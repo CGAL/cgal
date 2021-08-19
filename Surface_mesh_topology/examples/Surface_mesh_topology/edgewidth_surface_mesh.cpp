@@ -1,13 +1,15 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
-#include <fstream>
+
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/draw_face_graph_with_paths.h>
 
-using Mesh           =CGAL::Surface_mesh<CGAL::Simple_cartesian<double>::Point_3>;
-using Path_on_surface=CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
+#include <fstream>
+
+using Mesh            = CGAL::Surface_mesh<CGAL::Simple_cartesian<double>::Point_3>;
+using Path_on_surface = CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
 
 double cycle_length(const Mesh& mesh, const Path_on_surface& cycle)
 { // Compute the length of the given cycle.
@@ -31,14 +33,13 @@ int main(int argc, char* argv[])
 {
   std::string filename(argc==1?"data/3torus.off":argv[1]);
   bool draw=(argc<3?false:(std::string(argv[2])=="-draw"));
-  std::ifstream inp(filename);
-  if (inp.fail())
+
+  Mesh sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
   {
     std::cout<<"Cannot read file '"<<filename<<"'. Exiting program"<<std::endl;
     return EXIT_FAILURE;
   }
-  Mesh sm;
-  inp>>sm;
   std::cout<<"File '"<<filename<<"' loaded. Finding edge-width of the mesh..."<<std::endl;
 
   CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh> cst(sm, true);

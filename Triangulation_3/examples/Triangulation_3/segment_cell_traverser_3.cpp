@@ -7,7 +7,7 @@
 #include <fstream>
 #include <string>
 
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/Random.h>
 
 
@@ -25,9 +25,7 @@ int main(int argc, char* argv[])
   const char* fname = (argc>1) ? argv[1] : "data/blobby.xyz";
 
   std::vector<Point_3> points;
-  std::ifstream stream(fname);
-  if (!stream ||
-      !CGAL::read_xyz_points(stream, std::back_inserter(points)))
+  if (!CGAL::IO::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

@@ -14,8 +14,8 @@ typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_circle;
 typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Random Random;
 
-int main() {
-
+int main()
+{
   const int N=1000;
 
   // generator for random data points in the square ( (-1,-1), (1,1) )
@@ -31,20 +31,19 @@ int main() {
   Fuzzy_circle default_range(center, 0.2);
 
   boost::optional<Point> any = tree.search_any_point(default_range);
-  if(any){
+  if(any)
     std::cout << *any << " is in the query circle\n";
-  }else{
+  else
     std::cout << "Empty query circle\n";
-  }
+
   std::list<Point> result;
   tree.search(std::back_inserter(result), default_range);
 
   std::cout << "\nPoints in cirle with center " << center << " and radius 0.2" << std::endl;
 
   std::list<Point>::iterator it;
-  for (it=result.begin(); (it != result.end()); ++it) {
+  for (it=result.begin(); (it != result.end()); ++it)
     std::cout << *it << std::endl;
-  }
 
   result.clear();
   // approximate range searching using value 0.1 for fuzziness parameter
@@ -54,9 +53,9 @@ int main() {
 
   std::cout << "\n\nPoints in cirle with center " << center << " and fuzzy radius [0.1,0.3]" << std::endl;
 
-  for (it=result.begin(); (it != result.end()); ++it) {
+  for (it=result.begin(); (it != result.end()); ++it)
     std::cout << *it << std::endl;
-  }
+
   std::cout << "\ndone" << std::endl;
   return 0;
 }

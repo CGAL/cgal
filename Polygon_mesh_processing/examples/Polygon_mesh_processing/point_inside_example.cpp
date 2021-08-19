@@ -1,16 +1,19 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/point_generators_3.h>
 
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
 #include <vector>
 #include <fstream>
 #include <limits>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_3 Point;
-typedef CGAL::Polyhedron_3<K> Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
+typedef K::Point_3                                             Point;
+typedef CGAL::Polyhedron_3<K>                                  Polyhedron;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 double max_coordinate(const Polyhedron& poly)
 {
@@ -28,13 +31,11 @@ double max_coordinate(const Polyhedron& poly)
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
-  std::ifstream input(filename);
 
   Polyhedron poly;
-  if (!input || !(input >> poly) || poly.empty()
-             || !CGAL::is_triangle_mesh(poly))
+  if(!PMP::IO::read_polygon_mesh(filename, poly) || CGAL::is_empty(poly) || !CGAL::is_triangle_mesh(poly))
   {
-    std::cerr << "Not a valid input file." << std::endl;
+    std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 

@@ -39,7 +39,7 @@ struct Lloyd_tester
 
     std::cerr << "Reading fish-and-rectangle.poly...";
     std::ifstream poly_file("fish-and-rectangle.poly");
-    CGAL::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
+    CGAL::IO::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
     CGAL_assertion( cdt.is_valid() );
 
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()

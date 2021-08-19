@@ -16,6 +16,7 @@
 
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
+#include <CGAL/internal/Static_filters/tools.h>
 
 namespace CGAL {
 
@@ -51,10 +52,12 @@ class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
   Type type;
 
   void extend( const Point_3& p, const Tag_false& ) {
+    internal::Static_filters_predicates::Get_approx<Point_3> get_approx; // Identity functor for all points
+                                    // but lazy points
     std::pair<double, double> q[3];
-    q[0] = CGAL::to_interval( p.x() );
-    q[1] = CGAL::to_interval( p.y() );
-    q[2] = CGAL::to_interval( p.z() );
+    q[0] = CGAL::to_interval( get_approx(p).x() );
+    q[1] = CGAL::to_interval( get_approx(p).y() );
+    q[2] = CGAL::to_interval( get_approx(p).z() );
     Box_intersection_d::Box_d< double, 3 >::extend(q);
   }
 
@@ -84,17 +87,6 @@ class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
       init( true );
     } else {
       init( false );
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-      std::pair<double, double> q[3];
-      q[0] = CGAL::to_interval( f->b.min_coord(0) );
-      q[1] = CGAL::to_interval( f->b.min_coord(1) );
-      q[2] = CGAL::to_interval( f->b.min_coord(2) );
-      Box_intersection_d::Box_d< double, 3 >::extend(q);
-      q[0] = CGAL::to_interval( f->b.max_coord(0) );
-      q[1] = CGAL::to_interval( f->b.max_coord(1) );
-      q[2] = CGAL::to_interval( f->b.max_coord(2) );
-      Box_intersection_d::Box_d< double, 3 >::extend(q);
-#else
       Halffacet_cycle_iterator cycle_it = f->facet_cycles_begin();
       if( cycle_it.is_shalfedge() ) {
         SHalfedge_iterator edge_it(cycle_it);
@@ -106,7 +98,6 @@ class Nef_box : public Box_intersection_d::Box_d< double, 3 > {
         }
       } else
         CGAL_error_msg( "is facet first cycle a SHalfloop?");
-#endif
     }
   }
 

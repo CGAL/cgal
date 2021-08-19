@@ -272,9 +272,9 @@ You also have the possibility to "lock" a child of a group with `CGAL::Three::Sc
 
 \snippet Three_examples/Basic_item_plugin.cpp group
 
-\section exampleIOPlugin Creating an IO Plugin
+\section exampleIOPlugin Creating an I/O Plugin
 
-An IO plugin is a plugin desined to load from  and save to a certain type of file. Its name is generally of the form Xxxx_yyyy_io_plugin \n
+An I/O plugin is a plugin desined to load from  and save to a certain type of file. Its name is generally of the form Xxxx_yyyy_io_plugin \n
 It inherits from the CGAL::Three::Polyhedron_demo_io_plugin_interface. It must implement the following functions :
 - CGAL::Three::Polyhedron_demo_io_plugin_interface#name which returns the plugin's name.
 ~~~~~~~~~~~~~{.cpp}

@@ -67,6 +67,7 @@
 
 \package_listing{Triangulation_2}
 \package_listing{TDS_2}
+\package_listing{Triangulation_on_sphere_2}
 \package_listing{Periodic_2_triangulation_2}
 \package_listing{Hyperbolic_triangulation_2}
 \package_listing{Periodic_4_hyperbolic_triangulation_2}
@@ -117,6 +118,7 @@
 \package_listing{Point_set_3}
 \package_listing{Point_set_processing_3}
 \package_listing{Shape_detection}
+\package_listing{Shape_regularization}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
 \package_listing{Heat_method_3}
@@ -130,6 +132,7 @@
 \package_listing{SearchStructures}
 \package_listing{Box_intersection_d}
 \package_listing{AABB_tree}
+\package_listing{Orthtree}
 \package_listing{Spatial_sorting}
 \package_listing{Optimal_bounding_box}
 
@@ -151,6 +154,7 @@
 \package_listing{BGL}
 \package_listing{Solver_interface}
 \package_listing{Property_map}
+\package_listing{Weights}
 \package_listing{Cone_spanners_2}
 \package_listing{Circulator}
 \package_listing{Generator}

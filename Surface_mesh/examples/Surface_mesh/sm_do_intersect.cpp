@@ -1,14 +1,12 @@
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/box_intersection_d.h>
+#include <CGAL/Timer.h>
+
 #include <algorithm>
 #include <vector>
 #include <fstream>
-
-#include <boost/bind.hpp>
-#include <boost/functional/value_factory.hpp>
-#include <boost/range/algorithm/transform.hpp>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/box_intersection_d.h>
-#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 
@@ -87,16 +85,12 @@ unsigned int intersect(const Mesh& P, const Mesh& Q) {
   Q_box_ptr.reserve(Q.number_of_faces());
 
   // build boxes and pointers to boxes
-  boost::transform(P.faces(),
-                 std::back_inserter(P_boxes),
-                 boost::bind(boost::value_factory<Box>(), _1, boost::cref(P)));
-
-
+  for(auto f : P.faces())
+    P_boxes.push_back( Box(f, P) );
   std::transform(P_boxes.begin(), P_boxes.end(), std::back_inserter(P_box_ptr),
                  &address_of_box);
-  boost::transform(Q.faces(),
-                 std::back_inserter(Q_boxes),
-                 boost::bind(boost::value_factory<Box>(), _1, boost::cref(Q)));
+  for(auto f : Q.faces())
+    Q_boxes.push_back( Box(f, Q) );
   std::transform(Q_boxes.begin(), Q_boxes.end(), std::back_inserter(Q_box_ptr),
                  &address_of_box);
 
@@ -110,19 +104,21 @@ unsigned int intersect(const Mesh& P, const Mesh& Q) {
 
 int main(int argc, char* argv[])
 {
-  std::cout.precision(17);
-  Mesh P, Q;
-
-  if(argc < 3) {
+  if(argc < 3)
+  {
     std::cerr << "Usage: do_intersect <mesh_1.off> <mesh_2.off>" << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::ifstream inP(argv[1]);
-  inP >> P;
+  std::cout.precision(17);
 
-  std::ifstream inQ(argv[2]);
-  inQ >> Q;
+  Mesh P, Q;
+  if(!CGAL::IO::read_polygon_mesh(argv[1], P) || !CGAL::IO::read_polygon_mesh(argv[2], Q))
+  {
+    std::cerr << "Invalid input files." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Timer timer;
   timer.start();
   unsigned int num_intersections = intersect(P,Q);
@@ -132,5 +128,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-
-

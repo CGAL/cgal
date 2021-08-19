@@ -47,11 +47,11 @@
 // }
 //
 // The code below uses the version of
-// https://github.com/wangbolun300/fast-envelope  avaiable on 7th of October 2020
+// https://github.com/wangbolun300/fast-envelope available on 7th of October 2020.
 //
-// The code below only use the high level algorithms of checking that a query
-// is covered by a set of prisms, where each prism is an offset for an input triangle.
-// That is, we do not use indirect predicates
+// The code below only uses the high-level algorithms checking that a query
+// is covered by a set of prisms, where each prism is the offset of an input triangle.
+// That is, we do not use indirect predicates.
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYHEDRAL_ENVELOPE_H
@@ -85,6 +85,9 @@
 #include <string>
 #include <fstream>
 #include <type_traits>
+#include <unordered_set>
+#include <unordered_map>
+
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_PMP_NP_CLASS NamedParameters
@@ -183,7 +186,7 @@ private:
 
 
   // The class  `Plane` is used for the 7-8 walls of a prism.
-  // We store at the same  time threee points and a plane.
+  // We store at the same time three points and a plane.
   // That is easier than retrieving the 3 points of a lazy plane.
   struct Plane {
     Plane()
@@ -202,7 +205,37 @@ private:
     ePlane_3 eplane;
   };
 
-  typedef std::vector<Plane> Prism;
+  struct Prism {
+
+    std::size_t size() const
+    {
+      return planes.size();
+    }
+
+    void reserve(std::size_t n)
+    {
+      planes.reserve(n);
+    }
+
+    void emplace_back(const Plane& p)
+    {
+      planes.emplace_back(p);
+    }
+
+
+    Plane& operator[](std::size_t i)
+    {
+      return planes[i];
+    }
+
+    const Plane& operator[](std::size_t i) const
+    {
+      return planes[i];
+    }
+
+    std::vector<Plane> planes;
+    int obtuse;
+  };
 
   static const bool OUT_PRISM = 1;
   static const bool IN_PRISM = 0;
@@ -321,6 +354,11 @@ public:
    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
    *                     must be available in `TriangleMesh`.}
    *   \cgalParamNEnd
+   *   \cgalParamNBegin{face_epsilon_map}
+   *     \cgalParamDescription{a property map associating to each face of `tm` an epsilon value}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                    as key type and `double` as value type}
+   *     \cgalParamDefault{Use `epsilon` for all faces}
    * \cgalNamedParamsEnd
    *
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
@@ -333,8 +371,10 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typedef boost::graph_traits<TriangleMesh> Graph_traits;
+    typedef typename Graph_traits::face_descriptor face_descriptor;
 
     typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -353,7 +393,8 @@ public:
     }
 
     GeomTraits gt;
-    for(typename Graph_traits::face_descriptor f : faces(tmesh)){
+    std::unordered_set<face_descriptor> deg_faces;
+    for(face_descriptor f : faces(tmesh)){
       if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
         typename Graph_traits::halfedge_descriptor h = halfedge(f, tmesh);
         int i = get(vim, source(h, tmesh));
@@ -363,8 +404,30 @@ public:
         Vector3i face = { i, j, k };
         env_faces.push_back(face);
       }
+      else
+        deg_faces.insert(f);
     }
-    init(epsilon);
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(epsilon);
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<face_descriptor, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<face_descriptor, double>(epsilon));
+
+      for(face_descriptor f : faces(tmesh))
+        if(deg_faces.count(f)==0)
+          epsilon_values.push_back( get(epsilon_map, f) );
+      init(epsilon_values);
+    }
   }
 
   /**
@@ -390,6 +453,12 @@ public:
    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
    *                     must be available in `TriangleMesh`.}
    *   \cgalParamNEnd
+   *   \cgalParamNBegin{face_epsilon_map}
+   *     \cgalParamDescription{a property map associating to each face of `tm` an epsilon value}
+   *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                    as key type and `double` as value type}
+   *     \cgalParamDefault{Use `epsilon` for all faces}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
@@ -407,6 +476,7 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -431,6 +501,7 @@ public:
       return insert_res.first->second;
     };
 
+    std::unordered_set<face_descriptor> deg_faces;
     for(face_descriptor f : face_range){
       if(! Polygon_mesh_processing::is_degenerate_triangle_face(f, tmesh, parameters::geom_traits(gt).vertex_point_map(vpm))){
         typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tmesh);
@@ -441,8 +512,31 @@ public:
         Vector3i face = { i, j, k };
         env_faces.push_back(face);
       }
+      else
+        deg_faces.insert(f);
     }
-    init(epsilon);
+
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(epsilon);
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<face_descriptor, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<face_descriptor, double>(epsilon));
+
+      for(face_descriptor f : face_range)
+        if(deg_faces.count(f)==0)
+          epsilon_values.push_back( get(epsilon_map, f) );
+      init(epsilon_values);
+    }
   }
 
   /**
@@ -466,6 +560,10 @@ public:
     *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is `Point_3` and whose key
     *                    is the value type of `PointRange::const_iterator`}
     *     \cgalParamDefault{`CGAL::Identity_property_map`}
+    *   \cgalParamNBegin{face_epsilon_map}
+    *     \cgalParamDescription{a property map associating to each triangle an epsilon value}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `double` as value type}
+    *     \cgalParamDefault{Use `epsilon` for all triangles}
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
@@ -482,6 +580,7 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type Point_map;
     Point_map pm = choose_parameter<Point_map>(get_parameter(np, internal_np::point_map));
@@ -499,7 +598,27 @@ public:
       Vector3i face = { int(t[0]), int(t[1]), int(t[2]) };
       env_faces.emplace_back(face);
     }
-    init(epsilon);
+
+    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+      init(epsilon);
+    else
+    {
+      std::vector<double> epsilon_values;
+      epsilon_values.reserve(env_faces.size());
+
+      typedef typename internal_np::Lookup_named_param_def<
+        internal_np::face_epsilon_map_t,
+        NamedParameters,
+        Constant_property_map<std::size_t, double>
+      > ::type  Epsilon_map;
+
+      Epsilon_map epsilon_map = choose_parameter(get_parameter(np, internal_np::face_epsilon_map),
+                                                 Constant_property_map<std::size_t, double>(epsilon));
+
+      for(std::size_t i=0; i<triangles.size(); ++i)
+        epsilon_values.push_back( get(epsilon_map, i) );
+      init(epsilon_values);
+    }
   }
 
   /// @}
@@ -530,9 +649,10 @@ public:
 
 private:
 
-  void init(double epsilon)
+  template <class Epsilons>
+  void init(const Epsilons& epsilon_values)
   {
-    halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon);
+    halfspace_generation(env_vertices, env_faces, halfspace, bounding_boxes, epsilon_values);
 
     Datum_map<GeomTraits> datum_map(bounding_boxes);
     Point_map<GeomTraits> point_map(bounding_boxes);
@@ -729,7 +849,7 @@ private:
     for (unsigned int i = 0; i < cutp.size(); i++){
       const Plane& plane_i = prism[cutp[i]];
 
-      boost::optional<ePoint_3> op = intersection_point(line, plane_i.eplane);
+      boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line, plane_i.eplane);
       if(! op){
         std::cout <<  "there must be an intersection 2" << std::endl;
       }
@@ -850,8 +970,8 @@ private:
       }
 
       for (unsigned int j = 0; j < cidl.size(); j++) {
-        boost::optional<ePoint_3> op = intersection_point(line,
-                                                          halfspace[prismindex[queue[i]]][cidl[j]].eplane);
+        boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line,
+                                                                                  halfspace[prismindex[queue[i]]][cidl[j]].eplane);
         const ePoint_3& ip = *op;
         inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id
           (ip, idlist, jump1, check_id);
@@ -936,6 +1056,7 @@ private:
   {
     std::size_t facesize = halfspace[pid].size();
     if (i == j) return false;
+    if( ((i == 0) && ( j==1))  || ((i == 1) && ( j==0)) ) return false;
     if (i == 0 && j != 1) return true;
     if (i == 1 && j != 0) return true;
     if (j == 0 && i != 1) return true;
@@ -952,10 +1073,14 @@ private:
                                      const Triangle& query,
                                      std::vector<unsigned int> &cid) const
   {
-    const ePoint_3 &tri0 = query.etriangle[0];
-    const ePoint_3 &tri1 = query.etriangle[1];
-    const ePoint_3 &tri2 = query.etriangle[2];
-    const ePoint_3 &n = query.n;
+    const ePoint_3 &etri0 = query.etriangle[0];
+    const ePoint_3 &etri1 = query.etriangle[1];
+    const ePoint_3 &etri2 = query.etriangle[2];
+    const ePoint_3& n = query.n;
+
+    const Point_3 &tri0 = query.triangle[0];
+    const Point_3 &tri1 = query.triangle[1];
+    const Point_3 &tri2 = query.triangle[2];
 
     const Prism& prism = halfspace[cindex];
     cid.clear();
@@ -976,9 +1101,9 @@ private:
         // As the orientation test operates on point with inf==sup of the coordinate intervals
         // we can profit from the static filters.
         // The oriented side test being made with interval arithmetic is more expensive
-        o1[i] =  orientation(plane.ep, plane.eq, plane.er, tri0);
-        o2[i] =  orientation(plane.ep, plane.eq, plane.er, tri1);
-        o3[i] =  orientation(plane.ep, plane.eq, plane.er, tri2);
+        o1[i] =  orientation(plane.ep, plane.eq, plane.er, etri0);
+        o2[i] =  orientation(plane.ep, plane.eq, plane.er, etri1);
+        o3[i] =  orientation(plane.ep, plane.eq, plane.er, etri2);
 
         if (o1[i] + o2[i] + o3[i] >= 2){ //1,1,0 case
           return 0;
@@ -1034,7 +1159,7 @@ private:
           const Plane& plane_i = prism[cutp[i]];
           const eLine_3& eline = *(seg[k]);
 
-          boost::optional<ePoint_3> op = intersection_point(eline, plane_i.eplane);
+          boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline, plane_i.eplane);
           if(! op){
 #ifdef CGAL_ENVELOPE_DEBUG
             std::cout <<  "there must be an intersection 6" << std::endl;
@@ -1088,9 +1213,40 @@ private:
 
             int inter = 0;
 
-            boost::optional<ePoint_3>  ipp = intersection_point(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            static const int  edges[3][3] = { {2, 4, 6 }, {2, 3, 5}, {2, 4, 5} };
+
+            int ob = prism.obtuse;
+            if (ob == -1) ob = 0;
+
+            if(((cutp[i] == 0)||(cutp[i] == 1)) && ( (cutp[j] == edges[ob][0])||(cutp[j] == edges[ob][1]) ||(cutp[j] == edges[ob][2]) )){ // ATTENTION Only correct together with CGAL_INITIAL
+              int j0 = (cutp[j] == edges[ob][0])? 0 : (cutp[j]==edges[ob][1])? 1 : 2;
+              int j1 = (cutp[j] == edges[ob][0])? 1 : (cutp[j]==edges[ob][1])? 2 : 0;
+              const Vector3i & v3i = env_faces[cindex];
+              const Point_3& pj0 = env_vertices[v3i[j0]];
+              const Point_3& pj1 = env_vertices[v3i[j1]];
+
+              if(pj0 == tri0){
+                if((pj1 == tri1)||(pj1 == tri2)){
+                  continue;
+                }
+              }
+              if(pj0 == tri1){
+                if((pj1 == tri2)||(pj1 == tri0)){
+                  continue;
+                }
+              }
+              if(pj0 == tri2){
+                if((pj1 == tri0)||(pj1 == tri1)){
+                  continue;
+                }
+              }
+
+
+            }
+
+            boost::optional<ePoint_3>  ipp = intersection_point_for_polyhedral_envelope(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(ipp){
-                inter = is_3_triangle_cut_float_fast(tri0, tri1, tri2,
+                inter = is_3_triangle_cut_float_fast(etri0, etri1, etri2,
                                                      n,
                                                      *ipp);
             }
@@ -1528,8 +1684,8 @@ private:
           if (!cut) continue;
 
           for (unsigned int j = 0; j < cidl.size(); j++) {
-            boost::optional<ePoint_3> op = intersection_point(eline,
-                                                              halfspace[prismindex[queue[i]]][cidl[j]].eplane);
+            boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
+                                                                                      halfspace[prismindex[queue[i]]][cidl[j]].eplane);
             const ePoint_3& ip = *op;
             inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(ip, idlist, jump1, check_id);
 
@@ -1612,8 +1768,8 @@ private:
           }
           // now we know that there exists an intesection point
 
-          boost::optional<ePoint_3> op = intersection_point(eline,
-                                                            halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);
+          boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
+                                                                                    halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);
           const ePoint_3& ip = *op;
 
           inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order(ip, idlist, idlistorder, jump1, check_id);
@@ -1696,9 +1852,9 @@ private:
             // We moved the intersection here
             // In case there is no intersection point we continue
             boost::optional<ePoint_3>
-              op = intersection_point(etriangle_eplane,
-                                            halfspace[jump1][intersect_face[queue[i]][k]].eplane,
-                                            halfspace[jump2][intersect_face[queue[j]][h]].eplane);
+              op = intersection_point_for_polyhedral_envelope(etriangle_eplane,
+                                                              halfspace[jump1][intersect_face[queue[i]][k]].eplane,
+                                                              halfspace[jump2][intersect_face[queue[j]][h]].eplane);
             if(! op){
               continue;
             }
@@ -1770,15 +1926,23 @@ private:
     return Plane(plane0, plane1,plane2);
   }
 
+  double get_epsilon(double epsilon, std::size_t)
+  {
+    return epsilon;
+  }
+
+  double get_epsilon(const std::vector<double>& epsilon_values, std::size_t i)
+  {
+    return epsilon_values[i];
+  }
 
   // build prisms for a list of triangles. each prism is represented by 7-8 planes, which are represented by 3 points
+  template <class Epsilons>
   void
   halfspace_generation(const std::vector<Point_3> &ver, const std::vector<Vector3i> &faces,
                        std::vector<Prism>& halfspace,
-                       std::vector<Iso_cuboid_3>& bounding_boxes, const double epsilon)
+                       std::vector<Iso_cuboid_3>& bounding_boxes, const Epsilons& epsilon_values)
   {
-    double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
-    double bbox_tolerance = epsilon *(1 + 1e-6);
     Vector_3 AB, AC, BC, normal;
     Plane plane;
     std::array<Vector_3, 8> box;
@@ -1804,6 +1968,10 @@ private:
     bounding_boxes.resize(faces.size());
     for (unsigned int i = 0; i < faces.size(); ++i)
       {
+        const double epsilon = get_epsilon(epsilon_values,i);
+        double tolerance = epsilon / std::sqrt(3);// the envelope thickness, to be conservative
+        double bbox_tolerance = epsilon *(1 + 1e-6);
+
         Bbox bb = ver[faces[i][0]].bbox () + ver[faces[i][1]].bbox() + ver[faces[i][2]].bbox();
         // todo: Add a grow() function to Bbox
         bounding_boxes[i] = Iso_cuboid_3(Point_3(bb.xmin()-bbox_tolerance, bb.ymin()-bbox_tolerance, bb.zmin()-bbox_tolerance),
@@ -1889,7 +2057,7 @@ private:
         halfspace[i].emplace_back(plane);// number 1
 
         int obtuse = obtuse_angle(ver[faces[i][0]], ver[faces[i][1]], ver[faces[i][2]]);
-
+        halfspace[i].obtuse = obtuse;
 
         edgedire = normalize(AB);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN, normal)*tolerance;
@@ -1900,6 +2068,11 @@ private:
                       ver[faces[i][0]] + edgenormaldist + normal);
         halfspace[i].emplace_back(plane);// number 2
 
+        if (obtuse != 1) {
+          plane = get_corner_plane(ver[faces[i][1]], midpoint(ver[faces[i][0]], ver[faces[i][2]]) , normal,
+                                   tolerance, use_accurate_cross);
+          halfspace[i].emplace_back(plane);// number 3;
+        }
 
         edgedire = normalize(BC);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN, normal)*tolerance;
@@ -1911,6 +2084,11 @@ private:
                       ver[faces[i][1]] + edgenormaldist + normal);
         halfspace[i].emplace_back(plane);// number 4
 
+        if (obtuse != 2) {
+          plane = get_corner_plane(ver[faces[i][2]], midpoint(ver[faces[i][0]], ver[faces[i][1]]), normal,
+                                   tolerance,use_accurate_cross);
+          halfspace[i].emplace_back(plane);// number 5;
+        }
 
         edgedire = -normalize(AC);
         // if (use_accurate_cross)edgenormaldist = accurate_cross_product_direction(ORIGIN, edgedire, ORIGIN , normal)*tolerance;
@@ -1922,21 +2100,10 @@ private:
                       ver[faces[i][0]] + edgenormaldist + normal);
         halfspace[i].emplace_back(plane);// number 6
 
-
-        if (obtuse != 1) {
-          plane = get_corner_plane(ver[faces[i][1]], midpoint(ver[faces[i][0]], ver[faces[i][2]]) , normal,
-                                   tolerance, use_accurate_cross);
-          halfspace[i].emplace_back(plane);// number 3;
-        }
         if (obtuse != 0) {
           plane = get_corner_plane(ver[faces[i][0]], midpoint(ver[faces[i][1]], ver[faces[i][2]]) , normal,
                                    tolerance,use_accurate_cross);
           halfspace[i].emplace_back(plane);// number 7;
-        }
-        if (obtuse != 2) {
-          plane = get_corner_plane(ver[faces[i][2]], midpoint(ver[faces[i][0]], ver[faces[i][1]]), normal,
-                                   tolerance,use_accurate_cross);
-          halfspace[i].emplace_back(plane);// number 5;
         }
 
 #ifdef CGAL_ENVELOPE_DEBUG

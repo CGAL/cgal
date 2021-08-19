@@ -47,8 +47,8 @@ void make_object_and_assign() {
   CGAL::Object o = CGAL::make_object(i);
   CGAL_assertion(CGAL::assign(j, o));
   CGAL_assertion(j == i);
-  CGAL_assertion(CGAL::object_cast<Foo>(&o) == NULL);
-  CGAL_assertion(CGAL::object_cast<int>(&o) != NULL);
+  CGAL_assertion(CGAL::object_cast<Foo>(&o) == nullptr);
+  CGAL_assertion(CGAL::object_cast<int>(&o) != nullptr);
 }
 
 void safe_bool() {

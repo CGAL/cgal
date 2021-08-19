@@ -79,6 +79,7 @@ class Handle_for_virtual
 
     ~Handle_for_virtual()
     {
+      if(!ptr) return;
       ptr->remove_reference();
       if ( !ptr->is_referenced() )
           delete ptr;

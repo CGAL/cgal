@@ -31,7 +31,7 @@ struct ArrReader
 
     ArrFormatter arrFormatter;
     auto arr = new Arrangement();
-    CGAL::read(*arr, ifs, arrFormatter);
+    CGAL::IO::read(*arr, ifs, arrFormatter);
     return arr;
   }
 };
@@ -106,7 +106,7 @@ struct ArrWriter
     using ArrFormatter = CGAL::Arr_with_history_text_formatter<TextFormatter>;
 
     ArrFormatter arrFormatter;
-    CGAL::write(*arr, ofs, arrFormatter);
+    CGAL::IO::write(*arr, ofs, arrFormatter);
   }
 };
 

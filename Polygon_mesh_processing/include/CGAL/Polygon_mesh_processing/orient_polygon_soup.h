@@ -458,8 +458,8 @@ struct Polygon_soup_orienter
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose value type is the point type.
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
- * whose value_type is a model of the concept `RandomAccessContainer`
- * whose value_type is `std::size_t`.
+ * whose `value_type` is a model of the concept `RandomAccessContainer`
+ * whose `value_type` is `std::size_t`.
  *
  * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
  *               non-manifoldness or non-orientability issues.

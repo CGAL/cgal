@@ -3,7 +3,7 @@
 
 project(Polygonal_surface_reconstruction_Tests)
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
@@ -31,8 +31,8 @@ endif()
 include(CGAL_CreateSingleSourceCGALProgram)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(NOT TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
   message(
     STATUS
       "NOTICE: This project requires Eigen 3.1 (or greater) and will not be compiled."
@@ -56,7 +56,7 @@ endif()
 
 create_single_source_cgal_program("polygonal_surface_reconstruction_test.cpp")
 target_link_libraries(polygonal_surface_reconstruction_test
-                      PUBLIC CGAL::Eigen_support)
+                      PUBLIC CGAL::Eigen3_support)
 if(TARGET CGAL::SCIP_support)
   target_link_libraries(polygonal_surface_reconstruction_test
                         PUBLIC CGAL::SCIP_support)

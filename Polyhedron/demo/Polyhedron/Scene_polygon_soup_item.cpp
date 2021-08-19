@@ -1,35 +1,33 @@
+#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
+
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
+
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Three.h>
 
-#include <QObject>
-#include <QApplication>
-#include <QtDebug>
+#include "triangulate_primitive.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/IO/OFF_reader.h>
-#include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/version.h>
-
+#include <CGAL/array.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-
-#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-
 #include <CGAL/Polygon_2.h>
+#include <CGAL/version.h>
 
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include "triangulate_primitive.h"
-#include <CGAL/array.h>
+#include <QObject>
+#include <QApplication>
+#include <QtDebug>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -59,7 +57,7 @@ struct Scene_polygon_soup_item_priv{
   typedef EPICK::Point_3 Point_3;
 
   Scene_polygon_soup_item_priv(Scene_polygon_soup_item* parent)
-    : soup(0),
+    : soup(nullptr),
       oriented(false)
   {
     item = parent;
@@ -73,7 +71,7 @@ struct Scene_polygon_soup_item_priv{
     if(soup)
     {
       delete soup;
-      soup = NULL;
+      soup = nullptr;
     }
   }
   void compute_normals_and_vertices(void) const;
@@ -188,7 +186,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
         positions_poly.push_back(ffit->vertex(2)->point().y());
         positions_poly.push_back(ffit->vertex(2)->point().z());
 
-        CGAL::Color color;
+        CGAL::IO::Color color;
         if(!soup->fcolors.empty())
           color = soup->fcolors[polygon_id];
         for(int i=0; i<3; i++)
@@ -204,7 +202,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
           }
           if(!soup->vcolors.empty())
           {
-            CGAL::Color vcolor = soup->vcolors[triangulation.v2v[ffit->vertex(i)]];
+            CGAL::IO::Color vcolor = soup->vcolors[triangulation.v2v[ffit->vertex(i)]];
             v_colors.push_back((float)vcolor.red()/255);
             v_colors.push_back((float)vcolor.green()/255);
             v_colors.push_back((float)vcolor.blue()/255);
@@ -264,7 +262,7 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
                 positions_poly.push_back(p.z()+offset.z);
                 if(!soup->fcolors.empty())
                 {
-                  const CGAL::Color color = soup->fcolors[nb];
+                  const CGAL::IO::Color color = soup->fcolors[nb];
                     f_colors.push_back((float)color.red()/255);
                     f_colors.push_back((float)color.green()/255);
                     f_colors.push_back((float)color.blue()/255);
@@ -272,7 +270,7 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
 
                 if(!soup->vcolors.empty())
                 {
-                  const CGAL::Color color = soup->vcolors[it->at(i)];
+                  const CGAL::IO::Color color = soup->vcolors[it->at(i)];
                   v_colors.push_back((float)color.red()/255);
                   v_colors.push_back((float)color.green()/255);
                   v_colors.push_back((float)color.blue()/255);
@@ -347,11 +345,15 @@ Scene_polygon_soup_item::clone() const {
 bool
 Scene_polygon_soup_item::load(std::istream& in)
 {
-  if (!d->soup) d->soup=new Polygon_soup();
-  else d->soup->clear();
+  if (!d->soup)
+    d->soup = new Polygon_soup();
+  else
+    d->soup->clear();
 
-  bool result = CGAL::read_OFF(in, d->soup->points, d->soup->polygons,
-                               d->soup->fcolors, d->soup->vcolors);
+  bool result = CGAL::IO::read_OFF(in, d->soup->points, d->soup->polygons,
+                                      CGAL::parameters::vertex_color_output_iterator(std::back_inserter(d->soup->vcolors))
+                                                        .face_color_output_iterator(std::back_inserter(d->soup->fcolors)));
+
   invalidateOpenGLBuffers();
   return result;
 }
@@ -526,7 +528,7 @@ Scene_polygon_soup_item::toolTip() const
 
 void
 Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-    if(d->soup == 0) return;
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -561,7 +563,7 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 void
 Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
 
-    if(d->soup == 0) return;
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -581,7 +583,7 @@ Scene_polygon_soup_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 
 void
 Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    if(d->soup == 0) return;
+    if(d->soup == nullptr) return;
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -608,7 +610,7 @@ Scene_polygon_soup_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const 
 bool
 Scene_polygon_soup_item::isEmpty() const {
 
-  return (d->soup == 0 || d->soup->points.empty());
+  return (d->soup == nullptr || d->soup->points.empty());
 }
 void
 Scene_polygon_soup_item::invalidateOpenGLBuffers()
@@ -661,7 +663,7 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
   d->soup->polygons.push_back(new_polygon);
 }
 
-template <class Point, class Polygon>
+template <class Point, typename Polygon>
 void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
 {
     if(!d->soup)
@@ -687,8 +689,8 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 
 template <class Point, class Polygon>
 void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
-                                   const std::vector<CGAL::Color>& fcolors,
-                                   const std::vector<CGAL::Color>& vcolors)
+                                   const std::vector<CGAL::IO::Color>& fcolors,
+                                   const std::vector<CGAL::IO::Color>& vcolors)
 {
     load (points, polygons);
 
@@ -700,14 +702,14 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 }
 // Force the instanciation of the template function for the types used in the STL_io_plugin. This is needed
 // because the d-pointer forbid the definition in the .h for this function.
-template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<std::array<double, 3>, std::array<int, 3> >
-(const std::vector<std::array<double, 3> >& points, const std::vector<std::array<int, 3> >& polygons);
+template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<EPICK::Point_3, std::vector<int> >
+(const std::vector<EPICK::Point_3>& points, const std::vector<std::vector<int> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
 (const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons);
 template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL::Epick::Point_3, std::vector<std::size_t> >
 (const std::vector<CGAL::Epick::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons,
- const std::vector<CGAL::Color>& fcolors,
- const std::vector<CGAL::Color>& vcolors);
+ const std::vector<CGAL::IO::Color>& fcolors,
+ const std::vector<CGAL::IO::Color>& vcolors);
 
 // Local Variables:
 // c-basic-offset: 4
@@ -716,8 +718,8 @@ template SCENE_POLYGON_SOUP_ITEM_EXPORT void Scene_polygon_soup_item::load<CGAL:
 const Scene_polygon_soup_item::Points& Scene_polygon_soup_item::points() const { return d->soup->points; }
 const Scene_polygon_soup_item::Polygons& Scene_polygon_soup_item::polygons() const { return d->soup->polygons; }
 bool Scene_polygon_soup_item::isDataColored() { return d->soup->fcolors.size()>0 || d->soup->vcolors.size()>0;}
-std::vector<CGAL::Color> Scene_polygon_soup_item::getVColors() const{return d->soup->vcolors;}
-std::vector<CGAL::Color> Scene_polygon_soup_item::getFColors() const{return d->soup->fcolors;}
+std::vector<CGAL::IO::Color> Scene_polygon_soup_item::getVColors() const{return d->soup->vcolors;}
+std::vector<CGAL::IO::Color> Scene_polygon_soup_item::getFColors() const{return d->soup->fcolors;}
 
 void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
 {
@@ -727,7 +729,7 @@ void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
     if(d->soup)
     {
       delete d->soup;
-      d->soup=NULL;
+      d->soup=nullptr;
     }
   }
 }

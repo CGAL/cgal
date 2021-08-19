@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Point_set_processing_3_Examples)
 
 # Find CGAL
@@ -80,9 +80,9 @@ endif()
 
 # Use Eigen
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(TARGET CGAL::Eigen_support)
-  set(CGAL_libs ${CGAL_libs} CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
+  set(CGAL_libs ${CGAL_libs} CGAL::Eigen3_support)
 
   # Executables that require Eigen
   foreach(
@@ -99,10 +99,10 @@ if(TARGET CGAL::Eigen_support)
     create_single_source_cgal_program("${target}.cpp")
     target_link_libraries(${target} PRIVATE ${CGAL_libs})
   endforeach()
-  if (TARGET CGAL::Eigen_support AND TARGET CGAL::LASLIB_support)
+  if (TARGET CGAL::Eigen3_support AND TARGET CGAL::LASLIB_support)
     create_single_source_cgal_program( "orient_scanlines_example.cpp" )
     target_link_libraries(orient_scanlines_example PRIVATE ${CGAL_libs}
-      CGAL::Eigen_support CGAL::LASLIB_support)
+      CGAL::Eigen3_support CGAL::LASLIB_support)
   endif()
   # Executables that require libpointmatcher
   find_package(libpointmatcher QUIET)

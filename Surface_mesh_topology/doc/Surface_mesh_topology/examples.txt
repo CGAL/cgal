@@ -5,5 +5,7 @@
 \example Surface_mesh_topology/path_homotopy_double_torus.cpp
 \example Surface_mesh_topology/path_homotopy_with_symbols.cpp
 \example Surface_mesh_topology/path_homotopy_with_symbols_2.cpp
+\example Surface_mesh_topology/path_simplicity_double_torus.cpp
+\example Surface_mesh_topology/path_simplicity_double_torus_2.cpp
 \example Surface_mesh_topology/open_path_homotopy.cpp
 */

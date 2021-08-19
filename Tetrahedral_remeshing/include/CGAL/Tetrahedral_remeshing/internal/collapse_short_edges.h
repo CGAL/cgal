@@ -219,7 +219,7 @@ public:
       Vertex_handle infinite_vertex = triangulation.infinite_vertex();
 
       bool v0_updated = false;
-      for (const Cell_handle ch : find_incident)
+      for (const Cell_handle& ch : find_incident)
       {
         if (invalid_cells.find(ch) == invalid_cells.end()) //valid cell
         {
@@ -445,7 +445,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
     c3t3.triangulation().finite_incident_cells(v0,
         std::back_inserter(cells_to_check));
 
-    for (const Cell_handle ch : cells_to_check)
+    for (const Cell_handle& ch : cells_to_check)
     {
       if (!ch->has_vertex(v1))
       {
@@ -478,7 +478,7 @@ bool is_valid_collapse(const typename C3t3::Edge& edge,
     c3t3.triangulation().finite_incident_cells(v1,
         std::back_inserter(cells_to_check));
 
-    for (const Cell_handle ch : cells_to_check)
+    for (const Cell_handle& ch : cells_to_check)
     {
       if (!ch->has_vertex(v0))
       {
@@ -792,7 +792,7 @@ collapse(const typename C3t3::Cell_handle ch,
   std::vector<Cell_handle> cells_to_remove;
   boost::unordered_set<Cell_handle> invalid_cells;
 
-  for(const Cell_handle c : inc_cells)
+  for(const Cell_handle& c : inc_cells)
   {
     const int v0_id = c->index(vh0);
     const int v1_id = c->index(vh1);
@@ -838,7 +838,7 @@ collapse(const typename C3t3::Cell_handle ch,
   const Vertex_handle infinite_vertex = tr.infinite_vertex();
 
   bool v0_updated = false;
-  for (const Cell_handle c : find_incident)
+  for (const Cell_handle& c : find_incident)
   {
     if (invalid_cells.find(c) == invalid_cells.end())//valid cell
     {
@@ -856,7 +856,7 @@ collapse(const typename C3t3::Cell_handle ch,
     = { { {{0,1}}, {{0,2}}, {{0,3}}, {{1,2}}, {{1,3}}, {{2,3}} } }; //vertex indices in cells
   const Vertex_handle vkept = vh0;
   const Vertex_handle vdeleted = vh1;
-  for (const Cell_handle c : cells_to_update)
+  for (const Cell_handle& c : cells_to_update)
   {
     for (const std::array<int, 2>& ei : edges)
     {
@@ -886,7 +886,7 @@ collapse(const typename C3t3::Cell_handle ch,
   // update complex facets
 
   //Update the vertex before removing it
-  for (const Cell_handle c : cells_to_update)
+  for (const Cell_handle& c : cells_to_update)
   {
     if (invalid_cells.find(c) == invalid_cells.end()) //valid cell
     {
@@ -1005,7 +1005,7 @@ bool is_cells_set_manifold(const C3t3&,
   }
 
   boost::unordered_map<EV, int> edges;
-  for (const std::pair<FV, int>& fvv : facets)
+  for (const auto& fvv : facets)
   {
     if (fvv.second != 1)
       continue;
@@ -1021,7 +1021,7 @@ bool is_cells_set_manifold(const C3t3&,
     }
   }
 
-  for (const std::pair<EV, int>& evv : edges)
+  for (const auto& evv : edges)
     if (evv.second != 2)
       return false;
 

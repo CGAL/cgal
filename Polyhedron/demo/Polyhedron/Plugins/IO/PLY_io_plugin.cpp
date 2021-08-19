@@ -3,18 +3,24 @@
 #include "Scene_textured_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 
+#include <CGAL/IO/PLY.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Three/Three.h>
+
 #include <QInputDialog>
 #include <QApplication>
-#include <fstream>
-
-#include <CGAL/IO/PLY_reader.h>
-#include <CGAL/IO/PLY_writer.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <QMessageBox>
+
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <string>
+#include <vector>
+
 using namespace CGAL::Three;
+
 class Polyhedron_demo_ply_plugin :
   public QObject,
   public CGAL::Three::Polyhedron_demo_io_plugin_interface
@@ -96,7 +102,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     // First try mesh
     std::string comments;
     Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item();
-    if (CGAL::read_ply(in, *sm_item->face_graph(), comments))
+    if (CGAL::IO::read_PLY(in, *sm_item->face_graph(), comments))
     {
       if(sm_item->face_graph()->property_map<face_descriptor, int >("f:patch_id").second)
       {
@@ -123,10 +129,10 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     // else try polygon soup
     std::vector<Kernel::Point_3> points;
     std::vector<std::vector<std::size_t> > polygons;
-    std::vector<CGAL::Color> fcolors;
-    std::vector<CGAL::Color> vcolors;
+    std::vector<CGAL::IO::Color> fcolors;
+    std::vector<CGAL::IO::Color> vcolors;
 
-    if (!(CGAL::read_PLY (in, points, polygons, fcolors, vcolors)))
+    if (!(CGAL::IO::read_PLY (in, points, polygons, fcolors, vcolors)))
     {
       QApplication::restoreOverrideCursor();
       ok = false;
@@ -192,14 +198,14 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   list << tr("Ascii");
   bool ok = false;
   QString choice
-    = QInputDialog::getItem(NULL, tr("Save PLY file"), tr("Format"), list, 0, false, &ok);
+    = QInputDialog::getItem(nullptr, tr("Save PLY file"), tr("Format"), list, 0, false, &ok);
 
   if (!ok)
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8().data(), std::ios::binary);
   if (choice == tr("Binary"))
-    CGAL::set_binary_mode(out);
+    CGAL::IO::set_binary_mode(out);
   else
     out.precision (std::numeric_limits<double>::digits10 + 2);
 
@@ -221,7 +227,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (soup_item)
   {
     bool res =
-        CGAL::write_PLY (out, soup_item->points(), soup_item->polygons());
+        CGAL::IO::write_PLY (out, soup_item->points(), soup_item->polygons());
     if(res)
       items.pop_front();
     return res;
@@ -233,7 +239,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (sm_item)
   {
     bool res =
-        CGAL::write_ply (out, *(sm_item->polyhedron()), sm_item->comments());
+        CGAL::IO::write_PLY(out, *(sm_item->polyhedron()), sm_item->comments());
     if(res)
       items.pop_front();
     return res;
@@ -245,7 +251,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (stm_item)
   {
     bool res =
-        CGAL::write_ply (out, *(stm_item->textured_face_graph()));
+        CGAL::IO::write_PLY(out, *(stm_item->textured_face_graph()));
     if(res)
       items.pop_front();
     return res;

@@ -138,7 +138,7 @@ static int dimension();
 returns a unique box id, see the
 `IdPolicy` template parameter above for the different
 choices.
-\tparam `IdPolicy`\f$ \neq\f$`ID_NONE`
+\tparam IdPolicy \f$ \neq\f$`ID_NONE`
 */
 std::size_t id();
 

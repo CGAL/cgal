@@ -13,6 +13,8 @@
 /// \file Mesh_complex_3_in_triangulation_3_fwd.h
 /// Forward declarations of the Mesh_3 package.
 
+#include <istream>
+
 #ifndef DOXYGEN_RUNNING
 namespace CGAL {
 

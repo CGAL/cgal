@@ -19,7 +19,7 @@ speed thanks to a lazy mechanism, similar to
 `Exact_predicates_exact_constructions_kernel`. A construction creates an
 approximate object, and stores a directed acyclic graph (DAG) of the operation
 and arguments used. When an operation needs more precision on an object than is
-currently available, which should be rare, %CGAL reconstructs exactly all the
+currently available, which should be rare, \cgal reconstructs exactly all the
 ancestors of the object and replaces this part of the graph with exact objects.
 This should be transparent for users, those details do not affect the
 functionality, but they can cause surprising running time where the costly part

@@ -121,7 +121,12 @@ public:
     return Aff_transformation_2(TRANSLATION, - translationvector_);
   }
 
-  bool         is_even() const
+  bool is_even() const
+  {
+    return true;
+  }
+
+  virtual bool is_translation() const
   {
     return true;
   }

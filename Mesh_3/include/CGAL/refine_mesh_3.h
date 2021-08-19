@@ -28,9 +28,10 @@
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
-#include <CGAL/atomic.h>
 
 #include <boost/parameter/preprocessor.hpp>
+
+#include <atomic>
 
 namespace CGAL {
 
@@ -196,7 +197,7 @@ struct Manifold_options {
 // Various Mesh_3 option
 struct Mesh_3_options {
 #ifndef CGAL_NO_ATOMIC
-      typedef CGAL::cpp11::atomic<bool>* Pointer_to_stop_atomic_boolean_t;
+      typedef std::atomic<bool>* Pointer_to_stop_atomic_boolean_t;
 #else
       typedef bool* Pointer_to_stop_atomic_boolean_t;
 #endif

@@ -665,9 +665,8 @@ private:
   check_dimension( InputIterator first, InputIterator last)
   { return ( std::find_if
              ( first, last,
-               CGAL::compose1_1
-               ( boost::bind2nd(std::not_equal_to<int>(), d),
-                 tco.access_dimension_d_object()))
+               [this](const auto& o)
+               { return this->tco.access_dimension_d_object()(o) != this->d; })
              == last); }
 
   // compute (squared) distance
@@ -850,7 +849,7 @@ operator << ( std::ostream& os,
   typedef  typename Traits_::ET          ET;
   typedef  ostream_iterator<ET>          Et_it;
 
-  switch ( CGAL::get_mode( os)) {
+  switch ( CGAL::IO::get_mode( os)) {
 
   case CGAL::IO::PRETTY:
     os << "CGAL::Polytope_distance_d( |P+Q| = "
@@ -919,7 +918,7 @@ operator << ( std::ostream& os,
 
   default:
     CGAL_optimisation_assertion_msg( false,
-                                     "CGAL::get_mode( os) invalid!");
+                                     "CGAL::IO::get_mode( os) invalid!");
     break; }
 
   return( os);

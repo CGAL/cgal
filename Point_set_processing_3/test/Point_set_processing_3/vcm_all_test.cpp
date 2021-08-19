@@ -1,7 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/vcm_estimate_edges.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_off_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <boost/dynamic_bitset.hpp>
 
@@ -25,17 +26,16 @@ std::cout << "=== test_fandisk ===\n";
   Covariance expected;
   int index;
 
-  // Reads a .xyz point set file in points[].
+  // Reads a point set file in points[].
   std::vector<Point> points;
   std::vector<Covariance> cov;
   boost::dynamic_bitset<std::size_t> on_feature_edge(nb_points);
   points.reserve(nb_points);
   cov.reserve(nb_points);
-  std::ifstream stream("data/fandisk.off");
-  if (!stream ||
-      !CGAL::read_off_points(stream,
-                             std::back_inserter(points),
-                             CGAL::parameters::point_map(pmap)))
+
+  if(!CGAL::IO::read_points("data/fandisk.off",
+                            std::back_inserter(points),
+                            CGAL::parameters::point_map(pmap)))
   {
     std::cerr << "Error: cannot read file data/fandisk.off" << std::endl;
     return false;

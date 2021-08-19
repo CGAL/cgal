@@ -21,7 +21,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/unordered_map.hpp>
 #include "Color_map.h"
 

@@ -1,11 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_shortest_path.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/Surface_mesh.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -34,9 +34,15 @@ typedef CGAL::AABB_tree<AABB_face_graph_traits>                         AABB_tre
 
 int main(int argc, char** argv)
 {
+  const char* filename = (argc>1) ? argv[1] : "data/elephant.off";
+
   Triangle_mesh tmesh;
-  std::ifstream input((argc>1) ? argv[1] : "data/elephant.off");
-  input >> tmesh;
+  if(!CGAL::IO::read_polygon_mesh(filename, tmesh) ||
+     !CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Surface_mesh_shortest_path shortest_paths(tmesh);
 

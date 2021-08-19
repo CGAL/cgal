@@ -201,6 +201,7 @@ void smooth_shape(const FaceRange& faces,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
 template<typename TriangleMesh, typename FaceRange>
 void smooth_shape(const FaceRange& faces,
                   TriangleMesh& tmesh,
@@ -223,6 +224,7 @@ void smooth_shape(TriangleMesh& tmesh,
 {
   smooth_shape(faces(tmesh), tmesh, time, parameters::all_default());
 }
+/// \endcond
 
 } // Polygon_mesh_processing
 } // CGAL

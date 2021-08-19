@@ -20,6 +20,7 @@
 #include <CGAL/number_type_config.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/Kernel/Same_uncertainty.h>
 
 namespace CGAL {
 CGAL_NTS_BEGIN_NAMESPACE
@@ -302,24 +303,59 @@ to_interval( const Real_embeddable& x) {
 }
 
 template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Field_tag)
+typename Coercion_traits<double, NT>::Type
+approximate_sqrt(const NT& x, CGAL::Null_functor)
 {
-  return NT(sqrt(CGAL::to_double(nt)));
+  return sqrt(CGAL::to_double(x));
 }
 
-template <typename NT>
-NT approximate_sqrt(const NT& nt, CGAL::Field_with_sqrt_tag)
+template <typename NT, typename Sqrt>
+typename Sqrt::result_type
+approximate_sqrt(const NT& nt, Sqrt sqrt)
 {
   return sqrt(nt);
 }
 
 template <typename NT>
-NT approximate_sqrt(const NT& nt)
+decltype(auto) approximate_sqrt(const NT& nt)
 {
+  // the initial version of this function was using Algebraic_category
+  // for the dispatch but some ring type (like Gmpz) provides a Sqrt
+  // functor even if not being Field_with_sqrt.
   typedef CGAL::Algebraic_structure_traits<NT> AST;
-  typedef typename AST::Algebraic_category Algebraic_category;
-  return approximate_sqrt(nt, Algebraic_category());
+  typedef typename AST::Sqrt Sqrt;
+  return approximate_sqrt(nt, Sqrt());
 }
+
+template <class NT>
+typename Same_uncertainty_nt<Comparison_result, NT>::type
+compare_quotients(const NT& xnum, const NT& xden,
+                  const NT& ynum, const NT& yden)
+{
+  // No assumptions on the sign of  den  are made
+
+  // code assumes that SMALLER == - 1;
+  CGAL_precondition( SMALLER == static_cast<Comparison_result>(-1) );
+
+  int xsign =  sign(xnum) *  sign(xden) ;
+  int ysign =  sign(ynum) *  sign(yden) ;
+  if (xsign == 0) return static_cast<Comparison_result>(-ysign);
+  if (ysign == 0) return static_cast<Comparison_result>(xsign);
+  // now (x != 0) && (y != 0)
+  int diff = xsign - ysign;
+  if (diff == 0)
+    {
+      int msign =  sign(xden) *  sign(yden);
+      NT leftop  = NT(xnum * yden * msign);
+      NT rightop = NT(ynum * xden * msign);
+      return  CGAL::compare(leftop, rightop);
+    }
+  else
+    {
+      return (xsign < ysign) ? SMALLER : LARGER;
+    }
+}
+
 
 CGAL_NTS_END_NAMESPACE
 } //namespace CGAL

@@ -1,12 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <boost/graph/kruskal_min_spanning_tree.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <list>
-
-#include <boost/graph/kruskal_min_spanning_tree.hpp>
-
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -16,8 +15,7 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_iterator   vertex_iterator;
 typedef boost::graph_traits<Mesh>::edge_descriptor   edge_descriptor;
 
-void
-kruskal(const Mesh& sm)
+void kruskal(const Mesh& sm)
 {
    // We use the default edge weight which is the squared length of the edge
 
@@ -57,12 +55,14 @@ kruskal(const Mesh& sm)
     "}# Shape\n";
 }
 
-
-int main(int,char** argv) {
-
+int main(int argc, char** argv)
+{
   Mesh sm;
-  std::ifstream input(argv[1]);
-  input >> sm;
+  if(argc < 2 || !CGAL::IO::read_polygon_mesh(argv[1], sm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   kruskal(sm);
 

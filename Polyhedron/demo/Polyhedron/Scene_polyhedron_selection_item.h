@@ -575,7 +575,7 @@ public:
     std::vector<bool>* is_selected_ptr;
     IDmap idmap;
     Is_selected_property_map()
-      : is_selected_ptr(NULL) {}
+      : is_selected_ptr(nullptr) {}
     Is_selected_property_map(std::vector<bool>& is_selected, IDmap idmap)
       : is_selected_ptr( &is_selected), idmap(idmap) {}
 
@@ -584,13 +584,13 @@ public:
 
     friend bool get(Is_selected_property_map map, Handle h)
     {
-      CGAL_assertion(map.is_selected_ptr!=NULL);
+      CGAL_assertion(map.is_selected_ptr!=nullptr);
       return (*map.is_selected_ptr)[map.id(h)];
     }
 
     friend void put(Is_selected_property_map map, Handle h, bool b)
     {
-      CGAL_assertion(map.is_selected_ptr!=NULL);
+      CGAL_assertion(map.is_selected_ptr!=nullptr);
       (*map.is_selected_ptr)[map.id(h)]=b;
     }
   };
@@ -613,7 +613,7 @@ public:
     {}
     friend bool get(const Is_constrained_map& map, const key_type& k)
     {
-      CGAL_assertion(map.m_set_ptr != NULL);
+      CGAL_assertion(map.m_set_ptr != nullptr);
       return map.m_set_ptr->count(k);
     }
     friend void put(Is_constrained_map& map, const key_type& k, const value_type b)

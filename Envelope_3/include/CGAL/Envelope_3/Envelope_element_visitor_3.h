@@ -533,7 +533,7 @@ public:
       CGAL_assertion(!cur_obj.is_empty());
       if (assign(point, cur_obj))
       {
-        // if the point is on the curve, should add it the the split points
+        // if the point is on the curve, should add it the split points
         // list, otherwise, it is irrelevant and should be ignored
         if (is_point_on_curve(point, original_cv))
           split_points.push_back(Point_2_with_info(point, false, false));

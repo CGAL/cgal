@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/property_map.h>
 #include <CGAL/IO/write_ply_points.h>
 
@@ -21,23 +22,24 @@ typedef CGAL::Nth_of_tuple_property_map<2, PCI> Intensity_map;
 
 // Define how a color should be stored
 namespace CGAL {
-  template< class F >
-  struct Output_rep< ::Color, F > {
-    const ::Color& c;
-    static const bool is_specialized = true;
-    Output_rep (const ::Color& c) : c(c)
-    { }
-    std::ostream& operator() (std::ostream& out) const
-    {
-      if (is_ascii(out))
-        out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
-      else
-        out.write(reinterpret_cast<const char*>(&c), sizeof(c));
-      return out;
-    }
-  };
-}
 
+template< class F >
+struct Output_rep< ::Color, F > {
+  const ::Color& c;
+  static const bool is_specialized = true;
+  Output_rep (const ::Color& c) : c(c)
+  { }
+  std::ostream& operator() (std::ostream& out) const
+  {
+    if (IO::is_ascii(out))
+      out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
+    else
+      out.write(reinterpret_cast<const char*>(&c), sizeof(c));
+    return out;
+  }
+};
+
+} // namespace CGAL
 
 int main(int, char**)
 {
@@ -52,17 +54,16 @@ int main(int, char**)
                                                i));
 
   std::ofstream f("out.ply", std::ios::binary);
-  CGAL::set_binary_mode(f); // The PLY file will be written in the binary format
+  CGAL::IO::set_binary_mode(f); // The PLY file will be written in the binary format
 
-  CGAL::write_ply_points_with_properties
-    (f, points,
-     CGAL::make_ply_point_writer (Point_map()),
-     std::make_tuple(Color_map(),
-                     CGAL::PLY_property<unsigned char>("red"),
-                     CGAL::PLY_property<unsigned char>("green"),
-                     CGAL::PLY_property<unsigned char>("blue"),
-                     CGAL::PLY_property<unsigned char>("alpha")),
-     std::make_pair (Intensity_map(), CGAL::PLY_property<int>("intensity")));
+  CGAL::IO::write_PLY_with_properties(f, points,
+                                      CGAL::make_ply_point_writer (Point_map()),
+                                      std::make_tuple(Color_map(),
+                                                      CGAL::IO::PLY_property<unsigned char>("red"),
+                                                      CGAL::IO::PLY_property<unsigned char>("green"),
+                                                      CGAL::IO::PLY_property<unsigned char>("blue"),
+                                                      CGAL::IO::PLY_property<unsigned char>("alpha")),
+                                  std::make_pair(Intensity_map(), CGAL::IO::PLY_property<int>("intensity")));
 
   return EXIT_SUCCESS;
 }

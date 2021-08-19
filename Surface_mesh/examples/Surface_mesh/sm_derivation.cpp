@@ -1,7 +1,9 @@
-#include <iostream>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Polygon_mesh_processing/bbox.h>
+
+#include <iostream>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;

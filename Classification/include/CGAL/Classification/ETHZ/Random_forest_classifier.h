@@ -141,7 +141,7 @@ public:
 
     \tparam ConcurrencyTag enables sequential versus parallel
     algorithm. Possible values are `Parallel_tag` (default value if
-    %CGAL is linked with TBB) or `Sequential_tag` (default value
+    \cgal is linked with TBB) or `Sequential_tag` (default value
     otherwise).
 
     \param ground_truth vector of label indices. It should contain for
@@ -290,14 +290,10 @@ public:
     The output file is written in a binary format that is readable by
     the `load_configuration()` method.
   */
-#if defined(DOXYGEN_RUNNING) || \
-  (defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && \
-   defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION))
   void save_configuration (std::ostream& output) const
   {
     m_rfc->write(output);
   }
-#endif
 
   /*!
     \brief loads a configuration from the stream `input`.
@@ -314,9 +310,6 @@ public:
     format for ETHZ Random Forest changed in CGAL 5.2.
 
   */
-#if defined(DOXYGEN_RUNNING) || \
-  (defined(CGAL_LINKED_WITH_BOOST_IOSTREAMS) && \
-   defined(CGAL_LINKED_WITH_BOOST_SERIALIZATION))
   void load_configuration (std::istream& input)
   {
     CGAL::internal::liblearning::RandomForest::ForestParams params;
@@ -324,7 +317,6 @@ public:
 
     m_rfc->read(input);
   }
-#endif
 
   /// @}
 
@@ -332,7 +324,7 @@ public:
   /// @{
 
   /*!
-    \brief converts a deprecated configuration (in compressed ASCII
+    \brief converts a deprecated configuration (in compressed \ascii
     format) to a new configuration (in binary format).
 
     The input file should be a GZIP container written by the

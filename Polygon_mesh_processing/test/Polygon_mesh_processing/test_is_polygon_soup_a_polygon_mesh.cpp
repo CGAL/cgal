@@ -11,7 +11,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 
 #include <array>
 #include <string>
@@ -40,7 +40,7 @@ void test_polygon_soup(std::string fname, bool expected)
     exit(EXIT_FAILURE);
   }
 
-  if(!CGAL::read_OFF(input, points, polygons))
+  if(!CGAL::IO::read_OFF(input, points, polygons))
   {
     std::cerr << "Error parsing the OFF file " << fname << "\n";
     exit(EXIT_FAILURE);
@@ -75,7 +75,7 @@ void test_polygon_soup(std::string fname, bool expected)
     assert(!CGAL::is_empty(p) && CGAL::is_valid_polygon_mesh(p));
 
     std::set<Point> ppts;
-    for(const vertex_descriptor v : vertices(p))
+    for( vertex_descriptor v : vertices(p))
       ppts.insert(get(vpm, v));
 
     assert(ppts.size() == num_vertices(p));

@@ -3,7 +3,7 @@
 \ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
-A hole record in a <span class="textsc">Dcel</span> data structure, which stores the face that contains
+A hole record in a \dcel data structure, which stores the face that contains
 the hole in its interior, along with an iterator for the hole in the holes'
 container of this face.
 
@@ -19,7 +19,7 @@ public:
 /// @{
 
 /*!
-the corresponding <span class="textsc">Dcel</span> face type.
+the corresponding \dcel face type.
 */
 typedef unspecified_type Face;
 

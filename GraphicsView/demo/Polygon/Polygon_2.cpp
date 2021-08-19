@@ -13,9 +13,7 @@
 #include <CGAL/minkowski_sum_2.h>
 #include <boost/config.hpp>
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 
 // Qt headers
 #include <QtGui>
@@ -125,7 +123,7 @@ MainWindow::MainWindow()
 
   this->graphicsView->setAcceptDrops(false);
 
-  minkgi = 0;
+  minkgi = nullptr;
   // Add a GraphicItem for the Polygon2
   pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&poly);
 
@@ -234,9 +232,7 @@ MainWindow::on_actionLoadPolygon_triggered()
                                                   ".",
                                                   tr( "Polyline files (*.polygons.cgal);;"
                                                       "WSL files (*.wsl);;"
-                                                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                       "WKT files (*.wkt *.WKT);;"
-                                                    #endif
                                                       "All file (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -251,12 +247,10 @@ MainWindow::open(QString fileName)
   poly.clear();
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     CGAL::Polygon_with_holes_2<K> P;
-    CGAL::read_polygon_WKT(ifs, P);
+    CGAL::IO::read_polygon_WKT(ifs, P);
     poly = Polygon2(P.outer_boundary().begin(),
                     P.outer_boundary().end());
-#endif
   }
   else
   {
@@ -276,20 +270,16 @@ MainWindow::on_actionSavePolygon_triggered()
                                                   tr("Save Polygon"),
                                                   ".",
                                                   tr( "Polyline files (*.polygons.cgal);;"
-                                                    #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                       "WKT files (*.wkt *.WKT);;"
-                                                    #endif
                                                       "All file (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       CGAL::Polygon_2<K> P(poly.begin(),
                            poly.end());
       CGAL::Polygon_with_holes_2<K> Pwh(P);
-      CGAL::write_polygon_WKT(ofs, Pwh);
-#endif
+      CGAL::IO::write_polygon_WKT(ofs, Pwh);
     }
     else
       ofs << poly;
@@ -557,10 +547,10 @@ MainWindow::clearPartition()
 void
 MainWindow::clearMinkowski()
 {
-  if(minkgi != 0){
+  if(minkgi != nullptr){
     scene.removeItem(minkgi);
     delete minkgi;
-    minkgi = 0;
+    minkgi = nullptr;
   }
 }
 

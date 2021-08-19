@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Surface_mesh_topology_Examples)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -21,20 +21,23 @@ endif()
 # add_definitions("-D_GLIBCXX_DEBUG")
 
 set(SOURCE_FILES
-    edgewidth_lcc.cpp
-    edgewidth_surface_mesh.cpp
-    facewidth.cpp
-    map_2_constructor.cpp
-    open_path_homotopy.cpp
-    path_homotopy.cpp
-    path_homotopy_double_torus.cpp
-    path_homotopy_torus.cpp
-    path_homotopy_with_sm_and_polyhedron.cpp
-    path_homotopy_with_symbols_2.cpp
-    path_homotopy_with_symbols.cpp
-    shortest_noncontractible_cycle_2.cpp
-    shortest_noncontractible_cycle.cpp
-    unsew_edgewidth_repeatedly.cpp)
+  edgewidth_lcc.cpp
+  edgewidth_surface_mesh.cpp
+  facewidth.cpp
+  map_2_constructor.cpp
+  open_path_homotopy.cpp
+  path_homotopy.cpp
+  path_homotopy_double_torus.cpp
+  path_homotopy_torus.cpp
+  path_homotopy_with_sm_and_polyhedron.cpp
+  path_homotopy_with_symbols_2.cpp
+  path_homotopy_with_symbols.cpp
+  path_simplicity_double_torus.cpp
+  path_simplicity_double_torus_2.cpp
+  shortest_noncontractible_cycle_2.cpp
+  shortest_noncontractible_cycle.cpp
+  unsew_edgewidth_repeatedly.cpp
+  )
 
 foreach(cppfile ${SOURCE_FILES})
   create_single_source_cgal_program("${cppfile}")
@@ -48,8 +51,9 @@ if(CGAL_Qt5_FOUND)
   target_link_libraries(path_homotopy PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(path_homotopy_double_torus PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(path_homotopy_torus PUBLIC CGAL::CGAL_Qt5)
-  target_link_libraries(path_homotopy_with_sm_and_polyhedron
-                        PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(path_homotopy_with_sm_and_polyhedron PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(path_simplicity_double_torus PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(path_simplicity_double_torus_2 PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(shortest_noncontractible_cycle_2 PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(shortest_noncontractible_cycle PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(unsew_edgewidth_repeatedly PUBLIC CGAL::CGAL_Qt5)

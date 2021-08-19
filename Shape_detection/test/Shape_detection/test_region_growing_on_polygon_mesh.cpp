@@ -38,7 +38,7 @@ bool test_region_growing_on_polygon_mesh(int argc, char *argv[]) {
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/polygon_mesh.off");
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
 
   if (!in) {
     std::cout <<

@@ -14,7 +14,6 @@
 //                 Kaspar Fischer
 
 #include <CGAL/QP_solver/Initialization.h>
-#include <boost/bind.hpp>
 #include <CGAL/NT_converter.h>
 
 namespace CGAL {
@@ -64,9 +63,7 @@ transition( )
     std::transform( C_by_index_iterator( B_O.begin(), c_accessor),
                     C_by_index_iterator( B_O.end  (), c_accessor),
                     minus_c_B.begin(),
-                    boost::bind(
-                      NT_converter<RT,ET>(),
-                      boost::bind(std::negate<RT>(), _1)));
+                    [](const RT& n){return NT_converter<RT,ET>()(-n);} );
 
     // compute initial solution of phase II
     compute_solution(Is_nonnegative());
@@ -1438,7 +1435,7 @@ replace_variable_slack_slack( )
 
     // update basis inverse
     A_row_by_index_accessor  a_accessor =
-      boost::bind( A_accessor( qp_A, 0, qp_n), _1, new_row);
+      [new_row, this](int i){ return A_accessor( this->qp_A, 0, this->qp_n)(i, new_row); };
     typedef typename std::iterator_traits<A_row_by_index_iterator>::value_type RT;
     std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
                    A_row_by_index_iterator( B_O.end  (), a_accessor),
@@ -1591,7 +1588,7 @@ replace_variable_original_slack( )
 
     // update basis inverse
     A_row_by_index_accessor  a_accessor =
-      boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
+      [new_row, this](int i){ return A_accessor( this->qp_A, 0, this->qp_n)(i, new_row); };
     typedef typename std::iterator_traits<A_row_by_index_iterator>::value_type RT;
     std::transform(A_row_by_index_iterator( B_O.begin(), a_accessor),
                    A_row_by_index_iterator( B_O.end  (), a_accessor),
@@ -1946,7 +1943,7 @@ leave_variable( )
 
         // update basis inverse
         A_row_by_index_accessor  a_accessor =
-          boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
+          [new_row, this](int i){ return A_accessor( this->qp_A, 0, this->qp_n)(i, new_row); };
         std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
                    A_row_by_index_iterator( B_O.end  (), a_accessor),
                    tmp_x.begin());
@@ -2283,7 +2280,7 @@ z_replace_variable_slack_by_original( )
 
     // prepare u
     A_row_by_index_accessor  a_accessor =
-      boost::bind (A_accessor( qp_A, 0, qp_n), _1, new_row);
+      [new_row, this](int i){ return A_accessor( this->qp_A, 0, this->qp_n)(i, new_row); };
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
                A_row_by_index_iterator( B_O.end  (), a_accessor),
                tmp_x.begin());
@@ -2370,7 +2367,7 @@ z_replace_variable_slack_by_slack( )
     // update basis inverse
     // --------------------
     A_row_by_index_accessor  a_accessor =
-      boost::bind ( A_accessor( qp_A, 0, qp_n), _1, new_row);
+      [new_row, this](int i){ return A_accessor( this->qp_A, 0, this->qp_n)(i, new_row); };
     std::copy( A_row_by_index_iterator( B_O.begin(), a_accessor),
                A_row_by_index_iterator( B_O.end  (), a_accessor),
                tmp_x.begin());
@@ -2937,7 +2934,7 @@ check_basis_inverse( Tag_false)
             }
         }
         v_it = std::find_if( q_x_O.begin(), q_x_O.begin()+cols,
-                             boost::bind2nd( std::not_equal_to<ET>(), et0));
+                             [this](const ET& v){ return v != this->et0; });
         if ( v_it != q_x_O.begin()+cols) {
             if ( ! vout4.verbose()) {
                 std::cerr << std::endl << "basis-inverse check: ";
@@ -2978,7 +2975,7 @@ check_basis_inverse( Tag_false)
         }
 
         v_it = std::find_if( q_lambda.begin(), q_lambda.begin()+rows,
-                             boost::bind2nd( std::not_equal_to<ET>(), et0));
+                             [this](const ET& v){ return v != this->et0; });
         if ( v_it != q_lambda.begin()+rows) {
             if ( ! vout4.verbose()) {
                 std::cerr << std::endl << "basis-inverse check: ";

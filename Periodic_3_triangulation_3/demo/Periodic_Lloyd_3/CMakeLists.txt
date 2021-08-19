@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Periodic_Lloyd_3_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -19,7 +19,7 @@ set(CMAKE_AUTOMOC ON)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script Help OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Script Help OpenGL Svg)
 
 if(Qt5Help_VERSION VERSION_LESS 5.12)
   set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qcollectiongenerator)

@@ -17,7 +17,6 @@
 
 
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Intersection_type.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 
@@ -27,17 +26,16 @@ namespace CGAL{
 namespace Polygon_mesh_processing {
 namespace Corefinement{
 
-template <class TriangleMesh, class VertexPointMap1, class VertexPointMap2>
+template <class TriangleMesh, class Exact_kernel, class VertexPointMap1, class VertexPointMap2>
 struct Intersect_coplanar_faces_3
 {
  // typedefs
   typedef typename boost::property_traits<VertexPointMap1>::value_type Point;
 
   CGAL_static_assertion((std::is_same<typename boost::property_traits<VertexPointMap1>::value_type,
-                                      typename boost::property_traits<VertexPointMap1>::value_type>::value));
+                                      typename boost::property_traits<VertexPointMap2>::value_type>::value));
 
   typedef typename CGAL::Kernel_traits<Point>::Kernel Input_kernel;
-  typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_kernel;
 
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
@@ -304,7 +302,7 @@ void intersection_coplanar_faces(
 
   halfedge_descriptor h1=halfedge(f1,tm1), h2=halfedge(f2,tm2);
 
-  Intersect_coplanar_faces_3<TriangleMesh, VertexPointMap1, VertexPointMap2>
+  Intersect_coplanar_faces_3<TriangleMesh, Exact_kernel,  VertexPointMap1, VertexPointMap2>
     intersect_cpln(tm1, tm2, vpm1, vpm2);
 
   // We will add in `inter_pts` the initial triangle of h1

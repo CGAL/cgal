@@ -50,6 +50,8 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/typeof/typeof.hpp>
 
+#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/result_of.h>
 using namespace CGAL;
 
 struct item : public In_place_list_base<item> {
@@ -97,8 +99,8 @@ struct Node {
     int   key;
     Node* next;
     Node* prev;
-    Node() : key(0), next(0), prev(0) { next = prev = this; }
-    Node(int n) : key(n), next(0), prev(0) { next = prev = this; }
+    Node() : key(0), next(nullptr), prev(nullptr) { next = prev = this; }
+    Node(int n) : key(n), next(nullptr), prev(nullptr) { next = prev = this; }
     Node(Node* nx_, Node* pv_, int n) : key(n), next(nx_), prev(pv_) {}
 };
 Node* new_node( Node* nx_, Node* pv_, int n) {
@@ -147,8 +149,8 @@ class CNode {
     const CNode* next() const { return next_;}
     CNode*       prev()       { return prev_;}
     const CNode* prev() const { return prev_;}
-    CNode() : next_(0), prev_(0), key(0) { next_ = prev_ = this; }
-    CNode( int n) : next_(0), prev_(0), key(n) { next_ = prev_ = this; }
+    CNode() : next_(nullptr), prev_(nullptr), key(0) { next_ = prev_ = this; }
+    CNode( int n) : next_(nullptr), prev_(nullptr), key(n) { next_ = prev_ = this; }
     CNode( CNode* nx_, CNode* pv_, int n)
         : next_(nx_), prev_( pv_), key(n) {}
     friend CNode* new_cnode( CNode* nx_, CNode* pv_, int n);
@@ -264,8 +266,8 @@ void test_Circulator_identity() {
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -356,8 +358,8 @@ void test_Circulator_identity() {
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -471,11 +473,11 @@ void test_Circulator_identity() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = begin;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == begin);
         assert( i == begin);
         // Do I reach myself.
@@ -521,8 +523,8 @@ Assert_bidirectional_category(c_begin);
     CGAL::Assert_is_at_least_forward_category(c_begin);
     typedef std::iterator_traits< C_Circulator >::value_type      VT;
     typedef std::iterator_traits< C_Circulator >::difference_type DT;
-    assert(1==test_value_type(static_cast< VT* >(0)));
-    assert(1==test_distance_type(static_cast< DT* >(0)));
+    assert(1==test_value_type(static_cast< VT* >(nullptr)));
+    assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
     // Default constructor.
     C_Circulator z = C_Circulator();
@@ -636,11 +638,11 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    assert(   z == NULL);
-    assert( ! (z != NULL));
+    assert(   z == nullptr);
+    assert( ! (z != nullptr));
     C_Circulator i = c_begin;
-    assert( ! (i == NULL));
-    assert(   i != NULL);
+    assert( ! (i == nullptr));
+    assert(   i != nullptr);
     assert( i == c_begin);
     assert( i == c_begin);
     // Do I reach myself.
@@ -693,8 +695,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z;
@@ -785,8 +787,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -880,8 +882,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -1058,11 +1060,11 @@ l2.destroy();
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = begin;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == begin);
         assert( i == begin);
         // Do I reach myself.
@@ -1131,8 +1133,8 @@ Assert_random_access_category(c_begin);
     CGAL::Assert_is_at_least_forward_category(c_begin);
     typedef std::iterator_traits< C_Circulator >::value_type      VT;
     typedef std::iterator_traits< C_Circulator >::difference_type DT;
-    assert(1==test_value_type(static_cast< VT* >(0)));
-    assert(1==test_distance_type(static_cast< DT* >(0)));
+    assert(1==test_value_type(static_cast< VT* >(nullptr)));
+    assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
     // Default constructor.
     C_Circulator z = C_Circulator();
@@ -1289,11 +1291,11 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    assert(   z == NULL);
-    assert( ! (z != NULL));
+    assert(   z == nullptr);
+    assert( ! (z != nullptr));
     C_Circulator i = c_begin;
-    assert( ! (i == NULL));
-    assert(   i != NULL);
+    assert( ! (i == nullptr));
+    assert(   i != nullptr);
     assert( i == c_begin);
     assert( i == c_begin);
     // Do I reach myself.
@@ -1372,8 +1374,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -1465,8 +1467,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -1573,8 +1575,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(c_end);
         typedef std::iterator_traits< C_Iterator >::value_type      VT;
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         C_Iterator z ;
@@ -1697,8 +1699,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -1790,8 +1792,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -1900,8 +1902,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(c_end);
         typedef std::iterator_traits< C_Iterator >::value_type      VT;
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         C_Iterator z ;
@@ -2025,8 +2027,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -2118,8 +2120,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -2215,8 +2217,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -2412,8 +2414,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(c_end);
         typedef std::iterator_traits< C_Iterator >::value_type      VT;
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         C_Iterator z ;
@@ -2601,8 +2603,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -2694,8 +2696,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -2801,8 +2803,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(c_end);
         typedef std::iterator_traits< C_Iterator >::value_type      VT;
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         C_Iterator z ;
@@ -2929,8 +2931,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -3022,8 +3024,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -3132,8 +3134,8 @@ void test_Iterator_project()
         CGAL::Assert_is_at_least_forward_category(c_end);
         typedef std::iterator_traits< C_Iterator >::value_type      VT;
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         C_Iterator z ;
@@ -3258,8 +3260,8 @@ void test_Iterator_transform()
 
   typedef std::iterator_traits< Iterator >::value_type      VT;
   typedef std::iterator_traits< Iterator >::difference_type DT;
-  assert(1==test_value_type(static_cast< VT* >(0)));
-  assert(1==test_distance_type(static_cast< DT* >(0)));
+  assert(1==test_value_type(static_cast< VT* >(nullptr)));
+  assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
   assert(   CGAL::is_empty_range( end  , end) );
   assert( ! CGAL::is_empty_range( begin, end) );
@@ -3382,8 +3384,8 @@ void test_Circulator_project() {
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3474,8 +3476,8 @@ void test_Circulator_project() {
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3589,11 +3591,11 @@ void test_Circulator_project() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = begin;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == begin);
         assert( i == begin);
         // Do I reach myself.
@@ -3639,8 +3641,8 @@ Assert_bidirectional_category(c_begin);
     CGAL::Assert_is_at_least_forward_category(c_begin);
     typedef std::iterator_traits< C_Circulator >::value_type      VT;
     typedef std::iterator_traits< C_Circulator >::difference_type DT;
-    assert(1==test_value_type(static_cast< VT* >(0)));
-    assert(1==test_distance_type(static_cast< DT* >(0)));
+    assert(1==test_value_type(static_cast< VT* >(nullptr)));
+    assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
     // Default constructor.
     C_Circulator z = C_Circulator();
@@ -3754,11 +3756,11 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    assert(   z == NULL);
-    assert( ! (z != NULL));
+    assert(   z == nullptr);
+    assert( ! (z != nullptr));
     C_Circulator i = c_begin;
-    assert( ! (i == NULL));
-    assert(   i != NULL);
+    assert( ! (i == nullptr));
+    assert(   i != nullptr);
     assert( i == c_begin);
     assert( i == c_begin);
     // Do I reach myself.
@@ -3813,8 +3815,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3905,8 +3907,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4020,11 +4022,11 @@ l2.destroy();
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = begin;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == begin);
         assert( i == begin);
         // Do I reach myself.
@@ -4070,8 +4072,8 @@ Assert_bidirectional_category(c_begin);
     CGAL::Assert_is_at_least_forward_category(c_begin);
     typedef std::iterator_traits< C_Circulator >::value_type      VT;
     typedef std::iterator_traits< C_Circulator >::difference_type DT;
-    assert(1==test_value_type(static_cast< VT* >(0)));
-    assert(1==test_distance_type(static_cast< DT* >(0)));
+    assert(1==test_value_type(static_cast< VT* >(nullptr)));
+    assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
     // Default constructor.
     C_Circulator z = C_Circulator();
@@ -4185,11 +4187,11 @@ Assert_bidirectional_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    assert(   z == NULL);
-    assert( ! (z != NULL));
+    assert(   z == nullptr);
+    assert( ! (z != nullptr));
     C_Circulator i = c_begin;
-    assert( ! (i == NULL));
-    assert(   i != NULL);
+    assert( ! (i == nullptr));
+    assert(   i != nullptr);
     assert( i == c_begin);
     assert( i == c_begin);
     // Do I reach myself.
@@ -4244,8 +4246,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4336,8 +4338,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4431,8 +4433,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4609,11 +4611,11 @@ l2.destroy();
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = begin;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == begin);
         assert( i == begin);
         // Do I reach myself.
@@ -4682,8 +4684,8 @@ Assert_random_access_category(c_begin);
     CGAL::Assert_is_at_least_forward_category(c_begin);
     typedef std::iterator_traits< C_Circulator >::value_type      VT;
     typedef std::iterator_traits< C_Circulator >::difference_type DT;
-    assert(1==test_value_type(static_cast< VT* >(0)));
-    assert(1==test_distance_type(static_cast< DT* >(0)));
+    assert(1==test_value_type(static_cast< VT* >(nullptr)));
+    assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
     // Default constructor.
     C_Circulator z = C_Circulator();
@@ -4840,11 +4842,11 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    assert(   z == NULL);
-    assert( ! (z != NULL));
+    assert(   z == nullptr);
+    assert( ! (z != nullptr));
     C_Circulator i = c_begin;
-    assert( ! (i == NULL));
-    assert(   i != NULL);
+    assert( ! (i == nullptr));
+    assert(   i != nullptr);
     assert( i == c_begin);
     assert( i == c_begin);
     // Do I reach myself.
@@ -4899,7 +4901,7 @@ Assert_random_access_category(c_begin);
 struct NN {
   NN* nn;
   int key;
-  NN() : nn(0), key(-1) {}
+  NN() : nn(nullptr), key(-1) {}
   NN( int k, NN* p) : nn(p), key(k) {}
   NN*       next()       { return nn; }
   const NN* next() const { return nn; }
@@ -4908,7 +4910,7 @@ int test_value_type( NN*) { return 1;}
 
 void test_Circulator_on_node() {
   {
-    NN* end   = new NN( 5, 0);
+    NN* end   = new NN( 5, nullptr);
     NN* p     = new NN( 4, end);
     NN* start = new NN( 3, p);
     p         = new NN( 2, start);
@@ -4931,8 +4933,8 @@ void test_Circulator_on_node() {
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -5043,11 +5045,11 @@ void test_Circulator_on_node() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = begin;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == begin);
         assert( i == begin);
         // Do I reach myself.
@@ -5079,8 +5081,8 @@ void test_Circulator_on_node() {
         CGAL::Assert_is_at_least_forward_category(c_begin);
         typedef std::iterator_traits< C_Circulator >::value_type      VT;
         typedef std::iterator_traits< C_Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         C_Circulator z = C_Circulator();
@@ -5158,11 +5160,11 @@ void test_Circulator_on_node() {
 
         // Check tests for empty data structures.
         C_Circulator z = C_Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         C_Circulator i = c_begin;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c_begin);
         assert( i == c_begin);
         // Do I reach myself.
@@ -5213,8 +5215,8 @@ void test_N_step_adaptor() {
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -5306,8 +5308,8 @@ void test_N_step_adaptor() {
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -5413,8 +5415,8 @@ Assert_bidirectional_category(c_end);
     CGAL::Assert_is_at_least_forward_category(c_end);
     typedef std::iterator_traits< C_Iterator >::value_type      VT;
     typedef std::iterator_traits< C_Iterator >::difference_type DT;
-    assert(1==test_value_type(static_cast< VT* >(0)));
-    assert(1==test_distance_type(static_cast< DT* >(0)));
+    assert(1==test_value_type(static_cast< VT* >(nullptr)));
+    assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
     // Default constructor.
     C_Iterator z ;
@@ -5534,8 +5536,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -5627,8 +5629,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -5723,8 +5725,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(end);
         typedef std::iterator_traits< Iterator >::value_type      VT;
         typedef std::iterator_traits< Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Iterator z ;
@@ -5917,8 +5919,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(c_end);
         typedef std::iterator_traits< C_Iterator >::value_type      VT;
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         C_Iterator z ;
@@ -6103,8 +6105,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -6195,8 +6197,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -6290,8 +6292,8 @@ l2.destroy();
         CGAL::Assert_is_at_least_forward_category(begin);
         typedef std::iterator_traits< Circulator >::value_type      VT;
         typedef std::iterator_traits< Circulator >::difference_type DT;
-        assert(1==test_value_type(static_cast< VT* >(0)));
-        assert(1==test_distance_type(static_cast< DT* >(0)));
+        assert(1==test_value_type(static_cast< VT* >(nullptr)));
+        assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -6468,11 +6470,11 @@ l2.destroy();
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = begin;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == begin);
         assert( i == begin);
         // Do I reach myself.
@@ -6540,8 +6542,8 @@ Assert_random_access_category(c_begin);
     CGAL::Assert_is_at_least_forward_category(c_begin);
     typedef std::iterator_traits< C_Circulator >::value_type      VT;
     typedef std::iterator_traits< C_Circulator >::difference_type DT;
-    assert(1==test_value_type(static_cast< VT* >(0)));
-    assert(1==test_distance_type(static_cast< DT* >(0)));
+    assert(1==test_value_type(static_cast< VT* >(nullptr)));
+    assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
     // Default constructor.
     C_Circulator z = C_Circulator();
@@ -6698,11 +6700,11 @@ Assert_random_access_category(c_begin);
 
     // Check tests for empty data structures.
     C_Circulator z = C_Circulator();
-    assert(   z == NULL);
-    assert( ! (z != NULL));
+    assert(   z == nullptr);
+    assert( ! (z != nullptr));
     C_Circulator i = c_begin;
-    assert( ! (i == NULL));
-    assert(   i != NULL);
+    assert( ! (i == nullptr));
+    assert(   i != nullptr);
     assert( i == c_begin);
     assert( i == c_begin);
     // Do I reach myself.
@@ -6783,8 +6785,8 @@ void test_N_step_adaptor_derived() {
             CGAL::Assert_is_at_least_forward_category(end);
             typedef std::iterator_traits< Iterator >::value_type      VT;
             typedef std::iterator_traits< Iterator >::difference_type DT;
-            assert(1==test_value_type(static_cast< VT* >(0)));
-            assert(1==test_distance_type(static_cast< DT* >(0)));
+            assert(1==test_value_type(static_cast< VT* >(nullptr)));
+            assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
             // Default constructor.
             Iterator z ;
@@ -6876,8 +6878,8 @@ void test_N_step_adaptor_derived() {
             CGAL::Assert_is_at_least_forward_category(end);
             typedef std::iterator_traits< Iterator >::value_type      VT;
             typedef std::iterator_traits< Iterator >::difference_type DT;
-            assert(1==test_value_type(static_cast< VT* >(0)));
-            assert(1==test_distance_type(static_cast< DT* >(0)));
+            assert(1==test_value_type(static_cast< VT* >(nullptr)));
+            assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
             // Default constructor.
             Iterator z ;
@@ -6983,8 +6985,8 @@ void test_N_step_adaptor_derived() {
             CGAL::Assert_is_at_least_forward_category(c_end);
             typedef std::iterator_traits< C_Iterator >::value_type      VT;
             typedef std::iterator_traits< C_Iterator >::difference_type DT;
-            assert(1==test_value_type(static_cast< VT* >(0)));
-            assert(1==test_distance_type(static_cast< DT* >(0)));
+            assert(1==test_value_type(static_cast< VT* >(nullptr)));
+            assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
             // Default constructor.
             C_Iterator z ;
@@ -7104,8 +7106,8 @@ void test_N_step_adaptor_derived() {
             CGAL::Assert_is_at_least_forward_category(begin);
             typedef std::iterator_traits< Circulator >::value_type      VT;
             typedef std::iterator_traits< Circulator >::difference_type DT;
-            assert(1==test_value_type(static_cast< VT* >(0)));
-            assert(1==test_distance_type(static_cast< DT* >(0)));
+            assert(1==test_value_type(static_cast< VT* >(nullptr)));
+            assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
             // Default constructor.
             Circulator z = Circulator();
@@ -7196,8 +7198,8 @@ void test_N_step_adaptor_derived() {
             CGAL::Assert_is_at_least_forward_category(begin);
             typedef std::iterator_traits< Circulator >::value_type      VT;
             typedef std::iterator_traits< Circulator >::difference_type DT;
-            assert(1==test_value_type(static_cast< VT* >(0)));
-            assert(1==test_distance_type(static_cast< DT* >(0)));
+            assert(1==test_value_type(static_cast< VT* >(nullptr)));
+            assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
             // Default constructor.
             Circulator z = Circulator();
@@ -7291,8 +7293,8 @@ void test_N_step_adaptor_derived() {
             CGAL::Assert_is_at_least_forward_category(begin);
             typedef std::iterator_traits< Circulator >::value_type      VT;
             typedef std::iterator_traits< Circulator >::difference_type DT;
-            assert(1==test_value_type(static_cast< VT* >(0)));
-            assert(1==test_distance_type(static_cast< DT* >(0)));
+            assert(1==test_value_type(static_cast< VT* >(nullptr)));
+            assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
             // Default constructor.
             Circulator z = Circulator();
@@ -7469,11 +7471,11 @@ void test_N_step_adaptor_derived() {
 
             // Check tests for empty data structures.
             Circulator z = Circulator();
-            assert(   z == NULL);
-            assert( ! (z != NULL));
+            assert(   z == nullptr);
+            assert( ! (z != nullptr));
             Circulator i = begin;
-            assert( ! (i == NULL));
-            assert(   i != NULL);
+            assert( ! (i == nullptr));
+            assert(   i != nullptr);
             assert( i == begin);
             assert( i == begin);
             // Do I reach myself.
@@ -7541,8 +7543,8 @@ void test_N_step_adaptor_derived() {
             CGAL::Assert_is_at_least_forward_category(c_begin);
             typedef std::iterator_traits< C_Circulator >::value_type      VT;
             typedef std::iterator_traits< C_Circulator >::difference_type DT;
-            assert(1==test_value_type(static_cast< VT* >(0)));
-            assert(1==test_distance_type(static_cast< DT* >(0)));
+            assert(1==test_value_type(static_cast< VT* >(nullptr)));
+            assert(1==test_distance_type(static_cast< DT* >(nullptr)));
 
             // Default constructor.
             C_Circulator z = C_Circulator();
@@ -7699,11 +7701,11 @@ void test_N_step_adaptor_derived() {
 
             // Check tests for empty data structures.
             C_Circulator z = C_Circulator();
-            assert(   z == NULL);
-            assert( ! (z != NULL));
+            assert(   z == nullptr);
+            assert( ! (z != nullptr));
             C_Circulator i = c_begin;
-            assert( ! (i == NULL));
-            assert(   i != NULL);
+            assert( ! (i == nullptr));
+            assert(   i != nullptr);
             assert( i == c_begin);
             assert( i == c_begin);
             // Do I reach myself.
@@ -8217,6 +8219,29 @@ void test_make_sorted_pair() {
                           std::pair<int,int> >::value) );
 }
 
+void test_result_of() {
+  struct Result_functor
+  {
+    int operator()()
+    {
+      return 0;
+    }
+
+    float operator()(const int&)
+    {
+      return 0.0f;
+    }
+  };
+
+  typedef CGAL::cpp11::result_of<Result_functor(void)>::type result_type;
+  typedef CGAL::cpp11::result_of<Result_functor(int)>::type result_type_float;
+  CGAL_USE_TYPE(result_type);
+  CGAL_USE_TYPE(result_type_float);
+  CGAL_static_assertion((boost::is_same<result_type, int>::value));
+  CGAL_static_assertion((boost::is_same<result_type_float, float>::value));
+
+}
+
 int main() {
   init_global_data();
   test_Circulator_identity();
@@ -8239,6 +8264,7 @@ int main() {
   test_prev_next();
   test_copy_n();
   test_make_sorted_pair();
+  test_result_of();
   return 0;
 }
 // EOF //

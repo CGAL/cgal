@@ -36,8 +36,9 @@ int main(int argc, char** argv)
                                                     std::cos(160. / 180 * CGAL_PI),
                                                     4,
                                                     0.14);
-  std::ofstream out("cleaned_mesh.off");
-  out << std::setprecision(17) << mesh;
+
+
+  CGAL::IO::write_polygon_mesh("cleaned_mesh.off", mesh, CGAL::parameters::stream_precision(17));
 
   std::cout << "Output mesh has " << edges(mesh).size() << " edges\n";
   if (PMP::does_self_intersect(mesh))

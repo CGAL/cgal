@@ -3,16 +3,16 @@
                               // converts 64 to 32 bits integers
 #endif
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Classification.h>
+#include <CGAL/Real_timer.h>
+
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Classification.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/Real_timer.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -39,11 +39,14 @@ int main (int argc, char** argv)
   if (argc > 2)
     filename_config = argv[2];
 
-  std::ifstream in (filename.c_str());
   Mesh mesh;
-
-  std::cerr << "Reading input" << std::endl;
-  in >> mesh;
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh,
+                                  // the PLY reader expects a binary file by default
+                                  CGAL::parameters::use_binary_mode(false)))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
 
   std::cerr << "Generating features" << std::endl;
   CGAL::Real_timer t;

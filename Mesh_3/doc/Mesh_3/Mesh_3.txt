@@ -542,10 +542,17 @@ cell base classes, the `MeshVertexBase_3` and
 `MeshCellBase_3` concepts impose additional requirements.
 
 Parallel algorithms require the executable to be linked against the
-<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
 for more details.
+
+\section Mesh_3_section_io Input/Output
+Several file formats are supported for writing a mesh:
+ - \ref IOStreamVTK, using `CGAL::IO::output_to_vtu()`
+ - \ref IOStreamAvizo, using `CGAL::IO::output_to_avizo()`
+ - \ref IOStreamMedit, using `CGAL::IO::output_to_medit()`
+ - \ref IOStreamTetgen, using `CGAL::IO::output_to_tetgen()`
 
 \section Mesh_3_section_examples Examples
 
@@ -566,13 +573,6 @@ constructor of the `Mesh_criteria` instance.
 Cut view of a 3D mesh produced from an implicit domain
 \cgalFigureEnd
 
-\subsubsection Mesh_33DDomainsGrayImageIsosurfaces 3D Domains Bounded by Isosurfaces in 3D Gray-Level Images
-
-The following example produces a 3D mesh for a domain whose boundary surface
-is the isosurface associated to an isovalue inside the input gray-level
-3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with DICOM files as input.
-
-\cgalExample{Mesh_3/mesh_3D_gray_image.cpp}
 
 \subsection Mesh_3MeshingMultipleDomains Meshing Multiple Domains
 
@@ -675,8 +675,18 @@ This allows to remesh a surface, and is equivalent to the function `make_surface
 View of a remeshed surface. (Left) input mesh (Right) output mesh. Code from subsection \ref Mesh_3RemeshingPolyhedralSurface generates the file.
 \cgalFigureEnd
 
-\subsection Mesh_3DomainsFromSegmented3DImages Domains From Segmented 3D Images
+\subsection Mesh_3DomainsFrom3DImages Domains From 3D Images
 
+\subsubsection Mesh_33DDomainsGrayImageIsosurfaces 3D Domains Bounded by Isosurfaces in 3D Gray-Level Images
+
+The following example produces a 3D mesh for a domain whose boundary surface
+is the isosurface associated to an isovalue inside the input gray-level
+3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with DICOM files as input.
+
+\cgalExample{Mesh_3/mesh_3D_gray_image.cpp}
+
+
+\subsubsection Mesh_3DomainsFromSegmented3DImages Domains From Segmented 3D Images
 \anchor Mesh_3_subsection_examples_3d_image
 The following code produces a 3D mesh from
 a 3D image. The image is a segmented medical image in which each
@@ -696,7 +706,7 @@ The resulting mesh is shown in \cgalFigureRef{figureliver_3d_image_mesh}.
 Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file.
 \cgalFigureEnd
 
-\subsubsection Mesh_3DomainsFromSegmented3DImagesWithCustomInitialization Domains From Segmented 3D Images, with a Custom Initialization
+\subsubsection Mesh_3DomainsFrom3DImagesWithCustomInitialization Domains From 3D Images, with a Custom Initialization
 
 The example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp is a modification
 of \ref Mesh_3/mesh_3D_image.cpp. The goal of that example is to show how
@@ -780,6 +790,25 @@ create a 3D image using the undocumented API of CGAL_ImageIO.
 
 The code of the function `%random_labeled_image()` is in the header file \ref
 Mesh_3/random_labeled_image.h\.
+
+
+The example \ref Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp is another
+custom initialization example, for meshing of 3D gray-level images. Similarly to
+the segmented image example above, the code consists in:
+  -# the creation of an empty `%c3t3` object,
+  -# a call to a non-documented function
+    `initialize_triangulation_from_gray_image()` that inserts points in
+    the triangulation,
+  -# then the call to `refine_mesh_3()`.
+
+\snippet Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp Meshing
+
+The code of the function `initialize_triangulation_from_gray_image()` is
+in the non-documented header \ref
+CGAL/Mesh_3/initialize_triangulation_from_gray_image.h\. As it is
+undocumented and may be removed or modified at any time, if you wish to
+use it then you should copy-paste it to your user code.
+
 
 \subsection Mesh_3UsingVariableSizingField Using Variable Sizing Field
 
@@ -873,7 +902,7 @@ a dedicated function computes the 1D-features, and adds them to the domain.
 \snippet Mesh_3/mesh_3D_image_with_features.cpp Call add_1D_features
 
 The function template `%add_1D_features()` is defined in the example
-file. It uses non-documented code from %CGAL, that should be copy-pasted in
+file. It uses non-documented code from \cgal, that should be copy-pasted in
 any user-code willing to use similar code. It uses the undocumented
 function template `%CGAL::polylines_to_protect` that computes the
 1D-features that correspond to the intersection of the bounding box of the

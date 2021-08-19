@@ -21,7 +21,6 @@
 
 #include <CGAL/Qt/camera.h>
 #include <CGAL/Qt/manipulatedCameraFrame.h>
-#include <CGAL/Qt/domUtils.h>
 #include <CGAL/Qt/keyFrameInterpolator.h>
 
 namespace CGAL{
@@ -45,7 +44,6 @@ Camera::Camera(QObject *parent)
   // Requires the interpolationKfi_
   setFrame(new ManipulatedCameraFrame());
 
-  // #CONNECTION# All these default values identical in initFromDOMElement.
 
   // Requires fieldOfView() to define focusDistance()
   setSceneRadius(1.0);
@@ -61,7 +59,6 @@ Camera::Camera(QObject *parent)
   // projectionMatrix_ below.
   setType(PERSPECTIVE);
 
-  // #CONNECTION# initFromDOMElement default values
   setZNearCoefficient(0.005);
   setZClippingCoefficient(sqrt(3.0));
 
@@ -883,10 +880,13 @@ void Camera::interpolateTo(const Frame &fr, qreal duration) {
  imprecision along the viewing direction. */
 CGAL_INLINE_FUNCTION
 Vec Camera::pointUnderPixel(const QPoint &pixel, bool &found) const {
-  float depth;
+  float depth = 2.0;
   // Qt uses upper corner for its origin while GL uses the lower corner.
-  dynamic_cast<QOpenGLFunctions*>(parent())->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
-               GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+  if(auto p = dynamic_cast<QOpenGLFunctions*>(parent()))
+  {
+    p->glReadPixels(pixel.x(), screenHeight() - 1 - pixel.y(), 1, 1,
+                    GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+  }
   found = depth < 1.0;
   Vec point(pixel.x(), pixel.y(), depth);
   point = unprojectedCoordinatesOf(point);
@@ -2015,153 +2015,6 @@ void Camera::deletePath(unsigned int i) {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-/*! Returns an XML \c QDomElement that represents the Camera.
-
- \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
- factory used to create QDomElement.
-
- Concatenates the Camera parameters, the ManipulatedCameraFrame::domElement()
- and the paths' KeyFrameInterpolator::domElement().
-
- Use initFromDOMElement() to restore the Camera state from the resulting \c
- QDomElement.
-
- If you want to save the Camera state in a file, use:
- \code
-  QDomDocument document("myCamera");
-  doc.appendChild( myCamera->domElement("Camera", document) );
-
-  QFile f("myCamera.xml");
-  if (f.open(IO_WriteOnly))
-  {
-    QTextStream out(&f);
-    document.save(out, 2);
-  }
- \endcode
-
- Note that the CGAL::QGLViewer::camera() is automatically saved by
- CGAL::QGLViewer::saveStateToFile() when a CGAL::QGLViewer is closed. Use
- CGAL::QGLViewer::restoreStateFromFile() to restore it back. */
-CGAL_INLINE_FUNCTION
-QDomElement Camera::domElement(const QString &name,
-                               QDomDocument &document) const {
-  QDomElement de = document.createElement(name);
-  QDomElement paramNode = document.createElement("Parameters");
-  paramNode.setAttribute("fieldOfView", QString::number(fieldOfView()));
-  paramNode.setAttribute("zNearCoefficient",
-                         QString::number(zNearCoefficient()));
-  paramNode.setAttribute("zClippingCoefficient",
-                         QString::number(zClippingCoefficient()));
-  paramNode.setAttribute("orthoCoef", QString::number(orthoCoef_));
-  paramNode.setAttribute("sceneRadius", QString::number(sceneRadius()));
-  paramNode.appendChild(sceneCenter().domElement("SceneCenter", document));
-
-  switch (type()) {
-  case Camera::PERSPECTIVE:
-    paramNode.setAttribute("Type", "PERSPECTIVE");
-    break;
-  case Camera::ORTHOGRAPHIC:
-    paramNode.setAttribute("Type", "ORTHOGRAPHIC");
-    break;
-  }
-  de.appendChild(paramNode);
-
-    de.appendChild(frame()->domElement("ManipulatedCameraFrame", document));
-
-  // KeyFrame paths
-  for (QMap<unsigned int, KeyFrameInterpolator *>::ConstIterator
-           it = kfi_.begin(),
-           end = kfi_.end();
-       it != end; ++it) {
-    QDomElement kfNode =
-        (it.value())->domElement("KeyFrameInterpolator", document);
-    kfNode.setAttribute("index", QString::number(it.key()));
-    de.appendChild(kfNode);
-  }
-
-  return de;
-}
-
-/*! Restores the Camera state from a \c QDomElement created by domElement().
-
- Use the following code to retrieve a Camera state from a file created using
- domElement(): \code
- // Load DOM from file
- QDomDocument document;
- QFile f("myCamera.xml");
- if (f.open(IO_ReadOnly))
- {
-   document.setContent(&f);
-   f.close();
- }
-
- // Parse the DOM tree
- QDomElement main = document.documentElement();
- myCamera->initFromDOMElement(main);
- \endcode
-
- The frame() pointer is not modified by this method. The frame() state is
- however modified.
-
- \attention The original keyFrameInterpolator() are deleted and should be copied
- first if they are shared. */
-CGAL_INLINE_FUNCTION
-void Camera::initFromDOMElement(const QDomElement &element) {
-  QDomElement child = element.firstChild().toElement();
-
-  QMutableMapIterator<unsigned int, KeyFrameInterpolator *> it(kfi_);
-  while (it.hasNext()) {
-    it.next();
-    deletePath(it.key());
-  }
-
-  while (!child.isNull()) {
-    if (child.tagName() == "Parameters") {
-      // #CONNECTION# Default values set in constructor
-      //setFieldOfView(DomUtils::qrealFromDom(child, "fieldOfView", CGAL_PI / 4.0));
-      setZNearCoefficient(
-          DomUtils::qrealFromDom(child, "zNearCoefficient", 0.005));
-      setZClippingCoefficient(
-          DomUtils::qrealFromDom(child, "zClippingCoefficient", sqrt(3.0)));
-      orthoCoef_ =
-          DomUtils::qrealFromDom(child, "orthoCoef", tan(fieldOfView() / 2.0));
-      setSceneRadius(
-          DomUtils::qrealFromDom(child, "sceneRadius", sceneRadius()));
-
-      setType(PERSPECTIVE);
-      QString type = child.attribute("Type", "PERSPECTIVE");
-      if (type == "PERSPECTIVE")
-        setType(Camera::PERSPECTIVE);
-      if (type == "ORTHOGRAPHIC")
-        setType(Camera::ORTHOGRAPHIC);
-
-      QDomElement child2 = child.firstChild().toElement();
-      while (!child2.isNull()) {
-        /* Although the scene does not change when a camera is loaded, restore
-       the saved center and radius values. Mainly useful when a the viewer is
-       restored on startup, with possible additional cameras. */
-        if (child2.tagName() == "SceneCenter")
-          setSceneCenter(Vec(child2));
-
-        child2 = child2.nextSibling().toElement();
-      }
-    }
-
-    if (child.tagName() == "ManipulatedCameraFrame")
-      frame()->initFromDOMElement(child);
-
-
-    if (child.tagName() == "KeyFrameInterpolator") {
-      unsigned int index = DomUtils::uintFromDom(child, "index", 0);
-      setKeyFrameInterpolator(index, new KeyFrameInterpolator(frame()));
-      if (keyFrameInterpolator(index))
-        keyFrameInterpolator(index)->initFromDOMElement(child);
-    }
-
-    child = child.nextSibling().toElement();
-  }
-}
 
 /*! Gives the coefficients of a 3D half-line passing through the Camera eye and
  pixel (x,y).

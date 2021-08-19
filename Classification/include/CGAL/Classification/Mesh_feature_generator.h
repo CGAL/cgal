@@ -43,7 +43,7 @@ namespace Classification {
 /*!
   \ingroup PkgClassificationMesh
 
-  \brief Generates a set of generic features for surface mesh
+  \brief generates a set of generic features for surface mesh
   classification.
 
   This class takes care of computing and storing all necessary data
@@ -67,7 +67,7 @@ namespace Classification {
   is `GeomTraits::Point_3`.
   \tparam ConcurrencyTag enables sequential versus parallel
   computation of `CGAL::Classification::Local_eigen_analysis`
-  objects. Possible values are `Parallel_tag` (default value if %CGAL
+  objects. Possible values are `Parallel_tag` (default value if \cgal
   is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
   matrix diagonalization. It can be omitted: if Eigen 3 (or greater)

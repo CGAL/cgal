@@ -25,7 +25,7 @@ Edge_container::Edge_container(int program, bool indexed)
   :Primitive_container(program, indexed),
     d(new Edge_d())
 {
-  std::vector<Vbo*> vbos(NbOfVbos, NULL);
+  std::vector<Vbo*> vbos(NbOfVbos, nullptr);
   setVbos(vbos);
 
 }
@@ -144,7 +144,7 @@ void Edge_container::draw(Viewer_interface *viewer,
       getVao(viewer)->program->setUniformValue("f_matrix", getFrameMatrix());
     getVbo(Indices)->bind();
     viewer->glDrawElements(GL_LINES, static_cast<GLuint>(getIdxSize()),
-                           GL_UNSIGNED_INT, 0);
+                           GL_UNSIGNED_INT, nullptr);
     getVbo(Indices)->release();
     getVao(viewer)->release();
   }

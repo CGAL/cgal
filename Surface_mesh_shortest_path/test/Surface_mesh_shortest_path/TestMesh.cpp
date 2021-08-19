@@ -1,8 +1,5 @@
 #include <CGAL/config.h>
 #include <iostream>
-
-#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
-
 #include <iomanip>
 #include <fstream>
 #include <utility>
@@ -350,12 +347,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-
-#else
- int main()
- {
-   std::cout << "TestMesh.cpp needs Boost Program Options" << std::endl;
-   return 0;
- }
-#endif

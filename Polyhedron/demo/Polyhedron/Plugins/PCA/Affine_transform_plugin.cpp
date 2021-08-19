@@ -87,7 +87,7 @@ public:
   }
   bool manipulatable() const { return true; }
 
-  Scene_item* clone()const{ return NULL; }
+  Scene_item* clone()const{ return nullptr; }
 
   bool supportsRenderingMode(RenderingMode m) const { return m==Points ; }
 
@@ -216,8 +216,8 @@ public:
     if(actionTransformPolyhedron) {
       connect(actionTransformPolyhedron, SIGNAL(triggered()),this, SLOT(go()));
     }
-    transform_item = NULL;
-    transform_points_item = NULL;
+    transform_item = nullptr;
+    transform_points_item = nullptr;
 
     dock_widget = new QDockWidget(
           tr("Affine Transformation")
@@ -357,8 +357,8 @@ public Q_SLOTS:
   void applySingleTransformation();
   void resetItems()
   {
-    transform_item = NULL;
-    transform_points_item = NULL;
+    transform_item = nullptr;
+    transform_points_item = nullptr;
   }
   void undo()
   {
@@ -398,7 +398,7 @@ class GridDialog :
 {
   Q_OBJECT
 public:
-  GridDialog(QWidget* =0)
+  GridDialog(QWidget* =nullptr)
   {
     setupUi(this);
   }
@@ -461,7 +461,7 @@ void Polyhedron_demo_affine_transform_plugin::grid()
 void Polyhedron_demo_affine_transform_plugin::go(){
   if (!started){
     Scene_item* item = scene->item(scene->mainSelectionIndex());
-    Scene_points_with_normal_item* points_item = NULL;
+    Scene_points_with_normal_item* points_item = nullptr;
     Facegraph_item* poly_item = qobject_cast<Facegraph_item*>(item);
     if(!poly_item)
     {
@@ -501,6 +501,8 @@ void Polyhedron_demo_affine_transform_plugin::start(FaceGraph *facegraph, const 
   lastMatrix.data()[13] = y;
   lastMatrix.data()[14] = z;
   transform_item = new Scene_facegraph_transform_item(CGAL::qglviewer::Vec(x,y,z),facegraph, name);
+  connect(transform_item, &Scene_item::aboutToBeDestroyed,
+          [](){ QApplication::restoreOverrideCursor(); });
   transform_item->setManipulatable(true);
   transform_item->setColor(Qt::green);
   transform_item->setRenderingMode(Wireframe);
@@ -534,6 +536,8 @@ void Polyhedron_demo_affine_transform_plugin::start(Scene_points_with_normal_ite
   lastMatrix.data()[14] = z;
 
   transform_points_item = new Scene_transform_point_set_item(points_item,CGAL::qglviewer::Vec(x,y,z));
+  connect(transform_points_item, &Scene_item::aboutToBeDestroyed,
+          [](){ QApplication::restoreOverrideCursor(); });
   transform_points_item->setRenderingMode(Points);
   transform_points_item->setName(tr("Affine Transformation"));
   connect(transform_points_item, SIGNAL(stop()),this, SLOT(go()));
@@ -567,7 +571,8 @@ void Polyhedron_demo_affine_transform_plugin::end(){
   if(transform_item)
   {
     CGAL::qglviewer::Vec c = transform_item->center();
-    FaceGraph* new_sm = new FaceGraph(*transform_item->getFaceGraph());
+    FaceGraph* new_sm = new FaceGraph();
+    CGAL::copy_face_graph(*transform_item->getFaceGraph(), *new_sm);
     typedef boost::property_map<FaceGraph,CGAL::vertex_point_t>::type VPmap;
     VPmap vpmap = get(CGAL::vertex_point, *new_sm);
 
@@ -584,7 +589,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     new_item->setName(tr("%1_transformed").arg(transform_item->name()));
     scene->replaceItem(tr_item_index,new_item);
     delete transform_item;
-    transform_item = NULL;
+    transform_item = nullptr;
   }
   else if(transform_points_item)
   {
@@ -604,7 +609,7 @@ void Polyhedron_demo_affine_transform_plugin::end(){
     new_item->setName(tr("%1_transformed").arg(transform_points_item->getBase()->name()));
     scene->replaceItem(tr_item_index,new_item);
     delete transform_points_item;
-    transform_points_item = NULL;
+    transform_points_item = nullptr;
   }
   dock_widget->hide();
   QApplication::restoreOverrideCursor();

@@ -42,12 +42,25 @@ namespace CGAL {
         return m.empty();
       }
 
+#if CGAL_MESHES_DEBUG_DOUBLE_MAP
+      template <typename Element_type>
+      std::ostream& debug_element(std::ostream& os, const Element_type& e) {
+        return os << (void*)(e.operator->());
+      }
+
+      template <typename Cell_handle>
+      std::ostream& debug_element(std::ostream& os, const std::pair<Cell_handle, int>& e) {
+        return os << "Facet{" << (void*)(e.first.operator->()) << ", " << e.second << "}";
+      }
+#endif
+
       Element get_next_element_impl()
       {
         CGAL_assertion(!m.empty());
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-        std::cerr << "get_next_element_impl(" << &*(m.front()->second)
-                  << ")\n";
+        std::cerr << "get_next_element_impl(";
+        debug_element(std::cerr, m.front()->second);
+        std::cerr << ")\n";
 #endif
         return m.front()->second;
 
@@ -56,7 +69,9 @@ namespace CGAL {
       void add_bad_element(const Element& e, const Quality& q)
       {
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-        std::cerr << "add_bad_element(" << &*e << ")\n";
+        std::cerr << "add_bad_element(";
+        debug_element(std::cerr, e);
+        std::cerr << ")\n";
 #endif
         m.insert(e, q);
       }
@@ -69,7 +84,9 @@ namespace CGAL {
       void remove_element(const Element& e)
       {
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
-        std::cerr << "remove_element(" << &*e << ")\n";
+        std::cerr << "remove_element(";
+        debug_element(std::cerr, e);
+        std::cerr << ")\n";
 #endif
         m.erase(e);
       }

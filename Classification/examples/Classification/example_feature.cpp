@@ -3,14 +3,14 @@
                               // converts 64 to 32 bits integers
 #endif
 
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Classification.h>
+#include <CGAL/IO/read_points.h>
+
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <string>
-
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Classification.h>
-#include <CGAL/IO/read_ply_points.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
@@ -67,12 +67,12 @@ public:
 int main (int argc, char** argv)
 {
   std::string filename (argc > 1 ? argv[1] : "data/b9.ply");
-  std::ifstream in (filename.c_str());
   std::vector<Point> pts;
 
   std::cerr << "Reading input" << std::endl;
-  if (!in
-      || !(CGAL::read_ply_points (in, std::back_inserter (pts))))
+  if (!(CGAL::IO::read_points(filename, std::back_inserter(pts),
+                              // the PLY reader expects a binary file by default
+                              CGAL::parameters::use_binary_mode(false))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;

@@ -751,7 +751,7 @@ public:
   }
 
   /*!
-   * Compare the the two points xy-lexicographically.
+   * Compare the two points xy-lexicographically.
    * \param pt The other point.
    * \param cache A cache for the vertical tangency points and the
    *              intersection points.

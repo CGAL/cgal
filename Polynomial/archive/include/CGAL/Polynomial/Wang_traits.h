@@ -18,7 +18,7 @@
 #include <CGAL/Polynomial/wang.h>
 
 /*! \file CGAL/Polynomial/Wang_traits.h
- *  \brief Definition of traits class CGAL::Wang_traits.
+ *  \brief definition of traits class CGAL::Wang_traits.
  */
 
 namespace CGAL{

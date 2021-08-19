@@ -45,7 +45,7 @@ struct Dump_c3t3 {
     std::clog<<"======dump c3t3===== to: " << prefix << std::endl;
     std::ofstream medit_file((prefix+".mesh").c_str());
     medit_file.precision(17);
-    CGAL::output_to_medit(medit_file, c3t3, false /*rebind*/, true /*show_patches*/);
+    CGAL::IO::output_to_medit(medit_file, c3t3, false /*rebind*/, true /*show_patches*/);
     medit_file.close();
 
     std::string bin_filename = prefix;
@@ -55,7 +55,7 @@ struct Dump_c3t3 {
     std::string signature = CGAL::Get_io_signature<C3t3>()();
     CGAL_assertion(signature != std::string());
     bin_file << "binary CGAL c3t3 " << signature << "\n";
-    CGAL::set_binary_mode(bin_file);
+    CGAL::IO::set_binary_mode(bin_file);
     bin_file << c3t3;
   }
 }; // end struct template Dump_c3t3<C3t3, bool>

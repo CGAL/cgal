@@ -20,16 +20,18 @@ struct Polygon_soup
     typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
     typedef boost::array<std::size_t, 2> Edge;
     typedef std::vector<Polygon_3> Polygons;
-    typedef std::vector<CGAL::Color> Colors;
+    typedef std::vector<CGAL::IO::Color> Colors;
     typedef std::set<Edge> Edges;
     typedef Polygons::size_type size_type;
-    Points points;
-    Polygons polygons;
+
+
     Edges_map edges;
     Colors fcolors;
     Colors vcolors;
     Edges non_manifold_edges;
     bool display_non_manifold_edges;
+    Points points;
+    Polygons polygons;
 
     Polygon_soup():
         display_non_manifold_edges(false){}
@@ -113,21 +115,21 @@ public:
 
     Scene_polygon_soup_item* clone() const Q_DECL_OVERRIDE;
 
-    template <class Point, class Polygon>
+    template <class Point, typename Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons);
 
     template <class Point, class Polygon>
     void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons,
-              const std::vector<CGAL::Color>& fcolors,
-              const std::vector<CGAL::Color>& vcolors);
+              const std::vector<CGAL::IO::Color>& fcolors,
+              const std::vector<CGAL::IO::Color>& vcolors);
 
     bool load(std::istream& in);
     void load(Scene_surface_mesh_item*);
     bool isDataColored();
 
     bool save(std::ostream& out) const;
-    std::vector<CGAL::Color> getVColors() const;
-    std::vector<CGAL::Color> getFColors() const;
+    std::vector<CGAL::IO::Color> getVColors() const;
+    std::vector<CGAL::IO::Color> getFColors() const;
     QString toolTip() const Q_DECL_OVERRIDE;
 
     // Indicate if rendering mode is supported

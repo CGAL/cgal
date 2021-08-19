@@ -631,20 +631,19 @@ void clear(OPEN_MESH_CLASS& sm)
   CGAL_postcondition(num_faces(sm) == 0);
 }
 
+//doesn't seem to work. Use BGL default IO functions instead.
+//template<typename K>
+//bool read_OFF(std::istream& is, OPEN_MESH_CLASS& sm)
+//{
+//  OpenMesh::IO::Options ropt;
+//  return OpenMesh::IO::read_mesh(sm, is, ".OFF", ropt, false);
+//}
 
-template<typename K>
-bool read_off(std::istream& is, OPEN_MESH_CLASS& sm)
-{
-  OpenMesh::IO::Options ropt;
-  return OpenMesh::IO::read_mesh(sm, is, ".OFF", ropt, false);
-}
-
-
-template<typename K>
-bool write_off(std::ostream& os, OPEN_MESH_CLASS& sm)
-{
-  return OpenMesh::IO::write_mesh(sm, os, ".OFF");
-}
+//template<typename K>
+//bool write_OFF(std::ostream& os, OPEN_MESH_CLASS& sm)
+//{
+//  return OpenMesh::IO::write_mesh(sm, os, ".OFF");
+//}
 
 }
 #ifndef CGAL_NO_DEPRECATED_CODE

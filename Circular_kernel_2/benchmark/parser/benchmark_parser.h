@@ -24,7 +24,7 @@
 // If the file has a different format name, it is rejected. If the
 // Major number in the file is higher than the major number listed
 // here then the file is also rejected. If the <major.minor> number
-// in the file is lower than the the number listed here, the parser
+// in the file is lower than the number listed here, the parser
 // assumes backwards compatibility and continues parsing.
 const std::string BENCHMARK_FORMAT_NAME( "AcsBenchmark");
 const int         BENCHMARK_FORMAT_MAJOR = 0;

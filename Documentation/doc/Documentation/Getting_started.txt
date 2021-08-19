@@ -16,7 +16,7 @@ The following pages cover advanced installation options:
 - \subpage configurationvariables gives information about which CMake variables can be used to help
 resolve missing dependencies while using the cmake command line tool.
 
-- \subpage installation describes the deprecated process of configuring and building \cgal.
+- \subpage installation describes the process of configuring and installing \cgal.
 
 The following pages cover the structure of the manual and general information about \cgal:
 

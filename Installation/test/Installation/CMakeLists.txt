@@ -1,7 +1,8 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.11...3.15)
+cmake_minimum_required(VERSION 3.12...3.20)
+
 project( Installation_Tests )
 
 
@@ -55,13 +56,14 @@ endif()
 
 create_link_to_program(CGAL)
 
-if(WITH_CGAL_Core)
+if ( CGAL_Core_FOUND )
   create_link_to_program(CGAL_Core)
 endif()
 
 if(WITH_CGAL_ImageIO)
   create_link_to_program(CGAL_ImageIO)
 endif()
+
 
 if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_executable(display_dll_version_info display_dll_version_info.cpp)
@@ -77,7 +79,7 @@ else()
 endif()
 
 if(WITH_CGAL_Qt5)
-  find_package(Qt5 QUIET)
+  find_package(Qt5 QUIET COMPONENTS Core)
   if(Qt5_FOUND)
     create_link_to_program(CGAL_Qt5)
   endif()
@@ -221,7 +223,7 @@ list(APPEND test_config_lst "test_config_file_3")
 if(CGAL_Qt5_FOUND)
   #configure cgal for a non standard install with qt5
   add_test(NAME config_non_standard_cgal_qt5
-    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib -DWITH_CGAL_Qt5=ON
+    COMMAND ${CMAKE_COMMAND} ${GENERATOR} ${INIT_FILE} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${NON_STANDARD_INSTALL_PREFIX}/non_standard_install_qt5 -DCGAL_INSTALL_LIB_DIR=lib
     "${CGAL_SOURCE_DIR}"
     WORKING_DIRECTORY "${NON_STANDARD_INSTALL_PREFIX}/non_standard_build_qt5")
   #install cgal in the non standard place

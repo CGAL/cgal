@@ -39,7 +39,7 @@ public:
 /*!
 A function object whose `operator()` computes the intersection of two segments.
 
-`Object_2 operator()(Segment_2 s1, Segment_2 s2);`
+`boost:optional<boost::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
 Returns the intersection of `s1` and `s2`.
 */
 typedef unspecified_type Intersect_2;
@@ -113,4 +113,3 @@ compute_squared_distance_2_object();
 /// @}
 
 }; /* end ConstrainedTriangulationTraits_2 */
-

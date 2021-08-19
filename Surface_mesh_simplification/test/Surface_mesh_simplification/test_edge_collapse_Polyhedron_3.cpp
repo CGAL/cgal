@@ -17,7 +17,7 @@
 #include "basics.h"
 #include "test_self_intersection.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 //#define TEST_TEST_TRACE_ENABLED
 
@@ -38,7 +38,7 @@ void error_handler (char const* what, char const* expr, char const* file, int li
        << "Expr: " << expr << endl
        << "File: " << file << endl
        << "Line: " << line << endl;
-  if(msg != 0)
+  if(msg != nullptr)
     cerr << "Explanation:" << msg << endl;
 
   throw std::runtime_error(expr);
@@ -48,7 +48,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 typedef SMS::Edge_profile<Surface> Profile;
 
-typedef boost::shared_ptr<Surface> SurfaceSP;
+typedef std::shared_ptr<Surface> SurfaceSP;
 
 // Constructs a flat polyhedron containing just the link of an edge or vertex.
 class Link_builder : public CGAL::Modifier_base<Surface::HalfedgeDS>

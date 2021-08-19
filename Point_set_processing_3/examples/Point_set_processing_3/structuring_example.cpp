@@ -1,10 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/write_xyz_points.h>
+
+#include <CGAL/IO/read_points.h>
+#include <CGAL/IO/write_points.h>
 #include <CGAL/property_map.h>
-
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
-
 #include <CGAL/structure_point_set.h>
 
 #include <iostream>
@@ -26,20 +25,19 @@ typedef CGAL::Shape_detection::Plane<Traits>               Plane;
 
 int main (int argc, char** argv)
 {
+  const char* filename = (argc>1) ? argv[1] : "data/cube.pwn";
+
   // Points with normals.
   Pwn_vector points;
 
   // Loading point set from a file.
-  std::ifstream stream(argc>1 ? argv[1] : "data/cube.pwn");
 
-  if (!stream ||
-    !CGAL::read_xyz_points(stream,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).
-      normal_map(Normal_map())))
+  if(!CGAL::IO::read_points(filename, std::back_inserter(points),
+                            CGAL::parameters::point_map(Point_map())
+                                             .normal_map(Normal_map())))
   {
-      std::cerr << "Error: cannot read file cube.pwn" << std::endl;
-      return EXIT_FAILURE;
+    std::cerr << "Error: cannot read file cube.pwn" << std::endl;
+    return EXIT_FAILURE;
   }
 
   std::cerr << points.size() << " point(s) read." << std::endl;
@@ -54,22 +52,22 @@ int main (int argc, char** argv)
 
   Pwn_vector structured_pts;
 
-  CGAL::structure_point_set (points,
-                             planes,
-                             std::back_inserter (structured_pts),
-                             0.015, // epsilon for structuring points
-                             CGAL::parameters::point_map (Point_map()).
-                             normal_map (Normal_map()).
-                             plane_map (CGAL::Shape_detection::Plane_map<Traits>()).
-                             plane_index_map (CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)));
+  CGAL::structure_point_set(points,
+                            planes,
+                            std::back_inserter(structured_pts),
+                            0.015, // epsilon for structuring points
+                            CGAL::parameters::point_map(Point_map())
+                                             .normal_map(Normal_map())
+                                             .plane_map(CGAL::Shape_detection::Plane_map<Traits>())
+                                             .plane_index_map(CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)));
 
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;
 
-  std::ofstream out ("out.pwn");
-  CGAL::write_xyz_points (out, structured_pts,
-                          CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
-  out.close();
+  CGAL::IO::write_points("out.pwn", structured_pts,
+                         CGAL::parameters::point_map(Point_map())
+                                          .normal_map(Normal_map())
+                                          .stream_precision(17));
 
   return EXIT_SUCCESS;
 }
