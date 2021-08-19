@@ -1672,8 +1672,8 @@ public:
       m_poly_traits(traits)
     {}
 
-    unsigned int get_curve_index (const X_monotone_curve_2& xcv,
-                                  const Arr_curve_end ce) const
+    size_type get_curve_index(const X_monotone_curve_2& xcv,
+                              const Arr_curve_end ce) const
     {
       //waqar:: dont know why it is opposite in Parameter_space_in_x...
       // I think this is because of the way the subcurves are stored in the
@@ -1683,8 +1683,7 @@ public:
       // and also that min end subcurve is always placed at position 0 of the
       // vector.
       // Comfirm with Eric.
-      unsigned int index =
-        (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
+      size_type index = (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1;
       return index;
     }
 
