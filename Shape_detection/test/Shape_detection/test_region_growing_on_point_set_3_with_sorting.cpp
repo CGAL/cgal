@@ -115,7 +115,10 @@ int main(int argc, char *argv[]) {
           distance_threshold, angle_threshold, min_region_size,
           input_range.point_map(), input_range.normal_map());
      },
-     [](const auto& r) -> bool { return (r.size() >= 6 && r.size() <= 8); });
+     [](const auto& r) -> bool {
+       std::cout << "- num regions planes: " << r.size() << std::endl;
+       return (r.size() >= 6 && r.size() <= 8);
+      });
   if (!success)
     return EXIT_FAILURE;
 
@@ -140,7 +143,10 @@ int main(int argc, char *argv[]) {
           min_radius, max_radius,
           input_range.point_map(), input_range.normal_map());
      },
-     [](const auto& r) -> bool { return (r.size() > 28 && r.size() < 48); });
+     [](const auto& r) -> bool {
+        std::cout << "- num regions spheres: " << r.size() << std::endl;
+        return (r.size() > 28 && r.size() < 48);
+      });
   if (!success)
     return EXIT_FAILURE;
 
@@ -165,7 +171,10 @@ int main(int argc, char *argv[]) {
           min_radius, max_radius,
           input_range.point_map(), input_range.normal_map());
      },
-     [](const auto& r) -> bool { return (r.size() > 4 && r.size() < 12); });
+     [](const auto& r) -> bool {
+        std::cout << "- num regions cylinders: " << r.size() << std::endl;
+        return (r.size() > 4 && r.size() < 12);
+      });
   if (!success)
     return EXIT_FAILURE;
 
