@@ -45,12 +45,5 @@ int main() {
     coordinates[i + 2] << std::endl;
   }
   std::cout << std::endl;
-
-  // Get a tuple of triangle coordinates for the first point.
-  const auto tuple =
-    CGAL::Barycentric_coordinates::triangle_coordinates_in_tuple_2(p0, p1, p2, queries[0]);
-  std::cout << "triangle coordinates (query 0): " <<
-    std::get<0>(tuple) << " " << std::get<1>(tuple) << " " << std::get<2>(tuple) << std::endl << std::endl;
-
   return EXIT_SUCCESS;
 }

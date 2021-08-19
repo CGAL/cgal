@@ -93,9 +93,8 @@ namespace Barycentric_coordinates {
     return segment_coordinates_2(
       p0, p1, query, c_begin, traits);
   }
-  /// \endcond
 
-  /*!
+  /*
     \ingroup PkgBarycentricCoordinates2RefFunctions
 
     \brief computes segment coordinates.
@@ -149,7 +148,6 @@ namespace Barycentric_coordinates {
     return std::make_pair(coordinates[0], coordinates[1]);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename Point_2>
   std::pair<
   typename Kernel_traits<Point_2>::Kernel::FT,

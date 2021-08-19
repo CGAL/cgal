@@ -97,9 +97,8 @@ namespace Barycentric_coordinates {
     return triangle_coordinates_2(
       p0, p1, p2, query, c_begin, traits);
   }
-  /// \endcond
 
-  /*!
+  /*
     \ingroup PkgBarycentricCoordinates2RefFunctions
 
     \brief computes triangle coordinates.
@@ -157,7 +156,6 @@ namespace Barycentric_coordinates {
     return std::make_tuple(coordinates[0], coordinates[1], coordinates[2]);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename Point_2>
   std::tuple<
   typename Kernel_traits<Point_2>::Kernel::FT,
