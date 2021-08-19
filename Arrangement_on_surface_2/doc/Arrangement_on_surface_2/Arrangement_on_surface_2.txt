@@ -6039,9 +6039,9 @@ subdivision \f$\mathcal{S}\f$, such that there is a face \f$f\f$ in
 
 The overlay of two given arrangements, conveniently referred to as the
 "blue" and the "red" arrangements, is implemented as a plane-sweep
-algorithm employing a dedicated visitor; see Section \ref
-arr_ssec_sweep.  The \f$x\f$-monotone curve type is extended with a
-color attribute (whose value is either blue or red); see Section \ref
+algorithm employing a dedicated visitor; see Section
+\ref arr_ssec_sweep.  The \f$x\f$-monotone curve type is extended with
+a color attribute (whose value is either blue or red); see Section \ref
 arr_ssecmeta_tr. With the help of the extended type unnecessary
 computations are filtered out while the plane is swept, yielding an
 efficient process. For example, monochromatic intersections are not
