@@ -1,10 +1,11 @@
 //! \file examples/Arrangement_on_surface_2/bgl_dual_adapter.cpp
 // Adapting the dual of an arrangement to a BGL graph.
 
+#include <CGAL/basic.h>
+
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/visitors.hpp>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/graph_traits_dual_arrangement_2.h>
 #include <CGAL/Arr_face_index_map.h>
