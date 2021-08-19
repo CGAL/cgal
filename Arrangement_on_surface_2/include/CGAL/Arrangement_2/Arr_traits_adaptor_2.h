@@ -865,7 +865,8 @@ public:
 
     // for all other cases an error is generated
     /*! Implementation for the cases no base is called. */
-    Comparison_result comp_x_on_bnd(const Point_2& p1, const Point_2& p2,
+    Comparison_result comp_x_on_bnd(const Point_2& /* p1 */,
+                                    const Point_2& /* p2 */,
                                     Arr_boundary_side_tag,
                                     Arr_boundary_side_tag) const
     { CGAL_error(); return SMALLER; }
@@ -1011,9 +1012,9 @@ public:
     }
 
     // for oblivious and contracted
-    Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
-                                          const X_monotone_curve_2& xcv2,
-                                          Arr_curve_end ce,
+    Comparison_result _compare_curve_ends(const X_monotone_curve_2& /* xcv1 */,
+                                          const X_monotone_curve_2& /* xcv2 */,
+                                          Arr_curve_end /* ce */,
                                           Arr_boundary_side_tag) const
     { CGAL_error(); return EQUAL; }
 
@@ -1330,10 +1331,10 @@ public:
     }
 
     // dummy
-    Comparison_result _compare_curve_ends(const X_monotone_curve_2& xcv1,
-                                          Arr_curve_end ce1,
-                                          const X_monotone_curve_2& xcv2,
-                                          Arr_curve_end ce2,
+    Comparison_result _compare_curve_ends(const X_monotone_curve_2& /* xcv1 */,
+                                          Arr_curve_end /* ce1 */,
+                                          const X_monotone_curve_2& /* xcv2 */,
+                                          Arr_curve_end /* ce2 */,
                                           Arr_oblivious_side_tag) const
     { CGAL_error(); return CGAL::EQUAL; }
 
@@ -2288,11 +2289,11 @@ public:
      * left-right boundary sides are oblivious or open, and
      * bottom-top boundary sides are oblivious or open
      */
-    bool is_between_lrr(const X_monotone_curve_2& cv,
+    bool is_between_lrr(const X_monotone_curve_2& /* cv */,
                         const X_monotone_curve_2& cv1,
                         const X_monotone_curve_2& cv2,
                         const Point_2& p,
-                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        bool& /* cv_equal_cv1 */, bool& /* cv_equal_cv2 */,
                         Arr_boundary_cond_tag,
                         Arr_boundary_cond_tag) const
     {
@@ -2359,10 +2360,10 @@ public:
      * bottom-top boundary sides are oblivious or open
      */
     bool is_between_rlr(const X_monotone_curve_2& cv,
-                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& /* cv1 */,
                         const X_monotone_curve_2& cv2,
                         const Point_2& p,
-                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        bool& /* cv_equal_cv1 */, bool& cv_equal_cv2,
                         Arr_boundary_cond_tag,
                         Arr_boundary_cond_tag) const
     {
@@ -2441,9 +2442,9 @@ public:
      */
     bool is_between_rrl(const X_monotone_curve_2& cv,
                         const X_monotone_curve_2& cv1,
-                        const X_monotone_curve_2& cv2,
+                        const X_monotone_curve_2& /* cv2 */,
                         const Point_2& p,
-                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        bool& cv_equal_cv1, bool& /* cv_equal_cv2 */,
                         Arr_boundary_cond_tag,
                         Arr_boundary_cond_tag) const
     {
@@ -2517,11 +2518,11 @@ public:
      * left-right boundary sides are oblivious or open, and
      * bottom-top boundary sides are oblivious or open
      */
-    bool is_between_rll(const X_monotone_curve_2& cv,
+    bool is_between_rll(const X_monotone_curve_2& /* cv */,
                         const X_monotone_curve_2& cv1,
                         const X_monotone_curve_2& cv2,
                         const Point_2& p,
-                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        bool& /* cv_equal_cv1 */, bool& /* cv_equal_cv2 */,
                         Arr_boundary_cond_tag,
                         Arr_boundary_cond_tag) const
     {
@@ -2612,10 +2613,10 @@ public:
      * bottom-top boundary sides are oblivious or open
      */
     bool is_between_lrl(const X_monotone_curve_2& cv,
-                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& /* cv1 */,
                         const X_monotone_curve_2& cv2,
                         const Point_2& p,
-                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        bool& /* cv_equal_cv1 */, bool& cv_equal_cv2,
                         Arr_boundary_cond_tag,
                         Arr_boundary_cond_tag) const
     {
@@ -2694,9 +2695,9 @@ public:
      */
     bool is_between_llr(const X_monotone_curve_2& cv,
                         const X_monotone_curve_2& cv1,
-                        const X_monotone_curve_2& cv2,
+                        const X_monotone_curve_2& /* cv2 */,
                         const Point_2& p,
-                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        bool& cv_equal_cv1, bool& /* cv_equal_cv2 */,
                         Arr_boundary_cond_tag,
                         Arr_boundary_cond_tag) const
     {
