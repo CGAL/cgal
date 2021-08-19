@@ -1,3 +1,14 @@
+// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Kaimo Hu
+
 #ifndef CGAL_BVD_H
 #define CGAL_BVD_H
 
@@ -8,7 +19,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
 // local
-#include "Polygon_kernel.h"
+#include "polygon_kernel.h"
 
 template <class Kernel, class TDS>
 class CBvd : public CGAL::Delaunay_triangulation_2<Kernel, TDS> {

@@ -1,3 +1,14 @@
+// Copyright (c) 2019  INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Kaimo Hu
+
 #ifndef CGAL_POLYGON_KERNEL_H
 #define CGAL_POLYGON_KERNEL_H
 
