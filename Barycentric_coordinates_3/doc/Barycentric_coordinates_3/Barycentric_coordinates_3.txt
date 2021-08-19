@@ -13,15 +13,15 @@ namespace Barycentric_coordinates {
 
 Barycentric coordinates are an important tool in computer graphics and geometric modeling.
 Originally, these coordinates were used to represent a given point with respect to a simplex but have been later
- generalized to more complex shapes.
+generalized to more complex shapes.
 
 The package 3D Generalized Barycentric Coordinates offers an efficient and robust implementation
-of three-dimensional closed-form generalized barycentric coordinates defined for convex simplicial polytopes.
+of three-dimensional closed-form, generalized barycentric coordinates defined for convex simplicial polytopes.
 
 In particular, this package includes an implementation of Wachspress, discrete harmonic, mean value, and
- one extra function to calculate barycentric coordinates with respect to tetrahedra. In this implementation,
- we restrict our polyhedra to convex ones with triangular faces, although some of the coordinates may
- accept more general shapes.
+one extra function to calculate barycentric coordinates with respect to tetrahedra. In this implementation,
+we restrict our polyhedra to convex ones with triangular faces, although some of the coordinates may
+accept more general shapes.
 
 
 \section gbc_3_interface Software Design
@@ -31,11 +31,13 @@ that can be computed analytically.
 All of the three analytic coordinates can be computed either by instantiating a class or through a
 free function. Tetrahedron coordinates can be computed only through the free function.
 
-We can specify a computation policy Barycentric_coordinates::Computation_policy_3 that can be FAST or
-FAST_WITH_EDGE_CASES for each of the three coordinates. The difference between them is that FAST_WITH_EDGE_CASES
- treats points near the boundaries by projecting them into the face of the polyhedron and then calculating triangle coordinates.
+Similarly to `Barycentric_coordinates::Computation_policy_2` in the 2D package, we can specify a computation 
+policy Barycentric_coordinates::Computation_policy_3 that can be FAST or
+FAST_WITH_EDGE_CASES for each of the three analytical coordinates. The difference between them is that FAST_WITH_EDGE_CASES 
+treats points near the boundaries by projecting them into the face of the polyhedron and then calculating triangle coordinates.
+Note that, different from the 2D package, there is not yet an implementation for a PRECISE algorithm. 
 
-The output of a query point is the coordinate value with respect to each vertex, the number of coordinate
+The output of a query point is the coordinate value with respect to each vertex, the number of coordinates
  values being the same as the number of vertices, and the ordering is also the same.
 
 All class and function templates are parameterized by a traits class, which is a model of the concept
@@ -46,13 +48,13 @@ a model of the concept FaceListGraph with a property map that maps a vertex from
 
 \section gbc_3_examples Examples
 
-In order to facilitate the process of learning this package, we provide various examples
-with a basic usage of different barycentric components.
+To facilitate the process of learning this package, we provide various examples
+with basic usage of different barycentric components.
 
 
 \subsection tetra_example Tetrahedron Coordinates
 
-In this example, we use the global function tetrahedron_coordinates_in_tuple().
+In this example, we use the global function `tetrahedron_coordinates_in_array()`.
 We compute coordinates for the tetrahedron whose vertices are the points in the
 set {(0,0,0), (1,0,0), (0,1,0), (0,0,1)}. We use points inside, outside and
 at the boundary of the tetrahedron.
@@ -116,14 +118,17 @@ algorithm should be used.
 Implementation details are described in \cgalCite{cgal:bc:f-wmvc-14} for Wachspress and mean value
 coordinates, and in \cgalCite{cgal:bc:jlw-ggcccsp-07} for discrete harmonic coordinates.
 
-The main purpose of the FAST_WITH_EDGE_CASES algorithm is to extend the region where the analytical
+For each coordinate, it is necessary to make divisions by the signed distance between the query 
+point and each face. So, if one of these distances is zero or close to zero (query point at the boundary), 
+it will cause a division by zero error or numerical instability, respectively.
+To avoid this, the main purpose of the FAST_WITH_EDGE_CASES algorithm is to extend the region where the analytical
 coordinates are well-defined. It adds the guarantee to calculate points near the boundaries. The
 way it works is very simple: before calculating any coordinate, the algorithm checks, for each face,
 if the distance between the query point and the plane is less than one predetermined tolerance. If so,
 instead of calculating the analytical form of the coordinates, it decomposes the query point with
 respect to this particular face and then calculates triangle coordinates. However, for Wachspress
 coordinates, the 2D version is used because the faces are not necessarily triangular. Note that for
-every vertice that does not belong to this face, the coordinate value will be zero.
+every vertex that does not belong to this face, the coordinate value will be zero.
 
 \subsection gbc_3_degeneracies_tetrahedron Tetrahedron Coordinates
 
@@ -136,23 +141,23 @@ where \f$V_i\f$ is the signed volume of the sub-tetrahedron opposite to the vert
 is the total volume of the tetrahedron, that is \f$V = V_0 + V_1 + V_2 + V_3\f$.
 
 These coordinates can be computed exactly if an exact number type is chosen, for any query point
-in the space and with respect to any non-degenerate tetrahedron. No special cases are handled. 
-The computation always yields the correct result. The notion of correctness depends on the precision 
+in the space and with respect to any non-degenerate tetrahedron. No special cases are handled.
+The computation always yields the correct result. The notion of correctness depends on the precision
 of the used number type. Note that for exterior points some coordinate values will be negative.
 
 \subsection gbc_3_degeneracies_wachspress Wachspress Coordinates
 
-To compute Wachspress coordinates of the query point `q`, we adopt the simple formula:
+For each vertex \f$v\f$, let \f$f_1, f_2, ..., f_k\f$ be the \f$k\f$ faces incident to \f$v\f$. We
+are assuming that the faces are taken in counterclockwise order.
+
+We can define \f${p_f}({q}) = \frac{{n_f}}{h_f({q})}\f$,
+and \f$h_f({q}) = ({v} - {q})\cdot {n_f}\f$ as the perpendicular distance of \f$q\f$ to \f$f\f$.
+For the face \f$f\f$, let \f${n_f}\f$ denote its unit outward normal.
+
+So, to compute Wachspress coordinates of the query point `q`, we adopt the simple formula:
 <center>
 \f$w_v({q}) = \sum_{i=2}^{k-1}det({p_{f_1}}({q}), {p_{f_i}}({q}), {p_{f_{i+1}}}({q}))\f$
 </center>
-
-for each vertex \f$v\f$, let \f$f_1, f_2, ..., f_k\f$ be the \f$k\f$ faces incident to \f$v\f$. We 
-are assuming that the faces are taken in anticlockwise order.
-
-We can define \f${p_f}({q}) = \frac{{n_f}}{h_f({q})}\f$, 
-and \f$h_f({q}) = ({v} - {q})\cdot {n_f}\f$ as the perpendicular distance of \f$q\f$ to \f$f\f$. 
-For the face \f$f\f$, let \f${n_f}\f$ denote its unit outward normal.
 
 In this implementation, Wachspress coordinates are well defined in the closure of any convex
 polyhedra. If an exact number type is chosen, they are computed exactly.
@@ -204,11 +209,11 @@ its coordinate values (see figure below). The results are represented in a log-l
 scale plot and are the mean value of 10 loop iterations (see plot below).
 
 \cgalFigureBegin{bc_coords_bench_structure_3, bc_coords_bench_structure_3.png}
-Points shown in red are the sample points used to make the benchmark.
+The points shown in red are the sample points used to make the benchmark.
 \cgalFigureEnd
 
 The performance strongly depends on the chosen kernel,
-for this test we choose to use SCKER because is much faster than others.
+for this test, we choose to use `Simple_cartesian<double>` because is much faster than others.
 Also, we can see that time (WP) << time (DH) < time (MV). This happens because wp
 implementation has fewer instructions per loop than the other two, so naturally,
 the computation time tends to be faster.
@@ -219,7 +224,7 @@ Wachspress (blue), discrete harmonic (orange), and mean value (green).
 \cgalFigureEnd
 
 Tetrahedron coordinates are not shown in the same plot because the test is
-slightly different. For this one, we simply show in a table (see table below)
+slightly different. For this one, we simply show in the table below
 the results for some pre-defined quantity of points. The test is done by regularly
 sampling strictly interior points with respect to a tetrahedron with
 unit sides that lies on the coordinate axis.

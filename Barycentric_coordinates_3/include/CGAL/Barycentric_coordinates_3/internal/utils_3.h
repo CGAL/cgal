@@ -235,7 +235,6 @@ public:
 
     const FT tol = get_tolerance<FT>();
     const std::size_t num_sides_face = vertices_face.size();
-    const std::size_t num_vertices_polyhedron = num_vertices(triangle_mesh);
 
     // Check if the vertices are distinct
     CGAL_assertion(are_vertices_distinct(vertices_face));
