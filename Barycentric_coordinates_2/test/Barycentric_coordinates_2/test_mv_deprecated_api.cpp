@@ -5,6 +5,7 @@
 #include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
@@ -39,10 +40,12 @@ int main()
   Mean_value_coordinates mean_value_coordinates(vertices.begin(), vertices.end());
 
   Coordinate_vector tri_coordinates;
-  Coordinate_vector  mv_coordinates;
+  Coordinate_vector old_coordinates;
+  Coordinate_vector new_coordinates;
 
   const Scalar step  = Scalar(1) / Scalar(100);
   const Scalar scale = Scalar(50);
+  const Scalar tol   = Scalar(1) / Scalar(10000000000);
 
   int count = 0;
   const Scalar limit = scale * step;
@@ -53,17 +56,24 @@ int main()
       const Point point(x, y);
 
       const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
-      const Output_type  mv_result = mean_value_coordinates(point, mv_coordinates);
+      const Output_type  mv_result = mean_value_coordinates(point, old_coordinates);
+      CGAL::Barycentric_coordinates::mean_value_coordinates_2(
+        vertices, point, std::back_inserter(new_coordinates));
 
       assert(
-        (tri_coordinates[count + 0] - mv_coordinates[count + 0]) < epsilon &&
-        (tri_coordinates[count + 1] - mv_coordinates[count + 1]) < epsilon &&
-        (tri_coordinates[count + 2] - mv_coordinates[count + 2]) < epsilon );
+        (tri_coordinates[count + 0] - old_coordinates[count + 0]) < epsilon &&
+        (tri_coordinates[count + 1] - old_coordinates[count + 1]) < epsilon &&
+        (tri_coordinates[count + 2] - old_coordinates[count + 2]) < epsilon );
+
+      assert(
+        CGAL::abs(old_coordinates[count + 0] - new_coordinates[count + 0]) < tol &&
+        CGAL::abs(old_coordinates[count + 1] - new_coordinates[count + 1]) < tol &&
+        CGAL::abs(old_coordinates[count + 2] - new_coordinates[count + 2]) < tol );
 
       if (
-        (tri_coordinates[count + 0] - mv_coordinates[count + 0]) > epsilon ||
-        (tri_coordinates[count + 1] - mv_coordinates[count + 1]) > epsilon ||
-        (tri_coordinates[count + 2] - mv_coordinates[count + 2]) > epsilon  )
+        (tri_coordinates[count + 0] - old_coordinates[count + 0]) > epsilon ||
+        (tri_coordinates[count + 1] - old_coordinates[count + 1]) > epsilon ||
+        (tri_coordinates[count + 2] - old_coordinates[count + 2]) > epsilon  )
       {
         cout << endl << "MV_deprecated_api_test: FAILED." << endl << endl;
         exit(EXIT_FAILURE);

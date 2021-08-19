@@ -5,6 +5,7 @@
 #include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
 #include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
@@ -39,7 +40,8 @@ int main()
   Wachspress_coordinates wachspress_coordinates(vertices.begin(), vertices.end());
 
   Coordinate_vector tri_coordinates;
-  Coordinate_vector  wp_coordinates;
+  Coordinate_vector old_coordinates;
+  Coordinate_vector new_coordinates;
 
   const Scalar step  = Scalar(1) / Scalar(100);
   const Scalar scale = Scalar(50);
@@ -52,17 +54,24 @@ int main()
       const Point point(x, y);
 
       const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
-      const Output_type  wp_result = wachspress_coordinates(point, wp_coordinates);
+      const Output_type  wp_result = wachspress_coordinates(point, old_coordinates);
+      CGAL::Barycentric_coordinates::wachspress_coordinates_2(
+        vertices, point, std::back_inserter(new_coordinates));
 
       assert(
-        tri_coordinates[count + 0] - wp_coordinates[count + 0] == Scalar(0) &&
-        tri_coordinates[count + 1] - wp_coordinates[count + 1] == Scalar(0) &&
-        tri_coordinates[count + 2] - wp_coordinates[count + 2] == Scalar(0) );
+        tri_coordinates[count + 0] - old_coordinates[count + 0] == Scalar(0) &&
+        tri_coordinates[count + 1] - old_coordinates[count + 1] == Scalar(0) &&
+        tri_coordinates[count + 2] - old_coordinates[count + 2] == Scalar(0) );
+
+      assert(
+        old_coordinates[count + 0] - new_coordinates[count + 0] == Scalar(0) &&
+        old_coordinates[count + 1] - new_coordinates[count + 1] == Scalar(0) &&
+        old_coordinates[count + 2] - new_coordinates[count + 2] == Scalar(0) );
 
       if (
-        tri_coordinates[count + 0] - wp_coordinates[count + 0] != Scalar(0) ||
-        tri_coordinates[count + 1] - wp_coordinates[count + 1] != Scalar(0) ||
-        tri_coordinates[count + 2] - wp_coordinates[count + 2] != Scalar(0)  )
+        tri_coordinates[count + 0] - old_coordinates[count + 0] != Scalar(0) ||
+        tri_coordinates[count + 1] - old_coordinates[count + 1] != Scalar(0) ||
+        tri_coordinates[count + 2] - old_coordinates[count + 2] != Scalar(0)  )
       {
         cout << endl << "WP_deprecated_api_test: FAILED." << endl << endl;
         exit(EXIT_FAILURE);

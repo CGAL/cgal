@@ -40,28 +40,36 @@ int main()
     Scalar(-1)/Scalar(4), Scalar(3) /Scalar(4), Scalar(1)/Scalar(2),
     Scalar(3) /Scalar(4), Scalar(-1)/Scalar(4), Scalar(1)/Scalar(2) };
 
-  Coordinate_vector coordinates;
+  Coordinate_vector old_coordinates;
+  Coordinate_vector new_coordinates;
 
   int count = 0;
   for (int i = 0; i < 5; ++i) {
-    const Output_type result = triangle_coordinates(query_points[i], std::back_inserter(coordinates));
+    const Output_type result = triangle_coordinates(query_points[i], std::back_inserter(old_coordinates));
+    CGAL::Barycentric_coordinates::triangle_coordinates_2(
+      first_vertex, second_vertex, third_vertex, query_points[i], std::back_inserter(new_coordinates));
 
     assert(
-      coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) &&
-      coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) &&
-      coordinates[count + 2] - expected_coordinates[count + 2] == Scalar(0) );
+      old_coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) &&
+      old_coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) &&
+      old_coordinates[count + 2] - expected_coordinates[count + 2] == Scalar(0) );
+
+    assert(
+      old_coordinates[count + 0] - new_coordinates[count + 0] == Scalar(0) &&
+      old_coordinates[count + 1] - new_coordinates[count + 1] == Scalar(0) &&
+      old_coordinates[count + 2] - new_coordinates[count + 2] == Scalar(0) );
 
     if (
-      coordinates[count + 0] - expected_coordinates[count + 0] != Scalar(0) ||
-      coordinates[count + 1] - expected_coordinates[count + 1] != Scalar(0) ||
-      coordinates[count + 2] - expected_coordinates[count + 2] != Scalar(0)  )
+      old_coordinates[count + 0] - expected_coordinates[count + 0] != Scalar(0) ||
+      old_coordinates[count + 1] - expected_coordinates[count + 1] != Scalar(0) ||
+      old_coordinates[count + 2] - expected_coordinates[count + 2] != Scalar(0)  )
     {
       cout << endl << "Triangle_coordinates_deprecated_api_test: FAILED." << endl << endl;
       exit(EXIT_FAILURE);
     }
     count += 3;
   }
-  coordinates.clear();
+  old_coordinates.clear();
 
   count = 0;
   for (int i = 0; i < 5; ++i) {

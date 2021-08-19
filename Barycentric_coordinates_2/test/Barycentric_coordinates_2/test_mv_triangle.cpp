@@ -1,5 +1,4 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
@@ -55,7 +54,6 @@ void test_mv_triangle() {
 int main() {
 
   test_mv_triangle< CGAL::Simple_cartesian<double> >();
-  test_mv_triangle< CGAL::Exact_predicates_exact_constructions_kernel >();
   test_mv_triangle< CGAL::Exact_predicates_inexact_constructions_kernel >();
 
   std::cout << "test_mv_triangle: PASSED" << std::endl;

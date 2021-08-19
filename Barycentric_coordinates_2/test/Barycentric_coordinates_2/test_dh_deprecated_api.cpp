@@ -5,6 +5,7 @@
 #include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_coordinates_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 
@@ -38,7 +39,8 @@ int main()
   Discrete_harmonic_coordinates discrete_harmonic_coordinates(vertices.begin(), vertices.end());
 
   Coordinate_vector tri_coordinates;
-  Coordinate_vector  dh_coordinates;
+  Coordinate_vector old_coordinates;
+  Coordinate_vector new_coordinates;
 
   const Scalar step  = Scalar(1) / Scalar(100);
   const Scalar scale = Scalar(50);
@@ -51,17 +53,24 @@ int main()
       const Point point(x, y);
 
       const Output_type tri_result = triangle_coordinates(point, tri_coordinates);
-      const Output_type  dh_result = discrete_harmonic_coordinates(point, dh_coordinates);
+      const Output_type  dh_result = discrete_harmonic_coordinates(point, old_coordinates);
+      CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_2(
+        vertices, point, std::back_inserter(new_coordinates));
 
       assert(
-        tri_coordinates[count + 0] - dh_coordinates[count + 0] == Scalar(0) &&
-        tri_coordinates[count + 1] - dh_coordinates[count + 1] == Scalar(0) &&
-        tri_coordinates[count + 2] - dh_coordinates[count + 2] == Scalar(0) );
+        tri_coordinates[count + 0] - old_coordinates[count + 0] == Scalar(0) &&
+        tri_coordinates[count + 1] - old_coordinates[count + 1] == Scalar(0) &&
+        tri_coordinates[count + 2] - old_coordinates[count + 2] == Scalar(0) );
+
+      assert(
+        old_coordinates[count + 0] - new_coordinates[count + 0] == Scalar(0) &&
+        old_coordinates[count + 1] - new_coordinates[count + 1] == Scalar(0) &&
+        old_coordinates[count + 2] - new_coordinates[count + 2] == Scalar(0) );
 
       if (
-        tri_coordinates[count + 0] - dh_coordinates[count + 0] != Scalar(0) ||
-        tri_coordinates[count + 1] - dh_coordinates[count + 1] != Scalar(0) ||
-        tri_coordinates[count + 2] - dh_coordinates[count + 2] != Scalar(0)  )
+        tri_coordinates[count + 0] - old_coordinates[count + 0] != Scalar(0) ||
+        tri_coordinates[count + 1] - old_coordinates[count + 1] != Scalar(0) ||
+        tri_coordinates[count + 2] - old_coordinates[count + 2] != Scalar(0)  )
       {
         cout << endl << "DH_deprecated_api_test: FAILED." << endl << endl;
         exit(EXIT_FAILURE);

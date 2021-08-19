@@ -41,26 +41,33 @@ int main()
     Scalar(-1)/Scalar(5) , Scalar(6) /Scalar(5) ,
     1                    , 0                     };
 
-  Coordinate_vector coordinates;
+  Coordinate_vector old_coordinates;
+  Coordinate_vector new_coordinates;
 
   int count = 0;
   for (int i = 0; i < 6; ++i) {
-    const Output_type result = segment_coordinates(query_points[i], std::back_inserter(coordinates));
+    const Output_type result = segment_coordinates(query_points[i], std::back_inserter(old_coordinates));
+    CGAL::Barycentric_coordinates::segment_coordinates_2(
+      first_vertex, second_vertex, query_points[i], std::back_inserter(new_coordinates));
 
     assert(
-      coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) &&
-      coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) );
+      old_coordinates[count + 0] - expected_coordinates[count + 0] == Scalar(0) &&
+      old_coordinates[count + 1] - expected_coordinates[count + 1] == Scalar(0) );
+
+    assert(
+      old_coordinates[count + 0] - new_coordinates[count + 0] == Scalar(0) &&
+      old_coordinates[count + 1] - new_coordinates[count + 1] == Scalar(0) );
 
     if (
-      coordinates[count + 0] - expected_coordinates[count + 0] != Scalar(0) ||
-      coordinates[count + 1] - expected_coordinates[count + 1] != Scalar(0)  )
+      old_coordinates[count + 0] - expected_coordinates[count + 0] != Scalar(0) ||
+      old_coordinates[count + 1] - expected_coordinates[count + 1] != Scalar(0)  )
     {
       cout << endl << "Segment_coordinates_deprecated_api_test: FAILED." << endl << endl;
       exit(EXIT_FAILURE);
     }
     count += 2;
   }
-  coordinates.clear();
+  old_coordinates.clear();
 
   count = 0;
   for (int i = 0; i < 6; ++i) {
