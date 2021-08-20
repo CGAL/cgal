@@ -26,6 +26,8 @@ namespace Surface_mesh_simplification {
 
 // use triangle quadrics for the faces, classical plane quadrics for the edges 
 // and optimize with a check for singular matrices
+//
+// implements classic triangle policies
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_triangle_policies : 
   public internal::GarlandHeckbert_cost_base<

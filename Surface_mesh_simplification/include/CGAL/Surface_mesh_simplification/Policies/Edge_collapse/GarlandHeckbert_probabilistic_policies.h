@@ -24,9 +24,13 @@ namespace Surface_mesh_simplification {
 
 // derived class implements functions used in the base class that
 // takes the derived class as template argument - see "CRTP"
+//
+// implements probabilistic plane quadrics, optionally takes a face variance map
+// giving a per-face variance 
 template<typename TriangleMesh, typename GeomTraits, typename 
   FaceVarianceMap = Constant_property_map<
-    typename boost::graph_traits<TriangleMesh>::face_descriptor, typename GeomTraits::FT
+    typename boost::graph_traits<TriangleMesh>::face_descriptor, 
+             std::pair<typename GeomTraits::FT, typename GeomTraits::FT>
   >> 
 class GarlandHeckbert_probabilistic_policies :
   public internal::GarlandHeckbert_placement_base<
@@ -35,7 +39,7 @@ class GarlandHeckbert_probabilistic_policies :
       CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
     >::type,
     GeomTraits, 
-    GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
+    GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits, FaceVarianceMap>
   >,
   public internal::GarlandHeckbert_cost_base<
     typename boost::property_map<
@@ -43,7 +47,7 @@ class GarlandHeckbert_probabilistic_policies :
       CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
     >::type,
     GeomTraits,
-    GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
+    GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits, FaceVarianceMap>
   >
 {
   
@@ -56,152 +60,129 @@ class GarlandHeckbert_probabilistic_policies :
 
   public:
 
-    typedef typename Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> GH_matrix;
-    typedef CGAL::dynamic_vertex_property_t<GH_matrix> Cost_property;
+  typedef typename Eigen::Matrix<FT, 4, 4, Eigen::DontAlign> GH_matrix;
+  typedef CGAL::dynamic_vertex_property_t<GH_matrix> Cost_property;
 
-    typedef typename boost::property_map<TriangleMesh, Cost_property>::type Vertex_cost_map;
+  typedef typename boost::property_map<TriangleMesh, Cost_property>::type Vertex_cost_map;
 
-    typedef internal::GarlandHeckbert_placement_base<
-      Vertex_cost_map, GeomTraits, GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
-      > Placement_base;
+  typedef internal::GarlandHeckbert_placement_base<
+    Vertex_cost_map, GeomTraits, GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
+    > Placement_base;
 
-    typedef internal::GarlandHeckbert_cost_base<
-      Vertex_cost_map, GeomTraits, GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
-      > Cost_base;
+  typedef internal::GarlandHeckbert_cost_base<
+    Vertex_cost_map, GeomTraits, GarlandHeckbert_probabilistic_policies<TriangleMesh, GeomTraits>
+    > Cost_base;
 
-    // both types are the same, this is so we avoid casting back to the base class in
-    // get_cost() or get_placement()
-    typedef GarlandHeckbert_probabilistic_policies Get_cost;
-    typedef GarlandHeckbert_probabilistic_policies Get_placement;
+  // both types are the same, this is so we avoid casting back to the base class in
+  // get_cost() or get_placement()
+  typedef GarlandHeckbert_probabilistic_policies Get_cost;
+  typedef GarlandHeckbert_probabilistic_policies Get_placement;
 
-    // so that operator() gets overloaded, this is needed because now Get_cost and Get_placement
-    // are the same
-    using Cost_base::operator();
-    using Placement_base::operator();
+  // so that operator() gets overloaded, this is needed because now Get_cost and Get_placement
+  // are the same
+  using Cost_base::operator();
+  using Placement_base::operator();
 
-    // these using directives are needed to choose between the definitions of these types
-    // in Cost_base and Placement_base (even though they are the same)
-    using typename Cost_base::Mat_4;
-    using typename Cost_base::Col_4;
-    using typename Cost_base::Point_3;
-    using typename Cost_base::Vector_3;
+  // these using directives are needed to choose between the definitions of these types
+  // in Cost_base and Placement_base (even though they are the same)
+  using typename Cost_base::Mat_4;
+  using typename Cost_base::Col_4;
+  using typename Cost_base::Point_3;
+  using typename Cost_base::Vector_3;
 
-    // default discontinuity multiplier is 100
-    GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh)
-      : GarlandHeckbert_probabilistic_policies(tmesh, 100) 
-    { }
+  // default discontinuity multiplier is 100
+  GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh)
+    : GarlandHeckbert_probabilistic_policies(tmesh, 100) 
+  { }
+  
+  GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh, FT dm)
+    : Cost_base(dm)
+  { 
+    // initialize the private variable vcm so it's lifetime is bound to that of the policy's
+    vcm_ = get(Cost_property(), tmesh);
+
+    // initialize both vcms
+    Cost_base::init_vcm(vcm_);
+    Placement_base::init_vcm(vcm_);
     
-    GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh, FT dm)
-      : Cost_base(dm)
-    { 
-      // initialize the private variable vcm so it's lifetime is bound to that of the policy's
-      vcm_ = get(Cost_property(), tmesh);
+    // try to initialize the face variance map using the estimated variance
+    // parameters are constants defined for this class
+    face_variance_map = FaceVarianceMap { 
+      internal::estimate_variances(tmesh, GeomTraits(), good_default_variance_unit, 
+          position_variance_factor) };  
+  }
+  
+  GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh, FT dm, const FaceVarianceMap& fvm)
+    : Cost_base(dm), face_variance_map(fvm)
+  { 
+     // initialize the private variable vcm so it's lifetime is bound to that of the policy's
+    vcm_ = get(Cost_property(), tmesh);
 
-      FT variance;
-      std::tie(variance, variance) = estimate_variances(tmesh, GeomTraits());
-      
-      // initialize both vcms
-      Cost_base::init_vcm(vcm_);
-      Placement_base::init_vcm(vcm_);
-      
-      // try to initialize the face variance map using the estimated variance
-      // TODO use the mean variance as well, should be easy to have pairs as value types
-      face_variance_map = FaceVarianceMap { variance };  
-    }
+    // initialize both vcms
+    Cost_base::init_vcm(vcm_);
+    Placement_base::init_vcm(vcm_);
+  }
+  
+  template<typename VPM>
+  Mat_4 construct_quadric_from_face(
+      const VPM& point_map,
+      const TriangleMesh& tmesh, 
+      face_descriptor f, 
+      const GeomTraits& gt) const
+  {
+    const Vector_3 normal = internal::construct_unit_normal_from_face<
+      VPM, TriangleMesh, GeomTraits>(point_map, tmesh, f, gt);
     
-    GarlandHeckbert_probabilistic_policies(TriangleMesh& tmesh, FT dm, const FaceVarianceMap& fvm)
-      : Cost_base(dm), face_variance_map(fvm)
-    { 
-       // initialize the private variable vcm so it's lifetime is bound to that of the policy's
-      vcm_ = get(Cost_property(), tmesh);
+    const Point_3 p = get(point_map, source(halfedge(f, tmesh), tmesh));
 
-      // initialize both vcms
-      Cost_base::init_vcm(vcm_);
-      Placement_base::init_vcm(vcm_);
-    }
-    
-    template<typename VPM>
-    Mat_4 construct_quadric_from_face(
-        const VPM& point_map,
-        const TriangleMesh& tmesh, 
-        face_descriptor f, 
-        const GeomTraits& gt) const
-    {
-      const Vector_3 normal = internal::construct_unit_normal_from_face<
-        VPM, TriangleMesh, GeomTraits>(point_map, tmesh, f, gt);
-      
-      const Point_3 p = get(point_map, source(halfedge(f, tmesh), tmesh));
+    FT n_variance;
+    FT p_variance;
 
-      FT variance = get(face_variance_map, f);
-      
-      return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, variance, variance);
-    }
+    std::tie(n_variance, p_variance) = get(face_variance_map, f);
     
-    template<typename VPM>
-    Mat_4 construct_quadric_from_edge(
-        const VPM& point_map,
-        const TriangleMesh& tmesh, 
-        halfedge_descriptor he, 
-        const GeomTraits& gt) const
-    {
-      const Vector_3 normal = internal::construct_edge_normal(point_map, tmesh, he, gt);
+    return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, n_variance, p_variance);
+  }
+  
+  template<typename VPM>
+  Mat_4 construct_quadric_from_edge(
+      const VPM& point_map,
+      const TriangleMesh& tmesh, 
+      halfedge_descriptor he, 
+      const GeomTraits& gt) const
+  {
+    const Vector_3 normal = internal::construct_edge_normal(point_map, tmesh, he, gt);
 
-      const Point_3 p = get(point_map, source(he, tmesh));
+    const Point_3 p = get(point_map, source(he, tmesh));
 
-      FT variance = get(face_variance_map, face(he, tmesh));
-      
-      return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, variance, variance);
-    }
+    FT n_variance;
+    FT p_variance;
+
+    std::tie(n_variance, p_variance) = get(face_variance_map, face(he, tmesh));
     
-    Col_4 construct_optimal_point(const Mat_4& quadric, const Col_4& p0, 
-        const Col_4& p1) const
-    {
-      return internal::construct_optimal_point_invertible<GeomTraits>(quadric);
-    }
-    
-    const Get_cost& get_cost() const { return *this; }
-    
-    const Get_placement& get_placement() const { return *this; }
-    
+    return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, n_variance, p_variance);
+  }
+  
+  Col_4 construct_optimal_point(const Mat_4& quadric, const Col_4& p0, 
+      const Col_4& p1) const
+  {
+    return internal::construct_optimal_point_invertible<GeomTraits>(quadric);
+  }
+  
+  const Get_cost& get_cost() const { return *this; }
+  
+  const Get_placement& get_placement() const { return *this; }
+  
   private:
-    Vertex_cost_map vcm_;
+  Vertex_cost_map vcm_;
+  
+  // magic number determined by some testing 
+  static constexpr FT good_default_variance_unit = 0.05;
+
+  // magic number - for most use cases, there is no input variance, so it makes sense to
+  // set the positional variance to a smaller value than the normal variance
+  static constexpr FT position_variance_factor = 0.1;
     
-    // give a very rough estimate of a decent variance for both parameters
-    static std::pair<FT, FT> estimate_variances(const TriangleMesh& mesh, 
-        const GeomTraits& gt)
-    {
-      typedef typename TriangleMesh::Vertex_index vertex_descriptor;
-      typedef typename TriangleMesh::Edge_index edge_descriptor;
-      
-      FT average_edge_length = 0;
-      
-      auto construct_vector = gt.construct_vector_3_object();
-      
-      for (edge_descriptor e : edges(mesh))
-      {
-        vertex_descriptor v1 = mesh.vertex(e, 0);
-        vertex_descriptor v2 = mesh.vertex(e, 1);
-
-        const Point_3& p1 = mesh.point(v1); 
-        const Point_3& p2 = mesh.point(v2); 
-
-        const Vector_3 vec = construct_vector(p1, p2);
-        average_edge_length += sqrt(vec.squared_length());
-      }
-      
-      average_edge_length = average_edge_length / mesh.number_of_edges();
-      const FT n2 = 0.05 * average_edge_length;
-      const FT p2 = 0.05 * average_edge_length;
-      
-      return std::make_pair(n2, p2);
-    }
-
-    // magic number determined by some testing, this is a good variance for models that
-    // fit inside a [-1, 1]^3 unit cube
-    static constexpr FT good_default_variance_unit = 0.05;
-    
-  private:
-    FaceVarianceMap face_variance_map;
+  FaceVarianceMap face_variance_map;
 };
 
 } // namespace Surface_mesh_simplification

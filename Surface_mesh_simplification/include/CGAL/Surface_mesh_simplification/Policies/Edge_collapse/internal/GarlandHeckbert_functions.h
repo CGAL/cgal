@@ -96,15 +96,6 @@ using Mat_4 = Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>;
 template<typename GeomTraits>
 using Col_4 = Eigen::Matrix<typename GeomTraits::FT, 4, 1>;
 
-template<typename GeomTraits>
-Mat_4<GeomTraits> unit_last_row(const Mat_4<GeomTraits>& mat)
-{
-  Mat_4<GeomTraits> ret;
-  ret << mat.block(0, 0, 3, 4), 0, 0, 0, 1;
-
-  return ret;
-}
-
 template<typename VertexPointMap, typename TriangleMesh, typename GeomTraits>
 typename GeomTraits::Vector_3 construct_unit_normal_from_face(
     const VertexPointMap& point_map,
@@ -139,8 +130,6 @@ typename GeomTraits::Vector_3 construct_edge_normal(
   typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  // TODO we do a potentially redundant calculation here, as we have 
-  // almost certainly already calculated this when constructing a quadric for the face
   const Vector_3 face_normal = construct_unit_normal_from_face(point_map, tmesh, face(he, tmesh), gt);
 
   const vertex_descriptor vs = source(he, tmesh);
@@ -177,8 +166,6 @@ Mat_4<GeomTraits> construct_classic_plane_quadric_from_normal(
   return row.transpose() * row;
 }
 
-//TODO why are we using VertexPointMap when all info is perfectly 
-// available in TriangleMesh
 template<typename VertexPointMap, typename TriangleMesh, typename GeomTraits>
 Mat_4<GeomTraits> construct_classic_plane_quadric_from_face(
     const VertexPointMap& point_map,
@@ -436,8 +423,6 @@ Col_4<GeomTraits> construct_optimal_point_invertible(const Mat_4<GeomTraits>& qu
   return opt_pt;
 }
 
-// TODO change to return a three dimensional vector, also adjust for this in policy_base
-// this makes the code more logical (also take three dimensional vectors as parameter?)
 template <typename GeomTraits>
 Col_4<GeomTraits> construct_optimal_point_singular(
     const Mat_4<GeomTraits>& quadric,
@@ -498,6 +483,40 @@ Col_4<GeomTraits> construct_optimal_point_singular(
 
     return opt_pt;
   }
+}
+
+template<typename TriangleMesh, typename GeomTraits>
+std::pair<typename GeomTraits::FT, typename GeomTraits::FT> estimate_variances(
+    const TriangleMesh& mesh, const GeomTraits& gt, 
+    typename GeomTraits::FT variance, 
+    typename GeomTraits::FT p_factor)
+{
+  typedef typename TriangleMesh::Vertex_index vertex_descriptor;
+  typedef typename TriangleMesh::Edge_index edge_descriptor;
+  typedef typename GeomTraits::FT FT;
+  typedef typename GeomTraits::Point_3 Point_3;
+
+  FT average_edge_length = 0;
+
+  auto construct_vector = gt.construct_vector_3_object();
+
+  for (edge_descriptor e : edges(mesh))
+  {
+    vertex_descriptor v1 = mesh.vertex(e, 0);
+    vertex_descriptor v2 = mesh.vertex(e, 1);
+
+    const Point_3& p1 = mesh.point(v1); 
+    const Point_3& p2 = mesh.point(v2); 
+
+    const Vector_3 vec = construct_vector(p1, p2);
+    average_edge_length += sqrt(vec.squared_length());
+  }
+
+  average_edge_length = average_edge_length / mesh.number_of_edges();
+  const FT n2 = variance * average_edge_length;
+  const FT p2 = p_factor * variance * average_edge_length;
+
+  return std::make_pair(n2, p2);
 }
 
 } // namespace internal
