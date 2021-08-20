@@ -26,6 +26,8 @@ namespace Surface_mesh_simplification {
 
 // derived class implements functions used in the base class that
 // takes the derived class as template argument - see "CRTP"
+//
+// implements classic plane quadrics
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_policies : 
   public internal::GarlandHeckbert_placement_base<
