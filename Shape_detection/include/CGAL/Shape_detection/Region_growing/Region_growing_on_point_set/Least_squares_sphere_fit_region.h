@@ -16,6 +16,7 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+#include <cmath>
 #include <vector>
 
 #include <CGAL/assertions.h>
@@ -224,6 +225,10 @@ public:
     if (indices.size() < 6)
       return true;
 
+    // TODO: Why do we get so many nan in this class?
+    if (std::isnan(m_radius))
+      return false;
+
     // If radius is out of bound, nothing fits, early ending
     if (m_radius < m_min_radius || m_radius > m_max_radius)
       return false;
@@ -232,16 +237,22 @@ public:
     const Point_3& query_point = get(m_point_map, key);
     Vector_3 normal = get(m_normal_map, key);
 
-    FT distance_to_center = m_sqrt(m_squared_distance_3 (query_point, m_center));
+    const FT sq_dist = m_squared_distance_3(query_point, m_center);
+    if (std::isnan(sq_dist)) return false;
+    FT distance_to_center = m_sqrt (sq_dist);
     FT distance_to_sphere = CGAL::abs (distance_to_center - m_radius);
 
     if (distance_to_sphere > m_distance_threshold)
       return false;
 
-    normal = normal / m_sqrt (normal * normal);
+    const FT sq_norm = normal * normal;
+    if (std::isnan(sq_norm)) return false;
+    normal = normal / m_sqrt (sq_norm);
 
     Vector_3 ray (m_center, query_point);
-    ray = ray / m_sqrt (ray * ray);
+    const FT sq_ray = ray * ray;
+    if (std::isnan(sq_ray)) return false;
+    ray = ray / m_sqrt (sq_ray);
 
     if (CGAL::abs (normal * ray) < m_normal_threshold)
       return false;

@@ -16,6 +16,7 @@
 
 #include <CGAL/license/Shape_detection.h>
 
+#include <cmath>
 #include <vector>
 
 #include <CGAL/assertions.h>
@@ -218,6 +219,7 @@ public:
     if (indices.size() < 6)
       return true;
 
+    // TODO: Why do we get so many nan in this class?
     if (std::isnan(m_radius))
       return false;
 
@@ -232,17 +234,23 @@ public:
     // TODO: Why do we have m_axis = 0 here sometimes?
     // Should it ever happen?
     if (m_axis.to_vector() == Vector_3(0, 0, 0)) return false;
-    FT distance_to_center = m_sqrt(m_squared_distance_3 (query_point, m_axis));
+    const FT sq_dist = m_squared_distance_3(query_point, m_axis);
+    if (std::isnan(sq_dist)) return false;
+    FT distance_to_center = m_sqrt (sq_dist);
     FT distance_to_cylinder = CGAL::abs (distance_to_center - m_radius);
 
     if (distance_to_cylinder > m_distance_threshold)
       return false;
 
-    normal = normal / m_sqrt (normal * normal);
+    const FT sq_norm = normal * normal;
+    if (std::isnan(sq_norm)) return false;
+    normal = normal / m_sqrt (sq_norm);
 
     Point_3 proj = m_axis.projection(query_point);
     Vector_3 ray (proj, query_point);
-    ray = ray / m_sqrt (ray * ray);
+    const FT sq_ray = ray * ray;
+    if (std::isnan(sq_ray)) return false;
+    ray = ray / m_sqrt (sq_ray);
 
     if (CGAL::abs (normal * ray) < m_normal_threshold)
       return false;
