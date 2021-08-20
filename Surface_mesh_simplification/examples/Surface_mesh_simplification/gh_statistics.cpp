@@ -9,7 +9,6 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_triangle_policies.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 
-
 #include <iostream>
 #include <fstream>
 
@@ -18,13 +17,16 @@
 #include <array>
 #include <functional>
 
-#include <boost/histogram.hpp>
-#include <boost/format.hpp>
+#include <boost/format.hpp> 
 #include <boost/filesystem.hpp>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 
+/**
+ * this is a largely undocumented file that was used to gather most statistics
+ * for my GSoC 2021 project on mesh decimation, maybe it is useful in the future  
+ */
 
 typedef CGAL::Simple_cartesian<double>                          Kernel;
 typedef Kernel::FT                                              FT;
@@ -38,18 +40,20 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace fs = boost::filesystem;
 
-typedef SMS::GarlandHeckbert_probabilistic_policies<Surface_mesh, Kernel> Prob_plane;
 typedef SMS::GarlandHeckbert_policies<Surface_mesh, Kernel> Classic_plane;
-typedef SMS::GarlandHeckbert_probabilistic_tri_policies<Surface_mesh, Kernel> Prob_tri;
+typedef SMS::GarlandHeckbert_probabilistic_policies<Surface_mesh, Kernel> Prob_plane;
 typedef SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel> Classic_tri;
-
-using hist = boost::histogram::histogram<std::tuple<boost::histogram::axis::regular<double, 
-      boost::use_default, boost::use_default, boost::use_default>>>; 
+typedef SMS::GarlandHeckbert_probabilistic_tri_policies<Surface_mesh, Kernel> Prob_tri;
 
 // settings for benchmarking - throw away the first n_burns results and keep the n_samples
 // samples
 constexpr int n_burns = 1;
 constexpr int n_samples = 10;
+
+constexpr std::size_t classic_plane_index = 0;
+constexpr std::size_t prob_plane_index = 1;
+constexpr std::size_t classic_tri_index = 2;
+constexpr std::size_t prob_tri_index = 3;
 
 template<typename Policy>
 Surface_mesh edge_collapse(Surface_mesh& mesh, double ratio = 0.2)
@@ -79,7 +83,7 @@ template<typename Policy>
 void time_all_vector(const std::vector<Surface_mesh>& meshes, const fs::path& output_file)
 {
   namespace time = std::chrono;
-  
+
   fs::ofstream out_stream {output_file};
   
   // always decimate meshes in this vector to avoid timing the
@@ -98,16 +102,16 @@ void time_all_vector(const std::vector<Surface_mesh>& meshes, const fs::path& ou
   // measure each run 
   for (int i = 0; i < n_samples; ++i)
   {
-    // measure time taken by the edge_collapse function over all meshes
+    // measure time taken by the edge_collapse function over each mesh individually
     time::time_point start_time = time::steady_clock::now();
-  
+
     for (Surface_mesh& mesh : temp_meshes)
     {
       edge_collapse<Policy>(mesh);
     }
-    
+
     time::time_point end_time = time::steady_clock::now();
-    
+
     // get elapsed time in nanoseconds
     unsigned long elapsed_ns = time::duration_cast<time::nanoseconds>
       (end_time - start_time).count();
@@ -117,6 +121,21 @@ void time_all_vector(const std::vector<Surface_mesh>& meshes, const fs::path& ou
 
     temp_meshes = meshes;
   }
+}
+
+bool read_from_file(Surface_mesh& mesh, const fs::path& p)
+{
+  fs::ifstream in {p};
+
+  // make sure the mesh is empty and ready for the next set of data
+  mesh.clear();
+
+  if (!in || !(in >> mesh))
+  {
+    return false;
+  }
+
+  return true;
 }
 
 std::vector<std::pair<Surface_mesh, std::string>> get_all_meshes(const fs::path& dir)
@@ -129,7 +148,7 @@ std::vector<std::pair<Surface_mesh, std::string>> get_all_meshes(const fs::path&
   {
     fs::directory_iterator end_iter;
     Surface_mesh mesh;
-    
+
     // iterate through all files in the given directory
     for (fs::directory_iterator dir_iter(dir); dir_iter != end_iter; ++dir_iter)
     {
@@ -139,17 +158,18 @@ std::vector<std::pair<Surface_mesh, std::string>> get_all_meshes(const fs::path&
       {
         const fs::path& path = dir_iter->path();
 
-        // input stream from the file
-        fs::ifstream is(path);
-
         // try to read the file into the surface mesh, upon failure, we continue looping 
         // iterating through the directory
-        if (!is || !(is >> mesh))
+        if (!read_from_file(mesh, path))
         {
           std::cerr << "Failed to read input mesh " << path 
-            << " in directory " << dir << std::endl;
+            << " in directory " << dir << "." << std::endl;
         }
-        else 
+        else if (!CGAL::is_triangle_mesh(mesh))
+        {
+          std::cerr << "Input geometry is not triangulated." << std::endl;
+        }
+        else
         {
           // we can move this mesh since we don't need it anymore - the next one will be read into 
           // the same variable
@@ -162,92 +182,93 @@ std::vector<std::pair<Surface_mesh, std::string>> get_all_meshes(const fs::path&
   return meshes;
 }
 
-template<typename Policy>
+  template<typename Policy>
 void time_policy(const fs::path& dir, const fs::path& output_file)
 {
   auto vec = get_all_meshes(dir);
-  std::for_each(std::begin(vec), std::end(vec), [] (const std::pair<Surface_mesh, std::string>&
-        p) { return p.first; });
-  return time_all_vector<Policy>(vec, output_file);
-}
+  std::vector<Surface_mesh> meshes { };
 
-// taken from a boost example
-template<typename histo>
-void print_hist(histo h)
-{
-  using namespace boost::histogram;
-  
-  std::ostringstream os;
-  for (auto&& x : indexed(h, coverage::all)) 
-  {
-    // alternative output formatting
-    //os << boost::format("bin %2i [%4.1f, %4.1f): %i\n")
-    //      % x.index() % x.bin().lower() % x.bin().upper() % *x;
-    os << boost::format("%i, ")
-          % *x;
+  for (const auto& p : vec) {
+    std::cout << p.second << '\n';
   }
 
-  std::cout << os.str() << std::endl;
+  // keep the first values from the pair (we don't need the names)(we don't need the names)
+  std::transform(vec.begin(), vec.end(), std::back_inserter(meshes),
+      [] (const std::pair<Surface_mesh, std::string>& p) { return p.first; }
+      );
+
+  return time_all_vector<Policy>(meshes, output_file);
 }
 
-hist generate_edge_statistics(Surface_mesh mesh, hist histo, std::function<FT(edge_descriptor, 
-      const Surface_mesh&)> f)
-{
-  for (auto e : mesh.edges())
-  {
-    FT value = f(e, mesh); 
-    histo(value);
-  }
-
-  return histo;
-}
-
-hist generate_face_statistics(Surface_mesh mesh, hist histo, std::function<FT(face_descriptor, 
-      const Surface_mesh&)> f)
-{
-  for (auto face : mesh.faces())
-  {
-    FT value = f(face, mesh); 
-    histo(value);
-  }
-
-  return histo;
-}
-
-template<typename Policy>
+  template<typename Policy>
 double hausdorff_error(const Surface_mesh& mesh, double ratio = 0.2)
 {
   // an arbitrarily chosen small value 
   constexpr double error_bound = 0.00001;
-  
+
   // make a copy of the mesh so we can compare later
   Surface_mesh temp = mesh;
- 
-  edge_collapse<Policy>(temp);
+
+  edge_collapse<Policy>(temp, ratio);
   return PMP::bounded_error_symmetric_Hausdorff_distance<CGAL::Sequential_tag>
     (mesh, temp, error_bound);
 }
-// calculate approximate Hausdorff errors for all different policies at the same
-// decimation ratio
-std::array<double, 4> hausdorff_errors(const Surface_mesh& mesh, double ratio = 0.2)
-{
-  std::array<double, 4> ret { {0, 0, 0, 0} }; 
 
-  ret[0] = hausdorff_error<Classic_plane>(mesh, ratio);
-  ret[1] = hausdorff_error<Prob_plane>(mesh, ratio);
-  ret[2] = hausdorff_error<Classic_tri>(mesh, ratio);
-  ret[3] = hausdorff_error<Prob_tri>(mesh, ratio);
-    
+// calculate approximate Hausdorff errors for all different policies at 
+// the same decimation ratio
+std::array<FT, 4> hausdorff_errors(const Surface_mesh& mesh, double ratio)
+{
+  std::array<FT, 4> ret { {0, 0, 0, 0} }; 
+
+  ret[classic_plane_index] = hausdorff_error<Classic_plane>(mesh, ratio);
+  ret[prob_plane_index] = hausdorff_error<Prob_plane>(mesh, ratio);
+  ret[classic_tri_index] = hausdorff_error<Classic_tri>(mesh, ratio);
+  ret[prob_tri_index] = hausdorff_error<Prob_tri>(mesh, ratio);
+
   return ret;
 }
+
+  template<typename InputIt>
+void hausdorff_errors_mesh(const Surface_mesh& mesh, const fs::path& out, InputIt begin, InputIt end)
+{
+  fs::ofstream out_stream {out};
+
+  for (InputIt it = begin; it != end; ++it) 
+  {
+    std::array<double, 4> errs = hausdorff_errors(mesh, *it);
+
+    out_stream << "ratio: " << *it << '\n';
+
+    for (double e : errs) 
+    {
+      out_stream << std::to_string(e) << '\n';
+    }
+  }
+}
+
+  template<typename InputIt>
+void hausdorff_errors_mesh(const fs::path& in, const fs::path& out, InputIt begin, InputIt end)
+{
+  fs::ifstream is {in};
+  Surface_mesh mesh;
+
+  if (!read_from_file(mesh, in))
+  {
+    std::cerr << "Failed to read input mesh " << in << '\n'; 
+  }
+  else
+  {
+    hausdorff_errors_mesh(mesh, out, begin, end);
+  }
+} 
 
 void hausdorff_errors_dir(const fs::path& dir, const fs::path& out, double ratio = 0.2)
 {
   // get a vector of pairs of a mesh and its name by loading all .off files in a directory
   const auto meshes = get_all_meshes(dir); 
-  
+
   fs::ofstream out_stream {out};
-  
+
   for (auto& p : meshes)
   {
     // calculate the errors and output to file
@@ -261,78 +282,156 @@ void hausdorff_errors_dir(const fs::path& dir, const fs::path& out, double ratio
   }
 }
 
-int main(int argc, char** argv)
+void write_aspect_ratios(fs::ofstream& out, const Surface_mesh& mesh) 
 {
-  using namespace boost::histogram;
-  hist edge_histo = make_histogram(axis::regular<>(14, 0.1, 4.0, "length"));
-  
-  auto f = [] (edge_descriptor e, const Surface_mesh& mesh) { 
-    return PMP::edge_length(mesh.halfedge(e), mesh);
-  };
-  
-  auto g = [] (face_descriptor face, const Surface_mesh& mesh) { 
-    return PMP::face_aspect_ratio(face, mesh);
-  };
-  
-    
-  const fs::path output {"hausdorff_errors"};
-
-  if (fs::exists(output))
+  for (auto face : mesh.faces())
   {
-    // clear file
-    fs::resize_file(output, 0); 
+    out << std::to_string(PMP::face_aspect_ratio(face, mesh)) << '\n'; 
+  }
+}
+
+void gather_face_aspect_ratio(const fs::path& file, const fs::path& out)
+{
+  Surface_mesh cp { }; 
+  Surface_mesh ct { }; 
+  Surface_mesh pp { }; 
+  Surface_mesh pt { }; 
+
+  read_from_file(cp, file);
+  read_from_file(ct, file);
+  read_from_file(pp, file);
+  read_from_file(pt, file);
+
+  edge_collapse<Classic_plane>(cp);
+  edge_collapse<Prob_plane>(pp);
+  edge_collapse<Classic_tri>(ct);
+  edge_collapse<Prob_tri>(pt);
+
+  fs::ofstream out_stream { out };
+
+  out_stream << "classic_plane\n";
+  write_aspect_ratios(out_stream, cp);
+  out_stream << "prob_plane\n";
+  write_aspect_ratios(out_stream, pp);
+  out_stream << "classic_tri\n";
+  write_aspect_ratios(out_stream, ct);
+  out_stream << "prob_tri\n";
+  write_aspect_ratios(out_stream, pt);
+}
+
+enum class Mode { time, hausdorff_ratio, hausdorff_mesh, run, apect_ratio };
+
+void time_policy_string(const fs::path& in, const fs::path& out, const std::string& policy) {
+  if (policy == "classic_plane")
+  {
+    time_policy<Classic_plane>(in, out);
+  }
+  else if (policy == "prob_plane")
+  {
+    time_policy<Prob_plane>(in, out);
+  }
+  else if (policy == "classic_tri")
+  {
+    time_policy<Classic_tri>(in, out);
+  }
+  else if (policy == "prob_tri")
+  {
+    time_policy<Prob_tri>(in, out);
+  }
+}
+
+int main(int argc, char* argv[])
+{
+
+  // default is time
+  Mode m = Mode::time;
+
+  if (argc > 1)
+  {
+    std::string input { argv[1] };
+
+    if (input == "time")
+    {
+      m = Mode::time;
+
+      if (argc != 5)
+      {
+        std::cerr << "Expected 3 arugments to time: [input_dir] [output_file] [policy].\n";
+        return EXIT_FAILURE;
+      }
+
+      time_policy_string(argv[2], argv[3], argv[4]);
+    }
+    else if (input == "ratio")
+    {
+      m = Mode::hausdorff_ratio;
+    }
+    else if (input == "mesh")
+    {
+      m = Mode::hausdorff_mesh;
+    }
+    else if (input == "run")
+    {
+      m = Mode::run;
+      if (argc != 3 && argc != 4)
+      {
+        std::cerr << "Expected 1 (2) argument(s) to run: [input_file] [ratio].\n";
+        return EXIT_FAILURE;
+      }
+      // default init empty mesh
+      Surface_mesh m { };
+
+      FT ratio = 0.2;
+      if (argc == 4) {
+        ratio = std::stod(argv[3]);
+      }
+
+      read_from_file(m, argv[2]);
+
+      Surface_mesh cp = m;
+      Surface_mesh pp = m;
+      Surface_mesh ct = m;
+      Surface_mesh pt = m;
+
+      edge_collapse<Classic_plane>(cp, ratio);
+      edge_collapse<Prob_plane>(pp, ratio);
+      edge_collapse<Classic_tri>(ct, ratio);
+      edge_collapse<Prob_tri>(pt, ratio);
+
+      fs::ofstream classic_plane_stream {"run_classic_plane.off"};
+      fs::ofstream prob_plane_stream {"run_prob_plane.off"};
+      fs::ofstream classic_tri_stream {"run_classic_tri.off"};
+      fs::ofstream prob_tri_stream {"run_prob_tri.off"};
+
+      classic_plane_stream << cp;
+      prob_plane_stream << pp;
+      classic_tri_stream << ct;
+      prob_tri_stream << pt;
+    }
+    else if (input == "aspect")
+    {
+      gather_face_aspect_ratio(argv[2], argv[3]);
+    } 
+    else 
+    {
+      std::cerr << "Didn't recognise command line argument " << input << 
+        "(options are time, ratio or mesh)\n"; 
+
+      return EXIT_FAILURE;
+    }
   }
 
-  hausdorff_errors_dir("data/", output);
-  
-  //time_policy<Classic_tri>("../data/", output);
-  
-  /*
-  Surface_mesh probabilistic = edge_collapse
-    <SMS::GarlandHeckbert_probabilistic_policies<Surface_mesh, Kernel>>(surface_mesh);
-  
-  Surface_mesh classic = edge_collapse
-    <SMS::GarlandHeckbert_policies<Surface_mesh, Kernel>>(surface_mesh);
-  
-  Surface_mesh classic_tri = edge_collapse
-    <SMS::GarlandHeckbert_triangle_policies<Surface_mesh, Kernel>>(surface_mesh);
- 
-  Surface_mesh probabilistic_tri = edge_collapse
-    <SMS::GarlandHeckbert_probabilistic_tri_policies<Surface_mesh, Kernel>>(surface_mesh);
-  
-  std::cout << "Original mesh histogram:\n";
-  print_hist(generate_edge_statistics(surface_mesh, edge_histo, f));
-
-  std::cout << "Decimated classic mesh histogram:\n";
-  print_hist(generate_edge_statistics(classic, edge_histo, f));
- 
-  std::cout << "Decimated probabilistic mesh histogram:\n";
-  print_hist(generate_edge_statistics(probabilistic, edge_histo, f));
-
-  std::cout << "Decimated classic tri mesh histogram:\n";
-  print_hist(generate_edge_statistics(classic_tri, edge_histo, f));
-
-  std::cout << "Decimated probabilistic tri mesh histogram:\n";
-  print_hist(generate_edge_statistics(probabilistic_tri, edge_histo, f));
-
-  hist face_histo = make_histogram(axis::regular<>(10, 1.0, 5.5));
-  
-  std::cout << "Original aspect ratio:\n";
-  print_hist(generate_face_statistics(surface_mesh, face_histo, g));
-
-  std::cout << "Classic aspect ratio:\n";
-  print_hist(generate_face_statistics(classic, face_histo, g));
-  
-  std::cout << "Probabilistic aspect ratio:\n";
-  print_hist(generate_face_statistics(probabilistic, face_histo, g));
-  
-  std::cout << "Classic tri aspect ratio:\n";
-  print_hist(generate_face_statistics(classic_tri, face_histo, g));
-  
-  std::cout << "Probabilistic tri aspect ratio:\n";
-  print_hist(generate_face_statistics(probabilistic_tri, face_histo, g));
-  */
-
-  
-  return EXIT_SUCCESS;
+  if (m == Mode::hausdorff_mesh)
+  {
+    if (argc != 3)
+    {
+      std::cerr << "Expected 1 argument to mesh: [input_file].\n";
+      return EXIT_FAILURE;
+    }
+    else 
+    {
+      std::array<double, 10> range {{ 0.7, 0.6, 0.5, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15 }};
+      hausdorff_errors_mesh(argv[2], "mesh_hausdorff_err", range.begin(), range.end());
+    }
+  }
 }
