@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
      },
      [](const auto& r) -> bool {
         std::cout << "- num regions spheres: " << r.size() << std::endl;
-        return (r.size() > 28 && r.size() < 48);
+        return (r.size() > 10 && r.size() < 90);
       });
   if (!success)
     return EXIT_FAILURE;
@@ -173,7 +173,7 @@ int main(int argc, char *argv[]) {
      },
      [](const auto& r) -> bool {
         std::cout << "- num regions cylinders: " << r.size() << std::endl;
-        return (r.size() > 4 && r.size() < 12);
+        return (r.size() > 2 && r.size() < 30);
       });
   if (!success)
     return EXIT_FAILURE;
