@@ -26,7 +26,7 @@ int main() {
   // Go over all arrangement edges and set their flags.
   // Recall that the value type of the edge iterator is the halfedge type.
   for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
-    unsigned int degree = vit->degree();
+    auto degree = vit->degree();
     vit->set_data((degree == 0) ? BLUE : ((degree <= 2) ? RED : WHITE));
   }
 
