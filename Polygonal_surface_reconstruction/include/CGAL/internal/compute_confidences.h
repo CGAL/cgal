@@ -141,8 +141,10 @@ namespace internal {
                                 // The last point in the polygon
                                 if (!plg.is_empty()) {
                                         const Point2& r = plg[plg.size() - 1];
-                                        if (CGAL::squared_distance(q, r) < CGAL::snap_squared_distance_threshold<FT>())
+                                        if (CGAL::squared_distance(q, r) < CGAL::snap_squared_distance_threshold<FT>()) {
+                                                ++cir;
                                                 continue;
+                                        }
                                 }
                                 plg.push_back(q);
 
