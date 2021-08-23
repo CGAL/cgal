@@ -13,7 +13,7 @@ typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits>       Traits;
 typedef Traits::Point_2                                   Point;
 typedef Traits::Segment_2                                 Segment;
-typedef Traits::Curve_2                                   Polyline;
+typedef Traits::Curve_2                                   My_polyline;
 typedef CGAL::Arrangement_2<Traits>                       Arrangement;
 
 #endif
