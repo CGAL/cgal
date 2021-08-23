@@ -76,7 +76,7 @@ protected:
   bool has_exact_p;
   bool has_exact_c;
 
-  double m = 0, M = 100;
+  int m = 0, M = 100;
 
   bool verbose = true;
 

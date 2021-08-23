@@ -439,8 +439,8 @@ intersection(const typename K::Tetrahedron_3& tet,
             // Doesn't matter whether there is another (non-strictly) inside point: if there is,
             // it is an extremity of the segment
 
-            const std::size_t str_inside_pt_pos =
-                (std::find(vertex_sides.begin(), vertex_sides.end(), ON_BOUNDED_SIDE) - vertex_sides.begin());
+            const int str_inside_pt_pos =
+                int(std::find(vertex_sides.begin(), vertex_sides.end(), ON_BOUNDED_SIDE) - vertex_sides.begin());
             CGAL_assertion(str_inside_pt_pos >= 0 && str_inside_pt_pos < 3);
 
             Triangle_3 res_tr = triangle(vertex(tr, str_inside_pt_pos), s.source(), s.target());
@@ -478,8 +478,8 @@ intersection(const typename K::Tetrahedron_3& tet,
             CGAL_assertion(strictly_inside_points == 0);
 
             // Grab the inside point
-            const std::size_t boundary_pt_pos =
-                (std::find(vertex_sides.begin(), vertex_sides.end(), ON_BOUNDARY) - vertex_sides.begin());
+            const int boundary_pt_pos =
+                int(std::find(vertex_sides.begin(), vertex_sides.end(), ON_BOUNDARY) - vertex_sides.begin());
             CGAL_assertion(boundary_pt_pos >= 0 && boundary_pt_pos < 3);
 
             const Point_3& boundary_pt = vertex(tr, boundary_pt_pos);
@@ -500,7 +500,7 @@ intersection(const typename K::Tetrahedron_3& tet,
             // 2 boundary points and 1 segment, have to distinguish between cases
             // depending on if the extremities of the segment are triangle extremities
 
-            std::array<std::size_t, 2> boundary_pts;
+            std::array<int, 2> boundary_pts;
             std::array<bool, 2> is_boundary_point_an_extremity;
 
             // Grab the inside points
