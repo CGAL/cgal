@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/property_map/vector_property_map.hpp>
