@@ -198,7 +198,7 @@ template<typename GT,
          typename EIFMap,
          typename VNFEMap>
  void sharp_call(PolygonMesh& pmesh,
-                 FT angle_in_deg,
+                 const FT& angle_in_deg,
                  EIFMap edge_is_feature_map,
                  VNFEMap vnfe)
 {
@@ -232,7 +232,7 @@ template<typename GT,
          typename PolygonMesh,
          typename EIFMap>
  void sharp_call(PolygonMesh& pmesh,
-                 FT& angle_in_deg,
+                 const FT& angle_in_deg,
                  EIFMap edge_is_feature_map,
                  const internal_np::Param_not_found&)
 {
@@ -329,9 +329,9 @@ template <typename PolygonMesh, typename EdgeIsFeatureMap, typename NamedParamet
 #endif
 void detect_sharp_edges(PolygonMesh& pmesh,
 #ifdef DOXYGEN_RUNNING
-    FT angle_in_deg,
+    const FT& angle_in_deg,
 #else
-    typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
+    const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT& angle_in_deg,
 #endif
     EdgeIsFeatureMap edge_is_feature_map,
     const NamedParameters& np)
@@ -530,9 +530,9 @@ template <typename PolygonMesh,
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 sharp_edges_segmentation(PolygonMesh& pmesh,
 #ifdef DOXYGEN_RUNNING
-      FT angle_in_deg,
+      const FT& angle_in_deg,
 #else
-      typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
+      const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT& angle_in_deg,
 #endif
       EdgeIsFeatureMap edge_is_feature_map,
       PatchIdMap patch_id_map,
@@ -552,7 +552,7 @@ sharp_edges_segmentation(PolygonMesh& pmesh,
 //Convenient overrides
 template <typename PolygonMesh, typename EdgeIsFeatureMap, typename FT>
 void detect_sharp_edges(PolygonMesh& p,
-                        FT angle_in_deg,
+                        const FT& angle_in_deg,
                         EdgeIsFeatureMap edge_is_feature_map)
 {
   detect_sharp_edges(p, angle_in_deg, edge_is_feature_map,
@@ -572,7 +572,7 @@ template <typename PolygonMesh, typename FT,
           typename EdgeIsFeatureMap, typename PatchIdMap>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 sharp_edges_segmentation(PolygonMesh& p,
-                         FT angle_in_deg,
+                         const FT& angle_in_deg,
                          EdgeIsFeatureMap edge_is_feature_map,
                          PatchIdMap patch_id_map)
 {
