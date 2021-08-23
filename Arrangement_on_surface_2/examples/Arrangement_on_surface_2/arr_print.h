@@ -51,7 +51,9 @@ void print_face(typename Arrangement::Face_const_handle f) {
   size_t index = 1;
   for (auto hole = f->holes_begin(); hole != f->holes_end(); ++hole, ++index) {
     std::cout << "    Hole #" << index << ": ";
-    print_ccb<Arrangement>(*hole);
+    // The following statement pacifies msvc.
+    typename Arrangement::Ccb_halfedge_const_circulator circ = *hole;
+    print_ccb<Arrangement>(circ);
   }
 
   // Print the isolated vertices.
