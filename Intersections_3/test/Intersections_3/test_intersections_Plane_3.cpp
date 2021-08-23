@@ -239,6 +239,11 @@ public:
         if(pln.has_on(sph6))
           continue;
 
+        // The sphere constructor will assert on degenerate positions
+        const Tet tet(pl0, sph6, sph5, sph4);
+        if(tet.is_degenerate())
+          continue;
+
         sph = Sph(pl0, sph6, sph5, sph4);
         check_intersection(pln, sph, C(pln, sph));
       }
@@ -439,7 +444,7 @@ int main(int, char**)
   std::cout << " |||||||| Test EPECK ||||||||" << std::endl;
   Plane_3_intersection_tester< CGAL::Epeck >(r, true /*exact predicates*/, true /*exact constructions*/).run();
 
-  // FIXME BROKEN PROJECTION, BROKEN PLN-SPHERE
+  // See above
 //  std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::Epeck_ft> ||||||||" << std::endl;
 //  Plane_3_intersection_tester< CGAL::Homogeneous<CGAL::Epeck_ft> >(r, true /*exact predicates*/, true /*exact constructions*/).run();
 

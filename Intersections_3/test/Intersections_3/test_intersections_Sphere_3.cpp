@@ -148,9 +148,6 @@ public:
       const FT r = this->r.get_int(this->m + 1, this->M);
       Sph sph(c, r);
 
-      if(c != tr1 && c != tr2)
-        check_do_intersect(sph, Tr(c, tr1, tr2));
-
       if(sph.oriented_side(tr0) != sph.oriented_side(tr1) ||
          sph.oriented_side(tr0) != sph.oriented_side(tr2) ||
          sph.oriented_side(tr2) != sph.oriented_side(tr1))
