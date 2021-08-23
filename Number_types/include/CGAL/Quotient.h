@@ -33,6 +33,8 @@
 #include <CGAL/Kernel/mpl.h>
 
 #include <boost/operators.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/type_index.hpp>
 
 namespace CGAL {
 
@@ -44,15 +46,15 @@ namespace CGAL {
 // This function is not documented as a number type requirement for now.
 template < typename NT >
 inline void
-simplify_quotient(NT & /*a*/, NT & /*b*/) {
+simplify_quotient(NT & a, NT & b) {
 
-  // const auto r = gcd(a, b);
+  const NT r = boost::multiprecision::gcd(a, b);
   // std::cout << "r: " << r << std::endl;
   // std::cout << "a: " << a << std::endl;
   // std::cout << "b: " << b << std::endl;
-  // a = a / r;
+  a = a / r;
   // std::cout << "new a: " << a << std::endl;
-  // b = b / r;
+  b = b / r;
   // std::cout << "new b: " << b << std::endl;
   // std::cout << std::endl;
 
@@ -700,21 +702,66 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
-          // auto x = xx;
-          // auto& a = x.num; auto& b = x.den;
-          // const auto r = gcd(a, b);
+          // Type x = xx;
+          // const decltype(x.num) r = gcd(x.num, x.den);
           // std::cout << "r: " << r << std::endl;
-          // std::cout << "a: " << a << std::endl;
-          // std::cout << "b: " << b << std::endl;
-          // a = a / r;
-          // std::cout << "new a: " << a << std::endl;
-          // b = b / r;
-          // std::cout << "new b: " << b << std::endl;
+          // std::cout << "a: " << x.num << std::endl;
+          // std::cout << "b: " << x.den << std::endl;
+          // x.num = x.num / r;
+          // std::cout << "new a: " << x.num << std::endl;
+          // x.den = x.den / r;
+          // std::cout << "new b: " << x.den << std::endl;
           // std::cout << std::endl;
 
-          Interval_nt<> quot =
-                          Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
-                          Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
+          // std::cout << "n: " << x.numerator() << std::endl;
+          // std::cout << "d: " << x.denominator() << std::endl;
+
+          Interval_nt<> quot;
+          const double inf = std::numeric_limits<double>::infinity();
+          const double xn = x.num.template convert_to<double>();
+          const double xd = x.den.template convert_to<double>();
+          if (xn == inf || xd == inf) {
+
+            // decltype(x.num) q, r;
+            // boost::multiprecision::divide_qr(x.num, x.den, q, r);
+
+            // std::cout << "type: " << boost::typeindex::type_id<decltype(x.num)>() << std::endl;
+
+            // std::cout << "x num: " << x.num << std::endl;
+            // std::cout << "x den: " << x.den << std::endl;
+
+            // std::cout << "q: " << q << std::endl;
+            // std::cout << "r: " << r << std::endl;
+
+            CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
+            if (x.num > 0 && x.den > 0)
+              return std::make_pair(0.0, 1.0);
+            else if (x.num < 0 && x.den < 0)
+              return std::make_pair(0.0, 1.0);
+            else
+              return std::make_pair(-1.0, 0.0);
+
+            // quot =
+            //   Interval_nt<>(CGAL_NTS to_interval(q)) +
+            //   Interval_nt<>(CGAL_NTS to_interval(Type(r, x.den)));
+
+            // quot =
+            //   Interval_nt<>(CGAL_NTS to_interval(q)) +
+            //   Interval_nt<>(CGAL_NTS to_interval(r)) /
+            //   Interval_nt<>(CGAL_NTS to_interval(x.den));
+
+            // std::cout << "new inf1: " << quot.inf() << std::endl;
+            // std::cout << "new sup1: " << quot.sup() << std::endl;
+
+          } else {
+
+            quot =
+              Interval_nt<>(CGAL_NTS to_interval(x.num)) /
+              Interval_nt<>(CGAL_NTS to_interval(x.den));
+
+            // std::cout << "new inf2: " << quot.inf() << std::endl;
+            // std::cout << "new sup2: " << quot.sup() << std::endl;
+          }
           return std::make_pair(quot.inf(), quot.sup());
         }
     };
