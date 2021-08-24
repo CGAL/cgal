@@ -707,7 +707,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
-        #if false // rough bounds
+        #if true // rough bounds
           // std::cout << "n: " << x.numerator()   << std::endl;
           // std::cout << "d: " << x.denominator() << std::endl;
 
@@ -729,6 +729,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
             // We do not have here a tight bound!
             // TODO: Use a binary search or limbs to find a tighter bound!
+            // TODO: Try to use here the conversion to cpp_rational from below.
             CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
             if (x.num > 0 && x.den > 0) {
               return std::make_pair( 0.0, 1.0);
@@ -766,6 +767,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         #else // tight bounds
 
+          // TODO: Should we use this one instead:
+          // https://github.com/boostorg/multiprecision/blob/3094249d7c30026b39fef77344e187bf93f24c6c/include/boost/multiprecision/detail/generic_interconvert.hpp#L305 ?
           boost::multiprecision::cpp_rational rat; // TODO: Is it fast enough?
           CGAL_assertion(x.den != 0);
           if (x.den < 0) {

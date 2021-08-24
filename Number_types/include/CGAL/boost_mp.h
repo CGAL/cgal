@@ -210,19 +210,27 @@ struct RET_boost_mp_base
           const int cmp = x.compare(i);
           if (cmp > 0) {
             s = nextafter(s, +inf);
-            #if false
+            #if true
             if (x.compare(s) >= 0) { // TODO: We may need to run it in a while loop!
-              // std::cout << "s after1: " << i << std::endl;
+              std::cout << "i is correct: " << std::endl;
+              std::cout << "x           : " << x << std::endl;
+              std::cout << "s before    : " << i << std::endl;
+              std::cout << "s after     : " << s << std::endl;
+              // std::cout << "s after1: " << s << std::endl;
               s = nextafter(s, +inf);
-              // std::cout << "s after2: " << i << std::endl;
+              // std::cout << "s after2: " << s << std::endl;
             }
             #endif
             CGAL_assertion(x.compare(s) < 0);
           }
           else if (cmp < 0) {
             i = nextafter(i, -inf);
-            #if false
+            #if true
             if (x.compare(i) <= 0) { // TODO: We may need to run it in a while loop!
+              std::cout << "s is correct: " << std::endl;
+              std::cout << "x           : " << x << std::endl;
+              std::cout << "i before    : " << s << std::endl;
+              std::cout << "i after     : " << i << std::endl;
               // std::cout << "i after1: " << i << std::endl;
               i = nextafter(i, -inf);
               // std::cout << "i after2: " << i << std::endl;
