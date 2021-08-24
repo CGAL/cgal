@@ -76,7 +76,7 @@ void explore(std::string s, const Nef_polyhedron&  poly)
 
 int main() {
 
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
   Nef_polyhedron N0(Nef_polyhedron::COMPLETE);
   explore("complete", N0);
 

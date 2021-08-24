@@ -400,10 +400,10 @@ of a polynomial using its principal Sturm-Habicht coefficients.
 \section PolynomialDesign Design and Implementation History
 
 This package is the result of the integration process of the NumeriX library
-of <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05} into \cgal.
+of \exacus \cgalCite{beh-eeeafcs-05} into \cgal.
 
 The class `Polynomial<Coeff>` had been started by Michael Seel within
-CGAL as part of the Nef_2 package. As part of the <span class="textsc">Exacus</span> project
+CGAL as part of the Nef_2 package. As part of the \exacus project
 it got significantly improved by Arno Eigenwillig and Michael Hemmer.
 
 However, due to the recursive definition the class was rather restricted to the

@@ -14,7 +14,6 @@
 
 #ifndef GEOMETRY_CONTAINER_H
 #define GEOMETRY_CONTAINER_H
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
 #include <boost/shared_ptr.hpp>
@@ -118,4 +117,3 @@ struct range_mutable_iterator<CGAL::internal::Geometry_container<T, TAG> >
 
 }//end boost
 #endif // GEOMETRY_CONTAINER_H
-#endif

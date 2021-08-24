@@ -65,6 +65,9 @@ public:
   Segment_3(const Rep& s)
       : Rep(s) {}
 
+  Segment_3(Rep&& s)
+      : Rep(std::move(s)) {}
+
   Segment_3(const Point_3& sp, const Point_3& ep)
     : Rep(typename R::Construct_segment_3()(Return_base_tag(), sp, ep)) {}
 
@@ -173,7 +176,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Segment_3<R> &s)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << s.source() << ' ' << s.target();
     case IO::BINARY :

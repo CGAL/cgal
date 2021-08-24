@@ -355,7 +355,7 @@ public:
 
     \tparam ColorMap model of `ReadablePropertyMap`  whose key type is
     the value type of the iterator of `PointRange` and value type is
-    `CGAL::Color`.
+    `CGAL::IO::Color`.
 
     \param features the feature set where the features are instantiated.
     \param color_map property map to access the colors of the input points (if any).

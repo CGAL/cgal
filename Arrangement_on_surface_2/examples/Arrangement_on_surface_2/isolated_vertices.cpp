@@ -27,9 +27,10 @@ int main()
   arr.insert_at_vertices(s4, v4, v1);
 
   // Remove the isolated vertices located in the unbounded face.
-  Arrangement::Vertex_iterator curr, next = arr.vertices_begin();
-  for (curr = next++; curr != arr.vertices_end(); curr = next++) {
+  Arrangement::Vertex_iterator iter = arr.vertices_begin();
+  while (iter != arr.vertices_end()) {
     // Keep an iterator to the next vertex, as curr might be deleted.
+    Arrangement::Vertex_iterator curr = iter ++;
     if (curr->is_isolated() && curr->face() == uf)
       arr.remove_isolated_vertex(curr);
   }

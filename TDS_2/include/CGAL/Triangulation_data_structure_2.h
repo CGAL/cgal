@@ -1997,13 +1997,16 @@ copy_tds(const TDS_src& tds_src,
     CGAL_triangulation_precondition( tds_src.is_vertex(vert));
 
   clear();
-  size_type n = tds_src.number_of_vertices();
   set_dimension(tds_src.dimension());
 
-  // Number of pointers to cell/vertex to copy per cell.
-  int dim = (std::max)(1, dimension() + 1);
+  if(tds_src.number_of_vertices() == 0)
+    return Vertex_handle();
 
-  if(n == 0) {return Vertex_handle();}
+  // Number of pointers to face/vertex to copy per face.
+  const int dim = (std::max)(1, dimension() + 1);
+
+  // Number of neighbors to set in each face (dim -1 has a single face)
+  const int nn = (std::max)(0, dimension() + 1);
 
   //initializes maps
   Unique_hash_map<typename TDS_src::Vertex_handle,Vertex_handle> vmap;
@@ -2025,7 +2028,7 @@ copy_tds(const TDS_src& tds_src,
     convert_face(*fit1, *fh);
   }
 
-  //link vertices to a cell
+  //link vertices to a face
   vit1 = tds_src.vertices_begin();
   for ( ; vit1 != tds_src.vertices_end(); vit1++) {
     vmap[vit1]->set_face(fmap[vit1->face()]);
@@ -2034,10 +2037,10 @@ copy_tds(const TDS_src& tds_src,
   //update vertices and neighbor pointers
   fit1 = tds_src.faces().begin();
   for ( ; fit1 != tds_src.faces_end(); ++fit1) {
-      for (int j = 0; j < dim ; ++j) {
+      for (int j = 0; j < dim ; ++j)
         fmap[fit1]->set_vertex(j, vmap[fit1->vertex(j)] );
+      for (int j = 0; j < nn ; ++j)
         fmap[fit1]->set_neighbor(j, fmap[fit1->neighbor(j)]);
-      }
     }
 
   // remove the post condition because it is false when copying the
@@ -2113,7 +2116,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 
   size_type n = number_of_vertices();
   size_type m = number_of_full_dim_faces();
-  if(is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << std::endl;
+  if(IO::is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << std::endl;
   else     os << n << m << dimension();
   if (n==0) return;
 
@@ -2128,7 +2131,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     if( ! skip_first){
       // os << v->point();
       os << *v ;
-    if(is_ascii(os))  os << std::endl;
+    if(IO::is_ascii(os))  os << std::endl;
     }
   }
 
@@ -2138,10 +2141,10 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
         V[vit] = inum++;
         // os << vit->point();
         os << *vit;
-        if(is_ascii(os)) os << "\n";
+        if(IO::is_ascii(os)) os << "\n";
     }
   }
-  if(is_ascii(os)) os << "\n";
+  if(IO::is_ascii(os)) os << "\n";
 
   // vertices of the faces
   inum = 0;
@@ -2151,21 +2154,21 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     F[ib] = inum++;
     for(int j = 0; j < dim ; ++j) {
       os << V[ib->vertex(j)];
-      if(is_ascii(os)) os << " ";
+      if(IO::is_ascii(os)) os << " ";
     }
     os << *ib ;
-    if(is_ascii(os)) os << "\n";
+    if(IO::is_ascii(os)) os << "\n";
   }
-  if(is_ascii(os)) os << "\n";
+  if(IO::is_ascii(os)) os << "\n";
 
   // neighbor pointers of the  faces
   for( Face_iterator it = face_iterator_base_begin();
        it != face_iterator_base_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[it->neighbor(j)];
-      if(is_ascii(os))  os << " ";
+      if(IO::is_ascii(os))  os << " ";
     }
-    if(is_ascii(os)) os << "\n";
+    if(IO::is_ascii(os)) os << "\n";
   }
 
   return ;

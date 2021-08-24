@@ -15,8 +15,6 @@
 #ifndef CGAL_IO_WKT_TRAITS_MULTIPOLYGON_H
 #define CGAL_IO_WKT_TRAITS_MULTIPOLYGON_H
 
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-
 #include <CGAL/internal/Geometry_container.h>
 
 #include <boost/geometry/io/wkt/write.hpp>
@@ -37,6 +35,5 @@ struct tag<CGAL::internal::Geometry_container<R, multi_polygon_tag> >
 } // namespace geometry
 } // namespace boost
 
-#endif // BOOST VERSION CHECKS
 #endif // CGAL_IO_WKT_TRAITS_MULTIPOLYGON_H
 

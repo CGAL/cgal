@@ -304,7 +304,7 @@ class Vertex_base {
  public:
       std::string debug() const
         { std::stringstream os;
-          set_pretty_mode(os);
+          CGAL::IO::set_pretty_mode(os);
           os<<"{ addr, point, mark, snc, svb, sve, seb, see, sfb, sfe, sl,"
             <<" info }"<<std::endl;
           os<<"{ "<<this<<", "<<point_at_center_<<", "<<mark_<<", "<<&*sncp_<<", "

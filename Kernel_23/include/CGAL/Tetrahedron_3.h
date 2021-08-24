@@ -58,6 +58,9 @@ public:
   Tetrahedron_3(const Rep& t)
       : Rep(t) {}
 
+  Tetrahedron_3(Rep&& t)
+      : Rep(std::move(t)) {}
+
   Tetrahedron_3(const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s)
     : Rep(typename R::Construct_tetrahedron_3()(Return_base_tag(), p, q, r, s)) {}
@@ -147,7 +150,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Tetrahedron_3<R> &t)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << t[0] << ' ' << t[1] << ' ' << t[2] << ' ' << t[3];
     case IO::BINARY :

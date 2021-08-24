@@ -545,24 +545,6 @@ Unassigned points are in black in both output images.
 \cgalFigureEnd
 
 
-\section Shape_detection_PlaneRegularization Plane Regularization
-
-Shape detection applies to man-made scenes or objects such as urban scenes or scans of mechanical parts.
-Such scenes often contain a wide range of geometric regularities such as parallelism, orthogonality, or symmetry.
-This package offers a function to reinforce four types of regularities for planar shapes, `CGAL::regularize_planes()`:
-
-- Planes that are near *parallel* are made parallel: normal vectors of planes that form angles smaller than a user-defined threshold are made exactly equal;
-- Parallel planes that are near *coplanar* are made exactly coplanar;
-- Planes that are near *orthogonal* are made exactly orthogonal;
-- Planes that are near *symmetrical* with respect to a user-defined axis are made exactly symmetrical.
-
-The user can choose to regularize only one or several of these four properties (see \link CGAL::regularize_planes() Reference Manual\endlink).
-The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters,
-which are subgroups of axis-symmetric and orthogonal clusters) as described by Verdie et al. \cgalCite{cgal:vla-lod-15}
-
-\cgalExample{Shape_detection/efficient_RANSAC_and_plane_regularization.cpp}
-
-
 \section Shape_detection_DeprecatedComponents Deprecated Components
 
 The new version (see all examples above) of the class `CGAL::Shape_detection::Region_growing`
@@ -580,8 +562,7 @@ Please update your code.
 \section Shape_detection_History History
 
 The Efficient RANSAC component was developed by Sven Oesau based on the prototype version created by Yannick Verdie,
-with the help of Clément Jamin and under the supervision of Pierre Alliez. Plane regularization was added by Simon Giraudot
-based on the prototype version developed by Florent Lafarge.
+with the help of Clément Jamin and under the supervision of Pierre Alliez.
 
 The region growing algorithm on a 3D point set was first implemented by Simon Giraudot based on the prototype version developed by Florent Lafarge
 and then generalized to arbitrary items including versions for a 2D point set, a 3D point set, and a polygon mesh by Thien Hoang during the

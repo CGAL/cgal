@@ -19,7 +19,7 @@
 
 
 #include <CGAL/Apollonius_graph_2/basic.h>
-#include <CGAL/atomic.h>
+#include <atomic>
 
 namespace CGAL {
 
@@ -33,8 +33,8 @@ public:
   typedef bool bool_;
   typedef unsigned long long_;
 #else
-  typedef CGAL::cpp11::atomic<bool> bool_;
-  typedef CGAL::cpp11::atomic<unsigned long> long_;
+  typedef std::atomic<bool> bool_;
+  typedef std::atomic<unsigned long> long_;
 #endif
 
   static bool_ count_cases;

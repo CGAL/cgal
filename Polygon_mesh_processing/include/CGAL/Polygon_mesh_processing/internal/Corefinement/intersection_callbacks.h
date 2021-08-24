@@ -21,7 +21,7 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <set>
 
 namespace CGAL {

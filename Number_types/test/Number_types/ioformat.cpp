@@ -51,10 +51,10 @@ void test_it(const char* N, int value)
   NT tmp2(0), tmp1 = static_cast<NT>(value);
 
   std::ostringstream os;
-  os << ::CGAL::oformat(tmp1);
+  os << ::CGAL::IO::oformat(tmp1);
   std::cout << os.str() << std::endl;
   std::istringstream is(os.str());
-  is >> ::CGAL::iformat(tmp2);
+  is >> ::CGAL::IO::iformat(tmp2);
   assert( tmp1 == tmp2 );
 }
 

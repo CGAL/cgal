@@ -118,6 +118,7 @@
 \package_listing{Point_set_3}
 \package_listing{Point_set_processing_3}
 \package_listing{Shape_detection}
+\package_listing{Shape_regularization}
 \package_listing{Stream_lines_2}
 \package_listing{Classification}
 \package_listing{Heat_method_3}
@@ -153,6 +154,7 @@
 \package_listing{BGL}
 \package_listing{Solver_interface}
 \package_listing{Property_map}
+\package_listing{Weights}
 \package_listing{Cone_spanners_2}
 \package_listing{Circulator}
 \package_listing{Generator}

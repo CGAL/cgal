@@ -46,7 +46,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/atomic.h>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
@@ -70,6 +69,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <atomic>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -102,7 +102,7 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
   std::ofstream out(filename.c_str(),
                     std::ios_base::out|std::ios_base::binary);
   out << "binary CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
-  CGAL::set_binary_mode(out);
+  CGAL::IO::set_binary_mode(out);
   out << c3t3;
 }
 
@@ -143,7 +143,7 @@ public:
                              std::size_t maximal_number_of_vertices = 0,
                              Mesh_error_code* error_code = 0
 #ifndef CGAL_NO_ATOMIC
-                             , CGAL::cpp11::atomic<bool>* stop_ptr = 0
+                             , std::atomic<bool>* stop_ptr = 0
 #endif
                              );
 
@@ -156,7 +156,7 @@ public:
   bool forced_stop() const {
 #ifndef CGAL_NO_ATOMIC
     if(stop_ptr_ != 0 &&
-       stop_ptr_->load(CGAL::cpp11::memory_order_acquire) == true)
+       stop_ptr_->load(std::memory_order_acquire) == true)
     {
       if(error_code_ != 0) *error_code_ = CGAL_MESH_3_STOPPED;
       return true;
@@ -469,7 +469,7 @@ private:
   Mesh_error_code* const error_code_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const stop_ptr_;
+  std::atomic<bool>* const stop_ptr_;
 #endif
 };
 
@@ -481,7 +481,7 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
                            std::size_t maximal_number_of_vertices,
                            Mesh_error_code* error_code
 #ifndef CGAL_NO_ATOMIC
-                           , CGAL::cpp11::atomic<bool>* stop_ptr
+                           , std::atomic<bool>* stop_ptr
 #endif
                            )
   : c3t3_(c3t3)
@@ -578,7 +578,7 @@ insert_corners()
     Index p_index = domain_.index_from_corner_index(cit->first);
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
-      std::cerr << "** treat corner #" << CGAL::oformat(p_index) << std::endl;
+      std::cerr << "** treat corner #" << CGAL::IO::oformat(p_index) << std::endl;
 #endif
 
     // Get weight (the ball radius is given by the 'query_size' function)
@@ -679,7 +679,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
     std::cerr << " ERROR dim=" << dim << " index=";
   }
 
-  std::cerr << CGAL::oformat(index) << std::endl;
+  std::cerr << CGAL::IO::oformat(index) << std::endl;
   if(v == Vertex_handle())
     std::cerr << "  HIDDEN!\n";
   std::cerr << "The weight was " << w << std::endl;
@@ -708,7 +708,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
   std::cerr << "smart_insert_point( (" << p
             << "), w=" << w
             << ", dim=" << dim
-            << ", index=" << CGAL::oformat(index) << ")\n";
+            << ", index=" << CGAL::IO::oformat(index) << ")\n";
 #endif
   const Tr& tr = c3t3_.triangulation();
 
@@ -1337,7 +1337,7 @@ refine_balls()
     std::ostringstream oss;
     oss << "dump_protecting_balls_" << refine_balls_iteration_nb << ".cgal";
     std::ofstream outfile(oss.str().c_str(), std::ios_base::binary | std::ios_base::out);
-    CGAL::Mesh_3::save_binary_file(outfile, c3t3_, true);
+    CGAL::IO::save_binary_file(outfile, c3t3_, true);
     outfile.close();
 #endif //CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 
@@ -1498,7 +1498,7 @@ change_ball_size(const Vertex_handle& v, const FT squared_size, const bool speci
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
   std::cerr << "change_ball_size(v=" << disp_vert(v)
             << " dim=" << c3t3_.in_dimension(v)
-            << " index=" << CGAL::oformat(c3t3_.index(v))
+            << " index=" << CGAL::IO::oformat(c3t3_.index(v))
             << " ,\n"
             << "                 (squared) size=" << w
             << ", special_ball=" << std::boolalpha << special_ball << std::endl;
@@ -1636,7 +1636,7 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   std::cerr << "check_and_fix_vertex_along_edge("
             << disp_vert(v)
             << " dim=" << get_dimension(v)
-            << " index=" << CGAL::oformat(c3t3_.index(v))
+            << " index=" << CGAL::IO::oformat(c3t3_.index(v))
             << " special=" << std::boolalpha << is_special(v)
             << ")\n";
 #endif
@@ -1906,7 +1906,7 @@ repopulate(InputIterator begin, InputIterator last,
   std::cerr << "repopulate(begin=" << disp_vert(*begin) << "\n"
             << "           last=" << disp_vert(*last)  << "\n"
             << "           distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "           index=" << CGAL::oformat(index) << ",\n"
+            << "           index=" << CGAL::IO::oformat(index) << ",\n"
             << "           orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion( std::distance(begin,last) >= 0 );
@@ -1946,7 +1946,7 @@ repopulate(InputIterator begin, InputIterator last,
     default:
       std::cerr << " ERROR dim=" << get_dimension(*current)  << " index=";
     }
-    std::cerr  << CGAL::oformat(c3t3_.index(*current)) << std::endl;
+    std::cerr  << CGAL::IO::oformat(c3t3_.index(*current)) << std::endl;
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
     *out++ = *current;
     c3t3_.triangulation().remove(*current);
@@ -1971,7 +1971,7 @@ analyze_and_repopulate(InputIterator begin, InputIterator last,
   std::cerr << "analyze_and_repopulate(begin=" << disp_vert(*begin) << "\n"
             << "                       last=" << disp_vert(*last) << "\n"
             << "                       distance(begin, last)=" << std::distance(begin, last) << ",\n"
-            << "                       index=" << CGAL::oformat(index) << ",\n"
+            << "                       index=" << CGAL::IO::oformat(index) << ",\n"
             << "                       orientation=" << orientation << ")\n";
 #endif
   CGAL_assertion( std::distance(begin,last) >= 0 );

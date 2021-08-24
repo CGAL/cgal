@@ -24,7 +24,8 @@ typedef std::vector<Point_2> Polyline_2;
 // inserts a polyline into a graph
 void insert(const std::vector<Point_2>& poly, Graph& graph, Point_vertex_map& pvmap)
 {
-    vertex_descriptor u, v;
+    vertex_descriptor u = boost::graph_traits<Graph>::null_vertex();
+    vertex_descriptor v;
     for (std::size_t i = 0; i < poly.size(); i++) {
         // check if the point is not yet in the graph
         if (pvmap.find(poly[i]) == pvmap.end()) {

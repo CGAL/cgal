@@ -10,6 +10,9 @@
 #ifndef CGAL_ATOMIC_H
 #define CGAL_ATOMIC_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/atomic.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/config.h>"
+
 #include <CGAL/config.h>
 
 #ifdef CGAL_HAS_THREADS

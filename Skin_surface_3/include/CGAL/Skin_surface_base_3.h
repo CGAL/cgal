@@ -24,7 +24,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 // Used for the triangulated mixed complex / Voronoi diagram
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -93,7 +93,7 @@ private:
 
 public:
   typedef Anchor_point                                               Vertex_info;
-  typedef std::pair<Simplex, boost::shared_ptr<Quadratic_surface> >  Cell_info;
+  typedef std::pair<Simplex, std::shared_ptr<Quadratic_surface> >  Cell_info;
 
 private:
   // Triangulated_mixed_complex:

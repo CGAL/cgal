@@ -32,9 +32,9 @@ int main (int argc, char** argv)
 
   // Loading point set from a file.
 
-  if(!CGAL::read_points(filename, std::back_inserter(points),
-                        CGAL::parameters::point_map(Point_map())
-                                         .normal_map(Normal_map())))
+  if(!CGAL::IO::read_points(filename, std::back_inserter(points),
+                            CGAL::parameters::point_map(Point_map())
+                                             .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file cube.pwn" << std::endl;
     return EXIT_FAILURE;
@@ -64,10 +64,10 @@ int main (int argc, char** argv)
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;
 
-  CGAL::write_points("out.pwn", structured_pts,
-                     CGAL::parameters::point_map(Point_map())
-                                      .normal_map(Normal_map())
-                                      .stream_precision(17));
+  CGAL::IO::write_points("out.pwn", structured_pts,
+                         CGAL::parameters::point_map(Point_map())
+                                          .normal_map(Normal_map())
+                                          .stream_precision(17));
 
   return EXIT_SUCCESS;
 }

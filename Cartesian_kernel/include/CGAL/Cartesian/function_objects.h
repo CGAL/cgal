@@ -253,18 +253,18 @@ namespace CartesianKernelFunctors {
     result_type
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     {
-      FT alpha, beta, gamma;
+      FT alpha, beta, gamma, denom;
 
       Cartesian_internal::solve(t.vertex(1)-t.vertex(0),
                                 t.vertex(2)-t.vertex(0),
                                 t.vertex(3)-t.vertex(0),
-                                p - t.vertex(0), alpha, beta, gamma);
+                                p - t.vertex(0), alpha, beta, gamma, denom);
       if (   (alpha < 0) || (beta < 0) || (gamma < 0)
-          || (alpha + beta + gamma > 1) )
+          || (alpha + beta + gamma > denom) )
           return ON_UNBOUNDED_SIDE;
 
       if (   (alpha == 0) || (beta == 0) || (gamma == 0)
-          || (alpha+beta+gamma == 1) )
+          || (alpha+beta+gamma == denom) )
         return ON_BOUNDARY;
 
       return ON_BOUNDED_SIDE;
@@ -606,6 +606,7 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Compare_slope_2
   {
+    typedef typename K::Point_2            Point_2;
     typedef typename K::Line_2             Line_2;
     typedef typename K::Segment_2          Segment_2;
   public:
@@ -624,6 +625,15 @@ namespace CartesianKernelFunctors {
                               s1.target().x(), s1.target().y(),
                               s2.source().x(), s2.source().y(),
                               s2.target().x(), s2.target().y());
+    }
+
+    result_type
+    operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
+    {
+      return compare_slopesC2(s1s.x(), s1s.y(),
+                              s1t.x(), s1t.y(),
+                              s2s.x(), s2s.y(),
+                              s2t.x(), s2t.y());
     }
   };
 
@@ -2741,6 +2751,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_2   Point_2;
+    typedef typename K::Segment_2 Segment_2;
   public:
     typedef Point_2          result_type;
 
@@ -2752,6 +2763,17 @@ namespace CartesianKernelFunctors {
       midpointC2(p.x(), p.y(), q.x(), q.y(), x, y);
       return construct_point_2(x, y);
     }
+
+    Point_2
+    operator()(const Segment_2& s) const
+    {
+      typename K::Construct_point_2 construct_point_2;
+      FT x, y;
+      const Point_2& p = s.source();
+      const Point_2& q = s.target();
+      midpointC2(p.x(), p.y(), q.x(), q.y(), x, y);
+      return construct_point_2(x, y);
+    }
   };
 
   template <typename K>
@@ -2759,12 +2781,24 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::FT        FT;
     typedef typename K::Point_3   Point_3;
+    typedef typename K::Segment_3 Segment_3;
   public:
     typedef Point_3               result_type;
 
     Point_3
     operator()(const Point_3& p, const Point_3& q) const
     {
+      typename K::Construct_point_3 construct_point_3;
+      FT x, y, z;
+      midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);
+      return construct_point_3(x, y, z);
+    }
+
+    Point_3
+    operator()(const Segment_3& s) const
+    {
+      const Point_3& p = s.source();
+      const Point_3& q = s.target();
       typename K::Construct_point_3 construct_point_3;
       FT x, y, z;
       midpointC3(p.x(), p.y(), p.z(), q.x(), q.y(), q.z(), x, y, z);
@@ -3860,10 +3894,10 @@ namespace CartesianKernelFunctors {
                v1 = t.vertex(1)-o,
                v2 = t.vertex(2)-o;
 
-      FT alpha, beta, gamma;
-      Cartesian_internal::solve(v0, v1, v2, p-o, alpha, beta, gamma);
+      FT alpha, beta, gamma, denum;
+      Cartesian_internal::solve(v0, v1, v2, p-o, alpha, beta, gamma, denum);
       return (alpha >= FT(0)) && (beta >= FT(0)) && (gamma >= FT(0))
-          && ((alpha+beta+gamma == FT(1)));
+          && ((alpha+beta+gamma == denum));
     }
 
     result_type

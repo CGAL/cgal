@@ -12,7 +12,7 @@
 #ifndef CGAL_VECTOR_AVX4_H
 #define CGAL_VECTOR_AVX4_H
 
-#if !defined __AVX__ || (__GNUC__ * 100 + __GNUC_MINOR__ < 408)
+#if !defined __AVX__
 #error Requires AVX and gcc 4.8+
 #endif
 #include <x86intrin.h>

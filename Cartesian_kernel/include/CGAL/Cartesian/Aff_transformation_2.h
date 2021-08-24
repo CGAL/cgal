@@ -165,6 +165,11 @@ public:
   bool is_even() const { return this->Ptr()->is_even(); }
   bool is_odd() const { return ! (this->Ptr()->is_even()); }
 
+  bool is_translation() const { return this->Ptr()->is_translation(); }
+  bool is_scaling() const { return this->Ptr()->is_scaling(); }
+  bool is_reflection() const { return this->Ptr()->is_reflection(); }
+  bool is_rotation() const { return this->Ptr()->is_rotation(); }
+
   FT cartesian(int i, int j) const { return this->Ptr()->cartesian(i,j); }
   FT homogeneous(int i, int j) const { return cartesian(i,j); }
   FT m(int i, int j) const { return cartesian(i,j); }

@@ -27,9 +27,6 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/Nef_2/iterator_tools.h>
 #include <CGAL/Nef_S2/Sphere_geometry.h>
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-#include <CGAL/Box_intersection_d/Box_d.h>
-#endif
 #include <list>
 
 #undef CGAL_NEF_DEBUG
@@ -129,29 +126,6 @@ public:
   and iterators. There's no type |SHalfloop_iterator|, as there is
   at most one |SLoop| pair per vertex.}*/
 
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  template<class Refs>
-  class Facet_with_box : public Items::template Halffacet<Refs> {
-  public:
-    typedef typename Items::template Halffacet<Refs> Halffacet;
-    typedef typename Refs::FT FT;
-    typedef typename Box_intersection_d::Box_d<FT,3> Box;
-
-    Box b;
-
-    Facet_with_box() : Halffacet(), b() {}
-    Facet_with_box(const Plane_3& h, Mark m) : Halffacet(h,m) {}
-    Facet_with_box(const Facet_with_box<Refs>& f) : Halffacet(f) {
-      b = f.b;
-    }
-
-    Facet_with_box<Refs>& operator=(const Facet_with_box<Refs>& f) {
-      (Halffacet) *this = (Halffacet) f;
-      b = f.b;
-      return *this;
-    }
-  };
-#endif
 
  public:
   typedef Sphere_map                                        Vertex_base;
@@ -163,11 +137,7 @@ public:
   typedef typename Vertex_list::iterator                    Vertex_iterator;
   typedef typename Vertex_list::const_iterator              Vertex_const_iterator;
 
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  typedef Facet_with_box<SNC_structure>                     Halffacet_base;
-#else
   typedef typename Items::template Halffacet<SNC_structure> Halffacet_base;
-#endif
   typedef SNC_in_place_list_halffacet<Halffacet_base>       Halffacet;
   typedef CGAL::In_place_list<Halffacet,false>              Halffacet_list;
   typedef CGAL_ALLOCATOR(Halffacet)                         Halffacet_alloc;
@@ -455,229 +425,6 @@ public:
           move_shalfedge_around_facet<SHalfedge_iterator> >
           SHalfedge_around_facet_circulator;
 
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  typedef std::pair<SHalfedge_around_facet_circulator,
-                    SHalfedge_around_facet_circulator> Outer_cycle;
-  typedef std::pair<SHalfedge_around_facet_circulator,
-                    SHalfedge_around_facet_circulator> Inner_cycle;
-
-  class Partial_facet {
-  public:
-    Halffacet_handle f;
-
-    std::list<Outer_cycle> outer_cycles;
-    std::list<Inner_cycle> inner_cycles;
-    std::list<Point_3>     isolated_vertices;
-
-    typedef typename std::list<Outer_cycle>::iterator Outer_cycle_iterator;
-    typedef typename std::list<Inner_cycle>::iterator Inner_cycle_iterator;
-    typedef typename std::list<Point_3>::iterator Isolated_vertex_iterator;
-
-    Partial_facet() {}
-
-    Partial_facet(const Partial_facet& pf) {
-      f = pf.f;
-      outer_cycles = pf.outer_cycles;
-      inner_cycles = pf.inner_cycles;
-      isolated_vertices = pf.isolated_vertices;
-    }
-
-    Partial_facet& operator=(const Partial_facet& pf) {
-      f = pf.f;
-      outer_cycles = pf.outer_cycles;
-      inner_cycles = pf.inner_cycles;
-      isolated_vertices = pf.isolated_vertices;
-      return *this;
-    }
-
-    explicit Partial_facet(Halffacet_handle fin) : f(fin) {
-      Halffacet_cycle_iterator fc = f->facet_cycles_begin();
-      for(;fc != f->facet_cycles_end();++fc) {
-        if(fc.is_shalfedge()) {
-          SHalfedge_around_facet_circulator se(fc), se_next(se);
-          ++se_next;
-          if(fc == f->facet_cycles_begin()) {
-            outer_cycles.push_back(Outer_cycle(se, se));
-            //            outer_cycles.push_back(Outer_cycle(se_next, se));
-          } else {
-            inner_cycles.push_back(Inner_cycle(se, se));
-            //            inner_cycles.push_back(Inner_cycle(se_next, se));
-          }
-        } else if(fc.is_shalfloop()) {
-          SHalfloop_handle l(fc);
-          isolated_vertices.push_back(l->incident_sface()->center_vertex()->point());
-        } else
-          CGAL_error_msg( "wrong value");
-      }
-    }
-
-    Outer_cycle_iterator outer_cycles_begin() { return outer_cycles.begin(); }
-    Inner_cycle_iterator inner_cycles_begin() { return inner_cycles.begin(); }
-    Isolated_vertex_iterator isolated_vertices_begin() { return isolated_vertices.begin(); }
-
-    Outer_cycle_iterator outer_cycles_end() { return outer_cycles.end(); }
-    Inner_cycle_iterator inner_cycles_end() { return inner_cycles.end(); }
-    Isolated_vertex_iterator isolated_vertices_end() { return isolated_vertices.end(); }
-
-    bool divide(const Plane_3& p, Partial_facet& pf1, Partial_facet& pf2) {
-      //      std::cerr << "divide " << std::endl;
-      //      debug();
-      pf1.f = pf2.f = f;
-      Outer_cycle_iterator oc = outer_cycles.begin();
-      for(;oc != outer_cycles.end(); ++oc) {
-        bool next = false;
-        //        CGAL_assertion(oc->first != oc->second);
-        SHalfedge_around_facet_circulator se = oc->first, se_begin(se), se_new(se), se_end;
-        Oriented_side ref = p.oriented_side(se->source()->source()->point()), cur;
-        //        std::cerr << "start " << se->source()->source()->point() << ":" << ref << std::endl;
-        ++se;
-        while(ref == ON_ORIENTED_BOUNDARY && se != oc->second) {
-          ref = p.oriented_side(se->source()->source()->point());
-          ++se;
-        }
-        if(se == oc->second)
-          return false;
-
-        for(;se != oc->second;++se) {
-          cur = p.oriented_side(se->source()->source()->point());
-          //          std::cerr << "current " << se->source()->source()->point() << ":" << cur  << std::endl;
-          if(cur != ref) {
-            CGAL_assertion(ref != ON_ORIENTED_BOUNDARY);
-            if(cur == ON_ORIENTED_BOUNDARY) {
-              next = true;
-              continue;
-            }
-            se_end = se;
-            if(next)
-              --se_end;
-            if(cur == ON_NEGATIVE_SIDE) {
-              pf2.outer_cycles.push_back(Outer_cycle(se_begin, se_end));
-            } else if(cur == ON_POSITIVE_SIDE) {
-              pf1.outer_cycles.push_back(Outer_cycle(se_begin, se_end));
-            }
-            se_begin = se_new;
-            if(next)
-              ++se_begin;
-            ref = cur;
-          } else
-              se_new = se;
-          next = false;
-        }
-        //        std::cerr << "end of cycle " << ref << std::endl;
-        if(next) {
-          if(ref == ON_POSITIVE_SIDE) {
-            pf1.outer_cycles.push_back(Outer_cycle(se_new, se));
-            pf2.outer_cycles.push_back(Outer_cycle(se_begin, --se));
-          } else {
-            pf2.outer_cycles.push_back(Outer_cycle(se_new, se));
-            pf1.outer_cycles.push_back(Outer_cycle(se_begin, --se));
-          }
-        } else {
-          if(ref == ON_POSITIVE_SIDE)
-            pf2.outer_cycles.push_back(Outer_cycle(se_begin, se));
-          else if(ref == ON_NEGATIVE_SIDE)
-            pf1.outer_cycles.push_back(Outer_cycle(se_begin, se));
-        }
-      }
-
-      Inner_cycle_iterator ic = inner_cycles.begin();
-      for(;ic != inner_cycles.end(); ++ic) {
-        bool next = false;
-        SHalfedge_around_facet_circulator se = ic->first, se_begin(se), se_new(se), se_end;
-        Oriented_side ref = p.oriented_side(se->source()->source()->point()), cur;
-        ++se;
-        while(ref == ON_ORIENTED_BOUNDARY && se != ic->second) {
-          ref = p.oriented_side(se->source()->source()->point());
-          ++se;
-        }
-        if(se == ic->second)
-          return false;
-
-        for(;se != ic->second; ++se) {
-          cur = p.oriented_side(se->source()->source()->point());
-          if(cur != ref) {
-            CGAL_assertion(ref != ON_ORIENTED_BOUNDARY);
-            if(cur == ON_ORIENTED_BOUNDARY) {
-              next = true;
-              continue;
-            }
-            se_end = se;
-            if(next)
-              --se_end;
-            if(cur == ON_NEGATIVE_SIDE) {
-              pf2.inner_cycles.push_back(Inner_cycle(se_begin, se_end));
-            } else if(cur == ON_POSITIVE_SIDE) {
-              pf1.inner_cycles.push_back(Inner_cycle(se_begin, se_end));
-            }
-            se_begin = se_new;
-            if(next)
-              ++se_begin;
-            ref = cur;
-          } else
-              se_new = se;
-          next = false;
-        }
-        if(next) {
-          if(ref == ON_POSITIVE_SIDE) {
-            pf1.inner_cycles.push_back(Inner_cycle(se_new, se));
-            pf2.inner_cycles.push_back(Inner_cycle(se_begin, --se));
-          } else {
-            pf2.inner_cycles.push_back(Inner_cycle(se_new, se));
-            pf1.inner_cycles.push_back(Inner_cycle(se_begin, --se));
-          }
-        } else {
-          if(ref == ON_POSITIVE_SIDE)
-            pf2.inner_cycles.push_back(Inner_cycle(se_begin, se));
-          else if(ref == ON_NEGATIVE_SIDE)
-            pf1.inner_cycles.push_back(Inner_cycle(se_begin, se));
-        }
-      }
-
-      Isolated_vertex_iterator iv = isolated_vertices.begin();
-      for(;iv != isolated_vertices.end();++iv) {
-        Oriented_side side = p.oriented_side(*iv);
-        if( side == ON_NEGATIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
-          pf1.isolated_vertices.push_back(*iv);
-        if( side == ON_POSITIVE_SIDE || side == ON_ORIENTED_BOUNDARY)
-          pf1.isolated_vertices.push_back(*iv);
-      }
-      //      std::cerr << "into " << std::endl;
-      //      pf1.debug();
-      //      pf2.debug();
-      return true;
-    }
-
-    void debug() {
-      std::cerr << "Partial_facet " << std::endl;
-      std::cerr << "Box " << std::endl;
-      std::cerr << " " << f->b.min_coord(0) << std::endl;
-      std::cerr << " " << f->b.min_coord(1) << std::endl;
-      std::cerr << " " << f->b.min_coord(2) << std::endl;
-      std::cerr << " " << f->b.max_coord(0) << std::endl;
-      std::cerr << " " << f->b.max_coord(1) << std::endl;
-      std::cerr << " " << f->b.max_coord(2) << std::endl;
-
-      Outer_cycle_iterator oc = outer_cycles_begin();
-      for(; oc != outer_cycles_end(); ++oc) {
-        std::cerr << "Outer cycle " << std::endl;
-        SHalfedge_around_facet_circulator sb(oc->first), se(oc->second);
-        CGAL_For_all(sb,se) {
-          std::cerr << "  " << sb->source()->source()->point() << std::endl;
-        }
-      }
-
-      Inner_cycle_iterator ic = inner_cycles_begin();
-      for(; ic != inner_cycles_end(); ++ic) {
-        std::cerr << "Inner cycle " << std::endl;
-        SHalfedge_around_facet_circulator sb(ic->first), se(ic->second);
-        CGAL_For_all(sb,se) {
-          std::cerr << "  " << sb->source()->source()->point() << std::endl;
-        }
-      }
-    }
-  };
-
-#endif
 
   /*{\Mcreation 3}*/
   /*{\Mtext |\Mname| is default and copy constructible. Note that copy

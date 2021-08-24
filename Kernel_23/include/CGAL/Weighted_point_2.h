@@ -69,6 +69,9 @@ public:
   Weighted_point_2(const Rep& p)
       : Rep(p) {}
 
+  Weighted_point_2(Rep&& p)
+      : Rep(std::move(p)) {}
+
   explicit
   Weighted_point_2(const Point_2& p)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), p, 0))
@@ -236,7 +239,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Weighted_point_2<R>& p,const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << p.point() << ' ' << p.weight();
     case IO::BINARY :
@@ -253,7 +256,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Weighted_point_2<R>& p,const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
       return os << p.point() << ' ' << p.weight();
@@ -283,9 +286,9 @@ std::istream&
 extract(std::istream& is, Weighted_point_2<R>& p, const Cartesian_tag&)
 {
   typename R::FT x, y, weight;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-      is >> iformat(x) >> iformat(y) >> iformat(weight);
+      is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(weight);
         break;
     case IO::BINARY :
         read(is, x);
@@ -294,7 +297,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Cartesian_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -309,7 +312,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hw;
   typename R::FT weight;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
       is >> hx >> hy >> hw >> weight;
@@ -322,7 +325,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Homogeneous_tag&)
         break;
     default:
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

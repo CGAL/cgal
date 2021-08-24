@@ -29,8 +29,9 @@
 #define _CORE_COREDEFS_H_
 
 #include <CGAL/CORE/extLong.h>
-#include <CGAL/atomic.h>
 #include <CGAL/disable_warnings.h>
+
+#include <atomic>
 
 #ifdef CGAL_HEADER_ONLY
 
@@ -75,7 +76,7 @@ namespace CORE {
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, AbortFlag, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, AbortFlag, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, AbortFlag, true)
 #endif
 
 /// Invalid Flag -- initiallly value is non-negative
@@ -86,7 +87,7 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, AbortFlag, true)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(int, InvalidFlag, 0)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<int>, InvalidFlag, 0)
+CGAL_GLOBAL_STATE_VAR(std::atomic<int>, InvalidFlag, 0)
 #endif
 
 /// Escape Precision in bits
@@ -102,7 +103,7 @@ CGAL_GLOBAL_STATE_VAR(long, EscapePrecFlag, 0)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, EscapePrecWarning, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, EscapePrecWarning, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, EscapePrecWarning, true)
 #endif
 
 // These following two values determine the precision of computing
@@ -124,7 +125,7 @@ CGAL_GLOBAL_STATE_VAR(extLong, defAbsPrec, CORE_posInfty)
 #ifdef CGAL_NO_ATOMIC
     CGAL_GLOBAL_STATE_VAR(long, defBigFloatOutputDigits, 10)
 #else
-    CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defBigFloatOutputDigits, 10)
+    CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defBigFloatOutputDigits, 10)
 #endif
 
 /// default input precision in digits for converting a string to a Real or Expr
@@ -138,7 +139,7 @@ CGAL_GLOBAL_STATE_VAR(extLong, defInputDigits, CORE_posInfty)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(long, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
 #endif
 
 /// default input precision in digits for converting a string to a BigFloat
@@ -146,7 +147,7 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defOutputDigits, 10) // == get_
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(long, defBigFloatInputDigits, 16)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defBigFloatInputDigits, 16)
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defBigFloatInputDigits, 16)
 #endif
 
 inline
@@ -169,7 +170,7 @@ CGAL_GLOBAL_STATE_VAR(extLong, defBFsqrtAbsPrec, 54)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, fpFilterFlag, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, fpFilterFlag, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, fpFilterFlag, true)
 #endif
 
 
@@ -177,7 +178,7 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, fpFilterFlag, true)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, incrementalEvalFlag, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, incrementalEvalFlag, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, incrementalEvalFlag, true)
 #endif
 
 
@@ -185,7 +186,7 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, incrementalEvalFlag, true)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, progressiveEvalFlag, true)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, progressiveEvalFlag, true)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, progressiveEvalFlag, true)
 #endif
 
 
@@ -193,14 +194,14 @@ CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, progressiveEvalFlag, true)
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(bool, rationalReduceFlag, false)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<bool>, rationalReduceFlag, false)
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, rationalReduceFlag, false)
 #endif
 
 /// default initial (bit) precision for AddSub Progressive Evaluation
 #ifdef CGAL_NO_ATOMIC
 CGAL_GLOBAL_STATE_VAR(long, defInitialProgressivePrec, 64)
 #else
-CGAL_GLOBAL_STATE_VAR(CGAL::cpp11::atomic<long>, defInitialProgressivePrec, 64)
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defInitialProgressivePrec, 64)
 #endif
 
 //////////////////////////////////////////////////////////////

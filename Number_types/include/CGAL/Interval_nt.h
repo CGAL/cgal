@@ -438,9 +438,9 @@ private:
       if(c == '['){ // read original output from operator <<
         double inf,sup;
         CGAL_SWALLOW(is, '[');// read the "["
-        is >> iformat(inf);
+        is >> IO::iformat(inf);
         CGAL_SWALLOW(is, ';');// read the ";"
-        is >> iformat(sup);
+        is >> IO::iformat(sup);
         CGAL_SWALLOW(is, ']');// read the "]"
         I = Interval_nt(inf,sup);
       }else{ //read double (backward compatibility)

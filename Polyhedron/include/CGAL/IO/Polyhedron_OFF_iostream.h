@@ -31,6 +31,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
@@ -56,7 +58,7 @@ bool read_OFF(std::istream& in,
   typedef typename boost::property_traits<VPM>::value_type                              Point;
   typedef typename Kernel_traits<Point>::Kernel                                         Kernel;
 
-  typedef typename internal::Converter_selector<Def_kernel, Kernel>::type               Converter;
+  typedef typename CGAL::internal::Converter_selector<Def_kernel, Kernel>::type         Converter;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -100,16 +102,42 @@ bool read_OFF(std::istream& in, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 template <class Traits,
           class Items,
           template < class T, class I, class A> class HDS,
+          class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(const std::string& fname,
+              Polyhedron_3<Traits, Items, HDS, Alloc>& P,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  std::ifstream in(fname);
+  return read_OFF(in, P, np);
+}
+
+template <class Traits,
+          class Items,
+          template < class T, class I, class A> class HDS,
+          class Alloc>
+bool read_OFF(const std::string& fname, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
+{
+  std::ifstream in(fname);
+  return read_OFF(in, P, parameters::all_default());
+}
+
+} // namespace IO
+
+template <class Traits,
+          class Items,
+          template < class T, class I, class A> class HDS,
           class Alloc>
 std::istream& operator>>(std::istream& in, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 {
-  read_OFF(in, P);
+  IO::read_OFF(in, P);
   return in;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
+
+namespace IO {
 
 template < class Traits,
            class Items,
@@ -149,13 +177,15 @@ bool write_OFF(std::ostream& out, const Polyhedron_3<Traits, Items, HDS, Alloc>&
   return write_OFF(out, P, parameters::all_default());
 }
 
+} // namespace IO
+
 template <class Traits,
           class Items,
           template < class T, class I, class A>
           class HDS, class Alloc>
 std::ostream& operator<<(std::ostream& out, const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 {
-  write_OFF(out, P);
+  IO::write_OFF(out, P);
   return out;
 }
 

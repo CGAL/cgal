@@ -20,8 +20,8 @@ int main(int argc, char*argv[])
   // Reads a point set file in points[].
   // The Identity_property_map property map can be omitted here as it is the default value.
   std::vector<Point> points;
-  if(!CGAL::read_points(fname, std::back_inserter(points),
-                        CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
+  if(!CGAL::IO::read_points(fname, std::back_inserter(points),
+                            CGAL::parameters::point_map(CGAL::Identity_property_map<Point>())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

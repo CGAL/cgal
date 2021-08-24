@@ -55,28 +55,28 @@ I_Binary_write_bool(std::ostream& out, bool b) {
 
 // Special function to read size_t from 32b integer to ensure files
 inline void
-I_Binary_read_uinteger32(std::istream& in, std::uint32_t& u) {
-    in.read( (char*)(&u), 4);
+I_Binary_read_uinteger32(std::istream& is, std::uint32_t& u) {
+    is.read( (char*)(&u), 4);
 }
 // written by 64b systems are still readable by 32b ones
 inline void
-I_Binary_read_size_t_from_uinteger32(std::istream& in, std::size_t& s) {
+I_Binary_read_size_t_from_uinteger32(std::istream& is, std::size_t& s) {
     std::uint32_t s32;
-    I_Binary_read_uinteger32 (in, s32);
+    I_Binary_read_uinteger32 (is, s32);
     s = static_cast<std::size_t>(s32);
 }
 inline void
-I_Binary_read_integer32(std::istream& in, std::int32_t& i) {
-    in.read( (char*)(&i), 4);
+I_Binary_read_integer32(std::istream& is, std::int32_t& i) {
+    is.read( (char*)(&i), 4);
 }
 inline void
-I_Binary_read_float32(std::istream& in, float& f) {
-  in.read( (char*)(&f), 4);
+I_Binary_read_float32(std::istream& is, float& f) {
+  is.read( (char*)(&f), 4);
 }
 inline void
-I_Binary_read_bool(std::istream& in, bool& b) {
+I_Binary_read_bool(std::istream& is, bool& b) {
     char c;
-    in.read(&c, 1);
+    is.read(&c, 1);
     b = (c != 0);
 }
 
@@ -130,13 +130,13 @@ I_Binary_write_big_endian_float32(std::ostream& out, float f) {
 }
 
 inline void
-I_Binary_read_big_endian_integer32(std::istream& in, std::int32_t& i) {
-    in.read( (char*)(&i), 4);
+I_Binary_read_big_endian_integer32(std::istream& is, std::int32_t& i) {
+    is.read( (char*)(&i), 4);
     I_swap_to_big_endian( i);
 }
 inline void
-I_Binary_read_big_endian_float32(std::istream& in, float& f) {
-  in.read( (char*)(&f), 4);
+I_Binary_read_big_endian_float32(std::istream& is, float& f) {
+  is.read( (char*)(&f), 4);
   I_swap_to_big_endian( f);
 }
 

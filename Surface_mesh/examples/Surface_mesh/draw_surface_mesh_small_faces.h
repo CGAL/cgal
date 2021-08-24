@@ -78,7 +78,7 @@ protected:
     bool issmall=false;
 
     // Default color of faces
-    CGAL::Color c(75,160,255);
+    CGAL::IO::Color c(75,160,255);
 
     // Compare the size of the face with the % m_threshold
     bool exist;
@@ -89,7 +89,7 @@ protected:
     // It it is smaller, color the face in red.
     if (get(faces_size, fh)<m_min_size+((m_max_size-m_min_size)/(100-m_threshold)))
     {
-      c=CGAL::Color(255,20,20);
+      c=CGAL::IO::Color(255,20,20);
       issmall=true;
     }
 

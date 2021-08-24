@@ -99,7 +99,7 @@ bool process_aux_2(const std::vector<Qualities>& qualities,
 
     displays[i]->segment(x_position_of_length_bound,  0.0,
                          x_position_of_length_bound, -0.05,
-                         CGAL::blue());
+                         CGAL::IO::blue());
   }
 
   *out_stream << "saving " << filename.c_str() << "...\n";

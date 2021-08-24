@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
   std::vector<K::Point_3> points;
   std::vector<std::vector<std::size_t> > polygons;
 
-  if(!CGAL::read_polygon_soup(filename, points, polygons) || points.empty())
+  if(!CGAL::IO::read_polygon_soup(filename, points, polygons) || points.empty())
   {
     std::cerr << "Cannot open file " << std::endl;
     return EXIT_FAILURE;

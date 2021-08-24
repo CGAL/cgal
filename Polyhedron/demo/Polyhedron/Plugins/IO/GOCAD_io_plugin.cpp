@@ -74,7 +74,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
   SMesh& P = * const_cast<SMesh*>(item->polyhedron());
 
   std::pair<std::string,std::string> name_and_color;
-  if(! CGAL::read_GOCAD(in, name_and_color, P))
+  if(! CGAL::IO::read_GOCAD(in, name_and_color, P))
   {
     std::cerr << "Error: Invalid polyhedron" << std::endl;
     delete item;
@@ -121,7 +121,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
   SMesh* poly = const_cast<SMesh*>(sm_item->polyhedron());
-  CGAL::write_GOCAD(out, qPrintable(fileinfo.baseName()), *poly);
+  CGAL::IO::write_GOCAD(out, qPrintable(fileinfo.baseName()), *poly);
   items.pop_front();
   return true;
 
