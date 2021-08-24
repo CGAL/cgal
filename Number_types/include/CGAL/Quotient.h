@@ -717,10 +717,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // std::cout << "d: " << x.denominator() << std::endl;
 
           Interval_nt<> quot;
-          const double inf = std::numeric_limits<double>::infinity();
-          const double xn = x.num.template convert_to<double>();
-          const double xd = x.den.template convert_to<double>();
-          if (xn == inf || xd == inf) {
+          // const double inf = std::numeric_limits<double>::infinity();
+          // const double xn = x.num.template convert_to<double>();
+          // const double xd = x.den.template convert_to<double>();
+          // if (xn == inf || xd == inf) {
 
             // decltype(x.num) q, r;
             // boost::multiprecision::divide_qr(x.num, x.den, q, r);
@@ -733,13 +733,14 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             // std::cout << "q: " << q << std::endl;
             // std::cout << "r: " << r << std::endl;
 
-            CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
-            if (x.num > 0 && x.den > 0)
-              return std::make_pair(0.0, 1.0);
-            else if (x.num < 0 && x.den < 0)
-              return std::make_pair(0.0, 1.0);
-            else
-              return std::make_pair(-1.0, 0.0);
+            // CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
+            // if (x.num > 0 && x.den > 0) {
+            //   return std::make_pair( 0.0, 1.0);
+            // } else if (x.num < 0 && x.den < 0) {
+            //   return std::make_pair( 0.0, 1.0);
+            // } else {
+            //   return std::make_pair(-1.0, 0.0);
+            // }
 
             // quot =
             //   Interval_nt<>(CGAL_NTS to_interval(q)) +
@@ -753,15 +754,38 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             // std::cout << "new inf1: " << quot.inf() << std::endl;
             // std::cout << "new sup1: " << quot.sup() << std::endl;
 
-          } else {
+          // } else {
 
-            quot =
-              Interval_nt<>(CGAL_NTS to_interval(x.num)) /
-              Interval_nt<>(CGAL_NTS to_interval(x.den));
+          boost::multiprecision::cpp_rational rat;
+          if (x.den < 0) {
+            rat = boost::multiprecision::cpp_rational(-x.num, -x.den);
+          } else {
+            rat = boost::multiprecision::cpp_rational(x.num, x.den);
+          }
+
+            double i = static_cast<double>(rat);
+            double s = i;
+
+            const double inf = std::numeric_limits<double>::infinity();
+            CGAL_assertion(i != inf && s != inf);
+            const int cmp = rat.compare(i);
+            if (cmp > 0) {
+              s = nextafter(s, +inf);
+              CGAL_assertion(rat.compare(s) < 0);
+            }
+            else if (cmp < 0) {
+              i = nextafter(i, -inf);
+              CGAL_assertion(rat.compare(i) > 0);
+            }
+            return std::make_pair(i, s);
+
+            // quot =
+            //   Interval_nt<>(CGAL_NTS to_interval(x.num)) /
+            //   Interval_nt<>(CGAL_NTS to_interval(x.den));
 
             // std::cout << "new inf2: " << quot.inf() << std::endl;
             // std::cout << "new sup2: " << quot.sup() << std::endl;
-          }
+          // }
           return std::make_pair(quot.inf(), quot.sup());
         }
     };

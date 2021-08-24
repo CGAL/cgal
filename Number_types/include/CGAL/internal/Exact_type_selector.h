@@ -69,8 +69,6 @@ struct Exact_field_selector
 // This is disabled for now because cpp_rational is even slower than Quotient<MP_Float>. Quotient<cpp_int> will be a good candidate after some polishing.
 #if defined(CGAL_USE_CPP_INT)
 { typedef Quotient<boost::multiprecision::cpp_int> Type; };
-#elif defined(CGAL_USE_CPP_RATIONAL)
-{ typedef Quotient<boost::multiprecision::cpp_rational> Type; };
 #else
 { typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
 # endif
