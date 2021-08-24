@@ -78,7 +78,7 @@ protected:
 
   int m = 0, M = 100;
 
-  bool verbose = true;
+  bool verbose = false;
 
 public:
   Intersection_3_tester(CGAL::Random& r,
