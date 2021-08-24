@@ -19,7 +19,7 @@ int main() {
   points1[2] = Point(3, 0);
   points1[3] = Point(4, 4);
   points1[4] = Point(6, 0);
-  Polyline pi1 = polyline_construct(&points1[0], &points1[5]);
+  auto pi1 = polyline_construct(&points1[0], &points1[5]);
 
   std::list<Point> points2;
   points2.push_back(Point(1, 3));
@@ -32,13 +32,13 @@ int main() {
   points2.push_back(Point(6, 2));
   points2.push_back(Point(5, 3));
   points2.push_back(Point(4, 2));
-  Polyline pi2 = polyline_construct(points2.begin(), points2.end());
+  auto pi2 = polyline_construct(points2.begin(), points2.end());
 
   std::vector<Segment> segs;
   segs.push_back(Segment(Point(0, 2), Point(1, 2)));
   segs.push_back(Segment(Point(1, 2), Point(3, 6)));
   segs.push_back(Segment(Point(3, 6), Point(5, 2)));
-  Polyline pi3 = polyline_construct(segs.begin(), segs.end());
+  auto pi3 = polyline_construct(segs.begin(), segs.end());
 
   insert(arr, pi1);
   insert(arr, pi2);
