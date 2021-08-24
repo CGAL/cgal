@@ -259,12 +259,35 @@ void sharp_corner_call(const PolygonMesh& pmesh,
                        VPMap vertex_point_map,
                        EIFMap edge_is_feature_map)
 {
-  FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+  using edge_descriptor   = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
-  // Detect sharp corners
-  for(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed : edges(pmesh))
+  // find vertices incident to 1 or at least 3 sharp edges
+  std::unordered_map<vertex_descriptor, std::size_t> degrees;
+  for (vertex_descriptor v : vertices(pmesh))
+    degrees[v] = 0;
+  for (edge_descriptor e : edges(pmesh))
   {
-    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed,pmesh);
+    if (get(edge_is_feature_map, e))
+    {
+      halfedge_descriptor he = halfedge(e, pmesh);
+      degrees[target(he, pmesh)]++;
+      degrees[source(he, pmesh)]++;
+    }
+  }
+  for (auto const& x : degrees)
+  {
+    if (x.second == 1 || x.second > 2)
+      put(vertex_is_feature_map, x.first, true);
+  }
+
+  // find other sharp corners (todo)
+  const FT cos_angle( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
+
+  for(edge_descriptor ed : edges(pmesh))
+  {
+    halfedge_descriptor he = halfedge(ed,pmesh);
     if(angle_in_deg != FT(180)
       && internal::is_sharp_corner(he, cos_angle, pmesh, vertex_point_map))
     {
