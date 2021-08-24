@@ -730,14 +730,40 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             // We do not have here a tight bound!
             // TODO: Use a binary search or limbs to find a tighter bound!
             // TODO: Try to use here the conversion to cpp_rational from below.
-            CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
-            if (x.num > 0 && x.den > 0) {
-              return std::make_pair( 0.0, 1.0);
-            } else if (x.num < 0 && x.den < 0) {
-              return std::make_pair( 0.0, 1.0);
-            } else {
-              return std::make_pair(-1.0, 0.0);
-            }
+            #if false
+              CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
+              if (x.num > 0 && x.den > 0) {
+                return std::make_pair( 0.0, 1.0);
+              } else if (x.num < 0 && x.den < 0) {
+                return std::make_pair( 0.0, 1.0);
+              } else {
+                return std::make_pair(-1.0, 0.0);
+              }
+            #else
+              boost::multiprecision::cpp_rational rat; // TODO: Is it fast enough?
+              CGAL_assertion(x.den != 0);
+              if (x.den < 0) {
+                rat = boost::multiprecision::cpp_rational(-x.num, -x.den);
+              } else {
+                rat = boost::multiprecision::cpp_rational( x.num,  x.den);
+              }
+
+              double i = static_cast<double>(rat);
+              double s = i;
+
+              const double inf = std::numeric_limits<double>::infinity();
+              CGAL_assertion(i != inf && s != inf);
+              const int cmp = rat.compare(i);
+              if (cmp > 0) {
+                s = nextafter(s, +inf);
+                CGAL_assertion(rat.compare(s) < 0);
+              }
+              else if (cmp < 0) {
+                i = nextafter(i, -inf);
+                CGAL_assertion(rat.compare(i) > 0);
+              }
+              return std::make_pair(i, s);
+            #endif
 
             // Interval_nt<> quot =
             //   Interval_nt<>(CGAL_NTS to_interval(q)) +
