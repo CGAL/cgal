@@ -282,14 +282,15 @@ void sharp_corner_call(const PolygonMesh& pmesh,
       put(vertex_is_feature_map, x.first, true);
   }
 
-  // find other sharp corners (todo)
+  // find other sharp corners
   const FT cos_angle( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
 
-  for(edge_descriptor ed : edges(pmesh))
+  for(halfedge_descriptor he : halfedges(pmesh))
   {
-    halfedge_descriptor he = halfedge(ed,pmesh);
-    if(angle_in_deg != FT(180)
-      && internal::is_sharp_corner(he, cos_angle, pmesh, vertex_point_map))
+    if (get(vertex_is_feature_map, target(he, pmesh)))
+      continue;
+    //TODO : is_sharp_corner(he) should be able to detect the tip of a cone
+    if(internal::is_sharp_corner(he, cos_angle, pmesh, vertex_point_map))
     {
       put(vertex_is_feature_map, source(he, pmesh), true);
     }
