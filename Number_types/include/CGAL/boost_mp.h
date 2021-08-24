@@ -195,39 +195,42 @@ struct RET_boost_mp_base
         std::pair<double, double>
         operator()(const Type& x) const {
 
-            // See if https://github.com/boostorg/multiprecision/issues/108 suggests anything better
-            // assume the conversion is within 1 ulp
-            // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
-            double i = x.template convert_to<double>();
-            double s = i;
+          // See if https://github.com/boostorg/multiprecision/issues/108 suggests anything better
+          // assume the conversion is within 1 ulp
+          // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
+          double i = x.template convert_to<double>();
+          double s = i;
 
-            // std::cout << "x: " << x << std::endl;
-            // std::cout << "i: " << i << std::endl;
+          // std::cout << "x: " << x << std::endl;
+          // std::cout << "i: " << i << std::endl;
+          // std::cout << "s: " << s << std::endl;
 
-            const double inf = std::numeric_limits<double>::infinity();
-            // std::cout << i << std::endl;
-            CGAL_assertion(i != inf && s != inf);
-            const int cmp = x.compare(i);
-            // std::cout << "cmp: " << cmp << std::endl;
-            if (cmp > 0) {
+          const double inf = std::numeric_limits<double>::infinity();
+          CGAL_assertion(i != inf && s != inf);
+          const int cmp = x.compare(i);
+          if (cmp > 0) {
+            s = nextafter(s, +inf);
+            #if false
+            if (x.compare(s) >= 0) { // TODO: We may need to run it in a while loop!
+              // std::cout << "s after1: " << i << std::endl;
               s = nextafter(s, +inf);
-              // if (x.compare(s) >= 0) {
-              //   // std::cout << "s after1: " << i << std::endl;
-              //   s = nextafter(s, +inf);
-              //   // std::cout << "s after2: " << i << std::endl;
-              // }
-              CGAL_assertion(x.compare(s) < 0);
+              // std::cout << "s after2: " << i << std::endl;
             }
-            else if (cmp < 0) {
+            #endif
+            CGAL_assertion(x.compare(s) < 0);
+          }
+          else if (cmp < 0) {
+            i = nextafter(i, -inf);
+            #if false
+            if (x.compare(i) <= 0) { // TODO: We may need to run it in a while loop!
+              // std::cout << "i after1: " << i << std::endl;
               i = nextafter(i, -inf);
-              // if (x.compare(i) <= 0) {
-              //   // std::cout << "i after1: " << i << std::endl;
-              //   i = nextafter(i, -inf);
-              //   // std::cout << "i after2: " << i << std::endl;
-              // }
-              CGAL_assertion(x.compare(i) > 0);
+              // std::cout << "i after2: " << i << std::endl;
             }
-            return std::pair<double, double> (i, s);
+            #endif
+            CGAL_assertion(x.compare(i) > 0);
+          }
+          return std::pair<double, double> (i, s);
         }
     };
 };

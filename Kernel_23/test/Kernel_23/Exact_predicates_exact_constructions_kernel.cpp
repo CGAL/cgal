@@ -21,7 +21,5 @@ int main(){
   CGAL_USE_TYPE(EPEKR);
 #endif
 
-  std::cout << EPEK::Point_3(0,0,0) << std::endl;
-
   return 0;
 }
