@@ -236,8 +236,8 @@ Shapes are detected by growing regions from seed items, where each region is cre
 
 Together with the generic algorithm's implementation `CGAL::Shape_detection::Region_growing`, three particular instances of this algorithm are provided:
 
-- Line detection in a \ref Shape_detection_RegionGrowingPoints "2D point set";
-- Plane detection in a \ref Shape_detection_RegionGrowingPoints "3D point set";
+- Line and circle detection in a \ref Shape_detection_RegionGrowingPoints "2D point set";
+- Plane, sphere, and cylinder detection in a \ref Shape_detection_RegionGrowingPoints "3D point set";
 - Plane detection on a \ref Shape_detection_RegionGrowingMesh "polygon mesh".
 
 Other instances can be easily added by the user, as explained below.
@@ -342,10 +342,13 @@ This class finds K (specified by the user) nearest neighbors of the query point 
 
 The component also provides
 
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region` - least squares line fit type of region for 2D points;
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region` - least squares plane fit type of region for 3D points.
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region` - least squares line fit type of region for 2D points
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region` - least squares circle fit type of region for 2D points
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region` - least squares plane fit type of region for 3D points
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region` - least squares sphere fit type of region for 3D points
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region` - least squares cylinder fit type of region for 3D points
 
-The program associates all points from a region to the best-fit hyperplane (2D line or 3D plane)
+The program associates all points from a region to the best-fit object (2D line, 2D circle, 3D plane, 3D sphere, etc.)
 and controls the quality of this fit.
 
 The quality of region growing in a point set (2D or 3D) can be improved by slightly sacrificing the running time.
@@ -356,9 +359,17 @@ We provide a quality sorting both for 2D and 3D points:
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting` - indices of 2D input points are sorted with respect
 to the quality of the least squares line fit applied to the neighbors of each point;
 
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting` - indices of 2D input points are sorted with respect
+to the quality of the least squares circle fit applied to the neighbors of each point;
+
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting` - indices of 3D input points are sorted with respect
 to the quality of the least squares plane fit applied to the neighbors of each point.
 
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting` - indices of 3D input points are sorted with respect
+to the quality of the least squares sphere fit applied to the neighbors of each point.
+
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting` - indices of 3D input points are sorted with respect
+to the quality of the least squares cylinder fit applied to the neighbors of each point.
 
 \subsubsection Shape_detection_RegionGrowingPoints_parameters Parameters
 
@@ -409,6 +420,8 @@ when `angle_threshold` is strict enough (c), or it can be recognized as only one
 
 \subsubsection Shape_detection_RegionGrowingPoints_examples Examples
 
+\paragraph Shape_detection_RegionGrowingPoints_example_2D_lines Detecting 2D Lines
+
 Typical usage of the Region Growing component consists of five steps:
 
 -# Define an input range with points;
@@ -421,15 +434,34 @@ Given a 2D point set, we detect 2D lines using the fuzzy sphere neighborhood. We
 
 The points with assigned to them normal vectors are stored in `std::vector` and the used `Kernel` is `CGAL::Simple_cartesian`, where the number type is `double`.
 
-\cgalExample{Shape_detection/region_growing_on_point_set_2.cpp}
+\cgalExample{Shape_detection/region_growing_lines_on_point_set_2.cpp}
+
+\paragraph Shape_detection_RegionGrowingPoints_example_2D_circles Detecting 2D Circles
+
+The following example shows a similar example, this time detecting circles instead of lines. In that case, we also preprocess points so that they are sorted according to their likelyhood of belonging to a circle:
+
+\cgalExample{Shape_detection/region_growing_circles_on_point_set_2.cpp}
+
+\paragraph Shape_detection_RegionGrowingPoints_example_3D_planes Detecting 3D Planes
 
 If we are given a 3D point set, then the example below shows how to detect 3D planes using the K nearest neighbors search. We color all points from the found regions
 and save them in a file (see Figure \cgalFigureRef{Region_growing_on_point_set_3}). The example also shows how to retrieve all points, which are not assigned to any region, and how to use a custom output iterator.
 
 The point set with associated normals is stored in `CGAL::Point_set_3` and the used `Kernel` is `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
-\cgalExample{Shape_detection/region_growing_on_point_set_3.cpp}
+\cgalExample{Shape_detection/region_growing_planes_on_point_set_3.cpp}
 
+\paragraph Shape_detection_RegionGrowingPoints_example_3D_spheres Detecting 3D Spheres
+
+The following example shows a similar example, this time detecting spheres instead of planes.
+
+\cgalExample{Shape_detection/region_growing_spheres_on_point_set_3.cpp}
+
+\paragraph Shape_detection_RegionGrowingPoints_example_3D_cylinders Detecting 3D Cylinders
+
+The following example shows another similar example, this time detecting (infinite) cylinders.
+
+\cgalExample{Shape_detection/region_growing_cylinders_on_point_set_3.cpp}
 
 \subsubsection Shape_detection_RegionGrowingPoints_performance Performance
 
@@ -518,7 +550,7 @@ a faster version of region growing, use a floating type based kernel.
 We can improve the quality of region growing by providing a different seeding order (analogously to \ref Shape_detection_RegionGrowingPoints "Point Sets") that is why in this example we also
 sort indices of input faces using the `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting` and only then detect regions.
 
-\cgalExample{Shape_detection/region_growing_on_polygon_mesh.cpp}
+\cgalExample{Shape_detection/region_growing_planes_on_polygon_mesh.cpp}
 
 
 \subsubsection Shape_detection_RegionGrowingMesh_performance Performance

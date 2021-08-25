@@ -75,6 +75,12 @@ Release date: December 2021
     that enables to provide a map from a point to a weight associated with this point.
 
 
+### [Shape Detection](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeDetection)
+
+-   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
+    and cylinders in 3D.
+
+
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
 

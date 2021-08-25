@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
   << std::endl << std::endl;
 
   // Load off data either from a local folder or a user-provided file.
-  std::ifstream in(argc > 1 ? argv[1] : "data/polygon_mesh.off");
+  std::ifstream in(argc > 1 ? argv[1] : "data/building.off");
   CGAL::IO::set_ascii_mode(in);
 
   if (!in) {
