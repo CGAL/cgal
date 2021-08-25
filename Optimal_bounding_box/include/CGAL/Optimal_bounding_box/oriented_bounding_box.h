@@ -245,7 +245,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 
 /// \addtogroup PkgOptimalBoundingBox_Oriented_bounding_box
 ///
-/// The function `oriented_bounding_box` computes an approximation of the <i>optimal bounding box</i>,
+/// The function `oriented_bounding_box()` computes an approximation of the <i>optimal bounding box</i>,
 /// which is defined as the rectangular box with smallest volume of all the rectangular boxes containing
 /// the input points.
 ///
@@ -277,7 +277,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 
 /// \ingroup PkgOptimalBoundingBox_Oriented_bounding_box
 ///
-/// The function `oriented_bounding_box` computes an approximation of the <i>optimal bounding box</i>,
+/// The function `oriented_bounding_box()` computes an approximation of the <i>optimal bounding box</i>,
 /// which is defined as the rectangular box with smallest volume of all the rectangular boxes containing
 /// the input points.
 ///
