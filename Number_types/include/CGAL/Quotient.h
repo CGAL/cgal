@@ -711,6 +711,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         #if defined(CGAL_USE_CPP_INT) && true
 
+          #if false // tight bounds optimized
+
+            // make tight and fast bounds for x here
+
+          #endif
+
           // std::cout << "n: " << x.numerator()   << std::endl;
           // std::cout << "d: " << x.denominator() << std::endl;
 
