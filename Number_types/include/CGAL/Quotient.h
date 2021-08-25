@@ -761,6 +761,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               }
 
               double i = static_cast<double>(rat);
+              // double i;
+              // decltype(x) xx = x;
+              // const std::integral_constant<bool, false> tag;
+              // boost::multiprecision::detail::generic_convert_rational_to_float_imp(i, xx.num, xx.den, tag);
               double s = i;
 
               const double inf = std::numeric_limits<double>::infinity();
