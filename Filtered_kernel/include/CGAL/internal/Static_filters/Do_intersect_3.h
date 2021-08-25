@@ -135,9 +135,6 @@ public:
     Get_approx<Point_3> get_approx;
     double px, py, pz;
 
-    if(! do_overlap(t.bbox(),b)){
-      return false;
-    }
     {
       const Point_3& p = t[0];
       if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
@@ -512,11 +509,6 @@ public:
   result_type
   operator()(const Triangle_3 &t, const Bbox_3& b) const
   {
-    // check overlaps between bboxes
-    if(! do_overlap(t.bbox(),b)){
-      return false;
-    }
-
     // check if at least one triangle point is inside the bbox
     Get_approx<Point_3> get_approx;
     std::array< std::array<double, 3>, 3> pts;
