@@ -713,7 +713,9 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           #if false // tight bounds optimized
 
-            // make tight and fast bounds for x here
+            // Make tight and fast bounds for x here.
+            // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
+            // 2. generic_interconvert.hpp - line 305.
 
           #endif
 
