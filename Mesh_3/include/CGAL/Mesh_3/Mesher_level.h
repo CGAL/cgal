@@ -23,6 +23,7 @@
   #include <CGAL/Mesh_3/Profiling_tools.h>
 #endif
 
+#include <CGAL/Mesher_level.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
 
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
@@ -39,16 +40,6 @@
 #include <atomic>
 
 namespace CGAL { namespace Mesh_3 {
-
-enum Mesher_level_conflict_status {
-  NO_CONFLICT = 0
-  , CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED
-  , CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED
-  , THE_FACET_TO_REFINE_IS_NOT_IN_ITS_CONFLICT_ZONE
-  , ELEMENT_WAS_A_ZOMBIE
-  , COULD_NOT_LOCK_ZONE
-  , COULD_NOT_LOCK_ELEMENT
-};
 
 /************************************************
  *
