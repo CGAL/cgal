@@ -124,7 +124,8 @@ build_intersection(const typename K::Tetrahedron_3& /*input_tetrahedron*/,
                             return true;
                         return false;
                       };
-  std::remove_if(points.begin(), points.end(), is_extremity);
+  points.erase(std::remove_if(points.begin(), points.end(), is_extremity),
+               points.end());
 
   // Take the first segment as reference, and order the rest to form a convex polygon
   //
