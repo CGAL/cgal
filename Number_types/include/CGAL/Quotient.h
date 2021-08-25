@@ -51,7 +51,8 @@ simplify_quotient(NT & a, NT & b) {
 // TODO:
 // - move it to the boost_mp.h
 // - can we use gcd only sometimes to save time?
-#if true
+#if defined(CGAL_USE_CPP_INT)
+
   const NT r = boost::multiprecision::gcd(a, b);
   // std::cout << "r: " << r << std::endl;
   // std::cout << "a: " << a << std::endl;
@@ -61,6 +62,7 @@ simplify_quotient(NT & a, NT & b) {
   b = b / r;
   // std::cout << "new b: " << b << std::endl;
   // std::cout << std::endl;
+
 #endif
 
 }
@@ -707,7 +709,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
-        #if true // rough bounds
+        #if defined(CGAL_USE_CPP_INT)
+
           // std::cout << "n: " << x.numerator()   << std::endl;
           // std::cout << "d: " << x.denominator() << std::endl;
 
@@ -727,10 +730,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             // std::cout << "q: " << q << std::endl;
             // std::cout << "r: " << r << std::endl;
 
-            // We do not have here a tight bound!
-            // TODO: Use a binary search or limbs to find a tighter bound!
-            // TODO: Try to use here the conversion to cpp_rational from below.
-            #if false
+            #if false // rough bounds
+
+              // We do not have here a tight bound!
+              // TODO: Use a binary search or limbs to find a tighter bound!
               CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
               if (x.num > 0 && x.den > 0) {
                 return std::make_pair( 0.0, 1.0);
@@ -739,7 +742,9 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               } else {
                 return std::make_pair(-1.0, 0.0);
               }
-            #else
+
+            #else // tight bounds using cpp_rational
+
               boost::multiprecision::cpp_rational rat; // TODO: Is it fast enough?
               CGAL_assertion(x.den != 0);
               if (x.den < 0) {
@@ -763,6 +768,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
                 CGAL_assertion(rat.compare(i) > 0);
               }
               return std::make_pair(i, s);
+
             #endif
 
             // Interval_nt<> quot =
@@ -781,7 +787,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           } else {
 
-            Interval_nt<> quot =
+            const Interval_nt<> quot =
               Interval_nt<>(CGAL_NTS to_interval(x.num)) /
               Interval_nt<>(CGAL_NTS to_interval(x.den));
 
@@ -791,33 +797,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             return std::make_pair(quot.inf(), quot.sup());
           }
 
-        #else // tight bounds
+        #else // master version
 
-          // TODO: Should we use this one instead:
-          // https://github.com/boostorg/multiprecision/blob/3094249d7c30026b39fef77344e187bf93f24c6c/include/boost/multiprecision/detail/generic_interconvert.hpp#L305 ?
-          boost::multiprecision::cpp_rational rat; // TODO: Is it fast enough?
-          CGAL_assertion(x.den != 0);
-          if (x.den < 0) {
-            rat = boost::multiprecision::cpp_rational(-x.num, -x.den);
-          } else {
-            rat = boost::multiprecision::cpp_rational( x.num,  x.den);
-          }
-
-          double i = static_cast<double>(rat);
-          double s = i;
-
-          const double inf = std::numeric_limits<double>::infinity();
-          CGAL_assertion(i != inf && s != inf);
-          const int cmp = rat.compare(i);
-          if (cmp > 0) {
-            s = nextafter(s, +inf);
-            CGAL_assertion(rat.compare(s) < 0);
-          }
-          else if (cmp < 0) {
-            i = nextafter(i, -inf);
-            CGAL_assertion(rat.compare(i) > 0);
-          }
-          return std::make_pair(i, s);
+          const Interval_nt<> quot =
+            Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
+            Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
+          return std::make_pair(quot.inf(), quot.sup());
 
         #endif
         }
