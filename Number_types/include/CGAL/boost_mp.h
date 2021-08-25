@@ -203,7 +203,7 @@ struct RET_boost_mp_base
           // assume the conversion is within 1 ulp
           // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
 
-          #if defined(CGAL_USE_CPP_INT)
+          #if defined(CGAL_USE_CPP_INT) && true // should always be true because it is a bug on CGAL/macOS
 
             // We must use to_nearest with cpp_int.
             double i;
@@ -226,6 +226,9 @@ struct RET_boost_mp_base
 
           const double inf = std::numeric_limits<double>::infinity();
           CGAL_assertion(i != inf && s != inf);
+
+          // Throws uncaught exception: Cannot convert a non-finite number to an integer.
+          // We can catch it earlier by using the CGAL_assertion() one line above.
           const int cmp = x.compare(i);
           if (cmp > 0) {
             s = nextafter(s, +inf);

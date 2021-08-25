@@ -51,7 +51,7 @@ simplify_quotient(NT & a, NT & b) {
 // TODO:
 // - move it to the boost_mp.h
 // - can we use gcd only sometimes to save time?
-#if defined(CGAL_USE_CPP_INT)
+#if defined(CGAL_USE_CPP_INT) && true
 
   const NT r = boost::multiprecision::gcd(a, b);
   // std::cout << "r: " << r << std::endl;
@@ -709,7 +709,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
-        #if defined(CGAL_USE_CPP_INT)
+        #if defined(CGAL_USE_CPP_INT) && true
 
           // std::cout << "n: " << x.numerator()   << std::endl;
           // std::cout << "d: " << x.denominator() << std::endl;
@@ -734,6 +734,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
               // We do not have here a tight bound!
               // TODO: Use a binary search or limbs to find a tighter bound!
+              // For REG tests this assertion fails!
               CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
               if (x.num > 0 && x.den > 0) {
                 return std::make_pair( 0.0, 1.0);
