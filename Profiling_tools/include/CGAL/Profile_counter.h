@@ -121,9 +121,9 @@ struct Profile_histogram_counter
 {
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    typedef tbb::concurrent_hash_map<unsigned, unsigned>  Counters;
+    typedef tbb::concurrent_hash_map<unsigned, unsigned>  CounterMap;
 #else
-    typedef std::map<unsigned, unsigned>  Counters;
+    typedef std::map<unsigned, unsigned>  CounterMap;
 #endif
 
 public:
@@ -133,7 +133,7 @@ public:
     void operator()(unsigned i)
     {
 #ifdef CGAL_CONCURRENT_PROFILE
-      Counters::accessor a;
+      CounterMap::accessor a;
       counters.insert(a, i);
       ++a->second;
 #else
@@ -144,7 +144,7 @@ public:
     ~Profile_histogram_counter()
     {
         unsigned total=0;
-        for (Counters::const_iterator it=counters.begin(), end=counters.end();
+        for (CounterMap::const_iterator it=counters.begin(), end=counters.end();
              it != end; ++it) {
             std::cerr << "[CGAL::Profile_histogram_counter] " << s;
             std::cerr << " [ " << std::setw(10) << internal::dot_it(it->first) << " : "
@@ -158,7 +158,7 @@ public:
     }
 
 private:
-    Counters  counters;
+    CounterMap  counters;
     const std::string s;
 };
 
