@@ -154,8 +154,6 @@ public:
 
   bool approx_equal(const S& p, const S& q)
   {
-    std::cout << "compare segments " << p << " & " << q << std::endl;
-
     // allow opposite orientation
     return (approx_equal(p.source(), q.source()) && approx_equal(p.target(), q.target())) ||
            (approx_equal(p.source(), q.target()) && approx_equal(p.target(), q.source()));
