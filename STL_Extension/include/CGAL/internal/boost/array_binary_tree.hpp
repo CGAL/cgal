@@ -23,7 +23,7 @@
 #include <iterator>
 
 #include <boost/config.hpp>
-#include <boost/iterator.hpp>
+#include <iterator>
 
 #include <functional>
 
