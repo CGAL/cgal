@@ -11,6 +11,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_construct_by_sorting.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Polyhedron_3.h>
@@ -28,26 +29,26 @@ const int runs = 10;
 
 template<typename Tree>
 struct FilterP {
-  const Tree* t;
+  const Tree *t;
 
   template<typename T>
-  bool operator()(const T& tt) { return !t->do_intersect(tt); }
+  bool operator()(const T &tt) { return !t->do_intersect(tt); }
 };
 
 
 template<typename ForwardIterator, typename Tree>
-std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, long& counter) {
-      typedef
-        typename Tree::AABB_traits::template Intersection_and_primitive_id<typename ForwardIterator::value_type>::Type
-        Obj_type;
+std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree &tree, long &counter) {
+  typedef
+  typename Tree::AABB_traits::template Intersection_and_primitive_id<typename ForwardIterator::value_type>::Type
+          Obj_type;
 
   std::vector<Obj_type> v;
   // bad educated guess
   v.reserve(elements);
-  for(; b != e; ++b) {
+  for (; b != e; ++b) {
     tree.all_intersections(*b, std::back_inserter(v));
     boost::optional<Obj_type> o = tree.any_intersection(*b);
-    if(o)
+    if (o)
       ++counter;
   }
 
@@ -55,7 +56,7 @@ std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, lo
 }
 
 template<typename K>
-boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name) {
+boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char *name) {
   typedef typename K::FT FT;
   typedef typename K::Ray_3 Ray;
   typedef typename K::Line_3 Line;
@@ -64,7 +65,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Traits;
+  typedef CGAL::AABB_traits_construct_by_sorting<K, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   std::ifstream ifs(name);
@@ -74,7 +75,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
 
   // Random seeded to 23, cube size equal to the magic number 2
   CGAL::Random r(23);
-  CGAL::Random_points_in_cube_3<Point, CGAL::Creator_uniform_3<FT, Point> > g( 2., r);
+  CGAL::Random_points_in_cube_3<Point, CGAL::Creator_uniform_3<FT, Point> > g(2., r);
 
   std::vector<Point> points;
   points.reserve(elements * 2);
@@ -85,8 +86,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   lines.reserve(elements);
 
   // forward
-  for(std::size_t i = 0; i < points.size(); i += 2)
-  {
+  for (std::size_t i = 0; i < points.size(); i += 2) {
     lines.push_back(Line(points[i], points[i + 1]));
   }
 
@@ -94,24 +94,23 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
   rays.reserve(elements);
 
   // backwards
-  for(std::size_t i = points.size(); i != 0; i -= 2)
-  {
+  for (std::size_t i = points.size(); i != 0; i -= 2) {
     rays.push_back(Ray(points[i - 1], points[i - 2]));
   }
 
   std::vector<Segment> segments;
   segments.reserve(elements);
   // from both sides
-  for(std::size_t i = 0, j = points.size() - 1; i < j; ++i, --j)
-  {
+  for (std::size_t i = 0, j = points.size() - 1; i < j; ++i, --j) {
     segments.push_back(Segment(points[i], points[j]));
   }
 
   Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
 
   // filter all primitives that do not intersect
+  // TODO Is this causing a problem?
 
-  FilterP<Tree> p = { &tree };
+  FilterP<Tree> p = {&tree};
 
   lines.erase(std::remove_if(lines.begin(), lines.end(), p), lines.end());
 
@@ -121,29 +120,28 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
 
   boost::tuple<std::size_t, std::size_t, std::size_t, long> tu;
 
-    {
-      CGAL::Timer t;
-      t.start();
+  {
+    CGAL::Timer t;
+    t.start();
 
-      for(int i = 0; i < runs; ++i)
-      {
-        long counter = 0L;
-        tu = boost::make_tuple(intersect(lines.begin(), lines.end(), tree, counter),
-                               intersect(rays.begin(), rays.end(), tree, counter),
-                               intersect(segments.begin(), segments.end(), tree, counter),
-                               // cant use counter here
-                               0);
-        boost::get<3>(tu) = counter;
-      }
-      std::cout << t.time();
+    for (int i = 0; i < runs; ++i) {
+      long counter = 0L;
+      tu = boost::make_tuple(intersect(lines.begin(), lines.end(), tree, counter),
+                             intersect(rays.begin(), rays.end(), tree, counter),
+                             intersect(segments.begin(), segments.end(), tree, counter),
+              // cant use counter here
+                             0);
+      boost::get<3>(tu) = counter;
     }
+    std::cout << t.time();
+  }
 
   return tu;
 }
 
-int main()
-{
+int main() {
   const char* filename = "./data/finger.off";
+  //const char *filename = "./data/bunny00.off";
 
   std::cout << "| Simple cartesian float kernel | ";
   boost::tuple<std::size_t, std::size_t, std::size_t, long> t1 = test<CGAL::Simple_cartesian<float> >(filename);
@@ -153,16 +151,17 @@ int main()
   boost::tuple<std::size_t, std::size_t, std::size_t, long> t2 = test<CGAL::Cartesian<float> >(filename);
   std::cout << " | " << std::endl;
 
-  std::cout << "| Simple cartesian double kernel |";
+  std::cout << "| Simple cartesian double kernel | ";
   boost::tuple<std::size_t, std::size_t, std::size_t, long> t3 = test<CGAL::Simple_cartesian<double> >(filename);
   std::cout << " | " << std::endl;
 
-  std::cout << "| Cartesian double kernel |";
+  std::cout << "| Cartesian double kernel | ";
   boost::tuple<std::size_t, std::size_t, std::size_t, long> t4 = test<CGAL::Cartesian<double> >(filename);
   std::cout << " | " << std::endl;
 
-  std::cout << "| Epic kernel |";
-  boost::tuple<std::size_t, std::size_t, std::size_t, long> t5 = test<CGAL::Exact_predicates_inexact_constructions_kernel>(filename);
+  std::cout << "| Epic kernel | ";
+  boost::tuple<std::size_t, std::size_t, std::size_t, long> t5 = test<CGAL::Exact_predicates_inexact_constructions_kernel>(
+          filename);
   std::cout << " | " << std::endl;
 
   std::size_t a, b, c;

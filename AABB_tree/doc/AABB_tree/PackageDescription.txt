@@ -30,6 +30,7 @@
 
 \cgalCRPSection{Classes}
 - `CGAL::AABB_traits<GeomTraits,Primitive>`
+- `CGAL::AABB_traits_construct_by_sorting<GeomTraits,Primitive>`
 - `CGAL::AABB_tree<AT>`
 
 \cgalCRPSection{Primitives}

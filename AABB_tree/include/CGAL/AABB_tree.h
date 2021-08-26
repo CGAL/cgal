@@ -26,11 +26,13 @@
 #include <CGAL/internal/AABB_tree/AABB_search_tree.h>
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_traits_construct_by_sorting.h>
 #include <boost/optional.hpp>
 #include <boost/lambda/lambda.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
+
 #endif
 
 /// \file AABB_tree.h
@@ -575,7 +577,20 @@ public:
                 const std::size_t range,
                 const ComputeBbox& compute_bbox,
                 const SplitPrimitives& split_primitives,
-                const AABBTraits&);
+                const AABB_traits&);
+
+    template<typename ConstPrimitiveIterator, typename ComputeBbox>
+    void expand(Node &node,
+                ConstPrimitiveIterator first,
+                ConstPrimitiveIterator beyond,
+                const std::size_t range,
+                const ComputeBbox &compute_bbox,
+                const typename CGAL::AABB_traits_construct_by_sorting<
+                        typename AABB_traits::Geom_traits,
+                        typename AABB_traits::Primitive,
+                        typename AABB_traits::Bbox_map,
+                        typename AABB_traits::Concurrency_tag>::Split_primitives &split_primitives,
+                const AABB_traits &traits);
 
   public:
     // returns a point which must be on one primitive
@@ -617,7 +632,7 @@ public:
 #else
     typename AABBTraits::Primitive::Datum_reference
 #endif
-    datum(Primitive& p)const
+    datum(Primitive& p) const
     {
       return Helper::get_datum(p, this->traits());
     }
@@ -813,6 +828,43 @@ public:
       node.set_children(new_node(), new_node());
       expand(node.left_child(), first, first + new_range, new_range, compute_bbox, split_primitives, traits);
       expand(node.right_child(), first + new_range, beyond, range - new_range, compute_bbox, split_primitives, traits);
+    }
+  }
+
+  template<typename Tr>
+  template<typename ConstPrimitiveIterator, typename ComputeBbox>
+  void AABB_tree<Tr>::expand(Node &node,
+                             ConstPrimitiveIterator first,
+                             ConstPrimitiveIterator beyond,
+                             const std::size_t range,
+                             const ComputeBbox &compute_bbox,
+                             const typename CGAL::AABB_traits_construct_by_sorting<
+                                     typename Tr::Geom_traits,
+                                     typename Tr::Primitive,
+                                     typename Tr::Bbox_map,
+                                     typename Tr::Concurrency_tag>::Split_primitives &split_primitives,
+                             const Tr &traits) {
+
+    // sort primitives along longest axis aabb
+    split_primitives(first, beyond, node.bbox());
+
+    switch (range) {
+      case 2:
+        node.set_children(*first, *(first + 1));
+        node.set_bbox(compute_bbox(first, beyond));
+        break;
+      case 3:
+        node.set_children(*first, new_node());
+        expand(node.right_child(), first + 1, beyond, 2, compute_bbox, split_primitives, traits);
+        node.set_bbox(node.right_child().bbox() + compute_bbox(first, first + 1));
+        break;
+      default:
+        const std::size_t new_range = range / 2;
+        node.set_children(new_node(), new_node());
+        expand(node.left_child(), first, first + new_range, new_range, compute_bbox, split_primitives, traits);
+        expand(node.right_child(), first + new_range, beyond, range - new_range, compute_bbox, split_primitives,
+               traits);
+        node.set_bbox(node.left_child().bbox() + node.right_child().bbox());
     }
   }
 

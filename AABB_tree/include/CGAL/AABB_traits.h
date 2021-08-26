@@ -180,12 +180,15 @@ class AABB_traits
 {
   typedef typename CGAL::Object Object;
 public:
+
   typedef GeomTraits Geom_traits;
+  typedef AABBPrimitive Primitive;
+  typedef BboxMap Bbox_map;
+  typedef CGAL::Parallel_tag Concurrency_tag;
 
   typedef AABB_traits<GeomTraits, AABBPrimitive, BboxMap> AT;
   // AABBTraits concept types
   typedef typename GeomTraits::FT FT;
-  typedef AABBPrimitive Primitive;
 
   typedef typename std::pair<Object,typename Primitive::Id> Object_and_primitive_id;
 
