@@ -1,30 +1,26 @@
 // Copyright (c) 2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is a part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
+//
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-/*!
-  \file Generalized_barycentric_coordinates_2.h
-*/
-
-#ifndef CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H
-#define CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H
+#ifndef CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_H
+#define CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
-
 #include <CGAL/disable_warnings.h>
 
 // CGAL headers.
 #include <CGAL/Polygon_2_algorithms.h>
 
 // Barycentric coordinates headers.
-#include <CGAL/Barycentric_coordinates_2/Segment_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/segment_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
 // Boost headers.
@@ -39,18 +35,23 @@ namespace Barycentric_coordinates {
 // Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 
 /*!
- * \ingroup PkgBarycentricCoordinates2Ref
+ * \ingroup PkgBarycentricCoordinates2RefDeprecated
  * The class `Generalized_barycentric_coordinates_2` implements generalized barycentric coordinates along the polygon's boundary and provides a common interface for all coordinate classes.
  * This class is parameterized by a coordinate class `Coordinate_2`, and a traits class `Traits`.
+
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 
 \tparam Coordinate_2 must be a model of the concept `BarycentricCoordinates_2`.
 
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
 */
-
 template<class Coordinate_2, class Traits>
-    class Generalized_barycentric_coordinates_2
+class
+#ifndef DOXYGEN_RUNNING
+CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+#endif
+Generalized_barycentric_coordinates_2
 {
 
 public:
@@ -177,8 +178,8 @@ public:
     /// @}
 
     // Computes generalized barycentric coordinates for any query point in the plane with respect to all the vertices of the polygon.
-    // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
-    // and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
+    // This function accepts a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
+    // and returns an iterator of the type <a href="https://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
     inline boost::optional<std::back_insert_iterator<std::vector<FT> > > operator()(const Point_2 &query_point, std::vector<FT> &output_vector, Query_point_location query_point_location = UNSPECIFIED_LOCATION, Type_of_algorithm type_of_algorithm = PRECISE)
     {
@@ -189,8 +190,8 @@ public:
     }
 
     // Computes generalized barycentric coordinates for a query point on the polygon's boundary with known index of the edge to which this point belongs.
-    // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
-    // and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
+    // This function accepts a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
+    // and returns an iterator of the type <a href="https://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
     //
     // \pre The provided query point belongs to the polygon's boundary.
@@ -204,8 +205,8 @@ public:
     }
 
     // Computes generalized barycentric coordinates for a query point, which coincides with one of the polygon's vertices, with known index.
-    // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
-    // and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
+    // This function accepts a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
+    // and returns an iterator of the type <a href="https://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
     //
     // \pre (0 <= index) && (index < number of the polygon's vertices).
@@ -218,8 +219,8 @@ public:
     }
 
     // Computes generalized barycentric weights (unnormalized coordinates) for any strictly interior query point with respect to all the vertices of the polygon.
-    // This function accepts a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
-    // and returns an iterator of the type <a href="http://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
+    // This function accepts a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
+    // and returns an iterator of the type <a href="https://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of weight values.
     //
     // \pre The provided query point belongs to the polygon's interior, excluding the boundary.
@@ -590,4 +591,4 @@ private:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_H
+#endif // CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_H
