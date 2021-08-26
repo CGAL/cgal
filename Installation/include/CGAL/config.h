@@ -144,7 +144,7 @@
 //----------------------------------------------------------------------//
 
 #if CGAL_HEADER_ONLY
-#  include <CGAL/internal/enable_third_party_libraries.h>
+#  include <CGAL/Installation/internal/enable_third_party_libraries.h>
 #else
 #  include <CGAL/compiler_config.h>
 #endif
