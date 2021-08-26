@@ -32,6 +32,7 @@ provides exact predicates.
 \cgalModels `ConvexHullTraits_2`
 \cgalModels `DelaunayMeshTraits_2`
 
+\sa `CGAL::Projection_traits_3`
 */
 template< typename K >
 class Projection_traits_xy_3 {

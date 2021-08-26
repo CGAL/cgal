@@ -20,27 +20,20 @@ provides exact predicates.
 \cgalModels `ConstrainedTriangulationTraits_2`
 \cgalModels `PolygonTraits_2`
 
+\sa `CGAL::Projection_traits_xy_3`
+\sa `CGAL::Projection_traits_xz_3`
+\sa `CGAL::Projection_traits_yz_3`
 */
 template <class K>
 class Projection_traits_3
 {
 public:
-  ///\name Types
-  ///@{
-
-  //!
-  typedef typename K::Point_3     Point_2;
-
-  ///@}
-
-
   /// \name Functors
   /// The functors provided by this class are those listed in the
   /// concepts. The functors operate on the 2D projections of their
   /// arguments. They come with preconditions that projections of the
   /// arguments are non-degenerate, e.g. a line segment does not project
   /// on a single point, two points do not project onto the same point, etc.
-  ///@}
 
   /// \name Creation
   ///@{
@@ -54,4 +47,5 @@ public:
 
   ///@}
 };
+
 } // end namespace CGAL
