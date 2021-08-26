@@ -709,13 +709,24 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
+        // std::cout << "xx: " << x << std::endl;
+        // std::cout << "xn: " << x.num << std::endl;
+        // std::cout << "xd: " << x.den << std::endl;
+
         #if defined(CGAL_USE_CPP_INT) && true
 
-          #if false // tight bounds optimized
+          #if true // tight bounds optimized
 
             // Make tight and fast bounds for x here.
             // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
             // 2. generic_interconvert.hpp - line 305.
+
+            double i, s;
+
+
+
+            CGAL_assertion_msg(false, "TODO: FINISH CONVERSION TO INTERVAL!");
+            return std::make_pair(i, s);
 
           #endif
 
@@ -780,6 +791,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
                 i = nextafter(i, -inf);
                 CGAL_assertion(rat.compare(i) > 0);
               }
+
+              // std::cout << "new inf1: " << i << std::endl;
+              // std::cout << "new sup1: " << s << std::endl;
+
               return std::make_pair(i, s);
 
             #endif
