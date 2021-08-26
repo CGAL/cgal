@@ -3009,7 +3009,13 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
-    { return Intersections::internal::do_intersect(t1, t2, K()); }
+    {
+      K k;
+      CGAL_assertion_code(typename K::Is_degenerate_2 is_degenerate = k.is_degenerate_2_object();)
+      CGAL_precondition( !is_degenerate(t1));
+      CGAL_precondition( !is_degenerate(t2));
+      return Intersections::internal::do_intersect(t1, t2, k);
+    }
   };
 
   template <typename K>
@@ -3022,11 +3028,24 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
-    { return Intersections::internal::do_intersect(t1, t2, K()); }
+    {
+      K k;
+      CGAL_assertion_code(typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();)
+      CGAL_precondition( !is_degenerate(t1));
+      CGAL_precondition( !is_degenerate(t2));
+      return Intersections::internal::do_intersect(t1, t2, k);
+    }
 
     result_type
     operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
-    { return Intersections::internal::do_intersect(pl1, pl2, pl3, K() ); }
+    {
+      K k;
+      CGAL_assertion_code(typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();)
+      CGAL_precondition( !is_degenerate(pl1));
+      CGAL_precondition( !is_degenerate(pl2));
+      CGAL_precondition( !is_degenerate(pl3));
+      return Intersections::internal::do_intersect(pl1, pl2, pl3, k );
+    }
 
   };
 
@@ -3539,7 +3558,13 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     decltype(auto)
     operator()(const T1& t1, const T2& t2) const
-    { return Intersections::internal::intersection(t1, t2, K()); }
+    {
+      K k;
+      CGAL_assertion_code(typename K::Is_degenerate_2 is_degenerate = k.is_degenerate_2_object();)
+      CGAL_precondition( !is_degenerate(t1));
+      CGAL_precondition( !is_degenerate(t2));
+      return Intersections::internal::intersection(t1, t2, k);
+    }
   };
 
   template <typename K>
@@ -3552,11 +3577,24 @@ namespace CommonKernelFunctors {
     template <class T1, class T2>
     decltype(auto)
     operator()(const T1& t1, const T2& t2) const
-    { return Intersections::internal::intersection(t1, t2, K() ); }
+    {
+      K k;
+      CGAL_assertion_code(typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();)
+      CGAL_precondition( !is_degenerate(t1));
+      CGAL_precondition( !is_degenerate(t2));
+      return Intersections::internal::intersection(t1, t2, k);
+    }
 
     decltype(auto)
     operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
-    { return Intersections::internal::intersection(pl1, pl2, pl3, K() ); }
+    {
+      K k;
+      CGAL_assertion_code(typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();)
+      CGAL_precondition( !is_degenerate(pl1));
+      CGAL_precondition( !is_degenerate(pl2));
+      CGAL_precondition( !is_degenerate(pl3));
+      return Intersections::internal::intersection(pl1, pl2, pl3, k );
+    }
   };
 
 
@@ -3596,6 +3634,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Ray_2             Ray_2;
     typedef typename K::Segment_2         Segment_2;
     typedef typename K::Triangle_2        Triangle_2;
+    typedef typename K::Point_2           Point_2;
     typedef typename K::Circle_3          Circle_3;
   public:
     typedef typename K::Boolean           result_type;
@@ -3627,6 +3666,10 @@ namespace CommonKernelFunctors {
     result_type
     operator()( const Circle_3& c) const
     { return c.rep().is_degenerate(); }
+
+    result_type
+    operator()( const Point_2& ) const
+    { return false; }
   };
 
   template <typename K>
@@ -3641,6 +3684,7 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3          Sphere_3;
     typedef typename K::Triangle_3        Triangle_3;
     typedef typename K::Tetrahedron_3     Tetrahedron_3;
+    typedef typename K::Point_3           Point_3;
   public:
     typedef typename K::Boolean           result_type;
 
@@ -3680,6 +3724,9 @@ namespace CommonKernelFunctors {
     operator()( const Circle_3& t) const
     { return t.rep().is_degenerate(); }
 
+    result_type
+    operator()( const Point_3& ) const
+    { return false; }
   };
 
   template <typename K>
