@@ -20,8 +20,6 @@
 #ifndef CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
 #define CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
 
-#include <iterator>
-
 #include <boost/config.hpp>
 #include <iterator>
 
