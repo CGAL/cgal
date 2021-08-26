@@ -24,8 +24,8 @@
 #include <algorithm>
 #include <functional>
 #include <CGAL/property_map.h>
-#include <CGAL/internal/boost/mutable_heap.hpp>
-#include <CGAL/internal/boost/array_binary_tree.hpp>
+#include <CGAL/STL_Extension/internal/boost/mutable_heap.hpp>
+#include <CGAL/STL_Extension/internal/boost/array_binary_tree.hpp>
 #include <iterator>
 
 namespace CGAL { namespace internal {
