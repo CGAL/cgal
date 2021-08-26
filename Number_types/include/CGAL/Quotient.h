@@ -708,7 +708,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
 
-        std::pair< std::pair<double, double>, long > get_interval_exp(const NT& x) const {
+        std::pair< std::pair<double, double>, long > get_interval_exp( NT& x ) const {
 
           std::cout << std::endl;
           std::cout << " --- debugging get_interval_exp() --- " << std::endl;
@@ -718,8 +718,38 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // first get mantissa in the form l*2^k, with 0.5 <= d < 1;
           // truncation is guaranteed to go towards zero.
 
-          // Exponent k = 0;
-          // double l = mpz_get_d_2exp (&k, man());
+          const unsigned n = msb(x);
+          std::cout << "msb before shift: " << msb(x) << std::endl;
+
+          if (n > 52) {
+
+            const unsigned d = n - 52;
+            x = x >> d;
+            std::cout << "shifting.... " << std::endl;
+            std::cout << "msb after shift: " << msb(x) << std::endl;
+            std::cout << "shift difference: " << d << std::endl;
+            std::cout << "shifted x: " << x << std::endl;
+            const double l(x);
+            const double u(x + 1);
+            std::cout << "l: " << l << std::endl;
+            std::cout << "u: " << u << std::endl;
+            return std::make_pair( std::make_pair(l, u), d );
+
+          } else {
+
+            std::cout << "no shifting required " << std::endl;
+            const double l(x);
+            const double u(l);
+            std::cout << "l: " << l << std::endl;
+            std::cout << "u: " << u << std::endl;
+            return std::make_pair( std::make_pair(l, u), 0 );
+
+          }
+
+          // exit(EXIT_SUCCESS);
+
+          // long k = 0;
+          // double l = mpz_get_d_2exp (&k, man()); // we miss this function for cpp_int
 
           // l = +/- 0.1*...*
           //           ------
@@ -743,23 +773,145 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           //   (std::pair<double, double>(l, u), k + exp());
         }
 
-        std::pair<double, double> get_interval_as_gmpzf( const Type& x ) const {
+        std::pair<double, double> get_interval_as_gmpzf( Type& x ) const {
 
           // Do here as MP_Float does.
-          double i = 0.0, s = 0.0;
+          // double i = 0.0, s = 0.0;
 
-          const auto n = get_interval_exp(x.numerator());
-          // const auto d = get_interval_exp(x.denominator());
+          Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+          const auto n = get_interval_exp(x.num);
+          const auto d = get_interval_exp(x.den);
+
+          // exit(EXIT_SUCCESS);
 
           // CGAL_assertion_msg(
           //   CGAL::abs(double(n.second) - double(d.second)) < (1<<30)*2.0,
           //   "Exponent overflow in Quotient<boost::multiprecision::cpp_int> to_interval");
 
-          // return ldexp(
-          //   Interval_nt<>(n.first) / Interval_nt<>(d.first),
-          //   static_cast<int>(n.second - d.second)).pair();
+          const Interval_nt<> num(n.first);
+          const Interval_nt<> den(d.first);
+          const Interval_nt<> div = num / den;
 
-          return std::make_pair(i, s);
+          std::cout << std::endl;
+          std::cout << " --- debugging get_interval_as_gmpzf() --- " << std::endl;
+          std::cout << "interval nt num: " << num << std::endl;
+          std::cout << "interval nt den: " << den << std::endl;
+          std::cout << "interval nt div: " << div << std::endl;
+
+          const long e = static_cast<int>(n.second - d.second);
+          std::cout << "exp: " << e << std::endl;
+          const auto pair = ldexp(div, e).pair();
+          std::cout << "ldexp l: " << pair.first << std::endl;
+          std::cout << "ldexp u: " << pair.second << std::endl;
+          std::cout << std::endl;
+
+          // TODO: Do not forget to change sign here!
+
+          // exit(EXIT_SUCCESS);
+
+          return pair;
+        }
+
+        std::pair<double, double> get_interval_as_boost( Type& x ) const {
+
+          double l = 0.0, u = 0.0;
+
+          if (x.num == 0) {
+            return std::make_pair(l, u);
+          }
+
+          bool change_sign = false;
+          if (x.num < 0) {
+            change_sign = true;
+            x.num = -x.num;
+          }
+
+          const int denom_bits = msb(x.den);
+          const int shift = std::numeric_limits<double>::digits + denom_bits - msb(x.num);
+
+          std::cout << std::endl;
+          std::cout << " --- debugging get_interval_as_boost() --- " << std::endl;
+          std::cout << "num before shift: " << x.num << std::endl;
+          std::cout << "den before shift: " << x.den << std::endl;
+
+          std::cout << "num bits: " << msb(x.num) << std::endl;
+          std::cout << "den bits: " << msb(x.den) << std::endl;
+          std::cout << "shift   : " << shift << std::endl;
+          std::cout << std::endl;
+
+          if (shift > 0) {
+            x.num <<= shift;
+          } else if (shift < 0) {
+            x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
+          }
+          std::cout << "num after shift: " << x.num << std::endl;
+          std::cout << "den after shift: " << x.den << std::endl;
+          std::cout << std::endl;
+
+          // exit(EXIT_SUCCESS);
+
+          decltype(x.num) q, r;
+          boost::multiprecision::divide_qr(x.num, x.den, q, r);
+          decltype(q) p = q;
+          const int q_bits = msb(q);
+          std::cout << "q bits: " << q_bits << std::endl;
+          std::cout << "p before: " << p << std::endl;
+          std::cout << "q before: " << q << std::endl;
+          std::cout << "r before: " << r << std::endl;
+          std::cout << std::endl;
+          const int num_dbl_digits = std::numeric_limits<double>::digits;
+
+          // exit(EXIT_SUCCESS);
+
+          if (q != 0) {
+            if (q_bits == num_dbl_digits - 1) {
+
+              // Round up if 2 * r > denom:
+              r <<= 1;
+              const int c = r.compare(x.den);
+              if (c > 0) {
+                ++q;
+              } else if ((c == 0) && (q & 1u)) {
+                ++q;
+              }
+              std::cout << "p after1: " << p << std::endl;
+              std::cout << "q after1: " << q << std::endl;
+              std::cout << "r after1: " << r << std::endl;
+
+            } else {
+
+              CGAL_assertion(q_bits == num_dbl_digits);
+              // We basically already have the rounding info:
+              if (q & 1u) {
+                if (r || (q & 2u)) {
+                  ++q;
+                }
+              }
+              std::cout << "p after2: " << p << std::endl;
+              std::cout << "q after2: " << q << std::endl;
+              std::cout << "r after2: " << r << std::endl;
+            }
+
+          }
+          std::cout << std::endl;
+
+          // exit(EXIT_SUCCESS);
+
+          l = boost::multiprecision::detail::do_cast<double>(p);
+          l = std::ldexp(l, -shift);
+          u = boost::multiprecision::detail::do_cast<double>(q);
+          u = std::ldexp(u, -shift);
+          if (change_sign) {
+            l = -l;
+            u = -u;
+          }
+
+          std::cout << "l: " << l << std::endl;
+          std::cout << "u: " << u << std::endl;
+
+          // exit(EXIT_SUCCESS);
+
+          return std::make_pair(l, u);
         }
 
         std::pair<double, double> operator()( const Type& x ) const {
@@ -770,14 +922,22 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         #if defined(CGAL_USE_CPP_INT) && true
 
-          #if true // tight bounds optimized
+          #if false // tight bounds optimized
 
             // Make tight and fast bounds for x here.
             // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
             // 2. generic_interconvert.hpp - line 305.
 
             // Using 1 as reference:
-            return get_interval_as_gmpzf(x);
+            // TODO: Can we avoid this copying by getting x without const?
+            Type xx = x;
+
+            // Does not yet take into account the sign and gives slightly
+            // different result for the HARD CASE.
+            // return get_interval_as_gmpzf(xx);
+
+            // Works slightly better than the first one and it is more complete.
+            return get_interval_as_boost(xx);
 
           #endif
 
