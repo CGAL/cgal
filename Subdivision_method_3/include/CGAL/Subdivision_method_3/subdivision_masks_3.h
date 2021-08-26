@@ -331,7 +331,7 @@ public:
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir(vertex, *(this->pmesh));
     size_t n = circulator_size(vcir);
-    CGAL_assertion(n > 0);
+    CGAL_assume(n > 0);
 
     FT R[] = {0.0, 0.0, 0.0};
     Point_ref S = get(this->vpmap,vertex);
