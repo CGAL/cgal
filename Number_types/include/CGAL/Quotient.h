@@ -721,12 +721,49 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
             // 2. generic_interconvert.hpp - line 305.
 
-            double i, s;
+            double i = 0.0, s = 0.0;
+
+            // Using 1 as reference:
+            // get surrounding interval of the form [l * 2 ^ k, u * 2^ k]
+            // first get mantissa in the form l*2^k, with 0.5 <= d < 1;
+            // truncation is guaranteed to go towards zero
+
+            // Exponent k = 0;
+            // double l = mpz_get_d_2exp (&k, man());
+
+            // l = +/- 0.1*...*
+            //           ------
+            //           53 digits
+            // in order to round away from zero, it suffices to add/subtract 2^-53
+
+            // double u = l;
+            // if (l < 0)
+            //   // u is already the upper bound, decrease l to get lower bound
+            //   l -= std::ldexp(1.0, -53);
+            // else
+            //   // l is already the lower bound, increase u to get upper bound
+            //   u += std::ldexp(1.0, -53);
+
+            // the interval is now [l * 2^(k + exp()), u * 2^(k + exp())]
+            // we may cast the exponents to int, since if that's going to
+            // create an overflow, we correctly get infinities
+
+            // return std::pair<std::pair<double, double>, long>
+            //   (std::pair<double, double>(l, u), k + exp());
+
+            // // do here as MP_Float does
+            // std::pair<std::pair<double, double>, long> n =
+            //   q.numerator().to_interval_exp();
+            // std::pair<std::pair<double, double>, long> d =
+            //   q.denominator().to_interval_exp();
+
+            // CGAL_assertion_msg(CGAL::abs(double(n.second) - double(d.second)) < (1<<30)*2.0,
+            //           "Exponent overflow in Quotient<MP_Float> to_interval");
+            // return ldexp(Interval_nt<>(n.first) / Interval_nt<>(d.first),
+            //             static_cast<int>(n.second - d.second)).pair();
 
 
-
-            CGAL_assertion_msg(false, "TODO: FINISH CONVERSION TO INTERVAL!");
-            return std::make_pair(i, s);
+          return std::make_pair(i, s);
 
           #endif
 
