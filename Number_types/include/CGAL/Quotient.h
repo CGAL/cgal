@@ -928,7 +928,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
             // 2. generic_interconvert.hpp - line 305.
 
-            // Using 1 as reference:
             // TODO: Can we avoid this copying by getting x without const?
             Type xx = x;
 
@@ -965,6 +964,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               // We do not have here a tight bound!
               // TODO: Use a binary search or limbs to find a tighter bound!
               // For REG tests this assertion fails!
+              // Are they real bounds? When q = 0, we can be arbitrarily far away
+              // from the lower and upper bound.
               CGAL_assertion(CGAL::abs(x.num) < CGAL::abs(x.den));
               if (x.num > 0 && x.den > 0) {
                 return std::make_pair( 0.0, 1.0);
@@ -976,9 +977,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
             #else // tight bounds using cpp_rational
 
-              boost::multiprecision::cpp_rational rat; // TODO: Is it fast enough?
+              // TODO: Is it fast enough? Seems so because this conversion happens
+              // only a few times during the run, at least for NEF.
+              boost::multiprecision::cpp_rational rat;
               CGAL_assertion(x.den != 0);
-              if (x.den < 0) {
+              if (x.den < 0) { // we do it due to the bug in boost
                 rat = boost::multiprecision::cpp_rational(-x.num, -x.den);
               } else {
                 rat = boost::multiprecision::cpp_rational( x.num,  x.den);
