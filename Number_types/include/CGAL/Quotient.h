@@ -814,18 +814,21 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
           CGAL_assertion(int(msb(x.den) - msb(x.num)) == -53);
 
-          decltype(x.num) q, r;
+          decltype(x.num) p, q, r;
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
-          decltype(q) p = q;
-          const int q_bits = msb(q);
 
           if (r != 0) {
+            const int q_bits = msb(q);
             if (q_bits == num_dbl_digits + 1) {
               q <<= 1;
+              p = q;
               ++q;
             } else {
+              p = q;
               ++q;
             }
+          } else {
+            p = q;
           }
 
           l = boost::multiprecision::detail::do_cast<double>(p);
