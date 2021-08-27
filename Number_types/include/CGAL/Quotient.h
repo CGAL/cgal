@@ -820,26 +820,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const int q_bits = msb(q);
 
           if (r != 0) {
-            if (q_bits == num_dbl_digits - 1) {
-
-              CGAL_assertion(r > 0);
-              r <<= 1;
-              const int c = r.compare(x.den);
-              if (c > 0) {
-                ++q;
-              } else if ((c == 0) && (q & 1u)) {
-                ++q;
-              }
-
+            if (q_bits == num_dbl_digits + 1) {
+              q <<= 1;
+              ++q;
             } else {
-
-              CGAL_assertion(r > 0);
-              CGAL_assertion(q_bits == num_dbl_digits);
-              if (q & 1u) {
-                if (r || (q & 2u)) {
-                  ++q;
-                }
-              }
+              ++q;
             }
           }
 
@@ -1225,22 +1210,22 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             // TODO: Both versions do not fully work with NEF, leading to NEF assertions,
             // however they both pass for REG and all test cases.
             Type xx = x;
-            const bool verbose = false;
+            const bool work_in_progress = false;
 
             // TODO: compare both below with the stable cpp_rational-based implementation
             // and see which configurations fail for NEF data.
 
             // Seems to be less precise and we rarely end up with an interval [d,d]
             // even for numbers, which are exactly representable as double.
-            // if (verbose) {
-            //   return get_interval_as_gmpzf_work_in_progress(xx);
+            // if (work_in_progress) {
+            //   return get_interval_as_gmpzf_work_in_progress(xx); // might be non stable
             // } else {
             //   return get_interval_as_gmpzf(xx);
             // }
 
             // Works slightly better than the first one.
-            if (verbose) {
-              return get_interval_as_boost_work_in_progress(xx);
+            if (work_in_progress) {
+              return get_interval_as_boost_work_in_progress(xx); // might be non stable
             } else {
               return get_interval_as_boost(xx);
             }
