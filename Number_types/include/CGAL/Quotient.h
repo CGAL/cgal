@@ -1105,42 +1105,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return std::make_pair(l, u);
         }
 
-        std::pair<double, double> operator()( const Type& x ) const {
-
-        // std::cout << "xx: " << x << std::endl;
-        // std::cout << "xn: " << x.num << std::endl;
-        // std::cout << "xd: " << x.den << std::endl;
-
-        #if defined(CGAL_USE_CPP_INT) && true
-
-          #if true // tight bounds optimized
-
-            // Make tight and fast bounds for x here.
-            // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
-            // 2. generic_interconvert.hpp - line 305.
-
-            // TODO: Can we avoid this copying by getting x without const?
-            // TODO: Both versions do not fully work with NEF, leading to NEF assertions,
-            // however they both pass for REG and all test cases.
-            Type xx = x;
-            const bool verbose = false;
-
-            // Seems to be less precise and we rarely end up with an interval [d,d]
-            // even for numbers, which are exactly representable as double.
-            // if (verbose) {
-            //   return get_interval_as_gmpzf_work_in_progress(xx);
-            // } else {
-            //   return get_interval_as_gmpzf(xx);
-            // }
-
-            // Works slightly better than the first one.
-            if (verbose) {
-              return get_interval_as_boost_work_in_progress(xx);
-            } else {
-              return get_interval_as_boost(xx);
-            }
-
-          #endif
+        std::pair<double, double> get_interval_using_cpp_rational_stable( const Type& x ) const {
 
           // std::cout << "n: " << x.numerator()   << std::endl;
           // std::cout << "d: " << x.denominator() << std::endl;
@@ -1240,6 +1205,49 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
             return std::make_pair(quot.inf(), quot.sup());
           }
+        }
+
+        std::pair<double, double> operator()( const Type& x ) const {
+
+        // std::cout << "xx: " << x << std::endl;
+        // std::cout << "xn: " << x.num << std::endl;
+        // std::cout << "xd: " << x.den << std::endl;
+
+        #if defined(CGAL_USE_CPP_INT) && true
+
+          #if false // tight bounds optimized
+
+            // Make tight and fast bounds for x here.
+            // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
+            // 2. generic_interconvert.hpp - line 305.
+
+            // TODO: Can we avoid this copying by getting x without const?
+            // TODO: Both versions do not fully work with NEF, leading to NEF assertions,
+            // however they both pass for REG and all test cases.
+            Type xx = x;
+            const bool verbose = false;
+
+            // Seems to be less precise and we rarely end up with an interval [d,d]
+            // even for numbers, which are exactly representable as double.
+            // if (verbose) {
+            //   return get_interval_as_gmpzf_work_in_progress(xx);
+            // } else {
+            //   return get_interval_as_gmpzf(xx);
+            // }
+
+            // Works slightly better than the first one.
+            if (verbose) {
+              return get_interval_as_boost_work_in_progress(xx);
+            } else {
+              return get_interval_as_boost(xx);
+            }
+
+          #else // cpp_rational based tight bounds
+
+            // These are slower but stable bounds, pass all tests and benches.
+            return get_interval_using_cpp_rational_stable(x);
+
+          #endif
 
         #else // master version
 
