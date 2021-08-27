@@ -815,35 +815,52 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         std::pair<double, double> get_interval_as_boost( Type& x ) const {
 
           double l = 0.0, u = 0.0;
-
-          if (x.num == 0) {
+          if (x.num == 0) { // return [0.0, 0.0]
             return std::make_pair(l, u);
           }
+          CGAL_assertion(x.num != 0);
+          CGAL_assertion(x.den != 0);
 
+          // Hnalde signs.
           bool change_sign = false;
-          if (x.num < 0) {
+          if (x.num < 0 && x.den < 0) {
+            x.num = -x.num;
+            x.den = -x.den;
+          } else if (x.num < 0 && x.den > 0) {
             change_sign = true;
             x.num = -x.num;
+          } else if (x.num > 0 && x.den < 0) {
+            change_sign = true;
+            x.den = -x.den;
           }
-
-          const int denom_bits = msb(x.den);
-          const int shift = std::numeric_limits<double>::digits + denom_bits - msb(x.num);
 
           std::cout << std::endl;
           std::cout << " --- debugging get_interval_as_boost() --- " << std::endl;
+          std::cout << std::endl;
+
+          std::cout << "change sign: " << change_sign << std::endl;
+
+          const int num_dbl_digits = std::numeric_limits<double>::digits;
+          const int shift = num_dbl_digits + (msb(x.den) - msb(x.num));
+
           std::cout << "num before shift: " << x.num << std::endl;
           std::cout << "den before shift: " << x.den << std::endl;
 
-          std::cout << "num bits: " << msb(x.num) << std::endl;
-          std::cout << "den bits: " << msb(x.den) << std::endl;
-          std::cout << "shift   : " << shift << std::endl;
-          std::cout << std::endl;
+          std::cout << "digits : " << num_dbl_digits << std::endl;
+          std::cout << "diff1  : " << int(msb(x.den) - msb(x.num)) << std::endl;
+          std::cout << "num msb: " << int(msb(x.num)) << std::endl;
+          std::cout << "den msb: " << int(msb(x.den)) << std::endl;
+          std::cout << "shift  : " << shift << std::endl;
 
           if (shift > 0) {
-            x.num <<= shift;
+            x.num <<= shift; // that is multiply bu 2^shift
           } else if (shift < 0) {
             x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
           }
+          CGAL_assertion(int(msb(x.den) - msb(x.num)) == -53);
+          std::cout << "diff2  : " << int(msb(x.den) - msb(x.num)) << std::endl;
+          std::cout << std::endl;
+
           std::cout << "num after shift: " << x.num << std::endl;
           std::cout << "den after shift: " << x.den << std::endl;
           std::cout << std::endl;
@@ -854,32 +871,36 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
           decltype(q) p = q;
           const int q_bits = msb(q);
-          std::cout << "q bits: " << q_bits << std::endl;
+          std::cout << "q msb   : " << q_bits << std::endl;
           std::cout << "p before: " << p << std::endl;
           std::cout << "q before: " << q << std::endl;
           std::cout << "r before: " << r << std::endl;
           std::cout << std::endl;
-          const int num_dbl_digits = std::numeric_limits<double>::digits;
 
           // exit(EXIT_SUCCESS);
 
-          if (q != 0) {
+          if (r != 0) {
             if (q_bits == num_dbl_digits - 1) {
 
-              // Round up if 2 * r > denom:
-              r <<= 1;
+              CGAL_assertion(r > 0);
+              // Round up if 2 * r > x.den:
+              r <<= 1; // multiply r by 2
               const int c = r.compare(x.den);
-              if (c > 0) {
+              std::cout << "cmp: " << c << std::endl;
+              if (c > 0) { // we are in the second half of the interval between two doubles
                 ++q;
               } else if ((c == 0) && (q & 1u)) {
                 ++q;
               }
+              // otherwise we are already in the correct position
+
               std::cout << "p after1: " << p << std::endl;
               std::cout << "q after1: " << q << std::endl;
               std::cout << "r after1: " << r << std::endl;
 
             } else {
 
+              CGAL_assertion(r > 0);
               CGAL_assertion(q_bits == num_dbl_digits);
               // We basically already have the rounding info:
               if (q & 1u) {
@@ -891,19 +912,20 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               std::cout << "q after2: " << q << std::endl;
               std::cout << "r after2: " << r << std::endl;
             }
-
           }
-          std::cout << std::endl;
 
           // exit(EXIT_SUCCESS);
 
           l = boost::multiprecision::detail::do_cast<double>(p);
-          l = std::ldexp(l, -shift);
+          std::cout << "do cast l: " << l << std::endl;
+          l = std::ldexp(l, -shift); // divide by 2^shift
           u = boost::multiprecision::detail::do_cast<double>(q);
-          u = std::ldexp(u, -shift);
+          std::cout << "do cast u: " << u << std::endl;
+          u = std::ldexp(u, -shift); // divide by 2^shift
           if (change_sign) {
-            l = -l;
-            u = -u;
+            const double t = l;
+            l = -u;
+            u = -t;
           }
 
           std::cout << "l: " << l << std::endl;
@@ -922,7 +944,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         #if defined(CGAL_USE_CPP_INT) && true
 
-          #if false // tight bounds optimized
+          #if true // tight bounds optimized
 
             // Make tight and fast bounds for x here.
             // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
