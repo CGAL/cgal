@@ -708,79 +708,74 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
 
-        std::pair< std::pair<double, double>, long > get_interval_exp( NT& x ) const {
+        std::pair< std::pair<double, double>, long > get_interval_exp( const bool verbose, NT& x ) const {
 
-          std::cout << std::endl;
-          std::cout << " --- debugging get_interval_exp() --- " << std::endl;
-          std::cout << "x: " << x << std::endl;
+          if (verbose) {
+            std::cout << std::endl;
+            std::cout << " --- debugging get_interval_exp() --- " << std::endl;
+            std::cout << std::endl;
+
+            std::cout << "x: " << x << std::endl;
+          }
 
           // Get surrounding interval of the form [l*2^k, u*2^k]
           // first get mantissa in the form l*2^k, with 0.5 <= d < 1;
           // truncation is guaranteed to go towards zero.
 
           const unsigned n = msb(x);
-          std::cout << "msb before shift: " << msb(x) << std::endl;
+          if (verbose) {
+            std::cout << "msb before shift: " << msb(x) << std::endl;
+          }
 
           if (n > 52) {
 
             const unsigned d = n - 52;
             x = x >> d;
-            std::cout << "shifting.... " << std::endl;
-            std::cout << "msb after shift: " << msb(x) << std::endl;
-            std::cout << "shift difference: " << d << std::endl;
-            std::cout << "shifted x: " << x << std::endl;
+
+            if (verbose) {
+              std::cout << "shifting.... " << std::endl;
+              std::cout << "msb after shift: " << msb(x) << std::endl;
+              std::cout << "shift difference: " << d << std::endl;
+              std::cout << "shifted x: " << x << std::endl;
+            }
+
+            // const double l = boost::multiprecision::detail::do_cast<double>(x);
+            // const double u = boost::multiprecision::detail::do_cast<double>(x + 1);
+
             const double l(x);
             const double u(x + 1);
-            std::cout << "l: " << l << std::endl;
-            std::cout << "u: " << u << std::endl;
+
+            if (verbose) {
+              std::cout << "l: " << l << std::endl;
+              std::cout << "u: " << u << std::endl;
+            }
             return std::make_pair( std::make_pair(l, u), d );
 
           } else {
 
-            std::cout << "no shifting required " << std::endl;
+            // const double l = boost::multiprecision::detail::do_cast<double>(x);
+            // const double u = l;
+
             const double l(x);
             const double u(l);
-            std::cout << "l: " << l << std::endl;
-            std::cout << "u: " << u << std::endl;
+
+            if (verbose) {
+              std::cout << "no shifting required " << std::endl;
+              std::cout << "l: " << l << std::endl;
+              std::cout << "u: " << u << std::endl;
+            }
             return std::make_pair( std::make_pair(l, u), 0 );
-
           }
-
-          // exit(EXIT_SUCCESS);
-
-          // long k = 0;
-          // double l = mpz_get_d_2exp (&k, man()); // we miss this function for cpp_int
-
-          // l = +/- 0.1*...*
-          //           ------
-          //           53 digits
-          // in order to round away from zero, it suffices to add/subtract 2^-53
-
-          // double u = l;
-          // if (l < 0) {
-          //   // u is already the upper bound, decrease l to get lower bound
-          //   l -= std::ldexp(1.0, -53);
-          // } else {
-          //   // l is already the lower bound, increase u to get upper bound
-          //   u += std::ldexp(1.0, -53);
-          // }
-
-          // The interval is now [l * 2^(k + exp()), u * 2^(k + exp())]
-          // we may cast the exponents to int, since if that's going to
-          // create an overflow, we correctly get infinities.
-
-          // return std::pair<std::pair<double, double>, long>
-          //   (std::pair<double, double>(l, u), k + exp());
         }
 
-        std::pair<double, double> get_interval_as_gmpzf( Type& x ) const {
+        std::pair<double, double> get_interval_as_gmpzf( const bool verbose,  Type& x ) const {
 
           // Do here as MP_Float does.
           // double i = 0.0, s = 0.0;
 
           Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-          const auto n = get_interval_exp(x.num);
-          const auto d = get_interval_exp(x.den);
+          const auto n = get_interval_exp(verbose, x.num);
+          const auto d = get_interval_exp(verbose, x.den);
 
           // exit(EXIT_SUCCESS);
 
@@ -792,27 +787,31 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const Interval_nt<> den(d.first);
           const Interval_nt<> div = num / den;
 
-          std::cout << std::endl;
-          std::cout << " --- debugging get_interval_as_gmpzf() --- " << std::endl;
-          std::cout << "interval nt num: " << num << std::endl;
-          std::cout << "interval nt den: " << den << std::endl;
-          std::cout << "interval nt div: " << div << std::endl;
+          if (verbose) {
+            std::cout << std::endl;
+            std::cout << " --- debugging get_interval_as_gmpzf() --- " << std::endl;
+            std::cout << "interval nt num: " << num << std::endl;
+            std::cout << "interval nt den: " << den << std::endl;
+            std::cout << "interval nt div: " << div << std::endl;
+          }
 
           const long e = static_cast<int>(n.second - d.second);
-          std::cout << "exp: " << e << std::endl;
           const auto pair = ldexp(div, e).pair();
-          std::cout << "ldexp l: " << pair.first << std::endl;
-          std::cout << "ldexp u: " << pair.second << std::endl;
-          std::cout << std::endl;
+
+          if (verbose) {
+            std::cout << "exp: " << e << std::endl;
+            std::cout << "ldexp l: " << pair.first << std::endl;
+            std::cout << "ldexp u: " << pair.second << std::endl;
+            std::cout << std::endl;
+          }
 
           // TODO: Do not forget to change sign here!
-
           // exit(EXIT_SUCCESS);
 
           return pair;
         }
 
-        std::pair<double, double> get_interval_as_boost( Type& x ) const {
+        std::pair<double, double> get_interval_as_boost( const bool verbose, Type& x ) const {
 
           double l = 0.0, u = 0.0;
           if (x.num == 0) { // return [0.0, 0.0]
@@ -821,7 +820,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(x.num != 0);
           CGAL_assertion(x.den != 0);
 
-          // Hnalde signs.
+          // Handle signs.
           bool change_sign = false;
           if (x.num < 0 && x.den < 0) {
             x.num = -x.num;
@@ -834,23 +833,27 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             x.den = -x.den;
           }
 
-          std::cout << std::endl;
-          std::cout << " --- debugging get_interval_as_boost() --- " << std::endl;
-          std::cout << std::endl;
+          if (verbose) {
+            std::cout << std::endl;
+            std::cout << " --- debugging get_interval_as_boost() --- " << std::endl;
+            std::cout << std::endl;
 
-          std::cout << "change sign: " << change_sign << std::endl;
+            std::cout << "change sign: " << change_sign << std::endl;
+          }
 
           const int num_dbl_digits = std::numeric_limits<double>::digits;
           const int shift = num_dbl_digits + (msb(x.den) - msb(x.num));
 
-          std::cout << "num before shift: " << x.num << std::endl;
-          std::cout << "den before shift: " << x.den << std::endl;
+          if (verbose) {
+            std::cout << "num before shift: " << x.num << std::endl;
+            std::cout << "den before shift: " << x.den << std::endl;
 
-          std::cout << "digits : " << num_dbl_digits << std::endl;
-          std::cout << "diff1  : " << int(msb(x.den) - msb(x.num)) << std::endl;
-          std::cout << "num msb: " << int(msb(x.num)) << std::endl;
-          std::cout << "den msb: " << int(msb(x.den)) << std::endl;
-          std::cout << "shift  : " << shift << std::endl;
+            std::cout << "digits : " << num_dbl_digits << std::endl;
+            std::cout << "diff1  : " << int(msb(x.den) - msb(x.num)) << std::endl;
+            std::cout << "num msb: " << int(msb(x.num)) << std::endl;
+            std::cout << "den msb: " << int(msb(x.den)) << std::endl;
+            std::cout << "shift  : " << shift << std::endl;
+          }
 
           if (shift > 0) {
             x.num <<= shift; // that is multiply bu 2^shift
@@ -858,12 +861,15 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
           }
           CGAL_assertion(int(msb(x.den) - msb(x.num)) == -53);
-          std::cout << "diff2  : " << int(msb(x.den) - msb(x.num)) << std::endl;
-          std::cout << std::endl;
 
-          std::cout << "num after shift: " << x.num << std::endl;
-          std::cout << "den after shift: " << x.den << std::endl;
-          std::cout << std::endl;
+          if (verbose) {
+            std::cout << "diff2  : " << int(msb(x.den) - msb(x.num)) << std::endl;
+            std::cout << std::endl;
+
+            std::cout << "num after shift: " << x.num << std::endl;
+            std::cout << "den after shift: " << x.den << std::endl;
+            std::cout << std::endl;
+          }
 
           // exit(EXIT_SUCCESS);
 
@@ -871,11 +877,14 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
           decltype(q) p = q;
           const int q_bits = msb(q);
-          std::cout << "q msb   : " << q_bits << std::endl;
-          std::cout << "p before: " << p << std::endl;
-          std::cout << "q before: " << q << std::endl;
-          std::cout << "r before: " << r << std::endl;
-          std::cout << std::endl;
+
+          if (verbose) {
+            std::cout << "q msb   : " << q_bits << std::endl;
+            std::cout << "p before: " << p << std::endl;
+            std::cout << "q before: " << q << std::endl;
+            std::cout << "r before: " << r << std::endl;
+            std::cout << std::endl;
+          }
 
           // exit(EXIT_SUCCESS);
 
@@ -886,7 +895,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               // Round up if 2 * r > x.den:
               r <<= 1; // multiply r by 2
               const int c = r.compare(x.den);
-              std::cout << "cmp: " << c << std::endl;
               if (c > 0) { // we are in the second half of the interval between two doubles
                 ++q;
               } else if ((c == 0) && (q & 1u)) {
@@ -894,9 +902,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               }
               // otherwise we are already in the correct position
 
-              std::cout << "p after1: " << p << std::endl;
-              std::cout << "q after1: " << q << std::endl;
-              std::cout << "r after1: " << r << std::endl;
+              if (verbose) {
+                std::cout << "cmp: " << c << std::endl;
+                std::cout << "p after1: " << p << std::endl;
+                std::cout << "q after1: " << q << std::endl;
+                std::cout << "r after1: " << r << std::endl;
+              }
 
             } else {
 
@@ -908,19 +919,22 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
                   ++q;
                 }
               }
-              std::cout << "p after2: " << p << std::endl;
-              std::cout << "q after2: " << q << std::endl;
-              std::cout << "r after2: " << r << std::endl;
+
+              if (verbose) {
+                std::cout << "p after2: " << p << std::endl;
+                std::cout << "q after2: " << q << std::endl;
+                std::cout << "r after2: " << r << std::endl;
+              }
             }
           }
 
           // exit(EXIT_SUCCESS);
 
           l = boost::multiprecision::detail::do_cast<double>(p);
-          std::cout << "do cast l: " << l << std::endl;
+          if (verbose) std::cout << "do cast l: " << l << std::endl;
           l = std::ldexp(l, -shift); // divide by 2^shift
           u = boost::multiprecision::detail::do_cast<double>(q);
-          std::cout << "do cast u: " << u << std::endl;
+          if (verbose) std::cout << "do cast u: " << u << std::endl;
           u = std::ldexp(u, -shift); // divide by 2^shift
           if (change_sign) {
             const double t = l;
@@ -928,8 +942,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             u = -t;
           }
 
-          std::cout << "l: " << l << std::endl;
-          std::cout << "u: " << u << std::endl;
+          if (verbose) {
+            std::cout << "l: " << l << std::endl;
+            std::cout << "u: " << u << std::endl;
+          }
 
           // exit(EXIT_SUCCESS);
 
@@ -952,13 +968,14 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
             // TODO: Can we avoid this copying by getting x without const?
             Type xx = x;
+            const bool verbose = false;
 
             // Does not yet take into account the sign and gives slightly
             // different result for the HARD CASE.
-            // return get_interval_as_gmpzf(xx);
+            // return get_interval_as_gmpzf(verbose, xx);
 
-            // Works slightly better than the first one and it is more complete.
-            return get_interval_as_boost(xx);
+            // Works slightly better than the first one.
+            return get_interval_as_boost(verbose, xx);
 
           #endif
 
