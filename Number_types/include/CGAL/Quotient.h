@@ -997,12 +997,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             Type xx = x;
             const bool verbose = false;
 
-            // Does not yet take into account the sign and gives slightly
-            // different result for the HARD CASE.
-            return get_interval_as_gmpzf(verbose, xx);
+            // Seems to be less precise and we rarely end up with an interval [d,d]
+            // even for numbers, which are exactly representable as double.
+            // return get_interval_as_gmpzf(verbose, xx);
 
             // Works slightly better than the first one.
-            // return get_interval_as_boost(verbose, xx);
+            return get_interval_as_boost(verbose, xx);
 
           #endif
 
