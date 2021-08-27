@@ -716,9 +716,9 @@ static Point_3 find_median_point(Vertex_list& V, int coord) {
 static Plane_3 construct_splitting_plane(const Point_3& pt, int coord)
 {
   switch(coord) {
-  case 0: return Plane_3(1, 0, 0, -pt.x());
-  case 1: return Plane_3(0, 1, 0, -pt.y());
-  case 2: return Plane_3(0, 0, 1, -pt.z());
+  case 0: return Plane_3(1/pt.hw(), 0, 0, -pt.hx());
+  case 1: return Plane_3(0, 1/pt.hw(), 0, -pt.hy());
+  case 2: return Plane_3(0, 0, 1/pt.hw(), -pt.hz());
   }
 
   CGAL_error_msg( "never reached");
