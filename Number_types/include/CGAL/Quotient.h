@@ -1227,6 +1227,9 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             Type xx = x;
             const bool verbose = false;
 
+            // TODO: compare both below with the stable cpp_rational-based implementation
+            // and see which configurations fail for NEF data.
+
             // Seems to be less precise and we rarely end up with an interval [d,d]
             // even for numbers, which are exactly representable as double.
             // if (verbose) {
