@@ -104,7 +104,7 @@ other but never both.
 \subsection installation_boost Boost Libraries
 
 \subsubsection inst_boost_1_70_plus Version 1.70 and Later
-Starting from \sc{Boost} 1.77, the cmake config mode can be used for configuring the \sc{Boost} version
+Starting from \sc{Boost} 1.70, the cmake config mode can be used for configuring the \sc{Boost} version
 to use by setting the environment variable `Boost_DIR` to the path containing the file
 `BoostConfig.cmake`. For example if you manually installed \sc{Boost} 1.77 with `--prefix=<path>`,
 then you should set `Boost_DIR=<path>/lib/cmake/Boost-1.77.0`.
@@ -112,7 +112,7 @@ then you should set `Boost_DIR=<path>/lib/cmake/Boost-1.77.0`.
 \subsubsection inst_boost_up_2_1_69 Version 1.69 and Earlier
 
 \warning If you have a version of Boost greater to 1.69 already installed on your system,
-`cmake` will always find it as the config mode if prefered over the other finding methods.
+`cmake` will always find it as the config mode is preferred over the other finding methods.
 
 In most cases, if \sc{Boost} is not automatically found, setting the `BOOST_ROOT`
 variable is enough. If it is not, you can specify the header and library
