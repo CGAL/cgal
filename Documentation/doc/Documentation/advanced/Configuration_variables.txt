@@ -113,6 +113,7 @@ then you should set `Boost_DIR=<path>/lib/cmake/Boost-1.77.0`.
 
 \warning If you have a version of Boost greater to 1.69 already installed on your system,
 `cmake` will always find it as the config mode is preferred over the other finding methods.
+You will need to set the cmake variable `Boost_NO_BOOST_CMAKE` to `ON` to bypass it.
 
 In most cases, if \sc{Boost} is not automatically found, setting the `BOOST_ROOT`
 variable is enough. If it is not, you can specify the header and library
