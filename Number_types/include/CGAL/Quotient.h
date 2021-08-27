@@ -722,14 +722,16 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // first get mantissa in the form l*2^k, with 0.5 <= d < 1;
           // truncation is guaranteed to go towards zero.
 
+          CGAL_assertion(x >= 0);
           const unsigned n = msb(x);
           if (verbose) {
             std::cout << "msb before shift: " << msb(x) << std::endl;
           }
 
-          if (n > 52) {
+          const unsigned num_dbl_digits = std::numeric_limits<double>::digits;
+          if (n > num_dbl_digits) {
 
-            const unsigned d = n - 52;
+            const unsigned d = n - num_dbl_digits;
             x = x >> d;
 
             if (verbose) {
@@ -739,11 +741,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               std::cout << "shifted x: " << x << std::endl;
             }
 
-            // const double l = boost::multiprecision::detail::do_cast<double>(x);
-            // const double u = boost::multiprecision::detail::do_cast<double>(x + 1);
-
-            const double l(x);
-            const double u(x + 1);
+            const double l = boost::multiprecision::detail::do_cast<double>(x);
+            const double u = boost::multiprecision::detail::do_cast<double>(x + 1);
 
             if (verbose) {
               std::cout << "l: " << l << std::endl;
@@ -753,11 +752,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           } else {
 
-            // const double l = boost::multiprecision::detail::do_cast<double>(x);
-            // const double u = l;
-
-            const double l(x);
-            const double u(l);
+            const double l = boost::multiprecision::detail::do_cast<double>(x);
+            const double u = l;
 
             if (verbose) {
               std::cout << "no shifting required " << std::endl;
@@ -770,8 +766,26 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         std::pair<double, double> get_interval_as_gmpzf( const bool verbose,  Type& x ) const {
 
-          // Do here as MP_Float does.
-          // double i = 0.0, s = 0.0;
+          double l = 0.0, u = 0.0;
+          if (x.num == 0) { // return [0.0, 0.0]
+            return std::make_pair(l, u);
+          }
+          CGAL_assertion(x.num != 0);
+          CGAL_assertion(x.den != 0);
+
+          // Handle signs.
+          bool change_sign = false;
+          if (x.num < 0 && x.den < 0) {
+            x.num = -x.num;
+            x.den = -x.den;
+          } else if (x.num < 0 && x.den > 0) {
+            change_sign = true;
+            x.num = -x.num;
+          } else if (x.num > 0 && x.den < 0) {
+            change_sign = true;
+            x.den = -x.den;
+          }
+          CGAL_assertion(x.num > 0 && x.den > 0);
 
           Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
           const auto n = get_interval_exp(verbose, x.num);
@@ -779,9 +793,9 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           // exit(EXIT_SUCCESS);
 
-          // CGAL_assertion_msg(
-          //   CGAL::abs(double(n.second) - double(d.second)) < (1<<30)*2.0,
-          //   "Exponent overflow in Quotient<boost::multiprecision::cpp_int> to_interval");
+          CGAL_assertion_msg(
+            CGAL::abs(double(n.second) - double(d.second)) < (1<<30)*2.0,
+            "Exponent overflow in Quotient<boost::multiprecision::cpp_int> to_interval()!");
 
           const Interval_nt<> num(n.first);
           const Interval_nt<> den(d.first);
@@ -790,25 +804,37 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           if (verbose) {
             std::cout << std::endl;
             std::cout << " --- debugging get_interval_as_gmpzf() --- " << std::endl;
+            std::cout << std::endl;
+
+            std::cout << "change sign: " << change_sign << std::endl;
             std::cout << "interval nt num: " << num << std::endl;
             std::cout << "interval nt den: " << den << std::endl;
             std::cout << "interval nt div: " << div << std::endl;
           }
 
-          const long e = static_cast<int>(n.second - d.second);
-          const auto pair = ldexp(div, e).pair();
+          const int e = static_cast<int>(n.second - d.second);
+          std::tie(l, u) = ldexp(div, e).pair();
 
           if (verbose) {
             std::cout << "exp: " << e << std::endl;
-            std::cout << "ldexp l: " << pair.first << std::endl;
-            std::cout << "ldexp u: " << pair.second << std::endl;
+            std::cout << "ldexp l: " << l << std::endl;
+            std::cout << "ldexp u: " << u << std::endl;
             std::cout << std::endl;
           }
 
-          // TODO: Do not forget to change sign here!
-          // exit(EXIT_SUCCESS);
+          if (change_sign) {
+            const double t = l;
+            l = -u;
+            u = -t;
+          }
 
-          return pair;
+          if (verbose) {
+            std::cout << "l: " << l << std::endl;
+            std::cout << "u: " << u << std::endl;
+          }
+
+          // exit(EXIT_SUCCESS);
+          return std::make_pair(l, u);
         }
 
         std::pair<double, double> get_interval_as_boost( const bool verbose, Type& x ) const {
@@ -832,6 +858,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             change_sign = true;
             x.den = -x.den;
           }
+          CGAL_assertion(x.num > 0 && x.den > 0);
 
           if (verbose) {
             std::cout << std::endl;
@@ -936,6 +963,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           u = boost::multiprecision::detail::do_cast<double>(q);
           if (verbose) std::cout << "do cast u: " << u << std::endl;
           u = std::ldexp(u, -shift); // divide by 2^shift
+
           if (change_sign) {
             const double t = l;
             l = -u;
@@ -948,7 +976,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
 
           // exit(EXIT_SUCCESS);
-
           return std::make_pair(l, u);
         }
 
@@ -972,10 +999,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
             // Does not yet take into account the sign and gives slightly
             // different result for the HARD CASE.
-            // return get_interval_as_gmpzf(verbose, xx);
+            return get_interval_as_gmpzf(verbose, xx);
 
             // Works slightly better than the first one.
-            return get_interval_as_boost(verbose, xx);
+            // return get_interval_as_boost(verbose, xx);
 
           #endif
 
