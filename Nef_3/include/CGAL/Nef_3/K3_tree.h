@@ -370,7 +370,7 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
         Point_3(FT(b.max_coord(0)), FT(b.max_coord(1)),FT(b.max_coord(2)));
       // We compute the intersection between a plane with normal vector in
       // the minus x direction and located at the minimum point of the bounding box, and the input ray.  When the ray does not intersect the bounding volume, there won't be any object hit, so it is safe to construct a segment that simply lay in the unbounded side of the bounding box.  This approach is taken instead of somehow (efficiently) report that there was no hit object, in order to mantain a clear interface with the Iterator class.
-      Plane_3 pl_on_minus_x = K3_tree::construct_splitting_plane(pt_on_minus_x_plane, c);
+      Plane_3 pl_on_minus_x = K3_tree::construct_splitting_plane(pt_on_minus_x_plane, c, typename Traits::Kernel::Kernel_tag());
       Object o = traits.intersect_object()( pl_on_minus_x, r);
       if( !CGAL::assign( q, o) || pl_on_minus_x.has_on(p))
         q = r.source() + vec;
@@ -640,7 +640,7 @@ Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
 
   Node_handle left_node = build_kdtree(V1, E1, F1, depth + 1);
   Node_handle right_node = build_kdtree(V2, E2, F2, depth + 1);
-  nodes.push_back(Node(left_node, right_node, construct_splitting_plane(point_on_plane, coord)));
+  nodes.push_back(Node(left_node, right_node, construct_splitting_plane(point_on_plane, coord, typename Traits::Kernel::Kernel_tag())));
   return &(nodes.back());
 }
 
@@ -687,12 +687,24 @@ static Point_3 find_median_point(Vertex_list& V, int coord) {
   return CGAL::midpoint((*median)->point(), (*prev)->point());
 }
 
-static Plane_3 construct_splitting_plane(const Point_3& pt, int coord)
+static Plane_3 construct_splitting_plane(const Point_3& pt, int coord, const Homogeneous_tag&)
 {
   switch(coord) {
   case 0: return Plane_3(1/pt.hw(), 0, 0, -pt.hx());
   case 1: return Plane_3(0, 1/pt.hw(), 0, -pt.hy());
   case 2: return Plane_3(0, 0, 1/pt.hw(), -pt.hz());
+  }
+
+  CGAL_error_msg( "never reached");
+  return Plane_3();
+}
+
+static Plane_3 construct_splitting_plane(const Point_3& pt, int coord, const Cartesian_tag&)
+{
+  switch(coord) {
+  case 0: return Plane_3(1, 0, 0, -pt.x());
+  case 1: return Plane_3(0, 1, 0, -pt.y());
+  case 2: return Plane_3(0, 0, 1, -pt.z());
   }
 
   CGAL_error_msg( "never reached");
