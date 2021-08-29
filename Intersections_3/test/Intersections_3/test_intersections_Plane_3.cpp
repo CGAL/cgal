@@ -232,6 +232,10 @@ public:
         if(pln.has_on(sph5))
           continue;
 
+        Tet tet{pl0, pl1, sph5, sph4};
+        if(tet.is_degenerate())
+          continue;
+
         sph = Sph(pl0, pl1, sph5, sph4);
         check_intersection(pln, sph, C(pln, sph));
 
@@ -240,7 +244,7 @@ public:
           continue;
 
         // The sphere constructor will assert on degenerate positions
-        const Tet tet(pl0, sph6, sph5, sph4);
+        tet = Tet{pl0, sph6, sph5, sph4};
         if(tet.is_degenerate())
           continue;
 
@@ -427,6 +431,8 @@ int main(int, char**)
 {
   std::cout.precision(17);
   std::cerr.precision(17);
+
+  CGAL::Set_ieee_double_precision pfr;
 
   CGAL::Random r;
   std::cout << "random seed = " << r.get_seed() << std::endl;
