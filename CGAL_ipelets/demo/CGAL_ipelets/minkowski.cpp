@@ -76,7 +76,7 @@ void SubSelectIpelet::protected_run(int fn)
   for (std::list<Circle_2>::iterator it=cir_list.begin();it!=cir_list.end();++it)
     r_offsets.push_back(sqrt(CGAL::to_double(it->squared_radius())));
 
-  IpeMatrix tfm (1,0,0,1,-CGAL::to_double(bbox.min().x()),-CGAL::to_double(bbox.min().y()));
+  IpeMatrix tfm (1,0,0,1,-CGAL::to_double((bbox.min)().x()),-CGAL::to_double((bbox.min)().y()));
 
   for (std::list<Polygon_2>::iterator it=pol_list.begin();it!=pol_list.end();++it)
     if(!it->is_simple()){

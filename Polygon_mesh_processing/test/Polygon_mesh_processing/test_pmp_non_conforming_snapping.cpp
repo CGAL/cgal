@@ -14,7 +14,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/IO/STL_reader.h>
+#include <CGAL/IO/STL.h>
 
 #include <array>
 #include <iostream>
@@ -51,7 +51,7 @@ void read_mesh(const char* filename,
   {
     std::vector<Point> points;
     std::vector<std::array<int, 3> > faces;
-    CGAL::read_STL(in, points, faces);
+    CGAL::IO::read_STL(in, points, faces);
 
     if(!CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces))
       std::cerr << "W: File does not describe a polygon mesh" << std::endl;

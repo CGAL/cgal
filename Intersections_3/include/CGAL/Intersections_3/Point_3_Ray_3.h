@@ -28,9 +28,9 @@ inline
 bool
 do_intersect(const typename K::Point_3 &pt,
              const typename K::Ray_3 &ray,
-             const K&)
+             const K& k)
 {
-  return ray.has_on(pt);
+  return k.has_on_3_object()(ray,pt);
 }
 
 
@@ -39,9 +39,9 @@ inline
 bool
 do_intersect(const typename K::Ray_3 &ray,
              const typename K::Point_3 &pt,
-             const K&)
+             const K& k)
 {
-  return ray.has_on(pt);
+  return k.has_on_3_object()(ray,pt);
 }
 
 

@@ -87,7 +87,7 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Mes
   this->mw = mainWindow;
 
   QAction* actionLoadFunction = new QAction("Generate &Implicit Function", mw);
-  if( NULL != actionLoadFunction )
+  if( nullptr != actionLoadFunction )
   {
     connect(actionLoadFunction, SIGNAL(triggered()), this, SLOT(load_function()));
   }
@@ -96,7 +96,7 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Mes
   QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
   if(!menu){
     QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
-    menu = new QMenu(tr("Generate &Objet"), menuFile);
+    menu = new QMenu(tr("Generate &Object"), menuFile);
     menu->setObjectName("menuGenerateObject");
     menuFile->insertMenu(actionLoad, menu);
   }
@@ -167,12 +167,12 @@ load_function_plugins()
       QPluginLoader loader;
       loader.setFileName(pluginsDir.absoluteFilePath(fileName));
       QObject *function_plugin = loader.instance();
-      if ( NULL != function_plugin )
+      if ( nullptr != function_plugin )
       {
         Implicit_function_interface* function =
           qobject_cast<Implicit_function_interface*>(function_plugin);
 
-        if ( NULL != function )
+        if ( nullptr != function )
         {
           functions_ << function;
         }

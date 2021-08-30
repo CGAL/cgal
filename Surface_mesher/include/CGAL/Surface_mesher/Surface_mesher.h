@@ -479,11 +479,15 @@ namespace CGAL {
       // On enleve la facette de la liste des mauvaises facettes
 #ifdef CGAL_SURFACE_MESHER_TAG_BAD
       if(f.first->is_bad(f.second))
+      {
 #endif // CGAL_SURFACE_MESHER_TAG_BAD
-        if(f.first < other_side.first)
-          facets_to_refine.erase(f);
-        else
-          facets_to_refine.erase(other_side);
+      if(f.first < other_side.first)
+        facets_to_refine.erase(f);
+      else
+        facets_to_refine.erase(other_side);
+#ifdef CGAL_SURFACE_MESHER_TAG_BAD
+      }
+#endif // CGAL_SURFACE_MESHER_TAG_BAD
       // Le compteur des visites est remis a zero
        reset_visited(f);
        reset_visited(other_side);

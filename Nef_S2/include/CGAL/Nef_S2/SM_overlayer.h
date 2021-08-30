@@ -540,8 +540,13 @@ public:
     Mark m[2];
     Object_handle o_supp[2];
     SHalfedge_handle e_below;
+
     vertex_info()
-    { o_supp[0]=o_supp[1]=Object_handle(); }
+    {
+      m[0]=m[1]=Mark();
+      o_supp[0]=o_supp[1]=Object_handle();
+    }
+
     LEDA_MEMORY(vertex_info)
   }; // vertex_info
 
@@ -2113,7 +2118,7 @@ complete_face_support(SVertex_iterator v_start, SVertex_iterator v_end,
 { CGAL_NEF_TRACEN("complete_face_support");
   for (SVertex_iterator v = v_start; v != v_end; ++v) {
     CGAL_NEF_TRACEN("VERTEX = "<<PH(v));
-    Mark m_buffer[2];
+    Mark m_buffer[2] {};
     SHalfedge_handle e_below = halfedge_below(v);
     if ( v == v_start ) {
       for (int i=0; i<2; ++i){

@@ -125,7 +125,7 @@ public:
     CGAL_assertion(!faces.empty());
 
     std::list<Triangle_3> tris;
-    for(const face_descriptor f : faces) {
+    for(const face_descriptor& f : faces) {
       const halfedge_descriptor he = halfedge(f, *m_tm);
       const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
       const Point_3 &p1 = m_vpmap[target(he, *m_tm)];

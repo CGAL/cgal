@@ -26,6 +26,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 //if export_complex is false, there must be no far point.
 template <typename C3T3>
 vtkUnstructuredGrid*
@@ -120,6 +122,12 @@ output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3,
   vtk_cells->Delete();
   return grid;
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_c3t3_to_vtk_unstructured_grid;
+#endif
 
 } // end namespace CGAL
 

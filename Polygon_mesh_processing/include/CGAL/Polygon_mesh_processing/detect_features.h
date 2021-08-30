@@ -236,22 +236,31 @@ template<typename GT,
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
  * \tparam FT a number type. It is
- * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+ * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
  * or from the geometric traits class deduced from the point property map
  * of `PolygonMesh`.
  * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *  as key type and `bool` as value type. It must be default constructible.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
  * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
- * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
- *    \cgalParamBegin{vertex_feature_degree_map} a property map that will contain the number of adjacent feature edges for
- *  each vertex of `pmesh` \cgalParamEnd
+ *   \cgalParamNBegin{vertex_feature_degree_map}
+ *     \cgalParamDescription{a property map that will associate to each vertex of `pmesh` the number of incident feature edges}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and `int` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_feature_degree_t(), pmesh)`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
@@ -295,6 +304,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
    inserted several times.
  * \tparam EdgeIsFeatureMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *  as key type and `bool` as value type.
+ *
  * \param pmesh the polygon mesh
  * \param patch_id_map the property map containing the surface patch ids for the faces of `pmesh`. It must be already filled.
  * \param vertex_incident_patches_map a property map that will contain the patch ids of all the faces incident to each vertex of `pmesh`.
@@ -368,31 +378,59 @@ namespace internal
  * computing a
  * surface patch id for each face.
  *
- *
  * \tparam PolygonMesh a model of `FaceGraph`
  * \tparam FT a number type. It is
- * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+ * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
  * or from the geometric traits class deduced from the point property map
  * of `PolygonMesh`.
  * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  * \tparam PatchIdMap a model of `ReadWritePropertyMap` with
    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
    and the desired patch id, model of `CopyConstructible` as value type.
- * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
  * \param angle_in_deg the dihedral angle bound
  * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
  * \param patch_id_map the property map that will contain the surface patch ids for the faces of `pmesh`.
- * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
- *    \cgalParamBegin{vertex_feature_degree_map} a property map that will contain the number of adjacent feature edges for each vertex of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{first_index} a `std::size_t` containing the index of the first surface patch of `pmesh`.
- *      The patches will be numbered on [first_index; first_index + num_patches], where num_patches is the number of surface patches \cgalParamEnd
- *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{vertex_incident_patches_map} a property map that will contain the patch ids of all the faces incident to each vertex of `pmesh`. \cgalParamEnd
+ *   \cgalParamNBegin{vertex_feature_degree_map}
+ *     \cgalParamDescription{a property map that will associate to each vertex of `pmesh` the number of incident feature edges}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `int` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_feature_degree_t(), pmesh)`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{first_index}
+ *     \cgalParamDescription{the index of the first surface patch of `pmesh`}
+ *     \cgalParamType{`std::size_t`}
+ *     \cgalParamExtra{The patches will be numbered on `[first_index; first_index + num_patches]`,
+ *                     where `num_patches` is the number of surface patches.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{vertex_incident_patches_map}
+ *     \cgalParamDescription{a property map that will contain the patch ids of all the faces incident to each vertex of `pmesh`}
+ *     \cgalParamType{a model of mutable `LvaluePropertyMap` with
+ *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type. Its value type
+ *                    must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.}
+ *     \cgalParamExtra{A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be inserted several times.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  * \returns the number of surface patches.
  *
@@ -450,9 +488,6 @@ sharp_edges_segmentation(PolygonMesh& p,
   return sharp_edges_segmentation(p, angle_in_deg, edge_is_feature_map, patch_id_map,
                                  parameters::all_default());
 }
-
-
-
 
 } // end namespace PMP
 } // end namespace CGAL

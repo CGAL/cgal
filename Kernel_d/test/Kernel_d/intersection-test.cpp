@@ -29,7 +29,7 @@ typedef CGAL::Quotient<RT> FT;
 #endif
 
 int main()
-{ CGAL::set_pretty_mode ( std::cerr );
+{ CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
 {
   typedef CGAL::Homogeneous_d<RT> Kernel;

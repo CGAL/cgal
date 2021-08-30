@@ -3,7 +3,7 @@
 #include <CGAL/Polynomial_type_generator.h>
 
 int main(){
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
   typedef CGAL::Polynomial_type_generator<int,1>::Type Poly_1;
   typedef CGAL::Polynomial_traits_d<Poly_1>            PT_1;
 

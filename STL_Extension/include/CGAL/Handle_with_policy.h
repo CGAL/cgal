@@ -851,7 +851,7 @@ protected:
     //! constructor used for class hierarchies of representations, where
     //! the handle class derived from this handle creates the different
     //! representations itself with the \c new operator. Except for this
-    //! constructor, the the one with the \c Use_with_initialize_with
+    //! constructor, the one with the \c Use_with_initialize_with
     //! argument, and the single argument template constructor no other
     //! constructor will work for class hierarchies of representations.
     Handle_with_policy( Rep* p) : ptr_( p) {

@@ -5,11 +5,6 @@ namespace CGAL {
 \mainpage User Manual
 \anchor Chapter_3D_Skin_Surface_Meshing
 \anchor chapterSkinSurface
-\htmlonly
-\( \newcommand\ssWpoint[1]{{\bf #1}} \)
-\( \newcommand\ssWeight[1]{w_{#1}} \)
-\( \newcommand{\dabs}[1]{{\parallel\! #1 \!\parallel}} \)
-\endhtmlonly
 
 \cgalAutoToc
 \author Nico Kruithof

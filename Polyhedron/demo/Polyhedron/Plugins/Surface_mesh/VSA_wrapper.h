@@ -66,7 +66,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
       // fitting center
       Vector_3 center = CGAL::NULL_VECTOR;
       FT area(0.0);
-      for(const face_descriptor f : faces) {
+      for(const face_descriptor& f : faces) {
         center = center + (get(center_pmap, f) - CGAL::ORIGIN) * get(area_pmap, f);
         area += get(area_pmap, f);
       }
@@ -90,13 +90,13 @@ public:
   // visual items
   struct Visual_items {
     Visual_items() :
-      group(NULL),
-      seeds(NULL),
+      group(nullptr),
+      seeds(nullptr),
       has_meshing_items(false),
-      triangles(NULL),
-      polygons(NULL),
-      anchors(NULL),
-      planes(NULL) {}
+      triangles(nullptr),
+      polygons(nullptr),
+      anchors(nullptr),
+      planes(nullptr) {}
 
     CGAL::Three::Scene_group_item *group;
     Scene_polylines_item *seeds;

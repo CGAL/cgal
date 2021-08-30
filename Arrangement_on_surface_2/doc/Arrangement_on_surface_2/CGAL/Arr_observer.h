@@ -285,8 +285,8 @@ virtual void before_split_face (Face_handle f,
 Halfedge_handle e);
 
 /*!
-issued immediately after the existing face `f1` has been split,
-such that a portion of it now forms a new face `f2`. The flag
+issued immediately after the existing face `f1` has been split
+into the two faces `f1` and `f2`. The flag
 `is_hole` designates whether `f2` forms a hole inside `f1`.
 */
 virtual void after_split_face (Face_handle f1,

@@ -17,6 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <list>
+#include <unordered_map>
 
 #include <CGAL/Polyline_simplification_2/Vertex_base_2.h>
 #include <CGAL/Polyline_simplification_2/Squared_distance_cost.h>
@@ -57,11 +58,15 @@ class Polyline_simplification_2
 public:
 
   typedef typename PCT::Point Point;
+  typedef typename PCT::Edge Edge;
   typedef typename PCT::Constraint_id Constraint_id;
+  typedef typename PCT::Constrained_edges_iterator Constrained_edges_iterator;
   typedef typename PCT::Constraint_iterator Constraint_iterator;
   typedef typename PCT::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
+  typedef typename PCT::Finite_vertices_iterator Finite_vertices_iterator;
   //typedef typename PCT::Points_in_constraint_iterator Points_in_constraint_iterator;
   typedef typename PCT::Vertex_handle Vertex_handle;
+    typedef typename PCT::Face_handle Face_handle;
   typedef typename PCT::Vertex_circulator Vertex_circulator;
 
   typedef typename PCT::Geom_traits::FT FT;
@@ -71,6 +76,7 @@ public:
   StopFunction stop;
   std::size_t pct_initial_number_of_vertices, number_of_unremovable_vertices;
 
+  std::unordered_map<Vertex_handle, std::list<Vertices_in_constraint_iterator> > vertex_to_iterator;
 
   struct Compare_cost
   {
@@ -79,6 +85,12 @@ public:
     {
       return (*x)->cost() < (*y)->cost();
     }
+
+    bool operator() (const Vertex_handle& x,const Vertex_handle& y) const
+    {
+      return x->cost() < y->cost();
+    }
+
   } ;
 
   struct Id_map : public boost::put_get_helper<std::size_t, Id_map>
@@ -86,12 +98,16 @@ public:
     typedef boost::readable_property_map_tag category;
     typedef std::size_t                      value_type;
     typedef value_type                       reference;
-    typedef Vertices_in_constraint_iterator  key_type;
+    typedef Vertex_handle  key_type;
 
-    reference operator[] ( key_type const& x ) const { return x.base()->id ; }
+
+    reference operator[] ( key_type const& x ) const
+    {
+        return x->ID;
+    }
   } ;
 
-  typedef CGAL::Modifiable_priority_queue<Vertices_in_constraint_iterator,Compare_cost,Id_map> MPQ ;
+  typedef CGAL::Modifiable_priority_queue<Vertex_handle,Compare_cost,Id_map> MPQ ;
 
   MPQ* mpq;
 
@@ -124,23 +140,63 @@ public:
     delete mpq;
   }
 
+  // endpoints of constraints are unremovable
+  // vertices which are not endpoint and have != 2 incident constrained edges are unremovable
   void initialize_unremovable()
   {
-    std::set<Vertex_handle> vertices;
     Constraint_iterator cit = pct.constraints_begin(), e = pct.constraints_end();
     for(; cit!=e; ++cit){
       Constraint_id cid = *cit;
-      Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
+      Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid),
+                                      ite = pct.vertices_in_constraint_end(cid);
       (*it)->set_removable(false);
-      for(; it != pct.vertices_in_constraint_end(cid); ++it){
-        if(vertices.find(*it) != vertices.end()){
+      ++it;
+      for(; it != ite; ++it){
+        if((boost::next(it) != ite) && (boost::prior(it)== boost::next(it))){
           (*it)->set_removable(false);
-        } else {
-          vertices.insert(*it);
         }
       }
       it = boost::prior(it);
       (*it)->set_removable(false);
+    }
+
+    std::unordered_map<Vertex_handle, int> degrees;
+    for (Constrained_edges_iterator it = pct.constrained_edges_begin(); it != pct.constrained_edges_end(); ++it) {
+      Edge e = *it;
+      Face_handle fh = e.first;
+      int ei = e.second;
+      Vertex_handle vh = fh->vertex(pct.cw(ei));
+      ++degrees[vh];
+      vh = fh->vertex(pct.ccw(ei));
+      ++degrees[vh];
+    }
+
+    for(Finite_vertices_iterator it = pct.finite_vertices_begin(); it != pct.finite_vertices_end(); ++it){
+      if( it->is_removable() && (degrees[it] != 2) ){
+        it->set_removable(false);
+      }
+    }
+
+    cit = pct.constraints_begin(), e = pct.constraints_end();
+    for(; cit!=e; ++cit){
+      Constraint_id cid = *cit;
+      for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
+          it != pct.vertices_in_constraint_end(cid);
+          ++it){
+        if((*it)->is_removable()){
+          typename std::unordered_map<Vertex_handle, std::list<Vertices_in_constraint_iterator> >::iterator lit;
+          lit = vertex_to_iterator.find(*it);
+
+          if(lit != vertex_to_iterator.end()){
+            std::list<Vertices_in_constraint_iterator>& ilist = lit->second;
+            if(std::find(ilist.begin(),ilist.end(),it) == ilist.end()){
+              ilist.push_back(it);
+            }
+          }else{
+            vertex_to_iterator[*it].push_back(it);
+          }
+        }
+      }
     }
   }
 
@@ -156,7 +212,9 @@ public:
         boost::optional<FT> dist = cost(pct, it);
         if(dist){
           (*it)->set_cost(*dist);
-          (*mpq).push(it);
+          if(! (*mpq).contains(*it)){
+              (*mpq).push(*it);
+            }
           ++n;
         } else {
           // no need to set the costs as this vertex is not in the priority queue
@@ -230,7 +288,9 @@ public:
     for(Vertices_in_constraint_iterator it = pct.vertices_in_constraint_begin(cid);
         it != pct.vertices_in_constraint_end(cid);
         ++it){
-      it.base()->id = id++;
+        Vertex_handle vh = *it;
+        vh->ID = id++;
+        //vertex_index_map[vh] = id++;
     }
     return id;
   }
@@ -239,9 +299,9 @@ public:
   initialize_indices()
   {
     int id = 0;
-    Constraint_iterator b = pct.constraints_begin(), e = pct.constraints_end();
-    for(; b!=e; ++b){
-      id = initialize_indices(*b, id);
+
+    for(Finite_vertices_iterator it =  pct.finite_vertices_begin(); it != pct.finite_vertices_end(); ++it){
+      it->ID = id++;
     }
     return id;
   }
@@ -252,29 +312,31 @@ operator()()
   if((*mpq).empty()){
       return false;
     }
-  Vertices_in_constraint_iterator v = (*mpq).top();
+  Vertex_handle v = (*mpq).top();
   (*mpq).pop();
-  if(stop(pct, *v, (*v)->cost(), pct_initial_number_of_vertices, pct.number_of_vertices())){
+  if(stop(pct, v, v->cost(), pct_initial_number_of_vertices, pct.number_of_vertices())){
     return false;
   }
-  if(is_removable(v)){
-    Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
-    pct.simplify(v);
+
+  Vertices_in_constraint_iterator vit = vertex_to_iterator[v].front();
+  if(is_removable(vit)){
+    Vertices_in_constraint_iterator u = boost::prior(vit), w = boost::next(vit);
+    pct.simplify(vit);
 
     if((*u)->is_removable()){
       boost::optional<FT> dist = cost(pct, u);
       if(! dist){
         // cost is undefined
-        if( mpq->contains(u) ){
-          mpq->erase(u);
+        if( mpq->contains(*u) ){
+          mpq->erase(*u);
         }
       } else {
         (*u)->set_cost(*dist);
-        if(mpq->contains(u)){
-          mpq->update(u, true);
+        if(mpq->contains(*u)){
+          mpq->update(*u, true);
         }
         else{
-          mpq->push(u);
+          mpq->push(*u);
         }
       }
     }
@@ -283,16 +345,16 @@ operator()()
       boost::optional<FT> dist = cost(pct, w);
       if(! dist){
         // cost is undefined
-        if( mpq->contains(w) ){
-          mpq->erase(w);
+        if( mpq->contains(*w) ){
+          mpq->erase(*w);
         }
       } else {
         (*w)->set_cost(*dist);
-        if(mpq->contains(w)){
-          mpq->update(w, true);
+        if(mpq->contains(*w)){
+          mpq->update(*w, true);
         }
         else{
-          mpq->push(w);
+          mpq->push(*w);
         }
 
       }
@@ -436,10 +498,10 @@ simplify(const CGAL::Polygon_with_holes_2<Traits,Container>& polygon,
 
 Simplifies an open or closed polyline given as an iterator range of 2D \cgal points.
 
-\tparam PointIterator must be an iterator with value type `CGAL::Kernel::Point_2`.
+\tparam PointIterator must be an iterator with value type `Kernel::Point_2`.
 \tparam CostFunction must be a model of `PolylineSimplificationCostFunction`
 \tparam StopFunction must be a model of `PolylineSimplificationStopPredicate`
-\tparam PointOutputIterator must be an output iterator to which `CGAL::Kernel::Point_2` can be assigned.
+\tparam PointOutputIterator must be an output iterator to which `Kernel::Point_2` can be assigned.
 */
   template <class PointIterator, class CostFunction, class StopFunction, class PointOutputIterator>
   PointOutputIterator

@@ -191,7 +191,7 @@ to iterate over the %Cartesian coordinates of the direction of a fixed
 axis of the computed ellipsoid, see
 `axis_direction_cartesian_begin()`.
 */
-typedef unspecified_type Axis_direction_iterator;
+typedef unspecified_type Axes_direction_coordinate_iterator;
 
 /// @}
 

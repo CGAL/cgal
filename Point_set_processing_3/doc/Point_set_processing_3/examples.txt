@@ -9,12 +9,14 @@
 \example Point_set_processing_3/registration_with_OpenGR.cpp
 \example Point_set_processing_3/registration_with_pointmatcher.cpp
 \example Point_set_processing_3/registration_with_opengr_pointmatcher_pipeline.cpp
+\example Point_set_processing_3/clustering_example.cpp
 \example Point_set_processing_3/remove_outliers_example.cpp
 \example Point_set_processing_3/grid_simplification_example.cpp
 \example Point_set_processing_3/grid_simplify_indices.cpp
 \example Point_set_processing_3/hierarchy_simplification_example.cpp
 \example Point_set_processing_3/jet_smoothing_example.cpp
 \example Point_set_processing_3/normals_example.cpp
+\example Point_set_processing_3/orient_scanlines_example.cpp
 \example Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp
 \example Point_set_processing_3/bilateral_smooth_point_set_example.cpp
 \example Point_set_processing_3/edge_aware_upsample_point_set_example.cpp

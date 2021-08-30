@@ -29,8 +29,8 @@ void test_io(_CT x){
 
         NT a(x);
         std::stringstream ss;
-        ss<<CGAL::oformat(a);
-        ss>>CGAL::iformat(a);
+        ss<<CGAL::IO::oformat(a);
+        ss>>CGAL::IO::iformat(a);
         assert(a==NT(x));
 }
 
@@ -44,8 +44,8 @@ void test_io(){
 
         NT a;
         std::stringstream ss;
-        ss<<CGAL::oformat(a);
-        ss>>CGAL::iformat(a);
+        ss<<CGAL::IO::oformat(a);
+        ss>>CGAL::IO::iformat(a);
         assert(a==NT());
 }
 
@@ -58,8 +58,8 @@ void test_interval_io(_CT x){
 
         NT a(x),b(x);
         std::stringstream ss;
-        ss<<CGAL::oformat(a);
-        ss>>CGAL::iformat(a);
+        ss<<CGAL::IO::oformat(a);
+        ss>>CGAL::IO::iformat(a);
         assert(a.inf()==b.inf());
         assert(a.sup()==b.sup());
 }

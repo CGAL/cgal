@@ -74,6 +74,8 @@ struct Vertex_index {
     explicit Vertex_index(Index_t i): m_i(i) {}
     Index_t as_int() const {return m_i;}
     Vertex_index operator++() {++m_i; return *this; }
+    bool operator==(const Vertex_index& other) const { return (m_i == other.m_i); }
+
 private:
     Index_t m_i;
 };

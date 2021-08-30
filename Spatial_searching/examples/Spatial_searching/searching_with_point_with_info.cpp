@@ -22,7 +22,8 @@ typedef CGAL::Orthogonal_k_neighbor_search<Traits>          K_neighbor_search;
 typedef K_neighbor_search::Tree                             Tree;
 typedef K_neighbor_search::Distance                         Distance;
 
-int main() {
+int main()
+{
   const unsigned int K = 5;
   // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) )
   Random_points_iterator rpit( 1.0);
@@ -46,14 +47,13 @@ int main() {
   indices.push_back(6);
 
   // Insert number_of_data_points in the tree
-  Tree tree(
-    boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin() )),
-    boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end() ) )
-  );
+  Tree tree(boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin())),
+            boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end())));
+
+  // search K nearest neighbours
   Point_3 query(0.0, 0.0, 0.0);
   Distance tr_dist;
 
-  // search K nearest neighbours
   K_neighbor_search search(tree, query, K);
   for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
     std::cout << " d(q, nearest neighbor)=  "

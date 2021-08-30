@@ -47,7 +47,7 @@ int main()
          it=gm.darts().begin(), itend=gm.darts().end();
        it!=itend; ++it)
   {
-    if ( gm.attribute<2>(it)==NULL )
+    if ( gm.attribute<2>(it)==nullptr )
       gm.set_attribute<2>(it, gm.create_attribute<2>());
   }
 

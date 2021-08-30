@@ -17,6 +17,7 @@
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
 #include <QAction>
+#include <QMultipleInputDialog.h>
 #include <QRegularExpressionMatch>
 #ifdef CGAL_USE_WEBSOCKETS
 #include <QtWebSockets/QWebSocket>
@@ -25,6 +26,7 @@
 #include <CGAL/Three/Three.h>
 
 #include "ui_LightingDialog.h"
+#include "CGAL_double_edit.h"
 
 #if defined(_WIN32)
 #include <QMimeData>
@@ -46,8 +48,10 @@ public:
   bool clipping;
   bool projection_is_ortho;
   bool cam_sharing;
+  bool scene_scaling;
   GLfloat gl_point_size;
   QVector4D clipbox[6];
+  QVector3D scaler;
   QPainter *painter;
 
   // L i g h t i n g
@@ -117,6 +121,7 @@ public:
   {
     return shader_programs;
   }
+
 #ifdef CGAL_USE_WEBSOCKETS
   QWebSocket m_webSocket;
 #endif
@@ -140,23 +145,23 @@ public:
                                .arg(d->position.y())
                                .arg(d->position.z()));
     QPalette palette;
-    ambient=QColor(255*d->ambient.x(),
-                   255*d->ambient.y(),
-                   255*d->ambient.z());
+    ambient=QColor::fromRgbF(d->ambient.x(),
+                             d->ambient.y(),
+                             d->ambient.z());
     palette.setColor(QPalette::Button,ambient);
     ambientButton->setPalette(palette);
     ambientButton->setStyle(QStyleFactory::create("Fusion"));
 
-    diffuse=QColor(255*d->diffuse.x(),
-                   255*d->diffuse.y(),
-                   255*d->diffuse.z());
+    diffuse=QColor::fromRgbF(d->diffuse.x(),
+                             d->diffuse.y(),
+                             d->diffuse.z());
     palette.setColor(QPalette::Button,diffuse);
     diffuseButton->setPalette(palette);
     diffuseButton->setStyle(QStyleFactory::create("Fusion"));
 
-    specular=QColor(255*d->specular.x(),
-                    255*d->specular.y(),
-                    255*d->specular.z());
+    specular=QColor::fromRgbF(d->specular.x(),
+                              d->specular.y(),
+                              d->specular.z());
     palette.setColor(QPalette::Button,specular);
     specularButton->setPalette(palette);
     specularButton->setStyle(QStyleFactory::create("Fusion"));
@@ -268,17 +273,17 @@ void Viewer::doBindings()
                           1.0f);
 
   QString front_color = viewer_settings.value("front_color", QString("1.0,0.0,0.0")).toString();
-  d->front_color= QColor(255*front_color.split(",").at(0).toFloat(),
-                         255*front_color.split(",").at(1).toFloat(),
-                         255*front_color.split(",").at(2).toFloat(),
+  d->front_color= QColor::fromRgbF(front_color.split(",").at(0).toFloat(),
+                                   front_color.split(",").at(1).toFloat(),
+                                   front_color.split(",").at(2).toFloat(),
                          1.0f);
   QString back_color = viewer_settings.value("back_color", QString("0.0,0.0,1.0")).toString();
-  d->back_color= QColor( 255*back_color.split(",").at(0).toFloat(),
-                         255*back_color.split(",").at(1).toFloat(),
-                         255*back_color.split(",").at(2).toFloat(),
+  d->back_color= QColor::fromRgbF( back_color.split(",").at(0).toFloat(),
+                                   back_color.split(",").at(1).toFloat(),
+                                   back_color.split(",").at(2).toFloat(),
                          1.0f);
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
-  d->scene = 0;
+  d->scene = nullptr;
   d->projection_is_ortho = false;
   d->cam_sharing = false;
   d->twosides = false;
@@ -292,6 +297,8 @@ void Viewer::doBindings()
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
   d->is_connected = false;
+  d->scene_scaling = false;
+  d->scaler = QVector3D(1,1,1);
 
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
@@ -311,15 +318,14 @@ void Viewer::doBindings()
 
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBinding(Qt::ShiftModifier, Qt::RightButton, CGAL::qglviewer::NO_CLICK_ACTION, false, Qt::NoButton);
   setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
                              tr("Select and pop context menu"));
   setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL);
+
   //use the new API for these
   setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, CGAL::qglviewer::SELECT);
 
-  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
-                             tr("Selects and display context "
-                                "menu of the selected item"));
   setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
                              tr("Show/hide the primitive ID of the types selected in the context menu of the picked item."));
   setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
@@ -374,6 +380,7 @@ Viewer::Viewer(QWidget* parent,
 
 Viewer::~Viewer()
 {
+  makeCurrent();
     QSettings viewer_settings;
     viewer_settings.setValue("cam_pos",
                              QString("%1,%2,%3")
@@ -407,7 +414,8 @@ Viewer::~Viewer()
                              .arg(d->back_color.redF())
                              .arg(d->back_color.greenF())
                              .arg(d->back_color.blueF()));
-
+    makeCurrent();
+    d->vao.destroy();
     if(d->_recentFunctions)
       delete d->_recentFunctions;
     if(d->painter)
@@ -768,7 +776,7 @@ void Viewer::turnCameraBy180Degres() {
 
 void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
-  if(scene == 0)
+  if(scene == nullptr)
     return;
   current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
   viewer->setGlPointSize(2.f);
@@ -830,9 +838,23 @@ void Viewer::postSelection(const QPoint& pixel)
     point = camera()->pointUnderPixel(pixel, found) - offset();
   }
   if(found) {
-    Q_EMIT selectedPoint(point.x,
-                         point.y,
-                         point.z);
+    QVector3D transformed_point(point.x,
+                                point.y,
+                                point.z);
+    if(d->scene_scaling)
+    {
+      transformed_point = QVector3D(
+            point.x+offset().x,
+            point.y+offset().y,
+            point.z+offset().z);
+      transformed_point = transformed_point/d->scaler;
+      transformed_point[0] -=offset().x ;
+      transformed_point[1] -=offset().y ;
+      transformed_point[2] -=offset().z ;
+    }
+    Q_EMIT selectedPoint(transformed_point.x(),
+                         transformed_point.y(),
+                         transformed_point.z());
     CGAL::qglviewer::Vec dir;
     CGAL::qglviewer::Vec orig;
     if(d->projection_is_ortho)
@@ -852,7 +874,7 @@ void Viewer::postSelection(const QPoint& pixel)
 }
 bool CGAL::Three::Viewer_interface::readFrame(QString s, CGAL::qglviewer::Frame& frame)
 {
-  QStringList list = s.split(" ", QString::SkipEmptyParts);
+  QStringList list = s.split(" ", CGAL_QT_SKIP_EMPTY_PARTS);
   if(list.size() != 7)
     return false;
   float vec[3];
@@ -919,17 +941,27 @@ void Viewer::attribBuffers(int program_name) const {
     QMatrix4x4 mv_mat;
     // transformation of the manipulated frame
     QMatrix4x4 f_mat;
+    // ModelView Matrix that is modified just for the normal matrix in case of scene scaling
+    QMatrix4x4 norm_mat;
 
     f_mat.setToIdentity();
     //fills the MVP and MV matrices.
     GLdouble d_mat[16];
-
     this->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
     this->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
+
+    norm_mat = mv_mat;
+
+    if(d->scene_scaling){
+      mvp_mat.scale(d->scaler);
+      mv_mat.scale(d->scaler);
+      QVector3D scale_norm(1.0/d->scaler.x(), 1.0/d->scaler.y(), 1.0/d->scaler.z());
+      norm_mat.scale(scale_norm);
+    }
 
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
@@ -1014,12 +1046,14 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_NO_INTERPOLATION:
     case PROGRAM_HEAT_INTENSITY:
       program->setUniformValue("mv_matrix", mv_mat);
+      program->setUniformValue("norm_matrix", norm_mat);
       break;
     case PROGRAM_WITHOUT_LIGHT:
     case PROGRAM_SOLID_WIREFRAME:
       break;
     case PROGRAM_WITH_TEXTURE:
       program->setUniformValue("mv_matrix", mv_mat);
+      program->setUniformValue("norm_matrix", norm_mat);
       program->setUniformValue("s_texture",0);
       program->setUniformValue("f_matrix",f_mat);
       break;
@@ -1129,7 +1163,7 @@ void Viewer::drawVisualHints()
     {
       d->textRenderer->addText(message_text);
     }
-    d->textRenderer->draw(this);
+    d->textRenderer->draw(this, d->scaler);
 
     if (d->_displayMessage)
       d->textRenderer->removeText(message_text);
@@ -1364,7 +1398,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.vert", ":/cgal/Polyhedron_3/resources/shader_flat.frag");
     program->setProperty("hasLight", true);
@@ -1387,7 +1421,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name,
                                                     ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.vert",
@@ -1402,7 +1436,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name,
                                                     ":/cgal/Polyhedron_3/resources/no_interpolation_shader.vert",
@@ -1414,7 +1448,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   default:
     std::cerr<<"ERROR : Program not found."<<std::endl;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -1422,7 +1456,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
 {
   if(e->modifiers().testFlag(Qt::ShiftModifier))
   {
-    double delta = e->delta();
+    double delta = e->angleDelta().y();
     if(delta>0)
     {
       switch(camera()->type())
@@ -1551,20 +1585,26 @@ void Viewer_impl::showDistance(QPoint pixel)
         rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffer.release();
         vao.release();
-
         distance_is_displayed = true;
-        double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
+        double dist = std::sqrt((BPoint.x-APoint.x)/scaler.x()*(BPoint.x-APoint.x)/scaler.x() + (BPoint.y-APoint.y)/scaler.y()*(BPoint.y-APoint.y)/scaler.y() + (BPoint.z-APoint.z)/scaler.z()*(BPoint.z-APoint.z)/scaler.z());
         QFont font;
         font.setBold(true);
         TextItem *ACoord = new TextItem(float(APoint.x),
                                         float(APoint.y),
                                         float(APoint.z),
-                                        QString("A(%1,%2,%3)").arg(APoint.x-viewer->offset().x).arg(APoint.y-viewer->offset().y).arg(APoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("A(%1,%2,%3)")
+                                        .arg(APoint.x/scaler.x()-viewer->offset().x, 0, 'g', 10)
+                                        .arg(APoint.y/scaler.y()-viewer->offset().y, 0, 'g', 10)
+                                        .arg(APoint.z/scaler.z()-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
         distance_text.append(ACoord);
         TextItem *BCoord = new TextItem(float(BPoint.x),
                                         float(BPoint.y),
                                         float(BPoint.z),
-                                        QString("B(%1,%2,%3)").arg(BPoint.x-viewer->offset().x).arg(BPoint.y-viewer->offset().y).arg(BPoint.z-viewer->offset().z), true, font, Qt::red, true);
+                                        QString("B(%1,%2,%3)")
+                                        .arg(BPoint.x/scaler.x()-viewer->offset().x, 0, 'g', 10)
+                                        .arg(BPoint.y/scaler.y()-viewer->offset().y, 0, 'g', 10)
+                                        .arg(BPoint.z/scaler.z()-viewer->offset().z, 0, 'g', 10), true, font, Qt::red, true);
+
         distance_text.append(BCoord);
         CGAL::qglviewer::Vec centerPoint = 0.5*(BPoint+APoint);
         TextItem *centerCoord = new TextItem(float(centerPoint.x),
@@ -1576,13 +1616,13 @@ void Viewer_impl::showDistance(QPoint pixel)
         Q_FOREACH(TextItem* ti, distance_text)
           textRenderer->addText(ti);
         Q_EMIT(viewer->sendMessage(QString("First point : A(%1,%2,%3), second point : B(%4,%5,%6), distance between them : %7")
-                  .arg(APoint.x-viewer->offset().x)
-                  .arg(APoint.y-viewer->offset().y)
-                  .arg(APoint.z-viewer->offset().z)
-                  .arg(BPoint.x-viewer->offset().x)
-                  .arg(BPoint.y-viewer->offset().y)
-                  .arg(BPoint.z-viewer->offset().z)
-                  .arg(dist)));
+                  .arg(APoint.x/scaler.x()-viewer->offset().x)
+                  .arg(APoint.y/scaler.y()-viewer->offset().y)
+                  .arg(APoint.z/scaler.z()-viewer->offset().z)
+                  .arg(BPoint.x/scaler.x()-viewer->offset().x)
+                  .arg(BPoint.y/scaler.y()-viewer->offset().y)
+                  .arg(BPoint.z/scaler.z()-viewer->offset().z)
+                  .arg(dist, 0, 'g', 10)));
     }
 
 }
@@ -1690,6 +1730,12 @@ void Viewer::setTotalPass(int p)
 
 void Viewer::messageLogged(QOpenGLDebugMessage msg)
 {
+  //filter out useless warning
+  // From those two links, we decided we didn't care for this warning:
+  // https://community.khronos.org/t/vertex-shader-in-program-2-is-being-recompiled-based-on-gl-state/76019
+  // https://stackoverflow.com/questions/12004396/opengl-debug-context-performance-warning
+  if(msg.message().contains("is being recompiled"))
+    return;
   QString error;
 
   // Format based on severity
@@ -1775,7 +1821,7 @@ void Viewer::setLighting()
   connect(dialog->position_lineEdit, &QLineEdit::editingFinished,
           [this, dialog]()
   {
-    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), QString::SkipEmptyParts);
+    QStringList list = dialog->position_lineEdit->text().split(QRegExp(","), CGAL_QT_SKIP_EMPTY_PARTS);
     if (list.isEmpty()) return;
     if (list.size()!=3){
       QMessageBox *msgBox = new QMessageBox;
@@ -1784,7 +1830,7 @@ void Viewer::setLighting()
       msgBox->exec();
       return;
     }
-    double coords[3];
+    float coords[3];
     for(int j=0; j<3; ++j)
     {
       bool ok;
@@ -1806,9 +1852,9 @@ void Viewer::setLighting()
   //set ambient
   connect(dialog, &LightingDialog::s_ambient_changed,
           [this, dialog](){
-    d->ambient=QVector4D(dialog->ambient.redF(),
-                         dialog->ambient.greenF(),
-                         dialog->ambient.blueF(),
+    d->ambient=QVector4D((float)dialog->ambient.redF(),
+                         (float)dialog->ambient.greenF(),
+                         (float)dialog->ambient.blueF(),
                          1.0f);
     update();
   });
@@ -1816,18 +1862,18 @@ void Viewer::setLighting()
   //set diffuse
   connect(dialog, &LightingDialog::s_diffuse_changed,
           [this, dialog](){
-    d->diffuse=QVector4D(dialog->diffuse.redF(),
-                         dialog->diffuse.greenF(),
-                         dialog->diffuse.blueF(),
+    d->diffuse=QVector4D((float)dialog->diffuse.redF(),
+                         (float)dialog->diffuse.greenF(),
+                         (float)dialog->diffuse.blueF(),
                          1.0f);
     update();
   });
   //set specular
   connect(dialog, &LightingDialog::s_specular_changed,
           [this, dialog](){
-    d->specular=QVector4D(dialog->specular.redF() ,
-                         dialog->specular.greenF(),
-                         dialog->specular.blueF() ,
+    d->specular=QVector4D((float)dialog->specular.redF(),
+                          (float)dialog->specular.greenF(),
+                          (float)dialog->specular.blueF(),
                          1.0f);
     update();
 
@@ -1837,8 +1883,8 @@ void Viewer::setLighting()
   connect(dialog->buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
           [this](){
     d->position = QVector4D(0,0,1,1);
-    d->ambient=QVector4D(77.0/255,77.0/255,77.0/255, 1.0);
-    d->diffuse=QVector4D(204.0/255,204.0/255,204.0/255,1.0);
+    d->ambient=QVector4D(77.0f/255,77.0f/255,77.0f/255, 1.0);
+    d->diffuse=QVector4D(204.0f/255,204.0f/255,204.0f/255,1.0);
     d->specular=QVector4D(0,0,0,1.0);
     d->spec_power = 51;
     update();
@@ -1945,6 +1991,57 @@ bool Viewer::isClipping() const
 {
   return d->clipping;
 }
+
+void Viewer::scaleScene()
+{
+  CGAL::Bbox_3 bbox = CGAL::Three::Three::scene()->bbox();
+  if(!d->scene_scaling)
+  {
+    QMultipleInputDialog dialog ("Scale Scene", CGAL::Three::Three::mainWindow());
+    DoubleEdit* x_val = dialog.add<DoubleEdit> ("Scale along X");
+    DoubleEdit* y_val = dialog.add<DoubleEdit> ("Scale along Y");
+    DoubleEdit* z_val = dialog.add<DoubleEdit> ("Scale along Z");
+    x_val->setMinimum(0);
+    y_val->setMinimum(0);
+    z_val->setMinimum(0);
+    if(bbox != CGAL::Bbox_3(0,0,0,0,0,0))
+    {
+      QPushButton* norm_button = dialog.add<QPushButton> ("");
+      norm_button->setText("Normalize");
+      norm_button->setToolTip("Automatically fill values to display the scene in a unit cube.");
+
+      connect(norm_button, &QPushButton::clicked, this,
+              [x_val, y_val, z_val, &bbox](){
+        x_val->setValue(1.0/(bbox.xmax()-bbox.xmin()));
+        y_val->setValue(1.0/(bbox.ymax()-bbox.ymin()));
+        z_val->setValue(1.0/(bbox.zmax()-bbox.zmin()));
+      });
+    }
+    if (dialog.exec() != QDialog::Accepted)
+    {
+      parent()->findChild<QAction*>("actionScaleScene")->setChecked(false);
+      return;
+    }
+    d->scaler.setX(x_val->text()==""?1.0:x_val->value());
+    d->scaler.setY(y_val->text()==""?1.0:y_val->value());
+    d->scaler.setZ(z_val->text()==""?1.0:z_val->value());
+
+    if(d->scaler.x() == 0.0 || d->scaler.y() == 0.0 || d->scaler.z()== 0.0)
+    {
+      parent()->findChild<QAction*>("actionScaleScene")->setChecked(false);
+      return;
+    }
+  }
+  else
+    d->scaler = QVector3D(1,1,1);
+
+  CGAL::qglviewer::Vec vmin(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
+      vmax(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
+  camera()->setPivotPoint((vmin+vmax)*0.5);
+  camera()->setSceneBoundingBox(vmin, vmax);
+  camera()->fitBoundingBox(vmin, vmax);
+  d->scene_scaling = !d->scene_scaling;
+}
 #ifdef CGAL_USE_WEBSOCKETS
 void Viewer::setShareCam(bool b, QString session)
 {
@@ -2017,7 +2114,28 @@ void Viewer::onTextMessageSocketReceived(QString message)
   if(session != d->session){
     return;
   }
-  moveCameraToCoordinates(position, 0.05f);
+  QStringList sl = position.split(" ");
+  if(sl.size() != 7)
+    return;
+
+  CGAL::qglviewer::Vec pos(sl[0].toDouble(),sl[1].toDouble(),sl[2].toDouble());
+  CGAL::qglviewer::Quaternion q(sl[3].toDouble(),sl[4].toDouble(),
+      sl[5].toDouble(),sl[6].toDouble());
+  camera()->frame()->setPositionAndOrientation(pos, q);
+  update();
 }
 #endif
+
+const QVector3D& Viewer::scaler()const { return d->scaler; }
+void Viewer::showEntireScene()
+{
+  CGAL::QGLViewer::showEntireScene();
+  CGAL::Bbox_3 bbox = CGAL::Three::Three::scene()->bbox();
+
+  CGAL::qglviewer::Vec vmin(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
+      vmax(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
+  camera()->setPivotPoint((vmin+vmax)*0.5);
+  camera()->setSceneBoundingBox(vmin, vmax);
+  camera()->fitBoundingBox(vmin, vmax);
+}
 #include "Viewer.moc"

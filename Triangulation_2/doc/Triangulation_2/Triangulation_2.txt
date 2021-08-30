@@ -10,7 +10,7 @@ namespace CGAL {
 \image html tr1dt1.svg
 \image latex tr1dt1.png
 
-This chapter describes the two dimensional triangulations
+This chapter describes the two-dimensional triangulations
 of \cgal.
 Section \ref Section_2D_Triangulations_Definitions recalls the
 main definitions about triangulations.
@@ -46,7 +46,7 @@ and vertices.
 
 \section Section_2D_Triangulations_Definitions Definitions
 
-A two dimensional triangulation can be roughly described as a set \f$ T\f$
+A two-dimensional triangulation can be roughly described as a set \f$ T\f$
 of triangular facets such that:
 
 - two facets either are disjoint or share a lower dimensional
@@ -85,8 +85,8 @@ A point \f$ p\f$ in the domain of \f$ T\f$ is said to singular
 if its surrounding in \f$ U_T\f$
 is neither a topological ball nor a topological disc.
 
-Then, a two dimensional triangulation can be described as a
-two dimensional simplicial complex that is pure,
+Then, a two-dimensional triangulation can be described as a
+two-dimensional simplicial complex that is pure,
 connected and without singularity.
 
 Each facet of a triangulation can be given an orientation
@@ -100,7 +100,7 @@ that all pairs of incident facets have consistent orientations.
 
 The data structure underlying \cgal triangulations
 allows the user to represent the combinatorics of
-any orientable two dimensional triangulations
+any orientable two-dimensional triangulations
 without boundaries.
 On top of this data structure, the 2D triangulations classes
 take care of the geometric embedding of the triangulation
@@ -126,7 +126,7 @@ to design a face of any dimension,
 and the two-dimensional faces of a triangulation
 should be properly called <I>facets</I>.
 However, following a common usage, we hereafter often call <I>faces</I>, the facets
-of a two dimensional triangulation.
+of a two-dimensional triangulation.
 
 \section Section_2D_Triangulations_Representation Representation
 
@@ -152,16 +152,6 @@ Therefore, each edge of the triangulation
 is incident to exactly two faces
 and the set of faces of a triangulation is topologically
 equivalent to a two-dimensional sphere.
-This extends to lower dimensional triangulations
-arising in degenerate cases or when the triangulations
-as less than three vertices.
-Including the infinite faces,
-a one dimensional triangulation
-is a ring of edges and vertices
-topologically equivalent to a \f$ 1\f$-sphere.
-A zero dimensional triangulation, whose domain is reduced to a
-single point, is represented by two vertices that is
-topologically equivalent to a \f$ 0\f$-sphere.
 
 Note that
 the *infinite vertex* has no significant
@@ -171,6 +161,26 @@ nor on an infinite face.
 \cgalFigureBegin{Triangulation_2D_Fig_infinite_vertex,infinite.png}
 Infinite vertex and infinite faces
 \cgalFigureEnd
+
+
+This extends to lower dimensional triangulations
+arising in degenerate cases or when the triangulations
+has fewer than three vertices.
+Including the infinite faces,
+a one dimensional triangulation
+is a ring of edges and vertices
+topologically equivalent to a \f$ 1\f$-sphere.
+A zero dimensional triangulation, whose domain is reduced to a
+single point, is represented by two vertices that is
+topologically equivalent to a \f$ 0\f$-sphere.
+This is illustrated in \cgalFigureRef{Triangulation_2D_Fig_low_dimensional}
+and the example \ref Triangulation_2/low_dimensional.cpp
+shows how to traverse a low dimensional triangulation.
+
+\cgalFigureBegin{Triangulation_2D_Fig_low_dimensional,low_dimensional.svg}
+Triangulations with zero, one, and two finite vertices.
+\cgalFigureEnd
+
 
 \subsection Triangulation_2ARepresentationBasedonFaces A Representation Based on Faces and Vertices
 
@@ -721,7 +731,7 @@ regular triangulation of \f$ { PW}\f$.
 Alternatively, the regular triangulation
 of the weighted points set \f$ { PW}\f$
 can be obtained as the projection
-on the two dimensional plane of the convex hull of the set of three
+on the two-dimensional plane of the convex hull of the set of three
 dimensional points
 \f$ { P'}= \{ (p_i,p_i ^2 - w_i ) | i = 1, \ldots , n \}\f$.
 
@@ -749,7 +759,7 @@ they have to be stored somewhere.
 The regular triangulation store those points in special vertices, called
 hidden vertices.
 A hidden point can reappear as vertex of the triangulation
-only when the two dimensional face that hides it
+only when the two-dimensional face that hides it
 is removed from the triangulation. To deal with this feature,
 each face of a regular triangulation stores a list of hidden vertices.
 The points in those vertices
@@ -1124,6 +1134,22 @@ through the edge.
 
 \cgalExample{Triangulation_2/polylines_triangulation.cpp}
 
+\subsection Triangulation_2ExampleBuildingFromSoup Example: Building a Triangulated Arrangement of Polylines from a Segment Soup
+
+The `Constrained_triangulation_plus_2` structure is initialized by a
+set of polylines. As users may only be able to provide a disconnected
+segment soup as input, a member function \link
+Constrained_triangulation_plus_2::split_subconstraint_graph_into_constraints()
+`split_subconstraint_graph_into_constraints()` \endlink is provided:
+this function identifies the polylines by connecting segments until a
+vertex whose degree is different from 2 is reached.
+
+The following code shows how a "blind" insertion of disconnected
+segments can be processed into a set of well-defined polyline
+constraints in a `Constrained_triangulation_plus_2`:
+
+\cgalExample{Triangulation_2/segment_soup_to_polylines.cpp}
+
 \section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy
 
 The class `Triangulation_hierarchy_2<Tr>`
@@ -1339,4 +1365,3 @@ Julia Fl&ouml;totto, Monique Teillaud and Mariette Yvinec.
 
 */
 } /* namespace CGAL */
-

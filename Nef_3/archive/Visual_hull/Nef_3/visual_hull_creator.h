@@ -87,9 +87,9 @@ class visual_hull_creator : public CGAL::Modifier_base<SNC_> {
 
 
  public:
-  visual_hull_creator(Point_3 min, Point_3 max, Point_3 position,
+  visual_hull_creator(Point_3 pmin, Point_3 pmax, Point_3 position,
                       std::list<std::list<Point_3> > p) :
-    room_min(min), room_max(max), c_pos(position), polygon_list(p) { }
+    room_min(pmin), room_max(pmax), c_pos(position), polygon_list(p) { }
 
     /*
   void recompute_scene() {

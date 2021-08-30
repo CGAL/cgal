@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/poisson_surface_reconstruction.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <vector>
 #include <fstream>
@@ -16,17 +16,14 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 int main(void)
 {
   std::vector<Pwn> points;
-  std::ifstream stream("data/kitten.xyz");
-  if (!stream ||
-      !CGAL::read_xyz_points(
-           stream,
-           std::back_inserter(points),
-           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>()).
-           normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
-    {
-      std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
-      return EXIT_FAILURE;
-    }
+
+  if(!CGAL::IO::read_points("data/kitten.xyz", std::back_inserter(points),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
+                                             .normal_map(CGAL::Second_of_pair_property_map<Pwn>())))
+  {
+    std::cerr << "Error: cannot read input file!" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   Polyhedron output_mesh;
 

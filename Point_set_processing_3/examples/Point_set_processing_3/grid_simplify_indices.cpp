@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/grid_simplify_point_set.h>
-#include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/property_map.h>
 
 #include <vector>
@@ -13,14 +13,16 @@ typedef Kernel::Vector_3 Vector;
 
 int main(int argc, char*argv[])
 {
+  const char* fname = (argc>1) ? argv[1] : "data/fin90_with_PCA_normals.xyz";
+
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
   std::vector<Vector> normals;
-  const char* fname = (argc>1)?argv[1]:"data/fin90_with_PCA_normals.xyz";
   std::ifstream stream(fname);
   Point p;
   Vector v;
-  while(stream >> p >> v){
+  while(stream >> p >> v)
+  {
     points.push_back(p);
     normals.push_back(v);
   }

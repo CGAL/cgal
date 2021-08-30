@@ -180,6 +180,11 @@ public:
 
   }
 
+  ~Alpha_shape_mesher ()
+  {
+    clear_surface();
+  }
+
   /// \cond SKIP_IN_MANUAL
   template <typename InputIterator, typename OutputIterator>
   void operator() (InputIterator begin, InputIterator end, OutputIterator output)
@@ -260,7 +265,7 @@ public:
    */
   Facet_const_iterator shell_begin( std::size_t shell ) const
   {
-    CGAL_assertion( shell >= 0 && shell < _shells.size() );
+    CGAL_assertion( shell < _shells.size() );
     return _shells[ shell ];
   }
   /// gives an iterator to the first triple in a given shell.
@@ -272,7 +277,7 @@ public:
    */
   Facet_iterator shell_begin( std::size_t shell )
   {
-    CGAL_assertion( shell >= 0 && shell < _shells.size() );
+    CGAL_assertion( shell < _shells.size() );
     return _shells[ shell ];
   }
 
@@ -283,7 +288,7 @@ public:
    */
   Facet_const_iterator shell_end( std::size_t shell ) const
   {
-    CGAL_assertion( shell >= 0 && shell < _shells.size() );
+    CGAL_assertion( shell < _shells.size() );
     if( shell == _shells.size()-1 )
       return _surface.end();
     return _shells[ shell+1 ];
@@ -298,7 +303,7 @@ public:
    */
   Facet_iterator shell_end( std::size_t shell )
   {
-    CGAL_assertion( shell >= 0 && shell < _shells.size() );
+    CGAL_assertion( shell < _shells.size() );
     if( shell == _shells.size()-1 )
         return _surface.end();
     return _shells[ shell+1 ];

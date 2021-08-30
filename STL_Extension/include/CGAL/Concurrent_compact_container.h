@@ -31,7 +31,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
-#include <CGAL/atomic.h>
 
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/queuing_mutex.h>
@@ -66,7 +65,7 @@ template<typename T> class has_##X {                                          \
 template < class T >
 struct Concurrent_compact_container_traits {
   static void *   pointer(const T &t) { return t.for_compact_container(); }
-  static void * & pointer(T &t)       { return t.for_compact_container(); }
+  static void set_pointer(T &t, void* p) { t.for_compact_container(p); }
 };
 
 namespace CCC_internal {
@@ -114,6 +113,8 @@ namespace CCC_internal {
 // Free list (head and size)
 template< typename pointer, typename size_type, typename CCC >
 class Free_list {
+  // Not that the implicitly-defined member functions copy the
+  // pointer, and not the pointed data.
 public:
   Free_list() : m_head(nullptr), m_size(0) {
 #if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
@@ -150,13 +151,6 @@ public:
 #endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   }
   bool empty()               { return size() == 0; }
-  // Warning: copy the pointer, not the data!
-  Free_list& operator= (const Free_list& other)
-  {
-    m_head = other.m_head;
-    m_size = other.m_size;
-    return *this;
-  }
 
   void merge(Free_list &other)
   {
@@ -210,7 +204,8 @@ class Concurrent_compact_container
   typedef Concurrent_compact_container_traits <T>                   Traits;
 
 public:
-  typedef CGAL::Time_stamper_impl<T>                Time_stamper_impl;
+  typedef CGAL::Time_stamper_impl<T>                Time_stamper;
+  typedef Time_stamper                              Time_stamper_impl; // backward compatibility
 
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
@@ -241,7 +236,6 @@ public:
 
   explicit Concurrent_compact_container(const Allocator &a = Allocator())
   : m_alloc(a)
-  , m_time_stamper(new Time_stamper_impl())
   {
     init ();
   }
@@ -250,7 +244,6 @@ public:
   Concurrent_compact_container(InputIterator first, InputIterator last,
                     const Allocator & a = Allocator())
   : m_alloc(a)
-  , m_time_stamper(new Time_stamper_impl())
   {
     init();
     std::copy(first, last, CGAL::inserter(*this));
@@ -259,11 +252,16 @@ public:
   // The copy constructor and assignment operator preserve the iterator order
   Concurrent_compact_container(const Concurrent_compact_container &c)
   : m_alloc(c.get_allocator())
-  , m_time_stamper(new Time_stamper_impl())
   {
     init();
     m_block_size = c.m_block_size;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
+  }
+
+  Concurrent_compact_container(Concurrent_compact_container&& c) noexcept
+  : m_alloc(c.get_allocator())
+  {
+    c.swap(*this);
   }
 
   Concurrent_compact_container & operator=(const Concurrent_compact_container &c)
@@ -275,10 +273,16 @@ public:
     return *this;
   }
 
+  Concurrent_compact_container & operator=(Concurrent_compact_container&& c) noexcept
+  {
+    Self tmp(std::move(c));
+    tmp.swap(*this);
+    return *this;
+  }
+
   ~Concurrent_compact_container()
   {
     clear();
-    delete m_time_stamper;
   }
 
   bool is_used(const_iterator ptr) const
@@ -290,11 +294,8 @@ public:
   {
     std::swap(m_alloc, c.m_alloc);
 #if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
-    { // non-atomic swap
-      size_type other_capacity = c.m_capacity;
-      c.m_capacity = size_type(m_capacity);
-      m_capacity = other_capacity;
-    }
+    // non-atomic swap of m_capacity
+    c.m_capacity = m_capacity.exchange(c.m_capacity.load());
 #else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     std::swap(m_capacity, c.m_capacity);
 #endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
@@ -304,7 +305,12 @@ public:
     std::swap(m_last_item, c.m_last_item);
     std::swap(m_free_lists, c.m_free_lists);
     m_all_items.swap(c.m_all_items);
-    std::swap(m_time_stamper, c.m_time_stamper);
+    // non-atomic swap of m_time_stamp
+    c.m_time_stamp = m_time_stamp.exchange(c.m_time_stamp.load());
+  }
+
+  friend void swap(Concurrent_compact_container& a, Concurrent_compact_container& b) {
+    a.swap(b);
   }
 
   iterator begin() { return iterator(m_first_item, 0, 0); }
@@ -341,17 +347,25 @@ public:
   iterator
   emplace(const Args&... args)
   {
+    typedef CCC_internal::Erase_counter_strategy<
+      CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
+    auto erase_counter = EraseCounterStrategy::erase_counter(*ret);;
     new (ret) value_type(args...);
+    EraseCounterStrategy::set_erase_counter(*ret, erase_counter);
     return finalize_insert(ret, fl);
   }
 
   iterator insert(const T &t)
   {
+    typedef CCC_internal::Erase_counter_strategy<
+      CCC_internal::has_increment_erase_counter<T>::value> EraseCounterStrategy;
     FreeList * fl = get_free_list();
     pointer ret = init_insert(fl);
+    auto erase_counter = EraseCounterStrategy::erase_counter(*ret);;
     std::allocator_traits<allocator_type>::construct(m_alloc, ret, t);
+    EraseCounterStrategy::set_erase_counter(*ret, erase_counter);
     return finalize_insert(ret, fl);
   }
 
@@ -461,6 +475,42 @@ public:
     return m_alloc;
   }
 
+  // Returns the index of the iterator "cit", i.e. the number n so that
+  // operator[](n)==*cit.
+  // Complexity : O(#blocks) = O(sqrt(capacity())).
+  // This function is mostly useful for purposes of efficient debugging at
+  // higher levels.
+  size_type index(const_iterator cit) const
+  {
+    // We use the block structure to provide an efficient version :
+    // we check if the address is in the range of each block.
+
+    assert(cit != end());
+
+    const_pointer c = &*cit;
+    size_type res=0;
+
+    Mutex::scoped_lock lock(m_mutex);
+
+    for (typename All_items::const_iterator it = m_all_items.begin(),
+         itend = m_all_items.end(); it != itend; ++it) {
+      const_pointer p = it->first;
+      size_type s = it->second;
+
+      // Are we in the address range of this block (excluding first and last
+      // elements) ?
+      if ( p<c && c<(p+s-1) )
+      {
+        CGAL_assertion_msg( (c-p)+p == c, "wrong alignment of iterator");
+        return res+(c-p-1);
+      }
+
+      res += s-2;
+    }
+
+    return (size_type)-1; // cit does not belong to this compact container
+  }
+
   // Returns whether the iterator "cit" is in the range [begin(), end()].
   // Complexity : O(#blocks) = O(sqrt(capacity())).
   // This function is mostly useful for purposes of efficient debugging at
@@ -544,7 +594,7 @@ private:
   {
     CGAL_assertion(type(ret) == USED);
     fl->dec_size();
-    m_time_stamper->set_time_stamp(ret);
+    Time_stamper::set_time_stamp(ret, m_time_stamp);
     return iterator(ret, 0);
   }
 
@@ -606,8 +656,8 @@ private:
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 4);
-    Traits::pointer(*ptr) = reinterpret_cast<void *>
-      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t);
+    Traits::set_pointer(*ptr, reinterpret_cast<void *>
+      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t));
   }
 
   typedef tbb::queuing_mutex Mutex;
@@ -619,8 +669,9 @@ private:
   // by walking through the block till its end.
   // This opens up the possibility for the compiler to optimize the clear()
   // function considerably when has_trivial_destructor<T>.
-  typedef std::vector<std::pair<pointer, size_type> >  All_items;
+  using All_items = std::vector<std::pair<pointer, size_type> >;
 
+  using time_stamp_t = std::atomic<std::size_t>;
 
   void init()
   {
@@ -636,25 +687,23 @@ private:
     m_first_item = nullptr;
     m_last_item  = nullptr;
     m_all_items  = All_items();
-    m_time_stamper->reset();
+    m_time_stamp = 0;
   }
 
   allocator_type    m_alloc;
 #if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
-  std::atomic<size_type> m_capacity;
+  std::atomic<size_type> m_capacity = {};
 #else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
-  size_type         m_capacity;
+  size_type         m_capacity      = {};
 #endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
-  size_type         m_block_size;
+  size_type         m_block_size    = CGAL_INIT_CONCURRENT_COMPACT_CONTAINER_BLOCK_SIZE;
   Free_lists        m_free_lists;
-  pointer           m_first_item;
-  pointer           m_last_item;
-  All_items         m_all_items;
+  pointer           m_first_item    = nullptr;
+  pointer           m_last_item     = nullptr;
+  All_items         m_all_items     = {};
   mutable Mutex     m_mutex;
+  time_stamp_t      m_time_stamp    = {};
 
-  // This is a pointer, so that the definition of Compact_container does
-  // not require a complete type `T`.
-  Time_stamper_impl* m_time_stamper;
 };
 
 template < class T, class Allocator >
@@ -718,7 +767,7 @@ void Concurrent_compact_container<T, Allocator>::clear()
     size_type s = it->second;
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
       if (type(pp) == USED)
-        m_alloc.destroy(pp);
+        std::allocator_traits<allocator_type>::destroy(m_alloc, pp);
     }
     m_alloc.deallocate(p, s);
   }
@@ -770,7 +819,7 @@ void Concurrent_compact_container<T, Allocator>::
   for (size_type i = old_block_size; i >= 1; --i)
   {
     EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
-    m_time_stamper->initialize_time_stamp(new_block + i);
+    Time_stamper::initialize_time_stamp(new_block + i);
     put_on_free_list(new_block + i, fl);
   }
 }

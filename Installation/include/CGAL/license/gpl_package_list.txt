@@ -32,6 +32,8 @@ Minkowski_sum_3 3D Minkowski Sum of Polyhedra
 Nef_2 2D Boolean Operations on Nef Polygons
 Nef_3 3D Boolean Operations on Nef Polyhedra
 Nef_S2 2D Boolean Operations on Nef Polygons Embedded on the Sphere
+Orthtree Quadtrees, Octrees, and Orthtrees
+Optimal_bounding_box Optimal Bounding Box
 Optimal_transportation_reconstruction_2 Optimal Transportation Curve Reconstruction
 Partition_2 2D Polygon Partitioning
 Periodic_2_triangulation_2 2D Periodic Triangulations
@@ -68,6 +70,7 @@ Segment_Delaunay_graph_2 2D Segment Delaunay Graphs
 Segment_Delaunay_graph_Linf_2 L Infinity Segment Delaunay Graphs
 Set_movable_separability_2 2D Movable Separability of Sets
 Shape_detection Shape Detection
+Shape_regularization Shape Regularization
 Skin_surface_3 3D Skin Surface Meshing
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
@@ -88,7 +91,10 @@ TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
 Three Three
 Triangulation_2 2D Triangulation
+Triangulation_on_sphere_2 2D Triangulation on Sphere
 Triangulation_3 3D Triangulations
 Triangulation dD Triangulations
 Visibility_2 2D Visibility Computation
 Voronoi_diagram_2 2D Voronoi Diagram Adaptor
+Tetrahedral_remeshing Tetrahedral Remeshing
+Weights Weights

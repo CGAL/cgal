@@ -143,7 +143,8 @@ protected:
 public:
   typedef CGAL::Surface_sweep_2::Event_comparer<Traits_adaptor_2, Event>
                                                         Event_comparer;
-  typedef Multiset<Event*, Event_comparer, Allocator>   Event_queue;
+  typedef Multiset<Event*, Event_comparer, Allocator, Tag_true>
+                                                        Event_queue;
   typedef typename Event_queue::iterator                Event_queue_iterator;
 
   typedef typename Event::Subcurve_iterator
@@ -159,19 +160,11 @@ public:
   typedef typename Status_line::iterator                Status_line_iterator;
 
   typedef std::allocator_traits<Allocator> Allocator_traits;
-  typedef typename Allocator_traits::template rebind_alloc<Event> Event_alloc;
   typedef typename Allocator_traits::template rebind_alloc<Subcurve> Subcurve_alloc;
 
 protected:
-  /*! \struct
-   * An auxiliary functor for comparing event pointers.
-   */
-  struct CompEventPtr {
-    Comparison_result operator()(Event* e1, Event* e2) const
-    { return (e1 < e2) ? SMALLER : ((e1 > e2) ? LARGER : EQUAL); }
-  };
 
-  typedef Multiset<Event*, CompEventPtr>           Allocated_events_set;
+  typedef Compact_container<Event>                 Allocated_events_set;
   typedef typename Allocated_events_set::iterator  Allocated_events_iterator;
 
   // Data members:
@@ -204,7 +197,6 @@ protected:
                                     // may happen only with events that are
                                     // associated with isolated query points.
 
-  Event_alloc m_eventAlloc;         // An allocator for the events objects.
   Subcurve_alloc m_subCurveAlloc;   // An allocator for the subcurve objects.
 
   Event m_masterEvent;              // A master Event (created once by the
@@ -309,6 +301,77 @@ public:
     m_visitor->after_sweep();
   }
 
+  /*!
+    runs the indexed sweep-line algorithm on a given range of
+    x-monotone curves and accessor. The main difference from the
+    original `sweep()` function is that the accessor allows to get
+    indices of end-points and avoid checking several times in the
+    event queue when the same vertex has several incident edges.
+
+    \param edges A range of edges
+    \param accessor An object providing, for a value_type `e` of
+           range `edges`, the following methods:
+     - size_t             min_end_index(e) -> the index of the min end of curve c
+     - size_t             max_end_index(e) -> the index of the max end of curve c
+     - X_monotone_curve_2 curve(e)         -> the x-monotone curve associated to e
+     - size_t             nb_vertices()    -> the total number of points/events
+     - void               before_init()    -> called before initialization
+     - void               after_init()     -> called after initialization
+   */
+  template <typename EdgeRange, typename Accessor>
+  void indexed_sweep (const EdgeRange& edges,
+                      const Accessor& accessor)
+  {
+    m_visitor->before_sweep();
+    accessor.before_init();
+    _init_indexed_sweep(edges, accessor);
+    accessor.after_init();
+    _sweep();
+    _complete_sweep();
+    m_visitor->after_sweep();
+  }
+
+  /*!
+    runs the indexed sweep-line algorithm on a given range of
+    x-monotone curves and accessor. The main difference from the
+    original `sweep()` function is that the accessor allows to get
+    indices of end-points and avoid checking several times in the
+    event queue when the same vertex has several incident edges.
+
+    Variant with action event points (if a curve passed through an
+    action point, it will be split).
+
+    \param edges A range of edges
+    \param accessor An object providing, for a value_type `e` of
+           range `edges`, the following methods:
+     - size_t             min_end_index(e) -> the index of the min end of curve c
+     - size_t             max_end_index(e) -> the index of the max end of curve c
+     - X_monotone_curve_2 curve(e)         -> the x-monotone curve associated to e
+     - size_t             nb_vertices()    -> the total number of points/events
+     - void               before_init()    -> called before initialization
+     - void               after_init()     -> called after initialization
+    \param points_begin An iterator for the first point in the range.
+    \param points_end A past-the-end iterator for this range.
+    \pre The value-type of PointInputIterator is the
+         traits-class Point_2.
+  */
+  template <typename EdgeRange, typename Accessor,
+            typename PointInputIterator>
+  void indexed_sweep (const EdgeRange& edges,
+                      const Accessor& accessor,
+                      PointInputIterator action_points_begin,
+                      PointInputIterator action_points_end)
+  {
+    m_visitor->before_sweep();
+    accessor.before_init();
+    _init_indexed_sweep(edges, accessor);
+    accessor.after_init();
+    _init_points(action_points_begin, action_points_end, Event::ACTION);
+    _sweep();
+    _complete_sweep();
+    m_visitor->after_sweep();
+  }
+
   /*! Get an iterator for the first subcurve in the status line. */
   Status_line_iterator status_line_begin() { return m_statusLine.begin(); }
 
@@ -376,6 +439,32 @@ protected:
       _init_curve(*cit, index);
   }
 
+  /*! Create a Subcurve object and two Event objects for each curve. */
+  template <typename EdgeRange, typename Accessor>
+  void _init_indexed_curves(const EdgeRange& edges,
+                            const Accessor& accessor)
+  {
+    std::vector<Event_queue_iterator> events (accessor.nb_vertices());
+
+    unsigned int index = 0;
+    for (const auto& e : edges)
+    {
+      std::size_t max_end = accessor.max_end_index(e);
+      std::size_t min_end = accessor.min_end_index(e);
+      const X_monotone_curve_2& curve = accessor.curve (e);
+
+      // Construct and initialize a subcurve object.
+      std::allocator_traits<Subcurve_alloc>::construct(m_subCurveAlloc, m_subCurves + index, m_masterSubcurve );
+      (m_subCurves + index)->set_hint(this->m_statusLine.end());
+      (m_subCurves + index)->init (curve);
+
+      _init_curve_end(curve, ARR_MAX_END, m_subCurves + index, events, max_end);
+      _init_curve_end(curve, ARR_MIN_END, m_subCurves + index, events, min_end);
+
+      ++ index;
+    }
+  }
+
   /*! Initiliaze the sweep algorithm. */
   template <typename CurveInputIterator>
   void _init_sweep(CurveInputIterator curves_begin,
@@ -385,6 +474,17 @@ protected:
       static_cast<unsigned int>(std::distance(curves_begin, curves_end));
     _init_structures();
     _init_curves(curves_begin, curves_end);     // initialize the curves
+  }
+
+  /*! Initiliaze the sweep algorithm. */
+  template <typename EdgeRange, typename Accessor>
+  void _init_indexed_sweep(const EdgeRange& edges,
+                           const Accessor& accessor)
+  {
+    m_num_of_subCurves =
+      static_cast<unsigned int>(std::distance(edges.begin(), edges.end()));
+    _init_structures();
+    _init_indexed_curves(edges, accessor);     // initialize the curves
   }
 
   /*! Initialize the data structures for the sweep-line algorithm. */
@@ -412,6 +512,11 @@ protected:
    */
   void _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind,
                        Subcurve* sc);
+
+  // Variant keeping track of indexed events
+  void _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind,
+                       Subcurve* sc,
+                       std::vector<Event_queue_iterator>& events, std::size_t index);
 
   /*! Handle the subcurves that are to the left of the event point (i.e.,
    * subcurves that we are done with).
@@ -485,6 +590,14 @@ protected:
                                       Arr_parameter_space ps_y,
                                       Subcurve* sc = nullptr);
 
+  // Variant keeping track of indexed events
+  std::pair<Event*, bool> _push_event(const Point_2& pt, Attribute type,
+                                      Arr_parameter_space ps_x,
+                                      Arr_parameter_space ps_y,
+                                      Subcurve* sc,
+                                      std::vector<Event_queue_iterator>& events,
+                                      std::size_t index);
+
   /*! Push an event point associated with a curve end into the event queue.
    * \param cv The x-monotone curve.
    * \param ind The relevant curve end.
@@ -502,6 +615,17 @@ protected:
                                       Arr_parameter_space ps_x,
                                       Arr_parameter_space ps_y,
                                       Subcurve* sc = nullptr);
+
+  // Variant keeping track of indexed events
+  std::pair<Event*, bool> _push_event(const X_monotone_curve_2& cv,
+                                      Arr_curve_end ind,
+                                      Attribute type,
+                                      Arr_parameter_space ps_x,
+                                      Arr_parameter_space ps_y,
+                                      Subcurve* sc,
+                                      const Point_2& pt,
+                                      std::vector<Event_queue_iterator>& events,
+                                      std::size_t index);
 
   void _update_event_at_open_boundary(Event* e,
                                       const X_monotone_curve_2& cv,

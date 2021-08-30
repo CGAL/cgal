@@ -10,7 +10,7 @@ However, some dependencies of \cgal might still need to be installed.
 
 Assuming that you have obtained \cgal through one of the package managers offering \cgal on your platform
 (see Section \ref secgettingcgal), you can download \cgal examples (
-<a href="https://github.com/CGAL/cgal/releases/download/releases/CGAL-\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.tar.xz">CGAL-\cgalReleaseNumber-examples.tar.xz</a>)
+<a href="https://github.com/CGAL/cgal/releases/download/v\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.tar.xz">CGAL-\cgalReleaseNumber-examples.tar.xz</a>)
 and the compilation of an example is as simple as:
 
     cd $HOME/CGAL-\cgalReleaseNumber/examples/Triangulation_2 # go to an example directory
@@ -51,7 +51,7 @@ acquire these dependencies.
 
 The examples and demos of \cgal are not included when you install \cgal with a package manager,
 and must be downloaded
-<a href="https://github.com/CGAL/cgal/releases/download/releases/CGAL-\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.tar.xz">here</a>.
+<a href="https://github.com/CGAL/cgal/releases/download/v\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.tar.xz">here</a>.
 
 \subsection secusingpkgman Using a Package Manager
 
@@ -60,12 +60,6 @@ On most operating systems, package managers offer \cgal and its essential third 
 On macOS, we recommend using of <a href="https://brew.sh/">Homebrew</a> in the following way:
 
     brew install cgal
-    brew install cgal-qt5   #(only for GUI)
-
-You should check that cgal and cgal-qt5 are correctly "linked", especially when upgrading from an old version. If not, run the following command:
-
-    brew link cgal
-    brew link cgal-qt5  #(if you installed it)
 
 On Linux distributions such as `Debian`/`Ubuntu`/`Mint`, use `apt-get` in the following way:
 
@@ -89,9 +83,9 @@ contains the following subdirectories:
 
 | Directory                  | Contents   |
 | :------------------------- | :----------|
-| `auxiliary` (Windows only) | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
+| `auxiliary` (Windows only) | precompiled \gmp and \mpfr for Windows |
 | `cmake/modules`            | modules for finding and using libraries |
-| `demo`                     | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
+| `demo`                     | demo programs (most of them need \qt, geomview or other third-party products) |
 | `doc_html`                 | documentation (HTML) |
 | `examples`                 | example programs |
 | `include`                  | header files |
@@ -100,13 +94,13 @@ contains the following subdirectories:
 
 The directories `include/CGAL/CORE` and `src/CGALCore` contain a
 distribution of the <a href="https://cs.nyu.edu/exact/">Core library</a> version 1.7 for
-dealing with algebraic numbers. Note that \sc{Core} is not part of \cgal and has its
+dealing with algebraic numbers. Note that \core is not part of \cgal and has its
 own license.
 
 The directory `include/CGAL/OpenNL` contains a distribution of the
 <a href="http://alice.loria.fr/index.php/software/4-library/23-opennl.html">Open Numerical Library</a>,
 which provides solvers for sparse linear systems, especially designed for the Computer Graphics community.
-\sc{OpenNL} is not part of \cgal and has its own license.
+\opennl is not part of \cgal and has its own license.
 
 The only documentation shipped within \cgal sources is the present manual.
 The \cgal manual can also be accessed online at
@@ -129,7 +123,7 @@ a standard location (such as `/usr/local/include`):
 For more advanced installations, we refer to Section \ref installation_configwithcmake.
 
 Note that even though \cgal is a header-only library, not all its dependencies
-are header-only. The libraries \sc{Gmp} and \sc{Mpfr}, for example, are not
+are header-only. The libraries \gmp and \mpfr, for example, are not
 header-only. As such, these dependencies must be built or installed independently.
 
 \section usage_configuring Configuring your Program
@@ -172,12 +166,17 @@ if no debugging is intended. Users should thus run:
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # we are here using a release tarball
 
-Note that the package Qt on brew is "keg-only", which means it cannot be "linked" with brew.
-You will have to specify the Qt5_DIR by hand to cmake, using something like
+The package Qt5 on brew is "keg-only", which means it is not "linked" with brew.
+In order to link against Qt5, you need to run:
 
-    -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5
+    brew link qt@5
 
-where '/usr/local/` is actually your current brew installation directory.
+After that, you will have to specify the Qt5_DIR by hand to cmake, using something like
+
+    -DQt5_DIR=/usr/local/opt/qt5/lib/cmake/Qt5
+
+where '/usr/local/` is actually your current brew installation directory. Check this directory
+to be sure where the Qt5 is placed on your machine.
 
 \subsection usage_configuring_cmake_gui Specifying Missing Dependencies
 
@@ -241,7 +240,7 @@ The results of a successful configuration are build files that control the build
 The nature of the build files depends on the generator used during configuration, but in most cases
 they contain several <I>targets</I>, such as all the examples of the Triangulation_2 package.
 
-In a \sc{Unix}-like environment the default generator produces makefiles.
+In a \unix-like environment the default generator produces makefiles.
 You can use the `make` command-line tool for the succeeding build step as follows:
 
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2

@@ -36,7 +36,7 @@ struct FG_is_selected_edge_property_map{
   std::vector<bool>* is_selected_ptr;
   EImap* edge_index_map;
   FG_is_selected_edge_property_map()
-    : is_selected_ptr(NULL), edge_index_map(NULL) {}
+    : is_selected_ptr(nullptr), edge_index_map(nullptr) {}
   FG_is_selected_edge_property_map(std::vector<bool>& is_selected, EImap* map)
     : is_selected_ptr( &is_selected), edge_index_map(map)
   {}
@@ -47,13 +47,13 @@ struct FG_is_selected_edge_property_map{
 
   friend bool get(FG_is_selected_edge_property_map map, fg_edge_descriptor ed)
   {
-    CGAL_assertion(map.is_selected_ptr!=NULL);
+    CGAL_assertion(map.is_selected_ptr!=nullptr);
     return (*map.is_selected_ptr)[map.id(ed)];
   }
 
   friend void put(FG_is_selected_edge_property_map map, fg_edge_descriptor ed, bool b)
   {
-    CGAL_assertion(map.is_selected_ptr!=NULL);
+    CGAL_assertion(map.is_selected_ptr!=nullptr);
     (*map.is_selected_ptr)[map.id(ed)]=b;
   }
 };
@@ -273,7 +273,7 @@ public Q_SLOTS:
 
     boost::vector_property_map<int,
       boost::property_map<FaceGraph, boost::face_index_t>::type>
-      fccmap;
+      fccmap(static_cast<unsigned>(num_faces(poly)));
 
     //get connected componant from the picked face
     std::set<fg_face_descriptor> final_sel;

@@ -1,52 +1,158 @@
-Subject: CGAL 4.14 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.3 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
-Body: 
+Body:
 
-The CGAL Open Source Project is pleased to announce the release 4.14
+The CGAL Open Source Project is pleased to announce the release 5.3
 of CGAL, the Computational Geometry Algorithms Library.
 
-This release will be the last one supporting C++98/C++03 compilers,
-and the next release, CGAL version 5.0, will require support for
-C++14.
 
-Besides fixes and general enhancement to existing packages, the
-following has changed since CGAL 4.13:
+Besides fixes and general enhancement to existing packages, the following
+has changed since CGAL 5.2:
 
+General changes
 
-### 2D Periodic Hyperbolic Triangulations (new package)
+-   The support for the compiled version of CGAL is dropped. Only the
+    header-only version is supported.
 
--   This package allows the computation of Delaunay triangulations of
-    the Bolza surface.  The Bolza surface is the most symmetric
-    hyperbolic surface of genus 2. Its fundamental domain is the
-    regular hyperbolic octagon with angles π/4 centered at the origin
-    of the Poincaré disk. Triangulations of the Bolza surface can be
-    seen as triangulations of the hyperbolic plane that are periodic
-    in the four directions defined by the sides of this regular
-    octagon.
-
-### 2D Hyperbolic Triangulations (new package)
-
--   This package allows the computation of Delaunay Triangulations of
-    sets of points in the Poincaré disk, which is one of the
-    conformal models for the hyperbolic plane.
-
-### The Heat Method (new package)
-
--   This package provides an algorithm that solves the single- or
-    multiple-source shortest path problem by returning an
-    approximation of the geodesic distance for all vertices of a
-    triangle mesh to the closest vertex in a given set of source
-    vertices.
-
-### Triangulated Surface Mesh Approximation (new package)
-
--   This package implements the Variational Shape Approximation method
-    to approximate an input surface triangle mesh by a simpler surface
-    triangle mesh.
+-   On Windows, the type used for Exact_rational, in Epick and
+    indirectly (through Lazy_exact_nt) Epeck may now be
+    boost::multiprecision::mpq_rational, as has been the case on other
+    platforms for several releases. This depends on various options and
+    is added to a list that includes mpq_class, CGAL::Gmpq,
+    leda_rational and CGAL::Quotient<CGAL::MP_Float>.
 
 
-See https://www.cgal.org/2019/03/29/cgal414/ for a complete list of
-changes.
+Quadtrees, Octrees, and Orthtrees (new package)
+
+-   This package implements a tree data structure in which each node
+    encloses a hypercubic section of space and each non-leave node has
+    hypercubic children whose edge lengths are half its edge length.
+    Such a data structure is known as a quadtree in 2D, an octree in 3D,
+    and is generalized as an “orthtree” in higher dimensions.
+
+      https://www.cgal.org/2021/04/27/Orthtree/
+
+      https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthtree
+
+
+Triangulations on the Sphere (new package)
+
+-   This package enables the construction and manipulation of Delaunay
+    triangulations on the 2-sphere. Triangulations are built
+    incrementally and can be modified by insertion or removal of
+    vertices. Point location querying and primitives to build the dual
+    Voronoi diagram are provided.
+
+      https://doc.cgal.org/5.3/Manual/packages.html#PkgTriangulationOnSphere2
+
+
+File Input / Output
+
+-   Point set, polygon soup, and polygon mesh file I/O functions have
+    been harmonized and documented:
+    -   Point set I/O functions can be found in the packages
+        Point_set_processing_3, and Point_set_3.
+    -   Polygon mesh I/O functions can be found in the package BGL.
+    -   Polygon soup I/O can be found in the package Stream_support.
+
+A comprehensive list of the supported file formats is available in the
+Stream_support package:
+
+    https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats
+
+Inversely, the following page can be used to find out which CGAL data
+structures can be used given a specific file format.
+
+    https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html
+
+
+Requirements
+
+-   The CMake minimal version is now 3.14.
+
+-   The GNU compiler g++ versions 6 and 7 are no longer tested. Only
+    version 8.3 or later are supported
+
+
+2D and 3D Linear Geometry Kernel
+
+-   Added is_translation(), is_scaling(), is_reflection(), and
+    is_rotation() to the classes Aff_transformation_2 and
+    Aff_transformation_3, which enable determining if the
+    transformations use a specialized representation internally.
+
+
+2D Regularized Boolean Set-Operations
+
+-   Added documentation for the free functions
+    oriented_side(const Point_2& p, ....) that accept a point and a
+    polygon.
+-   Documentation has been improved across the whole package.
+
+
+Polygon Mesh Processing
+
+-   Added the class CGAL::Polyhedral_envelope, providing a way to
+    quickly check if a primitive (point, segment, or triangle) is within
+    a polyhedral envelope around a set of triangles. It is based on the
+    work of Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and
+    Daniele Panozzo. “Exact and efficient polyhedral envelope
+    containment check.” (ACM Trans. Graph., 39-4, July 2020).
+-   Added more functions in the visitor of the corefinement based
+    methods to track all edge creations.
+
+
+Surface Mesh Topology
+
+-   Added the function
+    CGAL::Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle(),
+    which can be used to determine whehter a closed path on a surface
+    mesh can be continously transformed to a cycle without self
+    intersection.
+
+
+Surface Mesh Simplification
+
+-   Added a filtering mechanism so that costly tests get only applied to
+    the next candidate for the edge collapse.
+-   Added the class Polyhedral_envelope_filter, which enables to perform
+    mesh simplification inside a polyhedral envelope of the input mesh.
+
+
+2D Polyline Simplification
+
+-   When polylines have common subsequences of vertices, these
+    subsequences may now be simplifified simultaneously.
+
+
+dD Triangulations
+
+-   Added the function insert_if_in_star() to the class
+    CGAL::Regular_triangulation, which enables users to insert a point p
+    in a regular triangulation on the condition that p appears
+    post-insertion in the star of a user-specified, existing vertex.
+
+
+2D and 3D Alpha Shapes
+
+-   Breaking change: The following deprecated classes have been removed:
+    Alpha_shape_euclidean_traits_2,
+    Weighted_alpha_shape_euclidean_traits_2,
+    Alpha_shape_euclidean_traits_3, and
+    Weighted_alpha_shape_euclidean_traits_3. All CGAL kernel can be used
+    directly as models of the concepts of the 2D and 3D Alpha Shape
+    packages.
+
+
+Classification
+
+-   Breaking change: the support for TensorFlow has been dropped; the
+    classifier CGAL::TensorFlow::Neural_network_classifier has been
+    removed.
+
+
+See https://www.cgal.org/2021/07/06/cgal53/ for a
+complete list of changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,

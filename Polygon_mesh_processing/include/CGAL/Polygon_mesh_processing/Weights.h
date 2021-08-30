@@ -141,9 +141,9 @@ public:
     Vector a = get(ppmap(), v0) - get(ppmap(), v1);
     Vector b = get(ppmap(), v2) - get(ppmap(), v1);
 
-    double dot_ab = a*b;
-    double dot_aa = a.squared_length();
-    double dot_bb = b.squared_length();
+    double dot_ab = CGAL::to_double(a * b);
+    double dot_aa = CGAL::to_double(a.squared_length());
+    double dot_bb = CGAL::to_double(b.squared_length());
     double lb = -0.999, ub = 0.999;
     double cosine = dot_ab / CGAL::sqrt(dot_aa) / CGAL::sqrt(dot_bb);
     cosine = (cosine < lb) ? lb : cosine;
@@ -307,7 +307,8 @@ public:
     {
       if( is_border(he,pmesh()) ) { continue; }
 
-      CGAL_assertion(CGAL::is_triangle_mesh(pmesh()));
+      CGAL_expensive_assertion(CGAL::is_valid_polygon_mesh(pmesh()));
+      CGAL_expensive_assertion(CGAL::is_triangle_mesh(pmesh()));
       CGAL_assertion( v0 == target(he, pmesh()) );
       vertex_descriptor v1 = source(he, pmesh());
       vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
@@ -849,6 +850,45 @@ public:
 
   double w_ij(halfedge_descriptor he) {
 
+    return cotangent_functor(he) * 2.0;
+  }
+};
+
+// Cotangent_value_Meyer has been changed to the version:
+// Cotangent_value_Meyer_secure to avoid imprecisions from
+// the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
+template<
+class PolygonMesh, class VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
+class Cotangent_weight_with_voronoi_area_fairing_secure {
+
+  typedef PolygonMesh PM;
+  typedef VertexPointMap VPMap;
+  Voronoi_area<PM, VPMap> voronoi_functor;
+  Cotangent_weight<PM, VPMap, Cotangent_value_Meyer_secure<PM, VPMap> > cotangent_functor;
+
+public:
+  Cotangent_weight_with_voronoi_area_fairing_secure(PM& pmesh_) :
+  voronoi_functor(pmesh_, get(CGAL::vertex_point, pmesh_)),
+  cotangent_functor(pmesh_, get(CGAL::vertex_point, pmesh_))
+  { }
+
+  Cotangent_weight_with_voronoi_area_fairing_secure(PM& pmesh_, VPMap vpmap_) :
+  voronoi_functor(pmesh_, vpmap_),
+  cotangent_functor(pmesh_, vpmap_)
+  { }
+
+  PM& pmesh() {
+    return voronoi_functor.pmesh();
+  }
+
+  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
+
+  double w_i(vertex_descriptor v_i) {
+    return 0.5 / voronoi_functor(v_i);
+  }
+
+  double w_ij(halfedge_descriptor he) {
     return cotangent_functor(he) * 2.0;
   }
 };

@@ -166,7 +166,7 @@ the dynamic approach needed 9.50s.
 To compute the convex hull of the model of \cgalFigureRef{figchbimba} featuring 192135 points,
 the static approach needed 0.18s, while the dynamic approach needed 1.90s.
 
-The measurements have been performed using \cgal 3.9, using the <span class="textsc">Gnu</span> \cpp compiler version 4.3.5, under Linux (Debian distribution),
+The measurements have been performed using \cgal 3.9, using the \gnu \cpp compiler version 4.3.5, under Linux (Debian distribution),
 with the compilation options <TT>-O3 -DCGAL_NDEBUG</TT>. The computer used was equipped with a 64bit Intel Xeon 2.27GHz processor and 12GB of RAM.
 
 */

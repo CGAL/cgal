@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
+// Author(s) : Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 #define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
@@ -24,6 +24,8 @@
  */
 
 #include <fstream>
+
+#include <boost/variant.hpp>
 
 #include <CGAL/config.h>
 #include <CGAL/tags.h>
@@ -1066,7 +1068,7 @@ public:
      *         LARGER  - x(xcv1, ce) > x(xcv2, ce).
      * \pre the ce end of the arc xcv1 lies on a pole.
      * \pre the ce end of the arc xcv2 lies on a pole.
-     * \pre the the $x$-coordinates of xcv1 and xcv2 at their ce end are
+     * \pre the $x$-coordinates of xcv1 and xcv2 at their ce end are
      *      equal (implying that the curves overlap).
      * \pre xcv1 does not coincide with the vertical identification curve.
      * \pre xcv2 does not coincide with the vertical identification curve.
@@ -1356,8 +1358,9 @@ public:
   /// \name Functor definitions for supporting intersections.
   //@{
 
-  /*! A functor that divides an arc into x-monotone arcs. That are, arcs that
-   * do not cross the identification arc.
+  /*! \class Make_x_monotone_2
+   * A functor for subdividing arcs into x-monotone arcs that do not cross the
+   * identification arc.
    */
   class Make_x_monotone_2 {
   protected:
@@ -1374,21 +1377,24 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
 
   public:
-    /*! Cut the given curve into x-monotone subcurves and insert them into the
-     * given output iterator. As spherical_arcs are always x_monotone, only one
-     * object will be contained in the iterator.
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator. As spherical_arcs are always x_monotone, only
+     * one object will be contained in the iterator.
      * \param xc the curve.
-     * \param oi the output iterator, whose value-type is Object. The output
-     *           object is a wrapper of either an X_monotone_curve_2, or - in
-     *           case the input spherical_arc is degenerate - a Point_2 object.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
      * \return the past-the-end iterator.
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& c, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
       if (c.is_degenerate()) {
         // The spherical_arc is a degenerate point - wrap it with an object:
-        *oi++ = make_object(c.right());
+        *oi++ = Make_x_monotone_result(c.right());
         return oi;
       }
 
@@ -1396,7 +1402,7 @@ public:
         // The spherical arc is monotone - wrap it with an object:
         // *oi++ = make_object(X_monotone_curve_2(c));
         const X_monotone_curve_2* xc = &c;
-        *oi++ = make_object(*xc);
+        *oi++ = Make_x_monotone_result(*xc);
         return oi;
       }
 
@@ -1408,14 +1414,14 @@ public:
           const Direction_3& pp = m_traits->pos_pole();
           X_monotone_curve_2 xc1(np, pp, c.normal(), true, true);
           X_monotone_curve_2 xc2(pp, np, c.normal(), true, false);
-          *oi++ = make_object(xc1);
-          *oi++ = make_object(xc2);
+          *oi++ = Make_x_monotone_result(xc1);
+          *oi++ = Make_x_monotone_result(xc2);
           return oi;
         }
 #if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
         // The arc is not vertical => break it at the discontinuity arc:
         const X_monotone_curve_2 xc(c.normal());
-        *oi++ = make_object(xc);
+        *oi++ = Make_x_monotone_result(xc);
 #else
         // Full x-monotone arcs are not supported!
         // Split the arc at the intersection point with the complement of the
@@ -1426,8 +1432,8 @@ public:
         Direction_3 d2(normal.dz(), 0, -(normal.dx()));
         X_monotone_curve_2 xc1(d1, d2, normal, false, directed_right);
         X_monotone_curve_2 xc2(d2, d1, normal, false, directed_right);
-        *oi++ = make_object(xc1);
-        *oi++ = make_object(xc2);
+        *oi++ = Make_x_monotone_result(xc1);
+        *oi++ = Make_x_monotone_result(xc2);
 #endif
         return oi;
       }
@@ -1445,16 +1451,16 @@ public:
         if (source.is_min_boundary() || target.is_min_boundary()) {
           X_monotone_curve_2 xc1(source, pp, normal, true, true);
           X_monotone_curve_2 xc2(pp, target, normal, true, false);
-          *oi++ = make_object(xc1);
-          *oi++ = make_object(xc2);
+          *oi++ = Make_x_monotone_result(xc1);
+          *oi++ = Make_x_monotone_result(xc2);
           return oi;
         }
 
         if (source.is_max_boundary() || target.is_max_boundary()) {
           X_monotone_curve_2 xc1(source, np, normal, true, false);
           X_monotone_curve_2 xc2(np, target, normal, true, true);
-          *oi++ = make_object(xc1);
-          *oi++ = make_object(xc2);
+          *oi++ = Make_x_monotone_result(xc1);
+          *oi++ = Make_x_monotone_result(xc2);
           return oi;
         }
 
@@ -1474,19 +1480,19 @@ public:
                     (!plane_is_positive && !s_is_positive));
         const Point_2& pole1 = (ccw) ? pp : np;
         X_monotone_curve_2 xc1(source, pole1, normal, true, ccw);
-        *oi++ = make_object(xc1);
+        *oi++ = Make_x_monotone_result(xc1);
         if (s_is_positive != t_is_positive) {
           // Construct 1 more arc:
           X_monotone_curve_2 xc2(pole1, target, normal, true, !ccw);
-          *oi++ = make_object(xc2);
+          *oi++ = Make_x_monotone_result(xc2);
           return oi;
         }
         // Construct 2 more arcs:
         const Point_2& pole2 = (ccw) ? np : pp;
         X_monotone_curve_2 xc2(pole1, pole2, normal, true, !ccw);
-        *oi++ = make_object(xc2);
+        *oi++ = Make_x_monotone_result(xc2);
         X_monotone_curve_2 xc3(pole2, target, normal, true, ccw);
-        *oi++ = make_object(xc3);
+        *oi++ = Make_x_monotone_result(xc3);
         return oi;
       }
 
@@ -1512,8 +1518,8 @@ public:
 
       X_monotone_curve_2 xc1(source, p, normal, false, directed_right);
       X_monotone_curve_2 xc2(p, target, normal, false, directed_right);
-      *oi++ = make_object(xc1);
-      *oi++ = make_object(xc2);
+      *oi++ = Make_x_monotone_result(xc1);
+      *oi++ = Make_x_monotone_result(xc2);
       return oi;
     }
   };
@@ -1646,7 +1652,10 @@ public:
                                         Project project,
                                         OutputIterator oi) const
     {
-      typedef std::pair<Point_2, Multiplicity>                  Point_2_pair;
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_2 equal = kernel->equal_2_object();
 
@@ -1658,7 +1667,7 @@ public:
       if (equal(l1, l2)) {
         const Point_2& trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
         X_monotone_curve_2 xc(l1_3, trg, normal, vertical, true);
-        *oi++ = make_object(xc);
+        *oi++ = Intersection_result(xc);
         return oi;
       }
 
@@ -1668,29 +1677,29 @@ public:
       if (l1_eq_start || (!l2_eq_start && in_between(l1, start, l2))) {
         // The following applies only to full circles:
         if (l1_eq_start && equal(r2, start))
-          *oi++ = make_object(Point_2_pair(r2_3, 1));
+          *oi++ = Intersection_result(Intersection_point(r2_3, 1));
         if (in_between(r1, l1, l2)) return oi;      // no intersection
         if (equal(r1, l2)) {
-          *oi++ = make_object(Point_2_pair(r1_3, 1));
+          *oi++ = Intersection_result(Intersection_point(r1_3, 1));
           return oi;
         }
         const Point_2& trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
         X_monotone_curve_2 xc(l2_3, trg, normal, vertical, true);
-        *oi++ = make_object(xc);
+        *oi++ = Intersection_result(xc);
         return oi;
       }
       CGAL_assertion(l2_eq_start || in_between(l2, start, l1));
       // The following applies only to full circles:
       if (l2_eq_start && equal(r1, start))
-        *oi++ = make_object(Point_2_pair(r1_3, 1));
+        *oi++ = Intersection_result(Intersection_point(r1_3, 1));
       if (in_between(r2, l2, l1)) return oi;      // no intersection
       if (equal(r2, l1)) {
-        *oi++ = make_object(Point_2_pair(r2_3, 1));
+        *oi++ = Intersection_result(Intersection_point(r2_3, 1));
         return oi;
       }
       const Point_2& trg = (in_between(r1, l2, r2)) ? r1_3 : r2_3;
       X_monotone_curve_2 xc(l1_3, trg, normal, vertical, true);
-      *oi++ = make_object(xc);
+      *oi++ = Intersection_result(xc);
       return oi;
     }
 
@@ -1784,9 +1793,12 @@ public:
       typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
       typedef typename Kernel::Counterclockwise_in_between_2
         Counterclockwise_in_between_2;
-      typedef typename Kernel::Equal_3                          Equal_3;
+      typedef typename Kernel::Equal_3                  Equal_3;
 
-      typedef std::pair<Point_2, Multiplicity>                  Point_2_pair;
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+
       const Kernel* kernel = m_traits;
 
       Equal_3 equal_3 = kernel->equal_3_object();
@@ -1810,9 +1822,9 @@ public:
               (res && (xc1.is_directed_right() != xc2.is_directed_right())))
           {
             if (xc1.left().is_min_boundary() && xc2.left().is_min_boundary())
-              *oi++ = make_object(Point_2_pair(xc1.left(), 1));
+              *oi++ = Intersection_result(Intersection_point(xc1.left(), 1));
             if (xc1.right().is_max_boundary() && xc2.right().is_max_boundary())
-              *oi++ = make_object(Point_2_pair(xc1.right(), 1));
+              *oi++ = Intersection_result(Intersection_point(xc1.right(), 1));
             return oi;
           }
 
@@ -1820,11 +1832,11 @@ public:
            * the other arc is completely overlapping.
            */
           if (xc1.left().is_min_boundary() && xc1.right().is_max_boundary()) {
-            *oi++ = make_object(xc2);
+            *oi++ = Intersection_result(xc2);
             return oi;
           }
           if (xc2.left().is_min_boundary() && xc2.right().is_max_boundary()) {
-            *oi++ = make_object(xc1);
+            *oi++ = Intersection_result(xc1);
             return oi;
           }
           /*! Find an endpoint that does not coincide with a pole, and project
@@ -1877,14 +1889,14 @@ public:
       // Determine which one of the two directions:
       Point_2 ed(v.direction());
       if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) {
-        *oi++ = make_object(Point_2_pair(ed, 1));
+        *oi++ = Intersection_result(Intersection_point(ed, 1));
         return oi;
       }
 
       Vector_3 vo(kernel->construct_opposite_vector_3_object()(v));
       Point_2 edo(vo.direction());
       if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) {
-        *oi++ = make_object(Point_2_pair(edo, 1));
+        *oi++ = Intersection_result(Intersection_point(edo, 1));
         return oi;
       }
       return oi;
@@ -1927,8 +1939,13 @@ public:
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
+      // Down cast to pass to kernel member functions
+      const Direction_3& xc1_left = xc1.left();
+      const Direction_3& xc2_left = xc2.left();
+      const Direction_3& xc1_right = xc1.right();
+      const Direction_3& xc2_right = xc2.right();
       if (xc1.is_degenerate() && xc2.is_degenerate())
-        return equal(xc1.left(), xc2.left());
+        return equal(xc1_left, xc2_left);
       if ((xc1.is_full() || xc1.is_meridian()) && xc2.is_degenerate())
         return xc1.has_on(xc2.left());
       if ((xc2.is_full() || xc2.is_meridian()) && xc1.is_degenerate())
@@ -1941,8 +1958,8 @@ public:
       if (!equal(normal1, normal2) && !equal(opposite_normal1, normal2))
         return false;
 
-      bool eq1 = equal(xc1.right(), xc2.left());
-      bool eq2 = equal(xc1.left(), xc2.right());
+      bool eq1 = equal(xc1_right, xc2_left);
+      bool eq2 = equal(xc1_left, xc2_right);
 
 #if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
       if (eq1 && eq2) return true;
@@ -2001,14 +2018,20 @@ public:
       const Kernel* kernel = m_traits;
       typename Kernel::Equal_3 equal = kernel->equal_3_object();
 
+      // Down cast to pass to kernel member functions
+      const Direction_3& xc1_right = xc1.right();
+      const Direction_3& xc2_left = xc2.left();
+
       xc.set_is_degenerate(false);
       xc.set_is_empty(false);
       xc.set_is_vertical(xc1.is_vertical());
 
-      bool eq1 = equal(xc1.right(), xc2.left());
+      bool eq1 = equal(xc1_right, xc2_left);
 
 #if defined(CGAL_FULL_X_MONOTONE_GEODESIC_ARC_ON_SPHERE_IS_SUPPORTED)
-      bool eq2 = equal(xc1.left(), xc2.right());
+      const Direction_3& xc1_left = xc1.left();
+      const Direction_3& xc2_right = xc2.right();
+      bool eq2 = equal(xc1_left, xc2_right);
       if (eq1 && eq2) {
         const Point_2& p =
           xc1.source().is_mid_boundary() ? xc1.source() : xc1.target();
@@ -2017,8 +2040,10 @@ public:
         xc.set_normal(xc1.normal());
         xc.set_is_full(true);
       }
+#else
+      CGAL_assertion_code(const Direction_3& xc1_left = xc1.left();
+                          const Direction_3& xc2_right = xc2.right());
 #endif
-
       if (xc1.is_directed_right() || xc2.is_directed_right()) {
         xc.set_normal(xc1.is_directed_right() ? xc1.normal() : xc2.normal());
         xc.set_is_directed_right(true);
@@ -2026,20 +2051,23 @@ public:
         if (eq1) {
           xc.set_source(xc1.left());
           xc.set_target(xc2.right());
-        } else {
-          CGAL_assertion(equal(xc1.left(), xc2.right()));
+        }
+        else {
+          CGAL_assertion(equal(xc1_left, xc2_right));
           xc.set_source(xc2.left());
           xc.set_target(xc1.right());
         }
-      } else {
+      }
+      else {
         xc.set_normal(xc1.normal());
         xc.set_is_directed_right(false);
 
         if (eq1) {
           xc.set_source(xc2.right());
           xc.set_target(xc1.left());
-        } else {
-          CGAL_assertion(equal(xc1.left(), xc2.right()));
+        }
+        else {
+          CGAL_assertion(equal(xc1_left, xc2_right));
           xc.set_source(xc1.right());
           xc.set_target(xc2.left());
         }

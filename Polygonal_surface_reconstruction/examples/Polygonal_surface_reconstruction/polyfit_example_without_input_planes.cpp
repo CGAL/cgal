@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/Writer_OFF.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
@@ -55,98 +54,96 @@ typedef CGAL::Surface_mesh<Point>                                               
 
 int main()
 {
-        Point_vector points;
+  Point_vector points;
 
-        // Loads point set from a file.
-        const std::string input_file("data/cube.pwn");
+  // Loads point set from a file.
+  const std::string input_file("data/cube.pwn");
     std::ifstream input_stream(input_file.c_str());
-        if (input_stream.fail()) {
-                std::cerr << "failed open file \'" <<input_file << "\'" << std::endl;
-                return EXIT_FAILURE;
-        }
-        std::cout << "Loading point cloud: " << input_file << "...";
+  if (input_stream.fail()) {
+    std::cerr << "failed open file \'" <<input_file << "\'" << std::endl;
+    return EXIT_FAILURE;
+  }
+  input_stream.close();
+  std::cout << "Loading point cloud: " << input_file << "...";
 
-        CGAL::Timer t;
-        t.start();
-    if (!input_stream ||
-                !CGAL::read_xyz_points(input_stream,
-                        std::back_inserter(points),
-                        CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
-        {
-                std::cerr << "Error: cannot read file " << input_file << std::endl;
-                return EXIT_FAILURE;
-        }
-        else
-                std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
+  CGAL::Timer t;
+  t.start();
+  if (!CGAL::IO::read_points(input_file.c_str(), std::back_inserter(points),
+                             CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
+  {
+    std::cerr << "Error: cannot read file " << input_file << std::endl;
+    return EXIT_FAILURE;
+  }
+  else
+    std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
 
-        // Shape detection
-        Efficient_ransac ransac;
-        ransac.set_input(points);
-        ransac.add_shape_factory<Plane>();
+  // Shape detection
+  Efficient_ransac ransac;
+  ransac.set_input(points);
+  ransac.add_shape_factory<Plane>();
 
-        std::cout << "Extracting planes...";
-        t.reset();
-        ransac.detect();
+  std::cout << "Extracting planes...";
+  t.reset();
+  ransac.detect();
 
-        Efficient_ransac::Plane_range planes = ransac.planes();
-        std::size_t num_planes = planes.size();
+  Efficient_ransac::Plane_range planes = ransac.planes();
+  std::size_t num_planes = planes.size();
 
-        std::cout << " Done. " << num_planes << " planes extracted. Time: " << t.time() << " sec." << std::endl;
+  std::cout << " Done. " << num_planes << " planes extracted. Time: " << t.time() << " sec." << std::endl;
 
-        // Stores the plane index of each point as the third element of the tuple.
-        Point_to_shape_index_map shape_index_map(points, planes);
-        for (std::size_t i = 0; i < points.size(); ++i) {
-                // Uses the get function from the property map that accesses the 3rd element of the tuple.
-                int plane_index = get(shape_index_map, i);
-                points[i].get<2>() = plane_index;
-        }
+  // Stores the plane index of each point as the third element of the tuple.
+  Point_to_shape_index_map shape_index_map(points, planes);
+  for (std::size_t i = 0; i < points.size(); ++i) {
+    // Uses the get function from the property map that accesses the 3rd element of the tuple.
+    int plane_index = get(shape_index_map, i);
+    points[i].get<2>() = plane_index;
+  }
 
-        //////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
 
-        std::cout << "Generating candidate faces...";
-        t.reset();
+  std::cout << "Generating candidate faces...";
+  t.reset();
 
-        Polygonal_surface_reconstruction algo(
-                points,
-                Point_map(),
-                Normal_map(),
-                Plane_index_map()
-        );
+  Polygonal_surface_reconstruction algo(
+    points,
+    Point_map(),
+    Normal_map(),
+    Plane_index_map()
+  );
 
-        std::cout << " Done. Time: " << t.time() << " sec." << std::endl;
+  std::cout << " Done. Time: " << t.time() << " sec." << std::endl;
 
-        //////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
 
-        Surface_mesh model;
+  Surface_mesh model;
 
-        std::cout << "Reconstructing...";
-        t.reset();
+  std::cout << "Reconstructing...";
+  t.reset();
 
-        if (!algo.reconstruct<MIP_Solver>(model)) {
-                std::cerr << " Failed: " << algo.error_message() << std::endl;
-                return EXIT_FAILURE;
-        }
+  if (!algo.reconstruct<MIP_Solver>(model)) {
+    std::cerr << " Failed: " << algo.error_message() << std::endl;
+    return EXIT_FAILURE;
+  }
 
-        const std::string& output_file("data/cube_result.off");
-        std::ofstream output_stream(output_file.c_str());
-        if (output_stream && CGAL::write_off(output_stream, model))
-                std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
-        else {
-                std::cerr << " Failed saving file." << std::endl;
-                return EXIT_FAILURE;
-        }
+  const std::string& output_file("data/cube_result.off");
+  if (CGAL::IO::write_OFF(output_file, model))
+    std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
+  else {
+    std::cerr << " Failed saving file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
-        //////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
 
-        // Also stores the candidate faces as a surface mesh to a file
-        Surface_mesh candidate_faces;
-        algo.output_candidate_faces(candidate_faces);
-        const std::string& candidate_faces_file("data/cube_candidate_faces.off");
-        std::ofstream candidate_stream(candidate_faces_file.c_str());
-        if (candidate_stream && CGAL::write_off(candidate_stream, candidate_faces))
-                std::cout << "Candidate faces saved to " << candidate_faces_file << "." << std::endl;
+  // Also stores the candidate faces as a surface mesh to a file
+  Surface_mesh candidate_faces;
+  algo.output_candidate_faces(candidate_faces);
+  const std::string& candidate_faces_file("data/cube_candidate_faces.off");
+  std::ofstream candidate_stream(candidate_faces_file.c_str());
+  if (CGAL::IO::write_OFF(candidate_stream, candidate_faces))
+    std::cout << "Candidate faces saved to " << candidate_faces_file << "." << std::endl;
 
-        return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 
 

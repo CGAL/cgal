@@ -1,3 +1,4 @@
+#define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
@@ -5,7 +6,41 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 typedef EPIC::Point_2 Point_2;
-typedef CGAL::Triangulation_vertex_base_2<EPIC> Vb;
+
+template <typename Vb>
+class My_vertex_base : public Vb {
+  std::size_t time_stamp_;
+public:
+  My_vertex_base() : Vb(), time_stamp_(-1) {
+  }
+
+  My_vertex_base(const My_vertex_base& other) :
+    Vb(other),
+    time_stamp_(other.time_stamp_)
+  {}
+
+  typedef CGAL::Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+
+  template < class TDS >
+  struct Rebind_TDS {
+    typedef typename Vb::template Rebind_TDS<TDS>::Other Vb2;
+    typedef My_vertex_base<Vb2> Other;
+  };
+};
+
+#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
+typedef My_vertex_base<CGAL::Triangulation_vertex_base_2<EPIC> > Vb;
+#else
+typedef CGAL::Triangulation_vertex_base_2<K> Vb;
+#endif
+
 typedef CGAL::Constrained_triangulation_face_base_2<EPIC> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> TDS;
 typedef CGAL::Exact_predicates_tag Itag;
@@ -14,6 +49,7 @@ typedef CGAL::Constrained_triangulation_plus_2<CDT> CDTp2;
 
 template <class CDT>
 void test() {
+  std::cerr.precision(17);
   CDT cdt;
   cdt.insert_constraint(Point_2(  48.0923419883269,   299.7232779774145  ),
                         Point_2(  66.05373710316852,  434.231770798343   ));

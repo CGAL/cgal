@@ -323,13 +323,13 @@ public :
     {
       const Point& p = pVertex->point();
 
-      xmin =  std::min(xmin,p.x());
-      ymin =  std::min(ymin,p.y());
-      zmin =  std::min(zmin,p.z());
+      xmin =  (std::min)(xmin,p.x());
+      ymin =  (std::min)(ymin,p.y());
+      zmin =  (std::min)(zmin,p.z());
 
-      xmax =  std::max(xmax,p.x());
-      ymax =  std::max(ymax,p.y());
-      zmax =  std::max(zmax,p.z());
+      xmax =  (std::max)(xmax,p.x());
+      ymax =  (std::max)(ymax,p.y());
+      zmax =  (std::max)(zmax,p.z());
     }
     m_bbox = Iso_cuboid(xmin,ymin,zmin,
                         xmax,ymax,zmax);

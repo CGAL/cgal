@@ -19,6 +19,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
+#include <CGAL/Subiterator.h>
 
 #include <iterator>
 #include <list>
@@ -67,8 +68,8 @@ linear_least_squares_fitting_2(InputIterator first,
   typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0. }};
 
   // assemble 2nd order moment about the origin.
-  FT temp[4] = {1/3.0, 0.25,
-                0.25,  1/3.0};
+  FT temp[4] = {FT(1/3.0), FT(0.25),
+                FT(0.25),  FT(1/3.0)};
   Matrix moment = init_matrix<FT>(2,temp);
 
   for(InputIterator it = first;
@@ -100,8 +101,8 @@ linear_least_squares_fitting_2(InputIterator first,
     transformation = area * transformation * moment * LA::transpose(transformation);
 
     // Translate the 2nd order moment to the center of the rectangle.
-    FT xav0 = (x1-x0)/2.0;
-    FT yav0 = (y2-y0)/2.0;
+    FT xav0 = (x1-x0)/FT(2);
+    FT yav0 = (y2-y0)/FT(2);
     // and add to covariance matrix
     covariance[0] += transformation[0][0] + area * (x0*xav0*2 + x0*x0);
     covariance[1] += transformation[0][1] + area * (x0*yav0 + xav0*y0 + x0*y0);
@@ -110,11 +111,13 @@ linear_least_squares_fitting_2(InputIterator first,
     mass += area;
   }
 
+  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
+
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
+  covariance[0] += -mass * (c.x() * c.x());
+  covariance[1] += -mass * (c.x() * c.y());
+  covariance[2] += -mass * (c.y() * c.y());
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order,
@@ -136,7 +139,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through
     // the centroid and with a default horizontal vector.
-    line = Line(c, Vector(1.0, 0.0));
+    line = Line(c, Vector(FT(1), FT(0)));
     return (FT)0.0;
   }
 } // end linear_least_squares_fitting_2 for rectangle set with 2D tag
@@ -155,24 +158,16 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
   typedef typename K::Segment_2         Segment_2;
+  auto converter = [](const Iso_rectangle& r, int idx) -> Segment_2 { return Segment_2(r[idx], r[(idx+1)%4]); };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Segment_2> segments;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Iso_rectangle& t = *it;
-    segments.push_back(Segment_2(t[0],t[1]));
-    segments.push_back(Segment_2(t[1],t[2]));
-    segments.push_back(Segment_2(t[2],t[3]));
-    segments.push_back(Segment_2(t[3],t[0]));
-  }
-
-  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K(),tag,
-                                        diagonalize_traits);
+  return linear_least_squares_fitting_2
+    (make_subiterator<Segment_2, 4> (first, converter),
+     make_subiterator<Segment_2, 4> (beyond),
+     line,c,(Segment_2*)nullptr,K(),tag,
+     diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for rectangle set with 1D tag
 
@@ -193,24 +188,16 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
   typedef typename K::Point_2         Point_2;
+  auto converter = [](const Iso_rectangle& r, int idx) -> Point_2 { return r[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point_2> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Iso_rectangle& t = *it;
-    points.push_back(Point_2(t[0]));
-    points.push_back(Point_2(t[1]));
-    points.push_back(Point_2(t[2]));
-    points.push_back(Point_2(t[3]));
-  }
-
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,K(),tag,
-                                        diagonalize_traits);
+  return linear_least_squares_fitting_2
+    (make_subiterator<Point_2, 4> (first, converter),
+     make_subiterator<Point_2, 4> (beyond),
+     line,c,(Point_2*)nullptr,K(),tag,
+     diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for rectangle set with 0D tag
 

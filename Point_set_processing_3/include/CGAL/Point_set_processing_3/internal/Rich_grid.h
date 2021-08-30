@@ -186,15 +186,19 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
 
   radius = _radius;
 
-  x_side = (unsigned int)ceil((bbox.xmax() - bbox.xmin()) / radius);
-  y_side = (unsigned int)ceil((bbox.ymax() - bbox.ymin()) / radius);
-  z_side = (unsigned int)ceil((bbox.zmax() - bbox.zmin()) / radius);
+  std::size_t x_size = (std::size_t)ceil((bbox.xmax() - bbox.xmin()) / radius);
+  std::size_t y_size = (std::size_t)ceil((bbox.ymax() - bbox.ymin()) / radius);
+  std::size_t z_size = (std::size_t)ceil((bbox.zmax() - bbox.zmin()) / radius);
 
-  x_side = (x_side > 0) ? x_side : 1;
-  y_side = (y_side > 0) ? y_side : 1;
-  z_side = (z_side > 0) ? z_side : 1;
+  x_size = (x_size > 0) ? x_size : 1;
+  y_size = (y_size > 0) ? y_size : 1;
+  z_size = (z_size > 0) ? z_size : 1;
 
-  indices.resize(x_side * y_side * z_side + 1, -1);
+  indices.resize(x_size * y_size * z_size + 1, -1);
+
+  x_side = int(x_size);
+  y_side = int(y_size);
+  z_side = int(z_size);
 
   std::sort(rich_points.begin(), rich_points.end(), Z_Sort<Kernel>());
 

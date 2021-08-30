@@ -18,7 +18,6 @@
 
 #include <CGAL/algorithm.h>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 
@@ -139,8 +138,6 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
                             ForwardIterator2 first2, ForwardIterator2 last2,
                             const Traits&  ch_traits)
 {
-  using namespace boost;
-
   typedef    typename Traits::Left_turn_2    Left_of_line;
   ForwardIterator1 iter11;
   ForwardIterator2 iter21;
@@ -165,12 +162,13 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
   while (iter22 != last2)
   {
       iter11 = std::find_if( first1, last1,
-                             bind(left_turn, *iter22++, *iter21++, _1) );
+                             [left_turn, iter22, iter21](const auto& p){ return left_turn(*iter22, *iter21, p); } );
+      ++iter22; ++iter21;
       if (iter11 != last1 ) return false;
   }
 
   iter11 = std::find_if( first1, last1,
-                         bind(left_turn, *first2, *iter21, _1) );
+                         [left_turn, first2, iter21](const auto& p){ return left_turn(*first2, *iter21, p); } );
   if (iter11 != last1 ) return false;
   return true;
 }
@@ -203,7 +201,8 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1,
   while (iter22 != last2)
   {
       iter11 = std::find_if( first1, last1,
-                             bind(left_turn, *iter22++, *iter21++, _1) );
+                             [left_turn, iter22, iter21](const auto& p){ return left_turn(*iter22, *iter21, p); } );
+      ++iter22; ++iter21;
       if (iter11 != last1 ) return false;
   }
 

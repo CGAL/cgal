@@ -59,9 +59,9 @@
 
 // To handle I/O for Surface_patch_index if that is a pair of `int` (the
 // default)
-#include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
+#include <CGAL/Mesh_3/internal/Handle_IO_for_pair_of_int.h>
 
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/Mesh_3/internal/indices_management.h>
 
 namespace CGAL {
 
@@ -439,9 +439,7 @@ public:
       if(r_domain_.query_is_cached(q))
       {
         const AABB_primitive_id primitive_id = r_domain_.cached_primitive_id();
-        typename cpp11::result_of<
-          typename IGT::Intersect_3(typename Primitive::Datum, Query)>::type o
-            = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
+        const auto o = IGT().intersect_3_object()(Primitive(primitive_id).datum(),q);
         intersection = o ?
           Intersection_and_primitive_id(*o, primitive_id) :
           AABB_intersection();

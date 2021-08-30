@@ -1,22 +1,27 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <CGAL/boost/graph/selection.h>
 
 #include <fstream>
+#include <iostream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3>             Mesh;
-typedef boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
+
+typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor        halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::edge_descriptor            edge_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = PMP::parameters;
 
-
-struct Vector_pmap_wrapper{
+struct Vector_pmap_wrapper
+{
   std::vector<bool>& vect;
   Vector_pmap_wrapper(std::vector<bool>& v) : vect(v) {}
   friend bool get(const Vector_pmap_wrapper& m, face_descriptor f)
@@ -33,19 +38,11 @@ int main(int argc, char* argv[])
 {
   const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
   const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
-  std::ifstream input(filename1);
 
   Mesh mesh1, mesh2;
-  if (!input || !(input >> mesh1))
+  if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
-    std::cerr << "First mesh is not a valid off file." << std::endl;
-    return 1;
-  }
-  input.close();
-  input.open(filename2);
-  if (!input || !(input >> mesh2))
-  {
-    std::cerr << "Second mesh is not a valid off file." << std::endl;
+    std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
@@ -66,11 +63,10 @@ int main(int argc, char* argv[])
   if (valid_difference)
   {
     std::cout << "Difference was successfully computed\n";
-    std::ofstream output("difference.off");
-    output.precision(17);
-    output << mesh1;
+    CGAL::IO::write_polygon_mesh("difference.off", mesh1, CGAL::parameters::stream_precision(17));
   }
-  else{
+  else
+  {
     std::cout << "Difference could not be computed\n";
     return 1;
   }
@@ -82,8 +78,7 @@ int main(int argc, char* argv[])
     if (is_constrained_map[e])
     {
       // insert all faces incident to the target vertex
-      for(halfedge_descriptor h :
-                    halfedges_around_target(halfedge(e,mesh1),mesh1))
+      for(halfedge_descriptor h : halfedges_around_target(halfedge(e,mesh1),mesh1))
       {
         if (!is_border(h, mesh1) )
         {
@@ -105,15 +100,10 @@ int main(int argc, char* argv[])
             << " faces were selected for the remeshing step\n";
 
   // remesh the region around the intersection polylines
-  PMP::isotropic_remeshing(
-    selected_faces,
-    0.02,
-    mesh1,
-    params::edge_is_constrained_map(is_constrained_map) );
+  PMP::isotropic_remeshing(selected_faces, 0.02, mesh1,
+                           params::edge_is_constrained_map(is_constrained_map));
 
-  std::ofstream output("difference_remeshed.off");
-  output.precision(17);
-  output << mesh1;
+  CGAL::IO::write_polygon_mesh("difference_remeshed.off", mesh1, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

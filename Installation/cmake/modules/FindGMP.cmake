@@ -31,20 +31,35 @@ if( NOT GMP_in_cache )
   	        DOC "The directory containing the GMP header files"
            )
 
-  find_library(GMP_LIBRARIES NAMES gmp libgmp-10 mpir
+  find_library(GMP_LIBRARY_RELEASE NAMES gmp libgmp-10 mpir
     HINTS ENV GMP_LIB_DIR
           ENV GMP_DIR
           ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
     PATH_SUFFIXES lib
-    DOC "Path to the GMP library"
+    DOC "Path to the Release GMP library"
     )
 
-  if ( GMP_LIBRARIES )
-    get_filename_component(GMP_LIBRARIES_DIR ${GMP_LIBRARIES} PATH CACHE )
+  find_library(GMP_LIBRARY_DEBUG NAMES gmpd gmp libgmp-10 mpir
+    HINTS ENV GMP_LIB_DIR
+          ENV GMP_DIR
+          ${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/lib
+    PATH_SUFFIXES lib
+    DOC "Path to the Debug GMP library"
+    )
+
+  get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+  if(IS_MULTI_CONFIG)
+    set(GMP_LIBRARIES debug ${GMP_LIBRARY_DEBUG} optimized ${GMP_LIBRARY_RELEASE})
+  else()
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+      set(GMP_LIBRARIES ${GMP_LIBRARY_DEBUG})
+    else()
+      set(GMP_LIBRARIES ${GMP_LIBRARY_RELEASE})
+    endif()
   endif()
 
   # Attempt to load a user-defined configuration for GMP if couldn't be found
-  if ( NOT GMP_INCLUDE_DIR OR NOT GMP_LIBRARIES_DIR )
+  if ( NOT GMP_INCLUDE_DIR OR NOT GMP_LIBRARIES)
     include( GMPConfig OPTIONAL )
   endif()
 

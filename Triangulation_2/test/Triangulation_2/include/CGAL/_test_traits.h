@@ -36,7 +36,6 @@ protected:
   double _x, _y;
 public:
   Triangulation_test_point() {}
-  Triangulation_test_point(const Point &p) : _x(p.test_x()), _y(p.test_y()) {}
   Triangulation_test_point(double x, double y) : _x(x), _y(y) {}
   Triangulation_test_point(double hx, double hy, double hw) :
     _x(hx/hw), _y(hy/hw)
@@ -47,7 +46,6 @@ public:
   bool   compare(const Point &p) const
     { return test_x()==p.test_x()  &&   test_y()==p.test_y(); }
   bool   uncompare(const Point &p) const { return !compare(p); }
-  Point  &operator=(const Point &p) { _x=p.test_x(); _y=p.test_y(); return *this; }
   void   test_set(TESTFT x, TESTFT y) { _x=x; _y=y; }
   bool operator==(const Point &p) const {return this->compare(p);}
 };
@@ -435,11 +433,6 @@ public:
   typedef Triangulation_test_Construct_direction_2 Construct_direction_2;
   typedef Triangulation_test_Construct_ray_2       Construct_ray_2;
 
-
-  _Triangulation_test_traits() {}
-  _Triangulation_test_traits(const _Triangulation_test_traits &) {}
-  _Triangulation_test_traits &operator=
-        (const _Triangulation_test_traits &) { return *this; }
 
   Less_x_2
   less_x_2_object() const

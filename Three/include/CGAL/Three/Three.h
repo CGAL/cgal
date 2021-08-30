@@ -29,8 +29,15 @@
 #  define THREE_EXPORT Q_DECL_IMPORT
 #endif
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+#define CGAL_QT_SKIP_EMPTY_PARTS QString::SkipEmptyParts
+#else
+#define CGAL_QT_SKIP_EMPTY_PARTS ::Qt::SkipEmptyParts
+#endif
+
 namespace CGAL{
 namespace Three{
+//define enum depending on Qt version
 class Polyhedron_demo_plugin_interface;
 class THREE_EXPORT Three{
 public:
@@ -58,7 +65,7 @@ public:
    */
   void addDockWidget(QDockWidget* dock_widget);
 
-  /*! \brief Gets an item of the templated type.
+  /*! \brief gets an item of the templated type.
    * \returns the first `SceneType` item found in the scene's list of currently selected
    * items;
    * \returns nullptr if there is no `SceneType` in the list.
@@ -73,15 +80,31 @@ public:
    * in the plugin.
    */
   static void autoConnectActions(CGAL::Three::Polyhedron_demo_plugin_interface* plugin);
+  /*!
+   * Displays in the console a blue text preceded by the mention
+   * "INFO: ".
+   */
   static void information(QString);
   /*!
-   * Displays a blue text preceded by the mention "WARNING :".
+   * Displays in the console an orange text preceded by the mention "WARNING: ".
    */
   static void warning(QString);
   /*!
-   * Displays a red text preceded by the mention "ERROR :".
+   * Displays in the console a red text preceded by the mention "ERROR: ".
    */
   static void error(QString);
+  /*!
+   * Displays an information popup.
+   */
+  static void information(QString title, QString message);
+  /*!
+   * Displays a warning popup.
+   */
+  static void warning(QString title, QString message);
+  /*!
+   * Displays an error popup.
+   */
+  static void error(QString title, QString message);
 protected:
   static QMainWindow* s_mainwindow;
   static Viewer_interface* s_mainviewer;

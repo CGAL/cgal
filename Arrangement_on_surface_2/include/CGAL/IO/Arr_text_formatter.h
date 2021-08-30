@@ -27,7 +27,7 @@
 namespace CGAL {
 
 /*! \class
- * A class defining a textual (ASCII) input/output format for arrangements
+ * A class defining a textual (\ascii) input/output format for arrangements
  * and supports reading and writing an arrangement from or to input/output
  * streams.
  */
@@ -120,8 +120,8 @@ public:
   void write_arrangement_begin()
   {
     CGAL_assertion(m_out != nullptr);
-    m_old_out_mode = get_mode(*m_out);
-    set_ascii_mode(*m_out);
+    m_old_out_mode = IO::get_mode(*m_out);
+    IO::set_ascii_mode(*m_out);
     _write_comment("BEGIN ARRANGEMENT");
   }
 
@@ -277,8 +277,8 @@ public:
   void read_arrangement_begin()
   {
     CGAL_assertion(m_in != nullptr);
-    m_old_in_mode = get_mode(*m_in);
-    set_ascii_mode(*m_in);
+    m_old_in_mode = IO::get_mode(*m_in);
+    IO::set_ascii_mode(*m_in);
     _skip_comments();
   }
 
@@ -489,7 +489,7 @@ protected:
 };
 
 /*! \class
- * A class defining a textual (ASCII) input/output format for arrangements
+ * A class defining a textual (\ascii) input/output format for arrangements
  * that store auxiliary dat with their face records, as they are templated
  * by a face-extended DCEL class.
  */
@@ -546,7 +546,7 @@ public:
 };
 
 /*! \class
- * A class defining a textual (ASCII) input/output format for arrangements
+ * A class defining a textual (\ascii) input/output format for arrangements
  * that store auxiliary dat with all their DCEL records, as they are templated
  * by a extended DCEL class.
  */

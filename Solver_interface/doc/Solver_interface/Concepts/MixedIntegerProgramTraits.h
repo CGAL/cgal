@@ -1,16 +1,13 @@
-
-
 class MixedIntegerProgramTraits
 
-
 /*!
+\ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
 `MixedIntegerProgramVariable` is a concept of a variable in
 a Mixed Integer Programming (MIP) problem.
 
 \cgalHasModel `CGAL::Variable<FT>`
-
 */
 template <typename FT>
 class MixedIntegerProgramVariable
@@ -25,7 +22,7 @@ public:
         typedef unspecified_type FT;
 
         /*!
-        A variable can be continuous, integer, or binary
+        A variable can be continuous, integer, or binary.
         */
         enum Variable_type { CONTINUOUS, INTEGER, BINARY };
 
@@ -43,10 +40,10 @@ public:
         /// \name Operations
         /// @{
 
-        /// Returns the variable type
+        /// Returns the variable type.
         Variable_type variable_type() const;
 
-        /// Sets/Changes the variable type
+        /// Sets/Changes the variable type.
         void set_variable_type(Variable_type t);
 
         /*!
@@ -69,26 +66,26 @@ public:
         */
         void set_index(int idx);
 
-        /// Returns the solver that owns this variable
+        /// Returns the solver that owns this variable.
         const MixedIntegerProgramTraits* solver() const;
         MixedIntegerProgramTraits* solver();
 
-        /// Sets the lower bound
+        /// Sets the lower bound.
         void set_lower_bound(FT lb);
 
-        /// Sets the upper bound
+        /// Sets the upper bound.
         void set_upper_bound(FT ub);
 
-        /// Sets both lower and upper bounds
+        /// Sets both lower and upper bounds.
         void set_bounds(FT lb, FT ub);
 
-        /// Gets the lower bound
+        /// Gets the lower bound.
         FT lower_bound() const;
 
-        /// Gets the upper bound
+        /// Gets the upper bound.
         FT upper_bound() const;
 
-        /// Gets both lower and upper bounds
+        /// Gets both lower and upper bounds.
         void get_bounds(FT& lb, FT& ub) const;
 
         /// Gets the infinity threshold (e.g., 1e20).
@@ -108,17 +105,15 @@ public:
 
 }; /* end MixedIntegerProgramVariable */
 
+/*!
+\ingroup PkgSolverInterfaceConcepts
+\cgalConcept
 
+`MixedIntegerProgramLinearConstraint` is a concept of a linear
+constraint in a Mixed Integer Programming (MIP) problem.
 
-   /*!
-
-   \cgalConcept
-
-   `MixedIntegerProgramLinearConstraint` is a concept of a linear
-   constraint in a Mixed Integer Programming (MIP) problem.
-
-   \cgalHasModel `CGAL::Linear_constraint<FT>`
-   */
+\cgalHasModel `CGAL::Linear_constraint<FT>`
+*/
 template <typename FT>
 class MixedIntegerProgramLinearConstraint
 {
@@ -155,26 +150,26 @@ public:
         */
         void set_index(int idx);
 
-        /// Returns the solver that owns this constraint
+        /// Returns the solver that owns this constraint.
         const MixedIntegerProgramTraits* solver() const;
         MixedIntegerProgramTraits* solver();
 
-        /// Sets the lower bound
+        /// Sets the lower bound.
         void set_lower_bound(FT lb);
 
-        /// Sets the upper bound
+        /// Sets the upper bound.
         void set_upper_bound(FT ub);
 
-        /// Sets both lower and upper bounds
+        /// Sets both lower and upper bounds.
         void set_bounds(FT lb, FT ub);
 
-        /// Gets the lower bound
+        /// Gets the lower bound.
         FT lower_bound() const;
 
-        /// Gets the upper bound
+        /// Gets the upper bound.
         FT upper_bound() const;
 
-        /// Gets both lower and upper bounds
+        /// Gets both lower and upper bounds.
         void get_bounds(FT& lb, FT& ub) const;
 
         /// Gets the infinity threshold (e.g., 1e20).
@@ -207,17 +202,15 @@ public:
 
 }; /* end MixedIntegerProgramLinearConstraint */
 
+/*!
+\ingroup PkgSolverInterfaceConcepts
+\cgalConcept
 
+`MixedIntegerProgramLinearObjective` is a concept of the linear
+objective function in a Mixed Integer Programming (MIP) problem.
 
-   /*!
-
-   \cgalConcept
-
-   `MixedIntegerProgramLinearObjective` is a concept of the linear
-   objective function in a Mixed Integer Programming (MIP) problem.
-
-   \cgalHasModel `CGAL::Linear_objective<FT>`
-   */
+\cgalHasModel `CGAL::Linear_objective<FT>`
+*/
 template <typename FT>
 class MixedIntegerProgramLinearObjective
 {
@@ -225,7 +218,7 @@ public:
         /// \name Types
         /// @{
 
-        /// The objective sense (i.e., optimization direction)
+        /// The objective sense (i.e., optimization direction).
         enum Sense { MINIMIZE, MAXIMIZE, UNDEFINED };
 
         /// @}
@@ -275,10 +268,8 @@ public:
 
 }; /* end MixedIntegerProgramLinearObjective */
 
-
-
 /*!
-\ingroup PkgSolverConcepts
+\ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
 @brief Concept describing the set of requirements for (constrained or unconstrained)
@@ -290,12 +281,10 @@ to solve the problem.
 \cgalHasModel `CGAL::GLPK_mixed_integer_program_traits<T>`
 \cgalHasModel `CGAL::SCIP_mixed_integer_program_traits<T>`
 */
-
 template <typename FT>
 class MixedIntegerProgramTraits
 {
 public:
-
         /// \name Creation
         /// @{
 
@@ -335,42 +324,42 @@ public:
         ///                  solver is destroyed.
         MixedIntegerProgramLinearObjective* create_objective(Sense sense);
 
-        /// Returns the number of variables
+        /// Returns the number of variables.
         std::size_t number_of_variables() const;
 
-        /// Returns the variables
+        /// Returns the variables.
         const std::vector<MixedIntegerProgramVariable*>& variables() const;
         std::vector<MixedIntegerProgramVariable*>& variables();
 
-        /// Returns the number of constraints
+        /// Returns the number of constraints.
         std::size_t number_of_constraints() const;
 
-        /// Returns the constraints
+        /// Returns the constraints.
         const std::vector<MixedIntegerProgramLinearConstraint*>& constraints() const;
         std::vector<MixedIntegerProgramLinearConstraint*>& constraints();
 
-        /// Returns the number of continuous variables
+        /// Returns the number of continuous variables.
         std::size_t number_of_continuous_variables() const;
 
-        /// Returns the number of integer variables
+        /// Returns the number of integer variables.
         std::size_t number_of_integer_variables() const;
 
-        /// Returns the number of binary variables
+        /// Returns the number of binary variables.
         std::size_t number_of_binary_variables() const;
 
-        /// Returns true if all variables are continuous
+        /// Returns true if all variables are continuous.
         bool is_continuous() const;
 
-        /// Returns true if this is a mixed integer program
+        /// Returns true if this is a mixed integer program.
         bool is_mixed_integer_program() const;
 
-        /// Returns true if this is an integer program
+        /// Returns true if this is an integer program.
         bool is_integer_program() const;
 
-        /// Returns true if binary program
+        /// Returns true if binary program.
         bool is_binary_program() const;
 
-        /// Returns the objective
+        /// Returns the objective.
         const MixedIntegerProgramLinearObjective * objective() const;
         MixedIntegerProgramLinearObjective * objective();
 
@@ -391,4 +380,5 @@ public:
         void clear();
 
         /// @}
+
 }; /* end MixedIntegerProgramTraits */

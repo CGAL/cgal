@@ -19,7 +19,7 @@
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/NewKernel_d/Define_kernel_types.h>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -56,10 +56,10 @@ namespace internal {
 // Whenever a construction takes iterator pairs as input, whether they point to double of Lazy objects, copy the ranges inside the lazy result so they are available for update_exact(). We analyze the input to try and guess where iterator pairs are. I would prefer if each functor had a specific signature (no overload in this layer) so we wouldn't have to guess.
 namespace Lazy_internal {
 template<class...>struct typelist{};
-template<int>struct arg_i{};
-template<int>struct arg_i_begin{};
-template<int>struct arg_i_end{};
-template<int>struct arg_i_ip1_range{};
+template<std::size_t>struct arg_i{};
+template<std::size_t>struct arg_i_begin{};
+template<std::size_t>struct arg_i_end{};
+template<std::size_t>struct arg_i_ip1_range{};
 template<class,class,class,class=void>struct analyze_args;
 template<class T,class U>struct analyze_args<T,U,typelist<>> {
   typedef T creator;
@@ -73,24 +73,24 @@ struct analyze_args<typelist<T...>,typelist<U...>,typelist<It,It,W...>,std::enab
 analyze_args<typelist<T...,arg_i_ip1_range<sizeof...(U)>>,typelist<U...,arg_i_begin<sizeof...(T)>,arg_i_end<sizeof...(T)>>,typelist<W...>> {};
 template<class...T> using analyze_args_for_lazy = analyze_args<typelist<>,typelist<>,typelist<T...>>;
 template<class,class>struct extract1;
-template<int i,class T>struct extract1<arg_i<i>,T>:std::tuple_element<i,T>{};
-template<int i,class T>struct extract1<arg_i_ip1_range<i>,T>{
+template<std::size_t i,class T>struct extract1<arg_i<i>,T>:std::tuple_element<i,T>{};
+template<std::size_t i,class T>struct extract1<arg_i_ip1_range<i>,T>{
   typedef std::tuple_element_t<i,T> E;
   typedef std::remove_cv_t<std::remove_reference_t<E>> It;
   typedef typename std::iterator_traits<It>::value_type element_type;
   // TODO: find a way to use an array of the right size, at least for the most frequent constructions
   typedef std::vector<element_type> type;
 };
-template<int i,class...T>decltype(auto)
+template<std::size_t i,class...T>decltype(auto)
 do_extract(arg_i<i>,std::tuple<T...>const&t)
 {return std::get<i>(t);}
-template<int i,class...T>decltype(auto)
+template<std::size_t i,class...T>decltype(auto)
 do_extract(arg_i_begin<i>,std::tuple<T...>const&t)
 {return std::begin(std::get<i>(t));}
-template<int i,class...T>decltype(auto)
+template<std::size_t i,class...T>decltype(auto)
 do_extract(arg_i_end<i>,std::tuple<T...>const&t)
 {return std::end(std::get<i>(t));}
-template<int i,class...T>decltype(auto)
+template<std::size_t i,class...T>decltype(auto)
 do_extract(arg_i_ip1_range<i>,std::tuple<T...>const&t)
 {
   typedef std::tuple<T...> L;
@@ -109,6 +109,7 @@ template<typename AT, typename ET, typename AC, typename EC, typename E2A, typen
 class Lazy_rep_XXX :
   public Lazy_rep< AT, ET, E2A >, private EC
 {
+  typedef Lazy_rep< AT, ET, E2A > Base;
   // `default_construct<T>()` is the same as `T{}`. But, this is a
   // workaround to a MSVC-2015 bug (fixed in MSVC-2017): its parser
   // seemed confused by `T{}` somewhere below.
@@ -129,9 +130,10 @@ class Lazy_rep_XXX :
   const EC& ec() const { return *this; }
   template<class...T>
   void update_exact_helper(Lazy_internal::typelist<T...>) const {
-    this->et = new ET(ec()( CGAL::exact( Lazy_internal::do_extract(T{},l) ) ... ) );
-    this->at = E2A()(*(this->et));
-    l = LL(); // There should be a nicer way to clear. Destruction for instance. With this->et as a witness of whether l has already been destructed.
+    auto* p = new typename Base::Indirect(ec()( CGAL::exact( Lazy_internal::do_extract(T{},l) ) ... ) );
+    this->set_at(p);
+    this->set_ptr(p);
+    lazy_reset_member(l);
   }
   public:
   void update_exact() const {
@@ -294,7 +296,9 @@ struct Lazy_cartesian :
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
             typedef typename Get_functor<Approximate_kernel, T>::type FA;
             typedef typename Get_functor<Exact_kernel, T>::type FE;
-            typedef Filtered_predicate2<FE,FA,C2E,C2A> type;
+            // Careful if operator< for Interval_nt ever starts using arithmetic...
+            // Not done directly in Filtered_predicate2 because of C2A
+            typedef Filtered_predicate2<Lazy_cartesian,FE,FA,C2E,C2A,!Uses_no_arithmetic<FA>::value> type;
     };
     template<class T,class D> struct Functor<T,D,Compute_tag> {
             typedef Lazy_construction2<T,Kernel> type;

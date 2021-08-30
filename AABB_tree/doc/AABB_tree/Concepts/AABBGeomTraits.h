@@ -45,11 +45,9 @@ typedef unspecified_type Do_intersect_3;
 
 /*!
 A functor object to construct the intersection between two geometric objects.
-This functor must support the result_of protocol, that is the return
-type of the `operator()(A, B)` is `CGAL::cpp11::result<Intersect_3(A,B)>`.
 
 Provides the operators:
-`CGAL::cpp11::result<Intersect_3(A,B)> operator()(const A& a, const B& b);`
+`decltype(auto) operator()(const A& a, const B& b);`
 where `A` and `B` are any relevant types among `Ray_3`, `Segment_3`, `Line_3`,
 `Triangle_3`, `Plane_3` and `Bbox_3`.
 Relevant herein means that a line primitive (ray, segment, line) is tested
@@ -132,62 +130,62 @@ typedef unspecified_type Equal_3;
 /// @{
 
 /*!
-Returns the intersection detection functor.
+returns the intersection detection functor.
 */
 Do_intersect_3 do_intersect_3_object();
 
 /*!
-Returns the intersection constructor.
+returns the intersection constructor.
 */
 Intersect_3 intersect_3_object();
 
 /*!
-Returns the sphere constructor.
+returns the sphere constructor.
 */
 Construct_sphere_3 construct_sphere_3_object();
 
 /*!
-Returns the closest point constructor.
+returns the closest point constructor.
 */
 Construct_projected_point_3 construct_projected_point_3_object();
 
 /*!
-Returns the compare distance constructor.
+returns the compare distance constructor.
 */
 Compare_distance_3 compare_distance_3_object();
 
 /*!
-Returns the closest point constructor.
+returns the closest point constructor.
 */
 Has_on_bounded_side_3 has_on_bounded_side_3_object();
 
 /*!
-Returns the squared radius functor.
+returns the squared radius functor.
 */
 Compute_squared_radius_3 compute_squared_radius_3_object();
 
 /*!
-Returns the squared distance functor.
+returns the squared distance functor.
 */
 Compute_squared_distance_3 compute_squared_distance_3_object();
 
 /*!
-Returns the `Less_x_3` functor.
+returns the `Less_x_3` functor.
 */
 Less_x_3 less_x_3_object();
 
 /*!
-Returns the `Less_y_3` functor.
+returns the `Less_y_3` functor.
 */
 Less_y_3 less_y_3_object();
 
 /*!
-Returns the `Less_z_3` functor.
+returns the `Less_z_3` functor.
 */
 Less_z_3 less_z_3_object();
 
 /*!
-Returns the equal functor.
+returns the equal functor.
 */
 Equal_3 equal_3_object();
 

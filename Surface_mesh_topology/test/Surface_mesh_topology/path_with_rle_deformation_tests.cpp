@@ -5,6 +5,7 @@
 #include <CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h>
 #include <vector>
 #include <sstream>
+#include <tuple>
 
 #include "Creation_of_test_cases_for_paths.h"
 
@@ -22,7 +23,7 @@ struct MyItems
     typedef std::size_t Dart_info;
 #endif // CGAL_PWRLE_TURN_V3
     typedef CGAL::Cell_attribute_with_point<CMap> Vertex_attrib;
-    typedef CGAL::cpp11::tuple<Vertex_attrib> Attributes;
+    typedef std::tuple<Vertex_attrib> Attributes;
   };
 };
 
@@ -35,7 +36,7 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3,
 #define NB_TESTS 21 // 0 ... 20
 static unsigned int nbtests=0;
 
-static const unsigned int ALL_TESTS=std::numeric_limits<unsigned int>::max();
+static const unsigned int ALL_TESTS=(std::numeric_limits<unsigned int>::max)();
 
 enum Transformation // enum for the type of transformations
 {

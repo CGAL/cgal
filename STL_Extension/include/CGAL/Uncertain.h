@@ -66,8 +66,6 @@ class Uncertain_conversion_exception
 public:
   Uncertain_conversion_exception(const std::string &s)
     : std::range_error(s) {}
-
-  ~Uncertain_conversion_exception() throw() {}
 };
 
 
@@ -350,6 +348,7 @@ Uncertain<bool> operator&(Uncertain<bool> a, bool b)
 #endif
 
 #define CGAL_AND_3(X, Y, Z)  CGAL_AND(X, CGAL_AND(Y, Z))
+#define CGAL_AND_6(A, B, C, D, E, F)  CGAL_AND(CGAL_AND_3(A, B, C), CGAL_AND_3(D, E,F))
 #define CGAL_OR_3(X, Y, Z)   CGAL_OR(X, CGAL_OR(Y, Z))
 
 
@@ -614,26 +613,12 @@ Uncertain<T> operator*(Uncertain<T> a, T b)
 
 // enum_cast overload
 
-#ifdef CGAL_CFG_MATCHING_BUG_5
-
-template < typename T, typename U >
-inline
-Uncertain<T> enum_cast_bug(Uncertain<U> u, const T*)
-{
-  return Uncertain<T>(static_cast<const T>(u.inf()),
-                      static_cast<const T>(u.sup()));
-}
-
-#else
-
 template < typename T, typename U >
 inline
 Uncertain<T> enum_cast(Uncertain<U> u)
 {
   return Uncertain<T>(static_cast<T>(u.inf()), static_cast<T>(u.sup()));
 }
-
-#endif
 
 } //namespace CGAL
 

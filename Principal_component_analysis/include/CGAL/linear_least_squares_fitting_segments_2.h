@@ -19,6 +19,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
+#include <CGAL/Subiterator.h>
 
 #include <iterator>
 #include <list>
@@ -67,7 +68,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // assemble 2nd order moment about the origin.
   FT temp[4] = {1.0, 0.5, 0.5, 1.0};
-  Matrix moment = (1.0/3.0) * init_matrix<FT>(2,temp);
+  Matrix moment = FT(1.0/3.0) * init_matrix<FT>(2,temp);
 
   for(InputIterator it = first;
       it != beyond;
@@ -83,7 +84,7 @@ linear_least_squares_fitting_2(InputIterator first,
                    t[0].y(), t[1].y()};
     Matrix transformation = init_matrix<FT>(2,delta);
     using std::sqrt;
-    FT length = sqrt(t.squared_length());
+    FT length = CGAL::approximate_sqrt(t.squared_length());
     CGAL_assertion(length != 0.0);
 
     // Find the 2nd order moment for the segment wrt to the origin by an affine transformation.
@@ -99,11 +100,13 @@ linear_least_squares_fitting_2(InputIterator first,
     mass += length;
   }
 
+  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
+
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += mass * (-1.0 * c.x() * c.x());
-  covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
+  covariance[0] += -mass * ( c.x() * c.x());
+  covariance[1] += -mass * (c.x() * c.y());
+  covariance[2] += -mass * (c.y() * c.y());
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order,
@@ -125,7 +128,7 @@ linear_least_squares_fitting_2(InputIterator first,
     // isotropic case (infinite number of directions)
     // by default: assemble a line that goes through
     // the centroid and with a default horizontal vector.
-    line = Line(c, Vector(1.0, 0.0));
+    line = Line(c, Vector(FT(1), FT(0)));
     return (FT)0.0;
   }
 } // end linear_least_squares_fitting_2 for segment set with 1D tag
@@ -144,21 +147,16 @@ linear_least_squares_fitting_2(InputIterator first,
   // types
   typedef typename K::Point_2  Point;
   typedef typename K::Segment_2 Segment;
+  auto converter = [](const Segment& s, int idx) -> Point { return s[idx]; };
 
   // precondition: at least one element in the container.
   CGAL_precondition(first != beyond);
 
-  std::list<Point> points;
-  for(InputIterator it = first;
-      it != beyond;
-      it++)
-  {
-    const Segment& s = *it;
-    points.push_back(s[0]);
-    points.push_back(s[1]);
-  }
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,k,(Point*)nullptr,tag,
-                                        diagonalize_traits);
+  return linear_least_squares_fitting_2
+    (make_subiterator<Point, 2> (first, converter),
+     make_subiterator<Point, 2> (beyond),
+     line,c,(Point*)nullptr,k,tag,
+     diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for segment set with 1D tag
 

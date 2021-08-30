@@ -300,12 +300,6 @@ public:
   static Quaternion randomQuaternion();
   //@}
 
-  /*! @name XML representation */
-  //@{
-  explicit Quaternion(const QDomElement &element);
-  QDomElement domElement(const QString &name, QDomDocument &document) const;
-  void initFromDOMElement(const QDomElement &element);
-//@}
 
 #ifdef DOXYGEN
   /*! @name Output stream */

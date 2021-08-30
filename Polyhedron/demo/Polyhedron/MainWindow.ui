@@ -97,7 +97,6 @@
     <addaction name="action_Rearrange_Viewers"/>
     <addaction name="menuDockWindows"/>
     <addaction name="separator"/>
-    <addaction name="action_Start_a_Session"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -468,17 +467,6 @@
   <action name="actionLoad_a_Scene_from_a_Script_File">
    <property name="text">
     <string>Load a Scene &amp;from a Script File...</string>
-   </property>
-  </action>
-  <action name="action_Start_a_Session">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Start a Session</string>
-   </property>
-   <property name="toolTip">
-    <string>Start a WebSocket Server to Share your Camera with Others on your Network.</string>
    </property>
   </action>
  </widget>

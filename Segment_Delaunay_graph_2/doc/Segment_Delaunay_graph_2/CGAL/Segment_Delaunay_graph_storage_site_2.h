@@ -7,20 +7,13 @@ namespace CGAL {
 The class `Segment_Delaunay_graph_storage_site_2` is a model for the concept
 `SegmentDelaunayGraphStorageSite_2`.
 
-\tparam Gt must be a model of the `SegmentDelaunayGraphTraits_2` concept.
+\tparam Gt must be a model of the `SegmentDelaunayGraphStorageTraits_2` concept.
 
 \cgalModels `SegmentDelaunayGraphStorageSite_2`
 
-\sa `SegmentDelaunayGraphSite_2`
-\sa `SegmentDelaunayGraphTraits_2`
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>`
-\sa `CGAL::Segment_Delaunay_graph_traits_2<K,MTag>`
-\sa `CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>`
-\sa `CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-\sa `CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
-
 */
-template< typename Gt >
+template< typename St >
 class Segment_Delaunay_graph_storage_site_2 {
 public:
 
@@ -31,9 +24,9 @@ public:
 /// @{
 
 /*!
-A type for the template parameter `Gt`.
+A type for the template parameter `St`.
 */
-typedef Gt Geom_traits;
+typedef St Storage_traits;
 
 /// @}
 

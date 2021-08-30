@@ -13,12 +13,12 @@
 #define CGAL_STORE_KERNEL_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_empty.hpp>
+#include <type_traits>
 
 namespace CGAL {
 namespace internal {
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Do_not_store_kernel)
-template<class T,bool=boost::is_empty<T>::value,bool=has_Do_not_store_kernel<T>::value> struct Do_not_store_kernel {
+template<class T,bool=std::is_empty<T>::value,bool=has_Do_not_store_kernel<T>::value> struct Do_not_store_kernel {
         enum { value=false };
         typedef Tag_false type;
 };

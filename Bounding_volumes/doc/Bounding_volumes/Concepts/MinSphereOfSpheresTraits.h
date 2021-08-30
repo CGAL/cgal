@@ -10,6 +10,9 @@ following constants, types, predicates and operations.
 \cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_3<K,FT,UseSqrt,Algorithm>`
 \cgalHasModel `CGAL::Min_sphere_of_spheres_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>`
 
+\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_2<K,FT,UseSqrt,Algorithm>`
+\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_3<K,FT,UseSqrt,Algorithm>`
+\cgalHasModel `CGAL::Min_sphere_of_points_d_traits_d<K,FT,Dim,UseSqrt,Algorithm>`
 */
 
 class MinSphereOfSpheresTraits {
@@ -112,4 +115,3 @@ Cartesian_const_iterator center_cartesian_begin(const Sphere& s);
 /// @}
 
 }; /* end MinSphereOfSpheresTraits */
-

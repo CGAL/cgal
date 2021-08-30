@@ -47,12 +47,12 @@ public:
   void setColor(QColor c) Q_DECL_OVERRIDE;
   bool save_binary(std::ostream& os) const
   {
-    return CGAL::Mesh_3::save_binary_file(os, c3t3());
+    return CGAL::IO::save_binary_file(os, c3t3());
   }
   bool save_ascii(std::ostream& os) const
   {
       os << "ascii CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
-      CGAL::set_ascii_mode(os);
+      CGAL::IO::set_ascii_mode(os);
       return !!(os << c3t3());
   }
 
@@ -101,9 +101,8 @@ public:
   {
       return Scene_item::bbox();
   }
-  Scene_c3t3_item* clone() const  Q_DECL_OVERRIDE{
-    return 0;
-  }
+
+  Scene_c3t3_item* clone() const  Q_DECL_OVERRIDE;
 
   bool load_binary(std::istream& is);
 
@@ -129,6 +128,7 @@ public:
     float getShrinkFactor() const;
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
+    std::size_t number_of_patches() const;
   public Q_SLOTS:
 
   void on_spheres_color_changed();
@@ -155,6 +155,12 @@ public:
   void build_histogram();
 
   QColor get_histogram_color(const double v) const;
+
+  void set_sharp_edges_angle(double d);
+  double get_sharp_edges_angle();
+
+  void set_detect_borders(bool b);
+  bool get_detect_borders();
 
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 

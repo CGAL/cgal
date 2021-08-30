@@ -16,6 +16,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/bounding_box.h>
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Triangulate_hole_polyline.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
@@ -42,29 +43,69 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup hole_filling_grp
   triangulates a hole in a polygon mesh.
-  The hole must not contain any non-manifold vertex,
-  nor self-intersections.
-  The patch generated does not introduce non-manifold edges nor degenerate triangles.
-  If a hole cannot be triangulated, `pmesh` is not modified and nothing is recorded in `out`.
+
+  Depending on the choice of the underlying algorithm different preconditions apply.
+  When using the 2D constrained Delaunay triangulation, the border edges of the hole
+  must not intersect the surface. Otherwise, additionally, the boundary
+  of the hole must not contain any non-manifold vertex. The patch generated does not
+  introduce non-manifold edges nor degenerate triangles. If a hole cannot be triangulated,
+  `pmesh` is not modified and nothing is recorded in `out`.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
   @tparam OutputIterator a model of `OutputIterator`
     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh containing the hole
   @param border_halfedge a border halfedge incident to the hole
   @param out iterator over patch faces
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-         If this parameter is omitted, an internal property map for
-         `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
-         If no valid triangulation can be found in this search space, the algorithm falls back to the
-         non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `PolygonMesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, the points of the boundary of the hole are used
+                            to estimate a fitting plane and a 2D constrained Delaunay triangulation
+                            is then used to fill the hole projected in the fitting plane.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If the boundary of the hole is not planar (according to the
+                      parameter `threshold_distance`) or if no valid 2D triangulation
+                      can be found, the algorithm falls back to the method using
+                      the 3D Delaunay triangulation. This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return `out`
@@ -99,13 +140,45 @@ namespace Polygon_mesh_processing {
 #endif
 
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
+    bool use_cdt =
+    #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+        false;
+#else
+        choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
+#endif
 
-    return internal::triangulate_hole_polygon_mesh(pmesh,
+    typename GeomTraits::FT max_squared_distance = typename GeomTraits::FT(-1);
+    if (use_cdt) {
+
+      std::vector<typename GeomTraits::Point_3> points;
+      typedef Halfedge_around_face_circulator<PolygonMesh> Hedge_around_face_circulator;
+      const auto vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh));
+      Hedge_around_face_circulator circ(border_halfedge, pmesh), done(circ);
+      do {
+        points.push_back(get(vpmap, target(*circ, pmesh)));
+      } while (++circ != done);
+
+      const typename GeomTraits::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
+      typename GeomTraits::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
+      default_squared_distance /= typename GeomTraits::FT(16); // one quarter of the bbox height
+
+      const typename GeomTraits::FT threshold_distance = choose_parameter(
+        get_parameter(np, internal_np::threshold_distance), typename GeomTraits::FT(-1));
+      max_squared_distance = default_squared_distance;
+      if (threshold_distance >= typename GeomTraits::FT(0))
+        max_squared_distance = threshold_distance * threshold_distance;
+      CGAL_assertion(max_squared_distance >= typename GeomTraits::FT(0));
+    }
+
+    return internal::triangulate_hole_polygon_mesh(
+      pmesh,
       border_halfedge,
       out,
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits))).first;
+      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
+      use_cdt,
+      max_squared_distance).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -143,24 +216,66 @@ namespace Polygon_mesh_processing {
      holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
   @tparam VertexOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices.
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
   @param face_out output iterator over patch faces
   @param vertex_out output iterator over patch vertices without including the boundary
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-         If this parameter is omitted, an internal property map for
-         `CGAL::vertex_point_t` should be available in `PolygonMesh`\cgalParamEnd
-     \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values
-         cause denser refinements, as in `refine()` \cgalParamEnd
-     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
-         If no valid triangulation can be found in this search space, the algorithm falls back to the
-         non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `PolygonMesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, the points of the boundary of the hole are used
+                            to estimate a fitting plane and a 2D constrained Delaunay triangulation
+                            is then used to fill the hole projected in the fitting plane.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If the boundary of the hole is not planar (according to the
+                      parameter `threshold_distance`) or if no valid 2D triangulation
+                      can be found, the algorithm falls back to the method using
+                      the 3D Delaunay triangulation. This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{density_control_factor}
+      \cgalParamDescription{factor to control density of the ouput mesh,
+                            where larger values cause denser refinements, as in `refine()`}
+      \cgalParamType{double}
+      \cgalParamDefault{\f$ \sqrt{2}\f$}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return pair of `face_out` and `vertex_out`
@@ -213,27 +328,84 @@ namespace Polygon_mesh_processing {
       holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
       holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param pmesh polygon mesh which has the hole
   @param border_halfedge a border halfedge incident to the hole
   @param face_out output iterator over patch faces
   @param vertex_out output iterator over patch vertices without including the boundary
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-     \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-         If this parameter is omitted, an internal property map for
-         `CGAL::vertex_point_t` should be available in `PolygonMesh`
-         \cgalParamEnd
-     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
-         If no valid triangulation can be found in this search space, the algorithm falls back to the
-         non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh, where larger values
-         cause denser refinements, as in `refine()` \cgalParamEnd
-     \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch \cgalParamEnd
-     \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
-     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `PolygonMesh`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, the points of the boundary of the hole are used
+                            to estimate a fitting plane and a 2D constrained Delaunay triangulation
+                            is then used to fill the hole projected in the fitting plane.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If the boundary of the hole is not planar (according to the
+                      parameter `threshold_distance`) or if no valid 2D triangulation
+                      can be found, the algorithm falls back to the method using
+                      the 3D Delaunay triangulation. This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{density_control_factor}
+      \cgalParamDescription{factor to control density of the ouput mesh,
+                            where larger values cause denser refinements, as in `refine()`}
+      \cgalParamType{double}
+      \cgalParamDefault{\f$ \sqrt{2}\f$}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{fairing_continuity}
+      \cgalParamDescription{A value controling the tangential continuity of the output surface patch.
+                            The possible values are 0, 1 and 2, refering to the  C<sup>0</sup>, C<sup>1</sup>
+                            and C<sup>2</sup> continuity.}
+      \cgalParamType{unsigned int}
+      \cgalParamDefault{`1`}
+      \cgalParamExtra{The larger `fairing_continuity` gets, the more fixed vertices are required.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{sparse_linear_solver}
+      \cgalParamDescription{an instance of the sparse linear solver used for fairing}
+      \cgalParamType{a class model of `SparseLinearAlgebraWithFactorTraits_d`}
+      \cgalParamDefault{If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and
+                        `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits`
+                        is provided as default value:\n
+                        `CGAL::Eigen_solver_traits<Eigen::SparseLU<CGAL::Eigen_sparse_matrix<double>::%EigenType, Eigen::COLAMDOrdering<int> > >`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   @return tuple of
@@ -313,19 +485,50 @@ namespace Polygon_mesh_processing {
      and the corresponding value type `type` must have
      a constructor `type(int p0, int p1, int p2)` available.
      The indices correspond to the ones of input points in `points`.
-  @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
   @param points the range of input points
   @param third_points the range of third points
   @param out iterator over output patch triangles, described by indices of points
              in `points`
-  @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
-     \cgalParamBegin{use_delaunay_triangulation} if `true`, use the Delaunay triangulation facet search space.
-         If no valid triangulation can be found in this search space, the algorithm falls back to the
-         non-Delaunay triangulations search space to find a solution \cgalParamEnd
-     \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+    \cgalParamNBegin{geom_traits}
+      \cgalParamDescription{an instance of a geometric traits class}
+      \cgalParamType{a class model of `Kernel`}
+      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_delaunay_triangulation}
+      \cgalParamDescription{If `true`, use the Delaunay triangulation facet search space.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If no valid triangulation can be found in this search space, the algorithm
+                      falls back to the non-Delaunay triangulations search space to find a solution.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{use_2d_constrained_delaunay_triangulation}
+      \cgalParamDescription{If `true`, the points of the boundary of the hole are used
+                            to estimate a fitting plane and a 2D constrained Delaunay triangulation
+                            is then used to fill the hole projected in the fitting plane.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`true`}
+      \cgalParamExtra{If the boundary of the hole is not planar (according to the
+                      parameter `threshold_distance`) or if no valid 2D triangulation
+                      can be found, the algorithm falls back to the method using
+                      the 3D Delaunay triangulation. This parameter is a good choice for near planar holes.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{threshold_distance}
+      \cgalParamDescription{The maximum distance between the vertices of
+                            the hole boundary and the least squares plane fitted to this boundary.}
+      \cgalParamType{double}
+      \cgalParamDefault{one quarter of the height of the bounding box of the hole}
+      \cgalParamExtra{This parameter is used only in conjunction with
+                      the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \todo handle islands
@@ -340,10 +543,18 @@ namespace Polygon_mesh_processing {
                             OutputIterator out,
                             const NamedParameters& np)
   {
+    if (points.empty()) return out;
+
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    bool use_dt3 =
+    bool use_cdt =
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+      false;
+#else
+      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
+#endif
+bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
 #else
@@ -365,7 +576,32 @@ namespace Polygon_mesh_processing {
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+    struct Always_valid{
+      bool operator()(const std::vector<Point>&, int,int,int)const
+      {return true;}
+    };
+    Always_valid is_valid;
 
+    const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
+    typename Kernel::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
+    default_squared_distance /= typename Kernel::FT(16); // one quarter of the bbox height
+
+    const typename Kernel::FT threshold_distance = choose_parameter(
+      get_parameter(np, internal_np::threshold_distance), typename Kernel::FT(-1));
+    typename Kernel::FT max_squared_distance = default_squared_distance;
+    if (threshold_distance >= typename Kernel::FT(0))
+      max_squared_distance = threshold_distance * threshold_distance;
+    CGAL_assertion(max_squared_distance >= typename Kernel::FT(0));
+
+    if(!use_cdt ||
+       !triangulate_hole_polyline_with_cdt(
+         points,
+         tracer,
+         is_valid,
+         choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
+         max_squared_distance))
+#endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
@@ -388,7 +624,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup  hole_filling_grp
-  same as above but the range of third points is omitted. They are not
+  Same as above but the range of third points is omitted. They are not
   taken into account in the cost computation that leads the hole filling.
 */
   template <typename PointRange,

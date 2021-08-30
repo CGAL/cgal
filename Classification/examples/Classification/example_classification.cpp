@@ -3,18 +3,19 @@
                               // converts 64 to 32 bits integers
 #endif
 
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <string>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/tags.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/read_points.h>
+#include <CGAL/IO/write_ply_points.h>
 
 #include <CGAL/Real_timer.h>
+
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <string>
 
 typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
@@ -47,13 +48,13 @@ typedef Classification::Feature::Vertical_dispersion<Kernel, Point_range, Pmap> 
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : "data/b9.ply");
-  std::ifstream in (filename.c_str());
-  std::vector<Point> pts;
+  const char* filename = (argc > 1) ? argv[1] : "data/b9.ply";
 
   std::cerr << "Reading input" << std::endl;
-  if (!in
-      || !(CGAL::read_ply_points (in, std::back_inserter (pts))))
+  std::vector<Point> pts;
+  if (!(CGAL::IO::read_points(filename, std::back_inserter(pts),
+                              // the PLY reader expects a binary file by default
+                              CGAL::parameters::use_binary_mode(false))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;
@@ -84,9 +85,7 @@ int main (int argc, char** argv)
   std::cerr << "Computing features" << std::endl;
   Feature_set features;
 
-#ifdef CGAL_LINKED_WITH_TBB
-  features.begin_parallel_additions();
-#endif
+  features.begin_parallel_additions(); // No effect in sequential mode
 
   Feature_handle distance_to_plane = features.add<Distance_to_plane> (pts, Pmap(), eigen);
   Feature_handle dispersion = features.add<Dispersion> (pts, Pmap(), grid,
@@ -94,9 +93,7 @@ int main (int argc, char** argv)
   Feature_handle elevation = features.add<Elevation> (pts, Pmap(), grid,
                                                       radius_dtm);
 
-#ifdef CGAL_LINKED_WITH_TBB
-  features.end_parallel_additions();
-#endif
+  features.end_parallel_additions(); // No effect in sequential mode
 
   //! [Features]
   ///////////////////////////////////////////////////////////////////
@@ -105,9 +102,15 @@ int main (int argc, char** argv)
   //! [Labels]
 
   Label_set labels;
+
+  // Init name only
   Label_handle ground = labels.add ("ground");
-  Label_handle vegetation = labels.add ("vegetation");
-  Label_handle roof = labels.add ("roof");
+
+  // Init name and color
+  Label_handle vegetation = labels.add ("vegetation", CGAL::IO::Color(0,255,0));
+
+  // Init name, Color and standard index (here, ASPRS building index)
+  Label_handle roof = labels.add ("roof", CGAL::IO::Color (255, 0, 0), 6);
 
   //! [Labels]
   ///////////////////////////////////////////////////////////////////
@@ -146,7 +149,7 @@ int main (int argc, char** argv)
 
   CGAL::Real_timer t;
   t.start();
-  Classification::classify<Concurrency_tag> (pts, labels, classifier, label_indices);
+  Classification::classify<CGAL::Parallel_if_available_tag> (pts, labels, classifier, label_indices);
   t.stop();
   std::cerr << "Raw classification performed in " << t.time() << " second(s)" << std::endl;
   t.reset();
@@ -156,7 +159,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Smoothing]
   t.start();
-  Classification::classify_with_local_smoothing<Concurrency_tag>
+  Classification::classify_with_local_smoothing<CGAL::Parallel_if_available_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.sphere_neighbor_query(radius_neighbors),
      label_indices);
@@ -169,7 +172,7 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Graph_cut]
   t.start();
-  Classification::classify_with_graphcut<Concurrency_tag>
+  Classification::classify_with_graphcut<CGAL::Parallel_if_available_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),
      0.2f, 4, label_indices);
@@ -180,35 +183,42 @@ int main (int argc, char** argv)
 
   // Save the output in a colored PLY format
 
-  std::ofstream f ("classification.ply");
-  f << "ply" << std::endl
-    << "format ascii 1.0" << std::endl
-    << "element vertex " << pts.size() << std::endl
-    << "property float x" << std::endl
-    << "property float y" << std::endl
-    << "property float z" << std::endl
-    << "property uchar red" << std::endl
-    << "property uchar green" << std::endl
-    << "property uchar blue" << std::endl
-    << "end_header" << std::endl;
+  std::vector<unsigned char> red, green, blue;
+  red.reserve(pts.size());
+  green.reserve(pts.size());
+  blue.reserve(pts.size());
 
   for (std::size_t i = 0; i < pts.size(); ++ i)
   {
-    f << pts[i] << " ";
-
     Label_handle label = labels[std::size_t(label_indices[i])];
+    unsigned r = 0, g = 0, b = 0;
     if (label == ground)
-      f << "245 180 0" << std::endl;
-    else if (label == vegetation)
-      f << "0 255 27" << std::endl;
-    else if (label == roof)
-      f << "255 0 170" << std::endl;
-    else
     {
-      f << "0 0 0" << std::endl;
-      std::cerr << "Error: unknown classification label" << std::endl;
+      r = 245; g = 180; b = 0;
     }
+    else if (label == vegetation)
+    {
+      r = 0; g = 255; b = 27;
+    }
+    else if (label == roof)
+    {
+      r = 255; g = 0; b = 170;
+    }
+    red.push_back(r);
+    green.push_back(g);
+    blue.push_back(b);
   }
+
+  std::ofstream f ("classification.ply");
+
+  CGAL::IO::write_PLY_with_properties
+    (f, CGAL::make_range (boost::counting_iterator<std::size_t>(0),
+                          boost::counting_iterator<std::size_t>(pts.size())),
+     CGAL::make_ply_point_writer (CGAL::make_property_map(pts)),
+     std::make_pair(CGAL::make_property_map(red), CGAL::PLY_property<unsigned char>("red")),
+     std::make_pair(CGAL::make_property_map(green), CGAL::PLY_property<unsigned char>("green")),
+     std::make_pair(CGAL::make_property_map(blue), CGAL::PLY_property<unsigned char>("blue")));
+
 
   std::cerr << "All done" << std::endl;
   return EXIT_SUCCESS;

@@ -31,7 +31,7 @@ using namespace CGAL::Surface_mesh_topology;
 ///////////////////////////////////////////////////////////////////////////////
 [[ noreturn ]] void error_command_line(int argc, char** argv, const char* msg)
 {
-  std::cout<<"ERROR: "<<msg<<std::endl;
+  std::cout<<"[ERROR] "<<msg<<std::endl;
   usage(argc, argv);
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,6 +47,7 @@ void process_command_line(int argc, char** argv,
                           bool& time)
 {
   std::string arg;
+  bool usage_required=false;
   for (int i=1; i<argc; ++i)
   {
     arg=argv[i];
@@ -55,27 +56,27 @@ void process_command_line(int argc, char** argv,
     else if (arg=="-D")
     {
      if (i+2>=argc)
-     { error_command_line(argc, argv, "Error: not enough number after -D option."); }
+     { error_command_line(argc, argv, "not enough number after -D option."); }
      d1=std::stoi(std::string(argv[++i]));
      d2=std::stoi(std::string(argv[++i]));
     }
     else if (arg=="-L")
     {
      if (i+2>=argc)
-     { error_command_line(argc, argv, "Error: not enough number after -L option."); }
+     { error_command_line(argc, argv, "not enough number after -L option."); }
      l1=std::stoi(std::string(argv[++i]));
      l2=std::stoi(std::string(argv[++i]));
     }
     else if (arg=="-N")
     {
       if (i==argc-1)
-      { error_command_line(argc, argv, "Error: no number after -nbtests option."); }
+      { error_command_line(argc, argv, "no number after -nbtests option."); }
       N=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
     }
     else if (arg=="-seed")
     {
       if (i==argc-1)
-      { error_command_line(argc, argv, "Error: no number after -seed option."); }
+      { error_command_line(argc, argv, "no number after -seed option."); }
       random=CGAL::Random(static_cast<unsigned int>
                           (std::stoi(std::string(argv[++i]))));
       // initialize the random generator with the given seed
@@ -83,9 +84,9 @@ void process_command_line(int argc, char** argv,
     else if (arg=="-time")
     { time=true; }
     else if (arg=="-h" || arg=="--help" || arg=="-?")
-    { usage(argc, argv); }
+    { usage_required=true; }
     else if (arg[0]=='-')
-    { std::cout<<"Unknown option "<<arg<<", ignored."<<std::endl; }
+    { std::cout<<"[WARNING] Unknown option "<<arg<<", ignored."<<std::endl; }
     else
     { file=arg; }
   }
@@ -93,6 +94,8 @@ void process_command_line(int argc, char** argv,
   if (N==0) { N=1; }
   if (l2<l1) l2=l1;
   if (d2<d1) d2=d1;
+
+  if (usage_required) {usage(argc, argv); }
 }
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
@@ -135,7 +138,7 @@ int main(int argc, char** argv)
     if (i!=0)
     {
       random=CGAL::Random(static_cast<unsigned int>
-             (random.get_int(0, std::numeric_limits<int>::max())));
+                          (random.get_int(0, (std::numeric_limits<int>::max)())));
     }
     std::cout<<"Random seed: "<<random.get_seed()<<": ";
 

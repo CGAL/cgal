@@ -15,23 +15,26 @@ LC_CTYPE=en_US.UTF-8
 # Update testsuite result pages
 5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection || echo ERROR
 
-# Launch the test suite, every 10mn, from 21:00 to 22:50, with no
-# platform. That is actually used by the Doxygen testsuite... :-\
-#*/10 21-22 * * * setarch i686 $HOME/CGAL/Scripts/developer_scripts/autotest_cgal_with_cmake
-
 # Create internal release
 # The script also updates the manual tools.
 
 # "master" alone
 0 21  *  *  Sun                      cd $HOME/CGAL/create_internal_release && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/master.git --do-it || echo ERROR
 # "integration"
-0 21  *  *  Mon,Tue,Wed,Thu,Fri      cd $HOME/CGAL/create_internal_release && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --do-it --public || echo ERROR
-# from branch 5.0
-0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-5.0-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.0-branch.git --public --do-it || echo ERROR
-# from branch 4.14
-#0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-4.14-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.14-branch.git --public --do-it || echo ERROR
+0 21  *  *  Mon,Tue,Wed,Thu          cd $HOME/CGAL/create_internal_release && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/integration.git $HOME/CGAL/branches/empty-dir --do-it || echo ERROR
+# from branch 5.3
+0 21  *  *  Sat                      cd $HOME/CGAL/create_internal_release-5.3-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.3-branch.git --public --do-it || echo ERROR
+# from branch 5.2
+0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-5.2-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.2-branch.git --public --do-it || echo ERROR
+
 
 ## Older stuff
+# from branch 5.1
+#0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-5.1-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.1-branch.git --public --do-it || echo ERROR
+# from branch 5.0
+#0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-5.0-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-5.0-branch.git --public --do-it || echo ERROR
+# from branch 4.14
+#0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-4.14-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.14-branch.git --public --do-it || echo ERROR
 # from branch 4.13
 #0 21  *  *  Fri                      cd $HOME/CGAL/create_internal_release-4.13-branch && /usr/bin/time scl enable rh-git29 -- $HOME/bin/create_release $HOME/CGAL/branches/CGAL-4.13-branch.git --public --do-it || echo ERROR
 # from branch 4.12
@@ -59,6 +62,9 @@ LC_CTYPE=en_US.UTF-8
 
 # Dump the crontab to SVN every hour at minute 18
 18 * * * * $HOME/bin/dump_crontab
+
+# Docker check every hour
+#0 * * * * docker inspect --format='{{json .State.Health.Status}}' cgal-mediawiki-docker_wiki_1 | grep -q '"healthy"' || docker logs cgal-mediawiki-docker_wiki_1
 
 # cgal->cgal2 with git-multimail
 */5 * * * * cd $HOME/Git/cgal-dev-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-dev         cgal-dev-receiver

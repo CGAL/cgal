@@ -193,8 +193,6 @@ namespace Polygon_mesh {
 
         points.clear();
         for (std::size_t j = 0; j < neighbors.size(); ++j) {
-
-          CGAL_precondition(neighbors[j] >= 0);
           CGAL_precondition(neighbors[j] < m_face_range.size());
 
           const auto face = *(m_face_range.begin() + neighbors[j]);

@@ -34,6 +34,7 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_face_graph_item::Face_graph Face_graph;
 
 #if defined(CGAL_LINKED_WITH_TBB)
+#include <tbb/parallel_for.h>
 template <class AABB_tree, class Point_3>
 struct Distance_computation{
   const AABB_tree& tree;
@@ -85,7 +86,7 @@ public:
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Flat || m == FlatPlusEdges);
   }
-  Scene_item* clone() const {return 0;}
+  Scene_item* clone() const {return nullptr;}
   QString toolTip() const {return QString("Item %1 with color indicating distance with %2").arg(this->name()).arg(other_poly);}
   void draw(Viewer_interface *viewer) const
   {

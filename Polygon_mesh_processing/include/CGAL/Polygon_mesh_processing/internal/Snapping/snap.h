@@ -168,7 +168,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
   CGAL_postcondition(halfedge_range.size() == initial_n - collapsed_n);
 }
 
-// Adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
+// Adapted from <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 template <typename TriangleMesh,
           typename VPMS, typename VPMT, typename FacePatchMap,
           typename AABBTraits>
@@ -927,8 +927,8 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 //                        and value type `GetGeomTraits<TriangleMesh, NamedParameters_A>::type::FT`
 // \tparam ToleranceMap_B a model of `ReadablePropertyMap` with key type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 //                        and value type `GetGeomTraits<TriangleMesh, NamedParameters_A>::type::FT`
-// \tparam NamedParameters_A a sequence of \ref pmp_namedparameters "Named Parameters"
-// \tparam NamedParameters_B a sequence of \ref pmp_namedparameters "Named Parameters"
+// \tparam NamedParameters_A a sequence of \ref bgl_namedparameters "Named Parameters"
+// \tparam NamedParameters_B a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // \param halfedge_range_A a range of halfedges of the first mesh defining a set of vertices (as targets of the halfeges)
 // \param tm_A the first mesh to which the vertices in `halfedge_range_A` belong
@@ -936,8 +936,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 // \param halfedge_range_B a range of vertices of the second mesh defining a set of vertices (as targets of the halfeges)
 // \param tolerance_map_B a tolerance map associating to each vertex of the second range a tolerance value
 // \param tm_B the target mesh to which the vertices in `halfedge_range_B` belong
-// \param np_A optional \ref pmp_namedparameters "Named Parameters" related to the source mesh,
-//             amongst those described below:
+// \param np_A an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamBegin{vertex_point_map}
@@ -950,8 +949,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 //   \cgalParamEnd
 // \cgalNamedParamsEnd
 //
-// \param np_B optional \ref pmp_namedparameters "Named Parameters" related to the target mesh,
-//             amongst those described below:
+// \param np_B an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamBegin{vertex_point_map}
@@ -1185,13 +1183,13 @@ std::size_t snap_borders(TriangleMesh& tm_A,
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
-  std::vector<halfedge_descriptor> border_vertices_1;
-  border_halfedges(tm_A, std::back_inserter(border_vertices_1));
-  std::vector<halfedge_descriptor> border_vertices_2;
-  border_halfedges(tm_B, std::back_inserter(border_vertices_2));
+  std::vector<halfedge_descriptor> border_vertices_A;
+  border_halfedges(tm_A, std::back_inserter(border_vertices_A));
+  std::vector<halfedge_descriptor> border_vertices_B;
+  border_halfedges(tm_B, std::back_inserter(border_vertices_B));
 
-  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_1, tm_A, tolerance_map_A,
-                                                      border_vertices_2, tm_B, tolerance_map_B,
+  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_A, tm_A, tolerance_map_A,
+                                                      border_vertices_B, tm_B, tolerance_map_B,
                                                       false /*not self snapping*/, np_A, np_B);
 }
 
@@ -1211,19 +1209,19 @@ std::size_t snap_borders(TriangleMesh& tm_A,
   typedef CGAL::dynamic_vertex_property_t<FT>                                    Vertex_property_tag;
   typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type  Tolerance_map;
 
-  std::vector<halfedge_descriptor> border_vertices_1;
-  std::vector<halfedge_descriptor> border_vertices_2;
-  border_halfedges(tm_A, std::back_inserter(border_vertices_1));
-  border_halfedges(tm_B, std::back_inserter(border_vertices_2));
+  std::vector<halfedge_descriptor> border_vertices_A;
+  std::vector<halfedge_descriptor> border_vertices_B;
+  border_halfedges(tm_A, std::back_inserter(border_vertices_A));
+  border_halfedges(tm_B, std::back_inserter(border_vertices_B));
 
-  const FT tol_mx(std::numeric_limits<double>::max());
+  const FT tol_mx((std::numeric_limits<double>::max)());
   Tolerance_map tolerance_map_A = get(Vertex_property_tag(), tm_A);
-  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_1, tolerance_map_A, tol_mx, tm_A, np_A);
-  Tolerance_map tolerance_map_B = get(Vertex_property_tag(), tm_A);
-  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_2, tolerance_map_B, tol_mx, tm_B, np_B);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_A, tolerance_map_A, tol_mx, tm_A, np_A);
+  Tolerance_map tolerance_map_B = get(Vertex_property_tag(), tm_B);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_B, tolerance_map_B, tol_mx, tm_B, np_B);
 
-  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_1, tm_A, tolerance_map_A,
-                                                      border_vertices_2, tm_B, tolerance_map_B,
+  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_A, tm_A, tolerance_map_A,
+                                                      border_vertices_B, tm_B, tolerance_map_B,
                                                       false /*no self snapping*/, np_A, np_B);
 }
 
@@ -1296,7 +1294,7 @@ std::size_t snap_borders(TriangleMesh& tm,
   std::vector<halfedge_descriptor> border_vertices;
   border_halfedges(tm, std::back_inserter(border_vertices));
 
-  const FT tol_mx(std::numeric_limits<double>::max());
+  const FT tol_mx((std::numeric_limits<double>::max)());
   Tolerance_map tolerance_map = get(Vertex_property_tag(), tm);
   internal::assign_tolerance_with_local_edge_length_bound(border_vertices, tolerance_map, tol_mx, tm, np);
 

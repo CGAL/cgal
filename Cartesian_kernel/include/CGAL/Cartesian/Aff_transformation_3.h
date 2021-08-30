@@ -143,14 +143,7 @@ public:
 
   Plane_3
   transform(const Plane_3& p) const
-  {
-    if (is_even())
-      return Plane_3(transform(p.point()),
-                 transpose().inverse().transform(p.orthogonal_direction()));
-    else
-      return Plane_3(transform(p.point()),
-               - transpose().inverse().transform(p.orthogonal_direction()));
-  }
+  { return this->Ptr()->transform(p); }
 
   Plane_3
   operator()(const Plane_3& p) const
@@ -161,6 +154,10 @@ public:
   bool is_even() const { return this->Ptr()->is_even(); }
   bool is_odd() const { return  ! (this->Ptr()->is_even()); }
 
+  bool is_translation() const { return this->Ptr()->is_translation(); }
+  bool is_scaling() const { return this->Ptr()->is_scaling(); }
+
+
   FT cartesian(int i, int j) const { return this->Ptr()->cartesian(i,j); }
   FT homogeneous(int i, int j) const { return cartesian(i,j); }
   FT m(int i, int j) const { return cartesian(i,j); }
@@ -168,6 +165,9 @@ public:
 
   Aff_transformation_3 operator*(const Aff_transformationC3 &t) const
   { return (*this->Ptr()) * (*t.Ptr()); }
+
+  std::ostream &
+  print(std::ostream &os) const;
 
   bool operator==(const Aff_transformationC3 &t)const
   {
@@ -188,13 +188,21 @@ protected:
 };
 
 
+template < class R >
+std::ostream&
+Aff_transformationC3<R>::print(std::ostream &os) const
+{
+  this->Ptr()->print(os);
+  return os;
+}
+
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 template < class R >
-std::ostream &operator<<(std::ostream &os,
-                         const Aff_transformationC3<R> &t)
+std::ostream&
+operator<<(std::ostream &os, const Aff_transformationC3<R> &t)
 {
-    t.print(os);
-    return os;
+  t.print(os);
+  return os;
 }
 #endif // CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATIONC3
 

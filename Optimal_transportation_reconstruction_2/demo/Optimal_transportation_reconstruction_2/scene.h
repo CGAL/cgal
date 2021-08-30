@@ -407,7 +407,7 @@ public:
                                                          Point_3_from_sample()),
                          boost::make_transform_iterator (m_samples.end(),
                                                          Point_3_from_sample())),
-       3);
+       3, CGAL::parameters::point_map (CGAL::Identity_property_map_no_lvalue<K::Point_3>()));
     std::cerr << "Average spacing = " << spacing << std::endl;
   }
 
@@ -628,7 +628,7 @@ public:
     const float point_size, const float vertex_size,
     const float line_thickness, GlViewer* viewer)
   {
-    if (m_pwsrec == NULL) {
+    if (m_pwsrec == nullptr) {
       return;
     }
     if(!is_viewer_set)

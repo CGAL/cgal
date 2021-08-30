@@ -1,4 +1,3 @@
-#ifndef CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -10,7 +9,7 @@
 //
 // Author(s)     : Ilker O. Yaz
 
-
+#ifndef CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
 #define CGAL_SURFACE_MESH_SEGMENTATION_MESH_SEGMENTATION_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
@@ -21,7 +20,7 @@
  * @file mesh_segmentation.h
  * @brief The API which contains free template functions for SDF computation and mesh segmentation.
  */
-#include <CGAL/internal/Surface_mesh_segmentation/Surface_mesh_segmentation.h>
+#include <CGAL/Surface_mesh_segmentation/internal/Surface_mesh_segmentation.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <boost/config.hpp>
 #include <CGAL/Kernel/global_functions_3.h>
@@ -198,8 +197,7 @@ segmentation_from_sdf_values( const TriangleMesh& triangle_mesh,
                               PointPropertyMap ppmap=PointPropertyMap(),
                               GeomTraits traits=GeomTraits())
 {
-  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type VPMap;
-  internal::Surface_mesh_segmentation<TriangleMesh, GeomTraits, VPMap> algorithm(triangle_mesh, traits, ppmap);
+  internal::Surface_mesh_segmentation<TriangleMesh, GeomTraits, PointPropertyMap> algorithm(triangle_mesh, traits, ppmap);
   return algorithm.partition(number_of_clusters, smoothing_lambda, sdf_values_map,
                              segment_ids, !output_cluster_ids);
 }

@@ -126,7 +126,6 @@ void enveloppeIpelet::protected_run(int fn)
       Vsite0.insert(Vsite0.end(),*(Vsite0.begin()+1));
       std::vector<ASite>::iterator Vsiteite0 = Vsite0.begin();
       std::vector<ASite>::iterator Vsiteite00 = Vsite0.end()-2;
-      #ifdef CGAL_USE_IPE_7
       for(std::vector<ASite>::iterator it=Vsiteite00 ; it!=Vsiteite0 ; --it){//draw precise convex hull computing tangency point to circles
         double c_rad = it->weight();
         if(c_rad!=0){
@@ -155,36 +154,6 @@ void enveloppeIpelet::protected_run(int fn)
       ipe::Shape shape;
       shape.appendSubPath(SSPseg_ipe);
       get_IpePage()->append(ipe::EPrimarySelected,CURRENTLAYER,new ipe::Path(CURRENTATTRIBUTES,shape));
-      #else
-      for(std::vector<ASite>::iterator it=Vsiteite00 ; it!=Vsiteite0 ; --it){//draw precise convex hull computing tangency point to circles
-        double c_rad = it->weight();
-        if(c_rad!=0){
-          Point_2 p_pt = (it-1)->point();  //previous neighbor
-          Point_2 c_pt = it->point();
-          Point_2 n_pt = (it+1)->point(); //next neighbor
-          double p_rad = (it-1)->weight();
-          double n_rad = (it+1)->weight();
-          IpeVector pt_ipe=tangency_point(c_rad,p_rad,c_pt,p_pt);
-          IpeVector pt_ipe0=tangency_point(c_rad,n_rad,c_pt,n_pt,-1);
-
-          if(it!=Vsiteite00)
-            SSPseg_ipe->AppendSegment(pt_ipe1,pt_ipe0);
-          SSPseg_ipe->AppendArc(IpeMatrix(c_rad,0,0,c_rad,c_pt.x(),c_pt.y()),pt_ipe0,pt_ipe);
-          pt_ipe1=pt_ipe;
-        }
-        else{
-          Point_2 c_pt = it->point();
-          IpeVector pt_ipe=IpeVector(c_pt.x(),c_pt.y());
-          if(it!=Vsiteite00)
-            SSPseg_ipe->AppendSegment(pt_ipe1,pt_ipe);
-          pt_ipe1=pt_ipe;
-        }
-      }
-      SSPseg_ipe->SetClosed(true);
-      IpePath* obj_ipe1 = new IpePath(get_IpeletHelper()->Attributes());
-      obj_ipe1 -> AddSubPath(SSPseg_ipe);
-      get_IpePage()->push_back(IpePgObject(IpePgObject::ESecondary,get_IpeletHelper()->CurrentLayer(),obj_ipe1));
-      #endif
     }
     break;
 

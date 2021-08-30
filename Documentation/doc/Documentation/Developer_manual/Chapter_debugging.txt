@@ -101,7 +101,7 @@ named `Traits1` and `Traits2`, and a third parameter named
 other is (presumably) a traits class that always gives the right answer.
 The `Adapter` is needed since the `X_curve` types
 for `Traits1` and `Traits2` might be different.
-This cross-checker does nothing other then asserting that the two traits
+This cross-checker does nothing other than asserting that the two traits
 classes return the same values by calling the
 the counterparts in the member traits classes
 (`tr1`,`tr2`) and comparing the results.

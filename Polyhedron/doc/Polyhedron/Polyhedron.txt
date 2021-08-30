@@ -292,22 +292,15 @@ Result of the run of the draw_polyhedron program. A window shows the polyhedron 
 
 \anchor sectionPolyIO
 
-Simple file I/O for polyhedral surfaces is already provided in the
-library. The file I/O considers so far only the topology of the
+The file I/O currently considers only the topology of the
 surface and its point coordinates. It ignores a possible plane
 equation or any user-added attributes, such as color.
 
 The default file format supported in \cgal for output as well as for
-input is the %Object File Format, OFF, with file extension <TT>.off</TT>,
-which is also understood by Geomview \cgalCite{cgal:p-gmgv16-96}. For OFF
-an ASCII and a binary format exist. The format can be selected with
-the \cgal modifiers for streams, `set_ascii_mode()` and
-`set_binary_mode()` respectively. The modifier `set_pretty_mode()`
-can be used to allow for (a few) structuring comments in the
-output. Otherwise, the output would be free of comments. The default
-for writing is ASCII without comments. Both, ASCII and binary format,
-can be read independent of the stream setting. Since this file format
-is the default format, iostream operators are provided for it.
+input is the \ref IOStreamOFF, with file extension <TT>.off</TT>.
+The modifier `set_pretty_mode()` can be used to allow for (a few) structuring comments in the output.
+Otherwise, the output would be free of comments. The default for writing is without comments.
+Since this file format is the default format, iostream operators are provided for it.
 
 \code{.cpp}
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -324,8 +317,8 @@ CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 Additional formats supported for writing are OpenInventor (<TT>.iv</TT>)
 \cgalCite{cgal:w-impoo-94}, VRML 1.0 and 2.0 (<TT>.wrl</TT>)
-\cgalCite{cgal:bpp-vrml-95}, \cgalCite{cgal:vrmls-97}, \cgalCite{cgal:hw-vrml2h-96}, and Wavefront Advanced
-Visualizer object format (<TT>.obj</TT>). Another convenient output
+\cgalCite{cgal:bpp-vrml-95}, \cgalCite{cgal:vrmls-97}, \cgalCite{cgal:hw-vrml2h-96},
+and \ref IOStreamOBJ (<TT>.obj</TT>). Another convenient output
 function writes a polyhedral surface to a Geomview process spawned
 from the \cgal program. These output functions are provided as
 stream operators, now acting on the stream type of the respective
@@ -363,12 +356,7 @@ restrictions on these formats. They must represent a permissible
 polyhedral surface, e.g., a 2-manifold and no isolated vertices, see
 Section \ref sectionPolyIntro.
 
-Some example programs around the different file formats are provided
-in the distribution under <TT>examples/Polyhedron_IO/</TT> and
-<TT>demo/Polyhedron_IO/</TT>. We show an example converting OFF input
-into VRML 1.0 output.
-
-\cgalExample{Polyhedron_IO/polyhedron2vrml.cpp}
+For more information on generic polygon meshes I/O, see the section \ref IOstreamPolygonMeshIO.
 
 \section PolyhedronExtending Extending Vertices, Halfedges, and Facets
 
@@ -442,7 +430,7 @@ faces but would be for vertices - and add the color attribute.
 
 template <class Refs>
 struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-CGAL::Color color;
+CGAL::IO::Color color;
 };
 
 \endcode
@@ -513,8 +501,7 @@ illustrating further the design of the halfedge data structure.
 This program reads a polyhedral surface from the standard input and
 writes a refined polyhedral surface to the standard output. Input and
 output are in the %Object File Format, OFF, with the common file
-extension <TT>.off</TT>, which is also understood by
-Geomview \cgalCite{cgal:p-gmgv16-96}.
+extension <TT>.off</TT>.
 
 The refinement is a single step of the \f$ \sqrt{3}\f$-scheme for creating
 a subdivision surface \cgalCite{cgal:k-s-00}. Each step subdivides a facet

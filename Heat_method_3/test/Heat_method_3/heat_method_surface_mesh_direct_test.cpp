@@ -36,19 +36,19 @@ int main(int argc, char* argv[])
   Point_3 sp = sm.point(source);
 
   std::cout << "source: " << sp  << " " << source << std::endl;
-  vertex_descriptor far;
+  vertex_descriptor vfar;
   double sdistance = 0;
 
   for(vertex_descriptor vd : vertices(sm)){
     if(get(vertex_distance,vd) > sdistance){
-      far = vd;
+      vfar = vd;
       sdistance = get(vertex_distance,vd);
     }
   }
   assert(sdistance > 2.9);
   assert(sdistance < CGAL_PI);
 
-  hm.add_source(far);
+  hm.add_source(vfar);
     assert(hm.sources().size() == 2);
   hm.estimate_geodesic_distances(vertex_distance);
 
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
   assert(sdistance > 1.4);
   assert(sdistance < CGAL_PI/2.0);
 
-  hm.remove_source(far);
+  hm.remove_source(vfar);
   assert(hm.sources().size() == 1);
 
   hm.clear_sources();
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
   // add range of sources
   std::vector<vertex_descriptor> vrange;
   vrange.push_back(source);
-    vrange.push_back(far);
+    vrange.push_back(vfar);
   hm.add_sources(vrange);
   assert(hm.sources().size() == 2);
   hm.estimate_geodesic_distances(vertex_distance);

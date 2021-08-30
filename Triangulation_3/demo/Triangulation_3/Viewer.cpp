@@ -476,7 +476,7 @@ void Viewer::compute_elements()
         drawVertex( m_pScene->m_vhArray.at( m_vidMoving )->point(), pos_movingPoint );
     }//end-if-v
     // Draw the nearest neighbor
-    if( m_nearestNb != NULL ) {
+    if( m_nearestNb != nullptr ) {
         drawVertex( m_queryPt, pos_queryPoint);
         drawVertex( m_nearestNb->point(), pos_nearest_neighbor);
     }
@@ -1676,7 +1676,7 @@ void Viewer::drawWithNames()
     buffers[33].bind();
     buffers[33].allocate(buf, 3*sizeof(GLfloat));
     rendering_program.enableAttributeArray("vertex");
-    rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
+    rendering_program.setAttributeArray("vertex",GL_FLOAT,nullptr,3);
     buffers[33].release();
     vao[3].release();
 
@@ -1721,7 +1721,7 @@ void Viewer::drawWithNames()
         buffers[33].bind();
         buffers[33].allocate(buf, 3*sizeof(GLfloat));
         rendering_program.enableAttributeArray("vertex");
-        rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
+        rendering_program.setAttributeArray("vertex",GL_FLOAT,nullptr,3);
         buffers[33].release();
 
         QMatrix4x4 mvpMatrix;
@@ -2151,7 +2151,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
         //  note: most mouse types work in steps of 15 degrees
         //  positive value: rotate forwards away from the user;
         //  negative value: rotate backwards toward the user.
-        m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+        m_fRadius += (event->angleDelta().y()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
         if( m_fRadius < 0.1f )
             m_fRadius = 0.1f;
 
@@ -2166,7 +2166,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
         //  positive value: rotate forwards away from the user;
         //  negative value: rotate backwards toward the user.
         float origR = m_fRadius;
-        m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+        m_fRadius += (event->angleDelta().y()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
         if( m_fRadius < 0.1f )
             m_fRadius = 0.1f;
         // update the new point and its conflict region
@@ -2185,7 +2185,7 @@ void Viewer::wheelEvent(QWheelEvent *event)
     // resize the trackball when moving a point
     else if( m_curMode == MOVE && modifiers == Qt::SHIFT && m_isMoving ) {
         float origR = m_fRadius;
-        m_fRadius += (event->delta()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
+        m_fRadius += (event->angleDelta().y()*1.f / m_iStep ); // inc-/decrease by 0.1 per step
         if( m_fRadius < 0.1f )
             m_fRadius = 0.1f;
         origR = m_fRadius / origR;

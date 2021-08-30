@@ -22,7 +22,7 @@
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 #include <CGAL/is_iterator.h>
 
 #include <boost/container/flat_set.hpp>
@@ -178,6 +178,19 @@ public:
 
   virtual ~Constrained_Delaunay_triangulation_2() {}
 
+
+  // Ensure rule-of-five: define the copy- and move- constructors
+  // as well as the copy- and move- assignment operators.
+  Constrained_Delaunay_triangulation_2(
+      const Constrained_Delaunay_triangulation_2 &) = default;
+  Constrained_Delaunay_triangulation_2(
+      Constrained_Delaunay_triangulation_2 &&) = default;
+
+  Constrained_Delaunay_triangulation_2 &
+  operator=(const Constrained_Delaunay_triangulation_2 &) = default;
+
+  Constrained_Delaunay_triangulation_2 &
+  operator=(Constrained_Delaunay_triangulation_2 &&) = default;
 
   // FLIPS
   bool is_flipable(Face_handle f, int i, bool perturb = true) const;

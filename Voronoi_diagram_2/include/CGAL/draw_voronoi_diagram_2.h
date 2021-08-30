@@ -17,6 +17,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Voronoi_diagram_2/Face.h>
@@ -31,10 +32,10 @@ namespace CGAL {
 struct DefaultColorFunctorV2
 {
   template <typename V2>
-  static CGAL::Color run(const V2 &, const typename V2::Face_iterator /*fh*/) {
+  static CGAL::IO::Color run(const V2 &, const typename V2::Face_iterator /*fh*/) {
     //CGAL::Random random((unsigned int)(std::size_t)(&*fh));
     //return get_random_color(random);
-    return CGAL::Color(73, 250, 117);
+    return CGAL::IO::Color(73, 250, 117);
   }
 };
 
@@ -87,7 +88,7 @@ protected:
 
   void compute_dual_vertex(Dual_vertices_iterator vi)
   {
-    add_point(vi->point(), CGAL::Color(50, 100, 180));
+    add_point(vi->point(), CGAL::IO::Color(50, 100, 180));
   }
 
   void add_segments_and_update_bounding_box(Halfedge_handle he)
@@ -186,7 +187,7 @@ protected:
     if (he->is_ray()) {
       if (he->has_source()) {
         // add_ray_segment(he->source()->point(), get_second_point(he));
-        add_ray(he->source()->point(), direction, CGAL::Color(100, 0, 0));
+        add_ray(he->source()->point(), direction, CGAL::IO::Color(100, 0, 0));
       }
     } else if (he->is_bisector()) {
       Kernel::Point_2 pointOnLine((v1->point().x() + v2->point().x()) / 2,
@@ -197,7 +198,7 @@ protected:
 
   void compute_face(Face_const_handle fh)
   {
-    CGAL::Color c = m_fcolor.run(v2, fh);
+    CGAL::IO::Color c = m_fcolor.run(v2, fh);
 
     Ccb_halfedge_circulator ec_start = fh->ccb();
     Ccb_halfedge_circulator ec = ec_start;
@@ -316,6 +317,7 @@ void draw(const CGAL_VORONOI_TYPE &av2,
 #endif
 
   if (!cgal_test_suite) {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc = 1;
     const char *argv[2] = {"voronoi_2_viewer", "\0"};
     QApplication app(argc, const_cast<char **>(argv));

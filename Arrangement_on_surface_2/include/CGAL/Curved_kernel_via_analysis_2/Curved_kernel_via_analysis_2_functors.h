@@ -231,7 +231,7 @@ public:
         // avoid compiler warning
         (void)arc;
 
-        //CGAL::set_pretty_mode(std::cerr);
+        //CGAL::IO::set_pretty_mode(std::cerr);
         CERR("Construct_pt_on_arc: " << CGAL::to_double(x) << ", " << arcno <<
              ", " << c.id() <<  "\narc = " << arc << "\n");
 
@@ -1410,9 +1410,9 @@ public:
  * Functor that computes the intersections of two arcs
  */
 template < class CurvedKernelViaAnalysis_2 >
-class Intersect_2 : public
-Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
-
+class Intersect_2 :
+    public Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2>
+{
 public:
     //! this instance' first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
@@ -1420,13 +1420,17 @@ public:
     //! the base type
     typedef
     Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
-    Base;
+      Base;
 
     CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
 
+    typedef unsigned int                              Multiplicity;
+    typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+    typedef boost::variant<Intersection_point, Arc_2> Intersection_result;
+
     //! the result type
-    typedef CGAL::cpp98::iterator< std::output_iterator_tag, CGAL::Object >
-    result_type;
+    typedef CGAL::cpp98::iterator<std::output_iterator_tag, Intersection_result>
+      result_type;
 
     //! the arity of the functor
 
@@ -1458,30 +1462,20 @@ public:
     template < class OutputIterator >
     OutputIterator operator()(const Arc_2& cv1, const Arc_2& cv2,
                               OutputIterator oi) const {
-
         CERR("\nintersect; cv1: " << cv1
              << ";\n cv2:" << cv2 << "");
 
         // if arcs overlap, just store their common part, otherwise compute
         // point-wise intersections
-        std::vector< Arc_2 > common_arcs;
-        if (cv1._trim_if_overlapped(cv2, std::back_inserter(common_arcs))) {
-            typename std::vector< Arc_2 >::const_iterator it;
-            for(it = common_arcs.begin(); it < common_arcs.end(); it++) {
-                *oi++ = CGAL::make_object(*it);
-            }
+        std::vector<Arc_2> arcs;
+        if (cv1._trim_if_overlapped(cv2, std::back_inserter(arcs))) {
+            for (const auto& item : arcs) *oi++ = Intersection_result(item);
             return oi;
         }
         // process non-ov erlapping case
-        typedef std::pair< Point_2, unsigned int > Point_and_mult;
-        typedef std::vector< Point_and_mult > Point_vector;
-        Point_vector vec;
-        typename Point_vector::const_iterator it;
+        std::vector<Intersection_point> vec;
         Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
-
-        for (it = vec.begin(); it != vec.end(); it++) {
-            *oi++ = CGAL::make_object(*it);
-        }
+        for (const auto& item : vec) *oi++ = Intersection_result(item);
         return oi;
     }
 
@@ -1865,100 +1859,110 @@ public:
 /*!\brief
  * Functor that decomposes curve into x-monotone arcs and isolated points
  */
-template < class CurvedKernelViaAnalysis_2 >
+template <class CurvedKernelViaAnalysis_2>
 class Make_x_monotone_2 : public
-Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+Curved_kernel_via_analysis_2_functor_base<CurvedKernelViaAnalysis_2> {
 
 public:
-    //! this instance' first template parameter
-    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+  //! this instance' first template parameter
+  typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
-    //! the base type
-    typedef
-    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
+  //! the base type
+  typedef
+  Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2>
     Base;
 
-    CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
+  CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
 
-    //! the result type
-    typedef CGAL::cpp98::iterator< std::output_iterator_tag, CGAL::Object >
+  //! the result type
+  typedef CGAL::cpp98::iterator< std::output_iterator_tag, CGAL::Object>
     result_type;
 
-    //! the arity of the functor
+  //! the arity of the functor
 
-    /*!\brief
-     * Standard constructor
-     *
-     * \param kernel The kernel
-     */
-    Make_x_monotone_2(Curved_kernel_via_analysis_2 *kernel) :
-        Base(kernel) {
-    }
+  /*!\brief
+   * Standard constructor
+   *
+   * \param kernel The kernel
+   */
+  Make_x_monotone_2(Curved_kernel_via_analysis_2* kernel) :
+    Base(kernel)
+  {}
 
-    /*!\brief
-     * Decomposes a given arc into list of x-monotone arcs
-     * (subcurves) and insert them to the output iterator. Since \c Arc_2
-     * is by definition x-monotone, an input arc is passed to the
-     * output iterator directly.
-     *
-     * \param cv The arc
-     * \param oi The output iterator, whose value-type is Object
-     * The returned objects are all wrappers Arc_2 objects
-     * \return The past-the-end iterator
-     */
-    template < class OutputIterator >
-    OutputIterator operator()(const Arc_2& cv, OutputIterator oi) const {
+  /*!\brief
+   * Decomposes a given arc into list of x-monotone arcs
+   * (subcurves) and insert them to the output iterator. Since \c Arc_2
+   * is by definition x-monotone, an input arc is passed to the
+   * output iterator directly.
+   *
+   * \param cv The arc
+   * \param oi The output iterator, whose value-type is Object
+   * The returned objects are all wrappers Arc_2 objects
+   * \return The past-the-end iterator
+   */
+  template <class OutputIterator>
+  OutputIterator operator()(const Arc_2& cv, OutputIterator oi) const
+  {
+    typedef typename Curved_kernel_via_analysis_2::Point_2      Point_2;
+    typedef typename Curved_kernel_via_analysis_2::Arc_2        Arc_2;
+    typedef boost::variant<Point_2, Arc_2>      Make_x_monotone_result;
+    *oi++ = Make_x_monotone_result(cv);
+    return oi;
+  }
 
-        *oi++ = CGAL::make_object(cv);
-        return oi;
-    }
+  /*!\brief
+   * Decomposes a given curve into list of x-monotone arcs
+   * (subcurves) and isolated points and insert them to the output iterator.
+   *
+   * \param cv The curve
+   * \param oi The output iterator, whose value-type is Object.
+   * The returned objects either wrapper Arc_2 or Point_2 objects
+   * \return The past-the-end iterator
+   */
+  template <class OutputIterator>
+  OutputIterator operator()(const Curve_analysis_2& cv, OutputIterator oi)
+    const
+  {
+    CGAL::internal::Make_x_monotone_2< Curved_kernel_via_analysis_2 >
+      make_x_monotone(Base::_ckva());
 
-    /*!\brief
-     * Decomposes a given curve into list of x-monotone arcs
-     * (subcurves) and isolated points and insert them to the output iterator.
-     *
-     * \param cv The curve
-     * \param oi The output iterator, whose value-type is Object.
-     * The returned objects either wrapper Arc_2 or Point_2 objects
-     * \return The past-the-end iterator
-     */
-    template < class OutputIterator >
-    OutputIterator operator()(const Curve_analysis_2& cv, OutputIterator oi)
-         const {
+    return make_x_monotone(cv, oi);
+  }
 
-        CGAL::internal::Make_x_monotone_2< Curved_kernel_via_analysis_2 >
-            make_x_monotone(Base::_ckva());
+  /*!\brief
+   * Splits an input object \c obj into x-monotone arcs and isolated points
+   *
+   * \param obj the polymorph input object: can represet \c Point_2,
+   * \c Arc_2, \c Non_x_monotone_arc_2 or \c Curve_analysis_2
+   * \param oi Output iterator that stores CGAL::Object, which either
+   *           encapsulates \c Point_2 or \c Arc_2
+   * \return Past-the-end iterator of \c oi
+   */
+  template <class OutputIterator>
+  OutputIterator operator()(CGAL::Object obj, OutputIterator oi)
+  {
+    typedef typename Curved_kernel_via_analysis_2::Point_2      Point_2;
+    typedef typename Curved_kernel_via_analysis_2::Arc_2        Arc_2;
+    typedef typename Curved_kernel_via_analysis_2::Non_x_monotone_arc_2
+      Non_x_monotone_arc_2;
+    typedef boost::variant<Point_2, Arc_2>
+      Make_x_monotone_result;
 
-        return make_x_monotone(cv, oi);
-    }
+    Curve_analysis_2 curve;
+    Point_2 p;
+    Arc_2 xcv;
+    Non_x_monotone_arc_2 nxarc;
 
-    /*!\brief
-     * Splits an input object \c obj into x-monotone arcs and isolated points
-     *
-     * \param obj the polymorph input object: can represet \c Point_2,
-     * \c Arc_2, \c Non_x_monotone_arc_2 or \c Curve_analysis_2
-     * \param oi Output iterator that stores CGAL::Object, which either
-     *           encapsulates \c Point_2 or \c Arc_2
-     * \return Past-the-end iterator of \c oi
-     */
-    template <class OutputIterator>
-    OutputIterator operator()(CGAL::Object obj, OutputIterator oi) {
-
-        typedef typename Curved_kernel_via_analysis_2::Non_x_monotone_arc_2
-            Non_x_monotone_arc_2;
-        Curve_analysis_2 curve;
-        Non_x_monotone_arc_2 nxarc;
-
-        if(CGAL::assign(curve, obj))
-            oi = (*this)(curve, oi);
-        else if(CGAL::assign(nxarc, obj))
-          std::cerr << "AU BACKE" << std::endl;
-          //oi = std::transform(nxarc.begin(), nxarc.end(), oi,
-          //      std::ptr_fun(CGAL::make_object<Arc_2>));
-        else // allow the remaining objects to pass through
-            *oi++ = obj;
-        return oi;
-    }
+    if (CGAL::assign(curve, obj)) oi = (*this)(curve, oi);
+    else if (CGAL::assign(nxarc, obj))
+      std::cerr << "AU BACKE" << std::endl;
+    //oi = std::transform(nxarc.begin(), nxarc.end(), oi,
+    //      std::ptr_fun(CGAL::make_object<Arc_2>));
+    else if (CGAL::assign(xcv, obj)) *oi++ = Make_x_monotone_result(xcv);
+    else if (CGAL::assign(p, obj)) *oi++ = Make_x_monotone_result(p);
+    else CGAL_error();
+    return oi;
+  }
 };
 
 

@@ -21,5 +21,6 @@
 #include <CGAL/squared_distance_3_0.h>
 #include <CGAL/squared_distance_3_1.h>
 #include <CGAL/squared_distance_3_2.h>
+#include <CGAL/squared_distance_3_3.h>
 
 #endif

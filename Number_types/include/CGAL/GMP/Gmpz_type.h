@@ -43,7 +43,7 @@ struct Gmpz_rep
 // maybe the mpz_init_set* functions should move back to Gmpz_rep.
 // But then we should use the Storage_traits::construct/get...
 
-  mpz_t mpZ;
+  mpz_t mpZ; /* coverity[member_decl] */
 
   Gmpz_rep() {}
   ~Gmpz_rep() { mpz_clear(mpZ); }

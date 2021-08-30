@@ -90,6 +90,11 @@ public:
        : Triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition(is_valid());  }
 
+  Delaunay_triangulation_2(Delaunay_triangulation_2&&) = default;
+  Delaunay_triangulation_2& operator=(const Delaunay_triangulation_2&) = default;
+  Delaunay_triangulation_2& operator=(Delaunay_triangulation_2&&) = default;
+  ~Delaunay_triangulation_2() = default;
+
  template <class InputIterator>
  Delaunay_triangulation_2(InputIterator first, InputIterator last,
                           const Gt& gt = Gt())

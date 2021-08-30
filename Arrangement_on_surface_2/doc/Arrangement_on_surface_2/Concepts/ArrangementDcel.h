@@ -3,7 +3,7 @@
 \ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
-A doubly-connected edge-list (<span class="textsc">Dcel</span> for short) data-structure. It consists
+A doubly-connected edge-list (\dcel for short) data-structure. It consists
 of three containers of records: vertices \f$ V\f$, halfedges \f$ E\f$, and faces \f$ F\f$.
 It maintains the incidence relation among them. The halfedges are ordered
 in pairs sometimes referred to as twins, such that each halfedge pair
@@ -112,12 +112,12 @@ typedef unspecified_type Face_const_iterator;
 /// @{
 
 /*!
-constructs an empty <span class="textsc">Dcel</span> with one unbounded face.
+constructs an empty \dcel with one unbounded face.
 */
 Arr_dcel();
 
 /*!
-assigns the contents of the `other` <span class="textsc">Dcel</span> whose unbounded face
+assigns the contents of the `other` \dcel whose unbounded face
 is given by `uf`, to `dcel`. The function returns a pointer to
 the unbounded face of `dcel` after the assignment.
 */

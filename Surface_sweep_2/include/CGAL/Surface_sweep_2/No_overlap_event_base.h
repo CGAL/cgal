@@ -27,6 +27,60 @@
 namespace CGAL {
 namespace Surface_sweep_2 {
 
+// This class is used to test if `void* T::for_compact_container()`
+// exists, to avoid adding a void* pointer to the Event_base structure
+// if Point_2 can already be used as a handle for this
+template<typename T>
+struct has_for_compact_container
+{
+private:
+
+  template<typename U> static
+  auto test(void*) -> decltype(std::declval<U>().for_compact_container() == nullptr, Tag_true());
+
+  template<typename> static Tag_false test(...);
+
+public:
+
+  static constexpr bool value = std::is_same<decltype(test<T>(nullptr)),Tag_true>::value;
+};
+
+template <typename Point_2, bool HasFor>
+class Event_base_for_compact_container { };
+
+template <typename Point_2>
+class Event_base_for_compact_container<Point_2, false>
+{
+  void* p = nullptr;
+public:
+
+  void* operator()(const Point_2&) const
+  {
+    return p;
+  }
+  void operator() (Point_2&, void* ptr)
+  {
+    p = ptr;
+  }
+};
+
+template <typename Point_2>
+class Event_base_for_compact_container<Point_2, true>
+{
+
+public:
+
+  void* operator()(const Point_2& p) const
+  {
+    return p.for_compact_container();
+  }
+  void operator() (Point_2& p, void* ptr)
+  {
+    p.for_compact_container(ptr);
+  }
+};
+
+
 /*! \class No_overlap_event_base
  *
  * A class associated with an event in a surface-sweep algorithm.
@@ -71,6 +125,9 @@ public:
   typedef typename Subcurve_container::reverse_iterator
     Subcurve_reverse_iterator;
 
+  typedef Event_base_for_compact_container
+  <Point_2, has_for_compact_container<Point_2>::value>    For_compact_container;
+
   /*! \enum The event type (with other information bits). */
 
   enum Attribute {
@@ -102,6 +159,10 @@ protected:
   char m_closed;                    // Is the event closed (associated with
                                     // a valid point.
 
+  // A handle for the compact container (either using the functions of
+  // `m_point` if available, or an additional pointer)
+  For_compact_container m_for_compact_container;
+
 public:
   /*! Default constructor. */
   No_overlap_event_base() :
@@ -110,6 +171,16 @@ public:
     m_ps_y(static_cast<char>(ARR_INTERIOR)),
     m_closed(1)
   {}
+
+  /*! Squat the content of Point_2 for the pointer of Compact Container */
+  void* for_compact_container() const
+  {
+    return m_for_compact_container(m_point);
+  }
+  void for_compact_container (void* p)
+  {
+    m_for_compact_container(m_point, p);
+  }
 
   /*! Initialize an event that is associated with a valid point. */
   void init(const Point_2& point, Attribute type,

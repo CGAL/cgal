@@ -256,18 +256,19 @@ The second parameter `Periodic_2Offset_2` defaults to
 The second template parameter of the main classes
 `Periodic_2_triangulation_2` and
 `Periodic_2_Delaunay_triangulation_2` is a
-triangulation data structure class. This class can be seen as a container for
+triangulation data structure class. This class must be a model of the concept
+`TriangulationDataStructure_2`, which describes requirements for the class to be a container for
 the faces and vertices maintaining incidence and adjacency relations (see
-Chapter \ref Chapter_2D_Triangulation_Data_Structure). A model of this triangulation data structure is
-`Triangulation_data_structure_2`, and it is described by the
-`TriangulationDataStructure_2` concept. This model is itself
+Chapter \ref Chapter_2D_Triangulation_Data_Structure). In addition, the concepts
+`TriangulationDataStructure_2::Vertex` and `TriangulationDataStructure_2::Face` are extended
+to support periodicity: the vertex and face must be models of
+`Periodic_2TriangulationVertexBase_2` and Periodic_2TriangulationFaceBase_2`.
+A model of such concept is `CGAL::Triangulation_data_structure_2`. It is
 parameterized by a vertex base class and a face base class, which gives the
 possibility to customize the vertices and cells used by the triangulation data
 structure, and hence by the geometric triangulation using it.
-To represent periodic triangulations the cell base and vertex base
-classes need to meet the concepts
-`Periodic_2TriangulationFaceBase_2` and
-`Periodic_2TriangulationVertexBase_2`.
+Basic models of the vertex and face concepts are provided: `CGAL::Periodic_2_triangulation_vertex_base_2`
+and `CGAL::Periodic_2_triangulation_face_base_2`.
 
 A default value for the triangulation data structure parameter is provided in
 all the triangulation classes, so it does not need to be specified by
@@ -308,7 +309,7 @@ the `TriangulationDataStructure_2` (e.g. a `Vertex_handle` or
 `Face_handle`), he can use the
 `Triangulation_vertex_base_with_info_2` class to add his own
 information easily in the vertices. The example below shows how to
-add a `CGAL::Color` this way.
+add a `CGAL::IO::Color` this way.
 
 \cgalExample{Periodic_2_triangulation_2/p2t2_colored_vertices.cpp}
 

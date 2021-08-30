@@ -183,9 +183,9 @@ You should place the generated file in the proper directory (and possibly
 rename it).  Then you can use the checks in the following fashion.
 
 \code{.cpp}
- #include <CGAL/optimisation\_assertions.h>
+ #include <CGAL/Optimisation/assertions.h>
 
- void optimisation\_foo( int i)
+ void optimisation_foo( int i)
  {
    CGAL_optimisation_precondition_msg( i == 42, "Only 42 allowed!");
    // ...
@@ -243,8 +243,7 @@ and \cgalCite{cgal:a-esgc-98} (also available at
 <A HREF="https://www.boost.org/community/exception_safety.html"><TT>https://www.boost.org/community/exception_safety.html</TT></A>).
 Any destructor which might throw an exception, including a destructor which
 uses the `CGAL_destructor_assertion` macro, should be marked with the
-`CGAL_NOEXCEPT(false)` macro. This macro provides future compatibility with
-C++11 and above, which provides the `noexcept` keyword.
+`noexcept(!CGAL_ASSERTIONS_ENABLED)`.
 
 \section secchecks_req_and_rec Requirements and recommendations
 

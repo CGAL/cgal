@@ -40,13 +40,13 @@
 #include <boost/range/end.hpp>
 #include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/unordered_set.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/parallel_do.h>
+# include <tbb/parallel_for_each.h>
 # include <mutex>
 #endif
 
@@ -840,16 +840,6 @@ public:
                            bool *could_lock_zone) const;
 
   /**
-   * Try to lock the incident cells and return them in \c cells
-   * Return value:
-   * - false: everything is unlocked and \c cells is empty
-   * - true: incident cells are locked and \c cells contains all of them
-   */
-  bool
-  try_lock_and_get_incident_cells(const Vertex_handle& v,
-                                  Cell_vector &cells) const;
-
-  /**
    * Try to lock ALL the incident cells and return in \c cells the ones
    * whose \c filter says "true".
    * Return value:
@@ -1234,8 +1224,8 @@ private:
       if(update_c3t3)
       {
         // Update status in c3t3
-        if(surface != boost::none)
-          c3t3_.add_to_complex(facet, surface.get());
+        if((bool)surface)
+          c3t3_.add_to_complex(facet, *surface);
         else
           c3t3_.remove_from_complex(facet);
       }
@@ -1256,7 +1246,7 @@ private:
         }
       }
 
-      return surface;
+      return surface ? surface : Surface_patch();
     }
 
 
@@ -1267,6 +1257,7 @@ private:
 
   class Facet_updater
   {
+    const Self& m_c3t3_helpers;
     Vertex_set& vertex_to_proj;
     C3T3& c3t3_;
     Update_c3t3& c3t3_updater_;
@@ -1275,8 +1266,10 @@ private:
     typedef Facet& reference;
     typedef const Facet& const_reference;
 
-    Facet_updater(C3T3& c3t3, Vertex_set& vertex_to_proj, Update_c3t3& c3t3_updater_)
-      : vertex_to_proj(vertex_to_proj), c3t3_(c3t3), c3t3_updater_(c3t3_updater_)
+    Facet_updater(const Self& c3t3_helpers,
+      C3T3& c3t3, Vertex_set& vertex_to_proj, Update_c3t3& c3t3_updater_)
+      : m_c3t3_helpers(c3t3_helpers),
+      vertex_to_proj(vertex_to_proj), c3t3_(c3t3), c3t3_updater_(c3t3_updater_)
     {}
 
     void
@@ -1296,9 +1289,9 @@ private:
           const Vertex_handle& v = f.first->vertex((k+i)&3);
           if ( c3t3_.in_dimension(v) > 2 )
           {
-            //lock_vertex_to_proj();
+            m_c3t3_helpers.lock_vertex_to_proj();
             vertex_to_proj.insert(v);
-            //unlock_vertex_to_proj();
+            m_c3t3_helpers.unlock_vertex_to_proj();
           }
         }
       }
@@ -1373,7 +1366,6 @@ private:
 
     std::size_t vertex_id(const std::size_t& i) const
     {
-      CGAL_precondition(i >= 0);
       CGAL_precondition((infinite_ && i < 3) || i < 4);
       return vertices_[i];
     }
@@ -1580,10 +1572,17 @@ private:
   Cell_vector c3t3_cells(const Cell_vector& cells) const
   {
     Cell_vector c3t3_cells;
+#ifdef CGAL_CXX17
+    std::remove_copy_if(cells.begin(),
+                        cells.end(),
+                        std::back_inserter(c3t3_cells),
+                        std::not_fn(Is_in_c3t3<Cell_handle>(c3t3_)));
+#else
     std::remove_copy_if(cells.begin(),
                         cells.end(),
                         std::back_inserter(c3t3_cells),
                         std::not1(Is_in_c3t3<Cell_handle>(c3t3_)) );
+#endif
     return c3t3_cells;
   }
 
@@ -1942,7 +1941,7 @@ private:
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      tbb::parallel_do(
+      tbb::parallel_for_each(
         outdated_cells.begin(), outdated_cells.end(),
         Update_cell_facets<Self, FacetUpdater>(tr_, updater));
     }
@@ -2055,7 +2054,7 @@ private:
                                        true); /* update surface centers */
       // false means "do not update the c3t3"
       if ( c3t3_.is_in_complex(*fit) != (bool)sp ||
-           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == sp.get()) ) )
+           ((bool)sp && !(c3t3_.surface_patch_index(*fit) == *sp) ) )
         return false;
     }
 
@@ -2732,7 +2731,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     // Note: ~42% of rebuild_restricted_delaunay time
     //  Facet_vector facets;
     lock_vertex_to_proj();
-    Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
+    Facet_updater facet_updater(*this, c3t3_,vertex_to_proj, updater);
     unlock_vertex_to_proj();
     update_facets(outdated_cells_vector, facet_updater);
 
@@ -2761,7 +2760,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
     // Get facets (returns each canonical facet only once)
     // Note: ~42% of rebuild_restricted_delaunay time
     //  Facet_vector facets;
-    Facet_updater facet_updater(c3t3_,vertex_to_proj, updater);
+    Facet_updater facet_updater(*this, c3t3_,vertex_to_proj, updater);
     update_facets(outdated_cells, facet_updater);
 
     // now we can clear
@@ -2832,7 +2831,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(first_cell, last_cell,
+    tbb::parallel_for_each(first_cell, last_cell,
       Update_cell<C3T3, Update_c3t3>(c3t3_, updater));
   }
   // Sequential
@@ -2854,7 +2853,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(
+    tbb::parallel_for_each(
       facets.begin(), facets.end(),
       Update_facet<Self, C3T3, Update_c3t3, Vertex_to_proj_set>(
         *this, c3t3_, updater, vertex_to_proj)
@@ -2949,7 +2948,19 @@ move_point(const Vertex_handle& old_vertex,
 
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
-  tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
+
+# ifdef CGAL_LINKED_WITH_TBB
+  // Parallel
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tr_.incident_cells_threadsafe(old_vertex, std::back_inserter(incident_cells_));
+  }
+  // Sequential
+  else
+# endif // CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(old_vertex, std::back_inserter(incident_cells_));
+  }
 
   const Weighted_point& position = tr_.point(old_vertex);
   const Weighted_point& new_position = cwp(translate(cp(position), move));
@@ -3038,9 +3049,10 @@ move_point(const Vertex_handle& old_vertex,
   //======= Get incident cells ==========
   Cell_vector incident_cells_;
   incident_cells_.reserve(64);
-  if (try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
+  if (tr_.try_lock_and_get_incident_cells(old_vertex, incident_cells_) == false)
   {
     *could_lock_zone = false;
+    unlock_all_elements();
     return Vertex_handle();
   }
   //======= /Get incident cells ==========
@@ -3067,10 +3079,11 @@ move_point(const Vertex_handle& old_vertex,
     lock_outdated_cells();
     std::copy(incident_cells_.begin(),incident_cells_.end(),
       std::inserter(outdated_cells_set, outdated_cells_set.end()));
-    unlock_outdated_cells();
 
     Vertex_handle new_vertex =
       move_point_no_topo_change(old_vertex, move, new_position);
+
+    unlock_outdated_cells();
 
     // Don't "unlock_all_elements" here, the caller may need it to do it himself
     return new_vertex;
@@ -3407,6 +3420,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                Bare_point& reference_point,
                                Surface_patch_index patch_index) const
 {
+  typedef typename C3T3::Triangulation::Triangle Triangle;
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   // Get incident facets
@@ -3427,45 +3441,47 @@ get_least_square_surface_plane(const Vertex_handle& v,
   const Weighted_point& position = tr_.point(v);
 
   // Get adjacent surface points
-  std::vector<Bare_point> surface_point_vector;
-  typename Facet_vector::iterator fit = facets.begin(), fend = facets.end();
-  for ( ; fit != fend; ++fit )
+  std::vector<Triangle> triangles;
+  typename C3T3::Facet ref_facet;
+
+  for (typename C3T3::Facet f : facets)
   {
-    if ( c3t3_.is_in_complex(*fit) &&
+    if ( c3t3_.is_in_complex(f) &&
          (patch_index == Surface_patch_index() ||
-          c3t3_.surface_patch_index(*fit) == patch_index) )
+          c3t3_.surface_patch_index(f) == patch_index) )
     {
-      const Cell_handle cell = fit->first;
-      const int i = fit->second;
+      ref_facet = f;
 
       // In the case of a periodic triangulation, the incident facets of a point
       // do not necessarily have the same offsets. Worse, the surface centers
       // might not have the same offset as their facet. Thus, no solution except
-      // calling a function 'get_closest_point(p, q)' that simply returns q
+      // calling a function 'get_closest_triangle(p, t)' that simply returns t
       // for a non-periodic triangulation, and checks all possible offsets for
       // periodic triangulations
-      const Bare_point& bp = tr_.get_closest_point(cp(position),
-                                                   cell->get_facet_surface_center(i));
-      surface_point_vector.push_back(bp);
+
+      Triangle t = c3t3_.triangulation().triangle(f);
+      Triangle ct = tr_.get_closest_triangle(cp(position), t);
+      triangles.push_back(ct);
     }
   }
 
   // In some cases point is not a real surface point
-  if ( surface_point_vector.empty() )
+  if ( triangles.empty() )
     return boost::none;
 
   // Compute least square fitting plane
   Plane_3 plane;
   Bare_point point;
-  CGAL::linear_least_squares_fitting_3(surface_point_vector.begin(),
-                                       surface_point_vector.end(),
+
+  CGAL::linear_least_squares_fitting_3(triangles.begin(),
+                                       triangles.end(),
                                        plane,
                                        point,
-                                       Dimension_tag<0>(),
+                                       Dimension_tag<2>(),
                                        tr_.geom_traits(),
                                        Default_diagonalize_traits<FT, 3>());
 
-  reference_point = surface_point_vector.front();
+  reference_point = ref_facet.first->get_facet_surface_center(ref_facet.second);
 
   return plane;
 }
@@ -3583,60 +3599,6 @@ get_incident_slivers_without_using_tds_data(const Vertex_handle& v,
   tr_.incident_cells_threadsafe(v, boost::make_function_output_iterator(f));
 }
 
-// CJTODO: call tr_.try_lock_and_get_incident_cells instead?
-template <typename C3T3, typename MD>
-bool
-C3T3_helpers<C3T3,MD>::
-try_lock_and_get_incident_cells(const Vertex_handle& v,
-                                Cell_vector &cells) const
-  {
-    // We need to lock v individually first, to be sure v->cell() is valid
-    if (!try_lock_vertex(v))
-      return false;
-
-    Cell_handle d = v->cell();
-    if (!try_lock_element(d)) // LOCK
-    {
-      unlock_all_elements();
-      return false;
-    }
-    cells.push_back(d);
-    d->tds_data().mark_in_conflict();
-    int head=0;
-    int tail=1;
-    do {
-      Cell_handle c = cells[head];
-
-      for (int i=0; i<4; ++i) {
-        if (c->vertex(i) == v)
-          continue;
-        Cell_handle next = c->neighbor(i);
-
-        if (!try_lock_element(next)) // LOCK
-        {
-          for(Cell_handle ch : cells)
-          {
-            ch->tds_data().clear();
-          }
-          cells.clear();
-          unlock_all_elements();
-          return false;
-        }
-        if (! next->tds_data().is_clear())
-          continue;
-        cells.push_back(next);
-        ++tail;
-        next->tds_data().mark_in_conflict();
-      }
-      ++head;
-    } while(head != tail);
-    for(Cell_handle ch : cells)
-    {
-      ch->tds_data().clear();
-    }
-    return true;
-  }
-
 template <typename C3T3, typename MD>
 template <typename Filter>
 bool
@@ -3647,7 +3609,7 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
 {
   std::vector<Cell_handle> tmp_cells;
   tmp_cells.reserve(64);
-  bool ret = try_lock_and_get_incident_cells(v, tmp_cells);
+  bool ret = tr_.try_lock_and_get_incident_cells(v, tmp_cells);
   if (ret)
   {
     for(Cell_handle ch : tmp_cells)
@@ -3656,6 +3618,8 @@ try_lock_and_get_incident_cells(const Vertex_handle& v,
         cells.push_back(ch);
     }
   }
+  else
+    tr_.unlock_all_elements();
   return ret;
 }
 
@@ -3687,10 +3651,17 @@ incident_slivers(const Vertex_handle& v,
   std::vector<Cell_handle> incident_cells_;
   tr_.incident_cells(v, std::back_inserter(incident_cells_));
 
+#ifdef CGAL_CXX17
+  std::remove_copy_if(incident_cells_.begin(),
+                      incident_cells_.end(),
+                      out,
+                      std::not_fn(Is_sliver<Sc>(c3t3_, criterion, sliver_bound)));
+#else
   std::remove_copy_if(incident_cells_.begin(),
                       incident_cells_.end(),
                       out,
                       std::not1(Is_sliver<Sc>(c3t3_,criterion,sliver_bound)));
+#endif
 
   return out;
 }
@@ -3873,7 +3844,19 @@ get_conflict_zone_topo_change(const Vertex_handle& v,
   // Get triangulation_vertex incident cells : removal conflict zone
   // TODO: hasn't it already been computed in "perturb_vertex" (when getting the slivers)?
   // We don't try to lock the incident cells since they've already been locked
-  tr_.incident_cells(v, removal_conflict_cells);
+
+# ifdef CGAL_LINKED_WITH_TBB
+// Parallel
+  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  {
+    tr_.incident_cells_threadsafe(v, removal_conflict_cells);
+  }
+  // Sequential
+  else
+# endif // CGAL_LINKED_WITH_TBB
+  {
+    tr_.incident_cells(v, removal_conflict_cells);
+  }
 
   // Get conflict_point conflict zone
   int li=0;

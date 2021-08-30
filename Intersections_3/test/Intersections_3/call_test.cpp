@@ -19,13 +19,15 @@ typedef CGAL::Iso_cuboid_3< K >     Cub;
 typedef CGAL::Sphere_3< K >         Sph;
 typedef CGAL::Circle_3< K >         C;
 
+typedef CGAL::Tetrahedron_3< K >    T;
+
 typedef CGAL::Bbox_3                Bbox_3;
 
 template<class A, class B>
 void call_intersection_global(const A& a, const B& b) {
-  typename CGAL::cpp11::result_of<K::Intersect_3(A, B)>::type x = CGAL::intersection(a, b);
-  typename CGAL::cpp11::result_of<K::Intersect_3(A, B)>::type y = CGAL::intersection(b, a);
-  typename CGAL::cpp11::result_of<K::Intersect_3(B, A)>::type z = CGAL::intersection(b, a);
+  const auto x = CGAL::intersection(a, b);
+  const auto y = CGAL::intersection(b, a);
+  const auto z = CGAL::intersection(b, a);
   CGAL_USE(x);
   CGAL_USE(y);
   CGAL_USE(z);
@@ -40,8 +42,8 @@ void call_do_intersect_global(const A& a, const B& b) {
 template<class A, class B, class K>
 void call_intersection_with_kernel(const A& a, const B& b, const K&) {
   typedef typename K::Intersect_3 Intersect;
-  typename CGAL::cpp11::result_of<Intersect(A, B)>::type x = Intersect()(a, b);
-  typename CGAL::cpp11::result_of<Intersect(A, B)>::type y = Intersect()(b, a);
+  const auto x = Intersect()(a, b);
+  const auto y = Intersect()(b, a);
 }
 
 template<class A, class B, class K>
@@ -81,7 +83,7 @@ int main(int argc, char**)
     // call_intersection_global(Pl(), Cub());
 
     // special
-    CGAL::cpp11::result_of<K::Intersect_3(Pl, Pl, Pl)>::type plplpl = CGAL::intersection(Pl(), Pl(), Pl());
+    const auto plplpl = CGAL::intersection(Pl(), Pl(), Pl());
 
     call_intersection_global(Tr(), S());
     call_intersection_global(Tr(), L());
@@ -103,10 +105,16 @@ int main(int argc, char**)
     // call_intersection_global(Cub(), Tr());
     call_intersection_global(Cub(), R());
     call_intersection_global(Cub(), Cub());
+//    call_intersection_global(Cub(), Bbox_3());
 
     call_intersection_global(Bbox_3(), L());
     call_intersection_global(Bbox_3(), S());
     call_intersection_global(Bbox_3(), R());
+    call_intersection_global(Bbox_3(), Cub());
+    CGAL::intersection(Bbox_3(), Bbox_3());
+
+    call_intersection_global(T(), L());
+
 
     // with kernel
 

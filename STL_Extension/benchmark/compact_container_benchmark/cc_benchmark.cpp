@@ -26,7 +26,7 @@ struct Truc
 {
   Truc(int v = 0) : value(v), /*value2(v), */p(NULL) {}
   void *   for_compact_container() const { return p; }
-  void * & for_compact_container()       { return p; }
+  void for_compact_container(void *ptr) { p = ptr; }
 
   int value;
   int value2;

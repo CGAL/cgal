@@ -13,7 +13,6 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #include <CGAL/circulator.h>
@@ -21,6 +20,8 @@
 #include <CGAL/use.h>
 
 #include <boost/iterator/iterator_facade.hpp>
+
+#include <limits>
 
 namespace CGAL {
 

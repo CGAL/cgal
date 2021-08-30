@@ -18,8 +18,12 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 int main(int /* argc */, char* argv[])
 {
   Mesh sm;
-  std::ifstream in(argv[1]);
-  in >> sm;
+  if(!CGAL::IO::read_polygon_mesh(argv[1], sm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Mesh::Property_map<vertex_descriptor,vertex_descriptor> predecessor;
   predecessor = sm.add_property_map<vertex_descriptor,vertex_descriptor>("v:predecessor").first;
 

@@ -4,12 +4,12 @@ namespace CGAL {
 \ingroup PkgConvexHull3Functions
 
 \brief computes robustly the intersection of the halfspaces defined by the planes contained in the range [`begin`, `end`) without constructing the dual points. The result is stored in the polyhedron `pm`.
-If `origin` is given then it must be a point strictly inside the polyhedron. If an interior point is not given then it is computed using a linear program and thus is slower.
+If `origin` is given then it must be a point strictly inside the polyhedron. If an interior point is not given then it is computed using the function `halfspace_intersection_interior_point_3()` based on solving a linear program and thus is slower.
 
 This version does not construct the dual points explicitely but uses a special traits class for the function `CGAL::convex_hull_3()` to handle predicates on dual points without constructing them.
 
-\attention Halfspaces are considered as lower halfspaces that is to say if the plane's equation is \f$ a\, x +b\, y +c\, z + d = 0 \f$ then the corresponding halfspace is defined by \f$ a\, x +b\, y +c\, z + d \le 0 \f$ .
-\attention
+Halfspaces are considered as lower halfspaces, that is if the plane equation is \f$ a\, x +b\, y +c\, z + d = 0 \f$ then the corresponding halfspace is defined by \f$ a\, x +b\, y +c\, z + d \le 0 \f$ .
+
 
 \pre The point type of `origin` and the point type of the vertices of `PolygonMesh` must come from the same \cgal %Kernel.\pre if provided, `origin` is inside the intersection of halfspaces defined by the range `[begin, end)`.
 \pre The computed intersection must be a bounded convex polyhedron.

@@ -95,8 +95,8 @@ void MregularIpelet::protected_run(int fn)
     draw_in_ipe(rt);
   else{//Draw kth Power diagram
     double incr_len=75;
-    bbox=Iso_rectangle_2(bbox.min()+Kernel::Vector_2(-incr_len,-incr_len),
-                         bbox.max()+Kernel::Vector_2(incr_len,incr_len));
+    bbox=Iso_rectangle_2((bbox.min)()+Kernel::Vector_2(-incr_len,-incr_len),
+                         (bbox.max)()+Kernel::Vector_2(incr_len,incr_len));
     draw_dual_in_ipe(rt,bbox);        //draw Voronoi Diagram
   }
 }

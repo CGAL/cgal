@@ -151,23 +151,25 @@ public:
   OutputIterator insert(const Vector_3 & normal1, const Vector_3 & normal2,
                         OutputIterator oi)
   {
-    std::list<CGAL::Object> x_objects;
+    typedef boost::variant<Point_2, X_monotone_curve_2>
+      Make_x_monotone_result;
+
+    std::list<Make_x_monotone_result> x_objects;
     make_x_monotone(normal1, normal2, std::back_inserter(x_objects));
 
-    typename std::list<CGAL::Object>::iterator it = x_objects.begin();
-    const X_monotone_curve_2 * xc = object_cast<X_monotone_curve_2>(&(*it));
+    auto it = x_objects.begin();
+    const auto* xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
     std::cout << "1.a. insert_in_face_interior(" << *xc << ")" << std::endl;
 #endif
-    Halfedge_handle he =
-      m_sgm.insert_in_face_interior(*xc, m_sgm.faces_begin());
-    if (!xc->is_directed_right()) he = he->twin();
+    Halfedge_handle he = m_sgm.insert_in_face_interior(*xc, m_sgm.faces_begin());
+    if (! xc->is_directed_right()) he = he->twin();
     *oi++ = he;
 
     ++it;
     if (it == x_objects.end()) return oi;
 
-    xc = object_cast<X_monotone_curve_2>(&(*it));
+    xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
     std::cout << "1.b. insert_from_vertex(" << *xc << ")" << std::endl;
 #endif
@@ -190,11 +192,14 @@ public:
                         const Vector_3 & normal2,
                         OutputIterator oi)
   {
-    std::list<CGAL::Object> x_objects;
+    typedef boost::variant<Point_2, X_monotone_curve_2>
+      Make_x_monotone_result;
+
+    std::list<Make_x_monotone_result> x_objects;
     make_x_monotone(normal1, normal2, std::back_inserter(x_objects));
 
-    typename std::list<CGAL::Object>::iterator it = x_objects.begin();
-    const X_monotone_curve_2 * xc = object_cast<X_monotone_curve_2>(&(*it));
+    auto it = x_objects.begin();
+    const auto* xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
     std::cout << "2.a. insert_from_vertex(" << *xc << ", "
               << vertex1->point() << ")" << std::endl;
@@ -208,7 +213,7 @@ public:
     ++it;
     if (it == x_objects.end()) return oi;
 
-    xc = object_cast<X_monotone_curve_2>(&(*it));
+    xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
     std::cout << "2.b. insert_from_vertex(" << *xc << ")" << std::endl;
 #endif
@@ -231,12 +236,15 @@ public:
                         const Vector_3 & normal2, Vertex_handle vertex2,
                         OutputIterator oi)
   {
-    std::list<CGAL::Object> x_objects;
+    typedef boost::variant<Point_2, X_monotone_curve_2>
+      Make_x_monotone_result;
+
+    std::list<Make_x_monotone_result> x_objects;
     make_x_monotone(normal1, normal2, std::back_inserter(x_objects));
 
-    typename std::list<CGAL::Object>::iterator it = x_objects.begin();
+    auto it = x_objects.begin();
     if (x_objects.size() == 1) {
-      const X_monotone_curve_2 * xc = object_cast<X_monotone_curve_2>(&(*it));
+      const auto* xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
       std::cout << "3. insert_from_vertex(" << *xc << ")" << std::endl;
 #endif
@@ -247,8 +255,8 @@ public:
       return oi;
     }
 
-    const X_monotone_curve_2 * xc1 = object_cast<X_monotone_curve_2>(&(*it++));
-    const X_monotone_curve_2 * xc2 = object_cast<X_monotone_curve_2>(&(*it));
+    const X_monotone_curve_2* xc1 = boost::get<X_monotone_curve_2>(&(*it++));
+    const X_monotone_curve_2* xc2 = boost::get<X_monotone_curve_2>(&(*it));
 
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
     std::cout << "3.a. insert_from_vertex(" << *xc2 << ")" << std::endl;
@@ -283,11 +291,13 @@ public:
                         const Vector_3 & normal2, Vertex_handle vertex2,
                         OutputIterator oi)
   {
-    std::list<CGAL::Object> x_objects;
+    typedef boost::variant<Point_2, X_monotone_curve_2>
+      Make_x_monotone_result;
+    std::list<Make_x_monotone_result> x_objects;
     make_x_monotone(normal1, normal2, std::back_inserter(x_objects));
-    typename std::list<CGAL::Object>::iterator it = x_objects.begin();
+    auto it = x_objects.begin();
     if (x_objects.size() == 1) {
-      const X_monotone_curve_2 * xc = object_cast<X_monotone_curve_2>(&(*it));
+      const auto* xc = boost::get<X_monotone_curve_2>(&(*it));
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
       std::cout << "4. insert_at_vertices(" << *xc << ")" << std::endl;
 #endif
@@ -295,8 +305,8 @@ public:
       return oi;
     }
 
-    const X_monotone_curve_2 * xc1 = object_cast<X_monotone_curve_2>(&(*it++));
-    const X_monotone_curve_2 * xc2 = object_cast<X_monotone_curve_2>(&(*it));
+    const X_monotone_curve_2 * xc1 = boost::get<X_monotone_curve_2>(&(*it++));
+    const X_monotone_curve_2 * xc2 = boost::get<X_monotone_curve_2>(&(*it));
 
 #if CGAL_ARR_SPHERICAL_GAUSSIAN_MAP_3_DEBUG==1
     std::cout << "4.a. insert_from_vertex(" << *xc1

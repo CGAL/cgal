@@ -1,6 +1,8 @@
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Mean_curvature_flow_skeletonization.h>
 
 #include <fstream>
@@ -22,7 +24,7 @@ typedef Skeleton::edge_descriptor                             Skeleton_edge;
 int main()
 {
   LCC lcc;
-  CGAL::read_off("data/elephant.off", lcc);
+  CGAL::IO::read_polygon_mesh("data/elephant.off", lcc);
 
   Skeleton skeleton;
   Skeletonization mcs(lcc);
@@ -51,7 +53,7 @@ int main()
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
-  std::ofstream output("skel-lcc.cgal");
+  std::ofstream output("skel-lcc.polylines.txt");
   for(Skeleton_edge e : CGAL::make_range(edges(skeleton)))
   {
     const Point& s = skeleton[source(e, skeleton)].point;
@@ -61,7 +63,7 @@ int main()
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance-lcc.cgal");
+  output.open("correspondance-lcc.polylines.txt");
   for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << "  " << get(CGAL::vertex_point, lcc, vd)  << "\n";

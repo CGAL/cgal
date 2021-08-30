@@ -20,7 +20,7 @@
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Euclidean_distance.h>
-#include <CGAL/internal/Search_helpers.h>
+#include <CGAL/Spatial_searching/internal/Search_helpers.h>
 
 #include <cstring>
 #include <list>
@@ -141,7 +141,7 @@ namespace CGAL {
 
       typedef std::input_iterator_tag iterator_category;
       typedef Point_with_transformed_distance       value_type;
-      typedef Point_with_transformed_distance*      pointer;
+      typedef const Point_with_transformed_distance*      pointer;
       typedef const Point_with_transformed_distance&      reference;
       typedef std::size_t               size_type;
       typedef std::ptrdiff_t            difference_type;

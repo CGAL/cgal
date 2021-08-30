@@ -108,7 +108,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
 {
-  Scene_face_graph_item* itemA = NULL;
+  Scene_face_graph_item* itemA = nullptr;
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
     Scene_face_graph_item* itemB =
@@ -116,7 +116,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
 
     if(itemB)
     {
-      if (itemA==NULL)
+      if (itemA==nullptr)
       {
         itemA = itemB;
         continue;
@@ -139,9 +139,9 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
                                   std::back_inserter(new_item->polylines),
                                   PMP::parameters::throw_on_self_intersection(true));
       }
-      catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+      catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
       {
-        QMessageBox::warning((QWidget*)NULL,
+        QMessageBox::warning((QWidget*)nullptr,
           tr("Self-intersections Found"),
           tr("Some self-intersections were found amongst intersecting facets"));
         delete new_item;
@@ -174,7 +174,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
       std::pair<std::size_t, std::size_t>,
       std::pair<std::size_t, std::size_t> >  Poly_intersection;
 
-  Scene_polylines_item* itemA = NULL;
+  Scene_polylines_item* itemA = nullptr;
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
     Scene_polylines_item* itemB =
@@ -182,7 +182,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
 
     if(itemB)
     {
-      if (itemA==NULL)
+      if (itemA==nullptr)
       {
         itemA = itemB;
         continue;

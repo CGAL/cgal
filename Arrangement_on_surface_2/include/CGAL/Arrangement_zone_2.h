@@ -28,6 +28,7 @@
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_point_location_result.h>
 
 #include <list>
 #include <map>
@@ -93,22 +94,28 @@ protected:
                                                    Right_side_category>::result
     Are_all_sides_oblivious_category;
 
-  typedef typename Arrangement_2::Vertex_const_handle    Vertex_const_handle;
-  typedef typename Arrangement_2::Halfedge_const_handle  Halfedge_const_handle;
-  typedef typename Arrangement_2::Face_const_handle      Face_const_handle;
+  typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
+  typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
+  typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
   typedef typename Arrangement_2::Ccb_halfedge_circulator
     Ccb_halfedge_circulator;
 
   // Types used for caching intersection points:
-  typedef std::pair<Point_2, Multiplicity>               Intersect_point_2;
-  typedef std::list<CGAL::Object>                        Intersect_list;
+  typedef std::pair<Point_2, Multiplicity>              Intersection_point;
+  typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+  typedef boost::optional<Intersection_result>          Optional_intersection;
+  typedef std::list<Intersection_result>                Intersect_list;
   typedef std::map<const X_monotone_curve_2*, Intersect_list>
-                                                         Intersect_map;
-  typedef typename Intersect_map::iterator               Intersect_map_iterator;
+                                                        Intersect_map;
+  typedef typename Intersect_map::iterator              Intersect_map_iterator;
 
-  typedef std::set<const X_monotone_curve_2*>            Curves_set;
-  typedef typename Curves_set::iterator                  Curves_set_iterator;
+  typedef std::set<const X_monotone_curve_2*>           Curves_set;
+  typedef typename Curves_set::iterator                 Curves_set_iterator;
+
+  typedef Arr_point_location_result<Arrangement_2>      Pl_result;
+  typedef typename Pl_result::Type                      Pl_result_type;
 
   // Data members:
   Arrangement_2& m_arr;                 // The associated arrangement.
@@ -124,7 +131,7 @@ protected:
 
   X_monotone_curve_2 m_cv;              // The current portion of the
                                         // inserted curve.
-  CGAL::Object m_obj;                   // The location of the left endpoint.
+  Pl_result_type m_obj;                 // The location of the left endpoint.
   bool m_has_left_pt;                   // Is the left end of the curve bounded.
   bool m_left_on_boundary;              // Is the left point on the boundary.
   Point_2 m_left_pt;                    // Its current left endpoint.
@@ -244,7 +251,7 @@ public:
    * \param obj An object that represents the location of the left end of the
    *            curve.
    */
-  void init_with_hint(const X_monotone_curve_2& cv, const Object& obj);
+  void init_with_hint(const X_monotone_curve_2& cv, Pl_result_type obj);
 
   /*! Compute the zone of the given curve and issue the apporpriate
    * notifications for the visitor.
@@ -378,14 +385,15 @@ private:
    *                                            point coincides with the right
    *                                            curve-end, which lies on the
    *                                            surface boundary.
-   * \return An object representing the next intersection: Intersect_point_2
+   * \return An object representing the next intersection: Intersection_point
    *         in case of a simple intersection point, X_monotone_curve_2 in
    *         case of an overlap, and an empty object if there is no
    *         intersection.
    */
-  CGAL::Object _compute_next_intersection(Halfedge_handle he,
-                                          bool skip_first_point,
-                                          bool& intersect_on_right_boundary);
+  Optional_intersection
+  _compute_next_intersection(Halfedge_handle he,
+                             bool skip_first_point,
+                             bool& intersect_on_right_boundary);
 
   /*! Remove the next intersection of m_cv with the given halfedge from the map.
    * \param he A handle to the halfedge.

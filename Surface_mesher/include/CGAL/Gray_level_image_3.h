@@ -19,7 +19,7 @@
 
 #include <CGAL/auto_link/ImageIO.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_GRAY_LEVEL_IMAGE_3_CONSTRUCTOR
 #include <boost/format.hpp>

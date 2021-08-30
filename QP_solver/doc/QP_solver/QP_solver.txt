@@ -8,18 +8,6 @@ namespace CGAL {
 
 \authors Kaspar Fischer, Bernd G&auml;rtner, Sven Sch&ouml;nherr, and Frans Wessendorp
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
-
 \section secQPdef Which Programs can be Solved?
 
 This package lets you solve <I>convex quadratic programs</I> of the

@@ -17,7 +17,7 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Dummy_tds_3.h>
+#include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
 namespace CGAL {
@@ -80,8 +80,8 @@ public:
   // For use by the Compact_container.
   void *   for_compact_container() const
   { return _c.for_compact_container(); }
-  void * & for_compact_container()
-  { return _c.for_compact_container(); }
+  void for_compact_container(void *p)
+  { _c.for_compact_container(p); }
 
 private:
   Cell_handle _c;

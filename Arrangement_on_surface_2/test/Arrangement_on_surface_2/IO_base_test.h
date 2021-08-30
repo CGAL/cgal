@@ -71,10 +71,10 @@ read_xcurve(InputStream_& is, typename GeomTraits_::X_monotone_curve_2& xcv)
   typedef GeomTraits_   Geom_traits;
   Basic_number_type x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
-  CGAL_assertion(!is.fail());
+  assert(!is.fail());
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
-  CGAL_assertion(p1 != p2);
+  assert(p1 != p2);
   xcv = typename Geom_traits::X_monotone_curve_2(p1, p2);
   return true;
 }
@@ -89,7 +89,7 @@ read_curve(InputStream_& is, typename GeomTraits_::Curve_2& cv)
   is >> x1 >> y1 >> x2 >> y2;
   Point_2 p1(x1, y1);
   Point_2 p2(x2, y2);
-  CGAL_assertion(p1 != p2);
+  assert(p1 != p2);
   cv = typename Geom_traits::Curve_2(p1, p2);
   return true;
 }
@@ -690,20 +690,19 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
     point_vector.push_back(Control_point_2(point_x, point_y));
   }
   //get the non x-monotone bezier segment
-  Subcurve_2 seg (point_vector.begin(), point_vector.end());
+  Subcurve_2 seg(point_vector.begin(), point_vector.end());
 
   //convert it into x-monotone bezier segment.
-  std::vector<CGAL::Object> obj_vector;
-  bezier_traits.make_x_monotone_2_object()(seg,
-                                           std::back_inserter(obj_vector));
-  X_monotone_subcurve_2 x_segment =
-    CGAL::object_cast<X_monotone_subcurve_2>((obj_vector[0]));
-
-  xseg = x_segment;
+  typedef boost::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
+  std::vector<Make_x_monotone_result> objs;
+  bezier_traits.make_x_monotone_2_object()(seg, std::back_inserter(objs));
+  assert(! objs.empty());
+  const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(objs[0]));
+  assert(x_seg_p);
+  xseg = *x_seg_p;
 
   return true;
 }
-
 
 template <>
 template <typename InputStream_>
@@ -721,6 +720,8 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   unsigned int number_of_segments;
   is >> number_of_segments;
 
+  typedef boost::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
+  auto make_x_monotone = bezier_traits.make_x_monotone_2_object();
   if ((type == 'x') || (type == 'X')) {
     for (unsigned int i=0; i<number_of_segments; ++i) {
       unsigned int num_control_points;
@@ -737,13 +738,12 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       Subcurve_2 seg(point_vector.begin(), point_vector.end());
 
       //convert it into x-monotone bezier segment.
-      std::vector<CGAL::Object> obj_vector;
-      bezier_traits.make_x_monotone_2_object()(seg,
-                                               std::back_inserter(obj_vector));
-      X_monotone_subcurve_2 x_seg =
-        CGAL::object_cast<X_monotone_subcurve_2>((obj_vector[0]));
-
-      x_segments.push_back(x_seg);
+      std::vector<Make_x_monotone_result> objs;
+      make_x_monotone(seg, std::back_inserter(objs));
+      assert(! objs.empty());
+      const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(objs[0]));
+      assert(x_seg_p);
+      x_segments.push_back(*x_seg_p);
 
     } //for loop (number of segments)
   }
@@ -1470,8 +1470,8 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
   std::cout << std::endl;
-  std::list<CGAL::Object> x_objs;
-  std::list<CGAL::Object>::const_iterator xoit;
+  typedef boost::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
+  std::list<Make_x_monotone_result> x_objs;
   Curve_2 tmp_cv;
   is >> tmp_cv;
   Rational B_psx = Rational(tmp_cv.control_point(0).x());
@@ -1482,15 +1482,15 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
     Rational(tmp_cv.control_point(tmp_cv.number_of_control_points()-1).y());
   Point_2 B_ps(B_psx, B_psy);
   Point_2 B_pt(B_ptx, B_pty);
-  Base_geom_traits::Make_x_monotone_2 make_x_monotone =
-    this->m_geom_traits.make_x_monotone_2_object();
-  make_x_monotone(tmp_cv, std::front_inserter (x_objs));
-  xoit = x_objs.begin();
+  auto make_x_monotone = this->m_geom_traits.make_x_monotone_2_object();
+  make_x_monotone(tmp_cv, std::front_inserter(x_objs));
+  auto xoit = x_objs.begin();
   size_t id(0);
-  if (!is.eof()) is >> id;
+  if (! is.eof()) is >> id;
   std::advance(xoit, id);
-  if (CGAL::assign(xcv, *xoit))
-    return true;
+  const auto* xcv_p = boost::get<X_monotone_curve_2>(&*xoit);
+  assert(xcv_p);
+  xcv = *xcv_p;
   return false;
 }
 
@@ -1546,9 +1546,8 @@ bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p) {
      is >> x;
      Base_geom_traits::X_monotone_curve_2 xcv;
      CGAL::swallow(is, '(');
-     CGAL_assertion_code(bool check = )
-     read_xcurve(is, xcv);
-     CGAL_assertion(check);
+     bool check = read_xcurve(is, xcv);
+     assert(check);
 
      CGAL::swallow(is, ')');
      p = construct_point_2(x, xcv);
@@ -1558,9 +1557,8 @@ bool IO_base_test<Base_geom_traits>::read_point(InputStream_& is, Point_2& p) {
      Base_geom_traits::Algebraic_real_1 x;
      is >> x;
      Base_geom_traits::Curve_2 c;
-     CGAL_assertion_code(bool check = )
-     read_curve(is, c);
-     CGAL_assertion(check);
+     bool check = read_curve(is, c);
+     assert(check);
      int arcno = 0;
      is >> arcno;
      p = construct_point_2(x, c, arcno);
@@ -1589,36 +1587,31 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   switch (type) {
    case '1': {
      Curve_2 cv;
-     Point_2 end_left,end_right;
-     CGAL_assertion_code(bool check = )
-     read_curve(is,cv);
-     CGAL_assertion(check);
+     Point_2 end_left, end_right;
+     bool check = read_curve(is,cv);
+     assert(check);
      CGAL::swallow(is, '(');
-     CGAL_assertion_code(check = )
-     read_point(is,end_left);
-     CGAL_assertion(check);
+     check = read_point(is,end_left);
+     assert(check);
      CGAL::swallow(is, ')');
      CGAL::swallow(is, '(');
-     CGAL_assertion_code(check = )
-     read_point(is,end_right);
-     CGAL_assertion(check);
+     check = read_point(is,end_right);
+     assert(check);
      CGAL::swallow(is, ')');
      std::vector<Base_geom_traits::X_monotone_curve_2> xcvs;
      construct_segment_2(cv, end_left, end_right, std::back_inserter(xcvs));
-     CGAL_assertion(xcvs.size() == 1);
+     assert(xcvs.size() == 1);
      xcv = xcvs[0];
      break;
     }
    case '2': {
      Curve_2 cv;
      Point_2 p;
-     CGAL_assertion_code(bool check = )
-     read_curve(is, cv);
-     CGAL_assertion(check);
+     bool check = read_curve(is, cv);
+     assert(check);
      CGAL::swallow(is, '(');
-     CGAL_assertion_code(check = )
-     read_point(is, p);
-     CGAL_assertion(check);
+     check = read_point(is, p);
+     assert(check);
      CGAL::swallow(is, ')');
      std::string site_of_p_string;
      Base_geom_traits::Site_of_point site_of_p;
@@ -1630,12 +1623,12 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
        site_of_p = Base_geom_traits::MAX_ENDPOINT;
      }
      else {
-       CGAL_assertion(site_of_p_string == "POINT_IN_INTERIOR");
+       assert(site_of_p_string == "POINT_IN_INTERIOR");
        site_of_p = Base_geom_traits::POINT_IN_INTERIOR;
      }
      std::vector<Base_geom_traits::X_monotone_curve_2> xcvs;
      construct_segment_2(cv, p, site_of_p, std::back_inserter(xcvs));
-     CGAL_assertion(xcvs.size() == 1);
+     assert(xcvs.size() == 1);
      xcv = xcvs[0];
      break;
     }
@@ -1685,9 +1678,9 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   Point_2 p1, p2;
   read_point(is, p1);
   read_point(is, p2);
-  CGAL_assertion(p1 != p2);
+  assert(p1 != p2);
 
-  unsigned int flag;
+  unsigned int flag = static_cast<unsigned int>(-1);
   is >> flag;
   if (flag == 1) {
     X_monotone_curve_2::Direction_3 normal;
@@ -1707,7 +1700,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   Point_2 p1, p2;
   read_point(is, p1);
   read_point(is, p2);
-  CGAL_assertion(p1 != p2);
+  assert(p1 != p2);
   unsigned int flag;
   is >> flag;
   if (flag == 1) {

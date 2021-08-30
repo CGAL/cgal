@@ -50,7 +50,12 @@ class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P> {
     Norm  norm;
 public:
     My_vertex() {} // repeat mandatory constructors
-    My_vertex( const P& pt) : CGAL::HalfedgeDS_vertex_base<Refs, T, P>(pt) {}
+    My_vertex( const P& pt)
+      : CGAL::HalfedgeDS_vertex_base<Refs, T, P>(pt)
+    {
+      //initialization of the normal
+      norm= CGAL::NULL_VECTOR;
+    }
     typedef Norm Normal_3;
     Normal_3&       normal()       { return norm; }
     const Normal_3& normal() const { return norm; }
@@ -96,7 +101,7 @@ int main() {
     P.make_tetrahedron( p, q, r, s);
     std::for_each( P.facets_begin(),   P.facets_end(),   Facet_normal());
     std::for_each( P.vertices_begin(), P.vertices_end(), Vertex_normal());
-    CGAL::set_pretty_mode( std::cout);
+    CGAL::IO::set_pretty_mode( std::cout);
     for ( Vertex_iterator i = P.vertices_begin(); i != P.vertices_end(); ++i)
         std::cout << i->normal() << std::endl;
     return 0;

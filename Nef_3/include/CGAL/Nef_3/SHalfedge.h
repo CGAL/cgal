@@ -114,6 +114,22 @@ class SHalfedge_base  {
         return *this;
       }
 
+    SHalfedge_base<Refs>& operator=(SHalfedge_base<Refs>&& e) noexcept
+      {
+        source_ = std::move(e.source_);
+        sprev_ = std::move(e.sprev_);
+        snext_ = std::move(e.snext_);
+        incident_sface_ = std::move(e.incident_sface_);
+        twin_ = std::move(e.twin_);
+        prev_ = std::move(e.prev_);
+        next_ = std::move(e.next_);
+        facet_ = std::move(e.facet_);
+        info_ = 0;
+        mark_ = std::move(e.mark_);
+        circle_ = std::move(e.circle_);
+        return *this;
+      }
+
     Mark& mark() { return mark_; }
     const Mark& mark() const { return mark_; }
 
@@ -200,7 +216,7 @@ class SHalfedge_base  {
 
     std::string debug() const
       { std::stringstream os;
-        set_pretty_mode(os);
+        CGAL::IO::set_pretty_mode(os);
         os <<"e[ "<<source_->debug()<<", "
            <<twin_->source_->debug()
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO

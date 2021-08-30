@@ -23,7 +23,7 @@
 #    define CGAL_DLL_EXPORT __declspec(dllexport)
 #    define CGAL_DLL_LOCAL
 #  else
-    #if __GNUC__ >= 4
+    #ifdef __GNUC__
       #define CGAL_DLL_IMPORT __attribute__ ((visibility ("default")))
       #define CGAL_DLL_EXPORT __attribute__ ((visibility ("default")))
       #define CGAL_DLL_LOCAL  __attribute__ ((visibility ("hidden")))

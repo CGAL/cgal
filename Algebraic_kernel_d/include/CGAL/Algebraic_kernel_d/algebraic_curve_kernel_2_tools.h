@@ -95,7 +95,7 @@ set_union_with_source(InputIterator1 first_begin,
 }
 
 /*
- * \brief Removes the leading term of the polynomial \c f as long as it
+ * \brief removes the leading term of the polynomial \c f as long as it
  * vanishes at \c alpha
  *
  */
@@ -169,7 +169,7 @@ template<typename AlgebraicKernel_1> typename AlgebraicKernel_1::Bound
 
 
 /*!
- * \brief Produces intermediate rational values for a list of
+ * \brief produces intermediate rational values for a list of
  * algebraic reals.
  *
  * For a list of Algebraic real values with \c n elements, a list with

@@ -12,7 +12,7 @@
 #ifndef CGAL_MESH_3_CONFIG_H
 #define CGAL_MESH_3_CONFIG_H 1
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <CGAL/config.h>

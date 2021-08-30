@@ -51,8 +51,6 @@ namespace internal {
     { }
 
     reference operator[](const key_type item_index) const {
-
-      CGAL_precondition(item_index >= 0);
       CGAL_precondition(item_index < m_item_range.size());
 
       const auto& key = *(m_item_range.begin() + item_index);

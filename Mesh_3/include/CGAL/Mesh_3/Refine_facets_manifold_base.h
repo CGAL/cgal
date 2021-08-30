@@ -19,7 +19,6 @@
 
 #include <CGAL/Mesh_facet_topology.h>
 
-#include <CGAL/atomic.h>
 #include <CGAL/utility.h>
 #include <CGAL/Time_stamper.h>
 
@@ -31,6 +30,7 @@
 
 #include <set>
 #include <vector>
+#include <atomic>
 
 namespace CGAL {
 
@@ -308,7 +308,7 @@ public:
                               int mesh_topology,
                               std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                              , CGAL::cpp11::atomic<bool>* stop_ptr
+                              , std::atomic<bool>* stop_ptr
 #endif
                               )
     : Base(triangulation,
@@ -446,7 +446,7 @@ public:
 
 #ifndef CGAL_NO_ATOMIC
       if(this->m_stop_ptr != 0 &&
-         this->m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+         this->m_stop_ptr->load(std::memory_order_acquire) == true)
       {
         return true;
       }

@@ -1830,7 +1830,7 @@ public:
   typedef typename Base::Rat_vector               Rat_vector;
   typedef typename Base::Polynomial               Polynomial;
 
-  typedef std::pair<Point_2,Multiplicity>        Intersection_point_2;
+  typedef std::pair<Point_2,Multiplicity>        Intersection_point;
 
 
   /// \name Constrcution methods.
@@ -1967,138 +1967,118 @@ public:
     CGAL_precondition (this->is_valid() && this->is_continuous());
     CGAL_precondition (arc.is_valid() && arc.is_continuous());
 
-    if (this->_has_same_base (arc))
-    {
-      Alg_kernel       ker;
+    if (this->_has_same_base (arc)) {
+      Alg_kernel ker;
 
       // Get the left and right endpoints of (*this) and their information
       // bits.
-      const Point_2&   left1 = (this->is_directed_right() ?
-                                this->_ps : this->_pt);
-      const Point_2&   right1 = (this->is_directed_right() ?
-                                 this->_pt : this->_ps);
-      int              info_left1, info_right1;
+      const Point_2& left1 =
+        (this->is_directed_right() ? this->_ps : this->_pt);
+      const Point_2& right1 =
+        (this->is_directed_right() ? this->_pt : this->_ps);
+      int info_left1, info_right1;
 
-      if (this->is_directed_right())
-      {
+      if (this->is_directed_right()) {
         info_left1 = (this->_info & this->SRC_INFO_BITS);
         info_right1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
       }
-      else
-      {
+      else {
         info_right1 = (this->_info & this->SRC_INFO_BITS);
         info_left1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
       }
 
       // Get the left and right endpoints of the other arc and their
       // information bits.
-      const Point_2&   left2 = (arc.is_directed_right() ? arc._ps : arc._pt);
-      const Point_2&   right2 = (arc.is_directed_right() ? arc._pt : arc._ps);
-      int              info_left2, info_right2;
+      const Point_2& left2 = (arc.is_directed_right() ? arc._ps : arc._pt);
+      const Point_2& right2 = (arc.is_directed_right() ? arc._pt : arc._ps);
+      int info_left2, info_right2;
 
-      if (arc.is_directed_right())
-      {
+      if (arc.is_directed_right()) {
         info_left2 = (arc._info & this->SRC_INFO_BITS);
         info_right2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
       }
-      else
-      {
+      else {
         info_right2 = (arc._info & this->SRC_INFO_BITS);
         info_left2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
       }
 
       // Locate the left curve-end with larger x-coordinate.
-      bool             at_minus_infinity = false;
-      Arr_parameter_space    inf_l1 = this->left_infinite_in_x();
-      Arr_parameter_space    inf_l2 = arc.left_infinite_in_x();
-      Point_2          p_left;
-      int              info_left;
+      bool at_minus_infinity = false;
+      Arr_parameter_space inf_l1 = this->left_infinite_in_x();
+      Arr_parameter_space inf_l2 = arc.left_infinite_in_x();
+      Point_2 p_left;
+      int info_left;
 
-      if (inf_l1 == ARR_INTERIOR && inf_l2 == ARR_INTERIOR)
-      {
+      if (inf_l1 == ARR_INTERIOR && inf_l2 == ARR_INTERIOR) {
         // Let p_left be the rightmost of the two left endpoints.
-        if (ker.compare_x_2_object() (left1, left2) == LARGER)
-        {
+        if (ker.compare_x_2_object() (left1, left2) == LARGER) {
           p_left = left1;
           info_left = info_left1;
         }
-        else
-        {
+        else {
           p_left = left2;
           info_left = info_left2;
         }
       }
-      else if (inf_l1 == ARR_INTERIOR)
-      {
+      else if (inf_l1 == ARR_INTERIOR) {
         // Let p_left be the left endpoint of (*this).
         p_left = left1;
         info_left = info_left1;
       }
-      else if (inf_l2 == ARR_INTERIOR)
-      {
+      else if (inf_l2 == ARR_INTERIOR) {
         // Let p_left be the left endpoint of the other arc.
         p_left = left2;
         info_left = info_left2;
       }
-      else
-      {
+      else {
         // Both arcs are defined at x = -oo.
         at_minus_infinity = true;
         info_left = info_left1;
       }
 
       // Locate the right curve-end with smaller x-coordinate.
-      bool             at_plus_infinity = false;
-      Arr_parameter_space    inf_r1 = this->right_infinite_in_x();
-      Arr_parameter_space    inf_r2 = arc.right_infinite_in_x();
-      Point_2          p_right;
-      int              info_right;
+      bool at_plus_infinity = false;
+      Arr_parameter_space inf_r1 = this->right_infinite_in_x();
+      Arr_parameter_space inf_r2 = arc.right_infinite_in_x();
+      Point_2 p_right;
+      int info_right;
 
-      if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR)
-      {
+      if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR) {
         // Let p_right be the rightmost of the two right endpoints.
-        if (ker.compare_x_2_object() (right1, right2) == SMALLER)
-        {
+        if (ker.compare_x_2_object() (right1, right2) == SMALLER) {
           p_right = right1;
           info_right = info_right1;
         }
-        else
-        {
+        else {
           p_right = right2;
           info_right = info_right2;
         }
       }
-      else if (inf_r1 == ARR_INTERIOR)
-      {
+      else if (inf_r1 == ARR_INTERIOR) {
         // Let p_right be the right endpoint of (*this).
         p_right = right1;
         info_right = info_right1;
       }
-      else if (inf_r2 == ARR_INTERIOR)
-      {
+      else if (inf_r2 == ARR_INTERIOR) {
         // Let p_right be the right endpoint of the other arc.
         p_right = right2;
         info_right = info_right2;
       }
-      else
-      {
+      else {
         // Both arcs are defined at x = +oo.
         at_plus_infinity = true;
         info_right = info_right2;
       }
 
       // Check the case of two bounded (in x) ends.
-      if (! at_minus_infinity && ! at_plus_infinity)
-      {
+      if (! at_minus_infinity && ! at_plus_infinity) {
         Comparison_result res = ker.compare_x_2_object() (p_left, p_right);
 
-        if (res == LARGER)
-        {
+        if (res == LARGER) {
           // The x-range of the overlap is empty, so there is no overlap.
-          return (oi);
+          return oi;
         }
-        else if (res == EQUAL)
-        {
+        if (res == EQUAL) {
           // We have a single overlapping point. Just make sure this point
           // is not at y = -/+ oo.
           if (info_left &&
@@ -2106,20 +2086,19 @@ public:
               info_right &&
               (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
           {
-            Intersection_point_2  ip (p_left, 0);
+            Intersection_point  ip (p_left, 0);
 
-            *oi = make_object (ip);
-            ++oi;
+            *oi++ = make_object (ip);
           }
 
-          return (oi);
+          return oi;
         }
       }
 
       // Create the overlapping portion of the rational arc by properly setting
       // the source (left) and target (right) endpoints and their information
       // bits.
-      Self      overlap_arc (*this);
+      Self overlap_arc(*this);
 
       overlap_arc._ps = p_left;
       overlap_arc._pt = p_right;
@@ -2128,10 +2107,9 @@ public:
                            this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS |
                            this->IS_VALID);
 
-      *oi = make_object (overlap_arc);
-      ++oi;
+      *oi++ = make_object(overlap_arc);
 
-      return (oi);
+      return oi;
     }
 
     // We wish to find the intersection points between:
@@ -2140,39 +2118,34 @@ public:
     //
     // It is clear that the x-coordinates of the intersection points are
     // the roots of the polynomial: ip(x) = p1(x)*q2(x) - p2(x)*q1(x).
-    Nt_traits            nt_traits;
-    Polynomial           ipoly = this->_numer * arc._denom -
-      arc._numer * this->_denom;
-    std::list<Algebraic>                           xs;
+    Nt_traits nt_traits;
+    Polynomial ipoly = this->_numer * arc._denom - arc._numer* this->_denom;
+    std::list<Algebraic> xs;
     typename std::list<Algebraic>::const_iterator  x_iter;
 
-    nt_traits.compute_polynomial_roots (ipoly,
-                                        std::back_inserter(xs));
+    nt_traits.compute_polynomial_roots(ipoly, std::back_inserter(xs));
 
     // Go over the x-values we obtained. For each value produce an
     // intersection point if it is contained in the x-range of both curves.
-    unsigned int                     mult;
+    unsigned int mult;
 
-    for (x_iter = xs.begin(); x_iter != xs.end(); ++x_iter)
-    {
+    for (x_iter = xs.begin(); x_iter != xs.end(); ++x_iter)  {
       if (this->_is_in_true_x_range (*x_iter) &&
           arc._is_in_true_x_range (*x_iter))
       {
         // Compute the intersection point and obtain its multiplicity.
-        Point_2    p (*x_iter, nt_traits.evaluate_at (this->_numer, *x_iter) /
-                               nt_traits.evaluate_at (this->_denom, *x_iter));
+        Point_2 p(*x_iter, nt_traits.evaluate_at (this->_numer, *x_iter) /
+                  nt_traits.evaluate_at (this->_denom, *x_iter));
 
-        this->compare_slopes (arc, p, mult);
+        this->compare_slopes(arc, p, mult);
 
         // Output the intersection point:
-        Intersection_point_2  ip (p, mult);
-
-        *oi = make_object (ip);
-        ++oi;
+        Intersection_point ip(p, mult);
+        *oi++ = make_object(ip);
       }
     }
 
-    return (oi);
+    return oi;
   }
 
   /*!

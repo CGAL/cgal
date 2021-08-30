@@ -48,7 +48,7 @@ public:
   /// returns true iff the facet containing `dh` is perforated.
   bool is_perforated(Dart_const_handle dh) const;
 
-  /// Shortcut for is_perforated(get_dart_labeled(s)).
+  /// Shortcut for `is_perforated(get_dart_labeled(s))`.
   bool is_perforated(const std::string & s) const;
 
   /// perforates the facet containing `dh`. Returns the number of darts of the face; 0 if the facet was already perforated.
@@ -60,6 +60,6 @@ public:
   /// fills the facet containing `dh`. Returns the number of darts of the face; 0 if the facet was already filled.
   size_type fill_facet(Dart_handle dh);
 
-  /// Shortcut for fill_facet(get_dart_labeled(s)).
+  /// Shortcut for `fill_facet(get_dart_labeled(s))`.
   size_type fill_facet(const std::string & s);
 };
