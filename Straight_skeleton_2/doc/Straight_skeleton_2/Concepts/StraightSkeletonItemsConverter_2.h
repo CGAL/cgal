@@ -2,14 +2,14 @@
 \ingroup PkgStraightSkeleton2Concepts
 \cgalConcept
 
-The concept `StraightSkeletonItemsConverter_2` describes the requirements for items converter passed as the third template argument to the class `Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsConverter>`. It converts the `HDS` items from one type of straight skeleton to another
+The concept `StraightSkeletonItemsConverter_2` describes the requirements for items converter passed
+as the third template argument to the class `Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsConverter>`.
+It converts the `HDS` items from one type of straight skeleton to another.
 
-\cgalHasModel CGAL::Straight_skeleton_items_converter_2
+\cgalHasModel `CGAL::Straight_skeleton_items_converter_2`
 
 \sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>`
-
 */
-
 class StraightSkeletonItemsConverter_2 {
 public:
 
@@ -38,7 +38,7 @@ typedef unspecified_type Source_face_const_handle;
 A model of the `StraightSkeletonVertex_2` concept used to represent the vertices
 of the straight skeleton of the target type.
 */
-typedef unspecified_type Tarvet_vertex;
+typedef unspecified_type Target_vertex;
 
 /*!
 A model of the `StraightSkeletonHalfedge_2` concept used to represent the halfedges

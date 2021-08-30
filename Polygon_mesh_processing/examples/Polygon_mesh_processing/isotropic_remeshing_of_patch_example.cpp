@@ -3,17 +3,19 @@
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
+
 #include <fstream>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Surface_mesh<K::Point_3> Mesh;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 
-typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor     face_descriptor;
+typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor        halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::edge_descriptor            edge_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -33,11 +35,11 @@ struct halfedge2edge
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
-  std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
-    std::cerr << "Not a valid input file." << std::endl;
+  if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
@@ -73,9 +75,7 @@ int main(int argc, char* argv[])
                            .protect_constraints(true)//i.e. protect border, here
                            );
 
-  std::ofstream out("out.off");
-  out.precision(17);
-  out << mesh;
+  CGAL::IO::write_polygon_mesh("out.off", mesh, CGAL::parameters::stream_precision(17));
   std::cout << "Remeshing done." << std::endl;
 
   return 0;

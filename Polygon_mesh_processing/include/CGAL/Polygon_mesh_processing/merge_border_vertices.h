@@ -9,6 +9,7 @@
 //
 //
 // Author(s)     : Sebastien Loriot
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
 #define CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
@@ -261,27 +262,29 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
 /// merges identical vertices around a cycle of boundary edges.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
-/// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 ///
 /// @param h a halfedge that belongs to a boundary cycle.
 /// @param pm the polygon mesh which contains the boundary cycle.
-/// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-/// \cgalParamBegin{vertex_point_map}
-///   the property map with the points associated to the vertices of `pm`.
-///    If this parameter is omitted, an internal property map for
-///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
-/// \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
-template <class PolygonMesh, class NamedParameter>
+///
+template <class PolygonMesh, class NamedParameters>
 void merge_duplicated_vertices_in_boundary_cycle(
         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
         PolygonMesh& pm,
-        const NamedParameter& np)
+        const NamedParameters& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameter>::const_type Vpm;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -315,23 +318,24 @@ void merge_duplicated_vertices_in_boundary_cycle(
 /// extracts boundary cycles and merges the duplicated vertices of each cycle.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`.
-/// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
+/// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 ///
 /// @param pm the polygon mesh which contains the cycles.
-/// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+/// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-/// \cgalParamBegin{vertex_point_map}
-///   the property map with the points associated to the vertices of `pm`.
-///    If this parameter is omitted, an internal property map for
-///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
-/// \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa `merge_duplicated_vertices_in_boundary_cycle()`
-template <class PolygonMesh, class NamedParameter>
+template <class PolygonMesh, class NamedParameters>
 void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
-                                                  const NamedParameter& np)
+                                                  const NamedParameters& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 

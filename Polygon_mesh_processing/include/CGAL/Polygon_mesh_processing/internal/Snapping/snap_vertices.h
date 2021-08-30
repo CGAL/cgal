@@ -44,6 +44,7 @@
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/member.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/blocked_range.h>
@@ -783,8 +784,8 @@ namespace experimental {
 //                        and value type `GetGeomTraits<PolygonMesh, NamedParameters_A>::type::FT`
 // \tparam ToleranceMap_B a model of `ReadablePropertyMap` with key type `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 //                        and value type `GetGeomTraits<PolygonMesh, NamedParameters_A>::type::FT`
-// \tparam NamedParameters_A a sequence of \ref pmp_namedparameters "Named Parameters"
-// \tparam NamedParameters_B a sequence of \ref pmp_namedparameters "Named Parameters"
+// \tparam NamedParameters_A a sequence of \ref bgl_namedparameters "Named Parameters"
+// \tparam NamedParameters_B a sequence of \ref bgl_namedparameters "Named Parameters"
 //
 // \param halfedge_range_A a range of halfedges of the first mesh defining a set of vertices (as targets of the halfeges)
 // \param tm_A the first mesh to which the vertices in `halfedge_range_A` belong
@@ -792,8 +793,7 @@ namespace experimental {
 // \param halfedge_range_B a range of vertices of the second mesh defining a set of vertices (as targets of the halfeges)
 // \param tolerance_map_B a tolerance map associating to each vertex of the second range a tolerance value
 // \param tm_B the target mesh to which the vertices in `halfedge_range_B` belong
-// \param np_A optional \ref pmp_namedparameters "Named Parameters" related to the source mesh,
-//             amongst those described below:
+// \param np_A an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamBegin{vertex_point_map}
@@ -806,8 +806,7 @@ namespace experimental {
 //   \cgalParamEnd
 // \cgalNamedParamsEnd
 //
-// \param np_B optional \ref pmp_namedparameters "Named Parameters" related to the target mesh,
-//             amongst those described below:
+// \param np_B an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
 //   \cgalParamBegin{vertex_point_map}
@@ -935,6 +934,27 @@ std::size_t snap_border_vertices(PolygonMesh& tm)
 {
   return snap_border_vertices(tm, tm);
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/// Other convenience overloads
+///////////////////////////////////////////////////////////////////////////////////////////////////
+template <typename PolygonMesh, typename ToleranceMap>
+std::size_t snap_all_vertices(PolygonMesh& tm, ToleranceMap tolerance_map)
+{
+  typedef boost::graph_traits<PolygonMesh> GT;
+
+  auto get_halfedge = [&tm](typename GT::vertex_descriptor v)
+  {
+    return halfedge(v, tm);
+  };
+
+  auto hedges = make_range(
+                 boost::make_transform_iterator(vertices(tm).begin(), get_halfedge),
+                 boost::make_transform_iterator(vertices(tm).end(), get_halfedge) );
+
+  return snap_vertices(hedges, tm, tolerance_map, hedges, tm, tolerance_map);
+}
+
 
 } // namespace experimental
 } // namespace Polygon_mesh_processing

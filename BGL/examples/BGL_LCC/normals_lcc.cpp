@@ -1,10 +1,13 @@
-#include <fstream>
+#include <CGAL/Simple_cartesian.h>
 
-#include <boost/graph/graph_traits.hpp>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <boost/graph/graph_traits.hpp>
+
+#include <iostream>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3                Point;
@@ -67,14 +70,14 @@ int main(int argc, char** argv)
                  Face_index_map;
 
   LCC lcc;
-  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
+  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:"cube.off", lcc);
 
   // Ad hoc property_map to store normals. Face_index_map is used to
   // map face_descriptors to a contiguous range of indices. See
   // http://www.boost.org/libs/property_map/doc/vector_property_map.html
   // for details.
   boost::vector_property_map<Vector, Face_index_map>
-    normals(get(CGAL::face_index, lcc));
+    normals(static_cast<unsigned>(num_faces(lcc)), get(CGAL::face_index, lcc));
 
   calculate_face_normals(
     lcc // Graph

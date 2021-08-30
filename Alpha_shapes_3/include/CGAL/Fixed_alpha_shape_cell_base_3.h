@@ -20,7 +20,7 @@
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
-#include <CGAL/internal/Classification_type.h>
+#include <CGAL/Alpha_shapes_3/internal/Classification_type.h>
 
 namespace CGAL {
 

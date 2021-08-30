@@ -297,32 +297,32 @@ void io() {
         assert( p == q );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(3)));
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(3)));
         //std::cout <<os.str()<<std::endl;
         assert( os.str() == "3" );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(-3)));
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(-3)));
         assert( os.str() == "(-3)" );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(-3)),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(-3)),CGAL::Parens_as_product_tag());
         assert( os.str() == "(-3)" );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(-3),NT(4)));
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(-3),NT(4)));
         if( CGAL::Polynomial_traits_d<POLY>::d == 1)
             assert( os.str() == "4*x + (-3)" );
         else
             assert( os.str() == "4*y + (-3)" );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(-3),NT(4)), CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(-3),NT(4)), CGAL::Parens_as_product_tag());
 
         if( CGAL::Polynomial_traits_d<POLY>::d == 1)
             assert( os.str() == "(4*x + (-3))" );

@@ -1,11 +1,13 @@
 Algebraic_foundations
 BGL
+Cartesian_kernel
 Circulator
 Distance_2
 Distance_3
 GraphicsView
 HalfedgeDS
 Hash_map
+Homogeneous_kernel
 Installation
 Intersections_2
 Intersections_3
@@ -15,8 +17,8 @@ Modifier
 Modular_arithmetic
 Number_types
 Polyhedron
-Polyhedron_IO
 Profiling_tools
 Property_map
+Random_numbers
 STL_Extension
 Stream_support

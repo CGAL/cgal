@@ -10,7 +10,7 @@
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
-//TODO: somehow use the fact the the x-value is the same in all comparisons
+//TODO: somehow use the fact the x-value is the same in all comparisons
 
 #ifndef CGAL_ARR_VERTICAL_SEGMENT_TRAITS
 #define CGAL_ARR_VERTICAL_SEGMENT_TRAITS
@@ -660,23 +660,33 @@ public:
     return Equal_2(_traits);
   }
 
-  /*! A functor that divides a curve into continues (x-monotone) curves. */
+  //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2
   {
   private:
     Traits& _traits;
+
   public:
     Make_x_monotone_2(Traits& traits) : _traits(traits) {}
-  template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
+
+    /*! Subdivide a given curve into x-monotone subcurves and insert them into
+     * a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return The past-the-end iterator.
+     */
+    template <class OutputIterator>
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
       Object_vector res (boost::apply_visitor(Make_x_monotone_2_visitor(_traits),cv.variant()));
       re_cast_object_vector(res,oi);
       return (oi);
     }
+
   private:
-    class Make_x_monotone_2_visitor
-      : public boost::static_visitor < Object_vector >
+    class Make_x_monotone_2_visitor :
+      public boost::static_visitor < Object_vector >
     {
     private:
       typedef boost::static_visitor <Object_vector> Base;
@@ -1787,4 +1797,3 @@ public:
 #endif // CGAL_DONT_SUBMIT
 
 #endif  //CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H
-

@@ -295,20 +295,36 @@ public:
    * @brief initializes the seeds with both maximum number of proxies and minimum error drop stop criteria.
    * The first criterion met stops the seeding.
    * Parameters out of range are ignored.
-   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters
 
-   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    * @return number of proxies initialized
 
    * \cgalNamedParamsBegin{Seeding Named Parameters}
-   *  \cgalParamBegin{seeding_method} selection of seeding method.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{max_number_of_proxies} maximum number of proxies to approximate the input mesh.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{number_of_relaxations} number of relaxation iterations interleaved within seeding.
-   *  \cgalParamEnd
+   *   \cgalParamNBegin{seeding_method}
+   *     \cgalParamDescription{the selection of seeding method}
+   *     \cgalParamType{`CGAL::Surface_mesh_approximation::Seeding_method`}
+   *     \cgalParamDefault{`CGAL::Surface_mesh_approximation::HIERARCHICAL`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{max_number_of_proxies}
+   *     \cgalParamDescription{the maximum number of proxies used to approximate the input mesh}
+   *     \cgalParamType{`std::size_t`}
+   *     \cgalParamDefault{`num_faces(tm) / 3`, used when `min_error_drop` is also not provided}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{min_error_drop}
+   *     \cgalParamDescription{the minimum error drop of the approximation, expressed as
+   *                           the ratio between two iterations of proxy addition}
+   *     \cgalParamType{`geom_traits::FT`}
+   *     \cgalParamDefault{`0.1`, used when `max_number_of_proxies` is also not provided}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{number_of_relaxations}
+   *     \cgalParamDescription{the number of relaxation iterations interleaved within seeding}
+   *     \cgalParamType{`std::size_t`}
+   *     \cgalParamDefault{`5`}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename NamedParameters>
@@ -767,23 +783,42 @@ public:
   /// @{
   /*!
    * @brief extracts the output mesh in the form of an indexed triangle set.
-   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters
    *
-   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
    * @return `true` if the extracted surface mesh is manifold, and `false` otherwise.
    *
    * \cgalNamedParamsBegin{Meshing Named Parameters}
-   *   \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
-   *   \cgalParamEnd
-   *   \cgalParamBegin{relative_to_chord} set `true` if the subdivision_ratio is the ratio of the
-   *     furthest vertex distance to the chord length, or to the average edge length otherwise.
-   *   \cgalParamEnd
-   *   \cgalParamBegin{with_dihedral_angle}  set `true` if subdivision_ratio is weighted by dihedral angle.
-   *   \cgalParamEnd
-   *   \cgalParamBegin{optimize_anchor_location}  if set to `true`, optimize the anchor locations.
-   *   \cgalParamEnd
-   *   \cgalParamBegin{pca_plane}  set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
-   *   \cgalParamEnd
+   *   \cgalParamNBegin{subdivision_ratio}
+   *     \cgalParamDescription{the chord subdivision ratio threshold to the chord length or average edge length}
+   *     \cgalParamType{`geom_traits::FT`}
+   *     \cgalParamDefault{`5.0`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{relative_to_chord}
+   *     \cgalParamDescription{If `true`, the `subdivision_ratio` is the ratio of the furthest vertex distance
+   *                           to the chord length, otherwise is the average edge length}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`false`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{with_dihedral_angle}
+   *     \cgalParamDescription{If `true`, the `subdivision_ratio` is weighted by dihedral angle}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`false`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{optimize_anchor_location}
+   *     \cgalParamDescription{If `true`, optimize the anchor locations}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`true`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{pca_plane}
+   *     \cgalParamDescription{If `true`, use PCA plane fitting, otherwise use the default area averaged plane parameters}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`false`}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename NamedParameters>
@@ -831,22 +866,38 @@ public:
   /// @{
   /*!
    * @brief outputs approximation results.
-   * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+   * @tparam NamedParameters a sequence of \ref bgl_namedparameters
 
-   * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    * \cgalNamedParamsBegin{Output Named Parameters}
-   *  \cgalParamBegin{face_proxy_map} a `WritePropertyMap` with
-   * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
-   * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
-   * The proxy-ids are contiguous in range `[0, number_of_proxies() - 1]`.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{proxies} output iterator over proxies.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{anchors} output iterator over anchor points.
-   *  \cgalParamEnd
-   *  \cgalParamBegin{triangles} output iterator over indexed triangles.
-   *  \cgalParamEnd
+   *   \cgalParamNBegin{face_proxy_map}
+   *     \cgalParamDescription{a property map to output the proxy index of each face of the input polygon mesh}
+   *     \cgalParamType{a model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+   *                    as key and `std::size_t` as value type}
+   *     \cgalParamDefault{no output operation is performed}
+   *     \cgalParamExtra{A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations})}
+   *     \cgalParamExtra{The proxy-ids are contiguous in range `[0, number_of_proxies - 1]`}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{proxies}
+   *     \cgalParamDescription{an `OutputIterator` to put proxies in}
+   *     \cgalParamType{a class model of `OutputIterator` with
+   *                    `CGAL::Surface_mesh_approximation::L21_metric_vector_proxy_no_area_weighting::Proxy` value type}
+   *     \cgalParamDefault{no output operation is performed}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{anchors}
+   *     \cgalParamDescription{an `OutputIterator` to put anchor points in}
+   *     \cgalParamType{a class model of `OutputIterator` with `geom_traits::%Point_3` value type}
+   *     \cgalParamDefault{no output operation is performed}
+   *   \cgalParamNEnd
+   *
+   *   \cgalParamNBegin{triangles}
+   *     \cgalParamDescription{an `OutputIterator` to put indexed triangles in}
+   *     \cgalParamType{a class model of `OutputIterator` with `std::array<std::size_t, 3>` value type}
+   *     \cgalParamDefault{no output operation is performed}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
   template <typename NamedParameters>
@@ -1501,7 +1552,7 @@ private:
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
 #endif
 
-        for(const halfedge_descriptor he : chord)
+        for(const halfedge_descriptor& he : chord)
           he_candidates.erase(he);
       } while (he_start != he_mark);
     }
@@ -1549,7 +1600,7 @@ private:
         FT dist_max(0.0);
         chord_vec = scale_functor(chord_vec,
           FT(1.0) / CGAL::approximate_sqrt(chord_vec.squared_length()));
-        for(const halfedge_descriptor he : chord) {
+        for(const halfedge_descriptor& he : chord) {
           Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
           vec = cross_product_functor(chord_vec, vec);
           const FT dist = CGAL::approximate_sqrt(vec.squared_length());
@@ -1561,7 +1612,7 @@ private:
       }
       else {
         FT dist_max(0.0);
-        for(const halfedge_descriptor he : chord) {
+        for(const halfedge_descriptor& he : chord) {
           const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
             pt_begin, m_vpoint_map[target(he, *m_ptm)]));
           if (dist > dist_max) {
@@ -1579,7 +1630,7 @@ private:
 
   /*!
    * @brief runs the pseudo Constrained Delaunay Triangulation at each proxy region,
-   * and stores the extracted indexed triangles in @a tris.
+   * and stores the extracted indexed triangles in `tris`.
    * @pre all anchors are found, i.e. all boundary cycles have been visited
    * and attached with at least 3 anchors.
    */
@@ -1778,11 +1829,11 @@ private:
   }
 
   /*!
-   * @brief subdivides a chord recursively in range `[@a chord_begin, @a chord_end).`
+   * @brief subdivides a chord recursively in range `[chord_begin, chord_end)`.
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
-   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the the chord length (relative sense),
+   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle if set to `true` add dihedral angle weight to the distance.
    * @return the number of anchors of the chord apart from the first one

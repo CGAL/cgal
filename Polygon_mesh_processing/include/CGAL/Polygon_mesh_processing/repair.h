@@ -64,7 +64,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///
 /// removes connected components whose area or volume is under a certain threshold value.
 ///
-/// Thresholds are provided via \ref pmp_namedparameters "Named Parameters". (see below).
+/// Thresholds are provided via \ref bgl_namedparameters "Named Parameters". (see below).
 /// If thresholds are not provided by the user, default values are computed as follows:
 /// - the area threshold is taken as the square of one percent of the length of the diagonal
 ///   of the bounding box of the mesh.
@@ -78,25 +78,71 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// by passing zero (`0`) as threshold value.
 ///
 /// \tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param tmesh the triangulated polygon mesh
-/// \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{area_threshold} a fixed value such that only connected components whose area is
-///                                   larger than this value are kept \cgalParamEnd
-///   \cgalParamBegin{volume_threshold} a fixed value such that only connected components whose volume is
-///                                    larger than this value are kept (only applies to closed connected components) \cgalParamEnd
-///   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
-///   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tmesh` \cgalParamEnd
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
-///    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
-///    \cgalParamBegin{dry_run} a Boolean parameter. If set to `true`, the mesh will not be altered,
-///                             but the number of components that would be removed is returned. The default value is `false`.\cgalParamEnd
-///    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type `face_descriptor`.
-///                                     When using the "dry run" mode (see parameter `dry_run`), faces
-///                                     that would be removed by the algorithm can be collected with this output iterator. \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+///     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+///                     must be available in `TriangleMesh`.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///     \cgalParamExtra{Exact constructions kernels are not supported by this function.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{face_index_map}
+///     \cgalParamDescription{a property map associating to each face of `tmesh` a unique index between `0` and `num_faces(tmesh) - 1`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+///                    as key type and `std::size_t` as value type}
+///     \cgalParamDefault{an automatically indexed internal map}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{area_threshold}
+///     \cgalParamDescription{a fixed value such that only connected components whose area is larger than this value are kept}
+///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamDefault{1\% of the length of the diagonal of the axis-aligned bounding box of the mesh, squared}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{volume_threshold}
+///     \cgalParamDescription{a fixed value such that only connected components whose volume is
+///                           larger than this value are kept (only applies to closed connected components)}
+///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamDefault{1\% of the length of the diagonal of the axis-aligned bounding box of the mesh, cubed}
+///     \cgalParamExtra{The mesh must be closed.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{edge_is_constrained_map}
+///     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+///                    as key type and `bool` as value type. It must be default constructible.}
+///     \cgalParamDefault{a default property map where no edge is constrained}
+///     \cgalParamExtra{A constrained edge can be split or collapsed, but not flipped, nor its endpoints moved by smoothing.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{dry_run}
+///     \cgalParamDescription{If `true`, the mesh will not be altered, but the number of components
+///                           that would be removed is returned.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{output_iterator}
+///     \cgalParamDescription{An output iterator to collect the faces that would be removed by the algorithm,
+///                           when using the "dry run" mode (see parameter `dry_run`)}
+///     \cgalParamType{a model of `OutputIterator` with value type `face_descriptor`}
+///     \cgalParamDefault{unused}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \return the number of connected components removed (ignoring isolated vertices).
@@ -179,7 +225,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     return 0;
 
   // Compute the connected components only once
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(tmesh)), fim);
   std::size_t num = connected_components(tmesh, face_cc, np);
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
@@ -210,7 +256,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 
   // Volumes make no sense for CCs that are not closed
   std::vector<bool> cc_closeness(num, true);
-  std::vector<FT> component_volumes(num);
+  std::vector<FT> component_volumes(num, FT(0));
 
   if(use_volumes)
   {

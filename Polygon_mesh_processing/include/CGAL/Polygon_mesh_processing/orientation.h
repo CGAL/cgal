@@ -53,8 +53,8 @@ namespace internal{
     {}
 
     typedef bool result_type;
-    template <class vertex_descriptor>
-    bool operator()(vertex_descriptor v1, vertex_descriptor v2) const
+    template <class vertex_descriptor1, class vertex_descriptor2>
+    bool operator()(vertex_descriptor1 v1, vertex_descriptor2 v2) const
     {
       return CGAL::SMALLER == compare_z(get(vpmap, v1), get(vpmap, v2));
     }
@@ -153,17 +153,25 @@ namespace internal{
  *      isolated connected component.
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm the closed triangle mesh free from self-intersections to be tested
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`
- *      If this parameter is omitted, an internal property map for
- *      `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *    \cgalParamEnd
- *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \note This function is only doing an orientation test for one connected component of `tm`.
@@ -361,26 +369,40 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 * inward or outward oriented.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
-* @tparam NamedParameters a sequence of \ref pmp_namedparameters
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters
 *
 * @param tm a closed triangulated surface mesh
-* @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \pre `CGAL::is_closed(tm)`
 *
 * \cgalNamedParamsBegin
-*   \cgalParamBegin{vertex_point_map}
-*     the property map with the points associated to the vertices of `tm`.
-*     If this parameter is omitted, an internal property map for
-*     `CGAL::vertex_point_t` must be available in `TriangleMesh`
-*   \cgalParamEnd
-*   \cgalParamBegin{face_index_map}
-*     a property map containing the index of each face of `tm`.
-*   \cgalParamEnd
-*   \cgalParamBegin{outward_orientation}
-*     if set to `true` (default) indicates that each connected component will be outward oriented,
-*     (inward oriented if `false`).
-*   \cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{face_index_map}
+*     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+*                    as key type and `std::size_t` as value type}
+*     \cgalParamDefault{an automatically indexed internal map}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{outward_orientation}
+*     \cgalParamDescription{If `true`, each connected component will be outward oriented (and inward oriented if `false`).}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
 template<class TriangleMesh, class NamedParameters>
@@ -662,94 +684,129 @@ void set_cc_intersecting_pairs(
  *   of the unbounded volume (that has no outer boundary)
  *
  * A property map for `CGAL::vertex_point_t` must be either available as an internal property map
- * of `tm` or provided as one of the \ref pmp_namedparameters "Named Parameters".
+ * of `tm` or provided as one of the \ref bgl_namedparameters "Named Parameters".
  *
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam VolumeFaceIndexMap a model of `WritablePropertyMap` with
- *                      `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
- *                      `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *                      `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and
+ *                      `boost::graph_traits<TriangleMesh>::%faces_size_type` as value type.
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm the input triangle mesh
  * @param volume_id_map the property map filled by this function with indices of volume components associated to the faces of `tm`
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{face_index_map}
- *     a property map containing a unique id per face of `tm`, in the range `[0, num_faces(tm)[`
- *   \cgalParamEnd
- *   \cgalParamBegin{face_connected_component_map}
- *     a property map filled by this function and that will contain for each face the id
- *     of its surface component in the range `[0, number of surface components - 1[`
- *   \cgalParamEnd
- *   \cgalParamBegin{volume_inclusions}
- *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
- *     with a value type being a model of `BackInsertionSequence` of `std::size_t`,
- *     both types having the functions `reserve()` and `push_back()`.
- *     The size of the container is exactly the number of surface components of `tm`.
- *     The container at position `k` contains the ids of all the
- *     surface components that are the first intersected by any ray with source on
- *     the surface component `k` and directed outside the volume enclosed by the
- *     surface component `k`. There is only one such id but when some surface components intersect.
- *   \cgalParamEnd
- *   \cgalParamBegin{do_orientation_tests}
- *     if `true` (the default value), the orientation of the faces of
- *     each surface components will be taken into account for the definition of the volume.
- *     If `false`, the face orientation is ignored and the volumes are defined only by the
- *     nesting of surface components.
- *   \cgalParamEnd
- *   \cgalParamBegin{error_codes}
- *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
- *     with a `value_type` being \link PMP_orientation_grp `Volume_error_code` \endlink
- *     The size of the container is exactly the number of volume components.
- *     The container indicates the status of a volume assigned to a set of faces.
- *     The description of the value type is given in the documentation of the enumeration type.
- *   \cgalParamEnd
- *   \cgalParamBegin{do_self_intersection_tests}
- *     If `false` (the default value), it is assumed that `tm` does not contains any self-intersections.
- *     if `true`, the input might contain some self-intersections and a test is done
- *     prior to the volume decomposition.
- *   \cgalParamEnd
- *   \cgalParamBegin{connected_component_id_to_volume_id}
- *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
- *     with a value_type being `std::size_t`.
- *     The size of the container is exactly the number of connected components.
- *     For each connected component identified using its id `ccid`, the id of the volume it contributes
- *     to describe is the value at the position `ccid` in the container.
- *   \cgalParamEnd
- *   \cgalParamBegin{nesting_levels}
- *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
- *     with a `value_type` being `std::size_t`.
- *     The size of the container is exactly the number of connected components.
- *     For each connected component identified using its id `ccid`, the container contains the number of
- *     connected components containing on its bounded side this component.
- *   \cgalParamEnd
- *   \cgalParamBegin{is_cc_outward_oriented}
- *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
- *     with a `value_type` being `bool`.
- *     The size of the container is exactly the number of connected components.
- *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented()`
- *     called on the triangle mesh corresponding to this connected component
- *     is the value at the position `ccid` in the container.
- *   \cgalParamEnd
- *   \cgalParamBegin{intersecting_volume_pairs_output_iterator}
- *     Output iterator into which pairs of ids (id must be convertible to `std::size_t`) can be put.
- *     Each pair of connected components intersecting will be reported using their ids.
- *    If `do_self_intersection_tests` named parameter is set to `false`, nothing will be reported.
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_connected_component_map}
+ *     \cgalParamDescription{a property map filled by this function and that will contain for each face the id
+ *                           of its surface component in the range `[0, number of surface components - 1]`}
+ *     \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{volume_inclusions}
+ *     \cgalParamDescription{a container, which contains at position `k` the ids of all the
+ *                           surface components that are the first intersected by any ray with source on
+ *                           the surface component `k` and directed outside the volume enclosed by the
+ *                           surface component `k`. There is only one such id but when some surface components intersect.
+ *                           The size of the container is exactly the number of surface components of `tm`.}
+ *     \cgalParamType{a `reference_wrapper` (either from `boost` or the standard library) containing
+ *                    a reference to an object that must be a model of the `BackInsertionSequence` concept,
+ *                    with a value type being a model of `BackInsertionSequence` of `std::size_t`,
+ *                    both types having the functions `reserve()` and `push_back()`}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{do_orientation_tests}
+ *     \cgalParamDescription{If `true`, the orientation of the faces of each surface components
+ *                           will be taken into account for the definition of the volume.
+ *                           If `false`, the face orientation is ignored and the volumes are defined
+ *                           only by the nesting of surface components.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{error_codes}
+ *     \cgalParamDescription{a container which indicates the status of a volume assigned to a set of faces.
+ *                           The description of the value type is given in the documentation of the enumeration type.
+ *                           The size of the container is exactly the number of volume components.}
+ *     \cgalParamType{a `reference_wrapper` (either from `boost` or the standard library) containing
+ *                    a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *                    with value type \link PMP_orientation_grp `Volume_error_code` \endlink}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{do_self_intersection_tests}
+ *     \cgalParamDescription{If `false`, it is assumed that `tm` does not contains any self-intersections.
+ *                           If `true`, the input might contain some self-intersections and a test is done prior to the volume decomposition.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{connected_component_id_to_volume_id}
+ *     \cgalParamDescription{For each connected component identified using its id `ccid`, the id
+ *                           of the volume it contributes to describe is the value at the position
+ *                           `ccid` in the container. The size of the container is exactly the number
+ *                           of connected components.}
+ *     \cgalParamType{a `reference_wrapper` (either from `boost` or the standard library) containing
+ *                    a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *                    with value type `std::size_t`}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
+ *
+ *
+ *   \cgalParamNBegin{nesting_levels}
+ *     \cgalParamDescription{For each connected component identified using its id `ccid`, the container contains the number of
+ *                           connected components containing on its bounded side this component.
+ *                           The size of the container is exactly the number of connected components.}
+ *     \cgalParamType{a `reference_wrapper` (either from `boost` or the standard library) containing
+ *                    a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *                    with value type `std::size_t`}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{is_cc_outward_oriented}
+ *     \cgalParamDescription{For each connected component identified using its id `ccid`, the output of `is_outward_oriented()`
+ *                           called on the triangle mesh corresponding to this connected component
+ *                           is the value at the position `ccid` in the container.
+ *                           The size of the container is exactly the number of connected components.}
+ *     \cgalParamType{a `reference_wrapper` (either from `boost` or the standard library) containing
+ *                    a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *                    with value type `bool`}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{intersecting_volume_pairs_output_iterator}
+ *     \cgalParamDescription{Output iterator into which pairs of ids (id must be convertible to `std::size_t`) can be put.
+ *                           Each pair of connected components intersecting will be reported using their ids.
+ *                           If `do_self_intersection_tests` named parameter is set to `false`, nothing will be reported.}
+ *     \cgalParamType{a model of `OutputIterator`}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \return the number of volume components defined by `tm`
@@ -1179,30 +1236,38 @@ volume_connected_components(const TriangleMesh& tm,
  * See \ref coref_def_subsec for details.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param tm a closed triangulated surface mesh
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{face_index_map}
- *     a property map containing the index of each face of `tm`.
- *   \cgalParamEnd
- *   \cgalParamBegin{is_cc_outward_oriented}
- *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object of type `std::vector<bool>`.
- *     The size of the vector is exactly the number of connected components.
- *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
- *     called on the submesh corresponding to this connected component
- *     is the value at the position `ccid` in the parameter vector.
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{is_cc_outward_oriented}
+ *     \cgalParamDescription{For each connected component identified using its id `ccid`, the output of `is_outward_oriented()`
+ *                           called on the triangle mesh corresponding to this connected component
+ *                           is the value at the position `ccid` in the container.
+ *                           The size of the container is exactly the number of connected components.}
+ *     \cgalParamType{a `reference_wrapper` (either from `boost` or the standard library) containing
+ *                    a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *                    with value type `bool`}
+ *     \cgalParamDefault{unused}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \see `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
@@ -1216,7 +1281,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   CGAL_precondition(is_closed(tm));
   CGAL_precondition(is_triangle_mesh(tm));
 
-  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
+  Constant_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
   std::size_t res =
     volume_connected_components(tm, vidmap, np.do_orientation_tests(true)
                                               .i_used_as_a_predicate(true));
@@ -1246,27 +1311,35 @@ std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexM
  * See \ref coref_def_subsec for a precise definition.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param tm a closed triangulated surface mesh
- * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * @pre `CGAL::is_closed(tm)`
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{face_index_map}
- *     a property map containing the index of each face of `tm`.
- *   \cgalParamEnd
- *   \cgalParamBegin{outward_orientation}
- *     if set to `true` (default) the outer connected components will be outward oriented (inward oriented if set to `false`).
- *     If the outer connected components are inward oriented, it means that the infinity will be considered
- *     as part of the volume bounded by `tm`.
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{outward_orientation}
+ *     \cgalParamDescription{If `true`, each connected component will be outward oriented (and inward oriented if `false`).}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *     \cgalParamExtra{If the outer connected components are inward oriented,
+ *                     it means that the infinity will be considered as part of the volume bounded by `tm`.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \see `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
@@ -1297,7 +1370,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
   std::vector<std::size_t> nesting_levels;
   std::vector<bool> is_cc_outward_oriented;
-  Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
+  Constant_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
 
   volume_connected_components(tm, vidmap,
                               parameters::vertex_point_map(vpm)
@@ -1348,24 +1421,36 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  * Connected components are examined by increasing number of faces.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param pm a surface mesh
- * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `pm`.
- *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
- *   \cgalParamEnd
- *   \cgalParamBegin{face_index_map}
- *     a property map containing an index for each face initialized from 0 to num_faces(pm).
- *   \cgalParamEnd
- *   \cgalParamBegin{maximum_number_of_faces}
- *     if not 0 (default), a connected component is considered reversible only
- *     if it has no more faces than the value given. Otherwise, it is always considered reversible.
- *   \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `pm`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `pm` a unique index
+ *                           between `0` and `num_faces(pm) - 1`)}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{maximum_number_of_faces}
+ *     \cgalParamDescription{If not `0`, a connected component is considered reversible only
+ *                           if it has no more faces than the value given.
+ *                           Otherwise, it is always considered reversible.}
+ *     \cgalParamType{`std::size_t`}
+ *     \cgalParamDefault{`0`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template <class PolygonMesh, class NamedParameters>

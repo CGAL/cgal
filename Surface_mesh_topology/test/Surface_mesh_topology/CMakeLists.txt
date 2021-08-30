@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Surface_mesh_topology_Tests)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -10,13 +10,9 @@ if(POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 if(CGAL_Qt5_FOUND)
-    add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
-
-if ( NOT CGAL_FOUND )
-  message(FATAL_ERROR "This program requires the CGAL library, and will not be compiled.")
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 endif()
 
 # add_definitions(-DCGAL_TRACE_PATH_TESTS)
@@ -34,6 +30,11 @@ set(SOURCE_FILES
   path_tests.cpp
   path_with_rle_deformation_tests.cpp
   shortest_noncontractible_cycle_tests.cpp
+  simplicity_cylinder.cpp
+  simplicity_double_torus.cpp
+  simplicity_double_torus_with_holes.cpp
+  simplicity_fundamental_polygon.cpp
+  simplicity_torus.cpp
   test_homotopy.cpp
   test_homotopy_with_polygonal_schema.cpp
   test_shortest_cycle_non_contractible.cpp

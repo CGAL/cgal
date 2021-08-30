@@ -1,13 +1,16 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+
 #include <vector>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef K::Point_3                                Point_3;
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[])
+{
   std::ifstream in( (argc>1)? argv[1] : "data/cloud.pol");
   boost::property_tree::ptree tree;
   boost::property_tree::read_xml(in, tree);

@@ -14,7 +14,6 @@
 #ifndef QGLVIEWER_CAMERA_H
 #define QGLVIEWER_CAMERA_H
 #include <QMap>
-#include <QDomElement>
 #include <CGAL/Qt/vec.h>
 #include <CGAL/Qt/quaternion.h>
 #include <CGAL/export/Qt.h>
@@ -433,15 +432,6 @@ public:
   qreal flySpeed() const;
 public Q_SLOTS:
   void setFlySpeed(qreal speed);
-  //@}
-
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
   //@}
 
 private Q_SLOTS:

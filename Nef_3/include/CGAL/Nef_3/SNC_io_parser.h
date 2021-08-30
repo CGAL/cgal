@@ -56,7 +56,8 @@ namespace Nef_3_internal{
 
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_Exact_kernel,Exact_kernel,false)
 
-template <class R,bool has_exact_kernel=Has_nested_Exact_kernel<R>::value, class FT = typename R::RT, class Kernel_tag=typename R::Kernel_tag>
+template <class R,bool has_exact_kernel=Has_nested_Exact_kernel<R>::value &&
+                                        !std::is_floating_point<typename R::RT>::value, class FT = typename R::RT, class Kernel_tag=typename R::Kernel_tag>
 struct Type_converter{
   typedef const CGAL::Point_3<R>& Point_3;
   typedef const CGAL::Vector_3<R>& Vector_3;
@@ -119,22 +120,20 @@ typename Type_converter<R>::Vector_3 get_vector(const CGAL::Vector_3<R>& v){ ret
 template<typename T>
 class moreLeft : public T {
 
-  typedef typename T::SM_decorator      SM_decorator;
   typedef typename T::SHalfedge_handle  SHalfedge_handle;
   typedef typename T::Vector_3          Vector_3;
   typedef typename T::FT                FT;
   typedef typename T::RT                RT;
 
  public:
-  moreLeft(T D) : T(D) {}
+  moreLeft(const T& D) : T(D) {}
 
-  int operator()(SHalfedge_handle se1, SHalfedge_handle se2) {
+  int operator()(SHalfedge_handle se1, SHalfedge_handle se2) const {
 
     CGAL_assertion(se1 != SHalfedge_handle());
     if(se2 == SHalfedge_handle())
       return -1;
 
-    SM_decorator SM(&*se1->source()->source());
     Vector_3 vec1 = se1->circle().orthogonal_vector();
     Vector_3 vec2 = se2->circle().orthogonal_vector();
 
@@ -180,15 +179,15 @@ class moreLeft : public T {
 };
 
 template <typename T>
-class sort_vertices : public SNC_decorator<T> {
+class sort_vertices : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>          Base;
+  typedef CGAL::SNC_const_decorator<T>    Base;
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Point_3       Point_3;
 
  public:
-  sort_vertices(T& D) : Base(D) {}
+  sort_vertices(const T& D) : Base(D) {}
 
   bool operator() (Vertex_handle v1, Vertex_handle v2) const {
     return lexicographically_xyz_smaller(v1->point(), v2->point());
@@ -196,14 +195,14 @@ class sort_vertices : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_edges : public SNC_decorator<T> {
+class sort_edges : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>            Base;
+  typedef CGAL::SNC_const_decorator<T>      Base;
   typedef typename T::Halfedge_handle Halfedge_handle;
 
  public:
-  sort_edges(T& D) : Base(D) {}
+  sort_edges(const T& D) : Base(D) {}
 
   bool operator() (Halfedge_handle e1, Halfedge_handle e2) const {
     sort_vertices<T> SORT(*this->sncp());
@@ -214,17 +213,17 @@ class sort_edges : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_facets : public SNC_decorator<T> {
+class sort_facets : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef SNC_decorator<T>             Base;
+  typedef SNC_const_decorator<T>       Base;
   typedef typename T::Halffacet_handle Halffacet_handle;
   typedef typename T::SHalfedge_handle SHalfedge_handle;
   typedef typename T::Vector_3         Vector_3;
   typedef typename T::Plane_3          Plane_3;
 
  public:
-  sort_facets(T& D) : Base(D) {}
+  sort_facets(const T& D) : Base(D) {}
 
   bool operator() (Halffacet_handle f1, Halffacet_handle f2) const {
 
@@ -258,17 +257,17 @@ class sort_facets : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_sedges : public SNC_decorator<T> {
+class sort_sedges : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>             Base;
+  typedef CGAL::SNC_const_decorator<T>       Base;
   typedef CGAL::SM_decorator<T>          SM_decorator;
   typedef typename T::Vertex_handle    Vertex_handle;
   typedef typename T::SHalfedge_handle SHalfedge_handle;
   typedef typename T::Sphere_circle    Sphere_circle;
 
  public:
-  sort_sedges(T& D) : Base(D) {}
+  sort_sedges(const T& D) : Base(D) {}
 
   bool operator() (SHalfedge_handle se1, SHalfedge_handle se2) const {
     CGAL_NEF_TRACEN("sort sedges");
@@ -321,14 +320,14 @@ class sort_sedges : public SNC_decorator<T> {
 
 
 template <typename T>
-class sort_sloops : public SNC_decorator<T> {
+class sort_sloops : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>             Base;
+  typedef CGAL::SNC_const_decorator<T>       Base;
   typedef typename T::SHalfloop_handle SHalfloop_handle;
 
  public:
-  sort_sloops(T& D) : Base(D) {}
+  sort_sloops(const T& D) : Base(D) {}
 
   bool operator() (SHalfloop_handle sl1, SHalfloop_handle sl2) const {
     if(sl1 == sl2) return false;
@@ -341,10 +340,10 @@ class sort_sloops : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_sface_cycle_entries : public SNC_decorator<T> {
+class sort_sface_cycle_entries : public SNC_const_decorator<T> {
 
   typedef T                             SNC_structure;
-  typedef CGAL::SNC_decorator<T>        Base;
+  typedef CGAL::SNC_const_decorator<T>  Base;
   typedef typename T::SM_decorator      SM_decorator;
   typedef typename T::Object_handle     Object_handle;
   typedef typename T::SVertex_handle    SVertex_handle;
@@ -355,7 +354,7 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
   typedef typename T::Vector_3          Vector_3;
 
  public:
-  sort_sface_cycle_entries(T D) : Base(D) {}
+  sort_sface_cycle_entries(const T& D) : Base(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
     CGAL_NEF_TRACEN("sort sface cycles ");
@@ -413,10 +412,10 @@ class sort_sface_cycle_entries : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_sfaces : public SNC_decorator<T> {
+class sort_sfaces : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>            Base;
+  typedef CGAL::SNC_const_decorator<T>      Base;
   typedef typename T::SM_decorator          SM_decorator;
   typedef typename T::Point_3               Point_3;
   typedef typename T::Vector_3              Vector_3;
@@ -429,7 +428,7 @@ class sort_sfaces : public SNC_decorator<T> {
                       SHalfedge_around_sface_circulator;
 
  public:
-  sort_sfaces(T& D) : Base(D) {}
+  sort_sfaces(const T& D) : Base(D) {}
 
   bool operator() (SFace_handle sf1, SFace_handle sf2) const {
     CGAL_NEF_TRACEN("sort sfaces");
@@ -441,11 +440,11 @@ class sort_sfaces : public SNC_decorator<T> {
     if(sf1->center_vertex() != sf2->center_vertex())
       return SORT(sf1->center_vertex(), sf2->center_vertex());
 
-    //    sort_sface_cycle_entries<Base> sort_cycles((Base) *this);
+    //    sort_sface_cycle_entries<Base> sort_cycles(*this);
     //    return sort_cycles(*sf1->sface_cycles_begin(), *sf2->sface_cycles_begin());
 
     SM_decorator SD(&*sf1->center_vertex());
-    moreLeft<Base> ml((Base) *this);
+    moreLeft<Base> ml(*this);
     Vector_3 plus(1,0,0);
 
     SFace_cycle_iterator fc;
@@ -529,15 +528,15 @@ class sort_sfaces : public SNC_decorator<T> {
 };
 
 template <typename T>
-class sort_volumes : public SNC_decorator<T> {
+class sort_volumes : public SNC_const_decorator<T> {
 
   typedef T SNC_structure;
-  typedef CGAL::SNC_decorator<T>    Base;
+  typedef CGAL::SNC_const_decorator<T> Base;
   typedef typename T::Volume_handle Volume_handle;
   typedef typename T::SFace_handle  SFace_handle;
 
  public:
-  sort_volumes(T& D) : Base(D) {}
+  sort_volumes(const T& D) : Base(D) {}
 
   bool operator() (Volume_handle c1, Volume_handle c2) const {
     CGAL_NEF_TRACEN("sort volumes");
@@ -562,7 +561,7 @@ class sort_facet_cycle_entries : public T {
   typedef typename T::Vector_3          Vector_3;
 
  public:
-  sort_facet_cycle_entries(T D) : T(D) {}
+  sort_facet_cycle_entries(const T& D) : T(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
 
@@ -610,7 +609,7 @@ class sort_shell_entries : public T {
   typedef typename T::Point_3       Point_3;
 
  public:
-  sort_shell_entries(T D) : T(D) {}
+  sort_shell_entries(const T& D) : T(D) {}
 
   bool operator() (Object_handle o1, Object_handle o2) const {
     SFace_handle sf1, sf2;
@@ -626,10 +625,10 @@ class sort_shell_entries : public T {
 };
 
 template<typename T>
-struct find_minimal_sface_of_shell : public SNC_decorator<T> {
+struct find_minimal_sface_of_shell : public SNC_const_decorator<T> {
 
   typedef T                               SNC_structure;
-  typedef CGAL::SNC_decorator<T>          Base;
+  typedef CGAL::SNC_const_decorator<T>    Base;
   typedef typename T::Vertex_handle       Vertex_handle;
   typedef typename T::Halfedge_handle     Halfedge_handle;
   typedef typename T::Halffacet_handle    Halffacet_handle;
@@ -642,7 +641,7 @@ struct find_minimal_sface_of_shell : public SNC_decorator<T> {
   SFace_handle sf_min;
   sort_sfaces<T> SORT;
 
-  find_minimal_sface_of_shell(T& D, SFace_visited_hash& Vi)
+  find_minimal_sface_of_shell(const T& D, SFace_visited_hash& Vi)
     : Base(D), Done(Vi), SORT(D) {}
 
   void visit(SFace_handle h) {
@@ -670,8 +669,9 @@ template<typename Tag, typename Kernel> class Geometry_io;
 template<typename Kernel>
 class Geometry_io<Cartesian_tag, Kernel> {
  public:
-  template <typename EK, typename K> static
-  typename EK::Point_3 read_point(std::istream& in) {
+
+  template <typename EK, typename K, typename Compose_> static
+  typename EK::Point_3 read_point_impl(std::istream& in, Compose_) {
     typedef Fraction_traits<typename K::FT> FracTraits;
     typename FracTraits::Type hx, hy, hz, hw;
     typename FracTraits::Numerator_type num;
@@ -688,8 +688,8 @@ class Geometry_io<Cartesian_tag, Kernel> {
     return typename EK::Point_3(hx,hy,hz,hw);
   }
 
-  template <typename EK, typename K> static
-  typename EK::Plane_3 read_plane(std::istream& in) {
+  template <typename EK, typename K, typename Compose_> static
+  typename EK::Plane_3 read_plane_impl(std::istream& in, Compose_) {
     typedef Fraction_traits<typename K::FT> FracTraits;
     typename FracTraits::Type a, b, c, d;
     typename FracTraits::Numerator_type num;
@@ -706,8 +706,32 @@ class Geometry_io<Cartesian_tag, Kernel> {
     return typename EK::Plane_3(a,b,c,d);
   }
 
-  template <typename R> static
-    void print_point_impl(std::ostream& out, const CGAL::Point_3<R> p) {
+  template <typename EK, typename K> static
+  typename EK::Point_3 read_point_impl(std::istream& in, Null_functor) {
+    typename K::FT hx, hy, hz, hw;
+    in >> hx >> hy >> hz >> hw;
+    return typename EK::Point_3(hx,hy,hz,hw);
+  }
+
+  template <typename EK, typename K> static
+  typename EK::Plane_3 read_plane_impl(std::istream& in, Null_functor) {
+    typename K::FT a, b, c, d;
+    in >> a >> b >> c >> d;
+    return typename EK::Plane_3(a,b,c,d);
+  }
+
+  template <typename EK, typename K> static
+  typename EK::Point_3 read_point(std::istream& in) {
+    return read_point_impl<EK,K>(in, typename Fraction_traits<typename K::FT>::Compose());
+  }
+
+  template <typename EK, typename K> static
+  typename EK::Plane_3 read_plane(std::istream& in) {
+    return read_plane_impl<EK,K>(in, typename Fraction_traits<typename K::FT>::Compose());
+  }
+
+  template <typename R, typename Decompose_> static
+  void print_point_impl(std::ostream& out, const CGAL::Point_3<R> p, Decompose_) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
 
@@ -737,8 +761,8 @@ class Geometry_io<Cartesian_tag, Kernel> {
         << vec[2] << " " << vec[3];
   }
 
-  template <typename R> static
-    void print_vector_impl(std::ostream& out, const CGAL::Vector_3<R> p) {
+  template <typename R, typename Decompose_> static
+  void print_vector_impl(std::ostream& out, const CGAL::Vector_3<R> p, Decompose_) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef typename FracTraits::Numerator_type NumType;
     typedef std::vector<NumType> NV;
@@ -766,8 +790,8 @@ class Geometry_io<Cartesian_tag, Kernel> {
         << vec[2] << " " << NumType(1);
   }
 
-  template <typename R> static
-  void print_plane_impl(std::ostream& out, const CGAL::Plane_3<R> p) {
+  template <typename R, typename Decompose_> static
+  void print_plane_impl(std::ostream& out, const CGAL::Plane_3<R> p, Decompose_) {
     typedef Fraction_traits<typename R::FT> FracTraits;
     typedef std::vector<typename FracTraits::Numerator_type> NV;
 
@@ -803,19 +827,37 @@ class Geometry_io<Cartesian_tag, Kernel> {
         << vec[2] << " " << vec[3];
   }
 
+  template <typename R> static
+  void print_point_impl(std::ostream& out, const CGAL::Point_3<R> p, Null_functor)
+  {
+    out << p.x() << " " << p.y() << " " << p.z() << " " << 1;
+  }
+
+  template <typename R> static
+  void print_vector_impl(std::ostream& out, const CGAL::Vector_3<R> v, Null_functor)
+  {
+    out << v.x() << " " << v.y() << " " << v.z() << " " << 1;
+  }
+
+  template <typename R> static
+  void print_plane_impl(std::ostream& out, const CGAL::Plane_3<R> p, Null_functor)
+  {
+    out << p.a() << " " << p.b() << " " << p.c() << " " << p.d();
+  }
+
   template <class R> static
   void print_point(std::ostream& out, const CGAL::Point_3<R>& p) {
-    print_point_impl(out, Nef_3_internal::get_point(p) );
+    print_point_impl(out, Nef_3_internal::get_point(p), typename Fraction_traits<typename R::FT>::Decompose() );
   }
 
   template <class R> static
   void print_vector(std::ostream& out, const CGAL::Vector_3<R>& v) {
-    print_vector_impl(out, Nef_3_internal::get_vector(v) );
+    print_vector_impl(out, Nef_3_internal::get_vector(v), typename Fraction_traits<typename R::FT>::Decompose() );
   }
 
   template <class R> static
   void print_plane(std::ostream& out, const CGAL::Plane_3<R>& p) {
-    print_plane_impl(out, Nef_3_internal::get_plane(p) );
+    print_plane_impl(out, Nef_3_internal::get_plane(p), typename Fraction_traits<typename R::FT>::Decompose() );
   }
 
 };
@@ -1032,7 +1074,7 @@ public:
   { Self O(os,W, sort); O.print(); }
 
   template <typename Iter, typename Index>
-    void output_sorted_indexes(Iter begin, Iter end, Index i) const {
+    void output_sorted_indexes(Iter begin, Iter end, const Index& i) const {
     int low = i[begin];
     int high = low;
     for(Iter it=begin; it != end; it++) {
@@ -1070,8 +1112,8 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
   sln(W.number_of_shalfloops()),
   sfn(W.number_of_sfaces())
 {
-  verbose = (get_mode(out) != CGAL::IO::ASCII &&
-             get_mode(out) != CGAL::IO::BINARY);
+  verbose = (IO::get_mode(out) != CGAL::IO::ASCII &&
+             IO::get_mode(out) != CGAL::IO::BINARY);
   sorted = sort;
   reduce = reduce_;
   reduce = reduce && this->is_extended_kernel() && this->is_bounded();
@@ -1149,7 +1191,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
         }
       }
       fi->plane() = normalized(fi->plane());
-      fi->boundary_entry_objects().sort(sort_facet_cycle_entries<Base>((Base) *this));
+      fi->boundary_entry_objects().sort(sort_facet_cycle_entries<Base>(*this));
     }
     FL.push_back(fi);
   }
@@ -1218,7 +1260,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
           *fc = make_object(se);
         }
       }
-      sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>((Base) *this));
+      sfi->boundary_entry_objects().sort(sort_sface_cycle_entries<Base>(*this));
     }
     SFL.push_back(sfi);
   }
@@ -1243,7 +1285,7 @@ SNC_io_parser<EW>::SNC_io_parser(std::ostream& os, SNC_structure& W,
         visit_shell_objects(SFace_handle(it),findMinSF);
         *it = make_object(findMinSF.minimal_sface());
       }
-      ci->shell_entry_objects().sort(sort_shell_entries<Base>((Base)*this));
+      ci->shell_entry_objects().sort(sort_shell_entries<Base>(*this));
     }
     CL.push_back(ci);
   }
@@ -1356,24 +1398,47 @@ template <typename EW>
 void SNC_io_parser<EW>::read()
 {
   if ( !check_sep("Selective Nef Complex") )
-    CGAL_error_msg("SNC_io_parser::read: no SNC header.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: no SNC header.");
+    return;
+  }
   std::string kernel_type;
   in >> kernel_type;
   CGAL_assertion(kernel_type == "standard" || kernel_type == "extended");
   if ( !(check_sep("vertices") && (in >> vn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong vertex line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong vertex line.");
+    return;
+  }
   if ( !(check_sep("halfedges") && (in >> en) && (en%2==0)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong edge line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong edge line.");
+    return;
+  }
   if ( !(check_sep("facets") && (in >> fn) && (fn%2==0)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong facet line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong facet line.");
+  }
   if ( !(check_sep("volumes") && (in >> cn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong volume line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong volume line.");
+    return;
+  }
   if ( !(check_sep("shalfedges") && (in >> sen)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sedge line.");
+  {
+   CGAL_warning_msg(false, "SNC_io_parser::read: wrong sedge line.");
+   return;
+  }
   if ( !(check_sep("shalfloops") && (in >> sln)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sloop line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong sloop line.");
+    return;
+  }
   if ( !(check_sep("sfaces") && (in >> sfn)) )
-    CGAL_error_msg("SNC_io_parser::read: wrong sface line.");
+  {
+    CGAL_warning_msg(false, "SNC_io_parser::read: wrong sface line.");
+    return;
+  }
 
   addInfiBox = (kernel_type == "standard" && Infi_box::extended_kernel());
 
@@ -1400,40 +1465,61 @@ void SNC_io_parser<EW>::read_items(int plus01) {
   typename std::vector<Vertex_iterator>::iterator vi;
   for(vi=Vertex_of.begin(); vi!=Vertex_of.end(); ++vi) {
     if (!read_vertex<K>(*vi))
-      CGAL_error_msg("SNC_io_parser::read: error in node line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in node line");
+      return;
+    }
   }
 
   typename std::vector<Halfedge_iterator>::iterator ei;
   for(ei=Edge_of.begin(); ei!=Edge_of.end(); ++ei) {
     if (!read_edge<K>(*ei))
-      CGAL_error_msg("SNC_io_parser::read: error in edge line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in edge line");
+      return;
+    }
   }
 
   typedef typename std::vector<Halffacet_iterator>::iterator vhf_iterator;
   vhf_iterator fi;
   for(fi=Halffacet_of.begin(); fi!=Halffacet_of.end(); ++fi) {
     if (!read_facet<K>(*fi))
-      CGAL_error_msg("SNC_io_parser::read: error in facet line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in facet line");
+      return;
+    }
   }
   typename std::vector<Volume_iterator>::iterator ci;
   for(ci=Volume_of.begin()+plus01; ci!=Volume_of.end(); ++ci) {
     if (!read_volume(*ci))
-      CGAL_error_msg("SNC_io_parser::read: error in volume line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in volume line");
+      return;
+    }
   }
   typename std::vector<SHalfedge_iterator>::iterator sei;
   for(sei=SEdge_of.begin(); sei!=SEdge_of.end(); ++sei) {
     if (!read_sedge<K>(*sei))
-      CGAL_error_msg("SNC_io_parser::read: error in sedge line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sedge line");
+      return;
+    }
   }
   typename std::vector<SHalfloop_iterator>::iterator sli;
   for(sli=SLoop_of.begin(); sli!=SLoop_of.end(); ++sli) {
     if (!read_sloop<K>(*sli))
-      CGAL_error_msg("SNC_io_parser::read: error in sloop line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sloop line");
+      return;
+    }
   }
   typename std::vector<SFace_iterator>::iterator sfi;
   for(sfi=SFace_of.begin(); sfi!=SFace_of.end(); ++sfi) {
     if (!read_sface(*sfi))
-      CGAL_error_msg("SNC_io_parser::read: error in sface line");
+    {
+      CGAL_warning_msg(false, "SNC_io_parser::read: error in sface line");
+      return;
+    }
   }
 
   SNC_constructor C(*this->sncp());
@@ -1491,21 +1577,56 @@ read_vertex(Vertex_handle vh) {
   vh->sncp() = this->sncp();
 
   in >> index;
+  if(index >= (int)en)
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->svertices_begin() = (index >= 0 ? Edge_of[index] : this->svertices_end());
   in >> index;
+  if(index >= int(en))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->svertices_last()  = index >= 0 ? Edge_of[index] : this->svertices_end();
   OK = OK && test_string(",");
   in >> index;
+  if(index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->shalfedges_begin() = index >= 0 ? SEdge_of[index] : this->shalfedges_end();
   in >> index;
+  if(index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->shalfedges_last()  = index >= 0 ? SEdge_of[index] : this->shalfedges_end();
   OK = OK && test_string(",");
   in >> index;
+  if(index >= int(sfn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->sfaces_begin() = index >= 0 ? SFace_of[index] : this->sfaces_end();
   in >> index;
+  if(index >= int(sfn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->sfaces_last()  = index >= 0 ? SFace_of[index] : this->sfaces_end();
   OK = OK && test_string(",");
   in >> index;
+  if(index >= int(sln))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   vh->shalfloop() = index >= 0 ? SLoop_of[index] : this->shalfloops_end();
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1560,17 +1681,37 @@ read_edge(Halfedge_handle eh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= int(en))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   eh->twin() = Edge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(vn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   eh->center_vertex() = Vertex_of[index];
   OK = OK && test_string(",");
   in >> index;
   if(index == 0) {
     in >> index;
+    if(index < 0 || index >= int(sen))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     eh->out_sedge() = SEdge_of[index];
   } else {
     in >> index;
+    if(index < 0 || index >= int(sfn))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     eh->incident_sface() = SFace_of[index];
   }
   OK = OK && test_string("|");
@@ -1625,6 +1766,11 @@ read_facet(Halffacet_handle fh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= int(fn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   fh->twin() = Halffacet_of[index];
   OK = OK && test_string(",");
 
@@ -1632,6 +1778,11 @@ read_facet(Halffacet_handle fh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= int(sen))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     fh->boundary_entry_objects().push_back(make_object(SEdge_of[index]));
     in >> cc;
   }
@@ -1640,11 +1791,21 @@ read_facet(Halffacet_handle fh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= int(sln))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     fh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
     in >> cc;
   }
 
   in >> index;
+  if(index < 0  || index >= int(cn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   fh->incident_volume() = Volume_of[index+addInfiBox];
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1687,6 +1848,11 @@ read_volume(Volume_handle ch) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= int(sfn))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     ch->shell_entry_objects().push_back(make_object(SFace_of[index]));
     in >> cc;
   }
@@ -1737,27 +1903,67 @@ read_sedge(SHalfedge_handle seh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->twin() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->sprev() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->snext() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(en))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->source() = Edge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sfn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->incident_sface() = SFace_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->prev() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(sen))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->next() = SEdge_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= int(fn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   seh->facet() = Halffacet_of[index];
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1808,12 +2014,27 @@ read_sloop(SHalfloop_handle slh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= (int)(sln))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   slh->twin() = SLoop_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= (int)(sfn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   slh->incident_sface() = SFace_of[index];
   OK = OK && test_string(",");
   in >> index;
+  if(index < 0 || index >= (int)(fn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   slh->facet() = Halffacet_of[index];
   OK = OK && test_string("|");
 #ifdef CGAL_NEF_NATURAL_COORDINATE_INPUT
@@ -1860,6 +2081,11 @@ read_sface(SFace_handle sfh) {
   OK = OK && test_string("{");
 
   in >> index;
+  if(index < 0 || index >= (int)(vn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   sfh->center_vertex() = Vertex_of[index];
   OK = OK && test_string(",");
 
@@ -1869,6 +2095,11 @@ read_sface(SFace_handle sfh) {
     in >> index;
     //    sfh->boundary_entry_objects().push_back(SEdge_of[index]);
     SM_decorator SD(&*sfh->center_vertex());
+    if(index < 0 || index >= (int)(sen))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     SD.link_as_face_cycle(SEdge_of[index],sfh);
     in >> cc;
   }
@@ -1877,6 +2108,11 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= (int)(en))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     sfh->boundary_entry_objects().push_back(make_object(Edge_of[index]));
     this->sncp()->store_sm_boundary_item(Edge_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
@@ -1886,12 +2122,22 @@ read_sface(SFace_handle sfh) {
   while(isdigit(cc)) {
     in.putback(cc);
     in >> index;
+    if(index < 0 || index >= (int)(sln))
+    {
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
     sfh->boundary_entry_objects().push_back(make_object(SLoop_of[index]));
     this->sncp()->store_sm_boundary_item(SLoop_of[index], --(sfh->sface_cycles_end()));
     in >> cc;
   }
 
   in >> index;
+  if(index < 0 || index >= (int)(cn))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
   sfh->volume() = Volume_of[index+addInfiBox];
   OK = OK && test_string("}");
   in >> sfh->mark();

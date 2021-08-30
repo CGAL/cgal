@@ -220,6 +220,20 @@ circulator over all facets incident to a given edge
 */
 typedef Triangulation_data_structure::Facet_circulator Facet_circulator;
 
+/*!
+iterator over cells intersected by a line segment.
+`Segment_cell_iterator` implements the concept `ForwardIterator` and is non-mutable.
+Its value type is `Cell_handle`.
+*/
+typedef unspecified_type Segment_cell_iterator;
+
+/*!
+iterator over simplices intersected by a line segment.
+`Segment_simplex_iterator` implements the concept `ForwardIterator` and is non-mutable.
+Its value type is `Triangulation_simplex_3 `.
+*/
+typedef unspecified_type Segment_simplex_iterator;
+
 /// @}
 
 /*! \name
@@ -279,6 +293,17 @@ that has as value type `Vertex_handle`.
   range type for iterating over the points of the finite vertices.
  */
   typedef Iterator_range<unspecified_type> Points;
+
+/*!
+  range type for iterating over the cells intersected by a line segment.
+*/
+  typedef Iterator_range<unspecified_type> Segment_traverser_cell_handles;
+
+/*!
+  range type for iterating over the simplices intersected by a line segment.
+*/
+  typedef Iterator_range<Segment_simplex_iterator> Segment_traverser_simplices;
+
 /// @}
 
 /// \name Creation
@@ -1278,6 +1303,182 @@ Finite_vertex_handles finite_vertex_handles() const;
 */
 Points points() const;
 
+/*!
+  returns a range of iterators over the cells intersected by a line segment
+*/
+Segment_traverser_cell_handles segment_traverser_cell_handles() const;
+
+/*!
+  returns a range of iterators over the simplices intersected by a line segment
+*/
+Segment_traverser_simplices segment_traverser_simplices() const;
+
+
+/// @}
+
+
+/*!\name Segment Cell Iterator
+The triangulation defines an iterator that visits cells intersected by a line segment.
+Segment Cell Iterator iterates over a sequence of cells which union contains the segment `[s,t]`.
+The sequence of cells is "minimal" (removing any cell would make the union of the
+renaming cells not entirely containing `[s,t]`) and sorted along `[s,t]`.
+The "minimality" of the sequence implies that in degenerate cases,
+only one cell incident to the traversed simplex will be reported.
+
+The cells visited form a facet-connected region containing both source and target points of the line segment `[s,t]`.
+Each cell falls within one or more of the following categories:
+1. a finite cell whose interior is intersected by `[s,t]`.
+2. a finite cell with a facet `f` whose interior is intersected by `[s,t]` in a line segment.
+If such a cell is visited, its neighbor incident to `f` is not visited.
+3. a finite cell with an edge `e` whose interior is intersected by `[s,t]` in a line segment.
+If such a cell is visited, none of the other cells incident to `e` are visited.
+4. a finite cell with an edge `e` whose interior is intersected by `[s,t]` in a point.
+This cell forms a connected component together with the other cells incident to `e` that are visited.
+Exactly two of these visited cells also fall in category 1 or 2.
+5. a finite cell with a vertex `v` that is an endpoint of `[s,t]`.
+This cell also fits in either category 1 or 2.
+6. a finite cell with a vertex `v` that lies in the interior of `[s,t]`.
+This cell forms a connected component together with the other cells incident to `v` that are visited.
+Exactly two of these cells also fall in category 1 or 2.
+7. an infinite cell with a finite facet whose interior is intersected by the interior of `[s,t]`.
+8. an infinite cell with a finite edge `e` whose interior is intersected by the interior of `[s,t]`.
+If such a cell is visited, its infinite neighbor incident to `e` is not visited.
+Among the finite cells incident to `e` that are visited,
+exactly one also falls in category 1 or 2.
+9. an infinite cell with a finite vertex `v` that lies in the interior of `[s,t]`.
+If such a cell is visited, none of the other infinite cells incident to `v` are visited.
+Among the finite cells incident to `v` that are visited,
+exactly one also falls in category 1, 2, or 3.
+10. an infinite cell in the special case where the segment does not intersect any finite facet.
+In this case, exactly one infinite cell is visited.
+This cell shares a facet `f` with a finite cell `c` such that `f` is intersected by the line through
+the point `s` and the vertex of `c` opposite of `f`.
+
+Note that for categories 4 and 6, it is not predetermined which incident cells are visited.
+However, exactly two of the incident cells `c0,c1` visited also fall in category 1 or 2.
+The remaining incident cells visited make a facet-connected sequence connecting `c0` to `c1`.
+
+`Segment_cell_iterator` implements the concept `ForwardIterator` and is non-mutable.
+It is invalidated by any modification of one of the cells traversed.
+
+Its `value_type` is `Cell_handle`.
+*/
+/// @{
+/*!
+returns the iterator that allows to visit the cells intersected by the line segment `[vs,vt]`.
+
+The initial value of the iterator is the cell containing `vs` and intersected by the
+line segment `[vs,vt]` in its interior.
+
+The first cell incident to `vt` is the last valid value of the iterator.
+It is followed by `segment_traverser_cells_end()`.
+
+\pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
+\pre `triangulation.dimension() >= 2`
+*/
+Segment_cell_iterator segment_traverser_cells_begin(Vertex_handle vs, Vertex_handle vt) const;
+
+/*!
+returns the iterator that allows to visit the cells intersected by the line segment `[ps, pt]`.
+
+If `[ps,pt]` entirely lies outside the convex hull, the iterator visits exactly one infinite cell.
+
+The initial value of the iterator is the cell containing `ps`.
+If more than one cell
+contains `ps` (e.g. if `ps` lies on a vertex),
+the initial value is the cell intersected by
+the interior of the line segment `[ps,pt]`.
+If `ps` lies outside the convex hull and `pt` inside the convex full,
+the initial value is the infinite cell which finite facet is intersected by
+the interior of `[ps,pt]`.
+
+The first cell containing `pt` is the last valid value of the iterator.
+It is followed by `segment_traverser_cells_end()`.
+
+The optional argument `hint` can reduce the time to construct the iterator
+if it is geometrically close to `ps`.
+
+\pre `ps` and `pt` must be different points.
+\pre  `triangulation.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
+*/
+Segment_cell_iterator segment_traverser_cells_begin(const Point& ps, const Point& pt, Cell_handle hint = Cell_handle()) const;
+
+/*!
+returns the past-the-end iterator over the intersected cells.
+
+This iterator cannot be dereferenced. It indicates when the `Segment_cell_iterator` has
+passed the target.
+
+\pre `triangulation.dimension() >= 2`
+*/
+Segment_cell_iterator segment_traverser_cells_end() const;
+
+/// @}
+
+/*!\name Segment Simplex Iterator
+The triangulation defines an iterator that visits all the triangulation simplices
+(vertices, edges, facets and cells) intersected by a line segment.
+The iterator traverses a connected sequence of simplices - possibly of all dimensions -
+intersected by the line segment `[s, t]`.
+In the degenerate case where the query segment goes exactly through a vertex
+(or along an edge, or along a facet), only one of the cells incident to that vertex
+(or edge, or facet) is returned by the iterator, and not all of them.
+
+Each simplex falls within one or more of the following categories:
+1. a finite cell whose interior is intersected by `[s,t]`,
+2. a facet `f` whose interior is intersected by `[s,t]` in a point,
+3. a facet `f` whose interior is intersected by `[s,t]` in a line segment,
+4. an edge `e` whose interior is intersected by `[s,t]` in a point,
+5. an edge `e` whose interior is intersected by `[s,t]` in a line segment,
+6. a vertex `v` lying on `[s,t]`,
+7. an infinite cell with a finite facet whose interior is intersected by the interior of `[s,t]`,
+8. an infinite cell in the special case where the segment does not intersect any finite facet.
+In this case, exactly one infinite cell is visited.
+This cell shares a facet `f` with a finite cell `c` such that `f` is intersected by the line through
+the source of `[s,t]` and the vertex of `c` opposite of `f`.
+
+`Segment_simplex_iterator` implements the concept `ForwardIterator` and is non-mutable.
+It is invalidated by any modification of one of the cells traversed.
+
+Its `value_type` is `Triangulation_simplex_3`.
+*/
+/// @{
+/*!
+returns the iterator that allows to visit the simplices intersected by the line segment `[vs,vt]`.
+
+The initial value of the iterator is `vs`.
+The iterator remains valid until `vt` is passed.
+
+\pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
+\pre `triangulation.dimension() >= 2`
+*/
+Segment_simplex_iterator segment_traverser_simplices_begin(Vertex_handle vs, Vertex_handle vt) const;
+
+/*!
+returns the iterator that allows to visit the simplices intersected by the line segment `[ps,pt]`.
+
+If `[ps,pt]` entirely lies outside the convex hull, the iterator visits exactly one infinite cell.
+
+The initial value of the iterator is the lowest dimension simplex containing `ps`.
+
+The iterator remains valid until the first simplex containing `pt` is passed.
+
+The optional argument `hint` can reduce the time to construct the iterator if it is close to `ps`.
+
+\pre `ps` and `pt` must be different points.
+\pre `triangulation.dimension() >= 2`. If the dimension is 2, both `ps` and `pt` must lie in the affine hull.
+*/
+Segment_simplex_iterator segment_traverser_simplices_begin(const Point& ps, const Point& pt, Cell_handle hint = Cell_handle()) const;
+
+/*!
+returns the past-the-end iterator over the intersected simplices.
+
+This iterator cannot be dereferenced. It indicates when the `Segment_simplex_iterator` has
+passed the target.
+
+\pre `triangulation.dimension() >= 2`
+*/
+Segment_simplex_iterator segment_traverser_simplices_end() const;
 
 /// @}
 

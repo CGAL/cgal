@@ -1,8 +1,8 @@
 /*!
-\defgroup bgl_namedparameters BGL Named Parameters
+\defgroup bgl_namedparameters Named Parameters
 \ingroup PkgBGLRef
 
-The algorithms of the \sc{Bgl} often have many parameters with default
+The algorithms of the Boost Graph Library (\bgl) often have many parameters with default
 values that are appropriate for most cases. In general, when no
 special treatment is applied, the values of such parameters are passed
 as a sequence. Deviating from the default for a certain parameter
@@ -18,202 +18,29 @@ vertex_descriptor s = vertex(A, g);
 dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
 \endcode
 
-In the \sc{Bgl} manual, this is called
+In the \bgl manual, this is called
 <a href="https://www.boost.org/libs/graph/doc/bgl_named_params.html">named parameters</a>.
-The named parameters in the example use the tags `predecessor_map` and `distance_map`
-and they are concatenated with the dot operator.<BR>
+The named parameters in the snippet use the tags `predecessor_map` and `distance_map`
+and they are concatenated using the dot operator.<BR>
 
-In the following, we assume that `PolygonMesh` is a model of the concept `FaceGraph`.
-Note that for some functions, the type might be more specific:
+A similar mechanism was introduced in \cgal, with the small difference that the named parameters
+tag live in the `CGAL::parameters::` namespace and `CGAL::parameters::all_default()` can be used to indicate
+that default values of optional named parameters must be used.
+As in the \bgl, named parameters in \cgal are also concatenated using
+the dot operator, and a typical usage is thus:
 
-Here is the list of the named parameters available in this package:
+\code {.cpp}
+Graph g1, g2;
+Vertex_point_map_2 vpm_2; // an hypothetical custom property map assigning a Point to the vertices of g2
 
-\cgalNPTableBegin
-\cgalNPBegin{vertex_point_map} \anchor BGL_vertex_point_map
-is the property map with the points associated to the vertices of the polygon mesh.\n
-<b>Type:</b> a class model of `ReadablePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-a \cgal point type as value type. \n
-<b>Default:</b> \code boost::get(CGAL::vertex_point, pmesh) \endcode
-\cgalNPEnd
+// without any named parameter (default values are used)
+CGAL::copy_face_graph(g1, g2);
 
-\cgalNPBegin{vertex_index_map} \anchor BGL_vertex_index_map
-is the property map associating a unique index to each vertex of a polygon mesh `g`,
-between `0` and `num_vertices(g)-1`.
-If this parameter is not passed, internal machinery will create and initialize a vertex index
-property map, either using the internal property map if it exists or using an external map. The latter
-might result in  - slightly - worsened performance in case of non-constant complexity for index access.\n
-<b>Type:</b> a class model of `ReadablePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and the value type
-\code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::vertex_index_t>::type>::value_type \endcode
-<b>Default:</b> an initialized vertex index property map
-\cgalNPEnd
-
-\cgalNPBegin{halfedge_index_map} \anchor BGL_halfedge_index_map
-is the property map associating a unique index to each halfedge of a polygon mesh,
-between `0` and `num_halfedges(g)-1`.
-If this parameter is not passed, internal machinery will create and initialize a halfedge index
-property map, either using the internal property map if it exists or using an external map. The latter
-might result in  - slightly - worsened performance in case of non-constant complexity for index access.\n
-<b>Type:</b> a class model of `ReadablePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%halfedge_descriptor` as key type and the value type:
-\code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::halfedge_index_t>::type>::value_type \endcode
-<b>Default:</b> an initialized halfedge index property map
-\cgalNPEnd
-
-\cgalNPBegin{edge_index_map} \anchor BGL_edge_index_map
-is the property map associating a unique index to each edge of a polygon mesh,
-between `0` and `num_edges(g)-1`.
-If this parameter is not passed, internal machinery will create and initialize a edge index
-property map, either using the internal property map if it exists or using an external map. The latter
-might result in  - slightly - worsened performance in case of non-constant complexity for index access.\n
-<b>Type:</b> a class model of `ReadablePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and the value type:
-\code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::edge_index_t>::type>::value_type \endcode
-<b>Default:</b> an initialized edge index property map
-\cgalNPEnd
-
-\cgalNPBegin{face_index_map} \anchor BGL_face_index_map
-is the property map associating a unique index to each face of a polygon mesh,
-between `0` and `num_faces(g)-1`.
-If this parameter is not passed, internal machinery will create and initialize a face index
-property map, either using the internal property map if it exists or using an external map. The latter
-might result in  - slightly - worsened performance in case of non-constant complexity for index access.\n
-<b>Type:</b> a class model of `ReadablePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type:
-\code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type>::value_type \endcode
-<b>Default:</b> an initialized face index property map
-\cgalNPEnd
-
-\cgalNPBegin{edge_is_constrained_map} \anchor BGL_edge_is_constrained_map
-is the property map containing information about edges of the input polygon mesh
-being marked or not.\n
-<b>Type:</b> a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-`bool` as value type. It should be default constructible.\n
-<b>Default:</b> a default property map where no edge is constrained
-\cgalNPEnd
-
-\cgalNPBegin{use_binary_mode} \anchor BGL_use_binary_mode
-is a Boolean indicating whether the binary mode or the ASCII mode should be used
-when writing data into a stream.\n
-<b>Type:</b> `bool`\n
-<b>Default:</b> Function specific.
-\cgalNPEnd
-
-\cgalNPBegin{METIS_options} \anchor BGL_METIS_options
-is a parameter used in `partition_graph()` and `partition_dual_graph()`
-to pass options to the METIS graph partitioner. The many options of METIS
-are not described here. Instead, users should refer to METIS'
-<a href="http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/manual.pdf">documentation</a>.\n
-<b>Type:</b> an array of size `METIS_NOPTIONS` with value type `idx_t`
-            (an integer type defined by METIS). \n
-<b>Default:</b> an array of size `METIS_NOPTIONS` with value type `idx_t`,
-                initialized using the function `METIS_SetDefaultOptions()`.
-\cgalNPEnd
-
-\cgalNPBegin{vertex_partition_id_map} \anchor BGL_vertex_partition_id_map
-is the property map storing for each vertex of the mesh the id of the subpart
-of the partition that has been assigned to this vertex.\n
-<b>Type:</b> a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
-`int` as value type. \n
-<b>Default:</b> None: this property map is used to store the partition IDs of the vertices
-as result of a partition algorithm; if it is not provided, this information is
-simply inaccessible.
-\cgalNPEnd
-
-\cgalNPBegin{face_partition_id_map} \anchor BGL_face_partition_id_map
-is the property map storing for each face of the mesh the id of the subpart
-of the partition that has been assigned to this face.\n
-<b>Type:</b> a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
-`int` as value type. \n
-<b>Default:</b> None: this property map is used to store the partition IDs of the faces
-as result of a partition algorithm; if it is not provided, this information is
-simply inaccessible.
-\cgalNPEnd
-
-
-\cgalNPBegin{vertex_to_vertex_output_iterator} \anchor BGL_vertex_to_vertex_output_iterator
-is a model of `OutputIterator` accepting `std::pair<vertex_descriptor, vertex_descriptor>`
-A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
-operation.\n
-<b>Type:</b>a class model of `OutputIterator` accepting
-`std::pair<`boost::graph_traits<PolygonMesh>::%vertex_descriptor, `boost::graph_traits<PolygonMesh>::%vertex_descriptor>`.\n
-<b>Default:</b> Emptyset_iterator
-\cgalNPEnd
-
-\cgalNPBegin{halfedge_to_halfedge_output_iterator} \anchor BGL_halfedge_to_halfedge_output_iterator
-is a model of `OutputIterator` accepting `std::pair<halfedge_descriptor, halfedge_descriptor>`
-A typical use case is mapping the halfedges from a source mesh to its copy's after a `copy_face_graph()`
-operation.\n
-<b>Type:</b>a class model of `OutputIterator` accepting
-`std::pair<`boost::graph_traits<PolygonMesh>::%halfedge_descriptor, `boost::graph_traits<PolygonMesh>::%halfedge_descriptor>`.\n
-<b>Default:</b> Emptyset_iterator
-\cgalNPEnd
-
-
-\cgalNPBegin{face_to_face_output_iterator} \anchor BGL_face_to_face_output_iterator
-is a model of `OutputIterator` accepting `std::pair<face_descriptor, face_descriptor>`
-A typical use case is mapping the faces from a source mesh to its copy's after a `copy_face_graph()`
-operation.\n
-<b>Type:</b>a class model of `OutputIterator` accepting
-`std::pair<`boost::graph_traits<PolygonMesh>::%face_descriptor, `boost::graph_traits<PolygonMesh>::%face_descriptor>`.\n
-<b>Default:</b> Emptyset_iterator
-\cgalNPEnd
-
-\cgalNPBegin{vertex_to_vertex_map} \anchor BGL_vertex_to_vertex_map
-is a property map storing for each vertex of a source mesh the corresponding vertex of another mesh.\n
-A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
-operation.\n
-<b>Type:</b>a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh1>::%vertex_descriptor` as key type and
-`boost::graph_traits<PolygonMesh2>::%vertex_descriptor` as value type.\n
-<b>Default:</b> None.
-\cgalNPEnd
-
-\cgalNPBegin{halfedge_to_halfedge_map} \anchor BGL_halfedge_to_halfedge_map
-is a property map storing for each halfedge of a source mesh the corresponding halfedge of another mesh.\n
-A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
-operation.\n
-<b>Type:</b>a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh1>::%halfedge_descriptor` as key type and
-`boost::graph_traits<PolygonMesh2>::%halfedge_descriptor` as value type.\n
-<b>Default:</b> None.
-\cgalNPEnd
-
-\cgalNPBegin{face_to_face_map} \anchor BGL_face_to_face_map
-is a property map storing for each face of a source mesh the corresponding face of another mesh.\n
-A typical use case is mapping the vertices from a source mesh to its copy's after a `copy_face_graph()`
-operation.\n
-<b>Type:</b>a class model of `ReadWritePropertyMap` with
-`boost::graph_traits<PolygonMesh1>::%face_descriptor` as key type and
-`boost::graph_traits<PolygonMesh2>::%face_descriptor` as value type.\n
-<b>Default:</b> None.
-\cgalNPEnd
-
-\cgalNPBegin{implementation_tag} \anchor BGL_implementation_tag
-tag used to select the implementation to be used among an algorithm-specific list.\n
-<b>Type:</b>a tag class\n
-<b>Default:</b> algorithm-specific.
-\cgalNPEnd
-
-\cgalNPBegin{prevent_unselection} \anchor BGL_prevent_unselection
-Boolean used to indicate if selection can be only extended or if it can also be shrinked.\n
-<b>Type:</b> `bool`\n
-<b>Default:</b> `false`.
-\cgalNPEnd
-
-\cgalNPBegin{geom_traits} \anchor BGL_geom_traits
-is the geometric traits instance used.\n
-<b>Type:</b> a Geometric traits class.\n
-<b>Default</b>:
-\code typename CGAL::Kernel_traits<
-        typename boost::property_traits<
-          typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
-\cgalNPEnd
-
-\cgalNPTableEnd
-
+// specifying named parameters for the second graph
+CGAL::copy_face_graph(g1, g2,
+                      CGAL::parameters::vertex_point_map(vpm)  //parameter for g1
+                      .vertex_to_vertex_map(v2v),              //other parameter for g1
+                      CGAL::parameters::all_default());        //parameter for g2
+\endcode
 */
+˛

@@ -16,9 +16,9 @@ faces as edges of the dual graph.
 The scope of \cgal is geometry and not graph algorithms. Nevertheless, this package
 provides the necessary classes and functions that enable using the
 algorithms of the <A HREF="https://www.boost.org/libs/graph/doc/index.html">Boost Graph Library</A> \cgalCite{cgal:sll-bgl-02}
-(\sc{Bgl} for short) with \cgal data structures.
+(\bgl for short) with \cgal data structures.
 
-Furthermore, this package extends the \sc{Bgl}
+Furthermore, this package extends the \bgl
 by introducing concepts such as `HalfedgeGraph` and `FaceGraph`
 allowing to handle *halfedges* and *faces*.
 These concepts reflect the design of the halfedge data structure described
@@ -26,7 +26,7 @@ in Chapter \ref PkgHalfedgeDS, with opposite halfedges and circular
 sequences of halfedges around vertices and around faces.
 
 This chapter is organized as follows:
-- The first section, Section \ref BGLA, summarizes the main ideas of the \sc{Bgl}.
+- The first section, Section \ref BGLA, summarizes the main ideas of the \bgl.
 - Section \ref BGLHeader then explains where to find header files and the chosen naming conventions, as we blend two
 different libraries.
 - The four following sections give examples on how to use CGAL graph and mesh data structures
@@ -34,13 +34,13 @@ such as
 \link PkgSurfaceMesh Surface_mesh \endlink,
 \link PkgPolyhedron Polyhedron \endlink,
 \link PkgArrangementOnSurface2 Arrangement_2 \endlink, and the
-\link PkgTriangulation2 2D triangulation \endlink classes as models of the \sc{Bgl} concepts.
+\link PkgTriangulation2 2D triangulation \endlink classes as models of the \bgl concepts.
 - Starting with Section \ref BGLExtensions, we introduce new graph concepts, classes,
-and functions that extend the functionalities of the \sc{Bgl}.
+and functions that extend the functionalities of the \bgl.
 
 \section BGLA A Short Introduction to the Boost Graph Library
 
-The algorithms of the \sc{Bgl} operate on models of various <I>graph concepts</I>.
+The algorithms of the \bgl operate on models of various <I>graph concepts</I>.
 The <I>traits class</I> `boost::graph_traits` enable algorithms to determine the types of vertices and edges
 (similar to `std::iterator_traits` for iterators).
 <I>Free functions</I> that operate on graphs enable algorithms to obtain,
@@ -53,7 +53,7 @@ arbitrary order.
 
 \subsection BGLGraphConcepts Graph Concepts
 
-The \sc{Bgl} introduces several <a href="https://www.boost.org/libs/graph/doc/graph_concepts.html">graph concepts</a>,
+The \bgl introduces several <a href="https://www.boost.org/libs/graph/doc/graph_concepts.html">graph concepts</a>,
 which have different sets of characteristics and requirements.
 For example, iterating through all vertices or all edges in a graph, obtaining the outgoing
 or in-going edges of a vertex, inserting vertices and edges into a graph,
@@ -101,16 +101,16 @@ std::pair<vertex_iterator,vertex_iterator> vertices(const Graph& g);
 
 \subsection BGLPropertyMaps Property Maps
 
-Another feature extensively used in the \sc{Bgl} is the *property map*,
+Another feature extensively used in the \bgl is the *property map*,
 which is offered by the <a href="https://www.boost.org/libs/property_map/doc/property_map.html">Boost Property Map Library</a>. Property maps
 are a general purpose interface for mapping key objects to
 corresponding value objects.
 
-The \sc{Bgl} uses property maps to associate information with vertices and edges.
+The \bgl uses property maps to associate information with vertices and edges.
 This mechanism uses a traits class (`boost::property_traits`) and free
 functions to read (`get`) and write (`put`) information in vertices,
 edges, and also in halfedges and faces for models of the \cgal graph concepts.
-For example, the \sc{Bgl}
+For example, the \bgl
 Dijksta's shortest path algorithm writes the predecessor of each vertex, as
 well as the distance to the source in such a property map.
 
@@ -138,14 +138,14 @@ Examples of such event points in graph algorithms are when a vertex is traversed
 or when all outgoing edges of a vertex have been traversed.<BR>
 
 See also Section <A HREF="https://www.boost.org/libs/graph/doc/visitor_concepts.html">Visitor Concepts</A>
-in the \sc{Bgl} manual.
+in the \bgl manual.
 
 \subsection BGLNamedParameters Named Parameters
 
-The notion of <I>named parameters</I> was introduced in the \sc{Bgl},
+The notion of <I>named parameters</I> was introduced in the \bgl,
 and allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 See also <a href="https://www.boost.org/libs/graph/doc/bgl_named_params.html">this page</a>
-in the manual of the \sc{Bgl} for more information.
+in the manual of the \bgl for more information.
 
 Say there is a function `f()` that takes 3 parameters called name, age and gender,
 and you have variables `n`, `a` and `g` to pass as parameters to that function.
@@ -186,32 +186,32 @@ refine(pmesh,
 \section BGLHeader Header Files, Namespaces, and Naming Conventions
 
 This package provides the necessary classes and functions that enable using
-\cgal data structures as models of the \sc{Bgl} graph concepts.
+\cgal data structures as models of the \bgl graph concepts.
 To this end, we offer partial specializations of the `boost::graph_traits<Graph>` for various \cgal packages.
 For each such package, denoted `PACKAGE`, the partial specializations live in
 the namespace `boost` and are located in the header file `CGAL/boost/graph/graph_traits_PACKAGE.h`.
 Free functions are in the namespace `CGAL`, and the compiler uses argument-dependent lookup to find them.
 %Euler operations, described in Section \ref BGLEulerOperations, are in the namespace `CGAL::Euler`, as the function `remove_face()` is at
 the same time a low-level and an %Euler operation.
-Concerning the naming conventions, we have to use those of the \sc{Bgl},
-as to fulfill the requirements of the concepts defined in the \sc{Bgl}.
+Concerning the naming conventions, we have to use those of the \bgl,
+as to fulfill the requirements of the concepts defined in the \bgl.
 
 Note that these partial specializations are often providing more than
 is required, making these classes not only models of the graph concepts
-of the \sc{Bgl}, but also models of the CGAL graph concepts, that will be
+of the \bgl, but also models of the CGAL graph concepts, that will be
 described in detail in Section \ref BGLExtensions. Correspondence tables
-between the types of a \cgal data structure and their \sc{Bgl} equivalents
+between the types of a \cgal data structure and their \bgl equivalents
 can be found in the \ref PkgBGLTraits documentation page.
 
 We present in the following sections some examples of utilization of some
-\cgal data structures as \sc{Bgl} graphs.
+\cgal data structures as \bgl graphs.
 
 \section BGLSurface_mesh The Class Surface_mesh as Model of the Boost Graph Concept
 
-The class `Surface_mesh` is a model of most of the graph concepts of the \sc{Bgl}
+The class `Surface_mesh` is a model of most of the graph concepts of the \bgl
 as well as the concepts provided by \cgal. A complete list can
 be found in the documentation of \link BGLSMGT boost::graph_traits \endlink.
-The examples show how to use some of the \sc{Bgl} algorithms with `Surface_mesh` and show how to use
+The examples show how to use some of the \bgl algorithms with `Surface_mesh` and show how to use
 the concepts provided by \cgal to implement a simple algorithm.
 
 \subsection BGLExampleMinimumSpanningTreeofaSurfaceMesh Example: Minimum Spanning Tree of a Surface_mesh
@@ -221,16 +221,16 @@ More examples can be found in Chapters
 \ref PkgSurfaceMeshSimplification, \ref PkgSurfaceMeshSegmentation, and \ref PkgSurfaceMeshDeformation.
 
 The surface mesh class uses integer indices to address vertices and edges,
-and it comes with a built-in property mechanism that maps nicely on the \sc{Bgl}.
+and it comes with a built-in property mechanism that maps nicely on the \bgl.
 
 \cgalExample{BGL_surface_mesh/prim.cpp}
 
 \section BGLPolyhedral The Class Polyhedron_3 as Model of the Boost Graph Concept
 
-The class `Polyhedron_3` is a model of most of the graph concepts of the \sc{Bgl}
+The class `Polyhedron_3` is a model of most of the graph concepts of the \bgl
 as well as the concepts provided by \cgal. A complete list can
 be found in the documentation of \link BGLPolyGT boost::graph_traits \endlink.
-The examples show how to use some of the \sc{Bgl} algorithms with `Polyhedron_3` and show how to use
+The examples show how to use some of the \bgl algorithms with `Polyhedron_3` and show how to use
 the concepts provided by \cgal to implement a simple algorithm.
 
 \subsection BGLExampleMinimumSpanningTreeofaPolyhedral Example: Minimum Spanning Tree of a Polyhedral Surface
@@ -243,7 +243,7 @@ More examples can be found in the Chapter
 
 \subsection BGLExampleUsingVerticesandEdgeswithanID Example: Using Vertices, and Edges with an ID
 
-The following example program shows a call to the \sc{Bgl}
+The following example program shows a call to the \bgl
 Kruskal's minimum spanning tree algorithm accessing the `id()`
 field stored in a polyhedron vertex.
 
@@ -275,7 +275,7 @@ integers in the range `[0, t.number_of_vertices())`.
 
 \subsection BGLExampleStoringtheVertexIDintheVertex Example: Storing the Vertex ID in the Vertex
 
-The algorithms of the \sc{Bgl} extensively use of the indices of
+The algorithms of the \bgl extensively use of the indices of
 vertices. In the previous example we stored the indices in a `std::map`
 and turned that map in a property map. This property map was then
 passed as argument to the shortest path function.
@@ -316,7 +316,7 @@ edges in our <I>boost</I> graph.
 
 Given an `Arrangement_2` instance, we can efficiently traverse its
 vertices and halfedges. Thus, the arrangement graph is a model of the concepts
-`VertexListGraph` and `EdgeListGraph` introduced by the \sc{Bgl}.
+`VertexListGraph` and `EdgeListGraph` introduced by the \bgl.
 At the same time, we use an iterator adapter of the circulator over the
 halfedges incident to a vertex (`Halfedge_around_target_circulator` - see
 Section \ref arr_sssectr_vertex "Traversal Methods for an Arrangement Vertex"
@@ -327,11 +327,11 @@ is a model of the concept `BidirectionalGraph` (this concept refines
 
 It is important to notice that the vertex descriptors we use are
 `Vertex_handle` objects and <I>not</I> vertex indices. However, in order
-to gain more efficiency in most \sc{Bgl} algorithm, it is better to have them
+to gain more efficiency in most \bgl algorithm, it is better to have them
 indexed \f$ 0, 1, \ldots, (n-1)\f$, where \f$ n\f$ is the number of vertices. We
 therefore introduce the `Arr_vertex_index_map<Arrangement>` class-template,
 which maintains a mapping of vertex handles to indices, as required by the
-\sc{Bgl}. An instance of this class must be attached to a valid arrangement
+\bgl. An instance of this class must be attached to a valid arrangement
 vertex when it is created. It uses the notification mechanism (see
 Section \ref arr_secnotif) to automatically maintain the mapping of vertices
 to indices, even when new vertices are inserted into the arrangement or
@@ -340,7 +340,7 @@ existing vertices are removed.
 A complete description of the types correspondences
 can be found in the documentation of \link BGLArgtGT boost::graph_traits \endlink.
 
-In most algorithm provided by the \sc{Bgl}, the output is given by
+In most algorithm provided by the \bgl, the output is given by
 <I>property maps</I>, such that each map entry corresponds to a vertex.
 For example, when we compute the shortest paths from a given source vertex
 \f$ s\f$ to all other vertices we can obtain a map of distances and a map of
@@ -353,7 +353,7 @@ template allows for an efficient mapping of `Vertex_handle` objects to
 properties of type `Type`. Note however that unlike the
 `Arr_vertex_index_map` class, the vertex property-map class is not
 kept synchronized with the number of vertices in the arrangement, so it
-should not be reused in calls to the \sc{Bgl} functions in case the arrangement
+should not be reused in calls to the \bgl functions in case the arrangement
 is modified in between these calls.
 
 \cgalFigureBegin{figex_bgl,ex_bgl.png}
@@ -362,7 +362,7 @@ An arrangement of 7 line segments, as constructed by `ex_bgl_primal_adapter.cpp`
 
 In the following example we construct an arrangement of 7 line segments,
 as shown in \cgalFigureRef{figex_bgl},
-then use the \sc{Bgl} Dijkstra's shortest-paths algorithm to compute
+then use the \bgl Dijkstra's shortest-paths algorithm to compute
 the graph distance of all vertices from the leftmost vertex in the
 arrangement \f$ v_0\f$. Note the usage of the `Arr_vertex_index_map` and
 the `Arr_vertex_property_map` classes. The latter one, instantiated by
@@ -400,7 +400,7 @@ data with the arrangement faces.
 In the following example we construct the same arrangement as in
 example `ex_bgl_primal_adapter.cpp` (see \cgalFigureRef{arr_figex_bgl}),
 and perform breadth-first search on the graph faces, starting from the
-unbounded face. We extend the \sc{Dcel} faces
+unbounded face. We extend the \dcel faces
 with an unsigned integer, marking the discover time of the face and use a
 breadth-first-search visitor to obtain these times and update the faces
 accordingly:
@@ -411,9 +411,9 @@ accordingly:
 
 The previous sections introduced partial specializations
 and free functions so that several \cgal data structures are adapted as models of some
-of the \sc{Bgl} graph concepts.
+of the \bgl graph concepts.
 In this section, we introduce new concepts, iterators, and property maps inspired
-by the functionalities of the \sc{Bgl}.
+by the functionalities of the \bgl.
 
 \subsection BGLExtensionsGraphConcepts Graph concepts
 
@@ -485,7 +485,7 @@ stored in the vertex record.)
 \subsubsection BGLExampleNormalHalfedgeGraph Example: Calculating Facet Normals using HalfedgeGraph
 
 The following example program shows a simple algorithm for calculating
-facet normals for a polyhedron using the \sc{Bgl} API. A
+facet normals for a polyhedron using the \bgl API. A
 <a href="https://www.boost.org/libs/property_map/doc/vector_property_map.html">boost::vector_property_map</a>
 is used to to store the calculated normals instead of changing the Polyhedron items class.
 
@@ -518,6 +518,19 @@ The following example shows how to attach a `string` property to vertices and
 a `double` value to the halfedges of a graph.
 
 \cgalExample{Property_map/dynamic_properties.cpp}
+
+\subsection BGLGraphIO Graph I/O
+
+Using a common graph concept enables having common input/output functions for all the models
+of this concept. The following file formats are supported for models of `FaceGraph`:
+- \ref IOStreamOFF (`.off`)
+- \ref IOStreamOBJ (`.obj`)
+- \ref IOStreamSTL (`.stl`)
+- \ref IOStreamPLY (`.ply`)
+- \ref IOStreamGocad (`.ts`)
+- \ref IOStreamVTK (`.vtp`)
+
+See the page \ref PkgBGLIOFct for an exhaustive description of the I/O functions of this package.
 
 \section BGLEulerOperations Euler Operations
 
@@ -566,13 +579,13 @@ as shown in the following example.
 \subsection BGLSeamMesh The Seam Mesh
 
 The class `Seam_mesh` allows to mark edges of a mesh as <em>seam edges</em>
-so that they <em>virtually</em> become border edges when exploring a seam mesh with the \sc{Bgl} API.
+so that they <em>virtually</em> become border edges when exploring a seam mesh with the \bgl API.
 The input mesh is referred to as <em>underlying</em> mesh of the seam mesh.
 We denote `tm` and `sm` the underlying mesh and the seam mesh respectively.
 
 Figure \cgalFigureRef{fig_Seam_mesh_1} shows an example of mesh on which two
 edges, defined by the halfedge pairs `h2-h3` and `h6-h7`, are marked as seams.
-The introduction of virtual borders modifies the elementary \sc{Bgl} graph traversal
+The introduction of virtual borders modifies the elementary \bgl graph traversal
 operations: when we circulate around the target of `h7` in the underlying mesh,
 we traverse `h7`, `h1`, `h3`, `h5`, before arriving at `h7` again.
 However, when we circulate in the seam mesh, we traverse `h7`, `h1`, `h3*`,
@@ -633,6 +646,12 @@ to the same vertex in the underlying mesh.
 Seam meshes are for example used in Chapter \ref PkgSurfaceMeshParameterization
 to parameterize a topological sphere by first virtually cutting it into a topological
 disk.
+
+\subsection BGLInheriting Inheriting from a Model of a Face Graph Concept
+In order for a type `FG` to be a model of one of the face graph concepts, a specialization of
+`boost::graph_traits<FG>` must exist. When you derive a class from `FG` this graph traits class specialization does not match.
+For such cases, a header file consuming some user defined macros is provided to make the derived class a valid model
+of the same concept. See `CGAL/boost/graph/graph_traits_inheritance_macros.h` for more details.
 
 \section BGLPartitioning Graph Partitioning
 

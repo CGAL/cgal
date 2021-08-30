@@ -3,15 +3,16 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <fstream>
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Exact_predicates_exact_constructions_kernel EK;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef Mesh::Property_map<vertex_descriptor,EK::Point_3> Exact_point_map;
-typedef Mesh::Property_map<vertex_descriptor,bool> Exact_point_computed;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = PMP::parameters;
@@ -66,27 +67,19 @@ int main(int argc, char* argv[])
 {
   const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
   const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
-  std::ifstream input(filename1);
 
   Mesh mesh1, mesh2;
-  if (!input || !(input >> mesh1))
+  if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
-    std::cerr << "First mesh is not a valid off file." << std::endl;
-    return 1;
-  }
-  input.close();
-  input.open(filename2);
-  if (!input || !(input >> mesh2))
-  {
-    std::cerr << "Second mesh is not a valid off file." << std::endl;
+    std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
   Exact_point_map mesh1_exact_points =
-    mesh1.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point").first;
+    mesh1.add_property_map<vertex_descriptor,EK::Point_3>("v:exact_point").first;
 
   Exact_point_map mesh2_exact_points =
-    mesh2.add_property_map<vertex_descriptor,EK::Point_3>("e:exact_point").first;
+    mesh2.add_property_map<vertex_descriptor,EK::Point_3>("v:exact_point").first;
 
   Exact_vertex_point_map mesh1_vpm(mesh1_exact_points, mesh1);
   Exact_vertex_point_map mesh2_vpm(mesh2_exact_points, mesh2);
@@ -106,14 +99,14 @@ int main(int argc, char* argv[])
                                          params::vertex_point_map(mesh2_vpm) ) )
     {
       std::cout << "Intersection and union were successfully computed\n";
-      std::ofstream output("inter_union.off");
-      output.precision(17);
-      output << mesh2;
+      CGAL::IO::write_polygon_mesh("inter_union.off", mesh2, CGAL::parameters::stream_precision(17));
       return 0;
     }
+
     std::cout << "Union could not be computed\n";
     return 1;
   }
+
   std::cout << "Intersection could not be computed\n";
   return 1;
 }

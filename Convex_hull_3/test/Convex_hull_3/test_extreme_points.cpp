@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
@@ -7,17 +8,16 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
 #include <vector>
 #include <cassert>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 typedef K::Point_3 Point_3;
-
 
 void test_function_overload()
 {

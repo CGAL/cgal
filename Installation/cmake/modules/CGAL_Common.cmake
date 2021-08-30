@@ -24,17 +24,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     set( CMAKE_2_6_3_OR_ABOVE FALSE )
   endif()
 
-  if ( CGAL_BUILDING_LIBS )
-    option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-    set(CGAL_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
-
-    if ( BUILD_SHARED_LIBS )
-      message( STATUS "Building shared libraries" )
-    else()
-      message( STATUS "Building static libraries" )
-    endif()
-  endif()
-
   if ( WIN32 )
     find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
     if(CMAKE_UNAME)

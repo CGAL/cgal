@@ -21,6 +21,7 @@
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
 
 #include <CGAL/Default.h>
+#include <CGAL/iterator.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -43,8 +44,8 @@ namespace Surface_mesh_parameterization {
 /// This class is a strategy called by the main
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
 /// - provides the template parameters `BorderParameterizer_` and `SolverTraits_`.
-/// - implements compute_w_ij() to compute `w_ij = (i,j)`, coefficient of
-///   the matrix A for `j` neighbor vertex of `i`, based on Tutte Barycentric
+/// - implements compute_w_ij() to compute `w_ij`, the `(i,j)`-coefficient of
+///   the matrix `A` for `j` neighbor vertex of `i`, based on Tutte Barycentric
 ///   Mapping method.
 ///
 /// \cgalModels `Parameterizer_3`
@@ -108,24 +109,32 @@ public:
   #endif
   >::type                                                     Solver_traits;
 #else
+  /// Border parameterizer type
   typedef Border_parameterizer_                               Border_parameterizer;
-  typedef SolverTraits_                                       SolverTraits;
+
+  /// Solver traits type
+  typedef SolverTraits_                                       Solver_traits;
 #endif
+
+  /// Triangle mesh type
+  typedef TriangleMesh_                                       Triangle_mesh;
 
   typedef TriangleMesh_                                       TriangleMesh;
 
+  /// Mesh vertex type
+  typedef typename boost::graph_traits<Triangle_mesh>::vertex_descriptor    vertex_descriptor;
+
+  /// Mesh halfedge type
+  typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
+
 private:
   // Superclass
-  typedef Fixed_border_parameterizer_3<TriangleMesh_,
+  typedef Fixed_border_parameterizer_3<Triangle_mesh,
                                        Border_parameterizer,
                                        Solver_traits>  Base;
 
 // Private types
 private:
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh>              vertex_around_target_circulator;
-
   typedef typename Base::NT                       NT;
 
   // Solver traits subtypes:
@@ -139,24 +148,24 @@ public:
                                       ///< %Object that maps the surface's border to 2D space.
                                       Solver_traits sparse_la = Solver_traits())
                                       ///< Traits object to access a sparse linear system.
-  : Fixed_border_parameterizer_3<TriangleMesh,
+  : Fixed_border_parameterizer_3<Triangle_mesh,
                                  Border_parameterizer,
                                  Solver_traits>(border_param, sparse_la)
   { }
 
   // Default copy constructor and operator =() are fine
 
-  /// Check if the 3D -> 2D mapping is one-to-one.
+  /// returns whether the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap,
             typename Faces_Container>
-  bool is_one_to_one_mapping(const TriangleMesh& mesh,
+  bool is_one_to_one_mapping(const Triangle_mesh& mesh,
                              halfedge_descriptor bhd,
                              const VertexUVMap uvmap) const
   {
-    /// Theorem: A one-to-one mapping is guaranteed if all w_ij coefficients
-    ///          are > 0 (for j vertex neighbor of i) and if the surface
+    /// Theorem: A one-to-one mapping is guaranteed if all `w_ij` coefficients
+    ///          are > 0 (for `j` vertex neighbor of `i`) and if the surface
     ///          border is mapped onto a 2D convex polygon.
-    /// Here, all w_ij coefficients = 1 (for j vertex neighbor of i), thus a
+    /// Here, all `w_ij` coefficients are equal to `1` (for `j` vertex neighbor of `i`), thus a
     /// valid embedding is guaranteed if the surface border is mapped
     /// onto a 2D convex polygon.
     return (Base::get_border_parameterizer().is_border_convex() ||
@@ -165,13 +174,12 @@ public:
 
 // Protected operations
 protected:
-  /// Compute w_ij = (i,j), coefficient of matrix A for j neighbor vertex of i.
-  virtual NT compute_w_ij(const TriangleMesh& /* mesh */,
+  /// computes `w_ij`, the coefficient of matrix `A` for `j` neighbor vertex of `i`.
+  virtual NT compute_w_ij(const Triangle_mesh& /* mesh */,
       vertex_descriptor /* main_vertex_v_i */,
-      vertex_around_target_circulator /* neighbor_vertex_v_j */ ) const
+      Vertex_around_target_circulator<Triangle_mesh> /* neighbor_vertex_v_j */ ) const
   {
-    /// In the Tutte Barycentric Mapping algorithm, we have w_ij = 1,
-    /// for j neighbor vertex of i.
+    /// In the Tutte Barycentric Mapping algorithm, we have `w_ij = 1`, for `j` neighbor vertex of `i`.
     return 1.;
   }
 };

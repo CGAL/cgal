@@ -1,7 +1,7 @@
 /*!
 \page general_intro Getting Started with %CGAL
 
-The following pages describe how to use \cgal on different environments
+The following pages describe how to use \cgal on different environments:
 
 - \subpage usage
 
@@ -11,19 +11,21 @@ The following pages describe how to use \cgal on different environments
 
 - \subpage devman_create_and_use_a_cmakelist explains how to use CMake to link a program with \cgal.
 
-The following pages cover advanced installation options
+The following pages cover advanced installation options:
 
 - \subpage configurationvariables gives information about which CMake variables can be used to help
 resolve missing dependencies while using the cmake command line tool.
 
-- \subpage installation describes the deprecated process of configuring and building \cgal.
+- \subpage installation describes the process of configuring and installing \cgal.
 
-The following pages cover the structure of the manual and general information about \cgal
+The following pages cover the structure of the manual and general information about \cgal:
 
 - \subpage manual gives an idea of where you should look for documentation.
 
 - \subpage preliminaries lists how to control inlining, thread safety, code deprecation, checking
-of pre- and postconditions, and how to alter the failure behavior.
+of pre- and postconditions, how to alter the failure behavior, and how to check the version of \cgal.
+
+- \subpage license describes the different licenses used within \cgal, with which users must comply.
 
 Once you are familiar with building your programs with \cgal and how the documentation is structured,
 you can head over to the \ref tutorials for a gentle introduction to \cgal, or directly to the package(s)

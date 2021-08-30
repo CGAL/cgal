@@ -10,18 +10,19 @@ Scene_group_item::Scene_group_item(QString name)
     expanded = true;
     already_drawn = false;
     scene = Three::scene();
+    children = new QList<Scene_interface::Item_id>();
 }
 
 bool Scene_group_item::isFinite() const
 {
-  Q_FOREACH(Scene_interface::Item_id id, children)
+  for(Scene_interface::Item_id id : *children)
     if(!getChild(id)->isFinite()){      return false;
     }
   return true;
 }
 
 bool Scene_group_item::isEmpty() const {
-  Q_FOREACH(Scene_interface::Item_id id, children)
+  for(Scene_interface::Item_id id : *children)
     if(!getChild(id)->isEmpty()){
       return false;
     }
@@ -31,7 +32,7 @@ bool Scene_group_item::isEmpty() const {
 Scene_group_item::Bbox Scene_group_item::bbox() const
 {
  Scene_item* first_non_empty = nullptr;
- Q_FOREACH(Scene_interface::Item_id id, children)
+ for(Scene_interface::Item_id id : *children)
    if(!getChild(id)->isEmpty())
    {
      first_non_empty = getChild(id);
@@ -40,7 +41,7 @@ Scene_group_item::Bbox Scene_group_item::bbox() const
  if(first_non_empty)
  {
    Bbox b =first_non_empty->bbox();
-   Q_FOREACH(Scene_interface::Item_id id, children)
+   for(Scene_interface::Item_id id : *children)
      b+=getChild(id)->bbox();
    return b;
  }
@@ -50,7 +51,7 @@ Scene_group_item::Bbox Scene_group_item::bbox() const
 
 bool Scene_group_item::supportsRenderingMode(RenderingMode m) const {
 
-  Q_FOREACH(Scene_interface::Item_id id, children)
+  for(Scene_interface::Item_id id : *children)
     if(!getChild(id)->supportsRenderingMode(m))
       return false;
   return true;
@@ -59,16 +60,16 @@ bool Scene_group_item::supportsRenderingMode(RenderingMode m) const {
 
 QString Scene_group_item::toolTip() const {
     QString str =
-            QObject::tr( "<p>Number of children: %1<br />").arg(children.size());
+            QObject::tr( "<p>Number of children: %1<br />").arg(children->size());
     str+="</p>";
     return str;
 }
 
 void Scene_group_item::addChild(Scene_item* new_item)
 {
-    if(!children.contains(scene->item_id(new_item)))
+    if(!children->contains(scene->item_id(new_item)))
     {
-        children.append(scene->item_id(new_item));
+        children->append(scene->item_id(new_item));
         update_group_number(new_item, has_group+1);
     }
 
@@ -76,9 +77,9 @@ void Scene_group_item::addChild(Scene_item* new_item)
 
 void Scene_group_item::addChild(Scene_interface::Item_id new_id)
 {
-  if(!children.contains(new_id))
+  if(!children->contains(new_id))
   {
-    children.append(new_id);
+    children->append(new_id);
     update_group_number(getChild(new_id), has_group+1);
   }
 }
@@ -89,16 +90,18 @@ void Scene_group_item::update_group_number(Scene_item * new_item, int n)
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(new_item);
     if(group)
+    {
       Q_FOREACH(Scene_interface::Item_id id, group->getChildren()){
 
         update_group_number(getChild(id),n+1);
       }
+    }
     new_item->has_group = n;
 }
 void Scene_group_item::setColor(QColor c)
 {
   Scene_item::setColor(c);
-  Q_FOREACH(Scene_interface::Item_id id, children)
+  for(Scene_interface::Item_id id : *children)
   {
     getChild(id)->setColor(c);
   }
@@ -107,7 +110,7 @@ void Scene_group_item::setColor(QColor c)
 void Scene_group_item::setRenderingMode(RenderingMode m)
 {
   Scene_item::setRenderingMode(m);
-  Q_FOREACH(Scene_interface::Item_id id, children)
+  for(Scene_interface::Item_id id : *children)
   {
     Scene_item* child = getChild(id);
     if(child->supportsRenderingMode(m))
@@ -118,7 +121,7 @@ void Scene_group_item::setRenderingMode(RenderingMode m)
 void Scene_group_item::setVisible(bool b)
 {
   Scene_item::setVisible(b);
-  Q_FOREACH(Scene_interface::Item_id id, children)
+  for(Scene_interface::Item_id id : *children)
   {
     Scene_item* child = getChild(id);
     child->setVisible(b);
@@ -139,12 +142,12 @@ void Scene_group_item::setExpanded(bool b)
 
 void Scene_group_item::moveDown(int i)
 {
-    children.move(i, i+1);
+    children->move(i, i+1);
 }
 
 void Scene_group_item::moveUp(int i)
 {
-    children.move(i, i-1);
+    children->move(i, i-1);
 }
 
 void Scene_group_item::draw(CGAL::Three::Viewer_interface* ) const  {
@@ -167,7 +170,7 @@ void Scene_group_item::renderChildren(Viewer_interface *viewer,
                             bool with_names)
 {
 
-  Q_FOREACH(Scene_interface::Item_id id, children){
+  for(Scene_interface::Item_id id : *children){
     if(with_names) {
       viewer->glClearDepthf(1.0f);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -229,14 +232,14 @@ void Scene_group_item::lockChild(Scene_item *child)
 
 void Scene_group_item::lockChild(Scene_interface::Item_id id)
 {
-  if(!children.contains(id))
+  if(!children->contains(id))
     return;
   getChild(id)->setProperty("lock", true);
 }
 
 void Scene_group_item::unlockChild(Scene_interface::Item_id id)
 {
-  if(!children.contains(id))
+  if(!children->contains(id))
        return;
   getChild(id)->setProperty("lock", false);
 }
@@ -246,7 +249,7 @@ void Scene_group_item::unlockChild(Scene_item *child)
 }
 bool Scene_group_item::isChildLocked(Scene_interface::Item_id id)
 {
-  if(!children.contains(id)
+  if(!children->contains(id)
      || (!getChild(id)->property("lock").toBool()) )
      return false;
    return true;
@@ -259,7 +262,7 @@ bool Scene_group_item::isChildLocked(Scene_item *child)
 void Scene_group_item::setAlpha(int )
 {
 
-  Q_FOREACH(Scene_interface::Item_id id, children)
+  for(Scene_interface::Item_id id : *children)
   {
     scene->item(id)->setAlpha(static_cast<int>(alpha()*255));
   }

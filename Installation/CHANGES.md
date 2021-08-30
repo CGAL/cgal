@@ -1,16 +1,310 @@
 Release History
 ===============
-
-[Release 5.1](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
+[Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
-Release date: July 2020
+Release date: December 2021
+
+### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
+
+-   This package provides a simple and unified interface to different types of weights.
+    In particular, it groups all weights into three category: analytic weights including
+    all basic weights which can be computed analytically for a query point with respect to its
+    local neighbors in 2D and 3D; barycentric weights including all weights which can be computed
+    for a query point with respect to the vertices of a planar polygon; and weighting regions
+    including all weights which are used to balance other weights.
+
+### [2D Generalized Barycentric Coordinates](https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2) (breaking change, major changes)
+
+-   **Breaking change**: The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are
+    renamed to `segment_coordinates_2.h` and `triangle_coordinates_2.h`.
+-   The classes `Segment_coordinates_2` and `Triangle_coordinates_2` are deprecated. The free functions
+    `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()` are deprecated as well.
+    Instead, the free functions `segment_coordinates_2()` and `triangle_coordinates_2()` must be used.
+-   The enums `Query_point_location` and `Type_of_algorithm` are deprecated. Instead, the enum
+    `Computation_policy_2` must be used.
+-   The clases `Wachspress_2`, `Discrete_harmonic_2`, `Mean_value_2`, and
+    `Generalized_barycentric_coordinates_2` are deprecated. As consequence, the concept `BarycentricCoordinates_2` is deprecated as well. Instead, the classes `Wachspress_coordinates_2`,
+    `Discrete_harmonic_coordinates_2`, and `Mean_value_coordinates_2` must be used.
+-   Added the class `Harmonic_coordinates_2` for computing approximate harmonic coordinates in 2D.
+    These coordinates satisfy all properties of barycentric coordinates inside any simple polygon.
+-   Added a new concept `DiscretizedDomain_2` and a model of this concept called `Delaunay_domain_2`
+    which is based on the [Mesh 2](https://doc.cgal.org/5.4/Manual/packages.html#PkgMesh2) package.
+    A model of this concept is required for computing `Harmonic_coordinates_2`.
+-   Added free functions for computing Wachspress, discrete harmonic, and mean value coordinates.
+-   All free functions and classes are now using ranges and property maps.
+
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
+
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
+    and`Projection_traits_yz_3` classes.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes,
+    identifies their common faces as well as faces present in only either of them.
+
+-   Added the functions: `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()` that
+    computes an estimate of the one-sided Hausdorff distance between two triangle meshes which
+    is bounded by a user-specified error bound;  `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()` that computes
+    an estimate of the symmetric Hausdorff distance bounded by a user-specified error bound;
+    and `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()` that returns `true`
+    if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
+    max distance.
+
+-   Added more functions in the [visitor of the corefinement based methods](https://doc.cgal.org/5.4/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+    to track all vertex creations.
+
+-   Added an option to [`CGAL::Polygon_mesh_processing::self_intersections()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__intersection__grp.html#gaf19c80ec12cbff7ebe9e69453f1d40b8) to report only a limited number of intersections (`maximum_number()`)
+
+### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
+
+-   This package enables to regularize a set of segments and open or closed contours in 2D
+    and a set of planes in 3D such that all input objects are rotated and aligned with respect to the
+    user-specified conditions. In addition, it provides a global regularization framework that can be
+    adjusted for the user needs and any type of geometric objects.
+
+###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
+
+-   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
+
+
+### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
+
+-   Added support for `libpointmatcher::GenericDescriptorOutlierFilter`
+    that enables to provide a map from a point to a weight associated with this point.
+
+
+### [Shape Detection](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeDetection)
+
+-   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
+    and cylinders in 3D.
+
+
+[Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
+-----------
+
+Release date: July 2021
+
+### [General changes](https://doc.cgal.org/5.3/Manual/general_intro.html)
+
+-   The support for the compiled version of CGAL is dropped. Only the header-only version is supported.
+
+-   On Windows, the type used for `Exact_rational`, in `Epick` and indirectly (through `Lazy_exact_nt`)
+   `Epeck` may now be `boost::multiprecision::mpq_rational`, as has been the case on other platforms
+   for several releases. This depends on various options and is added to a list that includes
+   `mpq_class`, `CGAL::Gmpq`, `leda_rational` and `CGAL::Quotient<CGAL::MP_Float>`.
+
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthtree) (new package)
+
+-   This package implements a tree data structure in which each node encloses a hypercubic section
+    of space and each non-leave node has hypercubic children whose edge lengths are half its edge length.
+    Such a data structure is known as a quadtree in 2D, an octree in 3D, and is generalized
+    as an "orthtree" in higher dimensions.
+
+### [Triangulations on the Sphere](https://doc.cgal.org/5.3/Manual/packages.html#PkgTriangulationOnSphere2) (new package)
+
+-   This package enables the construction and manipulation of Delaunay triangulations on the 2-sphere.
+    Triangulations are built incrementally and can be modified by insertion or removal of vertices.
+    Point location querying and primitives to build the dual Voronoi diagram are provided.
+
+### File Input / Output
+
+-   Point set, polygon soup, and polygon mesh file I/O functions have been harmonized and documented:
+    -   Point set I/O functions can be found in the packages [Point_set_processing_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing), and [Point_set_3](https://doc.cgal.org/5.3/Manual/packages.html#PkgPointSet3).
+    -   Polygon mesh I/O functions can be found in the package [BGL](https://doc.cgal.org/5.3/Manual/packages.html#PkgBGL).
+    -   Polygon soup I/O can be found in the package [Stream_support](https://doc.cgal.org/5.3/Manual/packages.html#PkgStreamSupport).
+
+A comprehensive list of the supported file formats is available in the Stream_support package
+[here](https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats);
+inversely, the following [page](https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html)
+can be used to find out which CGAL data structures can be used given a specific file format.
+
+### [Requirements](https://doc.cgal.org/5.3/Manual/thirdparty.html)
+
+-   The CMake minimal version is now `3.14`.
+-   The GNU compiler g++ versions 6 and 7 are no longer tested. Only version 8.3 or later are supported
+
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.3/Manual/packages.html#PkgKernel23)
+
+-   Added `is_translation()`, `is_scaling()`, `is_reflection()`, and `is_rotation()` to the classes
+    [`Aff_transformation_2`](https://doc.cgal.org/5.3/Kernel_23/classCGAL_1_1Aff__transformation__2.html)
+    and [`Aff_transformation_3`](https://doc.cgal.org/5.3/Kernel_23/classCGAL_1_1Aff__transformation__3.html),
+    which enable determining if the transformations use a specialized representation internally.
+
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.3/Manual/packages.html#PkgBooleanSetOperations2)
+-   Added documentation for the free functions [`oriented_side(const Point_2& p, ....)`](https://doc.cgal.org/5.3/Boolean_set_operations_2/group__boolean__oriented__side.html)
+    that accept a point and a polygon.
+-   Documentation has been improved across the whole package.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the class [`CGAL::Polyhedral_envelope`](https://doc.cgal.org/5.3/Polygon_mesh_processing/structCGAL_1_1Polyhedral__envelope.html),
+    providing a way to quickly check if a primitive (point, segment, or triangle)
+    is within a polyhedral envelope around a set of triangles. It is based on the work of
+    Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and Daniele Panozzo.
+    "Exact and efficient polyhedral envelope containment check." (ACM Trans. Graph., 39-4, July 2020).
+-   Added more functions in the [visitor of the corefinement based methods](https://doc.cgal.org/5.3/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+    to track all edge creations.
+
+### [Surface Mesh Topology](https://doc.cgal.org/5.3/Manual/packages.html#PkgSurfaceMeshTopologySummary)
+-   Added the function [`CGAL::Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle()`](https://doc.cgal.org/5.3/Surface_mesh_topology/classCGAL_1_1Surface__mesh__topology_1_1Curves__on__surface__topology.html#a8d7c4cba2cf2cff542f5cd93117233db),
+    which can be used to determine whehter a closed path on a surface mesh can be continously
+    transformed to a cycle without self intersection.
+
+### [Surface Mesh Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgSurfaceMeshSimplification)
+-   Added a filtering mechanism so that costly tests get only applied to the next candidate for the edge collapse.
+-   Added the class [`Polyhedral_envelope_filter`](https://doc.cgal.org/5.3/Surface_mesh_simplification/classCGAL_1_1Surface__mesh__simplification_1_1Polyhedral__envelope__filter.html),
+    which enables to perform mesh simplification  inside a polyhedral envelope of the input mesh.
+
+### [2D Polyline Simplification](https://doc.cgal.org/5.3/Manual/packages.html#PkgPolylineSimplification2)
+-   When polylines have common subsequences of vertices, these subsequences may now be simplifified simultaneously.
+
+### [dD Triangulations](https://doc.cgal.org/5.3/Manual/packages.html#PkgTriangulations)
+-   Added the function [`insert_if_in_star()`](https://doc.cgal.org/5.3/Triangulation/classCGAL_1_1Regular__triangulation.html#aa8df2d138f341939e834bcdd7cb6c71a)
+    to the class [`CGAL::Regular_triangulation`](https://doc.cgal.org/5.3/Triangulation/classCGAL_1_1Regular__triangulation.html),
+    which enables users to insert a point `p` in a regular triangulation on the condition that `p`
+    appears post-insertion in the star of a user-specified, existing vertex.
+
+### [2D and 3D Alpha Shapes](https://doc.cgal.org/5.3/Manual/packages.html#PkgAlphaShapes2)
+-   **Breaking change**: The following deprecated classes have been removed: `Alpha_shape_euclidean_traits_2`,
+    `Weighted_alpha_shape_euclidean_traits_2`, `Alpha_shape_euclidean_traits_3`, and
+    `Weighted_alpha_shape_euclidean_traits_3`. All CGAL kernel can be used directly as models
+    of the concepts of the 2D and 3D Alpha Shape packages.
+
+### [Classification](https://doc.cgal.org/5.3/Manual/packages.html#PkgClassification)
+-   **Breaking change**: the support for TensorFlow has been dropped; the
+    classifier `CGAL::TensorFlow::Neural_network_classifier` has been removed.
+
+
+[Release 5.2](https://github.com/CGAL/cgal/releases/tag/v5.2)
+-----------
+
+Release date: December 2020
+
+### [dD Geometry Kernel](https://doc.cgal.org/5.2/Manual/packages.html#PkgKernelD)
+
+-   The kernels [`Epick_d`](https://doc.cgal.org/5.2/Kernel_d/structCGAL_1_1Epick__d.html)
+    and [`Epeck_d`](https://doc.cgal.org/5.2/Kernel_d/structCGAL_1_1Epeck__d.html) gain two new functors:
+    [`Compute_power_product_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Compute__power__product__d.html)
+    and [`Construct_power_sphere_d`](https://doc.cgal.org/5.2/Kernel_d/classCGAL_1_1Epeck__d_1_1Construct__power__sphere__d.html),
+    to deal with weighted points.
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.2/Manual/packages.html#PkgBGL)
+
+-   Added a convenience header, [`CGAL/boost/graph/graph_traits_inheritance_macros.h`](https://doc.cgal.org/5.2/BGL/graph__traits__inheritance__macros_8h.html),
+    which enables easily making any class inheriting from a model of a face graph concept, a model of the same concept.
+-   Added the function [`can_add_face()`](https://doc.cgal.org/5.2/BGL/group__PkgBGLEulerOperations.html#ga7dc63595108097b6e28b04fe962135f0),
+    which tests whether a new face defined by a range of vertices can be added.
+
+### [3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/5.2/Manual/packages.html#PkgAABBTree)
+
+-   Added the move constructor and the assignment operator to the
+    [AABB Tree](https://doc.cgal.org/5.2/AABB_tree/classCGAL_1_1AABB__tree.html) class.
+
+### [2D Arrangements](https://doc.cgal.org/5.2/Manual/packages.html#PkgArrangementOnSurface2)
+
+-   Replaced the use of legacy
+    [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+    to modern `boost::variant`.
+-   Changed make-x-monotone return type from legacy
+    [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+    to `boost::variant` in all traits concepts and models.
+    As there exists an implicit conversion from `boost::variant` to `CGAL::Object`,
+    the new code is backward compatible. However, it is recommended that all calls
+    to the make-x-monotone functions are fixed to use the new return type.
+-   Changed [`decompose()`](https://doc.cgal.org/5.2/Arrangement_on_surface_2/group__PkgArrangementOnSurface2Funcs.html#gae20b2917f6de15db9bf025f83abf8e89)
+    interface to use `boost::variant` instead of legacy
+    [`CGAL::Object`](https://doc.cgal.org/5.2/STL_Extension/classCGAL_1_1Object.html)
+    As explained above, the code is backward compatible. However, it is recommended
+    that all calls to `decompose()` are fixed to use the new interface.
+
+### [Surface Mesh](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMesh)
+
+-   Added the function [`clear_without_removing_property_maps()`](https://doc.cgal.org/5.2/Surface_mesh/classCGAL_1_1Surface__mesh.html#aad000a07a5ada30536f194b28b59d111)
+    to clear a mesh but keep all the created property maps added.
+-   Added the functions [`remove_property_maps<Index_type>()`](https://doc.cgal.org/5.2/Surface_mesh/classCGAL_1_1Surface__mesh.html#a2a3dd8c01f7fba7b640d85bfd1c41d90)
+    and [`remove_all_property_maps()`](https://doc.cgal.org/5.2/Surface_mesh/classCGAL_1_1Surface__mesh.html#a5696da09300f3d0eafed117668bb3bec)
+    to remove all added property maps by index type or all of them respectively.
+-   Added the functions [`set_recycle_garbage()`](https://doc.cgal.org/5.2/Surface_mesh/classCGAL_1_1Surface__mesh.html#a40ada5068bf6d529a511c46767dfd21d)
+    and [`does_recycle_garbage()`](https://doc.cgal.org/5.2/Surface_mesh/classCGAL_1_1Surface__mesh.html#a081a87aaf7e56e6b4f9afba99967f8f4)
+    to the class `Surface_mesh`.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added a visitor to the functions
+    [`CGAL::Polygon_mesh_processing::triangulate_face()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#ga70d65044f8c7309c24ade88fa280124a)
+    and [`CGAL::Polygon_mesh_processing::triangulate_faces()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__meshing__grp.html#gacaaff4d520500c530d9c3d5ebe2a0760),
+    that enables the user to keep track of the newly created faces through the triangulation process.
+-   Added an option in [`CGAL::Polygon_mesh_processing::corefine()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__corefinement__grp.html#ga6447dee822aaf92016f34512ce0b3456),
+    [`CGAL::Polygon_mesh_processing::split()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__corefinement__grp.html#gaa491feee9e41f725332bea0ea1215578)
+    and [`CGAL::Polygon_mesh_processing::clip()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__corefinement__grp.html#ga30082762ba2d947cba304e2884d96a99)
+    functions, which enable the operations to be performed on a mesh with
+    self-intersections present in the intersection area.
+-   Added an optional range parameter to [`CGAL::Polygon_mesh_processing::stitch_borders()`](https://doc.cgal.org/5.2/Polygon_mesh_processing/group__PMP__repairing__grp.html#ga8ae4352e67d2b099994ac8990c13bd41),
+    which can be used to specify which boundary cycles are eligible for stitching.
+
+### [Surface Mesh Parameterization](https://doc.cgal.org/5.2/Manual/packages.html#PkgSurfaceMeshParameterization)
+
+-   Added a new parameterization method, [Iterative Authalic Parameterization](https://doc.cgal.org/5.2/Surface_mesh_parameterization/index.html#title11).
+    It is based on the work of Jain, Hardik, Manuel Wollhaf, and Olaf Hellwich,
+    "Learning to Reconstruct Symmetric Shapes using Planar Parameterization of 3D Surface."
+    (IEEE International Conference on Computer Vision Workshops, 2019).
+
+### [Classification](https://doc.cgal.org/5.2/Manual/packages.html#PkgClassification)
+
+-   **Breaking change**: new IO format for the [`ETHZ::Random_Forest`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1ETHZ_1_1Random__forest__classifier.html) classifier:
+    a conversion function from the outdated format to the new one is provided.
+
+-   Added new functions to the class [`CGAL::Classification::Evaluation`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1Evaluation.html):
+    [`append()`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1Evaluation.html#a20c5fc43af44c96ce0cae40375be934f)
+    to enrich the evaluation with additional results;
+    [`confusion()`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1Evaluation.html#a706a85bb1deefee350ce71855bc023e9)
+    to access the confusion matrix;
+    output functions to save the evaluation to and `ASCII` or `HTML` stream.
+-   Added a new operator, [`CGAL::Classification::feature_cast<>`](https://doc.cgal.org/5.2/Classification/group__PkgClassificationFeature.html#gaf4b1504270f25061f63f05743a17e5d1),
+    for easy conversions.
+-   The classes [`CGAL::Classification::Feature_set`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1Feature__set.html)
+    and [`CGAL::Classification::Label_set`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1Label__set.html)
+    are now models of the concept [`Range`](https://doc.cgal.org/5.2/Circulator/classRange.html).
+-   The class [`CGAL::Classification::Label`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1Label.html)
+    now has attributes `index`, `standard_index` and `color`,
+    with automatic selection if the ASPRS standard names are used.
+-   Added new functions in [`CGAL::Classification::Point_set_feature_iterator`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1Point__set__feature__generator.html),
+    to enable users to select which features should be generated.
+-   Added a new function, [`CGAL::Classification::Label_set::is_valid_ground_truth()`](https://doc.cgal.org/5.2/Classification/classCGAL_1_1Classification_1_1Label__set.html#adeb3b046f640c091b1f123e982386e43),
+    to help users check if a ground truth matches a given label set.
+
+### [Point Set Processing](https://doc.cgal.org/5.2/Manual/packages.html#PkgPointSetProcessing3)
+
+-   Added a function [`CGAL::scanline_orient_normals()`](https://doc.cgal.org/5.2/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#ga221d4efde44f42aefe153cb927138efe),
+    which orients a point cloud by estimating a line of sight.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.2/Manual/packages.html#PkgConvexHull3)
+
+-   Added the function [`CGAL::halfspace_intersection_interior_point_3()`](https://doc.cgal.org/5.2/Convex_hull_3/group__PkgConvexHull3Functions.html#ga9a1ead3126e42fbf46ef269466cddc8f),
+    which can be used to retrieve the point that is the most interior a convex closed volume
+    defined by the intersection of a set of halfspaces.
+
+### [3D Triangulations](https://doc.cgal.org/5.2/Manual/packages.html#PkgTriangulation3)
+
+-   Added new classes and functions to visit the cells and simplices intersected by a line segment,
+    see Sections [Segment Cell Iterator](https://doc.cgal.org/5.2/Triangulation_3/classCGAL_1_1Triangulation__3.html#amgrp0d087ed77bb99ca595c92d2cd2ab59b9)
+    and [Segment Simplex Iterator](https://doc.cgal.org/5.2/Triangulation_3/classCGAL_1_1Triangulation__3.html#amgrp2447c1d2dce281951a0a4d8aecd3f35d), respectively.
+
+
+[Release 5.1](https://github.com/CGAL/cgal/releases/tag/v5.1)
+-----------
+
+Release date: September 2020
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/5.1/Manual/packages.html#PkgTetrahedralRemeshing) (new package)
 
 -   This package implements a tetrahedral isotropic remeshing algorithm,
     that improves the quality of tetrahedra in terms of dihedral angles,
     while targeting a given edge length.
+
+    See also the associated [blog entry](https://www.cgal.org/2020/08/07/Tetrahedral-remeshing/).
 
 ### [Surface Mesh Topology](https://doc.cgal.org/5.1/Manual/packages.html#PkgSurfaceMeshTopologySummary) (new package)
 
@@ -29,6 +323,11 @@ Release date: July 2020
     (in terms of volume) bounding box that contains a given mesh or point set.
 
     See also the associated [blog entry](https://www.cgal.org/2020/04/20/Optimal_bounding_box/).
+
+### Installation
+
+-   The CGAL\_Core library no longer requires `Boost.Thread`, even if the g++ compiler is used.
+-   The minimal supported version of Boost is now 1.66.0.
 
 ### [Tutorials](https://doc.cgal.org/5.1/Manual/tutorials.html)
 
@@ -69,7 +368,7 @@ Release date: July 2020
 -   Added the function [`CGAL::set_triangulation_ids()`](https://doc.cgal.org/5.1/BGL/group__BGLGraphExternalIndices.html#ga1a22cf8bdde32fcdf1a4a78966eed630),
     which must be used to initialize vertex, edge, and face indices of a triangulation meant to be used with BGL algorithms.
 
-### [3D Fast Intersection and Distance Computation](https://doc.cgal.org/5.1/Manual/packages.html#PkgAABBTree)
+### [3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/5.1/Manual/packages.html#PkgAABBTree)
 
 -   The behavior of the internal search tree used to accelerate distance queries has changed:
     usage of the internal search tree will now be enabled by default, and its construction
@@ -1199,7 +1498,7 @@ Release date: September 2017
     robust versions of the kernel functors
     `Construct_weighted_circumcenter_3`, `Compute_squared_radius_3`, and
     `Compute_squared_radius_smallest_orthogonal_sphere_3`. This class
-    can be used as traits class in the the `Mesh_3` package to
+    can be used as traits class in the `Mesh_3` package to
     efficiently yet robustly generate 3D meshes.
 -   Add a new type of polyhedral domain with features,
     `Polyhedral_complex_mesh_domain_3`. The domain is defined by a

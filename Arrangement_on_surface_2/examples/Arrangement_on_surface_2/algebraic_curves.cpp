@@ -32,7 +32,7 @@ typedef Arr_traits_2::Polynomial_2 Polynomial_2;
 int main() {
 
     // For nice printouts
-    CGAL::set_pretty_mode(std::cout);
+    CGAL::IO::set_pretty_mode(std::cout);
 
     Arr_traits_2 arr_traits;
 

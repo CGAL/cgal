@@ -135,7 +135,7 @@ struct Index_map_initializer<IndexPropertyMap, Graph, false>
   void operator()(const PropertyTag, IndexPropertyMap, const Graph&)
   {
     // The property map is not writable; should never be here.
-    CGAL_assertion_msg(false, "You are trying to initialize a non-writable property map");
+    CGAL_assertion_msg(false, "Initialization of a non-writable property map is impossible");
   }
 };
 
@@ -171,7 +171,7 @@ IndexMap get_initialized_index_map_const(const IndexMap index_map,
   CGAL_USE(g);
   CGAL_USE(p);
 
-  // If you are passing a pmap via NPs, it must be initialized
+  // If a pmap is passed via NPs, it must be initialized
   CGAL_assertion(is_index_map_valid(p, index_map, g));
 
   return index_map;
@@ -185,7 +185,7 @@ IndexMap get_initialized_index_map(const IndexMap index_map,
   CGAL_USE(g);
   CGAL_USE(p);
 
-  // If you are passing a pmap via NPs, it must be initialized
+  // If a pmap is passed via NPs, it must be initialized
   CGAL_assertion(is_index_map_valid(p, index_map, g));
 
   return index_map;

@@ -6,6 +6,7 @@
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 
 #include <iostream>
 #include <fstream>
@@ -38,7 +39,7 @@ int main(int argc, char* argv[])
   Target1 T1;
   {
     CGAL::copy_face_graph(S, T1);
-    CGAL::write_off("lcc.off", T1);
+    CGAL::IO::write_OFF("lcc.off", T1);
   }
 
   S.clear();

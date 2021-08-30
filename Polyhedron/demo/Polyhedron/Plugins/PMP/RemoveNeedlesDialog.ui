@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>607</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
         <string>Threshold in degrees</string>
        </property>
        <property name="title">
-        <string>Cap Threshold</string>
+        <string>Cap threshold (max. angle allowed within a triangle): </string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
@@ -30,7 +30,7 @@
           <item>
            <widget class="QDoubleSpinBox" name="capBox">
             <property name="toolTip">
-             <string/>
+             <string>Angle in degrees</string>
             </property>
             <property name="suffix">
              <string/>
@@ -57,7 +57,7 @@
         <string>(size+big edge )/(size+small edge)</string>
        </property>
        <property name="title">
-        <string>Needle Threshold</string>
+        <string>Needle threshold (max. edge length ratio (longest/shortest) allowed within a triangle):</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -65,7 +65,7 @@
           <item>
            <widget class="QDoubleSpinBox" name="needleBox">
             <property name="toolTip">
-             <string>Threshold in degrees</string>
+             <string>Length Ratio</string>
             </property>
             <property name="decimals">
              <number>2</number>
@@ -89,7 +89,7 @@
         <string>Do not collapse edges begger than this threshold.</string>
        </property>
        <property name="title">
-        <string>Collapse Length Threshold</string>
+        <string>Do not collapse needles (according to the criterion above) whose shortest edge has a length greater than:</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
@@ -97,10 +97,13 @@
           <item>
            <widget class="QDoubleSpinBox" name="collapseBox">
             <property name="toolTip">
-             <string>Threshold in degrees</string>
+             <string>Length</string>
             </property>
             <property name="decimals">
-             <number>2</number>
+             <number>25</number>
+            </property>
+            <property name="maximum">
+             <double>99999999.000000000000000</double>
             </property>
            </widget>
           </item>

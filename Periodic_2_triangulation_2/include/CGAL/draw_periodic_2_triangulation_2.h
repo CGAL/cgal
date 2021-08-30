@@ -17,6 +17,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Random.h>
 
@@ -25,11 +26,11 @@ namespace CGAL {
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorP2T2 {
   template <typename P2T2>
-  static CGAL::Color run(const P2T2 &,
+  static CGAL::IO::Color run(const P2T2 &,
                          const typename P2T2::Periodic_triangle_iterator /*ti*/) {
     //CGAL::Random random((unsigned int)(std::size_t)(&*ti));
     //return get_random_color(random);
-    return CGAL::Color(73, 250, 117);
+    return CGAL::IO::Color(73, 250, 117);
   }
 };
 
@@ -106,7 +107,7 @@ protected:
     // Construct the triangle in 9-sheeted covering space and add to viewer
     Triangle t(p2t2.triangle(*ti));
 
-    CGAL::Color c=m_fcolor.run(p2t2, ti);
+    CGAL::IO::Color c=m_fcolor.run(p2t2, ti);
     face_begin(c);
     add_point_in_face(t[0]);
     add_point_in_face(t[1]);
@@ -115,9 +116,9 @@ protected:
 
     // Display the edges of the faces as segments with a
     // light gray color for better visualization
-    add_segment(t[0], t[1], CGAL::Color(207, 213, 211));
-    add_segment(t[1], t[2], CGAL::Color(207, 213, 211));
-    add_segment(t[2], t[0], CGAL::Color(207, 213, 211));
+    add_segment(t[0], t[1], CGAL::IO::Color(207, 213, 211));
+    add_segment(t[1], t[2], CGAL::IO::Color(207, 213, 211));
+    add_segment(t[2], t[0], CGAL::IO::Color(207, 213, 211));
   }
 
   void compute_domain()
@@ -134,10 +135,10 @@ protected:
         Kernel::Point_2 p3(orig_domain.xmax(), orig_domain.ymin());
         Kernel::Point_2 p4((orig_domain.max)());
 
-        add_segment(p1 + shift, p2 + shift, CGAL::Color(96, 104, 252));
-        add_segment(p1 + shift, p3 + shift, CGAL::Color(96, 104, 252));
-        add_segment(p2 + shift, p4 + shift, CGAL::Color(96, 104, 252));
-        add_segment(p3 + shift, p4 + shift, CGAL::Color(96, 104, 252));
+        add_segment(p1 + shift, p2 + shift, CGAL::IO::Color(96, 104, 252));
+        add_segment(p1 + shift, p3 + shift, CGAL::IO::Color(96, 104, 252));
+        add_segment(p2 + shift, p4 + shift, CGAL::IO::Color(96, 104, 252));
+        add_segment(p3 + shift, p4 + shift, CGAL::IO::Color(96, 104, 252));
       }
     }
   }
@@ -260,6 +261,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"p2t2_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));

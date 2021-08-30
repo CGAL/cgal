@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>492</height>
+    <height>508</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,20 +16,117 @@
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
+     <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0">
       <item>
-       <widget class="QLabel" name="legendLabel">
-        <property name="text">
-         <string>RAMP DISPLAYING</string>
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>127</width>
+           <height>430</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <widget class="QLabel" name="legendLabel">
+            <property name="text">
+             <string>RAMP DISPLAYING</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
         <item row="4" column="1">
          <widget class="QPushButton" name="colorizeButton">
           <property name="text">
            <string>Colorize</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QTabWidget" name="colorChoiceWidget">
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="ramp_tab">
+           <attribute name="title">
+            <string>Ramp</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <widget class="QGroupBox" name="groupBox_2">
+              <property name="title">
+               <string>Ramp Colors</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <item>
+                <widget class="QPushButton" name="minColorButton">
+                 <property name="text">
+                  <string>Color Min...</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="maxColorButton">
+                 <property name="text">
+                  <string>Color Max...</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="map_tab">
+           <attribute name="title">
+            <string>Map</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QPushButton" name="initColorButton">
+              <property name="text">
+               <string>Initial Color...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QPushButton" name="sourcePointsButton">
+          <property name="text">
+           <string>Select Source Points</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -54,53 +151,6 @@
             </widget>
            </item>
           </layout>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Ramp Colors</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QPushButton" name="minColorButton">
-             <property name="text">
-              <string>Color Min...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="maxColorButton">
-             <property name="text">
-              <string>Color Max...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QPushButton" name="sourcePointsButton">
-          <property name="text">
-           <string>Select Source Points</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string/>
-          </property>
          </widget>
         </item>
         <item row="1" column="1">
@@ -157,6 +207,9 @@
       </item>
       <item>
        <widget class="QComboBox" name="propertyBox">
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::AdjustToContents</enum>
+        </property>
         <item>
          <property name="text">
           <string>Smallest Angle Per Face</string>

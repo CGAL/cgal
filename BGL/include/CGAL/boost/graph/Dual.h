@@ -56,18 +56,18 @@ public:
   /*! The underlying primal type. */
   typedef Primal_ Primal;
 
-  /*! Construct a Dual from a given primal. */
+  /*! constructs a Dual from a given primal. */
   Dual(const Primal& primal)
     : primal_(primal) {}
 
-  /*! Returns the underlying primal. */
+  /*! returns the underlying primal. */
   const Primal& primal() const
   { return primal_; }
 };
 
 
 /*!
-  Construct a `Dual` from a given `primal`.
+  constructs a `Dual` from a given `primal`.
   \relates CGAL::Dual
  */
 template<typename Primal>

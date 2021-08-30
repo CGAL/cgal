@@ -524,10 +524,9 @@ treat_result(Scene_c3t3_item& source_item,
                             static_cast<float>(bbox.ymin() + bbox.ymax())/2.f,
                             static_cast<float>(bbox.zmin() + bbox.zmax())/2.f);
 
-    result_item.setColor(QColor(59,74,226));
+    result_item.setColor(source_item.color());
     result_item.setRenderingMode(source_item.renderingMode());
     result_item.set_data_item(source_item.data_item());
-
     source_item.setVisible(false);
 
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -539,6 +538,7 @@ treat_result(Scene_c3t3_item& source_item,
   else
   {
     result_item.update_histogram();
+    result_item.invalidateOpenGLBuffers();
 
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     scene->itemChanged(index);

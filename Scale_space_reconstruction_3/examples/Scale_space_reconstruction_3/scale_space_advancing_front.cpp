@@ -1,17 +1,14 @@
-
-#include <fstream>
-#include <iostream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/IO.h>
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 #include <CGAL/Scale_space_reconstruction_3/Advancing_front_mesher.h>
 #include <CGAL/Scale_space_reconstruction_3/Jet_smoother.h>
 
-#include <CGAL/IO/read_off_points.h>
 #include <CGAL/Timer.h>
+
+#include <fstream>
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 
@@ -26,17 +23,16 @@ typedef Reconstruction::Facet_const_iterator                   Facet_iterator;
 
 int main(int argc, char** argv)
 {
-  if (argc!=2){
+  if (argc != 2)
+  {
     std::cerr << "Error, no input file provided\n";
     return 1;
   }
-  // Read the data.
-  Point_set points;
-  std::ifstream in(argv[1]);
-  std::cerr << "Reading " << std::flush;
-  in >> points;
 
-  if (points.empty())
+  // Read the data.
+  std::cerr << "Reading " << std::flush;
+  Point_set points;
+  if(!CGAL::IO::read_point_set(argv[1], points))
   {
     std::cerr << "Error: cannot read file" << std::endl;
     return EXIT_FAILURE;

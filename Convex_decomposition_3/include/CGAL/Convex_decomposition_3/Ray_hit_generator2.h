@@ -112,8 +112,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
         e->twin() = svb;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
         svb->set_index(e->get_index());
-        svf->set_index();
-        svf->twin()->set_index(svf->get_index());
+        svf->twin()->set_index(svf->new_index());
 #endif
       } else {
         svf->twin() = e;
@@ -122,8 +121,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
         e->twin() = svf;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
         svf->set_index(e->get_index());
-        svb->set_index();
-        svb->twin()->set_index(svb->get_index());
+        svb->twin()->set_index(svb->new_index());
 #endif
       }
 
@@ -182,8 +180,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
       sv1->twin() = sv2; // TODO: why is this necessary?
       sv2->twin() = sv1; // these edges should not go into the Edge_sorter
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-      sv1->set_index();
-      sv2->set_index(sv1->get_index());
+      sv2->set_index(sv1->new_index());
 #endif
     }
   }

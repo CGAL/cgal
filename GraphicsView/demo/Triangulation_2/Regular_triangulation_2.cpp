@@ -5,9 +5,7 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_2.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 
 #include <CGAL/point_generators_2.h>
 // Qt headers
@@ -94,6 +92,7 @@ MainWindow::MainWindow()
                    dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setEdgesPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
 
   // Add a GraphicItem for the Powerdiagram diagram
@@ -247,9 +246,7 @@ MainWindow::on_actionLoadPoints_triggered()
                                                   tr("Open Points file"),
                                                   ".",
                                                   tr("Weighted Points (*.wpts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All (*)"));
 
   if(! fileName.isEmpty()){
@@ -257,14 +254,12 @@ MainWindow::on_actionLoadPoints_triggered()
     std::vector<Weighted_point_2> points;
     if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<K::Point_3> points_3;
-      CGAL::read_multi_point_WKT(ifs, points_3);
+      CGAL::IO::read_multi_point_WKT(ifs, points_3);
       for(const K::Point_3& p : points_3)
       {
         points.push_back(Weighted_point_2(K::Point_2(p.x(), p.y()), p.z()));
       }
-#endif
     }
     else
     {
@@ -288,15 +283,12 @@ MainWindow::on_actionSavePoints_triggered()
                                                   tr("Save points"),
                                                   ".reg.cgal",
                                                   tr("Weighted Points (*.wpts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<K::Point_3> points_3;
       for(Regular::Finite_vertices_iterator
           vit = dt.finite_vertices_begin(),
@@ -307,8 +299,7 @@ MainWindow::on_actionSavePoints_triggered()
                                       vit->point().y(),
                                       vit->point().weight()));
       }
-      CGAL::write_multi_point_WKT(ofs, points_3);
-#endif
+      CGAL::IO::write_multi_point_WKT(ofs, points_3);
     }
     else
     {

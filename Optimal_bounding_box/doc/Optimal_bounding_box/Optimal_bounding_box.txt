@@ -94,7 +94,7 @@ and is enabled by default.
 
 \subsection OBBInnOut Input and Output
 
-The input can be a range of 3D points, or a mesh, with a variety of \ref obb_namedparameters "Named Parameters"
+The input can be a range of 3D points, or a mesh, with a variety of \ref bgl_namedparameters "Named Parameters"
 enabling using further custom inputs.
 
 The result of the algorithm can be retrieved as:
@@ -177,7 +177,7 @@ from the eight points.
 
 \subsection OBBExampleNP Using Named Parameters
 
-The following example illustrates how to use \ref obb_namedparameters "Named Parameters"
+The following example illustrates how to use \ref bgl_namedparameters "Named Parameters"
 to efficiently compute the oriented bounding box of a mesh whose vertices' positions are
 modified on the fly.
 

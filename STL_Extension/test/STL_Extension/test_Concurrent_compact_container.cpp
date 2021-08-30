@@ -22,8 +22,8 @@ int main()
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
-
-# include <tbb/task_scheduler_init.h>
+#define TBB_PREVIEW_GLOBAL_CONTROL 1
+# include <tbb/global_control.h>
 # include <tbb/parallel_for.h>
 # include <atomic>
 
@@ -451,7 +451,7 @@ int main()
     std::cout << "cc2: " << it->rnd << " / " << std::endl;
   }*/
 
-  tbb::task_scheduler_init init(1);
+  tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test_time_stamps<CGAL::Concurrent_compact_container<Node_1> >();
   return 0;
 }

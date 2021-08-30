@@ -72,8 +72,10 @@ bool line_starts_with(const std::string& line, const char* cstr)
     return (line.compare(fnws, strlen(cstr), cstr) == 0);
   return false;
 }
+
 namespace IO{
 namespace internal{
+
 bool treat_surf_materials(std::istream& input,
                           std::vector<material>& materials,
                           int& material_id)
@@ -136,7 +138,7 @@ void treat_surf_vertices(std::istream& input,
     double x(0),y(0),z(0);
     iss.clear();
     iss.str(line);
-    iss >> CGAL::iformat(x) >> CGAL::iformat(y) >> CGAL::iformat(z);
+    iss >> CGAL::IO::iformat(x) >> CGAL::IO::iformat(y) >> CGAL::IO::iformat(z);
     points.push_back(Point_3(x,y,z));
   }
 }

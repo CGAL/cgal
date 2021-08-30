@@ -18,12 +18,14 @@ typedef CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3<Triangle_mesh, CG
 
 int main(int argc, char* argv[])
 {
-  Triangle_mesh tm;
   const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
-  std::ifstream input(filename);
-  if (!input || !(input >> tm) || tm.is_empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
-    return 1;
+
+  Triangle_mesh tm;
+  if(!CGAL::IO::read_polygon_mesh(filename, tm) ||
+     CGAL::is_empty(tm) || !CGAL::is_triangle_mesh(tm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
   }
 
    //property map for the distance values to the source set

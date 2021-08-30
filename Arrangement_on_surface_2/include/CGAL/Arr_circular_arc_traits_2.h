@@ -27,6 +27,10 @@
  * Arrangement_2 package, which it is now part of. It contains a traits
  * class for the arrangement package that handles circular curves.
  * It is based on the circular kernel.
+ *
+ * \todo Fix the circular-kernel make-x-monotone functor to use modern variant
+ *       instead of the legacy CGAL::Object. Then, eliminate the special
+ *       implementation here and directly use the kernel functor instead.
  */
 
 #include <CGAL/basic.h>
@@ -109,7 +113,7 @@ public:
   typedef unsigned int                           Multiplicity;
 
   typedef CGAL::Tag_false                        Has_left_category;
-  typedef CGAL::Tag_false                          Has_merge_category;
+  typedef CGAL::Tag_false                        Has_merge_category;
   typedef CGAL::Tag_false                        Has_do_intersect_category;
 
   typedef Arr_oblivious_side_tag                 Left_side_category;
@@ -129,7 +133,7 @@ public:
   typedef typename CircularKernel::Construct_circular_min_vertex_2
                                                         Construct_min_vertex_2;
   typedef typename CircularKernel::Equal_2              Equal_2;
-  typedef typename CircularKernel::Make_x_monotone_2    Make_x_monotone_2;
+  // typedef typename CircularKernel::Make_x_monotone_2    Make_x_monotone_2;
   typedef typename CircularKernel::Split_2              Split_2;
   typedef typename CircularKernel::Intersect_2          Intersect_2;
   typedef typename CircularKernel::Is_vertical_2        Is_vertical_2;
@@ -149,8 +153,8 @@ public:
   Equal_2 equal_2_object() const
   { return ck.equal_2_object(); }
 
-  Make_x_monotone_2 make_x_monotone_2_object() const
-  { return ck.make_x_monotone_2_object(); }
+  // Make_x_monotone_2 make_x_monotone_2_object() const
+  // { return ck.make_x_monotone_2_object(); }
 
   Split_2 split_2_object() const
   { return ck.split_2_object(); }
@@ -168,6 +172,34 @@ public:
     { return ck.is_vertical_2_object();  }
 
 
+  //! A functor for subdividing curves into x-monotone curves.
+  class Make_x_monotone_2 {
+  public:
+    template <typename OutputIterator>
+    OutputIterator operator()(const Curve_2& arc, OutputIterator oi) const
+    {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
+      std::vector<CGAL::Object> objs;
+      CircularKernel().make_x_monotone_2_object()(arc, std::back_inserter(objs));
+      for (const auto& obj : objs) {
+        if (const auto* p = CGAL::object_cast<Point_2>(&obj)) {
+          *oi++ = Make_x_monotone_result(*p);
+          continue;
+        }
+        if (const auto* xcv = CGAL::object_cast<X_monotone_curve_2>(&obj)) {
+          *oi++ = Make_x_monotone_result(*xcv);
+          continue;
+        }
+        CGAL_error();
+      }
+      return oi;
+    }
+  };
+
+  Make_x_monotone_2 make_x_monotone_2_object() const
+  { return Make_x_monotone_2(); }
 };
 
 } // namespace CGAL

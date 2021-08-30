@@ -73,25 +73,31 @@ bool check_compare_y_at_x_2(Curve& cv)
   return true;
 }
 
-template<typename Curve>
-void check_intersect(const Curve& cv1, const Curve& cv2)
+template <typename GeometryTraits_2>
+void check_intersect(const typename GeometryTraits_2::X_monotone_curve_2& cv1,
+                     const typename GeometryTraits_2::X_monotone_curve_2& cv2,
+                     const GeometryTraits_2& traits)
 {
   // Polycurve_arc_traits_2 traits;
-
-  // std::vector<CGAL::Object> object_vec;
-  // traits.intersect_2_object()(cv1, cv2, object_vec);
-  // std::cout<< "number of intersections is: " << object_vec.size();
+  // std::vector<Intersection_result> objs;
+  // traits.intersect_2_object()(cv1, cv2, std::back_inserter(objs));
+  // std::cout<< "number of intersections is: " << objs.size();
 }
 
-template<typename Curve>
-void check_make_x_monotone(Curve cv)
+template <typename GeometryTraits_2>
+void check_make_x_monotone(typename GeometryTraits::Curve_2 cv,
+                           const GeometryTraits_2& traits)
 {
-   Polycurve_arc_traits_2 traits;
-   std::vector<CGAL::Object> object_vec;
+  typedef GeometryTraits_2                                  Geometry_traits_2;
+  typedef typename Geometry_traits_2::Point_2               Point_2;
+  typedef typename Geometry_traits_2::X_monotone_traits_2   X_monotone_traits_2;
 
-   traits.make_x_monotone_2_object()(cv, std::back_inserter(object_vec));
-   std::cout << "Number of x-monotone curves: "
-             << object_vec.size() << std::endl;
+  typedef boost::variant<Point_2, X_monotone_traits_2>
+    Make_x_monotone_result;
+
+  std::vector<Make_x_monotone_result> objs;
+  traits.make_x_monotone_2_object()(cv, std::back_inserter(objs));
+  std::cout << "Number of x-monotone curves: " << objs.size() << std::endl;
 }
 
 template<typename Curve>
@@ -198,8 +204,8 @@ int main(int argc, char* argv[])
   //////////////////////
 
   // check_compare_y_at_x_2(x_polycurve_1);
-  // check_intersect(x_polycurve_1, x_polycurve_2);
-  //check_make_x_monotone(curve_1);
+  // check_intersect(x_polycurve_1, x_polycurve_2, traits);
+  //check_make_x_monotone<Polycurve_arc_traits_2>(curve_1, traits);
 
   //checking if the cgal_assertion for curve construction for two points work
   //or not.

@@ -3,9 +3,9 @@
 /*! \defgroup PkgBGLConcepts Concepts
  \ingroup PkgBGLRef
 
- We extend the Boost Graph Library (\sc{Bgl} for short) with a set of new concepts.
+ We extend the Boost Graph Library (\bgl for short) with a set of new concepts.
  In order to make this documentation self-contained we here also document
- concepts that are defined in the original version of the \sc{Bgl}.
+ concepts that are defined in the original version of the \bgl.
  The documentation of the concepts lists at the same time the functions
  related to it. Models of the concept and their related functions
  must be in the same namespace (they will be found by Koenig lookup).
@@ -443,7 +443,7 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLPropertiesDynamic Dynamic Properties
 /// \ingroup PkgBGLRef
 
-/// \defgroup PkgBGLGraphExternalIndices External Indices
+/// \defgroup BGLGraphExternalIndices External Indices
 /// \ingroup PkgBGLRef
 
 /// \defgroup PkgBGLHelperFct Helper Functions
@@ -466,6 +466,41 @@ the requirement for traversal of all faces in a graph.
 
 /// \defgroup PkgBGLIOFct I/O Functions
 /// \ingroup PkgBGLRef
+
+/// \defgroup PkgBGLIoFuncsSTL STL I/O Functions
+/// I/O Functions for the \ref IOStreamSTL
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsPLY PLY I/O Functions
+/// I/O Functions for the \ref IOStreamPLY
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsOBJ OBJ I/O Functions
+/// I/O Functions for the \ref IOStreamOBJ
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
+/// I/O Functions for the \ref IOStreamOFF
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsVTP VTP I/O Functions
+/// I/O Functions for the \ref IOStreamVTK
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsGOCAD GOCAD I/O Functions
+/// I/O Functions for the \ref IOStreamGocad
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsWRL WRL I/O Functions
+/// I/O Functions for the \ref IOStreamWRL
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncs3MF 3MF I/O Functions
+/// I/O Functions for the \ref IOStream3MF
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIOFctDeprecated I/O Functions (Deprecated)
+/// \ingroup PkgBGLIOFct
 
 /*!
 \addtogroup PkgBGLPropertiesDynamic
@@ -551,9 +586,9 @@ Methods to read and write graphs.
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Andreas Fabri, Fernando Cacciola, Philipp Moeller, and Ron Wein}
 \cgalPkgDesc{This package provides a framework for interfacing \cgal data structures
-             with the algorithms of the Boost Graph Library, or \sc{BGL} for short.
+             with the algorithms of the Boost Graph Library, or \bgl for short.
              It allows to run graph algorithms directly on \cgal data structures which are model
-             of the \sc{BGL} graph concepts, for example the shortest path algorithm
+             of the \bgl graph concepts, for example the shortest path algorithm
              on a Delaunay triangulation in order to compute the Euclidean minimum spanning tree.
              Furthermore, it introduces several new graph concepts describing halfedge data structures.}
 \cgalPkgManuals{Chapter_CGAL_and_the_Boost_Graph_Library,PkgBGLRef}
@@ -586,15 +621,15 @@ Methods to read and write graphs.
 
 \cgalCRPSection{%CGAL Classes Adapted for the Graph API}
 
-A number of \cgal structures have been adapted as graphs for the \sc{Bgl}. All
+A number of \cgal structures have been adapted as graphs for the \bgl. All
 adapted types are listed here. The pages document which concepts they
 model, the properties they support, and any possible caveats that a
 user might encounter.
 
 - \link BGLSMGT `boost::graph_traits<CGAL::Surface_mesh<P> >` \endlink
-- \link BGLPolyGT `boost::graph_traits<CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<K> >` \endlink
 - \link BGLLCCGT `boost::graph_traits<CGAL::Linear_cell_complex_for_combinatorial_map<...> >` \endlink
-- \link BGLSeam_meshGT `boost::graph_traits<CGAL::Seam_mesh<T> >` \endlink
+- \link BGLSeam_meshGT `boost::graph_traits< CGAL::Seam_mesh<G> >` \endlink
 - \link BGLT2GT `boost::graph_traits<CGAL::Triangulation_2<GT, TDS> >` \endlink and other 2D triangulations
 - \link BGLArgtGT `boost::graph_traits<CGAL::Arrangement_2<T, DC> >` \endlink
 - \link BGLOMPAK `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` \endlink
@@ -713,6 +748,7 @@ user might encounter.
 - `CGAL::Graph_with_descriptor_with_graph`
 - `CGAL::Graph_with_descriptor_with_graph_property_map`
 - `CGAL::Seam_mesh`
+- `CGAL/boost/graph/graph_traits_inheritance_macros.h`
 
 \cgalCRPSection{Partitioning Methods}
 - `CGAL::METIS::partition_graph()`
@@ -720,19 +756,21 @@ user might encounter.
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- \link PkgBGLIOFct `CGAL::read_off()` \endlink
-- \link PkgBGLIOFct `CGAL::write_off()` \endlink
-- \link PkgBGLIOFct `CGAL::write_wrl()` \endlink
-- `CGAL::write_vtp()`
-
+- `CGAL::IO::read_polygon_mesh()`
+- `CGAL::IO::write_polygon_mesh()`
+- \link PkgBGLIoFuncsSTL I/O for STL files \endlink
+- \link PkgBGLIoFuncsPLY I/O for PLY files \endlink
+- \link PkgBGLIoFuncsOBJ I/O for OBJ files \endlink
+- \link PkgBGLIoFuncsOFF I/O for OFF files \endlink
+- \link PkgBGLIoFuncsGOCAD I/O for GOCAD files \endlink
+- \link PkgBGLIoFuncsVTP I/O for VTP files \endlink
+- \link PkgBGLIoFuncs3MF I/O for 3MF files \endlink
+- \link PkgBGLIoFuncsWRL I/O for WRL files \endlink
 */
 
 /*!
 \addtogroup PkgBGLEulerOperations
 
-We call high level operations that maintain the validity of a halfedge graph <em>%Euler Operations</em>.
-
+We call high-level operations that maintain the validity of a halfedge graph <em>%Euler Operations</em>.
 
 */
-
-

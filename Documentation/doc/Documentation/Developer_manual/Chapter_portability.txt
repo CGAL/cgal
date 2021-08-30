@@ -9,7 +9,7 @@
 This chapter gives an overview of issues related to the
 configuration of \cgal that allow you to answer such questions as:
 <UL>
-<LI>Is \em LEDA / <span class="textsc">Gmp</span> there? (Section  \ref secleda_gmp_support)
+<LI>Is \em LEDA / \gmp there? (Section  \ref secleda_gmp_support)
 <LI>Which compiler is this? (Section  \ref secwhich_compiler )
 <LI>Does the compiler support feature X? (Section  \ref secworkaround_flags )
 </UL>
@@ -101,70 +101,70 @@ the following table.
     <TD ALIGN=LEFT NOWRAP>
 GNU 3.2.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>__GNUC__</TT>
+`__GNUC__`
     <TD ALIGN=LEFT NOWRAP>
 3
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 GNU 3.2.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>__GNUC_MINOR__</TT>
+`__GNUC_MINOR__`
     <TD ALIGN=LEFT NOWRAP>
 2
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 GNU 3.2.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>__GNUC_PATCHLEVEL__</TT>
+`__GNUC_PATCHLEVEL__`
     <TD ALIGN=LEFT NOWRAP>
 1
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 Microsoft VC7.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>_MSC_VER</TT>
+`_MSC_VER`
     <TD ALIGN=LEFT NOWRAP>
 1310
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 Microsoft VC8.0
     <TD ALIGN=LEFT NOWRAP>
-<TT>_MSC_VER</TT>
+`_MSC_VER`
     <TD ALIGN=LEFT NOWRAP>
 1400
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 Intel 11.1
     <TD ALIGN=LEFT NOWRAP>
-<TT>__INTEL_COMPILER</TT>
+`__INTEL_COMPILER`
     <TD ALIGN=LEFT NOWRAP>
 1110
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 Clang 2.9
     <TD ALIGN=LEFT NOWRAP>
-<TT>__clang_major__</TT>
+`__clang_major__`
     <TD ALIGN=LEFT NOWRAP>
 2
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 Clang 2.9
     <TD ALIGN=LEFT NOWRAP>
-<TT>__clang_minor__</TT>
+`__clang_minor__`
     <TD ALIGN=LEFT NOWRAP>
 9
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 SUN 5.3
     <TD ALIGN=LEFT NOWRAP>
-<TT>__SUNPRO_CC</TT>
+`__SUNPRO_CC`
     <TD ALIGN=LEFT NOWRAP>
 0x530
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 SUN 5.10
     <TD ALIGN=LEFT NOWRAP>
-<TT>__SUNPRO_CC</TT>
+`__SUNPRO_CC`
     <TD ALIGN=LEFT NOWRAP>
 0x5100
 </TABLE>
@@ -178,17 +178,17 @@ There are also flags to identify the architecture.
     <TD ALIGN=LEFT NOWRAP>
 SGI
     <TD ALIGN=LEFT NOWRAP>
-<TT>__sgi</TT>
+`__sgi`
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 SUN
     <TD ALIGN=LEFT NOWRAP>
-<TT>__sun</TT>
+`__sun`
   <TR>
     <TD ALIGN=LEFT NOWRAP>
 Linux
     <TD ALIGN=LEFT NOWRAP>
-<TT>__linux</TT>
+`__linux`
 </TABLE>
 </TABLE>
 
@@ -290,8 +290,8 @@ up-to-date version of this list.
 <DT><B><TT>CGAL_CFG_NO_LONG_LONG</TT></B><DD>
 
    The `long long` built-in integral type is not part of the
-  <span class="textsc">Iso</span> C++ standard, but many compilers support it
-  nevertheless, since it is part of the <span class="textsc">Iso</span> C standard. This
+  \iso C++ standard, but many compilers support it
+  nevertheless, since it is part of the \iso C standard. This
   flag is set if it is supported.
 
 <DT><B><TT>CGAL_CFG_NO_TMPL_IN_TMPL_PARAM</TT></B><DD>

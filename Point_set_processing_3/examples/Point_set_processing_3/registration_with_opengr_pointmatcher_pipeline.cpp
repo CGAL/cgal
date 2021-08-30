@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/IO/read_ply_points.h>
-#include <CGAL/IO/write_ply_points.h>
+
+#include <CGAL/IO/read_points.h>
+#include <CGAL/IO/write_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Aff_transformation_3.h>
 
@@ -24,31 +25,25 @@ namespace params = CGAL::parameters;
 
 int main(int argc, const char** argv)
 {
-  const char* fname1 = (argc>1)?argv[1]:"data/hippo1.ply";
-  const char* fname2 = (argc>2)?argv[2]:"data/hippo2.ply";
+  const char* fname1 = (argc>1) ? argv[1] : "data/hippo1.ply";
+  const char* fname2 = (argc>2) ? argv[2] : "data/hippo2.ply";
 
   std::vector<Pwn> pwns1, pwns2;
-  std::ifstream input(fname1);
-  if (!input ||
-      !CGAL::read_ply_points(input, std::back_inserter(pwns1),
-            CGAL::parameters::point_map (CGAL::First_of_pair_property_map<Pwn>()).
-            normal_map (Normal_map())))
+  if(!CGAL::IO::read_points(fname1, std::back_inserter(pwns1),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>())
+                                             .normal_map (Normal_map())))
   {
     std::cerr << "Error: cannot read file " << fname1 << std::endl;
     return EXIT_FAILURE;
   }
-  input.close();
 
-  input.open(fname2);
-  if (!input ||
-      !CGAL::read_ply_points(input, std::back_inserter(pwns2),
-            CGAL::parameters::point_map (Point_map()).
-            normal_map (Normal_map())))
+  if(!CGAL::IO::read_points(fname2, std::back_inserter(pwns2),
+                            CGAL::parameters::point_map(Point_map())
+                                             .normal_map(Normal_map())))
   {
     std::cerr << "Error: cannot read file " << fname2 << std::endl;
     return EXIT_FAILURE;
   }
-  input.close();
 
   std::cerr << "Computing registration transformation using OpenGR Super4PCS.." << std::endl;
   // First, compute registration transformation using OpenGR Super4PCS
@@ -57,8 +52,7 @@ int main(int argc, const char** argv)
       CGAL::OpenGR::compute_registration_transformation
         (pwns1, pwns2,
          params::point_map(Point_map()).normal_map(Normal_map()),
-         params::point_map(Point_map()).normal_map(Normal_map()))
-    );
+         params::point_map(Point_map()).normal_map(Normal_map())));
 
   std::cerr << "Computing registration transformation using PointMatcher ICP, "
             << "taking transformation computed by OpenGR Super4PCS as initial transformation.." << std::endl;
@@ -68,15 +62,11 @@ int main(int argc, const char** argv)
     CGAL::pointmatcher::register_point_sets
       (pwns1, pwns2,
        params::point_map(Point_map()).normal_map(Normal_map()),
-       params::point_map(Point_map()).normal_map(Normal_map())
-       .transformation(res));
+       params::point_map(Point_map()).normal_map(Normal_map()).transformation(res));
 
-  std::ofstream out("pwns2_aligned.ply");
-  if (!out ||
-      !CGAL::write_ply_points(
-        out, pwns2,
-        CGAL::parameters::point_map(Point_map()).
-        normal_map(Normal_map())))
+  if(!CGAL::IO::write_points("pwns2_aligned.ply", pwns2,
+                             CGAL::parameters::point_map(Point_map())
+                                              .normal_map(Normal_map())))
   {
     return EXIT_FAILURE;
   }

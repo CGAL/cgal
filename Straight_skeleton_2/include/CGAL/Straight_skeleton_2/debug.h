@@ -13,7 +13,6 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/config.h>
 
 #ifdef CGAL_USE_CORE
@@ -27,15 +26,18 @@
     || defined(CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING)
 #
 #  define CGAL_STSKEL_TRACE_ON
-#
+bool sEnableTrace = true ;
+#  define CGAL_STSKEL_ENABLE_TRACE sEnableTrace = true ;
+#  define CGAL_STSKEL_DISABLE_TRACE sEnableTrace = false ;
 #  include<string>
 #  include<iostream>
 #  include<sstream>
 #  include<iomanip>
 #  define CGAL_STSKEL_TRACE(m) \
+     if ( sEnableTrace ) \
      { \
        std::ostringstream ss ; \
-       ss << m ; \
+       ss << std::setprecision(19) << m ; \
        std::string s = ss.str(); \
        Straight_skeleton_external_trace(s); \
      }
@@ -66,10 +68,9 @@ inline std::string ptr2str( boost::intrusive_ptr<T> const& ptr )
 template<class N>
 inline std::string n2str( N const& n )
 {
-  std::ostringstream ss ; ss << std::setprecision(19)  ;
-
-  ss << CGAL_NTS to_double(n) ;
-
+  std::ostringstream ss ;
+  ss << std::setprecision(19);
+  ss << CGAL_NTS to_double(n);
   return ss.str();
 }
 
@@ -170,7 +171,7 @@ template<class P>
 inline std::string s2str( P const& s, P const& t )
 {
   std::ostringstream ss ;
-  ss << "{" << p2str(s) << "-" << p2str(t) << "}" ;
+  ss << "{" << p2str(s) << " " << p2str(t) << "}" ;
   return ss.str();
 }
 
@@ -214,11 +215,13 @@ inline std::string newb2str( char const* name, BH const& b )
      << " is B" << b->id()
      << " [E" << b->defining_contour_edge()->id()
      << ",E" << b->opposite()->defining_contour_edge()->id()
-     << "] {B" << b->prev()->id()
+     << "] {N" << b->prev()->opposite()->vertex()->id()
+     << "->B" << b->prev()->id()
      << "->N"  << b->prev()->vertex()->id()
      << "->B" << b->id()
      << "->N" << b->vertex()->id()
      << "->B" << b->next()->id()
+     << "->N" << b->next()->vertex()->id()
      << "}" ;
 
   return ss.str();
@@ -260,7 +263,7 @@ inline std::string newn2str( char const* name, VH const& v, Triedge const& aTrie
 #endif
 
 #ifdef CGAL_STRAIGHT_SKELETON_TRAITS_ENABLE_TRACE
-bool sEnableTraitsTrace = false ;
+bool sEnableTraitsTrace = false;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_ENABLE_TRACE_IF(cond) if ((cond)) sEnableTraitsTrace = true ;
 #  define CGAL_STSKEL_TRAITS_DISABLE_TRACE sEnableTraitsTrace = false;
@@ -341,8 +344,6 @@ template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;    
 #define CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(expr,K,cons,error)
 
 #endif
-
-#undef CGAL_STSKEL_ENABLE_TRACE
 
 #endif // CGAL_STRAIGHT_SKELETON_DEBUG_H //
 // EOF //

@@ -6,7 +6,6 @@
 /// \defgroup PkgTriangulation3TriangulationClasses Triangulation Classes
 /// \ingroup PkgTriangulation3Ref
 
-
 /// \defgroup PkgTriangulation3TraitsClasses Traits Classes
 /// \ingroup PkgTriangulation3Ref
 

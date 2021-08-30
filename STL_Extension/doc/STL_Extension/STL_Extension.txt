@@ -98,7 +98,7 @@ The class `Concurrent_compact_container<T, Allocator>`
 provides the same features, but enables concurrency-safe
 `insert` and `erase` operations. Other operations are not concurrency-safe.
 It requires the program to be linked against
-the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 
 \section stl_multi Multiset with Extended Functionality
 
@@ -264,7 +264,7 @@ example.
 
 Note that the setting of the standard macro `NDEBUG` sets `CGAL_NDEBUG`,
 unless `CGAL_DEBUG` is also defined. If both `NDEBUG` and `CGAL_DEBUG` are
-defined, then the the standard `assert` macro is disabled, but not the CGAL
+defined, then the standard `assert` macro is disabled, but not the CGAL
 assertions and preconditions.
 
 Not all checks are on by default.

@@ -40,7 +40,8 @@ following:
 - `Plane_3`
 
 as well as combinations `Point_3`/`Triangle_3`,
-and `Weighted_point_3`/`Triangle_3`.
+and `Weighted_point_3`/`Triangle_3`, as well as `Point_3`/`Tetrahedron_3`,
+and `Weighted_point_3`/`Tetrahedron_3`
 
 \sa `compare_distance_to_point_grp`
 \sa `compare_signed_distance_to_line_grp`

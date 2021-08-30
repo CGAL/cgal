@@ -13,24 +13,22 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
-#include <boost/optional/optional.hpp>
-#include <boost/none.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/or.hpp>
-
 #include <CGAL/Straight_skeleton_2/assertions.h>
 #include <CGAL/Straight_skeleton_2/debug.h>
 #include <CGAL/Straight_skeleton_2/test.h>
 
-//
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/or.hpp>
+#include <boost/none.hpp>
+#include <boost/optional/optional.hpp>
+#include <boost/type_traits/is_same.hpp>
+
+#include <iostream>
+
 // The heap objects used in this implementation are intrusively reference counted. Thus, they inherit from Ref_counted_base.
-//
 namespace CGAL {
 
-namespace CGAL_SS_i
-{
+namespace CGAL_SS_i {
 
 template<class K> struct Has_inexact_constructions
 {
@@ -158,43 +156,6 @@ private:
 
 } // namespace CGAL_SS_i
 
-enum Trisegment_collinearity
-{
-    TRISEGMENT_COLLINEARITY_NONE
-  , TRISEGMENT_COLLINEARITY_01
-  , TRISEGMENT_COLLINEARITY_12
-  , TRISEGMENT_COLLINEARITY_02
-  , TRISEGMENT_COLLINEARITY_ALL
-} ;
-
-
-inline char const* trisegment_collinearity_to_string( Trisegment_collinearity c )
-{
-  switch ( c )
-  {
-    case TRISEGMENT_COLLINEARITY_NONE : return "<>" ;
-    case TRISEGMENT_COLLINEARITY_01   : return "<0,1>" ;
-    case TRISEGMENT_COLLINEARITY_12   : return "<1,2>" ;
-    case TRISEGMENT_COLLINEARITY_02   : return "<0,2>" ;
-    case TRISEGMENT_COLLINEARITY_ALL  : return "<0,1,2>" ;
-  }
-
-  return "!!UNKNOWN COLLINEARITY!!" ;
-}
-
-
-namespace internal
-{
-
-template <>
-struct Minmax_traits< Trisegment_collinearity >
-{
-  static const Trisegment_collinearity min = TRISEGMENT_COLLINEARITY_NONE;
-  static const Trisegment_collinearity max = TRISEGMENT_COLLINEARITY_ALL;
-};
-
-}
-
 class Ref_counted_base
 {
 private:
@@ -203,7 +164,7 @@ private:
   Ref_counted_base& operator=( Ref_counted_base const &);
 protected:
   Ref_counted_base(): mCount(0) {}
-  virtual ~Ref_counted_base() {}
+  virtual ~Ref_counted_base() noexcept(!CGAL_ASSERTIONS_ENABLED) {}
 public:
     void AddRef() const { ++mCount; }
     void Release() const

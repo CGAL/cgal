@@ -13,10 +13,11 @@
 #define GENERALIZED_MAP_FWD_H 1
 
 #include <CGAL/memory.h>
+#include <CGAL/tags.h>
 
 namespace CGAL {
 
-template<unsigned int d_, class Items_, class Alloc_ >
+template<unsigned int d_, class Items_, class Alloc_, class Concurrent_tag=CGAL::Tag_false >
 class Generalized_map_storage_1;
 
 struct Generic_map_min_items;
@@ -24,13 +25,13 @@ struct Generic_map_min_items;
 template < unsigned int d_, class Refs,
            class Items_=Generic_map_min_items,
            class Alloc_=CGAL_ALLOCATOR(int),
-           class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_> >
+           class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_, CGAL::Tag_false> >
 class Generalized_map_base;
 
 template < unsigned int d_,
            class Items_=Generic_map_min_items,
            class Alloc_=CGAL_ALLOCATOR(int),
-           class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_> >
+           class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_, CGAL::Tag_false> >
 class Generalized_map;
 
 } // CGAL

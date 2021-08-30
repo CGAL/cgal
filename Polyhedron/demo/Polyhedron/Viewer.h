@@ -92,6 +92,7 @@ public:
   //!Set total number of depth peeling passes.
    void setTotalPass(int);
    void resetFov();
+   const QVector3D& scaler() const override;
 Q_SIGNALS:
   void sendMessage(QString);
   void doneInitGL(CGAL::Three::Viewer_interface*);
@@ -137,7 +138,8 @@ public Q_SLOTS:
   void onSocketConnected();
   void onTextMessageSocketReceived(QString message);
 #endif
-
+  void scaleScene();
+  void showEntireScene()Q_DECL_OVERRIDE;
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
   void paintGL()Q_DECL_OVERRIDE;

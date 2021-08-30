@@ -31,4 +31,6 @@
 \example Surface_mesh_segmentation/extract_segmentation_into_mesh_example.cpp
 \example Polygon_mesh_processing/face_filtered_graph_example.cpp
 \example Property_map/dynamic_properties.cpp
+\example Surface_mesh/sm_derivation.cpp
+\example Polyhedron/poly_derivation.cpp
 */

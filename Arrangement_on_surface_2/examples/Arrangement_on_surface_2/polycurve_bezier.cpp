@@ -33,16 +33,18 @@ typedef CGAL::Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
 typedef Bezier_traits::Curve_2                         Bezier_curve_2;
 typedef Bezier_traits::X_monotone_curve_2              Bezier_x_curve_2;
 typedef CGAL::Arr_polycurve_traits_2<Bezier_traits>    Polycurve_bezier_traits_2;
+typedef Polycurve_bezier_traits_2::Point_2             Point_2;
 typedef Polycurve_bezier_traits_2::X_monotone_curve_2  X_mono_polycurve;
 typedef CGAL::Arrangement_2<Polycurve_bezier_traits_2> Arrangement_2;
+
+typedef boost::variant<Point_2, Bezier_x_curve_2>      Make_x_monotone_result;
 
 int main()
 {
   Polycurve_bezier_traits_2 pc_traits;
   Bezier_traits bezier_traits;
 
-  Polycurve_bezier_traits_2::Construct_x_monotone_curve_2
-    construct_x_mono_polycurve =
+  auto construct_x_mono_polycurve =
     pc_traits.construct_x_monotone_curve_2_object();
 
   std::vector<Bezier_x_curve_2> x_bezier_curves;
@@ -69,11 +71,11 @@ int main()
     // Read the current curve (specified by its control points).
     in_file >> B;
     //convert it into x-monotone bezier curve.
-    std::vector<CGAL::Object> obj_vector;
+    std::vector<Make_x_monotone_result> obj_vector;
     bezier_traits.make_x_monotone_2_object()(B, std::back_inserter(obj_vector));
-    Bezier_x_curve_2 x_seg =
-      CGAL::object_cast<Bezier_x_curve_2>((obj_vector[0]));
-    x_curves.push_back(x_seg);
+    auto* x_seg_p = boost::get<Bezier_x_curve_2>(&obj_vector[0]);
+    CGAL_assertion(x_seg_p);
+    x_curves.push_back(*x_seg_p);
   }
 
   X_mono_polycurve polycurve =

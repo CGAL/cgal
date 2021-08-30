@@ -67,6 +67,21 @@ private:
   X_monotone_curve_2 sub_cv1;         // Auxiliary variables
   X_monotone_curve_2 sub_cv2;         // (used for splitting curves).
 
+
+  // update halfedge pointing to events, case with overlaps
+  template <class Subcurve_>
+  void update_incident_halfedge_after_split(Subcurve_* sc,
+                                            Halfedge_handle he,
+                                            Halfedge_handle new_he,
+                                            Tag_true);
+
+  // update halfedge pointing to events, case without overlaps
+  template <class Subcurve_>
+  void update_incident_halfedge_after_split(Subcurve_* sc,
+                                            Halfedge_handle he,
+                                            Halfedge_handle new_he,
+                                            Tag_false);
+
 public:
   /*! A notification invoked when a new subcurve is created. */
   void add_subcurve(const X_monotone_curve_2& cv, Subcurve* sc);
@@ -98,6 +113,43 @@ public:
 //-----------------------------------------------------------------------------
 // Member-function definitions:
 //-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+// update halfedge pointing to events, case with overlaps
+//
+template <typename Hlpr, typename Vis>
+template <class Subcurve_>
+void Arr_insertion_ss_visitor<Hlpr, Vis>::
+update_incident_halfedge_after_split(Subcurve_* sc,
+                                     Halfedge_handle he,
+                                     Halfedge_handle new_he,
+                                     Tag_true)
+{
+  std::vector<Subcurve*> leaves;
+  sc->all_leaves( std::back_inserter(leaves) );
+  for(Subcurve* ssc : leaves)
+  {
+    Event* last_event_on_ssc = ssc->last_event();
+    if (last_event_on_ssc->halfedge_handle() == he)
+      last_event_on_ssc->set_halfedge_handle(new_he->next());
+  }
+}
+
+//-----------------------------------------------------------------------------
+// update halfedge pointing to events, case without overlaps
+//
+template <typename Hlpr, typename Vis>
+template <class Subcurve_>
+void Arr_insertion_ss_visitor<Hlpr, Vis>::
+update_incident_halfedge_after_split(Subcurve_* sc,
+                                     Halfedge_handle he,
+                                     Halfedge_handle new_he,
+                                     Tag_false)
+{
+  Event* last_event_on_sc = sc->last_event();
+  if (last_event_on_sc->halfedge_handle() == he)
+    last_event_on_sc->set_halfedge_handle(new_he->next());
+}
 
 //-----------------------------------------------------------------------------
 // Check if the halfedge associated with the given subcurve will be split
@@ -132,9 +184,8 @@ Arr_insertion_ss_visitor<Hlpr, Vis>::split_edge(Halfedge_handle he, Subcurve* sc
   Halfedge_handle new_he =
     this->m_arr_access.split_edge_ex(he, pt.base(),
                                      sub_cv1.base(), sub_cv2.base());
-  Event* last_event_on_sc = sc->last_event();
-  if (last_event_on_sc->halfedge_handle() == he)
-    last_event_on_sc->set_halfedge_handle(new_he->next());
+  // update the halfedge incident to events on the left of the split
+  update_incident_halfedge_after_split(sc, he, new_he, typename Subcurve::Handle_overlaps());
 
   return new_he;
 }

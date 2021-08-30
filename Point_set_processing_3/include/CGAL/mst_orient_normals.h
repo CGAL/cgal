@@ -545,27 +545,50 @@ create_mst_graph(
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param k number of neighbors.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd
-     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
-     provided, the neighborhood of a query point is computed with a fixed spherical
-     radius instead of a fixed number of neighbors. In that case, the parameter
-     `k` is used as a limit on the number of points returned by each spherical
-     query (to avoid overly large number of points in high density areas). If no
-     limit is wanted, use `k=0`.\cgalParamEnd
-     \cgalParamBegin{point_is_constrained_map} a model of `ReadablePropertyMap` with value type
-     `bool`. Points with a `true` value will be used as seed points: their normal will be considered as already
-     oriented, it won't be altered and it will be propagated to its neighbors. If this parameter is omitted,
-     the highest point (highest Z coordinate) will be used as the unique seed with an upward oriented
-     normal\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+       \cgalParamType{a model of `WritablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{neighbor_radius}
+       \cgalParamDescription{the spherical neighborhood radius}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`0` (no limit)}
+       \cgalParamExtra{If provided, the neighborhood of a query point is computed with a fixed spherical
+                       radius instead of a fixed number of neighbors. In that case, the parameter
+                       `k` is used as a limit on the number of points returned by each spherical
+                       query (to avoid overly large number of points in high density areas).}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{point_is_constrained_map}
+       \cgalParamDescription{a property map containing information about points being constrained or not}
+       \cgalParamType{a class model of `ReadablePropertyMap` with `PointRange::iterator::value_type`
+                      as key type and `bool` as value type}
+       \cgalParamDefault{If this parameter is omitted, the highest point (highest Z coordinate)
+                         will be used as the unique seed with an upward oriented.}
+       \cgalParamExtra{Points with a `true` value will be used as seed points: their normal
+                       will be considered as already oriented, it won't be altered
+                       and it will be propagated to its neighbors.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return iterator over the first point with an unoriented normal.

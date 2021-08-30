@@ -237,7 +237,7 @@ void xAlci_main_window::oc_rasterize_click()
         oc_activate_layers();
     } else {
 //         CGAL::set_error_behaviour(CGAL::THROW_EXCEPTION);
-        ::CGAL::set_pretty_mode(std::cout);
+        ::CGAL::IO::set_pretty_mode(std::cout);
         Poly_int2 f;
 
         if(!input_poly(f, oc_input->text().ascii()))

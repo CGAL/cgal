@@ -71,34 +71,59 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
    \tparam ClusterMap is a model of `ReadWritePropertyMap` with value
    type `std::size_t`.
 
-   \param points input point range.
+   \param points input point range
    \param cluster_map maps each point to the index of the cluster it belongs to.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{callback} an instance of
-      `std::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped and the number of already
-      computed clusters is returned.\cgalParamEnd
-     \cgalParamBegin{neighbor_radius} spherical neighborhood
-     radius. If no value is provided, the default value is 1% of the
-     bounding box diagonal.\cgalParamEnd
-     \cgalParamBegin{attraction_factor} used to compute adjacencies
-     between clusters. Adjacencies are computed using a nearest
-     neighbor graph built similarly to the one used for clustering,
-     using `attraction_factor * neighbor_radius` as
-     parameter. %Default value is `2`.\cgalParamEnd
-     \cgalParamBegin{adjacencies} model of `OutputIterator` that
-     accepts objects of type `std::pair<std::size_t,
-     std::size_t>`. Each pair contains the indices of two adjacent
-     clusters. If this parameter is not used, adjacencies are not
-     computed at all.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{callback}
+       \cgalParamDescription{a mechanism to get feedback on the advancement of the algorithm
+                             while it's running and to interrupt it if needed}
+       \cgalParamType{an instance of `std::function<bool(double)>`.}
+       \cgalParamDefault{unused}
+       \cgalParamExtra{It is called regularly when the
+                       algorithm is running: the current advancement (between 0. and
+                       1.) is passed as parameter. If it returns `true`, then the
+                       algorithm continues its execution normally; if it returns
+                       `false`, the algorithm is stopped and the number of already
+                       computed clusters is returned.}
+       \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{neighbor_radius}
+       \cgalParamDescription{the spherical neighborhood radius}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`1` percent of the bounding box diagonal}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{attraction_factor}
+       \cgalParamDescription{used to compute adjacencies between clusters.
+                             Adjacencies are computed using a nearest neighbor graph built similarly
+                             to the one used for clustering, using `attraction_factor * neighbor_radius` as
+                             parameter.}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`2`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{adjacencies}
+       \cgalParamDescription{an output iterator used to output pairs containing the indices of two adjacent clusters.}
+       \cgalParamType{a model of `OutputIterator` that accepts objects of type `std::pair<std::size_t, std::size_t>`}
+       \cgalParamDefault{`CGAL::Emptyset_iterator`}
+       \cgalParamExtra{If this parameter is not used, adjacencies are not computed at all.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return the number of clusters identified.
@@ -114,6 +139,7 @@ std::size_t cluster_point_set (PointRange& points,
   // basic geometric types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
+  typedef typename boost::property_traits<ClusterMap>::value_type Cluster_index_t;
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
   typedef typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::type Adjacencies;
@@ -150,7 +176,7 @@ std::size_t cluster_point_set (PointRange& points,
 
   // Init cluster map with -1
   for (const value_type& p : points)
-    put (cluster_map, p, -1);
+    put (cluster_map, p, Cluster_index_t(-1));
 
   Neighbor_query neighbor_query (points, point_map);
 
@@ -165,7 +191,7 @@ std::size_t cluster_point_set (PointRange& points,
   {
     const value_type& p = *it;
 
-    if (int(get (cluster_map, p)) != -1)
+    if (get (cluster_map, p) != Cluster_index_t(-1))
       continue;
 
     todo.push (it);
@@ -175,10 +201,10 @@ std::size_t cluster_point_set (PointRange& points,
       iterator current = todo.front();
       todo.pop();
 
-      if (int(get (cluster_map, *current)) != -1)
+      if (get (cluster_map, *current) != Cluster_index_t(-1))
         continue;
 
-      put (cluster_map, *current, nb_clusters);
+      put (cluster_map, *current, Cluster_index_t(nb_clusters));
       ++ done;
 
       if (callback && !callback (callback_factor * (done + 1) / double(size)))
@@ -205,15 +231,15 @@ std::size_t cluster_point_set (PointRange& points,
     done = 0;
     for (const value_type& p : points)
     {
-      std::size_t c0 = get (cluster_map, p);
+      std::size_t c0 = std::size_t(get (cluster_map, p));
 
       neighbors.clear();
       neighbor_query.get_iterators (get (point_map, p), 0, neighbor_radius,
-                                    std::back_inserter (neighbors), false);
+                                    std::back_inserter (neighbors), 0);
 
       for (const iterator& it : neighbors)
       {
-        std::size_t c1 = get (cluster_map, *it);
+        std::size_t c1 = std::size_t(get (cluster_map, *it));
         if (c0 < c1)
           adj.push_back (std::make_pair (c0, c1));
         else if (c0 > c1)

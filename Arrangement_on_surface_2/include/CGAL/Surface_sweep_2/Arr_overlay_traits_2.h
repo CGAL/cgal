@@ -26,7 +26,6 @@
 #include <boost/optional.hpp>
 
 #include <CGAL/Arr_tags.h>
-#include <CGAL/Object.h>
 
 namespace CGAL {
 
@@ -134,6 +133,8 @@ public:
   class Ex_x_monotone_curve_2 {
   public:
     typedef Base_x_monotone_curve_2             Base;
+    typedef Halfedge_handle_red HH_red;
+    typedef Halfedge_handle_blue HH_blue;
 
   protected:
     Base m_base_xcv;                              // The base curve.

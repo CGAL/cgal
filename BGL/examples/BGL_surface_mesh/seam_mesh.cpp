@@ -4,13 +4,14 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/Seam_mesh.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <iostream>
 #include <fstream>
 #include <vector>
-
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point;
@@ -30,12 +31,16 @@ typedef boost::graph_traits<Seam_mesh>::halfedge_descriptor       halfedge_descr
 typedef boost::graph_traits<Seam_mesh>::edge_descriptor           edge_descriptor;
 typedef boost::graph_traits<Seam_mesh>::face_descriptor           face_descriptor;
 
-
 int main(int argc, char* argv[])
 {
+  const char* filename = (argc>1) ? argv[1] : "data/cube.off";
+
   Mesh sm;
-  std::ifstream in((argc>1) ? argv[1] : "data/cube.off");
-  in >> sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
 
   Seam_edge_pmap seam_edge_pm =
       sm.add_property_map<SM_edge_descriptor, bool>("e:on_seam", false).first;

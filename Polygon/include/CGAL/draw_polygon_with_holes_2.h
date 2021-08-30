@@ -37,7 +37,7 @@ void draw(const PH& aph);
 #endif
 
 #ifdef CGAL_USE_BASIC_VIEWER
-
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Random.h>
 
@@ -91,7 +91,7 @@ protected:
 
     if (p2.outer_boundary().is_empty()) return;
 
-    CGAL::Color c(75,160,255);
+    CGAL::IO::Color c(75,160,255);
     face_begin(c);
 
     compute_one_loop_elements(p2.outer_boundary(), false);
@@ -138,6 +138,7 @@ void draw(const CGAL::Polygon_with_holes_2<T, C>& ap2,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"t2_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));

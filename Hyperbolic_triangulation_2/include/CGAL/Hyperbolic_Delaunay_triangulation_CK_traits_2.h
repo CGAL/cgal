@@ -26,7 +26,7 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/variant.hpp>
 
-#include <CGAL/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
 
 namespace CGAL {
 

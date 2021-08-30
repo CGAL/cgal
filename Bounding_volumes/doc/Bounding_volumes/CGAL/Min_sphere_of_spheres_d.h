@@ -50,7 +50,7 @@ minsphere can be described by the number \f$ t\f$, which is called the
 sphere's <I>discriminant</I>, and by \f$ d+1\f$ pairs \f$ (a_i,b_i)\in\Q^2\f$
 (one for the radius and \f$ d\f$ for the center coordinates).
 
-<B>Note:</B> This class (almost) replaces
+\note This class (almost) replaces
 `CGAL::Min_sphere_d<Traits>`, which solves the less general
 problem of finding the smallest enclosing ball of a set of
 <I>points</I>. `Min_sphere_of_spheres_d` is faster than

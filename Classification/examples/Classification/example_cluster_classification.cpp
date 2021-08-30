@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Classification.h>
@@ -17,8 +17,6 @@
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/Shape_detection/Region_growing.h>
 #include <CGAL/Real_timer.h>
-
-typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3                Point;
@@ -37,6 +35,7 @@ typedef CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel,
 typedef CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type>                   Region_growing;
 
 namespace Classification = CGAL::Classification;
+namespace Feature = CGAL::Classification::Feature;
 
 typedef Classification::Label_handle   Label_handle;
 typedef Classification::Feature_handle Feature_handle;
@@ -50,24 +49,28 @@ typedef Classification::Cluster<Point_set, Pmap>                             Clu
 int main (int argc, char** argv)
 {
   std::string filename        = "data/b9.ply";
-  std::string filename_config = "data/b9_clusters_config.gz";
+  std::string filename_config = "data/b9_clusters_config.bin";
 
   if (argc > 1)
     filename = argv[1];
   if (argc > 2)
     filename_config = argv[2];
 
-  std::ifstream in (filename.c_str(), std::ios::binary);
-  Point_set pts;
-
   std::cerr << "Reading input" << std::endl;
-  in >> pts;
+  Point_set pts;
+  if(!(CGAL::IO::read_point_set(filename, pts,
+                                // the PLY reader expects a binary file by default
+                                CGAL::parameters::use_binary_mode(true))))
+  {
+    std::cerr << "Error: cannot read " << filename << std::endl;
+    return EXIT_FAILURE;
+  }
 
   std::cerr << "Estimating normals" << std::endl;
   CGAL::Real_timer t;
   t.start();
   pts.add_normal_map();
-  CGAL::jet_estimate_normals<Concurrency_tag> (pts, 12);
+  CGAL::jet_estimate_normals<CGAL::Parallel_if_available_tag> (pts, 12);
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
   t.reset();
@@ -83,7 +86,12 @@ int main (int argc, char** argv)
 #endif
 
   generator.generate_point_based_features (pointwise_features);
-  generator.generate_normal_based_features (pointwise_features, pts.normal_map());
+
+  // Generator should only be used with variables defined at the scope
+  // of the generator object, thus we instantiate the normal map
+  // outside of the function
+  Vmap normal_map = pts.normal_map();
+  generator.generate_normal_based_features (pointwise_features, normal_map);
 
 #ifdef CGAL_LINKED_WITH_TBB
   pointwise_features.end_parallel_additions();
@@ -151,50 +159,38 @@ int main (int argc, char** argv)
 
   Feature_set features;
 
-#ifdef CGAL_LINKED_WITH_TBB
-  features.begin_parallel_additions();
-#endif
-
   // First, compute means of features.
-  for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
-    features.add<Classification::Feature::Cluster_mean_of_feature> (clusters, pointwise_features[i]);
-
-#ifdef CGAL_LINKED_WITH_TBB
-  features.end_parallel_additions();
   features.begin_parallel_additions();
-#endif
+  for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
+    features.add<Feature::Cluster_mean_of_feature> (clusters, pointwise_features[i]);
+  features.end_parallel_additions();
 
   // Then, compute variances of features (and remaining cluster features).
+  features.begin_parallel_additions();
   for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
-    features.add<Classification::Feature::Cluster_variance_of_feature> (clusters,
-                                                                        pointwise_features[i], // i^th feature
-                                                                        features[i]);          // mean of i^th feature
+    features.add<Feature::Cluster_variance_of_feature> (clusters,
+                                                        pointwise_features[i], // i^th feature
+                                                        features[i]);          // mean of i^th feature
 
-  features.add<Classification::Feature::Cluster_size> (clusters);
-  features.add<Classification::Feature::Cluster_vertical_extent> (clusters);
+  features.add<Feature::Cluster_size> (clusters);
+  features.add<Feature::Cluster_vertical_extent> (clusters);
 
   for (std::size_t i = 0; i < 3; ++ i)
-    features.add<Classification::Feature::Eigenvalue> (clusters, eigen, (unsigned int)(i));
+    features.add<Feature::Eigenvalue> (clusters, eigen, (unsigned int)(i));
 
-#ifdef CGAL_LINKED_WITH_TBB
   features.end_parallel_additions();
-#endif
 
   //! [Features]
   ///////////////////////////////////////////////////////////////////
 
   t.stop();
 
-  // Add types.
-  Label_set labels;
-  Label_handle ground     = labels.add ("ground");
-  Label_handle vegetation = labels.add ("vegetation");
-  Label_handle roof       = labels.add ("roof");
+  Label_set labels = { "ground", "vegetation", "roof" };
 
   std::vector<int> label_indices(clusters.size(), -1);
 
   std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
-  Classification::ETHZ_random_forest_classifier classifier (labels, features);
+  Classification::ETHZ::Random_forest_classifier classifier (labels, features);
 
   std::cerr << "Loading configuration" << std::endl;
   std::ifstream in_config (filename_config, std::ios_base::in | std::ios_base::binary);
@@ -203,7 +199,7 @@ int main (int argc, char** argv)
   std::cerr << "Classifying" << std::endl;
   t.reset();
   t.start();
-  Classification::classify<Concurrency_tag> (clusters, labels, classifier, label_indices);
+  Classification::classify<CGAL::Parallel_if_available_tag> (clusters, labels, classifier, label_indices);
   t.stop();
 
   std::cerr << "Classification done in " << t.time() << " second(s)" << std::endl;

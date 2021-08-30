@@ -45,9 +45,7 @@ int main(int argc, char** argv)
   std::cout << "\nFinished!\n" << r << " edges removed.\n" << surface_mesh.number_of_edges() << " final edges.\n";
   std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count() << "ms" << std::endl;
 
-  std::ofstream os(argc > 3 ? argv[3] : "out.off");
-  os.precision(17);
-  os << surface_mesh;
+  CGAL::IO::write_polygon_mesh((argc > 3) ? argv[3] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

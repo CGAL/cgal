@@ -152,7 +152,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Normal Tolerance:</string>
+           <string>Normal Tolerance (in degrees):</string>
           </property>
          </widget>
         </item>
@@ -165,7 +165,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>0.90</string>
+           <string>30</string>
           </property>
          </widget>
         </item>

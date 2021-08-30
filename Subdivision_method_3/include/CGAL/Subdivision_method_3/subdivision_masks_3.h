@@ -1,5 +1,3 @@
-// ======================================================================
-//
 // Copyright (c) 2005-2017 GeometryFactory (France).  All Rights Reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -11,7 +9,6 @@
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
 //
-// ======================================================================
 
 #ifndef CGAL_SUBDIVISION_MASKS_3_H
 #define CGAL_SUBDIVISION_MASKS_3_H
@@ -334,6 +331,7 @@ public:
   void vertex_node(vertex_descriptor vertex, Point& pt) {
     Halfedge_around_vertex_circulator vcir(vertex, *(this->pmesh));
     size_t n = circulator_size(vcir);
+    CGAL_assume(n > 0);
 
     FT R[] = {0.0, 0.0, 0.0};
     Point_ref S = get(this->vpmap,vertex);

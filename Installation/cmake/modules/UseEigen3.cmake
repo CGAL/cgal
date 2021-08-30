@@ -8,4 +8,4 @@ add_definitions(-DCGAL_EIGEN3_ENABLED)
 
 set (EIGEN3_SETUP TRUE)
 
-message(DEPRECATION "This file UseEigen.cmake is deprecated, and the imported target `CGAL::Eigen_support` from CGAL_Eigen_support.cmake should be used instead.")
+message(DEPRECATION "This file UseEigen.cmake is deprecated, and the imported target `CGAL::Eigen3_support` from CGAL_Eigen3_support.cmake should be used instead.")

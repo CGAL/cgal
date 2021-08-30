@@ -43,6 +43,8 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 
+#include <CGAL/Triangulation_segment_traverser_3.h>
+
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
@@ -51,7 +53,6 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
 
-#include <boost/bind.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -62,12 +63,12 @@
 #include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 #include <boost/iterator/zip_iterator.hpp>
 #endif
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
-#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/Filtered_kernel/internal/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -524,6 +525,12 @@ public:
   typedef Iterator_range<Finite_edges_iterator> Finite_edges;
   typedef Iterator_range<Finite_facets_iterator> Finite_facets;
 
+  typedef Triangulation_segment_cell_iterator_3<Self>    Segment_cell_iterator;
+  typedef Triangulation_segment_simplex_iterator_3<Self> Segment_simplex_iterator;
+
+  typedef Iterator_range<Prevent_deref<Segment_cell_iterator> >    Segment_traverser_cell_handles;
+  typedef Iterator_range<Segment_simplex_iterator> Segment_traverser_simplices;
+
 private:
   // Auxiliary iterators for convenience
   // do not use default template argument to please VC++
@@ -567,7 +574,7 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  typename boost::result_of<const Construct_point_3(const P&)>::type
+  typename boost::result_of<Construct_point_3(P)>::type
   construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
@@ -2196,6 +2203,73 @@ public:
     return _tds.incident_edges_threadsafe(v, edges, Finite_filter(this));
   }
 
+  //// Segment Cell Iterator
+  Segment_cell_iterator segment_traverser_cells_begin(Vertex_handle vs,
+                                                      Vertex_handle vt) const
+  {
+    Segment_cell_iterator it(this, vs, vt);
+    return it;
+  }
+  Segment_cell_iterator segment_traverser_cells_begin(const Point& ps,
+                                                      const Point& pt,
+                                                      Cell_handle hint = Cell_handle()) const
+  {
+    Segment_cell_iterator it(this, ps, pt, hint);
+    return it;
+  }
+  Segment_cell_iterator segment_traverser_cells_end() const
+  {
+    Segment_cell_iterator it(this);
+    return it.end();
+  }
+  Segment_traverser_cell_handles segment_traverser_cell_handles(Vertex_handle vs,
+                                                                Vertex_handle vt) const
+  {
+    return make_prevent_deref_range(segment_traverser_cells_begin(vs, vt),
+                                    segment_traverser_cells_end());
+  }
+  Segment_traverser_cell_handles segment_traverser_cell_handles(const Point& ps,
+                                                                const Point& pt,
+                                                                Cell_handle hint = Cell_handle()) const
+  {
+    return make_prevent_deref_range(segment_traverser_cells_begin(ps, pt, hint),
+                                    segment_traverser_cells_end());
+  }
+
+  //// Segment Simplex Iterator
+  Segment_simplex_iterator segment_traverser_simplices_begin(Vertex_handle vs,
+                                                             Vertex_handle vt) const
+  {
+    Segment_simplex_iterator it(this, vs, vt);
+    return it;
+  }
+  Segment_simplex_iterator segment_traverser_simplices_begin(const Point& ps,
+                                                             const Point& pt,
+                                                             Cell_handle hint = Cell_handle()) const
+  {
+    Segment_simplex_iterator it(this, ps, pt, hint);
+    return it;
+  }
+  Segment_simplex_iterator segment_traverser_simplices_end() const
+  {
+    Segment_simplex_iterator it(this);
+    return it.end();
+  }
+  Segment_traverser_simplices segment_traverser_simplices(Vertex_handle vs,
+                                                          Vertex_handle vt) const
+  {
+    return Segment_traverser_simplices(segment_traverser_simplices_begin(vs, vt),
+                                       segment_traverser_simplices_end());
+  }
+  Segment_traverser_simplices segment_traverser_simplices(const Point& ps,
+                                                          const Point& pt,
+                                                          Cell_handle hint = Cell_handle()) const
+  {
+    return Segment_traverser_simplices(segment_traverser_simplices_begin(ps, pt, hint),
+                                       segment_traverser_simplices_end());
+  }
+
+
   size_type degree(Vertex_handle v) const
   {
     return _tds.degree(v);
@@ -2239,7 +2313,7 @@ public:
 
     std::size_t n;
     int d;
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> d >> n;
     else {
       read(is, d);
@@ -2301,7 +2375,7 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
 
   std::size_t n;
   int d;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
   {
     is >> d >> n;
   }
@@ -2361,7 +2435,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
 
   // outputs dimension and number of vertices
   size_type n = tr.number_of_vertices();
-  if(is_ascii(os))
+  if(IO::is_ascii(os))
   {
     os << tr.dimension() << std::endl << n << std::endl;
   }
@@ -2390,7 +2464,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   {
     os << *TV[i];
     V[TV[i]] = i;
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os << std::endl;
   }
 
@@ -2408,7 +2482,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
       for(Cell_iterator it = tr.cells_begin(), end = tr.cells_end(); it != end; ++it)
       {
         os << *it; // other information
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << std::endl;
       }
       break;
@@ -2418,7 +2492,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
       for(Facet_iterator it = tr.facets_begin(), end = tr.facets_end(); it != end; ++it)
       {
         os << *((*it).first); // other information
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << std::endl;
       }
       break;
@@ -2428,7 +2502,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
       for(Edge_iterator it = tr.edges_begin(), end = tr.edges_end(); it != end; ++it)
       {
         os << *((*it).first); // other information
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << std::endl;
       }
       break;
@@ -7219,22 +7293,10 @@ operator==(const Triangulation_3<GT, Tds1, Lds>& t1,
     std::vector<Point> V2 (t2.points_begin(), t2.points_end());
 
     std::sort(V1.begin(), V1.end(),
-              boost::bind<Comparison_result>(
-                cmp1,
-                boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _1),
-                boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _2))
-              == SMALLER);
+              [&cmp1, &cp](const Point& p1, const Point& p2){ return cmp1(cp(p1), cp(p2))==SMALLER; });
 
     std::sort(V2.begin(), V2.end(),
-              boost::bind<Comparison_result>(
-                cmp2,
-                boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _1),
-                boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _2))
-              == SMALLER);
+              [&cmp2, &cp](const Point& p1, const Point& p2){ return cmp2(cp(p1), cp(p2))==SMALLER; });
 
     return V1 == V2;
   }

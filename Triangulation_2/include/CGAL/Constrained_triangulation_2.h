@@ -56,7 +56,7 @@ namespace internal {
     int n;
     Indentation_level() : n(0) {}
     friend std::ostream& operator<<(std::ostream& os, Indentation_level level) {
-      return os << std::string(2*level.n, ' ');
+      return os << std::setw(2) << level.n << ": " << std::string(2*level.n, ' ');
     }
     Indentation_level& operator++() { ++n; return *this; }
     Indentation_level& operator--() { --n; return *this; }
@@ -843,11 +843,11 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       if (vi != vaa && vi != vbb) {
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stask push [vaa, vi] ( #" << vaa->time_stamp() << "= " << vaa->point()
+            << "CT_2::insert_constraint stack push [vaa, vi] ( #" << vaa->time_stamp() << "= " << vaa->point()
             << " , #" << vi->time_stamp() << "= " << vi->point()
             << " )\n";
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stask push [vi, vbb] ( #" << vi->time_stamp() << "= " << vi->point()
+            << "CT_2::insert_constraint stack push [vi, vbb] ( #" << vi->time_stamp() << "= " << vi->point()
             << " , #" << vbb->time_stamp() << "= " << vbb->point()
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
@@ -857,7 +857,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       else{
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
   std::cerr << CGAL::internal::cdt_2_indent_level
-            << "CT_2::insert_constraint stask push [vaa, vbb]( #" << vaa->time_stamp() << "= " << vaa->point()
+            << "CT_2::insert_constraint stack push [vaa, vbb]( #" << vaa->time_stamp() << "= " << vaa->point()
             << " , #" << vbb->time_stamp() << "= " << vbb->point()
             << " )\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
@@ -1544,7 +1544,7 @@ file_output(std::ostream& os) const
     for(int j = 0; j < 3; ++j){
       if (ib->is_constrained(j)) { os << "C";}
       else { os << "N";}
-      if(is_ascii(os)){
+      if(IO::is_ascii(os)){
         if(j==2) {
           os << "\n";
         } else {
@@ -1710,23 +1710,34 @@ compute_intersection(const Gt& gt,
              const typename Gt::Point_2& pd,
              typename Gt::Point_2& pi)
 {
-  typename Gt::Intersect_2 compute_intersec=gt.intersect_2_object();
-   typename Gt::Construct_segment_2
-    construct_segment=gt.construct_segment_2_object();
-  Object result = compute_intersec(construct_segment(pa,pb),
-                                   construct_segment(pc,pd));
+  typedef typename Gt::Point_2 Point_2;
+
+  typename Gt::Intersect_2 compute_intersec = gt.intersect_2_object();
+  typename Gt::Construct_segment_2 construct_segment = gt.construct_segment_2_object();
+
+  auto // CGAL::cpp11::result_of<typename Gt::Intersect_2(Segment_2, Segment_2)>::type
+    result = compute_intersec(construct_segment(pa,pb),
+                              construct_segment(pc,pd));
+
+
 #ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-  typename Gt::Segment_2 s;
-  if(assign(s, result)) {
-    std::cerr << CGAL::internal::cdt_2_indent_level
-              << "compute_intersection: " << s << '\n';
-  }
-  if(assign(pi, result)) {
-    std::cerr << CGAL::internal::cdt_2_indent_level
-              << "compute_intersection: " << pi << '\n';
+  typedef typename Gt::Segment_2 Segment_2;
+  if(result){
+    if (const Segment_2* s = boost::get<Segment_2>(&*result)){
+      std::cerr << CGAL::internal::cdt_2_indent_level
+                << "compute_intersection: " << *s << '\n';
+    }else if(const Point_2* p = boost::get<Point_2 >(&*result))
+      std::cerr << CGAL::internal::cdt_2_indent_level
+                << "compute_intersection: " << *p << '\n';
   }
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
-  return assign(pi, result);
+  if(result){
+    if(const Point_2* p = boost::get<Point_2 >(&*result)){
+      pi = *p;
+      return true;
+    }
+  }
+  return false;
 }
 
 

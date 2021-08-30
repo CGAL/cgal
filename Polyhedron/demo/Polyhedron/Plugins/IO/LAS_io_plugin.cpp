@@ -2,6 +2,7 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Point_set_3/IO.h>
 #include <fstream>
 using namespace CGAL::Three;
 class Polyhedron_demo_las_plugin :
@@ -35,12 +36,32 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
 
   Scene_points_with_normal_item* item;
   item = new Scene_points_with_normal_item();
-  if(!item->read_las_point_set(in))
+  Q_ASSERT(item->point_set() != nullptr);
+
+  item->point_set()->clear();
+
+  ok = CGAL::IO::read_LAS (in, *(item->point_set())) && !item->isEmpty();
+  if(ok)
+  {
+    std::cerr << item->point_set()->info();
+
+    if (!item->point_set()->has_normal_map())
     {
-      delete item;
-      ok = false;
-      return QList<Scene_item*>();
+      item->setRenderingMode(Points);
     }
+    else{
+      item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
+    }
+    if (item->point_set()->check_colors())
+      std::cerr << "-> Point set has colors" << std::endl;
+
+    item->invalidateOpenGLBuffers();
+  }
+  if(!ok)
+  {
+    delete item;
+    return QList<Scene_item*>();
+  }
 
   item->setName(fileinfo.completeBaseName());
   ok = true;
@@ -63,14 +84,18 @@ bool Polyhedron_demo_las_plugin::save(QFileInfo fileinfo,QList<CGAL::Three::Scen
     return false;
 
   // This plugin supports point sets
-  const Scene_points_with_normal_item* point_set_item =
-    qobject_cast<const Scene_points_with_normal_item*>(item);
+  Scene_points_with_normal_item* point_set_item =
+    qobject_cast<Scene_points_with_normal_item*>(item);
   if(!point_set_item)
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8().data());
   items.pop_front();
-  return point_set_item->write_las_point_set(out);
+  Q_ASSERT(point_set_item->point_set() != nullptr);
+
+  point_set_item->point_set()->reset_indices();
+
+  return CGAL::IO::write_LAS(out, *(point_set_item->point_set()));
 }
 
 

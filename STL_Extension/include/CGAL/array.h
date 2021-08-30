@@ -13,11 +13,8 @@
 #define CGAL_ARRAY_H
 
 #include <CGAL/config.h>
-#ifndef CGAL_CFG_NO_CPP0X_ARRAY
-#  include <array>
-#else
-#  include <boost/array.hpp>
-#endif
+#include <array>
+#include <utility>
 
 namespace CGAL {
 
@@ -49,7 +46,7 @@ namespace CGAL {
 // It's also untrue that this is not documented...  It is !
 
 template< typename T, typename... Args >
-inline
+BOOST_CXX14_CONSTEXPR
 std::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
@@ -62,11 +59,26 @@ make_array(const T & t, const Args & ... args)
 struct Construct_array
 {
   template <typename T, typename... Args>
-  std::array<T, 1 + sizeof...(Args)> operator()(const T& t, const Args& ... args)
+  constexpr
+  std::array<T, 1 + sizeof...(Args)>
+  operator()(const T& t, const Args& ... args) const
   {
     return make_array (t, args...);
   }
 };
+
+template <std::size_t...Is, typename T>
+constexpr std::array<T, sizeof...(Is)>
+make_filled_array_aux(const T& value, std::index_sequence<Is...>)
+{
+  return {(static_cast<void>(Is), value)...};
+}
+
+template <std::size_t N, typename T>
+constexpr std::array<T, N> make_filled_array(const T& value)
+{
+  return make_filled_array_aux(value, std::make_index_sequence<N>());
+}
 
 } //namespace CGAL
 

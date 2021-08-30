@@ -22,9 +22,9 @@ The algorithm
 computes a support set \f$ S\f$ which remains fixed until the next insert
 or clear operation.
 
-<B>Please note:</B> This class is (almost) obsolete. The class
+\note  This class is (almost) obsolete. The class
 `CGAL::Min_sphere_of_spheres_d<Traits>` solves a more general problem
-and is faster then `Min_sphere_d` even if used only for points
+and is faster than `Min_sphere_d` even if used only for points
 as input. Most importantly, `CGAL::Min_sphere_of_spheres_d<Traits>` has
 a specialized implementation for floating-point arithmetic which
 ensures correct results in a large number of cases (including
@@ -38,17 +38,17 @@ divide.
 
 
 \tparam Traits must be a model of the concept
-`OptimisationDTraits` as its template argument.
+`MinSphereAnnulusDTraits` as its template argument.
 
-We provide the models `CGAL::Optimisation_d_traits_2`,
-`CGAL::Optimisation_d_traits_3` and
-`CGAL::Optimisation_d_traits_d`
+We provide the models `CGAL::Min_sphere_annulus_d_traits_2`,
+`CGAL::Min_sphere_annulus_d_traits_3` and
+`CGAL::Min_sphere_annulus_d_traits_d`
 for two-, three-, and \f$ d\f$-dimensional points respectively.
 
-\sa `CGAL::Optimisation_d_traits_2<K,ET,NT>`
-\sa `CGAL::Optimisation_d_traits_3<K,ET,NT>`
-\sa `CGAL::Optimisation_d_traits_d<K,ET,NT>`
-\sa `OptimisationDTraits`
+\sa `CGAL::Min_sphere_annulus_d_traits_2<K,ET,NT>`
+\sa `CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>`
+\sa `CGAL::Min_sphere_annulus_d_traits_d<K,ET,NT>`
+\sa `MinSphereAnnulusDTraits`
 \sa `CGAL::Min_circle_2<Traits>`
 \sa `CGAL::Min_sphere_of_spheres_d<Traits>`
 \sa `CGAL::Min_annulus_d<Traits>`
@@ -68,7 +68,7 @@ each take linear time.
 
 \cgalHeading{Example}
 
-\cgalExample{Min_sphere_d/min_sphere_d.cpp}
+\cgalExample{Min_sphere_d/min_sphere_homogeneous_3.cpp}
 
 */
 template< typename Traits >

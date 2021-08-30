@@ -71,10 +71,14 @@ tests_per_label = defaultdict(list)
 for t_id in range(0, len(tests)):
     t = tests[t_id]
     for l in t['Labels']:
-        label = l.replace("_Tests","")
-        labels.add(label)
-        tests_per_label[label].append(t)
+        if "_Tests" in l or "_Examples" in l or "_Demo" in l:
+            label = l.replace("_Tests","")
+            labels.add(label)
+            tests_per_label[label].append(t)
 
+warning_pattern=re.compile(r'(.*([^a-zA-Z_,:-])([^\d]\s)warning).*?(\[|\n)', flags=re.IGNORECASE)
+w_det=re.compile("warning");
+filter_pattern=re.compile(r'cmake|cgal', flags=re.IGNORECASE);
 with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                                                   tester=tester_name,
                                                   platform=platform_name), 'a+') as results:
@@ -85,8 +89,17 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                 print("   {result} {name} in {time} s : {value} ".format(result = "successful " if (t['Status'] == 'passed') else "ERROR:     ", name = t['Name'], value = t['ExitValue'] if(t['ExitValue'] != "") else "SUCCESS" , time = t['ExecutionTime']), file=error)
                 if t['Status'] != 'passed':
                     result_for_label='n'
-                elif t['Output'] != None and re.search(r'(^|[^a-zA-Z_,:-])warning', t['Output'], flags=re.IGNORECASE):
-                    result_for_label='w'
+                elif t['Output'] != None and w_det.search(t['Output']):
+                    entries = re.split("\n+", t['Output'])
+                    for entry in entries:
+                        m=warning_pattern.search(entry)
+                        if m:
+                            n = filter_pattern.search(m.group(0))
+                            if n:
+                                result_for_label='w'
+                                break;
+                            else:
+                                result_for_label='t'
 
                 with io.open("{}/ProgramOutput.{}".format(label, t['Name']), mode="w", encoding="utf-8") as f:
                     print("{}/ProgramOutput.{}".format(label, t['Name']))

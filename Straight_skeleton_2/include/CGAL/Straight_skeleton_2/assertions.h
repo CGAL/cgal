@@ -13,11 +13,11 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
+#include <CGAL/assertions.h>
 
 #if defined(CGAL_STRAIGHT_SKELETON_NO_POSTCONDITIONS) \
   || defined(CGAL_NO_POSTCONDITIONS) \
-  || (!defined(CGAL_STRAIGHT_SKELETON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE)) \
-  || defined(NDEBUG)
+  || (!defined(CGAL_STRAIGHT_SKELETON_CHECK_EXPENSIVE) && !defined(CGAL_CHECK_EXPENSIVE))
 #  define CGAL_stskel_expensive_postcondition(EX)         (static_cast<void>(0))
 #  define CGAL_stskel_expensive_postcondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_stskel_expensive_postcondition_code(CODE)

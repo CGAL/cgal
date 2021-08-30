@@ -32,6 +32,8 @@
 #include <queue>
 #include <tuple>
 #include <iostream>
+#include <boost/intrusive/rbtree.hpp>
+#include <boost/intrusive/link_mode.hpp>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -48,6 +50,52 @@ struct Minimal_quadrangulation_local_map_items
     typedef CGAL::Cell_attribute<CMap, int32_t> Vertex_attribute;
     typedef std::tuple<Vertex_attribute, void, void> Attributes;
   };
+};
+
+struct Minimal_quadrangulation_simplicity_testing_rbtree_node
+{
+  Minimal_quadrangulation_simplicity_testing_rbtree_node(std::size_t i=0)
+      : m_idx(i) {}
+
+  Minimal_quadrangulation_simplicity_testing_rbtree_node *m_parent, *m_left, *m_right;
+  int m_color;
+  std::size_t m_idx;
+};
+
+struct Minimal_quadrangulation_simplicity_testing_rbtree_node_traits
+{
+  typedef Minimal_quadrangulation_simplicity_testing_rbtree_node                node;
+  typedef Minimal_quadrangulation_simplicity_testing_rbtree_node*               node_ptr;
+  typedef const Minimal_quadrangulation_simplicity_testing_rbtree_node*         const_node_ptr;
+  typedef int                                                                   color;
+
+  static node_ptr get_parent(const_node_ptr n) { return n->m_parent; }
+  static void set_parent(node_ptr n, node_ptr parent) { n->m_parent = parent; }
+  static node_ptr get_left(const_node_ptr n) { return n->m_left; }
+  static void set_left(node_ptr n, node_ptr left) { n->m_left = left; }
+  static node_ptr get_right(const_node_ptr n) { return n->m_right; }
+  static void set_right(node_ptr n, node_ptr right) { n->m_right = right; }
+  static color get_color(const_node_ptr n) { return n->m_color; }
+  static void set_color(node_ptr n, color color) { n->m_color = color; }
+  static color black() { return color(0); }
+  static color red() { return color(1); }
+};
+
+struct Minimal_quadrangulation_simplicity_testing_rbtree_value_traits
+{
+  typedef Minimal_quadrangulation_simplicity_testing_rbtree_node_traits         node_traits;
+  typedef node_traits::node                                                     value_type;
+  typedef node_traits::node_ptr                                                 node_ptr;
+  typedef node_traits::const_node_ptr                                           const_node_ptr;
+  typedef value_type*                                                           pointer;
+  typedef value_type const*                                                     const_pointer;
+
+  static const boost::intrusive::link_mode_type link_mode = boost::intrusive::link_mode_type::normal_link;
+
+  static node_ptr to_node_ptr(value_type &value) { return &value; }
+  static const_node_ptr to_node_ptr(const value_type &value) { return &value; }
+  static pointer to_value_ptr(node_ptr n) { return n; }
+  static const_pointer to_value_ptr(const_node_ptr n) { return n; }
 };
 
 template<typename Mesh_>
@@ -242,14 +290,17 @@ public:
 
   /// @return true iff 'p' is contractible.
   bool is_contractible(const Path_on_surface<Mesh>& p,
-                       bool display_time=false) const
+                       bool display_time=false, bool is_verbose=false) const
   {
     if (p.is_empty())
     { return true; }
 
     if (!p.is_closed())
     {
-      std::cerr<<"Error: is_contractible requires a closed path."<<std::endl;
+      if (is_verbose)
+      {
+        std::cerr<<"Error: is_contractible requires a closed path."<<std::endl;
+      }
       return false;
     }
 
@@ -292,15 +343,18 @@ public:
   /// @return true iff 'p1' and 'p2' are freely homotopic.
   bool are_freely_homotopic(const Path_on_surface<Mesh>& p1,
                             const Path_on_surface<Mesh>& p2,
-                            bool display_time=false) const
+                            bool display_time=false, bool is_verbose=false) const
   {
     if (p1.is_empty() && p2.is_empty()) { return true; }
 
     if ((!p1.is_empty() && !p1.is_closed()) ||
         (!p2.is_empty() && !p2.is_closed()))
     {
-      std::cerr<<"Error: are_freely_homotopic requires two closed paths."
-               <<std::endl;
+      if (is_verbose)
+      {
+        std::cerr<<"Error: are_freely_homotopic requires two closed paths."
+                 <<std::endl;
+      }
       return false;
     }
 
@@ -353,7 +407,7 @@ public:
   /// @return true iff 'p1' and 'p2' are base point freely homotopic.
   bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
                                 const Path_on_surface<Mesh>& p2,
-                                bool display_time=false) const
+                                bool display_time=false, bool is_verbose=false) const
   {
     if (p1.is_empty() && p2.is_empty()) { return true; }
     if (p1.is_empty() || p2.is_empty()) { return false; }
@@ -365,8 +419,11 @@ public:
         (p1.back_flip()?p1.back():get_original_map().template beta<1>(p1.back()),
          p2.back_flip()?p2.back():get_original_map().template beta<1>(p2.back())))
     {
-      std::cerr<<"Error: are_base_point_homotopic requires two paths that"
-               <<" share the same vertices as extremities."<<std::endl;
+      if (is_verbose)
+      {
+        std::cerr<<"Error: are_base_point_homotopic requires two paths that"
+                 <<" share the same vertices as extremities."<<std::endl;
+      }
       return false;
     }
 
@@ -475,6 +532,83 @@ public:
     return res;
 #endif // defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
   }
+
+  /// @return true iff 'p' is a simple curve.
+  bool is_homotopic_to_simple_cycle(const Path_on_surface<Mesh>& p,
+                       bool display_time=false, bool is_verbose=false) const
+  {
+    if (p.is_empty())
+    { return true; }
+
+    if (!p.is_closed())
+    {
+      if (is_verbose)
+      {
+        std::cerr<<"Error: is_homotopic_to_simple_cycle requires a closed path."<<std::endl;
+      }
+      return true;
+    }
+
+    if (get_local_map().is_empty())
+    { return true; } // A closed path on a sphere is always simple
+
+    CGAL::Timer t;
+    if (display_time)
+    { t.start(); }
+
+    bool res=false;
+    if (local_map_is_a_torus())
+    {
+      Path_on_surface<Local_map>
+        pt=transform_original_path_into_quad_surface_for_torus(p);
+
+      int a, b;
+      count_edges_of_path_on_torus(pt, a, b);
+      a = std::abs(a);
+      b = std::abs(b);
+      res=((a == 0 && b == 1) || (b == 0 && a == 1) || CGAL::gcd(a, b) - 1 == 0);
+    }
+    else if (is_contractible(p))
+    {
+      // genus > 1 and contractible
+      res=true;
+    }
+    else
+    {
+      // genus > 1 and not contractible, perform unzip algorithm
+      internal::Path_on_surface_with_rle<Self>
+          pt=transform_original_path_into_quad_surface_with_rle(p);
+      pt.canonize();
+      // Use non-rle path from now on
+      Path_on_surface<Local_map> p_canonized(pt);
+      auto factorization=p_canonized.factorize();
+      // If the path length is 1, it must be simple
+      res = factorization.second <= 1 && factorization.first.length() <= 1;
+      if (factorization.second <= 1 && !res)
+      {
+        // If the curve is not primitive, there must be at least
+        // one self intersection
+
+        auto& p_original = factorization.first;
+        p_original.simplify_flips();
+
+        auto perturbation = compute_perturbation(p_original);
+
+        // Check whether orders form a valid parenthesis expression
+        res = is_ordering_simple(perturbation.first, perturbation.second);
+      }
+    }
+
+    if (display_time)
+    {
+      t.stop();
+      std::cout<<"[TIME] is_homotopic_to_simple_cycle: "<<t.time()<<" seconds"
+               <<std::endl;
+    }
+
+    return res;
+  }
+
 
 protected:
 
@@ -1574,6 +1708,408 @@ protected:
     }
 
     return res;
+  }
+
+  /// Compute a tentative ordering to avoid intersection
+  /// @pre the input path should be primitive
+  /// @return A pair of final path and correspondent ordering
+  std::pair<Path_on_surface<Local_map>, std::unordered_map<size_type, std::vector<std::size_t>>> compute_perturbation(const Path_on_surface<Local_map>& p) const
+  {
+    std::vector<Dart_const_handle> pr;
+    pr.reserve(p.length());
+    for(std::size_t i = 0; i < p.length(); ++i)
+    {
+      pr.emplace_back(p[i]);
+    }
+
+    // Compute the backward cyclic KMP failure table for the curve
+    std::vector<std::size_t> suffix_len = compute_common_circular_suffix(p);
+    std::vector<bool> switchable = compute_switchable(p);
+
+    typedef typename boost::intrusive::rbtree<Minimal_quadrangulation_simplicity_testing_rbtree_node,
+            typename boost::intrusive::value_traits<Minimal_quadrangulation_simplicity_testing_rbtree_value_traits>> rbtree;
+    std::vector<Minimal_quadrangulation_simplicity_testing_rbtree_node> rb_nodes;
+    rb_nodes.reserve(pr.size());
+    std::unordered_map<size_type, rbtree> trees;
+
+    for (std::size_t i = 0; i < pr.size(); ++i)
+    {
+      Dart_const_handle dh = pr[i];
+      auto dart_id = get_absolute_idx(dh);
+      rb_nodes.emplace_back(i);
+      auto& node = rb_nodes.back();
+
+      // Check whether current darts needs to be switched
+      if (i > 0 && switchable[i])
+      {
+        // Look at the t-1 turn of [i-1, i, i + 1]
+        Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
+        size_type dleft_id = get_absolute_idx(dleft);
+        if(trees[dleft_id].size() > 0)
+        {
+          std::size_t max_turn_idx = is_absolutely_directed(dleft) ? trees[dleft_id].begin()->m_idx : trees[dleft_id].rbegin()->m_idx;
+          Dart_const_handle dprev = get_previous_relative_to(pr, max_turn_idx, dleft);
+          // If there exists a crossing that can be avoided, switch
+          if(get_order_relative_to(pr[i - 1], dleft) > get_order_relative_to(dprev, dleft))
+          {
+            switch_dart(pr, i, switchable);
+            dh = pr[i];
+            dart_id = get_absolute_idx(pr[i]);
+          }
+        }
+      }
+      // Insert current darts
+      if (trees[dart_id].empty())
+      {
+        trees[dart_id].push_back(node);
+      }
+      else
+      {
+        // First check whether there is another corner in the previous part of the path
+        // where it matches p[i - 1] -> p[i]
+        // If so, p[i] must be inserted adjacent to one such corner
+        size_type prev_dart_id = get_absolute_idx(pr[i - 1]);
+        auto it_prev = trees[prev_dart_id].iterator_to(rb_nodes[i - 1]);
+        if (it_prev != trees[prev_dart_id].begin() && is_same_corner(pr, std::prev(it_prev)->m_idx, i - 1))
+        {
+          auto it_adjacent = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::prev(it_prev)->m_idx, pr[i - 1])]);
+          if(is_absolutely_directed(pr[i - 1]) == is_absolutely_directed(dh))
+          {
+            trees[dart_id].insert_before(std::next(it_adjacent), node);
+          }
+          else
+          {
+            trees[dart_id].insert_before(it_adjacent, node);
+          }
+        }
+        else if (std::next(it_prev) != trees[prev_dart_id].end() && is_same_corner(pr, std::next(it_prev)->m_idx, i - 1))
+        {
+          auto it_adjacent = trees[dart_id].iterator_to(rb_nodes[get_next_idx_relative_to(pr, std::next(it_prev)->m_idx, pr[i-1])]);
+          if(is_absolutely_directed(pr[i - 1]) == is_absolutely_directed(dh))
+          {
+            trees[dart_id].insert_before(it_adjacent, node);
+          }
+          else
+          {
+            trees[dart_id].insert_before(std::next(it_adjacent), node);
+          }
+        }
+        else
+        {
+          /// There is no same corner in the previous of the path
+          /// Perform usual unzip insertion
+          auto less_than_in_tree = is_absolutely_directed(dh)?
+            std::function<bool(std::size_t, std::size_t)>{std::greater<std::size_t>()} : std::function<bool(std::size_t, std::size_t)>{std::less<std::size_t>()};
+          auto comparator = [this, &pr, &p, &suffix_len, &less_than_in_tree] (const std::size_t& key, const rbtree::value_type& b) -> bool {
+            if (b.m_idx == 0 && pr[key] == pr[0])
+            {
+              if(pr[key] != p[key]) {
+                // current edge was switched so it should always be on the right side (more clockwise)
+                return less_than_in_tree(0, 1);
+              }
+              /// Comparing to pr[0], needs to check longest suffix
+              std::size_t current_dividing_idx = key + p.length() - 1 - suffix_len[key - 1];
+              std::size_t path_end_dividing_idx = p.length() - 1 - suffix_len[key - 1];
+              std::size_t last_same_idx = (path_end_dividing_idx == p.length() - 1) ? 0 : path_end_dividing_idx + 1;
+              if (current_dividing_idx >= p.length())
+              {
+                current_dividing_idx -= p.length();
+              }
+              Dart_const_handle dbase = p[last_same_idx],
+                                dcur = p[current_dividing_idx],
+                                d0 = p[path_end_dividing_idx];
+
+              std::size_t key_prev_order = this->get_order_relative_to(dcur, dbase);
+              std::size_t b_prev_order = this->get_order_relative_to(d0, dbase);
+              return less_than_in_tree(key_prev_order, b_prev_order);
+            }
+            else
+            {
+              std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
+              Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
+              std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
+              return less_than_in_tree(key_prev_order, b_prev_order);
+            }
+          };
+          auto it_after = trees[dart_id].upper_bound(i, comparator);
+          trees[dart_id].insert_before(it_after, node);
+        }
+      }
+    }
+
+    Path_on_surface<Local_map> p_perturbed(get_local_map());
+    for(const auto& dp: pr)
+    {
+      p_perturbed.push_back(dp);
+    }
+    std::unordered_map<size_type, std::vector<std::size_t>> ordering;
+    for(const auto& edge_ordering: trees)
+    {
+      std::transform(edge_ordering.second.begin(), edge_ordering.second.end(),
+                     std::back_inserter(ordering[edge_ordering.first]),
+                     [] (const rbtree::value_type& node)
+                     {
+                       return node.m_idx;
+                     });
+    }
+    return std::make_pair(p_perturbed, ordering);
+  }
+
+  /// @return true iff the ordering of the edges in the input path is intersection free
+  bool is_ordering_simple(const Path_on_surface<Local_map>& p, const std::unordered_map<size_type, std::vector<std::size_t>>& ordering) const
+  {
+    bool res = true;
+    auto marktemp=get_local_map().get_new_mark();
+    for (auto it=get_local_map().darts().begin();
+         res && it!=get_local_map().darts().end(); ++it)
+    {
+      if (!get_local_map().is_marked(it, marktemp))
+      {
+        std::stack<std::pair<std::size_t, bool>> parenthesis_pairing;
+        Dart_const_handle dh2=it;
+        do
+        {
+          get_local_map().mark(dh2, marktemp);
+          auto dart_id = get_absolute_idx(dh2);
+          auto handle_node = [&dh2, &p, &parenthesis_pairing] (const std::size_t& idx) {
+            auto curr_dart = std::make_pair(idx, p[idx] == dh2);
+            if (parenthesis_pairing.empty())
+            {
+              parenthesis_pairing.push(curr_dart);
+            }
+            else
+            {
+              /// We can cancel a pair of dart iff
+              /// 1) They are adjacent in the path (wrap around for the last dart)
+              /// 2) The first one is going in and the second one is going out
+              auto prev_dart = parenthesis_pairing.top();
+              auto next_dart = curr_dart;
+              if(!next_dart.second)
+              {
+                std::swap(next_dart, prev_dart);
+              }
+              if ((next_dart.first - prev_dart.first == 1 || (next_dart.first == 0 && prev_dart.first == p.length() - 1)) &&
+                  (!prev_dart.second && next_dart.second))
+              {
+                parenthesis_pairing.pop();
+              }
+              else
+              {
+                parenthesis_pairing.push(curr_dart);
+              }
+            }
+          };
+          auto it_dart_ordering = ordering.find(dart_id);
+          if (it_dart_ordering != ordering.cend())
+          {
+            if (is_absolutely_directed(dh2))
+            {
+              std::for_each(it_dart_ordering->second.cbegin(), it_dart_ordering->second.cend(), handle_node);
+            }
+            else
+            {
+              std::for_each(it_dart_ordering->second.crbegin(), it_dart_ordering->second.crend(), handle_node);
+            }
+          }
+          dh2 = get_local_map().template beta<2, 1>(dh2);
+        }
+        while(dh2!=it);
+        res = res && parenthesis_pairing.empty();
+      }
+    }
+    get_local_map().free_mark(marktemp);
+    return res;
+  }
+
+  /// Compute the longest common suffix of a path against all of it circular shifts
+  /// Based on a modification of Knuth-Morris-Pratt algorithm
+  std::vector<std::size_t> compute_common_circular_suffix(const Path_on_surface<Local_map>& p) const
+  {
+    Path_on_surface<Local_map> q(p);
+    q += p;
+    std::vector<std::size_t> suffix_len(q.length());
+    std::size_t match_begin = 0,
+                match_end = 0;
+    suffix_len.back() = q.length();
+    for (std::size_t i = 1; i < q.length(); ++i) {
+      std::size_t match_idx = q.length() - 1 - i;
+      if (i >= match_end || i + suffix_len[match_idx + match_begin] >= match_end) {
+        match_begin = i;
+        if (i >= match_end) {
+          match_end = i;
+        }
+        while (match_end < q.length() && q[q.length() - 1 - match_end] == q[q.length() - 1 - (match_end - i)]) {
+          ++match_end;
+        }
+        suffix_len[match_idx] = match_end - match_begin;
+      }
+      else {
+        suffix_len[match_idx] = suffix_len[match_idx + match_begin];
+      }
+    }
+
+    std::vector<std::size_t> result(suffix_len.begin() + p.length(), suffix_len.end());
+    for (std::size_t i = 0; i < result.size(); ++i) {
+      result[i] = (std::min)(result[i], p.length());
+    }
+    return result;
+  }
+
+  /// Compute a boolean array of whether there is an left-L-shape at i-th dart, aka whether it is swicthable
+  std::vector<bool> compute_switchable(const Path_on_surface<Local_map>& p) const
+  {
+    std::vector<bool> switchable(p.length(), false);
+    /// Skip the last dart and the first dart since it can never be switched, nor can it
+    /// be the second last dart of a switch
+    std::size_t idx = p.length() - 2;
+    while (idx > 0)
+    {
+      if (positive_turn(p[idx], p[idx + 1]) == 1)
+      {
+        /// This is the end of a possible switchbale subpath
+        switchable[idx].flip();
+        --idx;
+        while (idx > 0 && positive_turn(p[idx], p[idx + 1]) == 2)
+        {
+          switchable[idx].flip();
+          --idx;
+        }
+      } else
+      {
+        --idx;
+      }
+    }
+    return switchable;
+  }
+
+  /// Actually switch the dart in a vector of darts
+  void switch_dart(std::vector<Dart_const_handle>& p, std::size_t i, std::vector<bool>& switchable) const
+  {
+    CGAL_assertion(static_cast<bool>(switchable[i]));
+    p[i] = get_local_map().template beta<0, 2>(p[i]);
+    p[i + 1] = get_local_map().template beta<2, 0, 2>(p[i]);
+    switchable[i] = false;
+    /// It is guarantee that the last dart is not switchable
+    std::size_t j = i + 2;
+    for(; switchable[j - 1]; ++j)
+    {
+      p[j] = get_local_map().template beta<2, 0, 2, 0, 2>(p[j - 1]);
+      switchable[j - 1] = false;
+    }
+    /// Last dart may become switchable
+    if (j < p.size() && ((switchable[j] && positive_turn(p[j - 1], p[j]) == 2) ||
+        positive_turn(p[j - 1], p[j]) == 1))
+    {
+      switchable[j - 1] = true;
+    }
+  }
+
+  /// Essentially compute the positive turn between ref and x
+  /// Requires x and ref outgoing at the same vertex
+  size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<0>(get_local_map().opposite2(x), ref));
+#if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
+    size_type ref_degree = get_local_map().template info<0>(ref);
+    size_type x_order = get_dart_id(get_local_map().opposite2(x)) % ref_degree;
+    size_type base_order = get_dart_id(ref) % ref_degree;
+    return (x_order < base_order) ? (x_order + ref_degree - base_order) : (x_order - base_order);
+#else
+    return get_local_map().negative_turn(x, ref);
+#endif
+  }
+
+  /// Extend p[i] towards the reverse direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return the index
+  int get_previous_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    return p[i] == ref ? (static_cast<int>(i) - 1) : (static_cast<int>(i) + 1);
+  }
+
+  /// Extend p[i] towards the reverse direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return whether the extension is viable without crossing the first and the last dart
+  bool has_previous_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    int j = get_previous_idx_relative_to(p, i, ref);
+    return j >= 0 && j < p.size();
+  }
+
+  /// Extend p[i] towards the reverse direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return the actual dart, wrap around if reaching boundary
+  Dart_const_handle get_previous_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    if (p[i] == ref)
+    {
+      return p[(i == 0) ? (p.size() - 1) : i - 1];
+    }
+    else
+    {
+      return get_local_map().opposite2(p[(i == p.size() - 1) ? 0 : i + 1]);
+    }
+  }
+
+  /// Extend p[i] towards the direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return the index
+  int get_next_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    return p[i] == ref ? (static_cast<int>(i) + 1) : (static_cast<int>(i) - 1);
+  }
+
+  /// Extend p[i] towards the direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return whether the extension is viable without crossing the first and the last dart
+  bool has_next_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    int j = get_next_idx_relative_to(p, i, ref);
+    return j >= 0 && j < static_cast<int>(p.size());
+  }
+
+  /// Extend p[i] towards the direction of ref
+  /// Requires p[i] and ref on the same 1-cell
+  /// @return the actual dart, wrap around if reaching boundary
+  Dart_const_handle get_next_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  {
+    CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
+    if (p[i] == ref)
+    {
+      return p[(i == p.size() - 1) ? 0 : i + 1];
+    }
+    else
+    {
+      return get_local_map().opposite2(p[(i == 0) ? (p.size() - 1) : i - 1]);
+    }
+  }
+
+  /// @return a unique 1-cell id for the dart
+  size_type get_absolute_idx(Dart_const_handle dh) const
+  {
+    return (std::min)(get_local_map().darts().index(dh), get_local_map().darts().index(get_local_map().opposite(dh)));
+  }
+
+  /// @return true if the dart is the representative for the unique 1-cell id
+  bool is_absolutely_directed(Dart_const_handle dh) const
+  {
+    return get_local_map().darts().index(dh) < get_local_map().darts().index(get_local_map().opposite(dh));
+  }
+
+  /// @return true if p[ref] -> p[ref + 1] forms the same corner as p[j]
+  /// Requires p[j] and p[ref] on the same 1-cell
+  bool is_same_corner(const std::vector<Dart_const_handle>& p, std::size_t j, std::size_t ref) const
+  {
+    if (!has_next_relative_to(p, j, p[ref]))
+    {
+      return false;
+    }
+    return get_next_relative_to(p, j, p[ref]) == p[ref + 1];
   }
 
 protected:

@@ -25,9 +25,9 @@ BOOST_concept(HalfedgeGraph,(G))
 
   BOOST_CONCEPT_USAGE(HalfedgeGraph)
   {
-    BOOST_CONCEPT_ASSERT((boost::DefaultConstructible<halfedge_descriptor>)) CGAL_UNUSED;
-    BOOST_CONCEPT_ASSERT((boost::EqualityComparable<halfedge_descriptor>)) CGAL_UNUSED;
-    BOOST_CONCEPT_ASSERT((boost::Assignable<halfedge_descriptor>)) CGAL_UNUSED;
+    BOOST_CONCEPT_ASSERT((boost::DefaultConstructible<halfedge_descriptor>));
+    BOOST_CONCEPT_ASSERT((boost::EqualityComparable<halfedge_descriptor>));
+    BOOST_CONCEPT_ASSERT((boost::Assignable<halfedge_descriptor>));
 
 
     e = edge(h, g);
@@ -97,9 +97,9 @@ BOOST_concept(FaceGraph,(G))
 
   BOOST_CONCEPT_USAGE(FaceGraph)
   {
-    BOOST_CONCEPT_ASSERT((boost::DefaultConstructible<face_descriptor>)) CGAL_UNUSED;
-    BOOST_CONCEPT_ASSERT((boost::EqualityComparable<face_descriptor>)) CGAL_UNUSED;
-    BOOST_CONCEPT_ASSERT((boost::Assignable<face_descriptor>)) CGAL_UNUSED;
+    BOOST_CONCEPT_ASSERT((boost::DefaultConstructible<face_descriptor>));
+    BOOST_CONCEPT_ASSERT((boost::EqualityComparable<face_descriptor>));
+    BOOST_CONCEPT_ASSERT((boost::Assignable<face_descriptor>));
 
     f = face(h, g);
     h = halfedge(f, g);

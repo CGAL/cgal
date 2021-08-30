@@ -8,13 +8,17 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Quotient<int>                           Number_type;
-typedef CGAL::Simple_cartesian<Number_type>           Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
-typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::X_monotone_curve_2                  Segment_2;
-typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
+typedef CGAL::Quotient<int>                             Number_type;
+typedef CGAL::Simple_cartesian<Number_type>             Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
+typedef Traits_2::Point_2                               Point_2;
+typedef Traits_2::X_monotone_curve_2                    Segment_2;
+typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
+typedef Arrangement_2::Vertex_handle                    Vertex_handle;
+typedef Arrangement_2::Halfedge_handle                  Halfedge_handle;
+typedef Arrangement_2::Face_handle                      Face_handle;
+typedef boost::variant<Vertex_handle, Halfedge_handle, Face_handle>
+                                                        Zone_result;
 
 #define N_SEGMENTS 3
 
@@ -40,7 +44,7 @@ int main ()
 
   for (k = 0; k < N_SEGMENTS; k++)
   {
-    std::list<CGAL::Object> zone_elems;
+    std::list<Zone_result> zone_elems;
     zone(arr, segs[k], std::back_inserter(zone_elems));
     std::size_t zone_actual_comp = zone_elems.size();
 

@@ -3,6 +3,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/tags.h>
 #include <CGAL/Timer.h>
 
@@ -81,6 +82,52 @@ int test_self_intersections(const char* filename,
   return 0;
 }
 
+template <typename K>
+int test_limited_self_intersections(const char* filename)
+{
+  typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
+
+  Mesh m;
+
+  if ( !CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, m) ) {
+    std::cerr << "Error: cannot read file: " << filename << std::endl;
+    return 1;
+  }
+
+  CGAL::Timer timer;
+  timer.start();
+
+  std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
+
+#ifdef CGAL_LINKED_WITH_TBB
+  if(!std::is_same<K, EPECK>::value) // EPECK isn't threadsafe
+  {
+    PMP::self_intersections<CGAL::Parallel_tag>(
+          m, std::back_inserter(intersected_tris), CGAL::parameters::maximum_number(40));
+    std::cout << "self_intersections test for 40 SI took " << timer.time() << " sec." << std::endl;
+    std::cout << "Found " << intersected_tris.size() << " SIs." << std::endl;
+    if(intersected_tris.size() < 40)
+    {
+      std::cerr<<"Not enough intersections found in parallel."<<std::endl;
+      return 1;
+    }
+    intersected_tris.clear();
+    timer.reset();
+  }
+#endif
+  PMP::self_intersections<CGAL::Sequential_tag>(
+    m, std::back_inserter(intersected_tris), CGAL::parameters::maximum_number(40));
+  std::cout << "self_intersections test for 40 SI took " << timer.time() << " sec." << std::endl;
+  timer.reset();
+  if(intersected_tris.size() != 40)
+  {
+    std::cerr<<"Too many intersections found in sequential"<<std::endl;
+    return 1;
+  }
+  return 0;
+}
+
 int main(int argc, char** argv)
 {
   // If file(s) are provided, the associated expected result must also be provided.
@@ -151,6 +198,14 @@ int main(int argc, char** argv)
 
   std::cout << "Fourth test (EPECK):" << std::endl;
   r += test_self_intersections<EPECK>(filename, expected);
+
+  filename = (argc > 9) ? argv[9] : "data/mannequin-devil.off";
+
+  std::cout << "Test with maximum_number (EPICK):" << std::endl;
+  r += test_limited_self_intersections<EPICK>(filename);
+
+  std::cout << "Test with maximum_number (EPECK):" << std::endl;
+  r += test_limited_self_intersections<EPECK>(filename);
 
   return r;
 }

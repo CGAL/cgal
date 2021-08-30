@@ -43,7 +43,7 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/array.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -110,18 +110,19 @@ struct Poisson_visitor {
 // The wrapper stores only pointers to the two functors.
 template <typename F1, typename F2>
 struct Special_wrapper_of_two_functions_keep_pointers {
+  typedef typename F2::FT FT;
   F1 *f1;
   F2 *f2;
   Special_wrapper_of_two_functions_keep_pointers(F1* f1, F2* f2)
     : f1(f1), f2(f2) {}
 
   template <typename X>
-  double operator()(const X& x) const {
+  FT operator()(const X& x) const {
     return (std::max)((*f1)(x), CGAL::square((*f2)(x)));
   }
 
   template <typename X>
-  double operator()(const X& x) {
+  FT operator()(const X& x) {
     return (std::max)((*f1)(x), CGAL::square((*f2)(x)));
   }
 }; // end struct Special_wrapper_of_two_functions_keep_pointers<F1, F2>
@@ -205,6 +206,67 @@ private:
   typedef typename Triangulation::All_cells_iterator       All_cells_iterator;
   typedef typename Triangulation::Locate_type Locate_type;
 
+  enum Cache_state { UNINITIALIZED, BUSY, INITIALIZED };
+  // Thread-safe cache for barycentric coordinates of a cell
+  class Cached_bary_coord
+  {
+  private:
+    std::atomic<Cache_state> m_state;
+    std::array<FT, 9> m_bary;
+  public:
+    Cached_bary_coord() : m_state (UNINITIALIZED) { }
+
+    // Copy operator to satisfy vector, shouldn't be used
+    Cached_bary_coord(const Cached_bary_coord&)
+    {
+      CGAL_error();
+    }
+
+    bool is_initialized()
+    {
+      Cache_state s = m_state;
+      if (s == UNINITIALIZED)
+      {
+        // If the following line successfully replaces UNINITIALIZED
+        // by BUSY, then the current thread in charge of initialization
+        if (m_state.compare_exchange_weak(s, BUSY))
+          return false;
+      }
+      // Otherwise, either the thread is BUSY by another thread, or
+      // it's already INITIALIZED. Either way, we way until it's INITIALIZED
+      else
+        while (m_state != INITIALIZED) { }
+
+      // At this point, it's always INITIALIZED
+      return true;
+    }
+
+    void set_initialized() { m_state = INITIALIZED; }
+
+    const FT& operator[] (const std::size_t& idx) const { return m_bary[idx]; }
+    FT& operator[] (const std::size_t& idx) { return m_bary[idx]; }
+  };
+
+  // Wrapper for thread safety of maintained cell hint for fast
+  // locate, with conversions atomic<Cell*>/Cell_handle
+  class Cell_hint
+  {
+    std::atomic<Cell*> m_cell;
+  public:
+
+    Cell_hint() : m_cell(nullptr) { }
+
+    // Poisson_reconstruction_function should be copyable, although we
+    // don't need to copy that
+    Cell_hint(const Cell_hint&) : m_cell(nullptr) { }
+
+    Cell_handle get() const
+    {
+      return Triangulation_data_structure::Cell_range::s_iterator_to(*m_cell);
+    }
+    void set (Cell_handle ch) { m_cell = ch.operator->(); }
+  };
+
 // Data members.
 // Warning: the Surface Mesh Generation package makes copies of implicit functions,
 // thus this class must be lightweight and stateless.
@@ -212,15 +274,14 @@ private:
 
   // operator() is pre-computed on vertices of *m_tr by solving
   // the Poisson equation Laplacian(f) = divergent(normals field).
-  boost::shared_ptr<Triangulation> m_tr;
-
-  mutable boost::shared_ptr<std::vector<boost::array<double,9> > > m_Bary;
+  std::shared_ptr<Triangulation> m_tr;
+  mutable std::shared_ptr<std::vector<Cached_bary_coord> > m_bary;
   mutable std::vector<Point> Dual;
   mutable std::vector<Vector> Normal;
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of operator()
-  mutable Cell_handle m_hint; // last cell found = hint for next search
+  mutable Cell_hint m_hint; // last cell found = hint for next search
 
   FT average_spacing;
 
@@ -284,7 +345,7 @@ public:
     PointPMap point_pmap, ///< property map: `value_type of InputIterator` -> `Point` (the position of an input point).
     NormalPMap normal_pmap ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
   )
-    : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
+    : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
     , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>
                       (CGAL::make_range(first, beyond), 6,
                        CGAL::parameters::point_map(point_pmap)))
@@ -304,7 +365,7 @@ public:
     PointPMap point_pmap, ///< property map: `value_type of InputIterator` -> `Point` (the position of an input point).
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
     Visitor visitor)
-    : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
+    : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
     , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6,
                                                                           CGAL::parameters::point_map(point_pmap)))
   {
@@ -323,7 +384,7 @@ public:
       boost::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>
     >::type* = 0
   )
-  : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
+    : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
   , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6))
   {
     forward_constructor(first, beyond,
@@ -527,21 +588,23 @@ public:
 
   boost::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
   {
-    m_hint = m_tr->locate(p  ,m_hint  ); // no hint when we use hierarchy
+    Cell_handle hint = m_hint.get();
+    hint = m_tr->locate(p, hint); // no hint when we use hierarchy
+    m_hint.set(hint);
 
-    if(m_tr->is_infinite(m_hint)) {
-      int i = m_hint->index(m_tr->infinite_vertex());
-      return boost::make_tuple(m_hint->vertex((i+1)&3)->f(),
-                               m_hint, true);
+    if(m_tr->is_infinite(hint)) {
+      int i = hint->index(m_tr->infinite_vertex());
+      return boost::make_tuple(hint->vertex((i+1)&3)->f(),
+                               hint, true);
     }
 
     FT a,b,c,d;
-    barycentric_coordinates(p,m_hint,a,b,c,d);
-    return boost::make_tuple(a * m_hint->vertex(0)->f() +
-                             b * m_hint->vertex(1)->f() +
-                             c * m_hint->vertex(2)->f() +
-                             d * m_hint->vertex(3)->f(),
-                             m_hint, false);
+    barycentric_coordinates(p,hint,a,b,c,d);
+    return boost::make_tuple(a * hint->vertex(0)->f() +
+                             b * hint->vertex(1)->f() +
+                             c * hint->vertex(2)->f() +
+                             d * hint->vertex(3)->f(),
+                             hint, false);
   }
   /// \endcond
 
@@ -552,19 +615,21 @@ public:
   */
   FT operator()(const Point& p) const
   {
-    m_hint = m_tr->locate(p ,m_hint);
+    Cell_handle hint = m_hint.get();
+    hint = m_tr->locate(p, hint);
+    m_hint.set(hint);
 
-    if(m_tr->is_infinite(m_hint)) {
-      int i = m_hint->index(m_tr->infinite_vertex());
-      return m_hint->vertex((i+1)&3)->f();
+    if(m_tr->is_infinite(hint)) {
+      int i = hint->index(m_tr->infinite_vertex());
+      return hint->vertex((i+1)&3)->f();
     }
 
     FT a,b,c,d;
-    barycentric_coordinates(p,m_hint,a,b,c,d);
-    return a * m_hint->vertex(0)->f() +
-           b * m_hint->vertex(1)->f() +
-           c * m_hint->vertex(2)->f() +
-           d * m_hint->vertex(3)->f();
+    barycentric_coordinates(p,hint,a,b,c,d);
+    return a * hint->vertex(0)->f() +
+           b * hint->vertex(1)->f() +
+           c * hint->vertex(2)->f() +
+           d * hint->vertex(3)->f();
   }
 
   /// \cond SKIP_IN_MANUAL
@@ -580,11 +645,8 @@ public:
 
   void initialize_barycenters() const
   {
-    m_Bary->resize(m_tr->number_of_cells());
-
-    for(std::size_t i=0; i< m_Bary->size();i++){
-      (*m_Bary)[i][0]=-1;
-    }
+    m_bary->clear();
+    m_bary->resize(m_tr->number_of_cells());
   }
 
   void initialize_cell_normals() const
@@ -627,7 +689,13 @@ public:
 
   void initialize_matrix_entry(Cell_handle ch) const
   {
-    boost::array<double,9> & entry = (*m_Bary)[ch->info()];
+    Cached_bary_coord& bary = (*m_bary)[ch->info()];
+
+    if (bary.is_initialized())
+      return;
+
+    // If the cache was uninitialized, this thread is in charge of
+    // initializing it
     const Point& pa = ch->vertex(0)->point();
     const Point& pb = ch->vertex(1)->point();
     const Point& pc = ch->vertex(2)->point();
@@ -638,9 +706,13 @@ public:
     Vector vc = pc - pd;
 
     internal::invert(va.x(), va.y(), va.z(),
-           vb.x(), vb.y(), vb.z(),
-           vc.x(), vc.y(), vc.z(),
-           entry[0],entry[1],entry[2],entry[3],entry[4],entry[5],entry[6],entry[7],entry[8]);
+                     vb.x(), vb.y(), vb.z(),
+                     vc.x(), vc.y(), vc.z(),
+                     bary[0],bary[1],bary[2],
+                     bary[3],bary[4],bary[5],
+                     bary[6],bary[7],bary[8]);
+
+    bary.set_initialized();
   }
   /// \endcond
 
@@ -847,10 +919,9 @@ private:
     //       vb.x(), vb.y(), vb.z(),
     //       vc.x(), vc.y(), vc.z(),
     //       i00, i01, i02, i10, i11, i12, i20, i21, i22);
-    const boost::array<double,9> & i = (*m_Bary)[cell->info()];
-    if(i[0]==-1){
-      initialize_matrix_entry(cell);
-    }
+    initialize_matrix_entry(cell);
+    const Cached_bary_coord& i = (*m_bary)[cell->info()];
+
     //    UsedBary[cell->info()] = true;
     a = i[0] * vp.x() + i[3] * vp.y() + i[6] * vp.z();
     b = i[1] * vp.x() + i[4] * vp.y() + i[7] * vp.z();

@@ -26,7 +26,7 @@
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/enumerable_thread_specific.h>
-  #include <tbb/parallel_do.h>
+  #include <tbb/parallel_for_each.h>
 #endif
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
@@ -41,7 +41,6 @@
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include <CGAL/Object.h>
-#include <CGAL/atomic.h>
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
@@ -51,6 +50,7 @@
 #include <CGAL/tuple.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <sstream>
+#include <atomic>
 
 namespace CGAL {
 
@@ -255,7 +255,7 @@ public:
                        const Criteria& criteria,
                        std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                       , CGAL::cpp11::atomic<bool>* stop_ptr
+                       , std::atomic<bool>* stop_ptr
 #endif
                        )
     : r_tr_(tr)
@@ -275,7 +275,7 @@ public:
   {
 #ifndef CGAL_NO_ATOMIC
     if(m_stop_ptr != 0 &&
-       m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+       m_stop_ptr->load(std::memory_order_acquire) == true)
     {
       return true;
     }
@@ -477,6 +477,12 @@ protected:
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet facet, const Quality& quality)
   {
+#if CGAL_MESH_3_VERY_VERBOSE
+    std::stringstream s;
+    s << "insert_bad_facet(" << debug_info_element_impl(facet) << ", ...) by thread "
+      << std::this_thread::get_id() << '\n';
+    std::cerr << s.str();
+#endif
     // Insert the facet and its mirror
     this->add_bad_element(
       this->from_facet_to_refinement_queue_element(facet, mirror_facet(facet)),
@@ -609,7 +615,7 @@ protected:
   std::size_t m_maximal_number_of_vertices_;
 #ifndef CGAL_NO_ATOMIC
   /// Pointer to the atomic Boolean that can stop the process
-  CGAL::cpp11::atomic<bool>* const m_stop_ptr;
+  std::atomic<bool>* const m_stop_ptr;
 #endif
 }; // end class template Refine_facets_3_base
 
@@ -777,7 +783,7 @@ public:
                   int mesh_topology,
                   std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                  , CGAL::cpp11::atomic<bool>* stop_ptr
+                  , std::atomic<bool>* stop_ptr
 #endif
                   );
   // For parallel
@@ -790,7 +796,7 @@ public:
                   WorksharingDataStructureType *worksharing_ds,
                   std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                  , CGAL::cpp11::atomic<bool>* stop_ptr
+                  , std::atomic<bool>* stop_ptr
 #endif
                   );
 
@@ -910,7 +916,7 @@ Refine_facets_3(Tr& triangulation,
                 int mesh_topology,
                 std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 )
   : Rf_base(triangulation, c3t3, oracle, criteria, mesh_topology,
@@ -939,7 +945,7 @@ Refine_facets_3(Tr& triangulation,
                 WorksharingDataStructureType *worksharing_ds,
                 std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                , CGAL::cpp11::atomic<bool>* stop_ptr
+                , std::atomic<bool>* stop_ptr
 #endif
                 )
   : Rf_base(triangulation, c3t3, oracle, criteria, maximal_number_of_vertices
@@ -987,8 +993,8 @@ scan_triangulation_impl()
 # endif
     add_to_TLS_lists(true);
 
-    // PARALLEL_DO
-    tbb::parallel_do(
+    // PARALLEL FOR_EACH
+    tbb::parallel_for_each(
       this->r_tr_.finite_facets_begin(), this->r_tr_.finite_facets_end(),
       typename Rf_base::template Scan_facet<Self>(*this)
     );

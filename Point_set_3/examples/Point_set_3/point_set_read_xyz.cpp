@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Point_set_3.h>
-#include <CGAL/Point_set_3/IO.h>
 
 #include <fstream>
 #include <limits>
@@ -14,35 +14,30 @@ typedef CGAL::Point_set_3<Point> Point_set;
 
 int main (int argc, char** argv)
 {
-  std::ifstream f (argc > 1 ? argv[1] : "data/oni.xyz");
+  const char* fname = argc > 1 ? argv[1] : "data/oni.xyz";
 
+  // Reading input
   Point_set point_set;
-
-  // Reading input in XYZ format
-  if (!f || !CGAL::read_xyz_point_set (f, point_set))
-    {
-      std::cerr << "Can't read input file " << std::endl;
-      return EXIT_FAILURE;
-    }
+  if(!CGAL::IO::read_XYZ(fname, point_set))
+  {
+    std::cerr << "Can't read input file " << std::endl;
+    return EXIT_FAILURE;
+  }
 
   if (point_set.has_normal_map())
+  {
+    // Normalization + inversion of normal vectors
+    for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
     {
-      // Normalization + inversion of normal vectors
-      for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
-        {
-          Vector n = point_set.normal(*it);
-          n = - n / std::sqrt (n * n);
-          point_set.normal(*it) = n;
-        }
+      Vector n = point_set.normal(*it);
+      n = - n / std::sqrt (n * n);
+      point_set.normal(*it) = n;
     }
+  }
 
   // Writing result in OFF format
-  std::ofstream out("normalized_normals.off");
-  out.precision(17);
-  if (!out || !CGAL::write_off_point_set (out, point_set))
-    {
-      return EXIT_FAILURE;
-    }
+  if(!CGAL::IO::write_OFF("normalized_normals.off", point_set, CGAL::parameters::stream_precision(17)))
+    return EXIT_FAILURE;
 
   return EXIT_SUCCESS;
 }

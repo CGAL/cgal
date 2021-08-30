@@ -1,4 +1,3 @@
-//=============================================================================
 // Copyright (C) 2001-2005 by Computer Graphics Group, RWTH Aachen
 // Copyright (C) 2011 by Graphics & Geometry Group, Bielefeld University
 // Copyright (C) 2014 GeometryFactory
@@ -10,7 +9,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
-
 #ifndef CGAL_SURFACE_MESH_PROPERTY_H
 #define CGAL_SURFACE_MESH_PROPERTY_H
 
@@ -18,13 +16,13 @@
 
 #ifndef DOXYGEN_RUNNING
 
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <typeinfo>
-
-#include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
+#include <CGAL/property_map.h>
+
+#include <algorithm>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
 namespace CGAL {
 
@@ -451,6 +449,16 @@ public:
         size_ = n;
     }
 
+    // resize the vector of properties to n, deleting all other properties
+    void resize_property_array(size_t n)
+    {
+        if (parrays_.size()<=n)
+          return;
+        for (std::size_t i=n; i<parrays_.size(); ++i)
+            delete parrays_[i];
+        parrays_.resize(n);
+    }
+
     // free unused space in all arrays
     void shrink_to_fit()
     {
@@ -607,7 +615,9 @@ public:
     }
 
     //@}
+#ifndef CGAL_TEST_SURFACE_MESH
 private:
+#endif
 
     Property_array<T>& array()
     {

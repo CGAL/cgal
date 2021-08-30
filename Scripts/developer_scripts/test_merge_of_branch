@@ -155,7 +155,7 @@ fi
 
 #check no file contains non-utf8 characters
 echo '.. Checking if non utf-8 characters are used...'
-txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\0", $2; }' | xargs -0 file -N | grep "text" | egrep -v "UTF-8|ASCII|XML|EPS|FIG|assembler source|Perl script|from flex")
+txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\n", $2; }' | xargs file -N | grep "text" | egrep -v "UTF-8|ASCII|CSV|XML|EPS|FIG|assembler source|Perl script|from flex")
 if [ -n "${txt_not_utf8}" ]; then
   echo "The following files have non utf-8 characters:"
   echo ${txt_not_utf8}

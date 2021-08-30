@@ -217,8 +217,8 @@ int main (int argc, char** argv)
   Mesh dsm_mesh;
   CGAL::copy_face_graph (dsm, dsm_mesh);
   std::ofstream dsm_ofile ("dsm.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dsm_ofile);
-  CGAL::write_ply (dsm_ofile, dsm_mesh);
+  CGAL::IO::set_binary_mode (dsm_ofile);
+  CGAL::IO::write_PLY (dsm_ofile, dsm_mesh);
   dsm_ofile.close();
 
   //! [Save DSM]
@@ -300,8 +300,8 @@ int main (int argc, char** argv)
 
   Mesh tin_colored_mesh;
 
-  Mesh::Property_map<Mesh::Face_index, CGAL::Color>
-    color_map = tin_colored_mesh.add_property_map<Mesh::Face_index, CGAL::Color>("f:color").first;
+  Mesh::Property_map<Mesh::Face_index, CGAL::IO::Color>
+    color_map = tin_colored_mesh.add_property_map<Mesh::Face_index, CGAL::IO::Color>("f:color").first;
 
   CGAL::copy_face_graph (tin_with_info, tin_colored_mesh,
                          CGAL::parameters::face_to_face_output_iterator
@@ -310,20 +310,20 @@ int main (int argc, char** argv)
                            {
                              // Color unassigned faces gray
                              if (ff.first->info() < 0)
-                               color_map[ff.second] = CGAL::Color(128, 128, 128);
+                               color_map[ff.second] = CGAL::IO::Color(128, 128, 128);
                              else
                              {
                                // Random color seeded by the component ID
                                CGAL::Random r (ff.first->info());
-                               color_map[ff.second] = CGAL::Color (r.get_int(64, 192),
+                               color_map[ff.second] = CGAL::IO::Color (r.get_int(64, 192),
                                                                    r.get_int(64, 192),
                                                                    r.get_int(64, 192));
                              }
                            })));
 
   std::ofstream tin_colored_ofile ("colored_tin.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (tin_colored_ofile);
-  CGAL::write_ply (tin_colored_ofile, tin_colored_mesh);
+  CGAL::IO::set_binary_mode (tin_colored_ofile);
+  CGAL::IO::write_PLY (tin_colored_ofile, tin_colored_mesh);
   tin_colored_ofile.close();
 
   //! [Save TIN with info]
@@ -415,8 +415,8 @@ int main (int argc, char** argv)
 
   // Save original DTM
   std::ofstream dtm_ofile ("dtm.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dtm_ofile);
-  CGAL::write_ply (dtm_ofile, dtm_mesh);
+  CGAL::IO::set_binary_mode (dtm_ofile);
+  CGAL::IO::write_PLY (dtm_ofile, dtm_mesh);
   dtm_ofile.close();
 
   std::cerr << face_selection.size() << " face(s) are selected for removal" << std::endl;
@@ -439,8 +439,8 @@ int main (int argc, char** argv)
 
   // Save filtered DTM
   std::ofstream dtm_holes_ofile ("dtm_with_holes.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dtm_holes_ofile);
-  CGAL::write_ply (dtm_holes_ofile, dtm_mesh);
+  CGAL::IO::set_binary_mode (dtm_holes_ofile);
+  CGAL::IO::write_PLY (dtm_holes_ofile, dtm_mesh);
   dtm_holes_ofile.close();
 
   // Get all holes
@@ -477,8 +477,8 @@ int main (int argc, char** argv)
 
   // Save DTM with holes filled
   std::ofstream dtm_filled_ofile ("dtm_filled.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dtm_filled_ofile);
-  CGAL::write_ply (dtm_filled_ofile, dtm_mesh);
+  CGAL::IO::set_binary_mode (dtm_filled_ofile);
+  CGAL::IO::write_PLY (dtm_filled_ofile, dtm_mesh);
   dtm_filled_ofile.close();
 
   //! [Hole filling]
@@ -490,8 +490,8 @@ int main (int argc, char** argv)
   CGAL::Polygon_mesh_processing::isotropic_remeshing (faces(dtm_mesh), spacing, dtm_mesh);
 
   std::ofstream dtm_remeshed_ofile ("dtm_remeshed.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dtm_remeshed_ofile);
-  CGAL::write_ply (dtm_remeshed_ofile, dtm_mesh);
+  CGAL::IO::set_binary_mode (dtm_remeshed_ofile);
+  CGAL::IO::write_PLY (dtm_remeshed_ofile, dtm_mesh);
   dtm_remeshed_ofile.close();
 
   //! [Remeshing]
@@ -642,7 +642,7 @@ int main (int argc, char** argv)
   // Output to WKT file
   std::ofstream contour_ofile ("contour.wkt");
   contour_ofile.precision(18);
-  CGAL::write_multi_linestring_WKT (contour_ofile, polylines);
+  CGAL::IO::write_multi_linestring_WKT (contour_ofile, polylines);
   contour_ofile.close();
 
   //! [Contouring split]
@@ -669,7 +669,7 @@ int main (int argc, char** argv)
   }
 
   std::size_t nb_vertices
-    = std::accumulate (polylines.begin(), polylines.end(), 0,
+    = std::accumulate (polylines.begin(), polylines.end(), 0u,
                        [](std::size_t size, const std::vector<Point_3>& poly) -> std::size_t
                        { return size + poly.size(); });
 
@@ -680,7 +680,7 @@ int main (int argc, char** argv)
   // Output to WKT file
   std::ofstream simplified_ofile ("simplified.wkt");
   simplified_ofile.precision(18);
-  CGAL::write_multi_linestring_WKT (simplified_ofile, polylines);
+  CGAL::IO::write_multi_linestring_WKT (simplified_ofile, polylines);
   simplified_ofile.close();
 
   //! [Contouring simplify]
@@ -736,7 +736,7 @@ int main (int argc, char** argv)
 
     // Save the classified point set
     std::ofstream classified_ofile ("classified.ply");
-    CGAL::set_binary_mode (classified_ofile);
+    CGAL::IO::set_binary_mode (classified_ofile);
     classified_ofile << points;
     classified_ofile.close();
   }

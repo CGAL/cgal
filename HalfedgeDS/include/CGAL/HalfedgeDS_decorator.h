@@ -695,7 +695,7 @@ public:
   protected:                               // Supports_halfedge_vertices
       void erase_connected_component_vertex( Halfedge_handle  ,Tag_false){}
       void erase_connected_component_vertex( Halfedge_handle h, Tag_true) {
-          // Erases the the vertex incident to h and sets all references
+          // Erases the vertex incident to h and sets all references
           // from halfedges around this vertex to Halfedge_handle(),
           // if the incident vertex handle is not already equal to
           // Halfedge_handle(). It is used to erase vertices as soon

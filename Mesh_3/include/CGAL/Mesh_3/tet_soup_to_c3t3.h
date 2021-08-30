@@ -105,19 +105,30 @@ bool build_finite_cells(Tr& tr,
     const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
     boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                         std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
-    const std::map<std::array<int,3>, int>& border_facets,
-    const bool verbose)
+    const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
+    const bool verbose,
+                        bool replace_domain_0 = false)
 {
   typedef std::array<int, 5>              Tet_with_ref; // 4 ids + 1 reference
 
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
+  typedef typename Tr::Cell::Surface_patch_index                Surface_patch_index;
 
   CGAL_assertion_code(
     typename Tr::Geom_traits::Construct_point_3 cp =
       tr.geom_traits().construct_point_3_object();
   )
-
+  int max_domain = 0;
+  if(replace_domain_0)
+  {
+    for(std::size_t i=0; i<finite_cells.size(); ++i)
+    {
+      const Tet_with_ref& tet = finite_cells[i];
+      if(tet[4] > max_domain)
+        max_domain=tet[4];
+    }
+  }
   // build the finite cells
   for(std::size_t i=0; i<finite_cells.size(); ++i)
   {
@@ -140,7 +151,10 @@ bool build_finite_cells(Tr& tr,
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
     c->set_subdomain_index(tet[4]); // the cell's info keeps the reference of the tetrahedron
-
+    if(replace_domain_0 && tet[4] == 0)
+    {
+      c->set_subdomain_index(max_domain+1); // the cell's info keeps the reference of the tetrahedron
+    }
     // assign cells to vertices
     for(int j=0; j<4; ++j)
     {
@@ -171,7 +185,8 @@ bool build_finite_cells(Tr& tr,
           ++k;
         } while(f[0] != n0);
 
-        typename std::map<std::array<int,3>, int>::const_iterator it = border_facets.find(f);
+        typename std::map<std::array<int,3>, Surface_patch_index>::const_iterator
+          it = border_facets.find(f);
         if(it != border_facets.end())
         {
           c->set_surface_patch_index(j, it->second);
@@ -186,7 +201,7 @@ bool build_finite_cells(Tr& tr,
           if(it != border_facets.end())
             c->set_surface_patch_index(j, it->second);
           else
-            c->set_surface_patch_index(j, 0);
+            c->set_surface_patch_index(j, Surface_patch_index());
         }
       }
     }
@@ -259,6 +274,8 @@ bool build_infinite_cells(Tr& tr,
     // the only finite facet
     it->second.push_back(std::make_pair(opp_c, 0));
     CGAL_assertion(it->second.size() == 2);
+
+    opp_c->set_surface_patch_index(0, c->surface_patch_index(i));
   }
 
 #ifdef CGAL_TET_SOUP_TO_C3T3_DEBUG
@@ -284,7 +301,7 @@ bool build_infinite_cells(Tr& tr,
 #endif
 
   // add the facets to the incident cells map
-  for (const Cell_handle c : infinite_cells)
+  for (const Cell_handle& c : infinite_cells)
     if(!add_infinite_facets_to_incident_cells_map<Tr>(c, 0, incident_cells_map, verbose))
       return false;
 
@@ -322,9 +339,10 @@ template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation(Tr& tr,
                          const std::vector<typename Tr::Point>& points,
                          const std::vector<std::array<int,5> >& finite_cells,
-                         const std::map<std::array<int,3>, int>& border_facets,
+                         const std::map<std::array<int,3>, typename Tr::Cell::Surface_patch_index>& border_facets,
                          std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                         const bool verbose = false)
+                         const bool verbose = false,
+                         bool replace_domain_0 = false)
 {
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
@@ -356,7 +374,7 @@ bool build_triangulation(Tr& tr,
   if (!finite_cells.empty())
   {
     if(!build_finite_cells<Tr>(tr, finite_cells, vertex_handle_vector, incident_cells_map,
-                           border_facets, verbose))
+                           border_facets, verbose, replace_domain_0))
       return false;
     if(!build_infinite_cells<Tr>(tr, incident_cells_map, verbose))
       return false;
@@ -380,7 +398,8 @@ bool build_triangulation(Tr& tr,
 
 template<class Tr, bool c3t3_loader_failed>
 bool build_triangulation_from_file(std::istream& is,
-                                   Tr& tr)
+                                   Tr& tr,
+                                   bool replace_domain_0)
 {
   typedef typename Tr::Point                                  Point_3;
 
@@ -389,7 +408,7 @@ bool build_triangulation_from_file(std::istream& is,
 
   std::vector<Tet_with_ref> finite_cells;
   std::vector<Point_3> points;
-  std::map<Facet, int> border_facets;
+  std::map<Facet, typename Tr::Cell::Surface_patch_index> border_facets;
 
   // grab the vertices
   int dim;
@@ -420,7 +439,8 @@ bool build_triangulation_from_file(std::istream& is,
       is >> nf;
       for(int i=0; i<nf; ++i)
       {
-        int n1, n2, n3, surface_patch_id;
+        int n1, n2, n3;
+        typename Tr::Cell::Surface_patch_index surface_patch_id;
         is >> n1 >> n2 >> n3 >> surface_patch_id;
         Facet facet;
         facet[0] = n1 - 1;
@@ -468,10 +488,16 @@ bool build_triangulation_from_file(std::istream& is,
 
   std::vector<typename Tr::Vertex_handle> vertices(points.size() + 1);
   bool is_well_built = build_triangulation<Tr, c3t3_loader_failed>(tr,
-    points, finite_cells, border_facets, vertices);
+    points, finite_cells, border_facets, vertices, false, replace_domain_0);
   return is_well_built;
 }
 
+template<class Tr, bool c3t3_loader_failed>
+bool build_triangulation_from_file(std::istream& is,
+                                   Tr& tr)
+{
+  return build_triangulation_from_file<Tr, c3t3_loader_failed>(is, tr, false);
+}
 }  // namespace CGAL
 
 #include <CGAL/enable_warnings.h>

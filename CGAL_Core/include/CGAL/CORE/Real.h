@@ -27,7 +27,9 @@
  ***************************************************************************/
 #ifndef _CORE_REAL_H_
 #define _CORE_REAL_H_
+
 #include "RealRep.h"
+#include <CGAL/use.h>
 
 namespace CORE {
 // class Real
@@ -481,6 +483,12 @@ inline Real Realbase_for<T>::operator-() const {
 template <>
 inline Real RealLong::operator-() const {
   return ker < -LONG_MAX ? -BigInt(ker) : -ker;
+}
+
+inline void init_CORE() {
+  using RealRep = CORE::RealDouble;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(MemoryPool<RealRep>*, pool_real_rep, &MemoryPool<RealRep>::global_allocator());
+  CGAL_USE(pool_real_rep);
 }
 
 } //namespace CORE

@@ -1,18 +1,8 @@
-//=======================================================================
-// Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
-//
-// This file is part of the Boost Graph Library
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
-// https://www.boost.org/LICENSE_1_0.txt)
-//=======================================================================
 // Copyright (c) 2007-2015  GeometryFactory (France).  All rights reserved.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: BSL-1.0
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola, Jane Tournois
 
@@ -36,6 +26,20 @@
 #include <type_traits>
 
 namespace CGAL {
+
+  namespace parameters
+  {
+    template <class Parameter, class NamedParameters>
+    struct Is_default
+    {
+      typedef typename internal_np::Lookup_named_param_def <
+        Parameter,
+        NamedParameters,
+        internal_np::Param_not_found > ::type NP_type;
+      static const bool value = boost::is_same<NP_type, internal_np::Param_not_found>::value;
+      typedef CGAL::Boolean_tag<value> type;
+    };
+  } // end of parameters namespace
 
   // forward declarations to avoid dependency to Solver_interface
   template <typename FT, unsigned int dim>
@@ -138,8 +142,6 @@ namespace CGAL {
       > ::type  const_type;
   };
 
-  namespace Polygon_mesh_processing {
-
   template<typename PolygonMesh, typename NamedParameters>
   class GetK
   {
@@ -149,8 +151,6 @@ namespace CGAL {
   public:
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   };
-
-  } // namespace Polygon_mesh_processing
 
   template<typename PolygonMesh,
            typename NamedParametersGT = Named_function_parameters<bool, internal_np::all_default_t>,
@@ -169,7 +169,7 @@ namespace CGAL {
     struct Fake_GT {};//to be used if there is no internal vertex_point_map in PolygonMesh
 
     typedef typename boost::mpl::if_c<Has_internal_pmap::value || !boost::is_same<internal_np::Param_not_found, NP_vpm>::value,
-                                     typename Polygon_mesh_processing::GetK<PolygonMesh, NamedParametersVPM>::Kernel,
+                                     typename GetK<PolygonMesh, NamedParametersVPM>::Kernel,
                                      Fake_GT>::type DefaultKernel;
 
   public:
@@ -302,7 +302,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       DummyNormalPmap//default
       > ::type  type;
   };
-
 
   namespace internal {
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
@@ -575,6 +574,21 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     Alpha_expansion_boost_adjacency_list_tag
     >::type type;
   };
+
+  template<typename NP>
+  void set_stream_precision_from_NP(std::ostream& os, const NP& np)
+  {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+    using parameters::is_default_parameter;
+
+    if(!is_default_parameter(get_parameter(np, internal_np::stream_precision)))
+    {
+      const int precision = choose_parameter<int>(get_parameter(np,
+                              internal_np::stream_precision));
+      os.precision(precision);
+    }
+  }
 } //namespace CGAL
 
 

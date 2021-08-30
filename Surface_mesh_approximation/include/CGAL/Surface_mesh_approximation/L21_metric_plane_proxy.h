@@ -127,7 +127,7 @@ public:
 
     // fitting normal
     Vector_3 norm = CGAL::NULL_VECTOR;
-    for(const face_descriptor f : faces) {
+    for(const face_descriptor& f : faces) {
       norm = m_sum_functor(norm,
         m_scale_functor(get(m_fnmap, f), get(m_famap, f)));
     }
