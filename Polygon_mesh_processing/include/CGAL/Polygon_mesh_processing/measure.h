@@ -346,6 +346,10 @@ longest_border(const PolygonMesh& pmesh)
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   *
+  * \warning This function involves a square root computation.
+  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+  * will be done approximately.
+  *
   * @sa `area()`
   */
 template<typename TriangleMesh,
