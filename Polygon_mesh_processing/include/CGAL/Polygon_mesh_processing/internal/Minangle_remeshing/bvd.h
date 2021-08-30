@@ -422,7 +422,7 @@ private:
   //
   // Draw
   //
-  void draw_bounded_cell(Vertex_handle v) const {
+  /* void draw_bounded_cell(Vertex_handle v) const {
     std::vector<Point_2> cell;
     if (compute_bounded_cell(v, std::back_inserter(cell))) {
       draw_polygon(cell);
@@ -557,7 +557,7 @@ private:
   void gl_vertex(const Point_2& q) const {
     Point_3 p = map_from_2d_to_3d(q);
     ::glVertex3d(p.x(), p.y(), p.z());
-  }
+  } */
 
   template <class Query> // Segment_2, Ray_2 or Ray_2
   bool intersect_domain(const Query& query,
