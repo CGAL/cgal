@@ -28,6 +28,18 @@ Release date: December 2021
 
 -   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
 
+### [2D Arrangements](https://doc.cgal.org/5.4/Manual/packages.html#PkgArrangementOnSurface2)
+
+ -  A new hierarchy of traits concepts is introduced.
+    It captures all the valid combinations of boundary conditions for the 4 boundary sides of the parameter space.
+    The 4 boundaries are Bottom, Top, Left, and Right. Each boundary side can be either contracted, identified, close, open, or oblivious.
+    Not all possible combinations are valid. If one side is identified then the other must be as well. Two adjacent sides cannot be contracted.
+
+ -  **Breaking Change:** The traits function objects `Compare_x_at_limit_2` and `Compare_x_near_limit_2` are renamed to `Compare_x_on_boundary_2` and `Compare_x_near_boundary_2`, respectively.
+
+ -  A new geometry traits , namely, `Arr_geodesic_arc_on_sphere_traits_2`, is introduced. It handles arcs of great circles embedded on the unit sphere.
+
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
@@ -330,20 +342,11 @@ Release date: September 2020
 
 ### [2D Arrangements](https://doc.cgal.org/5.1/Manual/packages.html#PkgArrangementOnSurface2)
 
- -  Changed intersection return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
-    to modern `boost::variant` in all traits concepts and models.
-    As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
-    new code is backward compatible. However, it is recommended that all calls
-    to the intersection functions are fixed to use the new return type.
-
- -  A new hierarchy of traits concepts is introduced.
-    It captures all the valid combinations of boundary conditions for the 4 boundary side of the parameter space.
-    The 4 boundaries are Bottom, Top, Left, and Right. Each boundary side can be either contracted, identified, close, open, or oblivious.
-    Not all possible combinations are valid. If one side is identified then the other must be as well. Two adjacent sides cannot be contracted.
-
- -  The traits function objects `Compare_x_at_limit_2` and `Compare_x_near_limit_2` are renamed to `Compare_x_on_boundary_2` and `Compare_x_near_boundary_2`, respectively.
-
- -  A new geometry traits , namely, `Arr_geodesic_arc_on_sphere_traits_2`, is introduced. It handles arcs of great circles embedded on the unit sphere.
+ -   Changed intersection return type from legacy [`CGAL::Object`](https://doc.cgal.org/5.1/STL_Extension/classCGAL_1_1Object.html)
+     to modern `boost::variant` in all traits concepts and models.
+     As there exists an implicit conversion from `boost::variant` to `CGAL::Object`, the
+     new code is backward compatible. However, it is recommended that all calls
+     to the intersection functions are fixed to use the new return type.
 
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.1/Manual/packages.html#PkgBooleanSetOperations2)
 
