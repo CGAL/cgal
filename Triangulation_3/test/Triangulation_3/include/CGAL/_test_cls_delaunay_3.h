@@ -30,7 +30,7 @@
 
 #include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
 
 // Accessory set of functions to differentiate between

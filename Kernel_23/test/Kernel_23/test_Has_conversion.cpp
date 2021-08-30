@@ -17,7 +17,7 @@
 
 #include <CGAL/Has_conversion.h>
 
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 

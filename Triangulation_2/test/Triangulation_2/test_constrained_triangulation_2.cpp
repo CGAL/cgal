@@ -20,7 +20,7 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 // Don't want to be warned about using CDT_2 (and not CDT_2+) with an exact number type
 #define CGAL_NO_CDT_2_WARNING
