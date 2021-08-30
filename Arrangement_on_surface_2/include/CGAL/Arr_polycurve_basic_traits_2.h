@@ -1695,8 +1695,8 @@ public:
       typename Subcurve_traits_2::Compare_x_near_boundary_2
         cmp_x_near_boundary = geom_traits->compare_x_near_boundary_2_object();
 
-      unsigned int index_1 = this->get_curve_index(xcv1, ce);
-      unsigned int index_2 = this->get_curve_index(xcv2, ce);
+      size_type index_1 = this->get_curve_index(xcv1, ce);
+      size_type index_2 = this->get_curve_index(xcv2, ce);
 
       return cmp_x_near_boundary(xcv1[index_1], xcv2[index_2], ce);
     }

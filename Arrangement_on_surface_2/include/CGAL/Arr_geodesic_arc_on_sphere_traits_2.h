@@ -34,6 +34,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -1488,6 +1489,7 @@ public:
     Arr_parameter_space operator()(const Point_2& p) const
     {
       CGAL_precondition(p.is_no_boundary());
+      CGAL_USE(p);
       return ARR_INTERIOR;
     }
   };
