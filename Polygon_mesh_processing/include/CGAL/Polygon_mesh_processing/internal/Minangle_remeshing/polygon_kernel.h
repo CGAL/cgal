@@ -15,8 +15,9 @@
 // C/C++
 #include <CGAL/license/Polygon_mesh_processing/minimal_angle_remeshing.h>
 #include <CGAL/convex_hull_2.h>
+#include <CGAL/Polygon_mesh_processing/internal/Minangle_remeshing/console_color.h>
 // local
-#include "console_color.h"
+// #include "console_color.h"
 
 template <class Kernel>
 class Polygon_kernel

@@ -33,12 +33,13 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/internal/Minangle_remeshing/bvd.h>
 // boost
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/random.hpp>
 // local
-#include "bvd.h"
+// #include "bvd.h"
 
 // namespace definition
 namespace PMP = CGAL::Polygon_mesh_processing;

@@ -21,8 +21,9 @@
 #include <utility>
 // CGAL
 #include <CGAL/license/Polygon_mesh_processing/minimal_angle_remeshing.h>
+#include <CGAL/Polygon_mesh_processing/internal/Minangle_remeshing/mesh_properties.h>
 // local
-#include "mesh_properties.h"
+// #include "mesh_properties.h"
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
