@@ -14,7 +14,7 @@
 #ifndef CGAL_PROJECTION_TRAITS_3_H
 #define CGAL_PROJECTION_TRAITS_3_H
 
-#include <CGAL/internal/Filtered_projection_traits_3.h>
+#include <CGAL/Kernel_23/internal/Filtered_projection_traits_3.h>
 
 namespace CGAL {
 

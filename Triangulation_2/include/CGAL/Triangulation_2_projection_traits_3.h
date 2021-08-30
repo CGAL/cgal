@@ -17,11 +17,11 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_2_projection_traits_3.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Projection_traits_3.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-#include <CGAL/internal/Filtered_projection_traits_3.h>
+#include <CGAL/Kernel_23/internal/Filtered_projection_traits_3.h>
 
 namespace CGAL {
 
