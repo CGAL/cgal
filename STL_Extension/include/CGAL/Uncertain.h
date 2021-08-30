@@ -498,65 +498,34 @@ Uncertain<T> make_uncertain(Uncertain<T> t)
 // they lack the "short-circuiting" property.
 // We provide macros CGAL_AND and CGAL_OR, which attempt to emulate their behavior.
 // Key things : do not evaluate expressions twice, and evaluate the right hand side
-// expression only when needed.
+// expression only when needed. This is done by using the second value of the macro
+// only when required thanks to a lambda that will consume the second expression on demand.
 
-inline
-Uncertain<bool> CGAL_AND(const Uncertain<bool>& a, const Uncertain<bool>& b)
-{
-  return certainly_not(a) ? make_uncertain(false)
-                          : a & b;
+namespace internal{
+  template <class F_B>
+  inline Uncertain<bool> cgal_and_impl(const Uncertain<bool>& a, F_B&& f_b)
+  {
+    return certainly_not(a) ? make_uncertain(false)
+                            : a & make_uncertain(f_b());
+  }
+
+  template <class F_B>
+  inline Uncertain<bool> cgal_or_impl(const Uncertain<bool>& a, F_B&& f_b)
+  {
+    return certainly(a) ? make_uncertain(true)
+                        : a | make_uncertain(f_b());
+  }
 }
 
-inline
-Uncertain<bool> CGAL_AND(bool a, const Uncertain<bool>& b)
-{
-  return !a ? make_uncertain(false)
-            : b;
-}
+#  define CGAL_AND(X, Y) \
+  ::CGAL::internal::cgal_and_impl((X), [&]() { return (Y); })
 
-inline
-Uncertain<bool> CGAL_AND(const Uncertain<bool>& a, bool b)
-{
-  return certainly_not(a) ? make_uncertain(false)
-                          : a & b;
-}
+#  define CGAL_OR(X, Y) \
+  ::CGAL::internal::cgal_or_impl((X), [&]() { return (Y); })
 
-inline
-Uncertain<bool> CGAL_AND(bool a, bool b)
-{
-  return make_uncertain(a && b);
-}
-
-inline
-Uncertain<bool> CGAL_OR(const Uncertain<bool>& a, const Uncertain<bool>& b)
-{
-  return certainly(a) ? make_uncertain(true)
-                          : a | b;
-}
-
-inline
-Uncertain<bool> CGAL_OR(bool a, const Uncertain<bool>& b)
-{
-  return a ? make_uncertain(true)
-            : b;
-}
-
-inline
-Uncertain<bool> CGAL_OR(const Uncertain<bool>& a, bool b)
-{
-  return certainly(a) ? make_uncertain(true)
-                      : a | b;
-}
-
-inline
-Uncertain<bool> CGAL_OR(bool a, bool b)
-{
-  return make_uncertain(a || b);
-}
-
-#define CGAL_AND_3(X, Y, Z)  CGAL::CGAL_AND(X, CGAL::CGAL_AND(Y, Z))
-#define CGAL_AND_6(A, B, C, D, E, F)  CGAL::CGAL_AND(CGAL::CGAL_AND_3(A, B, C), CGAL::CGAL_AND_3(D, E,F))
-#define CGAL_OR_3(X, Y, Z)   CGAL::CGAL_OR(X, CGAL::CGAL_OR(Y, Z))
+#define CGAL_AND_3(X, Y, Z)  CGAL_AND(X, CGAL_AND(Y, Z))
+#define CGAL_AND_6(A, B, C, D, E, F)  CGAL_AND(CGAL_AND_3(A, B, C), CGAL_AND_3(D, E,F))
+#define CGAL_OR_3(X, Y, Z)   CGAL_OR(X, CGAL_OR(Y, Z))
 
 // make_certain() : Forcing a cast to certain (possibly throwing).
 // This is meant to be used only in cases where we cannot easily propagate the
