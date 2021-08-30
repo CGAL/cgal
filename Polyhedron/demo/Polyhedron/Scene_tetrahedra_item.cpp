@@ -169,8 +169,6 @@ void Scene_tetrahedra_item::computeElements()const
   tmp_rrr.reserve(c3t3.number_of_cells_in_complex());
   tmp_v.reserve(c3t3.number_of_cells_in_complex());
 
-  int keep = 0;
-
 
   for(C3t3::Triangulation::Cell_iterator
       cit = c3t3.triangulation().finite_cells_begin(),
@@ -215,10 +213,6 @@ void Scene_tetrahedra_item::computeElements()const
     if(max_dihedral_angle > d->extrema[1][1]) { d->extrema[1][1]=max_dihedral_angle; }
     //3 : volume
     double v = std::abs(CGAL::volume(pa, pb, pc, pd));
-    if(v>20000)
-    {
-      keep = tmp_v.size();
-    }
     tmp_v.push_back(v);
     if(v < d->extrema[3][0]) { d->extrema[3][0] = static_cast<float>(v); }
     if(v > d->extrema[3][1]) { d->extrema[3][1] = static_cast<float>(v); }
