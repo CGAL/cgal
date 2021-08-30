@@ -129,22 +129,36 @@ configure()
 {
   echo "Configuring... "
   rm -rf CMakeCache.txt CMakeFiles/
-  echo "cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
- -DCGAL_DIR=\"$CGAL_DIR\" \
- -DCGAL_CXX_FLAGS:STRING=\"$TESTSUITE_CXXFLAGS -I../../include\" \
- -DCGAL_EXE_LINKER_FLAGS=\"$TESTSUITE_LDFLAGS\" \
- -DCMAKE_BUILD_TYPE=NOTFOUND \
- ."
-  if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
-                                    -DCGAL_DIR="$CGAL_DIR" \
-                                    -DCGAL_CXX_FLAGS:STRING="$TESTSUITE_CXXFLAGS -I../../include" \
-                                    -DCGAL_EXE_LINKER_FLAGS="$TESTSUITE_LDFLAGS" \
-                                    -DCMAKE_BUILD_TYPE=NOTFOUND \
-                                    .' ; then
+  if [ -f "$INIT_FILE" ]
+  then
+    if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+                                        -DCGAL_DIR="$CGAL_DIR" \
+                                        -DCGAL_CXX_FLAGS:STRING="$CGAL_CXX_FLAGS $TESTSUITE_CXXFLAGS -I../../include" \
+                                        -DCGAL_EXE_LINKER_FLAGS="$CGAL_EXE_LINKER_FLAGS $TESTSUITE_LDFLAGS" \
+                                        .' ; then
 
-    echo "   successful configuration" >> $ERRORFILE
+      echo "   successful configuration" >> $ERRORFILE
+    else
+      echo "   ERROR:    configuration" >> $ERRORFILE
+    fi
   else
-    echo "   ERROR:    configuration" >> $ERRORFILE
+    echo "cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+   -DCGAL_DIR=\"$CGAL_DIR\" \
+   -DCGAL_CXX_FLAGS:STRING=\"$TESTSUITE_CXXFLAGS -I../../include\" \
+   -DCGAL_EXE_LINKER_FLAGS=\"$TESTSUITE_LDFLAGS\" \
+   -DCMAKE_BUILD_TYPE=NOTFOUND \
+   ."
+    if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+                                      -DCGAL_DIR="$CGAL_DIR" \
+                                      -DCGAL_CXX_FLAGS:STRING="$TESTSUITE_CXXFLAGS -I../../include" \
+                                      -DCGAL_EXE_LINKER_FLAGS="$TESTSUITE_LDFLAGS" \
+                                      -DCMAKE_BUILD_TYPE=NOTFOUND \
+                                      .' ; then
+
+      echo "   successful configuration" >> $ERRORFILE
+    else
+      echo "   ERROR:    configuration" >> $ERRORFILE
+    fi
   fi
 }
 
@@ -1127,7 +1141,7 @@ test_polycurve_conic_traits()
   if [ -n "${SUCCESS}" ] ; then
 
     # The input arguments for the execute_commands_new_structure,
-    # 1. Polycurve_conics is the directory name in "data"
+    # 1. polycurve_conics is the directory name in "data"
     # 2. polycurve_conic_traits is a string
     # Execute_command_new_structure will only run the test on functors provided as the third, fourth and so on arguments.
     # To see how the input data directory should be structured for each functor, check the execute_commands_new_structure function in this file.
@@ -1168,7 +1182,7 @@ test_polycurve_circular_arc_traits()
 
   compile_test_with_flags test_traits circular_arc_polycurve "$flags"
   if [ -n "${SUCCESS}" ] ; then
-   execute_commands_new_structure Polycurves_circular_arcs polycurve_circular_arc_traits \
+   execute_commands_new_structure polycurves_circular_arcs polycurve_circular_arc_traits \
     COMPARE_Y_AT_X \
     EQUAL \
     IS_VERTICAL \
@@ -1208,7 +1222,7 @@ test_polycurve_bezier_traits()
 
   compile_test_with_flags test_traits bezier_polycurve "$flags"
   if [ -n "${SUCCESS}" ] ; then
-   execute_commands_new_structure Polycurves_bezier test_polycurve_bezier_traits \
+   execute_commands_new_structure polycurves_bezier test_polycurve_bezier_traits \
     MERGE \
     EQUAL \
     IS_VERTICAL \
@@ -1750,6 +1764,8 @@ compile_and_run test_spherical_removal
 compile_and_run test_io
 
 compile_and_run test_sgm
+
+compile_and_run test_polycurve_intersection
 
 # if any error occurred then append the full error description file to error file
 

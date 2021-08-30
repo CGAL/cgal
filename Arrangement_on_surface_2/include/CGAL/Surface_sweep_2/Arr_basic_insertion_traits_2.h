@@ -23,7 +23,6 @@
  * Defintion of the Arr_basic_insertion_traits_2<Traits,Arrangement> class.
  */
 
-#include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 
 #include <list>
@@ -411,7 +410,7 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   {
     return (Compare_y_at_x_right_2
-	    (m_base_traits->compare_y_at_x_right_2_object()));
+            (m_base_traits->compare_y_at_x_right_2_object()));
   }
 
   /*! A functor that checks whether two points and two x-monotone curves are

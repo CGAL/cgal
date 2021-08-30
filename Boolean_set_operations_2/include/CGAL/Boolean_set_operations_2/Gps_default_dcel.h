@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -76,7 +76,7 @@ public:
     const Gps_face_base & ex_f = static_cast<const Gps_face_base&>(f);
     m_info = ex_f.m_info;
   }
-  
+
   bool contained() const
   {
     return (m_info & CONTAINED) != 0;

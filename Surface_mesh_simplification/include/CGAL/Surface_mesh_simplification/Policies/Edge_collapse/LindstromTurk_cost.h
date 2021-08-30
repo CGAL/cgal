@@ -9,53 +9,41 @@
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H 1
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-
-#include <CGAL/Surface_mesh_simplification/Detail/Common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Detail/Lindstrom_Turk_core.h>
+#include <CGAL/Surface_mesh_simplification/internal/Common.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/Lindstrom_Turk_core.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/LindstromTurk_params.h>
 
 namespace CGAL {
+namespace Surface_mesh_simplification {
 
-namespace Surface_mesh_simplification  
-{
-
-  template<class TM_>
+template<class TM_>
 class LindstromTurk_cost
 {
 public:
-    
-  typedef TM_ TM ;
-  /*
+  typedef TM_                                                                 TM;
+  typedef internal::LindstromTurk_params                                      LindstromTurk_params;
 
-  typedef Edge_profile<TM> Profile ;
-  typedef typename Traits::Point_3 Point;
-  typedef typename Traits::FT FT ;
-  
-  typedef optional<FT> result_type ;
-  */
-public:
+  LindstromTurk_cost(const LindstromTurk_params& LT_params = LindstromTurk_params())
+    : m_LT_params(LT_params)
+  {}
 
-  LindstromTurk_cost( LindstromTurk_params const& aParams = LindstromTurk_params() ) : mParams(aParams) {}
-     
   template <typename Profile>
-  optional<typename Profile::FT>
-  operator()( Profile const& aProfile, optional<typename Profile::Point> const& aPlacement ) const
+  boost::optional<typename Profile::FT>
+  operator()(const Profile& profile,
+             const boost::optional<typename Profile::Point>& placement) const
   {
-    return LindstromTurkCore<TM,Profile>(mParams,aProfile).compute_cost(aPlacement) ;
+    return internal::LindstromTurkCore<TM, Profile>(m_LT_params, profile).compute_cost(placement);
   }
 
 private:
-
-  LindstromTurk_params mParams ;    
+  LindstromTurk_params m_LT_params;
 };
 
 } // namespace Surface_mesh_simplification
+} // namespace CGAL
 
-} //namespace CGAL
-
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H //
-// EOF //
- 
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H

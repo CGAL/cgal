@@ -98,7 +98,7 @@ void test_simple_saddle_vertex_mesh()
   typedef Graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef Graph_traits::face_descriptor face_descriptor;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
+  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::const_type VPM;
 
   Traits traits;
 
@@ -197,7 +197,7 @@ void test_simple_saddle_vertex_mesh()
 
   collector.m_sequence.clear();
 
-  typedef boost::property_map<Polyhedron_3, CGAL::halfedge_external_index_t>::type HalfedgeIndexMap;
+  typedef boost::property_map<Polyhedron_3, CGAL::halfedge_external_index_t>::const_type HalfedgeIndexMap;
 
   HalfedgeIndexMap halfedgeIndexMap(CGAL::get(CGAL::halfedge_external_index, P));
 
@@ -329,7 +329,7 @@ void test_boundary_mesh()
   typedef Graph_traits::face_descriptor face_descriptor;
   typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
+  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::const_type VPM;
 
   Traits traits;
 
@@ -398,7 +398,7 @@ void test_boundary_mesh()
 
   Barycentric_coordinates startLocation = construct_barycentric_coordinates(FT(0.1), FT(0.8), FT(0.1));
 
-  typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::type FaceIndexMap;
+  typedef boost::property_map<Polyhedron_3, CGAL::face_external_index_t>::const_type FaceIndexMap;
 
   FaceIndexMap faceIndexMap(CGAL::get(CGAL::face_external_index, P));
 
@@ -462,6 +462,6 @@ int main()
   shortest_path_regular_tetrahedron();
   test_simple_saddle_vertex_mesh();
   test_boundary_mesh();
-  
+
    return 0;
 }

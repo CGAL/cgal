@@ -31,7 +31,7 @@ void loadHsp() {
 
   int hulls;
   std::cin >> hulls;
-  
+
   for(int h=0; h<hulls; ++h) {
     std::cerr << "read hull " << h << std::endl;
     Plane_3 pl;
@@ -49,26 +49,26 @@ void loadHsp() {
 }
 
 Nef_polyhedron_3 create_from_halfspaces(const Plane_list& plane_list, bool invert) {
-  
+
   Nef_polyhedron_3 cube;
   std::ifstream in("Nef3/centered_cube.nef3");
   in >> cube;
 
   int mag = 1000000;
-  Aff_transformation_3 scale(mag, 0, 0, 
-			     0, mag, 0, 
-			     0, 0, mag, 1);
+  Aff_transformation_3 scale(mag, 0, 0,
+                             0, mag, 0,
+                             0, 0, mag, 1);
   cube.transform(scale);
 
   Plane_list_iterator pli;
   for(pli = plane_list.begin(); pli != plane_list.end(); ++pli) {
-    if(invert) {      
+    if(invert) {
       Plane_3 inverted_plane(-pli->a(), -pli->b(),
-			     -pli->c(), -pli->d());
+                             -pli->c(), -pli->d());
       cube = cube.intersection(inverted_plane);
     } else
       cube = cube.intersection(*pli);
-  }  
+  }
   return cube;
 }
 
@@ -79,13 +79,13 @@ bool test_convex_hull(const Nef_polyhedron_3& N, const Plane_list& plane_list, b
     //    std::cerr << "plane " << *pli << std::endl;
     Vertex_const_iterator vi;
     for(vi = N.vertices_begin(); vi != N.vertices_end(); ++vi) {
-      //      std::cerr << CGAL::to_double(vi->point().x()) << ", " 
-      //		<< CGAL::to_double(vi->point().y()) << ", " 
-      //		<< CGAL::to_double(vi->point().z()) << ": " 
-      //		<< pli->oriented_side(vi->point()) << std::endl; 
+      //      std::cerr << CGAL::to_double(vi->point().x()) << ", "
+      //                << CGAL::to_double(vi->point().y()) << ", "
+      //                << CGAL::to_double(vi->point().z()) << ": "
+      //                << pli->oriented_side(vi->point()) << std::endl;
       if((!inverse  && pli->oriented_side(vi->point()) == CGAL::ON_POSITIVE_SIDE) ||
-	 (inverse && pli->oriented_side(vi->point()) == CGAL::ON_NEGATIVE_SIDE))
-	return false;
+         (inverse && pli->oriented_side(vi->point()) == CGAL::ON_NEGATIVE_SIDE))
+        return false;
     }
   }
 
@@ -106,13 +106,13 @@ int main(int argc, char* argv[]) {
       result = create_from_halfspaces(*hi, false);
       std::cerr << "test 1 " << std::endl;
       if(!test_convex_hull(result, *hi, false))
-	std::cerr << "convex hull incorrect" << std::endl;
+        std::cerr << "convex hull incorrect" << std::endl;
     } else {
       std::cerr << "create 2 " << std::endl;
       Nef_polyhedron_3 tmp = create_from_halfspaces(*hi, false);
       std::cerr << "size of obstacle " << tmp.number_of_vertices() << std::endl;
       if(!test_convex_hull(tmp, *hi, false))
-	std::cerr << "convex hull incorrect" << std::endl;
+        std::cerr << "convex hull incorrect" << std::endl;
       result = result - tmp;
     }
   }

@@ -27,7 +27,7 @@
 #include <CGAL/Intersections_3/internal/Bbox_3_Plane_3_do_intersect.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -173,7 +173,7 @@ namespace internal {
       if ( certainly(side[2]==0) )        return 1;
     }
     else{
-        if ( certainly(side[1]==0) && 
+        if ( certainly(side[1]==0) &&
             certainly(side[2]==0) )       return 0;
     }
     return -1;
@@ -203,7 +203,7 @@ namespace internal {
         return b;
       if(b) std::swap(j,k);
       return CGAL_AND((do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j->y(), p_min.z()-j->z(), sides) <= 0),
-                      (do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-k->y(), p_max.z()-k->z(), sides) >= 0) );      
+                      (do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-k->y(), p_max.z()-k->z(), sides) >= 0) );
     }
     case 1: {
       // t_max >= t_min
@@ -246,7 +246,7 @@ namespace internal {
     typename K::Vector_3 sides[3];
     sides[0] = a_triangle[1] - a_triangle[0];
     sides[1] = a_triangle[2] - a_triangle[1];
-    sides[2] = a_triangle[0] - a_triangle[2];    
+    sides[2] = a_triangle[0] - a_triangle[2];
     int forbidden_axis=-1;
     int forbidden_size=-1;
     //determine whether one vector is collinear with an axis
@@ -266,29 +266,29 @@ namespace internal {
         if ( tmp!= -1){
           forbidden_axis=tmp;
           forbidden_size=2;
-        }        
+        }
       }
     }
-    
+
 #if 0
     typename K::Point_3 p(a_bbox.xmin(), a_bbox.ymin(), a_bbox.zmin());
     typename K::Point_3 q(a_bbox.xmax(), a_bbox.ymax(), a_bbox.zmax());
-    
+
     typename K::Point_3 m = CGAL::midpoint(p,q);
     typename K::Vector_3 v = m - CGAL::ORIGIN;
-    
+
     typename K::Triangle_3 triangle(a_triangle[0]-v, a_triangle[1]-v, a_triangle[2]-v);
-  
+
     Box3 bbox( (p-v).bbox() + (q-v).bbox());
 
-#else 
+#else
     const typename K::Triangle_3&  triangle = a_triangle;
     const Box3& bbox = a_bbox;
-#endif    
-    
+#endif
+
     // Create a "certainly true"
     Uncertain<bool> ind_or_true = make_uncertain(true);
-    
+
     if (forbidden_axis!=0){
       if (forbidden_size!=0){
         Uncertain<bool> b = do_axis_intersect<K,Box3,0,0>(triangle, sides, bbox);
@@ -315,7 +315,7 @@ namespace internal {
         }
       }
     }
-    
+
     if (forbidden_axis!=1){
       if (forbidden_size!=0){
         Uncertain<bool> b = do_axis_intersect<K,Box3,1,0>(triangle, sides, bbox);
@@ -342,7 +342,7 @@ namespace internal {
         }
       }
     }
-    
+
     if (forbidden_axis!=2){
       if (forbidden_size!=0){
         Uncertain<bool> b = do_axis_intersect<K,Box3,2,0>(triangle, sides, bbox);

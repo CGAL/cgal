@@ -5,9 +5,9 @@ namespace AlgebraicStructureTraits_{
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-This `AdaptableUnaryFunction` may simplify a given object. 
+This `AdaptableUnaryFunction` may simplify a given object.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction`
 
 \sa `AlgebraicStructureTraits`
 
@@ -16,28 +16,28 @@ This `AdaptableUnaryFunction` may simplify a given object.
 class Simplify {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Is void. 
-*/ 
-typedef unspecified_type result_type; 
+Is void.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is `AlgebraicStructureTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `AlgebraicStructureTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-may simplify \f$ x\f$. 
-*/ 
-result_type operator()(argument_type x); 
+may simplify \f$ x\f$.
+*/
+result_type operator()(argument_type x);
 
 /// @}
 

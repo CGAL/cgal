@@ -15,7 +15,7 @@ typedef double                                Number_Type;
 
 typedef CGAL::Cartesian<Number_Type>             K;
 typedef K::Point_2                      Point;
-typedef K::Vector_2                     Vector; 
+typedef K::Vector_2                     Vector;
 typedef K::Segment_2                   Segment;
 typedef K::Iso_rectangle_2              Iso_rectangle_2;
 
@@ -30,12 +30,12 @@ int main(int argc,char *argv[])
     return(1);
   }
 
-  for(int i = 1, j = 2; j < argc; i += 2, j += 2) { 
+  for(int i = 1, j = 2; j < argc; i += 2, j += 2) {
     std::cout << "Using " << argv[i] << " and comparing against" << argv[j] << std::endl;
     std::ifstream is(argv[i]);
     std::ifstream ifs(argv[j]);
     if(is.fail() || ifs.fail()) {
-      std::cerr << "Bad input or output file : " << argv[i] 
+      std::cerr << "Bad input or output file : " << argv[i]
                 << " " << argv[j] << std::endl;
       return(1);
     }
@@ -76,7 +76,7 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   Largest_empty_rect empty_rectangle1(b);
   assert(b == empty_rectangle1.get_largest_empty_iso_rectangle());
 
-  // get points from an input file 
+  // get points from an input file
   int number_of_points = 0;
   is_ptr >> number_of_points;
   for(int i = 0;i < number_of_points;++i) {
@@ -100,8 +100,8 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
   output << "test first set   (" << (ler.min)().x()
-	    << "," << (ler.min)().y() 
-            << "),(" << (ler.max)().x() 
+            << "," << (ler.min)().y()
+            << "),(" << (ler.max)().x()
             << "," << (ler.max)().y() << ")\n";
 
   // test another ctor
@@ -114,8 +114,8 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   ler = empty_rectangle2.get_largest_empty_iso_rectangle();
 
   output << "test operator = (" << (ler.min)().x()
-	    << "," << (ler.min)().y() 
-            << "),(" << (ler.max)().x() 
+            << "," << (ler.min)().y()
+            << "),(" << (ler.max)().x()
             << "," << (ler.max)().y() << ")\n";
 
   // test cctor
@@ -124,8 +124,8 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   ler = empty_rectangle3.get_largest_empty_iso_rectangle();
 
   output << "test cctor      (" << (ler.min)().x()
-	    << "," << (ler.min)().y() 
-            << "),(" << (ler.max)().x() 
+            << "," << (ler.min)().y()
+            << "),(" << (ler.max)().x()
             << "," << (ler.max)().y() << ")\n";
 
   // test list insertion
@@ -138,8 +138,8 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   ler = empty_rectangle4.get_largest_empty_iso_rectangle();
 
   output << "  LER is  (" << (ler.min)().x()
-	    << "," << (ler.min)().y() 
-            << "),(" << (ler.max)().x() 
+            << "," << (ler.min)().y()
+            << "),(" << (ler.max)().x()
             << "," << (ler.max)().y() << ")\n";
 
   // test default bbox
@@ -152,8 +152,8 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   ler = empty_rectangle5.get_largest_empty_iso_rectangle();
 
   output << "test default ctor    (" << (ler.min)().x()
-	    << "," << (ler.min)().y() 
-            << "),(" << (ler.max)().x() 
+            << "," << (ler.min)().y()
+            << "),(" << (ler.max)().x()
             << "," << (ler.max)().y() << ")\n";
 
   // test removals
@@ -164,8 +164,8 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
   output << "test after removal   (" << (ler.min)().x()
-	    << "," << (ler.min)().y() 
-            << "),(" << (ler.max)().x() 
+            << "," << (ler.min)().y()
+            << "),(" << (ler.max)().x()
             << "," << (ler.max)().y() << ")\n";
 
 
@@ -179,8 +179,8 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   ler = empty_rectangle1.get_largest_empty_iso_rectangle();
 
   output << "test after clear (" << (ler.min)().x()
-	    << "," << (ler.min)().y() 
-            << "),(" << (ler.max)().x() 
+            << "," << (ler.min)().y()
+            << "),(" << (ler.max)().x()
             << "," << (ler.max)().y() << ")\n";
 
   bo = empty_rectangle1.insert(p);
@@ -190,8 +190,8 @@ int test(std::ifstream& is_ptr, const std::string& expected)
   Iso_rectangle_2 bb = empty_rectangle1.get_bounding_box();
 
   output << "test bounding box (" << (bb.min)().x()
-	    << "," << (bb.min)().y() 
-            << "),(" << (bb.max)().x() 
+            << "," << (bb.min)().y()
+            << "),(" << (bb.max)().x()
             << "," << (bb.max)().y() << ")\n";
 
   // test quadruple

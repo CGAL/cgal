@@ -71,7 +71,7 @@ int main ()
   insert (arr2, Segment_2 (Point_2(4, 4), Point_2(-4, 4)));
   insert (arr2, Segment_2 (Point_2(-4, 4), Point_2(-4, -4)));
 
-  // Give the unbounded face the index 1, and the bounded face the index 2. 
+  // Give the unbounded face the index 1, and the bounded face the index 2.
   CGAL_assertion (arr2.number_of_faces() == 2);
 
   ArrangementB_2::Face_iterator    fit;

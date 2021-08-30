@@ -1,6 +1,6 @@
 
 // Author(s) : Camille Wormser, Pierre Alliez
-// Example of an AABB tree used with a simple list of 
+// Example of an AABB tree used with a simple list of
 // triangles (a triangle soup) stored into an array of points.
 
 #include <iostream>
@@ -25,7 +25,7 @@ struct My_point {
     My_point (double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
 };
 
-// The triangles are stored in a flat vector of points (a triangle soup): 
+// The triangles are stored in a flat vector of points (a triangle soup):
 // three consecutive points represent a triangle
 typedef std::vector<My_point>::const_iterator Point_iterator;
 
@@ -66,7 +66,7 @@ private:
 public:
     My_triangle_primitive() {} // default constructor needed
 
-    // the following constructor is the one that receives the iterators from the 
+    // the following constructor is the one that receives the iterators from the
     // iterator range given as input to the AABB_tree
     My_triangle_primitive(Triangle_iterator a)
         : m_it(a) {}
@@ -76,7 +76,7 @@ public:
     // on the fly conversion from the internal data
     // to the CGAL types
     Datum datum() const
-    { 
+    {
         Point_iterator p_it = m_it.base();
         Point p(p_it->x, p_it->y, p_it->z);
         ++p_it;
@@ -89,7 +89,7 @@ public:
 
     // returns one point which must be on the primitive
     Point reference_point() const
-    { 
+    {
         return Point(m_it->x, m_it->y, m_it->z);
     }
 };
@@ -107,12 +107,12 @@ int main()
     My_point d(0.0, 0.0, 0.0);
 
     std::vector<My_point> triangles;
-    triangles.push_back(a); triangles.push_back(b); triangles.push_back(c);  
-    triangles.push_back(a); triangles.push_back(b); triangles.push_back(d);  
-    triangles.push_back(a); triangles.push_back(d); triangles.push_back(c);  
+    triangles.push_back(a); triangles.push_back(b); triangles.push_back(c);
+    triangles.push_back(a); triangles.push_back(b); triangles.push_back(d);
+    triangles.push_back(a); triangles.push_back(d); triangles.push_back(c);
 
     // constructs AABB tree
-    Tree tree(Triangle_iterator(triangles.begin()), 
+    Tree tree(Triangle_iterator(triangles.begin()),
         Triangle_iterator(triangles.end()));
 
     // counts #intersections

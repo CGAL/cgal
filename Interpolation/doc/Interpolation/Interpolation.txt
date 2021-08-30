@@ -94,7 +94,7 @@ diagrams, also known as <em>power diagrams</em>, are obtained by considering wei
 (the weight being a scalar) and considering a weighted distance, the <em>power distance</em>,
 defined between two weighted points \f$ (p, \omega_p) \f$ and \f$ (q, \omega_q) \f$ by
 \f$ \Pi( (p, \omega_p), (q, \omega_q) ) = pq^2 - \omega_p - \omega_q \f$.
-See \link Subsection_2D_Triangulations_Regular_Description this section \endlink
+See \ref Subsection_2D_Triangulations_Regular_Description "this section"
 of the package \ref PkgTriangulation2 for an in-depth description of power diagrams.
 
 \cgalFigureBegin{figrn_coords, rn_coords.svg}
@@ -312,7 +312,7 @@ neighbors of \f$ \mathbf{x}\f$, we have
 \f[ Z^0(\mathbf{x}) = \ccSum{i}{}{ \lambda_i(\mathbf{x}) (a + \mathbf{b}^t\mathbf{p_i})} = a+\mathbf{b}^t \mathbf{x} \f]
 by the barycentric coordinate property.
 
-This interpolation is implemented through the function `	CGAL::linear_interpolation()`.
+This interpolation is implemented through the function `        CGAL::linear_interpolation()`.
 The first example in Subsection \ref subsecinterpol_examples shows how the function is
 called.
 

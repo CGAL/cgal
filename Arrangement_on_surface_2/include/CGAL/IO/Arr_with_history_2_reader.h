@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 #ifndef CGAL_ARR_WITH_HISTORY_2_READER_H
@@ -37,7 +37,7 @@ public:
   typedef Arr_with_history_2_reader<Arr_with_history_2>   Self;
 
 protected:
- 
+
   typedef Arrangement_2_reader<Arr_with_history_2>        Base;
   typedef typename Arr_with_history_2::Size               Size;
   typedef typename Arr_with_history_2::Curve_handle       Curve_handle;
@@ -72,7 +72,7 @@ public:
   {
     // Read the arrangement (without history).
     Base::operator() (formatter);
-    
+
     // Read the inducing curves.
     formatter.read_curves_begin();
 
@@ -121,7 +121,7 @@ protected:
     formatter.read_curve_end();
     return;
   }
-   
+
 };
 
 } //namespace CGAL

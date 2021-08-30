@@ -37,6 +37,10 @@ struct Tester
 
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+  typedef CGAL::Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr,
+    CGAL::Sequential_tag> C3t3_base_sequential;
+  typedef CGAL::Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr,
+    CGAL::Parallel_tag> C3t3_base_parallel;
 
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Weighted_point Weighted_point;
@@ -90,7 +94,7 @@ struct Tester
     //-------------------------------------------------------
     // Test empty c3t3
     //-------------------------------------------------------
-    std::cerr << "\tNumber of cells in c3t3: " 
+    std::cerr << "\tNumber of cells in c3t3: "
               << c3t3.number_of_cells_in_complex() << std::endl;
     std::cerr << "\tNumber of facets in c3t3: "
               << c3t3.number_of_facets_in_complex() << std::endl;
@@ -120,6 +124,35 @@ struct Tester
     assert(c3t3.is_in_complex(ch));
     assert(c3t3.subdomain_index(ch) == subdomain_index);
 
+    //-------------------------------------------------------
+    // Test move construction
+    //-------------------------------------------------------
+    C3t3 c3t3_moved{std::move(c3t3)};
+    assert(c3t3_moved.is_valid());
+    assert(c3t3.is_valid());
+    assert(ch == (Cell_handle)c3t3_moved.cells_in_complex_begin());
+    assert(c3t3_moved.number_of_cells_in_complex() == 1);
+    assert(c3t3_moved.number_of_cells_in_complex() ==
+           (size_type)std::distance(c3t3_moved.cells_in_complex_begin(),
+                                    c3t3_moved.cells_in_complex_end()));
+    assert(c3t3_moved.is_in_complex(ch));
+    assert(c3t3_moved.subdomain_index(ch) == subdomain_index);
+
+    assert(c3t3.number_of_cells_in_complex() == 0);
+    assert(c3t3.number_of_cells_in_complex() == (size_type)std::distance(c3t3.cells_in_complex_begin(),
+                                                                         c3t3.cells_in_complex_end()));
+    c3t3 = std::move(c3t3_moved);
+    assert(ch == (Cell_handle)c3t3.cells_in_complex_begin());
+    assert(c3t3.number_of_cells_in_complex() == 1);
+    assert(c3t3.number_of_cells_in_complex() == (size_type)std::distance(c3t3.cells_in_complex_begin(),
+                                                                         c3t3.cells_in_complex_end()));
+    assert(c3t3.is_in_complex(ch));
+    assert(c3t3.subdomain_index(ch) == subdomain_index);
+
+    assert(c3t3_moved.number_of_cells_in_complex() == 0);
+    assert(c3t3_moved.number_of_cells_in_complex() ==
+           (size_type)std::distance(c3t3_moved.cells_in_complex_begin(),
+                                    c3t3_moved.cells_in_complex_end()));
     // -----------------------------------
     // Test Cell_in_complex_iterator
     // The goal here is to test operators and conversion on iterator type
@@ -128,10 +161,10 @@ struct Tester
     ch = cit;
     typename C3t3::Triangulation::Cell& c1 = *ch;
     typename C3t3::Triangulation::Cell& c2 = *cit;
-    
+
     assert( c1.subdomain_index() == c2.subdomain_index() );
     assert ( cit->vertex(0) == ch->vertex(0) );
-    
+
     //-------------------------------------------------------
     // Remove cell from c3t3 and verify
     //-------------------------------------------------------
@@ -229,43 +262,43 @@ struct Tester
     typedef std::vector<std::pair<Bare_point, Index> > Initial_points_vector;
     Initial_points_vector initial_points;
     domain.construct_initial_points_object()(std::back_inserter(initial_points), 6);
-    
+
     C3t3 c3t3_bis;
     c3t3_bis.insert_surface_points(initial_points.begin(), initial_points.end());
-    
+
     Cell_handle ch_bis = c3t3_bis.triangulation().finite_cells_begin();
     c3t3_bis.add_to_complex(ch_bis,subdomain_index);
-    
+
     std::cout << "\tNumber of cells in c3t3_bis: "
               << c3t3_bis.number_of_cells_in_complex() << std::endl;
     std::cout << "\tNumber of facets in c3t3_bis: "
               << c3t3_bis.number_of_facets_in_complex() << std::endl;
     std::cout << "\tNumber of vertices in c3t3_bis triangulation: "
               << c3t3_bis.triangulation().number_of_vertices() << std::endl;
-    
+
     //-------------------------------------------------------
     // Swap c3t3 and c3t3_bis
     //-------------------------------------------------------
     std::cout << "Swap c3t3 and c3t3_bis\n";
     typedef typename C3t3::size_type size_type;
 
-    size_type c3t3_cell_nb = c3t3.number_of_cells_in_complex(); 
+    size_type c3t3_cell_nb = c3t3.number_of_cells_in_complex();
     size_type c3t3_facet_nb = c3t3.number_of_facets_in_complex();
     size_type c3t3_vertex_nb = c3t3.triangulation().number_of_vertices();
 
-    size_type c3t3_bis_cell_nb = c3t3_bis.number_of_cells_in_complex(); 
+    size_type c3t3_bis_cell_nb = c3t3_bis.number_of_cells_in_complex();
     size_type c3t3_bis_facet_nb = c3t3_bis.number_of_facets_in_complex();
     size_type c3t3_bis_vertex_nb = c3t3_bis.triangulation().number_of_vertices();
 
     c3t3.swap(c3t3_bis);
-    
+
     std::cout << "\tNumber of cells in c3t3: "
               << c3t3.number_of_cells_in_complex() << std::endl;
     std::cout << "\tNumber of facets in c3t3: "
               << c3t3.number_of_facets_in_complex() << std::endl;
     std::cout << "\tNumber of vertices in c3t3 triangulation: "
               << c3t3.triangulation().number_of_vertices() << std::endl;
-  
+
     std::cout << "\tNumber of cells in c3t3_bis: "
               << c3t3_bis.number_of_cells_in_complex() << std::endl;
     std::cout << "\tNumber of facets in c3t3_bis: "
@@ -280,10 +313,10 @@ struct Tester
     assert(c3t3_bis_cell_nb == c3t3.number_of_cells_in_complex());
     assert(c3t3_bis_facet_nb == c3t3.number_of_facets_in_complex());
     assert(c3t3_bis_vertex_nb == c3t3.triangulation().number_of_vertices());
-  
+
     // reset
     c3t3.swap(c3t3_bis);
-    
+
     //-------------------------------------------------------
     // Modify indices and dimension and verify
     //-------------------------------------------------------
@@ -312,56 +345,56 @@ struct Tester
 
     c3t3.set_surface_patch_index(f2.first, f2.second, surface_patch_index);
     assert(c3t3.surface_patch_index(f2) == surface_patch_index);
-    
+
     // -----------------------------------
     // Test subdomain iterators
     // -----------------------------------
     std::cerr << "Test subdomain iterators\n";
-    
+
     typename C3t3::Cells_in_complex_iterator subdomain_cit =
       c3t3.cells_in_complex_begin(subdomain_index);
     typename C3t3::Cells_in_complex_iterator subdomain_cit_bis =
       c3t3.cells_in_complex_begin(subdomain_index_bis);
     typename C3t3::Cells_in_complex_iterator cend =
       c3t3.cells_in_complex_end();
-    
+
     std::cout << "\tNumber of cells of index '" << subdomain_index << "': "
               << std::distance(subdomain_cit,cend) << std::endl;
     std::cout << "\tNumber of cells of index '" << subdomain_index_bis << "': "
               << std::distance(subdomain_cit_bis,cend) << std::endl;
-    
+
     assert ( std::distance(subdomain_cit,cend) == 0 );
     assert ( std::distance(subdomain_cit_bis,cend) == 1 );
     assert ( c3t3.subdomain_index(subdomain_cit_bis) == subdomain_index_bis );
-    
+
     // -----------------------------------
     // Test surface patch iterators
     // -----------------------------------
     std::cerr << "Test surface patch iterators\n";
     c3t3.set_surface_patch_index(f2.first, f2.second, surface_patch_index_bis);
-    
+
     typename C3t3::Facets_in_complex_iterator patch_fit =
       c3t3.facets_in_complex_begin(surface_patch_index);
     typename C3t3::Facets_in_complex_iterator patch_fit_bis =
       c3t3.facets_in_complex_begin(surface_patch_index_bis);
     typename C3t3::Facets_in_complex_iterator fend =
       c3t3.facets_in_complex_end();
-    
+
     std::cout << "\tNumber of facets of index '<" << surface_patch_index.first
               << "," << surface_patch_index.second << ">': "
               << std::distance(patch_fit,fend) << std::endl;
     std::cout << "\tNumber of facets of index '<" << surface_patch_index_bis.first
               << "," << surface_patch_index.second << ">': "
               << std::distance(patch_fit_bis,fend) << std::endl;
-    
+
     assert ( std::distance(patch_fit,fend) == 3 );
     assert ( std::distance(patch_fit_bis,fend) == 1 );
     assert ( c3t3.surface_patch_index(*patch_fit) == surface_patch_index );
     assert ( c3t3.surface_patch_index(*patch_fit_bis) == surface_patch_index_bis );
 
     std::ofstream out_medit("test-medit.mesh");
-    CGAL::output_to_medit(out_medit, c3t3);
-    CGAL::output_to_tetgen("test-tetgen", c3t3);
+    CGAL::IO::output_to_medit(out_medit, c3t3);
+    CGAL::IO::output_to_tetgen("test-tetgen", c3t3);
   }
 };
 

@@ -6,7 +6,7 @@
 
 Viewer::Viewer(QWidget* parent)
   : CGAL::QGLViewer(parent),
-    m_pScene(NULL),
+    m_pScene(nullptr),
     m_custom_mouse(false)
 {
 }
@@ -19,7 +19,7 @@ void Viewer::setScene(Scene* pScene)
 void Viewer::draw()
 {
   CGAL::QGLViewer::draw();
-  if(m_pScene != NULL)
+  if(m_pScene != nullptr)
   {
       m_pScene->draw(this);
   }
@@ -42,7 +42,7 @@ void Viewer::mousePressEvent(QMouseEvent* e)
     m_pScene->cutting_plane(true);
     m_custom_mouse = true;
   }
-  
+
   CGAL::QGLViewer::mousePressEvent(e);
 }
 
@@ -55,10 +55,10 @@ void Viewer::mouseReleaseEvent(QMouseEvent* e)
     QApplication::setOverrideCursor(Qt::WaitCursor);
     m_pScene->cutting_plane(true);
     QApplication::restoreOverrideCursor();
-      
+
     m_custom_mouse = false;
   }
-  
+
   CGAL::QGLViewer::mouseReleaseEvent(e);
 }
 

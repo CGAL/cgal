@@ -6,13 +6,13 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
- 
+
 //~ #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 #include <CGAL/Segment_Delaunay_graph_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -35,7 +35,7 @@ typedef CGAL::Regular_triangulation_2<Kernel>                                 Re
 //Apollonius
 typedef CGAL::Apollonius_graph_traits_2<Kernel>                               AT;
 typedef CGAL::Apollonius_graph_2<AT>                                          Apollonius;
-typedef Apollonius::Site_2                                                    ASite;  
+typedef Apollonius::Site_2                                                    ASite;
 // --------------------------------------------------------------------
 
 const std::string sublabel[] = {
@@ -49,10 +49,10 @@ const std::string helpmsg[] = {
   "Draw the Apollonius diagram of a set of circles"
 };
 
-class diagrammeIpelet 
+class diagrammeIpelet
   : public CGAL::Ipelet_base<Kernel,5> {
 public:
-  diagrammeIpelet() 
+  diagrammeIpelet()
     :CGAL::Ipelet_base<Kernel,5>("Diagrams",sublabel,helpmsg){}
   void protected_run(int);
 };
@@ -64,18 +64,18 @@ void diagrammeIpelet::protected_run(int fn)
   Delaunay dt;     //Voronoi of points
   Regular rt;     //power diagram
   Apollonius apo;     //apollonius
-  
+
   bool b=false;
- 
+
   if (fn==4) {
     show_help();
     return;
-  } 
-  
+  }
+
   std::list<Point_2> pt_list;
   std::list<Segment_2> sg_list;
   std::list<Circle_2> cir_list;
-  
+
   Iso_rectangle_2 bbox=
   read_active_objects(
     CGAL::dispatch_or_drop_output<Point_2,Polygon_2,Circle_2,Segment_2>(
@@ -85,7 +85,7 @@ void diagrammeIpelet::protected_run(int fn)
       std::back_inserter(sg_list)
     )
   );
-  
+
   switch(fn){
   case 1:
   case 0:
@@ -94,7 +94,7 @@ void diagrammeIpelet::protected_run(int fn)
       print_error_message(("No mark, no segment and no polygon selected"));
       return;
     }
-    
+
     b=!( sg_list.empty() );
     for (std::list<Segment_2>::iterator it=sg_list.begin();it!=sg_list.end();++it)
       svd.insert(it->point(0),it->point(1));
@@ -104,28 +104,28 @@ void diagrammeIpelet::protected_run(int fn)
     else
       dt.insert(pt_list.begin(),pt_list.end());
     break;
-    
-    
+
+
   case 2:
     //POWER DIAGRAM
     if (pt_list.empty() && cir_list.empty()){
       print_error_message(("No mark nor circle selected"));
       return;
     }
-    
+
     for (std::list<Circle_2>::iterator it=cir_list.begin();it!=cir_list.end();it++)
       rt.insert(Weighted_point_2(it->center(),it->squared_radius()));
     for (std::list<Point_2>::iterator it=pt_list.begin();it!=pt_list.end();it++)
       rt.insert(Weighted_point_2(*it,0));
   break;
-     
-     
-  case 3:     
+
+
+  case 3:
     //APOLLONIUS
     if (cir_list.empty()){
       print_error_message(("No circle selected"));
       return;
-    }  
+    }
     for (std::list<Circle_2>::iterator it=cir_list.begin();it!=cir_list.end();it++)
       apo.insert(ASite(it->center(),sqrt(CGAL::to_double(it->squared_radius()))));
     for (std::list<Point_2>::iterator it=pt_list.begin();it!=pt_list.end();it++)
@@ -135,11 +135,11 @@ void diagrammeIpelet::protected_run(int fn)
 
   Kernel::FT incr_len=(fn<2)?50:75;
   //slightly increase the size of the Bbox
-  bbox=Iso_rectangle_2(bbox.min()+Kernel::Vector_2(-incr_len,-incr_len),
-                       bbox.max()+Kernel::Vector_2(incr_len,incr_len));
-  
-  
-  
+  bbox=Iso_rectangle_2((bbox.min)()+Kernel::Vector_2(-incr_len,-incr_len),
+                       (bbox.max)()+Kernel::Vector_2(incr_len,incr_len));
+
+
+
   if(fn<2){     //recover dual objects
     if(b){
       if (fn==0) draw_dual_in_ipe(svd,bbox);

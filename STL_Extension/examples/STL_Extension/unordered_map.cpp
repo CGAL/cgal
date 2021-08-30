@@ -10,7 +10,7 @@ typedef CGAL::Surface_mesh<Point_3>     Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
 int main()
-{ 
+{
   boost::unordered_map<vertex_descriptor, int> bum;
   Mesh mesh;
   vertex_descriptor vd  = mesh.add_vertex();

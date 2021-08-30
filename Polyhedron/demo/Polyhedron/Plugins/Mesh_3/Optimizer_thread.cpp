@@ -11,12 +11,12 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include "config_mesh_3.h"
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include "Optimizer_thread.h"
 #include "Scene_c3t3_item.h"
@@ -33,7 +33,7 @@ Optimizer_thread(Optimization_function_interface* f, Scene_c3t3_item* item)
 {
   connect(timer_, SIGNAL(timeout()),
           this,   SLOT(emit_status()));
-  timer_->start(static_cast<int>(timer_period_*1000));  
+  timer_->start(static_cast<int>(timer_period_*1000));
 }
 
 
@@ -47,7 +47,7 @@ void
 Optimizer_thread::
 run()
 {
-  QTime timer;
+  QElapsedTimer timer;
   timer.start();
   //SEGFAULT
   rc_ = f_->launch();

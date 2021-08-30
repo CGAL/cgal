@@ -1,9 +1,9 @@
-// Copyright (c) 2002-2004,2007  
+// Copyright (c) 2002-2004,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -178,7 +178,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>
-#include <CGAL/CORE_BigInt.h> 
+#include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>

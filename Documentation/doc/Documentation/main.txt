@@ -32,8 +32,8 @@ Head over to \ref general_intro to learn how to obtain, install, and use \cgal.
 
 <h2>License</h2>
 
-%CGAL is distributed under a dual-license scheme. %CGAL can be used
-together with Open Source software free of charge. Using %CGAL in
+\cgal is distributed under a dual-license scheme. \cgal can be used
+together with Open Source software free of charge. Using \cgal in
 other contexts can be done by obtaining a commercial license from
 [GeometryFactory](http://www.geometryfactory.com). For more details
 see the \ref license "License" page.

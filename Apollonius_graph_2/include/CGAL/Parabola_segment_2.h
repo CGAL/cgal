@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -47,7 +47,7 @@ public:
 
   template<class ApolloniusSite>
   Parabola_segment_2(const ApolloniusSite &p, const Line_2 &l,
-		     const Point_2 &p1, const Point_2 &p2)
+                     const Point_2 &p1, const Point_2 &p2)
     : Parabola_2< Gt >(p, l)
   {
     this->p1 = p1;
@@ -55,92 +55,107 @@ public:
   }
 
   Parabola_segment_2(const Point_2 &p, const Line_2 &l,
-		     const Point_2 &p1, const Point_2 &p2)
+                     const Point_2 &p1, const Point_2 &p2)
     : Parabola_2< Gt >(p, l)
   {
     this->p1 = p1;
     this->p2 = p2;
   }
 
-  int compute_k(const FT& tt) const {
-    return int(CGAL::sqrt(CGAL::to_double(tt) / 2));
+  int compute_k(const FT tt, const FT STEP) const {
+    return int(CGAL::to_double(CGAL::sqrt(tt / STEP)));
   }
 
+  // s0 and s1 define a desired drawing "range"
   void generate_points(std::vector<Point_2>& p,
-                       const FT STEP = FT(2)) const
+                       const FT STEP,
+                       FT s0, FT s1) const
   {
-    FT s0, s1;
-
-    s0 = t(p1);
-    s1 = t(p2);
-
-    if (CGAL::compare(s0, s1) == LARGER) {
-      std::swap(s0, s1);
-    }
+    CGAL_precondition(STEP > 0);
 
     p.clear();
 
-    if ( !(CGAL::is_positive(s0)) &&
-	 !(CGAL::is_negative(s1)) ) {
-      FT tt;
-      int k;
+    if (CGAL::compare(s0, s1) == LARGER)
+      std::swap(s0, s1);
+
+    // This is a parabola segment that exists between only between p1 and p2 so we gotta crop
+    // the desired range to actually fit the parabola segment
+    FT tp1 = t(p1), tp2 = t(p2);
+
+    if (CGAL::compare(tp1, tp2) == LARGER)
+      std::swap(tp1, tp2);
+
+    if(tp2 < s0 || s1 < tp1) // nothing to draw because the ranges are completely disjoint
+      return;
+
+    s0 = (std::max)(s0, tp1);
+    s1 = (std::min)(s1, tp2);
+
+    if ( !(CGAL::is_positive(s0)) && !(CGAL::is_negative(s1)) )
+    {
+      FT tt = - STEP;
+      int k = -1;
 
       p.push_back( this->o );
-      k = -1;
 
-      tt = - STEP;
-      while ( CGAL::compare(tt, s0) == LARGER ) {
-	p.insert( p.begin(), f(tt) );
-	k--;
-	tt = -FT(k * k) * STEP;
+      // no need to check tt < s1 since we have tt < 0, s1 >= 0 and tt is moving towards -inf
+      while ( CGAL::compare(tt, s0) == LARGER )
+      {
+        p.insert( p.begin(), f(tt) );
+        --k;
+        tt = - FT(k * k) * STEP;
       }
       p.insert( p.begin(), f(s0) );
 
       k = 1;
       tt = STEP;
-      while ( CGAL::compare(tt, s1) == SMALLER ) {
-	p.push_back( f(tt) );
-	k++;
-	tt = FT(k * k) * STEP;
+
+      // no need to check tt > s0 since we have tt > 0, s0 <= 0 and tt is moving towards +inf
+      while ( CGAL::compare(tt, s1) == SMALLER )
+      {
+        p.push_back( f(tt) );
+        ++k;
+        tt = FT(k * k) * STEP;
       }
       p.push_back( f(s1) );
-    } else if ( !(CGAL::is_negative(s0)) &&
-		!(CGAL::is_negative(s1)) ) {
-      FT tt;
-      int k;
+    }
+    else if ( !(CGAL::is_negative(s0)) && !(CGAL::is_negative(s1)) )
+    {
+      FT tt = s0;
+      int k = compute_k(tt, STEP);
 
-
-      p.push_back( f(s0) );
-
-      tt = s0;
-      k = compute_k(tt);
-
-      while ( CGAL::compare(tt, s1) == SMALLER ) {
-	if ( CGAL::compare(tt, s0) != SMALLER )
-	  p.push_back( f(tt) );
-	k++;
-	tt = FT(k * k) * STEP;
+      do
+      {
+        p.push_back( f(tt) );
+        ++k;
+        tt = FT(k * k) * STEP;
       }
-      p.push_back( f(s1) );
-    } else {
-      FT tt;
-      int k;
+      while ( CGAL::compare(tt, s0) == LARGER && CGAL::compare(tt, s1) == SMALLER );
 
       p.push_back( f(s1) );
+    }
+    else
+    {
+      FT tt = s1;
+      int k = - compute_k(-tt, STEP);
 
-      tt = s1;
-      k = -compute_k(-tt);
-
-      while ( CGAL::compare(tt, s0) == LARGER ) {
-	if ( CGAL::compare(tt, s1) != LARGER )
-	  p.push_back( f(tt) );
-	k--;
-	tt = -FT(k * k) * STEP;
+      do
+      {
+        p.push_back( f(tt) );
+        --k;
+        tt = - FT(k * k) * STEP;
       }
+      while ( CGAL::compare(tt, s0) == LARGER && CGAL::compare(tt, s1) == SMALLER );
+
       p.push_back( f(s0) );
     }
   }
 
+  void generate_points(std::vector<Point_2>& p,
+                       const FT STEP = FT(2)) const
+  {
+    return generate_points(p, STEP, t(p1), t(p2));
+  }
 
   template< class Stream >
   void draw(Stream& W) const

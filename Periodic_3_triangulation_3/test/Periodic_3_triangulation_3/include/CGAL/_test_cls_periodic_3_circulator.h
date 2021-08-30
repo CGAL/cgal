@@ -93,14 +93,14 @@ _test_circulator( const Triangulation &T )
 //     {
 //      cc0=cc=T.incident_cells(*eit);
 //       do {
-// 	cc++; n++;
+//         cc++; n++;
 //       } while (cc != cc0);
 //     }
 //   for (eit=T.finite_edges_begin(); eit!=T.edges_end(); eit++)
 //     {
 //      cc0=cc=T.incident_cells(*eit, eit->first);
 //       do {
-// 	cc++; n++;
+//         cc++; n++;
 //       } while (cc != cc0);
 //     }
 
@@ -128,7 +128,7 @@ _test_circulator( const Triangulation &T )
   }
 
   Facet_circulator fc, fc0, fc1;
-  assert(fc1 == 0);
+  assert(fc1 == nullptr);
   int i,j;
   //   for (eit=T.edges_begin(); eit!=T.edges_end(); eit++)
   eit=T.edges_begin(); // test (edge)
@@ -158,7 +158,7 @@ _test_circulator( const Triangulation &T )
   {
     //      for (fi=0; fi!=4 ; fi++)
     //        {
-    // 	if (t.dimension()==2) {fi=3;}
+    //         if (t.dimension()==2) {fi=3;}
     fc0=fc=T.incident_facets(*eit, eit->first,
                              T.next_around_edge(eit->second, eit->third));
     do {
@@ -187,7 +187,7 @@ _test_circulator( const Triangulation &T )
   {
     //      for (fi=0; fi!=4 ; fi++)
     //        {
-    // 	if (t.dimension()==2) {fi=3;}
+    //         if (t.dimension()==2) {fi=3;}
     fc0=fc=T.incident_facets(*eit, std::make_pair( eit->first,
                                                    T.next_around_edge(eit->second,
                                                                       eit->third)) );

@@ -10,17 +10,17 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
   typedef Nef_ Nef_polyhedron;
   typedef typename Nef_::SNC_structure        SNC_structure;
   typedef CGAL::SNC_decorator<SNC_structure>  Base;
-  
-  typedef typename SNC_structure::Volume_iterator Volume_iterator; 
+
+  typedef typename SNC_structure::Volume_iterator Volume_iterator;
   typedef typename SNC_structure::Vertex_iterator Vertex_iterator;
   typedef typename SNC_structure::Halfedge_iterator Halfedge_iterator;
-  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator; 
-  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator; 
-  typedef typename SNC_structure::SHalfloop_iterator SHalfloop_iterator; 
-  typedef typename SNC_structure::SFace_iterator SFace_iterator; 
+  typedef typename SNC_structure::Halffacet_iterator Halffacet_iterator;
+  typedef typename SNC_structure::SHalfedge_iterator SHalfedge_iterator;
+  typedef typename SNC_structure::SHalfloop_iterator SHalfloop_iterator;
+  typedef typename SNC_structure::SFace_iterator SFace_iterator;
   typedef typename SNC_structure::Halffacet_cycle_iterator Halffacet_cycle_iterator;
-  
-  typedef typename SNC_structure::Volume_handle Volume_handle; 
+
+  typedef typename SNC_structure::Volume_handle Volume_handle;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
   typedef typename SNC_structure::Halffacet_handle Halffacet_handle;
   typedef typename SNC_structure::SHalfedge_handle SHalfedge_handle;
@@ -33,7 +33,7 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
  private:
   std::ostream& out;
 
-  CGAL::Unique_hash_map<Vertex_iterator,int> VI;  
+  CGAL::Unique_hash_map<Vertex_iterator,int> VI;
   CGAL::Unique_hash_map<Halfedge_iterator,int> EI;
   CGAL::Unique_hash_map<Halffacet_iterator,int>    FI;
   CGAL::Unique_hash_map<Volume_iterator,int>   CI;
@@ -41,7 +41,7 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
   CGAL::Unique_hash_map<SHalfloop_iterator,int>   SLI;
   CGAL::Unique_hash_map<SFace_iterator,int>     SFI;
 
-  CGAL::Unique_hash_map<Vertex_iterator,int> VERTEX;  
+  CGAL::Unique_hash_map<Vertex_iterator,int> VERTEX;
   CGAL::Unique_hash_map<Halffacet_iterator,int> FACE;
   CGAL::Unique_hash_map<Volume_iterator,int> LUMP;
   CGAL::Unique_hash_map<Halfedge_iterator,int> COEDGE;
@@ -59,7 +59,7 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
   int loop_offset;
 
  public:
-  sat_writer(std::ostream& os, Nef_polyhedron& N) : 
+  sat_writer(std::ostream& os, Nef_polyhedron& N) :
     Base(*const_cast<SNC_structure*>(N.sncp())), out(os) {
 
     Vertex_iterator v=vertices_begin();
@@ -83,7 +83,7 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
     SFace_iterator sf=sfaces_begin();
     for(int i=0;sf!=sfaces_end();++sf)
       SFI[sf]=i++;
-    
+
     int i=2;
     for(c=++volumes_begin();c!=volumes_end();++c) {
       LUMP[c]=i;
@@ -92,26 +92,26 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
 
     for(f=halffacets_begin();f!=halffacets_end();++f)
       if(CI[f->incident_volume()]==0) {
-	FACE[f]=i;
-	i=i+distance(f->facet_cycles_begin(),f->facet_cycles_end())+2;
+        FACE[f]=i;
+        i=i+distance(f->facet_cycles_begin(),f->facet_cycles_end())+2;
       }
 
     for(se=shalfedges_begin();se!=shalfedges_end();++se)
       if(CI[se->facet()->incident_volume()]==0)
-	COEDGE[se->source()]=i++;
+        COEDGE[se->source()]=i++;
 
     for(se=shalfedges_begin();se!=shalfedges_end();++se)
       if(CI[se->facet()->incident_volume()]==0) {
-	NEXT_COEDGE[se->source()] = COEDGE[se->next()->source()];
-	PREV_COEDGE[se->source()] = COEDGE[se->prev()->source()];
+        NEXT_COEDGE[se->source()] = COEDGE[se->next()->source()];
+        PREV_COEDGE[se->source()] = COEDGE[se->prev()->source()];
       }
 
     for(se=shalfedges_begin();se!=shalfedges_end();++se)
       if(CI[se->facet()->incident_volume()]==0 && se->source()->is_twin()) {
-	EDGE[se->source()]=i;
-	i+=2;
+        EDGE[se->source()]=i;
+        i+=2;
       }
-	
+
     for(v=vertices_begin();v!=vertices_end();++v) {
       VERTEX[v]=i;
       i+=2;
@@ -120,23 +120,23 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
     std::list<Halffacet_handle> next_face[number_of_volumes()-1];
     for(f=halffacets_begin();f!=halffacets_end();++f)
       if(CI[f->incident_volume()]==0)
-	next_face[CI[f->twin()->incident_volume()]-1].push_back(f);
-    
+        next_face[CI[f->twin()->incident_volume()]-1].push_back(f);
+
     for(c=++volumes_begin();c!=volumes_end();++c)
       FIRST_FACE[c] = FACE[*next_face[CI[c]-1].begin()];
-   
+
     typename std::list<Halffacet_handle>::const_iterator li;
     for(i=0; i<number_of_volumes()-1;++i) {
       for(li=next_face[i].begin();li!=--next_face[i].end();)
-	NEXT_FACE[*li] = FACE[*++li];
+        NEXT_FACE[*li] = FACE[*++li];
       NEXT_FACE[*li] = -1;
     }
   }
-  
+
   void print_header() {
     out << "700 0 1 0" << std::endl
-	<< "22 ACIS/Scheme AIDE - 7.0 11 ACIS 7.0 NT 24 Mon Oct 18 18:53:23 2004" << std::endl
-	<< "1 9.9999999999999995e-007 1e-010" << std::endl;
+        << "22 ACIS/Scheme AIDE - 7.0 11 ACIS 7.0 NT 24 Mon Oct 18 18:53:23 2004" << std::endl
+        << "1 9.9999999999999995e-007 1e-010" << std::endl;
   }
 
   void print_footer() {
@@ -146,7 +146,7 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
   void print_body() {
     out << "body $-1 -1 $-1 $2 $-1 $1 #" << std::endl;
     out << "transform $-1 -1 1 0 0 0 1 0 0 0 1 0 0 0 1 no_rotate no_reflect no_shear #"
-	<< std::endl;
+        << std::endl;
   }
 
   void print_lumps_and_shells() {
@@ -157,17 +157,17 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
       Volume_iterator c_next(c);
       ++c_next;
       SFace_handle sf(c->shells_begin());
-      SHalfedge_handle e(sf->sface_cycles_begin());      
+      SHalfedge_handle e(sf->sface_cycles_begin());
       Halffacet_handle f(e->twin()->facet());
       if(CI[f->incident_volume()]!=0)
-	f=f->twin();
+        f=f->twin();
 
       int next = (c_next!=volumes_end()?LUMP[c_next]:-1);
       out << "lump $-1 -1 $-1 $" << next
-	  << " $" << 3+2*i << " $0 #" << std::endl;
+          << " $" << 3+2*i << " $0 #" << std::endl;
       out << "shell $-1 -1 $-1 $-1" // << (next==-1?-1:next+1)
-	  << " $-1 $" << FIRST_FACE[c]
-	  << " $-1 $" << 2+2*i << " #" << std::endl;
+          << " $-1 $" << FIRST_FACE[c]
+          << " $-1 $" << 2+2*i << " #" << std::endl;
       ++i;
     }
   }
@@ -177,10 +177,10 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
     Halffacet_iterator f;
     for(f=halffacets_begin();f!=halffacets_end();++f) {
       if(CI[f->incident_volume()]!=0) continue;
-    
+
       out << "face $-1 -1 $-1 $" << NEXT_FACE[f] << " $" << FACE[f]+2 << " $"
-	  << LUMP[f->twin()->incident_volume()]+1 << " $-1 $" 
-	  << FACE[f]+1 << " forward single #" << std::endl;
+          << LUMP[f->twin()->incident_volume()]+1 << " $-1 $"
+          << FACE[f]+1 << " forward single #" << std::endl;
 
       Plane_3 pl(f->plane());
       SHalfedge_handle se(f->facet_cycles_begin());
@@ -188,79 +188,79 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
       Point_3 pt(e->source()->point());
       Vector_3 vec(e->point()-CGAL::ORIGIN);
 
-      out << "plane-surface $-1 -1 $-1 " 
-	  << CGAL::to_double(pt.x()) << " "
-	  << CGAL::to_double(pt.y()) << " "
-	  << CGAL::to_double(pt.z()) << " "
-	  << CGAL::to_double(pl.a()) << " " 
-	  << CGAL::to_double(pl.b()) << " "
-	  << CGAL::to_double(pl.c()) << " "
-	  << CGAL::to_double(vec.hx()) << " "
-	  << CGAL::to_double(vec.hy()) << " "
-	  << CGAL::to_double(vec.hz()) << " "
-	  << "forward_v I I I I #" << std::endl;
-   
+      out << "plane-surface $-1 -1 $-1 "
+          << CGAL::to_double(pt.x()) << " "
+          << CGAL::to_double(pt.y()) << " "
+          << CGAL::to_double(pt.z()) << " "
+          << CGAL::to_double(pl.a()) << " "
+          << CGAL::to_double(pl.b()) << " "
+          << CGAL::to_double(pl.c()) << " "
+          << CGAL::to_double(vec.hx()) << " "
+          << CGAL::to_double(vec.hy()) << " "
+          << CGAL::to_double(vec.hz()) << " "
+          << "forward_v I I I I #" << std::endl;
+
       loop_offset = FACE[f]+3;
       Halffacet_cycle_iterator fci;
       for(fci = f->facet_cycles_begin(); fci != f->facet_cycles_end(); ++fci) {
-	se = SHalfedge_handle(fci);
-	if(fci == --f->facet_cycles_end())
-	  out << "loop $-1 -1 $-1 $-1 $" 
-	      << COEDGE[se->source()] << " $" << FACE[f] << " #" << std::endl;
-	else
-	  out << "loop $-1 -1 $-1 $" << loop_offset++ << " $" 
-	      << COEDGE[se->source()] << " $" << FACE[f] << " #" << std::endl;
+        se = SHalfedge_handle(fci);
+        if(fci == --f->facet_cycles_end())
+          out << "loop $-1 -1 $-1 $-1 $"
+              << COEDGE[se->source()] << " $" << FACE[f] << " #" << std::endl;
+        else
+          out << "loop $-1 -1 $-1 $" << loop_offset++ << " $"
+              << COEDGE[se->source()] << " $" << FACE[f] << " #" << std::endl;
       }
     }
   }
 
   void print_coedge() {
-    
+
     SHalfedge_iterator se;
     for(se=shalfedges_begin();se!=shalfedges_end();++se)
       if(CI[se->facet()->incident_volume()]==0) {
-	out << "coedge $-1 -1 $-1 $" << NEXT_COEDGE[se->source()] 
-	    << " $" << PREV_COEDGE[se->source()]
-	    << " $" << COEDGE[se->source()->twin()] << " $";
-	if(se->source()->is_twin())
-	  out << EDGE[se->source()] << " reversed $";
-	else
-	  out << EDGE[se->source()->twin()] << " forward $";
-	out << FACE[se->facet()]+2
-	    << " $-1 #" << std::endl;
+        out << "coedge $-1 -1 $-1 $" << NEXT_COEDGE[se->source()]
+            << " $" << PREV_COEDGE[se->source()]
+            << " $" << COEDGE[se->source()->twin()] << " $";
+        if(se->source()->is_twin())
+          out << EDGE[se->source()] << " reversed $";
+        else
+          out << EDGE[se->source()->twin()] << " forward $";
+        out << FACE[se->facet()]+2
+            << " $-1 #" << std::endl;
       }
   }
-  
+
   void print_edges() {
     SHalfedge_iterator se;
     for(se=shalfedges_begin();se!=shalfedges_end();++se)
       if(CI[se->facet()->incident_volume()]==0 && se->source()->is_twin()) {
 
-	double end_param;
-	Vector_3 vec(se->source()->twin()->source()->point() -
-		     se->source()->source()->point());
-	if(vec.x()!=0)
-	  end_param = CGAL::to_double(vec.x()/se->source()->point().x());
-	else if(vec.y()!=0)
-	  end_param = CGAL::to_double(vec.y()/se->source()->point().y());
-	else
-	  end_param = CGAL::to_double(vec.z()/se->source()->point().z());
+        double end_param;
+        Vector_3 vec(se->source()->twin()->source()->point() -
+                     se->source()->source()->point());
+        if(vec.x()!=0)
+          end_param = CGAL::to_double(vec.x()/se->source()->point().x());
+        else if(vec.y()!=0)
+          end_param = CGAL::to_double(vec.y()/se->source()->point().y());
+        else
+          end_param = CGAL::to_double(vec.z()/se->source()->point().z());
 
-	out << "edge $-1 -1 $-1 $" 
-	    << VERTEX[se->source()->source()] << " 0 $" 
-	    << VERTEX[se->source()->twin()->source()] << " " << end_param << " $" 
-	    << COEDGE[se->source()] 
-	    << " $" << EDGE[se->source()]+1
-	    << " forward @7 unknown #" << std::endl;
-	
-	out << "straight-curve $-1 -1 $-1 " 
-	    << CGAL::to_double(se->source()->source()->point().x()) << " "
-	    << CGAL::to_double(se->source()->source()->point().y()) << " "
-	    << CGAL::to_double(se->source()->source()->point().z()) << " "
-	    << CGAL::to_double(se->source()->point().x()) << " "
-	    << CGAL::to_double(se->source()->point().y()) << " "
-	    << CGAL::to_double(se->source()->point().z()) << " I I #"	  
-	    << std::endl;
+        out << "edge $-1 -1 $-1 $"
+            << VERTEX[se->source()->source()] << " 0 $"
+            << VERTEX[se->source()->twin()->source()] << " " << end_param << " $"
+            << COEDGE[se->source()]
+            << " $" << EDGE[se->source()]+1
+            << " forward @7 unknown #" << std::endl;
+
+        out << "straight-curve $-1 -1 $-1 "
+            << CGAL::to_double(se->source()->source()->point().x()) << " "
+            << CGAL::to_double(se->source()->source()->point().y()) << " "
+            << CGAL::to_double(se->source()->source()->point().z()) << " "
+            << CGAL::to_double(se->source()->point().x()) << " "
+            << CGAL::to_double(se->source()->point().y()) << " "
+            << CGAL::to_double(se->source()->point().z()) << " I I #"
+            << std::endl;
       }
   }
 
@@ -269,18 +269,18 @@ class sat_writer : public CGAL::SNC_decorator<typename Nef_::SNC_structure> {
     for(v=vertices_begin();v!=vertices_end();++v) {
       Halfedge_handle e=v->svertices_begin();
       if(!e->is_twin()) e=e->twin();
-      out << "vertex $-1 -1 $-1 $" << EDGE[e] 
-	  << " $" << VERTEX[v]+1 << " #" << std::endl;
+      out << "vertex $-1 -1 $-1 $" << EDGE[e]
+          << " $" << VERTEX[v]+1 << " #" << std::endl;
 
-      out << "point $-1 -1 $-1 " 
-	  << CGAL::to_double(v->point().x()) << " "
-	  << CGAL::to_double(v->point().y()) << " "
-	  << CGAL::to_double(v->point().z()) << " #"
-	  << std::endl;
-      
+      out << "point $-1 -1 $-1 "
+          << CGAL::to_double(v->point().x()) << " "
+          << CGAL::to_double(v->point().y()) << " "
+          << CGAL::to_double(v->point().z()) << " #"
+          << std::endl;
+
     }
   }
-  
+
   void print() {
     print_header();
     print_body();

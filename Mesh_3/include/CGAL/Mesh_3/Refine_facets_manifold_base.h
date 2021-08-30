@@ -19,7 +19,6 @@
 
 #include <CGAL/Mesh_facet_topology.h>
 
-#include <CGAL/atomic.h>
 #include <CGAL/utility.h>
 #include <CGAL/Time_stamper.h>
 
@@ -31,6 +30,7 @@
 
 #include <set>
 #include <vector>
+#include <atomic>
 
 namespace CGAL {
 
@@ -219,7 +219,7 @@ private:
               << biggest_sq_dist << std::endl;
 #endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 
-    for (++fcirc; *fcirc != first_facet; ++fcirc) 
+    for (++fcirc; *fcirc != first_facet; ++fcirc)
     {
       while(!this->r_c3t3_.is_in_complex(*fcirc)) ++fcirc;
       if(*fcirc == first_facet) break;
@@ -247,7 +247,7 @@ private:
 
   // Actions to perform on a facet inside the conflict zone
   void
-  before_insertion_handle_facet_inside_conflict_zone (const Facet& f) 
+  before_insertion_handle_facet_inside_conflict_zone (const Facet& f)
   {
 #ifdef CGAL_LINKED_WITH_TBB
     // Sequential only
@@ -308,7 +308,7 @@ public:
                               int mesh_topology,
                               std::size_t maximal_number_of_vertices
 #ifndef CGAL_NO_ATOMIC
-                              , CGAL::cpp11::atomic<bool>* stop_ptr
+                              , std::atomic<bool>* stop_ptr
 #endif
                               )
     : Base(triangulation,
@@ -446,7 +446,7 @@ public:
 
 #ifndef CGAL_NO_ATOMIC
       if(this->m_stop_ptr != 0 &&
-         this->m_stop_ptr->load(CGAL::cpp11::memory_order_acquire) == true)
+         this->m_stop_ptr->load(std::memory_order_acquire) == true)
       {
         return true;
       }
@@ -544,7 +544,7 @@ public:
     // foreach f in star(v)
     for (typename Facets::iterator fit = facets.begin();
          fit != facets.end();
-         ++fit) 
+         ++fit)
     {
       // foreach edge of *fit
       const Cell_handle cell = fit->first;
@@ -564,7 +564,7 @@ public:
           // edges are tried to be inserted several times
           // TODO one day: test if the edge is still singular
           if ( (this->r_c3t3_.face_status(edge) == C3t3::SINGULAR) ||
-               ( (!m_with_boundary) && 
+               ( (!m_with_boundary) &&
                  (this->r_c3t3_.face_status(edge) == C3t3::BOUNDARY) )
                )
           {

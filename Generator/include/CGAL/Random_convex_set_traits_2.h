@@ -1,16 +1,16 @@
-// Copyright (c) 1998  
+// Copyright (c) 1998
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -41,8 +41,8 @@ struct Random_convex_set_traits_2 : public Kernel {
   {
     FT
     operator()( const Point_2& p) const
-    { 
-      return (std::max)( CGAL_NTS abs( p.x()), CGAL_NTS abs( p.y())); 
+    {
+      return (std::max)( CGAL_NTS abs( p.x()), CGAL_NTS abs( p.y()));
     }
   };
 

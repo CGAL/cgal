@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -118,17 +118,17 @@ template <> class Algebraic_structure_traits< double >
 };
 
 
-  
-#ifdef CGAL_USE_SSE2_FABS   
+
+#ifdef CGAL_USE_SSE2_FABS
 inline double sse2fabs(double a)
 {
   static CGAL_ALIGN_16 const union{
     __int64 i[2];
     __m128d m;
   } absMask = {0x7fffffffffffffff, 0x7fffffffffffffff};
-	  
+
   __m128d temp = _mm_set1_pd(a);
-  
+
   temp = _mm_and_pd(temp, absMask.m);
   return _mm_cvtsd_f64 (temp);
 }
@@ -148,7 +148,7 @@ template <> class Real_embeddable_traits< double >
         Type operator()( const Type& x ) const {
 #ifdef CGAL_USE_SSE2_FABS
           return sse2fabs(x);
-#else         
+#else
           return std::fabs( x );
 #endif
         }

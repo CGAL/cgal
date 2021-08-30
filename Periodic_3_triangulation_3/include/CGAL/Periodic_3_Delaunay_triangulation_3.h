@@ -22,7 +22,7 @@
 #include <CGAL/spatial_sort.h>
 
 // Needed by remove to fill the hole.
-#include <CGAL/internal/Periodic_3_Delaunay_triangulation_remove_traits_3.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_Delaunay_triangulation_remove_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 
 #include <iostream>
@@ -56,7 +56,7 @@ public:
   typedef Periodic_3_triangulation_3<Gt,Tds>                   Base;
 
 public:
-  /** @name Template parameter types */ 
+  /** @name Template parameter types */
   typedef Gt                                    Geometric_traits;
   typedef Tds                                   Triangulation_data_structure;
 

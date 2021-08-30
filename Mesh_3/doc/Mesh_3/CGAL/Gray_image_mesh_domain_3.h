@@ -18,24 +18,24 @@ domain have gray level values that are larger than the isovalue.
 
 This class includes a member function that provides, by interpolation,
 a gray level value at any query point.
-An intersection between a segment and bounding 
+An intersection between a segment and bounding
 surfaces is detected when both segment endpoints are associated with gray level
 values which are on both sides of the isovalue.
 The intersection is then constructed by bisection.
-The bisection stops when the query segment is shorter than a given error bound 
-`e`. This error bound is given by `e=d`\f$ \times\f$`bound` where `d` is the 
-length of the diagonal of the bounding box (in world coordinates) and 
+The bisection stops when the query segment is shorter than a given error bound
+`e`. This error bound is given by `e=d`\f$ \times\f$`bound` where `d` is the
+length of the diagonal of the bounding box (in world coordinates) and
 `bound` is the argument passed to the constructor of `Labeled_image_mesh_domain_3`.
 
 
-\tparam Image is the type of the input image. 
+\tparam Image is the type of the input image.
 This parameter must be `CGAL::Image_3`.
 
-\tparam BGT is a geometric traits class which provides 
-the basic operations to implement 
-intersection tests and intersection computations 
-through a bisection method. This parameter must be instantiated 
-with a model of the concept `BisectionGeometricTraits_3`. 
+\tparam BGT is a geometric traits class which provides
+the basic operations to implement
+intersection tests and intersection computations
+through a bisection method. This parameter must be instantiated
+with a model of the concept `BisectionGeometricTraits_3`.
 
 \tparam Image_word_type is the data type encoded in the `Image`
 input file
@@ -54,7 +54,7 @@ class Gray_image_mesh_domain_3
 {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -67,7 +67,7 @@ value higher than the input isovalue.
 @param value_outside the value attached to voxels outside of the domain
        to be meshed. It should be lower than `iso_value`
 @param error_bound is relative to the size of the image.
-*/ 
+*/
   Gray_image_mesh_domain_3(
       const Image& image,
       const Image_word_type iso_value,

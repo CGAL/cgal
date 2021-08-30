@@ -13,8 +13,8 @@ classes for the data items (`Data` and `Window`).
 
 \cgalHeading{Example}
 
-The following figures show a number of rectangles and a 2-dimensional 
-segment tree built on them. 
+The following figures show a number of rectangles and a 2-dimensional
+segment tree built on them.
 
 \image html segment_ex2.png "Two dimensional interval data and the corresponding segment tree."
 \image latex segment_ex2.png "Two dimensional interval data and the corresponding segment tree."
@@ -27,59 +27,59 @@ public:
 /// @{
 
 /*!
-container `Data`. 
-*/ 
-typedef unspecified_type Data; 
+container `Data`.
+*/
+typedef unspecified_type Data;
 
 /*!
-container `Window`. 
-*/ 
-typedef unspecified_type Window; 
+container `Window`.
+*/
+typedef unspecified_type Window;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
 
-*/ 
-Tree_anchor<Data, Window> a(); 
+*/
+Tree_anchor<Data, Window> a();
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
 
-*/ 
-template<class OutputIterator> 
-OutputIterator window_query(Window win, OutputIterator result); 
+*/
+template<class OutputIterator>
+OutputIterator window_query(Window win, OutputIterator result);
 
 /*!
 
-*/ 
-template<class OutputIterator> 
-OutputIterator enclosing_query(Window win, OutputIterator result); 
+*/
+template<class OutputIterator>
+OutputIterator enclosing_query(Window win, OutputIterator result);
 
 /*!
-returns true; 
-*/ 
-bool is_valid(); 
+returns true;
+*/
+bool is_valid();
 
 protected:
 
 /*!
-returns true. 
-*/ 
-bool is_inside(Window win, 
-Data object); 
+returns true.
+*/
+bool is_inside(Window win,
+Data object);
 
 /*!
-returns true. 
-*/ 
-bool is_anchor(); 
+returns true.
+*/
+bool is_anchor();
 
 /// @}
 

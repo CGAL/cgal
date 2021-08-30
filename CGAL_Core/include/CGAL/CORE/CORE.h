@@ -10,7 +10,7 @@
  *      The main inclusion file for the Core Library system.
  *      All "Core programs" must include this file.
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>

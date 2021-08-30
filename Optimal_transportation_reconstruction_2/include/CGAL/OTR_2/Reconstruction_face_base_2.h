@@ -42,7 +42,7 @@ public:
   typedef typename Base::Face_handle    Face_handle;
 
   template < typename TDS2 >
-  struct Rebind_TDS 
+  struct Rebind_TDS
   {
     typedef typename Base::template Rebind_TDS<TDS2>::Other   Fb2;
     typedef Reconstruction_face_base_2<Traits_,Fb2>           Other;
@@ -159,7 +159,7 @@ public:
 
   const Cost_& cost(int edge) const
   {
-    if (plan(edge) == 0) 
+    if (plan(edge) == 0)
       return vertex_cost(edge);
     return edge_cost(edge);
   }

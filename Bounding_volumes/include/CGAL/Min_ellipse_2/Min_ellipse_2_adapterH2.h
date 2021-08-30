@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // ETH Zurich (Switzerland).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
@@ -97,7 +97,7 @@ class Min_ellipse_2_adapterH2 {
     orientation( const Point& p, const Point& q, const Point& r) const
     {
         typedef  typename DA_::RT  RT;
-    
+
         RT  phx;
         RT  phy;
         RT  phw;
@@ -107,11 +107,11 @@ class Min_ellipse_2_adapterH2 {
         RT  rhx;
         RT  rhy;
         RT  rhw;
-    
+
         dao.get( p, phx, phy, phw);
         dao.get( q, qhx, qhy, qhw);
         dao.get( r, rhx, rhy, rhw);
-    
+
         return( static_cast< CGAL::Orientation>(
                  CGAL_NTS sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
                               - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
@@ -337,7 +337,7 @@ operator << ( std::ostream& os,
     const char*  sep  = empty;
     const char*  tail = empty;
 
-    switch ( CGAL::get_mode( os)) {
+    switch ( CGAL::IO::get_mode( os)) {
       case CGAL::IO::PRETTY:
         head = pretty_head;
         sep  = pretty_sep;
@@ -350,7 +350,7 @@ operator << ( std::ostream& os,
         break;
       default:
         CGAL_optimisation_assertion_msg( false,
-                                        "CGAL::get_mode( os) invalid!");
+                                        "CGAL::IO::get_mode( os) invalid!");
         break; }
 
     os << head << e.n_boundary_points;
@@ -382,11 +382,11 @@ std::istream&
 operator >> ( std::istream& is,
               CGAL::_Min_ellipse_2_adapterH2__Ellipse<PT_,DA_>& e)
 {
-    switch ( CGAL::get_mode( is)) {
+    switch ( CGAL::IO::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
         std::cerr << std::endl;
-	std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
 
       case CGAL::IO::ASCII:

@@ -1,9 +1,9 @@
-// Copyright (c) 2014  
+// Copyright (c) 2014
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -37,11 +37,11 @@ namespace CGAL {
 `Exact_integer` is an exact integer number type.
 
 It is a typedef of another number type. Its exact definition depends on
-the availability the third-party libraries %GMP, %CORE, and %LEDA. %CGAL must
+the availability the third-party libraries \gmp, \core, and \leda. \cgal must
 be configured with at least one of those libraries.
 
-\cgalModels `EuclideanRing` 
-\cgalModels `RealEmbeddable` 
+\cgalModels `EuclideanRing`
+\cgalModels `RealEmbeddable`
 
 */
 #if DOXYGEN_RUNNING

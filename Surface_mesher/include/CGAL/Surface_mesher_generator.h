@@ -135,17 +135,17 @@ namespace CGAL {
       SurfaceMeshTraits_3,
       Criteria,
       Tag>::Mesher_base Mesher_base;
-  
+
     typedef Surface_mesher::Surface_mesher<
       Mesher_base,
       typename Surface_mesher::details::Facet_generator<Mesher_base>::type,
       Null_mesher_level,
       verbosity> Mesher;
-  
+
     typedef Mesher type;
     typedef Mesher Type;
   }; // end struct Surface_mesher_generator
-  
+
 } // end namespace CGAL
 
 #endif // CGAL_SURFACE_MESH_GENERATOR_H

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
@@ -15,10 +15,10 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Arr_rational_arc_traits_2.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_rational_function_traits_2.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 /*! \file
- * Definition of the Arr_rational_arc_traits_2 class. 
+ * Definition of the Arr_rational_arc_traits_2 class.
  */
 #include <CGAL/config.h>
 
@@ -34,15 +34,15 @@ namespace CGAL {
  * A traits class for maintaining an arrangement of bounded arcs (segments) of
  * rational functions of arbitrary degree.
  *
- * The class is templated with two parameters: 
+ * The class is templated with two parameters:
  * Alg_kernel A geometric kernel, where Alg_kernel::FT is the number type
  *            for the coordinates of arrangement vertices, which are algebraic
  *            numbers (defined by Nt_traits::Algebraic).
  * Nt_traits A traits class for performing various operations on the integer,
- *           rational and algebraic types. 
+ *           rational and algebraic types.
  */
 template <class Alg_kernel_, class Nt_traits_>
-class Arr_rational_arc_traits_2 
+class Arr_rational_arc_traits_2
 {
 public:
 
@@ -80,7 +80,7 @@ public:
   Arr_rational_arc_traits_2 ()
   {}
 
-  /// \name Functor definitions.
+  /// \name Basic functor definitions.
   //@{
 
   /*! A functor that compares the x-coordinates of two points */
@@ -256,7 +256,7 @@ public:
       );
       CGAL_precondition ((cv1.left_infinite_in_x() != ARR_INTERIOR ||
                           cv1.left_infinite_in_y() != ARR_INTERIOR ||
-                          ker.compare_xy_2_object() (p, 
+                          ker.compare_xy_2_object() (p,
                                                      cv1.left()) == LARGER) &&
                          (cv2.left_infinite_in_x() != ARR_INTERIOR ||
                           cv2.left_infinite_in_y() != ARR_INTERIOR ||
@@ -266,17 +266,17 @@ public:
       // Compare the slopes of the two arcs.
       Comparison_result        res;
       unsigned int             mult;
-    
+
       res = cv1.compare_slopes (cv2, p, mult);
 
-      // The comparison result is to the right of p. In case the multiplicity 
+      // The comparison result is to the right of p. In case the multiplicity
       // of the intersection point p is odd, reverse this result.
       if (mult % 2 == 1)
       {
-	if (res == SMALLER)
-	  res = LARGER;
-	else if (res == LARGER)
-	  res = SMALLER;
+        if (res == SMALLER)
+          res = LARGER;
+        else if (res == LARGER)
+          res = SMALLER;
       }
 
       return (res);
@@ -320,7 +320,7 @@ public:
       );
       CGAL_precondition((cv1.right_infinite_in_x() != ARR_INTERIOR ||
                          cv1.right_infinite_in_y() != ARR_INTERIOR ||
-                         ker.compare_xy_2_object() (p, 
+                         ker.compare_xy_2_object() (p,
                                                     cv1.right()) == SMALLER) &&
                         (cv2.right_infinite_in_x() != ARR_INTERIOR ||
                          cv2.right_infinite_in_y() != ARR_INTERIOR ||
@@ -381,19 +381,22 @@ public:
   {
     return Equal_2();
   }
+  //@}
+
+  //! \name Intersections, subdivisions, and mergings
+  //@{
 
   /*! A functor that divides a curve into continues (x-monotone) curves. */
   class Make_x_monotone_2
   {
   public:
 
-    /*!
-     * Cut the given conic curve (or conic arc) into x-monotone subcurves 
-     * and insert them to the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects is a wrapper for an X_monotone_curve_2 object.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given rational arc into x-monotone subcurves and insert them
+     * into a given output iterator.
+     * \param cv the arc.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
     template<class OutputIterator>
     OutputIterator operator() (const Curve_2& cv, OutputIterator oi)
@@ -511,14 +514,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_rational_arc_traits_2<Kernel>;
-    
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
@@ -586,7 +589,7 @@ public:
   /*! Obtain a Parameter_space_in_x_2 function object */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(); }
-  
+
   /*! A function object that obtains the parameter space of a geometric
    * entity along the y-axis
    */
@@ -646,7 +649,7 @@ public:
      * \return the comparison result:
      *         SMALLER - x(p) < x(xc, ce);
      *         EQUAL   - x(p) = x(xc, ce);
-     *         LARGER  - x(p) > x(xc, ce).     
+     *         LARGER  - x(p) > x(xc, ce).
      * \pre p lies in the interior of the parameter space.
      * \pre the ce end of the curve xcv lies on a boundary, implying that xcv
      *      is either a vertical line or a curve with a vertical asymptote.
@@ -691,13 +694,13 @@ public:
   /*! Obtain a Compare_x_at_limit_2 function object */
   Compare_x_at_limit_2 compare_x_at_limit_2_object() const
   { return Compare_x_at_limit_2(); }
-    
+
   /*! A function object that compares the x-coordinates of arc ends near the
    * boundary of the parameter space
    */
   class Compare_x_near_limit_2 {
   public:
-    
+
     /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
      * parameter space at y = +/- oo.
      * \param xcv1 the first arc.
@@ -724,7 +727,7 @@ public:
   /*! Obtain a Compare_x_near_limit_2 function object */
   Compare_x_near_limit_2 compare_x_near_limit_2_object() const
   { return Compare_x_near_limit_2(); }
-    
+
 
   /*! A function object that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
@@ -755,10 +758,10 @@ public:
   { return Compare_y_near_boundary_2(); }
 
   //@}
-  
+
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
- 
+
   class Compare_endpoints_xy_2
   {
   public:
@@ -775,7 +778,7 @@ public:
       if (cv.is_directed_right())
         return (SMALLER);
       else
-	return (LARGER);
+        return (LARGER);
     }
   };
 

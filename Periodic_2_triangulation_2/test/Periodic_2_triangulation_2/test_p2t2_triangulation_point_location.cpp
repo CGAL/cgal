@@ -23,7 +23,7 @@ Face_handle test_point_location(const Triangulation &t,
   os = t.oriented_side(fh, query);
   CGAL_USE(bs);
   CGAL_USE(os);
-  
+
   CGAL_assertion(lt2 == lt_in);
 
   switch (lt_in)

@@ -104,7 +104,7 @@ struct Intersect_facets {
     }
 };
 
-void write_off() {
+void write_OFF() {
     cout << "OFF\n" << (triangles.size() * 3) << ' ' << triangles.size()
          << " 0\n";
     for ( std::vector<Triangle>::iterator i = triangles.begin();
@@ -154,7 +154,7 @@ int main(int argc, char* argv[]) {
     cerr << "Intersection ... " << endl;
     intersection( P);
     cerr << "Intersection       : " << user_time.time() << " seconds." << endl;
-    write_off();
+    write_OFF();
 
     return 0;
 }

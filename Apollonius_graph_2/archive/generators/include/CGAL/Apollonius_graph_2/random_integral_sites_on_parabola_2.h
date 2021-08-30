@@ -28,7 +28,7 @@ public:
   }
 
   Random_integral_sites_on_parabola_2(unsigned int b, unsigned int p,
-				      int seed)
+                                      int seed)
     : b_(b), p_(p), r_(seed) {
     CGAL_precondition( b >= 0 && b <= 26 );
     CGAL_precondition( p >= 0 && p <= 26 );

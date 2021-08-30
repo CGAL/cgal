@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Philippe Guigue
 
@@ -26,26 +26,26 @@ namespace CGAL {
   class Plane_3;
 
 namespace Intersections {
-  
+
 namespace internal {
 
 template <class K>
-bool do_intersect(const typename K::Triangle_3 &t, 
-		  const typename K::Plane_3   &h,
-		  const K & k)
+bool do_intersect(const typename K::Triangle_3 &t,
+                  const typename K::Plane_3   &h,
+                  const K & k)
 {
-  
+
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(t)) ;
   CGAL_kernel_precondition( ! k.is_degenerate_3_object()(h)) ;
 
-   
+
   typename K::Construct_vertex_3 vertex_on =
     k.construct_vertex_3_object();
-  
+
   typename K::Oriented_side_3 oriented_side =
     k.oriented_side_3_object();
 
-  
+
 
   switch ( oriented_side(h,vertex_on(t,0)) ) {
   case ON_POSITIVE_SIDE:
@@ -66,8 +66,8 @@ bool do_intersect(const typename K::Triangle_3 &t,
 template <class K>
 inline
 bool do_intersect(const typename K::Plane_3   &h,
-		  const typename K::Triangle_3 &t, 
-		  const K & k)
+                  const typename K::Triangle_3 &t,
+                  const K & k)
 {
   return do_intersect(t, h, k);
 }

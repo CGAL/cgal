@@ -15,7 +15,7 @@
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Nef_3/convex_decomposition_3.h> 
+#include <CGAL/Nef_3/convex_decomposition_3.h>
 #include <CGAL/convexity_check_3.h>
 
 #ifdef CGAL_TCSP_BRUTE_FORCE
@@ -74,7 +74,7 @@ public:
   bool is_in(const Plane_3 p) {
     for(CI ci = planes.begin(); ci != planes.end(); ++ci)
       if(*ci == p)
-	return true;
+        return true;
     return false;
   }
 
@@ -94,10 +94,10 @@ public:
     std::cout << planes.size() << std::endl;
     for(CI ci = planes.begin(); ci != planes.end(); ++ci) {
 #ifdef CGAL_WITH_LAZY_KERNEL
-      std::cout << CGAL::to_double(ci->a().exact()) << " " 
-		<< CGAL::to_double(ci->b().exact()) << " "
-		<< CGAL::to_double(ci->c().exact()) << " "
-		<< CGAL::to_double(ci->d().exact()) << std::endl;
+      std::cout << CGAL::to_double(ci->a().exact()) << " "
+                << CGAL::to_double(ci->b().exact()) << " "
+                << CGAL::to_double(ci->c().exact()) << " "
+                << CGAL::to_double(ci->d().exact()) << std::endl;
 #else
       std::cout << *ci << std::endl;
 #endif
@@ -108,15 +108,15 @@ public:
 
 void read( const char* name, Polyhedron_3& poly) {
   std::ifstream in( name);
-  if ( ! in) { 
+  if ( ! in) {
     std::cerr << "minkowsky_sum: error: cannot open file '"<< name
-	      << "' for reading." << std::endl;
+              << "' for reading." << std::endl;
     std::exit( 1);
   }
   in >> poly;
-  if ( ! in) { 
+  if ( ! in) {
     std::cerr << "minkowsky_sum: error: reading from file '"<< name << "'."
-	      << std::endl;
+              << std::endl;
     std::exit( 1);
   }
 }
@@ -167,19 +167,19 @@ int main(int argc, char* argv[]) {
     Point_3 p(x,y,z,1);
 #else
     Point_3 p(x.numerator()   * y.denominator() * z.denominator(),
-	      x.denominator() * y.numerator()   * z.denominator(),
-	      x.denominator() * y.denominator() * z.numerator(),
-	      x.denominator() * y.denominator() * z.denominator() );
+              x.denominator() * y.numerator()   * z.denominator(),
+              x.denominator() * y.denominator() * z.numerator(),
+              x.denominator() * y.denominator() * z.denominator() );
     p = normalized(p);
 #endif
     //    std::cerr << "input " << p << std::endl;
     points.push_back(p);
   }
- 
+
   std::cerr << "number of facets " << nf << std::endl;
   trunk.getline(buffer,80);
   trunk.getline(buffer,80);
-  
+
   int mod = argc > 3 ? std::atoi(argv[3]) : 256;
   int step = argc > 4 ? std::atoi(argv[4]) : 2;
   int mp = argc > 5 ? std::atoi(argv[5]) : nv/63;
@@ -187,7 +187,7 @@ int main(int argc, char* argv[]) {
   int face[3*nf];
   for(int i=0;i<nf;++i){
     trunk >> face[3*i] >> face[3*i+1] >> face[3*i+2] >> col >> man;
-    facets.push_back(std::make_pair(face+(3*i),face+(3*i+3))); 
+    facets.push_back(std::make_pair(face+(3*i),face+(3*i+3)));
   }
 
   Polyhedron_3 P;
@@ -205,20 +205,20 @@ int main(int argc, char* argv[]) {
   }
 
   std::cerr << "bbp " << bbp.min_coord(0)
-	    << ", " << bbp.min_coord(1)
-	    << ", " << bbp.min_coord(2)
-	    << " - " << bbp.max_coord(0)
-	    << ", " << bbp.max_coord(1) 
-	    << ", " << bbp.max_coord(2) << std::endl;
+            << ", " << bbp.min_coord(1)
+            << ", " << bbp.min_coord(2)
+            << " - " << bbp.max_coord(0)
+            << ", " << bbp.max_coord(1)
+            << ", " << bbp.max_coord(2) << std::endl;
 
-  Kernel::Vector_3 vec(bbp.max_coord(0)-bbp.min_coord(0), 
-		       bbp.max_coord(1)-bbp.min_coord(1),
-		       bbp.max_coord(2)-bbp.min_coord(2));
+  Kernel::Vector_3 vec(bbp.max_coord(0)-bbp.min_coord(0),
+                       bbp.max_coord(1)-bbp.min_coord(1),
+                       bbp.max_coord(2)-bbp.min_coord(2));
   vec = vec / Kernel::RT(2);
   std::cerr << "translate " << vec << std::endl;
   Kernel::Vector_3 pvec(-bbp.max_coord(0),
-			-bbp.max_coord(1),
-			-bbp.max_coord(2));
+                        -bbp.max_coord(1),
+                        -bbp.max_coord(2));
   vec = vec + pvec;
   std::cerr << "translate " << vec << std::endl;
   Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, vec);
@@ -230,7 +230,7 @@ int main(int argc, char* argv[]) {
 
   CGAL::Timer t;
   t.start();
-  std::vector<Point_3>::const_iterator 
+  std::vector<Point_3>::const_iterator
     pbegin(points.begin()), pend(points.end());
   std::list<std::pair<int*, int*> >::const_iterator
     fbegin(facets.begin()), fend(facets.end());
@@ -271,12 +271,12 @@ int main(int argc, char* argv[]) {
   outNCV << NCV;
   outDIFF << DIFF;
   t.start();
-  
+
   convex_decomposition_3<Nef_polyhedron_3>(DIFF);
 
   t.stop();
-  std::cerr << "Runtime CSP,CV,(CV-CSP),Decomposition: " 
-	    << t.time() << std::endl;
+  std::cerr << "Runtime CSP,CV,(CV-CSP),Decomposition: "
+            << t.time() << std::endl;
   t.start();
 
 
@@ -299,8 +299,8 @@ int main(int argc, char* argv[]) {
   }
 
   t.stop();
-  std::cerr << "Runtime CSP,CV,(CV-CSP),Decomposition,Output: " 
-	    << t.time() << std::endl;    
+  std::cerr << "Runtime CSP,CV,(CV-CSP),Decomposition,Output: "
+            << t.time() << std::endl;
 
   /*
   QApplication a(argc, argv);

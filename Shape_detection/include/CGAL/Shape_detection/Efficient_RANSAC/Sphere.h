@@ -25,14 +25,14 @@ namespace CGAL {
     /*!
      \ingroup PkgShapeDetectionRANSACShapes
      \brief Sphere implements Shape_base. The sphere is represented by its center and the radius.
-     \tparam Traits must be a model of `EfficientRANSACTraits` with the additional 
+     \tparam Traits must be a model of `EfficientRANSACTraits` with the additional
              requirement for spheres (see `EfficientRANSACTraits` documentation).
      */
   template <class Traits>
   class Sphere : public Shape_base<Traits> {
     using Shape_base<Traits>::update_label;
 
-  public:    
+  public:
     /// \cond SKIP_IN_MANUAL
     typedef typename Traits::Point_map Point_map;
       ///< property map to access the location of an input point.
@@ -64,7 +64,7 @@ namespace CGAL {
     Point_3 center() const {
       return this->sph_center(m_sphere);
     }
-      
+
     /*!
       Access to the radius of the sphere.
      */
@@ -79,13 +79,13 @@ namespace CGAL {
     FT squared_distance(const Point_3 &p) const {
       const FT d = CGAL::sqrt(
         this->sqlen(this->constr_vec(
-          p, this->sph_center(m_sphere)))) 
+          p, this->sph_center(m_sphere))))
         - CGAL::sqrt(this->sqradius(m_sphere));
       return d * d;
     }
-    
+
     /*!
-      Helper function to write center, 
+      Helper function to write center,
       radius of the sphere and number of assigned points into a string.
      */
     std::string info() const {
@@ -200,7 +200,7 @@ namespace CGAL {
       }
     }
 
-    virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
         Vector_3 n = this->constr_vec(
@@ -227,7 +227,7 @@ namespace CGAL {
       sphere_normal = this->scale(sphere_normal, (FT)1.0 / length);
       return CGAL::abs(this->scalar_pdct(sphere_normal, n));
     }
-      
+
     virtual std::size_t minimum_sample_size() const {
       return 3;
     }
@@ -340,7 +340,7 @@ namespace CGAL {
       m_wrap_right = abs(max[0] - CGAL_M_PI_2 * rad) < (cluster_epsilon * 0.5);
       m_wrap_left = abs(min[0] + CGAL_M_PI_2 * rad) < (cluster_epsilon * 0.5);
 
-      FT diff_top = CGAL::abs(-FT(CGAL_PI * rad) - min[1]) 
+      FT diff_top = CGAL::abs(-FT(CGAL_PI * rad) - min[1])
         + FT(CGAL_PI * rad) - max[1];
       m_wrap_top = diff_top < cluster_epsilon;
 
@@ -442,7 +442,7 @@ namespace CGAL {
           // First index
           l = bitmap[(m_equator + 1) * u_extent - 1];
           unsigned int ws = bitmap[(m_equator + 3) * u_extent - 1];
-          
+
           if (l && ws && l != ws) {
             l = (std::min<unsigned int>)(ws, l);
             update_label(labels, (std::max<unsigned int>)(ws, l), l);
@@ -542,7 +542,7 @@ namespace CGAL {
     virtual bool supports_connected_component() const {
       return true;
     }
-    
+
   private:
     Sphere_3 m_sphere;
     mutable bool m_wrap_right, m_wrap_top, m_wrap_left;

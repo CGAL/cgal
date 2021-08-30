@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Regular_triangulation_traits_adapter` is used internally by the
 class `Regular_triangulation` to wrap its first template parameter
 (`RegularTriangulationTraits_`)
-so that the base class `Triangulation` manipulates weighted points instead 
+so that the base class `Triangulation` manipulates weighted points instead
 of bare points.
 
 \tparam RTTraits must be a model of the `RegularTriangulationTraits` concept.
@@ -39,7 +39,7 @@ public:
   The base traits.
   */
   typedef RTTraits                                  Base;
-  
+
   /*!
   The weighted point type.
   */

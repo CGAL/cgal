@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
       = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
                                       PMP::parameters::first_index(1)
                                      .vertex_incident_patches_map(vip));
-   
+
     CGAL_assertion(number_of_patches == 6);
 
     PMP::detect_sharp_edges(mesh, 90, eif);

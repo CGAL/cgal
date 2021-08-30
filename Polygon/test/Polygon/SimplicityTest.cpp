@@ -34,7 +34,7 @@ bool TestSimplicity(const char* FileName)
   int n;                  // number of points
   std::vector<Point> polygon;
 
-  CGAL::set_ascii_mode(from);
+  CGAL::IO::set_ascii_mode(from);
   from >> answer >> n;
   cout << "  polygon has " << n << " points" << endl;
   for (int i=0; i<n; i++) {
@@ -71,7 +71,7 @@ void TestDegenerateCases()
 int main()
 {
   TestDegenerateCases();
-  
+
   bool all_correct = true;
   all_correct &= TestSimplicity("data/simple1.dat");
   all_correct &= TestSimplicity("data/simple2.dat");

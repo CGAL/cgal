@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
   Nef_polyhedron N2;
   in2 >> N2;
   CGAL_assertion(N2.is_valid());
-  
+
   cgal_nef3_timer_on = false;
 
 #if defined CGAL_NEF3_UNION

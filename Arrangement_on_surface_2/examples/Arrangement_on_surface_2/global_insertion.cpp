@@ -26,7 +26,7 @@ int main ()
 
   S1[0] = Segment_2 (Point_2 (1, 2.5), Point_2 (4, 5));
   S1[1] = Segment_2 (Point_2 (1, 2.5), Point_2 (6, 2.5));
-  S1[2] = Segment_2 (Point_2 (1, 2.5), Point_2 (4, 0));  
+  S1[2] = Segment_2 (Point_2 (1, 2.5), Point_2 (4, 0));
   S1[3] = Segment_2 (Point_2 (4, 5), Point_2 (6, 2.5));
   S1[4] = Segment_2 (Point_2 (4, 0), Point_2 (6, 2.5));
 
@@ -51,7 +51,7 @@ int main ()
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
   return 0;
 }

@@ -1,9 +1,9 @@
-// Copyright (c) 2001,2007  
+// Copyright (c) 2001,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -19,9 +19,9 @@
 #define CGAL_COUNTED_NUMBER_H
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/atomic.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp> // for Root_of_selector
 #include <iostream>
+#include <atomic>
 
 namespace CGAL {
 
@@ -30,11 +30,11 @@ class Counted_number {
 #ifdef CGAL_NO_ATOMIC
     static unsigned long
 #else
-    static CGAL::cpp11::atomic<unsigned long>
+    static std::atomic<unsigned long>
 #endif
                          s_neg_count, s_add_count, s_sub_count,
                          s_mul_count, s_div_count,
-                  			 s_eq_count, s_comp_count,
+                                           s_eq_count, s_comp_count,
                          s_simplify_count,
                          s_unit_part_count,
                          s_is_zero_count,
@@ -54,7 +54,7 @@ class Counted_number {
     static void reset()
             { s_neg_count=0; s_add_count=0; s_sub_count=0;
               s_mul_count=0; s_div_count=0;
-      	      s_eq_count=0; s_comp_count = 0;
+                    s_eq_count=0; s_comp_count = 0;
               s_simplify_count = 0; s_unit_part_count = 0; s_is_zero_count = 0;
               s_is_one_count = 0; s_square_count = 0;
               s_integral_division_count = 0; s_is_square_count = 0;
@@ -108,7 +108,7 @@ class Counted_number {
     static unsigned long count()
             { return s_neg_count + s_add_count + s_sub_count +
                      s_mul_count + s_div_count +
-      	             s_eq_count + s_comp_count +
+                           s_eq_count + s_comp_count +
                      s_simplify_count + s_unit_part_count + s_is_zero_count +
                      s_is_one_count + s_square_count +
                      s_integral_division_count + s_is_square_count +
@@ -125,9 +125,9 @@ class Counted_number {
             {inc_neg_count();return Counted_number(-m_rep);}
     Counted_number const & operator+=(Counted_number const &n)
             {
-		inc_add_count();
-		m_rep += n.m_rep;
-		return *this;}
+                inc_add_count();
+                m_rep += n.m_rep;
+                return *this;}
     Counted_number const & operator-=(Counted_number const &n)
             {inc_sub_count(); m_rep -= n.m_rep; return *this;}
     Counted_number const & operator*=(Counted_number const &n)
@@ -278,66 +278,66 @@ unsigned long Counted_number<NT>::s_div_mod_count = 0;
 
 template< class NT >
 unsigned long Counted_number<NT>::s_mod_count = 0;
-#else 
+#else
 template <class NT>
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_neg_count;
-
-template <class NT>
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_add_count;
+std::atomic<unsigned long> Counted_number<NT>::s_neg_count;
 
 template <class NT>
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_sub_count;
+std::atomic<unsigned long> Counted_number<NT>::s_add_count;
 
 template <class NT>
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_mul_count;
+std::atomic<unsigned long> Counted_number<NT>::s_sub_count;
 
 template <class NT>
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_div_count;
+std::atomic<unsigned long> Counted_number<NT>::s_mul_count;
 
 template <class NT>
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_eq_count;
+std::atomic<unsigned long> Counted_number<NT>::s_div_count;
 
 template <class NT>
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_comp_count;
+std::atomic<unsigned long> Counted_number<NT>::s_eq_count;
+
+template <class NT>
+std::atomic<unsigned long> Counted_number<NT>::s_comp_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_simplify_count;
+std::atomic<unsigned long> Counted_number<NT>::s_simplify_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_unit_part_count;
+std::atomic<unsigned long> Counted_number<NT>::s_unit_part_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_zero_count;
+std::atomic<unsigned long> Counted_number<NT>::s_is_zero_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_one_count;
+std::atomic<unsigned long> Counted_number<NT>::s_is_one_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_square_count;
+std::atomic<unsigned long> Counted_number<NT>::s_square_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_integral_division_count;
+std::atomic<unsigned long> Counted_number<NT>::s_integral_division_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_is_square_count;
+std::atomic<unsigned long> Counted_number<NT>::s_is_square_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_sqrt_count;
+std::atomic<unsigned long> Counted_number<NT>::s_sqrt_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_kth_root_count;
+std::atomic<unsigned long> Counted_number<NT>::s_kth_root_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_root_of_count;
+std::atomic<unsigned long> Counted_number<NT>::s_root_of_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_gcd_count;
+std::atomic<unsigned long> Counted_number<NT>::s_gcd_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_div_mod_count;
+std::atomic<unsigned long> Counted_number<NT>::s_div_mod_count;
 
 template< class NT >
-CGAL::cpp11::atomic<unsigned long> Counted_number<NT>::s_mod_count;
+std::atomic<unsigned long> Counted_number<NT>::s_mod_count;
 #endif
 
 
@@ -490,14 +490,14 @@ void Counted_number<NT>::report(std::ostream &os)
 template <class NT>
 std::ostream& operator<<(std::ostream &os, Counted_number<NT> const &n)
 {
-    return os << ::CGAL::oformat( n.rep() )<< std::endl;
+    return os << ::CGAL::IO::oformat( n.rep() )<< std::endl;
 }
 
 template <class NT>
 std::istream& operator>>(std::istream &is, Counted_number<NT> &n)
 {
     NT num;
-    is >> ::CGAL::iformat(num);
+    is >> ::CGAL::IO::iformat(num);
     if (is) n = Counted_number<NT>(num);
     return is;
 }
@@ -799,8 +799,8 @@ public:
 
 template <class NT>
 class Real_embeddable_traits<Counted_number<NT> >
-  : public INTERN_RET::Real_embeddable_traits_base <Counted_number<NT> , 
-   typename Real_embeddable_traits<NT>::Is_real_embeddable > 
+  : public INTERN_RET::Real_embeddable_traits_base <Counted_number<NT> ,
+   typename Real_embeddable_traits<NT>::Is_real_embeddable >
 {
     typedef Real_embeddable_traits<NT> RET_NT;
 
@@ -830,13 +830,13 @@ public:
     };
 };
 
-template<typename NT> inline 
+template<typename NT> inline
 Counted_number<NT> min BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Counted_number<NT> & x,
 const Counted_number<NT> & y){
   return CGAL::Min<Counted_number<NT> > ()(x,y);
 }
-template<typename NT> inline 
+template<typename NT> inline
 Counted_number<NT> max BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Counted_number<NT> & x,
 const Counted_number<NT> & y){

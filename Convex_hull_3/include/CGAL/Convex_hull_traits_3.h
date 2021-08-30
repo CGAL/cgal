@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -42,7 +42,7 @@ public:
   Point_triple() {}
 
   Point_triple(const Point_3 &p, const Point_3 &q, const Point_3 &r)
-    : p_(p), q_(q), r_(r) 
+    : p_(p), q_(q), r_(r)
   {}
 
   const Point_3& p() const { return p_; }
@@ -80,23 +80,23 @@ public:
   bool
     operator()( const Plane_3& pl, const Point_3& p) const
     {
-      typename K::Orientation_3 o; 
+      typename K::Orientation_3 o;
       return ( o(pl.p(), pl.q(), pl.r(), p) == CGAL::POSITIVE );
     }
 
   typedef bool result_type;
 };
 template <class K, class OldK>
-class Point_triple_construct_orthogonal_vector_3 
+class Point_triple_construct_orthogonal_vector_3
 {
 public:
-  
+
     typedef typename K::Vector_3 Vector_3;
     typedef typename K::Plane_3 Plane_3;
-  
+
   Vector_3 operator()(const Plane_3& plane) const
   {
-    typename OldK::Construct_orthogonal_vector_3 
+    typename OldK::Construct_orthogonal_vector_3
       construct_orthogonal_vector_3;
     return construct_orthogonal_vector_3(plane.p(), plane.q(), plane.r());
   }
@@ -104,10 +104,10 @@ public:
 
 
 template <class K>
-class Point_triple_oriented_side_3 
+class Point_triple_oriented_side_3
 {
 public:
-  
+
     typedef typename K::Point_3 Point_3;
     typedef typename K::Plane_3 Plane_3;
     typedef Oriented_side    result_type;
@@ -115,7 +115,7 @@ public:
   result_type
     operator()( const Plane_3& pl, const Point_3& p) const
     {
-      typename K::Orientation_3 o; 
+      typename K::Orientation_3 o;
       Orientation ori = o(pl.p(), pl.q(), pl.r(), p) ;
       if(ori > 0) return ON_POSITIVE_SIDE;
       if(ori < 0) return ON_NEGATIVE_SIDE;
@@ -124,8 +124,8 @@ public:
 };
 
 template <typename K>
-class Point_triple_less_signed_distance_to_plane_3 
-{  
+class Point_triple_less_signed_distance_to_plane_3
+{
 public:
     typedef typename K::Point_3 Point_3;
     typedef Point_triple<K> Plane_3;
@@ -156,9 +156,9 @@ struct GT3_for_CH3 {
               boost::is_floating_point<typename R_::FT>::type::value &&
               R_::Has_filtered_predicates_tag::value
             > >
-class Convex_hull_traits_3 
+class Convex_hull_traits_3
 {
- public:  
+ public:
   typedef R_                                     R;
   typedef Convex_hull_traits_3<R, Polyhedron, Has_filtered_predicates_tag>  Self;
   typedef typename R::Point_3                    Point_3;
@@ -196,8 +196,8 @@ class Convex_hull_traits_3
 
   typedef  Point_triple_less_signed_distance_to_plane_3<R>
                                                  Less_signed_distance_to_plane_3;
-  
-  
+
+
 
   // required for degenerate case of all points coplanar
   typedef CGAL::Projection_traits_xy_3<R>         Traits_xy_3;
@@ -209,10 +209,10 @@ class Convex_hull_traits_3
   {return Traits_yz_3();}
   Traits_xz_3 construct_traits_xz_3_object()const
   {return Traits_xz_3();}
-  
+
   typedef typename R::Construct_vector_3          Construct_vector_3;
-  // for postcondition checking 
-  typedef typename R::Ray_3                      Ray_3; 
+  // for postcondition checking
+  typedef typename R::Ray_3                      Ray_3;
 
   typedef typename R::Has_on_3                   Has_on_3;
   typedef Point_triple_oriented_side_3<Self>     Oriented_side_3;
@@ -234,7 +234,7 @@ class Convex_hull_traits_3
   construct_triangle_3_object() const
   { return Construct_triangle_3(); }
 
-  Construct_centroid_3  
+  Construct_centroid_3
   construct_centroid_3_object() const
   { return Construct_centroid_3(); }
 
@@ -249,7 +249,7 @@ class Convex_hull_traits_3
   Coplanar_3
   coplanar_3_object() const
   { return Coplanar_3(); }
- 
+
   Has_on_3
   has_on_3_object() const
   { return Has_on_3(); }
@@ -274,7 +274,7 @@ class Convex_hull_traits_3
   do_intersect_3_object() const
   { return Do_intersect_3(); }
 
-  Less_signed_distance_to_plane_3  
+  Less_signed_distance_to_plane_3
   less_signed_distance_to_plane_3_object() const
   { return Less_signed_distance_to_plane_3(); }
 

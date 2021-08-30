@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -62,9 +62,9 @@ ch_graham_andrew_scan( BidirectionalIterator first,
   if ( iter != last )
   {
       S.push_back( iter );
-      typedef typename std::vector<BidirectionalIterator>::reverse_iterator  
+      typedef typename std::vector<BidirectionalIterator>::reverse_iterator
               rev_iterator;
-      rev_iterator  stack_rev_iter = S.rbegin(); 
+      rev_iterator  stack_rev_iter = S.rbegin();
       alpha = iter;
       beta  = *++stack_rev_iter;
 
@@ -90,8 +90,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
 
   typedef typename std::vector< BidirectionalIterator >::iterator std_iterator;
   std_iterator  stack_iter = S.begin();
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   typedef  typename Traits::Point_2     Point_2;
@@ -108,8 +107,7 @@ ch_graham_andrew_scan( BidirectionalIterator first,
           first, last, \
           res.output_so_far_begin(), res.output_so_far_end(), \
           ch_traits));
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();
@@ -154,9 +152,9 @@ ch__ref_graham_andrew_scan( BidirectionalIterator first,
   if ( iter != last )
   {
       S.push_back( iter );
-      typedef typename std::vector<BidirectionalIterator>::reverse_iterator  
+      typedef typename std::vector<BidirectionalIterator>::reverse_iterator
               rev_iterator;
-      rev_iterator  stack_rev_iter = S.rbegin(); 
+      rev_iterator  stack_rev_iter = S.rbegin();
       alpha = iter;
       beta  = *++stack_rev_iter;
 
@@ -195,9 +193,9 @@ ch_graham_andrew( InputIterator  first,
                        const Traits&  ch_traits)
 {
   typedef  typename Traits::Point_2     Point_2;
-  typedef  typename Traits::Equal_2      Equal_2;  
-  
-  Equal_2      equal_points = ch_traits.equal_2_object();  
+  typedef  typename Traits::Equal_2      Equal_2;
+
+  Equal_2      equal_points = ch_traits.equal_2_object();
 
   if (first == last) return result;
   std::vector< Point_2 >  V (first, last);
@@ -208,8 +206,7 @@ ch_graham_andrew( InputIterator  first,
       return result;
   }
 
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
@@ -225,8 +222,7 @@ ch_graham_andrew( InputIterator  first,
           V.begin(), V.end(), \
           res.output_so_far_begin(), res.output_so_far_end(), \
           ch_traits));
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();
@@ -241,9 +237,9 @@ ch_lower_hull_scan( InputIterator  first,
                          const Traits&  ch_traits)
 {
   typedef  typename Traits::Point_2      Point_2;
-  typedef  typename Traits::Equal_2      Equal_2;  
-  
-  Equal_2      equal_points = ch_traits.equal_2_object();    
+  typedef  typename Traits::Equal_2      Equal_2;
+
+  Equal_2      equal_points = ch_traits.equal_2_object();
 
   if (first == last) return result;
   std::vector< Point_2 >  V (first, last);
@@ -254,15 +250,13 @@ ch_lower_hull_scan( InputIterator  first,
       return result;
   }
 
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
   #endif // no postconditions ...
   ch_graham_andrew_scan( V.begin(), V.end(), res, ch_traits);
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();
@@ -276,24 +270,22 @@ ch_upper_hull_scan( InputIterator  first,
                          const Traits&  ch_traits)
 {
   typedef  typename Traits::Point_2      Point_2;
-  typedef  typename Traits::Equal_2      Equal_2;  
-  
-  Equal_2      equal_points = ch_traits.equal_2_object();     
+  typedef  typename Traits::Equal_2      Equal_2;
+
+  Equal_2      equal_points = ch_traits.equal_2_object();
 
   if (first == last) return result;
   std::vector< Point_2 >  V (first, last);
   std::sort( V.begin(), V.end(), ch_traits.less_xy_2_object() );
   if (equal_points( *(V.begin()), *(V.rbegin())) )
   { return result; }
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   Tee_for_output_iterator<OutputIterator,Point_2> res(result);
   #endif // no postconditions ...
   ch_graham_andrew_scan( V.rbegin(), V.rend(), res, ch_traits);
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();

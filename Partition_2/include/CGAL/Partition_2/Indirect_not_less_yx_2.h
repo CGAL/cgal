@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -19,17 +19,17 @@
 namespace CGAL {
 
 template <class Traits>
-class Indirect_not_less_yx_2 
+class Indirect_not_less_yx_2
 {
 public:
      typedef typename Traits::Point_2 Point_2;
      typedef typename Traits::Less_yx_2     Less_yx_2;
 
-     Indirect_not_less_yx_2(const Traits& traits) : 
+     Indirect_not_less_yx_2(const Traits& traits) :
          less_yx_2(traits.less_yx_2_object()) {}
 
      template <class Iterator>
-     bool 
+     bool
      operator()( const Iterator& p, const Iterator& q) const
      { return less_yx_2( Point_2(*q), Point_2(*p)); }
 

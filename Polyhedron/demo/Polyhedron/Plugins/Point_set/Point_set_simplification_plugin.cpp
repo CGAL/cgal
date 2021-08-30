@@ -22,11 +22,7 @@
 #include "ui_Point_set_simplification_plugin.h"
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 struct Compute_average_spacing_functor
   : public Functor_with_signal_callback
@@ -131,7 +127,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
 {
   Q_OBJECT
   public:
-    Point_set_demo_point_set_simplification_dialog(QWidget * /*parent*/ = 0)
+    Point_set_demo_point_set_simplification_dialog(QWidget * /*parent*/ = nullptr)
     {
       setupUi(this);
       m_maximumSurfaceVariation->setRange(0.000010, 0.33330);
@@ -152,7 +148,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
   double maximumSurfaceVariation() const { return m_maximumSurfaceVariation->value(); }
 
 public Q_SLOTS:
-  
+
   void on_Random_toggled (bool toggled)
   {
     m_randomSimplificationPercentage->setEnabled (toggled);
@@ -188,7 +184,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
   {
     // Gets point set
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
         return;
 
     // Gets options
@@ -225,23 +221,23 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
 
       Grid_simplify_functor functor (points, dialog.gridCellSize() * average_spacing);
       run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Grid simplyfing...", mw);
-      
+
       // Computes points to remove by Grid Clustering
       first_point_to_remove = *functor.result;
-        
+
     }
     else
     {
       std::cerr << "Point set hierarchy simplification (cluster size = " << dialog.maximumClusterSize()
-		<< ", maximum variation = " << dialog.maximumSurfaceVariation() << ")...\n";
+                << ", maximum variation = " << dialog.maximumSurfaceVariation() << ")...\n";
 
       // Computes points to remove by Hierarchy
       Hierarchy_simplify_functor functor (points, dialog.maximumClusterSize(),
                                           dialog.maximumSurfaceVariation());
       run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Hierarchy simplyfing...", mw);
-      
+
       first_point_to_remove = *functor.result;
-        
+
     }
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
@@ -263,7 +259,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     // Warns user
     if (nb_points_to_remove > 0)
     {
-      QMessageBox::information(NULL,
+      QMessageBox::information(nullptr,
                                tr("Points selected for removal"),
                                tr("%1 point(s) are selected for removal.\nYou may delete or reset the selection using the item context menu.")
                                .arg(nb_points_to_remove));

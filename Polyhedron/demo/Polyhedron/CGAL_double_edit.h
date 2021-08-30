@@ -23,7 +23,7 @@ public:
   void setValue(double d);
   void setMinimum(double d);
   void setMaximum(double d);
-  void setRange(double min, double max);
+  void setRange(double rmin, double rmax);
   double getValue();
   double getMinimum();
   double getMaximum();

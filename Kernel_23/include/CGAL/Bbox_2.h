@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2004  
+// Copyright (c) 1999,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -61,6 +61,8 @@ public:
   inline double     ymin() const;
   inline double     xmax() const;
   inline double     ymax() const;
+  inline double x_span() const;
+  inline double y_span() const;
 
   inline double     max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double     min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
@@ -90,6 +92,14 @@ inline
 double
 Bbox_2::ymax() const
 { return rep[3]; }
+
+inline double Bbox_2::x_span() const {
+  return xmax() - xmin();
+}
+
+inline double Bbox_2::y_span() const {
+  return ymax() - ymin();
+}
 
 inline
 bool
@@ -159,7 +169,7 @@ Bbox_2::dilate(int dist)
   rep[2] = float_advance(rep[2],dist);
   rep[3] = float_advance(rep[3],dist);
 }
-  
+
 inline
 bool
 do_overlap(const Bbox_2 &bb1, const Bbox_2 &bb2)
@@ -176,7 +186,7 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_2 &b)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         os << b.xmin() << ' ' << b.ymin() << ' '
            << b.xmax() << ' ' << b.ymax();
@@ -204,10 +214,10 @@ operator>>(std::istream &is, Bbox_2 &b)
     double ymin = 0;
     double xmax = 0;
     double ymax = 0;
-    
-    switch(get_mode(is)) {
+
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(xmin) >> iformat(ymin) >> iformat(xmax) >> iformat(ymax);
+        is >> IO::iformat(xmin) >> IO::iformat(ymin) >> IO::iformat(xmax) >> IO::iformat(ymax);
         break;
     case IO::BINARY :
         read(is, xmin);

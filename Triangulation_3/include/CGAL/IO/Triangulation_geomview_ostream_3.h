@@ -48,7 +48,7 @@ show_triangulation_edges(Geomview_stream &gv, const Triangulation_3<GT,TDS> &T)
 
   // Finite edges indices.
   for( typename Triangulation_3<GT, TDS>::Finite_edges_iterator
-	  eit = T.finite_edges_begin(); eit != T.finite_edges_end(); ++eit) {
+          eit = T.finite_edges_begin(); eit != T.finite_edges_end(); ++eit) {
       gv << 2
          << V[(*eit).first->vertex((*eit).second)]
          << V[(*eit).first->vertex((*eit).third)]
@@ -79,8 +79,8 @@ operator<<( Geomview_stream &gv, const Triangulation_3<GT,TDS> &T)
         std::vector<typename GT::Triangle_3> triangles;
 
         for (typename Triangulation_3<GT, TDS>::Finite_facets_iterator
-	     fit = T.finite_facets_begin(); fit != T.finite_facets_end();
-	     ++fit)
+             fit = T.finite_facets_begin(); fit != T.finite_facets_end();
+             ++fit)
             triangles.push_back(T.triangle(*fit));
 
         gv.draw_triangles(triangles.begin(), triangles.end());

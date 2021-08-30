@@ -17,11 +17,11 @@
 \cgalPkgPicture{Hypertriangle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Samuel Hornus, and Clément Jamin}
-\cgalPkgDesc{This package provides classes for manipulating 
-triangulations (pure simplicial complexes) in Euclidean spaces whose dimension 
-can be specified at compile-time or at run-time. Specifically, it provides a 
+\cgalPkgDesc{This package provides classes for manipulating
+triangulations (pure simplicial complexes) in Euclidean spaces whose dimension
+can be specified at compile-time or at run-time. Specifically, it provides a
 data structure to store the triangulations, and two classes to handle
-triangulations and Delaunay triangulations of point sets. Point location and point 
+triangulations and Delaunay triangulations of point sets. Point location and point
 insertion are supported. The Delaunay triangulation also supports point removal.}
 \cgalPkgManuals{Chapter_Triangulations,PkgTriangulationsRef}
 \cgalPkgSummaryEnd
@@ -32,12 +32,12 @@ insertion are supported. The Delaunay triangulation also supports point removal.
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-A triangulation is a pure manifold simplicial complex. 
+A triangulation is a pure manifold simplicial complex.
 Its faces are simplices such that two of them either do not
 intersect or share a common face.
 
 The triangulation classes of \cgal are designed to
-represent triangulations of a set of points \f$ A\f$ in 
+represent triangulations of a set of points \f$ A\f$ in
 \f$ \mathbb{R}^d\f$. It can be
 viewed as a partition of the convex hull of \f$ A\f$ into simplices whose
 vertices are the points of \f$ A\f$.
@@ -55,7 +55,7 @@ vertex. In that way, each facet is incident to exactly two full cells and
 special cases at the boundary of the convex hull are simple to deal
 with.
 
-A triangulation is represented as a collection of vertices 
+A triangulation is represented as a collection of vertices
 and full cells that are linked
 together through incidence and adjacency relations. Each full cell gives
 access to its incident vertices and to its adjacent
@@ -63,7 +63,7 @@ full cells. Each vertex gives access to one of its incident full cells.
 
 The vertices of a full cell are indexed in positive
 orientation, the positive orientation being defined by the orientation
-of the underlying Euclidean space \f$ \mathbb{R}^d\f$. 
+of the underlying Euclidean space \f$ \mathbb{R}^d\f$.
 The neighbors of a full cell are also
 indexed  in such a way that the neighbor indexed by \f$ i\f$
 is opposite to the vertex with the same index.

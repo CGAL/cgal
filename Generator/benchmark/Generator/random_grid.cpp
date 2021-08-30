@@ -23,16 +23,16 @@ grid(int N, double eps)
   std::cout << N*N << std::endl;
   for(double i = 0; i < N; i++){
     for(double j = 0; j < N; j++){
-      std::cout << i + rng.get_double(-eps,eps) << " " 
+      std::cout << i + rng.get_double(-eps,eps) << " "
                 << j + rng.get_double(-eps,eps) << "\n";
     }
-  }  
+  }
 }
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   int N= 10;
-  double eps = 0; 
+  double eps = 0;
   try {
 
     po::options_description desc("Allowed options");
@@ -42,9 +42,9 @@ int main(int argc, char* argv[])
       ("eps", po::value<double>(), "perturb x and y of points by eps")
       ;
 
-    po::variables_map vm;        
+    po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);    
+    po::notify(vm);
 
     if (vm.count("help")) {
       std::cout << desc << "\n";

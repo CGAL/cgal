@@ -21,6 +21,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 
+#include <boost/container/small_vector.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <algorithm>
@@ -729,9 +730,9 @@ Delaunay_triangulation<DCTraits, TDS>
         // consistent with the rest of the cells
         if (current_dimension() == 1)
         {
-            // Is "inf_v_cell" the right infinite cell? 
+            // Is "inf_v_cell" the right infinite cell?
             // Then inf_v_index should be 1
-            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+            if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0
                 && inf_v_index == 0)
             {
                 inf_v_cell->swap_vertices(
@@ -742,9 +743,9 @@ Delaunay_triangulation<DCTraits, TDS>
             {
                 inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
                 inf_v_index = inf_v_cell->index(infinite_vertex());
-                // Is "inf_v_cell" the right infinite cell? 
+                // Is "inf_v_cell" the right infinite cell?
                 // Then inf_v_index should be 1
-                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0 
+                if (inf_v_cell->neighbor(inf_v_index)->index(inf_v_cell) == 0
                     && inf_v_index == 0)
                 {
                     inf_v_cell->swap_vertices(
@@ -792,7 +793,7 @@ Delaunay_triangulation<DCTraits, TDS>
 {
     CGAL_precondition_msg( ! is_infinite(s), "full cell must be finite");
     CGAL_expensive_precondition( POSITIVE == orientation(s) );
-    typedef std::vector<const Point *> Points;
+    typedef boost::container::small_vector<const Point *, 8> Points;
     Points points(current_dimension() + 2);
     int i(0);
     for( ; i <= current_dimension(); ++i )

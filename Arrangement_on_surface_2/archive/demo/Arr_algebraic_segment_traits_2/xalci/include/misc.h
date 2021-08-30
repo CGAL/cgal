@@ -56,7 +56,7 @@ public:
         int i = 0;
         for(InputIterator it = begin;it != end; it++, i++) {
             std::stringstream curr_item;
-            ::CGAL::set_pretty_mode(curr_item);
+            ::CGAL::IO::set_pretty_mode(curr_item);
             curr_item << i << "th: ";
             curr_item << (*it);
             curve_list->insertItem(curr_item.str());
@@ -77,7 +77,7 @@ public:
 class Graphic_layer : public CGAL::Qt_widget_layer
 {
 Q_OBJECT
- 
+
 public:
     Graphic_layer(CGAL::Qt_widget *attach_to, int index_,
         int color_index_, int fst_ind = -1,
@@ -85,7 +85,7 @@ public:
          Qt_widget_layer(parent, name),
           erase(false), index(index_), color_index(color_index_),
           first_curve_index(fst_ind), second_curve_index(snd_ind)
-    { 
+    {
         attach_to->attach(this);
     }
 
@@ -99,7 +99,7 @@ protected:
 
     int index, color_index;
     int first_curve_index, second_curve_index;
-        
+
 };
 
 typedef std::vector<Graphic_layer *> Layers;

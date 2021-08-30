@@ -1,5 +1,5 @@
 /// \defgroup PkgThreeRef Three Reference
-/// 
+///
 /*!
 \addtogroup PkgThreeRef
 
@@ -12,7 +12,6 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.8}
-\cgalPkgBib{cgal:rlfg-pd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd

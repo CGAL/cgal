@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 // Example program for the linear_least_square_fitting function on set of cuboids in 3D
 #include <CGAL/Simple_cartesian.h>
@@ -20,9 +20,9 @@ int main()
 {
   std::cout << "Test linear least squares fitting of 3D cuboids"  << std::endl;
   std::list<Iso_cuboid> cuboids;
-	Point a(0.0,0.0,0.0);
-	Point b(1.0,2.0,3.0);
-	Point c(4.0,5.0,6.0);
+        Point a(0.0,0.0,0.0);
+        Point b(1.0,2.0,3.0);
+        Point c(4.0,5.0,6.0);
   cuboids.push_back(Iso_cuboid(a,b));
   cuboids.push_back(Iso_cuboid(a,c));
 

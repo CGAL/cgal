@@ -1,18 +1,16 @@
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include <iterator>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Random.h>
-
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
 #include <CGAL/Surface_mesh_shortest_path.h>
+#include <CGAL/Random.h>
 
 #include <boost/lexical_cast.hpp>
+
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <iterator>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Triangle_mesh;
@@ -28,7 +26,6 @@ int main(int argc, char** argv)
   Triangle_mesh tmesh;
   std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
   input >> tmesh;
-  input.close();
 
   // initialize indices of vertices, halfedges and faces
   CGAL::set_halfedgeds_items_id(tmesh);
@@ -49,7 +46,7 @@ int main(int argc, char** argv)
   // For all vertices in the tmesh, compute the points of
   // the shortest path to the source point and write them
   // into a file readable using the CGAL Polyhedron demo
-  std::ofstream output("shortest_paths_with_id.cgal");
+  std::ofstream output("shortest_paths_with_id.polylines.txt");
   vertex_iterator vit, vit_end;
   for ( boost::tie(vit, vit_end) = vertices(tmesh);
         vit != vit_end; ++vit)

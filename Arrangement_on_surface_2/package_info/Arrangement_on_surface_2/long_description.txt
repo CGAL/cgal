@@ -34,7 +34,7 @@ zone of an arrangement, and line-sweeping the plane, the arrangements
 is embedded on. These frameworks are used in turn in the
 implementations of other operations on arrangements. Computing the
 overlay of two arrangements, for example, is based on the sweep-line
-framework. 
+framework.
 
 Arrangements and arrangement components can also be extended to store
 additional data. An important extension stores the construction

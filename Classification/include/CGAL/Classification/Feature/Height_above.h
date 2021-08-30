@@ -49,20 +49,18 @@ namespace Feature {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Height_above : public Feature_base
 {
-  typedef typename GeomTraits::Iso_cuboid_3 Iso_cuboid_3;
-
-  typedef Image<float> Image_float;
-  typedef Planimetric_grid<GeomTraits, PointRange, PointMap> Grid;
+  using Image_float = Image<float>;
+  using Grid = Planimetric_grid<GeomTraits, PointRange, PointMap>;
 
   const PointRange& input;
   PointMap point_map;
   const Grid& grid;
   Image_float dtm;
   std::vector<float> values;
-  
+
 public:
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -81,13 +79,13 @@ public:
       for (std::size_t i = 0; i < grid.width(); ++ i)
         if (grid.has_points(i,j))
         {
-          float z_max = -std::numeric_limits<float>::max();
+          float z_max = -(std::numeric_limits<float>::max)();
 
           typename Grid::iterator end = grid.indices_end(i,j);
           for (typename Grid::iterator it = grid.indices_begin(i,j); it != end; ++ it)
           {
             float z = float(get(point_map, *(input.begin()+(*it))).z());
-            z_max = (std::max(z_max, z));
+            z_max = ((std::max)(z_max, z));
           }
 
           dtm(i,j) = z_max;
@@ -116,7 +114,7 @@ public:
       std::size_t J = grid.y(pt_index);
       return dtm(I,J) - float(get (point_map, *(input.begin() + pt_index)).z());
     }
-    
+
     return values[pt_index];
   }
 

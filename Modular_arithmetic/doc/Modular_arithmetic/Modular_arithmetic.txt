@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Modular_Arithmetic
 \anchor chapmodulararithmetic
 \cgalAutoToc
@@ -10,65 +10,65 @@ namespace CGAL {
 
 \section Modular_arithmeticIntroduction Introduction
 
-Modular arithmetic is a fundamental tool in modern algebra systems. 
-In conjunction with the Chinese remainder theorem it serves as the 
-workhorse in several algorithms computing the gcd, resultant etc. 
-Moreover, it can serve as a very efficient filter, since it is often 
-possible to exclude that some value is zero by computing its modular 
+Modular arithmetic is a fundamental tool in modern algebra systems.
+In conjunction with the Chinese remainder theorem it serves as the
+workhorse in several algorithms computing the gcd, resultant etc.
+Moreover, it can serve as a very efficient filter, since it is often
+possible to exclude that some value is zero by computing its modular
 correspondent with respect to one prime only.
 
 \section Modular_arithmetic_residue Residue and Modularizable
 
 First of all, this package introduces a type `Residue`.
-It represents \f$ \mathbb{Z}{/p\mathbb{Z}}\f$ for some prime \f$ p\f$. 
-The prime number \f$ p\f$ is stored in a static member variable. 
-The class provides static member functions to change this value. 
+It represents \f$ \mathbb{Z}{/p\mathbb{Z}}\f$ for some prime \f$ p\f$.
+The prime number \f$ p\f$ is stored in a static member variable.
+The class provides static member functions to change this value.
 
-Changing the prime invalidates already existing objects 
+Changing the prime invalidates already existing objects
 of this type.
-However, already existing objects do not lose their value with respect to the 
-old prime and can be reused after restoring the old prime. 
-Since the type is based on double 
-arithmetic the prime is restricted to values less than \f$ 2^{26}\f$. 
+However, already existing objects do not lose their value with respect to the
+old prime and can be reused after restoring the old prime.
+Since the type is based on double
+arithmetic the prime is restricted to values less than \f$ 2^{26}\f$.
 The initial value of \f$ p\f$ is 67108859.
 
 
-Moreover, the package introduces the concept `Modularizable`. 
-An algebraic structure `T` is considered as `Modularizable` if there 
-is a mapping from `T` into an algebraic structure that is based on 
-the type `Residue`. 
-For scalar types, e.g. Integers, this mapping is just the canonical 
-homomorphism into \f$ \mathbb{Z}{/p\mathbb{Z}}\f$ represented by `Residue`. 
-For compound types, e.g. Polynomials, the mapping is applied to the 
-coefficients of the compound type. 
+Moreover, the package introduces the concept `Modularizable`.
+An algebraic structure `T` is considered as `Modularizable` if there
+is a mapping from `T` into an algebraic structure that is based on
+the type `Residue`.
+For scalar types, e.g. Integers, this mapping is just the canonical
+homomorphism into \f$ \mathbb{Z}{/p\mathbb{Z}}\f$ represented by `Residue`.
+For compound types, e.g. Polynomials, the mapping is applied to the
+coefficients of the compound type.
 The mapping is provided by the class `Modular_traits<T>`.
-The class `Modular_traits<T>` is designed such that the concept 
-`Modularizable` can be considered as optional, i.e., 
+The class `Modular_traits<T>` is designed such that the concept
+`Modularizable` can be considered as optional, i.e.,
 `Modular_traits<T>` provides a tag that can be used for dispatching.
 
 \subsection Modular_arithmetic_example Example
 
 In the following example modular arithmetic is used as a filter on order
-to avoid unnecessary gcd computations of polynomials. 
-A `gcd` computation can be very costly due to coefficient growth within the 
-Euclidean algorithm. 
-   
-The general idea is that firstly the gcd is computed with respect 
-to one prime only. If this modular gcd is constant we can (in most cases) 
-conclude that the actual gcd is constant as well. 
-   
-For this purpose the example introduces the function `may_have_common_factor()`.
-Note that there are two versions of this function, namely for the case 
-that the coefficient type is `Modularizable` and that it is not. 
-If the type is not `Modularizable` the filter is just not applied and the 
-function returns true. 
+to avoid unnecessary gcd computations of polynomials.
+A `gcd` computation can be very costly due to coefficient growth within the
+Euclidean algorithm.
 
-Further note that the implementation of class `Residue` requires a mantissa 
-precision according to the IEEE Standard for Floating-Point Arithmetic (IEEE 754). 
-However, on some processors the traditional FPU uses an extended precision. Hence, it 
-is indispensable that the proper mantissa length is enforced before performing 
-any arithmetic operations. Moreover, it is required that numbers are rounded to the 
-next nearest value. This can be ensured using `Protect_FPU_rounding` with 
+The general idea is that firstly the gcd is computed with respect
+to one prime only. If this modular gcd is constant we can (in most cases)
+conclude that the actual gcd is constant as well.
+
+For this purpose the example introduces the function `may_have_common_factor()`.
+Note that there are two versions of this function, namely for the case
+that the coefficient type is `Modularizable` and that it is not.
+If the type is not `Modularizable` the filter is just not applied and the
+function returns true.
+
+Further note that the implementation of class `Residue` requires a mantissa
+precision according to the IEEE Standard for Floating-Point Arithmetic (IEEE 754).
+However, on some processors the traditional FPU uses an extended precision. Hence, it
+is indispensable that the proper mantissa length is enforced before performing
+any arithmetic operations. Moreover, it is required that numbers are rounded to the
+next nearest value. This can be ensured using `Protect_FPU_rounding` with
 `CGAL_FE_TONEAREST`, which also enforces the required precision as a side effect.
 
 
@@ -76,12 +76,12 @@ next nearest value. This can be ensured using `Protect_FPU_rounding` with
 
 \section Modular_arithmeticDesign Design and Implementation History
 
-The class `Residue` is based on the C-code of Sylvain Pion et. al. 
+The class `Residue` is based on the C-code of Sylvain Pion et. al.
 as it was presented in \cgalCite{bepp-sdrns-99}.
 
 The remaining part of the package is the result of the integration process
-of the NumeriX library of <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05} into \cgal.
+of the NumeriX library of \exacus \cgalCite{beh-eeeafcs-05} into \cgal.
 
-*/ 
+*/
 } /* namespace CGAL */
 

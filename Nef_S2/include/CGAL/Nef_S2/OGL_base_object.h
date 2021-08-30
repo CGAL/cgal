@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
@@ -19,10 +19,10 @@ namespace CGAL {
 
 namespace OGL {
 
-  class OGL_base_object {    
+  class OGL_base_object {
   public:
 
-    typedef CGAL::Simple_cartesian<double>       Double_kernel;  
+    typedef CGAL::Simple_cartesian<double>       Double_kernel;
     typedef Double_kernel::Point_3               Double_point;
     typedef Double_kernel::Vector_3              Double_vector;
     typedef Double_kernel::Segment_3             Double_segment;

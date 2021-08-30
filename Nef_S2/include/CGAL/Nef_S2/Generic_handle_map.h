@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
@@ -21,14 +21,14 @@
 namespace CGAL {
 
 struct Void_handle_hash_function {
-    std::size_t operator() (void* h) const { 
+    std::size_t operator() (void* h) const {
         return std::size_t(h);
     }
 };
 
 
 template <class I>
-class Generic_handle_map : public 
+class Generic_handle_map : public
   Unique_hash_map<void*,I,Void_handle_hash_function>
 { typedef Unique_hash_map<void*,I,Void_handle_hash_function> Base;
 public:
@@ -36,12 +36,12 @@ public:
   Generic_handle_map(I i) : Base(i) {}
 
   template <class H>
-  const I& operator[](H h) const 
-  { return Base::operator[](&*h); }
+  const I& operator[](H h) const
+  { return Base::operator[]((void*)&*h); }
 
   template <class H>
-  I& operator[](H h) 
-  { return Base::operator[](&*h); }
+  I& operator[](H h)
+  { return Base::operator[]((void*)&*h); }
 
 };
 

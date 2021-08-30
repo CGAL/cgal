@@ -45,9 +45,6 @@ void Surface_sweep_2<Vis>::_complete_sweep()
   // Complete the sweep process using base sweep-line class.
   Base::_complete_sweep();
 
-  // Clean the set of curve pairs for which we have computed intersections.
-  m_curves_pair_set.clear();
-
   // Free all overlapping subcurves we have created.
   Subcurve_iterator   itr;
   for (itr = m_overlap_subCurves.begin(); itr != m_overlap_subCurves.end();
@@ -514,27 +511,28 @@ template <typename Vis>
   CGAL_SS_PRINT_CURVE(c2);
   CGAL_SS_PRINT_EOL();
 
-  CGAL_assertion(event_for_overlap==NULL || event_for_overlap==this->m_currentEvent);
+  CGAL_assertion((event_for_overlap == nullptr) ||
+                 (event_for_overlap == this->m_currentEvent));
 
-  typedef typename Geometry_traits_2::Multiplicity      Multiplicity;
+  auto ctr_min = this->m_traits->construct_min_vertex_2_object();;
 
   CGAL_assertion(c1 != c2);
 
-  // look up for (c1,c2) in the table and insert if doesnt exist
-  Curve_pair cv_pair(c1,c2);
-  if (! (m_curves_pair_set.insert(cv_pair)).second) {
+  // look up for c1 in the table of c2 (or vice versa if c2<c1) and insert if doesnt exist
+  if ((c1 < c2 ? c1->intersection_exists(c2) : c2->intersection_exists(c1))) {
     CGAL_SS_PRINT_END_EOL("computing intersection (already computed)");
     return;  //the curves have already been checked for intersection
   }
 
   // handle overlapping curves with common ancesters
   Subcurve_vector all_leaves_diff;
-  Subcurve* first_parent=nullptr;
-  if (c1->originating_subcurve1()!=nullptr || c2->originating_subcurve2()!=nullptr)
+  Subcurve* first_parent = nullptr;
+  if ((c1->originating_subcurve1() != nullptr) ||
+      (c2->originating_subcurve2() != nullptr))
   {
-    // get the subcurve leaves of c1 and of c2. Then extract from the smallest set
-    // the subcurves leaves that are not in the other one. If empty, it means that
-    // a subcurves is completely contained in another one.
+    // get the subcurve leaves of c1 and of c2. Then extract from the smallest
+    // set the subcurves leaves that are not in the other one. If empty, it
+    // means that a subcurves is completely contained in another one.
     first_parent = c1;
     Subcurve* second_parent = c2;
 
@@ -542,8 +540,7 @@ template <typename Vis>
     Subcurve_vector all_leaves_second;
     first_parent->all_leaves(std::back_inserter(all_leaves_first));
     second_parent->all_leaves(std::back_inserter(all_leaves_second));
-    if (all_leaves_second.size() > all_leaves_first.size())
-    {
+    if (all_leaves_second.size() > all_leaves_first.size()) {
       std::swap(first_parent,second_parent);
       std::swap(all_leaves_first,all_leaves_second);
     }
@@ -553,105 +550,108 @@ template <typename Vis>
     std::sort(all_leaves_first.begin(), all_leaves_first.end());
     std::sort(all_leaves_second.begin(), all_leaves_second.end());
 
+    // copies elements from all_leaves_second that are not in all_leaves_first
     std::set_difference(all_leaves_second.begin(), all_leaves_second.end(),
                         all_leaves_first.begin(), all_leaves_first.end(),
-                        std::back_inserter(all_leaves_diff)); // copies elements from all_leaves_second that are not in all_leaves_first
+                        std::back_inserter(all_leaves_diff));
 
-    if (all_leaves_second.size()==all_leaves_diff.size())
-    {
+    if (all_leaves_second.size() == all_leaves_diff.size()) {
       // first_parent has no common parent with second_parent
-      all_leaves_diff.clear(); // clear so that it is not used by _create_overlapping_curve()
+      // clear so that it is not used by _create_overlapping_curve()
+      all_leaves_diff.clear();
     }
-    else
-      if (all_leaves_diff.empty())
+    else if (all_leaves_diff.empty()) {
+      // first_parent entirely contains second_parent
+      CGAL_SS_PRINT_TEXT("One overlapping curve entirely contains the other one");
+      CGAL_SS_PRINT_EOL();
+
+      Event* left_event = (Event*) first_parent->left_event();
+      Event* right_event = (Event*) first_parent->right_event();
+
+      if (! second_parent->is_start_point(left_event))
+        left_event->add_curve_to_left(second_parent);
+      else
+        left_event->remove_curve_from_right(second_parent);
+
+      CGAL_SS_PRINT_CURVE(c1);
+      CGAL_SS_PRINT_TEXT(" + ");
+      CGAL_SS_PRINT_CURVE(c2);
+      CGAL_SS_PRINT_TEXT(" => ");
+      CGAL_SS_PRINT_EOL();
+      CGAL_SS_PRINT_TEXT("  ");
+      CGAL_SS_PRINT_CURVE(first_parent);
+      CGAL_SS_PRINT_EOL();
+
+      // Remove second_parent from the left curves of the right end
+      // and add it on the right otherwise
+      if (second_parent->is_end_point(right_event))
+        right_event->remove_curve_from_left(second_parent);
+      else
+        _add_curve_to_right(right_event, second_parent);
+
+      // add the overlapping curve kept of the right of the left end
+      right_event->add_curve_to_left(first_parent);
+      _add_curve_to_right(left_event, first_parent);
+
+      this->m_visitor->found_overlap(c1, c2, first_parent);
+
+      CGAL_SS_PRINT_END_EOL("computing intersection");
+      return;
+    }
+    else {
+      CGAL_SS_PRINT_TEXT("Overlap with common ancestors (all_leaves_diff.size() = ");
+      CGAL_SS_PRINT_TEXT(std::to_string(all_leaves_diff.size()).c_str());
+      CGAL_SS_PRINT_TEXT(")");
+      CGAL_SS_PRINT_EOL();
+
+      // iteratively create the final overlapping (geometric) curve.
+      // This is needed rather than simply computing the intersection of
+      // the last curves of first_parent and second_parent as some traits
+      // classes (such as Arr_curve_data_traits_2) override the Intersect_2
+      // functor and expects the curve to have no common ancesters
+      // (Arr_curve_data_traits_2 is used in the testsuite to sum up
+      //  the overlapping degree of a curve)
+      CGAL_SS_PRINT_TEXT("First parent is: ");
+      CGAL_SS_PRINT_CURVE(first_parent);
+      CGAL_SS_PRINT_EOL();
+      X_monotone_curve_2 xc = first_parent->last_curve();
+      for (auto sc_it = all_leaves_diff.begin();
+           sc_it != all_leaves_diff.end(); ++sc_it)
       {
-        // first_parent entirely contains second_parent
-        CGAL_SS_PRINT_TEXT("One overlapping curve entirely contains the other one");
+        CGAL_SS_PRINT_TEXT("Inter with curve: ");
+        CGAL_SS_PRINT_CURVE((*sc_it));
         CGAL_SS_PRINT_EOL();
 
-        Event* left_event = (Event*) first_parent->left_event();
-        Event* right_event = (Event*) first_parent->right_event();
-
-        if (!second_parent->is_start_point(left_event))
-          left_event->add_curve_to_left(second_parent);
-        else
-          left_event->remove_curve_from_right(second_parent);
-
-        CGAL_SS_PRINT_CURVE(c1);
-        CGAL_SS_PRINT_TEXT(" + ");
-        CGAL_SS_PRINT_CURVE(c2);
-        CGAL_SS_PRINT_TEXT(" => ");
-        CGAL_SS_PRINT_EOL();
-        CGAL_SS_PRINT_TEXT("  ");
-        CGAL_SS_PRINT_CURVE(first_parent);
-        CGAL_SS_PRINT_EOL();
-
-        // Remove second_parent from the left curves of the right end
-        // and add it on the right otherwise
-        if (second_parent->is_end_point(right_event))
-          right_event->remove_curve_from_left(second_parent);
-        else
-          _add_curve_to_right(right_event, second_parent);
-
-        // add the overlapping curve kept of the right of the left end
-        right_event->add_curve_to_left(first_parent);
-        _add_curve_to_right(left_event, first_parent);
-
-        this->m_visitor->found_overlap(c1, c2, first_parent);
-
-        CGAL_SS_PRINT_END_EOL("computing intersection");
-        return;
+        Intersection_vector xections;
+        auto intersector = this->m_traits->intersect_2_object();
+        intersector(xc, (*sc_it)->last_curve(), vector_inserter(xections));
+        CGAL_assertion(xections.size() == 1);
+        auto& item = xections.front();
+        xc = *boost::get<X_monotone_curve_2>(&item);
       }
-      else{
-        CGAL_SS_PRINT_TEXT("Overlap with common ancestors (all_leaves_diff.size() = ");
-        CGAL_SS_PRINT_TEXT(std::to_string(all_leaves_diff.size()).c_str());
-        CGAL_SS_PRINT_TEXT(")");
-        CGAL_SS_PRINT_EOL();
 
-        // iteratively create the final overlapping (geometric) curve.
-        // This is needed rather than simply computing the intersection of
-        // the last curves of first_parent and second_parent as some traits
-        // classes (such as Arr_curve_data_traits_2) override the Intersect_2
-        // functor and expects the curve to have no common ancesters
-        // (Arr_curve_data_traits_2 is used in the testsuite to sum up
-        //  the overlapping degree of a curve)
-        CGAL_SS_PRINT_TEXT("First parent is: ");
-        CGAL_SS_PRINT_CURVE(first_parent);
-        CGAL_SS_PRINT_EOL();
-        X_monotone_curve_2 xc = first_parent->last_curve();
-        for (typename Subcurve_vector::iterator sc_it=all_leaves_diff.begin();
-             sc_it!=all_leaves_diff.end(); ++sc_it)
-        {
-          CGAL_SS_PRINT_TEXT("Inter with curve: ");
-          CGAL_SS_PRINT_CURVE((*sc_it));
-          CGAL_SS_PRINT_EOL();
+      CGAL_assertion
+        (this->m_queueEventLess(ctr_min(xc),
+                                event_for_overlap == nullptr ?
+                                this->m_currentEvent : event_for_overlap) ==
+         EQUAL);
 
-          std::vector<CGAL::Object> inter_res;
-
-          this->m_traits->intersect_2_object()(xc,
-                                               (*sc_it)->last_curve(),
-                                               vector_inserter(inter_res));
-          CGAL_assertion(inter_res.size()==1);
-          CGAL_assertion( CGAL::object_cast< X_monotone_curve_2 >(&inter_res.front())!=nullptr );
-          xc = *CGAL::object_cast< X_monotone_curve_2 >(&inter_res.front());
-        }
-
-        CGAL_assertion( this->m_queueEventLess(this->m_traits->construct_min_vertex_2_object()(xc),
-                                                event_for_overlap==NULL ? this->m_currentEvent : event_for_overlap)
-          == EQUAL);
-
-        _create_overlapping_curve(xc, c1 , c2, all_leaves_diff, first_parent, event_for_overlap);
-        CGAL_SS_PRINT_END_EOL("computing intersection (overlap with common ancestors)");
-        return;
-      }
+      _create_overlapping_curve(xc, c1 , c2, all_leaves_diff, first_parent,
+                                event_for_overlap);
+      CGAL_SS_PRINT_END_EOL("computing intersection (overlap with common ancestors)");
+      return;
+    }
   }
+
+  auto ps_x_fnc = this->m_traits->parameter_space_in_x_2_object();
+  auto ps_y_fnc = this->m_traits->parameter_space_in_y_2_object();
 
   // do compute the intersection of the two curves
   vector_inserter vi(m_x_objects) ;
   vector_inserter vi_end(m_x_objects);
 
-  vi_end =
-    this->m_traits->intersect_2_object()(c1->last_curve(), c2->last_curve(), vi);
+  auto intersector = this->m_traits->intersect_2_object();
+  vi_end = intersector(c1->last_curve(), c2->last_curve(), vi);
 
   if (vi == vi_end) {
     CGAL_SS_PRINT_END_EOL("Computing intersection (no intersection)");
@@ -660,29 +660,19 @@ template <typename Vis>
 
   // The two subCurves may start at the same point, in that case we ignore the
   // first intersection point.
-
-  const Arr_parameter_space ps_x1 =
-    this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
-                                                    ARR_MIN_END);
-  const Arr_parameter_space ps_y1 =
-    this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
-                                                    ARR_MIN_END);
-  const Arr_parameter_space ps_x2 =
-    this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
-                                                    ARR_MIN_END);
-  const Arr_parameter_space ps_y2 =
-    this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
-                                                    ARR_MIN_END);
+  Arr_parameter_space ps_x1 = ps_x_fnc(c1->last_curve(), ARR_MIN_END);
+  Arr_parameter_space ps_y1 = ps_y_fnc(c1->last_curve(), ARR_MIN_END);
+  Arr_parameter_space ps_x2 = ps_x_fnc(c2->last_curve(), ARR_MIN_END);
+  Arr_parameter_space ps_y2 = ps_y_fnc(c2->last_curve(), ARR_MIN_END);
 
   if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
       ((ps_x1 != ARR_INTERIOR) || (ps_y1 != ARR_INTERIOR)) &&
       this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
       this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
   {
-    if ( object_cast<std::pair<Point_2, Multiplicity> >(&(*vi)) != nullptr
-         && this->m_traits->equal_2_object()
-        (this->m_traits->construct_min_vertex_2_object()(c1->last_curve()),
-         this->m_traits->construct_min_vertex_2_object()(c2->last_curve())))
+    if ((boost::get<Intersection_point>(&(*vi)) != nullptr) &&
+        this->m_traits->equal_2_object()(ctr_min(c1->last_curve()),
+                                         ctr_min(c2->last_curve())))
     {
       CGAL_SS_PRINT_TEXT("Skipping common left endpoint on boundary ...");
       CGAL_SS_PRINT_EOL();
@@ -698,7 +688,7 @@ template <typename Vis>
     vector_inserter vi_last = vi_end;
 
     --vi_last;
-    if (object_cast<std::pair<Point_2, Multiplicity> >(&(*vi_last)) != nullptr) {
+    if (boost::get<Intersection_point>(&(*vi_last)) != nullptr) {
       CGAL_SS_PRINT_TEXT("Skipping common right endpoint...");
       CGAL_SS_PRINT_EOL();
       --vi_end;
@@ -708,18 +698,10 @@ template <typename Vis>
     // In case both right curve-ends have boundary conditions and are not
     // open, check whether the right endpoints are the same. If they are,
     // skip the last intersection point.
-    const Arr_parameter_space ps_x1 =
-      this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
-                                                      ARR_MAX_END);
-    const Arr_parameter_space ps_y1 =
-      this->m_traits->parameter_space_in_y_2_object()(c1->last_curve(),
-                                                      ARR_MAX_END);
-    const Arr_parameter_space ps_x2 =
-      this->m_traits->parameter_space_in_x_2_object()(c2->last_curve(),
-                                                      ARR_MAX_END);
-    const Arr_parameter_space ps_y2 =
-      this->m_traits->parameter_space_in_y_2_object()(c2->last_curve(),
-                                                      ARR_MAX_END);
+    Arr_parameter_space ps_x1 = ps_x_fnc(c1->last_curve(), ARR_MAX_END);
+    Arr_parameter_space ps_y1 = ps_y_fnc(c1->last_curve(), ARR_MAX_END);
+    Arr_parameter_space ps_x2 = ps_x_fnc(c2->last_curve(), ARR_MAX_END);
+    Arr_parameter_space ps_y2 = ps_y_fnc(c2->last_curve(), ARR_MAX_END);
 
     if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
         ((ps_x1 != ARR_INTERIOR) || (ps_y2 != ARR_INTERIOR)) &&
@@ -733,8 +715,7 @@ template <typename Vis>
         vector_inserter vi_last = vi_end;
 
         --vi_last;
-        if (object_cast<std::pair<Point_2, Multiplicity> >(&(*vi_last)) != nullptr)
-        {
+        if (boost::get<Intersection_point>(&(*vi_last)) != nullptr) {
           CGAL_SS_PRINT_TEXT("Skipping common right endpoint on boundary...");
           CGAL_SS_PRINT_EOL();
           --vi_end;
@@ -743,12 +724,11 @@ template <typename Vis>
     }
   }
 
-  const std::pair<Point_2, Multiplicity>* xp_point;
-
   // Efi: why not skipping in a loop?check only one (that is, why not in a loop)?
-  // SL: curves are split and no event strictly before the current event should be reported
+  // SL: curves are split and no event strictly before the current event should
+  //     be reported
   if (vi != vi_end) {
-    xp_point = object_cast<std::pair<Point_2, Multiplicity> >(&(*vi));
+    const Intersection_point* xp_point = boost::get<Intersection_point>(&(*vi));
     if (xp_point != nullptr) {
       // Skip the intersection point if it is not larger than the current
       // event.
@@ -762,9 +742,8 @@ template <typename Vis>
 
   bool first_i = true;
   for (; vi != vi_end; ++vi) {
-    unsigned int multiplicity = 0;
-
-    xp_point = object_cast<std::pair<Point_2, Multiplicity> >(&(*vi));
+    Multiplicity multiplicity = 0;
+    const Intersection_point* xp_point = boost::get<Intersection_point>(&(*vi));
     if (xp_point != nullptr) {
       Point_2 xp = xp_point->first;
       multiplicity = xp_point->second;
@@ -773,13 +752,14 @@ template <typename Vis>
       _create_intersection_point(xp, multiplicity, c1, c2);
     }
     else {
-      X_monotone_curve_2 icv = *object_cast<X_monotone_curve_2>(&(*vi));
+      const X_monotone_curve_2 icv = *boost::get<X_monotone_curve_2>(&(*vi));
       // CGAL_assertion(icv != nullptr);
 
       CGAL_SS_PRINT_TEXT("Found an overlap");
       CGAL_SS_PRINT_EOL();
+      // event_for_overlap is only valid for the first intersection
       _create_overlapping_curve(icv, c1 , c2, all_leaves_diff, first_parent,
-                                first_i ? event_for_overlap:NULL); // event_for_overlap is only valid for the first intersection
+                                first_i ? event_for_overlap : NULL);
     }
     first_i = false;
   }

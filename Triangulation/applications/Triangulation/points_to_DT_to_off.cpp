@@ -25,7 +25,7 @@ void test(int dim)
   DT dt(dim_from_file);
   dt.insert(points.begin(), points.end());
   CGAL_assertion(dt.is_valid(true));
-  
+
   // Export
   std::stringstream output_filename;
   output_filename << "data/dt_dim" << dim << ".off";

@@ -15,7 +15,7 @@ typedef CGAL::Delaunay_triangulation_3<K, Tds>                      Delaunay;
 typedef Delaunay::Point                                             Point;
 
 //a functor that returns a std::pair<Point,unsigned>.
-//the unsigned integer is incremented at each call to 
+//the unsigned integer is incremented at each call to
 //operator()
 struct Auto_count : public CGAL::cpp98::unary_function<const Point&,std::pair<Point,unsigned> >{
   mutable unsigned i;

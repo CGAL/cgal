@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   std::ifstream in( (argc>1)? argv[1] : "data/cube.xyz");
   std::vector<Point_3> points;
   Point_3 p;
- 
+
   while(in >> p){
     points.push_back(p);
   }

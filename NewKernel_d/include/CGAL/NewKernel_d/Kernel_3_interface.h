@@ -20,8 +20,8 @@
 
 namespace CGAL {
 template <class Base_> struct Kernel_3_interface : public Base_ {
-	typedef Base_ Base;
-	typedef Kernel_3_interface<Base> Kernel;
+        typedef Base_ Base;
+        typedef Kernel_3_interface<Base> Kernel;
         typedef typename Get_type<Base, RT_tag>::type RT;
         typedef typename Get_type<Base, FT_tag>::type FT;
         typedef typename Get_type<Base, Bool_tag>::type Boolean;
@@ -31,63 +31,65 @@ template <class Base_> struct Kernel_3_interface : public Base_ {
         typedef typename Get_type<Base, Oriented_side_tag>::type Oriented_side;
         typedef typename Get_type<Base, Bounded_side_tag>::type Bounded_side;
         typedef typename Get_type<Base, Angle_tag>::type Angle;
-	typedef typename Get_type<Base, Point_tag>::type	Point_3;
-	typedef typename Get_type<Base, Vector_tag>::type	Vector_3;
-	typedef typename Get_type<Base, Segment_tag>::type	Segment_3;
-	typedef std::tuple<Point_3,Point_3,Point_3>		Triangle_3; // placeholder
-	typedef std::tuple<Point_3,Point_3,Point_3,Point_3>	Tetrahedron_3; // placeholder
-	struct Compare_xyz_3 {
-		typedef typename Get_functor<Base, Compare_lexicographically_tag>::type CL;
-		typedef typename CL::result_type result_type;
-		CL cl;
-		Compare_xyz_3(Kernel const&k):cl(k){}
-		result_type operator()(Point_3 const&a, Point_3 const&b) {
-			return cl(a,b);
-		}
-	};
-	struct Compare_distance_3 {
-		typedef typename Get_functor<Base, Compare_distance_tag>::type CD;
-		typedef typename CD::result_type result_type;
-		CD cd;
-		Compare_distance_3(Kernel const&k):cd(k){}
-		result_type operator()(Point_3 const&a, Point_3 const&b, Point_3 const&c) {
-			return cd(a,b,c);
-		}
-		result_type operator()(Point_3 const&a, Point_3 const&b, Point_3 const&c, Point_3 const&d) {
-			return cd(a,b,c,d);
-		}
-	};
-	struct Orientation_3 {
-		typedef typename Get_functor<Base, Orientation_of_points_tag>::type O;
-		typedef typename O::result_type result_type;
-		O o;
-		Orientation_3(Kernel const&k):o(k){}
-		result_type operator()(Point_3 const&a, Point_3 const&b, Point_3 const&c, Point_3 const&d) {
-			//return o(a,b,c,d);
-			Point_3 const* t[4]={&a,&b,&c,&d};
-			return o(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+4));
+        typedef typename Get_type<Base, Point_tag>::type        Point_3;
+        typedef typename Get_type<Base, Vector_tag>::type        Vector_3;
+        typedef typename Get_type<Base, Segment_tag>::type        Segment_3;
+        typedef std::tuple<Point_3,Point_3,Point_3>                Triangle_3; // placeholder
+        typedef std::tuple<Point_3,Point_3,Point_3,Point_3>        Tetrahedron_3; // placeholder
+        struct Compare_xyz_3 {
+                typedef typename Get_functor<Base, Compare_lexicographically_tag>::type CL;
+                typedef typename CL::result_type result_type;
+                CL cl;
+                Compare_xyz_3(Kernel const&k):cl(k){}
+                result_type operator()(Point_3 const&a, Point_3 const&b) {
+                        return cl(a,b);
+                }
+        };
+        struct Compare_distance_3 {
+                typedef typename Get_functor<Base, Compare_distance_tag>::type CD;
+                typedef typename CD::result_type result_type;
+                CD cd;
+                Compare_distance_3(Kernel const&k):cd(k){}
+                result_type operator()(Point_3 const&a, Point_3 const&b, Point_3 const&c) {
+                        return cd(a,b,c);
+                }
+                result_type operator()(Point_3 const&a, Point_3 const&b, Point_3 const&c, Point_3 const&d) {
+                        return cd(a,b,c,d);
+                }
+        };
+        struct Orientation_3 {
+                typedef typename Get_functor<Base, Orientation_of_points_tag>::type O;
+                typedef typename O::result_type result_type;
+                O o;
+                Orientation_3(Kernel const&k):o(k){}
+                result_type operator()(Point_3 const&a, Point_3 const&b, Point_3 const&c, Point_3 const&d) {
+                        //return o(a,b,c,d);
+                        Point_3 const* t[4]={&a,&b,&c,&d};
+                        return o(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+4));
 
-		}
-	};
-	struct Side_of_oriented_sphere_3 {
-		typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type SOS;
-		typedef typename SOS::result_type result_type;
-		SOS sos;
-		Side_of_oriented_sphere_3(Kernel const&k):sos(k){}
-		result_type operator()(Point_3 const&a, Point_3 const&b, Point_3 const&c, Point_3 const&d, Point_3 const&e) {
-			//return sos(a,b,c,d);
-			Point_3 const* t[5]={&a,&b,&c,&d,&e};
-			return sos(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+5));
-		}
-	};
+                }
+        };
+        struct Side_of_oriented_sphere_3 {
+                typedef typename Get_functor<Base, Side_of_oriented_sphere_tag>::type SOS;
+                typedef typename SOS::result_type result_type;
+                SOS sos;
+                Side_of_oriented_sphere_3(Kernel const&k):sos(k){}
+                result_type operator()(Point_3 const&a, Point_3 const&b, Point_3 const&c, Point_3 const&d, Point_3 const&e) {
+                        //return sos(a,b,c,d);
+                        Point_3 const* t[5]={&a,&b,&c,&d};
+                        return sos(make_transforming_iterator<Dereference_functor>(t+0),make_transforming_iterator<Dereference_functor>(t+4),e);
+                }
+        };
+        typedef typename Get_functor<Base, Construct_ttag<Point_tag> >::type Construct_point_3;
 
-	// I don't have the Coplanar predicates (yet)
+        // I don't have the Coplanar predicates (yet)
 
 
-	Compare_xyz_3 compare_xyz_3_object()const{ return Compare_xyz_3(*this); }
-	Compare_distance_3 compare_distance_3_object()const{ return Compare_distance_3(*this); }
-	Orientation_3 orientation_3_object()const{ return Orientation_3(*this); }
-	Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object()const{ return Side_of_oriented_sphere_3(*this); }
+        Compare_xyz_3 compare_xyz_3_object()const{ return Compare_xyz_3(*this); }
+        Compare_distance_3 compare_distance_3_object()const{ return Compare_distance_3(*this); }
+        Orientation_3 orientation_3_object()const{ return Orientation_3(*this); }
+        Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object()const{ return Side_of_oriented_sphere_3(*this); }
+        Construct_point_3 construct_point_3_object()const{ return Construct_point_3(*this); }
 };
 }
 

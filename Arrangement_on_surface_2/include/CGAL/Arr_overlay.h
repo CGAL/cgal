@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 
@@ -17,7 +17,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Arr_overlay.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_overlay_2.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Arr_overlay_2.h>
 

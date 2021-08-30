@@ -13,10 +13,10 @@ public:
 /// @{
 
 /*!
-returns the dimension of \f$ p\f$. 
-*/ 
-int operator()(const Kernel_d::Point_d& 
-p); 
+returns the dimension of \f$ p\f$.
+*/
+int operator()(const Kernel_d::Point_d&
+p);
 
 /// @}
 

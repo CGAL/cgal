@@ -18,7 +18,7 @@ bool cgal_nef3_timer_on = false;
 int main(int argc, char* argv[]) {
 
   assert(argc>1 && argc<7);
-  
+
   int nx = argc>2 ? std::atoi(argv[2]) : 2;
   int ny = argc>3 ? std::atoi(argv[3]) : 2;
   int nz = argc>4 ? std::atoi(argv[4]) : 2;
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
   std::ifstream fin(argv[1]);
   Nef_polyhedron_3 Nin;
   fin >> Nin;
- 
+
   std::ostringstream out;
   ggen g(out, Nin);
   g.print(nx,ny,nz);
@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
   Nef_polyhedron_3 N;
   in >> N;
 
-  N.transform(Aff_transformation_3(CGAL::SCALING,s,s_ist));  
+  N.transform(Aff_transformation_3(CGAL::SCALING,s,s_ist));
   N.transform(Aff_transformation_3(CGAL::TRANSLATION,Vector_3(s,s,s,2)));
 
   Sat_writer SW(std::cout,N);

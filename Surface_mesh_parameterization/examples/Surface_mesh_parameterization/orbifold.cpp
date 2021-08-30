@@ -45,15 +45,14 @@ int main(int argc, char** argv)
   CGAL::Timer task_timer;
   task_timer.start();
 
-  const char* mesh_filename = (argc>1) ? argv[1] : "data/bear.off";
-  std::ifstream in_mesh(mesh_filename);
-  if(!in_mesh) {
-    std::cerr << "Error: problem loading the input data" << std::endl;
+  const char* filename = (argc>1) ? argv[1] : "data/bear.off";
+
+  SurfaceMesh sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
-
-  SurfaceMesh sm; // underlying mesh of the seam mesh
-  in_mesh >> sm;
 
   // Selection file that contains the cones and possibly the path between cones
   // -- the first line for the cones indices

@@ -13,13 +13,13 @@ public:
 /// @{
 
 /*!
-computes the square of the Euclidean 
+computes the square of the Euclidean
 distance between the two points \f$ p\f$ and \f$ q\f$.
 
-\pre The dimensions of \f$ p\f$ and \f$ q\f$ are the same. 
-*/ 
-Kernel_d::FT operator()(const Kernel_d::Point_d& p, 
-const Kernel_d::Point_d& q); 
+\pre The dimensions of \f$ p\f$ and \f$ q\f$ are the same.
+*/
+Kernel_d::FT operator()(const Kernel_d::Point_d& p,
+const Kernel_d::Point_d& q);
 
 /// @}
 

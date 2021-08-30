@@ -34,19 +34,19 @@ public:
   typedef typename Tr::Facet Facet;
 
   Surface_mesh_default_criteria_3(const FT angle_bound,
-				  const FT radius_bound,
-				  const FT distance_bound)
+                                  const FT radius_bound,
+                                  const FT distance_bound)
     : curvature_size_criterion(distance_bound),
       uniform_size_criterion(radius_bound),
       aspect_ratio_criterion(angle_bound)
-      
+
   {
     criterion_vector.reserve(4);
-    
+
     criterion_vector.push_back (&aspect_ratio_criterion);
     criterion_vector.push_back (&uniform_size_criterion);
     criterion_vector.push_back (&curvature_size_criterion);
-    
+
     criteria.set_criteria(criterion_vector);
   }
 
@@ -61,7 +61,7 @@ private:
 
   Surface_mesher::Uniform_size_criterion<Tr> uniform_size_criterion;
   // bound on radii of surface Delaunay balls
-  
+
   Surface_mesher::Aspect_ratio_criterion<Tr> aspect_ratio_criterion;
   // lower bound on minimum angle in degrees
 
@@ -71,7 +71,7 @@ private:
 
 template <typename Tr>
 std::ostream&
-operator<<(std::ostream& os, 
+operator<<(std::ostream& os,
            const typename Surface_mesh_default_criteria_3<Tr>::Quality& /*q*/)
 {
   return os << "q";

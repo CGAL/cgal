@@ -20,13 +20,11 @@
 #include <CGAL/Qt/SegmentsGraphicsItem.h>
 #include <CGAL/Qt/PolylinesGraphicsItem.h>
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
- 
+
 // the two base classes
 #include "ui_Snap_rounding_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -45,10 +43,10 @@ class MainWindow :
   public Ui::Snap_rounding_2
 {
   Q_OBJECT
-  
-private:  
-  
-  QGraphicsScene scene;  
+
+private:
+
+  QGraphicsScene scene;
 
   CGAL::Qt::RegularGridGraphicsItem<K> * rgi;
 
@@ -62,15 +60,15 @@ private:
   InputSegmentsGraphicsItem * isgi;
   OutputPolylinesGraphicsItem *plgi;
   double delta;
-  
+
 public:
   MainWindow();
-              
+
   void resize(){
   this->graphicsView->setSceneRect(QRectF(0,0,20, 20));
   this->graphicsView->fitInView(0,0, 20, 20, Qt::KeepAspectRatio);
   }
-              
+
 public Q_SLOTS:
 
   void processInput(CGAL::Object o);
@@ -112,8 +110,8 @@ MainWindow::MainWindow()
  // inputs polylines with 2 points
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 2, false);
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-  
+                   this, SLOT(processInput(CGAL::Object)));
+
   scene.installEventFilter(pi);
 
   // Manual handling of actions
@@ -121,10 +119,10 @@ MainWindow::MainWindow()
 
 
   QObject::connect(this->doubleSpinBox, SIGNAL(valueChanged(double)),
-		   this, SLOT(deltaChanged(double)));
+                   this, SLOT(deltaChanged(double)));
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   //
   // Setup the scene and the view
@@ -132,7 +130,7 @@ MainWindow::MainWindow()
   scene.setItemIndexMethod(QGraphicsScene::NoIndex);
   this->graphicsView->setScene(&scene);
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
+  this->graphicsView->transform().scale(1, -1);
   this->graphicsView->setMouseTracking(true);
 
   rgi = new CGAL::Qt::RegularGridGraphicsItem<K>(delta, delta);
@@ -152,7 +150,7 @@ MainWindow::MainWindow()
   scene.addItem(rgi);
 
   plgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -164,7 +162,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -201,10 +199,10 @@ MainWindow::processInput(CGAL::Object o)
   Q_EMIT( changed());
 }
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -249,12 +247,10 @@ void
 MainWindow::on_actionLoadSegments_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open segment file"),
+                                                  tr("Open segment file"),
                                                   ".",
                                                   tr("Edge files (*.edg);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -270,9 +266,8 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     std::vector<std::vector<Point_2> > mls;
-    CGAL::read_multi_linestring_WKT(ifs, mls);
+    CGAL::IO::read_multi_linestring_WKT(ifs, mls);
     for(const std::vector<Point_2>& ls : mls)
     {
       if(ls.size() > 2)
@@ -280,7 +275,6 @@ MainWindow::open(QString fileName)
       Segment_2 seg(ls[0], ls[1]);
       input.push_back(seg);
     }
-#endif
   }
   else {
     std::copy(std::istream_iterator<Segment_2>(ifs),
@@ -301,19 +295,16 @@ void
 MainWindow::on_actionSaveSegments_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
+                                                  tr("Save points"),
                                                   ".",
                                                   tr("Edge files (*.edg);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     ofs.precision(12);
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<std::vector<Point_2> >mls;
       for(const Segment_2& seg : input)
       {
@@ -322,8 +313,7 @@ MainWindow::on_actionSaveSegments_triggered()
         ls[1] = seg.target();
         mls.push_back(ls);
       }
-      CGAL::write_multi_linestring_WKT(ofs, mls);
-#endif
+      CGAL::IO::write_multi_linestring_WKT(ofs, mls);
     }
     else
       std::copy(input.begin(), input.end(),  std::ostream_iterator<Segment_2>(ofs, "\n"));
@@ -336,7 +326,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(isgi->boundingRect());
-  this->graphicsView->fitInView(isgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(isgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 

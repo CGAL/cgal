@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -122,10 +122,10 @@ public:
   Aff_transformation_2 compose(const Reflection &r) const
   {
     return Aff_transformation_2(
-          r.cosinus_*cosinus_+r.sinus_*sinus_, 
-          -r.cosinus_*sinus_+r.sinus_*cosinus_, 
+          r.cosinus_*cosinus_+r.sinus_*sinus_,
+          -r.cosinus_*sinus_+r.sinus_*cosinus_,
           r.t13(),
-          r.sinus_*cosinus_-r.cosinus_*sinus_, 
+          r.sinus_*cosinus_-r.cosinus_*sinus_,
           -r.sinus_*sinus_-r.cosinus_*cosinus_
           , r.t23());
   }
@@ -139,7 +139,13 @@ public:
                                 -sinus_*t.t21 + cosinus_*t.t22,
                                 t.t23);
   }
+
   bool is_even() const
+  {
+    return true;
+  }
+
+  bool is_rotation() const
   {
     return true;
   }

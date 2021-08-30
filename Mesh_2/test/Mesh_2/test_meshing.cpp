@@ -59,7 +59,7 @@ struct Tester2 {
 
     std::cerr << "Reading fish-and-rectangle.poly...";
     std::ifstream poly_file("fish-and-rectangle.poly");
-    CGAL::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
+    CGAL::IO::read_triangle_poly_file(cdt, poly_file, std::back_inserter(seeds));
     assert(cdt.is_valid());
     const size_type inititial_number_of_vertices = cdt.number_of_vertices();
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
@@ -108,7 +108,7 @@ struct Tester2 {
                                  CGAL::Delaunay_mesh_criteria_2<CDT>());
     const size_type number_of_vertices0bis = cdt.number_of_vertices();
     std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() << "\n\n";
-  
+
     assert( number_of_vertices0 == number_of_vertices0bis );
 
     cdt = cdt2;
@@ -139,7 +139,7 @@ struct Tester2 {
       mesher.refine_mesh();
     }
     const size_type number_of_vertices2 = cdt.number_of_vertices();
-    std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices() 
+    std::cerr << " done.\nNumber of vertices: " << cdt.number_of_vertices()
               << "\n\n";
 
     assert(cdt.is_valid());

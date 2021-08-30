@@ -112,13 +112,13 @@ private:
     P_traits cdt_traits(normal);
     cdt = new CDT(cdt_traits);
     typename CDT::Vertex_handle previous, first, last_inserted;
-    
+
     // Iterate the points of the facet and decide if they must be inserted in the CDT
     typename Kernel::FT x(0), y(0), z(0);
 
     for(PointAndId idPoint : idPoints)
     {
-     
+
       x += idPoint.point.x();
      y += idPoint.point.y();
      z += idPoint.point.z();
@@ -132,7 +132,7 @@ private:
        if(first == typename CDT::Vertex_handle()) {
          first = vh;
        }
-       if(previous != 0 && previous != vh) {
+       if(previous != nullptr && previous != vh) {
          cdt->insert_constraint(previous, vh);
          last_inserted = previous;
        }
@@ -189,7 +189,7 @@ private:
         if(first == typename CDT::Vertex_handle()) {
           first = vh;
         }
-        if(previous != 0 && previous != vh) {
+        if(previous != nullptr && previous != vh) {
           cdt->insert_constraint(previous, vh);
           last_inserted = previous;
         }

@@ -26,15 +26,15 @@
 */
 enum RenderingMode
 {
-  Points = 0, //! Renders only points without lighting.
-  PointsPlusNormals, //!Renders points and normals.
-  Wireframe, //!Renders only edges.
-  Flat, //!Renders only faces, with a lighting per face.
-  FlatPlusEdges, //!Renders flat faces and edges.
-  Gouraud, //!Renders only faces, with a lighting per vertex.
-  GouraudPlusEdges, //!Renders faces with a lighting per vertex, and edges.
-  ShadedPoints, //!Renders only points with lighting.
-  NumberOfRenderingMode //!Number of values in this enum.
+  Points = 0,           //!< Renders only points without lighting.
+  PointsPlusNormals,    //!< Renders points and normals.
+  Wireframe,            //!< Renders only edges.
+  Flat,                 //!< Renders only faces, with a lighting per face.
+  FlatPlusEdges,        //!< Renders flat faces and edges.
+  Gouraud,              //!< Renders only faces, with a lighting per vertex.
+  GouraudPlusEdges,     //!< Renders faces with a lighting per vertex, and edges.
+  ShadedPoints,         //!< Renders only points with lighting.
+  NumberOfRenderingMode //!< Number of values in this enum.
 };
 
 
@@ -72,7 +72,7 @@ public:
   virtual Item_id addItem(CGAL::Three::Scene_item* item) = 0;
   //!Adds a CGAL::Three::Scene_item* to the list of children.
   virtual void addChild(Scene_item* item)=0;
-  //! \brief Replaces an item by a new one in the scene.
+  //! \brief replaces an item by a new one in the scene.
   //! The item which id is `id` is replaced by `item`.
   //! The first one is deleted and gives its index to the second one.
   //! If emit_item_about_to_be_destroyed is true, emits
@@ -144,13 +144,13 @@ public:
   //! Used to update the selection in the Geometric Objects view.
   virtual void setSelectedItem(Item_id) = 0;
   //! \brief ignore data updating.
-  //! 
-  //! This will ignore all the individual calls to `itemChanged()` until 
+  //!
+  //! This will ignore all the individual calls to `itemChanged()` until
   //! `setUpdatesEnabled()` is called whith `b` being `true`.
   //!
   virtual void setUpdatesEnabled(bool b) =0;
   //!
-  //! \brief Updates all the items in the SceneView.
+  //! \brief updates all the items in the SceneView.
   //!
   virtual void allItemsChanged() = 0;
 }; // end interface Scene_interface

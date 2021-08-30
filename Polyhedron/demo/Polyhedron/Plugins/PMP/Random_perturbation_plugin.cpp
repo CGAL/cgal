@@ -16,7 +16,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -94,7 +94,7 @@ public Q_SLOTS:
 
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
+    QElapsedTimer time;
     time.start();
 
     std::cout << "Perturbation..." << std::endl;

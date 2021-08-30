@@ -61,10 +61,10 @@ TriangulationPointInput<T>::TriangulationPointInput(QGraphicsScene* s,
 
 
 
-// TODO: Do this! 
+// TODO: Do this!
 
 template <typename T>
-void 
+void
 TriangulationPointInput<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   p = convert(event->scenePos());
@@ -73,7 +73,7 @@ TriangulationPointInput<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-void 
+void
 TriangulationPointInput<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent * /*event*/)
 {
   faces.clear();
@@ -90,7 +90,7 @@ TriangulationPointInput<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent * /*event
 
 
 template <typename T>
-bool 
+bool
 TriangulationPointInput<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if(event->type() == QEvent::GraphicsSceneMousePress) {
@@ -105,7 +105,7 @@ TriangulationPointInput<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

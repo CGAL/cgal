@@ -36,9 +36,9 @@ void test_io(const NT& x){
         assert( x == tmp );
     }{
         std::ostringstream os;
-        os << ::CGAL::oformat(x);
+        os << ::CGAL::IO::oformat(x);
         std::istringstream is(os.str());
-        is >> ::CGAL::iformat(tmp);
+        is >> ::CGAL::IO::iformat(tmp);
         assert( x == tmp );
     }{
         std::ostringstream os;

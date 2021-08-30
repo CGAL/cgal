@@ -7,20 +7,20 @@
 #include <iostream>
 #include <fstream>
 #include <list>
- 
+
 typedef CGAL::Cartesian_d<double> K;
 typedef K::Point_d Point_d;
 
 
 int main() {
-  
+
   CGAL::Random Rnd;
   int N;
-  
+
   char filename[80];
   std::cout << "Enter input file name containing data points: \n" ;
   std::cin >> filename;
-  
+
   char filename_out_query_points[80];
   std::cout << "Enter output file name containing query points: \n" ;
   std::cin >> filename_out_query_points;
@@ -47,7 +47,7 @@ int main() {
 
   out_query << N; out_query << " "; out_query << query_point_number; out_query << std::endl;
   out_data << N; out_data << " "; out_data << data_point_number; out_data << std::endl;
-  
+
   std::cout << "dimension = " << N << std::endl;
   std::cout << "data point number = " << data_point_number << std::endl;
   std::cout << "query point number = " << query_point_number << std::endl;
@@ -61,41 +61,41 @@ int main() {
   for (int jj=0; jj < query_point_number; ) {
        int random_number=Rnd.get_int(0,point_number);
        if (query_point[random_number]==0) {
-		query_point[random_number]=1;
-  		jj++;
+                query_point[random_number]=1;
+                  jj++;
        }
  }
-  
+
 
  for (int i = 0; i < point_number; i++) {
-	std::vector<double> p(N);
+        std::vector<double> p(N);
         for (int j = 0; j < N; j++) {
-          in >> p[j]; 
-        } 	
+          in >> p[j];
+        }
         Point_d Pnt(N,p.begin(),p.end());
         all_points.push_back(Pnt);
-  }; 
+  };
 
-  
+
   // schrijf all points naar query points of data points
   int counter=0;
   for(point_list::iterator it = all_points.begin(); it != all_points.end(); ++it) {
-     // 
-     if (query_point[counter]==1) { 
-     	for (int j = 0; j < N; j++) {
-        	  out_query << (*it)[j]; out_query << " ";
-     	}
-     	out_query << std::endl;
+     //
+     if (query_point[counter]==1) {
+             for (int j = 0; j < N; j++) {
+                  out_query << (*it)[j]; out_query << " ";
+             }
+             out_query << std::endl;
      } else {
-     	for (int j = 0; j < N; j++) {
-        	  out_data << (*it)[j]; out_data << " ";
-     	}
-     	out_data << std::endl;
+             for (int j = 0; j < N; j++) {
+                  out_data << (*it)[j]; out_data << " ";
+             }
+             out_data << std::endl;
      }
-     counter++; 
+     counter++;
   }
 
-  
+
   out_query.close();
   out_data.close();
   return 0;

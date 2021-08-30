@@ -7,8 +7,8 @@ the requirement for traversal of all faces in a graph.
 
 \cgalAssociatedTypesBegin
 
-\cgalAssociatedTypeBegin{boost::graph_traits<FaceListGraph>::%face_iterator} A face iterator (obtained via `faces(g)`) provides access to all of the faces in a graph. 
-A face iterator type must meet the requirements of `MultiPassInputIterator`. The value type of the 
+\cgalAssociatedTypeBegin{boost::graph_traits<FaceListGraph>::%face_iterator} A face iterator (obtained via `faces(g)`) provides access to all of the faces in a graph.
+A face iterator type must meet the requirements of `MultiPassInputIterator`. The value type of the
 face iterator must be the same as the face descriptor of the graph.
 \cgalAssociatedTypeEnd
 

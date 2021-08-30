@@ -12,6 +12,9 @@
 #ifndef CGAL_THREAD_H
 #define CGAL_THREAD_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/thread.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/config.h>"
+
 #include <CGAL/config.h>
 
 /*
@@ -34,7 +37,7 @@
 #  include <tbb/tbb_config.h>
 #  if TBB_IMPLEMENT_CPP0X
 #    include <tbb/compat/thread>
-#    include <tbb/atomic.h>
+#    include <atomic>
 #    include <tbb/tick_count.h>
 #    define CGAL_USE_TBB_THREADS 1
 #  else
@@ -56,7 +59,7 @@ namespace CGAL {
 namespace cpp11 {
 
 #if CGAL_USE_TBB_THREADS
-  
+
   using std::thread; // std::thread is declared by TBB if TBB_IMPLEMENT_CPP0X == 1
 
   inline void sleep_for (double seconds)
@@ -65,7 +68,7 @@ namespace cpp11 {
     // It takes interval_t types as argument (!= from the std norm)
     std::this_thread::sleep_for(tbb::tick_count::interval_t(seconds));
   }
-  
+
 #else // C++11 implementation
 
   using std::thread;
@@ -83,8 +86,8 @@ namespace cpp11 {
 
 #if defined(CGAL_NO_ATOMIC) && defined(CGAL_LINKED_WITH_TBB)
   // If <CGAL/atomic.h> did not defined CGAL::cpp11::atomic, then use
-  // tbb::atomic as a fallback.
-  using tbb::atomic;
+  // std::atomic as a fallback.
+  using std::atomic;
 #endif
 
 } // cpp11

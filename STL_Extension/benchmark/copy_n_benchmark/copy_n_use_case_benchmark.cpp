@@ -40,17 +40,17 @@ int main(int argc, char* argv[]) {
   const char* generator = "Random_points_in_disc_2";
   float time;
 
-  std::cout << 
+  std::cout <<
     "{| \n"
     "! Library !! Generator !! #Elements !! items/sec \n"
     "|- \n";
-  
+
   timer.restart();
   for (int i = 0; i < repeats; ++i) { CGAL::copy_n( g, n, points.begin()); }
   time = (double)n*repeats/timer.elapsed()/1.0E6;
   format_output("CGAL", generator , n, time);
   std::cout << "|- \n";
-  
+
   timer.restart();
   for (int i = 0; i < repeats; ++i) { std::copy_n( g, n, points.begin()); }
   time = (double)n*repeats/timer.elapsed()/1.0E6;

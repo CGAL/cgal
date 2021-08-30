@@ -1,11 +1,11 @@
 // Copyright (c) 2009 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org)
-// 
+//
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_TEST_IO_H
@@ -29,8 +29,8 @@ void test_io(_CT x){
 
         NT a(x);
         std::stringstream ss;
-        ss<<CGAL::oformat(a);
-        ss>>CGAL::iformat(a);
+        ss<<CGAL::IO::oformat(a);
+        ss>>CGAL::IO::iformat(a);
         assert(a==NT(x));
 }
 
@@ -44,8 +44,8 @@ void test_io(){
 
         NT a;
         std::stringstream ss;
-        ss<<CGAL::oformat(a);
-        ss>>CGAL::iformat(a);
+        ss<<CGAL::IO::oformat(a);
+        ss>>CGAL::IO::iformat(a);
         assert(a==NT());
 }
 
@@ -58,8 +58,8 @@ void test_interval_io(_CT x){
 
         NT a(x),b(x);
         std::stringstream ss;
-        ss<<CGAL::oformat(a);
-        ss>>CGAL::iformat(a);
+        ss<<CGAL::IO::oformat(a);
+        ss>>CGAL::IO::iformat(a);
         assert(a.inf()==b.inf());
         assert(a.sup()==b.sup());
 }

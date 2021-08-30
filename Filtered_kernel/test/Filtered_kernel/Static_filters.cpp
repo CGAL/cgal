@@ -348,7 +348,7 @@ int main(int argc, char **argv)
 
   std::cout << "Testing Compare_squared_radius_3" << std::endl;
   for(int i=0; i<loops; ++i)
-    test_compare_squared_radius_3();  
+    test_compare_squared_radius_3();
 
   return 0;
 }

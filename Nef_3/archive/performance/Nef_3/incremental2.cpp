@@ -89,7 +89,7 @@ typedef Kernel::Aff_transformation_3        Aff_transformation_3;
 bool cgal_nef3_timer_on = false;
 
 Aff_transformation_3 compute_transformation_matrix(double alpha) {
-  
+
   double arc = CGAL_PI * alpha / 180.0;
 
   RT epsilon = 1;
@@ -107,27 +107,27 @@ Aff_transformation_3 compute_transformation_matrix(double alpha) {
     epsilon *= RT(10);
   }
 
-  std::cout << "epsilon      : 1/" << epsilon << std::endl; 
+  std::cout << "epsilon      : 1/" << epsilon << std::endl;
 
   RT sin_alpha(0);
   RT cos_alpha(0);
   RT w(0);
-  
+
   CGAL::Timer t;
-  t.start(); 
+  t.start();
   CGAL::rational_rotation_approximation( arc,
-					 sin_alpha, cos_alpha, w,
-					 RT(1), RT(epsilon));
+                                         sin_alpha, cos_alpha, w,
+                                         RT(1), RT(epsilon));
   t.stop();
   std::cout << "approx. time: " << t.time() << std::endl;
 
   Aff_transformation_3 aff( cos_alpha,-sin_alpha, RT(0),
-			    sin_alpha, cos_alpha, RT(0),
-			    RT(0), RT(0), w,
-			    w);
+                            sin_alpha, cos_alpha, RT(0),
+                            RT(0), RT(0), w,
+                            w);
 
-  std::cout << "sin(alpha)*w: " << sin_alpha << std::endl; 
-  std::cout << "cos(alpha)*w: " << cos_alpha << std::endl; 
+  std::cout << "sin(alpha)*w: " << sin_alpha << std::endl;
+  std::cout << "cos(alpha)*w: " << cos_alpha << std::endl;
   std::cout << "w: " << w << std::endl;
 
   return aff;
@@ -139,18 +139,18 @@ Aff_transformation_3 compute_transformation_matrix(RT sinus, RT cosinus, RT w) {
   double arc = std::asin(sin_double);
   double alpha = arc * 180 / CGAL_PI;
 
-  std::cout << "sin(alpha)*w: " << sinus << std::endl; 
-  std::cout << "cos(alpha)*w: " << cosinus << std::endl; 
+  std::cout << "sin(alpha)*w: " << sinus << std::endl;
+  std::cout << "cos(alpha)*w: " << cosinus << std::endl;
   std::cout << "w: " << w << std::endl;
 
   std::cout << "sin_double: " << sin_double << std::endl;
   std::cout << "arc: " << arc << std::endl;
   std::cout << "alpha: " << alpha << std::endl;
-  
+
   Aff_transformation_3 aff( cosinus,-sinus, RT(0),
-			    sinus, cosinus, RT(0),
-			    RT(0), RT(0), w,
-			    w);
+                            sinus, cosinus, RT(0),
+                            RT(0), RT(0), w,
+                            w);
   return aff;
 
 }
@@ -192,11 +192,11 @@ int main(int argc, char* argv[]) {
   int runs = std::atoi(argv[3]);
   RT start_t, factor;
   if(argc > 4)
-    start_t = std::atoi(argv[4]);    
+    start_t = std::atoi(argv[4]);
   else
     start_t = 10;
   if(argc > 5)
-    factor = std::atoi(argv[5]);    
+    factor = std::atoi(argv[5]);
   else
     factor = 10;
 
@@ -209,7 +209,7 @@ int main(int argc, char* argv[]) {
 
     Nef_polyhedron N2 = N1;
     N2.transform(aff);
-    
+
     Nef_polyhedron N3 = N2;
     N3.transform(aff_fixed);
 

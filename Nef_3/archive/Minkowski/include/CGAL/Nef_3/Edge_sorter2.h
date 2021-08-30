@@ -10,14 +10,14 @@ namespace CGAL {
 
 template<typename Nef_, typename Container>
 class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
-  
+
   typedef Nef_                                   Nef_polyhedron;
   typedef typename Nef_polyhedron::SNC_and_PL    SNC_and_PL;
   typedef typename Nef_polyhedron::SNC_structure SNC_structure;
   typedef typename Nef_polyhedron::Items         Items;
   typedef CGAL::SNC_decorator<SNC_structure>     Base;
   typedef CGAL::SNC_point_locator<Base>          SNC_point_locator;
-  typedef CGAL::SNC_constructor<Items, SNC_structure>   
+  typedef CGAL::SNC_constructor<Items, SNC_structure>
     SNC_constructor;
 
   typedef typename SNC_structure::Vertex_handle     Vertex_handle;
@@ -39,7 +39,7 @@ class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
   };
 
   bool split_at(Segment_3 s1, Segment_3 s2, Point_3& ip2) {
-    
+
     Point_3 ip1;
     Vector_3 vec1(cross_product(s2.to_vector(),Vector_3(1,0,0)));
     Plane_3 pl1(s2.source(), vec1);
@@ -62,7 +62,7 @@ class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
 
  public:
   Edge_sorter2(Container& cin) : c(cin) {}
-      
+
   void operator()(SNC_and_PL& sncpl) {
 
     sncp = sncpl.sncp;
@@ -75,62 +75,62 @@ class Edge_sorter2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     for(esi1 = c.begin(); esi1 != c.end(); ++esi1) {
       //      std::cerr << "1: " << (*esi1)->source()->point() << "->" << (*esi1)->twin()->source()->point() << std::endl;
       esi2 = esi1;
-      ++esi2; 
+      ++esi2;
       //      if(esi2 != c.end())
-      //	std::cerr << "2: " << (*esi2)->source()->point() << "->" << (*esi2)->twin()->source()->point() << std::endl;
+      //        std::cerr << "2: " << (*esi2)->source()->point() << "->" << (*esi2)->twin()->source()->point() << std::endl;
       while(esi2!=c.end() &&
-	    (*esi1)->twin()->source()->point().x() <
-	    (*esi2)->source()->point().x()) {
-	if((*esi1)->source() == (*esi2)->source()) {
-	  ++esi2;
-	  continue;
-	}
-	Point_3 ip;
-	bool b = split_at(Segment_3((*esi1)->source()->point(),
-				    (*esi1)->twin()->source()->point()), 
-			  Segment_3((*esi2)->source()->point(),
-				    (*esi2)->twin()->source()->point()),ip);
-	//	std::cerr << "split " << b << std::endl;
-	if(b) {
-	  //	  std::cerr << ip << std::endl;
-	  Vertex_handle v;
-	  Halfedge_handle e = (*esi2);
-	  v = C.create_from_edge(e,ip);
-	  pl->add_vertex(v);
+            (*esi1)->twin()->source()->point().x() <
+            (*esi2)->source()->point().x()) {
+        if((*esi1)->source() == (*esi2)->source()) {
+          ++esi2;
+          continue;
+        }
+        Point_3 ip;
+        bool b = split_at(Segment_3((*esi1)->source()->point(),
+                                    (*esi1)->twin()->source()->point()),
+                          Segment_3((*esi2)->source()->point(),
+                                    (*esi2)->twin()->source()->point()),ip);
+        //        std::cerr << "split " << b << std::endl;
+        if(b) {
+          //          std::cerr << ip << std::endl;
+          Vertex_handle v;
+          Halfedge_handle e = (*esi2);
+          v = C.create_from_edge(e,ip);
+          pl->add_vertex(v);
 
-	  SVertex_iterator svi = v->svertices_begin();
-	  SVertex_handle svf, svb;
-	  if(svi->point() == e->point()) {
-	    svf = svi;
-	    svb = ++svi;
-	  } else {
-	    svb = svi;
-	    svf = ++svi;
-	  }
-	  
-	  svb->twin() = e;
-	  svf->twin() = e->twin();
-	  e->twin()->twin() = svf;
-	  e->twin() = svb;
-	  
-	  pl->add_edge(svf);
-	  pl->add_edge(svb);
+          SVertex_iterator svi = v->svertices_begin();
+          SVertex_handle svf, svb;
+          if(svi->point() == e->point()) {
+            svf = svi;
+            svb = ++svi;
+          } else {
+            svb = svi;
+            svf = ++svi;
+          }
 
-	  esi3 = esi2;
-	  ++esi3;
-	  while(esi3 != c.end() && 
-		(*esi3)->source()->point() > 
-		svf->source()->point())
-	    ++esi3;
-	  c.insert(esi3, svf);
-	}
-	
-	++esi2;
-	//	std::cerr << "2: " << (*esi2)->source()->point() << "->" << (*esi2)->twin()->source()->point() << std::endl;
+          svb->twin() = e;
+          svf->twin() = e->twin();
+          e->twin()->twin() = svf;
+          e->twin() = svb;
+
+          pl->add_edge(svf);
+          pl->add_edge(svb);
+
+          esi3 = esi2;
+          ++esi3;
+          while(esi3 != c.end() &&
+                (*esi3)->source()->point() >
+                svf->source()->point())
+            ++esi3;
+          c.insert(esi3, svf);
+        }
+
+        ++esi2;
+        //        std::cerr << "2: " << (*esi2)->source()->point() << "->" << (*esi2)->twin()->source()->point() << std::endl;
       }
     }
   }
 };
-  
+
 } //namespace CGAL
 #endif //CGAL_NEF3_EDGE_SORTER2_H

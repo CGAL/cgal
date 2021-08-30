@@ -1,9 +1,9 @@
-// Copyright (c) 2000, 2001, 2004  
+// Copyright (c) 2000, 2001, 2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -41,7 +41,7 @@ int main()
   gv.clear(); // remove the pickplane.
 
   gv << K::Point_2 (200, 100);
-  gv << CGAL::blue();
+  gv << CGAL::IO::blue();
   gv << K::Point_3 (200, 100, 100);
   gv << CGAL::red();
   gv << K::Segment_2 (K::Point_2(200, 100),

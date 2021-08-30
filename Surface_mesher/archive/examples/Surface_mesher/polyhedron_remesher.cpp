@@ -31,18 +31,18 @@ int main() {
   Polyhedral_surface surface(file_input);
 
   // defining meshing criteria
-  CGAL::Surface_mesh_default_criteria_3<Tr> 
+  CGAL::Surface_mesh_default_criteria_3<Tr>
     facets_criteria(30.,  // angular bound
-		    0.5,  // radius bound
-		    0.5); // distance bound
+                    0.5,  // radius bound
+                    0.5); // distance bound
   CGAL::Surface_mesh_default_edges_criteria_3<Tr>
     edges_criteria(0.5,  // radius bound
-		   0.5); // distance bound
+                   0.5); // distance bound
 
   // meshing surface
   CGAL::make_piecewise_smooth_surface_mesh(c2t3, surface,
-					   facets_criteria, edges_criteria,
-					   CGAL::Manifold_tag());
+                                           facets_criteria, edges_criteria,
+                                           CGAL::Manifold_tag());
 
   std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
 }

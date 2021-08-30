@@ -1,16 +1,16 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel
 
@@ -33,8 +33,8 @@ class Compute_coordinateHd {
   typedef typename K::FT             FT;
   typedef typename K::Point_d        Point_d;
  public:
-  typedef FT                         result_type;  
-  result_type 
+  typedef FT                         result_type;
+  result_type
     operator()(const Point_d& p, int i) const
   {
     return p.cartesian(i);
@@ -47,7 +47,7 @@ class Point_dimensionHd {
   typedef typename K::Point_d        Point_d;
   public:
   typedef int                       result_type;
-  result_type 
+  result_type
     operator()(const Point_d& p) const
   {
     return p.dimension();
@@ -60,7 +60,7 @@ class Less_coordinateHd {
   typedef typename K::Point_d        Point_d;
   public:
   typedef bool                       result_type;
-  result_type 
+  result_type
     operator()(const Point_d& p, const Point_d& q, int i) const
   {
     int d = p.dimension();
@@ -76,7 +76,7 @@ typedef typename R::RT RT;
 typedef typename R::LA LA;
 
 Point_d operator()(const Point_d& p) const
-{ 
+{
   int d = p.dimension();
   typename LA::Vector h(d+2);
   RT D = p.homogeneous(d);
@@ -126,13 +126,13 @@ Point_d operator()(Forward_iterator start, Forward_iterator end) const
   typename LA::Vector b(d);
   Point_d pd = *start++;
   RT pdd  = pd.homogeneous(d);
-  for (int i = 0; i < d; i++) { 
+  for (int i = 0; i < d; i++) {
     // we set up the equation for p_i
-    Point_d pi = *start++; 
+    Point_d pi = *start++;
     RT pid = pi.homogeneous(d);
     b[i] = 0;
     for (int j = 0; j < d; j++) {
-      M(i,j) = RT(2) * pdd * pid * 
+      M(i,j) = RT(2) * pdd * pid *
                (pi.homogeneous(j)*pdd - pd.homogeneous(j)*pid);
       b[i] += (pi.homogeneous(j)*pdd - pd.homogeneous(j)*pid) *
               (pi.homogeneous(j)*pdd + pd.homogeneous(j)*pid);
@@ -163,28 +163,28 @@ typedef typename R::LA LA;
 typedef typename R::FT FT;
 typedef typename R::RT RT;
 
-bool operator()(const Point_d& p, const Point_d& s, const Point_d& t, 
+bool operator()(const Point_d& p, const Point_d& s, const Point_d& t,
      FT& l) const
-{ int d = p.dimension(); 
-  CGAL_assertion_msg((d==s.dimension())&&(d==t.dimension()&& d>0), 
+{ int d = p.dimension();
+  CGAL_assertion_msg((d==s.dimension())&&(d==t.dimension()&& d>0),
   "position_along_line: argument dimensions disagree.");
-  CGAL_assertion_msg((s!=t), 
+  CGAL_assertion_msg((s!=t),
   "Position_on_line_d: line defining points are equal.");
-  RT lnum = (p.homogeneous(0)*s.homogeneous(d) - 
-             s.homogeneous(0)*p.homogeneous(d)) * t.homogeneous(d); 
-  RT lden = (t.homogeneous(0)*s.homogeneous(d) - 
-             s.homogeneous(0)*t.homogeneous(d)) * p.homogeneous(d); 
-  RT num(lnum), den(lden), lnum_i, lden_i; 
-  for (int i = 1; i < d; i++) {  
-    lnum_i = (p.homogeneous(i)*s.homogeneous(d) - 
-              s.homogeneous(i)*p.homogeneous(d)) * t.homogeneous(d); 
-    lden_i = (t.homogeneous(i)*s.homogeneous(d) - 
-              s.homogeneous(i)*t.homogeneous(d)) * p.homogeneous(d); 
-    if (lnum*lden_i != lnum_i*lden) return false; 
+  RT lnum = (p.homogeneous(0)*s.homogeneous(d) -
+             s.homogeneous(0)*p.homogeneous(d)) * t.homogeneous(d);
+  RT lden = (t.homogeneous(0)*s.homogeneous(d) -
+             s.homogeneous(0)*t.homogeneous(d)) * p.homogeneous(d);
+  RT num(lnum), den(lden), lnum_i, lden_i;
+  for (int i = 1; i < d; i++) {
+    lnum_i = (p.homogeneous(i)*s.homogeneous(d) -
+              s.homogeneous(i)*p.homogeneous(d)) * t.homogeneous(d);
+    lden_i = (t.homogeneous(i)*s.homogeneous(d) -
+              s.homogeneous(i)*t.homogeneous(d)) * p.homogeneous(d);
+    if (lnum*lden_i != lnum_i*lden) return false;
     if (lden_i != 0) { den = lden_i; num = lnum_i; }
   }
   l = R::make_FT(num,den);
-  return true; 
+  return true;
 }
 };
 
@@ -195,7 +195,7 @@ typedef typename R::LA LA;
 typedef typename R::RT RT;
 
 template <class ForwardIterator, class OutputIterator>
-OutputIterator operator()(ForwardIterator first, ForwardIterator last, 
+OutputIterator operator()(ForwardIterator first, ForwardIterator last,
   const Point_d& p, OutputIterator result)
 { TUPLE_DIM_CHECK(first,last,Barycentric_coordinates_d);
   CGAL_assertion_code( int d = p.dimension(); )
@@ -204,9 +204,9 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
   typename LA::Matrix M(first,last);
   typename LA::Vector b(p.homogeneous_begin(),p.homogeneous_end()), x;
   RT D;
-  LA::linear_solver(M,b,x,D);  
+  LA::linear_solver(M,b,x,D);
   for (int i=0; i< x.dimension(); ++result, ++i) {
-    *result= R::make_FT(x[i],D); 
+    *result= R::make_FT(x[i],D);
   }
   return result;
 }
@@ -214,21 +214,21 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 
 
 template <class R>
-struct OrientationHd { 
+struct OrientationHd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 
 template <class ForwardIterator>
 Orientation operator()(ForwardIterator first, ForwardIterator last)
 { TUPLE_DIM_CHECK(first,last,Orientation_d);
-  int d = static_cast<int>(std::distance(first,last)); 
+  int d = static_cast<int>(std::distance(first,last));
   // range contains d points of dimension d-1
   CGAL_assertion_msg(first->dimension() == d-1,
   "Orientation_d: needs first->dimension() + 1 many points.");
   typename LA::Matrix M(d); // quadratic
   for (int i = 0; i < d; ++first,++i) {
-    for (int j = 0; j < d; ++j) 
-      M(i,j) = first->homogeneous(j); 
+    for (int j = 0; j < d; ++j)
+      M(i,j) = first->homogeneous(j);
   }
   int row_correction = ( (d % 2 == 0) ? -1 : +1 );
   // we invert the sign if the row number is even i.e. d is odd
@@ -237,52 +237,52 @@ Orientation operator()(ForwardIterator first, ForwardIterator last)
 };
 
 template <class R>
-struct Side_of_oriented_sphereHd { 
+struct Side_of_oriented_sphereHd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 typedef typename R::RT RT;
 
-template <class ForwardIterator> 
-Oriented_side operator()(ForwardIterator first, ForwardIterator last, 
+template <class ForwardIterator>
+Oriented_side operator()(ForwardIterator first, ForwardIterator last,
                          const Point_d& x)
-{ 
+{
   TUPLE_DIM_CHECK(first,last,Side_of_oriented_sphere_d);
   int d = static_cast<int>(std::distance(first,last)); // |A| contains |d| points
-  CGAL_assertion_msg((d-1 == first->dimension()), 
+  CGAL_assertion_msg((d-1 == first->dimension()),
   "Side_of_oriented_sphere_d: needs first->dimension()+1 many input points.");
-  typename LA::Matrix M(d + 1); 
-  for (int i = 0; i < d; ++first, ++i) { 
+  typename LA::Matrix M(d + 1);
+  for (int i = 0; i < d; ++first, ++i) {
     RT Sum = 0;
-    RT hd = first->homogeneous(d-1); 
-    M(i,0) = hd*hd; 
-    for (int j = 0; j < d; j++) { 
-      RT hj = first->homogeneous(j); 
-      M(i,j + 1) = hj * hd; 
-      Sum += hj*hj; 
+    RT hd = first->homogeneous(d-1);
+    M(i,0) = hd*hd;
+    for (int j = 0; j < d; j++) {
+      RT hj = first->homogeneous(j);
+      M(i,j + 1) = hj * hd;
+      Sum += hj*hj;
     }
-    M(i,d) = Sum; 
+    M(i,d) = Sum;
   }
-  RT Sum = 0; 
-  RT hd = x.homogeneous(d-1); 
-  M(d,0) = hd*hd; 
-  for (int j = 0; j < d; j++) { 
-    RT hj = x.homogeneous(j); 
-    M(d,j + 1) = hj * hd; 
-    Sum += hj*hj; 
+  RT Sum = 0;
+  RT hd = x.homogeneous(d-1);
+  M(d,0) = hd*hd;
+  for (int j = 0; j < d; j++) {
+    RT hj = x.homogeneous(j);
+    M(d,j + 1) = hj * hd;
+    Sum += hj*hj;
   }
-  M(d,d) = Sum; 
+  M(d,d) = Sum;
   return CGAL::Sign(- LA::sign_of_determinant(M));
 }
 };
 
 template <class R>
-struct Side_of_bounded_sphereHd { 
+struct Side_of_bounded_sphereHd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 typedef typename R::RT RT;
 
-template <class ForwardIterator> 
-Bounded_side operator()(ForwardIterator first, ForwardIterator last, 
+template <class ForwardIterator>
+Bounded_side operator()(ForwardIterator first, ForwardIterator last,
                         const Point_d& p)
 {
   TUPLE_DIM_CHECK(first,last,region_of_sphere);
@@ -297,13 +297,13 @@ Bounded_side operator()(ForwardIterator first, ForwardIterator last,
         case ON_POSITIVE_SIDE    :   return ON_BOUNDED_SIDE;
         case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;
         case ON_NEGATIVE_SIDE    :   return ON_UNBOUNDED_SIDE;
-    }       
+    }
   } else {
     switch (oside) {
         case ON_POSITIVE_SIDE    :   return ON_UNBOUNDED_SIDE;
         case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;
         case ON_NEGATIVE_SIDE    :   return ON_BOUNDED_SIDE;
-    }     
+    }
   }
   return ON_BOUNDARY; // never reached
 }
@@ -311,103 +311,103 @@ Bounded_side operator()(ForwardIterator first, ForwardIterator last,
 
 
 template <class R>
-struct Contained_in_simplexHd { 
+struct Contained_in_simplexHd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 typedef typename R::RT RT;
 
-template <class ForwardIterator> 
+template <class ForwardIterator>
 bool operator()(ForwardIterator first, ForwardIterator last,
-                const Point_d& p) 
+                const Point_d& p)
 {
   TUPLE_DIM_CHECK(first,last,Contained_in_simplex_d);
   int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
-  int d = first->dimension(); 
+  int d = first->dimension();
   CGAL_assertion_code(
     typename R::Affinely_independent_d check_independence; )
   CGAL_assertion_msg(check_independence(first,last),
     "Contained_in_simplex_d: A not affinely independent.");
   CGAL_assertion(d==p.dimension());
 
-  typename LA::Matrix M(d + 1,k); 
-  typename LA::Vector b(p.homogeneous_begin(),p.homogeneous_end()); 
+  typename LA::Matrix M(d + 1,k);
+  typename LA::Vector b(p.homogeneous_begin(),p.homogeneous_end());
   for (int j = 0; j < k; ++first, ++j) {
-    for (int i = 0; i <= d; ++i)  
-      M(i,j) = first->homogeneous(i); 
+    for (int i = 0; i <= d; ++i)
+      M(i,j) = first->homogeneous(i);
   }
 
-  RT D; 
-  typename LA::Vector lambda; 
-  if ( LA::linear_solver(M,b,lambda,D) ) { 
-    int s = CGAL_NTS sign(D); 
-    for (int j = 0; j < k; j++) { 
-      int t = CGAL_NTS sign(lambda[j]); 
-      if (s * t < 0) return false; 
+  RT D;
+  typename LA::Vector lambda;
+  if ( LA::linear_solver(M,b,lambda,D) ) {
+    int s = CGAL_NTS sign(D);
+    for (int j = 0; j < k; j++) {
+      int t = CGAL_NTS sign(lambda[j]);
+      if (s * t < 0) return false;
     }
     return true;
   }
-  return false; 
+  return false;
 }
 };
 
 template <class R>
-struct Contained_in_affine_hullHd { 
+struct Contained_in_affine_hullHd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 typedef typename R::RT RT;
 
-template <class ForwardIterator> 
+template <class ForwardIterator>
 bool operator()(ForwardIterator first, ForwardIterator last,
-                const Point_d& p) 
+                const Point_d& p)
 {
   TUPLE_DIM_CHECK(first,last,Contained_in_affine_hull_d);
   int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
-  int d = first->dimension(); 
-  typename LA::Matrix M(d + 1,k); 
-  typename LA::Vector b(p.homogeneous_begin(),p.homogeneous_end()); 
-  for (int j = 0; j < k; ++first, ++j) 
-    for (int i = 0; i <= d; ++i) 
-      M(i,j) = first->homogeneous(i); 
-  return LA::is_solvable(M,b); 
+  int d = first->dimension();
+  typename LA::Matrix M(d + 1,k);
+  typename LA::Vector b(p.homogeneous_begin(),p.homogeneous_end());
+  for (int j = 0; j < k; ++first, ++j)
+    for (int i = 0; i <= d; ++i)
+      M(i,j) = first->homogeneous(i);
+  return LA::is_solvable(M,b);
 }
 };
 
 
 template <class R>
-struct Affine_rankHd { 
+struct Affine_rankHd {
 typedef typename R::Point_d Point_d;
 typedef typename R::Vector_d Vector_d;
 typedef typename R::LA LA;
 typedef typename R::RT RT;
 
-template <class ForwardIterator> 
-int operator()(ForwardIterator first, ForwardIterator last) 
+template <class ForwardIterator>
+int operator()(ForwardIterator first, ForwardIterator last)
 {
   TUPLE_DIM_CHECK(first,last,Affine_rank_d);
   int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
-  if (k == 0) return -1; 
-  if (k == 1) return 0; 
-  int d = first->dimension(); 
+  if (k == 0) return -1;
+  if (k == 1) return 0;
+  int d = first->dimension();
   typename LA::Matrix M(d,--k);
   Point_d p0 = *first; ++first; // first points to second
   for (int j = 0; j < k; ++first, ++j) {
     Vector_d v = *first - p0;
-    for (int i = 0; i < d; i++) 
-      M(i,j) = v.homogeneous(i); 
+    for (int i = 0; i < d; i++)
+      M(i,j) = v.homogeneous(i);
   }
-  return LA::rank(M); 
+  return LA::rank(M);
 }
 };
 
 template <class R>
-struct Affinely_independentHd { 
+struct Affinely_independentHd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 typedef typename R::RT RT;
 
-template <class ForwardIterator> 
-bool operator()(ForwardIterator first, ForwardIterator last) 
-{ typename R::Affine_rank_d rank; 
+template <class ForwardIterator>
+bool operator()(ForwardIterator first, ForwardIterator last)
+{ typename R::Affine_rank_d rank;
   int n = static_cast<int>(std::distance(first,last));
   return rank(first,last) == n-1;
 }
@@ -430,18 +430,18 @@ typedef typename R::Vector_d Vector_d;
 
 template<class ForwardIterator>
 bool operator()(
-  ForwardIterator first, ForwardIterator last, const Vector_d& x) 
+  ForwardIterator first, ForwardIterator last, const Vector_d& x)
 { TUPLE_DIM_CHECK(first,last,Contained_in_linear_hull_d);
   int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| vectors
-  int d = first->dimension(); 
-  typename LA::Matrix M(d,k); 
-  typename LA::Vector b(d); 
-  for (int i = 0; i < d; i++) { 
-     b[i] = x.homogeneous(i); 
-     for (int j = 0; j < k; j++) 
-       M(i,j) = (first+j)->homogeneous(i); 
+  int d = first->dimension();
+  typename LA::Matrix M(d,k);
+  typename LA::Vector b(d);
+  for (int i = 0; i < d; i++) {
+     b[i] = x.homogeneous(i);
+     for (int j = 0; j < k; j++)
+       M(i,j) = (first+j)->homogeneous(i);
   }
-  return LA::is_solvable(M,b); 
+  return LA::is_solvable(M,b);
 }
 };
 
@@ -453,12 +453,12 @@ template <class ForwardIterator>
 int operator()(ForwardIterator first, ForwardIterator last)
 { TUPLE_DIM_CHECK(first,last,linear_rank);
   int k = static_cast<int>(std::distance(first,last)); // k vectors
-  int d = first->dimension(); 
-  typename LA::Matrix M(d,k); 
+  int d = first->dimension();
+  typename LA::Matrix M(d,k);
   for (int i = 0; i < d  ; i++)
-     for (int j = 0; j < k; j++)  
-       M(i,j) = (first + j)->homogeneous(i); 
-  return LA::rank(M); 
+     for (int j = 0; j < k; j++)
+       M(i,j) = (first + j)->homogeneous(i);
+  return LA::rank(M);
 }
 };
 
@@ -484,20 +484,20 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
   OutputIterator result)
 { TUPLE_DIM_CHECK(first,last,linear_base);
   int k = static_cast<int>(std::distance(first,last)); // k vectors
-  int d = first->dimension(); 
-  typename LA::Matrix M(d,k); 
-  for (int j = 0; j < k; j++) 
+  int d = first->dimension();
+  typename LA::Matrix M(d,k);
+  for (int j = 0; j < k; j++)
     for (int i = 0; i < d; i++)
-      M(i,j) = (first+j)->homogeneous(i); 
+      M(i,j) = (first+j)->homogeneous(i);
 
-  std::vector<int> indcols; 
-  int r = LA::independent_columns(M,indcols); 
+  std::vector<int> indcols;
+  int r = LA::independent_columns(M,indcols);
 
   for (int l=0; l < r; l++) {
     typename LA::Vector v = M.column(indcols[l]);
     *result++ = Vector_d(d,v.begin(),v.end(),1);
   }
-  return result; 
+  return result;
 }
 };
 

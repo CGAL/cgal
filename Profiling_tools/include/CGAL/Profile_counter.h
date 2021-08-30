@@ -31,7 +31,7 @@
 //   the ratios corresponding to the number of times 2 branches are taken.
 //
 //  If CGAL_CONCURRENT_PROFILE is defined, the counters can be concurrently updated
-//  
+//
 // See also CGAL/Profile_timer.h
 
 // TODO :
@@ -48,6 +48,7 @@
 #include <iomanip>
 #include <string>
 #include <map>
+#include <atomic>
 
 #include <CGAL/disable_warnings.h>
 
@@ -90,24 +91,24 @@ namespace CGAL {
 struct Profile_counter
 {
     Profile_counter(const std::string & ss)
-      : s(ss) 
+      : s(ss)
     {
-      i = 0; // needed here because of tbb::atomic 
+      i = 0; // needed here because of std::atomic
     }
 
     void operator++() { ++i; }
 
     ~Profile_counter()
     {
-     
-      
+
+
       std::cerr << "[CGAL::Profile_counter] "
                 << std::setw(10) << internal::dot_it(i) << " " << s << std::endl;
     }
 
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    tbb::atomic<unsigned int> i;
+    std::atomic<unsigned int> i;
 #else
     unsigned int i;
 #endif
@@ -129,14 +130,14 @@ public:
     Profile_histogram_counter(const std::string & ss)
       : s(ss) {}
 
-    void operator()(unsigned i) 
-    { 
+    void operator()(unsigned i)
+    {
 #ifdef CGAL_CONCURRENT_PROFILE
       Counters::accessor a;
       counters.insert(a, i);
       ++a->second;
 #else
-      ++counters[i]; 
+      ++counters[i];
 #endif
     }
 
@@ -167,7 +168,7 @@ struct Profile_branch_counter
     Profile_branch_counter(const std::string & ss)
       : s(ss)
     {
-      i = j = 0; // needed here because of tbb::atomic 
+      i = j = 0; // needed here because of std::atomic
     }
 
     void operator++() { ++i; }
@@ -183,7 +184,7 @@ struct Profile_branch_counter
 
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    tbb::atomic<unsigned int> i, j;
+    std::atomic<unsigned int> i, j;
 #else
     unsigned int i, j;
 #endif
@@ -194,9 +195,9 @@ private:
 struct Profile_branch_counter_3
 {
     Profile_branch_counter_3(const std::string & ss)
-      : s(ss) 
+      : s(ss)
     {
-      i = j = k = 0; // needed here because of tbb::atomic 
+      i = j = k = 0; // needed here because of std::atomic
     }
 
     void operator++() { ++i; }
@@ -214,7 +215,7 @@ struct Profile_branch_counter_3
 
 private:
 #ifdef CGAL_CONCURRENT_PROFILE
-    tbb::atomic<unsigned int> i, j, k;
+    std::atomic<unsigned int> i, j, k;
 #else
     unsigned int i, j, k;
 #endif
@@ -242,9 +243,9 @@ private:
 #  define CGAL_HISTOGRAM_PROFILER(Y, Z)
 #  define CGAL_BRANCH_PROFILER(Y, NAME)
 #  define CGAL_BRANCH_PROFILER_BRANCH(NAME)
-#  define CGAL_BRANCH_PROFILER_3(Y, NAME) 
+#  define CGAL_BRANCH_PROFILER_3(Y, NAME)
 #  define CGAL_BRANCH_PROFILER_BRANCH_1(NAME)
-#  define CGAL_BRANCH_PROFILER_BRANCH_2(NAME) 
+#  define CGAL_BRANCH_PROFILER_BRANCH_2(NAME)
 #endif
 
 } //namespace CGAL

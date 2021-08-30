@@ -39,7 +39,7 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   typedef typename CGAL::Ray_hit_generator2<Nef_polyhedron> Ray_hit2;
   typedef typename CGAL::External_structure_builder<Nef_polyhedron> External_structure_builder;
   typedef typename CGAL::SFace_separator<Nef_polyhedron> SFace_separator;
-  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::less<Point_3>, 
+  typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::less<Point_3>,
                                      std::less<FT>, Container> Edge_sorter;
   typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::greater<Point_3>,
                                      std::greater<FT>, Container> Edge_sorter2;
@@ -53,14 +53,14 @@ void convex_decomposition_3(Nef_polyhedron& N) {
 
   Reflex_edge_searcher res(Sphere_point(1,0,0));
   N.delegate(res,false,false);
-  
+
   std::cerr << "number of reflex sedges"
-	    << std::distance(res.positive_redges_begin(), 
-			     res.positive_redges_end())
-	    << ","
-	    << std::distance(res.negative_redges_begin(), 
-			     res.negative_redges_end())
-	    << std::endl;
+            << std::distance(res.positive_redges_begin(),
+                             res.positive_redges_end())
+            << ","
+            << std::distance(res.negative_redges_begin(),
+                             res.negative_redges_end())
+            << std::endl;
 
     Edge_sorter es(res.get_negative_redges());
     N.delegate(es);
@@ -73,50 +73,50 @@ void convex_decomposition_3(Nef_polyhedron& N) {
 
       /*
       std::cerr << "handle negative reflex edge "
-		<< ": " << e->source()->point() 
-		<< "->" << e->twin()->source()->point() << std::endl;
+                << ": " << e->source()->point()
+                << "->" << e->twin()->source()->point() << std::endl;
       */
 
       Single_wall W(e,Vector_3(-1,0,0));
       if(!W.need_to_create_wall()) continue;
-      
+
       Reflex_vertex_searcher rvs(Sphere_point(1,0,0));
       //      if((rvs.is_reflex_vertex(e->source())&2) == 2) {
       if(rvs.need_to_shoot(e, true)) {
-	Ray_hit2 rh2a(Vector_3(-1,0,0), e->source());
-	N.delegate(rh2a);
+        Ray_hit2 rh2a(Vector_3(-1,0,0), e->source());
+        N.delegate(rh2a);
       }
       //      if((rvs.is_reflex_vertex(e->twin()->source())&2) == 2) {
       if(rvs.need_to_shoot(e->twin(), true)) {
-	Ray_hit2 rh2a(Vector_3(-1,0,0), e->twin()->source());
-	N.delegate(rh2a);
-      }  
+        Ray_hit2 rh2a(Vector_3(-1,0,0), e->twin()->source());
+        N.delegate(rh2a);
+      }
     }
 
     int i=0;
     for(rei=res.negative_redges_begin(); rei!=res.negative_redges_end(); ++rei) {
       Halfedge_handle e = (*rei);
       if((++i%100)==0)
-	std::cerr << "handle negative reflex edge " << i << std::endl;
-	  //		  << ": " << e->source()->point() 
-	  //		  << "->" << e->twin()->source()->point() << std::endl;
+        std::cerr << "handle negative reflex edge " << i << std::endl;
+          //                  << ": " << e->source()->point()
+          //                  << "->" << e->twin()->source()->point() << std::endl;
       if(e->point().hx() > 0)
-	e = e->twin();
+        e = e->twin();
       Single_wall W(e,Vector_3(-1,0,0));
-      if(!W.need_to_create_wall()) continue;    
+      if(!W.need_to_create_wall()) continue;
       N.delegate(W);
     }
     //    CGAL_NEF_SETDTHREAD(229*233*239);
     N.delegate(esb);
     N.delegate(res, false, false);
 
-    std::cerr << "number of reflex sedges" 
-	      << std::distance(res.positive_redges_begin(), 
-			       res.positive_redges_end())
-	      << ","
-	      << std::distance(res.negative_redges_begin(), 
-			       res.negative_redges_end())
-	      << std::endl;
+    std::cerr << "number of reflex sedges"
+              << std::distance(res.positive_redges_begin(),
+                               res.positive_redges_end())
+              << ","
+              << std::distance(res.negative_redges_begin(),
+                               res.negative_redges_end())
+              << std::endl;
 
     CGAL_assertion(N.is_valid(0,0));
 
@@ -130,54 +130,54 @@ void convex_decomposition_3(Nef_polyhedron& N) {
       Halfedge_handle e = (*rei);
 
       CGAL_assertion(e->source()->point() >
-		     e->twin()->source()->point());
+                     e->twin()->source()->point());
       Single_wall W(e,Vector_3(1,0,0));
       if(!W.need_to_create_wall()) continue;
-      
+
       Reflex_vertex_searcher rvs(Sphere_point(1,0,0));
       //      if((rvs.is_reflex_vertex(e->source())&1) == 1) {
       if(rvs.need_to_shoot(e, false)) {
-	//	  std::cerr << "shoot source" << std::endl;
-	Ray_hit2 rh2a(Vector_3(1,0,0), e->source());
-	N.delegate(rh2a);
+        //          std::cerr << "shoot source" << std::endl;
+        Ray_hit2 rh2a(Vector_3(1,0,0), e->source());
+        N.delegate(rh2a);
       }
       //      if((rvs.is_reflex_vertex(e->twin()->source())&1) == 1) {
       if(rvs.need_to_shoot(e->twin(), false)) {
-	//	  std::cerr << "shoot target" << std::endl;
-	Ray_hit2 rh2a(Vector_3(1,0,0), e->twin()->source());
-	N.delegate(rh2a);
+        //          std::cerr << "shoot target" << std::endl;
+        Ray_hit2 rh2a(Vector_3(1,0,0), e->twin()->source());
+        N.delegate(rh2a);
       }
     }
-    
+
     i=0;
     for(rei=res2.positive_redges_begin(); rei!=res2.positive_redges_end(); ++rei) {
       Halfedge_handle e = (*rei);
       if((++i%100)==0)
-	std::cerr << "handle positive reflex edge " << i << std::endl;
-	  //		  << ": " << e->source()->point() 
-	  //		  << "->" << e->twin()->source()->point() << std::endl;
+        std::cerr << "handle positive reflex edge " << i << std::endl;
+          //                  << ": " << e->source()->point()
+          //                  << "->" << e->twin()->source()->point() << std::endl;
       Single_wall W(e,Vector_3(1,0,0));
       if(!W.need_to_create_wall()) continue;
       N.delegate(W);
     }
-    
-    N.delegate(esb);    
+
+    N.delegate(esb);
     CGAL_assertion(N.is_valid(0,0));
     //    N.delegate(res2, false, false);
 
-    std::cerr << "number of reflex sedges" 
-	      << std::distance(res2.positive_redges_begin(), 
-			       res2.positive_redges_end())
-	      << ","
-	      << std::distance(res2.negative_redges_begin(), 
-			       res2.negative_redges_end())
-	      << std::endl;
-   
+    std::cerr << "number of reflex sedges"
+              << std::distance(res2.positive_redges_begin(),
+                               res2.positive_redges_end())
+              << ","
+              << std::distance(res2.negative_redges_begin(),
+                               res2.negative_redges_end())
+              << std::endl;
+
   typename Nef_polyhedron::Halfedge_const_iterator ei;
   CGAL_forall_halfedges(ei, N) {
     if(ei->out_sedge() == typename Nef_polyhedron::SHalfedge_const_handle())
-      std::cerr << "isolated edge " << ei->source()->point() 
-		<< "->" << ei->twin()->source()->point() << std::endl;
+      std::cerr << "isolated edge " << ei->source()->point()
+                << "->" << ei->twin()->source()->point() << std::endl;
   }
 
   //  CGAL_NEF_SETDTHREAD(43*227*229*233);
@@ -190,13 +190,13 @@ void convex_decomposition_3(Nef_polyhedron& N) {
   N.delegate(Y,false,false);
 
   std::cerr << "number of yreflex sedges "
-	    << std::distance(Y.pos_begin(), 
-			     Y.pos_end())
-	    << ","
-	    << std::distance(Y.neg_begin(), 
-			     Y.neg_end())
-	    << std::endl;
-  
+            << std::distance(Y.pos_begin(),
+                             Y.pos_end())
+            << ","
+            << std::distance(Y.neg_begin(),
+                             Y.neg_end())
+            << std::endl;
+
 
   typename YVertical_wall_builder::Vertical_redge_iterator vri=Y.pos_begin();
   for(; vri != Y.pos_end(); ++vri) {

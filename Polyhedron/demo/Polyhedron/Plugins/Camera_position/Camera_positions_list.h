@@ -10,11 +10,12 @@ class QStandardItemModel;
 
 class Camera_positions_list : public QDockWidget {
   Q_OBJECT
-public:  
+public:
   Camera_positions_list(QWidget* parent);
 
 public Q_SLOTS:
   void load(QString filename);
+  bool save(QString filename);
 protected Q_SLOTS:
   void on_plusButton_pressed();
   void on_minusButton_pressed();
@@ -41,3 +42,4 @@ private:
 };
 
 #endif
+

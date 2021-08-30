@@ -50,23 +50,7 @@ class Hyperbolic_traits_with_translations_2_adaptor
 public:
   typedef typename Predicate::result_type                 result_type;
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Predicate::operator();
-#else
-  result_type operator()(const Point& p0, const Point& p1) const
-  {
-	  return Predicate()(p0, p1);
-  }
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2) const
-  {
-    return Predicate()(p0,p1,p2);
-  }
-
-  result_type operator()(const Point& p0, const Point& p1, const Point& p2, const Point& p3) const
-  {
-    return Predicate()(p0,p1,p2,p3);
-  }
-#endif
 
   Hyperbolic_traits_with_translations_2_adaptor(const Predicate_ pred = Predicate_()) : Predicate_(pred) {}
 
@@ -126,16 +110,9 @@ private:
 
 public:
   typedef Point                                           result_type;
- 
-#ifndef CGAL_CFG_MATCHING_BUG_6
+
   using Construct_point_base::operator();
-#else
-  Point operator()(const NT& x, const NT& y) const
-  {
-    return Construct_point_base()(x,y);
-  }
-#endif
-  
+
   Periodic_4_construct_hyperbolic_point_2() { }
 
   Point operator()(const Point& pt, const Hyperbolic_translation& tr) const
@@ -618,7 +595,7 @@ class Side_of_original_octagon
   };
 
 
-} // end namespace internal 
+} // end namespace internal
 
 
 template <typename Kernel = Exact_predicates_exact_constructions_kernel_with_sqrt,

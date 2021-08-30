@@ -14,6 +14,6 @@ int main() {
 }
 
 #else
-#warning CGAL has no default CGAL::Arithmetic kernel 
+#warning CGAL has no default CGAL::Arithmetic kernel
 int main() { return 0; }
 #endif

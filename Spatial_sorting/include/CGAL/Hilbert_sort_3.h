@@ -18,27 +18,27 @@
 
 namespace CGAL {
 
-template <class K,  class Hilbert_policy >
-  class Hilbert_sort_3;
+template <class K, class Hilbert_policy, class ConcurrencyTag = Sequential_tag>
+class Hilbert_sort_3;
 
-template <class K>  
-  class Hilbert_sort_3<K, Hilbert_sort_median_policy >
-  : public Hilbert_sort_median_3<K>
+template <class K, class ConcurrencyTag>
+class Hilbert_sort_3<K, Hilbert_sort_median_policy, ConcurrencyTag >
+  : public Hilbert_sort_median_3<K, ConcurrencyTag>
 {
- public:
- Hilbert_sort_3 (const K &k=K() , std::ptrdiff_t limit=1 )
-   : Hilbert_sort_median_3<K> (k,limit)
-    {}
+public:
+  Hilbert_sort_3 (const K &k=K(), std::ptrdiff_t limit=1 )
+    : Hilbert_sort_median_3<K, ConcurrencyTag> (k,limit)
+  {}
 };
 
-template <class K>
-  class Hilbert_sort_3<K, Hilbert_sort_middle_policy >
+template <class K, class ConcurrencyTag >
+class Hilbert_sort_3<K, Hilbert_sort_middle_policy, ConcurrencyTag >
   : public Hilbert_sort_middle_3<K>
 {
- public:
- Hilbert_sort_3 (const K &k=K() , std::ptrdiff_t limit=1 )
-   : Hilbert_sort_middle_3<K> (k,limit)
-    {}
+public:
+  Hilbert_sort_3 (const K &k=K(), std::ptrdiff_t limit=1 )
+    : Hilbert_sort_middle_3<K> (k,limit)
+  {}
 };
 
 } // namespace CGAL

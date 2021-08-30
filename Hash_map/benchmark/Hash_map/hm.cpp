@@ -15,7 +15,7 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Timer.h>
-#include<boost/range/iterator_range.hpp> 
+#include<boost/range/iterator_range.hpp>
 #include <boost/unordered_map.hpp>
 #include <unordered_map>
 
@@ -44,11 +44,11 @@ run(const G& g)
     V.push_back(vd);
     V2.push_back(vd);
   }
-  
+
   boost::rand48 random;
   boost::random_number_generator<boost::rand48> rng(random);
   std::random_shuffle(V.begin(), V.end(), rng);
-  
+
   Timer t;
 #if 0
   t.start();
@@ -66,10 +66,10 @@ run(const G& g)
   std::cerr << "foreach std::vector<vertex_descriptor)\n";
   t.reset(); t.start();
   for(int i=0; i<100; i++){
-  for(vertex_descriptor vd : V2){ 
-#ifdef NOHASH    
+  for(vertex_descriptor vd : V2){
+#ifdef NOHASH
     st += std::size_t(vd);
-#else 
+#else
     typename Map::iterator it = vm.find(vd);
     v = v + ((*it).second - CGAL::ORIGIN);
 #endif
@@ -77,7 +77,7 @@ run(const G& g)
   }
 
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
-#endif 
+#endif
 
 #if 1
   std::cerr << "foreach boost::iterator_range r = vertices(g))\n";
@@ -87,7 +87,7 @@ run(const G& g)
   boost::iterator_range<typename boost::graph_traits<G>::vertex_iterator> r = vertices(g);
 
   for(vertex_descriptor vd : r) {
-#ifdef NOHASH    
+#ifdef NOHASH
     st += std::size_t(vd);
     // v = v + (get(vpm,vd) - CGAL::ORIGIN);
 #else
@@ -117,10 +117,10 @@ run(const G& g)
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
 
-#endif 
+#endif
 
 
-#if 1 
+#if 1
   std::cerr << "foreach vertices(g))\n";
   t.reset(); t.start();
   for(int i=0; i<100; i++){
@@ -135,7 +135,7 @@ run(const G& g)
   }
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
-#endif 
+#endif
 
 
 #if 1
@@ -153,10 +153,10 @@ run(const G& g)
   }
   }
   t.stop();  std::cerr << "  " <<t.time() << " sec.     " << std::endl;
-   
+
 #endif
 
-  
+
 #if 0
   std::cerr << "boost::tie(vb,ve) = vertices(g);\n";
   t.reset(); t.start();
@@ -165,7 +165,7 @@ run(const G& g)
   boost::tie(vb,ve) = vertices(g);
   for(; vb != ve; ++vb) {
     vertex_descriptor vd = *vb;
-#ifdef NOHASH    
+#ifdef NOHASH
     st += std::size_t(vd);
     //v = v + (get(vpm,vd) - CGAL::ORIGIN);
 #else
@@ -178,7 +178,7 @@ run(const G& g)
 #endif
 
   std::cerr << "v = " << v << "  " << st << std::endl;
-  
+
 }
 
 struct blob {
@@ -228,9 +228,9 @@ int main(int , char* argv[])
     std::cerr << "\nPolyhedron_3 std::unordered_map"<< std::endl;
     run<Mesh,SUM>(m);
     std::cerr << "\nPolyhedron_3 boost::unordered_map"<< std::endl;
-    run<Mesh,BUM>(m);    
+    run<Mesh,BUM>(m);
   }
-  
+
   {
     const int N = 3165798;
     std::cerr << "\nHashing "<< N << " pointers\n";
@@ -241,8 +241,8 @@ int main(int , char* argv[])
       ints[i]=i;
     }
     std::random_shuffle(ints.begin(), ints.end());
-    
-    
+
+
     {
       boost::unordered_map<blob*,int> um;
       Timer t;
@@ -253,7 +253,7 @@ int main(int , char* argv[])
       t.stop();
       std::cerr << " boost::unordered_map: " <<  t.time() << " sec.\n";
     }
-    
+
     {
       std::unordered_map<blob*,int> um;
       Timer t;

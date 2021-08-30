@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -22,12 +22,12 @@
 
 namespace CGAL {
 
-// same as |convex_hull_2(first,last,result)|. {\sc traits}: 
+// same as |convex_hull_2(first,last,result)|. {\sc traits}:
 // uses |Traits::Point_2|, |Traits::Less_signed_distance_to_line_2|,
 // |Traits::Left_turn_2|,, |Traits::Equal_2| and |Traits::Less_xy_2|.
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
-ch_bykat(InputIterator first, InputIterator last, 
+ch_bykat(InputIterator first, InputIterator last,
          OutputIterator  result,
          const Traits& ch_traits);
 
@@ -46,14 +46,14 @@ ch_bykat(InputIterator first, InputIterator last, OutputIterator  result)
 
 template <class InputIterator, class OutputIterator, class Traits>
 OutputIterator
-ch_bykat_with_threshold(InputIterator first, InputIterator last, 
+ch_bykat_with_threshold(InputIterator first, InputIterator last,
                              OutputIterator  result,
                              const Traits& ch_traits);
 
 template <class InputIterator, class OutputIterator>
 inline
 OutputIterator
-ch_bykat_with_threshold(InputIterator first, InputIterator last, 
+ch_bykat_with_threshold(InputIterator first, InputIterator last,
                         OutputIterator  result)
 {
     typedef std::iterator_traits<InputIterator>   ITraits;

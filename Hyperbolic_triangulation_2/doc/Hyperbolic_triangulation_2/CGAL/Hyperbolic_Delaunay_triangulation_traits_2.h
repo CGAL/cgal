@@ -6,17 +6,17 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicTriangulation2TraitsClasses
 
-The class `Hyperbolic_Delaunay_triangulation_traits_2` is designed as one of the 
+The class `Hyperbolic_Delaunay_triangulation_traits_2` is designed as one of the
 default models for the traits concept `HyperbolicDelaunayTriangulationTraits_2`
-offered by %CGAL. 
+offered by \cgal.
 
 \tparam K must be a model of `Kernel`.
 
-If `K` provides exact computations with square roots, then this class automatically 
-provides exact constructions and predicates. The default value for `K` is 
-`Exact_predicates_exact_constructions_kernel_with_sqrt`, which guarantees exact 
-constructions of Delaunay triangulations and dual objects for input points with 
-algebraic coordinates. 
+If `K` provides exact computations with square roots, then this class automatically
+provides exact constructions and predicates. The default value for `K` is
+`Exact_predicates_exact_constructions_kernel_with_sqrt`, which guarantees exact
+constructions of Delaunay triangulations and dual objects for input points with
+algebraic coordinates.
 
 \sa `Hyperbolic_Delaunay_triangulation_CK_traits_2`
 
@@ -32,14 +32,14 @@ public:
   /// @{
     typedef typename K::FT                           FT;
     typedef typename K::Point_2                      Hyperbolic_point_2;
-  	typedef Hyperbolic_point_2								       Hyperbolic_Voronoi_point_2;
-    typedef unspecified_type								         Circular_arc_2; 
+          typedef Hyperbolic_point_2                                                                       Hyperbolic_Voronoi_point_2;
+    typedef unspecified_type                                                                         Circular_arc_2;
     typedef typename K::Segment_2                    Euclidean_segment_2;
-  	typedef boost::variant< Circular_arc_2, 
-                            Euclidean_segment_2 >	   Hyperbolic_segment_2;
+          typedef boost::variant< Circular_arc_2,
+                            Euclidean_segment_2 >           Hyperbolic_segment_2;
     typedef typename K::Triangle_2                   Hyperbolic_triangle_2;
   /// @}
-  
+
 
   /// \name Creation
   /// @{
@@ -55,7 +55,7 @@ public:
   /// @}
 
 
-}; 
+};
 
 
 } // namespace CGAL

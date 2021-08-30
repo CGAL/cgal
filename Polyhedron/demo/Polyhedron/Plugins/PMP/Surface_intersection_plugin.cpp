@@ -15,7 +15,7 @@
 #include <QMenu>
 #include <QMainWindow>
 #include <QApplication>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QMessageBox>
 
 typedef Scene_surface_mesh_item Scene_face_graph_item;
@@ -108,7 +108,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
 {
-  Scene_face_graph_item* itemA = NULL;
+  Scene_face_graph_item* itemA = nullptr;
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
     Scene_face_graph_item* itemB =
@@ -116,7 +116,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
 
     if(itemB)
     {
-      if (itemA==NULL)
+      if (itemA==nullptr)
       {
         itemA = itemB;
         continue;
@@ -130,7 +130,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
 
       Scene_polylines_item* new_item = new Scene_polylines_item();
      // perform Boolean operation
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       try{
@@ -139,9 +139,9 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
                                   std::back_inserter(new_item->polylines),
                                   PMP::parameters::throw_on_self_intersection(true));
       }
-      catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+      catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
       {
-        QMessageBox::warning((QWidget*)NULL,
+        QMessageBox::warning((QWidget*)nullptr,
           tr("Self-intersections Found"),
           tr("Some self-intersections were found amongst intersecting facets"));
         delete new_item;
@@ -174,7 +174,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
       std::pair<std::size_t, std::size_t>,
       std::pair<std::size_t, std::size_t> >  Poly_intersection;
 
-  Scene_polylines_item* itemA = NULL;
+  Scene_polylines_item* itemA = nullptr;
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
     Scene_polylines_item* itemB =
@@ -182,7 +182,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
 
     if(itemB)
     {
-      if (itemA==NULL)
+      if (itemA==nullptr)
       {
         itemA = itemB;
         continue;
@@ -193,7 +193,7 @@ void Polyhedron_demo_intersection_plugin::intersectionPolylines()
       Scene_points_with_normal_item* new_point_item = new Scene_points_with_normal_item();
       Scene_polylines_item* new_pol_item = new Scene_polylines_item();
      // perform Boolean operation
-      QTime time;
+      QElapsedTimer time;
       time.start();
       std::vector<Polyline_3> polyA, polyB;
       Q_FOREACH(const Polyline_3& poly, itemA->polylines)
@@ -289,7 +289,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
   Scene_points_with_normal_item* new_point_item = new Scene_points_with_normal_item();
   Scene_polylines_item* new_pol_item = new Scene_polylines_item();
   // perform Boolean operation
-  QTime time;
+  QElapsedTimer time;
   time.start();
   Scene_face_graph_item::Face_graph tm = *itemA->face_graph();
   std::vector<face_descriptor> Afaces;

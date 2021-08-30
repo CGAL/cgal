@@ -35,12 +35,12 @@ int main ()
   insert(arr1, segments.begin(), segments.end());
   std::cout << traits << std::endl;
   traits.clear_counters();
-  
+
   // Construct an arrangement using incremental insertion:
   Arrangement_2 arr2(&traits);
   insert(arr2, s1);
   insert(arr2, s2);
   std::cout << traits << std::endl;
-  
+
   return 0;
 }

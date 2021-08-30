@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -50,26 +50,26 @@ private:
 
 private:
   Orientation vv_orientation(const Voronoi_circle& vc, const Point_2& sp1,
-			     const Point_2& p1,	const Point_2& p2,
-			     const Field_with_sqrt_tag&) const
+                             const Point_2& p1,        const Point_2& p2,
+                             const Field_with_sqrt_tag&) const
   {
     FT a = vc.a1() + vc.a2() * CGAL::sqrt(vc.delta());
     FT b = vc.b1() + vc.b2() * CGAL::sqrt(vc.delta());
     FT det1 = a * (p2.y() - p1.y()) - b * (p2.x() - p1.x());
     FT c = vc.c1() + vc.c2() * CGAL::sqrt(vc.delta());
     FT det2 = determinant(p1.x() - sp1.x(), p1.y() - sp1.y(),
-				p2.x() - sp1.x(), p2.y() - sp1.y());
+                                p2.x() - sp1.x(), p2.y() - sp1.y());
     return CGAL::sign(det1 + FT(2) * c * det2);
   }
 
   Orientation vv_orientation(const Voronoi_circle vc, const Point_2& sp1,
-			     const Point_2& p1, const Point_2& p2,
-			     const Integral_domain_without_division_tag&) const
+                             const Point_2& p1, const Point_2& p2,
+                             const Integral_domain_without_division_tag&) const
   {
     FT dx = p2.x() - p1.x();
     FT dy = p2.y() - p1.y();
     FT det1 = determinant(p1.x() - sp1.x(), p1.y() - sp1.y(),
-				p2.x() - sp1.x(), p2.y() - sp1.y());
+                                p2.x() - sp1.x(), p2.y() - sp1.y());
     FT A = vc.a1() * dy - vc.b1() * dx + FT(2) * vc.c1() * det1;
     FT B = vc.a2() * dy - vc.b2() * dx + FT(2) * vc.c2() * det1;
     return sign_a_plus_b_x_sqrt_c(A, B, vc.delta());
@@ -78,15 +78,15 @@ private:
 public:
   inline
   Orientation operator()(const Site_2& s1, const Site_2& s2,
-			 const Site_2& s3) const
+                         const Site_2& s3) const
   {
     return Kernel().orientation_2_object()(s1.point(), s2.point(),
-					   s3.point());
+                                           s3.point());
   }
 
   Orientation operator()(const Site_2& s1, const Site_2& s2,
-			 const Site_2& s3, const Site_2& p1,
-			 const Site_2& p2) const
+                         const Site_2& s3, const Site_2& p1,
+                         const Site_2& p2) const
   {
     // computes the operation of the Voronoi vertex of s1, s2, s3 and
     // the points p1 and p2

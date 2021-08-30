@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -50,7 +50,7 @@ public:
   typedef Site_2        argument_type;
 
   Boolean   operator()(const Site_2& p, const Site_2& q,
-		       const Site_2& r, const Site_2& s) const
+                       const Site_2& r, const Site_2& s) const
   {
     Voronoi_vertex_2 vpqr(p, q, r);
     if ( vpqr.incircle_no_easy(s) == POSITIVE ) { return false; }

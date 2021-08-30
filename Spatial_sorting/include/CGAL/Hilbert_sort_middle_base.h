@@ -19,16 +19,18 @@ namespace CGAL {
 
 namespace internal {
 
-    template <class RandomAccessIterator, class Cmp>
-    RandomAccessIterator
-    fixed_hilbert_split (RandomAccessIterator begin, RandomAccessIterator end,
-                   Cmp cmp = Cmp ())
-    {
-        if (begin >= end) return begin;
+template <class RandomAccessIterator, class Cmp>
+RandomAccessIterator
+fixed_hilbert_split (RandomAccessIterator begin, RandomAccessIterator end,
+                     Cmp cmp = Cmp ())
+{
+  if (begin >= end)
+    return begin;
 
-        return std::partition (begin, end, cmp);
-    }
+  return std::partition (begin, end, cmp);
 }
+
+} // namespace internal
 
 } // namespace CGAL
 

@@ -88,7 +88,7 @@ public:
   virtual void before_handle_event(Event* event);
 
   //@}
-  
+
   /*! A notification invoked when a new subcurve is created. */
   virtual void add_subcurve(Halfedge_handle he, Subcurve* sc);
 
@@ -97,7 +97,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------

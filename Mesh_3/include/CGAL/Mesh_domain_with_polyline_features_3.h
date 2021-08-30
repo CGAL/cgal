@@ -29,7 +29,7 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/Mesh_3/internal/indices_management.h>
 
 #include <vector>
 #include <set>
@@ -40,8 +40,7 @@
 #include <boost/variant.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 namespace CGAL {
 
@@ -568,27 +567,15 @@ public:
 /// of the base class.
 /// @{
 
-  Mesh_domain_with_polyline_features_3()
-    : MeshDomain_3()
+  template <typename ... T>
+  Mesh_domain_with_polyline_features_3(const T& ...o)
+    : MeshDomain_3(o...)
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-  template <typename T1>
-  Mesh_domain_with_polyline_features_3
-  (const T1& o1, typename boost::disable_if<boost::is_same<T1,Self>,
-                                            CGAL::Tag_false>::type* = 0)
-    : MeshDomain_3(o1)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
+  Mesh_domain_with_polyline_features_3(const Mesh_domain_with_polyline_features_3&) = default;
 
-  template <typename T1, typename T2, typename ... T>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, const T& ...o)
-    : MeshDomain_3(o1, o2, o...)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
 /// @}
 
 /// \name Operations
@@ -635,7 +622,7 @@ public:
    PolylinePMap polyline_pmap,
    IncidentPatchesIndicesPMap incident_paches_indices_pmap,
    IndicesOutputIterator out /* = CGAL::Emptyset_iterator() */);
-  
+
   template <typename InputIterator, typename IndicesOutputIterator>
   IndicesOutputIterator
   add_features_with_context(InputIterator first, InputIterator end,
@@ -644,7 +631,7 @@ public:
   /// @}
   /// \endcond
   /*!
-    Add 1-dimensional features in the domain. `InputIterator` value type must 
+    Add 1-dimensional features in the domain. `InputIterator` value type must
     be a model of the concept `MeshPolyline_3`.
   */
   template <typename InputIterator>
@@ -664,9 +651,9 @@ public:
   /*!
     Add 1-dimensional features (curves) from the range `[first, end)` in the domain with their incidences
     with 2-dimensional features (patches) of the domain.
- 
+
     \tparam InputIterator input iterator over curves
-    \tparam PolylinePMap is a model of `ReadablePropertyMap` with key type 
+    \tparam PolylinePMap is a model of `ReadablePropertyMap` with key type
       `std::iterator_traits<InputIterator>::%reference` and a value type
       that is a model of `MeshPolyline_3`.
     \tparam IncidentPatchesIndicesPMap is a model of `ReadablePropertyMap`
@@ -681,7 +668,7 @@ public:
     \param incident_patches_indices_pmap the property map that provides
       access to the set of indices of the surface patches that are incident to
       a given 1D-feature (curve)
-  */ 
+  */
   template <typename InputIterator,
             typename PolylinePMap,
             typename IncidentPatchesIndicesPMap>
@@ -696,7 +683,7 @@ public:
                                 CGAL::Emptyset_iterator());
   }
 /// @}
-  
+
 /// \name Implementation of the concept MeshDomainWithFeatures_3
 /// The following methods implement the requirement of the concept
 /// `MeshDomainWithFeatures_3`.
@@ -871,7 +858,7 @@ public:
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
 
 private:
-  mutable boost::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
+  mutable std::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
@@ -896,7 +883,7 @@ public:
     if(curves_aabb_tree_ptr_) {
       curves_aabb_tree_ptr_->clear();
     } else {
-      curves_aabb_tree_ptr_ = boost::make_shared<Curves_AABB_tree>();
+      curves_aabb_tree_ptr_ = std::make_shared<Curves_AABB_tree>();
     }
     for(typename Edges::const_iterator
           edges_it = edges_.begin(),
@@ -1165,6 +1152,13 @@ add_features_and_incidences(InputIterator first, InputIterator end,
 
     Curve_index curve_id = insert_edge(polyline.begin(), polyline.end());
     edges_incidences_[curve_id].insert(patches_ids.begin(), patches_ids.end());
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+    std::cerr << "Curve #" << curve_id << " is incident to the following patches: {";
+    for(auto id: patches_ids) {
+      std::cerr << " " << id;
+    }
+    std::cerr << "}\n";
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 1
     *indices_out++ = curve_id;
   }
 
@@ -1410,7 +1404,7 @@ compute_corners_incidences()
                      std::inserter(incidences,
                                    incidences.begin()));
     }
-#ifdef CGAL_MESH_3_PROTECTION_DEBUG
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
     display_corner_incidences(std::cerr, cit->first, id);
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 

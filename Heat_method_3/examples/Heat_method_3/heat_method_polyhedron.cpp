@@ -2,10 +2,10 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
+#include <boost/unordered_map.hpp>
+
 #include <fstream>
 #include <iostream>
-
-#include <boost/unordered_map.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
   boost::unordered_map<vertex_descriptor, double> vertex_distance;
 
   vertex_descriptor source = *(vertices(tm).first);
-  
+
   CGAL::Heat_method_3::estimate_geodesic_distances(tm,
                                                    boost::make_assoc_property_map(vertex_distance),
                                                    source) ;

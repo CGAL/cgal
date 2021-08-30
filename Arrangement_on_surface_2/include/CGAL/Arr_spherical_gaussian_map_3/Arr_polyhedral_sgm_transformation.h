@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Naama mayer         <naamamay@post.tau.ac.il>
 
 
@@ -28,7 +28,7 @@ public:
   typedef typename Arrangement::Face_handle   Face_handle;
 
   void rotate_face(Face_handle f, const Transformation_3 & aff)
-  {			
+  {
     //Transform all the vertices of the original polyhedron.
     f->set_point(aff.transform(f->point()));
   }

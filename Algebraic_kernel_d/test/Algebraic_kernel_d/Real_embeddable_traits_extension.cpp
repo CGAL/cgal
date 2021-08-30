@@ -6,7 +6,7 @@
 // $URL:$
 // $Id:$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
 //
 // ============================================================================
@@ -34,20 +34,20 @@ void test_real_embeddable_extension(const NT_&){
 
   typedef CGAL::internal::Real_embeddable_extension<NT_> RETE;
 
-  typedef typename RETE::Type NT; 
-  
+  typedef typename RETE::Type NT;
+
   typedef typename RETE::Floor Floor;
-  typedef typename RETE::Ceil Ceil; 
+  typedef typename RETE::Ceil Ceil;
   typedef typename RETE::Floor_log2_abs Floor_log2_abs;
   typedef typename RETE::Ceil_log2_abs Ceil_log2_abs;
-  
+
   {
     const Floor floor = Floor();
     typedef typename Floor::argument_type Argument_type;
     typedef typename Floor::result_type   Result_type;
     CGAL_USE_TYPE(Argument_type);
     CGAL_USE_TYPE(Result_type);
-    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
+    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));
     CGAL_static_assertion(( ::boost::is_same<Integer, Result_type>::value));
     assert(Integer(42) == floor(NT(42)));
     assert(Integer(-42) == floor(NT(-42)));
@@ -59,18 +59,18 @@ void test_real_embeddable_extension(const NT_&){
     typedef typename Floor_log2_abs::result_type   Result_type;
     CGAL_USE_TYPE(Argument_type);
     CGAL_USE_TYPE(Result_type);
-    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
+    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));
     CGAL_static_assertion(( ::boost::is_same<long, Result_type>::value));
-    
+
     assert(long(0) == floor_log2_abs(NT(1)));
     assert(long(0) == floor_log2_abs(NT(-1)));
 
     assert(long(1) == floor_log2_abs(NT(2)));
-    
+
     assert(long(1) == floor_log2_abs(NT(3)));
     assert(long(2) == floor_log2_abs(NT(4)));
     assert(long(2) == floor_log2_abs(NT(5)));
-    
+
     assert(long(2) == floor_log2_abs(NT(7)));
     assert(long(3) == floor_log2_abs(NT(8)));
     assert(long(3) == floor_log2_abs(NT(9)));
@@ -86,7 +86,7 @@ void test_real_embeddable_extension(const NT_&){
     typedef typename Ceil::result_type   Result_type;
     CGAL_USE_TYPE(Argument_type);
     CGAL_USE_TYPE(Result_type);
-    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
+    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));
     CGAL_static_assertion(( ::boost::is_same<Integer, Result_type>::value));
     assert(Integer(42) == ceil(NT(42)));
     assert(Integer(-42) == ceil(NT(-42)));
@@ -98,18 +98,18 @@ void test_real_embeddable_extension(const NT_&){
     typedef typename Ceil_log2_abs::result_type   Result_type;
     CGAL_USE_TYPE(Argument_type);
     CGAL_USE_TYPE(Result_type);
-    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));  
+    CGAL_static_assertion(( ::boost::is_same<NT, Argument_type>::value));
     CGAL_static_assertion(( ::boost::is_same<long, Result_type>::value));
-    
+
     assert(long(0) == ceil_log2_abs(NT(1)));
     assert(long(0) == ceil_log2_abs(NT(-1)));
 
     assert(long(1) == ceil_log2_abs(NT(2)));
-    
+
     assert(long(2) == ceil_log2_abs(NT(3)));
     assert(long(2) == ceil_log2_abs(NT(4)));
     assert(long(3) == ceil_log2_abs(NT(5)));
-    
+
     assert(long(3) == ceil_log2_abs(NT(7)));
     assert(long(3) == ceil_log2_abs(NT(8)));
     assert(long(4) == ceil_log2_abs(NT(9)));
@@ -118,7 +118,7 @@ void test_real_embeddable_extension(const NT_&){
     assert(long(3) == ceil_log2_abs(NT(-8)));
     assert(long(4) == ceil_log2_abs(NT(-9)));
   }
-   
+
 }
 
 
@@ -126,8 +126,8 @@ void test_real_embeddable_extension(const NT_&){
 template <typename AK>
 void test_real_embeddable_extension_ak(){
   typedef typename AK::Integer Integer;
-  typedef typename AK::Bigfloat Bigfloat; 
-  typedef typename AK::Bigfloat Bigfloat_interval; 
+  typedef typename AK::Bigfloat Bigfloat;
+  typedef typename AK::Bigfloat Bigfloat_interval;
 
   test_real_embeddable_extension(Integer());
   //typedef typename AK::Rational Rational;
@@ -147,6 +147,6 @@ int main() {
 #ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
     test_real_embeddable_extension_ak< CGAL::CORE_arithmetic_kernel >();
 #endif
-    
+
     return 0;
 }

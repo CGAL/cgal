@@ -38,7 +38,7 @@ namespace CGAL {
   {
     // private types
     typedef Sphere_oracle_3<GT, Point_creator, Visitor> Self;
-    
+
     typedef typename GT::Point_3 Point;
     typedef typename GT::FT FT;
     typedef typename GT::Sphere_3 Sphere_3;
@@ -87,11 +87,11 @@ namespace CGAL {
       return on_bounded_side_of_sphere(sphere, p);
     }
 
-    class Intersect_3 
+    class Intersect_3
     {
       const Self& oracle;
 
-      boost::tuple<int, FT, FT> 
+      boost::tuple<int, FT, FT>
       intersection_line_sphere_lambda(const Surface_3& sphere,
                                       const Point& a,
                                       const Point& b) const
@@ -100,7 +100,7 @@ namespace CGAL {
           Let the vectorial line equation:
             m = a + lambda * ( b - a )
           (a, b, and m are points, and lambda if a real.)
-          
+
           Let c be the center of the sphere, of radius r.
           The intersection of the line and the sphere is given by:
             (c-m)^2 = r^2
@@ -122,9 +122,9 @@ namespace CGAL {
 
         typename GT::Construct_vector_3 vector =
           GT().construct_vector_3_object();
-        typename GT::Compute_scalar_product_3 scalar_product = 
+        typename GT::Compute_scalar_product_3 scalar_product =
           GT().compute_scalar_product_3_object();
-        typename GT::Compute_squared_distance_3 squared_distance = 
+        typename GT::Compute_squared_distance_3 squared_distance =
           GT().compute_squared_distance_3_object();
         typename GT::Construct_center_3 center =
           GT().construct_center_3_object();
@@ -145,12 +145,12 @@ namespace CGAL {
         case ZERO:
           return boost::make_tuple(1, ab_ac / ab2, 0);
         case POSITIVE:
-	  {
-	    const FT sqrt_deltaprime = CGAL::sqrt(deltaprime);
-	    return boost::make_tuple(2,
-				     (ab_ac - sqrt_deltaprime) / ab2,
-				     (ab_ac + sqrt_deltaprime) / ab2);
-	  }
+          {
+            const FT sqrt_deltaprime = CGAL::sqrt(deltaprime);
+            return boost::make_tuple(2,
+                                     (ab_ac - sqrt_deltaprime) / ab2,
+                                     (ab_ac + sqrt_deltaprime) / ab2);
+          }
         case NEGATIVE:
           break;
         }
@@ -164,17 +164,17 @@ namespace CGAL {
                                   Assert_on_lambda test) const
       {
         typedef typename GT::Vector_3 Vector;
-        
+
         typename GT::Construct_vector_3 vector =
           GT().construct_vector_3_object();
-        typename GT::Construct_scaled_vector_3 scaled_vector = 
+        typename GT::Construct_scaled_vector_3 scaled_vector =
           GT().construct_scaled_vector_3_object();
-        typename GT::Construct_translated_point_3 translated_point = 
+        typename GT::Construct_translated_point_3 translated_point =
           GT().construct_translated_point_3_object();
 
         int number_of_roots;
         FT root_1, root_2;
-        boost::tie(number_of_roots, root_1, root_2) = 
+        boost::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         const Vector ab = vector(a, b);
@@ -194,30 +194,30 @@ namespace CGAL {
         return Object();
       } // end private_intersection
 
-      struct Lambda_between_0_and_1 : public CGAL::cpp98::unary_function<FT, bool> 
+      struct Lambda_between_0_and_1 : public CGAL::cpp98::unary_function<FT, bool>
       {
         bool operator()(const FT x) const
         {
           return FT(0) <= x && x <= FT(1);
         }
       };
-        
-      struct Lambda_positive : public CGAL::cpp98::unary_function<FT, bool> 
+
+      struct Lambda_positive : public CGAL::cpp98::unary_function<FT, bool>
       {
         bool operator()(const FT x) const
         {
           return FT(0) <= x;
         }
       };
-        
-      struct Always_true : public CGAL::cpp98::unary_function<FT, bool> 
+
+      struct Always_true : public CGAL::cpp98::unary_function<FT, bool>
       {
         bool operator()(const FT) const
         {
           return true;
         }
       };
-        
+
     public:
       Intersect_3(const Self& oracle) : oracle(oracle)
       {
@@ -230,7 +230,7 @@ namespace CGAL {
 
         const Point& a = point_on(s, 0);
         const Point& b = point_on(s, 1);
-        
+
         return private_intersection(sphere, a, b, Lambda_between_0_and_1());
       } // end operator()(Surface_3, Segment_3)
 
@@ -240,7 +240,7 @@ namespace CGAL {
 
         const Point& a = point_on(r, 0);
         const Point& b = point_on(r, 1);
-        
+
         return private_intersection(sphere, a, b, Lambda_positive());
       } // end operator()(Surface_3, Ray_3)
 
@@ -250,7 +250,7 @@ namespace CGAL {
 
         const Point& a = point_on(l, 0);
         const Point& b = point_on(l, 1);
-        
+
         return private_intersection(sphere, a, b, Always_true());
       } // end operator()(Surface_3, Line_3)
 
@@ -261,26 +261,26 @@ namespace CGAL {
                         Point_3& b) const
       {
         typedef typename GT::Vector_3 Vector;
-        
+
         typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
           GT().has_on_bounded_side_3_object();
         typename GT::Construct_vector_3 vector =
           GT().construct_vector_3_object();
-        typename GT::Construct_scaled_vector_3 scaled_vector = 
+        typename GT::Construct_scaled_vector_3 scaled_vector =
           GT().construct_scaled_vector_3_object();
-        typename GT::Construct_translated_point_3 translated_point = 
+        typename GT::Construct_translated_point_3 translated_point =
           GT().construct_translated_point_3_object();
 
         const bool a_in_sphere = on_bounded_side_of_sphere(sphere, a);
-        const bool b_in_sphere = on_bounded_side_of_sphere(sphere, b);        
+        const bool b_in_sphere = on_bounded_side_of_sphere(sphere, b);
 
         if( a_in_sphere && b_in_sphere )
           return true;
 
         int number_of_roots;
         FT root_1, root_2;
-        
-        boost::tie(number_of_roots, root_1, root_2) = 
+
+        boost::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
@@ -308,7 +308,7 @@ namespace CGAL {
         {    // do not move point a
           if( root_2 < FT(0) ) // root_x in ]-\infinity, 0[
             return false;      // no intersection
-          else 
+          else
           {
             const Vector ab = vector(a, b);
             if( root_2 <= FT(1) )
@@ -326,14 +326,14 @@ namespace CGAL {
                     Point_3& b) const
       {
         typedef typename GT::Vector_3 Vector;
-        
+
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
         typename GT::Construct_vector_3 vector =
           GT().construct_vector_3_object();
-        typename GT::Construct_scaled_vector_3 scaled_vector = 
+        typename GT::Construct_scaled_vector_3 scaled_vector =
           GT().construct_scaled_vector_3_object();
-        typename GT::Construct_translated_point_3 translated_point = 
+        typename GT::Construct_translated_point_3 translated_point =
           GT().construct_translated_point_3_object();
 
         a = point_on(r, 0);
@@ -341,8 +341,8 @@ namespace CGAL {
 
         int number_of_roots;
         FT root_1, root_2;
-        
-        boost::tie(number_of_roots, root_1, root_2) = 
+
+        boost::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots == 2 && root_2 > FT(0) )
@@ -365,14 +365,14 @@ namespace CGAL {
                      Point& b) const
       {
         typedef typename GT::Vector_3 Vector;
-        
+
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
         typename GT::Construct_vector_3 vector =
           GT().construct_vector_3_object();
-        typename GT::Construct_scaled_vector_3 scaled_vector = 
+        typename GT::Construct_scaled_vector_3 scaled_vector =
           GT().construct_scaled_vector_3_object();
-        typename GT::Construct_translated_point_3 translated_point = 
+        typename GT::Construct_translated_point_3 translated_point =
           GT().construct_translated_point_3_object();
 
         a = point_on(l, 0);
@@ -380,8 +380,8 @@ namespace CGAL {
 
         int number_of_roots;
         FT root_1, root_2;
-        
-        boost::tie(number_of_roots, root_1, root_2) = 
+
+        boost::tie(number_of_roots, root_1, root_2) =
           intersection_line_sphere_lambda(sphere, a, b);
 
         if( number_of_roots == 2 )
@@ -405,18 +405,18 @@ namespace CGAL {
       Construct_initial_points(const Self& oracle) : oracle(oracle)
       {
       }
-      
+
       // Random points
       template <typename OutputIteratorPoints>
-      OutputIteratorPoints operator() (const Surface_3& sphere, 
-                                       OutputIteratorPoints out, 
+      OutputIteratorPoints operator() (const Surface_3& sphere,
+                                       OutputIteratorPoints out,
                                        int n = 20) const // WARNING: why 20?
       {
-        const Point center = 
+        const Point center =
           GT().construct_center_3_object()(sphere);
-        const FT squared_radius = 
+        const FT squared_radius =
           GT().compute_squared_radius_3_object()(sphere);
-        const double radius_in_double = 
+        const double radius_in_double =
           CGAL::sqrt(CGAL::to_double(squared_radius));
 
         typename CGAL::Random_points_on_sphere_3<Point,

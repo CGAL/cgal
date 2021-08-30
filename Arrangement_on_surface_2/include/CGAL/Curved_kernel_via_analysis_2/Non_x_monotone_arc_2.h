@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -15,7 +15,7 @@
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Non_x_monotone_arc_2.h
  * \brief defines class \c Non_x_monotone_arc_2
- *  
+ *
  * non x-monotone arc of a generic curve
  */
 
@@ -30,13 +30,13 @@ namespace CGAL {
 namespace internal {
 
 template < class CurvedKernelViaAnalysis_2 >
-class Non_x_monotone_arc_2_rep { 
+class Non_x_monotone_arc_2_rep {
 
 public:
 
     // this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-    
+
     // myself
     typedef Non_x_monotone_arc_2_rep< Curved_kernel_via_analysis_2 > Self;
 
@@ -46,7 +46,7 @@ public:
     // a list of x-monotone arcs
     typedef std::vector< Arc_2 > Arc_vector;
 
-public:    
+public:
 
     /*!\brief
      * Default constructor
@@ -54,14 +54,14 @@ public:
     Non_x_monotone_arc_2_rep() {
     }
 
-    /*!\brief 
+    /*!\brief
      * constructs from one x-monotone arc
      */
     Non_x_monotone_arc_2_rep(const Arc_2& arc) {
         _m_x_monotone_arcs.push_back(arc);
     }
 
-    /*!\brief 
+    /*!\brief
      * constructs a non x-monotone arc from the list of x-monotone pieces
      */
     template <class InputIterator>
@@ -89,11 +89,11 @@ template < class CurvedKernelViaAnalysis_2,
         class Rep_  = Non_x_monotone_arc_2_rep< CurvedKernelViaAnalysis_2 > >
 class Non_x_monotone_arc_2 :
     public CGAL::Handle_with_policy< Rep_ > {
-    
+
 public:
     //!\name public typedefs
     //!@{
-    
+
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
@@ -102,14 +102,14 @@ public:
 
     //! this instance itself
     typedef Non_x_monotone_arc_2< Curved_kernel_via_analysis_2, Rep > Self;
-    
+
     //! type of curve kernel
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
         Curve_kernel_2;
-       
+
     //! type of analysis of a pair of curves
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-    
+
     //! type of a point on generic curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
 
@@ -118,7 +118,7 @@ public:
 
     //! iterator type to range through the list of x-monotone arcs
     typedef typename Rep::Arc_vector::const_iterator Arc_const_iterator;
-    
+
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
 
@@ -130,8 +130,8 @@ public:
     /*!\brief
      * Default constructor
      */
-    Non_x_monotone_arc_2() : 
-        Base(Rep()) {   
+    Non_x_monotone_arc_2() :
+        Base(Rep()) {
     }
 
     /*!\brief
@@ -139,7 +139,7 @@ public:
      */
 #ifdef DOXYGEN_RUNNING
     Non_x_monotone_arc_2(const Self& a) :
-        Base(static_cast<const Base&>(a)) {  
+        Base(static_cast<const Base&>(a)) {
     }
 #endif
 
@@ -155,7 +155,7 @@ public:
      * iterator range <tt>[start; end)</tt>
      *
      * template argument type of \c InputIterator is \c Arc_2
-     * 
+     *
      * \pre the x-monotone arcs must be connected into a single chain
      * \pre either all x-monotone arcs must be vertical or non-vertical
      */
@@ -188,19 +188,19 @@ public:
 public:
     //! \name Access functions
     //!@{
-    
+
     /*!\brief
      * returns the number of x-monotone arcs this object consists of
      */
     int number_of_x_monotone_arcs() const {
         return static_cast<int>(this->ptr()->_m_x_monotone_arcs.size());
     }
-    
+
     /*!\brief
      * returns iterator pointing to the first x-monotone arc in the list
      */
     Arc_const_iterator begin() const {
-        return this->ptr()->_m_x_monotone_arcs.begin(); 
+        return this->ptr()->_m_x_monotone_arcs.begin();
     }
 
     /*!\brief
@@ -219,7 +219,7 @@ public:
         CGAL_precondition(i < number_of_x_monotone_arcs());
         return this->ptr()->_m_x_monotone_arcs[i];
     }
-#endif	
+#endif
 
     /*!\brief
      * returns the supporting curve
@@ -235,13 +235,13 @@ public:
     bool is_vertical() const {
         CGAL_precondition(number_of_x_monotone_arcs() > 0);
         return this->ptr()->_m_x_monotone_arcs[0].is_vertical();
-    } 
-    
+    }
+
     //!@}
 }; // Non_x_monotone_arc_2
 
 /*!\relates Non_x_monotone_arc_2
- * \brief 
+ * \brief
  * output operator
  */
 template < class CurvedKernelViaAnalysis_2, class Rep_>

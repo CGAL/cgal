@@ -21,7 +21,7 @@ int main ()
 {
   // Construct the arrangement of five intersecting segments.
   Arrangement_2 arr;
-  
+
   std::list<X_monotone_curve_2> arcs;
 
   arcs.push_back(X_monotone_curve_2(Point_2(1, 0, 0), Point_2(0, 1, 0)));
@@ -34,7 +34,7 @@ int main ()
   arcs.push_back(X_monotone_curve_2(Point_2(-1, 0, 0), Point_2(0, -1, 0)));
   arcs.push_back(X_monotone_curve_2(Point_2(0, 0, -1), Point_2(1, 0, 0)));
   arcs.push_back(X_monotone_curve_2(Point_2(0, 1, 0), Point_2(0, 0, -1)));
-  
+
 #if 0
   // insert_non_intersecting_curves (arr, arcs.begin(), arcs.end());
   // insert_x_monotone_curves (arr, arcs.begin(), arcs.end());
@@ -50,7 +50,7 @@ int main ()
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   return 0;

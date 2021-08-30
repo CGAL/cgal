@@ -18,7 +18,7 @@ class Nary_union_by_small_queue {
 
  public:
   Nary_union_by_small_queue() : inserted(0) {}
-  
+
   void unite() {
     pit i1(queue.begin()), i2(i1);
     ++i2;

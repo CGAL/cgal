@@ -7,13 +7,7 @@ namespace CGAL {
 \anchor chapsurface_mesh_parameterization
 \cgalAutoToc
 
-\authors Laurent Saboret, Pierre Alliez, Bruno L&eacute;vy, Andreas Fabri, and
-Mael Rouxel-Labbé
-
-\warning The API and structure of this package have greatly changed with CGAL 4.11.
-Users who wish to use the former API must use a version prior to 4.11.
-Section \ref Surface_mesh_parameterizationBasics gives a gentle introduction to
-the new, much simpler, API.
+\authors Laurent Saboret, Pierre Alliez, Bruno L&eacute;vy, Mael Rouxel-Labb&eacute;, Andreas Fabri and Hardik Jain
 
 \section Surface_mesh_parameterizationIntroduction Introduction
 
@@ -218,7 +212,7 @@ convex combination condition. This algorithm amounts to solve one
 sparse linear system for each set of parameter coordinates, with a
 \#vertices x \#vertices sparse and symmetric positive definite matrix
 (if the border vertices are eliminated from the linear system).
-A coefficient \f$ (i, j)\f$ of the matrix is set to 1 for an edge linking
+A coefficient \f$ (i,j)\f$ of the matrix is set to 1 for an edge linking
 the vertex \f$ v_i\f$ to the vertex \f$ v_j\f$, to minus the degree of the
 vertex \f$ v_i\f$ for a diagonal element, and to 0 for any other matrix
 entry. Although a bijective mapping is guaranteed when the border is convex,
@@ -298,6 +292,29 @@ for both systems) is asymmetric.
 \cgalFigureCaptionBegin{Surface_mesh_parameterizationfigfloater}
 Floater Mean Value Coordinates. Rightmost: parameter space.
 \cgalFigureCaptionEnd
+
+\subsubsection Surface_mesh_parameterizationIterativeAuthalic Iterative Authalic Parameterization
+
+`Surface_mesh_parameterization::Iterative_authalic_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
+
+The Iterative Authalic parameterization method has been introduced by
+Jain et al. \cgalCite{cgal:j-lrsspp-19}. This parameterization
+is a fixed border parameterization and is part of the authalic parameterization family,
+meaning that it aims to minimize area distortion between the input surface mesh and the parameterized output.
+More precisely, the approach used by this parameterizer is to iteratively redistribute
+the \f$ L_2\f$ stretch - as defined by Sander et al. \cgalCite{cgal:ssgh-tmpm-01} - over the mesh.
+
+\cgalFigureAnchor{Surface_mesh_parameterizationfigiterativeauthalic}
+<center>
+<img src="iterative_authalic.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Surface_mesh_parameterizationfigiterativeauthalic}
+Iterative Authalic Parameterization (the blue line depicts the cut graph). Rightmost: parameter space.
+\cgalFigureCaptionEnd
+
+Although this is a fixed border parameterization method, it does not guarantee a one-to-one mapping.
+However, it will in practice yield valid results with less distortion than other authalic
+parameterization methods.
 
 \subsubsection secBorderParameterizationsforFixedMethods Border Parameterizations for Fixed Methods
 
@@ -475,55 +492,43 @@ underlying (input) mesh.
 
 \subsection Surface_mesh_parameterizationParameterization Parameterization Methods and Guarantees
 
-<UL>
-
-<LI>Fixed boundaries
-
-<UL>
-
-<LI>One-to-one mapping
-
-Tutte's theorem guarantees a one-to-one mapping provided that the weights are all positive
-and the border is convex.
-It is the case for Tutte Barycentric Mapping and Floater Mean Value Coordinates.
-It is not always the case for Discrete Conformal Map (cotangents) and
-Discrete Authalic parameterization.
-
-<LI>Non-singularity of the matrix
-
-Geshorgin's theorem guarantees the convergence of the solver if the matrix is diagonal dominant.
-This is the case with positive weights (Tutte Barycentric Mapping and Floater Mean Value Coordinates).
-
-</UL>
-
-<LI>Free boundaries
-
-<UL>
-
-<LI>One-to-one mapping
-
-No guarantee is provided by either LSCM or ARAP parameterizations (both global
-overlaps and triangle flips can occur).
-
-<LI>Non-singularity of the matrix
-
-For LSCM, the matrix of the system is the Gram matrix of a matrix with maximal rank,
-and is therefore non-singular (Gram theorem).
-
-</UL>
-
-<LI> Boundary-less
-
-<UL>
-
-<LI>One-to-one mapping
-
-The Orbifold-Tutte embedding is guaranteed to exist and to be computable
-via a sparse linear system.
-
-</UL>
-
-</UL>
+<ul>
+  <li><b>Fixed boundaries</b>
+    <ul>
+      <li><em>One-to-one mapping</em><br>
+        Tutte's theorem guarantees a one-to-one mapping provided that the weights are all positive
+        and the border is convex.
+        It is the case for Tutte Barycentric Mapping and Floater Mean Value Coordinates.
+        It is not always the case for Discrete Conformal Map (cotangents), Discrete Authalic,
+        and Iterative Authalic parameterizations.
+      </li>
+      <li><em>Non-singularity of the matrix</em><br>
+        Geshorgin's theorem guarantees the convergence of the solver if the matrix is diagonal dominant.
+        This is the case with positive weights (Tutte Barycentric Mapping and Floater Mean Value Coordinates).
+      </li>
+    </ul>
+  </li>
+  <li><b>Free boundaries</b>
+    <ul>
+      <li><em>One-to-one mapping</em><br>
+        No guarantee is provided by either LSCM or ARAP parameterizations (both global overlaps
+        and triangle flips can occur).
+      </li>
+      <li><em>Non-singularity of the matrix</em><br>
+        For LSCM, the matrix of the system is the Gram matrix of a matrix with maximal rank,
+        and is therefore non-singular (Gram theorem).
+      </li>
+    </ul>
+  </li>
+  <li><b>Boundary-less</b>
+    <ul>
+      <li><em>One-to-one mapping</em><br>
+        The Orbifold-Tutte embedding is guaranteed to exist and to be computable
+        via a sparse linear system.
+      </li>
+    </ul>
+  </li>
+</ul>
 
 \section Surface_mesh_parameterizationExtendingthe Implementation History
 
@@ -538,6 +543,9 @@ parameterization technique was also added with the help of its authors, Noam Aig
 and Yaron Lipman. Finally, the class `Seam_mesh` was introduced to handle
 virtual borders. The class `Seam_mesh` is also a model of a `FaceGraph`,
 and replaces a wrapper which had a more complicated API.
+
+Iterative authalic parameterization was added in CGAL 5.2 by Mael Rouxel-Labbé,
+based on a prototype developed by Hardik Jain.
 
 */
 } /* namespace CGAL */

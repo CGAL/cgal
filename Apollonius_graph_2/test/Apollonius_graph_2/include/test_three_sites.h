@@ -54,10 +54,10 @@ int number_of_infinite_vertices(const AG& ag, typename AG::Vertex_handle v)
 
 template<class AG>
 bool test_three_sites(const AG& ag,
-		      typename AG::Vertex_handle v1,
-		      typename AG::Vertex_handle v2,
-		      typename AG::Vertex_handle v3,
-		      Middle_t mid_type)
+                      typename AG::Vertex_handle v1,
+                      typename AG::Vertex_handle v2,
+                      typename AG::Vertex_handle v3,
+                      Middle_t mid_type)
 {
   std::cout << "Site 1: " << v1->site() << std::endl;
   std::cout << "Site 2: " << v2->site() << std::endl;

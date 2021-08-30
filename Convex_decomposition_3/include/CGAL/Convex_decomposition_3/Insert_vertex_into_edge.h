@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
@@ -34,18 +34,18 @@ class Insert_vertex_into_edge {
 
  public:
   Insert_vertex_into_edge(SNC_structure& snc_,
-			  SNC_point_locator& pl_) 
+                          SNC_point_locator& pl_)
     : snc(snc_), pl(pl_) {}
 
-  SVertex_handle operator() 
-    (SVertex_handle e, const Point_3 ip) 
+  SVertex_handle operator()
+    (SVertex_handle e, const Point_3 ip)
   {
     CGAL::SNC_constructor<Items, SNC_structure> C(snc);
     Vertex_handle v;
     v = C.create_from_edge(e, ip);
-    
+
     pl.add_vertex(v);
-    
+
     SVertex_iterator svi = v->svertices_begin();
     SVertex_handle svf, svb;
     if(svi->point() == e->point()) {
@@ -55,12 +55,12 @@ class Insert_vertex_into_edge {
       svb = svi;
       svf = ++svi;
     }
-    
+
     svb->twin() = e;
     svf->twin() = e->twin();
     e->twin()->twin() = svf;
     e->twin() = svb;
-    
+
     pl.add_edge(svf);
     pl.add_edge(svb);
 

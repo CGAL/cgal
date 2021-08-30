@@ -6,10 +6,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Simon Giraudot
- 
+
 #ifndef CGAL_KERNEL_HASH_FUNCTIONS_H
 #define CGAL_KERNEL_HASH_FUNCTIONS_H
 
@@ -57,8 +57,8 @@ template <typename K>
 inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Iso_rectangle_2<K>& iso_rectangle)
 {
-  std::size_t result = hash_value(iso_rectangle.min());
-  boost::hash_combine(result, hash_value(iso_rectangle.max()));
+  std::size_t result = hash_value((iso_rectangle.min)());
+  boost::hash_combine(result, hash_value((iso_rectangle.max)()));
   return result;
 }
 
@@ -126,8 +126,8 @@ template <typename K>
 inline std::enable_if_t<std::is_same<typename K::Rep_tag, Cartesian_tag>::value, std::size_t>
 hash_value (const Iso_cuboid_3<K>& iso_cuboid)
 {
-  std::size_t result = hash_value(iso_cuboid.min());
-  boost::hash_combine(result, hash_value(iso_cuboid.max()));
+  std::size_t result = hash_value((iso_cuboid.min)());
+  boost::hash_combine(result, hash_value((iso_cuboid.max)()));
   return result;
 }
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s) : Jane Tournois
 //
 
@@ -76,7 +76,7 @@ namespace CGAL
   * to avoid compilation errors when seeds_begin and seeds_end are
   * not initialized. Indeed, there is no way to have a
   * "default empty iterator" for these named parameters.
-  * Emptyset_iterator implements OutputIterator, 
+  * Emptyset_iterator implements OutputIterator,
   * but stands here for "any empty input iterator"
   * (and any other type could).
   */

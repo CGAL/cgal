@@ -16,7 +16,7 @@ namespace CGAL {
   on the two pipes.
 
   All insert operators construct expressions in `gcl`, the Geomview
-  command language, which is a subset of <span class="textsc">Lisp</span>. These expressions
+  command language, which is a subset of \lisp. These expressions
   are sent to Geomview via the pipe. The extract operators notify `interest`
   for a certain kind of events. When such an event happens Geomview
   sends a description of the event in `gcl` and the extract operator has
@@ -37,13 +37,13 @@ public:
     If `machine` and `login` are not `nullptr`,
     Geomview is started on the remote machine using `rsh`.
   */
-  Geomview_stream(const Bbox_3 &bbox 
+  Geomview_stream(const Bbox_3 &bbox
                   = Bbox_3(0,0,0, 1,1,1),
                   const char *machine = nullptr,
                   const char *login = nullptr);
 /// @}
 
-  
+
   /*!
     [`begin`;`end`) is an iterator range with value type
     `Triangle_3<R>`.  This method uses the OFF format to draw several triangles
@@ -58,7 +58,7 @@ public:
 
 /// @{
   /*!
-    Makes `c` the color of vertices, edges and faces in subsequent IO 
+    Makes `c` the color of vertices, edges and faces in subsequent IO
     operations.
   */
   Geomview_stream& operator<<(const Color& c);
@@ -152,33 +152,33 @@ public:
 
   /*!
     Inserts `i` into the stream. Puts whitespace around if the
-    stream is in ascii mode.
+    stream is in \ascii mode.
   */
   Geomview_stream& operator<<(int i);
 
   /*!
     Inserts `i` into the stream. Puts whitespace around if the
-    stream is in ascii mode.
+    stream is in \ascii mode.
   */
   Geomview_stream& operator<<(unsigned int i);
 
   /*!
     Inserts `i` into the stream. Puts whitespace around if the
-    stream is in ascii mode. Currently implemented by converting to int, so it
+    stream is in \ascii mode. Currently implemented by converting to int, so it
     can be truncated on 64 bit platforms.
   */
   Geomview_stream& operator<<(long i);
 
   /*!
     Inserts `i` into the stream. Puts whitespace around if the
-    stream is in ascii mode. Currently implemented by converting to unsigned int,
+    stream is in \ascii mode. Currently implemented by converting to unsigned int,
     so it can be truncated on 64 bit platforms.
   */
   Geomview_stream& operator<<(unsigned long i);
 
   /*!
     Inserts double `d` into the stream. Puts whitespace around if the
-    stream is in ascii mode.
+    stream is in \ascii mode.
   */
   Geomview_stream& operator<<(double d);
 
@@ -196,7 +196,7 @@ public:
 
   /*!
     Sets raw mode.  In raw mode, kernel points are output without headers and
-    footers, just the coordinates (in binary or ascii mode).  This allows the
+    footers, just the coordinates (in binary or \ascii mode). This allows the
     implementation of the stream functions for other objects to re-use the
     code for points internally, by temporary saving the raw mode to true, and
     restoring it after.
@@ -227,7 +227,7 @@ public:
   bool set_binary_mode(bool b = true);
 
   /*!
-    Sets whether we are in ascii mode.
+    Sets whether we are in \ascii mode.
   */
   bool set_ascii_mode(bool b = true);
 
@@ -237,7 +237,7 @@ public:
   bool get_binary_mode();
 
   /*!
-    Returns `true` iff `gs` is in ascii mode.
+    Returns `true` iff `gs` is in \ascii mode.
   */
   bool get_ascii_mode();
 
@@ -253,7 +253,7 @@ template <class R>
 Geomview_stream&
 operator<<(Geomview_stream& gs, const Point_2<R>& p);
 
-/// \addtogroup GeomviewOutput Output Operators for CGAL Kernel Classes 
+/// \addtogroup GeomviewOutput Output Operators for CGAL Kernel Classes
 /// \ingroup PkgGeomviewRef
 /// The following classes of the \cgal kernel have output
 /// operators. 2D objects are embedded in the `xy`-plane.
@@ -364,7 +364,7 @@ operator<<(Geomview_stream& gs, const Bbox_3& b);
 
 /// @}
 
-/// \addtogroup GeomviewInput Input Operators for CGAL Kernel Classes 
+/// \addtogroup GeomviewInput Input Operators for CGAL Kernel Classes
 /// \ingroup PkgGeomviewRef
 /// An input operator is provided for points. The user has to select
 /// a point on the <I>pick plane</I> with the right mouse button. The pick plane
@@ -384,8 +384,8 @@ operator>>(Geomview_stream& gs, Point_3<R>& p);
 
 /// \addtogroup GeomviewOutputClasses Output Operators for CGAL Basic Library Classes
 /// \ingroup PkgGeomviewRef
-/// Output operators are provided for polyhedral surfaces, as well as for 3D 
-/// and 2D triangulations. The latter allow to visualize terrrains if the 
+/// Output operators are provided for polyhedral surfaces, as well as for 3D
+/// and 2D triangulations. The latter allow to visualize terrrains if the
 /// point type isa  3D point.
 /// @{
 

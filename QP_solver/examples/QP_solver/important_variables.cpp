@@ -17,23 +17,23 @@ int main()
   points.push_back (Point_d (4, 1)); // point 1
   points.push_back (Point_d (4, 4)); // point 2
   points.push_back (Point_d (2, 3)); // point 3
- 
+
   // test all 25 integer points in [0,4]^2
   for (int i=0; i<=4; ++i)
     for (int j=0; j<=4; ++j) {
       Point_d p (i, j);
       Solution s = solve_convex_hull_containment_lp
-	(p, points.begin(), points.end(), CGAL::MP_Float());
+        (p, points.begin(), points.end(), CGAL::MP_Float());
       std::cout << p;
       if (s.is_infeasible())
-	std::cout << " is not in the convex hull\n";
+        std::cout << " is not in the convex hull\n";
       else {
-	assert (s.is_optimal());
-	std::cout << " is a convex combination of the points ";
-	Solution::Index_iterator it = s.basic_variable_indices_begin();
-	Solution::Index_iterator end = s.basic_variable_indices_end();
-	for (; it != end; ++it) std::cout << *it << " ";
-	std::cout << std::endl;
+        assert (s.is_optimal());
+        std::cout << " is a convex combination of the points ";
+        Solution::Index_iterator it = s.basic_variable_indices_begin();
+        Solution::Index_iterator end = s.basic_variable_indices_end();
+        for (; it != end; ++it) std::cout << *it << " ";
+        std::cout << std::endl;
       }
     }
   return 0;

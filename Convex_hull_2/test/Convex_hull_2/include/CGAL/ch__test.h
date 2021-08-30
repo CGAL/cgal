@@ -2,9 +2,9 @@
 //
 // Copyright (c) 1999 The CGAL Consortium
 //
-// 
-// 
-// 
+//
+//
+//
 //
 // ----------------------------------------------------------------------------
 // release       :
@@ -33,12 +33,12 @@
 
 namespace CGAL {
 
-enum ch_Algorithm{ ch_JARVIS, 
-                        ch_GRAHAM_ANDREW, 
-                        ch_EDDY, 
-                        ch_BYKAT, 
-                        ch_BYKAT_WITH_THRESHOLD, 
-                        ch_LOWER_UPPER, 
+enum ch_Algorithm{ ch_JARVIS,
+                        ch_GRAHAM_ANDREW,
+                        ch_EDDY,
+                        ch_BYKAT,
+                        ch_BYKAT_WITH_THRESHOLD,
+                        ch_LOWER_UPPER,
                         ch_AKL_TOUSSAINT,
                         ch_ALL,
                         ch_DEFAULT };
@@ -50,20 +50,20 @@ enum ch_Check_status{ ch_CHECK_ALL,
 
 template <class InputIterator, class Traits>
 bool
-ch__test(InputIterator first, InputIterator last, 
-              const Traits& ch_traits, 
-              ch_Algorithm alg, 
+ch__test(InputIterator first, InputIterator last,
+              const Traits& ch_traits,
+              ch_Algorithm alg,
               ch_Check_status check_level);
 
 template <class InputIterator, class Traits>
 bool
-ch__test(InputIterator first, InputIterator last, 
-              const Traits& ch_traits, 
+ch__test(InputIterator first, InputIterator last,
+              const Traits& ch_traits,
               ch_Algorithm alg);
 
 template <class InputIterator, class Traits>
 bool
-ch__test(InputIterator first, InputIterator last, 
+ch__test(InputIterator first, InputIterator last,
               const Traits& ch_traits);
 
 

@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
   typedef Graph_traits::face_descriptor face_descriptor;
   typedef Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
-  typedef boost::property_map<Polyhedron_3, boost::vertex_point_t>::type VPM;
-  typedef boost::property_map<Polyhedron_3, boost::face_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, boost::vertex_point_t>::const_type VPM;
+  typedef boost::property_map<Polyhedron_3, boost::face_index_t>::const_type FIM;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron_3, VPM> AABB_face_graph_primitive;
   typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
@@ -83,8 +83,8 @@ int main(int argc, char* argv[])
 
   size_t numTrials = 30;
 
-  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM ;
-  typedef boost::property_map<Polyhedron_3, CGAL::face_index_t>::type FIM;
+  typedef boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::const_type VPM ;
+  typedef boost::property_map<Polyhedron_3, CGAL::face_index_t>::const_type FIM;
 
   FIM faceIndexMap(get(boost::face_index, polyhedron));
   VPM vertexPointMap(get(CGAL::vertex_point, polyhedron));

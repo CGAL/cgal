@@ -12,7 +12,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QDebug>
 #include <QObject>
@@ -186,7 +186,7 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
     return;
   }
 
-  if(item->polyhedron_item() == NULL)
+  if(item->polyhedron_item() == nullptr)
   {
     Scene_facegraph_item* polyhedronItem = getSelectedItem<Scene_facegraph_item>();
 

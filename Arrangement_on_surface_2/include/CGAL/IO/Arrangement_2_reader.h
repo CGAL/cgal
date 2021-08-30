@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 //                 (based on old version by Michal Meyerovitch and Ester Ezra)
@@ -41,9 +41,9 @@ namespace CGAL {
     typedef Arrangement_2_reader<Arrangement_2>             Self;
 
   protected:
- 
+
     typedef typename Arrangement_2::Size                    Size;
-    typedef typename Arrangement_2::Dcel                    Dcel;  
+    typedef typename Arrangement_2::Dcel                    Dcel;
 
     typedef typename Arrangement_2::X_monotone_curve_2      X_monotone_curve_2;
     typedef typename Arrangement_2::Point_2                 Point_2;
@@ -59,7 +59,7 @@ namespace CGAL {
     typedef typename Arr_accessor::Dcel_outer_ccb           DOuter_ccb;
     typedef typename Arr_accessor::Dcel_inner_ccb           DInner_ccb;
     typedef typename Arr_accessor::Dcel_isolated_vertex     DIso_vert;
-  
+
     // Data members:
     Arrangement_2&           m_arr;
     Arr_accessor             m_arr_access;
@@ -104,7 +104,7 @@ namespace CGAL {
       // std::cout << number_of_vertices << std::endl;
       // std::cout << number_of_halfedges << std::endl;
       // std::cout << number_of_faces << std::endl;
-    
+
       // Read the DCEL vertices and store them in the vertices vector.
       formatter.read_vertices_begin();
 
@@ -120,7 +120,7 @@ namespace CGAL {
 
       m_halfedges.resize(number_of_halfedges);
       for (k = 0; k < number_of_halfedges; k += 2)
-      { 
+      {
         he = _read_edge(formatter);
         m_halfedges[k] = he;
         m_halfedges[k + 1] = he->opposite();
@@ -176,7 +176,7 @@ namespace CGAL {
       formatter.read_vertex_end();
       return (new_v);
     }
- 
+
     /*! Read a DCEL edge (a pair of twin halfedges). */
     template <class Formatter>
     DHalfedge* _read_edge(Formatter& formatter)
@@ -194,7 +194,7 @@ namespace CGAL {
 
       if (has_curve)
       {
-        // Read the x-monotone curve associated with the edge. 
+        // Read the x-monotone curve associated with the edge.
         formatter.read_x_monotone_curve(m_curve);
 
         // Allocate a pair of new DCEL halfegdes and associate them with the
@@ -210,10 +210,10 @@ namespace CGAL {
       // Set the cross pointers between the twin halfedges and the end vertices.
       trg_v->set_halfedge(new_he);
       new_he->set_vertex(trg_v);
-    
+
       src_v->set_halfedge(new_he->opposite());
       new_he->opposite()->set_vertex(src_v);
-   
+
       // Set the direction of the halfedges.
       if (direction == 0)
       {
@@ -290,7 +290,7 @@ namespace CGAL {
       formatter.read_inner_ccbs_end();
 
       // Read the isolated vertices inside the face.
-      Size n_isolated_vertices = 
+      Size n_isolated_vertices =
         formatter.read_size("number_of_isolated_vertices");
       if (n_isolated_vertices) {
         formatter.read_isolated_vertices_begin();
@@ -308,7 +308,7 @@ namespace CGAL {
         }
         formatter.read_isolated_vertices_end();
       }
-    
+
       // Read any auxiliary data associated with the face.
       if (is_valid)
         formatter.read_face_data(Face_handle(new_f));
@@ -326,7 +326,7 @@ namespace CGAL {
      * \return A pointer to the first halfedge read.
      */
     template <class Formatter>
-    DHalfedge* _read_ccb(Formatter& formatter, 
+    DHalfedge* _read_ccb(Formatter& formatter,
                          Size boundary_size,
                          DOuter_ccb* p_outer,
                          DInner_ccb* p_inner)
@@ -335,7 +335,7 @@ namespace CGAL {
                      (p_outer == nullptr && p_inner != nullptr));
 
       formatter.read_ccb_halfedges_begin();
- 
+
       // Find the first halfedge, and set its CCB.
       std::size_t  first_idx = formatter.read_halfedge_index();
       DHalfedge*   first_he = m_halfedges [first_idx];
@@ -347,7 +347,7 @@ namespace CGAL {
 
       // Read the rest of the halfedge along the boundary.
       std::size_t  curr_idx;
-      DHalfedge*   prev_he = first_he;    
+      DHalfedge*   prev_he = first_he;
       DHalfedge*   curr_he;
       Size         k;
 
@@ -380,4 +380,4 @@ namespace CGAL {
 
 } //namespace CGAL
 
-#endif // CGAL_IO_ARRANGEMENT_2_READER_H 
+#endif // CGAL_IO_ARRANGEMENT_2_READER_H

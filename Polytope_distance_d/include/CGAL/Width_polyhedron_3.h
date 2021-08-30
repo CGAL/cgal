@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Thomas Herrmann, Lutz Kettner
 
@@ -28,8 +28,8 @@ namespace CGAL {
 
 
 template <class Refs, class Traits>
-class Width_vertex_default_base 
-    : public CGAL::HalfedgeDS_vertex_base< 
+class Width_vertex_default_base
+    : public CGAL::HalfedgeDS_vertex_base<
         Refs, Tag_true, typename Traits::Point_3> {
 private:
     typedef Traits          WT;
@@ -89,25 +89,25 @@ class Data_access {
  private:
   //Precondition: Plane Equation already computed in a deterministic way
   struct Facet_compare {
-    bool operator()(Facet_const_handle f, 
-		    Facet_const_handle g) const {
+    bool operator()(Facet_const_handle f,
+                    Facet_const_handle g) const {
       Width_Traits tco;
       Plane fpp=f->plane();
       Plane gpp=g->plane();
       RT fa,fb,fc,fd,ga,gb,gc,gd;
       tco.get_plane_coefficients(fpp,fa,fb,fc,fd);
       tco.get_plane_coefficients(gpp,ga,gb,gc,gd);
-      return fa<ga 
-	      || ( fa==ga && fb<gb )
-	      || ( fa==ga && fb==gb && fc<gc )
-	      || ( fa==ga && fb==gb && fc==gc && fd<gd );
+      return fa<ga
+              || ( fa==ga && fb<gb )
+              || ( fa==ga && fb==gb && fc<gc )
+              || ( fa==ga && fb==gb && fc==gc && fd<gd );
     }
   };
   //Precondition: Plane Equation already computed in a deterministic way
-  //and a facet is bounded by exactly 3 edges! 
+  //and a facet is bounded by exactly 3 edges!
   struct Halfedge_compare {
-    bool operator()(Halfedge_const_handle e, 
-		    Halfedge_const_handle h) const {
+    bool operator()(Halfedge_const_handle e,
+                    Halfedge_const_handle h) const {
       Width_Traits tco;
       PolyPoint etail=e->opposite()->vertex()->point();
       PolyPoint ehead=e->vertex()->point();
@@ -119,83 +119,82 @@ class Data_access {
       RT htx,hty,htz,hth,hhx,hhy,hhz,hhh;
       tco.get_point_coordinates(htail,htx,hty,htz,hth);
       tco.get_point_coordinates(hhead,hhx,hhy,hhz,hhh);
-      
+
       return (etx*hth <htx*eth ||
-	      ( etx*hth==htx*eth && ety*hth <hty*eth ) ||
-	      ( etx*hth==htx*eth && ety*hth==hty*eth && etz*hth <htz*eth ) ||
-	      ( etx*hth==htx*eth && ety*hth==hty*eth && etz*hth==htz*eth
-	      && ehx*hhh <hhx*ehh ) ||
-	      ( etx*hth==htx*eth && ety*hth==hty*eth && etz*hth==htz*eth 
-	      && ehx*hhh==hhx*ehh && ehy*hhh <hhy*ehh ) ||
-	      ( etx*hth==htx*eth && ety*hth==hty*eth && etz*hth==htz*eth 
-	      && ehx*hhh==hhx*ehh && ehy*hhh==hhy*ehh && ehz*hhh<hhz*ehh )
-	      );
+              ( etx*hth==htx*eth && ety*hth <hty*eth ) ||
+              ( etx*hth==htx*eth && ety*hth==hty*eth && etz*hth <htz*eth ) ||
+              ( etx*hth==htx*eth && ety*hth==hty*eth && etz*hth==htz*eth
+              && ehx*hhh <hhx*ehh ) ||
+              ( etx*hth==htx*eth && ety*hth==hty*eth && etz*hth==htz*eth
+              && ehx*hhh==hhx*ehh && ehy*hhh <hhy*ehh ) ||
+              ( etx*hth==htx*eth && ety*hth==hty*eth && etz*hth==htz*eth
+              && ehx*hhh==hhx*ehh && ehy*hhh==hhy*ehh && ehz*hhh<hhz*ehh )
+              );
     }
   };
 
-  std::map< Facet_const_handle, 
+  std::map< Facet_const_handle,
     std::vector<Vertex_handle>,
-    Facet_compare> 
+    Facet_compare>
     antipodal_vertices;
 
-  std::map< Halfedge_const_handle, 
-    bool, 
-    Halfedge_compare> 
+  std::map< Halfedge_const_handle,
+    bool,
+    Halfedge_compare>
     visited_halfedges;
 
-  std::map< Halfedge_const_handle, 
-    bool, 
-    Halfedge_compare> 
+  std::map< Halfedge_const_handle,
+    bool,
+    Halfedge_compare>
     impassable_halfedges;
-  
+
  public:
   bool is_visited(Halfedge_handle& e) const {
-    typename std::map < Halfedge_const_handle, bool, 
+    typename std::map < Halfedge_const_handle, bool,
       Halfedge_compare > ::const_iterator it;
     it=visited_halfedges.find(e);
     CGAL_assertion(it!=visited_halfedges.end());
     DEBUGENDL(VISITED_CHECK,"Visited flag value of edge "
-	      <<e->opposite()->vertex()->point()
-	      <<" --> ",e->vertex()->point()<<": "<<it->second);
+              <<e->opposite()->vertex()->point()
+              <<" --> ",e->vertex()->point()<<": "<<it->second);
     return it->second;
   }
   void set_visited_flag(Halfedge_handle& e, bool val) {
     DEBUGENDL(VISITED_CHECK,"Set visited flag to: ",val);
     visited_halfedges[e]=val;
   }
-  
+
   bool is_impassable(Halfedge_handle& e) const {
-    typename std::map < Halfedge_const_handle, 
-      bool, 
+    typename std::map < Halfedge_const_handle,
+      bool,
       Halfedge_compare > ::const_iterator it;
     it=impassable_halfedges.find(e);
     CGAL_assertion(it!=impassable_halfedges.end());
     DEBUGENDL(IMPASSABLE_CHECK,"Impassable flag value of edge ",
-	      e->opposite()->vertex()->point()
-	      <<" --> "<<e->vertex()->point()<<": "<<it->second);
+              e->opposite()->vertex()->point()
+              <<" --> "<<e->vertex()->point()<<": "<<it->second);
     return it->second;
   }
   void set_impassable_flag(Halfedge_handle& e, bool val) {
     DEBUGENDL(IMPASSABLE_CHECK,"Set impassable flag to: ",val);
     impassable_halfedges[e]=val;
   }
-  
-  void set_antipodal_vertices(Facet_handle& f, 
-				 std::vector<Vertex_handle>& V) {
+
+  void set_antipodal_vertices(Facet_handle& f,
+                                 std::vector<Vertex_handle>& V) {
     antipodal_vertices[f]=V;
   }
-  
-  void get_antipodal_vertices(Facet_handle& f, 
-			      std::vector<Vertex_handle>& res) const {
-    typename std::map< Facet_const_handle, 
+
+  void get_antipodal_vertices(Facet_handle& f,
+                              std::vector<Vertex_handle>& res) const {
+    typename std::map< Facet_const_handle,
       std::vector<Vertex_handle>, Facet_compare>::const_iterator it;
     it=antipodal_vertices.find(f);
     CGAL_assertion(it!=antipodal_vertices.end());
     res=it->second;
   }
 
-#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS) \
-      || defined(NDEBUG))
+#if !(defined(CGAL_KERNEL_NO_ASSERTIONS) || defined(CGAL_NO_ASSERTIONS))
   int size_of_impassable() {
     return(int(impassable_halfedges.size()));
   }

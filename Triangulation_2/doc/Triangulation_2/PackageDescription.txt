@@ -1,4 +1,4 @@
-/// \defgroup PkgTriangulation2Ref 2D Triangulation Reference
+/// \defgroup PkgTriangulation2Ref 2D Triangulations Reference
 /// \defgroup PkgTriangulation2Concepts Concepts
 /// \ingroup PkgTriangulation2Ref
 
@@ -24,7 +24,7 @@
 /*!
 \addtogroup PkgTriangulation2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Triangulation,PkgTriangulation2}
+\cgalPkgDescriptionBegin{2D Triangulations,PkgTriangulation2}
 \cgalPkgPicture{cdt2d-small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Mariette Yvinec}
@@ -46,22 +46,22 @@ can be viewed as a collection of triangular faces,
 such that two faces either have an empty intersection or share an edge or a vertex.
 
 The basic elements of the representation are vertices and faces.
-Each triangular face gives access to its three incident vertices 
-and to its three adjacent faces. 
+Each triangular face gives access to its three incident vertices
+and to its three adjacent faces.
 Each vertex gives access to one of its incident faces
 and through that face to the circular list of its incident faces.
-The edges are not explicitly represented, they are only represented 
+The edges are not explicitly represented, they are only represented
 through the adjacency relations of two faces.
 
 The triangulation classes of \cgal depend on two template parameters.
 The first template parameter stands for
  a geometric traits class which is assumed to provide
-the geometric objects (points, segments and triangles) 
+the geometric objects (points, segments and triangles)
 forming  the triangulation and the geometric predicates on those objects.
 The second template parameter stands for a model
 of  triangulation data
 structure acting as a container for faces and vertices
-while  taking care of the combinatorial aspects of the triangulation. 
+while  taking care of the combinatorial aspects of the triangulation.
 The concepts and models relative to the triangulation data structure
 are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
 

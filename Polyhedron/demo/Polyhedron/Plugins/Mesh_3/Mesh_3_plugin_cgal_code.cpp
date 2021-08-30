@@ -87,6 +87,14 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
+  if(polylines.empty()) {
+    if(protect_features) {
+      p_new_item->set_sharp_edges_angle(sharp_edges_angle);
+    }
+    else if (protect_borders) {
+      p_new_item->set_detect_borders(true);
+    }
+  }
 
   QString tooltip = QString("<div>From \"") + filename +
     QString("\" with the following mesh parameters"
@@ -161,6 +169,9 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.manifold = manifold;
+  param.detect_connected_components = false; // to avoid random values
+                                             // in the debug displays
+
 
   typedef ::Mesh_function<Function_mesh_domain,
                           Mesh_fnt::Implicit_domain_tag> Mesh_function;

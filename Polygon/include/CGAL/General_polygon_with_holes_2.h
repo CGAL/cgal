@@ -47,7 +47,7 @@ public:
 
 /// @{
   /// polygon without hole type
-  typedef Polygon_							General_polygon_2;
+  typedef Polygon_                                                        General_polygon_2;
 /// @}
 
   typedef std::deque<General_polygon_2>               Holes_container;
@@ -164,12 +164,11 @@ protected:
 /*!
 This operator exports a General_polygon_with_holes_2 to the output stream `out`.
 
-An ASCII and a binary format exist. The format can be selected with
+An \ascii and a binary format exist. The format can be selected with
 the \cgal modifiers for streams, `set_ascii_mode(0` and `set_binary_mode()`
 respectively. The modifier `set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
-be free of comments. The default for writing is ASCII without
-comments.
+be free of comments. The default for writing is \ascii without comments.
 
 The number of curves of the outer boundary is exported followed by the
 curves themselves. Then, the number of holes
@@ -184,7 +183,7 @@ std::ostream
 {
   typename General_polygon_with_holes_2<Polygon_>::Hole_const_iterator hit;
 
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       os << p.outer_boundary() << ' ' << p.number_of_holes()<< ' ';
       for (hit = p.holes_begin(); hit != p.holes_end(); ++hit) {
@@ -217,8 +216,7 @@ std::ostream
 /*!
 This operator imports a General_polygon_with_holes_2 from the input stream `in`.
 
-An ASCII and a binary format exist. The stream detects the format
-automatically and can read both.
+Both ASCII and binary formats are supported, and the format is automatically detected.
 
 The format consists of the number of curves of the outer boundary
 followed by the curves themselves, followed

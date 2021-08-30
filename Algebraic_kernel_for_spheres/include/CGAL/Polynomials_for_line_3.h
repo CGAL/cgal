@@ -4,9 +4,9 @@
 // This file is part of CGAL (www.cgal.org).
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -35,15 +35,15 @@ class Polynomials_for_line_3
               // y = a2 t + b2
               // z = a3 t + b3
 public:
-  
+
   typedef FT_ FT;
-  
+
   Polynomials_for_line_3(){}
-  
-  Polynomials_for_line_3(const FT & a1, const FT & b1, 
+
+  Polynomials_for_line_3(const FT & a1, const FT & b1,
                  const FT & a2, const FT & b2,
                  const FT & a3, const FT & b3)
-  { 
+  {
     rep[0] = a1;
     rep[1] = b1;
     rep[2] = a2;
@@ -57,16 +57,16 @@ public:
 
   const FT & b1() const
   { return rep[1]; }
-  
+
   const FT & a2() const
   { return rep[2]; }
-  
+
   const FT & b2() const
   { return rep[3]; }
 
   const FT & a3() const
   { return rep[4]; }
-  
+
   const FT & b3() const
   { return rep[5]; }
 
@@ -80,16 +80,16 @@ public:
 
 template < typename FT >
 inline
-bool 
+bool
 operator == ( const Polynomials_for_line_3<FT> & p1,
-	      const Polynomials_for_line_3<FT> & p2 )
+              const Polynomials_for_line_3<FT> & p2 )
 {
-  return( (p1.a1() == p2.a1()) && 
-	  (p1.b1() == p2.b1()) &&
-	  (p1.a2() == p2.a2()) &&
-	  (p1.b2() == p2.b2()) &&
+  return( (p1.a1() == p2.a1()) &&
+          (p1.b1() == p2.b1()) &&
+          (p1.a2() == p2.a2()) &&
+          (p1.b2() == p2.b2()) &&
           (p1.a3() == p2.a3()) &&
-	  (p1.b3() == p2.b3()));
+          (p1.b3() == p2.b3()));
 }
 
 } //namespace CGAL

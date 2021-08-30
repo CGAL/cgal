@@ -38,11 +38,11 @@ struct FACET {
     original[1] = points[1] = p[1];
     original[2] = points[2] = p[2];
 
-    if(points[1] < points[0]) 
+    if(points[1] < points[0])
       exchange(points[0], points[1]);
-    if(points[2] < points[1]) 
+    if(points[2] < points[1])
       exchange(points[2], points[1]);
-    if(points[1] < points[0]) exchange(points[0], points[1]);    
+    if(points[1] < points[0]) exchange(points[0], points[1]);
   }
 
   void exchange(int& a, int& b) {
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     return 1;
 
   std::ifstream trunk(argv[1]);
-  
+
   char buffer[80];
   int nv,nf,nc,nfl;
   std::vector<VERTEX> vertices;
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
     trunk >> p[0] >> p[1] >> p[2];
     vertices.push_back(p);
   }
-  
+
   std::cerr << "number of facets " << nf << std::endl;
   trunk.getline(buffer,80);
   trunk.getline(buffer,80);
@@ -118,9 +118,9 @@ int main(int argc, char* argv[]) {
     //    edges[vi0][vi1].facets.push_back(fi);
     //    edges[vi0][vi2].facets.push_back(fi);
     //    edges[vi1][vi2].facets.push_back(fi);
-  }  
+  }
 
-  /*  
+  /*
   std::list<FIT> border;
   for(FIT fi = facets.begin(); fi != facets.end(); ++fi) {
     VIT vi0 = vertices.begin()+fi->points[0];
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
        edges[vi1][vi2].facets.size() < 2)
       border.push_back(fi);
   }
-  
+
   std::cerr << "borders " << border.size() << std::endl;
   */
 
@@ -149,20 +149,20 @@ int main(int argc, char* argv[]) {
 
   std::cout << "OFF" << std::endl;
   std::cout << vertices.size() << " "
-	    << nf << " 0" << std::endl;
-  
+            << nf << " 0" << std::endl;
+
   std::vector<VERTEX>::iterator vi;
   for(vi = vertices.begin(); vi != vertices.end(); ++vi)
-    std::cout << vi->point[0] << " " 
-	      << vi->point[1] << " "
-	      << vi->point[2] << std::endl;
+    std::cout << vi->point[0] << " "
+              << vi->point[1] << " "
+              << vi->point[2] << std::endl;
 
   std::list<FACET>::iterator fi;
   for(fi = facets.begin(); fi != facets.end(); ++fi)
     if(!fi->erased)
-      std::cout << "3 " << fi->original[0] 
-		<< " "  << fi->original[1]
-		<< " "  << fi->original[2] << std::endl;
-  
+      std::cout << "3 " << fi->original[0]
+                << " "  << fi->original[1]
+                << " "  << fi->original[2] << std::endl;
+
   return 0;
 }

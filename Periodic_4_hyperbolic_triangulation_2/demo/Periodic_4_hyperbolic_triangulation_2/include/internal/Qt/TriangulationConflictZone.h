@@ -43,7 +43,7 @@ protected:
   bool eventFilter(QObject *obj, QEvent *event);
 
   Point p;
-  
+
   DT * dt;
   Converter<K> convert;
   QGraphicsScene *scene_;
@@ -56,7 +56,7 @@ TriangulationConflictZone<T>::TriangulationConflictZone(QGraphicsScene* s,
               QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {}
-  
+
 
 
 template <typename T>
@@ -69,7 +69,7 @@ TriangulationConflictZone<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-bool 
+bool
 TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if(event->type() == QEvent::GraphicsSceneMouseMove) {
@@ -80,7 +80,7 @@ TriangulationConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

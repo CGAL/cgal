@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_CGAL_and_the_Qt_Graphics_View_Framework
 \anchor chapterQGraphicsView
 \cgalAutoToc
@@ -16,9 +16,9 @@ cross-platform application development.
 This chapter describes classes that help to visualize two dimensional \cgal objects
 with the <A HREF="https://doc.qt.io/qt-5/graphicsview.html">Qt Graphics View Framework</A>.
 
-This framework uses the model view paradigm. <A HREF="https://doc.qt.io/qt-5/qgraphicsitem.html">`QGraphicsItem`</A>s are stored in a 
-<A HREF="https://doc.qt.io/qt-5/qgraphicsscene.html">`QGraphicsScene`</A> 
-and are displayed in a <A HREF="https://doc.qt.io/qt-5/qgraphicsview.html">`QGraphicsView`</A>. The items 
+This framework uses the model view paradigm. <A HREF="https://doc.qt.io/qt-5/qgraphicsitem.html">`QGraphicsItem`</A>s are stored in a
+<A HREF="https://doc.qt.io/qt-5/qgraphicsscene.html">`QGraphicsScene`</A>
+and are displayed in a <A HREF="https://doc.qt.io/qt-5/qgraphicsview.html">`QGraphicsView`</A>. The items
 have a paint method which is called when an item is in the visible area of a view.
 The framework is also responsible for dispatching events from the view
 via the scene to the items. The framework is extensible in the sense
@@ -39,7 +39,7 @@ As %Qt and \cgal have different naming conventions, and as this package
 brings them together we adopted the following, hybrid naming conventions.
 
 <UL>
-<LI>All header files are in the directory `CGAL/Qt/`. 
+<LI>All header files are in the directory `CGAL/Qt/`.
 <LI>Class names are concatenated capitalized words, and function names are
 concatenated capitalized word with the first word in lowercase. The rationale is that
 these classes are related to %Qt, and that they sometimes are derived
@@ -68,7 +68,7 @@ UML Class Diagram with the %Qt classes (blue), \cgal classes for using the frame
 In order to visualize for example a `CGAL::Delaunay_triangulation_2`, we
 provide the graphics item class `CGAL::Qt::TriangulationGraphicsItem<T>`.
 It provides a `paint` method that draws the edges and vertices of a triangulation
-using the drawing primitives of the <A HREF="https://doc.qt.io/qt-5/qpainter.html">`QPainter`</A>. The color of vertices and edges, 
+using the drawing primitives of the <A HREF="https://doc.qt.io/qt-5/qpainter.html">`QPainter`</A>. The color of vertices and edges,
 can be chosen by setting a user defined <A HREF="https://doc.qt.io/qt-5/qpen.html">`QPen`</A>.
 
 As this graphics item only stores a pointer to a triangulation, it
@@ -83,7 +83,7 @@ triangulation changes the application emits a signal that can get connected to t
 We provide a class `CGAL::Qt::GraphicsViewNavigation` that can be
 installed as an event filter of a graphics view and its viewport. As for
 all %Qt widgets, the `QGraphicsView` is derived from
-`QObject`. Events like the mouse buttons pressed or released, the mouse movemed, keys pressed, 
+`QObject`. Events like the mouse buttons pressed or released, the mouse movemed, keys pressed,
 are passed to the view which first hands them over to the
 event filter. The `CGAL::Qt::GraphicsViewNavigation` event filter allows to zoom, scroll, and recenter.
 Finally, the class emits a signal with the mouse coordinates. This can be used
@@ -98,10 +98,10 @@ in order to enter a point.
 
 Once the input generator has assembled the object, which can involve several mouse clicks,
 it emits a `CGAL::Object` wrapping the input. The emitted input can be connected
-by the application developer to a slot. In the 2D demos of \cgal, which use the 
+by the application developer to a slot. In the 2D demos of \cgal, which use the
 Graphics View Framework we connect it to the slot `MainWindow::processInput(CGAL::Object)`.
-This method unwraps from the `CGAL::Object` and inserts it in the data structure. 
-It then typically emits a signal `modelChanged()` which can be 
+This method unwraps from the `CGAL::Object` and inserts it in the data structure.
+It then typically emits a signal `modelChanged()` which can be
 connected to the graphics item representing the data structure.
 
 All input generators we provide use the left mouse button for entering points.
@@ -109,6 +109,6 @@ The right click terminates a sequence of entered points. 'Delete' and 'backspace
 remove the last entered point. 'Esc' resets the input generator. As the 'Ctrl' key
 is used by the `CGAL::Qt::GraphicsViewNavigation` this modifier is not used.
 
-*/ 
+*/
 } /* namespace CGAL */
 

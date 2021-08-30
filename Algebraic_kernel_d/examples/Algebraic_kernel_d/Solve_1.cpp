@@ -2,7 +2,7 @@
 // $Id$
 
 #include <CGAL/config.h>
-#ifdef CGAL_USE_MPFI 
+#ifdef CGAL_USE_MPFI
 #include <CGAL/Algebraic_kernel_d_1.h>
 #include <CGAL/Gmpz.h>
 #include <vector>
@@ -14,7 +14,7 @@ typedef AK::Bound                                       Bound;
 typedef AK::Multiplicity_type                           Multiplicity_type;
 
 int main(){
-  AK ak; // an object of 
+  AK ak; // an object of
   AK::Solve_1 solve_1 = ak.solve_1_object();
   Polynomial_1 x = CGAL::shift(AK::Polynomial_1(1),1); // the monomial x
 

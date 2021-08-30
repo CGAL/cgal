@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 //                 Baruch Zukerman        <baruchzu@post.tau.ac.il>
@@ -24,7 +24,7 @@ namespace CGAL
 namespace Envelope_3
 {
 
-//! All even-indexed elements are stored in the first sequence and all the 
+//! All even-indexed elements are stored in the first sequence and all the
 //  odd-indexed are stored in the second sequence.
 class Arbitrary_dividor
 {
@@ -42,10 +42,10 @@ public:
         *set2++ = *begin;
 
   }
-  
+
 };
 
-//! The last element is stored in the second sequence and all the other (n-1) 
+//! The last element is stored in the second sequence and all the other (n-1)
 //  elments are stored in the first sequence.
 class Incremental_dividor
 {
@@ -91,14 +91,14 @@ public:
 class Random_dividor
 {
 public:
-  
+
   template <class InputIterator, class OutputIterator>
   void operator()(InputIterator begin, InputIterator end,
                   OutputIterator set1, OutputIterator set2)
   {
     while (begin != end)
     {
-      
+
       if (CGAL::get_default_random().get_bool())
         *set1++ = *begin++;
       else
@@ -112,4 +112,4 @@ public:
 } // namespace Envelope_3
 } // namespace CGAL
 
-#endif 
+#endif

@@ -28,13 +28,13 @@ int main (int argc, char *argv[])
   // Check the number of program arguments.
   if (argc < 3) {
     std::cerr << "Usage: " << argv[0] << " <file name> <method>"
-	      << std::endl
-	      << "method is either:" << std::endl
-	      << "    -a for aggragated insertion;" << std::endl
-	      << "    -n for incremental insertion with naive point-location;"
-	      << std::endl
-	      << "    -w for incremental insertion with walk point-location." 
-	      << std::endl;
+              << std::endl
+              << "method is either:" << std::endl
+              << "    -a for aggragated insertion;" << std::endl
+              << "    -n for incremental insertion with naive point-location;"
+              << std::endl
+              << "    -w for incremental insertion with walk point-location."
+              << std::endl;
 
     return 1;
   }
@@ -108,12 +108,12 @@ int main (int argc, char *argv[])
       Naive_pl                         pl (arr);
       Conic_arcs_list::const_iterator  iter;
 
-      std::cout << "Performing incremental insertion (with naive PL) of " 
-		<< n << " ellipses." << std::endl;
+      std::cout << "Performing incremental insertion (with naive PL) of "
+                << n << " ellipses." << std::endl;
 
       timer.start();
       for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
-	insert (arr, *iter, pl);
+        insert (arr, *iter, pl);
       timer.stop();
     }
     else {
@@ -121,19 +121,19 @@ int main (int argc, char *argv[])
       Walk_pl                          pl (arr);
       Conic_arcs_list::const_iterator  iter;
 
-      std::cout << "Performing incremental insertion (with walk PL) of " 
-		<< n << " ellipses." << std::endl;
+      std::cout << "Performing incremental insertion (with walk PL) of "
+                << n << " ellipses." << std::endl;
 
       timer.start();
       for (iter = ellipses.begin(); iter != ellipses.end(); ++iter)
-	insert (arr, *iter, pl);
+        insert (arr, *iter, pl);
       timer.stop();
     }
   }
   else {
     // Perform aggregated insertion.
-    std::cout << "Performing aggregated insertion of " 
-	      << n << " ellipses." << std::endl;
+    std::cout << "Performing aggregated insertion of "
+              << n << " ellipses." << std::endl;
 
     timer.start();
     insert (arr, ellipses.begin(), ellipses.end());
@@ -142,11 +142,11 @@ int main (int argc, char *argv[])
 
   // Print the arrangement dimensions.
   std::cout << "V = " << arr.number_of_vertices()
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces() << std::endl << std::endl;
+            << ",  E = " << arr.number_of_edges()
+            << ",  F = " << arr.number_of_faces() << std::endl << std::endl;
 
-  std::cout << "Construction took " << timer.time() 
-	    << " seconds." << std::endl;
+  std::cout << "Construction took " << timer.time()
+            << " seconds." << std::endl;
 
   // Check the validity of the arrangement:
   std::cout << "Checking validity ... " << std::flush;

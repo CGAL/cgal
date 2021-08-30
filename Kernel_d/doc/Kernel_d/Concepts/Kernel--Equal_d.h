@@ -13,13 +13,13 @@ public:
 /// @{
 
 /*!
-returns true iff \f$ p\f$ and \f$ q\f$ are equal (as 
+returns true iff \f$ p\f$ and \f$ q\f$ are equal (as
 \f$ d\f$-dimensional points).
 
-\pre `p` and `q` have the same dimension. 
-*/ 
-bool operator()(const Kernel_d::Point_d&p, const 
-Kernel_d::Point_d&q); 
+\pre `p` and `q` have the same dimension.
+*/
+bool operator()(const Kernel_d::Point_d&p, const
+Kernel_d::Point_d&q);
 
 /// @}
 

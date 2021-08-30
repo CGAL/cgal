@@ -25,7 +25,7 @@ namespace Polyline_simplification_2
 /// \ingroup PkgPolylineSimplification2Classes
 
 
-/// This class is a stop predicate returning `true` when the cost for 
+/// This class is a stop predicate returning `true` when the cost for
 /// simplifying a vertex is greater than a certain threshold.
 ///
 /// \cgalModels `PolylineSimplificationStopPredicate`.

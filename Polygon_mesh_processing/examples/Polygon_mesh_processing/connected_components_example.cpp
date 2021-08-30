@@ -2,8 +2,11 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <boost/function_output_iterator.hpp>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/property_map/property_map.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -29,7 +32,7 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
     :g_(NULL)
   {}
 
-  Constraint(G& g, double bound) 
+  Constraint(G& g, double bound)
     : g_(&g), bound_(bound)
   {}
 
@@ -69,11 +72,11 @@ struct Put_true
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
-  std::ifstream input(filename);
 
   Mesh mesh;
-  if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << "Not a valid off file." << std::endl;
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
@@ -88,7 +91,7 @@ int main(int argc, char* argv[])
 
   std::cerr << "Connected components without edge constraints" << std::endl;
   std::cerr << cc.size() << " faces in the CC of " << fd << std::endl;
-  
+
   // Instead of writing the faces into a container, you can set a face property to true
   typedef Mesh::Property_map<face_descriptor, bool> F_select_map;
   F_select_map fselect_map =
@@ -116,12 +119,12 @@ int main(int argc, char* argv[])
               << " is made of " << cc.second << " faces" << std::endl;
   }
 
-  std::cerr << "- We keep only components which have at least 4 faces" << std::endl; 
+  std::cerr << "- We keep only components which have at least 4 faces" << std::endl;
   PMP::keep_large_connected_components(mesh,
       4,
       PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
 
-  std::cerr << "- We keep the two largest components" << std::endl; 
+  std::cerr << "- We keep the two largest components" << std::endl;
   PMP::keep_largest_connected_components(mesh,
       2,
       PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));

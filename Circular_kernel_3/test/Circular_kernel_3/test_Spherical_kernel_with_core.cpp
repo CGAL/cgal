@@ -9,8 +9,8 @@
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #if defined(CGAL_USE_CORE) || defined(CGAL_USE_LEDA)
@@ -33,7 +33,7 @@ int main()
   typedef CGAL::Spherical_kernel_3<Linear_k1,Algebraic_k1>    SK1;
   SK1 sk1;
   _test_spherical_kernel_predicates(sk1);
-  _test_spherical_kernel_construct(sk1); 
+  _test_spherical_kernel_construct(sk1);
   _test_spherical_kernel_compute(sk1);
   test_functionalities_on_a_reference_sphere<SK1>(SK1::Point_3(4.5,1.2,0.7));
 #endif

@@ -19,61 +19,75 @@ typedef Arrangement_2::Vertex_handle                  Vertex_handle;
 //test from a bug report when inserting a segment closing a hole
 bool test_insert_at_vertices_1(){
   Arrangement_2 arr;
-  
+
   Vertex_handle v_x0y3 = arr.insert_in_face_interior(Point_2(Number_type(0), Number_type(3)), arr.unbounded_face());
   Vertex_handle v_x1y6 = arr.insert_in_face_interior(Point_2(Number_type(1), Number_type(6)), arr.unbounded_face());
   Vertex_handle v_x1y3 = arr.insert_in_face_interior(Point_2(Number_type(1), Number_type(3)), arr.unbounded_face());
   Vertex_handle v_x2y3 = arr.insert_in_face_interior(Point_2(Number_type(2), Number_type(3)), arr.unbounded_face());
   Vertex_handle v_x3y6 = arr.insert_in_face_interior(Point_2(Number_type(3), Number_type(6)), arr.unbounded_face());
   Vertex_handle v_x3y0 = arr.insert_in_face_interior(Point_2(Number_type(3), Number_type(0)), arr.unbounded_face());
-  
+
   arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x1y6->point()), v_x0y3, v_x1y6);
   arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x1y3->point()), v_x0y3, v_x1y3);
   arr.insert_at_vertices(Segment_2(v_x1y3->point(), v_x2y3->point()), v_x1y3, v_x2y3);
   arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x3y6->point()), v_x0y3, v_x3y6);
   arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x3y0->point()), v_x0y3, v_x3y0);
- 
+
   Halfedge_handle he = arr.insert_at_vertices(Segment_2(v_x3y6->point(), v_x3y0->point()), v_x3y6, v_x3y0);
-  
-  
+
+
   if (he->face() != arr.unbounded_face())
   {
     std::cerr << "Error: he->face() must be the unbounded face!" << std::endl;
     return false;
   }
-    
+
   return is_valid(arr);
 }
 
 bool test_insert_at_vertices_2(){
   Arrangement_2 arr;
-  
+
   Vertex_handle v_x0y3 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(0), Kernel::FT(3)), arr.unbounded_face());
   Vertex_handle v_x1y6 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(1), Kernel::FT(6)), arr.unbounded_face());
   Vertex_handle v_x1y3 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(1), Kernel::FT(3)), arr.unbounded_face());
   Vertex_handle v_x2y3 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(2), Kernel::FT(3)), arr.unbounded_face());
   Vertex_handle v_x3y6 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(3), Kernel::FT(6)), arr.unbounded_face());
   Vertex_handle v_x3y0 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(3), Kernel::FT(0)), arr.unbounded_face());
-  
+
   arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x1y6->point()), v_x0y3, v_x1y6);
   arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x1y3->point()), v_x0y3, v_x1y3);
   arr.insert_at_vertices(Segment_2(v_x1y3->point(), v_x2y3->point()), v_x1y3, v_x2y3);
   arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x3y6->point()), v_x0y3, v_x3y6);
   arr.insert_at_vertices(Segment_2(v_x3y6->point(), v_x3y0->point()), v_x3y6, v_x3y0);
-  
+
   Halfedge_handle he = arr.insert_at_vertices(Segment_2(v_x3y0->point(), v_x0y3->point()), v_x3y0, v_x0y3);
-  
+
   if (he->face() != arr.unbounded_face())
   {
     std::cerr << "Error: he->face() must be the unbounded face!" << std::endl;
     return false;
   }
-  
+
   return is_valid(arr);
 }
 
 bool test_insert_at_vertices(){
   return test_insert_at_vertices_1() && test_insert_at_vertices_2();
+}
+
+bool test_insert_on_overlap(){
+  Arrangement_2 arr;
+
+  std::vector<Segment_2> segs1, segs2;
+  segs1.emplace_back(Point_2(0, 0), Point_2(0, 4));
+  segs2.emplace_back(Point_2(0, 0), Point_2(4,4));
+  segs2.emplace_back(Point_2(0, 2), Point_2(0, 4));
+  segs2.emplace_back(Point_2(0, 2), Point_2(4,4));
+  CGAL::insert(arr, segs1.begin(), segs1.end());
+  CGAL::insert(arr, segs2.begin(), segs2.end());
+
+  return is_valid(arr);
 }
 
 int main ()
@@ -109,7 +123,7 @@ int main ()
   segs[23] = Segment_2 (Point_2 (13, 3), Point_2 (17, 3));
   segs[24] = Segment_2 (Point_2 (12, 6), Point_2 (13, 3));
   segs[25] = Segment_2 (Point_2 (17, 3), Point_2 (20, 1));
-  
+
   for (k = 0; k < N_SEGMENTS; k++)
   {
     insert_non_intersecting_curve (arr, segs[k]);
@@ -120,10 +134,10 @@ int main ()
     if (! valid)
       return (1);
   }
-  
+
   std::cout << "Arrangement size:"
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Check the validity more thoroughly.
@@ -131,11 +145,15 @@ int main ()
   std::cout << "Arrangement is "
             << (valid ? "valid." : "NOT valid!") << std::endl;
   if (!valid) return 1;
-  
+
   std::cout << "Test insert_at_vertices ";
   valid=test_insert_at_vertices();
   std::cout << ( valid ? "valid." : "NOT valid!") << std::endl;
-  
+
+  if (!valid) return 1;
+  std::cout << "Test insert on overlap\n";
+  valid=test_insert_on_overlap();
+
   return valid?0:1;
 }
 

@@ -202,7 +202,7 @@ namespace std {
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash 
+#  pragma warning(disable:4099) // For VC10 it is class hash
 #endif
 
 #ifndef CGAL_CFG_NO_STD_HASH

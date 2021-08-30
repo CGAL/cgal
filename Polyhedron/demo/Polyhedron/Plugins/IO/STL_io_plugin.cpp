@@ -1,24 +1,29 @@
+#include "SMesh_type.h"
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Kernel_type.h"
 #include "Scene.h"
-#include "SMesh_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
-#include <fstream>
 
-#include <CGAL/IO/Polyhedron_builder_from_STL.h>
-#include <CGAL/IO/STL_writer.h>
+#include <CGAL/IO/polygon_soup_io.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-
 
 #include <QColor>
 #include <QString>
 #include <QStringList>
 #include <QMainWindow>
 #include <QInputDialog>
+
+#include <boost/property_map/function_property_map.hpp>
+
 #include <cstdint>
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <vector>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_stl_plugin :
@@ -60,6 +65,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
     ok = false;
     return QList<Scene_item*>();
   }
+  in.close();
   if(fileinfo.size() == 0)
   {
     CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
@@ -70,20 +76,27 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
       CGAL::Three::Three::scene()->addItem(item);
     return QList<Scene_item*>()<<item;
   }
-  std::vector<std::array<double, 3> > points;
-  std::vector<std::array<int, 3> > triangles;
-  if (!CGAL::read_STL(in, points, triangles))
+  std::vector<EPICK::Point_3> points;
+  std::vector<std::vector<int> > triangles;
+  if (!CGAL::IO::read_polygon_soup(fileinfo.filePath().toUtf8().toStdString(), points, triangles))
   {
     std::cerr << "Error: invalid STL file" << std::endl;
     ok = false;
     return QList<Scene_item*>();
   }
 
-  try{
+  try
+  {
     // Try building a surface_mesh
     SMesh* SM = new SMesh();
     if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
+    {
+      //auto pmap = boost::make_function_property_map<std::array<double, 3>, Point_3>(
+      //              [](const std::array<double, 3>& a) { return Point_3(a[0], a[1], a[2]); });
+
       CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, *SM);
+    }
+
     if(!SM->is_valid() || SM->is_empty()){
       std::cerr << "Error: Invalid facegraph" << std::endl;
     }
@@ -127,23 +140,23 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   list << tr("Ascii");
   bool ok = false;
   QString choice
-    = QInputDialog::getItem(NULL, tr("Save STL file"), tr("Format"), list, 0, false, &ok);
+    = QInputDialog::getItem(nullptr, tr("Save STL file"), tr("Format"), list, 0, false, &ok);
 
   if (!ok)
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8(), std::ios::out | std::ios::binary);
   if ( choice == tr("Binary") )
-    CGAL::set_mode(out, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(out, CGAL::IO::BINARY);
   else
   {
-    CGAL::set_mode(out, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(out, CGAL::IO::ASCII);
     out.precision (std::numeric_limits<double>::digits10 + 2);
   }
 
   if (sm_item)
   {
-    CGAL::write_STL(*sm_item->face_graph(), out);
+    CGAL::IO::write_STL(out, *sm_item->face_graph());
     items.pop_front();
     return true;
   }

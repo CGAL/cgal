@@ -80,10 +80,10 @@ int main()
     Plane_intersection plane_intersection = tree.any_intersection(plane_query);
     if(plane_intersection)
     {
-      
+
       if(boost::get<Segment>(&(plane_intersection->first)))
             std::cout << "intersection object is a segment" << std::endl;
     }
-    
+
     return EXIT_SUCCESS;
 }

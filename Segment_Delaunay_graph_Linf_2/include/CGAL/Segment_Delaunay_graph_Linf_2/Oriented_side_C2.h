@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -76,8 +76,8 @@ public:
   // is the direction of the supporting line of s, rotated by 90
   // degrees counterclockwise.
   Oriented_side operator()(const Site_2& s1, const Site_2& s2,
-			   const Site_2& s3,
-			   const Site_2& s, const Site_2& p) const
+                           const Site_2& s3,
+                           const Site_2& s, const Site_2& p) const
   {
     CGAL_precondition( s.is_segment() && p.is_point() );
 
@@ -99,8 +99,8 @@ public:
 
   // tie breaker for finite vertex
   Oriented_side operator()(const Site_2& s1, const Site_2& s2,
-			   const Site_2& s3,
-			   const Site_2& s, const Site_2& p,
+                           const Site_2& s3,
+                           const Site_2& s, const Site_2& p,
                            const Point_2 & pt) const
   {
     CGAL_precondition( s.is_segment() && p.is_point() );
@@ -202,7 +202,7 @@ public:
   // is the direction of the supporting line of s, rotated by 90
   // degrees counterclockwise.
   Oriented_side operator()(const Site_2& s1, const Site_2& s2,
-			   const Site_2& s, const Site_2& p) const
+                           const Site_2& s, const Site_2& p) const
   {
     CGAL_precondition( s.is_segment() && p.is_point() );
 
@@ -319,7 +319,7 @@ public:
 
   // tie breaker for infinite vertex
   Oriented_side operator()(const Site_2& s1, const Site_2& s2,
-			   const Site_2& s, const Site_2& p,
+                           const Site_2& s, const Site_2& p,
                            const Point_2 & pt) const
   {
     CGAL_precondition( s.is_segment() && p.is_point() );

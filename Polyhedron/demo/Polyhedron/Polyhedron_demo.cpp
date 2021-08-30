@@ -32,8 +32,6 @@ int& code_to_call_before_creation_of_QCoreApplication(int& i) {
   QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
 #endif
 
-  //We set the locale to avoid any trouble with VTK
-  std::setlocale(LC_ALL, "C");
   return i;
 }
 
@@ -49,6 +47,8 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   , d_ptr_is_initialized(false)
   , d_ptr(new Polyhedron_demo_impl)
 {
+  //We set the locale to avoid any trouble with VTK
+  std::setlocale(LC_ALL, "C");
   d_ptr_is_initialized = true;
   std::cerr.precision(17);
   std::cout.precision(17);
@@ -63,7 +63,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
 
   QCommandLineParser parser;
   parser.addHelpOption();
-  
+
   QCommandLineOption use_keyword("keyword",
                               tr("Only loads the plugins associated with the following keyword. Can be called multiple times."),
                                  "keyword");
@@ -97,7 +97,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   keywords.append(parser_keywords);
   d_ptr->mainWindow.reset(new MainWindow(keywords, parser.isSet(verbose)));
   MainWindow& mainWindow = *d_ptr->mainWindow;
-  
+
   mainWindow.setWindowTitle(main_window_title);
   mainWindow.show();
 

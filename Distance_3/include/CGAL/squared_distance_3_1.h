@@ -1,16 +1,16 @@
-// Copyright (c) 1998-2004  
+// Copyright (c) 1998-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman, Andreas Fabri
 
@@ -31,17 +31,33 @@ namespace CGAL {
 namespace internal {
 
 template <class K>
-typename K::FT
-squared_distance(
+void
+squared_distance_RT(
     const typename K::Point_3 &pt,
     const typename K::Line_3 &line,
+    typename K::RT& num,
+    typename K::RT& den,
     const K& k)
 {
   typedef typename K::Vector_3 Vector_3;
   typename K::Construct_vector_3 construct_vector;
   Vector_3 dir(line.direction().vector());
   Vector_3 diff = construct_vector(line.point(), pt);
-  return internal::squared_distance_to_line(dir, diff, k);
+  return internal::squared_distance_to_line_RT(dir, diff, num, den, k);
+}
+
+template <class K>
+typename K::FT
+squared_distance(
+    const typename K::Point_3 &pt,
+    const typename K::Line_3 &line,
+    const K& k)
+{
+  typedef typename K::RT RT;
+  typedef typename K::FT FT;
+  RT num, den;
+  squared_distance_RT(pt, line, num, den, k);
+  return Rational_traits<FT>().make_rational(num, den);
 }
 
 template <class K>
@@ -57,22 +73,56 @@ squared_distance(
 
 
 template <class K>
+void
+squared_distance_RT(
+    const typename K::Point_3 &pt,
+    const typename K::Ray_3 &ray,
+    typename K::RT& num,
+    typename K::RT& den,
+    const K& k)
+{
+  typename K::Construct_vector_3 construct_vector;
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::RT RT;
+
+  Vector_3 diff = construct_vector(ray.source(), pt);
+  const Vector_3 &dir = ray.direction().vector();
+  if (!is_acute_angle(dir,diff, k) )
+  {
+    num = wdot(diff, diff, k);
+    den = wmult((K*)0, RT(1), diff.hw(), diff.hw());
+    return;
+  }
+
+  squared_distance_to_line_RT(dir, diff, num, den, k);
+}
+
+template <class K>
 typename K::FT
 squared_distance(
     const typename K::Point_3 &pt,
     const typename K::Ray_3 &ray,
     const K& k)
 {
-  typename K::Construct_vector_3 construct_vector;
+  // This duplicates code from the _RT functions, but it is a slowdown to do something like:
+  //
+  //   RT num, den;
+  //   squared_distance_RT(pt, ray, num, den, k);
+  //   return Rational_traits<FT>().make_rational(num, den);
+  //
+  // See https://github.com/CGAL/cgal/pull/5680
+
   typedef typename K::Vector_3 Vector_3;
 
-    Vector_3 diff = construct_vector(ray.source(), pt);
-    const Vector_3 &dir = ray.direction().vector();
-    if (!is_acute_angle(dir,diff, k) )
-        return (typename K::FT)(diff*diff);
-    return squared_distance_to_line(dir, diff, k);
-}
+  typename K::Construct_vector_3 construct_vector = k.construct_vector_3_object();
 
+  Vector_3 diff = construct_vector(ray.source(), pt);
+  const Vector_3 &dir = ray.direction().vector();
+  if (!is_acute_angle(dir,diff, k) )
+    return (typename K::FT)(diff*diff);
+
+  return squared_distance_to_line(dir, diff, k);
+}
 
 template <class K>
 inline
@@ -85,78 +135,80 @@ squared_distance(
     return squared_distance(pt, ray, k);
 }
 
-
-
-
 template <class K>
-typename K::FT
-squared_distance(
+void
+squared_distance_RT(
     const typename K::Point_3 &pt,
     const typename K::Segment_3 &seg,
-    const K& k,
-    const Homogeneous_tag)
+    typename K::RT& num,
+    typename K::RT& den,
+    const K& k)
 {
-    typename K::Construct_vector_3 construct_vector;
-    typedef typename K::Vector_3 Vector_3;
-    typedef typename K::RT RT;
-    typedef typename K::FT FT;
-    // assert that the segment is valid (non zero length).
-    Vector_3 diff = construct_vector(seg.source(), pt);
-    Vector_3 segvec = construct_vector(seg.source(), seg.target());
-    RT d = wdot(diff,segvec, k);
-    if (d <= (RT)0)
-        return (FT(diff*diff));
-    RT e = wdot(segvec,segvec, k);
-    if ( (d * segvec.hw()) > (e * diff.hw()))
-        return squared_distance(pt, seg.target(), k);
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::RT RT;
 
-    Vector_3 wcr = wcross(segvec, diff, k);
-    return FT(wcr*wcr)/FT(e * diff.hw() * diff.hw());
+  typename K::Construct_vector_3 construct_vector;
+
+  // assert that the segment is valid (non zero length).
+  const Vector_3 diff_s = construct_vector(seg.source(), pt);
+  const Vector_3 segvec = construct_vector(seg.source(), seg.target());
+
+  const RT d = wdot(diff_s, segvec, k);
+  if (d <= RT(0))
+  {
+    // this is squared_distance(pt, seg.source())
+    num = wdot(diff_s, diff_s, k);
+    den = wmult((K*)0, RT(1), diff_s.hw(), diff_s.hw());
+    return;
+  }
+
+  const RT e = wdot(segvec, segvec, k);
+  if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff_s.hw()))
+  {
+    // this is squared_distance(pt, seg.target())
+    const Vector_3 diff_t = construct_vector(seg.target(), pt);
+    num = wdot(diff_t, diff_t, k);
+    den = wmult((K*)0, RT(1), diff_t.hw(), diff_t.hw());
+    return;
+  }
+
+  // This is an expanded call to squared_distance_to_line_RT() to avoid recomputing 'e'
+  const Vector_3 wcr = wcross(segvec, diff_s, k);
+  num = wdot(wcr, wcr, k);
+  den = wmult((K*)0, e, diff_s.hw(), diff_s.hw());
 }
 
 template <class K>
-typename K::FT
-squared_distance(
-    const typename K::Point_3 &pt,
-    const typename K::Segment_3 &seg,
-    const K& k,
-    const Cartesian_tag&)
-{
-    typename K::Construct_vector_3 construct_vector;
-    typedef typename K::Vector_3 Vector_3;
-    typedef typename K::RT RT;
-    typedef typename K::FT FT;
-    // assert that the segment is valid (non zero length).
-    Vector_3 diff = construct_vector(seg.source(), pt);
-    Vector_3 segvec = construct_vector(seg.source(), seg.target());
-    RT d = wdot(diff,segvec, k);
-    if (d <= (RT)0)
-        return (FT(diff*diff));
-    RT e = wdot(segvec,segvec, k);
-    if (d > e)
-        return squared_distance(pt, seg.target(), k);
-
-    Vector_3 wcr = wcross(segvec, diff, k);
-    return FT(wcr*wcr)/e;
-}
-
-
-template <class K>
-inline
 typename K::FT
 squared_distance(
     const typename K::Point_3 &pt,
     const typename K::Segment_3 &seg,
     const K& k)
-{ 
-  typedef typename K::Kernel_tag Tag;
-  Tag tag;
-  return squared_distance(pt, seg, k, tag);
+{
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::RT RT;
+  typedef typename K::FT FT;
+
+  typename K::Construct_vector_3 construct_vector = k.construct_vector_3_object();
+
+  // assert that the segment is valid (non zero length).
+  Vector_3 diff = construct_vector(seg.source(), pt);
+  Vector_3 segvec = construct_vector(seg.source(), seg.target());
+  RT d = wdot(diff,segvec, k);
+  if (d <= RT(0))
+    return (FT(diff*diff));
+
+  RT e = wdot(segvec,segvec, k);
+  if (wmult((K*)0 ,d, segvec.hw()) > wmult((K*)0, e, diff.hw()))
+    return squared_distance(pt, seg.target(), k);
+
+  // This is an expanded call to squared_distance_to_line() to avoid recomputing 'e'
+  Vector_3 wcr = wcross(segvec, diff, k);
+  return FT(wcr*wcr) / wmult((K*)0, e, diff.hw(), diff.hw());
 }
 
-
 template <class K>
-inline 
+inline
 typename K::FT
 squared_distance(
     const typename K::Segment_3 & seg,
@@ -165,8 +217,6 @@ squared_distance(
 {
     return squared_distance(pt, seg, k);
 }
-
-
 
 template <class K>
 typename K::Comparison_result
@@ -187,7 +237,7 @@ compare_distance_pssC3(
       Vector_3 diff = construct_vector(seg1.source(), pt);
       Vector_3 segvec = construct_vector(seg1.source(), seg1.target());
       RT d = wdot(diff,segvec, k);
-      if (d <= (RT)0){
+      if (d <= RT(0)){
         d1 = (FT(diff*diff));
       }else{
         RT e = wdot(segvec,segvec, k);
@@ -204,7 +254,7 @@ compare_distance_pssC3(
       Vector_3 diff = construct_vector(seg2.source(), pt);
       Vector_3 segvec = construct_vector(seg2.source(), seg2.target());
       RT d = wdot(diff,segvec, k);
-      if (d <= (RT)0){
+      if (d <= RT(0)){
         d2 = (FT(diff*diff));
       }else{
         RT e = wdot(segvec,segvec, k);
@@ -217,7 +267,7 @@ compare_distance_pssC3(
         }
       }
     }
-    return compare(d1*e2, d2*e1);
+    return CGAL::compare(d1*e2, d2*e1);
 }
 
 template <class K>
@@ -240,7 +290,7 @@ compare_distance_ppsC3(
       Vector_3 diff = construct_vector(seg.source(), pt);
       Vector_3 segvec = construct_vector(seg.source(), seg.target());
       RT d = wdot(diff,segvec, k);
-      if (d <= (RT)0){
+      if (d <= RT(0)){
         d2 = (FT(diff*diff));
       }else{
         RT e = wdot(segvec,segvec, k);
@@ -253,7 +303,7 @@ compare_distance_ppsC3(
         }
       }
     }
-    return compare(d1*e2, d2);
+    return CGAL::compare(d1*e2, d2);
 }
 
 
@@ -267,7 +317,7 @@ squared_distance_parallel(
   typedef typename K::Vector_3 Vector_3;
     const Vector_3 &dir1 = seg1.direction().vector();
     const Vector_3 &dir2 = seg2.direction().vector();
- 
+
     if (same_direction(dir1, dir2, k)) {
         if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source(), k))
             return squared_distance(seg1.target(), seg2.source(), k);
@@ -286,11 +336,11 @@ squared_distance_parallel(
 
 template <class K>
 inline
-typename K::RT 
+typename K::RT
 _distance_measure_sub(typename K::RT startwdist, typename K::RT endwdist,
-			 const typename K::Vector_3 &start, 
-			 const typename K::Vector_3 &end,
-			 const K&)
+                         const typename K::Vector_3 &start,
+                         const typename K::Vector_3 &end,
+                         const K&)
 {
     return  CGAL_NTS abs(wmult((K*)0, startwdist, end.hw())) -
             CGAL_NTS abs(wmult((K*)0, endwdist, start.hw()));
@@ -318,14 +368,14 @@ squared_distance(
         return squared_distance(start1, seg2, k);
     if (start2 == end2)
         return squared_distance(start2, seg1, k);
-    
+
     Vector_3 dir1, dir2, normal;
     dir1 = seg1.direction().vector();
     dir2 = seg2.direction().vector();
     normal = wcross(dir1, dir2, k);
     if (is_null(normal, k))
         return squared_distance_parallel(seg1, seg2, k);
-    
+
     bool crossing1, crossing2;
     RT sdm_s1to2, sdm_e1to2, sdm_s2to1, sdm_e2to1;
     Vector_3 perpend1, perpend2, s2mins1, e2mins1, e1mins2;
@@ -338,7 +388,7 @@ squared_distance(
     sdm_e1to2 = wdot(perpend2, e1mins2, k);
     sdm_s2to1 = wdot(perpend1, s2mins1, k);
     sdm_e2to1 = wdot(perpend1, e2mins1, k);
-    
+
     if (sdm_s1to2 < RT(0)) {
         crossing1 = (sdm_e1to2 >= RT(0));
     } else {
@@ -357,12 +407,12 @@ squared_distance(
             crossing2 = (sdm_s2to1 == RT(0));
         }
     }
-    
+
     if (crossing1) {
         if (crossing2) {
             return squared_distance_to_plane(normal, s2mins1, k);
         }
-    
+
         RT dm;
         dm = _distance_measure_sub(
                   sdm_s2to1, sdm_e2to1, s2mins1, e2mins1, k);
@@ -411,7 +461,7 @@ squared_distance(
             return (min1 < min2) ? min1 : min2;
         }
     }
-    
+
 }
 
 
@@ -572,8 +622,8 @@ squared_distance(
     Vector_3 segdir = seg.direction().vector();
     Vector_3 normal = wcross(segdir, linedir, k);
     if (is_null(normal, k))
-        return squared_distance_to_line(linedir, 
-					construct_vector(linepoint,start), k);
+        return squared_distance_to_line(linedir,
+                                        construct_vector(linepoint,start), k);
 
     bool crossing;
     RT sdm_ss2l, sdm_se2l;
@@ -768,7 +818,7 @@ squared_distance(
     const typename K::Line_3 &line1,
     const typename K::Line_3 &line2,
     const K& k)
-{   
+{
   typename K::Construct_vector_3 construct_vector;
     typedef typename K::Vector_3 Vector_3;
 
@@ -792,7 +842,7 @@ template <class K>
 inline
 typename K::FT
 squared_distance(const Point_3<K> &pt,
-		 const Line_3<K> &line)
+                 const Line_3<K> &line)
 {
   return internal::squared_distance(pt, line, K());
 }
@@ -872,7 +922,7 @@ template <class K>
 inline
 typename K::FT
 squared_distance(const Segment_3<K> &seg1,
-		 const Segment_3<K> &seg2)
+                 const Segment_3<K> &seg2)
 {
   return internal::squared_distance(seg1, seg2, K());
 }
@@ -948,8 +998,8 @@ ray_ray_squared_distance_parallel(
     const Vector_3<K> &ray2dir,
     const Vector_3<K> &s1_min_s2)
 {
-  return internal::ray_ray_squared_distance_parallel(ray1dir, ray2dir, 
-						  s1_min_s2, K());
+  return internal::ray_ray_squared_distance_parallel(ray1dir, ray2dir,
+                                                  s1_min_s2, K());
 }
 
 template <class K>
@@ -996,7 +1046,7 @@ typename K::FT
 squared_distance(
     const Line_3<K> &line1,
     const Line_3<K> &line2)
-{  
+{
     return internal::squared_distance(line1, line2, K());
 }
 

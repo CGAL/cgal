@@ -7,13 +7,13 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_CIRCLE_TYPE_H

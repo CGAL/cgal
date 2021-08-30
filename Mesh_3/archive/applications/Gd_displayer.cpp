@@ -20,7 +20,7 @@ Gd_displayer::~Gd_displayer()
 
 void Gd_displayer::fill_rectangle(double x1, double y1,
                                   double x2, double y2,
-                                  CGAL::Color c)
+                                  CGAL::IO::Color c)
 {
   gdImageFilledRectangle(im,
                          x_pixel(x1), y_pixel(y2),
@@ -30,7 +30,7 @@ void Gd_displayer::fill_rectangle(double x1, double y1,
 
 void Gd_displayer::segment(double x1, double y1,
                            double x2, double y2,
-                           CGAL::Color c)
+                           CGAL::IO::Color c)
 {
   gdImageLine(im,
               x_pixel(x1), y_pixel(y1),
@@ -52,7 +52,7 @@ void Gd_displayer::set_window(const double x_min, const double x_max,
   syclip = sy;
   gdImageSetClip(im, xclip, yclip, xclip+sxclip, yclip+syclip);
   xscal = sxclip / (xmax-xmin);
-  yscal = syclip / (ymax-ymin);  
+  yscal = syclip / (ymax-ymin);
 }
 
 int Gd_displayer::x_pixel(double x) const
@@ -74,6 +74,6 @@ bool Gd_displayer::save_png(const char* filename)
     fclose(pngout);
     return true;
   }
-  else 
+  else
     return false;
 }

@@ -1,0 +1,335 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Surface_Mesh_Topology
+\anchor ChapterSurfaceMeshTopology
+
+\cgalAutoToc
+\author Guillaume Damiand and Francis Lazarus
+
+This package provides a toolbox for manipulating curves on a combinatorial surface from the topological point of view. Two main functionalities are proposed. One is the computation of shortest curves that cannot be continuously deformed to a point. This includes the computation of the so-called edge width and face width of the vertex-edge graph of a combinatorial surface. The other functionality is the homotopy test for deciding if two given curves on a combinatorial surface can be continuously deformed one into the other.
+
+
+\section SMTopology Introduction
+
+All the computations in this package, either for the shortest non-contractible curve or for the homotopy tests,  are performed on a input surface represented as a model of `CombinatorialMap` or any model of `FaceGraph`. Note that combinatorial maps are based on darts and FaceGraphs are based on halfedges. To avoid repetitions we use the terms darts and halfedges interchangeably in the sequel.
+The input surface is supposed to be connected and orientable.
+
+\subsection SMTopology_shortest Shortest Non-Contractible Curve
+
+Given a combinatorial surface, one may consider <em>combinatorial curves</em>, which are described as sequences of edges, or <em>topological curves</em>, which are continuous curves on the topological surface underlying the combinatorial surface. The length of a combinatorial curve is the sum of the lengths of its edges. Here, we measure the length of a topological curve as the number of crossings of this curve with the vertex-edge graph of the combinatorial surface.
+A closed curve, either topological or combinatorial, that cannot be continuously deformed to a point on the topological surface is said <em>non-contractible</em>. This package offers the following functions:
+
+- Given a surface mesh \f$\cal{M}\f$ and a dart handle `dh`, compute a shortest non-contractible combinatorial curve passing through the source vertex of `dh`,
+- Given a surface mesh \f$\cal{M}\f$, compute a shortest non-contractible combinatorial  curve without the previous vertex requirement. When all the edges have the same unit length, the length of a shortest non-contractible curve is known as the <em>edge width</em> of the surface,
+- Given a surface mesh \f$\cal{M}\f$, compute a shortest non-contractible topological curve. It can be assumed that this curve does not cross the edges of \f$\cal{M}\f$ and only passes through the vertices. It follows that the curve can be described by a circular sequence of traversed faces alternating with the vertices it passes through. The length of this curve (i.e., the number of vertices it passes through) is known as the <em>face width</em> of the surface.
+
+It is important to clarify how we compare the lengths of two combinatorial curves in order to compute the shortest one. "Shortest" can be understood as "having the least amount of edges" or "having the smallest total length of its edges". In the former case, we consider that the mesh is unweighted; in the latter case, we consider that the mesh is weighted, and one must specify how the weight, or length, of each edge is calculated (see concept `WeightFunctor`). When the vertices of the mesh have Euclidean coordinates, the Euclidean distance between two connected vertices defines a natural weight for the corresponding edge. A weight functor \link CGAL::Surface_mesh_topology::Euclidean_length_weight_functor `Euclidean_length_weight_functor`\endlink is provided for this purpose.
+
+The algorithm to find a shortest non-contractible curve through a specified vertex is based on the paper by Cabello et al. \cgalCite{cvl-ew-12}. The time complexity is linear, though in the weighted case it is raised by a logarithmic factor, assuming that the weight computation takes constant time per edge. Computing the edge width takes quadratic time by running the first function on each vertex, and its complexity is also raised by a logarithmic factor when considering a weighted map. Computing the face width consists of constructing the radial graph of the original mesh and computing the edge width of the radial graph. It thus takes quadratic time. Computing face width on weighted maps is currently not supported.
+
+\subsection SMTopology_homotopy Homotopy Test
+
+Given a curve drawn on a surface one can ask if the curve can be continuously deformed to a point (i.e. a zero length curve). In other words, does there exist a continuous sequence of curves on the surface that starts with the input curve and ends to a point? Curves that deform to a point are said <em>contractible</em>. Any curve on a sphere is contractible but this is not true for all curves on a torus or on a surface with more complicated topology. The algorithms in this section are purely topological and do not assume any geometry on the input surface. In particular, the surface is not necessarily embedded in a Euclidean space.
+
+The algorithm implemented in this package builds a data structure to efficiently answer queries of the following forms:
+- Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is contractible on \f$\cal{M}\f$,
+- Given a combinatorial surface \f$\cal{M}\f$ and two closed combinatorial curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation,
+- Given a combinatorial surface \f$\cal{M}\f$ and two, non-necessarily closed, combinatorial curves on \f$\cal{M}\f$, decide if the two curves are related by a continuous transformation that fixes the curve extremities. The curves should have common endpoints, otherwise the answer to the query is trivially negative.
+
+The second query asks if the curves are <em>freely homotopic</em> while the third one asks if the curves are <em>homotopic with fixed endpoints</em>. The three queries are globally referred to as <em>homotopy tests</em>. \cgalFigureRef{fig_sm_topology_homotopy} below illustrates the three types of queries.
+
+\cgalFigureBegin{fig_sm_topology_homotopy, free-vs-fixed-endpoints.svg}
+ On the upper left surface the green curve is contractible. The red and blue curves share the same (green) endpoint. (Being closed, their two endpoints coincide.) Although these last two curves are not homotopic with fixed endpoints they are freely homotopic as shown by the suggested continuous transformation of the blue curve.
+\cgalFigureEnd
+
+The algorithms used are based on a paper by Erickson and Whittlesey \cgalCite{ew-tcsr-13}, providing a linear time algorithm for the above homotopy tests. This is a simplified version of the linear time algorithm  by Lazarus and Rivaud \cgalCite{lr-hts-12}.
+
+\subsection SMTopology_simplicity Simplicity Test
+
+Given a cycle drawn on a surface one can ask if the cycle can be continously deformed to a cycle that does not intersect with itself. Any contractible cycle deforms to a simple cycle but this is not true for more complicated cycles. The algorithm in this section is purely topological and do not assume any geometry on the input surface.
+
+The algorithm implemented in this package builds a data structure to efficiently answer queries of the following forms:
+- Given a combinatorial surface \f$\cal{M}\f$ and a closed combinatorial curve specified as a sequence of edges of \f$\cal{M}\f$, decide if the curve is homotopic to a simple one on \f$\cal{M}\f$.
+
+The algorithm used is based on a paper by Despré and Lazarus \cgalCite{cgal:dl-cginc-19}, providing a \f$O(n + l\log{l})\f$-time algorithm where \f$n\f$ is the complexity of \f$\cal{M}\f$ and \f$l\f$ is the length of the path.
+
+\section SMTopology_HowToUse API Description
+
+\subsection SMTopology_Input Specifying the Input Surface and Curves
+
+The main class for this package is `Surface_mesh_topology::Curves_on_surface_topology`. Its constructor takes the input surface. An internal representation of the surface (described below) is computed the first time an homotopy test is called.
+
+Each combinatorial curve on this surface is contained in an instance of the class `Surface_mesh_topology::Path_on_surface`. An object in this class behaves as a list. This list is initially empty and the halfedges corresponding to the sequence of consecutive oriented edges of an input curve should be pushed back in this list. The class provides four ways for extending a nonempty path.
+- Simply push the next halfedge using the \ref Surface_mesh_topology::Path_on_surface::push_back "push_back()" member function. One can also specify if this halfedge should have its direction flipped so as to satisfy the condition of a `Path_on_surface` (see the description of \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "`can_be_pushed()`" below) This can be done even when the path is empty,
+- The user may push the index of the next halfedge instead of the halfedge itself with the member function \ref Surface_mesh_topology::Path_on_surface::push_back_by_index "push_back_by_index()". This may however be at the cost of an overhead computation mapping the index to the actual dart,
+- The path may be extended with the member function \ref Surface_mesh_topology::Path_on_surface::extend_positive_turn "extend_positive_turn()" by specifying the next halfedge thanks to a number of positive turns with respect to the previous dart/halfedge in the path. Calling this previous halfedge `h`, extending by a positive one turn is thus equivalent to extend the path with `next(h)`. An analogous member function \ref Surface_mesh_topology::Path_on_surface::extend_negative_turn "extend_negative_turn()" is provided for convenience,
+- Finally, when the input surface is a model of `PolygonalSchema`, which is a model of `GenericMap` with labeled edges as explained in section \ref SMTopology_Schema, the user may push the label of the next halfedge instead of the halfedge itself with the member function \ref Surface_mesh_topology::Path_on_surface::push_back_by_label "push_back_by_label()".
+
+In the first two cases, let A be the source vertex of the added dart or the target vertex if the added dart is flipped, let B be the target vertex of the last dart in the path or the source vertex if the last dart is flipped: A and B should coincide. The user is responsible for ensuring this condition. The member functions \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "can_be_pushed()", \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" and \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_label "can_be_pushed_by_label()" return `true` if and only if the condition is satisfied.
+
+\subsection SMTopology_Schema Polygonal Schema Helper
+\subsubsection SMTopology_PL Polygonal Schema
+Specifying a path on a combinatorial surface might be a tedious task. Indeed, knowing in advance the pointer, index or turn of each consecutive halfedge in a path is not always easy. In order to facilitate this task, we provide an intuitive model of `CombinatorialMap` called `Surface_mesh_topology::Polygonal_schema_with_combinatorial_map`, a model of the `PolygonalSchema` concept. In this model, a surface is viewed as a collection of clockwise oriented polygonal facets with labeled boundary (oriented) edges. Boundary edges with the same label are glued together to form a surface. Each label should appear at most twice in the collection and a label that appears only once corresponds to a boundary edge. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. Since we are dealing with orientable surfaces only, each label that appears twice must appear once with a minus.
+The user can add facets to the surface one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words (any sequence of characters, except space) separated by blank spaces. In the next figure we see three examples of combinatorial maps described by a collection of facets with labeled edges.
+\cgalFigureBegin{fig_sm_incremental-builder, incremental-builder.svg}
+ Left, a surface described by a single facet with eight edges pairwise identified. The resulting (topological) surface is shown in \cgalFigureRef{fig_cut-open}. Middle, a surface described by three labeled quadrilaterals. Right, a single labeled facet. The corresponding surface is topologically equivalent to the middle example.
+\cgalFigureEnd
+The code for creating the above left and middle examples appear in the \ref SMTopology_Example_VI_VII "polygonal schema examples" below.
+The class provides the following functionalities.
+- \ref PolygonalSchema::add_facet "add_facet(s)" adds a polygon to the current collection of polygons. If the polygon has "n" sides, "s" is a sequence of "n" edge labels possibly preceded by a minus and separated by blanks.
+- alternatively, the user can add a facet by adding edge labels one at a time using the member functions \ref PolygonalSchema::init_facet "init_facet()", \ref PolygonalSchema::add_edges_to_facet "add_edges_to_facet()" and \ref PolygonalSchema::finish_facet "finish_facet()"
+
+\subsubsection SMTopology_PL_with_Boundary Polygonal Schema with Boundary
+As noted in the previous section \ref SMTopology_PL "Polygonal Schema",  every label that appears only once in a polygonal schema corresponds to a boundary edge. The Polygonal Schema helper offers another mechanism to create surfaces with boundary. Each facet already added to a polygonal schema may be perforated to create a hole in the surface. The edges of a perforated facet thus becomes boundary edges. The reverse operation consists in filling the supposedly perforated facet. The class provides the following interface.
+- \ref PolygonalSchema::perforate_facet "perforate_facet (h)" perforates the facet identified by the halfedge `h`. If `s` is the label of the oriented edge corresponding to `h`, one may equivalently call perforate_facet (s).
+- Similarly, \ref  PolygonalSchema::fill_facet "fill_facet (h or s)" turns a facet into a plain one.
+- The member functions \ref PolygonalSchema::get_dart_labeled "get_dart_labeled(s)" and \ref PolygonalSchema::get_label "get_label(h)" allow to easily pass from a halfedge to its label and vice versa.
+
+As an example, one may perforate all the facets of a polygonal schema \f$\cal{M}\f$ to obtain a "skeleton" surface equivalent to a thickening of the graph composed of the edges of \f$\cal{M}\f$.
+
+\subsubsection SMTopology_Curves_on_PS Curves on Polygonal Schema
+A `Surface_mesh_topology::Curves_on_surface_topology` can be constructed with a `Surface_mesh_topology::Polygonal_schema_with_combinatorial_map` as input surface. In this case, every halfedge has a label (possibly preceded by a minus) and a path can be specified by the sequence of labels corresponding to its halfedge sequence. A repeated call to the function \ref Surface_mesh_topology::Path_on_surface::push_back_by_label "push_back_by_label()" allows the user to specify the path in this way.
+
+\subsection SMTopology_Compute_SNC Compute Shortest Non-contractible Cycle
+
+Since the data structures to represent a surface are edge-centralized, in order to specify a vertex where the curve is computed, the user can use any dart belonging to this vertex. We use the term <em>cycle</em> as a synonymous of closed curve.
+
+The class \link Surface_mesh_topology::Curves_on_surface_topology `Curves_on_surface_topology` \endlink provides the following three functions:
+
+- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle_with_base_point `compute_shortest_non_contractible_cycle_with_base_point(dh, weight_functor)` \endlink: Compute a shortest non-contractible cycle going through the source vertex of `dh`,
+- \link Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle `compute_shortest_non_contractible_cycle(weight_functor)` \endlink:  Very similar to the previous function, except that one does not specify a vertex. It computes a shortest non-contractible cycle through every vertex and returns the shortest cycle among them,
+- \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_edge_width `compute_edge_width()` \endlink: Compute the edge width of the mesh, equivalent to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle `compute_shortest_non_contractible_cycle(`\endlink \link CGAL::Surface_mesh_topology::Unit_weight_functor `Unit_weight_functor())`\endlink.
+
+The above functions return an instance of \link Surface_mesh_topology::Path_on_surface `Path_on_surface` \endlink. The optional argument `weight_functor` is used to calculate the length of the edges. If not given, all the edge lengths are set to 1, i.e. the mesh is unweighted.
+
+\subsection SMTopology_Compute_facewidth Compute Face Width
+
+Face width returns a shortest non-contractible topological curve described as a circular sequence of traversed faces alternating with the vertices it passes through. Each face or vertex in this sequence is identified by one of its dart handles.
+In practice, we choose the same dart handle for a face as for the next vertex it passes through. This way, we only need to return one dart handle for a face and its following vertex in the sequence.
+
+The function \link Surface_mesh_topology::Curves_on_surface_topology::compute_face_width `compute_face_width()` \endlink computes the sequence of dart handles as described above and returns an `std::vector` of dart handles, where each dart represents a traversed face followed by an incident  vertex.
+
+\subsection SMTopology_Queries Testing Homotopy
+
+Given two `Surface_mesh_topology::Path_on_surface` \f$p_1\f$ and \f$p_2\f$, the class `Surface_mesh_topology::Curves_on_surface_topology` provides the following three functions:
+
+- \ref Surface_mesh_topology::Curves_on_surface_topology::is_contractible "is_contractible"(\f$p_1\f$) returns `true` if the closed curve \f$p_1\f$ is contractible,
+
+- \ref Surface_mesh_topology::Curves_on_surface_topology::are_freely_homotopic "are_freely_homotopic"(\f$p_1\f$, \f$p_2\f$) returns `true` if the closed curves \f$p_1\f$ and \f$p_2\f$ are freely homotopic,
+
+- \ref Surface_mesh_topology::Curves_on_surface_topology::are_homotopic_with_fixed_endpoints "are_homotopic_with_fixed_endpoints"(\f$p_1\f$, \f$p_2\f$) returns `true` if the paths \f$p_1\f$ and \f$p_2\f$ are homotopic with fixed endpoints. This call is equivalent to \ref Surface_mesh_topology::Curves_on_surface_topology::is_contractible "is_contractible"(\f$p_1\cdot \overline{p_2}\f$), where \f$p_1\cdot \overline{p_2}\f$ is the concatenation of \f$p_1\f$ and the reverse of \f$p_2\f$.
+
+A common first step in the homotopy test algorithms is to simplify the input combinatorial surface. This preprocessing step is done once and for all for a given mesh, the first time an homotopy test is called. The simplified surface is a quadrangulation, every face of which is a quadrilateral, stored in a `Surface_mesh_topology::Curves_on_surface_topology`. It has 2 vertices and \f$2g\f$ quadrilaterals where \f$g\f$ is the genus of
+the input surface. This is otherwise independent of the size of input surface,
+\note The user must not modify the input surface as long as homotopy tests are performed with this `Surface_mesh_topology::Curves_on_surface_topology`.
+
+Each time a `Surface_mesh_topology::Path_on_surface` is provided for a homotopy test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_topology::Curves_on_surface_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
+
+\subsection SMTopology_Query_Simplicity Testing Simplicity
+
+Given a `Surface_mesh_topology::Path_on_surface` \f$p\f$, the class `Surface_mesh_topology::Curves_on_surface_topology` provides the following function:
+
+- \link Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle `is_homotopic_to_simple_cycle(p)` \endlink returns `true` if the closed curve \f$p\f$ is homotopic to some simple cycle.
+
+Like homotopy tests, the first step is to simplify the input combinatorial surface. The algorithm will share the surface with homotopy tests and invoke the simplification if the preprocessing has not been done yet.
+\note The user must not modify the input surface as long as simplicity tests are performed with this `Surface_mesh_topology::Curves_on_surface_topology`.
+
+Each time a `Surface_mesh_topology::Path_on_surface` is provided for a simplicity test, it is first transformed to an equivalent path in the quadrangulation stored by the `Surface_mesh_topology::Curves_on_surface_topology`. This transformation is transparent to the user who has never access to the quadrangulation.
+
+
+\section SMTopology_Examples Examples
+
+\subsection SMTopology_Example_I_II_III Compute Shortest Non-contractible Cycle
+
+In the next two examples, we present various ways to compute shortest non-contractible cycles.
+
+One can store the original mesh in a `Combinatorial_map` instance and run the algorithm without regarding the geometric distances, i.e. the unweighted case (first call to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle_with_base_point  `compute_shortest_non_contractible_cycle_with_base_point`\endlink). Alternatively, one can take the geometric distances into consideration by providing a weight functor to calculate the weight of the edge containing the given dart (second call to \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle_with_base_point `compute_shortest_non_contractible_cycle_with_base_point`\endlink). Note that the time complexity is raised by a logarithmic factor.
+
+\cgalExample{Surface_mesh_topology/shortest_noncontractible_cycle.cpp}
+
+In order to find the edge width of the surface, one can make use of the routine \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_edge_width `compute_edge_width`\endlink as in the following example. The weighted shortest non contractible cycle is also computed (calling \link CGAL::Surface_mesh_topology::Curves_on_surface_topology::compute_shortest_non_contractible_cycle `compute_shortest_non_contractible_cycle`\endlink). In this example, a `Surface_mesh` is used to store the mesh.
+
+\cgalExample{Surface_mesh_topology/edgewidth_surface_mesh.cpp}
+
+In these two examples, the mesh and the cycles can be visualized if CGAL_Qt5 is enabled.
+
+\subsection SMTopology_Example_IV Compute Face Width
+
+The following example computes the face width, and visualizes it if CGAL_Qt5 is enabled.
+
+\cgalExample{Surface_mesh_topology/facewidth.cpp}
+
+\subsection SMTopology_Example_V Basic Homotopy Test
+The following example shows how to load an off file and how to create three closed paths on this surface. Contractibility and free homotopy tests are then performed. The example also shows how to use the \cgal viewer if CGAL_Qt5 is enabled.
+\cgalExample{Surface_mesh_topology/path_homotopy_double_torus.cpp}
+
+\subsection SMTopology_Example_VI Basic Simplicity Test
+The following example shows how to test the simplicity of a closed path on a double torus. The original path is visualized if CGAL_Qt5 is enabled.
+\cgalExample{Surface_mesh_topology/path_simplicity_double_torus_2.cpp}
+
+\subsection SMTopology_Example_VI_VII Polygonal Schema
+Here, we show with two examples how to create a surface from a list of faces specified by edge label sequences.
+In this first example, we build a genus two torus surface from a single face, also called a polygonal schema. See left \cgalFigureRef{fig_sm_incremental-builder} for an illustration. Two closed paths are then created. The paths are freely homotopic but not homotopic with fixed endpoint.
+\cgalExample{Surface_mesh_topology/path_homotopy_with_symbols.cpp}
+
+In this second example, we build a genus two torus surface from a set of three squares. See middle  \cgalFigureRef{fig_sm_incremental-builder} for an illustration. The first two faces are added each with a single call to the member function `add_facet()`. The third face is build incrementally by adding its edge labels one at a time. We then create a contractible closed path.
+\cgalExample{Surface_mesh_topology/path_homotopy_with_symbols_2.cpp}
+
+\subsection SMTopology_Example_VIII Open Path
+
+In this third example, we create non closed paths on the same mesh as in the first example and perform homotopy tests with fixed endpoints. Here, a `Surface_mesh` is used as an alternative to a `CombinatorialMap`.
+\cgalExample{Surface_mesh_topology/open_path_homotopy.cpp}
+
+\section SMTopology_Benchmarks Benchmarks
+
+The machine used is a PC running Ubuntu 18.04 with an Intel CPU Core i7-4790 CPU clocked at 3.60GHz with 32GB of RAM.
+
+\subsection SMTopology_bench1 Combinatorial Surface Topology Computation Time
+
+The first time an homotopy test is called, we build a special quadrangulation of the surface as internal representation (as explained in Section \ref SMTopology_Theory "Implementation Details"). The complexity of this operation is linear in the number of darts of the input surface, as we can see in \cgalFigureRef{fig_sm_topology_bench1}.
+
+For this benchmark, we computed 38 `Surface_mesh_topology::Curves_on_surface_topology` objects for different input surfaces with different number of darts (between 8,000 and 30,000,000). We show in the figure the computation time of the quadrangulation according to the number of darts of the input surface. We remind that this computation needs be done only once if you want to perform several path homotopy tests on the same surface.
+
+\cgalFigureBegin{fig_sm_topology_bench1, computation-time-reduce-surface.svg}
+ Computation time of `Surface_mesh_topology::Curves_on_surface_topology` constructions, according to the number of darts or the input surface.
+\cgalFigureEnd
+
+\subsection SMTopology_bench2 Path Homotopy Tests
+
+In this second benchmark, we use two surfaces as input (with respectively 543,652 vertices, 1,631,574 edges and 1,087,716 faces, and 55,498 vertices, 167,106 edges and 111,404 faces). We generate 100 random pairs of closed paths on each surface. The first path is generated randomly, with a lower bound for its length given by a random number between 100 and 10,000: passed the lower bound, the path is randomly extended until it returns to its origin vertex. The second path is generated from a sequence of elementary deformations of the first path, so that the two paths are homotopic. The number of elementary deformations is a random number between 100 and 10,000.
+
+The computation time of the 200 `are_freely_homotopic()` tests are given in \cgalFigureRef{fig_sm_topology_bench2}, according to the number of darts of the two input paths.
+
+\cgalFigureBegin{fig_sm_topology_bench2, computation-time-path-homotopy.svg}
+ Computation time of `are_freely_homotopic()` tests, according to the number of darts or the input paths.
+\cgalFigureEnd
+
+The third benchmark is similar to the previous one, except that we use a genus 5 surface with one vertex, 10 edges and 1 face. The length of the paths to be tested is varied between 10 and 30,000,000. The computation time of the  `are_freely_homotopic()` tests are given in \cgalFigureRef{fig_sm_topology_bench3}. The free homotopy test takes 17 seconds for paths of length 10,000,000.
+\cgalFigureBegin{fig_sm_topology_bench3, computation-time-polygonal-schema.svg}
+ Computation time of `are_freely_homotopic()` tests, according to the number of darts or the input paths for random paths on the canonical reduced surface of genus five.
+\cgalFigureEnd
+
+Note that the linear time implementation of the algorithms is remarkably observed in each benchmark.
+
+\section SMTopology_Theory Implementation Details
+
+\subsection SMTopology_SNC Compute Shortest Non-Contractible Cycle
+
+The algorithm to find shortest non-contractible cycle through a vertex in \cgalCite{cvl-ew-12} can be summarized as follows.
+
+A mesh \f$\cal{M}\f$ consists of components such as vertices, edges, and faces, thus it can be seen as a graph \f$G\f$ embedded in the surface \f$\Sigma\f$.
+
+Let \f$T\f$ be a spanning tree of \f$G\f$. Let \f$C^*\f$ be the subgraph of the dual graph \f$G^*\f$ of \f$G\f$ with the same vertex set as \f$G^*\f$ and the edge set be \f$E(G^*)\backslash E(T)^*\f$. Repeatedly remove from \f$C^*\f$ the edges with an incident vertex of degree one, the remaining set of edges is denoted as \f$E_{nc}(T)^*\f$. It has been proven that for any edge \f$ab\in E_{nc}(T)\f$, the concatenation of the path from a vertex \f$v\f$ following \f$T\f$ to \f$a\f$, the edge \f$ab\f$, and the path from \f$b\f$ following \f$T\f$ back to \f$v\f$ is a closed path (denoted as \f$\tau(T, v, ab)\f$) and is non-contractible. Furthermore, if \f$T\f$ is a BFS tree (or Dijkstra tree in the weighted case) rooted at \f$v\f$, the shortest cycle found among \f$\tau(T, v, e)\f$ for any \f$e\in E_{nc}(T)\f$ is the shortest non-contractible cycle through \f$v\f$.
+
+Although it is said in \ref SMTopology_Input that the given mesh should be closed (no dart is 2-free), the algorithm to find shortest non-contractible cycles also works if the surface contains boundaries.
+
+\subsection SMTopology_Facewidth Compute Face Width
+
+The reader is recommended to read the section \ref SMTopology_SNC before reading this section.
+
+The face width is the minimum number of intersection points between \f$G\f$ and
+any non-contractible cycle of \f$\Sigma\f$ (these cycles do not necessarily follow the edges of \f$G\f$). As a result, the face width of \f$G\f$ is half the edge width of \f$R(G)\f$, where \f$R(G)\f$ denotes the radial graph of \f$G\f$. The radial graph of \f$G\f$ is a bipartite graph, constructed as follows. Start with the original graph. For every face of the original graph, add a vertex in the interior of the face and connect this vertex to all the vertices of the face. After doing this for all faces, remove all edges from the original graph.
+
+\subsection SMTopology_Quad_System Reducing to a Quadrangulation
+
+A <em>quadrangulation</em> is a combinatorial map whose faces are quadrilaterals, i.e. have four sides.
+For efficiency of the homotopy test, the input combinatorial surface \f$\cal{M}\f$ is first turned into a quadrangulation with only two vertices. The transformation is performed as follows.
+-# A spanning tree of the graph composed of the vertices and edges of \f$\cal{M}\f$ is computed. See \cgalFigureRef{fig_spanning_tree}.
+ \cgalFigureBegin{fig_spanning_tree,spanning_tree.svg}
+  Left, a combinatorial map with three faces (red, yellow, green). Right, a spanning tree of its graph.
+  \cgalFigureEnd
+
+-# The edges of the spanning are contracted. The resulting surface has the same topology as \f$\cal{M}\f$ and has a single vertex.
+ \cgalFigureBegin{fig_contract_tree,contract_tree.svg}
+  The contraction of a spanning tree merges all the vertices into a single vertex.
+  \cgalFigureEnd
+
+-# The faces are merged into a single face by iteratively erasing edges incident to distinct faces. Those edges corresponds to a spanning tree of the dual combinatorial map.
+  \cgalFigureBegin{fig_merge_faces,merge_faces.svg}
+  The green, red and yellow faces are merged by removing edges. The resulting <em>reduced surface</em> has a single vertex and a single face.
+  \cgalFigureEnd
+Cutting through the graph of the reduced surface, we obtain a face that can be flattened into the plane.
+ \cgalFigureBegin{fig_cut-open,cut-open.svg}
+ If \f$\cal{M}\f$ is obtained by gluing \f$g\f$ tori, i.e. \f$\cal{M}\f$ has genus \f$g\f$, the cut-open reduced surface has \f$4g\f$ sides.
+    \cgalFigureEnd
+
+-# A vertex is introduced in the middle of this unique face and joined by new edges to the corners of this face to form a triangulation with \f$4g\f$ triangles. Gluing back along the  (old) edges of the reduced surface and deleting them amounts to merge the triangles by pairs. We thus obtain a quadrangulated surface \f$\cal{Q}\f$ with  \f$2g\f$ quadrilaterals, \f$4g\f$ edges and 2 vertices.
+ \cgalFigureBegin{fig_quad_mesh,quad_mesh.svg}
+ Triangles of the same color are merged into quadrilaterals. All the light blue vertices correspond to a same vertex on the glued surface.
+    \cgalFigureEnd
+
+This quadrangulation \f$\cal{Q}\f$ is stored in a `Surface_mesh_topology::Curves_on_surface_topology`. In order to perform a homotopy test, each input curve \f$C\f$ is transformed into a (closed) path in \f$\cal{Q}\f$ as follows. If an edge of \f$C\f$ is part of the contracted spanning tree, we simply ignore that edge. Otherwise the edge can be replaced by two consecutive edges of \f$\cal{Q}\f$ to obtain a new path \f$C'\f$ in the vertex-edge graph of \f$\cal{Q}\f$ so that \f$C'\f$ is a continuous deformation of \f$C\f$. Hence, deciding if \f$C\f$ is contractible in \f$\cal{M}\f$ is equivalent to test if \f$C'\f$ is contractible in \f$\cal{Q}\f$.
+
+\subsection SMTopology_Canonical Canonical Form
+
+In order to test if two input curves \f$C\f$ and \f$D\f$ in \f$\cal{M}\f$ are homotopic they are first replaced by curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ as above. Those curves are further transformed into <em>canonical forms</em> that only depend on their homotopy classes. The transformation to canonical form relies on three basic operations that we now describe.
+-# A <em>bracket</em> in a curve is a subsequence of edges along a row of quadrilaterals, surrounded by two edges along the end sides of the row. A bracket can be flattened by replacing the corresponding subpath with a shorter subpath going along the other long side of the row. See \cgalFigureRef{fig_bracket}.
+\cgalFigureBegin{fig_bracket,bracket.svg}
+ Left, a blue curve in a quadrangulation (for clarity the quadrangulation has more than two vertices). Middle, a bracket of the blue curve. Right, the bracket has been flattened.
+    \cgalFigureEnd
+
+-# A <em>spur</em> in a curve is a subsequence of two opposite edges. A spur can be deleted to shorten the curve. See \cgalFigureRef{fig_spur}.
+\cgalFigureBegin{fig_spur,spur.svg}
+ Removing a spur.
+    \cgalFigureEnd
+
+-# A <em>right L-shape</em> in a curve is a subsequence of edges going along the exterior side of a sequence of quadrilaterals forming an L, with the interior of the L to its right. This notion takes into account the traversal direction of the curve. A right L-shape subpath can be pushed to the right by replacing it with the other side of the L-shaped sequence of quadrilaterals. See \cgalFigureRef{fig_push_right}
+\cgalFigureBegin{fig_push_right,push_right.svg}
+ Pushing an L-shaped subpath to its right.
+    \cgalFigureEnd
+
+The canonical form of a curve is obtained by flattening its brackets, removing its spurs and pushing its right L-shapes to the right until the curve has no more brackets, spurs or L-shapes. This can be done in time proportional to the number of edges of the curve. Note that the above three operations preserve the homotopy class of the curve.
+
+\subsection SMTopology_Homotopy_Test Homotopy Test
+It can be proven that the canonical form is uniquely defined and only depends on the homotopy class of the curve. Hence, the curves \f$C'\f$ and \f$D'\f$ in \f$\cal{Q}\f$ are homotopic if and only if their canonical forms are equal. Since each curve is defined as a sequence of (oriented) edges up to a cyclic permutation, we resort to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical forms are the same up to a cyclic permutation.
+
+\subsection SMTopology_Simplicity_Test Simplicity Test
+The simplicity test relies on the fact that a closed curve is homotopic to a simple one if and only if its canonical form can be made intersection free via infinitesimal perturbations together with some homotopy preserving operations. One can imagine each edge in the quadrangulation has a width and each vertex in the quadrangulation has an area so that paths visiting the same vertex/edge multiple times can avoid intersection after perturbation within a vertex or an edge. See \cgalFigureRef{fig_perturbation_sample} for an example.
+\cgalFigureBegin{fig_perturbation_sample,perturbation_sample.svg}
+ Applying a perturbation to remove 2 intersections between the red and the blue subpaths.
+    \cgalFigureEnd
+
+Such a perturbation can be encoded as a transverse ordering of the edges from the canonical form which traverse the same edge in the quadrangulation. The idea of the algorithm is to traverse the canonical form, one edge at a time, to inductively build such orderings and try to avoid intersection as best as we can.
+
+\subsubsection SMTopology_Simplicity_Test_Primitive Detect Repetition
+There is an easy case where we know for sure that a closed curve cannot be deformed to simple one: If the canonical form can be expressed as concatenation of two or more copies of the same path. So the first step of the algorithm is to detect repetition.
+
+Let \f$P\f$ be a path and let \f$+\f$ be the operator of concatenation. It can be shown that \f$P\f$ contains no repetition if and only if there are only 2 matchings of \f$P\f$ in \f$P+P\f$ (matching the first and the second copy). The algorithm resorts to the Knuth-Morris-Pratt algorithm to decide in linear time if the canonical form contains repetitions.
+
+\subsubsection SMTopology_Simplicity_Test_Switch Avoid Crossing by Switching
+Apart from applying perturbation, the algorithm also tries to avoid crossings using a homotopy-preserving operation called as a <em>switch</em>. A switch is triggered whenever an intersection could be avoided by turning a left L-shaped subpath into a right L-shaped subpath. See \cgalFigureRef{fig_switch_sample} for an example.
+\cgalFigureBegin{fig_switch_sample,switch_sample.svg}
+ Top-left, an intersection between the red subpath and the green subpath at the start of the left L-shaped red subpath. Top-right, switch the left L-shape to right L-shape to avoid the intersection. Bottom-left or right, no switch is performed because no intersection can be avoided.
+    \cgalFigureEnd
+
+\subsubsection SMTopology_Simplicity_Test_Relative_Order Decide Relative Order
+As the algorithm inductively builds orderings, it has to determine a relative order between the edge being processed and the edges that have been ordered. There are three cases to consider.
+
+-# The current edge and its predecessor, say \f$e\f$, form a subpath of length two so that a parallel copy of this subpath has already been processed, and \f$e\f$ is adjacent to its parallel copy in the previously constructed ordering. In this case, the current edge must be adjacent to its copy in the transverse ordering. See \cgalFigureRef{fig_relative_order_corner}.
+\cgalFigureBegin{fig_relative_order_corner,relative_order_corner.svg}
+ The red edge is being processed. The blue edge is adjacent to the green edge (the predecessor \f$e\f$ of the red edge) in the previously constructed ordering and forms the same turn (blue-pink turn) as the green-red turn. The red edge should be right next to the pink edge in the ordering so as to avoid crossings.
+    \cgalFigureEnd
+
+-# When the previous situation does not occur, the current edge has to be compared against every parallel copy already processed. In this case, the predecessors of the copy and of the current edge form a Y shape with the current edge. The circular order of the edges in this Y  can be used to determine the relative order between the current edge and its copy. See \cgalFigureRef{fig_relative_order_normal}.
+\cgalFigureBegin{fig_relative_order_normal,relative_order_normal.svg}
+ The red edge is being processed and is compared against the pink edge. Since the green edge (the predecessor of the red edge) is to the right of the blue edge around the vertex, the red edge must be to the right of the pink edge in the transverse ordering.
+    \cgalFigureEnd
+
+-# There is one special case where the comparison of the current edge with a parallel copy cannot be deduced form previous computations: When this copy happens to be the very first edge processed in the traversal. Indeed, the predecessor of the first edge (aka the last edge of the path) has not been processed yet. If the last edge runs parallel to the predecessor of the current edge, we cannot determine their relative order. So the idea is to keep following the predecessors of the current edge and of the first edge until they diverge, at which point the relative order around the vertex can be used to determine the relative order. See \cgalFigureRef{fig_relative_order_first}. This can be precomputed by finding all the longest common suffixes of the path against its circular shifts. A modified Knuth-Morris-Pratt algorithm is applied to preprocess the path in linear time.
+\cgalFigureBegin{fig_relative_order_first,relative_order_first.svg}
+ The red edge is being processed and is compared against the pink edge which is the first edge of the path. The blue and green edges are the first diverging pair when tracing backward. The dashed line means that edges have not been processed yet. Since the green edge lies to the right of the blue edge around the vertex, the red edge must be to the right of the pink edge in the ordering.
+    \cgalFigureEnd
+
+The transverse orderings are stored in red-black trees, one for each edge of the quadrangulation. So each insertion or search takes \f$O(\log{l})\f$ time, where \f$l\f$ is the length of the closed curve.
+
+\subsubsection SMTopology_Simplicity_Test_Verification Verify Ordering
+After computing a tentative ordering within the edges of the path, we have to verify that such an ordering could result in an intersection free arrangement. Since there is no intersection within an edge, we only need to verify this for each vertex in the quadrangulation. Each vertex is naturally associated with a circular ordering of the incident path edges by concatenating clockwise the orderings computed for every incident edge in the quadrangulation. We consider the two consecutive edges composing a turn (one going in the vertex, one going out of the vertex) at the vertex being verified as a <em>pair</em>. The ordering at the vertex is intersection free if and only if there is no two pairs crossing each other according to the clockwise ordering around the vertex. In other words, for any two pairs \f$(a, a')\f$ and \f$(b, b')\f$, none of the subsequences \f$a, b, a', b'\f$ or \f$a, b', a', b\f$ should appear in the clockwise ordering. This is very similar to verifying balanced parentheses in a string. We traverse clockwise at each vertex and use a stack-based algorithm to verify in linear time that the ordering produces a cycle without self-intersection.
+
+\section Implementation History
+
+The code was developed in 2018 by Guillaume Damiand and Francis Lazarus. Felix Castillon contributed to the extension of the homotopy test to the case of surfaces with boundaries. Thien Hoang added methods to compute shortest non-contractible cycles, edge width and face width as part of the program Google Summer of Code 2019. Shuhao Tan added methods to test simplicity of a closed curve as part of the program Google Summer of Code 2020.
+
+*/
+} /* namespace CGAL */

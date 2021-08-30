@@ -4,8 +4,8 @@ namespace CGAL {
 /*!
 \ingroup PkgAlphaShapes3Ref
 
-The class `Fixed_alpha_shape_vertex_base_3` is the default model for the concept 
-`FixedAlphaShapeVertex_3`. 
+The class `Fixed_alpha_shape_vertex_base_3` is the default model for the concept
+`FixedAlphaShapeVertex_3`.
 
 \tparam Traits is the geometric traits class that is provided
 to the `Alpha_shape_3` class.

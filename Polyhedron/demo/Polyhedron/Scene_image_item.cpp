@@ -24,12 +24,12 @@ class Image_accessor
 {
 public:
   Image_accessor(const Image& im, int dx=1, int dy=1, int dz=1);
-  
+
   bool is_vertex_active(std::size_t i, std::size_t j, std::size_t k) const;
   const QColor& vertex_color(std::size_t i, std::size_t j, std::size_t k) const;
   void normal(std::size_t i, std::size_t j, std::size_t k,
               float& x, float& y, float& z) const;
-  
+
   int dx() const { return dx_; }
   int dy() const { return dy_; }
   int dz() const { return dz_; }
@@ -39,22 +39,22 @@ public:
   double vx() const { return im_.vx(); }
   double vy() const { return im_.vy(); }
   double vz() const { return im_.vz(); }
-  
+
   double tx() const { return im_.image()->tx; }
   double ty() const { return im_.image()->ty; }
   double tz() const { return im_.image()->tz; }
-  
+
 private:
   unsigned char non_null_neighbor_data(std::size_t i,
                                        std::size_t j,
                                        std::size_t k) const;
-  
+
   unsigned char image_data(std::size_t i, std::size_t j, std::size_t k) const;
-  
+
   void add_to_normal(unsigned char v,
                      float& x, float& y, float& z,
                      int dx, int dy, int dz) const;
-  
+
 private:
   const Image& im_;
   int dx_, dy_, dz_;
@@ -73,12 +73,12 @@ Image_accessor::Image_accessor(const Image& im, int dx, int dy, int dz)
 {
   const std::size_t xdim = im_.xdim();
   const std::size_t ydim = im_.ydim();
-  const std::size_t zdim = im_.zdim();  
-  
+  const std::size_t zdim = im_.zdim();
+
   for(std::size_t i=0 ; i<xdim ; i+=dx_)
-  { 
+  {
     for(std::size_t j=0 ; j<ydim ; j+=dy_)
-    { 
+    {
       for(std::size_t k=0 ; k<zdim ; k+=dz_)
       {
         unsigned char c = image_data(i,j,k);
@@ -86,7 +86,7 @@ Image_accessor::Image_accessor(const Image& im, int dx, int dy, int dz)
       }
     }
   }
-  
+
   double i=0;
   const double starting_hue = 45./360.; // magenta
   for ( std::map<unsigned char, QColor>::iterator it = colors_.begin(),
@@ -98,7 +98,7 @@ Image_accessor::Image_accessor(const Image& im, int dx, int dy, int dz)
   }
 }
 
-bool 
+bool
 Image_accessor::
 is_vertex_active(std::size_t i, std::size_t j, std::size_t k) const
 {
@@ -110,16 +110,16 @@ is_vertex_active(std::size_t i, std::size_t j, std::size_t k) const
   unsigned char v6 = image_data(i    , j-dy_, k  );
   unsigned char v7 = image_data(i    , j    , k-dz_);
   unsigned char v8 = image_data(i    , j    , k  );
-  
+
   // don't draw interior vertices
-  if ( v1 != 0 && v2 != 0 && v3 != 0 && v4 != 0 && 
+  if ( v1 != 0 && v2 != 0 && v3 != 0 && v4 != 0 &&
        v5 != 0 && v6 != 0 && v7 != 0 && v8 != 0 )
   {
     return false;
   }
-  
-  return ( v1 != 0 || v2 != 0 || v3 != 0 || v4 != 0 || 
-           v5 != 0 || v6 != 0 || v7 != 0 || v8 != 0 ); 
+
+  return ( v1 != 0 || v2 != 0 || v3 != 0 || v4 != 0 ||
+           v5 != 0 || v6 != 0 || v7 != 0 || v8 != 0 );
 }
 
 const QColor&
@@ -127,10 +127,10 @@ Image_accessor::vertex_color(std::size_t i, std::size_t j, std::size_t k) const
 {
   unsigned char c = non_null_neighbor_data(i,j,k);
   if ( 0 == c ) { return default_color_; }
-  
+
   std::map<unsigned char, QColor>::const_iterator color = colors_.find(c);
   if ( colors_.end() == color ) { return default_color_; }
-  
+
   return color->second;
 }
 
@@ -149,7 +149,7 @@ non_null_neighbor_data(std::size_t i, std::size_t j, std::size_t k) const
 {
   unsigned char v = image_data(i-dx_, j-dy_, k-dz_);
   if ( v != 0 ) { return v; }
-  
+
   v = image_data(i-dx_, j-dy_, k  );
   if ( v != 0 ) { return v; }
 
@@ -161,16 +161,16 @@ non_null_neighbor_data(std::size_t i, std::size_t j, std::size_t k) const
 
   v = image_data(i    , j-dy_, k-dz_);
   if ( v != 0 ) { return v; }
-  
+
   v = image_data(i    , j-dy_, k  );
   if ( v != 0 ) { return v; }
-  
+
   v = image_data(i    , j    , k-dz_);
   if ( v != 0 ) { return v; }
 
   v = image_data(i    , j    , k  );
   if ( v != 0 ) { return v; }
-  
+
   return 0;
 }
 
@@ -181,25 +181,25 @@ normal(std::size_t i, std::size_t j, std::size_t k,
 {
   unsigned char v = image_data(i-dx_, j-dy_, k-dz_);
   add_to_normal(v,x,y,z,       1    , 1    , 1);
-  
+
   v = image_data(        i-dx_, j-dy_, k);
   add_to_normal(v,x,y,z, 1    , 1    , -1);
-  
+
   v = image_data(        i-dx_, j    , k-dz_);
   add_to_normal(v,x,y,z, 1    , -1   , 1);
-  
+
   v = image_data(        i-dx_, j    , k  );
   add_to_normal(v,x,y,z, 1    , -1   , -1);
-  
+
   v = image_data(        i    , j-dy_, k-dz_);
   add_to_normal(v,x,y,z, -1   , 1    , 1);
-  
+
   v = image_data(        i    , j-dy_, k  );
   add_to_normal(v,x,y,z, -1   , 1    , -1);
-  
+
   v = image_data(        i    , j    , k-dz_);
   add_to_normal(v,x,y,z, -1   , -1   , 1);
-  
+
   v = image_data(        i    , j    , k);
   add_to_normal(v,x,y,z, -1   , -1   , -1);
 }
@@ -224,38 +224,38 @@ class Vertex_buffer_helper
 {
 public:
   Vertex_buffer_helper(const Image_accessor& data, bool is_ogl_4_3);
-  
+
   void fill_buffer_data();
 
   float* colors() { return colors_.data(); }
   float* normals() { return normals_.data(); }
   float* vertices() { return vertices_.data();}
   unsigned int* quads() { return quads_.data(); }
-  
+
   std::size_t color_size() const { return colors_.size(); }
   std::size_t normal_size() const { return normals_.size(); }
   std::size_t vertex_size() const { return vertices_.size(); }
   std::size_t quad_size() const { return quads_.size(); }
-  
+
 private:
   void treat_vertex(std::size_t i, std::size_t j, std::size_t k);
-  
+
   void push_color(std::size_t i, std::size_t j, std::size_t k);
   void push_normal(std::size_t i, std::size_t j, std::size_t k);
   void push_vertex(std::size_t i, std::size_t j, std::size_t k);
   void push_quads(std::size_t i, std::size_t j, std::size_t k);
   void push_quad(int pos1, int pos2, int pos3, int pos4);
-  
+
   int compute_position(std::size_t i, std::size_t j, std::size_t k) const;
   int vertex_index(std::size_t i, std::size_t j, std::size_t k) const;
-  
+
   int dx() const { return data_.dx(); }
   int dy() const { return data_.dy(); }
   int dz() const { return data_.dz(); }
-  
+
 private:
   static int vertex_not_found_;
-  
+
   const Image_accessor& data_;
   typedef std::map<int, std::size_t> Indices;
   Indices indices_;
@@ -297,7 +297,7 @@ Vertex_buffer_helper::treat_vertex(std::size_t i, std::size_t j, std::size_t k)
     push_vertex(i,j,k);
     push_color(i,j,k);
     push_normal(i,j,k);
-    push_quads(i,j,k);    
+    push_quads(i,j,k);
   }
 }
 
@@ -316,12 +316,12 @@ Vertex_buffer_helper::push_normal(std::size_t i, std::size_t j, std::size_t k)
 {
   float x=0.f, y=0.f, z=0.f;
   data_.normal(i,j,k,x,y,z);
-  
+
   float norm = std::sqrt(x*x+y*y+z*z);
   x = x / norm;
   y = y / norm;
   z = z / norm;
-  
+
   normals_.push_back(x);
   normals_.push_back(y);
   normals_.push_back(z);
@@ -331,7 +331,7 @@ void
 Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
 {
   indices_.insert(std::make_pair(compute_position(i,j,k),
-                                 vertices_.size()/3)); 
+                                 vertices_.size()/3));
   //resize the "border vertices"
   double di = double(i),dj = double(j),dk = double(k);
   if (di == 0)
@@ -360,7 +360,7 @@ Vertex_buffer_helper::push_quads(std::size_t i, std::size_t j, std::size_t k)
   int pos3 = vertex_index(i     , j-dy(), k) ;
   int pos4 = vertex_index(i     ,j      , k);
   push_quad(pos1, pos2, pos3, pos4);
-  
+
   pos1 = vertex_index(i-dx(), j, k);
   pos2 = vertex_index(i-dx(), j, k-dz());
   pos3 = vertex_index(i     , j, k-dz());
@@ -409,14 +409,14 @@ vertex_index(std::size_t i, std::size_t j, std::size_t k) const
   {
     return vertex_not_found_;
   }
-  
+
   int vertex_key = compute_position(i,j,k);
   Indices::const_iterator it = indices_.find(vertex_key);
   if ( it != indices_.end() )
   {
     return static_cast<int>(it->second);
   }
-  
+
   return vertex_not_found_;
 }
 
@@ -465,14 +465,14 @@ Scene_image_item::Scene_image_item(Image* im, int display_scale, bool hidden = f
   setTriangleContainer(0,new Tc(
                          Three::mainViewer()->isOpenGL_4_3()
                          ? Vi::PROGRAM_NO_INTERPOLATION
-                         : Vi::PROGRAM_WITH_LIGHT, 
+                         : Vi::PROGRAM_WITH_LIGHT,
                          true));
   setEdgeContainer(0, new Ec(
                      Three::mainViewer()->isOpenGL_4_3()
                      ? Vi::PROGRAM_SOLID_WIREFRAME
                      : Vi::PROGRAM_NO_SELECTION,
                      false));
-  
+
 }
 
 
@@ -549,7 +549,7 @@ Scene_image_item::toolTip() const
             "<p>Spacings: ( %6 , %7 , %8 )</p>")
     .arg(this->name())
     .arg(w_type)
-    .arg(m_image->xdim()) 
+    .arg(m_image->xdim())
     .arg(m_image->ydim())
     .arg(m_image->zdim())
     .arg(m_image->vx())
@@ -559,7 +559,7 @@ Scene_image_item::toolTip() const
 
 bool
 Scene_image_item::supportsRenderingMode(RenderingMode m) const
-{ 
+{
   switch ( m )
   {
   case Wireframe:
@@ -570,7 +570,7 @@ Scene_image_item::supportsRenderingMode(RenderingMode m) const
   default:
     return false;
   }
-  
+
   return false;
 }
 
@@ -677,7 +677,7 @@ void Scene_image_item_priv::draw_Bbox(Scene_item::Bbox bbox, std::vector<float> 
 }
 
 void Scene_image_item::drawEdges(Viewer_interface *viewer) const
-{ 
+{
   if(!isInit(viewer))
     initGL(viewer);
   if ( getBuffersFilled() &&
@@ -716,10 +716,10 @@ void Scene_image_item::initializeBuffers(Viewer_interface *v) const
 {
   getTriangleContainer(0)->initializeBuffers(v);
   getTriangleContainer(0)->setIdxSize(d->idx_size);
-  
+
   getEdgeContainer(0)->initializeBuffers(v);
   getEdgeContainer(0)->setFlatDataSize(d->box_size);
-  
+
   d->v_box.clear();
   d->v_box.shrink_to_fit();
   if(d->helper)
@@ -741,22 +741,22 @@ void Scene_image_item::computeElements() const
                                                   d->m_voxel_scale);
     d->helper = new internal::Vertex_buffer_helper(image_data_accessor, d->is_ogl_4_3);
     d->helper->fill_buffer_data();
-    getTriangleContainer(0)->allocate( 
+    getTriangleContainer(0)->allocate(
           Tc::Smooth_vertices,
           d->helper->vertices(), static_cast<int>(d->helper->vertex_size()*sizeof(float)));
-    getTriangleContainer(0)->allocate( 
+    getTriangleContainer(0)->allocate(
           Tc::Smooth_normals,
           d->helper->normals(), static_cast<int>(d->helper->normal_size()*sizeof(float)));
-    
-    getTriangleContainer(0)->allocate( 
+
+    getTriangleContainer(0)->allocate(
           Tc::VColors,
           d->helper->colors(), static_cast<int>(d->helper->color_size()*sizeof(float)));
-    getTriangleContainer(0)->allocate( 
+    getTriangleContainer(0)->allocate(
           Tc::Vertex_indices,
           d->helper->quads(), static_cast<int>(d->helper->quad_size()*sizeof(unsigned int)));
     d->idx_size = d->helper->quad_size();
   }
-  getEdgeContainer(0)->allocate( 
+  getEdgeContainer(0)->allocate(
         Ec::Vertices,
         d->v_box.data(), static_cast<int>(d->v_box.size()*sizeof(float)));
   d->box_size = d->v_box.size();

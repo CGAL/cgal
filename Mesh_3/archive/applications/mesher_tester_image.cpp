@@ -26,16 +26,16 @@ public:
     image_.read(str.c_str());
     domain_ = new Domain(image_, 1e-6);
   }
-  
+
   ~Domain_builder() { delete domain_; }
-  
+
   Domain& domain() { return *domain_; }
-  
+
   std::vector<Tr_image::Point>::iterator points_begin()
-  { CGAL_error_msg("No input point in 3D image (wrong --off_vertices option?)"); } 
-  
+  { CGAL_error_msg("No input point in 3D image (wrong --off_vertices option?)"); }
+
   std::vector<Tr_image::Point>::iterator points_end()
-  { CGAL_error_msg("No input point in 3D image (wrong --off_vertices option?)"); } 
+  { CGAL_error_msg("No input point in 3D image (wrong --off_vertices option?)"); }
 
   C3t3_image::Index points_index() { return C3t3_image::Index(); }
 
@@ -50,32 +50,32 @@ int main(int argc, char** argv)
 {
   int nb_threads;
   std::string outdir;
-  
-	// options
-	po::options_description generic("Options");
+
+        // options
+        po::options_description generic("Options");
   generic.add_options()
   ("help", "Produce help message")
   ("threads", po::value<int>(&nb_threads)->default_value(2), "Run <arg> threads")
-	("outdir", po::value<std::string>(&outdir)->default_value("tester_output"), "Output directory. <arg> is location");
-	
-	po::options_description cmdline_options("Usage", 1);
-	cmdline_options.add(generic);
-	
-	po::variables_map vm;
-	po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
-	po::notify(vm);
-	
-	if(vm.count("help"))
-	{
-		std::cout << cmdline_options << std::endl;
-		std::cout << "* Images:    .inr.gz files should be in data/3D_images\n";
-		std::cout << "  Note: for each file toto.domain, add a toto.txt file with meshing parameters\n\n";
-		return 1;
-	}
-	
-	// iterate on data files
-	std::string data_img("data/3D_images/"); // or a user defined path...
-  mesh<C3t3_image,Mesh_criteria_image,Image_domain>(data_img,outdir,nb_threads); 
+        ("outdir", po::value<std::string>(&outdir)->default_value("tester_output"), "Output directory. <arg> is location");
 
-	return 0;
+        po::options_description cmdline_options("Usage", 1);
+        cmdline_options.add(generic);
+
+        po::variables_map vm;
+        po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
+        po::notify(vm);
+
+        if(vm.count("help"))
+        {
+                std::cout << cmdline_options << std::endl;
+                std::cout << "* Images:    .inr.gz files should be in data/3D_images\n";
+                std::cout << "  Note: for each file toto.domain, add a toto.txt file with meshing parameters\n\n";
+                return 1;
+        }
+
+        // iterate on data files
+        std::string data_img("data/3D_images/"); // or a user defined path...
+  mesh<C3t3_image,Mesh_criteria_image,Image_domain>(data_img,outdir,nb_threads);
+
+        return 0;
 }

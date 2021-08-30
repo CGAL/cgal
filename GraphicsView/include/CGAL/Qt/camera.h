@@ -14,7 +14,6 @@
 #ifndef QGLVIEWER_CAMERA_H
 #define QGLVIEWER_CAMERA_H
 #include <QMap>
-#include <QDomElement>
 #include <CGAL/Qt/vec.h>
 #include <CGAL/Qt/quaternion.h>
 #include <CGAL/export/Qt.h>
@@ -388,11 +387,11 @@ public:
   void computeProjectionMatrix() const;
   void computeModelViewMatrix() const;
   //!Sets the frustum according to the current type of the camera
-  //! (PERSPECTIVE or ORTHOGRAPHIC) in this order : 
+  //! (PERSPECTIVE or ORTHOGRAPHIC) in this order :
   //! left, right, top, bottom, near, far
   void setFrustum(double frustum[6]);
-  //!Fills `frustum` from the current frustum of the camera according 
-  //! to the current type (PERSPECTIVE or ORTHOGRAPHIC) in this order : 
+  //!Fills `frustum` from the current frustum of the camera according
+  //! to the current type (PERSPECTIVE or ORTHOGRAPHIC) in this order :
   //! left, right, top, bottom, near, far
   void getFrustum(double frustum[6]);
   void getProjectionMatrix(GLfloat m[16]) const;
@@ -433,15 +432,6 @@ public:
   qreal flySpeed() const;
 public Q_SLOTS:
   void setFlySpeed(qreal speed);
-  //@}
-
-  /*! @name XML representation */
-  //@{
-public:
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
   //@}
 
 private Q_SLOTS:

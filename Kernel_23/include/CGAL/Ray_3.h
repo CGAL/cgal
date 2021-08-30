@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -22,7 +22,6 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/result_of.h>
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
@@ -64,6 +63,9 @@ public:
   Ray_3(const Rep& r)
     : Rep(r) {}
 
+  Ray_3(Rep&& r)
+    : Rep(std::move(r)) {}
+
   Ray_3(const Point_3& sp, const Point_3& secondp)
     : Rep(typename R::Construct_ray_3()(Return_base_tag(), sp, secondp)) {}
 
@@ -99,25 +101,25 @@ public:
   bool        collinear_has_on(const Point_3 &p) const;
 */
 
-  typename cpp11::result_of<typename R::Construct_point_on_3(Ray_3, FT)>::type
+  decltype(auto)
   point(const FT i) const
   {
     return R().construct_point_on_3_object()(*this, i);
   }
 
-  typename cpp11::result_of<typename R::Construct_source_3(Ray_3)>::type
+  decltype(auto)
   source() const
   {
     return R().construct_source_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_second_point_3(Ray_3)>::type
+  decltype(auto)
   second_point() const
   {
     return R().construct_second_point_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_source_3(Ray_3)>::type
+  decltype(auto)
   start() const
   {
     return source();
@@ -167,7 +169,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Ray_3<R>& r, const Cartesian_tag&)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << r.start() << ' ' << r.direction();
     case IO::BINARY :
@@ -181,7 +183,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Ray_3<R>& r, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
       case IO::ASCII :
           return os << r.start() << ' ' << r.direction();

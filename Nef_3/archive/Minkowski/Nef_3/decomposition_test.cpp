@@ -5,7 +5,7 @@
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/IO/Qt_widget_Nef_3.h>
 #include <qapplication.h>
-#include <CGAL/Nef_3/convex_decomposition_3.h> 
+#include <CGAL/Nef_3/convex_decomposition_3.h>
 #include <CGAL/Nef_3/is_reflex_sedge.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/convexity_check_3.h>
@@ -41,7 +41,7 @@ typedef CGAL::Nef_polyhedron_3<Kernel>     Nef_polyhedron_3;
 #endif
 
 int main(int argc, char* argv[]) {
-  
+
   CGAL_assertion(argc==2);
   std::ifstream in(argv[1]);
   Nef_polyhedron_3 N;
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
   }
 
   QApplication a(argc, argv);
-  CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>* w = 
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>* w =
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron_3>(N);
   a.setMainWidget(w);
   w->show();

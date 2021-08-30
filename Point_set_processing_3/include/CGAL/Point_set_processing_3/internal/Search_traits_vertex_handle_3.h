@@ -93,7 +93,7 @@ struct Kernel_traits< internal::Point_vertex_handle_3<Vertex_handle> > {
   };
 };
 
-  namespace internal {  
+  namespace internal {
 
 /// Functor with two function operators, which return the begin and
 /// past the end iterator for the Cartesian coordinates.
@@ -117,8 +117,10 @@ struct Construct_cartesian_const_iterator_vertex_handle_3
 template <class Vertex_handle>
 struct Euclidean_distance_vertex_handle_3
 {
+  typedef double FT;
   typedef CGAL::internal::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
   typedef Point_vertex_handle_3 Query_item;
+  typedef Point_vertex_handle_3 Point_d;
 
   double transformed_distance(const Point_vertex_handle_3& p1, const Point_vertex_handle_3& p2) const {
     double distx = p1.x()-p2.x();
@@ -212,7 +214,7 @@ struct Euclidean_distance_vertex_handle_3
 
     h=p.z();
     dists[2] = (h >= (b.min_coord(2)+b.max_coord(2))/2.0)? h-b.min_coord(2) : b.max_coord(2)-h;
-    
+
     double d2 = dists[2]*dists[2];
 
     return d0 + d1 + d2;
@@ -246,7 +248,7 @@ class Search_traits_vertex_handle_3
                           >
 {};
 
-  } // namespace internal 
+  } // namespace internal
 /// \endcond
 
 } //namespace CGAL

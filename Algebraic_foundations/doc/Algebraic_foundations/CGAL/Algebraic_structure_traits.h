@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-An instance of `Algebraic_structure_traits` is a model of `AlgebraicStructureTraits`, where <span class="textsc">T</span> is the associated type. 
+An instance of `Algebraic_structure_traits` is a model of `AlgebraicStructureTraits`, where <span class="textsc">T</span> is the associated type.
 
 \cgalModels `AlgebraicStructureTraits`
 
@@ -19,13 +19,13 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-Tag indicating that a type is a model of the 
-`EuclideanRing` concept. 
+Tag indicating that a type is a model of the
+`EuclideanRing` concept.
 
 \cgalModels `DefaultConstructible`
 
-\sa `EuclideanRing` 
-\sa `AlgebraicStructureTraits` 
+\sa `EuclideanRing`
+\sa `AlgebraicStructureTraits`
 
 */
 
@@ -36,12 +36,12 @@ struct Euclidean_ring_tag : public Unique_factorization_domain_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-Tag indicating that a type is a model of the `Field` concept. 
+Tag indicating that a type is a model of the `Field` concept.
 
 \cgalModels `DefaultConstructible`
 
-\sa `Field` 
-\sa `AlgebraicStructureTraits` 
+\sa `Field`
+\sa `AlgebraicStructureTraits`
 
 */
 
@@ -52,12 +52,12 @@ struct Field_tag : public Integral_domain_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-Tag indicating that a type is a model of the `FieldWithKthRoot` concept. 
+Tag indicating that a type is a model of the `FieldWithKthRoot` concept.
 
 \cgalModels `DefaultConstructible`
 
-\sa `FieldWithKthRoot` 
-\sa `AlgebraicStructureTraits` 
+\sa `FieldWithKthRoot`
+\sa `AlgebraicStructureTraits`
 
 */
 
@@ -68,12 +68,12 @@ struct Field_with_kth_root_tag : public Field_with_sqrt_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-Tag indicating that a type is a model of the `FieldWithRootOf` concept. 
+Tag indicating that a type is a model of the `FieldWithRootOf` concept.
 
 \cgalModels `DefaultConstructible`
 
-\sa `FieldWithRootOf` 
-\sa `AlgebraicStructureTraits` 
+\sa `FieldWithRootOf`
+\sa `AlgebraicStructureTraits`
 
 */
 
@@ -84,12 +84,12 @@ struct Field_with_root_of_tag : public Field_with_kth_root_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-Tag indicating that a type is a model of the `FieldWithSqrt` concept. 
+Tag indicating that a type is a model of the `FieldWithSqrt` concept.
 
 \cgalModels `DefaultConstructible`
 
-\sa `FieldWithSqrt` 
-\sa `AlgebraicStructureTraits` 
+\sa `FieldWithSqrt`
+\sa `AlgebraicStructureTraits`
 
 */
 
@@ -100,12 +100,12 @@ struct Field_with_sqrt_tag : public Field_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-Tag indicating that a type is a model of the `IntegralDomain` concept. 
+Tag indicating that a type is a model of the `IntegralDomain` concept.
 
 \cgalModels `DefaultConstructible`
 
-\sa `IntegralDomain` 
-\sa `AlgebraicStructureTraits` 
+\sa `IntegralDomain`
+\sa `AlgebraicStructureTraits`
 
 */
 
@@ -116,11 +116,11 @@ struct Integral_domain_tag : public Integral_domain_without_division_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-Tag indicating that a type is a model of the `IntegralDomainWithoutDivision` concept. 
+Tag indicating that a type is a model of the `IntegralDomainWithoutDivision` concept.
 
 \cgalModels `DefaultConstructible`
 
-\sa `IntegralDomainWithoutDivision` 
+\sa `IntegralDomainWithoutDivision`
 
 */
 
@@ -131,12 +131,12 @@ struct Integral_domain_without_division_tag {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-Tag indicating that a type is a model of the `UniqueFactorizationDomain` concept. 
+Tag indicating that a type is a model of the `UniqueFactorizationDomain` concept.
 
 \cgalModels `DefaultConstructible`
 
-\sa `UniqueFactorizationDomain` 
-\sa `AlgebraicStructureTraits` 
+\sa `UniqueFactorizationDomain`
+\sa `AlgebraicStructureTraits`
 
 */
 

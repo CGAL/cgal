@@ -1,10 +1,11 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Real_timer.h>
-
-
+#include <CGAL/IO/OFF.h>
 #include <CGAL/boost/graph/property_maps.h>
-
+#include <CGAL/number_utils.h>
+#include <CGAL/Coercion_traits.h>
 
 #include <fstream>
 #include <ostream>
@@ -73,12 +74,12 @@ struct Custom_traits_Hausdorff
   };
 
   struct Construct_vector_3{
-    Vector_3 	operator() (const Point_3 &, const Point_3 &){return Vector_3();}
+    Vector_3         operator() (const Point_3 &, const Point_3 &){return Vector_3();}
   };
 
   struct Construct_scaled_vector_3
   {
-    Vector_3 	operator() (const Vector_3 &, const FT &)
+    Vector_3         operator() (const Vector_3 &, const FT &)
     {return Vector_3();}
 
   };
@@ -168,10 +169,10 @@ struct Custom_traits_Hausdorff
     Construct_cartesian_const_iterator_3(){}
     Construct_cartesian_const_iterator_3(const Point_3&){}
     const FT* operator()(const Point_3&) const
-    { return 0; }
+    { return nullptr; }
 
     const FT* operator()(const Point_3&, int)  const
-    { return 0; }
+    { return nullptr; }
     typedef const FT* result_type;
   };
 // } end of requirements from SearchGeomTraits_3
@@ -193,6 +194,14 @@ struct Custom_traits_Hausdorff
 };
 
 namespace CGAL{
+
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double, Custom_traits_Hausdorff::FT)
+
 template<>struct Kernel_traits<Custom_traits_Hausdorff::Point_3>
 {
   typedef Custom_traits_Hausdorff Kernel;
@@ -258,6 +267,11 @@ void general_tests(const TriangleMesh& m1,
   std::cout << "Max distance to triangle mesh (sequential) "
             << PMP::max_distance_to_triangle_mesh<CGAL::Sequential_tag>(points,m1)
             << "\n";
+
+  std::vector<typename GeomTraits::Point_3> samples;
+  PMP::sample_triangle_mesh(m1, std::back_inserter(samples));
+  std::cout << samples.size()<<" points sampled on mesh."<<std::endl;
+
 }
 
 void test_concept()
@@ -267,16 +281,21 @@ void test_concept()
   general_tests<CK>(m1,m2);
 }
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
+  if(argc != 3)
+  {
+    std::cerr << "Missing input meshes" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Mesh m1,m2;
   std::ifstream input(argv[1]);
   input >> m1;
   input.close();
-
   input.open(argv[2]);
   input >> m2;
-
+  input.close();
   std::cout << "First mesh has " << num_faces(m1) << " faces\n";
   std::cout << "Second mesh has " << num_faces(m2) << " faces\n";
 
@@ -303,6 +322,17 @@ int main(int, char** argv)
   general_tests<K>(m1,m2);
 
   test_concept();
+
+  std::vector<std::vector<std::size_t> > faces;
+  std::vector<K::Point_3> points;
+  input.open(argv[1]);
+  CGAL::IO::read_OFF(input, points, faces);
+  input.close();
+
+  std::vector<K::Point_3> samples;
+  PMP::sample_triangle_soup(points, faces, std::back_inserter(samples));
+  std::cout<<samples.size()<<" points sampled on soup."<<std::endl;
+
 
   return 0;
 }

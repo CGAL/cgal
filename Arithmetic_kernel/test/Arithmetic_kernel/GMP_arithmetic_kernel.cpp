@@ -7,7 +7,7 @@
 #include <CGAL/Test/_test_arithmetic_kernel.h>
 
 int main() {
-  std::cout << "TEST GMP_arithmetic_kernel" << std::endl; 
+  std::cout << "TEST GMP_arithmetic_kernel" << std::endl;
   typedef CGAL::GMP_arithmetic_kernel AK;
   CGAL::test_arithmetic_kernel<AK>();
   return 0;

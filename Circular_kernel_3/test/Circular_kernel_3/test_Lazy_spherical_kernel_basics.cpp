@@ -1,9 +1,9 @@
-// Copyright (c) 2001,2002  
+// Copyright (c) 2001,2002
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -12,7 +12,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 //
 // Author(s)     : Sylvain Pion
- 
+
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Spherical_kernel_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -34,7 +34,7 @@
 #include "CGAL/_test_cls_iso_cuboid_3.h"
 #include "CGAL/_test_angle.h"
 #include "CGAL/_test_cls_circle_3.h"
- 
+
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
 int

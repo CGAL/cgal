@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
@@ -27,7 +27,7 @@ public:
     typedef typename Kernel::Point_3  Point_3;
     typedef typename Kernel::Plane_3  Plane_3;
 
-    typedef typename Kernel::Construct_opposite_plane_3 
+    typedef typename Kernel::Construct_opposite_plane_3
                                       Construct_opposite_plane_3;
 private:
     Kernel m_kernel;

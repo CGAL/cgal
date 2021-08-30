@@ -252,7 +252,7 @@ private:
   template <typename Strategy, Pl_strategy id>
   void init_pl(const std::string& name)
   {
-    m_locators[id].m_variant = static_cast<Strategy*>(NULL);
+    m_locators[id].m_variant = static_cast<Strategy*>(nullptr);
     m_locators[id].m_name = name;
     m_locators[id].m_active = true;
   }
@@ -262,7 +262,7 @@ private:
   void allocate_pl()
   {
     Strategy* locator = new Strategy();
-    CGAL_assertion(locator);
+    assert(locator);
     m_locators[id].m_variant = locator;
   }
 
@@ -293,7 +293,7 @@ private:
     Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
     if (strategy) {
       delete strategy;
-      m_locators[id].m_variant = static_cast<Strategy*>(NULL);
+      m_locators[id].m_variant = static_cast<Strategy*>(nullptr);
     }
   }
 
@@ -667,12 +667,12 @@ Point_location_test<GeomTraits, TopolTraits>::
 Point_location_test(const Geom_traits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits),
-  m_arr(NULL),
-  m_random_g(NULL),
-  m_grid_g(NULL),
-  m_halton_g(NULL),
-  m_middle_edges_g(NULL),
-  m_specified_points_g(NULL)
+  m_arr(nullptr),
+  m_random_g(nullptr),
+  m_grid_g(nullptr),
+  m_halton_g(nullptr),
+  m_middle_edges_g(nullptr),
+  m_specified_points_g(nullptr)
 {
   m_locators.resize(NUM_PL_STRATEGIES);
 
@@ -773,7 +773,7 @@ deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
-    m_arr = NULL;
+    m_arr = nullptr;
   }
 }
 
@@ -1091,7 +1091,7 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
     Face_const_handle* fh_ref = boost::get<Face_const_handle>(&(objs[0][qi]));
     if (fh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	Face_const_handle* fh_cur =
+        Face_const_handle* fh_cur =
           boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           if ((*fh_cur) != (*fh_ref)) {
@@ -1106,13 +1106,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Error: point location number " << pl << std::endl;
         std::cout << "Expected: a face." << std::endl;
         result += -1;
-	Halfedge_const_handle* hh_cur =
+        Halfedge_const_handle* hh_cur =
           boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
-	if (hh_cur) {
+        if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;
           continue;
         }
-	Vertex_const_handle* vh_cur =
+        Vertex_const_handle* vh_cur =
           boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
@@ -1132,7 +1132,7 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
       boost::get<Halfedge_const_handle>(&(objs[0][qi]));
     if (hh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	Halfedge_const_handle* hh_cur =
+        Halfedge_const_handle* hh_cur =
           boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           if (((*hh_cur) != (*hh_ref)) && ((*hh_cur)->twin() != (*hh_ref))) {
@@ -1149,13 +1149,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Expected: a halfedge, " << (*hh_ref)->curve()
                   << std::endl;
         result += -1;
-	Face_const_handle* fh_cur =
+        Face_const_handle* fh_cur =
           boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
-	Vertex_const_handle* vh_cur =
+        Vertex_const_handle* vh_cur =
           boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           std::cout << "Actual: a vertex." << std::endl;
@@ -1171,7 +1171,7 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
       boost::get<Vertex_const_handle>(&(objs[0][qi]));
     if (vh_ref) {
       for (size_t pl = 1; pl < pls_num; ++pl) {
-	Vertex_const_handle* vh_cur =
+        Vertex_const_handle* vh_cur =
           boost::get<Vertex_const_handle>(&(objs[pl][qi]));
         if (vh_cur) {
           if ((*vh_cur) != (*vh_ref)) {
@@ -1187,13 +1187,13 @@ verify(Variants_vector objs[NUM_PL_STRATEGIES], size_t size, size_t pls_num)
         std::cout << "Error: point location number " << pl << std::endl;
         std::cout << "Expected: a vertex: "<< (*vh_ref)->point() << std::endl;
         result += -1;
-	Face_const_handle* fh_cur =
+        Face_const_handle* fh_cur =
           boost::get<Face_const_handle>(&(objs[pl][qi]));
         if (fh_cur) {
           std::cout << "Actual: a face." << std::endl;
           continue;
         }
-	Halfedge_const_handle* hh_cur =
+        Halfedge_const_handle* hh_cur =
           boost::get<Halfedge_const_handle>(&(objs[pl][qi]));
         if (hh_cur) {
           std::cout << "Actual: a halfedge." << std::endl;

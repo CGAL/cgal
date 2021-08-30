@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -53,7 +53,7 @@ class Compare_xy_2
 
 public:
     typedef CGAL::Comparison_result result_type;
-    
+
     //! standard constructor
     Compare_xy_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -71,7 +71,7 @@ public:
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
-     *         SMALLER if x(p1) \< x(p2), or if x(p1) = x(p2) and 
+     *         SMALLER if x(p1) \< x(p2), or if x(p1) = x(p2) and
      *                   y(p1) \< y(p2);
      *         EQUAL if the two points are equal.
      */
@@ -79,7 +79,7 @@ public:
     {
         if(p1.is_identical(p2))
             return CGAL::EQUAL;
-    
+
         typedef typename SweepCurvesAdapter_2::Native_arc_2 Native_arc_2;
         typename SweepCurvesAdapter_2::Native_point_2 pt;
         Native_arc_2 arc;
@@ -101,7 +101,7 @@ public:
             arc = p1.arc();
             end = p1.curve_end();
             loc1 = arc.location(end);
- 
+
             if(!p2.is_finite()) { // both points lie at infinity
                 loc2 = p2.arc().location(p2.curve_end());
                 if(Native_arc_2::is_on_left_right(loc1)) {
@@ -119,7 +119,7 @@ public:
                     if(res == CGAL::EQUAL && end == p2.curve_end() &&
                             loc1 != loc2) {
                         return (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ?
-                            CGAL::SMALLER : CGAL::LARGER);        
+                            CGAL::SMALLER : CGAL::LARGER);
                     }
                     return res;
                 }
@@ -138,14 +138,14 @@ public:
             // compares a finite point with a curve end at y=+/-oo:
             res = _m_adapter->kernel().kernel().compare_1_object()
                 (pt.x(), arc.curve_end_x(end));
-                
+
             if(res == CGAL::EQUAL) // in case of equality use boundary types:
                 res = (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? CGAL::LARGER :
                     CGAL::SMALLER);
         }
         return (inverse ? -res : res);
     }
-    
+
 private:
     SweepCurvesAdapter_2 *_m_adapter;
 };
@@ -157,7 +157,7 @@ class Less_xy_2
 
 public:
     typedef bool result_type;
-    
+
     //! standard constructor
     Less_xy_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -170,7 +170,7 @@ public:
     result_type operator()(const Point_2& p1, const Point_2& p2) const {
         return (_m_adapter->compare_xy_2_object()(p1, p2) == CGAL::SMALLER);
     }
-    
+
 private:
     SweepCurvesAdapter_2 *_m_adapter;
 };
@@ -180,10 +180,10 @@ class Compare_y_at_x_2
 {
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef CGAL::Comparison_result result_type;
-    
+
     //! standard constructor
     Compare_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -240,7 +240,7 @@ public:
         CGAL::Arr_curve_end end = p.curve_end(), end2;
        // CGAL::Boundary_type bnd_x = p.arc().boundary_in_x(end);
         CGAL::Arr_parameter_space locp = p.arc().location(end);
-        
+
         if(Native_arc_2::is_on_left_right(locp)) {
             CGAL_precondition(locp == cv.arc().location(end));
             // compare two curve ends at +/-oo in x
@@ -275,7 +275,7 @@ public:
             // arc is vertical => infinite end coincides
             return CGAL::EQUAL; // two vertical arcs => coincide
         }
-        
+
         CGAL_precondition_msg(end == end2, "Point is not within the arc's "
             "x-range");
 
@@ -291,11 +291,11 @@ public:
         if(locp == cv.arc().location(end2) &&
                 !p.arc().is_vertical() && !cv.arc().is_vertical())
         if((end == CGAL::ARR_MAX_END && locp == CGAL::ARR_TOP_BOUNDARY) ||
-           (end == CGAL::ARR_MIN_END && locp == CGAL::ARR_BOTTOM_BOUNDARY)) 
+           (end == CGAL::ARR_MIN_END && locp == CGAL::ARR_BOTTOM_BOUNDARY))
             res = -res;
         return res;
     }
-    
+
 private:
     SweepCurvesAdapter_2 *_m_adapter;
 
@@ -306,10 +306,10 @@ class Equal_y_at_x_2
 {
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef bool result_type;
-    
+
     //! standard constructor
     Equal_y_at_x_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -323,7 +323,7 @@ public:
     {
         return (_m_adapter->compare_y_at_x_2_object()(cv, p) == CGAL::EQUAL);
     }
-    
+
 private:
     SweepCurvesAdapter_2 *_m_adapter;
 
@@ -334,17 +334,17 @@ class Multiplicity_of_intersection_2 {
 
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef int result_type;
-    
+
     //! standard constructor
     Multiplicity_of_intersection_2(SweepCurvesAdapter_2 *) {
     }
 
-    /*!\brief 
+    /*!\brief
      * multiplicity of intersection
-     * 
+     *
      * The intersection multiplicity of \c *this and \c cv2 at point \c p is
      * returned.
      *
@@ -369,25 +369,25 @@ class Compare_y_right_of_point_2
 {
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef CGAL::Comparison_result result_type;
-    
+
     //! standard constructor
     Compare_y_right_of_point_2(SweepCurvesAdapter_2 *) {
     }
 
     /*!
-     * Compares the y value of two x-monotone curves immediately 
+     * Compares the y value of two x-monotone curves immediately
      * to the right of their intersection point. If one of the curves is
      * vertical (emanating upward from p), it's always considered to be above
      * the other curve.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param p The intersection point.
-     * \pre The point p lies on both curves, and both of them must be 
+     * \pre The point p lies on both curves, and both of them must be
      * also be defined (lexicographically) to its right.
-     * \return The relative position of cv1 with respect to 
+     * \return The relative position of cv1 with respect to
      * cv2 immdiately to the right of p: SMALLER, LARGER or EQUAL.
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
@@ -395,7 +395,7 @@ public:
 
         SCA_CERR("Compare_y_right_of_point_2: cv1: " << cv1 << "\n cv2: " <<
             cv2 << "\n pt: " << p << std::endl);
-            
+
         CGAL_precondition(!cv1.is_degenerate());
         CGAL_precondition(!cv2.is_degenerate());
         CGAL_precondition(p.is_finite());
@@ -409,10 +409,10 @@ class Source_2
 {
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef Point_2 result_type;
-    
+
     //! standard constructor
     Source_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -428,7 +428,7 @@ public:
 
 private:
     SweepCurvesAdapter_2 *_m_adapter;
-    
+
 };
 
 template < class SweepCurvesAdapter_2 >
@@ -436,10 +436,10 @@ class Target_2
 {
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef Point_2 result_type;
-    
+
     //! standard constructor
     Target_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -452,10 +452,10 @@ public:
     result_type operator()(const Arc_2& cv) const {
         return cv.target();
     }
-    
+
 private:
     SweepCurvesAdapter_2 *_m_adapter;
-    
+
 };
 
 template < class SweepCurvesAdapter_2 >
@@ -463,10 +463,10 @@ class Construct_segment_2
 {
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef Arc_2 result_type;
-    
+
     //! standard constructor
     Construct_segment_2(SweepCurvesAdapter_2 *) {
     }
@@ -486,10 +486,10 @@ template < class SweepCurvesAdapter_2 >
 class Is_degenerate_2
 {
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef bool result_type;
-    
+
     //! standard constructor
     Is_degenerate_2(SweepCurvesAdapter_2 *) {
     }
@@ -498,7 +498,7 @@ public:
      * checks whether this arc represents an isolated point (i.e., degenerate)
      */
     result_type operator()(const Arc_2& cv) const {
-        
+
         return cv.is_degenerate();
     }
 };
@@ -507,10 +507,10 @@ template < class SweepCurvesAdapter_2 >
 class Do_overlap_2
 {
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef bool result_type;
-    
+
     //! standard constructor
     Do_overlap_2(SweepCurvesAdapter_2 *) {
     }
@@ -520,7 +520,7 @@ public:
      * i.e., they overlap
      */
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2) const {
-        
+
         if(cv1.is_degenerate() || cv2.is_degenerate())
             return false;
         return cv1.arc().do_overlap(cv2.arc());
@@ -532,10 +532,10 @@ class New_endpoints_2 {
 
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef Arc_2 result_type;
-    
+
     //! standard constructor
     New_endpoints_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -557,14 +557,14 @@ public:
         CGAL_precondition(
             _m_adapter->compare_xy_2_object()(cv.target(), q) == CGAL::EQUAL
         );
-            
+
         cv.new_endpoints(p, q);
         return cv;
     }
-    
+
 private:
     SweepCurvesAdapter_2 *_m_adapter;
-  
+
 };
 
 template < class SweepCurvesAdapter_2 >
@@ -572,10 +572,10 @@ class New_endpoints_opposite_2 {
 
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef Arc_2 result_type;
-    
+
     //! standard constructor
     New_endpoints_opposite_2(SweepCurvesAdapter_2 *) {
     }
@@ -585,7 +585,7 @@ public:
      * lexicographic order of endpoints is ensured automatically, hence no
      * special handling is required
      */
-    result_type operator()(const Arc_2& cv, 
+    result_type operator()(const Arc_2& cv,
                            const Point_2& /* p */,
                            const Point_2& /* q */) const {
         SCA_CERR("\n\nWARNING!! New_endpoints_opposite_2: cv: " << cv <<
@@ -602,10 +602,10 @@ template < class SweepCurvesAdapter_2 >
 class Intersect_2 {
 
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     //typedef bool result_type;
-    
+
     //! standard constructor
     Intersect_2(SweepCurvesAdapter_2 *) {
     }
@@ -620,7 +620,7 @@ public:
 
         SCA_CERR("Intersect_2: cv1: " << cv1 << "\n cv2: " <<
             cv2 << std::endl);
-            
+
         return cv1.intersect(cv2, oi);
     }
 };
@@ -630,10 +630,10 @@ class Intersect_right_of_point_2 {
 
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Arc_2;
-   
+
 public:
     typedef bool result_type;
-    
+
     //! standard constructor
     Intersect_right_of_point_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -644,8 +644,8 @@ public:
      * computes the next intersection of \c cv1 and \c cv2 right of \c ref
      * in lexicographical order and returns it through \c res argument
      *
-     * intersect_right_of_point is not called when using sweep_curves() with 
-     * intersection dictionary and without validation of internal structures 
+     * intersect_right_of_point is not called when using sweep_curves() with
+     * intersection dictionary and without validation of internal structures
      * (as is standard). Hence we can be lazy here for the moment
      * without losing performance.
      */
@@ -654,14 +654,14 @@ public:
 
         SCA_CERR("Intersect_right_of_point_2: cv1: " << cv1 << "\n cv2: " <<
             cv2 << "\n ref: " << ref << std::endl);
-            
+
         typedef std::vector<Point_2> Point_container;
         Point_container tmp;
         cv1.intersect(cv2, back_inserter(tmp));
 
         for(typename Point_container::const_iterator it =  tmp.begin();
                 it != tmp.end(); it++) {
-            // assume points are sorted lexicographical    
+            // assume points are sorted lexicographical
             if(_m_adapter->compare_xy_2_object()(*it, ref) == CGAL::LARGER) {
                 res = *it;
                 SCA_CERR("intersection found: " << res << "\n");
@@ -670,23 +670,23 @@ public:
         }
         return false;
     }
-    
+
 private:
     SweepCurvesAdapter_2 *_m_adapter;
 
 };
 
 template < class SweepCurvesAdapter_2 >
-class Make_x_monotone_2 
+class Make_x_monotone_2
 {
     typedef typename SweepCurvesAdapter_2::Curve_2 Curve_2;
     typedef typename SweepCurvesAdapter_2::Generic_point_2 Point_2;
     typedef typename SweepCurvesAdapter_2::Generic_arc_2 Generic_arc_2;
-   
+
 public:
     typedef CGAL::cpp98::iterator<std::output_iterator_tag, Generic_arc_2>
       result_type;
-    
+
     //! standard constructor
     Make_x_monotone_2(SweepCurvesAdapter_2 *adapter) :
         _m_adapter(adapter) {
@@ -694,56 +694,57 @@ public:
     }
 
     /*!
-     * decompose a given arc into list of x-monotone pieces 
-     * (subcurves) and insert them to the output iterator. Since \c Arc_2 
-     * is by definition x-monotone, an input arc is passed to the 
-     * output iterator directly. 
+     * decompose a given arc into list of x-monotone pieces
+     * (subcurves) and insert them to the output iterator. Since \c Arc_2
+     * is by definition x-monotone, an input arc is passed to the
+     * output iterator directly.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. 
-     * The returned objects are all wrappers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+     * \param oi The output iteratorfor the result. Its dereference type is a
+     *        variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *        objects..
+     * \return The past-the-end output iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator()(const Generic_arc_2& cv,
-            OutputIterator oi) const {
+    OutputIterator operator()(const Generic_arc_2& cv, OutputIterator oi) const
+    {
         *oi++ = cv;
         return oi;
     }
-    
+
     /*!
-     * decompose a given curve into list of x-monotone pieces 
-     * (subcurves) and insert them to the output iterator. 
+     * decompose a given curve into list of x-monotone pieces
+     * (subcurves) and insert them to the output iterator.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. 
-     * The returned objects are all wrappers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
+     * \return The past-the-end output iterator.
      */
     template<class OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const {
 
-        typedef typename SweepCurvesAdapter_2::Native_arc_2 Native_arc_2;
-        typedef typename SweepCurvesAdapter_2::Native_point_2 Native_point_2;
-        typedef typename SweepCurvesAdapter_2::Generic_point_2 Generic_point_2;
-        
-        typedef std::vector<CGAL::Object> Objects;
-        Objects objs;
-        _m_adapter->kernel().make_x_monotone_2_object()(cv,
-            std::back_inserter(objs));
+        typedef typename SweepCurvesAdapter_2::Native_arc_2     Native_arc_2;
+        typedef typename SweepCurvesAdapter_2::Native_point_2   Native_point_2;
+        typedef typename SweepCurvesAdapter_2::Generic_point_2  Generic_point_2;
+        typedef boost::variant<Native_arc_2, Native_point_2>
+          Make_x_monotone_result;
+
+        std::vector<Make_x_monotone_result> objs;
+        auto make_x_monotone = _m_adapter->kernel().make_x_monotone_2_object();
+        make_x_monotone(cv, std::back_inserter(objs));
         // sort out normal and degenerate arcs
-        for(typename Objects::const_iterator it = objs.begin();
-                it != objs.end(); it++) {
-            Native_arc_2 arc;
-            Native_point_2 pt;
-            if(CGAL::assign(arc, *it))
-                *oi++ = Generic_arc_2(arc);
-            else if(CGAL::assign(pt, *it))
-                *oi++ = Generic_arc_2(Generic_point_2(pt));
-            else
-                CGAL_error_msg("Bogus object..\n");
+        for (auto& obj : objs) {
+          if (auto* arc = boost::get<Native_arc_2>(&obj)) {
+            *oi++ = Generic_arc_2(*arc);
+            continue;
+          }
+          auto* pt = boost::get<Native_point_2>(&obj);
+          CGAL_assertion(pt);
+          *oi++ = Generic_arc_2(Generic_point_2(*pt));
         }
         return oi;
     }
-    
+
 private:
     SweepCurvesAdapter_2 *_m_adapter;
 };
@@ -765,10 +766,10 @@ public:
     //! type of curve kernel
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
     Curve_kernel_2;
-    
+
     //! myself
     typedef Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 > Self;
-    
+
     //!@}
 
 public:
@@ -778,14 +779,14 @@ public:
     //! default constructor
     Sweep_curves_adapter_2() {
     }
-    
+
     //! construct using specific \c CKvA_2 instance (for controlling)
     Sweep_curves_adapter_2(const Curved_kernel_via_analysis_2& kernel) :
         _m_kernel(kernel) {
     }
-    
+
     //!@}
-    
+
     //!\name embedded types and predicates for \c CurveSweepTraits
     //!@{
 
@@ -800,10 +801,10 @@ public:
     //! generic arc (supports isolated points)
     typedef internal::Generic_arc_2<Self> Generic_arc_2;
 
-    //! type of point in model of  \c CurveSweepTraits_2 
+    //! type of point in model of  \c CurveSweepTraits_2
     typedef Generic_point_2 Point_2;
 
-    //! type of segment in model of  \c CurveSweepTraits_2 
+    //! type of segment in model of  \c CurveSweepTraits_2
     typedef Generic_arc_2 Segment_2;
 
 // declares functors, for each functor defines a member function
@@ -812,32 +813,32 @@ public:
     typedef Sweep_curves_functors::Y<Self> Y; \
     Y Z() const { return Y((Sweep_curves_adapter_2 *)this); }
 #define CGAL_Sweep_curves_cons(Y, Z) CGAL_Sweep_curves_pred(Y, Z)
-    
+
     CGAL_Sweep_curves_pred(Compare_xy_2, compare_xy_2_object)
     CGAL_Sweep_curves_pred(Less_xy_2, less_xy_2_object)
     CGAL_Sweep_curves_pred(Is_degenerate_2, is_degenerate_2_object)
-    
+
     CGAL_Sweep_curves_pred(Do_overlap_2, do_overlap_2_object)
     CGAL_Sweep_curves_pred(Compare_y_at_x_2, compare_y_at_x_2_object)
     CGAL_Sweep_curves_pred(Equal_y_at_x_2, equal_y_at_x_2_object)
-    
+
     CGAL_Sweep_curves_pred(Multiplicity_of_intersection_2,
             multiplicity_of_intersection_2_object)
     CGAL_Sweep_curves_pred(Compare_y_right_of_point_2,
             compare_y_right_of_point_2_object)
-            
+
     CGAL_Sweep_curves_cons(Source_2, source_2_object)
     CGAL_Sweep_curves_cons(Target_2, target_2_object)
     CGAL_Sweep_curves_cons(Construct_segment_2, construct_segment_2_object)
-            
+
     CGAL_Sweep_curves_cons(New_endpoints_2, new_endpoints_2_object)
     CGAL_Sweep_curves_cons(New_endpoints_opposite_2,
             new_endpoints_opposite_2_object)
-            
+
     CGAL_Sweep_curves_cons(Intersect_2, intersect_2_object)
     CGAL_Sweep_curves_cons(Intersect_right_of_point_2,
         intersect_right_of_point_2_object)
-        
+
     CGAL_Sweep_curves_cons(Make_x_monotone_2, make_x_monotone_2_object)
 
 #undef CGAL_Sweep_curves_pred
@@ -855,7 +856,7 @@ protected:
 
     //! reference to Curved_kernel_via_analysis_2 object
     Curved_kernel_via_analysis_2 _m_kernel;
-     
+
     //!@}
 }; // class Sweep_curves_adapter_2
 

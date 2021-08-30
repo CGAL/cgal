@@ -127,7 +127,7 @@ CMAKE_CXX_FLAGS:STRING= /DWIN32 /D_WINDOWS /W3 /GR /EHsc -D_CRT_SECURE_NO_DEPREC
 CMAKE_CXX_FLAGS_DEBUG:STRING=/D_DEBUG /MDd /Ob0 /Od /RTC1
 
 //Flags used by the compiler during release minsize builds.
-CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1 
+CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1
 
 //Flags used by the compiler during release builds (/MD /Ob1 /Oi
 // /Ot /Oy /Gs will produce slightly less optimized but smaller

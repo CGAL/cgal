@@ -6,10 +6,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau@geometryfactory.com>
-   
+
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
 
@@ -26,7 +26,7 @@
 CGAL_INLINE_FUNCTION
 void CGAL_Qt_init_resources() {
   Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Triangulation_2); 
+  Q_INIT_RESOURCE(Triangulation_2);
   Q_INIT_RESOURCE(Input);
   Q_INIT_RESOURCE(CGAL);
 }

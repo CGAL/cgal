@@ -18,7 +18,7 @@ int main() {
 
   std::ifstream file;
   file.open("SVD_benchmark");
-  if (!file) 
+  if (!file)
   {
     CGAL_TRACE_STREAM << "Error loading file!\n";
     return 0;
@@ -26,8 +26,8 @@ int main() {
 
   int ite = 200000;
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;
-  Eigen::Matrix3d u, v, m, r;         
-  Eigen::Vector3d w;   
+  Eigen::Matrix3d u, v, m, r;
+  Eigen::Vector3d w;
 
   int matrix_idx = rand()%200;
   for (int i = 0; i < matrix_idx; i++)
@@ -42,24 +42,24 @@ int main() {
   }
 
 
-  CGAL::Timer task_timer; 
+  CGAL::Timer task_timer;
 
   std::cout << "Start SVD decomposition...";
   task_timer.start();
   for (int i = 0; i < ite; i++)
   {
-    
+
     #include <CGAL/internal/Surface_mesh_deformation/auxiliary/Singular_Value_Decomposition_Kernel_Declarations.hpp>
 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa11.f=m(0,0);) 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa21.f=m(1,0);) 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa31.f=m(2,0);) 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa12.f=m(0,1);) 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa22.f=m(1,1);) 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa32.f=m(2,1);) 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa13.f=m(0,2);) 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa23.f=m(1,2);) 
-    ENABLE_SCALAR_IMPLEMENTATION(Sa33.f=m(2,2);) 
+    ENABLE_SCALAR_IMPLEMENTATION(Sa11.f=m(0,0);)
+    ENABLE_SCALAR_IMPLEMENTATION(Sa21.f=m(1,0);)
+    ENABLE_SCALAR_IMPLEMENTATION(Sa31.f=m(2,0);)
+    ENABLE_SCALAR_IMPLEMENTATION(Sa12.f=m(0,1);)
+    ENABLE_SCALAR_IMPLEMENTATION(Sa22.f=m(1,1);)
+    ENABLE_SCALAR_IMPLEMENTATION(Sa32.f=m(2,1);)
+    ENABLE_SCALAR_IMPLEMENTATION(Sa13.f=m(0,2);)
+    ENABLE_SCALAR_IMPLEMENTATION(Sa23.f=m(1,2);)
+    ENABLE_SCALAR_IMPLEMENTATION(Sa33.f=m(2,2);)
 
     ENABLE_SSE_IMPLEMENTATION(Va11=_mm_set1_ps(m(0,0));)
     ENABLE_SSE_IMPLEMENTATION(Va21=_mm_set1_ps(m(1,0));)
@@ -72,7 +72,7 @@ int main() {
     ENABLE_SSE_IMPLEMENTATION(Va33=_mm_set1_ps(m(2,2));)
 
     #include <CGAL/internal/Surface_mesh_deformation/auxiliary/Singular_Value_Decomposition_Main_Kernel_Body.hpp>
-    
+
     std::pair<Eigen::Matrix3d, Eigen::Matrix3d> solver;
 
 #ifdef USE_SCALAR_IMPLEMENTATION

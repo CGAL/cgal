@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -22,7 +22,6 @@
 #include <CGAL/monotone_matrix_search.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 template < class Operation, class RandomAccessIC >
@@ -114,9 +113,9 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
 
   // output result:
   return transform(v.begin(),
-		   v.end(),
-		   o,
-		   boost::bind(modulus<int>(), _1, number_of_points));
+                   v.end(),
+                   o,
+                   [number_of_points](int i){ return i % number_of_points;} );
 } // all_furthest_neighbors_2( ... )
 
 

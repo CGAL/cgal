@@ -35,7 +35,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
                                                          Polyhedron,
                                                          CGAL::Default,
                                                          short> Mesh_domain;
-    
+
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
       typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
@@ -82,7 +82,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
                                         CGAL::parameters::manifold(),
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
-    
+
     CGAL::remove_far_points_in_mesh_3(c3t3);
 
     // Verify
@@ -90,16 +90,16 @@ struct Polyhedron_with_features_tester : public Tester<K>
                  Polyhedral_tag()); //, 1099, 1099, 1158, 1158, 4902, 4902);
 
     std::ofstream out_medit("test-medit.mesh");
-    CGAL::output_to_medit(out_medit, c3t3);
-    CGAL::output_to_tetgen("test-tetgen", c3t3);
+    CGAL::IO::output_to_medit(out_medit, c3t3);
+    CGAL::IO::output_to_tetgen("test-tetgen", c3t3);
     std::ofstream out_binary("test-binary.mesh.cgal",
                              std::ios_base::out|std::ios_base::binary);
-    CGAL::Mesh_3::save_binary_file(out_binary, c3t3);
+    CGAL::IO::save_binary_file(out_binary, c3t3);
     out_binary.close();
     C3t3 c3t3_bis;
     std::ifstream in_binary("test-binary.mesh.cgal",
                              std::ios_base::in|std::ios_base::binary);
-    CGAL::Mesh_3::load_binary_file(in_binary, c3t3_bis);
+    CGAL::IO::load_binary_file(in_binary, c3t3_bis);
     assert(c3t3_bis.triangulation() == c3t3.triangulation());
 
   }
@@ -110,7 +110,7 @@ int main()
   Polyhedron_with_features_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron with edges:\n";
   test_epic();
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   Polyhedron_with_features_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation from a polyhedron with edges:\n";

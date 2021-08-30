@@ -27,7 +27,7 @@ class Gps_circle_segment_traits_2 :
   public Gps_traits_2<Arr_circle_segment_traits_2<Kernel_, Filer_> >
 {
 public:
-  Gps_circle_segment_traits_2<Kernel_, Filer_>(bool use_cache = false) :
+  Gps_circle_segment_traits_2(bool use_cache = false) :
     Gps_traits_2<Arr_circle_segment_traits_2<Kernel_, Filer_> >()
   {
     this->m_use_cache = use_cache;

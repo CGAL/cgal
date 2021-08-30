@@ -1,4 +1,5 @@
 /*!
+\example Surface_mesh_simplification/edge_collapse_envelope.cpp
 \example Surface_mesh_simplification/edge_collapse_polyhedron.cpp
 \example Surface_mesh_simplification/edge_collapse_OpenMesh.cpp
 \example Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp
@@ -9,4 +10,5 @@
 \example Surface_mesh_simplification/edge_collapse_all_short_edges.cpp
 \example Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp
 \example Surface_mesh_simplification/edge_collapse_visitor_surface_mesh.cpp
+\example Surface_mesh_simplification/edge_collapse_garland_heckbert.cpp
 */

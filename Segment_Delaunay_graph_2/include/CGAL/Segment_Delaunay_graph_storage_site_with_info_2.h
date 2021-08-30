@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -75,7 +75,7 @@ private:
 public:
   // COPY CONSTRUCTOR
   //-----------------
-  Segment_Delaunay_graph_storage_site_with_info_2(const Self& other) 
+  Segment_Delaunay_graph_storage_site_with_info_2(const Self& other)
     : Base(other)
   {
     info_set_ = other.info_set_;
@@ -119,7 +119,7 @@ public:
   // ACCESS TO INFO
   //---------------
   inline const Info& info() const {
-    CGAL_precondition( info_has_been_set() );
+    CGAL_assume(info_has_been_set());
     return info_;
   }
 

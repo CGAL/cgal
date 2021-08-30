@@ -15,7 +15,7 @@ namespace CGAL {
 \cgalAutoToc
 \author %CGAL Editorial Board
 
-This tutorial is for the %CGAL newbie, who knows \CC and has
+This tutorial is for the \cgal newbie, who knows \CC and has
 a basic knowledge of geometric algorithms. The first section
 shows how to define a point and segment class, and how to
 apply geometric predicates on them. The section further raises
@@ -241,7 +241,7 @@ ch_graham_andrew( InputIterator  first,
 There are two obvious questions: What can be used as argument for
 this template parameter? And why do we have template parameters at all?
 
-To answer the first question, any model of the %CGAL concept `Kernel` provides
+To answer the first question, any model of the \cgal concept `Kernel` provides
 what is required by the concept `ConvexHullTraits_2`.
 
 As for the second question, think about an application where we want to
@@ -252,7 +252,7 @@ of the previous example.
 \cgalExample{Convex_hull_2/convex_hull_yz.cpp}
 
 Another example would be about a user defined point type, or a point
-type coming from a third party library other than %CGAL. Put the point
+type coming from a third party library other than \cgal. Put the point
 type together with the required predicates for this point type in the
 scope of a class, and you can run `convex_hull_2()` with these
 points.
@@ -308,7 +308,7 @@ there must be a global function `halfedges(const G&)`, etc.
 
 An example for a concept with a required traits class is `InputIterator`.
 For a model of an `InputIterator` a specialization of the class
-<a href="http://en.cppreference.com/w/cpp/iterator/iterator_traits"> `std::iterator_traits`</a>
+<a href="https://en.cppreference.com/w/cpp/iterator/iterator_traits"> `std::iterator_traits`</a>
 must exist (or the generic template must be applicable).
 
 \section intro_further Further Reading

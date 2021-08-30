@@ -4,9 +4,9 @@
 // This file is part of CGAL (www.cgal.org).
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -28,12 +28,12 @@
 namespace CGAL {
 
 template < class AK >
-inline 
+inline
 typename AK::Polynomial_for_spheres_2_3
 construct_polynomial_sphere_2_3(const typename AK::FT& xc,
-			       const typename AK::FT& yc,
-			       const typename AK::FT& zc,
-			       const typename AK::FT& r_sq)
+                               const typename AK::FT& yc,
+                               const typename AK::FT& zc,
+                               const typename AK::FT& r_sq)
 { return AK().construct_polynomial_sphere_2_3_object()(xc, yc, zc, r_sq); }
 
 } //namespace CGAL

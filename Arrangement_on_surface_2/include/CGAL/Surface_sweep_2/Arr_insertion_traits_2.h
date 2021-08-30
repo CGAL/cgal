@@ -80,17 +80,13 @@ public:
   protected:
     //! The base operators.
     Base_intersect_2 m_base_intersect;
-    Halfedge_handle invalid_he;
 
     /*! Constructor.
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Intersect_2(const Base_intersect_2& base) :
-      m_base_intersect (base),
-      invalid_he()
-    {}
+    Intersect_2(const Base_intersect_2& base) :  m_base_intersect (base) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_insertion_traits_2<Gt2, Arrangement_2>;
@@ -101,6 +97,14 @@ public:
                               const X_monotone_curve_2& cv2,
                               OutputIterator oi)
     {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+      typedef boost::variant<Intersection_point, Base_x_monotone_curve_2>
+                                                        Intersection_base_result;
+
+      Halfedge_handle invalid_he;
+
       if ((cv1.halfedge_handle() != invalid_he) &&
           (cv2.halfedge_handle() != invalid_he) &&
           (cv1.halfedge_handle() != cv2.halfedge_handle()))
@@ -110,40 +114,32 @@ public:
         return oi;
       }
 
-      OutputIterator oi_end = m_base_intersect(cv1.base(), cv2.base(), oi);
-      const Base_x_monotone_curve_2* base_overlap_cv;
-      const std::pair<Base_point_2, unsigned int>* intersect_p;
-
+      std::vector<Intersection_base_result> xections;
+      m_base_intersect(cv1.base(), cv2.base(), std::back_inserter(xections));
       // convert objects that are associated with Base_x_monotone_curve_2 to
       // X_monotone_curve_2
-      for(; oi != oi_end; ++oi) {
-        base_overlap_cv = object_cast<Base_x_monotone_curve_2>(&(*oi));
-        if (base_overlap_cv != nullptr) {
-          // Add halfedge handles to the resulting curve.
-          Halfedge_handle he;
-
-          if (cv1.halfedge_handle() != invalid_he) he = cv1.halfedge_handle();
-          else if (cv2.halfedge_handle() != invalid_he)
-            he = cv2.halfedge_handle();
-
-          X_monotone_curve_2 overlap_cv (*base_overlap_cv, he);
-
-          overlap_cv.set_overlapping();
-          *oi = make_object (overlap_cv);
+      for (const auto& xection : xections) {
+        const Intersection_point*
+          p_p = boost::get<Intersection_point>(&xection);
+        if (p_p != nullptr) {
+          *oi++ = Intersection_result(xection);
+          continue;
         }
-        else {
-          intersect_p =
-            object_cast<std::pair<Base_point_2, unsigned int> >(&(*oi));
+        const Base_x_monotone_curve_2* base_cv_p =
+          boost::get<Base_x_monotone_curve_2>(&xection);
+        CGAL_assertion(base_cv_p);
 
-          CGAL_assertion (intersect_p != nullptr);
-
-          *oi = make_object(std::make_pair(Point_2(intersect_p->first),
-                                           intersect_p->second));
-        }
+        // Add halfedge handles to the resulting curve.
+        Halfedge_handle he;
+        if (cv1.halfedge_handle() != invalid_he) he = cv1.halfedge_handle();
+        else if (cv2.halfedge_handle() != invalid_he)
+          he = cv2.halfedge_handle();
+        X_monotone_curve_2 cv(*base_cv_p, he);
+        cv.set_overlapping();
+        *oi++ = Intersection_result(cv);
       }
-
-      // Return a past-the-end iterator.
-      return oi_end;
+      xections.clear();
+      return oi;
     }
   };
 

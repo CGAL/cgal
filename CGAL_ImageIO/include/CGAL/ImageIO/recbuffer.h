@@ -17,15 +17,15 @@
  *
  * Copyright©INRIA 1999
  *
- * DESCRIPTION: 
+ * DESCRIPTION:
  *
  *
  *
  * AUTHOR:
  * Gregoire Malandain (greg@sophia.inria.fr)
  * http://www.inria.fr/epidaure/personnel/malandain/
- * 
- * CREATION DATE: 
+ *
+ * CREATION DATE:
  * June, 9 1998
  *
  * Copyright Gregoire Malandain, INRIA
@@ -48,26 +48,26 @@
 
 
 extern int GradientModulus( void *bufferIn, bufferType typeIn,
-			    void *bufferOut, bufferType typeOut,
-			    int *bufferDims, int *borderLengths,
-			    float *filterCoefs, recursiveFilterType filterType );
+                            void *bufferOut, bufferType typeOut,
+                            int *bufferDims, int *borderLengths,
+                            float *filterCoefs, recursiveFilterType filterType );
 extern int Laplacian_2D( void *bufferIn, bufferType typeIn,
-			 void *bufferOut, bufferType typeOut,
-			 int *bufferDims, int *borderLengths,
-			 float *filterCoefs, recursiveFilterType filterType );
+                         void *bufferOut, bufferType typeOut,
+                         int *bufferDims, int *borderLengths,
+                         float *filterCoefs, recursiveFilterType filterType );
 extern int Laplacian( void *bufferIn, bufferType typeIn,
-		      void *bufferOut, bufferType typeOut,
-		      int *bufferDims, int *borderLengths,
-		      float *filterCoefs, recursiveFilterType filterType );
+                      void *bufferOut, bufferType typeOut,
+                      int *bufferDims, int *borderLengths,
+                      float *filterCoefs, recursiveFilterType filterType );
 
 extern int GradientHessianGradient_2D( void *bufferIn, bufferType typeIn,
-			 void *bufferOut, bufferType typeOut,
-			 int *bufferDims, int *borderLengths,
-			 float *filterCoefs, recursiveFilterType filterType );
+                         void *bufferOut, bufferType typeOut,
+                         int *bufferDims, int *borderLengths,
+                         float *filterCoefs, recursiveFilterType filterType );
 extern int GradientHessianGradient( void *bufferIn, bufferType typeIn,
-		      void *bufferOut, bufferType typeOut,
-		      int *bufferDims, int *borderLengths,
-		      float *filterCoefs, recursiveFilterType filterType );
+                      void *bufferOut, bufferType typeOut,
+                      int *bufferDims, int *borderLengths,
+                      float *filterCoefs, recursiveFilterType filterType );
 
 
 
@@ -77,21 +77,21 @@ extern int GradientHessianGradient( void *bufferIn, bufferType typeIn,
  *
  * DESCRIPTION:
  * Performs recursive filtering on 3D buffers.
- * Each direction (X, Y or Z) is performed 
+ * Each direction (X, Y or Z) is performed
  * independently (separability).
  *
  * A direction is filtered if there are enough
  * points along this direction (at least 5),
- * if the coefficient along this direction is 
+ * if the coefficient along this direction is
  * positive, and if the derivative's order along
  * this direction is not NODERIVATIVE (see
  * derivativeOrder).
  *
  * Once a line along a direction is extracted for
- * filtering, one may want to add points at both 
+ * filtering, one may want to add points at both
  * ends of the line to avoid cut-off effects. The
  * value of each endpoint is repeated n times.
- * Thus the length of the line is increased by 
+ * Thus the length of the line is increased by
  * 2*n.
  *
  * PARAMETERS:
@@ -104,9 +104,9 @@ extern int GradientHessianGradient( void *bufferIn, bufferType typeIn,
  *
  * - borderLengths[0] is the number of points to be
  *   added at both ends of each X line (if
- *   positive). The value of each endpoint is 
+ *   positive). The value of each endpoint is
  *   repeated borderLengths[0] times to produce
- *   a line of length 
+ *   a line of length
  *   bufferDims[0] + 2 * borderLengths[0].
  *
  *   borderLengths[1] is the number of points to be
@@ -115,23 +115,23 @@ extern int GradientHessianGradient( void *bufferIn, bufferType typeIn,
  *   borderLengths[2] is the number of points to be
  *   added at both ends of each Z line.
  *
- * - derivatives[0] is the order of the derivative 
- *   to be computed along direction X. 
+ * - derivatives[0] is the order of the derivative
+ *   to be computed along direction X.
  *
- *   derivatives[1] is the order of the derivative 
- *   to be computed along direction Y. 
+ *   derivatives[1] is the order of the derivative
+ *   to be computed along direction Y.
  *
- *   derivatives[2] is the order of the derivative 
- *   to be computed along direction Z. 
+ *   derivatives[2] is the order of the derivative
+ *   to be computed along direction Z.
  *
  * - filterCoefs[0] is the coefficient of the filter
- *   to be applied along direction X. 
+ *   to be applied along direction X.
  *
  *   filterCoefs[1] is the coefficient of the filter
- *   to be applied along direction Y. 
+ *   to be applied along direction Y.
  *
  *   filterCoefs[2] is the coefficient of the filter
- *   to be applied along direction Z. 
+ *   to be applied along direction Z.
  *
  * - filterType is the type of recursive filter to
  *   be applied to the 3D buffer.
@@ -153,15 +153,15 @@ extern int GradientHessianGradient( void *bufferIn, bufferType typeIn,
  * - InitRecursiveCoefficients
  */
 extern int RecursiveFilterOnBuffer( void *bufferIn, /* input buffer */
-				    bufferType typeIn, /* type of the input buffer */
-				    void *bufferOut, /* output buffer */
-				    bufferType typeOut, /* type of the output buffer */
-				    int *bufferDims, /* buffers' dimensions */
-				    int *borderLengths, /* number of points to be added at both ends */
-				    derivativeOrder *derivatives, /* order of derivatives to be computed */
-				    float *filterCoefs, /* coefficients of the filters to be applied */
-				    recursiveFilterType filterType /* type of the recursive filter to be applied */
-				    );
+                                    bufferType typeIn, /* type of the input buffer */
+                                    void *bufferOut, /* output buffer */
+                                    bufferType typeOut, /* type of the output buffer */
+                                    int *bufferDims, /* buffers' dimensions */
+                                    int *borderLengths, /* number of points to be added at both ends */
+                                    derivativeOrder *derivatives, /* order of derivatives to be computed */
+                                    float *filterCoefs, /* coefficients of the filters to be applied */
+                                    recursiveFilterType filterType /* type of the recursive filter to be applied */
+                                    );
 
 
 
@@ -169,7 +169,7 @@ extern int RecursiveFilterOnBuffer( void *bufferIn, /* input buffer */
  *
  * DESCRIPTION:
  * Some information will be written on stderr when processing.
- * It will turn on the verbose mode of recline too, by 
+ * It will turn on the verbose mode of recline too, by
  * calling Recline_verbose();
  */
 extern void Recbuffer_verbose ( );

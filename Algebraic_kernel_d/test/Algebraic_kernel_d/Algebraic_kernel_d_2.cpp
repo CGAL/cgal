@@ -5,7 +5,7 @@
 //
 // $URL:$
 // $Id: $
-// 
+//
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
@@ -42,17 +42,17 @@ int main() {
 
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "TESTING LEDA" << std::endl;
-#endif    
+#endif
     {
-      
+
       typedef CGAL::LEDA_arithmetic_kernel AK;
       test_algebraic_kernel<AK::Integer>();
       /*
       test_algebraic_kernel<AK::Rational>();
       test_algebraic_kernel<CGAL::Sqrt_extension<AK::Integer,AK::Integer> >();
-      
+
       test_algebraic_kernel
-	<CGAL::Sqrt_extension<AK::Rational,AK::Rational> >();
+        <CGAL::Sqrt_extension<AK::Rational,AK::Rational> >();
       */
     }
 #else
@@ -63,16 +63,16 @@ int main() {
 #ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "TESTING CORE" << std::endl;
-#endif          
+#endif
     {
       typedef CGAL::CORE_arithmetic_kernel AK;
       test_algebraic_kernel<AK::Integer>();
       /*
       test_algebraic_kernel<AK::Rational>();
       test_algebraic_kernel<CGAL::Sqrt_extension<AK::Integer,AK::Integer> >();
-      
+
       test_algebraic_kernel
-	<CGAL::Sqrt_extension<AK::Rational,AK::Rational> >();
+        <CGAL::Sqrt_extension<AK::Rational,AK::Rational> >();
       */
     }
 #else
@@ -83,16 +83,16 @@ int main() {
 #ifdef CGAL_HAS_GMP_ARITHMETIC_KERNEL
 #if CGAL_ACK_DEBUG_FLAG
     CGAL_ACK_DEBUG_PRINT << "TESTING GMP" << std::endl;
-#endif       
+#endif
     {
       typedef CGAL::GMP_arithmetic_kernel AK;
       test_algebraic_kernel<AK::Integer>();
       /*
       test_algebraic_kernel<AK::Rational>();
       test_algebraic_kernel<CGAL::Sqrt_extension<AK::Integer,AK::Integer> >();
-      
+
       test_algebraic_kernel
-	<CGAL::Sqrt_extension<AK::Rational,AK::Rational> >();
+        <CGAL::Sqrt_extension<AK::Rational,AK::Rational> >();
       */
     }
 #else

@@ -20,7 +20,7 @@
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 #include <CGAL/tss.h>
 
 #include <boost/iterator/zip_iterator.hpp>
@@ -143,7 +143,7 @@ public:
   {
     insert(first, last);
   }
-  
+
   Periodic_2_Delaunay_triangulation_2& operator=(const Periodic_2_Delaunay_triangulation_2&)=default;
   // \}
 
@@ -216,7 +216,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last, bool is_large_point_set = true)
-#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO 
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
     if (first == last) return 0;
 

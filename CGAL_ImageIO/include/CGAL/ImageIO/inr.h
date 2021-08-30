@@ -23,7 +23,7 @@
     @param im image descriptor
     @param end image data endianness (END_UNKNOWN to use architecture endianness) */
 int _writeInrimageHeader(const _image *im,
-			 ENDIANNESS end);
+                         ENDIANNESS end);
 
 /** Writes the given image body in an already opened file.
     @param im image descriptor */
@@ -38,10 +38,10 @@ int readInrimageHeader(const char *,_image *im);
     @param magic this string is of size 5 and corresponds to the first 4 characters of the file (terminated with a null character)
     @param filename the file name
     @return -1 if it is not an Inrimage file and 0 otherwise */
-int testInrimageHeader(char *magic,const char *filename); 
+int testInrimageHeader(char *magic,const char *filename);
 
 /** calls _writeInrimageHeader and _writeInrimageData
-    @param basename the file name without any extension 
+    @param basename the file name without any extension
     @param im structure
     @return same as  _writeInrimageHeader*/
 int writeInrimage(char *basename,_image *im);

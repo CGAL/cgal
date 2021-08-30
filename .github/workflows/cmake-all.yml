@@ -1,6 +1,6 @@
 name: CMake all CGAL
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -8,9 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v1
-      with:
-        fetch-depth: 0
+    - uses: actions/checkout@v2.0.0
     - name: install dependencies
       run: sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
     - name: configure all

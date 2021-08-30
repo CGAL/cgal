@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
@@ -16,8 +16,8 @@
 //         they may be wrong now.
 
 /*! \file NiX/Descartes.h
-  \brief Defines class NiX::Descartes. 
-  
+  \brief defines class NiX::Descartes.
+
   Isolate real roots of polynomials.
 
   This file provides a class to isolate real roots of polynomials,
@@ -32,7 +32,7 @@
 #define CGAL_ALGEBRAIC_KERNEL_D_DESCARTES_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Polynomial.h> 
+#include <CGAL/Polynomial.h>
 
 #include <CGAL/Algebraic_kernel_d/univariate_polynomial_utils.h>
 #include <CGAL/Algebraic_kernel_d/construct_binary.h>
@@ -47,9 +47,9 @@ namespace CGAL {
 namespace internal {
 
 /*! \ingroup NiX_Algebraic_real
- *  \brief A model of concept RealRootIsolator. 
+ *  \brief A model of concept RealRootIsolator.
  */
-template <class Polynomial_, class Rational_> 
+template <class Polynomial_, class Rational_>
 class Descartes {
     typedef CGAL::Fraction_traits<Polynomial_> FT_poly;
     typedef Fraction_traits<Rational_> FT_rat;
@@ -65,63 +65,63 @@ public:
 private:
     typedef typename Polynomial::NT Coeff;
     typedef Integer IT;
-    
+
     Polynomial poly_;
-    int number_of_real_roots_;   
-    IT* numerator;   
-    IT* denominator_exponent; 
+    int number_of_real_roots_;
+    IT* numerator;
+    IT* denominator_exponent;
     bool* is_exact;
     IT LEFT,SCALE,DENOM;
     bool is_strong_;
     int k;
     bool interval_given;
-    
+
 public:
     /*! \brief Constructor from univariate square free polynomial.
-    
-    The RealRootIsolator provides isolating intervals for the real 
+
+    The RealRootIsolator provides isolating intervals for the real
     roots of the polynomial.
-    \pre the polynomial is square free      
+    \pre the polynomial is square free
     */
-    Descartes(const Polynomial& P = Polynomial(Coeff(0)), 
+    Descartes(const Polynomial& P = Polynomial(Coeff(0)),
             bool is_strong = false,
-            int kk = 2) 
-        : poly_(P) , 
-          is_strong_(is_strong), 
+            int kk = 2)
+        : poly_(P) ,
+          is_strong_(is_strong),
           k(kk),
           interval_given(false) {
-        
-        numerator = new IT[CGAL::degree(P)]; 
+
+        numerator = new IT[CGAL::degree(P)];
         denominator_exponent = new IT[CGAL::degree(P)];
-        is_exact = new bool[CGAL::degree(P)]; 
+        is_exact = new bool[CGAL::degree(P)];
         number_of_real_roots_ = 0;
-        if(CGAL::degree(P) == 0) 
-            { 
+        if(CGAL::degree(P) == 0)
+            {
                 if(P.is_zero()) number_of_real_roots_ = -1;
                 return;
             }
-        
+
         intern_decompose(poly_,typename FT_poly::Is_fraction());
     }
-    
-    // constructor for coefficient types \c Coeff with given interval 
+
+    // constructor for coefficient types \c Coeff with given interval
     // (experimental)
     Descartes(const Polynomial& P,
             const Rational& left,
             const Rational& right,
             bool is_strong = false,
-            int kk = 2) 
-        : poly_(P) , 
-          is_strong_(is_strong), 
+            int kk = 2)
+        : poly_(P) ,
+          is_strong_(is_strong),
           k(kk),
           interval_given(true) {
-        
-        numerator = new IT[CGAL::degree(P)]; 
+
+        numerator = new IT[CGAL::degree(P)];
         denominator_exponent = new IT[CGAL::degree(P)];
         is_exact = new bool[CGAL::degree(P)];
         number_of_real_roots_ = 0;
-        if(CGAL::degree(P) == 0) 
-            { 
+        if(CGAL::degree(P) == 0)
+            {
                 if(P.is_zero()) number_of_real_roots_ = -1;
                 return;
             }
@@ -130,7 +130,7 @@ public:
         typedef typename FT_rat::Denominator Denominator;
         Numerator numleft, numright;
         Denominator denleft, denright;
- 
+
         decompose(left,numleft,denleft);
         decompose(right,numright,denright);
 
@@ -144,18 +144,18 @@ public:
 
     //! copy constructor
     Descartes(const Descartes& D)
-        : poly_(D.poly_), 
+        : poly_(D.poly_),
           number_of_real_roots_(D.number_of_real_roots_),
-          LEFT(D.LEFT), 
+          LEFT(D.LEFT),
           SCALE(D.SCALE),
           DENOM(D.DENOM),
-          is_strong_(D.is_strong_), 
+          is_strong_(D.is_strong_),
           k(D.k),
           interval_given(D.interval_given) {
-        
-        numerator = new IT[CGAL::degree(poly_)]; 
+
+        numerator = new IT[CGAL::degree(poly_)];
         denominator_exponent = new IT[CGAL::degree(poly_)];
-        is_exact = new bool[CGAL::degree(poly_)]; 
+        is_exact = new bool[CGAL::degree(poly_)];
         for(int i=0; i<number_of_real_roots(); i++)
             {
                 numerator[i] = D.numerator[i];
@@ -172,36 +172,36 @@ public:
     }
 
 public: // functions
-    
-    /*! \brief returns the defining polynomial*/ 
+
+    /*! \brief returns the defining polynomial*/
     Polynomial polynomial() const { return poly_; }
-    
+
     //! returns the number of real roots
     int number_of_real_roots() const { return number_of_real_roots_; }
 
-    /*! \brief returns true if the isolating interval is degenerated to a 
+    /*! \brief returns true if the isolating interval is degenerated to a
       single point.
-      
-      If is_exact_root(i) is true, 
+
+      If is_exact_root(i) is true,
       then left_bound(int i) equals  \f$root_i\f$. \n
-      If is_exact_root(i) is true, 
-      then right_bound(int i) equals  \f$root_i\f$. \n 
+      If is_exact_root(i) is true,
+      then right_bound(int i) equals  \f$root_i\f$. \n
     */
     bool is_exact_root(int i) const { return is_exact[i]; }
-      
- 
-   
-public:   
-  
-  
+
+
+
+public:
+
+
     void left_bound(int i, IT& numerator_, IT& denominator_) const {
         CGAL_assertion(i >= 0 && i < number_of_real_roots_);
         construct_binary(denominator_exponent[i], denominator_);
         numerator_= SCALE * numerator[i] + LEFT * denominator_;
         denominator_ = denominator_ * DENOM;
     }
-    
-  
+
+
     void right_bound(int i,IT& numerator_, IT& denominator_) const {
         CGAL_assertion(i >= 0 && i < number_of_real_roots_);
         if(is_exact[i]){
@@ -214,61 +214,61 @@ public:
         }
     }
 public:
-    
-    /*! \brief returns  \f${l_i}\f$ the left bound of the isolating interval 
+
+    /*! \brief returns  \f${l_i}\f$ the left bound of the isolating interval
       for root  \f$root_{i}\f$.
-      
+
       In case is_exact_root(i) is true,  \f$l_i = root_{i}\f$,\n
-      otherwise:  \f$l_i < root_{i}\f$. 
-         
+      otherwise:  \f$l_i < root_{i}\f$.
+
       If  \f$i-1>=0\f$, then  \f$l_i > root_{i-1}\f$. \n
-      If  \f$i-1>=0\f$, then  \f$l_i >= r_{i-1}\f$, 
+      If  \f$i-1>=0\f$, then  \f$l_i >= r_{i-1}\f$,
       the right bound of  \f$root_{i-1}\f$\n
 
       \pre 0 <= i < number_of_real_roots()
     */
-    Rational left_bound(int i) const { 
+    Rational left_bound(int i) const {
         IT numerator_, denominator_;
         left_bound(i,numerator_,denominator_);
         return Rational(numerator_) / Rational(denominator_);
     }
-    
-    /*! \brief returns  \f${r_i}\f$ the right bound of the isolating interval 
+
+    /*! \brief returns  \f${r_i}\f$ the right bound of the isolating interval
       for root  \f$root_{i}\f$.
-      
+
       In case is_exact_root(i) is true,  \f$r_i = root_{i}\f$,\n
-      otherwise:  \f$r_i > root_{i}\f$. 
-         
+      otherwise:  \f$r_i > root_{i}\f$.
+
       If  \f$i+1< n \f$, then  \f$r_i < root_{i+1}\f$,
       where \f$n\f$ is number of real roots.\n
-      If  \f$i+1< n \f$, then  \f$r_i <= l_{i+1}\f$, 
+      If  \f$i+1< n \f$, then  \f$r_i <= l_{i+1}\f$,
       the left bound of  \f$root_{i+1}\f$\n
 
-        
+
       \pre 0 <= i < number_of_real_roots()
     */
-    Rational right_bound(int i) const { 
+    Rational right_bound(int i) const {
         IT numerator_, denominator_;
         right_bound(i,numerator_,denominator_);
         return Rational(numerator_) / Rational(denominator_);
-    }  
-    
+    }
+
 private:
     void intern_decompose( Polynomial P_, ::CGAL::Tag_true){
         typename FT_poly::Decompose decompose;
         typename FT_poly::Numerator_type NumP;
         typename FT_poly::Denominator_type dummy;
- 
+
         decompose(P_,NumP,dummy);
         init_with(NumP);
     }
 
-    void intern_decompose( Polynomial P, ::CGAL::Tag_false){ 
+    void intern_decompose( Polynomial P, ::CGAL::Tag_false){
         init_with(P);
     }
 
-  
-    template<class Polynomial__> 
+
+    template<class Polynomial__>
     void init_with(const Polynomial__& P){
         typedef typename  Polynomial__::NT Coeff;
         if(!interval_given)
@@ -281,28 +281,28 @@ private:
         Polynomial__ Q = ::CGAL::scale_up(R,Coeff(SCALE));
         zero_one_descartes<Coeff>(Q,0,0);
     }
-    
-    
+
+
     //! returns the polynomial $(1 + x)^n P(1/(1 + x))$.
     template <class Coeff__>
     /*
-    typename 
-    CGAL::Polynomial_traits_d<Polynomial> 
+    typename
+    CGAL::Polynomial_traits_d<Polynomial>
     ::template Rebind<Coeff__,1>::Other::Type
     */
-    POLYNOMIAL_REBIND(Coeff__) 
-        variation_transformation(const POLYNOMIAL_REBIND(Coeff__)& P) { 
+    POLYNOMIAL_REBIND(Coeff__)
+        variation_transformation(const POLYNOMIAL_REBIND(Coeff__)& P) {
         POLYNOMIAL_REBIND(Coeff__) R = reversal(P);
-        return translate_by_one(R); 
+        return translate_by_one(R);
     }
 
     //! Returns an upper bound on the absolute value of all roots of $P$.
     /*! The upper bound is a power of two. Only works for univariate
-     * polynomials. 
+     * polynomials.
      */
     template <class Coeff__>
-    IT weak_upper_root_bound(const POLYNOMIAL_REBIND(Coeff__)& P) { 
-  
+    IT weak_upper_root_bound(const POLYNOMIAL_REBIND(Coeff__)& P) {
+
         typename Real_embeddable_traits<Coeff__>::Abs abs;
         const int n = CGAL::degree(P);
         IT r(1);  // return value
@@ -328,29 +328,29 @@ private:
             return false;
         return (P[0] != Coeff__(0) && P.evaluate(Coeff__(1)) != Coeff__(0));
     }
-    //! Descartes algoritm to determine isolating intervals for the roots 
+    //! Descartes algoritm to determine isolating intervals for the roots
     //! lying in the interval (0,1).
     // The parameters $(i,D)$ describe the interval $(i/2^D, (i+1)/2^D)$.
     // Here $0\leq i < 2^D$.
     template <class Coeff__>
     void zero_one_descartes(const POLYNOMIAL_REBIND(Coeff__)& P,
-            IT i, IT D) { 
-        // Determine the number of sign variations of the transformed 
-        // polynomial $(1+x)^nP(1/(1+x))$. This gives the number of 
+            IT i, IT D) {
+        // Determine the number of sign variations of the transformed
+        // polynomial $(1+x)^nP(1/(1+x))$. This gives the number of
         // roots of $P$ in $(0,1)$.
 
         POLYNOMIAL_REBIND(Coeff__) R = variation_transformation<Coeff__>(P);
         int descarte = sign_variations(R);
-        
+
         // no root
         if ( descarte == 0 ) return;
 
         // exactly one root
         // Note the termination criterion $P(0)\neq 0$ and $P(1)\neq 0$.
         // This ensures that the given interval is an isolating interval.
-        if ( descarte == 1 
-                && P[0] != Coeff__(0) 
-                && P.evaluate(Coeff__(1)) != Coeff__(0) ) { 
+        if ( descarte == 1
+                && P[0] != Coeff__(0)
+                && P.evaluate(Coeff__(1)) != Coeff__(0) ) {
             if(is_strong_) {
                 strong_zero_one_descartes<Coeff__>(P,i,D);
                 return;
@@ -360,8 +360,8 @@ private:
                 denominator_exponent[number_of_real_roots_] = D;
                 is_exact[number_of_real_roots_] = false;
                 number_of_real_roots_++;
-                return; 
-            } 
+                return;
+            }
         }
 
         // more than one root
@@ -371,33 +371,33 @@ private:
         // Transform the polynomial such that the first half of the interval
         // is mapped to the unit interval.
         POLYNOMIAL_REBIND(Coeff__) Q = scale_down(P,Coeff__(2));
- 
+
         // Consider the first half of the interval.
         zero_one_descartes<Coeff__>(Q,i,D);
-     
-        // Test if the polynomial is zero at the midpoint of the interval 
+
+        // Test if the polynomial is zero at the midpoint of the interval
         POLYNOMIAL_REBIND(Coeff__)  S = translate_by_one(Q);
-        if ( S[0] == Coeff__(0) ) { 
+        if ( S[0] == Coeff__(0) ) {
             numerator[number_of_real_roots_] = i + 1;
             denominator_exponent[number_of_real_roots_] = D;
             is_exact[number_of_real_roots_] = true;
             number_of_real_roots_++;
         }
-         
-        // Consider the second half of the interval. 
-        zero_one_descartes<Coeff__>(S,i+1,D); 
+
+        // Consider the second half of the interval.
+        zero_one_descartes<Coeff__>(S,i+1,D);
     }
 
 
-    //! Strong Descartes algoritm to determine isolating intervals for the 
+    //! Strong Descartes algoritm to determine isolating intervals for the
     //! roots lying in the interval (0,1), where the first
-    //! derivative have no sign change. \pre $P$ has only one root in the 
+    //! derivative have no sign change. \pre $P$ has only one root in the
     //! interval given by $(i,D)$.
     // The parameters $(i,D)$ describe the interval $(i/2^D, (i+1)/2^D)$.
     // Here $0\leq i < D$.
     template <class Coeff__>
     void strong_zero_one_descartes(const POLYNOMIAL_REBIND(Coeff__)& P,
-            IT i, IT D) { 
+            IT i, IT D) {
 
         // Test if the polynomial P' has no roots in the
         // interval. For further use in Newton, the interval should be not
@@ -422,11 +422,11 @@ private:
                 denominator_exponent[number_of_real_roots_] = D;
                 is_exact[number_of_real_roots_] = false;
                 number_of_real_roots_++;
-                return; 
+                return;
             }
         }
 
-        // either $P'$ fails the test, 
+        // either $P'$ fails the test,
         // or the interval is too large
         // Refine the interval.
         i = 2*i; D = D+1;
@@ -434,10 +434,10 @@ private:
         // Transform the polynomial such that the first half of the interval
         // is mapped to the unit interval.
         POLYNOMIAL_REBIND(Coeff__) Q = scale_down(P,Coeff__(2));
- 
-        // Test if the polynomial is zero at the midpoint of the interval 
+
+        // Test if the polynomial is zero at the midpoint of the interval
         POLYNOMIAL_REBIND(Coeff__)  S = translate_by_one(Q);
-        if ( S[0] == Coeff__(0) ) { 
+        if ( S[0] == Coeff__(0) ) {
             numerator[number_of_real_roots_] = i + 1;
             denominator_exponent[number_of_real_roots_] = D;
             is_exact[number_of_real_roots_] = true;
@@ -450,11 +450,11 @@ private:
             strong_zero_one_descartes<Coeff__>(Q,i,D);
             return;
         }
-         
-        // Consider the second half of the interval. 
-        strong_zero_one_descartes<Coeff__>(S,i+1,D); 
+
+        // Consider the second half of the interval.
+        strong_zero_one_descartes<Coeff__>(S,i+1,D);
         return;
-    } 
+    }
 };
 
 } // namespace internal

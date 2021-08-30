@@ -90,6 +90,11 @@ public:
        : Triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition(is_valid());  }
 
+  Delaunay_triangulation_2(Delaunay_triangulation_2&&) = default;
+  Delaunay_triangulation_2& operator=(const Delaunay_triangulation_2&) = default;
+  Delaunay_triangulation_2& operator=(Delaunay_triangulation_2&&) = default;
+  ~Delaunay_triangulation_2() = default;
+
  template <class InputIterator>
  Delaunay_triangulation_2(InputIterator first, InputIterator last,
                           const Gt& gt = Gt())
@@ -322,10 +327,10 @@ public:
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 private:
- 
+
   using Triangulation::top_get_first;
   using Triangulation::top_get_second;
-  
+
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {

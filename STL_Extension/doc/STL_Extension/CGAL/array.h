@@ -8,7 +8,7 @@ the function. The position of each argument in the array is the same
 as its position in the argument list.
 
 The maximal number of arguments is `6`.
-*/ 
+*/
 template <class T> std::array<T, N> make_array(const T&...);
 
 /*!

@@ -32,14 +32,14 @@ namespace CGAL {
  * Representation of an envelope diagram (a minimization diagram or a
  * maximization diagram).
  */
-template <class GeomTraits_, class TopTraits_ = 
-          typename Default_planar_topology< 
+template <class GeomTraits_, class TopTraits_ =
+          typename Default_planar_topology<
                                GeomTraits_,
                                Envelope_3::Envelope_pm_dcel<
-                                 GeomTraits_, 
+                                 GeomTraits_,
                                  typename GeomTraits_::Xy_monotone_surface_3
                                > >::Traits
-          > 
+          >
 class Envelope_diagram_on_surface_2 :
 public Arrangement_on_surface_2<GeomTraits_, TopTraits_>
 {
@@ -55,7 +55,7 @@ protected:
   friend class Arr_accessor<Self>;
 
 public:
-  typedef Arrangement_on_surface_2<Traits_3, 
+  typedef Arrangement_on_surface_2<Traits_3,
     TopTraits>                                          Base;
   // This is yacky, but we have not choice because of observer stuff.
   typedef Base                                          Arrangement;
@@ -80,10 +80,10 @@ public:
  * maximization diagram).
  */
 
-template <class GeomTraits_, 
-          class Dcel_ = Envelope_3::Envelope_pm_dcel< 
+template <class GeomTraits_,
+          class Dcel_ = Envelope_3::Envelope_pm_dcel<
             GeomTraits_, typename GeomTraits_::Xy_monotone_surface_3
-            > 
+            >
           >
 class Envelope_diagram_2 :
   public Envelope_diagram_on_surface_2< GeomTraits_,
@@ -94,7 +94,7 @@ class Envelope_diagram_2 :
 public:
   typedef GeomTraits_                                   Traits_3;
   typedef typename Traits_3::Xy_monotone_surface_3      Xy_monotone_surface_3;
-  
+
 protected:
   typedef Dcel_                                         Env_dcel;
   typedef Envelope_diagram_2<Traits_3, Env_dcel>        Self;
@@ -127,14 +127,14 @@ public:
 //--------------------------------  Envelope_on_surface_3
 // specialization
 template <class GeomTraits_, class TopTraits_>
-class is_arrangement_2< 
+class is_arrangement_2<
   Envelope_diagram_on_surface_2<GeomTraits_, TopTraits_>
 > : public boost::true_type
 {};
 
 // specialization
 template <class GeomTraits_, class DCEL_>
-class is_arrangement_2< 
+class is_arrangement_2<
   Envelope_diagram_2<GeomTraits_, DCEL_>
 > : public boost::true_type
 {};

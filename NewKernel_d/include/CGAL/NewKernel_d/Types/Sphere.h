@@ -15,25 +15,25 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Sphere {
-	typedef typename Get_type<R_, FT_tag>::type FT_;
-	typedef typename Get_type<R_, Point_tag>::type	Point_;
-	Point_ c_;
-	FT_ r2_;
+        typedef typename Get_type<R_, FT_tag>::type FT_;
+        typedef typename Get_type<R_, Point_tag>::type        Point_;
+        Point_ c_;
+        FT_ r2_;
 
-	public:
-	Sphere(){}
-	Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
-	// TODO: Add a piecewise constructor?
+        public:
+        Sphere(){}
+        Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
+        // TODO: Add a piecewise constructor?
 
-	Point_ const& center()const{return c_;}
-	FT_ const& squared_radius()const{return r2_;}
+        Point_ const& center()const{return c_;}
+        FT_ const& squared_radius()const{return r2_;}
 };
 
 namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_sphere : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_sphere)
-  typedef typename Get_type<R_, Sphere_tag>::type	result_type;
-  typedef typename Get_type<R_, Point_tag>::type	Point;
+  typedef typename Get_type<R_, Sphere_tag>::type        result_type;
+  typedef typename Get_type<R_, Point_tag>::type        Point;
   typedef typename Get_type<R_, FT_tag>::type FT;
   result_type operator()(Point const&a, FT const&b)const{
     return result_type(a,b);
@@ -44,7 +44,7 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
-#endif  
+#endif
     return result_type(cp(),0);
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(pop)
@@ -64,9 +64,9 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
 
 template <class R_> struct Center_of_sphere : private Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Center_of_sphere)
-  typedef typename Get_type<R_, Sphere_tag>::type	Sphere;
+  typedef typename Get_type<R_, Sphere_tag>::type        Sphere;
   // No reference because of the second overload
-  typedef typename Get_type<R_, Point_tag>::type	result_type;
+  typedef typename Get_type<R_, Point_tag>::type        result_type;
 
   result_type const& operator()(Sphere const&s)const{
     return s.center();
@@ -74,16 +74,16 @@ template <class R_> struct Center_of_sphere : private Store_kernel<R_> {
 
   template<class Iter>
   result_type operator()(Iter b, Iter e)const{
-    typename Get_functor<R_, Construct_ttag<Sphere_tag> >::type	cs(this->kernel());
+    typename Get_functor<R_, Construct_ttag<Sphere_tag> >::type        cs(this->kernel());
     return operator()(cs(b,e)); // computes the radius needlessly
   }
 };
 
 template <class R_> struct Squared_radius {
   CGAL_FUNCTOR_INIT_IGNORE(Squared_radius)
-  typedef typename Get_type<R_, Sphere_tag>::type	Sphere;
-  typedef typename Get_type<R_, FT_tag>::type const&	result_type;
-  // TODO: Is_exact?
+  typedef typename Get_type<R_, Sphere_tag>::type        Sphere;
+  typedef typename Get_type<R_, FT_tag>::type const&        result_type;
+  // TODO: Uses_no_arithmetic?
   result_type operator()(Sphere const&s)const{
     return s.squared_radius();
   }

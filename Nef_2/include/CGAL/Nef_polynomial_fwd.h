@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion
 
@@ -19,7 +19,7 @@
 
 namespace CGAL {
 
-namespace Nef { 
+namespace Nef {
 template <typename> class Polynomial;
 
 template <typename ET> double to_double(const Polynomial<ET> &);

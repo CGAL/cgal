@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Meyer  <ameyer@mpi-sb.mpg.de>
 #ifndef CGAL_BINOP_INTERSECTION_TESTS_H
@@ -35,7 +35,7 @@ struct binop_intersection_test_segment_tree {
   typedef typename SNC_decorator::Point_3                 Point_3;
 
   typedef CGAL::SNC_const_decorator<SNC_structure>        Const_decorator;
-  typedef CGAL::Nef_box<SNC_decorator>                    Nef_box; 
+  typedef CGAL::Nef_box<SNC_decorator>                    Nef_box;
 
   template<class Callback>
   struct Bop_edge0_face1_callback {
@@ -144,7 +144,7 @@ struct binop_intersection_test_segment_tree {
 #ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_edge1,
-			CGAL_NEF3_BOX_INTERSECTION_CUTOFF,);
+                        CGAL_NEF3_BOX_INTERSECTION_CUTOFF,);
 #else
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_edge1);
@@ -159,7 +159,7 @@ struct binop_intersection_test_segment_tree {
 #ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_face1,
-			CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
+                        CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
 #else
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge0_face1);
@@ -174,7 +174,7 @@ struct binop_intersection_test_segment_tree {
 #ifdef CGAL_NEF3_BOX_INTERSECTION_CUTOFF
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge1_face0,
-			CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
+                        CGAL_NEF3_BOX_INTERSECTION_CUTOFF);
 #else
     box_intersection_d( a.begin(), a.end(), b.begin(), b.end(),
                         callback_edge1_face0);

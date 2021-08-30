@@ -3,9 +3,9 @@ namespace ArrTraits {
 \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines Functor 
+\cgalRefines Functor
 
-\cgalHasModel ArrangementLandmarkTraits_2::Approximate_2 
+\cgalHasModel ArrangementLandmarkTraits_2::Approximate_2
 
 */
 
@@ -17,11 +17,11 @@ public:
 /// @{
 
 /*!
-returns an approximation of `p`'s \f$ x\f$-coordinate (if `i == 0`), 
-or of `p`'s \f$ y\f$-coordinate (if `i == 1`). 
-*/ 
-Approximate_number_type operator()( ArrTraits::Point_2 p, 
-int i); 
+returns an approximation of `p`'s \f$ x\f$-coordinate (if `i == 0`),
+or of `p`'s \f$ y\f$-coordinate (if `i == 1`).
+*/
+Approximate_number_type operator()( ArrTraits::Point_2 p,
+int i);
 
 /// @}
 

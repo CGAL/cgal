@@ -64,7 +64,7 @@ public:
   const CGAL::Object& tds_data() const { return this->_tds_data; }
 
 private:
-  CGAL::Object 	_tds_data;
+  CGAL::Object         _tds_data;
 };
 
 } // namespace CGAL

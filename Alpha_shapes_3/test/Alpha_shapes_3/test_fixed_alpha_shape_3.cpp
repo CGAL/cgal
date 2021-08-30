@@ -51,7 +51,7 @@ void fill_lists(const char* file_path,
 {
   double x,y,z,r;
   std::ifstream input(file_path);
- 
+
   while(input >> x >> y >> z >> r){
     Point_3 p(x,y,z);
     lst.push_back(p);
@@ -114,16 +114,16 @@ void print_simplices_classif_fe(Iterator begin,Iterator end, const Alpha_shape_3
 template <class AS1,class AS2>
 void print_comparison(const AS1& as1, const AS2& as2){
   std::cout << "Cells\n";
-  print_simplices_classif(as1.finite_cells_begin(),as1.finite_cells_end(),as1); 
+  print_simplices_classif(as1.finite_cells_begin(),as1.finite_cells_end(),as1);
   print_simplices_classif(as2.finite_cells_begin(),as2.finite_cells_end(),as2);
   std::cout << "Facets\n";
-  print_simplices_classif_fe(as1.finite_facets_begin(),as1.finite_facets_end(),as1); 
+  print_simplices_classif_fe(as1.finite_facets_begin(),as1.finite_facets_end(),as1);
   print_simplices_classif_fe(as2.finite_facets_begin(),as2.finite_facets_end(),as2);
   std::cout << "Edges\n";
-  print_simplices_classif_fe(as1.finite_edges_begin(),as1.finite_edges_end(),as1); 
+  print_simplices_classif_fe(as1.finite_edges_begin(),as1.finite_edges_end(),as1);
   print_simplices_classif_fe(as2.finite_edges_begin(),as2.finite_edges_end(),as2);
   std::cout << "Vertices\n";
-  print_simplices_classif(as1.finite_vertices_begin(),as1.finite_vertices_end(),as1); 
+  print_simplices_classif(as1.finite_vertices_begin(),as1.finite_vertices_end(),as1);
   print_simplices_classif(as2.finite_vertices_begin(),as2.finite_vertices_end(),as2);
 }
 
@@ -186,29 +186,29 @@ void compare_edges_classif(Iterator1 begin1, Iterator1 end1,const AS1& as1,Itera
 template <class AS1,class AS2>
 void compare_all(const AS1& as1, const AS2& as2,bool debug=false)
 {
-  compare_classif(as1.finite_cells_begin(),as1.finite_cells_end(),as1,as2.finite_cells_begin(),as2,"Cells",debug);  
+  compare_classif(as1.finite_cells_begin(),as1.finite_cells_end(),as1,as2.finite_cells_begin(),as2,"Cells",debug);
   compare_facets_classif(as1.finite_cells_begin(),as1.finite_cells_end(),as1,as2.finite_cells_begin(),as2,"Facets",debug);
   compare_edges_classif(as1.finite_cells_begin(),as1.finite_cells_end(),as1,as2.finite_cells_begin(),as2,"Edges",debug);
-  compare_classif(as1.finite_vertices_begin(),as1.finite_vertices_end(),as1,as2.finite_vertices_begin(),as2,"Vertices",debug); 
+  compare_classif(as1.finite_vertices_begin(),as1.finite_vertices_end(),as1,as2.finite_vertices_begin(),as2,"Vertices",debug);
 }
-  
+
 void test_dynamic_insert(const std::list<Weighted_point_3 >& wlst)
 {
   typedef std::list<Weighted_point_3 >::const_iterator Iterator;
   Iterator min_it=wlst.begin();
   WFixed_AS dynamic_as;
-  
+
   while(min_it!=wlst.end() && dynamic_as.dimension() != 3)
   {
     dynamic_as.insert(*min_it);
     ++min_it;
   }
-//  int k=0;  
+//  int k=0;
   for (Iterator it=min_it ;it!=wlst.end(); ++it)
   {
-//    std::cout << ++k << " " << std::flush;    
+//    std::cout << ++k << " " << std::flush;
     dynamic_as.insert(*it);
-    WFixed_DT tr_copy;    
+    WFixed_DT tr_copy;
     tr_copy.set_infinite_vertex( tr_copy.tds().copy_tds( dynamic_as.tds(), dynamic_as.infinite_vertex() ) );
     WFixed_AS static_as (tr_copy);
     compare_all(dynamic_as,static_as);
@@ -219,7 +219,7 @@ void test_dynamic_insert(const std::list<Weighted_point_3 >& wlst)
 void test_dynamic_remove(const std::list<Weighted_point_3 >& wlst)
 {
    WFixed_AS dynamic_as(wlst.begin(),wlst.end());
-  
+
 //  int k=0;
   while (dynamic_as.dimension() == 3)
   {
@@ -231,7 +231,7 @@ void test_dynamic_remove(const std::list<Weighted_point_3 >& wlst)
     dynamic_as.remove(dynamic_as.finite_vertices_begin());
   }
   std::cout << "done"<< std::endl;
-  
+
   while (dynamic_as.number_of_vertices() != 0) dynamic_as.remove(dynamic_as.finite_vertices_begin());
 }
 
@@ -248,24 +248,24 @@ void make_one_run(const char* filename){
   WFixed_DT T(wlst.begin(),wlst.end());
   if (wlst.size()!=T.number_of_vertices())
     std::cout << wlst.size()-T.number_of_vertices() << " hidden vertices.\n";
-  
+
   std::cout << "Build Fixed weighted alpha complex" << std::endl;
   WFixed_AS wfixed_as(T);
- 
+
 //copy triangulation for family alpha-shape
   WDT T1;
   T1.set_infinite_vertex( T1.tds().copy_tds( wfixed_as.tds(),wfixed_as.infinite_vertex() ) );
   std::cout << "Build family weighted alpha complex" << std::endl;
 
   WAS w_as(T1,0,WAS::GENERAL);
-  
+
 
 //DEBUG info
 //  print_comparison(wfixed_as,w_as);
-  
+
 //compare classification of simplices
   std::cout << "Compare both.... ";
-  compare_all(wfixed_as,w_as); 
+  compare_all(wfixed_as,w_as);
   std::cout << "OK\n";
 
 //---Test alpha shape
@@ -276,11 +276,11 @@ void make_one_run(const char* filename){
   std::cout << "Build Fixed alpha complex" << std::endl;
   Fixed_AS fixed_as(delaunay0);
   std::cout << "Build family alpha complex" << std::endl;
-  AS as(delaunay1,0,AS::GENERAL); 
+  AS as(delaunay1,0,AS::GENERAL);
   std::cout << "Compare both.... ";
   compare_all(fixed_as,as);
   std::cout << "OK\n";
-  
+
 //test dynamic version
   std::cout << "Test dynamic remove \n";
   test_dynamic_remove(wlst);
@@ -293,8 +293,8 @@ int main(int argc, char** argv){
   if (argc==1){
     std::cerr << "Nothing was tested\n";
     return EXIT_SUCCESS;
-  }  
-  
+  }
+
   for (int i=1;i<argc;++i) make_one_run(argv[i]);
   return 0;
 }

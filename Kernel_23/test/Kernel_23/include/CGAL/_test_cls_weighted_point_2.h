@@ -65,13 +65,13 @@ bool _test_cls_weighted_point_2(const R& )
 
   p1 = wp2.point();
   assert(p1 == p0);
-  
+
   p1 =  wp3.point();
 
   FT w = wp3.weight();
   assert(w == iw);
   w = wp7.weight();
-  
+
   // no need to test the other operations as they use Point_2 operations (which
   // are tested in _test_cls_point_2.h)
 

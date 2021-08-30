@@ -46,7 +46,7 @@ private:
   vtkCGALSurfaceMesherContourFilter(const vtkCGALSurfaceMesherContourFilter&);  // Not implemented.
   void operator=(const vtkCGALSurfaceMesherContourFilter&);  // Not implemented.
 };
-  
+
 // IMPLEMENTATION
 
 #include "vtkCellArray.h"
@@ -77,12 +77,12 @@ vtkCGALSurfaceMesherContourFilter::vtkCGALSurfaceMesherContourFilter()
 {
   Value = 0.;
 }
-  
+
 vtkCGALSurfaceMesherContourFilter::~vtkCGALSurfaceMesherContourFilter()
 {
 }
 
-int 
+int
 vtkCGALSurfaceMesherContourFilter::
 FillInputPortInformation(int, vtkInformation *info)
 {
@@ -130,8 +130,8 @@ int vtkCGALSurfaceMesherContourFilter::RequestData(
     return 0;
   Gray_level_image gray_level_image(image, Value);
 
-  GT::FT radius = std::max(image.xdim() * image.vx(),
-                           std::max(image.ydim() * image.vy(),
+  GT::FT radius = (std::max)(image.xdim() * image.vx(),
+                           (std::max)(image.ydim() * image.vy(),
                                     image.zdim() * image.vz())
                            );
   GT::Sphere_3 bounding_sphere(GT::Point_3(image.xdim() * image.vx()/2.,

@@ -1,6 +1,6 @@
 #ifndef SCENE_EDIT_POLYHEDRON_ITEM_H
 #define SCENE_EDIT_POLYHEDRON_ITEM_H
-//#define CGAL_PROFILE 
+//#define CGAL_PROFILE
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_transparent_interface.h>
@@ -27,7 +27,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Surface_mesh_deformation.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <QGLBuffer>
 #include <QGLShader>
 #include <QGLShaderProgram>
@@ -147,7 +147,7 @@ private:
   M_Deform_mesh* deform_mesh;
 
 public:
-  Control_vertices_data(M_Deform_mesh* deform_mesh, CGAL::qglviewer::ManipulatedFrame* frame = 0)
+  Control_vertices_data(M_Deform_mesh* deform_mesh, CGAL::qglviewer::ManipulatedFrame* frame = nullptr)
     : frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
   { }
 
@@ -212,7 +212,7 @@ private:
     }
   }
   CGAL::Three::Scene_interface::Bbox calculate_initial_bbox()
-  {    
+  {
     if(initial_positions.empty()) {return CGAL::Three::Scene_interface::Bbox(0,0,0,0,0,0); }
 
     const CGAL::qglviewer::Vec& p_i = *(initial_positions.begin());
@@ -236,21 +236,21 @@ struct Mouse_keyboard_state_deformation
   bool left_button_pressing;
   bool right_button_pressing;
 
-  Mouse_keyboard_state_deformation() 
+  Mouse_keyboard_state_deformation()
     : ctrl_pressing(false), shift_pressing(false), left_button_pressing(false), right_button_pressing(false)
   { }
 };
 typedef std::list<Control_vertices_data<SMesh> > Ctrl_vertices_sm_group_data_list;
 struct Scene_edit_polyhedron_item_priv;
 // This class represents a polyhedron in the OpenGL scene
-class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
+class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item
   : public CGAL::Three::Scene_group_item ,
     public CGAL::Three::Scene_transparent_interface
 {
   Q_INTERFACES(CGAL::Three::Scene_transparent_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.TransparentInterface/1.0")
   Q_OBJECT
-public:  
+public:
   Scene_edit_polyhedron_item(){} //needed by the transparent interface
   /// Create an Scene_edit_polyhedron_item from a Scene_surface-mesh_item.
   /// The ownership of the polyhedron is moved to the new edit_polyhedron
@@ -270,9 +270,9 @@ public:
   void setVisible(bool b);
   void setRenderingMode(RenderingMode m);
 
-  
+
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { 
+  bool supportsRenderingMode(RenderingMode m) const {
     return m == GouraudPlusEdges;
   }
   void draw(CGAL::Three::Viewer_interface*) const;

@@ -19,9 +19,9 @@ int main()
   dt.insert(Point_2(10,0));
   dt.insert(Point_2(0,10));
   dt.insert(Point_2(10,10));
-  
+
   std::vector<Point_2> vec_constraint;
-  
+
   vec_constraint.push_back(Point_2(1, 2));
   vec_constraint.push_back(Point_2(2, 2));
   vec_constraint.push_back(Point_2(3, 2));

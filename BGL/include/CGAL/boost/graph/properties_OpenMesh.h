@@ -423,7 +423,11 @@ template<typename K>
 void
 put(boost::vertex_point_t p, OPEN_MESH_CLASS& g,
     typename boost::graph_traits< OPEN_MESH_CLASS >::vertex_descriptor vd,
+#if defined(CGAL_USE_OM_POINTS)
     const typename K::Point& point)
+#else
+    const CGAL::Exact_predicates_inexact_constructions_kernel::Point_3& point)
+#endif
 {
   put(get(p,g), vd, point);
 }

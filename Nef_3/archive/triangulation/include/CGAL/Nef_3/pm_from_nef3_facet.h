@@ -1,7 +1,7 @@
 #ifndef PM_FROM_NEF3_FACET_2_H
 #define PM_FROM_NEF3_FACET_2_H
 
-#undef _DEBUG 
+#undef _DEBUG
 #define _DEBUG 5
 #include <CGAL/Nef_2/debug.h>
 
@@ -22,7 +22,7 @@ add_cycle( Cycle_circulator c, typename Planar_map::Face_handle outer_cycle, Pla
   CGAL_assertion( curr != prev);
   X_curve first_segment( *prev, *curr);
   CGAL_NEF_TRACEN("inserting first segment "<<first_segment);
-  Halfedge_handle first_edge = 
+  Halfedge_handle first_edge =
     pm.insert_in_face_interior( first_segment, outer_cycle);
 
   // edge 2 ... n-1
@@ -36,7 +36,7 @@ add_cycle( Cycle_circulator c, typename Planar_map::Face_handle outer_cycle, Pla
     Halfedge_around_vertex_circulator hav(edge->target()->incident_halfedges()), hend(hav);
     CGAL_For_all( hav, hend)
       if( hav->source()->point() == segment.target())
-	break;
+        break;
     if( hav != hend) { // segment already inserted
       CGAL_NEF_TRACEN("segment already inserted (bubble): "<<segment);
       edge = hav->twin();
@@ -50,7 +50,7 @@ add_cycle( Cycle_circulator c, typename Planar_map::Face_handle outer_cycle, Pla
       edge = pm.insert_from_vertex( segment, edge);
     }
   }
-  
+
   // edge n
   CGAL_assertion( *c == first_edge->source()->point());
   X_curve last_segment( *curr, *c);
@@ -71,21 +71,21 @@ add_cycle( Cycle_circulator c, typename Planar_map::Face_handle outer_cycle, Pla
     CGAL_NEF_TRACEN("inserting last segment "<<last_segment);
     last_edge = pm.insert_at_vertices( last_segment, edge->target(), first_edge->source());
   }
-  
+
   Face_handle face = last_edge->face();
   if( face->is_unbounded())
     face = last_edge->twin()->face();
-  
+
   return face;
 }
 
 
 template <typename SNC_structure, typename Planar_map, typename Projector>
 typename Planar_map::Face_handle
-add_hole( typename SNC_structure::Halffacet_cycle_const_iterator ci, 
-	  typename Planar_map::Face_handle face, Planar_map& pm,
-	  Projector projector) {
-  
+add_hole( typename SNC_structure::Halffacet_cycle_const_iterator ci,
+          typename Planar_map::Face_handle face, Planar_map& pm,
+          Projector projector) {
+
   typedef typename Planar_map::Face_handle Face_handle;
   typedef typename SNC_structure::SNC_decorator SNC_decorator;
   typedef typename SNC_structure::SHalfedge_const_handle SHalfedge_const_handle;
@@ -95,11 +95,11 @@ add_hole( typename SNC_structure::Halffacet_cycle_const_iterator ci,
   typedef typename SNC_structure::Kernel Kernel;
   typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Point_3 Point_3;
-  
+
   typedef std::vector<Point_2> Point_2_vector;
   typedef typename Point_2_vector::const_iterator Point_2_vector_iterator;
   typedef Circulator_from_iterator<Point_2_vector_iterator> Circulator;
-  
+
   SNC_decorator D;
   Face_handle hole;
   if( ci.is_shalfedge()) {
@@ -126,9 +126,9 @@ add_hole( typename SNC_structure::Halffacet_cycle_const_iterator ci,
 
 template <typename SNC_structure, typename Planar_map, typename Projector>
 typename Planar_map::Face_handle
-add_face( typename SNC_structure::Halffacet_cycle_const_iterator ci, 
-	   typename Planar_map::Face_handle face, Planar_map& pm,
-	   Projector projector) {
+add_face( typename SNC_structure::Halffacet_cycle_const_iterator ci,
+           typename Planar_map::Face_handle face, Planar_map& pm,
+           Projector projector) {
   typedef typename SNC_structure::SHalfedge_const_handle SHalfedge_const_handle;
   typedef typename SNC_structure::SHalfedge_around_facet_const_circulator
     SHalfedge_around_facet_const_circulator;
@@ -139,13 +139,13 @@ add_face( typename SNC_structure::Halffacet_cycle_const_iterator ci,
   CGAL_precondition( circulator_distance(sc, send) > 2);
   return add_hole<SNC_structure>( ci, face, pm, projector);
 }
-  
+
 template <typename SNC_structure, typename Planar_map, typename Projector>
 typename Planar_map::Face_handle
-pm_from_nef3_facet( typename SNC_structure::Halffacet_const_handle f, 
-		    Planar_map& pm,
-		    Projector projector) {
-  typedef typename SNC_structure::Halffacet_cycle_const_iterator 
+pm_from_nef3_facet( typename SNC_structure::Halffacet_const_handle f,
+                    Planar_map& pm,
+                    Projector projector) {
+  typedef typename SNC_structure::Halffacet_cycle_const_iterator
     Halffacet_cycle_const_iterator;
   typedef typename Planar_map::Face_handle Face_handle;
 

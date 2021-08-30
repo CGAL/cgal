@@ -16,8 +16,8 @@ typedef CGAL::Random                    Random;
 int usage (int argc, char *argv[])
 {
   std::cerr << "usage: " << argv[0]
-	    << " <number of points> <bit size of coordinates> "
-	    << "[bit size of weights] [seed]" << std::endl;
+            << " <number of points> <bit size of coordinates> "
+            << "[bit size of weights] [seed]" << std::endl;
   return 2;
 }
 

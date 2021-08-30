@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
@@ -53,7 +53,7 @@ test_n( unsigned int n,
     if( n < allpairs_max ) {
         std::cout << "all pairs ... " << std::flush;
         timer.start();
-        CGAL::Box_intersection_d::all_pairs( 
+        CGAL::Box_intersection_d::all_pairs(
                         boxes1.begin(), boxes1.end(),
                         boxes2.begin(), boxes2.end(),
                         callback0, typename Uti1::Traits(), bipartite == false );
@@ -72,7 +72,7 @@ test_n( unsigned int n,
     if( bipartite )
         CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                                 boxes1.begin(), boxes1.end(),
-                                                callback1, 
+                                                callback1,
                                                 typename Uti1::Traits(),
                                                 DIM - 1);
     timer.stop();

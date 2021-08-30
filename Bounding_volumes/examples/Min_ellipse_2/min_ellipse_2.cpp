@@ -19,7 +19,7 @@ main( int, char**)
     Point     P[n];
 
     for ( int i = 0; i < n; ++i)
-	P[ i] = Point( i % 2 ? i : -i , 0);
+        P[ i] = Point( i % 2 ? i : -i , 0);
     // (0,0), (-1,0), (2,0), (-3,0)
 
     std::cout << "Computing ellipse (without randomization)...";
@@ -39,7 +39,7 @@ main( int, char**)
     assert(me2.number_of_support_points()==2);
 
     // prettyprinting
-    CGAL::set_pretty_mode( std::cout);
+    CGAL::IO::set_pretty_mode( std::cout);
     std::cout << me2;
 
     // in general, the ellipse is not explicitly representable

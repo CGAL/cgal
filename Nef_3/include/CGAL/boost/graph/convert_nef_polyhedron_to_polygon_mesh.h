@@ -347,7 +347,7 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
   typedef typename Kernel_traits<Point_3>::Kernel Nef_Kernel;
   typedef typename PointRange::value_type Out_Point;
   typedef typename Kernel_traits<Out_Point>::Kernel Output_kernel;
-  
+
   typedef Cartesian_converter<Nef_Kernel, Output_kernel> Converter;
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();

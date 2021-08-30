@@ -29,7 +29,7 @@ lead to precision issues, please use CGAL::Eigen_diagonalize_traits")
 
 namespace CGAL {
 
-/// \ingroup PkgSolverInterfaceRef
+/// \ingroup PkgSolverInterfaceLS
 ///
 /// The class `Diagonalize_traits` provides an internal
 /// implementation for the diagonalization of Variance-Covariance
@@ -271,7 +271,7 @@ public:
 
       eigen_values[k] = eigen_values[i];
       eigen_values[i] = x;
-      
+
       int jj = index[k];
       index[k] = index[i];
       index[i] = jj;

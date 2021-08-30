@@ -35,7 +35,7 @@ template <typename Polygon_with_holes>
 void print_polygon_with_holes(const Polygon_with_holes & pwh)
 {
   if (! pwh.is_unbounded()) {
-    std::cout << "{ Outer boundary = "; 
+    std::cout << "{ Outer boundary = ";
     print_polygon (pwh.outer_boundary());
   }
   else std::cout << "{ Unbounded polygon." << std::endl;

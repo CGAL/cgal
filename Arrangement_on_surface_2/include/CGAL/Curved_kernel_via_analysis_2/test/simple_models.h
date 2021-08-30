@@ -1,4 +1,4 @@
-// Copyright (c) 2004-2008, 2010 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2004-2008, 2010 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -15,7 +15,7 @@
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/test/simple_models.h
  * \brief defines dummy implementations satisfying Curve_kernel_2
- * concept requirenments 
+ * concept requirenments
  */
 
 #include <CGAL/config.h>
@@ -44,7 +44,7 @@ struct Curve_2_model_rep {
     Curve_2_model_rep() :
         i_(0) {
     }
-    
+
     Curve_2_model_rep(int i) :
         i_(i) {
     }
@@ -55,7 +55,7 @@ struct Curve_2_model :
 
     typedef Curve_2_model_rep         Rep;
     typedef ::CGAL::Handle_with_policy< Rep > Base;
-    
+
     typedef CGAL::Algebraic_kernel_d_1< CGAL::Arithmetic_kernel::Integer > AK_1;
 
     typedef AK_1::Algebraic_real_1 Algebraic_real_1;
@@ -63,11 +63,11 @@ struct Curve_2_model :
     typedef double Bound;
 
     typedef int Coefficient;
-    
+
     typedef CGAL::Polynomial< CGAL::Polynomial < int > > Poly_d;
 
     typedef CGAL::Handle_id_less_than< Curve_2_model > Less_than;
-    
+
     // for total_degree (find smaller curve if two are available)
     Poly_d f() const {
         return ptr()->f_;
@@ -85,7 +85,7 @@ struct Curve_2_model :
         return Bound(0);
     }
 
-    Algebraic_real_1 y_at(Bound r, int arcno){ 
+    Algebraic_real_1 y_at(Bound r, int arcno){
         return Algebraic_real_1();
     }
 
@@ -102,7 +102,7 @@ struct Curve_2_model :
     static bool decompose(Curve_2_model f, Curve_2_model g,
                    OutputIterator parts_of_f,
                    OutputIterator parts_of_g) {
-        return true;    
+        return true;
     }
 
     bool operator== (const Curve_2_model& c) {
@@ -127,14 +127,14 @@ template < class Curve_ >
 struct Curve_pair_2_model_rep {
 
     typedef Curve_ Curve;
-    
+
     typedef Curve Algebraic_curve_2;
 
     //typedef SoX::Event2_slice< Curve_pair_2< Curve > > Event2_slice;
-    
+
     Curve c1_;
     Curve c2_;
-    
+
     // DefaultConstructible
     Curve_pair_2_model_rep() :
         c1_(), c2_() {
@@ -143,14 +143,14 @@ struct Curve_pair_2_model_rep {
     Curve_pair_2_model_rep(Curve c1, Curve c2) :
         c1_(c1), c2_(c2) {
     }
-    
+
     std::vector< int > slices_;
 };
 
 template < class Curve_ >
-struct Curve_pair_2_model : 
+struct Curve_pair_2_model :
     public ::CGAL::Handle_with_policy< Curve_pair_2_model_rep< Curve_ > > {
-    
+
     typedef Curve_ Curve;
 
     typedef Curve Algebraic_curve_2;
@@ -166,7 +166,7 @@ struct Curve_pair_2_model :
     };
 
     // Assignable
-    
+
     // Constructable from two curves
     Curve_pair_2_model(Curve c1, Curve c2) :
         Base(Rep(c1, c2)) {
@@ -188,7 +188,7 @@ struct Curve_pair_2_model :
         return -1;
     }
 
-    void x_to_index(typename Algebraic_curve_2::Algebraic_real_1 x, 
+    void x_to_index(typename Algebraic_curve_2::Algebraic_real_1 x,
                     int& idx, bool& event) const {
         return;
     }
@@ -209,24 +209,24 @@ public:
     // myself
     typedef Xy_coordinate_2_rep<Algebraic_curve_kernel_2> Self;
 
-    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
-    Curve_analysis_2; 
-    
-    typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1; 
+    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
+    Curve_analysis_2;
+
+    typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1;
 
     // constructors
 public:
     // default constructor ()
     Xy_coordinate_2_rep()
     {   }
-    
+
     // data
     // x-coordinate
     Algebraic_real_1 _m_x;
-    
+
     // supporting curve
     mutable Curve_analysis_2 _m_curve;
-    
+
     // arc number on curve
     mutable int _m_arcno;
 
@@ -235,26 +235,26 @@ public:
 };
 
 template <class AlgebraicCurveKernel_2>
-class Xy_coordinate_2 : 
+class Xy_coordinate_2 :
     public
        ::CGAL::Handle_with_policy<Xy_coordinate_2_rep<AlgebraicCurveKernel_2> >
 {
 public:
     //! \name public typedefs
     //!@{
-    
+
     //! this instance's first template parameter
     typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;
-    
+
     //! this instance's second template parameter
     typedef Xy_coordinate_2_rep<AlgebraicCurveKernel_2> Rep;
-    
+
     //! this instance itself
     typedef Xy_coordinate_2<Algebraic_curve_kernel_2> Self;
-        
+
     //! type of an algabraic curve
-    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
-    Curve_analysis_2; 
+    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
+    Curve_analysis_2;
 
     //! type of Algebraic_real_1
     typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1;
@@ -274,23 +274,23 @@ public:
     //!@{
 
     Xy_coordinate_2() :
-        Base(Rep()) { 
+        Base(Rep()) {
     }
 
     Xy_coordinate_2(const Self& p) :
-        Base(static_cast<const Base&>(p)) {  
+        Base(static_cast<const Base&>(p)) {
     }
 
     Xy_coordinate_2(const Algebraic_real_1&, const Curve_analysis_2&, int) :
             Base(Rep()) {
     }
-    
+
     Xy_coordinate_2(Rep rep) :
-        Base(rep) {  
+        Base(rep) {
     }
-   
+
 public:
-    
+
     const Algebraic_real_1& x() const {
         return this->ptr()->_m_x;
     }
@@ -298,13 +298,13 @@ public:
     Algebraic_real_1 y() const {
         return this->ptr()->_m_x;
     }
-    
+
     Curve_analysis_2 curve() const {
-        return this->ptr()->_m_curve; 
+        return this->ptr()->_m_curve;
     }
-    
+
     int arcno() const {
-        return -1; 
+        return -1;
     }
 
     //!@}
@@ -320,10 +320,10 @@ public:
             bool equal_x = false) const {
         return CGAL::ZERO;
     }
-    
+
     //! equality
     bool operator == (const Self& q) const {return false;}
-    
+
     //! inequality
     bool operator != (const Self& q) const {return false;}
 
@@ -338,7 +338,7 @@ public:
 
     //! greater-equal in (x,y) lexicographic order
     bool operator >= (const Self& q) const {return false;}
-    
+
 public:
 
     bool is_x_zero() const {
@@ -348,7 +348,7 @@ public:
     bool is_y_zero() const {
         return false;
     }
-    
+
     std::pair<double, double> to_double() const {
         return std::make_pair(0.0, 0.0);
     }
@@ -360,22 +360,22 @@ public:
     Bound_interval get_approximation_y() const {
         return Bound_interval(0.0, 0.0);
     }
-    
+
     void refine_x() const {
     }
-    
+
     void refine_x(int rel_prec) {
     }
 
     void refine_y() const {
     }
-    
+
     //!@}
 
 }; // class Xy_coordinate_2
 
-template < class AlgebraicCurveKernel_2> 
-std::ostream& operator<< (std::ostream& os, 
+template < class AlgebraicCurveKernel_2>
+std::ostream& operator<< (std::ostream& os,
     const Xy_coordinate_2<AlgebraicCurveKernel_2>& pt) {
     return os;
 }
@@ -396,7 +396,7 @@ class Status_line_CA_1_rep {
 
     // type of x-coordinate
     typedef typename Curve_analysis_2::Algebraic_real_1
-                Algebraic_real_1; 
+                Algebraic_real_1;
 
     // an instance of a size type
     typedef typename Curve_analysis_2::size_type size_type;
@@ -404,9 +404,9 @@ class Status_line_CA_1_rep {
     // constructors
 public:
     // default constructor ()
-    Status_line_CA_1_rep() 
+    Status_line_CA_1_rep()
     {   }
-    
+
     //! x-coordinate of event info
     mutable Algebraic_real_1 _m_x;
 
@@ -415,8 +415,8 @@ public:
     size_type _m_index;
 
     //! underlying curve analysis
-    Curve_analysis_2 _m_ca; 
-    
+    Curve_analysis_2 _m_ca;
+
      // befriending the handle
     friend class Status_line_CA_1<Curve_analysis_2>;
 };
@@ -432,7 +432,7 @@ public:
     //! this instance's first template parameter
     //! model of AlgebraicKernel_d_2::CurveAnalysis_2
     typedef CurveAnalysis_2 Curve_analysis_2;
-    
+
     //! this instance's second template parameter
     typedef Status_line_CA_1_rep<CurveAnalysis_2> Rep;
 
@@ -440,7 +440,7 @@ public:
     typedef Status_line_CA_1<Curve_analysis_2> Self;
 
     //! type of x-coordinate
-    typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1; 
+    typedef typename Curve_analysis_2::Algebraic_real_1 Algebraic_real_1;
 
     typedef typename Curve_analysis_2::Xy_coordinate_2 Xy_coordinate_2;
 
@@ -451,7 +451,7 @@ public:
 
      //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
-    
+
     //!@}
 public:
     //!\name constructors
@@ -460,38 +460,38 @@ public:
     /*!\brief
      * Default constructor
      */
-    Status_line_CA_1() : 
-        Base(Rep()) {   
+    Status_line_CA_1() :
+        Base(Rep()) {
     }
 
     /*!\brief
      * copy constructor
      */
-    Status_line_CA_1(const Self& p) : 
-            Base(static_cast<const Base&>(p)) {  
+    Status_line_CA_1(const Self& p) :
+            Base(static_cast<const Base&>(p)) {
     }
 
     /*!\brief
      * constructs from a given represenation
      */
-    Status_line_CA_1(Rep rep) : 
-        Base(rep) {  
+    Status_line_CA_1(Rep rep) :
+        Base(rep) {
     }
-    
+
     //!@}
-    
+
     Algebraic_real_1 x() const {
         return Algebraic_real_1();
     }
-    
+
     Curve_analysis_2 curve_analysis_2() const {
         return Curve_analysis_2();
     }
-    
+
     size_type index() const {
         return static_cast<size_type>(0);
     }
-        
+
     bool covers_line() const {
         return false;
     }
@@ -511,7 +511,7 @@ public:
     Xy_coordinate_2 algebraic_real_2(size_type j) const {
         return Xy_coordinate_2();
     }
-    
+
     Xy_coordinate_2 xy_coordinate_2(size_type j) const {
         return algebraic_real_2(j);
     }
@@ -527,7 +527,7 @@ public:
     Arc_pair number_of_branches_approaching_plus_infinity() const {
         return Arc_pair(0, 0);
     }
-  
+
 }; // class Status_line_CA_1
 
 template <class CurveAnalysis_2>
@@ -557,19 +557,19 @@ public:
     // constructors
 public:
     // default constructor ()
-    Curve_analysis_2_rep()  
+    Curve_analysis_2_rep()
     {  }
-    
+
     // standard constructor
     Curve_analysis_2_rep(const Polynomial_2& curve) {
     }
 
     mutable Polynomial_2 _m_curve;
-    
+
     // befriending the handle
     friend class Curve_analysis_2<Algebraic_curve_kernel_2>;
 };
-    
+
 template <class AlgebraicCurveKernel_2>
 class Curve_analysis_2 :
     public ::CGAL::Handle_with_policy<
@@ -583,7 +583,7 @@ public:
 
     //! this instance's second template parameter
     typedef Curve_analysis_2_rep<AlgebraicCurveKernel_2> Rep;
-    
+
     //! x-coordinate type
     typedef typename Algebraic_curve_kernel_2::Algebraic_real_1 Algebraic_real_1;
 
@@ -601,39 +601,39 @@ public:
 
     //! type of a vertical line
     typedef internal::Status_line_CA_1<Self> Status_line_1;
-        
+
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy<Rep> Base;
-    
+
     //!@}
 public:
     //!\name Constructors
     //!@{
 
     //! \brief default constructor
-    Curve_analysis_2() : 
-        Base(Rep()) {  
+    Curve_analysis_2() :
+        Base(Rep()) {
     }
 
     /*!\brief
      * copy constructor
      */
-    Curve_analysis_2(const Self& p) : 
-        Base(static_cast<const Base&>(p)) {  
+    Curve_analysis_2(const Self& p) :
+        Base(static_cast<const Base&>(p)) {
     }
 
     //! \brief constructs a curve analysis from a given \c Curve_2 object
     //!
     //! for safety purposes implicit conversion from \c Curve_2 is disabled
-    explicit Curve_analysis_2(const Polynomial_2& c) : 
-        Base(Rep(c)) {  
+    explicit Curve_analysis_2(const Polynomial_2& c) :
+        Base(Rep(c)) {
     }
-           
+
     /*!\brief
      * constructsa curve analysis from a given represenation
      */
-    Curve_analysis_2(Rep rep) : 
-        Base(rep) {  
+    Curve_analysis_2(Rep rep) :
+        Base(rep) {
     }
 
     //!@}
@@ -648,7 +648,7 @@ public:
 
     //! \brief alias for \c polynomial_2()
     Polynomial_2 curve_2() const
-    { 
+    {
         return polynomial_2();
     }
 
@@ -673,7 +673,7 @@ public:
     Status_line_1 status_line_at_exact_x(Algebraic_real_1 x) const {
         return Status_line_1();
     }
-    
+
     /*!\brief
      * returns a \c CGAL::Object that encodes the asymptotic value of a
      * curve-arc approaching the left or the right boundary \c loc of the
@@ -687,7 +687,7 @@ public:
      *
      * \pre \c loc is either \c CGAL::ARR_LEFT_BOUNDARY or
      *  \c CGAL::ARR_RIGHT_BOUNDARY
-     */  
+     */
      CGAL::Object asymptotic_value_of_arc(CGAL::Arr_parameter_space loc,
              size_type arcno) const {
 
@@ -700,11 +700,11 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-template < class CurvePairAnalysis_2, class Rep_ > 
+template < class CurvePairAnalysis_2, class Rep_ >
 class Status_line_CPA_1;
 
 template <class CurvePairAnalysis_2, class Rep>
-std::ostream& operator<< (std::ostream&, 
+std::ostream& operator<< (std::ostream&,
     const Status_line_CPA_1<CurvePairAnalysis_2, Rep>&);
 
 template < class CurvePairAnalysis_2 >
@@ -722,20 +722,20 @@ class Status_line_CPA_1_rep {
     // constructors
 public:
     // default constructor ()
-    Status_line_CPA_1_rep()  
+    Status_line_CPA_1_rep()
     {   }
 
     // stores this status line interval or event index of a curve pair
     size_type _m_index;
-    
+
     // befriending the handle
     friend class Status_line_CPA_1<Curve_pair_analysis_2, Self>;
 };
 
 template <class CurvePairAnalysis_2,
       class Rep_ = internal::Status_line_CPA_1_rep<CurvePairAnalysis_2> >
-class Status_line_CPA_1 : 
-    public ::CGAL::Handle_with_policy< Rep_ > 
+class Status_line_CPA_1 :
+    public ::CGAL::Handle_with_policy< Rep_ >
 {
 public:
     //!@{
@@ -743,7 +743,7 @@ public:
 
     //! this instance's first template parameter
     typedef CurvePairAnalysis_2 Curve_pair_analysis_2;
-    
+
     //! this instance's second template parameter
     typedef Rep_ Rep;
 
@@ -751,7 +751,7 @@ public:
     typedef Status_line_CPA_1<Curve_pair_analysis_2, Rep> Self;
 
     //! type of x-coordinate
-    typedef typename Curve_pair_analysis_2::Algebraic_real_1 Algebraic_real_1; 
+    typedef typename Curve_pair_analysis_2::Algebraic_real_1 Algebraic_real_1;
 
     //! an instance of a size type
     typedef typename Curve_pair_analysis_2::size_type size_type;
@@ -761,36 +761,36 @@ public:
 
      //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
-    
+
     //!@}
 public:
     //!\name constructors
     //!@{
 
     Status_line_CPA_1() :
-        Base(Rep()) {   
+        Base(Rep()) {
     }
 
     Status_line_CPA_1(const Self& p) :
-            Base(static_cast<const Base&>(p)) {  
+            Base(static_cast<const Base&>(p)) {
     }
-        
+
     /*!\brief
      * constructs from a given represenation
      */
-    Status_line_CPA_1(Rep rep) : 
-        Base(rep) {  
+    Status_line_CPA_1(Rep rep) :
+        Base(rep) {
     }
-    
+
     Algebraic_real_1 x() const {
         return Algebraic_real_1();
     }
-    
+
     //! returns this vertical line's index (event or interval index)
     size_type index() const {
         return this->ptr()->_m_index;
     }
-        
+
     size_type number_of_events() const {
         return static_cast<size_type>(0);
     }
@@ -814,20 +814,20 @@ public:
     bool is_intersection() const {
         return false;
     }
-    
+
     //!@}
 }; // class Status_line_CPA_1
 
 template <class CurvePairAnalysis_2, class Rep>
 std::ostream& operator<< (std::ostream& os,
         const internal::Status_line_CPA_1<CurvePairAnalysis_2, Rep>& cpv_line) {
-        
+
     return os;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template < class AlgebraicCurveKernel_2, class Rep_ > 
+template < class AlgebraicCurveKernel_2, class Rep_ >
 class Curve_pair_analysis_2;
 
 template < class AlgebraicCurveKernel_2 >
@@ -847,19 +847,19 @@ public:
     // constructors
 public:
     // default constructor ()
-    Curve_pair_analysis_2_rep() 
+    Curve_pair_analysis_2_rep()
     {   }
 
     // data
     Curve_analysis_2 _m_ca1, _m_ca2;
-    
+
     // befriending the handle
     friend class Curve_pair_analysis_2<Algebraic_curve_kernel_2, Self>;
 };
-    
+
 template <class AlgebraicCurveKernel_2,
       class Rep_ = internal::Curve_pair_analysis_2_rep<AlgebraicCurveKernel_2> >
-class Curve_pair_analysis_2 : public ::CGAL::Handle_with_policy< Rep_ > 
+class Curve_pair_analysis_2 : public ::CGAL::Handle_with_policy< Rep_ >
 {
 public:
     //!@{
@@ -878,7 +878,7 @@ public:
     typedef typename Algebraic_curve_kernel_2::Xy_coordinate_2 Xy_coordinate_2;
 
     //! type of 1-curve analysis
-    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2 
+    typedef typename Algebraic_curve_kernel_2::Curve_analysis_2
             Curve_analysis_2;
 
     //! an instance of a size type
@@ -889,7 +889,7 @@ public:
 
     //! type of a vertical line
     typedef internal::Status_line_CPA_1<Self> Status_line_1;
-        
+
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy<Rep> Base;
 
@@ -899,24 +899,24 @@ public:
     //!@{
 
     //! \brief default constructor
-    Curve_pair_analysis_2() : 
-        Base(Rep()) {  
+    Curve_pair_analysis_2() :
+        Base(Rep()) {
     }
 
     /*!\brief
      * copy constructor
      */
-    Curve_pair_analysis_2(const Self& p) : 
-        Base(static_cast<const Base&>(p)) {  
+    Curve_pair_analysis_2(const Self& p) :
+        Base(static_cast<const Base&>(p)) {
     }
 
     Curve_pair_analysis_2(const Curve_analysis_2& ca1,
-        const Curve_analysis_2& ca2) : 
-            Base(Rep()) {  
+        const Curve_analysis_2& ca2) :
+            Base(Rep()) {
     }
- 
+
     Curve_pair_analysis_2(Rep rep) :
-        Base(rep) {  
+        Base(rep) {
     }
 
     Curve_analysis_2 curve_analysis(bool c) const {
@@ -979,7 +979,7 @@ public:
 
     //! type of internal x_coordinate
     typedef Internal_curve_2::Algebraic_real_1 Internal_x_coordinate;
-    
+
     //! type of internal coefficient
     typedef Internal_curve_2::Coefficient Internal_coefficient;
 
@@ -987,10 +987,10 @@ public:
 public:
     //! \name types and functors for \c ACK_2< >
     //!@{
-    
+
     //! myself
     typedef Simple_algebraic_kernel_2  Self;
-    
+
     //! univariate polynomial type
     typedef CGAL::Polynomial<int> Polynomial_1;
 
@@ -1005,7 +1005,7 @@ public:
 
     //! type of Bound
     typedef Internal_curve_2::Bound Bound;
-        
+
     //! type of Coordinate_1
     typedef Algebraic_real_1 Coordinate_1;
 
@@ -1017,38 +1017,38 @@ public:
 public:
     //! \name types and functors for \c GPA_2< both >
     //!@{
-   
+
     //! type of 1-curve analysis
-    typedef internal::Curve_analysis_2<Self> Curve_analysis_2; 
+    typedef internal::Curve_analysis_2<Self> Curve_analysis_2;
 
     //! type of 2-curve analysis
-    typedef internal::Curve_pair_analysis_2<Self> Curve_pair_analysis_2; 
-    
+    typedef internal::Curve_pair_analysis_2<Self> Curve_pair_analysis_2;
+
     //!@}
 
     //! \name public functors and predicates
     //!@{
-       
+
     //! \brief default constructor
-    Simple_algebraic_kernel_2() 
+    Simple_algebraic_kernel_2()
     {  }
-    
+
     //! \brief constructs \c Curve_analysis_2 object, uses caching if appropriate
     struct Construct_curve_2 :
             public CGAL::cpp98::unary_function< Polynomial_2, Curve_analysis_2 >
     {
         //! \brief constructs an object from \c Algebraic_curve_kernel_2 type
         //! no default constructor provided
-        Construct_curve_2(/*Self *pkernel_2*/) 
+        Construct_curve_2(/*Self *pkernel_2*/)
         {  }
-            
+
         Curve_analysis_2 operator()(const Polynomial_2& f) const
         {
             return Curve_analysis_2();
         }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_2, construct_curve_2_object);
-    
+
     /*! \brief
      * constructs \c Curve_pair_analysis_2 from pair of 1-curve analysis,
      * caching is used when appropriate
@@ -1056,148 +1056,148 @@ public:
     struct Construct_curve_pair_2 :
             public CGAL::cpp98::binary_function<Curve_analysis_2, Curve_analysis_2,
                 Curve_pair_analysis_2> {
-           
+
         Curve_pair_analysis_2 operator()
            (const Curve_analysis_2& ca1, const Curve_analysis_2& ca2) const {
-                 
+
             Curve_pair_analysis_2 cpa_2(ca1,ca2);
             return cpa_2;
         }
     };
     CGAL_Algebraic_Kernel_cons(Construct_curve_pair_2,
                                construct_curve_pair_2_object);
-    
-    //! type of a curve point 
+
+    //! type of a curve point
     typedef internal::Xy_coordinate_2<Self> Xy_coordinate_2;
-    
+
     //! returns the first coordinate of \c Xy_coordinate_2
     struct Get_x_2 :
         public CGAL::cpp98::unary_function<Xy_coordinate_2, Algebraic_real_1> {
-        
+
         Algebraic_real_1 operator()(const Xy_coordinate_2& xy) const {
             return xy.x();
         }
     };
     CGAL_Algebraic_Kernel_cons(Get_x_2, Get_x_2_object);
-    
+
     //! returns the second coordinate of \c Xy_coordinate_2
     struct Get_y_2 :
         public CGAL::cpp98::unary_function<Xy_coordinate_2, Algebraic_real_1> {
-        
+
         Algebraic_real_1 operator()(const Xy_coordinate_2& xy) const {
             return xy.y();
         }
     };
     CGAL_Algebraic_Kernel_cons(Get_y_2, Get_y_2_object);
-    
+
     struct Refine_x_2 :
         public CGAL::cpp98::unary_function<Xy_coordinate_2, void> {
-      
+
         void operator()(const Xy_coordinate_2& r) const {  }
-        
+
         void operator()(Xy_coordinate_2& r, int rel_prec) const {  }
     };
     CGAL_Algebraic_Kernel_pred(Refine_x_2, refine_x_2_object);
-    
+
     struct Refine_y_2 :
         public CGAL::cpp98::unary_function<Xy_coordinate_2, void> {
-      
+
         void operator()(const Xy_coordinate_2& r) const {  }
-        
+
         void operator()(Xy_coordinate_2& r, int rel_prec) const {  }
     };
     CGAL_Algebraic_Kernel_pred(Refine_y_2, refine_y_2_object);
-    
+
     //! computes the current lower boundary of the first coordinate of \c r
     struct Lower_boundary_x_2 {
-       
+
         typedef Xy_coordinate_2 agrument_type;
         typedef Bound result_type;
-            
+
         result_type operator()(const Xy_coordinate_2& r) {
-            return static_cast<result_type>(0); 
+            return static_cast<result_type>(0);
         }
     };
     CGAL_Algebraic_Kernel_cons(Lower_boundary_x_2, lower_boundary_x_2_object);
-    
+
     //! computes the current upper boundary of the first coordinate of \c r
     struct Upper_boundary_x_2 {
-       
+
         typedef Xy_coordinate_2 agrument_type;
         typedef Bound result_type;
-            
+
         result_type operator()(const Xy_coordinate_2& r) {
-            return static_cast<result_type>(0);  
+            return static_cast<result_type>(0);
         }
     };
     CGAL_Algebraic_Kernel_cons(Upper_boundary_x_2, upper_boundary_x_2_object);
-    
+
     //! computes the current lower boundary of the second coordinate of \c r
     struct Lower_boundary_y_2 {
-       
+
         typedef Xy_coordinate_2 agrument_type;
         typedef Bound result_type;
-            
+
         result_type operator()(const Xy_coordinate_2& r) {
-            return static_cast<result_type>(0);  
+            return static_cast<result_type>(0);
         }
     };
     CGAL_Algebraic_Kernel_cons(Lower_boundary_y_2, lower_boundary_y_2_object);
-    
+
     //! computes the current lower boundary of the second coordinate of \c r
     struct Upper_boundary_y_2 {
-       
+
         typedef Xy_coordinate_2 agrument_type;
         typedef Bound result_type;
-            
+
         result_type operator()(const Xy_coordinate_2& r) {
-            return static_cast<result_type>(0); 
+            return static_cast<result_type>(0);
         }
     };
     CGAL_Algebraic_Kernel_cons(Upper_boundary_y_2, upper_boundary_y_2_object);
-    
+
     //! returns the number of boundary type in-between x-coordinates of two
     //! Xy_coordinate_2 objects
     struct Bound_between_x_2 {
-       
+
         typedef Xy_coordinate_2 first_agrument_type;
         typedef Xy_coordinate_2 second_agrument_type;
         typedef Bound result_type;
-            
-        result_type operator()(const Xy_coordinate_2& r1, 
+
+        result_type operator()(const Xy_coordinate_2& r1,
                 const Xy_coordinate_2& r2) const {
-            return static_cast<result_type>(0); 
+            return static_cast<result_type>(0);
         }
     };
-    CGAL_Algebraic_Kernel_cons(Bound_between_x_2, 
+    CGAL_Algebraic_Kernel_cons(Bound_between_x_2,
             boundary_between_x_2_object);
-            
+
     //! returns the number of boundary type in-between y-coordinates of two
     //! Xy_coordinate_2 objects
     struct Bound_between_y_2 {
-       
+
         typedef Xy_coordinate_2 first_agrument_type;
         typedef Xy_coordinate_2 second_agrument_type;
         typedef Bound result_type;
-            
-        result_type operator()(const Xy_coordinate_2& r1, 
+
+        result_type operator()(const Xy_coordinate_2& r1,
                 const Xy_coordinate_2& r2) const {
-            return static_cast<result_type>(0); 
+            return static_cast<result_type>(0);
         }
     };
-    CGAL_Algebraic_Kernel_cons(Bound_between_y_2, 
+    CGAL_Algebraic_Kernel_cons(Bound_between_y_2,
             boundary_between_y_2_object);
-    
-    //! \brief comparison of x-coordinates 
+
+    //! \brief comparison of x-coordinates
     struct Compare_x_2 :
          public CGAL::cpp98::binary_function<Algebraic_real_1, Algebraic_real_1,
                 Comparison_result > {
 
-        Comparison_result operator()(const Algebraic_real_1& x1, 
+        Comparison_result operator()(const Algebraic_real_1& x1,
                                          const Algebraic_real_1& x2) const {
             return CGAL::EQUAL;
         }
-        Comparison_result operator()(const Xy_coordinate_2& xy1, 
+        Comparison_result operator()(const Xy_coordinate_2& xy1,
                                          const Xy_coordinate_2& xy2) const {
             return CGAL::EQUAL;
         }
@@ -1208,24 +1208,24 @@ public:
     struct Compare_y_2 :
         public CGAL::cpp98::binary_function< Xy_coordinate_2, Xy_coordinate_2,
                 Comparison_result > {
-        
-        Comparison_result operator()(const Xy_coordinate_2& xy1, 
+
+        Comparison_result operator()(const Xy_coordinate_2& xy1,
                                      const Xy_coordinate_2& xy2) const {
             return CGAL::EQUAL;
         }
     };
     CGAL_Algebraic_Kernel_pred(Compare_y_2, compare_y_2_object);
-    
+
     //! lexicographical comparison of two objects of type \c Xy_coordinate_2
     //!
     //! \c equal_x specifies that only y-coordinates need to be compared
     struct Compare_xy_2 :
           public CGAL::cpp98::binary_function<Xy_coordinate_2, Xy_coordinate_2,
-                Comparison_result > 
+                Comparison_result >
     {
-        Comparison_result operator()(const Xy_coordinate_2& xy1, 
+        Comparison_result operator()(const Xy_coordinate_2& xy1,
              const Xy_coordinate_2& xy2, bool equal_x = false) const {
-             
+
              return CGAL::EQUAL;
         }
     };
@@ -1234,7 +1234,7 @@ public:
     //! \brief checks whether curve has only finitely many self-intersection
     //! points, i.e., it has no self-overlapped continuous parts
     //!
-    //! for algerbaic curves this means that supporting polynomial is 
+    //! for algerbaic curves this means that supporting polynomial is
     //! square-free
     struct Has_finite_number_of_self_intersections_2 :
             public CGAL::cpp98::unary_function< Polynomial_2, bool > {
@@ -1243,9 +1243,9 @@ public:
             return true; //is_square_free(p);
         }
     };
-    CGAL_Algebraic_Kernel_pred(Has_finite_number_of_self_intersections_2, 
+    CGAL_Algebraic_Kernel_pred(Has_finite_number_of_self_intersections_2,
             has_finite_number_of_self_intersections_2_object);
-            
+
     //! \brief checks whether a curve pair has finitely many intersections,
     //! in other words, whether two curves have no continuous common part
     //!
@@ -1253,20 +1253,20 @@ public:
     //! coprime
     struct Has_finite_number_of_intersections_2 :
         public CGAL::cpp98::binary_function< Curve_analysis_2, Curve_analysis_2, bool > {
-               
-        bool operator()(const Curve_analysis_2& c1, 
+
+        bool operator()(const Curve_analysis_2& c1,
                         const Curve_analysis_2& c2) const {
             return true;
         }
     };
-    CGAL_Algebraic_Kernel_pred(Has_finite_number_of_intersections_2, 
+    CGAL_Algebraic_Kernel_pred(Has_finite_number_of_intersections_2,
             has_finite_number_of_intersections_2_object);
-    
+
     //! set of various curve and curve pair decomposition functions
     struct Decompose_2 {
-    
+
         //! default constructor
-        Decompose_2(/*Self *pkernel_2*/)  
+        Decompose_2(/*Self *pkernel_2*/)
         {  }
 
         Polynomial_2 operator()(const Polynomial_2& p) {
@@ -1274,17 +1274,17 @@ public:
         }
 
         template< class OutputIterator1, class OutputIterator2 >
-        int operator()( const Curve_analysis_2& c, OutputIterator1 fit, 
+        int operator()( const Curve_analysis_2& c, OutputIterator1 fit,
                         OutputIterator2 mit ) const {
-                        
+
             return 0;
         }
-        
+
         template < class OutputIterator >
-        bool operator()(const Curve_analysis_2& c1, 
+        bool operator()(const Curve_analysis_2& c1,
                         const Curve_analysis_2& c2,
             OutputIterator oi1, OutputIterator oi2, OutputIterator oib) {
-           
+
             return false;
         }
     private:
@@ -1292,12 +1292,12 @@ public:
         /*Self *_m_pkernel_2; */
     };
     CGAL_Algebraic_Kernel_cons(Decompose_2, decompose_2_object);
-    
+
     //!@}
 public:
     //! \name types and functors for \c GPA_2<Algebraic_kernel_d_2>
     //!@{
-    
+
     typedef Construct_curve_2 Construct_polynomial_2_;
 
     typedef Has_finite_number_of_self_intersections_2 Is_square_free_2;
@@ -1306,11 +1306,11 @@ public:
     typedef Decompose_2 Make_square_free_2;
     typedef Decompose_2 Square_free_factorize;
     typedef Decompose_2 Make_coprime_2;
-    
+
     //! \brief computes the derivative w.r.t. the first (innermost) variable
-    struct Derivative_x_2 : 
+    struct Derivative_x_2 :
         public CGAL::cpp98::unary_function< Polynomial_2, Polynomial_2 > {
-        
+
         Polynomial_2 operator()(const Polynomial_2& p) const {
             return p;
         }
@@ -1320,7 +1320,7 @@ public:
     //! \brief computes the derivative w.r.t. the first (outermost) variable
     struct Derivative_y_2 :
         public CGAL::cpp98::unary_function< Polynomial_2, Polynomial_2 > {
-        
+
         Polynomial_2 operator()(const Polynomial_2& p) const  {
             return p;
         }
@@ -1328,13 +1328,13 @@ public:
     CGAL_Algebraic_Kernel_cons(Derivative_y_2, derivative_y_2_object);
 
     struct X_critical_points_2 {
-       
+
         template <class OutputIterator>
-        OutputIterator operator()(const Polynomial_2& p, 
+        OutputIterator operator()(const Polynomial_2& p,
                 OutputIterator oi) const {
             return oi;
         }
-        
+
         //! \brief computes the ith x-critical point of polynomial \c p
         Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const {
             return Xy_coordinate_2();
@@ -1342,17 +1342,17 @@ public:
     };
     CGAL_Algebraic_Kernel_cons(X_critical_points_2,
         x_critical_points_2_object);
-    
+
     struct Y_critical_points_2 {
-    
+
         //! \brief copies in the output iterator the y-critical points of
         //! polynomial \c p as objects of type \c Xy_coordinate_2
         template <class OutputIterator>
-        OutputIterator operator()(const Polynomial_2& p, 
+        OutputIterator operator()(const Polynomial_2& p,
             OutputIterator oi) const {
             return oi;
         }
-        
+
         //! \brief computes the ith y-critical point of polynomial \c p
         Xy_coordinate_2 operator()(const Polynomial_2& p, int i) const {
             return Xy_coordinate_2();
@@ -1361,8 +1361,8 @@ public:
     CGAL_Algebraic_Kernel_cons(Y_critical_points_2,
         y_critical_points_2_object);
 
-    /*!\brief 
-     * computes the sign of a bivariate polynomial \c p evaluated at the root 
+    /*!\brief
+     * computes the sign of a bivariate polynomial \c p evaluated at the root
      * \c r of a system of two bivariate polynomial equations
      *
      * returns a value convertible to \c CGAL::Sign
@@ -1378,7 +1378,7 @@ public:
     CGAL_Algebraic_Kernel_pred(Sign_at_2, sign_at_2_object);
 
     struct Solve_2 {
-    
+
         template <class OutputIteratorRoots, class OutputIteratorMult>
         std::pair<OutputIteratorRoots, OutputIteratorMult>
             operator()(const Polynomial_2& p1, const Polynomial_2& p2,
@@ -1389,11 +1389,11 @@ public:
     };
     CGAL_Algebraic_Kernel_cons(Solve_2, solve_2_object);
 
-#undef CGAL_Algebraic_Kernel_pred    
-#undef CGAL_Algebraic_Kernel_cons 
-    
+#undef CGAL_Algebraic_Kernel_pred
+#undef CGAL_Algebraic_Kernel_cons
+
     //!@}
-      
+
 }; // class Algebraic_curve_kernel_2
 
 } //namespace CGAL

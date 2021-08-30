@@ -9,8 +9,8 @@ boundary and no bounded side, i.e.\ its unbounded side equals the
 whole plane \f$ \E^2\f$.
 */
 class Ellipse {
-public:  
-/// \name Types 
+public:
+/// \name Types
 /// @{
 
 /*!
@@ -20,7 +20,7 @@ typedef unspecified_type Point;
 
 /// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
@@ -84,7 +84,7 @@ void  set( const Point& p,
 /// @}
 
 
-/// \name Predicates 
+/// \name Predicates
 /// @{
 
 /*!
@@ -146,7 +146,7 @@ returns `true`, iff `ellipse` is degenerate, i.e.\ if
 bool  is_degenerate( ) const;
 
 /// @}
-/// \name I/O 
+/// \name I/O
 /// The following I/O operator is only needed, if the corresponding I/O
 /// operator of `CGAL::Min_ellipse_2` is used.
 /// @{

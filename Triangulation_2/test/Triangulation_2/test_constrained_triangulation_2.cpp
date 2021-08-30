@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Triangulation/test_constrained_triangulation.C
 // source        : $URL$
 // revision      : $Id$
@@ -20,7 +20,7 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 // Don't want to be warned about using CDT_2 (and not CDT_2+) with an exact number type
 #define CGAL_NO_CDT_2_WARNING
@@ -60,7 +60,7 @@ int main()
   typedef CGAL::Exact_predicates_tag                               Itag;
   typedef CGAL::Constrained_triangulation_2<TestK,TDS,Itag>        Ctwi;
   _test_cls_constrained_triangulation(Ctwi());
-  
+
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_intersections_tag : " << std::endl;
   typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;
@@ -69,6 +69,6 @@ int main()
   typedef CGAL::Exact_intersections_tag                         EItag;
   typedef CGAL::Constrained_triangulation_2<EK,TDSS,EItag>      Ctwei;
   _test_cls_constrained_triangulation(Ctwei());
-  
+
   return 0;
 }

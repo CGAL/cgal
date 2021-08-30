@@ -10,9 +10,9 @@
 // Author(s)     : Monique Teillaud, Sylvain Pion, Andreas Fabri
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 // Descriptions of the file format can be found at
@@ -124,13 +124,13 @@ private:
 
   is >> n;
   CGAL_assertion(n == 10);
-  is >> iformat(cx);
+  is >> IO::iformat(cx);
   is >> n;
   CGAL_assertion(n == 20);
-  is >> iformat(cy);
+  is >> IO::iformat(cy);
   is >> n;
   CGAL_assertion(n == 40);
-  is >> iformat(r);
+  is >> IO::iformat(r);
   FT sqr_ft(r*r);
   circ = CGAL::make_array(cx,cy,sqr_ft);
 }
@@ -160,16 +160,16 @@ read_polygon(std::istream& is, Polygon& poly)
       CGAL_assertion(n == 0);
       is >> n;
       CGAL_assertion(n == 10);
-      is >> iformat(x);
+      is >> IO::iformat(x);
       is >> n;
       CGAL_assertion(n == 20);
-      is >> iformat(y);
+      is >> IO::iformat(y);
       is >> n;
       len = 0;
       if(n == 42){
-	is >> len;
+        is >> len;
       } else {
-	CGAL_assertion(n == 0);
+        CGAL_assertion(n == 0);
       }
       poly.push_back(CGAL::make_array(x,y, len));
     }

@@ -1,19 +1,19 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -44,7 +44,7 @@
 #include "CGAL/_test_fct_coplanar_3.h"
 #include "CGAL/_test_cls_iso_cuboid_3.h"
 #include "CGAL/_test_angle.h"
- 
+
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
 template <typename Cls>

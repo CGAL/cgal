@@ -2,9 +2,9 @@ namespace CGAL {
 
 /*!
 \ingroup PkgGeneratorsRef
-\brief chooses `n` items at random from a random 
-access iterator range which is useful to produce degenerate input data 
-sets with multiple entries of identical items. 
+\brief chooses `n` items at random from a random
+access iterator range which is useful to produce degenerate input data
+sets with multiple entries of identical items.
 
 The function chooses a random item from the range `[first,last)` and
 writes it to `result`, each item from the range with equal
@@ -16,12 +16,12 @@ Returns the value of `result` after inserting the `n` items.
 
 
 
-\sa `CGAL::perturb_points_2()` 
+\sa `CGAL::perturb_points_2()`
 */
-template <class RandomAccessIterator, class Size, 
+template <class RandomAccessIterator, class Size,
 class OutputIterator, class Random>
 OutputIterator random_selection( RandomAccessIterator first,
-RandomAccessIterator last, 
+RandomAccessIterator last,
 Size n, OutputIterator result, Random& rnd = get_default_random());
 
 } /* namespace CGAL */

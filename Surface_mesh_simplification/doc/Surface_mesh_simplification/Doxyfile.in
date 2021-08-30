@@ -1,15 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Triangulated Surface Mesh Simplification"
-
-# macros to be used inside the code
-ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
-ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
-ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref SMS_\1 \"\1\"</td><td>"
-ALIASES += "cgalParamEnd=</td></tr>"
-
-#macros for NamedParameters.txt
-ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"params\">"
-ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
-ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
-ALIASES += "cgalNPEnd=</td></tr>"

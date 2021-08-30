@@ -63,10 +63,10 @@ public:
     boost::filesystem::path headerFile(fileName);
     boost::filesystem::path dataFile(string_field("in"));
 #if BOOST_FILESYSTEM_VERSION == 2
-    dataFile = boost::filesystem::complete(dataFile, 
+    dataFile = boost::filesystem::complete(dataFile,
                                            boost::filesystem::complete(headerFile.parent_path()));
 #else
-    dataFile = boost::filesystem::absolute(dataFile, 
+    dataFile = boost::filesystem::absolute(dataFile,
                                            boost::filesystem::absolute(headerFile.parent_path()));
 #endif
     if(!load_data(dataFile.string())) {
@@ -88,7 +88,7 @@ public:
 
 protected :
 
-  bool load_data(std::string dataFilename) 
+  bool load_data(std::string dataFilename)
   {
     if(_im) delete _im;
     _im = new _image;
@@ -141,11 +141,11 @@ protected :
 
     // Compute number of element
     const std::size_t size = n(1) * n(2) * n(3);
-    
+
     // Allocate array
     _data = new T[size];
     _im->data = (void*)_data;
-    
+
     // // Read file
     if(_readImageData(_im) < 0) return false;
    // char* buffer = reinterpret_cast<char*>(_data);

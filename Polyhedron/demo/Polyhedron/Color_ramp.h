@@ -13,21 +13,21 @@
 class SCENE_COLOR_RAMP_EXPORT Color_component
 {
   typedef std::list<std::pair<double,double> > Values;
-  
+
 public:
   Color_component();
   Color_component(const double c0, const double c1);
   ~Color_component() {}
-  
+
   double interpolate(const double v) const;
   void add(const double v, double color);
   void rebuild(const double c0, const double c1);
   void print() const;
-  
+
 private:
   inline Values::const_iterator next_it(const double v) const;
   inline Values::iterator next_it(const double v);
-  
+
 private:
   Values values_;
 };
@@ -36,7 +36,7 @@ private:
 class SCENE_COLOR_RAMP_EXPORT Color_ramp
 {
 public :
-	Color_ramp();
+        Color_ramp();
         Color_ramp(const double r0, const double r1, const double g0, const double g1,
                    const double b0, const double b1);
 
@@ -45,8 +45,8 @@ public :
   inline double g(double v) const;
   inline double b(double v) const;
 
-	void build_red();
-	void build_blue();
+        void build_red();
+        void build_blue();
         void build_thermal();
         void build_rainbow();
 

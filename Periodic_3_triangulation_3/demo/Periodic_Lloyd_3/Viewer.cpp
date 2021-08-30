@@ -92,9 +92,9 @@ Viewer::next_around_circle(const float& phi, const Vec& pos, const Vec& ori) {
 
   Vec y(cam_norm.z, 0, -cam_norm.x);
   Vec y_norm = y/y.norm();
-  
+
   Vec new_cam = ori + (cam_norm*cos(phi) + y_norm*sin(phi)) * cam.norm();
-  return new_cam;  
+  return new_cam;
 }
 
 void Viewer::initialize_buffers()

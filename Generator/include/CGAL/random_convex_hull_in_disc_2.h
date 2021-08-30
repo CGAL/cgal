@@ -21,6 +21,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/copy_n.h>
 #include <CGAL/number_type_config.h>
+#include <CGAL/double.h>
 #include <list>
 
 namespace CGAL {
@@ -67,19 +68,6 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
   }
   if (n == 1)  // generation of a point
   {
-
-    #if BOOST_VERSION < 104700
-
-    boost::uniform_real<double> random_squared_radius_distribution(
-        small_radius * small_radius / (big_radius * big_radius), 1);
-    boost::uniform_real<double> random_angle_distribution(a, b);
-    boost::variate_generator<
-        GEN&, boost::uniform_real<double> > random_angle(gen, random_angle_distribution);
-    boost::variate_generator<
-        GEN&, boost::uniform_real<double> > random_squared_radius(gen, random_squared_radius_distribution);
-
-    #else
-
     boost::random::uniform_real_distribution<double> random_squared_radius_distribution(
         small_radius * small_radius / (big_radius * big_radius), 1);
 
@@ -88,8 +76,6 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
         GEN&, boost::random::uniform_real_distribution<double> > random_angle(gen, random_angle_distribution);
     boost::random::variate_generator<
         GEN&, boost::random::uniform_real_distribution<double> > random_squared_radius(gen, random_squared_radius_distribution);
-
-    #endif
 
     double alpha = random_angle();
     double r = big_radius * std::sqrt(random_squared_radius());
@@ -179,7 +165,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
   do {  // Initialization
     long init =
         static_cast<long>((std::min)(static_cast<std::size_t>(100), n - simulated_points));
-    
+
     generate_points_annulus(init, -CGAL_PI, CGAL_PI, 0, radius, l,
                             gen);
 
@@ -192,8 +178,8 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
            (simulated_points < n));  // initialization such that 0 in P_n
 
   std::size_t T = n;
-  if (!fast) T = static_cast<std::size_t>(std::floor(n / std::pow(std::log(static_cast<double>(n)), 2)));
-  
+  if (!fast) T = static_cast<std::size_t>(std::floor(n / CGAL::square(std::log(static_cast<double>(n)))));
+
   while (simulated_points < n) {
     // l is a list coming from a convex hull operation. we are moving the
     // points s.t the angles are from -pi to pi.

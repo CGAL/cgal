@@ -40,7 +40,7 @@ void report( const Point_3* a, const Point_3* b) {
 }
 
 int main(int argc, char*argv[]) {
-  
+
   std::ifstream in((argc>1)?argv[1]:"data/points.xyz");
   Point_3 p;
   while(in >> p){

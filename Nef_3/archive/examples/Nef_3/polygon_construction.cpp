@@ -18,7 +18,7 @@ Polygon_constructor;
 int main() {
 
   Point_3 pl[4] = {Point_3(0,0,0), Point_3(1,0,0),
-		   Point_3(1,1,0), Point_3(0,1,0)};
+                   Point_3(1,1,0), Point_3(0,1,0)};
   polygon poly;
   poly.push_back(point_range(pl,pl+4));
   Nef_polyhedron N;

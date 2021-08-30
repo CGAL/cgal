@@ -11,7 +11,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_UNIFORM_SIZING_FIELD_H
@@ -23,28 +23,28 @@
 namespace CGAL {
 
 namespace Mesh_3 {
-  
+
 template <typename Tr>
 class Uniform_sizing_field
 {
   typedef typename Tr::Geom_traits    Gt;
   typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Gt::FT             FT;
-  
+
 public:
-  // Vertices of mesh triangulation do not need to be updated 
+  // Vertices of mesh triangulation do not need to be updated
   static const bool is_vertex_update_needed = false;
-  
+
 public:
   Uniform_sizing_field(const Tr&) {}
   void fill(const std::map<Weighted_point,FT>&) {}
-  
+
   FT operator()(const Weighted_point&) const { return FT(1); }
   template <typename Handle>
   FT operator()(const Weighted_point&, const Handle&) const { return FT(1); }
 };
-  
-  
+
+
 } // end namespace Mesh_3
 
 

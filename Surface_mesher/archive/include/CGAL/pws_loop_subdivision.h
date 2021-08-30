@@ -72,7 +72,7 @@ public:
         CGAL_assertion(he != NULL);
         const Point& next = he->next()->vertex()->point();
         const Point& prev = he->prev()->vertex()->point();
-        Point p = CGAL::ORIGIN + 0.25 *(prev - CGAL::ORIGIN) + 
+        Point p = CGAL::ORIGIN + 0.25 *(prev - CGAL::ORIGIN) +
                                  0.50 *(curr - CGAL::ORIGIN) +
                                  0.25 *(next - CGAL::ORIGIN);
         builder.add_vertex(p);
@@ -97,7 +97,7 @@ public:
             // prev ==== curr ==== next
             Point prev,next;
             m_pMesh->incident_points_on_crease(v,prev,next);
-            Point p = CGAL::ORIGIN + 0.125 *(prev - CGAL::ORIGIN) + 
+            Point p = CGAL::ORIGIN + 0.125 *(prev - CGAL::ORIGIN) +
                                      0.750 *(curr - CGAL::ORIGIN) +
                                      0.125 *(next - CGAL::ORIGIN);
             builder.add_vertex(p);
@@ -166,7 +166,7 @@ public:
             if(type_v1 == type_v2) // all diagonals of minor in table 1
               mask_type = 2; // regular crease case
             else
-              if(type_v1 == Polyhedron::CREASE_REGULAR || 
+              if(type_v1 == Polyhedron::CREASE_REGULAR ||
                  type_v2 == Polyhedron::CREASE_REGULAR)
                 mask_type = 3; // irregular crease case
               else
@@ -175,7 +175,7 @@ public:
                 // this is all must remain
                 CGAL_assertion( (type_v1 == Polyhedron::CREASE_IRREGULAR && type_v2 == Polyhedron::CORNER) ||
                         (type_v2 == Polyhedron::CREASE_IRREGULAR && type_v1 == Polyhedron::CORNER));
-              } 
+              }
           }
         }
 
@@ -188,7 +188,7 @@ public:
           {
             const Point& p3 = he->next()->vertex()->point();
             const Point& p4 = he->opposite()->next()->vertex()->point();
-            Point p = CGAL::ORIGIN + 0.375 *(p1 - CGAL::ORIGIN) + 
+            Point p = CGAL::ORIGIN + 0.375 *(p1 - CGAL::ORIGIN) +
                                      0.375 *(p2 - CGAL::ORIGIN) +
                                      0.125 *(p3 - CGAL::ORIGIN) +
                                      0.125 *(p4 - CGAL::ORIGIN);
@@ -217,7 +217,7 @@ public:
               CGAL_assertion(type_v1 == Polyhedron::CREASE_IRREGULAR);
               CGAL_assertion(type_v2 == Polyhedron::CREASE_REGULAR);
             }
-            Point p = CGAL::ORIGIN + 0.625 *(regular   - CGAL::ORIGIN) + 
+            Point p = CGAL::ORIGIN + 0.625 *(regular   - CGAL::ORIGIN) +
                                      0.375 *(irregular - CGAL::ORIGIN);
             builder.add_vertex(p);
           }
@@ -280,7 +280,7 @@ public:
       h4->control_edge() = false;
       h4->next()->control_edge() = false;
       h4->next()->next()->control_edge() = false;
-      
+
       h1->next()->next()->sharp() = false;
       h2->next()->next()->sharp() = false;
       h3->next()->next()->sharp() = false;
@@ -340,7 +340,7 @@ public:
         CGAL_assertion(he != NULL);
         const Point& next = he->next()->vertex()->point();
         const Point& prev = he->prev()->vertex()->point();
-        pos[index] = 0.25 *(prev - CGAL::ORIGIN) + 
+        pos[index] = 0.25 *(prev - CGAL::ORIGIN) +
                      0.50 *(curr - CGAL::ORIGIN) +
                      0.25 *(next - CGAL::ORIGIN);
       } // end is border

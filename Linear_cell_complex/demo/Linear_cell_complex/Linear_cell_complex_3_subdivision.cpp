@@ -73,7 +73,7 @@ flip_edge (LCC & m, Dart_handle d)
   CGAL_assertion ( !m.is_free(d,2) );
   CGAL_assertion ( !m.is_free(d,1) && !m.is_free(d,0) );
   CGAL_assertion ( !m.is_free(m.beta(d,2), 0) && !m.is_free(m.beta(d, 2), 1) );
-  
+
   if (!m.is_removable<1>(d)) return LCC::null_handle;
 
   Dart_handle d1 = m.beta(d,1);
@@ -106,7 +106,7 @@ flip_edge (LCC & m, Dart_handle d)
     m.link_beta_1(m.beta(d3,3), m.beta(d,3));
     m.link_beta_1(m.beta(d2,3), m.beta(d,2,3));
   }
-  
+
   // CGAL::remove_cell<LCC,1>(m, d);
   // insert_cell_1_in_cell_2(m, d1, d1->beta(1)->beta(1));
 
@@ -127,10 +127,10 @@ subdivide_lcc_3 (LCC & m)
   // 1) We smoth the old vertices.
   std::vector <std::pair<Point_3, Dart_handle> > vertices;  // smooth the old vertices
   vertices.reserve (m.number_of_attributes<0> ());  // get intermediate space
-  std::transform (m.vertex_attributes().begin (), 
-		  m.vertex_attributes().end (),
-		  std::back_inserter (vertices), 
-		  Smooth_old_vertex (m, mark));
+  std::transform (m.vertex_attributes().begin (),
+                  m.vertex_attributes().end (),
+                  std::back_inserter (vertices),
+                  Smooth_old_vertex (m, mark));
 
   // 2) We subdivide each facet.
   m.negate_mark (treated);  // All the darts are marked in O(1).
@@ -189,6 +189,6 @@ subdivide_lcc_3 (LCC & m)
 
   CGAL_assertion (m.is_whole_map_marked (mark));
   m.free_mark (mark);
-  
+
   CGAL_postcondition ( m.is_valid ());
 }

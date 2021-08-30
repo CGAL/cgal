@@ -44,7 +44,7 @@ public:
   typedef unspecified_type Intersection_distance;
 
   /*!
-    Returns the intersection distance functor.
+    returns the intersection distance functor.
   */
   Intersection_distance intersection_distance_object() const ;
 };

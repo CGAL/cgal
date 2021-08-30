@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Envelopes_of_Curves_in_2D
 
 \anchor chapterEnvelope2
@@ -44,7 +44,7 @@ the \f$x\f$-monotone curves in the set:
 \f{eqnarray*}{
 {\cal U}_{{\cal C}} (x) = \max_{1 \leq k \leq n}{\underline{C}_k (x)} \ ,
 \f}
-where in this case \f$ \underline{C}_k(x) = -\infty\f$ for \f$ x 
+where in this case \f$ \underline{C}_k(x) = -\infty\f$ for \f$ x
 \not\in R_{C_k}\f$.
 
 Given a set of \f$ x\f$-monotone curves \f$ {\cal C}\f$, the <I>minimization
@@ -67,26 +67,26 @@ a single \f$ x\f$-monotone curve \f$ C_k\f$ is trivial to compute: we project
 the boundary of its range of definition \f$ R_{C_k}\f$ onto the \f$ x\f$-axis
 and label the features it induces accordingly. Given a set
 \f$ {\cal D}\f$ of (non necessarily \f$ x\f$-monotone) curves in \f$ {\mathbb R}^2\f$,
-we subdivide each curve into a finite number of weakly \f$ x\f$-monotone 
+we subdivide each curve into a finite number of weakly \f$ x\f$-monotone
 curves, and obtain the set \f$ {\cal C}\f$. Then, we split the set into two
 disjoint subsets \f$ {\cal C}_1\f$ and \f$ {\cal C}_2\f$, and we compute their envelope
 diagrams recursively. Finally, we merge the diagrams in linear time by
 traversing both diagrams in parallel.
 
-\section env2_secenv_diag The Envelope Diagram 
+\section env2_secenv_diag The Envelope Diagram
 
 The package basically contains two sets of free functions:
-\link lower_envelope_x_monotone_2() `lower_envelope_x_monotone_2(begin, end, diag)`\endlink 
+\link lower_envelope_x_monotone_2() `lower_envelope_x_monotone_2(begin, end, diag)`\endlink
 (similarly `upper_envelope_x_monotone_2()`) construct the envelope diagram
-for a given range of \f$ x\f$-monotone curves, while 
-\link lower_envelope_x_monotone_2() `lower_envelope_2(begin, end, diag)`\endlink 
+for a given range of \f$ x\f$-monotone curves, while
+\link lower_envelope_x_monotone_2() `lower_envelope_2(begin, end, diag)`\endlink
 (similarly `upper_envelope_2()`) construct the envelope diagram for a
 range of <I>arbitrary</I> (not necessarily \f$ x\f$-monotone) curves.
 In this section we explain more on the structure of the envelope
 diagram these functions output.
 
 \cgalFigureBegin{env2_figmin_diag,min_diag.png}
-The lower envelope of eight line segments, labeled \f$ A, \ldots, H\f$, 
+The lower envelope of eight line segments, labeled \f$ A, \ldots, H\f$,
 as constructed in `envelope_segments.cpp`. The minimization
 diagram is shown at the bottom, where each diagram vertex points to
 the point associated with it, and the labels of the segment that
@@ -133,9 +133,9 @@ empty intervals. This is not the case when we deal, for example, with
 envelopes of sets of lines.)
 
 Any model of the `EnvelopeDiagram_1` concept must define a geometric
-traits class, which in turn defines the `Point_2` and 
+traits class, which in turn defines the `Point_2` and
 `X_monotone_curve_2` types defined with the diagram features.
-The geometric traits class must be a model of the 
+The geometric traits class must be a model of the
 `ArrangementXMonotoneTraits_2` concept in case we construct
 envelopes of \f$ x\f$-monotone curves. If we are interested in handling
 arbitrary (not necessarily \f$ x\f$-monotone) curves, the traits class
@@ -188,7 +188,7 @@ A set of four circles, as constructed in \ref Envelope_2/envelope_circles.cpp. T
 
 \subsection Envelope_2ExampleforEnvelopeofNonLinearCurves Example for Envelope of Non-Linear Curves
 
-We conclude by an example of envelopes of non-linear curves. 
+We conclude by an example of envelopes of non-linear curves.
 We use the `Arr_circle_segment_traits_2` class to construct the
 lower and the upper envelopes of a set of four circles, as depicted
 in \cgalFigureRef{env2_figex_circ}. Note that unlike the two previous
@@ -197,6 +197,6 @@ that compute envelopes of arbitrary curves.
 
 \cgalExample{Envelope_2/envelope_circles.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

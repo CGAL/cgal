@@ -8,7 +8,7 @@ namespace CGAL {
 
 returns the center of the sphere spanned by the points in `A = tuple[first,last)`.
 
-\pre \f$ A\f$ contains \f$ d+1\f$ affinely independent points of dimension \f$ d\f$. 
+\pre \f$ A\f$ contains \f$ d+1\f$ affinely independent points of dimension \f$ d\f$.
 \tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> Point_d<R>
@@ -31,7 +31,7 @@ Point_d<R> lift_to_paraboloid(const Point_d<R>& p);
 computes a basis of the linear space
 spanned by the vectors in `A = tuple [first,last)` and returns
 it via an iterator range starting in `result`. The returned
-iterator marks the end of the output. 
+iterator marks the end of the output.
 \pre \f$ A\f$ contains vectors of the same dimension \f$ d\f$.
 
 \tparam ForwardIterator has `Vector_d<R>` as value type.

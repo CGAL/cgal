@@ -16,10 +16,10 @@ template <typename K>
 void test_orient(const char* file_name)
 {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
-  
+
   typedef typename K::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> Surface_mesh;
-  
+
   //run test for a Polyhedron
   std::ifstream input(file_name);
   Polyhedron poly; // file should contain oriented polyhedron

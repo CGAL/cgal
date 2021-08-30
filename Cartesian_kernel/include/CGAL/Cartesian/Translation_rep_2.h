@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -50,9 +50,9 @@ public:
   {}
 
   Point_2     transform(const Point_2 &p) const
-  { 
+  {
     typename R::Construct_translated_point_2 translated_point;
-    return translated_point(p, translationvector_); 
+    return translated_point(p, translationvector_);
   }
 
   Vector_2    transform(const Vector_2 &v) const { return v; }
@@ -107,10 +107,10 @@ public:
                                 + t.t22*translationvector_.y()
                                 + t.t23);
   }
-  
+
   Aff_transformation_2 compose(const Reflection &r) const
   {
-    return Aff_transformation_2(r.cosinus_, r.sinus_, 
+    return Aff_transformation_2(r.cosinus_, r.sinus_,
                                 r.cosinus_*(translationvector_.x()-r.t.x())+r.sinus_*(translationvector_.y() - r.t.y()) +r.t.x(),
                                 r.sinus_, -r.cosinus_,
                                 r.sinus_*(translationvector_.x()-r.t.x())-r.cosinus_*(translationvector_.y() - r.t.y())+r.t.y());
@@ -121,7 +121,12 @@ public:
     return Aff_transformation_2(TRANSLATION, - translationvector_);
   }
 
-  bool         is_even() const
+  bool is_even() const
+  {
+    return true;
+  }
+
+  virtual bool is_translation() const
   {
     return true;
   }

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Thomas Herrmann, Lutz Kettner
 
@@ -34,7 +34,7 @@ public:
     RT get_hy( const Point_3& p) const { return p.hy(); }
     RT get_hz( const Point_3& p) const { return p.hz(); }
     RT get_hw( const Point_3& p) const { return p.hw(); }
-    void get_point_coordinates( const Point_3& p, 
+    void get_point_coordinates( const Point_3& p,
                                 RT& px, RT& py, RT& pz, RT& ph) const {
         px = get_hx(p);
         py = get_hy(p);
@@ -45,19 +45,19 @@ public:
     RT get_b( const Plane_3& f) const { return f.b(); }
     RT get_c( const Plane_3& f) const { return f.c(); }
     RT get_d( const Plane_3& f) const { return f.d(); }
-    void get_plane_coefficients( const Plane_3& f, 
+    void get_plane_coefficients( const Plane_3& f,
                                  RT& a, RT& b, RT& c, RT& d) const {
         a = get_a(f);
         b = get_b(f);
         c = get_c(f);
         d = get_d(f);
     }
-    
-    Point_3 make_point( const RT& hx, const RT& hy, 
+
+    Point_3 make_point( const RT& hx, const RT& hy,
                         const RT& hz, const RT& hw) const  {
         return Point_3(hx,hy,hz,hw);
     }
-    Plane_3 make_plane( const RT& a, const RT& b, 
+    Plane_3 make_plane( const RT& a, const RT& b,
                         const RT& c, const RT& d) const {
         return Plane_3(a,b,c,d);
     }

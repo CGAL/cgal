@@ -46,7 +46,7 @@ typedef Dt::Point           Point;
 //////////////////////
 template<class TRIANGULATION>
 void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
-	       Cell_handle c)
+               Cell_handle c)
 {
   if ( ! T.is_infinite(c) )
     os << T.tetrahedron(c);
@@ -55,14 +55,14 @@ void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 }
 template<class TRIANGULATION>
 void visu_facet(CGAL::Geomview_stream & os, const TRIANGULATION & T,
-	       Cell_handle c, int i)
+               Cell_handle c, int i)
 {
   if ( ! T.is_infinite(c,i) )
     os << T.triangle(c,i);
 }
 template<class TRIANGULATION>
 void visu_edge(CGAL::Geomview_stream & os, const TRIANGULATION & T,
-	       Cell_handle c, int i, int j)
+               Cell_handle c, int i, int j)
 {
   if ( ! T.is_infinite(c,i,j) )
     os << T.segment(c,i,j);
@@ -83,7 +83,7 @@ void visu_vertices(CGAL::Geomview_stream & os, const TRIANGULATION & T)
 }
 template<class TRIANGULATION>
 void visu_vertex(CGAL::Geomview_stream & os, const TRIANGULATION & T,
-	       Cell_handle c, int i)
+               Cell_handle c, int i)
 {
   if ( ! T.is_infinite(c->vertex(i)) )
     os << c->vertex(i)->point();
@@ -94,7 +94,7 @@ void visu_vertex(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 int main()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(0,0,0, 5, 5, 5));
-  gv.set_bg_color(CGAL::Color(0, 200, 200));
+  gv.set_bg_color(CGAL::IO::Color(0, 200, 200));
   gv.set_wired(true);
   gv.clear();
 
@@ -108,7 +108,7 @@ int main()
   for (z=0 ; z<5 ; z++)
     for (y=0 ; y<5 ; y++)
       for (x=0 ; x<5 ; x++)
-	  V[i++] = T.insert(Point(x,y,z));
+          V[i++] = T.insert(Point(x,y,z));
 
   assert( T.is_valid() );
   assert( T.number_of_vertices() == 125 );

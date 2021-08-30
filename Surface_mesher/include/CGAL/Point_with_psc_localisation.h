@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -37,7 +37,7 @@ public:
   Point_with_psc_localisation() : Point(), index(), dim(-1) {}
 
   Point_with_psc_localisation(const Point& p) : Point(p), index(), dim(-1) {}
-			   
+
 //   Point_with_psc_localisation(const typename Kernel::Point_3& p) : Point(p), index(0) {}
 
   Point_with_psc_localisation(const Point_with_psc_localisation& p)
@@ -116,7 +116,7 @@ std::ostream&
 operator<<(std::ostream &os, const Point_with_psc_localisation<Point>& p)
 {
   os << static_cast<const Point&>(p);
-  if(is_ascii(os))
+  if(IO::is_ascii(os))
     os << ' ' << p.dimension() << ' ' << p.element_index();
   else {
     write(os, p.dimension());
@@ -131,7 +131,7 @@ operator>>(std::istream &is, Point_with_psc_localisation<Point>& p)
 {
   is >>  static_cast<Point&>(p);
   int index, dim;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
     is >> dim >> index;
   else {
     read(is, dim);

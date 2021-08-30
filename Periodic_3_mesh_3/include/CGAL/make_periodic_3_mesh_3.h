@@ -182,7 +182,7 @@ C3T3 make_periodic_3_mesh_3(const MD& md, const MC& mc, const T& ...t)
 #  pragma warning(push)
 #  pragma warning(disable:4003) // not enough actual parameters for macro
 #endif
-  
+
 // see <CGAL/config.h>
 CGAL_PRAGMA_DIAG_PUSH
 // see <CGAL/boost/parameter.h>

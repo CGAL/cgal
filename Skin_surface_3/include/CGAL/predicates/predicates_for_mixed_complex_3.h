@@ -31,27 +31,27 @@ namespace CGAL {
 template < class FT>
 Sign
 side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
-		     const FT &p2x, const FT &p2y, const FT &p2z, const FT &p2w,
-		     const FT &xx, const FT &xy, const FT &xz, 
-		     const FT &s) {
+                     const FT &p2x, const FT &p2y, const FT &p2z, const FT &p2w,
+                     const FT &xx, const FT &xy, const FT &xz,
+                     const FT &s) {
   FT x, y, z, dx, dy, dz;
   weighted_circumcenterC3(p1x, p1y, p1z, p1w,
-			  p2x, p2y, p2z, p2w,
-			  x,y,z);
+                          p2x, p2y, p2z, p2w,
+                          x,y,z);
   dx = p1x - p2x;  dy = p1y - p2y;  dz = p1z - p2z;
 
   return CGAL_NTS sign(((1-s)*p1x+s*x-xx)*(dx) +
-		       ((1-s)*p1y+s*y-xy)*(dy) +
-		       ((1-s)*p1z+s*z-xz)*(dz));
+                       ((1-s)*p1y+s*y-xy)*(dy) +
+                       ((1-s)*p1z+s*z-xz)*(dz));
 }
 
 template < class FT>
 Sign
 side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
-		     const FT &p2x, const FT &p2y, const FT &p2z, const FT &p2w,
-		     const FT &p3x, const FT &p3y, const FT &p3z, const FT &p3w,
-		     const FT &xx, const FT &xy, const FT &xz, 
-		     const FT &s) {
+                     const FT &p2x, const FT &p2y, const FT &p2z, const FT &p2w,
+                     const FT &p3x, const FT &p3y, const FT &p3z, const FT &p3w,
+                     const FT &xx, const FT &xy, const FT &xz,
+                     const FT &s) {
   // n is perpendicular to (p1,p2) in the plane of the triangle
   // q is the orthocenter of (p1,p2,p3)
   // t are temporary
@@ -69,23 +69,23 @@ side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
 
   // compute q:
   weighted_circumcenterC3(p1x, p1y, p1z, p1w,
-			  p2x, p2y, p2z, p2w,
-			  p3x, p3y, p3z, p3w,
-			  qx,qy,qz);
+                          p2x, p2y, p2z, p2w,
+                          p3x, p3y, p3z, p3w,
+                          qx,qy,qz);
 
   return CGAL_NTS sign(((1-s)*p1x+s*qx-xx)*nx +
-		       ((1-s)*p1y+s*qy-xy)*ny +
-		       ((1-s)*p1z+s*qz-xz)*nz);
+                       ((1-s)*p1y+s*qy-xy)*ny +
+                       ((1-s)*p1z+s*qz-xz)*nz);
 }
 
 template < class FT>
 Sign
 side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
-		     const FT &p2x, const FT &p2y, const FT &p2z, const FT &p2w,
-		     const FT &p3x, const FT &p3y, const FT &p3z, const FT &p3w,
-		     const FT &p4x, const FT &p4y, const FT &p4z, const FT &p4w,
-		     const FT &xx, const FT &xy, const FT &xz, 
-		     const FT &s) {
+                     const FT &p2x, const FT &p2y, const FT &p2z, const FT &p2w,
+                     const FT &p3x, const FT &p3y, const FT &p3z, const FT &p3w,
+                     const FT &p4x, const FT &p4y, const FT &p4z, const FT &p4w,
+                     const FT &xx, const FT &xy, const FT &xz,
+                     const FT &s) {
   // n is perpendicular to (p1,p2,p3) (outward of the tetrahedron)
   // q is the orthocenter of (p1,p2,p3)
 
@@ -102,18 +102,18 @@ side_of_mixed_cellC3(const FT &p1x, const FT &p1y, const FT &p1z, const FT &p1w,
 
   // compute q:
   weighted_circumcenterC3(p1x, p1y, p1z, p1w,
-			  p2x, p2y, p2z, p2w,
-			  p3x, p3y, p3z, p3w,
-			  p4x, p4y, p4z, p4w,
-			  qx,qy,qz);
+                          p2x, p2y, p2z, p2w,
+                          p3x, p3y, p3z, p3w,
+                          p4x, p4y, p4z, p4w,
+                          qx,qy,qz);
 
   // First term makes up for the orientation of (p1,p2,p3,p4)
   // Second term is the actual sign of test.
-  return 
+  return
     CGAL_NTS sign(nx*(p1x-p4x) + ny*(p1y-p4y) + nz*(p1z-p4z)) *
     CGAL_NTS sign(((1-s)*p1x+s*qx-xx)*nx +
-		  ((1-s)*p1y+s*qy-xy)*ny +
-		  ((1-s)*p1z+s*qz-xz)*nz);
+                  ((1-s)*p1y+s*qy-xy)*ny +
+                  ((1-s)*p1z+s*qz-xz)*nz);
 }
 
 } //namespace CGAL

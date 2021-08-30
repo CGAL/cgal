@@ -33,7 +33,7 @@ class Facet_criterion_visitor_with_balls
 {
   typedef Mesh_3::Criterion_visitor<Tr, typename Tr::Facet> Base;
   typedef Facet_criterion_visitor_with_balls<Tr> Self;
-   
+
 public:
   typedef Mesh_3::Abstract_criterion<Tr, Self> Criterion;
   typedef Mesh_3::Curvature_size_criterion<Tr, Self> Curvature_size_criterion;
@@ -41,7 +41,7 @@ public:
   typedef Mesh_3::Facet_on_surface_criterion<Tr, Self> Facet_on_surface_criterion;
   typedef Mesh_3::Uniform_size_criterion<Tr, Self> Uniform_size_criterion;
   typedef Mesh_3::Facet_on_same_surface_criterion<Tr, Self> Facet_on_same_surface_criterion;
-  
+
 
   typedef typename Base::Quality Facet_quality;
   typedef typename Base::Is_bad  Is_facet_bad;
@@ -56,11 +56,11 @@ public:
   int wp_nb_;
   double radius_ortho_shpere;
   double ratio;
-  
+
   //typedef typename Tr::Cell::Surface_patch_index Surface_patch_index;
   //typedef typename Tr::Vertex_handle Vertex_handle;
 
-   
+
   // Constructor
   Facet_criterion_visitor_with_balls(const Tr& tr, const Facet& fh)
     : Base(tr, fh)
@@ -110,7 +110,7 @@ public:
                                     : f_size2 / cw(wp2);
       }
       break;
-          
+
     case 1:
       {
         if(compare_sq_radius(wp2, FT(0)) == CGAL::SMALLER) { std::swap(wp1, wp2); }
@@ -122,13 +122,13 @@ public:
         ratio = f_size / cw(wp1);
       }
       break;
-          
+
     default: break;
     }
-      
+
     //std::cerr << "radius: " << radius_ortho_shpere << "  ratio: " << ratio << "  wp_nb:" << wp_nb_ << "\n";
   }
-   
+
   // Destructor
   ~Facet_criterion_visitor_with_balls() { }
 
@@ -139,15 +139,15 @@ public:
     else
       Base::do_visit(criterion);
   }
-   
+
   void visit(const Curvature_size_criterion& criterion)
   {
     if ( wp_nb_ >= 2 && radius_ortho_shpere <= 0.)
       Base::increment_counter();
     else if ( wp_nb_ == 1)
-    { 
+    {
       if ( ratio > 1.21 )
-      { 
+      {
         Base::do_visit(criterion);
         return;
       }
@@ -156,15 +156,15 @@ public:
     }
     else
       Base::do_visit(criterion);
-  
+
   }
-   
+
   void visit(const Aspect_ratio_criterion& criterion)
   {
     if ( wp_nb_ >=2  && radius_ortho_shpere <= 0.)
     {
       if ( ratio > 4 )
-      { 
+      {
         Base::do_visit(criterion);
         return;
       }

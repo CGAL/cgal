@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -22,7 +22,7 @@
 #include <map>
 
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/internal/TDS_2/Edge_hash_function.h>
+#include <CGAL/TDS_2/internal/Edge_hash_function.h>
 
 
 namespace CGAL {
@@ -95,22 +95,13 @@ public:
   }
 
   bool operator()(const Delaunay_graph& dual,
-		  const Face_handle& f,	int i) const {
+                  const Face_handle& f,        int i) const {
     return operator()(dual, Edge(f,i));
   }
 
+  template <typename EdgeIterator>
   bool operator()(const Delaunay_graph& dual,
-		  const Edge_circulator& ec) const {
-    return operator()(dual, *ec);
-  }
-
-  bool operator()(const Delaunay_graph& dual,
-		  const All_edges_iterator& eit) const {
-    return operator()(dual, *eit);
-  }
-
-  bool operator()(const Delaunay_graph& dual,
-		  const Finite_edges_iterator& eit) const {
+                  const EdgeIterator eit) const {
     return operator()(dual, *eit);
   }
 
@@ -144,7 +135,7 @@ public:
     typename Edge_map::iterator it;
     for (it = emap.begin(); it != emap.end(); ++it) {
       valid = valid && dual.tds().is_edge(it->first.first,
-					  it->first.second);
+                                          it->first.second);
     }
     return valid;
   }
@@ -210,22 +201,13 @@ public:
   }
 
   bool operator()(const Delaunay_graph& dual,
-		  const Face_handle& f,	int i) const {
+                  const Face_handle& f,        int i) const {
     return operator()(dual, Edge(f,i));
   }
 
+  template <typename EdgeIterator>
   bool operator()(const Delaunay_graph& dual,
-		  const Edge_circulator& ec) const {
-    return operator()(dual, *ec);
-  }
-
-  bool operator()(const Delaunay_graph& dual,
-		  const All_edges_iterator& eit) const {
-    return operator()(dual, *eit);
-  }
-
-  bool operator()(const Delaunay_graph& dual,
-		  const Finite_edges_iterator& eit) const {
+                  const EdgeIterator eit) const {
     return operator()(dual, *eit);
   }
 
@@ -250,11 +232,11 @@ public:
 
   bool is_valid() const { return true; }
 
-  bool is_valid(const Delaunay_graph& dual) const {
+  bool is_valid(const Delaunay_graph& dual) const
+  {
     bool valid = true;
-    All_edges_iterator eit;
-    for (eit = dual.all_edges_begin(); eit != dual.all_edges_end(); ++eit) {
-      Edge e = *eit;
+    for (auto eit = dual.all_edges_begin(); eit != dual.all_edges_end(); ++eit) {
+      const Edge& e = *eit;
       bool b = !emap.is_defined(e) || (emap[e] != UNDEFINED);
       valid = valid && b;
     }
@@ -415,7 +397,7 @@ public:
     bool valid = true;
     typename Delaunay_graph::All_vertices_iterator vit;
     for (vit = dual.all_vertices_begin();
-	 vit != dual.all_vertices_end(); ++vit) {
+         vit != dual.all_vertices_end(); ++vit) {
       bool b = !vmap.is_defined(vit) || (vmap[vit] != UNDEFINED);
       valid = valid && b;
     }

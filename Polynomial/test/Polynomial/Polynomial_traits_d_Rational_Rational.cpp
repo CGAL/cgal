@@ -13,22 +13,22 @@
 
 int main()
 {
-  typedef CGAL::Arithmetic_kernel AK; 
-  typedef AK::Rational Rational; 
-  
+  typedef CGAL::Arithmetic_kernel AK;
+  typedef AK::Rational Rational;
+
   typedef CGAL::Polynomial< CGAL::Sqrt_extension< Rational, Rational > > Poly;
   typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
-  std::cerr << 
-    "Test for coefficient type Sqrt_extension< Rational, Rational >" 
+  std::cerr <<
+    "Test for coefficient type Sqrt_extension< Rational, Rational >"
             << std::endl;
-  std::cerr << 
+  std::cerr <<
     "----------------------------------------------------------------------"
-            << std::endl;    
-  CGAL::Test_Pol::test_multiple_dimensions(PT());    
+            << std::endl;
+  CGAL::Test_Pol::test_multiple_dimensions(PT());
   return 0;
 }
- 
+
 #else
 int main()
 {

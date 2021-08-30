@@ -2,9 +2,11 @@
 
 #include <fstream>
 #include "performance_2.h"
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
@@ -51,7 +53,7 @@ private:
   virtual bool read_mesh(const char* _filename)
   {
     CGAL::Memory_sizer ms;
-    bool b = CGAL::read_off(mesh, _filename);
+    bool b = CGAL::IO::read_OFF(mesh, _filename);
     std::cout << "memory consumption: " << ms.virtual_size() << "  " << ms.resident_size() << std::endl;
     return b;
   }
@@ -59,7 +61,7 @@ private:
 
   virtual bool write_mesh(const char* _filename)
   {
-    return CGAL::write_off(mesh, _filename);
+    return CGAL::IO::write_OFF(mesh, _filename);
   }
 
 
@@ -281,7 +283,7 @@ private:
     namespace SMS = CGAL::Surface_mesh_simplification ;
 
     mesh.clear();
-    bool b = CGAL::read_off(mesh, _filename);
+    bool b = CGAL::IO::read_OFF(_filename, mesh);
     SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.1);
     int r = SMS::edge_collapse(mesh, stop);
   }

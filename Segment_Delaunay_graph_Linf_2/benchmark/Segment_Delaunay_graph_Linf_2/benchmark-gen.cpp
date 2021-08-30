@@ -231,7 +231,7 @@ load_cin_file(std::istream& ifs, SDG& sdg) {
 template <typename SDG>
 void
 run_benchmark(SDG& sdg)
-{  
+{
   load_cin_file(std::cin, sdg);
 
   CGAL::Timer timer;

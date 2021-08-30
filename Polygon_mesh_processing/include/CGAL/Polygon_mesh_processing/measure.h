@@ -28,10 +28,13 @@
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
 
+#include <boost/container/small_vector.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
+#include <boost/dynamic_bitset.hpp>
 
 #include <utility>
+#include <algorithm>
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
@@ -40,9 +43,7 @@
 
 namespace CGAL {
 
-namespace Polygon_mesh_processing {
-
-// workaround for area(face_range,tm) overload
+// workaround for area(face_range, tm) overload
 template<typename CGAL_PMP_NP_TEMPLATE_PARAMETERS, typename NP>
 class GetGeomTraits<CGAL_PMP_NP_CLASS, NP>
 {
@@ -50,27 +51,46 @@ public:
   struct type{};
 };
 
+namespace Polygon_mesh_processing {
+
+namespace internal {
+
+inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& ids)
+{
+  auto min_elem = std::min_element(ids.begin(), ids.end());
+  std::rotate(ids.begin(), min_elem, ids.end());
+}
+}//namespace internal
 /**
   * \ingroup measure_grp
   * computes the length of an edge of a given polygon mesh.
   * The edge is given by one of its halfedges, or the edge itself.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param h one halfedge of the edge to compute the length
   * @param pmesh the polygon mesh to which `h` belongs
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return the length of `h`. The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `pmesh`.
   *
@@ -136,22 +156,31 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
   * that contains a given halfedge.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param h a halfedge of the border polyline of which the length is computed
   * @param pmesh the polygon mesh to which `h` belongs
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return the length of the sequence of border edges of `face(h, pmesh)`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `pmesh`.
   *
@@ -198,16 +227,25 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   * a halfedge that is part of this border and the length of this border.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param pmesh the polygon mesh
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return a pair composed of two members:
@@ -216,7 +254,7 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   *     deduced from the graph traits corresponding to the type `PolygonMesh`.
   *   - `second`: the length of the longest border
   *     The return type `FT` is a number type. It is
-  *     either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  *     either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   *     or the geometric traits class deduced from the point property map
   *     of `pmesh`
   *
@@ -278,24 +316,33 @@ longest_border(const PolygonMesh& pmesh)
   * triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param f the face of which the area is computed
   * @param tmesh the triangulated surface mesh to which `f` belongs
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
-  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
   *
   * @return the area of `f`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   *
@@ -326,7 +373,8 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   halfedge_descriptor hd = halfedge(f, tmesh);
   halfedge_descriptor nhd = next(hd, tmesh);
 
-  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type traits;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type GT;
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   return approximate_sqrt(traits.compute_squared_area_3_object()(get(vpm, source(hd, tmesh)),
                                                                  get(vpm, target(hd, tmesh)),
@@ -351,22 +399,31 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
           model of `Range`.
           Its iterator type is `InputIterator`.
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param face_range the range of faces of which the area is computed
   * @param tmesh the triangulated surface mesh to which the faces of `face_range` belong
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
-  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return sum of face areas of `faces`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   *
@@ -412,21 +469,30 @@ area(FaceRange face_range, const TriangleMesh& tmesh)
   * computes the surface area of a triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the triangulated surface mesh
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
-  *  \cgalParamBegin{geom_traits}an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return the surface area of `tmesh`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   *
@@ -462,23 +528,32 @@ area(const TriangleMesh& tmesh)
   * a closed triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the closed triangulated surface mesh bounding the volume
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * @pre `tmesh` is closed
   *
   * \cgalNamedParamsBegin
-  *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
-  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return the volume bounded by `tmesh`.
   * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
   */
@@ -500,7 +575,7 @@ volume(const TriangleMesh& tmesh,
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_const_property_map(CGAL::vertex_point, tmesh));
   typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3 origin(0, 0, 0);
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -534,23 +609,32 @@ volume(const TriangleMesh& tmesh)
   * computes the aspect ratio of a face of a given triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param f the face of which the aspect ratio is computed
   * @param tmesh the triangulated surface mesh to which `f` belongs
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
-  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
   *
   * @return the aspect ratio of `f`. The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref pmp_namedparameters "Named Parameters" if provided,
+  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map of `tmesh`.
   *
   */
@@ -577,11 +661,11 @@ face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_const_property_map(CGAL::vertex_point, tmesh));
 
   halfedge_descriptor h = halfedge(f, tmesh);
 
-  Geom_traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Geom_traits());
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
 #if 0
   const FT sq_triangle_area = gt.compute_squared_area_3_object()(get(vpm, source(h, tmesh)),
@@ -645,18 +729,27 @@ face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   * a closed triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `FaceListGraph`
-  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the closed triangulated surface mesh bounding the volume
-  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * @pre `tmesh` is closed
   *
   * \cgalNamedParamsBegin
-  *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-  *   If this parameter is omitted, an internal property map for
-  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
-  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+  *   \cgalParamNEnd
+  *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return the centroid of the domain bounded by `tmesh`.
@@ -679,7 +772,7 @@ centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 
   typedef typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_const_property_map(CGAL::vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type Kernel;
   typedef typename Kernel::Point_3                                      Point_3;
@@ -736,6 +829,192 @@ CGAL::vertex_point_t>::type>::Kernel::Point_3
 centroid(const TriangleMesh& tmesh)
 {
   return centroid(tmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+
+/**
+  * \ingroup measure_grp
+  * identifies faces only present in `m1` and `m2` as well as the faces present
+  * in both polygon meshes. Two faces are matching if they have the same
+  * orientation and the same points.
+  *
+  * @tparam PolygonMesh1 a model of `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam PolygonMesh2 a model of `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam FaceOutputIterator1 model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh1>::%face_descriptor`.
+  * @tparam FaceOutputIterator2 model of `OutputIterator`
+     holding `boost::graph_traits<PolygonMesh2>::%face_descriptor`.
+  * @tparam FacePairOutputIterator model of `OutputIterator`
+     holding `std::pair<boost::graph_traits<PolygonMesh1>::%face_descriptor,
+     boost::graph_traits<PolygonMesh2>::%face_descriptor`.
+  *
+  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param m1 the first `PolygonMesh`
+  * @param m2 the second `PolygonMesh`
+  * @param common output iterator collecting the faces that are common to both meshes.
+  * @param m1_only output iterator collecting the faces that are only in `m1`
+  * @param m2_only output iterator collecting the faces that are only in `m2`
+  * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `m1`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh1>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type. `%Point_3` must be `LessThanComparable`.}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, m1)`}
+  *     \cgalParamExtra{The same holds for `m2` and `PolygonMesh2` and the point type must be the same for both meshes.}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{vertex_index_map}
+  *     \cgalParamDescription{a property map associating to each vertex of `m1` a unique index between `0` and `num_vertices(m1) - 1`, and similarly for `m2`.}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+  *                    as key type and `std::size_t` as value type}
+  *     \cgalParamDefault{an automatically indexed internal map}
+  *     \cgalParamExtra{If this parameter is not passed, internal machinery will create and initialize
+  *                     a face index property map, either using the internal property map if it exists
+  *                     or using an external map. The latter might result in  - slightly - worsened performance
+  *                     in case of non-constant complexity for index access. The same holds for `m2` and `PolygonMesh2`.}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
+  *
+ */
+template< typename PolygonMesh1,
+          typename PolygonMesh2,
+          typename FacePairOutputIterator,
+          typename FaceOutputIterator1,
+          typename FaceOutputIterator2,
+          typename NamedParameters1,
+          typename NamedParameters2 >
+void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
+                 FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only,
+                 const NamedParameters1& np1, const NamedParameters2& np2)
+{
+  typedef typename GetVertexPointMap<PolygonMesh1, NamedParameters1>::const_type            VPMap1;
+  typedef typename GetVertexPointMap<PolygonMesh2, NamedParameters2>::const_type            VPMap2;
+  typedef typename GetInitializedVertexIndexMap<PolygonMesh1, NamedParameters1>::const_type VIMap1;
+  typedef typename GetInitializedVertexIndexMap<PolygonMesh2, NamedParameters2>::const_type VIMap2;
+  typedef typename boost::property_traits<VPMap2>::value_type                               Point_3;
+  typedef typename boost::graph_traits<PolygonMesh1>::face_descriptor                       face_descriptor_1;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  const VPMap1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                       get_const_property_map(vertex_point, m1));
+  const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                       get_const_property_map(vertex_point, m2));
+  CGAL_static_assertion_msg((boost::is_same<typename boost::property_traits<VPMap1>::value_type,
+                             typename boost::property_traits<VPMap2>::value_type>::value),
+                            "Both vertex point maps must have the same point type.");
+
+  const VIMap1 vim1 = get_initialized_vertex_index_map(m1, np1);
+  const VIMap2 vim2 = get_initialized_vertex_index_map(m2, np2);
+
+  std::map<Point_3, std::size_t> point_id_map;
+
+  std::vector<std::size_t> m1_vertex_id(num_vertices(m1), -1);
+  std::vector<std::size_t> m2_vertex_id(num_vertices(m2), -1);
+  boost::dynamic_bitset<> shared_vertices(m1_vertex_id.size() + m2_vertex_id.size());
+
+  //iterate both meshes to set ids of all points, and set vertex/point_id maps.
+  std::size_t id = 0;
+  for(auto v : vertices(m1))
+  {
+    const typename boost::property_traits<VPMap1>::reference p = get(vpm1, v);
+    auto res = point_id_map.emplace(p, id);
+    if(res.second)
+      ++id;
+    m1_vertex_id[get(vim1, v)] = res.first->second;
+  }
+  for(auto v : vertices(m2))
+  {
+    const typename boost::property_traits<VPMap2>::reference p = get(vpm2, v);
+    auto res = point_id_map.emplace(p, id);
+    if(res.second)
+      ++id;
+    else
+      shared_vertices.set(res.first->second);
+    m2_vertex_id[get(vim2, v)] = res.first->second;
+  }
+
+  //fill a set with the "faces point-ids" of m1 and then iterate faces of m2 to compare.
+  std::map<boost::container::small_vector<std::size_t, 4>, face_descriptor_1> m1_faces_map;
+  for(auto f : faces(m1))
+  {
+    bool all_shared = true;
+    boost::container::small_vector<std::size_t, 4> ids;
+    for(auto v : CGAL::vertices_around_face(halfedge(f, m1), m1))
+    {
+      std::size_t vid = m1_vertex_id[get(vim1, v)];
+      ids.push_back(vid);
+      if(!shared_vertices.test(vid))
+      {
+        all_shared = false;
+        break;
+      }
+    }
+    if(all_shared)
+    {
+      internal::rearrange_face_ids(ids);
+      m1_faces_map.emplace(ids, f);
+    }
+    else
+      *m1_only++ = f;
+  }
+  for(auto f : faces(m2))
+  {
+    boost::container::small_vector<std::size_t, 4> ids;
+    bool all_shared = true;
+    for(auto v : CGAL::vertices_around_face(halfedge(f, m2), m2))
+    {
+      std::size_t vid = m2_vertex_id[get(vim2, v)];
+      ids.push_back(vid);
+      if(!shared_vertices.test(vid))
+      {
+        all_shared = false;
+        break;
+      }
+    }
+    if(all_shared)
+    {
+      internal::rearrange_face_ids(ids);
+      auto it = m1_faces_map.find(ids);
+      if(it != m1_faces_map.end())
+      {
+        *common++ = std::make_pair(it->second, f);
+        m1_faces_map.erase(it);
+      }
+      else
+      {
+        *m2_only++ = f;
+      }
+    }
+    else
+      *m2_only++ = f;
+  }
+  //all shared faces have been removed from the map, so all that remains must go in m1_only
+  for(const auto& it : m1_faces_map)
+  {
+    *m1_only++ = it.second;
+  }
+}
+
+template<typename PolygonMesh1, typename PolygonMesh2, typename FacePairOutputIterator, typename FaceOutputIterator1, typename FaceOutputIterator2, typename NamedParameters>
+void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
+                 FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only,
+                 const NamedParameters& np)
+{
+  match_faces(m1, m2, common, m1_only, m2_only, np, parameters::all_default());
+}
+
+template<typename PolygonMesh1, typename PolygonMesh2, typename FacePairOutputIterator, typename FaceOutputIterator1, typename FaceOutputIterator2>
+void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
+                 FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only)
+{
+  match_faces(m1, m2, common, m1_only, m2_only, parameters::all_default(), parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -90,7 +90,7 @@ public:
   QRectF boundingRect() const;
 
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& verticesPen() const
   {
@@ -119,7 +119,7 @@ protected:
 
 template <typename KdTree>
 PointsInKdTreeGraphicsItem<KdTree>::PointsInKdTreeGraphicsItem(KdTree * p_)
-  :  kdtree(p_), painterostream(0),  draw_vertices(true)   
+  :  kdtree(p_), painterostream(0),  draw_vertices(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(kdtree->size() == 0){
@@ -131,7 +131,7 @@ PointsInKdTreeGraphicsItem<KdTree>::PointsInKdTreeGraphicsItem(KdTree * p_)
 }
 
 template <typename KdTree>
-QRectF 
+QRectF
 PointsInKdTreeGraphicsItem<KdTree>::boundingRect() const
 {
   return bounding_rect;
@@ -143,8 +143,8 @@ PointsInKdTreeGraphicsItem<KdTree>::boundingRect() const
 
 
 template <typename KdTree>
-void 
-PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter, 
+void
+PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
@@ -160,7 +160,7 @@ PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter,
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename KdTree>
-void 
+void
 PointsInKdTreeGraphicsItem<KdTree>::updateBoundingBox()
 {
   prepareGeometryChange();
@@ -172,7 +172,7 @@ PointsInKdTreeGraphicsItem<KdTree>::updateBoundingBox()
 
 
 template <typename KdTree>
-void 
+void
 PointsInKdTreeGraphicsItem<KdTree>::modelChanged()
 {
   if((kdtree->size() == 0) ){

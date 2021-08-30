@@ -11,7 +11,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include <QObject>
@@ -30,14 +30,14 @@ class Tanglecube_implicit_function :
 
 public:
   virtual QString name() const { return "Tanglecube function"; }
-  
+
   virtual double operator()(double x, double y, double z) const
   {
     double x2=x*x, y2=y*y, z2=z*z;
     double x4=x2*x2, y4=y2*y2, z4=z2*z2;
     return x4 - 5*x2 + y4 - 5*y2 + z4 - 5*z2 + 11.8;
   }
-  
+
   virtual Bbox bbox() const
   {
     double r = radius * 1.2;

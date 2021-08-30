@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -58,28 +58,28 @@ private:
   Are_same_segments_2  same_segments;
 
   bool is_on_common_support(const Site_2& s1, const Site_2& s2,
-			    const Point_2& p) const
+                            const Point_2& p) const
   {
     CGAL_precondition( !s1.is_input() && !s2.is_input() );
 
     if (  same_segments(s1.supporting_site(0),
-			s2.supporting_site(0)) ||
-	  same_segments(s1.supporting_site(0),
-			s2.supporting_site(1))  ) {
+                        s2.supporting_site(0)) ||
+          same_segments(s1.supporting_site(0),
+                        s2.supporting_site(1))  ) {
       Site_2 support = s1.supporting_site(0);
       Site_2 tp = Site_2::construct_site_2(p);
 
       return (  same_points(support.source_site(), tp) ||
-		same_points(support.target_site(), tp)  );
+                same_points(support.target_site(), tp)  );
     } else if (  same_segments(s1.supporting_site(1),
-			       s2.supporting_site(1)) ||
-		 same_segments(s1.supporting_site(1),
-			       s2.supporting_site(0))  ) {
+                               s2.supporting_site(1)) ||
+                 same_segments(s1.supporting_site(1),
+                               s2.supporting_site(0))  ) {
       Site_2 support = s1.supporting_site(1);
       Site_2 tp = Site_2::construct_site_2(p);
 
       return (  same_points(support.source_site(), tp) ||
-		same_points(support.target_site(), tp)  );      
+                same_points(support.target_site(), tp)  );
     }
     return false;
   }
@@ -96,19 +96,19 @@ private:
   }
 
   bool have_common_support(const Site_2& s, const Point_2& p1,
-			   const Point_2& p2) const
+                           const Point_2& p2) const
   {
     CGAL_precondition( !s.is_input() );
 
     Site_2 t = Site_2::construct_site_2(p1, p2);
 
     return ( same_segments(s.supporting_site(0), t) ||
-	     same_segments(s.supporting_site(1), t) );
+             same_segments(s.supporting_site(1), t) );
   }
 
 private:
   Sign incircle_ppp(const Site_2& p, const Site_2& q,
-		    const Site_2& t, const Tag_false&) const
+                    const Site_2& t, const Tag_false&) const
   {
     Point_2 pp = p.point(), qp = q.point(), tp = t.point();
 
@@ -128,7 +128,7 @@ private:
     RT dtpy = pp.y() - tp.y();
     RT dtqx = qp.x() - tp.x();
     RT minus_dtqy = -qp.y() + tp.y();
-    
+
     Sign s = sign_of_determinant(dtpx, dtpy, minus_dtqy, dtqx);
 
     CGAL_assertion( s != ZERO );
@@ -137,7 +137,7 @@ private:
   }
 
   Sign incircle_ppp(const Site_2& p, const Site_2& q,
-		    const Site_2& t, const Tag_true&) const
+                    const Site_2& t, const Tag_true&) const
   {
     Orientation o = COLLINEAR; // the initialization was done in
                                // order a compiler warning
@@ -153,41 +153,41 @@ private:
     // convex hull
     if ( !p_exact || !q_exact || !t_exact ) {
       if ( !p_exact && !q_exact && !t_exact ) {
-	if ( have_common_support(p, q) &&
-	     have_common_support(q, t) ) {
-	  o = COLLINEAR;
-	  filtered = true;
-	}
+        if ( have_common_support(p, q) &&
+             have_common_support(q, t) ) {
+          o = COLLINEAR;
+          filtered = true;
+        }
       } else if ( !p_exact && !q_exact && t_exact ) {
-	if ( is_on_common_support(p, q, t.point()) ) {
-	  o = COLLINEAR;
-	  filtered = true;
-	}
+        if ( is_on_common_support(p, q, t.point()) ) {
+          o = COLLINEAR;
+          filtered = true;
+        }
       } else if ( !p_exact && q_exact && !t_exact ) {
-	if ( is_on_common_support(p, t, q.point()) ) {
-	  o = COLLINEAR;
-	  filtered = true;
-	}
+        if ( is_on_common_support(p, t, q.point()) ) {
+          o = COLLINEAR;
+          filtered = true;
+        }
       } else if ( p_exact && !q_exact && !t_exact ) {
-	if ( is_on_common_support(t, q, p.point()) ) {
-	  o = COLLINEAR;
-	  filtered = true;
-	}
+        if ( is_on_common_support(t, q, p.point()) ) {
+          o = COLLINEAR;
+          filtered = true;
+        }
       } else if ( !p_exact && q_exact && t_exact ) {
-	if ( have_common_support(p, q.point(), t.point()) ) {
-	  o = COLLINEAR;
-	  filtered = true;
-	}
+        if ( have_common_support(p, q.point(), t.point()) ) {
+          o = COLLINEAR;
+          filtered = true;
+        }
       } else if ( p_exact && !q_exact && t_exact ) {
-	if ( have_common_support(q, p.point(), t.point()) ) {
-	  o = COLLINEAR;
-	  filtered = true;
-	}
+        if ( have_common_support(q, p.point(), t.point()) ) {
+          o = COLLINEAR;
+          filtered = true;
+        }
       } else if ( p_exact && q_exact && !t_exact ) {
-	if ( have_common_support(t, p.point(), q.point()) ) {
-	  o = COLLINEAR;
-	  filtered = true;
-	}
+        if ( have_common_support(t, p.point(), q.point()) ) {
+          o = COLLINEAR;
+          filtered = true;
+        }
       }
     }
 
@@ -211,9 +211,9 @@ private:
     RT dtpy = pp.y() - tp.y();
     RT dtqx = qp.x() - tp.x();
     RT minus_dtqy = -qp.y() + tp.y();
-    
+
     Sign s = sign_of_determinant(dtpx, dtpy, minus_dtqy, dtqx);
-    
+
     CGAL_assertion( s != ZERO );
 
     return s;
@@ -221,7 +221,7 @@ private:
 
 
   Sign incircle_p(const Site_2& p, const Site_2& q,
-		  const Site_2& t) const
+                  const Site_2& t) const
   {
     CGAL_precondition( t.is_point() );
 
@@ -244,57 +244,57 @@ private:
       // activated if a lot of intersection points appear on the
       // convex hull
       if ( !p_exact || !q_exact || !t_exact ) {
-	if ( !p_exact && !q_exact && !t_exact ) {
-	  if ( have_common_support(p, q) &&
-	       have_common_support(q, t) ) {
-	    o = COLLINEAR;
-	    filtered = true;
-	  }
-	} else if ( !p_exact && !q_exact && t_exact ) {
-	  if ( is_on_common_support(p, q, t.point()) ) {
-	    o = COLLINEAR;
-	    filtered = true;
-	  }
-	} else if ( !p_exact && q_exact && !t_exact ) {
-	  if ( is_on_common_support(p, t, q.point()) ) {
-	    o = COLLINEAR;
-	    filtered = true;
-	  }
-	} else if ( p_exact && !q_exact && !t_exact ) {
-	  if ( is_on_common_support(t, q, p.point()) ) {
-	    o = COLLINEAR;
-	    filtered = true;
-	  }
-	} else if ( !p_exact && q_exact && t_exact ) {
-	  if ( have_common_support(p, q.point(), t.point()) ) {
-	    o = COLLINEAR;
-	    filtered = true;
-	  }
-	} else if ( p_exact && !q_exact && t_exact ) {
-	  if ( have_common_support(q, p.point(), t.point()) ) {
-	    o = COLLINEAR;
-	    filtered = true;
-	  }
-	} else if ( p_exact && q_exact && !t_exact ) {
-	  if ( have_common_support(t, p.point(), q.point()) ) {
-	    o = COLLINEAR;
-	    filtered = true;
-	  }
-	}
+        if ( !p_exact && !q_exact && !t_exact ) {
+          if ( have_common_support(p, q) &&
+               have_common_support(q, t) ) {
+            o = COLLINEAR;
+            filtered = true;
+          }
+        } else if ( !p_exact && !q_exact && t_exact ) {
+          if ( is_on_common_support(p, q, t.point()) ) {
+            o = COLLINEAR;
+            filtered = true;
+          }
+        } else if ( !p_exact && q_exact && !t_exact ) {
+          if ( is_on_common_support(p, t, q.point()) ) {
+            o = COLLINEAR;
+            filtered = true;
+          }
+        } else if ( p_exact && !q_exact && !t_exact ) {
+          if ( is_on_common_support(t, q, p.point()) ) {
+            o = COLLINEAR;
+            filtered = true;
+          }
+        } else if ( !p_exact && q_exact && t_exact ) {
+          if ( have_common_support(p, q.point(), t.point()) ) {
+            o = COLLINEAR;
+            filtered = true;
+          }
+        } else if ( p_exact && !q_exact && t_exact ) {
+          if ( have_common_support(q, p.point(), t.point()) ) {
+            o = COLLINEAR;
+            filtered = true;
+          }
+        } else if ( p_exact && q_exact && !t_exact ) {
+          if ( have_common_support(t, p.point(), q.point()) ) {
+            o = COLLINEAR;
+            filtered = true;
+          }
+        }
       }
 
       Point_2 pp = p.point(), qp = q.point(), tp = t.point();
 
       if ( !filtered ) {
-	// MK::ERROR: here I should call a kernel object, not a
-	// function...; actually here (and everywhere in this class)
-	// use the orientation predicate for sites; it does some
-	// geometric filtering...
-	o = orientation(pp, qp, tp);
+        // MK::ERROR: here I should call a kernel object, not a
+        // function...; actually here (and everywhere in this class)
+        // use the orientation predicate for sites; it does some
+        // geometric filtering...
+        o = orientation(pp, qp, tp);
       }
 
       if ( o != COLLINEAR ) {
-	return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
+        return (o == LEFT_TURN) ? POSITIVE : NEGATIVE;
       }
 
       // MK::ERROR: change the following code to use the compare_x_2
@@ -303,7 +303,7 @@ private:
       RT dtpy = pp.y() - tp.y();
       RT dtqx = qp.x() - tp.x();
       RT minus_dtqy = -qp.y() + tp.y();
-      
+
       Sign s = sign_of_determinant(dtpx, dtpy, minus_dtqy, dtqx);
 
       CGAL_assertion( s != ZERO );
@@ -331,7 +331,7 @@ private:
 
 
   Sign incircle_pps(const Site_2& p, const Site_2& q,
-		    const Site_2& t) const
+                    const Site_2& t) const
   {
     CGAL_precondition( p.is_point() && q.is_point() );
 
@@ -345,9 +345,9 @@ private:
     bool is_q_on_t = is_q_tsrc || is_q_ttrg;
 
     if ( is_p_on_t && is_q_on_t ) {
-	// if t is the segment joining p and q then t must be a vertex
-	// on the convex hull
-	return NEGATIVE;
+        // if t is the segment joining p and q then t must be a vertex
+        // on the convex hull
+        return NEGATIVE;
     } else if ( is_p_on_t ) {
       // p is an endpoint of t
       // in this case the p,q,oo vertex is destroyed only if the
@@ -371,7 +371,7 @@ private:
       Orientation o2 = orientation(pp, qq, t.target());
 
       if ( o1 == RIGHT_TURN || o2 == RIGHT_TURN ) {
-	return NEGATIVE;
+        return NEGATIVE;
       }
       return POSITIVE;
     }
@@ -379,7 +379,7 @@ private:
 
 
   Sign incircle_sps(const Site_2& p, const Site_2& q,
-		    const Site_2& t) const
+                    const Site_2& t) const
   {
     CGAL_precondition( p.is_segment() && q.is_point() );
 
@@ -402,7 +402,7 @@ private:
 
 
   Sign incircle_pss(const Site_2& p, const Site_2& q,
-		    const Site_2& t) const
+                    const Site_2& t) const
   {
     CGAL_precondition( p.is_point() && q.is_segment() );
 
@@ -428,7 +428,7 @@ private:
 
 
   Sign incircle_s(const Site_2& p, const Site_2& q,
-		  const Site_2& t) const
+                  const Site_2& t) const
   {
     CGAL_precondition( t.is_segment() );
 
@@ -448,7 +448,7 @@ public:
 
 
   Sign operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& r, const Site_2& t) const
+                  const Site_2& r, const Site_2& t) const
   {
 #ifdef CGAL_PROFILE
     // In case CGAL profile is called then output the sites in case of
@@ -461,13 +461,13 @@ public:
       std::string suffix("-failure-log.cin");
       std::string fname;
       if ( np == 3 ) {
-	fname = "ppp";
+        fname = "ppp";
       } else if ( np == 2 ) {
-	fname = "pps";
+        fname = "pps";
       } else if ( np == 1 ) {
-	fname = "pss";
+        fname = "pss";
       } else {
-	fname = "sss";
+        fname = "sss";
       }
       fname += suffix;
       std::ofstream ofs(fname.c_str(), std::ios_base::app);
@@ -513,10 +513,10 @@ public:
   }
 
 
-  
+
 
   Sign operator()(const Site_2& p, const Site_2& q,
-		  const Site_2& t) const
+                  const Site_2& t) const
   {
 #ifdef CGAL_PROFILE
     // In case CGAL profile is called then output the sites in case of
@@ -537,11 +537,11 @@ public:
     if ( p.is_point() && q.is_segment() ) {
       // p must be an endpoint of q
       CGAL_assertion( same_points(p, q.source_site()) ||
-		      same_points(p, q.target_site()) );
+                      same_points(p, q.target_site()) );
     } else if ( p.is_segment() && q.is_point() ) {
       // q must be an endpoint of p
       CGAL_assertion( same_points(p.source_site(), q) ||
-		      same_points(p.target_site(), q) );
+                      same_points(p.target_site(), q) );
     }
 
     if ( t.is_point() ) {

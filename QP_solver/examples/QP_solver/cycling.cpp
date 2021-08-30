@@ -29,7 +29,7 @@ int main() {
   // solve the program, using ET as the exact type
   // choose verbose mode and Bland pricing
   CGAL::Quadratic_program_options options;
-  options.set_verbosity(1);                         // verbose mode 
+  options.set_verbosity(1);                         // verbose mode
   options.set_pricing_strategy(CGAL::QP_BLAND);     // Bland's rule
   options.set_auto_validation(true);                // automatic self-check
   Solution s = CGAL::solve_nonnegative_linear_program(lp, ET(), options);

@@ -35,19 +35,20 @@ void draw(const PS& aps);
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
 {
-  
+
 // Viewer class for Point_set
 template<class PointSet>
 class SimplePointSetViewerQt : public Basic_viewer_qt
 {
   typedef Basic_viewer_qt Base;
   typedef typename PointSet::Point_map::value_type Point;
-  
+
 public:
   /// Construct the viewer.
   /// @param apointset the point set to view
@@ -65,7 +66,7 @@ protected:
   void compute_vertex(const Point& p)
   {
     add_point(p);
-    // We can use add_point(p, c) with c a CGAL::Color to add a colored point
+    // We can use add_point(p, c) with c a CGAL::IO::Color to add a colored point
   }
 
   void compute_elements()
@@ -87,7 +88,7 @@ protected:
   const PointSet& pointset;
 };
 
-// Specialization of draw function.  
+// Specialization of draw function.
 template<class P, class V>
 void draw(const Point_set_3<P, V>& apointset,
           const char* title="Point_set_3 Basic Viewer")
@@ -97,20 +98,21 @@ void draw(const Point_set_3<P, V>& apointset,
 #else
   bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-  
+
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"point_set_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimplePointSetViewerQt<Point_set_3<P, V> > mainwindow(app.activeWindow(), 
+    SimplePointSetViewerQt<Point_set_3<P, V> > mainwindow(app.activeWindow(),
                                                           apointset,
                                                           title);
     mainwindow.show();
     app.exec();
   }
 }
-  
+
 } // End namespace CGAL
 
 #endif // CGAL_USE_BASIC_VIEWER

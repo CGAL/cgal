@@ -10,9 +10,9 @@
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_INTERSECTION_LINE_2_CIRCLE_2_MAP_H
@@ -35,7 +35,7 @@ typedef struct inter_map_pair {
   inter_map_pair(const inter_map_pair &i) : x(i.x), y(i.y) {}
   bool operator<(const inter_map_pair &i) const {
     if(x < i.x) return true;
-    if(x > i.x) return false; 
+    if(x > i.x) return false;
     if(y < i.y) return true;
     return false;
   }
@@ -49,10 +49,10 @@ private:
 public:
   Intersection_line_2_circle_2_map() : id_gen(0) { intersection_map.clear(); }
   ~Intersection_line_2_circle_2_map() { intersection_map.clear(); }
-  
+
   unsigned int get_new_id() {
     return ++id_gen;
-  } 
+  }
 
   template < class T >
   bool find(int id1, int id2, T& res) const {

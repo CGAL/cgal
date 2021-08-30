@@ -1,19 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_2_LINE_2_H
 #define CGAL__TEST_FURTHER_FCT_POINT_2_LINE_2_H
@@ -53,7 +53,7 @@ _test_further_fct_point_line_2(const R& )
  assert( CGAL::compare_signed_distance_to_line(l18, p9,p9) == CGAL::EQUAL );
  assert( CGAL::compare_signed_distance_to_line(l18, p5,p4) == CGAL::SMALLER );
  assert( CGAL::compare_signed_distance_to_line(l18, p4,p5) == CGAL::LARGER );
- assert( CGAL::compare_signed_distance_to_line(l18.opposite(),p4,p5) == 
+ assert( CGAL::compare_signed_distance_to_line(l18.opposite(),p4,p5) ==
                                                               CGAL::SMALLER );
  assert( CGAL::compare_signed_distance_to_line(l64, p1,p2) == CGAL::EQUAL );
  assert( CGAL::compare_signed_distance_to_line(l64, p1,p9) == CGAL::EQUAL );

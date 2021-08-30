@@ -4,18 +4,18 @@
 
 The following books and papers are recommended as references:
 
-- \cgalCite{cgal:a-gps-98} - Mathew Austern's introduction to the \stl 
-  using the concept/model style of presentation.  Austern wrote the 
+- \cgalCite{cgal:a-gps-98} - Mathew Austern's introduction to the \stl
+  using the concept/model style of presentation.  Austern wrote the
   WWW \stl documentation at SGI.
 - \cgalCite{cgal:s-cpl-97} - Bjarne Stroustrup's introduction to
-  \cpp and the \stl for those who already know some \cpp. 
+  \cpp and the \stl for those who already know some \cpp.
   Stroustrup is the designer and original implementer of \cpp.
 - \cgalCite{cgal:ll-cp-98} - Stanley Lippman and Josee Lajoie's
   \cpp primer.
 - \cgalCite{cgal:m-ec-97} - Scott Meyers's book on ways to improve
-  your \cpp programs.  Items 21 and 29 discuss the concept of 
+  your \cpp programs.  Items 21 and 29 discuss the concept of
   const-correctness.
 - \cgalCite{fgkss-dccga-00} - The \cgal design paper.
-- \cgalCite{hhkps-aegk-01} - The new \cgal kernel design paper. 
+- \cgalCite{hhkps-aegk-01} - The new \cgal kernel design paper.
 
 */

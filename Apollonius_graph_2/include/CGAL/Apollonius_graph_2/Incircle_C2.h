@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -46,7 +46,7 @@ public:
 
   inline Sign
   operator()(const Bitangent_line& bl, const Site_2& q,
-	     const Field_with_sqrt_tag&) const
+             const Field_with_sqrt_tag&) const
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
@@ -60,13 +60,13 @@ public:
 
   inline Sign
   operator()(const Bitangent_line& bl, const Site_2& q,
-	     const Integral_domain_without_division_tag&) const
+             const Integral_domain_without_division_tag&) const
     {
 #ifdef AG2_PROFILE_PREDICATES
       ag2_predicate_profiler::distance_from_bitangent_counter++;
 #endif
       FT A = bl.a1() * q.x() + bl.b1() * q.y() + bl.c1()
-	- q.weight() * bl.d();
+        - q.weight() * bl.d();
       FT B = bl.a2() * q.x() + bl.b2() * q.y() + bl.c2();
       return sign_a_plus_b_x_sqrt_c(A, B, bl.delta());
     }
@@ -87,8 +87,8 @@ public:
 public:
   inline Sign
   operator()(const Bitangent_line& bl,
-	     const Inverted_weighted_point& v,
-	     const Field_with_sqrt_tag&) const
+             const Inverted_weighted_point& v,
+             const Field_with_sqrt_tag&) const
     {
       FT a = bl.a1() + bl.a2() * CGAL::sqrt(bl.delta());
       FT b = bl.b1() + bl.b2() * CGAL::sqrt(bl.delta());
@@ -99,11 +99,11 @@ public:
 
   inline Sign
   operator()(const Bitangent_line& bl,
-	     const Inverted_weighted_point& v,
-	     const Integral_domain_without_division_tag&) const
+             const Inverted_weighted_point& v,
+             const Integral_domain_without_division_tag&) const
     {
       FT A = bl.a1() * v.x() + bl.b1() * v.y() + bl.c1() * v.p()
-	- v.weight() * bl.d();
+        - v.weight() * bl.d();
       FT B = bl.a2() * v.x() + bl.b2() * v.y() + bl.c2() * v.p();
 
       return sign_a_plus_b_x_sqrt_c(A, B, bl.delta());
@@ -117,7 +117,7 @@ class Weighted_point_less_than
 public:
   inline
   bool operator()(const Weighted_point& p1,
-		  const Weighted_point& p2) const
+                  const Weighted_point& p2) const
   {
     if ( p1.x() == p2.x() ) {
       return p1.y() < p2.y();
@@ -155,7 +155,7 @@ public:
 private:
   inline Orientation
   orientation(const Bitangent_line& l, const Point_2& p,
-	      const Field_with_sqrt_tag&) const
+              const Field_with_sqrt_tag&) const
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
       FT B = l.a2() * p.x() + l.b2() * p.y() + l.c2();
@@ -165,17 +165,17 @@ private:
 
   inline Orientation
   orientation(const Bitangent_line& l, const Point_2& p,
-	      const Integral_domain_without_division_tag&) const
+              const Integral_domain_without_division_tag&) const
     {
       FT A = l.a1() * p.x() + l.b1() * p.y() + l.c1();
       FT B = l.a2() * p.x() + l.b2() * p.y() + l.c2();
       return sign_a_plus_b_x_sqrt_c(A, B, l.delta());
     }
 
-  
+
   inline Orientation
   orientation(const Bitangent_line& l,
-	      const Inverted_weighted_point& u) const
+              const Inverted_weighted_point& u) const
     {
       FT A = l.a1() * u.x() / u.p() + l.b1() * u.y() / u.p() + l.c1();
       FT B = l.a2() * u.x() / u.p() + l.b2() * u.y() / u.p() + l.c2();
@@ -189,7 +189,7 @@ public:
 
   inline
   Sign operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& p3, const Site_2& q) const
+                  const Site_2& p3, const Site_2& q) const
   {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::incircle_counter++;
@@ -214,7 +214,7 @@ public:
 
   inline
   Sign operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& q) const
+                  const Site_2& q) const
   {
     Method_tag tag;
     //
@@ -230,7 +230,7 @@ public:
     CGAL_assertion( o1 != COLLINEAR || o2 != COLLINEAR );
     if ( o1 == o2 ) { return POSITIVE; }
     return NEGATIVE;
-  }  
+  }
 
 };
 

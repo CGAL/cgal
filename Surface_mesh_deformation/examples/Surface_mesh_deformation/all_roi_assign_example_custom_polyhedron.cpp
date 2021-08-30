@@ -1,28 +1,33 @@
+#include <CGAL/Simple_cartesian.h>
+
+#include <CGAL/algorithm.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/property_map.h>
+#include <CGAL/Surface_mesh_deformation.h>
+
+#include <cmath>
 #include <fstream>
 #include <map>
-#include <cmath>
-#include <CGAL/property_map.h>
-#include <CGAL/algorithm.h>
 
+template <typename Kernel>
 struct Custom_point_3{
   // Required by File_scanner_OFF
-  struct R{
-    typedef double RT;
-  };
+  typedef Kernel R;
+  typedef typename Kernel::FT FT;
 
-  double coords[3];
+  FT coords[3];
   Custom_point_3(){}
-  Custom_point_3(double x, double y, double z)
+  Custom_point_3(FT x, FT y, FT z)
   { coords[0]=x; coords[1]=y; coords[2]=z; }
-  Custom_point_3(double x, double y, double z, double w)
+  Custom_point_3(FT x, FT y, FT z, FT w)
   { coords[0]=x/w; coords[1]=y/w; coords[2]=z/w; }
 
-  double x() const {return coords[0];}
-  double y() const {return coords[1];}
-  double z() const {return coords[2];}
+  FT x() const { return coords[0]; }
+  FT y() const { return coords[1]; }
+  FT z() const { return coords[2]; }
 
-  double& operator[](int i)       { return coords[i]; }
-  double  operator[](int i) const { return coords[i]; }
+  FT& operator[](int i)       { return coords[i]; }
+  FT  operator[](int i) const { return coords[i]; }
 
   friend std::ostream& operator<<(std::ostream& out, const Custom_point_3& p)
   {
@@ -37,15 +42,15 @@ struct Custom_point_3{
   }
 };
 
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_deformation.h>
-
-struct Custom_traits{
-  typedef Custom_point_3 Point_3;
+template <typename Kernel>
+struct Custom_traits
+{
+  typedef Custom_point_3<Kernel> Point_3;
   struct Plane_3{};
 };
 
-typedef CGAL::Polyhedron_3<Custom_traits>       Polyhedron;
+typedef CGAL::Simple_cartesian<double>                        Kernel;
+typedef CGAL::Polyhedron_3<Custom_traits<Kernel> >            Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator      vertex_iterator;

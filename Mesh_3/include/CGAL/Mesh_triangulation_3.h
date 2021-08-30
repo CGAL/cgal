@@ -59,6 +59,7 @@ public:
   typedef typename Geom_traits::FT                            FT;
   typedef typename Base::Bare_point                           Bare_point;
   typedef typename Base::Weighted_point                       Weighted_point;
+  typedef typename Base::Triangle                             Triangle;
 
   typedef typename Base::Vertex_handle                        Vertex_handle;
   typedef typename Base::Cell_handle                          Cell_handle;
@@ -77,9 +78,14 @@ public:
   // possibilities). To allow Periodic_3_mesh_3 to use Mesh_3's files,
   // each mesh triangulation implements its own version.
 
-  Bare_point get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
+  const Bare_point& get_closest_point(const Bare_point& /*p*/, const Bare_point& q) const
   {
     return q;
+  }
+
+  const Triangle& get_closest_triangle(const Bare_point& /*p*/, const Triangle& t) const
+  {
+    return t;
   }
 
   void set_point(const Vertex_handle v,
@@ -120,65 +126,40 @@ public:
 //
 template<class MD,
          class K_ = Default,
-         class Concurrency_tag = Sequential_tag,
+         class Concurrency_tag_ = Sequential_tag,
          class Vertex_base_ = Default,
          class Cell_base_   = Default>
-struct Mesh_triangulation_3;
-
-// Sequential version (default)
-template<class MD, class K_, class Concurrency_tag,
-         class Vertex_base_, class Cell_base_>
 struct Mesh_triangulation_3
 {
 private:
-  typedef typename Default::Lazy_get<K_, Kernel_traits<MD> >::type K;
+  using K = typename Default::Lazy_get<K_, Kernel_traits<MD> >::type;
 
-  typedef typename details::Mesh_geom_traits_generator<K>::type    Geom_traits;
+  using Geom_traits = typename details::Mesh_geom_traits_generator<K>::type;
 
-  typedef typename Default::Get<
+  using Indices_tuple = Mesh_3::internal::Indices_tuple_t<MD>;
+  using Vertex_base = typename Default::Get<
     Vertex_base_,
-    Mesh_vertex_base_3<Geom_traits, MD> >::type                    Vertex_base;
-  typedef typename Default::Get<
+    Mesh_vertex_generator_3<Geom_traits,
+                            Indices_tuple,
+                            typename MD::Index> >::type;
+  using Cell_base = typename Default::Get<
     Cell_base_,
-    Compact_mesh_cell_base_3<Geom_traits, MD> >::type              Cell_base;
-
-  typedef Triangulation_data_structure_3<Vertex_base,Cell_base>    Tds;
-  typedef Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds> Triangulation;
+    Compact_mesh_cell_generator_3<Geom_traits,
+                                  typename MD::Subdomain_index,
+                                  typename MD::Surface_patch_index,
+                                  typename MD::Index> >::type;
+  using Concurrency_tag =
+      typename Default::Get<Concurrency_tag_, Sequential_tag>::type;
+  struct Tds : public Triangulation_data_structure_3<Vertex_base, Cell_base,
+                                                     Concurrency_tag> {};
+  using Triangulation =
+      Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
+  ;
 
 public:
-  typedef Triangulation type;
-  typedef type Type;
+  using type = Triangulation;
+  using Type = type;
 };  // end struct Mesh_triangulation_3
-
-#ifdef CGAL_LINKED_WITH_TBB
-// Parallel version (specialization)
-//
-template<class MD, class K_,
-         class Vertex_base_, class Cell_base_>
-struct Mesh_triangulation_3<MD, K_, Parallel_tag, Vertex_base_, Cell_base_>
-{
-private:
-  typedef typename Default::Get<K_, typename Kernel_traits<MD>::Kernel>::type K;
-
-  typedef typename details::Mesh_geom_traits_generator<K>::type       Geom_traits;
-
-  typedef typename Default::Get<
-    Vertex_base_,
-    Mesh_vertex_base_3<Geom_traits, MD> >::type                       Vertex_base;
-  typedef typename Default::Get<
-    Cell_base_,
-    Compact_mesh_cell_base_3<Geom_traits, MD> >::type                 Cell_base;
-
-  typedef Triangulation_data_structure_3<
-    Vertex_base, Cell_base, Parallel_tag>                             Tds;
-  typedef Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>    Triangulation;
-
-public:
-  typedef Triangulation type;
-  typedef type Type;
-};  // end struct Mesh_triangulation_3
-#endif // CGAL_LINKED_WITH_TBB
-
 }  // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>

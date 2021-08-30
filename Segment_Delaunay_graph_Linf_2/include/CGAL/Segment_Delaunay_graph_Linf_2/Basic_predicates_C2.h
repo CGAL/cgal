@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -534,7 +534,7 @@ public:
   static
   Comparison_result
   compare_linf_distances_to_lines(const Point_2& p,
-				     const Line_2& l1,
+                                     const Line_2& l1,
                                      const Line_2& l2)
   {
     Homogeneous_point_2 hl1 = compute_linf_projection_hom(l1, p);
@@ -1381,14 +1381,14 @@ public:
 
   inline static
   bool check_if_exact(const Site_2& , unsigned int ,
-		      const Tag_false&)
+                      const Tag_false&)
   {
     return true;
   }
 
   inline static
   bool check_if_exact(const Site_2& s, unsigned int i,
-		      const Tag_true&)
+                      const Tag_true&)
   {
     return s.is_input(i);
   }
@@ -1399,38 +1399,38 @@ public:
   // pass it so that we do not have to recompute it
   static bool
   is_on_positive_halfspace(const Site_2& supp,
-			   const Site_2& s, const Line_2& l)
+                           const Site_2& s, const Line_2& l)
   {
     CGAL_precondition( supp.is_segment() && s.is_segment() );
     Are_same_points_2 same_points;
     Are_same_segments_2 same_segments;
 
     if ( same_segments(supp.supporting_site(),
-		       s.supporting_site()) ) {
+                       s.supporting_site()) ) {
       return false;
     }
 
     if ( same_points(supp.source_site(), s.source_site()) ||
-	 same_points(supp.target_site(), s.source_site()) ) {
+         same_points(supp.target_site(), s.source_site()) ) {
       return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
     }
 
     if ( same_points(supp.source_site(), s.target_site()) ||
-	 same_points(supp.target_site(), s.target_site()) ) {
+         same_points(supp.target_site(), s.target_site()) ) {
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
     ITag itag;
 
     if ( !check_if_exact(s, 0, itag) &&
-	 same_segments(supp.supporting_site(),
-		       s.crossing_site(0)) ) {
+         same_segments(supp.supporting_site(),
+                       s.crossing_site(0)) ) {
       return oriented_side_of_line(l, s.target()) == ON_POSITIVE_SIDE;
     }
 
     if ( !check_if_exact(s, 1, itag) &&
-	 same_segments(supp.supporting_site(),
-		       s.crossing_site(1)) ) {
+         same_segments(supp.supporting_site(),
+                       s.crossing_site(1)) ) {
       return oriented_side_of_line(l, s.source()) == ON_POSITIVE_SIDE;
     }
 
@@ -1511,7 +1511,7 @@ public:
       Line_2 l[])
   {
     CGAL_precondition( p.is_segment() && q.is_segment() &&
-		       r.is_segment() );
+                       r.is_segment() );
 
     l[0] = compute_supporting_line(p.supporting_site());
     l[1] = compute_supporting_line(q.supporting_site());
@@ -1520,41 +1520,41 @@ public:
     bool is_oriented[3] = {false, false, false};
 
     if ( is_on_positive_halfspace(p, q, l[0]) ||
-	 is_on_positive_halfspace(p, r, l[0]) ) {
+         is_on_positive_halfspace(p, r, l[0]) ) {
       is_oriented[0] = true;
     } else {
       l[0] = opposite_line(l[0]);
       if ( is_on_positive_halfspace(p, q, l[0]) ||
-	   is_on_positive_halfspace(p, r, l[0]) ) {
-	is_oriented[0] = true;
+           is_on_positive_halfspace(p, r, l[0]) ) {
+        is_oriented[0] = true;
       } else {
-	l[0] = opposite_line(l[0]);
+        l[0] = opposite_line(l[0]);
       }
     }
 
     if ( is_on_positive_halfspace(q, p, l[1]) ||
-	 is_on_positive_halfspace(q, r, l[1]) ) {
+         is_on_positive_halfspace(q, r, l[1]) ) {
       is_oriented[1] = true;
     } else {
        l[1] = opposite_line(l[1]);
       if ( is_on_positive_halfspace(q, p, l[1]) ||
-	   is_on_positive_halfspace(q, r, l[1]) ) {
-	is_oriented[1] = true;
+           is_on_positive_halfspace(q, r, l[1]) ) {
+        is_oriented[1] = true;
       } else {
-	l[1] = opposite_line(l[1]);
+        l[1] = opposite_line(l[1]);
       }
     }
 
     if ( is_on_positive_halfspace(r, p, l[2]) ||
-	 is_on_positive_halfspace(r, q, l[2]) ) {
+         is_on_positive_halfspace(r, q, l[2]) ) {
       is_oriented[2] = true;
     } else {
       l[2] = opposite_line(l[2]);
       if ( is_on_positive_halfspace(r, p, l[2]) ||
-	   is_on_positive_halfspace(r, q, l[2]) ) {
-	is_oriented[2] = true;
+           is_on_positive_halfspace(r, q, l[2]) ) {
+        is_oriented[2] = true;
       } else {
-	l[2] = opposite_line(l[2]);
+        l[2] = opposite_line(l[2]);
       }
     }
 
@@ -1565,9 +1565,9 @@ public:
     int i_no(-1);
     for (int i = 0; i < 3; i++) {
       if ( !is_oriented[i] ) {
-	i_no = i;
-	CGAL_assertion( is_oriented[(i+1)%3] && is_oriented[(i+2)%3] );
-	break;
+        i_no = i;
+        CGAL_assertion( is_oriented[(i+1)%3] && is_oriented[(i+2)%3] );
+        break;
       }
     }
 
@@ -1717,7 +1717,7 @@ public:
     CGAL_precondition( p.is_point() && s.is_segment() );
     Are_same_points_2 same_points;
     return ( same_points(p, s.source_site()) ||
-	     same_points(p, s.target_site())   );
+             same_points(p, s.target_site())   );
   }
 
   // Orient the segment s and return result as a line.

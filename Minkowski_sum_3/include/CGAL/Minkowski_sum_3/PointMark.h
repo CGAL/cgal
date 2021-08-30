@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_MS3_POINTMARK_H
@@ -57,23 +57,23 @@ class PointMark {
 };
 
 template <typename Kernel>
-std::ostream& operator<<(std::ostream& out, 
-			 const PointMark<Kernel>& pm) {
+std::ostream& operator<<(std::ostream& out,
+                         const PointMark<Kernel>& pm) {
   out << pm.point() << "/" << pm.boolean();
   return out;
 }
 
 template <typename Kernel>
 bool operator==(const PointMark<Kernel>& pm1,
-		const PointMark<Kernel>& pm2) {
-  return 
+                const PointMark<Kernel>& pm2) {
+  return
     pm1.point() == pm2.point() &&
     pm1.boolean() == pm2.boolean();
 }
 
 template <typename Kernel>
 const PointMark<Kernel> operator+(const PointMark<Kernel>& pm1,
-				  const PointMark<Kernel>& pm2) {
+                                  const PointMark<Kernel>& pm2) {
   PointMark<Kernel> ret(pm1);
   ret += pm2;
   return ret;

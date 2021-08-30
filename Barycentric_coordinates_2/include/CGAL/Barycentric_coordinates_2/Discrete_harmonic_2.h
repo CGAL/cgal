@@ -1,23 +1,19 @@
 // Copyright (c) 2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is a part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
+//
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-/*!
-  \file Discrete_harmonic_2.h
-*/
-
-#ifndef CGAL_DISCRETE_HARMONIC_2_H
-#define CGAL_DISCRETE_HARMONIC_2_H
+#ifndef CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_H
+#define CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
-
 #include <CGAL/disable_warnings.h>
 
 // CGAL headers.
@@ -40,11 +36,13 @@ namespace Barycentric_coordinates {
 // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos. A general construction of barycentric coordinates over convex polygons. Advances in Computational Mathematics, 24(1-4):311-331, 2006.".
 
 /*!
- * \ingroup PkgBarycentricCoordinates2Ref
- * The class `Discrete_harmonic_2` implements 2D discrete harmonic coordinates ( \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ). 
+ * \ingroup PkgBarycentricCoordinates2RefDeprecated
+ * The class `Discrete_harmonic_2` implements 2D discrete harmonic coordinates ( \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ).
  * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
- * Discrete harmonic coordinates can be computed exactly. By definition, they do not necesserily give positive values.
+ * Discrete harmonic coordinates can be computed exactly. By definition, they do not necessarily give positive values.
+
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
@@ -53,9 +51,12 @@ namespace Barycentric_coordinates {
 \pre The provided polygon is strictly convex.
 
 */
-
-template<class Traits> 
-    class Discrete_harmonic_2
+template<class Traits>
+class
+#ifndef DOXYGEN_RUNNING
+CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+#endif
+Discrete_harmonic_2
 {
 
 public:
@@ -73,8 +74,8 @@ public:
 
     // \name Creation
 
-    // Creates the class `Discrete_harmonic_2` that implements the behaviour of discrete harmonic coordinates for any query point that does not belong to the polygon's boundary.
-    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
+    // Creates the class `Discrete_harmonic_2` that implements the behavior of discrete harmonic coordinates for any query point that does not belong to the polygon's boundary.
+    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
     Discrete_harmonic_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
         vertex(vertices),
         barycentric_traits(b_traits),
@@ -103,10 +104,10 @@ public:
     // Computation of Discrete Harmonic Basis Functions
 
     // This function computes discrete harmonic barycentric coordinates for a chosen query point on the bounded side of a strictly convex polygon.
-    // \pre The provided polygon is strictly convex. 
+    // \pre The provided polygon is strictly convex.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
-    {   
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -129,7 +130,7 @@ public:
     // \pre The provided polygon is strictly convex.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm, const bool warning_tag = true)
-    {   
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -356,7 +357,7 @@ private:
     {
         if(warning_tag)
             std::cout << std::endl << "ATTENTION: Discrete harmonic coordinates might be not well-defined outside the polygon!" << std::endl;
-        
+
         // Use the same formulas as for the bounded side since they are also valid on the unbounded side.
         return coordinates_on_bounded_side_fast_2(query_point, output);
     }
@@ -389,7 +390,7 @@ private:
         output_stream << "3. Lagrange property;" << std::endl;
         output_stream << "4. Linearity along edges;" << std::endl;
         output_stream << "5. Smoothness;" << std::endl;
-        output_stream << "6. Similarity invariance;" << std::endl;
+        output_stream << "6. Similarity invariance." << std::endl;
 
         output_stream << std::endl;
         output_stream << "For polygons whose vertices lie on a common circle, they coincide with Wachspress coordinates." << std::endl;
@@ -407,7 +408,7 @@ private:
             // Index of the last polygon's vertex.
             const int last = int(number_of_vertices) - 1;
 
-            // Test all the consequent triplets of the polygon's vertices on collinearity. 
+            // Test all the consequent triplets of the polygon's vertices on collinearity.
             // In case we find at least one, return WEAKLY_CONVEX polygon.
             if(collinear_2(vertex[last], vertex[0], vertex[1]))
                 return WEAKLY_CONVEX;
@@ -435,4 +436,4 @@ private:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_DISCRETE_HARMONIC_2_H
+#endif // CGAL_BARYCENTRIC_DISCRETE_HARMONIC_2_H

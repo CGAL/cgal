@@ -50,9 +50,9 @@ public:
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
-  typedef typename Arrangement_2::Vertex_handle		Vertex_handle;
-  typedef typename Arrangement_2::Halfedge_handle	Halfedge_handle;
-  typedef typename Arrangement_2::Face_handle		Face_handle;
+  typedef typename Arrangement_2::Vertex_handle                Vertex_handle;
+  typedef typename Arrangement_2::Halfedge_handle        Halfedge_handle;
+  typedef typename Arrangement_2::Face_handle                Face_handle;
 
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
   typedef typename Arrangement_2::Edge_const_iterator   Edge_const_iterator;
@@ -80,7 +80,7 @@ public:
   typedef Triangulation_vertex_base_with_info_2<Vertex_const_handle, Kernel>
     Vbb;
   typedef Triangulation_hierarchy_vertex_base_2<Vbb>                  Vb;
-  //typedef Triangulation_face_base_with_info_2<CGAL::Color,Kernel>    Fbt;
+  //typedef Triangulation_face_base_with_info_2<CGAL::IO::Color,Kernel>    Fbt;
   typedef Constrained_triangulation_face_base_2<Kernel>               Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>                       TDS;
   typedef Exact_predicates_tag                                        Itag;

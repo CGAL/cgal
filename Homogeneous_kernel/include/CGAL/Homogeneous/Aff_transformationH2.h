@@ -1,16 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -57,6 +57,11 @@ class Aff_transformation_rep_baseH2 : public Ref_counted_virtual
     virtual  Aff_transformation_repH2<R>
                         general_form() const = 0;
     virtual  bool       is_even() const = 0;
+
+    virtual  bool       is_translation() const { return false; }
+    virtual  bool       is_scaling() const { return false; }
+    virtual  bool       is_reflection() const { return false; }
+    virtual  bool       is_rotation() const { return false; }
 
     virtual  RT         homogeneous(int i, int j) const = 0;
     virtual  FT         cartesian(int i, int j) const = 0;
@@ -247,6 +252,10 @@ class Translation_repH2 : public Aff_transformation_rep_baseH2<R>
              is_even() const
              { return true; }
 
+    virtual  bool
+             is_translation() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -321,6 +330,11 @@ class Rotation_repH2 : public Aff_transformation_rep_baseH2<R>
              {
                return true;
              }
+
+    virtual  bool
+             is_rotation() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -392,6 +406,10 @@ class Scaling_repH2 : public Aff_transformation_rep_baseH2<R>
              is_even() const
              { return true; }
 
+    virtual  bool
+             is_scaling() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -456,6 +474,10 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
              is_even() const
              { return false; }
 
+    virtual  bool
+             is_reflection() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -513,7 +535,7 @@ public:
 
           // Scaling:
 
-          Aff_transformationH2(const Scaling, const RT& a,  
+          Aff_transformationH2(const Scaling, const RT& a,
                                const RT& b = RT(1));
 
           Aff_transformationH2(const Scaling, const RT& xa, const RT& xb,
@@ -576,6 +598,11 @@ public:
     bool                    is_even() const;
     bool                    is_odd()  const;
 
+    bool                    is_translation() const;
+    bool                    is_scaling() const;
+    bool                    is_rotation() const;
+    bool                    is_reflection() const;
+
                             // Access functions for matrix form
     FT                      cartesian(int i, int j) const;
     RT                      homogeneous(int i, int j) const;
@@ -594,8 +621,8 @@ public:
 
     Aff_transformationH2<R>
     operator*(const Aff_transformationH2<R>& right_argument ) const;
-    
-    
+
+
     bool operator==(const Aff_transformationH2 &t)const
     {
       for(int i=0; i<3; ++i)
@@ -604,7 +631,7 @@ public:
             return false;
       return true;
     }
-    
+
     bool operator!=(const Aff_transformationH2 &t)const
     {
       return !(*this == t);
@@ -624,7 +651,7 @@ Aff_transformationH2(const Identity_transformation)
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2(const Translation,
-	             const typename Aff_transformationH2<R>::Vector_2& v)
+                     const typename Aff_transformationH2<R>::Vector_2& v)
 { initialize_with(Translation_repH2<R>( v )); }
 
 template < class R >
@@ -645,7 +672,7 @@ Aff_transformationH2( const Scaling, const RT& xa, const RT& xb,
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2(const Reflection,
-	             const typename Aff_transformationH2<R>::Line_2& l)
+                     const typename Aff_transformationH2<R>::Line_2& l)
 { initialize_with(Reflection_repH2<R>( l)); }
 
 template < class R >
@@ -740,6 +767,30 @@ is_odd() const
 { return ! is_even(); }
 
 template < class R >
+bool
+Aff_transformationH2<R>::
+is_translation() const
+{ return this->Ptr()->is_translation(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_scaling() const
+{ return this->Ptr()->is_scaling(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_rotation() const
+{ return this->Ptr()->is_rotation(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_reflection() const
+{ return this->Ptr()->is_reflection(); }
+
+template < class R >
 inline
 typename Aff_transformationH2<R>::FT
 Aff_transformationH2<R>::
@@ -769,6 +820,17 @@ operator*(const Aff_transformationH2<R>& right_argument) const
   return _general_transformation_composition(
                   this->Ptr()->general_form(),
                   right_argument.Ptr()->general_form() );
+}
+
+template <class R>
+std::ostream&
+operator<<(std::ostream& out, const Aff_transformationH2<R>& t)
+{
+  typename R::RT RT0(0);
+  Aff_transformation_repH2<R> r = t.Ptr()->general_form();
+  return out << "| "<< r.a << ' ' << r.b << ' ' << r.c << " |\n"
+             << "| "<< r.d << ' ' << r.e << ' ' << r.f << " |\n"
+             << "| "<< RT0 << ' ' << RT0 << ' ' << r.g << " |\n";
 }
 
 template <class R>

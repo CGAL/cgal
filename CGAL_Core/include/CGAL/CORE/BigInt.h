@@ -6,10 +6,10 @@
  * This file is part of CGAL (www.cgal.org).
  *
  * File: BigInt.h
- * Synopsis: 
- * 		a wrapper class for mpz from GMP
- * 
- * Written by 
+ * Synopsis:
+ *                 a wrapper class for mpz from GMP
+ *
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -29,7 +29,7 @@
 #include <CGAL/CORE/MemoryPool.h>
 #include <string>
 
-namespace CORE { 
+namespace CORE {
 
 
 class BigIntRep : public RCRepImpl<BigIntRep> {
@@ -469,7 +469,7 @@ inline void divexact(BigInt& z, const BigInt& x, const BigInt& y) {
 // Chee (1/12/2004)   The definition of div_exact(x,y) next
 //   ensure that in Polynomials<NT> works with both NT=BigInt and NT=int:
 inline BigInt div_exact(const BigInt& x, const BigInt& y) {
-  BigInt z;	     // precodition: isDivisible(x,y)
+  BigInt z;             // precodition: isDivisible(x,y)
   divexact(z, x, y); // z is set to x/y;
   return z;
 }
@@ -511,14 +511,14 @@ inline int bitLength(const BigInt& a) {
   return mpz_sizeinbase(a.get_mp(), 2);
 }
 /// floorLg -- floor of log_2(a)
-/** Convention: a=0, floorLg(a) returns -1. 
+/** Convention: a=0, floorLg(a) returns -1.
  *  This makes sense for integer a.
  */
 inline long floorLg(const BigInt& a) {
   return (sign(a) == 0) ? (-1) : (bitLength(a)-1);
 }
 /// ceilLg -- ceiling of log_2(a) where a=BigInt, int or long
-/** Convention: a=0, ceilLg(a) returns -1. 
+/** Convention: a=0, ceilLg(a) returns -1.
  *  This makes sense for integer a.
  */
 inline long ceilLg(const BigInt& a) {

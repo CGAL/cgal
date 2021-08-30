@@ -12,7 +12,7 @@ int main(int argc, char argv[]) {
 
   Nef_polyhedron_3 N;
   std::cin >> N;
-  
+
   Sat_writer SW(std::cout,N);
   SW.print();
 }

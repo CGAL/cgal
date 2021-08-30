@@ -7,7 +7,7 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 
-// Domain 
+// Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
@@ -44,7 +44,7 @@ int main()
   // and no "bounding polyhedron", so the volumetric part of the domain will be
   // empty.
   Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
-  
+
   // Get sharp features
   domain.detect_features(); //includes detection of borders
 
@@ -53,7 +53,7 @@ int main()
                          facet_angle = 25,
                          facet_size = 0.1,
                          facet_distance = 0.001);
-  
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 

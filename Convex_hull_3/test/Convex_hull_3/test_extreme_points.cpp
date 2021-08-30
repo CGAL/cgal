@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
@@ -7,17 +8,16 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
 #include <vector>
 #include <cassert>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 typedef K::Point_3 Point_3;
-
 
 void test_function_overload()
 {
@@ -52,7 +52,7 @@ void test_triangulated_cube(const char* fname)
   std::ifstream input(fname);
   SurfaceMesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     exit(1);
   }
 
@@ -206,9 +206,9 @@ void test_extreme_vertices(const char* fname)
   std::ifstream input(fname);
   Polyhedron_3 P;
   if (!input || !(input >> P) || P.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     exit(1);
-  }  
+  }
   /*CGAL::Extreme_points_traits_adapter_3<
       boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type
       ,
@@ -216,9 +216,9 @@ void test_extreme_vertices(const char* fname)
       >
       traits(get(CGAL::vertex_point, P));*/
   CGAL::Convex_hull_traits_3<K, Polyhedron_3, CGAL::Tag_true> traits;
-  boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type pmap = 
+  boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type pmap =
       get(CGAL::vertex_point, P);
-  
+
   std::vector<boost::graph_traits<Polyhedron_3>::vertex_descriptor> verts;
   CGAL::extreme_points_3(vertices(P), std::back_inserter(verts) ,
                    CGAL::make_extreme_points_traits_adapter(pmap, traits));

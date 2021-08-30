@@ -16,6 +16,7 @@
 #include <CGAL/Dart.h>
 #endif
 
+#include <CGAL/Linear_cell_complex_fwd.h>
 #include <CGAL/Cell_attribute_with_point.h>
 #include <CGAL/tuple.h>
 
@@ -39,7 +40,7 @@ namespace CGAL {
     struct Dart_wrapper
     {
       typedef CGAL::Dart<d, LCC> Dart;
-      
+
       typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
       typedef std::tuple<Vertex_attrib>    Attributes;
     };

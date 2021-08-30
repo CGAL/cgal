@@ -1,16 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -94,7 +94,7 @@ public:
     return Aff_transformation_2(scalefactor_*r.cosinus_, scalefactor_*r.sinus_,-r.cosinus_*r.t.x()-r.sinus_*r.t.y()+r.t.x(),
                                 scalefactor_*r.sinus_, -scalefactor_*r.cosinus_, -r.sinus_*r.t.x()+r.cosinus_*r.t.y()-r.t.y());
   }
-  
+
   Aff_transformation_2 compose(const Scaling &t) const
   {
     return Aff_transformation_2(SCALING, scalefactor_*t.scalefactor_);
@@ -116,6 +116,11 @@ public:
   }
 
   bool is_even() const
+  {
+    return true;
+  }
+
+  bool is_scaling() const
   {
     return true;
   }

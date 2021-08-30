@@ -32,38 +32,38 @@ void test_validity()
   vertices[1] = add_vertex(mesh);
   vertices[2] = add_vertex(mesh);
   vertices[3] = add_vertex(mesh);
-  
+
   put(vpmap, vertices[0], Point_3(0,0,0));
   put(vpmap, vertices[1], Point_3(1,0,0));
   put(vpmap, vertices[2], Point_3(1,1,0));
   put(vpmap, vertices[3], Point_3(0,1,0));
-  
-  edges[0] = add_edge(mesh); 
-  edges[1] = add_edge(mesh); 
-  edges[2] = add_edge(mesh); 
-  edges[3] = add_edge(mesh); 
-  
+
+  edges[0] = add_edge(mesh);
+  edges[1] = add_edge(mesh);
+  edges[2] = add_edge(mesh);
+  edges[3] = add_edge(mesh);
+
   assert(!CGAL::is_valid_halfedge_graph(mesh));
   for(int i=0; i<4; ++i)
   {
     set_target(halfedge(edges[i], mesh), vertices[i], mesh);
     set_halfedge(vertices[i], halfedge(edges[i], mesh), mesh);
   }
-  
+
   for(int i=0; i<4; ++i)
     set_target(opposite(halfedge(edges[i], mesh), mesh), vertices[(i+1)%4], mesh);
   for(int i=0; i<4; ++i)
   {
     set_next(halfedge(edges[(i+1)%4], mesh), halfedge(edges[i], mesh), mesh);
-    set_next(opposite(halfedge(edges[i], mesh), mesh), 
+    set_next(opposite(halfedge(edges[i], mesh), mesh),
         opposite(halfedge(edges[(i+1)%4], mesh), mesh), mesh);
   }
-  
+
   assert(CGAL::is_valid_halfedge_graph(mesh));
   face_descriptor faces[1];
   faces[0] = add_face(mesh);
   assert(!CGAL::is_valid_face_graph(mesh));
-  
+
   for(int i=0; i<4; ++i)
   {
     set_face(opposite(halfedge(edges[i], mesh), mesh), faces[0], mesh);
@@ -71,7 +71,7 @@ void test_validity()
   set_halfedge(faces[0], opposite(halfedge(edges[0], mesh), mesh), mesh);
   assert(CGAL::is_valid_face_graph(mesh));
   assert(CGAL::is_valid_polygon_mesh(mesh));
-  
+
   Mesh dummy;
   vertices[0] = add_vertex(dummy);
   vertices[1] = add_vertex(dummy);
@@ -88,7 +88,7 @@ void test_validity()
   set_face(opposite(halfedge(edges[0], dummy), dummy), faces[0], dummy);
   assert(CGAL::is_valid_face_graph(dummy));
   assert(!CGAL::is_valid_polygon_mesh(dummy));
-  
+
 }
 
 template <typename Mesh>

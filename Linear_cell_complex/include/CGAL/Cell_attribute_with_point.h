@@ -25,11 +25,11 @@ namespace CGAL {
   class Point_for_cell
   {
   public:
-    /// Contructor without parameter.
+    /// Constructor without parameter.
     Point_for_cell()
     {}
 
-    /// Contructor with a point in parameter.
+    /// Constructor with a point in parameter.
     Point_for_cell(const Point& apoint) : mpoint(apoint)
     {}
 
@@ -87,15 +87,15 @@ namespace CGAL {
     { return !operator==(other); }
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_point()
     {}
 
-    /// Contructor with a point in parameter.
+    /// Constructor with a point in parameter.
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
 
-    /// Contructor with a point and an attribute in parameters.
+    /// Constructor with a point and an attribute in parameters.
     Cell_attribute_with_point(const Point& apoint, const Info& ainfo) :
       Base1(ainfo),
       Base2(apoint)
@@ -144,11 +144,11 @@ namespace CGAL {
     { return false; }
 
   protected:
-    /// Default contructor.
+    /// Default constructor.
     Cell_attribute_with_point()
     {}
 
-    /// Contructor with a point in parameter.
+    /// Constructor with a point in parameter.
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
   };

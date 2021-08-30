@@ -36,12 +36,12 @@ typedef unspecified_type Distance;
 /// \name Creation
 /// @{
 
-/** 
+/**
  * sets `circle` to the empty circle.
  */
 void set();
 
-/** 
+/**
  * sets `circle` to the circle containing exactly \f$ \{\mbox{`p` }\}\f$.
  */
 void  set( const Point& p);
