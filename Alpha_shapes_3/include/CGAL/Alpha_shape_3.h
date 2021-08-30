@@ -16,7 +16,7 @@
 
 #include <CGAL/license/Alpha_shapes_3.h>
 
-#include <CGAL/internal/Lazy_alpha_nt_3.h>
+#include <CGAL/Alpha_shapes_3/internal/Lazy_alpha_nt_3.h>
 #include <CGAL/Alpha_shape_cell_base_3.h> // for Alpha_status
 
 #include <CGAL/basic.h>

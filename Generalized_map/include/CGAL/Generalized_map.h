@@ -13,10 +13,10 @@
 #define CGAL_GENERALIZED_MAP_H 1
 
 #include <CGAL/Generalized_map_fwd.h>
-#include <CGAL/internal/Combinatorial_map_utility.h>
-#include <CGAL/internal/Generalized_map_group_functors.h>
-#include <CGAL/internal/Combinatorial_map_copy_functors.h>
-#include <CGAL/internal/Generalized_map_sewable.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_utility.h>
+#include <CGAL/Generalized_map/internal/Generalized_map_group_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_copy_functors.h>
+#include <CGAL/Generalized_map/internal/Generalized_map_sewable.h>
 
 #include <CGAL/Generalized_map_storages.h>
 #include <CGAL/Combinatorial_map_functors.h>

@@ -1,6 +1,6 @@
 /*!
 
-\page thirdparty Essential and Optional Third Party Dependencies
+\page thirdparty Compilers and Third Party Dependencies
 \cgalAutoToc
 
 \section seccompilers Supported Compilers

@@ -31,6 +31,8 @@ provides exact predicates.
 \cgalModels `ConstrainedTriangulationTraits_2`
 \cgalModels `ConvexHullTraits_2`
 \cgalModels `DelaunayMeshTraits_2`
+\cgalModels `AnalyticWeightTraits_2`
+\cgalModels `BarycentricTraits_2`
 
 \sa `CGAL::Projection_traits_3`
 */

@@ -1,0 +1,105 @@
+namespace CGAL {
+namespace Shape_regularization {
+
+/*!
+\defgroup PkgShapeRegularizationRef Shape Regularization Reference
+
+\defgroup PkgShapeRegularizationRefConcepts Concepts
+\ingroup PkgShapeRegularizationRef
+
+Concepts, which are used to parameterize the functions and classes
+from `CGAL::Shape_regularization`.
+
+
+\defgroup PkgShapeRegularizationRefSegments Segments
+\ingroup PkgShapeRegularizationRef
+
+Models and functions that can be used when regularizing segments.
+
+
+\defgroup PkgShapeRegularizationRefContours Contours
+\ingroup PkgShapeRegularizationRef
+
+Models and functions that can be used when regularizing contours.
+
+
+\defgroup PkgShapeRegularizationRefPlanes Planes
+\ingroup PkgShapeRegularizationRef
+
+Models and functions that can be used when regularizing planes.
+
+\addtogroup PkgShapeRegularizationRef
+
+
+\cgalPkgDescriptionBegin{Shape Regularization, PkgShapeRegularization}
+\cgalPkgPicture{sr_logo_120x120.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge}
+\cgalPkgDesc{Regularization of a set of segments and open or closed contours in 2D
+and a set of planes in 3D such that all input objects are rotated and aligned with respect
+to the user-specified conditions.}
+\cgalPkgManuals{Chapter_Shape_Regularization, PkgShapeRegularizationRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.4}
+\cgalPkgDependsOn{\ref PkgSolverInterface}
+\cgalPkgBib{cgal:asgbl-sr}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+## Shape Regularization ##
+
+### %Concepts ###
+- `NeighborQuery`
+- `RegularizationType`
+- `ContourDirections`
+
+### %Segments ###
+
+#### Free Functions ####
+- `regularize_angles()`
+- `regularize_offsets()`
+- `regularize_segments()`
+
+#### Neighbor Queries ####
+- `Segments::Delaunay_neighbor_query_2<GeomTraits, InputRange, SegmentMap>`
+
+#### Regularization Types ####
+- `Segments::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
+- `Segments::Offset_regularization_2<GeomTraits, InputRange, SegmentMap>`
+
+#### Grouping %Segments ####
+- `Segments::parallel_groups()`
+- `Segments::orthogonal_groups()`
+- `Segments::collinear_groups()`
+
+#### Simplifying %Segments ####
+- `Segments::unique_segments()`
+
+### %Contours ###
+
+#### Free Functions ####
+- `regularize_closed_contour()`
+- `regularize_open_contour()`
+
+#### Estimating Directions ####
+- `Contours::Longest_direction_2<GeomTraits, InputRange, PointMap>`
+- `Contours::Multiple_directions_2<GeomTraits, InputRange, PointMap>`
+- `Contours::User_defined_directions_2<GeomTraits, InputRange, PointMap>`
+
+### %Planes ###
+
+#### Free Functions ####
+- `regularize_planes()`
+
+### QP Regularization ###
+- `QP_regularization<GeomTraits, InputRange, NeighQuery, RegType, QPSolver>`
+*/
+
+} /* namespace Shape_regularization */
+} /* namespace CGAL */

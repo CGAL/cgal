@@ -810,6 +810,7 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Compare_slope_2
   {
+    typedef typename K::Point_2            Point_2;
     typedef typename K::Line_2             Line_2;
     typedef typename K::Segment_2          Segment_2;
   public:
@@ -843,47 +844,54 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Segment_2& s1, const Segment_2& s2) const
     {
+      return (*this)(s1.source(), s1.target(),
+                     s2.source(), s2.target());
+    }
+
+    result_type
+    operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
+    {
       typedef typename K::FT        FT;
 
-      typename K::Comparison_result cmp_y1 = compare_y(s1.source(), s1.target());
+      typename K::Comparison_result cmp_y1 = compare_y(s1s, s1t);
       if (cmp_y1 == EQUAL) // horizontal
         {
-          typename K::Comparison_result cmp_x2 = compare_x(s2.source(), s2.target());
+          typename K::Comparison_result cmp_x2 = compare_x(s2s, s2t);
 
           if (cmp_x2 == EQUAL) return SMALLER;
-          FT s_hw = s2.source().hw();
-          FT t_hw = s2.target().hw();
-          return - CGAL_NTS sign(s2.source().hy()*t_hw - s2.target().hy()*s_hw) *
-                   CGAL_NTS sign(s2.source().hx()*t_hw - s2.target().hx()*s_hw);
+          FT s_hw = s2s.hw();
+          FT t_hw = s2t.hw();
+          return - CGAL_NTS sign(s2s.hy()*t_hw - s2t.hy()*s_hw) *
+                   CGAL_NTS sign(s2s.hx()*t_hw - s2t.hx()*s_hw);
         }
 
-      typename K::Comparison_result cmp_y2 = compare_y(s2.source(), s2.target());
+      typename K::Comparison_result cmp_y2 = compare_y(s2s, s2t);
       if (cmp_y2 == EQUAL)
         {
-          typename K::Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
+          typename K::Comparison_result cmp_x1 = compare_x(s1s, s1t);
 
           if (cmp_x1 == EQUAL) return LARGER;
-          FT s_hw = s1.source().hw();
-          FT t_hw = s1.target().hw();
-          return CGAL_NTS sign(s1.source().hy()*t_hw - s1.target().hy()*s_hw) *
-                 CGAL_NTS sign(s1.source().hx()*t_hw - s1.target().hx()*s_hw);
+          FT s_hw = s1s.hw();
+          FT t_hw = s1t.hw();
+          return CGAL_NTS sign(s1s.hy()*t_hw - s1t.hy()*s_hw) *
+                 CGAL_NTS sign(s1s.hx()*t_hw - s1t.hx()*s_hw);
         }
 
-      typename K::Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
-      typename K::Comparison_result cmp_x2 = compare_x(s2.source(), s2.target());
+      typename K::Comparison_result cmp_x1 = compare_x(s1s, s1t);
+      typename K::Comparison_result cmp_x2 = compare_x(s2s, s2t);
       if (cmp_x1 == EQUAL)
         return cmp_x2 == EQUAL ? EQUAL : LARGER;
 
       if (cmp_x2 == EQUAL) return SMALLER;
 
-      FT s1_s_hw = s1.source().hw();
-      FT s1_t_hw = s1.target().hw();
-      FT s2_s_hw = s2.source().hw();
-      FT s2_t_hw = s2.target().hw();
-      FT s1_xdiff = s1.source().hx()*s1_t_hw - s1.target().hx()*s1_s_hw;
-      FT s1_ydiff = s1.source().hy()*s1_t_hw - s1.target().hy()*s1_s_hw;
-      FT s2_xdiff = s2.source().hx()*s2_t_hw - s2.target().hx()*s2_s_hw;
-      FT s2_ydiff = s2.source().hy()*s2_t_hw - s2.target().hy()*s2_s_hw;
+      FT s1_s_hw = s1s.hw();
+      FT s1_t_hw = s1t.hw();
+      FT s2_s_hw = s2s.hw();
+      FT s2_t_hw = s2t.hw();
+      FT s1_xdiff = s1s.hx()*s1_t_hw - s1t.hx()*s1_s_hw;
+      FT s1_ydiff = s1s.hy()*s1_t_hw - s1t.hy()*s1_s_hw;
+      FT s2_xdiff = s2s.hx()*s2_t_hw - s2t.hx()*s2_s_hw;
+      FT s2_ydiff = s2s.hy()*s2_t_hw - s2t.hy()*s2_s_hw;
       typename K::Sign s1_sign = CGAL_NTS sign(s1_ydiff * s1_xdiff);
       typename K::Sign s2_sign = CGAL_NTS sign(s2_ydiff * s2_xdiff);
 

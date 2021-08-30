@@ -1,23 +1,19 @@
 // Copyright (c) 2014 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is a part of CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
+//
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-/*!
-  \file Mean_value_2.h
-*/
-
-#ifndef CGAL_MEAN_VALUE_2_H
-#define CGAL_MEAN_VALUE_2_H
+#ifndef CGAL_BARYCENTRIC_MEAN_VALUE_2_H
+#define CGAL_BARYCENTRIC_MEAN_VALUE_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
-
 #include <CGAL/disable_warnings.h>
 
 // STL headers.
@@ -92,20 +88,25 @@ public:
 // [2] Reference: "M. S. Floater, Wachspress and mean value coordinates, to appear in the Proceedings of the 14th International Conference on Approximation Theory, G. Fasshauer and L. L. Schumaker (eds.)."
 
 /*!
- * \ingroup PkgBarycentricCoordinates2Ref
+ * \ingroup PkgBarycentricCoordinates2RefDeprecated
  * The class `Mean_value_2` implements 2D mean value coordinates ( \cite cgal:bc:hf-mvcapp-06, \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ).
  * This class is parameterized by a traits class `Traits`, and it is used as a coordinate class to complete the class `Generalized_barycentric_coordinates_2`.
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
- * Mean value coordinates can be computed only approximately due to an inevitable square root operation, and they are necesserily positive only inside the kernel of a star-shaped polygon and inside any quadrilateral.
+ * Mean value coordinates can be computed only approximately due to an inevitable square root operation, and they are necessarily positive only inside the kernel of a star-shaped polygon and inside any quadrilateral.
+
+ * \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
 \cgalModels `BarycentricCoordinates_2`
 
 */
-
 template<class Traits>
-    class Mean_value_2
+class
+#ifndef DOXYGEN_RUNNING
+CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+#endif
+Mean_value_2
 {
 
 public:
@@ -123,8 +124,8 @@ public:
 
     // \name Creation
 
-    // Creates the class `Mean_value_2` that implements the behaviour of mean value coordinates for any query point that does not belong to the polygon's boundary.
-    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
+    // Creates the class `Mean_value_2` that implements the behavior of mean value coordinates for any query point that does not belong to the polygon's boundary.
+    // The polygon is given by a range of vertices of the type `Traits::Point_2` stored in a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
     Mean_value_2(const std::vector<typename Traits::Point_2> &vertices, const Traits &b_traits) :
         vertex(vertices),
         barycentric_traits(b_traits),
@@ -265,7 +266,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
+        // - https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);
@@ -394,7 +395,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
+        // - https://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);
@@ -486,7 +487,7 @@ private:
         output_stream << "5. Smoothness;" << std::endl;
         output_stream << "6. Similarity invariance;" << std::endl;
         output_stream << "7. Linear independence;" << std::endl;
-        output_stream << "8. Refinability;" << std::endl;
+        output_stream << "8. Refinability." << std::endl;
 
         output_stream << std::endl;
         output_stream << "Mean value coordinates satisfy the non-negativity and boundedness between 0 and 1 properties inside the kernel of an arbitrary star-shaped polygon, too." << std::endl;
@@ -503,4 +504,4 @@ private:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_MEAN_VALUE_2_H
+#endif // CGAL_BARYCENTRIC_MEAN_VALUE_2_H

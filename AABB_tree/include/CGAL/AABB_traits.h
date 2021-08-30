@@ -21,10 +21,10 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
-#include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
-#include <CGAL/internal/Has_boolean_tags.h>
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
+#include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
+#include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
 
 #include <boost/optional.hpp>

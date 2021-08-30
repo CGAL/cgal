@@ -22,7 +22,7 @@
 
 #include <map>
 #include <utility>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <boost/mpl/eval_if.hpp>
 #include <boost/mpl/identity.hpp>
 

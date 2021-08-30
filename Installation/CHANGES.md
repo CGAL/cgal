@@ -5,6 +5,35 @@ Release History
 
 Release date: December 2021
 
+### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
+
+-   This package provides a simple and unified interface to different types of weights.
+    In particular, it groups all weights into three category: analytic weights including
+    all basic weights which can be computed analytically for a query point with respect to its
+    local neighbors in 2D and 3D; barycentric weights including all weights which can be computed
+    for a query point with respect to the vertices of a planar polygon; and weighting regions
+    including all weights which are used to balance other weights.
+
+### [2D Generalized Barycentric Coordinates](https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2) (breaking change, major changes)
+
+-   **Breaking change**: The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are
+    renamed to `segment_coordinates_2.h` and `triangle_coordinates_2.h`.
+-   The classes `Segment_coordinates_2` and `Triangle_coordinates_2` are deprecated. The free functions
+    `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()` are deprecated as well.
+    Instead, the free functions `segment_coordinates_2()` and `triangle_coordinates_2()` must be used.
+-   The enums `Query_point_location` and `Type_of_algorithm` are deprecated. Instead, the enum
+    `Computation_policy_2` must be used.
+-   The clases `Wachspress_2`, `Discrete_harmonic_2`, `Mean_value_2`, and
+    `Generalized_barycentric_coordinates_2` are deprecated. As consequence, the concept `BarycentricCoordinates_2` is deprecated as well. Instead, the classes `Wachspress_coordinates_2`,
+    `Discrete_harmonic_coordinates_2`, and `Mean_value_coordinates_2` must be used.
+-   Added the class `Harmonic_coordinates_2` for computing approximate harmonic coordinates in 2D.
+    These coordinates satisfy all properties of barycentric coordinates inside any simple polygon.
+-   Added a new concept `DiscretizedDomain_2` and a model of this concept called `Delaunay_domain_2`
+    which is based on the [Mesh 2](https://doc.cgal.org/5.4/Manual/packages.html#PkgMesh2) package.
+    A model of this concept is required for computing `Harmonic_coordinates_2`.
+-   Added free functions for computing Wachspress, discrete harmonic, and mean value coordinates.
+-   All free functions and classes are now using ranges and property maps.
+
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
 
 -   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
@@ -25,10 +54,33 @@ Release date: December 2021
     if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
     max distance.
 
+-   Added more functions in the [visitor of the corefinement based methods](https://doc.cgal.org/5.4/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+    to track all vertex creations.
+
+-   Added an option to [`CGAL::Polygon_mesh_processing::self_intersections()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__intersection__grp.html#gaf19c80ec12cbff7ebe9e69453f1d40b8) to report only a limited number of intersections (`maximum_number()`)
+
+### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
+
+-   This package enables to regularize a set of segments and open or closed contours in 2D
+    and a set of planes in 3D such that all input objects are rotated and aligned with respect to the
+    user-specified conditions. In addition, it provides a global regularization framework that can be
+    adjusted for the user needs and any type of geometric objects.
 
 ###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
 
 -   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
+
+
+### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
+
+-   Added support for `libpointmatcher::GenericDescriptorOutlierFilter`
+    that enables to provide a map from a point to a weight associated with this point.
+
+
+### [Shape Detection](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeDetection)
+
+-   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
+    and cylinders in 3D.
 
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)

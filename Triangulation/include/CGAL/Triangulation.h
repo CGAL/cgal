@@ -16,7 +16,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/internal/Triangulation/utilities.h>
+#include <CGAL/Triangulation/internal/utilities.h>
 #include <CGAL/Triangulation_data_structure.h>
 #include <CGAL/Triangulation_full_cell.h>
 #include <CGAL/Triangulation_vertex.h>
