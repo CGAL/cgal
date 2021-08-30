@@ -479,10 +479,6 @@ public:
     }
     CGAL_assertion(BGL::internal::is_index_map_valid(fids2, num_faces(tm2), faces(tm2)));
 
-    // bitset to identify coplanar faces
-    boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);
-    boost::dynamic_bitset<> tm2_coplanar_faces(num_faces(tm2), 0);
-
     // In the following loop we filter intersection edges that are strictly inside a patch
     // of coplanar facets so that we keep only the edges on the border of the patch.
     // This is not optimal and in an ideal world being able to find the outside edges
@@ -495,6 +491,14 @@ public:
                                        : epp_it_end;
     boost::unordered_set<edge_descriptor> inter_edges_to_remove1,
                                           inter_edges_to_remove2;
+
+    // Each vector contains a subset of coplanar faces. More particularly only
+    // the coplanar faces incident to an intersection edge. Note
+    // that for coplanar faces, intersection edges are on the input
+    // edges and some coplanar faces might not be seen as they are
+    // the result of the retriangulation.
+    std::vector<face_descriptor> tm1_coplanar_faces, tm2_coplanar_faces;
+
     for (;epp_it!=epp_it_end;)
     {
       halfedge_descriptor h1  = epp_it->second.first[&tm1];
@@ -514,7 +518,7 @@ public:
       Node_id index_q2 = get_node_id(q2, vertex_to_node_id2);
 
       // set boolean for the position of p1 wrt to q1 and q2
-      bool p1_eq_q1=is_border(h1_opp, tm1), p1_eq_q2=p1_eq_q1;
+      bool p1_eq_q1=false, p1_eq_q2=false;
       if (!is_border(h1_opp, tm1) && index_p1!=NID)
       {
         if (!is_border(h2_opp, tm2))
@@ -523,8 +527,8 @@ public:
           if (p1_eq_q1)
           {
             //mark coplanar facets if any
-            tm1_coplanar_faces.set(get(fids1, face(h1_opp, tm1)));
-            tm2_coplanar_faces.set(get(fids2, face(h2_opp, tm2)));
+            tm1_coplanar_faces.push_back(face(h1_opp, tm1));
+            tm2_coplanar_faces.push_back(face(h2_opp, tm2));
           }
         }
         if (!is_border(h2, tm2))
@@ -533,14 +537,14 @@ public:
           if (p1_eq_q2)
           {
             //mark coplanar facets if any
-            tm1_coplanar_faces.set(get(fids1, face(h1_opp, tm1)));
-            tm2_coplanar_faces.set(get(fids2, face(h2, tm2)));
+            tm1_coplanar_faces.push_back(face(h1_opp, tm1));
+            tm2_coplanar_faces.push_back(face(h2, tm2));
           }
         }
       }
 
       // set boolean for the position of p2 wrt to q1 and q2
-      bool p2_eq_q1=is_border(h1, tm1), p2_eq_q2=p2_eq_q1;
+      bool p2_eq_q1=false, p2_eq_q2=false;
       if (!is_border(h1, tm1) && index_p2!=NID)
       {
         if (!is_border(h2_opp, tm2))
@@ -548,8 +552,8 @@ public:
           p2_eq_q1 = index_p2 == index_q1;
           if (p2_eq_q1){
             //mark coplanar facets if any
-            tm1_coplanar_faces.set(get(fids1, face(h1, tm1)));
-            tm2_coplanar_faces.set(get(fids2, face(h2_opp, tm2)));
+            tm1_coplanar_faces.push_back(face(h1, tm1));
+            tm2_coplanar_faces.push_back(face(h2_opp, tm2));
           }
         }
         if (!is_border(h2, tm2))
@@ -557,8 +561,8 @@ public:
           p2_eq_q2 = index_p2 == index_q2;
           if (p2_eq_q2){
             //mark coplanar facets if any
-            tm1_coplanar_faces.set(get(fids1, face(h1, tm1)));
-            tm2_coplanar_faces.set(get(fids2, face(h2, tm2)));
+            tm1_coplanar_faces.push_back(face(h1, tm1));
+            tm2_coplanar_faces.push_back(face(h2, tm2));
           }
         }
       }
@@ -671,6 +675,21 @@ public:
     patch_status_not_set_tm1.set();
     patch_status_not_set_tm2.set();
 
+    // first set coplanar status of patches using the coplanar faces collected during the
+    // extra intersection edges collected. This is important in the case of full connected components
+    // being coplanar. They have no intersection edges (closed cc) or only intersection edges on the
+    // boundary (non-closed cc)
+    for (face_descriptor f1 : tm1_coplanar_faces)
+    {
+      std::size_t fid1 = get(fids1, f1);
+      coplanar_patches_of_tm1.set(tm1_patch_ids[ fid1 ]);
+    }
+    for (face_descriptor f2 : tm2_coplanar_faces)
+    {
+      std::size_t fid2 = get(fids2, f2);
+      coplanar_patches_of_tm2.set(tm2_patch_ids[ fid2 ]);
+    }
+
     for (typename An_edge_per_polyline_map::iterator
             it=an_edge_per_polyline.begin(),
             it_end=an_edge_per_polyline.end(); it!=it_end;++it)
@@ -766,20 +785,23 @@ public:
             std::size_t patch_id_q1=tm2_patch_ids[ get(fids2, face(opposite(h2,tm2),tm2)) ];
             std::size_t patch_id_q2=tm2_patch_ids[ get(fids2, face(h2,tm2)) ];
 
-            //indicates that patch status will be updated
-            patch_status_not_set_tm1.reset(patch_id_p);
-            patch_status_not_set_tm2.reset(patch_id_q1);
-            patch_status_not_set_tm2.reset(patch_id_q2);
+            if (index_p!=index_q1 && index_p!=index_q2)
+            {
+              //indicates that patch status will be updated
+              patch_status_not_set_tm1.reset(patch_id_p);
+              patch_status_not_set_tm2.reset(patch_id_q1);
+              patch_status_not_set_tm2.reset(patch_id_q2);
 
-            bool p_is_between_q1q2 = sorted_around_edge(
-                ids.first, ids.second,
-                index_q1, index_q2, index_p,
-                q1, q2, p,
-                vpm2, vpm1,
-                nodes);
+              bool p_is_between_q1q2 = sorted_around_edge(
+                  ids.first, ids.second,
+                  index_q1, index_q2, index_p,
+                  q1, q2, p,
+                  vpm2, vpm1,
+                  nodes);
 
-            if (p_is_between_q1q2)
-              is_patch_inside_tm2.set(patch_id_p);
+              if (p_is_between_q1q2)
+                is_patch_inside_tm2.set(patch_id_p);
+            }
           }
         }
       }
@@ -1146,11 +1168,8 @@ public:
 
           if (index_p1 != NID)
           {
-            if (tm1_coplanar_faces.test(f_id))
-            {
-              coplanar_patches_of_tm1.set(patch_id);
+            if (coplanar_patches_of_tm1.test(patch_id))
               coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
-            }
             else
             {
               typename Exact_kernel::Point_3 e_centroid =
@@ -1220,11 +1239,8 @@ public:
           }
           if (index_p2 != NID)
           {
-            if (tm2_coplanar_faces.test(f_id))
-            {
-              coplanar_patches_of_tm2.set(patch_id);
+            if (coplanar_patches_of_tm2.test(patch_id))
               coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id);
-            }
             else
             {
               typename Exact_kernel::Point_3 e_centroid =
