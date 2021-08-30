@@ -24,6 +24,7 @@
 #include <CGAL/memory.h>
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <CGAL/N_step_adaptor_derived.h>
+#include <CGAL/iterator.h>
 #include <algorithm>
 #include <vector>
 #include <map>
@@ -161,6 +162,9 @@ public:
     typedef typename Types::Vertex_I                   Vertex_I;
     typedef typename Types::Vertex_CI                  Vertex_CI;
 
+    typedef Iterator_range< Prevent_deref<Vertex_iterator> >       Vertex_handles;
+    typedef Iterator_range< Prevent_deref<Vertex_const_iterator> > Vertex_const_handles;
+
     typedef typename Types::Halfedge_vector            Halfedge_vector;
     typedef typename Types::Halfedge_handle            Halfedge_handle;
     typedef typename Types::Halfedge_const_handle      Halfedge_const_handle;
@@ -169,6 +173,9 @@ public:
     typedef typename Types::Halfedge_I                 Halfedge_I;
     typedef typename Types::Halfedge_CI                Halfedge_CI;
 
+    typedef Iterator_range< Prevent_deref<Halfedge_iterator> >       Halfedge_handles;
+    typedef Iterator_range< Prevent_deref<Halfedge_const_iterator> > Halfedge_const_handles;
+
     typedef typename Types::Face_vector                Face_vector;
     typedef typename Types::Face_handle                Face_handle;
     typedef typename Types::Face_const_handle          Face_const_handle;
@@ -176,6 +183,9 @@ public:
     typedef typename Types::Face_const_iterator        Face_const_iterator;
     typedef typename Types::Face_I                     Face_I;
     typedef typename Types::Face_CI                    Face_CI;
+
+    typedef Iterator_range< Prevent_deref<Face_iterator> >       Face_handles;
+    typedef Iterator_range< Prevent_deref<Face_const_iterator> > Face_const_handles;
 
     typedef typename Types::size_type                  size_type;
     typedef typename Types::difference_type            difference_type;
@@ -371,19 +381,25 @@ public:
 
     Vertex_iterator   vertices_begin()   { return vertices.begin();}
     Vertex_iterator   vertices_end()     { return vertices.end();}
+    Vertex_handles    vertex_handles()   { return make_prevent_deref_range(vertices_begin(), vertices_end());}
     Halfedge_iterator halfedges_begin()  { return halfedges.begin();}
     Halfedge_iterator halfedges_end()    { return halfedges.end();}
+    Halfedge_handles  halfedge_handles() { return make_prevent_deref_range(halfedges_begin(), halfedges_end());}
     Face_iterator     faces_begin()      { return faces.begin();}
     Face_iterator     faces_end()        { return faces.end();}
+    Face_handles      face_handles()     { return make_prevent_deref_range(faces_begin(), faces_end());}
 
     // The constant iterators and circulators.
 
-    Vertex_const_iterator   vertices_begin()  const{ return vertices.begin();}
-    Vertex_const_iterator   vertices_end()    const{ return vertices.end();}
-    Halfedge_const_iterator halfedges_begin() const{ return halfedges.begin();}
-    Halfedge_const_iterator halfedges_end()   const{ return halfedges.end();}
-    Face_const_iterator     faces_begin()     const{ return faces.begin();}
-    Face_const_iterator     faces_end()       const{ return faces.end();}
+    Vertex_const_iterator   vertices_begin()   const{ return vertices.begin();}
+    Vertex_const_iterator   vertices_end()     const{ return vertices.end();}
+    Vertex_const_handles    vertex_handles()   const{ return make_prevent_deref_range(vertices_begin(), vertices_end());}
+    Halfedge_const_iterator halfedges_begin()  const{ return halfedges.begin();}
+    Halfedge_const_iterator halfedges_end()    const{ return halfedges.end();}
+    Halfedge_const_handles  halfedge_handles() const{ return make_prevent_deref_range(halfedges_begin(), halfedges_end());}
+    Face_const_iterator     faces_begin()      const{ return faces.begin();}
+    Face_const_iterator     faces_end()        const{ return faces.end();}
+    Face_const_handles      face_handles()     const{ return make_prevent_deref_range(faces_begin(), faces_end());}
 
 // Insertion
 //

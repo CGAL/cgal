@@ -16,17 +16,20 @@
 
 #include <CGAL/license/Mesh_3.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/IO/VTK.h>
+
+#include <boost/variant.hpp>
 
 #include <iostream>
 #include <vector>
 #include <map>
-#include <CGAL/assertions.h>
-#include <CGAL/IO/io.h>
-#include <CGAL/IO/write_vtk.h>
-#include <boost/variant.hpp>
 
 //todo try to factorize with functors
-namespace CGAL{
+namespace CGAL {
+namespace IO {
+namespace internal {
 
 template <class C3T3>
 void
@@ -132,9 +135,10 @@ write_cells(std::ostream& os,
       for (int i=0; i<4; i++)
         connectivity_table.push_back(V[cit->vertex(i)]);
     }
-  write_vector<std::size_t>(os,connectivity_table);
-  write_vector<std::size_t>(os,offsets);
-  write_vector<unsigned char>(os,cell_type);
+
+  internal::write_vector<std::size_t>(os,connectivity_table);
+  internal::write_vector<std::size_t>(os,offsets);
+  internal::write_vector<unsigned char>(os,cell_type);
 }
 
 
@@ -210,7 +214,7 @@ write_c3t3_points(std::ostream& os,
       coordinates.push_back(vit->point()[1]);
       coordinates.push_back(dim == 3 ? vit->point()[2] : 0.0);
     }
-  write_vector<FT>(os,coordinates);
+  internal::write_vector<FT>(os,coordinates);
 }
 
 // writes the attribute tags before binary data is appended
@@ -260,7 +264,7 @@ void
 write_attributes(std::ostream& os,
                  const std::vector<FT>& att)
 {
-  write_vector(os,att);
+  internal::write_vector(os,att);
 }
 
 enum VTU_ATTRIBUTE_TYPE{
@@ -275,7 +279,7 @@ template <class C3T3>
 void output_to_vtu_with_attributes(std::ostream& os,
                                    const C3T3& c3t3,
                                    std::vector<std::pair<const char*, Vtu_attributes> >&attributes,
-                                   IO::Mode mode = IO::BINARY)
+                                   Mode mode = BINARY)
 {
   //CGAL_assertion(attributes.size() == attribute_types.size());
   typedef typename C3T3::Triangulation Tr;
@@ -304,7 +308,7 @@ void output_to_vtu_with_attributes(std::ostream& os,
      << "\" NumberOfCells=\"" << c3t3.number_of_cells() << "\">\n";
   std::size_t offset = 0;
 
-  const bool binary = (mode == IO::BINARY);
+  const bool binary = (mode == BINARY);
   write_c3t3_points_tag(os,tr,number_of_vertices,V,binary,offset);
   write_cells_tag(os,c3t3,V,binary,offset); // fills V if the mode is ASCII
   os << "    <CellData Scalars=\""<<attributes.front().first<<"\">\n";
@@ -345,13 +349,13 @@ void output_to_vtu_with_attributes(std::ostream& os,
   os << "</VTKFile>\n";
 }
 
-
+} // namespace internal
 
 //public API
 template <class C3T3>
 void output_to_vtu(std::ostream& os,
                const C3T3& c3t3,
-               IO::Mode mode = IO::BINARY)
+               Mode mode = BINARY)
 {
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
   std::vector<double> mids;
@@ -363,11 +367,18 @@ void output_to_vtu(std::ostream& os,
     mids.push_back(v);
   }
 
-  std::vector<std::pair<const char*, Vtu_attributes > > atts;
-  Vtu_attributes v = &mids;
+  std::vector<std::pair<const char*, internal::Vtu_attributes > > atts;
+  internal::Vtu_attributes v = &mids;
   atts.push_back(std::make_pair("MeshDomain", v));
-  output_to_vtu_with_attributes(os, c3t3, atts, mode);
+  internal::output_to_vtu_with_attributes(os, c3t3, atts, mode);
 }
 
-} //end CGAL
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_to_vtu;
+#endif
+
+} // namespace CGAL
+
 #endif // CGAL_VTK_IO_H

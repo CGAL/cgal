@@ -8,6 +8,7 @@
 #include <QInputDialog>
 #include <QElapsedTimer>
 #include <QAction>
+#include <QMessageBox>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
@@ -103,10 +104,14 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
 
   Scene_polyhedron_selection_item* selection_item =
     qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
-
+  if(selection_item && selection_item->selected_edges.empty())
+  {
+    QMessageBox::warning(mw, "Empty Edges", "There are no selected edges. Aborting.");
+    return;
+  }
   if (poly_item || selection_item)
   {
-    FaceGraph& pmesh = (poly_item != NULL)
+    FaceGraph& pmesh = (poly_item != nullptr)
       ? *poly_item->polyhedron()
       : *selection_item->polyhedron();
 
@@ -119,8 +124,8 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     connect(ui.buttonBox, SIGNAL(rejected()),
             &dialog, SLOT(reject()));
 
-    Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
-      : (selection_item != NULL ? selection_item->bbox()
+    Scene_interface::Bbox bbox = poly_item != nullptr ? poly_item->bbox()
+      : (selection_item != nullptr ? selection_item->bbox()
         : scene->bbox());
 
     double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
@@ -181,7 +186,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
       << num_halfedges(pmesh) / 2 << " edges)" << std::endl;
 
     // update scene
-    if (poly_item != NULL)
+    if (poly_item != nullptr)
     {
       poly_item->invalidateOpenGLBuffers();
       poly_item->polyhedron()->collect_garbage();

@@ -289,12 +289,13 @@ The triangulation data structure is a container for the faces and vertices and m
 incidence and adjacency relations.
 This parameter must meet the requirements described in the concept `TriangulationDataStructure_2`,
 for which \cgal offers the model `Triangulation_data_structure_2`.
-This model is itself parameterized by a vertex
-base class and a face base class, which gives the possibility to customize the vertices and
-faces used by the triangulation data structure. To represent periodic hyperbolic triangulations,
-the face base and vertex base classes must be models of the concepts
+To represent periodic hyperbolic triangulations,
+the face and vertex of the triangulation data structure must be models of the concepts
 `Periodic_4HyperbolicTriangulationFaceBase_2` and
 `Periodic_4HyperbolicTriangulationVertexBase_2`, respectively.
+The model `CGAL::Triangulation_data_structure_2` is parameterized by a vertex
+base class and a face base class, which gives the possibility to customize the vertices and
+faces used by the triangulation data structure.
 
 The default value for the triangulation data structure parameter is
 `Triangulation_data_structure_2< Periodic_4_hyperbolic_triangulation_vertex_base_2<Traits>, Periodic_4_hyperbolic_triangulation_face_base_2<Traits> >`,

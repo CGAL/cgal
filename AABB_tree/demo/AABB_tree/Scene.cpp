@@ -33,7 +33,7 @@ Scene::Scene()
     , m_grid_size(slow_distance_grid_size)
     , m_cut_plane(NONE)
 {
-    m_pPolyhedron = NULL;
+    m_pPolyhedron = nullptr;
 
     // view options
     m_view_points = true;
@@ -91,8 +91,8 @@ void Scene::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 120 \n"
-        "attribute highp vec4 vertex;\n"
+        "#version 150 \n"
+        "in highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 f_matrix;\n"
         "void main(void)\n"
@@ -103,10 +103,11 @@ void Scene::compile_shaders()
     //Vertex source code
     const char fragment_source[] =
     {
-        "#version 120 \n"
+        "#version 150 \n"
         "uniform highp vec4 color; \n"
+        "out highp vec4 out_color; \n"
         "void main(void) { \n"
-        "gl_FragColor = color; \n"
+        "out_color = color; \n"
         "} \n"
         "\n"
     };
@@ -139,26 +140,27 @@ void Scene::compile_shaders()
     //Vertex source code
     const char tex_vertex_source[] =
     {
-        "#version 120 \n"
-        "attribute highp vec4 vertex;\n"
-        "attribute highp vec2 tex_coord; \n"
+        "#version 150 \n"
+        "in highp vec4 vertex;\n"
+        "in highp vec2 tex_coord; \n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 f_matrix;\n"
-        "varying highp vec2 texc;\n"
+        "out highp vec2 texc;\n"
         "void main(void)\n"
         "{\n"
         "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
-        "    texc = tex_coord;\n"
+        "   texc = tex_coord;\n"
         "}"
     };
     //Vertex source code
     const char tex_fragment_source[] =
     {
-        "#version 120 \n"
-        "uniform sampler2D texture;\n"
-        "varying highp vec2 texc;\n"
+        "#version 150 \n"
+        "uniform sampler2D s_texture;\n"
+        "in highp vec2 texc;\n"
+        "out highp vec4 out_color; \n"
         "void main(void) { \n"
-        "gl_FragColor = texture2D(texture, texc.st);\n"
+        "out_color = vec4(texture(s_texture, texc));\n"
         "} \n"
         "\n"
     };
@@ -539,7 +541,7 @@ int Scene::open(QString filename)
         return -1;
     }
 
-    if(m_pPolyhedron != NULL)
+    if(m_pPolyhedron != nullptr)
         delete m_pPolyhedron;
 
     // allocate new polyhedron
@@ -551,7 +553,7 @@ int Scene::open(QString filename)
         QApplication::restoreOverrideCursor();
 
         delete m_pPolyhedron;
-        m_pPolyhedron = NULL;
+        m_pPolyhedron = nullptr;
 
         return -1;
     }
@@ -569,7 +571,7 @@ void Scene::update_bbox()
     std::cout << "Compute bbox...";
     m_bbox = Bbox();
 
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "failed (no polyhedron)." << std::endl;
         return;
@@ -792,7 +794,7 @@ FT Scene::bbox_diag() const
 
 void Scene::build_facet_tree()
 {
-    if ( NULL == m_pPolyhedron )
+    if ( nullptr == m_pPolyhedron )
     {
         std::cerr << "Build facet tree failed: load polyhedron first." << std::endl;
         return;
@@ -811,7 +813,7 @@ void Scene::build_facet_tree()
 
 void Scene::build_edge_tree()
 {
-    if ( NULL == m_pPolyhedron )
+    if ( nullptr == m_pPolyhedron )
     {
         std::cerr << "Build edge tree failed: load polyhedron first." << std::endl;
         return;
@@ -858,7 +860,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
                                const double vmin,
                                const double vmax)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -911,7 +913,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
 
 void Scene::generate_inside_points(const unsigned int nb_points)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -953,7 +955,7 @@ void Scene::generate_inside_points(const unsigned int nb_points)
 
 void Scene::generate_boundary_segments(const unsigned int nb_slices)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1003,7 +1005,7 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
 
 void Scene::generate_boundary_points(const unsigned int nb_points)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1053,7 +1055,7 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
 
 void Scene::generate_edge_points(const unsigned int nb_points)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1217,7 +1219,7 @@ void Scene::cut_segment_plane()
     {
         const Segment* inter_seg = CGAL::object_cast<Segment>(&(it->first));
 
-        if ( NULL != inter_seg )
+        if ( nullptr != inter_seg )
         {
             m_cut_segments.push_back(*inter_seg);
         }
@@ -1278,7 +1280,7 @@ void Scene::toggle_view_plane()
 
 void Scene::refine_bisection(const FT max_sqlen)
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1293,7 +1295,7 @@ void Scene::refine_bisection(const FT max_sqlen)
 
 void Scene::refine_loop()
 {
-    if(m_pPolyhedron == NULL)
+    if(m_pPolyhedron == nullptr)
     {
         std::cout << "Load polyhedron first." << std::endl;
         return;
@@ -1319,12 +1321,8 @@ void Scene::deactivate_cutting_plane()
 }
 void Scene::initGL()
 {
-    gl = new QOpenGLFunctions_2_1();
-   if(!gl->initializeOpenGLFunctions())
-    {
-        qFatal("ERROR : OpenGL Functions not initialized. Check your OpenGL Verison (should be >=3.3)");
-        exit(1);
-    }
+    gl = new QOpenGLFunctions();
+    gl->initializeOpenGLFunctions();
 
     gl->glGenTextures(1, &textureId);
     compile_shaders();

@@ -18,6 +18,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/memory.h>
 #include <CGAL/number_utils_classes.h>
+#include <CGAL/Compact_container.h>
 #include <iterator>
 
 namespace CGAL {
@@ -50,7 +51,12 @@ namespace CGAL {
 
 template <typename Type_,
           class Compare_ = CGAL::Compare<Type_>,
-          class Allocator_ = CGAL_ALLOCATOR(int)>
+          class Allocator_ = CGAL_ALLOCATOR(int),
+#ifdef CGAL_MULTISET_USE_COMPACT_CONTAINER_AS_DEFAULT
+          typename UseCompactContainer = Tag_true>
+#else
+          typename UseCompactContainer = Tag_false>
+#endif
 class Multiset
 {
 public:
@@ -59,7 +65,8 @@ public:
   typedef Type_                                     Type;
   typedef Compare_                                  Compare;
   typedef Allocator_                                Allocator;
-  typedef Multiset<Type, Compare, Allocator>        Self;
+  typedef Multiset<Type, Compare, Allocator, UseCompactContainer>
+                                                    Self;
 
   // Type definitions for STL compatibility.
   typedef Type                                      value_type;
@@ -224,11 +231,64 @@ protected:
 
       return (succP);
     }
+
+    void* for_compact_container() const
+    {
+      return parentP;
+    }
+
+    void for_compact_container (void * p)
+    {
+      reinterpret_cast<void*&>(parentP) = p;
+    }
+
   };
 
   // Rebind the allocator to the Node type:
-  typedef std::allocator_traits<Allocator> Allocator_traits;
-  typedef typename Allocator_traits::template rebind_alloc<Node> Node_allocator;
+  class Default_node_allocator
+  {
+    typedef std::allocator_traits<Allocator> Allocator_traits;
+    typedef typename Allocator_traits::template rebind_alloc<Node> Base;
+    Base base;
+
+  public:
+
+    Node* allocate (const Node& n)
+    {
+      Node* new_node = base.allocate(1);
+      std::allocator_traits<Base>::construct(base, new_node, n);
+      return new_node;
+    }
+
+    void deallocate (Node* n)
+    {
+      std::allocator_traits<Base>::destroy(base, n);
+      base.deallocate (n, 1);
+    }
+  };
+
+  class CC_node_allocator
+  {
+    typedef Compact_container<Node> Base;
+    Base base;
+
+  public:
+
+    Node* allocate (const Node& n)
+    {
+      Node* new_node = &*base.emplace(n);
+      return new_node;
+    }
+
+    void deallocate (Node* n)
+    {
+      base.erase (base.iterator_to(*n));
+    }
+  };
+
+  typedef typename std::conditional<UseCompactContainer::value,
+                                    CC_node_allocator,
+                                    Default_node_allocator>::type Node_allocator;
 
 public:
 
@@ -242,7 +302,7 @@ public:
   class iterator
   {
     // Give the red-black tree class template access to the iterator's members.
-    friend class Multiset<Type, Compare, Allocator>;
+    friend class Multiset<Type, Compare, Allocator, UseCompactContainer>;
     friend class const_iterator;
 
   public:
@@ -353,7 +413,7 @@ public:
   class const_iterator
   {
     // Give the red-black tree class template access to the iterator's members.
-    friend class Multiset<Type, Compare, Allocator>;
+    friend class Multiset<Type, Compare, Allocator, UseCompactContainer>;
 
   public:
 
@@ -530,7 +590,7 @@ public:
   /*!
    * Destructor. [takes O(n) operations]
    */
-  virtual ~Multiset ();
+  virtual ~Multiset () noexcept(!CGAL_ASSERTIONS_ENABLED);
 
   /*!
    * Assignment operator. [takes O(n) operations]
@@ -1136,7 +1196,7 @@ public:
 
   /*!
    * Split the tree such that all remaining objects are less than a given
-   * key, and all objects greater then (or equal to) this key form
+   * key, and all objects greater than (or equal to) this key form
    * a new output tree. [takes O(log n) operations]
    * \param key The split key.
    * \param comp_key A comparison functor for comparing keys and objects.
@@ -1429,20 +1489,7 @@ protected:
    * \return A pointer to the newly created node.
    */
   Node* _allocate_node (const Type& object,
-                        typename Node::Node_color color)
-#ifdef CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG
-  {
-      CGAL_multiset_assertion (color != Node::DUMMY_BEGIN &&
-              color != Node::DUMMY_END);
-
-      Node* new_node = node_alloc.allocate(1);
-      std::allocator_traits<Node_allocator>::construct(node_alloc, new_node, beginNode);
-      new_node->init(object, color);
-      return (new_node);
-  }
-#else
-  ;
-#endif
+                        typename Node::Node_color color);
 
   /*!
    * De-allocate a tree node.
@@ -1455,8 +1502,8 @@ protected:
 //---------------------------------------------------------
 // Default constructor.
 //
-template <class Type, class Compare, typename Allocator>
-Multiset<Type, Compare, Allocator>::Multiset () :
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+Multiset<Type, Compare, Allocator, UseCompactContainer>::Multiset () :
   rootP (nullptr),
   iSize (0),
   iBlackHeight (0),
@@ -1470,8 +1517,8 @@ Multiset<Type, Compare, Allocator>::Multiset () :
 //---------------------------------------------------------
 // Constructor with a pointer to comparison object.
 //
-template <class Type, class Compare, typename Allocator>
-Multiset<Type, Compare, Allocator>::Multiset (const Compare& comp) :
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+Multiset<Type, Compare, Allocator, UseCompactContainer>::Multiset (const Compare& comp) :
   rootP (nullptr),
   iSize (0),
   iBlackHeight (0),
@@ -1485,8 +1532,8 @@ Multiset<Type, Compare, Allocator>::Multiset (const Compare& comp) :
 //---------------------------------------------------------
 // Copy constructor.
 //
-template <class Type, class Compare, typename Allocator>
-Multiset<Type, Compare, Allocator>::Multiset (const Self& tree) :
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+Multiset<Type, Compare, Allocator, UseCompactContainer>::Multiset (const Self& tree) :
   rootP (nullptr),
   iSize (tree.iSize),
   iBlackHeight (tree.iBlackHeight),
@@ -1517,12 +1564,17 @@ Multiset<Type, Compare, Allocator>::Multiset (const Self& tree) :
 //---------------------------------------------------------
 // Destructor.
 //
-template <class Type, class Compare, typename Allocator>
-Multiset<Type, Compare, Allocator>::~Multiset ()
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+Multiset<Type, Compare, Allocator, UseCompactContainer>::~Multiset () noexcept(!CGAL_ASSERTIONS_ENABLED)
 {
+  if (UseCompactContainer::value)
+    return;
+
   // Delete the entire tree recursively.
-  if (rootP != nullptr)
-    _destroy (rootP);
+  CGAL_destructor_assertion_catch(
+    if (rootP != nullptr)
+      _destroy (rootP);
+  );
 
   rootP = nullptr;
   beginNode.parentP = nullptr;
@@ -1532,9 +1584,9 @@ Multiset<Type, Compare, Allocator>::~Multiset ()
 //---------------------------------------------------------
 // Assignment operator.
 //
-template <class Type, class Compare, typename Allocator>
-Multiset<Type, Compare, Allocator>&
-Multiset<Type, Compare, Allocator>::operator= (const Self& tree)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+Multiset<Type, Compare, Allocator, UseCompactContainer>&
+Multiset<Type, Compare, Allocator, UseCompactContainer>::operator= (const Self& tree)
 {
   // Avoid self-assignment.
   if (this == &tree)
@@ -1570,8 +1622,8 @@ Multiset<Type, Compare, Allocator>::operator= (const Self& tree)
 //---------------------------------------------------------
 // Swap two trees (replace their contents).
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::swap (Self& tree)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::swap (Self& tree)
 {
   // Avoid self-swapping.
   if (this == &tree)
@@ -1613,8 +1665,8 @@ void Multiset<Type, Compare, Allocator>::swap (Self& tree)
 //---------------------------------------------------------
 // Test two trees for equality.
 //
-template <class Type, class Compare, typename Allocator>
-bool Multiset<Type,Compare,Allocator>::operator== (const Self& tree) const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+bool Multiset<Type,Compare,Allocator,UseCompactContainer>::operator== (const Self& tree) const
 {
   // The sizes of the two trees must be the same.
   if (size() != tree.size())
@@ -1640,8 +1692,8 @@ bool Multiset<Type,Compare,Allocator>::operator== (const Self& tree) const
 //---------------------------------------------------------
 // Check if our tree is lexicographically smaller that a given tree.
 //
-template <class Type, class Compare, typename Allocator>
-bool Multiset<Type,Compare,Allocator>::operator< (const Self& tree) const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+bool Multiset<Type,Compare,Allocator,UseCompactContainer>::operator< (const Self& tree) const
 {
   // Go over all elements in both tree and compare them pairwise.
   const_iterator   it1 = this->begin();
@@ -1680,9 +1732,9 @@ bool Multiset<Type,Compare,Allocator>::operator< (const Self& tree) const
 //---------------------------------------------------------
 // Get an iterator for the minimum object in the tree (non-const version).
 //
-template <class Type, class Compare, typename Allocator>
-inline typename Multiset<Type,Compare,Allocator>::iterator
-Multiset<Type, Compare, Allocator>::begin ()
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+inline typename Multiset<Type,Compare,Allocator,UseCompactContainer>::iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::begin ()
 {
   if (beginNode.parentP != nullptr)
     return (iterator (beginNode.parentP));
@@ -1693,9 +1745,9 @@ Multiset<Type, Compare, Allocator>::begin ()
 //---------------------------------------------------------
 // Get a past-the-end iterator for the tree objects (non-const version).
 //
-template <class Type, class Compare, typename Allocator>
-inline typename Multiset<Type, Compare,Allocator>::iterator
-Multiset<Type, Compare, Allocator>::end ()
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+inline typename Multiset<Type, Compare,Allocator, UseCompactContainer>::iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::end ()
 {
   return (iterator (&endNode));
 }
@@ -1703,9 +1755,9 @@ Multiset<Type, Compare, Allocator>::end ()
 //---------------------------------------------------------
 // Get an iterator for the minimum object in the tree (const version).
 //
-template <class Type, class Compare, typename Allocator>
-inline typename Multiset<Type,Compare,Allocator>::const_iterator
-Multiset<Type, Compare, Allocator>::begin () const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+inline typename Multiset<Type,Compare,Allocator,UseCompactContainer>::const_iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::begin () const
 {
   if (beginNode.parentP != nullptr)
     return (const_iterator (beginNode.parentP));
@@ -1716,9 +1768,9 @@ Multiset<Type, Compare, Allocator>::begin () const
 //---------------------------------------------------------
 // Get a past-the-end iterator for the tree objects (const version).
 //
-template <class Type, class Compare, typename Allocator>
-inline typename Multiset<Type,Compare,Allocator>::const_iterator
-Multiset<Type, Compare, Allocator>::end () const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+inline typename Multiset<Type,Compare,Allocator,UseCompactContainer>::const_iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::end () const
 {
   return (const_iterator (&endNode));
 }
@@ -1727,9 +1779,9 @@ Multiset<Type, Compare, Allocator>::end () const
 // Get a reverse iterator for the maxnimum object in the tree
 // (non-const version).
 //
-template <class Type, class Compare, typename Allocator>
-inline typename Multiset<Type,Compare,Allocator>::reverse_iterator
-Multiset<Type, Compare, Allocator>::rbegin ()
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+inline typename Multiset<Type,Compare,Allocator,UseCompactContainer>::reverse_iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::rbegin ()
 {
   return (reverse_iterator (end()));
 }
@@ -1738,9 +1790,9 @@ Multiset<Type, Compare, Allocator>::rbegin ()
 // Get a pre-the-begin reverse iterator for the tree objects
 // (non-const version).
 //
-template <class Type, class Compare, typename Allocator>
-inline typename Multiset<Type,Compare,Allocator>::reverse_iterator
-Multiset<Type, Compare, Allocator>::rend ()
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+inline typename Multiset<Type,Compare,Allocator,UseCompactContainer>::reverse_iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::rend ()
 {
   return (reverse_iterator (begin()));
 }
@@ -1748,9 +1800,9 @@ Multiset<Type, Compare, Allocator>::rend ()
 //---------------------------------------------------------
 // Get a reverse iterator for the maximum object in the tree (const version).
 //
-template <class Type, class Compare, typename Allocator>
-inline typename Multiset<Type,Compare,Allocator>::const_reverse_iterator
-Multiset<Type, Compare, Allocator>::rbegin () const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+inline typename Multiset<Type,Compare,Allocator,UseCompactContainer>::const_reverse_iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::rbegin () const
 {
   return (const_reverse_iterator (end()));
 }
@@ -1758,9 +1810,9 @@ Multiset<Type, Compare, Allocator>::rbegin () const
 //---------------------------------------------------------
 // Get a pre-the-begin reverse iterator for the tree objects (const version).
 //
-template <class Type, class Compare, typename Allocator>
-inline typename Multiset<Type,Compare,Allocator>::const_reverse_iterator
-Multiset<Type, Compare, Allocator>::rend () const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+inline typename Multiset<Type,Compare,Allocator,UseCompactContainer>::const_reverse_iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::rend () const
 {
   return (const_reverse_iterator (begin()));
 }
@@ -1768,8 +1820,8 @@ Multiset<Type, Compare, Allocator>::rend () const
 //---------------------------------------------------------
 // Get the size of the tree.
 //
-template <class Type, class Compare, typename Allocator>
-size_t Multiset<Type, Compare, Allocator>::size () const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+size_t Multiset<Type, Compare, Allocator, UseCompactContainer>::size () const
 {
   if (rootP == nullptr)
     // The tree is empty:
@@ -1798,9 +1850,9 @@ size_t Multiset<Type, Compare, Allocator>::size () const
 //---------------------------------------------------------
 // Insert a new object to the tree.
 //
-template <class Type, class Compare, typename Allocator>
-typename Multiset<Type, Compare, Allocator>::iterator
-Multiset<Type, Compare, Allocator>::insert (const Type& object)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+typename Multiset<Type, Compare, Allocator, UseCompactContainer>::iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (const Type& object)
 {
   if (rootP == nullptr)
   {
@@ -1897,9 +1949,9 @@ Multiset<Type, Compare, Allocator>::insert (const Type& object)
 //---------------------------------------------------------
 // Insert an object to the tree, with a given hint to its position.
 //
-template <class Type, class Compare, typename Allocator>
-typename Multiset<Type, Compare, Allocator>::iterator
-Multiset<Type, Compare, Allocator>::insert (iterator position,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+typename Multiset<Type, Compare, Allocator, UseCompactContainer>::iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::insert (iterator position,
                                             const Type& object)
 {
   Node  *nodeP = position.nodeP;
@@ -1973,9 +2025,9 @@ Multiset<Type, Compare, Allocator>::insert (iterator position,
 //---------------------------------------------------------
 // Insert a new object to the tree as the a successor of a given node.
 //
-template <class Type, class Compare, typename Allocator>
-typename Multiset<Type, Compare, Allocator>::iterator
-Multiset<Type, Compare, Allocator>::insert_after (iterator position,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+typename Multiset<Type, Compare, Allocator, UseCompactContainer>::iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_after (iterator position,
                                                   const Type& object)
 {
   Node  *nodeP = position.nodeP;
@@ -2071,9 +2123,9 @@ Multiset<Type, Compare, Allocator>::insert_after (iterator position,
 //---------------------------------------------------------
 // Insert a new object to the tree as the a predecessor of a given node.
 //
-template <class Type, class Compare, typename Allocator>
-typename Multiset<Type, Compare, Allocator>::iterator
-Multiset<Type, Compare, Allocator>::insert_before (iterator position,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+typename Multiset<Type, Compare, Allocator, UseCompactContainer>::iterator
+Multiset<Type, Compare, Allocator, UseCompactContainer>::insert_before (iterator position,
                                                    const Type& object)
 {
   Node  *nodeP = position.nodeP;
@@ -2169,8 +2221,8 @@ Multiset<Type, Compare, Allocator>::insert_before (iterator position,
 //---------------------------------------------------------
 // Remove an object from the tree.
 //
-template <class Type, class Compare, typename Allocator>
-size_t Multiset<Type, Compare, Allocator>::erase (const Type& object)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+size_t Multiset<Type, Compare, Allocator, UseCompactContainer>::erase (const Type& object)
 {
   // Find the first node containing an object not less than the object to
   // be erased and from there look for objects equivalent to the given object.
@@ -2201,8 +2253,8 @@ size_t Multiset<Type, Compare, Allocator>::erase (const Type& object)
 //---------------------------------------------------------
 // Remove the object pointed by the given iterator.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::erase (iterator position)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::erase (iterator position)
 {
   Node  *nodeP = position.nodeP;
 
@@ -2215,8 +2267,8 @@ void Multiset<Type, Compare, Allocator>::erase (iterator position)
 //---------------------------------------------------------
 // Remove all objects from the tree.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::clear ()
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::clear ()
 {
   // Delete all the tree nodes recursively.
   if (rootP != nullptr)
@@ -2236,8 +2288,8 @@ void Multiset<Type, Compare, Allocator>::clear ()
 //---------------------------------------------------------
 // Replace the object pointed by a given iterator with another object.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::replace (iterator position,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::replace (iterator position,
                                                   const Type& object)
 {
   Node  *nodeP = position.nodeP;
@@ -2264,8 +2316,8 @@ void Multiset<Type, Compare, Allocator>::replace (iterator position,
 //---------------------------------------------------------
 // Swap the location two objects in the tree, given by their positions.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::swap (iterator pos1,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::swap (iterator pos1,
                                                iterator pos2)
 {
   Node        *node1_P = pos1.nodeP;
@@ -2310,8 +2362,8 @@ void Multiset<Type, Compare, Allocator>::swap (iterator pos1,
 //---------------------------------------------------------
 // Check if the tree is a valid one.
 //
-template <class Type, class Compare, typename Allocator>
-bool Multiset<Type, Compare, Allocator>::is_valid () const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+bool Multiset<Type, Compare, Allocator, UseCompactContainer>::is_valid () const
 {
   if (rootP == nullptr)
   {
@@ -2362,8 +2414,8 @@ bool Multiset<Type, Compare, Allocator>::is_valid () const
 //---------------------------------------------------------
 // Get the height of the tree.
 //
-template <class Type, class Compare, typename Allocator>
-size_t Multiset<Type, Compare, Allocator>::height () const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+size_t Multiset<Type, Compare, Allocator, UseCompactContainer>::height () const
 {
   if (rootP == nullptr)
     // Empty tree.
@@ -2376,8 +2428,8 @@ size_t Multiset<Type, Compare, Allocator>::height () const
 //---------------------------------------------------------
 // Catenate the tree with another given tree.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::catenate (Self& tree)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::catenate (Self& tree)
 {
   // Get the maximal node in our tree and the minimal node in the other tree.
   Node    *max1_P = endNode.parentP;
@@ -2614,8 +2666,8 @@ void Multiset<Type, Compare, Allocator>::catenate (Self& tree)
 // in the range [begin, position) and all objects in the range
 // [position, end) form a new output tree.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::split (iterator position,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::split (iterator position,
                                                 Self& tree)
 {
   CGAL_multiset_precondition (tree.empty());
@@ -3032,8 +3084,8 @@ void Multiset<Type, Compare, Allocator>::split (iterator position,
 // Move the contents of one tree to another without actually duplicating
 // the nodes. This operation also clears the copied tree.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_shallow_assign (Self& tree)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_shallow_assign (Self& tree)
 {
   // Copy the assigned tree properties.
   rootP = tree.rootP;
@@ -3060,8 +3112,8 @@ void Multiset<Type, Compare, Allocator>::_shallow_assign (Self& tree)
 //---------------------------------------------------------
 // Clear the properties of the tree, without actually deallocating its nodes.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_shallow_clear ()
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_shallow_clear ()
 {
   rootP = nullptr;
   iSize = 0;
@@ -3075,8 +3127,8 @@ void Multiset<Type, Compare, Allocator>::_shallow_clear ()
 //---------------------------------------------------------
 // Remove the given tree node.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_remove_at (Node* nodeP)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_at (Node* nodeP)
 {
   CGAL_multiset_precondition (_is_valid (nodeP));
 
@@ -3191,8 +3243,8 @@ void Multiset<Type, Compare, Allocator>::_remove_at (Node* nodeP)
 //---------------------------------------------------------
 // Swap the location two nodes in the tree.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_swap (Node* node1_P,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_swap (Node* node1_P,
                                                 Node* node2_P)
 {
   CGAL_multiset_assertion (_is_valid (node1_P));
@@ -3332,8 +3384,8 @@ void Multiset<Type, Compare, Allocator>::_swap (Node* node1_P,
 //---------------------------------------------------------
 // Swap the location two sibling nodes in the tree.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_swap_siblings (Node* node1_P,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_swap_siblings (Node* node1_P,
                                                          Node* node2_P)
 {
   CGAL_multiset_assertion (_is_valid (node1_P));
@@ -3408,8 +3460,8 @@ void Multiset<Type, Compare, Allocator>::_swap_siblings (Node* node1_P,
 //---------------------------------------------------------
 // Calculate the height of the subtree spanned by a given node.
 //
-template <class Type, class Compare, typename Allocator>
-size_t Multiset<Type, Compare, Allocator>::_sub_height
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+size_t Multiset<Type, Compare, Allocator, UseCompactContainer>::_sub_height
     (const Node* nodeP) const
 {
   CGAL_multiset_assertion (_is_valid (nodeP));
@@ -3432,8 +3484,8 @@ size_t Multiset<Type, Compare, Allocator>::_sub_height
 //---------------------------------------------------------
 // Calculate the height of the subtree spanned by a given node.
 //
-template <class Type, class Compare, typename Allocator>
-bool Multiset<Type, Compare, Allocator>::_sub_is_valid
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+bool Multiset<Type, Compare, Allocator, UseCompactContainer>::_sub_is_valid
     (const Node* nodeP,
      size_t& sub_size,
      size_t& sub_bh) const
@@ -3496,9 +3548,9 @@ bool Multiset<Type, Compare, Allocator>::_sub_is_valid
 //---------------------------------------------------------
 // Get the leftmost node in the sub-tree spanned by the given node.
 //
-template <class Type, class Compare, typename Allocator>
-typename Multiset<Type, Compare, Allocator>::Node*
-Multiset<Type, Compare, Allocator>::_sub_minimum (Node* nodeP) const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+typename Multiset<Type, Compare, Allocator, UseCompactContainer>::Node*
+Multiset<Type, Compare, Allocator, UseCompactContainer>::_sub_minimum (Node* nodeP) const
 {
   CGAL_multiset_assertion (_is_valid (nodeP));
 
@@ -3512,9 +3564,9 @@ Multiset<Type, Compare, Allocator>::_sub_minimum (Node* nodeP) const
 //---------------------------------------------------------
 // Get the rightmost node in the sub-tree spanned by the given node.
 //
-template <class Type, class Compare, typename Allocator>
-typename Multiset<Type, Compare, Allocator>::Node*
-Multiset<Type, Compare, Allocator>::_sub_maximum (Node* nodeP) const
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+typename Multiset<Type, Compare, Allocator, UseCompactContainer>::Node*
+Multiset<Type, Compare, Allocator, UseCompactContainer>::_sub_maximum (Node* nodeP) const
 {
   CGAL_multiset_assertion (_is_valid (nodeP));
 
@@ -3535,8 +3587,8 @@ Multiset<Type, Compare, Allocator>::_sub_maximum (Node* nodeP) const
 //     /   \          <--------------            /   \    .
 //    T1    T2                                  T2    T3
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_rotate_left (Node* xNodeP)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_rotate_left (Node* xNodeP)
 {
   // Get the right child of the node.
   Node        *yNodeP = xNodeP->rightP;
@@ -3581,8 +3633,8 @@ void Multiset<Type, Compare, Allocator>::_rotate_left (Node* xNodeP)
 //---------------------------------------------------------
 // Right-rotate the sub-tree spanned by the given node.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_rotate_right (Node* yNodeP)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_rotate_right (Node* yNodeP)
 {
   // Get the left child of the node.
   Node        *xNodeP = yNodeP->leftP;
@@ -3627,9 +3679,9 @@ void Multiset<Type, Compare, Allocator>::_rotate_right (Node* yNodeP)
 //---------------------------------------------------------
 // Duplicate the entire sub-tree rooted at the given node.
 //
-template <class Type, class Compare, typename Allocator>
-typename Multiset<Type, Compare, Allocator>::Node*
-Multiset<Type, Compare, Allocator>::_duplicate (const Node* nodeP)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+typename Multiset<Type, Compare, Allocator, UseCompactContainer>::Node*
+Multiset<Type, Compare, Allocator, UseCompactContainer>::_duplicate (const Node* nodeP)
 {
   CGAL_multiset_assertion (_is_valid (nodeP));
 
@@ -3656,8 +3708,8 @@ Multiset<Type, Compare, Allocator>::_duplicate (const Node* nodeP)
 //---------------------------------------------------------
 // Destroy the entire sub-tree rooted at the given node.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_destroy (Node* nodeP)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_destroy (Node* nodeP)
 {
   CGAL_multiset_assertion (_is_valid (nodeP));
 
@@ -3679,8 +3731,8 @@ void Multiset<Type, Compare, Allocator>::_destroy (Node* nodeP)
 //---------------------------------------------------------
 // Fix-up the tree so it maintains the red-black properties after insertion.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_insert_fixup (Node* nodeP)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_insert_fixup (Node* nodeP)
 {
   CGAL_multiset_precondition (_is_red (nodeP));
 
@@ -3791,8 +3843,8 @@ void Multiset<Type, Compare, Allocator>::_insert_fixup (Node* nodeP)
 //---------------------------------------------------------
 // Fix-up the tree so it maintains the red-black properties after removal.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_remove_fixup (Node* nodeP,
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_remove_fixup (Node* nodeP,
                                                         Node* parentP)
 {
   Node        *currP = nodeP;
@@ -3953,33 +4005,27 @@ void Multiset<Type, Compare, Allocator>::_remove_fixup (Node* nodeP,
 //---------------------------------------------------------
 // Allocate and initialize new tree node.
 //
-#ifndef CGAL_CFG_OUTOFLINE_MEMBER_DEFINITION_BUG
-template <class Type, class Compare, typename Allocator>
-typename Multiset<Type, Compare, Allocator>::Node*
-Multiset<Type, Compare, Allocator>::_allocate_node
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+typename Multiset<Type, Compare, Allocator, UseCompactContainer>::Node*
+Multiset<Type, Compare, Allocator, UseCompactContainer>::_allocate_node
         (const Type& object,
          typename Node::Node_color color)
 {
   CGAL_multiset_assertion (color != Node::DUMMY_BEGIN &&
                            color != Node::DUMMY_END);
 
-  Node* new_node = node_alloc.allocate(1);
-  std::allocator_traits<Node_allocator>::construct(node_alloc, new_node, beginNode);
+  Node* new_node = node_alloc.allocate(beginNode);
   new_node->init(object, color);
   return (new_node);
 }
-#endif
 
 //---------------------------------------------------------
 // De-allocate a tree node.
 //
-template <class Type, class Compare, typename Allocator>
-void Multiset<Type, Compare, Allocator>::_deallocate_node (Node* nodeP)
+template <class Type, class Compare, typename Allocator, typename UseCompactContainer>
+void Multiset<Type, Compare, Allocator, UseCompactContainer>::_deallocate_node (Node* nodeP)
 {
-  std::allocator_traits<Node_allocator>::destroy(node_alloc, nodeP);
-  node_alloc.deallocate (nodeP, 1);
-
-  return;
+  node_alloc.deallocate (nodeP);
 }
 
 } //namespace CGAL

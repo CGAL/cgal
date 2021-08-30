@@ -13,11 +13,17 @@ typedef boost::graph_traits<Mesh>::halfedge_iterator    halfedge_iterator;
 
 typedef CGAL::Surface_mesh_deformation<Mesh> Surface_mesh_deformation;
 
-int main()
+int main(int argc, char** argv)
 {
+  const char* filename = (argc > 1) ? argv[1] : "data/plane.off";
+
   Mesh mesh;
-  std::ifstream in("data/plane.off");
-  in >>mesh;
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // Create a deformation object
   Surface_mesh_deformation deform_mesh(mesh);
 

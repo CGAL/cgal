@@ -69,6 +69,7 @@ _test_fct_constructions_3(const R& r)
   assert( CGAL::midpoint( p110, p001) == p);
   assert( CGAL::midpoint( p010, p101) == p);
   assert( CGAL::midpoint( p100, p011) == p);
+  assert( CGAL::midpoint( Segment{p100, p011}) == p);
 
   // circumcenter
   assert( CGAL::circumcenter( p111, p001, p010, p000) == p);

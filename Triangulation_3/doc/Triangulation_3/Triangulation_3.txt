@@ -411,9 +411,9 @@ range of points will be performed in parallel, and the individual
 insert/remove operations will be optionally thread-safe.
 
 Parallel algorithms require the program to be linked against
-the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
 for more details.
 
 \section Triangulation3secexamples Examples
@@ -517,6 +517,14 @@ simplices can be stored in a set.
 
 \cgalExample{Triangulation_3/fast_location_3.cpp}
 
+\subsection Triangulation3exsegmenttraverser Traversing the Triangulation Along a Segment
+
+The package provides iterators that can be used to traverse the triangulation along a segment.
+It is guaranteed that the input segment intersects all cells (resp. simplices) visited by this traversal iterator.
+
+\cgalExample{Triangulation_3/segment_cell_traverser_3.cpp}
+\cgalExample{Triangulation_3/segment_simplex_traverser_3.cpp}
+
 \subsection Triangulation_3FindingtheCellsinConflict Finding the Cells in Conflict with a Point in a Delaunay Triangulation
 
 \cgalExample{Triangulation_3/find_conflicts_3.cpp}
@@ -609,7 +617,7 @@ coordinates are generated using the <TT>drand48</TT> C function). In the
 weighted case, the weights are all zero, which means that there are actually no
 hidden points during execution.
 
-The measurements have been performed using \cgal 3.6, using the <span class="textsc">Gnu</span> \cpp compiler
+The measurements have been performed using \cgal 3.6, using the \gnu \cpp compiler
 version 4.3.2, under Linux (Fedora 10 distribution), with the compilation options
 <TT>-O3 -DCGAL_NDEBUG</TT>. The computer used was equipped with a 64bit Intel
 Xeon 3GHz processor and 32GB of RAM (a recent desktop machine as of 2009).
@@ -1120,6 +1128,11 @@ Teillaud in the framework of the Google Summer of Code, 2010.
 
 In 2013, Clément Jamin added parallel algorithms (insert, remove) to the
 Delaunay and regular triangulations.
+
+In 2014, Thijs van Lankveld implemented the segment cell traverser iterator.
+In 2018, Jane Tournois introduced the segment simplex traverser iterator
+and finalized both iterators that were integrated in release 5.2.
+Olivier Devillers contributed to boost the performances of the cell traverser.
 
 The authors wish to thank Lutz Kettner for inspiring discussions about
 the design of \cgal. Jean-Daniel Boissonnat is also acknowledged

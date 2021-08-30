@@ -23,7 +23,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/internal/Dummy_tds_3.h>
+#include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Has_timestamp.h>
 
@@ -669,7 +669,7 @@ public:
   friend std::istream& operator>>(std::istream &is, Compact_mesh_cell_3 &c)
   {
     Subdomain_index index;
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> index;
     else
       read(is, index);
@@ -678,8 +678,8 @@ public:
       for(int i = 0; i < 4; ++i)
         {
           Surface_patch_index i2;
-          if(is_ascii(is))
-            is >> iformat(i2);
+          if(IO::is_ascii(is))
+            is >> IO::iformat(i2);
           else
             {
               read(is, i2);
@@ -693,14 +693,14 @@ public:
   friend
   std::ostream& operator<<(std::ostream &os, const Compact_mesh_cell_3 &c)
   {
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os << c.subdomain_index();
     else
       write(os, c.subdomain_index());
     for(int i = 0; i < 4; ++i)
       {
-        if(is_ascii(os))
-          os << ' ' << oformat(c.surface_patch_index(i));
+        if(IO::is_ascii(os))
+          os << ' ' << IO::oformat(c.surface_patch_index(i));
         else
           write(os, c.surface_patch_index(i));
       }

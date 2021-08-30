@@ -16,7 +16,7 @@
 
 // This package
 #include <CGAL/remove_outliers.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <deque>
 #include <string>
@@ -109,23 +109,18 @@ int main(int argc, char * argv[])
     // Loads point set
     //***************************************
 
-    // File name is:
-    std::string input_filename  = argv[i];
-
     // Reads the point set file in points[].
     std::deque<Point> points;
-    std::cerr << "Open " << input_filename << " for reading..." << std::endl;
+    std::cerr << "Open " << argv[i] << " for reading..." << std::endl;
 
     // If XYZ file format:
-    std::ifstream stream(input_filename.c_str());
-    if(stream &&
-       CGAL::read_xyz_points(stream, std::back_inserter(points)))
+    if(CGAL::IO::read_points(argv[i], std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }
     else
     {
-      std::cerr << "Error: cannot read file " << input_filename << std::endl;
+      std::cerr << "Error: cannot read file " << argv[i] << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
       continue;
     }
@@ -140,7 +135,7 @@ int main(int argc, char * argv[])
     struct A{};
     std::vector< std::pair<Point, A> > points_bis;
     points_bis.reserve(points.size());
-    for (const Point p : points)
+    for (const Point& p : points)
       points_bis.push_back( std::make_pair(p, A()) );
     test_avg_knn_sq_distance(points_bis, nb_neighbors_remove_outliers, removed_percentage,
                              CGAL::First_of_pair_property_map<std::pair<Point,A>>());

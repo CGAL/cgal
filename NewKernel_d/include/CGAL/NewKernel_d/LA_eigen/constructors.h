@@ -91,11 +91,9 @@ namespace CGAL {
     };
 
     struct Initializer_list {
-      // Fix T==NT?
-      template<class T>
-        result_type operator()(std::initializer_list<T> l) const {
-          return Iterator()(l.size(),l.begin(),l.end());
-        }
+      result_type operator()(std::initializer_list<NT> l) const {
+        return Iterator()(l.size(),l.begin(),l.end());
+      }
     };
 
     struct Values {

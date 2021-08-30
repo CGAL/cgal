@@ -512,7 +512,7 @@ public:
 private:
 
     /*
-     * \brief Sets all status lines at events and of intervals
+     * \brief sets all status lines at events and of intervals
      *
      * Writes the status lines of events and interval into the object.
      * The value type of both \c InputIterator1 and \c InputIterator2
@@ -571,7 +571,7 @@ private:
 
 public:
 
-    /*! \brief Returns whether the curve has a valid defining polynomial
+    /*! \brief returns whether the curve has a valid defining polynomial
      */
     bool has_defining_polynomial() const {
         return bool(this->ptr()->f);
@@ -579,7 +579,7 @@ public:
 
 public:
 
-    /*! \brief Sets the defining polynomial.
+    /*! \brief sets the defining polynomial.
      *
      * \pre The object has no defining polynomial yet.
      */
@@ -595,7 +595,7 @@ public:
 public:
 
     /*!
-     * \brief Returns whether the curve is y-regular
+     * \brief returns whether the curve is y-regular
      *
      * A curve is called y-regular if the leading coefficient of its defining
      * polynomial wrt y is a constant, i.e., contains no x
@@ -646,7 +646,7 @@ public:
 public:
 
     /*!
-     * \brief Returns the number of event lines of the curve
+     * \brief returns the number of event lines of the curve
      *
      * Algebraically, the number of real roots of the discriminant of
      * the curve's defining equation is returned.
@@ -664,7 +664,7 @@ public:
 public:
 
     /*!
-     * \brief Returns whether the given x-coordinate is critical for the curve
+     * \brief returns whether the given x-coordinate is critical for the curve
      * and which event or interval index the x-coordinate belongs to.
      *
      * \param is_event is set to \c true if the curve has an event
@@ -734,7 +734,7 @@ public:
 private:
 
     /*
-     * \brief Returns a status line for an exact value \c alpha that
+     * \brief returns a status line for an exact value \c alpha that
      * is not an event of the curve
      *
      * This function controls the internal cache that stores already created
@@ -1167,7 +1167,7 @@ private:
 public:
 
     /*!
-     * \brief Returns the status line for the interval
+     * \brief returns the status line for the interval
      * preceeding the <tt>i</tt>th event
      *
      * Returns a status line for a reference x-coordinate of the <tt>i</tt>th
@@ -1235,7 +1235,7 @@ public:
 private:
 
     /*
-     * \brief Creates an intermediate line at position \c ar.
+     * \brief creates an intermediate line at position \c ar.
      *
      * It is required that none of the following situations occurs at position
      * <tt>ar</tt>: singularity, vertical tangent line, vertical asymptote.\n
@@ -1279,7 +1279,7 @@ private:
 private:
 
    /*
-    * \brief Returns an Event_line_builder instance
+    * \brief returns an Event_line_builder instance
     *
     * Note: So far, a new instance is created each time the function is called
     */
@@ -1444,7 +1444,7 @@ private:
 public:
 
     /*!
-     * \brief Returns the <tt>i</tt>th Sturm-Habicht polynomial
+     * \brief returns the <tt>i</tt>th Sturm-Habicht polynomial
      * of the primitive part of the defining polynomial
      */
     Polynomial_2 sturm_habicht_of_primitive(size_type i) const
@@ -1458,7 +1458,7 @@ public:
 public:
 
     /*!
-     * \brief Returns the <tt>i</tt>th principal Sturm-Habicht coefficient
+     * \brief returns the <tt>i</tt>th principal Sturm-Habicht coefficient
      * of the primitive part of the defining polynomial
      */
     Polynomial_1 principal_sturm_habicht_of_primitive(size_type i) const
@@ -1477,7 +1477,7 @@ public:
 public:
 
     /*!
-     * \brief Returns the <tt>i</tt>th coprincipal Sturm-Habicht coefficient
+     * \brief returns the <tt>i</tt>th coprincipal Sturm-Habicht coefficient
      * of the primitive part of the defining polynomial
      *
      * The coprincipal Sturm-Habicht coefficient is the coefficient
@@ -1498,7 +1498,7 @@ public:
 public:
 
     /*!
-     * \brief Returns an iterator to the principal Sturm-Habicht coefficients,
+     * \brief returns an iterator to the principal Sturm-Habicht coefficients,
      * starting with the <tt>0</tt>th one (the resultant)
      */
     Principal_sturm_habicht_iterator principal_sturm_habicht_begin() const {
@@ -1930,7 +1930,7 @@ private:
 public:
 
     /*!
-     * \brief Returns a \c Curve_analysis_2 object for a sheared curve.
+     * \brief returns a \c Curve_analysis_2 object for a sheared curve.
      *
      * The shear factor is given by the integer \c s.
      * This functions only shears the primitive part of the defining equation.
@@ -2007,7 +2007,7 @@ public:
      *
      * For each status line at an event and each status line that represents
      * an interval, all y-coordinates are approximated such that their
-     * isolating interval has absolute size smaller then \c precision.
+     * isolating interval has absolute size smaller than \c precision.
      */
     void refine_all(Bound precision) {
 
@@ -2082,7 +2082,7 @@ public:
 public:
 
     /*!
-     * \brief Returns the limit an infinite arc converges to
+     * \brief returns the limit an infinite arc converges to
      *
      * \pre <tt>loc==CGAL::LEFT_BOUNDARY ||
      *          loc==CGAL::RIGHT_BOUNDARY</tt>
@@ -2399,7 +2399,7 @@ private:
 }; // class Algebraic_curve_2_2
 
 
-//! \brief Prints the objects.
+//! \brief prints the objects.
 template<typename AlgebraicKernelWithAnalysis_2,
          typename Rep_>
 std::ostream& operator<< (
@@ -2417,7 +2417,7 @@ std::ostream& operator<< (
   typedef typename Curve::Asymptote_y Asymptote_y;
 
 
-    switch (::CGAL::get_mode(out)) {
+    switch (::CGAL::IO::get_mode(out)) {
     case ::CGAL::IO::PRETTY: {
 
       out << "--------------- Analysis results ---------------" << std::endl;
@@ -2507,14 +2507,14 @@ std::ostream& operator<< (
     return out;
 }
 
-//! \brief Reads the objects from stream
+//! \brief reads the objects from stream
 template<typename AlgebraicKernelWithAnalysis_2,
          typename Rep_>
 std::istream& operator>> (
     std::istream& is,
     Curve_analysis_2< AlgebraicKernelWithAnalysis_2, Rep_ >& curve) {
 
-  CGAL_precondition(CGAL::is_ascii(is));
+  CGAL_precondition(CGAL::IO::is_ascii(is));
 
   typedef AlgebraicKernelWithAnalysis_2 Algebraic_kernel_with_analysis_2;
 

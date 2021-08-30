@@ -51,7 +51,7 @@ typedef unspecified_type RT;
 
 /// \name Creation
 /// In addition to the default and copy constructors the following
-/// static methods are available for constructing sites:
+/// static methods must be available for constructing sites:
 /// @{
 
 /*!

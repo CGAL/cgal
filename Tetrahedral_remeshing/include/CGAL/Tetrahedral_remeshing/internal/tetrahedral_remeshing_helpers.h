@@ -68,7 +68,7 @@ const int indices_table[4][3] = { { 3, 1, 2 },
                                   { 3, 0, 1 },
                                   { 2, 1, 0 } };
 
-int indices(const int& i, const int& j)
+inline int indices(const int& i, const int& j)
 {
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)
@@ -775,6 +775,7 @@ bool is_outside(const typename C3t3::Edge & edge,
   return true; //all incident cells are outside or infinite
 }
 
+// is `v` part of the selection of cells that should be remeshed?
 template<typename C3t3, typename CellSelector>
 bool is_selected(const typename C3t3::Vertex_handle v,
                  const C3t3& c3t3,
@@ -821,6 +822,24 @@ bool is_internal(const typename C3t3::Edge& edge,
   } while (++circ != done);
 
   return true;
+}
+
+// is `e` part of the selection of cells that should be remeshed?
+template<typename C3T3, typename CellSelector>
+bool is_selected(const typename C3T3::Triangulation::Edge& e,
+                 const C3T3& c3t3,
+                 CellSelector cell_selector)
+{
+  typedef typename C3T3::Triangulation::Cell_circulator Cell_circulator;
+  Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  Cell_circulator done = circ;
+  do
+  {
+    if (cell_selector(circ))
+      return true;
+  } while (++circ != done);
+
+  return false;
 }
 
 template<typename Gt>
@@ -1171,6 +1190,18 @@ void dump_polylines(const CellRange& cells, const char* filename)
       dump_facet(std::make_pair(*it, i), ofs);
   }
   ofs.close();
+}
+
+template<typename C3t3>
+void check_surface_patch_indices(const C3t3& c3t3)
+{
+  typedef typename C3t3::Vertex_handle Vertex_handle;
+  for (Vertex_handle v : c3t3.triangulation().finite_vertex_handles())
+  {
+    if (v->in_dimension() != 2)
+      continue;
+    CGAL_assertion(surface_patch_index(v, c3t3) != typename C3t3::Surface_patch_index());
+  }
 }
 
 template<typename Tr>
@@ -1640,7 +1671,7 @@ template<typename C3t3>
 void dump_binary(const C3t3& c3t3, const char* filename)
 {
   std::ofstream os(filename, std::ios::binary | std::ios::out);
-  CGAL::Mesh_3::save_binary_file(os, c3t3);
+  CGAL::IO::save_binary_file(os, c3t3);
   os.close();
 }
 

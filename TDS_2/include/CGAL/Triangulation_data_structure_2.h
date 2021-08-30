@@ -36,9 +36,7 @@
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 #include <CGAL/Triangulation_ds_iterators_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
-
-#include <CGAL/IO/File_header_OFF.h>
-#include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
@@ -67,6 +65,22 @@ public:
   template < typename Fb2 >
   struct Rebind_face {
     typedef Triangulation_data_structure_2<Vb, Fb2>  Other;
+  };
+
+  class Face_data {
+    unsigned char conflict_state;
+  public:
+    Face_data() : conflict_state(0) {}
+
+    void clear()            { conflict_state = 0; }
+    void mark_in_conflict() { conflict_state = 1; }
+    void mark_on_boundary() { conflict_state = 2; }
+    void mark_processed()   { conflict_state = 1; }
+
+    bool is_clear()       const { return conflict_state == 0; }
+    bool is_in_conflict() const { return conflict_state == 1; }
+    bool is_on_boundary() const { return conflict_state == 2; }
+    bool processed() const { return conflict_state == 1; }
   };
 
   typedef Vertex_base                                Vertex;
@@ -424,7 +438,6 @@ public:
   void file_output(std::ostream& os,
                    Vertex_handle v = Vertex_handle(),
                    bool skip_first=false) const;
-  Vertex_handle off_file_input(std::istream& is, bool verbose=false);
   void  vrml_output(std::ostream& os,
                     Vertex_handle v = Vertex_handle(),
                     bool skip_first=false) const;
@@ -1984,13 +1997,16 @@ copy_tds(const TDS_src& tds_src,
     CGAL_triangulation_precondition( tds_src.is_vertex(vert));
 
   clear();
-  size_type n = tds_src.number_of_vertices();
   set_dimension(tds_src.dimension());
 
-  // Number of pointers to cell/vertex to copy per cell.
-  int dim = (std::max)(1, dimension() + 1);
+  if(tds_src.number_of_vertices() == 0)
+    return Vertex_handle();
 
-  if(n == 0) {return Vertex_handle();}
+  // Number of pointers to face/vertex to copy per face.
+  const int dim = (std::max)(1, dimension() + 1);
+
+  // Number of neighbors to set in each face (dim -1 has a single face)
+  const int nn = (std::max)(0, dimension() + 1);
 
   //initializes maps
   Unique_hash_map<typename TDS_src::Vertex_handle,Vertex_handle> vmap;
@@ -2012,7 +2028,7 @@ copy_tds(const TDS_src& tds_src,
     convert_face(*fit1, *fh);
   }
 
-  //link vertices to a cell
+  //link vertices to a face
   vit1 = tds_src.vertices_begin();
   for ( ; vit1 != tds_src.vertices_end(); vit1++) {
     vmap[vit1]->set_face(fmap[vit1->face()]);
@@ -2021,10 +2037,10 @@ copy_tds(const TDS_src& tds_src,
   //update vertices and neighbor pointers
   fit1 = tds_src.faces().begin();
   for ( ; fit1 != tds_src.faces_end(); ++fit1) {
-      for (int j = 0; j < dim ; ++j) {
+      for (int j = 0; j < dim ; ++j)
         fmap[fit1]->set_vertex(j, vmap[fit1->vertex(j)] );
+      for (int j = 0; j < nn ; ++j)
         fmap[fit1]->set_neighbor(j, fmap[fit1->neighbor(j)]);
-      }
     }
 
   // remove the post condition because it is false when copying the
@@ -2100,7 +2116,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
 
   size_type n = number_of_vertices();
   size_type m = number_of_full_dim_faces();
-  if(is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << std::endl;
+  if(IO::is_ascii(os))  os << n << ' ' << m << ' ' << dimension() << std::endl;
   else     os << n << m << dimension();
   if (n==0) return;
 
@@ -2115,7 +2131,7 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     if( ! skip_first){
       // os << v->point();
       os << *v ;
-    if(is_ascii(os))  os << std::endl;
+    if(IO::is_ascii(os))  os << std::endl;
     }
   }
 
@@ -2125,10 +2141,10 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
         V[vit] = inum++;
         // os << vit->point();
         os << *vit;
-        if(is_ascii(os)) os << "\n";
+        if(IO::is_ascii(os)) os << "\n";
     }
   }
-  if(is_ascii(os)) os << "\n";
+  if(IO::is_ascii(os)) os << "\n";
 
   // vertices of the faces
   inum = 0;
@@ -2138,21 +2154,21 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
     F[ib] = inum++;
     for(int j = 0; j < dim ; ++j) {
       os << V[ib->vertex(j)];
-      if(is_ascii(os)) os << " ";
+      if(IO::is_ascii(os)) os << " ";
     }
     os << *ib ;
-    if(is_ascii(os)) os << "\n";
+    if(IO::is_ascii(os)) os << "\n";
   }
-  if(is_ascii(os)) os << "\n";
+  if(IO::is_ascii(os)) os << "\n";
 
   // neighbor pointers of the  faces
   for( Face_iterator it = face_iterator_base_begin();
        it != face_iterator_base_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[it->neighbor(j)];
-      if(is_ascii(os))  os << " ";
+      if(IO::is_ascii(os))  os << " ";
     }
-    if(is_ascii(os)) os << "\n";
+    if(IO::is_ascii(os)) os << "\n";
   }
 
   return ;
@@ -2280,104 +2296,6 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
    os << "}" << std::endl;
    return;
 }
-
-template < class Vb, class Fb>
-typename Triangulation_data_structure_2<Vb,Fb>::Vertex_handle
-Triangulation_data_structure_2<Vb,Fb>::
-off_file_input( std::istream& is, bool verbose)
-{
-  // input from an OFF file
-  // assume a dimension 2 triangulation
-  // create an infinite-vertex and  infinite faces with the
-  // boundary edges if any.
-  // return the infinite vertex if created
-  Vertex_handle vinf;
-  File_scanner_OFF scanner(is, verbose);
-  if (! is) {
-    if (scanner.verbose()) {
-         std::cerr << " " << std::endl;
-         std::cerr << "TDS::off_file_input" << std::endl;
-         std::cerr << " input error: file format is not OFF." << std::endl;
-    }
-    return vinf;
-  }
-
-  if(number_of_vertices() != 0)    clear();
-  int dim = 2;
-  set_dimension(dim);
-
-  std::vector<Vertex_handle > vvh(scanner.size_of_vertices());
-  std::map<Vh_pair, Edge> edge_map;
-  typedef typename Vb::Point   Point;
-
-  // read vertices
-  std::size_t i;
-  for ( i = 0; i < scanner.size_of_vertices(); i++) {
-    Point p;
-    file_scan_vertex( scanner, p);
-    vvh[i] = create_vertex();
-    vvh[i]->set_point(p);
-    scanner.skip_to_next_vertex( i);
-  }
-  if ( ! is ) {
-    is.clear( std::ios::badbit);
-    return vinf;
-  }
-  //vinf = vvh[0];
-
-  // create the facets
-  for ( i = 0; i < scanner.size_of_facets(); i++) {
-    Face_handle fh = create_face();
-    std::size_t no;
-    scanner.scan_facet( no, i);
-    if( ! is || no != 3) {
-      if ( scanner.verbose()) {
-        std::cerr << " " << std::endl;
-        std::cerr << "TDS::off_file_input" << std::endl;
-        std::cerr << "facet " << i << "does not have  3 vertices."
-                  << std::endl;
-      }
-      is.clear( std::ios::badbit);
-      return vinf;
-    }
-
-    for ( std::size_t j = 0; j < no; ++j) {
-      std::size_t index;
-      scanner.scan_facet_vertex_index( index, i);
-      fh->set_vertex(j, vvh[index]);
-      vvh[index]->set_face(fh);
-    }
-
-    for (std::size_t ih  = 0; ih < no; ++ih) {
-        set_adjacency(fh, ih, edge_map);
-    }
-  }
-
-  // deal with  boundaries
-  if ( !edge_map.empty()) {
-    vinf = create_vertex();
-    std::map<Vh_pair, Edge> inf_edge_map;
-   while (!edge_map.empty()) {
-     Face_handle fh = edge_map.begin()->second.first;
-     int ih = edge_map.begin()->second.second;
-     Face_handle fn = create_face( vinf,
-                                   fh->vertex(cw(ih)),
-                                   fh->vertex(ccw(ih)));
-     vinf->set_face(fn);
-     set_adjacency(fn, 0, fh, ih);
-     set_adjacency(fn, 1, inf_edge_map);
-     set_adjacency(fn, 2, inf_edge_map);
-     edge_map.erase(edge_map.begin());
-   }
-   CGAL_triangulation_assertion(inf_edge_map.empty());
-  }
-
-
-  // coherent orientation
-  reorient_faces();
-  return vinf;
-}
-
 
 template < class Vb, class Fb>
 void

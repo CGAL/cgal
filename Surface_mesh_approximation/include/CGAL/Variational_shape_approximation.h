@@ -1552,7 +1552,7 @@ private:
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
 #endif
 
-        for(const halfedge_descriptor he : chord)
+        for(const halfedge_descriptor& he : chord)
           he_candidates.erase(he);
       } while (he_start != he_mark);
     }
@@ -1600,7 +1600,7 @@ private:
         FT dist_max(0.0);
         chord_vec = scale_functor(chord_vec,
           FT(1.0) / CGAL::approximate_sqrt(chord_vec.squared_length()));
-        for(const halfedge_descriptor he : chord) {
+        for(const halfedge_descriptor& he : chord) {
           Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(he, *m_ptm)]);
           vec = cross_product_functor(chord_vec, vec);
           const FT dist = CGAL::approximate_sqrt(vec.squared_length());
@@ -1612,7 +1612,7 @@ private:
       }
       else {
         FT dist_max(0.0);
-        for(const halfedge_descriptor he : chord) {
+        for(const halfedge_descriptor& he : chord) {
           const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(
             pt_begin, m_vpoint_map[target(he, *m_ptm)]));
           if (dist > dist_max) {
@@ -1630,7 +1630,7 @@ private:
 
   /*!
    * @brief runs the pseudo Constrained Delaunay Triangulation at each proxy region,
-   * and stores the extracted indexed triangles in @a tris.
+   * and stores the extracted indexed triangles in `tris`.
    * @pre all anchors are found, i.e. all boundary cycles have been visited
    * and attached with at least 3 anchors.
    */
@@ -1829,11 +1829,11 @@ private:
   }
 
   /*!
-   * @brief subdivides a chord recursively in range `[@a chord_begin, @a chord_end).`
+   * @brief subdivides a chord recursively in range `[chord_begin, chord_end)`.
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
-   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the the chord length (relative sense),
+   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle if set to `true` add dihedral angle weight to the distance.
    * @return the number of anchors of the chord apart from the first one

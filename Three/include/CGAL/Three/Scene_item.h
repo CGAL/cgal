@@ -96,7 +96,7 @@ public:
   //! This is where the vectors of VBOs and VAOs are initialized.
   Scene_item(int buffers_size = 20, int vaos_size = 10);
 
-  //! \brief Sets the number of isolated vertices.
+  //! \brief sets the number of isolated vertices.
   //!
   //! This number will be displayed in a warning box at loading.
   //! @see getNbIsolatedvertices
@@ -105,12 +105,12 @@ public:
   //! @see setNbIsolatedvertices
   std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
   virtual ~Scene_item();
-  //! \brief Duplicates the item.
+  //! \brief duplicates the item.
   //!
   //! Creates a new item as a copy of this one.
   virtual Scene_item* clone() const = 0;
 
-  //! \brief Indicates if `m` is supported
+  //! \brief indicates if `m` is supported
   //!
   //! If it is, it will be displayed in the context menu of the item.
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
@@ -163,7 +163,7 @@ public:
   virtual QFont font() const { return QFont(); }
 
   // Functions that help the Scene to compute its bbox
-  //! \brief Determines if the item is finite or not.
+  //! \brief determines if the item is finite or not.
   //!
   //! For example, a plane is not finite.
   //! If false, the BBox is not computed.
@@ -203,7 +203,7 @@ public:
   //! A manipulated frame is an independent system that can be
   //! translated or rotated using the Ctrl key and the mouse.
   //!@returns the manipulatedFrame of the item.
-  virtual ManipulatedFrame* manipulatedFrame() { return 0; }
+  virtual ManipulatedFrame* manipulatedFrame() { return nullptr; }
 
   // Getters for the four basic properties
   //!Getter for the item's color.
@@ -281,7 +281,7 @@ public:
   virtual Header_data header()const;
   //!Returns true if the item has statistics.
   virtual bool has_stats()const{return false;}
-  //!Returns a QString containing the requested value for the the table in the statistics dialog
+  //!Returns a QString containing the requested value for the table in the statistics dialog
   /*! \verbatim
    * Example :
    *  ____________________________
@@ -482,7 +482,7 @@ protected:
   void attribBuffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
-  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
+  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = nullptr) const;
 public:
   //! \brief defaultSaveName returns the name to be used as default
   //! when saving this item.

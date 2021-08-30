@@ -3,7 +3,7 @@
 #include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
 
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
@@ -32,6 +32,57 @@ test_copy_face_graph_nm_umbrella()
   for (halfedge_descriptor h : halfedges(g_copy))
   {
     assert( target(h, g_copy) != Traits::null_vertex() );
+  }
+}
+
+template <typename T>
+void
+test_copy_face_graph_isolated_vertices()
+{
+  typedef Kernel::Point_3 Point_3;
+
+  {
+    T s, t;
+    add_vertex(s);
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    add_vertex(t);
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    CGAL::make_triangle(Point_3(), Point_3(), Point_3(), s);
+    add_vertex(s);
+    t=s;
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    CGAL::make_triangle(Point_3(), Point_3(), Point_3(), s);
+    add_vertex(s);
+    add_vertex(t);
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    CGAL::make_tetrahedron(Point_3(), Point_3(), Point_3(), Point_3(), s);
+    add_vertex(s);
+    t=s;
+    CGAL::copy_face_graph(s, t);
+  }
+
+  {
+    T s, t;
+    CGAL::make_tetrahedron(Point_3(), Point_3(), Point_3(), Point_3(), s);
+    add_vertex(s);
+    add_vertex(t);
+    CGAL::copy_face_graph(s, t);
   }
 }
 
@@ -489,7 +540,7 @@ add_faces()
     std::ifstream in("data/head.off");
     std::vector<Kernel::Point_3> points;
     std::vector<std::array<std::size_t, 3> > faces_ids;
-    CGAL::read_OFF(in, points, faces_ids);
+    CGAL::IO::read_OFF(in, points, faces_ids);
 
     std::vector<vertex_descriptor> verts;
     verts.reserve(points.size());
@@ -510,7 +561,7 @@ add_faces()
   {
     std::ifstream in("data/open_cube.off");
     T m;
-    CGAL::read_off(in, m);
+    CGAL::IO::read_OFF(in, m);
     std::vector<vertex_descriptor> verts(vertices(m).begin(), vertices(m).end());
     std::list< std::vector<vertex_descriptor> > new_faces;
     new_faces.push_back({verts[1], verts[7], verts[4]});
@@ -523,7 +574,7 @@ add_faces()
   {
     std::ifstream in("data/open_cube.off");
     T m;
-    CGAL::read_off(in, m);
+    CGAL::IO::read_OFF(in, m);
     std::vector<vertex_descriptor> verts(vertices(m).begin(), vertices(m).end());
     verts.push_back(add_vertex(m));
     put(CGAL::vertex_point, m, verts.back(), Kernel::Point_3(50,0,50));
@@ -619,6 +670,7 @@ void
 test_Euler_operations()
 {
   test_copy_face_graph_nm_umbrella<Graph>();
+  test_copy_face_graph_isolated_vertices<Graph>();
   join_face_test<Graph>();
   add_vertex_and_face_to_border_test<Graph>();
   add_face_to_border_test<Graph>();

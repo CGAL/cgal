@@ -26,6 +26,7 @@
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Rational_traits.h>
 
 namespace CGAL {
 
@@ -187,6 +188,21 @@ squared_distance(const typename K::Point_3 & pt1,
   return k.compute_squared_distance_3_object()(pt1, pt2);
 }
 
+template <class K>
+void
+squared_distance_to_plane_RT(const typename K::Vector_3 & normal,
+                             const typename K::Vector_3 & diff,
+                             typename K::RT& num,
+                             typename K::RT& den,
+                             const K& k)
+{
+  typedef typename K::RT RT;
+  RT dot, squared_length;
+  dot = wdot(normal, diff, k);
+  squared_length = wdot(normal, normal, k);
+  num = square(dot);
+  den = wmult((K*)0, squared_length, diff.hw(), diff.hw());
+}
 
 template <class K>
 typename K::FT
@@ -196,13 +212,24 @@ squared_distance_to_plane(const typename K::Vector_3 & normal,
 {
   typedef typename K::RT RT;
   typedef typename K::FT FT;
-  RT dot, squared_length;
-  dot = wdot(normal, diff, k);
-  squared_length = wdot(normal, normal, k);
-  return FT(dot*dot) /
-    FT(wmult((K*)0, squared_length, diff.hw(), diff.hw()));
+  RT num, den;
+  squared_distance_to_plane_RT(normal, diff, num, den, k);
+  return Rational_traits<FT>().make_rational(num, den);
 }
 
+template <class K>
+void
+squared_distance_to_line_RT(const typename K::Vector_3 & dir,
+                            const typename K::Vector_3 & diff,
+                            typename K::RT& num,
+                            typename K::RT& den,
+                            const K& k)
+{
+  typedef typename K::Vector_3 Vector_3;
+  Vector_3 wcr = wcross(dir, diff, k);
+  num = wdot(wcr, wcr, k);
+  den = wmult((K*)0, wdot(dir, dir, k), diff.hw(), diff.hw());
+}
 
 template <class K>
 typename K::FT
@@ -210,14 +237,12 @@ squared_distance_to_line(const typename K::Vector_3 & dir,
                          const typename K::Vector_3 & diff,
                          const K& k)
 {
-  typedef typename K::Vector_3 Vector_3;
   typedef typename K::RT RT;
   typedef typename K::FT FT;
-  Vector_3 wcr = wcross(dir, diff, k);
-  return FT(wcr*wcr)/FT(wmult(
-                              (K*)0, RT(wdot(dir, dir, k)), diff.hw(), diff.hw()));
+  RT num, den;
+  squared_distance_to_line_RT(dir, diff, num, den, k);
+  return Rational_traits<FT>().make_rational(num, den);
 }
-
 
 template <class K>
 inline

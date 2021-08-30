@@ -256,7 +256,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 
   // Volumes make no sense for CCs that are not closed
   std::vector<bool> cc_closeness(num, true);
-  std::vector<FT> component_volumes(num);
+  std::vector<FT> component_volumes(num, FT(0));
 
   if(use_volumes)
   {

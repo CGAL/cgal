@@ -273,36 +273,44 @@ The macros are then |CGAL_forall_svertices(v,M)|,
 |CGAL_forall_sfaces(f,M)|, |CGAL_forall_sface_cycles_of(fc,F)|
 where |M| is a sphere map and |F| is a sface.}*/
 
+private:
+std::string get_svertex_index(SVertex_const_handle) const;
+
 }; // SM_const_decorator
 
 
+
+template <typename SM_>
+std::string SM_const_decorator<SM_>::
+get_svertex_index(SVertex_const_handle v) const
+{
+  Object_index<SVertex_const_handle>
+    VI(svertices_begin(),svertices_end(),'v');
+  return VI(v);
+}
 
 template <typename SM_>
 void SM_const_decorator<SM_>::
 check_integrity_and_topological_planarity(bool faces) const
 {
   CGAL_NEF_TRACEN("check_integrity_and_topological_planarity:");
-  using CGAL::Object_index;
-  Object_index<SVertex_const_iterator>
-    VI(svertices_begin(),svertices_end(),'v');
+#ifdef CGAL_USE_TRACE
   Object_index<SHalfedge_const_iterator>
     EI(shalfedges_begin(),shalfedges_end(),'e');
-  Object_index<SFace_const_iterator>
-    FI(sfaces_begin(),sfaces_end(),'f');
+#endif
   SVertex_const_handle v;
   int iso_vert_num=0;
   /* check the source links of out edges and count isolated vertices */
   CGAL_forall_svertices(v,*this) {
     if ( is_isolated(v) ) {
       if ( faces )
-        CGAL_assertion_msg(v->incident_sface() != SFace_const_handle(), VI(v).c_str());
+        CGAL_assertion_msg(v->incident_sface() != SFace_const_handle(), get_svertex_index(v).c_str());
       ++iso_vert_num;
     } else {
-      CGAL_assertion_msg(first_out_edge(v) != SHalfedge_const_handle(),
-      VI(v).c_str());
-      CGAL_NEF_TRACEN(v->point()<<" "<<EI(first_out_edge(v)));
-      CGAL_assertion_msg(first_out_edge(v)->source() == v,
-                         VI(v).c_str());
+      CGAL_assertion_code(SHalfedge_const_handle e=first_out_edge(v));
+      CGAL_assertion_msg(e != SHalfedge_const_handle(), get_svertex_index(v).c_str());
+      CGAL_NEF_TRACEN(v->point()<<" "<<EI[first_out_edge(v)]);
+      CGAL_assertion_msg(e->source() == v, get_svertex_index(v).c_str());
     }
   }
 

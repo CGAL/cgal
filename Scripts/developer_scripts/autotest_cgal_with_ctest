@@ -1,6 +1,4 @@
 #!/bin/bash
-
-#!/bin/bash
 #usage : script [-c -l -n -s -k] testsuite_dir
 
 ##########################
@@ -16,15 +14,15 @@ export WGET="wget"
 export WGET_OPTS="--no-check-certificate --no-verbose"
 export CURL="curl"
 export CURL_OPTS="-k --remote-name --silent --location-trusted"
-export CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
+export CGAL_URL="https://cgal.geometryfactory.com/CGAL/Releases"
 export UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
 export LATEST_LOCATION="${CGAL_URL}/LATEST"
 export TAR="tar"
 export GUNZIP="gunzip"
 export COMPRESSOR="gzip"
 export CONSOLE_OUTPUT="y"
-export CGAL_HOME=`pwd`
-export USE_TARGZ="n"
+export CGAL_HOME=$(pwd | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
+export USE_TARGZ="y"
 export USE_TARBZ="n"
 export CGAL_RELEASE=""
 export LOGS_DIR=""
@@ -34,6 +32,15 @@ export CGAL_DIR=""
 export INSTALLATION_DIR=""
 export TESTSUITE_DIR=""
 USE_LATEST_UNZIPPED=""
+
+# ----------------------------------------------------------------------------------------
+# produce a string containing the actual date/time
+#  (used to identify files)
+# ----------------------------------------------------------------------------------------
+datestr()
+{
+  date +%d%m%Y%H%M
+}
 
 # ----------------------------------------------------------------------------------------
 # Logging functions
@@ -61,7 +68,24 @@ log_done()
   printf "\n-------------------------------------------------------\n" >> "${1}"
 }
 
-
+error()
+{
+  if [ -n "${CONSOLE_OUTPUT}" ]; then
+      printf "\nERROR: ${*}, exiting.\n" >&2
+  fi
+  printf "\nERROR: ${*}, exiting.\n" >> "${ACTUAL_LOGFILE}"
+  ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}"
+  FILENAME="${CGAL_RELEASE_ID}-log`datestr`.gz"
+  mv "${ACTUAL_LOGFILE}.gz" "${LOGS_DIR}/${FILENAME}"
+  if [ ! "${MAIL_ADDRESS}" = "must_be_set_in_.autocgalrc" ]; then
+    for i in ${MAIL_ADDRESS}; do
+      printf "ERROR\n${LOGS_DIR}/${FILENAME}\n" | \
+          ${SENDMAIL} -s "completed autotest" "${i}"
+    done
+  fi
+  rm -rf "$LOCK_FILE";
+  exit 1
+}
 
 # ----------------------------------------------------------------------------------------
 # Downloads the file "LATEST" whose contents indicates which release to test
@@ -190,7 +214,7 @@ unzip_cgal()
 # Parse command line arguments
 for arg in "$@"
 do
-  case "$arg" in 
+  case "$arg" in
     "-c")
       echo "Using latest unzipped release instead of getting a new one from the server"
       USE_LATEST_UNZIPPED="y"
@@ -237,7 +261,7 @@ LOCK_FILE="${CGAL_HOME}/autotest_cgal_with_cmake.lock"
 ACTUAL_LOGFILE="${CGAL_HOME}/`basename ${0}`.log"
 rm -f "${ACTUAL_LOGFILE}"
 
-echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}" 
+echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}"
 
 cd "$CGAL_HOME"
 
@@ -257,6 +281,8 @@ if [ -n "${SCRIPTS_DIR}" ]; then
 else
   CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-I"`
 fi
+
+CGAL_DIR=$(echo "$CGAL_DIR" | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 
 CGAL_RELEASE_ID=$(cat last_release_id)
 for HOST in ${BUILD_HOSTS}; do

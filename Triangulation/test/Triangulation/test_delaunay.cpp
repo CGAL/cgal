@@ -1,13 +1,4 @@
 #include <CGAL/config.h>
-#if defined(BOOST_GCC) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
-
-#include <iostream>
-int main()
-{
-  std::cerr << "NOTICE: This test requires G++ >= 4.4, and will not be compiled." << std::endl;
-}
-
-#else
 
 #include <CGAL/Epick_d.h>
 #include <CGAL/Epeck_d.h>
@@ -132,7 +123,7 @@ void go(const int N)
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(NULL)));
+    srand(static_cast<unsigned int>(time(nullptr)));
     int N = 10;
     if( argc > 1 )
         N = atoi(argv[1]);
@@ -145,5 +136,3 @@ int main(int argc, char **argv)
     cerr << endl;
     return 0;
 }
-
-#endif

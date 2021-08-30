@@ -19,7 +19,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/spatial_sort.h>
@@ -37,6 +37,7 @@
 #include <map>
 #include <vector>
 #include <array>
+#include <CGAL/array.h>
 
 namespace CGAL {
 
@@ -82,7 +83,14 @@ public:
 #endif
 
  private:
-  // here is the stack of triangulations which form the hierarchy
+  void init_hierarchy() {
+    hierarchy[0] = this;
+    for(int i=1; i<Triangulation_hierarchy_2__maxlevel; ++i)
+      hierarchy[i] = &hierarchy_triangulations[i-1];
+  }
+
+ // here is the stack of triangulations which form the hierarchy
+  std::array<Tr_Base,Triangulation_hierarchy_2__maxlevel-1> hierarchy_triangulations;
   std::array<Tr_Base*,Triangulation_hierarchy_2__maxlevel> hierarchy;
   boost::rand48  random;
 
@@ -93,13 +101,10 @@ public:
   Triangulation_hierarchy_2(Triangulation_hierarchy_2&& other)
     noexcept( noexcept(Tr_Base(std::move(other))) )
     : Tr_Base(std::move(other))
+    , hierarchy_triangulations(std::move(other.hierarchy_triangulations))
     , random(std::move(other.random))
   {
-    hierarchy[0] = this;
-    for(int i=1; i<Triangulation_hierarchy_2__maxlevel; ++i) {
-      hierarchy[i] = other.hierarchy[i];
-      other.hierarchy[i] = nullptr;
-    }
+    init_hierarchy();
   }
 
   template<class InputIterator>
@@ -107,10 +112,7 @@ public:
                             const Geom_traits& traits = Geom_traits())
     : Tr_Base(traits)
   {
-    hierarchy[0] = this;
-    for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
-      hierarchy[i] = new Tr_Base(traits);
-
+    init_hierarchy();
     insert (first, beyond);
   }
 
@@ -120,15 +122,11 @@ public:
     noexcept( noexcept(Triangulation_hierarchy_2(std::move(other))) )
   {
     static_cast<Tr_Base&>(*this) = std::move(other);
-    hierarchy[0] = this;
-    for(int i=1; i<Triangulation_hierarchy_2__maxlevel; ++i) {
-      hierarchy[i] = other.hierarchy[i];
-      other.hierarchy[i] = nullptr;
-    }
+    hierarchy_triangulations = std::move(other.hierarchy_triangulations);
     return *this;
   }
 
-  ~Triangulation_hierarchy_2();
+  ~Triangulation_hierarchy_2() = default;
 
   //Helping
   void copy_triangulation(const Triangulation_hierarchy_2 &tr);
@@ -293,10 +291,11 @@ template <class Tr_>
 Triangulation_hierarchy_2<Tr_>::
 Triangulation_hierarchy_2(const Geom_traits& traits)
   : Tr_Base(traits)
+  , hierarchy_triangulations(
+           make_filled_array<Triangulation_hierarchy_2__maxlevel-1,
+                             Tr_Base>(traits))
 {
-  hierarchy[0] = this;
-  for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
-    hierarchy[i] = new Tr_Base(traits);
+  init_hierarchy();
 }
 
 
@@ -304,12 +303,8 @@ Triangulation_hierarchy_2(const Geom_traits& traits)
 template <class Tr_>
 Triangulation_hierarchy_2<Tr_>::
 Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr_> &tr)
-    : Tr_Base()
+  : Triangulation_hierarchy_2(tr.geom_traits())
 {
-  // create an empty triangulation to be able to delete it !
-  hierarchy[0] = this;
-  for(int i=1;i<Triangulation_hierarchy_2__maxlevel;++i)
-    hierarchy[i] = new Tr_Base(tr.geom_traits());
   copy_triangulation(tr);
 }
 
@@ -392,23 +387,9 @@ void
 Triangulation_hierarchy_2<Tr_>::
 swap(Triangulation_hierarchy_2<Tr_> &tr)
 {
-  Tr_Base* temp;
   Tr_Base::swap(tr);
-  for(int i= 1; i<Triangulation_hierarchy_2__maxlevel; ++i){
-    temp = hierarchy[i];
-    hierarchy[i] = tr.hierarchy[i];
-    tr.hierarchy[i]= temp;
-  }
-}
-
-template <class Tr_>
-Triangulation_hierarchy_2<Tr_>::
-~Triangulation_hierarchy_2()
-{
-  clear();
-  for(int i= 1; i<Triangulation_hierarchy_2__maxlevel; ++i){
-    delete hierarchy[i];
-  }
+  using std::swap;
+  swap(hierarchy_triangulations, tr.hierarchy_triangulations);
 }
 
 template <class Tr_>

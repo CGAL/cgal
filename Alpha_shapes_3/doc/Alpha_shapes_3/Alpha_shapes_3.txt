@@ -71,7 +71,7 @@ meaning in particular that the alpha complex may have
 singular faces. For \f$ 0 \leq k \leq d-1\f$,
 a \f$ k\f$-simplex of the alpha complex is said to be
 singular if it is not a facet of a \f$ (k+1)\f$-simplex of the complex.
-%CGAL provides two versions of alpha shapes. In the general mode,
+\cgal provides two versions of alpha shapes. In the general mode,
 the alpha shapes correspond strictly to the above definition.
 The regularized mode provides a regularized version of the alpha shapes.
 It corresponds to the domain covered by a regularized version
@@ -192,6 +192,10 @@ the vertices, edges, facets and cells of the different types
 (`EXTERIOR`, `SINGULAR`, `REGULAR` or
 `INTERIOR`).
 
+\subsection AlphaShape3DIO Input/Output
+It is possible to export a 3D alpha shape to a `std::ostream` or to a `Geomview_stream`
+using the `operator<<`, see the documentation of the class `Alpha_shape_3` for more information.
+
 \section AlphaShape3D_ConceptAndModels Concepts and Models
 
 We currently do not specify concepts for the underlying triangulation
@@ -215,8 +219,8 @@ in the non-weighted case and `WeightedAlphaShapeTraits_3` in the weighted case.
 All \cgal kernels are models of both concepts.
 
 The triangulation data structure of the triangulation
-has to be a model of the concept `TriangulationDataStructure_3`,
-and it must be parameterized with vertex and cell classes, which are model of the concepts
+has to be a model of the concept `TriangulationDataStructure_3`
+whose vertex and cell classes are model of the concepts
 `AlphaShapeVertex_3` and `AlphaShapeCell_3`.
 The classes `Alpha_shape_vertex_base_3<Gt>` and `Alpha_shape_cell_base_3<Gt>`
 are models of these concepts and can be used for all type of alpha shapes,
@@ -230,8 +234,8 @@ the traits class are described in the concepts `FixedAlphaShapeTraits_3`
 in the non-weighted case and `FixedWeightedAlphaShapeTraits_3` in the weighted case.
 All \cgal kernels are models of both concepts.
 The triangulation data structure of the triangulation
-has to be a model of the concept `TriangulationDataStructure_3`,
-and it must be parameterized with vertex and cell classes, which are model of the concepts
+has to be a model of the concept `TriangulationDataStructure_3`
+whose vertex and cell classes are model of the concepts
 `FixedAlphaShapeVertex_3` and `FixedAlphaShapeCell_3`.
 The package provides models `Fixed_alpha_shape_vertex_base_3<Gt>`
 and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.

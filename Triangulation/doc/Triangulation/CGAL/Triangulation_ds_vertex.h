@@ -18,7 +18,7 @@ with some additional attributes tuned for a specific application (a color for
 example).
 
 
-\tparam `TriangulationDataStructure_` must be a model of the
+\tparam TriangulationDataStructure_ must be a model of the
 `TriangulationDataStructure` concept.
 
 \cgalModels `TriangulationDSVertex`

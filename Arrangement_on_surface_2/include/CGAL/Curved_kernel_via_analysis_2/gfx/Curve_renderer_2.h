@@ -238,7 +238,8 @@ private:
     typedef std::vector<int> index_vector;
 
     //! map container element's type for maintaining a list of cache instances
-    typedef std::pair<int, int> LRU_entry;
+    typedef std::pair<int, std::size_t> LRU_entry;
+
     //! LRU list used for cache switching
     typedef std::vector< LRU_entry > Cache_list;
 
@@ -256,8 +257,9 @@ public:
     //!@{
 
     //! default constructor: a curve segment is undefined
-    Curve_renderer_2() : cache_id(-1), IA_method(0), initialized(false),
-       one(1) {
+    Curve_renderer_2() :
+      cache_id(INVALID_CACHE_ID), IA_method(0), initialized(false), one(1)
+    {
         arcno = -1;
         setup(Bbox_2(-1.0, -1.0, 1.0, 1.0), 640, 480);
     }
@@ -381,8 +383,10 @@ private:
     Clip_points btm_clip, top_clip;  //! a set of bottom and top clip points
     Poly_dst_1 btm_poly, top_poly;   //! bottom and top polynomials
 
-    int cache_id;        //! index of currently used cache instance
+    std::size_t cache_id;  //! index of currently used cache instance
     Cache_list cache_list; //! list of indices of cache instances
+
+    static constexpr std::size_t INVALID_CACHE_ID = CGAL_N_CACHES;
 
     Seed_stack s_stack;      //! a stack of seed points
     Seed_point current_seed; //! current seed point
@@ -1192,7 +1196,7 @@ Lexit:
 
     std::reverse(rev_points.begin(), rev_points.end());
     // resize rev_points to accommodate the size of points vector
-    unsigned rsize = rev_points.size();
+    std::size_t rsize = rev_points.size();
     rev_points.resize(rsize + points.size());
     std::copy(points.begin(), points.end(), rev_points.begin() + rsize);
 }
@@ -1750,7 +1754,7 @@ void segment_clip_points(const Rational& x_lower, const Rational& x_upper,
 //                     high = ubound_y(xy);
     //TODO: no need to refine y-intervals: you need only to check whether
     // polynomial vanishes at y_clip, since algebraic real you specify is exact
-                    if((_.first < y_clip && _.second > y_clip)||
+                    if(( (_.first < y_clip) && (_.second > y_clip) ) ||
                             _.first == y_clip || _.second == y_clip) {
                         //event.refine_to(i, engine.pixel_h_r/CGAL_REFINE_Y);
                         Rational _1, _2;
@@ -2312,7 +2316,8 @@ void select_cache_entry(const Arc_2& arc) {
         it++;
     }
 
-    int new_id, new_entry = (it == cache_list.end());
+    std::size_t new_id;
+    bool new_entry = (it == cache_list.end());
     if(new_entry) {
         new_id = cache_list.size();
         if(new_id >= CGAL_N_CACHES) {
@@ -2579,10 +2584,10 @@ inline bool is_isolated_pixel(const Pixel_2& /* pix */) {
 }
 
 // DEBUG ONLY
-void dump_neighbourhood(const Pixel_2& pix) {
 #ifdef Gfx_USE_OUT
-    CGAL::set_mode(std::cerr, CGAL::IO::PRETTY);
-    CGAL::set_mode(std::cout, CGAL::IO::PRETTY);
+void dump_neighbourhood(const Pixel_2& pix) {
+    CGAL::IO::set_mode(std::cerr, CGAL::IO::PRETTY);
+    CGAL::IO::set_mode(std::cout, CGAL::IO::PRETTY);
 
     Stripe box[2]; // 0 - left-right stripe, 1 - bottom-top stripe
     //NT inv = NT(1) / NT(one << pix.level);
@@ -2757,8 +2762,10 @@ void dump_neighbourhood(const Pixel_2& pix) {
     Gfx_OUT("val = " << b << std::endl);
     if(a*b < 0)
         Gfx_OUT("sign change at segment 2" << std::endl);
-#endif // Gfx_USE_OUT
 }
+#else
+void dump_neighbourhood(const Pixel_2&) { }
+#endif // Gfx_USE_OUT
 
 //!@}
 }; // class Curve_renderer_2<>

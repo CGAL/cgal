@@ -23,31 +23,35 @@ typedef K_neighbor_search::Tree                                         Tree;
 typedef Tree::Splitter                                                  Splitter;
 typedef K_neighbor_search::Distance                                     Distance;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
+  const char* filename = (argc>1) ? argv[1] : "data/tripod.off";
+
   Mesh mesh;
-  std::cerr << argc <<std::endl;
-  std::ifstream in((argc>1)?argv[1]:"data/tripod.off");
-  in  >> mesh;
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
+
   const unsigned int K = 5;
 
   Vertex_point_pmap vppmap = get(CGAL::vertex_point,mesh);
 
   // Insert number_of_data_points in the tree
-  Tree tree(
-            vertices(mesh).begin(),
-            vertices(mesh).end(),
-            Splitter(),
-            Traits(vppmap)
-  );
+  Tree tree(vertices(mesh).begin(), vertices(mesh).end(), Splitter(), Traits(vppmap));
+
+  // search K nearest neighbours
   Point_3 query(0.0, 0.0, 0.0);
   Distance tr_dist(vppmap);
 
-  // search K nearest neighbours
   K_neighbor_search search(tree, query, K,0,true,tr_dist);
   std::cout <<"The "<< K << " nearest vertices to the query point at (0,0,0) are:" << std::endl;
-  for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
+  for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++)
+  {
     std::cout << "vertex " << it->first << " : " << vppmap[it->first] << " at distance "
               << tr_dist.inverse_of_transformed_distance(it->second) << std::endl;
   }
+
   return 0;
 }

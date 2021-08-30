@@ -14,7 +14,7 @@
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_ARC_2_H
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Arc_2.h
- *\brief Defines class \c Arc_2 that represents an arc on a curve that
+ *\brief defines class \c Arc_2 that represents an arc on a curve that
  * can be analyzed.
  */
 
@@ -36,6 +36,8 @@
 #include <CGAL/Curved_kernel_via_analysis_2/Point_2.h>
 
 #include <CGAL/Curved_kernel_via_analysis_2/Sweep_curves_adapter_2.h>
+
+#include <CGAL/kernel_assertions.h>
 
 namespace CGAL {
 
@@ -1818,8 +1820,7 @@ protected:
      */
     void _check_arc_interior() const {
 
-#if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS) \
-        || defined(NDEBUG))
+#if !(defined(CGAL_KERNEL_NO_PRECONDITIONS) || defined(CGAL_NO_PRECONDITIONS))
 
         if(is_vertical()) {
             Coordinate_1 x0 = _minpoint().x();
@@ -2695,9 +2696,9 @@ protected:
      * if arcs' x-ranges overlap; otherwise returns \c false
      *
      * \param cv2 The second arc
-     * \param pt_low Output: Point indicating the lower bound of the the joint
+     * \param pt_low Output: Point indicating the lower bound of the joint
      *        x-range
-     * \param pt_high Output: Point indicating the upper bound of the the joint
+     * \param pt_high Output: Point indicating the upper bound of the joint
      *        x-range
      * \return \c true, if arcs overlap, \c false otherwise
      *
@@ -2968,7 +2969,11 @@ private:
         kernel().approximate_absolute_y_2_object()(
             arc.curve_end(end).xy(), prec
         );
+      break;
 
+    }
+    default: {
+       CGAL_error();
     }
     } // switch
 
@@ -3053,8 +3058,8 @@ public:
         y_dapprox = y_interval_for_curve_end(*this, CGAL::ARR_MAX_END, prec);
 
         // adapt y-interval
-        ymin = CGAL::min(ymin, y_dapprox.first);
-        ymax = CGAL::max(ymax, y_dapprox.second);
+        ymin = (CGAL::min)(ymin, y_dapprox.first);
+        ymax = (CGAL::max)(ymax, y_dapprox.second);
 
         // search local extrema on a non-vertical arc
 
@@ -3130,9 +3135,9 @@ public:
                   (curr_xy, prec);
 
                 // adapt y-interval
-                ymin = CGAL::min(ymin,
+                ymin = (CGAL::min)(ymin,
                                  CGAL::to_double(xy_approx.first));
-                ymax = CGAL::max(ymax,
+                ymax = (CGAL::max)(ymax,
                                  CGAL::to_double(xy_approx.second));
               }
             }
@@ -3159,7 +3164,7 @@ public:
      */
     void write(std::ostream& os) const {
 
-        switch (::CGAL::get_mode(os)) {
+        switch (::CGAL::IO::get_mode(os)) {
         case ::CGAL::IO::PRETTY:
             os << "arc@" << this->id() << "[(sup@" << this->curve().id();
             if (this->is_vertical()) {
@@ -3209,7 +3214,7 @@ public:
      */
     void read(std::istream& is) {
 
-      CGAL_precondition(CGAL::is_ascii(is));
+      CGAL_precondition(CGAL::IO::is_ascii(is));
 
       Rep rep;
 
@@ -3360,13 +3365,13 @@ std::ostream& operator<<(
 }
 
 
-//! \brief Reads the objects from stream.
+//! \brief reads the objects from stream.
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::istream& operator>> (
     std::istream& is,
     Arc_2< CurvedKernelViaAnalysis_2, Rep_ >& arc) {
 
-  CGAL_precondition(CGAL::is_ascii(is));
+  CGAL_precondition(CGAL::IO::is_ascii(is));
 
   //typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
   //typedef Rep_ Rep;

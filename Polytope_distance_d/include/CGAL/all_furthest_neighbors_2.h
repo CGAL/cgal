@@ -22,7 +22,6 @@
 #include <CGAL/monotone_matrix_search.h>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <algorithm>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 template < class Operation, class RandomAccessIC >
@@ -116,7 +115,7 @@ all_furthest_neighbors_2( RandomAccessIC points_begin,
   return transform(v.begin(),
                    v.end(),
                    o,
-                   boost::bind(modulus<int>(), _1, number_of_points));
+                   [number_of_points](int i){ return i % number_of_points;} );
 } // all_furthest_neighbors_2( ... )
 
 

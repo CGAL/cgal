@@ -30,6 +30,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /*!
  * Write an arrangement with history to an output stream using a given
  * formatter.
@@ -54,6 +56,8 @@ std::ostream& write
   return (os);
 }
 
+} // namespace IO
+
 /*!
  * Output operator (importer).
  * \param os The output stream.
@@ -76,6 +80,8 @@ std::ostream& operator<<
   writer (text_format);
   return (os);
 }
+
+namespace IO {
 
 /*!
  * Read an arrangement with history from an input stream using a given
@@ -101,6 +107,8 @@ std::istream& read
   return (is);
 }
 
+} // namespace IO
+
 /*!
  * Output operator (exporter).
  * \param is The input stream.
@@ -123,6 +131,11 @@ std::istream& operator>>
   reader (text_format);
   return (is);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::read;
+using IO::write;
+#endif
 
 } //namespace CGAL
 

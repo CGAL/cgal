@@ -565,7 +565,7 @@ vertices (representing a line segment). The `traits` argument must model
 the concept `ArrangementTraits_2` and it should be capable of handling
 conic arcs in an exact manner---using an instance of the
 `Arr_conic_traits_2` class template with the number
-types provided by the <span class="textsc">Core</span> library is the
+types provided by the \core library is the
 preferred option; see \ref arr_ssectr_conic "A Traits Class for Conic Arcs"
 for more details. The function template returns an object of the nested
 type `Gps_traits_2::Polygons_with_holes_2`

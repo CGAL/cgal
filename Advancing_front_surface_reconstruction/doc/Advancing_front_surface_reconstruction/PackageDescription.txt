@@ -1,5 +1,8 @@
 /// \defgroup PkgAdvancingFrontSurfaceReconstructionRef Advancing Front Surface Reconstruction Reference
 
+/// \defgroup PkgAdvancingFrontSurfaceReconstructionRefConcepts Concepts
+/// \ingroup PkgAdvancingFrontSurfaceReconstructionRef
+
 /*!
 \addtogroup PkgAdvancingFrontSurfaceReconstructionRef
 
@@ -24,6 +27,10 @@ of topological singularities. }
 
 
 \cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `AdvancingFrontSurfaceReconstructionTraits_3`
 
 \cgalCRPSection{Classes}
 

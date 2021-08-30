@@ -17,8 +17,8 @@
 
 template < typename AK>
 void test_AK_1(){
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational;
@@ -37,8 +37,8 @@ void test_AK_1(){
 
 template < typename AK>
 void test_AK_2(){
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational;
@@ -57,8 +57,8 @@ void test_AK_2(){
 
 template < typename AK>
 void test_AK_4(){
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational;
@@ -78,8 +78,8 @@ void test_AK_4(){
 
 template < typename AK>
 void test_AK_5(){
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational;
@@ -101,8 +101,8 @@ void test_AK_5(){
 
 template < typename AK>
 void test_AK_6(){
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational;

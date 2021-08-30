@@ -1966,7 +1966,7 @@ Apollonius_graph_2<Gt,Agds,LTag>::file_output(std::ostream& os) const
 
   CGAL_assertion( n >= 1 );
 
-  if( is_ascii(os) ) {
+  if( IO::is_ascii(os) ) {
     os << n << ' ' << m << ' ' << dimension() << std::endl;
   } else {
     os << n << m << dimension();
@@ -1980,24 +1980,24 @@ Apollonius_graph_2<Gt,Agds,LTag>::file_output(std::ostream& os) const
   V[infinite_vertex()] = inum++;
 
   // finite vertices
-  if (is_ascii(os)) os << std::endl;
+  if (IO::is_ascii(os)) os << std::endl;
   for (Finite_vertices_iterator vit = finite_vertices_begin();
        vit != finite_vertices_end(); ++vit) {
     V[vit] = inum++;
     os << vit->site();
-    if ( is_ascii(os) ) { os << ' '; }
+    if ( IO::is_ascii(os) ) { os << ' '; }
     os << vit->number_of_hidden_sites();
     typename Vertex::Hidden_sites_iterator hit;
     for (hit = vit->hidden_sites_begin(); hit != vit->hidden_sites_end();
          ++hit) {
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << *hit;
     }
     // write non-combinatorial info of the vertex
     //    os << *vit ;
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
   }
-  if ( is_ascii(os) ) { os << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl; }
 
   // vertices of the faces
   inum = 0;
@@ -2007,25 +2007,25 @@ Apollonius_graph_2<Gt,Agds,LTag>::file_output(std::ostream& os) const
     F[fit] = inum++;
     for(int j = 0; j < dim ; ++j) {
       os << V[ fit->vertex(j) ];
-      if( is_ascii(os) ) { os << ' '; }
+      if( IO::is_ascii(os) ) { os << ' '; }
     }
     // write non-combinatorial info of the face
     //    os << *fit ;
-    if( is_ascii(os) ) { os << std::endl; }
+    if( IO::is_ascii(os) ) { os << std::endl; }
   }
-  if( is_ascii(os) ) { os << std::endl; }
+  if( IO::is_ascii(os) ) { os << std::endl; }
 
   // neighbor pointers of the  faces
   for( All_faces_iterator it = all_faces_begin();
        it != all_faces_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[ it->neighbor(j) ];
-      if( is_ascii(os) ) { os << ' '; }
+      if( IO::is_ascii(os) ) { os << ' '; }
     }
-    if( is_ascii(os) ) { os << std::endl; }
+    if( IO::is_ascii(os) ) { os << std::endl; }
   }
 
-  if ( is_ascii(os) ) { os << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl; }
 }
 
 

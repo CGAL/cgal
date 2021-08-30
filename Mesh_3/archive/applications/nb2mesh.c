@@ -408,7 +408,7 @@ int loadNoboite(char *name) {
     fread(&no,sizeof(int),1,in);
   }
 
-  /* read ascii file */
+  /* read ASCII file */
   else {
     fscanf(in,"%d %d %d %d %d",&ne,&np,&npfixe,&icube,&npbli);
     fscanf(in,"%d %d %d %d",&nbele,&loele,&nbelef,&loelef);

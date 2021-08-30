@@ -114,7 +114,7 @@ public:
 
 
     /*!
-     * \brief Creates an event line at position \c alpha for the specified
+     * \brief creates an event line at position \c alpha for the specified
      * curve.
      *
      * Additionally, the \c id of the event line to be created has to be
@@ -441,7 +441,7 @@ protected:
                 }
 /*
 #if CGAL_ACK_DEBUG_FLAG
-                ::CGAL::set_ascii_mode(CGAL_ACK_DEBUG_PRINT);
+                ::CGAL::IO::set_ascii_mode(CGAL_ACK_DEBUG_PRINT);
                 CGAL_ACK_DEBUG_PRINT << "Stha: " << (*seq_it) << std::endl;
 #endif
 */

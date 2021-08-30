@@ -35,7 +35,7 @@ class ComparePoints {
   ComparePoints(Coordinate c) : coord(c) {
     CGAL_assertion( c >= 0 && c <=2);
   }
-  CGAL::Comparison_result operator()(const Point_3 p1, const Point_3& p2) {
+  CGAL::Comparison_result operator()(const Point_3& p1, const Point_3& p2) {
     switch(coord) {
     case 0:
       CGAL_NEF_TRACEN("compare_x " << p1 << ", " << p2 << "=" << (int) CGAL::compare_x(p1, p2));
@@ -108,13 +108,6 @@ public:
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  typedef typename SNC_structure::Halffacet_triangle_handle
-                                  Halffacet_triangle_handle;
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  typedef typename SNC_structure::Partial_facet Partial_facet;
-#endif
   typedef typename SNC_structure::Object_handle Object_handle;
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
@@ -148,20 +141,13 @@ public:
     ( const Point_3& pop, Halfedge_handle e, Depth depth);
   template<typename Depth> Oriented_side operator()
     ( const Point_3& pop, Halffacet_handle f, Depth depth);
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  template<typename Depth> Oriented_side operator()
-    ( const Point_3& pop, Halffacet_triangle_handle f, Depth depth);
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  template<typename Depth> Oriented_side operator()
-    ( const Point_3& pop, Partial_facet& f, Depth depth);
-#endif
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   bool reference_counted;
 #endif
-  SNC_decorator D;
   Unique_hash_map<Vertex_handle, Oriented_side> OnSideMap;
+#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   Unique_hash_map<const RT*, Oriented_side> OnSideMapRC;
+#endif
 };
 
 template <class SNC_decorator>
@@ -294,13 +280,6 @@ public:
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  typedef typename SNC_structure::Halffacet_triangle_handle
-                                  Halffacet_triangle_handle;
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  typedef typename SNC_structure::Partial_facet Partial_facet;
-#endif
 
   typedef typename SNC_structure::Object_handle Object_handle;
   typedef std::vector<Object_handle> Object_list;
@@ -342,26 +321,12 @@ Side_of_plane<SNC_decorator>::operator()
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  Halffacet_triangle_handle t;
-#endif
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  Partial_facet pf;
-#endif
   if( CGAL::assign( v, o))
     return (*this)(pop, v, depth);
   else if( CGAL::assign( e, o))
     return (*this)(pop, e, depth);
   else if( CGAL::assign( f, o))
     return (*this)(pop, f, depth);
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-  else if( CGAL::assign(pf, o))
-    return (*this)(pop, pf, depth);
-#endif
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  else if( CGAL::assign( t, o))
-    return (*this)(pop, t, depth);
-#endif
   else
     CGAL_error_msg( "wrong handle");
 
@@ -478,63 +443,6 @@ Side_of_plane<SNC_decorator>::operator()
   return ON_ORIENTED_BOUNDARY;
 }
 
-#ifdef CGAL_NEF3_TRIANGULATE_FACETS
-template <typename SNC_decorator>
-template <typename Depth>
-Oriented_side
-Side_of_plane<SNC_decorator>::operator()
-( const Point_3& pop, Halffacet_triangle_handle t, Depth depth) {
-  bool on_positive_side = false, on_negative_side = false;
-  Triangle_3 tr(t.get_triangle());
-  for( int i = 0; i < 3; ++i) {
-    Oriented_side side = ON_ORIENTED_BOUNDARY;
-    Comparison_result cr;
-    if(
-#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
-       !reference_counted ||
-#endif
-       !OnSideMapRC.is_defined(&(tr[i].hw()))) {
-      switch(depth%3) {
-      case 0:
-        cr = CGAL::compare_x(tr[i], pop);
-        side = cr == LARGER ? ON_POSITIVE_SIDE :
-                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      case 1:
-        cr = CGAL::compare_y(tr[i], pop);
-        side = cr == LARGER ? ON_POSITIVE_SIDE :
-                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      case 2:
-        cr = CGAL::compare_z(tr[i], pop);
-        side = cr == LARGER ? ON_POSITIVE_SIDE :
-                 cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
-        break;
-      default: CGAL_error_msg( "wrong value");
-      }
-#ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
-      if(reference_counted)
-        OnSideMapRC[&(tr[i].hw())] = side;
-    } else if(reference_counted)
-      side = OnSideMapRC[&(tr[i].hw())];
-#endif
-    if( side == ON_POSITIVE_SIDE)
-      on_positive_side = true;
-    else if( side == ON_NEGATIVE_SIDE)
-      on_negative_side = true;
-  }
-  if( on_positive_side && on_negative_side)
-    return ON_ORIENTED_BOUNDARY;
-  if( !on_positive_side && !on_negative_side)
-    return ON_ORIENTED_BOUNDARY;
-  if( on_positive_side) {
-    CGAL_assertion( !on_negative_side);
-    return ON_POSITIVE_SIDE;
-  }
-  CGAL_assertion( on_negative_side);
-  return ON_NEGATIVE_SIDE;
-}
-#endif
 
 /*
    As for the edges, if a facet is tanget to the plane it is not considered as
@@ -547,17 +455,6 @@ Side_of_plane<SNC_decorator>::operator()
    as far as two vertices located on different sides of the plane.
 */
 
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-template <class SNC_decorator>
-template <typename Depth>
-Oriented_side
-Side_of_plane<SNC_decorator>::operator()
-  (const Point_3& pop, Partial_facet& pf, Depth depth) {
-  CGAL_error_msg( "not implemented yet");
-
-  return ON_ORIENTED_BOUNDARY;
-}
-#endif
 
 template <class SNC_decorator>
 template <typename Depth>

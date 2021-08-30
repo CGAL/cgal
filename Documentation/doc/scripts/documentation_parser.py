@@ -1,3 +1,5 @@
+#/usr/bin/env python3
+
 from pyquery import PyQuery as pq
 from collections import defaultdict
 from sys import argv 

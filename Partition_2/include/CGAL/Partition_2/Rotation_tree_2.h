@@ -34,7 +34,6 @@
 
 #include <CGAL/vector.h>
 #include <CGAL/Partition_2/Rotation_tree_node_2.h>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 

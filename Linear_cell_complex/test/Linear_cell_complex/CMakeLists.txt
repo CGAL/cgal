@@ -1,28 +1,21 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.1...3.20)
+project(Linear_cell_complex_Tests)
 
-cmake_minimum_required(VERSION 3.1...3.15)
-project( Linear_cell_complex_Tests )
+find_package(CGAL REQUIRED)
 
+file(
+  GLOB hfiles
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
-find_package(CGAL QUIET)
-
-if ( CGAL_FOUND )
-
-  file(GLOB hfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-
-  # create a target per cppfile
-  file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-  foreach(cppfile ${cppfiles})
-    create_single_source_cgal_program( "${cppfile}" "${hfiles}" )
-  endforeach()
-
-else()
-
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-
-endif()
-
+# create a target per cppfile
+file(
+  GLOB cppfiles
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+foreach(cppfile ${cppfiles})
+  create_single_source_cgal_program("${cppfile}" "${hfiles}")
+endforeach()

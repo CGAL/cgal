@@ -283,7 +283,7 @@ void Viewer::doBindings()
                                    back_color.split(",").at(2).toFloat(),
                          1.0f);
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
-  d->scene = 0;
+  d->scene = nullptr;
   d->projection_is_ortho = false;
   d->cam_sharing = false;
   d->twosides = false;
@@ -318,15 +318,14 @@ void Viewer::doBindings()
 
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL, true, Qt::RightButton);
+  setMouseBinding(Qt::ShiftModifier, Qt::RightButton, CGAL::qglviewer::NO_CLICK_ACTION, false, Qt::NoButton);
   setMouseBindingDescription(Qt::ShiftModifier, Qt::RightButton,
                              tr("Select and pop context menu"));
   setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, CGAL::qglviewer::RAP_FROM_PIXEL);
+
   //use the new API for these
   setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, CGAL::qglviewer::SELECT);
 
-  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
-                             tr("Selects and display context "
-                                "menu of the selected item"));
   setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
                              tr("Show/hide the primitive ID of the types selected in the context menu of the picked item."));
   setMouseBindingDescription(Qt::Key_D, Qt::NoModifier, Qt::LeftButton,
@@ -381,6 +380,7 @@ Viewer::Viewer(QWidget* parent,
 
 Viewer::~Viewer()
 {
+  makeCurrent();
     QSettings viewer_settings;
     viewer_settings.setValue("cam_pos",
                              QString("%1,%2,%3")
@@ -776,7 +776,7 @@ void Viewer::turnCameraBy180Degres() {
 
 void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
-  if(scene == 0)
+  if(scene == nullptr)
     return;
   current_total_pass = viewer->inFastDrawing() ? total_pass/2 : total_pass;
   viewer->setGlPointSize(2.f);
@@ -941,20 +941,26 @@ void Viewer::attribBuffers(int program_name) const {
     QMatrix4x4 mv_mat;
     // transformation of the manipulated frame
     QMatrix4x4 f_mat;
+    // ModelView Matrix that is modified just for the normal matrix in case of scene scaling
+    QMatrix4x4 norm_mat;
 
     f_mat.setToIdentity();
     //fills the MVP and MV matrices.
     GLdouble d_mat[16];
-
     this->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
     this->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
+
+    norm_mat = mv_mat;
+
     if(d->scene_scaling){
       mvp_mat.scale(d->scaler);
       mv_mat.scale(d->scaler);
+      QVector3D scale_norm(1.0/d->scaler.x(), 1.0/d->scaler.y(), 1.0/d->scaler.z());
+      norm_mat.scale(scale_norm);
     }
 
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
@@ -1040,12 +1046,14 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_NO_INTERPOLATION:
     case PROGRAM_HEAT_INTENSITY:
       program->setUniformValue("mv_matrix", mv_mat);
+      program->setUniformValue("norm_matrix", norm_mat);
       break;
     case PROGRAM_WITHOUT_LIGHT:
     case PROGRAM_SOLID_WIREFRAME:
       break;
     case PROGRAM_WITH_TEXTURE:
       program->setUniformValue("mv_matrix", mv_mat);
+      program->setUniformValue("norm_matrix", norm_mat);
       program->setUniformValue("s_texture",0);
       program->setUniformValue("f_matrix",f_mat);
       break;
@@ -1390,7 +1398,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_flat.vert", ":/cgal/Polyhedron_3/resources/shader_flat.frag");
     program->setProperty("hasLight", true);
@@ -1413,7 +1421,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name,
                                                     ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.vert",
@@ -1428,7 +1436,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     if(!isOpenGL_4_3())
     {
       std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
-      return 0;
+      return nullptr;
     }
     QOpenGLShaderProgram* program = declare_program(name,
                                                     ":/cgal/Polyhedron_3/resources/no_interpolation_shader.vert",
@@ -1440,7 +1448,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   default:
     std::cerr<<"ERROR : Program not found."<<std::endl;
-    return 0;
+    return nullptr;
   }
 }
 
@@ -1483,7 +1491,7 @@ void Viewer::wheelEvent(QWheelEvent* e)
 
 bool Viewer::testDisplayId(double x, double y, double z)
 {
-    return d->scene->testDisplayId(x,y,z,this, d->scaler);
+    return d->scene->testDisplayId(x,y,z,this);
 }
 
 QPainter* Viewer::getPainter(){return d->painter;}
@@ -2030,6 +2038,7 @@ void Viewer::scaleScene()
   CGAL::qglviewer::Vec vmin(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
       vmax(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
   camera()->setPivotPoint((vmin+vmax)*0.5);
+  camera()->setSceneBoundingBox(vmin, vmax);
   camera()->fitBoundingBox(vmin, vmax);
   d->scene_scaling = !d->scene_scaling;
 }
@@ -2116,4 +2125,17 @@ void Viewer::onTextMessageSocketReceived(QString message)
   update();
 }
 #endif
+
+const QVector3D& Viewer::scaler()const { return d->scaler; }
+void Viewer::showEntireScene()
+{
+  CGAL::QGLViewer::showEntireScene();
+  CGAL::Bbox_3 bbox = CGAL::Three::Three::scene()->bbox();
+
+  CGAL::qglviewer::Vec vmin(((float)bbox.xmin()+offset().x)*d->scaler.x(), ((float)bbox.ymin()+offset().y)*d->scaler.y(), ((float)bbox.zmin()+offset().z)*d->scaler.z()),
+      vmax(((float)bbox.xmax()+offset().x)*d->scaler.x(), ((float)bbox.ymax()+offset().y)*d->scaler.y(), ((float)bbox.zmax()+offset().z)*d->scaler.z());
+  camera()->setPivotPoint((vmin+vmax)*0.5);
+  camera()->setSceneBoundingBox(vmin, vmax);
+  camera()->fitBoundingBox(vmin, vmax);
+}
 #include "Viewer.moc"

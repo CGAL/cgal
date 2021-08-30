@@ -15,18 +15,13 @@
 #include <CGAL/value_type_traits.h>
 
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-  #include <boost/property_map/property_map.hpp>
-#else
-  #include <boost/property_map.hpp>
-  #include <boost/vector_property_map.hpp>
-
-#endif
+#include <boost/property_map/property_map.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/tuple.h>
 
 #include <utility> // defines std::pair
 
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Cartesian_converter_fwd.h>
@@ -468,18 +463,18 @@ struct Constant_property_map
 
   typedef KeyType                                       key_type;
   typedef ValueType                                     value_type;
-  typedef value_type&                                   reference;
+  typedef const value_type&                             reference;
   typedef boost::read_write_property_map_tag            category;
 
   Constant_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
 
   /// Free function that returns `pm.default_value`.
-  inline friend value_type
-  get (const Constant_property_map& pm, const key_type&){ return pm.default_value; }
+  inline friend
+  const value_type& get (const Constant_property_map& pm, const key_type&) { return pm.default_value; }
 
   /// Free function that does nothing.
-  inline friend void
-  put (const Constant_property_map&, const key_type&, const value_type&) { }
+  inline friend
+  void put (const Constant_property_map&, const key_type&, const value_type&) { }
 };
 
 /// \ingroup PkgPropertyMapRef
@@ -603,6 +598,53 @@ make_transform_range_from_property_map (Range& range, Pmap pmap)
     (make_transform_iterator_from_property_map (range.begin(), pmap),
      make_transform_iterator_from_property_map (range.end(), pmap));
 }
+
+template <typename SizeType>
+CGAL::Iterator_range<boost::counting_iterator<SizeType> >
+make_counting_range (const SizeType begin, const SizeType end)
+{
+  return CGAL::make_range (boost::counting_iterator<SizeType>(begin),
+                           boost::counting_iterator<SizeType>(end));
+}
+
+/// \endcond
+
+/// \cond SKIP_IN_MANUAL
+/*
+  This property map is used to turn a property map using the value
+  type of a random access iterator as key type to the same property
+  map but using the index of the element iterated to.
+
+  It basically allows, when accessing the ith element of a range, to
+  do `get(map, i)` instead of `get(map, range[i])`.
+ */
+template<typename RandomAccessIterator, typename PropertyMap>
+struct Random_index_access_property_map
+{
+  typedef std::size_t key_type;
+  typedef typename boost::property_traits<PropertyMap>::value_type value_type;
+  typedef typename boost::property_traits<PropertyMap>::reference reference;
+  typedef typename boost::property_traits<PropertyMap>::category category;
+
+  RandomAccessIterator m_begin;
+  PropertyMap m_map;
+
+  Random_index_access_property_map (RandomAccessIterator begin = RandomAccessIterator(),
+                                    PropertyMap map = PropertyMap())
+    : m_begin(begin), m_map(map) {}
+
+  friend reference get (const Random_index_access_property_map& map, const key_type& index,
+                        typename std::enable_if<std::is_convertible<category, boost::readable_property_map_tag>::value>::type* = 0)
+  {
+    return get(map.m_map, *std::next(map.m_begin, index));
+  }
+
+  friend void put (Random_index_access_property_map& map, const key_type& index, const value_type& value,
+                   typename std::enable_if<std::is_convertible<category, boost::writable_property_map_tag>::value>::type* = 0)
+  {
+    put (map.m_map, *std::next(map.m_begin, index), value);
+  }
+};
 /// \endcond
 
 } // namespace CGAL

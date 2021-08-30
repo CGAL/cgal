@@ -13,12 +13,14 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/disable_warnings.h>
+#include <CGAL/Straight_skeleton_2.h>
 
-#include <boost/shared_ptr.hpp>
+#include <CGAL/assertions.h>
 #include <CGAL/Cartesian_converter.h>
 
-#include <CGAL/Straight_skeleton_2.h>
+#include <boost/shared_ptr.hpp>
+
+#include <vector>
 
 namespace CGAL {
 
@@ -122,10 +124,10 @@ struct Straight_skeleton_converter_2
 
   Target_skeleton_ptr operator() ( Source_skeleton const& aSkeleton ) const
   {
-    CGAL_assertion(aSkeleton.is_valid());
+    CGAL_assertion(aSkeleton.is_valid(true /*likely partial skeleton*/));
     Target_skeleton_ptr rResult = create_unconnected_copy(aSkeleton);
     connect_items(aSkeleton,*rResult);
-    CGAL_assertion(rResult->is_valid());
+    CGAL_assertion(rResult->is_valid(true /*likely partial skeleton*/));
     return rResult ;
   }
 
@@ -294,8 +296,6 @@ convert_straight_skeleton_2 ( Source_skeleton const& aSrc )
 }
 
 } // end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_STRAIGHT_SKELETON_2_CONVERTER_H //
 // EOF //

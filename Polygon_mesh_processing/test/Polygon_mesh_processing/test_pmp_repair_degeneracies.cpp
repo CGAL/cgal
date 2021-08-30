@@ -1,6 +1,7 @@
 #define CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
@@ -21,6 +22,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 namespace CP = CGAL::parameters;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel             EPICK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel               EPECK;
 
 template <typename K, typename EdgeRange, typename FaceRange, typename Mesh>
 void detect_degeneracies(const EdgeRange& edge_range,
@@ -191,7 +193,7 @@ void initialize_IDs(const CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_descriptor           face_descriptor;
 
-  int i=0;
+  std::size_t i=0;
   for(vertex_descriptor v : vertices(mesh))
     v->id() = i++;
 
@@ -340,16 +342,20 @@ void test()
   typedef CGAL::Surface_mesh<Point_3>                                   Surface_mesh;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3>  Polyhedron_with_ID;
 
-  std::cout << "EPICK SM TESTS" << std::endl;
+  std::cout << "SM TESTS" << std::endl;
   test<Kernel, Surface_mesh>();
 
-  std::cout << "EPICK POLYHEDRON TESTS" << std::endl;
+  std::cout << "POLYHEDRON TESTS" << std::endl;
   test<Kernel, Polyhedron_with_ID>();
 }
 
 int main(int /*argc*/, char** /*argv*/)
 {
+  std::cout << "EPICK TESTS" << std::endl;
   test<EPICK>();
+
+  std::cout << "EPECK TESTS" << std::endl;
+  test<EPECK>();
 
   std::cout << "Done" << std::endl;
 

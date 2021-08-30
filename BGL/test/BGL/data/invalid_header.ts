@@ -1,0 +1,24 @@
+
+HEADER {
+name:small
+*solid*color: 0.501961 0.501961 0.501961 1
+ivolmap:false
+imap:false
+last_selected_folder:Graphic
+TSurfIsoAssociation:true
+}
+GOCAD_ORIGINAL_COORDINATE_SYSTEM
+NAME Default
+AXIS_NAME "X" "Y" "Z"
+AXIS_UNIT "m" "m" "m"
+ZPOSITIVE Depth
+END_ORIGINAL_COORDINATE_SYSTEM
+PROPERTY_CLASS_HEADER Z {
+is_z:on
+}
+
+VRTX 1 0.001 0.00 0.000005
+VRTX 2 1.001 0.00 0.000005
+VRTX 3 0.001 1.00 0.000005
+TRGL 1 2 3
+END

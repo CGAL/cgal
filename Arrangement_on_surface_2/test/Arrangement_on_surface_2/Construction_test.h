@@ -172,7 +172,7 @@ Construction_test<T_Geom_traits, T_Topol_traits>::
 Construction_test(const Geom_traits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits),
-  m_arr(NULL),
+  m_arr(nullptr),
   m_verbose_level(0)
 {}
 
@@ -188,7 +188,7 @@ void Construction_test<T_Geom_traits, T_Topol_traits>::deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
-    m_arr = NULL;
+    m_arr = nullptr;
   }
 }
 

@@ -68,7 +68,7 @@ each take linear time.
 
 \cgalHeading{Example}
 
-\cgalExample{Min_sphere_d/min_sphere_homogeneous_d.cpp}
+\cgalExample{Min_sphere_d/min_sphere_homogeneous_3.cpp}
 
 */
 template< typename Traits >

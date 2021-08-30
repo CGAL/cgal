@@ -119,14 +119,14 @@ int main ()
   std::ofstream    out_file ("arr_ex_dcel_io.dat");
   Formatter        formatter;
 
-  write (arr, out_file, formatter);
+  CGAL::IO::write (arr, out_file, formatter);
   out_file.close();
 
   // Read the arrangement from the file.
   Arrangement_2    arr2;
   std::ifstream    in_file ("arr_ex_dcel_io.dat");
 
-  read (arr2, in_file, formatter);
+  CGAL::IO::read (arr2, in_file, formatter);
   in_file.close();
 
   std::cout << "The arrangement vertices: " << std::endl;

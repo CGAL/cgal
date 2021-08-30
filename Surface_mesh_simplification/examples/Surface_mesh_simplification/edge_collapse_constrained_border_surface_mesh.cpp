@@ -90,9 +90,7 @@ int main(int argc, char** argv)
   std::cout << "\nFinished!\n" << r << " edges removed.\n"
             << surface_mesh.number_of_edges() << " final edges.\n";
 
-  std::ofstream os(argc > 2 ? argv[2] : "out.off");
-  os.precision(17);
-  os << surface_mesh;
+  CGAL::IO::write_polygon_mesh((argc > 2) ? argv[2] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
 
   // now check!
   for(halfedge_descriptor hd : halfedges(surface_mesh))

@@ -45,11 +45,9 @@ typedef unspecified_type Do_intersect_3;
 
 /*!
 A functor object to construct the intersection between two geometric objects.
-This functor must support the result_of protocol, that is the return
-type of the `operator()(A, B)` is `CGAL::cpp11::result<Intersect_3(A,B)>`.
 
 Provides the operators:
-`CGAL::cpp11::result<Intersect_3(A,B)> operator()(const A& a, const B& b);`
+`decltype(auto) operator()(const A& a, const B& b);`
 where `A` and `B` are any relevant types among `Ray_3`, `Segment_3`, `Line_3`,
 `Triangle_3`, `Plane_3` and `Bbox_3`.
 Relevant herein means that a line primitive (ray, segment, line) is tested

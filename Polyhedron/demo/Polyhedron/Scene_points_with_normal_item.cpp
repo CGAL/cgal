@@ -1,9 +1,9 @@
 #define CGAL_data_type float
 #define CGAL_GL_data_type GL_FLOAT
-#include "Scene_points_with_normal_item.h"
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
-#include <CGAL/Point_set_3/IO.h>
+#include "Scene_points_with_normal_item.h"
+
+#include <CGAL/Point_set_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -11,11 +11,14 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Edge_container.h>
+
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/Point_set_3/IO.h>
 
 #include <QObject>
 #include <QApplication>
@@ -110,7 +113,7 @@ struct Scene_points_with_normal_item_priv
     if(m_points)
     {
       delete m_points;
-      m_points = NULL;
+      m_points = nullptr;
     }
     delete normal_Slider;
     delete point_Slider;
@@ -544,58 +547,16 @@ void Scene_points_with_normal_item::selectDuplicates()
   Q_EMIT itemChanged();
 }
 
-#ifdef CGAL_LINKED_WITH_LASLIB
-// Loads point set from .LAS file
-bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
-{
-  Q_ASSERT(d->m_points != NULL);
-
-  d->m_points->clear();
-
-  bool ok = stream &&
-    CGAL::read_las_point_set (stream, *(d->m_points)) &&
-            !isEmpty();
-
-  std::cerr << d->m_points->info();
-
-  if (!d->m_points->has_normal_map())
-  {
-    setRenderingMode(Points);
-  }
-  else{
-    setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
-  }
-  if (d->m_points->check_colors())
-    std::cerr << "-> Point set has colors" << std::endl;
-
-  invalidateOpenGLBuffers();
-  return ok;
-}
-
-// Write point set to .LAS file
-bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
-{
-  Q_ASSERT(d->m_points != NULL);
-
-  d->m_points->reset_indices();
-
-  return stream &&
-    CGAL::write_las_point_set (stream, *(d->m_points));
-}
-
-#endif // LAS
-
 // Loads point set from .PLY file
 bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
 
-  bool ok = stream &&
-    CGAL::read_ply_point_set (stream, *(d->m_points), d->m_comments) &&
-            !isEmpty();
-    d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
+  bool ok = CGAL::IO::read_PLY(stream, *(d->m_points), d->m_comments) && !isEmpty();
+
+  d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   std::cerr << d->m_points->info();
 
   if (!d->m_points->has_normal_map())
@@ -617,7 +578,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 // Write point set to .PLY file
 bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bool binary) const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
@@ -625,22 +586,19 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
     return false;
 
   if (binary)
-    CGAL::set_binary_mode (stream);
+    CGAL::IO::set_binary_mode (stream);
 
-  CGAL::write_ply_point_set (stream, *(d->m_points), d->m_comments);
-
-  return true;
+  return CGAL::IO::write_PLY(stream, *(d->m_points), d->m_comments);
 }
 
 // Loads point set from .OFF file
 bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
-  bool ok = stream &&
-    CGAL::read_off_point_set(stream, *(d->m_points)) &&
-            !isEmpty();
+  bool ok = CGAL::IO::read_OFF(stream, *(d->m_points)) && !isEmpty();
+
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
   return ok;
@@ -649,24 +607,22 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
 // Write point set to .OFF file
 bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
-  return stream &&
-    CGAL::write_off_point_set (stream, *(d->m_points));
+  return CGAL::IO::write_OFF(stream, *(d->m_points));
 }
 
 // Loads point set from .XYZ file
 bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
 
-  bool ok = stream &&
-    CGAL::read_xyz_point_set (stream, *(d->m_points)) &&
-    !isEmpty();
+  bool ok = CGAL::IO::read_XYZ (stream, *(d->m_points)) && !isEmpty();
+
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
   return ok;
@@ -675,18 +631,17 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 // Write point set to .XYZ file
 bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->reset_indices();
 
-  return stream &&
-    CGAL::write_xyz_point_set (stream, *(d->m_points));
+  return CGAL::IO::write_XYZ(stream, *(d->m_points));
 }
 
 QString
 Scene_points_with_normal_item::toolTip() const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   return QObject::tr("<p><b>%1</b> (color: %4)<br />"
                      "<i>Point_set_3</i></p>"
@@ -799,12 +754,12 @@ drawPoints(CGAL::Three::Viewer_interface* viewer) const
 // Gets wrapped point set
 Point_set* Scene_points_with_normal_item::point_set()
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
   return d->m_points;
 }
 const Point_set* Scene_points_with_normal_item::point_set() const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
   return d->m_points;
 }
 
@@ -821,14 +776,14 @@ const std::string& Scene_points_with_normal_item::comments() const
 bool
 Scene_points_with_normal_item::isEmpty() const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
   return d->m_points->empty();
 }
 
 void
 Scene_points_with_normal_item::compute_bbox()const
 {
-  Q_ASSERT(d->m_points != NULL);
+  Q_ASSERT(d->m_points != nullptr);
 
   Kernel::Iso_cuboid_3 bbox = d->m_points->bounding_box();
   setBbox(Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
@@ -885,7 +840,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
       if(has_normals())
       {
         QMenu *container = new QMenu(tr("Normals Length"));
-        QWidgetAction *sliderAction = new QWidgetAction(0);
+        QWidgetAction *sliderAction = new QWidgetAction(nullptr);
         if((d->nb_points)/3 <= limit_fast_drawing)
         {
           connect(d->normal_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::invalidateOpenGLBuffers);
@@ -902,7 +857,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         menu->addMenu(container);
       }
         QMenu *container = new QMenu(tr("Points Size"));
-        QWidgetAction *sliderAction = new QWidgetAction(0);
+        QWidgetAction *sliderAction = new QWidgetAction(nullptr);
         connect(d->point_Slider, &QSlider::sliderPressed, this, &Scene_points_with_normal_item::pointSliderPressed);
         connect(d->point_Slider, &QSlider::sliderReleased, this, &Scene_points_with_normal_item::pointSliderReleased);
         connect(d->point_Slider, &QSlider::valueChanged, this, &Scene_points_with_normal_item::itemChanged);
@@ -958,7 +913,7 @@ void Scene_points_with_normal_item::invalidateOpenGLBuffers()
     Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
-      if(viewer == NULL)
+      if(viewer == nullptr)
         continue;
       setBuffersInit(viewer, false);
     }
@@ -1001,7 +956,7 @@ void Scene_points_with_normal_item::itemAboutToBeDestroyed(Scene_item *item)
   if(d && d->m_points && item == this)
   {
     delete d->m_points;
-    d->m_points = NULL;
+    d->m_points = nullptr;
   }
 }
 

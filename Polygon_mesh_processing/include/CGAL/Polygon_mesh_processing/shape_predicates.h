@@ -358,6 +358,8 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
                         const NamedParameters& np)
 {
   CGAL_precondition(threshold >= 1.);
+  CGAL_precondition(f != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -403,7 +405,7 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
   if(min_sq_length == 0)
     return min_h;
 
-  const FT sq_threshold = threshold * threshold;
+  const FT sq_threshold = square(FT(threshold));
   if(max_sq_length / min_sq_length >= sq_threshold)
   {
     CGAL_assertion(min_h != boost::graph_traits<TriangleMesh>::null_halfedge());
@@ -462,7 +464,8 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
                      const double threshold,
                      const NamedParameters& np)
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
+  CGAL_precondition(f != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));
   CGAL_precondition(threshold >= -1.);
   CGAL_precondition(threshold <= 0.);
 
@@ -482,7 +485,7 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   typedef typename Traits::FT                                               FT;
   typedef typename Traits::Vector_3                                         Vector_3;
 
-  const FT sq_threshold = threshold * threshold;
+  const FT sq_threshold = square(FT(threshold));
   const halfedge_descriptor h0 = halfedge(f, tm);
 
   std::array<FT, 3> sq_lengths;

@@ -152,8 +152,8 @@ SM_io_parser(std::ostream& iout, const Base& D)
   en(this->number_of_shalfedges()),
   ln(this->number_of_shalfloops()),
   fn(this->number_of_sfaces())
-{ verbose = (get_mode(out) != CGAL::IO::ASCII &&
-             get_mode(out) != CGAL::IO::BINARY);
+{ verbose = (IO::get_mode(out) != CGAL::IO::ASCII &&
+             IO::get_mode(out) != CGAL::IO::BINARY);
 }
 
 
@@ -203,8 +203,14 @@ bool SM_io_parser<Decorator_>::read_vertex(SVertex_handle v)
        !(in >> p) ||
        !check_sep("}") ) return false;
 
-  if (iso) set_face(v,SFace_of[f]);
-  else     set_first_out_edge(v,Edge_of[f]);
+  if(f<0 || (iso && f > fn) || (!iso && f > en))
+  {
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
+
+  if (iso) this->set_face(v,SFace_of[f]);
+  else     this->set_first_out_edge(v,Edge_of[f]);
   v->mark() = m; v->point() = p;
   return true;
 }
@@ -235,17 +241,21 @@ bool SM_io_parser<Decorator_>::read_edge(SHalfedge_handle e)
        !(in >> m) || !check_sep(",") ||
        !(in >> k) || !check_sep("}") )
     return false;
-  CGAL_assertion_msg
+  if (!
      (eo >= 0 && eo < en && epr >= 0 && epr < en && ene >= 0 && ene < en &&
-      v >= 0 && v < vn && f >= 0 && f < fn ,
-      "wrong index in read_edge");
+      v >= 0 && v < vn && f >= 0 && f < fn ))
+  {
+    std::cerr<<"wrong index in read_edge"<<std::endl;
+    in.setstate(std::ios_base::badbit);
+    return false;
+  }
 
   // precond: features exist!
   CGAL_assertion(EI[e->twin()]);
-  set_prev(e,Edge_of[epr]);
-  set_next(e,Edge_of[ene]);
-  set_source(e,SVertex_of[v]);
-  set_face(e,SFace_of[f]);
+  this->set_prev(e,Edge_of[epr]);
+  this->set_next(e,Edge_of[ene]);
+  this->set_source(e,SVertex_of[v]);
+  this->set_face(e,SFace_of[f]);
   e->mark() = m;
   e->circle() = k;
   return true;
@@ -274,7 +284,7 @@ bool SM_io_parser<Decorator_>::read_loop(SHalfloop_handle l)
   CGAL_assertion_msg(
     (lo >= 0 && lo < 2 && f >= 0 && f < fn),"wrong index in read_edge");
 
-  set_face(l,SFace_of[f]);
+  this->set_face(l,SFace_of[f]);
   l->mark() = m;
   l->circle() = k;
   return true;
@@ -303,21 +313,33 @@ bool SM_io_parser<Decorator_>::read_face(SFace_handle f)
   int n, ei, vi, li; Mark m;
   if ( !(in >> n) || !check_sep("{") ) return false;
   while (in >> ei) {
-    CGAL_assertion_msg(ei >= 0 && ei < en,
-                           "wrong index in face cycle list.");
-    store_sm_boundary_object(Edge_of[ei],f);
+    if(!(ei >= 0 && ei < en))
+    {
+      std::cerr<<"wrong index in face cycle list."<<std::endl;
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
+    this->store_sm_boundary_object(Edge_of[ei],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> vi) {
-    CGAL_assertion_msg(vi >= 0 && vi < vn,
-                           "wrong index in iso vertex list.");
-    store_sm_boundary_object(SVertex_of[vi],f);
+    if(!(vi >= 0 && vi < vn))
+    {
+      std::cerr<<"wrong index in iso vertex list."<<std::endl;
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
+    this->store_sm_boundary_object(SVertex_of[vi],f);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> li) {
-    CGAL_assertion_msg(li >= 0 && li < 2,
-                           "wrong index in iso vertex list.");
-    store_sm_boundary_object(Loop_of[li],f);
+    if(!(li >= 0 && li < 2))
+    {
+      std::cerr<<"wrong index in iso vertex list."<<std::endl;
+      in.setstate(std::ios_base::badbit);
+      return false;
+    }
+    this->store_sm_boundary_object(Loop_of[li],f);
   } in.clear();
   if (!check_sep(",") || !(in >> m) || !check_sep("}") )
     return false;
@@ -357,16 +379,36 @@ void SM_io_parser<Decorator_>::print() const
 template <typename Decorator_>
 void SM_io_parser<Decorator_>::read()
 {
+  if ( !check_sep("Nef_polyhedron_S2") )
+  {
+   CGAL_warning_msg(false, "Missing line in header");
+   return;
+  }
   if ( !check_sep("Sphere_map_2") )
-    CGAL_error_msg("SM_io_parser::read: no embedded_PM header.");
+  {
+   CGAL_warning_msg(false, "SM_io_parser::read: no embedded_PM header.");
+   return;
+  }
   if ( !(check_sep("vertices") && (in >> vn)) )
-    CGAL_error_msg("SM_io_parser::read: wrong vertex line.");
+  {
+   CGAL_warning_msg(false, "SM_io_parser::read: wrong vertex line.");
+   return;
+  }
   if ( !(check_sep("edges") && (in >> en) && (en%2==0)) )
-    CGAL_error_msg("SM_io_parser::read: wrong edge line.");
+  {
+   CGAL_warning_msg(false, "SM_io_parser::read: wrong edge line.");
+   return;
+  }
   if ( !(check_sep("loops") && (in >> ln)) )
-    CGAL_error_msg("SM_io_parser::read: wrong loop line.");
+  {
+   CGAL_warning_msg(false, "SM_io_parser::read: wrong loop line.");
+   return;
+  }
   if ( !(check_sep("faces") && (in >> fn)) )
-    CGAL_error_msg("SM_io_parser::read: wrong face line.");
+  {
+   CGAL_warning_msg(false, "SM_io_parser::read: wrong face line.");
+   return;
+  }
 
   SVertex_of.resize(vn);
   Edge_of.resize(en);
@@ -383,18 +425,28 @@ void SM_io_parser<Decorator_>::read()
 
   for(i=0; i<vn; i++) {
     if (!read_vertex(SVertex_of[i]))
-      CGAL_error_msg("SM_io_parser::read: error in node line");
+    {
+     CGAL_warning_msg(false, "SM_io_parser::read: error in node line");
+     return;
+    }
   }
   for(i=0; i<en; i++) {
     if (!read_edge(Edge_of[i]))
-      CGAL_error_msg("SM_io_parser::read: error in edge line");
+    {
+     CGAL_warning_msg(false, "SM_io_parser::read: error in edge line");
+     return;
+    }
+
   }
   if ( ln == 2 ) {
     read_loop(Loop_of[0]); read_loop(Loop_of[1]);
   }
   for(i=0; i<fn; i++) {
     if (!read_face(SFace_of[i]))
-      CGAL_error_msg("SM_io_parser::read: error in face line");
+    {
+     CGAL_warning_msg(false, "SM_io_parser::read: error in face line");
+     return;
+    }
   }
 }
 

@@ -16,7 +16,7 @@
 
 #include <CGAL/Surface_mesh_topology/internal/Functors_for_face_graph_wrapper.h>
 #include <CGAL/Surface_mesh_topology/internal/Iterators_for_face_graph_wrapper.h>
-#include <CGAL/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 #include <CGAL/Combinatorial_map_fwd.h>

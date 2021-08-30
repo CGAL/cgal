@@ -20,7 +20,6 @@
 #endif
 
 #include <CGAL/Qt/vec.h>
-#include <CGAL/Qt/domUtils.h>
 
 // Most of the methods are declared inline in vec.h
 
@@ -70,100 +69,6 @@ Vec Vec::orthogonalVec() const {
     return Vec(-z, 0.0, x);
   else
     return Vec(-y, x, 0.0);
-}
-
-/*! Constructs a Vec from a \c QDomElement representing an XML code of the form
- \code< anyTagName x=".." y=".." z=".." />\endcode
-
-If one of these attributes is missing or is not a number, a warning is displayed
-and the associated value is set to 0.0.
-
-See also domElement() and initFromDOMElement(). */
-CGAL_INLINE_FUNCTION
-Vec::Vec(const QDomElement &element) {
-  QStringList attribute;
-  attribute << "x"
-            << "y"
-            << "z";
-  for (int i = 0; i < attribute.size(); ++i)
-#ifdef QGLVIEWER_UNION_NOT_SUPPORTED
-    this->operator[](i) = DomUtils::qrealFromDom(element, attribute[i], 0.0);
-#else
-    v_[i] = DomUtils::qrealFromDom(element, attribute[i], 0.0);
-#endif
-}
-
-/*! Returns an XML \c QDomElement that represents the Vec.
-
- \p name is the name of the QDomElement tag. \p doc is the \c QDomDocument
- factory used to create QDomElement.
-
- When output to a file, the resulting QDomElement will look like:
- \code
- <name x=".." y=".." z=".." />
- \endcode
-
- Use initFromDOMElement() to restore the Vec state from the resulting \c
- QDomElement. See also the Vec(const QDomElement&) constructor.
-
- Here is complete example that creates a QDomDocument and saves it into a file:
- \code
- Vec sunPos;
- QDomDocument document("myDocument");
- QDomElement sunElement = document.createElement("Sun");
- document.appendChild(sunElement);
- sunElement.setAttribute("brightness", sunBrightness());
- sunElement.appendChild(sunPos.domElement("sunPosition", document));
- // Other additions to the document hierarchy...
-
- // Save doc document
- QFile f("myFile.xml");
- if (f.open(IO_WriteOnly))
- {
-   QTextStream out(&f);
-   document.save(out, 2);
-   f.close();
- }
- \endcode
-
-CGAL_INLINE_FUNCTION
- See also Quaternion::domElement(), Frame::domElement(), Camera::domElement()...
- */
-CGAL_INLINE_FUNCTION
-QDomElement Vec::domElement(const QString &name, QDomDocument &document) const {
-  QDomElement de = document.createElement(name);
-  de.setAttribute("x", QString::number(x));
-  de.setAttribute("y", QString::number(y));
-  de.setAttribute("z", QString::number(z));
-  return de;
-}
-
-/*! Restores the Vec state from a \c QDomElement created by domElement().
-
- The \c QDomElement should contain \c x, \c y and \c z attributes. If one of
- these attributes is missing or is not a number, a warning is displayed and the
- associated value is set to 0.0.
-
- To restore the Vec state from an xml file, use:
- \code
- // Load DOM from file
- QDomDocument doc;
- QFile f("myFile.xml");
- if (f.open(IO_ReadOnly))
- {
-   doc.setContent(&f);
-   f.close();
- }
- // Parse the DOM tree and initialize
- QDomElement main=doc.documentElement();
- myVec.initFromDOMElement(main);
- \endcode
-
- See also the Vec(const QDomElement&) constructor. */
-CGAL_INLINE_FUNCTION
-void Vec::initFromDOMElement(const QDomElement &element) {
-  const Vec v(element);
-  *this = v;
 }
 
 CGAL_INLINE_FUNCTION

@@ -13,7 +13,7 @@
 #define CGAL_VECTOR_SSE2_H
 
 // Check what needs adapting for clang, intel and microsoft
-#if !defined __SSE2__ || (__GNUC__ * 100 + __GNUC_MINOR__ < 408)
+#if !defined __SSE2__
 #error Requires SSE2 and gcc 4.8+
 #endif
 #include <x86intrin.h> // FIXME: other platforms call it differently

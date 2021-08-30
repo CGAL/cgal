@@ -26,7 +26,7 @@
 #include <CGAL/Intersections_3/Iso_cuboid_3_Line_3.h>
 #include <CGAL/utils_classes.h>
 #include <CGAL/squared_distance_3.h>
-
+#include <CGAL/rank.h>
 #include <CGAL/Intersections_3/internal/bbox_intersection_3.h>
 namespace CGAL {
 
@@ -57,7 +57,7 @@ namespace CGAL {
 // the special plane_3 function
 template <class K>
 inline
-typename cpp11::result_of<typename K::Intersect_3(typename K::Plane_3, typename K::Plane_3, typename K::Plane_3)>::type
+decltype(auto)
 intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
              const Plane_3<K> &plane3)
 {
@@ -78,6 +78,33 @@ do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
 
 namespace Intersections {
 namespace internal {
+
+template <class K>
+boost::optional<typename K::Point_3>
+intersection_point(const typename K::Plane_3 &plane,
+                   const typename K::Line_3 &line,
+                   const K& /*k*/)
+{
+  typedef typename K::Point_3 Point_3;
+  typedef typename K::Direction_3 Direction_3;
+  typedef typename K::RT RT;
+
+  const Point_3 &line_pt = line.point();
+  const Direction_3 &line_dir = line.direction();
+
+  RT num = plane.a()*line_pt.hx() + plane.b()*line_pt.hy()
+    + plane.c()*line_pt.hz() + wmult_hw((K*)0, plane.d(), line_pt);
+  RT den = plane.a()*line_dir.dx() + plane.b()*line_dir.dy()
+    + plane.c()*line_dir.dz();
+  if (den == 0) {
+    return boost::none;
+  }
+  return boost::make_optional(Point_3(den*line_pt.hx()-num*line_dir.dx(),
+                                      den*line_pt.hy()-num*line_dir.dy(),
+                                      den*line_pt.hz()-num*line_dir.dz(),
+                                      wmult_hw((K*)0, den, line_pt)));
+}
+
 
 template <class K>
 typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
@@ -181,6 +208,55 @@ intersection(const typename K::Plane_3 &plane1,
     }
     return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Plane_3>(plane1);
 }
+
+
+  //  triple plane intersection
+template <class K>
+boost::optional<typename K::Point_3>
+intersection_point(const typename K::Plane_3 &plane1,
+                   const typename K::Plane_3 &plane2,
+                   const typename K::Plane_3 &plane3,
+                   const K&)
+{
+  typedef typename K::FT FT;
+  const FT &m00 = plane1.a();
+  const FT &m01 = plane1.b();
+  const FT &m02 = plane1.c();
+  const FT &b0  = - plane1.d();
+  const FT &m10 = plane2.a();
+  const FT &m11 = plane2.b();
+  const FT &m12 = plane2.c();
+  const FT &b1  = - plane2.d();
+  const FT &m20 = plane3.a();
+  const FT &m21 = plane3.b();
+  const FT &m22 = plane3.c();
+  const FT &b2  = - plane3.d();
+
+  // Minors common to two determinants
+  const FT minor_0 = m00*m11 - m10*m01;
+  const FT minor_1 = m00*m21 - m20*m01;
+  const FT minor_2 = m10*m21 - m20*m11;
+
+  const FT den = minor_0*m22 - minor_1*m12 + minor_2*m02; // determinant of M
+
+  if(is_zero(den)){
+    return boost::none;
+  }
+
+  const FT num3 = minor_0*b2 - minor_1*b1 + minor_2*b0;  // determinant of M with M[x:2] swapped with [b0,b1,b2]
+
+  // Minors common to two determinants
+  const FT minor_3 = b0*m12 - b1*m02;
+  const FT minor_4 = b0*m22 - b2*m02;
+  const FT minor_5 = b1*m22 - b2*m12;
+
+  // num1 has opposite signs because b0 and M[:1] have been swapped
+  const FT num1 = - minor_3*m21 + minor_4*m11 - minor_5*m01;  // determinant of M with M[x:0] swapped with [b0,b1,b2]
+  const FT num2 = minor_3*m20 - minor_4*m10 + minor_5*m00;  // determinant of M with M[x:1] swapped with [b0,b1,b2]
+
+  return boost::make_optional(typename K::Point_3(num1/den, num2/den, num3/den));
+}
+
 
 template <class K>
 boost::optional< boost::variant<typename K::Point_3,
@@ -303,7 +379,7 @@ intersection(const typename K::Line_3 &l1,
   const Vector_3 v3v2 = cross_product(v3,v2);
   const Vector_3 v1v2 = cross_product(v1,v2);
   const FT sl = v1v2.squared_length();
-  if(certainly(sl == FT(0)))
+  if(certainly(is_zero(sl)))
     return intersection_return<typename K::Intersect_3, typename K::Line_3, typename K::Line_3>();
   const FT t = ((v3v2.x()*v1v2.x()) + (v3v2.y()*v1v2.y()) + (v3v2.z()*v1v2.z())) / sl;
 
@@ -446,6 +522,7 @@ do_intersect(const typename K::Segment_3  &s1,
   }
   return false;
 }
+
 
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
@@ -777,9 +854,9 @@ do_intersect(const typename K::Plane_3 &p,
   typedef typename K::FT FT;
   const FT d2 = CGAL::square(p.a()*s.center().x() +
                              p.b()*s.center().y() +
-                             p.c()*s.center().z() + p.d()) /
-      (square(p.a()) + square(p.b()) + square(p.c()));
-  return d2 <= s.squared_radius();
+                             p.c()*s.center().z() + p.d());
+
+  return d2 <= s.squared_radius() * (square(p.a()) + square(p.b()) + square(p.c()));
 }
 
 template <class K>
@@ -891,20 +968,15 @@ template <class K>
 bool
 do_intersect(const typename K::Plane_3 &plane,
              const typename K::Ray_3 &ray,
-             const K& k)
+             const K& )
 {
-    typedef typename K::Point_3 Point_3;
+    typename K::Oriented_side_3 oriented_side_3;
 
-    typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>
-      ::result_type
-      line_intersection = internal::intersection(plane, ray.supporting_line(), k);
-
-    if(!line_intersection)
-        return false;
-    if(const Point_3 *isp = intersect_get<Point_3>(line_intersection))
-        return ray.collinear_has_on(*isp);
-
-    return true;
+    Oriented_side os = oriented_side_3(plane,ray.source());
+    if(os == ON_ORIENTED_BOUNDARY){
+      return true;
+    }
+    return sign(ray.to_vector()* plane.orthogonal_vector()) * os == -1;
 }
 
 
@@ -1566,7 +1638,39 @@ template <class R>
 inline bool
 do_intersect(const Plane_3<R>& plane1, const Plane_3<R>& plane2, const R&)
 {
-  return bool(intersection(plane1, plane2));
+    typedef typename R::RT RT;
+    const RT &a = plane1.a();
+    const RT &b = plane1.b();
+    const RT &c = plane1.c();
+    const RT &d = plane1.d();
+    const RT &p = plane2.a();
+    const RT &q = plane2.b();
+    const RT &r = plane2.c();
+    const RT &s = plane2.d();
+
+    RT det = a*q-p*b;
+    if (det != 0) {
+      return true;
+    }
+    det = a*r-p*c;
+    if (det != 0) {
+      return true;
+    }
+    det = b*r-c*q;
+    if (det != 0) {
+      return true;
+    }
+// degenerate case
+    if (a!=0 || p!=0) {
+      return (a*s == p*d);
+    }
+    if (b!=0 || q!=0) {
+      return (b*s == q*d);
+    }
+    if (c!=0 || r!=0) {
+      return (c*s == r*d);
+    }
+    return true;
 }
 
 
@@ -1575,29 +1679,130 @@ inline bool
 do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
              const Plane_3<R> &plane3, const R&)
 {
-  return bool(intersection(plane1, plane2, plane3));
+  typedef typename R::RT RT;
+
+  if(! is_zero(determinant(plane1.a(), plane1.b(), plane1.c(),
+                           plane2.a(), plane2.b(), plane2.c(),
+                           plane3.a(), plane3.b(), plane3.c()))){
+    return true;
+  }
+
+  int pcount = 0;
+  bool b12, b13,b23;
+  if((b12 = parallel(plane1,plane2))) pcount++;
+  if((b13 = parallel(plane1,plane3))) pcount++;
+  if((b23 = parallel(plane2,plane3))) pcount++;
+
+  if(pcount == 3){
+    return (( (plane1 == plane2) || (plane1 == plane2.opposite())) && ( (plane1 == plane3) || (plane1 == plane3.opposite())));
+  }
+
+  if(pcount == 1){
+    if(b12 && ((plane1 == plane2)||(plane1 == plane2.opposite()  ))) return true;
+    if(b13 && ((plane1 == plane3)||(plane1 == plane3.opposite()  ))) return true;
+    if(b23 && ((plane2 == plane3)||(plane2 == plane3.opposite()  ))) return true;
+  }
+
+  int rd = rank_34<RT>(plane1.a(), plane1.b(), plane1.c(), plane1.d(),
+                       plane2.a(), plane2.b(), plane2.c(), plane2.d(),
+                       plane3.a(), plane3.b(), plane3.c(), plane3.d());
+
+  return rd == 2;
 }
 
 
 template <class R>
 inline bool
-do_intersect(const Iso_cuboid_3<R> &i, const Iso_cuboid_3<R> &j, const R&)
+do_intersect(const Iso_cuboid_3<R> &icub1, const Iso_cuboid_3<R> &icub2, const R&)
 {
-  return bool(CGAL::intersection(i, j));
+    typedef typename R::Point_3 Point_3;
+
+    Point_3 min_points[2];
+    Point_3 max_points[2];
+    min_points[0] = (icub1.min)();
+    min_points[1] = (icub2.min)();
+    max_points[0] = (icub1.max)();
+    max_points[1] = (icub2.max)();
+    const int DIM = 3;
+    int min_idx[DIM];
+    int max_idx[DIM];
+    Point_3 newmin;
+    Point_3 newmax;
+    for (int dim = 0; dim < DIM; ++dim) {
+        min_idx[dim] =
+          min_points[0].cartesian(dim) >= min_points[1].cartesian(dim) ? 0 : 1;
+        max_idx[dim] =
+          max_points[0].cartesian(dim) <= max_points[1].cartesian(dim) ? 0 : 1;
+        if (min_idx[dim] != max_idx[dim]
+                && max_points[max_idx[dim]].cartesian(dim)
+                   < min_points[min_idx[dim]].cartesian(dim))
+          return false;
+    }
+    return true;
+
 }
 
 template <class R>
 inline bool
-do_intersect(const Line_3<R> &l, const Iso_cuboid_3<R> &j, const R&)
+do_intersect(const Line_3<R> &line, const Iso_cuboid_3<R> &box, const R&)
 {
-  return bool(CGAL::intersection(l, j));
+    typedef typename R::Point_3 Point_3;
+    typedef typename R::Vector_3 Vector_3;
+    typedef typename R::FT FT;
+    bool all_values = true;
+    FT _min = 0, _max = 0; // initialization to stop compiler warning
+    FT _denum;
+    Point_3 const & _ref_point=line.point();
+    Vector_3 const & _dir=line.direction().vector();
+    Point_3 const & _iso_min=(box.min)();
+    Point_3 const & _iso_max=(box.max)();
+    for (int i=0; i< _ref_point.dimension(); i++) {
+        if (_dir.homogeneous(i) == 0) {
+            if (_ref_point.cartesian(i) < _iso_min.cartesian(i)) {
+              return false;
+            }
+            if (_ref_point.cartesian(i) > _iso_max.cartesian(i)) {
+              return false;
+            }
+        } else {
+            FT newmin, newmax;
+            FT newdenum = _dir.cartesian(i);
+            if (_dir.homogeneous(i) > 0) {
+              newmin = (_iso_min.cartesian(i) - _ref_point.cartesian(i));
+              newmax = (_iso_max.cartesian(i) - _ref_point.cartesian(i));
+            } else {
+              newmin = (_iso_max.cartesian(i) - _ref_point.cartesian(i));
+              newmax = (_iso_min.cartesian(i) - _ref_point.cartesian(i));
+            }
+            if (all_values) {
+                _min = newmin;
+                _max = newmax;
+                _denum = newdenum;
+            } else {
+
+              if (compare_quotients(newmin, newdenum, _min, _denum) == LARGER)
+                    _min = newmin;
+              if (compare_quotients(newmax, newdenum, _max, _denum) == LARGER)
+                    _max = newmax;
+              if (compare_quotients(_max, _denum, _min, _denum) == SMALLER) {
+                  return false;
+                }
+                _denum = newdenum;
+
+            }
+            all_values = false;
+        }
+    }
+    CGAL_kernel_assertion(!all_values);
+    return true;
 }
+
 
 template <class R>
 inline bool
-do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
+do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R& r)
 {
-  return bool(CGAL::intersection(l, j));
+  return do_intersect(l, j, r);
 }
 } // namespace internal
 } // namespace Intersections

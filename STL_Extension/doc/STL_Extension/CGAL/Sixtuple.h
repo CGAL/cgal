@@ -13,7 +13,7 @@ iterators) for accessing the elements of a container.
 \deprecated This class is deprecated, and will be removed in some future \cgal release.
 Please use std::array instead.
 
-\tparam `T` must be `Assignable`.
+\tparam T must be `Assignable`.
 */
 template< typename T >
 class Sixtuple {

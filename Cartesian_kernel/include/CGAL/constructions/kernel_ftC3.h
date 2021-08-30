@@ -366,10 +366,10 @@ bisector_of_planesC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
                      FT &a, FT &b, FT &c, FT &d)
 {
   // We normalize the equations of the 2 planes, and we then add them.
-  FT n1 = CGAL_NTS sqrt(CGAL_NTS square(pa) + CGAL_NTS square(pb) +
-                        CGAL_NTS square(pc));
-  FT n2 = CGAL_NTS sqrt(CGAL_NTS square(qa) + CGAL_NTS square(qb) +
-                        CGAL_NTS square(qc));
+  FT n1 = CGAL_NTS approximate_sqrt( FT(CGAL_NTS square(pa) + CGAL_NTS square(pb) +
+                        CGAL_NTS square(pc)) );
+  FT n2 = CGAL_NTS approximate_sqrt( FT(CGAL_NTS square(qa) + CGAL_NTS square(qb) +
+                        CGAL_NTS square(qc)) );
   a = n2 * pa + n1 * qa;
   b = n2 * pb + n1 * qb;
   c = n2 * pc + n1 * qc;

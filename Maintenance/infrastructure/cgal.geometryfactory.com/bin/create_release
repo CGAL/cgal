@@ -18,34 +18,26 @@ if [ -n "DRY_RUN" ]; then
     QUIET=
 fi
 
-if [ -d "$1/.git" ]; then
-    pushd "$1" > /dev/null
-    branch=`git rev-parse --abbrev-ref HEAD`
-    remote=`git config branch.${branch}.remote`
-#    echo "Git repository, in branch '$branch'"
-    git fetch $DRY_RUN $QUIET -p --all
-    [ -z "$DRY_RUN" ] && git reset $QUIET --hard "$remote/$branch"
-    git clean $DRY_RUN $QUIET -f -d -x
+pushd "$1" > /dev/null
+branch=`git rev-parse --abbrev-ref HEAD`
+remote=`git config branch.${branch}.remote`
+git fetch $DRY_RUN $QUIET -p --all
+[ -z "$DRY_RUN" ] && git reset $QUIET --hard "$remote/$branch"
+git clean $DRY_RUN $QUIET -f -d -x
 
-    ln -s -n -f "$1" $HOME/latest-internal-release-branch
+ln -s -n -f "$1" $HOME/latest-internal-release-branch
 
-    # Hard-reset integration "every day", if today's "$branch" is integration
-    # and create testsuite-Monday, testsuite-Tuesday, and so on...
-    if [ x"$branch" = "xintegration" ]; then
-        git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`" cgal/master:integration
-    elif [ x"$branch" = "xintegration-4.5" ]; then
-        git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`" cgal/releases/CGAL-4.5-branch:integration-4.5
-    else
-        git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`"
-    fi
-
-    popd > /dev/null
+# Hard-reset integration "every day", if today's "$branch" is integration
+# and create testsuite-Monday, testsuite-Tuesday, and so on...
+if [ x"$branch" = "xintegration" ]; then
+    git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`" cgal/master:integration
+elif [ x"$branch" = "xintegration-4.5" ]; then
+    git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`" cgal/releases/CGAL-4.5-branch:integration-4.5
 else
-    svn up "$1"
+    git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`"
 fi
 
-# Update the candidates branch, if any.
-[ -d "$2" ] && svn up "$2"
+popd > /dev/null
 
 # Update the symbolic links, using $1 and $2
 rm "$HOME/CGAL/last-release-branch"

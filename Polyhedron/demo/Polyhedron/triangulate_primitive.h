@@ -132,7 +132,7 @@ private:
        if(first == typename CDT::Vertex_handle()) {
          first = vh;
        }
-       if(previous != 0 && previous != vh) {
+       if(previous != nullptr && previous != vh) {
          cdt->insert_constraint(previous, vh);
          last_inserted = previous;
        }
@@ -189,7 +189,7 @@ private:
         if(first == typename CDT::Vertex_handle()) {
           first = vh;
         }
-        if(previous != 0 && previous != vh) {
+        if(previous != nullptr && previous != vh) {
           cdt->insert_constraint(previous, vh);
           last_inserted = previous;
         }

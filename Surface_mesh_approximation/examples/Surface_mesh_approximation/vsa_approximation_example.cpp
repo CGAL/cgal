@@ -1,13 +1,15 @@
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/Surface_mesh_approximation/approximate_triangle_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+
+#include <iostream>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
@@ -15,12 +17,18 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Mesh;
 namespace VSA = CGAL::Surface_mesh_approximation;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-int main()
+int main(int argc, char** argv)
 {
+  const char* filename = (argc > 1) ? argv[1] : "data/bear.off";
+
   // read input surface triangle mesh
   Mesh mesh;
-  std::ifstream file("data/bear.off");
-  file >> mesh;
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh) ||
+     !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // output indexed triangles
   std::vector<Kernel::Point_3> anchors;
@@ -29,10 +37,10 @@ int main()
   // free function interface with named parameters
   bool is_manifold = VSA::approximate_triangle_mesh(mesh,
     CGAL::parameters::seeding_method(VSA::HIERARCHICAL). // hierarchical seeding
-    max_number_of_proxies(200). // seeding with maximum number of proxies
-    number_of_iterations(30). // number of clustering iterations after seeding
-    anchors(std::back_inserter(anchors)). // anchor vertices
-    triangles(std::back_inserter(triangles))); // indexed triangles
+                      max_number_of_proxies(200). // seeding with maximum number of proxies
+                      number_of_iterations(30). // number of clustering iterations after seeding
+                      anchors(std::back_inserter(anchors)). // anchor vertices
+                      triangles(std::back_inserter(triangles))); // indexed triangles
 
   std::cout << "#anchor vertices: " << anchors.size() << std::endl;
   std::cout << "#triangles: " << triangles.size() << std::endl;

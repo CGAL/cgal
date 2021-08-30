@@ -33,31 +33,21 @@
 
 #include <boost/property_map/property_map.hpp>
 
+#include <array>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <type_traits>
 #include <unordered_map>
+#include <utility>
+#include <vector>
+#include <bitset>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
 
 namespace internal
 {
-
-template <class Geom_traits, class Plane_3, class Point_3>
-int
-inter_pt_index(int i, int j,
-               const Plane_3& plane,
-               std::vector<Point_3>& points,
-               std::map<std::pair<int,int>, int>& id_map)
-{
-  std::pair<std::map<std::pair<int,int>, int>::iterator, bool> res =
-    id_map.insert(std::make_pair(make_sorted_pair(i,j),
-                  static_cast<int> (points.size())));
-  if(res.second)
-    points.push_back(
-      typename Geom_traits::Construct_plane_line_intersection_point_3()
-        (plane, points[i], points[j]));
-
-  return res.first->second;
-}
 
 template <class Plane_3,
           class TriangleMesh,
@@ -99,19 +89,42 @@ clip_to_bbox(const Plane_3& plane,
   }};
 
   // description of faces of the bbox
-  std::array<int, 24> face_indices =
-    {{ 0, 1, 2, 3,
-       2, 1, 5, 6,
-       3, 2, 6, 7,
-       1, 0, 4, 5,
-       4, 0, 3, 7,
-       6, 5, 4, 7 }};
+  constexpr std::array<int, 24> face_indices
+    { { 0, 1, 2, 3,
+        2, 1, 5, 6,
+        3, 2, 6, 7,
+        1, 0, 4, 5,
+        4, 0, 3, 7,
+        6, 5, 4, 7 } };
 
-  std::map<std::pair<int,int>, int> id_map;
+  constexpr std::array<int, 24> edge_indices
+    { { 0,  1,  2, 3,
+        1,  4,  5, 6,
+        2,  6,  7, 8,
+        0,  9, 10, 4,
+        9,  3,  8, 11,
+        5, 10, 11, 7 } };
+
+  std::array<int, 12> edge_ipt_id;
+  edge_ipt_id.fill(-1);
+
+  auto inter_pt_index =
+    [&plane, &corners, &edge_ipt_id](int i, int j, int edge_id)
+  {
+    if (edge_ipt_id[edge_id]==-1)
+    {
+      edge_ipt_id[edge_id] = static_cast<int> (corners.size());
+      corners.push_back(typename Geom_traits::Construct_plane_line_intersection_point_3()
+                      (plane, corners[i], corners[j]));
+    }
+
+    return edge_ipt_id[edge_id];
+  };
+
   std::vector< std::vector<int> > output_faces(6);
   bool all_in = true;
   bool all_out = true;
-  std::set<int> in_point_ids; // to collect the set of points in the clipped bbox
+  std::bitset<14> in_point_bits; // to collect the set of points in the clipped bbox
 
   // for each face of the bbox, we look for intersection of the plane with its edges
   for(int i=0; i<6; ++i)
@@ -120,6 +133,7 @@ clip_to_bbox(const Plane_3& plane,
     {
       int current_id = face_indices[4*i + k];
       int next_id = face_indices[4*i + (k+1)%4];
+      int edge_id = edge_indices[4 * i + k];
 
       switch(orientations[ current_id ])
       {
@@ -128,13 +142,13 @@ clip_to_bbox(const Plane_3& plane,
           all_out=false;
           // point on or on the negative side
           output_faces[i].push_back(current_id);
-          in_point_ids.insert(output_faces[i].back());
+          in_point_bits.set(output_faces[i].back());
           // check for intersection of the edge
           if(orientations[ next_id ] == ON_POSITIVE_SIDE)
           {
             output_faces[i].push_back(
-              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map));
-            in_point_ids.insert(output_faces[i].back());
+              inter_pt_index(current_id, next_id, edge_id));
+            in_point_bits.set(output_faces[i].back());
           }
           break;
         }
@@ -145,15 +159,15 @@ clip_to_bbox(const Plane_3& plane,
           if(orientations[ next_id ] == ON_NEGATIVE_SIDE)
           {
             output_faces[i].push_back(
-              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map));
-            in_point_ids.insert(output_faces[i].back());
+              inter_pt_index(current_id, next_id, edge_id));
+            in_point_bits.set(output_faces[i].back());
           }
           break;
         }
         case ON_ORIENTED_BOUNDARY:
         {
           output_faces[i].push_back(current_id);
-          in_point_ids.insert(output_faces[i].back());
+          in_point_bits.set(output_faces[i].back());
         }
       }
     }
@@ -175,11 +189,14 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename graph_traits::face_descriptor face_descriptor;
 
   std::map<int, vertex_descriptor> out_vertices;
-  for(int i : in_point_ids)
+  for(int i=0; i<14;++i)
   {
-    vertex_descriptor v = add_vertex(tm_out);
-    out_vertices.insert(std::make_pair(i, v));
-    put(vpm_out, v, corners[i]);
+    if (in_point_bits.test(i))
+    {
+      vertex_descriptor v = add_vertex(tm_out);
+      out_vertices.insert(std::make_pair(i, v));
+      put(vpm_out, v, corners[i]);
+    }
   }
 
   std::map< std::pair<int,int>, halfedge_descriptor> hedge_map;
@@ -299,6 +316,7 @@ void split_along_edges(TriangleMesh& tm,
   std::set<halfedge_descriptor> extra_border_hedges;
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
+    if (is_border(shared_edges[k], tm)) continue;
     for(halfedge_descriptor h : halfedges_around_target(target(shared_edges[k], tm), tm))
       if(is_border(h, tm))
         extra_border_hedges.insert(h);
@@ -317,6 +335,7 @@ void split_along_edges(TriangleMesh& tm,
   // now duplicate the edge and set its pointers
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
+    if (is_border(shared_edges[k], tm)) continue;
     halfedge_descriptor h    = halfedge(shared_edges[k], tm);
     face_descriptor fh = face(h, tm);
     //add edge
@@ -420,10 +439,9 @@ generic_clip_impl(
                                      NamedParameters1>::type Vpm;
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters2>::type Vpm2;
-  CGAL_USE_TYPE(Vpm2);
-  CGAL_assertion_code(
-    static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
-  CGAL_static_assertion(same_vpm);
+
+  CGAL_static_assertion((std::is_same<typename boost::property_traits<Vpm>::value_type,
+                                      typename boost::property_traits<Vpm>::value_type>::value));
 
   Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                               get_property_map(boost::vertex_point, tm1));
@@ -477,17 +495,17 @@ generic_clip_impl(
 
   // surface intersection algorithm call
   typedef Corefinement::Generic_clip_output_builder<TriangleMesh,
-                                                    Vpm,
+                                                    Vpm, Vpm2,
                                                     Algo_ecm1,
                                                     FaceIndexMap1,
                                                     Default> Ob;
 
   typedef Corefinement::Surface_intersection_visitor_for_corefinement<
-    TriangleMesh, Vpm, Ob, Ecm_in, User_visitor> Algo_visitor;
+    TriangleMesh, Vpm, Vpm2, Ob, Ecm_in, User_visitor> Algo_visitor;
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Ob ob(tm1, tm2, vpm1, vpm2, algo_ecm1, fid_map1, use_compact_clipper);
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Algo_visitor >
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, Vpm, Vpm2, Algo_visitor >
     functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in,&tm2));
   functor(CGAL::Emptyset_iterator(), false, true);
 }
@@ -663,6 +681,14 @@ clip(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{allow_self_intersections}
+  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
+  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
+  *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -678,6 +704,10 @@ bool clip(TriangleMesh& tm,
 #endif
           const NamedParameters& np)
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  namespace params = PMP::parameters;
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
 
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
@@ -701,7 +731,8 @@ bool clip(TriangleMesh& tm,
       break;
   }
 
-  return clip(tm, clipper, np, parameters::all_default());
+  const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
+  return clip(tm, clipper, np, params::do_not_modify(do_not_modify));
 }
 
 /**
@@ -752,6 +783,15 @@ bool clip(TriangleMesh& tm,
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{allow_self_intersections}
+  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
+  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
+  *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
@@ -767,6 +807,11 @@ bool clip(TriangleMesh& tm,
 #endif
           const NamedParameters& np)
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  namespace params = PMP::parameters;
+
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
   TriangleMesh clipper;
 
@@ -775,7 +820,8 @@ bool clip(TriangleMesh& tm,
                   clipper);
   triangulate_faces(clipper);
 
-  return clip(tm, clipper, np, parameters::all_default());
+  const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
+  return clip(tm, clipper, np, params::do_not_modify(do_not_modify));
 }
 
 /*!
@@ -818,6 +864,8 @@ bool clip(TriangleMesh& tm,
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{do_not_modify}
   *     \cgalParamDescription{(`np_s` only) if `true`, `splitter` will not be modified.}
   *     \cgalParamType{Boolean}
@@ -908,6 +956,13 @@ void split(TriangleMesh& tm,
   *     \cgalParamDefault{`false`}
   *   \cgalParamNEnd
   *
+  *   \cgalParamNBegin{allow_self_intersections}
+  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
+  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`.}
+  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
@@ -937,7 +992,11 @@ void split(TriangleMesh& tm,
   CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, PMP::parameters::all_default());
 
   if(os == CGAL::ON_ORIENTED_BOUNDARY)
-    return split(tm, splitter, np, params::all_default());
+  {
+
+    const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
+    return split(tm, splitter, np, params::do_not_modify(do_not_modify));
+  }
 
   //else nothing to do, no intersection.
 }
@@ -998,6 +1057,15 @@ void split(TriangleMesh& tm,
   *     \cgalParamDefault{`true`}
   *   \cgalParamNEnd
   *
+  * *   \cgalParamNBegin{allow_self_intersections}
+  *     \cgalParamDescription{If `true`, self-intersections are accepted for `tm`.}
+  *     \cgalParamType{Boolean}
+  *     \cgalParamDefault{`false`}
+  *     \cgalParamExtra{If this option is set to `true`, `tm` is no longer required to be without self-intersection.
+  *                     Setting this option to `true` will automatically set `throw_on_self_intersection` to `false`
+  *                     and `clip_volume` to `false`.}
+  *   \cgalParamNEnd
+  *
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
@@ -1010,14 +1078,18 @@ void split(TriangleMesh& tm,
            #endif
            const NamedParameters& np)
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  namespace params = PMP::parameters;
   TriangleMesh splitter;
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],
       iso_cuboid[4], iso_cuboid[5], iso_cuboid[6], iso_cuboid[7],
       splitter);
   triangulate_faces(splitter);
-
-  split(tm, splitter, np, parameters::all_default());
+  const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
+  return split(tm, splitter, np, params::do_not_modify(do_not_modify));
 }
 
 /// \cond SKIP_IN_MANUAL

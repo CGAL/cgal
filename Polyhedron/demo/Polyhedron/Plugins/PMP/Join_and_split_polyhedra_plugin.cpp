@@ -21,7 +21,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/unordered_map.hpp>
 #include "Color_map.h"
 
@@ -199,6 +199,7 @@ struct Polyhedron_cc_marker{
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedComponents_triggered()
 {
   // wait cursor
+
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   std::set<Scene_facegraph_item*> to_skip;
@@ -226,6 +227,13 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
 
       if (selection_item)
       {
+        if(selection_item->selected_edges.empty())
+        {
+          QApplication::restoreOverrideCursor();
+          QMessageBox::warning(mw, "Empty Edges", "There are no selected edges. Skipping.");
+          continue;
+          QApplication::setOverrideCursor(Qt::WaitCursor);
+        }
         namespace PMP = CGAL::Polygon_mesh_processing;
         typedef boost::graph_traits<FaceGraph>::face_descriptor   face_descriptor;
 

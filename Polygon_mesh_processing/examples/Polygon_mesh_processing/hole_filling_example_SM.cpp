@@ -3,6 +3,7 @@
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -12,12 +13,14 @@
 #include <set>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
-typedef CGAL::Surface_mesh<Point> Mesh;
+typedef Kernel::Point_3                                     Point;
+typedef CGAL::Surface_mesh<Point>                           Mesh;
 
-typedef boost::graph_traits<Mesh>::halfedge_descriptor   halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor       face_descriptor;
-typedef boost::graph_traits<Mesh>::vertex_descriptor     vertex_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_descriptor        vertex_descriptor;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor      halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 bool is_small_hole(halfedge_descriptor h, Mesh & mesh,
                    double max_hole_diam, int max_num_hole_edges)
@@ -48,22 +51,22 @@ int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
 
+  Mesh mesh;
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
+
   // Both of these must be positive in order to be considered
   double max_hole_diam   = (argc > 2) ? boost::lexical_cast<double>(argv[2]): -1.0;
   int max_num_hole_edges = (argc > 3) ? boost::lexical_cast<int>(argv[3]) : -1;
-
-  std::ifstream input(filename);
-  Mesh mesh;
-  if ( !input || !(input >> mesh) ) {
-    std::cerr << "Not a valid off file." << std::endl;
-    return 1;
-  }
 
   unsigned int nb_holes = 0;
   std::vector<halfedge_descriptor> border_cycles;
 
   // collect one halfedge per boundary cycle
-  CGAL::Polygon_mesh_processing::extract_boundary_cycles(mesh, std::back_inserter(border_cycles));
+  PMP::extract_boundary_cycles(mesh, std::back_inserter(border_cycles));
 
   for(halfedge_descriptor h : border_cycles)
   {
@@ -73,12 +76,10 @@ int main(int argc, char* argv[])
 
     std::vector<face_descriptor>  patch_facets;
     std::vector<vertex_descriptor> patch_vertices;
-    bool success = std::get<0>(
-      CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
-                mesh,
-                h,
-                std::back_inserter(patch_facets),
-                std::back_inserter(patch_vertices)) );
+    bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
+                                                                     h,
+                                                                     std::back_inserter(patch_facets),
+                                                                     std::back_inserter(patch_vertices)));
 
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
     std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
@@ -89,10 +90,8 @@ int main(int argc, char* argv[])
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
 
-  std::string outfile = "filled_SM.off";
-  std::ofstream out(outfile.c_str());
-  std::cout << "Mesh written to: " << outfile << std::endl;
-  out.precision(17);
-  out << mesh << std::endl;
+  CGAL::IO::write_polygon_mesh("filled_SM.off", mesh, CGAL::parameters::stream_precision(17));
+  std::cout << "Mesh written to: filled_SM.off" << std::endl;
+
   return 0;
 }

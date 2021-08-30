@@ -8,11 +8,11 @@ namespace CGAL {
   An object `arr` of the class `Arrangement_2` represents the
   planar subdivision induced by a set of \f$ x\f$-monotone curves and isolated
   points into maximally connected cells. The arrangement is represented as
-  a doubly-connected edge-list (<span class="textsc">Dcel</span>) such that each <span class="textsc">Dcel</span> vertex
+  a doubly-connected edge-list (\dcel) such that each \dcel vertex
   is associated with a point of the plane and each edge is
   associated with an \f$ x\f$-monotone curve whose interior is disjoint from all
   other edges and vertices. Recall that an arrangement
-  edge is always comprised of a pair of twin <span class="textsc">Dcel</span> halfedges.
+  edge is always comprised of a pair of twin \dcel halfedges.
 
   The `Arrangement_2` template has two parameters:
   <UL>
@@ -26,7 +26,7 @@ namespace CGAL {
   value of this parameter is by default
   `Arr_default_dcel<Traits>`.
   </UL>
-  The available traits classes and <span class="textsc">Dcel</span> classes are described below.
+  The available traits classes and \dcel classes are described below.
 
   \sa `ArrangementDcel`
   \sa `Arr_default_dcel<Traits>`
@@ -71,7 +71,7 @@ public:
   typedef Traits Traits_2;
 
   /*!
-    the <span class="textsc">Dcel</span> representation of the arrangement.
+    the \dcel representation of the arrangement.
   */
   typedef unspecified_type Dcel;
 

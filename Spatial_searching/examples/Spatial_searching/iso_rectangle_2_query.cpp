@@ -14,8 +14,8 @@ typedef CGAL::Search_traits_2<K> Traits;
 typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_iso_box;
 
-int
-main() {
+int main()
+{
   const int N = 1000;
 
   std::list<Point_d> points;
@@ -23,9 +23,8 @@ main() {
 
   Tree tree;
   Random_points_iterator rpg;
-  for(int i = 0; i < N; i++){
+  for(int i = 0; i < N; i++)
     tree.insert(*rpg++);
-  }
 
   std::list<Point_d> result;
 

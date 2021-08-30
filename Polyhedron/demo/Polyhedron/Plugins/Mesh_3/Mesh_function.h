@@ -35,23 +35,11 @@
 #include <CGAL/use.h>
 
 #include <boost/any.hpp>
-#include <CGAL/Mesh_3/experimental/Get_facet_patch_id.h>
 
 namespace CGAL {
   class Image_3;
 }
-namespace internal{
-//general case for polyhedron
-template<class Domain>
-struct Get_facet_patch_id_selector {
-  typedef CGAL::Default type;
-};
-//specialization for surface_mesh
-template<>
-struct Get_facet_patch_id_selector<Polyhedral_mesh_domain> {
-  typedef CGAL::Mesh_3::Get_facet_patch_id_sm<Polyhedral_mesh_domain> type;
-};
-}//end internal
+
 struct Mesh_parameters
 {
   double facet_angle;
@@ -243,8 +231,7 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
      criteria,
      p_.protect_features,
      p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
-                       p::nonlinear_growth_of_balls =
-                       p_.use_sizing_field_with_aabb_tree));
+                       p::nonlinear_growth_of_balls = true));
 }
 
 template < typename D_, typename Tag >
@@ -265,14 +252,7 @@ edge_criteria(double edge_size, Mesh_fnt::Polyhedral_domain_tag)
 {
   if(p_.use_sizing_field_with_aabb_tree) {
     typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
-    typedef Sizing_field_with_aabb_tree
-      <
-      Kernel
-      , Domain
-      , typename Domain::AABB_tree
-      , CGAL::Default
-      , typename internal::Get_facet_patch_id_selector<Domain>::type
-      > Mesh_sizing_field; // type of sizing field for 0D and 1D features
+    typedef Sizing_field_with_aabb_tree<Kernel, Domain> Mesh_sizing_field; // type of sizing field for 0D and 1D features
     typedef std::vector<Set_of_patch_ids> Patches_ids_vector;
     typedef typename Domain::Curve_index Curve_index;
     const Curve_index max_index = domain_->maximal_curve_index();

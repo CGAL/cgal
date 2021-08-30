@@ -1177,7 +1177,7 @@ std::size_t flip_all_edges(const std::vector<VertexPair>& edges,
     boost::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
 
   std::size_t count = 0;
-  for (const VertexPair vp : edges)
+  for (const VertexPair& vp : edges)
   {
     boost::optional<boost::container::small_vector<Cell_handle, 64>>&
       o_inc_vh = inc_cells[vp.first];

@@ -109,6 +109,8 @@ public:
         tmp += n;
         return tmp.operator*();
     }
+    bool operator==( std::nullptr_t) const { return ptr == nullptr; }
+    bool operator!=( std::nullptr_t) const { return ptr != nullptr; }
     bool operator< ( const Self& i) const { return ( ptr < i.ptr); }
     bool operator> ( const Self& i) const { return i < *this;    }
     bool operator<=( const Self& i) const { return !(i < *this); }

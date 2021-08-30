@@ -18,10 +18,15 @@ jobs:
          git clone https://maxGimeno:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git --depth=5
          PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
          cd cgal.github.io/
-         egrep -v " ${PR_NUMBER}\." index.html > tmp.html
+         egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true
          if [ -n "$(diff -q ./index.html ./tmp.html)" ]; then
            mv tmp.html index.html
-         #git rm -r ${PR_NUMBER} && git commit -a -m "Remove ${PR_NUMBER}" && git push -u origin master
-           git commit -a -m "Remove ${PR_NUMBER}" && git push -u origin master
+         fi
+         if [ -d ${PR_NUMBER} ]; then 
+           git rm -r ${PR_NUMBER} 
+         fi
+         #git diff exits with 1 if there is no diff
+         if  git diff --quiet; then
+           git commit -a --amend -m"base commit" && git push -f -u origin master
          fi
 

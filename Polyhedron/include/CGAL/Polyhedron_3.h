@@ -16,9 +16,6 @@
 #include <CGAL/license/Polyhedron.h>
 
 #include <CGAL/Polyhedron_3_fwd.h>
-#include <CGAL/basic.h>
-#include <algorithm>
-#include <cstddef>
 
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Iterator_project.h>
@@ -33,6 +30,8 @@
 #include <CGAL/Polyhedron_traits_3.h>
 #include <CGAL/iterator.h>
 
+#include <algorithm>
+#include <cstddef>
 
 namespace CGAL {
 
@@ -111,7 +110,8 @@ public:
 
     // the degree of the vertex, i.e., edges emanating from this vertex
     std::size_t vertex_degree() const {
-        return this->halfedge()->vertex_degree();
+        return this->halfedge()!=Halfedge_const_handle()
+               ? this->halfedge()->vertex_degree() : 0;
     }
     size_type degree() const { return vertex_degree(); } //backwards compatible
 

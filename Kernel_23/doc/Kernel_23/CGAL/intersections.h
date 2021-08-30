@@ -58,6 +58,12 @@ In three-dimensional space, the types `Type1` and
 - `Tetrahedron_3<Kernel>`.
 */
 bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
+
+/*!
+checks whether `obj1`, `obj2` and `obj3` intersect.
+*/
+bool do_intersect(Plane_3<Kernel> obj1, Plane_3<Kernel> obj2, Plane_3<Kernel> obj3);
+
 /// @}
 
 
@@ -95,12 +101,15 @@ The following tables give the possible values for `Type1` and `Type2`.
 
 \cgalHeading{2D Intersections}
 
-The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_2(A, B)>::%type`.
-It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
+The return type of intersecting two objects of the types `Type1` and `Type2` can be
+specified through the placeholder type specifier `auto`. It is equivalent to
+`boost::optional< boost::variant< T... > >`, the last column in the table providing
+the template parameter pack.
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
-<TR> <TH> Type1 </TH>
+<TR>
+ <TH> Type1 </TH>
  <TH> Type2 </TH>
  <TH> Return Type:  `T...` </TH>
 </TR>
@@ -191,12 +200,15 @@ intersections existing with the type `Iso_rectangle_2`. Note that the return typ
 
 \cgalHeading{3D Intersections}
 
-The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
-It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
+The return type of intersecting two objects of the types `Type1` and `Type2` can be
+specified through the placeholder type specifier `auto`. It is equivalent to
+`boost::optional< boost::variant< T... > >`, the last column in the table providing
+the template parameter pack.
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
-<TR> <TH> Type1 </TH>
+<TR>
+ <TH> Type1 </TH>
  <TH> Type2 </TH>
  <TH> Return Type: `T...` </TH>
 </TR>
@@ -350,9 +362,9 @@ The following examples demonstrate the most common use of
 `intersection()` functions with the 2D and 3D Linear %Kernel.
 
 In the first two examples we intersect a segment and a line.
-The result type can be obtained with `CGAL::cpp11::result_of`. It looks simpler
-if you use a C++ compiler which supports `auto`,
-but you must anyways know that the result type is a `boost::optional<boost::variant<..> >`, in order to unpack the point or segment.
+The result type can be specified through the placeholder type specifier `auto`,
+but you must anyway know that the result type is a `boost::optional<boost::variant<..> >`,
+in order to unpack the point or segment.
 
 <A HREF="https://www.boost.org/libs/optional/">`boost::optional`</A> comes in
 as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A> comes in
@@ -374,7 +386,7 @@ a standard library algorithm.
 
 */
 template <typename Kernel>
-cpp11::result_of<Kernel::Intersect_23(Type1, Type2)>::type
+decltype(auto)
 intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);
 
 /*!
@@ -382,7 +394,7 @@ returns the intersection of 3 planes, which can be a
 point, a line, a plane, or empty.
 */
 template <typename Kernel>
-boost::optional< boost::variant< Point_3, Line_3, Plane_3 > >
+decltype(auto)
 intersection(const Plane_3<Kernel>& pl1,
              const Plane_3<Kernel>& pl2,
              const Plane_3<Kernel>& pl3);

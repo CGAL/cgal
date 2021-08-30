@@ -55,6 +55,12 @@ the number of edges effectively removed.
     \cgalParamDefault{`CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`}
   \cgalParamNEnd
 
+  \cgalParamNBegin{filter}
+    \cgalParamDescription{a policy which returns the filter for a placement}
+    \cgalParamType{a model of the concept `Filter`}
+    \cgalParamDefault{no placement gets filtered}
+  \cgalParamNEnd
+
   \cgalParamNBegin{edge_is_constrained_map}
     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`}
     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
@@ -102,4 +108,3 @@ int edge_collapse(TriangleMesh& tmesh,
 
 } // namespace Surface_mesh_simplification
 } /* namespace CGAL */
-

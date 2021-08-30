@@ -114,7 +114,7 @@ public:
       current_dir = (current_dir +1) % _dimension;
     }while (current_dir != last_dir);
 
-    if ( end-begin < two_to_dim) return; // less than 2^dim points
+    if ( end-begin < two_to_dim) return; // fewer than 2^dim points
 
     /////////////start recursive calls
     last_dir = (direction + _dimension -1) % _dimension;

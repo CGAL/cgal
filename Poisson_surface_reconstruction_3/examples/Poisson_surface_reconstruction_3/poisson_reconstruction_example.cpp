@@ -6,7 +6,7 @@
 #include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/compute_average_spacing.h>
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
@@ -40,18 +40,14 @@ int main(void)
     FT sm_distance = 0.375; // Surface Approximation error w.r.t. point set average spacing.
 
     // Reads the point set file in points[].
-    // Note: read_xyz_points_and_normals() requires an iterator over points
+    // Note: read_points() requires an iterator over points
     // + property maps to access each point's position and normal.
     PointList points;
-    std::ifstream stream("data/kitten.xyz");
-    if (!stream ||
-        !CGAL::read_xyz_points(
-                              stream,
-                              std::back_inserter(points),
-                              CGAL::parameters::point_map (Point_map()).
-                              normal_map (Normal_map())))
+    if(!CGAL::IO::read_points("data/kitten.xyz", std::back_inserter(points),
+                          CGAL::parameters::point_map(Point_map())
+                                           .normal_map (Normal_map())))
     {
-      std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
+      std::cerr << "Error: cannot read file input file!" << std::endl;
       return EXIT_FAILURE;
     }
 

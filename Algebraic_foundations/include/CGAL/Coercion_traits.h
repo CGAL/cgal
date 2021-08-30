@@ -13,7 +13,7 @@
 // =============================================================================
 
 /*! \file NiX/Coercion_traits.h
- *  \brief Defines class NiX::Coercion_traits.
+ *  \brief defines class NiX::Coercion_traits.
  *
  *  Provides the general definition of the \c Coercion_traits<A,B> class, with
  *  specializations for the builtin number types.

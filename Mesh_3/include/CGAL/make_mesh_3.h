@@ -32,6 +32,8 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/parameter/preprocessor.hpp>
 
+#include <atomic>
+
 namespace CGAL {
 
 namespace parameters {
@@ -192,7 +194,7 @@ void init_c3t3_with_features(C3T3& c3t3,
                              std::size_t maximal_number_of_vertices = 0,
                              Mesh_error_code* pointer_to_error_code = 0
 #ifndef CGAL_NO_ATOMIC
-                             , CGAL::cpp11::atomic<bool>* pointer_to_stop = 0
+                             , std::atomic<bool>* pointer_to_stop = 0
 #endif
                              )
 {

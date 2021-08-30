@@ -15,7 +15,7 @@ int main() {
 
     Polyhedron P;
     P.make_tetrahedron( p, q, r, s);
-    CGAL::set_ascii_mode( std::cout);
+    CGAL::IO::set_ascii_mode( std::cout);
     for ( Vertex_iterator v = P.vertices_begin(); v != P.vertices_end(); ++v)
         std::cout << v->point() << std::endl;
     return 0;

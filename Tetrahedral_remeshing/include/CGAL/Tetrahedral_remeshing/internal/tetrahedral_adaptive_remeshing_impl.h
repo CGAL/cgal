@@ -618,6 +618,9 @@ public:
       Tetrahedral_remeshing::internal::compute_statistics(
         tr(), m_cell_selector, ossi.str().c_str());
 #endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+      CGAL::Tetrahedral_remeshing::debug::check_surface_patch_indices(m_c3t3);
+#endif
     }
 
     while (it_nb < max_it + nb_extra_iterations)

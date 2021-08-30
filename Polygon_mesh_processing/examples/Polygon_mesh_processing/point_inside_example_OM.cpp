@@ -1,24 +1,22 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
+#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
+#include <CGAL/point_generators_3.h>
+#include <CGAL/Side_of_triangle_mesh.h>
+
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
-
-#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
-
-#include <CGAL/point_generators_3.h>
-
-#include <CGAL/Side_of_triangle_mesh.h>
 
 #include <vector>
 #include <fstream>
 #include <limits>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 
-typedef OpenMesh::PolyMesh_ArrayKernelT< > Mesh;
-typedef K::Point_3 Point;
+typedef OpenMesh::PolyMesh_ArrayKernelT< >                    Mesh;
+typedef K::Point_3                                            Point;
 
-typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_descriptor          vertex_descriptor;
 
 double max_coordinate(const Mesh& mesh)
 {
@@ -42,7 +40,7 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
-  if (!CGAL::is_triangle_mesh(mesh))
+  if (CGAL::is_empty(mesh) || !CGAL::is_triangle_mesh(mesh))
   {
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;

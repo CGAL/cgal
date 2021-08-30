@@ -38,7 +38,7 @@ public:
   /// The circle type, only required if you want to detect tori
   typedef unspecified_type Circle_2;
   /// The 2D vector type, only required if you want to detect tori
-  typedef unspecified_type Vector_3;
+  typedef unspecified_type Vector_2;
 
   /// The number type of the Cartesian coordinates of types Point_3
   typedef unspecified_type FT;

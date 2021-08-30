@@ -142,7 +142,7 @@ public:
     typedef typename boost::property_traits<PointPropertyMap>::value_type
     Point;
 
-    boost::shared_ptr<Point> point;
+    std::shared_ptr<Point> point;
     std::size_t idx;
 
   public:
@@ -157,18 +157,18 @@ public:
     void increment()
     {
       ++idx;
-      CGAL_assertion(point != boost::shared_ptr<Point>());
+      CGAL_assertion(point != std::shared_ptr<Point>());
     }
     void decrement()
     {
       --idx;
-      CGAL_assertion(point != boost::shared_ptr<Point>());
+      CGAL_assertion(point != std::shared_ptr<Point>());
     }
 
     void advance(std::ptrdiff_t n)
     {
       idx += n;
-      CGAL_assertion(point != boost::shared_ptr<Point>());
+      CGAL_assertion(point != std::shared_ptr<Point>());
     }
 
     std::ptrdiff_t distance_to(const No_lvalue_iterator& other) const

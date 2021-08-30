@@ -14,9 +14,14 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
 int main(int argc, char* argv[])
 {
+  const char* filename = (argc > 1) ? argv[1] : "data/prim.off";
+
   Mesh sm;
-  std::ifstream in((argc>1)?argv[1]:"data/prim.off");
-  in >> sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
 
   Mesh::Property_map<vertex_descriptor,int> ccmap;
   ccmap = sm.add_property_map<vertex_descriptor,int>("v:CC").first;

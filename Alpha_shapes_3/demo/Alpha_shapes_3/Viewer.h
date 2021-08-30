@@ -21,6 +21,7 @@ public:
   Viewer(QWidget* parent);
   ~Viewer()
   {
+    makeCurrent();
     buffers[0].destroy();
     buffers[1].destroy();
     buffers[2].destroy();

@@ -19,18 +19,18 @@ struct Facewidth_draw_functor : public CGAL::DefaultDrawingFunctorLCC
   { return alcc.is_marked(dh, m_vertex_mark); }
 
   template<typename LCC>
-  CGAL::Color vertex_color(const LCC& /* alcc */,
+  CGAL::IO::Color vertex_color(const LCC& /* alcc */,
                            typename LCC::Dart_const_handle /* dh */) const
-  { return CGAL::Color(0, 255, 0); }
+  { return CGAL::IO::Color(0, 255, 0); }
 
   template<typename LCC>
   bool colored_edge(const LCC& /*alcc*/, typename LCC::Dart_const_handle /*dh*/) const
   { return false; }
 
   template<typename LCC>
-  CGAL::Color edge_color(const LCC& /* alcc*/,
+  CGAL::IO::Color edge_color(const LCC& /* alcc*/,
                          typename LCC::Dart_const_handle /* dh */) const
-  { return CGAL::Color(0, 0, 255); }
+  { return CGAL::IO::Color(0, 0, 255); }
 
   template<typename LCC>
   bool colored_face(const LCC& /* alcc */,
@@ -38,9 +38,9 @@ struct Facewidth_draw_functor : public CGAL::DefaultDrawingFunctorLCC
   {return true;}
 
   template<typename LCC>
-  CGAL::Color face_color(const LCC& alcc, typename LCC::Dart_const_handle dh) const
-  { return alcc.is_marked(dh, m_face_mark)?CGAL::Color(255, 0, 0)
-                                          :CGAL::Color(211, 211, 211); }
+  CGAL::IO::Color face_color(const LCC& alcc, typename LCC::Dart_const_handle dh) const
+  { return alcc.is_marked(dh, m_face_mark)?CGAL::IO::Color(255, 0, 0)
+                                          :CGAL::IO::Color(211, 211, 211); }
 
   template<typename LCC>
   bool colored_volume(const LCC& /* alcc */,

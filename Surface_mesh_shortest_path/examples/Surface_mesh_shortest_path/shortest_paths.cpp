@@ -1,15 +1,14 @@
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Random.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_shortest_path.h>
+#include <CGAL/Random.h>
 
 #include <boost/lexical_cast.hpp>
+
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Triangle_mesh;
@@ -21,10 +20,15 @@ typedef Graph_traits::face_iterator face_iterator;
 
 int main(int argc, char** argv)
 {
+  const char* filename = (argc>1) ? argv[1] : "data/elephant.off";
+
   Triangle_mesh tmesh;
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
-  input >> tmesh;
-  input.close();
+  if(!CGAL::IO::read_polygon_mesh(filename, tmesh) ||
+     !CGAL::is_triangle_mesh(tmesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // pick up a random face
   const unsigned int randSeed = argc > 2 ? boost::lexical_cast<unsigned int>(argv[2]) : 7915421;
@@ -42,7 +46,7 @@ int main(int argc, char** argv)
   // For all vertices in the tmesh, compute the points of
   // the shortest path to the source point and write them
   // into a file readable using the CGAL Polyhedron demo
-  std::ofstream output("shortest_paths_with_id.cgal");
+  std::ofstream output("shortest_paths_with_id.polylines.txt");
   vertex_iterator vit, vit_end;
   for ( boost::tie(vit, vit_end) = vertices(tmesh);
         vit != vit_end; ++vit)

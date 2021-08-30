@@ -5,7 +5,7 @@
 \cgalPkgPicture{ipeico.jpg}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Olivier Devillers, Sébastien Loriot, and Sylvain Pion}
-\cgalPkgDesc{This package provides  a generic framework to easily write ipelets (plug-in's) using \cgal for the the Ipe extensible drawing editor.}
+\cgalPkgDesc{This package provides  a generic framework to easily write ipelets (plug-in's) using \cgal for the Ipe extensible drawing editor.}
 \cgalPkgManuals{Chapter_CGAL_Ipelets,PkgCGALIpeletsRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin

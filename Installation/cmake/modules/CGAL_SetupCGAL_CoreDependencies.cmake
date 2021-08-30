@@ -46,22 +46,16 @@ endif()
 #
 #   Link the target with the dependencies of `CGAL_Core`::
 #
-#     CGAL_setup_CGAL_Core_dependencies( target [INTERFACE] )
+#     CGAL_setup_CGAL_Core_dependencies( target)
 #
-#   If the option ``INTERFACE`` is passed, the dependencies are
+#   The dependencies are
 #   added using :command:`target_link_libraries` with the ``INTERFACE``
-#   keyword, or ``PUBLIC`` otherwise.
+#   keyword.
 #
 
 function(CGAL_setup_CGAL_Core_dependencies target)
-  if(ARGV1 STREQUAL INTERFACE)
-    set(keyword INTERFACE)
-  else()
-    set(keyword PUBLIC)
-  endif()
-
-  use_CGAL_GMP_support(CGAL_Core ${keyword})
-  target_compile_definitions(${target} ${keyword} CGAL_USE_CORE=1)
-  target_link_libraries( CGAL_Core ${keyword} CGAL::CGAL )
+  use_CGAL_GMP_support(CGAL_Core INTERFACE)
+  target_compile_definitions(${target} INTERFACE CGAL_USE_CORE=1)
+  target_link_libraries( CGAL_Core INTERFACE CGAL::CGAL )
 
 endfunction()

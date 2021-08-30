@@ -128,8 +128,8 @@ bool test3(const char* points_filename, const char* xcurves_filename,
 int main(int argc, char* argv[])
 {
 #if TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
-  CGAL::set_pretty_mode(std::cout);
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cerr);
 #endif
 
   if (argc < 4) {

@@ -8,10 +8,6 @@ namespace CGAL {
 
 This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle different types of data, multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data which they can index and for which they can compute relevant features, compute their own local features on the input data set and define their own labels.
 
-\note This component requires C++11 and depends on the Boost libraries
-[Serialization](https://www.boost.org/libs/serialization) and
-[IO Streams](https://www.boost.org/libs/iostreams) (compiled with the GZIP dependency).
-
 \section Classification_Organization Package Organization
 
 %Classification of data sets is achieved as follows (see Figure \cgalFigureRef{Classification_organization_fig}):
@@ -35,7 +31,9 @@ Currently, \cgal provides data structures to handle classification of point sets
 
 \subsection Classification_labels Label Set
 
-A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name and is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle). Note that names are not used for identification: two labels in the same set can have the same name (but not the same handle).
+A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name, an index (in a label set), a standard index (for example, the index of the label in the ASPRS standard) and a color. It is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle). Note that names, standard indices and colors are not used for identification: two labels in the same set can have the same name, standard index and color but not the same handle.
+
+If labels are initialized with their names only, standard indices and colors can be deduced in some cases (see [Label_set::add()](@ref CGAL::Classification::Label_set::add)).
 
 The following code snippet shows how to add labels to the classification object:
 
@@ -201,7 +199,7 @@ Example of cluster classification mesh (left: input, middle: clusters computed f
 
 %Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the probability that an input item belongs to one label or another. A model of the concept `CGAL::Classification::Classifier` must take the index of an input item and store the probability associated to each label in a vector. If a classifier returns the value 1 for a pair of label and input item, it means that this item belongs to this label with certainty; values close to 0 mean that this item is not likely to belong to this label.
 
-\cgal provides four models for this concept, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier), [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier), [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier) and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
+\cgal provides three models for this concept, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier), [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier), and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
 
 \note Currently, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier)
 is the best classifier available in \cgal and we strongly advise users
@@ -229,7 +227,15 @@ cases where many labels are used (more than five).
 
 An [example](\ref Classification_example_ethz_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
-to README provided in the [ETH Zurich's code archive](https://www.ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/sourcecode-and-datasets/Random%20Forest/rforest.zip).
+to README provided in the [ETH Zurich's code archive](https://ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/sourcecode-and-datasets/Random%20Forest/rforest.zip).
+
+\subsubsection Classification_ETHZ_random_forest_deprecated Deprecated IO
+
+The IO functions of this classifier were changed in \cgal
+5.2. Configurations generated from previous versions are not valid
+anymore and should be converted first as shown in the following example:
+
+\cgalExample{Classification/example_deprecated_conversion.cpp}
 
 \subsection Classification_OpenCV_random_forest OpenCV Random Forest
 
@@ -248,31 +254,6 @@ An [example](\ref Classification_example_opencv_random_forest) shows how to
 use this classifier. For more details about the algorithm, please refer
 to [the official documentation](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
 of OpenCV.
-
-\subsection Classification_TensorFlow_neural_network TensorFlow Neural Network
-
-\cgal provides [TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier).
-
-It uses the C++ API of the \ref thirdpartyTensorFlow library.
-
-\warning This feature is still experimental: it may not be stable
-and is likely to undergo substantial changes in future releases of
-\cgal. The API changes will be announced in the release notes.
-
-The provided interface is a feature-based neural network: a set of
-features is used as an input layer followed by a user-specified number
-of hidden layers with a user-specified activation function. The output
-layer is a softmax layer providing, for each label, the probability
-that an input item belongs to it.
-
-This classifier cannot be set up by hand and requires a ground truth
-training set. The training algorithm usually requires a higher number
-of inliers than random forest. The quality of the results, so far, is
-comparable to random forest.
-
-An [example](\ref Classification_example_tensorflow_neural_network) shows how to
-use this classifier. For more details about the algorithm, please refer
-to [the TensorFlow tutorials](https://www.tensorflow.org/tutorials/).
 
 \subsection Classification_sowf Sum of Weighted Features
 
@@ -517,14 +498,6 @@ The following example shows how to use the classifier [ETHZ::Random_forest_class
 The following example shows how to use the classifier [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier) using an input training set.
 
 \cgalExample{Classification/example_opencv_random_forest.cpp}
-
-\subsection Classification_example_tensorflow_neural_network TensorFlow Neural Network
-
-The following example shows how to use the classifier
-[TensorFlow::Neural_network_classifier](@ref CGAL::Classification::TensorFlow::Neural_network_classifier)
-using an input training set.
-
-\cgalExample{Classification/example_tensorflow_neural_network.cpp}
 
 \subsection Classification_example_mesh Mesh Classification
 

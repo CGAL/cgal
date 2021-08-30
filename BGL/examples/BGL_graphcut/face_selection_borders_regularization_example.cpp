@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 
 #include <fstream>
 #include <iostream>
@@ -20,7 +21,7 @@ int main(int argc, char** argv)
   }
 
   Mesh mesh;
-  CGAL::read_off (in, mesh);
+  CGAL::IO::read_OFF (in, mesh);
 
   boost::unordered_map<Face_index, bool> is_selected_map;
 

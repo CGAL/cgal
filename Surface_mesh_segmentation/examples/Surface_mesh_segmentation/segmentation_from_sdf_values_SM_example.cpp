@@ -1,33 +1,33 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/mesh_segmentation.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/property_map.h>
 
 #include <iostream>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point_3;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
+typedef Kernel::Point_3                                       Point_3;
 
-typedef CGAL::Surface_mesh<Point_3> Mesh;
+typedef CGAL::Surface_mesh<Point_3>                           Mesh;
 
-typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_descriptor          vertex_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 int main(int argc, char** argv )
 {
+  const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
+
   Mesh mesh;
-  if (argc==2){
-    std::ifstream input(argv[1]);
-    input >> mesh;
-  } else {
-    std::ifstream cactus("data/cactus.off");
-    cactus >> mesh;
-  }
-  if (!CGAL::is_triangle_mesh(mesh)){
-    std::cerr << "Input is not a triangle mesh" << std::endl;
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh) ||
+     !CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
+
   typedef Mesh::Property_map<face_descriptor,double> Facet_double_map;
   Facet_double_map sdf_property_map;
 
@@ -61,5 +61,6 @@ int main(int argc, char** argv )
   // Note that we can use the same SDF values (sdf_property_map) over and over again for segmentation.
   // This feature is relevant for segmenting the mesh several times with different parameters.
   CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
+
   return EXIT_SUCCESS;
 }

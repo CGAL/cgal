@@ -19,7 +19,7 @@
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/NewKernel_d/Define_kernel_types.h>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -109,6 +109,7 @@ template<typename AT, typename ET, typename AC, typename EC, typename E2A, typen
 class Lazy_rep_XXX :
   public Lazy_rep< AT, ET, E2A >, private EC
 {
+  typedef Lazy_rep< AT, ET, E2A > Base;
   // `default_construct<T>()` is the same as `T{}`. But, this is a
   // workaround to a MSVC-2015 bug (fixed in MSVC-2017): its parser
   // seemed confused by `T{}` somewhere below.
@@ -129,9 +130,10 @@ class Lazy_rep_XXX :
   const EC& ec() const { return *this; }
   template<class...T>
   void update_exact_helper(Lazy_internal::typelist<T...>) const {
-    this->et = new ET(ec()( CGAL::exact( Lazy_internal::do_extract(T{},l) ) ... ) );
-    this->at = E2A()(*(this->et));
-    l = LL(); // There should be a nicer way to clear. Destruction for instance. With this->et as a witness of whether l has already been destructed.
+    auto* p = new typename Base::Indirect(ec()( CGAL::exact( Lazy_internal::do_extract(T{},l) ) ... ) );
+    this->set_at(p);
+    this->set_ptr(p);
+    lazy_reset_member(l);
   }
   public:
   void update_exact() const {
@@ -294,7 +296,9 @@ struct Lazy_cartesian :
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
             typedef typename Get_functor<Approximate_kernel, T>::type FA;
             typedef typename Get_functor<Exact_kernel, T>::type FE;
-            typedef Filtered_predicate2<Lazy_cartesian,FE,FA,C2E,C2A> type;
+            // Careful if operator< for Interval_nt ever starts using arithmetic...
+            // Not done directly in Filtered_predicate2 because of C2A
+            typedef Filtered_predicate2<Lazy_cartesian,FE,FA,C2E,C2A,!Uses_no_arithmetic<FA>::value> type;
     };
     template<class T,class D> struct Functor<T,D,Compute_tag> {
             typedef Lazy_construction2<T,Kernel> type;

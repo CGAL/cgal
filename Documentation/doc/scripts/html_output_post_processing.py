@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # Copyright (c) 2012 GeometryFactory (France). All rights reserved.
 # All rights reserved.
 #
@@ -187,10 +187,13 @@ def automagically_number_figures():
   #collect the list of packages in the package overview page,
   #respecting the order of that page
   all_packages=[]
+  if not path.isfile("./Manual/packages.html"):
+    stderr.write("Error: Figure numbering; ./Manual/packages.html does not exist\n")
+    return
+
 
   file_content = codecs.open("./Manual/packages.html", 'r', encoding='utf-8')
   d = pq(file_content.read(),parser="html")
-
   for el in d('a.elRef'):
     text = pq(el).attr('href')
     if text.find("index.html")!=-1:
@@ -330,9 +333,10 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     # external is placed by doxygen to mark a class from a tagfile, this
     # is more confusing then helpful in our case
-
-    re_replace_in_file('\[external\]', '', os.path.join('Manual','annotated.html'))
-
+    if path.isfile(os.path.join('Manual','annotated.html')):
+      re_replace_in_file('\[external\]', '', os.path.join('Manual','annotated.html'))
+    else:
+      stderr.write("Error: ./Manual/annotated.html does not exists\n")
     # fix class/concept mismatch in generated pages
     relationship_pages=list(package_glob('./*/hasModels.html'))
     relationship_pages.extend(package_glob('./*/generalizes.html'))

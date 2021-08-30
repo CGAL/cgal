@@ -9,7 +9,7 @@ fi
 
 for pr in $(python3 ./Scripts/developer_scripts/list_pull_requests.py "$1" --unmerged); do
     if ! hub merge $pr; then
-        echo $p;
+        echo $pr;
         break
     fi
 done

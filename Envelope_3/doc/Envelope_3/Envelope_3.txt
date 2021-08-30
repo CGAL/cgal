@@ -58,7 +58,7 @@ both these diagrams as <I>envelope diagrams</I>.
 
 It is easy to see that an envelope diagram is no more than a planar
 arrangement (see Chapter \ref chapterArrangement_on_surface_2 "2D Arrangements"), represented
-using an extended \sc{Dcel} structure, such that every \sc{Dcel}
+using an extended \dcel structure, such that every \dcel
 record (namely each face, halfedge and vertex) stores an additional
 container of it originators: the \f$ xy\f$-monotone surfaces that induce
 this feature.

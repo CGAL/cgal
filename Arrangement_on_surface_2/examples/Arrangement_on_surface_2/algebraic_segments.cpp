@@ -61,7 +61,7 @@ int main()
   // but not for this instance
   for(size_t i = 0; i < pre_segs.size(); ++i) {
     auto* curr_p = boost::get<X_monotone_curve_2>(&pre_segs[i]);;
-    CGAL_assertion(curr_p);
+    CGAL_assertion(curr_p != nullptr);
     segs.push_back(*curr_p);
   }
   // Construct an ellipse with equation 2*x^2+5*y^2-7=0
