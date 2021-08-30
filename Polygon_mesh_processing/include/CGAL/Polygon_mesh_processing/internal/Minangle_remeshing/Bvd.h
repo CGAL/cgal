@@ -16,7 +16,7 @@
 #undef max
 
 // CGAL
-#include <CGAL/license/minimal_angle_remeshing.h>
+#include <CGAL/license/Polygon_mesh_processing/minimal_angle_remeshing.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_2.h>
 // local

@@ -13,11 +13,13 @@
 #define CGAL_POLYGON_MESH_PROCESSING_MINIMAL_ANGLE_REMESHING_H
 
 // CGAL
-#include <CGAL/license/minimal_angle_remeshing.h>
-#include <CGAL/Polygon_mesh_processing/internal/minangle_remesh_impl.h>
+#include <CGAL/license/Polygon_mesh_processing/minimal_angle_remeshing.h>
+#include <CGAL/Polygon_mesh_processing/internal/Minangle_remeshing/minangle_remesh_impl.h>
+// #include "internal/Minangle_remeshing/minangle_remesh_impl.h"
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 // #include "../../../BGL/include/CGAL/boost/graph/parameters_interface.h"
+
 
 namespace CGAL{
 namespace Polygon_mesh_processing {

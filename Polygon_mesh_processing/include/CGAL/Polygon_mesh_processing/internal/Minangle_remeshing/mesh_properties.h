@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <fstream>
 // CGAL
-#include <CGAL/license/minimal_angle_remeshing.h>
+#include <CGAL/license/Polygon_mesh_processing/minimal_angle_remeshing.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Triangulation_hierarchy_2.h>
 #include <CGAL/Surface_mesh.h>

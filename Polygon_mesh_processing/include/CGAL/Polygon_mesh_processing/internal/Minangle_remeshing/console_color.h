@@ -15,7 +15,7 @@
 // C/C++
 #include <iostream>
 // CGAL
-#include <CGAL/license/minimal_angle_remeshing.h>
+#include <CGAL/license/Polygon_mesh_processing/minimal_angle_remeshing.h>
 
 
 #if defined(WIN32)

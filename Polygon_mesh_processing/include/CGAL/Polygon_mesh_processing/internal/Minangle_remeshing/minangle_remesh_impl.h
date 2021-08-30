@@ -20,7 +20,7 @@
 #include <algorithm>
 #include <utility>
 // CGAL
-#include <CGAL/license/minimal_angle_remeshing.h>
+#include <CGAL/license/Polygon_mesh_processing/minimal_angle_remeshing.h>
 // local
 #include "mesh_properties.h"
 

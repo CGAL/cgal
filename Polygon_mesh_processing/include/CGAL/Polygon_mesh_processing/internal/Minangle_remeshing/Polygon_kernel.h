@@ -13,7 +13,7 @@
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_KERNEL_H
 
 // C/C++
-#include <CGAL/license/minimal_angle_remeshing.h>
+#include <CGAL/license/Polygon_mesh_processing/minimal_angle_remeshing.h>
 #include <CGAL/convex_hull_2.h>
 // local
 #include "console_color.h"
