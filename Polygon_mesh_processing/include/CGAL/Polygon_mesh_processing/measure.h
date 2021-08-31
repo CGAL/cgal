@@ -23,7 +23,6 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-#include <CGAL/squared_distance_3.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
@@ -113,6 +112,8 @@ edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
             const PolygonMesh& pmesh,
             const NamedParameters& np)
 {
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -122,8 +123,10 @@ edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, pmesh));
 
-  return CGAL::approximate_sqrt(CGAL::squared_distance(get(vpm, source(h, pmesh)),
-                                                       get(vpm, target(h, pmesh))));
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  return CGAL::approximate_sqrt(gt.compute_squared_distance_3_object()(get(vpm, source(h, pmesh)),
+								       get(vpm, target(h, pmesh))));
 }
 
 template<typename PolygonMesh>
@@ -201,6 +204,8 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descript
                     const PolygonMesh& pmesh,
                     const NamedParameters& np)
 {
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
+
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
@@ -210,8 +215,10 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descript
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, pmesh));
 
-  return CGAL::squared_distance(get(vpm, source(h, pmesh)),
-                                get(vpm, target(h, pmesh)));
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  return gt.compute_squared_distance_3_object()(get(vpm, source(h, pmesh)),
+						get(vpm, target(h, pmesh)));
 }
 
 template<typename PolygonMesh>
