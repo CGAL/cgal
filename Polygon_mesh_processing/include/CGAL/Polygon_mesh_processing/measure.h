@@ -70,7 +70,7 @@ inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& i
   * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param h one halfedge of the edge to compute the length
+  * @param h one halfedge of the edge whose length is computed
   * @param pmesh the polygon mesh to which `h` belongs
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -99,6 +99,7 @@ inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& i
   * If `FT` does not have a `sqrt()` operation, the square root computation
   * will be done approximately.
   *
+  * @sa `squared_edge_length()`
   * @sa `face_border_length()`
   */
 template<typename PolygonMesh,
@@ -114,6 +115,8 @@ edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(boost::graph_traits<PolygonMesh>::null_halfedge() != h);
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -159,7 +162,7 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
   * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param h one halfedge of the edge to compute the squared length
+  * @param h one halfedge of the edge whose squared length is computed
   * @param pmesh the polygon mesh to which `h` belongs
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -195,25 +198,27 @@ FT
 typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 #endif
 squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-		    const PolygonMesh& pmesh,
-		    const NamedParameters& np)
+                    const PolygonMesh& pmesh,
+                    const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(boost::graph_traits<PolygonMesh>::null_halfedge() != h);
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, pmesh));
 
   return CGAL::squared_distance(get(vpm, source(h, pmesh)),
-				get(vpm, target(h, pmesh)));
+                                get(vpm, target(h, pmesh)));
 }
 
 template<typename PolygonMesh>
 typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
 CGAL::vertex_point_t>::type>::Kernel::FT
 squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-		    const PolygonMesh& pmesh)
+                    const PolygonMesh& pmesh)
 {
   return squared_edge_length(h, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
@@ -222,8 +227,8 @@ template<typename PolygonMesh,
          typename NamedParameters>
 typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
-		    const PolygonMesh& pmesh,
-		    const NamedParameters& np)
+                    const PolygonMesh& pmesh,
+                    const NamedParameters& np)
 {
   return squared_edge_length(halfedge(e, pmesh), pmesh, np);
 }
@@ -232,12 +237,12 @@ template<typename PolygonMesh>
 typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
 CGAL::vertex_point_t>::type>::Kernel::FT
 squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
-		    const PolygonMesh& pmesh)
+                    const PolygonMesh& pmesh)
 {
   return squared_edge_length(halfedge(e, pmesh), pmesh);
 }
 
-  
+
 /**
   * \ingroup measure_grp
   * computes the length of the border polyline
@@ -246,7 +251,7 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
   * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param h a halfedge of the border polyline of which the length is computed
+  * @param h a halfedge of the border polyline whose length is computed
   * @param pmesh the polygon mesh to which `h` belongs
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -403,10 +408,10 @@ longest_border(const PolygonMesh& pmesh)
   * computes the area of a face of a given
   * triangulated surface mesh.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param f the face of which the area is computed
+  * @param f the face whose area is computed
   * @param tmesh the triangulated surface mesh to which `f` belongs
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -438,6 +443,7 @@ longest_border(const PolygonMesh& pmesh)
   * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
   * will be done approximately.
   *
+  * @sa `squared_face_area()`
   * @sa `area()`
   */
 template<typename TriangleMesh,
@@ -487,10 +493,10 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   * computes the squared area of a face of a given
   * triangulated surface mesh.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param f the face of which the squared area is computed
+  * @param f the face whose squared area is computed
   * @param tmesh the triangulated surface mesh to which `f` belongs
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -528,8 +534,8 @@ FT
 typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT
 #endif
 squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-          const TriangleMesh& tmesh,
-          const CGAL_PMP_NP_CLASS& np)
+		  const TriangleMesh& tmesh,
+		  const CGAL_PMP_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -571,10 +577,10 @@ squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`.
           Its iterator type is `InputIterator`.
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param face_range the range of faces of which the area is computed
+  * @param face_range the range of faces of whose area is computed
   * @param tmesh the triangulated surface mesh to which the faces of `face_range` belong
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
@@ -641,7 +647,7 @@ area(FaceRange face_range, const TriangleMesh& tmesh)
   * \ingroup measure_grp
   * computes the surface area of a triangulated surface mesh.
   *
-  * @tparam TriangleMesh a model of `HalfedgeGraph`
+  * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
   * @param tmesh the triangulated surface mesh
@@ -784,7 +790,7 @@ volume(const TriangleMesh& tmesh)
   * @tparam TriangleMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param f the face of which the aspect ratio is computed
+  * @param f the face whose aspect ratio is computed
   * @param tmesh the triangulated surface mesh to which `f` belongs
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
