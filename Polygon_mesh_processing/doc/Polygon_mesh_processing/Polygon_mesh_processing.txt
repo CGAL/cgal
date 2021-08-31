@@ -135,7 +135,7 @@ Isotropic remeshing.
 
 \subsubsection Minimal Angle Remeshing
 The incremental error-bounded and feature preserving surface remeshing algorithm with minimal
-angle improvement introduced by Hu et al. \cgalCite{hu2017TVCG} is implemented in this package.
+angle improvement introduced by Hu et al. \cgalCite{hu2016error} is implemented in this package.
 This algorithm iteratively performs carefully prioritized local operations, such as edge split,
 edge collapse, edge flips (optional), vertex relocate and Laplacian smoothing, whenever they do
 not violate the approximation error bound and improve the mesh otherwise. By greedily searching
@@ -160,7 +160,7 @@ box.
 \cgalFigureEnd
 
 Compared with the isotropic remeshing introduced by Botsch et al. \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP},
-the minimal angle remeshing algorithm is slower (see Hu et al. \cgalCite{hu2017TVCG}) since it has to explicitly bound the
+the minimal angle remeshing algorithm is slower (see Hu et al. \cgalCite{hu2016error}) since it has to explicitly bound the
 `maximal error threshold` before applying each local operator. However, it has the following advantages: 1) the maximal
 approximation error with the original mesh can be explicitly bounded; 2) the sharp features can be implicitly preserved,
 without having to detect or specify them in advance; 3) the minimal angle of the result, which is input-dependent in isotropic
