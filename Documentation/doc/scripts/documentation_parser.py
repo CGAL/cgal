@@ -35,7 +35,7 @@ for i in range(0,len(compounds)):
       total_path=op.join(op.sep, root_path,filepath)
       if(op.isfile(total_path)):
         file_content = codecs.open(total_path, 'r', encoding='utf-8')
-        e = pq(file_content, parser="xml")
+        e = pq(file_content.read(), parser="xml")
         compoundnames=[p.text() for p in list(e('includes').items())]
         
         if(len(compoundnames) > 1 and compoundnames[0].find("Concept") != -1):
