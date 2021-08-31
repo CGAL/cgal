@@ -1048,6 +1048,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     getEdgeContainer(C3t3_edges)->draw(viewer, true);
 
     if(d->show_tetrahedra){
+      ncthis->show_intersection(true);
       if(!d->frame->isManipulated())
         d->intersection->setFast(false);
       else

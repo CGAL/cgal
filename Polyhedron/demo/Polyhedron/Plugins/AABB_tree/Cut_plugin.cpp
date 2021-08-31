@@ -249,6 +249,8 @@ public:
     m_red_ramp.build_red();
     m_blue_ramp.build_blue();
     m_thermal_ramp.build_thermal();
+    facet_sm_trees = nullptr;
+    edge_sm_trees = nullptr;
     setTriangleContainer(1, new Tc(Vi::PROGRAM_NO_SELECTION, false));
     setTriangleContainer(0, new Tc(Vi::PROGRAM_WITH_TEXTURE, false));
     setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));

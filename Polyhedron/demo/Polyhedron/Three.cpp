@@ -20,6 +20,19 @@ RenderingMode Three::s_defaultPSRM;
 int Three::default_point_size;
 int Three::default_normal_length;
 int Three::default_lines_width;
+bool Three::s_is_locked;
+QMutex* Three::s_mutex;
+QWaitCondition* Three::s_wait_condition;
+
+QWaitCondition* Three::getWaitCondition()
+{
+  return s_wait_condition;
+}
+
+QMutex* Three::getMutex()
+{
+  return s_mutex;
+}
 
 QMainWindow* Three::mainWindow()
 {
@@ -255,3 +268,9 @@ int Three::getDefaultLinesWidth()
 {
   return default_lines_width;
 }
+
+bool& Three::isLocked()
+{
+  return s_is_locked;
+}
+
