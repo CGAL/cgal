@@ -416,7 +416,7 @@ if(NOT TBB_VERSION)
 
  #only read the start of the file
  file(STRINGS
-      "${TBB_INCLUDE_DIR}/tbb/tbb_stddef.h"
+      "${TBB_INCLUDE_DIR}/oneapi/tbb/version.h"
       TBB_VERSION_CONTENTS
       REGEX "VERSION")
 
