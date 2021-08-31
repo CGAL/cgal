@@ -131,9 +131,9 @@ typename K::Point_3 random_point_in(const CGAL::Bbox_3& bbox,
                                     CGAL::Random& r)
 {
   typedef typename K::FT FT;
-  FT x(r.get_double(bbox.xmin(), bbox.xmax()));
-  FT y(r.get_double(bbox.ymin(), bbox.ymax()));
-  FT z(r.get_double(bbox.zmin(), bbox.zmax()));
+  FT x = static_cast<FT>(r.get_double(bbox.xmin(), bbox.xmax()));
+  FT y = static_cast<FT>(r.get_double(bbox.ymin(), bbox.ymax()));
+  FT z = static_cast<FT>(r.get_double(bbox.zmin(), bbox.zmax()));
   return typename K::Point_3(x,y,z);
 }
 
