@@ -389,6 +389,7 @@ struct Scene_triangulation_3_item_priv {
     nb_spheres = 0;
     nb_vertices = 0;
     nb_tets = 0;
+    spheres_are_shown = false;
     smallest_radius_radius = (std::numeric_limits<float>::max)();
     smallest_edge_radius = (std::numeric_limits<float>::max)();
     biggest_v_sma_cube = 0;
