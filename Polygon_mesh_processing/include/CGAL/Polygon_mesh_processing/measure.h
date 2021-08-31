@@ -126,7 +126,7 @@ edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   return CGAL::approximate_sqrt(gt.compute_squared_distance_3_object()(get(vpm, source(h, pmesh)),
-								       get(vpm, target(h, pmesh))));
+                                                                       get(vpm, target(h, pmesh))));
 }
 
 template<typename PolygonMesh>
@@ -218,7 +218,7 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descript
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   return gt.compute_squared_distance_3_object()(get(vpm, source(h, pmesh)),
-						get(vpm, target(h, pmesh)));
+                                                get(vpm, target(h, pmesh)));
 }
 
 template<typename PolygonMesh>
@@ -541,8 +541,8 @@ FT
 typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT
 #endif
 squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-		  const TriangleMesh& tmesh,
-		  const CGAL_PMP_NP_CLASS& np)
+                  const TriangleMesh& tmesh,
+                  const CGAL_PMP_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -562,8 +562,8 @@ squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   return traits.compute_squared_area_3_object()(get(vpm, source(hd, tmesh)),
-						get(vpm, target(hd, tmesh)),
-						get(vpm, target(nhd, tmesh)));
+                                                get(vpm, target(hd, tmesh)),
+                                                get(vpm, target(nhd, tmesh)));
 }
 
 template<typename TriangleMesh>
