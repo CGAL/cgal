@@ -38,7 +38,7 @@ auto make_not_null(T&& t) {
 #include "Scene_image_item.h"
 #include "Image_type.h"
   #ifdef CGAL_USE_ITK
-  #include <CGAL/Mesh_3/generate_weights_from_labeled_image.h>
+  #include <CGAL/Mesh_3/generate_label_weights.h>
   #endif
 
 #endif
@@ -713,7 +713,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       && sigma_weights != image_item->sigma_weights())
     {
       image_item->set_image_weights(
-        CGAL::Mesh_3::generate_weights(*pImage, sigma_weights),
+        CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights),
         sigma_weights);
     }
 #endif

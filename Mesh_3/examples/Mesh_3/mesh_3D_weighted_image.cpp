@@ -5,7 +5,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 
 #include <CGAL/Labeled_mesh_domain_3.h>
-#include <CGAL/Mesh_3/generate_weights_from_labeled_image.h>
+#include <CGAL/Mesh_3/generate_label_weights.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   /// [Domain creation]
   const float sigma = 10.f;
   CGAL::Image_3 img_weights =
-    CGAL::Mesh_3::generate_weights(image, sigma);
+    CGAL::Mesh_3::generate_label_weights(image, sigma);
 
   Mesh_domain domain
     = Mesh_domain::create_labeled_image_mesh_domain(image,

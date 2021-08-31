@@ -10,8 +10,8 @@
 //
 // Author(s)     : Laurent Rineau, Jane Tournois
 
-#ifndef CGAL_MESH_3_GENERATE_WEIGHTS_FROM_LABELED_IMAGE_H
-#define CGAL_MESH_3_GENERATE_WEIGHTS_FROM_LABELED_IMAGE_H
+#ifndef CGAL_MESH_3_GENERATE_LABEL_WEIGHTS_H
+#define CGAL_MESH_3_GENERATE_LABEL_WEIGHTS_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -143,7 +143,7 @@ SIGN get_sign()
 
 /// @cond INTERNAL
 template<typename Image_word_type>
-CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
+CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& image,
                                                     const float& sigma)
 {
   typedef unsigned char Weights_type; //from 0 t 255
@@ -274,11 +274,11 @@ CGAL::Image_3 generate_weights_with_known_word_type(const CGAL::Image_3& image,
 * @returns a `CGAL::Image_3` of weights used to build a quality `Labeled_mesh_domain_3`
 */
 
-CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
+CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
                                const float& sigma)
 {
   CGAL_IMAGE_IO_CASE(image.image(),
-    return generate_weights_with_known_word_type<Word>(image, sigma);
+    return generate_label_weights_with_known_word_type<Word>(image, sigma);
   );
   CGAL_error_msg("This place should never be reached, because it would mean "
     "the image word type is a type that is not handled by "
@@ -289,4 +289,4 @@ CGAL::Image_3 generate_weights(const CGAL::Image_3& image,
 }//namespace Mesh_3
 }//namespace CGAL
 
-#endif // CGAL_MESH_3_GENERATE_WEIGHTS_FROM_LABELED_IMAGE_H
+#endif // CGAL_MESH_3_GENERATE_LABEL_WEIGHTS_H
