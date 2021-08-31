@@ -150,7 +150,7 @@ the detailed API of the Point Set Processing functions.
 \cgal provides functions to read and write sets of points (possibly with normals)
 from the following file formats:
 
-- \link IOStreamXYZ XYZ \endlink (ASCII file three point coordinates `x y z` per line or three
+- \link IOStreamXYZ XYZ \endlink (\ascii file three point coordinates `x y z` per line or three
 point coordinates and three normal vector coordinates `x y z nx ny nz`
 per line)
 - \link IOStreamOFF OFF (%Object File Format) \endlink -- \cgalCite{cgal:p-gmgv16-96}
@@ -161,7 +161,7 @@ not handle normals and requires the \ref thirdpartyLASlib library.
 All of the functions in \ref PkgPointSetProcessing3IO (with the exception of the LAS format)
 can read and write either points alone or points with normals (depending on
 whether the `normal_map` named parameter is used by the user or not).
-Note that the %PLY format handles both ASCII and binary formats. In
+Note that the %PLY format handles both \ascii and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional
 properties. These can also be read by \cgal (see Section \ref
 Point_set_processing_3Properties_io).

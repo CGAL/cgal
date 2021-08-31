@@ -1130,7 +1130,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     case 3:
         if(out_degree(source(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3 ||
            out_degree(target(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3)
-          d->tempInstructions("Faces not joined : the two ends of the edge must have a degree of at least 3.",
+          d->tempInstructions("Faces not joined : the two endpoints of the edge must have a degree of at least 3.",
                            "Select the edge separating the faces you want to join."
                            "Warning: this operation will clear the undo stack.");
         else
@@ -1160,7 +1160,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
         }
         else if(!CGAL::Euler::does_satisfy_link_condition(ed, *polyhedron()))
         {
-          d->tempInstructions("Edge not collapsed : link condition not satidfied.",
+          d->tempInstructions("Edge not collapsed : link condition not satisfied.",
                            "Select the edge you want to collapse.");
         }
         else
@@ -2450,8 +2450,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
     // Extract the part n°0 of the partition into a new, independent mesh
     if(selected_facets.size() == 0)
       return QString("n/a");
-    boost::vector_property_map<int,
-        boost::property_map<SMesh, boost::face_index_t>::type>
+    boost::vector_property_map<int, boost::property_map<CGAL::Face_filtered_graph<SMesh>, boost::face_index_t>::type>
         fccmap(get(boost::face_index, *d->filtered_graph));
 
     return QString::number(CGAL::Polygon_mesh_processing::connected_components(*d->filtered_graph, fccmap));

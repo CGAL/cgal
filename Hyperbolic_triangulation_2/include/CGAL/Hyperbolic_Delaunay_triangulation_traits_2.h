@@ -21,7 +21,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/determinant.h>
 #include <CGAL/distance_predicates_2.h>
-#include <CGAL/internal/Exact_complex.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Exact_complex.h>
 #include <CGAL/Origin.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/triangulation_assertions.h>
@@ -32,7 +32,7 @@
 
 #include <utility>
 
-#include <CGAL/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
+#include <CGAL/Hyperbolic_triangulation_2/internal/Hyperbolic_Delaunay_triangulation_traits_2_functions.h>
 
 namespace CGAL {
 

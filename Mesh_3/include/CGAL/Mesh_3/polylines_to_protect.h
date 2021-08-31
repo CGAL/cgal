@@ -22,7 +22,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
-#include <CGAL/internal/Mesh_3/Graph_manipulations.h>
+#include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Labeled_mesh_domain_3.h> // for CGAL::Null_subdomain_index
 #include <boost/utility.hpp> // for boost::prior

@@ -63,6 +63,9 @@ public:
   Ray_3(const Rep& r)
     : Rep(r) {}
 
+  Ray_3(Rep&& r)
+    : Rep(std::move(r)) {}
+
   Ray_3(const Point_3& sp, const Point_3& secondp)
     : Rep(typename R::Construct_ray_3()(Return_base_tag(), sp, secondp)) {}
 

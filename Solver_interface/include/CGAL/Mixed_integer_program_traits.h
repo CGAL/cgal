@@ -96,7 +96,7 @@ namespace CGAL {
         };
         /// \endcond
 
-        /// \ingroup PkgSolverInterfaceRef
+        /// \ingroup PkgSolverInterfaceMIP
         ///
         /// The variable of a mixed integer program.
         ///
@@ -195,7 +195,7 @@ namespace CGAL {
         };
         /// \endcond
 
-        /// \ingroup PkgSolverInterfaceRef
+        /// \ingroup PkgSolverInterfaceMIP
         ///
         /// The linear constraint of a mixed integer program.
         ///
@@ -227,7 +227,7 @@ namespace CGAL {
         };
 
 
-        /// \ingroup PkgSolverInterfaceRef
+        /// \ingroup PkgSolverInterfaceMIP
         ///
         /// The linear objective of a mixed integer program.
         ///
@@ -263,7 +263,7 @@ namespace CGAL {
                 /// \endcond
         };
 
-        /// \ingroup PkgSolverInterfaceRef
+        /// \ingroup PkgSolverInterfaceMIP
         ///
         /// The class `CGAL::Mixed_integer_program_traits` provides an interface for
         /// formulating and solving (constrained or unconstrained) mixed integer

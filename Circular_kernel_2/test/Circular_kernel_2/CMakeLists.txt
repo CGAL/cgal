@@ -16,7 +16,6 @@ include_directories(BEFORE ../../../Kernel_23/test/Kernel_23/include)
 include_directories(BEFORE ../Kernel_23/include)
 
 create_single_source_cgal_program("test_Circular_kernel.cpp")
-create_single_source_cgal_program("test_Lazy_circular_kernel.cpp")
 create_single_source_cgal_program("test_Exact_circular_kernel.cpp")
 create_single_source_cgal_program("test_Filtered_bbox_circular_kernel.cpp")
 create_single_source_cgal_program("test_Line_arc.cpp")

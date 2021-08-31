@@ -25,7 +25,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/use.h>
 
 #include <boost/mem_fn.hpp>

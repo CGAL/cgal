@@ -50,7 +50,7 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/typeof/typeof.hpp>
 
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/result_of.h>
 using namespace CGAL;
 

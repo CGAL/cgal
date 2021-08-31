@@ -33,7 +33,7 @@
 #include <boost/unordered_set.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
-#include <CGAL/internal/Has_member_visited.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
@@ -47,8 +47,8 @@
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-#include <CGAL/internal/Triangulation_ds_iterators_3.h>
-#include <CGAL/internal/Triangulation_ds_circulators_3.h>
+#include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
+#include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
 #include <CGAL/tss.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1009,9 +1009,7 @@ public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
     v(_v), treat(_output), t(_t), filter(_filter)
     {
-#if ( BOOST_VERSION >= 105000 )
       tmp_vertices.reserve(64);
-#endif
     }
 
     void operator()(Cell_handle c) {
@@ -4043,32 +4041,27 @@ copy_tds(const TDS_src& tds,
                                           || tds.is_vertex(vert) );
 
   clear();
-
-  size_type n = tds.number_of_vertices();
   set_dimension(tds.dimension());
 
-  if (n == 0)  return Vertex_handle();
+  if(tds.number_of_vertices() == 0)
+    return Vertex_handle();
 
   // Number of pointers to cell/vertex to copy per cell.
-  int dim = (std::max)(1, dimension() + 1);
+  const int dim = (std::max)(1, dimension() + 1);
 
-  // Create the vertices.
-  std::vector<typename TDS_src::Vertex_handle> TV(n);
-  size_type i = 0;
+  // Number of neighbors to set
+  const int nn = (std::max)(0, dimension() + 1);
 
-  for (typename TDS_src::Vertex_iterator vit = tds.vertices_begin();
-       vit != tds.vertices_end(); ++vit)
-    TV[i++] = vit;
-
-  CGAL_triangulation_assertion( i == n );
-
+  // Initializes maps
   Unique_hash_map< typename TDS_src::Vertex_handle,Vertex_handle > V;
   Unique_hash_map< typename TDS_src::Cell_handle,Cell_handle > F;
 
-  for (i=0; i <= n-1; ++i){
-    Vertex_handle vh=create_vertex( convert_vertex(*TV[i]) );
-    V[ TV[i] ] = vh;
-    convert_vertex(*TV[i],*vh);
+  // Create the vertices.
+  for (typename TDS_src::Vertex_iterator vit = tds.vertices_begin();
+       vit != tds.vertices_end(); ++vit) {
+    Vertex_handle vh = create_vertex( convert_vertex(*vit) );
+    V[vit] = vh;
+    convert_vertex(*vit,*vh);
   }
 
   // Create the cells.
@@ -4089,7 +4082,7 @@ copy_tds(const TDS_src& tds,
   // Hook neighbor pointers of the cells.
   for (typename TDS_src::Cell_iterator cit2 = tds.cells().begin();
           cit2 != tds.cells_end(); ++cit2) {
-    for (int j = 0; j < dim; j++)
+    for (int j = 0; j < nn; j++)
       F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 

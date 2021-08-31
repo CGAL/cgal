@@ -21,7 +21,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
-#include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
+#include <CGAL/AABB_tree/internal/AABB_drawing_traits.h>
 //#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 

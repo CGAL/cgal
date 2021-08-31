@@ -333,7 +333,7 @@ public:
   /// @{
 
   /*!
-    \brief outputs the evaluation in a simple ASCII format to the stream `os`.
+    \brief outputs the evaluation in a simple \ascii format to the stream `os`.
   */
   friend std::ostream& operator<< (std::ostream& os, const Evaluation& evaluation)
   {
