@@ -1,12 +1,14 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
+
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 
 #include <string>
 #include <fstream>
-
 
 typedef const double vec[3];
 const vec input[10] =
@@ -128,20 +130,10 @@ int main()
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
 
   bool ok = true;
-  ok = ok &&
-      test<CGAL::Epick,
-           CGAL::Triangulation_2_projection_traits_3<Epick> >
-      ("CDT_2 in a 3D plane, with Epick");
-  ok = ok &&
-      test<CGAL::Epeck,
-           CGAL::Triangulation_2_projection_traits_3<Epeck> >
-      ("CDT_2 in a 3D plane, with Epeck");
-  ok = ok && test_segment_intersections<CGAL::Epick,
-           CGAL::Triangulation_2_projection_traits_3<Epick> >
-      ("CDT_2 traits intersection with Epick");
-  ok = ok && test_segment_intersections<CGAL::Epeck,
-           CGAL::Triangulation_2_projection_traits_3<Epeck> >
-      ("CDT_2 traits intersection with Epeck");
+  ok = ok && test<CGAL::Epick, CGAL::Projection_traits_3<Epick> >("CDT_2 in a 3D plane, with Epick");
+  ok = ok && test<CGAL::Epeck, CGAL::Projection_traits_3<Epeck> >("CDT_2 in a 3D plane, with Epeck");
+  ok = ok && test_segment_intersections<CGAL::Epick, CGAL::Triangulation_2_projection_traits_3<Epick> >("CDT_2 traits intersection with Epick");
+  ok = ok && test_segment_intersections<CGAL::Epeck, CGAL::Triangulation_2_projection_traits_3<Epeck> >("CDT_2 traits intersection with Epeck");
 
   return ok ? 0 : 1;
 }

@@ -1,4 +1,5 @@
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <fstream>
 #include <iostream>
 #include <CGAL/Surface_mesh.h>

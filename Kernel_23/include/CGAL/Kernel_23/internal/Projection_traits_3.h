@@ -833,6 +833,8 @@ public:
   }
 };
 
+// This is for projection traits along a specific canonical plane (xy, yz, xz)
+// The generic class for an arbitrary normal is CGAL::Projection_traits_3<K> (not in `internal`)
 template < class R, int dim >
 class Projection_traits_3 {
 public:
