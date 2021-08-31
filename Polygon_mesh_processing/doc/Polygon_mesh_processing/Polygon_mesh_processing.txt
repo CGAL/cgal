@@ -105,7 +105,7 @@ maximizes the minimum angle of all the angles of the triangles in the triangulat
 
 \subsubsection Remeshing
 
-\subsubsection Isotropic Remeshing
+\subsubsubsection IsotropicRemeshing Isotropic Remeshing
 The incremental triangle-based isotropic remeshing algorithm introduced by Botsch et al
  \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP} is implemented in this package.
 This algorithm incrementally performs simple operations such as edge splits, edge collapses,
@@ -133,7 +133,7 @@ Isotropic remeshing.
 (d) Surface mesh with the selection uniformly remeshed.
 \cgalFigureEnd
 
-\subsubsection Minimal Angle Remeshing
+\subsubsubsection MinimalAngleRemeshing Minimal Angle Remeshing
 The incremental error-bounded and feature preserving surface remeshing algorithm with minimal
 angle improvement introduced by Hu et al. \cgalCite{hu2016error} is implemented in this package.
 This algorithm iteratively performs carefully prioritized local operations, such as edge split,
