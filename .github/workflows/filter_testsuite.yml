@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
+    if: (github.event.comment.user.login == 'sloriot' || github.event.comment.user.login == 'lrineau') && contains(github.event.comment.body, '/testme')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v3
