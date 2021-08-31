@@ -213,13 +213,8 @@ namespace internal {
       if (is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-      Uncertain<bool> tmp = do_axis_intersect_aux_A0<FT,SIDE>(p_min[1]-j[1], p_min[2]-j[2], sides, do_axis_intersect_aux_impl) != POSITIVE;
-
-      return certainly_not(tmp) ? make_uncertain(false) : tmp & (do_axis_intersect_aux_A0<FT,SIDE>(p_max[1]-k[1], p_max[2]-k[2], sides, do_axis_intersect_aux_impl) != NEGATIVE);
-
- 
-      //return CGAL_AND((do_axis_intersect_aux_A0<FT,SIDE>(p_min[1]-j[1], p_min[2]-j[2], sides, do_axis_intersect_aux_impl) != POSITIVE),
-      //                (do_axis_intersect_aux_A0<FT,SIDE>(p_max[1]-k[1], p_max[2]-k[2], sides, do_axis_intersect_aux_impl) != NEGATIVE) );
+      return CGAL_AND((do_axis_intersect_aux_A0<FT,SIDE>(p_min[1]-j[1], p_min[2]-j[2], sides, do_axis_intersect_aux_impl) != POSITIVE),
+                      (do_axis_intersect_aux_A0<FT,SIDE>(p_max[1]-k[1], p_max[2]-k[2], sides, do_axis_intersect_aux_impl) != NEGATIVE) );
     }
     case 1: {
       // t_max >= t_min
@@ -227,9 +222,8 @@ namespace internal {
       if (is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-
-      Uncertain<bool> tmp = do_axis_intersect_aux_A1<FT,SIDE>(p_min[0]-j[0], p_min[2]-j[2], sides, do_axis_intersect_aux_impl) != POSITIVE;
-      return certainly_not(tmp) ? make_uncertain(false) : tmp & (do_axis_intersect_aux_A1<FT,SIDE>(p_max[0]-k[0], p_max[2]-k[2], sides, do_axis_intersect_aux_impl) != NEGATIVE);
+      return  CGAL_AND((do_axis_intersect_aux_A1<FT,SIDE>(p_min[0]-j[0], p_min[2]-j[2], sides, do_axis_intersect_aux_impl) != POSITIVE),
+                       (do_axis_intersect_aux_A1<FT,SIDE>(p_max[0]-k[0], p_max[2]-k[2], sides, do_axis_intersect_aux_impl) != NEGATIVE) );
 
     }
     case 2: {
@@ -238,9 +232,8 @@ namespace internal {
       if ( is_indeterminate(b))
         return b;
       if(b) std::swap(j,k);
-
-      Uncertain<bool> tmp = do_axis_intersect_aux_A2<FT,SIDE>(p_min[0]-j[0], p_min[1]-j[1], sides, do_axis_intersect_aux_impl) != POSITIVE;
-      return certainly_not(tmp) ? make_uncertain(false) : tmp &(do_axis_intersect_aux_A2<FT,SIDE>(p_max[0]-k[0], p_max[1]-k[1], sides, do_axis_intersect_aux_impl) != NEGATIVE);
+      return  CGAL_AND((do_axis_intersect_aux_A2<FT,SIDE>(p_min[0]-j[0], p_min[1]-j[1], sides, do_axis_intersect_aux_impl) != POSITIVE),
+                       (do_axis_intersect_aux_A2<FT,SIDE>(p_max[0]-k[0], p_max[1]-k[1], sides, do_axis_intersect_aux_impl) != NEGATIVE) );
     }
     default:
       // Should not happen
