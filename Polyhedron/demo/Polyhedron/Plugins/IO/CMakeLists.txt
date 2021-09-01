@@ -53,7 +53,6 @@ set_package_properties(
 polyhedron_demo_plugin(triangulation_3_io_plugin triangulation_3_io_plugin KEYWORDS IO)
 target_link_libraries(triangulation_3_io_plugin PUBLIC scene_triangulation_3_item)
 
-
 if(VTK_FOUND)
   if(VTK_USE_FILE)
     include(${VTK_USE_FILE})

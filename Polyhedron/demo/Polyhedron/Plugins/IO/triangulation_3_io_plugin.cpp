@@ -31,21 +31,6 @@ public:
       ok = false;
       return QList<CGAL::Three::Scene_item*>();
     }
-#if 0
-    //{
-    CGAL::Random rng;
-    std::vector<T3::Point> points;
-    while (points.size() < 30)
-    {
-      T3::Point p(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.));
-      points.push_back(p);
-    }
-
-    T3 tr(points.begin(), points.end());
-    for (T3::Cell_handle c : tr.finite_cell_handles())
-      c->set_subdomain_index(1);
-    // }
-#else
     T3 tr;;
 
     if(fileinfo.absoluteFilePath().endsWith(".binary.cgal"))
@@ -56,7 +41,6 @@ public:
       ok = false;
       return QList<CGAL::Three::Scene_item*>();
     }
-#endif
     Scene_triangulation_3_item* new_item = new Scene_triangulation_3_item(tr);
     new_item->setName(fileinfo.fileName());
     new_item->invalidateOpenGLBuffers();
@@ -106,6 +90,5 @@ public:
   }
 
 };
-
 
 #include "triangulation_3_io_plugin.moc"

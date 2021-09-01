@@ -96,7 +96,6 @@ using namespace CGAL::Three;
     bool is_facet_oriented(const T3::Facet&)const override;
     bool is_surface()const override;
     void common_constructor(bool is_surface);
-
   };
 
 #endif // SCENE_C3T3_ITEM_H

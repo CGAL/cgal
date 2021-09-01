@@ -573,7 +573,6 @@ checks if the %IO stream `s` is in `ASCII` mode.
 */
 inline bool is_ascii(std::ios& s) { return s.iword(Static::get_mode()) == ASCII; }
 
-
 /*!
 \ingroup PkgStreamSupportRef
 
