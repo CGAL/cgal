@@ -260,6 +260,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   if(TARGET CGAL::TBB_support)
     target_link_libraries(scene_c3t3_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_triangulation_3_item PUBLIC CGAL::TBB_support)
   endif()
   if(COMMAND target_precompile_headers)
     # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
