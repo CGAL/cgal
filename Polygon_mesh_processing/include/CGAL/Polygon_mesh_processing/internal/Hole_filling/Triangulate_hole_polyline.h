@@ -30,6 +30,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_3.h>
 #include <queue>
+#include <CGAL/Polygon_2_algorithms.h>
 #endif
 
 #include <CGAL/utility.h>
