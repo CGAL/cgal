@@ -61,6 +61,12 @@ void test_references(const NamedParameters& np)
   Visitor_reference_type vis_ref = params::choose_parameter(params::get_parameter_reference(np, inp::visitor), default_value);
   CGAL_USE(vis_ref);
 
+  // std::reference_wrapper of const
+  typedef typename inp::Lookup_named_param_def<inp::face_index_t, NamedParameters, Default_type>::reference FIM_reference_type;
+  static_assert(std::is_same<const B&, FIM_reference_type>::value);
+  FIM_reference_type fim_ref = params::choose_parameter(params::get_parameter_reference(np, inp::face_index), default_value);
+  CGAL_USE(fim_ref);
+
   // non-copyable
   typedef typename inp::Lookup_named_param_def<inp::vertex_point_t, NamedParameters, Default_type>::reference VPM_reference_type;
   static_assert(std::is_same<const B&, VPM_reference_type>::value);
@@ -72,6 +78,12 @@ void test_references(const NamedParameters& np)
   static_assert(std::is_same<A<0>&, VIM_reference_type>::value);
   VIM_reference_type vim_ref = params::choose_parameter(params::get_parameter_reference(np, inp::vertex_index), default_value);
   CGAL_USE(vim_ref);
+
+  // default
+  typedef typename inp::Lookup_named_param_def<inp::edge_index_t, NamedParameters, Default_type>::reference EIM_reference_type;
+  static_assert(std::is_same<Default_type&, EIM_reference_type>::value);
+  EIM_reference_type eim_ref = params::choose_parameter(params::get_parameter_reference(np, inp::edge_index), default_value);
+  assert(&eim_ref==&default_value);
 }
 
 int main()
@@ -83,6 +95,9 @@ int main()
 
   test_references(params::visitor(std::ref(b))
                          .vertex_point_map(b)
-                         .vertex_index_map(A<0>(0)));
+                         .vertex_index_map(A<0>(0))
+                         .face_index_map(std::reference_wrapper<const B>(b))
+  );
+
   return EXIT_SUCCESS;
 }

@@ -210,9 +210,8 @@ get_parameter_reference_impl(Named_params_impl<std::reference_wrapper<T>, Tag, N
   return np.v.get();
 };
 
-
 template <typename T, typename Tag, typename Base, typename Query_tag>
-typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::type
+typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::reference
 get_parameter_reference_impl(Named_params_impl<T, Tag, Base>& np, Query_tag tag)
 {
   CGAL_static_assertion( (!boost::is_same<Query_tag, Tag>::value) );
