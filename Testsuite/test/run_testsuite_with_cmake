@@ -231,7 +231,7 @@ test_directory()
 install_sfcgal()
 {
   #get SFCGAL
-  git clone https://github.com/Oslandia/SFCGAL.git xternal_SFCGAL
+  git clone https://gitlab.com/Oslandia/SFCGAL.git xternal_SFCGAL
   #add a test script
   cd xternal_SFCGAL
   cat > cgal_test_with_cmake<<EOF
@@ -239,16 +239,10 @@ install_sfcgal()
   if [ -z "${MAKE_CMD}" ]; then
     MAKE_CMD=make
   fi
-
-  echo "copying patch..."
-   for file in \$PWD/CGAL_patches/CGAL/*; do
-    cp -r \$file \$PWD/../../../../../include/CGAL/
-  done
-  echo "done"
   mkdir build
   cd build
   echo "configuring cmake..."
-  cmake -DCGAL_DIR="\$PWD/../../build" -DSFCGAL_BUILD_TESTS=ON -DCMAKE_CXX_FLAGS_RELEASE="-O3" ..
+  cmake -DCGAL_DIR="\$CGAL_RELEASE_DIR/lib/cmake/CGAL" -DSFCGAL_BUILD_TESTS=ON -DCMAKE_CXX_FLAGS_RELEASE="-O3" ..
   echo "done."
   echo "building..."
   "${MAKE_CMD}" all
