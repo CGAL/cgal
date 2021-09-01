@@ -34,7 +34,7 @@ for i in range(0,len(compounds)):
       filepath='class'+compound+'.xml'
       total_path=op.join(op.sep, root_path,filepath)
       if(op.isfile(total_path)):
-        file_content = codecs.open(total_path, 'r', encoding='utf-8')
+        file_content = codecs.open(total_path, 'rb')
         e = pq(file_content.read(), parser="xml")
         compoundnames=[p.text() for p in list(e('includes').items())]
         
