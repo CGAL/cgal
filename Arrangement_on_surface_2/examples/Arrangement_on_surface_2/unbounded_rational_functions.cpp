@@ -1,6 +1,18 @@
 //! \file examples/Arrangement_2/unbounded_rational_functions.cpp
 // Constructing an arrangement of unbounded portions of rational functions.
 
+#include <CGAL/config.h>
+
+#ifndef CGAL_USE_CORE
+#include <iostream>
+
+int main() {
+  std::cout << "Sorry, this example needs CORE ..." << std::endl;
+  return 0;
+}
+
+#else
+
 #include "arr_rat_functions.h"
 #include "arr_print.h"
 
@@ -49,3 +61,5 @@ int main() {
 
   return 0;
 }
+
+#endif

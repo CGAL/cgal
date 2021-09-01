@@ -2,9 +2,18 @@
 // Constructing an arrangement of algebraic segments.
 
 #include <iostream>
+#include <CGAL/config.h>
+
+#if (!CGAL_USE_CORE) && (!CGAL_USE_LEDA) && (!(CGAL_USE_GMP && CGAL_USE_MPFI))
+int main ()
+{
+  std::cout << "Sorry, this example needs CORE, LEDA, or GMP+MPFI ..."
+            << std::endl;
+  return 0;
+}
+#else
 
 #include <CGAL/basic.h>
-#include <CGAL/Gmpz.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 
@@ -96,3 +105,5 @@ int main() {
 
   return 0;
 }
+
+#endif

@@ -1,8 +1,7 @@
 //! \file examples/Arrangement_2/rational_functions.cpp
 // Constructing an arrangement of arcs of rational functions.
 
-#include "arr_rat_functions.h"
-#include "arr_print.h"
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
@@ -13,6 +12,9 @@ int main() {
 }
 
 #else
+
+#include "arr_rat_functions.h"
+#include "arr_print.h"
 
 int main() {
   CGAL::IO::set_pretty_mode(std::cout);             // for nice printouts.

@@ -1,6 +1,10 @@
 //! \file examples/Arrangement_on_surface_2/conic_multiplicities.cpp
 // Handling intersection points with multiplicity between conic arcs.
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_USE_CORE
+
 #include <CGAL/basic.h>
 #include <CGAL/Arr_naive_point_location.h>
 
@@ -32,3 +36,15 @@ int main() {
   print_arrangement (arr);
   return 0;
 }
+
+#else
+
+#include <iostream>
+
+int main ()
+{
+  std::cout << "Sorry, this example needs GMP and CORE\n";
+  return 0;
+}
+
+#endif

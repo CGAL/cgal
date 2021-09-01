@@ -1,6 +1,10 @@
 //! \file examples/Arrangement_on_surface_2/Bezier_curves.cpp
 // Constructing an arrangement of Bezier curves.
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_USE_CORE
+
 #include "arr_Bezier.h"
 #include "arr_print.h"
 #include "read_objects.h"
@@ -21,3 +25,16 @@ int main(int argc, char* argv[]) {
 
   return 0;
 }
+
+
+#else
+
+#include <iostream>
+
+int main ()
+{
+  std::cout << "Sorry, this example needs GMP and CORE\n";
+  return 0;
+}
+
+#endif

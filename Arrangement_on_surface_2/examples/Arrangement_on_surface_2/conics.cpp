@@ -1,6 +1,10 @@
 //! \file examples/Arrangement_on_surface_2/conics.cpp
 // Constructing an arrangement of various conic arcs.
 
+#include <CGAL/config.h>
+
+#ifdef CGAL_USE_CORE
+
 #include "arr_conics.h"
 #include "arr_print.h"
 
@@ -53,3 +57,15 @@ int main() {
 
   return 0;
 }
+
+#else
+
+#include <iostream>
+
+int main ()
+{
+  std::cout << "Sorry, this example needs GMP and CORE\n";
+  return 0;
+}
+
+#endif
