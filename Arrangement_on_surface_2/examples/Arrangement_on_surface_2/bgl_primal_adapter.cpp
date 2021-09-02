@@ -35,7 +35,7 @@ int main() {
 
   // Create a property map based on std::vector to keep the result distances.
   boost::vector_property_map<Number_type, Vertex_index_map>
-    dist_map(arr.number_of_vertices(), index_map);
+    dist_map(static_cast<unsigned int>(arr.number_of_vertices()), index_map);
 
   // Perform Dijkstra's algorithm from the vertex v0.
   My_edge_length edge_length;
