@@ -1041,6 +1041,16 @@ public:
   Comparison_result operator()(const Kernel::Segment_2& s1,
                                const Kernel::Segment_2& s2);
 
+  /*!
+    compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
+    where the slope is the variation of the `y`-coordinate
+    from the left to the right endpoint of the segments.
+  */
+  Comparison_result operator()(const Kernel::Point_2& s1s,
+                               const Kernel::Point_2& s1t,
+                               const Kernel::Point_2& s2s,
+                               const Kernel::Point_2& s2t));
+
   /// @}
 
 }; /* end Kernel::CompareSlope_2 */
@@ -4996,6 +5006,10 @@ public:
   */
   Kernel::Point_2 operator()(const Kernel::Point_2& p,
                              const Kernel::Point_2& q );
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s);
 
   /// @}
 
@@ -5022,6 +5036,11 @@ public:
   */
   Kernel::Point_3 operator()(const Kernel::Point_3& p,
                              const Kernel::Point_3& q );
+
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s);
 
 
   /// @}
@@ -9702,7 +9721,6 @@ public:
                            const Kernel::Point_3&r,
                            const Kernel::Point_3&s,
                            const Kernel::Point_3&t);
-
 
   /// @}
 

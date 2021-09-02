@@ -19,7 +19,7 @@
 #include <CGAL/Real_timer.h>
 
 #include <CGAL/Shape_detection.h>
-#include <CGAL/Regularization.h>
+#include <CGAL/Shape_regularization/regularize_planes.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Alpha_shape_face_base_2.h>
@@ -373,15 +373,19 @@ private:
     if (dialog.regularize()) {
 
       std::cerr << "Regularization of planes... " << std::endl;
-      CGAL::regularize_planes(
-        *points,
-        points->point_map(),
+      CGAL::Shape_regularization::Planes::regularize_planes(
         planes,
         CGAL::Identity_property_map<Plane_3>(),
-        CGAL::Shape_detection::RG::Point_to_shape_index_map(*points, regions),
-        true, true, true, true,
-        max_accepted_angle,
-        max_distance_to_plane);
+        *points,
+        points->point_map(),
+        CGAL::parameters::plane_index_map(
+          CGAL::Shape_detection::RG::Point_to_shape_index_map(*points, regions)).
+        regularize_parallelism(true).
+        regularize_orthogonality(true).
+        regularize_coplanarity(true).
+        regularize_axis_symmetry(true).
+        maximum_angle(max_accepted_angle).
+        maximum_offset(max_distance_to_plane));
 
       std::cerr << "done" << std::endl;
     }
@@ -654,13 +658,19 @@ private:
       {
         std::cerr << "Regularization of planes... " << std::endl;
         typename Ransac::Plane_range planes = ransac.planes();
-        CGAL::regularize_planes (*points,
-                                 points->point_map(),
-                                 planes,
-                                 CGAL::Shape_detection::Plane_map<Traits>(),
-                                 CGAL::Shape_detection::Point_to_shape_index_map<Traits>(*points, planes),
-                                 true, true, true, true,
-                                 op.normal_threshold, op.epsilon);
+        CGAL::Shape_regularization::Planes::regularize_planes(
+          planes,
+          CGAL::Shape_detection::Plane_map<Traits>(),
+          *points,
+          points->point_map(),
+          CGAL::parameters::plane_index_map(
+            CGAL::Shape_detection::Point_to_shape_index_map<Traits>(*points, planes)).
+          regularize_parallelism(true).
+          regularize_orthogonality(true).
+          regularize_coplanarity(true).
+          regularize_axis_symmetry(true).
+          maximum_angle(dialog.normal_tolerance()).
+          maximum_offset(op.epsilon));
 
         std::cerr << "done" << std::endl;
       }
@@ -1055,8 +1065,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
                                map_v2i[it->vertex (1)],
                                map_v2i[it->vertex (2)]);
     }
-
-  soup_item->orient();
+  std::vector<std::size_t> dum;
+  soup_item->orient(dum);
   if(sm_item){
     soup_item->exportAsSurfaceMesh (sm_item->polyhedron());
   }

@@ -647,7 +647,7 @@ public:
     graph_node_classifier.new_node(node_id, *tm2_ptr);
 
     //forward to the visitor
-//    user_visitor.new_node_added(node_id, type, h_1, h_2, is_target_coplanar, is_source_coplanar); // NODE_VISITOR_TAG
+    user_visitor.intersection_point_detected(node_id, type, h_1, h_2, tm1, tm2, is_target_coplanar, is_source_coplanar);
     if (tm2_ptr!=const_mesh_ptr)
     {
       switch(type)
@@ -997,7 +997,6 @@ public:
         halfedge_descriptor hnew = Euler::split_edge(hedge, tm);
         CGAL_assertion(expected_src==source(hnew,tm));
         vertex_descriptor vnew=target(hnew,tm);
-//          user_visitor.new_vertex_added(node_id, vnew, tm); // NODE_VISITOR_TAG
         nodes.call_put(vpm, vnew, node_id, tm);
         // register the new vertex in the output builder
         output_builder.set_vertex_id(vnew, node_id, tm);
@@ -1010,6 +1009,7 @@ public:
         //update marker tags. If the edge was marked, then the resulting edges in the split must be marked
         if ( hedge_is_marked )
           call_put(marks_on_edges,tm,edge(hnew,tm),true);
+        user_visitor.new_vertex_added(node_id, target(hnew, tm), tm);
         user_visitor.edge_split(hnew, tm);
 
         CGAL_assertion_code(expected_src=vnew);

@@ -12,7 +12,7 @@
 // #define CGAL_DEPRECATED_HEADER "test_header.h"
 // #define CGAL_REPLACEMENT_HEADER "test_replacement_header.h"
 
-// #include <CGAL/internal/deprecation_warning.h>
+// #include <CGAL/Installation/internal/deprecation_warning.h>
 
 int main()
 {

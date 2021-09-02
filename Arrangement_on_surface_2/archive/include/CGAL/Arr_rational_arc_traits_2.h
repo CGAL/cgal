@@ -15,7 +15,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Arr_rational_arc_traits_2.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_rational_function_traits_2.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 /*! \file
  * Definition of the Arr_rational_arc_traits_2 class.

@@ -69,6 +69,10 @@ public:
     : RPoint_2(p)
   {}
 
+  Point_2(RPoint_2&& p)
+    : RPoint_2(std::move(p))
+  {}
+
   explicit
   Point_2(const Weighted_point_2& wp)
     : Rep(wp.point())
@@ -246,7 +250,7 @@ extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
@@ -273,7 +277,7 @@ extract(std::istream& is, Point_2<R>& p, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

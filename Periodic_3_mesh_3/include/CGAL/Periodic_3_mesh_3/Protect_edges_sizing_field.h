@@ -40,7 +40,7 @@
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/internal/Has_member_visited.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>

@@ -14,7 +14,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/NewKernel_d/Cartesian_change_FT.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 namespace CGAL {
 

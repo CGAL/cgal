@@ -20,7 +20,7 @@
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Euclidean_distance.h>
 #include <CGAL/tuple.h>
-#include <CGAL/internal/Search_helpers.h>
+#include <CGAL/Spatial_searching/internal/Search_helpers.h>
 
 #include <cstring>
 #include <list>

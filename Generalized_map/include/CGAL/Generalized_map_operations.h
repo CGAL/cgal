@@ -13,7 +13,7 @@
 #define CGAL_GENERALIZED_MAP_OPERATIONS_H 1
 
 #include <CGAL/GMap_dart_const_iterators.h>
-#include <CGAL/internal/Combinatorial_map_group_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_group_functors.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 
 #include <deque>

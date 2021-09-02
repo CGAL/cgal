@@ -26,7 +26,7 @@
 #include <CGAL/Mesh_3/Mesher_level_default_implementations.h>
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/enumerable_thread_specific.h>
-  #include <tbb/parallel_do.h>
+  #include <tbb/parallel_for_each.h>
 #endif
 
 #include <CGAL/Meshes/Filtered_deque_container.h>
@@ -993,8 +993,8 @@ scan_triangulation_impl()
 # endif
     add_to_TLS_lists(true);
 
-    // PARALLEL_DO
-    tbb::parallel_do(
+    // PARALLEL FOR_EACH
+    tbb::parallel_for_each(
       this->r_tr_.finite_facets_begin(), this->r_tr_.finite_facets_end(),
       typename Rf_base::template Scan_facet<Self>(*this)
     );

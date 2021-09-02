@@ -27,7 +27,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 // For interior_polyhedron_3
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_interior_point_3.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
