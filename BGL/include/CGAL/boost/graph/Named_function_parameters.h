@@ -75,7 +75,7 @@ struct Get_param< Named_params_impl<T, Tag, Base>, Tag >
   typedef typename std::conditional<std::is_copy_constructible<T>::value,
                                     T, std::reference_wrapper<const T> >::type type;
   typedef typename std::conditional<std::is_copy_constructible<T>::value,
-                                    T&, const T&>::type reference;
+                                    T, const T&>::type reference;
 };
 
 template< typename T, typename Tag>
@@ -84,7 +84,7 @@ struct Get_param< Named_params_impl<T, Tag, No_property>, Tag >
   typedef typename std::conditional<std::is_copy_constructible<T>::value,
                                     T, std::reference_wrapper<const T> >::type type;
   typedef typename std::conditional<std::is_copy_constructible<T>::value,
-                                    T&, const T&>::type reference;
+                                    T, const T&>::type reference;
 };
 
 template< typename T, typename Tag, typename Base>
@@ -161,7 +161,7 @@ get_parameter_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
 
 // helper for getting references
 template <class T>
-T& get_reference(T& t)
+const T& get_reference(const T& t)
 {
   return t;
 }
@@ -175,47 +175,47 @@ T& get_reference(const std::reference_wrapper<T>& r)
 // helper function to extract the reference from a named parameter pack given a query tag
 template <typename T, typename Tag, typename Base>
 typename std::conditional<std::is_copy_constructible<T>::value,
-                          T&, const T& >::type
-get_parameter_reference_impl(Named_params_impl<T, Tag, Base>& np, Tag)
+                          T, const T& >::type
+get_parameter_reference_impl(const Named_params_impl<T, Tag, Base>& np, Tag)
 {
   return get_reference(np.v);
 }
 
 template< typename T, typename Tag, typename Query_tag>
 Param_not_found
-get_parameter_reference_impl(Named_params_impl<T, Tag, No_property>&, Query_tag)
+get_parameter_reference_impl(const Named_params_impl<T, Tag, No_property>&, Query_tag)
 {
   return Param_not_found();
 }
 
 template< typename T, typename Tag>
 typename std::conditional<std::is_copy_constructible<T>::value,
-                          T&, const T& >::type
-get_parameter_reference_impl(Named_params_impl<T, Tag, No_property>& np, Tag)
+                          T, const T& >::type
+get_parameter_reference_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
 {
   return get_reference(np.v);
 };
 
 template <typename T, typename Tag, typename Base>
 T&
-get_parameter_reference_impl(Named_params_impl<std::reference_wrapper<T>, Tag, Base>& np, Tag)
+get_parameter_reference_impl(const Named_params_impl<std::reference_wrapper<T>, Tag, Base>& np, Tag)
 {
   return np.v.get();
 }
 
 template< typename T, typename Tag>
 T&
-get_parameter_reference_impl(Named_params_impl<std::reference_wrapper<T>, Tag, No_property>& np, Tag)
+get_parameter_reference_impl(const Named_params_impl<std::reference_wrapper<T>, Tag, No_property>& np, Tag)
 {
   return np.v.get();
 };
 
 template <typename T, typename Tag, typename Base, typename Query_tag>
 typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::reference
-get_parameter_reference_impl(Named_params_impl<T, Tag, Base>& np, Query_tag tag)
+get_parameter_reference_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
 {
   CGAL_static_assertion( (!boost::is_same<Query_tag, Tag>::value) );
-  return get_parameter_reference_impl(static_cast<typename Base::base&>(np), tag);
+  return get_parameter_reference_impl(static_cast<const typename Base::base&>(np), tag);
 }
 
 
@@ -296,7 +296,7 @@ typename internal_np::Get_param<internal_np::Named_params_impl<T, Tag, Base>, Qu
 get_parameter_reference(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
 {
   return internal_np::get_parameter_reference_impl(
-    static_cast<internal_np::Named_params_impl<T, Tag, Base>&>(const_cast<Named_function_parameters<T, Tag, Base>&>(np)),
+    static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np),
     tag);
 }
 

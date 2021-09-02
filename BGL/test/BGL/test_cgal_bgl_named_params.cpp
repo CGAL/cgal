@@ -75,7 +75,7 @@ void test_references(const NamedParameters& np)
 
   // passed by copy
   typedef typename inp::Lookup_named_param_def<inp::vertex_index_t, NamedParameters, Default_type>::reference VIM_reference_type;
-  static_assert(std::is_same<A<0>&, VIM_reference_type>::value);
+  static_assert(std::is_same<A<0>, VIM_reference_type>::value);
   VIM_reference_type vim_ref = params::choose_parameter(params::get_parameter_reference(np, inp::vertex_index), default_value);
   CGAL_USE(vim_ref);
 
