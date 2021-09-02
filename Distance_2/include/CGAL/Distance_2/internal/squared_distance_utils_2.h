@@ -19,6 +19,7 @@
 #define CGAL_SQUARED_DISTANCE_UTILS_H
 
 #include <CGAL/determinant.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/wmult.h>
 
 namespace CGAL {
@@ -293,7 +294,6 @@ same_direction(const typename K::Vector_2 &u,
   Tag tag;
   return same_direction_tag(u,v, k, tag);
 }
-
 
 } // namespace internal
 
