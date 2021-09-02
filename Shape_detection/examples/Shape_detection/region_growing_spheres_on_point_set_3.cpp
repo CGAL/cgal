@@ -72,9 +72,9 @@ int main (int argc, char** argv)
      ([&](const std::vector<std::size_t>& region)
       {
         // Assign a random color to each region
-        unsigned char r = (unsigned char)(random.get_int(64, 192));
-        unsigned char g = (unsigned char)(random.get_int(64, 192));
-        unsigned char b = (unsigned char)(random.get_int(64, 192));
+        unsigned char r = static_cast<unsigned char>(random.get_int(64, 192));
+        unsigned char g = static_cast<unsigned char>(random.get_int(64, 192));
+        unsigned char b = static_cast<unsigned char>(random.get_int(64, 192));
         for (const std::size_t& idx : region)
         {
           red[idx] = r;

@@ -2496,15 +2496,15 @@ void MainWindow::viewerShowObject()
   Scene_item* item = nullptr;
   QAction* sender_action = qobject_cast<QAction*>(sender());
   if(sender_action && !sender_action->data().isNull()) {
-    item = (Scene_item*)sender_action->data().value<void*>();
+    item = static_cast<Scene_item*>(sender_action->data().value<void*>());
   }
   if(item) {
     const Scene::Bbox bbox = item->bbox();
-    CGAL::qglviewer::Vec min((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z),
-        max((float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
+    CGAL::qglviewer::Vec min(static_cast<float>(bbox.xmin())+viewer->offset().x, static_cast<float>(bbox.ymin())+viewer->offset().y, static_cast<float>(bbox.zmin())+viewer->offset().z),
+        max(static_cast<float>(bbox.xmax())+viewer->offset().x, static_cast<float>(bbox.ymax())+viewer->offset().y, static_cast<float>(bbox.zmax())+viewer->offset().z);
     viewer->setSceneBoundingBox(min, max);
-    viewerShow((float)min.x, (float)min.y, (float)min.z,
-               (float)max.x, (float)max.y, (float)max.z);
+    viewerShow(static_cast<float>(min.x), static_cast<float>(min.y), static_cast<float>(min.z),
+               static_cast<float>(max.x), static_cast<float>(max.y), static_cast<float>(max.z));
   }
 }
 /* to check
@@ -3599,9 +3599,9 @@ void SubViewer::lookat()
     if (viewer->camera()->frame()->isSpinning())
       viewer->camera()->frame()->stopSpinning();
     mw->viewerShow(viewer,
-                   (float)dialog.get_x() + viewer->offset().x,
-                   (float)dialog.get_y() + viewer->offset().y,
-                   (float)dialog.get_z() + viewer->offset().z);
+                   static_cast<float>(dialog.get_x()) + viewer->offset().x,
+                   static_cast<float>(dialog.get_y()) + viewer->offset().y,
+                   static_cast<float>(dialog.get_z()) + viewer->offset().z);
   }
 }
 
