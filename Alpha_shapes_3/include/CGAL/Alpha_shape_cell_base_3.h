@@ -17,7 +17,7 @@
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
-#include <CGAL/internal/Lazy_alpha_nt_3.h>
+#include <CGAL/Alpha_shapes_3/internal/Lazy_alpha_nt_3.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {

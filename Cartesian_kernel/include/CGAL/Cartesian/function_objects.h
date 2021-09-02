@@ -606,6 +606,7 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Compare_slope_2
   {
+    typedef typename K::Point_2            Point_2;
     typedef typename K::Line_2             Line_2;
     typedef typename K::Segment_2          Segment_2;
   public:
@@ -624,6 +625,15 @@ namespace CartesianKernelFunctors {
                               s1.target().x(), s1.target().y(),
                               s2.source().x(), s2.source().y(),
                               s2.target().x(), s2.target().y());
+    }
+
+    result_type
+    operator()(const Point_2& s1s, const Point_2& s1t, const Point_2& s2s, const Point_2& s2t) const
+    {
+      return compare_slopesC2(s1s.x(), s1s.y(),
+                              s1t.x(), s1t.y(),
+                              s2s.x(), s2s.y(),
+                              s2t.x(), s2t.y());
     }
   };
 
@@ -3284,15 +3294,15 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator() (const Circle_2 & c1, const Circle_2 & c2) const
-          {
+    {
       // Concentric Circles don't have radical line
       CGAL_kernel_precondition (c1.center() != c2.center());
       const FT a = 2*(c2.center().x() - c1.center().x());
       const FT b = 2*(c2.center().y() - c1.center().y());
       const FT c = CGAL::square(c1.center().x()) +
-        CGAL::square(c1.center().y()) - c1.squared_radius() -
-        CGAL::square(c2.center().x()) -
-        CGAL::square(c2.center().y()) + c2.squared_radius();
+                   CGAL::square(c1.center().y()) - c1.squared_radius() -
+                   CGAL::square(c2.center().x()) -
+                   CGAL::square(c2.center().y()) + c2.squared_radius();
       return Line_2(a, b, c);
     }
   };
@@ -3317,11 +3327,11 @@ namespace CartesianKernelFunctors {
       const FT b = 2*(s2.center().y() - s1.center().y());
       const FT c = 2*(s2.center().z() - s1.center().z());
       const FT d = CGAL::square(s1.center().x()) +
-        CGAL::square(s1.center().y()) +
-        CGAL::square(s1.center().z()) - s1.squared_radius() -
-        CGAL::square(s2.center().x()) -
-        CGAL::square(s2.center().y()) -
-        CGAL::square(s2.center().z()) + s2.squared_radius();
+                   CGAL::square(s1.center().y()) +
+                   CGAL::square(s1.center().z()) - s1.squared_radius() -
+                   CGAL::square(s2.center().x()) -
+                   CGAL::square(s2.center().y()) -
+                   CGAL::square(s2.center().z()) + s2.squared_radius();
       return Plane_3(a, b, c, d);
     }
   };

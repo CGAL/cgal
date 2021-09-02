@@ -1041,6 +1041,16 @@ public:
   Comparison_result operator()(const Kernel::Segment_2& s1,
                                const Kernel::Segment_2& s2);
 
+  /*!
+    compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
+    where the slope is the variation of the `y`-coordinate
+    from the left to the right endpoint of the segments.
+  */
+  Comparison_result operator()(const Kernel::Point_2& s1s,
+                               const Kernel::Point_2& s1t,
+                               const Kernel::Point_2& s2s,
+                               const Kernel::Point_2& s2t));
+
   /// @}
 
 }; /* end Kernel::CompareSlope_2 */
@@ -8888,7 +8898,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`, or,
     if both \f$ x\f$- and \f$ y\f$- coordinate are identical and
     the \f$ z\f$-coordinate of `p` is smaller than the \f$ z\f$-coordinate of `q`.
@@ -8918,7 +8928,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_2&p,
@@ -8947,7 +8957,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_3&p,
@@ -9030,7 +9040,7 @@ public:
 
   /*!
     returns true iff the \f$ y\f$-coordinate of `p` is smaller than the
-    \f$ y\f$-coordinate of `q` or if the are the same and
+    \f$ y\f$-coordinate of `q` or if they are the same and
     the \f$ x\f$-coordinate of `p` is smaller than the \f$ x\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_2&p,
@@ -9711,7 +9721,6 @@ public:
                            const Kernel::Point_3&r,
                            const Kernel::Point_3&s,
                            const Kernel::Point_3&t);
-
 
   /// @}
 

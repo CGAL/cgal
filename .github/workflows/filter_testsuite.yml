@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    if: github.event.comment.user.login == 'maxGimeno' && contains(github.event.comment.body, '/testme')
+    if: (github.event.comment.user.login == 'sloriot' || github.event.comment.user.login == 'lrineau') && contains(github.event.comment.body, '/testme')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v3
@@ -61,7 +61,7 @@ jobs:
         uses: actions/github-script@v3
         with:
           script: |
-            const address = "The testsuite is lauched. results will be found, after it is done, here : https://cgal.geometryfactory.com/~mgimeno/test_suite/TESTRESULTS/index.shtml "
+            const address = "The testsuite is lauched. results will be found, after it is done, here : https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/index.shtml "
             github.issues.createComment({
               owner: "CGAL",
               repo: "cgal",

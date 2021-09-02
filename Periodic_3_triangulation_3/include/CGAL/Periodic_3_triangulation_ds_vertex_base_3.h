@@ -17,7 +17,7 @@
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Dummy_tds_3.h>
+#include <CGAL/TDS_3/internal/Dummy_tds_3.h>
 #include <CGAL/Periodic_3_offset_3.h>
 
 namespace CGAL {
