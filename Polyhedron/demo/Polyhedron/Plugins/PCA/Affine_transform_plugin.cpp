@@ -435,7 +435,7 @@ void Polyhedron_demo_affine_transform_plugin::grid()
       y_t = dialog.y_space_doubleSpinBox->value();
       z_t = dialog.z_space_doubleSpinBox->value();
       bool single = dialog.singleItemCheckBox->isChecked();
-      Facegraph_item* t_item;
+      Facegraph_item* t_item = nullptr;
       if(single)
       {
         t_item = new Facegraph_item();
@@ -473,7 +473,7 @@ void Polyhedron_demo_affine_transform_plugin::grid()
           }
         }
       }
-      if(single)
+      if(single && t_item)
         t_item->invalidateOpenGLBuffers();
       QApplication::restoreOverrideCursor();
 }
