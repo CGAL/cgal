@@ -1206,7 +1206,7 @@ equivalent point with normalized coordinates, namely \f$(\frac{1}{2},
 <tr>
 <td>
 \image html pred_around_vertex.png
-\image latex pred_around_vertex.pdf
+\image latex pred_around_vertex.png
 </td>
 <td>
 
@@ -3825,7 +3825,7 @@ this overloaded version is required only for the concepts
 <tr>
 <td>
 \image html compare_y_near_boundary.png
-\image latex compare_y_near_boundary.pdf
+\image latex compare_y_near_boundary.png
 </td>
 <td>
 
@@ -3876,7 +3876,7 @@ compare the values \f$x_p\f$ and \f$x(d)\f$.
 <tr>
 <td>
 \image html compare_x_on_boundary.png
-\image latex compare_x_on_boundary.pdf
+\image latex compare_x_on_boundary.png
 </td>
 <td>
 
@@ -3920,7 +3920,7 @@ and `ArrangementIdentifiedHorizontalTraits_2`.
 <tr>
 <td>
 \image html compare_x_near_boundary.png
-\image latex compare_x_near_boundary.pdf
+\image latex compare_x_near_boundary.png
 </td>
 <td>
 
@@ -4281,12 +4281,12 @@ Also, note that a single polyline can be split into several
 For example, the general polyline
 
 \image html generic-polyline.png
-\image latex generic-polyline.pdf
+\image latex generic-polyline.png
 
 can be represented by one of the following two orientations.
 
 \image html well_oriented_polyline.png
-\image latex well_oriented_polyline.pdf
+\image latex well_oriented_polyline.png
 
 Distinct \f$x\f$-monotone polylines are rendered in different colors.
 
