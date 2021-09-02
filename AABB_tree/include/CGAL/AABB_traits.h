@@ -332,7 +332,7 @@ public:
     template<typename Query>
     bool operator()(const Query& q, const Bounding_box& bbox) const
     {
-      return CGAL::do_intersect(q, bbox);
+      return GeomTraits().do_intersect_3_object()(q, bbox);
     }
 
     template<typename Query>
