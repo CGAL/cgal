@@ -351,7 +351,6 @@ void Scene_c3t3_item::computeElements()const
         Ec::Vertices,
         d->positions_lines_not_in_complex.data(),
         static_cast<int>(d->positions_lines_not_in_complex.size()*sizeof(float)));
-
   d->positions_lines_not_in_complex_size = d->positions_lines_not_in_complex.size();
   QApplication::restoreOverrideCursor();
 }

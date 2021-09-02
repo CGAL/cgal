@@ -18,7 +18,6 @@ and LICENSE.LGPL.
 The following files are modified versions taken from Boost and are licensed
 under the Boost Software License (see LICENSE.BSL).
 - include/CGAL/auto_link/auto_link.h
-- include/CGAL/internal/container_fwd_fixed.hpp
 - include/CGAL/STL_Extension/internal/boost/array_binary_tree.hpp
 - include/CGAL/STL_Extension/internal/boost/mutable_heap.hpp
 - include/CGAL/STL_Extension/internal/boost/mutable_queue.hpp

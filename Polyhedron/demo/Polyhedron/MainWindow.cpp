@@ -157,6 +157,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   this->verbose = verbose;
+  is_locked = false;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoadScript);
@@ -167,6 +168,8 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   viewer_window = new SubViewer(ui->mdiArea, this, nullptr);
   viewer = viewer_window->viewer;
   CGAL::Three::Three::s_mainviewer = viewer;
+  CGAL::Three::Three::s_mutex = &mutex;
+  CGAL::Three::Three::s_wait_condition = &wait_condition;
   viewer->setObjectName("mainViewer");
   viewer_window->showMaximized();
   viewer_window->setWindowFlags(
@@ -682,12 +685,17 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       bool init2 = initIOPlugin(obj);
       if (!init1 && !init2)
       {
-        //qdebug << "not for this program";
         pluginsStatus_map[name] = QString("Not for this program.");
       }
-      else
-        //qdebug << "success";
+      else{
+#ifdef QT_SCRIPT_LIB
+        QScriptValue objectValue =
+            script_engine->newQObject(obj);
+        script_engine->globalObject().setProperty(obj->objectName(), objectValue);
+        evaluate_script_quiet(QString("plugins.push(%1);").arg(obj->objectName()));
+#endif
         pluginsStatus_map[name] = QString("success");
+      }
     }
     else if(!do_load)
     {
@@ -695,7 +703,6 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       ignored_map[name] = true;
     }
     else{
-      //qdebug << "error: " << qPrintable(loader.errorString());
       pluginsStatus_map[name] = loader.errorString();
 
     }
@@ -826,12 +833,6 @@ bool MainWindow::initPlugin(QObject* obj)
     obj->setParent(this);
     plugin->init(this, this->scene, this);
     plugins << qMakePair(plugin, obj->objectName());
-#ifdef QT_SCRIPT_LIB
-    QScriptValue objectValue =
-        script_engine->newQObject(obj);
-    script_engine->globalObject().setProperty(obj->objectName(), objectValue);
-    evaluate_script_quiet(QString("plugins.push(%1);").arg(obj->objectName()));
-#endif
 
     Q_FOREACH(QAction* action, plugin->actions()) {
       // If action does not belong to the menus, add it to "Operations" menu
@@ -1008,7 +1009,6 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& vmin, CGAL::qglviewer::
   const double xmax = bbox.xmax();
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
-
 
 
   vmin = CGAL::qglviewer::Vec(xmin, ymin, zmin);
@@ -1287,6 +1287,7 @@ QList<Scene_item*> MainWindow::loadItem(QFileInfo fileinfo,
                          QString("File %1 is not a readable file.")
                          .arg(fileinfo.absoluteFilePath()));
   }
+
   QCursor tmp_cursor(Qt::WaitCursor);
   CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
   QList<Scene_item*> result = loader->load(fileinfo, ok, add_to_scene);
@@ -2223,6 +2224,7 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
+
   float lineWidth[2];
   if(!viewer->isOpenGL_4_3())
     viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
@@ -3398,7 +3400,6 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     viewer->setShareCam(b, session);
   });
 #endif
-
 }
 
 void MainWindow::on_actionAdd_Viewer_triggered()
@@ -3694,6 +3695,47 @@ void MainWindow::on_action_Save_triggered()
     }
   }
 }
+
+void MainWindow::test_all_actions()
+{
+  int nb_items = scene->numberOfEntries();
+  selectSceneItem(0);
+  Q_FOREACH(PluginNamePair pnp, plugins)
+  {
+    Polyhedron_demo_plugin_interface* plugin = pnp.first;
+    Q_FOREACH(QAction* action, plugin->actions()){
+      if(plugin->applicable(action)){
+        qDebug()<<"Testing "<<pnp.second<<"and "<<action->text()<<" on";
+        qDebug()<<scene->item(scene->mainSelectionIndex())->name()<<"...";
+        action->triggered();
+        getMutex()->lock();
+        if(isLocked())
+        {
+          getMutex()->unlock();
+          getMutex()->lock();
+          getWaitCondition()->wait(getMutex());
+          getMutex()->unlock();
+          //get the "done event" that add items after the meshing thread is finished to execute before we start the next action.
+          QCoreApplication::processEvents();
+        }
+        getMutex()->unlock();
+        while(scene->numberOfEntries() > nb_items)
+        {
+          scene->erase(nb_items);
+        }
+        selectSceneItem(0);
+        //if the item is hidden, the scene's bbox is 0 and that badly
+        //messes with the offset meshing, for example.
+        scene->item(scene->mainSelectionIndex())->setVisible(true);
+        reloadItem();
+        selectSceneItem(0);
+      }
+    }
+  }
+  while(scene->numberOfEntries() > 0)
+    scene->erase(0);
+}
+
 
 void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
 {

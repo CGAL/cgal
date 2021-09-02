@@ -5,17 +5,14 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
 
 
-#ifndef CGAL_INTERNAL_TRIANGULATION_2_PROJECTION_TRAITS_BASE_3_H
-#define CGAL_INTERNAL_TRIANGULATION_2_PROJECTION_TRAITS_BASE_3_H
-
-#include <CGAL/license/Triangulation_2.h>
-
+#ifndef CGAL_INTERNAL_PROJECTION_TRAITS_BASE_3_H
+#define CGAL_INTERNAL_PROJECTION_TRAITS_BASE_3_H
 
 #include <CGAL/Profile_timer.h>
 #include <CGAL/intersections.h>
@@ -379,9 +376,9 @@ public:
 
 
 template < class Kernel >
-class Triangulation_2_projection_traits_base_3
+class Projection_traits_base_3
 {
-  typedef Triangulation_2_projection_traits_base_3<Kernel> Self;
+  typedef Projection_traits_base_3<Kernel> Self;
 
   typename Kernel::Vector_3 n, b1, b2;
 
@@ -389,7 +386,7 @@ public:
   typedef typename Kernel::Vector_3 Vector_3;
 
 
-  explicit Triangulation_2_projection_traits_base_3(const Vector_3& n_)
+  explicit Projection_traits_base_3(const Vector_3& n_)
     : n(n_)
   {
     typedef typename Kernel::FT FT;
@@ -589,8 +586,8 @@ public:
     return Projection_to_plan(plane_point, *this);
   }
 
-}; // end class Triangulation_2_projection_traits_base_3<Kernel>
+}; // end class Projection_traits_base_3<Kernel>
 
 } // end namespace CGAL
 
-#endif // CGAL_INTERNAL_TRIANGULATION_2_PROJECTION_TRAITS_BASE_3_H
+#endif // CGAL_INTERNAL_PROJECTION_TRAITS_BASE_3_H
