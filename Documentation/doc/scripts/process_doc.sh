@@ -7,16 +7,16 @@ if [ "$1" == '--help' ]; then
   exit 0
 fi
 
-mkdir -p doc_1_8_18
+mkdir -p doc_1_8_4
 mkdir -p doc_1_8_13
 mkdir -p doc_master
 
-PATH_TO_1_8_13="$1"
-PATH_TO_1_8_18="$2"
+PATH_TO_1_8_4="$1"
+PATH_TO_1_8_13="$2"
 PUBLISH_DIR="$3"
 
-DOXYGEN_1=$($PATH_TO_1_8_13 --version)
-DOXYGEN_2=$($PATH_TO_1_8_18 --version)
+DOXYGEN_1=$($PATH_TO_1_8_4 --version)
+DOXYGEN_2=$($PATH_TO_1_8_13 --version)
 
 DO_COMPARE=TRUE
 PATH_TO_SCRIPTS=${PWD}
@@ -52,17 +52,17 @@ cd $PATH_TO_SCRIPTS #scripts
 PATH_TO_MASTER="$PWD/doxygen_master/build/bin/doxygen"
 echo "done."
 
-echo "comparing versions 1.8.18 and 1.8.13"
-bash -$- test_doxygen_versions.sh $PATH_TO_1_8_13 $PATH_TO_1_8_18 $PWD/doc_1_8_13 $PWD/doc_1_8_18  $PUBLISH_DIR
-if [ ! -d $PWD/doc_1_8_18/doc_log ]; then
+echo "comparing versions 1.8.4 and 1.8.13"
+bash -$- test_doxygen_versions.sh $PATH_TO_1_8_4 $PATH_TO_1_8_13 $PWD/doc_1_8_4 $PWD/doc_1_8_13  $PUBLISH_DIR
+if [ ! -d $PWD/doc_1_8_13/doc_log ]; then
   echo "NO DOC LOGS."
   exit 1
 fi
 mv diff.txt diff1.txt
 
-echo "comparing versions 1.8.13 and master"
+echo "comparing versions 1.8.4 and master"
 if [ "$DO_COMPARE" = "TRUE" ]; then
-  bash -$- test_doxygen_versions.sh $PATH_TO_1_8_13 $PATH_TO_MASTER $PWD/doc_1_8_13 $PWD/doc_master $PUBLISH_DIR
+  bash -$- test_doxygen_versions.sh $PATH_TO_1_8_4 $PATH_TO_MASTER $PWD/doc_1_8_4 $PWD/doc_master $PUBLISH_DIR
 fi
 if [ $? -ne 0 ] || [ "$DO_COMPARE" = "FALSE" ]; then
   DO_COMPARE=FALSE
@@ -80,13 +80,13 @@ if [ "$DO_COMPARE" = "TRUE" ]; then
     --cgal-version "$CGAL_NAME" --do-copy-results --version-to-keep 10 --doxygen-version1 "$DOXYGEN_1" --doxygen-version2 "$DOXYGEN_2" --master-describe "$MASTER_DESCRIBE"
 else
   echo "NO MASTER"
-  python3 ${PWD}/testsuite.py --output-dir1 $PWD/doc_1_8_13/doc_output/ --output-dir2 $PWD/doc_1_8_18/doc_output/ --doc-log-dir1 $PWD/doc_1_8_13/doc_log/ \
-    --doc-log-dir2 $PWD/doc_1_8_18/doc_log/ --doc-log-dir-master $PWD/doc_master/ \
+  python3 ${PWD}/testsuite.py --output-dir1 $PWD/doc_1_8_4/doc_output/ --output-dir2 $PWD/doc_1_8_13/doc_output/ --doc-log-dir1 $PWD/doc_1_8_4/doc_log/ \
+    --doc-log-dir2 $PWD/doc_1_8_13/doc_log/ --doc-log-dir-master $PWD/doc_master/ \
     --publish $PUBLISH_DIR --diff1 $PWD/diff1.txt \
     --cgal-version "$CGAL_NAME" --do-copy-results --version-to-keep 10 --doxygen-version1 "$DOXYGEN_1" --doxygen-version2 "$DOXYGEN_2"
 fi
 #clean-up
-rm -rf ./doc_1_8_18 ./doc_1_8_13 ./doc_master #./doxygen_master
+rm -rf ./doc_1_8_4 ./doc_1_8_13 ./doc_master #./doxygen_master
 rm ./diff1.txt ./cgal_version
 if [ -f ./diff2.txt ]; then
   rm ./diff2.txt

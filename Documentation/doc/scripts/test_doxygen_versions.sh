@@ -94,7 +94,7 @@ echo "done."
 #add post-processing
 cd ./build_doc
 echo "Adding postprocessing..."
-make -j$NB_CORES doc_with_postprocessing  & >> ./build_logs
+make -j$NB_CORES doc_with_postprocessing  &>> ./build_logs
 echo "done."
 cd .. #scripts
 mv ./build_doc/* $BUILD_DIR_2

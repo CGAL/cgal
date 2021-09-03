@@ -74,7 +74,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 </head><body>
 <h1 id="maintitle">Doxygen Manual Results</h1>'''
     page_footer='''<table border="1" cellspacing="2" cellpadding="5" class="test-results">
-    <tr><td/><th colspan="3">Doxygen 1.8.13(official)</th><th colspan="3">Doxygen 1.8.18</th><th colspan="3">Doxygen master</th></tr>
+    <tr><td/><th colspan="3">Doxygen 1.8.4</th><th colspan="3">Doxygen 1.8.13(official)</th><th colspan="3">Doxygen master</th></tr>
 <tr>
 <th>Package Name</th>
 <th>Logs </th>
@@ -93,11 +93,11 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
       suffix=''
       if args.doxygen_version1:
         suffix = ""+args.doxygen_version1
-      link1="<a href=\"output1/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix}</a> (used for the official CGAL documentation)\n".format(_suffix=suffix)
+      link1="<a href=\"output1/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix}</a>\n".format(_suffix=suffix)
       suffix = ''
       if args.doxygen_version2:
         suffix = args.doxygen_version2
-      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/doxygen/doxygen\"> Doxygen {_suffix}</a>\n".format(_suffix=suffix)
+      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix} (used for the official CGAL documentation)</a>\n".format(_suffix=suffix) 
       suffix = ''
       if args.master_describe:
         suffix=args.master_describe
@@ -267,7 +267,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <html><head><title>Manual Testsuite Overview</title></head>
 <body><h1>Overviewpage of the Doxygen Manual Testsuite</h1>
 <table border="1" cellspacing="2" cellpadding="5" id="revisions" class="rev-table">
-  <tr><td/><td/><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen 1.8.18</th><th colspan="2">Doxygen master</th><td/><td/></tr>
+  <tr><td/><td/><th colspan="2">Doxygen 1.8.4</th><th colspan="2">Doxygen 1.8.13</th><th colspan="2">Doxygen master</th><td/><td/></tr>
 <tr><th>Revision</th><th>Date</th><th>Warnings</th>
 <th>Errors</th><th>Warnings </th><th>Errors</th><th>Warnings </th><th>Errors </th>
 <th>Diff with doxygen master</th><th>Diff with doxygen 1.8.13</th></tr></table></body>''')
