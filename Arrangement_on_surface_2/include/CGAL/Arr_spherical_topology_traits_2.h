@@ -235,13 +235,13 @@ public:
    * \param v the vertex.
    * \todo why is this needed, and where used?
    */
-  bool is_valid_vertex (const Vertex* /* v */) const { return true; }
+  bool is_valid_vertex(const Vertex* /* v */) const { return true; }
 
   /*! Obtain the number of valid vertices. */
   Size number_of_valid_vertices() const { return (m_dcel.size_of_vertices()); }
 
   /*! Determine whether the given halfedge is valid. */
-  bool is_valid_halfedge (const Halfedge* /* he */) const { return true; }
+  bool is_valid_halfedge(const Halfedge* /* he */) const { return true; }
 
   /*! Obtain the number of valid halfedges. */
   Size number_of_valid_halfedges() const
@@ -288,9 +288,28 @@ public:
   Vertex* north_pole() { return m_north_pole; }
 
   /*! Obtain a vertex on the line of discontinuity that corresponds to
-   *  the given curve-end (or return nullptr if no such vertex exists).
+   *  the given point (or return NULL if no such vertex exists).
    */
-  Vertex* discontinuity_vertex(const X_monotone_curve_2 xc, Arr_curve_end ind)
+  Vertex* discontinuity_vertex(const Point_2& pt)
+  {
+    auto it = m_boundary_vertices.find(pt);
+    return (it != m_boundary_vertices.end()) ? it->second : nullptr;
+  }
+
+  /*! Obtain a vertex on the line of discontinuity that corresponds to
+   *  the given point (or return NULL if no such vertex exists).
+   */
+  const Vertex* discontinuity_vertex(const Point_2& pt) const
+  {
+    auto it = m_boundary_vertices.find(pt);
+    return (it != m_boundary_vertices.end()) ? it->second : nullptr;
+  }
+
+  // TODO remove if all occurences have been replaced with the new signature that queries for a point
+  /*! Obtain a vertex on the line of discontinuity that corresponds to
+   *  the given curve-end (or return NULL if no such vertex exists).
+   */
+  Vertex* discontinuity_vertex(const X_monotone_curve_2& xc, Arr_curve_end ind)
   {
     Point_2 key = (ind == ARR_MIN_END) ?
       m_geom_traits->construct_min_vertex_2_object()(xc) :
@@ -402,7 +421,19 @@ public:
   //@{
 
   /*! Receive a notification on the creation of a new boundary vertex that
-   * corresponds to the given curve end.
+   * corresponds to a point.
+   * \param v The new boundary vertex.
+   * \param p The point.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
+   */
+  void notify_on_boundary_vertex_creation(Vertex* v,
+                                          const Point_2& p,
+                                          Arr_parameter_space ps_x,
+                                          Arr_parameter_space ps_y);
+
+  /*! Receive a notification on the creation of a new boundary vertex that
+   * corresponds to a given curve end.
    * \param v The new boundary vertex.
    * \param xc The x-monotone curve.
    * \param ind The curve end.
@@ -425,8 +456,8 @@ public:
    * \param swap_predecessors Output swap predeccesors or not;
    *        set correctly only if true is returned
    */
-  bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
-                                   std::pair< CGAL::Sign, CGAL::Sign> signs2,
+  bool let_me_decide_the_outer_ccb(std::pair<CGAL::Sign, CGAL::Sign> signs1,
+                                   std::pair<CGAL::Sign, CGAL::Sign> signs2,
                                    bool& swap_predecessors) const;
 
 
@@ -439,10 +470,10 @@ public:
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion(std::pair< CGAL::Sign,
-                                             CGAL::Sign > /* signs1 */,
-                                  std::pair< CGAL::Sign,
-                                             CGAL::Sign > /* signs2 */) const
+  face_split_after_edge_insertion(std::pair<CGAL::Sign,
+                                            CGAL::Sign> /* signs1 */,
+                                  std::pair<CGAL::Sign,
+                                            CGAL::Sign> /* signs2 */) const
   {
     // In case of a spherical topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
@@ -573,10 +604,9 @@ public:
 
   //! reference_face (non-const version).
   /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common
-      point.
-      \return A pointer to the reference face.
-  */
+   * All reference faces of arrangements of the same type have a common point.
+   * \return A pointer to the reference face.
+   */
   Face* reference_face() { return spherical_face(); }
   //@}
 
@@ -613,7 +643,6 @@ protected:
    * on the line of discontinuity.
    */
   Face* _face_below_vertex_on_discontinuity(Vertex* v) const;
-
   //@}
 };
 

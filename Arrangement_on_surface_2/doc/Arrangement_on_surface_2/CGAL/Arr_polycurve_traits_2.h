@@ -355,7 +355,7 @@ namespace CGAL {
       /*! \deprecated
        * Obtain the number of subcurve end-points that comprise the polycurve.
        * Note that for a bounded polycurve, if there are \f$ n\f$ points in the
-       * polycurve, it is comprised of \f$ (n - 1)\f$ subcurves.
+       * polycurve, it comprises \f$ (n - 1)\f$ subcurves.
        * Currently, only bounded polycurves are supported.
        */
       unsigned_int points() const;

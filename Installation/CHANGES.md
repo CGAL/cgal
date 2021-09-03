@@ -70,6 +70,18 @@ Release date: December 2021
 
 -   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
 
+### [2D Arrangements](https://doc.cgal.org/5.4/Manual/packages.html#PkgArrangementOnSurface2)
+
+ -  A new hierarchy of traits concepts is introduced.
+    It captures all the valid combinations of boundary conditions for the 4 boundary sides of the parameter space.
+    The 4 boundaries are Bottom, Top, Left, and Right. Each boundary side can be either contracted, identified, close, open, or oblivious.
+    Not all possible combinations are valid. If one side is identified then the other must be as well. Two adjacent sides cannot be contracted.
+
+ -  **Breaking Change:** The traits function objects `Compare_x_at_limit_2` and `Compare_x_near_limit_2` are renamed to `Compare_x_on_boundary_2` and `Compare_x_near_boundary_2`, respectively.
+
+ -  A new geometry traits , namely, `Arr_geodesic_arc_on_sphere_traits_2`, is introduced. It handles arcs of great circles embedded on the unit sphere.
+
+
 
 ### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
 

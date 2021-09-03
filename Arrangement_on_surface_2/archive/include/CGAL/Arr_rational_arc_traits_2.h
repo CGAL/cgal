@@ -637,7 +637,7 @@ public:
  /*! A function object that compares the x-limits of arc ends on the
    * boundary of the parameter space
    */
-  class Compare_x_at_limit_2 {
+  class Compare_x_on_boundary_2 {
   public:
     /*! Compare the x-coordinate of a point and the x-coordinate of the limit
      * of a rational arc at its specificed end at y = +/- oo.
@@ -691,14 +691,14 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_at_limit_2 function object */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(); }
 
   /*! A function object that compares the x-coordinates of arc ends near the
    * boundary of the parameter space
    */
-  class Compare_x_near_limit_2 {
+  class Compare_x_near_boundary_2 {
   public:
 
     /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
@@ -724,9 +724,9 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_near_limit_2 function object */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(); }
+  /*! Obtain a Compare_x_near_boundary_2 function object */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(); }
 
 
   /*! A function object that compares the y-coordinates of arc ends near the
