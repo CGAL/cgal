@@ -20,6 +20,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/utility.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/Polygon_2_algorithms.h>
 
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
