@@ -41,6 +41,10 @@
 #include <boost/optional.hpp>
 #include <boost/dynamic_bitset.hpp>
 
+#include <boost/container/flat_set.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/container/small_vector.hpp>
+
 namespace CGAL {
 
 using CDT_3_face_index = int;
@@ -252,7 +256,13 @@ private:
 
             conforming_dt_visitor.process_cells_in_conflict(cell_it, end);
       }
-      void reinsert_vertices(Vertex_handle) const {}
+      void after_insertion(Vertex_handle new_vertex) {
+
+      }
+
+      void reinsert_vertices(Vertex_handle v) {
+        after_insertion(v);
+      }
       Vertex_handle replace_vertex(Cell_handle c, int index,
                                    const Point_3 &) const {
         return c->vertex(index);
@@ -264,8 +274,8 @@ public:
   Vertex_handle insert(const Point_3 &p, Locate_type lt, Cell_handle c,
                                int li, int lj)
   {
-    auto v = Conforming_Dt::private_insert(p, lt, c, li, lj, insert_in_conflict_visitor);
-    Conforming_Dt::restore_Delaunay();
+    auto v = Conforming_Dt::insert_impl(p, lt, c, li, lj, insert_in_conflict_visitor);
+    Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
     return v;
   }
 
@@ -275,6 +285,11 @@ public:
 
     Cell_handle c = tr.locate(p, lt, li, lj, start);
     return insert(p, lt, c, li, lj);
+  }
+
+  Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb)
+  {
+    return this->insert_constrained_edge_impl(va, vb, insert_in_conflict_visitor);
   }
 
   template <typename Polygon>
@@ -341,31 +356,33 @@ public:
       CDT_2& cdt_2 = face_constraints.back();
       CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>>
           circ{&vertex_handles}, circ_end{circ};
-      std::optional<typename CDT_2::Vertex_handle> first;
-      std::optional<typename CDT_2::Vertex_handle> previous;
+      const auto first_2d  = cdt_2.insert(tr.point(*circ));
+      first_2d->info().vertex_handle_3d = *circ;
+      auto previous_2d = first_2d;
       do {
-        auto vh_2 = cdt_2.insert(tr.point(*circ));
-        vh_2->info().vertex_handle_3d = *circ;
-        if(!first) first = vh_2;
-        if(previous) {
-          cdt_2.insert_constraint(*previous, vh_2);
-          std::cerr << "insert constraint ("
-                    << tr.point((*previous)->info().vertex_handle_3d)
-                    << " , "
-                    << tr.point((vh_2)->info().vertex_handle_3d)
-                    << ")\n";
-        }
-        previous = vh_2;
+        auto va = *circ;
         ++circ;
-        if(circ == circ_end) {
-          cdt_2.insert_constraint(vh_2, *first);
-          std::cerr << "insert constraint ("
-                    << tr.point((vh_2)->info().vertex_handle_3d)
-                    << " , "
-                    << tr.point((*first)->info().vertex_handle_3d)
-                    << ")\n";
-          break;
+        auto vb = *circ;
+        const auto c_id = this->constraint_from_extremities(va, vb);
+        if(c_id != Constraint_id{}) {
+          auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+          auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+          if(vit != v_end && ++vit != v_end && vit != --v_end) {
+            for(; vit != v_end; ++vit) {
+              // insert (*vit)->point() in the cdt_2, on the edge
+            }
+          }
         }
+
+        auto vh_2d = circ == circ_end ? first_2d : cdt_2.insert(tr.point(vb));
+        vh_2d->info().vertex_handle_3d = vb;
+        cdt_2.insert_constraint(previous_2d, vh_2d);
+        std::cerr << "insert constraint ("
+                  << tr.point(previous_2d->info().vertex_handle_3d)
+                  << " , "
+                  << tr.point(vh_2d->info().vertex_handle_3d)
+                  << ")\n";
+        previous_2d = vh_2d;
       } while (circ != circ_end);
       { // Now, use BGL BFS algorithm to mark the faces reachable from
         // an infinite face as `is_outside_the_face`.
@@ -398,7 +415,7 @@ public:
       const auto vb_2 = constr_edge_2.first->vertex(cdt_2.ccw(constr_edge_2.second));
       const auto va = va_2->info().vertex_handle_3d;
       const auto vb = vb_2->info().vertex_handle_3d;
-      const auto c_id = this->constraint_from_extremities(va, vb);
+      auto c_id = this->constraint_from_extremities(va, vb);
       if(c_id != Constraint_id{}) {
         auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
         auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
@@ -407,8 +424,9 @@ public:
             // insert (*vit)->point() in the cdt_2, on the edge
           }
         }
+      } else {
+        c_id = this->insert_constrained_edge(va, vb);
       }
-      const auto constraint_id = this->insert_constrained_edge(va, vb);
     }
     for(auto fh: cdt_2.all_face_handles())
     {
@@ -472,11 +490,16 @@ public:
   /// @}
 
 protected:
+  using set_of_face_ids = boost::container::flat_set<
+      CDT_3_face_index, std::less<CDT_3_face_index>,
+      boost::container::small_vector<CDT_3_face_index, 2>>;
   T_3 &tr = *this;
   Conforming_Dt &conforming_dt = *this;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
 
   std::vector<CDT_2> face_constraints;
+  set_of_face_ids x;
+  boost::unordered_map<Constraint_id, set_of_face_ids> incident_faces;
   boost::dynamic_bitset<> face_constraint_misses_subfaces;
 };
 

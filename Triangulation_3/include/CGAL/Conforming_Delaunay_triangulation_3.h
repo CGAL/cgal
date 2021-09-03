@@ -148,8 +148,24 @@ protected:
   }
 
   template <typename Visitor>
-  Vertex_handle private_insert(const Point &p, Locate_type lt, Cell_handle c,
-                               int li, int lj, Visitor& visitor)
+  Constraint_id insert_constrained_edge_impl(Vertex_handle va, Vertex_handle vb,
+                                             Visitor& visitor) {
+    if(va != vb) {
+      const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
+      va->c_id = c_id.vl_ptr();
+      vb->c_id = c_id.vl_ptr();
+      ++va->nb_of_incident_constraints;
+      ++vb->nb_of_incident_constraints;
+      add_to_subconstraints_to_conform(va, vb, c_id);
+      restore_Delaunay(visitor);
+      return c_id;
+    }
+    return {};
+  }
+
+  template <typename Visitor>
+  Vertex_handle insert_impl(const Point &p, Locate_type lt, Cell_handle c,
+                            int li, int lj, Visitor& visitor)
   {
     Vertex_handle v1, v2;
     Vertex_handle new_vertex;
@@ -190,9 +206,9 @@ protected:
 
 public:
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
-                               int li, int lj)
+                       int li, int lj)
   {
-    auto v = private_insert(p, lt, c, li, lj, insert_in_conflict_visitor);
+    auto v = insert_impl(p, lt, c, li, lj, insert_in_conflict_visitor);
     restore_Delaunay();
     return v;
   }
@@ -205,18 +221,9 @@ public:
     return insert(p, lt, c, li, lj);
   }
 
-  Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb) {
-    if(va != vb) {
-      const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
-      va->c_id = c_id.vl_ptr();
-      vb->c_id = c_id.vl_ptr();
-      ++va->nb_of_incident_constraints;
-      ++vb->nb_of_incident_constraints;
-      add_to_subconstraints_to_conform(va, vb, c_id);
-      restore_Delaunay();
-      return c_id;
-    }
-    return {};
+  Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb)
+  {
+    return insert_constrained_edge_impl(va, vb, insert_in_conflict_visitor);
   }
 
   bool is_conforming() const {
@@ -251,7 +258,9 @@ protected:
       }
     }
   }
-  void restore_Delaunay() {
+
+  template <typename Visitor>
+  void restore_Delaunay(Visitor& visitor) {
     while(!subconstraints_to_conform.empty()) {
       auto pair = subconstraints_to_conform.top();
       subconstraints_to_conform.pop();
@@ -263,13 +272,15 @@ protected:
       std::cerr << "tr.subconstraints_to_conform.pop()="
                 << display_subcstr(pair.first) << "\n";
 #endif // CGAL_DEBUG_CDT_3
-      conform_subconstraint(pair.first, pair.second);
+      conform_subconstraint(pair.first, pair.second, visitor);
     }
   }
 
   /// Return `true` if a Steiner point was inserted
+  template <typename Visitor>
   bool conform_subconstraint(Subconstraint subconstraint,
-                             Constraint_id constraint)
+                             Constraint_id constraint,
+                             Visitor& visitor)
   {
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
@@ -279,8 +290,8 @@ protected:
       Locate_type lt;
       int li, lj;
       const Cell_handle c = tr.locate(steiner_pt, lt, li, lj, hint);
-      const Vertex_handle v = this->private_insert(steiner_pt, lt, c, li, lj,
-                                                   insert_in_conflict_visitor);
+      const Vertex_handle v = this->insert_impl(steiner_pt, lt, c, li, lj,
+                                                visitor);
       if(lt != T_3::VERTEX) {
         v->nb_of_incident_constraints = 1;
         v->c_id = constraint.vl_ptr();
