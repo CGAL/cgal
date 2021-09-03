@@ -226,48 +226,6 @@ test_directory()
   echo
 }
 
-
-#setup sfcgal as a package to be tested
-install_sfcgal()
-{
-  #get SFCGAL
-  git clone https://gitlab.com/Oslandia/SFCGAL.git xternal_SFCGAL
-  #add a test script
-  cd xternal_SFCGAL
-  cat > cgal_test_with_cmake<<EOF
-  #! /bin/sh
-  if [ -z "${MAKE_CMD}" ]; then
-    MAKE_CMD=make
-  fi
-  mkdir build
-  cd build
-  echo "configuring cmake..."
-  cmake -DCGAL_DIR="\$CGAL_RELEASE_DIR/lib/cmake/CGAL" -DSFCGAL_BUILD_TESTS=ON -DCMAKE_CXX_FLAGS_RELEASE="-O3" ..
-  echo "done."
-  echo "building..."
-  "${MAKE_CMD}" all
-  echo "done. Testing.."
-  if ctest -VV --output-on-failure; then
-    echo "done. Cleaning up..."
-  else
-    exit 1
-  fi
-  cd ..
-  cd CGAL_patches
-  for file in CGAL/internal/*/*; do
-    rm \$PWD/../../../../../../include/\$file
-  done
-  for file in CGAL/*; do
-    if [ -f \$file ]; then
-      rm \$PWD/../../../../../../include/\$file
-    fi
-  done
-  echo "done."
-EOF
-  chmod +x cgal_test_with_cmake
-}
-
-
 run_testsuite()
 {
 
@@ -301,8 +259,5 @@ if [ -z "$1" ] ; then
 else
   TEST_DIRECTORIES="$*"
 fi
-if [ -n "$TEST_XTERNAL" ]; then
-  TEST_DIRECTORIES="$TEST_DIRECTORIES xternal_SFCGAL"
-  install_sfcgal
-fi
+
 run_testsuite
