@@ -43,10 +43,13 @@ void test_values_and_types(const NamedParameters& np)
 }
 
 template<class NamedParameters>
-void test_no_copyable(const NamedParameters&)
+void test_no_copyable(const NamedParameters& np)
 {
   typedef typename inp::Get_param<typename NamedParameters::base,inp::visitor_t>::type NP_type;
   static_assert( boost::is_same<NP_type,std::reference_wrapper<const B> > ::value );
+
+  const A<4>& a  = params::choose_parameter(params::get_parameter_reference(np, inp::edge_index), A<4>(4));
+  assert(a.v==4);
 }
 
 template <class NamedParameters>
