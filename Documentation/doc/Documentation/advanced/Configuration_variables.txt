@@ -317,8 +317,10 @@ cmake variables is necessary.
 
 \subsection installation_tbb TBB Library
 
-If \tbb is not automatically found, the user must set the `TBB_ROOT`
-environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compiler>` must be set.
+If \tbb is not automatically found, the user must set some variables, depending on the used version of TBB.
+
+\subsubsection installation_old_tbb TBB 2020 or before
+The `TBB_ROOT` and `TBB_ARCH_PLATFORM=<arch>/<compiler>` environment variables must be set.
 `<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
 used. It should be set to what is used in `$TBB_ROOT/lib/<arch>`.
 
@@ -338,6 +340,14 @@ Note that the variables in the table below are being used.
 | `TBB_MALLOC_DEBUG_LIBRARY` | Full pathname of the compiled TBB debug malloc library | CMake |
 | `TBB_MALLOCPROXY_DEBUG_LIBRARY` | Full pathname of the compiled TBB debug malloc_proxy library (optional) | CMake |
 | `TBB_MALLOCPROXY_RELEASE_LIBRARY` | Full pathname of the compiled TBB release malloc_proxy library (optional) | CMake |
+
+\subsubsection installation_new_tbb OneTBB
+Since OneAPI \tbb version 2021, Intel provides CMake scripts of their own, and the user only have to set the `TBB_DIR`
+CMake variable at configuration time. A typical value for `TBB_DIR` is
+`/opt/intel/oneapi/tbb/latest/lib/cmake/tbb` on Unix systems, and `C:/dev/OneAPI/tbb/latest/lib/cmake/tbb` on Windows.
+Alternatively, the user can instead source the `setvars` script that can be found at `/opt/intel/oneapi/setvars.sh` on Unix and
+`C:/dev/OneAPI/setvars.bat` on Windows. It will setup the PATH and all Intel internal variables to be able to easily use
+any library of the OneAPI.
 
 \subsection installation_laslib LASlib library
 
