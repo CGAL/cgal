@@ -6,11 +6,11 @@ data-autoref/test_05.off 1 5 17 1 0 0
 data-autoref/test_06.off 3 55 141 1 76 0
 data-autoref/test_07.off 1 4 10 1 4 0
 data-autoref/test_08.off 1 31 87 1 52 0
-data-autoref/test_09.off 1 4 5 1 5 0
+data-autoref/test_09.off 1 4 5 1 4 0
 data-autoref/test_10.off 1 3 13 0 13 0
 data-autoref/test_11.off 1 3 12 1 5 0
 data-autoref/test_12.off 2 2 11 1 11 0
-data-autoref/test_13.off 1 5 16 0 16 0
+data-autoref/test_13.off 1 5 16 1 8 0
 data-autoref/test_14.off 1 5 16 1 12 0
 data-autoref/test_15.off 3 8 16 1 12 0
 data-autoref/test_16.off 1 2 6 1 4 0
