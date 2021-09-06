@@ -1203,7 +1203,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         #if defined(CGAL_USE_CPP_INT) && true
 
-          #if false // tight bounds optimized
+          #if true // tight bounds optimized
 
             // Make tight and fast bounds for x here.
             // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
