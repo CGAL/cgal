@@ -1,0 +1,20 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \begin{pspicture}(-0.45,-0.1)(1.45,1.6)
+    \psline[linewidth=0.25pt](1.45,1.6)(1.45,0)(-0.45,0)(-0.45,1.6)
+    \psline[linewidth=0.5pt]{<-}(-0.1,0.45)(1.1,0.45)
+    \psline[linewidth=0.8pt,linestyle=dashed,dash=2pt 2pt](0.5,0)(0.5,1)
+    \pnode(0.5,0){1}
+    \arrMainVertex(0,1){2}
+    \pnode(0.5,0){3}
+    \arrMainVertex(1,1){4}
+    \nccurve[showpoints=false,ncurv=1,angleA=90,angleB=270]{1}{2}
+    \nccurve[showpoints=false,ncurv=1,angleA=90,angleB=270]{3}{4}
+    \pscircle*(0.25,0.45){2pt}
+    \pscircle*(0.75,0.45){2pt}
+  \end{pspicture}
+}
+\end{document}

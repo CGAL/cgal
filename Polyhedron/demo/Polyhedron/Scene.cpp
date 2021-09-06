@@ -171,6 +171,9 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
+  if(index <0 || index >= numberOfEntries())
+    return -1;
+
   CGAL::Three::Scene_item* item = m_entries[index];
   if(qobject_cast<Scene_group_item*>(item))
   {
@@ -184,8 +187,6 @@ Scene::erase(Scene::Item_id index)
   //clears the Scene_view
   clear();
   index_map.clear();
-  if(index < 0 || index >= m_entries.size())
-    return -1;
   if(item->parentGroup())
     item->parentGroup()->removeChild(item);
 
@@ -193,7 +194,7 @@ Scene::erase(Scene::Item_id index)
   Item_id removed_item = item_id(item);
   children.removeAll(removed_item);
   indexErased(removed_item);
-    m_entries.removeAll(item);
+  m_entries.removeAll(item);
   Q_EMIT itemAboutToBeDestroyed(item);
   item->aboutToBeDestroyed();
   item->deleteLater();
@@ -764,8 +765,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       std::vector<QOpenGLFramebufferObject*> fbos;
       std::vector<QOpenGLFramebufferObject*> depth_test;
       QColor background = viewer->backgroundColor();
-      fbos.resize((int)viewer->total_pass());
-      depth_test.resize((int)viewer->total_pass()-1);
+      fbos.resize(static_cast<int>(viewer->total_pass()));
+      depth_test.resize(static_cast<int>(viewer->total_pass())-1);
 
       //first pass
       fbos[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
@@ -835,8 +836,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
 
       //last pass
-      fbos[(int)viewer->total_pass()-1] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
-      fbos[(int)viewer->total_pass()-1]->bind();
+      fbos[static_cast<int>(viewer->total_pass())-1] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
+      fbos[static_cast<int>(viewer->total_pass())-1]->bind();
       viewer->glDisable(GL_BLEND);
       viewer->glEnable(GL_DEPTH_TEST);
       viewer->glDepthFunc(GL_LESS);
@@ -846,18 +847,18 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      renderScene(opaque_items     , viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
-      renderScene(transparent_items, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
-      fbos[(int)viewer->total_pass()-1]->release();
+      renderScene(opaque_items     , viewer, picked_item_IDs, false, static_cast<int>(viewer->total_pass())-1, false, depth_test[static_cast<int>(viewer->total_pass())-2]);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, static_cast<int>(viewer->total_pass())-1, false, depth_test[static_cast<int>(viewer->total_pass())-2]);
+      fbos[static_cast<int>(viewer->total_pass())-1]->release();
       if(viewer->getStoredFrameBuffer() != nullptr)
         viewer->getStoredFrameBuffer()->bind();
 
       //blending
       program.bind();
       vaos[viewer]->bind();
-      viewer->glClearColor((GLclampf)background.redF(),
-                           (GLclampf)background.greenF(),
-                           (GLclampf)background.blueF(),
+      viewer->glClearColor(static_cast<GLclampf>(background.redF()),
+                           static_cast<GLclampf>(background.greenF()),
+                           static_cast<GLclampf>(background.blueF()),
                            0.0f);
       viewer->glDisable(GL_DEPTH_TEST);
       viewer->glClear(GL_COLOR_BUFFER_BIT);
@@ -868,9 +869,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       proj_mat.setToIdentity();
       proj_mat.ortho(-1,1,-1,1,0,1);
       program.setUniformValue("projection_matrix", proj_mat);
-      for(int i=0; i< (int)viewer->total_pass()-1; ++i)
+      for(int i=0; i< static_cast<int>(viewer->total_pass())-1; ++i)
         delete depth_test[i];
-      for(int i = (int)viewer->total_pass()-1; i>=0; --i)
+      for(int i = static_cast<int>(viewer->total_pass())-1; i>=0; --i)
       {
         viewer->glBindTexture(GL_TEXTURE_2D, fbos[i]->texture());
         viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(6));

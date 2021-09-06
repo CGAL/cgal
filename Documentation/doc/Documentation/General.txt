@@ -65,6 +65,24 @@ public:
 };
 
 /// \cgalConcept
+/// Adaptable functor with three arguments
+/// \cgalRefines AdaptableFunctor
+class AdaptableTernaryFunction
+{
+public:
+  /// result_type
+  typedef unspecified_type result_type;
+  /// first argument_type
+  typedef unspecified_type first_argument_type;
+  /// second argument_type
+  typedef unspecified_type second_argument_type;
+  /// third argument_type
+  typedef unspecified_type third_argument_type;
+  /// operator type
+  result_type operator()(first_argument_type, second_argument_type, third_argument_type);
+};
+
+/// \cgalConcept
 /// Concept from the \cpp standard.
 /// See https://en.cppreference.com/w/cpp/named_req/Iterator
 class Iterator {};

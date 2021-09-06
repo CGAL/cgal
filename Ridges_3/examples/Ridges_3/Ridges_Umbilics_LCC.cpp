@@ -287,7 +287,7 @@ int main()
   PolyhedralSurf P;
   CGAL::IO::read_polygon_mesh(if_name.c_str(), P);
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
-          (int)num_vertices(P), (int)num_faces(P));
+          static_cast<int>(num_vertices(P)), static_cast<int>(num_faces(P)));
   if(verbose)
     out_verb << "Polysurf with " << num_vertices(P)
              << " vertices and " << num_faces(P)

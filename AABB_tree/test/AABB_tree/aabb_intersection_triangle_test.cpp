@@ -79,7 +79,7 @@ void test_speed_for_query(const Tree& tree,
         }
         nb++;
     }
-    unsigned int speed = (unsigned int)(nb / timer.time());
+    unsigned int speed = static_cast<unsigned int>(nb / timer.time());
     std::cout.precision(10);
     std::cout.width(15);
     std::cout << speed << " intersections/s with " << query_name << std::endl;

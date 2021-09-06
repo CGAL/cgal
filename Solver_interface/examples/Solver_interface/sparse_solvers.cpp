@@ -21,7 +21,7 @@ int main(void)
     int x = rand() % degree;
     int y = rand() % degree;
 
-    FT value = rand() / (FT)RAND_MAX;
+    FT value = rand() / static_cast<FT>(RAND_MAX);
 
     A.add_coef(x, y, value);
     A.add_coef(y, x, value);

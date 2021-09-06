@@ -487,7 +487,9 @@ See Section \ref Section_2D_Triangulations_Delaunay for an example.
 `Projection_traits_xz_3<R>` to
 deal with projections on the
 `yz` plane and `xz`-plane,
-respectively.
+respectively, as well as the geometric traits class
+`Projection_traits_3<R>` that deals with projections onto an
+arbitrary plane defined by its orthogonal vector.
 
 \subsection Subsection_2D_Triangulations_Basic_Example Example of a Basic Triangulation
 

@@ -18,7 +18,7 @@ int main ()
               <<dim<<"D" << std::endl;
   std::vector<Point> v;
   v.reserve(nb_points);
-  CGAL::points_on_cube_grid_d (dim, size, (std::size_t) nb_points,
+  CGAL::points_on_cube_grid_d (dim, size, static_cast<std::size_t>(nb_points),
                                std::back_inserter(v), Creator_d(dim) );
   for (int i = 0; i < nb_points; ++i) std::cout<<"  "<<v[i]<<std::endl;
   return 0;

@@ -64,7 +64,8 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
   typedef CGAL::Polygon_mesh_processing::internal::
     Polygon_soup_orienter<PointRange, PolygonRange> Orienter;
 
-  Orienter orienter(points, polygons);
+  Default_orientation_visitor visitor;
+  Orienter orienter(points, polygons, visitor);
   orienter.fill_edge_map();
   // make edges to duplicate
   for(std::size_t i1=0;i1<points.size();++i1)

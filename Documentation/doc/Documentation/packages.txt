@@ -134,7 +134,6 @@
 \package_listing{AABB_tree}
 \package_listing{Orthtree}
 \package_listing{Spatial_sorting}
-\package_listing{Optimal_bounding_box}
 
 \cgalPackageSection{PartGeometricOptimization,Geometric Optimization}
 
@@ -142,6 +141,7 @@
 \package_listing{Inscribed_areas}
 \package_listing{Polytope_distance_d}
 \package_listing{Principal_component_analysis}
+\package_listing{Optimal_bounding_box}
 
 \cgalPackageSection{PartInterpolation,Interpolation}
 

@@ -302,7 +302,7 @@ public Q_SLOTS:
       }
       if(total == 0)
         continue;
-      CGAL::qglviewer::Vec center(x/(double)total, y/(double)total, z/(double)total);
+      CGAL::qglviewer::Vec center(x/static_cast<double>(total), y/static_cast<double>(total), z/static_cast<double>(total));
       CGAL::qglviewer::Vec orig;
       CGAL::qglviewer::Vec dir;
       if(camera->type() == CGAL::qglviewer::Camera::PERSPECTIVE)

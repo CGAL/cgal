@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
+#include <CGAL/Surface_mesh_segmentation/internal/K_means_clustering.h>
 typedef CGAL::internal::K_means_clustering K_means;
 /**
  * Test where number of points equal to number of centers,

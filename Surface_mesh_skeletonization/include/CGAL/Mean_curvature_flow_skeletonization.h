@@ -44,7 +44,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 
 // Curve skeleton data structure
-#include <CGAL/internal/Surface_mesh_skeletonization/Curve_skeleton.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Curve_skeleton.h>
 
 // For Voronoi diagram
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -53,13 +53,13 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 // For debugging macro
-#include <CGAL/internal/Surface_mesh_skeletonization/Debug.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Debug.h>
 
 // Some helper functions
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
 // For detect_degenarcy
-#include <CGAL/internal/Surface_mesh_skeletonization/Detect_degeneracy.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Detect_degeneracy.h>
 
 // Inside mesh test
 #include <CGAL/Side_of_triangle_mesh.h>

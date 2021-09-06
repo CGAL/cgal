@@ -20,6 +20,8 @@
 #include <QModelIndex>
 #include <QMdiSubWindow>
 #include <QLineEdit>
+#include <QMutex>
+#include <QWaitCondition>
 
 class Scene;
 class Viewer;
@@ -95,6 +97,7 @@ public:
                                             CGAL::Three::Polyhedron_demo_io_plugin_interface*,
                                             bool& ok,
                                             bool add_to_scene=true);
+
   void computeViewerBBox(CGAL::qglviewer::Vec &vmin, CGAL::qglviewer::Vec &vmax);
   void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min,
                         CGAL::qglviewer::Vec max);
@@ -446,6 +449,8 @@ public:
   //! Calls evaluate_script(script, filename, true).
   void evaluate_script_quiet(QString script,
                              const QString & fileName = QString());
+  QMutex mutex;
+  QWaitCondition wait_condition;
 #endif
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
@@ -453,6 +458,7 @@ public Q_SLOTS:
   void toggleFullScreen();
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
+  void test_all_actions();
 private:
   SubViewer* viewer_window;
   QList<QDockWidget *> visibleDockWidgets;
@@ -470,6 +476,7 @@ private Q_SLOTS:
   void recenterViewer();
 
 private:
+  bool is_locked;
   QMap<QAction*, QMenu*> action_menu_map;
 };
 

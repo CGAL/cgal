@@ -44,7 +44,7 @@ int main(int argc, char*argv[])
      CGAL::parameters::threshold_percent (100.). // No limit on the number of outliers to remove
      threshold_distance (2. * average_spacing)); // Point with distance above 2*average_spacing are considered outliers
 
-  std::cerr << (100. * std::distance(first_to_remove, points.end()) / (double)(points.size()))
+  std::cerr << (100. * std::distance(first_to_remove, points.end()) / static_cast<double>(points.size()))
             << "% of the points are considered outliers when using a distance threshold of "
             << 2. * average_spacing << std::endl;
 
