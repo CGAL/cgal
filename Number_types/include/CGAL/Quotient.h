@@ -754,8 +754,20 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(x.num > 0 && x.den > 0);
 
           Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-          const auto n = get_interval_exp(x.num);
-          const auto d = get_interval_exp(x.den);
+          auto n = get_interval_exp(x.num);
+          auto d = get_interval_exp(x.den);
+
+          const int e = static_cast<int>(n.second - d.second);
+          if (CGAL::abs(double(n.second) - double(d.second)) >= (1<<30)*2.0) {
+            CGAL_assertion_msg(false, "TODO: Check this case!");
+            if (e < 0) {
+              n.second = INT_MIN;
+              d.second = INT_MAX;
+            } else if (e > 0) {
+              n.second = INT_MAX;
+              d.second = INT_MIN;
+            }
+          }
 
           CGAL_assertion_msg(
             CGAL::abs(double(n.second) - double(d.second)) < (1<<30)*2.0,
@@ -764,8 +776,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const Interval_nt<> num(n.first);
           const Interval_nt<> den(d.first);
           const Interval_nt<> div = num / den;
-
-          const int e = static_cast<int>(n.second - d.second);
           std::tie(l, u) = ldexp(div, e).pair();
 
           if (change_sign) {
