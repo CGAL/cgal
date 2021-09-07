@@ -316,7 +316,7 @@ const D& choose_parameter(const internal_np::Param_not_found&, const D& d)
 template <typename D>
 D choose_parameter(const internal_np::Param_not_found&, D&& d)
 {
-  return d;
+  return std::move(d);
 }
 
 template <typename T, typename D>
