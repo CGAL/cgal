@@ -782,10 +782,33 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return std::make_pair(l, u);
         }
 
+        // TODO: The main question: does this implementation returns p and q, which
+        // are exactly representable on the double grid or we should still apply nextafter
+        // in order to get it and set correct rounding mode before calling do_cast?
+        // Now, it seems like our l and u are simply closest doubles rather than points
+        // on the double grid.
         std::pair<double, double> get_interval_as_boost( Type& x ) const {
+
+          const Type input = x;
+          std::cout << "input: " << input << std::endl;
 
           double l = 0.0, u = 0.0;
           if (x.num == 0) { // return [0.0, 0.0]
+
+            Type lb(l), ub(u);
+
+            std::cout << "x: " << x << std::endl;
+            std::cout << "l: " << l << std::endl;
+            std::cout << "u: " << u << std::endl;
+
+            std::cout << "lb: " << lb << std::endl;
+            std::cout << "ub: " << ub << std::endl;
+            std::cout << std::endl;
+
+            CGAL_assertion(lb <= ub);
+            CGAL_assertion(lb <= input);
+            CGAL_assertion(ub >= input);
+
             return std::make_pair(l, u);
           }
           CGAL_assertion(x.num != 0);
@@ -806,29 +829,48 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(x.num > 0 && x.den > 0);
 
           const int num_dbl_digits = std::numeric_limits<double>::digits;
-          const int shift = num_dbl_digits + (msb(x.den) - msb(x.num));
+          const int shift = num_dbl_digits + msb(x.den) - msb(x.num);
           if (shift > 0) {
+            std::cout << "num shift" << std::endl;
             x.num <<= shift;
           } else if (shift < 0) {
+            std::cout << "den shift" << std::endl;
             x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
           }
           CGAL_assertion(int(msb(x.den) - msb(x.num)) == -53);
 
           decltype(x.num) p, q, r;
+          std::cout << "x: " << x << std::endl;
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
 
+          std::cout << "q before: " << q << std::endl;
+          std::cout << "r before: " << r << std::endl;
+
+          const int q_bits = msb(q);
+          std::cout << "q bits: " << q_bits << std::endl;
+          std::cout << "q digs: " << num_dbl_digits << std::endl;
+
           if (r != 0) {
-            const int q_bits = msb(q);
             if (q_bits == num_dbl_digits + 1) {
-              q <<= 1;
+              std::cout << "case1" << std::endl;
+              // TODO: Should we add this shift to ldexp later? Probably not.
+              q <<= 1; // TODO: Is it left of right shift?
               p = q;
               ++q;
             } else {
+              std::cout << "case2" << std::endl;
               p = q;
               ++q;
             }
           } else {
-            p = q;
+            if (q_bits == num_dbl_digits + 1) {
+              std::cout << "case3" << std::endl;
+              q <<= 1; // TODO: Is it left of right shift?
+              p = q;
+            } else {
+              std::cout << "case4" << std::endl;
+              p = q;
+            }
           }
 
           l = boost::multiprecision::detail::do_cast<double>(p);
@@ -842,15 +884,27 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             u = -t;
           }
 
-          Type lb(l), ub(u);
+          Type lb(l);
+          Type ub(u);
+
+          std::cout << "x: " << x << std::endl;
+          std::cout << "l: " << l << std::endl;
+          std::cout << "u: " << u << std::endl;
+
+          std::cout << "lb: " << lb << std::endl;
+          std::cout << "ub: " << ub << std::endl;
+          std::cout << std::endl;
+
           CGAL_assertion(lb <= ub);
-          CGAL_assertion(lb <= x);
-          CGAL_assertion(ub >= x);
+          CGAL_assertion(lb <= input);
+          CGAL_assertion(ub >= input);
 
           return std::make_pair(l, u);
         }
 
         std::pair<double, double> get_interval_using_cpp_rational( const Type& x ) const {
+
+          std::cout << "input: " << x << std::endl;
 
           const double inf = std::numeric_limits<double>::infinity();
           const double xn = x.num.template convert_to<double>();
@@ -883,6 +937,16 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             }
 
             Type lb(i), ub(s);
+
+            std::cout << "inf case" << std::endl;
+            std::cout << "x: " << x << std::endl;
+            std::cout << "l: " << i << std::endl;
+            std::cout << "u: " << s << std::endl;
+
+            std::cout << "lb: " << lb << std::endl;
+            std::cout << "ub: " << ub << std::endl;
+            std::cout << std::endl;
+
             CGAL_assertion(lb <= ub);
             CGAL_assertion(lb <= x);
             CGAL_assertion(ub >= x);
@@ -895,7 +959,18 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               Interval_nt<>(CGAL_NTS to_interval(x.num)) /
               Interval_nt<>(CGAL_NTS to_interval(x.den));
 
-            Type lb(quot.inf()), ub(quot.sup());
+            Type lb(quot.inf());
+            Type ub(quot.sup());
+
+            std::cout << "std case" << std::endl;
+            std::cout << "x: " << x << std::endl;
+            std::cout << "l: " << quot.inf() << std::endl;
+            std::cout << "u: " << quot.sup() << std::endl;
+
+            std::cout << "lb: " << lb << std::endl;
+            std::cout << "ub: " << ub << std::endl;
+            std::cout << std::endl;
+
             CGAL_assertion(lb <= ub);
             CGAL_assertion(lb <= x);
             CGAL_assertion(ub >= x);
@@ -946,6 +1021,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(lb <= ub);
           CGAL_assertion(lb <= x);
           CGAL_assertion(ub >= x);
+
+          // std::cout << "x: " << x << std::endl;
+          // std::cout << "l: " << quot.inf() << std::endl;
+          // std::cout << "u: " << quot.sup() << std::endl;
+          // std::cout << std::endl;
 
           return std::make_pair(quot.inf(), quot.sup());
 
