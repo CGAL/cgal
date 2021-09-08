@@ -106,23 +106,11 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
 #endif // no CGAL_NO_ASSERTIONS
 
-#  if defined(CGAL_NO_ASSERTIONS)
-
-#    define CGAL_static_assertion(EX) \
-     static_assert(true, "")
-
-#    define CGAL_static_assertion_msg(EX,MSG) \
-     static_assert(true, "")
-
-#  else // no CGAL_NO_ASSERTIONS
-
-#    define CGAL_static_assertion(EX) \
+# define CGAL_static_assertion(EX) \
      static_assert(EX, #EX)
 
-#    define CGAL_static_assertion_msg(EX,MSG) \
+# define CGAL_static_assertion_msg(EX,MSG) \
      static_assert(EX, MSG)
-
-#  endif // no CGAL_NO_ASSERTIONS
 
 #if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_assertion(EX) (static_cast<void>(0))
