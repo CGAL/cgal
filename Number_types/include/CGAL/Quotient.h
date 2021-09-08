@@ -800,20 +800,22 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         std::pair<double, double> get_interval_as_boost( Type& x ) const {
 
           const Type input = x;
-          std::cout << "input: " << input << std::endl;
+          // std::cout << "input: " << input << std::endl;
 
           double l = 0.0, u = 0.0;
           if (x.num == 0) { // return [0.0, 0.0]
 
             Type lb(l), ub(u);
 
-            std::cout << "x: " << x << std::endl;
-            std::cout << "l: " << l << std::endl;
-            std::cout << "u: " << u << std::endl;
+            // std::cout << "x: " << x << std::endl;
+            // std::cout << "l: " << l << std::endl;
+            // std::cout << "u: " << u << std::endl;
 
-            std::cout << "lb: " << lb << std::endl;
-            std::cout << "ub: " << ub << std::endl;
-            std::cout << std::endl;
+            // std::cout << "lb: " << lb << std::endl;
+            // std::cout << "ub: " << ub << std::endl;
+
+            // std::cout << "EARLY QUIT" << std::endl;
+            // std::cout << std::endl;
 
             CGAL_assertion(lb <= ub);
             CGAL_assertion(lb <= input);
@@ -838,54 +840,100 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
           CGAL_assertion(x.num > 0 && x.den > 0);
 
-          const int num_dbl_digits = std::numeric_limits<double>::digits;
-          const int shift = num_dbl_digits + msb(x.den) - msb(x.num);
+          const int num_dbl_digits = std::numeric_limits<double>::digits - 1;
+          const int msb_diff = int(msb(x.num) - msb(x.den));
+          int shift = num_dbl_digits - msb_diff;
+
+          // std::cout << "digs: " << num_dbl_digits << std::endl;
+          // std::cout << "diff: " << msb_diff       << std::endl;
+
+          // if (shift == 0) {
+          //   CGAL_assertion_msg(false, "TODO: ZERO SHIFT!");
+          // }
+          // std::cout << "shift: " << shift << std::endl;
+
           if (shift > 0) {
-            std::cout << "num shift" << std::endl;
+            CGAL_assertion(msb_diff < num_dbl_digits);
+            // std::cout << "num shift: " << shift << std::endl;
             x.num <<= shift;
+            // CGAL_assertion_msg(false, "TODO: NUMERATOR CASE!");
           } else if (shift < 0) {
-            std::cout << "den shift" << std::endl;
+            CGAL_assertion(msb_diff > num_dbl_digits);
+            // std::cout << "den shift: " << shift << std::endl;
             x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
+            // CGAL_assertion_msg(false, "TODO: DENOMINATOR CASE!");
           }
-          CGAL_assertion(int(msb(x.den) - msb(x.num)) == -53);
+          CGAL_assertion(int(msb(x.num) - msb(x.den)) == num_dbl_digits);
 
           decltype(x.num) p, q, r;
-          std::cout << "x: " << x << std::endl;
+          // std::cout << "x: " << x << std::endl;
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
 
-          std::cout << "q before: " << q << std::endl;
-          std::cout << "r before: " << r << std::endl;
+          // std::vector<unsigned char> v;
+          // export_bits(q, std::back_inserter(v), 1);
+          // std::cout << "binary: ";
+          // for (const unsigned char bit : v) {
+          //   std::cout << static_cast<unsigned>(bit);
+          // }
+          // std::cout << std::endl;
+
+          // std::cout << "q before: " << q << std::endl;
+          // std::cout << "r before: " << r << std::endl;
 
           const int q_bits = msb(q);
-          std::cout << "q bits: " << q_bits << std::endl;
-          std::cout << "q digs: " << num_dbl_digits << std::endl;
+          // std::cout << "n bits: " << int(msb(x.num)) << std::endl;
+          // std::cout << "d bits: " << int(msb(x.den)) << std::endl;
+          // std::cout << "q bits: " << q_bits << std::endl;
+          // std::cout << "q digs: " << num_dbl_digits << std::endl;
 
-          if (r != 0) {
-            if (q_bits == num_dbl_digits + 1) {
-              std::cout << "case1" << std::endl;
-              // TODO: Should we add this shift to ldexp later? Probably not.
-              q <<= 1; // TODO: Is it left of right shift?
-              p = q;
-              ++q;
-            } else {
-              std::cout << "case2" << std::endl;
-              p = q;
-              ++q;
-            }
+          if (q_bits == num_dbl_digits - 1) {
+
+            // It seems to be identical to CASE-2.
+            // std::cout << "CASE-1-3" << std::endl;
+            CGAL_assertion(r != 0);
+            p = q;
+            ++q;
+
+            // q >>= 1;
+            // p = q;
+            // ++q;
+            // --shift;
+
+            // r <<= 1; p = q;
+            // const int cmp = r.compare(x.den);
+            // if (cmp > 0) {
+            //   std::cout << "subcase 1" << std::endl;
+            //   ++q;
+            // } else if ((cmp == 0) && (q & 1u)) {
+            //   std::cout << "subcase 2" << std::endl;
+            //   ++q;
+            // } else {
+            //   std::cout << "subcase 3" << std::endl;
+            // }
+
+            // CGAL_assertion_msg(false, "TODO: CASE-13!");
+
           } else {
-            if (q_bits == num_dbl_digits + 1) {
-              std::cout << "case3" << std::endl;
-              q <<= 1; // TODO: Is it left of right shift?
+
+            CGAL_assertion(q_bits == num_dbl_digits);
+            if (r != 0) {
+              // std::cout << "CASE-2" << std::endl;
               p = q;
+              ++q;
+              // CGAL_assertion_msg(false, "TODO: CASE-2!");
             } else {
-              std::cout << "case4" << std::endl;
+              // std::cout << "CASE-4" << std::endl;
               p = q;
+              // CGAL_assertion_msg(false, "TODO: CASE-4!");
             }
           }
 
-          l = boost::multiprecision::detail::do_cast<double>(p);
+          // std::cout << "p: " << p << std::endl;
+          // std::cout << "q: " << q << std::endl;
+
+          l = static_cast<double>(p);
           l = std::ldexp(l, -shift);
-          u = boost::multiprecision::detail::do_cast<double>(q);
+          u = static_cast<double>(q);
           u = std::ldexp(u, -shift);
 
           if (change_sign) {
@@ -897,13 +945,13 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           Type lb(l);
           Type ub(u);
 
-          std::cout << "x: " << x << std::endl;
-          std::cout << "l: " << l << std::endl;
-          std::cout << "u: " << u << std::endl;
+          // std::cout << "x: " << x << std::endl;
+          // std::cout << "l: " << l << std::endl;
+          // std::cout << "u: " << u << std::endl;
 
-          std::cout << "lb: " << lb << std::endl;
-          std::cout << "ub: " << ub << std::endl;
-          std::cout << std::endl;
+          // std::cout << "lb: " << lb << std::endl;
+          // std::cout << "ub: " << ub << std::endl;
+          // std::cout << std::endl;
 
           CGAL_assertion(lb <= ub);
           CGAL_assertion(lb <= input);
