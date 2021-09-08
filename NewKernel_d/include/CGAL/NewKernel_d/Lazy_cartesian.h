@@ -176,14 +176,15 @@ struct Lazy_construction2 {
   template<class...L>
   std::enable_if_t<(sizeof...(L)>0), result_type> operator()(L const&...l) const {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    Protect_FPU_rounding<Protection> P;
-    try {
-      return new Lazy_rep_XXX<AT, ET, AC, EC, E2A, L...>(ac, ec, l...);
-    } catch (Uncertain_conversion_exception&) {
-      CGAL_BRANCH_PROFILER_BRANCH(tmp);
-      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-      return new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l)...));
+    {
+      Protect_FPU_rounding<Protection> P;
+      try {
+          return new Lazy_rep_XXX<AT, ET, AC, EC, E2A, L...>(ac, ec, l...);
+      } catch (Uncertain_conversion_exception&) {}
     }
+    CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    return new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l)...));
   }
   // FIXME: this forces us to have default constructors for all types, try to make its instantiation lazier
   // Actually, that may be the clearing in update_exact().

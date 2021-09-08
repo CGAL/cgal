@@ -689,33 +689,36 @@ locate_in_tmc(const Bare_point &p0, TMC_Cell_handle start) const
     // We temporarily put p at i's place in pts.
     const TMC_Point* backup = pts[i];
     pts[i] = &p_inexact;
+    bool run_exact=false;
     {
       Protect_FPU_rounding<true> P;
       try {
         o = TMC_Geom_traits().orientation_3_object()(*pts[0], *pts[1],
                                                      *pts[2], *pts[3]);
-      } catch (Uncertain_conversion_exception&) {
-        Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-        typedef Exact_predicates_exact_constructions_kernel EK;
-        Cartesian_converter<typename Bare_point::R, EK> converter_ek;
+      } catch (Uncertain_conversion_exception&) { run_exact=true; }
+    }
+    if (run_exact)
+    {
+      Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+      typedef Exact_predicates_exact_constructions_kernel EK;
+      Cartesian_converter<typename Bare_point::R, EK> converter_ek;
 
-        Skin_surface_traits_3<EK> exact_traits(shrink_factor());
+      Skin_surface_traits_3<EK> exact_traits(shrink_factor());
 
-        typename EK::Point_3 e_pts[4];
+      typename EK::Point_3 e_pts[4];
 
-        // We know that the 4 vertices of c are positively oriented.
-        // So, in order to test if p is seen outside from one of c's facets,
-        // we just replace the corresponding point by p in the orientation
-        // test.  We do this using the array below.
-        for (int k=0; k<4; k++) {
-          if (k != i) {
-            e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
-          } else {
-            e_pts[k] = converter_ek(p0);
-          }
+      // We know that the 4 vertices of c are positively oriented.
+      // So, in order to test if p is seen outside from one of c's facets,
+      // we just replace the corresponding point by p in the orientation
+      // test.  We do this using the array below.
+      for (int k=0; k<4; k++) {
+        if (k != i) {
+          e_pts[k] = get_anchor_point(c->vertex(k)->info(), exact_traits);
+        } else {
+          e_pts[k] = converter_ek(p0);
         }
-        o = orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]);
       }
+      o = orientation(e_pts[0], e_pts[1], e_pts[2], e_pts[3]);
     }
 
     if ( o != NEGATIVE ) {
