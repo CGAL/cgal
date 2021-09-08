@@ -2,6 +2,7 @@
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_integer.h>
 #include <CGAL/Homogeneous.h>
 
 #include <CGAL/squared_distance_3.h>
@@ -68,7 +69,7 @@ struct Test
 private:
   CGAL::Random& r;
   const double epsilon = 1e-14;
-  int N = 1000;
+  int N = 10;
   double m = 0, M = 1;
 
 public:
@@ -681,7 +682,7 @@ int main()
 //  Test<CGAL::Simple_homogeneous<double> >(r, 1e-5).run();
 //  Test<CGAL::Simple_cartesian<CGAL::Interval_nt<true> > >(r, 1e-5).run();
 
-  Test<CGAL::Homogeneous<CGAL::Epeck_ft> >(r, 0).run();
+  Test<CGAL::Homogeneous<CGAL::Exact_integer> >(r, 0).run();
 
   const double epick_eps = 10 * std::numeric_limits<double>::epsilon();
   Test<CGAL::Exact_predicates_inexact_constructions_kernel>(r, epick_eps).run();
