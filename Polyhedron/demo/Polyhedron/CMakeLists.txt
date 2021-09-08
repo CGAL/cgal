@@ -78,7 +78,7 @@ find_package(METIS)
 include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
-  DESCRIPTION "A library for partitionning."
+  DESCRIPTION "A library for partitioning."
   PURPOSE "Requiered for the partition plugin.")
 
 # Activate concurrency?

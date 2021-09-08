@@ -635,7 +635,7 @@ Function `remove_outliers()` deletes a user-specified fraction of
 outliers from an input point set. More specifically, it partitions the
 input points with respect to the average squared distances to their
 nearest neighbors and deletes the points with largest value, either
-partitionning with a threshold or removing a fixed percentage. The
+partitioning with a threshold or removing a fixed percentage. The
 user can either specify a fixed number of nearest neighbors or a fixed
 spherical neighborhood radius.
 
