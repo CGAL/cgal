@@ -1065,8 +1065,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
                                map_v2i[it->vertex (1)],
                                map_v2i[it->vertex (2)]);
     }
-
-  soup_item->orient();
+  std::vector<std::size_t> dum;
+  soup_item->orient(dum);
   if(sm_item){
     soup_item->exportAsSurfaceMesh (sm_item->polyhedron());
   }

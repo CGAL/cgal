@@ -288,13 +288,12 @@ namespace Compare_y_on_boundary_2 {
   struct Points< Arr_identified_side_tag > {
     typedef Arr_use_traits_tag type;
   };
-
 } // namespace Compare_y_on_boundary_2
 
 
 namespace Compare_y_near_boundary_2 {
 
-// Curve-ends
+  // Curve-ends
 
   template < class ArrSideTag >
   struct Curve_ends {
@@ -327,7 +326,6 @@ namespace Compare_y_near_boundary_2 {
   };
 
 } // Compare_y_near_boundary_2
-
 
 
 template < class ArrLeftSideTag, class ArrRightSideTag >
@@ -581,112 +579,6 @@ namespace Is_on_x_identification_2 {
 
 } // namespace Is_on_x_identification_2
 
-
-namespace Compare_x_at_limit_2 {
-
-  // Point_curve-end
-
-  template < class ArrSideTag >
-  struct Point_curve_end {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Point_curve_end< Arr_oblivious_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Point_curve_end< Arr_open_side_tag > {
-    typedef Arr_use_traits_tag type;
-  };
-
-  template <>
-  struct Point_curve_end< Arr_closed_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Point_curve_end< Arr_contracted_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Point_curve_end< Arr_identified_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  // Curve-ends
-
-  template < class ArrSideTag >
-  struct Curve_ends {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_oblivious_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_open_side_tag > {
-    typedef Arr_use_traits_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_closed_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_contracted_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_identified_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-} // Compare_x_at_limit_2
-
-namespace Compare_x_near_limit_2 {
-
-  // Curve-ends
-
-  template < class ArrSideTag >
-  struct Curve_ends {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_oblivious_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_open_side_tag > {
-    typedef Arr_use_traits_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_closed_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_contracted_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-  template <>
-  struct Curve_ends< Arr_identified_side_tag > {
-    typedef Arr_use_dummy_tag type;
-  };
-
-} // Compare_x_near_limit_2
-
-
 namespace Compare_x_on_boundary_2 {
 
  // Points
@@ -712,7 +604,7 @@ namespace Compare_x_on_boundary_2 {
 
   template <>
   struct Points< Arr_contracted_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
@@ -734,7 +626,7 @@ namespace Compare_x_on_boundary_2 {
 
   template <>
   struct Point_curve_end< Arr_open_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
@@ -766,12 +658,12 @@ namespace Compare_x_on_boundary_2 {
 
   template <>
   struct Curve_ends< Arr_open_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
   struct Curve_ends< Arr_closed_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
@@ -803,7 +695,7 @@ namespace Compare_x_near_boundary_2 {
 
   template <>
   struct Curve_ends< Arr_open_side_tag > {
-    typedef Arr_use_dummy_tag type;
+    typedef Arr_use_traits_tag type;
   };
 
   template <>
@@ -881,35 +773,6 @@ public:
     internal::Is_on_x_identification_2::Point< Top_side_category >::type
   >::type
   Is_on_x_identification_2_point_tag;
-
-  //! tag type for Compare_x_at_limit_2 (point-curve-end signature)
-  typedef typename internal::Or_traits<
-    typename
-    internal::Compare_x_at_limit_2::Point_curve_end< Bottom_side_category >
-    ::type,
-    typename
-    internal::Compare_x_at_limit_2::Point_curve_end< Top_side_category >::type
-  >::type
-  Compare_x_at_limit_2_point_curve_end_tag;
-
-  //! tag type for Compare_x_at_limit_2 (curve-ends signature)
-  typedef typename internal::Or_traits<
-    typename
-    internal::Compare_x_at_limit_2::Curve_ends< Bottom_side_category >::type,
-    typename
-    internal::Compare_x_at_limit_2::Curve_ends< Top_side_category >::type
-  >::type
-  Compare_x_at_limit_2_curve_ends_tag;
-
-  //! tag type for Compare_x_near_limit_boundary_2 (curve-ends signature)
-  typedef typename internal::Or_traits<
-    typename
-    internal::Compare_x_near_limit_2::Curve_ends< Bottom_side_category >
-    ::type,
-    typename
-    internal::Compare_x_near_limit_2::Curve_ends< Top_side_category >::type
-  >::type
-  Compare_x_near_limit_2_curve_ends_tag;
 
   //! tag type for Compare_x_on_boundary_2 (points signature)
   typedef typename internal::Or_traits<

@@ -2214,7 +2214,7 @@ public:
  * Functor that compares x-limits at the top or bottom boundary
  */
 template < class CurvedKernelViaAnalysis_2 >
-class Compare_x_at_limit_2 : public
+class Compare_x_on_boundary_2 : public
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
 
 public:
@@ -2233,7 +2233,7 @@ public:
 
     //! the arity of the functor
 
-    Compare_x_at_limit_2(Curved_kernel_via_analysis_2 *kernel) :
+    Compare_x_on_boundary_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
@@ -2257,7 +2257,7 @@ public:
                            CGAL::Arr_curve_end ce) const {
 
 
-        CERR("\ncompare_x_at_limit: p: " << p << "\n cv: " <<
+        CERR("\ncompare_x_on_boundary: p: " << p << "\n cv: " <<
              cv << "; curve_end: " << ce << "\n");
 
         // this curve end has boundary only in y
@@ -2295,7 +2295,7 @@ public:
     result_type operator()(const Arc_2& cv1, CGAL::Arr_curve_end ce1,
                            const Arc_2& cv2, CGAL::Arr_curve_end ce2) const {
 
-        CERR("\ncompare_x_at_limit: cv1: " << cv1 << "\n cv2: " <<
+        CERR("\ncompare_x_on_boundary: cv1: " << cv1 << "\n cv2: " <<
             cv2 << "; end1: " << ce1 << "; end2: " << ce2 << "\n");
         /*CGAL::Arr_boundary_type bnd1 = boundary(end1),
             bnd2 = cv2.boundary(ce2);*/
@@ -2325,7 +2325,7 @@ public:
  * Functor that compares x-coordinates near the top or bottom boundary
  */
 template < class CurvedKernelViaAnalysis_2 >
-class Compare_x_near_limit_2 : public
+class Compare_x_near_boundary_2 : public
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
 
 public:
@@ -2344,7 +2344,7 @@ public:
 
     //! the arity of the functor
 
-    Compare_x_near_limit_2(Curved_kernel_via_analysis_2 *kernel) :
+    Compare_x_near_boundary_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
@@ -2367,7 +2367,7 @@ public:
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                            CGAL::Arr_curve_end ce) const {
 
-        CERR("\ncompare_x_near_limit: cv1: " << cv1 << "\n cv2: " <<
+        CERR("\ncompare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
             cv2 << "; ce: " << ce << "\n");
 
         CGAL::Arr_parameter_space loc1 = cv1.location(ce);
@@ -2375,7 +2375,7 @@ public:
                                cv2.location(ce));
         CGAL_precondition(cv1.is_on_bottom_top(loc1));
         CGAL_precondition(cv1.is_on_bottom_top(loc2));
-        CGAL_precondition(cv1.compare_x_at_limit(ce, cv2, ce) == CGAL::EQUAL);
+        CGAL_precondition(cv1.compare_x_on_boundary(ce, cv2, ce) == CGAL::EQUAL);
 
         CGAL_precondition(loc1 == loc2);
 
@@ -2717,10 +2717,10 @@ public:
     // bottom-top
     CGAL_CKvA_2_functor_pred(Parameter_space_in_y_2,
                              parameter_space_in_y_2_object);
-    CGAL_CKvA_2_functor_pred(Compare_x_at_limit_2,
-                             compare_x_at_limit_2_object);
-    CGAL_CKvA_2_functor_pred(Compare_x_near_limit_2,
-                             compare_x_near_limit_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_x_on_boundary_2,
+                             compare_x_on_boundary_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_x_near_boundary_2,
+                             compare_x_near_boundary_2_object);
 
     CGAL_CKvA_2_functor_cons(X_extreme_points_2, x_extreme_points_2_object);
     CGAL_CKvA_2_functor_cons(Y_extreme_points_2, y_extreme_points_2_object);

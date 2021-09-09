@@ -40,7 +40,6 @@ int main()
 
 int main()
 {
-
   // bool UNTESTED_TRAITS_AS_GMP_OR_MPFI_IS_NOT_INSTALLED;
   std::cout << std::endl
             << "NOTE: GMP and/or MPFI are not installed, "

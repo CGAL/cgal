@@ -15,7 +15,7 @@
 #ifndef CGAL_IO_WKT_TRAITS_MULTIPOINT_H
 #define CGAL_IO_WKT_TRAITS_MULTIPOINT_H
 
-#include <CGAL/internal/Geometry_container.h>
+#include <CGAL/Stream_support/internal/Geometry_container.h>
 
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>

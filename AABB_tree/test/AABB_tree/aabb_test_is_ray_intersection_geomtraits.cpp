@@ -1,5 +1,5 @@
 #include <CGAL/assertions.h>
-#include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
+#include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 

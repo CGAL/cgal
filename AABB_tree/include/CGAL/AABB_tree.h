@@ -21,11 +21,11 @@
 
 #include <vector>
 #include <iterator>
-#include <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
-#include <CGAL/internal/AABB_tree/AABB_node.h>
-#include <CGAL/internal/AABB_tree/AABB_search_tree.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
+#include <CGAL/AABB_tree/internal/AABB_node.h>
+#include <CGAL/AABB_tree/internal/AABB_search_tree.h>
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <boost/optional.hpp>
 #include <boost/lambda/lambda.hpp>
 
@@ -1058,7 +1058,7 @@ public:
 
 } // end namespace CGAL
 
-#include <CGAL/internal/AABB_tree/AABB_ray_intersection.h>
+#include <CGAL/AABB_tree/internal/AABB_ray_intersection.h>
 
 #include <CGAL/enable_warnings.h>
 

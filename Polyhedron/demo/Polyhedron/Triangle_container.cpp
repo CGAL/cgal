@@ -165,8 +165,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
       getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);
       getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);
-      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());
-      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("near", static_cast<float>(viewer->camera()->zNear()));
+      getVao(viewer)->program->setUniformValue("far", static_cast<float>(viewer->camera()->zFar()));
       getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)
@@ -205,8 +205,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
       getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);
       getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);
-      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());
-      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("near", static_cast<float>(viewer->camera()->zNear()));
+      getVao(viewer)->program->setUniformValue("far", static_cast<float>(viewer->camera()->zFar()));
       getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)

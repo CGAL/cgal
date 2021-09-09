@@ -167,8 +167,8 @@ void Edge_container::draw(Viewer_interface *viewer,
     if(getVao(viewer)->program->property("hasViewport").toBool())
     {
       getVao(viewer)->program->setUniformValue("viewport", getViewport());
-      getVao(viewer)->program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
-      getVao(viewer)->program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("near",static_cast<GLfloat>(viewer->camera()->zNear()));
+      getVao(viewer)->program->setUniformValue("far",static_cast<GLfloat>(viewer->camera()->zFar()));
     }
     if(getVao(viewer)->program->property("hasWidth").toBool())
       getVao(viewer)->program->setUniformValue("width", getWidth());

@@ -45,7 +45,7 @@
   "CGAL::Shape_detection_3::Region_growing<> has been replaced by the class "\
   "CGAL::Shape_detection::Region_growing<>."
 
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 namespace CGAL {
 namespace Shape_detection {

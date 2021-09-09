@@ -18,7 +18,7 @@
 
 #include <CGAL/TDS_full_cell_default_storage_policy.h>
 #include <CGAL/TDS_full_cell_mirror_storage_policy.h>
-#include <CGAL/internal/Triangulation/Dummy_TDS.h>
+#include <CGAL/Triangulation/internal/Dummy_TDS.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 #include <CGAL/array.h>

@@ -19,7 +19,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/spatial_sort.h>

@@ -19,19 +19,16 @@
 #include <CGAL/Optimal_bounding_box/internal/population.h>
 #include <CGAL/Optimal_bounding_box/Oriented_bounding_box_traits_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-
+#include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Random.h>
-#include <CGAL/Simple_cartesian.h>
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
 #include <CGAL/Real_timer.h>

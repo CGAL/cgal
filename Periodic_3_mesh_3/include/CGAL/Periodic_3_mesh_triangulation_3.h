@@ -22,8 +22,8 @@
 // traits class
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
-#include <CGAL/internal/Robust_periodic_weighted_circumcenter_traits_3.h>
-#include <CGAL/internal/canonicalize_helper.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Robust_periodic_weighted_circumcenter_traits_3.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/canonicalize_helper.h>
 
 // periodic triangulations
 #include <CGAL/Periodic_3_regular_triangulation_traits_3.h>

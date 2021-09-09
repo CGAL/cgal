@@ -434,7 +434,18 @@ void Polyhedron_demo_affine_transform_plugin::grid()
       x_t = dialog.x_space_doubleSpinBox->value();
       y_t = dialog.y_space_doubleSpinBox->value();
       z_t = dialog.z_space_doubleSpinBox->value();
-
+      bool single = dialog.singleItemCheckBox->isChecked();
+      Facegraph_item* t_item = nullptr;
+      if(single)
+      {
+        t_item = new Facegraph_item();
+        t_item->setName(tr("%1 %2x%3x%4")
+                        .arg(item->name())
+                        .arg(i_max)
+                        .arg(j_max)
+                        .arg(k_max));
+        scene->addItem(t_item);
+      }
       for(int i = 0; i < i_max; ++i)
       {
         for(int j = 0; j< j_max; ++j)
@@ -443,19 +454,27 @@ void Polyhedron_demo_affine_transform_plugin::grid()
           {
             FaceGraph e;
             CGAL::copy_face_graph(m,e);
-
             Kernel::Aff_transformation_3 trans(CGAL::TRANSLATION, Kernel::Vector_3(i*x_t,j*y_t,k*z_t));
             CGAL::Polygon_mesh_processing::transform(trans, e);
-            Facegraph_item* t_item = new Facegraph_item(e);
-            t_item->setName(tr("%1 %2,%3,%4")
-                            .arg(item->name())
-                            .arg(i)
-                            .arg(j)
-                            .arg(k));
-            scene->addItem(t_item);
+            if(!single)
+            {
+              t_item = new Facegraph_item(e);
+              t_item->setName(tr("%1 %2,%3,%4")
+                              .arg(item->name())
+                              .arg(i)
+                              .arg(j)
+                              .arg(k));
+              scene->addItem(t_item);
+            }
+            else
+            {
+              CGAL::copy_face_graph(e, *t_item->face_graph());
+            }
           }
         }
       }
+      if(single && t_item)
+        t_item->invalidateOpenGLBuffers();
       QApplication::restoreOverrideCursor();
 }
 void Polyhedron_demo_affine_transform_plugin::go(){
