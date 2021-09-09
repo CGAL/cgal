@@ -329,7 +329,7 @@ void Polyhedron_demo_polylines_io_plugin::split_graph()
   Scene_item* main_item = scene->item(scene->mainSelectionIndex());
   Scene_polylines_item* polylines_item =
       qobject_cast<Scene_polylines_item*>(main_item);
-  if(polylines_item == 0) return;
+  if(polylines_item == nullptr) return;
   std::vector<Scene_polylines_item::Polylines_container::value_type> new_polylines;
   polylines_to_split(new_polylines, polylines_item->polylines.begin(), polylines_item->polylines.end());
   Scene_polylines_item* new_item = new Scene_polylines_item;

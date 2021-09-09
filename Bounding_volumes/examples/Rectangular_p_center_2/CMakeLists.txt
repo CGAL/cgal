@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Rectangular_p_center_2_Examples)
 
 find_package(CGAL REQUIRED)

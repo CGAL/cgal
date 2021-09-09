@@ -71,6 +71,7 @@
 - `CGAL::Simple_cartesian<FieldNumberType>`
 - `CGAL::Simple_homogeneous<RingNumberType>`
 - `CGAL::Projection_traits_xy_3<K>`
+- `CGAL::Projection_traits_3<K>`
 
 \cgalCRPSection{Predefined Kernels}
 

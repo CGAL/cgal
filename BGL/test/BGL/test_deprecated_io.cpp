@@ -1,4 +1,5 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <fstream>
 #include <iostream>
 #include <CGAL/Surface_mesh.h>
@@ -44,7 +45,7 @@ int main()
   assert(ok);
   os.close();
 
-  ok = CGAL::read_VTP("tmp.vtp", sm_in);
+  ok = CGAL::IO::read_VTP("tmp.vtp", sm_in);
   assert(ok);
   assert(num_vertices(sm_in) == 3 && num_faces(sm_in) == 1);
   sm_in.clear();

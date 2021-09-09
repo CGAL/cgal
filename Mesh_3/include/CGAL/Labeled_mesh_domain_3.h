@@ -27,14 +27,14 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/boost/parameter.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
 
 #include <functional>
 
-#include <CGAL/internal/Mesh_3/Handle_IO_for_pair_of_int.h>
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/Mesh_3/internal/Handle_IO_for_pair_of_int.h>
+#include <CGAL/Mesh_3/internal/indices_management.h>
 
 // support for `CGAL::Image_3`
 #include <CGAL/Image_3.h>
@@ -148,7 +148,7 @@ protected:
   typedef typename Geom_traits::Sphere_3 Sphere_3;
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid_3;
   typedef typename Geom_traits::FT FT;
-  typedef boost::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
+  typedef std::shared_ptr<CGAL::Random> CGAL_Random_share_ptr_t;
   /// Returns squared error bound from \c bbox and \c error
   FT squared_error_bound(const Iso_cuboid_3& bbox, const FT& error) const
   {

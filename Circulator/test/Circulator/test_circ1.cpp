@@ -235,7 +235,7 @@ void test_tags() {
     assert( 4 == foo( v.begin()));
     assert( 4 == foo( v.end()));
 
-    int* p = NULL;
+    int* p = nullptr;
     assert( 4 == foo( p));
     {
         typedef Forward_circulator_base<char,std::ptrdiff_t,std::size_t>
@@ -465,8 +465,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -577,8 +577,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Const_iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Const_iterator z = Const_iterator();
@@ -656,8 +656,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -749,8 +749,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -864,8 +864,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Const_iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Const_iterator z = Const_iterator();
@@ -982,8 +982,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -1075,8 +1075,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -1171,8 +1171,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -1372,8 +1372,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Const_iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Const_iterator z = Const_iterator();
@@ -1550,8 +1550,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -1643,8 +1643,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -1758,8 +1758,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Const_iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Const_iterator z = Const_iterator();
@@ -1875,8 +1875,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -1968,8 +1968,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -2064,8 +2064,8 @@ void test_container_from_circulator() {
         typedef std::iterator_traits<Iterator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Iterator z = Iterator();
@@ -2262,8 +2262,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -2374,11 +2374,11 @@ void test_circulator_from_iterator() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -2408,8 +2408,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -2487,11 +2487,11 @@ void test_circulator_from_iterator() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -2521,8 +2521,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -2614,8 +2614,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -2729,11 +2729,11 @@ void test_circulator_from_iterator() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -2776,8 +2776,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -2891,11 +2891,11 @@ void test_circulator_from_iterator() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -2938,8 +2938,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3031,8 +3031,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3127,8 +3127,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3302,11 +3302,11 @@ void test_circulator_from_iterator() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -3372,8 +3372,8 @@ void test_circulator_from_iterator() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3527,11 +3527,11 @@ void test_circulator_from_iterator() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -3624,8 +3624,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3736,11 +3736,11 @@ void test_circulator_from_container() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -3770,8 +3770,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3849,11 +3849,11 @@ void test_circulator_from_container() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -3883,8 +3883,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -3976,8 +3976,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4091,11 +4091,11 @@ void test_circulator_from_container() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -4139,8 +4139,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4254,11 +4254,11 @@ void test_circulator_from_container() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -4301,8 +4301,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4394,8 +4394,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4490,8 +4490,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4665,11 +4665,11 @@ void test_circulator_from_container() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.
@@ -4736,8 +4736,8 @@ void test_circulator_from_container() {
         typedef std::iterator_traits<Circulator> I_Traits;
         typedef I_Traits::value_type      I_value_type;
         typedef I_Traits::difference_type I_difference_type;
-        assert(1==test_value_type( (I_value_type*)(0)));
-        assert(1==test_difference_type( (I_difference_type*)(0)));
+        assert(1==test_value_type( (I_value_type*)nullptr));
+        assert(1==test_difference_type( (I_difference_type*)nullptr));
 
         // Default constructor.
         Circulator z = Circulator();
@@ -4891,11 +4891,11 @@ void test_circulator_from_container() {
 
         // Check tests for empty data structures.
         Circulator z = Circulator();
-        assert(   z == NULL);
-        assert( ! (z != NULL));
+        assert(   z == nullptr);
+        assert( ! (z != nullptr));
         Circulator i = c;
-        assert( ! (i == NULL));
-        assert(   i != NULL);
+        assert( ! (i == nullptr));
+        assert(   i != nullptr);
         assert( i == c);
         assert( i == c);
         // Do I reach myself.

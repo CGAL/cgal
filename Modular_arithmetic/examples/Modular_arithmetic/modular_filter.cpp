@@ -67,7 +67,7 @@ Polynomial modular_filtered_gcd(const Polynomial& p1, const Polynomial& p2){
 }
 
 int main(){
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
 
   typedef CGAL::Gmpz NT;
   typedef CGAL::Polynomial<NT> Poly;

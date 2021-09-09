@@ -750,9 +750,9 @@ public:
   //Get the source point
   const Algebraic_point_2& source() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-                      source_parameter_space_in_x() == ARR_INTERIOR &&
-                      source_parameter_space_in_y() == ARR_INTERIOR);
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(source_parameter_space_in_x() == ARR_INTERIOR);
+    CGAL_precondition(source_parameter_space_in_y() == ARR_INTERIOR);
     return (_ps);
   }
 
@@ -760,8 +760,8 @@ public:
   //Get the x-coordinate of the source point
   Algebraic_real_1 source_x() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-                      source_parameter_space_in_x() == ARR_INTERIOR);
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(source_parameter_space_in_x() == ARR_INTERIOR);
     return (_ps.x());
   }
 
@@ -779,9 +779,9 @@ public:
   //Get the target point
   const Algebraic_point_2& target() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-                      target_boundary_in_x() == ARR_INTERIOR &&
-                      target_boundary_in_y() == ARR_INTERIOR);
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(target_boundary_in_x() == ARR_INTERIOR);
+    CGAL_precondition(target_boundary_in_y() == ARR_INTERIOR);
     return (_pt);
   }
 
@@ -789,8 +789,8 @@ public:
   //Get the x-coordinate of the target point
   Algebraic_real_1 target_x() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-                      target_boundary_in_x() == ARR_INTERIOR);
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(target_boundary_in_x() == ARR_INTERIOR);
     return (_pt.x());
   }
 
@@ -847,16 +847,16 @@ public:
   //Get the x_value of the right endpoint
   const Algebraic_real_1& right_x() const
   {
-    CGAL_precondition((_info & IS_VALID) != 0 &&
-        right_parameter_space_in_x() == ARR_INTERIOR );
+    CGAL_precondition((_info & IS_VALID) != 0);
+    CGAL_precondition(right_parameter_space_in_x() == ARR_INTERIOR );
     return ((_info & IS_DIRECTED_RIGHT) ? _pt.x() : _ps.x());
   }
   //---------------------
   //Get the left endpoint
   const Algebraic_point_2& left() const
   {
-    CGAL_precondition(left_parameter_space_in_x() == ARR_INTERIOR &&
-        left_parameter_space_in_y() == ARR_INTERIOR);
+    CGAL_precondition(left_parameter_space_in_x() == ARR_INTERIOR);
+    CGAL_precondition(left_parameter_space_in_y() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _ps : _pt);
   }
 
@@ -864,8 +864,8 @@ public:
   //Get the right endpoint
   const Algebraic_point_2& right() const
   {
-    CGAL_precondition(right_parameter_space_in_x() == ARR_INTERIOR &&
-        right_parameter_space_in_y() == ARR_INTERIOR);
+    CGAL_precondition(right_parameter_space_in_x() == ARR_INTERIOR);
+    CGAL_precondition(right_parameter_space_in_y() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _pt : _ps);
   }
 
@@ -1036,8 +1036,8 @@ public:
     Algebraic_real_1 x0;
 
     if (ce == ARR_MIN_END) {
-      CGAL_assertion(left_parameter_space_in_x() == ARR_INTERIOR &&
-                     left_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(left_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(left_parameter_space_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x0 = _ps.x();
       else
@@ -1045,8 +1045,8 @@ public:
     }
     else
     {
-      CGAL_assertion(right_parameter_space_in_x() == ARR_INTERIOR &&
-                     right_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(right_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(right_parameter_space_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x0 = _pt.x();
       else
@@ -1121,8 +1121,8 @@ public:
 
     if (ind1 == ARR_MIN_END)
     {
-      CGAL_assertion(left_parameter_space_in_x() == ARR_INTERIOR &&
-                     left_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(left_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(left_parameter_space_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x1 = _ps.x();
       else
@@ -1130,8 +1130,8 @@ public:
     }
     else
     {
-      CGAL_assertion(right_parameter_space_in_x() == ARR_INTERIOR &&
-                     right_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(right_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(right_parameter_space_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x1 = _pt.x();
       else
@@ -1143,8 +1143,8 @@ public:
 
     if (ind2 == ARR_MIN_END)
     {
-      CGAL_assertion(arc.left_parameter_space_in_x() == ARR_INTERIOR &&
-                     arc.left_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(arc.left_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(arc.left_parameter_space_in_y() != ARR_INTERIOR);
       if ((arc._info & IS_DIRECTED_RIGHT) != 0)
         x2 = arc._ps.x();
       else
@@ -1152,8 +1152,8 @@ public:
     }
     else
     {
-      CGAL_assertion(arc.right_parameter_space_in_x() == ARR_INTERIOR &&
-                     arc.right_parameter_space_in_y() != ARR_INTERIOR);
+      CGAL_assertion(arc.right_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_assertion(arc.right_parameter_space_in_y() != ARR_INTERIOR);
       if ((arc._info & IS_DIRECTED_RIGHT) != 0)
         x2 = arc._pt.x();
       else
@@ -1228,8 +1228,8 @@ public:
                                             const Algebraic_point_2& p,
                                             bool to_left, const Cache& cache) const
   {
-    CGAL_precondition(this->point_position(p,cache) == CGAL::EQUAL &&
-                      arc.point_position(p,cache)   == CGAL::EQUAL);
+    CGAL_precondition(this->point_position(p,cache) == CGAL::EQUAL);
+    CGAL_precondition(arc.point_position(p,cache)   == CGAL::EQUAL);
 
     //check if the base functions are equal
     if (_has_same_base(arc))
@@ -1251,8 +1251,8 @@ public:
   Comparison_result compare_at_minus_infinity(const Self& arc,
                                               const Cache& cache) const
   {
-    CGAL_precondition(left_parameter_space_in_x() == ARR_LEFT_BOUNDARY &&
-                      arc.left_parameter_space_in_x() == ARR_LEFT_BOUNDARY);
+    CGAL_precondition(left_parameter_space_in_x() == ARR_LEFT_BOUNDARY);
+    CGAL_precondition(arc.left_parameter_space_in_x() == ARR_LEFT_BOUNDARY);
 
     //check if the base functions are equal
     if (_has_same_base(arc))
@@ -1274,8 +1274,8 @@ public:
   Comparison_result compare_at_plus_infinity(const Self& arc,
                                              const Cache& cache) const
   {
-    CGAL_precondition(right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY &&
-                      arc.right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY);
+    CGAL_precondition(right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY);
+    CGAL_precondition(arc.right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY);
 
     //check if the base functions are equal
     if (_has_same_base(arc))
@@ -2040,8 +2040,10 @@ public:
   {
     typedef boost::variant<Intersection_point, Self>    Intersection_result;
 
-    CGAL_precondition(this->is_valid() && this->is_continuous());
-    CGAL_precondition(arc.is_valid() && arc.is_continuous());
+    CGAL_precondition(this->is_valid());
+    CGAL_precondition(this->is_continuous());
+    CGAL_precondition(arc.is_valid());
+    CGAL_precondition(arc.is_continuous());
 
     if (this->equals(arc)) {
       Self overlap_arc(*this);
@@ -2236,7 +2238,8 @@ public:
   void split(const Algebraic_point_2& p, Self& c1, Self& c2,
              const Cache& CGAL_assertion_code(cache)) const
   {
-    CGAL_precondition(this->is_valid() && this->is_continuous());
+    CGAL_precondition(this->is_valid());
+    CGAL_precondition(this->is_continuous());
 
     // Make sure that p lies on the interior of the arc.
     CGAL_precondition(this->point_position(p,cache) == EQUAL &&
@@ -2275,8 +2278,10 @@ public:
    */
   void merge(const Self& arc)
   {
-    CGAL_precondition(this->is_valid() && this->is_continuous());
-    CGAL_precondition(arc.is_valid() && arc.is_continuous());
+    CGAL_precondition(this->is_valid());
+    CGAL_precondition(this->is_continuous());
+    CGAL_precondition(arc.is_valid());
+    CGAL_precondition(arc.is_continuous());
     CGAL_precondition(this->can_merge_with(arc));
 
     // Check if we should extend the arc to the left or to the right.
@@ -2334,11 +2339,11 @@ public:
     }
     else
     {
-      CGAL_precondition(this->left_parameter_space_in_x() == ARR_INTERIOR &&
-                        this->left_parameter_space_in_y() == ARR_INTERIOR &&
-                        arc.right_parameter_space_in_x() == ARR_INTERIOR &&
-                        arc.right_parameter_space_in_y() == ARR_INTERIOR &&
-                        (this->left().x() == arc.right().x()));
+      CGAL_precondition(this->left_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_precondition(this->left_parameter_space_in_y() == ARR_INTERIOR);
+      CGAL_precondition(arc.right_parameter_space_in_x() == ARR_INTERIOR);
+      CGAL_precondition(arc.right_parameter_space_in_y() == ARR_INTERIOR);
+      CGAL_precondition(this->left().x() == arc.right().x());
 
       // Extend the arc to the left.
       if ((this->_info & this->IS_DIRECTED_RIGHT) != 0)

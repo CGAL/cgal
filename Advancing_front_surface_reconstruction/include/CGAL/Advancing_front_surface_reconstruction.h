@@ -36,11 +36,11 @@
 #include <CGAL/Advancing_front_surface_reconstruction_cell_base_3.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/internal/AFSR/Surface_vertex_base_2.h>
-#include <CGAL/internal/AFSR/Surface_face_base_2.h>
-#include <CGAL/internal/AFSR/construct_surface_2.h>
-#include <CGAL/internal/AFSR/construct_polyhedron.h>
-#include <CGAL/internal/AFSR/write_triple_indices.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/Surface_vertex_base_2.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/Surface_face_base_2.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/construct_surface_2.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/construct_polyhedron.h>
+#include <CGAL/Advancing_front_surface_reconstruction/internal/write_triple_indices.h>
 
 namespace CGAL {
 

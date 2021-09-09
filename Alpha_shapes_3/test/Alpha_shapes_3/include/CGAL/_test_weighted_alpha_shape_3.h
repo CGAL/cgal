@@ -22,7 +22,7 @@ template <class Weighted_point>
 bool
 file_input(std::ifstream& is, std::list<Weighted_point>& L)
 {
-  CGAL::set_ascii_mode(is);
+  CGAL::IO::set_ascii_mode(is);
   int n;
   is >> n;
   std::cout << "Reading " << n << " points" << std::endl;

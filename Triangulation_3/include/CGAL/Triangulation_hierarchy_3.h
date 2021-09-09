@@ -17,7 +17,7 @@
 
 // Commented because the class is actually used by Delaunay_triangulation_hierarchy_3.h
 // #define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_hierarchy_3.h>"
-// #include <CGAL/internal/deprecation_warning.h>
+// #include <CGAL/Installation/internal/deprecation_warning.h>
 
 // This class is deprecated, but must be kept for backward compatibility.
 //
@@ -28,7 +28,7 @@
 // Then, later, maybe merge the Compact/Fast codes in a cleaner factorized way.
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_3.h>
 #include <CGAL/Location_policy.h>
@@ -42,7 +42,7 @@
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
 #include <CGAL/spatial_sort.h>
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/iterator/zip_iterator.hpp>

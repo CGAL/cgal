@@ -441,7 +441,7 @@ protected:
                 }
 /*
 #if CGAL_ACK_DEBUG_FLAG
-                ::CGAL::set_ascii_mode(CGAL_ACK_DEBUG_PRINT);
+                ::CGAL::IO::set_ascii_mode(CGAL_ACK_DEBUG_PRINT);
                 CGAL_ACK_DEBUG_PRINT << "Stha: " << (*seq_it) << std::endl;
 #endif
 */

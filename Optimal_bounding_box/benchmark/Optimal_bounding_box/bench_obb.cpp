@@ -29,7 +29,7 @@ void bench_finding_obb(const std::string filename,
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > unused_faces;
 
-  CGAL::read_polygon_soup(filename, points, unused_faces);
+  CGAL::IO::read_polygon_soup(filename, points, unused_faces);
 
   std::vector<Point_3> ch_points;
   std::array<Point_3, 8> obb_points1;

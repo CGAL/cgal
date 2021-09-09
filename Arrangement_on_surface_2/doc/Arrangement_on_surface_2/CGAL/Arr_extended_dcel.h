@@ -4,11 +4,11 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangementOnSurface2DCEL
 
-The `Arr_extended_dcel` class-template extends the topological-features of the <span class="textsc">Dcel</span>
+The `Arr_extended_dcel` class-template extends the topological-features of the \dcel
 namely the vertex, halfedge, and face types. While it is possible to maintain
 extra (non-geometric) data with the curves or points of the arrangement by
 extending their types respectively, it is also possible to extend the vertex,
-halfedge, or face types of the <span class="textsc">Dcel</span> through inheritance. As the technique to
+halfedge, or face types of the \dcel through inheritance. As the technique to
 extend these types is somewhat cumbersome and difficult for inexperienced
 users, the `Arr_extended_dcel` class-template provides a convenient way to do that.
 Each one of the three features is extended with a corresponding data type
@@ -54,7 +54,7 @@ namespace CGAL {
 \ingroup PkgArrangementOnSurface2DCEL
 
 The `Arr_extended_face` class-template extends the face topological-features of the
-<span class="textsc">Dcel</span>. It is parameterized by a face base-type `FaceBase` and a data type
+\dcel. It is parameterized by a face base-type `FaceBase` and a data type
 `FData` used to extend the face base-type.
 
 \cgalModels `ArrangementDcelFace`
@@ -106,7 +106,7 @@ namespace CGAL {
 \ingroup PkgArrangementOnSurface2DCEL
 
 The `Arr_extended_halfedge` class-template extends the halfedge topological-features of
-the <span class="textsc">Dcel</span>. It is parameterized by a halfedge base-type `HalfedgeBase`
+the \dcel. It is parameterized by a halfedge base-type `HalfedgeBase`
 and a data type `HData` used to extend the halfedge base-type.
 
 \cgalModels `ArrangementDcelHalfedge`
@@ -158,7 +158,7 @@ namespace CGAL {
 \ingroup PkgArrangementOnSurface2DCEL
 
 The `Arr_extended_vertex` class-template extends the vertex
-topological-features of the <span class="textsc">Dcel</span>. It is parameterized by a
+topological-features of the \dcel. It is parameterized by a
 vertex base-type `VertexBase` and a data type `VData` used to extend
 the vertex base-type.
 
@@ -210,12 +210,12 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangementOnSurface2DCEL
 
-The `Arr_face_extended_dcel` class-template extends the <span class="textsc">Dcel</span> face-records, making it
+The `Arr_face_extended_dcel` class-template extends the \dcel face-records, making it
 possible to store extra (non-geometric) data with the arrangement faces.
 The class should be instantiated by an `FData` type which represents the
 extra data stored with each face.
 
-Note that all types of <span class="textsc">Dcel</span> features (namely vertex, halfedge and face)
+Note that all types of \dcel features (namely vertex, halfedge and face)
 are provided as template parameters. However, by default they are defined
 as follows:
 

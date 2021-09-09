@@ -198,8 +198,12 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - \link measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::centroid()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::match_faces()` \endlink
 
 \cgalCRPSection{Distance Functions}
+- `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
+- `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()`
+- `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()`
 - `CGAL::Polygon_mesh_processing::approximate_Hausdorff_distance()`
 - `CGAL::Polygon_mesh_processing::approximate_symmetric_Hausdorff_distance()`
 - `CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set()`
@@ -227,6 +231,6 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::transform()`
 
 \cgalCRPSection{I/O Functions}
-- \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink
+- \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink
 
 */

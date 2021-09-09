@@ -49,7 +49,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 # include <mutex>
-# include <tbb/parallel_do.h>
+# include <tbb/parallel_for_each.h>
 # include <tbb/concurrent_vector.h>
 #endif
 
@@ -794,7 +794,7 @@ compute_moves(Moving_vertices_set& moving_vertices)
     tbb::concurrent_vector<Vertex_handle> vertices_not_moving_any_more;
 
     // Get move for each moving vertex
-    tbb::parallel_do(
+    tbb::parallel_for_each(
           moving_vertices.begin(), moving_vertices.end(),
           Compute_move<Self, Sizing_field, Moves_vector>(
             *this, sizing_field_, moves, do_freeze_, vertices_not_moving_any_more,
@@ -1033,7 +1033,7 @@ fill_sizing_field()
       std::vector< std::pair<Bare_point, FT> > > Local_list;
     Local_list local_lists;
 
-    tbb::parallel_do(
+    tbb::parallel_for_each(
       tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
       Compute_sizing_field_value<Self, Local_list>(*this, tr_.geom_traits(), local_lists)
     );

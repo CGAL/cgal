@@ -109,6 +109,8 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
   assert(get_parameter(np, CGAL::internal_np::non_manifold_feature_map).v == 60);
   assert(get_parameter(np, CGAL::internal_np::filter).v == 61);
+  assert(get_parameter(np, CGAL::internal_np::face_epsilon_map).v == 62);
+  assert(get_parameter(np, CGAL::internal_np::maximum_number).v == 68);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -225,6 +227,8 @@ void test(const NamedParameters& np)
   check_same_type<78910>(get_parameter(np, CGAL::internal_np::maximum_number_of_faces));
   check_same_type<60>(get_parameter(np, CGAL::internal_np::non_manifold_feature_map));
   check_same_type<61>(get_parameter(np, CGAL::internal_np::filter));
+  check_same_type<62>(get_parameter(np, CGAL::internal_np::face_epsilon_map));
+  check_same_type<68>(get_parameter(np, CGAL::internal_np::maximum_number));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
@@ -353,6 +357,8 @@ int main()
                          .use_compact_clipper(A<45>(45))
                          .non_manifold_feature_map(A<60>(60))
                          .filter(A<61>(61))
+                         .face_epsilon_map(A<62>(62))
+                         .maximum_number(A<68>(68))
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
                          .erase_all_duplicates(A<48>(48))

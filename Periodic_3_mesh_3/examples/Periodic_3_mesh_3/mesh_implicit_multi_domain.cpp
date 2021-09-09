@@ -89,9 +89,9 @@ int main(int argc, char** argv)
 
   // Output
   std::ofstream medit_file("output_multi_domain.mesh");
-  CGAL::output_periodic_mesh_to_medit<C3t3>(medit_file, c3t3, number_of_copies_in_output,
-                                            false /*do not associate different colors to each copy*/,
-                                            false /*do not rebind*/, true /*show patches*/);
+  CGAL::IO::output_periodic_mesh_to_medit<C3t3>(medit_file, c3t3, number_of_copies_in_output,
+                                                false /*do not associate different colors to each copy*/,
+                                                false /*do not rebind*/, true /*show patches*/);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

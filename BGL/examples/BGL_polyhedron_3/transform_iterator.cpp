@@ -21,7 +21,7 @@ struct Source {
   const G* g;
 
   Source()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Source(const G& g)

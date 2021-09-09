@@ -23,7 +23,7 @@
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
 #include <boost/variant.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 
 #ifdef CGAL_TD_DEBUG
@@ -95,7 +95,7 @@ public:
   typedef Td_ninetuple<boost::variant<Vertex_const_handle,Point>,
                        boost::variant<Vertex_const_handle,unsigned char>,
                        boost::variant<Halfedge_const_handle,
-                                      boost::shared_ptr<X_monotone_curve_2> >,
+                                      std::shared_ptr<X_monotone_curve_2> >,
                        Halfedge_const_handle,
                        unsigned char,
                        Self*, Self*,
@@ -122,15 +122,10 @@ public:
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
   friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-#elif defined(__GNUC__)
+#elif (__GNUC__ > 0)
 
-#if ((__GNUC__ < 3) || ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)))
-  friend typename Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
-  friend typename Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-#else
   friend class Trapezoidal_decomposition_2<Traits>::Around_point_circulator;
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
-#endif
 
 #else
   friend class Around_point_circulator;
@@ -230,7 +225,7 @@ public:
 
     if (type() == TD_EDGE)
     {
-      //ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(top()->curve()));
+      //ptr()->e2 = (std::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(top()->curve()));
       set_curve_for_rem_he(top()->curve());
       return;
     }
@@ -238,8 +233,8 @@ public:
     //else if (type() == TD_VERTEX)
 
     Curve_end v_ce(left()->curve_end());
-    ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(v_ce.cv()));
-    //CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != nullptr);
+    ptr()->e2 = (std::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(v_ce.cv()));
+    //CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != nullptr);
 
     ptr()->e1 = (v_ce.ce() == ARR_MIN_END ) ? CGAL_TD_CV_MIN_END : CGAL_TD_CV_MAX_END;
 
@@ -255,7 +250,7 @@ public:
   {
     CGAL_precondition (type() == TD_EDGE);
 
-    ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(cv));
+    ptr()->e2 = (std::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(cv));
   }
 
   /*! Set the trapezoid's type flag (Trapezoid/Edge/Vertex). */
@@ -537,8 +532,8 @@ public:
     CGAL_precondition(is_on_boundaries());
 
     CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
-    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
-    X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
+    X_monotone_curve_2* cv_ptr = (boost::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
     CGAL_assertion(cv_ptr != nullptr);
 
     Arr_curve_end ce =
@@ -555,8 +550,8 @@ public:
     CGAL_precondition(is_on_boundaries());
 
     CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
-    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
-    X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
+    X_monotone_curve_2* cv_ptr = (boost::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
     CGAL_assertion(cv_ptr != nullptr);
 
     Arr_curve_end ce =
@@ -572,8 +567,8 @@ public:
     CGAL_precondition(type() == TD_VERTEX);
 
     CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
-    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
-    X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
+    X_monotone_curve_2* cv_ptr = (boost::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
     CGAL_assertion(cv_ptr != nullptr);
 
     Arr_curve_end ce =
@@ -587,8 +582,8 @@ public:
   {
     CGAL_precondition(!is_active() && type() == TD_EDGE);
 
-    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
-    X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
+    X_monotone_curve_2* cv_ptr = (boost::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
     CGAL_assertion(cv_ptr != nullptr);
     return *cv_ptr;
   }

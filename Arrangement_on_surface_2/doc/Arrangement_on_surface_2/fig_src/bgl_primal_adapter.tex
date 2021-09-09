@@ -1,0 +1,39 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \pspicture[](-1,-1)(10,8)
+  \arraxes(0,0)(-1,-1)(10,8)
+  \arrMinorVertex(1,1){1}\uput[120]{0}(1,1){$p_1$}
+  \uput[-45]{0}(1,1){$v_0$}
+  \arrp[135](1,4){2}
+  \arrp[-45](2,2){3}
+  \arrEmptyIntersectionVertex(1,1)(3,7)(1,4)(7,1){x1}
+  \arrp[90](3,7){4}
+  \arrEmptyIntersectionVertex(2,2)(4,4)(1,4)(7,1){x2}
+  \arrp[45](4,4){5}
+  \arrEmptyIntersectionVertex(2,2)(9,3)(1,4)(7,1){x3}
+  \arrp[-45](7,1){6}
+  \arrp[18](9,3){7}
+  %
+  \ncline[linecolor=blue]{1}{x1}
+  \ncline[linecolor=blue]{x1}{4}
+  %
+  \ncline[linecolor=blue]{3}{x2}
+  \ncline[linecolor=blue]{x2}{5}
+  %
+  \ncline[linecolor=blue]{2}{x1}
+  \ncline[linecolor=blue]{x1}{x2}
+  \ncline[linecolor=blue]{x2}{x3}
+  \ncline[linecolor=blue]{x3}{6}
+  %
+  \ncline[linecolor=blue]{3}{x3}
+  \ncline[linecolor=blue]{x3}{7}
+  %
+  \ncline[linecolor=blue]{1}{6}
+  \ncline[linecolor=blue]{6}{7}
+  \ncline[linecolor=blue]{4}{7}
+  \endpspicture
+}
+\end{document}

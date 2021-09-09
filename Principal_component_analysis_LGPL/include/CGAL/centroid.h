@@ -120,9 +120,7 @@ centroid(InputIterator begin,
       it++)
   {
     const Segment& s = *it;
-    using std::abs;
-    using std::sqrt;
-    FT length = sqrt(abs(s.squared_length()));
+    FT length = CGAL::approximate_sqrt(CGAL::abs(s.squared_length()));
     Point c = K().construct_midpoint_2_object()(s[0],s[1]);
     v = v + length * (c - ORIGIN);
     sum_lengths += length;
@@ -216,7 +214,7 @@ centroid(InputIterator begin,
       it++)
   {
     const Triangle& triangle = *it;
-    FT unsigned_area = std::abs(triangle.area());
+    FT unsigned_area = CGAL::abs(triangle.area());
     Point c = K().construct_centroid_2_object()(triangle[0],triangle[1],triangle[2]);
     v = v + unsigned_area * (c - ORIGIN);
     sum_areas += unsigned_area;
@@ -252,7 +250,7 @@ centroid(InputIterator begin,
       it++)
   {
     const Circle& s = *it;
-    FT radius = std::sqrt(s.squared_radius());
+    FT radius = CGAL::approximate_sqrt(s.squared_radius());
     Point c = s.center();
     v = v + radius * (c - ORIGIN);
     sum_lengths += radius;
@@ -381,7 +379,7 @@ centroid(InputIterator begin,
       it++)
   {
     const Iso_rectangle& r = *it;
-    FT unsigned_area = std::abs(r.area());
+    FT unsigned_area = CGAL::abs(r.area());
     Point c = K().construct_centroid_2_object()(r[0],r[1],r[2],r[3]);
     v = v + unsigned_area * (c - ORIGIN);
     sum_areas += unsigned_area;
@@ -442,8 +440,7 @@ centroid(InputIterator begin,
       it++)
   {
     const Segment& s = *it;
-    using std::sqrt;
-    FT length = sqrt(s.squared_length());
+    FT length = CGAL::approximate_sqrt(s.squared_length());
     Point c = CGAL::midpoint(s.source(),s.target());
     // Point c = K().construct_midpoint_3_object()(s[0],s[1]);
     //Point c = Point((s[0][0] + s[1][0])/2.0, (s[0][1] + s[1][1])/2.0, (s[0][2] + s[1][2])/2.0);
@@ -539,7 +536,7 @@ centroid(InputIterator begin,
       it++)
   {
     const Triangle& triangle = *it;
-    FT unsigned_area = std::sqrt(triangle.squared_area());
+    FT unsigned_area = CGAL::approximate_sqrt(triangle.squared_area());
     Point c = K().construct_centroid_3_object()(triangle[0],triangle[1],triangle[2]);
     v = v + unsigned_area * (c - ORIGIN);
     sum_areas += unsigned_area;
@@ -608,7 +605,7 @@ centroid(InputIterator begin,
       it++)
   {
     const Sphere& sphere = *it;
-    FT unsigned_volume = sphere.squared_radius() * std::sqrt(sphere.squared_radius());
+    FT unsigned_volume = sphere.squared_radius() * CGAL::approximate_sqrt(sphere.squared_radius());
     Point c = sphere.center();
     v = v + unsigned_volume * (c - ORIGIN);
     sum_volumes += unsigned_volume;
@@ -717,7 +714,7 @@ centroid(InputIterator begin,
   {
     const Iso_cuboid& cuboid = *it;
     FT unsigned_area = 2 * ((cuboid.xmax()-cuboid.xmin())*(cuboid.ymax()-cuboid.ymin()) + (cuboid.xmax()-cuboid.xmin())*(cuboid.zmax()-cuboid.zmin()) + (cuboid.ymax()-cuboid.ymin())*(cuboid.zmax()-cuboid.zmin()));
-    Point c = K().construct_centroid_3_object()(cuboid[0],cuboid[1],cuboid[3],cuboid[5]);
+    Point c = K().construct_midpoint_3_object()(cuboid[0],cuboid[7]);
     v = v + unsigned_area * (c - ORIGIN);
     sum_areas += unsigned_area;
   }
@@ -750,7 +747,7 @@ centroid(InputIterator begin,
   {
     const Iso_cuboid& cuboid = *it;
     FT unsigned_volume = cuboid.volume();
-    Point c = K().construct_centroid_3_object()(cuboid[0],cuboid[1],cuboid[3],cuboid[5]);
+    Point c = K().construct_midpoint_3_object()(cuboid[0],cuboid[7]);
     v = v + unsigned_volume * (c - ORIGIN);
     sum_volumes += unsigned_volume;
   }

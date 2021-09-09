@@ -618,7 +618,7 @@ protected:
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, cv);
     m_curves.push_back (*p_cv);
 
-    // Create a data-traits Curve_2 object, which is comprised of cv and
+    // Create a data-traits Curve_2 object, which comprises cv and
     // a pointer to the extended curve we have just created.
     // Insert this curve into the base arrangement. Note that the attached
     // observer will take care of updating the edges' set.
@@ -647,7 +647,7 @@ protected:
     std::allocator_traits<Curves_alloc>::construct(m_curves_alloc, p_cv, cv);
     m_curves.push_back (*p_cv);
 
-    // Create a data-traits Curve_2 object, which is comprised of cv and
+    // Create a data-traits Curve_2 object, which comprises cv and
     // a pointer to the extended curve we have just created.
     // Insert this curve into the base arrangement. Note that the attached
     // observer will take care of updating the edges' set.

@@ -70,6 +70,9 @@ public:
   Vector_3(const Rep& v)
       : Rep(v) {}
 
+  Vector_3(Rep&& v)
+      : Rep(std::move(v)) {}
+
   Vector_3(const Point_3& a, const Point_3& b)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), a, b)) {}
 
@@ -267,7 +270,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Vector_3<R>& v, const Cartesian_tag&)
 {
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       return os << v.x() << ' ' << v.y()  << ' ' << v.z();
     case IO::BINARY :
@@ -285,7 +288,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Vector_3<R>& v, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << v.hx() << ' ' << v.hy() << ' ' << v.hz() << ' ' << v.hw();
@@ -316,9 +319,9 @@ std::istream&
 extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0), z(0);
-  switch(get_mode(is)) {
+  switch(IO::get_mode(is)) {
     case IO::ASCII :
-      is >> iformat(x) >> iformat(y) >> iformat(z);
+      is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z);
       break;
     case IO::BINARY :
       read(is, x);
@@ -328,7 +331,7 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
     default:
       is.setstate(std::ios::failbit);
       std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
       break;
   }
   if (is)
@@ -341,7 +344,7 @@ std::istream&
 extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hz, hw;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
         is >> hx >> hy >> hz >> hw;
@@ -355,7 +358,7 @@ extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

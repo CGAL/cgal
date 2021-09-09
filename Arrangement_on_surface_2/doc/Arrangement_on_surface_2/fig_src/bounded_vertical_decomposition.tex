@@ -1,0 +1,50 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.8}%
+  \begin{pspicture}(-0.2,-1)(8.2,4)
+    \arrMainVertex(0,0){1}
+    \arrMainVertex(3,3){2}
+    \arrMainVertex(6,0){3}
+    \arrMainVertex(2,0){4}
+    \arrMainVertex(5,3){5}
+    \arrMainVertex(8,0){6}
+    \ncline[linecolor=blue]{1}{2}
+    \ncline[linecolor=blue]{2}{3}
+    \ncline[linecolor=blue]{4}{5}
+    \ncline[linecolor=blue]{5}{6}
+    %
+    \arrEmptyVertex(4,2){x}
+    %
+    \pnode(0,-1){11}
+    \pnode(0,4){12}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{1}{11}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{1}{12}
+    \pnode(2,-1){21}
+    \arrMinorVertex(2,2){22}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{4}{21}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{4}{22}
+    \arrMinorVertex(3,1){31}
+    \pnode(3,4){32}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{2}{31}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{2}{32}
+    \pnode(4,-1){41}
+    \pnode(4,4){42}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{x}{41}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{x}{42}
+    \arrMinorVertex(5,1){51}
+    \pnode(5,4){52}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{5}{51}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{5}{52}
+    \pnode(6,-1){61}
+    \arrMinorVertex(6,2){62}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{3}{61}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{3}{62}
+    \pnode(8,-1){71}
+    \pnode(8,4){72}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{6}{71}
+    \ncline[linestyle=dashed,dash=1pt 1pt]{6}{72}
+  \end{pspicture}
+}
+\end{document}

@@ -40,24 +40,12 @@ FT capsule_function(const Point& p)
   else if(z < FT(-5)) return base+CGAL::square(z+5);
   else return base;
 }
-#if BOOST_VERSION >= 106600
 auto field = [](const Point& p, const int, const Mesh_domain::Index)
              {
                if(p.z() > 2) return 0.025;
                if(p.z() < -3) return 0.01;
                else return 1.;
              };
-#else
-struct Field {
-  typedef ::FT FT;
-
-  FT operator()(const Point& p, const int, const Mesh_domain::Index) const {
-    if(p.z() > 2) return 0.025;
-    if(p.z() < -3) return 0.01;
-    else return 1;
-  }
-} field;
-#endif
 
 int main()
 {

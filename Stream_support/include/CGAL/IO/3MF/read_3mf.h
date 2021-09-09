@@ -128,7 +128,7 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
     NMR::MODELMESH_TRIANGLECOLOR_SRGB pColor;
     NMR::lib3mf_propertyhandler_getcolor(pPropertyHandler, pid, &pColor);
     NMR::MODELMESHCOLOR_SRGB mColor = pColor.m_Colors[0];
-    colors[pid]=CGAL::Color(mColor.m_Red, mColor.m_Green,
+    colors[pid]=CGAL::IO::Color(mColor.m_Red, mColor.m_Green,
                             mColor.m_Blue, mColor.m_Alpha);
   }
 

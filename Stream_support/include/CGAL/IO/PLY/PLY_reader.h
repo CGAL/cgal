@@ -46,6 +46,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /// \cond SKIP_IN_MANUAL
 
 // PLY types:
@@ -135,7 +137,6 @@ make_ply_normal_writer(VectorMap normal_map)
                          PLY_property<typename Get_FT_from_map<VectorMap>::type>("nz"));
 }
 
-namespace IO {
 namespace internal {
 
 class PLY_read_number
@@ -194,7 +195,7 @@ public:
 
   void read_ascii(std::istream& stream, float& t) const
   {
-    if(!(stream >> iformat(t)))
+    if(!(stream >> IO::iformat(t)))
       stream.clear(std::ios::badbit);
   }
 
@@ -707,7 +708,7 @@ bool read_PLY_faces(std::istream& in,
                       CGAL::is_iterator<ColorOutputIterator>::value
                     >::type* = nullptr)
 {
-  typedef CGAL::Color                                     Color_rgb;
+  typedef CGAL::IO::Color                                 Color_rgb;
 
   bool has_colors = false;
   std::string rtag = "r", gtag = "g", btag = "b";
@@ -783,6 +784,14 @@ bool read_PLY_faces(std::istream& in,
 
 } // namespace PLY
 } // namespace internal
+
+#ifndef CGAL_NO_DEPREACTED_CODE
+using IO::PLY_property;
+using IO::make_ply_normal_reader;
+using IO::make_ply_normal_writer;
+using IO::make_ply_point_reader;
+using IO::make_ply_point_writer;
+#endif
 
 /// \endcond
 

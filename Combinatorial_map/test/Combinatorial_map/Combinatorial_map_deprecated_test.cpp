@@ -1,6 +1,6 @@
 #include <cstdlib>
 
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #define CGAL_CMAP_DART_DEPRECATED 1
 

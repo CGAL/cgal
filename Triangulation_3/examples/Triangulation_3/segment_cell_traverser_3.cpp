@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
   const char* fname = (argc>1) ? argv[1] : "data/blobby.xyz";
 
   std::vector<Point_3> points;
-  if (!CGAL::read_points(fname, std::back_inserter(points)))
+  if (!CGAL::IO::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

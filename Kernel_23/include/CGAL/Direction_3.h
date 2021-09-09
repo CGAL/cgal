@@ -64,6 +64,9 @@ public:
   Direction_3(const Rep& d)
     : Rep(d) {}
 
+  Direction_3(Rep&& d)
+    : Rep(std::move(d)) {}
+
   explicit Direction_3(const Vector_3& v)
     : Rep(typename R::Construct_direction_3()(Return_base_tag(), v)) {}
 
@@ -133,7 +136,7 @@ std::ostream&
 insert(std::ostream& os, const Direction_3<R>& d, const Cartesian_tag&)
 {
   typename R::Vector_3 v = d.to_vector();
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       return os << v.x() << ' ' << v.y()  << ' ' << v.z();
     case IO::BINARY :
@@ -151,7 +154,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Direction_3<R>& d, const Homogeneous_tag&)
 {
-  switch(get_mode(os))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << d.dx() << ' ' << d.dy() << ' ' << d.dz();
@@ -180,9 +183,9 @@ std::istream&
 extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0), z(0);
-  switch(get_mode(is)) {
+  switch(IO::get_mode(is)) {
     case IO::ASCII :
-      is >> iformat(x) >> iformat(y) >> iformat(z);
+      is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z);
       break;
     case IO::BINARY :
       read(is, x);
@@ -192,7 +195,7 @@ extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&)
     default:
       is.setstate(std::ios::failbit);
       std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
       break;
   }
   if (is)
@@ -205,10 +208,10 @@ std::istream&
 extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&)
 {
   typename R::RT x, y, z;
-  switch(get_mode(is))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
-        is >> iformat(x) >> iformat(y) >> iformat(z);
+        is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z);
         break;
     case IO::BINARY :
         read(is, x);
@@ -218,7 +221,7 @@ extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

@@ -21,7 +21,7 @@ int main(int argc, char** argv)
   }
 
   Mesh mesh;
-  CGAL::read_OFF (in, mesh);
+  CGAL::IO::read_OFF (in, mesh);
 
   boost::unordered_map<Face_index, bool> is_selected_map;
 

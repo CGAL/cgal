@@ -18,109 +18,36 @@
 #include <CGAL/license/Nef_3.h>
 
 
-#include <CGAL/basic.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/Iterator_project.h>
-#include <CGAL/representation_tags.h>
-#include <vector>
-
-#undef CGAL_NEF_DEBUG
-#define CGAL_NEF_DEBUG 17
-#include <CGAL/Nef_2/debug.h>
+#include <CGAL/Projection_traits_yz_3.h>
+#include <CGAL/Projection_traits_xz_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
 
 namespace CGAL {
-
-template <class Point_2, class Point_3>
-Point_2 point_3_get_x_y_point_2(const Point_3& p, const Homogeneous_tag&) {
-  return( Point_2(p.hx(), p.hy(), p.hw()) );
-}
-
-template <class Point_2, class Point_3>
-Point_2 point_3_get_y_z_point_2(const Point_3& p, const Homogeneous_tag&) {
-  return( Point_2(p.hy(), p.hz(), p.hw()) );
-}
-
-template <class Point_2, class Point_3>
-Point_2 point_3_get_z_x_point_2(const Point_3& p, const Homogeneous_tag&) {
-  return( Point_2(p.hz(), p.hx(), p.hw()) );
-}
-
-template <class Point_2, class Point_3>
-Point_2 point_3_get_x_y_point_2(const Point_3& p, const Cartesian_tag&) {
-  return( Point_2(p.x(), p.y()) );
-}
-
-template <class Point_2, class Point_3>
-Point_2 point_3_get_y_z_point_2(const Point_3& p, const Cartesian_tag&) {
-  return( Point_2(p.y(), p.z()) );
-}
-
-template <class Point_2, class Point_3>
-Point_2 point_3_get_z_x_point_2(const Point_3& p, const Cartesian_tag&) {
-  return( Point_2(p.z(), p.x()) );
-}
-
-template <class Point_2, class Point_3, class R>
-Point_2 point_3_get_x_y_point_2(const Point_3& p) {
-    return point_3_get_x_y_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
-}
-
-template <class Point_2, class Point_3, class R>
-Point_2 point_3_get_y_z_point_2(const Point_3& p) {
-    return point_3_get_y_z_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
-}
-
-template <class Point_2, class Point_3, class R>
-Point_2 point_3_get_z_x_point_2(const Point_3& p) {
-    return point_3_get_z_x_point_2<Point_2,Point_3>(p,typename R::Kernel_tag());
-}
 
 template <class IteratorForward, class R>
 Bounded_side bounded_side_3(IteratorForward first,
                             IteratorForward last,
                             const Point_3<R>& point,
-                            typename R::Plane_3 plane = typename R::Plane_3(0,0,0,0)) {
-  typedef typename R::Point_2 Point_2;
-  typedef typename R::Point_3 Point_3;
-  typedef typename R::Plane_3 Plane_3;
+                            const Plane_3<R>& plane)
+{
+  typedef typename CGAL::Projection_traits_yz_3<R> YZ;
+  typedef typename CGAL::Projection_traits_xz_3<R> XZ;
+  typedef typename CGAL::Projection_traits_xy_3<R> XY;
 
-  if(plane == Plane_3(0,0,0,0)) {
-    // TO TEST: code never tested
-    IteratorForward p(first);
-    Point_3 p0(*(p++));
-    CGAL_assertion(p != last);
-    Point_3 p1(*(p++));
-    CGAL_assertion(p != last);
-    Point_3 p2(*(p++));
-    plane = Plane_3(p0, p1, p2);
-
-    /* since we just need to project the points to a non-perpendicular plane
-       we don't need to care about the plane orientation */
-  }
+  CGAL_assertion(!plane.is_degenerate());
 
   typename R::Non_zero_dimension_3 non_zero_dimension_3;
   int dir = non_zero_dimension_3(plane.orthogonal_vector());
 
-
-  CGAL_assertion(!plane.is_degenerate());
-  Point_2 (*t)(const Point_3&);
-
-  if(dir == 0){
-    t = &point_3_get_y_z_point_2< Point_2, Point_3, R>;
-  }else if(dir == 1){
-    t = &point_3_get_z_x_point_2< Point_2, Point_3, R>;
-  }else{
-    t = &point_3_get_x_y_point_2< Point_2, Point_3, R>;
+  if(dir == 0) {
+    return bounded_side_2(first, last, point, YZ());
+  } else if(dir == 1) {
+    return bounded_side_2(first, last, point, XZ());
+  } else {
+    return bounded_side_2(first, last, point, XY());
   }
-
-  std::vector< Point_2> points;
-  CGAL_NEF_TRACEN("facet:");
-  for( ; first != last; ++first ) {
-    CGAL_NEF_TRACEN(t(*first)<<" "<<*first);
-    points.push_back( t(*first));
-  }
-  Bounded_side side = bounded_side_2( points.begin(), points.end(), t(point));
-  return side;
 }
 
 } //namespace CGAL

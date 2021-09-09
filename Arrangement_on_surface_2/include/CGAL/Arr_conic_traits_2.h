@@ -23,8 +23,8 @@
  */
 
 #include <fstream>
+#include <atomic>
 
-#include <CGAL/atomic.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Conic_arc_2.h>
@@ -108,7 +108,7 @@ public:
 #ifdef CGAL_NO_ATOMIC
     static unsigned int index;
 #else
-    static CGAL::cpp11::atomic<unsigned int> index;
+    static std::atomic<unsigned int> index;
 #endif
     return (++index);
   }

@@ -436,8 +436,8 @@ std::ostream&
 operator << (std::ostream& os,
     const CGAL::internal::Algebraic_real_d_1<Coefficient, Rational, HandlePolicy, RepClass >& x){
   os << "["   << x.polynomial()
-     << ",["  << oformat(x.low())
-     << " , " << oformat(x.high()) << " ]]";
+     << ",["  << IO::oformat(x.low())
+     << " , " << IO::oformat(x.high()) << " ]]";
   return os;
 }
 
@@ -458,9 +458,9 @@ operator >> (std::istream& is,
   is >> poly;
   swallow(is, ',');// read the ","
   swallow(is, '[');// read the ","
-  is >> iformat(low);
+  is >> IO::iformat(low);
   swallow(is, ',');// read the ","
-  is >> iformat(high);
+  is >> IO::iformat(high);
   swallow(is, ']');// read the "]"
   swallow(is, ']');// read the "]"
   x = ALGNUM(poly, low, high);

@@ -102,7 +102,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::init(QMainWindow* mainWindow,
   mw = mainWindow;
   scene = scene_interface;
   messages = m;
-  plane_item = NULL;
+  plane_item = nullptr;
 
   actionSlicerWidget = new QAction(tr("Polyhedron Slicer"), mw);
   actionSlicerWidget->setProperty("subMenuName", "Polygon Mesh Processing");
@@ -325,10 +325,10 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 }
 
 void Polyhedron_demo_polyhedron_slicer_plugin::item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
-  if(plane_item == NULL) { return; }// which means this plugin erased plane_item
+  if(plane_item == nullptr) { return; }// which means this plugin erased plane_item
   Scene_plane_item* destroyed_plane = qobject_cast<Scene_plane_item*>(scene_item);
   if(destroyed_plane && destroyed_plane == plane_item) {
-    plane_item = NULL;
+    plane_item = nullptr;
     dock_widget->hide();
   }
 }
@@ -336,7 +336,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::item_about_to_be_destroyed(CGAL::
 void Polyhedron_demo_polyhedron_slicer_plugin::dock_widget_closed() {
   CGAL_assertion(plane_item != NULL);
   CGAL::Three::Scene_interface::Item_id id = scene->item_id(plane_item);
-  plane_item = NULL;
+  plane_item = nullptr;
   scene->erase(id);
 }
 // this function assumes 'planes' are parallel

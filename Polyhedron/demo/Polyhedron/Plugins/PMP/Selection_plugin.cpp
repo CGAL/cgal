@@ -124,7 +124,7 @@ public:
   bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items) override {
     Scene_item* scene_item = items.front();
       const Scene_polyhedron_selection_item* item = qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
-      if(item == NULL) { return false; }
+      if(item == nullptr) { return false; }
 
       bool res = item->save(fileinfo.filePath().toStdString());
       if(res)
@@ -312,7 +312,7 @@ public Q_SLOTS:
   Scene_polyhedron_selection_item* onTheFlyItem() {
     Scene_face_graph_item* poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
     if(!poly_item)
-      return NULL;
+      return nullptr;
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
     new_item->setName(QString("%1 (selection)").arg(poly_item->name()));
     connectItem(new_item);
@@ -1030,8 +1030,8 @@ public Q_SLOTS:
       qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
     if(!selection_item) { return; }
 
-    Scene_face_graph_item* poly_item = NULL;
-    if(selection_item->polyhedron_item() == NULL) { //coming from selection_io loader
+    Scene_face_graph_item* poly_item = nullptr;
+    if(selection_item->polyhedron_item() == nullptr) { //coming from selection_io loader
       bool found = false;
       for(int i = 0; i<scene->numberOfEntries(); ++i){
         poly_item = qobject_cast<Scene_face_graph_item*>(scene->item(i));

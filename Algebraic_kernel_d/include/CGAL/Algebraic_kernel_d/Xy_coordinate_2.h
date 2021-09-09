@@ -675,7 +675,7 @@ template < class AlgebraicCurveKernel_2, class Rep>
 std::ostream& operator<< (std::ostream& os,
     const Xy_coordinate_2<AlgebraicCurveKernel_2, Rep>& pt)
 {
-  switch (::CGAL::get_mode(os)) {
+  switch (::CGAL::IO::get_mode(os)) {
   case ::CGAL::IO::PRETTY: {
     os << "[x-coord: " << CGAL::to_double(pt.x()) << "; curve: " <<
       pt.curve().polynomial_2() <<
@@ -703,7 +703,7 @@ std::istream& operator >> (
     std::istream& is,
     Xy_coordinate_2< AlgebraicCurveKernel_2, Rep_>& pt) {
 
-  CGAL_precondition(CGAL::is_ascii(is));
+  CGAL_precondition(CGAL::IO::is_ascii(is));
 
   // this instance's first template argument
   typedef AlgebraicCurveKernel_2 Algebraic_curve_kernel_2;

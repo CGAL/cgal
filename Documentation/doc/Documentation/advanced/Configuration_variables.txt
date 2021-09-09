@@ -19,7 +19,7 @@ summarized below are CMake variables.
 \subsection installation_component_selection Component Selection
 
 The following boolean variables indicate which \cgal components to
-configure and build. Their values can be ON or OFF.
+configure and/or build. Their values can be ON or OFF.
 
 
 | Variable | %Default Value   |
@@ -102,6 +102,16 @@ be given as similarly-named environment variables instead. Keep in mind that you
 other but never both.
 
 \subsection installation_boost Boost Libraries
+
+\subsubsection inst_boost_1_70_plus Version 1.70 and Later
+Starting from \boost 1.70, the cmake config mode can be used for configuring the \boost version
+to use by setting the environment variable `Boost_DIR` to the path containing the file
+`BoostConfig.cmake`. For example if you manually installed \boost 1.77 with `--prefix=<path>`,
+then you should set `Boost_DIR=<path>/lib/cmake/Boost-1.77.0`.
+
+\subsubsection inst_boost_up_2_1_69 Version 1.69 and Earlier
+
+\warning If you have a version of Boost greater than 1.69 already installed on your system, and you want to configure and compile with an earlier version of Boost, then you will need to set the CMake variable `Boost_NO_BOOST_CMAKE` to `ON` (otherwise the `FindBoost.cmake` module of CMake will start searching for `BoostConfig.cmake`, and ignore the `BOOST_ROOT` variable).
 
 In most cases, if \boost is not automatically found, setting the `BOOST_ROOT`
 variable is enough. If it is not, you can specify the header and library

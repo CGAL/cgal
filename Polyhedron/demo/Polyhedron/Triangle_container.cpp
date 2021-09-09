@@ -25,7 +25,7 @@ Triangle_container::Triangle_container(int program, bool indexed)
   : Primitive_container(program, indexed),
     d(new Tri_d())
 {
-  std::vector<Vbo*> vbos(NbOfVbos, NULL);
+  std::vector<Vbo*> vbos(NbOfVbos, nullptr);
   setVbos(vbos);
 }
 
@@ -165,8 +165,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
       getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);
       getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);
-      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());
-      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("near", static_cast<float>(viewer->camera()->zNear()));
+      getVao(viewer)->program->setUniformValue("far", static_cast<float>(viewer->camera()->zFar()));
       getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)
@@ -175,11 +175,11 @@ void Triangle_container::draw(Viewer_interface* viewer,
     if(getVao(viewer)->program->property("drawLinesAdjacency").toBool())
     {
       viewer->glDrawElements(GL_LINES_ADJACENCY, static_cast<unsigned int>(getIdxSize()),
-                             GL_UNSIGNED_INT, 0 );
+                             GL_UNSIGNED_INT, nullptr );
     }
     else{
       viewer->glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(getIdxSize()),
-                             GL_UNSIGNED_INT, 0 );}
+                             GL_UNSIGNED_INT, nullptr );}
     getVbo(Vertex_indices)->release();
     getVao(viewer)->release();
   }
@@ -205,8 +205,8 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);
       getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);
       getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);
-      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());
-      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("near", static_cast<float>(viewer->camera()->zNear()));
+      getVao(viewer)->program->setUniformValue("far", static_cast<float>(viewer->camera()->zFar()));
       getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)

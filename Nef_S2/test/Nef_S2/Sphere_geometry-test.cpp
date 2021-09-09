@@ -21,7 +21,7 @@ typedef CGAL::Plane_3<Kernel>          Plane;
 int main()
 {
   CGAL_TEST_START;
-  CGAL::set_pretty_mode ( std::cout );
+  CGAL::IO::set_pretty_mode ( std::cout );
   SPoint p(0,0,1), q(1,1,0), r(1,-1,0), s(1,1,1);
   SSegment s1(p,q), s2(p,r,false), s3(SPoint(0,-1,0),SPoint(-1,0,0));
   SCircle c0, c1(p,q), c2(1,1,1), c3(Plane(1,1,1,0));
