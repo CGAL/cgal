@@ -52,13 +52,13 @@ typedef unspecified_type Exact_integer;
 
 #if CGAL_USE_GMPXX
 
-typedef mpz_class Exact_integer;
+typedef boost::multiprecision::cpp_int Exact_integer;
 
 #elif CGAL_USE_GMP
 # ifdef CGAL_USE_BOOST_MP
-typedef boost::multiprecision::mpz_int Exact_integer;
+typedef boost::multiprecision::cpp_int Exact_integer;
 # else
-typedef Gmpz Exact_integer;
+typedef boost::multiprecision::cpp_int Exact_integer;
 # endif
 
 #elif CGAL_USE_LEDA
@@ -67,7 +67,7 @@ typedef leda_integer Exact_integer;
 
 #elif CGAL_USE_CORE
 
-typedef CORE::BigInt Exact_integer;
+typedef boost::multiprecision::cpp_int Exact_integer;
 
 #elif defined CGAL_USE_BOOST_MP
 
