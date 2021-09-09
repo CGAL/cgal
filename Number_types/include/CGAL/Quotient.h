@@ -706,7 +706,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
     class To_interval
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
-        const NT zero = 0;
+
       public:
 
         bool are_correct_bounds( const double l, const double u, const Type& x ) const {
@@ -731,7 +731,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         std::pair< Interval_nt<>, int64_t > get_interval_exp( NT& x ) const {
 
-          CGAL_assertion(x >= zero);
+          CGAL_assertion((CGAL::is_zero(x) || CGAL::is_positive(x)));
           int64_t d = 0;
           double l = 0.0, u = 0.0;
           const int64_t n = static_cast<int64_t>(msb(x));
@@ -754,26 +754,26 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           CGAL_assertion_code(const Type input = x);
           double l = 0.0, u = 0.0;
-          if (x.num == zero) { // return [0.0, 0.0]
+          if (CGAL::is_zero(x.num)) { // return [0.0, 0.0]
             CGAL_assertion(are_correct_bounds(l, u, input));
             return std::make_pair(l, u);
           }
-          CGAL_assertion(x.num != zero);
-          CGAL_assertion(x.den != zero);
+          CGAL_assertion(!CGAL::is_zero(x.num));
+          CGAL_assertion(!CGAL::is_zero(x.den));
 
           // Handle signs.
           bool change_sign = false;
-          if (x.num < zero && x.den < zero) {
+          if (CGAL::is_negative(x.num) && CGAL::is_negative(x.den)) {
             x.num = -x.num;
             x.den = -x.den;
-          } else if (x.num < zero && x.den > zero) {
+          } else if (CGAL::is_negative(x.num) && CGAL::is_positive(x.den)) {
             change_sign = true;
             x.num = -x.num;
-          } else if (x.num > zero && x.den < zero) {
+          } else if (CGAL::is_positive(x.num) && CGAL::is_negative(x.den)) {
             change_sign = true;
             x.den = -x.den;
           }
-          CGAL_assertion(x.num > zero && x.den > zero);
+          CGAL_assertion(CGAL::is_positive(x.num) && CGAL::is_positive(x.den));
 
           const auto num = get_interval_exp(x.num);
           const auto den = get_interval_exp(x.den);
@@ -796,26 +796,26 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           CGAL_assertion_code(const Type input = x);
           double l = 0.0, u = 0.0;
-          if (x.num == zero) { // return [0.0, 0.0]
+          if (CGAL::is_zero(x.num)) { // return [0.0, 0.0]
             CGAL_assertion(are_correct_bounds(l, u, input));
             return std::make_pair(l, u);
           }
-          CGAL_assertion(x.num != zero);
-          CGAL_assertion(x.den != zero);
+          CGAL_assertion(!CGAL::is_zero(x.num));
+          CGAL_assertion(!CGAL::is_zero(x.den));
 
           // Handle signs.
           bool change_sign = false;
-          if (x.num < zero && x.den < zero) {
+          if (CGAL::is_negative(x.num) && CGAL::is_negative(x.den)) {
             x.num = -x.num;
             x.den = -x.den;
-          } else if (x.num < zero && x.den > zero) {
+          } else if (CGAL::is_negative(x.num) && CGAL::is_positive(x.den)) {
             change_sign = true;
             x.num = -x.num;
-          } else if (x.num > zero && x.den < zero) {
+          } else if (CGAL::is_positive(x.num) && CGAL::is_negative(x.den)) {
             change_sign = true;
             x.den = -x.den;
           }
-          CGAL_assertion(x.num > zero && x.den > zero);
+          CGAL_assertion(CGAL::is_positive(x.num) && CGAL::is_positive(x.den));
 
           const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
           const int64_t msb_num = static_cast<int64_t>(msb(x.num));
@@ -823,10 +823,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const int64_t msb_diff = msb_num - msb_den;
           const int64_t shift = num_dbl_digits - msb_diff;
 
-          if (shift > 0) {
+          if (CGAL::is_positive(shift)) {
             CGAL_assertion(msb_diff < num_dbl_digits);
             x.num <<= shift;
-          } else if (shift < 0) {
+          } else if (CGAL::is_negative(shift)) {
             CGAL_assertion(msb_diff > num_dbl_digits);
             x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
           }
@@ -836,18 +836,18 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           NT q, r;
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
           const int64_t q_bits = static_cast<int64_t>(msb(q));
-          CGAL_assertion(q_bits == num_dbl_digits || r != zero /* when q_bit = num_dbl_digits - 1 */ );
+          CGAL_assertion(q_bits == num_dbl_digits || !CGAL::is_zero(r) /* when q_bit = num_dbl_digits - 1 */ );
 
-          if (r != zero) {
+          if (!CGAL::is_zero(r)) {
             const NT p = q;
             ++q;
-            CGAL_assertion(p >= zero && q > p);
+            CGAL_assertion((CGAL::is_zero(p) || CGAL::is_positive(p)) && CGAL::is_positive(q - p));
             const uint64_t pp = static_cast<uint64_t>(p);
             const uint64_t qq = static_cast<uint64_t>(q);
             const Interval_nt<> intv(pp, qq);
             std::tie(l, u) = ldexp(intv, -shift).pair();
           } else {
-            CGAL_assertion(q >= zero);
+            CGAL_assertion((CGAL::is_zero(q) || CGAL::is_positive(q)));
             const uint64_t qq = static_cast<uint64_t>(q);
             const Interval_nt<> intv(qq, qq);
             std::tie(l, u) = ldexp(intv, -shift).pair();
@@ -873,8 +873,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             // Seems fast enough because this conversion happens
             // only a few times during the run, at least for NEF.
             boost::multiprecision::cpp_rational rat;
-            CGAL_assertion(x.den != zero);
-            if (x.den < zero) {
+            CGAL_assertion(!CGAL::is_zero(x.den));
+            if (CGAL::is_negative(x.den)) {
               rat = boost::multiprecision::cpp_rational(-x.num, -x.den);
             } else {
               rat = boost::multiprecision::cpp_rational( x.num,  x.den);
@@ -886,13 +886,13 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             const double inf = std::numeric_limits<double>::infinity();
             CGAL_assertion(i != inf && s != inf);
             const int cmp = rat.compare(i);
-            if (cmp > 0) {
+            if (CGAL::is_positive(cmp)) {
               s = nextafter(s, +inf);
-              CGAL_assertion(rat.compare(s) < 0);
+              CGAL_assertion(CGAL::is_negative(rat.compare(s)));
             }
-            else if (cmp < 0) {
+            else if (CGAL::is_negative(cmp)) {
               i = nextafter(i, -inf);
-              CGAL_assertion(rat.compare(i) > 0);
+              CGAL_assertion(CGAL::is_positive(rat.compare(i)));
             }
             CGAL_assertion(are_correct_bounds(i, s, x));
             return std::make_pair(i, s);
