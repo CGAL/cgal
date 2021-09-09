@@ -712,7 +712,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           CGAL_assertion(x >= 0);
           const unsigned n = msb(x);
-          const unsigned num_dbl_digits = std::numeric_limits<double>::digits;
+          const unsigned num_dbl_digits = std::numeric_limits<double>::digits - 1;
           if (n > num_dbl_digits) {
 
             const unsigned d = n - num_dbl_digits;
@@ -730,8 +730,9 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
         }
 
-        std::pair<double, double> get_interval_as_gmpzf( Type& x ) const {
+        std::pair<double, double> get_interval_as_gmpzf( const Type& input ) const {
 
+          Type x = input;
           double l = 0.0, u = 0.0;
           if (x.num == 0) { // return [0.0, 0.0]
             return std::make_pair(l, u);
@@ -753,30 +754,19 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
           CGAL_assertion(x.num > 0 && x.den > 0);
 
-          Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
           auto n = get_interval_exp(x.num);
           auto d = get_interval_exp(x.den);
-
-          const int e = static_cast<int>(n.second - d.second);
-          if (CGAL::abs(double(n.second) - double(d.second)) >= (1<<30)*2.0) {
-            CGAL_assertion_msg(false, "TODO: Check this case!");
-            if (e < 0) {
-              n.second = INT_MIN;
-              d.second = INT_MAX;
-            } else if (e > 0) {
-              n.second = INT_MAX;
-              d.second = INT_MIN;
-            }
-          }
-
-          CGAL_assertion_msg(
-            CGAL::abs(double(n.second) - double(d.second)) < (1<<30)*2.0,
-            "Exponent overflow in Quotient<boost::multiprecision::cpp_int> to_interval()!");
 
           const Interval_nt<> num(n.first);
           const Interval_nt<> den(d.first);
           const Interval_nt<> div = num / den;
+          const int e = static_cast<int>(n.second - d.second);
           std::tie(l, u) = ldexp(div, e).pair();
+
+          if (u == 0.0) {
+            u = std::numeric_limits<double>::min();
+            CGAL_assertion(l == 0.0);
+          }
 
           if (change_sign) {
             const double t = l;
@@ -784,43 +774,40 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             u = -t;
           }
 
-          Type lb(l), ub(u);
-          CGAL_assertion(lb <= ub);
-          CGAL_assertion(lb <= x);
-          CGAL_assertion(ub >= x);
-
+          if (l == std::numeric_limits<double>::infinity()) {
+            l = std::numeric_limits<double>::max();
+            CGAL_assertion(u == std::numeric_limits<double>::infinity());
+          } else if (u == -std::numeric_limits<double>::infinity()) {
+            u = std::numeric_limits<double>::lowest();
+            CGAL_assertion(l == -std::numeric_limits<double>::infinity());
+          }
+          CGAL_assertion(are_correct_bounds(l, u, input));
           return std::make_pair(l, u);
         }
 
-        // TODO: The main question: does this implementation returns p and q, which
-        // are exactly representable on the double grid or we should still apply nextafter
-        // in order to get it and set correct rounding mode before calling do_cast?
-        // Now, it seems like our l and u are simply closest doubles rather than points
-        // on the double grid.
-        std::pair<double, double> get_interval_as_boost( Type& x ) const {
+        bool are_correct_bounds( const double l, const double u, const Type& x ) const {
 
-          const Type input = x;
-          // std::cout << "input: " << input << std::endl;
+          if (
+            CGAL::abs(l) == std::numeric_limits<double>::infinity() ||
+            CGAL::abs(u) == std::numeric_limits<double>::infinity()) {
+            return true;
+          }
+          CGAL_assertion(CGAL::abs(l) != std::numeric_limits<double>::infinity());
+          CGAL_assertion(CGAL::abs(u) != std::numeric_limits<double>::infinity());
 
+          const Type lb(l), ub(u);
+          CGAL_assertion(lb <= ub);
+          CGAL_assertion(lb <= x);
+          CGAL_assertion(ub >= x);
+          return lb <= ub && lb <= x && ub >= x;
+        }
+
+        std::pair<double, double> get_interval_as_boost( const Type& input ) const {
+
+          Type x = input; // TODO: Can we avoid this copying?
           double l = 0.0, u = 0.0;
           if (x.num == 0) { // return [0.0, 0.0]
-
-            Type lb(l), ub(u);
-
-            // std::cout << "x: " << x << std::endl;
-            // std::cout << "l: " << l << std::endl;
-            // std::cout << "u: " << u << std::endl;
-
-            // std::cout << "lb: " << lb << std::endl;
-            // std::cout << "ub: " << ub << std::endl;
-
-            // std::cout << "EARLY QUIT" << std::endl;
-            // std::cout << std::endl;
-
-            CGAL_assertion(lb <= ub);
-            CGAL_assertion(lb <= input);
-            CGAL_assertion(ub >= input);
-
+            CGAL_assertion(are_correct_bounds(l, u, input));
             return std::make_pair(l, u);
           }
           CGAL_assertion(x.num != 0);
@@ -842,99 +829,38 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           const int num_dbl_digits = std::numeric_limits<double>::digits - 1;
           const int msb_diff = int(msb(x.num) - msb(x.den));
-          int shift = num_dbl_digits - msb_diff;
-
-          // std::cout << "digs: " << num_dbl_digits << std::endl;
-          // std::cout << "diff: " << msb_diff       << std::endl;
-
-          // if (shift == 0) {
-          //   CGAL_assertion_msg(false, "TODO: ZERO SHIFT!");
-          // }
-          // std::cout << "shift: " << shift << std::endl;
+          const int shift = num_dbl_digits - msb_diff;
 
           if (shift > 0) {
             CGAL_assertion(msb_diff < num_dbl_digits);
-            // std::cout << "num shift: " << shift << std::endl;
             x.num <<= shift;
-            // CGAL_assertion_msg(false, "TODO: NUMERATOR CASE!");
           } else if (shift < 0) {
             CGAL_assertion(msb_diff > num_dbl_digits);
-            // std::cout << "den shift: " << shift << std::endl;
             x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
-            // CGAL_assertion_msg(false, "TODO: DENOMINATOR CASE!");
           }
           CGAL_assertion(int(msb(x.num) - msb(x.den)) == num_dbl_digits);
 
           decltype(x.num) p, q, r;
-          // std::cout << "x: " << x << std::endl;
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
-
-          // std::vector<unsigned char> v;
-          // export_bits(q, std::back_inserter(v), 1);
-          // std::cout << "binary: ";
-          // for (const unsigned char bit : v) {
-          //   std::cout << static_cast<unsigned>(bit);
-          // }
-          // std::cout << std::endl;
-
-          // std::cout << "q before: " << q << std::endl;
-          // std::cout << "r before: " << r << std::endl;
-
           const int q_bits = msb(q);
-          // std::cout << "n bits: " << int(msb(x.num)) << std::endl;
-          // std::cout << "d bits: " << int(msb(x.den)) << std::endl;
-          // std::cout << "q bits: " << q_bits << std::endl;
-          // std::cout << "q digs: " << num_dbl_digits << std::endl;
 
-          if (q_bits == num_dbl_digits - 1) {
-
-            // It seems to be identical to CASE-2.
-            // std::cout << "CASE-1-3" << std::endl;
-            CGAL_assertion(r != 0);
+          CGAL_assertion(q_bits == num_dbl_digits || r != 0);
+          if (r != 0) {
             p = q;
             ++q;
-
-            // q >>= 1;
-            // p = q;
-            // ++q;
-            // --shift;
-
-            // r <<= 1; p = q;
-            // const int cmp = r.compare(x.den);
-            // if (cmp > 0) {
-            //   std::cout << "subcase 1" << std::endl;
-            //   ++q;
-            // } else if ((cmp == 0) && (q & 1u)) {
-            //   std::cout << "subcase 2" << std::endl;
-            //   ++q;
-            // } else {
-            //   std::cout << "subcase 3" << std::endl;
-            // }
-
-            // CGAL_assertion_msg(false, "TODO: CASE-13!");
-
           } else {
-
-            CGAL_assertion(q_bits == num_dbl_digits);
-            if (r != 0) {
-              // std::cout << "CASE-2" << std::endl;
-              p = q;
-              ++q;
-              // CGAL_assertion_msg(false, "TODO: CASE-2!");
-            } else {
-              // std::cout << "CASE-4" << std::endl;
-              p = q;
-              // CGAL_assertion_msg(false, "TODO: CASE-4!");
-            }
+            p = q;
           }
-
-          // std::cout << "p: " << p << std::endl;
-          // std::cout << "q: " << q << std::endl;
 
           l = static_cast<double>(p);
           l = std::ldexp(l, -shift);
           u = static_cast<double>(q);
           u = std::ldexp(u, -shift);
+
+          if (u == 0.0) {
+            u = std::numeric_limits<double>::min();
+            CGAL_assertion(l == 0.0);
+          }
 
           if (change_sign) {
             const double t = l;
@@ -942,34 +868,25 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             u = -t;
           }
 
-          Type lb(l);
-          Type ub(u);
-
-          // std::cout << "x: " << x << std::endl;
-          // std::cout << "l: " << l << std::endl;
-          // std::cout << "u: " << u << std::endl;
-
-          // std::cout << "lb: " << lb << std::endl;
-          // std::cout << "ub: " << ub << std::endl;
-          // std::cout << std::endl;
-
-          CGAL_assertion(lb <= ub);
-          CGAL_assertion(lb <= input);
-          CGAL_assertion(ub >= input);
-
+          if (l == std::numeric_limits<double>::infinity()) {
+            l = std::numeric_limits<double>::max();
+            CGAL_assertion(u == std::numeric_limits<double>::infinity());
+          } else if (u == -std::numeric_limits<double>::infinity()) {
+            u = std::numeric_limits<double>::lowest();
+            CGAL_assertion(l == -std::numeric_limits<double>::infinity());
+          }
+          CGAL_assertion(are_correct_bounds(l, u, input));
           return std::make_pair(l, u);
         }
 
         std::pair<double, double> get_interval_using_cpp_rational( const Type& x ) const {
-
-          std::cout << "input: " << x << std::endl;
 
           const double inf = std::numeric_limits<double>::infinity();
           const double xn = x.num.template convert_to<double>();
           const double xd = x.den.template convert_to<double>();
           if (xn == inf || xd == inf) {
 
-            // TODO: Is it fast enough? Seems so because this conversion happens
+            // Seems fast enough because this conversion happens
             // only a few times during the run, at least for NEF.
             boost::multiprecision::cpp_rational rat;
             CGAL_assertion(x.den != 0);
@@ -993,22 +910,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               i = nextafter(i, -inf);
               CGAL_assertion(rat.compare(i) > 0);
             }
-
-            Type lb(i), ub(s);
-
-            std::cout << "inf case" << std::endl;
-            std::cout << "x: " << x << std::endl;
-            std::cout << "l: " << i << std::endl;
-            std::cout << "u: " << s << std::endl;
-
-            std::cout << "lb: " << lb << std::endl;
-            std::cout << "ub: " << ub << std::endl;
-            std::cout << std::endl;
-
-            CGAL_assertion(lb <= ub);
-            CGAL_assertion(lb <= x);
-            CGAL_assertion(ub >= x);
-
+            CGAL_assertion(are_correct_bounds(i, s, x));
             return std::make_pair(i, s);
 
           } else {
@@ -1016,23 +918,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             const Interval_nt<> quot =
               Interval_nt<>(CGAL_NTS to_interval(x.num)) /
               Interval_nt<>(CGAL_NTS to_interval(x.den));
-
-            Type lb(quot.inf());
-            Type ub(quot.sup());
-
-            std::cout << "std case" << std::endl;
-            std::cout << "x: " << x << std::endl;
-            std::cout << "l: " << quot.inf() << std::endl;
-            std::cout << "u: " << quot.sup() << std::endl;
-
-            std::cout << "lb: " << lb << std::endl;
-            std::cout << "ub: " << ub << std::endl;
-            std::cout << std::endl;
-
-            CGAL_assertion(lb <= ub);
-            CGAL_assertion(lb <= x);
-            CGAL_assertion(ub >= x);
-
             return std::make_pair(quot.inf(), quot.sup());
           }
         }
@@ -1043,24 +928,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           #if true // tight bounds optimized
 
-            // Make tight and fast bounds for x here.
-            // 1. Gmpzf.h - line 156 and Gmpzf_type.h - line 412.
-            // 2. generic_interconvert.hpp - line 305.
-
-            // TODO: Can we avoid this copying by getting x without const?
-            // TODO: Both versions do not fully work with NEF, leading to NEF assertions,
-            // however they both pass for REG and all test cases.
-            Type xx = x;
-
-            // TODO: compare both below with the stable cpp_rational-based implementation
-            // and see which configurations fail for NEF data.
-
             // Seems to be less precise and we rarely end up with an interval [d,d]
             // even for numbers, which are exactly representable as double.
-            // return get_interval_as_gmpzf(xx);
+            return get_interval_as_gmpzf(x);
 
             // Works slightly better than the first one.
-            return get_interval_as_boost(xx);
+            // return get_interval_as_boost(x);
 
           #else // cpp_rational based tight bounds
 
@@ -1074,17 +947,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const Interval_nt<> quot =
             Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
             Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
-
-          Type lb(quot.inf()), ub(quot.sup());
-          CGAL_assertion(lb <= ub);
-          CGAL_assertion(lb <= x);
-          CGAL_assertion(ub >= x);
-
-          // std::cout << "x: " << x << std::endl;
-          // std::cout << "l: " << quot.inf() << std::endl;
-          // std::cout << "u: " << quot.sup() << std::endl;
-          // std::cout << std::endl;
-
           return std::make_pair(quot.inf(), quot.sup());
 
         #endif
