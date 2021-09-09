@@ -81,7 +81,7 @@
 #include <limits>
 
 #ifndef DO_NOT_HANDLE_NON_MANIFOLD_POINT
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #endif
 
 #ifndef CGAL_NO_EDGE_EDGE_EXTRA_REMOVAL
@@ -243,7 +243,7 @@ class Reconstruction_from_parallel_slices_3{
     //mark printed nm_edge (bitset)
     //previous_bottom_incontour_nm_vertices (info in the vertex!)
     #endif
-    T_FaceInfo2():other_face(NULL),other_index(-1){}
+    T_FaceInfo2():other_face(nullptr),other_index(-1){}
     int nesting_level;
 
     bool in_domain()
@@ -615,7 +615,7 @@ class Reconstruction_from_parallel_slices_3{
     To_exact to_exact;
     CGAL::Object obj = CGAL::intersection(to_exact(s1),to_exact(s2));
     const Exact_kernel::Point_2* p = CGAL::object_cast<Exact_kernel::Point_2>(&obj);
-    CGAL_assertion(p!=NULL);
+    CGAL_assertion(p!=nullptr);
     To_input to_input;
     return to_input(*p);
   }
@@ -818,7 +818,7 @@ class Reconstruction_from_parallel_slices_3{
     }
     else{
 #ifndef DO_NOT_INTERSECT_CONTOURS_WITH_MEDIAL_AXIS
-      A_info.other_face=NULL;
+      A_info.other_face=nullptr;
 #endif
       if (lt==CDT2::EDGE){
         if( loc->is_constrained(li) ){
@@ -898,7 +898,7 @@ class Reconstruction_from_parallel_slices_3{
 //        for (int k=0;k<3;++k){
 //          if (it->is_constrained((k+1)%3) && it->is_constrained((k+2)%3)){
 //            FaceInfo2 info;
-//            vertex_to_add(it->vertex(k)->point(),info,NULL,cdtB,points);
+//            vertex_to_add(it->vertex(k)->point(),info,nullptr,cdtB,points);
 //          }
 //        }
       }
@@ -963,7 +963,7 @@ class Reconstruction_from_parallel_slices_3{
     //the dual segment or ray (and stop when a constrained edge have been found)
     for(Finite_faces_iterator it = cdtA.finite_faces_begin(); it != cdtA.finite_faces_end(); ++it){
       if( !it->info().in_domain() &&
-          it->info().other_face != NULL )
+          it->info().other_face != nullptr )
       {
         CGAL_assertion(!it->info().dual_point_on_constraint);
         for (int i=0;i<3;++i){
@@ -976,7 +976,7 @@ class Reconstruction_from_parallel_slices_3{
                  !it->neighbor(i)->info().dual_point_on_constraint &&  //this point is not already on a constraint: this is only relevant to filter these elements
                                                                        //when we are not interested in intersection points of non-constrained edges with the exterior medial axis
                  #endif
-                 it->neighbor(i)->info().other_face == NULL) //dual vertex is outside the domain of cdtB
+                 it->neighbor(i)->info().other_face == nullptr) //dual vertex is outside the domain of cdtB
             {
               Face_handle_2 f_in = it->info().other_face;
               CGAL_assertion(!cdtB.is_infinite(f_in));
@@ -1738,10 +1738,10 @@ class Reconstruction_from_parallel_slices_3{
   //that are inside the domain. These edges are possible locations where non-manifold
   //connections can happen
   void split_non_manifold_edges_between_contour_points(double topz,bool last_run){
-    bool first_run=previous_layer_incontour_edges==NULL;
+    bool first_run=previous_layer_incontour_edges==nullptr;
 
     incontour_edge_ds.clear();
-    Unique_incontour_edges* current_layer_incontour_edges=last_run?NULL:new Unique_incontour_edges();
+    Unique_incontour_edges* current_layer_incontour_edges=last_run?nullptr:new Unique_incontour_edges();
 
     for(Cell_iterator_3 it = delaunay_3.finite_cells_begin(); it != delaunay_3.finite_cells_end(); ++it ) {
       if(it->info().type == CellInfo3::EDGE_EDGE && !it->info().volume){
@@ -2709,7 +2709,7 @@ class Reconstruction_from_parallel_slices_3{
 
     #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
     double top_z = top_ptr->finite_vertices_begin()->info().z;
-    bool first_run = previous_bottom_incontour_nm_vertices==NULL;
+    bool first_run = previous_bottom_incontour_nm_vertices==nullptr;
     #endif
 
     //POSSIBLE OPTI: One way to directly compute incident facets is to make a pass on all cells and use a vector
@@ -3070,9 +3070,9 @@ class Reconstruction_from_parallel_slices_3{
     std::map< cpp0x::tuple<Vertex_handle_3,Vertex_handle_3,Vertex_handle_3>,int > new_opposite_nm_edge_vertex;
 
     //sets to detect non-manifold vertices and edges
-    std::set<Vertex_handle_2>* current_bottom_incontour_nm_vertices=NULL;
+    std::set<Vertex_handle_2>* current_bottom_incontour_nm_vertices=nullptr;
     if (!last_run) current_bottom_incontour_nm_vertices=new std::set<Vertex_handle_2>();
-    std::set< std::pair<Vertex_handle_2,Vertex_handle_2> >* current_bottom_incontour_nm_edges=NULL;
+    std::set< std::pair<Vertex_handle_2,Vertex_handle_2> >* current_bottom_incontour_nm_edges=nullptr;
     if (!last_run) current_bottom_incontour_nm_edges=new std::set<std::pair<Vertex_handle_2,Vertex_handle_2> >();
 
     //mark planar non-manifold edges inside the contour as well as in contour vertices and non-manifold facets
@@ -3430,7 +3430,7 @@ class Reconstruction_from_parallel_slices_3{
 //  std::ofstream output("last-graph.off");//DEBUG
 //  write_cells(output);//DEBUG
 //  write_deleted_tetra();//DEBUG
-//    bool first_run=previous_layer_incontour_edges==NULL;
+//    bool first_run=previous_layer_incontour_edges==nullptr;
     #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
     if( split_non_manifold_incontour_edges )
       split_non_manifold_edges_between_contour_points(top_ptr->finite_vertices_begin()->info().z,last_run);
@@ -3488,13 +3488,13 @@ class Reconstruction_from_parallel_slices_3{
 public:
 
   Reconstruction_from_parallel_slices_3():
-    top_ptr(NULL),bottom_ptr(NULL),next_ptr(NULL)
+    top_ptr(nullptr),bottom_ptr(nullptr),next_ptr(nullptr)
   #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
   ,additional_index(-1)
   #endif
   #ifdef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
-  ,previous_bottom_incontour_nm_vertices(NULL)
-  ,previous_bottom_incontour_nm_edges(NULL)
+  ,previous_bottom_incontour_nm_vertices(nullptr)
+  ,previous_bottom_incontour_nm_edges(nullptr)
   #endif
 
   {}
@@ -3510,7 +3510,7 @@ public:
     read(polygon_reader, next_ptr);
     #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
   //init container to check no two opposite planar facets  are in the final volume
-    previous_layer_incontour_edges=NULL;
+    previous_layer_incontour_edges=nullptr;
     #endif
   //initialization
     CGAL::make_conforming_Gabriel_2(*bottom_ptr);
@@ -3538,14 +3538,14 @@ public:
       if (top_ptr) delete top_ptr;
       top_ptr=bottom_ptr;
       bottom_ptr=next_ptr;
-      next_ptr=NULL;
+      next_ptr=nullptr;
 
       if (polygon_reader.has_next_planar_contour()){
         polygon_reader.next_polygon();
         read(polygon_reader, next_ptr);
       }
-      run(next_ptr==NULL);
-    }while (next_ptr!=NULL);
+      run(next_ptr==nullptr);
+    }while (next_ptr!=nullptr);
     #ifdef CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
     std::cout << std::endl;
     #endif
@@ -3553,7 +3553,7 @@ public:
     delete bottom_ptr;
     delete top_ptr;
     #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
-    if( split_non_manifold_incontour_edges && previous_layer_incontour_edges!=NULL)
+    if( split_non_manifold_incontour_edges && previous_layer_incontour_edges!=nullptr)
       delete previous_layer_incontour_edges;
     #endif
     slice_writer_ptr->finalize();
