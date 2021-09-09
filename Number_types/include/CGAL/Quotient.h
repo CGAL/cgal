@@ -930,10 +930,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
             // Seems to be less precise and we rarely end up with an interval [d,d]
             // even for numbers, which are exactly representable as double.
-            return get_interval_as_gmpzf(x);
+            // return get_interval_as_gmpzf(x);
 
             // Works slightly better than the first one.
-            // return get_interval_as_boost(x);
+            return get_interval_as_boost(x);
 
           #else // cpp_rational based tight bounds
 
