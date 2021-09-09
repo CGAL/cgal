@@ -215,13 +215,90 @@ Quotient<NT>::normalize()
 template <class NT>
 CGAL_MEDIUM_INLINE
 Quotient<NT>&
-Quotient<NT>::operator+= (const Quotient<NT>& r)
+Quotient<NT>::operator+= (const Quotient<NT>& b)
 {
+#if 0
+  
     num = num * r.den + r.num * den;
     den *= r.den;
     simplify_quotient(num, den);
     return *this;
+    
+#else
+
+    // taken from https://github.com/boostorg/multiprecision/blob/rational_adaptor_standalone/include/boost/multiprecision/rational_adaptor.hpp#L486
+    // This has the BSL, but this code won't survive
+    typedef NT Backend;
+
+    NT result_num, result_denom;
+    Backend  gcd, t1, t2, t3, t4;
+   //
+   // Begin by getting the gcd of the 2 denominators:
+   //
+    gcd = boost::multiprecision::gcd(denominator(), b.denominator());
+   //
+   // Do we have gcd > 1:
+   //
+   if (! gcd == 1)
+   {
+      //
+      // Scale the denominators by gcd, and put the results in t1 and t2:
+      //
+     t1 = CGAL::integral_division( b.denominator(), gcd);
+     t2 = CGAL::integral_division( denominator(), gcd);
+      //
+      // multiply the numerators by the scale denominators and put the results in t3, t4:
+      //
+      t3 =  numerator() * t1;
+      t4 =  b.numerator() * t2;
+      //
+      // Add them up:
+      //
+      t3 += t4;
+      //
+      // Get the gcd of gcd and our numerator (t3):
+      //
+      t4 = boost::multiprecision::gcd(t3, gcd);
+      if (t4 == 1)
+      {
+         result_num = t3;
+         result_denom = t1 * denominator();
+      }
+      else
+      {
+         //
+         // Uncommon case where gcd is not 1, divide the numerator
+         // and the denominator terms by the new gcd.  Note we perform division
+         // on the existing gcd value as this is the smallest of the 3 denominator
+         // terms we'll be multiplying together, so there's a good chance it's a
+         // single limb value already:
+         //
+	result_num= CGAL::integral_division(t3, t4);
+        t3 = CGAL::integral_division( gcd, t4);
+         t4 =  t1 * t2;
+         result_denom =  t4 * t3;
+      }
+   }
+   else
+   {
+      //
+      // Most common case (approx 60%) where gcd is one:
+      //
+      t1 = numerator() * b.denominator();
+      t2 =  denominator() *b.numerator();
+
+      result_num  =  t1 + t2;
+
+      result_denom = denominator() * b.denominator();
+
+   }
+
+  *this = Quotient<NT>(result_num,result_denom);
+  return *this;
+#endif
+
 }
+
 
 template <class NT>
 CGAL_MEDIUM_INLINE
