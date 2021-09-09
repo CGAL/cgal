@@ -728,27 +728,25 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return lb <= ub && lb <= x && ub >= x;
         }
 
-        std::pair< std::pair<double, double>, int64_t > get_interval_exp( NT& x ) const {
+        std::pair< Interval_nt<>, int64_t > get_interval_exp( NT& x ) const {
 
           CGAL_assertion(x >= 0);
+          int64_t d = 0;
+          double l = 0.0, u = 0.0;
           const int64_t n = static_cast<int64_t>(msb(x));
           const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
-          if (n > num_dbl_digits) {
 
-            const int64_t d = n - num_dbl_digits;
+          if (n > num_dbl_digits) {
+            d = n - num_dbl_digits;
             x = x >> d;
             const NT y = x + 1;
-
-            const double l = static_cast<double>(x);
-            const double u = static_cast<double>(y);
-            return std::make_pair( std::make_pair(l, u), d );
-
+            l = static_cast<double>(x);
+            u = static_cast<double>(y);
           } else {
-
-            const double l = static_cast<double>(x);
-            const double u = l;
-            return std::make_pair( std::make_pair(l, u), 0 );
+            l = static_cast<double>(x);
+            u = l;
           }
+          return std::make_pair( Interval_nt<>(l, u), d );
         }
 
         std::pair<double, double> get_interval_as_gmpzf( Type x ) const {
@@ -776,13 +774,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
           CGAL_assertion(x.num > 0 && x.den > 0);
 
-          const auto n = get_interval_exp(x.num);
-          const auto d = get_interval_exp(x.den);
+          const auto num = get_interval_exp(x.num);
+          const auto den = get_interval_exp(x.den);
 
-          const Interval_nt<> num(n.first);
-          const Interval_nt<> den(d.first);
-          const Interval_nt<> div = num / den;
-          const int64_t e = n.second - d.second;
+          const Interval_nt<> div = num.first / den.first;
+          const int64_t e = num.second - den.second;
           std::tie(l, u) = ldexp(div, e).pair();
 
           if (change_sign) {
