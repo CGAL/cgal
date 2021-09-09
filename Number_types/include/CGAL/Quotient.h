@@ -51,7 +51,7 @@ simplify_quotient(NT & a, NT & b) {
 // TODO:
 // - move it to the boost_mp.h
 // - can we use gcd only sometimes to save time?
-#if defined(CGAL_USE_CPP_INT) && true
+// #if defined(CGAL_USE_CPP_INT) && true
 
   const NT r = boost::multiprecision::gcd(a, b);
   // std::cout << "r: " << r << std::endl;
@@ -63,7 +63,7 @@ simplify_quotient(NT & a, NT & b) {
   // std::cout << "new b: " << b << std::endl;
   // std::cout << std::endl;
 
-#endif
+// #endif
 
 }
 
