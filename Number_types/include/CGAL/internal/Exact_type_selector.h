@@ -55,12 +55,12 @@ namespace CGAL { namespace internal {
 template < typename >
 struct Exact_field_selector
 #ifdef CGAL_USE_GMPXX
-{ typedef mpq_class Type; };
+{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
 #elif defined(CGAL_USE_GMP)
 # if defined(CGAL_USE_BOOST_MP)
-{ typedef boost::multiprecision::mpq_rational Type; };
+{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
 # else
-{ typedef Gmpq Type; };
+{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
 # endif
 #elif defined(CGAL_USE_LEDA)
 { typedef leda_rational Type; };
@@ -70,10 +70,10 @@ struct Exact_field_selector
 #if defined(CGAL_USE_CPP_INT)
 { typedef Quotient<boost::multiprecision::cpp_int> Type; };
 #else
-{ typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
+{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
 # endif
 #else
-{ typedef Quotient<MP_Float> Type; };
+{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
 #endif
 
 // By default, a field is a safe choice of ring.

@@ -944,10 +944,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         #else // master version
 
-          const Interval_nt<> quot =
-            Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
-            Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
-          return std::make_pair(quot.inf(), quot.sup());
+          return get_interval_as_boost(x);
+
+          // const Interval_nt<> quot =
+          //   Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
+          //   Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
+          // return std::make_pair(quot.inf(), quot.sup());
 
         #endif
         }
