@@ -777,9 +777,6 @@ inline
 void
 simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 {
-  // return;
-  // std::cout << "a: " << numerator   << std::endl;
-  // std::cout << "b: " << denominator << std::endl;
   // Currently only simplifies the two exponents.
 #if 0
   // This better version causes problems as the I/O is changed for
@@ -796,16 +793,12 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
     numerator.exp -= denominator.exp;
     denominator.exp = 0;
     const MP_Float g = gcd(numerator, denominator);
-    // std::cout << "r: " << g << std::endl;
     numerator = integral_division(numerator, g);
     denominator = integral_division(denominator, g);
   }
   numerator.exp -= denominator.exp;
   denominator.exp = 0;
 #endif
-  // std::cout << "new a: " << numerator   << std::endl;
-  // std::cout << "new b: " << denominator << std::endl;
-  // std::cout << std::endl;
 }
 
 inline void simplify_root_of_2(MP_Float &/*a*/, MP_Float &/*b*/, MP_Float&/*c*/) {
