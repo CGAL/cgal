@@ -1,4 +1,4 @@
-#define CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
+// #define CGAL_RECONSTRUCTION_FROM_PARALLEL_SLICES_3_DEBUG
 //#define CGAL_ALLOW_NON_MANIFOLD_INPUT
 
 #include <CGAL/Reconstruction_from_parallel_slices_3.h>
@@ -125,14 +125,15 @@ int main(int argc, char* argv[])
 
   #ifndef CGAL_ALLOW_NON_MANIFOLD_INPUT
   std::ofstream fout("graph.off");
+  fout << polyhedron;
+  fout.close();
+  std::cout << "graph.off written" << std::endl;
   if ( !polyhedron.is_closed() ){
     std::cout << "The polyhedron is not closed" << std::endl;
     polyhedron.normalize_border();
     for (Polyhedron::Edge_iterator  eit=polyhedron.border_edges_begin(),eit_end=polyhedron.edges_end();eit!=eit_end;++eit)
       std::cout << eit->vertex()->point() <<  " " << eit->opposite()->vertex()->point() << std::endl;
   }
-  fout << polyhedron;
-  fout.close();
 
   //check that there is not degenerate triangles
   int degen_triangle=0;
