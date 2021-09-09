@@ -803,6 +803,7 @@ struct Lazy_construction_bbox
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return ec(CGAL::exact(l1));
   }
 };
@@ -851,6 +852,7 @@ struct Lazy_construction_nt {
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return new Lazy_rep_0<AT,ET,To_interval<ET> >(ec( CGAL::exact(l)... ));
   }
 
@@ -1076,6 +1078,7 @@ public:
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     typename R1::ET et;
     ec(CGAL::exact(l1), CGAL::exact(l2), et);
     r1 = R1(new Lazy_rep_0<typename R1::AT,typename R1::ET,E2A>(et));
@@ -1147,6 +1150,7 @@ public:
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     typename R1::ET et1, et2;
     ec(CGAL::exact(l1), CGAL::exact(l2), et1, et2);
     r1 = R1(Handle_1(new Lazy_rep_0<typename R1::AT,typename R1::ET,E2A>(et1)));
@@ -1205,6 +1209,7 @@ public:
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     // TODO: Instead of using a vector, write an iterator adapter
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     std::vector<Object> exact_objects;
     ec(CGAL::exact(l1), CGAL::exact(l2), std::back_inserter(exact_objects));
     for (std::vector<Object>::const_iterator oit = exact_objects.begin();
@@ -1283,6 +1288,7 @@ public:
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     ET eto = ec(CGAL::exact(l1));
     return make_lazy<LK>(eto);
   }
@@ -1338,6 +1344,7 @@ public:
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
     return make_lazy<LK>(eto);
   }
@@ -1371,6 +1378,7 @@ public:
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     ET eto = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
     return make_lazy<LK>(eto);
   }
@@ -1544,7 +1552,7 @@ struct Lazy_construction_variant {
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     ET exact_v = EC()(CGAL::exact(l1), CGAL::exact(l2));
     result_type res;
 
@@ -1594,7 +1602,7 @@ struct Lazy_construction_variant {
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     ET exact_v = EC()(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
     result_type res;
 
@@ -1646,6 +1654,7 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
     }                                                                   \
     CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);      \
     return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
   }
 
@@ -1714,6 +1723,7 @@ struct result<F( BOOST_PP_ENUM_PARAMS(n, T) )> { \
     }                                                                   \
     CGAL_BRANCH_PROFILER_BRANCH(tmp);                                 \
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);          \
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);      \
     return result_type( Handle(new Lazy_rep_0<AT,ET,E2A>(ec( BOOST_PP_ENUM(n, CGAL_LEXACT, _) ))) ); \
   }
 

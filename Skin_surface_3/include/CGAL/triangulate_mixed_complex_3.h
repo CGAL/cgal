@@ -1210,6 +1210,7 @@ orientation(Tmc_Cell_handle ch)
     } catch (Uncertain_conversion_exception&) {}
   }
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   typedef Exact_predicates_exact_constructions_kernel EK;
   typedef Cartesian_converter<EK, Tmc_traits>         Exact_converter;
   typedef Skin_surface_traits_3<EK>                   Exact_traits;

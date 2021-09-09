@@ -55,6 +55,7 @@ public:
       {}
     }
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return From_Exact( Exact_construction(To_Exact(a1)) );
   }
   template <class A1, class A2>
@@ -72,6 +73,7 @@ public:
       {}
     }
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return From_Exact( Exact_construction(To_Exact(a1),
                                           To_Exact(a2)) );
   }
@@ -92,6 +94,7 @@ public:
       {}
     }
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return From_Exact( Exact_construction(To_Exact(a1),
                                           To_Exact(a2),
                                           To_Exact(a3)) );

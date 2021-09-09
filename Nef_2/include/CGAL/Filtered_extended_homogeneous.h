@@ -403,6 +403,7 @@ int orientation(const Extended_point<RT>& p1,
       run_exact=true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = orientation_coeff2(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
@@ -422,6 +423,7 @@ int orientation(const Extended_point<RT>& p1,
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = orientation_coeff1(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
@@ -441,6 +443,7 @@ int orientation(const Extended_point<RT>& p1,
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = orientation_coeff0(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                              p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
@@ -473,6 +476,7 @@ int compare_x(const Extended_point<RT>& p1,
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = compare_expr(p1.mx(),p1.hw(),p2.mx(),p2.hw());
 
@@ -490,6 +494,7 @@ int compare_x(const Extended_point<RT>& p1,
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = compare_expr(p1.nx(),p1.hw(),p2.nx(),p2.hw());
   return res;
@@ -514,6 +519,7 @@ int compare_y(const Extended_point<RT>& p1,
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = compare_expr(p1.my(),p1.hw(),p2.my(),p2.hw());
   if ( res != 0 ) return res;
@@ -529,6 +535,7 @@ int compare_y(const Extended_point<RT>& p1,
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = compare_expr(p1.ny(),p1.hw(),p2.ny(),p2.hw());
   return res;
@@ -673,6 +680,7 @@ int compare_pair_dist(
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = cmppd_coeff2(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
@@ -695,6 +703,7 @@ int compare_pair_dist(
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = cmppd_coeff1(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
@@ -716,6 +725,7 @@ int compare_pair_dist(
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = cmppd_coeff0(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                        p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
@@ -959,6 +969,7 @@ int orientation(const Extended_direction<RT>& d1,
       run_exact=true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = coeff2_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
@@ -979,6 +990,7 @@ int orientation(const Extended_direction<RT>& d1,
       run_exact=true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if (run_exact)
     res = coeff1_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),
@@ -1000,6 +1012,7 @@ int orientation(const Extended_direction<RT>& d1,
       run_exact = true;
     }
   }
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   if(run_exact)
     res = coeff0_dor(p1.mx(),p1.nx(),p1.my(),p1.ny(),p1.hw(),
                      p2.mx(),p2.nx(),p2.my(),p2.ny(),p2.hw(),

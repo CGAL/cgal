@@ -152,6 +152,7 @@ public:
     }
 
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     EC_result_type er = Exact_construction(To_Exact(std::forward<A>(a))...) ;
     return From_Exact(er);
   }

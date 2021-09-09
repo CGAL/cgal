@@ -88,6 +88,7 @@ public:
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return ep(c2e(std::forward<Args>(args))...);
   }
 };

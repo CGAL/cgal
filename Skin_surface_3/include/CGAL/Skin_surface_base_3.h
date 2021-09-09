@@ -313,7 +313,7 @@ sign(TMC_Vertex_handle vit) const
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   typedef Exact_predicates_exact_constructions_kernel    EK;
   typedef Skin_surface_traits_3<EK>                      Exact_skin_surface_traits;
   typedef Skin_surface_base_3<Exact_skin_surface_traits> Exact_skin_surface_base;
@@ -355,6 +355,7 @@ sign(const Bare_point &p, const Cell_info &info) const
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   return construct_surface(info.first,
                            Exact_predicates_exact_constructions_kernel()).sign(p);
 }
@@ -630,7 +631,7 @@ compare(Cell_info &info1, const Bare_point &p1,
   }
   CGAL_BRANCH_PROFILER_BRANCH(tmp);
   Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);
-
+  CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
   return CGAL_NTS sign(
     construct_surface(info1.first,
                       Exact_predicates_exact_constructions_kernel()).value(p1) -
@@ -697,6 +698,7 @@ locate_in_tmc(const Bare_point &p0, TMC_Cell_handle start) const
                                                      *pts[2], *pts[3]);
       } catch (Uncertain_conversion_exception&) { run_exact=true; }
     }
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     if (run_exact)
     {
       Protect_FPU_rounding<false> P(CGAL_FE_TONEAREST);

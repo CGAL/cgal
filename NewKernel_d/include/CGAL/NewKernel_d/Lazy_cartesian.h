@@ -184,6 +184,7 @@ struct Lazy_construction2 {
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return new Lazy_rep_0<AT,ET,E2A>(ec(CGAL::exact(l)...));
   }
   // FIXME: this forces us to have default constructors for all types, try to make its instantiation lazier
