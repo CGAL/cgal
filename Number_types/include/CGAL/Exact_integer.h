@@ -50,11 +50,7 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
-#if false // test cpp_int
-
-typedef boost::multiprecision::cpp_int Exact_integer;
-
-#else // default types
+#if defined(CGAL_DO_NOT_RUN_TESTME) // default types
 
 #if CGAL_USE_GMPXX
 
@@ -82,7 +78,11 @@ typedef boost::multiprecision::cpp_int Exact_integer;
 
 #endif // CGAL_USE_BOOST_MP
 
-#endif // default types
+#else // run testme
+
+typedef boost::multiprecision::cpp_int Exact_integer;
+
+#endif // run tesme
 
 #endif // not DOXYGEN_RUNNING
 

@@ -20,7 +20,7 @@
 // MSVC had trouble with versions <= 1.69:
 // https://github.com/boostorg/multiprecision/issues/98
 #if !defined CGAL_DO_NOT_USE_BOOST_MP && \
-    (!defined _MSC_VER || BOOST_VERSION >= 107000) || false // test cpp_int
+    (!defined _MSC_VER || BOOST_VERSION >= 107000) || !defined(CGAL_DO_NOT_RUN_TESTME)
 #define CGAL_USE_BOOST_MP 1
 
 #include <CGAL/functional.h> // *ary_function
@@ -193,7 +193,7 @@ struct RET_boost_mp_base
     struct To_interval
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
 
-        #if true // test boost devel
+        #if defined(CGAL_USE_TO_INTERVAL_WITH_BOOST) // test boost devel
 
         bool are_correct_bounds( const double l, const double u, const Type& x ) const {
 
@@ -312,22 +312,13 @@ struct RET_boost_mp_base
           // assume the conversion is within 1 ulp
           // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
 
-          #if defined(CGAL_USE_CPP_INT) && true // should always be true because it is a bug on CGAL/macOS
-
-            // We must use to_nearest with cpp_int.
-            double i;
-            {
-              Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-              i = x.template convert_to<double>();
-            }
-            double s = i;
-
-          #else // master version
-
-            double i = x.template convert_to<double>();
-            double s = i;
-
-          #endif
+          // We must use to_nearest with cpp_int.
+          double i;
+          {
+            Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
+            i = x.template convert_to<double>();
+          }
+          double s = i;
 
           // std::cout << "x: " << x << std::endl;
           // std::cout << "i: " << i << std::endl;

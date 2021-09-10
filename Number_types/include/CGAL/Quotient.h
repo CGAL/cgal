@@ -31,7 +31,10 @@
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/mpl.h>
+
+#if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
 #include <CGAL/boost_mp.h>
+#endif
 
 #include <boost/operators.hpp>
 #include <boost/type_index.hpp>
@@ -48,7 +51,7 @@ template < typename NT >
 inline void
 simplify_quotient(NT & a, NT & b) { }
 
-#if defined(CGAL_USE_CPP_INT) || false // test cpp_int
+#if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
 
 inline void
 simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
@@ -214,12 +217,14 @@ Quotient<NT>::normalize()
   return *this;
 }
 
+#if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
+
 template <class NT>
 CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const Quotient<NT>& b)
 {
-#if 0
+#if false
 
     num = num * r.den + r.num * den;
     den *= r.den;
@@ -301,6 +306,20 @@ Quotient<NT>::operator+= (const Quotient<NT>& b)
 
 }
 
+#else // default impl
+
+template <class NT>
+CGAL_MEDIUM_INLINE
+Quotient<NT>&
+Quotient<NT>::operator+= (const Quotient<NT>& r)
+{
+  num = num * r.den + r.num * den;
+  den *= r.den;
+  simplify_quotient(num, den);
+  return *this;
+}
+
+#endif // default impl
 
 template <class NT>
 CGAL_MEDIUM_INLINE
@@ -809,6 +828,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return lb <= ub && lb <= x && ub >= x;
         }
 
+        #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
+
         std::pair< Interval_nt<>, int64_t > get_interval_exp( NT& x ) const {
 
           CGAL_assertion(x >= 0);
@@ -993,38 +1014,39 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
         }
 
+        #endif // CPP_INT
+
         std::pair<double, double> operator()( const Type& x ) const {
 
-        #if defined(CGAL_USE_CPP_INT) || false // test cpp_int
+        #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
 
-          #if true // tight bounds optimized
+          // Option 1.
+          // Seems to be less precise and we rarely end up with an interval [d,d]
+          // even for numbers, which are exactly representable as double.
+          // They also pass all tests and benches.
+          // return get_interval_as_gmpzf(x);
 
-            // Seems to be less precise and we rarely end up with an interval [d,d]
-            // even for numbers, which are exactly representable as double.
-            // return get_interval_as_gmpzf(x);
+          // Option 2.
+          // Works slightly better than the first one.
+          // They also pass all tests and benches.
+          return get_interval_as_boost(x);
 
-            // Works slightly better than the first one.
-            return get_interval_as_boost(x);
-
-          #else // cpp_rational based tight bounds
-
-            // These are slower but stable bounds, pass all tests and benches.
-            return get_interval_using_cpp_rational(x);
-
-          #endif
+          // Option 3.
+          // These are slower but stable bounds, pass all tests and benches.
+          // return get_interval_using_cpp_rational(x);
 
         #else // master version
 
-          #if false
+          #if defined(CGAL_USE_TO_INTERVAL_WITH_BOOST)
+          return std::make_pair(0.0, 0.0);
+          #else
           const Interval_nt<> quot =
             Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
             Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
           return std::make_pair(quot.inf(), quot.sup());
-          #else // test boost devel
-          return std::make_pair(0.0, 0.0);
           #endif
 
-        #endif // CPP_INT
+        #endif // master version
         }
     };
 
