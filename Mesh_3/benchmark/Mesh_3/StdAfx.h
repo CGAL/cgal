@@ -13,6 +13,7 @@
 #include <deque>
 #include <fstream>
 #include <typeindex>
+#include <iterator>
 
 // Windows
 #include <windows.h>
@@ -24,7 +25,6 @@
 #include <boost/concept_check.hpp>
 #include <boost/config.hpp>
 #include <boost/format.hpp>
-#include <boost/iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/iterator/iterator_facade.hpp>

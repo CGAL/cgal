@@ -21,10 +21,9 @@
 #define CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
 
 #include <CGAL/iterator.h>
-
 #include <boost/config.hpp>
-#include <boost/iterator.hpp>
 
+#include <iterator>
 #include <functional>
 
 namespace CGAL { namespace internal {
