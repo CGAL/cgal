@@ -4312,14 +4312,15 @@ namespace CartesianKernelFunctors {
     {
       typename K::Construct_source_2 source;
       typename K::Construct_target_2 target;
-      const Point_2 a = source(s);
-      const Point_2 b = target(s);
+      const Point_2& a = source(s);
+      const Point_2& b = target(s);
       const FT dX = b.x() - a.x();
       const FT dY = b.y() - a.y();
 
-      const Point_2& p0 = t[0];
-      const Point_2& p1 = t[1];
-      const Point_2& p2 = t[2];
+      typename K::Construct_vertex_2 vertex;
+      const Point_2& p0 = vertex(t, 0);
+      const Point_2& p1 = vertex(t, 1);
+      const Point_2& p2 = vertex(t, 2);
       const FT R0 = p0.x() * p0.x() + p0.y() * p0.y();
       const FT R1 = p1.x() * p1.x() + p1.y() * p1.y();
       const FT R2 = p2.x() * p2.x() + p2.y() * p2.y();
@@ -4329,12 +4330,7 @@ namespace CartesianKernelFunctors {
                        - (R2 - R1) * (p0.x() * dX + p0.y() * dY)
                        - (R0 - R2) * (p1.x() * dX + p1.y() * dY)
                        - (R1 - R0) * (p2.x() * dX + p2.y() * dY);
-      if (det < 0)
-        return CGAL::ON_NEGATIVE_SIDE;
-      else if (det == 0.)
-        return CGAL::ON_ORIENTED_BOUNDARY;
-      else
-        return CGAL::ON_POSITIVE_SIDE;
+      return CGAL::sign(det);
     }
   };
 
