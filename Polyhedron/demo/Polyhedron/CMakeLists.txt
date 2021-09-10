@@ -249,12 +249,18 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${item_name})
   endmacro(add_item)
 
+  add_item(scene_triangulation_3_item Scene_triangulation_3_item.cpp)
+  target_link_libraries(scene_triangulation_3_item PUBLIC scene_basic_objects)
+
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(
-    scene_c3t3_item PUBLIC scene_surface_mesh_item scene_polygon_soup_item
-                           scene_basic_objects ${TBB_LIBRARIES})
+    scene_c3t3_item PUBLIC scene_triangulation_3_item
+    scene_surface_mesh_item scene_polygon_soup_item
+    scene_basic_objects ${TBB_LIBRARIES})
+
   if(TARGET CGAL::TBB_support)
     target_link_libraries(scene_c3t3_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_triangulation_3_item PUBLIC CGAL::TBB_support)
   endif()
   if(COMMAND target_precompile_headers)
     # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
