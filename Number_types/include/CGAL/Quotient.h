@@ -51,7 +51,7 @@ simplify_quotient(NT & a, NT & b) {
 // TODO:
 // - move it to the boost_mp.h
 // - can we use gcd only sometimes to save time?
-// #if defined(CGAL_USE_CPP_INT) && true
+#if defined(CGAL_USE_CPP_INT) || true
 
   const NT r = boost::multiprecision::gcd(a, b);
   // std::cout << "r: " << r << std::endl;
@@ -63,7 +63,7 @@ simplify_quotient(NT & a, NT & b) {
   // std::cout << "new b: " << b << std::endl;
   // std::cout << std::endl;
 
-// #endif
+#endif
 
 }
 
@@ -738,7 +738,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const int64_t n = static_cast<int64_t>(msb(x));
           const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
 
-          if (CGAL::is_positive(n - num_dbl_digits)) {
+          if (n > num_dbl_digits) {
             d = n - num_dbl_digits;
             x = x >> d;
             const NT y = x + 1;
@@ -764,15 +764,15 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           // Handle signs.
           bool change_sign = false;
-          const bool is_pos_num = CGAL::is_positive(x.num);
-          const bool is_pos_den = CGAL::is_positive(x.den);
-          if (!is_pos_num && !is_pos_den) {
+          const bool is_num_pos = CGAL::is_positive(x.num);
+          const bool is_den_pos = CGAL::is_positive(x.den);
+          if (!is_num_pos && !is_den_pos) {
             x.num = -x.num;
             x.den = -x.den;
-          } else if (!is_pos_num && is_pos_den) {
+          } else if (!is_num_pos && is_den_pos) {
             change_sign = true;
             x.num = -x.num;
-          } else if (is_pos_num && !is_pos_den) {
+          } else if (is_num_pos && !is_den_pos) {
             change_sign = true;
             x.den = -x.den;
           }
@@ -808,15 +808,15 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           // Handle signs.
           bool change_sign = false;
-          const bool is_pos_num = CGAL::is_positive(x.num);
-          const bool is_pos_den = CGAL::is_positive(x.den);
-          if (!is_pos_num && !is_pos_den) {
+          const bool is_num_pos = CGAL::is_positive(x.num);
+          const bool is_den_pos = CGAL::is_positive(x.den);
+          if (!is_num_pos && !is_den_pos) {
             x.num = -x.num;
             x.den = -x.den;
-          } else if (!is_pos_num && is_pos_den) {
+          } else if (!is_num_pos && is_den_pos) {
             change_sign = true;
             x.num = -x.num;
-          } else if (is_pos_num && !is_pos_den) {
+          } else if (is_num_pos && !is_den_pos) {
             change_sign = true;
             x.den = -x.den;
           }
@@ -828,10 +828,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const int64_t msb_diff = msb_num - msb_den;
           const int64_t shift = num_dbl_digits - msb_diff;
 
-          if (CGAL::is_positive(shift)) {
+          if (shift > 0) {
             CGAL_assertion(msb_diff < num_dbl_digits);
             x.num <<= shift;
-          } else if (CGAL::is_negative(shift)) {
+          } else if (shift < 0) {
             CGAL_assertion(msb_diff > num_dbl_digits);
             x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
           }
@@ -891,11 +891,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             const double inf = std::numeric_limits<double>::infinity();
             CGAL_assertion(i != inf && s != inf);
             const int cmp = rat.compare(i);
-            if (CGAL::is_positive(cmp)) {
+            if (cmp > 0) {
               s = nextafter(s, +inf);
               CGAL_assertion(rat.compare(s) < 0);
             }
-            else if (CGAL::is_negative(cmp)) {
+            else if (cmp < 0) {
               i = nextafter(i, -inf);
               CGAL_assertion(rat.compare(i) > 0);
             }
@@ -913,7 +913,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         std::pair<double, double> operator()( const Type& x ) const {
 
-        #if defined(CGAL_USE_CPP_INT) && true
+        #if defined(CGAL_USE_CPP_INT) || true
 
           #if true // tight bounds optimized
 
@@ -933,13 +933,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         #else // master version
 
-          // TODO: Remove it from here!
-          return get_interval_as_boost(x);
-
-          // const Interval_nt<> quot =
-          //   Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
-          //   Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
-          // return std::make_pair(quot.inf(), quot.sup());
+          const Interval_nt<> quot =
+            Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
+            Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
+          return std::make_pair(quot.inf(), quot.sup());
 
         #endif
         }
