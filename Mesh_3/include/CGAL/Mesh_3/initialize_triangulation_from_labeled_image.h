@@ -16,7 +16,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Mesh_3/search_for_connected_components_in_labeled_image.h>
-#include <CGAL/Mesh_3/squared_distance_Point_3_Triangle_3.h>
+#include <CGAL/Distance_3/Point_3_Triangle_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/make_mesh_3.h>
 

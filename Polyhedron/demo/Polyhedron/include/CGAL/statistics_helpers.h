@@ -1,7 +1,8 @@
 #ifndef POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 #define POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 
-#include <CGAL/squared_distance_3_0.h>
+#include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/Distance_3/Point_3_Line_3.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <boost/accumulators/accumulators.hpp>

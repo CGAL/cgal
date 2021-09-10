@@ -20,7 +20,7 @@
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
-#include <CGAL/squared_distance_2.h>
+#include <CGAL/Distance_2/Point_2_Point_2.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Nef_polynomial.h>
 #undef CGAL_NEF_DEBUG
