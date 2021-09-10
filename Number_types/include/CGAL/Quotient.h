@@ -218,12 +218,12 @@ Quotient<NT>&
 Quotient<NT>::operator+= (const Quotient<NT>& b)
 {
 #if 0
-  
+
     num = num * r.den + r.num * den;
     den *= r.den;
     simplify_quotient(num, den);
     return *this;
-    
+
 #else
 
     // taken from https://github.com/boostorg/multiprecision/blob/rational_adaptor_standalone/include/boost/multiprecision/rational_adaptor.hpp#L486
@@ -273,7 +273,7 @@ Quotient<NT>::operator+= (const Quotient<NT>& b)
          // terms we'll be multiplying together, so there's a good chance it's a
          // single limb value already:
          //
-	result_num= CGAL::integral_division(t3, t4);
+  result_num= CGAL::integral_division(t3, t4);
         t3 = CGAL::integral_division( gcd, t4);
          t4 =  t1 * t2;
          result_denom =  t4 * t3;
