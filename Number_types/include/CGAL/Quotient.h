@@ -46,14 +46,17 @@ namespace CGAL {
 // This function is not documented as a number type requirement for now.
 template < typename NT >
 inline void
-simplify_quotient(NT & a, NT & b) {
+simplify_quotient(NT & a, NT & b) { }
+
+inline void
+simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
 
 // TODO:
 // - move it to the boost_mp.h
 // - can we use gcd only sometimes to save time?
 #if defined(CGAL_USE_CPP_INT) || true
 
-  const NT r = boost::multiprecision::gcd(a, b);
+  const boost::multiprecision::cpp_int r = boost::multiprecision::gcd(a, b);
   // std::cout << "r: " << r << std::endl;
   // std::cout << "a: " << a << std::endl;
   // std::cout << "b: " << b << std::endl;
@@ -917,7 +920,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           NT q, r;
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
-          const int64_t q_bits = static_cast<int64_t>(msb(q));
+          CGAL_assertion_code(const int64_t q_bits = static_cast<int64_t>(msb(q)));
           CGAL_assertion(q_bits == num_dbl_digits || r != 0 /* when q_bit = num_dbl_digits - 1 */ );
 
           if (!CGAL::is_zero(r)) {

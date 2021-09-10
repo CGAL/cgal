@@ -50,15 +50,22 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
+#if true // test this type
+
+typedef boost::multiprecision::cpp_int Exact_integer;
+
+#else // default types
+
 #if CGAL_USE_GMPXX
 
-typedef boost::multiprecision::cpp_int Exact_integer;
+typedef mpz_class Exact_integer;
 
 #elif CGAL_USE_GMP
+
 # ifdef CGAL_USE_BOOST_MP
-typedef boost::multiprecision::cpp_int Exact_integer;
+typedef boost::multiprecision::mpz_int Exact_integer;
 # else
-typedef boost::multiprecision::cpp_int Exact_integer;
+typedef Gmpz Exact_integer;
 # endif
 
 #elif CGAL_USE_LEDA
@@ -67,13 +74,16 @@ typedef leda_integer Exact_integer;
 
 #elif CGAL_USE_CORE
 
-typedef boost::multiprecision::cpp_int Exact_integer;
+typedef CORE::BigInt Exact_integer;
 
 #elif defined CGAL_USE_BOOST_MP
 
 typedef boost::multiprecision::cpp_int Exact_integer;
 
-#endif // CGAL_USE_CORE
+#endif // CGAL_USE_BOOST_MP
+
+#endif // default types
+
 #endif // not DOXYGEN_RUNNING
 
 } /* end namespace CGAL */
