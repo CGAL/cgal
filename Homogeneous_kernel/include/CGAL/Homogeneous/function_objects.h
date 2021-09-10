@@ -4670,6 +4670,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Circle_2       Circle_2;
     typedef typename K::Line_2         Line_2;
     typedef typename K::Triangle_2     Triangle_2;
+    typedef typename K::Segment_2      Segment_2;
   public:
     typedef typename K::Oriented_side  result_type;
 
@@ -4708,6 +4709,33 @@ namespace HomogeneousKernelFunctors {
          && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
         ? ON_ORIENTED_BOUNDARY
         : -ot;
+    }
+
+    result_type
+    operator()(const Segment_2& s, const Triangle_2& t) const
+    {
+      typename K::Construct_source_2 source;
+      typename K::Construct_target_2 target;
+      typename K::Construct_circumcenter_2 circumcenter;
+      typename K::Orientation_2 orientation;
+
+      const Point_2 a = source(s);
+      const Point_2 b = target(s);
+      const Point_2 cc = circumcenter(t);
+
+      CGAL::Orientation o_abc = orientation(a, b, cc);
+      if (o_abc == CGAL::COLLINEAR)
+        return CGAL::ON_ORIENTED_BOUNDARY;
+
+      CGAL::Orientation o_abt = orientation(a, b, t[0]);
+      if (o_abt == CGAL::COLLINEAR)
+        o_abt = orientation(a, b, t[1]);
+      if (o_abt == CGAL::COLLINEAR)
+        o_abt = orientation(a, b, t[2]);
+      CGAL_assertion(o_abt != CGAL::COLLINEAR);
+
+      if (o_abc == o_abt) return CGAL::ON_POSITIVE_SIDE;
+      else                return CGAL::ON_NEGATIVE_SIDE;
     }
   };
 
