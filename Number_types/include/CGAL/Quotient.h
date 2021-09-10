@@ -31,9 +31,9 @@
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/mpl.h>
+#include <CGAL/boost_mp.h>
 
 #include <boost/operators.hpp>
-#include <boost/multiprecision/cpp_int.hpp>
 #include <boost/type_index.hpp>
 
 namespace CGAL {
@@ -48,14 +48,14 @@ template < typename NT >
 inline void
 simplify_quotient(NT & a, NT & b) { }
 
+#if defined(CGAL_USE_CPP_INT) || true // test cpp_int
+
 inline void
 simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
 
-// TODO:
-// - move it to the boost_mp.h
-// - can we use gcd only sometimes to save time?
-#if defined(CGAL_USE_CPP_INT) || true
-
+  // TODO:
+  // - move it to the boost_mp.h
+  // - can we use gcd only sometimes to save time?
   const boost::multiprecision::cpp_int r = boost::multiprecision::gcd(a, b);
   // std::cout << "r: " << r << std::endl;
   // std::cout << "a: " << a << std::endl;
@@ -65,10 +65,9 @@ simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp
   b = b / r;
   // std::cout << "new b: " << b << std::endl;
   // std::cout << std::endl;
-
-#endif
-
 }
+
+#endif // CPP_INT
 
 // This one should be replaced by some functor or tag.
 // Meanwhile, the class is specialized for Gmpz, mpz_class, leda_integer.
@@ -993,7 +992,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         std::pair<double, double> operator()( const Type& x ) const {
 
-        #if defined(CGAL_USE_CPP_INT) || true
+        #if defined(CGAL_USE_CPP_INT) || true // test cpp_int
 
           #if true // tight bounds optimized
 
@@ -1018,7 +1017,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
           return std::make_pair(quot.inf(), quot.sup());
 
-        #endif
+        #endif // CPP_INT
         }
     };
 
