@@ -812,8 +812,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(x >= 0);
           int64_t d = 0;
           double l = 0.0, u = 0.0;
-          const int64_t n = static_cast<int64_t>(msb(x));
-          const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
+          const int64_t n = static_cast<int64_t>(msb(x)) + 1;
+          const int64_t num_dbl_digits = std::numeric_limits<double>::digits;
 
           if (n > num_dbl_digits) {
             d = n - num_dbl_digits;
