@@ -4314,13 +4314,16 @@ namespace CartesianKernelFunctors {
       typename K::Construct_target_2 target;
       const Point_2& a = source(s);
       const Point_2& b = target(s);
-      const FT dX = b.x() - a.x();
-      const FT dY = b.y() - a.y();
+      CGAL_assertion(a != b);
 
       typename K::Construct_vertex_2 vertex;
       const Point_2& p0 = vertex(t, 0);
       const Point_2& p1 = vertex(t, 1);
       const Point_2& p2 = vertex(t, 2);
+      CGAL_assertion(p0 != p1 && p1 != p2 && p2 != p0);
+
+      const FT dX = b.x() - a.x();
+      const FT dY = b.y() - a.y();
       const FT R0 = p0.x() * p0.x() + p0.y() * p0.y();
       const FT R1 = p1.x() * p1.x() + p1.y() * p1.y();
       const FT R2 = p2.x() * p2.x() + p2.y() * p2.y();
