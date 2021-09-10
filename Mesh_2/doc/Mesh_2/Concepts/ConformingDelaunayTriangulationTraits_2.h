@@ -92,6 +92,16 @@ points `p`, `q`, `r` (`q` being the vertex of the angle).
 */
 typedef unspecified_type Angle_2;
 
+/*!
+Predicate object. Must provide the operator
+`CGAL::Oriented_side operator()(Segment_2 s, Triangle_2 t)` that
+returns \ref ON_ORIENTED_BOUNDARY, \ref ON_NEGATIVE_SIDE,
+or \ref ON_POSITIVE_SIDE,
+depending on the position of the circumcenter of `t` relative
+to the oriented supporting line of `s`.
+*/
+typedef unspecified_type Oriented_side_2;
+
 /// @}
 
 
