@@ -620,7 +620,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     typedef CGAL::AABB_face_graph_triangle_primitive<G, VPM>                   AABB_face_graph_primitive;
     typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
-    CGAL_assertion_code(typedef typename K::Point_3                            Point_3;)
+    typedef typename K::Point_3                            Point_3;
     CGAL_static_assertion((std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value));
 
     CGAL::AABB_tree<AABB_face_graph_traits> tree_a;

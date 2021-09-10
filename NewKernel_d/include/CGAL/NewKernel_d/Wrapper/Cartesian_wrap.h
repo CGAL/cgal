@@ -56,6 +56,7 @@ template<class T> struct Is_wrapper_iterator<T,true> :
 { };
 
 struct Forward_rep {
+//@mglisse shall we update that code?
 //TODO: make a good C++0X version with perfect forwarding
 //#ifdef CGAL_CXX11
 //template <class T,class=typename std::enable_if<!Is_wrapper<typename std::decay<T>::type>::value&&!Is_wrapper_iterator<typename std::decay<T>::type>::value>::type>

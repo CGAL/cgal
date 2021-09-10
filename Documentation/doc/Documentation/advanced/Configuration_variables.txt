@@ -382,9 +382,7 @@ If GLPK is not automatically found, the following variables must be set:
 
 A number of boolean flags are used to workaround compiler bugs and
 limitations. They all start with the prefix `CGAL_CFG`. These
-flags are used to work around compiler bugs and limitations. For
-example, the flag `CGAL_CFG_NO_CPP0X_LONG_LONG` denotes
-that the compiler does not know the type `long long`.
+flags are used to work around compiler bugs and limitations.
 
 For each installation a file <TT><CGAL/compiler_config.h></TT>
 is defined, with the correct
