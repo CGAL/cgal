@@ -98,7 +98,8 @@ Predicate object. Must provide the operator
 returns \ref ON_ORIENTED_BOUNDARY, \ref ON_NEGATIVE_SIDE,
 or \ref ON_POSITIVE_SIDE,
 depending on the position of the circumcenter of `t` relative
-to the oriented supporting line of `s`.
+to the oriented supporting line of `s`. The orientation of the
+supporting line is the same as the orientation of `s`.
 */
 typedef unspecified_type Oriented_side_2;
 
