@@ -48,7 +48,7 @@ template < typename NT >
 inline void
 simplify_quotient(NT & a, NT & b) { }
 
-#if defined(CGAL_USE_CPP_INT) || true // test cpp_int
+#if defined(CGAL_USE_CPP_INT) || false // test cpp_int
 
 inline void
 simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
@@ -814,7 +814,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(x >= 0);
           int64_t d = 0;
           double l = 0.0, u = 0.0;
-          const int64_t n = static_cast<int64_t>(msb(x)) + 1;
+          const int64_t n = static_cast<int64_t>(boost::multiprecision::msb(x)) + 1;
           const int64_t num_dbl_digits = std::numeric_limits<double>::digits;
 
           if (n > num_dbl_digits) {
@@ -902,8 +902,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(x.num > 0 && x.den > 0);
 
           const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
-          const int64_t msb_num = static_cast<int64_t>(msb(x.num));
-          const int64_t msb_den = static_cast<int64_t>(msb(x.den));
+          const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(x.num));
+          const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(x.den));
           const int64_t msb_diff = msb_num - msb_den;
           const int64_t shift = num_dbl_digits - msb_diff;
 
@@ -915,12 +915,15 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
           }
           CGAL_assertion(num_dbl_digits ==
-            static_cast<int64_t>(msb(x.num)) - static_cast<int64_t>(msb(x.den)));
+            static_cast<int64_t>(boost::multiprecision::msb(x.num)) -
+            static_cast<int64_t>(boost::multiprecision::msb(x.den)));
 
           NT q, r;
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
-          CGAL_assertion_code(const int64_t q_bits = static_cast<int64_t>(msb(q)));
-          CGAL_assertion(q_bits == num_dbl_digits || r != 0 /* when q_bit = num_dbl_digits - 1 */ );
+          CGAL_assertion_code(const int64_t q_bits =
+            static_cast<int64_t>(boost::multiprecision::msb(q)));
+          CGAL_assertion(q_bits == num_dbl_digits ||
+            r != 0 /* when q_bit = num_dbl_digits - 1 */ );
 
           if (!CGAL::is_zero(r)) {
             const NT p = q;
@@ -992,7 +995,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         std::pair<double, double> operator()( const Type& x ) const {
 
-        #if defined(CGAL_USE_CPP_INT) || true // test cpp_int
+        #if defined(CGAL_USE_CPP_INT) || false // test cpp_int
 
           #if true // tight bounds optimized
 
@@ -1012,10 +1015,14 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         #else // master version
 
+          #if false
           const Interval_nt<> quot =
             Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /
             Interval_nt<>(CGAL_NTS to_interval(x.denominator()));
           return std::make_pair(quot.inf(), quot.sup());
+          #else // test boost devel
+          return std::make_pair(0.0, 0.0);
+          #endif
 
         #endif // CPP_INT
         }

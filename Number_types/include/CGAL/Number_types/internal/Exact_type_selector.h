@@ -55,7 +55,7 @@ namespace CGAL { namespace internal {
 template < typename >
 struct Exact_field_selector
 
-#if true // test cpp_int
+#if false // test cpp_int
 
 { typedef Quotient<boost::multiprecision::cpp_int> Type; };
 

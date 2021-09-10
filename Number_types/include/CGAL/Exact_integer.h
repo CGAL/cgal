@@ -50,7 +50,7 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
-#if true // test cpp_int
+#if false // test cpp_int
 
 typedef boost::multiprecision::cpp_int Exact_integer;
 

@@ -20,7 +20,7 @@
 // MSVC had trouble with versions <= 1.69:
 // https://github.com/boostorg/multiprecision/issues/98
 #if !defined CGAL_DO_NOT_USE_BOOST_MP && \
-    (!defined _MSC_VER || BOOST_VERSION >= 107000) || true // test cpp_int
+    (!defined _MSC_VER || BOOST_VERSION >= 107000) || false // test cpp_int
 #define CGAL_USE_BOOST_MP 1
 
 #include <CGAL/functional.h> // *ary_function
@@ -192,6 +192,115 @@ struct RET_boost_mp_base
 
     struct To_interval
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
+
+        #if true // test boost devel
+
+        bool are_correct_bounds( const double l, const double u, const Type& x ) const {
+
+          if (
+            CGAL::abs(l) == std::numeric_limits<double>::infinity() ||
+            CGAL::abs(u) == std::numeric_limits<double>::infinity() ||
+            CGAL::abs(l) == 0.0 ||
+            CGAL::abs(u) == 0.0) {
+            return true;
+          }
+          CGAL_assertion(CGAL::abs(l) != std::numeric_limits<double>::infinity());
+          CGAL_assertion(CGAL::abs(u) != std::numeric_limits<double>::infinity());
+          CGAL_assertion(CGAL::abs(l) != 0.0);
+          CGAL_assertion(CGAL::abs(u) != 0.0);
+
+          const Type lb(l), ub(u);
+          CGAL_assertion(lb <= ub);
+          CGAL_assertion(lb <= x);
+          CGAL_assertion(ub >= x);
+          return lb <= ub && lb <= x && ub >= x;
+        }
+
+        std::pair<double, double>
+        operator()(const Type& x) const {
+
+          // std::cout << boost::multiprecision::numerator(x) << std::endl;
+          // std::cout << boost::multiprecision::denominator(x) << std::endl;
+
+          auto xnum = boost::multiprecision::numerator(x);
+          auto xden = boost::multiprecision::denominator(x);
+
+          CGAL_assertion_code(const Type input = x);
+          double l = 0.0, u = 0.0;
+          if (CGAL::is_zero(xnum)) { // return [0.0, 0.0]
+            CGAL_assertion(are_correct_bounds(l, u, input));
+            return std::make_pair(l, u);
+          }
+          CGAL_assertion(xnum != 0);
+          CGAL_assertion(xden != 0);
+
+          // Handle signs.
+          bool change_sign = false;
+          const bool is_num_pos = CGAL::is_positive(xnum);
+          const bool is_den_pos = CGAL::is_positive(xden);
+          if (!is_num_pos && !is_den_pos) {
+            xnum = -xnum;
+            xden = -xden;
+          } else if (!is_num_pos && is_den_pos) {
+            change_sign = true;
+            xnum = -xnum;
+          } else if (is_num_pos && !is_den_pos) {
+            change_sign = true;
+            xden = -xden;
+          }
+          CGAL_assertion(xnum > 0 && xden > 0);
+
+          const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
+          const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(xnum));
+          const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(xden));
+          const int64_t msb_diff = msb_num - msb_den;
+          const int64_t shift = num_dbl_digits - msb_diff;
+
+          if (shift > 0) {
+            CGAL_assertion(msb_diff < num_dbl_digits);
+            xnum <<= shift;
+          } else if (shift < 0) {
+            CGAL_assertion(msb_diff > num_dbl_digits);
+            xden <<= boost::multiprecision::detail::unsigned_abs(shift);
+          }
+          CGAL_assertion(num_dbl_digits ==
+            static_cast<int64_t>(boost::multiprecision::msb(xnum)) -
+            static_cast<int64_t>(boost::multiprecision::msb(xden)));
+
+          decltype(xnum) q, r;
+          boost::multiprecision::divide_qr(xnum, xden, q, r);
+          CGAL_assertion_code(const int64_t q_bits =
+            static_cast<int64_t>(boost::multiprecision::msb(q)));
+          CGAL_assertion(q_bits == num_dbl_digits ||
+            r != 0 /* when q_bit = num_dbl_digits - 1 */ );
+
+          if (!CGAL::is_zero(r)) {
+            const decltype(q) p = q;
+            ++q;
+            CGAL_assertion(p >= 0 && q > p);
+            const uint64_t pp = static_cast<uint64_t>(p);
+            const uint64_t qq = static_cast<uint64_t>(q);
+            const Interval_nt<> intv(pp, qq);
+            std::tie(l, u) = ldexp(intv, -shift).pair();
+          } else {
+            CGAL_assertion(q > 0);
+            const uint64_t qq = static_cast<uint64_t>(q);
+            const Interval_nt<> intv(qq, qq);
+            std::tie(l, u) = ldexp(intv, -shift).pair();
+          }
+
+          if (change_sign) {
+            const double t = l;
+            l = -u;
+            u = -t;
+          }
+
+          CGAL_assertion(are_correct_bounds(l, u, input));
+          return std::make_pair(l, u);
+        }
+
+        #else // default impl
+
         std::pair<double, double>
         operator()(const Type& x) const {
 
@@ -240,6 +349,8 @@ struct RET_boost_mp_base
           }
           return std::pair<double, double> (i, s);
         }
+
+        #endif // default impl
     };
 };
 
