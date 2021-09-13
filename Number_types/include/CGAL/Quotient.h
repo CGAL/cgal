@@ -1042,16 +1042,18 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // Option 1.
           // Seems to be less precise and we rarely end up with an interval [d,d]
           // even for numbers, which are exactly representable as double.
-          // They also pass all tests and benches.
+          // Otherwise, it is quite similar to the results of the option 3.
           // return get_interval_as_gmpzf(x);
 
           // Option 2.
           // Works slightly better than the first one.
-          // They also pass all tests and benches.
+          // It always returns a correct interval, but it is sometimes less tight
+          // than the one from the option 3.
           return get_interval_as_boost(x);
 
           // Option 3.
-          // These are slower but stable bounds, pass all tests and benches.
+          // This seems to give the tightest intervals, but it does not handle inf
+          // for the moment.
           // return get_interval_using_cpp_rational(x);
 
         #else // master version
