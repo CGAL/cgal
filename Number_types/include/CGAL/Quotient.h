@@ -34,6 +34,10 @@
 
 #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
 #include <CGAL/boost_mp.h>
+// TODO: The two below will be removed when we move simplify_quotient() to boost_mp,
+// where it is supposed to be.
+#include <boost/multiprecision/number.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
 #endif
 
 #include <boost/operators.hpp>
@@ -53,7 +57,11 @@ simplify_quotient(NT & a, NT & b) { }
 
 #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
 
-inline void
+// WARNINGS:
+// https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Convex_decomposition_3/TestReport_cgaltest_Ubuntu-gcc7.gz
+// https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Convex_decomposition_3/TestReport_cgaltest_arm64-apple_bigsur_clang1200-release-64bits.gz
+// See boost includes above. Should make it work, I guess.
+void
 simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
 
   // TODO:
@@ -222,9 +230,9 @@ Quotient<NT>::normalize()
 template <class NT>
 CGAL_MEDIUM_INLINE
 Quotient<NT>&
-Quotient<NT>::operator+= (const Quotient<NT>& b)
+Quotient<NT>::operator+= (const Quotient<NT>& r)
 {
-#if false
+#if true
 
     num = num * r.den + r.num * den;
     den *= r.den;
@@ -242,10 +250,14 @@ Quotient<NT>::operator+= (const Quotient<NT>& b)
    //
    // Begin by getting the gcd of the 2 denominators:
    //
+   // ERROR: no matching function for call to gcd! We skip this implementation for the moment!
     gcd = boost::multiprecision::gcd(denominator(), b.denominator());
    //
    // Do we have gcd > 1:
    //
+   // WARNING: logical not is only applied to the left hand side of comparison and
+   // ERROR: no match for operator!
+   // We skip this implementation for the moment!
    if (! gcd == 1)
    {
       //
@@ -265,6 +277,7 @@ Quotient<NT>::operator+= (const Quotient<NT>& b)
       //
       // Get the gcd of gcd and our numerator (t3):
       //
+      // ERROR: no matching function for call to gcd! We skip this implementation for the moment!
       t4 = boost::multiprecision::gcd(t3, gcd);
       if (t4 == 1)
       {
@@ -946,18 +959,23 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(q_bits == num_dbl_digits ||
             r != 0 /* when q_bit = num_dbl_digits - 1 */ );
 
+          // WARNING: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Combinatorial_map/TestReport_cgaltest_VS-19.gz
+          // Interval_nt is defined only for double, see impl.
           if (!CGAL::is_zero(r)) {
             const NT p = q;
             ++q;
             CGAL_assertion(p >= 0 && q > p);
             const uint64_t pp = static_cast<uint64_t>(p);
             const uint64_t qq = static_cast<uint64_t>(q);
-            const Interval_nt<> intv(pp, qq);
+            const double pp_dbl = static_cast<double>(pp);
+            const double qq_dbl = static_cast<double>(qq);
+            const Interval_nt<> intv(pp_dbl, qq_dbl);
             std::tie(l, u) = ldexp(intv, -shift).pair();
           } else {
             CGAL_assertion(q > 0);
             const uint64_t qq = static_cast<uint64_t>(q);
-            const Interval_nt<> intv(qq, qq);
+            const double qq_dbl = static_cast<double>(qq);
+            const Interval_nt<> intv(qq_dbl, qq_dbl);
             std::tie(l, u) = ldexp(intv, -shift).pair();
           }
 
