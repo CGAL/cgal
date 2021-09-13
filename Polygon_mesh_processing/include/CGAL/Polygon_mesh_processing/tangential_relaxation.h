@@ -272,7 +272,7 @@ void tangential_relaxation(TriangleMesh& tm, const NamedParameters& np)
 template <class TriangleMesh>
 void tangential_relaxation(TriangleMesh& tm)
 {
-  triangle(tm, parameters::all_default());
+  tangential_relaxation(tm, parameters::all_default());
 }
 
 } } // CGAL::Polygon_mesh_processing
