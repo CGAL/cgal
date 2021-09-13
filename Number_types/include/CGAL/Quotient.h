@@ -989,48 +989,54 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return std::make_pair(l, u);
         }
 
+        std::pair<double, double> interval_from_cpp_rational( const Type& x ) const {
+
+          // Seems fast enough because this conversion happens
+          // only a few times during the run, at least for NEF.
+          boost::multiprecision::cpp_rational rat;
+          CGAL_assertion(!CGAL::is_zero(x.den));
+          if (CGAL::is_negative(x.den)) {
+            rat = boost::multiprecision::cpp_rational(-x.num, -x.den);
+          } else {
+            CGAL_assertion(CGAL::is_positive(x.den));
+            rat = boost::multiprecision::cpp_rational( x.num,  x.den);
+          }
+
+          double l, u;
+          std::tie(l, u) = to_interval(rat);
+          const double inf = std::numeric_limits<double>::infinity();
+
+          if (l == +inf) {
+            l = std::numeric_limits<double>::max();
+            CGAL_assertion(u == +inf);
+          } else if (u == -inf) {
+            u = std::numeric_limits<double>::lowest();
+            CGAL_assertion(l == -inf);
+          }
+
+          CGAL_assertion(are_correct_bounds(l, u, x));
+          return std::make_pair(l, u);
+        }
+
         std::pair<double, double> get_interval_using_cpp_rational( const Type& x ) const {
 
           const double inf = std::numeric_limits<double>::infinity();
-          const double xn = x.num.template convert_to<double>();
-          const double xd = x.den.template convert_to<double>();
-          if (xn == inf || xd == inf) {
 
-            // Seems fast enough because this conversion happens
-            // only a few times during the run, at least for NEF.
-            boost::multiprecision::cpp_rational rat;
-            CGAL_assertion(!CGAL::is_zero(x.den));
-            if (CGAL::is_negative(x.den)) {
-              rat = boost::multiprecision::cpp_rational(-x.num, -x.den);
-            } else {
-              CGAL_assertion(CGAL::is_positive(x.den));
-              rat = boost::multiprecision::cpp_rational( x.num,  x.den);
-            }
-
-            double i = static_cast<double>(rat);
-            double s = i;
-
-            const double inf = std::numeric_limits<double>::infinity();
-            CGAL_assertion(i != inf && s != inf);
-            const int cmp = rat.compare(i);
-            if (cmp > 0) {
-              s = nextafter(s, +inf);
-              CGAL_assertion(rat.compare(s) < 0);
-            }
-            else if (cmp < 0) {
-              i = nextafter(i, -inf);
-              CGAL_assertion(rat.compare(i) > 0);
-            }
-            CGAL_assertion(are_correct_bounds(i, s, x));
-            return std::make_pair(i, s);
-
-          } else {
-
-            const Interval_nt<> quot =
-              Interval_nt<>(CGAL_NTS to_interval(x.num)) /
-              Interval_nt<>(CGAL_NTS to_interval(x.den));
-            return std::make_pair(quot.inf(), quot.sup());
+          const Interval_nt<> xn = Interval_nt<>(CGAL_NTS to_interval(x.num));
+          if (CGAL::abs(xn.inf()) == inf || CGAL::abs(xn.sup()) == inf) {
+            return interval_from_cpp_rational(x);
           }
+          CGAL_assertion(CGAL::abs(xn.inf()) != inf && CGAL::abs(xn.sup()) != inf);
+
+          const Interval_nt<> xd = Interval_nt<>(CGAL_NTS to_interval(x.den));
+          if (CGAL::abs(xd.inf()) == inf || CGAL::abs(xd.sup()) == inf) {
+            return interval_from_cpp_rational(x);
+          }
+          CGAL_assertion(CGAL::abs(xd.inf()) != inf && CGAL::abs(xd.sup()) != inf);
+
+          const Interval_nt<> quot = xn / xd;
+          CGAL_assertion(are_correct_bounds(quot.inf(), quot.sup(), x));
+          return std::make_pair(quot.inf(), quot.sup());
         }
 
         #endif // CPP_INT
@@ -1049,12 +1055,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // Works slightly better than the first one.
           // It always returns a correct interval, but it is sometimes less tight
           // than the one from the option 3.
-          return get_interval_as_boost(x);
+          // return get_interval_as_boost(x);
 
           // Option 3.
-          // This seems to give the tightest intervals, but it does not handle inf
-          // for the moment.
-          // return get_interval_using_cpp_rational(x);
+          // This seems to give the tightest intervals.
+          return get_interval_using_cpp_rational(x);
 
         #else // master version
 

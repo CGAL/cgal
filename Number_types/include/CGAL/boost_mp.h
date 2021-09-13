@@ -314,13 +314,13 @@ struct RET_boost_mp_base
 
           // We must use to_nearest with cpp_int.
           double i;
+          const double inf = std::numeric_limits<double>::infinity();
           {
             Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-            i = x.template convert_to<double>();
+            i = static_cast<double>(x);
+            if (CGAL::abs(i) == inf) return std::make_pair(i, i);
           }
           double s = i;
-
-          const double inf = std::numeric_limits<double>::infinity();
           CGAL_assertion(i != inf && s != inf);
 
           // Throws uncaught exception: Cannot convert a non-finite number to an integer.
@@ -334,7 +334,7 @@ struct RET_boost_mp_base
             i = nextafter(i, -inf);
             CGAL_assertion(x.compare(i) > 0);
           }
-          return std::pair<double, double> (i, s);
+          return std::pair<double, double>(i, s);
         }
 
         #endif // default impl
