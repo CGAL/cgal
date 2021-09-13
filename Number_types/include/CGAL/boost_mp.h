@@ -210,7 +210,6 @@ struct RET_boost_mp_base
           CGAL_assertion(CGAL::abs(u) != 0.0);
 
           const Type lb(l), ub(u);
-          CGAL_assertion(lb <= ub);
           CGAL_assertion(lb <= x);
           CGAL_assertion(ub >= x);
           return lb <= ub && lb <= x && ub >= x;
@@ -218,9 +217,6 @@ struct RET_boost_mp_base
 
         std::pair<double, double>
         operator()(const Type& x) const {
-
-          // std::cout << boost::multiprecision::numerator(x) << std::endl;
-          // std::cout << boost::multiprecision::denominator(x) << std::endl;
 
           auto xnum = boost::multiprecision::numerator(x);
           auto xden = boost::multiprecision::denominator(x);
@@ -231,8 +227,8 @@ struct RET_boost_mp_base
             CGAL_assertion(are_correct_bounds(l, u, input));
             return std::make_pair(l, u);
           }
-          CGAL_assertion(xnum != 0);
-          CGAL_assertion(xden != 0);
+          CGAL_assertion(!CGAL::is_zero(xnum));
+          CGAL_assertion(!CGAL::is_zero(xden));
 
           // Handle signs.
           bool change_sign = false;
@@ -248,7 +244,7 @@ struct RET_boost_mp_base
             change_sign = true;
             xden = -xden;
           }
-          CGAL_assertion(xnum > 0 && xden > 0);
+          CGAL_assertion(CGAL::is_positive(xnum) && CGAL::is_positive(xden));
 
           const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
           const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(xnum));
@@ -274,18 +270,26 @@ struct RET_boost_mp_base
           CGAL_assertion(q_bits == num_dbl_digits ||
             r != 0 /* when q_bit = num_dbl_digits - 1 */ );
 
+          // WARNING: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Combinatorial_map/TestReport_cgaltest_VS-19.gz
+          // Fixed: Interval_nt is defined only for double, see impl below.
           if (!CGAL::is_zero(r)) {
             const decltype(q) p = q;
             ++q;
             CGAL_assertion(p >= 0 && q > p);
             const uint64_t pp = static_cast<uint64_t>(p);
             const uint64_t qq = static_cast<uint64_t>(q);
-            const Interval_nt<> intv(pp, qq);
+            CGAL_assertion(pp >= 0 && qq > pp);
+            const double pp_dbl = static_cast<double>(pp);
+            const double qq_dbl = static_cast<double>(qq);
+            const Interval_nt<> intv(pp_dbl, qq_dbl);
             std::tie(l, u) = ldexp(intv, -shift).pair();
           } else {
+            CGAL_assertion(CGAL::is_zero(r));
             CGAL_assertion(q > 0);
             const uint64_t qq = static_cast<uint64_t>(q);
-            const Interval_nt<> intv(qq, qq);
+            CGAL_assertion(qq > 0);
+            const double qq_dbl = static_cast<double>(qq);
+            const Interval_nt<> intv(qq_dbl, qq_dbl);
             std::tie(l, u) = ldexp(intv, -shift).pair();
           }
 
@@ -304,10 +308,6 @@ struct RET_boost_mp_base
         std::pair<double, double>
         operator()(const Type& x) const {
 
-          // std::cout << "- before test minimal nextafter ... " << std::endl;
-          // test_minimal_nextafter();
-          // std::cout << "- after  test minimal nextafter ... " << std::endl;
-
           // See if https://github.com/boostorg/multiprecision/issues/108 suggests anything better
           // assume the conversion is within 1 ulp
           // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
@@ -319,10 +319,6 @@ struct RET_boost_mp_base
             i = x.template convert_to<double>();
           }
           double s = i;
-
-          // std::cout << "x: " << x << std::endl;
-          // std::cout << "i: " << i << std::endl;
-          // std::cout << "s: " << s << std::endl;
 
           const double inf = std::numeric_limits<double>::infinity();
           CGAL_assertion(i != inf && s != inf);
