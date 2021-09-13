@@ -61,7 +61,7 @@ simplify_quotient(NT & a, NT & b) { }
 // https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Convex_decomposition_3/TestReport_cgaltest_Ubuntu-gcc7.gz
 // https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Convex_decomposition_3/TestReport_cgaltest_arm64-apple_bigsur_clang1200-release-64bits.gz
 // See boost includes above. Should make it work, I guess.
-void
+inline void
 simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
 
   // TODO:
