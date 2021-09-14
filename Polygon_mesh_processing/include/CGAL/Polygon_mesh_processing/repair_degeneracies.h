@@ -42,6 +42,7 @@
 #include <sstream>
 #include <utility>
 #include <vector>
+#include <functional>
 
 // First part of the file: remove_ALMOST_degenerate_faces (needles/caps)
 // Second part of the file: remove_degenerate_edges/faces
@@ -434,6 +435,81 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, std::ref
   {}
 };
 
+template <class TriangleMesh, class VPM, class Traits, class Functor>
+struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, std::function<Functor(const std::vector<typename boost::graph_traits<TriangleMesh>::face_descriptor>&)> >
+{
+  typedef boost::graph_traits<TriangleMesh> Graph_traits;
+  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
+  typedef typename Graph_traits::edge_descriptor edge_descriptor;
+  typedef typename Graph_traits::face_descriptor face_descriptor;
+
+  typedef Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Functor> Base;
+  typedef std::function<Functor(const std::vector<face_descriptor>&)> Make_env;
+
+  Filter_wrapper_for_cap_needle_removal(TriangleMesh& tm, const VPM& vpm, const Make_env& make_envelope)
+    : m_tm(tm)
+    , m_vpm(vpm)
+    , m_make_envelope(make_envelope)
+  {}
+
+  void collect_link_faces(edge_descriptor e, std::vector<face_descriptor>& link_faces)
+  {
+    halfedge_descriptor h = halfedge(e, m_tm);
+    halfedge_descriptor h_opp = opposite(h, m_tm);
+
+    halfedge_descriptor endleft = next(h_opp, m_tm);
+    halfedge_descriptor endright = next(h, m_tm);
+
+    face_descriptor f = face(h, m_tm);
+    if(f!=boost::graph_traits<TriangleMesh>::null_face())
+      link_faces.push_back(f);
+    f = face(h_opp, m_tm);
+    if(f!=boost::graph_traits<TriangleMesh>::null_face())
+      link_faces.push_back(f);
+
+    // counterclockwise around src
+    halfedge_descriptor hl = opposite(prev(h, m_tm), m_tm);
+
+    while(hl != endleft)
+    {
+      if (!is_border(hl, m_tm))
+        link_faces.push_back(face(hl, m_tm));
+      hl = opposite(prev(hl, m_tm), m_tm);
+    }
+
+    // counterclockwise around tgt
+    hl = opposite(prev(h_opp, m_tm), m_tm);
+
+    while(hl != endright)
+    {
+      if (!is_border(hl, m_tm))
+        link_faces.push_back(face(hl, m_tm));
+      hl = opposite(prev(hl, m_tm), m_tm);
+    }
+  }
+
+  bool flip(halfedge_descriptor h)
+  {
+    std::vector<face_descriptor> link_faces;
+    collect_link_faces(edge(h, m_tm), link_faces);
+    Functor f = m_make_envelope(link_faces);
+    Base base(m_tm, m_vpm, f);
+    return base.flip(h);
+  }
+
+  bool collapse(edge_descriptor e)
+  {
+    std::vector<face_descriptor> link_faces;
+    collect_link_faces(e, link_faces);
+    Functor f = std::move(m_make_envelope(link_faces));
+    Base base(m_tm, m_vpm, f);
+    return base.collapse(e);
+  }
+
+  TriangleMesh& m_tm;
+  const VPM& m_vpm;
+  const Make_env& m_make_envelope;
+};
 
 template <class TriangleMesh, class VPM, class Traits>
 struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity<void*> >
