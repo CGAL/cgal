@@ -20,10 +20,6 @@
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
-
-#include <iostream>
-
-
 template < typename K_base >
 class Collinear_3
   : public K_base::Collinear_3
