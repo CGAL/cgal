@@ -123,9 +123,12 @@ namespace internal {
                            : border_edges_ptr(new std::set<edge_descriptor>())
                            , pmesh_ptr_(&pmesh)
       {
+        namespace PMP = CGAL::Polygon_mesh_processing;
+
         std::vector<halfedge_descriptor> border;
-        PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border)
-                            , PMP::parameters::face_index_map(fimap));
+        PMP::border_halfedges(
+            faces, *pmesh_ptr_, std::back_inserter(border)
+          , PMP::parameters::face_index_map(fimap));
 
         for (halfedge_descriptor h : border)
           border_edges_ptr->insert(edge(h, *pmesh_ptr_));
@@ -192,6 +195,8 @@ namespace internal {
         , FIMap fimap
         , const bool do_init = true)
       {
+        namespace PMP = CGAL::Polygon_mesh_processing;
+
         patch_ids_map = get(Face_property_tag(), pmesh);
         if (do_init)
         {
