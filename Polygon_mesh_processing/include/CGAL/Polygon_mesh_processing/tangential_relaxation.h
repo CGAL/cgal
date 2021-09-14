@@ -36,10 +36,11 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
-* \todo rephrase
-* applies an iterative smoothing filter to the mesh.
-* The vertex movement has to be constrained to the vertex tangent plane [...]
-* smoothing algorithm with uniform Laplacian weights
+* applies an iterative area-based tangential smoothing to the given range of vertices.
+* Each vertex is relocated to its gravity-weighted centroid, iteratively, and the connectivity
+* is unchanged.
+* For each vertex `v`, the relocation vector is projected back to the tangent plane to
+* the surface at `v`.
 *
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
