@@ -165,6 +165,12 @@ Mesh smoothing of the closed surface <i>blobby</i>, containing self-intersection
 Statistics for the various combinations of mesh smoothing.
 \cgalFigureEnd
 
+Mesh smoothing can also be achieved with `CGAL::Polygon_mesh_processing::tangential_relaxation()`,
+that iteratively performs vertex relocations following an area-based tangential smoothing scheme.
+The example \ref Polygon_mesh_processing/tangential_relaxation_example.cpp shows how this
+mesh relaxation function can be used.
+
+
 - Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_shape()`
 incrementally moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
 The curvature flow algorithm for shape smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al. \cgalCite{kazhdan2012can}.
