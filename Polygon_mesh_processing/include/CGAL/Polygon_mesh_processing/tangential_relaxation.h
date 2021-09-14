@@ -17,7 +17,6 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/property_map.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
@@ -47,8 +46,7 @@ namespace Polygon_mesh_processing {
 *         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
 * @tparam VertexRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
-*         model of `Range`. Its iterator type is ForwardIterator.
-*
+*         model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param vertices the range of vertices which will be relocated by relaxation
@@ -79,13 +77,6 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDefault{`1`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{face_index_map}
-*     \cgalParamDescription{a property map associating to each face of `tm` a unique index between `0` and `num_faces(tm) - 1`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
-*                    as key type and `std::size_t` as value type}
-*     \cgalParamDefault{an automatically indexed internal map}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{edge_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tm`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
@@ -112,16 +103,6 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDefault{`false`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{face_patch_map}
-*     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces(tm)`}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
-*                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable` as value type.}
-*     \cgalParamDefault{a default property map where each face is associated with the ID of
-*                       the connected component it belongs to. Connected components are
-*                       computed with respect to the constrained edges listed in the property map
-*                       `edge_is_constrained_map`}
-*     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
-*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \todo check if it should really be a triangle mesh or if a polygon mesh is fine
@@ -165,60 +146,39 @@ namespace Polygon_mesh_processing {
   const bool relax_constraints = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
-  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FIMap;
-  FIMap fimap = CGAL::get_initialized_face_index_map(tm, np);
-
-  typedef typename internal_np::Lookup_named_param_def <
-    internal_np::face_patch_t,
-    NamedParameters,
-    internal::Connected_components_pmap<TriangleMesh, FIMap>//default
-  > ::type FPMap;
-  FPMap fpmap = choose_parameter(get_parameter(np, internal_np::face_patch),
-          internal::Connected_components_pmap<TriangleMesh, FIMap>(faces(tm), tm, ecm, fimap,
-            parameters::is_default_parameter(get_parameter(np, internal_np::face_patch))));
-
   typedef typename GT::Vector_3 Vector_3;
   typedef typename GT::Point_3 Point_3;
 
   auto check_normals = [&](vertex_descriptor v)
   {
-    bool first_on_patch = true;
+    bool first_run = true;
     Vector_3 prev = NULL_VECTOR, first = NULL_VECTOR;
     halfedge_descriptor first_h = boost::graph_traits<TriangleMesh>::null_halfedge();
-
     for (halfedge_descriptor hd : CGAL::halfedges_around_target(v, tm))
     {
-      if (is_border(hd, tm)
-        || get(fpmap, face(hd, tm)) != get(fpmap, face(opposite(hd, tm), tm))
-        || get(ecm, edge(hd, tm)))
-      {
-        first_on_patch = true;
-        continue;
-      }
+      if (is_border(hd, tm)) continue;
+
       Vector_3 n = compute_face_normal(face(hd, tm), tm);
       if (n == CGAL::NULL_VECTOR) //for degenerate faces
         continue;
 
-      if (first_on_patch)
+      if (first_run)
       {
-        first_on_patch = false;
+        first_run = false;
         first = n;
         first_h = hd;
       }
       else
       {
-        if (to_double(n * prev) <= 0)
-          return false;
+        if (!get(ecm, edge(hd, tm)))
+          if (to_double(n * prev) <= 0)
+            return false;
       }
       prev = n;
     }
-
-    if (!get(ecm, edge(first_h, tm))
-      && get(fpmap, face(first_h, tm)) == get(fpmap, face(opposite(first_h, tm), tm)))
-    {
+    if (!get(ecm, edge(first_h, tm)))
       if (to_double(first * prev) <= 0)
         return false;
-    }
 
     return true;
   };
@@ -245,9 +205,7 @@ namespace Polygon_mesh_processing {
       // collect hedges to detect if we have to handle boundary cases
       for(halfedge_descriptor h : halfedges_around_target(v, tm))
       {
-        if (is_border_edge(h, tm)
-          || get(ecm, edge(h, tm))
-          || get(fpmap, face(h, tm)) != get(fpmap, face(opposite(h, tm), tm)))
+        if (is_border_edge(h, tm) || get(ecm, edge(h, tm)))
           border_halfedges.push_back(h);
         else
           interior_hedges.push_back(h);
