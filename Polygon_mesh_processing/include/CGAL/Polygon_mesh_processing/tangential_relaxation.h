@@ -26,6 +26,12 @@
 #include <tuple>
 #include <type_traits>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
+
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
@@ -36,13 +42,17 @@ namespace Polygon_mesh_processing {
 * The vertex movement has to be constrained to the vertex tangent plane [...]
 * smoothing algorithm with uniform Laplacian weights
 *
-* @tparam Triangle model of `MutableFaceGraph`.
-*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+* @tparam TriangleMesh model of `MutableFaceGraph`.
+*         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
+*         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
+* @tparam VertexRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
+*         model of `Range`. Its iterator type is ForwardIterator.
+*
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param tm a triangle mesh
+* @param vertices the range of vertices which will be relocated by relaxation
+* @param tm the triangle mesh to which `vertices` belong
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
@@ -114,11 +124,13 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \todo shall we take a range of vertices as input?
+* \todo check if it should really be a triangle mesh or if a polygon mesh is fine
 */
-template <class TriangleMesh, class NamedParameters>
-void tangential_relaxation(TriangleMesh& tm, const NamedParameters& np)
-{
+  template <typename VertexRange, class TriangleMesh, class NamedParameters>
+  void tangential_relaxation(const VertexRange& vertices,
+                             TriangleMesh& tm,
+                             const NamedParameters& np)
+  {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
@@ -217,7 +229,7 @@ void tangential_relaxation(TriangleMesh& tm, const NamedParameters& np)
     std::vector< VNP > barycenters;
     // at each vertex, compute vertex normal
     // at each vertex, compute barycenter of neighbors
-    for(vertex_descriptor v : vertices(tm))
+    for(vertex_descriptor v : vertices)
     {
       if (get(vcm, v) || halfedge(v, tm)==boost::graph_traits<TriangleMesh>::null_halfedge())
         continue;
@@ -310,11 +322,26 @@ void tangential_relaxation(TriangleMesh& tm, const NamedParameters& np)
   }//end for loop (nit == nb_iterations)
 }
 
+template <typename VertexRange, class TriangleMesh>
+void tangential_relaxation(const VertexRange& vertices, TriangleMesh& tm)
+{
+  tangential_relaxation(vertices, tm, parameters::all_default());
+}
+
+template <class TriangleMesh,
+          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+void tangential_relaxation(TriangleMesh& tm, const CGAL_PMP_NP_CLASS& np)
+{
+  tangential_relaxation(vertices(tm), tm, np);
+}
+
 template <class TriangleMesh>
 void tangential_relaxation(TriangleMesh& tm)
 {
-  tangential_relaxation(tm, parameters::all_default());
+  tangential_relaxation(vertices(tm), tm, parameters::all_default());
 }
+
+
 
 } } // CGAL::Polygon_mesh_processing
 
