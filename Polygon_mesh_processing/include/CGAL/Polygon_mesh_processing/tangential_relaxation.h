@@ -37,10 +37,9 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 * applies an iterative area-based tangential smoothing to the given range of vertices.
-* Each vertex is relocated to its gravity-weighted centroid, iteratively, and the connectivity
-* is unchanged.
-* For each vertex `v`, the relocation vector is projected back to the tangent plane to
-* the surface at `v`.
+* Each vertex `v` is relocated to its gravity-weighted centroid, and the relocation vector
+* is projected back to the tangent plane to the surface at `v`, iteratively.
+* The connectivity remains unchanged.
 *
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
@@ -298,6 +297,10 @@ void tangential_relaxation(const VertexRange& vertices, TriangleMesh& tm)
   tangential_relaxation(vertices, tm, parameters::all_default());
 }
 
+/*!
+* \ingroup PMP_meshing_grp
+* applies `tangential_relaxation()` to all the vertices of `tm`.
+*/
 template <class TriangleMesh,
           typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 void tangential_relaxation(TriangleMesh& tm, const CGAL_PMP_NP_CLASS& np)

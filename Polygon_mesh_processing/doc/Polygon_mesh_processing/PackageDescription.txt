@@ -102,6 +102,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::fair()`
 - `CGAL::Polygon_mesh_processing::refine()`
 - `CGAL::Polygon_mesh_processing::smooth_mesh()`
+- `CGAL::Polygon_mesh_processing::tangential_relaxation()`
 - `CGAL::Polygon_mesh_processing::smooth_shape()`
 - `CGAL::Polygon_mesh_processing::triangulate_face()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
