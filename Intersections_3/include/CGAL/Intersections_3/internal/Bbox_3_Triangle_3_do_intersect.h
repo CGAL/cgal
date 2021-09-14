@@ -24,6 +24,8 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Intersections_3/internal/Bbox_3_Plane_3_do_intersect.h>
 
+#include <CGAL/number_utils_classes.h>
+
 namespace CGAL {
 namespace Intersections {
 namespace internal {
@@ -411,7 +413,8 @@ bool do_intersect_bbox_or_iso_cuboid(const typename K::Triangle_3& a_triangle,
                                        const FT& c_alpha,
                                        const FT& c_beta) -> Uncertain<Sign>
   {
-    return CGAL::sign(- c_alpha * alpha + c_beta * beta);
+    Sgn<FT> sign;
+    return sign(- c_alpha * alpha + c_beta * beta);
   };
 
   std::array< std::array<FT, 3>, 3> triangle =
