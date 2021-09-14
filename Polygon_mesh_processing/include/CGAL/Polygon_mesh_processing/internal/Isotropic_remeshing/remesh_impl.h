@@ -66,7 +66,7 @@
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
 #define CGAL_PMP_REMESHING_VERBOSE
-#define CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE_PROGRESS
+#define CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE
 #endif
 
 
@@ -858,8 +858,8 @@ namespace internal {
 #endif
       for (unsigned int nit = 0; nit < nb_iterations; ++nit)
       {
-#ifdef CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE_PROGRESS
-        std::cout << "\r\t(iteration " << (nit + 1) << " / ";
+#ifdef CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE
+        std::cout << "\r\t(Tangential relaxation iteration " << (nit + 1) << " / ";
         std::cout << nb_iterations << ") ";
         std::cout.flush();
 #endif

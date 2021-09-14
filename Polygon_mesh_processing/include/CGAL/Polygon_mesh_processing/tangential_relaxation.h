@@ -225,6 +225,12 @@ namespace Polygon_mesh_processing {
 
   for (unsigned int nit = 0; nit < nb_iterations; ++nit)
   {
+#ifdef CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE
+    std::cout << "\r\t(Tangential relaxation iteration " << (nit + 1) << " / ";
+    std::cout << nb_iterations << ") ";
+    std::cout.flush();
+#endif
+
     typedef std::tuple<vertex_descriptor, Vector_3, Point_3> VNP;
     std::vector< VNP > barycenters;
     // at each vertex, compute vertex normal
@@ -320,6 +326,11 @@ namespace Polygon_mesh_processing {
         put(vpm, vp.first, initial_pos);//cancel move
     }
   }//end for loop (nit == nb_iterations)
+
+#ifdef CGAL_PMP_TANGENTIAL_RELAXATION_VERBOSE
+  std::cout << "\rTangential relaxation : "
+    << nb_iterations << " iterations done." << std::endl;
+#endif
 }
 
 template <typename VertexRange, class TriangleMesh>
