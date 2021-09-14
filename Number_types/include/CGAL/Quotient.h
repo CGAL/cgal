@@ -1055,11 +1055,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // Works slightly better than the first one.
           // It always returns a correct interval, but it is sometimes less tight
           // than the one from the option 3.
-          // return get_interval_as_boost(x);
+          return get_interval_as_boost(x);
 
           // Option 3.
           // This seems to give the tightest intervals.
-          return get_interval_using_cpp_rational(x);
+          // return get_interval_using_cpp_rational(x);
 
         #else // master version
 
