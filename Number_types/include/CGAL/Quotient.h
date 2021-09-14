@@ -953,8 +953,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           boost::multiprecision::divide_qr(x.num, x.den, q, r);
           CGAL_assertion_code(const int64_t q_bits =
             static_cast<int64_t>(boost::multiprecision::msb(q)));
-          CGAL_assertion(q_bits == num_dbl_digits ||
-            r != 0 /* when q_bit = num_dbl_digits - 1 */ );
 
           // WARNING: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Combinatorial_map/TestReport_cgaltest_VS-19.gz
           // Fixed: Interval_nt is defined only for double, see impl below.
