@@ -14,7 +14,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -28,7 +28,8 @@ int main(int argc, char* argv[])
 
   std::cout << "Relax...";
 
-  PMP::tangential_relaxation(mesh);
+  PMP::tangential_relaxation(mesh,
+    CGAL::parameters::number_of_iterations(3));
 
   std::cout << "done." << std::endl;
 
