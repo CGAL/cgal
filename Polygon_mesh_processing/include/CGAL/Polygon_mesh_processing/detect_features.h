@@ -16,15 +16,13 @@
 
 #include <CGAL/license/Polygon_mesh_processing/detect_features.h>
 
-#include <CGAL/disable_warnings.h>
-
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <set>
 
+#include <set>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -171,12 +169,10 @@ template<typename GT,
                  VNFEMap vnfe)
 {
   // Initialize vertices
-  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd :
-                vertices(pmesh))
-  {
+  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd : vertices(pmesh))
     put(vnfe, vd, 0);
-  }
-  FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
+
+  FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.));
 
   // Detect sharp edges
   for(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed : edges(pmesh))
@@ -188,8 +184,8 @@ template<typename GT,
       )
     {
       put(edge_is_feature_map, edge(he, pmesh), true);
-      put(vnfe, target(he,pmesh), get(vnfe, target(he,pmesh))+1);
-      put(vnfe, source(he,pmesh), get(vnfe, source(he,pmesh))+1);
+      put(vnfe, target(he, pmesh), get(vnfe, target(he, pmesh))+1);
+      put(vnfe, source(he, pmesh), get(vnfe, source(he, pmesh))+1);
     }
   }
 }
@@ -207,7 +203,7 @@ template<typename GT,
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor     edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-  FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.) );
+  FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.));
 
   // Detect sharp edges
   for(edge_descriptor ed : edges(pmesh))
@@ -222,7 +218,8 @@ template<typename GT,
     }
   }
 }
-} //end internal
+
+} // namespace internal
 
 /*!
  * \ingroup PMP_detect_features_grp
@@ -272,12 +269,12 @@ template <typename PolygonMesh, typename EdgeIsFeatureMap, typename NamedParamet
 #endif
 void detect_sharp_edges(PolygonMesh& pmesh,
 #ifdef DOXYGEN_RUNNING
-    FT angle_in_deg,
+                        FT angle_in_deg,
 #else
-    typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
+                        typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
 #endif
-    EdgeIsFeatureMap edge_is_feature_map,
-    const NamedParameters& np)
+                        EdgeIsFeatureMap edge_is_feature_map,
+                        const NamedParameters& np)
 {
   //extract types from NPs
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
@@ -326,19 +323,18 @@ void detect_vertex_incident_patches(PolygonMesh& pmesh,
   for(vertex_descriptor vit :vertices(pmesh))
   {
     // Look only at feature vertices
-    if( ! get(edge_is_feature_map, edge(halfedge(vit, pmesh), pmesh) ))
-    { continue; }
+    if(!get(edge_is_feature_map, edge(halfedge(vit, pmesh), pmesh)))
+      continue;
 
     // Loop on incident facets of vit
-    typename VertexIncidentPatchesMap::value_type&
-      id_set = vertex_incident_patches_map[vit];
-    for(halfedge_descriptor he : halfedges_around_target(vit,pmesh))
+    typename VertexIncidentPatchesMap::value_type& id_set = vertex_incident_patches_map[vit];
+    for(halfedge_descriptor he : halfedges_around_target(vit, pmesh))
     {
-      if( ! is_border(he,pmesh) )
+      if(!is_border(he, pmesh))
       {
         id_set.insert(get(patch_id_map, face(he, pmesh)));
       }
-      else if( ! is_border(opposite(he,pmesh),pmesh) )
+      else if(!is_border(opposite(he, pmesh), pmesh))
       {
         id_set.insert(get(patch_id_map, face(opposite(he, pmesh), pmesh)));
       }
@@ -346,26 +342,22 @@ void detect_vertex_incident_patches(PolygonMesh& pmesh,
   }
 }
 
+namespace internal {
 
-namespace internal
+template<typename PolygonMesh, typename PIDMap, typename VIPMap, typename EIFMap>
+void vip_call(const PolygonMesh& mesh, PIDMap pid, VIPMap vip, EIFMap eif)
 {
-  template<typename PolygonMesh,
-              typename PIDMap,
-              typename VIPMap,
-              typename EIFMap>
-  void vip_call(PolygonMesh& mesh, PIDMap pid, VIPMap vip, EIFMap eif )
-  {
-    CGAL::Polygon_mesh_processing::detect_vertex_incident_patches(mesh, pid, vip, eif);
-  }
+  CGAL::Polygon_mesh_processing::detect_vertex_incident_patches(mesh, pid, vip, eif);
+}
 
-  template<typename PolygonMesh,
-           typename PIDMap,
-           typename EIFMap>
-  void vip_call(PolygonMesh&, PIDMap, const internal_np::Param_not_found&, EIFMap)
-  {
-    //do nothing when the parameter is not given
-  }
-}//end internal
+template<typename PolygonMesh, typename PIDMap, typename EIFMap>
+void vip_call(const PolygonMesh&, PIDMap, const internal_np::Param_not_found&, EIFMap)
+{
+  //do nothing when the parameter is not given
+}
+
+} // namespace internal
+
 /*!
  * \ingroup PMP_detect_features_grp
  *
@@ -448,23 +440,23 @@ template <typename PolygonMesh,
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 sharp_edges_segmentation(PolygonMesh& pmesh,
 #ifdef DOXYGEN_RUNNING
-      FT angle_in_deg,
+                         FT angle_in_deg,
 #else
-      typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
+                         typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
 #endif
-      EdgeIsFeatureMap edge_is_feature_map,
-      PatchIdMap patch_id_map,
-      const NamedParameters& np)
+                         EdgeIsFeatureMap edge_is_feature_map,
+                         PatchIdMap patch_id_map,
+                         const NamedParameters& np)
 {
-    detect_sharp_edges(pmesh, angle_in_deg, edge_is_feature_map, np);
+  detect_sharp_edges(pmesh, angle_in_deg, edge_is_feature_map, np);
 
-    typename boost::graph_traits<PolygonMesh>::faces_size_type result =
-      internal::detect_surface_patches(pmesh, patch_id_map, edge_is_feature_map, np);
+  typename boost::graph_traits<PolygonMesh>::faces_size_type result =
+    internal::detect_surface_patches(pmesh, patch_id_map, edge_is_feature_map, np);
 
-    internal::vip_call(pmesh, patch_id_map,
-      parameters::get_parameter(np, internal_np::vertex_incident_patches), edge_is_feature_map);
+  internal::vip_call(pmesh, patch_id_map,
+    parameters::get_parameter(np, internal_np::vertex_incident_patches), edge_is_feature_map);
 
-    return result;
+  return result;
 }
 
 //Convenient overrides
@@ -480,18 +472,16 @@ void detect_sharp_edges(PolygonMesh& p,
 template <typename PolygonMesh, typename FT,
           typename EdgeIsFeatureMap, typename PatchIdMap>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
-sharp_edges_segmentation(PolygonMesh& p,
+sharp_edges_segmentation(const PolygonMesh& p,
                          FT angle_in_deg,
                          EdgeIsFeatureMap edge_is_feature_map,
                          PatchIdMap patch_id_map)
 {
   return sharp_edges_segmentation(p, angle_in_deg, edge_is_feature_map, patch_id_map,
-                                 parameters::all_default());
+                                  parameters::all_default());
 }
 
 } // end namespace PMP
 } // end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_DETECT_FEATURES_IN_POLYGON_MESH_H
