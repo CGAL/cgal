@@ -49,7 +49,7 @@ is_sharp(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
          const PolygonMesh& pmesh,
          const VPM vpm,
          const GT gt,
-         const typename GT::FT cos_angle)
+         const typename GT::FT sq_cos_angle)
 {
   typedef typename GT::Vector_3                                                Vector_3;
 
@@ -71,7 +71,7 @@ is_sharp(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
   const Vector_3 n1 = cross(vc, v1);
   const Vector_3 n2 = cross(vc, v2);
 
-  return (square(n1 * n2) <= square(cos_angle) * sq_length(n1) * sq_length(n2));
+  return (square(n1 * n2) <= sq_cos_angle * sq_length(n1) * sq_length(n2));
 }
 
 //wrapper for patchid map.
@@ -178,7 +178,7 @@ void sharp_call(const FT angle_in_deg,
   for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd : vertices(pmesh))
     put(vnfe, vd, 0);
 
-  FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.));
+  const FT sq_cos_angle = square(std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.));
 
   // Detect sharp edges
   for(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed : edges(pmesh))
@@ -186,7 +186,7 @@ void sharp_call(const FT angle_in_deg,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed, pmesh);
     if(is_border_edge(he, pmesh) ||
        angle_in_deg == FT() ||
-       (angle_in_deg != FT(180) && internal::is_sharp(he, pmesh, vpm, gt, cos_angle)))
+       (angle_in_deg != FT(180) && internal::is_sharp(he, pmesh, vpm, gt, sq_cos_angle)))
     {
       put(edge_is_feature_map, edge(he, pmesh), true);
       put(vnfe, target(he, pmesh), get(vnfe, target(he, pmesh))+1);
@@ -206,7 +206,7 @@ void sharp_call(const FT angle_in_deg,
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor     edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-  FT cos_angle ( std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.));
+  const FT sq_cos_angle = square(std::cos(CGAL::to_double(angle_in_deg) * CGAL_PI / 180.));
 
   // Detect sharp edges
   for(edge_descriptor ed : edges(pmesh))
@@ -214,7 +214,7 @@ void sharp_call(const FT angle_in_deg,
     halfedge_descriptor he = halfedge(ed, pmesh);
     if(is_border_edge(he, pmesh) ||
        angle_in_deg == FT() ||
-       (angle_in_deg != FT(180) && internal::is_sharp(he, pmesh, vpm, gt, cos_angle)))
+       (angle_in_deg != FT(180) && internal::is_sharp(he, pmesh, vpm, gt, sq_cos_angle)))
     {
       put(edge_is_feature_map, edge(he, pmesh), true);
     }
