@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include <cstdio>
 
 namespace CGAL {
@@ -750,14 +751,17 @@ public:
       return;
 
     // Prepare a string desribing the color.
-    char    color_desc [10];
 
-    sprintf ("#%02x%02x%02x", r, g, b);
+    std::stringstream out;
+    out << "0x"  << std::hex
+	<< std::setfill('0') << std::setw(2) << r
+	<< std::setfill('0') << std::setw(2) << g
+	<< std::setfill('0') << std::setw(2) << b;
 
     // Write the color to the FIG file.
     _ofile << "0 "                        // Desginates a color pseudo-object.
            << static_cast<int>(color) << ' '
-           << color_desc << std::endl;
+           << out.str() << std::endl;
 
     // Mark that the color is now defined.
     colors[static_cast<int>(color)] = true;
