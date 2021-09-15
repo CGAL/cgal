@@ -1018,13 +1018,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           NT p, r;
           boost::multiprecision::divide_qr(x.num, x.den, p, r);
-          CGAL_assertion_code(const int64_t p_bits =
-            static_cast<int64_t>(boost::multiprecision::msb(p)));
+          const int64_t p_bits = static_cast<int64_t>(boost::multiprecision::msb(p));
 
           // std::cout << "x num shifted: " << x.num << std::endl;
           // std::cout << "x den shifted: " << x.den << std::endl;
 
-          // std::cout << "p bits: " << boost::multiprecision::msb(p) << std::endl;
+          // std::cout << "p bits: " << p_bits << std::endl;
 
           // std::cout << "p: " << p << std::endl;
           // std::cout << "r: " << r << std::endl;
