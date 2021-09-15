@@ -139,27 +139,6 @@ long gcd(long m, long n) {
   return p;
 }
 
-// char* core_itoa(int n, char* buffer, int buffer_size)
-//      returns a pointer to the null-terminated string in buffer
-// NOTES:
-// 0. Buffer size should be 17 bytes (resp., 33 bytes, 65 bytes) on 16-bit
-//      (resp., 32-bit, 64-bit) machines.  Formula: 1+sizeof(int)*8 bytes.
-// 1. itoa(...) is available on some stdlib.h, but it is
-//      not defined by ANSI-C and so not all compilers support it.
-// 2. Our use of sprintf(...) to do the job is known to
-//      be inefficient, but this is hardly critical for our usage.
-// 3. A more general program should take a 3rd argument (the radix of
-//      output number).  We assume radix 10.
-CGAL_INLINE_FUNCTION
-char * core_itoa(int n, char* buffer, int buffer_size) {
-#if   defined(_MSC_VER)
-  sprintf_s(buffer, buffer_size, "%d", n);
-#else
-  CGAL_USE(buffer_size);
-  std::sprintf(buffer, "%d", n);
-#endif
-        return buffer;
-}
 
 /// implements the "integer mantissa" function
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
@@ -198,10 +177,8 @@ void core_error(std::string msg, std::string file, int lineno, bool err) {
   outFile.close();
   if (err) {
      char buf[65];
-     // perror((std::string("CORE ERROR") + " (file " + file + ", line "
-     //        + core_itoa(lineno,buf, 65) +"):" + msg + "\n").c_str());
      std::cerr << (std::string("CORE ERROR") + " (file " + file + ", line "
-                   + core_itoa(lineno,buf, 65) +"):" + msg + "\n").c_str();
+                   + std::to_string(lineno) +"):" + msg + "\n").c_str();
      std::exit(1); //Note: do not call abort()
   }
 }
