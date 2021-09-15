@@ -817,6 +817,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         bool are_bounds_correct( const double l, const double u, const Type& x ) const {
 
           const double inf = std::numeric_limits<double>::infinity();
+          std::cout << "          l: " << l << std::endl;
+          std::cout << "          u: " << u << std::endl;
+          std::cout << "nextafter l: " << nextafter(l, +inf) << std::endl;
+          std::cout << std::endl;
+
           CGAL_assertion(u == l || u == std::nextafter(l, +inf));
           const bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
 
@@ -1028,27 +1033,67 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             std::cout << "- case r = 0" << std::endl;
             std::tie(l, u) = get_0ulp_interval(shift, p);
           } else {
-            if (p_bits == num_dbl_digits - 1) {
+            std::cout << "- case r > 0" << std::endl;
 
-              std::cout << "- case r > 0 && p_bits = 51" << std::endl;
+            if (p_bits == num_dbl_digits - 1) { // we did not reach full precision
+
+              // x.num <<= 1;
+              // boost::multiprecision::divide_qr(x.num, x.den, p, r);
+              // std::cout << "p bits shifted: " << boost::multiprecision::msb(p) << std::endl;
+              // std::cout << "p: " << p << std::endl;
+              // std::cout << "r: " << r << std::endl;
+              // std::tie(l, u) = get_1ulp_interval(shift+1, p);
+
+              // CGAL_assertion(r < x.den);
+              // if (shift > 0) {
+              //   std::cout << "- case p_bits = 51 && shift > 0" << std::endl;
+              //   // CGAL_assertion_msg(false, "TODO: SHIFT > 0!");
+
+              //   p <<= 1;
+              //   r <<= 1;
+              //   ++shift;
+              // } else {
+              //   std::cout << "- case p_bits = 51 && shift < 0" << std::endl;
+              //   // CGAL_assertion_msg(false, "TODO: SHIFT < 0!");
+
+              //   CGAL_assertion(shift < 0);
+              //   p <<= 1;
+              //   r <<= 1;
+              //   ++shift;
+              // }
+
+              p <<= 1;
               r <<= 1;
+              ++shift;
+              std::cout << "p_bits shifted: " << boost::multiprecision::msb(p) << std::endl;
+
               const int cmp = r.compare(x.den);
               if (cmp > 0) {
 
-                p <<= 1;
-                std::cout << "p bits shifted: " << boost::multiprecision::msb(p) << std::endl;
-                ++shift;
+                std::cout << "subcase 1" << std::endl;
+                // CGAL_assertion_msg(false, "TODO: SUBCASE1!");
+
                 ++p;
                 std::tie(l, u) = get_1ulp_interval(shift, p);
 
               } else if ( ((cmp == 0) && (p & 1u)) ) {
-                CGAL_assertion_msg(false, "TODO: THIS CASE1!");
+
+                std::cout << "subcase 2" << std::endl;
+                CGAL_assertion_msg(false, "TODO: SUBCASE2!");
+
+                ++p;
+                std::tie(l, u) = get_1ulp_interval(shift, p);
+
               } else {
-                CGAL_assertion_msg(false, "TODO: THIS CASE2!");
+
+                std::cout << "subcase 3" << std::endl;
+                // CGAL_assertion_msg(false, "TODO: SUBCASE3!");
+
+                std::tie(l, u) = get_1ulp_interval(shift, p);
               }
 
             } else {
-              std::cout << "- case r > 0 && p_bits = 52" << std::endl;
+              std::cout << "- case p_bits = 52" << std::endl;
               std::tie(l, u) = get_1ulp_interval(shift, p);
             }
           }
@@ -1058,12 +1103,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             l = -u;
             u = -t;
           }
-
-          std::cout << "          l: " << l << std::endl;
-          std::cout << "          u: " << u << std::endl;
-          const double inf = std::numeric_limits<double>::infinity();
-          std::cout << "nextafter l: " << nextafter(l, +inf) << std::endl;
-          std::cout << std::endl;
 
           CGAL_assertion(are_bounds_correct(l, u, input));
           return std::make_pair(l, u);
