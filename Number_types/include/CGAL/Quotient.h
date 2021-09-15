@@ -1035,6 +1035,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           } else {
             // std::cout << "- case r > 0" << std::endl;
 
+            CGAL_assertion(r > 0);
             CGAL_assertion(r < x.den);
             if (p_bits == num_dbl_digits - 1) { // we did not reach full precision
 
@@ -1067,6 +1068,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               ++shift;
               // std::cout << "p_bits shifted: " << boost::multiprecision::msb(p) << std::endl;
 
+              CGAL_assertion(r > 0);
               const int cmp = r.compare(x.den);
               if (cmp > 0) {
 
@@ -1076,7 +1078,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
                 ++p;
                 std::tie(l, u) = get_1ulp_interval(shift, p);
 
-              } else if ( ((cmp == 0) && (p & 1u)) ) {
+              } else if ( (cmp == 0) && (p & 1u) ) {
 
                 // std::cout << "subcase 2" << std::endl;
                 CGAL_assertion_msg(false, "TODO: SUBCASE2!");
