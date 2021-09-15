@@ -885,7 +885,7 @@ public:
 
   /*! Clean all operation counters */
   void clear_counters()
-  { memset(m_counters, 0, sizeof(m_counters)); }
+  { memset_s(m_counters, sizeof(m_counters), 0, sizeof(m_counters)); }
 
 private:
   /*! The operation counters */
