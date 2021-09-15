@@ -1029,6 +1029,14 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // std::cout << "p: " << p << std::endl;
           // std::cout << "r: " << r << std::endl;
 
+          // std::vector<unsigned char> b;
+          // export_bits(p, std::back_inserter(b), 1);
+          // std::cout << "binary: ";
+          // for (const unsigned char bit : b) {
+          //   std::cout << static_cast<unsigned>(bit);
+          // }
+          // std::cout << std::endl;
+
           if (r == 0) {
             // std::cout << "- case r = 0" << std::endl;
             std::tie(l, u) = get_0ulp_interval(shift, p);
@@ -1070,6 +1078,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
               CGAL_assertion(r > 0);
               const int cmp = r.compare(x.den);
+              // std::cout << "cmp: " << cmp << std::endl;
+              // std::cout << "p & 1u: " << (p & 1u) << std::endl;
               if (cmp > 0) {
 
                 // std::cout << "subcase 1" << std::endl;
@@ -1081,7 +1091,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               } else if ( (cmp == 0) && (p & 1u) ) {
 
                 // std::cout << "subcase 2" << std::endl;
-                CGAL_assertion_msg(false, "TODO: SUBCASE2!");
+                // CGAL_assertion_msg(false, "TODO: SUBCASE2!");
 
                 ++p;
                 std::tie(l, u) = get_1ulp_interval(shift, p);
