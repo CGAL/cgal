@@ -831,7 +831,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const Type lb(l), ub(u);
           CGAL_assertion(lb <= x);
           CGAL_assertion(ub >= x);
-          return lb <= ub && lb <= x && ub >= x;
+          const bool are_bounds_respected = (lb <= x && x <= ub);
+
+          const double inf = std::numeric_limits<double>::infinity();
+          CGAL_assertion(u == l || u == std::nextafter(l, +inf));
+          bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
+          return are_bounds_respected && are_bounds_tight;
         }
 
         #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
@@ -938,6 +943,14 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const int64_t msb_diff = msb_num - msb_den;
           const int64_t shift = num_dbl_digits - msb_diff;
 
+          // std::cout << "msb num: " << msb_num << std::endl;
+          // std::cout << "msb den: " << msb_den << std::endl;
+          // std::cout << "msb diff: " << msb_diff << std::endl;
+          // std::cout << "shift: " << shift << std::endl;
+
+          // std::cout << "x num: " << x.num << std::endl;
+          // std::cout << "x den: " << x.den << std::endl;
+
           if (shift > 0) {
             CGAL_assertion(msb_diff < num_dbl_digits);
             x.num <<= shift;
@@ -954,8 +967,40 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion_code(const int64_t q_bits =
             static_cast<int64_t>(boost::multiprecision::msb(q)));
 
+          // std::cout << "x num shift: " << x.num << std::endl;
+          // std::cout << "x den shift: " << x.den << std::endl;
+
+          // std::cout << "q: " << q << std::endl;
+          // std::cout << "r: " << r << std::endl;
+
           // WARNING: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Combinatorial_map/TestReport_cgaltest_VS-19.gz
           // Fixed: Interval_nt is defined only for double, see impl below.
+          // if (q_bits == num_dbl_digits - 1) {
+          //   if (!CGAL::is_zero(r)) {
+          //     q <<= 1;
+          //     const NT p = q;
+          //     ++q;
+          //     ++shift;
+          //     const uint64_t pp = static_cast<uint64_t>(p);
+          //     const uint64_t qq = static_cast<uint64_t>(q);
+          //     CGAL_assertion(pp >= 0 && qq > pp);
+          //     const double pp_dbl = static_cast<double>(pp);
+          //     const double qq_dbl = static_cast<double>(qq);
+
+          //     // std::cout << "msb p: " << msb(p) << std::endl;
+          //     // std::cout << "msb q: " << msb(q) << std::endl;
+
+          //     // std::cout << "pp_dbl: " << pp_dbl << std::endl;
+          //     // std::cout << "qq_dbl: " << qq_dbl << std::endl;
+
+          //     const Interval_nt<> intv(pp_dbl, qq_dbl);
+          //     std::tie(l, u) = ldexp(intv, -shift).pair();
+
+          //   } else {
+
+          //   }
+          // } else {
+
           if (!CGAL::is_zero(r)) {
             const NT p = q;
             ++q;
@@ -965,6 +1010,13 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             CGAL_assertion(pp >= 0 && qq > pp);
             const double pp_dbl = static_cast<double>(pp);
             const double qq_dbl = static_cast<double>(qq);
+
+            // std::cout << "msb p: " << msb(p) << std::endl;
+            // std::cout << "msb q: " << msb(q) << std::endl;
+
+            // std::cout << "pp_dbl: " << pp_dbl << std::endl;
+            // std::cout << "qq_dbl: " << qq_dbl << std::endl;
+
             const Interval_nt<> intv(pp_dbl, qq_dbl);
             std::tie(l, u) = ldexp(intv, -shift).pair();
           } else {
@@ -976,12 +1028,17 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             const Interval_nt<> intv(qq_dbl, qq_dbl);
             std::tie(l, u) = ldexp(intv, -shift).pair();
           }
+          // }
 
           if (change_sign) {
             const double t = l;
             l = -u;
             u = -t;
           }
+
+          // std::cout << "l: " << l << std::endl;
+          // std::cout << "u: " << u << std::endl;
+          // std::cout << "nextafter: " << nextafter(l, +std::numeric_limits<double>::infinity()) << std::endl;
 
           CGAL_assertion(are_correct_bounds(l, u, input));
           return std::make_pair(l, u);
