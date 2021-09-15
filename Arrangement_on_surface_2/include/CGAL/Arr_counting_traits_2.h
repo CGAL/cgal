@@ -27,6 +27,7 @@
 #include <iostream>
 #include <string.h>
 #include <atomic>
+#include <array>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
@@ -885,11 +886,11 @@ public:
 
   /*! Clean all operation counters */
   void clear_counters()
-  { memset_s(m_counters, sizeof(m_counters), 0, sizeof(m_counters)); }
+  { m_counters = {}; }
 
 private:
   /*! The operation counters */
-  mutable size_t m_counters[NUMBER_OF_OPERATIONS];
+  mutable std::array<size_t, NUMBER_OF_OPERATIONS> m_counters;
 };
 
 template <typename Out_stream, class Base_traits>
