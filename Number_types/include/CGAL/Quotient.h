@@ -817,10 +817,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         bool are_bounds_correct( const double l, const double u, const Type& x ) const {
 
           const double inf = std::numeric_limits<double>::infinity();
-          std::cout << "          l: " << l << std::endl;
-          std::cout << "          u: " << u << std::endl;
-          std::cout << "nextafter l: " << nextafter(l, +inf) << std::endl;
-          std::cout << std::endl;
+          // std::cout << "          l: " << l << std::endl;
+          // std::cout << "          u: " << u << std::endl;
+          // std::cout << "nextafter l: " << nextafter(l, +inf) << std::endl;
+          // std::cout << std::endl;
 
           CGAL_assertion(u == l || u == std::nextafter(l, +inf));
           const bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
@@ -918,7 +918,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         std::pair<double, double> get_0ulp_interval( const int64_t shift, const NT& p ) const {
 
-          std::cout << "- 0ulp interval: " << std::endl;
+          // std::cout << "- 0ulp interval: " << std::endl;
 
           CGAL_assertion(p >= 0);
           const uint64_t pp = static_cast<uint64_t>(p);
@@ -926,8 +926,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(pp >= 0);
           const double pp_dbl = static_cast<double>(pp);
 
-          std::cout << "pp_dbl: " << pp_dbl << std::endl;
-          std::cout << "qq_dbl: " << pp_dbl << std::endl;
+          // std::cout << "pp_dbl: " << pp_dbl << std::endl;
+          // std::cout << "qq_dbl: " << pp_dbl << std::endl;
 
           const Interval_nt<> intv(pp_dbl, pp_dbl);
           return ldexp(intv, -static_cast<int>(shift)).pair();
@@ -935,7 +935,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
         std::pair<double, double> get_1ulp_interval( const int64_t shift, const NT& p ) const {
 
-          std::cout << "- 1ulp interval: " << std::endl;
+          // std::cout << "- 1ulp interval: " << std::endl;
 
           CGAL_assertion(p >= 0);
           const uint64_t pp = static_cast<uint64_t>(p);
@@ -946,11 +946,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const double pp_dbl = static_cast<double>(pp);
           const double qq_dbl = static_cast<double>(qq);
 
-          std::cout << "pp_dbl: " << pp_dbl << std::endl;
-          std::cout << "qq_dbl: " << qq_dbl << std::endl;
+          // std::cout << "pp_dbl: " << pp_dbl << std::endl;
+          // std::cout << "qq_dbl: " << qq_dbl << std::endl;
 
-          std::cout << "pp_dbl ldexp: " << std::ldexp(pp_dbl, -shift) << std::endl;
-          std::cout << "qq_dbl ldexp: " << std::ldexp(qq_dbl, -shift) << std::endl;
+          // std::cout << "pp_dbl ldexp: " << std::ldexp(pp_dbl, -shift) << std::endl;
+          // std::cout << "qq_dbl ldexp: " << std::ldexp(qq_dbl, -shift) << std::endl;
 
           const Interval_nt<> intv(pp_dbl, qq_dbl);
           const auto res = ldexp(intv, -static_cast<int>(shift)).pair();
@@ -997,13 +997,13 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const int64_t msb_diff = msb_num - msb_den;
           int64_t shift = num_dbl_digits - msb_diff;
 
-          std::cout << "msb  num: " << msb_num  << std::endl;
-          std::cout << "msb  den: " << msb_den  << std::endl;
-          std::cout << "msb diff: " << msb_diff << std::endl;
-          std::cout << "   shift: " << shift    << std::endl;
+          // std::cout << "msb  num: " << msb_num  << std::endl;
+          // std::cout << "msb  den: " << msb_den  << std::endl;
+          // std::cout << "msb diff: " << msb_diff << std::endl;
+          // std::cout << "   shift: " << shift    << std::endl;
 
-          std::cout << "x num: " << x.num << std::endl;
-          std::cout << "x den: " << x.den << std::endl;
+          // std::cout << "x num: " << x.num << std::endl;
+          // std::cout << "x den: " << x.den << std::endl;
 
           if (shift > 0) {
             CGAL_assertion(msb_diff < num_dbl_digits);
@@ -1021,20 +1021,21 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion_code(const int64_t p_bits =
             static_cast<int64_t>(boost::multiprecision::msb(p)));
 
-          std::cout << "x num shifted: " << x.num << std::endl;
-          std::cout << "x den shifted: " << x.den << std::endl;
+          // std::cout << "x num shifted: " << x.num << std::endl;
+          // std::cout << "x den shifted: " << x.den << std::endl;
 
-          std::cout << "p bits: " << boost::multiprecision::msb(p) << std::endl;
+          // std::cout << "p bits: " << boost::multiprecision::msb(p) << std::endl;
 
-          std::cout << "p: " << p << std::endl;
-          std::cout << "r: " << r << std::endl;
+          // std::cout << "p: " << p << std::endl;
+          // std::cout << "r: " << r << std::endl;
 
           if (r == 0) {
-            std::cout << "- case r = 0" << std::endl;
+            // std::cout << "- case r = 0" << std::endl;
             std::tie(l, u) = get_0ulp_interval(shift, p);
           } else {
-            std::cout << "- case r > 0" << std::endl;
+            // std::cout << "- case r > 0" << std::endl;
 
+            CGAL_assertion(r < x.den);
             if (p_bits == num_dbl_digits - 1) { // we did not reach full precision
 
               // x.num <<= 1;
@@ -1044,7 +1045,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               // std::cout << "r: " << r << std::endl;
               // std::tie(l, u) = get_1ulp_interval(shift+1, p);
 
-              // CGAL_assertion(r < x.den);
               // if (shift > 0) {
               //   std::cout << "- case p_bits = 51 && shift > 0" << std::endl;
               //   // CGAL_assertion_msg(false, "TODO: SHIFT > 0!");
@@ -1065,12 +1065,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               p <<= 1;
               r <<= 1;
               ++shift;
-              std::cout << "p_bits shifted: " << boost::multiprecision::msb(p) << std::endl;
+              // std::cout << "p_bits shifted: " << boost::multiprecision::msb(p) << std::endl;
 
               const int cmp = r.compare(x.den);
               if (cmp > 0) {
 
-                std::cout << "subcase 1" << std::endl;
+                // std::cout << "subcase 1" << std::endl;
                 // CGAL_assertion_msg(false, "TODO: SUBCASE1!");
 
                 ++p;
@@ -1078,7 +1078,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
               } else if ( ((cmp == 0) && (p & 1u)) ) {
 
-                std::cout << "subcase 2" << std::endl;
+                // std::cout << "subcase 2" << std::endl;
                 CGAL_assertion_msg(false, "TODO: SUBCASE2!");
 
                 ++p;
@@ -1086,14 +1086,14 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
               } else {
 
-                std::cout << "subcase 3" << std::endl;
+                // std::cout << "subcase 3" << std::endl;
                 // CGAL_assertion_msg(false, "TODO: SUBCASE3!");
 
                 std::tie(l, u) = get_1ulp_interval(shift, p);
               }
 
             } else {
-              std::cout << "- case p_bits = 52" << std::endl;
+              // std::cout << "- case p_bits = 52" << std::endl;
               std::tie(l, u) = get_1ulp_interval(shift, p);
             }
           }
