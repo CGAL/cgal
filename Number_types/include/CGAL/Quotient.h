@@ -814,17 +814,21 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
       public:
 
-        bool are_correct_bounds( const double l, const double u, const Type& x ) const {
+        bool are_bounds_correct( const double l, const double u, const Type& x ) const {
+
+          const double inf = std::numeric_limits<double>::infinity();
+          CGAL_assertion(u == l || u == std::nextafter(l, +inf));
+          const bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
 
           if (
-            CGAL::abs(l) == std::numeric_limits<double>::infinity() ||
-            CGAL::abs(u) == std::numeric_limits<double>::infinity() ||
+            CGAL::abs(l) == inf ||
+            CGAL::abs(u) == inf ||
             CGAL::abs(l) == 0.0 ||
             CGAL::abs(u) == 0.0) {
-            return true;
+            return are_bounds_tight;
           }
-          CGAL_assertion(CGAL::abs(l) != std::numeric_limits<double>::infinity());
-          CGAL_assertion(CGAL::abs(u) != std::numeric_limits<double>::infinity());
+          CGAL_assertion(CGAL::abs(l) != inf);
+          CGAL_assertion(CGAL::abs(u) != inf);
           CGAL_assertion(CGAL::abs(l) != 0.0);
           CGAL_assertion(CGAL::abs(u) != 0.0);
 
@@ -833,10 +837,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(ub >= x);
           const bool are_bounds_respected = (lb <= x && x <= ub);
 
-          const double inf = std::numeric_limits<double>::infinity();
-          CGAL_assertion(u == l || u == std::nextafter(l, +inf));
-          bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
-          return are_bounds_respected && are_bounds_tight;
+          return are_bounds_tight && are_bounds_respected;
         }
 
         #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
@@ -871,7 +872,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion_code(const Type input = x);
           double l = 0.0, u = 0.0;
           if (CGAL::is_zero(x.num)) { // return [0.0, 0.0]
-            CGAL_assertion(are_correct_bounds(l, u, input));
+            CGAL_assertion(are_bounds_correct(l, u, input));
             return std::make_pair(l, u);
           }
           CGAL_assertion(!CGAL::is_zero(x.num));
@@ -906,8 +907,25 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             u = -t;
           }
 
-          CGAL_assertion(are_correct_bounds(l, u, input));
+          CGAL_assertion(are_bounds_correct(l, u, input));
           return std::make_pair(l, u);
+        }
+
+        std::pair<double, double> get_0ulp_interval( const int64_t shift, const NT& p ) const {
+
+          std::cout << "- 0ulp interval: " << std::endl;
+
+          CGAL_assertion(p >= 0);
+          const uint64_t pp = static_cast<uint64_t>(p);
+
+          CGAL_assertion(pp >= 0);
+          const double pp_dbl = static_cast<double>(pp);
+
+          std::cout << "pp_dbl: " << pp_dbl << std::endl;
+          std::cout << "qq_dbl: " << pp_dbl << std::endl;
+
+          const Interval_nt<> intv(pp_dbl, pp_dbl);
+          return ldexp(intv, -static_cast<int>(shift)).pair();
         }
 
         std::pair<double, double> get_1ulp_interval( const int64_t shift, const NT& p ) const {
@@ -926,25 +944,19 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           std::cout << "pp_dbl: " << pp_dbl << std::endl;
           std::cout << "qq_dbl: " << qq_dbl << std::endl;
 
+          std::cout << "pp_dbl ldexp: " << std::ldexp(pp_dbl, -shift) << std::endl;
+          std::cout << "qq_dbl ldexp: " << std::ldexp(qq_dbl, -shift) << std::endl;
+
           const Interval_nt<> intv(pp_dbl, qq_dbl);
-          return ldexp(intv, -shift).pair();
-        }
+          const auto res = ldexp(intv, -static_cast<int>(shift)).pair();
 
-        std::pair<double, double> get_0ulp_interval( const int64_t shift, const NT& p ) const {
-
-          std::cout << "- 0ulp interval: " << std::endl;
-
-          CGAL_assertion(p >= 0);
-          const uint64_t pp = static_cast<uint64_t>(p);
-
-          CGAL_assertion(pp >= 0);
-          const double pp_dbl = static_cast<double>(pp);
-
-          std::cout << "pp_dbl: " << pp_dbl << std::endl;
-          std::cout << "qq_dbl: " << pp_dbl << std::endl;
-
-          const Interval_nt<> intv(pp_dbl, pp_dbl);
-          return ldexp(intv, -shift).pair();
+          // TODO: For some reason, ldexp returns 2.752961027411077506e-308
+          // instead of denorm_min!
+          if (res.first == 0.0) {
+            CGAL_assertion(res.second != 0.0);
+            return std::make_pair(0.0, CGAL_IA_MIN_DOUBLE);
+          }
+          return res;
         }
 
         std::pair<double, double> get_interval_as_boost( Type x ) const {
@@ -952,7 +964,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion_code(const Type input = x);
           double l = 0.0, u = 0.0;
           if (CGAL::is_zero(x.num)) { // return [0.0, 0.0]
-            CGAL_assertion(are_correct_bounds(l, u, input));
+            CGAL_assertion(are_bounds_correct(l, u, input));
             return std::make_pair(l, u);
           }
           CGAL_assertion(!CGAL::is_zero(x.num));
@@ -1024,11 +1036,12 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
               if (cmp > 0) {
 
                 p <<= 1;
+                std::cout << "p bits shifted: " << boost::multiprecision::msb(p) << std::endl;
                 ++shift;
                 ++p;
                 std::tie(l, u) = get_1ulp_interval(shift, p);
 
-              } else if ( ((cmp == 0) && (p & 1u))) {
+              } else if ( ((cmp == 0) && (p & 1u)) ) {
                 CGAL_assertion_msg(false, "TODO: THIS CASE1!");
               } else {
                 CGAL_assertion_msg(false, "TODO: THIS CASE2!");
@@ -1052,7 +1065,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           std::cout << "nextafter l: " << nextafter(l, +inf) << std::endl;
           std::cout << std::endl;
 
-          CGAL_assertion(are_correct_bounds(l, u, input));
+          CGAL_assertion(are_bounds_correct(l, u, input));
           return std::make_pair(l, u);
         }
 
@@ -1081,7 +1094,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             CGAL_assertion(l == -inf);
           }
 
-          CGAL_assertion(are_correct_bounds(l, u, x));
+          CGAL_assertion(are_bounds_correct(l, u, x));
           return std::make_pair(l, u);
         }
 
@@ -1102,7 +1115,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           CGAL_assertion(CGAL::abs(xd.inf()) != inf && CGAL::abs(xd.sup()) != inf);
 
           const Interval_nt<> quot = xn / xd;
-          CGAL_assertion(are_correct_bounds(quot.inf(), quot.sup(), x));
+          CGAL_assertion(are_bounds_correct(quot.inf(), quot.sup(), x));
           return std::make_pair(quot.inf(), quot.sup());
         }
 
