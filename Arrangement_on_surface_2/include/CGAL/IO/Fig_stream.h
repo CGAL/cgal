@@ -754,9 +754,9 @@ public:
 
     std::stringstream out;
     out << "0x"  << std::hex
-	<< std::setfill('0') << std::setw(2) << r
-	<< std::setfill('0') << std::setw(2) << g
-	<< std::setfill('0') << std::setw(2) << b;
+        << std::setfill('0') << std::setw(2) << r
+        << std::setfill('0') << std::setw(2) << g
+        << std::setfill('0') << std::setw(2) << b;
 
     // Write the color to the FIG file.
     _ofile << "0 "                        // Desginates a color pseudo-object.
@@ -1704,7 +1704,6 @@ protected:
     _ofile << ' ' << ix << ' ' << iy << ' ';
 
     // Write the text.
-    char    oct[10];
     int     i;
 
     for (i = 0; i < len_text; i++)
@@ -1716,9 +1715,11 @@ protected:
       }
       else
       {
-        // Convert the current character to an octal string and write it.
-        sprintf (oct, "\\%03o", text[i]);
-        _ofile << oct;
+        // Convert the current character to an octal string and write
+        // it.
+        std::stringstream out;
+        out << "\\" << std::setfill('0') << std::setw(3) << std::oct << text[i];
+        _ofile << out.str();
       }
     }
 
