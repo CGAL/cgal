@@ -910,6 +910,43 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return std::make_pair(l, u);
         }
 
+        std::pair<double, double> get_1ulp_interval( const int64_t shift, const NT& p ) const {
+
+          std::cout << "- 1ulp interval: " << std::endl;
+
+          CGAL_assertion(p >= 0);
+          const uint64_t pp = static_cast<uint64_t>(p);
+          const uint64_t qq = static_cast<uint64_t>(pp + 1);
+
+          CGAL_assertion(pp >= 0);
+          CGAL_assertion(qq > pp);
+          const double pp_dbl = static_cast<double>(pp);
+          const double qq_dbl = static_cast<double>(qq);
+
+          std::cout << "pp_dbl: " << pp_dbl << std::endl;
+          std::cout << "qq_dbl: " << qq_dbl << std::endl;
+
+          const Interval_nt<> intv(pp_dbl, qq_dbl);
+          return ldexp(intv, -shift).pair();
+        }
+
+        std::pair<double, double> get_0ulp_interval( const int64_t shift, const NT& p ) const {
+
+          std::cout << "- 0ulp interval: " << std::endl;
+
+          CGAL_assertion(p >= 0);
+          const uint64_t pp = static_cast<uint64_t>(p);
+
+          CGAL_assertion(pp >= 0);
+          const double pp_dbl = static_cast<double>(pp);
+
+          std::cout << "pp_dbl: " << pp_dbl << std::endl;
+          std::cout << "qq_dbl: " << pp_dbl << std::endl;
+
+          const Interval_nt<> intv(pp_dbl, pp_dbl);
+          return ldexp(intv, -shift).pair();
+        }
+
         std::pair<double, double> get_interval_as_boost( Type x ) const {
 
           CGAL_assertion_code(const Type input = x);
@@ -941,15 +978,15 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(x.num));
           const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(x.den));
           const int64_t msb_diff = msb_num - msb_den;
-          const int64_t shift = num_dbl_digits - msb_diff;
+          int64_t shift = num_dbl_digits - msb_diff;
 
-          // std::cout << "msb num: " << msb_num << std::endl;
-          // std::cout << "msb den: " << msb_den << std::endl;
-          // std::cout << "msb diff: " << msb_diff << std::endl;
-          // std::cout << "shift: " << shift << std::endl;
+          std::cout << "msb  num: " << msb_num  << std::endl;
+          std::cout << "msb  den: " << msb_den  << std::endl;
+          std::cout << "msb diff: " << msb_diff << std::endl;
+          std::cout << "   shift: " << shift    << std::endl;
 
-          // std::cout << "x num: " << x.num << std::endl;
-          // std::cout << "x den: " << x.den << std::endl;
+          std::cout << "x num: " << x.num << std::endl;
+          std::cout << "x den: " << x.den << std::endl;
 
           if (shift > 0) {
             CGAL_assertion(msb_diff < num_dbl_digits);
@@ -962,73 +999,46 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             static_cast<int64_t>(boost::multiprecision::msb(x.num)) -
             static_cast<int64_t>(boost::multiprecision::msb(x.den)));
 
-          NT q, r;
-          boost::multiprecision::divide_qr(x.num, x.den, q, r);
-          CGAL_assertion_code(const int64_t q_bits =
-            static_cast<int64_t>(boost::multiprecision::msb(q)));
+          NT p, r;
+          boost::multiprecision::divide_qr(x.num, x.den, p, r);
+          CGAL_assertion_code(const int64_t p_bits =
+            static_cast<int64_t>(boost::multiprecision::msb(p)));
 
-          // std::cout << "x num shift: " << x.num << std::endl;
-          // std::cout << "x den shift: " << x.den << std::endl;
+          std::cout << "x num shifted: " << x.num << std::endl;
+          std::cout << "x den shifted: " << x.den << std::endl;
 
-          // std::cout << "q: " << q << std::endl;
-          // std::cout << "r: " << r << std::endl;
+          std::cout << "p bits: " << boost::multiprecision::msb(p) << std::endl;
 
-          // WARNING: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Combinatorial_map/TestReport_cgaltest_VS-19.gz
-          // Fixed: Interval_nt is defined only for double, see impl below.
-          // if (q_bits == num_dbl_digits - 1) {
-          //   if (!CGAL::is_zero(r)) {
-          //     q <<= 1;
-          //     const NT p = q;
-          //     ++q;
-          //     ++shift;
-          //     const uint64_t pp = static_cast<uint64_t>(p);
-          //     const uint64_t qq = static_cast<uint64_t>(q);
-          //     CGAL_assertion(pp >= 0 && qq > pp);
-          //     const double pp_dbl = static_cast<double>(pp);
-          //     const double qq_dbl = static_cast<double>(qq);
+          std::cout << "p: " << p << std::endl;
+          std::cout << "r: " << r << std::endl;
 
-          //     // std::cout << "msb p: " << msb(p) << std::endl;
-          //     // std::cout << "msb q: " << msb(q) << std::endl;
-
-          //     // std::cout << "pp_dbl: " << pp_dbl << std::endl;
-          //     // std::cout << "qq_dbl: " << qq_dbl << std::endl;
-
-          //     const Interval_nt<> intv(pp_dbl, qq_dbl);
-          //     std::tie(l, u) = ldexp(intv, -shift).pair();
-
-          //   } else {
-
-          //   }
-          // } else {
-
-          if (!CGAL::is_zero(r)) {
-            const NT p = q;
-            ++q;
-            CGAL_assertion(p >= 0 && q > p);
-            const uint64_t pp = static_cast<uint64_t>(p);
-            const uint64_t qq = static_cast<uint64_t>(q);
-            CGAL_assertion(pp >= 0 && qq > pp);
-            const double pp_dbl = static_cast<double>(pp);
-            const double qq_dbl = static_cast<double>(qq);
-
-            // std::cout << "msb p: " << msb(p) << std::endl;
-            // std::cout << "msb q: " << msb(q) << std::endl;
-
-            // std::cout << "pp_dbl: " << pp_dbl << std::endl;
-            // std::cout << "qq_dbl: " << qq_dbl << std::endl;
-
-            const Interval_nt<> intv(pp_dbl, qq_dbl);
-            std::tie(l, u) = ldexp(intv, -shift).pair();
+          if (r == 0) {
+            std::cout << "- case r = 0" << std::endl;
+            std::tie(l, u) = get_0ulp_interval(shift, p);
           } else {
-            CGAL_assertion(CGAL::is_zero(r));
-            CGAL_assertion(q > 0);
-            const uint64_t qq = static_cast<uint64_t>(q);
-            CGAL_assertion(qq > 0);
-            const double qq_dbl = static_cast<double>(qq);
-            const Interval_nt<> intv(qq_dbl, qq_dbl);
-            std::tie(l, u) = ldexp(intv, -shift).pair();
+            if (p_bits == num_dbl_digits - 1) {
+
+              std::cout << "- case r > 0 && p_bits = 51" << std::endl;
+              r <<= 1;
+              const int cmp = r.compare(x.den);
+              if (cmp > 0) {
+
+                p <<= 1;
+                ++shift;
+                ++p;
+                std::tie(l, u) = get_1ulp_interval(shift, p);
+
+              } else if ( ((cmp == 0) && (p & 1u))) {
+                CGAL_assertion_msg(false, "TODO: THIS CASE1!");
+              } else {
+                CGAL_assertion_msg(false, "TODO: THIS CASE2!");
+              }
+
+            } else {
+              std::cout << "- case r > 0 && p_bits = 52" << std::endl;
+              std::tie(l, u) = get_1ulp_interval(shift, p);
+            }
           }
-          // }
 
           if (change_sign) {
             const double t = l;
@@ -1036,9 +1046,11 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             u = -t;
           }
 
-          // std::cout << "l: " << l << std::endl;
-          // std::cout << "u: " << u << std::endl;
-          // std::cout << "nextafter: " << nextafter(l, +std::numeric_limits<double>::infinity()) << std::endl;
+          std::cout << "          l: " << l << std::endl;
+          std::cout << "          u: " << u << std::endl;
+          const double inf = std::numeric_limits<double>::infinity();
+          std::cout << "nextafter l: " << nextafter(l, +inf) << std::endl;
+          std::cout << std::endl;
 
           CGAL_assertion(are_correct_bounds(l, u, input));
           return std::make_pair(l, u);
