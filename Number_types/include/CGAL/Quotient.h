@@ -57,10 +57,6 @@ simplify_quotient(NT & , NT & ) { }
 
 #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
 
-// WARNINGS:
-// https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Convex_decomposition_3/TestReport_cgaltest_Ubuntu-gcc7.gz
-// https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Convex_decomposition_3/TestReport_cgaltest_arm64-apple_bigsur_clang1200-release-64bits.gz
-// See boost includes above. Should make it work, I guess.
 inline void
 simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
 
@@ -919,15 +915,15 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         // TODO: This is a temporary implementation and should be replaced
         // by the default one.
         Interval_nt<false>
-        my_ldexp(const Interval_nt<false> &i, const int e) const {
+        my_ldexp( const Interval_nt<false>& intv, const int e ) const {
 
-          CGAL_assertion(i.inf() > 0.0);
-          CGAL_assertion(i.sup() > 0.0);
+          CGAL_assertion(intv.inf() > 0.0);
+          CGAL_assertion(intv.sup() > 0.0);
           const double scale = std::ldexp(1.0, e);
           return Interval_nt<false> (
             CGAL_NTS is_finite(scale) ?
-            scale * i.inf() : CGAL_IA_MAX_DOUBLE,
-            scale == 0 ? CGAL_IA_MIN_DOUBLE : scale * i.sup());
+            scale * intv.inf() : CGAL_IA_MAX_DOUBLE,
+            scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup());
         }
 
         std::pair<double, double> get_0ulp_interval( const int64_t shift, const NT& p ) const {
@@ -1210,7 +1206,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         #else // master version
 
           #if defined(CGAL_USE_TO_INTERVAL_WITH_BOOST)
-          return std::make_pair(0.0, 0.0);
+          return std::make_pair(static_cast<double>(x.num), static_cast<double>(x.den));
           #else
           const Interval_nt<> quot =
             Interval_nt<>(CGAL_NTS to_interval(x.numerator())) /

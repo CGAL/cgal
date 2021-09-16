@@ -81,7 +81,8 @@ struct Exact_field_selector
 
 #else // run testme
 
-{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
+// { typedef Quotient<boost::multiprecision::cpp_int> Type; };
+{ typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
 
 #endif // run testme
 

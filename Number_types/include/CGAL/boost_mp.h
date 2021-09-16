@@ -193,26 +193,69 @@ struct RET_boost_mp_base
     struct To_interval
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
 
-        #if defined(CGAL_USE_TO_INTERVAL_WITH_BOOST) // test boost devel
+        // #if defined(CGAL_USE_TO_INTERVAL_WITH_BOOST) // test boost devel - use when the default is Quotient<cpp_int>
+        #if !defined(CGAL_DO_NOT_RUN_TESTME) || defined(CGAL_USE_TO_INTERVAL_WITH_BOOST) // test boost devel - use when the default is cpp_rational
 
-        bool are_correct_bounds( const double l, const double u, const Type& x ) const {
+        bool are_bounds_correct( const double l, const double u, const Type& x ) const {
+
+          const double inf = std::numeric_limits<double>::infinity();
+          CGAL_assertion(u == l || u == std::nextafter(l, +inf));
+          const bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
 
           if (
-            CGAL::abs(l) == std::numeric_limits<double>::infinity() ||
-            CGAL::abs(u) == std::numeric_limits<double>::infinity() ||
+            CGAL::abs(l) == inf ||
+            CGAL::abs(u) == inf ||
             CGAL::abs(l) == 0.0 ||
             CGAL::abs(u) == 0.0) {
-            return true;
+            return are_bounds_tight;
           }
-          CGAL_assertion(CGAL::abs(l) != std::numeric_limits<double>::infinity());
-          CGAL_assertion(CGAL::abs(u) != std::numeric_limits<double>::infinity());
+          CGAL_assertion(CGAL::abs(l) != inf);
+          CGAL_assertion(CGAL::abs(u) != inf);
           CGAL_assertion(CGAL::abs(l) != 0.0);
           CGAL_assertion(CGAL::abs(u) != 0.0);
 
           const Type lb(l), ub(u);
           CGAL_assertion(lb <= x);
           CGAL_assertion(ub >= x);
-          return lb <= ub && lb <= x && ub >= x;
+          const bool are_bounds_respected = (lb <= x && x <= ub);
+          return are_bounds_tight && are_bounds_respected;
+        }
+
+        Interval_nt<false>
+        my_ldexp( const Interval_nt<false>& intv, const int e ) const {
+
+          CGAL_assertion(intv.inf() > 0.0);
+          CGAL_assertion(intv.sup() > 0.0);
+          const double scale = std::ldexp(1.0, e);
+          return Interval_nt<false> (
+            CGAL_NTS is_finite(scale) ?
+            scale * intv.inf() : CGAL_IA_MAX_DOUBLE,
+            scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup());
+        }
+
+        template<typename ET>
+        std::pair<double, double> get_0ulp_interval( const int64_t shift, const ET& p ) const {
+
+          CGAL_assertion(p >= 0);
+          const uint64_t pp = static_cast<uint64_t>(p);
+          CGAL_assertion(pp >= 0);
+          const double pp_dbl = static_cast<double>(pp);
+          const Interval_nt<false> intv(pp_dbl, pp_dbl);
+          return my_ldexp(intv, -static_cast<int>(shift)).pair();
+        }
+
+        template<typename ET>
+        std::pair<double, double> get_1ulp_interval( const int64_t shift, const ET& p ) const {
+
+          CGAL_assertion(p >= 0);
+          const uint64_t pp = static_cast<uint64_t>(p);
+          const uint64_t qq = static_cast<uint64_t>(pp + 1);
+          CGAL_assertion(pp >= 0);
+          CGAL_assertion(qq > pp);
+          const double pp_dbl = static_cast<double>(pp);
+          const double qq_dbl = static_cast<double>(qq);
+          const Interval_nt<false> intv(pp_dbl, qq_dbl);
+          return my_ldexp(intv, -static_cast<int>(shift)).pair();
         }
 
         std::pair<double, double>
@@ -221,14 +264,14 @@ struct RET_boost_mp_base
           auto xnum = boost::multiprecision::numerator(x);
           auto xden = boost::multiprecision::denominator(x);
 
+          CGAL_assertion(!CGAL::is_zero(xden));
           CGAL_assertion_code(const Type input = x);
           double l = 0.0, u = 0.0;
           if (CGAL::is_zero(xnum)) { // return [0.0, 0.0]
-            CGAL_assertion(are_correct_bounds(l, u, input));
+            CGAL_assertion(are_bounds_correct(l, u, input));
             return std::make_pair(l, u);
           }
           CGAL_assertion(!CGAL::is_zero(xnum));
-          CGAL_assertion(!CGAL::is_zero(xden));
 
           // Handle signs.
           bool change_sign = false;
@@ -250,47 +293,49 @@ struct RET_boost_mp_base
           const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(xnum));
           const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(xden));
           const int64_t msb_diff = msb_num - msb_den;
-          const int64_t shift = num_dbl_digits - msb_diff;
+          int64_t shift = num_dbl_digits - msb_diff;
 
           if (shift > 0) {
             CGAL_assertion(msb_diff < num_dbl_digits);
-            xnum <<= shift;
+            xnum <<= +shift;
           } else if (shift < 0) {
             CGAL_assertion(msb_diff > num_dbl_digits);
-            xden <<= boost::multiprecision::detail::unsigned_abs(shift);
+            xden <<= -shift;
           }
           CGAL_assertion(num_dbl_digits ==
             static_cast<int64_t>(boost::multiprecision::msb(xnum)) -
             static_cast<int64_t>(boost::multiprecision::msb(xden)));
 
-          decltype(xnum) q, r;
-          boost::multiprecision::divide_qr(xnum, xden, q, r);
-          CGAL_assertion_code(const int64_t q_bits =
-            static_cast<int64_t>(boost::multiprecision::msb(q)));
-          CGAL_assertion(q_bits == num_dbl_digits ||
-            r != 0 /* when q_bit = num_dbl_digits - 1 */ );
+          decltype(xnum) p, r;
+          boost::multiprecision::divide_qr(xnum, xden, p, r);
+          const int64_t p_bits = static_cast<int64_t>(boost::multiprecision::msb(p));
 
-          // WARNING: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/CGAL-5.4-Ic-5937/Combinatorial_map/TestReport_cgaltest_VS-19.gz
-          // Fixed: Interval_nt is defined only for double, see impl below.
-          if (!CGAL::is_zero(r)) {
-            const decltype(q) p = q;
-            ++q;
-            CGAL_assertion(p >= 0 && q > p);
-            const uint64_t pp = static_cast<uint64_t>(p);
-            const uint64_t qq = static_cast<uint64_t>(q);
-            CGAL_assertion(pp >= 0 && qq > pp);
-            const double pp_dbl = static_cast<double>(pp);
-            const double qq_dbl = static_cast<double>(qq);
-            const Interval_nt<> intv(pp_dbl, qq_dbl);
-            std::tie(l, u) = ldexp(intv, -shift).pair();
+          if (r == 0) {
+            std::tie(l, u) = get_0ulp_interval(shift, p);
           } else {
-            CGAL_assertion(CGAL::is_zero(r));
-            CGAL_assertion(q > 0);
-            const uint64_t qq = static_cast<uint64_t>(q);
-            CGAL_assertion(qq > 0);
-            const double qq_dbl = static_cast<double>(qq);
-            const Interval_nt<> intv(qq_dbl, qq_dbl);
-            std::tie(l, u) = ldexp(intv, -shift).pair();
+            CGAL_assertion(r > 0);
+            CGAL_assertion(r < xden);
+            if (p_bits == num_dbl_digits - 1) { // we did not reach full precision
+
+              p <<= 1;
+              r <<= 1;
+              ++shift;
+
+              CGAL_assertion(r > 0);
+              const int cmp = r.compare(xden);
+              if (cmp > 0) {
+                ++p;
+                std::tie(l, u) = get_1ulp_interval(shift, p);
+              } else if (cmp == 0) {
+                ++p;
+                std::tie(l, u) = get_0ulp_interval(shift, p);
+              } else {
+                std::tie(l, u) = get_1ulp_interval(shift, p);
+              }
+
+            } else {
+              std::tie(l, u) = get_1ulp_interval(shift, p);
+            }
           }
 
           if (change_sign) {
@@ -299,7 +344,7 @@ struct RET_boost_mp_base
             u = -t;
           }
 
-          CGAL_assertion(are_correct_bounds(l, u, input));
+          CGAL_assertion(are_bounds_correct(l, u, input));
           return std::make_pair(l, u);
         }
 
