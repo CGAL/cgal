@@ -199,4 +199,12 @@ endif()
 #CGAL_DATA_DIR, used by `CGAL::data_file_path(filename)` from `CGAL/config.h`
 set(CGAL_DATA_DIR "@CGAL_DATA_DIR@")
 
+if(NOT TARGET CGAL::Data)
+  add_library(CGAL::Data INTERFACE IMPORTED)
+  if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
+    set_target_properties(CGAL::Data PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_DATA_DIR=\"${CGAL_DATA_DIR}\"")
+  endif()
+endif()
+
 include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")
