@@ -916,6 +916,20 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return std::make_pair(l, u);
         }
 
+        // TODO: This is a temporary implementation and should be replaced
+        // by the default one.
+        Interval_nt<false>
+        my_ldexp(const Interval_nt<false> &i, const int e) const {
+
+          CGAL_assertion(i.inf() > 0.0);
+          CGAL_assertion(i.sup() > 0.0);
+          const double scale = std::ldexp(1.0, e);
+          return Interval_nt<false> (
+            CGAL_NTS is_finite(scale) ?
+            scale * i.inf() : CGAL_IA_MAX_DOUBLE,
+            scale == 0 ? CGAL_IA_MIN_DOUBLE : scale * i.sup());
+        }
+
         std::pair<double, double> get_0ulp_interval( const int64_t shift, const NT& p ) const {
 
           // std::cout << "- 0ulp interval: " << std::endl;
@@ -929,8 +943,9 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // std::cout << "pp_dbl: " << pp_dbl << std::endl;
           // std::cout << "qq_dbl: " << pp_dbl << std::endl;
 
-          const Interval_nt<> intv(pp_dbl, pp_dbl);
-          return ldexp(intv, -static_cast<int>(shift)).pair();
+          // TODO: Should we use false?
+          const Interval_nt<false> intv(pp_dbl, pp_dbl);
+          return my_ldexp(intv, -static_cast<int>(shift)).pair();
         }
 
         std::pair<double, double> get_1ulp_interval( const int64_t shift, const NT& p ) const {
@@ -952,20 +967,22 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           // std::cout << "pp_dbl ldexp: " << std::ldexp(pp_dbl, -shift) << std::endl;
           // std::cout << "qq_dbl ldexp: " << std::ldexp(qq_dbl, -shift) << std::endl;
 
-          const Interval_nt<> intv(pp_dbl, qq_dbl);
-          const auto res = ldexp(intv, -static_cast<int>(shift)).pair();
+          const Interval_nt<false> intv(pp_dbl, qq_dbl);
+          /* const auto res = */
+          return my_ldexp(intv, -static_cast<int>(shift)).pair();
 
           // TODO: For some reason, ldexp returns 2.752961027411077506e-308
           // instead of denorm_min!
-          if (res.first == 0.0) {
-            CGAL_assertion(res.second != 0.0);
-            return std::make_pair(0.0, CGAL_IA_MIN_DOUBLE);
-          }
-          return res;
+          // if (res.first == 0.0) {
+          //   CGAL_assertion(res.second != 0.0);
+          //   return std::make_pair(0.0, CGAL_IA_MIN_DOUBLE);
+          // }
+          // return res;
         }
 
         std::pair<double, double> get_interval_as_boost( Type x ) const {
 
+          CGAL_assertion(!CGAL::is_zero(x.den));
           CGAL_assertion_code(const Type input = x);
           double l = 0.0, u = 0.0;
           if (CGAL::is_zero(x.num)) { // return [0.0, 0.0]
@@ -973,7 +990,6 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
             return std::make_pair(l, u);
           }
           CGAL_assertion(!CGAL::is_zero(x.num));
-          CGAL_assertion(!CGAL::is_zero(x.den));
 
           // Handle signs.
           bool change_sign = false;
@@ -1007,10 +1023,10 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           if (shift > 0) {
             CGAL_assertion(msb_diff < num_dbl_digits);
-            x.num <<= shift;
+            x.num <<= +shift;
           } else if (shift < 0) {
             CGAL_assertion(msb_diff > num_dbl_digits);
-            x.den <<= boost::multiprecision::detail::unsigned_abs(shift);
+            x.den <<= -shift;
           }
           CGAL_assertion(num_dbl_digits ==
             static_cast<int64_t>(boost::multiprecision::msb(x.num)) -
@@ -1087,13 +1103,13 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
                 ++p;
                 std::tie(l, u) = get_1ulp_interval(shift, p);
 
-              } else if ( (cmp == 0) && (p & 1u) ) {
+              } else if ( (cmp == 0) /* && (p & 1u) */ ) {
 
                 // std::cout << "subcase 2" << std::endl;
                 // CGAL_assertion_msg(false, "TODO: SUBCASE2!");
 
                 ++p;
-                std::tie(l, u) = get_1ulp_interval(shift, p);
+                std::tie(l, u) = get_0ulp_interval(shift, p);
 
               } else {
 
