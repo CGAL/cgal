@@ -32,10 +32,10 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionSharEdges = new QAction("Detect Sharp Edges", mw);
-    actionSharEdges->setObjectName("detectSharpFeaturesAction");
-    if(actionSharEdges) {
-      connect(actionSharEdges, SIGNAL(triggered()),
+    actionSharpEdges = new QAction("Detect Sharp Edges", mw);
+    actionSharpEdges->setObjectName("detectSharpFeaturesAction");
+    if(actionSharpEdges) {
+      connect(actionSharpEdges, SIGNAL(triggered()),
               this, SLOT(detectSharpEdgesWithInputDialog()));
     }
 
@@ -57,7 +57,7 @@ public:
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionSharEdges
+    return QList<QAction*>() << actionSharpEdges
                              << actionSharpCorners;
   }
 
@@ -72,7 +72,7 @@ protected:
   bool is_sharp(halfedge_descriptor he);
 
 private:
-  QAction* actionSharEdges;
+  QAction* actionSharpEdges;
   QAction* actionSharpCorners;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;

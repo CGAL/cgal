@@ -122,6 +122,7 @@ struct Scene_surface_mesh_item_priv{
     smesh_(new SMesh(*other.d->smesh_)),
     idx_data_(other.d->idx_data_),
     idx_edge_data_(other.d->idx_edge_data_),
+    idx_corner_data_(other.d->idx_corner_data_),
     fpatch_id_map(other.d->fpatch_id_map),
     min_patch_id(other.d->min_patch_id),
     colors_(other.d->colors_)
@@ -135,9 +136,12 @@ struct Scene_surface_mesh_item_priv{
                                                  true));
     item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_WITHOUT_LIGHT,
                                                  true));
-    item->setPointContainer(0, new Point_container(VI::PROGRAM_NO_SELECTION,
+    item->setPointContainer(1, new Point_container(VI::PROGRAM_NO_SELECTION,
                                                  false));
+    item->setPointContainer(0, new Point_container(VI::PROGRAM_WITHOUT_LIGHT,
+                                                 true));
     item->getEdgeContainer(0)->setFrameMatrix(QMatrix4x4());
+    item->getPointContainer(0)->setFrameMatrix(QMatrix4x4());
     has_feature_edges = false;
     has_feature_corners = false;
     invalidate_stats();
@@ -170,8 +174,10 @@ struct Scene_surface_mesh_item_priv{
                                                  true));
     item->setEdgeContainer(0, new Edge_container(VI::PROGRAM_WITHOUT_LIGHT,
                                                  true));
+    item->setPointContainer(1, new Point_container(VI::PROGRAM_NO_SELECTION,
+                                                 true));
     item->setPointContainer(0, new Point_container(VI::PROGRAM_WITHOUT_LIGHT,
-                                                 false));
+                                                 true));
 
     has_feature_edges = false;
     has_feature_corners = false;
@@ -263,9 +269,13 @@ struct Scene_surface_mesh_item_priv{
   mutable std::vector<unsigned int> idx_data_;
   mutable std::size_t idx_data_size;
   mutable std::vector<unsigned int> idx_edge_data_;
+  mutable std::vector<unsigned int> idx_corner_data_;
   mutable std::size_t idx_edge_data_size;
+  mutable std::size_t idx_corner_data_size;
   mutable std::vector<unsigned int> idx_feature_edge_data_;
+  mutable std::vector<unsigned int> idx_feature_corner_data_;
   mutable std::size_t idx_feature_edge_data_size;
+  mutable std::size_t idx_feature_corner_data_size;
   mutable std::vector<cgal_gl_data> smooth_vertices;
   mutable std::vector<cgal_gl_data> smooth_normals;
   mutable std::vector<cgal_gl_data> flat_vertices;
@@ -532,6 +542,20 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       }
     }
     idx_edge_data_.shrink_to_fit();
+
+    idx_corner_data_.clear();
+    idx_corner_data_.shrink_to_fit();
+    idx_corner_data_.reserve(num_vertices(*smesh_) * 2);
+    for(vertex_descriptor vd : vertices(*smesh_))
+    {
+      idx_corner_data_.push_back(vd);
+      if(has_feature_corners &&
+         get(v_is_feature_map, vd))
+      {
+        idx_feature_corner_data_.push_back(vd);
+      }
+    }
+    idx_corner_data_.shrink_to_fit();
   }
 
   if(name.testFlag(Scene_item_rendering_helper::COLORS) &&
@@ -680,19 +704,27 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   {
     idx_edge_data_size = idx_edge_data_.size();
     idx_feature_edge_data_size = idx_feature_edge_data_.size();
+    idx_corner_data_size = idx_corner_data_.size();
+    idx_feature_corner_data_size = idx_feature_corner_data_.size();
     idx_data_size = idx_data_.size();
     flat_vertices_size = flat_vertices.size();
 
     item->getPointContainer(0)->allocate(Pt::Vertices, smooth_vertices.data(),
                                         static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
-    item->getEdgeContainer(0)->allocate(Ed::Indices, idx_edge_data_.data(),
-                                        static_cast<int>(idx_edge_data_.size()*sizeof(unsigned int)));
     item->getEdgeContainer(0)->allocate(Ed::Vertices, smooth_vertices.data(),
                                         static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
+    item->getEdgeContainer(0)->allocate(Ed::Indices, idx_edge_data_.data(),
+                                        static_cast<int>(idx_edge_data_.size()*sizeof(unsigned int)));
+    item->getPointContainer(0)->allocate(Pt::Indices, idx_corner_data_.data(),
+                                         static_cast<int>(idx_corner_data_.size()*sizeof(unsigned int)));
     item->getEdgeContainer(1)->allocate(Ed::Indices, idx_feature_edge_data_.data(),
                                         static_cast<int>(idx_feature_edge_data_.size()*sizeof(unsigned int)));
+    item->getPointContainer(1)->allocate(Pt::Indices, idx_feature_corner_data_.data(),
+                                        static_cast<int>(idx_feature_corner_data_.size()*sizeof(unsigned int)));
     item->getEdgeContainer(1)->allocate(Ed::Vertices, smooth_vertices.data(),
                                         static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
+    item->getPointContainer(1)->allocate(Pt::Vertices, smooth_vertices.data(),
+                                         static_cast<int>(num_vertices(*smesh_)*3*sizeof(cgal_gl_data)));
     item->getTriangleContainer(0)->allocate(Tri::Vertex_indices, idx_data_.data(),
                                             static_cast<int>(idx_data_.size()*sizeof(unsigned int)));
     item->getTriangleContainer(1)->allocate(Tri::Flat_vertices, flat_vertices.data(),
@@ -754,32 +786,39 @@ void Scene_surface_mesh_item_priv::initializeBuffers(CGAL::Three::Viewer_interfa
   item->getTriangleContainer(0)->initializeBuffers(viewer);
   item->getEdgeContainer(1)->initializeBuffers(viewer);
   item->getEdgeContainer(0)->initializeBuffers(viewer);
+  item->getPointContainer(1)->initializeBuffers(viewer);
   item->getPointContainer(0)->initializeBuffers(viewer);
 
   ////Clean-up
   item->getPointContainer(0)->setFlatDataSize(vertices(*smesh_).size()*3);
   item->getTriangleContainer(1)->setFlatDataSize(flat_vertices_size);
   item->getTriangleContainer(0)->setIdxSize(idx_data_size);
-  item->getEdgeContainer(1)->setIdxSize( idx_feature_edge_data_size);
-  item->getEdgeContainer(0)->setIdxSize( idx_edge_data_size);
-  smooth_vertices       .resize(0);
-  smooth_normals        .resize(0);
-  flat_vertices         .resize(0);
-  flat_normals          .resize(0);
-  f_colors              .resize(0);
-  v_colors              .resize(0);
-  idx_data_             .resize(0);
-  idx_edge_data_        .resize(0);
-  idx_feature_edge_data_.resize(0);
-  smooth_vertices       .shrink_to_fit();
-  smooth_normals        .shrink_to_fit();
-  flat_vertices         .shrink_to_fit();
-  flat_normals          .shrink_to_fit();
-  f_colors              .shrink_to_fit();
-  v_colors              .shrink_to_fit();
-  idx_data_             .shrink_to_fit();
-  idx_edge_data_        .shrink_to_fit();
-  idx_feature_edge_data_.shrink_to_fit();
+  item->getEdgeContainer (1) ->setIdxSize( idx_feature_edge_data_size);
+  item->getEdgeContainer (0) ->setIdxSize( idx_edge_data_size);
+  item->getPointContainer(1) ->setIdxSize( idx_feature_corner_data_size);
+  item->getPointContainer(0) ->setIdxSize( idx_corner_data_size);
+  smooth_vertices         .resize(0);
+  smooth_normals          .resize(0);
+  flat_vertices           .resize(0);
+  flat_normals            .resize(0);
+  f_colors                .resize(0);
+  v_colors                .resize(0);
+  idx_data_               .resize(0);
+  idx_edge_data_          .resize(0);
+  idx_corner_data_        .resize(0);
+  idx_feature_edge_data_  .resize(0);
+  idx_feature_corner_data_.resize(0);
+  smooth_vertices         .shrink_to_fit();
+  smooth_normals          .shrink_to_fit();
+  flat_vertices           .shrink_to_fit();
+  flat_normals            .shrink_to_fit();
+  f_colors                .shrink_to_fit();
+  v_colors                .shrink_to_fit();
+  idx_data_               .shrink_to_fit();
+  idx_edge_data_          .shrink_to_fit();
+  idx_corner_data_        .shrink_to_fit();
+  idx_feature_edge_data_  .shrink_to_fit();
+  idx_feature_corner_data_.shrink_to_fit();
 }
 
 
@@ -846,6 +885,12 @@ void Scene_surface_mesh_item::drawPoints(CGAL::Three::Viewer_interface *viewer) 
   getPointContainer(0)->setSelected(is_selected);
   getPointContainer(0)->setColor(color());
   getPointContainer(0)->draw( viewer, true);
+  if(d->has_feature_corners)
+  {
+    getPointContainer(1)->setSelected(false);
+    getPointContainer(1)->setColor(QColor(Qt::red));
+    getPointContainer(1)->draw(viewer, true);
+  }
 }
 
 void
@@ -1333,6 +1378,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
   getTriangleContainer(0)->reset_vbos(name);
   getEdgeContainer(1)->reset_vbos(name);
   getEdgeContainer(0)->reset_vbos(name);
+  getPointContainer(1)->reset_vbos(name);
   getPointContainer(0)->reset_vbos(name);
   bool has_been_init = false;
   for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
@@ -2018,6 +2064,12 @@ void Scene_surface_mesh_item::resetColors()
       put(d->e_is_feature_map, e, false);
     }
     d->has_feature_edges = false;
+  }
+  if(d->has_feature_corners){
+      for(boost::graph_traits<SMesh>::vertex_descriptor v : vertices(*d->smesh_)){
+          put(d->v_is_feature_map, v, false);
+      }
+      d->has_feature_corners = false;
   }
   invalidate(COLORS);
   itemChanged();
