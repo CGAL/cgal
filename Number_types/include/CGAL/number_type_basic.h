@@ -62,7 +62,9 @@
 
 #ifdef CGAL_USE_GMP
 #ifdef CGAL_USE_GMPXX
+#if defined(CGAL_DO_NOT_RUN_TESTME)
 #include <CGAL/gmpxx.h>
+#endif
 #endif // CGAL_USE_GMPXX
 #endif // CGAL_USE_GMP
 

@@ -1145,7 +1145,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           }
 
           double l, u;
-          std::tie(l, u) = to_interval(rat);
+          std::tie(l, u) = to_interval(rat); // TODO: fails if boost_mp is not included!
           const double inf = std::numeric_limits<double>::infinity();
 
           if (l == +inf) {
