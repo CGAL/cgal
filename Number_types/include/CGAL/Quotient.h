@@ -53,7 +53,7 @@ namespace CGAL {
 // This function is not documented as a number type requirement for now.
 template < typename NT >
 inline void
-simplify_quotient(NT & a, NT & b) { }
+simplify_quotient(NT & , NT & ) { }
 
 #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
 
@@ -1153,7 +1153,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const double inf = std::numeric_limits<double>::infinity();
 
           if (l == +inf) {
-            l = std::numeric_limits<double>::max();
+            l = (std::numeric_limits<double>::max)();
             CGAL_assertion(u == +inf);
           } else if (u == -inf) {
             u = std::numeric_limits<double>::lowest();
