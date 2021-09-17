@@ -848,7 +848,7 @@ ch_quickhull_face_graph(std::list<typename Traits::Point_3>& points,
       CGAL_assertion( traits.has_on_positive_side_3_object()(
             construct_plane(v2->point(),v1->point(),v0->point()),
             v3->point()) );
-      make_tetrahedron(v0->point(),v1->point(),v3->point(),v2->point(),P);
+      // AF make_tetrahedron(v0->point(),v1->point(),v3->point(),v2->point(),P);
     }
   }
 
