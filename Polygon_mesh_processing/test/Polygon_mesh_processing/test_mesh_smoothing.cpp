@@ -3,6 +3,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/property_map.h>
 
@@ -82,6 +83,18 @@ void test_area_smoothing_without_projection(const char* filename)
                                           .use_angle_smoothing(false));
 }
 
+template<typename Mesh>
+void test_tangential_relaxation(const char* filename)
+{
+  Mesh mesh;
+  read_mesh(filename, mesh);
+  PMP::tangential_relaxation(vertices(mesh), mesh,
+    CGAL::parameters::number_of_iterations(4)
+    .relax_constraints(false));
+  PMP::tangential_relaxation(vertices(mesh), mesh);
+  PMP::tangential_relaxation(mesh);
+}
+
 template <typename Mesh>
 void test_constrained_vertices(const char* filename)
 {
@@ -127,6 +140,7 @@ int main(int /*argc*/, char** /*argv*/)
   test_angle_smoothing_without_projection<SurfaceMesh>(filename_elephant);
   test_area_smoothing_without_projection<SurfaceMesh>(filename_mannequin);
   test_constrained_vertices<SurfaceMesh>(filename_elephant);
+  test_tangential_relaxation<SurfaceMesh>(filename_elephant);
 
   // test with Polyhedron
   test_smoothing<Polyhedron>(filename_elephant);
@@ -135,6 +149,7 @@ int main(int /*argc*/, char** /*argv*/)
   test_angle_smoothing_without_projection<Polyhedron>(filename_elephant);
   test_area_smoothing_without_projection<Polyhedron>(filename_mannequin);
   test_constrained_vertices<Polyhedron>(filename_mannequin);
+  test_tangential_relaxation<Polyhedron>(filename_elephant);
 
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
