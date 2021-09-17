@@ -810,6 +810,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
       public:
 
+        #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
+
         bool are_bounds_correct( const double l, const double u, const Type& x ) const {
 
           const double inf = std::numeric_limits<double>::infinity();
@@ -841,8 +843,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return are_bounds_tight && are_bounds_respected;
         }
 
-        #if defined(CGAL_USE_CPP_INT) || !defined(CGAL_DO_NOT_RUN_TESTME)
-
+        /*
         std::pair< Interval_nt<>, int64_t > get_interval_exp( NT& x ) const {
 
           CGAL_assertion(CGAL::is_positive(x));
@@ -910,7 +911,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
 
           CGAL_assertion(are_bounds_correct(l, u, input));
           return std::make_pair(l, u);
-        }
+        } */
 
         // TODO: This is a temporary implementation and should be replaced
         // by the default one.
@@ -1131,6 +1132,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           return std::make_pair(l, u);
         }
 
+        /*
         std::pair<double, double> interval_from_cpp_rational( const Type& x ) const {
 
           // Seems fast enough because this conversion happens
@@ -1179,7 +1181,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
           const Interval_nt<> quot = xn / xd;
           CGAL_assertion(are_bounds_correct(quot.inf(), quot.sup(), x));
           return std::make_pair(quot.inf(), quot.sup());
-        }
+        } */
 
         #endif // CPP_INT
 
