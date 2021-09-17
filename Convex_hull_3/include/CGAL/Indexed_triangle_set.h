@@ -31,7 +31,7 @@ struct Indexed_triangle_set
 
 template <class P>
 void make_tetrahedron(const P& p0, const P&p1, const P& p2, const P& p3,
-		      Indexed_triangle_set<P>& its)
+                      Indexed_triangle_set<P>& its)
 {
   std::cout << "make_tetrahedron" << std::endl;
 }
@@ -73,7 +73,7 @@ void add_isolated_points(const P& point, Indexed_triangle_set<P>& its)
 
 template <typename P>
 void copy_ch2_to_face_graph(const std::list<P>& CH_2,
-			    Indexed_triangle_set<P>& its)
+                            Indexed_triangle_set<P>& its)
 {
   std::cout << "copy_ch2_to_face_graph" << std::endl;
 }
