@@ -165,8 +165,9 @@ Mesh smoothing of the closed surface <i>blobby</i>, containing self-intersection
 Statistics for the various combinations of mesh smoothing.
 \cgalFigureEnd
 
-Mesh smoothing can also be achieved with `CGAL::Polygon_mesh_processing::tangential_relaxation()`,
-that iteratively performs vertex relocations following an area-based tangential smoothing scheme.
+- Mesh smoothing by tangential relaxation : `CGAL::Polygon_mesh_processing::tangential_relaxation()`
+iteratively performs vertex relocations following an area-based tangential smoothing scheme described in
+\cgalCite{botsch2010PMP}.
 The example \ref Polygon_mesh_processing/tangential_relaxation_example.cpp shows how this
 mesh relaxation function can be used.
 
