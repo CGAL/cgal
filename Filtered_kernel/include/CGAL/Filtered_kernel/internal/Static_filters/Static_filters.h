@@ -26,10 +26,10 @@
 #include <CGAL/Kernel/function_objects.h>
 #include <CGAL/Cartesian/function_objects.h>
 
-#include <CGAL/Filtered_kernel/internal/tools.h>
-#include <CGAL/Filtered_kernel/internal/Orientation_2.h>
-#include <CGAL/Filtered_kernel/internal/Orientation_3.h>
-#include <CGAL/Filtered_kernel/internal/Collinear_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Orientation_2.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Orientation_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Collinear_3.h>
 
 // for static filters added nov./dec. 2011
 #ifdef CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
@@ -42,39 +42,39 @@
 #endif // CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
 
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
-#  include <CGAL/Filtered_kernel/internal/Equal_3.h>
-#  include <CGAL/Filtered_kernel/internal/Equal_2.h>
+#  include <CGAL/Filtered_kernel/internal/Static_filters/Equal_3.h>
+#  include <CGAL/Filtered_kernel/internal/Static_filters/Equal_2.h>
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_COMPARE_X_2_STATIC_FILTERS
-#  include <CGAL/Filtered_kernel/internal/Compare_x_2.h>
-#  include <CGAL/Filtered_kernel/internal/Compare_y_2.h>
+#  include <CGAL/Filtered_kernel/internal/Static_filters/Compare_x_2.h>
+#  include <CGAL/Filtered_kernel/internal/Static_filters/Compare_y_2.h>
 #endif // NOT CGAL_NO_COMPARE_X_2_STATIC_FILTERS
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
-#  include <CGAL/Filtered_kernel/internal/Is_degenerate_3.h>
+#  include <CGAL/Filtered_kernel/internal/Static_filters/Is_degenerate_3.h>
 #endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_ANGLE_3_STATIC_FILTERS
-#  include <CGAL/Filtered_kernel/internal/Angle_3.h>
+#  include <CGAL/Filtered_kernel/internal/Static_filters/Angle_3.h>
 #endif // NOT CGAL_NO_ANGLE_3_STATIC_FILTERS
 
 #ifndef CGAL_NO_DO_INTERSECT_STATIC_FILTERS
-#  include <CGAL/Filtered_kernel/internal/Do_intersect_3.h>
-#  include <CGAL/Filtered_kernel/internal/Do_intersect_2.h>
+#  include <CGAL/Filtered_kernel/internal/Static_filters/Do_intersect_3.h>
+#  include <CGAL/Filtered_kernel/internal/Static_filters/Do_intersect_2.h>
 #endif // NOT NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
-#include <CGAL/Filtered_kernel/internal/Coplanar_3.h>
-#include <CGAL/Filtered_kernel/internal/Compare_y_at_x_2.h>
-#include <CGAL/Filtered_kernel/internal/Side_of_oriented_circle_2.h>
-#include <CGAL/Filtered_kernel/internal/Side_of_oriented_sphere_3.h>
-#include <CGAL/Filtered_kernel/internal/Compare_squared_radius_3.h>
-#include <CGAL/Filtered_kernel/internal/Compare_weighted_squared_radius_3.h>
-#include <CGAL/Filtered_kernel/internal/Power_side_of_oriented_power_sphere_3.h>
-#include <CGAL/Filtered_kernel/internal/Compare_distance_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Coplanar_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Compare_y_at_x_2.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Side_of_oriented_circle_2.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Side_of_oriented_sphere_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Compare_squared_radius_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Compare_weighted_squared_radius_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Compare_distance_3.h>
 
-// #include <CGAL/Filtered_kernel/internal/Coplanar_orientation_3.h>
-// #include <CGAL/Filtered_kernel/internal/Coplanar_side_of_bounded_circle_3.h>
+// #include <CGAL/Filtered_kernel/internal/Static_filters/Coplanar_orientation_3.h>
+// #include <CGAL/Filtered_kernel/internal/Static_filters/Coplanar_side_of_bounded_circle_3.h>
 
 // TODO :
 // - add more predicates :

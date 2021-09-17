@@ -25,7 +25,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 
-#include <CGAL/Filtered_kernel/internal/Static_filters.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filters.h>
 #include <boost/type_traits.hpp>
 
 // This file contains the definition of a generic kernel filter.

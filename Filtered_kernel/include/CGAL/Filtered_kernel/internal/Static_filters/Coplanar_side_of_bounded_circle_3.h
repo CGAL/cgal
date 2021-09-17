@@ -17,7 +17,7 @@
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Profile_counter.h>
-// #include <CGAL/Filtered_kernel/internal/Static_filter_error.h> // Only used to precompute constants
+// #include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h> // Only used to precompute constants
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
 

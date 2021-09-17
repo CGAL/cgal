@@ -15,7 +15,7 @@
 #define CGAL_INTERNAL_STATIC_FILTERS_COMPARE_SQUARED_RADIUS_3_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Filtered_kernel/internal/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
 #include <cmath>
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {

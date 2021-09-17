@@ -15,7 +15,7 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/determinant.h>
-#include <CGAL/Filtered_kernel/internal/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
 
 #include <cmath>
 
