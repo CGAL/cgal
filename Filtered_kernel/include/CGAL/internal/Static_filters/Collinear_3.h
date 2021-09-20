@@ -20,10 +20,6 @@
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
-
-#include <iostream>
-
-
 template < typename K_base >
 class Collinear_3
   : public K_base::Collinear_3
@@ -54,6 +50,8 @@ public:
         fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry) &&
         fit_in_double(get_approx(r).z(), rz))
     {
+      CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
       double dpx = (px - rx);
       double dqx = (qx - rx);
       double dpy = (py - ry);
@@ -81,6 +79,7 @@ public:
         if (CGAL::abs(double_tmp_result) > eps )
           return false;
       }
+
       double dpz = (pz - rz);
       double dqz = (qz - rz);
 
@@ -119,7 +118,10 @@ public:
         if (CGAL::abs(double_tmp_result_AvrrXBP) > eps)
           return false;
       }
+
+      CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
     }
+
     return Base::operator()(p, q, r);
   }
 
