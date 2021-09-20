@@ -9,20 +9,16 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
+#include <CGAL/tags.h>
 
 // Domain
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Mesh_domain = CGAL::Labeled_mesh_domain_3<K>;
 
-using Concurrency_tag =
-#ifdef CGAL_CONCURRENT_MESH_3
-  CGAL::Parallel_tag;
-#else
-  CGAL::Sequential_tag;
-#endif
-
 // Triangulation
-using Tr   = CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type;
+using Tr   = CGAL::Mesh_triangulation_3<Mesh_domain,
+                                        CGAL::Default,
+                                        CGAL::Parallel_if_available_tag>::type;
 using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
 // Criteria
