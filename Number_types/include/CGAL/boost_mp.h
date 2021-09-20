@@ -20,7 +20,8 @@
 // MSVC had trouble with versions <= 1.69:
 // https://github.com/boostorg/multiprecision/issues/98
 #if !defined CGAL_DO_NOT_USE_BOOST_MP && \
-    (!defined _MSC_VER || BOOST_VERSION >= 107000) || !defined(CGAL_DO_NOT_RUN_TESTME)
+    (!defined _MSC_VER || BOOST_VERSION >= 107000) || \
+    defined CGAL_USE_CPP_INT || !defined CGAL_DO_NOT_RUN_TESTME
 #define CGAL_USE_BOOST_MP 1
 
 #include <CGAL/functional.h> // *ary_function
@@ -318,7 +319,7 @@ struct RET_boost_mp_base_rational
           return Interval_nt<false> (
             CGAL_NTS is_finite(scale) ?
             scale * intv.inf() : CGAL_IA_MAX_DOUBLE,
-            scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup());
+            scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup() );
         }
 
         template<typename ET>
@@ -337,7 +338,7 @@ struct RET_boost_mp_base_rational
 
           CGAL_assertion(p >= 0);
           const uint64_t pp = static_cast<uint64_t>(p);
-          const uint64_t qq = static_cast<uint64_t>(pp + 1);
+          const uint64_t qq = pp + 1;
           CGAL_assertion(pp >= 0);
           CGAL_assertion(qq > pp);
           const double pp_dbl = static_cast<double>(pp);
