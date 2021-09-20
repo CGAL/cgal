@@ -28,7 +28,7 @@ namespace
   {
     if ( type == _CRT_ASSERT )
     {
-      std::fprintf(stderr,msg);
+      std::cerr << msg << std::endl;
       *retval = 0 ;
       std::exit(255);
     }
