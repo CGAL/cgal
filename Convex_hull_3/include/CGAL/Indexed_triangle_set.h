@@ -15,6 +15,8 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
+#include <boost/graph/graph_traits.hpp>
+
 #include <vector>
 #include <fstream>
 #include <array>
@@ -33,7 +35,9 @@ template <class P>
 void make_tetrahedron(const P& p0, const P&p1, const P& p2, const P& p3,
                       Indexed_triangle_set<P>& its)
 {
-  std::cout << "make_tetrahedron" << std::endl;
+  CGAL_assertion(its.vertices.empty());
+  its.vertices = {p0, p1, p2, p3};
+  its.faces = { {0, 1, 2}, {1, 0, 3}, {3, 0, 2}, {2, 1, 3} };
 }
 
 template <class P>
@@ -67,7 +71,7 @@ namespace internal {
 template <class P>
 void add_isolated_points(const P& point, Indexed_triangle_set<P>& its)
 {
-  std::cout << "add_isolated_points()" << std::endl;
+  its.vertices.push_back(point);
 }
 
 
@@ -92,13 +96,25 @@ void copy_face_graph(const TDS& tds, Indexed_triangle_set<P>& its)
     vit->info() = i++;
   }
   for (Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit) {
-      its.faces.push_back(CGAL::make_array(fit->vertex(0)->info(), fit->vertex(1)->info(), fit->vertex(2)->info()));
+      its.faces.push_back({fit->vertex(0)->info(), fit->vertex(1)->info(), fit->vertex(2)->info()});
   }
 }
 
 }
 }
 
-} // namespace
+} // namespace CGAL
 
+namespace boost {
+
+// this partial specialization is needed so that the general overload
+// for make_tetrahedron can be eliminated as halfedge_descriptor is
+// used in the returned type
+template <class P>
+struct graph_traits<CGAL::Indexed_triangle_set<P>>
+{
+  typedef void* halfedge_descriptor;
+};
+
+} // boost
 #endif
