@@ -770,7 +770,7 @@ private:
     SparseLinearAlgebraTraits_d solver, ///< sparse linear solver
     double lambda)
   {
-    CGAL_TRACE("Calls solve_poisson()\n");
+    CGAL_TRACE_STREAM << "Calls solve_poisson()\n";
 
     double time_init = clock();
 
@@ -786,7 +786,7 @@ private:
     m_tr->index_unconstrained_vertices();
     unsigned int nb_variables = static_cast<unsigned int>(m_tr->number_of_vertices()-1);
 
-    CGAL_TRACE("  Number of variables: %ld\n", (long)(nb_variables));
+    CGAL_TRACE_STREAM  << "  Number of variables: " <<  nb_variables << std::endl;
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(nb_variables); // matrix is symmetric definite positive
@@ -815,9 +815,9 @@ private:
     clear_duals();
     clear_normals();
     duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
-    CGAL_TRACE("  Creates matrix: done (%.2lf s)\n", duration_assembly);
+    CGAL_TRACE_STREAM << "  Creates matrix: done (" << duration_assembly << "sec.)\n";
 
-    CGAL_TRACE("  Solve sparse linear system...\n");
+    CGAL_TRACE_STREAM << "  Solve sparse linear system...\n";
 
     // Solve "A*X = B". On success, solution is (1/D) * X.
     time_init = clock();
@@ -827,7 +827,7 @@ private:
     CGAL_surface_reconstruction_points_assertion(D == 1.0);
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
 
-    CGAL_TRACE("  Solve sparse linear system: done (%.2lf s)\n", duration_solve);
+    CGAL_TRACE_STREAM << "  Solve sparse linear system: done (" << duration_solve << "sec.)\n";
 
     // copy function's values to vertices
     unsigned int index = 0;
@@ -835,7 +835,7 @@ private:
       if(!m_tr->is_constrained(v))
         v->f() = X[index++];
 
-    CGAL_TRACE("End of solve_poisson()\n");
+    CGAL_TRACE_STREAM << "End of solve_poisson()\n";
 
     return true;
   }
