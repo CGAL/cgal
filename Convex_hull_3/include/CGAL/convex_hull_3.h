@@ -359,6 +359,8 @@ public:
       }
     }
     catch (Uncertain_conversion_exception&){}
+    Protector protector(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     if (ek_plane_ptr==nullptr) {
       const typename Exact_K::Point_3 ep = to_EK(p);
       ek_plane_ptr = new Vector_plus_point<Exact_K>;
