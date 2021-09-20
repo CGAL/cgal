@@ -914,7 +914,8 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
         } */
 
         // TODO: This is a temporary implementation and should be replaced
-        // by the default one.
+        // by the default one. Can we use int64_t for e here? - No, because we
+        // would not be able to run ldexp on it.
         Interval_nt<false>
         my_ldexp( const Interval_nt<false>& intv, const int e ) const {
 

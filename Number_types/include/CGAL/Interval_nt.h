@@ -1017,7 +1017,6 @@ const Interval_nt<Protected> & y){
 
 // TODO : document, when we are OK with the interface.
 // - should it allow other number types for the exponent ?
-// TODO: Can we use int64_t for e here?
 template < bool b >
 Interval_nt<b>
 ldexp(const Interval_nt<b> &i, int e)
