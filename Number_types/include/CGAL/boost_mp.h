@@ -13,6 +13,7 @@
 #define CGAL_BOOST_MP_H
 
 #include <CGAL/config.h>
+#include <CGAL/number_utils.h>
 
 // It is easier to disable this number type completely for old versions.
 // Before 1.63, I/O is broken.  Again, disabling the whole file is just the
@@ -201,16 +202,20 @@ struct RET_boost_mp_base
           // assume the conversion is within 1 ulp
           // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
 
-          // We must use to_nearest with cpp_int.
+          // We must use to_nearest here.
           double i;
           const double inf = std::numeric_limits<double>::infinity();
           {
             Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
             i = static_cast<double>(x);
-            if (CGAL::abs(i) == inf) return std::make_pair(i, i);
+            if (i == +inf) {
+              return std::make_pair((std::numeric_limits<double>::max)(), i);
+            } else if (i == -inf) {
+              return std::make_pair(i, std::numeric_limits<double>::lowest());
+            }
           }
           double s = i;
-          CGAL_assertion(i != inf && s != inf);
+          CGAL_assertion(CGAL::abs(i) != inf && CGAL::abs(s) != inf);
 
           // Throws uncaught exception: Cannot convert a non-finite number to an integer.
           // We can catch it earlier by using the CGAL_assertion() one line above.
@@ -228,62 +233,19 @@ struct RET_boost_mp_base
     };
 };
 
+template <class T, class = boost::mpl::int_<boost::multiprecision::number_category<T>::value> >
+struct RET_boost_mp;
+
 template <class NT>
-struct RET_boost_mp_base_rational
-    : public INTERN_RET::Real_embeddable_traits_base< NT , CGAL::Tag_true > {
+struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_integer> >
+    : RET_boost_mp_base <NT> {};
 
+template <class NT>
+struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> >
+    : RET_boost_mp_base <NT> {
     typedef NT Type;
-
-    struct Is_zero: public CGAL::cpp98::unary_function<Type ,bool> {
-        bool operator()( const Type& x) const {
-            return x.is_zero();
-        }
-    };
-
-    struct Is_positive: public CGAL::cpp98::unary_function<Type ,bool> {
-        bool operator()( const Type& x) const {
-            return x.sign() > 0;
-        }
-    };
-
-    struct Is_negative: public CGAL::cpp98::unary_function<Type ,bool> {
-        bool operator()( const Type& x) const {
-            return x.sign() < 0;
-        }
-    };
-
-    struct Abs : public CGAL::cpp98::unary_function<Type, Type> {
-        template <typename T>
-        Type operator()(const T& x) const {
-            return boost::multiprecision::abs(x);
-        }
-    };
-
-    struct Sgn : public CGAL::cpp98::unary_function<Type, ::CGAL::Sign> {
-        ::CGAL::Sign operator()(Type const& x) const {
-            return CGAL::sign(x.sign());
-        }
-    };
-
-    struct Compare
-        : public CGAL::cpp98::binary_function<Type, Type, Comparison_result> {
-        Comparison_result operator()(const Type& x, const Type& y) const {
-            return CGAL::sign(x.compare(y));
-        }
-    };
-
-    struct To_double
-        : public CGAL::cpp98::unary_function<Type, double> {
-        double operator()(const Type& x) const {
-            return x.template convert_to<double>();
-        }
-    };
-
     struct To_interval
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
-
-        // #if defined(CGAL_USE_TO_INTERVAL_WITH_BOOST) // test boost devel - use when the default is Quotient<cpp_int>
-        #if !defined(CGAL_DO_NOT_RUN_TESTME) || defined(CGAL_USE_TO_INTERVAL_WITH_BOOST) // test boost devel - use when the default is cpp_rational
 
         bool are_bounds_correct( const double l, const double u, const Type& x ) const {
 
@@ -347,8 +309,7 @@ struct RET_boost_mp_base_rational
           return my_ldexp(intv, -static_cast<int>(shift)).pair();
         }
 
-        std::pair<double, double>
-        operator()(const Type& x) const {
+        std::pair<double, double> operator()( const Type& x ) const {
 
           auto xnum = boost::multiprecision::numerator(x);
           auto xden = boost::multiprecision::denominator(x);
@@ -436,55 +397,8 @@ struct RET_boost_mp_base_rational
           CGAL_assertion(are_bounds_correct(l, u, input));
           return std::make_pair(l, u);
         }
-
-        #else // default impl
-
-        std::pair<double, double>
-        operator()(const Type& x) const {
-
-          // See if https://github.com/boostorg/multiprecision/issues/108 suggests anything better
-          // assume the conversion is within 1 ulp
-          // adding IA::smallest() doesn't work because inf-e=inf, even rounded down.
-
-          // We must use to_nearest with cpp_int.
-          double i;
-          const double inf = std::numeric_limits<double>::infinity();
-          {
-            Protect_FPU_rounding<true> P(CGAL_FE_TONEAREST);
-            i = static_cast<double>(x);
-            if (CGAL::abs(i) == inf) return std::make_pair(i, i);
-          }
-          double s = i;
-          CGAL_assertion(i != inf && s != inf);
-
-          // Throws uncaught exception: Cannot convert a non-finite number to an integer.
-          // We can catch it earlier by using the CGAL_assertion() one line above.
-          const int cmp = x.compare(i);
-          if (cmp > 0) {
-            s = nextafter(s, +inf);
-            CGAL_assertion(x.compare(s) < 0);
-          }
-          else if (cmp < 0) {
-            i = nextafter(i, -inf);
-            CGAL_assertion(x.compare(i) > 0);
-          }
-          return std::pair<double, double>(i, s);
-        }
-
-        #endif // default impl
     };
 };
-
-template <class T, class = boost::mpl::int_<boost::multiprecision::number_category<T>::value> >
-struct RET_boost_mp;
-
-template <class NT>
-struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_integer> >
-    : RET_boost_mp_base <NT> {};
-
-template <class NT>
-struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> >
-    : RET_boost_mp_base_rational <NT> {};
 
 #ifdef CGAL_USE_MPFR
 // Because of these full specializations, things get instantiated more eagerly. Make them artificially partial if necessary.
