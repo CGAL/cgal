@@ -26,7 +26,7 @@ inline void CGAL_print_stderr(const char *fmt, ...)
 {
   va_list argp;
   va_start(argp, fmt);
-  vfprintf(stderr, fmt, argp);
+  vfprintf_s(stderr, fmt, argp);
   va_end(argp);
 }
 
