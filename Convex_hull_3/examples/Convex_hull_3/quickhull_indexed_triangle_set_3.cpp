@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Indexed_triangle_set.h>
 #include <CGAL/convex_hull_3.h>
 
 #include <vector>
@@ -24,7 +23,7 @@ int main(int argc, char* argv[])
     points.push_back(p);
   }
 
-  
+
   CGAL::convex_hull_3(points.begin(), points.end(), vertices, faces);
 
   std::cout << vertices.size() << "  " << faces.size() << std::endl;

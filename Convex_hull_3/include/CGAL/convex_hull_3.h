@@ -31,6 +31,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Convex_hull_3/internal/Indexed_triangle_set.h>
 
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
