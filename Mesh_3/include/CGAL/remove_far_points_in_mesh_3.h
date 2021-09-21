@@ -74,11 +74,10 @@ private:
 /*!
 \ingroup PkgMesh3Functions
 
-The concurrent version of the tetrahedral mesh generation algorithm implemented in
-`CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()` inserts a small set of
-auxiliary vertices that belong to the triangulation but are isolated from the complex
-at the end of the meshing process.
-
+For efficiency reasons, the concurrent version of the tetrahedral mesh generation algorithm
+implemented in `CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()` inserts
+a small set of auxiliary vertices outside the bounding box of the mesh domain.
+At the that end of the meshing process, they belong to the triangulation but are isolated from the complex.
 This function removes these so called "far points" from `c3t3.triangulation()`,
 without modifying the mesh complex.
 
