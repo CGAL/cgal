@@ -54,6 +54,9 @@ Release date: December 2021
     if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
     max distance.
 
+-   Added the functions `CGAL::Polygon_mesh_processing::squared_edge_length()`
+    and `CGAL::Polygon_mesh_processing::squared_face_area()` which do not perform a `sqrt()` operation.
+
 -   Added more functions in the [visitor of the corefinement based methods](https://doc.cgal.org/5.4/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
     to track all vertex creations.
 
