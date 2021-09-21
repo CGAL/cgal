@@ -57,63 +57,39 @@ void convert_image_3_to_itk(const CGAL::Image_3& image,
   typename ImageType::RegionType region(corner, size);
   itk_img->SetRegions(region);
 
-//  itk_img->Allocate(image.xdim() * image.ydim() * image.zdim());
   itk_img->Allocate();
 
-  using Index = itk::Index<3>::IndexValueType;
-  for (std::size_t i = 0; i < image.xdim(); ++i)
-  {
-    for (std::size_t j = 0; j < image.ydim(); ++j)
-    {
-      for (std::size_t k = 0; k < image.zdim(); ++k)
-      {
-        typename ImageType::IndexType index = {(Index)i, (Index)j, (Index)k};
-        const Image_word_type label = image.value(i, j, k);
-        labels.insert(label);
-        itk_img->SetPixel(index, label);
-      }
-    }
-  }
+  const Image_word_type* img_begin = static_cast<const Image_word_type*>(image.data());
+  std::copy(img_begin, img_begin + image.size(), itk_img->GetBufferPointer());
+
+  labels.insert(img_begin, img_begin + image.size());
 }
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+template<typename Image_word_type>
 int count_non_white_pixels(const CGAL::Image_3& image)
 {
-  int nb_nonzero = 0;
-  for (std::size_t i = 0; i < image.xdim(); ++i)
+  auto diff255 = [&](const Image_word_type p)
   {
-    for (std::size_t j = 0; j < image.ydim(); ++j)
-    {
-      for (std::size_t k = 0; k < image.zdim(); ++k)
-      {
-        if (image.value(i, j, k) != 255)
-          nb_nonzero++;
-      }
-    }
-  }
-  return nb_nonzero;
+    return p != 255;
+  };
+  const Image_word_type* img_begin = static_cast<const Image_word_type*>(image.data());
+  return std::count_if(img_begin,
+                       img_begin + image.size(),
+                       diff255);
 }
 
 template<typename Image_word_type>
-int count_non_white_pixels(const itk::Image<Image_word_type, 3>* image)
+int count_non_white_pixels(itk::Image<Image_word_type, 3>* itk_img)
 {
-  int nb_nonzero = 0;
-  const auto sizeOfImage = image->GetLargestPossibleRegion().GetSize();
-  using Index = itk::Index<3>::IndexValueType;
-
-  for (std::size_t i = 0; i < sizeOfImage[0]; ++i)
+  auto diff255 = [&](const Image_word_type p)
   {
-    for (std::size_t j = 0; j < sizeOfImage[1]; ++j)
-    {
-      for (std::size_t k = 0; k < sizeOfImage[2]; ++k)
-      {
-        const itk::Index<3>  index = { (Index)i, (Index)j, (Index)k };
-        if (image->GetPixel(index) != 255)
-          nb_nonzero++;
-      }
-    }
-  }
-  return nb_nonzero;
+    return p != 255;
+  };
+  auto size = itk_img->GetLargestPossibleRegion().GetSize();
+  return std::count_if(itk_img->GetBufferPointer(),
+                       itk_img->GetBufferPointer() + size[0]*size[1]*size[2],
+                       diff255);
 }
 #endif //CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
 
@@ -147,6 +123,7 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
                                                     const float& sigma)
 {
   typedef unsigned char Weights_type; //from 0 t 255
+  const std::size_t img_size = image.size();
 
   //create weights image
   _image* weights
@@ -158,7 +135,7 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
                    internal::get_sign<Weights_type>());      //image word sign
   Weights_type* weights_ptr = (Weights_type*)(weights->data);
   std::fill(weights_ptr,
-            weights_ptr + image.xdim() * image.ydim() * image.zdim(),
+            weights_ptr + img_size,
             Weights_type(0));
   weights->tx = image.tx();
   weights->ty = image.ty();
@@ -237,23 +214,17 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   }
 
   //copy pixels to weights
-  using Index = itk::Index<3>::IndexValueType;
-  for (std::size_t i = 0; i < image.xdim(); ++i)
-  {
-    for (std::size_t j = 0; j < image.ydim(); ++j)
-    {
-      for (std::size_t k = 0; k < image.zdim(); ++k)
-      {
-        typename ImageType::IndexType index = { (Index)i, (Index)j, (Index)k };
-        using CGAL::IMAGEIO::static_evaluate;
-        static_evaluate<Weights_type>(weights, i, j, k) = blured_max->GetPixel(index);
-      }
-    }
-  }
+  std::copy(blured_max->GetBufferPointer(),
+            blured_max->GetBufferPointer() + img_size,
+            weights_ptr);
 
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-  std::cout << "non white in image \t= " << internal::count_non_white_pixels(image) << std::endl;
-  std::cout << "non white in weights \t= " << internal::count_non_white_pixels(blured_max.GetPointer()) << std::endl;
+  std::cout << "non white in image \t= "
+    << internal::count_non_white_pixels<Image_word_type>(image) << std::endl;
+  std::cout << "non white in weights \t= "
+    << internal::count_non_white_pixels<Weights_type>(weights) << std::endl;
+  std::cout << "non white in itkWeights \t= "
+    << internal::count_non_white_pixels<Weights_type>(blured_max.GetPointer()) << std::endl;
   _writeImage(weights, "weights-image.inr.gz");
 #endif
 

@@ -1,3 +1,5 @@
+//#define CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
