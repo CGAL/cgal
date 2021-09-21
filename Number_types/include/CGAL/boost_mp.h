@@ -25,6 +25,7 @@
     defined CGAL_USE_CPP_INT || !defined CGAL_DO_NOT_RUN_TESTME
 #define CGAL_USE_BOOST_MP 1
 
+#include <CGAL/Quotient.h>
 #include <CGAL/functional.h> // *ary_function
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Modular_traits.h>
