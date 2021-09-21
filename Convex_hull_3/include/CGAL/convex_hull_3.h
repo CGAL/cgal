@@ -1094,7 +1094,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::type Traits;
 
-  Indexed_triangle_set<Point_3> its(vertices,faces);
+  Convex_hull_3::internal::Indexed_triangle_set<Point_3> its(vertices,faces);
   convex_hull_3(first, beyond, its, Traits());
 }
 

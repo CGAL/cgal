@@ -23,6 +23,8 @@
 #include <list>
 
 namespace CGAL {
+namespace Convex_hull_3 {
+namespace internal {
 
 template <typename P>
 struct Indexed_triangle_set
@@ -37,42 +39,7 @@ struct Indexed_triangle_set
 };
 
 
-template <class P>
-void make_tetrahedron(const P& p0, const P&p1, const P& p2, const P& p3,
-                      Indexed_triangle_set<P>& its)
-{
-  CGAL_assertion(its.vertices.empty());
-  its.vertices = {p0, p1, p2, p3};
-  its.faces = { {0, 1, 2}, {1, 0, 3}, {3, 0, 2}, {2, 1, 3} };
-}
 
-template <class P>
-void clear(Indexed_triangle_set<P>& its)
-{
-  its.vertices.clear();
-  its.faces.clear();
-}
-
-
-template <class P>
-std::ostream& operator<<(std::ostream& os, const Indexed_triangle_set<P>& its)
-{
-  os << "OFF\n";
-  os << its.vertices.size() << " " << its.faces.size() << " \n";
-  for(const P& p : its.vertices){
-    os << p << "\n";
-  }
-  for(const std::array<int,3> f : its.faces){
-    os << f[0] << " "<< f[1] << " "<< f[2] << "\n";
-  }
-  os << std::flush;
-  return os;
-}
-
-
-
-namespace Convex_hull_3 {
-namespace internal {
 
 template <class P>
 void add_isolated_points(const P& point, Indexed_triangle_set<P>& its)
@@ -88,9 +55,11 @@ void copy_ch2_to_face_graph(const std::list<P>& CH_2,
   std::cout << "copy_ch2_to_face_graph" << std::endl;
 }
 
+} // namespace internal
+} // namespace Convex_hull_3
 
 template <typename TDS, typename P>
-void copy_face_graph(const TDS& tds, Indexed_triangle_set<P>& its)
+void copy_face_graph(const TDS& tds, Convex_hull_3::internal::Indexed_triangle_set<P>& its)
 {
   typedef typename TDS::Vertex_iterator Vertex_iterator;
   typedef typename TDS::Face_iterator Face_iterator;
@@ -106,7 +75,21 @@ void copy_face_graph(const TDS& tds, Indexed_triangle_set<P>& its)
   }
 }
 
+
+template <class P>
+void clear(Convex_hull_3::internal::Indexed_triangle_set<P>& its)
+{
+  its.vertices.clear();
+  its.faces.clear();
 }
+
+template <class P>
+void make_tetrahedron(const P& p0, const P&p1, const P& p2, const P& p3,
+                      Convex_hull_3::internal::Indexed_triangle_set<P>& its)
+{
+  CGAL_assertion(its.vertices.empty());
+  its.vertices = {p0, p1, p2, p3};
+  its.faces = { {0, 1, 2}, {1, 0, 3}, {3, 0, 2}, {2, 1, 3} };
 }
 
 } // namespace CGAL
@@ -117,7 +100,7 @@ namespace boost {
 // for make_tetrahedron can be eliminated as halfedge_descriptor is
 // used in the returned type
 template <class P>
-struct graph_traits<CGAL::Indexed_triangle_set<P>>
+struct graph_traits<CGAL::Convex_hull_3::internal::Indexed_triangle_set<P>>
 {
   typedef void* halfedge_descriptor;
 };
