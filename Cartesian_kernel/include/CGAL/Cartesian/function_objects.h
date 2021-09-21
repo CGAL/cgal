@@ -4322,18 +4322,13 @@ namespace CartesianKernelFunctors {
       const Point_2& p2 = vertex(t, 2);
       CGAL_assertion(p0 != p1 && p1 != p2 && p2 != p0);
 
-      const FT dX = b.x() - a.x();
-      const FT dY = b.y() - a.y();
-      const FT R0 = p0.x() * p0.x() + p0.y() * p0.y();
-      const FT R1 = p1.x() * p1.x() + p1.y() * p1.y();
-      const FT R2 = p2.x() * p2.x() + p2.y() * p2.y();
-      const FT denominator = (p1.x() - p0.x()) * (p2.y() - p0.y()) +
-                             (p0.x() - p2.x()) * (p1.y() - p0.y());
-      const FT det = 2 * denominator * (a.x() * dY - a.y() * dX)
-                       - (R2 - R1) * (p0.x() * dX + p0.y() * dY)
-                       - (R0 - R2) * (p1.x() * dX + p1.y() * dY)
-                       - (R1 - R0) * (p2.x() * dX + p2.y() * dY);
-      return CGAL::sign(det);
+      return circumcenter_oriented_side_of_oriented_segmentC2(
+                  a.x(), a.y(),
+                  b.x(), b.y(),
+                  p0.x(), p0.y(),
+                  p1.x(), p1.y(),
+                  p2.x(), p2.y()
+      );
     }
   };
 
