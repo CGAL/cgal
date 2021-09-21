@@ -18,7 +18,7 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <vector>
-#include <fstream>
+#include <iostream>
 #include <array>
 
 namespace CGAL {
@@ -59,7 +59,7 @@ std::ostream& operator<<(std::ostream& os, const Indexed_triangle_set<P>& its)
   for(const std::array<int,3> f : its.faces){
     os << f[0] << " "<< f[1] << " "<< f[2] << "\n";
   }
-  std::cout << std::flush;
+  os << std::flush;
   return os;
 }
 
@@ -116,5 +116,6 @@ struct graph_traits<CGAL::Indexed_triangle_set<P>>
   typedef void* halfedge_descriptor;
 };
 
-} // boost
-#endif
+} // namespace boost
+
+#endif  // CGAL_INDEXED_TRIANGLE_SET_H
