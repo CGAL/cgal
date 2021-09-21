@@ -20,6 +20,7 @@
 #include <vector>
 #include <iostream>
 #include <array>
+#include <list>
 
 namespace CGAL {
 
