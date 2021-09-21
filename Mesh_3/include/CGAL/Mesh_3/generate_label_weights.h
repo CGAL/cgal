@@ -237,6 +237,7 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
 * voxel of `image`, to make the output mesh surfaces smoother.
 * The weights image is generated using the algorithm described by Stalling et al
 * in \cgalCite{stalling1998weighted}.
+* The [Insight toolkit](https://itk.org/) is needed to compile this function.
 *
 * @param image the input labeled image from which the weights image is computed.
 *   Both will then be used to construct a `Labeled_mesh_domain_3`.
