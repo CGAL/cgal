@@ -1085,6 +1085,19 @@ void convex_hull_3(const VertexListGraph& g,
   convex_hull_3(g,pm,CGAL::parameters::all_default());
 }
 
+template <class InputIterator, class P>
+void convex_hull_3(InputIterator first, InputIterator beyond,
+                   std::vector<P>& vertices,
+		           std::vector<std::array<int,3> >& faces,
+                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::type Traits;
+
+  Indexed_triangle_set<Point_3> its(vertices,faces);
+  convex_hull_3(first, beyond, its, Traits());
+}
+
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator
 extreme_points_3(const InputRange& range,

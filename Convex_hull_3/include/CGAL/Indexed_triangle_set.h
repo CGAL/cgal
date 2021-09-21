@@ -27,8 +27,13 @@ namespace CGAL {
 template <typename P>
 struct Indexed_triangle_set
 {
-  std::vector<P> vertices;
-  std::vector<std::array<int,3> > faces;
+  std::vector<P>& vertices;
+  std::vector<std::array<int,3> >& faces;
+
+  Indexed_triangle_set(std::vector<P>& vertices,
+		       std::vector<std::array<int,3> >& faces)
+    : vertices(vertices), faces(faces)
+  {}
 };
 
 
