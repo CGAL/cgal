@@ -17,6 +17,8 @@
 
 #include <map>
 #include <vector>
+#include <unordered_map>
+#include <bitset>
 
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Triangle_container.h>
@@ -30,6 +32,7 @@
 #include <CGAL/Qt/qglviewer.h>
 
 #include <boost/function_output_iterator.hpp>
+#include <boost/dynamic_bitset.hpp>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -92,13 +95,15 @@ public :
       std::vector<float> *p_normals,
       std::vector<float> *p_edges,
       std::vector<float> *p_colors,
-      std::vector<float> *p_bary)
+      std::vector<float> *p_bary,
+      std::vector<float> *p_subdomain_ids)
   {
     vertices = p_vertices;
     normals = p_normals;
     edges = p_edges;
     colors = p_colors;
     barycenters = p_bary;
+    subdomain_ids = p_subdomain_ids;
   }
   void setColor(QColor c) Q_DECL_OVERRIDE
   {
@@ -122,6 +127,8 @@ public :
                              static_cast<int>(colors->size()*sizeof(float)));
     getTriangleContainer(0)->allocate(Tc::Facet_centers, barycenters->data(),
                                   static_cast<int>(barycenters->size()*sizeof(float)));
+    getTriangleContainer(0)->allocate(Tc::Subdomain_indices, subdomain_ids->data(),
+                                      static_cast<int>(subdomain_ids->size()*sizeof(float)));
     getEdgeContainer(0)->allocate(Ec::Vertices, edges->data(),
                             static_cast<int>(edges->size()*sizeof(float)));
     setBuffersFilled(true);
@@ -278,6 +285,7 @@ private:
   mutable std::vector<float> *edges;
   mutable std::vector<float> *colors;
   mutable std::vector<float> *barycenters;
+  mutable std::vector<float> *subdomain_ids;
   mutable bool is_fast;
   mutable QSlider* alphaSlider;
   mutable float m_alpha ;
@@ -343,6 +351,7 @@ struct Scene_triangulation_3_item_priv {
     spheres_are_shown = false;
     is_aabb_tree_built = false;
     alphaSlider = NULL;
+    is_filterable = true;
   }
   void computeIntersection(const Primitive& facet);
   void fill_aabb_tree() {
@@ -432,7 +441,9 @@ struct Scene_triangulation_3_item_priv {
   typedef std::set<int> Indices;
   Indices surface_patch_indices_;
   Indices subdomain_indices_;
+  std::unordered_map<int, int> id_to_compact;
   QSlider* tet_Slider;
+  bool is_filterable;
 
   //!Allows OpenGL 2.0 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
@@ -449,6 +460,7 @@ struct Scene_triangulation_3_item_priv {
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> positions_barycenter;
+  mutable std::vector<float> inter_subdomain_ids;
 
   mutable std::vector<float> normals;
   mutable std::vector<float> f_colors;
@@ -458,6 +470,7 @@ struct Scene_triangulation_3_item_priv {
   mutable std::vector<float> ws_vertex;
   mutable std::vector<float> s_radius;
   mutable std::vector<float> s_center;
+  mutable std::vector<float> subdomain_ids;
   mutable bool computed_stats;
   mutable float max_edges_length;
   mutable float min_edges_length;
@@ -477,6 +490,8 @@ struct Scene_triangulation_3_item_priv {
   Tree tree;
   QVector<QColor> colors;
   QVector<QColor> colors_subdomains;
+  boost::dynamic_bitset<> visible_subdomain;
+  std::bitset<24> bs[4] = {16777215, 16777215, 16777215, 16777215};
   bool show_tetrahedra;
   bool is_aabb_tree_built;
   bool last_intersection;
@@ -627,15 +642,23 @@ Scene_triangulation_3_item::triangulation_changed()
   // Fill indices map and get max subdomain value
   d->surface_patch_indices_.clear();
   d->subdomain_indices_.clear();
+  d->visible_subdomain.clear();
+  d->id_to_compact.clear();
 
   int max = 0;
+  int compact = 0;
   for (Tr::Finite_cells_iterator cit = triangulation().finite_cells_begin(),
        end = triangulation().finite_cells_end(); cit != end; ++cit)
   {
     max = (std::max)(max, cit->subdomain_index());
-    d->subdomain_indices_.insert(cit->subdomain_index());
+    if(d->subdomain_indices_.insert(cit->subdomain_index()).second)
+        {
+          d->id_to_compact[cit->subdomain_index()] = compact++;
+        }
   }
   const int max_subdomain_index = max;
+  d->visible_subdomain.resize(max_subdomain_index+1, true);
+  d->is_filterable &=( d->subdomain_ids.size() < 96);
   for (Tr::Finite_facets_iterator fit = triangulation().finite_facets_begin(),
        end = triangulation().finite_facets_end(); fit != end; ++fit)
   {
@@ -907,6 +930,10 @@ QString Scene_triangulation_3_item::toolTip() const {
 }
 
 void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
+  if(!viewer->isOpenGL_4_3())
+   {
+     d->is_filterable = false;
+   }
   if(!visible())
     return;
   Scene_triangulation_3_item* ncthis = const_cast<Scene_triangulation_3_item*>(this);
@@ -935,6 +962,15 @@ void Scene_triangulation_3_item::draw(CGAL::Three::Viewer_interface* viewer) con
     // it is only computed once and positions_poly is emptied at the end
     getTriangleContainer(T3_faces)->setAlpha(alpha());
     getTriangleContainer(T3_faces)->setIsSurface(is_surface());
+    QOpenGLShaderProgram* program = viewer->getShaderProgram(getTriangleContainer(T3_faces)->getProgram());
+    program->bind();
+    if(d->is_filterable)
+    {
+      QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
+      program->setUniformValue("is_visible_bitset", visible_bitset);
+    }
+    program->setUniformValue("is_filterable", d->is_filterable);
+    program->release();
     getTriangleContainer(T3_faces)->draw(viewer, false);
     if(d->show_tetrahedra){
       ncthis->show_intersection(true);
@@ -1005,6 +1041,15 @@ void Scene_triangulation_3_item::drawEdges(CGAL::Three::Viewer_interface* viewer
     }
 
     QVector4D cp = cgal_plane_to_vector4d(this->plane());
+    QOpenGLShaderProgram* program = viewer->getShaderProgram(getEdgeContainer(T3_edges)->getProgram());
+        program->bind();
+        if(d->is_filterable)
+        {
+          QVector4D visible_bitset(d->bs[0].to_ulong(),d->bs[1].to_ulong(),d->bs[2].to_ulong(),d->bs[3].to_ulong());
+          program->setUniformValue("is_visible_bitset", visible_bitset);
+        }
+        program->setUniformValue("is_filterable", d->is_filterable);
+        program->release();
     getEdgeContainer(T3_edges)->setPlane(cp);
     getEdgeContainer(T3_edges)->setIsSurface(is_surface());
     getEdgeContainer(T3_edges)->setColor(QColor(Qt::black));
@@ -1197,6 +1242,10 @@ void Scene_triangulation_3_item_priv::computeIntersection(const Primitive& cell)
 
   typedef unsigned char UC;
   Tr::Cell_handle ch = cell.id();
+  if(!visible_subdomain[ch->subdomain_index()])
+    {
+      return;
+    }
   QColor c = this->colors_subdomains[ch->subdomain_index()].lighter(50);
 
   const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
@@ -1205,6 +1254,15 @@ void Scene_triangulation_3_item_priv::computeIntersection(const Primitive& cell)
   const Tr::Bare_point& pd = wp2p(ch->vertex(3)->point());
 
   CGAL::Color color(UC(c.red()), UC(c.green()), UC(c.blue()));
+
+  if(is_filterable)
+  {
+    float id = static_cast<float>(id_to_compact[ch->subdomain_index()]);
+    for(int i=0; i< 48; ++i)
+    {
+      inter_subdomain_ids.push_back(id);
+    }
+  }
 
   intersection->addTriangle(pb, pa, pc, color);
   intersection->addTriangle(pa, pb, pd, color);
@@ -1235,6 +1293,7 @@ void Scene_triangulation_3_item_priv::computeIntersections(CGAL::Three::Viewer_i
   f_colors.clear();
   positions_lines.clear();
   positions_barycenter.clear();
+  inter_subdomain_ids.clear();
   const Geom_traits::Plane_3& plane = item->plane(offset);
   tree.all_intersected_primitives(plane,
         boost::make_function_output_iterator(ComputeIntersection(*this)));
@@ -1320,6 +1379,7 @@ void Scene_triangulation_3_item_priv::computeElements()
   s_colors.resize(0);
   s_center.resize(0);
   s_radius.resize(0);
+  subdomain_ids.resize(0);
 
   //The grid
   {
@@ -1363,6 +1423,7 @@ void Scene_triangulation_3_item_priv::computeElements()
     {
       if(!item->do_take_facet(*fit)) continue;
       const Tr::Cell_handle& cell = fit->first;
+      const Tr::Cell_handle& cell2 = cell->neighbor(fit->second);
       const int& index = fit->second;
       const Tr::Bare_point& pa = wp2p(cell->vertex((index + 1) & 3)->point());
       const Tr::Bare_point& pb = wp2p(cell->vertex((index + 2) & 3)->point());
@@ -1372,6 +1433,21 @@ void Scene_triangulation_3_item_priv::computeElements()
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
       f_colors.push_back((float)color.redF());f_colors.push_back((float)color.greenF());f_colors.push_back((float)color.blueF());
+      //As a facet belongs to 2 cells, we need both to decide if it should be hidden or not.
+      //Also 0 is a forbidden value, that is reserved for the "outside of the domain", so it won't be in the bs table.
+      if(is_filterable)
+      {
+        float dom1 = (cell->subdomain_index() != 0) ? static_cast<float>(id_to_compact[cell->subdomain_index()])
+            : static_cast<float>(id_to_compact[cell2->subdomain_index()]);
+
+        float dom2 = (cell2->subdomain_index() != 0) ? static_cast<float>(id_to_compact[cell2->subdomain_index()])
+            : static_cast<float>(id_to_compact[cell->subdomain_index()]);
+        for(int i=0; i<6; ++i)
+        {
+          subdomain_ids.push_back(dom1);
+          subdomain_ids.push_back(dom2);
+        }
+      }
       if(item->is_facet_oriented(*fit))
           draw_triangle(pb, pa, pc);
       else
@@ -1441,7 +1517,8 @@ void Scene_triangulation_3_item::show_intersection(bool b)
                                   &d->normals,
                                   &d->positions_lines,
                                   &d->f_colors,
-                                  &d->positions_barycenter);
+                                  &d->positions_barycenter,
+                                  &d->inter_subdomain_ids);
     d->intersection->setName("Intersection tetrahedra");
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
@@ -1862,12 +1939,20 @@ void Scene_triangulation_3_item::computeElements()const
         d->positions_barycenter.data(),
         static_cast<int>(d->positions_barycenter.size()*sizeof(float)));
 
+  getTriangleContainer(T3_faces)->allocate(
+        Tc::Subdomain_indices, d->subdomain_ids.data(),
+        static_cast<int>(d->subdomain_ids.size()*sizeof(float)));
+
   d->positions_poly_size = d->positions_poly.size();
 
   getEdgeContainer(T3_edges)->allocate(
         Ec::Vertices,
         d->positions_lines.data(),
         static_cast<int>(d->positions_lines.size()*sizeof(float)));
+  getEdgeContainer(T3_edges)->allocate(
+        Ec::Subdomain_indices, d->subdomain_ids.data(),
+        static_cast<int>(d->subdomain_ids.size()*sizeof(float)));
+
   d->positions_lines_size = d->positions_lines.size();
 
   getEdgeContainer(Grid_edges)->allocate(
@@ -1941,5 +2026,34 @@ Scene_item::Bbox Scene_triangulation_3_item::bbox() const
   is_bbox_computed = true;
   return _bbox;
 }
+
+const std::set<int>& Scene_triangulation_3_item::subdomain_indices() const
+{
+  return d->subdomain_indices_;
+}
+
+QColor Scene_triangulation_3_item::getSubdomainIndexColor(int i) const
+{
+  return d->colors_subdomains[i];
+}
+
+void Scene_triangulation_3_item::switchVisibleSubdomain(int id)
+{
+  d->visible_subdomain[id] = !d->visible_subdomain[id];
+  int compact_id = d->id_to_compact[id];
+  int i = compact_id/32;
+  int j = compact_id%32;
+
+  d->bs[i][j] = d->visible_subdomain[id];
+}
+
+void Scene_triangulation_3_item::computeIntersection()
+{
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
+  {
+    d->computeIntersections(static_cast<CGAL::Three::Viewer_interface*>(v));
+  }
+}
+
 #include "Scene_triangulation_3_item.moc"
 
