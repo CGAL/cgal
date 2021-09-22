@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   std::cout << "* number of input points: " << point_set_2.size() << std::endl;
   assert(is_default_input && point_set_2.size() == 3634);
 
-  // Default parameter values for the data file point_set_2.xyz.
+  // Default parameter values for the data file buildings_outline.xyz.
   const FT          sphere_radius   = FT(5);
   const FT          max_distance    = FT(45) / FT(10);
   const FT          max_angle       = FT(45);
@@ -64,11 +64,11 @@ int main(int argc, char *argv[]) {
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  std::cout << "* number of found regions: " << regions.size() << std::endl;
+  std::cout << "* number of found lines: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 65);
 
   // Save regions to a file.
-  const std::string fullpath = (argc > 2 ? argv[2] : "regions_point_set_2.ply");
+  const std::string fullpath = (argc > 2 ? argv[2] : "lines_point_set_2.ply");
   utils::save_point_regions_2<Kernel, Point_set_2, Point_map>(
     point_set_2, regions, fullpath);
   return EXIT_SUCCESS;

@@ -236,16 +236,14 @@ namespace Point_set {
       typename internal::Get_sqrt<Local_traits>::Sqrt sqrt;
       typename Local_traits::Compute_squared_distance_3 squared_distance_3;
 
-      for (std::size_t i = 0; i < m_input_range.size(); ++i)
-      {
+      for (std::size_t i = 0; i < m_input_range.size(); ++i) {
 
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
 
         points.clear();
-        for (std::size_t j = 0; j < neighbors.size(); ++j)
-        {
+        for (std::size_t j = 0; j < neighbors.size(); ++j) {
           CGAL_precondition(neighbors[j] < m_input_range.size());
 
           const auto& key = *(m_input_range.begin() + neighbors[j]);
@@ -257,16 +255,18 @@ namespace Point_set {
         Local_line_3 fitted_line;
         Local_FT fitted_radius;
 
-        if (internal::cylinder_fit (points, Local_point_map(), Local_normal_map(),
-                                    sqrt, squared_distance_3, fitted_line, fitted_radius))
-        {
-          // Score is min squared distance to cylinder
+        if (internal::create_cylinder_3(
+          points, Local_point_map(), Local_normal_map(),
+          sqrt, squared_distance_3, fitted_line, fitted_radius)) {
+
+          // Score is min squared distance to cylinder.
           m_scores[i] = Local_FT(0);
-          for (const Local_pwn& pwn : points)
-            m_scores[i] += abs (sqrt(squared_distance_3(pwn.first, fitted_line)) - fitted_radius);
+          for (const Local_pwn& pwn : points) {
+            m_scores[i] += abs(sqrt(squared_distance_3(pwn.first, fitted_line)) - fitted_radius);
+          }
+        } else {
+          m_scores[i] = Local_FT(std::numeric_limits<double>::max());
         }
-        else
-          m_scores[i] = Local_FT(std::numeric_limits<double>::infinity());
       }
     }
   };

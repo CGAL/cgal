@@ -138,7 +138,6 @@ int main(int argc, char *argv[]) {
   if (!success)
     return EXIT_FAILURE;
 
-  /*
   success =
     test<Sphere_region, Sphere_sorting>
     (argc, argv,
@@ -154,7 +153,7 @@ int main(int argc, char *argv[]) {
        const std::size_t min_region_size = 50;
        // No constraint on radius
        const double min_radius = 0.;
-       const double max_radius = std::numeric_limits<double>::infinity();
+       const double max_radius = std::numeric_limits<double>::max();
        return Sphere_region
          (input_range, tolerance, max_angle, min_region_size,
           min_radius, max_radius,
@@ -182,7 +181,7 @@ int main(int argc, char *argv[]) {
        const std::size_t min_region_size = 200;
        // No constraint on radius
        const double min_radius = 0.;
-       const double max_radius = std::numeric_limits<double>::infinity();
+       const double max_radius = std::numeric_limits<double>::max();
        return Cylinder_region
          (input_range, tolerance, max_angle, min_region_size,
           min_radius, max_radius,
@@ -193,7 +192,7 @@ int main(int argc, char *argv[]) {
         return (r.size() > 2 && r.size() < 30);
       });
   if (!success)
-    return EXIT_FAILURE; */
+    return EXIT_FAILURE;
 
   return EXIT_SUCCESS;
 }

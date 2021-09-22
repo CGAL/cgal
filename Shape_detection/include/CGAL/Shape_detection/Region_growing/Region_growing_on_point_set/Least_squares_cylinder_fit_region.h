@@ -305,17 +305,20 @@ namespace Point_set {
       CGAL_precondition(query_index < m_input_range.size());
 
       // First, we need to integrate at least 6 points so that the
-      // computed cylinder means something
-      if (indices.size() < 6)
+      // computed cylinder means something.
+      if (indices.size() < 6) {
         return true;
+      }
 
       // TODO: Why do we get so many nan in this class?
-      if (std::isnan(m_radius))
+      if (std::isnan(m_radius)) {
         return false;
+      }
 
-      // If radius is out of bound, nothing fits, early ending
-      if (m_radius < m_min_radius || m_radius > m_max_radius)
+      // If radius is out of bound, nothing fits, early ending.
+      if (m_radius < m_min_radius || m_radius > m_max_radius) {
         return false;
+      }
 
       const auto& key = *(m_input_range.begin() + query_index);
       const Point_3& query_point = get(m_point_map, key);
@@ -326,25 +329,26 @@ namespace Point_set {
       if (m_axis.to_vector() == Vector_3(0, 0, 0)) return false;
       const FT sq_dist = m_squared_distance_3(query_point, m_axis);
       if (std::isnan(sq_dist)) return false;
-      FT distance_to_center = m_sqrt (sq_dist);
-      FT distance_to_cylinder = CGAL::abs (distance_to_center - m_radius);
+      const FT distance_to_center = m_sqrt(sq_dist);
+      const FT distance_to_cylinder = CGAL::abs(distance_to_center - m_radius);
 
-      if (distance_to_cylinder > m_distance_threshold)
+      if (distance_to_cylinder > m_distance_threshold) {
         return false;
+      }
 
       const FT sq_norm = normal * normal;
       if (std::isnan(sq_norm)) return false;
       normal = normal / m_sqrt (sq_norm);
 
-      Point_3 proj = m_axis.projection(query_point);
-      Vector_3 ray (proj, query_point);
+      const Point_3 proj = m_axis.projection(query_point);
+      Vector_3 ray(proj, query_point);
       const FT sq_ray = ray * ray;
       if (std::isnan(sq_ray)) return false;
-      ray = ray / m_sqrt (sq_ray);
+      ray = ray / m_sqrt(sq_ray);
 
-      if (CGAL::abs (normal * ray) < m_cos_value_threshold)
+      if (CGAL::abs(normal * ray) < m_cos_value_threshold) {
         return false;
-
+      }
       return true;
     }
 
@@ -382,25 +386,21 @@ namespace Point_set {
 
       CGAL_precondition(region.size() > 0);
 
-      // Shuffle to avoid always picking 2 close points
-      std::vector<std::size_t>& aregion
-        = const_cast<std::vector<std::size_t>&>(region);
-      cpp98::random_shuffle (aregion.begin(), aregion.end());
+      // Shuffle to avoid always picking 2 close points.
+      std::vector<std::size_t>& aregion =
+        const_cast<std::vector<std::size_t>&>(region);
+      cpp98::random_shuffle(aregion.begin(), aregion.end());
 
       using VT = typename std::iterator_traits<typename InputRange::const_iterator>::value_type;
-      auto unary_function
-        = [&](const std::size_t& idx) -> VT
-          {
-            return *(m_input_range.begin() + idx);
-          };
+      auto unary_function = [&](const std::size_t& idx) -> VT {
+        return *(m_input_range.begin() + idx);
+      };
 
-      internal::cylinder_fit
-        (make_range (boost::make_transform_iterator
-                    (region.begin(), unary_function),
-                    boost::make_transform_iterator
-                    (region.end(), unary_function)),
-        m_point_map, m_normal_map, m_sqrt, m_squared_distance_3,
-        m_axis, m_radius);
+      internal::create_cylinder_3(
+        make_range(
+          boost::make_transform_iterator(region.begin(), unary_function),
+          boost::make_transform_iterator(region.end(), unary_function)),
+        m_point_map, m_normal_map, m_sqrt, m_squared_distance_3, m_axis, m_radius);
       return true;
     }
 

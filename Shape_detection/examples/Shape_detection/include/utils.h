@@ -16,6 +16,7 @@
 #include <CGAL/memory.h>
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/OFF.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/write_ply_points.h>
 #include <CGAL/IO/Color.h>

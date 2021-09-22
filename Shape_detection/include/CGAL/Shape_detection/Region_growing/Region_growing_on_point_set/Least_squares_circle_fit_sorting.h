@@ -231,15 +231,17 @@ namespace Point_set {
         Local_point_2 fitted_center;
         Local_FT fitted_radius;
 
-        if (internal::circle_fit (points, sqrt, squared_distance_2, fitted_center, fitted_radius))
-        {
-          // Score is min squared distance to sphere
+        if (internal::create_circle_2(
+          points, sqrt, squared_distance_2, fitted_center, fitted_radius)) {
+
+          // Score is min squared distance to sphere.
           m_scores[i] = Local_FT(0);
-          for (const Local_point_2& p : points)
-            m_scores[i] += abs (sqrt(squared_distance_2(p, fitted_center)) - fitted_radius);
+          for (const Local_point_2& p : points) {
+            m_scores[i] += abs(sqrt(squared_distance_2(p, fitted_center)) - fitted_radius);
+          }
+        } else {
+          m_scores[i] = Local_FT(std::numeric_limits<double>::max());
         }
-        else
-          m_scores[i] = Local_FT(std::numeric_limits<double>::infinity());
       }
     }
   };

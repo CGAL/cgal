@@ -105,6 +105,7 @@ A lower probability provides a higher reliability and determinism at the cost of
 
 
 \subsection Shape_detection_RANSACExamples Examples
+
 The main class `Shape_detection::Efficient_RANSAC` takes a template parameter `Shape_detection::Efficient_RANSAC_traits` that defines the geometric types and input format.
 Property maps provide a means to interface with the user-specific data structures.
 The first parameter of the `Shape_detection::Efficient_RANSAC_traits` class is the common `Kernel`.
@@ -373,6 +374,7 @@ to the quality of the least squares sphere fit applied to the neighbors of each 
 - `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting` - indices of 3D input points are sorted with respect
 to the quality of the least squares cylinder fit applied to the neighbors of each point.
 
+
 \subsubsection Shape_detection_RegionGrowingPoints_parameters Parameters
 
 The classes in Section \ref Shape_detection_RegionGrowingPoints "Region Growing On Point Set" depend on a few parameters
@@ -468,6 +470,7 @@ The following example shows a similar example, this time detecting spheres inste
 The following example shows another similar example, this time detecting (infinite) cylinders.
 
 \cgalExample{Shape_detection/region_growing_cylinders_on_point_set_3.cpp}
+
 
 \subsubsection Shape_detection_RegionGrowingPoints_performance Performance
 

@@ -212,16 +212,14 @@ namespace Point_set {
       typename internal::Get_sqrt<Local_traits>::Sqrt sqrt;
       typename Local_traits::Compute_squared_distance_3 squared_distance_3;
 
-      for (std::size_t i = 0; i < m_input_range.size(); ++i)
-      {
+      for (std::size_t i = 0; i < m_input_range.size(); ++i) {
 
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
 
         points.clear();
-        for (std::size_t j = 0; j < neighbors.size(); ++j)
-        {
+        for (std::size_t j = 0; j < neighbors.size(); ++j) {
           CGAL_precondition(neighbors[j] < m_input_range.size());
 
           const auto& key = *(m_input_range.begin() + neighbors[j]);
@@ -232,15 +230,17 @@ namespace Point_set {
         Local_point_3 fitted_center;
         Local_FT fitted_radius;
 
-        if (internal::sphere_fit (points, sqrt, squared_distance_3, fitted_center, fitted_radius))
-        {
-          // Score is min squared distance to sphere
+        if (internal::create_sphere_3(
+          points, sqrt, squared_distance_3, fitted_center, fitted_radius)) {
+
+          // Score is min squared distance to sphere.
           m_scores[i] = Local_FT(0);
-          for (const Local_point_3& p : points)
-            m_scores[i] += abs (sqrt(squared_distance_3(p, fitted_center)) - fitted_radius);
+          for (const Local_point_3& p : points) {
+            m_scores[i] += abs(sqrt(squared_distance_3(p, fitted_center)) - fitted_radius);
+          }
+        } else {
+          m_scores[i] = Local_FT(std::numeric_limits<double>::max());
         }
-        else
-          m_scores[i] = Local_FT(std::numeric_limits<double>::infinity());
       }
     }
   };

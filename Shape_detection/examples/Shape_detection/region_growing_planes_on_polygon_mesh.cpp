@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   std::cout << "* number of input faces: " << face_range.size() << std::endl;
   assert(is_default_input && face_range.size() == 32245);
 
-  // Default parameter values for the data file polygon_mesh.off.
+  // Default parameter values for the data file building.off.
   const FT          max_distance    = FT(1);
   const FT          max_angle       = FT(45);
   const std::size_t min_region_size = 5;
@@ -75,12 +75,12 @@ int main(int argc, char *argv[]) {
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  std::cout << "* number of found regions: " << regions.size() << std::endl;
+  std::cout << "* number of found planes: " << regions.size() << std::endl;
   assert(is_default_input && regions.size() == 326);
 
   // Save regions to a file only if it is stored in CGAL::Surface_mesh.
   #if defined(USE_SURFACE_MESH)
-    const std::string fullpath = (argc > 2 ? argv[2] : "regions_polygon_mesh.ply");
+    const std::string fullpath = (argc > 2 ? argv[2] : "planes_polygon_mesh.ply");
     utils::save_polygon_mesh_regions(polygon_mesh, regions, fullpath);
   #endif
   return EXIT_SUCCESS;

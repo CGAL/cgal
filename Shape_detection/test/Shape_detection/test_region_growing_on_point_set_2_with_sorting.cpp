@@ -107,8 +107,8 @@ bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr
 int main(int argc, char *argv[]) {
 
   return ((
-    test<Line_region, Line_sorting>(argc, argv, 62, 66) // &&
-    // test<Circle_region, Circle_sorting>(argc, argv, 196, 200)
+    test<Line_region, Line_sorting>(argc, argv, 62, 66) &&
+    test<Circle_region, Circle_sorting>(argc, argv, 196, 200)
   ) ? EXIT_SUCCESS : EXIT_FAILURE );
 
 }

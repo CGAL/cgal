@@ -308,17 +308,20 @@ namespace Point_set {
       CGAL_precondition(query_index < m_input_range.size());
 
       // First, we need to integrate at least 6 points so that the
-      // computed sphere means something
-      if (indices.size() < 6)
+      // computed sphere means something.
+      if (indices.size() < 6) {
         return true;
+      }
 
       // TODO: Why do we get so many nan in this class?
-      if (std::isnan(m_radius))
+      if (std::isnan(m_radius)) {
         return false;
+      }
 
-      // If radius is out of bound, nothing fits, early ending
-      if (m_radius < m_min_radius || m_radius > m_max_radius)
+      // If radius is out of bound, nothing fits, early ending.
+      if (m_radius < m_min_radius || m_radius > m_max_radius) {
         return false;
+      }
 
       const auto& key = *(m_input_range.begin() + query_index);
       const Point_3& query_point = get(m_point_map, key);
@@ -326,24 +329,25 @@ namespace Point_set {
 
       const FT sq_dist = m_squared_distance_3(query_point, m_center);
       if (std::isnan(sq_dist)) return false;
-      FT distance_to_center = m_sqrt (sq_dist);
-      FT distance_to_sphere = CGAL::abs (distance_to_center - m_radius);
+      const FT distance_to_center = m_sqrt(sq_dist);
+      const FT distance_to_sphere = CGAL::abs(distance_to_center - m_radius);
 
-      if (distance_to_sphere > m_distance_threshold)
+      if (distance_to_sphere > m_distance_threshold) {
         return false;
+      }
 
       const FT sq_norm = normal * normal;
       if (std::isnan(sq_norm)) return false;
       normal = normal / m_sqrt (sq_norm);
 
-      Vector_3 ray (m_center, query_point);
+      Vector_3 ray(m_center, query_point);
       const FT sq_ray = ray * ray;
       if (std::isnan(sq_ray)) return false;
       ray = ray / m_sqrt (sq_ray);
 
-      if (CGAL::abs (normal * ray) < m_cos_value_threshold)
+      if (CGAL::abs(normal * ray) < m_cos_value_threshold) {
         return false;
-
+      }
       return true;
     }
 
@@ -380,17 +384,14 @@ namespace Point_set {
     bool update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);
-      auto unary_function
-        = [&](const std::size_t& idx) -> const Point_3&
-          {
-            return get (m_point_map, *(m_input_range.begin() + idx));
-          };
+      auto unary_function = [&](const std::size_t& idx) -> const Point_3& {
+        return get (m_point_map, *(m_input_range.begin() + idx));
+      };
 
-      internal::sphere_fit
-        (make_range (boost::make_transform_iterator
-                    (region.begin(), unary_function),
-                    boost::make_transform_iterator
-                    (region.end(), unary_function)),
+      internal::create_sphere_3(
+        make_range(
+          boost::make_transform_iterator(region.begin(), unary_function),
+          boost::make_transform_iterator(region.end(), unary_function)),
         m_sqrt, m_squared_distance_3, m_center, m_radius);
       return true;
     }

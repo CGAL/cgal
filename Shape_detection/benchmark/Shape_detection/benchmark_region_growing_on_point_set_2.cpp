@@ -8,7 +8,7 @@
 #include <iterator>
 
 // CGAL includes.
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -32,7 +32,7 @@ using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range,
 using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
-using Timer  = CGAL::Timer;
+using Timer  = CGAL::Real_timer;
 using Region = std::vector<std::size_t>;
 
 void benchmark_region_growing_on_point_set_2(

@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   std::cout << "* number of input points: " << input_range.size() << std::endl;
   assert(is_default_input && input_range.size() == 8075);
 
-  // Default parameter values for the data file point_set_3.xyz.
+  // Default parameter values for the data file building.xyz.
   const std::size_t k               = 12;
   const FT          max_distance    = FT(2);
   const FT          max_angle       = FT(20);
@@ -73,11 +73,11 @@ int main(int argc, char *argv[]) {
     output_range, number_of_regions);
   region_growing.detect(
     boost::make_function_output_iterator(inserter));
-  std::cout << "* number of found regions: " << number_of_regions << std::endl;
+  std::cout << "* number of found planes: " << number_of_regions << std::endl;
   assert(is_default_input && number_of_regions == 7);
 
   // Save regions to a file.
-  const std::string fullpath = (argc > 2 ? argv[2] : "regions_point_set_3.ply");
+  const std::string fullpath = (argc > 2 ? argv[2] : "planes_point_set_3.ply");
   std::ofstream out(fullpath);
   out << output_range;
   out.close();
