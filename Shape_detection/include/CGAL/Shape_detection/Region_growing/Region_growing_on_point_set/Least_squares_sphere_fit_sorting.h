@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Simon Giraudot, Dmitry Anisimov
+// Author(s)     : Simon Giraudot
 //
 
 #ifndef CGAL_SHAPE_DETECTION_REGION_GROWING_POINT_SET_LEAST_SQUARES_SPHERE_FIT_SORTING_H
@@ -16,202 +16,235 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// STL includes.
-#include <vector>
-#include <algorithm>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/Cartesian_converter.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 // Internal includes.
-#include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 
 namespace CGAL {
 namespace Shape_detection {
 namespace Point_set {
 
-/*!
-  \ingroup PkgShapeDetectionRGOnPoints
-
-  \brief Sorting of 3D points with respect to the local sphere fit quality.
-
-  Indices of 3D input points are sorted with respect to the quality of the
-  least squares sphere fit applied to the neighboring points of each point.
-
-  \tparam GeomTraits
-  must be a model of `Kernel`.
-
-  \tparam InputRange
-  must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-
-  \tparam NeighborQuery
-  must be a model of `NeighborQuery`.
-
-  \tparam PointMap
-  must be an `LvaluePropertyMap` whose key type is the value type of the input
-  range and value type is `Kernel::Point_3`.
-*/
-template<typename GeomTraits,
-         typename InputRange,
-         typename NeighborQuery,
-         typename PointMap>
-class Least_squares_sphere_fit_sorting
-{
-
-public:
-
-  /// \name Types
-  /// @{
-
-  /// \cond SKIP_IN_MANUAL
-  using Traits = GeomTraits;
-  using Input_range = InputRange;
-  using Neighbor_query = NeighborQuery;
-  using Point_map = PointMap;
-  using Seed_map = internal::Seed_property_map;
-  /// \endcond
-
-#ifdef DOXYGEN_RUNNING
   /*!
-    an `LvaluePropertyMap` whose key and value type is `std::size_t`.
-    This map provides an access to the ordered indices of input points.
+    \ingroup PkgShapeDetectionRGOnPoints
+
+    \brief Sorting of 3D points with respect to the local sphere fit quality.
+
+    Indices of 3D input points are sorted with respect to the quality of the
+    least squares sphere fit applied to the neighboring points of each point.
+
+    \tparam GeomTraits
+    a model of `Kernel`
+
+    \tparam InputRange
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+
+    \tparam NeighborQuery
+    a model of `NeighborQuery`
+
+    \tparam PointMap
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Point_3`
   */
-  typedef unspecified_type Seed_map;
-#endif
+  template<
+  typename GeomTraits,
+  typename InputRange,
+  typename NeighborQuery,
+  typename PointMap>
+  class Least_squares_sphere_fit_sorting {
 
-  /// @}
+  public:
 
-  /// \name Initialization
-  /// @{
+    /// \name Types
+    /// @{
 
-  /*!
-    \brief initializes all internal data structures.
+    /// \cond SKIP_IN_MANUAL
+    using Traits = GeomTraits;
+    using Input_range = InputRange;
+    using Neighbor_query = NeighborQuery;
+    using Point_map = PointMap;
+    using Seed_map = internal::Seed_property_map;
+    /// \endcond
 
-    \param input_range
-    an instance of `InputRange` with 3D points
+    #ifdef DOXYGEN_RUNNING
+        /*!
+          a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
+          This map provides an access to the ordered indices of input points.
+        */
+      typedef unspecified_type Seed_map;
+    #endif
 
-    \param neighbor_query
-    an instance of `NeighborQuery` that is used internally to
-    access point's neighbors
+    /// @}
 
-    \param point_map
-    an instance of `PointMap` that maps an item from `input_range`
-    to `Kernel::Point_3`
+  private:
+    // using FT = typename Traits::FT;
+    // using Compare_scores = internal::Compare_scores<FT>;
 
-    \pre `input_range.size() > 0`
-  */
-  Least_squares_sphere_fit_sorting (const InputRange& input_range,
-                                    NeighborQuery& neighbor_query,
-                                    const PointMap point_map = PointMap())
-    : m_input_range(input_range)
-    , m_neighbor_query(neighbor_query)
-    , m_point_map(point_map)
-    , m_to_local_converter()
-  {
-    CGAL_precondition(input_range.size() > 0);
+    using Local_traits = Exact_predicates_inexact_constructions_kernel;
+    using Local_FT = typename Local_traits::FT;
+    using Local_point_3 = typename Local_traits::Point_3;
+    using To_local_converter = Cartesian_converter<Traits, Local_traits>;
+    using Compare_scores = internal::Compare_scores<Local_FT>;
 
-    m_order.resize(m_input_range.size());
-    for (std::size_t i = 0; i < m_input_range.size(); ++i)
-      m_order[i] = i;
-    m_scores.resize(m_input_range.size());
-  }
+  public:
+    /// \name Initialization
+    /// @{
 
-  /// @}
+    /*!
+      \brief initializes all internal data structures.
 
-  /// \name Sorting
-  /// @{
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
 
-  /*!
-    \brief sorts indices of input points.
-  */
-  void sort()
-  {
-    compute_scores();
-    CGAL_postcondition(m_scores.size() > 0);
+      \param input_range
+      an instance of `InputRange` with 3D points
 
-    Compare_scores cmp(m_scores);
-    std::sort(m_order.begin(), m_order.end(), cmp);
-  }
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access point's neighbors
 
-  /// @}
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
-  /// \name Access
-  /// @{
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_3`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
-  /*!
-    \brief returns an instance of `Seed_map` to access the ordered indices
-    of input points.
-  */
-  Seed_map seed_map()
-  {
-    return Seed_map(m_order);
-  }
+      \pre `input_range.size() > 0`
+    */
+    template<typename NamedParameters>
+    Least_squares_sphere_fit_sorting(
+      const InputRange& input_range,
+      NeighborQuery& neighbor_query,
+      const NamedParameters& np) :
+    m_input_range(input_range),
+    m_neighbor_query(neighbor_query),
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
+    m_to_local_converter() {
 
-  /// @}
-
-private:
-
-  // Types.
-  using Local_traits = Exact_predicates_inexact_constructions_kernel;
-  using Local_FT = typename Local_traits::FT;
-  using Local_point_3 = typename Local_traits::Point_3;
-  using To_local_converter = Cartesian_converter<Traits, Local_traits>;
-  using Compare_scores = internal::Compare_scores<Local_FT>;
-
-  // Functions.
-  void compute_scores()
-  {
-    std::vector<std::size_t> neighbors;
-    std::vector<Local_point_3> points;
-
-    typename internal::Get_sqrt<Local_traits>::Sqrt sqrt;
-    typename Local_traits::Compute_squared_distance_3 squared_distance_3;
-
-    for (std::size_t i = 0; i < m_input_range.size(); ++i)
-    {
-
-      neighbors.clear();
-      m_neighbor_query(i, neighbors);
-      neighbors.push_back(i);
-
-      points.clear();
-      for (std::size_t j = 0; j < neighbors.size(); ++j)
-      {
-        CGAL_precondition(neighbors[j] < m_input_range.size());
-
-        const auto& key = *(m_input_range.begin() + neighbors[j]);
-        points.push_back(m_to_local_converter(get(m_point_map, key)));
-      }
-      CGAL_postcondition(points.size() == neighbors.size());
-
-      Local_point_3 fitted_center;
-      Local_FT fitted_radius;
-
-      if (internal::sphere_fit (points, sqrt, squared_distance_3, fitted_center, fitted_radius))
-      {
-        // Score is min squared distance to sphere
-        m_scores[i] = Local_FT(0);
-        for (const Local_point_3& p : points)
-          m_scores[i] += abs (sqrt(squared_distance_3(p, fitted_center)) - fitted_radius);
-      }
-      else
-        m_scores[i] = Local_FT(std::numeric_limits<double>::infinity());
+      CGAL_precondition(input_range.size() > 0);
+      m_order.resize(m_input_range.size());
+      std::iota(m_order.begin(), m_order.end(), 0);
+      m_scores.resize(m_input_range.size());
     }
-  }
 
-  // Fields.
-  const Input_range& m_input_range;
-  Neighbor_query& m_neighbor_query;
-  const Point_map m_point_map;
+    /*!
+      \brief initializes all internal data structures.
 
-  std::vector<std::size_t> m_order;
-  std::vector<Local_FT> m_scores;
+      \deprecated This constructor is deprecated since the version 5.5 of \cgal.
 
-  const To_local_converter m_to_local_converter;
-};
+      \param input_range
+      an instance of `InputRange` with 3D points
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access point's neighbors
+
+      \param point_map
+      an instance of `PointMap` that maps an item from `input_range`
+      to `Kernel::Point_3`
+
+      \pre `input_range.size() > 0`
+    */
+    CGAL_DEPRECATED_MSG("This constructor is deprecated since the version 5.5 of CGAL!")
+    Least_squares_sphere_fit_sorting(
+      const InputRange& input_range,
+      NeighborQuery& neighbor_query,
+      const PointMap point_map = PointMap()) :
+    Least_squares_sphere_fit_sorting(
+      input_range, neighbor_query, CGAL::parameters::
+    point_map(point_map))
+    { }
+
+    /// @}
+
+    /// \name Sorting
+    /// @{
+
+    /*!
+      \brief sorts indices of input points.
+    */
+    void sort() {
+
+      compute_scores();
+      CGAL_postcondition(m_scores.size() > 0);
+      Compare_scores cmp(m_scores);
+      std::sort(m_order.begin(), m_order.end(), cmp);
+    }
+
+    /// @}
+
+    /// \name Access
+    /// @{
+
+    /*!
+      \brief returns an instance of `Seed_map` to access the ordered indices
+      of input points.
+    */
+    Seed_map seed_map() {
+      return Seed_map(m_order);
+    }
+
+    /// @}
+
+  private:
+    const Input_range& m_input_range;
+    Neighbor_query& m_neighbor_query;
+    const Point_map m_point_map;
+    const Traits m_traits;
+    std::vector<std::size_t> m_order;
+    std::vector<Local_FT> m_scores;
+    const To_local_converter m_to_local_converter;
+
+    void compute_scores() {
+      std::vector<std::size_t> neighbors;
+      std::vector<Local_point_3> points;
+
+      typename internal::Get_sqrt<Local_traits>::Sqrt sqrt;
+      typename Local_traits::Compute_squared_distance_3 squared_distance_3;
+
+      for (std::size_t i = 0; i < m_input_range.size(); ++i)
+      {
+
+        neighbors.clear();
+        m_neighbor_query(i, neighbors);
+        neighbors.push_back(i);
+
+        points.clear();
+        for (std::size_t j = 0; j < neighbors.size(); ++j)
+        {
+          CGAL_precondition(neighbors[j] < m_input_range.size());
+
+          const auto& key = *(m_input_range.begin() + neighbors[j]);
+          points.push_back(m_to_local_converter(get(m_point_map, key)));
+        }
+        CGAL_postcondition(points.size() == neighbors.size());
+
+        Local_point_3 fitted_center;
+        Local_FT fitted_radius;
+
+        if (internal::sphere_fit (points, sqrt, squared_distance_3, fitted_center, fitted_radius))
+        {
+          // Score is min squared distance to sphere
+          m_scores[i] = Local_FT(0);
+          for (const Local_point_3& p : points)
+            m_scores[i] += abs (sqrt(squared_distance_3(p, fitted_center)) - fitted_radius);
+        }
+        else
+          m_scores[i] = Local_FT(std::numeric_limits<double>::infinity());
+      }
+    }
+  };
 
 } // namespace Point_set
 } // namespace Shape_detection

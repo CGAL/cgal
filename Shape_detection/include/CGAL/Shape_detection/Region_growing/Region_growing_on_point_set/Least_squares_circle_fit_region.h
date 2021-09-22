@@ -83,9 +83,6 @@ namespace Point_set {
     using Sqrt = typename Get_sqrt::Sqrt;
 
   public:
-
-    /// @}
-
     /// \name Initialization
     /// @{
 
@@ -202,7 +199,8 @@ namespace Point_set {
       CGAL_precondition(m_min_radius >= FT(0));
 
       const FT m_max_radius = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::maximum_radius), FT(std::numeric_limits<double>::max()));
+        parameters::get_parameter(np, internal_np::maximum_radius),
+        FT(std::numeric_limits<double>::max()));
       CGAL_precondition(m_max_radius >= m_min_radius);
     }
 
@@ -288,7 +286,8 @@ namespace Point_set {
       \param query_index
       index of the query point
 
-      \param indices indices of the inliers of the region
+      \param indices
+      indices of the inliers of the region
 
       The first parameter is not used in this implementation.
 
