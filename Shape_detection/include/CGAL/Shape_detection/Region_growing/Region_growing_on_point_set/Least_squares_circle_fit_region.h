@@ -86,7 +86,7 @@ namespace Point_set {
     /// \name Initialization
     /// @{
 
-      /*!
+    /*!
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
@@ -280,7 +280,7 @@ namespace Point_set {
 
       This function controls if a point with the index `query_index` is within
       the `maximum_distance` from the corresponding circle and if the angle between
-      its normal and the circle radius is within the `maximum_angle`.  If both conditions
+      its normal and the circle radius is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
       \param query_index

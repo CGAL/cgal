@@ -89,124 +89,124 @@ namespace Point_set {
     /// \name Initialization
     /// @{
 
-      /*!
-        \brief initializes all internal data structures.
+    /*!
+      \brief initializes all internal data structures.
 
-        \tparam NamedParameters
-        a sequence of \ref bgl_namedparameters "Named Parameters"
+      \tparam NamedParameters
+      a sequence of \ref bgl_namedparameters "Named Parameters"
 
-        \param input_range
-        an instance of `InputRange` with 3D points and
-        corresponding 3D normal vectors
+      \param input_range
+      an instance of `InputRange` with 3D points and
+      corresponding 3D normal vectors
 
-        \param np
-        a sequence of \ref bgl_namedparameters "Named Parameters"
-        among the ones listed below
+      \param np
+      a sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below
 
-        \cgalNamedParamsBegin
-          \cgalParamNBegin{maximum_distance}
-            \cgalParamDescription{the maximum distance from a point to a sphere}
-            \cgalParamType{`GeomTraits::FT`}
-            \cgalParamDefault{1}
-          \cgalParamNEnd
-          \cgalParamNBegin{maximum_angle}
-            \cgalParamDescription{the maximum angle in degrees between
-            the normal of a point and the radius of a sphere}
-            \cgalParamType{`GeomTraits::FT`}
-            \cgalParamDefault{25 degrees}
-          \cgalParamNEnd
-          \cgalParamNBegin{cosine_value}
-            \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
-            this parameter can be used instead of the `maximum_angle`}
-            \cgalParamType{`GeomTraits::FT`}
-            \cgalParamDefault{`cos(25 * PI / 180)`}
-          \cgalParamNEnd
-          \cgalParamNBegin{minimum_region_size}
-            \cgalParamDescription{the minimum number of 3D points a region must have}
-            \cgalParamType{`std::size_t`}
-            \cgalParamDefault{3}
-          \cgalParamNEnd
-          \cgalParamNBegin{minimum_radius}
-            \cgalParamDescription{the radius below which an estimated sphere
-            is considered as invalid and discarded}
-            \cgalParamType{`GeomTraits::FT`}
-            \cgalParamDefault{0, no limit}
-          \cgalParamNEnd
-          \cgalParamNBegin{maximum_radius}
-            \cgalParamDescription{the radius above which an estimated sphere
-            is considered as invalid and discarded.}
-            \cgalParamType{`GeomTraits::FT`}
-            \cgalParamDefault{+infinity, no limit}
-          \cgalParamNEnd
-          \cgalParamNBegin{point_map}
-            \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
-            to `Kernel::Point_3`}
-            \cgalParamDefault{`PointMap()`}
-          \cgalParamNEnd
-          \cgalParamNBegin{normal_map}
-            \cgalParamDescription{ an instance of `NormalMap` that maps an item from `input_range`
-            to `Kernel::Vector_3`}
-            \cgalParamDefault{`NormalMap()`}
-          \cgalParamNEnd
-          \cgalParamNBegin{geom_traits}
-            \cgalParamDescription{an instance of `GeomTraits`}
-            \cgalParamDefault{`GeomTraits()`}
-          \cgalParamNEnd
-        \cgalNamedParamsEnd
+      \cgalNamedParamsBegin
+        \cgalParamNBegin{maximum_distance}
+          \cgalParamDescription{the maximum distance from a point to a sphere}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{1}
+        \cgalParamNEnd
+        \cgalParamNBegin{maximum_angle}
+          \cgalParamDescription{the maximum angle in degrees between
+          the normal of a point and the radius of a sphere}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{cosine_value}
+          \cgalParamDescription{the cos value computed as `cos(maximum_angle * PI / 180)`,
+          this parameter can be used instead of the `maximum_angle`}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{`cos(25 * PI / 180)`}
+        \cgalParamNEnd
+        \cgalParamNBegin{minimum_region_size}
+          \cgalParamDescription{the minimum number of 3D points a region must have}
+          \cgalParamType{`std::size_t`}
+          \cgalParamDefault{3}
+        \cgalParamNEnd
+        \cgalParamNBegin{minimum_radius}
+          \cgalParamDescription{the radius below which an estimated sphere
+          is considered as invalid and discarded}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{0, no limit}
+        \cgalParamNEnd
+        \cgalParamNBegin{maximum_radius}
+          \cgalParamDescription{the radius above which an estimated sphere
+          is considered as invalid and discarded.}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{+infinity, no limit}
+        \cgalParamNEnd
+        \cgalParamNBegin{point_map}
+          \cgalParamDescription{an instance of `PointMap` that maps an item from `input_range`
+          to `Kernel::Point_3`}
+          \cgalParamDefault{`PointMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{normal_map}
+          \cgalParamDescription{ an instance of `NormalMap` that maps an item from `input_range`
+          to `Kernel::Vector_3`}
+          \cgalParamDefault{`NormalMap()`}
+        \cgalParamNEnd
+        \cgalParamNBegin{geom_traits}
+          \cgalParamDescription{an instance of `GeomTraits`}
+          \cgalParamDefault{`GeomTraits()`}
+        \cgalParamNEnd
+      \cgalNamedParamsEnd
 
-        \pre `input_range.size() > 0`
-        \pre `maximum_distance >= 0`
-        \pre `maximum_angle >= 0 && maximum_angle <= 90`
-        \pre `cosine_value >= 0 && cosine_value <= 1`
-        \pre `minimum_region_size > 0`
-        \pre `minimum_radius >= 0`
-        \pre `maximum_radius >= minimum_radius`
-      */
-      template<typename NamedParameters>
-      Least_squares_sphere_fit_region(
-        const InputRange& input_range,
-        const NamedParameters& np) :
-      m_input_range(input_range),
-      m_point_map(parameters::choose_parameter(parameters::get_parameter(
-        np, internal_np::point_map), PointMap())),
-      m_normal_map(parameters::choose_parameter(parameters::get_parameter(
-        np, internal_np::normal_map), NormalMap())),
-      m_traits(parameters::choose_parameter(parameters::get_parameter(
-        np, internal_np::geom_traits), GeomTraits())),
-      m_squared_length_3(m_traits.compute_squared_length_3_object()),
-      m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
-      m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
-      m_sqrt(Get_sqrt::sqrt_object(m_traits)) {
+      \pre `input_range.size() > 0`
+      \pre `maximum_distance >= 0`
+      \pre `maximum_angle >= 0 && maximum_angle <= 90`
+      \pre `cosine_value >= 0 && cosine_value <= 1`
+      \pre `minimum_region_size > 0`
+      \pre `minimum_radius >= 0`
+      \pre `maximum_radius >= minimum_radius`
+    */
+    template<typename NamedParameters>
+    Least_squares_sphere_fit_region(
+      const InputRange& input_range,
+      const NamedParameters& np) :
+    m_input_range(input_range),
+    m_point_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::point_map), PointMap())),
+    m_normal_map(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::normal_map), NormalMap())),
+    m_traits(parameters::choose_parameter(parameters::get_parameter(
+      np, internal_np::geom_traits), GeomTraits())),
+    m_squared_length_3(m_traits.compute_squared_length_3_object()),
+    m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
+    m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
+    m_sqrt(Get_sqrt::sqrt_object(m_traits)) {
 
-        CGAL_precondition(input_range.size() > 0);
-        const FT max_distance = parameters::choose_parameter(
-          parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
-        CGAL_precondition(max_distance >= FT(0));
-        m_distance_threshold = max_distance;
+      CGAL_precondition(input_range.size() > 0);
+      const FT max_distance = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
+      CGAL_precondition(max_distance >= FT(0));
+      m_distance_threshold = max_distance;
 
-        const FT max_angle = parameters::choose_parameter(
-          parameters::get_parameter(np, internal_np::maximum_angle), FT(25));
-        CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
+      const FT max_angle = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::maximum_angle), FT(25));
+      CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
 
-        m_min_region_size = parameters::choose_parameter(
-          parameters::get_parameter(np, internal_np::minimum_region_size), 3);
-        CGAL_precondition(m_min_region_size > 0);
+      m_min_region_size = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::minimum_region_size), 3);
+      CGAL_precondition(m_min_region_size > 0);
 
-        const FT default_cos_value = static_cast<FT>(std::cos(CGAL::to_double(
-          (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
-        const FT cos_value = parameters::choose_parameter(
-          parameters::get_parameter(np, internal_np::cosine_value), default_cos_value);
-        CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
-        m_cos_value_threshold = cos_value;
+      const FT default_cos_value = static_cast<FT>(std::cos(CGAL::to_double(
+        (max_angle * static_cast<FT>(CGAL_PI)) / FT(180))));
+      const FT cos_value = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::cosine_value), default_cos_value);
+      CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
+      m_cos_value_threshold = cos_value;
 
-        const FT m_min_radius = parameters::choose_parameter(
-          parameters::get_parameter(np, internal_np::minimum_radius), FT(0));
-        CGAL_precondition(m_min_radius >= FT(0));
+      const FT m_min_radius = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::minimum_radius), FT(0));
+      CGAL_precondition(m_min_radius >= FT(0));
 
-        const FT m_max_radius = parameters::choose_parameter(
-          parameters::get_parameter(np, internal_np::maximum_radius),
-          FT(std::numeric_limits<double>::max()));
-        CGAL_precondition(m_max_radius >= m_min_radius);
+      const FT m_max_radius = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::maximum_radius),
+        FT(std::numeric_limits<double>::max()));
+      CGAL_precondition(m_max_radius >= m_min_radius);
     }
 
     /*!
@@ -285,7 +285,7 @@ namespace Point_set {
 
       This function controls if a point with the index `query_index` is within
       the `maximum_distance` from the corresponding sphere and if the angle between
-      its normal and the sphere radius is within the `maximum_angle`.  If both conditions
+      its normal and the sphere radius is within the `maximum_angle`. If both conditions
       are satisfied, it returns `true`, otherwise `false`.
 
       \param query_index

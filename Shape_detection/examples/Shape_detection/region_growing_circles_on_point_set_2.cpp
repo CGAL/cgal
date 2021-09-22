@@ -64,6 +64,7 @@ int main (int argc, char** argv)
     points, CGAL::parameters::
     k_neighbors(k).
     point_map(points.point_map()));
+
   Region_type region_type(
     points, CGAL::parameters::
     maximum_distance(max_distance).

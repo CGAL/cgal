@@ -52,7 +52,6 @@ namespace Point_set {
   class Least_squares_sphere_fit_sorting {
 
   public:
-
     /// \name Types
     /// @{
 
@@ -65,10 +64,10 @@ namespace Point_set {
     /// \endcond
 
     #ifdef DOXYGEN_RUNNING
-        /*!
-          a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
-          This map provides an access to the ordered indices of input points.
-        */
+      /*!
+        a model of `ReadablePropertyMap` whose key and value type is `std::size_t`.
+        This map provides an access to the ordered indices of input points.
+      */
       typedef unspecified_type Seed_map;
     #endif
 
