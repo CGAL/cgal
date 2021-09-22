@@ -28,8 +28,9 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <queue>
+#include <CGAL/Polygon_2_algorithms.h>
 #endif
 
 #include <CGAL/utility.h>
@@ -1374,7 +1375,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
 
   // Checking the hole simplicity.
-  typedef Triangulation_2_projection_traits_3<Traits> P_traits;
+  typedef CGAL::Projection_traits_3<Traits> P_traits;
   const P_traits p_traits(avg_normal);
   if (!is_simple_2(P.begin(), P.end() - 1, p_traits)) {
     // std::cerr << "WARNING: simplicity, cdt 2 falls back to the original solution!" << std::endl;

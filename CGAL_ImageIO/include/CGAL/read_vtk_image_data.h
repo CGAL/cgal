@@ -19,7 +19,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/read_vtk_image_data.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/IO/read_vtk_image_data.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 #endif
 
 #endif // CGAL_READ_VTK_IMAGE_DATA_H

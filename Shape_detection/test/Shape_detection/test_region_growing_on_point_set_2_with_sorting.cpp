@@ -29,12 +29,16 @@ using Input_range       = std::vector<Point_with_normal>;
 using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
 using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range, Point_map>;
-using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
-using Sorting        = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
-using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range, Point_map>;
+using Line_region    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+using Line_sorting   = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
+using Circle_region  = SD::Point_set::Least_squares_circle_fit_region<Kernel, Input_range, Point_map, Normal_map>;
+using Circle_sorting = SD::Point_set::Least_squares_circle_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
 
-int main(int argc, char *argv[]) {
+template <typename Region_type, typename Sorting>
+bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr)
+{
+  using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Default parameter values.
   const std::size_t k                  = 12;
@@ -92,6 +96,21 @@ int main(int argc, char *argv[]) {
     assert(regions.size() == 62);
   }
 
-  std::cout << "rg_sortpoints2, sc_test_success: " << true << std::endl;
-  return EXIT_SUCCESS;
+  region_growing.release_memory();
+  assert(regions.size() >= minr && regions.size() <= maxr);
+
+  const bool cartesian_double_test_success = (regions.size() >= minr && regions.size() <= maxr);
+  std::cout << "cartesian_double_test_success: " << cartesian_double_test_success << std::endl;
+
+  const bool success = cartesian_double_test_success;
+  return success;
+}
+
+int main(int argc, char *argv[]) {
+
+  return ((
+    test<Line_region, Line_sorting>(argc, argv, 62, 66) &&
+    test<Circle_region, Circle_sorting>(argc, argv, 196, 200)
+  ) ? EXIT_SUCCESS : EXIT_FAILURE );
+
 }

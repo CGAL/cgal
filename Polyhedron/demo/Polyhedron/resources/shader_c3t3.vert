@@ -3,6 +3,7 @@ in vec4 vertex;
 in vec3 normals;
 in vec3 colors;
 in vec3 center;
+in vec2 subdomain_in;
 uniform  mat4 mvp_matrix;
 uniform  mat4 mv_matrix;
 uniform mat4 norm_matrix;
@@ -11,9 +12,11 @@ uniform  float shrink_factor;
 out vec4 fP;
 out vec3 fN;
 out vec4 color;
+flat out vec2 subdomain_out;
 uniform  float point_size;
 void main(void)
 {
+  subdomain_out = subdomain_in;
   gl_PointSize = point_size;
   color = vec4(colors, vertex.x * cutplane.x  + vertex.y * cutplane.y  + vertex.z * cutplane.z  +  cutplane.w);
   fP = mv_matrix * vertex;

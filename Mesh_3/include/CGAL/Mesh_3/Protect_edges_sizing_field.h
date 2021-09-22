@@ -42,7 +42,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/Time_stamper.h>
-#include <CGAL/internal/Has_member_visited.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 #include <CGAL/iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Delaunay_triangulation_3.h>

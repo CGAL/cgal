@@ -16,11 +16,11 @@
 
 #include <CGAL/Combinatorial_map_fwd.h>
 
-#include <CGAL/internal/Combinatorial_map_internal_functors.h>
-#include <CGAL/internal/Combinatorial_map_utility.h>
-#include <CGAL/internal/Combinatorial_map_group_functors.h>
-#include <CGAL/internal/Combinatorial_map_copy_functors.h>
-#include <CGAL/internal/Combinatorial_map_sewable.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_utility.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_group_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_copy_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_sewable.h>
 
 #include <CGAL/Combinatorial_map_storages.h>
 #include <CGAL/Combinatorial_map_functors.h>

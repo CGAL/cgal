@@ -1,0 +1,20 @@
+\documentclass[12pt]{standalone}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+  \psset{treevshift=0,unit=1em,xunit=2em,yunit=1em,everytree={},etcratio=.75,triratio=.5}
+     \jtree[everylabel=\sl,xunit=70pt,arrows=->]
+     \! = {}
+        <left>[scaleby=2.31 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangementVerticalSideTraits\_2}}}@vst !vst
+        ^<right>[scaleby=2.31 0,arrows=-,linestyle=none]{\psframebox{\concept{ArrangemenHorizontalSideTraits\_2}}}@hst !hst
+        .
+     \!hst = <left>[scaleby=1.15 1]{\psframebox{\concept{ArrangementBottomSideTraits\_2}}}@bst !bst
+        ^<right>[scaleby=1.15 1]{\psframebox{\concept{ArrangementTopSideTraits\_2}}}@tst !tst
+        .
+     \!vst = <left>[scaleby=1.12 1]{\psframebox{\concept{ArrangementLeftSideTraits\_2}}}@lst !lst
+        ^<right>[scaleby=1.12 1]{\psframebox{\concept{ArrangementRightSideTraits\_2}}}@rst !rst
+        .
+      \endjtree
+  \psset{treevshift=0,unit=1cm,xunit=1cm,yunit=1cm,everytree={},
+         etcratio=.75,triratio=.5}
+\end{document}

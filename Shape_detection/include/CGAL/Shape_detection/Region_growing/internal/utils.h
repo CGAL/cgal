@@ -62,8 +62,17 @@ namespace internal {
     using FT = typename Traits::FT;
 
   public:
-    const FT operator()(const FT value) const {
-      CGAL_precondition(value >= FT(0));
+    FT operator()(const FT value) const {
+
+      // TODO: This happens for circles and cylinders only! Maybe after my
+      // precision cleaning in the new revision PR, this will be gone for all platforms.
+      if (value < FT(0)) return FT(0); // clamp to zero
+      const bool is_value_ok = (value >= FT(0));
+      if (!is_value_ok) { // TODO: remove that!
+        std::cout.precision(20);
+        std::cout << "- wrong value: " << value << std::endl;
+      }
+      CGAL_precondition(is_value_ok);
       return static_cast<FT>(CGAL::sqrt(CGAL::to_double(value)));
     }
   };

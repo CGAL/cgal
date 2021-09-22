@@ -153,9 +153,8 @@ void MainWindow::on_actionInside_points_triggered()
 {
   bool ok;
 
-  const unsigned int nb_points = (unsigned)
-    QInputDialog::getInt(nullptr, "#Points",
-    "#Points:",10000,1,100000000,9,&ok);
+  const unsigned int nb_points = static_cast<unsigned>(QInputDialog::getInt(nullptr, "#Points",
+    "#Points:",10000,1,100000000,9,&ok));
 
   if(!ok)
     return;
@@ -170,9 +169,8 @@ void MainWindow::on_actionPoints_in_interval_triggered()
 {
   bool ok;
 
-  const unsigned int nb_points = (unsigned)
-                QInputDialog::getInt(nullptr, "#Points",
-    "#Points:",10000,1,100000000,9,&ok);
+  const unsigned int nb_points = static_cast<unsigned>(QInputDialog::getInt(nullptr, "#Points",
+    "#Points:",10000,1,100000000,9,&ok));
 
   if(!ok)
     return;
@@ -198,9 +196,8 @@ void MainWindow::on_actionBoundary_segments_triggered()
 {
   bool ok;
 
-  const unsigned int nb_slices = (unsigned)
-    QInputDialog::getInt(nullptr, "#Slices",
-    "Slices:",100,1,1000000,8,&ok);
+  const unsigned int nb_slices = static_cast<unsigned>(QInputDialog::getInt(nullptr, "#Slices",
+    "Slices:",100,1,1000000,8,&ok));
 
   if(!ok)
     return;
@@ -215,9 +212,8 @@ void MainWindow::on_actionBoundary_points_triggered()
 {
   bool ok;
 
-  const unsigned int nb_points = (unsigned)
-    QInputDialog::getInt(nullptr, "#Points",
-    "Points:",1000,1,10000000,8,&ok);
+  const unsigned int nb_points = static_cast<unsigned>(QInputDialog::getInt(nullptr, "#Points",
+    "Points:",1000,1,10000000,8,&ok));
 
   if(!ok)
     return;
@@ -232,9 +228,8 @@ void MainWindow::on_actionEdge_points_triggered()
 {
   bool ok;
 
-  const unsigned int nb_points = (unsigned)
-    QInputDialog::getInt(nullptr, "#Points",
-    "Points:",1000,1,10000000,8,&ok);
+  const unsigned int nb_points = static_cast<unsigned>(QInputDialog::getInt(nullptr, "#Points",
+    "Points:",1000,1,10000000,8,&ok));
 
   if(!ok)
     return;

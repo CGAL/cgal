@@ -47,10 +47,10 @@ int main(int, char**)
 
   for (int i = 0; i < 10; ++ i)
     points.push_back (std::make_tuple (Point (i / 10., i / 20., i / 30.),
-                                               CGAL::make_array ((unsigned char)(255 / (i + 1)),
-                                                                 (unsigned char)(192 / (i + 1)),
-                                                                 (unsigned char)(128 / (i + 1)),
-                                                                 (unsigned char)(64 / (i + 1))),
+                                               CGAL::make_array (static_cast<unsigned char>(255 / (i + 1)),
+                                                                 static_cast<unsigned char>(192 / (i + 1)),
+                                                                 static_cast<unsigned char>(128 / (i + 1)),
+                                                                 static_cast<unsigned char>(64 / (i + 1))),
                                                i));
 
   std::ofstream f("out.ply", std::ios::binary);

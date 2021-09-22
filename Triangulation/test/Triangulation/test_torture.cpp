@@ -1,7 +1,7 @@
 #include <CGAL/config.h>
 
 #include <CGAL/Epick_d.h>
-#include <CGAL/internal/Combination_enumerator.h>
+#include <CGAL/Triangulation/internal/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>

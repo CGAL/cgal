@@ -1,0 +1,132 @@
+<!-- HTML header for doxygen 1.8.20-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="icon" type="image/png" href="$relpath$../Manual/g-196x196-doc.png"/>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen $doxygenversion"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
+<!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
+<!-- <link href="$relpath^../Manual/tabs.css" rel="stylesheet" type="text/css"/> -->
+<script type="text/javascript" src="$relpath^../Manual/jquery.js"></script>
+<script type="text/javascript" src="$relpath^../Manual/dynsections.js"></script>
+<script src="$relpath^../Manual/hacks.js" type="text/javascript"></script>
+<!-- Manually include treeview and search to avoid bloat and to fix
+     paths to the directory Manual . -->
+<!-- $.treeview -->
+<!-- $.search -->
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="$relpath^../Manual/resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript">
+  $(document).ready(initResizable);
+</script>
+<link href="$relpath^../Manual/search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="$relpath^../Manual/search/searchdata.js"></script>
+<script type="text/javascript" src="$relpath^../Manual/search/search.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() { init_search(); });
+</script>
+<link href="$relpath^../Manual/search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../Manual/search/search.js"></script>
+<!-- Manually done below. -->
+<link href="$relpath^../Manual/$stylesheet" rel="stylesheet" type="text/css" />
+<!-- This should probably be an extrastylesheet instead of hardcoded. -->
+<link href="$relpath$../Manual/cgal_stylesheet.css" rel="stylesheet" type="text/css" />
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+$mathjax
+<script src="$relpath^modules.js" type="text/javascript"></script>
+$extrastylesheet
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="back-nav">
+  <ul>
+    <li><a href="https://www.cgal.org/">cgal.org</a></li>
+    <li><a href="../Manual/index.html">Top</a></li>
+    <li><a href="../Manual/general_intro.html">Getting Started</a></li>
+    <li><a href="../Manual/tutorials.html">Tutorials</a></li>
+    <li><a href="../Manual/packages.html">Package Overview</a></li>
+    <li><a href="../Manual/how_to_cite_cgal.html">Acknowledging CGAL</a></li>
+  </ul>
+  <!-- In a package SEARCHENGINE = false, so we cannot use $searchbox
+       insertion. That's why we have to do it manually here. Notice
+       that we also take pngs from the Manual. -->
+  <div id="MSearchBox" class="MSearchBoxInactive">
+    <span class="left">
+      <img id="MSearchSelect" src="../Manual/search/mag_sel.svg"
+           onmouseover="return searchBox.OnSearchSelectShow()"
+           onmouseout="return searchBox.OnSearchSelectHide()"
+           alt=""/>
+      <input type="text" id="MSearchField" value="Search" accesskey="S"
+             onfocus="searchBox.OnSearchFieldFocus(true)"
+             onblur="searchBox.OnSearchFieldFocus(false)"
+             onkeyup="searchBox.OnSearchFieldChange(event)"/>
+    </span><span class="right">
+      <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="../Manual/search/close.svg" alt=""/></a>
+    </span>
+  </div>
+
+</div>
+<!--BEGIN TITLEAREA-->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <!--BEGIN PROJECT_LOGO-->
+  <td id="projectlogo"><img alt="Logo" src="$relpath^$projectlogo"/></td>
+  <!--END PROJECT_LOGO-->
+  <!--BEGIN PROJECT_NAME-->
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">$projectname
+   <!--BEGIN PROJECT_NUMBER-->&#160;<span id="projectnumber">$projectnumber</span><!--END PROJECT_NUMBER-->
+   </div>
+   <!--BEGIN PROJECT_BRIEF--><div id="projectbrief">$projectbrief</div><!--END PROJECT_BRIEF-->
+  </td>
+  <!--END PROJECT_NAME-->
+  <!--BEGIN !PROJECT_NAME-->
+   <!--BEGIN PROJECT_BRIEF-->
+    <td style="padding-left: 0.5em;">
+    <div id="projectbrief">$projectbrief</div>
+    </td>
+   <!--END PROJECT_BRIEF-->
+  <!--END !PROJECT_NAME-->
+  <!--BEGIN DISABLE_INDEX-->
+  <!--BEGIN SEARCHENGINE-->
+  <!-- We disable the search box because we have added it in the
+  back-nav for stylistic reasons. -->
+  <!-- <td>$.searchbox</td> -->
+  <!--END SEARCHENGINE-->
+  <!--END DISABLE_INDEX-->
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- Code below is usually inserted by doxygen when SEARCHENGINE =
+     true. Notice that the path to the search directory is adjusted to
+     the top-level.-->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "../Manual/search",false,'Search');
+</script>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0"
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<!--END TITLEAREA-->
+<!-- end header part -->

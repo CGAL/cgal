@@ -11,10 +11,6 @@
 // Author(s)     :  Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                  Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#if (__GNUC__>4) || (__GNUC__ == 4 && __GNUC_MINOR__ >=6)
-#  pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#endif
-
 #include <CGAL/use.h>
 
 template <class Traits>

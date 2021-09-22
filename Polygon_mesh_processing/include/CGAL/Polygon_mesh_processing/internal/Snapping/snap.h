@@ -168,7 +168,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
   CGAL_postcondition(halfedge_range.size() == initial_n - collapsed_n);
 }
 
-// Adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
+// Adapted from <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 template <typename TriangleMesh,
           typename VPMS, typename VPMT, typename FacePatchMap,
           typename AABBTraits>

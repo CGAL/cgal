@@ -47,8 +47,8 @@
   template<typename K>                                                  \
   inline                                                                \
   decltype(auto) \
-  intersection(const B<K>& a, const A<K>& b) {                          \
-    return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
+  intersection(const B<K>& b, const A<K>& a) {                          \
+    return BOOST_PP_CAT(K().intersect_, BOOST_PP_CAT(DIM, _object()(b, a))); \
   }
 
 #define CGAL_INTERSECTION_FUNCTION_SELF(A, DIM)                         \
@@ -67,8 +67,8 @@
   }                                                        \
   template<typename K>                                     \
   inline bool                                              \
-  do_intersect(const B<K>& a, const A<K>& b) {             \
-    return BOOST_PP_CAT(K().do_intersect_, BOOST_PP_CAT(DIM, _object()(a, b))); \
+  do_intersect(const B<K>& b, const A<K>& a) {             \
+    return BOOST_PP_CAT(K().do_intersect_, BOOST_PP_CAT(DIM, _object()(b, a))); \
   }
 
 #define CGAL_DO_INTERSECT_FUNCTION_SELF(A, DIM)                         \

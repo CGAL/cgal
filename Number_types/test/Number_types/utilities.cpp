@@ -32,9 +32,7 @@
 #include <CGAL/leda_real.h>
 #endif // CGAL_USE_LEDA
 
-#ifdef CGAL_USE_LONG_LONG
-#  include <CGAL/long_long.h>
-#endif
+#include <CGAL/long_long.h>
 
 #include <CGAL/Number_type_checker.h>
 
@@ -63,10 +61,8 @@ int main()
   // TESTIT(unsigned int, "unsigned int")
   // TESTIT(unsigned long int, "unsigned long int")
   // TESTIT(unsigned short int, "unsigned short int")
-#ifdef CGAL_USE_LONG_LONG
   TESTIT(long long, "long long")
   // TESTIT(unsigned long long, "unsigned long long")
-#endif
   TESTIT(float, "float")
   TESTIT(double, "double")
   TESTIT(long double, "long double")

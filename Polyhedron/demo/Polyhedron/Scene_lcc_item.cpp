@@ -154,7 +154,7 @@ struct lcc_priv{
         bool is_process;
       };
 
-      typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+      typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
       typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
       typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits>     Fb1;
       typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>         Fb;

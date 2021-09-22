@@ -127,16 +127,6 @@
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 
-// Hack: Boost<1.55 does not detect correctly the C++11 features of ICC.
-// We declare by hand two features that we need (variadic templates and
-// rvalue references).
-#if defined(__INTEL_COMPILER) && defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  undef BOOST_NO_VARIADIC_TEMPLATES
-#  undef BOOST_NO_CXX11_VARIADIC_TEMPLATES
-#  undef BOOST_NO_RVALUE_REFERENCES
-#  undef BOOST_NO_CXX11_RVALUE_REFERENCES
-#endif
-
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
@@ -144,7 +134,7 @@
 //----------------------------------------------------------------------//
 
 #if CGAL_HEADER_ONLY
-#  include <CGAL/internal/enable_third_party_libraries.h>
+#  include <CGAL/Installation/internal/enable_third_party_libraries.h>
 #else
 #  include <CGAL/compiler_config.h>
 #endif
@@ -167,98 +157,6 @@
 #define CGAL_USE_SSE2_FABS
 #endif
 
-//----------------------------------------------------------------------//
-//  Detect features at compile-time. Some macros have only been
-//  introduced as of Boost 1.40. In that case, we simply say that the
-//  feature is not available, even if that is wrong.
-//  ----------------------------------------------------------------------//
-
-#if defined(BOOST_NO_0X_HDR_ARRAY)
-#define CGAL_CFG_NO_CPP0X_ARRAY 1
-#endif
-#if defined(BOOST_NO_0X_HDR_UNORDERED_SET) || \
-    defined(BOOST_NO_0X_HDR_UNORDERED_MAP) || \
-   (defined(_MSC_VER) && (_MSC_VER == 1800)) // std::unordered_set is very bad in MSVC2013
-#define CGAL_CFG_NO_CPP0X_UNORDERED 1
-#endif
-#if defined( BOOST_NO_0X_HDR_THREAD)
-#define CGAL_CFG_NO_STD_THREAD 1
-#endif
-#if defined(BOOST_NO_DECLTYPE)
-#define CGAL_CFG_NO_CPP0X_DECLTYPE 1
-#endif
-#if defined(BOOST_NO_DELETED_FUNCTIONS) || \
-    defined(BOOST_NO_DEFAULTED_FUNCTIONS) || \
-    (defined(_MSC_VER) && _MSC_VER < 1900) // MSVC 2013 has only partial support
-#define CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS 1
-#endif
-#if defined(BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS)
-#define CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 1
-#endif
-#if defined(BOOST_NO_INITIALIZER_LISTS)
-#define CGAL_CFG_NO_CPP0X_INITIALIZER_LISTS 1
-#endif
-#if defined(BOOST_MSVC)
-#define CGAL_CFG_NO_CPP0X_ISFINITE 1 // used in <CGAL/CORE/Filter.h>
-#endif
-#if defined(BOOST_NO_LONG_LONG)
-#define CGAL_CFG_NO_CPP0X_LONG_LONG 1
-#endif
-#if defined(BOOST_NO_LAMBDAS)
-#define CGAL_CFG_NO_CPP0X_LAMBDAS 1
-#endif
-#if defined(BOOST_NO_RVALUE_REFERENCES)
-#define CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE 1
-#endif
-#if defined(BOOST_NO_STATIC_ASSERT)
-#define CGAL_CFG_NO_CPP0X_STATIC_ASSERT 1
-#endif
-#if defined(BOOST_NO_0X_HDR_TUPLE)
-#define CGAL_CFG_NO_CPP0X_TUPLE 1
-#endif
-#if defined(BOOST_NO_VARIADIC_TEMPLATES)
-#define CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES 1
-#endif
-// never use TR1
-#define CGAL_CFG_NO_TR1_ARRAY 1
-// never use TR1
-#define CGAL_CFG_NO_TR1_TUPLE 1
-#if (__GNUC__ <= 0) || defined(__INTEL_COMPILER)
-#define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
-#endif
-#if _MSC_VER==1800
-#define CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-#endif
-#if __cplusplus < 201103L && !(_MSC_VER >= 1600)
-#define CGAL_CFG_NO_CPP0X_COPY_N 1
-#define CGAL_CFG_NO_CPP0X_NEXT_PREV 1
-#endif
-#if defined(BOOST_NO_EXPLICIT_CONVERSION_OPERATIONS) \
-    || defined(BOOST_NO_EXPLICIT_CONVERSION_OPERATORS)
-#define CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS 1
-#endif
-#if defined(BOOST_NO_TEMPLATE_ALIASES)
-#define CGAL_CFG_NO_CPP0X_TEMPLATE_ALIASES 1
-#endif
-
-// Some random list to let us write C++11 without thinking about
-// each feature we are using.
-#if ( __cplusplus >= 201103L || _MSVC_LANG >= 201103L ) &&      \
-    !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && \
-    !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE && \
-    !defined CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS && \
-    !defined CGAL_CFG_NO_CPP0X_TUPLE && \
-    !defined CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX && \
-    !defined CGAL_CFG_NO_CPP0X_STATIC_ASSERT && \
-    !defined CGAL_CFG_NO_CPP0X_DECLTYPE && \
-    !defined CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS && \
-    !defined CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-#define CGAL_CXX11 1
-#endif
-// Same for C++14.
-#if __cplusplus >= 201402L || _MSVC_LANG >= 201402L
-#  define CGAL_CXX14 1
-#endif
 // Same for C++17
 #if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
 #  define CGAL_CXX17 1
@@ -300,27 +198,11 @@
 #define CGAL_END_NAMESPACE }
 #endif
 
-
-#ifndef CGAL_CFG_NO_CPP0X_LONG_LONG
-#  define CGAL_USE_LONG_LONG
-#endif
-
-
 #ifndef CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG
 #  define CGAL_TYPENAME_DEFAULT_ARG typename
 #else
 #  define CGAL_TYPENAME_DEFAULT_ARG
 #endif
-
-
-#ifdef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-#  define CGAL_DELETED
-#  define CGAL_EXPLICITLY_DEFAULTED
-#else
-#  define CGAL_DELETED = delete
-#  define CGAL_EXPLICITLY_DEFAULTED = default
-#endif
-
 
 // Big endian or little endian machine.
 // ====================================
@@ -481,7 +363,7 @@ using std::max;
 #define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
-#if CGAL_CXX11 && __has_cpp_attribute(no_unique_address)
+#if __has_cpp_attribute(no_unique_address)
 #  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else
 #  define CGAL_NO_UNIQUE_ADDRESS
@@ -506,25 +388,6 @@ using std::max;
 #  if defined BOOST_HAS_THREADS || defined _OPENMP
 #    define CGAL_HAS_THREADS
 #  endif
-#endif
-
-#if __has_feature(cxx_thread_local) || \
-    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1900 )
-// see also Installation/cmake/modules/config/support/CGAL_test_cpp_version.cpp
-#define CGAL_CAN_USE_CXX11_THREAD_LOCAL
-#endif
-
-#if (__has_include(<mutex>) && __cplusplus >= 201103L ) | \
-    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1700 )
-#define CGAL_CAN_USE_CXX11_MUTEX
-#endif
-
-#if (__has_include(<atomic>) && __cplusplus >= 201103L ) || \
-    ( (__GNUC__ > 0) && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1700 )
-#define CGAL_CAN_USE_CXX11_ATOMIC
 #endif
 
 #ifndef CGAL_HAS_THREADS
