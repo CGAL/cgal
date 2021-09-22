@@ -286,7 +286,7 @@ public:
 
     \pre `region.size() > 0`
   */
-  void update(const std::vector<std::size_t>& region)
+  bool update(const std::vector<std::size_t>& region)
   {
     CGAL_precondition(region.size() > 0);
 
@@ -309,6 +309,7 @@ public:
                    (region.end(), unary_function)),
        m_point_map, m_normal_map, m_sqrt, m_squared_distance_3,
        m_axis, m_radius);
+    return true;
   }
   /// @}
 

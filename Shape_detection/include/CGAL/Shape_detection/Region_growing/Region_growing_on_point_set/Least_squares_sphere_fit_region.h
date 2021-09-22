@@ -288,7 +288,7 @@ public:
 
     \pre `region.size() > 0`
   */
-  void update(const std::vector<std::size_t>& region)
+  bool update(const std::vector<std::size_t>& region)
   {
     CGAL_precondition(region.size() > 0);
 
@@ -304,6 +304,7 @@ public:
                    boost::make_transform_iterator
                    (region.end(), unary_function)),
        m_sqrt, m_squared_distance_3, m_center, m_radius);
+    return true;
   }
 
   /// @}

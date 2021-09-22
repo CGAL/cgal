@@ -64,7 +64,10 @@ int main (int argc, char** argv)
   const double min_radius = 0.;
   const double max_radius = std::numeric_limits<double>::infinity();
 
-  Neighbor_query neighbor_query(points, k, points.point_map());
+  Neighbor_query neighbor_query(
+    points, CGAL::parameters::
+    k_neighbors(k).
+    point_map(points.point_map()));
   Region_type region_type(points, tolerance, max_angle, min_region_size,
                           min_radius, max_radius,
                           points.point_map(), points.normal_map());
