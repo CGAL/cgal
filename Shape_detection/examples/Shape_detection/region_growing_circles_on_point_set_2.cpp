@@ -56,27 +56,30 @@ int main (int argc, char** argv)
 
   // Default parameters for data/circles.ply
   const std::size_t k = 12;
-  const double tolerance = 0.01;
+  const double max_distance = 0.01;
   const double max_angle = 10.;
   const std::size_t min_region_size = 20;
-
-  // No constraint on radius
-  const double min_radius = 0.;
-  const double max_radius = std::numeric_limits<double>::infinity();
 
   Neighbor_query neighbor_query(
     points, CGAL::parameters::
     k_neighbors(k).
     point_map(points.point_map()));
-  Region_type region_type(points, tolerance, max_angle, min_region_size,
-                          min_radius, max_radius,
-                          points.point_map(), points.normal_map());
+  Region_type region_type(
+    points, CGAL::parameters::
+    maximum_distance(max_distance).
+    maximum_angle(max_angle).
+    minimum_region_size(min_region_size).
+    point_map(points.point_map()).
+    normal_map(points.normal_map()));
 
   // Sort indices
-  Sorting sorting(points, neighbor_query, points.point_map());
+  Sorting sorting(
+    points, neighbor_query, CGAL::parameters::
+    point_map(points.point_map()));
   sorting.sort();
 
-  Region_growing region_growing(points, neighbor_query, region_type, sorting.seed_map());
+  Region_growing region_growing(
+    points, neighbor_query, region_type, sorting.seed_map());
 
   // Add maps to get colored output
   Point_set_3::Property_map<unsigned char>

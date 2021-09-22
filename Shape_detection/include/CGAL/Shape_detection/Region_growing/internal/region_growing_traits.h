@@ -16,15 +16,6 @@
 
 #include <CGAL/license/Shape_detection.h>
 
-// STL includes.
-#include <vector>
-#include <algorithm>
-#include <type_traits>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/number_utils.h>
-
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
 
