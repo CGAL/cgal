@@ -274,10 +274,10 @@ do_intersect(const typename K::Segment_2 &seg1,
 template <class K>
 class Segment_2_Segment_2_pair {
 public:
-    enum Intersection_results {NOT_COMPUTED_YET, NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Segment_2_Segment_2_pair(typename K::Segment_2 const *seg1,
                             typename K::Segment_2 const *seg2)
-            : _seg1(seg1), _seg2(seg2), _known(false), _result(NOT_COMPUTED_YET) {}
+            : _seg1(seg1), _seg2(seg2), _known(false), _result(UNKNOWN) {}
 
     Intersection_results intersection_type() const;
 
