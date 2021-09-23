@@ -11,7 +11,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Efi Fogel       ogel@gmail.com>
+// Author(s): Efi Fogel       <efifogel@gmail.com>
 //            Simon Giraudot  <simon.giraudot@geometryfactory.com>
 //            Waqar Khan      <wkhan@mpi-inf.mpg.de>
 
