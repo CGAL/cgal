@@ -1078,6 +1078,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
   // Chen Li, "if (c == EOF)" is unsafe since c is of char type and
   // EOF is of int tyep with a negative value -1
   if (i.eof()) {
+    delete [] str;
     i.clear(std::ios::eofbit | std::ios::failbit);
     return i;
   }
