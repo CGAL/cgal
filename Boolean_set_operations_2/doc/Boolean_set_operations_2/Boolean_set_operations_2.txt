@@ -109,9 +109,7 @@ general polygons, where the edges of a general polygon may be
 general \f$ x\f$-monotone curves, rather than being simple line segments.
 </UL>
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssecpolygon_validation Conditions for Valid Polygons
-<!----------------------------------------------------------------------------->
 
 In our context, a polygon must uphold the following conditions:
 
@@ -121,10 +119,8 @@ In our context, a polygon must uphold the following conditions:
 <LI><I>Orientation</I> - the polygon's outer boundary must be <I>counter-clockwise oriented</I>.
 </OL>
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssecpolygon_with_holes_validation Conditions for Valid
 Polygons with Holes
-<!----------------------------------------------------------------------------->
 
 In our context, a polygon with holes must uphold the following conditions:
 
@@ -179,9 +175,7 @@ that accept two `Polygon_2` objects as their input. We explain how
 these functions should be used through several examples in the
 following sections.
 
-<!----------------------------------------------------------------------------->
 \subsection Boolean_set_operations_2ASimpleExample A Simple Example
-<!----------------------------------------------------------------------------->
 
 \image html triangles.png
 \image latex triangles.png
@@ -200,9 +194,7 @@ which is located in the header file `print_utils.h`.
 
 \cgalExample{Boolean_set_operations_2/do_intersect.cpp}
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssecpolygons_with_holes Polygons with Holes
-<!----------------------------------------------------------------------------->
 
 \cgalFigureBegin{figsimple,simple.png}
 Operations on simple polygons. (a) The union of two polygons, resulting in a point set whose outer boundary is defined by a simple polygon and contains a polygonal hole in its interior. (b) The intersection (darkly shaded) of two polygons (lightly shaded), resulting in two disjoint polygons. (c) The complement (darkly shaded) of a simple polygon (lightly shaded).
@@ -318,9 +310,7 @@ of several disconnected components, they all accept an output iterator
 output polygons to its associated container.
 </UL>
 
-<!----------------------------------------------------------------------------->
 \subsection bso_sssecex_simple_bops Joining and Intersecting Simple Polygons
-<!----------------------------------------------------------------------------->
 
 The following example demonstrates the usage of the free functions
 `join()` and `intersection()` for computing the union and the
@@ -331,9 +321,7 @@ the header file `print_utils.h` under the examples folder.
 
 \cgalExample{Boolean_set_operations_2/simple_join_intersect.cpp}
 
-<!----------------------------------------------------------------------------->
 \subsection bso_sssecpwh_bops Operations on Polygons with Holes
-<!----------------------------------------------------------------------------->
 
 We have demonstrated that free functions that perform Boolean set
 operations on simple polygons may output polygons with holes. In
@@ -370,9 +358,7 @@ vertical walls).
 
 \cgalExample{Boolean_set_operations_2/connect_polygon.cpp}
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssecmain_component Operating on Polygon Sets
-<!----------------------------------------------------------------------------->
 
 The result of a regularized operation on two polygons (or polygons
 with holes) \f$ P\f$ and \f$ Q\f$ is typically a collection of several
@@ -432,9 +418,7 @@ come in two flavors: for example, `S.join(P, Q)` computes the union of
 Similarly, `S.complement(P)` sets \f$ S\f$ to be the complement of \f$
 P\f$, while `S.complement()` assigns \f$ S\f$ with its complement.
 
-<!----------------------------------------------------------------------------->
 \subsection bso_sssecsequence A Sequence of Set Operations
-<!----------------------------------------------------------------------------->
 
 The free functions reviewed in Section \ref bso_ssecpolygons_with_holes
 serve as a wrapper for the polygon-set class, and are only provided for
@@ -463,9 +447,7 @@ interior of this hole.
 
 \cgalExample{Boolean_set_operations_2/sequence.cpp}
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssecinsert_ni Inserting Non Intersecting Polygons
-<!----------------------------------------------------------------------------->
 
 If you want to compute the union of a polygon \f$ P\f$ (\f$ P\f$ may be a simple
 polygon or a polygon-with-holes object) with a general-polygon set
@@ -498,9 +480,7 @@ range of polygons. When a range of polygons are inserted into a
 polygon set \f$ S\f$, all the polygons in the range and the polygons represented
 by \f$ S\f$ must be pairwise disjoint in their interiors.
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssecagg_ops Performing Aggregated Operations
-<!----------------------------------------------------------------------------->
 
 There are a few options to compute the union of a set of polygons
 \f$ P_1, \ldots P_m\f$. You can do it incrementally as follows. At each step
@@ -548,9 +528,7 @@ Polygon_set_2 S;
 S.join (begin, end);
 \endcode
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssectraits_sel Traits Selection
-<!----------------------------------------------------------------------------->
 
 All the free function-templates that apply Boolean set operations
 accept an optional traits argument; see next Section for more
@@ -693,9 +671,7 @@ An instantiated
 the concepts `GeneralPolygon_2` and
 `GeneralPolygonWithHoles_2` respectively.
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssectraits_concepts The Traits-Class Concepts
-<!----------------------------------------------------------------------------->
 
 The traits class used to instantiate the `General_polygon_set_2`
 class template must model the concept `GeneralPolygonSetTraits_2`,
@@ -742,9 +718,7 @@ when exact arithmetic is used. When inexact arithmetic is used,
 (nearly) degenerate configurations may result in abnormal termination
 of the program or even incorrect results.
 
-<!----------------------------------------------------------------------------->
 \subsection bso_sseccirc_seg Operating on Polygons with Circular Arcs
-<!----------------------------------------------------------------------------->
 
 Two traits classes are distributed with \cgal. The first one is named
 `Gps_segment_traits_2`, and it is used to perform Boolean
@@ -778,9 +752,7 @@ operator.
 
 \cgalExample{Boolean_set_operations_2/circle_segment.cpp}
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssecgeneral_polygon_concept General Polygon Set Traits Adapter
-<!----------------------------------------------------------------------------->
 
 The concept `GeneralPolygon_2` and its generic model
 `General_polygon_2<ArrDirectionalXMonotoneTraits>` facilitate the
@@ -865,9 +837,7 @@ the `Gps_traits_2` adapter.
 
 \cgalExample{Boolean_set_operations_2/bezier_traits_adapter.cpp}
 
-<!----------------------------------------------------------------------------->
 \subsection bso_ssecaggregated_gen_ops Aggregated Operations
-<!----------------------------------------------------------------------------->
 
 In Section \ref bso_ssecagg_ops we describe how aggregated union
 and intersection operations can be applied to a collection of ordinary
