@@ -162,7 +162,7 @@ if(TARGET CGAL::CGAL_ImageIO)
     target_link_libraries(mesh_3D_image_variable_size
                           PUBLIC CGAL::Eigen3_support)
 
-    find_package(ITK QUIET NO_MODULE)
+    find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing)
     if(ITK_FOUND)
       include(${ITK_USE_FILE})
       create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
