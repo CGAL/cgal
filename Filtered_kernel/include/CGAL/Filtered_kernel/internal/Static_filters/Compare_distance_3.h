@@ -15,7 +15,7 @@
 #define CGAL_INTERNAL_STATIC_FILTERS_COMPARE_DISTANCE_3_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Filtered_kernel/internal/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <cmath>
 #include <iostream>
 
