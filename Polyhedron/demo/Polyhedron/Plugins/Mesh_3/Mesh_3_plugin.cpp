@@ -37,9 +37,9 @@ auto make_not_null(T&& t) {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
 #include "Image_type.h"
-  #ifdef CGAL_USE_ITK
-  #include <CGAL/Mesh_3/generate_label_weights.h>
-  #endif
+#ifdef CGAL_USE_ITK
+#include <CGAL/Mesh_3/generate_label_weights.h>
+#endif
 
 #endif
 
