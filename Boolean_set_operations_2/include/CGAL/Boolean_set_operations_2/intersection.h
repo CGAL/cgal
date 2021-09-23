@@ -278,7 +278,7 @@ intersection(InputIterator begin, InputIterator end,
              OutputIterator oi, Tag_false, unsigned int k=5,
              Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
-  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  typename Iterator_to_gps_traits<InputIterator>::Traits traits;
   return r_intersection(begin, end, oi, traits, k);
 }
 
@@ -292,7 +292,7 @@ intersection(InputIterator begin, InputIterator end,
                <typename CGAL::is_iterator<InputIterator>>::type* = 0,
              Disable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
-  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  typename Iterator_to_gps_traits<InputIterator>::Traits traits;
   return r_intersection(begin, end, oi, traits, k);
 }
 
@@ -326,7 +326,7 @@ intersection(InputIterator1 begin1, InputIterator1 end1,
              OutputIterator oi, Tag_false, unsigned int k=5,
              Enable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
-  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  typename Iterator_to_gps_traits<InputIterator1>::Traits traits;
   return r_intersection(begin1, end1, begin2, end2, oi, traits, k);
 }
 
@@ -339,7 +339,7 @@ intersection(InputIterator1 begin1, InputIterator1 end1,
              OutputIterator oi, unsigned int k=5,
              Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
-  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  typename Iterator_to_gps_traits<InputIterator1>::Traits traits;
   return r_intersection(begin1, end1, begin2, end2, oi, traits, k);
 }
 

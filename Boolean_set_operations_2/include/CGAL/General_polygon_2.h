@@ -22,7 +22,7 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Object.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 

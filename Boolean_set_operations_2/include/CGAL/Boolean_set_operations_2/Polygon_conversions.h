@@ -232,6 +232,13 @@ convert_polygon_back(OutputIterator& output,
     <Kernel, Container, OutputIterator>(output);
 }
 
+template <typename InputIterator>
+struct Iterator_to_gps_traits {
+  typedef typename std::iterator_traits<InputIterator>::value_type InputPolygon;
+  typedef typename Gps_default_traits<InputPolygon>::Traits    Traits;
+};
+
+
 }
 
 #endif // CGAL_BSO_POLYGON_CONVERSIONS_H

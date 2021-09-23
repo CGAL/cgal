@@ -254,7 +254,7 @@ inline bool do_intersect(InputIterator begin, InputIterator end,
                          Tag_false, unsigned int k=5,
                          Enable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
-  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  typename Iterator_to_gps_traits<InputIterator>::Traits traits;
   return r_do_intersect(begin, end, traits, k);
 }
 
@@ -264,7 +264,7 @@ inline bool do_intersect(InputIterator begin, InputIterator end,
                          unsigned int k=5,
                          Disable_if_Polygon_2_iterator<InputIterator>* = 0)
 {
-  typename map_iterator_to_traits<InputIterator>::Traits traits;
+  typename Iterator_to_gps_traits<InputIterator>::Traits traits;
   return do_intersect(begin, end, traits, k);
 }
 
@@ -299,7 +299,7 @@ inline bool do_intersect (InputIterator1 begin1, InputIterator1 end1,
                           unsigned int k=5,
                           Disable_if_Polygon_2_iterator<InputIterator1>* = 0)
 {
-  typename map_iterator_to_traits<InputIterator1>::Traits traits;
+  typename Iterator_to_gps_traits<InputIterator1>::Traits traits;
   return r_do_intersect(begin1, end1, begin2, end2, traits, k);
 }
 
