@@ -521,17 +521,15 @@ public:
 
       local_orientation=Local_kernel::Orientation_3()(V1, V2, normal) ;
 
-      if(local_orientation!=CGAL::ZERO && local_orientation!=orientation)
-      { return false; }
-      // V1 and V2 are collinear
-      if(local_orientation==CGAL::ZERO )
+      if(local_orientation!=CGAL::ZERO)
       {
-        //TS and TU are opposite
-        if(CGAL::scalar_product(V1,V2) >=0)
-          return true;
-        //TS and TU have the same direction.
-        else
-          return false;
+        if(local_orientation!=orientation)
+        { return false; }
+      }
+      else
+      {
+        if(CGAL::scalar_product(V1,V2)<0)
+        { return false; }  //TS and TU are opposite
       }
     }
     return true;
