@@ -218,17 +218,19 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
             blured_max->GetBufferPointer() + img_size,
             weights_ptr);
 
+  CGAL::Image_3 weights_img(weights);
+
 #ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
   std::cout << "non white in image \t= "
     << internal::count_non_white_pixels<Image_word_type>(image) << std::endl;
   std::cout << "non white in weights \t= "
-    << internal::count_non_white_pixels<Weights_type>(weights) << std::endl;
+    << internal::count_non_white_pixels<Weights_type>(weights_img) << std::endl;
   std::cout << "non white in itkWeights \t= "
     << internal::count_non_white_pixels<Weights_type>(blured_max.GetPointer()) << std::endl;
   _writeImage(weights, "weights-image.inr.gz");
 #endif
 
-  return CGAL::Image_3(weights);
+  return weights_img;
 }
 /// @endcond
 
