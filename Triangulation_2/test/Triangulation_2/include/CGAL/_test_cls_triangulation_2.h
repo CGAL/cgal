@@ -132,9 +132,14 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1.number_of_vertices() == 0 );
 
   Triangul T3(T1);
-  Triangul T4 = T1;
-  T3.swap(T1);
+  assert(T3.tds().vertices().size() == T1.tds().vertices().size());
+  assert(T3.tds().faces().size() == T1.tds().faces().size());
 
+  Triangul T4 = T1;
+  assert(T4.tds().vertices().size() == T1.tds().vertices().size());
+  assert(T4.tds().faces().size() == T1.tds().faces().size());
+
+  T3.swap(T1);
 
   /**************************/
   /******* INSERTIONS *******/
@@ -156,16 +161,20 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T0_0.is_valid() );
 
   Triangul T0_1;
-  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != NULL );
+  Vertex_handle v0_1_0 = T0_1.insert(p0); assert( v0_1_0 != nullptr );
   assert( T0_1.dimension() == 0 );
   assert( T0_1.number_of_vertices() == 1 );
   assert( T0_1.number_of_faces() == 0);
   assert( T0_1.is_valid() );
 
+  Triangul T0_1b(T0_1);
+  assert(T0_1b.tds().vertices().size() == T0_1.tds().vertices().size());
+  assert(T0_1b.tds().faces().size() == T0_1.tds().faces().size());
+
   // test insert_first()
   Triangul T0_2;
   Vertex_handle v0_2_0 =   T0_2.insert_first(p0);
-  assert( v0_2_0 != NULL );
+  assert( v0_2_0 != nullptr );
   assert( T0_2.dimension() == 0 );
   assert( T0_2.number_of_vertices() == 1 );
   assert( T0_2.number_of_faces() == 0);
@@ -184,11 +193,15 @@ _test_cls_triangulation_2( const Triangul & )
   assert( T1_2.number_of_faces() == 0 );
   assert( T1_2.is_valid() );
 
+  Triangul T1_2b(T1_2);
+  assert(T1_2b.tds().vertices().size() == T1_2.tds().vertices().size());
+  assert(T1_2b.tds().faces().size() == T1_2.tds().faces().size());
+
   // p1,p3,p2  [endpoints first]
   Triangul T1_3_0;
-  Vertex_handle v1_3_0_1 = T1_3_0.insert(p1); assert( v1_3_0_1 != NULL );
-  Vertex_handle v1_3_0_3 = T1_3_0.insert(p3); assert( v1_3_0_3 != NULL );
-  Vertex_handle v1_3_0_2 = T1_3_0.insert(p2); assert( v1_3_0_2 != NULL );
+  Vertex_handle v1_3_0_1 = T1_3_0.insert(p1); assert( v1_3_0_1 != nullptr );
+  Vertex_handle v1_3_0_3 = T1_3_0.insert(p3); assert( v1_3_0_3 != nullptr );
+  Vertex_handle v1_3_0_2 = T1_3_0.insert(p2); assert( v1_3_0_2 != nullptr );
   assert( T1_3_0.dimension() == 1 );
   assert( T1_3_0.number_of_vertices() == 3 );
   assert( T1_3_0.number_of_faces() == 0 );
@@ -196,9 +209,9 @@ _test_cls_triangulation_2( const Triangul & )
 
   // p1,p2,p3  [middle point first]
   Triangul T1_3_1;
-  Vertex_handle v1_3_1_1 = T1_3_1.insert(p1); assert( v1_3_1_1 != NULL );
-  Vertex_handle v1_3_1_3 = T1_3_1.insert(p2); assert( v1_3_1_3 != NULL );
-  Vertex_handle v1_3_1_2 = T1_3_1.insert(p3); assert( v1_3_1_2 != NULL );
+  Vertex_handle v1_3_1_1 = T1_3_1.insert(p1); assert( v1_3_1_1 != nullptr );
+  Vertex_handle v1_3_1_3 = T1_3_1.insert(p2); assert( v1_3_1_3 != nullptr );
+  Vertex_handle v1_3_1_2 = T1_3_1.insert(p3); assert( v1_3_1_2 != nullptr );
   assert( T1_3_1.dimension() == 1 );
   assert( T1_3_1.number_of_vertices() == 3 );
   assert( T1_3_1.number_of_faces() == 0 );
@@ -217,7 +230,7 @@ _test_cls_triangulation_2( const Triangul & )
 
   // test insert_second()
   Triangul T1_6 = T0_2;
-  Vertex_handle v1_6_2 = T1_6.insert_second(p3); assert( v1_6_2 != NULL );
+  Vertex_handle v1_6_2 = T1_6.insert_second(p3); assert( v1_6_2 != nullptr );
   assert( T1_6.dimension() == 1 );
   assert( T1_6.number_of_vertices() == 2 );
   assert( T1_6.is_valid() );
@@ -694,7 +707,7 @@ _test_cls_triangulation_2( const Triangul & )
   // here == operator needed for Point!
   // testing with the grid triangulation
   LFC fc= T2_7.line_walk(p1,p10);
-  assert(fc!=NULL);
+  assert(fc!=nullptr);
   assert(!fc.is_empty());
   LFC fc2=fc;
   assert(fc==fc2);
@@ -775,67 +788,67 @@ _test_cls_triangulation_2( const Triangul & )
   /******** I/O *******/
   std::cout << "    output to a file" << std::endl;
   std::ofstream of0_0("T00.triangulation", std::ios::out);
-  CGAL::set_ascii_mode(of0_0);
+  CGAL::IO::set_ascii_mode(of0_0);
   of0_0 << T0_0; of0_0.close();
   std::ofstream of0_1("T01.triangulation");
-  CGAL::set_ascii_mode(of0_1);
+  CGAL::IO::set_ascii_mode(of0_1);
   of0_1 << T0_1; of0_1.close();
   std::ofstream of1_2("T12.triangulation");
-  CGAL::set_ascii_mode(of1_2);
+  CGAL::IO::set_ascii_mode(of1_2);
   of1_2 << T1_2; of1_2.close();
   std::ofstream of1_5("T15.triangulation");
-  CGAL::set_ascii_mode(of1_5);
+  CGAL::IO::set_ascii_mode(of1_5);
   of1_5 << T1_5; of1_5.close();
   std::ofstream of1_6("T16.triangulation");
-  CGAL::set_ascii_mode(of1_6);
+  CGAL::IO::set_ascii_mode(of1_6);
   of1_6 << T1_6; of1_6.close();
   std::ofstream of2_1("T21.triangulation");
-  CGAL::set_ascii_mode(of2_1);
+  CGAL::IO::set_ascii_mode(of2_1);
   of2_1 << T2_1; of2_1.close();
   std::ofstream of2_3("T23.triangulation");
-  CGAL::set_ascii_mode(of2_3);
+  CGAL::IO::set_ascii_mode(of2_3);
   of2_3 << T2_3; of2_3.close();
   std::ofstream of2_5("T25.triangulation");
-  CGAL::set_ascii_mode(of2_5);
+  CGAL::IO::set_ascii_mode(of2_5);
   of2_5 << T2_5; of2_5.close();
   std::ofstream of2_6("T26.triangulation");
-  CGAL::set_ascii_mode(of2_6);
+  CGAL::IO::set_ascii_mode(of2_6);
   of2_6 << T2_6; of2_6.close();
 
   std::cout << "    input from a file" << std::endl;
-  std::ifstream if0_0("T00.triangulation"); CGAL::set_ascii_mode(if0_0);
+  std::ifstream if0_0("T00.triangulation"); CGAL::IO::set_ascii_mode(if0_0);
   Triangul T0_0_copy;   if0_0 >> T0_0_copy;
   assert( T0_0_copy.is_valid() &&
           T0_0_copy.number_of_vertices() == T0_0.number_of_vertices() );
-  std::ifstream if0_1("T01.triangulation"); CGAL::set_ascii_mode(if0_1);
+  std::ifstream if0_1("T01.triangulation"); CGAL::IO::set_ascii_mode(if0_1);
   Triangul T0_1_copy; if0_1 >> T0_1_copy;
   assert( T0_1_copy.is_valid() &&
           T0_1_copy.number_of_vertices() == T0_1.number_of_vertices() );
-  std::ifstream if1_2("T12.triangulation"); CGAL::set_ascii_mode(if1_2);
+  std::ifstream if1_2("T12.triangulation"); CGAL::IO::set_ascii_mode(if1_2);
   Triangul T1_2_copy; if1_2 >> T1_2_copy;
   assert( T1_2_copy.is_valid() &&
           T1_2_copy.number_of_vertices() == T1_2.number_of_vertices() );
-  std::ifstream if1_5("T15.triangulation"); CGAL::set_ascii_mode(if1_5);
+  std::ifstream if1_5("T15.triangulation"); CGAL::IO::set_ascii_mode(if1_5);
   Triangul T1_5_copy; if1_5 >> T1_5_copy;
   assert( T1_5_copy.is_valid() &&
           T1_5_copy.number_of_vertices() == T1_5.number_of_vertices() );
-  std::ifstream if1_6("T16.triangulation"); CGAL::set_ascii_mode(if1_6);
+  std::ifstream if1_6("T16.triangulation"); CGAL::IO::set_ascii_mode(if1_6);
   Triangul T1_6_copy; if1_6 >> T1_6_copy;
   assert( T1_6_copy.is_valid() &&
           T1_6_copy.number_of_vertices() == T1_6.number_of_vertices() );
-  std::ifstream if2_1("T21.triangulation"); CGAL::set_ascii_mode(if2_1);
+  std::ifstream if2_1("T21.triangulation"); CGAL::IO::set_ascii_mode(if2_1);
   Triangul T2_1_copy; if2_1 >> T2_1_copy;
   assert( T2_1_copy.is_valid() &&
           T2_1_copy.number_of_vertices() == T2_1.number_of_vertices() );
-  std::ifstream if2_3("T23.triangulation"); CGAL::set_ascii_mode(if2_3);
+  std::ifstream if2_3("T23.triangulation"); CGAL::IO::set_ascii_mode(if2_3);
   Triangul T2_3_copy; if2_3 >> T2_3_copy;
   assert( T2_3_copy.is_valid() &&
           T2_3_copy.number_of_vertices() == T2_3.number_of_vertices() );
-  std::ifstream if2_5("T25.triangulation"); CGAL::set_ascii_mode(if2_5);
+  std::ifstream if2_5("T25.triangulation"); CGAL::IO::set_ascii_mode(if2_5);
   Triangul T2_5_copy; if2_5 >> T2_5_copy;
   assert( T2_5_copy.is_valid() &&
           T2_5_copy.number_of_vertices() == T2_5.number_of_vertices() );
-  std::ifstream if2_6("T26.triangulation"); CGAL::set_ascii_mode(if2_6);
+  std::ifstream if2_6("T26.triangulation"); CGAL::IO::set_ascii_mode(if2_6);
   Triangul T2_6_copy; if2_6 >> T2_6_copy;
   assert( T2_6_copy.is_valid() &&
           T2_6_copy.number_of_vertices() == T2_6.number_of_vertices() );

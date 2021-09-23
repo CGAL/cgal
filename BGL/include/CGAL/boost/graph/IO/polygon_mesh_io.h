@@ -28,6 +28,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
@@ -121,7 +123,7 @@ bool read_polygon_mesh(std::istream& is,
  *
  * \return `true` if reading was successful, `false` otherwise.
  *
- * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink if the data is not 2-manifold
+ * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink if the data is not 2-manifold
 */
 template <class Graph, typename NamedParameters>
 bool read_polygon_mesh(const std::string& fname,
@@ -130,7 +132,7 @@ bool read_polygon_mesh(const std::string& fname,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == std::string())
   {
     if(verbose)
@@ -212,7 +214,7 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{verbose}
@@ -233,7 +235,7 @@ bool write_polygon_mesh(const std::string& fname,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == std::string())
   {
     if(verbose)
@@ -275,6 +277,6 @@ bool write_polygon_mesh(const std::string& fname, Graph& g)
 
 /// \endcond
 
-} // namespace CGAL
+}} // namespace CGAL::IO
 
 #endif // CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H

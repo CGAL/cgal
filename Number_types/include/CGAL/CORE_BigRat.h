@@ -156,7 +156,7 @@ public:
     Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        switch (get_mode(out)) {
+        switch (IO::get_mode(out)) {
         case IO::PRETTY:{
             if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
                 return out <<CGAL_CORE_NUMERATOR(t);
@@ -197,9 +197,9 @@ public:
     std::ostream& operator()( std::ostream& out) const {
         Needs_parens_as_product< ::CORE::BigRat > needs_parens_as_product;
         if (needs_parens_as_product(t))
-            return out <<"("<< oformat(t) <<")";
+            return out <<"("<< IO::oformat(t) <<")";
         else
-            return out << oformat(t);
+            return out << IO::oformat(t);
     }
 };
 

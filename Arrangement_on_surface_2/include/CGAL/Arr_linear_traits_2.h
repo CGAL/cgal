@@ -99,6 +99,7 @@ public:
     bool      is_degen;         // Is the object degenerate (a single point).
 
   public:
+
     /*! Default constructor.
      */
     _Linear_object_cached_2() :
@@ -377,7 +378,7 @@ public:
      */
     void set_right()
     {
-      CGAL_precondition (! is_degen);
+      CGAL_precondition(! is_degen);
 
       if (is_right) has_target = false;
       else has_source = false;
@@ -829,7 +830,8 @@ public:
       // Notice we use the supporting lines in order to compare the slopes,
       // and that we swap the order of the curves in order to obtain the
       // correct result to the left of p.
-      return (kernel.compare_slope_2_object()(cv2.supp_line(), cv1.supp_line()));
+      return (kernel.compare_slope_2_object()(cv2.supp_line(),
+                                              cv1.supp_line()));
     }
   };
 
@@ -1010,7 +1012,7 @@ public:
     Arr_parameter_space operator()(const X_monotone_curve_2 & xcv,
                                    Arr_curve_end ce) const
     {
-      CGAL_precondition (! xcv.is_degenerate());
+      CGAL_precondition(! xcv.is_degenerate());
 
       return (ce == ARR_MIN_END) ?
         xcv.left_infinite_in_y() : xcv.right_infinite_in_y();
@@ -1020,7 +1022,7 @@ public:
      * \param p the point.
      * \return the parameter space at p.
      */
-    Arr_parameter_space operator()(const Point_2 ) const
+    Arr_parameter_space operator()(const Point_2 /* p */) const
     { return ARR_INTERIOR; }
   };
 
@@ -1028,10 +1030,10 @@ public:
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
-  /*! A function object that compares the x-limits of arc ends on the
+  /*! A function object that compares the x-limits of line ends on the
    * boundary of the parameter space
    */
-  class Compare_x_at_limit_2 {
+  class Compare_x_on_boundary_2 {
   protected:
     typedef Arr_linear_traits_2<Kernel> Traits;
 
@@ -1044,7 +1046,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_at_limit_2(const Traits& traits) : m_traits(traits) {}
+    Compare_x_on_boundary_2(const Traits& traits) : m_traits(traits) {}
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_linear_traits_2<Kernel>;
@@ -1112,14 +1114,14 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_at_limit_2 function object */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(*this); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(*this); }
 
   /*! A function object that compares the x-coordinates of arc ends near the
    * boundary of the parameter space
    */
-  class Compare_x_near_limit_2 {
+  class Compare_x_near_boundary_2 {
   public:
     /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
      * parameter space at y = +/- oo.
@@ -1155,10 +1157,9 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_near_limit_2 function object */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(); }
-
+  /*! Obtain a Compare_x_near_boundary_2 function object */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(); }
 
   /*! A function object that compares the y-limits of arc ends on the
    * boundary of the parameter space.
@@ -1271,7 +1272,7 @@ public:
     void operator()(const X_monotone_curve_2& cv, const Point_2& p,
                     X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
-      CGAL_precondition (! cv.is_degenerate());
+      CGAL_precondition(! cv.is_degenerate());
 
       // Make sure that p lies on the interior of the curve.
       CGAL_precondition_code (
@@ -1566,7 +1567,7 @@ class Arr_linear_object_2 :
     public Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2
 {
   typedef typename Arr_linear_traits_2<Kernel_>::_Linear_object_cached_2
-                                                                   Base;
+                                                            Base;
 
 public:
   typedef Kernel_                                           Kernel;
@@ -1666,8 +1667,7 @@ public:
     return (this->l);
   }
 
-  /*!
-   * Get the source point.
+  /*! Get the source point.
    * \pre The object is a point, a segment or a ray.
    */
   const Point_2& source() const
@@ -1706,8 +1706,7 @@ public:
   // compiler will have 3 equivalent options to choose from.
 };
 
-/*!
- * Exporter for the segment class used by the traits-class.
+/*! Exporter for the segment class used by the traits-class.
  */
 template <typename Kernel, typename OutputStream>
 OutputStream& operator<<(OutputStream& os,
@@ -1727,7 +1726,6 @@ InputStream& operator>>(InputStream& is, Arr_linear_object_2<Kernel>& lobj)
 {
   // Read the object type.
   char c;
-
   do {
     is >> c;
   } while ((c != 'S' && c != 's') &&
@@ -1736,7 +1734,7 @@ InputStream& operator>>(InputStream& is, Arr_linear_object_2<Kernel>& lobj)
 
   // Read the object accordingly.
   if (c == 'S' || c == 's') {
-    typename Kernel::Segment_2  seg;
+    typename Kernel::Segment_2 seg;
     is >> seg;
     lobj = seg;
   }

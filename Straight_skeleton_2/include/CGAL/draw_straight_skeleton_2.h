@@ -28,7 +28,7 @@ namespace CGAL {
 struct DefaultColorFunctorSS2
 {
   template<typename SS2>
-  static CGAL::Color run(const SS2&,
+  static CGAL::IO::Color run(const SS2&,
                          const typename SS2::Finite_faces_iterator fh)
   {
     CGAL::Random random((unsigned int)(std::size_t)(&*fh));
@@ -65,7 +65,7 @@ protected:
   /*
   void compute_face(Facet_const_handle fh)
   {
-    CGAL::Color c=m_fcolor.run(ss2, fh);
+    CGAL::IO::Color c=m_fcolor.run(ss2, fh);
     face_begin(c);
 
     add_point_in_face(fh->vertex(0)->point());
@@ -78,9 +78,9 @@ protected:
   void compute_edge(Halfedge_const_handle eh)
   {
     if(eh->is_bisector())
-      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::red());
+      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::IO::red());
     else
-      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::black());
+      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::IO::black());
   }
   void print_halfedge_labels(Halfedge_const_handle h)
   {
@@ -93,11 +93,11 @@ protected:
   void compute_vertex(Vertex_const_handle vh)
   {
     if(vh->is_split())
-      add_point(vh->point(), CGAL::Color(10,10,180)); // blue, but not flashy
+      add_point(vh->point(), CGAL::IO::Color(10,10,180)); // blue, but not flashy
     else if(vh->has_infinite_time())
-      add_point(vh->point(), CGAL::orange());
+      add_point(vh->point(), CGAL::IO::orange());
     else
-      add_point(vh->point(), CGAL::Color(10,180,10)); // green, but not flashy
+      add_point(vh->point(), CGAL::IO::Color(10,180,10)); // green, but not flashy
   }
   void print_vertex_label(Vertex_const_handle vh)
   {

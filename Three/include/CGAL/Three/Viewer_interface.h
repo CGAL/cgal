@@ -71,6 +71,7 @@ public:
    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
    PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
    PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
+   PROGRAM_TETRA_FILTERING,     //! Used in Scene_tetrahedra_item with Tetrahedra_filtering_plugin
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
 
@@ -287,6 +288,8 @@ public:
   //!  A vector indicating the scaling factors to apply to the scene when displaying it.
   //!  It can be useful when a scene is very large along one of it's coordinates, making it hard to visualize it.
   virtual const QVector3D& scaler() const = 0;
+
+  virtual void showEntireScene() = 0;
 }; // end class Viewer_interface
 }
 }

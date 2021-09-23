@@ -17,7 +17,7 @@
 
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 40800)
+#if defined(BOOST_GCC)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Wmaybe-uninitialized\"")
 #endif
@@ -264,7 +264,7 @@ OutputIterator partition_approx_convex_2(InputIterator first,
 }
 
 }
-#if  (BOOST_GCC >= 40800)
+#if defined(BOOST_GCC)
  _Pragma("GCC diagnostic pop")
 #endif
 #endif // CGAL_PARTITION_APPROX_CONVEX_H

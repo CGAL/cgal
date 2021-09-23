@@ -17,7 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/internal/Static_or_dynamic_array.h>
+#include <CGAL/Triangulation/internal/Static_or_dynamic_array.h>
 
 namespace CGAL {
 

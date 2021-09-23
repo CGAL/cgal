@@ -25,7 +25,7 @@
 
 #include <CGAL/generators.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/internal/Generic_random_point_generator.h>
+#include <CGAL/Generator/internal/Generic_random_point_generator.h>
 #include <CGAL/iterator.h>
 
 #include <iterator>

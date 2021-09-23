@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script.
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Shape_detection_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -79,4 +79,3 @@ create_single_source_cgal_program(
 create_single_source_cgal_program("test_efficient_RANSAC_torus_parameters.cpp")
 
 create_single_source_cgal_program("test_efficient_RANSAC_scene.cpp")
-create_single_source_cgal_program("test_efficient_RANSAC_regularization.cpp")

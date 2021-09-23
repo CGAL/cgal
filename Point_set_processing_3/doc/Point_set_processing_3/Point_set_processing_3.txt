@@ -150,7 +150,7 @@ the detailed API of the Point Set Processing functions.
 \cgal provides functions to read and write sets of points (possibly with normals)
 from the following file formats:
 
-- \link IOStreamXYZ XYZ \endlink (ASCII file three point coordinates `x y z` per line or three
+- \link IOStreamXYZ XYZ \endlink (\ascii file three point coordinates `x y z` per line or three
 point coordinates and three normal vector coordinates `x y z nx ny nz`
 per line)
 - \link IOStreamOFF OFF (%Object File Format) \endlink -- \cgalCite{cgal:p-gmgv16-96}
@@ -161,7 +161,7 @@ not handle normals and requires the \ref thirdpartyLASlib library.
 All of the functions in \ref PkgPointSetProcessing3IO (with the exception of the LAS format)
 can read and write either points alone or points with normals (depending on
 whether the `normal_map` named parameter is used by the user or not).
-Note that the %PLY format handles both ASCII and binary formats. In
+Note that the %PLY format handles both \ascii and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional
 properties. These can also be read by \cgal (see Section \ref
 Point_set_processing_3Properties_io).
@@ -635,7 +635,7 @@ Function `remove_outliers()` deletes a user-specified fraction of
 outliers from an input point set. More specifically, it partitions the
 input points with respect to the average squared distances to their
 nearest neighbors and deletes the points with largest value, either
-partitionning with a threshold or removing a fixed percentage. The
+partitioning with a threshold or removing a fixed percentage. The
 user can either specify a fixed number of nearest neighbors or a fixed
 spherical neighborhood radius.
 
@@ -742,9 +742,9 @@ Comparison between different sizes of neighbor radius.
 
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
 A parallel version of WLOP is provided and requires the executable to be linked against the
-<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
 for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
@@ -787,9 +787,9 @@ Comparison for two smoothing methods: Left: Input, 250K points, normal-color map
 
 Performance:
 A parallel version of bilateral smoothing is provided and requires the executable to be linked against the
-<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 The number of threads used is controlled through the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
 Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm.

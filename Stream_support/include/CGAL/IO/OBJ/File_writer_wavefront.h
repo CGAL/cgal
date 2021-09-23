@@ -56,11 +56,11 @@ public:
   void write_footer() const { out() << "\n# End of Wavefront obj format #" << std::endl; }
 
   void write_vertex(const double x, const double y, const double z) {
-    out() << "v " << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z) << '\n';
+    out() << "v " << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z) << '\n';
   }
 
   void write_vertex_normal(const double x, const double y, const double z) {
-    out() << "vn " << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z) << '\n';
+    out() << "vn " << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z) << '\n';
   }
 
   void write_vertex_color(const double, const double, const double) { }

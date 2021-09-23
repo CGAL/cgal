@@ -24,7 +24,6 @@
 
 #include <CGAL/intersections.h>
 #include <CGAL/iterator.h>
-#include <CGAL/result_of.h>
 #include <CGAL/Timer.h>
 
 #include <iterator>
@@ -726,6 +725,6 @@ remove(Vertex_handle v)
 
 } // namespace CGAL
 
-#include <CGAL/internal/Periodic_4_hyperbolic_triangulation_dummy_14.h>
+#include <CGAL/Periodic_4_hyperbolic_triangulation_2/internal/Periodic_4_hyperbolic_triangulation_dummy_14.h>
 
 #endif // CGAL_PERIODIC_4_HYPERBOLIC_DELAUNAY_TRIANGULATION_2_H

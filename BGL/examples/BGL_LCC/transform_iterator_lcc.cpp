@@ -24,7 +24,7 @@ struct Source {
   const G* g;
 
   Source()
-    : g(NULL)
+    : g(nullptr)
   {}
 
   Source(const G& g)
@@ -43,7 +43,7 @@ struct Source {
 int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::read_polygon_mesh((argc>1)?argv[1]:"cube.off", lcc);
+  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:"cube.off", lcc);
   GraphTraits::vertex_descriptor vd = *(vertices(lcc).first);
 
   typedef boost::transform_iterator<Source<LCC>,halfedge_around_target_iterator> adjacent_vertex_iterator;

@@ -398,7 +398,7 @@ void check_integrity_and_topological_planarity(bool faces=true) const;
 
 template <class VH>
 std::string PV(VH v)
-{ std::ostringstream os; CGAL::set_pretty_mode(os);
+{ std::ostringstream os; CGAL::IO::set_pretty_mode(os);
   if (v != VH()) os << v->point();
   else           os << "nil";
   return os.str();

@@ -34,7 +34,7 @@ namespace CGAL {
 `Exact_algebraic` is an exact algebraic number type, constructible from `double`.
 
 It is a typedef of another number type. Its exact definition depends on
-the availability the third-party libraries %CORE, and %LEDA. %CGAL must
+the availability the third-party libraries \core, and \leda. \cgal must
 be configured with at least one of those libraries.
 
 \cgalModels `FieldWithSqrt`

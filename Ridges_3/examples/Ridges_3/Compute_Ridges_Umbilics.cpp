@@ -282,7 +282,7 @@ int main()
   std::ifstream stream(if_name.c_str());
   stream >> P;
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
-          (int)P.size_of_vertices(), (int)P.size_of_facets());
+          static_cast<int>(P.size_of_vertices()), static_cast<int>(P.size_of_facets()));
   if(verbose)
     out_verb << "Polysurf with " << P.size_of_vertices()
              << " vertices and " << P.size_of_facets()

@@ -476,7 +476,7 @@ void Viewer::compute_elements()
         drawVertex( m_pScene->m_vhArray.at( m_vidMoving )->point(), pos_movingPoint );
     }//end-if-v
     // Draw the nearest neighbor
-    if( m_nearestNb != NULL ) {
+    if( m_nearestNb != nullptr ) {
         drawVertex( m_queryPt, pos_queryPoint);
         drawVertex( m_nearestNb->point(), pos_nearest_neighbor);
     }
@@ -1676,7 +1676,7 @@ void Viewer::drawWithNames()
     buffers[33].bind();
     buffers[33].allocate(buf, 3*sizeof(GLfloat));
     rendering_program.enableAttributeArray("vertex");
-    rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
+    rendering_program.setAttributeArray("vertex",GL_FLOAT,nullptr,3);
     buffers[33].release();
     vao[3].release();
 
@@ -1721,7 +1721,7 @@ void Viewer::drawWithNames()
         buffers[33].bind();
         buffers[33].allocate(buf, 3*sizeof(GLfloat));
         rendering_program.enableAttributeArray("vertex");
-        rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
+        rendering_program.setAttributeArray("vertex",GL_FLOAT,nullptr,3);
         buffers[33].release();
 
         QMatrix4x4 mvpMatrix;

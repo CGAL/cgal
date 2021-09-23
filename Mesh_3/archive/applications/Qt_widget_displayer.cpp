@@ -14,7 +14,7 @@ Qt_widget_displayer::Qt_widget_displayer(CGAL::Qt_widget* w) : widget(w) {}
 
 void Qt_widget_displayer::fill_rectangle(double x1, double y1,
                                          double x2, double y2,
-                                         CGAL::Color color)
+                                         CGAL::IO::Color color)
 {
   *widget << CGAL::FillColor(color)
           << color
@@ -23,7 +23,7 @@ void Qt_widget_displayer::fill_rectangle(double x1, double y1,
 
 void Qt_widget_displayer::segment(double x1, double y1,
                                   double x2, double y2,
-                                  CGAL::Color color)
+                                  CGAL::IO::Color color)
 {
   *widget << color << Segment_2(Point_2(x1, y1),
                                 Point_2(x2, y2));

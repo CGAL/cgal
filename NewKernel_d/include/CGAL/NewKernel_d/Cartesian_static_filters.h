@@ -13,9 +13,9 @@
 #define CGAL_KD_CARTESIAN_STATIC_FILTERS_H
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/internal/Static_filters/tools.h> // bug, should be included by the next one
-#include <CGAL/internal/Static_filters/Orientation_2.h>
-#include <CGAL/internal/Static_filters/Side_of_oriented_circle_2.h>
+#include <CGAL/Filtered_kernel/internal/tools.h> // bug, should be included by the next one
+#include <CGAL/Filtered_kernel/internal/Orientation_2.h>
+#include <CGAL/Filtered_kernel/internal/Side_of_oriented_circle_2.h>
 #include <boost/mpl/if.hpp>
 
 namespace CGAL {

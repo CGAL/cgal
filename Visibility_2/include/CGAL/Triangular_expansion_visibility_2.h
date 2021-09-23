@@ -18,7 +18,7 @@
 
 
 #include <CGAL/Arrangement_2.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Arr_observer.h>
@@ -151,7 +151,7 @@ private:
 
   // May change during visibility computation
   mutable Observer observer;
-  mutable boost::shared_ptr<CDT> p_cdt;
+  mutable std::shared_ptr<CDT> p_cdt;
   mutable std::vector<Segment_2> needles;
 
   // Copy constructor and assignment not supported
@@ -696,7 +696,7 @@ private:
                                               Make_constraint());
 
     //std::cout << "init_cdt new CDT" << std::endl;
-    p_cdt = boost::shared_ptr<CDT>(new CDT(begin, end));
+    p_cdt = std::shared_ptr<CDT>(new CDT(begin, end));
     observer.has_changed = false;
     //std::cout << "init_cdt done" << std::endl;
     //std::cout << std::endl;

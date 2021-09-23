@@ -187,8 +187,7 @@ output_to_tetgen(std::string filename,
 
 } // end namespace Mesh_3
 
-
-
+namespace IO {
 
 template <class C3T3>
 void
@@ -212,6 +211,12 @@ output_to_tetgen(std::string filename,
       Mesh_3::output_to_tetgen<C3T3,false,true>(filename,c3t3);
   }
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_to_tetgen;
+#endif
 
 } // end namespace CGAL
 

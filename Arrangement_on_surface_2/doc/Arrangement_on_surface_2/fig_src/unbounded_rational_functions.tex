@@ -1,0 +1,46 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.8}%
+  \begin{pspicture}(-4.5,-4.5)(4.5,4.5)
+    \arraxes(0,0)(-4.5,-4.5)(4.5,4.5)
+    \psplot[linecolor=blue,linewidth=0.5pt]{-.866}{.866}
+           {3 4 x x mul mul sub}% y = 3 - 4x^2
+    \psplot[linecolor=blue,linewidth=0.5pt]{-.866}{.866}
+           {4 x x mul mul 3 sub}% y = 4x^2 - 3
+    \psplot[linecolor=purple,linewidth=0.5pt]{-4.5}{-0.111}
+           {0 1 2 x mul div sub}% y = -1/2x
+    \psplot[linecolor=purple,linewidth=0.5pt]{0.111}{4.5}
+           {1 2 x mul div}% y = 1/2x
+    \psplot[linecolor=olivegreen,linewidth=0.5pt]{0.222}{4.5}
+           {1 x div}% y = 1/x
+    \psplot[linecolor=olivegreen,linewidth=0.5pt]{-4.5}{-0.222}
+           {1 x div}% y = 1/x
+    \psplot[linecolor=olivegreen,linewidth=0.5pt]{0.222}{4.5}
+           {0 1 x div sub}% y = -1/x
+    \psplot[linecolor=olivegreen,linewidth=0.5pt]{-4.5}{-0.222}
+           {0 1 x div sub}% y = -1/x
+    \arrMainVertex(-.866,0){a1}
+    \arrMainVertex(.866,0){a2}
+    \arrEmptyVertex(-0.5,-2){x1}
+    \arrEmptyVertex(0.5,-2){x2}
+    \arrEmptyVertex(-0.5,2){x3}
+    \arrEmptyVertex(0.5,2){x4}
+    \arrEmptyVertex(0.765,0.654){x5}
+    \arrEmptyVertex(-0.765,0.654){x6}
+    \arrEmptyVertex(0.175,2.857){x7}
+    \arrEmptyVertex(-0.175,2.857){x8}
+    %
+    \rput(2.7,4){\textcolor{olivegreen}{$c_1, C'_1: y = \pm\frac{1}{x}$}}
+    \rput(2.5,3.3){\textcolor{blue}{$c_2: y = -4x^2 + 3$}}
+    \rput(2.7,2.6){\textcolor{blue}{$c'_2: y = 4x^2 - 3$}}
+    \rput(2.7,1.9){\textcolor{purple}{$c_3, C'_3: y = \pm\frac{1}{2x}$}}
+    \psframe[linewidth=0.25pt](-4.5,-4.5)(4.5,4.5)
+  \end{pspicture}
+
+  \begin{pspicture}
+
+  \end{pspicture}
+}
+\end{document}

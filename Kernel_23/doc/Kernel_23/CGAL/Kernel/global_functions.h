@@ -852,7 +852,7 @@ const CGAL::Point_3<Kernel>& t);
 
 
 
-/// \defgroup compare_slopes_grp CGAL::compare_slopes()
+/// \defgroup compare_slopes_grp CGAL::compare_slope()
 /// \ingroup kernel_global_function
 /// @{
 
@@ -870,9 +870,20 @@ from the left to the right endpoint of the segments.
 */
 template <typename Kernel>
 Comparison_result compare_slope(const CGAL::Segment_2<Kernel> &s1,
-const CGAL::Segment_2<Kernel> &s2);
+                                const CGAL::Segment_2<Kernel> &s2);
 
 /*!
+compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
+where the slope is the variation of the `y`-coordinate
+from the left to the right endpoint of the segments.
+*/
+template <typename Kernel>
+Comparison_result compare_slope(const CGAL::Point_2<Kernel> &s1s,
+                                const CGAL::Point_2<Kernel> &s1t,
+                                const CGAL::Point_2<Kernel> &s2s,
+                                const CGAL::Point_2<Kernel> &s2t);
+
+  /*!
 compares the slopes of the segments `(p,q)` and `(r,s)`,
 where the slope is the variation of the `z`-coordinate from the first
 to the second point  of the segment divided by the length of the segment.
@@ -2242,11 +2253,24 @@ template <typename Kernel>
 CGAL::Point_2<Kernel> midpoint( const CGAL::Point_2<Kernel>& p,
 const CGAL::Point_2<Kernel>& q );
 
+
+  /*!
+computes the midpoint of the segment `s`.
+*/
+template <typename Kernel>
+CGAL::Point_2<Kernel> midpoint( const CGAL::Segment_2<Kernel>& s);
+
 /*!
 computes the midpoint of the segment `pq`.
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> midpoint( const CGAL::Point_3<Kernel>& p, const CGAL::Point_3<Kernel>& q );
+
+/*!
+computes the midpoint of the segment `s`.
+*/
+template <typename Kernel>
+CGAL::Point_3<Kernel> midpoint( const CGAL::Segment_3<Kernel>& s );
 
 /// @}
 

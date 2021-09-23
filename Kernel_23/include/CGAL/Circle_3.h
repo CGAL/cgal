@@ -93,6 +93,9 @@ public:
   Circle_3(const Rep& r)
     : Rep(r) {}
 
+  Circle_3(Rep&& r)
+    : Rep(std::move(r)) {}
+
   decltype(auto)
   diametral_sphere() const
   {
@@ -120,27 +123,27 @@ public:
     return typename R::Construct_bbox_3()(*this);
   }
 
-        FT area_divided_by_pi() const
-        {
-          return typename R::Compute_area_divided_by_pi_3()(*this);
+  FT area_divided_by_pi() const
+  {
+    return typename R::Compute_area_divided_by_pi_3()(*this);
   }
 
   double approximate_area() const
   {
-          return typename R::Compute_approximate_area_3()(*this);
-        }
+    return typename R::Compute_approximate_area_3()(*this);
+  }
 
-        FT squared_length_divided_by_pi_square() const
-        {
-          return typename R::Compute_squared_length_divided_by_pi_square_3()(*this);
+  FT squared_length_divided_by_pi_square() const
+  {
+    return typename R::Compute_squared_length_divided_by_pi_square_3()(*this);
   }
 
   double approximate_squared_length() const
   {
-          return typename R::Compute_approximate_squared_length_3()(*this);
-        }
+    return typename R::Compute_approximate_squared_length_3()(*this);
+  }
 
-        typename R::Boolean
+  typename R::Boolean
   has_on(const Point_3 &p) const
   {
     return typename R::Has_on_3()(*this, p);
