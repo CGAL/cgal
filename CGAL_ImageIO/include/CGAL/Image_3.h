@@ -102,7 +102,7 @@ public:
 //     std::cerr << "Image_3::copy_constructor\n";
   }
 
-  Image_3(_image* im, Own own_the_data = OWN_THE_DATA)
+  explicit Image_3(_image* im, Own own_the_data = OWN_THE_DATA)
   {
     private_read(im, own_the_data);
   }
