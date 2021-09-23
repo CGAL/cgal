@@ -35,16 +35,15 @@ using Line_sorting   = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Inp
 using Circle_region  = SD::Point_set::Least_squares_circle_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Circle_sorting = SD::Point_set::Least_squares_circle_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map>;
 
-template <typename Region_type, typename Sorting>
-bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr)
-{
+template<typename Region_type, typename Sorting>
+bool test(int argc, char** argv, const std::string name, const std::size_t minr, const std::size_t maxr) {
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Default parameter values.
-  const std::size_t k                  = 12;
-  const FT          distance_threshold = FT(45) / FT(10);
-  const FT          angle_threshold    = FT(45);
-  const std::size_t min_region_size    = 5;
+  const std::size_t k               = 12;
+  const FT          max_distance    = FT(45) / FT(10);
+  const FT          max_angle       = FT(45);
+  const std::size_t min_region_size = 5;
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
@@ -66,8 +65,8 @@ bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr
   Region_type region_type(
     input_range,
     CGAL::parameters::
-    maximum_distance(distance_threshold).
-    maximum_angle(angle_threshold).
+    maximum_distance(max_distance).
+    maximum_angle(max_angle).
     minimum_region_size(min_region_size));
 
   // Sort indices.
@@ -82,7 +81,9 @@ bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
-  assert(regions.size() == 62);
+
+  std::cout << "- num regions " + name + ": " << regions.size() << std::endl;
+  assert(regions.size() >= minr && regions.size() <= maxr);
 
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
@@ -90,25 +91,21 @@ bool test (int argc, char** argv, const std::size_t minr, const std::size_t maxr
     SD::internal::region_growing_lines(
       input_range, std::back_inserter(regions),
       CGAL::parameters::
-      maximum_distance(distance_threshold).
-      maximum_angle(angle_threshold).
+      maximum_distance(max_distance).
+      maximum_angle(max_angle).
       minimum_region_size(min_region_size));
     assert(regions.size() == 62);
   }
-  assert(regions.size() >= minr && regions.size() <= maxr);
 
-  const bool cartesian_double_test_success = (regions.size() >= minr && regions.size() <= maxr);
-  std::cout << "cartesian_double_test_success: " << cartesian_double_test_success << std::endl;
-
-  const bool success = cartesian_double_test_success;
+  const bool success = true;
+  std::cout << "rg_" + name + "_sortpoints2, sc_test_success: " << success << std::endl;
   return success;
 }
 
 int main(int argc, char *argv[]) {
 
   return ((
-    test<Line_region, Line_sorting>(argc, argv, 62, 66) &&
-    test<Circle_region, Circle_sorting>(argc, argv, 196, 200)
+    test<Line_region, Line_sorting>(argc, argv, "lines", 62, 66) && // test lines
+    test<Circle_region, Circle_sorting>(argc, argv, "circles", 62, 66) // test circles
   ) ? EXIT_SUCCESS : EXIT_FAILURE );
-
 }

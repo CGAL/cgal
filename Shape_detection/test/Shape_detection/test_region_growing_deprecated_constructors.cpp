@@ -48,13 +48,25 @@ using RT1 = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range_2, 
 using RT2 = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range_3, Point_map_3, Normal_map_3>;
 using RT3 = SD::Polygon_mesh::Least_squares_plane_fit_region<Kernel, Polygon_mesh>;
 
+using RT4 = SD::Point_set::Least_squares_circle_fit_region<Kernel, Input_range_2, Point_map_2, Normal_map_2>;
+using RT5 = SD::Point_set::Least_squares_sphere_fit_region<Kernel, Input_range_3, Point_map_3, Normal_map_3>;
+using RT6 = SD::Point_set::Least_squares_cylinder_fit_region<Kernel, Input_range_3, Point_map_3, Normal_map_3>;
+
 using S1 = SD::Point_set::Least_squares_line_fit_sorting<Kernel, Input_range_2, NQ1, Point_map_2>;
 using S2 = SD::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range_3, NQ2, Point_map_3>;
 using S3 = SD::Polygon_mesh::Least_squares_plane_fit_sorting<Kernel, Polygon_mesh, NQ3>;
 
+using S4 = SD::Point_set::Least_squares_circle_fit_sorting<Kernel, Input_range_2, NQ1, Point_map_2>;
+using S5 = SD::Point_set::Least_squares_sphere_fit_sorting<Kernel, Input_range_3, NQ2, Point_map_3>;
+using S6 = SD::Point_set::Least_squares_cylinder_fit_sorting<Kernel, Input_range_3, NQ2, Point_map_3, Normal_map_3>;
+
 using RG1 = SD::Region_growing<Input_range_2, NQ1, RT1, typename S1::Seed_map>;
 using RG2 = SD::Region_growing<Input_range_3, NQ2, RT2, typename S2::Seed_map>;
 using RG3 = SD::Region_growing<Face_range   , NQ3, RT3, typename S3::Seed_map>;
+
+using RG4 = SD::Region_growing<Input_range_2, NQ1, RT4, typename S4::Seed_map>;
+using RG5 = SD::Region_growing<Input_range_3, NQ2, RT5, typename S5::Seed_map>;
+using RG6 = SD::Region_growing<Input_range_3, NQ2, RT6, typename S6::Seed_map>;
 
 int main() {
 
@@ -64,6 +76,8 @@ int main() {
   const FT          angle_threshold    = FT(15);
   const std::size_t min_region_size    = 1;
   const FT          sphere_radius      = FT(2);
+  const FT          min_radius         = FT(0);
+  const FT          max_radius         = FT(1000000);
 
   const Kernel traits;
   const Input_range_2 input_range_2 = {
@@ -106,28 +120,63 @@ int main() {
     distance_threshold, angle_threshold, min_region_size,
     vertex_to_point_map, traits);
 
+  RT4 rt4(input_range_2,
+    distance_threshold, angle_threshold, min_region_size, min_radius, max_radius,
+    point_map_2, normal_map_2, traits);
+  RT5 rt5(input_range_3,
+    distance_threshold, angle_threshold, min_region_size, min_radius, max_radius,
+    point_map_3, normal_map_3, traits);
+  RT6 rt6(input_range_3,
+    distance_threshold, angle_threshold, min_region_size, min_radius, max_radius,
+    point_map_3, normal_map_3, traits);
+
   S1 s1(input_range_2, nq1, point_map_2);
   S2 s2(input_range_3, nq2, point_map_3);
   S3 s3(polygon_mesh , nq3, vertex_to_point_map);
+
+  S4 s4(input_range_2, nq1, point_map_2);
+  S5 s5(input_range_3, nq2, point_map_3);
+  S6 s6(input_range_3, nq2, point_map_3);
 
   s1.sort();
   s2.sort();
   s3.sort();
 
+  s4.sort();
+  s5.sort();
+  s6.sort();
+
   RG1 rg1(input_range_2, nq1, rt1, s1.seed_map());
   RG2 rg2(input_range_3, nq2, rt2, s2.seed_map());
   RG3 rg3(face_range   , nq3, rt3, s3.seed_map());
 
+  RG4 rg4(input_range_2, nq1, rt4, s4.seed_map());
+  RG5 rg5(input_range_3, nq2, rt5, s5.seed_map());
+  RG6 rg6(input_range_3, nq2, rt6, s6.seed_map());
+
   std::vector< std::vector<std::size_t> > regions1;
   std::vector< std::vector<std::size_t> > regions2;
   std::vector< std::vector<std::size_t> > regions3;
+
+  std::vector< std::vector<std::size_t> > regions4;
+  std::vector< std::vector<std::size_t> > regions5;
+  std::vector< std::vector<std::size_t> > regions6;
+
   rg1.detect(std::back_inserter(regions1));
   rg2.detect(std::back_inserter(regions2));
   rg3.detect(std::back_inserter(regions3));
 
+  rg4.detect(std::back_inserter(regions4));
+  rg5.detect(std::back_inserter(regions5));
+  rg6.detect(std::back_inserter(regions6));
+
   assert(regions1.size() == 1);
   assert(regions2.size() == 1);
   assert(regions3.size() == 4);
+
+  assert(regions4.size() > 0);
+  assert(regions5.size() > 0);
+  assert(regions6.size() > 0);
 
   std::cout << "rg_deprecated, sc_test_success: " << true << std::endl;
   return EXIT_SUCCESS;

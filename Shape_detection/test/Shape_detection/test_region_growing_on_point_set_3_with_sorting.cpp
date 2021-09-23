@@ -37,17 +37,20 @@ using Sphere_sorting = SD::Point_set::Least_squares_sphere_fit_sorting<Kernel, I
 using Cylinder_region = SD::Point_set::Least_squares_cylinder_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Cylinder_sorting = SD::Point_set::Least_squares_cylinder_fit_sorting<Kernel, Input_range, Neighbor_query, Point_map, Normal_map>;
 
-template <typename Region_type, typename Sorting, typename SortingCode,
-          typename RegionCode, typename AssertionCode>
-bool test (int argc, char** argv, const SortingCode& /*sc*/, const RegionCode& /*reg*/, const AssertionCode& assertion)
-{
+template<
+typename Region_type,
+typename Sorting,
+typename Lambda_region,
+typename Lambda_assertion>
+bool test(
+  int argc, char** argv, const std::string name,
+  const Lambda_region& lambda_region,
+  const Lambda_assertion& lambda_assertion) {
+
   using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
   // Default parameter values.
-  const std::size_t k                  = 12;
-  const FT          distance_threshold = FT(2);
-  const FT          angle_threshold    = FT(20);
-  const std::size_t min_region_size    = 50;
+  const std::size_t k = 12;
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
@@ -66,29 +69,29 @@ bool test (int argc, char** argv, const SortingCode& /*sc*/, const RegionCode& /
     k_neighbors(k).
     point_map(input_range.point_map()));
 
-  Region_type region_type(
-    input_range,
-    CGAL::parameters::
-    maximum_distance(distance_threshold).
-    maximum_angle(angle_threshold).
-    minimum_region_size(min_region_size).
-    point_map(input_range.point_map()).
-    normal_map(input_range.normal_map()));
-
   // Sort indices.
   Sorting sorting(
     input_range, neighbor_query,
-    CGAL::parameters::point_map(input_range.point_map()));
+    CGAL::parameters::
+    point_map(input_range.point_map()).
+    normal_map(input_range.normal_map()));
   sorting.sort();
 
   // Run region growing.
+  Region_type region_type = lambda_region(input_range);
   Region_growing region_growing(
     input_range, neighbor_query, region_type, sorting.seed_map());
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
   region_growing.clear();
-  assert(regions.size() == 7);
+  const bool result = lambda_assertion(regions);
+  assert(result);
+
+  // Default parameter values.
+  const FT          max_distance    = FT(2);
+  const FT          max_angle       = FT(20);
+  const std::size_t min_region_size = 50;
 
   // Test free functions and stability.
   for (std::size_t k = 0; k < 3; ++k) {
@@ -96,103 +99,92 @@ bool test (int argc, char** argv, const SortingCode& /*sc*/, const RegionCode& /
     SD::internal::region_growing_planes(
       input_range, std::back_inserter(regions),
       CGAL::parameters::
-      maximum_distance(distance_threshold).
-      maximum_angle(angle_threshold).
+      maximum_distance(max_distance).
+      maximum_angle(max_angle).
       minimum_region_size(min_region_size).
       point_map(input_range.point_map()).
       normal_map(input_range.normal_map()));
     assert(regions.size() == 7);
   }
 
-  bool result = assertion(regions);
-  assert (result);
-  std::cout << "exact_inexact_test_success: " << result << std::endl;
-  return result;
+  const bool success = true;
+  std::cout << "rg_" + name + "_sortpoints3, epick_test_success: " << success << std::endl;
+  return success;
 }
 
 int main(int argc, char *argv[]) {
+  bool success = true;
 
-  bool success =
-    test<Plane_region, Plane_sorting>
-    (argc, argv,
-     [](const auto& input_range, auto& neighbor_query) -> Plane_sorting
-     {
-       return Plane_sorting (input_range, neighbor_query,
-                             input_range.point_map());
-     },
-     [](const auto& input_range) -> Plane_region
-     {
-       // Default parameter values for the data file point_set_3.xyz.
-       const FT          distance_threshold = FT(2);
-       const FT          angle_threshold    = FT(20);
-       const std::size_t min_region_size    = 50;
-       return Plane_region
-         (input_range,
-          distance_threshold, angle_threshold, min_region_size,
-          input_range.point_map(), input_range.normal_map());
-     },
-     [](const auto& r) -> bool {
-       std::cout << "- num regions planes: " << r.size() << std::endl;
-       return (r.size() >= 6 && r.size() <= 8);
-      });
-  if (!success)
-    return EXIT_FAILURE;
+  // Test planes.
+  success = test<Plane_region, Plane_sorting>(argc, argv, "planes",
+    [](const auto& input_range) -> Plane_region {
 
-  success =
-    test<Sphere_region, Sphere_sorting>
-    (argc, argv,
-     [](const auto& input_range, auto& neighbor_query) -> Sphere_sorting
-     {
-       return Sphere_sorting (input_range, neighbor_query,
-                              input_range.point_map());
-     },
-     [](const auto& input_range) -> Sphere_region
-     {
-       const double tolerance = 0.01;
-       const double max_angle = 10.;
+       const FT          max_distance    = FT(2);
+       const FT          max_angle       = FT(20);
        const std::size_t min_region_size = 50;
-       // No constraint on radius
-       const double min_radius = 0.;
-       const double max_radius = std::numeric_limits<double>::max();
-       return Sphere_region
-         (input_range, tolerance, max_angle, min_region_size,
-          min_radius, max_radius,
-          input_range.point_map(), input_range.normal_map());
-     },
-     [](const auto& r) -> bool {
-        std::cout << "- num regions spheres: " << r.size() << std::endl;
-        return (r.size() > 10 && r.size() < 90);
-      });
-  if (!success)
-    return EXIT_FAILURE;
+       return Plane_region(input_range, CGAL::parameters::
+          maximum_distance(max_distance).
+          maximum_angle(max_angle).
+          minimum_region_size(min_region_size).
+          point_map(input_range.point_map()).
+          normal_map(input_range.normal_map()));
+    },
+    [](const auto& region) -> bool {
+      std::cout << "- num regions planes: " << region.size() << std::endl;
+      return (region.size() >= 6 && region.size() <= 8);
+    }
+  );
 
-  success =
-    test<Cylinder_region, Cylinder_sorting>
-    (argc, argv,
-     [](const auto& input_range, auto& neighbor_query) -> Cylinder_sorting
-     {
-       return Cylinder_sorting (input_range, neighbor_query,
-                                input_range.point_map(), input_range.normal_map());
-     },
-     [](const auto& input_range) -> Cylinder_region
-     {
-       const double tolerance = 0.05;
-       const double max_angle = 5.;
+  if (!success) {
+    return EXIT_FAILURE;
+  }
+
+  // Test spheres.
+  success = test<Sphere_region, Sphere_sorting>(argc, argv, "spheres",
+    [](const auto& input_range) -> Sphere_region {
+
+       const FT          max_distance    = FT(1) / FT(100);
+       const FT          max_angle       = FT(10);
+       const std::size_t min_region_size = 50;
+       return Sphere_region(input_range, CGAL::parameters::
+          maximum_distance(max_distance).
+          maximum_angle(max_angle).
+          minimum_region_size(min_region_size).
+          point_map(input_range.point_map()).
+          normal_map(input_range.normal_map()));
+    },
+    [](const auto& region) -> bool {
+      std::cout << "- num regions spheres: " << region.size() << std::endl;
+      return (region.size() > 36 && region.size() < 40);
+    }
+  );
+
+  if (!success) {
+    return EXIT_FAILURE;
+  }
+
+  // Test cylinders.
+  success = test<Cylinder_region, Cylinder_sorting>(argc, argv, "cylinders",
+    [](const auto& input_range) -> Cylinder_region {
+
+       const FT          max_distance    = FT(1) / FT(20);
+       const FT          max_angle       = FT(5);
        const std::size_t min_region_size = 200;
-       // No constraint on radius
-       const double min_radius = 0.;
-       const double max_radius = std::numeric_limits<double>::max();
-       return Cylinder_region
-         (input_range, tolerance, max_angle, min_region_size,
-          min_radius, max_radius,
-          input_range.point_map(), input_range.normal_map());
-     },
-     [](const auto& r) -> bool {
-        std::cout << "- num regions cylinders: " << r.size() << std::endl;
-        return (r.size() > 2 && r.size() < 30);
-      });
-  if (!success)
-    return EXIT_FAILURE;
+       return Cylinder_region(input_range, CGAL::parameters::
+          maximum_distance(max_distance).
+          maximum_angle(max_angle).
+          minimum_region_size(min_region_size).
+          point_map(input_range.point_map()).
+          normal_map(input_range.normal_map()));
+    },
+    [](const auto& region) -> bool {
+      std::cout << "- num regions cylinders: " << region.size() << std::endl;
+      return (region.size() > 6 && region.size() < 10);
+    }
+  );
 
+  if (!success) {
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
