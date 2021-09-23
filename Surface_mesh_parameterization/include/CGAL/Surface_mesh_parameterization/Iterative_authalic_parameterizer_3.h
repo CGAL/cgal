@@ -41,7 +41,7 @@
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <algorithm>
 #include <cmath>

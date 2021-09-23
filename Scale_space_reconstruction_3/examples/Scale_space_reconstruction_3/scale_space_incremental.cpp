@@ -1,10 +1,10 @@
-#include <fstream>
-#include <iostream>
-#include <algorithm>
-
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_off_points.h>
+#include <CGAL/IO/read_points.h>
+
+#include <algorithm>
+#include <fstream>
+#include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Kernel;
 
@@ -30,19 +30,22 @@ void dump_reconstruction(const Reconstruction& reconstruct, std::string name)
       output << "3 " << *it << std::endl;
 }
 
-int main(int argc, char* argv[]) {
-    // Read the data.
-    std::vector<Point> points;
-    if (argc!=2){
+int main(int argc, char* argv[])
+{
+    if (argc != 2)
+    {
       std::cerr << "Error, no input file provided\n";
       return 1;
     }
-    std::ifstream in(argv[1]);
+
     std::cout << "Reading " << std::flush;
-    if( !in || !CGAL::read_off_points( in, std::back_inserter( points ) ) ) {
-        std::cerr << "Error: cannot read file" << std::endl;
-        return EXIT_FAILURE;
+    std::vector<Point> points;
+    if(!CGAL::IO::read_points(argv[1], std::back_inserter(points)))
+    {
+      std::cerr << "Error: cannot read file" << std::endl;
+      return EXIT_FAILURE;
     }
+
     std::cout << "done: " << points.size() << " points." << std::endl;
 
     // Construct the reconstruction

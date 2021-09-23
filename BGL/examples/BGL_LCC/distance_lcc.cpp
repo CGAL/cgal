@@ -1,5 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
 #include <boost/graph/breadth_first_search.hpp>
 
@@ -18,7 +20,7 @@ typedef boost::graph_traits<LCC>::vertex_iterator   vertex_iterator;
 int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
+  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:"cube.off", lcc);
 
   // This is the vector where the distance gets written to
   std::vector<int> distance(lcc.vertex_attributes().size());

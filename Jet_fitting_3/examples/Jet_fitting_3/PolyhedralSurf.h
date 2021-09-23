@@ -145,7 +145,7 @@ HEdge_PM<TPoly> get_hepm(boost::edge_weight_t, TPoly& )
 struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
   // wrap vertex
   template < class Refs, class Traits > struct Vertex_wrapper {
-    typedef struct {
+    typedef struct FGeomTraits {
     public:
       typedef typename Traits::Point_3 Point_3;
     } FGeomTraits;
@@ -158,7 +158,7 @@ struct Wrappers_VFH:public CGAL::Polyhedron_items_3 {
   template < class Refs, class Traits > struct Face_wrapper {
     //typedef typename Traits::Vector_3 Vector_3;
     //all types needed by the facet...
-    typedef struct {
+    typedef struct FGeomTraits {
     public:
       typedef typename Traits::Vector_3 Vector_3;
     } FGeomTraits;

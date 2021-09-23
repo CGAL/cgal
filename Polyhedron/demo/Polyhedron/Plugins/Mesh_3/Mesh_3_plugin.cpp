@@ -8,7 +8,6 @@
 
 #include <QObject>
 #include <QAction>
-#include <QMainWindow>
 #include <QApplication>
 #include <QtPlugin>
 #include "Scene_c3t3_item.h"
@@ -100,8 +99,7 @@ public:
       connect(actionMesh_3_surface, SIGNAL(triggered()),
               this, SLOT(mesh_3_surface()));
     }
-
-    actionSplitPolylines = new QAction("Split polylines in a graph", mw);
+    actionSplitPolylines = new QAction("Build Features Graph for Mesh_3", mw);
     actionSplitPolylines->setProperty("subMenuName",
                                       "Tetrahedral Mesh Generation");
     connect(actionSplitPolylines, &QAction::triggered,
@@ -336,6 +334,9 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
   features_protection_available = false;
   if (auto poly_items = get<Polyhedral_mesh_items>(&*items)) {
     auto& sm_items = poly_items->sm_items;
+    if(sm_items.empty()) {
+      return tr("ERROR: there must be at least one surface mesh item.");
+    }
     for (auto sm_item : sm_items) {
       if (nullptr == sm_item->polyhedron()) {
         return tr("ERROR: no data in selected item %1").arg(sm_item->name());
@@ -728,6 +729,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   // Launch thread
   source_item_ = item;
   source_item_name_ = item_name;
+  CGAL::Three::Three::getMutex()->lock();
+  CGAL::Three::Three::isLocked() = true;
+  CGAL::Three::Three::getMutex()->unlock();
+
   launch_thread(thread);
 
   QApplication::restoreOverrideCursor();
@@ -870,6 +875,9 @@ treat_result(Scene_item& source_item,
     scene->setSelectedItem(new_item_id);
     delete result_item;
   }
+  CGAL::Three::Three::getMutex()->lock();
+  CGAL::Three::Three::isLocked() = false;
+  CGAL::Three::Three::getMutex()->unlock();
 }
 
 #include "Mesh_3_plugin.moc"

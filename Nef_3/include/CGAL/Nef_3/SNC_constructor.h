@@ -831,7 +831,7 @@ public:
                            ec->circle());
         Sphere_point sp(intersection(c, seg.sphere_circle()));
         CGAL_NEF_TRACEN(seg <<" has_on " << sp);
-        if(!seg.has_on(sp))
+        if(!seg.has_on_after_intersection(sp))
           sp = sp.antipode();
         sv = D.new_svertex(sp);
         CGAL_NEF_TRACEN("new svertex 3 " << normalized(sp));
@@ -2063,7 +2063,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
                            ec->circle());
         Sphere_point sp(intersection(c, seg.sphere_circle()));
         CGAL_NEF_TRACEN(seg <<" has_on " << sp);
-        if(!seg.has_on(sp))
+        if(!seg.has_on_after_intersection(sp))
           sp = sp.antipode();
         sv = D.new_svertex(sp);
         CGAL_NEF_TRACEN("new svertex 3 " << normalized(sp));
@@ -2129,16 +2129,14 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
 
     Halfedge_iterator e;
     CGAL_forall_edges(e, *this->sncp()) {
-      e->set_index();
-      e->twin()->set_index(e->get_index());
+      e->twin()->set_index(e->new_index());
     }
 
     Halffacet_iterator f;
     CGAL_forall_halffacets(f, *this->sncp()) {
       Halffacet_cycle_iterator fci(f->facet_cycles_begin());
       SHalfedge_handle se(fci);
-      se->set_index();
-      int index(se->get_index());
+      int index(se->new_index());
       for(; fci != f->facet_cycles_end(); ++fci) {
         if(fci.is_shalfedge()) {
           SHalfedge_around_facet_circulator c1(fci), c2(c1);

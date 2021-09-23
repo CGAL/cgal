@@ -90,7 +90,7 @@ compute_denoise_projection(
   Vector normal_sum = CGAL::NULL_VECTOR;
 
   FT cos_sigma = cos(sharpness_angle * CGAL_PI / 180.0);
-  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
+  FT sharpness_bandwidth = CGAL::square((CGAL::max)(1e-8, 1 - cos_sigma));
 
   for (typename PointRange::iterator it : neighbor_pwns)
   {
@@ -101,7 +101,7 @@ compute_denoise_projection(
     if (dist2 < radius2)
     {
       FT theta = std::exp(dist2 * iradius16);
-      FT psi = std::exp(-std::pow(1 - get(normal_map, vt) * nn, 2)
+      FT psi = std::exp(-CGAL::square(1 - get(normal_map, vt) * nn)
         / sharpness_bandwidth);
 
       weight = theta * psi;
@@ -178,9 +178,9 @@ compute_max_spacing(
    For more details, please see section 4 in \cgalCite{ear-2013}.
 
    A parallel version of this function is provided and requires the executable to be
-   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+   See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
    for more details.
 
    \pre Normals must be unit vectors
@@ -191,7 +191,7 @@ compute_max_spacing(
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param k size of the neighborhood for the implicit surface patch fitting.
    The larger the value is, the smoother the result will be.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below

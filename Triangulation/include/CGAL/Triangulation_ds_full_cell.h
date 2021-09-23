@@ -18,7 +18,7 @@
 
 #include <CGAL/TDS_full_cell_default_storage_policy.h>
 #include <CGAL/TDS_full_cell_mirror_storage_policy.h>
-#include <CGAL/internal/Triangulation/Dummy_TDS.h>
+#include <CGAL/Triangulation/internal/Dummy_TDS.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 #include <CGAL/array.h>
@@ -259,7 +259,7 @@ template < typename TDS, typename SSP >
 std::ostream &
 operator<<(std::ostream & O, const Triangulation_ds_full_cell<TDS,SSP> &) /* Concept */
 {
-    /*if( is_ascii(O) )
+    /*if( IO::is_ascii(O) )
     {
         // os << '\n';
     }
@@ -271,7 +271,7 @@ template < typename TDS, typename SSP >
 std::istream &
 operator>>(std::istream & I, Triangulation_ds_full_cell<TDS,SSP> &) /* Concept */
 {
-    /*if( is_ascii(I) )
+    /*if( IO::is_ascii(I) )
     {}
     else {}*/
     return I;

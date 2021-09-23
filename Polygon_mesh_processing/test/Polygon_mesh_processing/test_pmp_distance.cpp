@@ -1,11 +1,11 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Real_timer.h>
-#include <CGAL/IO/OFF_reader.h>
-
-
+#include <CGAL/IO/OFF.h>
 #include <CGAL/boost/graph/property_maps.h>
-
+#include <CGAL/number_utils.h>
+#include <CGAL/Coercion_traits.h>
 
 #include <fstream>
 #include <ostream>
@@ -169,10 +169,10 @@ struct Custom_traits_Hausdorff
     Construct_cartesian_const_iterator_3(){}
     Construct_cartesian_const_iterator_3(const Point_3&){}
     const FT* operator()(const Point_3&) const
-    { return 0; }
+    { return nullptr; }
 
     const FT* operator()(const Point_3&, int)  const
-    { return 0; }
+    { return nullptr; }
     typedef const FT* result_type;
   };
 // } end of requirements from SearchGeomTraits_3
@@ -194,6 +194,14 @@ struct Custom_traits_Hausdorff
 };
 
 namespace CGAL{
+
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float, Custom_traits_Hausdorff::FT)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double, Custom_traits_Hausdorff::FT)
+
 template<>struct Kernel_traits<Custom_traits_Hausdorff::Point_3>
 {
   typedef Custom_traits_Hausdorff Kernel;
@@ -318,7 +326,7 @@ int main(int argc, char** argv)
   std::vector<std::vector<std::size_t> > faces;
   std::vector<K::Point_3> points;
   input.open(argv[1]);
-  CGAL::read_OFF(input, points, faces);
+  CGAL::IO::read_OFF(input, points, faces);
   input.close();
 
   std::vector<K::Point_3> samples;

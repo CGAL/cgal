@@ -1,8 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/extract_mean_curvature_flow_skeleton.h>
+
 #include <fstream>
 
 
@@ -50,7 +53,7 @@ struct Display_polylines{
 int main()
 {
   LCC lcc;
-  CGAL::read_off("data/elephant.off", lcc);
+  CGAL::IO::read_polygon_mesh("data/elephant.off", lcc);
 
   Skeleton skeleton;
 
@@ -60,13 +63,13 @@ int main()
   std::cout << "Number of edges of the skeleton: " << boost::num_edges(skeleton) << "\n";
 
   // Output all the edges of the skeleton.
-  std::ofstream output("skel-lcc.cgal");
+  std::ofstream output("skel-lcc.polylines.txt");
   Display_polylines display(skeleton,output);
   CGAL::split_graph_into_polylines(skeleton, display);
   output.close();
 
   // Output skeleton points and the corresponding surface points
-  output.open("correspondance-lcc.cgal");
+  output.open("correspondance-lcc.polylines.txt");
   for(Skeleton_vertex v : CGAL::make_range(vertices(skeleton)))
     for(vertex_descriptor vd : skeleton[v].vertices)
       output << "2 " << skeleton[v].point << " "

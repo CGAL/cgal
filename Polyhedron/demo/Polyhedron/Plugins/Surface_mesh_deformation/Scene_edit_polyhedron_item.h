@@ -27,7 +27,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Surface_mesh_deformation.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <QGLBuffer>
 #include <QGLShader>
 #include <QGLShaderProgram>
@@ -147,7 +147,7 @@ private:
   M_Deform_mesh* deform_mesh;
 
 public:
-  Control_vertices_data(M_Deform_mesh* deform_mesh, CGAL::qglviewer::ManipulatedFrame* frame = 0)
+  Control_vertices_data(M_Deform_mesh* deform_mesh, CGAL::qglviewer::ManipulatedFrame* frame = nullptr)
     : frame(frame), bbox(0,0,0,0,0,0), rot_direction(0.,0.,1.), deform_mesh(deform_mesh)
   { }
 

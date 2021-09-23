@@ -24,12 +24,12 @@
 #    if defined(CGAL_LICENSE_WARNING)
 
        CGAL_pragma_warning("Your commercial license for CGAL does not cover "
-                           "this release of the  package.")
+                           "this release of the Classification package.")
 #    endif
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-              of the  package. \
+              of the Classification package. \
               You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
@@ -39,13 +39,13 @@
 
 #  if defined(CGAL_LICENSE_WARNING)
      CGAL_pragma_warning("\nThe macro CGAL_CLASSIFICATION_COMMERCIAL_LICENSE is not defined."
-                          "\nYou use the CGAL  package under "
+                          "\nYou use the CGAL Classification package under "
                           "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_CLASSIFICATION_COMMERCIAL_LICENSE is not defined.\
-            You use the CGAL  package under the terms of \
+            You use the CGAL Classification package under the terms of \
             the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 

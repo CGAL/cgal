@@ -79,98 +79,6 @@ CGAL::vertex_point_t>::type>::value_type Point;
 
 namespace CGAL{
 
-  class ErrorObserverVtk : public vtkCommand
-  {
-  public:
-    ErrorObserverVtk() :
-      Error(false),
-      Warning(false),
-      ErrorMessage(""),
-      WarningMessage("") {}
-    static ErrorObserverVtk *New() { return new ErrorObserverVtk; }
-
-    bool GetError() const          { return this->Error; }
-    bool GetWarning() const        { return this->Warning; }
-    std::string GetErrorMessage()   { return ErrorMessage; }
-    std::string GetWarningMessage() { return WarningMessage; }
-
-    void Clear()
-    {
-      this->Error = false;
-      this->Warning = false;
-      this->ErrorMessage = "";
-      this->WarningMessage = "";
-    }
-    virtual void Execute(vtkObject *vtkNotUsed(caller),
-                         unsigned long event,
-                         void *calldata)
-    {
-      switch (event)
-      {
-      case vtkCommand::ErrorEvent:
-        ErrorMessage = static_cast<char *>(calldata);
-        this->Error = true;
-        break;
-      case vtkCommand::WarningEvent:
-        WarningMessage = static_cast<char *>(calldata);
-        this->Warning = true;
-        break;
-      }
-    }
-
-  private:
-    bool        Error;
-    bool        Warning;
-    std::string ErrorMessage;
-    std::string WarningMessage;
-  };
-
-  template <typename TM>
-  bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
-                                   TM& tmesh)
-  {
-    typedef typename boost::property_map<TM, CGAL::vertex_point_t>::type VPMap;
-    typedef typename boost::property_map_value<TM, CGAL::vertex_point_t>::type Point_3;
-    typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
-
-    VPMap vpmap = get(CGAL::vertex_point, tmesh);
-
-    // get nb of points and cells
-    vtkIdType nb_points = poly_data->GetNumberOfPoints();
-    vtkIdType nb_cells = poly_data->GetNumberOfCells();
-
-    //extract points
-    std::vector<vertex_descriptor> vertex_map(nb_points);
-    for (vtkIdType i = 0; i<nb_points; ++i)
-    {
-      double coords[3];
-      poly_data->GetPoint(i, coords);
-
-      vertex_descriptor v = add_vertex(tmesh);
-      put(vpmap, v, Point_3(coords[0], coords[1], coords[2]));
-      vertex_map[i]=v;
-    }
-
-    //extract cells
-    for (vtkIdType i = 0; i<nb_cells; ++i)
-    {
-      if(poly_data->GetCellType(i) != 5
-         && poly_data->GetCellType(i) != 7
-         && poly_data->GetCellType(i) != 9) //only supported cells are triangles, quads and polygons
-        continue;
-      vtkCell* cell_ptr = poly_data->GetCell(i);
-
-      vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
-      if (nb_vertices < 3)
-        return false;
-      std::vector<vertex_descriptor> vr(nb_vertices);
-      for (vtkIdType k=0; k<nb_vertices; ++k)
-        vr[k]=vertex_map[cell_ptr->GetPointId(k)];
-
-      CGAL::Euler::add_face(vr, tmesh);
-    }
-    return true;
-  }
 
   template <class Point_3>
   void extract_segments_from_vtkPointSet(vtkPointSet* poly_data,
@@ -333,7 +241,7 @@ public:
         std::ofstream os(output_filename.data());
         os << std::setprecision(16);
         //write header
-        CGAL::write_vtp(os, *mesh);
+        CGAL::IO::write_VTP(os, *mesh);
       }
     }
     else
@@ -347,26 +255,13 @@ public:
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
 
-      CGAL::output_to_vtu(os, c3t3);
+      CGAL::IO::output_to_vtu(os, c3t3);
     }
     items.pop_front();
     return true;
   }
 
   bool canLoad(QFileInfo) const { return true; }
-
-  template <class vtkReader>
-  vtkSmartPointer<vtkReader>
-  read_vtk_file(const std::string& input_filename,
-                vtkSmartPointer<CGAL::ErrorObserverVtk> errorObserver)
-  {
-    vtkSmartPointer<vtkReader> reader = vtkSmartPointer<vtkReader>::New();
-    reader->AddObserver(vtkCommand::ErrorEvent, errorObserver);
-    reader->AddObserver(vtkCommand::WarningEvent, errorObserver);
-    reader->SetFileName(input_filename.data());
-    reader->Update();
-    return reader;
-  }
 
   QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
@@ -393,47 +288,25 @@ public:
     }
 
     vtkSmartPointer<vtkPointSet> data;
-    vtkSmartPointer<CGAL::ErrorObserverVtk> obs =
-      vtkSmartPointer<CGAL::ErrorObserverVtk>::New();
+    vtkSmartPointer<CGAL::IO::internal::ErrorObserverVtk> obs =
+      vtkSmartPointer<CGAL::IO::internal::ErrorObserverVtk>::New();
 
     if (extension=="vtp")
-      data = read_vtk_file<vtkXMLPolyDataReader>(fname,obs)
+      data = CGAL::IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname,obs)
               ->GetOutput();
     else
      if (extension=="vtu")
-       data = read_vtk_file<vtkXMLUnstructuredGridReader>(fname,obs)
+       data = CGAL::IO::internal::read_vtk_file<vtkXMLUnstructuredGridReader>(fname,obs)
                 ->GetOutput();
      else{
        //read non-XML data
        vtkSmartPointer<vtkDataSetReader> reader =
-         read_vtk_file<vtkDataSetReader>(fname,obs);
+         CGAL::IO::internal::read_vtk_file<vtkDataSetReader>(fname,obs);
        data = vtkPolyData::SafeDownCast(reader->GetOutput());
        if (!data)
         data = vtkUnstructuredGrid::SafeDownCast(reader->GetOutput());
      }
 
-    if (obs->GetError())
-    {
-      QMessageBox msgBox;
-      msgBox.setText("This type of data can't be opened");
-      msgBox.setInformativeText(QString("VTK error message :\n")
-        .append(QString(obs->GetErrorMessage().data())));
-      msgBox.setStandardButtons(QMessageBox::Ok);
-      msgBox.setIcon(QMessageBox::Critical);
-      msgBox.exec();
-      ok = false;
-      return QList<Scene_item*>();
-    }
-    if (obs->GetWarning())
-    {
-      QMessageBox msgBox;
-      msgBox.setText("This file generates a warning");
-      msgBox.setInformativeText(QString("VTK warning message :\n")
-        .append(QString(obs->GetWarningMessage().data())));
-      msgBox.setStandardButtons(QMessageBox::Ok);
-      msgBox.setIcon(QMessageBox::Warning);
-      msgBox.exec();
-    }
     if (obs->GetError())
     {
       QMessageBox msgBox;
@@ -482,7 +355,7 @@ public:
     if(is_polygon_mesh)
     {
       FaceGraph* poly = new FaceGraph();
-      if (CGAL::vtkPointSet_to_polygon_mesh(data, *poly))
+      if (CGAL::IO::internal::vtkPointSet_to_polygon_mesh(data, *poly, CGAL::parameters::all_default()))
       {
         Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
         if(group)

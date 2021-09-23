@@ -124,12 +124,30 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{face_patch_map}
 *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*                    as key type and the desired property, model of `CopyConstructible` as value type.}
+*                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable` as value type.}
 *     \cgalParamDefault{a default property map where each face is associated with the ID of
 *                       the connected component it belongs to. Connected components are
 *                       computed with respect to the constrained edges listed in the property map
 *                       `edge_is_constrained_map`}
 *     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_split}
+*     \cgalParamDescription{whether edges that are too long with respect to the given sizing are split}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_collapse}
+*     \cgalParamDescription{whether edges that are too short with respect to the given sizing are collapsed}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_flip}
+*     \cgalParamDescription{whether edge flips are performed to improve shape and valence}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{number_of_relaxation_steps}
@@ -278,6 +296,9 @@ void isotropic_remeshing(const FaceRange& faces
   unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   bool smoothing_1d = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   unsigned int nb_laplacian = choose_parameter(get_parameter(np, internal_np::number_of_relaxation_steps), 1);
+  bool do_collapse = choose_parameter(get_parameter(np, internal_np::do_collapse), true);
+  bool do_split = choose_parameter(get_parameter(np, internal_np::do_split), true);
+  bool do_flip = choose_parameter(get_parameter(np, internal_np::do_flip), true);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -293,10 +314,13 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
     if (target_edge_length>0)
     {
-      remesher.split_long_edges(high);
-      remesher.collapse_short_edges(low, high, collapse_constraints);
+      if(do_split)
+        remesher.split_long_edges(high);
+      if(do_collapse)
+        remesher.collapse_short_edges(low, high, collapse_constraints);
     }
-    remesher.equalize_valences();
+    if(do_flip)
+      remesher.flip_edges_for_valence_and_shape();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));

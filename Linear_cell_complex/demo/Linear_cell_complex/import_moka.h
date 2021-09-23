@@ -20,7 +20,7 @@ struct GDart
   Dart_handle dh;
   LCC::Vertex_attribute_handle vh;
 
-  GDart() : dh(NULL), vh(NULL)
+  GDart() : dh(nullptr), vh(nullptr)
   {}
 
   GDart(const GDart& adart) : dh(adart.dh),
@@ -97,9 +97,9 @@ bool import_from_moka(LCC& lcc, const char* filename)
   std::stack<unsigned int> totreat;
   for (unsigned int startingdart = 0; startingdart<nbLoaded; ++startingdart)
   {
-    bool orient=(gdarts[startingdart].dh==NULL);
+    bool orient=(gdarts[startingdart].dh==nullptr);
     for (unsigned int dim=0; orient && dim<4; ++dim)
-      if (gdarts[gdarts[startingdart].alpha[dim]].dh!=NULL) orient=false;
+      if (gdarts[gdarts[startingdart].alpha[dim]].dh!=nullptr) orient=false;
 
     if ( orient )
     {
@@ -111,15 +111,15 @@ bool import_from_moka(LCC& lcc, const char* filename)
         unsigned int i=totreat.top();
         totreat.pop();
 
-        assert(gdarts[i].dh!=NULL);
+        assert(gdarts[i].dh!=nullptr);
 
         for (unsigned int dim=1; dim<4; ++dim)
         {
           if (gdarts[i].alpha[dim]!=i &&
-              gdarts[gdarts[i].alpha[dim]].vh!=NULL)
+              gdarts[gdarts[i].alpha[dim]].vh!=nullptr)
           {
             gdarts[i].vh = gdarts[gdarts[i].alpha[dim]].vh;
-            gdarts[gdarts[i].alpha[dim]].vh = NULL;
+            gdarts[gdarts[i].alpha[dim]].vh = nullptr;
           }
 
           unsigned int alpha0 = gdarts[i].alpha[0];
@@ -127,7 +127,7 @@ bool import_from_moka(LCC& lcc, const char* filename)
 
           if (gdarts[alpha0].alpha[dim]!=alpha0)
           {
-            if ( gdarts[gdarts[alpha0].alpha[dim]].dh==NULL )
+            if ( gdarts[gdarts[alpha0].alpha[dim]].dh==nullptr )
             {
               totreat.push(gdarts[alpha0].alpha[dim]);
               gdarts[gdarts[alpha0].alpha[dim]].dh = lcc.create_dart();
@@ -151,13 +151,13 @@ bool import_from_moka(LCC& lcc, const char* filename)
   bool orientable = true;
   for (unsigned int i = 0; i<nbLoaded; ++i)
   {
-    if (gdarts[i].dh!=NULL)
+    if (gdarts[i].dh!=nullptr)
     {
       for (unsigned int dim=0; dim<4; ++dim)
       {
         if (orientable &&
             gdarts[i].alpha[dim]!=i &&
-            gdarts[gdarts[i].alpha[dim]].dh!=NULL)
+            gdarts[gdarts[i].alpha[dim]].dh!=nullptr)
         {
           std::cout<<"Pb, the gmap is NOT orientable."<<std::endl;
           orientable=false;
@@ -165,12 +165,12 @@ bool import_from_moka(LCC& lcc, const char* filename)
         }
       }
 
-      if ( lcc.template attribute<3>(gdarts[i].dh) == NULL )
+      if ( lcc.template attribute<3>(gdarts[i].dh) == nullptr )
       {
         lcc.template set_attribute<3>(gdarts[i].dh, lcc.template create_attribute<3>());
       }
     }
-    if (gdarts[i].vh!=NULL)
+    if (gdarts[i].vh!=nullptr)
     {
       lcc.set_vertex_attribute(gdarts[i].dh, gdarts[i].vh);
     }

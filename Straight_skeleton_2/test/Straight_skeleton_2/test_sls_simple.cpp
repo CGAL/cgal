@@ -74,7 +74,8 @@ void test_API()
 template <typename K, typename StraightSkeleton>
 bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
 {
-  typedef typename StraightSkeleton::Traits::Point_2 Point;
+  typedef typename StraightSkeleton::Traits::Point_2                 Point;
+  typedef CGAL::Polygon_2<K>                                         Polygon_2;
 
   if(!ss)
     return false;
@@ -91,8 +92,8 @@ bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
 
   std::cout << unique_vertices.size() << " unique vertices (" << ss->size_of_vertices() << ")" << std::endl;
 
-  // Can't guarantee that the embedding is correct with EPICK
-  if(!std::is_same<K, EPICK>::value)
+  // Can't guarantee that the embedding is correct with EPICK or EPECK (non-exact sqrt)
+  if(std::is_same<K, EPECK_w_sqrt>::value)
   {
     if(unique_vertices.size() != ss->size_of_vertices())
       return false;
@@ -100,6 +101,21 @@ bool is_valid(const boost::shared_ptr<StraightSkeleton>& ss)
     for(auto hit=ss->halfedges_begin(); hit!=ss->halfedges_end(); ++hit)
       if(hit->vertex()->point() == hit->opposite()->vertex()->point())
         return false;
+
+    for (auto fit=ss->faces_begin(); fit!=ss->faces_end(); ++fit)
+    {
+      Polygon_2 p;
+      auto h = fit->halfedge();
+      do
+      {
+        p.push_back(h->vertex()->point());
+        h = h->next();
+      }
+      while(h != fit->halfedge());
+
+      if(!p.is_simple())
+        return false;
+    }
   }
 
   return true;
@@ -112,6 +128,7 @@ void test_skeleton(const char* filename,
                    const std::size_t expected_nf = -1)
 {
   std::cout << "Construct straight skeleton of input: " << filename << std::endl;
+  std::cout << "Kernel: " << typeid(K).name() << std::endl;
 
   typedef typename K::Point_2                                        Point;
 
@@ -124,7 +141,7 @@ void test_skeleton(const char* filename,
   std::ifstream in(filename);
   assert(in);
 
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
 
   std::vector<Polygon_2> polys;
 
@@ -279,6 +296,7 @@ void test_kernel()
   test_skeleton<K>("data/degenerate28b.poly");
   test_skeleton<K>("data/degenerate28c.poly");
   test_skeleton<K>("data/degenerate28x.poly");
+  test_skeleton<K>("data/degenerate29.poly");
   test_skeleton<K>("data/degenerate_multinode0.poly", 41, 136, 28);
   test_skeleton<K>("data/double_edge.poly", 7, 22, 5);
   test_skeleton<K>("data/double_edge_0.poly", 7, 22, 5);
@@ -307,6 +325,7 @@ void test_kernel()
   test_skeleton<K>("data/rectangle.poly", 6, 18, 4);
   test_skeleton<K>("data/region_4.poly", 4, 12, 3);
   test_skeleton<K>("data/rombus_4_spokes.poly", 17, 56, 12);
+  test_skeleton<K>("data/issue5177.poly");
 
   // The embedding of those below is bad when using EPICK
   test_skeleton<K>("data/poly4.poly"/*, 15, 48, 10*/); // almost duplicates

@@ -193,7 +193,7 @@ void initialize_IDs(const CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_descriptor           face_descriptor;
 
-  int i=0;
+  std::size_t i=0;
   for(vertex_descriptor v : vertices(mesh))
     v->id() = i++;
 

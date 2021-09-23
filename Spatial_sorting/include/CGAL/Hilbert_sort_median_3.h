@@ -83,8 +83,14 @@ struct Hilbert_cmp_3<K,2,false>
 
 } // namespace internal
 
+#ifdef __clang__
+#define CGAL_VISIBILITY_MACRO __attribute__ ((visibility ("hidden")))
+#else
+#define CGAL_VISIBILITY_MACRO
+#endif
+
 template <class K, class ConcurrencyTag>
-class Hilbert_sort_median_3
+class CGAL_VISIBILITY_MACRO Hilbert_sort_median_3
 {
 public:
   typedef Hilbert_sort_median_3<K, ConcurrencyTag> Self;

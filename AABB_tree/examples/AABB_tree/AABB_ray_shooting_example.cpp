@@ -1,13 +1,14 @@
-#include <iostream>
-#include <fstream>
-
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
+
+#include <iostream>
+#include <fstream>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::FT FT;
@@ -24,8 +25,8 @@ typedef CGAL::AABB_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef boost::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
 
-
-struct Skip {
+struct Skip
+{
   face_descriptor fd;
 
   Skip(const face_descriptor fd)
@@ -44,14 +45,20 @@ struct Skip {
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/tetrahedron.off";
-  std::ifstream input(filename);
+
   Mesh mesh;
-  input >> mesh;
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Invalid input." << std::endl;
+    return 1;
+  }
+
   Tree tree(faces(mesh).first, faces(mesh).second, mesh);
 
   double d = CGAL::Polygon_mesh_processing::is_outward_oriented(mesh)?-1:1;
 
-  for(face_descriptor fd : faces(mesh)){
+  for(face_descriptor fd : faces(mesh))
+  {
     halfedge_descriptor hd = halfedge(fd,mesh);
     Point p = CGAL::centroid(mesh.point(source(hd,mesh)),
                              mesh.point(target(hd,mesh)),
@@ -61,13 +68,16 @@ int main(int argc, char* argv[])
     Ray ray(p,d * v);
     Skip skip(fd);
     Ray_intersection intersection = tree.first_intersection(ray, skip);
-    if(intersection){
+    if(intersection)
+    {
       if(boost::get<Point>(&(intersection->first))){
         const Point* p =  boost::get<Point>(&(intersection->first) );
         std::cout <<  *p << std::endl;
       }
     }
   }
+
   std::cerr << "done" << std::endl;
+
   return 0;
 }

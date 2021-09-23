@@ -1,10 +1,7 @@
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Arrangement_on_surface_2_Demo)
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -23,6 +20,8 @@ if (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_compile_definitions(QT_NO_KEYWORDS)
   include_directories( BEFORE ./ )
 
+  # Arrangement package includes
+  add_definitions(-DQT_NO_KEYWORDS)
   option(COMPILE_UTILS_INCREMENTALLY
     "Compile files in Utils directory incrementally, or compile them all as a unit. \
     Incremental compilation will be better for development and consume less \

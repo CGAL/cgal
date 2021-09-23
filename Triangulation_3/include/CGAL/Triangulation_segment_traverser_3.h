@@ -1149,6 +1149,6 @@ private:
 
 } // namespace CGAL
 
-#include <CGAL/internal/Triangulation_segment_traverser_3_impl.h>
+#include <CGAL/Triangulation_3/internal/Triangulation_segment_traverser_3_impl.h>
 
 #endif // CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_H

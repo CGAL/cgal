@@ -17,9 +17,8 @@
 #include <CGAL/license/Spatial_searching.h>
 
 
-#include <CGAL/result_of.h>
 #include <CGAL/Kd_tree_rectangle.h>
-#include <CGAL/internal/Get_dimension_tag.h>
+#include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 #include <vector>
 
 namespace CGAL {

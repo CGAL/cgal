@@ -226,7 +226,7 @@ public:
     is `CGAL::Point_3`.
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if \cgal
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted if Eigen 3 (or greater)
@@ -308,7 +308,7 @@ public:
     \tparam FaceListGraph model of `FaceListGraph`.
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if \cgal
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -392,7 +392,7 @@ public:
     `RandomAccessIterator` and its value type is the key type of
     `PointMap`.
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if \cgal
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted: if Eigen 3 (or greater)

@@ -7,16 +7,15 @@
 
 
 typedef CGAL::Simple_cartesian<double>                                   Kernel;
-typedef Kernel::Point_3 Point_3;
-typedef CGAL::Surface_mesh<Point_3>  Mesh;
+typedef Kernel::Point_3                                                  Point_3;
+typedef CGAL::Surface_mesh<Point_3>                                      Mesh;
 
-typedef boost::graph_traits<Mesh>::vertex_descriptor   vertex_descriptor;
-typedef boost::graph_traits<Mesh>::vertex_iterator     vertex_iterator;
-typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_descriptor                     vertex_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_iterator                       vertex_iterator;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor                   halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::edge_descriptor                       edge_descriptor;
 
-
-typedef Eigen::Vector3d                                                Vector3d;
+typedef Eigen::Vector3d                                                  Vector3d;
 
 typedef CGAL::Surface_mesh_deformation<Mesh>     Surface_mesh_deformation;
 
@@ -45,12 +44,13 @@ std::vector<vertex_descriptor> extract_k_ring(const Mesh &P, vertex_descriptor v
   return Q;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-  Mesh mesh;
-  std::ifstream input("data/plane.off");
+  const char* filename = (argc>1) ? argv[1] : "data/plane.off";
 
-  if ( !input || !(input >> mesh) || mesh.is_empty() ) {
+  Mesh mesh;
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  {
     std::cerr<< "Cannot open data/plane.off";
     return 1;
   }

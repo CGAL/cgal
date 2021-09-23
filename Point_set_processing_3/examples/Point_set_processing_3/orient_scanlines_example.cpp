@@ -16,8 +16,8 @@ using Scanline_id_map = CGAL::Nth_of_tuple_property_map<3, Point_with_info>;
 void dump (const char* filename, const std::vector<Point_with_info>& points)
 {
   std::ofstream ofile (filename, std::ios::binary);
-  CGAL::set_binary_mode(ofile);
-  CGAL::write_ply_points
+  CGAL::IO::set_binary_mode(ofile);
+  CGAL::IO::write_PLY
     (ofile, points,
      CGAL::parameters::point_map (Point_map()).
      normal_map (Normal_map()));
@@ -33,13 +33,13 @@ int main (int argc, char** argv)
   std::cerr << "Reading input file " << fname << std::endl;
   std::ifstream ifile (fname, std::ios::binary);
   if (!ifile ||
-      !CGAL::read_las_points_with_properties
+      !CGAL::IO::read_LAS_with_properties
       (ifile, std::back_inserter (points),
-       CGAL::make_las_point_reader (Point_map()),
+       CGAL::IO::make_las_point_reader (Point_map()),
        std::make_pair (Scan_angle_map(),
-                       CGAL::LAS_property::Scan_angle()),
+                       CGAL::IO::LAS_property::Scan_angle()),
        std::make_pair (Scanline_id_map(),
-                       CGAL::LAS_property::Scan_direction_flag())))
+                       CGAL::IO::LAS_property::Scan_direction_flag())))
   {
     std::cerr << "Can't read " << fname << std::endl;
     return EXIT_FAILURE;

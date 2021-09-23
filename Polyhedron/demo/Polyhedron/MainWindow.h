@@ -20,6 +20,8 @@
 #include <QModelIndex>
 #include <QMdiSubWindow>
 #include <QLineEdit>
+#include <QMutex>
+#include <QWaitCondition>
 
 class Scene;
 class Viewer;
@@ -79,15 +81,15 @@ public:
    * Then it creates and initializes the scene and do the
    * connexions with the UI. Finally it loads the plugins.*/
 
-  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = 0);
+  MainWindow(const QStringList& keywords, bool verbose = false,QWidget* parent = nullptr);
   ~MainWindow();
 
-  /*! Finds an IO plugin.
+  /*! Finds an I/O plugin.
    * throws std::invalid_argument if no loader with that argument can be found
-   @returns the IO plugin associated with `loader_name`*/
+   @returns the I/O plugin associated with `loader_name`*/
   CGAL::Three::Polyhedron_demo_io_plugin_interface* findLoader(const QString& loader_name) const;
 
-  /*! \brief Loads on or more item with a given loader.
+  /*! \brief loads on or more item with a given loader.
    *
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
@@ -95,6 +97,7 @@ public:
                                             CGAL::Three::Polyhedron_demo_io_plugin_interface*,
                                             bool& ok,
                                             bool add_to_scene=true);
+
   void computeViewerBBox(CGAL::qglviewer::Vec &vmin, CGAL::qglviewer::Vec &vmax);
   void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min,
                         CGAL::qglviewer::Vec max);
@@ -379,7 +382,7 @@ protected:
    */
   void loadPlugins();
   /*!
-   * \brief Initializes the plugins.
+   * \brief initializes the plugins.
    * Makes pairs between plugins and object names and fills the Operations menu.
    * Called only once.
    */
@@ -446,6 +449,8 @@ public:
   //! Calls evaluate_script(script, filename, true).
   void evaluate_script_quiet(QString script,
                              const QString & fileName = QString());
+  QMutex mutex;
+  QWaitCondition wait_condition;
 #endif
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
@@ -453,6 +458,7 @@ public Q_SLOTS:
   void toggleFullScreen();
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
+  void test_all_actions();
 private:
   SubViewer* viewer_window;
   QList<QDockWidget *> visibleDockWidgets;
@@ -470,6 +476,7 @@ private Q_SLOTS:
   void recenterViewer();
 
 private:
+  bool is_locked;
   QMap<QAction*, QMenu*> action_menu_map;
 };
 

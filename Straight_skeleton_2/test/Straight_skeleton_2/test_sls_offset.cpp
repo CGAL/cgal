@@ -833,7 +833,7 @@ void test_offset(const char* filename)
   std::ifstream in(filename);
   assert(in);
 
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
 
   std::vector<Point> points;
   std::vector<Polygon_2> polys;
@@ -909,8 +909,10 @@ void test_offset(const char* filename)
 //    for(const auto& offp : offset_poly_with_holes)
 //      print_polygon_with_holes(*offp);
     CGAL::set_use_polygon_assertions(false);
-    for(const auto& offp : offset_poly_with_holes)
+    for(const auto& offp : offset_poly_with_holes){
+      (void)offp;
       assert(offp->outer_boundary().is_counterclockwise_oriented());
+    }
     CGAL::set_use_polygon_assertions(true);
 #ifdef CGAL_SLS_TEST_SPEED_THINGS_UP_FOR_THE_TESTSUITE
     if(i > 2)

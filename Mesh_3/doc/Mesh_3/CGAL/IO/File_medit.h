@@ -1,8 +1,8 @@
 namespace CGAL {
-
+namespace IO {
 /// \ingroup PkgMesh3IOFunctions
 ///
-/// \brief Outputs a mesh complex to the medit (`.mesh`) file format.
+/// \brief outputs a mesh complex to the medit (`.mesh`) file format.
 ///        See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
 ///
 /// \param os the output stream
@@ -18,4 +18,4 @@ void output_to_medit(std::ostream& os,
                      bool rebind = false,
                      bool show_patches = false);
 
-} // end namespace CGAL
+}} // end namespace CGAL::IO

@@ -641,7 +641,7 @@ typedef SNC_structure::Volume_handle        Volume_handle;
 typedef SNC_structure::Object_handle        Object_handle;
 
 int main() {
-  CGAL::set_pretty_mode(std::cerr);
+  CGAL::IO::set_pretty_mode(std::cerr);
   SETDTHREAD(151*157);
 
   Point_3 source, target;

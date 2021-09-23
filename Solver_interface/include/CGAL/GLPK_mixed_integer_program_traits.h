@@ -46,7 +46,7 @@ int bound_type(FT lb, FT ub)
 
 } // namespace internal
 
-/// \ingroup PkgSolverInterfaceRef
+/// \ingroup PkgSolverInterfaceMIP
 ///
 /// This class provides an interface for formulating and solving
 /// constrained or unconstrained mixed integer programs using

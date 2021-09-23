@@ -38,7 +38,7 @@ void draw(const P& ap);
 #endif
 
 #ifdef CGAL_USE_BASIC_VIEWER
-
+#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Random.h>
 
@@ -74,7 +74,7 @@ protected:
 
     Point prev=p2.vertex(p2.size()-1);
 
-    CGAL::Color c(75,160,255);
+    CGAL::IO::Color c(75,160,255);
     face_begin(c);
 
     for (typename P2::Vertex_const_iterator i=p2.vertices_begin();
@@ -122,6 +122,7 @@ void draw(const CGAL::Polygon_2<T, C>& ap2,
 
   if (!cgal_test_suite)
   {
+    CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
     const char* argv[2]={"t2_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));

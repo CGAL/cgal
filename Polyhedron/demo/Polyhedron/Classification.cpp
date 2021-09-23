@@ -5,7 +5,7 @@
 
 
 /*!
- * \brief Defines the entry point of the demo.
+ * \brief defines the entry point of the demo.
  * Creates the application and sets a main window.
  */
 int main(int argc, char **argv)

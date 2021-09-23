@@ -5,7 +5,7 @@
 
 The concept `AdaptationTraits_2` defines the functors required for
 accessing geometric information in the Delaunay graph that is needed by the
-`Voronoi_diagram_2<DG,AT,AP>` class.
+`CGAL::Voronoi_diagram_2<DG,AT,AP>` class.
 It optionally defines a functor for performing nearest site queries. A
 tag is provided for determining whether this functor is defined or not.
 

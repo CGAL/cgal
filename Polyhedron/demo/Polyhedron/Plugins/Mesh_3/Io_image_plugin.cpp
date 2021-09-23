@@ -57,7 +57,7 @@
 #include <fstream>
 #include <cstdlib>
 #ifdef CGAL_USE_VTK
-#include <CGAL/read_vtk_image_data.h>
+#include <CGAL/IO/read_vtk_image_data.h>
 
 #include <vtkNew.h>
 #include <vtkImageData.h>
@@ -221,10 +221,10 @@ public:
     this->scene = scene_interface;
     this->mw = mainWindow;
     this->is_gray = false;
-    x_control = NULL;
-    y_control = NULL;
-    z_control = NULL;
-    current_control = NULL;
+    x_control = nullptr;
+    y_control = nullptr;
+    z_control = nullptr;
+    current_control = nullptr;
     planeSwitch = new QAction("Add Volume Planes", mw);
     QAction *actionLoadDCM = new QAction("Open Directory (for DCM files)", mw);
     connect(actionLoadDCM, SIGNAL(triggered()), this, SLOT(on_actionLoadDCM_triggered()));
@@ -236,7 +236,7 @@ public:
               this, SLOT(connect_controls(int)));
     }
     Viewer_interface* v = CGAL::Three::Three::mainViewer();
-    CGAL_assertion(v != 0);
+    CGAL_assertion(v != nullptr);
     pxr_.setViewer(v);
     connect(v, SIGNAL(pointSelected(const QMouseEvent *)), &pxr_, SLOT(update(const QMouseEvent *)));
     createOrGetDockLayout();
@@ -244,12 +244,12 @@ public:
             this, SLOT(connectNewViewer(QObject*)));
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    if ( NULL != menuFile )
+    if ( nullptr != menuFile )
     {
       QList<QAction*> menuFileActions = menuFile->actions();
 
       // Look for action just after "Load..." action
-      QAction* actionAfterLoad = NULL;
+      QAction* actionAfterLoad = nullptr;
       for ( QList<QAction*>::iterator it_action = menuFileActions.begin(),
            end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
       {
@@ -264,7 +264,7 @@ public:
       }
 
       // Insert "Load implicit function" action
-      if ( NULL != actionAfterLoad )
+      if ( nullptr != actionAfterLoad )
       {
         menuFile->insertAction(actionAfterLoad,actionLoadDCM);
       }
@@ -279,7 +279,7 @@ public:
       if(controlDockWidget)
           controlDockWidget->hide();
   }
-  Io_image_plugin() : planeSwitch(NULL) {}
+  Io_image_plugin() : planeSwitch(nullptr) {}
 
   QString nameFilters() const override;
   bool canLoad(QFileInfo) const override;
@@ -350,10 +350,10 @@ public Q_SLOTS:
 
     std::vector< Scene_image_item* > seg_items;
     Scene_image_item* seg_img;
-    seg_img = NULL;
+    seg_img = nullptr;
     for(int i = 0; i < scene->numberOfEntries(); ++i) {
       Scene_image_item* tmp = qobject_cast<Scene_image_item*>(scene->item(i));
-      if(tmp != NULL){
+      if(tmp != nullptr){
         seg_items.push_back(tmp);
       }
     }
@@ -541,7 +541,7 @@ private:
   bool loadDCM(QString filename);
   Image* createDCMImage(QString dirname);
   QLayout* createOrGetDockLayout() {
-    QLayout* layout = NULL;
+    QLayout* layout = nullptr;
     QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");;
 
     if(!controlDockWidget) {
@@ -585,7 +585,7 @@ private:
     QLayout* layout = createOrGetDockLayout();
     QRegExpValidator* validator = new QRegExpValidator(QRegExp("\\d*"), this);
     bool show_sliders = true;
-    if(x_control == NULL)
+    if(x_control == nullptr)
     {
       x_control = new QWidget;
       x_box = new QHBoxLayout(x_control);
@@ -615,7 +615,7 @@ private:
       show_sliders &= seg_img->image()->xdim() > 1;
     }
 
-    if(y_control == NULL)
+    if(y_control == nullptr)
     {
       y_control = new QWidget;
       y_box = new QHBoxLayout(y_control);
@@ -644,7 +644,7 @@ private:
       show_sliders &= seg_img->image()->ydim() > 1;
     }
 
-    if(z_control == NULL)
+    if(z_control == nullptr)
     {
       z_control = new QWidget;
       z_box = new QHBoxLayout(z_control);
@@ -676,7 +676,7 @@ private:
     y_control->setEnabled(show_sliders);
     z_control->setEnabled(show_sliders);
 
-    if(!(seg_img == NULL)) {
+    if(!(seg_img == nullptr)) {
       const CGAL::Image_3* img = seg_img->image();
       CGAL_IMAGE_IO_CASE(img->image(), this->launchAdders<Word>(seg_img, seg_img->name()))
 
@@ -820,9 +820,9 @@ private Q_SLOTS:
       {
         if(group_map[key].group == group_item)
         {
-          group_map[key].x_item = NULL;
-          group_map[key].y_item = NULL;
-          group_map[key].z_item = NULL;
+          group_map[key].x_item = nullptr;
+          group_map[key].y_item = nullptr;
+          group_map[key].z_item = nullptr;
           group_map.remove(key);
           break;
         }
@@ -844,9 +844,9 @@ private Q_SLOTS:
         Scene_group_item* group = qobject_cast<Scene_group_item*>(group_map[img_item].group);
         if(!group)
           return;
-        group_map[img_item].x_item = NULL;
-        group_map[img_item].y_item = NULL;
-        group_map[img_item].z_item = NULL;
+        group_map[img_item].x_item = nullptr;
+        group_map[img_item].y_item = nullptr;
+        group_map[img_item].z_item = nullptr;
         disconnect(group_map[img_item].group, SIGNAL(aboutToBeDestroyed()),
                            this, SLOT(erase_group()));
         group_map.remove(img_item);
@@ -884,7 +884,7 @@ private Q_SLOTS:
     current_control = &group_map[sel_itm];
     bool show_sliders = true;
     // x line
-    if(c.x_item != NULL)
+    if(c.x_item != nullptr)
     {
       Volume_plane_interface* x_plane = qobject_cast<Volume_plane_interface*>(c.x_item);
       if(x_slider)
@@ -905,7 +905,7 @@ private Q_SLOTS:
       show_sliders &= qobject_cast<Scene_image_item*>(sel_itm)->image()->xdim() > 1;
     }
     //y line
-    if(c.y_item != NULL)
+    if(c.y_item != nullptr)
     {
       Volume_plane_interface* y_plane = qobject_cast<Volume_plane_interface*>(c.y_item);
       if(y_slider)
@@ -925,7 +925,7 @@ private Q_SLOTS:
       show_sliders &= qobject_cast<Scene_image_item*>(sel_itm)->image()->ydim() > 1;
     }
     // z line
-    if(c.z_item != NULL)
+    if(c.z_item != nullptr)
     {
       Volume_plane_interface* z_plane = qobject_cast<Volume_plane_interface*>(c.z_item);
       if(z_slider)
@@ -959,19 +959,19 @@ private Q_SLOTS:
 
   void destroy_x_item()
   {
-    current_control->x_item = NULL;
+    current_control->x_item = nullptr;
     if(group_map.isEmpty())
       x_control->hide();
   }
   void destroy_y_item()
   {
-    current_control->y_item = NULL;
+    current_control->y_item = nullptr;
     if(group_map.isEmpty())
       y_control->hide();
   }
   void destroy_z_item()
   {
-    current_control->z_item = NULL;
+    current_control->z_item = nullptr;
     if(group_map.isEmpty())
       z_control->hide();
   }
@@ -1239,7 +1239,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
     {
 
       Image *image = createDCMImage(dirname);
-      if(image->image() == 0)
+      if(image->image() == nullptr)
       {
         QMessageBox::warning(mw, mw->windowTitle(),
                              tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
@@ -1265,7 +1265,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
     else
     {
       Image *image = createDCMImage(dirname);
-      if(image->image() == 0)
+      if(image->image() == nullptr)
       {
         QMessageBox::warning(mw, mw->windowTitle(),
                              tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
@@ -1293,7 +1293,7 @@ bool Io_image_plugin::loadDCM(QString dirname)
 }
 Image* Io_image_plugin::createDCMImage(QString dirname)
 {
-  Image* image = NULL;
+  Image* image = nullptr;
 #ifdef CGAL_USE_VTK
   vtkNew<vtkDICOMImageReader> dicom_reader;
   dicom_reader->SetDirectoryName(dirname.toUtf8());
@@ -1312,7 +1312,7 @@ Image* Io_image_plugin::createDCMImage(QString dirname)
   auto vtk_image = smoother->GetOutput();
   vtk_image->Print(std::cerr);
   image = new Image;
-  *image = CGAL::read_vtk_image_data(vtk_image); // copy the image data
+  *image = CGAL::IO::read_vtk_image_data(vtk_image); // copy the image data
 #else
   CGAL::Three::Three::warning("You need VTK to read a DCM file");
   CGAL_USE(dirname);

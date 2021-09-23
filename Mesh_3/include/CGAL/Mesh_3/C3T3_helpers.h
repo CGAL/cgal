@@ -40,13 +40,13 @@
 #include <boost/range/end.hpp>
 #include <boost/optional.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/unordered_set.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/parallel_do.h>
+# include <tbb/parallel_for_each.h>
 # include <mutex>
 #endif
 
@@ -1941,7 +1941,7 @@ private:
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      tbb::parallel_do(
+      tbb::parallel_for_each(
         outdated_cells.begin(), outdated_cells.end(),
         Update_cell_facets<Self, FacetUpdater>(tr_, updater));
     }
@@ -2831,7 +2831,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(first_cell, last_cell,
+    tbb::parallel_for_each(first_cell, last_cell,
       Update_cell<C3T3, Update_c3t3>(c3t3_, updater));
   }
   // Sequential
@@ -2853,7 +2853,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(
+    tbb::parallel_for_each(
       facets.begin(), facets.end(),
       Update_facet<Self, C3T3, Update_c3t3, Vertex_to_proj_set>(
         *this, c3t3_, updater, vertex_to_proj)
@@ -3420,6 +3420,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                Bare_point& reference_point,
                                Surface_patch_index patch_index) const
 {
+  typedef typename C3T3::Triangulation::Triangle Triangle;
   typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
 
   // Get incident facets
@@ -3440,45 +3441,47 @@ get_least_square_surface_plane(const Vertex_handle& v,
   const Weighted_point& position = tr_.point(v);
 
   // Get adjacent surface points
-  std::vector<Bare_point> surface_point_vector;
-  typename Facet_vector::iterator fit = facets.begin(), fend = facets.end();
-  for ( ; fit != fend; ++fit )
+  std::vector<Triangle> triangles;
+  typename C3T3::Facet ref_facet;
+
+  for (typename C3T3::Facet f : facets)
   {
-    if ( c3t3_.is_in_complex(*fit) &&
+    if ( c3t3_.is_in_complex(f) &&
          (patch_index == Surface_patch_index() ||
-          c3t3_.surface_patch_index(*fit) == patch_index) )
+          c3t3_.surface_patch_index(f) == patch_index) )
     {
-      const Cell_handle cell = fit->first;
-      const int i = fit->second;
+      ref_facet = f;
 
       // In the case of a periodic triangulation, the incident facets of a point
       // do not necessarily have the same offsets. Worse, the surface centers
       // might not have the same offset as their facet. Thus, no solution except
-      // calling a function 'get_closest_point(p, q)' that simply returns q
+      // calling a function 'get_closest_triangle(p, t)' that simply returns t
       // for a non-periodic triangulation, and checks all possible offsets for
       // periodic triangulations
-      const Bare_point& bp = tr_.get_closest_point(cp(position),
-                                                   cell->get_facet_surface_center(i));
-      surface_point_vector.push_back(bp);
+
+      Triangle t = c3t3_.triangulation().triangle(f);
+      Triangle ct = tr_.get_closest_triangle(cp(position), t);
+      triangles.push_back(ct);
     }
   }
 
   // In some cases point is not a real surface point
-  if ( surface_point_vector.empty() )
+  if ( triangles.empty() )
     return boost::none;
 
   // Compute least square fitting plane
   Plane_3 plane;
   Bare_point point;
-  CGAL::linear_least_squares_fitting_3(surface_point_vector.begin(),
-                                       surface_point_vector.end(),
+
+  CGAL::linear_least_squares_fitting_3(triangles.begin(),
+                                       triangles.end(),
                                        plane,
                                        point,
-                                       Dimension_tag<0>(),
+                                       Dimension_tag<2>(),
                                        tr_.geom_traits(),
                                        Default_diagonalize_traits<FT, 3>());
 
-  reference_point = surface_point_vector.front();
+  reference_point = ref_facet.first->get_facet_surface_center(ref_facet.second);
 
   return plane;
 }

@@ -304,7 +304,7 @@ class Vertex_base {
  public:
       std::string debug() const
         { std::stringstream os;
-          set_pretty_mode(os);
+          CGAL::IO::set_pretty_mode(os);
           os<<"{ addr, point, mark, snc, svb, sve, seb, see, sfb, sfe, sl,"
             <<" info }"<<std::endl;
           os<<"{ "<<this<<", "<<point_at_center_<<", "<<mark_<<", "<<&*sncp_<<", "
@@ -343,7 +343,7 @@ class Vertex_base {
         valid = valid && (sfaces_last_  != nullptr && sfaces_last_  != SFace_iterator());
         valid = valid && (shalfloop_ != nullptr && shalfloop_ != SHalfloop_iterator());
 
-        if(shalfedges_begin_ == sncp()->shalfedges_end()) {         // point in volume or on plane, which is either isolated or has one outgoing edge
+        if(valid && shalfedges_begin_ == sncp()->shalfedges_end()) {         // point in volume or on plane, which is either isolated or has one outgoing edge
           if(shalfloop_ != sncp()->shalfloops_end())
             valid = valid && (++SFace_const_iterator(sfaces_begin_) == sfaces_last_);
           else

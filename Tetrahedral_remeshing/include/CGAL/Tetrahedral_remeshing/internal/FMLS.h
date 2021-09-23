@@ -382,11 +382,19 @@ private:
             minMax[3 + j] = PN[6 * i + j];
         }
       for (std::size_t i = 0; i < 3; i++) {
-        minMax[i] -= 0.001f;
-        minMax[3 + i] += 0.001f;
+        minMax[i] = (minMax[i] > 0.)
+                  ? (0.99 * minMax[i]) : (1.01 * minMax[i]);
+        minMax[3 + i] = (minMax[3+i] > 0.)
+                  ? (1.01 * minMax[3+i]) : (0.99 * minMax[3+i]);
       }
+
       for (std::size_t i = 0; i < 3; i++)
+      {
         res[i] = (std::size_t)ceil((minMax[3 + i] - minMax[i]) / cellSize);
+        if(res[i] == 0)
+          res[i] = 1;
+      }
+
       std::size_t LUTSize = res[0] * res[1] * res[2];
       LUT.resize(LUTSize);
       LUT.assign(LUTSize, 0);
@@ -463,7 +471,7 @@ private:
       {
         if (vp[j] < 0)
           p[j] = 0;
-        if (vp[j] >= res[j])
+        else if (vp[j] >= res[j])
           p[j] = res[j] - 1;
         else
           p[j] = static_cast<std::size_t>(std::floor(vp[j]));

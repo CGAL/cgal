@@ -150,7 +150,8 @@ void test_1(const char* file_name, bool use_DT, bool save_output) {
   std::vector<boost::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
     points, std::back_inserter(tris),
-    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT)
+        .use_2d_constrained_delaunay_triangulation(true));
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points, save_output);
@@ -168,7 +169,8 @@ void test_2(const char* file_name, bool use_DT, bool save_output) {
   std::vector<boost::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
     points, extras, std::back_inserter(tris),
-    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT)
+        .use_2d_constrained_delaunay_triangulation(true));
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points, save_output);
@@ -185,7 +187,8 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
   std::vector<boost::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
     points, std::back_inserter(tris),
-    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT)
+        .use_2d_constrained_delaunay_triangulation(true));
 
   if(!tris.empty()) {
     std::cerr << "  Error: patch should be empty" << std::endl;

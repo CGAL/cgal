@@ -320,6 +320,16 @@ this boils down to an identity function as vertices \em are indices.
 
 \cgalExample{Surface_mesh/sm_bgl.cpp}
 
+\section sectionSurfaceMesh_IO Surface Mesh I/O
+
+As a model of `FaceGraph` (see Section \ref sectionSurfaceMesh_BGL), `CGAL::Surface_mesh`
+can be read from and written using a number of different file formats. Refer to
+the \ref PkgBGLIOFct of the \ref PkgBGL package, and the \ref PMP_IO_grp of the \ref PkgPolygonMeshProcessing
+package for more information.
+
+In addition, this package provides `Surface_mesh`-specific overloads of the I/O functions
+from the \ref PkgBGL package. This enables reading/writing directly from/to internal property maps,
+see \ref PkgSurfaceMeshIOFunc for more information.
 
 \section sectionSurfaceMesh_memory Memory Management
 
@@ -395,7 +405,7 @@ and when iterating over elements they will not be enumerated in the insertion or
 \section sectionSurfaceMeshHistory Implementation History
 
 This package is derived from an early version of Daniel Sieger and Mario Botsch package
-<a href="http://graphics.uni-bielefeld.de/publications/imr11/"><em>%Surface_mesh</em></a>
+<em>Surface_mesh</em>
 \cgalCite{sieger2011design},
 which is inspired from the design of <a href="https://www.openmesh.org/">OpenMesh</a> and the \cgal package
 \ref PkgPolyhedron.

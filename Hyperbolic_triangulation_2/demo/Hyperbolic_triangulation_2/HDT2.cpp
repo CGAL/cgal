@@ -11,7 +11,7 @@
 #else
   #include <CGAL/Cartesian.h>
   #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
-  #include <internal/Qt/HyperbolicPainterOstream.h>
+  #include "internal/Qt/HyperbolicPainterOstream.h"
 #endif
 
 #include <CGAL/Hyperbolic_Delaunay_triangulation_2.h>

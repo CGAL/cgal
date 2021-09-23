@@ -35,7 +35,7 @@ if(VTK_FOUND)
   endif()
   if("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
     if(TARGET VTK::IOImage)
-      set(VTK_LIBRARIES VTK::IOImage)
+      set(VTK_LIBRARIES VTK::IOImage VTK::ImagingGeneral)
     endif()
     if(NOT VTK_LIBRARIES)
       message(
@@ -96,10 +96,10 @@ target_link_libraries(
 
 # Use Eigen
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
-include(CGAL_Eigen_support)
+include(CGAL_Eigen3_support)
 
-if(TARGET CGAL::Eigen_support)
-  target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen_support)
+if(TARGET CGAL::Eigen3_support)
+  target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen3_support)
 else() #eigen
   message(
     STATUS
@@ -109,6 +109,10 @@ endif() #eigen
 
 polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
+
+qt5_wrap_ui(tetraUI_FILES Tetrahedra_filter_widget.ui)
+polyhedron_demo_plugin(tetrahedra_filtering_plugin Tetrahedra_filtering_plugin ${tetraUI_FILES} KEYWORDS Mesh_3 Viewer)
+target_link_libraries(tetrahedra_filtering_plugin  PUBLIC scene_c3t3_item scene_tetrahedra_item)
 
 qt5_wrap_ui(ribUI_FILES Rib_dialog.ui)
 polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin

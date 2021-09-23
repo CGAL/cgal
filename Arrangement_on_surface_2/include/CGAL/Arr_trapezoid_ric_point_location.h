@@ -94,35 +94,32 @@ public:
   typedef typename Trapezoidal_decomposition::Td_active_trapezoid
                                                 Td_active_trapezoid;
   //!type of side tags
-  typedef typename Traits_adaptor_2::Left_side_category
-                                                Left_side_category;
-  typedef typename Traits_adaptor_2::Bottom_side_category
-                                                Bottom_side_category;
-  typedef typename Traits_adaptor_2::Top_side_category
-                                                Top_side_category;
-  typedef typename Traits_adaptor_2::Right_side_category
-                                                Right_side_category;
+  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
 protected:
   typedef Arr_point_location_result<Arrangement_on_surface_2>        Result;
-  typedef typename Result::Type                           Result_type;
+  typedef typename Result::Type                         Result_type;
 
 public:
   // Support cpp11::result_of
-  typedef Result_type                                     result_type;
+  typedef Result_type                                   result_type;
 
 protected:
   //type of trapezoidal decomposition class
-  typedef Trapezoidal_decomposition             TD;
+  typedef Trapezoidal_decomposition                     TD;
 
-  typedef typename Arr_are_all_sides_oblivious_tag<
-                     Left_side_category, Bottom_side_category,
-                     Top_side_category, Right_side_category >::result
-    Are_all_sides_oblivious_category;
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
+    All_sides_oblivious_category;
 
   // Data members:
-  const Traits_adaptor_2 *m_traits;  // Its associated traits object.
-  TD  td;       // instance of trapezoidal decomposition
+  const Traits_adaptor_2* m_traits; // Its associated traits object.
+  TD  td;                           // instance of trapezoidal decomposition
   bool m_with_guarantees;
   //for the notification functions
   X_monotone_curve_2  m_cv_before_split;
@@ -130,16 +127,16 @@ protected:
   //X_monotone_curve_2        m_cv_before_merge1;
   //X_monotone_curve_2        m_cv_before_merge2;
 
-  template<typename T>
+  template <typename T>
   Result_type make_result(T t) const { return Result::make_result(t); }
   inline Result_type default_result() const { return Result::default_result(); }
 
 public:
   /*! Default constructor. */
-  Arr_trapezoid_ric_point_location (bool with_guarantees = true,
-                           double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD,
-                           double size_thrs = CGAL_TD_DEFAULT_SIZE_THRESHOLD)
-    : m_traits (nullptr), m_with_guarantees(with_guarantees)
+  Arr_trapezoid_ric_point_location(bool with_guarantees = true,
+                                   double depth_thrs = CGAL_TD_DEFAULT_DEPTH_THRESHOLD,
+                                   double size_thrs = CGAL_TD_DEFAULT_SIZE_THRESHOLD) :
+    m_traits(nullptr), m_with_guarantees(with_guarantees)
   {
     td.set_with_guarantees(with_guarantees);
     td.depth_threshold(depth_thrs);

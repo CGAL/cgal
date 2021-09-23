@@ -1,5 +1,5 @@
 include(polyhedron_demo_macros)
-if(TARGET CGAL::Eigen_support)
+if(TARGET CGAL::Eigen3_support)
 
   find_package(SCIP QUIET)
 
@@ -43,7 +43,7 @@ if(TARGET CGAL::Eigen_support)
   target_link_libraries(
     surface_reconstruction_plugin
     PUBLIC scene_polygon_soup_item scene_surface_mesh_item
-           scene_points_with_normal_item CGAL::Eigen_support)
+           scene_points_with_normal_item CGAL::Eigen3_support)
 
   if(TARGET CGAL::SCIP_support)
     target_link_libraries(surface_reconstruction_plugin
@@ -62,7 +62,7 @@ if(TARGET CGAL::Eigen_support)
   target_link_libraries(
     point_set_normal_estimation_plugin
     PUBLIC scene_points_with_normal_item scene_callback_signaler
-           CGAL::Eigen_support)
+           CGAL::Eigen3_support)
 
   qt5_wrap_ui(features_detection_pluginUI_FILES Features_detection_plugin.ui)
   polyhedron_demo_plugin(
@@ -70,14 +70,14 @@ if(TARGET CGAL::Eigen_support)
     ${features_detection_pluginUI_FILES} KEYWORDS PointSetProcessing)
   target_link_libraries(
     features_detection_plugin PUBLIC scene_points_with_normal_item
-                                     CGAL::Eigen_support)
+                                     CGAL::Eigen3_support)
 
   polyhedron_demo_plugin(point_set_smoothing_plugin Point_set_smoothing_plugin
                          KEYWORDS PointSetProcessing)
   target_link_libraries(
     point_set_smoothing_plugin
     PUBLIC scene_points_with_normal_item scene_callback_signaler
-           CGAL::Eigen_support)
+           CGAL::Eigen3_support)
 
   polyhedron_demo_plugin(
     point_set_average_spacing_plugin Point_set_average_spacing_plugin KEYWORDS
@@ -85,7 +85,7 @@ if(TARGET CGAL::Eigen_support)
   target_link_libraries(
     point_set_average_spacing_plugin
     PUBLIC scene_points_with_normal_item scene_callback_signaler
-           CGAL::Eigen_support)
+           CGAL::Eigen3_support)
 
   qt5_wrap_ui(point_set_shape_detectionUI_FILES
               Point_set_shape_detection_plugin.ui)
@@ -96,7 +96,7 @@ if(TARGET CGAL::Eigen_support)
   target_link_libraries(
     point_set_shape_detection_plugin
     PUBLIC scene_surface_mesh_item scene_points_with_normal_item
-           scene_polygon_soup_item scene_callback_signaler CGAL::Eigen_support)
+           scene_polygon_soup_item scene_callback_signaler CGAL::Eigen3_support)
 
   find_package(OpenGR QUIET)
   include(CGAL_OpenGR_support)
@@ -110,7 +110,7 @@ if(TARGET CGAL::Eigen_support)
       ${register_point_setsUI_FILES} KEYWORDS PointSetProcessing)
     target_link_libraries(register_point_sets_plugin
                           PUBLIC scene_points_with_normal_item)
-    target_link_libraries(register_point_sets_plugin PUBLIC CGAL::Eigen_support)
+    target_link_libraries(register_point_sets_plugin PUBLIC CGAL::Eigen3_support)
     if(TARGET CGAL::OpenGR_support)
       target_link_libraries(register_point_sets_plugin
                             PUBLIC CGAL::OpenGR_support)

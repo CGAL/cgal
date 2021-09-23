@@ -185,7 +185,7 @@ compute_update_sample_point(
     if (dist2 < 1e-10) continue;
     FT dist = std::sqrt(dist2);
 
-    weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2); // L1
+    weight = std::exp(dist2 * iradius16) * CGAL::square(FT(1.0) / dist); // L1
 
     if (!is_sample_densities_empty)
     {
@@ -341,9 +341,9 @@ compute_density_weight_for_sample_point(
    For more details, please refer to \cgalCite{wlop-2009}.
 
    A parallel version of WLOP is provided and requires the executable to be
-   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+   See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
@@ -353,7 +353,7 @@ compute_density_weight_for_sample_point(
    \tparam OutputIterator Type of the output iterator.
    It must accept objects of type `geom_traits::Point_3`.
 
-   \param points input point range.
+   \param points input point range
    \param output iterator where output points are put.
    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 

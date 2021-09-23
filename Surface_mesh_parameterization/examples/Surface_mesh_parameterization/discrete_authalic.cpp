@@ -28,14 +28,14 @@ namespace SMP = CGAL::Surface_mesh_parameterization;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/three_peaks.off");
-  if(!in) {
-    std::cerr << "Problem loading the input data" << std::endl;
-    return EXIT_FAILURE;
-  }
+  const char* filename = (argc>1) ? argv[1] : "data/three_peaks.off";
 
   SurfaceMesh sm;
-  in >> sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   // A halfedge on the border
   halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(sm).first;

@@ -7,12 +7,8 @@ The concept `AlphaShapeTraits_3` describes the requirements
 for the geometric traits class
 of the underlying Delaunay triangulation of a basic alpha shape.
 
-\cgalRefines `DelaunayTriangulationTraits_3`
-
-In addition to the requirements described in the concept
-::DelaunayTriangulationTraits_3, the geometric traits class of a
-Delaunay triangulation plugged in a basic alpha shapes provides the
-following.
+\cgalRefines `DelaunayTriangulationTraits_3`, if the underlying triangulation of the alpha shape is a Delaunay triangulation.
+\cgalRefines `Periodic_3DelaunayTriangulationTraits_3`, if the underlying triangulation of the alpha shape is a periodic Delaunay triangulation.
 
 \cgalHasModel All models of `Kernel`.
 

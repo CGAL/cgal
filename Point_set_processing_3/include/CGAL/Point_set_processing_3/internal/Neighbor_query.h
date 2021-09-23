@@ -22,7 +22,7 @@
 
 #include <CGAL/iterator.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 namespace Point_set_processing_3 {

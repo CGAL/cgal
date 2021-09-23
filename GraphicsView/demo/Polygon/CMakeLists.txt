@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Polygon_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -16,8 +16,8 @@ endif()
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 Core)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-include(CGAL_Eigen_support)
-if(NOT TARGET CGAL::Eigen_support)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
   message(
     STATUS
       "NOTICE: This project requires the Eigen library, and will not be compiled."
@@ -25,7 +25,7 @@ if(NOT TARGET CGAL::Eigen_support)
   return()
 endif()
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
@@ -55,7 +55,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polygon_2)
 
   target_link_libraries(Polygon_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                          CGAL::Eigen_support Qt5::Gui)
+                                          CGAL::Eigen3_support Qt5::Gui)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Polygon_2)

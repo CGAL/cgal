@@ -86,7 +86,7 @@ int main(int argc, char** argv)
   std::size_t nb_sharp_edges = 0;
 
   // detect sharp edges
-  std::ofstream cst_output("constrained_edges.cgal");
+  std::ofstream cst_output("constrained_edges.polylines.txt");
   for(edge_descriptor ed : edges(surface_mesh))
   {
     halfedge_descriptor hd = halfedge(ed, surface_mesh);

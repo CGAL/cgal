@@ -14,7 +14,7 @@
 #ifndef CGAL_GRABBER_H
 #define CGAL_GRABBER_H
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL{
 

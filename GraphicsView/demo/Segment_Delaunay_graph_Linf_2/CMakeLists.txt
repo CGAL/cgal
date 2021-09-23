@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Segment_Delaunay_graph_Linf_2_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -20,7 +20,7 @@ set(QT_USE_QTMAIN TRUE)
 set(QT_USE_QTSCRIPT TRUE)
 set(QT_USE_QTOPENGL TRUE)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
 include_directories(BEFORE ./include)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)

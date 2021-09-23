@@ -18,10 +18,15 @@ jobs:
            if(asso == 'OWNER' || asso == 'MEMBER') {
              const body = context.payload.comment.body
              if(body.includes("build:")) {
-               const re = /\/build:(\w+)\s*/;
+               const re = /\/(force-)?build:(\w+)\s*/;
                if(re.test(body)){
                  const res = re.exec(body)
-                 return res[1];
+                 if(body.includes("force-")) {
+                   return res[2]+":yes"
+                 }
+                 else{
+                   return res[2]+":no"
+                 }
                }
              }
            }
@@ -49,8 +54,9 @@ jobs:
         if: steps.get_round.outputs.result != 'stop'
         run: |
           set -x
-          sudo apt-get install -y graphviz ssh bibtex2html
-          sudo pip install lxml pyquery
+          sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
+          sudo pip install lxml
+          sudo pip install 'pyquery==1.4.1' # it seems to be the last py2 compatible version
           wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
           sudo mv doxygen_exe /usr/bin/doxygen
           sudo chmod +x /usr/bin/doxygen
@@ -64,19 +70,29 @@ jobs:
           mkdir -p build_doc && cd build_doc && cmake ../Documentation/doc
 
       - name: Build and Upload Doc
+        id: build_and_run
         if: steps.get_round.outputs.result != 'stop'
         run: |
           set -ex
           PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
-          ROUND=${{ steps.get_round.outputs.result }}
+          TMP_ROUND=${{ steps.get_round.outputs.result }}
+          ROUND=$(echo $TMP_ROUND | cut -d ":" -f 1)
+          force=$(echo $TMP_ROUND | cut -d ":" -f 2)
           wget --no-verbose cgal.github.io -O tmp.html
-          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
+          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html || [ "$force" = "yes" ]; then
             #list impacted packages
-            LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
+            LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
+              echo "::set-output name=DoxygenError::No package affected."
               exit 1
             fi
-            cd build_doc && make -j2 doc && make -j2 doc_with_postprocessing
+            cd build_doc && make -j2 doc
+            make -j2 doc_with_postprocessing 2>tmp.log
+            if [ -s tmp.log ]; then
+              content=`cat ./tmp.log`
+              echo "::set-output name=DoxygenError::$(cat tmp.log)"
+              exit 1
+            fi
             cd ..
             git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
@@ -91,20 +107,38 @@ jobs:
             egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true
             echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./tmp.html
             mv tmp.html index.html
-            git add ${PR_NUMBER}/$ROUND && git commit -q --amend -m "base commit" && git push -q -f -u origin master
+            git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
+            echo "::set-output name=DoxygenError::This round already exists. Overwrite it with /force-build"
             exit 1
           fi
 
       - name: Post address
         uses: actions/github-script@v3
-        if: steps.get_round.outputs.result != 'stop'
+        if: ${{ success() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
-            const address = "The documentation is built. It will be available, after a few minutes, here : https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/${{ steps.get_round.outputs.result }}/Manual/index.html"
+            const tmp_round = "${{ steps.get_round.outputs.result }}";
+            const id = tmp_round.indexOf(":");
+            const round = tmp_round.substring(0,id);
+            const address = "The documentation is built. It will be available, after a few minutes, here : https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/"+round+"/Manual/index.html"
             github.issues.createComment({
               owner: "CGAL",
               repo: "cgal",
               issue_number: ${{ github.event.issue.number }},
               body: address
+            });
+
+      - name: Post error
+        uses: actions/github-script@v3
+        if: ${{ failure() && steps.get_round.outputs.result != 'stop' }}
+        with:
+          script: |
+            const error = "${{steps.build_and_run.outputs.DoxygenError}}"
+            const msg = "There was an error while building the doc: \n"+error
+            github.issues.createComment({
+              owner: "CGAL",
+              repo: "cgal",
+              issue_number: ${{ github.event.issue.number }},
+              body: msg
             });

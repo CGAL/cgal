@@ -10,7 +10,7 @@
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
 
-//TODO: somehow use the fact the the x-value is the same in all comparisons
+//TODO: somehow use the fact the x-value is the same in all comparisons
 
 #ifndef CGAL_ARR_VERTICAL_SEGMENT_TRAITS
 #define CGAL_ARR_VERTICAL_SEGMENT_TRAITS
@@ -1442,29 +1442,29 @@ public:
   {
     return Compare_y_at_x_right_2(_traits);
   }
-  class Compare_x_near_limit_2
+  class Compare_x_near_boundary_2
   {
   private:
     Traits& _traits;
   public:
-    Compare_x_near_limit_2 (Traits& traits) : _traits(traits) {}
+    Compare_x_near_boundary_2 (Traits& traits) : _traits(traits) {}
     Comparison_result operator()( const X_monotone_curve_2& xcv1,
                                   const X_monotone_curve_2& xcv2,
                                   Arr_curve_end ce) const
     {
-      return (boost::apply_visitor(Compare_x_near_limit_2_visitor(_traits,ce),xcv1.variant(),xcv2.variant()));
+      return (boost::apply_visitor(Compare_x_near_boundary_2_visitor(_traits,ce),xcv1.variant(),xcv2.variant()));
     }
   private:
-    class Compare_x_near_limit_2_visitor
+    class Compare_x_near_boundary_2_visitor
       : public boost::static_visitor <Comparison_result>
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_x_near_limit_2_visitor(Traits& traits,Arr_curve_end ce)
+      Compare_x_near_boundary_2_visitor(Traits& traits,Arr_curve_end ce)
         :_traits(traits), _ce(ce), Base() {}
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
-        return _traits.compare_x_near_limit_2_object()(xcv1,xcv2,_ce);
+        return _traits.compare_x_near_boundary_2_object()(xcv1,xcv2,_ce);
       }
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Vertical_segment& xcv2 ) const
       {
@@ -1479,7 +1479,7 @@ public:
           return CGAL::SMALLER;
         }
 
-        return _traits.compare_x_at_limit_2_object()(xcv2.max(),xcv1,_ce);
+        return _traits.compare_x_on_boundary_2_object()(xcv2.max(),xcv1,_ce);
       }
       Comparison_result operator()(const Vertical_segment& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
@@ -1512,44 +1512,44 @@ public:
    private:
      Traits& _traits;
      Arr_curve_end _ce;
-    };  //Compare_x_near_limit_2_visitor
-  }; //Compare_x_near_limit_2
+    };  //Compare_x_near_boundary_2_visitor
+  }; //Compare_x_near_boundary_2
 
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   {
-    return Compare_x_near_limit_2(_traits);
+    return Compare_x_near_boundary_2(_traits);
   }
 
-  class Compare_x_at_limit_2
+  class Compare_x_on_boundary_2
   {
   private:
     Traits& _traits;
   public:
-    Compare_x_at_limit_2 (Traits& traits) :_traits(traits) {}
+    Compare_x_on_boundary_2 (Traits& traits) :_traits(traits) {}
     Comparison_result operator()( const Point_2 & p,
                                   const X_monotone_curve_2 & xcv,
                                   Arr_curve_end ce) const
     {
-      return (boost::apply_visitor(Compare_x_at_limit_2_visitor_1(_traits,ce,p),xcv.variant()));
+      return (boost::apply_visitor(Compare_x_on_boundary_2_visitor_1(_traits,ce,p),xcv.variant()));
     }
     Comparison_result operator()( const X_monotone_curve_2 & xcv1,
                                   Arr_curve_end ce1,
                                   const X_monotone_curve_2 & xcv2,
                                   Arr_curve_end ce2) const
     {
-      return (boost::apply_visitor(Compare_x_at_limit_2_visitor_2(_traits,ce1,ce2),xcv1.variant(),xcv2.variant()));
+      return (boost::apply_visitor(Compare_x_on_boundary_2_visitor_2(_traits,ce1,ce2),xcv1.variant(),xcv2.variant()));
     }
   private:
-    class Compare_x_at_limit_2_visitor_1
+    class Compare_x_on_boundary_2_visitor_1
       : public boost::static_visitor <Comparison_result>
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_x_at_limit_2_visitor_1(Traits& traits,Arr_curve_end ce,const Point_2 & p)
+      Compare_x_on_boundary_2_visitor_1(Traits& traits,Arr_curve_end ce,const Point_2 & p)
         :_traits(traits), _ce(ce), _p(p), Base() {}
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv ) const
       {
-        return _traits.compare_x_at_limit_2_object()(_p,xcv,_ce);
+        return _traits.compare_x_on_boundary_2_object()(_p,xcv,_ce);
       }
       Comparison_result operator()(const Vertical_segment& xcv) const
       {
@@ -1563,18 +1563,18 @@ public:
       Traits& _traits;
       Point_2 _p;
       Arr_curve_end _ce;
-    };  //Compare_x_at_limit_2_visitor_1
+    };  //Compare_x_on_boundary_2_visitor_1
 
-    class Compare_x_at_limit_2_visitor_2
+    class Compare_x_on_boundary_2_visitor_2
       : public boost::static_visitor <Comparison_result>
     {
     public:
       typedef boost::static_visitor <Comparison_result> Base;
-      Compare_x_at_limit_2_visitor_2(Traits& traits,Arr_curve_end ce1,Arr_curve_end ce2)
+      Compare_x_on_boundary_2_visitor_2(Traits& traits,Arr_curve_end ce1,Arr_curve_end ce2)
         :_traits(traits), _ce1(ce1), _ce2(ce2), Base() {}
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
-        return _traits.compare_x_at_limit_2_object()(xcv1,_ce1,xcv2,_ce2);
+        return _traits.compare_x_on_boundary_2_object()(xcv1,_ce1,xcv2,_ce2);
       }
       Comparison_result operator()(const Non_vertical_x_curve_2& xcv1,const Vertical_segment& xcv2 ) const
       {
@@ -1583,7 +1583,7 @@ public:
         else //_ce2 == ARR_MAX_END
           CGAL_precondition (xcv2.max_parameter_space() == CGAL::ARR_TOP_BOUNDARY);
 
-        return _traits.compare_x_at_limit_2_object()(xcv2.max(),xcv1,_ce1);
+        return _traits.compare_x_on_boundary_2_object()(xcv2.max(),xcv1,_ce1);
       }
       Comparison_result operator()(const Vertical_segment& xcv1,const Non_vertical_x_curve_2& xcv2 ) const
       {
@@ -1592,7 +1592,7 @@ public:
         else //_ce1 == ARR_MAX_END
           CGAL_precondition (xcv1.max_parameter_space() == CGAL::ARR_TOP_BOUNDARY);
 
-        return _traits.compare_x_at_limit_2_object()(xcv1.max(),xcv2,_ce2);
+        return _traits.compare_x_on_boundary_2_object()(xcv1.max(),xcv2,_ce2);
       }
       Comparison_result operator()(const Vertical_segment& xcv1,const Vertical_segment& xcv2 ) const
       {
@@ -1611,12 +1611,12 @@ public:
     private:
       Traits& _traits;
       Arr_curve_end _ce1,_ce2;
-    };  //Compare_x_at_limit_2_visitor_2
-  };  //Compare_x_at_limit_2
+    };  //Compare_x_on_boundary_2_visitor_2
+  };  //Compare_x_on_boundary_2
 
-  /*! Obtain a Compare_x_at_limit_2 function object */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(_traits); }
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(_traits); }
   /*! A function object that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
    */

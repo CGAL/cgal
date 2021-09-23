@@ -161,7 +161,7 @@ public:
     \tparam PlaneRange is a model of `ConstRange`. The value type of
     its iterator is the key type of the named parameter `plane_map`.
 
-    \param points input point range.
+    \param points input point range
     \param planes input plane range.
     \param epsilon size parameter.
     \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -800,9 +800,7 @@ private:
         double angle_A = std::acos (CGAL::abs (plane1.orthogonal_vector() * plane2.orthogonal_vector()));
         double angle_B = CGAL_PI - angle_A;
 
-        typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
-          result = CGAL::intersection(plane1, plane2);
-
+        const auto result = CGAL::intersection(plane1, plane2);
         if (!result)
           {
 #ifdef CGAL_PSP3_VERBOSE
@@ -1029,8 +1027,7 @@ private:
                   pts2.push_back (m_points[inde]);
               }
 
-            typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
-              result = CGAL::intersection (plane1, ortho);
+            auto result = CGAL::intersection (plane1, ortho);
             if (result)
               {
                 if (const Line* l = boost::get<Line>(&*result))
@@ -1194,16 +1191,12 @@ private:
         const Plane& plane2 = m_planes[m_corners[i].planes[1]];
         const Plane& plane3 = m_planes[m_corners[i].planes[2]];
 
-        typename cpp11::result_of<typename Kernel::Intersect_3(Plane, Plane)>::type
-          result = CGAL::intersection(plane1, plane2);
-
+        const auto result = CGAL::intersection(plane1, plane2);
         if (result)
           {
             if (const Line* l = boost::get<Line>(&*result))
               {
-                typename cpp11::result_of<typename Kernel::Intersect_3(Line, Plane)>::type
-                  result2 = CGAL::intersection(*l, plane3);
-
+                const auto result2 = CGAL::intersection(*l, plane3);
                 if (result2)
                   {
                     if (const Point* p = boost::get<Point>(&*result2))
@@ -1507,7 +1500,7 @@ private:
    <A HREF="https://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
    to match specific needs.
 
-   \param points input point range.
+   \param points input point range
    \param planes input plane range.
    \param output output iterator where output points are written
    \param epsilon size parameter.

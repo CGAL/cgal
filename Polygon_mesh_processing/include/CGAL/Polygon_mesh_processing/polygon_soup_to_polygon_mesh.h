@@ -28,6 +28,7 @@
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
+#include <boost/container/flat_set.hpp>
 
 #include <array>
 #include <set>
@@ -157,8 +158,8 @@ private:
 * boundaries of the polygons provided in `polygons`.
 *
 * @tparam PolygonRange a model of the concept `RandomAccessContainer`
-* whose value_type is a model of the concept `RandomAccessContainer`
-* whose value_type is `std::size_t`.
+* whose `value_type` is a model of the concept `RandomAccessContainer`
+* whose `value_type` is `std::size_t`.
 *
 * @param polygons each element in the range describes a polygon
 * using the indices of the vertices.
@@ -177,14 +178,16 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   //check there is no duplicated ordered edge, and
   //check there is no polygon with twice the same vertex
   std::set<std::pair<V_ID, V_ID> > edge_set;
+  boost::container::flat_set<V_ID> polygon_vertices;
   V_ID max_id = 0;
+
   for(const Polygon& polygon : polygons)
   {
     std::size_t nb_edges = boost::size(polygon);
     if(nb_edges < 3)
       return false;
 
-    std::set<V_ID> polygon_vertices;
+    polygon_vertices.clear();
     V_ID prev = *std::prev(boost::end(polygon));
     for(V_ID id : polygon)
     {
@@ -234,7 +237,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * @tparam NamedParameters_PM a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param points points of the soup of polygons
-* @param polygons each element in the vector describes a polygon using the indices of the points in `points`
+* @param polygons each element in the range describes a polygon using the indices of the points in `points`
 * @param out the polygon mesh to be built
 * @param np_ps an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -290,6 +293,8 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   converter(out, vpm);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template<typename PolygonMesh,
          typename PointRange, typename PolygonRange,
          typename NamedParameters_PS>
@@ -308,6 +313,8 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
 {
   return polygon_soup_to_polygon_mesh(points, polygons, out, parameters::all_default(), parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

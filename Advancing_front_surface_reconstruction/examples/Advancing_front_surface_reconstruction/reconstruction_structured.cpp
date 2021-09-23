@@ -9,7 +9,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/disable_warnings.h>
 
 #include <boost/lexical_cast.hpp>
@@ -113,13 +113,10 @@ int main (int argc, char* argv[])
 
   const char* fname = (argc>1) ? argv[1] : "data/cube.pwn";
   // Loading point set from a file.
-  std::ifstream stream(fname);
 
-  if (!stream ||
-    !CGAL::read_xyz_points(stream,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).
-      normal_map(Normal_map())))
+  if (!CGAL::IO::read_points(fname, std::back_inserter(points),
+                             CGAL::parameters::point_map(Point_map()).
+                                               normal_map(Normal_map())))
   {
       std::cerr << "Error: cannot read file" << std::endl;
       return EXIT_FAILURE;

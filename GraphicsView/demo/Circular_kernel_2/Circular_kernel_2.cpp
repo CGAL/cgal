@@ -10,9 +10,7 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Object.h>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 
 // Qt headers
 #include <QtGui>
@@ -216,9 +214,7 @@ MainWindow::on_actionLoadLineAndCircularArcs_triggered()
                                                   tr("Open Line and Circular Arc File"),
                                                   ".",
                                                   tr("Edge files (*.arc)\n"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT)\n"
-                                                   #endif
                                                      ));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -236,12 +232,11 @@ MainWindow::open(QString fileName)
     double x,y;
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
     {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       //read pairs as Line_arc_2 and triplets as circular_arc_2
       do
       {
         std::vector<Point_2> multi_points;
-        CGAL::read_multi_point_WKT(ifs, multi_points);
+        CGAL::IO::read_multi_point_WKT(ifs, multi_points);
         if(multi_points.size() == 2)
         {
           Line_arc_2 la(Segment_2(multi_points[0],
@@ -279,7 +274,6 @@ MainWindow::open(QString fileName)
         }
       }while(ifs.good() && !ifs.eof());
       ifs.close();
-#endif
     }
     else
     {

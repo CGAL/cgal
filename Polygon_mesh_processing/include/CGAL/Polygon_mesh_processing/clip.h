@@ -41,30 +41,13 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <bitset>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
 
 namespace internal
 {
-
-template <class Geom_traits, class Plane_3, class Point_3>
-int
-inter_pt_index(int i, int j,
-               const Plane_3& plane,
-               std::vector<Point_3>& points,
-               std::map<std::pair<int,int>, int>& id_map)
-{
-  std::pair<std::map<std::pair<int,int>, int>::iterator, bool> res =
-    id_map.insert(std::make_pair(make_sorted_pair(i,j),
-                  static_cast<int> (points.size())));
-  if(res.second)
-    points.push_back(
-      typename Geom_traits::Construct_plane_line_intersection_point_3()
-        (plane, points[i], points[j]));
-
-  return res.first->second;
-}
 
 template <class Plane_3,
           class TriangleMesh,
@@ -106,19 +89,42 @@ clip_to_bbox(const Plane_3& plane,
   }};
 
   // description of faces of the bbox
-  std::array<int, 24> face_indices =
-    {{ 0, 1, 2, 3,
-       2, 1, 5, 6,
-       3, 2, 6, 7,
-       1, 0, 4, 5,
-       4, 0, 3, 7,
-       6, 5, 4, 7 }};
+  constexpr std::array<int, 24> face_indices
+    { { 0, 1, 2, 3,
+        2, 1, 5, 6,
+        3, 2, 6, 7,
+        1, 0, 4, 5,
+        4, 0, 3, 7,
+        6, 5, 4, 7 } };
 
-  std::map<std::pair<int,int>, int> id_map;
+  constexpr std::array<int, 24> edge_indices
+    { { 0,  1,  2, 3,
+        1,  4,  5, 6,
+        2,  6,  7, 8,
+        0,  9, 10, 4,
+        9,  3,  8, 11,
+        5, 10, 11, 7 } };
+
+  std::array<int, 12> edge_ipt_id;
+  edge_ipt_id.fill(-1);
+
+  auto inter_pt_index =
+    [&plane, &corners, &edge_ipt_id](int i, int j, int edge_id)
+  {
+    if (edge_ipt_id[edge_id]==-1)
+    {
+      edge_ipt_id[edge_id] = static_cast<int> (corners.size());
+      corners.push_back(typename Geom_traits::Construct_plane_line_intersection_point_3()
+                      (plane, corners[i], corners[j]));
+    }
+
+    return edge_ipt_id[edge_id];
+  };
+
   std::vector< std::vector<int> > output_faces(6);
   bool all_in = true;
   bool all_out = true;
-  std::set<int> in_point_ids; // to collect the set of points in the clipped bbox
+  std::bitset<14> in_point_bits; // to collect the set of points in the clipped bbox
 
   // for each face of the bbox, we look for intersection of the plane with its edges
   for(int i=0; i<6; ++i)
@@ -127,6 +133,7 @@ clip_to_bbox(const Plane_3& plane,
     {
       int current_id = face_indices[4*i + k];
       int next_id = face_indices[4*i + (k+1)%4];
+      int edge_id = edge_indices[4 * i + k];
 
       switch(orientations[ current_id ])
       {
@@ -135,13 +142,13 @@ clip_to_bbox(const Plane_3& plane,
           all_out=false;
           // point on or on the negative side
           output_faces[i].push_back(current_id);
-          in_point_ids.insert(output_faces[i].back());
+          in_point_bits.set(output_faces[i].back());
           // check for intersection of the edge
           if(orientations[ next_id ] == ON_POSITIVE_SIDE)
           {
             output_faces[i].push_back(
-              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map));
-            in_point_ids.insert(output_faces[i].back());
+              inter_pt_index(current_id, next_id, edge_id));
+            in_point_bits.set(output_faces[i].back());
           }
           break;
         }
@@ -152,15 +159,15 @@ clip_to_bbox(const Plane_3& plane,
           if(orientations[ next_id ] == ON_NEGATIVE_SIDE)
           {
             output_faces[i].push_back(
-              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map));
-            in_point_ids.insert(output_faces[i].back());
+              inter_pt_index(current_id, next_id, edge_id));
+            in_point_bits.set(output_faces[i].back());
           }
           break;
         }
         case ON_ORIENTED_BOUNDARY:
         {
           output_faces[i].push_back(current_id);
-          in_point_ids.insert(output_faces[i].back());
+          in_point_bits.set(output_faces[i].back());
         }
       }
     }
@@ -182,11 +189,14 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename graph_traits::face_descriptor face_descriptor;
 
   std::map<int, vertex_descriptor> out_vertices;
-  for(int i : in_point_ids)
+  for(int i=0; i<14;++i)
   {
-    vertex_descriptor v = add_vertex(tm_out);
-    out_vertices.insert(std::make_pair(i, v));
-    put(vpm_out, v, corners[i]);
+    if (in_point_bits.test(i))
+    {
+      vertex_descriptor v = add_vertex(tm_out);
+      out_vertices.insert(std::make_pair(i, v));
+      put(vpm_out, v, corners[i]);
+    }
   }
 
   std::map< std::pair<int,int>, halfedge_descriptor> hedge_map;
@@ -306,6 +316,7 @@ void split_along_edges(TriangleMesh& tm,
   std::set<halfedge_descriptor> extra_border_hedges;
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
+    if (is_border(shared_edges[k], tm)) continue;
     for(halfedge_descriptor h : halfedges_around_target(target(shared_edges[k], tm), tm))
       if(is_border(h, tm))
         extra_border_hedges.insert(h);
@@ -324,6 +335,7 @@ void split_along_edges(TriangleMesh& tm,
   // now duplicate the edge and set its pointers
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
+    if (is_border(shared_edges[k], tm)) continue;
     halfedge_descriptor h    = halfedge(shared_edges[k], tm);
     face_descriptor fh = face(h, tm);
     //add edge
@@ -852,6 +864,8 @@ bool clip(TriangleMesh& tm,
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
   *     \cgalParamDefault{`false`}
+  *   \cgalParamNEnd
+  *
   *   \cgalParamNBegin{do_not_modify}
   *     \cgalParamDescription{(`np_s` only) if `true`, `splitter` will not be modified.}
   *     \cgalParamType{Boolean}

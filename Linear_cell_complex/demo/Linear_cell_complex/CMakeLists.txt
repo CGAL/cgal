@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 # cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Linear_cell_complex_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -37,7 +37,7 @@ add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 ##################
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
 
 if(NOT
    (CGAL_Qt5_FOUND

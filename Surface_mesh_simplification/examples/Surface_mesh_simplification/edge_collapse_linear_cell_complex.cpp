@@ -8,6 +8,8 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 
+#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -21,8 +23,8 @@ int main(int argc, char** argv)
 {
   LCC lcc;
   const char* filename = (argc > 1) ? argv[1] : "data/cube-meshed.off";
-  std::ifstream is(filename);
-  if(!is || !(CGAL::read_off(filename, lcc)))
+
+  if(!CGAL::IO::read_polygon_mesh(filename, lcc))
   {
     std::cerr << "Failed to read input mesh: " << filename << std::endl;
     return EXIT_FAILURE;
@@ -58,7 +60,7 @@ int main(int argc, char** argv)
 
   lcc.display_characteristics(std::cout) << ", is_valid=" << CGAL::is_valid(lcc) << std::endl;
 
-  CGAL::write_off((argc > 3 ? argv[3] : "out.off"), lcc);
+  CGAL::IO::write_polygon_mesh((argc > 3 ? argv[3] : "out.off"), lcc);
 
   return EXIT_SUCCESS;
 }

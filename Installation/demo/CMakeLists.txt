@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.12...3.20)
 project(CGAL_DEMOS)
 
 if(CGAL_BRANCH_BUILD)
@@ -17,10 +17,8 @@ endif()
 
 list(SORT list)
 
-if(NOT CGAL_BUILDING_LIBS)
-  find_package(CGAL REQUIRED)
-  include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
-endif()
+find_package(CGAL REQUIRED)
+include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 message("== Generating build files for demos ==")
 foreach(entry ${list})

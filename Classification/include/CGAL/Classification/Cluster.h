@@ -122,7 +122,7 @@ public:
   void clear () { m_inliers->clear(); }
 
   /*!
-    \brief Inserts element of index `idx` in the cluster.
+    \brief inserts element of index `idx` in the cluster.
   */
   void insert (std::size_t idx) { m_inliers->push_back (idx); }
 
@@ -132,23 +132,23 @@ public:
   /// @{
 
   /*!
-    \brief Returns the number of items in the cluster.
+    \brief returns the number of items in the cluster.
   */
   std::size_t size() const { return m_inliers->size(); }
 
   /*!
-    \brief Returns the index (in the input range) of the i^{th} element of the cluster.
+    \brief returns the index (in the input range) of the i^{th} element of the cluster.
   */
   std::size_t index (std::size_t i) const { return (*m_inliers)[i]; }
 
   /*!
-    \brief Returns the i^{th} item of the cluster.
+    \brief returns the i^{th} item of the cluster.
   */
   const Item& operator[] (std::size_t i) const
   { return get (m_item_map, *(m_range->begin() + (*m_inliers)[i])); }
 
   /*!
-    \brief Returns the bounding box of the cluster.
+    \brief returns the bounding box of the cluster.
   */
   const CGAL::Bbox_3& bbox() const
   {
@@ -168,22 +168,22 @@ public:
   /// @{
 
   /*!
-    \brief Returns the input classification value used for training.
+    \brief returns the input classification value used for training.
   */
   int training() const { return m_training; }
 
   /*!
-    \brief Returns a reference to the input classification value used for training.
+    \brief returns a reference to the input classification value used for training.
   */
   int& training() { return m_training; }
 
   /*!
-    \brief Returns the output classification value.
+    \brief returns the output classification value.
   */
   int label() const { return m_label; }
 
   /*!
-    \brief Returns a reference to the output classification value.
+    \brief returns a reference to the output classification value.
   */
   int& label() { return m_label; }
 

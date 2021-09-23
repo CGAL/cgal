@@ -66,7 +66,7 @@ int main()
   L21_approx approx(mesh, vpmap, error_metric);
 
   std::cout << "Random seeding by number." << std::endl;
-  std::srand(static_cast<unsigned int>(std::time(0)));
+  std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
   std::size_t count = 0;
   while (!count) {
@@ -104,7 +104,7 @@ int main()
 
 
   CGAL::Bbox_3 bbox;
-  for(const vertex_descriptor v : vertices(mesh))
+  for(const vertex_descriptor& v : vertices(mesh))
     bbox += vpmap[v].bbox();
   const FT ymin = bbox.ymin(), ymax = bbox.ymax(), yrange = ymax - ymin;
   std::cout << "Range along y axis: [" << ymin << ", " << ymax << "]" << std::endl;
@@ -113,7 +113,7 @@ int main()
   std::size_t planar_pxidx = static_cast<std::size_t>(-1);
   std::size_t num_planar_faces = 0;
   bool first = true;
-  for(const face_descriptor f : faces(mesh)) {
+  for(const face_descriptor& f : faces(mesh)) {
     const halfedge_descriptor he = halfedge(f, mesh);
     const Point_3 &p0 = vpmap[source(he, mesh)];
     const Point_3 &p1 = vpmap[target(he, mesh)];

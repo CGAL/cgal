@@ -53,7 +53,6 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
 
-#include <boost/bind.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -64,12 +63,12 @@
 #include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 #include <boost/iterator/zip_iterator.hpp>
 #endif
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
-#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/Filtered_kernel/internal/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -576,7 +575,7 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  typename boost::result_of<Construct_point_3(P)>::type
+  typename boost::result_of<const Construct_point_3(const P&)>::type
   construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
@@ -2315,7 +2314,7 @@ public:
 
     std::size_t n;
     int d;
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> d >> n;
     else {
       read(is, d);
@@ -2394,7 +2393,7 @@ std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
 
   std::size_t n;
   int d;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
   {
     is >> d >> n;
   }
@@ -2453,7 +2452,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
 
   // outputs dimension and number of vertices
   size_type n = tr.number_of_vertices();
-  if(is_ascii(os))
+  if(IO::is_ascii(os))
   {
     os << tr.dimension() << std::endl << n << std::endl;
   }
@@ -2471,7 +2470,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
   for(; vit != tr.vertices_end(); ++vit)
   {
     os << *vit;
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os<<std::endl;
   }
 
@@ -2493,7 +2492,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
       for(Cell_iterator it = tr.cells_begin(), end = tr.cells_end(); it != end; ++it)
       {
         os << *it; // other information
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << std::endl;
       }
       break;
@@ -2503,7 +2502,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
       for(Facet_iterator it = tr.facets_begin(), end = tr.facets_end(); it != end; ++it)
       {
         os << *((*it).first); // other information
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << std::endl;
       }
       break;
@@ -2513,7 +2512,7 @@ std::ostream& operator<< (std::ostream& os, const Triangulation_3<GT, Tds, Lds>&
       for(Edge_iterator it = tr.edges_begin(), end = tr.edges_end(); it != end; ++it)
       {
         os << *((*it).first); // other information
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << std::endl;
       }
       break;
@@ -7304,22 +7303,10 @@ operator==(const Triangulation_3<GT, Tds1, Lds>& t1,
     std::vector<Point> V2 (t2.points_begin(), t2.points_end());
 
     std::sort(V1.begin(), V1.end(),
-              boost::bind<Comparison_result>(
-                cmp1,
-                boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _1),
-                boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _2))
-              == SMALLER);
+              [&cmp1, &cp](const Point& p1, const Point& p2){ return cmp1(cp(p1), cp(p2))==SMALLER; });
 
     std::sort(V2.begin(), V2.end(),
-              boost::bind<Comparison_result>(
-                cmp2,
-                boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _1),
-                boost::bind<
-                typename boost::result_of<const Construct_point_3(const Point&)>::type>(cp, _2))
-              == SMALLER);
+              [&cmp2, &cp](const Point& p1, const Point& p2){ return cmp2(cp(p1), cp(p2))==SMALLER; });
 
     return V1 == V2;
   }
