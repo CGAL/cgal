@@ -31,7 +31,7 @@ struct Output_rep< ::Color, F > {
   { }
   std::ostream& operator() (std::ostream& out) const
   {
-    if (is_ascii(out))
+    if (IO::is_ascii(out))
       out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << " " << int(c[3]);
     else
       out.write(reinterpret_cast<const char*>(&c), sizeof(c));
@@ -47,23 +47,23 @@ int main(int, char**)
 
   for (int i = 0; i < 10; ++ i)
     points.push_back (std::make_tuple (Point (i / 10., i / 20., i / 30.),
-                                               CGAL::make_array ((unsigned char)(255 / (i + 1)),
-                                                                 (unsigned char)(192 / (i + 1)),
-                                                                 (unsigned char)(128 / (i + 1)),
-                                                                 (unsigned char)(64 / (i + 1))),
+                                               CGAL::make_array (static_cast<unsigned char>(255 / (i + 1)),
+                                                                 static_cast<unsigned char>(192 / (i + 1)),
+                                                                 static_cast<unsigned char>(128 / (i + 1)),
+                                                                 static_cast<unsigned char>(64 / (i + 1))),
                                                i));
 
   std::ofstream f("out.ply", std::ios::binary);
-  CGAL::set_binary_mode(f); // The PLY file will be written in the binary format
+  CGAL::IO::set_binary_mode(f); // The PLY file will be written in the binary format
 
-  CGAL::write_PLY_with_properties(f, points,
-                                  CGAL::make_ply_point_writer (Point_map()),
-                                  std::make_tuple(Color_map(),
-                                                  CGAL::PLY_property<unsigned char>("red"),
-                                                  CGAL::PLY_property<unsigned char>("green"),
-                                                  CGAL::PLY_property<unsigned char>("blue"),
-                                                  CGAL::PLY_property<unsigned char>("alpha")),
-                                  std::make_pair(Intensity_map(), CGAL::PLY_property<int>("intensity")));
+  CGAL::IO::write_PLY_with_properties(f, points,
+                                      CGAL::make_ply_point_writer (Point_map()),
+                                      std::make_tuple(Color_map(),
+                                                      CGAL::IO::PLY_property<unsigned char>("red"),
+                                                      CGAL::IO::PLY_property<unsigned char>("green"),
+                                                      CGAL::IO::PLY_property<unsigned char>("blue"),
+                                                      CGAL::IO::PLY_property<unsigned char>("alpha")),
+                                  std::make_pair(Intensity_map(), CGAL::IO::PLY_property<int>("intensity")));
 
   return EXIT_SUCCESS;
 }

@@ -31,7 +31,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
-#include <CGAL/atomic.h>
 
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/queuing_mutex.h>

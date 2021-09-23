@@ -161,7 +161,7 @@ inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
 namespace std{
 template <> inline
 void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2)
-  CGAL_NOEXCEPT(std::is_nothrow_move_constructible<CGAL::Exponent_vector>::value
+  noexcept(std::is_nothrow_move_constructible<CGAL::Exponent_vector>::value
                 && std::is_nothrow_move_assignable<CGAL::Exponent_vector>::value)
 {
   ev1.swap(ev2);

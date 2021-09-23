@@ -19,7 +19,7 @@
 #include <CGAL/PolyhedralSurf_neighbors.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <list>
 #include <vector>
@@ -133,7 +133,7 @@ class Umbilic_approximation
   const TriangleMesh& P;
 
   typedef T_PolyhedralSurf_neighbors<TriangleMesh> Poly_neighbors;
-  boost::shared_ptr<Poly_neighbors> poly_neighbors;
+  std::shared_ptr<Poly_neighbors> poly_neighbors;
 
   CGAL::Abs<FT> cgal_abs;
   CGAL::To_double<FT> To_double;
@@ -165,7 +165,7 @@ Umbilic_approximation(const TriangleMesh& p,
 {
   CGAL_precondition(is_triangle_mesh(P));
 
-  poly_neighbors = boost::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
+  poly_neighbors = std::shared_ptr<Poly_neighbors>(new Poly_neighbors(P));
 }
 
 

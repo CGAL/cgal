@@ -34,6 +34,7 @@ public:
   typedef typename Transformation_base_3::Point_3       Point_3;
   typedef typename Transformation_base_3::Vector_3      Vector_3;
   typedef typename Transformation_base_3::Direction_3   Direction_3;
+  typedef typename Transformation_base_3::Plane_3       Plane_3;
   typedef typename Transformation_base_3::Aff_transformation_3
                                                         Aff_transformation_3;
 
@@ -57,6 +58,12 @@ public:
   virtual Direction_3  transform(const Direction_3 &d) const
   {
     return d;
+  }
+
+  virtual Plane_3  transform(const Plane_3 &p) const
+  {
+    // direction ( which is (p.a(), p.b(), p.c())) does not change
+    return Plane_3(p.a(),p.b(),p.c(), p.d()*scalefactor_);
   }
 
   virtual Aff_transformation_3 operator*(const Transformation_base_3 &t) const
@@ -117,6 +124,11 @@ public:
   }
 
   virtual bool is_even() const
+  {
+    return true;
+  }
+
+  virtual bool is_scaling() const
   {
     return true;
   }

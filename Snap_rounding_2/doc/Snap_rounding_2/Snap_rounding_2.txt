@@ -10,8 +10,6 @@ namespace CGAL {
 
 \section Snap_rounding_2Introduction Introduction
 
-<span style="display:none">\f$ \def\A{{\cal A}} \f$ \f$ \def\S{{\cal S}} \f$</span>
-
 Snap Rounding (SR, for short) is a well known method for converting
 arbitrary-precision arrangements of segments into a fixed-precision
 representation \cgalCite{gght-srlse-97}, \cgalCite{gm-rad-98}, \cgalCite{h-psifp-99}. In
@@ -28,9 +26,9 @@ An arrangement of segments before (a) and after (b) SR (hot pixels are shaded)
 
 \section Snap_rounding_2What What is Snap Rounding/Iterated Snap Rounding
 
-Given a finite collection \f$ \S\f$ of segments in the plane, the
-arrangement of \f$ \S\f$ denoted \f$ \A(\S)\f$ is the subdivision of the plane
-into vertices, edges, and faces induced by \f$ \S\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or
+Given a finite collection \f$ \Sc\f$ of segments in the plane, the
+arrangement of \f$ \Sc\f$ denoted \f$ \Ac(\Sc)\f$ is the subdivision of the plane
+into vertices, edges, and faces induced by \f$ \Sc\f$. A <I>vertex</I> of the arrangement is either a segment endpoint or
 the intersection of two segments. Given an arrangement of segments
 whose vertices are represented with arbitrary-precision coordinates,
 the function `snap_rounding_2()` proceeds as follows. We tile the plane

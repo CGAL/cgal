@@ -64,7 +64,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
 
 public:
   Polyhedron_demo_surface_mesh_approximation_plugin() {
-    std::srand(time(0));
+    std::srand(time(nullptr));
   }
 
   void init(QMainWindow *main_window,
@@ -254,10 +254,10 @@ public:
         cvx_hull_points.push_back(origin + p.x() * base1 + p.y() * base2);
       }
     }
-    std::vector<CGAL::Color> fcolors;
+    std::vector<CGAL::IO::Color> fcolors;
     for(const QColor& c : approx.proxy_colors())
-      fcolors.push_back(CGAL::Color(c.red(), c.green(), c.blue()));
-    approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::Color>());
+      fcolors.push_back(CGAL::IO::Color(c.red(), c.green(), c.blue()));
+    approx.visual_items().planes->load(cvx_hull_points, cvx_hulls, fcolors, std::vector<CGAL::IO::Color>());
   }
 
 public Q_SLOTS:
@@ -332,10 +332,10 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   approx.visual_items().group = group;
   approx.visual_items().seeds = seeds_item;
   approx.visual_items().has_meshing_items = false;
-  approx.visual_items().triangles = NULL;
-  approx.visual_items().polygons = NULL;
-  approx.visual_items().anchors = NULL;
-  approx.visual_items().planes = NULL;
+  approx.visual_items().triangles = nullptr;
+  approx.visual_items().polygons = nullptr;
+  approx.visual_items().anchors = nullptr;
+  approx.visual_items().planes = nullptr;
 
   update_seeds_item(approx, pmesh);
 

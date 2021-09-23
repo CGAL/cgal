@@ -135,4 +135,3 @@ compare_y_near_boundary 60 60 MAX_END EQUAL
 compare_y_near_boundary 61 61 MAX_END EQUAL
 compare_y_near_boundary 62 62 MAX_END EQUAL
 compare_y_near_boundary 63 63 MAX_END EQUAL
-

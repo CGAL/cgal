@@ -1,0 +1,97 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.5}%
+  \begin{tabular}{ccc}
+    \pspicture[](0.5,0)(10,7)
+    \arrMainVertex(1,4){a}
+    \arrMainVertex(5,6){b}
+    \arrMainVertex(9,4){c}
+    \arrMainVertex(7,2){d}
+    \arrMainVertex(3,1){e}
+    \arrMainVertex(3,2){f}
+    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
+    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
+    \ncline[linewidth=0.5pt,linecolor=blue]{c}{d}
+    \ncline[linewidth=0.5pt,linecolor=blue]{d}{e}
+    \ncline[linewidth=0.5pt,linecolor=blue]{e}{f}
+    \ncline[linewidth=0.5pt,linecolor=blue]{f}{a}
+    \arrMinorVertex(3,3){1}\uput[135]{0}(3,3){$v_1$}
+    \arrMinorVertex(6,4){2}\uput[-45]{0}(6,4){$v_2$}
+    \ncline[linestyle=dashed,linewidth=0.5pt,linecolor=blue]{1}{2}
+    \ncline[linewidth=0.5pt,offset=3pt]{->}{1}{2}
+    \ncline[linewidth=0.5pt,offset=3pt]{->}{2}{1}
+    \rput(5,5){$f$}
+    \psframe[linewidth=0.5pt](0.5,0)(10,7)
+    \endpspicture &
+    %
+    \pspicture[](0.5,0)(10,7)
+    \arrMainVertex(1,3){a}
+    \arrMainVertex(2,5){b}
+    \arrMainVertex(5,6){c}
+    \arrMainVertex(7,3){u}
+    \uput[180]{0}(7,3){$u$}
+    \arrMainVertex(5,1){e}
+    \arrMainVertex(3,2){f}
+    \arrMainVertex(2,1){g}
+    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
+    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
+    \ncline[linewidth=0.5pt,linecolor=blue]{c}{u}
+    \ncline[linewidth=0.5pt,linecolor=blue]{u}{e}
+    \ncline[linewidth=0.5pt,linecolor=blue]{e}{f}
+    \ncline[linewidth=0.5pt,linecolor=blue]{f}{g}
+    \ncline[linewidth=0.5pt,linecolor=blue]{g}{a}
+    \arrMinorVertex(9,4){v}
+    \uput[90]{0}(9,4){$v$}
+    \ncline[linestyle=dashed,linewidth=0.5pt,linecolor=blue]{u}{v}
+    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{c}{u}
+    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{u}{e}
+    \ncline[linewidth=0.5pt,offset=3pt]{->}{u}{v}
+    \ncline[linewidth=0.5pt,offset=3pt]{->}{v}{u}
+    \psframe[linewidth=0.5pt](0.5,0)(10,7)
+    \endpspicture &
+    %
+    \pspicture[](0.5,0)(10,7)
+    \arrMainVertex(1,3){a}
+    \arrMainVertex(2,6){b}
+    \arru[45](5,6){1}
+    \arru[-45](7,1){2}
+    \arrMainVertex(4,2){e}
+    \arrMainVertex(2,1){f}
+    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
+    \ncline[linewidth=0.5pt,linecolor=blue]{b}{1}
+    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{b}{1}
+    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{1}{b}
+    \ncline[linestyle=dashed,linewidth=0.5pt,linecolor=blue]{1}{2}
+    \ncline[linewidth=0.5pt,offset=3pt]{->}{1}{2}
+    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=6pt]{->}{2}{1}
+    \ncline[linewidth=0.5pt,linecolor=blue]{2}{e}
+    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{2}{e}
+    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt,nodesepB=4pt]{->}{e}{2}
+    \ncline[linewidth=0.5pt,linecolor=blue]{e}{f}
+    \ncline[linewidth=0.5pt,linecolor=blue]{f}{a}
+    \arrMainVertex(2.5,4){a}
+    \arrMainVertex(3.5,5){b}
+    \arrMainVertex(4.5,4){c}
+    \arrMainVertex(3.5,3){d}
+    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
+    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
+    \ncline[linewidth=0.5pt,linecolor=blue]{c}{d}\Aput[1pt]{$h_1$}
+    \ncline[linewidth=0.5pt,linecolor=blue]{d}{a}
+    \ncline[linewidth=0.5pt,linecolor=blue]{a}{c}
+    \rput(1,5){$f$}
+    \rput(2.5,5){$f'$}
+    \arrMainVertex(7,4){a}
+    \arrMainVertex(8,4){b}
+    \arrMainVertex(8,5){c}
+    \arrMainVertex(9,3){d}
+    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
+    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
+    \ncline[linewidth=0.5pt,linecolor=blue]{c}{a}
+    \ncline[linewidth=0.5pt,linecolor=blue]{b}{d}\Aput[1pt]{$h_2$}
+    \psframe[linewidth=0.5pt](0.5,0)(10,7)
+    \endpspicture
+  \end{tabular}
+}
+\end{document}

@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 // ============================================================================
 //
 // Copyright (c) 2005-2006, 2017 Le-Jeng Shiue

@@ -18,7 +18,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_projective_yz_traits_2.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/Projection_traits_yz_3.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/predicates/kernel_ftC2.h>
 

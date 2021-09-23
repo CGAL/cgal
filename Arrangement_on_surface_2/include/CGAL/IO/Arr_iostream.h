@@ -29,6 +29,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /*!
  * Write an arrangement to an output stream using a given formatter.
  * \param arr The arrangement.
@@ -51,6 +53,8 @@ std::ostream&
   return (os);
 }
 
+} // namespace IO
+
 /*!
  * Output operator (importer).
  * \param os The output stream.
@@ -71,6 +75,8 @@ std::ostream&
   writer (text_format);
   return (os);
 }
+
+namespace IO {
 
 /*!
  * Read an arrangement from an input stream using a given formatter.
@@ -94,6 +100,8 @@ std::istream&
   return (is);
 }
 
+} // namespace IO
+
 /*!
  * Output operator (exporter).
  * \param is The input stream.
@@ -114,6 +122,11 @@ std::istream&
   reader (text_format);
   return (is);
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::read;
+using IO::write;
+#endif
 
 } //namespace CGAL
 

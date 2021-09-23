@@ -66,6 +66,9 @@ public:
   Plane_3(const Rep& p)
     : Rep(p) {}
 
+  Plane_3(Rep&& p)
+    : Rep(std::move(p)) {}
+
   Plane_3(const Point_3& p, const Point_3& q, const Point_3& r)
     : Rep(typename R::Construct_plane_3()(Return_base_tag(), p, q, r)) {}
 
@@ -228,7 +231,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Plane_3<R> &p)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << p.a() << ' ' << p.b() <<  ' ' << p.c() << ' ' << p.d();
     case IO::BINARY :
@@ -249,9 +252,9 @@ std::istream &
 operator>>(std::istream &is, Plane_3<R> &p)
 {
   typename R::RT a(0), b(0), c(0), d(0);
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> iformat(a) >> iformat(b) >> iformat(c) >> iformat(d);
+        is >> IO::iformat(a) >> IO::iformat(b) >> IO::iformat(c) >> IO::iformat(d);
         break;
     case IO::BINARY :
         read(is, a);
@@ -262,7 +265,7 @@ operator>>(std::istream &is, Plane_3<R> &p)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)

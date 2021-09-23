@@ -94,7 +94,7 @@ struct Scene_polyhedron_selection_item_priv{
     item(parent)
   {
     filtered_graph = nullptr;
-    item->setProperty("classname", QString("surface_mesh"));
+    item->setProperty("classname", QString("surface_mesh_selection"));
     keep_selection_valid = Scene_polyhedron_selection_item::None;
   }
 
@@ -1130,7 +1130,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
     case 3:
         if(out_degree(source(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3 ||
            out_degree(target(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3)
-          d->tempInstructions("Faces not joined : the two ends of the edge must have a degree of at least 3.",
+          d->tempInstructions("Faces not joined : the two endpoints of the edge must have a degree of at least 3.",
                            "Select the edge separating the faces you want to join."
                            "Warning: this operation will clear the undo stack.");
         else
@@ -1160,7 +1160,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_de
         }
         else if(!CGAL::Euler::does_satisfy_link_condition(ed, *polyhedron()))
         {
-          d->tempInstructions("Edge not collapsed : link condition not satidfied.",
+          d->tempInstructions("Edge not collapsed : link condition not satisfied.",
                            "Select the edge you want to collapse.");
         }
         else
@@ -1803,7 +1803,7 @@ void Scene_polyhedron_selection_item::common_constructor()
   d->is_treated = false;
   d->poly_need_update = false;
   d->are_temp_buffers_filled = false;
-  d->poly = NULL;
+  d->poly = nullptr;
   d->ready_to_move = false;
   do_process = true;
   setProperty("no_picking", true);
@@ -1825,13 +1825,13 @@ void Scene_polyhedron_selection_item::common_constructor()
 }
 
 Scene_polyhedron_selection_item::Scene_polyhedron_selection_item()
-  : Scene_polyhedron_item_decorator(NULL, false)
+  : Scene_polyhedron_item_decorator(nullptr, false)
 {
   common_constructor();
 }
 
 Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_graph_item* poly_item, QMainWindow* mw)
-  : Scene_polyhedron_item_decorator(NULL, false)
+  : Scene_polyhedron_item_decorator(nullptr, false)
 {
   common_constructor();
   QString sf = poly_item->property("source filename").toString();
@@ -1896,7 +1896,7 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
-        if(viewer == NULL)
+        if(viewer == nullptr)
           continue;
         setBuffersInit(viewer, false);
         viewer->update();
@@ -1970,7 +1970,7 @@ void Scene_polyhedron_selection_item::validateMoveVertex()
   temp_selected_vertices.clear();
   CGAL::QGLViewer* viewer = Three::mainViewer();
   k_ring_selector.setEditMode(true);
-  viewer->setManipulatedFrame(NULL);
+  viewer->setManipulatedFrame(nullptr);
   invalidateOpenGLBuffers();
   poly_item->itemChanged();
   if(property("need_hl_restore").toBool()){
@@ -2450,8 +2450,7 @@ QString Scene_polyhedron_selection_item::computeStats(int type)
     // Extract the part n°0 of the partition into a new, independent mesh
     if(selected_facets.size() == 0)
       return QString("n/a");
-    boost::vector_property_map<int,
-        boost::property_map<SMesh, boost::face_index_t>::type>
+    boost::vector_property_map<int, boost::property_map<CGAL::Face_filtered_graph<SMesh>, boost::face_index_t>::type>
         fccmap(get(boost::face_index, *d->filtered_graph));
 
     return QString::number(CGAL::Polygon_mesh_processing::connected_components(*d->filtered_graph, fccmap));

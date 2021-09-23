@@ -226,9 +226,9 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
   update_comments_of_point_set_item();
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  m_ethz = NULL;
+  m_ethz = nullptr;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  m_random_forest = NULL;
+  m_random_forest = nullptr;
 #endif
 
   // Compute neighborhood
@@ -278,15 +278,19 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 
 Cluster_classification::~Cluster_classification()
 {
-  if (m_sowf != NULL)
+  if (m_sowf != nullptr)
     delete m_sowf;
-  if (m_ethz != NULL)
+  if (m_ethz != nullptr)
     delete m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  if (m_random_forest != NULL)
+  if (m_random_forest != nullptr)
     delete m_random_forest;
 #endif
-  if (m_points != NULL)
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != nullptr)
+    delete m_neural_network;
+#endif
+  if (m_points != nullptr)
   {
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
@@ -385,10 +389,10 @@ void Cluster_classification::backup_existing_colors_and_add_new()
 {
   if (m_points->point_set()->has_colors())
   {
-    m_color = m_points->point_set()->add_property_map<CGAL::Color>("real_color").first;
+    m_color = m_points->point_set()->add_property_map<CGAL::IO::Color>("real_color").first;
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
-      m_color[*it] = CGAL::Color ((unsigned char)(255 * m_points->point_set()->red(*it)),
+      m_color[*it] = CGAL::IO::Color ((unsigned char)(255 * m_points->point_set()->red(*it)),
                                   (unsigned char)(255 * m_points->point_set()->green(*it)),
                                   (unsigned char)(255 * m_points->point_set()->blue(*it)));
 
@@ -400,7 +404,7 @@ void Cluster_classification::backup_existing_colors_and_add_new()
 
 void Cluster_classification::reset_colors()
 {
-  if (m_color == Point_set::Property_map<CGAL::Color>())
+  if (m_color == Point_set::Property_map<CGAL::IO::Color>())
     m_points->point_set()->remove_colors();
   else
   {
@@ -538,7 +542,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
         float min = (std::numeric_limits<float>::max)();
         float max = -(std::numeric_limits<float>::max)();
 
-        if (vmin != NULL && vmax != NULL
+        if (vmin != nullptr && vmax != nullptr
             && *vmin != std::numeric_limits<float>::infinity()
             && *vmax != std::numeric_limits<float>::infinity())
         {
@@ -577,7 +581,7 @@ void Cluster_classification::change_color (int index, float* vmin, float* vmax)
             m_points->point_set()->set_color(*it);
         }
 
-        if (vmin != NULL && vmax != NULL)
+        if (vmin != nullptr && vmax != nullptr)
         {
           *vmin = min;
           *vmax = max;
@@ -595,7 +599,7 @@ int Cluster_classification::real_index_color() const
 {
   int out = m_index_color;
 
-  if (out == 0 && m_color == Point_set::Property_map<CGAL::Color>())
+  if (out == 0 && m_color == Point_set::Property_map<CGAL::IO::Color>())
     out = -1;
   return out;
 }
@@ -631,7 +635,7 @@ void Cluster_classification::compute_features (std::size_t nb_scales, float voxe
   if (normals)
     normal_map = m_points->point_set()->normal_map();
 
-  bool colors = (m_color != Point_set::Property_map<CGAL::Color>());
+  bool colors = (m_color != Point_set::Property_map<CGAL::IO::Color>());
 
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
@@ -705,16 +709,16 @@ void Cluster_classification::compute_features (std::size_t nb_scales, float voxe
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  if (m_ethz != NULL)
+  if (m_ethz != nullptr)
   {
     delete m_ethz;
-    m_ethz = NULL;
+    m_ethz = nullptr;
   }
 #ifdef CGAL_LINKED_WITH_OPENCV
-  if (m_random_forest != NULL)
+  if (m_random_forest != nullptr)
   {
     delete m_random_forest;
-    m_random_forest = NULL;
+    m_random_forest = nullptr;
   }
 #endif
 
@@ -833,7 +837,7 @@ void Cluster_classification::train(int classifier, const QMultipleInputDialog& d
   }
   else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
-    if (m_ethz != NULL)
+    if (m_ethz != nullptr)
       delete m_ethz;
     m_ethz = new ETHZ_random_forest (m_labels, m_features);
     m_ethz->train<Concurrency_tag>(training, true,
@@ -846,7 +850,7 @@ void Cluster_classification::train(int classifier, const QMultipleInputDialog& d
   else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
-    if (m_random_forest != NULL)
+    if (m_random_forest != nullptr)
       delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features,
                                          dialog.get<QSpinBox>("max_depth")->value(), 5, 15,
@@ -880,7 +884,7 @@ bool Cluster_classification::run (int method, int classifier,
     run (method, *m_sowf, subdivisions, smoothing);
   else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
-    if (m_ethz == NULL)
+    if (m_ethz == nullptr)
     {
       std::cerr << "Error: ETHZ Random Forest must be trained or have a configuration loaded first" << std::endl;
       return false;
@@ -890,7 +894,7 @@ bool Cluster_classification::run (int method, int classifier,
   else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
-    if (m_random_forest == NULL)
+    if (m_random_forest == nullptr)
     {
       std::cerr << "Error: OpenCV Random Forest must be trained or have a configuration loaded first" << std::endl;
       return false;

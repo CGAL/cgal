@@ -46,12 +46,13 @@ private:
   class Node {
   public:
     explicit Node(Vertex_handle vh, bool input = false)
-      : vertex_(vh), input(input)
+      : vertex_(vh), point_(vertex_->point()), input(input)
     {}
-    const Point& point() const { return vertex_->point(); }
+    const Point& point() const { return point_; }
     Vertex_handle vertex() const { return vertex_; }
   private:
     Vertex_handle vertex_;
+    Point point_;
   public:
     bool input;
   };
@@ -69,7 +70,7 @@ public:
     >
   {
   public:
-    Point_it() : Vertex_it::iterator_adaptor_() {}
+    Point_it() : Point_it::iterator_adaptor_() {}
     Point_it(typename Vertex_list::all_iterator it) : Point_it::iterator_adaptor_(it) {}
   private:
     friend class boost::iterator_core_access;
@@ -645,10 +646,12 @@ Polyline_constraint_hierarchy_2<T,Compare,Point>::remove_points_without_correspo
 {
   std::size_t n = 0;
   for(Point_it it = points_in_constraint_begin(cid);
-      it != points_in_constraint_end(cid); ++it) {
+      it != points_in_constraint_end(cid);) {
     if(cid.vl_ptr()->is_skipped(it.base())) {
       it = cid.vl_ptr()->erase(it.base());
       ++n;
+    }else{
+      ++it;
     }
   }
   return n;

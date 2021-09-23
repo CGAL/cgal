@@ -93,7 +93,7 @@ Moreover, it is connected&nbsp;\cgalCite{cgal:bdt-hdcvd-14}.
 From what was said above, it is natural that the class
 `Hyperbolic_Delaunay_triangulation_2` privately inherits from the class
 `Delaunay_triangulation_2`. Consequently, users are encouraged to look at Chapter
-\ref Chapter_2D_Triangulations "2D Triangulation" of the %CGAL manual to
+\ref Chapter_2D_Triangulations "2D Triangulation" of the \cgal manual to
 know more in particular about the representation of triangulations in
 CGAL and the flexibility of the design.
 

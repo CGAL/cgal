@@ -191,7 +191,7 @@ public:
         CGAL_assertion_code(check_protocoll = 0;)
     }
 
-    ~Polyhedron_incremental_builder_3() CGAL_NOEXCEPT(CGAL_NO_ASSERTIONS_BOOL)
+    ~Polyhedron_incremental_builder_3() noexcept(!CGAL_ASSERTIONS_ENABLED)
     {
         CGAL_destructor_assertion( check_protocoll == 0);
     }
@@ -402,7 +402,7 @@ protected:
         CGAL_assertion( ! last_vertex);
         HalfedgeDS_items_decorator<HDS> decorator;
         Halfedge_handle e = get_vertex_to_edge_map( w);
-        if ( e != Halfedge_handle()) {
+        if ( e != nullptr) {
             CGAL_assertion( e->vertex() == index_to_vertex_map[w]);
             // check that the facet has no self intersections
             if ( current_face != Face_handle()
@@ -491,7 +491,7 @@ protected:
         // Halfedge e points to a vertex w. Walk around w to find a hole
         // in the facet structure. Report an error if none exist. Return
         // the halfedge at this hole that points to the vertex w.
-        CGAL_assertion( e != Halfedge_handle());
+        CGAL_assertion( e != nullptr);
         HalfedgeDS_items_decorator<HDS> decorator;
         Halfedge_handle start_edge( e);
         do {
@@ -649,7 +649,7 @@ add_vertex_to_facet( std::size_t v2) {
             Halfedge_handle hole = lookup_hole( v1);
             if ( m_error)
                 return;
-            CGAL_assertion( hole != Halfedge_handle());
+            CGAL_assertion( hole != nullptr);
             h2->opposite()->HBase::set_next( hole->next());
             decorator.set_prev( hole->next(), h2->opposite());
             hole->HBase::set_next( h1->opposite());
@@ -689,7 +689,7 @@ add_vertex_to_facet( std::size_t v2) {
                 } while ( e->next() != prev && e != h1);
                 if ( e == h1) {
                     // disconnected facet complexes
-                    if ( hole != Halfedge_handle()) {
+                    if ( hole != nullptr) {
                         // The complex can be connected with
                         // the hole at hprime.
                         hprime->HBase::set_next( hole->next());
@@ -763,8 +763,8 @@ test_facet_indices( std::vector< std::size_t> indices) {
         // check if halfedge is already in the HDS and is not border halfedge
         Halfedge_handle v = get_vertex_to_edge_map(indices[i]);
         Vertex_handle   w = index_to_vertex_map[indices[i+1]];
-        if ( v != Halfedge_handle()
-             && get_vertex_to_edge_map(indices[i+1]) != Halfedge_handle()) {
+        if ( v != nullptr
+             && get_vertex_to_edge_map(indices[i+1]) != nullptr) {
             // cycle through halfedge-loop and find edge to indices[i+1]
             Halfedge_handle vstart = v;
             do {
@@ -780,7 +780,7 @@ test_facet_indices( std::vector< std::size_t> indices) {
         // tested for non-manifold halfedges already, we just need to check
         // if the vertex indices[i] is not a closed manifold yet.
         Halfedge_handle v = get_vertex_to_edge_map(indices[i]);
-        if ( v != Halfedge_handle()) {
+        if ( v != nullptr) {
             Halfedge_handle vstart = v;
             do {
                 v = v->next()->opposite();

@@ -862,6 +862,8 @@ output_to_medit(std::ostream& os,
 
 } // end namespace Mesh_3
 
+namespace IO {
+
 /**
  * @brief outputs mesh to medit format
  * @param os the stream
@@ -911,6 +913,12 @@ bool read_MEDIT(std::istream& in, T3& t3)
   CGAL_assertion(!(!in));
   return CGAL::build_triangulation_from_file<T3, true>(in, t3);
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_to_medit;
+#endif
 
 } // end namespace CGAL
 

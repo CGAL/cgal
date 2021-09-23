@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
   // Output
   std::ofstream medit_file("output_implicit_with_subdomains.mesh");
-  CGAL::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);
+  CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return 0;

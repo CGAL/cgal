@@ -226,15 +226,6 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
                             unsigned int nb_neighbors_mst, // number of neighbors
                             const std::vector<Vector>& original_normals) // may be empty
 {
-#if (BOOST_VERSION / 100) == 1054
-  std::cerr <<
-    "In run_mst_orient_normals():\n"
-    "NOTICE: This function is incompatible with Boost 1.54, "
-    "and will not be tested. See the following bug:\n"
-    "  https://svn.boost.org/trac/boost/ticket/9012\n";
-  return true;
-#endif // Boost version is 1.54
-
   std::cerr << "Orients Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
@@ -310,10 +301,10 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream &&
-                CGAL::read_OFF(stream,
-                                      std::back_inserter(points),
-                                      CGAL::parameters::normal_map
-                                      (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
+                CGAL::IO::read_OFF(stream,
+                                   std::back_inserter(points),
+                                   CGAL::parameters::normal_map
+                                     (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
                   );
     }
     // If XYZ file format
@@ -321,9 +312,9 @@ int main(int argc, char * argv[])
              extension == ".pwn" || extension == ".PWN")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream && CGAL::read_XYZ(stream,
-                                         std::back_inserter(points),
-                                         CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
+      success = stream && CGAL::IO::read_XYZ(stream,
+                                             std::back_inserter(points),
+                                             CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
     }
     if (success)
     {

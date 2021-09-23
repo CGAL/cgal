@@ -56,9 +56,9 @@ public:
     Output_rep(const T& tt) : t(tt) {}
     std::ostream& operator () (std::ostream& out) const {
         if ( needs_parens_as_product(t)) {
-            return out << "(" << oformat(t) << ")";
+            return out << "(" << IO::oformat(t) << ")";
         } else {
-            return out << oformat(t);
+            return out << IO::oformat(t);
         }
     }
 };
@@ -75,11 +75,9 @@ template <> struct Needs_parens_as_product<long>{
     bool operator()(const long& x){return x < long(0);}
 };
 
-#ifdef CGAL_USE_LONG_LONG
 template <> struct Needs_parens_as_product<long long>{
     bool operator()(const long long& x){return x < (long long)(0);}
 };
-#endif
 
 template <> struct Needs_parens_as_product<float>{
     bool operator()(const float& x){return x < float(0);}

@@ -1061,7 +1061,7 @@ private:
   template<typename NumberType>
   bool number(NumberType& entry) {
     // whitespace(); the following >> should care for this
-    from >> CGAL::iformat(entry);
+    from >> CGAL::IO::iformat(entry);
     return from.good();
   }
 

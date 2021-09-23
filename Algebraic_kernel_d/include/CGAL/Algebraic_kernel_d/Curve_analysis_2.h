@@ -2417,7 +2417,7 @@ std::ostream& operator<< (
   typedef typename Curve::Asymptote_y Asymptote_y;
 
 
-    switch (::CGAL::get_mode(out)) {
+    switch (::CGAL::IO::get_mode(out)) {
     case ::CGAL::IO::PRETTY: {
 
       out << "--------------- Analysis results ---------------" << std::endl;
@@ -2514,7 +2514,7 @@ std::istream& operator>> (
     std::istream& is,
     Curve_analysis_2< AlgebraicKernelWithAnalysis_2, Rep_ >& curve) {
 
-  CGAL_precondition(CGAL::is_ascii(is));
+  CGAL_precondition(CGAL::IO::is_ascii(is));
 
   typedef AlgebraicKernelWithAnalysis_2 Algebraic_kernel_with_analysis_2;
 

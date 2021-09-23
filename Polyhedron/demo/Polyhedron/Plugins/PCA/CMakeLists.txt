@@ -37,3 +37,9 @@ target_link_libraries(
   basic_generator_plugin
   PUBLIC scene_surface_mesh_item scene_points_with_normal_item
          scene_polylines_item)
+
+     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+       set_tests_properties(
+         compilation_of__create_obb_mesh_plugin
+         PROPERTIES RESOURCE_LOCK Selection_test_resources)
+     endif()

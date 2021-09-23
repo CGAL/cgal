@@ -704,7 +704,7 @@ for 3D triangles and efficient intersection tests for bounding boxes.
 This work was supported
 by the Graduiertenkolleg 'Algorithmische Diskrete Mathematik',
 under grant DFG We 1265/2-1,
-and by ESPRIT IV Long Term Research Projects No. 21957 (%CGAL)
+and by ESPRIT IV Long Term Research Projects No. 21957 (\cgal)
 and No. 28155 (GALIA).
 
 */

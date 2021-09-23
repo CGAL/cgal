@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Surface_mesh_topology_Examples)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)

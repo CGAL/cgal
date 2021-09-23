@@ -11,7 +11,7 @@
 //
 // Author(s)     : Mariette Yvinec
 
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <cassert>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>

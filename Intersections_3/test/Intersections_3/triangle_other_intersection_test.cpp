@@ -17,8 +17,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-
-
+#include <CGAL/Random.h>
 
 // -----------------------------------
 // Kernels
@@ -47,8 +46,8 @@ struct Checker
 
     if ( ! result.empty() )
     {
-      assert(   NULL != CGAL::object_cast<typename K::Point_3>(&result)
-             || NULL != CGAL::object_cast<typename K::Segment_3>(&result));
+      assert(   nullptr != CGAL::object_cast<typename K::Point_3>(&result)
+             || nullptr != CGAL::object_cast<typename K::Segment_3>(&result));
     }
   }
 };
@@ -66,8 +65,8 @@ struct Checker<Epic>
     if ( ! result.empty() )
     {
       assert( CGAL::do_intersect(q, t) );
-      assert(   NULL != CGAL::object_cast<typename K::Point_3>(&result)
-             || NULL != CGAL::object_cast<typename K::Segment_3>(&result));
+      assert(   nullptr != CGAL::object_cast<typename K::Point_3>(&result)
+             || nullptr != CGAL::object_cast<typename K::Segment_3>(&result));
     }
   }
 
@@ -79,8 +78,8 @@ struct Checker<Epic>
     {
       // Here we can't check do_intersect, because there are constructions when
       // building points on line
-      assert(   NULL != CGAL::object_cast<K::Point_3>(&result)
-             || NULL != CGAL::object_cast<K::Segment_3>(&result));
+      assert(   nullptr != CGAL::object_cast<K::Point_3>(&result)
+             || nullptr != CGAL::object_cast<K::Segment_3>(&result));
     }
   }
 };
@@ -106,8 +105,8 @@ struct Checker<Epec>
       const Point_3* p = CGAL::object_cast<Point_3>(&result);
       const Segment_3* s = CGAL::object_cast<Segment_3>(&result);
 
-      assert(   (NULL!=p && t.has_on(*p) && q.has_on(*p))
-             || (NULL!=s && t.has_on(s->source()) && t.has_on(s->target())
+      assert(   (nullptr!=p && t.has_on(*p) && q.has_on(*p))
+             || (nullptr!=s && t.has_on(s->source()) && t.has_on(s->target())
                          && q.has_on(s->source()) && q.has_on(s->target())) );
     }
     else
@@ -128,18 +127,19 @@ double random_in(const double a,
 }
 
 template <class K>
-typename K::Point_3 random_point_in(const CGAL::Bbox_3& bbox)
+typename K::Point_3 random_point_in(const CGAL::Bbox_3& bbox,
+                                    CGAL::Random& r)
 {
   typedef typename K::FT FT;
-  FT x = (FT)random_in(bbox.xmin(),bbox.xmax());
-  FT y = (FT)random_in(bbox.ymin(),bbox.ymax());
-  FT z = (FT)random_in(bbox.zmin(),bbox.zmax());
+  FT x = static_cast<FT>(r.get_double(bbox.xmin(), bbox.xmax()));
+  FT y = static_cast<FT>(r.get_double(bbox.ymin(), bbox.ymax()));
+  FT z = static_cast<FT>(r.get_double(bbox.zmin(), bbox.zmax()));
   return typename K::Point_3(x,y,z);
 }
 
 // random_test()
 template <class K>
-void random_test()
+void random_test(CGAL::Random& r)
 {
   typedef typename K::Point_3 Point;
   typedef typename K::Segment_3 Segment;
@@ -158,9 +158,9 @@ void random_test()
   // Use 10 triangles, 100 queries for each triangle
   for ( int i=0 ; i<10 ; ++i )
   {
-    Triangle t(random_point_in<K>(bbox),
-               random_point_in<K>(bbox),
-               random_point_in<K>(bbox));
+    Triangle t(random_point_in<K>(bbox, r),
+               random_point_in<K>(bbox, r),
+               random_point_in<K>(bbox, r));
 
     if ( is_degenerate(t) )
       continue;
@@ -169,8 +169,8 @@ void random_test()
 
     for ( int j=0 ; j<100 ; ++j )
     {
-      Point a = random_point_in<K>(bbox);
-      Point b = random_point_in<K>(bbox);
+      Point a = random_point_in<K>(bbox, r);
+      Point b = random_point_in<K>(bbox, r);
 
       Segment s (a,b);
       Ray r(a,b);
@@ -217,7 +217,7 @@ bool test_aux(bool is_kernel_exact,
   CGAL::Object object = CGAL::intersection(t,q);
   const Result* pr = CGAL::object_cast<Result>(&object);
 
-  if ( (NULL != pr) &&
+  if ( (nullptr != pr) &&
        (is_kernel_exact ?
         (expected == *pr) :
         CGAL::to_double(CGAL::squared_distance(expected, *pr)) < sq_espilon ) )
@@ -229,7 +229,7 @@ bool test_aux(bool is_kernel_exact,
     std::cout << "ERROR: intersection(" << name
     << ") did not answer the expected result !";
 
-    if ( NULL != pr )
+    if ( nullptr != pr )
       std::cout << " (answer: ["<< *pr << "])";
 
     std::cout << std::endl;
@@ -597,6 +597,9 @@ bool test(bool is_kernel_exact = true)
 // -----------------------------------
 int main()
 {
+  CGAL::Random r;
+  std::cout << "random seed = " << r.get_seed() << std::endl;
+
   // -----------------------------------
   // Test intersection results
   // -----------------------------------
@@ -627,25 +630,25 @@ int main()
   // -----------------------------------
   // Test random intersection
   // -----------------------------------
-  srand( static_cast<unsigned int>(time(NULL)) );
+  srand( static_cast<unsigned int>(time(nullptr)) );
   std::cout << std::endl << "Test random intersections" << std::endl;
   std::cout << "\tTesting with Simple_cartesian<float>..." << std::endl ;
-  random_test<Sc_f>();
+  random_test<Sc_f>(r);
 
   std::cout << "\tTesting with Simple_cartesian<double>..." << std::endl ;
-        random_test<Sc_d>();
+  random_test<Sc_d>(r);
 
   std::cout << "\tTesting with Cartesian<float>..." << std::endl ;
-        random_test<C_f>();
+  random_test<C_f>(r);
 
   std::cout << "\tTesting with Cartesian<double>..." << std::endl ;
-        random_test<C_d>();
+  random_test<C_d>(r);
 
   std::cout << "\tTesting with Exact_predicates_inexact_constructions_kernel..." << std::endl ;
-  random_test<Epic>();
+  random_test<Epic>(r);
 
   std::cout << "\tTesting with Exact_predicates_exact_constructions_kernel..." << std::endl ;
-  random_test<Epec>();
+  random_test<Epec>(r);
 
   if ( b ) {
     return EXIT_SUCCESS;

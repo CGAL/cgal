@@ -78,7 +78,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
   }
   std::vector<EPICK::Point_3> points;
   std::vector<std::vector<int> > triangles;
-  if (!CGAL::read_polygon_soup(fileinfo.filePath().toUtf8().toStdString(), points, triangles))
+  if (!CGAL::IO::read_polygon_soup(fileinfo.filePath().toUtf8().toStdString(), points, triangles))
   {
     std::cerr << "Error: invalid STL file" << std::endl;
     ok = false;
@@ -140,23 +140,23 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   list << tr("Ascii");
   bool ok = false;
   QString choice
-    = QInputDialog::getItem(NULL, tr("Save STL file"), tr("Format"), list, 0, false, &ok);
+    = QInputDialog::getItem(nullptr, tr("Save STL file"), tr("Format"), list, 0, false, &ok);
 
   if (!ok)
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8(), std::ios::out | std::ios::binary);
   if ( choice == tr("Binary") )
-    CGAL::set_mode(out, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(out, CGAL::IO::BINARY);
   else
   {
-    CGAL::set_mode(out, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(out, CGAL::IO::ASCII);
     out.precision (std::numeric_limits<double>::digits10 + 2);
   }
 
   if (sm_item)
   {
-    CGAL::write_STL(out, *sm_item->face_graph());
+    CGAL::IO::write_STL(out, *sm_item->face_graph());
     items.pop_front();
     return true;
   }

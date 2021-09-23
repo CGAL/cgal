@@ -882,10 +882,7 @@ public:
     return boost::algorithm::knuth_morris_pratt_search(pp2.m_path.begin(),
                                                        pp2.m_path.end(),
                                                        pp1.m_path.begin(),
-                                                       pp1.m_path.end())
-#if BOOST_VERSION>=106200
-      .first
-#endif
+                                                       pp1.m_path.end()).first
         !=pp2.m_path.end();
   }
   bool operator!=(const Self&  other) const
@@ -1118,18 +1115,14 @@ public:
     auto itMatch = boost::algorithm::knuth_morris_pratt_search(pp2.m_path.begin() + 1,
                                                                pp2.m_path.end(),
                                                                pp1.m_path.begin(),
-                                                               pp1.m_path.end())
-#if BOOST_VERSION>=106200
-      .first
-#endif
-      ;
+                                                               pp1.m_path.end()).first;
     /// It can be proved that the first match location is the length of match
     auto primitiveSize = itMatch - pp2.m_path.begin();
     auto originalLength = pp1.length();
     CGAL_assertion(pp1.length() % primitiveSize == 0);
     pp1.cut(primitiveSize);
     CGAL_assertion(pp1.is_closed());
-    return std::make_pair(pp1, originalLength / primitiveSize);
+    return std::make_pair(pp1, int(originalLength / primitiveSize));
   }
 
   /// @return the turn between dart number i and dart number i+1.

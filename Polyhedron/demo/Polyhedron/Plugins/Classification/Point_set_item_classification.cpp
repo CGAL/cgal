@@ -18,7 +18,7 @@
 
 Point_set_item_classification::Point_set_item_classification(Scene_points_with_normal_item* points)
   : m_points (points)
-  , m_generator (NULL)
+  , m_generator (nullptr)
   , m_input_is_las (false)
 {
   m_index_color = 1;
@@ -213,26 +213,30 @@ Point_set_item_classification::Point_set_item_classification(Scene_points_with_n
   update_comments_of_point_set_item();
 
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  m_ethz = NULL;
+  m_ethz = nullptr;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  m_random_forest = NULL;
+  m_random_forest = nullptr;
 #endif
 }
 
 
 Point_set_item_classification::~Point_set_item_classification()
 {
-  if (m_sowf != NULL)
+  if (m_sowf != nullptr)
     delete m_sowf;
-  if (m_ethz != NULL)
+  if (m_ethz != nullptr)
     delete m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
-  if (m_random_forest != NULL)
+  if (m_random_forest != nullptr)
     delete m_random_forest;
 #endif
-  if (m_generator != NULL)
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+  if (m_neural_network != nullptr)
+    delete m_neural_network;
+#endif
+  if (m_generator != nullptr)
     delete m_generator;
-  if (m_points != NULL)
+  if (m_points != nullptr)
   {
     // For LAS saving, convert classification info in the LAS standard
     QString filename = m_points->property("source filename").toString();
@@ -321,10 +325,10 @@ void Point_set_item_classification::backup_existing_colors_and_add_new()
 {
   if (m_points->point_set()->has_colors())
     {
-      m_color = m_points->point_set()->add_property_map<CGAL::Color>("real_color").first;
+      m_color = m_points->point_set()->add_property_map<CGAL::IO::Color>("real_color").first;
       for (Point_set::const_iterator it = m_points->point_set()->begin();
            it != m_points->point_set()->first_selected(); ++ it)
-        m_color[*it] = CGAL::Color((unsigned char)(255 * m_points->point_set()->red(*it)),
+        m_color[*it] = CGAL::IO::Color((unsigned char)(255 * m_points->point_set()->red(*it)),
                                    (unsigned char)(255 * m_points->point_set()->green(*it)),
                                    (unsigned char)(255 * m_points->point_set()->blue(*it)));
 
@@ -336,7 +340,7 @@ void Point_set_item_classification::backup_existing_colors_and_add_new()
 
 void Point_set_item_classification::reset_colors()
 {
-  if (m_color == Point_set::Property_map<CGAL::Color>())
+  if (m_color == Point_set::Property_map<CGAL::IO::Color>())
     m_points->point_set()->remove_colors();
   else
     {
@@ -441,7 +445,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
         float min = (std::numeric_limits<float>::max)();
         float max = -(std::numeric_limits<float>::max)();
 
-        if (vmin != NULL && vmax != NULL
+        if (vmin != nullptr && vmax != nullptr
             && *vmin != std::numeric_limits<float>::infinity()
             && *vmax != std::numeric_limits<float>::infinity())
         {
@@ -469,7 +473,7 @@ void Point_set_item_classification::change_color (int index, float* vmin, float*
           m_points->point_set()->set_color(*it, ramp.r(v) * 255, ramp.g(v) * 255, ramp.b(v) * 255);
         }
 
-        if (vmin != NULL && vmax != NULL)
+        if (vmin != nullptr && vmax != nullptr)
         {
           *vmin = min;
           *vmax = max;
@@ -487,7 +491,7 @@ int Point_set_item_classification::real_index_color() const
 {
   int out = m_index_color;
 
-  if (out == 0 && m_color == Point_set::Property_map<CGAL::Color>())
+  if (out == 0 && m_color == Point_set::Property_map<CGAL::IO::Color>())
     out = -1;
   return out;
 }
@@ -508,7 +512,7 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales, flo
 {
   CGAL_assertion (!(m_points->point_set()->empty()));
 
-  if (m_generator != NULL)
+  if (m_generator != nullptr)
     delete m_generator;
 
   reset_indices();
@@ -526,7 +530,7 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales, flo
   if (normals)
     normal_map = m_points->point_set()->normal_map();
 
-  bool colors = (m_color != Point_set::Property_map<CGAL::Color>());
+  bool colors = (m_color != Point_set::Property_map<CGAL::IO::Color>());
 
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;
@@ -559,16 +563,16 @@ void Point_set_item_classification::compute_features (std::size_t nb_scales, flo
 
   delete m_sowf;
   m_sowf = new Sum_of_weighted_features (m_labels, m_features);
-  if (m_ethz != NULL)
+  if (m_ethz != nullptr)
   {
     delete m_ethz;
-    m_ethz = NULL;
+    m_ethz = nullptr;
   }
 #ifdef CGAL_LINKED_WITH_OPENCV
-  if (m_random_forest != NULL)
+  if (m_random_forest != nullptr)
   {
     delete m_random_forest;
-    m_random_forest = NULL;
+    m_random_forest = nullptr;
   }
 #endif
 
@@ -728,7 +732,7 @@ void Point_set_item_classification::train(int classifier, const QMultipleInputDi
   }
   else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
-    if (m_ethz != NULL)
+    if (m_ethz != nullptr)
       delete m_ethz;
     m_ethz = new ETHZ_random_forest (m_labels, m_features);
     m_ethz->train<Concurrency_tag>(training, true,
@@ -741,7 +745,7 @@ void Point_set_item_classification::train(int classifier, const QMultipleInputDi
   else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
-    if (m_random_forest != NULL)
+    if (m_random_forest != nullptr)
       delete m_random_forest;
     m_random_forest = new Random_forest (m_labels, m_features,
                                          dialog.get<QSpinBox>("max_depth")->value(), 5, 15,
@@ -776,7 +780,7 @@ bool Point_set_item_classification::run (int method, int classifier,
     run (method, *m_sowf, subdivisions, smoothing);
   else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
   {
-    if (m_ethz == NULL)
+    if (m_ethz == nullptr)
     {
       std::cerr << "Error: ETHZ Random Forest must be trained or have a configuration loaded first" << std::endl;
       return false;
@@ -786,7 +790,7 @@ bool Point_set_item_classification::run (int method, int classifier,
   else if (classifier == CGAL_CLASSIFICATION_OPENCV_NUMBER)
   {
 #ifdef CGAL_LINKED_WITH_OPENCV
-    if (m_random_forest == NULL)
+    if (m_random_forest == nullptr)
     {
       std::cerr << "Error: OpenCV Random Forest must be trained or have a configuration loaded first" << std::endl;
       return false;

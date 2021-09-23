@@ -542,17 +542,17 @@ cell base classes, the `MeshVertexBase_3` and
 `MeshCellBase_3` concepts impose additional requirements.
 
 Parallel algorithms require the executable to be linked against the
-<a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+<a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
 for more details.
 
 \section Mesh_3_section_io Input/Output
 Several file formats are supported for writing a mesh:
- - \ref IOStreamVTK, using `CGAL::output_to_vtu()`
- - \ref IOStreamAvizo, using `CGAL::output_to_avizo()`
- - \ref IOStreamMedit, using `CGAL::output_to_medit()`
- - \ref IOStreamTetgen, using `CGAL::output_to_tetgen()`
+ - \ref IOStreamVTK, using `CGAL::IO::output_to_vtu()`
+ - \ref IOStreamAvizo, using `CGAL::IO::output_to_avizo()`
+ - \ref IOStreamMedit, using `CGAL::IO::output_to_medit()`
+ - \ref IOStreamTetgen, using `CGAL::IO::output_to_tetgen()`
 
 \section Mesh_3_section_examples Examples
 
@@ -749,7 +749,7 @@ that call is replaced by:
 
 The code of the function `initialize_triangulation_from_labeled_image()` is
 in the non-documented header \ref
-CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h\. As it is
+CGAL/Mesh_3/initialize_triangulation_from_labeled_image.h. As it is
 undocumented and may be removed or modified at any time, if you wish to
 use it then you should copy-paste it to your user code. The code of that
 function is rather complicated. The following lines show how to insert new
@@ -807,7 +807,7 @@ create a 3D image using the undocumented API of CGAL_ImageIO.
 \snippet Mesh_3/mesh_3D_image_with_custom_initialization.cpp Create the image
 
 The code of the function `%random_labeled_image()` is in the header file \ref
-Mesh_3/random_labeled_image.h\.
+Mesh_3/random_labeled_image.h.
 
 
 The example \ref Mesh_3/mesh_3D_gray_image_with_custom_initialization.cpp is another
@@ -823,7 +823,7 @@ the segmented image example above, the code consists in:
 
 The code of the function `initialize_triangulation_from_gray_image()` is
 in the non-documented header \ref
-CGAL/Mesh_3/initialize_triangulation_from_gray_image.h\. As it is
+CGAL/Mesh_3/initialize_triangulation_from_gray_image.h. As it is
 undocumented and may be removed or modified at any time, if you wish to
 use it then you should copy-paste it to your user code.
 
@@ -920,7 +920,7 @@ a dedicated function computes the 1D-features, and adds them to the domain.
 \snippet Mesh_3/mesh_3D_image_with_features.cpp Call add_1D_features
 
 The function template `%add_1D_features()` is defined in the example
-file. It uses non-documented code from %CGAL, that should be copy-pasted in
+file. It uses non-documented code from \cgal, that should be copy-pasted in
 any user-code willing to use similar code. It uses the undocumented
 function template `%CGAL::polylines_to_protect` that computes the
 1D-features that correspond to the intersection of the bounding box of the

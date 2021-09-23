@@ -9,6 +9,7 @@
 #include <CGAL/odt_optimize_mesh_3.h>
 #include <CGAL/perturb_mesh_3.h>
 #include <CGAL/exude_mesh_3.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <fstream>
 #include <sstream>
@@ -65,6 +66,7 @@ void test()
 
   // iterate
   std::vector<std::string> output_c3t3;
+  std::vector<std::string> output_surfaces;
   output_c3t3.reserve(5 * nb_runs);
   for(std::size_t i = 0; i < nb_runs; ++i)
   {
@@ -76,11 +78,22 @@ void test()
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str()); //[5*i]
     oss.clear();
+    Polyhedron out_poly;
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+    oss << out_poly;
+    output_surfaces.push_back(oss.str());//[5*i]
+    out_poly.clear();
+    oss.clear();
 
     //LLOYD (1)
     CGAL::lloyd_optimize_mesh_3(c3t3, domain, max_iteration_number = nb_lloyd);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+1]
+    oss.clear();
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+    oss << out_poly;
+    output_surfaces.push_back(oss.str());//[i*5+1]
+    out_poly.clear();
     oss.clear();
 
     //ODT (2)
@@ -88,17 +101,32 @@ void test()
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+2]
     oss.clear();
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+    oss << out_poly;
+    output_surfaces.push_back(oss.str());//[i*5+2]
+    out_poly.clear();
+    oss.clear();
 
     //PERTURB (3)
     CGAL::perturb_mesh_3(c3t3, domain, sliver_bound=perturb_bound);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+3]
     oss.clear();
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+    oss << out_poly;
+    output_surfaces.push_back(oss.str());//[i*5+3]
+    out_poly.clear();
+    oss.clear();
 
     //EXUDE (4)
     CGAL::exude_mesh_3(c3t3, sliver_bound=exude_bound);
     c3t3.output_to_medit(oss);
     output_c3t3.push_back(oss.str());//[i*5+4]
+    oss.clear();
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out_poly);
+    oss << out_poly;
+    output_surfaces.push_back(oss.str());//[i*5+4]
+    out_poly.clear();
     oss.clear();
 
     if(i == 0)
@@ -109,6 +137,11 @@ void test()
       if(0 != output_c3t3[5*(i-1)+j].compare(output_c3t3[5*i+j]))
       {
         std::cerr << "Meshing operation " << j << " is not deterministic.\n";
+        CGAL_assertion(false);
+      }
+      if (0 != output_surfaces[5 * (i - 1) + j].compare(output_surfaces[5 * i + j]))
+      {
+        std::cerr << "Output surface after operation " << j << " is not deterministic.\n";
         CGAL_assertion(false);
       }
     }

@@ -18,7 +18,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/minimum_enclosing_quadrilateral_2.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/min_quadrilateral_2.h>"
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/min_quadrilateral_2.h>
 

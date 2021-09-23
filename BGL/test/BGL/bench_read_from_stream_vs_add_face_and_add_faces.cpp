@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
   Mesh m;
   const char* filename = (argc>1) ? argv[1] : "data/genus3.off";
-  CGAL::read_polygon_mesh(filename, m);
+  CGAL::IO::read_polygon_mesh(filename, m);
 
   std::cout << "  is_valid? " << CGAL::is_valid_polygon_mesh(m) << "\n";
   std::cout << "Total time: " << timer.time() << std::endl << std::endl;
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
   const char* filename = (argc>1) ? argv[1] : "data/blobby.off";
   std::vector<Kernel::Point_3> points;
   std::vector<std::array<std::size_t, 3> > faces_ids;
-  CGAL::read_polygon_soup(filename, points, faces_ids);
+  CGAL::IO::read_polygon_soup(filename, points, faces_ids);
   std::cout << "  Read soup: " << timer.time() << std::endl;
 
   std::vector<std::array<Mesh::Vertex_index, 3> > triangles;
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 
   std::vector<Kernel::Point_3> points;
   std::vector<std::array<std::size_t, 3> > faces_ids;
-  CGAL::read_polygon_soup(filename, points, faces_ids);
+  CGAL::IO::read_polygon_soup(filename, points, faces_ids);
   std::cout << "  Read soup: " << timer.time() << std::endl;
 
   std::vector<std::array<Mesh::Vertex_index, 3> > triangles;

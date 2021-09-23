@@ -62,6 +62,9 @@ public:
   Circle_2(const RCircle_2& t)
     : RCircle_2(t) {}
 
+  Circle_2(RCircle_2&& t)
+    : RCircle_2(std::move(t)) {}
+
   Circle_2(const Point_2 &center, const FT &squared_radius,
            const Orientation &orientation)
     : RCircle_2(typename R::Construct_circle_2()(Return_base_tag(), center, squared_radius, orientation)) {}
@@ -221,7 +224,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Circle_2<R>& c)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
            << static_cast<int>(c.orientation());
@@ -264,9 +267,9 @@ extract(std::istream& is, Circle_2<R>& c)
     typename R::Point_2 center;
     typename R::FT squared_radius(0);
     int o=0;
-    switch(get_mode(is)) {
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> center >> iformat(squared_radius) >> o;
+        is >> center >> IO::iformat(squared_radius) >> o;
         break;
     case IO::BINARY :
         is >> center;
@@ -276,7 +279,7 @@ extract(std::istream& is, Circle_2<R>& c)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)

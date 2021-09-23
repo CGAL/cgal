@@ -1,0 +1,34 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \begin{pspicture}(-1,-1)(7,6)
+    \arraxes(0,0)(-1,-1)(7,6)
+    \arrEmptyVertex(0,3){a}
+    \arrEmptyVertex(2,5){b}
+    \arrEmptyVertex(4,5){c}
+    \arrEmptyVertex(6,3){d}
+    \arrEmptyVertex(3,0){e}
+    \arrEmptyVertex(3,2){f}
+    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
+    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
+    \ncline[linewidth=0.5pt,linecolor=blue]{c}{d}
+    \ncline[linewidth=0.5pt,linecolor=blue]{d}{e}
+    \ncline[linewidth=0.5pt,linecolor=blue]{e}{a}
+    \arrCrossVertex(1,4){1}\uput[-45]{0}(1,4){$q_1$}
+    \arrCrossVertex(4,3){2}\uput[270]{0}(4,3){$q_2$}
+    \ncline[linestyle=dotted,dotsep=1pt]{->}{2}{c}
+    \arrCrossVertex(6,3){3}\uput[-45]{0}(6,3){$q_3$}
+    \arrCrossVertex(3,2){4}\uput[270]{0}(3,2){$q_4$}
+    \pnode(3,5){44}
+    \ncline[linestyle=dotted,dotsep=1pt]{->}{4}{44}
+    \arrCrossVertex(5,2){5}\uput[-45]{0}(5,2){$q_5$}
+    \pnode(5,4){55}
+    \ncline[linestyle=dotted,dotsep=1pt]{->}{5}{55}
+    \arrCrossVertex(1,0){6}\uput[-45]{0}(1,0){$q_6$}
+    \pnode(1,2){66}
+    \ncline[linestyle=dotted,dotsep=1pt]{->}{6}{66}
+  \end{pspicture}
+}
+\end{document}

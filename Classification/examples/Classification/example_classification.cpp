@@ -52,9 +52,9 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   std::vector<Point> pts;
-  if (!(CGAL::read_points(filename, std::back_inserter(pts),
-                          // the PLY reader expects a binary file by default
-                          CGAL::parameters::use_binary_mode(false))))
+  if (!(CGAL::IO::read_points(filename, std::back_inserter(pts),
+                              // the PLY reader expects a binary file by default
+                              CGAL::parameters::use_binary_mode(false))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;
@@ -107,10 +107,10 @@ int main (int argc, char** argv)
   Label_handle ground = labels.add ("ground");
 
   // Init name and color
-  Label_handle vegetation = labels.add ("vegetation", CGAL::Color(0,255,0));
+  Label_handle vegetation = labels.add ("vegetation", CGAL::IO::Color(0,255,0));
 
   // Init name, Color and standard index (here, ASPRS building index)
-  Label_handle roof = labels.add ("roof", CGAL::Color (255, 0, 0), 6);
+  Label_handle roof = labels.add ("roof", CGAL::IO::Color (255, 0, 0), 6);
 
   //! [Labels]
   ///////////////////////////////////////////////////////////////////
@@ -211,7 +211,7 @@ int main (int argc, char** argv)
 
   std::ofstream f ("classification.ply");
 
-  CGAL::write_PLY_with_properties
+  CGAL::IO::write_PLY_with_properties
     (f, CGAL::make_range (boost::counting_iterator<std::size_t>(0),
                           boost::counting_iterator<std::size_t>(pts.size())),
      CGAL::make_ply_point_writer (CGAL::make_property_map(pts)),

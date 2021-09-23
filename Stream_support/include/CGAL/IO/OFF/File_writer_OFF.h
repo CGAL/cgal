@@ -60,8 +60,6 @@ public:
 
   void write_footer()
   {
-    if(m_header.ascii() && m_header.comments())
-      out() << "\n\n# End of OFF #";
     out() << std::endl;
   }
 
@@ -75,7 +73,7 @@ public:
     }
     else
     {
-      out() << '\n' << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z);
+      out() << '\n' << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z);
     }
   }
 
@@ -89,7 +87,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << oformat(x) << ' ' << oformat(y) << ' ' << oformat(z);
+      out() << ' ' << ' ' << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z);
     }
   }
 
@@ -103,7 +101,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << oformat(r) << ' ' << oformat(g) << ' ' << oformat(b);
+      out() << ' ' << ' ' << IO::oformat(r) << ' ' << IO::oformat(g) << ' ' << IO::oformat(b);
     }
   }
 
@@ -116,7 +114,7 @@ public:
     }
     else
     {
-      out() << ' ' << ' ' << oformat(tx) << ' ' << oformat(ty);
+      out() << ' ' << ' ' << IO::oformat(tx) << ' ' << IO::oformat(ty);
     }
   }
 
@@ -124,17 +122,7 @@ public:
   {
     if(m_header.ascii())
     {
-      if(m_header.no_comments())
-      {
-        out() << '\n';
-      }
-      else
-      {
-        out() << "\n\n# " << m_header.size_of_facets()
-              << " facets\n";
-        out() << "# ------------------------------------------"
-                 "\n\n";
-      }
+      out() << '\n';
     }
   }
 
