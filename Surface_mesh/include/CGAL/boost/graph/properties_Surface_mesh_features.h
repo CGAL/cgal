@@ -51,6 +51,16 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::edge_is_feature_t>
 };
 
 
+template<typename P>
+struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_is_feature_t>
+{
+  typedef typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+
+  typedef typename CGAL::Surface_mesh<P>::template Property_map<vertex_descriptor, bool> type;
+  typedef type const_type;
+};
+
+
 template <typename P>
 struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_feature_degree_t>
 {
@@ -126,12 +136,31 @@ inline get(CGAL::edge_is_feature_t, Surface_mesh<P>& smesh)
 }
 
 
+
+template <typename P>
+CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_is_feature_t)
+inline get(CGAL::vertex_is_feature_t, Surface_mesh<P>& smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+  return smesh. template add_property_map<vertex_descriptor,bool>("v:is_feature", false).first;
+}
+
+
 template <typename P>
 CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::edge_is_feature_t)
 inline get(CGAL::edge_is_feature_t, const Surface_mesh<P>& smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::edge_descriptor edge_descriptor;
   return smesh. template property_map<edge_descriptor,bool>("e:is_feature").first;
+}
+
+
+template <typename P>
+CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::vertex_is_feature_t)
+inline get(CGAL::vertex_is_feature_t, const Surface_mesh<P>& smesh)
+{
+  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_descriptor vertex_descriptor;
+  return smesh. template property_map<vertex_descriptor,bool>("v:is_feature").first;
 }
 
 
