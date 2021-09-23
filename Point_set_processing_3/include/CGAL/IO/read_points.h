@@ -28,6 +28,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /**
   \ingroup PkgPointSetProcessing3IO
 
@@ -71,11 +73,11 @@ namespace CGAL {
      \cgalParamNEnd
 
      \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
        \cgalParamType{Boolean}
        \cgalParamDefault{`true`}
        \cgalParamExtra{This parameter is only relevant for `PLY` reading: the `OFF` and `XYZ` formats
-                       are always ASCII, and the `LAS` format is always binary.}
+                       are always \ascii, and the `LAS` format is always binary.}
      \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -88,7 +90,7 @@ bool read_points(const std::string& fname,
                  PointOutputIterator output,
                  const NamedParameters& np)
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz" || ext == "pwn")
     return read_XYZ<OutputIteratorValueType>(fname, output, np);
@@ -128,6 +130,6 @@ bool read_points(const std::string& fname, OutputIterator output)
 
 /// \endcond
 
-} // namespace CGAL
+} } // namespace CGAL::IO
 
 #endif // CGAL_POINT_SET_PROCESSING_READ_POINTS_H

@@ -27,7 +27,7 @@
 #include <CGAL/Mesh_3/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
-#include <CGAL/internal/Mesh_3/check_weights.h>
+#include <CGAL/Mesh_3/internal/check_weights.h>
 
 #include <boost/parameter/preprocessor.hpp>
 

@@ -7,8 +7,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
 
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
@@ -21,7 +19,7 @@ int main(int argc, char* argv[])
 
   std::ifstream is((argc>1)?argv[1]:"data/multipoint.wkt");
   MultiPoint mp;
-  CGAL::read_multi_point_WKT(is, mp);
+  CGAL::IO::read_multi_point_WKT(is, mp);
   for(const Point& p : mp)
   {
     std::cout<<p<<std::endl;
@@ -29,9 +27,3 @@ int main(int argc, char* argv[])
   is.close();
   return 0;
 }
-#else
-int main()
-{
-  return 0;
-}
-#endif

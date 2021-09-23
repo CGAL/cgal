@@ -77,13 +77,13 @@ struct MyDrawingFunctorLCC
   /// @return the color of the volume containing dh
   ///  used only if colored_volume(alcc, dh) and !colored_face(alcc, dh)
   template<typename LCC>
-  CGAL::Color volume_color(const LCC& alcc,
+  CGAL::IO::Color volume_color(const LCC& alcc,
                            typename LCC::Dart_const_handle dh) const
   { return alcc.template info<3>(dh).color(); }
   /// @return the color of the face containing dh
   ///  used only if colored_face(alcc, dh)
   template<typename LCC>
-  CGAL::Color face_color(const LCC& alcc,
+  CGAL::IO::Color face_color(const LCC& alcc,
                          typename LCC::Dart_const_handle dh) const
   {
     CGAL::Random random((unsigned int)(alcc.darts().index(dh)));
@@ -92,15 +92,15 @@ struct MyDrawingFunctorLCC
   /// @return the color of the edge containing dh
   ///  used only if colored_edge(alcc, dh)
   template<typename LCC>
-  CGAL::Color edge_color(const LCC&,
+  CGAL::IO::Color edge_color(const LCC&,
                          typename LCC::Dart_const_handle) const
-  { return CGAL::Color(0, 0, 0); }
+  { return CGAL::IO::Color(0, 0, 0); }
   /// @return the color of the vertex containing dh
   ///  used only if colored_vertex(alcc, dh)
   template<typename LCC>
-  CGAL::Color vertex_color(const LCC&,
+  CGAL::IO::Color vertex_color(const LCC&,
                            typename LCC::Dart_const_handle) const
-  { return CGAL::Color(0, 0, 0); }
+  { return CGAL::IO::Color(0, 0, 0); }
 };
 
 

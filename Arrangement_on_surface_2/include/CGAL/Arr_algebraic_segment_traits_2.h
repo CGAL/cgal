@@ -129,14 +129,14 @@ public:
         return CKvA_2::instance().parameter_space_in_x_2_object();
     }
 
-    typedef typename CKvA_2::Compare_x_at_limit_2 Compare_x_at_limit_2;
-    Compare_x_at_limit_2 compare_x_at_limit_2_object() const {
-        return CKvA_2::instance().compare_x_at_limit_2_object();
+    typedef typename CKvA_2::Compare_x_on_boundary_2 Compare_x_on_boundary_2;
+    Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const {
+        return CKvA_2::instance().compare_x_on_boundary_2_object();
     }
 
-    typedef typename CKvA_2::Compare_x_near_limit_2  Compare_x_near_limit_2;
-    Compare_x_near_limit_2 compare_x_near_limit_2_object() const {
-        return CKvA_2::instance().compare_x_near_limit_2_object();
+    typedef typename CKvA_2::Compare_x_near_boundary_2 Compare_x_near_boundary_2;
+    Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
+        return CKvA_2::instance().compare_x_near_boundary_2_object();
     }
 
     typedef typename CKvA_2::Construct_min_vertex_2 Construct_min_vertex_2;

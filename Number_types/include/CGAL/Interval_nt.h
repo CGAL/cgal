@@ -438,9 +438,9 @@ private:
       if(c == '['){ // read original output from operator <<
         double inf,sup;
         CGAL_SWALLOW(is, '[');// read the "["
-        is >> iformat(inf);
+        is >> IO::iformat(inf);
         CGAL_SWALLOW(is, ';');// read the ";"
-        is >> iformat(sup);
+        is >> IO::iformat(sup);
         CGAL_SWALLOW(is, ']');// read the "]"
         I = Interval_nt(inf,sup);
       }else{ //read double (backward compatibility)
@@ -1141,17 +1141,15 @@ namespace INTERN_INTERVAL_NT {
       // it helps significantly, it might even hurt by introducing a
       // dependency.
     }
-#else
+#else // no __AVX512F__
     // TODO: Alternative for computing CGAL_IA_SQRT_DOWN(d.inf()) exactly
     // without changing the rounding mode:
     // - compute x = CGAL_IA_SQRT(d.inf())
     // - compute y = CGAL_IA_SQUARE(x)
     // - if y==d.inf() use x, else use -CGAL_IA_SUB(CGAL_IA_MIN_DOUBLE,x)
-    FPU_set_cw(CGAL_FE_DOWNWARD);
-    double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
-    FPU_set_cw(CGAL_FE_UPWARD);
-#endif
-    return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
+    double i = IA_sqrt_toward_zero(d.inf());
+#endif // no __AVX512F__
+    return Interval_nt<Protected>(i, IA_sqrt_up(d.sup()));
   }
 
   template <bool Protected>

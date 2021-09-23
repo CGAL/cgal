@@ -34,7 +34,7 @@ private:
 
 public:
   Constrained_edges_property_map()
-    : m_set_ptr(NULL)
+    : m_set_ptr(nullptr)
   {}
   Constrained_edges_property_map(boost::unordered_set<key_type>* set_)
     : m_set_ptr(set_)
@@ -45,7 +45,7 @@ public:
                   const key_type& k,
                   const bool b)
   {
-    CGAL_assertion(map.m_set_ptr != NULL);
+    CGAL_assertion(map.m_set_ptr != nullptr);
     CGAL_assertion(k.first < k.second);
     if (b)  map.m_set_ptr->insert(k);
     else    map.m_set_ptr->erase(k);
@@ -54,7 +54,7 @@ public:
   friend value_type get(const Constrained_edges_property_map& map,
                               const key_type& k)
   {
-    CGAL_assertion(map.m_set_ptr != NULL);
+    CGAL_assertion(map.m_set_ptr != nullptr);
     CGAL_assertion(k.first < k.second);
     return (map.m_set_ptr->count(k) > 0);
   }

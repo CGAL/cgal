@@ -22,7 +22,7 @@
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 #include <CGAL/is_iterator.h>
 
 #include <boost/container/flat_set.hpp>

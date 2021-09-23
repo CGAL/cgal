@@ -63,11 +63,11 @@ _test_cls_triangulation_3_input_output(const Triangulation & T,
   std::cout << "    I/O (binary)" << std::endl;
   {
     std::ofstream oFileBin(filename2, std::ios::out|std::ios::binary);
-    CGAL::set_binary_mode(oFileBin);
+    CGAL::IO::set_binary_mode(oFileBin);
     oFileBin << T;
   }
   std::ifstream iFileBin(filename2, std::ios::in|std::ios::binary);
-  CGAL::set_binary_mode(iFileBin);
+  CGAL::IO::set_binary_mode(iFileBin);
   Triangulation Tfromfile_binary;
   iFileBin >> Tfromfile_binary;
   assert(Tfromfile_binary.is_valid());
@@ -190,7 +190,21 @@ _test_cls_triangulation_3(const Triangulation &)
   //########################################################################
 
 
-  /**************CONSTRUCTORS (1)*********************/
+  /************** CONSTRUCTORS (1)********************/
+
+  Cls Tm1;
+  assert( Tm1.dimension() == -1 );
+  assert( Tm1.number_of_vertices() == 0 );
+
+  Cls Tm3(Tm1);
+  assert(Tm3 == Tm1);
+
+  Cls Tm4 = Tm1;
+  assert(Tm4 == Tm1);
+
+  Tm3.swap(Tm1);
+
+  /************** INSERTIONS *************************/
   /************** and I/O ****************************/
 
   std::cout << "    Constructor " << std::endl;
@@ -214,6 +228,9 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.number_of_vertices() == 1);
   assert(T0.is_valid());
 
+  Cls T0d0(T0);
+  assert(T0 == T0d0);
+
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations
     {
@@ -227,6 +244,9 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.dimension() == 1);
   assert(T0.number_of_vertices() == 2);
   assert(T0.is_valid());
+
+  Cls T0d1(T0);
+  assert(T0 == T0d1);
 
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations
@@ -242,6 +262,9 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.number_of_vertices() == 3);
   assert(T0.is_valid());
 
+  Cls T0d2(T0);
+  assert(T0 == T0d2);
+
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations
     {
@@ -255,6 +278,9 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
+
+  Cls T0d3(T0);
+  assert(T0 == T0d3);
 
   if (! del) // to avoid doing the following tests for both Delaunay
     // and non Delaunay triangulations

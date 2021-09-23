@@ -186,9 +186,9 @@ two input polygons. The example listed below tests whether the two
 triangles depicted on the right intersect. It uses, as do the other
 example programs in this chapter, the auxiliary header file
 `bso_rational_nt.h`, which defines the type `Number_type` as
-<span class="textsc">Gmp</span>'s rational number-type (`Gmpq`), or as the
+\gmp's rational number-type (`Gmpq`), or as the
 number type `Quotient<MP_Float>` that is included in the support
-library of \cgal, based on whether the <span class="textsc">Gmp</span> library is installed
+library of \cgal, based on whether the \gmp library is installed
 or not. It also uses the function `print_polygon.h` listed above,
 which is located in the header file `print_utils.h`.
 
@@ -367,24 +367,21 @@ a collection in terms of a class, making it possible to operate on the
 set resulting from computing, for example, \f$ P \setminus Q\f$.
 
 A central component in the Boolean set-operations package is the
-`Polygon_set_2<Kernel, Container, Dcel>` class-template. An instance
-of this class represents a point set formed by the collection of
-several disconnected polygons with holes. It employs the
-`Arrangement_2` class to represent this point set in the plane as a
-planar arrangement; see Chapter \ref chapterArrangement_on_surface_2
-"2D Arrangements". The instantiated `Dcel` type is used to represent
-the underlying internal arrangement. It must model the concept
-`GeneralPolygonSetDcel`, and defaults to `Gps_default_dcel`.  You can
-override this default, with a different <span
-class="textsc">Dcel</span> class, typically an extension of the
-default. Overriding the default is necessary only if you intend to
-obtain the underlying internal arrangement and process it further.
+`Polygon_set_2<Kernel, Container, Dcel>` class-template. An instance of
+this class represents a point set formed by the collection of several
+disconnected polygons with holes. It employs the `Arrangement_2` class
+to represent this point set in the plane as a planar arrangement; see
+Chapter \ref chapterArrangement_on_surface_2 "2D Arrangements". The instantiated `Dcel`
+type is used to represent the underlying internal arrangement. It must model
+the concept `GeneralPolygonSetDcel`, and defaults to `Gps_default_dcel`.
+You can override this default, with a different \dcel class, typically
+an extension of the default. Overriding the default is necessary only if
+you intend to obtain the underlying internal arrangement and process it further.
 
-An instance \f$ S\f$ of a `Polygon_set_2` class usually represents the
-result of a sequence of operations that were applied on some input
-polygons. The representation of \f$ S\f$ is unique, regardless of the
-particular sequence of operations that were applied in order to arrive
-at it.
+An instance \f$ S\f$ of a `Polygon_set_2` class usually represents
+the result of a sequence of operations that were applied on some input
+polygons. The representation of \f$ S\f$ is unique, regardless of the particular
+sequence of operations that were applied in order to arrive at it.
 
 In addition, a polygon-set object can be constructed from a single
 polygon object or from a polygon-with-holes object. Once constructed,
@@ -649,20 +646,18 @@ concepts.
 The central class-template `General_polygon_set_2<Traits,Dcel>` is
 used to represent point sets that are comprised of a finite number of
 pairwise disjoint general polygons with holes, and provides various
-Boolean set-operations on such sets. It is parameterized by a
-<I>traits</I> class and a <span class="textsc">Dcel</span> class. The
-former defines the type of points used to represent polygon vertices
-and the type of \f$ x\f$-monotone curves that represent the polygon
-edges. The traits class also provides primitive geometric operations
-that operate on objects of these types.  The <span
-class="textsc">Dcel</span> class is used to represent the underlying
-internal `Arrangement_2` data structure. The instantiated `Dcel` type
-is used to represent the underlying internal arrangement. It must
-model the concept `GeneralPolygonSetDcel`, and defaults to
-`Gps_default_dcel`.  You can override this default, with a different
-<span class="textsc">Dcel</span> class, typically an extension of the
-default. Overriding the default is necessary only if you intend to
-obtain the underlying internal arrangement and process it further.
+Boolean set-operations on such sets. It is parameterized by a <I>traits</I>
+class and a \dcel class. The former defines the type of points used
+to represent polygon vertices and the type of \f$ x\f$-monotone curves that
+represent the polygon edges. The traits class also provides primitive
+geometric operations that operate on objects of these types.
+The \dcel class is used to represent the underlying internal
+`Arrangement_2` data structure. The instantiated `Dcel` type is
+used to represent the underlying internal arrangement. It must model the
+concept `GeneralPolygonSetDcel`, and defaults to `Gps_default_dcel`.
+You can override this default, with a different \dcel class, typically
+an extension of the default. Overriding the default is necessary only if
+you intend to obtain the underlying internal arrangement and process it further.
 
 An instantiated
 `General_polygon_set_2` class defines the nested types
@@ -824,7 +819,7 @@ respectively. Their intersection comprises nine simple polygons, as
 depicted to the right.
 
 Recall that every B&eacute;zier curve is defined by a sequence of control
-points that form chains (see Section \ref arr_ssectr_bez. The last
+points that form chains (see Section \ref arr_sssectr_bez. The last
 control point of every curve must be identical to the first control
 point of its successor. The function `read_Bezier_polygon()`
 included in the example reads the curves from an input file until they

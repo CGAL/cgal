@@ -20,7 +20,7 @@
 
 template <typename AK>
 void test_polynomial_utils(){
-  //CGAL::set_pretty_mode(std::cout);
+  //CGAL::IO::set_pretty_mode(std::cout);
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational;

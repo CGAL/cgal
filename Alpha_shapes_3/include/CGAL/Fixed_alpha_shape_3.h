@@ -36,7 +36,7 @@
 #include <CGAL/IO/Geomview_stream.h>  // TBC
 #endif
 
-#include <CGAL/internal/Classification_type.h>
+#include <CGAL/Alpha_shapes_3/internal/Classification_type.h>
 
 #include <CGAL/Triangulation_3.h>
 

@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc>1) ? argv[1] : "data/tripod.off";
 
   Mesh mesh;
-  if(!CGAL::read_polygon_mesh(filename, mesh))
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

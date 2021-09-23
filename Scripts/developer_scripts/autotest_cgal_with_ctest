@@ -1,6 +1,4 @@
 #!/bin/bash
-
-#!/bin/bash
 #usage : script [-c -l -n -s -k] testsuite_dir
 
 ##########################
@@ -16,14 +14,14 @@ export WGET="wget"
 export WGET_OPTS="--no-check-certificate --no-verbose"
 export CURL="curl"
 export CURL_OPTS="-k --remote-name --silent --location-trusted"
-export CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
+export CGAL_URL="https://cgal.geometryfactory.com/CGAL/Releases"
 export UPLOAD_RESULT_DESTINATION="cgaltest@cgaltest.geometryfactory.com:incoming"
 export LATEST_LOCATION="${CGAL_URL}/LATEST"
 export TAR="tar"
 export GUNZIP="gunzip"
 export COMPRESSOR="gzip"
 export CONSOLE_OUTPUT="y"
-export CGAL_HOME=`pwd`
+export CGAL_HOME=$(pwd | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 export USE_TARGZ="y"
 export USE_TARBZ="n"
 export CGAL_RELEASE=""
@@ -216,7 +214,7 @@ unzip_cgal()
 # Parse command line arguments
 for arg in "$@"
 do
-  case "$arg" in 
+  case "$arg" in
     "-c")
       echo "Using latest unzipped release instead of getting a new one from the server"
       USE_LATEST_UNZIPPED="y"
@@ -263,7 +261,7 @@ LOCK_FILE="${CGAL_HOME}/autotest_cgal_with_cmake.lock"
 ACTUAL_LOGFILE="${CGAL_HOME}/`basename ${0}`.log"
 rm -f "${ACTUAL_LOGFILE}"
 
-echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}" 
+echo "Running `basename ${0}` "'$Revision$' >> "${ACTUAL_LOGFILE}"
 
 cd "$CGAL_HOME"
 
@@ -283,6 +281,8 @@ if [ -n "${SCRIPTS_DIR}" ]; then
 else
   CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-I"`
 fi
+
+CGAL_DIR=$(echo "$CGAL_DIR" | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 
 CGAL_RELEASE_ID=$(cat last_release_id)
 for HOST in ${BUILD_HOSTS}; do

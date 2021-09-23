@@ -22,6 +22,7 @@
 \example Poisson_surface_reconstruction_3/poisson_reconstruction_example.cpp
 \example Polygon_mesh_processing/corefinement_difference_remeshed.cpp
 \example Polygon_mesh_processing/corefinement_mesh_union.cpp
+\example Polygon_mesh_processing/corefinement_OM_union.cpp
 \example Polygon_mesh_processing/corefinement_mesh_union_and_intersection.cpp
 \example Polygon_mesh_processing/corefinement_consecutive_bool_op.cpp
 \example Polygon_mesh_processing/detect_features_example.cpp
@@ -33,4 +34,5 @@
 \example Polygon_mesh_processing/locate_example.cpp
 \example Polygon_mesh_processing/orientation_pipeline_example.cpp
 \example Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp
+\example Polygon_mesh_processing/hausdorff_bounded_error_distance_example.cpp
 */

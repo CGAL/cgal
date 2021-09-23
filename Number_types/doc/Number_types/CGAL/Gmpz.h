@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup nt_gmp
 
 An object of the class `Gmpz` is an arbitrary precision integer
-based on the <span class="textsc">Gmp</span> Library.
+based on the \gmp Library.
 
 \cgalModels `EuclideanRing`
 \cgalModels `RealEmbeddable`
@@ -101,7 +101,7 @@ size_t bit_size() const;
 
 /*!
 Returns the size in limbs of `z`. A limb is the type used by
-<span class="textsc">Gmp</span> to represent the integer (usually `long`).
+\gmp to represent the integer (usually `long`).
 */
 size_t size() const;
 

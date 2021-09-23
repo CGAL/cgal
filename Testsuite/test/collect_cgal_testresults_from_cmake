@@ -30,7 +30,10 @@ RESULT_FILE=''
 # print timings on fd3
 print_testresult()
 {
-  if [ ! -f ErrorOutput_$1 ] ; then
+  if [ -f skipped ]; then
+    RESULT="s"
+    TIMING="0"
+  elif [ ! -f ErrorOutput_$1 ] ; then
     RESULT="?"
     TIMING="?"
   else
@@ -50,7 +53,12 @@ print_testresult()
       # 'QMessageBox::warning'.
       if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i -E -q '(^|[^a-zA-Z_,:-])warning'
       then
-        RESULT="w"
+        if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i -E '(^|[^a-zA-Z_,:-])warning' | grep -i -q "include[/\]CGAL\|cmake"
+        then
+          RESULT="w"
+        else
+          RESULT="t"
+        fi
       else
   if grep -E -q 'NOTICE: .*(need|require|incompatible).*and.*will not be' CompilerOutput_$1
   then

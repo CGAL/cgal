@@ -23,7 +23,7 @@ template <class Point>
 bool
 file_input(std::ifstream& is, std::list<Point>& L, int nb=0)
 {
-  CGAL::set_ascii_mode(is);
+  CGAL::IO::set_ascii_mode(is);
   int n;
   is >> n;
   if (nb != 0 && nb <= n) n=nb;

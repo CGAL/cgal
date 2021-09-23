@@ -82,7 +82,7 @@ public Q_SLOTS:
       Scene_polyhedron_selection_item* selection_item =
         qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
 
-      SMesh* pMesh = (sm_item != NULL)
+      SMesh* pMesh = (sm_item != nullptr)
                     ? sm_item->polyhedron()
                     : selection_item->polyhedron();
 

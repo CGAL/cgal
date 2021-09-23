@@ -164,7 +164,7 @@ private:
   Ref_counted_base& operator=( Ref_counted_base const &);
 protected:
   Ref_counted_base(): mCount(0) {}
-  virtual ~Ref_counted_base() {}
+  virtual ~Ref_counted_base() noexcept(!CGAL_ASSERTIONS_ENABLED) {}
 public:
     void AddRef() const { ++mCount; }
     void Release() const

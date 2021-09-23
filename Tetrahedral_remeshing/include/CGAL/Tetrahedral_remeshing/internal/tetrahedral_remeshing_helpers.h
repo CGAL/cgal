@@ -68,7 +68,7 @@ const int indices_table[4][3] = { { 3, 1, 2 },
                                   { 3, 0, 1 },
                                   { 2, 1, 0 } };
 
-int indices(const int& i, const int& j)
+inline int indices(const int& i, const int& j)
 {
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)
@@ -1671,7 +1671,7 @@ template<typename C3t3>
 void dump_binary(const C3t3& c3t3, const char* filename)
 {
   std::ofstream os(filename, std::ios::binary | std::ios::out);
-  CGAL::Mesh_3::save_binary_file(os, c3t3);
+  CGAL::IO::save_binary_file(os, c3t3);
   os.close();
 }
 

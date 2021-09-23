@@ -27,7 +27,7 @@ int main (int argc, char** argv)
 
   // read input
   std::vector<Point_3> points;
-  if(!CGAL::read_points(fname, std::back_inserter(points)))
+  if(!CGAL::IO::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: can't read input file" << std::endl;
     return EXIT_FAILURE;

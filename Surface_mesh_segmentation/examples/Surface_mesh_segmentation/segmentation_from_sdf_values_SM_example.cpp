@@ -21,7 +21,7 @@ int main(int argc, char** argv )
   const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
 
   Mesh mesh;
-  if(!CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, mesh) ||
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh) ||
      !CGAL::is_triangle_mesh(mesh))
   {
     std::cerr << "Invalid input file." << std::endl;

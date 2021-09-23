@@ -530,7 +530,7 @@ possible to use the `Gps_circle_segment_traits_2<Kernel>` class template,
 which considerably speeds up the (approximate) construction of the offset
 polygon and the application of Boolean set operations on such polygons;
 see Section
-\ref arr_ssectr_circ_seg "A Traits Class for Circular Arcs and Line Segments"
+\ref arr_sssectr_circ_seg "A Traits Class for Circular Arcs and Line Segments"
 for the exploitation of the efficient square root extension number type.
 The function returns an object of the nested type
 `Gps_circle_segment_traits_2::Polygon_with_holes_2` representing
@@ -558,18 +558,18 @@ As mentioned in the previous section, it is possible to represent
 offset polygons in an exact manner if the edges of the polygons are
 represented as arcs of conic curves with rational coefficients. The
 \link offset_polygon_2() `offset_polygon_2(P, r, traits)`\endlink
-function template computes the offset of a given polygon \f$ P\f$
-by a rational radius \f$ r\f$ in an exact manner. The input
-polygon \f$ P\f$ must be either simple or degenerate consisting of two
-vertices (representing a line segment). The `traits` argument must model
-the concept `ArrangementTraits_2` and it should be capable of handling
+function template computes the offset of a given polygon \f$ P\f$ by a
+rational radius \f$ r\f$ in an exact manner. The input polygon \f$
+P\f$ must be either simple or degenerate consisting of two vertices
+(representing a line segment). The `traits` argument must model the
+concept `ArrangementTraits_2` and it should be capable of handling
 conic arcs in an exact manner---using an instance of the
-`Arr_conic_traits_2` class template with the number
-types provided by the <span class="textsc">Core</span> library is the
-preferred option; see \ref arr_ssectr_conic "A Traits Class for Conic Arcs"
-for more details. The function template returns an object of the nested
-type `Gps_traits_2::Polygons_with_holes_2`
-(see \ref bso_ssecgeneral_polygon_concept "General Polygon Set Traits Adapter"
+`Arr_conic_traits_2` class template with the number types provided by
+the \core library is the preferred option; see \ref arr_sssectr_conic
+"A Traits Class for Conic Arcs" for more details. The function
+template returns an object of the nested type
+`Gps_traits_2::Polygons_with_holes_2` (see \ref
+bso_ssecgeneral_polygon_concept "General Polygon Set Traits Adapter"
 for more details on the traits-class adaptor `Gps_traits_2`), which
 represents the exact offset polygon.
 

@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc>1) ? argv[1] : "data/star.off";
 
   std::vector<Point_3> points;
-  if(!CGAL::read_points(filename, std::back_inserter(points)))
+  if(!CGAL::IO::read_points(filename, std::back_inserter(points)))
   {
     std::cerr<< "Cannot open input file." <<std::endl;
     return 1;

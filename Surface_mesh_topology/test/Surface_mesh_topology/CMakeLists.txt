@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Surface_mesh_topology_Tests)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -21,19 +21,25 @@ endif()
 # add_definitions("-D_GLIBCXX_DEBUG")
 
 set(SOURCE_FILES
-    fundamental_group_of_the_circle.cpp
-    fundamental_group_of_the_torus.cpp
-    homotopy_big_cylinder.cpp
-    homotopy_double_torus_with_holes.cpp
-    homotopy_rond_point_saucisse.cpp
-    homotopy_small_cylinder.cpp
-    path_tests.cpp
-    path_with_rle_deformation_tests.cpp
-    shortest_noncontractible_cycle_tests.cpp
-    test_homotopy.cpp
-    test_homotopy_with_polygonal_schema.cpp
-    test_shortest_cycle_non_contractible.cpp
-    tests_path_on_surface.cpp)
+  fundamental_group_of_the_circle.cpp
+  fundamental_group_of_the_torus.cpp
+  homotopy_big_cylinder.cpp
+  homotopy_double_torus_with_holes.cpp
+  homotopy_rond_point_saucisse.cpp
+  homotopy_small_cylinder.cpp
+  path_tests.cpp
+  path_with_rle_deformation_tests.cpp
+  shortest_noncontractible_cycle_tests.cpp
+  simplicity_cylinder.cpp
+  simplicity_double_torus.cpp
+  simplicity_double_torus_with_holes.cpp
+  simplicity_fundamental_polygon.cpp
+  simplicity_torus.cpp
+  test_homotopy.cpp
+  test_homotopy_with_polygonal_schema.cpp
+  test_shortest_cycle_non_contractible.cpp
+  tests_path_on_surface.cpp
+  )
 
 foreach(cppfile ${SOURCE_FILES})
   create_single_source_cgal_program("${cppfile}")

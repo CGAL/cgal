@@ -349,6 +349,12 @@ protected:
     es.build_external_structure();
   }
 
+ private:
+  void mark_bounded_volumes() {
+    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
+    delegate(mbv, /*compute_external*/ false, /*simplify*/ false);
+  }
+
  public:
   /*{\Mcreation 3}*/
 
@@ -369,8 +375,15 @@ protected:
   }
 
   Nef_polyhedron_3& operator=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) {
-    Base::operator=(N1);
+    Base::operator=(N1); // copy the handle
     set_snc(snc());
+    return (*this);
+  }
+
+  Nef_polyhedron_3& operator=(Nef_polyhedron_3<Kernel,Items, Mark>&& N1) noexcept {
+    N1.set_snc(snc()); // N1.set_snc sets N1.sncp_ not N1.snc_
+    Base::operator=(std::move(N1)); // swap the handles
+    set_snc(snc()); // snc() will return N1.snc_
     return (*this);
   }
 
@@ -490,8 +503,7 @@ protected:
        SFace_handle sf(v->new_sface());
        SM.link_as_isolated_vertex(sv,sf);
        if(first) {
-         sv->set_index();
-         index = sv->get_index();
+         index = sv->new_index();
          first = false;
        } else
          sv->set_index(index);
@@ -512,8 +524,7 @@ protected:
        SM.link_as_isolated_vertex(sv1,sf);
        SM.link_as_isolated_vertex(sv2,sf);
        sv1->set_index(index);
-       sv2->set_index();
-       index = sv2->get_index();
+       index = sv2->new_index();
      }
  };
 
@@ -602,9 +613,8 @@ protected:
     polyhedron_3_to_nef_3
       <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
     build_external_structure();
+    mark_bounded_volumes();
     simplify();
-    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
-    delegate(mbv);
     set_snc(snc());
   }
 
@@ -616,9 +626,8 @@ protected:
     initialize_infibox_vertices(EMPTY);
     polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
     build_external_structure();
+    mark_bounded_volumes();
     simplify();
-    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
-    delegate(mbv);
     set_snc(snc());
   }
 
@@ -637,9 +646,8 @@ protected:
     initialize_infibox_vertices(EMPTY);
     polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
     build_external_structure();
+    mark_bounded_volumes();
     simplify();
-    CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
-    delegate(mbv);
     set_snc(snc());
   }
 
@@ -651,9 +659,8 @@ protected:
    initialize_infibox_vertices(EMPTY);
    shell_to_nef_3(N, sf, snc());
    build_external_structure();
+   mark_bounded_volumes();
    simplify();
-   CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
-   delegate(mbv);
    set_snc(snc());
  }
 
@@ -1703,6 +1710,8 @@ protected:
     bool ninety = is_90degree_rotation(aff);
     bool scale = is_scaling(aff);
 
+    bool translate = aff.is_translation();
+
     Vertex_iterator vi;
     CGAL_forall_vertices( vi, snc()) {
 
@@ -1719,8 +1728,10 @@ protected:
         vertex_list.push_back(vi);
       } else {
         vi->point() = vi->point().transform( aff);
-        SM_decorator sdeco(&*vi);
-        sdeco.transform( linear);
+        if(! translate){
+          SM_decorator sdeco(&*vi);
+          sdeco.transform( linear);
+        }
       }
     }
 
@@ -1840,29 +1851,6 @@ protected:
       CGAL_forall_halffacets(fi,snc()) {
         if(is_standard(fi) || ninety) {
           fi->plane() = fi->plane().transform( aff);
-#ifdef CGAL_NEF3_FACET_WITH_BOX
-          typedef typename Halffacet::Box Box;
-          bool first = true;
-          Halffacet_cycle_iterator cycle_it = fi->facet_cycles_begin();
-          if( cycle_it.is_shalfedge() ) {
-            SHalfedge_iterator edge_it(cycle_it);
-            SHalfedge_around_facet_circulator
-              start( edge_it ), end( edge_it );
-            CGAL_For_all( start, end ) {
-              const Point_3& p = start->source()->source()->point();
-              typename Kernel::FT q[3];
-              q[0] = p.x();
-              q[1] = p.y();
-              q[2] = p.z();
-              if(first) {
-                fi->b = Box(q,q);
-                first = false;
-              } else
-                fi->b.extend(q);
-            }
-          } else
-            CGAL_error_msg( "is facet first cycle a SHalfloop?");
-#endif
         }
       }
 

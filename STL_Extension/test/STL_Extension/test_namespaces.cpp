@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h> // because CGAL::copy_n is deprecated
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h> // because CGAL::copy_n is deprecated
 
 #include <boost/config.hpp>
 

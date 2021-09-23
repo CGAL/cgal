@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Documentation NONE)
 
 # Minimal version of CMake:
@@ -27,7 +27,7 @@ else()
 endif()
 
 find_package(Doxygen)
-find_package(PythonInterp 2.6.7)
+find_package(PythonInterp)
 
 if(NOT DOXYGEN_FOUND)
   message(WARNING "Cannot build the documentation without Doxygen!")
