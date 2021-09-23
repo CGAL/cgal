@@ -37,10 +37,10 @@ namespace internal {
 template <class K>
 class Ray_2_Segment_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Ray_2_Segment_2_pair(typename K::Ray_2 const *ray,
                          typename K::Segment_2 const *seg)
-            : _ray(ray), _seg(seg), _known(false) {}
+            : _ray(ray), _seg(seg) {}
 
     Intersection_results intersection_type() const;
 
@@ -49,8 +49,7 @@ public:
 protected:
     typename K::Ray_2 const *   _ray;
     typename K::Segment_2 const *  _seg;
-    mutable bool                    _known;
-    mutable Intersection_results    _result;
+    mutable Intersection_results    _result = UNKNOWN;
     mutable typename K::Point_2         _intersection_point, _other_point;
 };
 
@@ -76,10 +75,9 @@ template <class K>
 typename Ray_2_Segment_2_pair<K>::Intersection_results
 Ray_2_Segment_2_pair<K>::intersection_type() const
 {
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
     // The non const this pointer is used to cast away const.
-    _known = true;
 //    if (!do_overlap(_ray->bbox(), _seg->bbox()))
 //        return NO_INTERSECTION;
     const typename K::Line_2 &l1 = _ray->supporting_line();
@@ -211,7 +209,7 @@ template <class K>
 typename K::Point_2
 Ray_2_Segment_2_pair<K>::intersection_point() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -222,7 +220,7 @@ typename K::Segment_2
 Ray_2_Segment_2_pair<K>::intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return Segment_2(_intersection_point, _other_point);
