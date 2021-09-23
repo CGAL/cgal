@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
     )
   );
   std::cout << "* number of found circles: " << num_circles << std::endl;
-  assert(is_default_input && num_circles == 0);
+  assert(is_default_input && num_circles == 12);
 
   // Save regions to a file.
   std::ofstream out("circles_point_set_2.ply");

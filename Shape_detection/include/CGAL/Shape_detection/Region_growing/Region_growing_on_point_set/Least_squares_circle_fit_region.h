@@ -194,11 +194,11 @@ namespace Point_set {
       CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
       m_cos_value_threshold = cos_value;
 
-      const FT m_min_radius = parameters::choose_parameter(
+      m_min_radius = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::minimum_radius), FT(0));
       CGAL_precondition(m_min_radius >= FT(0));
 
-      const FT m_max_radius = parameters::choose_parameter(
+      m_max_radius = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::maximum_radius),
         FT(std::numeric_limits<double>::max()));
       CGAL_precondition(m_max_radius >= m_min_radius);

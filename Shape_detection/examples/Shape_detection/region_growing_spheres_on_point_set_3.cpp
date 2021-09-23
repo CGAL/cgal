@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     )
   );
   std::cout << "* number of found spheres: " << num_spheres << std::endl;
-  assert(is_default_input && num_spheres == 0);
+  assert(is_default_input && num_spheres == 10);
 
   // Save regions to a file.
   std::ofstream out("spheres_point_set_3.ply");
