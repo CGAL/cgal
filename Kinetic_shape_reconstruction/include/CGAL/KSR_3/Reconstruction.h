@@ -18,7 +18,7 @@
 // CGAL includes.
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
-#include <CGAL/Regularization/regularize_planes.h>
+#include <CGAL/Shape_regularization/regularize_planes.h>
 
 #include <CGAL/Alpha_shape_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -266,7 +266,7 @@ public:
 
     Plane_map plane_map;
     Point_to_plane_map point_to_plane_map(m_input_range, regions);
-    CGAL::regularize_planes(
+    CGAL::Shape_regularization::Planes::regularize_planes(
       m_input_range,
       m_point_map,
       planes,
