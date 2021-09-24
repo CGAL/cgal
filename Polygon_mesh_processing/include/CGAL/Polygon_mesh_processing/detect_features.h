@@ -194,7 +194,7 @@ void sharp_call(const FT angle_in_deg,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he = halfedge(ed, pmesh);
     if(is_border_edge(he, pmesh) ||
        angle_in_deg == FT() ||
-       (angle_in_deg != FT(180) && internal::is_sharp(he, pmesh, vpm, gt, Sign(cos_angle), sq_cos_angle)))
+       (angle_in_deg != FT(180) && internal::is_sharp(he, pmesh, vpm, gt, sign(cos_angle), sq_cos_angle)))
     {
       put(edge_is_feature_map, edge(he, pmesh), true);
       put(vnfe, target(he, pmesh), get(vnfe, target(he, pmesh))+1);
@@ -223,7 +223,7 @@ void sharp_call(const FT angle_in_deg,
     halfedge_descriptor he = halfedge(ed, pmesh);
     if(is_border_edge(he, pmesh) ||
        angle_in_deg == FT() ||
-       (angle_in_deg != FT(180) && internal::is_sharp(he, pmesh, vpm, gt, Sign(cos_angle), sq_cos_angle)))
+       (angle_in_deg != FT(180) && internal::is_sharp(he, pmesh, vpm, gt, sign(cos_angle), sq_cos_angle)))
     {
       put(edge_is_feature_map, edge(he, pmesh), true);
     }
