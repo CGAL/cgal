@@ -674,7 +674,10 @@ public:
   }
 
   const Vertex_index duplicate_vertex(const Vertex_index& v) {
-    const auto vi = m_data->mesh.add_vertex(m_data->mesh.point(v));
+    // TODO: We cannot take it by reference because it fails for EPECK
+    // when called from  front_and_back_34() in Data_structure.
+    const auto pp = m_data->mesh.point(v);
+    const auto vi = m_data->mesh.add_vertex(pp);
     m_data->direction[vi]     = m_data->direction[v];
     m_data->v_ivertex_map[vi] = m_data->v_ivertex_map[v];
     m_data->v_iedge_map[vi]   = m_data->v_iedge_map[v];

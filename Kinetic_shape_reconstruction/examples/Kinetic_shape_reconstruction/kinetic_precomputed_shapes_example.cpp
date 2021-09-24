@@ -12,7 +12,7 @@ using SCD   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-using Kernel     = EPICK;
+using Kernel     = EPECK;
 using FT         = typename Kernel::FT;
 using Point_2    = typename Kernel::Point_2;
 using Point_3    = typename Kernel::Point_3;
