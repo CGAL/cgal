@@ -282,7 +282,7 @@ public:
   void remove_isolated_vertices()
   {
     std::set<Vertex_handle> c3t3_vertices;
-    for (Cells_in_complex_iterator c = this->cells_in_complex_begin();
+    for (typename Base::Cells_in_complex_iterator c = this->cells_in_complex_begin();
          c != this->cells_in_complex_end();
          ++c)
     {
