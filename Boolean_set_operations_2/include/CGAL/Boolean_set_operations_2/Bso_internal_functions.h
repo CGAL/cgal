@@ -150,7 +150,6 @@ inline OutputIterator s_intersection(const Pgn1& pgn1, const Pgn2& pgn2,
                                      OutputIterator oi) {
   // Use the first polygon to determine the (default) traits
   typedef typename Gps_polyline_traits<Pgn1>::Polyline_traits   Polyline_traits;
-  typedef General_polygon_2<Polyline_traits>                    General_pgn;
 
   typename Gps_polyline_traits<Pgn1>::Traits traits;
   const Polyline_traits& ptraits(traits);
@@ -350,7 +349,6 @@ inline OutputIterator _difference(const Pgn1& pgn1, const Pgn2& pgn2,
 {
   // Use the first polygon to determine the (default) traits
   typedef typename Gps_polyline_traits<Pgn1>::Polyline_traits   Polyline_traits;
-  typedef General_polygon_2<Polyline_traits>                    General_pgn;
 
   typename Gps_polyline_traits<Pgn1>::Traits traits;
   const Polyline_traits& ptraits(traits);
@@ -381,7 +379,6 @@ inline OutputIterator s_symmetric_difference(const Pgn1& pgn1, const Pgn2& pgn2,
                                              OutputIterator oi) {
   // Use the first polygon to determine the (default) traits
   typedef typename Gps_polyline_traits<Pgn1>::Polyline_traits   Polyline_traits;
-  typedef General_polygon_2<Polyline_traits>                    General_pgn;
   typename Gps_polyline_traits<Pgn1>::Traits traits;
   const Polyline_traits& ptraits(traits);
   s_symmetric_difference(convert_polygon(pgn1, ptraits),
@@ -521,7 +518,6 @@ OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
   // Use the polygon with holes to determine the (default) traits
   typedef Polygon_with_holes_2<Kernel, Container>               Pgn;
   typedef typename Gps_polyline_traits<Pgn>::Polyline_traits    Polyline_traits;
-  typedef General_polygon_2<Polyline_traits>                    General_pgn;
 
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const Polyline_traits& ptraits(traits);
