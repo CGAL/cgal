@@ -63,12 +63,12 @@
 #include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 #include <boost/iterator/zip_iterator.hpp>
 #endif
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
-#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -574,7 +574,7 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  typename boost::result_of<Construct_point_3(P)>::type
+  typename boost::result_of<const Construct_point_3(const P&)>::type
   construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);

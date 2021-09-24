@@ -63,6 +63,7 @@ public:
   typedef Subcurve_                                     Subcurve;
   typedef Event_                                        Event;
   typedef Allocator_                                    Allocator;
+  typedef Tag_false                                     Handle_overlaps;
 
 private:
   typedef Geometry_traits_2                             Gt2;

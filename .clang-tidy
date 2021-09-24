@@ -1,5 +1,5 @@
 ---
-Checks:          '-clang-diagnostic*,-clang-analyzer*,modernize-use-nullptr'
+Checks:          '-clang-diagnostic*,-clang-analyzer*,modernize-use-nullptr,google-readability-casting'
 HeaderFilterRegex: 'CGAL/*'
 ...
 

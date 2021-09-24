@@ -735,7 +735,7 @@ void sqrt_extension_test(){
     test_get_arithmetic_kernel<AT,ACDE_TAG>();
 }
 
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 void test_nt_converter()
 {
   typedef CGAL::internal::Exact_field_selector<int>::Type NT;

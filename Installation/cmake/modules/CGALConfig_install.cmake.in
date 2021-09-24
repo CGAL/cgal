@@ -179,4 +179,16 @@ if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
   # Nov. 2017). -- Laurent Rineau
   include(CGAL_SetupFlags)
 endif()
+
+#CGAL_DATA_DIR
+set(CGAL_DATA_DIR "@CGAL_DATA_DIR@")
+
+if(NOT TARGET CGAL::Data)
+  add_library(CGAL::Data INTERFACE IMPORTED)
+  if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
+    set_target_properties(CGAL::Data PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_DATA_DIR=\"${CGAL_DATA_DIR}\"")
+  endif()
+endif()
+
 include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

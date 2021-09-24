@@ -177,7 +177,7 @@ public:
     CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
 public Q_SLOTS:
     void shuffle_orientations();
-    bool orient();
+    bool orient(std::vector<std::size_t>& non_manifold_vertices);
     bool exportAsSurfaceMesh(SMesh*);
     void inside_out();
     void repair(bool erase_dup, bool req_same_orientation);

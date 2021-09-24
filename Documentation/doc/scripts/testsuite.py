@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2012 GeometryFactory (France). All rights reserved.
 # All rights reserved.
 # 
@@ -88,7 +88,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
 <th>Errors</th>
 </tr>
 </table></body></html>'''
-    
+
     if args.publish and args.do_copy_results:
       suffix=''
       if args.doxygen_version1:
@@ -97,7 +97,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
       suffix = ''
       if args.doxygen_version2:
         suffix = args.doxygen_version2
-      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix} (used for the official CGAL documentation)</a>\n".format(_suffix=suffix)
+      link2="\n<br><a href=\"output2/Manual/index.html\">Documentation built</a> with <a href=\"https://github.com/CGAL/doxygen\">our fork of Doxygen {_suffix} (used for the official CGAL documentation)</a>\n".format(_suffix=suffix) 
       suffix = ''
       if args.master_describe:
         suffix=args.master_describe
@@ -150,7 +150,7 @@ body  {color: black; background-color: #C0C0D0; font-family: sans-serif;}
         for index in range(0, len(results1)):
           result = [('./build_logs', './build_logs', (0,1))]
           results_master.extend(result)
-    for index in range(0, len(results1)-1):
+    for index in range(0, len(results1)):
         status='class="package-good"'
         no_errors = True
         no_warn = True

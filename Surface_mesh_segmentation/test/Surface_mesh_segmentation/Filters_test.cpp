@@ -1,4 +1,4 @@
-#include <CGAL/internal/Surface_mesh_segmentation/Filters.h>
+#include <CGAL/Surface_mesh_segmentation/internal/Filters.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>

@@ -17,7 +17,7 @@
 
 #include <CGAL/Dimension.h>
 #include <CGAL/Compact_container.h>
-#include <CGAL/internal/Static_or_dynamic_array.h>
+#include <CGAL/Triangulation/internal/Static_or_dynamic_array.h>
 
 #include <boost/cstdint.hpp>
 

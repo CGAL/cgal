@@ -68,7 +68,6 @@ namespace CGAL {
   {
     return begin()==end();
   }
-#ifndef CGAL_CFG_NO_CPP0X_TUPLE
 
   operator std::tuple<I&, I&>()
   {
@@ -79,8 +78,6 @@ namespace CGAL {
   {
     return std::tuple<const I&, const I&>{this->first, this->second};
   }
-#endif
-
 };
 
   template <typename T>

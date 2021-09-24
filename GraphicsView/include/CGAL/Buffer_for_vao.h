@@ -15,7 +15,7 @@
 
 #include <CGAL/license/GraphicsView.h>
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -521,17 +521,15 @@ public:
 
       local_orientation=Local_kernel::Orientation_3()(V1, V2, normal) ;
 
-      if(local_orientation!=CGAL::ZERO && local_orientation!=orientation)
-      { return false; }
-      // V1 and V2 are collinear
-      if(local_orientation==CGAL::ZERO )
+      if(local_orientation!=CGAL::ZERO)
       {
-        //TS and TU are opposite
-        if(CGAL::scalar_product(V1,V2) >=0)
-          return true;
-        //TS and TU have the same direction.
-        else
-          return false;
+        if(local_orientation!=orientation)
+        { return false; }
+      }
+      else
+      {
+        if(CGAL::scalar_product(V1,V2)<0)
+        { return false; }  //TS and TU are opposite
       }
     }
     return true;
@@ -887,7 +885,7 @@ protected:
     bool is_process;
   };
 
-  typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+  typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
   typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
   typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits>     Fb1;
   typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>         Fb;

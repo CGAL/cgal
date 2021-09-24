@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <memory>
 #include <CGAL/Kd_tree_rectangle.h>
-#include <CGAL/internal/Get_dimension_tag.h>
+#include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/enum.h>
 

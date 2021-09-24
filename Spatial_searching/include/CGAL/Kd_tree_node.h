@@ -20,7 +20,7 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Has_member.h>
-#include <CGAL/internal/Search_helpers.h>
+#include <CGAL/Spatial_searching/internal/Search_helpers.h>
 #include <boost/cstdint.hpp>
 
 namespace CGAL {

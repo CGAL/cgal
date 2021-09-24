@@ -5,7 +5,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
-#include <CGAL/Regularization/regularize_planes.h>
+#include <CGAL/Shape_regularization/regularize_planes.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
@@ -122,13 +122,20 @@ bool test_scene(int argc, char** argv) {
 
   // Test regularization
   typename Efficient_ransac::Plane_range planes = ransac.planes();
-  CGAL::regularize_planes (points,
-                           Point_map(),
-                           planes,
-                           CGAL::Shape_detection::Plane_map<Traits>(),
-                           CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes),
-                           true, true, true, true,
-                           (FT)50., (FT)0.01);
+  CGAL::Shape_regularization::Planes::
+    regularize_planes(
+      planes,
+      CGAL::Shape_detection::Plane_map<Traits>(),
+      points,
+      Point_map(),
+      CGAL::parameters::plane_index_map(
+        CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)).
+      regularize_parallelism(true).
+      regularize_orthogonality(true).
+      regularize_coplanarity(true).
+      regularize_axis_symmetry(true).
+      maximum_angle(FT(50)).
+      maximum_offset(FT(1) / FT(100)));
 
   Point_index_range pts = ransac.indices_of_unassigned_points();
 

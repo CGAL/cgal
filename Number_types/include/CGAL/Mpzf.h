@@ -112,16 +112,9 @@
 #if !defined(CGAL_HAS_THREADS)
 #define CGAL_MPZF_THREAD_LOCAL
 #define CGAL_MPZF_TLS
-#elif defined(CGAL_CAN_USE_CXX11_THREAD_LOCAL)
+#else
 #define CGAL_MPZF_THREAD_LOCAL thread_local
 #define CGAL_MPZF_TLS thread_local
-#elif defined(_MSC_VER)
-#define CGAL_MPZF_THREAD_LOCAL __declspec(thread)
-#define CGAL_MPZF_TLS
-#else
-#define CGAL_MPZF_THREAD_LOCAL __thread
-#define CGAL_MPZF_TLS
-// Too bad for the others
 #endif
 namespace CGAL {
 namespace Mpzf_impl {
@@ -162,7 +155,6 @@ template <class T, class = void> struct pool2 {
   static T& ptr(T t) { t -= extra+1; return *reinterpret_cast<T*>(t); }
 };
 
-#if defined(CGAL_CAN_USE_CXX11_THREAD_LOCAL)
 template <class T, class = void> struct pool3 {
   static T pop() { T ret = data(); data() = ptr(data()); return ret; }
   static void push(T t) { ptr(t) = data(); data() = t; }
@@ -185,7 +177,6 @@ template <class T, class = void> struct pool3 {
   }
   static T& ptr(T t) { t -= extra+1; return *reinterpret_cast<T*>(t); }
 };
-#endif
 
 // No caching
 template <class T, class = void> struct no_pool {

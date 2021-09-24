@@ -196,16 +196,16 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
           normals.push_back(normal.z());
           if(!soup->fcolors.empty())
           {
-            f_colors.push_back((float)color.red()/255);
-            f_colors.push_back((float)color.green()/255);
-            f_colors.push_back((float)color.blue()/255);
+            f_colors.push_back(static_cast<float>(color.red())/255);
+            f_colors.push_back(static_cast<float>(color.green())/255);
+            f_colors.push_back(static_cast<float>(color.blue())/255);
           }
           if(!soup->vcolors.empty())
           {
             CGAL::IO::Color vcolor = soup->vcolors[triangulation.v2v[ffit->vertex(i)]];
-            v_colors.push_back((float)vcolor.red()/255);
-            v_colors.push_back((float)vcolor.green()/255);
-            v_colors.push_back((float)vcolor.blue()/255);
+            v_colors.push_back(static_cast<float>(vcolor.red())/255);
+            v_colors.push_back(static_cast<float>(vcolor.green())/255);
+            v_colors.push_back(static_cast<float>(vcolor.blue())/255);
           }
         }
     }
@@ -263,17 +263,17 @@ Scene_polygon_soup_item_priv::compute_normals_and_vertices() const{
                 if(!soup->fcolors.empty())
                 {
                   const CGAL::IO::Color color = soup->fcolors[nb];
-                    f_colors.push_back((float)color.red()/255);
-                    f_colors.push_back((float)color.green()/255);
-                    f_colors.push_back((float)color.blue()/255);
+                    f_colors.push_back(static_cast<float>(color.red())/255);
+                    f_colors.push_back(static_cast<float>(color.green())/255);
+                    f_colors.push_back(static_cast<float>(color.blue())/255);
                 }
 
                 if(!soup->vcolors.empty())
                 {
                   const CGAL::IO::Color color = soup->vcolors[it->at(i)];
-                  v_colors.push_back((float)color.red()/255);
-                  v_colors.push_back((float)color.green()/255);
-                  v_colors.push_back((float)color.blue()/255);
+                  v_colors.push_back(static_cast<float>(color.red())/255);
+                  v_colors.push_back(static_cast<float>(color.green())/255);
+                  v_colors.push_back(static_cast<float>(color.blue())/255);
                 }
             }
         }
@@ -420,9 +420,51 @@ void Scene_polygon_soup_item::inside_out()
 }
 
 bool
-Scene_polygon_soup_item::orient()
+Scene_polygon_soup_item::orient(std::vector<std::size_t>& non_manifold_vertices)
 {
+  struct Visitor : public CGAL::Polygon_mesh_processing::Default_orientation_visitor
+  {
+    const Polygon_soup::Polygons& polygons;
+    std::set<std::size_t>& nm_vertices;
+    std::set< std::pair<std::size_t, std::size_t> > nm_edges;
 
+    Visitor(const Polygon_soup::Polygons& polygons,
+            std::set<std::size_t>& nm_vertices)
+      : polygons(polygons)
+      , nm_vertices(nm_vertices)
+    {}
+
+    void non_manifold_edge(std::size_t v1, std::size_t v2, std::size_t)
+    {
+      nm_edges.insert(CGAL::make_sorted_pair(v1, v2));
+    }
+
+    void link_connected_polygons(std::size_t v, const std::vector<std::size_t>& polygons_in_current_cycle)
+    {
+      // check if the current components of polygon incident to the link of the vertex contains
+      // a non-manifold edge. If no, then it is a "pure" non-manifold vertex in this component
+      if (!nm_edges.empty())
+        for(std::size_t pid : polygons_in_current_cycle)
+        {
+          for (std::size_t i=0; i<polygons[pid].size(); ++i)
+          {
+            if (polygons[pid][i]==v)
+            {
+              std::size_t vn1 = i==0?(polygons[pid].size()-1):(i-1);
+              std::size_t vn2 = i+1;
+              if (vn2==polygons[pid].size()) vn2=0;
+
+              if (nm_edges.count(CGAL::make_sorted_pair(polygons[pid][i], polygons[pid][vn1]))==1) return;
+              if (nm_edges.count(CGAL::make_sorted_pair(polygons[pid][i], polygons[pid][vn2]))==1) return;
+              break;
+            }
+            else
+              CGAL_assertion(i!=polygons[pid].size()-1); // the vertex is incident to the polygon
+          }
+        }
+      nm_vertices.insert(v);
+    }
+  };
   if(isEmpty() || d->oriented)
     return true; // nothing to do
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -449,9 +491,12 @@ Scene_polygon_soup_item::orient()
     d->soup->polygons.swap(valid_polygons);
 
   bool res;
+  std::set<std::size_t> nm_v_set;
+  Visitor visitor(valid_polygons, nm_v_set);
   QApplication::setOverrideCursor(Qt::WaitCursor);
   res =  CGAL::Polygon_mesh_processing::
-    orient_polygon_soup(d->soup->points, d->soup->polygons);
+    orient_polygon_soup(d->soup->points, d->soup->polygons, CGAL::parameters::visitor(visitor));
+  non_manifold_vertices.assign(nm_v_set.begin(), nm_v_set.end());
   QApplication::restoreOverrideCursor();
   return res;
 }
@@ -493,7 +538,8 @@ Scene_polygon_soup_item::save(std::ostream& out) const
 bool
 Scene_polygon_soup_item::exportAsSurfaceMesh(SMesh *out_surface_mesh)
 {
-  orient();
+  std::vector<std::size_t> dum;
+  orient(dum);
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh< CGAL::Surface_mesh<Point_3> >(
     d->soup->points, d->soup->polygons, *out_surface_mesh);
   std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_surface_mesh);

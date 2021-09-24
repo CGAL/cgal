@@ -22,6 +22,7 @@
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Intersection_traits_2.h>
 #include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Kernel/global_functions_2.h>
 
 namespace CGAL {
 

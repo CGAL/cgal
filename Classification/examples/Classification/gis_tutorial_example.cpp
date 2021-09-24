@@ -556,7 +556,7 @@ int main (int argc, char** argv)
         double height_ratio = (height_at_query - bbox.zmin()) / (bbox.zmax() - bbox.zmin());
         colors = color_ramp.get(height_ratio);
       }
-      raster_ofile.write ((char*)(&colors), 3);
+      raster_ofile.write (reinterpret_cast<char*>(&colors), 3);
     }
 
   raster_ofile.close();

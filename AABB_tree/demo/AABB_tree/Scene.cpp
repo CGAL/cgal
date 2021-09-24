@@ -43,7 +43,7 @@ Scene::Scene()
     // distance function
     m_red_ramp.build_red();
     m_blue_ramp.build_blue();
-    m_max_distance_function = (FT)0.0;
+    m_max_distance_function = static_cast<FT>(0.0);
     texture = new Texture(m_grid_size,m_grid_size);
     ready_to_cut = true;
     are_buffers_initialized = false;
@@ -481,7 +481,7 @@ void Scene::compute_texture(int i, int j,Color_ramp pos_ramp ,Color_ramp neg_ram
 
     const FT& d00 = m_distance_function[i][j].second;
     // determines grey level
-    unsigned int i00 = 255-(unsigned)(255.0 * (double)std::fabs(d00) / m_max_distance_function);
+    unsigned int i00 = 255-static_cast<unsigned>(255.0 * std::fabs(d00) / m_max_distance_function);
 
     if(d00 > 0.0)
         texture->setData(i,j,pos_ramp.r(i00),pos_ramp.g(i00),pos_ramp.b(i00));
@@ -498,7 +498,7 @@ void Scene::attrib_buffers(CGAL::QGLViewer* viewer)
     viewer->camera()->getModelViewProjectionMatrix(mat);
     for(int i=0; i < 16; i++)
     {
-        mvpMatrix.data()[i] = (float)mat[i];
+        mvpMatrix.data()[i] = static_cast<float>(mat[i]);
     }
     rendering_program.bind();
     mvpLocation = rendering_program.uniformLocation("mvp_matrix");
@@ -717,8 +717,8 @@ void Scene::draw(CGAL::QGLViewer* viewer)
 FT Scene::random_in(const double a,
                     const double b)
 {
-    double r = rand() / (double)RAND_MAX;
-    return (FT)(a + (b - a) * r);
+    double r = rand() / static_cast<double>(RAND_MAX);
+    return static_cast<FT>(a + (b - a) * r);
 }
 
 Point Scene::random_point(const CGAL::Bbox_3& bbox)
@@ -890,7 +890,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
 
         // measure sign
         Ray ray(p,vec);
-        int nb_intersections = (int)tree.number_of_intersected_primitives(ray);
+        int nb_intersections = static_cast<int>(tree.number_of_intersected_primitives(ray));
         if(nb_intersections % 2 != 0)
             signed_distance *= -1.0;
 
@@ -903,7 +903,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
         }
         nb_trials++;
     }
-    double speed = (double)nb_trials / timer.time();
+    double speed = static_cast<double>(nb_trials) / timer.time();
     std::cout << "done (" << nb_trials << " trials, "
               << timer.time() << " s, "
               << speed << " queries/s)" << std::endl;
@@ -937,7 +937,7 @@ void Scene::generate_inside_points(const unsigned int nb_points)
     {
         Point p = random_point(tree.bbox());
         Ray ray(p,vec);
-        int nb_intersections = (int)tree.number_of_intersected_primitives(ray);
+        int nb_intersections = static_cast<int>(tree.number_of_intersected_primitives(ray));
         if(nb_intersections % 2 != 0)
         {
             m_points.push_back(p);
@@ -946,7 +946,7 @@ void Scene::generate_inside_points(const unsigned int nb_points)
         }
         nb_trials++;
     }
-    double speed = (double)nb_trials / timer.time();
+    double speed = static_cast<double>(nb_trials) / timer.time();
     std::cout << "done (" << nb_trials << " trials, "
               << timer.time() << " s, "
               << speed << " queries/s)" << std::endl;
@@ -974,14 +974,14 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
     timer.start();
     std::cout << "Generate boundary segments from " << nb_slices << " slices: ";
 
-    Vector normal((FT)0.0,(FT)0.0,(FT)1.0);
+    Vector normal(static_cast<FT>(0.0),static_cast<FT>(0.0),static_cast<FT>(1.0));
     unsigned int i;
 
     const double dz = m_bbox.zmax() - m_bbox.zmin();
     for(i=0;i<nb_slices;i++)
     {
-        FT z = m_bbox.zmin() + (FT)i / (FT)nb_slices * dz;
-        Point p((FT)0.0, (FT)0.0, z);
+        FT z = m_bbox.zmin() + static_cast<FT>(i) / static_cast<FT>(nb_slices) * dz;
+        Point p(static_cast<FT>(0.0), static_cast<FT>(0.0), z);
         Plane plane(p,normal);
 
         std::list<Object_and_primitive_id> intersections;

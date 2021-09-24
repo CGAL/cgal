@@ -21,8 +21,6 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-
 #include <CGAL/IO/PLY.h>
 
 #ifdef DOXYGEN_RUNNING
@@ -175,8 +173,12 @@ public:
   bool has_simplex_specific_property(internal::PLY_read_number* property, Edge_index)
   {
     const std::string& name = property->name();
+    if(name == "vertex1" || name == "vertex2")
+      return true;
+#ifndef CGAL_NO_DEPRECATED_CODE
     if(name == "v0" || name == "v1")
       return true;
+#endif
     return false;
   }
 
@@ -365,8 +367,8 @@ public:
   void process_line(PLY_element& element, Edge_index& ei)
   {
     IntType v0, v1;
-    element.assign(v0, "v0");
-    element.assign(v1, "v1");
+    element.assign(v0, "vertex1");
+    element.assign(v1, "vertex2");
 
     Halfedge_index hi = m_mesh.halfedge(m_map_v2v[std::size_t(v0)],
         m_map_v2v[std::size_t(v1)]);
@@ -961,8 +963,8 @@ bool write_PLY(std::ostream& os,
     if(!eprinters.empty())
     {
       os << "element edge " << sm.number_of_edges() << std::endl;
-      os << "property int v0" << std::endl;
-      os << "property int v1" << std::endl;
+      os << "property int vertex1" << std::endl;
+      os << "property int vertex2" << std::endl;
       os << oss.str();
     }
   }
@@ -1153,7 +1155,5 @@ CGAL_DEPRECATED bool write_ply(std::ostream& os, const Surface_mesh<P>& sm)
 #endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace CGAL
-
-#endif // !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 
 #endif // CGAL_SURFACE_MESH_IO_PLY_H

@@ -206,9 +206,8 @@ functor followed by the suffix `_object`.For example, the function that returns 
       all the platforms the library supports.  In particular, it should not
       contain the characters ':', '*', or ' '.
 <LI>Internal header files - which are not documented to the user - should
-      have <TT>/internal/</TT> as a directory higher up in their hierarchy.
-      For example <TT>CGAL/internal/foo.h</TT> or
-      <TT>CGAL/Package/internal/predicates/my_pred.h</TT>.
+      have <TT>Package/internal/</TT> as a directory higher up in their hierarchy.
+      For example <TT>CGAL/Triangulation_2/internal/predicates/my_pred.h</TT>.
 </UL>
 
 \section secprogramming_conventions Programming conventions
