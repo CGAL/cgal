@@ -137,6 +137,7 @@ optimization processes.
 \sa `CGAL::perturb_mesh_3()`
 \sa `CGAL::lloyd_optimize_mesh_3()`
 \sa `CGAL::odt_optimize_mesh_3()`
+\sa `CGAL::remove_far_points_in_mesh_3()`
 \sa `CGAL::parameters::exude`
 \sa `CGAL::parameters::no_exude`
 \sa `CGAL::parameters::perturb`

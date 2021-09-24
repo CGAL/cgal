@@ -143,6 +143,7 @@ optimization processes.
 \sa `perturb_mesh_3()`
 \sa `lloyd_optimize_mesh_3()`
 \sa `odt_optimize_mesh_3()`
+\sa `CGAL::remove_far_points_in_mesh_3()`
 \sa `parameters::exude()`
 \sa `parameters::no_exude()`
 \sa `parameters::perturb()`
