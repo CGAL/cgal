@@ -282,8 +282,8 @@ public:
   void remove_isolated_vertices()
   {
     std::set<Vertex_handle> c3t3_vertices;
-    for (Cell_iterator c = cells_in_complex_begin();
-         c != cells_in_complex_end();
+    for (Cells_in_complex_iterator c = this->cells_in_complex_begin();
+         c != this->cells_in_complex_end();
          ++c)
     {
       c3t3_vertices.insert(c->vertex(0));
