@@ -1,7 +1,4 @@
-// #define HMC_SparseLU
-// #define HMC_SimplicialLLT
-// #define HMC_SimplicialLDLT // default
-
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
 #include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
