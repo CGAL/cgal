@@ -26,9 +26,9 @@ void print_point_set (const Point_set& point_set)
   for (Point_set::const_iterator it = point_set.begin(); it != point_set.end(); ++ it)
   {
     std::cerr << "* Point " << point_set.point(*it) // or point_set[it]
-              << " with color [" << (int)(color[*it][0])
-              << " " << (int)(color[*it][1])
-              << " " << (int)(color[*it][2])
+              << " with color [" << static_cast<int>(color[*it][0])
+              << " " << static_cast<int>(color[*it][1])
+              << " " << static_cast<int>(color[*it][2])
               << "] and intensity " << intensity[*it]
               << std::endl;
   }
@@ -53,11 +53,11 @@ int main (int, char**)
   for (std::size_t i = 0; i < 10; ++ i)
   {
     Point_set::iterator it = point_set.insert (Point (double(i), double(i), double(i)));
-    Color c = {{ (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
-                 (unsigned char)(CGAL::get_default_random().get_int(0, 255)),
-                 (unsigned char)(CGAL::get_default_random().get_int(0, 255)) }};
+    Color c = {{ static_cast<unsigned char>(CGAL::get_default_random().get_int(0, 255)),
+                 static_cast<unsigned char>(CGAL::get_default_random().get_int(0, 255)),
+                 static_cast<unsigned char>(CGAL::get_default_random().get_int(0, 255)) }};
     color[*it] = c;
-    intensity[*it] = rand() / (double)(RAND_MAX);
+    intensity[*it] = rand() / static_cast<double>(RAND_MAX);
   }
 
   print_point_set (point_set);

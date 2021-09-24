@@ -21,7 +21,7 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
-#include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
+#include <CGAL/AABB_tree/internal/AABB_drawing_traits.h>
 //#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -249,6 +249,8 @@ public:
     m_red_ramp.build_red();
     m_blue_ramp.build_blue();
     m_thermal_ramp.build_thermal();
+    facet_sm_trees = nullptr;
+    edge_sm_trees = nullptr;
     setTriangleContainer(1, new Tc(Vi::PROGRAM_NO_SELECTION, false));
     setTriangleContainer(0, new Tc(Vi::PROGRAM_WITH_TEXTURE, false));
     setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));

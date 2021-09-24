@@ -169,19 +169,15 @@ overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1
   typedef typename Arr_res::Allocator                           Allocator;
 
   // some type assertions (not all, but better than nothing).
-#if !defined(CGAL_NO_ASSERTIONS)
   typedef typename Agt2::Point_2                                A_point;
   typedef typename Bgt2::Point_2                                B_point;
   typedef typename Rgt2::Point_2                                Res_point;
-#endif
   CGAL_static_assertion((boost::is_convertible<A_point, Res_point>::value));
   CGAL_static_assertion((boost::is_convertible<B_point, Res_point>::value));
 
-#if !defined(CGAL_NO_ASSERTIONS)
   typedef typename Agt2::X_monotone_curve_2                     A_xcv;
   typedef typename Bgt2::X_monotone_curve_2                     B_xcv;
   typedef typename Rgt2::X_monotone_curve_2                     Res_xcv;
-#endif
   CGAL_static_assertion((boost::is_convertible<A_xcv, Res_xcv>::value));
   CGAL_static_assertion((boost::is_convertible<B_xcv, Res_xcv>::value));
 

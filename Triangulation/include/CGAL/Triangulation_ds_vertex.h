@@ -17,7 +17,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Compact_container.h>
-#include <CGAL/internal/Triangulation/Dummy_TDS.h>
+#include <CGAL/Triangulation/internal/Dummy_TDS.h>
 
 namespace CGAL {
 

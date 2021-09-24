@@ -86,9 +86,9 @@ public:
   //! perform the output, calls \c operator\<\< by default.
   std::ostream& operator()( std::ostream& out) const {
     if(IO::is_ascii(out)) {
-      out << (int)t;
+      out << static_cast<int>(t);
     } else {
-      CGAL::write(out, (int)t);
+      CGAL::write(out, static_cast<int>(t));
     }
     return out;
   }
@@ -109,7 +109,7 @@ public:
     } else {
       CGAL::read(in, i);
     }
-    t = (T)i;
+    t = static_cast<T>(i);
     return in;
   }
 };

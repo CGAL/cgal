@@ -105,6 +105,8 @@
         <file>resources/heat_intensity_shader.vert</file>
         <file>resources/compatibility_shaders/heat_intensity_shader.frag</file>
         <file>resources/compatibility_shaders/heat_intensity_shader.vert</file>
+        <file>resources/shader_tet_filter.frag</file>
+        <file>resources/shader_tet_filter.vert</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

@@ -79,4 +79,3 @@ create_single_source_cgal_program(
 create_single_source_cgal_program("test_efficient_RANSAC_torus_parameters.cpp")
 
 create_single_source_cgal_program("test_efficient_RANSAC_scene.cpp")
-create_single_source_cgal_program("test_efficient_RANSAC_regularization.cpp")

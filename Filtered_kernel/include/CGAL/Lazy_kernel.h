@@ -24,7 +24,7 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_2.h>
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Lazy.h>
-#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <boost/none.hpp>
 #include <boost/mpl/if.hpp>

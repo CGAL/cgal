@@ -126,6 +126,7 @@ CGAL_add_named_parameter(non_manifold_feature_map_t, non_manifold_feature_map, n
 CGAL_add_named_parameter(polyhedral_envelope_epsilon_t, polyhedral_envelope_epsilon, polyhedral_envelope_epsilon)
 CGAL_add_named_parameter(match_faces_t, match_faces, match_faces)
 CGAL_add_named_parameter(face_epsilon_map_t, face_epsilon_map, face_epsilon_map)
+CGAL_add_named_parameter(maximum_number_t, maximum_number, maximum_number)
 CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use_one_sided_hausdorff)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
@@ -179,6 +180,7 @@ CGAL_add_named_parameter(pointmatcher_config_t, pointmatcher_config, pointmatche
 CGAL_add_named_parameter(adjacencies_t, adjacencies, adjacencies)
 CGAL_add_named_parameter(scan_angle_t, scan_angle_map, scan_angle_map)
 CGAL_add_named_parameter(scanline_id_t, scanline_id_map, scanline_id_map)
+CGAL_add_named_parameter(scalar_t, scalar_map, scalar_map)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)
@@ -228,3 +230,16 @@ CGAL_add_named_parameter(angle_threshold_t, angle_threshold, angle_threshold)
 CGAL_add_named_parameter(min_region_size_t, min_region_size, min_region_size)
 CGAL_add_named_parameter(regularize_t, regularize, regularize)
 CGAL_add_named_parameter(graphcut_beta_t, graphcut_beta, graphcut_beta)
+
+// List of named parameters used in Shape_regularization package
+CGAL_add_named_parameter(minimum_length_t, minimum_length, minimum_length)
+CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
+CGAL_add_named_parameter(maximum_offset_t, maximum_offset, maximum_offset)
+CGAL_add_named_parameter(regularize_parallelism_t, regularize_parallelism, regularize_parallelism)
+CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, regularize_orthogonality)
+CGAL_add_named_parameter(regularize_coplanarity_t, regularize_coplanarity, regularize_coplanarity)
+CGAL_add_named_parameter(regularize_axis_symmetry_t, regularize_axis_symmetry, regularize_axis_symmetry)
+CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_direction)
+CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
+CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
+CGAL_add_named_parameter(segment_t, segment_map, segment_map)

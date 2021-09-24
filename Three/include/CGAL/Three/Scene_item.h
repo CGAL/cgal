@@ -331,7 +331,7 @@ public Q_SLOTS:
   //!This function is called by `Scene::changeGroup` and should not be
   //!called manually.
   virtual void moveToGroup(Scene_group_item* group);
-  void setRenderingMode(int m) { setRenderingMode((RenderingMode)m);}
+  void setRenderingMode(int m) { setRenderingMode(static_cast<RenderingMode>(m));}
   //!Sets the rendering mode of the item.
   //!@see RenderingMode
   virtual void setRenderingMode(RenderingMode m) {

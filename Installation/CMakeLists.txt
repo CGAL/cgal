@@ -22,8 +22,6 @@ include(GNUInstallDirs)
 #
 #--------------------------------------------------------------------------------------------------
 
-message("== Setting paths ==")
-
 if(CGAL_BRANCH_BUILD)
 
   message(
@@ -848,6 +846,8 @@ if(NOT RUNNING_CGAL_AUTO_TEST)
     add_programs(test tests OFF)
   endif()
 endif()
+
+message("== Setting paths ==")
 
 #--------------------------------------------------------------------------------------------------
 #

@@ -105,8 +105,8 @@ public:
   /// Changes the number of variables and the number of constraints of the problem.
   ///
   /// \warning Calling this function also clears all previous entries.
-  void resize(const int new_n,
-              const int new_m = 0)
+  void resize(const std::size_t new_n,
+              const std::size_t new_m = 0)
   {
     clear();
     n = new_n;

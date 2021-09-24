@@ -17,10 +17,10 @@
 #ifndef CGAL_INTERSECTIONS_2_CIRCLE_2_CIRCLE_2_H
 #define CGAL_INTERSECTIONS_2_CIRCLE_2_CIRCLE_2_H
 
-#include <CGAL/Circle_2.h>
-#include <CGAL/squared_distance_2_1.h>
-
+#include <CGAL/Distance_2/Point_2_Point_2.h>
 #include <CGAL/Intersection_traits_2.h>
+
+#include <CGAL/Circle_2.h>
 
 namespace CGAL {
 namespace Intersections {

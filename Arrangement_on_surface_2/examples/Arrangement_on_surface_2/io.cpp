@@ -1,48 +1,34 @@
 //! \file examples/Arrangement_on_surface_2/io.cpp
 // Using the arrangement I/O operators.
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arrangement_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 #include <fstream>
 
+#include <CGAL/basic.h>
+#include <CGAL/IO/Arr_iostream.h>
+
+#include "arr_inexact_construction_segments.h"
+#include "arr_print.h"
 #include "point_location_utils.h"
 
-typedef CGAL::Cartesian<CGAL::Exact_rational>         Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
-typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
-
-int main ()
-{
+int main() {
   // Construct the arrangement.
-  Arrangement_2    arr;
-
-  construct_segments_arr (arr);
-
-  std::cout << "Writing an arrangement of size:" << std::endl
-            << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges()
-            << ",  F = " << arr.number_of_faces() << std::endl;
+  Arrangement arr1;
+  construct_segments_arr(arr1);
+  std::cout << "Writing\n";
+  print_arrangement_size(arr1);
 
   // Write the arrangement to a file.
-  std::ofstream    out_file ("arr_ex_io.dat");
-
-  out_file << arr;
+  std::ofstream out_file("arr_ex_io.dat");
+  out_file << arr1;
   out_file.close();
 
   // Read the arrangement from the file.
-  Arrangement_2    arr2;
-  std::ifstream    in_file ("arr_ex_io.dat");
-
+  Arrangement arr2;
+  std::ifstream in_file("arr_ex_io.dat");
   in_file >> arr2;
   in_file.close();
+  std::cout << "Reading\n";
+  print_arrangement_size(arr2);
 
-  std::cout << "Read an arrangement of size:" << std::endl
-            << "   V = " << arr2.number_of_vertices()
-            << ",  E = " << arr2.number_of_edges()
-            << ",  F = " << arr2.number_of_faces() << std::endl;
-
-  return (0);
+  return 0;
 }

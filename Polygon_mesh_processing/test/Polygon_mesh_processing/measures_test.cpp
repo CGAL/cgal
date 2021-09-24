@@ -55,6 +55,13 @@ void test_pmesh(const Mesh& pmesh)
       continue;
     else
     {
+       FT edge_length = PMP::edge_length(h, pmesh);
+       FT squared_edge_length = PMP::squared_edge_length(h, pmesh);
+       std::cout << "squared edge length = " << squared_edge_length << std::endl;
+       std::cout << "edge length = " << edge_length << std::endl;
+
+      FT  squared_face_area = PMP::squared_face_area(face(h, pmesh), pmesh);
+      std::cout << "squared face area = " << squared_face_area << std::endl;
       FT face_area = PMP::face_area(face(h, pmesh), pmesh);
       std::cout << "face area = " << face_area << std::endl;
       assert(face_area > 0);
