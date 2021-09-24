@@ -53,9 +53,8 @@ public:
                             const char* title="Basic Polygon_set_2 Viewer") :
     Base(parent, title)
   {
-    const int n = aps2.number_of_polygons_with_holes();
-    typename PS2::Polygon_with_holes_2 polygons[n];
-    aps2.polygons_with_holes(polygons);
+    std::vector<typename PS2::Polygon_with_holes_2> polygons;
+    aps2.polygons_with_holes(std::back_inserter(polygons));
 
     for (typename PS2::Polygon_with_holes_2& P: polygons) {
       Base::compute_elements(P);
