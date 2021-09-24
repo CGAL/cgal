@@ -34,6 +34,7 @@
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
+#include <algorithm>
 
 namespace CGAL {
 
@@ -229,47 +230,83 @@ public:
     far_vertices_.push_back(vh);
   }
 
+  void remove_isolated_vertex(Vertex_handle v)
+  {
+    Triangulation& tr = triangulation();
+
+    std::vector<Cell_handle> new_cells;
+    new_cells.reserve(32);
+    tr.remove_and_give_new_cells(v, std::back_inserter(new_cells));
+
+    typename std::vector<Cell_handle>::iterator nc_it = new_cells.begin();
+    typename std::vector<Cell_handle>::iterator nc_it_end = new_cells.end();
+    for (; nc_it != nc_it_end; ++nc_it)
+    {
+      Cell_handle c = *nc_it;
+      for (int i = 0; i < 4; ++i)
+      {
+        Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
+        if (is_in_complex(mirror_facet))
+        {
+          set_surface_patch_index(c, i,
+            surface_patch_index(mirror_facet));
+          c->set_facet_surface_center(i,
+            mirror_facet.first->get_facet_surface_center(mirror_facet.second));
+        }
+      }
+      /*int i_inf;
+      if (c->has_vertex(tr.infinite_vertex(), i_inf))
+      {
+        Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
+        if (is_in_complex(mirror_facet))
+        {
+          set_surface_patch_index(c, i_inf,
+                                  surface_patch_index(mirror_facet));
+        }
+      }*/
+    }
+  }
+
   void remove_far_points()
   {
-    Triangulation &tr = triangulation();
     //triangulation().remove(far_vertices_.begin(), far_vertices_.end());
     typename Far_vertices_vec::const_iterator it = far_vertices_.begin();
     typename Far_vertices_vec::const_iterator it_end = far_vertices_.end();
     for ( ; it != it_end ; ++it)
     {
-      std::vector<Cell_handle> new_cells;
-      new_cells.reserve(32);
-      tr.remove_and_give_new_cells(*it, std::back_inserter(new_cells));
-
-      typename std::vector<Cell_handle>::iterator nc_it = new_cells.begin();
-      typename std::vector<Cell_handle>::iterator nc_it_end = new_cells.end();
-      for ( ; nc_it != nc_it_end ; ++nc_it)
-      {
-        Cell_handle c = *nc_it;
-        for (int i = 0 ; i < 4 ; ++i)
-        {
-          Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i));
-          if (is_in_complex(mirror_facet))
-          {
-            set_surface_patch_index(c, i,
-                                    surface_patch_index(mirror_facet));
-            c->set_facet_surface_center(i,
-              mirror_facet.first->get_facet_surface_center(mirror_facet.second));
-          }
-        }
-        /*int i_inf;
-        if (c->has_vertex(tr.infinite_vertex(), i_inf))
-        {
-          Facet mirror_facet = tr.mirror_facet(std::make_pair(c, i_inf));
-          if (is_in_complex(mirror_facet))
-          {
-            set_surface_patch_index(c, i_inf,
-                                    surface_patch_index(mirror_facet));
-          }
-        }*/
-      }
+      remove_isolated_vertex(*it);
     }
     far_vertices_.clear();
+  }
+
+  void remove_isolated_vertices()
+  {
+    std::set<Vertex_handle> c3t3_vertices;
+    for (Cell_iterator c = cells_in_complex_begin();
+         c != cells_in_complex_end();
+         ++c)
+    {
+      c3t3_vertices.insert(c->vertex(0));
+      c3t3_vertices.insert(c->vertex(1));
+      c3t3_vertices.insert(c->vertex(2));
+      c3t3_vertices.insert(c->vertex(3));
+    }
+
+    Triangulation& tr = triangulation();
+    if (c3t3_vertices.size() == tr.number_of_vertices())
+      return;
+
+    using It = CGAL::Prevent_deref<typename Tr::Finite_vertices_iterator>;
+    std::set<Vertex_handle> tr_vertices(It(tr.finite_vertices_begin()),
+                                        It(tr.finite_vertices_end()));
+
+    std::vector<Vertex_handle> isolated;
+    std::set_difference(tr_vertices.begin(), tr_vertices.end(),
+                        c3t3_vertices.begin(), c3t3_vertices.end(),
+                        std::back_inserter(isolated));
+
+    for (Vertex_handle v : isolated)
+      remove_isolated_vertex(v);
   }
 
   /**
