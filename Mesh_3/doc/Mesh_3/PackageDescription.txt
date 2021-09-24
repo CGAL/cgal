@@ -115,6 +115,7 @@ and their associated classes:
 - `CGAL::lloyd_optimize_mesh_3()`
 - `CGAL::odt_optimize_mesh_3()`
 - `CGAL::remove_far_points_in_mesh_3()`
+- `CGAL::remove_isolated_vertices_in_mesh_3()`
 - `CGAL::facets_in_complex_3_to_triangle_mesh()`
 
 \cgalCRPSection{CGAL::parameters Functions}
