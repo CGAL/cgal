@@ -362,24 +362,7 @@ namespace internal {
     typename Traits::Compute_squared_distance_2 squared_distance_2;
 
     using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
-    using IConverter = CGAL::Cartesian_converter<Traits, ITraits>;
-
     using IFT = typename ITraits::FT;
-    using IPoint_2 = typename ITraits::Point_2;
-
-    // Convert to inexact type.
-    std::vector<IPoint_2> points;
-    CGAL_precondition(region.size() > 0);
-    points.reserve(region.size());
-    const IConverter iconverter = IConverter();
-
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
-      points.push_back(iconverter(point));
-    }
-    CGAL_precondition(points.size() == region.size());
 
     using Diagonalize_traits = Eigen_diagonalize_traits<IFT, 4>;
     using Covariance_matrix = typename Diagonalize_traits::Covariance_matrix;
@@ -389,7 +372,15 @@ namespace internal {
 
     // Use bbox to compute diagonalization with smaller coordinates to
     // avoid loss of precision when inverting large coordinates.
-    const auto bbox = CGAL::bbox_2(points.begin(), points.end());
+    FT xmin = +FT(1000000000000);
+    FT ymin = +FT(1000000000000);
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& point = get(point_map, key);
+      xmin = (CGAL::min)(xmin, point.x());
+      ymin = (CGAL::min)(ymin, point.y());
+    }
 
     // Circle least squares fitting:
     // Circle of center (a, b) and radius R:
@@ -413,11 +404,14 @@ namespace internal {
       IFT(0), IFT(0), IFT(0), IFT(0), IFT(0)
     };
 
-    A[0] = static_cast<IFT>(points.size());
-    for (const auto& point : points) {
+    A[0] = static_cast<IFT>(region.size());
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& point = get(point_map, key);
 
-      const IFT x = point.x() - bbox.xmin();
-      const IFT y = point.y() - bbox.ymin();
+      const IFT x = static_cast<IFT>(CGAL::to_double(point.x() - xmin));
+      const IFT y = static_cast<IFT>(CGAL::to_double(point.y() - ymin));
       const IFT r = x * x + y * y;
 
       A[1] += x;
@@ -452,30 +446,30 @@ namespace internal {
     CGAL_assertion(eigenvectors[3] != IFT(0));
 
     // Other cases.
-    const IFT half = IFT(1) / IFT(2);
+    const FT half = FT(1) / FT(2);
     const Point_2 fitted_center = Point_2(
-      static_cast<FT>(bbox.xmin() - half * (eigenvectors[1] / eigenvectors[3])),
-      static_cast<FT>(bbox.ymin() - half * (eigenvectors[2] / eigenvectors[3]))
+      xmin - half * static_cast<FT>(eigenvectors[1] / eigenvectors[3]),
+      ymin - half * static_cast<FT>(eigenvectors[2] / eigenvectors[3])
     );
 
     FT fitted_radius = FT(0);
-    for (const auto& point : points) {
-      const Point_2 converted = Point_2(
-        static_cast<FT>(point.x()),
-        static_cast<FT>(point.y()));
-      fitted_radius += sqrt(squared_distance_2(converted, fitted_center));
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& point = get(point_map, key);
+      fitted_radius += sqrt(squared_distance_2(point, fitted_center));
     }
-    fitted_radius /= static_cast<FT>(points.size());
+    fitted_radius /= static_cast<FT>(region.size());
 
     // Compute score.
     FT score = FT(-1);
     if (compute_score) {
       score = FT(0);
-      for (const auto& point : points) {
-        const Point_2 converted = Point_2(
-          static_cast<FT>(point.x()),
-          static_cast<FT>(point.y()));
-        score += CGAL::abs(sqrt(squared_distance_2(converted, fitted_center)) - fitted_radius);
+      for (const std::size_t item_index : region) {
+        CGAL_precondition(item_index < input_range.size());
+        const auto& key = *(input_range.begin() + item_index);
+        const auto& point = get(point_map, key);
+        score += CGAL::abs(sqrt(squared_distance_2(point, fitted_center)) - fitted_radius);
       }
     }
 
@@ -499,24 +493,7 @@ namespace internal {
     typename Traits::Compute_squared_distance_3 squared_distance_3;
 
     using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
-    using IConverter = CGAL::Cartesian_converter<Traits, ITraits>;
-
     using IFT = typename ITraits::FT;
-    using IPoint_3 = typename ITraits::Point_3;
-
-    // Convert to inexact type.
-    std::vector<IPoint_3> points;
-    CGAL_precondition(region.size() > 0);
-    points.reserve(region.size());
-    const IConverter iconverter = IConverter();
-
-    for (const std::size_t item_index : region) {
-      CGAL_precondition(item_index < input_range.size());
-      const auto& key = *(input_range.begin() + item_index);
-      const auto& point = get(point_map, key);
-      points.push_back(iconverter(point));
-    }
-    CGAL_precondition(points.size() == region.size());
 
     using Diagonalize_traits = Eigen_diagonalize_traits<IFT, 5>;
     using Covariance_matrix = typename Diagonalize_traits::Covariance_matrix;
@@ -526,7 +503,17 @@ namespace internal {
 
     // Use bbox to compute diagonalization with smaller coordinates to
     // avoid loss of precision when inverting large coordinates.
-    const auto bbox = CGAL::bbox_3(points.begin(), points.end());
+    FT xmin = +FT(1000000000000);
+    FT ymin = +FT(1000000000000);
+    FT zmin = +FT(1000000000000);
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& point = get(point_map, key);
+      xmin = (CGAL::min)(xmin, point.x());
+      ymin = (CGAL::min)(ymin, point.y());
+      zmin = (CGAL::min)(zmin, point.z());
+    }
 
     // Sphere least squares fitting.
     // See create_circle_2() above for more details on computation.
@@ -536,12 +523,15 @@ namespace internal {
       IFT(0), IFT(0), IFT(0), IFT(0), IFT(0)
     };
 
-    A[0] = static_cast<IFT>(points.size());
-    for (const auto& point : points) {
+    A[0] = static_cast<IFT>(region.size());
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& point = get(point_map, key);
 
-      const IFT x = point.x() - bbox.xmin();
-      const IFT y = point.y() - bbox.ymin();
-      const IFT z = point.z() - bbox.zmin();
+      const IFT x = static_cast<IFT>(CGAL::to_double(point.x() - xmin));
+      const IFT y = static_cast<IFT>(CGAL::to_double(point.y() - ymin));
+      const IFT z = static_cast<IFT>(CGAL::to_double(point.z() - zmin));
       const IFT r = x * x + y * y + z * z;
 
       A[1] += x;
@@ -582,33 +572,31 @@ namespace internal {
     CGAL_assertion(eigenvectors[4] != IFT(0));
 
     // Other cases.
-    const IFT half = IFT(1) / IFT(2);
+    const FT half = FT(1) / FT(2);
     const Point_3 fitted_center = Point_3(
-      static_cast<FT>(bbox.xmin() - half * (eigenvectors[1] / eigenvectors[4])),
-      static_cast<FT>(bbox.ymin() - half * (eigenvectors[2] / eigenvectors[4])),
-      static_cast<FT>(bbox.zmin() - half * (eigenvectors[3] / eigenvectors[4]))
+      xmin - half * static_cast<FT>(eigenvectors[1] / eigenvectors[4]),
+      ymin - half * static_cast<FT>(eigenvectors[2] / eigenvectors[4]),
+      zmin - half * static_cast<FT>(eigenvectors[3] / eigenvectors[4])
     );
 
     FT fitted_radius = FT(0);
-    for (const auto& point : points) {
-      const Point_3 converted = Point_3(
-        static_cast<FT>(point.x()),
-        static_cast<FT>(point.y()),
-        static_cast<FT>(point.z()));
-      fitted_radius += sqrt(squared_distance_3(converted, fitted_center));
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& point = get(point_map, key);
+      fitted_radius += sqrt(squared_distance_3(point, fitted_center));
     }
-    fitted_radius /= static_cast<FT>(points.size());
+    fitted_radius /= static_cast<FT>(region.size());
 
     // Compute score.
     FT score = FT(-1);
     if (compute_score) {
       score = FT(0);
-      for (const auto& point : points) {
-        const Point_3 converted = Point_3(
-          static_cast<FT>(point.x()),
-          static_cast<FT>(point.y()),
-          static_cast<FT>(point.z()));
-        score += CGAL::abs(sqrt(squared_distance_3(converted, fitted_center)) - fitted_radius);
+      for (const std::size_t item_index : region) {
+        CGAL_precondition(item_index < input_range.size());
+        const auto& key = *(input_range.begin() + item_index);
+        const auto& point = get(point_map, key);
+        score += CGAL::abs(sqrt(squared_distance_3(point, fitted_center)) - fitted_radius);
       }
     }
 
