@@ -408,7 +408,7 @@ namespace Point_set {
         return *(m_input_range.begin() + idx);
       };
 
-      internal::create_cylinder_3(
+      internal::create_cylinder(
         make_range(
           boost::make_transform_iterator(region.begin(), unary_function),
           boost::make_transform_iterator(region.end(), unary_function)),

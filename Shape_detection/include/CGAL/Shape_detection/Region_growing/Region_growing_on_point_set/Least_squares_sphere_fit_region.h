@@ -400,7 +400,7 @@ namespace Point_set {
         return get (m_point_map, *(m_input_range.begin() + idx));
       };
 
-      internal::create_sphere_3(
+      internal::create_sphere(
         make_range(
           boost::make_transform_iterator(region.begin(), unary_function),
           boost::make_transform_iterator(region.end(), unary_function)),

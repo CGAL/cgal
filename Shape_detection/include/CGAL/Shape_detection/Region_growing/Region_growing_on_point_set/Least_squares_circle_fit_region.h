@@ -336,8 +336,8 @@ namespace Point_set {
 
       const FT sq_dist = m_squared_distance_2(query_point, m_center);
       if (std::isnan(sq_dist)) return false;
-      const FT distance_to_center = m_sqrt (sq_dist);
-      const FT distance_to_circle = CGAL::abs (distance_to_center - m_radius);
+      const FT distance_to_center = m_sqrt(sq_dist);
+      const FT distance_to_circle = CGAL::abs(distance_to_center - m_radius);
 
       if (distance_to_circle > m_distance_threshold) {
         return false;
@@ -345,12 +345,12 @@ namespace Point_set {
 
       const FT sq_norm = normal * normal;
       if (std::isnan(sq_norm)) return false;
-      normal = normal / m_sqrt (sq_norm);
+      normal = normal / m_sqrt(sq_norm);
 
       Vector_2 ray(m_center, query_point);
       const FT sq_ray = ray * ray;
       if (std::isnan(sq_ray)) return false;
-      ray = ray / m_sqrt (sq_ray);
+      ray = ray / m_sqrt(sq_ray);
 
       if (CGAL::abs(normal * ray) < m_cos_value_threshold) {
         return false;
@@ -391,15 +391,13 @@ namespace Point_set {
     bool update(const std::vector<std::size_t>& region) {
 
       CGAL_precondition(region.size() > 0);
-      auto unary_function = [&](const std::size_t& idx) -> const Point_2& {
-        return get(m_point_map, *(m_input_range.begin() + idx));
-      };
-
-      internal::create_circle_2(
-        make_range(
-          boost::make_transform_iterator(region.begin(), unary_function),
-          boost::make_transform_iterator(region.end(), unary_function)),
-        m_sqrt, m_squared_distance_2, m_center, m_radius);
+      FT radius; Point_2 center;
+      std::tie(radius, center) = internal::create_circle_2(
+        m_input_range, m_point_map, region, m_traits, false).first;
+      if (radius >= FT(0)) {
+        m_radius = radius;
+        m_center = center;
+      }
       return true;
     }
 
@@ -417,11 +415,11 @@ namespace Point_set {
     FT m_min_radius;
     FT m_max_radius;
 
-    const Squared_distance_2 m_squared_distance_2;
     const Sqrt m_sqrt;
+    const Squared_distance_2 m_squared_distance_2;
 
-    Point_2 m_center;
     FT m_radius;
+    Point_2 m_center;
   };
 
 } // namespace Point_set

@@ -268,7 +268,7 @@ namespace Point_set {
         Local_line_3 fitted_line;
         Local_FT fitted_radius;
 
-        if (internal::create_cylinder_3(
+        if (internal::create_cylinder(
           points, Local_point_map(), Local_normal_map(),
           sqrt, squared_distance_3, fitted_line, fitted_radius)) {
 

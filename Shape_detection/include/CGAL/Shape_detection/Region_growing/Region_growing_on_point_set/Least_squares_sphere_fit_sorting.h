@@ -243,7 +243,7 @@ namespace Point_set {
         Local_point_3 fitted_center;
         Local_FT fitted_radius;
 
-        if (internal::create_sphere_3(
+        if (internal::create_sphere(
           points, sqrt, squared_distance_3, fitted_center, fitted_radius)) {
 
           // Score is min squared distance to sphere.
