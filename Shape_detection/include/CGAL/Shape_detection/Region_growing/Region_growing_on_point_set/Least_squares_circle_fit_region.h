@@ -204,6 +204,8 @@ namespace Point_set {
       CGAL_precondition(m_max_radius >= m_min_radius);
     }
 
+    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
     /*!
       \brief initializes all internal data structures.
 
@@ -269,6 +271,8 @@ namespace Point_set {
     normal_map(normal_map).
     geom_traits(traits))
     { }
+
+    #endif // CGAL_NO_DEPRECATED_CODE
 
     /// @}
 

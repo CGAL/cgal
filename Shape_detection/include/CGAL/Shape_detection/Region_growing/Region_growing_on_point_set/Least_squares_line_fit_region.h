@@ -182,6 +182,8 @@ namespace Point_set {
       m_cos_value_threshold = cos_value;
     }
 
+    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
     /*!
       \brief initializes all internal data structures.
 
@@ -235,6 +237,8 @@ namespace Point_set {
     normal_map(normal_map).
     geom_traits(traits))
     { }
+
+    #endif // CGAL_NO_DEPRECATED_CODE
 
     /// @}
 

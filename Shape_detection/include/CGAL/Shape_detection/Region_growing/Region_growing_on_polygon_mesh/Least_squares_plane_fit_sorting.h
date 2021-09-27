@@ -137,6 +137,8 @@ namespace Polygon_mesh {
       m_scores.resize(m_face_range.size());
     }
 
+    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
     /*!
       \brief initializes all internal data structures.
 
@@ -164,6 +166,8 @@ namespace Polygon_mesh {
       pmesh, neighbor_query, CGAL::parameters::
     vertex_point_map(vertex_to_point_map))
     { }
+
+    #endif // CGAL_NO_DEPRECATED_CODE
 
     /// @}
 

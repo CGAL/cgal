@@ -137,6 +137,8 @@ namespace Point_set {
       m_scores.resize(m_input_range.size());
     }
 
+    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
     /*!
       \brief initializes all internal data structures.
 
@@ -164,6 +166,8 @@ namespace Point_set {
       input_range, neighbor_query, CGAL::parameters::
     point_map(point_map))
     { }
+
+    #endif // CGAL_NO_DEPRECATED_CODE
 
     /// @}
 

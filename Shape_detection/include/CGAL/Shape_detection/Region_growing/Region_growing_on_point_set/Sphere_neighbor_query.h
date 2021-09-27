@@ -149,6 +149,8 @@ namespace Point_set {
       m_tree.build();
     }
 
+    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
     /*!
       \brief initializes a Kd-tree with input points.
 
@@ -178,6 +180,8 @@ namespace Point_set {
     sphere_radius(sphere_radius).
     point_map(point_map))
     { }
+
+    #endif // CGAL_NO_DEPRECATED_CODE
 
     /// @}
 
