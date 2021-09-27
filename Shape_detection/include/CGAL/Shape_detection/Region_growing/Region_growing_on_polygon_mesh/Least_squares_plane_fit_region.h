@@ -247,6 +247,14 @@ namespace Polygon_mesh {
 
     #endif // CGAL_NO_DEPRECATED_CODE
 
+    /// \cond SKIP_IN_MANUAL
+    Least_squares_plane_fit_region(
+      const PolygonMesh& pmesh) :
+    Least_squares_plane_fit_region(
+      pmesh, CGAL::parameters::all_default())
+    { }
+    /// \endcond
+
     /// @}
 
     /// \name Access

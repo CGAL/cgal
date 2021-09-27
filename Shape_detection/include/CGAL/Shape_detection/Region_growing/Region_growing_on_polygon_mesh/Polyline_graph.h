@@ -183,6 +183,14 @@ namespace Polygon_mesh {
     }
 
     /// \cond SKIP_IN_MANUAL
+    Least_squares_circle_fit_region(
+      const InputRange& input_range) :
+    Least_squares_circle_fit_region(
+      input_range, CGAL::parameters::all_default())
+    { }
+    /// \endcond
+
+    /// \cond SKIP_IN_MANUAL
     void build_graph() {
 
       clear();

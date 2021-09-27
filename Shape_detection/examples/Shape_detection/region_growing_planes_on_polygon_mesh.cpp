@@ -64,8 +64,7 @@ int main(int argc, char *argv[]) {
     minimum_region_size(min_region_size));
 
   // Sort face indices.
-  Sorting sorting(
-    polygon_mesh, neighbor_query, CGAL::parameters::all_default());
+  Sorting sorting(polygon_mesh, neighbor_query);
   sorting.sort();
 
   // Create an instance of the region growing class.

@@ -136,6 +136,15 @@ namespace Polyline {
       m_scores.resize(m_input_range.size());
     }
 
+    /// \cond SKIP_IN_MANUAL
+    Least_squares_line_fit_sorting(
+      const InputRange& input_range,
+      NeighborQuery& neighbor_query) :
+    Least_squares_line_fit_sorting(
+      input_range, neighbor_query, CGAL::parameters::all_default())
+    { }
+    /// \endcond
+
     /// @}
 
     /// \name Sorting

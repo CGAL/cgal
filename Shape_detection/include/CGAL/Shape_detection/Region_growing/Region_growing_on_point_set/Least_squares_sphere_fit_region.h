@@ -279,6 +279,14 @@ namespace Point_set {
 
     #endif // CGAL_NO_DEPRECATED_CODE
 
+    /// \cond SKIP_IN_MANUAL
+    Least_squares_sphere_fit_region(
+      const InputRange& input_range) :
+    Least_squares_sphere_fit_region(
+      input_range, CGAL::parameters::all_default())
+    { }
+    /// \endcond
+
     /// @}
 
     /// \name Access

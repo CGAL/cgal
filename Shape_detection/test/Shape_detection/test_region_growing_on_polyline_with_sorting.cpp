@@ -72,8 +72,7 @@ int main(int argc, char *argv[]) {
     maximum_angle(angle_threshold));
 
   // Sort indices.
-  Sorting_3 sorting_3(
-    polyline_3, neighbor_query_3, CGAL::parameters::all_default());
+  Sorting_3 sorting_3(polyline_3, neighbor_query_3);
   sorting_3.sort();
 
   // Run 3D region growing.
@@ -125,8 +124,7 @@ int main(int argc, char *argv[]) {
     maximum_angle(angle_threshold));
 
   // Sort indices.
-  Sorting_2 sorting_2(
-    polyline_2, neighbor_query_2, CGAL::parameters::all_default());
+  Sorting_2 sorting_2(polyline_2, neighbor_query_2);
   sorting_2.sort();
 
   // Run 2D region growing.

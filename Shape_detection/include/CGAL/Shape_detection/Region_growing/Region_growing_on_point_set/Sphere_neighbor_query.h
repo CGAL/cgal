@@ -183,6 +183,14 @@ namespace Point_set {
 
     #endif // CGAL_NO_DEPRECATED_CODE
 
+    /// \cond SKIP_IN_MANUAL
+    Sphere_neighbor_query(
+      const InputRange& input_range) :
+    Sphere_neighbor_query(
+      input_range, CGAL::parameters::all_default())
+    { }
+    /// \endcond
+
     /// @}
 
     /// \name Access

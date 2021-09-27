@@ -157,8 +157,7 @@ bool test_lines_segment_set_2() {
   assert(segments.size() == 4);
 
   Neighbor_query neighbor_query;
-  Region_type region_type(
-    segments, CGAL::parameters::all_default());
+  Region_type region_type(segments);
 
   std::vector< std::vector<std::size_t> > regions;
   Region_growing region_growing(
