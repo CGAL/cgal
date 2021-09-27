@@ -730,8 +730,7 @@ initialize()
         "When calling refine_mesh_3(), the input `c3t3` should have been initialized and have "
         "at least one facet in the complex. Try to solve this issue using :\n"
         "\t- The automatic initialization provided by make_mesh_3()\n"
-        "\t- Adding more and better chosen points on the input surface\n"
-        "\t- defining the compilation macro CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE\n");
+        "\t- Adding more and better chosen points on the input surface\n");
     }
 
     if (r_c3t3_.number_of_far_points() == 0 &&
