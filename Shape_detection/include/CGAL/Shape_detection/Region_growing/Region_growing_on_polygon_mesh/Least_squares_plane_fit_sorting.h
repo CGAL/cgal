@@ -170,12 +170,13 @@ namespace Polygon_mesh {
     #endif // CGAL_NO_DEPRECATED_CODE
 
     /// \cond SKIP_IN_MANUAL
-    Least_squares_plane_fit_sorting(
-      const PolygonMesh& pmesh,
-      NeighborQuery& neighbor_query) :
-    Least_squares_plane_fit_sorting(
-      pmesh, neighbor_query, CGAL::parameters::all_default())
-    { }
+    // TODO: Should be off until the deprecated code is removed.
+    // Least_squares_plane_fit_sorting(
+    //   const PolygonMesh& pmesh,
+    //   NeighborQuery& neighbor_query) :
+    // Least_squares_plane_fit_sorting(
+    //   pmesh, neighbor_query, CGAL::parameters::all_default())
+    // { }
     /// \endcond
 
     /// @}

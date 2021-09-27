@@ -193,12 +193,13 @@ namespace Point_set {
     #endif // CGAL_NO_DEPRECATED_CODE
 
     /// \cond SKIP_IN_MANUAL
-    Least_squares_cylinder_fit_sorting(
-      const InputRange& input_range,
-      NeighborQuery& neighbor_query) :
-    Least_squares_cylinder_fit_sorting(
-      input_range, neighbor_query, CGAL::parameters::all_default())
-    { }
+    // TODO: Should be off until the deprecated code is removed.
+    // Least_squares_cylinder_fit_sorting(
+    //   const InputRange& input_range,
+    //   NeighborQuery& neighbor_query) :
+    // Least_squares_cylinder_fit_sorting(
+    //   input_range, neighbor_query, CGAL::parameters::all_default())
+    // { }
     /// \endcond
 
     /// @}

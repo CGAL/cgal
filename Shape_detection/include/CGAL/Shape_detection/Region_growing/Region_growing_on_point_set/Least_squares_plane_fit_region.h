@@ -241,11 +241,12 @@ namespace Point_set {
     #endif // CGAL_NO_DEPRECATED_CODE
 
     /// \cond SKIP_IN_MANUAL
-    Least_squares_plane_fit_region(
-      const InputRange& input_range) :
-    Least_squares_plane_fit_region(
-      input_range, CGAL::parameters::all_default())
-    { }
+    // TODO: Should be off until the deprecated code is removed.
+    // Least_squares_plane_fit_region(
+    //   const InputRange& input_range) :
+    // Least_squares_plane_fit_region(
+    //   input_range, CGAL::parameters::all_default())
+    // { }
     /// \endcond
 
     /// @}

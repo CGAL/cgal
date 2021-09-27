@@ -170,8 +170,8 @@ namespace Point_set {
       np, internal_np::normal_map), NormalMap())),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::geom_traits), GeomTraits())),
-    m_squared_distance_2(m_traits.compute_squared_distance_2_object()),
-    m_sqrt(Get_sqrt::sqrt_object(m_traits)) {
+    m_sqrt(Get_sqrt::sqrt_object(m_traits)),
+    m_squared_distance_2(m_traits.compute_squared_distance_2_object()) {
 
       CGAL_precondition(input_range.size() > 0);
       const FT max_distance = parameters::choose_parameter(
@@ -275,11 +275,12 @@ namespace Point_set {
     #endif // CGAL_NO_DEPRECATED_CODE
 
     /// \cond SKIP_IN_MANUAL
-    Least_squares_circle_fit_region(
-      const InputRange& input_range) :
-    Least_squares_circle_fit_region(
-      input_range, CGAL::parameters::all_default())
-    { }
+    // TODO: Should be off until the deprecated code is removed.
+    // Least_squares_circle_fit_region(
+    //   const InputRange& input_range) :
+    // Least_squares_circle_fit_region(
+    //   input_range, CGAL::parameters::all_default())
+    // { }
     /// \endcond
 
     /// @}
@@ -321,7 +322,7 @@ namespace Point_set {
       }
 
       // TODO: Why do we get so many nan in this class?
-      if (std::isnan(m_radius)) {
+      if (std::isnan(CGAL::to_double(m_radius))) {
         return false;
       }
 
@@ -335,7 +336,7 @@ namespace Point_set {
       Vector_2 normal = get(m_normal_map, key);
 
       const FT sq_dist = m_squared_distance_2(query_point, m_center);
-      if (std::isnan(sq_dist)) return false;
+      if (std::isnan(CGAL::to_double(sq_dist))) return false;
       const FT distance_to_center = m_sqrt(sq_dist);
       const FT distance_to_circle = CGAL::abs(distance_to_center - m_radius);
 
@@ -344,12 +345,12 @@ namespace Point_set {
       }
 
       const FT sq_norm = normal * normal;
-      if (std::isnan(sq_norm)) return false;
+      if (std::isnan(CGAL::to_double(sq_norm))) return false;
       normal = normal / m_sqrt(sq_norm);
 
       Vector_2 ray(m_center, query_point);
       const FT sq_ray = ray * ray;
-      if (std::isnan(sq_ray)) return false;
+      if (std::isnan(CGAL::to_double(sq_ray))) return false;
       ray = ray / m_sqrt(sq_ray);
 
       if (CGAL::abs(normal * ray) < m_cos_value_threshold) {

@@ -358,8 +358,8 @@ namespace internal {
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
 
-    using sqrt = typename Get_sqrt<Traits>::Sqrt;
-    using squared_distance_2 = typename Traits::Compute_squared_distance_2;
+    typename Get_sqrt<Traits>::Sqrt sqrt;
+    typename Traits::Compute_squared_distance_2 squared_distance_2;
 
     using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
     using IConverter = CGAL::Cartesian_converter<Traits, ITraits>;

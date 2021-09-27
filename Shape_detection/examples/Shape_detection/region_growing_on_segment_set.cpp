@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 
   // Find planar regions.
   One_ring_query one_ring_query(surface_mesh);
-  Plane_region plane_region(surface_mesh);
+  Plane_region plane_region(surface_mesh, CGAL::parameters::all_default());
   RG_planes rg_planes(face_range, one_ring_query, plane_region);
 
   std::vector< std::vector<std::size_t> > regions;

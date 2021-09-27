@@ -70,7 +70,9 @@ bool test(int argc, char** argv, const std::string name, const std::size_t minr,
     minimum_region_size(min_region_size));
 
   // Sort indices.
-  Sorting sorting(input_range, neighbor_query);
+  Sorting sorting(
+    input_range, neighbor_query,
+    CGAL::parameters::all_default());
   sorting.sort();
 
   // Run region growing.

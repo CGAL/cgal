@@ -189,11 +189,12 @@ namespace Point_set {
     #endif // CGAL_NO_DEPRECATED_CODE
 
     /// \cond SKIP_IN_MANUAL
-    K_neighbor_query(
-      const InputRange& input_range) :
-    K_neighbor_query(
-      input_range, CGAL::parameters::all_default())
-    { }
+    // TODO: Should be off until the deprecated code is removed.
+    // K_neighbor_query(
+    //   const InputRange& input_range) :
+    // K_neighbor_query(
+    //   input_range, CGAL::parameters::all_default())
+    // { }
     /// \endcond
 
     /// @}
