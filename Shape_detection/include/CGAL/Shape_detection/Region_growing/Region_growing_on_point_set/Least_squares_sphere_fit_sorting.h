@@ -74,14 +74,8 @@ namespace Point_set {
     /// @}
 
   private:
-    // using FT = typename Traits::FT;
-    // using Compare_scores = internal::Compare_scores<FT>;
-
-    using Local_traits = Exact_predicates_inexact_constructions_kernel;
-    using Local_FT = typename Local_traits::FT;
-    using Local_point_3 = typename Local_traits::Point_3;
-    using To_local_converter = Cartesian_converter<Traits, Local_traits>;
-    using Compare_scores = internal::Compare_scores<Local_FT>;
+    using FT = typename Traits::FT;
+    using Compare_scores = internal::Compare_scores<FT>;
 
   public:
     /// \name Initialization
@@ -128,8 +122,7 @@ namespace Point_set {
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::geom_traits), GeomTraits())),
-    m_to_local_converter() {
+      np, internal_np::geom_traits), GeomTraits())) {
 
       CGAL_precondition(input_range.size() > 0);
       m_order.resize(m_input_range.size());
@@ -216,45 +209,18 @@ namespace Point_set {
     const Point_map m_point_map;
     const Traits m_traits;
     std::vector<std::size_t> m_order;
-    std::vector<Local_FT> m_scores;
-    const To_local_converter m_to_local_converter;
+    std::vector<FT> m_scores;
 
     void compute_scores() {
+
       std::vector<std::size_t> neighbors;
-      std::vector<Local_point_3> points;
-
-      typename internal::Get_sqrt<Local_traits>::Sqrt sqrt;
-      typename Local_traits::Compute_squared_distance_3 squared_distance_3;
-
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
-
-        points.clear();
-        for (std::size_t j = 0; j < neighbors.size(); ++j) {
-          CGAL_precondition(neighbors[j] < m_input_range.size());
-
-          const auto& key = *(m_input_range.begin() + neighbors[j]);
-          points.push_back(m_to_local_converter(get(m_point_map, key)));
-        }
-        CGAL_postcondition(points.size() == neighbors.size());
-
-        Local_point_3 fitted_center;
-        Local_FT fitted_radius;
-
-        if (internal::create_sphere(
-          points, sqrt, squared_distance_3, fitted_center, fitted_radius)) {
-
-          // Score is min squared distance to sphere.
-          m_scores[i] = Local_FT(0);
-          for (const Local_point_3& p : points) {
-            m_scores[i] += abs(sqrt(squared_distance_3(p, fitted_center)) - fitted_radius);
-          }
-        } else {
-          m_scores[i] = Local_FT(std::numeric_limits<double>::max());
-        }
+        m_scores[i] = internal::create_sphere(
+          m_input_range, m_point_map, neighbors, m_traits, true).second;
+        CGAL_assertion(m_scores[i] >= FT(0));
       }
     }
   };

@@ -461,7 +461,8 @@ namespace internal {
     FT fitted_radius = FT(0);
     for (const auto& point : points) {
       const Point_2 converted = Point_2(
-        static_cast<FT>(point.x()), static_cast<FT>(point.y()));
+        static_cast<FT>(point.x()),
+        static_cast<FT>(point.y()));
       fitted_radius += sqrt(squared_distance_2(converted, fitted_center));
     }
     fitted_radius /= static_cast<FT>(points.size());
@@ -472,7 +473,8 @@ namespace internal {
       score = FT(0);
       for (const auto& point : points) {
         const Point_2 converted = Point_2(
-          static_cast<FT>(point.x()), static_cast<FT>(point.y()));
+          static_cast<FT>(point.x()),
+          static_cast<FT>(point.y()));
         score += CGAL::abs(sqrt(squared_distance_2(converted, fitted_center)) - fitted_radius);
       }
     }
@@ -482,18 +484,41 @@ namespace internal {
   }
 
   template<
-  typename PointRange,
-  typename Sqrt,
-  typename Squared_distance_3,
-  typename Point_3,
-  typename FT>
-  bool create_sphere(
-    const PointRange& points,
-    const Sqrt& sqrt,
-    const Squared_distance_3& squared_distance_3,
-    Point_3& center, FT& radius) {
+  typename Traits,
+  typename InputRange,
+  typename PointMap>
+  std::pair<std::pair<typename Traits::FT, typename Traits::Point_3>, typename Traits::FT>
+  create_sphere(
+    const InputRange& input_range, const PointMap point_map,
+    const std::vector<std::size_t>& region, const Traits&, const bool compute_score) {
 
-    using Diagonalize_traits = Eigen_diagonalize_traits<FT, 5>;
+    using FT = typename Traits::FT;
+    using Point_3 = typename Traits::Point_3;
+
+    typename Get_sqrt<Traits>::Sqrt sqrt;
+    typename Traits::Compute_squared_distance_3 squared_distance_3;
+
+    using ITraits = CGAL::Exact_predicates_inexact_constructions_kernel;
+    using IConverter = CGAL::Cartesian_converter<Traits, ITraits>;
+
+    using IFT = typename ITraits::FT;
+    using IPoint_3 = typename ITraits::Point_3;
+
+    // Convert to inexact type.
+    std::vector<IPoint_3> points;
+    CGAL_precondition(region.size() > 0);
+    points.reserve(region.size());
+    const IConverter iconverter = IConverter();
+
+    for (const std::size_t item_index : region) {
+      CGAL_precondition(item_index < input_range.size());
+      const auto& key = *(input_range.begin() + item_index);
+      const auto& point = get(point_map, key);
+      points.push_back(iconverter(point));
+    }
+    CGAL_precondition(points.size() == region.size());
+
+    using Diagonalize_traits = Eigen_diagonalize_traits<IFT, 5>;
     using Covariance_matrix = typename Diagonalize_traits::Covariance_matrix;
 
     using Vector = typename Diagonalize_traits::Vector;
@@ -501,23 +526,23 @@ namespace internal {
 
     // Use bbox to compute diagonalization with smaller coordinates to
     // avoid loss of precision when inverting large coordinates.
-    const Bbox_3 bbox = bbox_3(points.begin(), points.end());
+    const auto bbox = CGAL::bbox_3(points.begin(), points.end());
 
     // Sphere least squares fitting.
     // See create_circle_2() above for more details on computation.
     Covariance_matrix A = {
-      FT(0), FT(0), FT(0), FT(0), FT(0),
-      FT(0), FT(0), FT(0), FT(0), FT(0),
-      FT(0), FT(0), FT(0), FT(0), FT(0)
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0),
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0),
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0)
     };
 
-    A[0] = static_cast<FT>(points.size());
-    for (const Point_3& p : points) {
+    A[0] = static_cast<IFT>(points.size());
+    for (const auto& point : points) {
 
-      const FT x = p.x() - bbox.xmin();
-      const FT y = p.y() - bbox.ymin();
-      const FT z = p.z() - bbox.zmin();
-      const FT r = x * x + y * y + z * z;
+      const IFT x = point.x() - bbox.xmin();
+      const IFT y = point.y() - bbox.ymin();
+      const IFT z = point.z() - bbox.zmin();
+      const IFT r = x * x + y * y + z * z;
 
       A[1] += x;
       A[2] += y;
@@ -536,36 +561,59 @@ namespace internal {
     }
 
     Vector eigenvalues = {
-      FT(0), FT(0), FT(0), FT(0), FT(0)
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0)
     };
     Matrix eigenvectors = {
-      FT(0), FT(0), FT(0), FT(0), FT(0),
-      FT(0), FT(0), FT(0), FT(0), FT(0),
-      FT(0), FT(0), FT(0), FT(0), FT(0),
-      FT(0), FT(0), FT(0), FT(0), FT(0),
-      FT(0), FT(0), FT(0), FT(0), FT(0)
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0),
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0),
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0),
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0),
+      IFT(0), IFT(0), IFT(0), IFT(0), IFT(0)
     };
     Diagonalize_traits::
       diagonalize_selfadjoint_covariance_matrix(A, eigenvalues, eigenvectors);
 
     // Perfect plane case, no sphere can be fitted.
-    if (eigenvectors[4] == 0) {
-      return false;
+    if (eigenvectors[4] == IFT(0)) {
+      return std::make_pair(
+        std::make_pair(FT(-1), Point_3()),
+        static_cast<FT>(std::numeric_limits<double>::max()));
     }
+    CGAL_assertion(eigenvectors[4] != IFT(0));
 
     // Other cases.
-    const FT half = FT(1) / FT(2);
-    center = Point_3(
-      bbox.xmin() - half * (eigenvectors[1] / eigenvectors[4]),
-      bbox.ymin() - half * (eigenvectors[2] / eigenvectors[4]),
-      bbox.zmin() - half * (eigenvectors[3] / eigenvectors[4]));
+    const IFT half = IFT(1) / IFT(2);
+    const Point_3 fitted_center = Point_3(
+      static_cast<FT>(bbox.xmin() - half * (eigenvectors[1] / eigenvectors[4])),
+      static_cast<FT>(bbox.ymin() - half * (eigenvectors[2] / eigenvectors[4])),
+      static_cast<FT>(bbox.zmin() - half * (eigenvectors[3] / eigenvectors[4]))
+    );
 
-    radius = FT(0);
-    for (const Point_3& p : points) {
-      radius += sqrt(squared_distance_3(p, center));
+    FT fitted_radius = FT(0);
+    for (const auto& point : points) {
+      const Point_3 converted = Point_3(
+        static_cast<FT>(point.x()),
+        static_cast<FT>(point.y()),
+        static_cast<FT>(point.z()));
+      fitted_radius += sqrt(squared_distance_3(converted, fitted_center));
     }
-    radius /= static_cast<FT>(points.size());
-    return true;
+    fitted_radius /= static_cast<FT>(points.size());
+
+    // Compute score.
+    FT score = FT(-1);
+    if (compute_score) {
+      score = FT(0);
+      for (const auto& point : points) {
+        const Point_3 converted = Point_3(
+          static_cast<FT>(point.x()),
+          static_cast<FT>(point.y()),
+          static_cast<FT>(point.z()));
+        score += CGAL::abs(sqrt(squared_distance_3(converted, fitted_center)) - fitted_radius);
+      }
+    }
+
+    return std::make_pair(
+      std::make_pair(fitted_radius, fitted_center), score);
   }
 
   template<
