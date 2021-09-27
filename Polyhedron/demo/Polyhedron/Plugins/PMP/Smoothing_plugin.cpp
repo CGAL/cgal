@@ -8,7 +8,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 #include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
@@ -278,7 +278,7 @@ public Q_SLOTS:
 
     if(poly_item)
     {
-      smooth_mesh(pmesh, parameters::do_project(projection)
+      angle_and_area_smoothing(pmesh, parameters::do_project(projection)
                                     .number_of_iterations(nb_iter)
                                     .vertex_is_constrained_map(vcmap)
                                     .use_safety_constraints(use_safety_measures)
@@ -296,7 +296,7 @@ public Q_SLOTS:
       // No faces selected --> use all faces
       if(std::begin(selection_item->selected_facets) == std::end(selection_item->selected_facets))
       {
-        smooth_mesh(pmesh, parameters::do_project(projection)
+        angle_and_area_smoothing(pmesh, parameters::do_project(projection)
                                       .number_of_iterations(nb_iter)
                                       .vertex_is_constrained_map(vcmap)
                                       .edge_is_constrained_map(selection_item->constrained_edges_pmap())
@@ -307,7 +307,7 @@ public Q_SLOTS:
       }
       else // some faces exist in the selection
       {
-        smooth_mesh(selection_item->selected_facets, pmesh, parameters::do_project(projection)
+        angle_and_area_smoothing(selection_item->selected_facets, pmesh, parameters::do_project(projection)
                                                                        .number_of_iterations(nb_iter)
                                                                        .vertex_is_constrained_map(vcmap)
                                                                        .edge_is_constrained_map(selection_item->constrained_edges_pmap())
