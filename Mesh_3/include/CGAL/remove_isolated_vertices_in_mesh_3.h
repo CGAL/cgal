@@ -25,13 +25,18 @@ namespace CGAL {
 
 /*!
   \ingroup PkgMesh3Functions
-  The tetrahedral mesh generation algorithm implemented in `CGAL::make_mesh_3()`
+    The tetrahedral mesh generation algorithm implemented in `CGAL::make_mesh_3()`
   and `CGAL::refine_mesh_3()` does not guarantee that all the points inserted
   by the algorithm are actually present in the final mesh.
+
   In most cases, all points are used, but if the geometry of the object
   has small features, compared to the size of the simplices (triangles and tetrahedra),
   it might be that the Delaunay facets that are selected in the restricted Delaunay
   triangulation miss some vertices of the triangulation.
+  The concurrent version of the tetrahedral mesh generation algorithm
+  also inserts a small set of auxiliary vertices that belong to the triangulation
+  but are isolated from the complex at the end of the meshing process.
+
   This function removes these so-called "isolated" vertices, that belong to the
   triangulation but not to any cell of the `C3T3`, from the triangulation.
 

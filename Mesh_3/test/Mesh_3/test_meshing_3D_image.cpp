@@ -19,7 +19,6 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/use.h>
 
-#include <CGAL/remove_far_points_in_mesh_3.h>
 #include <CGAL/remove_isolated_vertices_in_mesh_3.h>
 
 template <typename Concurrency_tag = CGAL::Sequential_tag>
@@ -64,7 +63,6 @@ public:
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
 
-    CGAL::remove_far_points_in_mesh_3(c3t3);
     CGAL::remove_isolated_vertices_in_mesh_3(c3t3);
 
     // Verify
