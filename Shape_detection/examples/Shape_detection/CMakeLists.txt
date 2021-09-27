@@ -13,6 +13,8 @@ include(CGAL_CreateSingleSourceCGALProgram)
 find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
+  message(STATUS "Found Eigen 3")
+
   create_single_source_cgal_program("efficient_RANSAC_basic.cpp")
   create_single_source_cgal_program("efficient_RANSAC_with_callback.cpp")
   create_single_source_cgal_program("region_growing_with_custom_classes.cpp")
