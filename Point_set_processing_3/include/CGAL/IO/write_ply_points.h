@@ -101,8 +101,8 @@ namespace IO {
               of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the `PropertyMap` objects provided
-   within the `PropertyHandler` parameter.
+                      its iterator is the key type of the `PropertyMap` objects provided
+                      within the `PropertyHandler` parameter.
    \tparam PropertyHandler handlers to recover properties.
 
    \returns `true` if writing was successful, `false` otherwise.
@@ -152,7 +152,7 @@ template <typename PointRange,
               of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param os output stream
@@ -220,11 +220,11 @@ bool write_PLY(std::ostream& os,
 
   set_stream_precision_from_NP(os, np);
 
-  if (has_normals)
+  if(has_normals)
     return write_PLY_with_properties(os, points,
                                      make_ply_point_writer(point_map),
                                      make_ply_normal_writer(normal_map));
-  // else
+
   return write_PLY_with_properties(os, points, make_ply_point_writer(point_map));
 }
 
@@ -245,7 +245,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
    \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param filename the path to the output file

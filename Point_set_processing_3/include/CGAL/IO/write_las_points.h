@@ -179,7 +179,7 @@ namespace LAS {
    \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
    \tparam PropertyHandler handlers to recover properties.
 
@@ -257,7 +257,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param os output stream
