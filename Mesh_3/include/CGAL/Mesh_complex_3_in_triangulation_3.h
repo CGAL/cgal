@@ -34,7 +34,6 @@
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
-#include <algorithm>
 
 namespace CGAL {
 
@@ -281,32 +280,54 @@ public:
 
   void remove_isolated_vertices()
   {
-    std::set<Vertex_handle> c3t3_vertices;
+    Triangulation& tr = triangulation();
+    for (Vertex_handle v : tr.finite_vertex_handles())
+      v->set_meshing_info(0);
+
     for (typename Base::Cells_in_complex_iterator c = this->cells_in_complex_begin();
          c != this->cells_in_complex_end();
          ++c)
     {
-      c3t3_vertices.insert(c->vertex(0));
-      c3t3_vertices.insert(c->vertex(1));
-      c3t3_vertices.insert(c->vertex(2));
-      c3t3_vertices.insert(c->vertex(3));
+      for (int i = 0; i < 4; ++i)
+      {
+        Vertex_handle vi = c->vertex(i);
+        vi->set_meshing_info(vi->meshing_info() + 1);
+      }
     }
 
-    Triangulation& tr = triangulation();
-    if (c3t3_vertices.size() == tr.number_of_vertices())
-      return;
-
-    using It = CGAL::Prevent_deref<typename Tr::Finite_vertices_iterator>;
-    std::set<Vertex_handle> tr_vertices(It(tr.finite_vertices_begin()),
-                                        It(tr.finite_vertices_end()));
+    for (typename Base::Facets_in_complex_iterator fit = this->facets_in_complex_begin();
+         fit != this->facets_in_complex_end();
+         ++fit)
+    {
+      Facet f = *fit;
+      for (int i = 1; i < 4; ++i)
+      {
+        Vertex_handle vi = f.first->vertex((f.second + i) % 4);
+        vi->set_meshing_info(vi->meshing_info() + 1);
+      }
+    }
 
     std::vector<Vertex_handle> isolated;
-    std::set_difference(tr_vertices.begin(), tr_vertices.end(),
-                        c3t3_vertices.begin(), c3t3_vertices.end(),
-                        std::back_inserter(isolated));
+    for (Vertex_handle v : tr.finite_vertex_handles())
+    {
+      if (v->meshing_info() == 0.)
+        isolated.push_back(v);
+    }
+
+#ifdef CGAL_MESH_3_VERBOSE
+    std::cout << "Remove " << isolated.size() << " isolated vertices...";
+    std::cout.flush();
+#endif
+
+    CGAL_assertion(far_vertices_.size() <= isolated.size());
+    far_vertices_.clear();
 
     for (Vertex_handle v : isolated)
       remove_isolated_vertex(v);
+
+#ifdef CGAL_MESH_3_VERBOSE
+    std::cout << "\nRemove " << isolated.size() << " isolated vertices done." << std::endl;
+#endif
   }
 
   /**
