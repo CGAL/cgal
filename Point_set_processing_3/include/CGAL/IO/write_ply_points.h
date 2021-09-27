@@ -96,7 +96,9 @@ namespace IO {
    be provided for `PropertyMap::value_type` that handles both ASCII
    and binary output (see `CGAL::IO::get_mode()`).
 
-   \attention When writing to a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the `PropertyMap` objects provided
@@ -145,7 +147,9 @@ template <typename PointRange,
 
    \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
-   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
