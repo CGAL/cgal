@@ -2,7 +2,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/property_map.h>
@@ -37,8 +37,8 @@ void test_smoothing(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh);
-  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10));
+  PMP::angle_and_area_smoothing(mesh);
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::number_of_iterations(10));
 }
 
 template <typename Mesh>
@@ -47,8 +47,8 @@ void test_angle_smoothing(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh);
-  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10)
+  PMP::angle_and_area_smoothing(mesh);
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::number_of_iterations(10)
                                           .use_area_smoothing(false));
 }
 
@@ -58,8 +58,8 @@ void test_area_smoothing(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh);
-  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(10)
+  PMP::angle_and_area_smoothing(mesh);
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::number_of_iterations(10)
                                           .use_angle_smoothing(false));
 }
 
@@ -69,7 +69,7 @@ void test_angle_smoothing_without_projection(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh, CGAL::parameters::do_project(false)
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::do_project(false)
                                           .use_area_smoothing(false));
 }
 
@@ -79,7 +79,7 @@ void test_area_smoothing_without_projection(const char* filename)
   Mesh mesh;
   read_mesh(filename, mesh);
 
-  PMP::smooth_mesh(mesh, CGAL::parameters::do_project(false)
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::do_project(false)
                                           .use_angle_smoothing(false));
 }
 
@@ -117,7 +117,7 @@ void test_constrained_vertices(const char* filename)
 
   CGAL::Boolean_property_map<std::set<vertex_descriptor> > vcmap(selected_vertices);
 
-  PMP::smooth_mesh(mesh, CGAL::parameters::vertex_is_constrained_map(vcmap));
+  PMP::angle_and_area_smoothing(mesh, CGAL::parameters::vertex_is_constrained_map(vcmap));
 
   for(vertex_descriptor v : vertices(mesh))
   {

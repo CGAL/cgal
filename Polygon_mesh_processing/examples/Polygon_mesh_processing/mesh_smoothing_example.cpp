@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
   std::cout << "Smoothing mesh... (" << nb_iterations << " iterations)" << std::endl;
 
   // Smooth with both angle and area criteria + Delaunay flips
-  PMP::smooth_mesh(mesh, PMP::parameters::number_of_iterations(nb_iterations)
+  PMP::angle_and_area_smoothing(mesh, PMP::parameters::number_of_iterations(nb_iterations)
                                          .use_safety_constraints(false) // authorize all moves
                                          .edge_is_constrained_map(eif));
 
