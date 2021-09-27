@@ -391,6 +391,7 @@ namespace Point_set {
     */
     bool update(const std::vector<std::size_t>& region) {
 
+      // Fit a circle.
       CGAL_precondition(region.size() > 0);
       FT radius; Point_2 center;
       std::tie(radius, center) = internal::create_circle_2(

@@ -79,7 +79,6 @@ namespace Point_set {
     using Line_3 = typename Traits::Line_3;
 
     using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
-
     using Get_sqrt = internal::Get_sqrt<Traits>;
     using Sqrt = typename Get_sqrt::Sqrt;
 
@@ -171,9 +170,8 @@ namespace Point_set {
       np, internal_np::normal_map), NormalMap())),
     m_traits(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::geom_traits), GeomTraits())),
-    m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
     m_sqrt(Get_sqrt::sqrt_object(m_traits)),
-    m_radius(FT(std::numeric_limits<double>::quiet_NaN())) {
+    m_squared_distance_3(m_traits.compute_squared_distance_3_object()) {
 
       CGAL_precondition(input_range.size() > 0);
       const FT max_distance = parameters::choose_parameter(
@@ -324,7 +322,7 @@ namespace Point_set {
       }
 
       // TODO: Why do we get so many nan in this class?
-      if (std::isnan(m_radius)) {
+      if (std::isnan(CGAL::to_double(m_radius))) {
         return false;
       }
 
@@ -341,7 +339,7 @@ namespace Point_set {
       // Should it ever happen?
       if (m_axis.to_vector() == Vector_3(0, 0, 0)) return false;
       const FT sq_dist = m_squared_distance_3(query_point, m_axis);
-      if (std::isnan(sq_dist)) return false;
+      if (std::isnan(CGAL::to_double(sq_dist))) return false;
       const FT distance_to_center = m_sqrt(sq_dist);
       const FT distance_to_cylinder = CGAL::abs(distance_to_center - m_radius);
 
@@ -350,13 +348,13 @@ namespace Point_set {
       }
 
       const FT sq_norm = normal * normal;
-      if (std::isnan(sq_norm)) return false;
-      normal = normal / m_sqrt (sq_norm);
+      if (std::isnan(CGAL::to_double(sq_norm))) return false;
+      normal = normal / m_sqrt(sq_norm);
 
       const Point_3 proj = m_axis.projection(query_point);
       Vector_3 ray(proj, query_point);
       const FT sq_ray = ray * ray;
-      if (std::isnan(sq_ray)) return false;
+      if (std::isnan(CGAL::to_double(sq_ray))) return false;
       ray = ray / m_sqrt(sq_ray);
 
       if (CGAL::abs(normal * ray) < m_cos_value_threshold) {
@@ -397,23 +395,20 @@ namespace Point_set {
     */
     bool update(const std::vector<std::size_t>& region) {
 
-      CGAL_precondition(region.size() > 0);
-
       // Shuffle to avoid always picking 2 close points.
       std::vector<std::size_t>& aregion =
         const_cast<std::vector<std::size_t>&>(region);
       cpp98::random_shuffle(aregion.begin(), aregion.end());
 
-      using VT = typename std::iterator_traits<typename InputRange::const_iterator>::value_type;
-      auto unary_function = [&](const std::size_t& idx) -> VT {
-        return *(m_input_range.begin() + idx);
-      };
-
-      internal::create_cylinder(
-        make_range(
-          boost::make_transform_iterator(region.begin(), unary_function),
-          boost::make_transform_iterator(region.end(), unary_function)),
-        m_point_map, m_normal_map, m_sqrt, m_squared_distance_3, m_axis, m_radius);
+      // Fit a cylinder.
+      CGAL_precondition(region.size() > 0);
+      FT radius; Line_3 axis;
+      std::tie(radius, axis) = internal::create_cylinder(
+        m_input_range, m_point_map, m_normal_map, region, m_traits, false).first;
+      if (radius >= FT(0)) {
+        m_radius = radius;
+        m_axis = axis;
+      }
       return true;
     }
 
@@ -431,11 +426,11 @@ namespace Point_set {
     FT m_min_radius;
     FT m_max_radius;
 
-    const Squared_distance_3 m_squared_distance_3;
     const Sqrt m_sqrt;
+    const Squared_distance_3 m_squared_distance_3;
 
-    Line_3 m_axis;
     FT m_radius;
+    Line_3 m_axis;
   };
 
 } // namespace Point_set

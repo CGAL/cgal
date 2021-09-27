@@ -76,12 +76,8 @@ namespace Point_set {
   private:
     using Point_3 = typename Traits::Point_3;
     using Vector_3 = typename Traits::Vector_3;
-    using Plane_3 = typename Traits::Plane_3;
 
-    using Squared_length_3 = typename Traits::Compute_squared_length_3;
     using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
-    using Scalar_product_3 = typename Traits::Compute_scalar_product_3;
-
     using Get_sqrt = internal::Get_sqrt<Traits>;
     using Sqrt = typename Get_sqrt::Sqrt;
 
@@ -394,6 +390,7 @@ namespace Point_set {
     */
     bool update(const std::vector<std::size_t>& region) {
 
+      // Fit a sphere.
       CGAL_precondition(region.size() > 0);
       FT radius; Point_3 center;
       std::tie(radius, center) = internal::create_sphere(
