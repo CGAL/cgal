@@ -64,6 +64,15 @@ namespace Polygon_mesh_processing {
 *     \cgalParamExtra{Exact constructions kernels are not supported by this function.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{features_angle_bound}
+*     \cgalParamDescription{The dihedral angle bound for detection of feature edges}
+*     \cgalParamType{A number type `FT`, either deduced from the `geom_traits`
+*          \ref bgl_namedparameters "Named Parameters" if provided,
+*          or from the geometric traits class deduced from the point property map
+*         of `PolygonMesh`.}
+*     \cgalParamDefault{`60`}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{face_index_map}
 *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
 *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
@@ -147,8 +156,9 @@ void make_surface_mesh(const TriangleMesh& pmesh
     return;
   }
 
-  bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
-
+  const bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
+  const typename GT::FT angle_bound
+    = choose_parameter(get_parameter(np, internal_np::features_angle_bound), 60.);
 
   // Create a vector with only one element: the pointer to the polyhedron.
   std::vector<const TM*> poly_ptrs_vector(1);
@@ -161,7 +171,7 @@ void make_surface_mesh(const TriangleMesh& pmesh
 
   // Get sharp features
   if(protect)
-    domain.detect_features(); //includes detection of borders
+    domain.detect_features(angle_bound); //includes detection of borders
 
   // Mesh criteria
   Mesh_criteria criteria(CGAL::parameters::edge_size = 0.025,
