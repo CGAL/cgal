@@ -182,7 +182,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   CGAL::Three::Three::s_scene = scene;
   CGAL::Three::Three::s_connectable_scene = scene;
   {
-    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
+    QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT,Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(setFocusToQuickSearch()));
     shortcut = new QShortcut(QKeySequence(Qt::Key_F5), this);
@@ -191,10 +191,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
     shortcut = new QShortcut(QKeySequence(Qt::Key_F11), this);
     connect(shortcut, SIGNAL(activated()),
             this, SLOT(toggleFullScreen()));
-    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_R), this);
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL,Qt::Key_R), this);
     connect(shortcut, &QShortcut::activated,
             this, &MainWindow::recenterScene);
-    shortcut = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_T), this);
+    shortcut = new QShortcut(QKeySequence(Qt::CTRL,Qt::Key_T), this);
     connect(shortcut, &QShortcut::activated,
             this,
             [](){

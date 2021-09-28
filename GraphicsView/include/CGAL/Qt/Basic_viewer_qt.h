@@ -160,11 +160,11 @@ public:
                                &arrays[SMOOTH_NORMAL_COLORED_FACES])
   {
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
+    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL, ::Qt::Key_Q);
 
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_C, "Switch clipping plane display mode");
-    setKeyDescription(::Qt::Key_C+::Qt::AltModifier, "Toggle clipping plane rendering on/off");
+    setKeyDescription(::Qt::AltModifier, ::Qt::Key_C, "Toggle clipping plane rendering on/off");
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
@@ -175,8 +175,8 @@ public:
     setKeyDescription(::Qt::Key_W, "Toggles faces display");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
-    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
-    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Plus, "Increase size of vertices");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Minus, "Decrease size of vertices");
     setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
