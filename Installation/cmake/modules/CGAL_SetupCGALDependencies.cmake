@@ -74,9 +74,6 @@ endif()
 #   keyword.
 #
 function(CGAL_setup_CGAL_dependencies target)
-  if(CGAL_DISABLE_GMPXX)
-    target_compile_definitions(${target} INTERFACE CGAL_DISABLE_GMPXX=1)
-  endif()
   if(CGAL_DISABLE_GMP)
     target_compile_definitions(${target} INTERFACE CGAL_DISABLE_GMP=1)
   else()
