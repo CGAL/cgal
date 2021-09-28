@@ -162,7 +162,7 @@ void make_surface_mesh(const TriangleMesh& pmesh
 
   // Create a vector with only one element: the pointer to the polyhedron.
   std::vector<const TM*> poly_ptrs_vector(1);
-  poly_ptrs_vector[1] = &pmesh;
+  poly_ptrs_vector[0] = &pmesh;
 
   // Create a polyhedral domain, with only one polyhedron,
   // and no "bounding polyhedron", so the volumetric part of the domain will be
