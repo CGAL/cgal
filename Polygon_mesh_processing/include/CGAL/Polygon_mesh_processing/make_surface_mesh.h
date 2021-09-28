@@ -147,6 +147,9 @@ void make_surface_mesh(const TriangleMesh& pmesh
     return;
   }
 
+  bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
+
+
   // Create a vector with only one element: the pointer to the polyhedron.
   std::vector<const TM*> poly_ptrs_vector(1);
   poly_ptrs_vector[1] = &pmesh;
@@ -157,7 +160,8 @@ void make_surface_mesh(const TriangleMesh& pmesh
   Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
 
   // Get sharp features
-  domain.detect_features(); //includes detection of borders
+  if(protect)
+    domain.detect_features(); //includes detection of borders
 
   // Mesh criteria
   Mesh_criteria criteria(CGAL::parameters::edge_size = 0.025,
