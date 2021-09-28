@@ -177,6 +177,7 @@ inline OutputIterator r_intersection(InputIterator begin, InputIterator end,
   typedef typename std::iterator_traits<InputIterator>::value_type Pgn;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
+  if (begin == end) return (oi);
   return r_intersection(convert_polygon_iterator(begin, ptraits),
                         convert_polygon_iterator(end, ptraits),
                         convert_polygon_back(oi, *begin), traits, k);
@@ -206,6 +207,12 @@ r_intersection(InputIterator1 begin1, InputIterator1 end1,
   typedef typename std::iterator_traits<InputIterator1>::value_type Pgn;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
+  if (begin1 == end1) {
+      if (begin2 == end2) return oi;
+      return r_intersection(convert_polygon_iterator(begin2, ptraits),
+                            convert_polygon_iterator(end2, ptraits),
+                            convert_polygon_back(oi, *begin2), traits, k);
+  }
   return r_intersection(convert_polygon_iterator(begin1, ptraits),
                         convert_polygon_iterator(end1, ptraits),
                         convert_polygon_iterator(begin2, ptraits),
@@ -294,6 +301,9 @@ inline OutputIterator r_join(InputIterator begin, InputIterator end,
   typedef typename std::iterator_traits<InputIterator>::value_type Pgn;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
+
+  if (begin == end) return oi;
+
   return r_join(convert_polygon_iterator(begin, ptraits),
                 convert_polygon_iterator(end, ptraits),
                 convert_polygon_back(oi, *begin), traits, k);
@@ -322,6 +332,12 @@ inline OutputIterator r_join(InputIterator1 begin1, InputIterator1 end1,
   typedef typename std::iterator_traits<InputIterator1>::value_type Pgn;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
+  if (begin1 == end1) {
+      if (begin2 == end2) return oi;
+      return r_join(convert_polygon_iterator(begin2, ptraits),
+          convert_polygon_iterator(end2, ptraits),
+          convert_polygon_back(oi, *begin2), traits, k);
+  }
   return r_join(convert_polygon_iterator(begin1, ptraits),
                 convert_polygon_iterator(end1, ptraits),
                 convert_polygon_iterator(begin2, ptraits),
@@ -410,6 +426,7 @@ inline OutputIterator r_symmetric_difference(InputIterator begin,
   typedef typename std::iterator_traits<InputIterator>::value_type Pgn;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
+  if (begin == end) return (oi);
   return r_symmetric_difference(convert_polygon_iterator(begin, ptraits),
                                 convert_polygon_iterator(end, ptraits),
                                 convert_polygon_back(oi, *begin), traits, k);
@@ -444,6 +461,12 @@ inline OutputIterator r_symmetric_difference(InputIterator1 begin1,
   typedef typename std::iterator_traits<InputIterator1>::value_type Pgn;
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const typename Gps_polyline_traits<Pgn>::Polyline_traits& ptraits(traits);
+  if (begin1 == end1){
+      if (begin2 == end2) return oi;
+      return r_symmetric_difference(convert_polygon_iterator(begin2, ptraits),
+                                    convert_polygon_iterator(end2, ptraits),
+                                    convert_polygon_back(oi, *begin2), traits, k);
+  }
   return r_symmetric_difference(convert_polygon_iterator(begin1, ptraits),
                                 convert_polygon_iterator(end1, ptraits),
                                 convert_polygon_iterator(begin2, ptraits),
