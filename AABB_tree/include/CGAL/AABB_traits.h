@@ -366,7 +366,7 @@ public:
     template<typename Query>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     operator()(const Query& query, const typename AT::Primitive& primitive) const {
-      auto inter_res = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
+      auto inter_res = GeomTraits().intersect_3_object()(query, internal::Primitive_helper<AT>::get_datum(primitive,m_traits));
       if (!inter_res)
         return boost::none;
       return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
@@ -391,9 +391,9 @@ public:
       GeomTraits geom_traits;
       Point closest_point = geom_traits.construct_projected_point_3_object()(
         internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
-      return
-        geom_traits.compare_distance_3_object()(p, closest_point, bound)==LARGER ?
-        bound : closest_point;
+
+      return (geom_traits.compare_distance_3_object()(p, closest_point, bound) == LARGER) ?
+               bound : closest_point;
     }
   };
 
@@ -406,15 +406,6 @@ public:
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
-      template <class Solid>
-      CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
-      {
-          return GeomTraits().do_intersect_3_object()
-          (GeomTraits().construct_sphere_3_object()
-          (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), pr)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
       {
           return GeomTraits().do_intersect_3_object()
@@ -436,6 +427,16 @@ public:
         return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
       }
 
+      // The following functions seem unused...?
+      template <class Solid>
+      CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
+      {
+          return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()
+          (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), pr)?
+          CGAL::SMALLER : CGAL::LARGER;
+      }
+
       template <class Solid>
       CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
       {
@@ -445,7 +446,6 @@ public:
           CGAL::SMALLER :
           CGAL::LARGER;
       }
-
   };
 
   Closest_point closest_point_object() const {return Closest_point(*this);}
