@@ -14,7 +14,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/P.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/anchor_dense.off";
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -29,12 +29,14 @@ int main(int argc, char* argv[])
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   Mesh outmesh;
-  PMP::make_surface_mesh(mesh, outmesh);
-
-// target_edge_length,
-// protect_constraints(true));
+  PMP::make_surface_mesh(mesh, outmesh,
+    PMP::parameters::protect_constraints(true));
 
   std::cout << "Remeshing done." << std::endl;
+
+  std::ofstream ofs("anchor_remeshed.off");
+  ofs << outmesh;
+  ofs.close();
 
   return 0;
 }
