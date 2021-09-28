@@ -160,7 +160,7 @@ class AABB_tree;
 /// \tparam BboxMap must be a model of `ReadablePropertyMap` that has as key type a primitive id,
 ///                 and as value type a `Bounding_box`.
 ///                 If the type is `Default` the `Datum` must have the
-///                 member function `bbox()` that returns the bounding box  of the primitive.
+///                 member function `bbox()` that returns the bounding box of the primitive.
 ///
 /// If the argument `GeomTraits` is a model of the concept \ref
 /// AABBRayIntersectionGeomTraits, this class is also a model of \ref
