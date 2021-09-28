@@ -92,6 +92,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
   typedef typename GT::FT                                                         FT;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type         VPM;
+  typedef typename boost::property_traits<VPM>::value_type                        Point;
   typedef typename boost::property_traits<VPM>::reference                         Point_ref;
 
   using parameters::get_parameter;
@@ -125,10 +126,10 @@ void simplify_range(HalfedgeRange& halfedge_range,
     // @fixme what if the source vertex is not to be snapped? Tolerance cannot be obtained...
     // and where should the post-collapse vertex be since we can't move the source vertex...
     // --> simply don't collapse?
-    const FT min_tol = (std::min)(get(tolerance_map, vs), get(tolerance_map, vt));
-    const FT max_tol = (std::max)(get(tolerance_map, vs), get(tolerance_map, vt));
+    const FT tol_s = get(tolerance_map, vs), tol_t = get(tolerance_map, vt);
+    const FT max_tol = (std::max)(tol_s, tol_t);
 
-    if(gt.compare_squared_distance_3_object()(ps,pt,CGAL::square(max_tol))==SMALLER)
+    if(gt.compare_squared_distance_3_object()(ps,pt,CGAL::square(max_tol)) == SMALLER)
     {
       const halfedge_descriptor prev_h = prev(h, tm);
       const halfedge_descriptor next_h = next(h, tm);
@@ -136,11 +137,23 @@ void simplify_range(HalfedgeRange& halfedge_range,
       // check that the border has at least 4 edges not to create degenerate volumes
       if(border_size(h, tm) >= 4)
       {
-        const FT h_sq_length = gt.compute_squared_distance_3_object()(ps, pt);
-        vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
+        const FT lambda = tol_s / (tol_s + tol_t);
+        const Point new_p = ps + lambda * (pt - ps);
 
-        put(vpm, v, gt.construct_midpoint_3_object()(ps, pt));
-        put(tolerance_map, v, min_tol + 0.5 * CGAL::approximate_sqrt(h_sq_length));
+        // If we're collapsing onto a vertex that is not allowed to move, keep it fixed
+        const FT min_tol = (std::min)(tol_s, tol_t);
+        FT new_tolerance = min_tol;
+        if(!is_zero(min_tol))
+        {
+          if(tol_t > tol_s) // the new point is closer to ps than to pt
+            new_tolerance += CGAL::approximate_sqrt(CGAL::squared_distance(new_p, ps));
+          else
+            new_tolerance += CGAL::approximate_sqrt(CGAL::squared_distance(new_p, pt));
+        }
+
+        vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
+        put(vpm, v, new_p);
+        put(tolerance_map, v, new_tolerance);
 
         if(get(range_halfedges, prev_h))
           edges_to_test.insert(prev_h);
