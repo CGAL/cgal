@@ -179,6 +179,7 @@ bool read_XYZ(std::istream& is,
       return false;
     }
   }
+  is.clear(is.rdstate() & ~std::ios_base::failbit); // set by getline
 
   return true;
 }
