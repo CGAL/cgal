@@ -52,7 +52,16 @@ template <typename P>
 void copy_ch2_to_face_graph(const std::list<P>& CH_2,
                             Indexed_triangle_set<P>& its)
 {
-  std::cout << "copy_ch2_to_face_graph" << std::endl;
+  its.vertices.reserve(CH_2.size());
+  its.faces.reserve(CH_2.size()-2);
+  for(const P& p : CH_2){
+    its.vertices.push_back(p);
+  }
+
+  for(int i = 1; i < CH_2.size()-1; ++i){
+      its.faces.push_back({ i, i + 1, i + 2 });
+  }
+
 }
 
 } // namespace internal
