@@ -679,7 +679,7 @@ void test_to_interval_tight_2() {
 
 #endif // CGAL_USE_BOOST_MP
 
-int main(int argc, char* argv[]) {
+int main() {
 
   // Make sure we have the same seed.
   CGAL::get_default_random() = CGAL::Random(0);
@@ -688,9 +688,9 @@ int main(int argc, char* argv[]) {
 
   #if false
   test_boost_eval_lehmer();
+  test_minimal_nextafter();
   #endif
   test_minimal_boost_gcd();
-  test_minimal_nextafter();
   test_to_interval_boost();
 
   test_to_interval_tight_1();
