@@ -196,7 +196,9 @@ bool read_OFF(std::istream& is,
     }
     // Skip remaining lines
   }
-  is.clear(is.rdstate() & ~std::ios_base::failbit); // set by getline
+  if(is.eof()) {
+    is.clear(is.rdstate() & ~std::ios_base::failbit); // set by getline
+  }
   return true;
 }
 
