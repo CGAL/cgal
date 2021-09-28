@@ -55,36 +55,23 @@ namespace CGAL { namespace internal {
 template < typename >
 struct Exact_field_selector
 
-#if defined(CGAL_DO_NOT_RUN_TESTME) // default types
-
 #ifdef CGAL_USE_GMPXX
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
-# if defined(CGAL_USE_BOOST_MP)
+#if defined(CGAL_USE_BOOST_MP)
 { typedef boost::multiprecision::mpq_rational Type; };
-# else
+#else
 { typedef Gmpq Type; };
-# endif
+#endif
 #elif defined(CGAL_USE_LEDA)
 { typedef leda_rational Type; };
 #elif defined(CGAL_USE_BOOST_MP)
 // See the discussion in https://github.com/CGAL/cgal/pull/3614
 // This is disabled for now because cpp_rational is even slower than Quotient<MP_Float>. Quotient<cpp_int> will be a good candidate after some polishing.
-#if defined(CGAL_USE_CPP_INT)
-{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
-#else
 { typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
-# endif
 #else
-{ typedef Quotient<MP_Float> Type; };
+{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
 #endif
-
-#else // run testme
-
-// { typedef Quotient<boost::multiprecision::cpp_int> Type; };
-{ typedef boost::multiprecision::cpp_rational Type; };
-
-#endif // run testme
 
 // By default, a field is a safe choice of ring.
 template < typename T >

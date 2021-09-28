@@ -44,7 +44,7 @@ namespace CGAL {
 // This function is not documented as a number type requirement for now.
 template < typename NT >
 inline void
-simplify_quotient(NT & , NT & ) {}
+simplify_quotient(NT &, NT &) {}
 
 // This one should be replaced by some functor or tag.
 // Meanwhile, the class is specialized for Gmpz, mpz_class, leda_integer.
