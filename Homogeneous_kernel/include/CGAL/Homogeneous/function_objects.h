@@ -4675,7 +4675,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
-    { return Oriented_side(c.bounded_side(p) * c.orientation()); }
+    { return Oriented_side(static_cast<int>(c.bounded_side(p)) * static_cast<int>(c.orientation())); }
 
     result_type
     operator()( const Line_2& l, const Point_2& p) const
