@@ -1,4 +1,4 @@
-// Copyright (c) 2015 GeometryFactory (France).
+// Copyright (c) 2021 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,13 +17,19 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
+
+#include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
+#include <CGAL/make_mesh_3.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-#include <CGAL/Timer.h>
+#define CGAL_MESH_3_VERBOSE 1
 #endif
 
 namespace CGAL {
@@ -32,27 +38,13 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
-* @brief remeshes a triangulated region of a polygon mesh.
-* This operation sequentially performs edge splits, edge collapses,
-* edge flips, tangential relaxation and projection to the initial surface
-* to generate a smooth mesh with a prescribed edge length.
+* @brief remeshes a surface triangle mesh.
 *
-* @tparam PolygonMesh model of `MutableFaceGraph`.
-*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
-*         models of `Hashable`.
-* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
-          model of `Range`. Its iterator type is `ForwardIterator`.
+* @tparam PolygonMesh model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
-* @param faces the range of triangular faces defining one or several surface patches to be remeshed
-* @param target_edge_length the edge length that is targeted in the remeshed patch.
-*        If `0` is passed then only the edge-flip, tangential relaxation, and projection steps will be done.
+* @param pmesh a triangle surface mesh
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*
-* @pre if constraints protection is activated, the constrained edges must
-* not be longer than 4/3*`target_edge_length`
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}
@@ -77,12 +69,6 @@ namespace Polygon_mesh_processing {
 *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *                    as key type and `std::size_t` as value type}
 *     \cgalParamDefault{an automatically indexed internal map}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{the number of iterations for the sequence of atomic operations performed (listed in the above description)}
-*     \cgalParamType{unsigned int}
-*     \cgalParamDefault{`1`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{edge_is_constrained_map}
@@ -113,14 +99,6 @@ namespace Polygon_mesh_processing {
 *                     It can even fail to terminate because of cascading vertex insertions.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{collapse_constraints}
-*     \cgalParamDescription{If `true`, the edges set as constrained in `edge_is_constrained_map`
-*                           (or by default the boundary edges) are collapsed during remeshing.}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{`true`}
-*     \cgalParamExtra{This value is ignored if `protect_constraints` is `true`.}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{face_patch_map}
 *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
@@ -130,39 +108,6 @@ namespace Polygon_mesh_processing {
 *                       computed with respect to the constrained edges listed in the property map
 *                       `edge_is_constrained_map`}
 *     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{do_split}
-*     \cgalParamDescription{whether edges that are too long with respect to the given sizing are split}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{`true`}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{do_collapse}
-*     \cgalParamDescription{whether edges that are too short with respect to the given sizing are collapsed}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{`true`}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{do_flip}
-*     \cgalParamDescription{whether edge flips are performed to improve shape and valence}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{`true`}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{number_of_relaxation_steps}
-*     \cgalParamDescription{the number of iterations of tangential relaxation that are performed
-*                           at each iteration of the remeshing process}
-*     \cgalParamType{unsigned int}
-*     \cgalParamDefault{`1`}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{relax_constraints}
-*     \cgalParamDescription{If `true`, the end vertices of the edges set as constrained
-*                           in `edge_is_constrained_map` and boundary edges move along the}
-*                           constrained polylines they belong to.}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{`false`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{do_project}
@@ -178,17 +123,6 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDefault{If not provided, vertices are projected on the input surface mesh.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
-*
-* @sa `split_long_edges()`
-*
-*@todo Deal with exact constructions Kernel. The only thing that makes sense is to
-*      guarantee that the output vertices are exactly on the input surface.
-*      To do so, we can do every construction in `double`, and use an exact process for
-*      projection. For each vertex, the `AABB_tree` would be used in an inexact manner
-*      to find the triangle on which projection has to be done. Then, use
-*      `CGAL::intersection(triangle, line)` in the exact constructions kernel to
-*      get a point which is exactly on the surface.
-*
 */
 template<typename TriangleMesh
        , typename NamedParameters>
@@ -196,30 +130,47 @@ void make_surface_mesh(const TriangleMesh& pmesh
                      , TriangleMesh& out
                      , const NamedParameters& np)
 {
-  typedef TriangleMesh PM;
-
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-  std::cout << std::endl;
-  CGAL::Timer t;
-  std::cout << "Remeshing parameters...";
-  std::cout.flush();
-  t.start();
-#endif
+  using TM   = TriangleMesh;
+  using GT   = typename GetGeomTraits<TM, NamedParameters>::type;
+  using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<GT, TM>;
+  using Tr   = CGAL::Mesh_triangulation_3<Mesh_domain>::type;
+  using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr,
+                         typename Mesh_domain::Corner_index,
+                         typename Mesh_domain::Curve_index>;
+  using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
-  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  if (!CGAL::is_triangle_mesh(pmesh)) {
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return;
+  }
 
+  // Create a vector with only one element: the pointer to the polyhedron.
+  std::vector<const TM*> poly_ptrs_vector(1);
+  poly_ptrs_vector[1] = &pmesh;
 
+  // Create a polyhedral domain, with only one polyhedron,
+  // and no "bounding polyhedron", so the volumetric part of the domain will be
+  // empty.
+  Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
 
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-  t.stop();
-  std::cout << "Remeshing done (size = " << target_edge_length;
-  std::cout << ", #iter = " << nb_iterations;
-  std::cout << ", " << t.time() << " sec )." << std::endl;
-#endif
+  // Get sharp features
+  domain.detect_features(); //includes detection of borders
+
+  // Mesh criteria
+  Mesh_criteria criteria(CGAL::parameters::edge_size = 0.025,
+                         CGAL::parameters::facet_angle = 25,
+                         CGAL::parameters::facet_size = 0.1,
+                         CGAL::parameters::facet_distance = 0.001);
+
+  // Mesh generation
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      CGAL::parameters::no_perturb(),
+                                      CGAL::parameters::no_exude());
+
+  CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out);
 }
 
 template<typename TriangleMesh>
