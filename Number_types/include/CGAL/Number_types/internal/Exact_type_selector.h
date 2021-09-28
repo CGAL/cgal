@@ -40,7 +40,7 @@
 #  include <CGAL/leda_real.h>
 #endif
 #ifdef CGAL_USE_CORE
-// #  include <CGAL/CORE_Expr.h>
+// # include <CGAL/CORE_Expr.h>
 namespace CORE {
 class Expr;
 }
@@ -59,7 +59,7 @@ struct Exact_field_selector
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
 #if defined(CGAL_USE_BOOST_MP)
-{ typedef boost::multiprecision::mpq_rational Type; };
+{ typedef BOOST_gmp_arithmetic_kernel::Rational Type; };
 #else
 { typedef Gmpq Type; };
 #endif
@@ -68,9 +68,13 @@ struct Exact_field_selector
 #elif defined(CGAL_USE_BOOST_MP)
 // See the discussion in https://github.com/CGAL/cgal/pull/3614
 // This is disabled for now because cpp_rational is even slower than Quotient<MP_Float>. Quotient<cpp_int> will be a good candidate after some polishing.
+// In fact, the new version of cpp_rational from here: https://github.com/boostorg/multiprecision/pull/366
+// is much better than Quotient<cpp_int> because it is using smart gcd and is well-supported
+// while Quotient does not. Though, we can still use it if needed.
+// { typedef Quotient<boost::multiprecision::cpp_int> Type; };
 { typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
 #else
-{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
+{ typedef Quotient<MP_Float> Type; };
 #endif
 
 // By default, a field is a safe choice of ring.
