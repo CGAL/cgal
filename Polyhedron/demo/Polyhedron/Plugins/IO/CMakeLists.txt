@@ -1,5 +1,13 @@
 include(polyhedron_demo_macros)
 
+find_package(LASLIB)
+set_package_properties(
+  LASLIB PROPERTIES
+  DESCRIPTION "A library for some I/O."
+  PURPOSE "Requiered for reading or writing LAS files.")
+
+include(CGAL_LASLIB_support)
+
 polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin KEYWORDS Viewer)
 target_link_libraries(gocad_plugin PUBLIC scene_surface_mesh_item)
 
@@ -41,6 +49,9 @@ set_package_properties(
   VTK PROPERTIES
   DESCRIPTION "A library for image processing."
   PURPOSE "Can be used for I/O (DICOM, VTU, VTP.")
+
+polyhedron_demo_plugin(triangulation_3_io_plugin triangulation_3_io_plugin KEYWORDS IO)
+target_link_libraries(triangulation_3_io_plugin PUBLIC scene_triangulation_3_item)
 
 if(VTK_FOUND)
   if(VTK_USE_FILE)
@@ -96,6 +107,11 @@ else()
     polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
     target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item CGAL::LASLIB_support)
     target_compile_features(las_plugin PRIVATE ${needed_cxx_features})
+    if(MSVC)
+      target_compile_definitions(
+        las_plugin
+        PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
+    endif()
   else()
     message(
       STATUS
@@ -118,8 +134,8 @@ if(3MF_LIBRARIES
    AND 3MF_INCLUDE_DIR
    AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NMR_DLLInterfaces.h")
   include_directories(${3MF_INCLUDE_DIR})
-  polyhedron_demo_plugin(3mf_io_plugin 3mf_io_plugin KEYWORDS Viewer PMP)
-  target_link_libraries(3mf_io_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
+  polyhedron_demo_plugin(io_3mf_plugin 3mf_io_plugin KEYWORDS Viewer PMP)
+  target_link_libraries(io_3mf_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
   target_compile_definitions(3mf_io_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
   message(

@@ -1,7 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
 
-#define CGAL_RANSAC_EXPERIMENTAL_FIXES
-#define USE_WEIGHTED_LEVELS
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
@@ -19,6 +17,9 @@
 #include <CGAL/Real_timer.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
+
+// Uncomment this line to run expensive test
+// #define CGAL_SHAPE_DETECTION_RUN_EXPENSIVE_TESTS
 
 namespace SD = CGAL::Shape_detection;
 
@@ -48,7 +49,7 @@ int main (int argc, char** argv)
   std::ifstream ifile(ifilename);
 
   if (!ifile ||
-      !CGAL::read_XYZ(
+      !CGAL::IO::read_XYZ(
       ifile,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
@@ -62,9 +63,9 @@ int main (int argc, char** argv)
 
   test_copied_point_cloud (points, 1);
   test_copied_point_cloud (points, 2);
+#ifdef CGAL_SHAPE_DETECTION_RUN_EXPENSIVE_TESTS
   test_copied_point_cloud (points, 5);
   test_copied_point_cloud (points, 10);
-#ifndef CGAL_TEST_SUITE // Disable tests too large for testsuite
   test_copied_point_cloud (points, 20);
   test_copied_point_cloud (points, 50);
 #endif
@@ -110,8 +111,14 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   CGAL::Real_timer t;
   t.start();
-  RG_query rg_query (points, parameters.cluster_epsilon);
-  RG_region rg_region (points, parameters.epsilon, parameters.normal_threshold, parameters.min_points);
+  RG_query rg_query (
+    points, CGAL::parameters::sphere_radius(parameters.cluster_epsilon));
+  RG_region rg_region (
+    points,
+    CGAL::parameters::
+    maximum_distance(parameters.epsilon).
+    cosine_value(parameters.normal_threshold).
+    minimum_region_size(parameters.min_points));
   Region_growing region_growing (points, rg_query, rg_region);
   std::size_t nb_detected = 0;
   std::size_t nb_unassigned = 0;
@@ -122,12 +129,12 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
 
   assert (nb_detected == ground_truth);
 
-#ifdef CGAL_TEST_SUITE
-  double timeout = 60; // 1 minute timeout
-  std::size_t nb_runs = 20; //
-#else
+#ifdef CGAL_SHAPE_DETECTION_RUN_EXPENSIVE_TESTS
   double timeout = 120; // 2 minutes timeout
   std::size_t nb_runs = 500;
+#else
+  double timeout = 60; // 1 minute timeout
+  std::size_t nb_runs = 20; //
 #endif
 
   CGAL::Real_timer timer;
@@ -164,13 +171,13 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
             << detected_ransac.front() << ";" << detected_ransac.back() << "], time["
             << times_ransac.front() << ";" << times_ransac.back() << "])" << std::endl;
 
-  // RANSAC should at least detect 75% of shapes
+  // RANSAC should detect at least 75% of shapes.
   assert (detected_ransac[detected_ransac.size() / 2] > std::size_t(0.75 * ground_truth));
 
 #ifdef CGAL_TEST_RANSAC_PROTOTYPE
   {
     CGAL::Real_timer timer;
-    double timeout = 120.; // 2 minute timeout
+    double timeout = 120.; // 2 minutes timeout
     timer.start();
     std::size_t nb_runs = 500;
     std::vector<std::size_t> detected_ransac;
@@ -195,7 +202,7 @@ void test_copied_point_cloud (const Point_set& original_points, std::size_t nb)
         proto_points.push_back(Pt);
       }
 
-      //manually set bounding box!
+      // Manually set bounding box!
       Vec3f cbbMin, cbbMax;
       cbbMin[0] = static_cast<float>(bbox.xmin());
       cbbMin[1] = static_cast<float>(bbox.ymin());

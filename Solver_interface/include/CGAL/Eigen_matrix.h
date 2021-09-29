@@ -20,7 +20,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSolverInterfaceRef
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>.

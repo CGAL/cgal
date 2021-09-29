@@ -44,8 +44,7 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
 
   Equal_2     equal_points = ch_traits.equal_2_object();
 
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   OutputIterator  res(result);
   #else
   typedef   typename Traits::Point_2               Point_2;
@@ -92,8 +91,7 @@ ch_jarvis_march(ForwardIterator first, ForwardIterator last,
           first, last, \
           res.output_so_far_begin(), res.output_so_far_end(), \
           ch_traits));
-  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS) \
-    || defined(NDEBUG)
+  #if defined(CGAL_CH_NO_POSTCONDITIONS) || defined(CGAL_NO_POSTCONDITIONS)
   return res;
   #else
   return res.to_output_iterator();

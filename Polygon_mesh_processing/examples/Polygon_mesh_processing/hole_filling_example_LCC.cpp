@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
 
   LCC mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
   std::ofstream out("filled_LCC.off");
   out.precision(17);
-  CGAL::write_OFF(out, mesh);
+  CGAL::IO::write_OFF(out, mesh);
 
   return 0;
 }

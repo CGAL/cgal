@@ -9,13 +9,9 @@
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <fstream>
 #include <cassert>
-
-
-
-#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 #include <boost/program_options.hpp>
+
 namespace po = boost::program_options;
-#endif
 
 
 typedef PolyhedralSurf::Traits          Kernel;
@@ -286,7 +282,7 @@ int main()
   std::ifstream stream(if_name.c_str());
   stream >> P;
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
-          (int)P.size_of_vertices(), (int)P.size_of_facets());
+          static_cast<int>(P.size_of_vertices()), static_cast<int>(P.size_of_facets()));
   if(verbose)
     out_verb << "Polysurf with " << P.size_of_vertices()
              << " vertices and " << P.size_of_facets()

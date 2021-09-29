@@ -8,7 +8,7 @@
 #include <iterator>
 
 // CGAL includes.
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -32,25 +32,24 @@ using Neighbor_query = SD::Point_set::Sphere_neighbor_query<Kernel, Input_range,
 using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Input_range, Point_map, Normal_map>;
 using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
-using Timer  = CGAL::Timer;
+using Timer  = CGAL::Real_timer;
 using Region = std::vector<std::size_t>;
 
 void benchmark_region_growing_on_point_set_2(
-  const std::size_t test_count,
-  const Input_range& input_range,
-  const FT sphere_radius,
-  const FT distance_threshold,
-  const FT angle_threshold,
-  const std::size_t min_region_size) {
+  const std::size_t test_count, const Input_range& input_range,
+  const FT sphere_radius, const FT distance_threshold,
+  const FT angle_threshold, const std::size_t min_region_size) {
 
   // Create instances of the parameter classes.
   Neighbor_query neighbor_query(
-    input_range,
-    sphere_radius);
+    input_range, CGAL::parameters::sphere_radius(sphere_radius));
 
   Region_type region_type(
     input_range,
-    distance_threshold, angle_threshold, min_region_size);
+    CGAL::parameters::
+    maximum_distance(distance_threshold).
+    maximum_angle(angle_threshold).
+    minimum_region_size(min_region_size));
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
@@ -76,8 +75,8 @@ void benchmark_region_growing_on_point_set_2(
   std::cout << "Test #"                          << test_count                << std::endl;
   std::cout << "  sphere_radius = "              << sphere_radius             << std::endl;
   std::cout << "  min_region_size = "            << min_region_size           << std::endl;
-  std::cout << "  distance_threshold = "         << distance_threshold        << std::endl;
-  std::cout << "  angle_threshold = "            << angle_threshold           << std::endl;
+  std::cout << "  max_distance = "               << distance_threshold        << std::endl;
+  std::cout << "  max_angle = "                  << angle_threshold           << std::endl;
   std::cout << "  -----"                                                      << std::endl;
   std::cout << "  Time elapsed: "                << timer.time()              << std::endl;
   std::cout << "  Number of detected regions: "  << regions.size()            << std::endl;
@@ -90,20 +89,15 @@ int main(int argc, char *argv[]) {
 
   // Load xyz data either from a local folder or a user-provided file.
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
 
   if (!in) {
-    std::cout <<
-    "Error: cannot read the file point_set_2.xyz!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
+    std::cout << "ERROR: cannot read the file point_set_2.xyz!" << std::endl;
     return EXIT_FAILURE;
   }
 
-  Input_range input_range;
   FT a, b, c, d, e, f;
-
+  Input_range input_range;
   while (in >> a >> b >> c >> d >> e >> f)
     input_range.push_back(std::make_pair(Point_2(a, b), Vector_2(d, e)));
   in.close();

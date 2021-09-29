@@ -16,7 +16,7 @@ int main(int argc, char*argv[])
 
   // Reads a point set file in points[].
   std::vector<Point> points;
-  if(!CGAL::read_points(fname, std::back_inserter(points)))
+  if(!CGAL::IO::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

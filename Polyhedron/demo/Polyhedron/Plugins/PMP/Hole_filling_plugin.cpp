@@ -132,7 +132,7 @@ public:
   }
 
   Scene_hole_visualizer* clone() const {
-    return 0;
+    return nullptr;
   }
   QString toolTip() const {
     return tr("%1 with %2 holes").arg(name()).arg(polyline_data_list.size());
@@ -459,7 +459,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
                                       CGAL::Three::Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
-  last_active_item = NULL;
+  last_active_item = nullptr;
 
   mw = mainWindow;
   scene = scene_interface;
@@ -657,17 +657,17 @@ void Polyhedron_demo_hole_filling_plugin::on_Create_polyline_items_button(){
   }
 }
 void Polyhedron_demo_hole_filling_plugin::on_Accept_button() {
-  if(last_active_item == NULL) { return; }
+  if(last_active_item == nullptr) { return; }
 
   accept_reject_toggle(false);
   if(Scene_hole_visualizer* hole_visualizer = get_hole_visualizer(last_active_item))
   { hole_visualizer->poly_item_changed();}
 
   new_facets.clear();
-  last_active_item = NULL;
+  last_active_item = nullptr;
 }
 void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
-  if(last_active_item == NULL) { return; }
+  if(last_active_item == nullptr) { return; }
 
   accept_reject_toggle(false);
   FaceGraph& graph = *(last_active_item->polyhedron());
@@ -677,7 +677,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
   change_poly_item_by_blocking(last_active_item, get_hole_visualizer(last_active_item));
 
   new_facets.clear();
-  last_active_item = NULL;
+  last_active_item = nullptr;
 }
 // To delete Scene_hole_visualizer when it becomes empty
 void Polyhedron_demo_hole_filling_plugin::hole_visualizer_changed() {
@@ -926,7 +926,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
 
   bool use_DT =
     QMessageBox::Yes == QMessageBox::question(
-    NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
+    nullptr, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QApplication::processEvents();
@@ -939,7 +939,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
       continue;
     }
     if(it->size() < 4) { // no triangle, skip it (needs at least 3 + 1 repeat)
-      print_message("Warning: skipping polyline which has less than 4 points!");
+      print_message("Warning: skipping polyline which has fewer than 4 points!");
       continue;
     }
 

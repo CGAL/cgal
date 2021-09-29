@@ -36,7 +36,7 @@ int main (int, char**)
   test (point_set.has_normal_map(), "point set should have normals.");
 
   const char* fname ("data/oni.pwn");
-  if(!CGAL::read_point_set(fname, point_set))
+  if(!CGAL::IO::read_point_set(fname, point_set))
   {
     test (false, "failed to read input point set.");
     return EXIT_FAILURE;
@@ -106,6 +106,11 @@ int main (int, char**)
 
   point_set.add_property_map<int> ("label", 0);
   point_set.add_property_map<double> ("intensity", 0.0);
+
+  auto pnt = point_set.properties_and_types();
+  std::cerr << "Properties = " << std::endl;
+  for (const auto& p : pnt)
+    std::cerr << " * " << p.first << " with type " << p.second.name() << std::endl;
 
   test (point_set.base().n_properties() == 4, "point set should have 4 properties.");
 

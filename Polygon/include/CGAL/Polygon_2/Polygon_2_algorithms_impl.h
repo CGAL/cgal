@@ -519,7 +519,7 @@ Orientation orientation_2(ForwardIterator first,
   if (next == last)
     next = first;
 
-  // if the range [first,last) contains less than three points, then some
+  // if the range [first,last) contains fewer than three points, then some
   // of the points (prev,i,next) will coincide
 
   // return the orientation of the triple (prev,i,next)

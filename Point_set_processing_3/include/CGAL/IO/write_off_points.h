@@ -66,8 +66,7 @@ bool write_OFF_PSP(std::ostream& os,
     return false;
   }
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   // Write header
   os << "NOFF" << std::endl;
@@ -89,6 +88,8 @@ bool write_OFF_PSP(std::ostream& os,
 
 } // namespace internal
 } // namespace Point_set_processing_3
+
+namespace IO {
 
 /**
    \ingroup PkgPointSetProcessing3IOOff
@@ -125,7 +126,7 @@ bool write_OFF_PSP(std::ostream& os,
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`6`}
+      \cgalParamDefault{the precision of the stream `os`}
     \cgalParamNEnd
    \cgalNamedParamsEnd
 
@@ -136,7 +137,7 @@ bool write_OFF(std::ostream& os,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                )
 {
@@ -147,7 +148,7 @@ bool write_OFF(std::ostream& os,
 
 template <typename PointRange>
 bool write_OFF(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_OFF(os, points, parameters::all_default());
 }
@@ -203,11 +204,12 @@ bool write_OFF(const std::string& filename,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                )
 {
   std::ofstream os(filename);
+  set_stream_precision_from_NP(os, np);
   return write_OFF(os, points, np);
 }
 
@@ -215,13 +217,15 @@ bool write_OFF(const std::string& filename,
 
 template <typename PointRange>
 bool write_OFF(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   std::ofstream os(filename);
   return write_OFF(os, points, parameters::all_default());
 }
 
 /// \endcond
+
+} // IO namespace
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -319,13 +323,13 @@ bool write_off_points(std::ostream& os, ///< output stream.
 /**
   \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSetProcessing3IOOff `CGAL::write_OFF()` \endlink should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
 {
-  return write_OFF(os, points, np);
+  return IO::write_OFF(os, points, np);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -334,7 +338,7 @@ CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points
 template <typename PointRange>
 CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points)
 {
-  return write_OFF(os, points, parameters::all_default());
+  return IO::write_OFF(os, points, parameters::all_default());
 }
 
 /// \endcond

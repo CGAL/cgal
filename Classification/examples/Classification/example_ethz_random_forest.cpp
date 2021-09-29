@@ -129,7 +129,7 @@ int main (int argc, char** argv)
     label_map[i] = label_indices[i]; // update label map with computed classification
 
     Label_handle label = labels[label_indices[i]];
-    const CGAL::Color& color = label->color();
+    const CGAL::IO::Color& color = label->color();
     red[i] = color.red();
     green[i] = color.green();
     blue[i] = color.blue();

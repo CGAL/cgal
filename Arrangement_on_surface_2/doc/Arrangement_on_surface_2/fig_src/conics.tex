@@ -1,0 +1,51 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.8}%
+  \pspicture[](-4,-4)(6,6)
+  \arraxes(0,0)(-4,-4)(6,6)
+  %
+  \psplot[linecolor=blue,linewidth=0.5pt]{0.25}{2}{1 x div}\rput(1.1,1.8){$c_1$}
+  %
+  \psplot[linecolor=blue,linewidth=0.5pt]{-2.683}{2.683}{6 x mul 1620 225 x x mul mul sub sqrt add 18 div}
+  \psplot[linecolor=blue,linewidth=0.5pt]{-2.683}{2.683}{6 x mul 1620 225 x x mul mul sub sqrt sub 18 div}\uput[0]{0}(2.683,0.89){$c_2$}
+  %
+  \psarc[linecolor=blue,linewidth=0.5pt](0,0){5}{90}{126.88}
+  \psarc[linecolor=blue,linewidth=0.5pt](0,0){5}{36.88}{90}\rput(3,4.6){$c_4$}
+  %
+  \pscircle[linecolor=blue,linewidth=0.5pt](0,4){1}\uput[0]{0}(1,4){$c_5$}
+  %
+  \psplot[linecolor=blue,linewidth=0.5pt]{-1.73}{1.41}{0 x x mul sub}\rput(-1.8,-1.4){$c_6$}
+  %
+  \psarc[linecolor=blue,linewidth=0.5pt](4,2.5){0.5}{-90}{90}\uput[0]{0}(4.5,2.5){$c_7$}
+  %
+  \arrMainVertex(-3,4){1}%           C4: x^2 + y^2 = 5^2
+  \arrMainVertex(-2.683,-0.89){2}%   C2:
+  \arrMainVertex(-1.73,-3){3}%       C6: x^2 + y = 0 | (-sqrt(3),-3)
+  \arrEmptyVertex(-1.54,-2.37){4}%   C2 x C6
+  \arrMainVertex(-1,4){5}%           C5:
+  \arrMainVertex(0,-3){6}%           C3: y - 4x + 3 = 0
+  \arrEmptyVertex(0,5){7}%           C4:
+  \arrEmptyVertex(0.217,-2.128){8}%  C2 x C3
+  \arrMainVertex(0.25,4){9}%         C1: xy - 1 = 0
+  \arrEmptyVertex(0.325,3.077){10}%  C1 x C5
+  \arrEmptyVertex(0.429,2.331){11}%  C1 x C2
+  \arrEmptyVertex(0.646,-0.417){12}% C6 x C3
+  \arrMainVertex(1,1){13}%           C3:
+  \arrMainVertex(1,4){14}%           C4:
+  \arrEmptyVertex(1.250,-1.562){15}% C2 x C6
+  \arrMainVertex(1.41,-2){16}%       C6: x^2 + y = 0 | sqrt(2),-2
+  \arrMainVertex(2,0.5){17}%         C1: xy - 1 = 0
+  \arrMainVertex(2.683,0.89){18}%    C2:
+  \arrMainVertex(4,2){19}%           C7:
+  \arrMainVertex(4,3){20}%           C4 x C7
+  \arrMainVertex(4.5,2.5){21}%       C7:
+  %
+  \ncline[linecolor=blue,linewidth=0.5pt]{6}{8}
+  \ncline[linecolor=blue,linewidth=0.5pt]{8}{12}
+  \ncline[linecolor=blue,linewidth=0.5pt]{12}{13}\rput(0.42,0.65){$c_3$}
+  %
+  \endpspicture
+}
+\end{document}

@@ -19,6 +19,7 @@
 #include <CGAL/Hilbert_sort_2.h>
 #include <CGAL/Hilbert_sort_3.h>
 #include <CGAL/Hilbert_sort_d.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/algorithm.h>
 
 #include <boost/random/random_number_generator.hpp>

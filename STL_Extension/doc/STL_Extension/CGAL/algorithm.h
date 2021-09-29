@@ -135,7 +135,7 @@ namespace cpp98 {
 /*!
 \ingroup STLAlgos
 
-Replacement for <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a>
+Replacement for <a href="https://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a>
 which was deprecated in C++14, and removed by C++17.
 In the \stl it was replaced by `std::shuffle()`.
 
@@ -149,7 +149,7 @@ random_shuffle(RandomAccessIterator begin, RandomAccessIterator end,
 /*!
 \ingroup STLAlgos
 
-Replacement for <a href="http://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a>
+Replacement for <a href="https://en.cppreference.com/w/cpp/algorithm/random_shuffle">`std::random_shuffle()`</a>
 which was deprecated in C++14, and removed by C++17.
 In the \stl it was replaced by `std::shuffle()`.
 

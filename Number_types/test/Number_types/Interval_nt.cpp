@@ -31,12 +31,18 @@ bool spiral_test()
       break;
   };
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  return i == 365;
+#else
   return i == 396;
+#endif
 }
 
 // Tests for constant propagation through intervals.
 // This must not be performed otherwise rounding modes are ignored.
-// Non-inlined operators usually stop cprop (*, /, sqrt).
+// On the other hand, if we always round to nearest, then constant propagation
+// is desirable.
+// Note: Non-inlined operators usually stop cprop (*, /, sqrt).
 template < typename IA_nt >
 bool cprop_test()
 {
@@ -92,12 +98,31 @@ bool square_root_test()
     a = b;
   };
   a -= 1.0;
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  DEBUG (
+  std::cout << "i          = " << i << std::endl;
+  std::cout << "sup        : " << a.sup() << std::endl;
+  std::cout << "inf        : " << a.inf() << std::endl;
+  ) // DEBUG
+  if (i != 54) {
+    return false;
+  }
+  // When we round to nearest it doesn't quite converge.
+  if (a.sup() > 3/(double(1<<30)*(1<<22))) {
+    return false;
+  }
+  if (-3/(double(1<<30)*(1<<22)) > a.inf()) {
+    return false;
+  }
+  return true;
+#else
   DEBUG (
   std::cout << "i          = " << i << std::endl;
   std::cout << "sup = -inf : " << (a.sup() == -a.inf()) << std::endl;
   std::cout << "width ok ? : " << (-a.inf() == 1/(double(1<<30)*(1<<22))) << std::endl;
   ) // DEBUG
   return i==54 && a.sup() == - a.inf() && a.sup() == 1/(double(1<<30)*(1<<22));
+#endif
 }
 
 
@@ -164,9 +189,15 @@ bool underflow_test()
   for (i=0; i<20; i++) b = b * b;
   for (i=0; i<20; i++) c = CGAL_NTS square(c);
 
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  return a.is_same(IA_nt(-CGAL_IA_MIN_DOUBLE, CGAL_IA_MIN_DOUBLE))
+      && b.is_same(IA_nt::smallest())
+      && c.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE));
+#else
   return a.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE))
       && b.is_same(IA_nt::smallest())
       && c.is_same(IA_nt(0, CGAL_IA_MIN_DOUBLE));
+#endif
 }
 
 
@@ -432,10 +463,17 @@ bool test ()
 
 int main()
 {
+#ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
+  std::cout << "Stress-testing the class Interval_nt<> always rounding to nearest.\n";
+  bool ok = test<CGAL::Interval_nt<> >();
+  std::cout << "\nStress-testing the class Interval_nt_advanced always rounding to nearest.\n";
+  ok &= test<CGAL::Interval_nt_advanced>();
+#else
   std::cout << "Stress-testing the class Interval_nt<>.\n";
   bool ok = test<CGAL::Interval_nt<> >();
   std::cout << "\nStress-testing the class Interval_nt_advanced.\n";
   ok &= test<CGAL::Interval_nt_advanced>();
+#endif
 
   return !ok;
 }

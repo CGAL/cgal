@@ -25,7 +25,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/use.h>
 
 #include <boost/mem_fn.hpp>
@@ -33,7 +33,7 @@
 double random_in(const double a,
                  const double b)
 {
-    double r = rand() / (double)RAND_MAX;
+    double r = rand() / static_cast<double>(RAND_MAX);
     return a + (b - a) * r;
 }
 
@@ -165,7 +165,7 @@ void test_distance_speed(Tree& tree,
       (void) closest;
             nb++;
     }
-    double speed = (double)nb / timer.time();
+    double speed = static_cast<double>(nb) / timer.time();
     std::cout << speed << " distance queries/s" << std::endl;
     timer.stop();
 }

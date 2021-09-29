@@ -9,8 +9,6 @@
 #include <vector>
 #include <deque>
 
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-
 #include <CGAL/IO/WKT.h>
 
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
@@ -27,7 +25,7 @@ int main(int argc, char* argv[])
     do
       {
         Polygon p;
-        CGAL::read_polygon_WKT(is, p);
+        CGAL::IO::read_polygon_WKT(is, p);
         if(!p.outer_boundary().is_empty())
           polys.push_back(p);
       }while(is.good() && !is.eof());
@@ -38,15 +36,9 @@ int main(int argc, char* argv[])
   {
     std::ifstream  is((argc>2)?argv[2]:"data/multipolygon.wkt");
     MultiPolygon mp;
-    CGAL::read_multi_polygon_WKT(is, mp);
+    CGAL::IO::read_multi_polygon_WKT(is, mp);
     for(Polygon p : mp)
       std::cout<<p<<std::endl;
   }
   return 0;
 }
-#else
-int main()
-{
-  return 0;
-}
-#endif

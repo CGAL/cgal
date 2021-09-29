@@ -1,3 +1,5 @@
+#define CGAL_PMP_REMESHING_VERBOSE
+
 #include <iostream>
 #include <fstream>
 
@@ -19,31 +21,17 @@ typedef L21_approx::Error_metric L21_metric;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
+int main()
 {
+  const char* file_name = "sphere_remeshed.off";
+  const FT drop = FT(1e-2);
+
   Mesh mesh;
   std::ifstream input(file_name);
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cout << "Invalid input file." << std::endl;
     return false;
   }
-
-  const std::size_t nb_removed = PMP::remove_isolated_vertices(mesh);
-  if (nb_removed > 0)
-    std::cout << nb_removed << " isolated vertices are removed." << std::endl;
-
-  const double target_edge_length = 0.05;
-  const unsigned int nb_iter = 3;
-
-  std::cout << "Start remeshing. ("
-    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
-  PMP::isotropic_remeshing(
-    faces(mesh),
-    target_edge_length,
-    mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
-  std::cout << "Remeshing done. ("
-    << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
   std::cout << "Testing \"" << file_name << '\"' << std::endl;
   // algorithm instance
@@ -57,7 +45,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
   const std::size_t num_iterations = 20;
   const std::size_t inner_iterations = 5;
   approx.initialize_seeds(
-    CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::INCREMENTAL)
+    CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::RANDOM)
     .min_error_drop(drop)
     .number_of_relaxations(inner_iterations));
   approx.run(num_iterations);
@@ -66,28 +54,10 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
   // meshing
   if (approx.extract_mesh(CGAL::parameters::subdivision_ratio(5.0))) {
     std::cout << "Succeeded." << std::endl;
-    return true;
+    return EXIT_SUCCESS;
   }
 
   std::cout << "Failed." << std::endl;
-  return false;
+  return EXIT_FAILURE;
 }
 
-/**
- * This file tests the meshing of the algorithm.
- * For now, we can only expect manifold output on simple geometric objects.
- */
-int main()
-{
-  std::cout << "Meshing manifold test." << std::endl;
-  if (!test_manifold("./data/cube.off"))
-    return EXIT_FAILURE;
-
-  if (!test_manifold("./data/cube-ouvert.off"))
-    return EXIT_FAILURE;
-
-  if (!test_manifold("./data/sphere.off"))
-    return EXIT_FAILURE;
-
-  return EXIT_SUCCESS;
-}

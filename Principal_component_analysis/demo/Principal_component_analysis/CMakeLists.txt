@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the PCA demo.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Principal_component_analysis_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -28,7 +28,7 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL)
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 

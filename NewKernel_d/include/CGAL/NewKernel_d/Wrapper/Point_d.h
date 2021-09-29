@@ -49,7 +49,7 @@ public:
   typedef Dimension_tag<0>  Feature_dimension;
 
   typedef typename Get_type<Kbase, Point_tag>::type      Rep;
-  //typedef typename CGAL::decay<typename boost::result_of<CPI(Rep,Begin_tag)>::type>::type Cartesian_const_iterator;
+  // typedef typename CGAL::decay<typename boost::result_of<CPI(Rep,Begin_tag)>::type>::type Cartesian_const_iterator;
 
   const Rep& rep() const noexcept
   {
@@ -141,7 +141,7 @@ public:
   {
     auto b = p.cartesian_begin();
     auto e = p.cartesian_end();
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
     {
       os << p.dimension();
       for(; b != e; ++b){
@@ -162,7 +162,7 @@ public:
   friend std::istream& operator>>(std::istream &is, Point_d & p)
   {
     int dim;
-    if( is_ascii(is) )
+    if( IO::is_ascii(is) )
       is >> dim;
     else
     {
@@ -171,10 +171,10 @@ public:
 
     if(!is) return is;
     std::vector<FT_> coords(dim);
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
     {
       for(int i=0;i<dim;++i)
-        is >> iformat(coords[i]);
+        is >> IO::iformat(coords[i]);
     }
     else
     {

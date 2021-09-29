@@ -95,7 +95,7 @@ public:
     typedef typename GetVertexPointMap<Graph, NamedParameters>::const_type         VPM;
     typedef typename boost::property_traits<VPM>::reference                        Point_ref;
 
-    typedef CGAL::Color                                                            Color;
+    typedef CGAL::IO::Color                                                        Color;
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_color_map_t, NamedParameters,
@@ -117,8 +117,7 @@ public:
     if(!m_os.good())
       return false;
 
-    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-    m_os.precision(precision);
+    set_stream_precision_from_NP(m_os, np);
 
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(CGAL::vertex_point, g));
@@ -154,7 +153,7 @@ public:
 
       if(has_vertex_colors)
       {
-        const CGAL::Color& vc = get(vcm, v);
+        const CGAL::IO::Color& vc = get(vcm, v);
         m_writer.write_vertex_color(vc.red(), vc.green(), vc.blue()); // @fixme correct?
       }
 
@@ -183,7 +182,7 @@ public:
 
       if(has_face_colors)
       {
-        const CGAL::Color& fc = get(fcm, f);
+        const CGAL::IO::Color& fc = get(fcm, f);
         m_writer.write_face_color(fc.red(), fc.green(), fc.blue());
       }
 

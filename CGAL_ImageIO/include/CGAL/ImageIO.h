@@ -93,7 +93,7 @@ typedef enum {
 typedef enum {
   /** data are binary */
   DM_BINARY,
-  /** data are ascii */
+  /** data are \ascii */
   DM_ASCII
 } DATA_MODE;
 

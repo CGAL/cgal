@@ -99,7 +99,7 @@ CGAL::Three::Scene_item*
 Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed)
 {
     if(index < 0 || index >= m_entries.size())
-        return 0;
+        return nullptr;
 
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
@@ -171,6 +171,9 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
+  if(index <0 || index >= numberOfEntries())
+    return -1;
+
   CGAL::Three::Scene_item* item = m_entries[index];
   if(qobject_cast<Scene_group_item*>(item))
   {
@@ -184,8 +187,6 @@ Scene::erase(Scene::Item_id index)
   //clears the Scene_view
   clear();
   index_map.clear();
-  if(index < 0 || index >= m_entries.size())
-    return -1;
   if(item->parentGroup())
     item->parentGroup()->removeChild(item);
 
@@ -193,7 +194,7 @@ Scene::erase(Scene::Item_id index)
   Item_id removed_item = item_id(item);
   children.removeAll(removed_item);
   indexErased(removed_item);
-    m_entries.removeAll(item);
+  m_entries.removeAll(item);
   Q_EMIT itemAboutToBeDestroyed(item);
   item->aboutToBeDestroyed();
   item->deleteLater();
@@ -471,13 +472,13 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   vbo[0].bind();
   vbo[0].allocate(points, 18 * sizeof(float));
   program.enableAttributeArray("vertex");
-  program.setAttributeArray("vertex", GL_FLOAT, 0, 3);
+  program.setAttributeArray("vertex", GL_FLOAT, nullptr, 3);
   vbo[0].release();
 
   vbo[1].bind();
   vbo[1].allocate(uvs, 12 * sizeof(float));
   program.enableAttributeArray("v_texCoord");
-  program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
+  program.setAttributeArray("v_texCoord", GL_FLOAT, nullptr, 2);
   vbo[1].release();
   vaos[viewer]->release();
   program.release();
@@ -519,7 +520,7 @@ bool item_should_be_skipped_in_draw(Scene_item* item) {
   if(!item->visible()) return true;
   if(item->has_group == 0) return false;
   Scene_group_item* group = item->parentGroup();
-  while(group != 0) {
+  while(group != nullptr) {
     if(!group->visible()) return false;
     group = group->parentGroup();
   }
@@ -730,7 +731,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       else
         transparent_items.push_back(id);
     }
-    renderScene(children, viewer, picked_item_IDs, with_names, -1, false, NULL);
+    renderScene(children, viewer, picked_item_IDs, with_names, -1, false, nullptr);
     if(with_names)
     {
       //here we get the selected point, before erasing the depth buffer. We store it
@@ -764,8 +765,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       std::vector<QOpenGLFramebufferObject*> fbos;
       std::vector<QOpenGLFramebufferObject*> depth_test;
       QColor background = viewer->backgroundColor();
-      fbos.resize((int)viewer->total_pass());
-      depth_test.resize((int)viewer->total_pass()-1);
+      fbos.resize(static_cast<int>(viewer->total_pass()));
+      depth_test.resize(static_cast<int>(viewer->total_pass())-1);
 
       //first pass
       fbos[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
@@ -779,8 +780,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      renderScene(opaque_items, viewer, picked_item_IDs, false, 0,false, NULL);
-      renderScene(transparent_items, viewer, picked_item_IDs, false, 0,false, NULL);
+      renderScene(opaque_items, viewer, picked_item_IDs, false, 0,false, nullptr);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, 0,false, nullptr);
       fbos[0]->release();
       depth_test[0] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
       depth_test[0]->bind();
@@ -793,8 +794,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      renderScene(opaque_items, viewer, picked_item_IDs, false, 0,true, NULL);
-      renderScene(transparent_items, viewer, picked_item_IDs, false, 0,true, NULL);
+      renderScene(opaque_items, viewer, picked_item_IDs, false, 0,true, nullptr);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, 0,true, nullptr);
       depth_test[0]->release();
 
       //other passes
@@ -835,8 +836,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
 
       //last pass
-      fbos[(int)viewer->total_pass()-1] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
-      fbos[(int)viewer->total_pass()-1]->bind();
+      fbos[static_cast<int>(viewer->total_pass())-1] = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA32F);
+      fbos[static_cast<int>(viewer->total_pass())-1]->bind();
       viewer->glDisable(GL_BLEND);
       viewer->glEnable(GL_DEPTH_TEST);
       viewer->glDepthFunc(GL_LESS);
@@ -846,18 +847,18 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                            0.0f);
       viewer->glClearDepthf(1);
       viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      renderScene(opaque_items     , viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
-      renderScene(transparent_items, viewer, picked_item_IDs, false, (int)viewer->total_pass()-1, false, depth_test[(int)viewer->total_pass()-2]);
-      fbos[(int)viewer->total_pass()-1]->release();
-      if(viewer->getStoredFrameBuffer() != NULL)
+      renderScene(opaque_items     , viewer, picked_item_IDs, false, static_cast<int>(viewer->total_pass())-1, false, depth_test[static_cast<int>(viewer->total_pass())-2]);
+      renderScene(transparent_items, viewer, picked_item_IDs, false, static_cast<int>(viewer->total_pass())-1, false, depth_test[static_cast<int>(viewer->total_pass())-2]);
+      fbos[static_cast<int>(viewer->total_pass())-1]->release();
+      if(viewer->getStoredFrameBuffer() != nullptr)
         viewer->getStoredFrameBuffer()->bind();
 
       //blending
       program.bind();
       vaos[viewer]->bind();
-      viewer->glClearColor((GLclampf)background.redF(),
-                           (GLclampf)background.greenF(),
-                           (GLclampf)background.blueF(),
+      viewer->glClearColor(static_cast<GLclampf>(background.redF()),
+                           static_cast<GLclampf>(background.greenF()),
+                           static_cast<GLclampf>(background.blueF()),
                            0.0f);
       viewer->glDisable(GL_DEPTH_TEST);
       viewer->glClear(GL_COLOR_BUFFER_BIT);
@@ -868,9 +869,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       proj_mat.setToIdentity();
       proj_mat.ortho(-1,1,-1,1,0,1);
       program.setUniformValue("projection_matrix", proj_mat);
-      for(int i=0; i< (int)viewer->total_pass()-1; ++i)
+      for(int i=0; i< static_cast<int>(viewer->total_pass())-1; ++i)
         delete depth_test[i];
-      for(int i = (int)viewer->total_pass()-1; i>=0; --i)
+      for(int i = static_cast<int>(viewer->total_pass())-1; i>=0; --i)
       {
         viewer->glBindTexture(GL_TEXTURE_2D, fbos[i]->texture());
         viewer->glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(6));
@@ -1099,11 +1100,13 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
       CGAL::Three::Scene_group_item* group =
           qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
       if(group)
+      {
         Q_FOREACH(Item_id id, group->getChildren())
         {
           CGAL::Three::Scene_item* child = item(id);
           groups_children << item_id(child);
         }
+      }
     }
     // Insure that children of selected groups will not be added twice
     Q_FOREACH(int i, selected_items_list)
@@ -1114,7 +1117,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
       }
     }
     //Gets the group at the drop position
-    CGAL::Three::Scene_group_item* group = NULL;
+    CGAL::Three::Scene_group_item* group = nullptr;
     if(parent.isValid())
         group = qobject_cast<CGAL::Three::Scene_group_item*>(this->item(index_map[parent]));
     bool one_contained = false;
@@ -1459,7 +1462,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
             if(mouseEvent->button() == ::Qt::LeftButton) {
                 QColor color =
                         QColorDialog::getColor(model->data(index).value<QColor>(),
-                                               0/*,
+                                               nullptr/*,
                                                tr("Select color"),
                                                QColorDialog::ShowAlphaChannel*/);
                 if (color.isValid()) {
@@ -1826,12 +1829,12 @@ findItem(const CGAL::Three::Scene_interface* scene_interface,
          const QMetaObject& metaobj,
          QString name, Scene_item_name_fn_ptr fn) {
     const Scene* scene = dynamic_cast<const Scene*>(scene_interface);
-    if(!scene) return 0;
+    if(!scene) return nullptr;
     Q_FOREACH(CGAL::Three::Scene_item* item, scene->entries()) {
        CGAL::Three::Scene_item* ptr = qobject_cast<CGAL::Three::Scene_item*>(metaobj.cast(item));
         if(ptr && ((ptr->*fn)() == name)) return ptr;
     }
-    return 0;
+    return nullptr;
 }
 
 Q_DECL_EXPORT
@@ -1946,13 +1949,13 @@ void Scene::initGL(Viewer_interface *viewer)
   vbo[0].bind();
   vbo[0].allocate(points, 18 * sizeof(float));
   program.enableAttributeArray("vertex");
-  program.setAttributeArray("vertex", GL_FLOAT, 0, 3);
+  program.setAttributeArray("vertex", GL_FLOAT, nullptr, 3);
   vbo[0].release();
 
   vbo[1].bind();
   vbo[1].allocate(uvs, 12 * sizeof(float));
   program.enableAttributeArray("v_texCoord");
-  program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
+  program.setAttributeArray("v_texCoord", GL_FLOAT, nullptr, 2);
   vbo[1].release();
   vaos[viewer]->release();
   program.release();

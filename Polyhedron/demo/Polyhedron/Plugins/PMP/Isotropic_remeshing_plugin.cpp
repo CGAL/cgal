@@ -376,7 +376,7 @@ public Q_SLOTS:
       typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
       typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-      FaceGraph& pmesh = (poly_item != NULL)
+      FaceGraph& pmesh = (poly_item != nullptr)
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
 
@@ -699,7 +699,7 @@ public Q_SLOTS:
       Scene_facegraph_item* poly_item =
         qobject_cast<Scene_facegraph_item*>(scene->item(index));
 
-      if (poly_item == NULL)
+      if (poly_item == nullptr)
       {
         std::cout << scene->item(index)->name().data()
           << " is not a FaceGraph, remeshing skipped\n";
@@ -942,7 +942,7 @@ private:
   Ui::Isotropic_remeshing_dialog
   remeshing_dialog(QDialog* dialog,
                    Scene_facegraph_item* poly_item,
-                   Scene_polyhedron_selection_item* selection_item = NULL)
+                   Scene_polyhedron_selection_item* selection_item = nullptr)
   {
     Ui::Isotropic_remeshing_dialog ui;
     ui.setupUi(dialog);
@@ -954,9 +954,11 @@ private:
             ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setDisabled(bool)));
-    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
+    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
             ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
+            ui.nbSmoothing_spinbox, SLOT(setDisabled(bool)));
+    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
             ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
     connect(ui.preserveDuplicates_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setChecked(bool)));
@@ -964,11 +966,11 @@ private:
             ui.protect_checkbox, SLOT(setDisabled(bool)));
 
     //Set default parameters
-    Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
-      : (selection_item != NULL ? selection_item->bbox()
+    Scene_interface::Bbox bbox = poly_item != nullptr ? poly_item->bbox()
+      : (selection_item != nullptr ? selection_item->bbox()
         : scene->bbox());
-    ui.objectName->setText(poly_item != NULL ? poly_item->name()
-      : (selection_item != NULL ? selection_item->name()
+    ui.objectName->setText(poly_item != nullptr ? poly_item->name()
+      : (selection_item != nullptr ? selection_item->name()
         : QString("Remeshing parameters")));
 
     ui.objectNameSize->setText(
@@ -997,7 +999,7 @@ private:
     ui.protect_checkbox->setChecked(false);
     ui.smooth1D_checkbox->setChecked(true);
 
-    if (NULL != selection_item)
+    if (nullptr != selection_item)
     {
       //do not preserve duplicates in selection mode
       ui.preserveDuplicates_checkbox->setDisabled(true);

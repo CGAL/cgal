@@ -44,10 +44,6 @@
 #  define CGAL_NO_WARNINGS
 #endif
 
-#ifdef CGAL_CFG_NO_CPP0X_STATIC_ASSERT
-#include <boost/static_assert.hpp>
-#endif
-
 namespace CGAL {
 
 // function declarations
@@ -77,8 +73,10 @@ inline bool possibly(Uncertain<bool> c);
 // ----------
 
 #if defined(CGAL_NO_ASSERTIONS)
+#  define CGAL_ASSERTIONS_ENABLED false
 #  define CGAL_assertion(EX) (static_cast<void>(0))
 #  define CGAL_destructor_assertion(EX) (static_cast<void>(0))
+#  define CGAL_destructor_assertion_catch(CODE) CODE
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
 #  ifdef CGAL_ASSUME
@@ -89,14 +87,17 @@ inline bool possibly(Uncertain<bool> c);
 #    define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
 #  endif // not def CGAL_ASSUME
 #else // no CGAL_NO_ASSERTIONS
+#  define CGAL_ASSERTIONS_ENABLED true
 #  define CGAL_assertion(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
 #  if __cpp_lib_uncaught_exceptions || ( _MSVC_LANG >= 201703L )  // C++17
 #    define CGAL_destructor_assertion(EX) \
      (CGAL::possibly(EX)||(std::uncaught_exceptions() > 0)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  define CGAL_destructor_assertion_catch(CODE) try{ CODE } catch(...) { if(std::uncaught_exceptions() <= 0) throw; }
 #  else // use C++03 `std::uncaught_exception()`
 #    define CGAL_destructor_assertion(EX) \
      (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__))
+#  define CGAL_destructor_assertion_catch(CODE) try{ CODE } catch(...) { if(!std::uncaught_exception()) throw; }
 #  endif // use C++03 `std::uncaught_exception()`
 #  define CGAL_assertion_msg(EX,MSG)                                    \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
@@ -105,47 +106,11 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
 #endif // no CGAL_NO_ASSERTIONS
 
-#ifndef CGAL_CFG_NO_CPP0X_STATIC_ASSERT
-
-#  if defined(CGAL_NO_ASSERTIONS)
-
-#    define CGAL_static_assertion(EX) \
-     static_assert(true, "")
-
-#    define CGAL_static_assertion_msg(EX,MSG) \
-     static_assert(true, "")
-
-#  else // no CGAL_NO_ASSERTIONS
-
-#    define CGAL_static_assertion(EX) \
+# define CGAL_static_assertion(EX) \
      static_assert(EX, #EX)
 
-#    define CGAL_static_assertion_msg(EX,MSG) \
+# define CGAL_static_assertion_msg(EX,MSG) \
      static_assert(EX, MSG)
-
-#  endif // no CGAL_NO_ASSERTIONS
-
-#else // if CGAL_CFG_NO_CPP0X_STATIC_ASSERT is true
-
-#  if defined(CGAL_NO_ASSERTIONS)
-
-#    define CGAL_static_assertion(EX) \
-     BOOST_STATIC_ASSERT(true) CGAL_UNUSED
-
-#    define CGAL_static_assertion_msg(EX,MSG) \
-     BOOST_STATIC_ASSERT(true) CGAL_UNUSED
-
-#  else // no CGAL_NO_ASSERTIONS
-
-#    define CGAL_static_assertion(EX) \
-     BOOST_STATIC_ASSERT(EX) CGAL_UNUSED
-
-#    define CGAL_static_assertion_msg(EX,MSG) \
-     BOOST_STATIC_ASSERT(EX) CGAL_UNUSED
-
-#  endif // no CGAL_NO_ASSERTIONS
-
-#endif // if CGAL_CFG_NO_CPP0X_STATIC_ASSERT is true
 
 #if defined(CGAL_NO_ASSERTIONS) || !defined(CGAL_CHECK_EXACTNESS)
 #  define CGAL_exactness_assertion(EX) (static_cast<void>(0))
@@ -188,10 +153,12 @@ inline bool possibly(Uncertain<bool> c);
 // -------------
 
 #if defined(CGAL_NO_PRECONDITIONS)
+#  define CGAL_PRECONDITIONS_ENABLED false
 #  define CGAL_precondition(EX) (static_cast<void>(0))
 #  define CGAL_precondition_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_precondition_code(CODE)
 #else
+#  define CGAL_PRECONDITIONS_ENABLED true
 #  define CGAL_precondition(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::precondition_fail( # EX , __FILE__, __LINE__))
 #  define CGAL_precondition_msg(EX,MSG) \
@@ -293,11 +260,19 @@ inline bool possibly(Uncertain<bool> c);
 
 #if defined(CGAL_NO_WARNINGS)
 #  define CGAL_warning(EX) (static_cast<void>(0))
+#  define CGAL_destructor_warning(EX) (static_cast<void>(0))
 #  define CGAL_warning_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_warning_code(CODE)
 #else
 #  define CGAL_warning(EX) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+#  if __cpp_lib_uncaught_exceptions || ( _MSVC_LANG >= 201703L )  // C++17
+#    define CGAL_destructor_warning(EX) \
+     (CGAL::possibly(EX)||(std::uncaught_exceptions() > 0)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+#  else // use C++03 `std::uncaught_exception()`
+#    define CGAL_destructor_warning(EX) \
+     (CGAL::possibly(EX)||std::uncaught_exception()?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__))
+#  endif // use C++03 `std::uncaught_exception()`
 #  define CGAL_warning_msg(EX,MSG) \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::warning_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_warning_code(CODE) CODE

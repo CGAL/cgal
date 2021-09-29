@@ -14,7 +14,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -51,15 +51,15 @@ class Volume_info
   friend void CGAL::write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree & node,
                                                            const Volume_info& arg);
 public:
-  Volume_info() : m_color(CGAL::Color(myrandom.get_int(0,256),
+  Volume_info() : m_color(CGAL::IO::Color(myrandom.get_int(0,256),
                                       myrandom.get_int(0,256),
                                       myrandom.get_int(0,256))),
     m_status( LCC_DEMO_VISIBLE | LCC_DEMO_FILLED )
   {}
 
-  CGAL::Color& color()
+  CGAL::IO::Color& color()
   { return m_color; }
-  const CGAL::Color& color() const
+  const CGAL::IO::Color& color() const
   { return m_color; }
 
   std::string color_name() const
@@ -97,7 +97,7 @@ public:
   { set_filled(!is_filled()); }
 
 private:
-  CGAL::Color m_color;
+  CGAL::IO::Color m_color;
   char        m_status;
 };
 
@@ -120,7 +120,7 @@ inline void read_cmap_attribute_node<Volume_info>
     char r = v.second.get<int>("color-r");
     char g = v.second.get<int>("color-g");
     char b = v.second.get<int>("color-b");
-    val.m_color = CGAL::Color(r,g,b);
+    val.m_color = CGAL::IO::Color(r,g,b);
   }
   catch(const std::exception &  )
   {}
@@ -178,7 +178,7 @@ struct Face_info {
   bool is_process;
 };
 
-typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
 typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
 
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info,P_traits> Fb1;

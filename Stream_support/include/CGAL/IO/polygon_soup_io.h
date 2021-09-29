@@ -18,12 +18,9 @@
 #include <CGAL/IO/3MF.h>
 #include <CGAL/IO/OBJ.h>
 #include <CGAL/IO/OFF.h>
-// #include <CGAL/IO/OI.h>
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/STL.h>
-// #include <CGAL/IO/VRML.h>
 #include <CGAL/IO/VTK.h>
-// #include <CGAL/IO/WKT.h>
 #include <CGAL/IO/GOCAD.h>
 
 #include <algorithm>
@@ -32,6 +29,8 @@
 #include <vector>
 
 namespace CGAL {
+
+namespace IO {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +81,7 @@ bool read_polygon_soup(const std::string& fname,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == std::string())
   {
     if(verbose)
@@ -172,7 +171,7 @@ bool write_polygon_soup(const std::string& fname,
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == std::string())
   {
     if(verbose)
@@ -217,6 +216,8 @@ bool write_polygon_soup(const std::string& fname, PointRange& points, PolygonRan
 }
 
 /// \endcond
+
+} // namespace IO
 
 } // namespace CGAL
 

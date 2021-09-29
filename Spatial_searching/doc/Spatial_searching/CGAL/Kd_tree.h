@@ -201,7 +201,7 @@ OutputIterator search(OutputIterator it, FuzzyQueryItem q) const;
 
 /*!
 Returns a const iterator to the first point in the tree.
-\note Starting with %CGAL 4.6, the order of the points in the iterator range
+\note Starting with \cgal 4.6, the order of the points in the iterator range
 `[begin() , end())` is not the order of  insertion of the points into the tree.
 This was not guaranteed before but might have beeen observed and exploited.
 */

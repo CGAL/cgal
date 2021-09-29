@@ -16,7 +16,7 @@ int main()
 {
   std::ifstream in("colored_tetra.ply");
   SMesh mesh;
-  CGAL::read_PLY(in, mesh);
+  CGAL::IO::read_PLY(in, mesh);
 
   std::cerr << "Read mesh with " << mesh.number_of_vertices() << " vertices and "
             << mesh.number_of_faces() << " faces" << std::endl;
@@ -37,11 +37,11 @@ int main()
 
   // Append second mesh
   std::ifstream in2("tetra.ply");
-  CGAL::read_PLY(in2, mesh);
+  CGAL::IO::read_PLY(in2, mesh);
 
   std::ofstream out("out.ply");
-//  CGAL::set_binary_mode(out);
-  CGAL::write_PLY(out, mesh);
+//  CGAL::IO::set_binary_mode(out);
+  CGAL::IO::write_PLY(out, mesh);
 
   return 0;
 }

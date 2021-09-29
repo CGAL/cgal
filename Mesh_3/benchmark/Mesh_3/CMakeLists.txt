@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Mesh_3_benchmark)
 
 # Creates a new CMake option, turned ON by default
@@ -79,7 +79,7 @@ if(Boost_PROGRAM_OPTIONS_FOUND)
   list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES})
 endif()
 
-if(Boost_FOUND AND Boost_VERSION GREATER 103400)
+if(Boost_FOUND )
   # Compilable benchmark
   set(BENCHMARK_SOURCE_FILES "concurrency.cpp")
   add_msvc_precompiled_header("StdAfx.h" "StdAfx.cpp" BENCHMARK_SOURCE_FILES)

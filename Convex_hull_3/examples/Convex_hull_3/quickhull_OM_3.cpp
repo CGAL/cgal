@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   Mesh sm;
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
 
-  CGAL::write_polygon_mesh((argc>2)?argv[2]:"out.off", sm);
+  CGAL::IO::write_polygon_mesh((argc>2)?argv[2]:"out.off", sm);
 
   return 0;
 }

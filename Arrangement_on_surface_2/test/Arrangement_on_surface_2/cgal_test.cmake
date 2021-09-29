@@ -30,9 +30,6 @@ set(SEGMENT_GEOM_TRAITS 0)
 set(NON_CACHING_SEGMENT_GEOM_TRAITS 1)
 set(POLYLINE_GEOM_TRAITS 2)
 set(NON_CACHING_POLYLINE_GEOM_TRAITS 3)
-set(POLYCURVE_CONIC_GEOM_TRAITS 14)
-set(POLYCURVE_CIRCULAR_ARC_GEOM_TRAITS 15)
-set(POLYCURVE_BEZIER_GEOM_TRAITS 16)
 set(LINEAR_GEOM_TRAITS 4)
 set(CORE_CONIC_GEOM_TRAITS 5)
 set(LINE_ARC_GEOM_TRAITS 6)
@@ -97,8 +94,6 @@ set(ARE_MERGEABLE 10)
 set(MERGE 11)
 set(ASSERTIONS 12)
 set(CONSTRUCTOR 13)
-set(COMPARE_X_AT_LIMIT 14)
-set(COMPARE_X_NEAR_LIMIT 15)
 set(COMPARE_X_ON_BOUNDARY 16)
 set(COMPARE_X_NEAR_BOUNDARY 17)
 set(COMPARE_Y_NEAR_BOUNDARY 18)
@@ -326,8 +321,6 @@ function(execute_commands_new_structure data_dir traits_type_name)
   set(commands_indicator_COMPARE 0)
   set(commands_indicator_VERTEX 0)
   set(commands_indicator_IS_VERTICAL 0)
-  set(commands_indicator_COMPARE_X_AT_LIMIT 0)
-  set(commands_indicator_COMPARE_X_NEAR_LIMIT 0)
   set(commands_indicator_COMPARE_X_ON_BOUNDARY 0)
   set(commands_indicator_COMPARE_X_NEAR_BOUNDARY 0)
   set(commands_indicator_COMPARE_Y_NEAR_BOUNDARY 0)
@@ -364,14 +357,6 @@ function(execute_commands_new_structure data_dir traits_type_name)
   if(commands_indicator_IS_VERTICAL)
     run_trapped_test(test_traits data/${data_dir}/points
       data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/is_vertical ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_X_AT_LIMIT)
-    run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_x_at_limit ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_X_NEAR_LIMIT)
-    run_trapped_test(test_traits data/${data_dir}/points
-      data/${data_dir}/xcurves data/${data_dir}/curves data/${data_dir}/compare_x_near_limit ${traits_type_name})
   endif()
   if(commands_indicator_COMPARE_X_ON_BOUNDARY)
     run_trapped_test(test_traits data/${data_dir}/points
@@ -471,8 +456,6 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
   set(commands_indicator_PARAMETER_SPACE_X 0)
   set(commands_indicator_PARAMETER_SPACE_Y 0)
   set(commands_indicator_COMPARE_XY 0)
-  set(commands_indicator_COMPARE_X_AT_LIMIT 0)
-  set(commands_indicator_COMPARE_X_NEAR_LIMIT 0)
   set(commands_indicator_COMPARE_X_ON_BOUNDARY 0)
   set(commands_indicator_COMPARE_X_NEAR_BOUNDARY 0)
   set(commands_indicator_COMPARE_Y_NEAR_BOUNDARY 0)
@@ -504,16 +487,6 @@ function(execute_commands_traits_adaptor data_dir traits_type_name)
     run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
       data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
       data/test_adaptor/${data_dir}/compare_xy ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_X_AT_LIMIT)
-    run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
-      data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
-      data/test_adaptor/${data_dir}/compare_x_at_limit ${traits_type_name})
-  endif()
-  if(commands_indicator_COMPARE_X_NEAR_LIMIT)
-    run_trapped_test(test_traits_adaptor data/test_adaptor/${data_dir}/points
-      data/test_adaptor/${data_dir}/xcurves data/test_adaptor/${data_dir}/curves
-      data/test_adaptor/${data_dir}/compare_x_near_limit ${traits_type_name})
   endif()
 
   if(commands_indicator_COMPARE_X_ON_BOUNDARY)
@@ -1072,7 +1045,7 @@ function(test_linear_traits)
     IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT
     SPLIT MERGE
     PARAMETER_SPACE_X PARAMETER_SPACE_Y
-    COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY)
+    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1274,7 +1247,7 @@ function(test_rational_arc_traits)
 
   execute_commands_new_structure(rational_arcs rational_arc_traits
     VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE
-    COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY)
+    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY)
 endfunction()
 
 #---------------------------------------------------------------------#
@@ -1424,3 +1397,9 @@ compile_and_run(test_io)
 compile_and_run(test_sgm)
 
 compile_and_run(test_polycurve_intersection)
+if(CGAL_DISABLE_GMP)
+  get_directory_property(LIST_OF_TESTS TESTS)
+  foreach(_test ${LIST_OF_TESTS})
+    set_property(TEST ${_test} APPEND PROPERTY ENVIRONMENT CGAL_DISABLE_GMP=1)
+  endforeach()
+endif()

@@ -2,21 +2,12 @@
 // Checking whether there are three collinear points in a given input set
 // using the arrangement of the dual lines.
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Arr_linear_traits_2.h>
-#include <CGAL/Arrangement_2.h>
 #include <cstdlib>
 
-typedef CGAL::Cartesian<CGAL::Exact_rational>         Kernel;
-typedef CGAL::Arr_linear_traits_2<Kernel>             Traits_2;
-typedef Traits_2::Point_2                             Point_2;
-typedef Traits_2::Line_2                              Line_2;
-typedef Traits_2::X_monotone_curve_2                  X_monotone_curve_2;
-typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
+#include "arr_linear.h"
+#include "read_objects.h"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
   // Get the name of the input file from the command line, or use the default
   // points.dat file if no command-line parameters are given.
   const char* filename = (argc > 1) ? argv[1] : "points.dat";
@@ -25,7 +16,7 @@ int main(int argc, char *argv[])
   std::ifstream in_file(filename);
 
   if (! in_file.is_open()) {
-    std::cerr << "Failed to open " << filename << "!" << std::endl;
+    std::cerr << "Failed to open " << filename << "!\n";
     return 1;
   }
 
@@ -36,71 +27,48 @@ int main(int argc, char *argv[])
   // <x_2> <y_2>                         // point #2.
   //   :      :       :      :
   // <x_n> <y_n>                         // point #n.
-  std::vector<Point_2> points;
-  std::list<X_monotone_curve_2> dual_lines;
-
-  size_t n;
-  in_file >> n;
-  points.resize(n);
-  unsigned int k;
-  for (k = 0; k < n; ++k) {
-    int px, py;
-    in_file >> px >> py;
-    points[k] = Point_2(px, py);
-
-    // The line dual to the point (p_x, p_y) is y = p_x*x - p_y,
-    // or: p_x*x - y - p_y = 0:
-    dual_lines.push_back(Line_2(CGAL::Exact_rational(px),
-                                CGAL::Exact_rational(-1),
-                                CGAL::Exact_rational(-py)));
-  }
-  in_file.close();
+  std::vector<Point> points;
+  read_objects<Point>(filename, std::back_inserter(points));
+  std::list<X_monotone_curve> dual_lines;
+  for (const auto& p : points) dual_lines.push_back(Line(p.x(), -1, -p.y()));
 
   // Construct the dual arrangement by aggregately inserting the lines.
-  Arrangement_2 arr;
-
+  Arrangement arr;
   insert(arr, dual_lines.begin(), dual_lines.end());
-
-  std::cout << "The dual arrangement size:" << std::endl
+  std::cout << "The dual arrangement size:\n"
             << "V = " << arr.number_of_vertices()
             << " (+ " << arr.number_of_vertices_at_infinity()
             << " at infinity)"
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces()
             << " (" << arr.number_of_unbounded_faces()
-            << " unbounded)" << std::endl;
+            << " unbounded)\n";
 
   // Look for a vertex whose degree is greater than 4.
-  Arrangement_2::Vertex_const_iterator vit;
   bool found_collinear = false;
-
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
     if (vit->degree() > 4) {
       found_collinear = true;
       break;
     }
   }
   if (found_collinear)
-    std::cout << "Found at least three collinear points in the input set."
-              << std::endl;
+    std::cout << "Found at least three collinear points in the input set.\n";
   else
-    std::cout << "No three collinear points are found in the input set."
-              << std::endl;
+    std::cout << "No three collinear points are found in the input set.\n";
 
   // Pick two points from the input set, compute their midpoint and insert
   // its dual line into the arrangement.
   Kernel ker;
-  const int k1 = std::rand() % n, k2 = (k1 + 1) % n;
-  Point_2 p_mid = ker.construct_midpoint_2_object()(points[k1], points[k2]);
-  X_monotone_curve_2 dual_p_mid = Line_2(CGAL::Exact_rational(p_mid.x()),
-                                         CGAL::Exact_rational(-1),
-                                         CGAL::Exact_rational(-p_mid.y()));
-
+  const auto n = points.size();
+  const auto k1 = std::rand() % n, k2 = (k1 + 1) % n;
+  Point p_mid = ker.construct_midpoint_2_object()(points[k1], points[k2]);
+  X_monotone_curve dual_p_mid = Line(p_mid.x(), -1, -p_mid.y());
   insert(arr, dual_p_mid);
 
   // Make sure that we now have three collinear points.
   found_collinear = false;
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit) {
     if (vit->degree() > 4) {
       found_collinear = true;
       break;

@@ -17,11 +17,23 @@ Concepts used for the parameters of the `CGAL::Shape_detection::Region_growing`.
 Models that can be used with the `CGAL::Shape_detection::Region_growing`
 for shape detection in a point set.
 
+\defgroup PkgShapeDetectionRGOnSegments Segment Set
+\ingroup PkgShapeDetectionRG
+
+Models that can be used with the `CGAL::Shape_detection::Region_growing`
+for shape detection in a segment set.
+
 \defgroup PkgShapeDetectionRGOnMesh Polygon Mesh
 \ingroup PkgShapeDetectionRG
 
 Models that can be used with the `CGAL::Shape_detection::Region_growing`
 for shape detection on a polygon mesh.
+
+\defgroup PkgShapeDetectionRGOnPolyline Polyline
+\ingroup PkgShapeDetectionRG
+
+Models that can be used with the `CGAL::Shape_detection::Region_growing`
+for shape detection on a polyline.
 
 \addtogroup PkgShapeDetectionRG
 
@@ -47,11 +59,6 @@ Property maps that can be used with the `CGAL::Shape_detection::Efficient_RANSAC
 
 \addtogroup PkgShapeDetectionRANSAC
 
-\defgroup PkgShapeDetectionDEPR Deprecated
-\ingroup PkgShapeDetectionRef
-
-Deprecated components.
-
 \addtogroup PkgShapeDetectionRef
 
 \cgalPkgDescriptionBegin{Shape Detection, PkgShapeDetection}
@@ -61,12 +68,7 @@ Deprecated components.
 \cgalPkgAuthors{Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez, Florent Lafarge, Simon Giraudot, Thien Hoang, and Dmitry Anisimov}
 \cgalPkgDesc{This package implements the Efficient RANSAC (RANdom SAmple Consensus) approach
 for detecting arbitrary shapes in an unorganized point set with unoriented normals
-and the Region Growing approach for detecting shapes in a set of arbitrary items.
-With the Efficient RANSAC approach, five canonical shapes can be detected: planes, spheres,
-cylinders, cones, and tori. Additional shapes can be detected, given a custom shape class by the user.
-For the Region Growing approach, this package provides three particular shape detection components:
-detecting lines in a 2D point set, detecting planes in a 3D point set, and detecting planes
-on a polygon mesh.}
+and the Region Growing approach for detecting shapes in a set of arbitrary items.}
 \cgalPkgManuals{Chapter_Shape_Detection, PkgShapeDetectionRef}
 \cgalPkgSummaryEnd
 
@@ -111,25 +113,37 @@ on a polygon mesh.}
 - `RegionType`
 
 ### Algorithm ###
-- `CGAL::Shape_detection::Region_growing<InputRange, NeighborQuery, RegionType, SeedMap>`
+- `CGAL::Shape_detection::Region_growing<InputRange, %NeighborQuery, %RegionType, SeedMap>`
 
 ### Point Set ###
 - `CGAL::Shape_detection::Point_set::K_neighbor_query<GeomTraits, InputRange, PointMap>`
 - `CGAL::Shape_detection::Point_set::Sphere_neighbor_query<GeomTraits, InputRange, PointMap>`
+
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
+
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap, NormalMap>`
+
+### Segment Set ###
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, SegmentMap>`
 
 ### Polygon Mesh ###
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`
+- `CGAL::Shape_detection::Polygon_mesh::Polyline_graph<GeomTraits, PolygonMesh, FaceRange, EdgeRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, FaceRange, VertexToPointMap>`
-- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, NeighborQuery, FaceRange, VertexToPointMap>`
+- `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, %NeighborQuery, FaceRange, VertexToPointMap>`
 
-## Deprecated Components ##
-- `CGAL::Shape_detection::deprecated::Shape_detection_traits<GeomTraits, InputRange, PointMap, NormalMap>`
-- `CGAL::Shape_detection::deprecated::Region_growing_depr<Traits>`
+### Polyline ###
+- `CGAL::Shape_detection::Polyline::One_ring_neighbor_query<GeomTraits, InputRange>`
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap>`
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, PointMap>`
 
-## Functions ##
-- `CGAL::regularize_planes()`
 */

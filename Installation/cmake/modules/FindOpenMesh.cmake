@@ -55,7 +55,7 @@ if(OpenMesh_FOUND AND NOT TARGET OpenMesh::OpenMesh)
   add_library(OpenMesh::OpenMesh UNKNOWN IMPORTED)
 
   if(TARGET OpenMeshCore)
-    target_link_libraries(OpenMesh::OpenMesh PUBLIC OpenMeshCore)
+    target_link_libraries(OpenMesh::OpenMesh INTERFACE OpenMeshCore)
     return()
   endif()
 

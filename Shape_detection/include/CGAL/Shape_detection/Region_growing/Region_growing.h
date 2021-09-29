@@ -39,16 +39,16 @@ namespace Shape_detection {
     - the `SeedMap` property map enables to define the seeding order of items and skip unnecessary items.
 
     \tparam InputRange
-    must be a model of `ConstRange`.
+    a model of `ConstRange`
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`
 
     \tparam RegionType
-    must be a model of `RegionType`.
+    a model of `RegionType`
 
     \tparam SeedMap
-    must be an `LvaluePropertyMap` whose key and value types are `std::size_t`.
+    a model of `ReadablePropertyMap` whose key and value types are `std::size_t`.
     %Default is `CGAL::Identity_property_map`.
   */
   template<
@@ -59,18 +59,19 @@ namespace Shape_detection {
   class Region_growing {
 
   public:
-
     /// \cond SKIP_IN_MANUAL
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Region_type = RegionType;
     using Seed_map = SeedMap;
-
-    using Visited_items = std::vector<bool>;
-    using Running_queue = std::queue<std::size_t>;
-    using Indices       = std::vector<std::size_t>;
     /// \endcond
 
+  private:
+    using Visited_items = std::vector<bool>;
+    using Running_queue = std::queue<std::size_t>;
+    using Indices = std::vector<std::size_t>;
+
+  public:
     /// \name Initialization
     /// @{
 
@@ -119,7 +120,7 @@ namespace Shape_detection {
       with the found regions.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `std::vector<std::size_t>`.
+      a model of output iterator whose value type is `std::vector<std::size_t>`
 
       \param regions
       an output iterator that stores regions, where each region is returned
@@ -146,13 +147,14 @@ namespace Shape_detection {
 
         // Try to grow a new region from the index of the seed item.
         if (!m_visited[seed_index]) {
-          propagate(seed_index, region);
+          const bool is_success = propagate(seed_index, region);
 
           // Check global conditions.
-          if (!m_region_type.is_valid_region(region))
+          if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
-          else
+          } else {
             *(regions++) = region;
+          }
         }
       }
       return regions;
@@ -167,7 +169,7 @@ namespace Shape_detection {
       \brief fills an output iterator with indices of all unassigned items.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `std::size_t`.
+      a model of output iterator whose value type is `std::size_t`
 
       \param output
       an output iterator that stores indices of all items, which are not assigned
@@ -199,21 +201,19 @@ namespace Shape_detection {
 
     /// \cond SKIP_IN_MANUAL
     void clear() {
-
       m_visited.clear();
       m_visited.resize(m_input_range.size(), false);
-    }
-
-    void release_memory() {
-
-      m_visited.clear();
-      m_visited.shrink_to_fit();
     }
     /// \endcond
 
   private:
+    const Input_range& m_input_range;
+    Neighbor_query& m_neighbor_query;
+    Region_type& m_region_type;
+    const Seed_map m_seed_map;
+    Visited_items m_visited;
 
-    void propagate(const std::size_t seed_index, Indices& region) {
+    bool propagate(const std::size_t seed_index, Indices& region) {
       region.clear();
 
       // Use two queues, while running on this queue, push to the other queue;
@@ -228,7 +228,8 @@ namespace Shape_detection {
       region.push_back(seed_index);
 
       // Update internal properties of the region.
-      m_region_type.update(region);
+      const bool is_well_created = m_region_type.update(region);
+      if (!is_well_created) return false;
 
       Indices neighbors;
       while (
@@ -270,20 +271,13 @@ namespace Shape_detection {
           depth_index = !depth_index;
         }
       }
+      return true;
     }
 
     void revert(const Indices& region) {
       for (const std::size_t item_index : region)
         m_visited[item_index] = false;
     }
-
-    // Fields.
-    const Input_range& m_input_range;
-    Neighbor_query& m_neighbor_query;
-    Region_type& m_region_type;
-    const Seed_map m_seed_map;
-
-    Visited_items m_visited;
   };
 
 } // namespace Shape_detection

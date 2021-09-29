@@ -1,0 +1,32 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \pspicture[](-5,-3.5)(5,4.5)
+  \arrMainVertex(0,0){0}\uput[-45]{0}(0,0){$v$}
+  \arrMainVertex(0,-1){1}
+  \pnode(-5,-3){a}
+  \pnode( 5,-3){b}
+  \pnode(-5, 0){c}
+  \pnode( 5, 0){d}
+  \pnode(-5, 4){e}
+  \pnode( 5, 4){f}
+  \pnode( 0, 4.5){g}
+  \ncline[linewidth=0.5pt,linecolor=blue]{1}{a}
+  \Aput[1pt]{\textcolor{blue}{$c_4$}}
+  \ncline[linewidth=0.5pt,linecolor=blue]{1}{b}
+  \Aput[1pt]{\textcolor{blue}{$c_5$}}
+  \ncline[linewidth=0.5pt,linecolor=blue]{0}{c}
+  \Aput[1pt]{\textcolor{blue}{$c_1$}}
+  \ncline[linewidth=0.5pt,linecolor=blue]{0}{d}
+  \ncline[linewidth=0.5pt,linecolor=blue]{0}{e}
+  \Aput[1pt]{\textcolor{blue}{$c_2$}}
+  \ncline[linewidth=0.5pt,linecolor=blue]{0}{f}
+  \Aput[1pt]{\textcolor{blue}{$c_3$}}
+  \ncline[linewidth=0.5pt,linecolor=blue]{0}{g}
+  \Aput[1pt]{\textcolor{blue}{$c_6$}}
+  \psframe[linewidth=0.25pt](-5,-3.5)(5,4.5)
+  \endpspicture
+}
+\end{document}

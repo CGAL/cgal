@@ -37,7 +37,7 @@ namespace CGAL {
 `Exact_integer` is an exact integer number type.
 
 It is a typedef of another number type. Its exact definition depends on
-the availability the third-party libraries %GMP, %CORE, and %LEDA. %CGAL must
+the availability the third-party libraries \gmp, \core, and \leda. \cgal must
 be configured with at least one of those libraries.
 
 \cgalModels `EuclideanRing`
