@@ -1492,6 +1492,8 @@ private:
           || GeomTraits().collinear_3_object()(t, p, q))
           continue;
 
+        typename GeomTraits::Construct_cross_product_vector_3 cross_product
+          = GeomTraits().construct_cross_product_vector_3_object();
 #ifdef CGAL_PMP_REMESHING_DEBUG
         typename GeomTraits::Construct_normal_3 normal
           = GeomTraits().construct_normal_3_object();
@@ -1499,13 +1501,13 @@ private:
         Vector_3 normal_after_collapse  = normal(t, p, q);
 
         CGAL::Sign s1 = CGAL::sign(normal_before_collapse * normal_after_collapse);
-        CGAL::Sign s2 = CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
-                                 * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)));
+        CGAL::Sign s2 = CGAL::sign(cross_product(Vector_3(s, p), Vector_3(s, q))
+                                 * cross_product(Vector_3(t, p), Vector_3(t, q)));
         CGAL_assertion(s1 == s2);
 #endif
 
-        if(CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
-                    * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)))
+        if(CGAL::sign(cross_product(Vector_3(s, p), Vector_3(s, q))
+                    * cross_product(Vector_3(t, p), Vector_3(t, q)))
           != CGAL::POSITIVE)
           return true;
       }
