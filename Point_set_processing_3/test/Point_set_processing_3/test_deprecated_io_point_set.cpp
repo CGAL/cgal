@@ -90,12 +90,12 @@ ps.push_back(Point_3(0,0,1));
  {
    std::ofstream os("tmp1.las", std::ios::binary);
    ok = CGAL::write_las_points_with_properties(os, points,
-					       CGAL::make_las_point_writer(CGAL::First_of_pair_property_map<PointWithColor>()),
-					       std::make_pair(GetRedMap(),CGAL::LAS_property::R()),
-					       std::make_pair(GetGreenMap(), CGAL::LAS_property::G()),
-					       std::make_pair(GetBlueMap(), CGAL::LAS_property::B()),
-					       std::make_pair(GetAlphaMap(), CGAL::LAS_property::I())
-					       );
+                                               CGAL::make_las_point_writer(CGAL::First_of_pair_property_map<PointWithColor>()),
+                                               std::make_pair(GetRedMap(),CGAL::LAS_property::R()),
+                                               std::make_pair(GetGreenMap(), CGAL::LAS_property::G()),
+                                               std::make_pair(GetBlueMap(), CGAL::LAS_property::B()),
+                                               std::make_pair(GetAlphaMap(), CGAL::LAS_property::I())
+                                               );
    assert(ok);
 
  }
@@ -104,13 +104,13 @@ ps.push_back(Point_3(0,0,1));
    points.clear();
    std::ifstream is("tmp1.las", std::ios::binary);
    ok = CGAL::read_las_points_with_properties(is, std::back_inserter (points),
-					      CGAL::make_las_point_reader(CGAL::First_of_pair_property_map<PointWithColor>()),
-					      std::make_tuple(CGAL::Second_of_pair_property_map<PointWithColor>(),
-							      CGAL::Construct_array(),
-							      CGAL::LAS_property::R(),
-							      CGAL::LAS_property::G(),
-							      CGAL::LAS_property::B(),
-							      CGAL::LAS_property::I()));
+                                              CGAL::make_las_point_reader(CGAL::First_of_pair_property_map<PointWithColor>()),
+                                              std::make_tuple(CGAL::Second_of_pair_property_map<PointWithColor>(),
+                                                              CGAL::Construct_array(),
+                                                              CGAL::LAS_property::R(),
+                                                              CGAL::LAS_property::G(),
+                                                              CGAL::LAS_property::B(),
+                                                              CGAL::LAS_property::I()));
    assert(ok);
    assert(points.size() == 3);
    assert(points[1].second[1] == 255);
@@ -137,12 +137,12 @@ ps.push_back(Point_3(0,0,1));
    std::ofstream os("tmp1.ply");
    assert(os.good());
    ok = CGAL::write_ply_points_with_properties(os, points,
-					       CGAL::make_ply_point_writer (CGAL::First_of_pair_property_map<PointWithColor>()),
-					       std::make_pair(GetRedMap(),CGAL::PLY_property<unsigned short>("red")),
-					       std::make_pair(GetGreenMap(), CGAL::PLY_property<unsigned short>("green")),
-					       std::make_pair(GetBlueMap(), CGAL::PLY_property<unsigned short>("blue")),
-					       std::make_pair(GetAlphaMap(), CGAL::PLY_property<unsigned short>("alpha"))
-					       );
+                                               CGAL::make_ply_point_writer (CGAL::First_of_pair_property_map<PointWithColor>()),
+                                               std::make_pair(GetRedMap(),CGAL::PLY_property<unsigned short>("red")),
+                                               std::make_pair(GetGreenMap(), CGAL::PLY_property<unsigned short>("green")),
+                                               std::make_pair(GetBlueMap(), CGAL::PLY_property<unsigned short>("blue")),
+                                               std::make_pair(GetAlphaMap(), CGAL::PLY_property<unsigned short>("alpha"))
+                                               );
    assert(! os.fail());
    assert(ok);
  }
@@ -152,13 +152,13 @@ ps.push_back(Point_3(0,0,1));
    assert(is.good());
    points.clear();
    ok = CGAL::read_ply_points_with_properties(is, std::back_inserter (points),
-					      CGAL::make_ply_point_reader(CGAL::First_of_pair_property_map<PointWithColor>()),
-					      std::make_tuple(CGAL::Second_of_pair_property_map<PointWithColor>(),
-							      CGAL::Construct_array(),
-							      CGAL::PLY_property<unsigned short>("red"),
-							      CGAL::PLY_property<unsigned short>("green"),
-							      CGAL::PLY_property<unsigned short>("blue"),
-							      CGAL::PLY_property<unsigned short>("alpha")));
+                                              CGAL::make_ply_point_reader(CGAL::First_of_pair_property_map<PointWithColor>()),
+                                              std::make_tuple(CGAL::Second_of_pair_property_map<PointWithColor>(),
+                                                              CGAL::Construct_array(),
+                                                              CGAL::PLY_property<unsigned short>("red"),
+                                                              CGAL::PLY_property<unsigned short>("green"),
+                                                              CGAL::PLY_property<unsigned short>("blue"),
+                                                              CGAL::PLY_property<unsigned short>("alpha")));
    assert(! is.fail());
    assert(ok);
    assert(points.size() == 3);
@@ -178,7 +178,7 @@ ps.push_back(Point_3(0,0,1));
    assert(is.good());
    ps.clear();
    ok = CGAL::read_ply_points(is, std::back_inserter (ps),
-			      CGAL::parameters::all_default());
+                              CGAL::parameters::all_default());
    assert(! is.fail());
    assert(ok);
    assert(ps.size() == 3);
@@ -198,7 +198,7 @@ ps.push_back(Point_3(0,0,1));
    assert(is.good());
    ps.clear();
    ok = CGAL::read_off_points(is, std::back_inserter (ps),
-			      CGAL::parameters::all_default());
+                              CGAL::parameters::all_default());
    assert(! is.fail());
    assert(ok);
    assert(ps.size() == 3);
@@ -218,7 +218,7 @@ ps.push_back(Point_3(0,0,1));
    assert(is.good());
    ps.clear();
    ok = CGAL::read_xyz_points(is, std::back_inserter (ps),
-			      CGAL::parameters::all_default());
+                              CGAL::parameters::all_default());
    assert(! is.fail());
    assert(ok);
    assert(ps.size() == 3);
