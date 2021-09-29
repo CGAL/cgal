@@ -53,7 +53,7 @@ class Point_set_3;
   normal vectors, the normal map is added to the point set. For PLY
   input, all point properties found in the header are added.
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \param is input stream
   \param ps point set
@@ -167,7 +167,9 @@ bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& 
 
   All properties are inserted in their instantiation order.
 
-  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+             of the stream must be set to `BINARY`.
 
   \param os the output stream
   \param ps the point set

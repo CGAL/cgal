@@ -84,7 +84,7 @@ bool read_PLY_BGL(std::istream& is,
 
   The data is expected to represent a 2-manifold (possibly with borders).
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -266,7 +266,9 @@ bool read_PLY(const std::string& fname, Graph& g,
 
  \brief writes the graph in an output stream, using the \ref IOStreamPLY.
 
- \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+ \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+            of the stream must be set to `BINARY`.
 
  \tparam Graph a model of `FaceListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

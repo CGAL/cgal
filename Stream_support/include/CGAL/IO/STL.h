@@ -49,7 +49,7 @@ namespace IO {
  *
  * \attention The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+ * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose value type is the point type
@@ -89,7 +89,7 @@ bool read_STL(std::istream& is,
   if(!is.good())
   {
     if(verbose)
-      std::cerr<<"File doesn't exist."<<std::endl;
+      std::cerr << "File doesn't exist." << std::endl;
     return false;
   }
 
@@ -269,7 +269,9 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *
  * \brief writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
  *
- * \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+ * \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+ *            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+ *            of the stream must be set to `BINARY`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
