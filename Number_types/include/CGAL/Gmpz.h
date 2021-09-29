@@ -241,7 +241,6 @@ namespace Eigen {
 
 
 //since types are included by Gmp_coercion_traits.h:
-#include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpzf.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
