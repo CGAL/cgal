@@ -184,7 +184,7 @@ jet_estimate_normals(
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  CGAL_TRACE("Calls jet_estimate_normals()\n");
+  CGAL_TRACE_STREAM << "Calls jet_estimate_normals()\n";
 
   // basic geometric types
   typedef typename PointRange::iterator iterator;
@@ -221,13 +221,15 @@ jet_estimate_normals(
   // precondition: at least 2 nearest neighbors
   CGAL_point_set_processing_precondition(k >= 2 || neighbor_radius > FT(0));
 
-  std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("  Creates KD-tree\n");
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
+  CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+  CGAL_TRACE_STREAM << "  Creates KD-tree\n";
 
   Neighbor_query neighbor_query (points, point_map);
 
-  memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("  Computes normals\n");
+  memory = CGAL::Memory_sizer().virtual_size();
+  CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+  CGAL_TRACE_STREAM << "  Computes normals\n";
 
   std::size_t nb_points = points.size();
 
@@ -251,8 +253,9 @@ jet_estimate_normals(
 
   callback_wrapper.join();
 
-  memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-  CGAL_TRACE("End of jet_estimate_normals()\n");
+  memory = CGAL::Memory_sizer().virtual_size();
+  CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+  CGAL_TRACE_STREAM << "End of jet_estimate_normals()\n";
 }
 
 

@@ -425,9 +425,7 @@ public:
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
     std::allocator_traits<allocator_type>::destroy(alloc, &*x);
-/*#ifndef CGAL_NO_ASSERTIONS
-    std::memset(&*x, 0, sizeof(T));
-#endif*/
+
     put_on_free_list(&*x);
     --size_;
   }
