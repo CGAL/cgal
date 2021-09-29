@@ -217,7 +217,7 @@ coplanarity_segmentation_with_region_growing(const TriangleMesh& triangle_mesh,
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  // std::cout << "- found regions: " << regions.size() << std::endl;
+  // std::cout << "- found planar regions: " << regions.size() << std::endl;
 
   for (std::size_t i = 0; i < regions.size(); ++i) {
     for (const std::size_t face_index : regions[i]) {

@@ -31,6 +31,10 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
+#include <CGAL/Shape_detection/Region_growing/Region_growing.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set.h>
+
 #include <CGAL/boost/graph/properties.h>
 #include <boost/unordered_map.hpp>
 
@@ -192,20 +196,107 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
 
 template <typename TriangleMesh,
           typename VertexPointMap,
-          typename EdgeIsConstrainedMap,
+          typename FaceCCIdMap,
           typename VertexCornerIdMap>
 std::size_t
 mark_corner_vertices_with_region_growing(
-  const TriangleMesh& /*triangle_mesh*/,
-  const EdgeIsConstrainedMap& /*edge_is_constrained*/,
-  VertexCornerIdMap& /*vertex_corner_id*/,
-  const double /*max_distance*/,
-  const double /*cos_value_squared*/,
-  const VertexPointMap& /*vpm*/)
+  const TriangleMesh& triangle_mesh,
+  const FaceCCIdMap& face_cc_ids,
+  VertexCornerIdMap& vertex_corner_id,
+  const double max_distance,
+  const double cos_value_squared,
+  const VertexPointMap& vpm)
 {
+  using Kernel = typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel;
+  using Vertex_type = typename boost::property_traits<VertexPointMap>::key_type;
+  using FT = typename Kernel::FT;
 
-  CGAL_assertion_msg(false, "TODO: ADD REGION GROWING!");
-  return 0;
+  // Get face/edge range and types.
+  const auto edge_range = edges(triangle_mesh);
+  using Face_range          = decltype(faces(triangle_mesh));
+  using Edge_range          = decltype(edge_range);
+  using Triangle_mesh       = TriangleMesh;
+  using Vertex_to_point_map = VertexPointMap;
+  using Face_to_region_map  = FaceCCIdMap;
+
+  using Polyline_graph = CGAL::Shape_detection::Polygon_mesh::
+    Polyline_graph<Kernel, Triangle_mesh, Face_to_region_map, Face_range, Edge_range, Vertex_to_point_map>;
+
+  using Segment_range = typename Polyline_graph::Segment_range;
+  using Segment_map   = typename Polyline_graph::Segment_map;
+
+  using Line_region  = CGAL::Shape_detection::Segment_set::
+    Least_squares_line_fit_region<Kernel, Segment_range, Segment_map>;
+  using Line_sorting = CGAL::Shape_detection::Segment_set::
+    Least_squares_line_fit_sorting<Kernel, Segment_range, Polyline_graph, Segment_map>;
+
+  using Region_growing = CGAL::Shape_detection::
+    Region_growing<Segment_range, Polyline_graph, Line_region, typename Line_sorting::Seed_map>;
+
+  // Create a graph of line segments.
+  // TODO: Can we use edge_is_constrained directly inside Line_sorting and RG?
+  Polyline_graph pgraph(triangle_mesh, CGAL::parameters::
+    face_index_map(face_cc_ids).vertex_point_map(vpm));
+  const auto& segment_range = pgraph.segment_range();
+
+  // Create instances of the classes Region_type and Sorting.
+  Line_region line_region(
+    segment_range, CGAL::parameters::
+    segment_map(pgraph.segment_map()).
+    maximum_distance(static_cast<FT>(max_distance)).
+    cosine_value(static_cast<FT>(CGAL::sqrt(cos_value_squared))));
+
+  Line_sorting line_sorting(
+    segment_range, pgraph, CGAL::parameters::segment_map(pgraph.segment_map()));
+  line_sorting.sort();
+
+  // Create an instance of the region growing class.
+  Region_growing region_growing(
+    segment_range, pgraph, line_region, line_sorting.seed_map());
+
+  // Run the algorithm.
+  std::vector< std::vector<std::size_t> > regions;
+  region_growing.detect(std::back_inserter(regions));
+  // std::cout << "- found linear regions: " << regions.size() << std::endl;
+
+  std::set<Vertex_type> unique;
+  for (const auto& region : regions) {
+
+    // TODO: Can we do it faster?
+    // We should not have more than 2 corners per region!
+    for (const std::size_t segment_index : region) {
+
+      const std::size_t ei = pgraph.edge_index(segment_index);
+      const auto edge = *(edge_range.begin() + ei);
+      const auto he = halfedge(edge, triangle_mesh);
+      const auto svertex = source(he, triangle_mesh);
+      const auto tvertex = target(he, triangle_mesh);
+
+      const auto& sneighbors = pgraph.source_neighbors(segment_index);
+      const auto& tneighbors = pgraph.target_neighbors(segment_index);
+      CGAL_assertion(sneighbors.size() > 0);
+      CGAL_assertion(tneighbors.size() > 0);
+
+      if (sneighbors.size() == 1) {
+        put(vertex_corner_id, svertex, default_id());
+      } else {
+        unique.insert(svertex);
+      }
+
+      if (tneighbors.size() == 1) {
+        put(vertex_corner_id, tvertex, default_id());
+      } else {
+        unique.insert(tvertex);
+      }
+    }
+  }
+
+  std::size_t corner_id = 0;
+  for (const auto& vertex : unique) {
+    put(vertex_corner_id, vertex, corner_id++);
+  }
+  // std::cout << "- found corners: " << corner_id << std::endl;
+  return corner_id;
 }
 
 template <typename TriangleMesh,
@@ -401,7 +492,7 @@ tag_corners_and_constrained_edges(TriangleMesh& tm,
       mark_corner_vertices(tm, edge_is_constrained, vertex_corner_id, min_cosinus_squared, vpm);
   } else {
     nb_corners =
-      mark_corner_vertices_with_region_growing(tm, edge_is_constrained, vertex_corner_id, max_frechet_distance, min_cosinus_squared, vpm);
+      mark_corner_vertices_with_region_growing(tm, face_cc_ids, vertex_corner_id, max_frechet_distance, min_cosinus_squared, vpm);
   }
 
   return std::make_pair(nb_corners, nb_cc);
