@@ -37,7 +37,7 @@ Release date: December 2021
 ### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
 
 -   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
-    and`Projection_traits_yz_3` classes.
+    and `Projection_traits_yz_3` classes.
 
 -   Added documentation for the class `Projection_traits_3`, which enables the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
 
@@ -61,6 +61,10 @@ Release date: December 2021
     to track all vertex creations.
 
 -   Added an option to [`CGAL::Polygon_mesh_processing::self_intersections()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__intersection__grp.html#gaf19c80ec12cbff7ebe9e69453f1d40b8) to report only a limited number of intersections (`maximum_number()`)
+
+### [The Heat Method](https://doc.cgal.org/5.4/Manual/packages.html#PkgHeatMethod)
+
+-   **Breaking change**: Added the functor `Compute_squared_length_3` that has an operator `operator(const Vector_3& v)`, which computes the squared length of `v`, to the `HeatMethodTraits_3` concept.
 
 ### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
 

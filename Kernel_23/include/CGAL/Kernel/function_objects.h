@@ -2850,8 +2850,8 @@ namespace CommonKernelFunctors {
 
   public:
     typename K::Point_3
-    operator()(const typename K::Point_3& origin,
-               const typename K::Triangle_3& triangle,
+    operator()(const typename K::Triangle_3& triangle,
+               const typename K::Point_3& origin,
                const K& k)
     {
       typedef typename K::Point_3 Point_3;
@@ -2890,18 +2890,18 @@ namespace CommonKernelFunctors {
         if(linf_ab > linf_ac) {
           if(linf_ab > linf_bc) {
             // ab is the maximal segment
-            return this->operator()(origin, seg(a, b), k);
+            return this->operator()(seg(a, b), origin, k);
           } else {
             // ab > ac, bc >= ab, use bc
-            return this->operator()(origin, seg(b, c), k);
+            return this->operator()(seg(b, c), origin, k);
           }
         } else { // ab <= ac
           if(linf_ac > linf_bc) {
             // ac is the maximal segment
-            return this->operator()(origin, seg(a, c), k);
+            return this->operator()(seg(a, c), origin, k);
           } else {
             // ab <= ac, ac <= bc, use bc
-            return this->operator()(origin, seg(b, c), k);
+            return this->operator()(seg(b, c), origin, k);
           }
         }
       } // degenerate plane
@@ -2923,8 +2923,8 @@ namespace CommonKernelFunctors {
     }
 
     typename K::Point_3
-    operator()(const typename K::Point_3& query,
-               const typename K::Segment_3& segment,
+    operator()(const typename K::Segment_3& segment,
+               const typename K::Point_3& query,
                const K& k)
     {
 
@@ -2945,8 +2945,8 @@ namespace CommonKernelFunctors {
     }
 
     typename K::Point_3
-    operator()(const typename K::Point_3& query,
-               const typename K::Ray_3& ray,
+    operator()(const typename K::Ray_3& ray,
+               const typename K::Point_3& query,
                const K& k)
     {
       if ( ray.to_vector() * (query-ray.source()) <= 0)
@@ -2955,6 +2955,14 @@ namespace CommonKernelFunctors {
       {
         return k.construct_projected_point_3_object()(ray.supporting_line(), query);
       }
+    }
+
+    const typename K::Point_3&
+    operator()(const typename K::Point_3& point,
+               const typename K::Point_3&,
+               const K&)
+    {
+      return point;
     }
 
     // code for operator for plane and point is defined in
@@ -3005,7 +3013,6 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Boolean     result_type;
 
-    // There are 36 combinaisons, so I use a template.
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
@@ -3018,7 +3025,6 @@ namespace CommonKernelFunctors {
   public:
     typedef typename K::Boolean     result_type;
 
-    // There are x combinaisons, so I use a template.
     template <class T1, class T2>
     result_type
     operator()(const T1& t1, const T2& t2) const
