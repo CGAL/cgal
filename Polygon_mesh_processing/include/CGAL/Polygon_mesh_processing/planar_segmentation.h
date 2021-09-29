@@ -27,7 +27,7 @@
 #include <CGAL/plane_mesh_segmentation.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 
@@ -288,7 +288,7 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
                         const std::vector<typename Kernel::Point_3>& corners,
                         std::vector<cpp11::array<std::size_t, 3> >& triangles)
 {
-  typedef Triangulation_2_projection_traits_3<Kernel>            P_traits;
+  typedef Projection_traits_3<Kernel>                            P_traits;
   typedef Triangulation_vertex_base_with_info_2<std::size_t, P_traits> Vb;
   typedef Triangulation_face_base_with_info_2<FaceInfo2,P_traits>     Fbb;
   typedef Constrained_triangulation_face_base_2<P_traits,Fbb>          Fb;
@@ -768,8 +768,6 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 #ifdef CGAL_DO_NOT_USE_PCA
   if (use_PCA)
     std::cerr << "Warning: ask for using PCA while it was disabled at compile time!\n";
-#else
-  typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
 #endif
 
   // declare and init all property maps
@@ -1026,7 +1024,6 @@ bool decimate_with_pca_for_coplanarity(TriangleMesh& tm,
 {
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
-  typedef typename graph_traits::halfedge_descriptor halfedge_descriptor;
   typedef typename graph_traits::face_descriptor face_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
 

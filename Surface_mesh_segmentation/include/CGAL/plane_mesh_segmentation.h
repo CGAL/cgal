@@ -15,6 +15,10 @@
 #include <CGAL/license/Surface_mesh_segmentation.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
+#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Exact_kernel_selector.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -140,7 +144,7 @@ mark_constrained_edges(
 }
 
 template <typename ECM, typename TriangleMesh>
-ECM get_ecm(ECM ecm, const TriangleMesh& tm)
+ECM get_ecm(ECM ecm, const TriangleMesh& /*tm*/)
 {
   return ecm;
 }
