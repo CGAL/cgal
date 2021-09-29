@@ -1104,7 +1104,7 @@ template <class InputIterator, class P, class Traits>
 void convex_hull_3(InputIterator first, InputIterator beyond,
                    std::vector<P>& vertices,
                    std::vector<std::array<int,3> >& faces,
-		   const Traits& traits,
+                   const Traits& traits,
                    typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
