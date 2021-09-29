@@ -190,7 +190,23 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   }
 }
 
+template <typename TriangleMesh,
+          typename VertexPointMap,
+          typename EdgeIsConstrainedMap,
+          typename VertexCornerIdMap>
+std::size_t
+mark_corner_vertices_with_region_growing(
+  const TriangleMesh& /*triangle_mesh*/,
+  const EdgeIsConstrainedMap& /*edge_is_constrained*/,
+  VertexCornerIdMap& /*vertex_corner_id*/,
+  const double /*max_distance*/,
+  const double /*cos_value_squared*/,
+  const VertexPointMap& /*vpm*/)
+{
 
+  CGAL_assertion_msg(false, "TODO: ADD REGION GROWING!");
+  return 0;
+}
 
 template <typename TriangleMesh,
           typename VertexPointMap,
@@ -379,8 +395,14 @@ tag_corners_and_constrained_edges(TriangleMesh& tm,
                                          .maximum_Frechet_distance(max_frechet_distance)
                                          .use_region_growing(use_region_growing));
 
-  std::size_t nb_corners =
-    mark_corner_vertices(tm, edge_is_constrained, vertex_corner_id, min_cosinus_squared, vpm);
+  std::size_t nb_corners = 0;
+  if (!use_region_growing) {
+    nb_corners =
+      mark_corner_vertices(tm, edge_is_constrained, vertex_corner_id, min_cosinus_squared, vpm);
+  } else {
+    nb_corners =
+      mark_corner_vertices_with_region_growing(tm, edge_is_constrained, vertex_corner_id, max_frechet_distance, min_cosinus_squared, vpm);
+  }
 
   return std::make_pair(nb_corners, nb_cc);
 }
