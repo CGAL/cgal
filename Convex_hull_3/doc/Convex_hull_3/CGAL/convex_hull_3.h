@@ -122,9 +122,9 @@ then the default traits class of `convex_hull_3()` is `Convex_hull_traits_3<R>`,
 
 template <class InputIterator, class Traits>
 void convex_hull_3(InputIterator first, InputIterator last,
-		   std::vector<Traits::Point_3>& vertices,
-		   std::vector<std::array<int,3> >& faces,
-		   const Traits& ch_traits = Default_traits);
+                   std::vector<Traits::Point_3>& vertices,
+                   std::vector<std::array<int,3> >& faces,
+                   const Traits& ch_traits = Default_traits);
 
 /*!
 \ingroup PkgConvexHull3Functions
