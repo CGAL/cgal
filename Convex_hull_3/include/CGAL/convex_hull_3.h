@@ -1099,6 +1099,21 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   convex_hull_3(first, beyond, its, Traits());
 }
 
+
+template <class InputIterator, class P, class Traits>
+void convex_hull_3(InputIterator first, InputIterator beyond,
+                   std::vector<P>& vertices,
+                   std::vector<std::array<int,3> >& faces,
+		   const Traits& traits,
+                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
+
+  Convex_hull_3::internal::Indexed_triangle_set<Point_3> its(vertices,faces);
+  convex_hull_3(first, beyond, its, traits);
+}
+
+
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator
 extreme_points_3(const InputRange& range,
