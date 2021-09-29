@@ -41,6 +41,10 @@ Release date: December 2021
 
 -   Added documentation for the class `Projection_traits_3`, which enables the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
 
+### 3D Convex Hulls
+
+-   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
 
 -   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes,
