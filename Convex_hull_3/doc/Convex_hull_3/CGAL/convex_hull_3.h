@@ -97,6 +97,34 @@ void convex_hull_3(InputIterator first, InputIterator last,
 Object& ch_object,
 const Traits& ch_traits = Default_traits);
 
+/*!
+\ingroup PkgConvexHull3Functions
+
+\brief computes the convex hull of the set of points in the range
+[`first`, `last`). The result, which may be a point, a segment,
+a triangle, or a triangle mesh, is stored as an indexed triangle soup
+in a vector of points and a vector of index triples.
+
+
+\tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`.
+\tparam Traits must be model of the concept `ConvexHullTraits_3`.
+For the purposes of checking the postcondition that the convex hull
+is valid, `Traits` must also be a model of the concept
+`IsStronglyConvexTraits_3`.
+
+If the kernel `R` of the points determined by the value type  of `InputIterator`
+is a kernel with exact predicates but inexact constructions
+(in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
+then the default traits class of `convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise.
+
+
+*/
+
+template <class InputIterator, class Traits>
+void convex_hull_3(InputIterator first, InputIterator last,
+		   std::vector<Traits::Point_3>& vertices,
+		   std::vector<std::array<int,3> >& faces,
+		   const Traits& ch_traits = Default_traits);
 
 /*!
 \ingroup PkgConvexHull3Functions
