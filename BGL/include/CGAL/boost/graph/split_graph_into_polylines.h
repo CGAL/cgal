@@ -170,7 +170,6 @@ void duplicate_terminal_vertices(Graph& graph,
             const std::pair<edge_descriptor, bool> pair = add_edge(vc, w, graph);
             graph[pair.first] = orig_e;
           }
-        CGAL_assertion(degree(v, graph) == 1);
       }
   }
 
