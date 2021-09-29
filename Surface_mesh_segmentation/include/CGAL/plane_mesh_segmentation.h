@@ -23,6 +23,9 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <CGAL/Shape_detection/Region_growing/Region_growing.h>
+#include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
+
 namespace CGAL {
 
 /// @TODO these predicates should probably end-up in the Kernel
@@ -165,17 +168,64 @@ template <typename TriangleMesh,
           typename FaceCCIdMap,
           typename VertexPointMap>
 typename boost::property_traits<FaceCCIdMap>::value_type
-coplanarity_segmentation_with_region_growing(const TriangleMesh& /*tm*/,
-                                             const double /*max_frechet_distance*/,
-                                             const double /*min_cosinus_squared*/,
-                                             FaceCCIdMap& /*face_cc_ids*/,
-                                             const VertexPointMap& /*vpm*/)
+coplanarity_segmentation_with_region_growing(const TriangleMesh& triangle_mesh,
+                                             const double max_distance,
+                                             const double cos_value_squared,
+                                             FaceCCIdMap& face_cc_ids,
+                                             const VertexPointMap& vpm)
 {
+  using Kernel = typename Kernel_traits<typename boost::property_traits<VertexPointMap>::value_type>::Kernel;
   using CC_ID = typename boost::property_traits<FaceCCIdMap>::value_type;
-  CGAL_assertion_msg(false, "TODO: ADD REGION GROWING!");
+  using FT = typename Kernel::FT;
 
-  CC_ID cc_id(-1);
-  return cc_id + 1;
+  // Get face range and types.
+  const auto face_range = faces(triangle_mesh);
+
+  using Face_range          = decltype(face_range);
+  using Triangle_mesh       = TriangleMesh;
+  using Vertex_to_point_map = VertexPointMap;
+
+  using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::
+    One_ring_neighbor_query<Triangle_mesh, Face_range>;
+  using Region_type    = CGAL::Shape_detection::Polygon_mesh::
+    Least_squares_plane_fit_region<Kernel, Triangle_mesh, Face_range, Vertex_to_point_map>;
+  using Sorting        = CGAL::Shape_detection::Polygon_mesh::
+    Least_squares_plane_fit_sorting<Kernel, Triangle_mesh, Neighbor_query, Face_range, Vertex_to_point_map>;
+
+  using Region_growing = CGAL::Shape_detection::
+    Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;
+
+  // Create instances of the classes Neighbor_query and Region_type.
+  Neighbor_query neighbor_query(triangle_mesh);
+
+  Region_type region_type(
+    triangle_mesh,
+    CGAL::parameters::
+    maximum_distance(static_cast<FT>(max_distance)).
+    cosine_value(static_cast<FT>(CGAL::sqrt(cos_value_squared))).
+    vertex_point_map(vpm));
+
+  // Sort face indices.
+  Sorting sorting(
+    triangle_mesh, neighbor_query, CGAL::parameters::vertex_point_map(vpm));
+  sorting.sort();
+
+  // Create an instance of the region growing class.
+  Region_growing region_growing(
+    face_range, neighbor_query, region_type, sorting.seed_map());
+
+  // Run the algorithm.
+  std::vector< std::vector<std::size_t> > regions;
+  region_growing.detect(std::back_inserter(regions));
+  // std::cout << "- found regions: " << regions.size() << std::endl;
+
+  for (std::size_t i = 0; i < regions.size(); ++i) {
+    for (const std::size_t face_index : regions[i]) {
+      const auto& face = *(face_range.begin() + face_index);
+      put(face_cc_ids, face, static_cast<CC_ID>(i));
+    }
+  }
+  return static_cast<CC_ID>(regions.size());
 }
 
 template <typename TriangleMesh,

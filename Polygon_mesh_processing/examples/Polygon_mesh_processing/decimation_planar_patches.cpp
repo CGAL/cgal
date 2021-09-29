@@ -14,10 +14,10 @@ typedef Kernel::Point_3 Point_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-int main()
+int main(int argc, char** argv)
 {
   Surface_mesh sm;
-  std::ifstream in("data/cube_quad.off");
+  std::ifstream in(argc > 1 ? argv[1] : "data/cube_quad.off");
   in >> sm;
 
   // triangulate faces;
@@ -36,10 +36,14 @@ int main()
   assert(faces(sm).size()>100);
 
   // decimate the mesh
-  PMP::decimate(sm); // use region growing approach by default
+  // PMP::decimate(sm); // use region growing approach by default
   // PMP::decimate(sm, CGAL::parameters::use_region_growing(false)); // use connected components approach
   // PMP::decimate(sm, CGAL::parameters::use_region_growing(true)); // use region growing approach
   // PMP::decimate(sm, CGAL::parameters::use_region_growing(false).maximum_Frechet_distance(30.0)); // use PCA approach
+
+  PMP::decimate(sm, CGAL::parameters::
+    minimum_cosinus_squared(0.999).
+    maximum_Frechet_distance(0.5)); // this is a stable version with approximate parameters
   std::ofstream("cube_decimated.off") << sm;
 
   // we should be back to 12 faces
