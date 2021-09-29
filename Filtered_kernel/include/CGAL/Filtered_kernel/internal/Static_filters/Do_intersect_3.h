@@ -18,8 +18,8 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Filtered_kernel/internal/Static_filter_error.h>
-#include <CGAL/Filtered_kernel/internal/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 
 #include <CGAL/Intersections_3/Bbox_3_Segment_3.h>
 // for CGAL::internal::do_intersect_bbox_segment_aux

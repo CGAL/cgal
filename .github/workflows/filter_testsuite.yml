@@ -61,7 +61,7 @@ jobs:
         uses: actions/github-script@v3
         with:
           script: |
-            const address = "The testsuite is lauched. results will be found, after it is done, here : https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/index.shtml "
+            const address = "Testsuite launched. Results will appear on the following page: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/index.shtml "
             github.issues.createComment({
               owner: "CGAL",
               repo: "cgal",

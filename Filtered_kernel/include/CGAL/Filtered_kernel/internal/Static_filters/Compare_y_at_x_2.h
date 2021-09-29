@@ -13,7 +13,7 @@
 #define CGAL_INTERNAL_STATIC_FILTERS_COMPARE_Y_AT_X_2_H
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Filtered_kernel/internal/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/algorithm.h>
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {

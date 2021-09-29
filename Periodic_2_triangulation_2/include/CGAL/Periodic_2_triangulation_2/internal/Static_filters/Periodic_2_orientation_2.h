@@ -15,8 +15,8 @@
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Filtered_kernel/internal/Static_filter_error.h>
-#include <CGAL/Filtered_kernel/internal/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 
 #include <CGAL/Periodic_2_offset_2.h>
 

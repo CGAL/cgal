@@ -16,7 +16,7 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Profile_counter.h>
-#include <CGAL/Filtered_kernel/internal/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <cmath>
 #include <iostream>
 

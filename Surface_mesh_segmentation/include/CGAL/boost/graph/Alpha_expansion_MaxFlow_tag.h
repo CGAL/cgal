@@ -20,7 +20,7 @@
 
 namespace MaxFlow
 {
-#include <CGAL/Surface_mesh_segmentation/internal/graph.h>
+#include <CGAL/Surface_mesh_segmentation/internal/auxiliary/graph.h>
 }
 
 
