@@ -1,4 +1,3 @@
-#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
