@@ -14,7 +14,7 @@ jobs:
     - name: configure all
       run: |
         set -e
-        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON ..
+        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DBUILD_TESTING=ON ..
         ctest -L CGAL_cmake_testsuite
 
   cmake-testsuite-with-qt5:
@@ -28,5 +28,5 @@ jobs:
     - name: configure all
       run: |
         set -e
-        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON ..
+        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DBUILD_TESTING=ON ..
         ctest -L CGAL_cmake_testsuite
