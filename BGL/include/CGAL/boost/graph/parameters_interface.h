@@ -220,6 +220,7 @@ CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, m
 // Parameters for segmentation
 CGAL_add_named_parameter(min_cosinus_squared_t, min_cosinus_squared, minimum_cosinus_squared)
 CGAL_add_named_parameter(max_Frechet_distance_t, max_Frechet_distance, maximum_Frechet_distance)
+CGAL_add_named_parameter(use_region_growing_t, use_region_growing, use_region_growing)
 
 // List of named parameters used in Shape_detection package
 CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)

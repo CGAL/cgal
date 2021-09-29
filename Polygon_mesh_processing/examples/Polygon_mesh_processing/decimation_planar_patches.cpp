@@ -34,9 +34,12 @@ int main()
   PMP::isotropic_remeshing(faces(sm), 0.1, sm, CGAL::parameters::edge_is_constrained_map(ecm));
   std::ofstream("cube_remeshed.off") << sm;
   assert(faces(sm).size()>100);
-  
+
   // decimate the mesh
-  PMP::decimate(sm);
+  PMP::decimate(sm); // use region growing approach by default
+  // PMP::decimate(sm, CGAL::parameters::use_region_growing(false)); // use connected components approach
+  // PMP::decimate(sm, CGAL::parameters::use_region_growing(true)); // use region growing approach
+  // PMP::decimate(sm, CGAL::parameters::use_region_growing(false).maximum_Frechet_distance(30.0)); // use PCA approach
   std::ofstream("cube_decimated.off") << sm;
 
   // we should be back to 12 faces

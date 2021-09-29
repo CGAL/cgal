@@ -365,6 +365,8 @@ template <typename TriangleMesh,
 std::pair<std::size_t, std::size_t>
 tag_corners_and_constrained_edges(TriangleMesh& tm,
                                   double min_cosinus_squared,
+                                  double max_frechet_distance,
+                                  bool use_region_growing,
                                   VertexCornerIdMap& vertex_corner_id,
                                   EdgeIsConstrainedMap& edge_is_constrained,
                                   FaceCCIdMap& face_cc_ids,
@@ -373,7 +375,9 @@ tag_corners_and_constrained_edges(TriangleMesh& tm,
   std::size_t nb_cc =
     segment_via_plane_fitting(tm, face_cc_ids,
                               parameters::edge_is_constrained_map(edge_is_constrained)
-                                         .minimum_cosinus_squared(min_cosinus_squared));
+                                         .minimum_cosinus_squared(min_cosinus_squared)
+                                         .maximum_Frechet_distance(max_frechet_distance)
+                                         .use_region_growing(use_region_growing));
 
   std::size_t nb_corners =
     mark_corner_vertices(tm, edge_is_constrained, vertex_corner_id, min_cosinus_squared, vpm);
@@ -874,6 +878,8 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     nb_corners_and_nb_cc_all[mesh_id] =
       tag_corners_and_constrained_edges(tm,
                                         min_cosinus_squared,
+                                        33.0,
+                                        false,
                                         vertex_corner_id_maps[mesh_id],
                                         edge_is_constrained_maps[mesh_id],
                                         face_cc_ids_maps[mesh_id],
@@ -926,10 +932,18 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 
 } //end of namespace Planar_segmentation
 
-template <typename TriangleMesh>
-bool decimate(TriangleMesh& tm, double min_cosinus_squared=1)
+template <typename TriangleMesh, typename NamedParameters>
+bool decimate(TriangleMesh& tm, const NamedParameters& np)
 {
-  CGAL_assertion(min_cosinus_squared>=0);
+  const double min_cosinus_squared =
+    parameters::choose_parameter<double>(parameters::get_parameter(np, internal_np::min_cosinus_squared), 1.0);
+  CGAL_assertion(min_cosinus_squared >= 0.0);
+  const double max_frechet_distance =
+    parameters::choose_parameter<double>(parameters::get_parameter(np, internal_np::max_Frechet_distance), 33.0);
+  CGAL_assertion(max_frechet_distance >= 0.0);
+  const bool use_region_growing =
+    parameters::choose_parameter<bool>(parameters::get_parameter(np, internal_np::use_region_growing), true);
+
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
@@ -951,7 +965,7 @@ bool decimate(TriangleMesh& tm, double min_cosinus_squared=1)
   /// @TODO turn into a named parameter
   typename boost::property_map<TriangleMesh, boost::vertex_point_t>::type vpm = get(boost::vertex_point, tm);
   std::pair<std::size_t, std::size_t> nb_corners_and_nb_cc =
-    Planar_segmentation::tag_corners_and_constrained_edges(tm, min_cosinus_squared, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm);
+    Planar_segmentation::tag_corners_and_constrained_edges(tm, min_cosinus_squared, max_frechet_distance, use_region_growing, vertex_corner_id, edge_is_constrained, face_cc_ids, vpm);
   bool res=Planar_segmentation::decimate_impl(tm,
                                               nb_corners_and_nb_cc,
                                               vertex_corner_id,
@@ -960,6 +974,11 @@ bool decimate(TriangleMesh& tm, double min_cosinus_squared=1)
                                               vpm);
 
   return res;
+}
+
+template <typename TriangleMesh>
+bool decimate(TriangleMesh& tm, const double min_cosinus_squared = 1.0) {
+  return decimate(tm, CGAL::parameters::minimum_cosinus_squared(min_cosinus_squared));
 }
 
 // MeshMap must be a mutable lvalue pmap with Triangle_mesh as value_type

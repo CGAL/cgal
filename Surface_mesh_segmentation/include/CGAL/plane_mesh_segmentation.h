@@ -165,6 +165,23 @@ template <typename TriangleMesh,
           typename FaceCCIdMap,
           typename VertexPointMap>
 typename boost::property_traits<FaceCCIdMap>::value_type
+coplanarity_segmentation_with_region_growing(const TriangleMesh& /*tm*/,
+                                             const double /*max_frechet_distance*/,
+                                             const double /*min_cosinus_squared*/,
+                                             FaceCCIdMap& /*face_cc_ids*/,
+                                             const VertexPointMap& /*vpm*/)
+{
+  using CC_ID = typename boost::property_traits<FaceCCIdMap>::value_type;
+  CGAL_assertion_msg(false, "TODO: ADD REGION GROWING!");
+
+  CC_ID cc_id(-1);
+  return cc_id + 1;
+}
+
+template <typename TriangleMesh,
+          typename FaceCCIdMap,
+          typename VertexPointMap>
+typename boost::property_traits<FaceCCIdMap>::value_type
 coplanarity_segmentation_with_pca(TriangleMesh& tm,
                                   double max_frechet_distance,
                                   double min_cosinus_squared,
@@ -310,9 +327,11 @@ segment_via_plane_fitting(const TriangleMesh& tm, SegmentPropertyMap segment_ids
                              get_const_property_map(boost::vertex_point, tm));
 
   // input parameter for example (exact or approximate)
-  double min_cosinus_squared = choose_parameter<double>(get_parameter(np, internal_np::min_cosinus_squared), 1);
+  const double min_cosinus_squared = choose_parameter<double>(get_parameter(np, internal_np::min_cosinus_squared), 1);
+  const double max_frechet_distance = choose_parameter<double>(get_parameter(np, internal_np::max_Frechet_distance), 33);
+  const bool use_region_growing = choose_parameter<bool>(get_parameter(np, internal_np::use_region_growing), true);
 
-  if ( is_default_parameter(get_parameter(np, internal_np::max_Frechet_distance)) )
+  if (max_frechet_distance == 33 && !use_region_growing) // default parameter value
   {
 
     // mark constrained edges
@@ -341,15 +360,23 @@ segment_via_plane_fitting(const TriangleMesh& tm, SegmentPropertyMap segment_ids
   }
   else
   {
-    // use PCA version
-    double max_frechet_distance = choose_parameter<double>(get_parameter(np, internal_np::max_Frechet_distance), 33);
+    typename boost::property_traits<SegmentPropertyMap>::value_type res;
+    if (!use_region_growing) {
+      // use PCA version
+      res = Planar_segmentation::coplanarity_segmentation_with_pca(tm,
+                                                                   max_frechet_distance,
+                                                                   min_cosinus_squared,
+                                                                   segment_ids,
+                                                                   vpm);
+    } else {
+      // use Region Growing version
+      res = Planar_segmentation::coplanarity_segmentation_with_region_growing(tm,
+                                                                              max_frechet_distance,
+                                                                              min_cosinus_squared,
+                                                                              segment_ids,
+                                                                              vpm);
+    }
 
-    typename boost::property_traits<SegmentPropertyMap>::value_type res =
-      Planar_segmentation::coplanarity_segmentation_with_pca(tm,
-                                                              max_frechet_distance,
-                                                              min_cosinus_squared,
-                                                              segment_ids,
-                                                              vpm);
     // mark constrained edges
     for(edge_descriptor e : edges(tm))
     {
