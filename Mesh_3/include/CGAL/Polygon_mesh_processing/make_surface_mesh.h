@@ -123,12 +123,14 @@ namespace Polygon_mesh_processing {
 *          \ref bgl_namedparameters "Named Parameters" if provided,
 *          or from the geometric traits class deduced from the point property map
 *          of `TriangleMesh`.}
-*     \cgalParamDefault{`0`}
+*     \cgalParamDefault{`std::numeric_limits<FT>::max()`}
 *   \cgalParamNEnd
 
 * \cgalNamedParamsEnd
 *
-* @todo add sizing_field for `edge_size`
+* @todo add edge_sizing_field_,
+*  facet_angle_, facet_size_, facet_sizing_field_, facet_distance_, facet_topology_,
+*  sizing_field_
 */
 template<typename TriangleMesh
        , typename NamedParameters>
@@ -172,7 +174,7 @@ void make_surface_mesh(const TriangleMesh& pmesh
     domain.detect_features(angle_bound); //includes detection of borders
 
   // Mesh criteria
-  const double esize = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
+  const FT esize = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
                                         (std::numeric_limits<FT>::max)());
   Mesh_criteria criteria(CGAL::parameters::edge_size = esize,
                          CGAL::parameters::facet_angle = 25,
