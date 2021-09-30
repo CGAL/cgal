@@ -720,19 +720,6 @@ initialize()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
-
-    if (r_c3t3_.number_of_facets() == 0)
-    {
-      CGAL::warning_fail("c3t3.number_of_facets() == 0",
-        __FILE__,
-        __LINE__,
-        "Warning : The mesh refinement process can't start.\n"
-        "When calling refine_mesh_3(), the input `c3t3` should have been initialized and have "
-        "at least one facet in the complex. Try to solve this issue using :\n"
-        "\t- The automatic initialization provided by make_mesh_3()\n"
-        "\t- Adding more and better chosen points on the input surface\n");
-    }
-
     if (r_c3t3_.number_of_far_points() == 0 &&
         r_c3t3_.number_of_facets() == 0 &&
         (r_c3t3_.triangulation().dimension() < 3
@@ -778,6 +765,18 @@ initialize()
     // Scan triangulation
     facets_mesher_.scan_triangulation();
     refinement_stage = REFINE_FACETS;
+  }
+
+  if (r_c3t3_.number_of_facets() == 0)
+  {
+    CGAL::warning_fail("r_c3t3_.number_of_facets() == 0",
+      __FILE__,
+      __LINE__,
+      "Warning : The mesh refinement process can't start.\n"
+      "When calling refine_mesh_3(), the input `c3t3` should have been initialized and have "
+      "at least one facet in the complex. Try to solve this issue using :\n"
+      "\t- The automatic initialization provided by make_mesh_3()\n"
+      "\t- Adding more and better chosen points on the input surface\n");
   }
 }
 
