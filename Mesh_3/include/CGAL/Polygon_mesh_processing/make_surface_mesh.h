@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MAKE_SURFACE_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_MAKE_SURFACE_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+#include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>
 
