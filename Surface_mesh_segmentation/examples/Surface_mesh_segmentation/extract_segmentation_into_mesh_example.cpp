@@ -5,7 +5,7 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#include <CGAL/mesh_segmentation.h>
+#include <CGAL/sdf_mesh_segmentation.h>
 
 #include <iostream>
 #include <fstream>

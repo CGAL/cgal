@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Timer.h>
 
-#include <CGAL/mesh_segmentation.h>
+#include <CGAL/sdf_mesh_segmentation.h>
 
 #include <cmath>
 #include <map>

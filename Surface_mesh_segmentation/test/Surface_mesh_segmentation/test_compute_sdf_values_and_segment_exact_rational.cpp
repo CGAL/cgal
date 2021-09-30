@@ -2,7 +2,7 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/mesh_segmentation.h>
+#include <CGAL/sdf_mesh_segmentation.h>
 
 #include <CGAL/property_map.h>
 

@@ -3,7 +3,7 @@
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
-#include <CGAL/mesh_segmentation.h>
+#include <CGAL/sdf_mesh_segmentation.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Unique_hash_map.h>
 

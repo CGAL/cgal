@@ -6,7 +6,7 @@
 
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 
-#include <CGAL/mesh_segmentation.h>
+#include <CGAL/sdf_mesh_segmentation.h>
 
 #include <CGAL/property_map.h>
 
