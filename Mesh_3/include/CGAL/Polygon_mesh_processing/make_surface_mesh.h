@@ -125,8 +125,8 @@ namespace Polygon_mesh_processing {
 *          of `TriangleMesh`.}
 *     \cgalParamDefault{`std::numeric_limits<FT>::max()`}
 *   \cgalParamNEnd
+*
 
-* \cgalNamedParamsEnd
 *
 * @todo add edge_sizing_field_,
 *  facet_angle_, facet_size_, facet_sizing_field_, facet_distance_, facet_topology_,
@@ -144,7 +144,7 @@ void make_surface_mesh(const TriangleMesh& pmesh
   using TM   = TriangleMesh;
   using GT   = typename GetGeomTraits<TM, NamedParameters>::type;
   using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<GT, TM>;
-  using Tr   = CGAL::Mesh_triangulation_3<Mesh_domain>::type;
+  using Tr   = typename CGAL::Mesh_triangulation_3<Mesh_domain>::type;
   using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr,
                          typename Mesh_domain::Corner_index,
                          typename Mesh_domain::Curve_index>;
@@ -156,10 +156,6 @@ void make_surface_mesh(const TriangleMesh& pmesh
     return;
   }
 
-  const bool protect = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::protect_constraints), false);
-  const typename GT::FT angle_bound
-    = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::features_angle_bound), 60.);
-
   // Create a vector with only one element: the pointer to the polyhedron.
   std::vector<const TM*> poly_ptrs_vector(1);
   poly_ptrs_vector[0] = &pmesh;
@@ -170,6 +166,8 @@ void make_surface_mesh(const TriangleMesh& pmesh
   Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
 
   // Get sharp features
+  const bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
+  const FT angle_bound = choose_parameter(get_parameter(np, internal_np::features_angle_bound), 60.);
   if(protect)
     domain.detect_features(angle_bound); //includes detection of borders
 
