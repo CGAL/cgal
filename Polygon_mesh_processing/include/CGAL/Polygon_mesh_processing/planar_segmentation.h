@@ -248,46 +248,94 @@ mark_corner_vertices_with_region_growing(
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  // std::cout << "- found linear regions: " << regions.size() << std::endl;
+  std::cout << "- found total linear regions: " << regions.size() << std::endl;
+  CGAL_assertion(regions.size() > 0);
+
+  // Create a region map.
+  std::map<std::size_t, std::size_t> region_map;
+  for (std::size_t i = 0; i < regions.size(); ++i) {
+    for (const std::size_t segment_index : regions[i]) {
+      region_map[segment_index] = i;
+    }
+  }
+  CGAL_assertion(region_map.size() > 0);
+
+  // Export linear regions.
+  // for (std::size_t i = 0; i < regions.size(); ++i) {
+  //   std::ofstream out("region-" + std::to_string(i) + ".polylines.txt");
+  //   for (const auto si : regions[i]) {
+  //     const auto& seg = get(pgraph.segment_map(), *(segment_range.begin() + si));
+  //     out << "2 " << seg << std::endl;
+  //   }
+  //   out.close();
+  // }
 
   std::set<Vertex_type> unique;
-  for (const auto& region : regions) {
+  for (std::size_t i = 0; i < regions.size(); ++i) {
 
-    // TODO: Can we do it faster?
-    // We should not have more than 2 corners per region!
-    for (const std::size_t segment_index : region) {
+    // TODO: Can we do it faster? I am not sure because we can have holes
+    // and corners, which happen in a middle of the region.
+    std::size_t num_corners_in_region = 0;
+    for (const std::size_t segment_index : regions[i]) {
 
       const std::size_t ei = pgraph.edge_index(segment_index);
-      const auto edge = *(edge_range.begin() + ei);
-      const auto he = halfedge(edge, triangle_mesh);
-      const auto svertex = source(he, triangle_mesh);
-      const auto tvertex = target(he, triangle_mesh);
+      const auto& edge = *(edge_range.begin() + ei);
+      const auto& he = halfedge(edge, triangle_mesh);
+
+      const auto& svertex = source(he, triangle_mesh);
+      const auto& tvertex = target(he, triangle_mesh);
 
       const auto& sneighbors = pgraph.source_neighbors(segment_index);
       const auto& tneighbors = pgraph.target_neighbors(segment_index);
+
       CGAL_assertion(sneighbors.size() > 0);
       CGAL_assertion(tneighbors.size() > 0);
 
-      if (sneighbors.size() == 1) {
-        put(vertex_corner_id, svertex, default_id());
-      } else {
+      // std::cout << "sn: " << sneighbors.size() << std::endl;
+      // std::cout << "tn: " << tneighbors.size() << std::endl;
+
+      CGAL_assertion(region_map.find(*(sneighbors.begin())) != region_map.end());
+      if (
+        (sneighbors.size() > 1) ||
+        (sneighbors.size() == 1 && region_map.at(*(sneighbors.begin())) != i)) {
+
         unique.insert(svertex);
+        ++num_corners_in_region;
+      } else {
+        put(vertex_corner_id, svertex, default_id());
       }
 
-      if (tneighbors.size() == 1) {
-        put(vertex_corner_id, tvertex, default_id());
-      } else {
+      CGAL_assertion(region_map.find(*(tneighbors.begin())) != region_map.end());
+      if (
+        (tneighbors.size() > 1) ||
+        (tneighbors.size() == 1 && region_map.at(*(tneighbors.begin())) != i)) {
+
         unique.insert(tvertex);
+        ++num_corners_in_region;
+      } else {
+        put(vertex_corner_id, tvertex, default_id());
       }
     }
+
+    // std::cout << "- found corners in region: " << num_corners_in_region << std::endl;
+    CGAL_assertion(num_corners_in_region >= 2);
   }
 
-  std::size_t corner_id = 0;
+  std::size_t num_total_corners = 0;
   for (const auto& vertex : unique) {
-    put(vertex_corner_id, vertex, corner_id++);
+    put(vertex_corner_id, vertex, num_total_corners++);
   }
-  // std::cout << "- found corners: " << corner_id << std::endl;
-  return corner_id;
+  std::cout << "- found total corners: " << num_total_corners << std::endl;
+
+  // Export corners.
+  // std::ofstream out("corners.xyz");
+  // for (const auto& vertex : unique) {
+  //   out << triangle_mesh.point(vertex) << std::endl;
+  // }
+  // out.close();
+
+  CGAL_assertion(num_total_corners >= regions.size());
+  return num_total_corners;
 }
 
 template <typename TriangleMesh,
@@ -1076,6 +1124,9 @@ bool decimate(TriangleMesh& tm, const NamedParameters& np)
                                               edge_is_constrained,
                                               face_cc_ids,
                                               vpm);
+
+  // std::cout << "- found total connected components: " << nb_corners_and_nb_cc.second << std::endl;
+  // std::cout << "- found total cc corners: " << nb_corners_and_nb_cc.first << std::endl;
 
   return res;
 }
