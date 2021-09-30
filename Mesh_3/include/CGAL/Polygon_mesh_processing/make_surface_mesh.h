@@ -75,13 +75,6 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDefault{`60`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{face_index_map}
-*     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*                    as key type and `std::size_t` as value type}
-*     \cgalParamDefault{an automatically indexed internal map}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{edge_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
