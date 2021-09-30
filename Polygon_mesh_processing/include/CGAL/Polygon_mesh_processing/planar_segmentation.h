@@ -185,6 +185,8 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   }
 }
 
+// TODO: Should we export this function as a separate corner detection algorithm
+// and put it inside Shape_detection?
 template <typename TriangleMesh,
           typename VertexPointMap,
           typename FaceCCIdMap,
@@ -248,7 +250,7 @@ mark_corner_vertices_with_region_growing(
   // Run the algorithm.
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-  std::cout << "- found total linear regions: " << regions.size() << std::endl;
+  // std::cout << "- found total linear regions: " << regions.size() << std::endl;
   CGAL_assertion(regions.size() > 0);
 
   // Create a region map.
@@ -325,7 +327,7 @@ mark_corner_vertices_with_region_growing(
   for (const auto& vertex : unique) {
     put(vertex_corner_id, vertex, num_total_corners++);
   }
-  std::cout << "- found total corners: " << num_total_corners << std::endl;
+  // std::cout << "- found total corners: " << num_total_corners << std::endl;
 
   // Export corners.
   // std::ofstream out("corners.xyz");
@@ -334,7 +336,7 @@ mark_corner_vertices_with_region_growing(
   // }
   // out.close();
 
-  CGAL_assertion(num_total_corners >= regions.size());
+  CGAL_assertion(num_total_corners > 0);
   return num_total_corners;
 }
 
