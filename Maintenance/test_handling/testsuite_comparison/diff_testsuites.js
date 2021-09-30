@@ -137,8 +137,9 @@ function diff_testsuites(baseTest, newTest){
           new_line+=" background-color: rgb(65%,65%,100%)'> "+result;
         } else if(res[1]=== "n"){
           new_line+=" background-color: rgb(100%,50%,50%)'> "+result;
-        }
-        else if(res[1]==="" && res[0]!==""){
+        } else if(res[1]== "t"){
+          new_line+=" background-color: rgb(75%,100%,50%)'> "+result;
+        } else if(res[1]==="" && res[0]!==""){
           new_line+=" background-color: rgb(50%,25%,75%)'>"+result;
         }
         else{
