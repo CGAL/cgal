@@ -19,3 +19,17 @@ STL_Extension
 Spatial_searching
 Stream_support
 Surface_mesh_segmentation
+Arithmetic_kernel
+Filtered_kernel
+HalfedgeDS
+Hash_map
+Homogeneous_kernel
+Kernel_d
+Modifier
+Polygon_mesh_processing
+Polyhedron
+Principal_component_analysis
+Principal_component_analysis_LGPL
+Shape_detection
+Solver_interface
+Surface_mesh
