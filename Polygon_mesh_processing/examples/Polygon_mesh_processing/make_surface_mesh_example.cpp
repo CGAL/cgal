@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
   Mesh outmesh;
   PMP::make_surface_mesh(mesh, outmesh,
     PMP::parameters::protect_constraints(true)
-    .edge_size(0.025));
+    .mesh_edge_size(0.025));
 
   std::cout << "Remeshing done." << std::endl;
 
