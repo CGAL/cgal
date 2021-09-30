@@ -28,6 +28,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <limits>
+
 #ifdef CGAL_PMP_REMESHING_VERBOSE
 #define CGAL_MESH_3_VERBOSE 1
 #endif
@@ -119,19 +121,21 @@ namespace Polygon_mesh_processing {
 *     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{do_project}
-*     \cgalParamDescription{whether vertices should be reprojected on the input surface after creation or displacement}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{`true`}
+*   \cgalParamNBegin{mesh_edge_size}
+*     \cgalParamDescription{Maximal edge length chosen to drive the process which samples
+*        the 1-dimensional features of the domain, when `protect_constraints` is `true`.
+*        It provides an upper bound for the distance between two protecting ball centers
+*        that are consecutive on a 1-feature.}
+*     \cgalParamType{A number type `FT`, either deduced from the `geom_traits`
+*          \ref bgl_namedparameters "Named Parameters" if provided,
+*          or from the geometric traits class deduced from the point property map
+*          of `TriangleMesh`.}
+*     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
-*
-*   \cgalParamNBegin{projection_functor}
-*     \cgalParamDescription{A function object used to project input vertices (moved by the smoothing) and created vertices}
-*     \cgalParamType{Unary functor that provides `%Point_3 operator()(vertex_descriptor)`, `%Point_3` being the value type
-*                    of the vertex point map.}
-*     \cgalParamDefault{If not provided, vertices are projected on the input surface mesh.}
-*   \cgalParamNEnd
+
 * \cgalNamedParamsEnd
+*
+* @todo add sizing_field for `edge_size`
 */
 template<typename TriangleMesh
        , typename NamedParameters>
@@ -150,15 +154,16 @@ void make_surface_mesh(const TriangleMesh& pmesh
                          typename Mesh_domain::Corner_index,
                          typename Mesh_domain::Curve_index>;
   using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
+  using FT = typename GT::FT;
 
   if (!CGAL::is_triangle_mesh(pmesh)) {
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return;
   }
 
-  const bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
+  const bool protect = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::protect_constraints), false);
   const typename GT::FT angle_bound
-    = choose_parameter(get_parameter(np, internal_np::features_angle_bound), 60.);
+    = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::features_angle_bound), 60.);
 
   // Create a vector with only one element: the pointer to the polyhedron.
   std::vector<const TM*> poly_ptrs_vector(1);
@@ -174,7 +179,9 @@ void make_surface_mesh(const TriangleMesh& pmesh
     domain.detect_features(angle_bound); //includes detection of borders
 
   // Mesh criteria
-  Mesh_criteria criteria(CGAL::parameters::edge_size = 0.025,
+  const double esize = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
+                                        (std::numeric_limits<FT>::max)());
+  Mesh_criteria criteria(CGAL::parameters::edge_size = esize,
                          CGAL::parameters::facet_angle = 25,
                          CGAL::parameters::facet_size = 0.1,
                          CGAL::parameters::facet_distance = 0.001);
