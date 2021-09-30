@@ -17,9 +17,21 @@ if(NOT CGAL_DISABLE_GMP)
                                      scene_selection_item CGAL::Eigen3_support)
 
     if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
-      set_tests_properties(
-        compilation_of__parameterization_plugin
-        PROPERTIES RESOURCE_LOCK Selection_test_resources)
+    set_tests_properties(
+      compilation_of__parameterization_plugin
+      PROPERTIES RESOURCE_LOCK Selection_test_resources)
+    endif()
+
+    qt5_wrap_ui(segmentationUI_FILES Mesh_segmentation_widget.ui)
+    polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin
+                          ${segmentationUI_FILES})
+    target_link_libraries(
+      mesh_segmentation_plugin PUBLIC scene_surface_mesh_item CGAL::Eigen3_support)
+
+    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+    set_tests_properties(
+      compilation_of__mesh_segmentation_plugin
+      PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
 
   else()
@@ -27,17 +39,6 @@ if(NOT CGAL_DISABLE_GMP)
       STATUS
         "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available."
     )
-  endif()
-
-  qt5_wrap_ui(segmentationUI_FILES Mesh_segmentation_widget.ui)
-  polyhedron_demo_plugin(mesh_segmentation_plugin Mesh_segmentation_plugin
-                         ${segmentationUI_FILES})
-  target_link_libraries(mesh_segmentation_plugin PUBLIC scene_surface_mesh_item)
-
-  if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
-    set_tests_properties(
-      compilation_of__mesh_segmentation_plugin
-      PROPERTIES RESOURCE_LOCK Selection_test_resources)
   endif()
 
   qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
