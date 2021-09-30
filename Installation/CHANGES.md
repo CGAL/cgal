@@ -97,6 +97,18 @@ Release date: December 2021
 -   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
     and cylinders in 3D.
 
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.4/Manual/packages.html#PkgBooleanSetOperations2)
+
+-   Added an extra parameter (`UsePolylines`) to all free functions (
+    [`complement()`](https://cgal.geometryfactory.com/CGAL/Manual_doxygen_test/CGAL-5.4-Ic-62/output2/Boolean_set_operations_2/group__boolean__complement.html),
+    [`do_intersect()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__do__intersect.html),
+    [`intersection()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__intersection.html),
+    [`join()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__join.html),
+    [`difference()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__difference.html),
+    [`symmetric_difference()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__symmetric__difference.html),
+    and [`oriented_side`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__oriented__side.html))
+    to control whether to use `Arr_polyline_traits_2` as default traits. It is the new default as it provides better performances in general.
+
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
