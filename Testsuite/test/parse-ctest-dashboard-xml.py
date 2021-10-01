@@ -76,7 +76,7 @@ for t_id in range(0, len(tests)):
             labels.add(label)
             tests_per_label[label].append(t)
 
-warning_pattern=re.compile(r'(.*([^a-zA-Z_,:-])([^\d]\s)warning).*?(\[|\n)', flags=re.IGNORECASE)
+warning_pattern=re.compile(r'(.*([^a-zA-Z_,:-])warning)', flags=re.IGNORECASE)
 w_det=re.compile("warning");
 filter_pattern=re.compile(r'cmake|cgal', flags=re.IGNORECASE);
 with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
