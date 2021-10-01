@@ -43,22 +43,14 @@ namespace Polygon_mesh_processing {
 * \ingroup PMP_meshing_grp
 * @brief remeshes a surface triangle mesh.
 *
-* @tparam PolygonMesh model of `FaceListGraph`
+* @tparam TriangleMesh model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param pmesh a triangle surface mesh
+* @param out the output triangle surface mesh
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `%Point_3` as value type}
-*     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-*                     must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
@@ -72,13 +64,13 @@ namespace Polygon_mesh_processing {
 *     \cgalParamType{A number type `FT`, either deduced from the `geom_traits`
 *          \ref bgl_namedparameters "Named Parameters" if provided,
 *          or from the geometric traits class deduced from the point property map
-*         of `PolygonMesh`.}
+*         of `TriangleMesh`.}
 *     \cgalParamDefault{`60`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{edge_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no edge is constrained}
 *     \cgalParamExtra{A constrained edge can be split or collapsed, but not flipped, nor its endpoints moved by smoothing.}
@@ -88,7 +80,7 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{vertex_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `pmesh`.}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no vertex is constrained}
 *     \cgalParamExtra{A constrained vertex cannot be modified during remeshing.}
@@ -106,7 +98,7 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{face_patch_map}
 *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces`}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
 *                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable` as value type.}
 *     \cgalParamDefault{a default property map where each face is associated with the ID of
 *                       the connected component it belongs to. Connected components are
@@ -120,12 +112,11 @@ namespace Polygon_mesh_processing {
 *          (resp. a uniform) upper bound for the lengths of curve edges.
 *          This parameter has to be set to a positive value when 1-dimensional features protection is used
 *          (when `protect_constraints` is `true`).}
-*     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept
-*          `MeshDomainField_3`}
-*     \cgalParamDefault{`std::numeric_limits<FT>::max()`, with
+*     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept `MeshDomainField_3`}
+*     \cgalParamDefault{`(std::numeric_limits<FT>::%max)()`, with
 *          `FT` a number type, either deduced from the `geom_traits` \ref bgl_namedparameters
 *          "Named Parameters" if provided, or from the geometric traits class deduced from the
-*          point property map of `PolygonMesh`.}
+*          point property map of `TriangleMesh`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{mesh_facet_size}
@@ -154,11 +145,11 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{mesh_facet_topology}
 *     \cgalParamDescription{The set of topological constraints which have to be verified
 *          by each surface facet. The default value is `CGAL::FACET_VERTICES_ON_SURFACE`.
-*          See `Mesh_facet_topology` manual page to get all possible values.}
-*     \cgalParamType{`Mesh_facet_topology`}
+*          See `CGAL::Mesh_facet_topology` manual page to get all possible values.}
+*     \cgalParamType{`CGAL::Mesh_facet_topology`}
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
-*
+* \cgalNamedParamsEnd
 */
 template<typename TriangleMesh
        , typename NamedParameters>
