@@ -119,14 +119,22 @@ namespace Polygon_mesh_processing {
 *          (resp. a uniform) upper bound for the lengths of curve edges.
 *          This parameter has to be set to a positive value when 1-dimensional features protection is used
 *          (when `protect_constraints` is `true`).}
-*     \cgalParamType{A number type `FT`, either deduced from the `geom_traits`
-*          \ref bgl_namedparameters "Named Parameters" if provided,
-*          or from the geometric traits class deduced from the point property map
-*          of `TriangleMesh`.}
-*     \cgalParamDefault{`std::numeric_limits<FT>::max()`}
+*     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept
+*          `MeshDomainField_3`}
+*     \cgalParamDefault{`std::numeric_limits<FT>::max()`, with
+*          `FT` a number type, either deduced from the `geom_traits` \ref bgl_namedparameters
+*          "Named Parameters" if provided, or from the geometric traits class deduced from the
+*          point property map of `PolygonMesh`.}
 *   \cgalParamNEnd
 *
-
+*   \cgalParamNBegin{mesh_facet_size}
+*     \cgalParamDescription{A scalar field (resp. a constant) describing a space varying
+*          (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
+*     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept
+*          `MeshDomainField_3`}
+*     \cgalParamDefault{`0.`}
+*   \cgalParamNEnd
+*
 *
 * @todo add facet_angle_, facet_size_, facet_sizing_field_, facet_distance_, facet_topology_
 */
@@ -169,11 +177,14 @@ void make_surface_mesh(const TriangleMesh& pmesh
   if(protect)
     domain.detect_features(angle_bound); //includes detection of borders
 
+  // Mesh criteria
   auto esize = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
                                 (std::numeric_limits<FT>::max)());
+  auto fsize = choose_parameter(get_parameter(np, internal_np::mesh_facet_size), 0.);
+
   Mesh_criteria criteria(CGAL::parameters::edge_size = esize,
-                         CGAL::parameters::facet_angle = 25,
-                         CGAL::parameters::facet_size = 0.1,
+                         CGAL::parameters::facet_size = fsize,
+                         CGAL::parameters::facet_angle = 20.,
                          CGAL::parameters::facet_distance = 0.001);
 
   // Mesh generation
