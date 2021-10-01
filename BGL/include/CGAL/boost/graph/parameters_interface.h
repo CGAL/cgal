@@ -131,6 +131,7 @@ CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use
 CGAL_add_named_parameter(features_angle_bound_t, features_angle_bound, features_angle_bound)
 CGAL_add_named_parameter(mesh_edge_size_t, mesh_edge_size, mesh_edge_size)
 CGAL_add_named_parameter(mesh_facet_size_t, mesh_facet_size, mesh_facet_size)
+CGAL_add_named_parameter(mesh_facet_angle_t, mesh_facet_angle, mesh_facet_angle)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

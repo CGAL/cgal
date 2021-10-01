@@ -135,8 +135,14 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDefault{`0.`}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{mesh_facet_angle}
+*     \cgalParamDescription{A lower bound for the angles (in degrees) of the surface mesh facets.}
+*     \cgalParamType{A number type `FT` model of the concept `Field`}
+*     \cgalParamDefault{`0.`}
+*   \cgalParamNEnd
+
 *
-* @todo add facet_angle_, facet_size_, facet_sizing_field_, facet_distance_, facet_topology_
+* @todo add facet_distance_, facet_topology_
 */
 template<typename TriangleMesh
        , typename NamedParameters>
@@ -181,10 +187,11 @@ void make_surface_mesh(const TriangleMesh& pmesh
   auto esize = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
                                 (std::numeric_limits<FT>::max)());
   auto fsize = choose_parameter(get_parameter(np, internal_np::mesh_facet_size), 0.);
+  auto fangle = choose_parameter(get_parameter(np, internal_np::mesh_facet_angle), 0.);
 
   Mesh_criteria criteria(CGAL::parameters::edge_size = esize,
                          CGAL::parameters::facet_size = fsize,
-                         CGAL::parameters::facet_angle = 20.,
+                         CGAL::parameters::facet_angle = fangle,
                          CGAL::parameters::facet_distance = 0.001);
 
   // Mesh generation
