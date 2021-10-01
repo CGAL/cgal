@@ -22,6 +22,7 @@
 #include <CGAL/KSR/enum.h>
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
+#include <CGAL/KSR/parameters.h>
 
 #include <CGAL/KSR_3/Support_plane.h>
 #include <CGAL/KSR_3/Intersection_graph.h>
@@ -46,7 +47,9 @@ private:
   using Triangle_2  = typename Kernel::Triangle_2;
   using Line_2      = typename Kernel::Line_2;
   using Plane_3     = typename Kernel::Plane_3;
-  using Polygon_2   = CGAL::Polygon_2<Kernel>;
+
+  using Polygon_2  = CGAL::Polygon_2<Kernel>;
+  using Parameters = KSR::Parameters_3<FT>;
 
 public:
   using Support_plane      = KSR_3::Support_plane<Kernel>;
@@ -201,9 +204,9 @@ private:
   using Limit_line = std::vector< std::pair< std::pair<std::size_t, std::size_t>, bool> >;
   std::vector<Limit_line> m_limit_lines;
 
+  const Parameters& m_parameters;
   FT m_previous_time;
   FT m_current_time;
-  bool m_verbose;
 
   std::vector<Volume_cell> m_volumes;
   std::map<int, std::size_t> m_volume_level_map;
@@ -212,10 +215,10 @@ private:
   Reconstructed_model m_reconstructed_model;
 
 public:
-  Data_structure(const bool verbose) :
+  Data_structure(const Parameters& parameters) :
+  m_parameters(parameters),
   m_previous_time(FT(0)),
-  m_current_time(FT(0)),
-  m_verbose(verbose)
+  m_current_time(FT(0))
   { }
 
   /*******************************
@@ -346,7 +349,7 @@ public:
         // pairs.push_back(std::make_pair(std::make_pair(sp_idx_2, sp_idx_1), false));
 
         ++num_1_intersected;
-        // if (m_verbose) {
+        // if (m_parameters.debug) {
         //   std::cout << "pair 1: " << std::to_string(sp_idx_1) << "/" << std::to_string(sp_idx_2) << std::endl;
         // }
         // CGAL_assertion_msg(false, "TODO: 1 POLYGON IS INTERSECTED!");
@@ -363,7 +366,7 @@ public:
         pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), false));
         pairs.push_back(std::make_pair(std::make_pair(sp_idx_2, sp_idx_1), false));
         ++num_2_intersected;
-        // if (m_verbose) {
+        // if (m_parameters.debug) {
         //   std::cout << "pair 1: " << std::to_string(sp_idx_1) << "/" << std::to_string(sp_idx_2) << std::endl;
         //   std::cout << "pair 2: " << std::to_string(sp_idx_2) << "/" << std::to_string(sp_idx_1) << std::endl;
         // }
@@ -377,7 +380,7 @@ public:
       }
     }
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "- num 1 intersected: " << num_1_intersected << std::endl;
       std::cout << "- num 2 intersected: " << num_2_intersected << std::endl;
     }
@@ -1085,14 +1088,14 @@ public:
       }
     }
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "- iedges, front: " << fiedges.size() << std::endl;
       for (const auto& fiedge : fiedges) {
         std::cout << str(fiedge) << ": " << segment_3(fiedge) << std::endl;
       }
     }
 
-    if (m_verbose ) {
+    if (m_parameters.debug ) {
       std::cout << "- iedges, back: " << biedges.size() << std::endl;
       for (const auto& biedge : biedges) {
         std::cout << str(biedge) << ": " << segment_3(biedge) << std::endl;
@@ -1103,7 +1106,7 @@ public:
 
   const std::pair<PVertex, PVertex> front_and_back_34(const PVertex& pvertex) {
 
-    if (m_verbose) std::cout << "- front back 34 case" << std::endl;
+    if (m_parameters.debug) std::cout << "- front back 34 case" << std::endl;
     PVertex front, back;
     const std::size_t sp_idx = pvertex.first;
     CGAL_assertion(sp_idx != KSR::no_element());
@@ -1125,7 +1128,7 @@ public:
   const std::pair<PVertex, PVertex> front_and_back_5(
     const PVertex& pvertex1, const PVertex& pvertex2) {
 
-    if (m_verbose) std::cout << "- front back 5 case" << std::endl;
+    if (m_parameters.debug) std::cout << "- front back 5 case" << std::endl;
     PVertex front, back;
     CGAL_assertion(pvertex1.first == pvertex2.first);
     const std::size_t sp_idx = pvertex1.first;
@@ -1308,7 +1311,7 @@ public:
     std::vector< std::pair<IEdge, bool> >& iedges,
     std::vector<PVertex>& pvertices) {
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "**** traversing iedges global" << std::endl;
       std::cout << "- k intersections before: " << this->k(pvertex.first) << std::endl;
     }
@@ -1320,11 +1323,11 @@ public:
     for (std::size_t i = 0; i < iedges.size() - 1; ++i) {
 
       if (iedges[i].second) {
-        if (m_verbose) {
+        if (m_parameters.debug) {
           std::cout << "- break iedge " << std::to_string(i) << std::endl;
         } break;
       } else {
-        if (m_verbose) {
+        if (m_parameters.debug) {
           std::cout << "- handle iedge " << std::to_string(i) << std::endl;
         }
       }
@@ -1343,20 +1346,20 @@ public:
         is_limit_line = update_limit_lines_and_k(pvertex, iedge_i, is_occupied_iedge);
       }
 
-      if (m_verbose) {
+      if (m_parameters.debug) {
         std::cout << "- bbox: " << is_bbox_reached  << "; " <<
         " limit: "    << is_limit_line << "; " <<
         " occupied: " << is_occupied_iedge << std::endl;
       }
 
       if (is_bbox_reached) {
-        if (m_verbose) std::cout << "- bbox, stop" << std::endl;
+        if (m_parameters.debug) std::cout << "- bbox, stop" << std::endl;
         break;
       } else if (is_limit_line) {
-        if (m_verbose) std::cout << "- limit, stop" << std::endl;
+        if (m_parameters.debug) std::cout << "- limit, stop" << std::endl;
         break;
       } else {
-        if (m_verbose) std::cout << "- free, any k, continue" << std::endl;
+        if (m_parameters.debug) std::cout << "- free, any k, continue" << std::endl;
         const std::size_t ip = i + 1;
         const auto& iedge_ip = iedges[ip].first;
         CGAL_assertion_msg(KSR::distance(
@@ -1376,7 +1379,7 @@ public:
       iedges.back().second = true;
     }
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "- num added pfaces: " << num_added_pfaces << std::endl;
       std::cout << "- k intersections after: " << this->k(pvertex.first) << std::endl;
     }
@@ -1392,14 +1395,14 @@ public:
     const bool is_open, const bool reverse, const std::size_t idx, const IEdge& iedge,
     std::vector<PVertex>& pvertices) {
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "- adding new pface: " << std::endl;
     }
 
     // The first pvertex of the new triangle.
     const auto& pv1 = pvertices[idx];
     CGAL_assertion(pv1 != null_pvertex());
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "- pv1 " << str(pv1) << ": " << point_3(pv1) << std::endl;
     }
 
@@ -1416,7 +1419,7 @@ public:
       pv2 = pvertices[idx + 1];
     }
     CGAL_assertion(pv2 != null_pvertex());
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "- pv2 " << str(pv2) << ": " << point_3(pv2) << std::endl;
     }
 
@@ -1434,28 +1437,28 @@ public:
     const bool is_open, const std::size_t idx, const IEdge& iedge,
     std::vector<PVertex>& pvertices) {
 
-    if (m_verbose) std::cout << "- creating new pvertex" << std::endl;
+    if (m_parameters.debug) std::cout << "- creating new pvertex" << std::endl;
 
     bool is_parallel = false;
     Point_2 future_point; Vector_2 future_direction;
 
     if (!is_open) {
-      if (m_verbose) std::cout << "- handling back/front case" << std::endl;
+      if (m_parameters.debug) std::cout << "- handling back/front case" << std::endl;
       is_parallel = compute_future_point_and_direction(
         0, ivertex, pv_prev, pv_next, iedge, future_point, future_direction);
       if (is_parallel) {
-        if (m_verbose) std::cout << "- new pvertex, back/front, parallel/reverse case" << std::endl;
+        if (m_parameters.debug) std::cout << "- new pvertex, back/front, parallel/reverse case" << std::endl;
         CGAL_assertion_msg(!is_parallel,
         "TODO: CREATE PVERTEX, BACK/FRONT, ADD PARALLEL CASE!");
       } else {
-        if (m_verbose) std::cout << "- new pvertex, back/front, standard case" << std::endl;
+        if (m_parameters.debug) std::cout << "- new pvertex, back/front, standard case" << std::endl;
       }
     } else {
-      if (m_verbose) std::cout << "- handling open case" << std::endl;
+      if (m_parameters.debug) std::cout << "- handling open case" << std::endl;
       is_parallel = compute_future_point_and_direction(
         pvertex, ivertex, pv_prev, pv_next, iedge, future_point, future_direction);
       if (is_parallel) {
-        if (m_verbose) std::cout << "- new pvertex, open, parallel/reverse case" << std::endl;
+        if (m_parameters.debug) std::cout << "- new pvertex, open, parallel/reverse case" << std::endl;
 
         IEdge prev_iedge = null_iedge();
         IEdge next_iedge = null_iedge();
@@ -1467,21 +1470,21 @@ public:
         }
 
         if (prev_iedge == iedge) {
-          if (m_verbose) std::cout << "- new pvertex, open, prev, parallel case" << std::endl;
+          if (m_parameters.debug) std::cout << "- new pvertex, open, prev, parallel case" << std::endl;
           CGAL_assertion_msg(!is_parallel, "TODO: CREATE_PVERTEX, OPEN, PREV, ADD PARALLEL CASE!");
         } else {
-          if (m_verbose) std::cout << "- new pvertex, open, prev, standard case" << std::endl;
+          if (m_parameters.debug) std::cout << "- new pvertex, open, prev, standard case" << std::endl;
         }
 
         if (next_iedge == iedge) {
-          if (m_verbose) std::cout << "- new pvertex, open, next, parallel case" << std::endl;
+          if (m_parameters.debug) std::cout << "- new pvertex, open, next, parallel case" << std::endl;
           CGAL_assertion_msg(!is_parallel, "TODO: CREATE_PVERTEX, OPEN, NEXT, ADD PARALLEL CASE!");
         } else {
-          if (m_verbose) std::cout << "- new pvertex, open, next, standard case" << std::endl;
+          if (m_parameters.debug) std::cout << "- new pvertex, open, next, standard case" << std::endl;
         }
         CGAL_assertion_msg(!is_parallel, "TODO: CREATE_PVERTEX, OPEN, ADD PARALLEL CASE!");
       } else {
-        if (m_verbose) std::cout << "- new pvertex, open, standard case" << std::endl;
+        if (m_parameters.debug) std::cout << "- new pvertex, open, standard case" << std::endl;
       }
     }
 
@@ -1688,9 +1691,6 @@ public:
   const FT speed(const PVertex& pvertex) { return support_plane(pvertex).speed(pvertex.second); }
 
   bool is_active(const PVertex& pvertex) const { return support_plane(pvertex).is_active(pvertex.second); }
-
-  bool is_verbose() const { return m_verbose; }
-  void set_verbose(const bool verbose) { m_verbose = verbose; }
 
   void deactivate(const PVertex& pvertex) {
 
@@ -2021,7 +2021,7 @@ public:
   std::vector<PVertex> pvertices_around_ivertex(
     const PVertex& pvertex, const IVertex& ivertex) const {
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout.precision(20);
       std::cout << "** searching pvertices around " << str(pvertex) << " wrt " << str(ivertex) << std::endl;
       std::cout << "- pvertex: " << point_3(pvertex) << std::endl;
@@ -2031,7 +2031,7 @@ public:
     std::deque<PVertex> pvertices;
     pvertices.push_back(pvertex);
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       const auto iedge = this->iedge(pvertex);
       if (iedge != null_iedge()) {
         std::cout << "- came from: " << str(iedge) << " " << segment_3(iedge) << std::endl;
@@ -2084,7 +2084,7 @@ public:
         // std::cout << "dot: "  << dot_product << std::endl;
 
         if (dot_product < FT(0)) {
-          if (m_verbose) {
+          if (m_parameters.debug) {
             std::cout << "- " << str(current) << " is backwards" << std::endl;
             // std::cout << point_3(current) << std::endl;
           }
@@ -2092,7 +2092,7 @@ public:
         }
 
         if (is_frozen(current)) {
-          if (m_verbose) {
+          if (m_parameters.debug) {
             std::cout << "- " << str(current) << " is frozen" << std::endl;
             // std::cout << point_3(current) << std::endl;
           }
@@ -2102,7 +2102,7 @@ public:
       }
 
       if (previous_was_free && is_free) {
-        if (m_verbose) {
+        if (m_parameters.debug) {
           std::cout << "- " << str(current) << " has no iedge, stopping there" << std::endl;
           // std::cout << point_3(current) << std::endl;
         }
@@ -2110,12 +2110,12 @@ public:
       }
 
       if (is_free) {
-        if (m_verbose) {
+        if (m_parameters.debug) {
           std::cout << "- " << str(current) << " has no iedge" << std::endl;
           // std::cout << point_3(current) << std::endl;
         }
       } else {
-        if (m_verbose) {
+        if (m_parameters.debug) {
           std::cout << "- " << str(current) << " has iedge " << str(iedge)
           << " from " << str(source(iedge)) << " to " << str(target(iedge)) << std::endl;
           // std::cout << segment_3(iedge) << std::endl;
@@ -2148,7 +2148,7 @@ public:
     std::copy(pvertices.begin(), pvertices.end(),
     std::back_inserter(crossed_pvertices));
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "- found " << crossed_pvertices.size() <<
       " pvertices ready to be merged: " << std::endl;
       for (const auto& crossed_pvertex : crossed_pvertices) {
@@ -2358,12 +2358,12 @@ public:
 
       if (is_ok_1 && is_ok_2) {
         is_limit_line = item.second;
-        if (m_verbose) std::cout << "- found intersection " << std::endl;
+        if (m_parameters.debug) std::cout << "- found intersection " << std::endl;
         return is_limit_line;
       }
     }
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       std::cout << "- first time intersection" << std::endl;
       std::cout << "- adding pair: " << std::to_string(sp_idx_1) << "-" << std::to_string(sp_idx_2);
     }
@@ -2371,17 +2371,17 @@ public:
     CGAL_assertion(pairs.size() < 2);
     if (is_occupied_iedge) {
       if (this->k(pvertex.first) == 1) {
-        if (m_verbose) std::cout << ", occupied, TRUE" << std::endl;
+        if (m_parameters.debug) std::cout << ", occupied, TRUE" << std::endl;
         is_limit_line = true;
         pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), is_limit_line));
       } else {
-        if (m_verbose) std::cout << ", occupied, FALSE" << std::endl;
+        if (m_parameters.debug) std::cout << ", occupied, FALSE" << std::endl;
         is_limit_line = false;
         pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), is_limit_line));
         this->k(pvertex.first)--;
       }
     } else {
-      if (m_verbose) std::cout << ", free, FALSE" << std::endl;
+      if (m_parameters.debug) std::cout << ", free, FALSE" << std::endl;
       is_limit_line = false;
       pairs.push_back(std::make_pair(std::make_pair(sp_idx_1, sp_idx_2), is_limit_line));
     }
@@ -2415,7 +2415,7 @@ public:
 
     const FT vec_dot = vec1 * vec2;
     const bool is_reversed = (vec_dot < FT(0));
-    if (is_reversed && m_verbose) {
+    if (is_reversed && m_parameters.debug) {
       std::cout << "- found reversed future direction" << std::endl;
     }
     return is_reversed;
@@ -2879,7 +2879,7 @@ public:
 
     bool is_reversed = false;
     if (CGAL::abs(m1 - m3) >= tol) {
-      if (m_verbose) std::cout << "- prev intersected lines" << std::endl;
+      if (m_parameters.debug) std::cout << "- prev intersected lines" << std::endl;
       const bool is_a_found = KSR::intersection(
         future_line_prev, iedge_line, future_point_a);
       if (!is_a_found) {
@@ -2888,7 +2888,7 @@ public:
         CGAL_assertion_msg(false, "TODO: CAN WE EVER BE HERE? WHY?");
       }
 
-      if (m_verbose) {
+      if (m_parameters.debug) {
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point_a) << std::endl;
       }
 
@@ -2902,16 +2902,16 @@ public:
     }
 
     if (CGAL::abs(m1 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- prev parallel lines" << std::endl;
+      if (m_parameters.debug) std::cout << "- prev parallel lines" << std::endl;
       is_parallel_prev = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT prev_dot = current_vec_prev * iedge_vec;
       if (prev_dot < FT(0)) {
-        if (m_verbose) std::cout << "- prev moves backwards" << std::endl;
+        if (m_parameters.debug) std::cout << "- prev moves backwards" << std::endl;
         future_point_a = target_p;
         // std::cout << point_3(target(iedge)) << std::endl;
       } else {
-        if (m_verbose) std::cout << "- prev moves forwards" << std::endl;
+        if (m_parameters.debug) std::cout << "- prev moves forwards" << std::endl;
         future_point_a = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
       }
@@ -2922,7 +2922,7 @@ public:
     CGAL_assertion(future_direction_a != Vector_2());
     future_point_a = pinit - m_current_time * future_direction_a;
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       auto tmp_a = future_direction_a;
       tmp_a = KSR::normalize(tmp_a);
       std::cout << "- prev future point a: " <<
@@ -2932,7 +2932,7 @@ public:
 
     is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
-      if (m_verbose) std::cout << "- next intersected lines" << std::endl;
+      if (m_parameters.debug) std::cout << "- next intersected lines" << std::endl;
       const bool is_b_found = KSR::intersection(
         future_line_next, iedge_line, future_point_b);
       if (!is_b_found) {
@@ -2941,7 +2941,7 @@ public:
         CGAL_assertion_msg(false, "TODO: CAN WE EVER BE HERE? WHY?");
       }
 
-      if (m_verbose) {
+      if (m_parameters.debug) {
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point_b) << std::endl;
       }
 
@@ -2955,16 +2955,16 @@ public:
     }
 
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- next parallel lines" << std::endl;
+      if (m_parameters.debug) std::cout << "- next parallel lines" << std::endl;
       is_parallel_next = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
       if (next_dot < FT(0)) {
-        if (m_verbose) std::cout << "- next moves backwards" << std::endl;
+        if (m_parameters.debug) std::cout << "- next moves backwards" << std::endl;
         future_point_b = target_p;
         // std::cout << point_3(target(iedge)) << std::endl;
       } else {
-        if (m_verbose) std::cout << "- next moves forwards" << std::endl;
+        if (m_parameters.debug) std::cout << "- next moves forwards" << std::endl;
         future_point_b = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
       }
@@ -2975,7 +2975,7 @@ public:
     CGAL_assertion(future_direction_b != Vector_2());
     future_point_b = pinit - m_current_time * future_direction_b;
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       auto tmp_b = future_direction_b;
       tmp_b = KSR::normalize(tmp_b);
       std::cout << "- next future point b: " <<
@@ -3100,9 +3100,9 @@ public:
 
     bool is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
-      if (m_verbose) std::cout << "- back/front intersected lines" << std::endl;
+      if (m_parameters.debug) std::cout << "- back/front intersected lines" << std::endl;
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
-      if (m_verbose) {
+      if (m_parameters.debug) {
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
       }
 
@@ -3113,27 +3113,27 @@ public:
     }
 
     const FT back_front_distance = KSR::distance(pinit, future_point);
-    if (m_verbose) std::cout << "- back/front distance: " << back_front_distance << std::endl;
+    if (m_parameters.debug) std::cout << "- back/front distance: " << back_front_distance << std::endl;
     CGAL_assertion(back_front_distance >= FT(0));
     // It can still miss this tolerance and then we enter parallel case and fail!
     const FT reversed_tol = tol * FT(1000);
     if (is_reversed && back_front_distance < reversed_tol) {
       is_reversed = false;
-      if (m_verbose) std::cout << "- back/front reversed, imprecise computation" << std::endl;
+      if (m_parameters.debug) std::cout << "- back/front reversed, imprecise computation" << std::endl;
       CGAL_assertion_msg(false, "TODO: BACK/FRONT HANDLE REVERSED CASE!");
     }
 
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- back/front parallel lines" << std::endl;
+      if (m_parameters.debug) std::cout << "- back/front parallel lines" << std::endl;
       is_parallel = true;
       // Here, in the dot product, we can have maximum 1 zero-length vector.
       const FT next_dot = current_vec_next * iedge_vec;
       if (next_dot < FT(0)) {
-        if (m_verbose) std::cout << "- back/front moves backwards" << std::endl;
+        if (m_parameters.debug) std::cout << "- back/front moves backwards" << std::endl;
         future_point = target_p;
         // std::cout << point_3(target(iedge)) << std::endl;
       } else {
-        if (m_verbose) std::cout << "- back/front moves forwards" << std::endl;
+        if (m_parameters.debug) std::cout << "- back/front moves forwards" << std::endl;
         future_point = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
       }
@@ -3144,7 +3144,7 @@ public:
     CGAL_assertion(future_direction != Vector_2());
     future_point = pinit - m_current_time * future_direction;
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       auto tmp = future_direction;
       tmp = KSR::normalize(tmp);
       std::cout << "- back/front future point: " <<
@@ -3222,9 +3222,9 @@ public:
 
     bool is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
-      if (m_verbose) std::cout << "- open intersected lines" << std::endl;
+      if (m_parameters.debug) std::cout << "- open intersected lines" << std::endl;
       future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
-      if (m_verbose) {
+      if (m_parameters.debug) {
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
       }
 
@@ -3235,7 +3235,7 @@ public:
     }
 
     const FT open_distance = KSR::distance(pinit, future_point);
-    if (m_verbose) std::cout << "- open distance: " << open_distance << std::endl;
+    if (m_parameters.debug) std::cout << "- open distance: " << open_distance << std::endl;
     CGAL_assertion(open_distance >= FT(0));
     // It can still miss this tolerance and then we enter parallel case and fail!
     const FT reversed_tol = tol * FT(1000);
@@ -3244,19 +3244,19 @@ public:
       // auto nvec = Vector_2(future_point, pinit);
       // nvec = KSR::normalize(nvec);
       // future_point = pinit + tol * nvec; // not a valid solution, tested
-      if (m_verbose) std::cout << "- open reversed, imprecise computation" << std::endl;
+      if (m_parameters.debug) std::cout << "- open reversed, imprecise computation" << std::endl;
       CGAL_assertion_msg(false, "TODO: OPEN HANDLE REVERSED CASE!");
     }
 
     if (CGAL::abs(m2 - m3) < tol || is_reversed) {
-      if (m_verbose) std::cout << "- open parallel lines" << std::endl;
+      if (m_parameters.debug) std::cout << "- open parallel lines" << std::endl;
       is_parallel = true;
       if (source_p == pv_point) {
-        if (m_verbose) std::cout << "- open moves backwards" << std::endl;
+        if (m_parameters.debug) std::cout << "- open moves backwards" << std::endl;
         future_point = target_p;
         // std::cout << point_3(target(iedge)) << std::endl;
       } else {
-        if (m_verbose) std::cout << "- open moves forwards" << std::endl;
+        if (m_parameters.debug) std::cout << "- open moves forwards" << std::endl;
         future_point = source_p;
         // std::cout << point_3(source(iedge)) << std::endl;
       }
@@ -3267,7 +3267,7 @@ public:
     CGAL_assertion(future_direction != Vector_2());
     future_point = pinit - m_current_time * future_direction;
 
-    if (m_verbose) {
+    if (m_parameters.debug) {
       auto tmp = future_direction;
       tmp = KSR::normalize(tmp);
       std::cout << "- open future point: " <<
@@ -3296,32 +3296,32 @@ public:
     const auto ibbox = isegment.bbox();
 
     if (has_iedge(pvertex)) {
-      if (m_verbose) std::cout << "- constrained pvertex case" << std::endl;
+      if (m_parameters.debug) std::cout << "- constrained pvertex case" << std::endl;
       return false;
     }
 
     if (!is_active(pvertex)) {
-      if (m_verbose) std::cout << "- pvertex no active case" << std::endl;
+      if (m_parameters.debug) std::cout << "- pvertex no active case" << std::endl;
       return false;
     }
 
     if (!is_active(iedge)) {
-      if (m_verbose) std::cout << "- iedge no active case" << std::endl;
+      if (m_parameters.debug) std::cout << "- iedge no active case" << std::endl;
       return false;
     }
 
     if (!CGAL::do_overlap(pbbox, ibbox)) {
-      if (m_verbose) std::cout << "- no overlap case" << std::endl;
+      if (m_parameters.debug) std::cout << "- no overlap case" << std::endl;
       return false;
     }
 
     Point_2 point;
     if (!KSR::intersection(psegment, isegment, point)) {
-      if (m_verbose) std::cout << "- no intersection case" << std::endl;
+      if (m_parameters.debug) std::cout << "- no intersection case" << std::endl;
       return false;
     }
 
-    if (m_verbose) std::cout << "- found intersection" << std::endl;
+    if (m_parameters.debug) std::cout << "- found intersection" << std::endl;
     return true;
   }
 };

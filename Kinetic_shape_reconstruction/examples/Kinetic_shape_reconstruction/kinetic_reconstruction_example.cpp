@@ -28,7 +28,7 @@ using Semantic_map = CGAL::KSR::Semantic_from_label_map<Label_map>;
 
 using KSR = CGAL::Kinetic_shape_reconstruction_3<Kernel>;
 
-using Parameters      = CGAL::KSR::Parameters<FT>;
+using Parameters      = CGAL::KSR::All_parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
 using Timer           = CGAL::Real_timer;
 

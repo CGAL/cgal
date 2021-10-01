@@ -26,6 +26,8 @@
 // Internal includes.
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
+#include <CGAL/KSR/parameters.h>
+
 #include <CGAL/KSR_3/Data_structure.h>
 
 namespace CGAL {
@@ -100,10 +102,11 @@ private:
   using Face_handle   = typename CDT::Face_handle;
   using Edge          = typename CDT::Edge;
 
+  using Parameters = KSR::Parameters_3<FT>;
+
 public:
-  Finalizer(
-    const bool verbose, const bool dprint, const bool debug, Data_structure& data) :
-  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(data)
+  Finalizer(Data_structure& data, const Parameters& parameters) :
+  m_data(data), m_parameters(parameters)
   { }
 
   void clean() {
@@ -113,13 +116,13 @@ public:
     std::size_t num_hanging_pfaces = detect_hanging_pfaces(should_be_removed);
 
     if (num_hanging_pfaces >= stop_value) {
-      if (m_verbose) {
+      if (m_parameters.verbose) {
         std::cout << "* number of hanging pfaces: " << num_hanging_pfaces << std::endl;
       }
       if (should_be_removed) return;
       const std::size_t num_added_pfaces = fill_holes(should_be_removed);
       CGAL_assertion(num_added_pfaces > 0);
-      if (m_verbose) {
+      if (m_parameters.verbose) {
         std::cout << "* number of added pfaces: " << num_added_pfaces << std::endl;
       }
       num_hanging_pfaces = detect_hanging_pfaces(should_be_removed);
@@ -147,10 +150,8 @@ public:
   }
 
 private:
-  const bool m_verbose;
-  const bool m_export;
-  const bool m_debug;
   Data_structure& m_data;
+  const Parameters& m_parameters;
 
   /*******************************
   **          CLEANING          **
@@ -883,7 +884,7 @@ private:
         }
       }
     }
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "* found boundary volumes: "<< volume_index << std::endl;
     }
     num_volumes = volume_index;
@@ -923,7 +924,7 @@ private:
         }
       }
       const int after = volume_index;
-      if (m_verbose) {
+      if (m_parameters.verbose) {
         std::cout << "* found interior volumes: "<< after - before << std::endl;
       }
       num_volumes = volume_index;
@@ -960,13 +961,13 @@ private:
     for (auto& volume : volumes)
       create_cell_pvertices(volume);
 
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "* created volumes: " << volumes.size() << std::endl;
-      if (m_export) dump_volumes(m_data, "final");
+      if (m_parameters.export_all) dump_volumes(m_data, "final");
       for (std::size_t i = 0; i < volumes.size(); ++i) {
         const auto& volume = volumes[i];
         CGAL_assertion(volume.pfaces.size() > 3);
-        if (m_debug) {
+        if (m_parameters.debug) {
           std::cout <<
           " VOLUME "     << std::to_string(i) << ": "
           " pvertices: " << volume.pvertices.size() <<
@@ -1014,7 +1015,7 @@ private:
         volume_size, volume_centroid, map_volumes, queue);
     }
 
-    if (m_debug) {
+    if (m_parameters.debug) {
       std::cout << "- FOUND VOLUME " << volume_index << ", (SIZE/BARYCENTER): "
       << volume_size << " / " << volume_centroid << std::endl;
     }
@@ -1062,7 +1063,7 @@ private:
         false, query, volume_index, num_volumes, centroids,
         volume_size, volume_centroid, map_volumes, queue);
     }
-    if (m_debug) {
+    if (m_parameters.debug) {
       std::cout << "- FOUND VOLUME " << volume_index << ", (SIZE/BARYCENTER): "
       << volume_size << " / " << volume_centroid << std::endl;
     }

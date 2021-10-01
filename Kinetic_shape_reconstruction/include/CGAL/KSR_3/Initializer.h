@@ -22,6 +22,8 @@
 // Internal includes.
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
+#include <CGAL/KSR/parameters.h>
+
 #include <CGAL/KSR_3/Data_structure.h>
 #include <CGAL/KSR_3/Polygon_splitter.h>
 
@@ -55,31 +57,26 @@ private:
   using OBB_traits = CGAL::Oriented_bounding_box_traits_3<IK>;
 
   using Planar_shape_type = KSR::Planar_shape_type;
+  using Parameters        = KSR::Parameters_3<FT>;
 
 public:
-  Initializer(
-    const bool verbose, const bool dprint, const bool debug, Data_structure& data) :
-  m_verbose(verbose), m_export(dprint), m_debug(debug), m_data(data),
+  Initializer(Data_structure& data, const Parameters& parameters) :
+  m_data(data), m_parameters(parameters),
   m_merge_type(Planar_shape_type::CONVEX_HULL)
   { }
 
   template<
   typename InputRange,
   typename PolygonMap>
-  double initialize(
-    const InputRange& input_range,
-    const PolygonMap polygon_map,
-    const unsigned int k,
-    const double enlarge_bbox_ratio,
-    const bool reorient) {
+  double initialize(const InputRange& input_range, const PolygonMap polygon_map) {
 
     FT time_step;
     std::array<Point_3, 8> bbox;
     create_bounding_box(
       input_range, polygon_map,
-      static_cast<FT>(enlarge_bbox_ratio),
-      reorient, bbox, time_step);
-    if (m_verbose) {
+      m_parameters.enlarge_bbox_ratio,
+      m_parameters.reorient, bbox, time_step);
+    if (m_parameters.verbose) {
       std::cout << "* precomputed time_step: " << time_step << std::endl;
     }
 
@@ -87,8 +84,8 @@ public:
     bounding_box_to_polygons(bbox, bbox_faces);
     add_polygons(input_range, polygon_map, bbox_faces);
 
-    if (m_verbose) std::cout << "* intersecting input polygons ... ";
-    if (m_debug) {
+    if (m_parameters.verbose) std::cout << "* intersecting input polygons ... ";
+    if (m_parameters.debug) {
       KSR_3::dump(m_data, "init");
       // KSR_3::dump_segmented_edges(m_data, "init");
     }
@@ -96,10 +93,10 @@ public:
     CGAL_assertion(m_data.check_integrity(false));
     make_polygons_intersection_free();
     CGAL_assertion(m_data.check_integrity(false));
-    set_k_intersections(k);
+    set_k_intersections(m_parameters.k);
 
-    if (m_verbose) std::cout << "done" << std::endl;
-    if (m_debug) {
+    if (m_parameters.verbose) std::cout << "done" << std::endl;
+    if (m_parameters.debug) {
       KSR_3::dump(m_data, "intersected");
       // KSR_3::dump_segmented_edges(m_data, "intersected");
     }
@@ -141,10 +138,8 @@ public:
   }
 
 private:
-  const bool m_verbose;
-  const bool m_export;
-  const bool m_debug;
   Data_structure& m_data;
+  const Parameters& m_parameters;
   const Planar_shape_type m_merge_type;
 
   template<
@@ -172,12 +167,12 @@ private:
 
     const auto& minp = bbox.front();
     const auto& maxp = bbox.back();
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout.precision(20);
       std::cout << "* bounding box minp: " << std::fixed <<
       minp.x() << "\t, " << minp.y() << "\t, " << minp.z() << std::endl;
     }
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout.precision(20);
       std::cout << "* bounding box maxp: " << std::fixed <<
       maxp.x() << "\t, " << maxp.y() << "\t, " << maxp.z() << std::endl;
@@ -240,12 +235,12 @@ private:
     CGAL_assertion(bbox_length_3 >= FT(0));
     const FT tol = KSR::tolerance<FT>();
     if (bbox_length_1 < tol || bbox_length_2 < tol || bbox_length_3 < tol) {
-      if (m_verbose) {
+      if (m_parameters.verbose) {
         std::cout << "* warning: optimal bounding box is flat, reverting ..." << std::endl;
       }
       initialize_axis_aligned_box(input_range, polygon_map, bbox);
     } else {
-      if (m_verbose) {
+      if (m_parameters.verbose) {
         std::cout << "* using optimal bounding box" << std::endl;
       }
     }
@@ -300,7 +295,7 @@ private:
         bbox[2] = Point_3(bbox[2].x() + d, bbox[2].y() + d, bbox[2].z() - d);
         bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
         bbox[6] = Point_3(bbox[6].x() + d, bbox[6].y() - d, bbox[6].z() + d);
-        if (m_verbose) {
+        if (m_parameters.verbose) {
           std::cout << "* setting x-based flat axis-aligned bounding box" << std::endl;
         }
 
@@ -317,7 +312,7 @@ private:
         bbox[2] = Point_3(bbox[2].x() + d, bbox[2].y() + d, bbox[2].z() - d);
         bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
         bbox[4] = Point_3(bbox[4].x() - d, bbox[4].y() + d, bbox[4].z() + d);
-        if (m_verbose) {
+        if (m_parameters.verbose) {
           std::cout << "* setting y-based flat axis-aligned bounding box" << std::endl;
         }
 
@@ -334,7 +329,7 @@ private:
         bbox[6] = Point_3(bbox[6].x() + d, bbox[6].y() - d, bbox[6].z() + d);
         bbox[7] = Point_3(bbox[7].x() + d, bbox[7].y() + d, bbox[7].z() + d);
         bbox[4] = Point_3(bbox[4].x() - d, bbox[4].y() + d, bbox[4].z() + d);
-        if (m_verbose) {
+        if (m_parameters.verbose) {
           std::cout << "* setting z-based flat axis-aligned bounding box" << std::endl;
         }
 
@@ -342,7 +337,7 @@ private:
         CGAL_assertion_msg(false, "ERROR: WRONG CASE!");
       }
     } else {
-      if (m_verbose) {
+      if (m_parameters.verbose) {
         std::cout << "* using axis-aligned bounding box" << std::endl;
       }
     }
@@ -433,7 +428,7 @@ private:
     CGAL_assertion(m_data.ivertices().size() == 8);
     CGAL_assertion(m_data.iedges().size() == 12);
 
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "* inserted bbox faces: " << bbox_faces.size() << std::endl;
     }
   }
@@ -461,7 +456,7 @@ private:
     }
 
     CGAL_assertion(m_data.number_of_support_planes() > 6);
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "* provided input polygons: " << input_range.size() << std::endl;
       std::cout << "* inserted input polygons: " << polygons.size() << std::endl;
     }
@@ -655,7 +650,7 @@ private:
 
   void make_polygons_intersection_free() {
 
-    if (m_debug) {
+    if (m_parameters.debug) {
       std::cout << std::endl;
       std::cout.precision(20);
     }
@@ -733,9 +728,9 @@ private:
 
     // Refine polygons.
     for (std::size_t i = 0; i < m_data.number_of_support_planes(); ++i) {
-      Polygon_splitter splitter(m_data);
+      Polygon_splitter splitter(m_data, m_parameters);
       splitter.split_support_plane(i);
-      // if (i >= 6 && m_export) {
+      // if (i >= 6 && m_parameters.export_all) {
       //   KSR_3::dump(m_data, "intersected-iter-" + std::to_string(i));
       // }
     }

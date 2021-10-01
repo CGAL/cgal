@@ -99,12 +99,13 @@ private:
   using Uchar_map    = typename Mesh_3::template Property_map<Face_index, unsigned char>;
 
   using Planar_shape_type = KSR::Planar_shape_type;
+  using Parameters        = KSR::Parameters_3<FT>;
 
 public:
-  Polygon_splitter(Data_structure& data) :
+  Polygon_splitter(Data_structure& data, const Parameters& parameters) :
   m_data(data),
-  m_merge_type(Planar_shape_type::CONVEX_HULL),
-  m_verbose(m_data.is_verbose())
+  m_parameters(parameters),
+  m_merge_type(Planar_shape_type::CONVEX_HULL)
   { }
 
   void split_support_plane(const std::size_t sp_idx) {
@@ -151,12 +152,13 @@ public:
 
 private:
   Data_structure& m_data;
+  const Parameters& m_parameters;
+
   TRI m_cdt;
   std::set<PVertex> m_input;
   std::map<CID, IEdge> m_map_intersections;
   std::map<PVertex, IVertex> m_boundary_ivertices;
   const Planar_shape_type m_merge_type;
-  const bool m_verbose;
 
   /*******************************
   **        MERGE PFACES        **
@@ -856,7 +858,7 @@ private:
     }
 
     CGAL_assertion(num_pfaces > 0);
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "** number of newly inserted pfaces: " << num_pfaces << std::endl;
     }
   }
@@ -977,7 +979,7 @@ private:
   void set_boundary_ivertex(
     const PVertex& pvertex, const IVertex& ivertex) {
 
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout.precision(20);
       std::cout << "*** setting boundary ivertex " << m_data.str(ivertex) <<
       " via pvertex " << m_data.str(pvertex) << std::endl;
@@ -988,7 +990,7 @@ private:
     // Get prev and next pvertices.
     PVertex prev, next;
     std::tie(prev, next) = m_data.border_prev_and_next(pvertex);
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "- prev: " << m_data.point_3(prev) << std::endl;
       std::cout << "- next: " << m_data.point_3(next) << std::endl;
     }
@@ -1055,7 +1057,7 @@ private:
     }
 
     CGAL_assertion(crossed_iedges.size() >= 2);
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "- crossed " << crossed_iedges.size() << " iedges: " << std::endl;
       for (const auto& crossed_iedge : crossed_iedges) {
         std::cout << m_data.str(crossed_iedge.first) << ": " <<
@@ -1079,7 +1081,7 @@ private:
     new_pvertices.resize(crossed_iedges.size(), m_data.null_pvertex());
 
     { // first crop
-      if (m_verbose) std::cout << "- first crop" << std::endl;
+      if (m_parameters.verbose) std::cout << "- first crop" << std::endl;
       const auto cropped = PVertex(pvertex.first, m_data.support_plane(pvertex).split_edge(pvertex.second, next.second));
       CGAL_assertion(cropped != m_data.null_pvertex());
 
@@ -1093,12 +1095,12 @@ private:
       CGAL_assertion(future_directions.front() != Vector_2());
       m_data.support_plane(cropped).set_point(cropped.second, future_points.front());
       m_data.direction(cropped) = future_directions.front();
-      if (m_verbose) std::cout << "- cropped 1: " <<
+      if (m_parameters.verbose) std::cout << "- cropped 1: " <<
         m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
     }
 
     { // second crop
-      if (m_verbose) std::cout << "- second crop" << std::endl;
+      if (m_parameters.verbose) std::cout << "- second crop" << std::endl;
       const auto cropped = PVertex(pvertex.first, m_data.support_plane(pvertex).split_edge(pvertex.second, prev.second));
       CGAL_assertion(cropped != m_data.null_pvertex());
 
@@ -1112,7 +1114,7 @@ private:
       CGAL_assertion(future_directions.back() != Vector_2());
       m_data.support_plane(cropped).set_point(cropped.second, future_points.back());
       m_data.direction(cropped) = future_directions.back();
-      if (m_verbose) std::cout << "- cropped 2: " <<
+      if (m_parameters.verbose) std::cout << "- cropped 2: " <<
         m_data.str(cropped) << ", " << m_data.point_3(cropped) << std::endl;
     }
 
@@ -1217,11 +1219,8 @@ private:
       m_data.point_2(sp_idx, m_data.target(iedge))) >= KSR::point_tolerance<FT>(),
     "TODO: SET FUTURE DIRECTION, HANDLE ZERO-LENGTH IEDGE!");
 
-    const bool is_debug = false;
-    m_data.set_verbose(is_debug);
     const auto is_parallel = m_data.compute_future_point_and_direction(
       pvertex, ivertex, n1, n2, iedge, future_point, future_direction);
-    m_data.set_verbose(m_verbose);
 
     CGAL_assertion_msg(!is_parallel,
     "TODO: COMPUTE FUTURE POINT AND DIRECTION, ADD PARALLEL CASE!");

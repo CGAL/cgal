@@ -96,7 +96,8 @@ int main(const int argc, const char** argv) {
     k_intersections(k).
     n_subdivisions(subdiv).
     enlarge_bbox_ratio(eratio).
-    reorient(orient));
+    reorient(orient).
+    use_hybrid_mode(true));
   assert(is_ksr_success);
   const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
   timer.stop();

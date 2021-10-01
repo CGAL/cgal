@@ -1,5 +1,5 @@
-#ifndef CGAL_KSR_PARAMETERS_H
-#define CGAL_KSR_PARAMETERS_H
+#ifndef CGAL_KSR_ALL_PARAMETERS_EXAMPLES_H
+#define CGAL_KSR_ALL_PARAMETERS_EXAMPLES_H
 
 // STL includes.
 #include <string>
@@ -8,7 +8,7 @@ namespace CGAL {
 namespace KSR {
 
   template<typename FT>
-  struct Parameters {
+  struct All_parameters {
 
     // Path to the input data file.
     std::string data;
@@ -46,7 +46,7 @@ namespace KSR {
     FT graphcut_beta;
 
     // Constructor.
-    Parameters() :
+    All_parameters() :
     data(""),
     gi("0"), bi("1"), ii("2"), vi("3"),
     // main parameters
@@ -80,4 +80,4 @@ namespace KSR {
 } // KSR
 } // CGAL
 
-#endif // CGAL_KSR_PARAMETERS_H
+#endif // CGAL_KSR_ALL_PARAMETERS_EXAMPLES_H

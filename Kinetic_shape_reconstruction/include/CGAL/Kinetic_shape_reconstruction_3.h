@@ -29,6 +29,8 @@
 // Internal includes.
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
+#include <CGAL/KSR/parameters.h>
+
 #include <CGAL/KSR_3/Data_structure.h>
 #include <CGAL/KSR_3/Reconstruction.h>
 #include <CGAL/KSR_3/Initializer.h>
@@ -61,11 +63,10 @@ private:
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
   using Vertex_index = typename Polygon_mesh::Vertex_index;
   using Timer        = CGAL::Real_timer;
+  using Parameters   = KSR::Parameters_3<FT>;
 
 private:
-  const bool m_verbose;
-  const bool m_export;
-  const bool m_debug;
+  Parameters m_parameters;
   Data_structure m_data;
   std::size_t m_num_events;
 
@@ -73,10 +74,8 @@ public:
   Kinetic_shape_reconstruction_3(
     const bool verbose = true,
     const bool debug   = false) :
-  m_verbose(verbose),
-  m_export(false),
-  m_debug(debug),
-  m_data(m_debug),
+  m_parameters(verbose, debug, false),
+  m_data(m_parameters),
   m_num_events(0)
   { }
 
@@ -90,14 +89,16 @@ public:
     const NamedParameters& np) {
 
     Timer timer;
-    const unsigned int k = parameters::choose_parameter(
+    m_parameters.k = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::k_intersections), 1);
-    unsigned int n = parameters::choose_parameter(
+    m_parameters.n = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::n_subdivisions), 0);
-    FT enlarge_bbox_ratio = parameters::choose_parameter(
+    m_parameters.enlarge_bbox_ratio = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::enlarge_bbox_ratio), FT(11) / FT(10));
-    const bool reorient = parameters::choose_parameter(
+    m_parameters.reorient = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::reorient), false);
+    m_parameters.use_hybrid_mode = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::use_hybrid_mode), false);
 
     std::cout.precision(20);
     if (input_range.size() == 0) {
@@ -106,34 +107,34 @@ public:
       return false;
     }
 
-    if (n != 0) {
+    if (m_parameters.n != 0) {
       CGAL_assertion_msg(false, "TODO: IMPLEMENT KINETIC SUBDIVISION!");
-      if (n > 3) {
-        CGAL_warning_msg(n <= 3,
+      if (m_parameters.n > 3) {
+        CGAL_warning_msg(m_parameters.n <= 3,
         "WARNING: DOES IT MAKE SENSE TO HAVE MORE THAN 64 INPUT BLOCKS? SETTING N TO 3!");
-        n = 3;
+        m_parameters.n = 3;
       }
     }
 
-    if (enlarge_bbox_ratio < FT(1)) {
-      CGAL_warning_msg(enlarge_bbox_ratio >= FT(1),
+    if (m_parameters.enlarge_bbox_ratio < FT(1)) {
+      CGAL_warning_msg(m_parameters.enlarge_bbox_ratio >= FT(1),
       "WARNING: YOU SET ENLARGE_BBOX_RATIO < 1.0! THE VALID RANGE IS [1.0, +INF). SETTING TO 1.0!");
-      enlarge_bbox_ratio = FT(1);
+      m_parameters.enlarge_bbox_ratio = FT(1);
     }
 
-    if (m_verbose) {
-      const unsigned int num_blocks = std::pow(n + 1, 3);
-      const std::string is_reorient = (reorient ? "true" : "false");
+    if (m_parameters.verbose) {
+      const unsigned int num_blocks = std::pow(m_parameters.n + 1, 3);
+      const std::string is_reorient = (m_parameters.reorient ? "true" : "false");
 
       std::cout << std::endl << "--- PARTITION OPTIONS: " << std::endl;
-      std::cout << "* number of intersections k: "            << k                  << std::endl;
-      std::cout << "* number of subdivisions per bbox side: " << n                  << std::endl;
-      std::cout << "* number of subdivision blocks: "         << num_blocks         << std::endl;
-      std::cout << "* enlarge bbox ratio: "                   << enlarge_bbox_ratio << std::endl;
-      std::cout << "* reorient: "                             << is_reorient        << std::endl;
+      std::cout << "* number of intersections k: "            << m_parameters.k                  << std::endl;
+      std::cout << "* number of subdivisions per bbox side: " << m_parameters.n                  << std::endl;
+      std::cout << "* number of subdivision blocks: "         << num_blocks                      << std::endl;
+      std::cout << "* enlarge bbox ratio: "                   << m_parameters.enlarge_bbox_ratio << std::endl;
+      std::cout << "* reorient: "                             << is_reorient                     << std::endl;
     }
 
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << std::endl << "--- INITIALIZING PARTITION:" << std::endl;
     }
 
@@ -141,13 +142,12 @@ public:
     timer.reset();
     timer.start();
     m_data.clear();
-    Initializer initializer(m_verbose, m_export, m_debug, m_data);
-    const FT time_step = static_cast<FT>(initializer.initialize(
-      input_range, polygon_map, k, CGAL::to_double(enlarge_bbox_ratio), reorient));
+    Initializer initializer(m_data, m_parameters);
+    const FT time_step = static_cast<FT>(initializer.initialize(input_range, polygon_map));
     timer.stop();
     const double time_to_initialize = timer.time();
 
-    // if (m_verbose) {
+    // if (m_parameters.verbose) {
     //   std::cout << std::endl << "* initialization (sec.): " << time_to_initialize << std::endl;
     //   std::cout << "INITIALIZATION SUCCESS!" << std::endl << std::endl;
     // }
@@ -158,13 +158,13 @@ public:
     //   std::cout << m_data.support_plane(i).plane() << std::endl;
     // }
 
-    if (k == 0) { // for k = 0, we skip propagation
-      CGAL_warning_msg(k > 0,
+    if (m_parameters.k == 0) { // for k = 0, we skip propagation
+      CGAL_warning_msg(m_parameters.k > 0,
       "WARNING: YOU SET K TO 0! THAT MEANS NO PROPAGATION! THE VALID VALUES ARE {1,2,...}. INTERSECT AND RETURN!");
       return false;
     }
 
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << std::endl << "--- RUNNING THE QUEUE:" << std::endl;
       std::cout << "* propagation started" << std::endl;
     }
@@ -173,54 +173,54 @@ public:
     timer.reset();
     timer.start();
     std::size_t num_queue_calls = 0;
-    Propagation propagation(m_verbose, m_export, m_debug, m_data);
+    Propagation propagation(m_data, m_parameters);
     std::tie(num_queue_calls, m_num_events) = propagation.propagate(time_step);
     timer.stop();
     const double time_to_propagate = timer.time();
 
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "* propagation finished" << std::endl;
       std::cout << "* number of queue calls: "    << num_queue_calls << std::endl;
       std::cout << "* number of events handled: " << m_num_events    << std::endl;
     }
 
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << std::endl << "--- FINALIZING PARTITION:" << std::endl;
     }
 
     // Finalization.
     timer.reset();
     timer.start();
-    if (m_debug) dump(m_data, "jiter-final-a-result");
+    if (m_parameters.debug) dump(m_data, "jiter-final-a-result");
 
-    Finalizer finalizer(m_verbose, m_export, m_debug, m_data);
+    Finalizer finalizer(m_data, m_parameters);
     finalizer.clean();
 
-    if (m_verbose) std::cout << "* checking final mesh integrity ...";
+    if (m_parameters.verbose) std::cout << "* checking final mesh integrity ...";
     CGAL_assertion(m_data.check_integrity(true, true, true));
-    if (m_verbose) std::cout << " done" << std::endl;
+    if (m_parameters.verbose) std::cout << " done" << std::endl;
 
-    if (m_debug) dump(m_data, "jiter-final-b-result");
+    if (m_parameters.debug) dump(m_data, "jiter-final-b-result");
     // std::cout << std::endl << "CLEANING SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
 
-    if (m_verbose) std::cout << "* getting volumes ..." << std::endl;
+    if (m_parameters.verbose) std::cout << "* getting volumes ..." << std::endl;
     finalizer.create_polyhedra();
     timer.stop();
     const double time_to_finalize = timer.time();
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "* found all together " << m_data.number_of_volumes(-1) << " volumes" << std::endl;
     }
     // std::cout << std::endl << "CREATING VOLUMES SUCCESS!" << std::endl << std::endl;
     // exit(EXIT_SUCCESS);
 
     // Timing.
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << std::endl << "--- TIMING (sec.):" << std::endl;
     }
     const double total_time =
       time_to_initialize + time_to_propagate + time_to_finalize;
-    if (m_verbose) {
+    if (m_parameters.verbose) {
       std::cout << "* initialization: " << time_to_initialize << std::endl;
       std::cout << "* propagation: "    << time_to_propagate  << std::endl;
       std::cout << "* finalization: "   << time_to_finalize   << std::endl;
@@ -246,7 +246,7 @@ public:
       InputRange, PointMap, VectorMap, SemanticMap, Kernel>;
 
     Reconstruction reconstruction(
-      input_range, point_map, normal_map, semantic_map, m_data, m_verbose, m_debug);
+      input_range, point_map, normal_map, semantic_map, m_data, m_parameters.verbose, m_parameters.debug);
     bool success = reconstruction.detect_planar_shapes(np);
     if (!success) {
       CGAL_assertion_msg(false, "ERROR: RECONSTRUCTION, DETECTING PLANAR SHAPES FAILED!");

@@ -88,7 +88,7 @@ point_3_from_point_2(const Point_2& point_2) {
     point_2.x(), point_2.y(), typename Kernel_traits<Point_2>::Kernel::FT(0));
 }
 
-// Tolerance.
+// Global tolerance.
 template<typename FT>
 static FT tolerance() {
   return FT(1) / FT(100000);
