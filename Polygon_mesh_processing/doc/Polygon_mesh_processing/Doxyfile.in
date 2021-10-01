@@ -9,6 +9,7 @@ WARN_IF_UNDOCUMENTED       =  false
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h
 INPUT += ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/make_surface_mesh.h \
          ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Mesh_facet_topology.h
+STRIP_FROM_PATH += ${CGAL_Mesh_3_INCLUDE_DIR}
 
 # macros to be used inside the code
 ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of points, each pair of contiguous points defines a segment of the polyline. If the first and last points of the polyline are identical, the polyline is closed."
