@@ -1,0 +1,26 @@
+/*!
+\defgroup PkgKineticShapeReconstructionRef Kinetic Shape Reconstruction Reference
+
+\cgalPkgDescriptionBegin{Kinetic Shape Reconstruction, PkgKineticShapeReconstruction}
+\cgalPkgPicture{kinetic_logo.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Simon Giraudot and Dmitry Anisimov}
+\cgalPkgDesc{}
+\cgalPkgManuals{Chapter_Kinetic_Shape_Reconstruction, PkgKineticShapeReconstructionRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.6}
+\cgalPkgBib{cgal:bla-bla}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Kinetic Shape Reconstruction ##
+
+*/

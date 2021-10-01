@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Dmitry Anisimov
+// Author(s)     : Simon Giraudot, Dmitry Anisimov
 
 #ifndef CGAL_KSR_CONVERSIONS_H
 #define CGAL_KSR_CONVERSIONS_H

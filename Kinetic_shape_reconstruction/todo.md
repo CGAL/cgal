@@ -1,13 +1,29 @@
-todo:
-- test real data 40 polygons, k = 6, coplanarity = 0.5 - inexact intersections (hybrid mode?)
-- test real data 40 polygons, k = 1, coplanarity = 0.1 - inexact intersections (hybrid mode?)
-- exact kernel: check all tests + random tests
-- add hybrid mode
-- add random perturbations at the preprocessing step
-- try to avoid all inexact computations such as sqrt e.g.
-- try to find out where we lose the precison the most
-- run a random config and if fails call back and run on a different config until success
+TODO:
+
+- fixed error with nullptr for add_vertex() inside front_and_back_34() in DS but we should try to create a minimal example for epick and epeck
+
+- stress-test-2/test-4-rnd-polygons-1-3.off - random failure, does it happen because we use EPECK, maybe it is because we still use queue which is based on doubles while in the original code it is exact, we cannot use exact with boost queue now because it does not allow changing numbers while in EPECK they can change in time
+
+- try to add custom exact queue that supports EPECK
+
+- what about accumulative errors in EPICK? Maybe we could use hybrid mode doing only important computations exactly like intersections e.g.
+
+- fix case with touching along an edge polygons at the initialization step, they should propagate while now they do not
+
+- can we avoid any inexact computations such as sqrt e.g.?
+
+- in EPECK some assertions are extremely slow
+
+- fix stress-test-6 cases - they are random, their results may depend on initial unlucky configuration so we need to implement random perturbation before running it
+
+- should we also add random perturbation that can be on or off depending on the input
+
+- EPICK fails: 40 polygons k = 1 and coplanarity = 0.1 or 40 polygons k = 6 and coplanarity = 0.5; 40 polygons - the one from real-data-test; coplanarity is from Support_plane.h operator==()
+
+- EPECK stress-test-5/test-2-rnd-polygons-20-4 runs extremely slow, does it actually finish? Btw real data with the same number of polygons work much faster! Maybe we better test it from now on only on real data because this is what is going to be most-likely used in real life. Can this speed issue be related to conversion from exact to inexact when creating a queue? It seems to hang at the end of each event that is when we check and continue execution with the next event. Maybe the event queue access is so slow? Do we utilize the technique from the paper, storing and accessing only the last three events? The values maybe grow so much that each intersection takes very long time if we use exact type everywhere.
+
 - try to avoid errors by using a smaller step
+
 - make intersections a part of kinetic traits that is exact
-- check new stress-test-6 files
-- fix EPECK errors
+
+- try to find out where we lose the precison the most

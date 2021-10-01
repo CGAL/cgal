@@ -8,7 +8,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Simon Giraudot
+// Author(s)     : Simon Giraudot, Dmitry Anisimov
 
 #ifndef CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
 #define CGAL_KINETIC_SHAPE_RECONSTRUCTION_3_H
