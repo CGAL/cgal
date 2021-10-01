@@ -147,7 +147,7 @@ namespace Polygon_mesh_processing {
 *          by each surface facet. The default value is `CGAL::FACET_VERTICES_ON_SURFACE`.
 *          See `CGAL::Mesh_facet_topology` manual page to get all possible values.}
 *     \cgalParamType{`CGAL::Mesh_facet_topology`}
-*     \cgalParamDefault{`0`}
+*     \cgalParamDefault{`CGAL::FACET_VERTICES_ON_SURFACE`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
