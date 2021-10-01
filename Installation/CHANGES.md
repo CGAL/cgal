@@ -100,7 +100,7 @@ Release date: December 2021
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.4/Manual/packages.html#PkgBooleanSetOperations2)
 
 -   Added an extra parameter (`UsePolylines`) to all free functions (
-    [`complement()`](https://cgal.geometryfactory.com/CGAL/Manual_doxygen_test/CGAL-5.4-Ic-62/output2/Boolean_set_operations_2/group__boolean__complement.html),
+    [`complement()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__complement.html),
     [`do_intersect()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__do__intersect.html),
     [`intersection()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__intersection.html),
     [`join()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__join.html),
