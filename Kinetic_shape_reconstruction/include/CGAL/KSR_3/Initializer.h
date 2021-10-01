@@ -23,6 +23,7 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/parameters.h>
+#include <CGAL/KSR/conversions.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
 #include <CGAL/KSR_3/Polygon_splitter.h>
@@ -58,11 +59,13 @@ private:
 
   using Planar_shape_type = KSR::Planar_shape_type;
   using Parameters        = KSR::Parameters_3<FT>;
+  using Kinetic_traits    = KSR::Kinetic_traits_3<Kernel>;
 
 public:
   Initializer(Data_structure& data, const Parameters& parameters) :
   m_data(data), m_parameters(parameters),
-  m_merge_type(Planar_shape_type::CONVEX_HULL)
+  m_merge_type(Planar_shape_type::CONVEX_HULL),
+  m_kinetic_traits(parameters.use_hybrid_mode)
   { }
 
   template<
@@ -141,6 +144,7 @@ private:
   Data_structure& m_data;
   const Parameters& m_parameters;
   const Planar_shape_type m_merge_type;
+  Kinetic_traits m_kinetic_traits;
 
   template<
   typename InputRange,
@@ -605,7 +609,8 @@ private:
         const auto& qj = merged[jp];
         const Segment_2 segment(pj, qj);
         Point_2 inter;
-        const bool is_intersected = KSR::intersection(segment, edge, inter);
+        const bool is_intersected =
+          m_kinetic_traits. template intersection(segment, edge, inter);
         if (is_intersected) return false;
       }
     }
@@ -705,7 +710,7 @@ private:
           }
 
           Point_2 point;
-          if (!KSR::intersection(
+          if (!m_kinetic_traits. template intersection(
             m_data.to_2d(common_plane_idx,
               Segment_3(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second))),
             m_data.to_2d(common_plane_idx,

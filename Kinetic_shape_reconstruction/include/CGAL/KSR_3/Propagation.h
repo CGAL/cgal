@@ -19,6 +19,7 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/parameters.h>
+#include <CGAL/KSR/debug.h>
 
 #include <CGAL/KSR_3/Event.h>
 #include <CGAL/KSR_3/Event_queue.h>
@@ -55,12 +56,14 @@ private:
 
   using Bbox_2     = CGAL::Bbox_2;
   using Face_index = typename Data_structure::Face_index;
-  using Parameters = KSR::Parameters_3<FT>;
+
+  using Parameters     = KSR::Parameters_3<FT>;
+  using Kinetic_traits = KSR::Kinetic_traits_3<Kernel>;
 
 public:
   Propagation(Data_structure& data, const Parameters& parameters) :
-  m_data(data), m_parameters(parameters), m_queue(parameters.debug),
-  m_min_time(-FT(1)), m_max_time(-FT(1))
+  m_data(data), m_parameters(parameters), m_kinetic_traits(parameters.use_hybrid_mode),
+  m_queue(parameters.debug), m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
 
   const std::pair<std::size_t, std::size_t> propagate(const FT time_step) {
@@ -101,6 +104,7 @@ public:
 private:
   Data_structure& m_data;
   const Parameters& m_parameters;
+  Kinetic_traits m_kinetic_traits;
 
   Event_queue m_queue;
   FT m_min_time;
@@ -200,7 +204,7 @@ private:
       }
 
       Point_2 inter;
-      if (!KSR::intersection(pv_segment, po_segment, inter)) {
+      if (!m_kinetic_traits. template intersection(pv_segment, po_segment, inter)) {
         continue;
       }
 
@@ -291,7 +295,7 @@ private:
       }
 
       Point_2 inter;
-      if (!KSR::intersection(pv_segment, po_segment, inter)) {
+      if (!m_kinetic_traits. template intersection(pv_segment, po_segment, inter)) {
         continue;
       }
 
@@ -444,7 +448,7 @@ private:
       }
 
       Point_2 inter;
-      if (!KSR::intersection(pv_segment, segments[i], inter)) {
+      if (!m_kinetic_traits. template intersection(pv_segment, segments[i], inter)) {
         continue;
       }
 

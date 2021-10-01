@@ -23,6 +23,7 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/parameters.h>
+#include <CGAL/KSR/conversions.h>
 
 #include <CGAL/KSR_3/Support_plane.h>
 #include <CGAL/KSR_3/Intersection_graph.h>
@@ -195,6 +196,8 @@ public:
     }
   };
 
+  using Kinetic_traits = KSR::Kinetic_traits_3<Kernel>;
+
 private:
   std::map< std::pair<std::size_t, IEdge>, Point_2>  m_points;
   std::map< std::pair<std::size_t, IEdge>, Vector_2> m_directions;
@@ -207,6 +210,7 @@ private:
   const Parameters& m_parameters;
   FT m_previous_time;
   FT m_current_time;
+  Kinetic_traits m_kinetic_traits;
 
   std::vector<Volume_cell> m_volumes;
   std::map<int, std::size_t> m_volume_level_map;
@@ -218,7 +222,8 @@ public:
   Data_structure(const Parameters& parameters) :
   m_parameters(parameters),
   m_previous_time(FT(0)),
-  m_current_time(FT(0))
+  m_current_time(FT(0)),
+  m_kinetic_traits(parameters.use_hybrid_mode)
   { }
 
   /*******************************
@@ -560,7 +565,7 @@ public:
     const auto all_iedges = m_intersection_graph.edges();
     for (const auto iedge : all_iedges) {
       const auto segment = segment_3(iedge);
-      if (!KSR::intersection(plane, segment, point)) {
+      if (!m_kinetic_traits. template intersection(plane, segment, point)) {
         continue;
       }
 
@@ -2880,7 +2885,7 @@ public:
     bool is_reversed = false;
     if (CGAL::abs(m1 - m3) >= tol) {
       if (m_parameters.debug) std::cout << "- prev intersected lines" << std::endl;
-      const bool is_a_found = KSR::intersection(
+      const bool is_a_found = m_kinetic_traits. template intersection(
         future_line_prev, iedge_line, future_point_a);
       if (!is_a_found) {
         std::cout << "WARNING: A IS NOT FOUND!" << std::endl;
@@ -2933,7 +2938,7 @@ public:
     is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_parameters.debug) std::cout << "- next intersected lines" << std::endl;
-      const bool is_b_found = KSR::intersection(
+      const bool is_b_found = m_kinetic_traits. template intersection(
         future_line_next, iedge_line, future_point_b);
       if (!is_b_found) {
         std::cout << "WARNING: B IS NOT FOUND!" << std::endl;
@@ -3101,7 +3106,7 @@ public:
     bool is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_parameters.debug) std::cout << "- back/front intersected lines" << std::endl;
-      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
+      future_point = m_kinetic_traits. template intersection<Point_2>(future_line_next, iedge_line);
       if (m_parameters.debug) {
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
       }
@@ -3223,7 +3228,7 @@ public:
     bool is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_parameters.debug) std::cout << "- open intersected lines" << std::endl;
-      future_point = KSR::intersection<Point_2>(future_line_next, iedge_line);
+      future_point = m_kinetic_traits. template intersection<Point_2>(future_line_next, iedge_line);
       if (m_parameters.debug) {
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
       }
@@ -3316,7 +3321,7 @@ public:
     }
 
     Point_2 point;
-    if (!KSR::intersection(psegment, isegment, point)) {
+    if (!m_kinetic_traits. template intersection(psegment, isegment, point)) {
       if (m_parameters.debug) std::cout << "- no intersection case" << std::endl;
       return false;
     }

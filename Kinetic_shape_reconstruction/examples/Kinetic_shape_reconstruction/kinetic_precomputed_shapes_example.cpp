@@ -84,6 +84,7 @@ int main(const int argc, const char** argv) {
   const unsigned int subdiv  = 0;
   const double       eratio  = 1.1;
   const bool         orient  = false;
+  const bool         use_hm  = false;
 
   // Algorithm.
   KSR ksr(verbose, debug);
@@ -97,7 +98,7 @@ int main(const int argc, const char** argv) {
     n_subdivisions(subdiv).
     enlarge_bbox_ratio(eratio).
     reorient(orient).
-    use_hybrid_mode(true));
+    use_hybrid_mode(use_hm));
   assert(is_ksr_success);
   const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
   timer.stop();

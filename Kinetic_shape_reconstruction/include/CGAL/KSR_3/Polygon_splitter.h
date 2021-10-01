@@ -27,6 +27,8 @@
 #include <CGAL/KSR/enum.h>
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
+#include <CGAL/KSR/parameters.h>
+#include <CGAL/KSR/conversions.h>
 
 namespace CGAL {
 namespace KSR_3 {
@@ -100,12 +102,14 @@ private:
 
   using Planar_shape_type = KSR::Planar_shape_type;
   using Parameters        = KSR::Parameters_3<FT>;
+  using Kinetic_traits    = KSR::Kinetic_traits_3<Kernel>;
 
 public:
   Polygon_splitter(Data_structure& data, const Parameters& parameters) :
   m_data(data),
   m_parameters(parameters),
-  m_merge_type(Planar_shape_type::CONVEX_HULL)
+  m_merge_type(Planar_shape_type::CONVEX_HULL),
+  m_kinetic_traits(parameters.use_hybrid_mode)
   { }
 
   void split_support_plane(const std::size_t sp_idx) {
@@ -153,12 +157,13 @@ public:
 private:
   Data_structure& m_data;
   const Parameters& m_parameters;
+  const Planar_shape_type m_merge_type;
+  Kinetic_traits m_kinetic_traits;
 
   TRI m_cdt;
   std::set<PVertex> m_input;
   std::map<CID, IEdge> m_map_intersections;
   std::map<PVertex, IVertex> m_boundary_ivertices;
-  const Planar_shape_type m_merge_type;
 
   /*******************************
   **        MERGE PFACES        **
@@ -261,7 +266,8 @@ private:
         const auto& qj = merged[jp];
         const Segment_2 segment(pj, qj);
         Point_2 inter;
-        const bool is_intersected = KSR::intersection(segment, edge, inter);
+        const bool is_intersected =
+          m_kinetic_traits. template intersection(segment, edge, inter);
         if (is_intersected) return false;
       }
     }

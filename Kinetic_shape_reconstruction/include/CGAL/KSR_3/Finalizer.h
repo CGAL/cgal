@@ -27,6 +27,7 @@
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR/debug.h>
 #include <CGAL/KSR/parameters.h>
+#include <CGAL/KSR/conversions.h>
 
 #include <CGAL/KSR_3/Data_structure.h>
 
@@ -102,11 +103,12 @@ private:
   using Face_handle   = typename CDT::Face_handle;
   using Edge          = typename CDT::Edge;
 
-  using Parameters = KSR::Parameters_3<FT>;
+  using Parameters     = KSR::Parameters_3<FT>;
+  using Kinetic_traits = KSR::Kinetic_traits_3<Kernel>;
 
 public:
   Finalizer(Data_structure& data, const Parameters& parameters) :
-  m_data(data), m_parameters(parameters)
+  m_data(data), m_parameters(parameters), m_kinetic_traits(parameters.use_hybrid_mode)
   { }
 
   void clean() {
@@ -152,6 +154,7 @@ public:
 private:
   Data_structure& m_data;
   const Parameters& m_parameters;
+  Kinetic_traits m_kinetic_traits;
 
   /*******************************
   **          CLEANING          **
@@ -1415,7 +1418,8 @@ private:
     // std::cout << "1 norm: " << norm << std::endl;
     const Plane_3 tr_plane(midp + norm * d, norm);
     Point_3 inter;
-    const bool is_intersection_found = KSR::intersection(line, tr_plane, inter);
+    const bool is_intersection_found =
+      m_kinetic_traits. template intersection(line, tr_plane, inter);
     if (!is_intersection_found) {
       std::cout << "d = " << d << std::endl;
     }
