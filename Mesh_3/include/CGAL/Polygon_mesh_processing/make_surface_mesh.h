@@ -24,6 +24,7 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/Mesh_facet_topology.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -143,15 +144,21 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{mesh_facet_distance}
 *     \cgalParamDescription{A scalar field (resp. a constant) describing a space varying
-           (resp. a uniform) upper bound for the distance between the facet circumcenter
-           and the center of its surface Delaunay ball.}
+*          (resp. a uniform) upper bound for the distance between the facet circumcenter
+*          and the center of its surface Delaunay ball.}
 *     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept
 *          `MeshDomainField_3`}
 *     \cgalParamDefault{`0.`}
 *   \cgalParamNEnd
-
 *
-* @todo add facet_distance_, facet_topology_
+*   \cgalParamNBegin{mesh_facet_topology}
+*     \cgalParamDescription{The set of topological constraints which have to be verified
+*          by each surface facet. The default value is `CGAL::FACET_VERTICES_ON_SURFACE`.
+*          See `Mesh_facet_topology` manual page to get all possible values.}
+*     \cgalParamType{`Mesh_facet_topology`}
+*     \cgalParamDefault{`0`}
+*   \cgalParamNEnd
+*
 */
 template<typename TriangleMesh
        , typename NamedParameters>
@@ -193,16 +200,19 @@ void make_surface_mesh(const TriangleMesh& pmesh
     domain.detect_features(angle_bound); //includes detection of borders
 
   // Mesh criteria
-  auto esize = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
-                                (std::numeric_limits<FT>::max)());
-  auto fsize = choose_parameter(get_parameter(np, internal_np::mesh_facet_size), 0.);
+  auto esize  = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
+                                 (std::numeric_limits<FT>::max)());
+  auto fsize  = choose_parameter(get_parameter(np, internal_np::mesh_facet_size), 0.);
   auto fangle = choose_parameter(get_parameter(np, internal_np::mesh_facet_angle), 0.);
-  auto fdist = choose_parameter(get_parameter(np, internal_np::mesh_facet_distance), 0.);
+  auto fdist  = choose_parameter(get_parameter(np, internal_np::mesh_facet_distance), 0.);
+  auto ftopo  = choose_parameter(get_parameter(np, internal_np::mesh_facet_topology),
+                                 CGAL::FACET_VERTICES_ON_SURFACE);
 
   Mesh_criteria criteria(CGAL::parameters::edge_size = esize,
                          CGAL::parameters::facet_size = fsize,
                          CGAL::parameters::facet_angle = fangle,
-                         CGAL::parameters::facet_distance = fdist);
+                         CGAL::parameters::facet_distance = fdist,
+                         CGAL::parameters::facet_topology = ftopo);
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,

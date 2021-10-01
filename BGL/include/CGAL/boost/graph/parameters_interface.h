@@ -133,6 +133,7 @@ CGAL_add_named_parameter(mesh_edge_size_t, mesh_edge_size, mesh_edge_size)
 CGAL_add_named_parameter(mesh_facet_size_t, mesh_facet_size, mesh_facet_size)
 CGAL_add_named_parameter(mesh_facet_angle_t, mesh_facet_angle, mesh_facet_angle)
 CGAL_add_named_parameter(mesh_facet_distance_t, mesh_facet_distance, mesh_facet_distance)
+CGAL_add_named_parameter(mesh_facet_topology_t, mesh_facet_topology, mesh_facet_topology)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
