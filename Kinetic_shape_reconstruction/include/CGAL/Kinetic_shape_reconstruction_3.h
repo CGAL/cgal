@@ -132,6 +132,7 @@ public:
       std::cout << "* number of subdivision blocks: "         << num_blocks                      << std::endl;
       std::cout << "* enlarge bbox ratio: "                   << m_parameters.enlarge_bbox_ratio << std::endl;
       std::cout << "* reorient: "                             << is_reorient                     << std::endl;
+      std::cout << "* hybrid mode: "                          << m_parameters.use_hybrid_mode    << std::endl;
     }
 
     if (m_parameters.verbose) {

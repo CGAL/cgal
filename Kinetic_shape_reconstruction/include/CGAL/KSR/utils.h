@@ -135,7 +135,8 @@ angle_3d(const Vector_3& v1, const Vector_3& v2) {
   }
 }
 
-// Intersections.
+// Intersections. Used only in the 2D version.
+// For the 3D version, see conversions.h!
 template<typename Type1, typename Type2, typename ResultType>
 inline bool intersection(
   const Type1& t1, const Type2& t2, ResultType& result) {

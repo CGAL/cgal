@@ -27,3 +27,6 @@ TODO:
 - make intersections a part of kinetic traits that is exact
 
 - try to find out where we lose the precison the most
+
+- in naive hybrid mode, we manage to succeed for more events, which means that making more exact computations improves the algorithm, that is a good sign,
+however doing them all exactly is very slow, so the trade-off must be found

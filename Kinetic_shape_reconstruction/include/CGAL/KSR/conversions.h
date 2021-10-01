@@ -20,8 +20,10 @@
 #include <utility>
 
 // CGAL includes.
+#include <CGAL/assertions.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 namespace CGAL {
 namespace KSR {
@@ -29,7 +31,16 @@ namespace KSR {
 template<typename GeomTraits>
 class Kinetic_traits_3 {
 
-  using FT = typename GeomTraits::FT;
+  using IK = GeomTraits; // assume GT is inexact here
+  using IT = typename GeomTraits::FT;
+
+  // TODO: This is very naive way of doing this. We should compare IT anf ET
+  // and, in case they are the same or IT is already exact, abort conversion!
+  using EK = CGAL::Exact_predicates_exact_constructions_kernel;
+  using ET = typename EK::FT;
+
+  using IK_to_EK = CGAL::Cartesian_converter<IK, EK>;
+  using EK_to_IK = CGAL::Cartesian_converter<EK, IK>;
 
 public:
   Kinetic_traits_3(const bool use_hybrid_mode) :
@@ -59,15 +70,20 @@ public:
 
 private:
   const bool m_use_hybrid_mode;
+  IK_to_EK m_inexact_to_exact;
+  EK_to_IK m_exact_to_inexact;
 
   template<typename Type1, typename Type2>
   decltype(auto) intersection_impl(const Type1& t1, const Type2& t2) const {
 
     if (!m_use_hybrid_mode) {
       return CGAL::intersection(t1, t2);
-    } {
-      CGAL_assertion_msg(false, "TODO: FINISH HYBRID MODE!");
-      return CGAL::intersection(t1, t2);
+    } { // convert to exact
+      const auto exact_t1 = m_inexact_to_exact(t1);
+      const auto exact_t2 = m_inexact_to_exact(t2);
+      const auto exact_result = CGAL::intersection(exact_t1, exact_t2);
+      // CGAL_assertion_msg(false, "TODO: FINISH HYBRID MODE!");
+      return m_exact_to_inexact(exact_result);
     }
   }
 };

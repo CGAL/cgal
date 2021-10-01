@@ -12,7 +12,7 @@ using SCD   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
-using Kernel     = EPECK;
+using Kernel     = EPICK;
 using FT         = typename Kernel::FT;
 using Point_2    = typename Kernel::Point_2;
 using Point_3    = typename Kernel::Point_3;
@@ -84,7 +84,7 @@ int main(const int argc, const char** argv) {
   const unsigned int subdiv  = 0;
   const double       eratio  = 1.1;
   const bool         orient  = false;
-  const bool         use_hm  = false;
+  const bool         use_hm  = true;
 
   // Algorithm.
   KSR ksr(verbose, debug);
