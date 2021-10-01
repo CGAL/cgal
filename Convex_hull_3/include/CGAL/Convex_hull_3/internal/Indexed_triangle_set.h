@@ -58,7 +58,7 @@ void copy_ch2_to_face_graph(const std::list<P>& CH_2,
     its.vertices.push_back(p);
   }
 
-  for(int i = 1; i < CH_2.size()-1; ++i){
+  for(std::size_t i = 1; i < CH_2.size()-1; ++i){
       its.faces.push_back({ i, i + 1, i + 2 });
   }
 
