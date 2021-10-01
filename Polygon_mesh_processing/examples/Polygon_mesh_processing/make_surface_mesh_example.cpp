@@ -32,13 +32,17 @@ int main(int argc, char* argv[])
   double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.02;
   Sizing_field size(target_edge_length);
 
+  double fdist = (argc > 3) ? std::stod(std::string(argv[3])) : 0.01;
+
+
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   Mesh outmesh;
   PMP::make_surface_mesh(mesh, outmesh,
     PMP::parameters::protect_constraints(true)
-    .mesh_edge_size(size));
+    .mesh_edge_size(size)
+    .mesh_facet_distance(fdist));
 
   std::cout << "Remeshing done." << std::endl;
 

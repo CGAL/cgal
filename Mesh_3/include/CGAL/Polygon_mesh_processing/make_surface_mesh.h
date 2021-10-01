@@ -129,7 +129,7 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{mesh_facet_size}
 *     \cgalParamDescription{A scalar field (resp. a constant) describing a space varying
-*          (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls.}
+*          (resp. a uniform) upper-bound for the radii of the surface Delaunay balls.}
 *     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept
 *          `MeshDomainField_3`}
 *     \cgalParamDefault{`0.`}
@@ -138,6 +138,15 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{mesh_facet_angle}
 *     \cgalParamDescription{A lower bound for the angles (in degrees) of the surface mesh facets.}
 *     \cgalParamType{A number type `FT` model of the concept `Field`}
+*     \cgalParamDefault{`0.`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{mesh_facet_distance}
+*     \cgalParamDescription{A scalar field (resp. a constant) describing a space varying
+           (resp. a uniform) upper bound for the distance between the facet circumcenter
+           and the center of its surface Delaunay ball.}
+*     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept
+*          `MeshDomainField_3`}
 *     \cgalParamDefault{`0.`}
 *   \cgalParamNEnd
 
@@ -188,11 +197,12 @@ void make_surface_mesh(const TriangleMesh& pmesh
                                 (std::numeric_limits<FT>::max)());
   auto fsize = choose_parameter(get_parameter(np, internal_np::mesh_facet_size), 0.);
   auto fangle = choose_parameter(get_parameter(np, internal_np::mesh_facet_angle), 0.);
+  auto fdist = choose_parameter(get_parameter(np, internal_np::mesh_facet_distance), 0.);
 
   Mesh_criteria criteria(CGAL::parameters::edge_size = esize,
                          CGAL::parameters::facet_size = fsize,
                          CGAL::parameters::facet_angle = fangle,
-                         CGAL::parameters::facet_distance = 0.001);
+                         CGAL::parameters::facet_distance = fdist);
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
