@@ -309,7 +309,7 @@ void Viewer::doBindings()
   setKeyDescription(Qt::Key_M,
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
-  setKeyDescription(Qt::Key_I + Qt::CTRL,
+  setKeyDescription(Qt::CTRL, Qt::Key_I,
                       tr("Toggle the primitive IDs visibility of the selected Item, for the types selected in the context menu of the said item."));
   setKeyDescription(Qt::Key_D,
                       tr("Disable the distance between two points  visibility."));

@@ -446,7 +446,8 @@ private:
     const Self *t;
 
   public:
-    Infinite_tester() {}
+    Infinite_tester()
+      : t(nullptr) {}
 
     Infinite_tester(const Self *tr)
       : t(tr) {}

@@ -3398,8 +3398,17 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_3 Triangle_3;
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Ray_3      Ray_3;
+
   public:
-    typedef Point_3          result_type;
+    template<typename>
+    struct result {
+      typedef const Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Point_3, Point_3)> {
+      typedef const Point_3& type;
+    };
 
     Point_3
     operator()( const Line_3& l, const Point_3& p ) const
@@ -3429,15 +3438,19 @@ namespace HomogeneousKernelFunctors {
 
     Point_3
     operator()( const Triangle_3& t, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(t,p,K()); }
 
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(s,p,K()); }
 
     Point_3
     operator()( const Ray_3& r, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(r,p,K()); }
+
+    const Point_3&
+    operator()( const Point_3& p, const Point_3& q) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,q,K()); }
   };
 
   template <class K>
@@ -4675,7 +4688,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
-    { return Oriented_side(c.bounded_side(p) * c.orientation()); }
+    { return Oriented_side(static_cast<int>(c.bounded_side(p)) * static_cast<int>(c.orientation())); }
 
     result_type
     operator()( const Line_2& l, const Point_2& p) const

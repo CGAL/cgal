@@ -54,7 +54,7 @@ void check_if_property_is_used(PointSet& point_set,
 
   \brief reads the content of an intput stream in the \ref IOStreamLAS into a point set.
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \param is the input stream
   \param point_set the point set
@@ -194,7 +194,7 @@ namespace IO {
 
   \brief writes the content of a point set into an output stream in the \ref IOStreamLAS.
 
-  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
 
   \tparam Point the point type of the `Point_set_3`
   \tparam Vector the vector type of the `Point_set_3`

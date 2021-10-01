@@ -18,7 +18,6 @@
 
 #include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/CORE/BigInt.h>
 #include <CGAL/CORE/Expr.h>
 #include <CGAL/CORE_coercion_traits.h>
 
@@ -189,7 +188,6 @@ public:
 
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>
-#include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>

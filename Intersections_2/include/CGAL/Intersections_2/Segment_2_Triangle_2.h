@@ -34,10 +34,10 @@ namespace internal {
 template <class K>
 class Segment_2_Triangle_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Segment_2_Triangle_2_pair(typename K::Segment_2 const *seg,
                               typename K::Triangle_2 const *trian)
-      : _seg(seg), _trian(trian), _known(false) {}
+      : _seg(seg), _trian(trian) {}
 
     Intersection_results intersection_type() const;
 
@@ -46,8 +46,7 @@ public:
 protected:
     typename K::Segment_2 const *  _seg;
     typename K::Triangle_2 const * _trian;
-    mutable bool                       _known;
-    mutable Intersection_results       _result;
+    mutable Intersection_results       _result = UNKNOWN;
     mutable typename K::Point_2            _intersection_point;
     mutable typename K::Point_2            _other_point;
 };
@@ -71,10 +70,9 @@ template <class K>
 typename Segment_2_Triangle_2_pair<K>::Intersection_results
 Segment_2_Triangle_2_pair<K>::intersection_type() const
 {
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
 // The non const this pointer is used to cast away const.
-    _known = true;
     Straight_2_<K> straight(*_seg);
     typedef typename K::Line_2 Line_2;
 
@@ -124,7 +122,7 @@ typename K::Point_2
 Segment_2_Triangle_2_pair<K>::
 intersection_point() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -136,7 +134,7 @@ Segment_2_Triangle_2_pair<K>::
 intersection_segment() const
 {
   typedef typename K::Segment_2 Segment_2;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return Segment_2(_intersection_point, _other_point);
