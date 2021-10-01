@@ -4,10 +4,16 @@
 #include <CGAL/Polygon_mesh_processing/make_surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
+#include <CGAL/Mesh_constant_domain_field_3.h>
+
+
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
+
+typedef CGAL::Mesh_constant_domain_field_3<K, int> Sizing_field;
+
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -24,6 +30,7 @@ int main(int argc, char* argv[])
   }
 
   double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.02;
+  Sizing_field size(target_edge_length);
 
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
@@ -31,7 +38,7 @@ int main(int argc, char* argv[])
   Mesh outmesh;
   PMP::make_surface_mesh(mesh, outmesh,
     PMP::parameters::protect_constraints(true)
-    .mesh_edge_size(0.025));
+    .mesh_edge_size(size));
 
   std::cout << "Remeshing done." << std::endl;
 

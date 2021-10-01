@@ -115,10 +115,10 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{mesh_edge_size}
-*     \cgalParamDescription{Maximal edge length chosen to drive the process which samples
-*        the 1-dimensional features of the domain, when `protect_constraints` is `true`.
-*        It provides an upper bound for the distance between two protecting ball centers
-*        that are consecutive on a 1-feature.}
+*     \cgalParamDescription{A scalar field (resp. a constant) providing a space varying
+*          (resp. a uniform) upper bound for the lengths of curve edges.
+*          This parameter has to be set to a positive value when 1-dimensional features protection is used
+*          (when `protect_constraints` is `true`).}
 *     \cgalParamType{A number type `FT`, either deduced from the `geom_traits`
 *          \ref bgl_namedparameters "Named Parameters" if provided,
 *          or from the geometric traits class deduced from the point property map
@@ -128,9 +128,7 @@ namespace Polygon_mesh_processing {
 *
 
 *
-* @todo add edge_sizing_field_,
-*  facet_angle_, facet_size_, facet_sizing_field_, facet_distance_, facet_topology_,
-*  sizing_field_
+* @todo add facet_angle_, facet_size_, facet_sizing_field_, facet_distance_, facet_topology_
 */
 template<typename TriangleMesh
        , typename NamedParameters>
@@ -171,9 +169,8 @@ void make_surface_mesh(const TriangleMesh& pmesh
   if(protect)
     domain.detect_features(angle_bound); //includes detection of borders
 
-  // Mesh criteria
-  const FT esize = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
-                                        (std::numeric_limits<FT>::max)());
+  auto esize = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
+                                (std::numeric_limits<FT>::max)());
   Mesh_criteria criteria(CGAL::parameters::edge_size = esize,
                          CGAL::parameters::facet_angle = 25,
                          CGAL::parameters::facet_size = 0.1,
