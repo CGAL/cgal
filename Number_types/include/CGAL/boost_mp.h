@@ -144,7 +144,7 @@ struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T
 namespace Boost_MP_internal {
 
   Interval_nt<false>
-  my_ldexp( const Interval_nt<false>& intv, const int e ) const {
+  my_ldexp( const Interval_nt<false>& intv, const int e ) {
 
     CGAL_assertion(intv.inf() > 0.0);
     CGAL_assertion(intv.sup() > 0.0);
@@ -155,7 +155,8 @@ namespace Boost_MP_internal {
       scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup() );
   }
 
-  bool are_bounds_correct( const double l, const double u, const Type& x ) const {
+  template<typename Type>
+  bool are_bounds_correct( const double l, const double u, const Type& x ) {
 
     const double inf = std::numeric_limits<double>::infinity();
     CGAL_assertion(u == l || u == std::nextafter(l, +inf));
@@ -181,7 +182,7 @@ namespace Boost_MP_internal {
   }
 
   template<typename ET>
-  std::pair<double, double> get_0ulp_interval( const int64_t shift, const ET& p ) const {
+  std::pair<double, double> get_0ulp_interval( const int64_t shift, const ET& p ) {
 
     CGAL_assertion(p >= 0);
     const uint64_t pp = static_cast<uint64_t>(p);
@@ -192,7 +193,7 @@ namespace Boost_MP_internal {
   }
 
   template<typename ET>
-  std::pair<double, double> get_1ulp_interval( const int64_t shift, const ET& p ) const {
+  std::pair<double, double> get_1ulp_interval( const int64_t shift, const ET& p ) {
 
     CGAL_assertion(p >= 0);
     const uint64_t pp = static_cast<uint64_t>(p);
@@ -205,8 +206,8 @@ namespace Boost_MP_internal {
     return my_ldexp(intv, -static_cast<int>(shift)).pair();
   }
 
-  template<typename ET>
-  std::pair<double, double> to_interval( ET xnum, ET xden ) const {
+  template<typename Type, typename ET>
+  std::pair<double, double> to_interval(const Type& x, ET xnum, ET xden ) {
 
     CGAL_assertion(!CGAL::is_zero(xden));
     CGAL_assertion_code(const Type input = x);
@@ -404,7 +405,7 @@ struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rat
 
           const auto& xnum = boost::multiprecision::numerator(x);
           const auto& xden = boost::multiprecision::denominator(x);
-          return Boost_MP_internal::to_interval(xnum, xden);
+          return Boost_MP_internal::to_interval(x, xnum, xden);
         }
     };
 };
@@ -962,7 +963,7 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
 
         // Option 2. Stable one!
         std::pair<double, double> operator()( const Type& x ) const {
-          return Boost_MP_internal::to_interval(x.num, x.den);
+          return Boost_MP_internal::to_interval(x, x.num, x.den);
         }
     };
 };
