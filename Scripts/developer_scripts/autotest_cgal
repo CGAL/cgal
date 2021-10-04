@@ -24,7 +24,7 @@
 #sets the umask to 022 & 0777
 umask 022
 
-# Warn deprecated use of enviroment variables to pass on flags
+# Warn deprecated use of environment variables to pass on flags
 if [ -n "$TESTSUITE_CXXFLAGS" ] ; then
   echo "\$TESTSUITE_CXXFLAGS is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS instead" >&2;
 fi

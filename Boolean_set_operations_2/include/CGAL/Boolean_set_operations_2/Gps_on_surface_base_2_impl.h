@@ -348,7 +348,7 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   }
 
   Face_const_handle const_f;
-  // face should not be contained as the pgn is completly disjoint of the
+  // face should not be contained as the pgn is completely disjoint of the
   // arrangement.
   CGAL_assertion(CGAL::assign(const_f, obj_f) && !const_f->contained());
   CGAL::assign(const_f, obj_f);
