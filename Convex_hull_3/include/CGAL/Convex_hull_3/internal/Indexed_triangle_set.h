@@ -114,17 +114,17 @@ void make_tetrahedron(const P& p0, const P&p1, const P& p2, const P& p3,
     CGAL::internal::resize(its.faces[i], 3);
   }
   its.faces[0][0] = 0;
-  its.faces[0][0] = 1;
-  its.faces[0][0] = 2;
-  its.faces[0][0] = 1;
-  its.faces[0][0] = 0;
-  its.faces[0][0] = 3;
-  its.faces[0][0] = 3;
-  its.faces[0][0] = 0;
-  its.faces[0][0] = 2;
-  its.faces[0][0] = 2;
-  its.faces[0][0] = 1;
-  its.faces[0][0] = 3;
+  its.faces[0][1] = 1;
+  its.faces[0][2] = 2;
+  its.faces[1][0] = 1;
+  its.faces[1][1] = 0;
+  its.faces[1][2] = 3;
+  its.faces[2][0] = 3;
+  its.faces[2][1] = 0;
+  its.faces[2][2] = 2;
+  its.faces[3][0] = 2;
+  its.faces[3][1] = 1;
+  its.faces[3][2] = 3;
 }
 
 } // namespace CGAL
