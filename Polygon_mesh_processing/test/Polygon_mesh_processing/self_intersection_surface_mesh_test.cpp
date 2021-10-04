@@ -83,7 +83,7 @@ int test_self_intersections(const std::string filename,
 }
 
 template <typename K>
-int test_limited_self_intersections(const char* filename)
+int test_limited_self_intersections(const std::string& filename)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
   typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;

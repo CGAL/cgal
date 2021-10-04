@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
   }
 
   Mesh P, Q;
-  if(!CGAL::IO::read_polygon_mesh(P_name, P) || !CGAL::IO::read_polygon_mesh(Q_name], Q))
+  if(!CGAL::IO::read_polygon_mesh(P_name, P) || !CGAL::IO::read_polygon_mesh(Q_name, Q))
   {
     std::cerr << "Invalid input files." << std::endl;
     return EXIT_FAILURE;
