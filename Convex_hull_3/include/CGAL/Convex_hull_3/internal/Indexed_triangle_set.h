@@ -38,9 +38,6 @@ struct Indexed_triangle_set
   {}
 };
 
-
-
-
 template <typename P, typename V, typename F>
 void add_isolated_points(const P& point, Indexed_triangle_set<V,F>& its)
 {
@@ -95,8 +92,8 @@ void copy_face_graph(const TDS& tds, Convex_hull_3::internal::Indexed_triangle_s
 template <typename V, typename F>
 void clear(Convex_hull_3::internal::Indexed_triangle_set<V,F>& its)
 {
-  its.vertices.clear();
-  its.faces.clear();
+  CGAL::internal::resize(its.vertices, 0);
+  CGAL::internal::resize(its.faces, 0);
 }
 
 
