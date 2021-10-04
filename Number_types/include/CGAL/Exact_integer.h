@@ -64,6 +64,8 @@ typedef leda_integer Exact_integer;
 typedef BOOST_cpp_arithmetic_kernel::Integer Exact_integer;
 #elif defined(CGAL_USE_CORE)
 typedef CORE::BigInt Exact_integer;
+#else
+#error "ERROR: Cannot determine a BigInt type!"
 #endif // CGAL_USE_CORE
 
 #endif // not DOXYGEN_RUNNING
