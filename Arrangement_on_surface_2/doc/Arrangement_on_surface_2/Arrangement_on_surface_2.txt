@@ -6746,7 +6746,7 @@ corresponding faces.
 <!-- ------------------------------------------------------------------------- -->
 
 Arrangement instances are adapted to \boost graphs by specializing the
-\link BGLArgtGT `boost:graph_traits` \endlink template for
+\link BGLArgtGT `boost::graph_traits` \endlink template for
 `Arrangement_2` instances. The graph-traits states the graph concepts
 that the arrangement class models (see below) and defines the types
 required by these concepts.
@@ -6879,7 +6879,7 @@ one described in the previous section. A dual-graph representation
 refers to the graph, where each arrangement face corresponds to a
 graph vertex, and two vertices are adjacent iff the corresponding faces
 share a common edge on their boundaries. This is done by specializing
-the `boost:graph_traits` template for `Dual<Arrangement_2>` instances,
+the `boost::graph_traits` template for `Dual<Arrangement_2>` instances,
 where `Dual<Arrangement_2>` is a template specialization that gives a
 dual interpretation to an arrangement instance.
 
