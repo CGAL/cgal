@@ -19,8 +19,6 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Image_3.h>
 
-#include <functional>
-
 namespace CGAL {
 
 namespace ImageIO {
@@ -40,7 +38,7 @@ public:
     , weights(weights)
   {}
 
-  class Indicator : public std::function<double(Image_word_type)>
+  class Indicator
   {
     const Weighted_indicator_factory& f;
     const Image_word_type label;
