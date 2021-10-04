@@ -158,18 +158,17 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   duplicator->SetInputImage(itk_img);
   duplicator->Update();
 
-  int id = 0;
-  for (Image_word_type label : labels)
+  for (int id = 0; id < labels.size(); ++id)
   {
     if (id > 0)
     {
       duplicator->SetInputImage(indicators[id - 1]);
       duplicator->Update();
     }
-    indicators[id++] = duplicator->GetOutput();
+    indicators[id] = duplicator->GetOutput();
   }
 
-  id = 0;
+  int id = 0;
   typename WeightsType::Pointer blured_max = WeightsType::New();
   for (Image_word_type label : labels)
   {
