@@ -394,7 +394,7 @@ int main()
   const std::string filename8 =  "data/tetra4.off";
   const std::string filename9 =  "data/small_spheres.off";
   const std::string filename10 = "data/hollow_sphere.off";
-  const std::string filename11 = "data-coref/sphere.off";
+  const std::string filename11 = CGAL::data_file_path("meshes/sphere.off");
 
 
   std::cout << "First test (Epic):" << std::endl;

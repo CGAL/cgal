@@ -115,7 +115,7 @@ void cube_test()
 {
   std::cout << "---- cube_test() ----\n";
   CGAL::Surface_mesh<EPIC::Point_3> tm;
-  std::ifstream in("data-coref/cube_meshed.off");
+  std::ifstream in(CGAL::data_file_path("meshes/cube_meshed.off"));
   in >> tm;
   assert(tm.vertices().size()!=0);
 

@@ -16,10 +16,12 @@ typedef CGAL::Surface_mesh_deformation<Polyhedron,CGAL::Default, CGAL::Default, 
 
 int main(int argc,char** argv)
 {
-  std::string off_name="input.off", sel_name="input.sel", def_name="input.def";
+  std::string off_name=CGAL::data_file_path("meshes/cactus.off"),
+              sel_name="data/cactus.sel",
+              def_name="data/cactus.def";
   if  ( argc!=4){
     std::cerr <<"Usage " << argv[0] << " input.off input.sel input.def\n";
-    return 1;
+    std::cerr <<"Using default values: " << off_name << " " << sel_name << " " << def_name << "\n";
   }
   else
   {

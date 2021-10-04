@@ -24,7 +24,7 @@ int main(int argc, char ** argv) {
   }
 
   Direction_2 initial_direction;
-  if (argc == 2)
+  if (argc <= 2)
     initial_direction = Direction_2(1, 0);  // default initial_direction
   else if (argc == 4)
     initial_direction = Direction_2(atof(argv[2]), atof(argv[3]));
