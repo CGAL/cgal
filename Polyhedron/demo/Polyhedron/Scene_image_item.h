@@ -47,7 +47,7 @@ public:
 
   const Image* image_weights() const;
   void set_image_weights(const Image& img, const float sigma);
-  const float sigma_weights() const;
+  float sigma_weights() const;
 
   void invalidateOpenGLBuffers();
   void initializeBuffers(Viewer_interface *) const;

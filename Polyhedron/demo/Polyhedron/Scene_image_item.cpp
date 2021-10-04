@@ -511,7 +511,7 @@ Scene_image_item::set_image_weights(const Image& img, const float sigma)
   d->m_image_weights = img;
   d->m_sigma_weights = sigma;
 }
-const float
+float
 Scene_image_item::sigma_weights() const
 {
   return d->m_sigma_weights;
