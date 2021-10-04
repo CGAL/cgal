@@ -595,16 +595,21 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     }
   }
   //weighted image
-  connect(ui.useWeights_checkbox,
-          SIGNAL(toggled(bool)),
-          ui.weightsSigma,
-          SLOT(setEnabled(bool)));
-  connect(ui.useWeights_checkbox,
-          SIGNAL(toggled(bool)),
-          ui.weightsSigma_label,
-          SLOT(setEnabled(bool)));
+#ifdef CGAL_USE_ITK
+  connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
+          ui.weightsSigma,        SLOT(setEnabled(bool)));
+  connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
+          ui.weightsSigma_label,  SLOT(setEnabled(bool)));
   ui.weightsSigma->setValue(1.);
-
+#else
+  ui.labeledImgGroup->setDisabled(true);
+  ui.labeledImgGroup->setToolTip(
+    QString("The use of weighted images is disabled "
+            "because the Insight Toolkit (ITK) is not available."));
+  ui.useWeights_checkbox->setDisabled(true);
+  ui.weightsSigma_label->setDisabled(true);
+  ui.weightsSigma->setDisabled(true);
+#endif
   // -----------------------------------
   // Get values
   // -----------------------------------
