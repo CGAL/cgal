@@ -712,7 +712,7 @@ When a segmented image is given as input, the generated mesh surface sometimes s
 to the voxels surface, causing an aliasing effect.
 A solution to generate a smooth and accurate output surface was described by Stalling et al in
 \cgalCite{stalling1998weighted}. It consists in generating a second input image, made
-of integer coefficients called *weights*, and use those weights to define smoothing domain boundaries.
+of integer coefficients called *weights*, and use those weights to define smoother domain boundaries.
 The 3D image of weights can be generated using `CGAL::Mesh_3::generate_weights()` as shown in
 the following example.
 
