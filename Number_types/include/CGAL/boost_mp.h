@@ -794,14 +794,6 @@ namespace internal {
 
 #ifdef CGAL_USE_BOOST_MP
 
-template < >
-inline void
-simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
-  const boost::multiprecision::cpp_int r = boost::multiprecision::gcd(a, b);
-  a /= r;
-  b /= r;
-}
-
 template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_int> >
     : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base< Quotient<boost::multiprecision::cpp_int> > {
 

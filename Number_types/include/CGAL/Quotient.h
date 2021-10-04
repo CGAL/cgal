@@ -33,6 +33,9 @@
 #include <CGAL/Kernel/mpl.h>
 
 #include <boost/operators.hpp>
+#ifdef CGAL_USE_BOOST_MP
+#include <boost/multiprecision/cpp_int.hpp>
+#endif // CGAL_USE_BOOST_MP
 
 namespace CGAL {
 
@@ -45,6 +48,15 @@ namespace CGAL {
 template < typename NT >
 inline void
 simplify_quotient(NT &, NT &) {}
+
+#ifdef CGAL_USE_BOOST_MP
+inline void
+simplify_quotient(boost::multiprecision::cpp_int & a, boost::multiprecision::cpp_int & b) {
+  const boost::multiprecision::cpp_int r = boost::multiprecision::gcd(a, b);
+  a /= r;
+  b /= r;
+}
+#endif // CGAL_USE_BOOST_MP
 
 // This one should be replaced by some functor or tag.
 // Meanwhile, the class is specialized for Gmpz, mpz_class, leda_integer.
