@@ -385,7 +385,7 @@ int main()
 
   bool expected = true;
   const char* filename1 =  "data/tetra1.off";
-  const char* filename2 =  "data/tetra3.off";
+  const char* filename2 =  CGAL::data_file_path("meshes/reference_tetrahedron.off");
   const char* filename3 =  "data/triangle.polylines.txt";
   const char* filename4 =  "data/planar.polylines.txt";
   const char* filename5 =  "data/tetra3_inter.polylines.txt";

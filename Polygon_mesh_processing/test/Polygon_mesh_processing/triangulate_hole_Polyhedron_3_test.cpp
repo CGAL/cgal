@@ -346,7 +346,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
 void generate_elephant_with_hole()
 {
   Polyhedron poly;
-  read_poly("data/elephant.off", poly);
+  read_poly(CGAL::data_file_path("meshes/elephant.off"), poly);
   int i=0;
   for(Facet_handle fd : faces(poly))
     if (++i==229)
@@ -372,7 +372,7 @@ int main()
   std::vector<std::string> input_files;
   input_files.push_back("elephant_triangle_hole.off");
   input_files.push_back("elephant_quad_hole.off");
-  input_files.push_back("data/mech-holes-shark.off");
+  input_files.push_back(CGAL::data_file_path("meshes/mech-holes-shark.off"));
   // std::cerr.precision(15);
   for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
     test_triangulate_hole(it->c_str(), true);

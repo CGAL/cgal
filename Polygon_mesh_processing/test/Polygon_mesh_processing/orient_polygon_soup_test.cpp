@@ -105,7 +105,7 @@ int test_orient(const bool save_oriented) {
   std::vector<Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
 
-  shuffle_off("data/elephant.off", "elephant-shuffled.off");
+  shuffle_off(CGAL::data_file_path("meshes/elephant.off"), "elephant-shuffled.off");
   std::ifstream input("elephant-shuffled.off");
   if ( !input || !read_soup<K>(input, points, polygons)){
     std::cerr << "Error: can not shuffled file.\n";
@@ -147,14 +147,14 @@ int test_pipeline()
   std::vector< std::vector<std::size_t> > polygons;
   Polyhedron ref1;
 
-  shuffle_off("data/elephant.off", "elephant-shuffled.off");
+  shuffle_off(CGAL::data_file_path("meshes/elephant.off"), "elephant-shuffled.off");
   std::ifstream input("elephant-shuffled.off");
   if ( !input || !read_soup<K>(input, points, polygons)){
     std::cerr << "Error: can not shuffled file.\n";
     return 1;
   }
   input.close();
-  input.open("data/elephant.off");
+  input.open(CGAL::data_file_path("meshes/elephant.off"));
   if ( !input || !(input >> ref1)){
     std::cerr << "Error: can not read reference file.\n";
     return 1;

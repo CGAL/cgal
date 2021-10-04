@@ -198,7 +198,7 @@ int main(int argc, char * argv[])
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
 
     // decode parameters
-    std::string input_filename  = argc == 1 ?  "data/ChineseDragon-10kv.off" : argv[1];
+    std::string input_filename  = argc == 1 ?  CGAL::data_file_path("meshes/ChineseDragon-10kv.off") : argv[1];
     std::string output_filename = argc == 1 ?  "ChineseDragon-10kv.pwn" : argv[2];
     if (argc==1)
     {

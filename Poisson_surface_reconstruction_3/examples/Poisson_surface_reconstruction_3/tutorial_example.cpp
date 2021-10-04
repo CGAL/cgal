@@ -37,7 +37,7 @@ int main(int argc, char*argv[])
 
   Point_set points;
 
-  std::string fname = argc==1?"data/kitten.xyz" : argv[1];
+  std::string fname = argc==1?CGAL::data_file_path("points_3/kitten.xyz") : argv[1];
   if (argc < 2)
   {
     std::cerr << "Usage: " << argv[0] << " [input.xyz/off/ply/las]" << std::endl;

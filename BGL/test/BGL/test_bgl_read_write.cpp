@@ -166,7 +166,7 @@ void test_bgl_OFF(const char* filename)
     VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg);
     FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg);
 
-    ok = CGAL::IO::read_OFF("data/mesh_with_colors.off", fg, CGAL::parameters::vertex_color_map(vcm)
+    ok = CGAL::IO::read_OFF(CGAL::data_file_path("meshes/mesh_with_colors.off"), fg, CGAL::parameters::vertex_color_map(vcm)
                                                                               .face_color_map(fcm));
     assert(ok);
     assert(num_vertices(fg) == 8 && num_faces(fg) == 4);
@@ -381,7 +381,7 @@ void test_bgl_OFF(const char* filename)
   assert(!ok);
   ok = CGAL::IO::read_OFF("data/sphere.obj", fg);
   assert(!ok);
-  ok = CGAL::IO::read_OFF("data/pig.stl", fg);
+  ok = CGAL::IO::read_OFF(CGAL::data_file_path("meshes/pig.stl"), fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -459,7 +459,7 @@ void test_bgl_OBJ(const std::string filename)
   assert(!ok);
   ok = CGAL::IO::read_OBJ("data/genus3.off", fg); // wrong extension
   assert(!ok);
-  ok = CGAL::IO::read_OBJ("data/pig.stl", fg);
+  ok = CGAL::IO::read_OBJ(CGAL::data_file_path("meshes/pig.stl"), fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -475,7 +475,7 @@ void test_bgl_PLY(const std::string filename,
   bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
   is.close();
   assert(ok);
-  assert(filename != "data/colored_tetra.ply" || (num_vertices(fg) == 4 && num_faces(fg) == 4));
+  assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply") || (num_vertices(fg) == 4 && num_faces(fg) == 4));
    if(!binary)
    {
      fg.clear();
@@ -483,7 +483,7 @@ void test_bgl_PLY(const std::string filename,
      bool ok = CGAL::IO::read_PLY(is, fg, CGAL::parameters::use_binary_mode(false));
      is.close();
      assert(ok);
-     assert(filename != "data/colored_tetra.ply" || (num_vertices(fg) == 4 && num_faces(fg) == 4));
+     assert(filename != CGAL::data_file_path("meshes/colored_tetra.ply") || (num_vertices(fg) == 4 && num_faces(fg) == 4));
    }
 
   // write with PLY
@@ -520,7 +520,7 @@ void test_bgl_PLY(const std::string filename,
   VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), fg);
   FaceColorMap fcm = get(CGAL::dynamic_face_property_t<CGAL::IO::Color>(), fg);
 
-  std::ifstream is_c("data/colored_tetra.ply"); // ASCII
+  std::ifstream is_c(CGAL::data_file_path("meshes/colored_tetra.ply")); // ASCII
   ok = CGAL::IO::read_PLY(is_c, fg, CGAL::parameters::vertex_color_map(vcm)
                                                     .face_color_map(fcm));
   assert(ok);
@@ -603,9 +603,9 @@ void test_bgl_PLY(const std::string filename,
   assert(!ok);
   ok = CGAL::IO::read_PLY("data/binary_cut.ply", fg); // broken binary
   assert(!ok);
-  ok = CGAL::IO::read_PLY("data/cube.off", fg);
+  ok = CGAL::IO::read_PLY(CGAL::data_file_path("meshes/cube.off"), fg);
   assert(!ok);
-  ok = CGAL::IO::read_PLY("data/pig.stl", fg);
+  ok = CGAL::IO::read_PLY(CGAL::data_file_path("meshes/pig.stl"), fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
 }
@@ -661,8 +661,8 @@ void test_bgl_STL(const std::string filename)
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   ok = CGAL::IO::read_STL(is, fg, CGAL::parameters::vertex_point_map(cvpm));
   assert(ok);
-  assert(filename != "data/pig.stl" || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
-  assert(filename != "data/pig.stl" || cpoints.size() == 8642);
+  assert(filename != CGAL::data_file_path("meshes/pig.stl") || (num_vertices(fg) == 8642 && num_faces(fg) == 16848));
+  assert(filename != CGAL::data_file_path("meshes/pig.stl") || cpoints.size() == 8642);
 
   // write with STL
   {
@@ -905,7 +905,7 @@ int main(int argc, char** argv)
 {
   // OFF
 
-  const char* off_file = (argc > 1) ? argv[1] : "data/prim.off";
+  const char* off_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/prim.off");
 
   test_bgl_OFF<Polyhedron, Kernel>(off_file);
   Polyhedron fg;
@@ -936,16 +936,16 @@ int main(int argc, char** argv)
 #endif
 
   // PLY
-  const char* ply_file_ascii = (argc > 3) ? argv[3] : "data/colored_tetra.ply";
+  const char* ply_file_ascii = (argc > 3) ? argv[3] : CGAL::data_file_path("meshes/colored_tetra.ply");
   test_bgl_PLY<Polyhedron>(ply_file_ascii, false);
   test_bgl_PLY<SM>(ply_file_ascii, false);
 
-  const char* ply_file = (argc > 3) ? argv[3] : "data/colored_tetra.ply";
+  const char* ply_file = (argc > 3) ? argv[3] : CGAL::data_file_path("meshes/colored_tetra.ply");
   test_bgl_PLY<Polyhedron>(ply_file, true);
   test_bgl_PLY<SM>(ply_file, true);
 
   // STL
-  const char* stl_file = (argc > 4) ? argv[4] : "data/pig.stl";
+  const char* stl_file = (argc > 4) ? argv[4] : CGAL::data_file_path("meshes/pig.stl");
   test_bgl_STL<Polyhedron>(stl_file);
   test_bgl_STL<SM>(stl_file);
   test_bgl_STL<LCC>(stl_file);

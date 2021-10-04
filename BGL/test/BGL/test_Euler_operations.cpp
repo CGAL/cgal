@@ -537,7 +537,7 @@ add_faces()
 
   for (int i=0; i<2; ++i)
   {
-    std::ifstream in("data/head.off");
+    std::ifstream in(CGAL::data_file_path("meshes/head.off"));
     std::vector<Kernel::Point_3> points;
     std::vector<std::array<std::size_t, 3> > faces_ids;
     CGAL::IO::read_OFF(in, points, faces_ids);
@@ -559,7 +559,7 @@ add_faces()
 
   // closing a cube no extra vertex
   {
-    std::ifstream in("data/open_cube.off");
+    std::ifstream in(CGAL::data_file_path("meshes/open_cube.off"));
     T m;
     CGAL::IO::read_OFF(in, m);
     std::vector<vertex_descriptor> verts(vertices(m).begin(), vertices(m).end());
@@ -572,7 +572,7 @@ add_faces()
   }
   // closing a cube with extra vertex
   {
-    std::ifstream in("data/open_cube.off");
+    std::ifstream in(CGAL::data_file_path("meshes/open_cube.off"));
     T m;
     CGAL::IO::read_OFF(in, m);
     std::vector<vertex_descriptor> verts(vertices(m).begin(), vertices(m).end());

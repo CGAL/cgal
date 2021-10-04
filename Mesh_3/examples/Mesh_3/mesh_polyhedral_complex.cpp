@@ -34,12 +34,12 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 using namespace CGAL::parameters;
 
 const char* const filenames[] = {
-  "data/patches/patch-01.off",
-  "data/patches/patch-13.off",
-  "data/patches/patch-20.off",
-  "data/patches/patch-21.off",
-  "data/patches/patch-23.off",
-  "data/patches/patch-30.off",
+  CGAL::data_file_path("meshes/patch-01.off"),
+  CGAL::data_file_path("meshes/patch-13.off"),
+  CGAL::data_file_path("meshes/patch-20.off"),
+  CGAL::data_file_path("meshes/patch-21.off"),
+  CGAL::data_file_path("meshes/patch-23.off"),
+  CGAL::data_file_path("meshes/patch-30.off"),
 };
 
 const std::pair<int, int> incident_subdomains[] = {

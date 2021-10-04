@@ -121,7 +121,7 @@ void test_generators()
   test<Mesh>("data/triangle.off",     true,     false,  false,  false );
   test<Mesh>("data/quad.off",         false,    true,   false,  false );
   test<Mesh>("data/tetrahedron.off",  false,    false,  true,   false );
-  test<Mesh>("data/cube.off",         false,    false,  false,  false );
+  test<Mesh>(CGAL::data_file_path("meshes/cube.off"),         false,    false,  false,  false );
   test<Mesh>("data/cube-quads.off",   false,    false,  false,  true );
 
   Point_3 a(0,0,0), b(1,0,0), c(1,1,0), d(0,1,0);

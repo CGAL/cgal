@@ -46,7 +46,7 @@ int main(void)
   const double duration = 0.1;
   test_kernels<TRIANGLE>("data/cube.off",duration);
   test_kernels<TRIANGLE>("data/finger.off",duration);
-  test_kernels<TRIANGLE>("data/pinion.off",duration);
+  test_kernels<TRIANGLE>(CGAL::data_file_path("meshes/pinion_small.off"),duration);
   test_kernels<TRIANGLE>("data/coverrear.off",duration);
   return EXIT_SUCCESS;
 }

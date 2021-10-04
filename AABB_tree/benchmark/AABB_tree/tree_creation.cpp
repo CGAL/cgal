@@ -54,7 +54,7 @@ BENCHMARK(BM_Intersections);
 
 int main(int argc, char** argv)
 {
-  const char* default_file = "data/handle.off";
+  const char* default_file = CGAL::data_file_path("meshes/handle.off");
   const char* filename = argc > 2? argv[2] : default_file;
 
   {

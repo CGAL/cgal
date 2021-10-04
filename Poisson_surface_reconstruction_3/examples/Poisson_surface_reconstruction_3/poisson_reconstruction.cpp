@@ -127,7 +127,7 @@ int main(int argc, char * argv[])
     double average_spacing_ratio = 5;
 
     // decode parameters
-    std::string input_filename  = argc == 1 ? "data/kitten.xyz" : argv[1];
+    std::string input_filename  = argc == 1 ? CGAL::data_file_path("points_3/kitten.xyz") : argv[1];
     std::string output_filename = argc == 1 ? "kitten_poisson-20-100-0.5.off" : argv[2];
     for (int i=3; i+1<argc ; ++i)
     {

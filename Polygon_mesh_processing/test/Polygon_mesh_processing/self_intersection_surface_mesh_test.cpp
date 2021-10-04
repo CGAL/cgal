@@ -137,7 +137,7 @@ int main(int argc, char** argv)
 
   // First test ----------------------------------------------------------------
   bool expected = false;
-  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  const char* filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   if(argc > 1) {
     assert(argc > 2);
     std::stringstream ss(argv[2]);
@@ -153,7 +153,7 @@ int main(int argc, char** argv)
 
   // Second test ---------------------------------------------------------------
   expected = true;
-  filename = (argc > 3) ? argv[3] : "data/mannequin-devil.off";
+  filename = (argc > 3) ? argv[3] : CGAL::data_file_path("meshes/mannequin-devil.off");
   if(argc > 3) {
     assert(argc > 4);
     std::stringstream ss(argv[4]);
@@ -199,7 +199,7 @@ int main(int argc, char** argv)
   std::cout << "Fourth test (EPECK):" << std::endl;
   r += test_self_intersections<EPECK>(filename, expected);
 
-  filename = (argc > 9) ? argv[9] : "data/mannequin-devil.off";
+  filename = (argc > 9) ? argv[9] : CGAL::data_file_path("meshes/mannequin-devil.off");
 
   std::cout << "Test with maximum_number (EPICK):" << std::endl;
   r += test_limited_self_intersections<EPICK>(filename);

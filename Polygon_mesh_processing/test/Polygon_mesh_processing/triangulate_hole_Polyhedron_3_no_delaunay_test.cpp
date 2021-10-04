@@ -360,7 +360,7 @@ void generate_elephant_with_hole()
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
 
   Polyhedron poly;
-  read_poly("data/elephant.off", poly);
+  read_poly(CGAL::data_file_path("meshes/elephant.off"), poly);
   int i=0;
   for(Facet_handle fd : faces(poly))
     if (++i==229)
@@ -389,7 +389,7 @@ typedef CGAL::Surface_mesh<typename Kernel::Point_3> Polyhedron;
   std::vector<std::string> input_files;
   input_files.push_back("elephant_triangle_hole.off");
   input_files.push_back("elephant_quad_hole.off");
-  input_files.push_back("data/mech-holes-shark.off");
+  input_files.push_back(CGAL::data_file_path("meshes/mech-holes-shark.off"));
   // std::cerr.precision(15);
   for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
     test_triangulate_hole<Polyhedron>(it->c_str());

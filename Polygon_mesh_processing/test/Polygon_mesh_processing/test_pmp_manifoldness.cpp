@@ -172,7 +172,7 @@ void test_blobby()
   std::cout << "  test: data/blobby.off" << std::endl;
 
   PolygonMesh mesh;
-  read_mesh("data/blobby.off", mesh);
+  read_mesh(CGAL::data_file_path("meshes/blobby.off"), mesh);
 
   // non-manifold vertices
   Vertices_to_merge_container all_merges;

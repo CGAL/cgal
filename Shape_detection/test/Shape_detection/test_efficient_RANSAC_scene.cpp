@@ -34,7 +34,7 @@ bool test_scene(int argc, char** argv) {
   // Load point set from a file.
   // read_points takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
-  const char* filename = (argc > 1) ? argv[1] : "data/cube.pwn";
+  const char* filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn");
 
   if (!CGAL::IO::read_points(filename, std::back_inserter(points),
                          CGAL::parameters::point_map(Point_map())

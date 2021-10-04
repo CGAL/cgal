@@ -61,7 +61,7 @@ struct Tester {
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/cube.off";
+  const char* fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/cube.off");
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef CGAL::Mesh_polyhedron_3<K>::type                    Polyhedron;

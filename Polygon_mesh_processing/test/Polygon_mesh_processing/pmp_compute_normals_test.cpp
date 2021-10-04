@@ -205,10 +205,10 @@ int main()
 
   CGAL::Set_ieee_double_precision pfr;
 
-  test("data/elephant.off");
+  test(CGAL::data_file_path("meshes/elephant.off"));
   test("data/folded_star.off");
   test("data/joint_refined.off");
-  test("data/mannequin-devil.off");
+  test(CGAL::data_file_path("meshes/mannequin-devil.off"));
   test("data/U.off");
 
   test("data_degeneracies/deg_on_border.off");

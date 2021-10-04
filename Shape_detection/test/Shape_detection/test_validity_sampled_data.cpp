@@ -45,7 +45,7 @@ void test_copied_point_cloud (const Point_set& points, std::size_t nb);
 int main (int argc, char** argv)
 {
   Point_set points;
-  const char* ifilename = (argc > 1) ? argv[1] : "data/point_set_3.xyz";
+  const char* ifilename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/point_set_3.xyz");
   std::ifstream ifile(ifilename);
 
   if (!ifile ||

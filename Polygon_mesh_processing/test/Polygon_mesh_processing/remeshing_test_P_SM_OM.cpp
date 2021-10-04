@@ -21,7 +21,7 @@ int main()
     typedef CGAL::Surface_mesh<Epic::Point_3> SM;
     SM sm;
 
-    std::ifstream in("data/elephant.off");
+    std::ifstream in(CGAL::data_file_path("meshes/elephant.off"));
     in >> sm;
     PMP::isotropic_remeshing(faces(sm),
                              0.02,
@@ -33,7 +33,7 @@ int main()
   {
     typedef CGAL::Polyhedron_3<Epic> P;
 
-    std::ifstream in("data/elephant.off");
+    std::ifstream in(CGAL::data_file_path("meshes/elephant.off"));
     P p;
     in >> p;
 
@@ -54,7 +54,7 @@ int main()
     typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OM;
 
     OM om;
-    OpenMesh::IO::read_mesh(om, "data/elephant.off");
+    OpenMesh::IO::read_mesh(om, CGAL::data_file_path("meshes/elephant.off"));
     om.request_face_status();
     om.request_edge_status();
     om.request_vertex_status();
@@ -70,7 +70,7 @@ int main()
     typedef OpenMesh::TriMesh_ArrayKernelT</* MyTraits*/> OM;
 
     OM om;
-    OpenMesh::IO::read_mesh(om, "data/elephant.off");
+    OpenMesh::IO::read_mesh(om, CGAL::data_file_path("meshes/elephant.off"));
     om.request_face_status();
     om.request_edge_status();
     om.request_vertex_status();

@@ -52,7 +52,7 @@ int test_surface_mesh(const char* filename)
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/elephant.off";
+  const char* filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   assert(test_surface_mesh<Epic>(filename) == 0);
   assert(test_surface_mesh<Epec>(filename) == 0);

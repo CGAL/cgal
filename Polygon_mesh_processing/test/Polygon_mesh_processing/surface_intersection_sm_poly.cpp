@@ -49,8 +49,8 @@ void run(const char* filename1, const char* filename2, const char* msg)
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
+  const char* filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const char* filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   run<Mesh>(filename1,filename2,"Surface_mesh");
   run<Polyhedron>(filename1,filename2,"Polyhedron_3");

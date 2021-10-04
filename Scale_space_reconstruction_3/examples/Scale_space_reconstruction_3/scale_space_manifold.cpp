@@ -22,7 +22,7 @@ typedef CGAL::Timer Timer;
 
 int main(int argc, char* argv[]) {
   // Read the dat
-  std::string fname = argc==1?"data/kitten.off":argv[1];
+  std::string fname = argc==1?CGAL::data_file_path("points_3/kitten.off"):argv[1];
 
   std::cerr << "Reading " << std::flush;
   std::vector<Point> points;

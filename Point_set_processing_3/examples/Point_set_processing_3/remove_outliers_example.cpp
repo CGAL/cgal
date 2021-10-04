@@ -15,7 +15,7 @@ typedef Kernel::Point_3 Point;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/oni.xyz";
+  const char* fname = (argc>1)?argv[1]:CGAL::data_file_path("points_3/oni.pwn");
 
   // Reads a point set file in points[].
   // The Identity_property_map property map can be omitted here as it is the default value.

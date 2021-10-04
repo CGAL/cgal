@@ -43,7 +43,7 @@ int main(void)
   const double duration = 0.1;
   test_kernels<SEGMENT>("data/cube.off",duration);
   test_kernels<SEGMENT>("data/finger.off",duration);
-  test_kernels<SEGMENT>("data/pinion.off",duration);
+  test_kernels<SEGMENT>(CGAL::data_file_path("meshes/pinion_small.off"),duration);
   test_kernels<SEGMENT>("data/coverrear.off",duration);
   return 0;
 }

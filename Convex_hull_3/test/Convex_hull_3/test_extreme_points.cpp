@@ -235,7 +235,7 @@ int main()
   test_triangulated_cube("data/cube_meshed.off");
   test_coplanar_points("data/coplanar_points.xyz");
   test_equal_points();
-  test_extreme_vertices("data/cross.off");
+  test_extreme_vertices(CGAL::data_file_path("meshes/cross.off"));
 
   return 0;
 }

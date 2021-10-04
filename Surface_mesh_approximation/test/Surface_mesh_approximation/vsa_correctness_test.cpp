@@ -96,13 +96,13 @@ bool test_shape(const Mesh &mesh, const std::size_t target_num_proxies)
  */
 int main()
 {
-  const char file_cube[] = "data/cube.off";
+  const char file_cube[] = CGAL::data_file_path("meshes/cube.off");
   std::cout << "Testing close mesh " << file_cube << std::endl;
   Mesh mesh_cube;
   if (!load_mesh(file_cube, mesh_cube) || !test_shape(mesh_cube, 6))
     return EXIT_FAILURE;
 
-  const char file_cube2[] = "data/cube-ouvert.off";
+  const char file_cube2[] = CGAL::data_file_path("meshes/cube-ouvert.off");
   std::cout << "Testing open mesh " << file_cube2 << std::endl;
   Mesh mesh_cube2;
   if (!load_mesh(file_cube2, mesh_cube2) || !test_shape(mesh_cube2, 5))

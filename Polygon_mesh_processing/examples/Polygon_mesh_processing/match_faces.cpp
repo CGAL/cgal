@@ -24,7 +24,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/P.off";
+  const char* filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
 
   Surface_mesh mesh1;
   Polyhedron mesh2;

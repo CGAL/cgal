@@ -188,7 +188,7 @@ using CTP = CGAL::Constrained_triangulation_plus_2<CDT>;
 
 int main (int argc, char** argv)
 {
-  const std::string fname = argc != 2 ? "data/b9_training.ply" : argv[1];
+  const std::string fname = argc != 2 ? CGAL::data_file_path("points_3/b9_training.ply") : argv[1];
   if (argc != 2)
   {
     std::cerr << "Usage: " << argv[0] << " points.ply" << std::endl;

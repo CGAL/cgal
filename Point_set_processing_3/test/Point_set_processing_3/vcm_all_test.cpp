@@ -33,7 +33,7 @@ std::cout << "=== test_fandisk ===\n";
   points.reserve(nb_points);
   cov.reserve(nb_points);
 
-  if(!CGAL::IO::read_points("data/fandisk_large.off",
+  if(!CGAL::IO::read_points(CGAL::data_file_path("meshes/fandisk_large.off"),
                             std::back_inserter(points),
                             CGAL::parameters::point_map(pmap)))
   {

@@ -104,8 +104,8 @@ unsigned int intersect(const Mesh& P, const Mesh& Q) {
 
 int main(int argc, char* argv[])
 {
-  std::string P_name = argc==1?"data/knot1.off" : argv[1];
-  std::string Q_name = argc<3 ?"data/elephant.off" : argv[2];
+  std::string P_name = argc==1?CGAL::data_file_path("meshes/knot1.off") : argv[1];
+  std::string Q_name = argc<3 ?CGAL::data_file_path("meshes/elephant.off") : argv[2];
   if(argc < 3) {
     std::cerr << "Usage: do_intersect <mesh_1.off> <mesh_2.off>" << std::endl;
     std::cerr << "Running with data/knot1.off and data/elephant.off\n";

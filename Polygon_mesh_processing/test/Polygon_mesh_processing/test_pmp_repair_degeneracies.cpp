@@ -322,7 +322,7 @@ void test()
                                std::initializer_list<std::size_t>({4, 5}),
                                1, 3, 1, 2, 0, 0);
 
-  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_sliding.off",
+  remove_degeneracies<K, Mesh>(CGAL::data_file_path("meshes/degtri_sliding.off"),
                                std::initializer_list<std::size_t>({2}),
                                std::initializer_list<std::size_t>({2, 4}),
                                0, 4, 0, 2, 0, 0);
