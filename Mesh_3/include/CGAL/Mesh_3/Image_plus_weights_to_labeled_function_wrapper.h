@@ -113,13 +113,13 @@ public:
   template <typename Point_3>
   return_type operator()(const Point_3& p) const
   {
-    return transform(
+    return static_cast<return_type>(transform(
       r_im_.template labellized_trilinear_interpolation<Image_word_type>(
           CGAL::to_double(p.x()),
           CGAL::to_double(p.y()),
           CGAL::to_double(p.z()),
           value_outside,
-          indicator_factory));
+          indicator_factory)));
   }
 
 private:
