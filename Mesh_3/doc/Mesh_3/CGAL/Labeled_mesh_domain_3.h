@@ -253,7 +253,7 @@ From the example (\ref Mesh_3/mesh_3D_image.cpp):
 \snippet Mesh_3/mesh_3D_image.cpp Domain creation
 
 From the example (\ref Mesh_3/mesh_3D_weighted_image.cpp),
-where the labeled image is used with precomputed weights image :
+where the labeled image is used with a precomputed 3D image of weights :
 
 \snippet Mesh_3/mesh_3D_weighted_image.cpp Domain creation
 
