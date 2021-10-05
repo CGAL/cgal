@@ -446,8 +446,8 @@ generic_clip_impl(
   Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                               get_property_map(boost::vertex_point, tm1));
 
-  Vpm vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                              get_property_map(boost::vertex_point, tm2));
+  Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                               get_property_map(boost::vertex_point, tm2));
 
   if (&tm1==&tm2)
   {
