@@ -820,6 +820,9 @@ class Surface_mesh_geodesic_distances_3
     >
 #endif
 {
+  CGAL_static_assertion((std::is_same<Mode, Direct>::value) ||
+                        (std::is_same<Mode, Intrinsic_Delaunay>::value));
+
   // extract real types from Default
 #ifdef CGAL_EIGEN3_ENABLED
   typedef typename Default::Get<
