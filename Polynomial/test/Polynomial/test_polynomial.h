@@ -33,7 +33,7 @@ template <class NT , class RT>
 inline
 void convert_to(const NT& x, RT& r){
     typedef CGAL::Coercion_traits<NT,RT> CT;
-    CGAL_assertion_code(typedef typename CT::Coercion_type RET;)
+    typedef typename CT::Coercion_type RET;
     CGAL_static_assertion((::boost::is_same<RET,RT>::value));
     r = typename CT::Cast()(x);
 }
@@ -297,32 +297,32 @@ void io() {
         assert( p == q );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(3)));
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(3)));
         //std::cout <<os.str()<<std::endl;
         assert( os.str() == "3" );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(-3)));
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(-3)));
         assert( os.str() == "(-3)" );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(-3)),CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(-3)),CGAL::Parens_as_product_tag());
         assert( os.str() == "(-3)" );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(-3),NT(4)));
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(-3),NT(4)));
         if( CGAL::Polynomial_traits_d<POLY>::d == 1)
             assert( os.str() == "4*x + (-3)" );
         else
             assert( os.str() == "4*y + (-3)" );
     }{
         std::ostringstream os;
-        CGAL::set_pretty_mode(os);
-        os << oformat(POLY(NT(-3),NT(4)), CGAL::Parens_as_product_tag());
+        CGAL::IO::set_pretty_mode(os);
+        os << CGAL::IO::oformat(POLY(NT(-3),NT(4)), CGAL::Parens_as_product_tag());
 
         if( CGAL::Polynomial_traits_d<POLY>::d == 1)
             assert( os.str() == "(4*x + (-3))" );
@@ -878,7 +878,7 @@ void test_scalar_factor_traits(){
         typedef CGAL::Polynomial<Integer> Polynomial;
         typedef CGAL::Scalar_factor_traits<Polynomial> SFT;
         typedef typename AT::Integer Scalar;
-        CGAL_assertion_code(typedef typename SFT::Scalar Scalar_;)
+        typedef typename SFT::Scalar Scalar_;
         CGAL_static_assertion((::boost::is_same<Scalar_, Scalar>::value));
 
         typename SFT::Scalar_factor sfac;
@@ -903,8 +903,8 @@ void test_scalar_factor_traits(){
         typedef CGAL::Polynomial<EXT_1       > Poly_1_ext_1;
         typedef CGAL::Polynomial<Poly_1_ext_1> Poly_2_ext_1;
         typedef CGAL::Scalar_factor_traits<Poly_2_ext_1> SFT;
-        CGAL_assertion_code(typedef typename AT::Integer Scalar;)
-        CGAL_assertion_code(typedef typename SFT::Scalar Scalar_;)
+        typedef typename AT::Integer Scalar;
+        typedef typename SFT::Scalar Scalar_;
         CGAL_static_assertion((::boost::is_same<Scalar_, Scalar>::value));
 
         typename SFT::Scalar_factor sfac;

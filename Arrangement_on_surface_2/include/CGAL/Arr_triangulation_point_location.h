@@ -80,7 +80,7 @@ public:
   typedef Triangulation_vertex_base_with_info_2<Vertex_const_handle, Kernel>
     Vbb;
   typedef Triangulation_hierarchy_vertex_base_2<Vbb>                  Vb;
-  //typedef Triangulation_face_base_with_info_2<CGAL::Color,Kernel>    Fbt;
+  //typedef Triangulation_face_base_with_info_2<CGAL::IO::Color,Kernel>    Fbt;
   typedef Constrained_triangulation_face_base_2<Kernel>               Fb;
   typedef Triangulation_data_structure_2<Vb,Fb>                       TDS;
   typedef Exact_predicates_tag                                        Itag;

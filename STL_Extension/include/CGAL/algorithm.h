@@ -22,6 +22,7 @@
 #include <CGAL/config.h>
 #include <CGAL/utils.h>
 #include <CGAL/enum.h>
+#include <CGAL/IO/io.h>
 #include <algorithm>
 #include <iosfwd>
 #include <iostream>
@@ -280,8 +281,8 @@ output_range(std::ostream& os,
 {
     InputIterator it = first;
     if (it != beyond) {
-        os << pre << oformat(*it) << post;
-        while (++it != beyond) os << sep << pre << oformat(*it) << post;
+        os << pre << CGAL::IO::oformat(*it) << post;
+        while (++it != beyond) os << sep << pre << CGAL::IO::oformat(*it) << post;
     }
     return os;
 }

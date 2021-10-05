@@ -63,7 +63,7 @@ public:
   typedef C2E   To_exact_converter;
   typedef C2A   To_approximate_converter;
 
-  // FIXME: should use result_of, see emails by Nico
+  // FIXME: should use result_of or decltype(auto), see emails by Nico
   typedef typename EP::result_type  result_type;
   // AP::result_type must be convertible to EP::result_type.
 
@@ -92,6 +92,8 @@ public:
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
+    Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     return ep(c2e(std::forward<Args>(args))...);
   }
 };

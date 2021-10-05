@@ -58,7 +58,7 @@ void kruskal(const Mesh& sm)
 int main(int argc, char** argv)
 {
   Mesh sm;
-  if(argc < 2 || !CGAL::read_polygon_mesh(argv[1], sm))
+  if(argc < 2 || !CGAL::IO::read_polygon_mesh(argv[1], sm))
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;

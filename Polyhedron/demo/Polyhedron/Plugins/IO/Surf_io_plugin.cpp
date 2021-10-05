@@ -68,7 +68,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return NULL;
+    return nullptr;
   }
 
   if(fileinfo.size() == 0)

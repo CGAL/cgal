@@ -76,6 +76,20 @@ bool test_insert_at_vertices(){
   return test_insert_at_vertices_1() && test_insert_at_vertices_2();
 }
 
+bool test_insert_on_overlap(){
+  Arrangement_2 arr;
+
+  std::vector<Segment_2> segs1, segs2;
+  segs1.emplace_back(Point_2(0, 0), Point_2(0, 4));
+  segs2.emplace_back(Point_2(0, 0), Point_2(4,4));
+  segs2.emplace_back(Point_2(0, 2), Point_2(0, 4));
+  segs2.emplace_back(Point_2(0, 2), Point_2(4,4));
+  CGAL::insert(arr, segs1.begin(), segs1.end());
+  CGAL::insert(arr, segs2.begin(), segs2.end());
+
+  return is_valid(arr);
+}
+
 int main ()
 {
   Arrangement_2   arr;
@@ -135,6 +149,10 @@ int main ()
   std::cout << "Test insert_at_vertices ";
   valid=test_insert_at_vertices();
   std::cout << ( valid ? "valid." : "NOT valid!") << std::endl;
+
+  if (!valid) return 1;
+  std::cout << "Test insert on overlap\n";
+  valid=test_insert_on_overlap();
 
   return valid?0:1;
 }

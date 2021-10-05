@@ -414,7 +414,7 @@ branches of each internal node can be computed in parallel, by calling
 `Kd_tree::build<CGAL::Parallel_tag>()`. On a quad-core processor, the
 parallel construction is experimentally 2 to 3 times faster than the
 sequential version, depending on the point cloud. The parallel version
-requires the executable to be linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+requires the executable to be linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
 
 One query on the `kd` tree is purely sequential, but several queries
 can be done in parallel.

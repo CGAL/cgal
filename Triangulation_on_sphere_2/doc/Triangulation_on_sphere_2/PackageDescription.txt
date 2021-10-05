@@ -1,0 +1,81 @@
+/// \defgroup PkgTriangulationOnSphere2Ref 2D Triangulation on the Sphere Reference
+
+/// \defgroup PkgTriangulationOnSphere2Concepts Concepts
+/// \ingroup PkgTriangulationOnSphere2Ref
+
+/// \defgroup PkgTriangulationOnSphere2TriangulationClasses Triangulation Classes
+/// \ingroup PkgTriangulationOnSphere2Ref
+
+/// \defgroup PkgTriangulationOnSphere2VertexFaceClasses Vertex and Face Classes
+/// \ingroup PkgTriangulationOnSphere2Ref
+
+/*!
+\addtogroup PkgTriangulationOnSphere2Ref
+
+\cgalPkgDescriptionBegin{2D Triangulations on the Sphere,PkgTriangulationOnSphere2}
+\cgalPkgPicture{triangulation_on_sphere.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner}
+\cgalPkgDesc{This package enables the construction and manipulation of Delaunay triangulations on the 2-sphere.
+             Triangulations are built incrementally and can be modified by insertion or removal of vertices.
+             Point location querying and primitives to build the dual Voronoi diagram are provided.}
+\cgalPkgManuals{Chapter_2D_Triangulations_on_sphere,PkgTriangulationOnSphere2Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.3}
+\cgalPkgDependsOn{\ref PkgTDS2}
+\cgalPkgBib{cgal:rtw-tos2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{2D Triangulations on the sphere,triangulation_on_sphere_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+A triangulation is a 2-dimensional simplicial complex that is pure,
+connected, and without singularities. It can be viewed as a collection of triangular faces,
+such that two faces either have an empty intersection or share an edge or a vertex.
+
+This package handles triangulations of points on the 2-sphere, and is thus tightly linked
+to the package \ref PkgTriangulation2, which handles triangulations of points in Euclidean 2D space,
+since both domains are 2-manifolds. Concepts and classes are therefore similar
+to those of the package \ref PkgTriangulation2.
+
+The basic elements of the representation are vertices and faces.
+Each triangular face gives access to its three incident vertices
+and to its three adjacent faces.
+Each vertex gives access to one of its incident faces
+and, through that face, to the circular list of its incident faces.
+The edges are not explicitly represented, they are only represented
+through the adjacency relations of two faces.
+
+The triangulation classes of \cgal depend on two template parameters.
+The first template parameter stands for a geometric traits class which is assumed to provide
+the geometric objects (points, segments, ...) forming the triangulation
+and the geometric predicates on those objects.
+The second template parameter stands for a model of triangulation data structure
+acting as a container for faces and vertices while taking care
+of the combinatorial aspects of the triangulation.
+The concepts and models relative to the triangulation data structure
+are described in Chapter \ref PkgTDS2Ref "2D Triangulation Data Structure".
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `TriangulationOnSphereTraits_2`
+- `DelaunayTriangulationOnSphereTraits_2`
+- `TriangulationOnSphereFaceBase_2`
+- `TriangulationOnSphereVertexBase_2`
+
+\cgalCRPSection{Traits Classes}
+- `CGAL::Delaunay_triangulation_on_sphere_traits_2<LK, SK>`
+- `CGAL::Projection_on_sphere_traits_3<LK, SK>`
+
+\cgalCRPSection{Triangulation Classes}
+- `CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>`
+- `CGAL::Triangulation_on_sphere_vertex_base_2<Traits, Vb>`
+- `CGAL::Triangulation_on_sphere_2<Traits, TDS>`
+- `CGAL::Delaunay_triangulation_on_sphere_2<Traits, TDS>`
+
+\cgalCRPSection{Enum}
+- \link CGAL::Triangulation_on_sphere_2::Locate_type `CGAL::Triangulation_on_sphere_2<Traits,TDS>::Locate_type` \endlink
+
+*/

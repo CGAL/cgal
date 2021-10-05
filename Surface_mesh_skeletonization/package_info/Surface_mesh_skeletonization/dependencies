@@ -20,7 +20,6 @@ Kernel_d
 Modifier
 Modular_arithmetic
 Number_types
-Polygon
 Polygon_mesh_processing
 Polyhedron
 Profiling_tools
@@ -34,3 +33,4 @@ Stream_support
 Surface_mesh_skeletonization
 TDS_3
 Triangulation_3
+Weights

@@ -55,10 +55,10 @@ equal_lineC2(const FT &l1a, const FT &l1b, const FT &l1c,
         return false; // Not parallel.
     typename Sgn<FT>::result_type s1a = CGAL_NTS sign(l1a);
     if (s1a != ZERO)
-        return s1a == CGAL_NTS sign(l2a)
-            && sign_of_determinant(l1a, l1c, l2a, l2c) == ZERO;
-    return CGAL_NTS sign(l1b) == CGAL_NTS sign(l2b)
-        && sign_of_determinant(l1b, l1c, l2b, l2c) == ZERO;
+        return CGAL_AND(s1a == CGAL_NTS sign(l2a),
+                        sign_of_determinant(l1a, l1c, l2a, l2c) == ZERO);
+    return CGAL_AND(CGAL_NTS sign(l1b) == CGAL_NTS sign(l2b),
+                    sign_of_determinant(l1b, l1c, l2b, l2c) == ZERO);
 }
 
 template < class FT >
@@ -230,7 +230,7 @@ compare_y_at_x_segment_C2(const FT &px,
     CGAL_kernel_precondition(are_ordered(s1sx, px, s1tx));
     CGAL_kernel_precondition(are_ordered(s2sx, px, s2tx));
 
-    if (s1sx != s1tx && s2sx != s2tx) {
+    if (CGAL_AND(s1sx != s1tx, s2sx != s2tx)) {
         FT s1stx = s1sx-s1tx;
         FT s2stx = s2sx-s2tx;
 
@@ -265,9 +265,9 @@ typename Equal_to<FT>::result_type
 equal_directionC2(const FT &dx1, const FT &dy1,
                   const FT &dx2, const FT &dy2)
 {
-  return CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2)
-      && CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2)
-      && sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO;
+  return CGAL_AND_3( CGAL_NTS sign(dx1) == CGAL_NTS sign(dx2),
+                     CGAL_NTS sign(dy1) == CGAL_NTS sign(dy2),
+                     sign_of_determinant(dx1, dy1, dx2, dy2) == ZERO );
 }
 
 template < class FT >
@@ -391,7 +391,9 @@ typename Compare<FT>::result_type
 compare_lexicographically_xyC2(const FT &px, const FT &py,
                                const FT &qx, const FT &qy)
 {
-  typename Compare<FT>::result_type c = CGAL_NTS compare(px,qx);
+  typedef typename Compare<FT>::result_type Cmp;
+  Cmp c = CGAL_NTS compare(px,qx);
+  if (is_indeterminate(c)) return indeterminate<Cmp>();
   return (c != EQUAL) ? c : CGAL_NTS compare(py,qy);
 }
 

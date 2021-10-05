@@ -65,7 +65,7 @@ function(create_single_source_cgal_program firstfile )
 
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${exe_name} )
 
-    target_link_libraries(${exe_name} PRIVATE CGAL::CGAL)
+    target_link_libraries(${exe_name} PRIVATE CGAL::CGAL CGAL::Data)
     foreach(comp ${CGAL_REQUESTED_COMPONENTS})
       if(TARGET CGAL::CGAL_${comp})
         target_link_libraries(${exe_name} PRIVATE CGAL::CGAL_${comp})

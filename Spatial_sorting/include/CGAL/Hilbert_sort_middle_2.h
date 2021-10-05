@@ -16,7 +16,7 @@
 #include <functional>
 #include <cstddef>
 #include <CGAL/Hilbert_sort_middle_base.h>
-#include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/number_utils.h>
 
 namespace CGAL {
 

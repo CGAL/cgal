@@ -119,8 +119,8 @@ public:
    */
   template <typename InputIterator>
   CGAL_DEPRECATED void construct_polycurve(InputIterator begin,
-                                          InputIterator end,
-                                          boost::true_type)
+                                           InputIterator end,
+                                           boost::true_type)
   {
     // Check if there are no points in the range:
     InputIterator ps = begin;

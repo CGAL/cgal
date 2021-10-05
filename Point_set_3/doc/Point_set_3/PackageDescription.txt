@@ -82,8 +82,8 @@ These overloads, available after including `CGAL/Point_set_3/IO.h`,
 allow the user to call point set processing algorithms without having
 to handle manually property maps and iterators.
 
-- `CGAL::read_point_set()`
-- `CGAL::write_point_set()`
+- `CGAL::IO::read_point_set()`
+- `CGAL::IO::write_point_set()`
 - \link PkgPointSet3IOLAS I/O for `LAS` files \endlink
 - \link PkgPointSet3IOOFF I/O for `OFF` files \endlink
 - \link PkgPointSet3IOPLY I/O for `PLY` files \endlink

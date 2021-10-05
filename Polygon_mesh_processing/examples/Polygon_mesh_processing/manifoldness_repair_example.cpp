@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   const char* filename = (argc > 1) ? argv[1] : "data/blobby.off";
 
   Mesh mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh) || CGAL::is_empty(mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh) || CGAL::is_empty(mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

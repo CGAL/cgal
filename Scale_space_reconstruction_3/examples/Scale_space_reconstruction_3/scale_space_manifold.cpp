@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 
   std::cerr << "Reading " << std::flush;
   std::vector<Point> points;
-  if(!CGAL::read_points(argv[1], std::back_inserter(points)))
+  if(!CGAL::IO::read_points(argv[1], std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file" << std::endl;
     return EXIT_FAILURE;

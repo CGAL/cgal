@@ -89,7 +89,6 @@ bool vtkPointSet_to_polygon_soup(vtkPointSet* poly_data,
   return true;
 }
 } // namespace internal
-} // namespace IO
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -109,14 +108,14 @@ bool read_VTP(const std::string& fname,
   }
 
   vtkSmartPointer<vtkPointSet> data;
-  vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
-      vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();
+  vtkSmartPointer<internal::ErrorObserverVtk> obs =
+      vtkSmartPointer<internal::ErrorObserverVtk>::New();
 
-  data = vtkPolyData::SafeDownCast(IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
+  data = vtkPolyData::SafeDownCast(internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
   if (obs->GetError())
     return false;
 
-  return IO::internal::vtkPointSet_to_polygon_soup(data, points, polygons, np);
+  return internal::vtkPointSet_to_polygon_soup(data, points, polygons, np);
 }
 
 /*!
@@ -150,7 +149,6 @@ bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygo
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
-namespace IO {
 namespace internal {
 
 // writes the polys appended data at the end of the .vtp file
@@ -345,7 +343,6 @@ void write_soup_polys_points(std::ostream& os,
 }
 
 } // namespace internal
-} // namespace IO
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsVTP
@@ -366,7 +363,7 @@ void write_soup_polys_points(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -374,7 +371,7 @@ void write_soup_polys_points(std::ostream& os,
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the stream `os``}
+ *     \cgalParamDefault{the precision of the stream `os`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -421,16 +418,16 @@ bool write_VTP(std::ostream& os,
   const bool binary = choose_parameter(get_parameter(np, internal_np::use_binary_mode), true);
   std::vector<std::size_t> size_map;
   std::vector<unsigned char> cell_type;
-  IO::internal::write_soup_points_tag(os, points, binary, offset);
-  IO::internal::write_soup_polys_tag(os, polygons, binary, offset, size_map, cell_type);
+  internal::write_soup_points_tag(os, points, binary, offset);
+  internal::write_soup_polys_tag(os, polygons, binary, offset, size_map, cell_type);
 
   os << "   </Piece>\n"
      << "  </PolyData>\n";
   if(binary)
   {
     os << "<AppendedData encoding=\"raw\">\n_";
-    IO::internal::write_soup_polys_points(os, points);
-    IO::internal::write_soup_polys(os, polygons,size_map, cell_type);
+    internal::write_soup_polys_points(os, points);
+    internal::write_soup_polys(os, polygons,size_map, cell_type);
   }
   os << "</VTKFile>" << std::endl;
 }
@@ -464,7 +461,7 @@ bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& p
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -488,13 +485,13 @@ bool write_VTP(const std::string& fname,
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_VTP(os, points, polygons, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
     return write_VTP(os, points, polygons, np);
   }
 }
@@ -508,6 +505,8 @@ bool write_VTP(const std::string& fname, const PointRange& points, const Polygon
 }
 
 /// \endcond
+
+} // namespace IO
 
 } // namespace CGAL
 

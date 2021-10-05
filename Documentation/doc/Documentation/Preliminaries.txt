@@ -33,8 +33,11 @@ are:
 If the macro `CGAL_HAS_THREADS` is not defined, then \cgal assumes it can use
 any thread-unsafe code (such as static variables).  By default, this macro is not
 defined, unless `BOOST_HAS_THREADS` or `_OPENMP` is defined.  It is possible
-to force its definition on the command line, and it is possible to prevent its default
-definition by setting `CGAL_HAS_NO_THREADS` from the command line.
+to force its definition in the compiler options, and it is possible to prevent its
+default definition by defining the macro `CGAL_HAS_NO_THREADS`.
+If you are using CMake, then you can set the CMake option `CGAL_HAS_NO_THREADS` to
+`TRUE`. In addition to defining the preprocessor macro CGAL_HAS_NO_THREADS`, it will
+also avoid CMake to link with the native threads support library on your system.
 
 \section Preliminaries_cc0x C++14 Support
 

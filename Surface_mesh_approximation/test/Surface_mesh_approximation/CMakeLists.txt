@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Surface_mesh_approximation_Tests)
 
 # CGAL and its components
@@ -50,8 +50,8 @@ target_link_libraries(vsa_approximation_test PUBLIC CGAL::Eigen3_support)
 create_single_source_cgal_program("vsa_segmentation_test.cpp")
 target_link_libraries(vsa_segmentation_test PUBLIC CGAL::Eigen3_support)
 
-create_single_source_cgal_program("vsa_meshing_manifold_test.cpp")
-target_link_libraries(vsa_meshing_manifold_test PUBLIC CGAL::Eigen3_support)
+#create_single_source_cgal_program("vsa_meshing_manifold_test.cpp")
+#target_link_libraries(vsa_meshing_manifold_test PUBLIC CGAL::Eigen3_support)
 
 create_single_source_cgal_program("vsa_metric_test.cpp")
 target_link_libraries(vsa_metric_test PUBLIC CGAL::Eigen3_support)

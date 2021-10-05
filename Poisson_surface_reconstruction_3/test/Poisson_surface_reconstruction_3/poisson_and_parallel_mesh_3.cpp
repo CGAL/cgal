@@ -39,7 +39,7 @@ int main(int, char**)
 
   std::ifstream stream("data/oni.pwn");
   if (!stream ||
-      !CGAL::read_XYZ
+      !CGAL::IO::read_XYZ
       (stream, std::back_inserter(points),
        CGAL::parameters::
        point_map(Point_map()).

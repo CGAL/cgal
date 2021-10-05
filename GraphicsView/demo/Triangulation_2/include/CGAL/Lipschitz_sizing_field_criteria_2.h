@@ -33,7 +33,7 @@ public:
   typedef Delaunay_mesh_criteria_2<CDT> Base;
 
   Lipschitz_sizing_field_criteria_2(const double aspect_bound = 0.125,
-                                    Sizing_field* sf = 0,
+                                    Sizing_field* sf = nullptr,
                                     const Geom_traits& traits = Geom_traits())
     : Base(aspect_bound), sizing_field(sf), traits(traits)
   {}

@@ -10,8 +10,8 @@
 # GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
 # GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
-cmake_minimum_required(VERSION 3.1...3.15)
-
+cmake_minimum_required(VERSION 3.1...3.20)
+find_program(BASH NAMES bash sh)
 function(process_package pkg)
   if(VERBOSE)
     message(STATUS "handling ${pkg}")
@@ -161,6 +161,9 @@ endif()
 file(COPY ${GIT_REPO}/GraphicsView/demo/resources ${GIT_REPO}/GraphicsView/demo/icons
   DESTINATION "${release_dir}/cmake/modules/demo")
 
+#copy data
+file(COPY ${GIT_REPO}/Data/data DESTINATION "${release_dir}/")
+
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
 
@@ -223,7 +226,7 @@ if (TESTSUITE)
     if(IS_DIRECTORY "${release_dir}/test/${d}")
       if(NOT EXISTS "${release_dir}/test/${d}/cgal_test_with_cmake")
         execute_process(
-          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
           WORKING_DIRECTORY "${release_dir}/test/${d}"
           RESULT_VARIABLE RESULT_VAR
           OUTPUT_VARIABLE OUT_VAR
@@ -249,7 +252,7 @@ if (TESTSUITE)
         file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Demo")
         if(NOT EXISTS "${release_dir}/test/${d}_Demo/cgal_test_with_cmake")
           execute_process(
-            COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
+            COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake --no-run
             WORKING_DIRECTORY "${release_dir}/test/${d}_Demo"
             RESULT_VARIABLE RESULT_VAR
             OUTPUT_VARIABLE OUT_VAR
@@ -270,7 +273,7 @@ if (TESTSUITE)
       file(RENAME "${release_dir}/tmp/${d}" "${release_dir}/test/${d}_Examples")
       if(NOT EXISTS "${release_dir}/test/${d}_Examples/cgal_test_with_cmake")
         execute_process(
-          COMMAND ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
+          COMMAND ${BASH} ${GIT_REPO}/Scripts/developer_scripts/create_cgal_test_with_cmake
           WORKING_DIRECTORY "${release_dir}/test/${d}_Examples"
           RESULT_VARIABLE RESULT_VAR
           OUTPUT_VARIABLE OUT_VAR
@@ -296,6 +299,7 @@ file(REMOVE ${release_dir}/include/CGAL/license/package_list.txt)
 if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
   # Taken from create_new_release.
   file(REMOVE_RECURSE ${release_dir}/test)
+  file(REMOVE_RECURSE ${release_dir}/data/test)
   file(REMOVE_RECURSE ${release_dir}/package_info)
   file(REMOVE_RECURSE ${release_dir}/developer_scripts)
   file(REMOVE_RECURSE ${release_dir}/doc)
@@ -322,7 +326,7 @@ if (GENERATE_TARBALLS)
 
   #create examples+demos
   execute_process(
-  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/data CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
   RESULT_VARIABLE RESULT_VAR
   OUTPUT_VARIABLE OUT_VAR
   )
@@ -336,6 +340,7 @@ if (GENERATE_TARBALLS)
     file(REMOVE_RECURSE ${release_dir}/include/CGAL/Test)
     file(REMOVE_RECURSE ${release_dir}/include/CGAL/Testsuite/)
   endif()
+  file(REMOVE_RECURSE ${release_dir}/data)
   file(REMOVE_RECURSE ${release_dir}/demo)
   file(REMOVE_RECURSE ${release_dir}/examples)
   file(REMOVE_RECURSE ${release_dir}/scripts)

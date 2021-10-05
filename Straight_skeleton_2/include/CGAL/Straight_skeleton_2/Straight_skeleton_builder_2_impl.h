@@ -19,10 +19,6 @@
 
 #include <boost/utility.hpp>
 #include <boost/version.hpp>
-#if BOOST_VERSION == 106000
-//ice_not is deprecated in boost 1.60 but used within adjacency_matrix.hpp
-#include <boost/type_traits/detail/ice_not.hpp>
-#endif
 #include <boost/graph/adjacency_matrix.hpp>
 
 #if defined(BOOST_MSVC)

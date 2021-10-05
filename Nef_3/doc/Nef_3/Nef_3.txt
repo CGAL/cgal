@@ -579,4 +579,3 @@ the `Object_handle` can represent a `Vertex_const_handle`, a
 
 */
 } /* namespace CGAL */
-

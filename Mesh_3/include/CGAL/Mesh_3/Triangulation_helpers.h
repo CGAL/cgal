@@ -20,7 +20,7 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/enum.h>
-#include <CGAL/internal/Has_nested_type_Bare_point.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Time_stamper.h>
 
 #include <boost/mpl/if.hpp>

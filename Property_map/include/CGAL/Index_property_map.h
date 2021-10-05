@@ -13,7 +13,7 @@
 #define CGAL_INDEX_PROPERTY_MAP_H
 
 #include <CGAL/property_map.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <iterator>
 #include <map>
@@ -97,7 +97,7 @@ public:
 
 private:
   // Property maps must be lightweight classes => share std::map
-  boost::shared_ptr<Index_map> m_index_map;
+  std::shared_ptr<Index_map> m_index_map;
 };
 
 /// @cond SKIP_IN_MANUAL

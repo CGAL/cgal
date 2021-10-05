@@ -82,12 +82,11 @@ public:
 /*!
 This operator exports a polygon with holes to the output stream `out`.
 
-An ASCII and a binary format exist. The format can be selected with
+An \ascii and a binary format exist. The format can be selected with
 the \cgal modifiers for streams, `set_ascii_mode()` and `set_binary_mode()`
 respectively. The modifier `set_pretty_mode()` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
-be free of comments. The default for writing is ASCII without
-comments.
+be free of comments. The default for writing is \ascii without comments.
 
 The number of points of the outer boundary is exported followed by the
 points themselves in counterclockwise order. Then, the number of holes
@@ -103,7 +102,7 @@ std::ostream& operator<<(std::ostream &os,
 {
   typename Polygon_with_holes_2<Kernel_,Container_>::Hole_const_iterator i;
 
-  switch(get_mode(os)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       os << p.outer_boundary() << ' ' << p.number_of_holes()<<' ';
       for (i = p.holes_begin(); i != p.holes_end(); ++i) {

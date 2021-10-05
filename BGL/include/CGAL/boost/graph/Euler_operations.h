@@ -766,7 +766,7 @@ add_face(const VertexRange& vr, Graph& g)
                       patch_start, patch_end;
   // cache for set_next and vertex' set_halfedge
   typedef std::pair<halfedge_descriptor, halfedge_descriptor> NextCacheEntry;
-  typedef std::vector<NextCacheEntry>    NextCache;
+  typedef boost::container::small_vector<NextCacheEntry,9>    NextCache;
   NextCache next_cache;
   next_cache.reserve(3 * n);
 

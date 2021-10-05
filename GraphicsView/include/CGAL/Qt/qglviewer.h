@@ -72,11 +72,11 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
 
 public:
   //todo check if this is used. If not remove it
-  explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
+  explicit QGLViewer(QGLContext* context, QWidget *parent = nullptr,
                      ::Qt::WindowFlags flags = ::Qt::WindowType(0));
-  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = 0,
+  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = nullptr,
                      ::Qt::WindowFlags flags = ::Qt::WindowType(0));
-  explicit QGLViewer(QWidget *parent = 0,
+  explicit QGLViewer(QWidget *parent = nullptr,
                      ::Qt::WindowFlags flags = ::Qt::WindowType(0));
 
   virtual ~QGLViewer();
@@ -833,8 +833,26 @@ public:
 
 public Q_SLOTS:
   void setShortcut(qglviewer::KeyboardAction action, unsigned int key);
+  void setShortcut(qglviewer::KeyboardAction action, ::Qt::Modifier modifier, ::Qt::Key key)
+  {
+    setShortcut(action,
+                static_cast<unsigned int>(modifier)+
+                static_cast<unsigned int>(key));
+  }
 
   void setKeyDescription(unsigned int key, QString description);
+  void setKeyDescription(::Qt::KeyboardModifier modifier, ::Qt::Key key, QString description)
+  {
+    setKeyDescription(static_cast<unsigned int>(modifier) +
+                      static_cast<unsigned int>(key),
+                      description);
+  }
+  void setKeyDescription(::Qt::Modifier modifier, ::Qt::Key key, QString description)
+  {
+    setKeyDescription(static_cast<unsigned int>(modifier) +
+                      static_cast<unsigned int>(key),
+                      description);
+  }
   void clearShortcuts();
 
 // Key Frames shortcut keys

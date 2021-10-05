@@ -26,6 +26,15 @@ template <> class Algebraic_structure_traits< Gmpq >
     typedef Tag_true            Is_exact;
     typedef Tag_false            Is_numerical_sensitive;
 
+    class Is_zero
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& x_) const {
+          return mpq_sgn(x_.mpq()) == 0;
+        }
+    };
+
+
     class Is_square
       : public CGAL::cpp98::binary_function< Type, Type&,
                                 bool > {
@@ -59,6 +68,22 @@ template <> class Algebraic_structure_traits< Gmpq >
 template <> class Real_embeddable_traits< Gmpq >
   : public INTERN_RET::Real_embeddable_traits_base< Gmpq , CGAL::Tag_true > {
   public:
+
+    class Is_positive
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& x_) const {
+          return mpq_sgn(x_.mpq()) > 0;
+        }
+    };
+
+    class Is_negative
+      : public CGAL::cpp98::unary_function< Type, bool > {
+      public:
+        bool operator()( const Type& x_) const {
+          return mpq_sgn(x_.mpq()) < 0;
+        }
+    };
 
     class Sgn
       : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
@@ -184,7 +209,6 @@ namespace Eigen {
 
 //since types are included by Gmp_coercion_traits.h:
 #include <CGAL/Gmpz.h>
-#include <CGAL/Gmpq.h>
 #include <CGAL/Gmpzf.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
 

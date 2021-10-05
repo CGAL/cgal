@@ -160,15 +160,13 @@ void constrain_sharp_and_border_edges(const FaceRange& faces,
 
 // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 
-template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits, typename PolyhedralEnvelope>
 bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& face_range,
                                               TriangleMesh& tmesh,
                                               const bool constrain_sharp_edges,
                                               const double dihedral_angle,
                                               const double weak_DA,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                                              const Polyhedral_envelope<GeomTraits>& cc_envelope,
-#endif
+                                              const PolyhedralEnvelope& cc_envelope,
                                               VertexPointMap vpm,
                                               const GeomTraits& gt)
 {
@@ -192,7 +190,7 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
   CGAL::copy_face_graph(ffg, local_mesh, CP::vertex_point_map(vpm));
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-  CGAL::write_polygon_mesh("results/local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("results/local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
 #endif
 
   // Constrain sharp and border edges
@@ -211,7 +209,7 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
                                                                          .use_safety_constraints(false));
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
-  CGAL::write_polygon_mesh("results/post_smoothing_local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("results/post_smoothing_local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
 #endif
 
   if(does_self_intersect(local_mesh))
@@ -221,7 +219,6 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
 #endif
     return false;
   }
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
   if (!cc_envelope.is_empty() && !cc_envelope(local_mesh))
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -229,7 +226,6 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
 #endif
     return false;
   }
-#endif
 
   std::vector<std::vector<Point> > patch;
   for(const face_descriptor f : faces(local_mesh))
@@ -258,14 +254,12 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
 // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 
 // This function is only called when the hole is NOT subdivided into smaller holes
-template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits, typename PolyhedralEnvelope>
 bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& cc_border_hedges,
                std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
                std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& working_face_range,
                TriangleMesh& tmesh,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-               const CGAL::Polyhedral_envelope<GeomTraits>& cc_envelope,
-#endif
+               const PolyhedralEnvelope& cc_envelope,
                VertexPointMap vpm,
                const GeomTraits& gt)
 {
@@ -303,7 +297,6 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
     return false;
   }
 
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
   if (!cc_envelope.is_empty() && !cc_envelope(patch))
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -311,7 +304,6 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
 #endif
     return false;
   }
-#endif
 
   // Could renew the range directly within the patch replacement function
   // to avoid erasing and re-adding the same face
@@ -337,13 +329,11 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
 }
 
 // Same function as above but border of the hole is not known
-template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits, typename PolyhedralEnvelope>
 bool fill_hole(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
                std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& working_face_range,
                TriangleMesh& tmesh,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-               const CGAL::Polyhedral_envelope<GeomTraits>& cc_envelope,
-#endif
+               const PolyhedralEnvelope& cc_envelope,
                VertexPointMap vpm,
                const GeomTraits& gt)
 {
@@ -365,24 +355,19 @@ bool fill_hole(std::set<typename boost::graph_traits<TriangleMesh>::face_descrip
 
   if(order_border_halfedge_range(cc_border_hedges, tmesh))
     return fill_hole(cc_border_hedges, cc_faces, working_face_range, tmesh,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                     cc_envelope,
-#endif
-                     vpm, gt);
+                     cc_envelope,vpm, gt);
   else
     return false;
 }
 
-template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits, typename PolyhedralEnvelope>
 bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& cc_border_hedges,
                                 std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
                                 std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& working_face_range,
                                 TriangleMesh& tmesh,
                                 const double dihedral_angle,
                                 const double weak_DA,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                                const CGAL::Polyhedral_envelope<GeomTraits>& cc_envelope,
-#endif
+                                const PolyhedralEnvelope& cc_envelope,
                                 VertexPointMap vpm,
                                 const GeomTraits& gt)
 {
@@ -431,10 +416,7 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
     {
       // Something went wrong while finding a potential cover for the a sub-hole --> use basic hole-filling
       return fill_hole(cc_border_hedges, cc_faces, working_face_range, tmesh,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                       cc_envelope,
-#endif
-                       vpm, gt);
+                       cc_envelope,vpm, gt);
     }
   }
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -469,13 +451,9 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
     std::cout << "Unhealthy patch, use base fill_hole" << std::endl;
 #endif
     return fill_hole(cc_border_hedges, cc_faces, working_face_range, tmesh,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                     cc_envelope,
-#endif
-                     vpm, gt);
+                     cc_envelope, vpm, gt);
   }
 
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
   // check if the patch is inside the input polyhedral envelope
   if(!cc_envelope.is_empty() && !cc_envelope(patch))
   {
@@ -483,12 +461,8 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
     std::cout << "Patch is not entirely inside the input polyhedral envelope, use base fill_hole" << std::endl;
 #endif
     return fill_hole(cc_border_hedges, cc_faces, working_face_range, tmesh,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                     cc_envelope,
-#endif
-                     vpm, gt);
+                     cc_envelope, vpm, gt);
   }
-#endif
 
   // Plug the hole-filling patch in the mesh
   std::set<face_descriptor> new_faces;
@@ -596,7 +570,7 @@ bool is_simple_3(const std::vector<typename boost::graph_traits<TriangleMesh>::h
   return true;
 }
 
-template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits, typename PolyhedralEnvelope>
 bool remove_self_intersections_with_hole_filling(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& cc_border_hedges,
                                                  std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
                                                  std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& working_face_range,
@@ -604,9 +578,7 @@ bool remove_self_intersections_with_hole_filling(std::vector<typename boost::gra
                                                  bool local_self_intersection_removal,
                                                  const double strong_dihedral_angle,
                                                  const double weak_dihedral_angle,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                                                 const Polyhedral_envelope<GeomTraits>& cc_envelope,
-#endif
+                                                 const PolyhedralEnvelope& cc_envelope,
                                                  VertexPointMap vpm,
                                                  const GeomTraits& gt)
 {
@@ -636,18 +608,12 @@ bool remove_self_intersections_with_hole_filling(std::vector<typename boost::gra
   {
     success = fill_hole_with_constraints(cc_border_hedges, cc_faces, working_face_range, tmesh,
                                          strong_dihedral_angle, weak_dihedral_angle,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                                         cc_envelope,
-#endif
-                                         vpm, gt);
+                                         cc_envelope, vpm, gt);
   }
   else
   {
     success = fill_hole(cc_border_hedges, cc_faces, working_face_range, tmesh,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
-                        cc_envelope,
-#endif
-                        vpm, gt);
+                        cc_envelope, vpm, gt);
   }
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -664,7 +630,7 @@ bool remove_self_intersections_with_hole_filling(std::vector<typename boost::gra
 }
 
 // the parameter `step` controls how many extra layers of faces we take around the range `faces_to_remove`
-template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits, typename Visitor>
 std::pair<bool, bool>
 remove_self_intersections_one_step(std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& faces_to_remove,
                                    std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& working_face_range,
@@ -676,7 +642,8 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
                                    const double weak_dihedral_angle,
                                    const double containment_epsilon,
                                    VertexPointMap vpm,
-                                   const GeomTraits& gt)
+                                   const GeomTraits& gt,
+                                   Visitor& visitor)
 {
   typedef boost::graph_traits<TriangleMesh>                               graph_traits;
   typedef typename graph_traits::vertex_descriptor                        vertex_descriptor;
@@ -715,6 +682,10 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 
   while(!faces_to_remove.empty())
   {
+    if (visitor.stop())
+      return std::make_pair(false, false);
+    visitor.start_component_handling();
+    visitor.status_update(faces_to_remove);
 #if defined(CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG) || defined(CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT)
     ++cc_id;
 #endif
@@ -910,6 +881,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       ++unsolved_self_intersections;
 #endif
 
+      visitor.end_component_handling();
       continue; // cannot replace a patch containing a nm vertex by a disk
     }
 
@@ -937,6 +909,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
      ++unsolved_self_intersections;
 #endif
+      visitor.end_component_handling();
       continue;
     }
 
@@ -949,6 +922,13 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     if (containment_epsilon!=0)
       cc_envelope = Polyhedral_envelope<GeomTraits>(cc_faces, tmesh, containment_epsilon);
 #else
+    struct Return_true {
+      bool is_empty() const { return true; }
+      bool operator()(const std::vector<std::vector<typename GeomTraits::Point_3> >&) const { return true; }
+      bool operator()(const TriangleMesh&) const { return true; }
+    };
+
+    Return_true cc_envelope;
     CGAL_USE(containment_epsilon);
 #endif
 
@@ -971,9 +951,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       fixed_by_smoothing = remove_self_intersections_with_smoothing(cc_faces, tmesh, true,
                                                                     strong_dihedral_angle,
                                                                     weak_dihedral_angle,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
                                                                     cc_envelope,
-#endif
                                                                     vpm, gt);
 
       if(!fixed_by_smoothing) // try again, but without constraining sharp edges
@@ -985,9 +963,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         fixed_by_smoothing = remove_self_intersections_with_smoothing(cc_faces, tmesh, false,
                                                                       strong_dihedral_angle,
                                                                       weak_dihedral_angle,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
                                                                       cc_envelope,
-#endif
                                                                       vpm, gt);
       }
     }
@@ -999,6 +975,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
  #endif
 
       something_was_done = true;
+      visitor.end_component_handling();
       continue;
     }
  #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -1013,21 +990,43 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     std::cout << "  DEBUG: Trying hole-filling based approach\n";
 #endif
 
-    if(!is_selection_a_topological_disk(cc_faces, tmesh))
+    int selection_chi = euler_characteristic_of_selection(cc_faces, tmesh);
+
+    if( selection_chi!=1 ) // not a topological disk
     {
-      // check if the selection contains cycles of border halfedges
-      bool only_border_edges = true;
+      if (preserve_genus)
+      {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+        std::cout << "  DEBUG: CC not handled, selection is not a topological disk (preserve_genus=true)\n";
+        ++unsolved_self_intersections;
+#endif
+        topology_issue = true;
+        continue;
+      }
+
+      // check if the topological issue is created by border edges
+      std::vector<halfedge_descriptor> mesh_non_border_hedges;
       std::set<halfedge_descriptor> mesh_border_hedge;
 
       for(halfedge_descriptor h : cc_border_hedges)
       {
         if(!is_border(opposite(h, tmesh), tmesh))
-          only_border_edges = false;
+          mesh_non_border_hedges.push_back(h);
         else
           mesh_border_hedge.insert(opposite(h, tmesh));
       }
 
-      int nb_cycles = 0;
+      if (mesh_border_hedge.empty())
+      {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+        std::cout << "  DEBUG: CC not handled, selection is not a topological disk (preserve_genus=false)\n";
+        ++unsolved_self_intersections;
+#endif
+        topology_issue = true;
+        continue;
+      }
+
+      // we look for cycles of border halfedges and update selection_chi
       while(!mesh_border_hedge.empty())
       {
         // we must count the number of cycle of boundary edges
@@ -1039,14 +1038,14 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
           if(h == h_b)
           {
             // found a cycle
-            ++nb_cycles;
+            selection_chi += 1;
             break;
           }
           else
           {
             typename std::set<halfedge_descriptor>::iterator it = mesh_border_hedge.find(h);
             if(it == mesh_border_hedge.end())
-              break; // not a cycle
+              break; // not a cycle does not count
 
             mesh_border_hedge.erase(it);
           }
@@ -1054,29 +1053,20 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
         while(true);
       }
 
-      if(nb_cycles > (only_border_edges ? 1 : 0))
+      if(selection_chi!=1)
       {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-        std::cout << "  DEBUG: CC not handled due to the presence of "
-                  << nb_cycles << " of boundary edges\n";
-     ++unsolved_self_intersections;
+        std::cout << "  DEBUG: CC not handled, selection is not a topological disk even if"
+                  << " boundary cycles are removed: chi=" << selection_chi << "\n";
+      ++unsolved_self_intersections;
 #endif
-
         topology_issue = true;
+        visitor.end_component_handling();
         continue;
       }
       else
       {
-        if(preserve_genus)
-        {
-#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-          std::cout << "  DEBUG: CC not handled because it is not a topological disk (preserve_genus=true)\n";
-          ++unsolved_self_intersections;
-#endif
-
-          all_fixed = false;
-          continue;
-        }
+        cc_border_hedges.swap(mesh_non_border_hedges);
 
         // count the number of cycles of halfedges of the boundary
         std::map<vertex_descriptor, vertex_descriptor> bhs;
@@ -1111,6 +1101,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 #endif
 
           all_fixed = false;
+          visitor.end_component_handling();
           continue;
         }
         else
@@ -1125,9 +1116,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     if(!remove_self_intersections_with_hole_filling(cc_border_hedges, cc_faces, working_face_range,
                                                     tmesh, only_treat_self_intersections_locally,
                                                     strong_dihedral_angle, weak_dihedral_angle,
-#ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
                                                     cc_envelope,
-#endif
                                                     vpm, gt))
     {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
@@ -1141,6 +1130,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     {
       something_was_done = true;
     }
+    visitor.end_component_handling();
   }
 
   if(!something_was_done)
@@ -1163,6 +1153,26 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 } // namespace internal
 
 namespace experimental {
+
+template <class TriangleMesh>
+struct Remove_self_intersection_default_visitor
+{
+  bool stop() const { return false; }
+  template <class FaceContainer>
+  void status_update(const FaceContainer&) {}
+  void start_main_loop() {}
+  void end_main_loop() {}
+  void start_iteration() {}
+  void end_iteration() {}
+  void start_component_handling() {}
+  void end_component_handling() {}
+  void parameters_used( bool /* parameters_used(preserve_genus */,
+                        bool /* only_treat_self_intersections_locally */,
+                        int /* max_steps */,
+                        double /* strong_dihedral_angle */,
+                        double /* weak_dihedral_angle */,
+                        double /* containment_epsilon */ ) {}
+};
 
 template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
 bool remove_self_intersections(const FaceRange& face_range,
@@ -1208,7 +1218,7 @@ bool remove_self_intersections(const FaceRange& face_range,
     Return_false//default
   > ::type  Output_iterator_predicate;
   Output_iterator_predicate out_it_predicates
-    = choose_parameter<Output_iterator_predicate>(get_parameter(np, internal_np::filter));
+    = choose_parameter<Return_false>(get_parameter(np, internal_np::filter));
 
   // use containment check
   const double containment_epsilon = choose_parameter(get_parameter(np, internal_np::polyhedral_envelope_epsilon), 0.);
@@ -1223,6 +1233,20 @@ bool remove_self_intersections(const FaceRange& face_range,
   std::cout << "\tcontainment_epsilon: " << containment_epsilon << std::endl;
 #endif
 
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Remove_self_intersection_default_visitor<TriangleMesh>//default
+  > ::type Visitor;
+  Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor));
+
+  visitor.parameters_used(preserve_genus,
+                          only_treat_self_intersections_locally,
+                          max_steps,
+                          strong_dihedral_angle,
+                          weak_dihedral_angle,
+                          containment_epsilon);
+
   if(!preserve_genus)
     duplicate_non_manifold_vertices(tmesh, np);
 
@@ -1233,8 +1257,12 @@ bool remove_self_intersections(const FaceRange& face_range,
   std::set<face_descriptor> faces_to_remove;
   std::set<face_descriptor> working_face_range(face_range.begin(), face_range.end());
 
+  visitor.start_main_loop();
   while(++step < max_steps)
   {
+    if (visitor.stop()) break;
+    visitor.start_iteration();
+
     if(faces_to_remove.empty()) // the previous round might have been blocked due to topological constraints
     {
       typedef std::pair<face_descriptor, face_descriptor> Face_pair;
@@ -1262,17 +1290,22 @@ bool remove_self_intersections(const FaceRange& face_range,
       break;
     }
 
+    visitor.status_update(faces_to_remove);
+
     std::tie(all_fixed, topology_issue) =
       internal::remove_self_intersections_one_step(
           faces_to_remove, working_face_range, tmesh,
           step, preserve_genus, only_treat_self_intersections_locally,
-          strong_dihedral_angle, weak_dihedral_angle, containment_epsilon, vpm, gt);
+          strong_dihedral_angle, weak_dihedral_angle, containment_epsilon, vpm, gt, visitor);
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     if(all_fixed && topology_issue)
         std::cout << "DEBUG: boundary cycles of boundary edges involved in self-intersections.\n";
 #endif
+
+    visitor.end_iteration();
   }
+  visitor.end_main_loop();
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   std::cout << "solved by constrained smoothing: " << internal::self_intersections_solved_by_constrained_smoothing << std::endl;

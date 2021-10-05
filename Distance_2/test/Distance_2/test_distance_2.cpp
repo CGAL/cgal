@@ -1,12 +1,12 @@
-// 2D distance tests.
-
 #ifdef NDEBUG
 #undef NDEBUG //this testsuite requires NDEBUG to be not defined
 #endif
 
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Homogeneous.h>
 
 #include <vector>
 #include <iostream>
@@ -167,7 +167,7 @@ struct Test {
     check_squared_distance (R(p( 4,    0), p(-3,  -1)), R(p(  1,  1), p(  2, 11)), 2);
   }
 
-  void R_S()
+  void S_R()
   {
     std::cout << "Ray - Segment\n";
     check_squared_distance (R(p(2, 0), p( 0, 2)), S(p( 1, 1), p( 4, 0)), 0);
@@ -216,7 +216,7 @@ struct Test {
     check_squared_distance (p( 1,  1), L(p(  4,  0), p(  -3,  -1)), 2);
   }
 
-  void L_S()
+  void S_L()
   {
     std::cout << "Line - Segment\n";
     check_squared_distance (L(p( 0,  0), p( 1,  0)), S(p(  2,  2), p(  3,  3)), 4);
@@ -268,29 +268,38 @@ struct Test {
 
   void run()
   {
-    std::cout << "2D Distance tests\n";
+    std::cout << "-- Kernel: " << typeid(K).name() << std::endl;
+
     P_P();
     P_S();
-    S_S();
     P_R();
-    R_R();
-    R_S();
-    R_L();
     P_L();
-    L_S();
-    L_L();
     P_T();
-    L_T();
-    R_T();
+
+    S_S();
     S_T();
+    S_R();
+    S_L();
+
+    R_R();
+    R_L();
+    R_T();
+
+    L_L();
+    L_T();
+
     T_T();
   }
-
 };
 
 int main()
 {
-        Test< CGAL::Simple_cartesian<double>   >().run();
-        Test< CGAL::Simple_homogeneous<double> >().run();
-        // TODO : test more kernels.
+  std::cout << "2D Distance tests\n";
+
+  Test<CGAL::Simple_cartesian<double> >().run();
+  Test<CGAL::Simple_homogeneous<double> >().run();
+
+  Test<CGAL::Homogeneous<CGAL::Epeck_ft> >().run();
+  Test<CGAL::Exact_predicates_inexact_constructions_kernel>().run();
+  Test<CGAL::Exact_predicates_exact_constructions_kernel>().run();
 }

@@ -15,6 +15,13 @@ if(NOT CGAL_DISABLE_GMP)
     target_link_libraries(
       parameterization_plugin PUBLIC scene_surface_mesh_item scene_textured_item
                                      scene_selection_item CGAL::Eigen3_support)
+
+    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+      set_tests_properties(
+        compilation_of__parameterization_plugin
+        PROPERTIES RESOURCE_LOCK Selection_test_resources)
+    endif()
+
   else()
     message(
       STATUS
@@ -27,6 +34,11 @@ if(NOT CGAL_DISABLE_GMP)
                          ${segmentationUI_FILES})
   target_link_libraries(mesh_segmentation_plugin PUBLIC scene_surface_mesh_item)
 
+  if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+    set_tests_properties(
+      compilation_of__mesh_segmentation_plugin
+      PROPERTIES RESOURCE_LOCK Selection_test_resources)
+  endif()
 
   qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
   polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
@@ -36,7 +48,8 @@ if(NOT CGAL_DISABLE_GMP)
   polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin
                          ${remeshingUI_FILES})
   target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item
-                                                   scene_polygon_soup_item)
+                                                     scene_polygon_soup_item
+                                                     scene_polylines_item)
   if(TARGET CGAL::Eigen3_support)
     target_link_libraries(offset_meshing_plugin PUBLIC CGAL::Eigen3_support)
   endif()

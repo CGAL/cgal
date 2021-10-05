@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 // Example program for the linear_least_square_fitting function on set of cuboids in 3D
 #include <CGAL/Simple_cartesian.h>

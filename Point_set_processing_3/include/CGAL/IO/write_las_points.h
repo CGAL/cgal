@@ -66,6 +66,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /**
  \ingroup PkgPointSetProcessing3IOLas
 
@@ -174,10 +176,10 @@ namespace LAS {
    See documentation of `read_LAS_with_properties()` for the
    list of available `LAS_property::Tag` classes.
 
-   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam PointMap is a model of `ReadablePropertyMap` with a value_type = `CGAL::Point_3`.
    \tparam PropertyHandler handlers to recover properties.
 
@@ -252,10 +254,10 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
 
    \brief writes the range of `points` (positions only), using the \ref IOStreamLAS.
 
-   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation of the `ofstream`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param os output stream
@@ -286,7 +288,7 @@ bool write_LAS(std::ostream& os,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                )
 {
@@ -341,12 +343,12 @@ bool write_LAS(const std::string& filename,
                const PointRange& points,
                const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                )
 {
   std::ofstream os(filename, std::ios::binary);
-  CGAL::set_mode(os, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, points, np);
 }
 
@@ -355,23 +357,27 @@ bool write_LAS(const std::string& filename,
 // variant with default NP
 template <typename PointRange>
 bool write_LAS(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   return write_LAS(os, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 template <typename PointRange>
 bool write_LAS(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
+               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
 {
   std::ofstream os(filename, std::ios::binary);
-  CGAL::set_mode(os, CGAL::IO::BINARY);
+  CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, points, parameters::all_default());
 }
 
 /// \endcond
 
+} // namespace IO
+
 #ifndef CGAL_NO_DEPRECATED_CODE
+
+using IO::make_las_point_writer;
 
 /// \cond SKIP_IN_MANUAL
 
@@ -384,7 +390,7 @@ bool write_las_points(std::ostream& os, ///< output stream.
                       PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_LAS(os, points, parameters::point_map(point_map));
+  return IO::write_LAS(os, points, parameters::point_map(point_map));
 }
 
 template <typename ForwardIterator>
@@ -394,7 +400,7 @@ bool write_las_points(std::ostream& os, ///< output stream.
                       ForwardIterator beyond) ///< past-the-end input point.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_LAS(os, points);
+  return IO::write_LAS(os, points);
 }
 
 /// \endcond
@@ -402,7 +408,7 @@ bool write_las_points(std::ostream& os, ///< output stream.
 /**
   \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_LAS_with_properties()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_LAS_with_properties()` should be used instead.
 */
 template <typename PointRange,
           typename PointMap,
@@ -410,23 +416,23 @@ template <typename PointRange,
 CGAL_DEPRECATED bool write_las_points_with_properties(std::ostream& os,
                                                       const PointRange& points,
                                                       std::tuple<PointMap,
-                                                      LAS_property::X,
-                                                      LAS_property::Y,
-                                                      LAS_property::Z> point_property,
+                                                      IO::LAS_property::X,
+                                                      IO::LAS_property::Y,
+                                                      IO::LAS_property::Z> point_property,
                                                       PropertyHandler&& ... properties)
 {
-  return write_LAS_with_properties(os, points, point_property, std::forward<PropertyHandler>(properties)...);
+  return IO::write_LAS_with_properties(os, points, point_property, std::forward<PropertyHandler>(properties)...);
 }
 
 /**
    \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_LAS()` should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_LAS()` should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_las_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
 {
-  return write_LAS(os, points, np);
+  return IO::write_LAS(os, points, np);
 }
 
 #endif //CGAL_NO_DEPRECATED_CODE

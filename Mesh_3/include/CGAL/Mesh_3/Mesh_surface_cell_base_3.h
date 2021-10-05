@@ -283,7 +283,7 @@ operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb> &c)
   is >> static_cast<Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> index;
     else
     {
@@ -303,8 +303,8 @@ operator<<(std::ostream &os,
   os << static_cast<const Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    if(is_ascii(os))
-      os << ' ' << oformat(c.surface_patch_index(i));
+    if(IO::is_ascii(os))
+      os << ' ' << IO::oformat(c.surface_patch_index(i));
     else
       write(os, c.surface_patch_index(i));
   }

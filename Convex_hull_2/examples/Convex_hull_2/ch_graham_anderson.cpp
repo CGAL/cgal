@@ -37,8 +37,8 @@ ch_graham_anderson( InputIterator  first, InputIterator  beyond,
 
 int main()
 {
-  CGAL::set_ascii_mode(std::cin);
-  CGAL::set_ascii_mode(std::cout);
+  CGAL::IO::set_ascii_mode(std::cin);
+  CGAL::IO::set_ascii_mode(std::cout);
   std::istream_iterator< Point_2 >  in_start( std::cin );
   std::istream_iterator< Point_2 >  in_end;
   std::ostream_iterator< Point_2 >  out( std::cout, "\n" );

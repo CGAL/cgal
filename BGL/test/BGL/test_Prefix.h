@@ -160,7 +160,7 @@ bool read_a_mesh(OMesh& s, const std::string& str) {
 template<typename T>
 bool read_a_mesh(T& m, const std::string& str)
 {
-  return CGAL::read_OFF(str, m);
+  return CGAL::IO::read_OFF(str, m);
 }
 
 bool read_a_mesh(Polyhedron& p, const std::string& str)

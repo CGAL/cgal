@@ -16,11 +16,11 @@
 
 #include <CGAL/Combinatorial_map_fwd.h>
 
-#include <CGAL/internal/Combinatorial_map_internal_functors.h>
-#include <CGAL/internal/Combinatorial_map_utility.h>
-#include <CGAL/internal/Combinatorial_map_group_functors.h>
-#include <CGAL/internal/Combinatorial_map_copy_functors.h>
-#include <CGAL/internal/Combinatorial_map_sewable.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_utility.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_group_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_copy_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_sewable.h>
 
 #include <CGAL/Combinatorial_map_storages.h>
 #include <CGAL/Combinatorial_map_functors.h>
@@ -55,7 +55,7 @@
 #endif
 
 #include <boost/config.hpp>
-#if  (BOOST_GCC >= 40900)
+#if defined(BOOST_GCC)
 _Pragma("GCC diagnostic push")
 _Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
 #endif
@@ -4824,7 +4824,7 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#if  (BOOST_GCC >= 40900)
+#if defined(BOOST_GCC)
  _Pragma("GCC diagnostic pop")
 #endif
 

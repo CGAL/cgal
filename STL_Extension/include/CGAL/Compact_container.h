@@ -425,9 +425,7 @@ public:
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
     std::allocator_traits<allocator_type>::destroy(alloc, &*x);
-/*#ifndef CGAL_NO_ASSERTIONS
-    std::memset(&*x, 0, sizeof(T));
-#endif*/
+
     put_on_free_list(&*x);
     --size_;
   }
@@ -874,6 +872,8 @@ namespace internal {
     {
       m_ptr = nullptr;
     }
+
+    explicit CC_iterator(pointer ptr) : m_ptr(ptr) { }
 
     // Converting constructor from mutable to constant iterator
     template <bool OtherConst>

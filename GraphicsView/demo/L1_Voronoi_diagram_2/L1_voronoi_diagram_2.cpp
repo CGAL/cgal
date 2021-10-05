@@ -24,9 +24,7 @@
 #include <QInputDialog>
 #include <boost/config.hpp>
 #include <boost/version.hpp>
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 #include <CGAL/IO/WKT.h>
-#endif
 
 #include <fstream>
 
@@ -275,9 +273,7 @@ MainWindow::on_actionLoadPoints_triggered()
                                                   tr("Open Points file"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
@@ -295,9 +291,7 @@ MainWindow::open(QString fileName)
   std::ifstream ifs(qPrintable(fileName));
   if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
   {
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-    CGAL::read_multi_point_WKT(ifs, m_sites);
-#endif
+    CGAL::IO::read_multi_point_WKT(ifs, m_sites);
   }
   else
   {
@@ -322,16 +316,12 @@ MainWindow::on_actionSavePoints_triggered()
                                                   tr("Save points"),
                                                   ".",
                                                   tr("CGAL files (*.pts.cgal);;"
-                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
                                                      "WKT files (*.wkt *.WKT);;"
-                                                   #endif
                                                      "All files (*)"));
   if(! fileName.isEmpty()) {
     std::ofstream ofs(qPrintable(fileName));
     if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-      CGAL::write_multi_point_WKT(ofs, m_sites);
-#endif
+      CGAL::IO::write_multi_point_WKT(ofs, m_sites);
     }else
       for(Points::iterator it = m_sites.begin();
           it != m_sites.end(); ++it)
@@ -358,10 +348,10 @@ MainWindow::on_actionShowVoronoi_toggled(bool checked)
 
 void
 MainWindow::calculate_envelope() {
-  if (m_envelope_diagram != NULL) {
-    m_graphics_item->setArrangement(NULL);
+  if (m_envelope_diagram != nullptr) {
+    m_graphics_item->setArrangement(nullptr);
     delete m_envelope_diagram;
-    m_envelope_diagram = NULL;
+    m_envelope_diagram = nullptr;
   }
 
   m_envelope_diagram = new Envelope_diagram_2();
@@ -374,7 +364,7 @@ QRectF
 MainWindow::bounding_rect() {
   CGAL::Bbox_2 bbox(0, 0, 0, 0);
 
-  if (m_envelope_diagram != NULL) {
+  if (m_envelope_diagram != nullptr) {
     for (Envelope_diagram_2::Vertex_iterator it =
            m_envelope_diagram->vertices_begin();
          it != m_envelope_diagram->vertices_end(); ++it) {

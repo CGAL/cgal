@@ -18,7 +18,7 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 int main(int /* argc */, char* argv[])
 {
   Mesh sm;
-  if(!CGAL::read_polygon_mesh(argv[1], sm))
+  if(!CGAL::IO::read_polygon_mesh(argv[1], sm))
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;

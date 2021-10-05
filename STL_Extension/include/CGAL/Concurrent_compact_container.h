@@ -31,7 +31,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
-#include <CGAL/atomic.h>
 
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/queuing_mutex.h>
@@ -395,10 +394,6 @@ private:
 
     std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
 
-/* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
-#ifndef CGAL_NO_ASSERTIONS
-    std::memset(&*x, 0, sizeof(T));
-#endif*/
     put_on_free_list(&*x, fl);
   }
 public:

@@ -1041,6 +1041,16 @@ public:
   Comparison_result operator()(const Kernel::Segment_2& s1,
                                const Kernel::Segment_2& s2);
 
+  /*!
+    compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
+    where the slope is the variation of the `y`-coordinate
+    from the left to the right endpoint of the segments.
+  */
+  Comparison_result operator()(const Kernel::Point_2& s1s,
+                               const Kernel::Point_2& s1t,
+                               const Kernel::Point_2& s2s,
+                               const Kernel::Point_2& s2t));
+
   /// @}
 
 }; /* end Kernel::CompareSlope_2 */
@@ -4996,6 +5006,10 @@ public:
   */
   Kernel::Point_2 operator()(const Kernel::Point_2& p,
                              const Kernel::Point_2& q );
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s);
 
   /// @}
 
@@ -5022,6 +5036,11 @@ public:
   */
   Kernel::Point_3 operator()(const Kernel::Point_3& p,
                              const Kernel::Point_3& q );
+
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s);
 
 
   /// @}
@@ -6905,7 +6924,7 @@ public:
   /// @{
 
   /*!
-    computes the unit normal of the vectors`q-p` and `r-p`.
+    computes the unit normal of the vectors `q-p` and `r-p`.
     This requires that `Kernel::FT` supports the `sqrt` operation.
   */
   Kernel::Vector_3 operator()(const Kernel::Point_3& p,
@@ -8409,8 +8428,6 @@ public:
   \cgalRefines `AdaptableFunctor` (with two arguments)
 
   \sa \link intersection_grp `CGAL::intersection()` \endlink
-  \sa `CGAL::cpp11::result_of`
-
 */
 class Intersect_2 {
 public:
@@ -8424,7 +8441,7 @@ public:
     `Type1` and `Type2`, for all pairs `Type1` and `Type2`.
     For details see the reference manual page for \link intersection_grp `CGAL::intersection()` \endlink.
   */
-  CGAL::cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>::type
+  decltype(auto)
   operator()(Type1 obj1, Type2 obj2);
 
   /// @}
@@ -8438,8 +8455,6 @@ public:
   \cgalRefines `AdaptableFunctor` (with two or three arguments)
 
   \sa intersection_linear_grp
-  \sa `CGAL::cpp11::result_of`
-
 */
 class Intersect_3 {
 public:
@@ -8453,8 +8468,8 @@ public:
     objects of type `Type1` and `Type2`.
     For details see the reference manual page for \ref intersection_linear_grp.
   */
-  CGAL::cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>::type
- operator()(Type1 obj1, Type2 obj2);
+  decltype(auto)
+  operator()(Type1 obj1, Type2 obj2);
 
 
 
@@ -8883,7 +8898,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`, or,
     if both \f$ x\f$- and \f$ y\f$- coordinate are identical and
     the \f$ z\f$-coordinate of `p` is smaller than the \f$ z\f$-coordinate of `q`.
@@ -8913,7 +8928,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_2&p,
@@ -8942,7 +8957,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_3&p,
@@ -9025,7 +9040,7 @@ public:
 
   /*!
     returns true iff the \f$ y\f$-coordinate of `p` is smaller than the
-    \f$ y\f$-coordinate of `q` or if the are the same and
+    \f$ y\f$-coordinate of `q` or if they are the same and
     the \f$ x\f$-coordinate of `p` is smaller than the \f$ x\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_2&p,
@@ -9706,7 +9721,6 @@ public:
                            const Kernel::Point_3&r,
                            const Kernel::Point_3&s,
                            const Kernel::Point_3&t);
-
 
   /// @}
 
