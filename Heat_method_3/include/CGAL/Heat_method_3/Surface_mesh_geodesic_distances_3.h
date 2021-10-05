@@ -805,14 +805,14 @@ class Surface_mesh_geodesic_distances_3
         >::Kernel
       >::type,
       Mode,
-      #ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
       typename Default::Get<
         LA,
         Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
       >::type,
-      #else
+#else
       LA,
-      #endif
+#endif
       typename Default::Get<
         VertexPointMap,
         typename boost::property_map< TriangleMesh, vertex_point_t>::const_type
@@ -821,14 +821,14 @@ class Surface_mesh_geodesic_distances_3
 #endif
 {
   // extract real types from Default
-  #ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
   typedef typename Default::Get<
     LA,
     Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
   >::type LA_type;
-  #else
+#else
   typedef LA LA_type;
-  #endif
+#endif
 
   typedef typename Default::Get<
     VertexPointMap,

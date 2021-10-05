@@ -45,9 +45,7 @@
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
-
-namespace internal
-{
+namespace internal {
 
 template <class Plane_3,
           class TriangleMesh,
