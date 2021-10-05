@@ -90,7 +90,7 @@ void test_precondition(const char* filename,
   std::cout << "Start remeshing of " << bad_selection_file
     << " (" << patch.size() << " faces)..." << std::endl;
 
-#ifndef CGAL_NDEBUG //o.w. CGAL_precondition not tested
+#ifndef NDEBUG //o.w. CGAL_precondition not tested
   bool exception_caught = false;
   try
   {
@@ -101,7 +101,7 @@ void test_precondition(const char* filename,
   {
     exception_caught = true;
   }
-  CGAL_assertion(exception_caught);
+  assert(exception_caught);
 #endif
 }
 
@@ -164,7 +164,7 @@ Main(int argc, const char* argv[])
 
   Mesh m;
   if (!input || !(input >> m)){
-    std::cerr << "Error: can not read file.\n";
+    std::cerr << "Error: can not read file " << filename << ".\n";
     assert(false);
     return;
   }
