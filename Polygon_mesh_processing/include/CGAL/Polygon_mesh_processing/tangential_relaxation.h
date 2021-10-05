@@ -24,6 +24,7 @@
 
 #include <tuple>
 #include <type_traits>
+#include <unordered_map>
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
@@ -192,16 +193,19 @@ namespace Polygon_mesh_processing {
 
     typedef std::tuple<vertex_descriptor, Vector_3, Point_3> VNP;
     std::vector< VNP > barycenters;
+
     // at each vertex, compute vertex normal
+    std::unordered_map<vertex_descriptor, Vector_3> vnormals;
+    compute_vertex_normals(tm, boost::make_assoc_property_map(vnormals), np);
+
     // at each vertex, compute barycenter of neighbors
     for(vertex_descriptor v : vertices)
     {
       if (get(vcm, v) || halfedge(v, tm)==boost::graph_traits<TriangleMesh>::null_halfedge())
         continue;
 
-      std::vector <halfedge_descriptor> interior_hedges, border_halfedges;
-
       // collect hedges to detect if we have to handle boundary cases
+      std::vector<halfedge_descriptor> interior_hedges, border_halfedges;
       for(halfedge_descriptor h : halfedges_around_target(v, tm))
       {
         if (is_border_edge(h, tm) || get(ecm, edge(h, tm)))
@@ -212,11 +216,7 @@ namespace Polygon_mesh_processing {
 
       if (border_halfedges.empty())
       {
-        // \todo: shall we want to have a way to compute once for all vertices (per loop)
-        //        this would avoid recompute face normals
-        Vector_3 vn = compute_vertex_normal(v, tm,
-                                            parameters::vertex_point_map(vpm)
-                                                       .geom_traits(gt));
+        const Vector_3& vn = vnormals.at(v);
         Vector_3 move = CGAL::NULL_VECTOR;
         unsigned int star_size = 0;
         for(halfedge_descriptor h :interior_hedges)
