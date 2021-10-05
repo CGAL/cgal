@@ -24,12 +24,11 @@ int main(int argc, char* argv[])
   }
 
   double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.04;
-  unsigned int nb_iter = 3;
+  unsigned int nb_iter = (argc > 3) ? std::stoi(std::string(argv[3])) : 10;
 
   std::cout << "Relax...";
 
-  PMP::tangential_relaxation(mesh,
-    CGAL::parameters::number_of_iterations(3));
+  PMP::tangential_relaxation(mesh, CGAL::parameters::number_of_iterations(nb_iter));
 
   std::cout << "done." << std::endl;
 
