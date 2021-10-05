@@ -401,9 +401,6 @@ void sample_non_manifold_edges(const typename GeomTraits::FT r,
     Vector d{sp, tp};
     d = gt.construct_scaled_vector_3_object()(d, 1 / FT(interval_n));
 
-    std::cout << "length | interval_n | d " << length << " " << interval_n << " " << CGAL::approximate_sqrt(d.squared_length()) << std::endl;
-    std::cout << interval_n * CGAL::approximate_sqrt(d.squared_length()) << std::endl;
-
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
     std::cout << "Sample edge " << sp << " " << tp << " with " << points_n << " extra points" << std::endl;
 #endif
@@ -445,12 +442,8 @@ void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
 
   Heat_method_3::Surface_mesh_geodesic_distances_3<PolygonMesh, CGAL::Heat_method_3::Intrinsic_Delaunay, VPM> smgd(pmesh, vpm);
 
-  std::cout << "sources" << std::endl;
   for(const halfedge_descriptor h : nm_points)
-  {
-    std::cout << get(vpm, target(h, pmesh)) << std::endl;
     smgd.add_source(target(h, pmesh));
-  }
 
   typedef CGAL::dynamic_vertex_property_t<FT>                                  Distance_tag;
   typedef typename boost::property_map<PolygonMesh, Distance_tag>::type        Vertex_distance_map;
