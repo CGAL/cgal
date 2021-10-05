@@ -73,13 +73,14 @@ namespace Mesh_3 {
  * N. Uses weighted trilinear interpolation.
  */
 template<typename Image_word_type = unsigned char,
+         typename Interpolation_type = Image_word_type,
          typename Weights_type = unsigned char,
-         typename Return_type = int,
-         typename Image_values_to_labels = std::function<Return_type(Image_word_type)>
-         >
+         typename Return_type = int>
 class Image_plus_weights_to_labeled_function_wrapper
 {
 public:
+  typedef std::function<Return_type(Interpolation_type)>
+                                                    Image_values_to_labels;
 
   // Types
   typedef Return_type return_type;
@@ -91,7 +92,7 @@ public:
   (const Image_& image,
    const Image_& weights_image,
    Image_values_to_labels transform = Identity<Return_type>(),
-   const Return_type value_outside = 0)
+   const Interpolation_type value_outside = Interpolation_type())
     : r_im_(image)
     , r_weights_im_(weights_image)
     , transform(transform)
@@ -127,7 +128,7 @@ private:
   const Image_& r_im_;
   const Image_& r_weights_im_;
   const Image_values_to_labels transform;
-  const Return_type value_outside;
+  const Interpolation_type value_outside;
   CGAL::ImageIO::Weighted_indicator_factory<Image_word_type,
                                             Weights_type> indicator_factory;
 };  // end class Image_plus_weights_to_labeled_function_wrapper

@@ -905,6 +905,7 @@ protected:
 
     typedef Mesh_3::Image_plus_weights_to_labeled_function_wrapper<
       Image_word_type,
+      int, //interpolation type
       unsigned char, // Weights_type,
       Subdomain_index> Wrapper;
     return Wrapper(image,
