@@ -138,7 +138,7 @@ While mesh smoothing is achieved by improving the quality of triangles based on 
 shape smoothing is designed to be \e intrinsic, depending as little as possible on the discretization
 and smoothing the shape alone without optimizing the shape of the triangles.
 
-- Mesh smoothing by angle and area optimization :
+- Mesh smoothing by angle and area optimization:
 `CGAL::Polygon_mesh_processing::angle_and_area_smoothing()` moves vertices to optimize geometry around each vertex:
 it can try to equalize the angles between incident edges, or (and) move vertices so that areas of adjacent triangles tend to equalize.
 Border vertices are considered constrained and do not move at any step of the procedure. No vertices are inserted at any time.
@@ -166,7 +166,7 @@ Mesh smoothing of the closed surface <i>blobby</i>, containing self-intersection
 Statistics for the various combinations of mesh smoothing.
 \cgalFigureEnd
 
-- Mesh smoothing by tangential relaxation : `CGAL::Polygon_mesh_processing::tangential_relaxation()`
+- Mesh smoothing by tangential relaxation: `CGAL::Polygon_mesh_processing::tangential_relaxation()`
 moves vertices following an area-based Laplacian smoothing scheme, performed
 at each vertex in an estimated tangent plane to the surface.
 The full algorithm is described in \cgalCite{botsch2010PMP}.

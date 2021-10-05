@@ -44,8 +44,8 @@ int main(int argc, char** argv)
 
   // Smooth with both angle and area criteria + Delaunay flips
   PMP::angle_and_area_smoothing(mesh, PMP::parameters::number_of_iterations(nb_iterations)
-                                         .use_safety_constraints(false) // authorize all moves
-                                         .edge_is_constrained_map(eif));
+                                                      .use_safety_constraints(false) // authorize all moves
+                                                      .edge_is_constrained_map(eif));
 
   CGAL::IO::write_polygon_mesh("mesh_smoothed.off", mesh, CGAL::parameters::stream_precision(17));
 

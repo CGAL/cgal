@@ -132,12 +132,12 @@ namespace Polygon_mesh_processing {
 * @warning The third party library \link thirdpartyCeres Ceres \endlink is required
 * to use area-based smoothing.
 *
-* @pre `tmesh` does not contain any degenerate faces
+* @pre `tmesh` does not contain any degenerate faces.
 */
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
 void angle_and_area_smoothing(const FaceRange& faces,
-                 TriangleMesh& tmesh,
-                 const NamedParameters& np)
+                              TriangleMesh& tmesh,
+                              const NamedParameters& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;

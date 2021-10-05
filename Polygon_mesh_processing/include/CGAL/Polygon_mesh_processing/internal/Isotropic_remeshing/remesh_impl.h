@@ -1026,14 +1026,15 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      PMP::tangential_relaxation(vertices(mesh_),
-         mesh_,
-         CGAL::parameters::number_of_iterations(nb_iterations)
-        .vertex_point_map(vpmap_)
-        .geom_traits(gt_)
-        .edge_is_constrained_map(constrained_edges_pmap)
-        .vertex_is_constrained_map(constrained_vertices_pmap)
-        .relax_constraints(relax_constraints)
+      PMP::tangential_relaxation(
+             vertices(mesh_),
+             mesh_,
+             CGAL::parameters::number_of_iterations(nb_iterations)
+                              .vertex_point_map(vpmap_)
+                              .geom_traits(gt_)
+                              .edge_is_constrained_map(constrained_edges_pmap)
+                              .vertex_is_constrained_map(constrained_vertices_pmap)
+                              .relax_constraints(relax_constraints)
       );
 
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));

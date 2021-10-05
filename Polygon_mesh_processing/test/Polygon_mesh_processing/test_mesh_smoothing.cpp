@@ -49,7 +49,7 @@ void test_angle_smoothing(const char* filename)
 
   PMP::angle_and_area_smoothing(mesh);
   PMP::angle_and_area_smoothing(mesh, CGAL::parameters::number_of_iterations(10)
-                                          .use_area_smoothing(false));
+                                                       .use_area_smoothing(false));
 }
 
 template <typename Mesh>
@@ -60,7 +60,7 @@ void test_area_smoothing(const char* filename)
 
   PMP::angle_and_area_smoothing(mesh);
   PMP::angle_and_area_smoothing(mesh, CGAL::parameters::number_of_iterations(10)
-                                          .use_angle_smoothing(false));
+                                                       .use_angle_smoothing(false));
 }
 
 template <typename Mesh>
@@ -70,7 +70,7 @@ void test_angle_smoothing_without_projection(const char* filename)
   read_mesh(filename, mesh);
 
   PMP::angle_and_area_smoothing(mesh, CGAL::parameters::do_project(false)
-                                          .use_area_smoothing(false));
+                                                       .use_area_smoothing(false));
 }
 
 template <typename Mesh>
@@ -80,7 +80,7 @@ void test_area_smoothing_without_projection(const char* filename)
   read_mesh(filename, mesh);
 
   PMP::angle_and_area_smoothing(mesh, CGAL::parameters::do_project(false)
-                                          .use_angle_smoothing(false));
+                                                       .use_angle_smoothing(false));
 }
 
 template<typename Mesh>
@@ -88,9 +88,11 @@ void test_tangential_relaxation(const char* filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
-  PMP::tangential_relaxation(vertices(mesh), mesh,
+  PMP::tangential_relaxation(
+    vertices(mesh),
+    mesh,
     CGAL::parameters::number_of_iterations(4)
-    .relax_constraints(false));
+                     .relax_constraints(false));
   PMP::tangential_relaxation(vertices(mesh), mesh);
   PMP::tangential_relaxation(mesh);
 }
