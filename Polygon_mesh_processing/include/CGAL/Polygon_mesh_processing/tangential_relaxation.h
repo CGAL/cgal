@@ -157,7 +157,7 @@ namespace Polygon_mesh_processing {
     {
       if (is_border(hd, tm)) continue;
 
-      Vector_3 n = compute_face_normal(face(hd, tm), tm);
+      Vector_3 n = compute_face_normal(face(hd, tm), tm, np);
       if (n == CGAL::NULL_VECTOR) //for degenerate faces
         continue;
 
@@ -225,9 +225,9 @@ namespace Polygon_mesh_processing {
           ++star_size;
         }
         CGAL_assertion(star_size > 0); //isolated vertices have already been discarded
-        move = (1. / (double)star_size) * move;
+        move = (1. / static_cast<double>(star_size)) * move;
 
-        barycenters.push_back( VNP(v, vn, get(vpm, v) + move) );
+        barycenters.emplace_back(v, vn, get(vpm, v) + move);
       }
       else
       {
@@ -244,7 +244,7 @@ namespace Polygon_mesh_processing {
           //check squared cosine is < 0.25 (~120 degrees)
           if (0.25 < dot*dot / ( squared_distance(get(vpm,ph0), get(vpm, v)) *
                                  squared_distance(get(vpm,ph1), get(vpm, v))) )
-            barycenters.push_back( VNP(v, vn, barycenter(get(vpm, ph0), 0.25, get(vpm, ph1), 0.25, get(vpm, v), 0.5)) );
+            barycenters.emplace_back(v, vn, barycenter(get(vpm, ph0), 0.25, get(vpm, ph1), 0.25, get(vpm, v), 0.5));
         }
       }
     }
@@ -256,17 +256,17 @@ namespace Polygon_mesh_processing {
     for(const VNP& vnp : barycenters)
     {
       vertex_descriptor v = std::get<0>(vnp);
-      Point_3 pv = get(vpm, v);
+      const Point_3& pv = get(vpm, v);
       const Vector_3& nv = std::get<1>(vnp);
       const Point_3& qv = std::get<2>(vnp); //barycenter at v
 
-      new_locations.push_back( std::make_pair(v, qv + (nv * Vector_3(qv, pv)) * nv) );
+      new_locations.emplace_back(v, qv + (nv * Vector_3(qv, pv)) * nv);
     }
 
     // perform moves
     for(const VP_pair& vp : new_locations)
     {
-      const Point_3 initial_pos = get(vpm, vp.first);
+      const Point_3& initial_pos = get(vpm, vp.first);
       const Vector_3 move(initial_pos, vp.second);
 
       put(vpm, vp.first, vp.second);
