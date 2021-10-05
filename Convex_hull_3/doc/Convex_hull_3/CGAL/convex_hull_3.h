@@ -108,8 +108,8 @@ in a vector of points and a vector of index triples.
 
 \tparam InputIterator must be an input iterator with a value type  equivalent to `Traits::Point_3`.
 \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
-\tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
-                     whose `value_type` is itself a model of the concepts `SequenceContainer`
+\tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+                     whose `value_type` is itself a model of the concepts `RandomAccessContainer`
                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
                      convertible to `std::size_t`
 \tparam Traits must be model of the concept `ConvexHullTraits_3`.

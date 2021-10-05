@@ -2,6 +2,7 @@
 #include <CGAL/convex_hull_3.h>
 
 #include <vector>
+#include <deque>
 #include <array>
 #include <algorithm>
 
@@ -67,7 +68,7 @@ int main()
 
   {
     typedef  std::vector<Point_3> Vertices;
-    typedef std::vector<std::list<int> > Faces;
+    typedef std::deque<std::vector<int> > Faces;
     test<Vertices,Faces>();
   }
 
