@@ -37,6 +37,8 @@ namespace CGAL {
 // Barycentric coordinates namespace.
 namespace Barycentric_coordinates {
 
+#if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Try to find a square root object in the provided `Traits` class. If not, then use the default square root from CGAL.
 
@@ -497,6 +499,8 @@ private:
         output_stream << "M. S. Floater, Wachspress and mean value coordinates, to appear in the Proceedings of the 14th International Conference on Approximation Theory, G. Fasshauer and L. L. Schumaker (eds.)." << std::endl;
     }
 };
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace Barycentric_coordinates
 

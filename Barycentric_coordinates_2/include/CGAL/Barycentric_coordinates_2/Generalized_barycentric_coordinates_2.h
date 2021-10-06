@@ -32,6 +32,8 @@ namespace CGAL {
 // Barycentric coordinates namespace.
 namespace Barycentric_coordinates {
 
+#if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
 // Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 
 /*!
@@ -584,6 +586,8 @@ private:
         return false;
     }
 };
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace Barycentric_coordinates
 

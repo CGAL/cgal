@@ -32,6 +32,8 @@ namespace CGAL {
 // Barycentric coordinates namespace.
 namespace Barycentric_coordinates {
 
+#if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
 // Examples: see the User Manual here - https://doc.cgal.org/latest/Manual/index.html.
 // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos. A general construction of barycentric coordinates over convex polygons. Advances in Computational Mathematics, 24(1-4):311-331, 2006.".
 
@@ -429,6 +431,8 @@ private:
         return CONCAVE;
     }
 };
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace Barycentric_coordinates
 
