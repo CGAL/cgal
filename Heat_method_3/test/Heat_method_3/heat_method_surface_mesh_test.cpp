@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 {
   //read in mesh
   Surface_mesh sm;
-  const char* filename = (argc > 1) ? argv[1] : "./data/sphere.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/larger_sphere.off");
   std::ifstream in(filename);
   in >> sm;
   //property map for the distance values to the source set

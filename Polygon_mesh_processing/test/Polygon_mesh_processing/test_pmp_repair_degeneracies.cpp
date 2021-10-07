@@ -123,7 +123,7 @@ bool remove_dfaces(const std::vector<std::size_t>& faces_selection_ids,
 }
 
 template <typename K, typename Mesh>
-void remove_degeneracies(const char* filename,
+void remove_degeneracies(const std::string filename,
                          const std::vector<std::size_t>& edges_selection_ids,
                          const std::vector<std::size_t>& faces_selection_ids,
                          const std::size_t expected_all_degen_edges_n,
@@ -203,7 +203,7 @@ void initialize_IDs(const CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with
 }
 
 template <typename K, typename Mesh>
-void remove_negligible_connected_components(const char* filename)
+void remove_negligible_connected_components(const std::string filename)
 {
   typedef typename boost::graph_traits<Mesh>::face_descriptor           face_descriptor;
 
@@ -322,7 +322,7 @@ void test()
                                std::initializer_list<std::size_t>({4, 5}),
                                1, 3, 1, 2, 0, 0);
 
-  remove_degeneracies<K, Mesh>("data_degeneracies/degtri_sliding.off",
+  remove_degeneracies<K, Mesh>(CGAL::data_file_path("meshes/degtri_sliding.off"),
                                std::initializer_list<std::size_t>({2}),
                                std::initializer_list<std::size_t>({2, 4}),
                                0, 4, 0, 2, 0, 0);

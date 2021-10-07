@@ -13,7 +13,7 @@ typedef CGAL::Surface_mesh<K::Point_3>                           SM;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc>1) ? argv[1] : "data/blobby.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
   int number_of_parts = (argc>2) ? atoi(argv[2]) : 8;
 
   SM sm;

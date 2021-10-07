@@ -66,7 +66,7 @@ bool check_points(
   return true;
 }
 
-bool test_no_deduction_points_and_normals_xyz(const char* file_name)
+bool test_no_deduction_points_and_normals_xyz(const std::string file_name)
 {
   boost::vector_property_map<Point_3> points;
   boost::vector_property_map<Vector_3> normals;
@@ -96,7 +96,7 @@ bool test_no_deduction_points_and_normals_xyz(const char* file_name)
   return check_points_and_vectors(points, normals, pv_pairs, indices);
 }
 
-bool test_no_deduction_points_and_normals_off(const char* file_name)
+bool test_no_deduction_points_and_normals_off(const std::string file_name)
 {
   boost::vector_property_map<Point_3> points;
   boost::vector_property_map<Vector_3> normals;
@@ -126,7 +126,7 @@ bool test_no_deduction_points_and_normals_off(const char* file_name)
   return check_points_and_vectors(points, normals, pv_pairs, indices);
 }
 
-bool test_no_deduction_points_xyz(const char* file_name)
+bool test_no_deduction_points_xyz(const std::string file_name)
 {
   boost::vector_property_map<Point_3> points_1; \
   std::vector<std::size_t> indices;
@@ -152,7 +152,7 @@ bool test_no_deduction_points_xyz(const char* file_name)
   return check_points(points_1, points_2, indices);
 }
 
-bool test_no_deduction_points_off(const char* file_name)
+bool test_no_deduction_points_off(const std::string file_name)
 {
   boost::vector_property_map<Point_3> points_1;
   std::vector<std::size_t> indices;

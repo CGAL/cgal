@@ -32,7 +32,7 @@ void merge_vertices(vertex_descriptor v_keep, vertex_descriptor v_rm, Mesh& mesh
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh) || CGAL::is_empty(mesh))

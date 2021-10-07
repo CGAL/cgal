@@ -48,7 +48,7 @@ typedef SMS::Constrained_placement<SMS::Midpoint_placement<Surface_mesh>,
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/mesh_with_border.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mesh_with_border.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {

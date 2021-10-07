@@ -120,7 +120,7 @@ void test_with_envelope(std::string filename, double eps)
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
 
   general_test(filename);
   if (argc==2)

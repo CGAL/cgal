@@ -55,7 +55,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
     //-------------------------------------------------------
     std::cout << "\tSeed is\t"
       << CGAL::get_default_random().get_seed() << std::endl;
-    std::ifstream input("data/cube.off");
+    std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
     Polyhedron polyhedron;
     input >> polyhedron;
     Mesh_domain domain(polyhedron, &CGAL::get_default_random());

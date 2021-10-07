@@ -18,7 +18,7 @@ void test_cube()
 {
   std::cout << "Test cube..." << std::endl;
 
-  std::ifstream input("data/cube_quad.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube_quad.off"));
   Mesh mesh;
   if(!input || !(input >> mesh))
   {
@@ -91,7 +91,7 @@ void test_blobby()
 {
   std::cout << "Test blobby..." << std::endl;
 
-  std::ifstream input("data/blobby.off");
+  std::ifstream input(CGAL::data_file_path("meshes/blobby.off"));
   Mesh mesh;
   if(!input || !(input >> mesh))
   {
