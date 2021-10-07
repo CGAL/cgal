@@ -29,93 +29,87 @@
 
 namespace CORE {
 
+  typedef  boost::multiprecision::cpp_rational Q;
+
 class BigRatRep : public RCRepImpl<BigRatRep> {
 public:
-  BigRatRep() {
-    mpq_init(mp);
-  }
+  BigRatRep()
+  : mp()
+  {}
+  
   // Note : should the copy-ctor be alloed at all ? [Sylvain Pion]
-  BigRatRep(const BigRatRep& z)  : RCRepImpl<BigRatRep>() {
-    mpq_init(mp);
-    mpq_set(mp, z.mp);
-  }
-  BigRatRep(signed char c) {
-    mpq_init(mp);
-    mpq_set_si(mp, c, 1);
-  }
-  BigRatRep(unsigned char c) {
-    mpq_init(mp);
-    mpq_set_ui(mp, c, 1);
-  }
-  BigRatRep(signed int i) {
-    mpq_init(mp);
-    mpq_set_si(mp, i, 1);
-  }
-  BigRatRep(unsigned int i) {
-    mpq_init(mp);
-    mpq_set_ui(mp, i, 1);
-  }
-  BigRatRep(signed short int s) {
-    mpq_init(mp);
-    mpq_set_si(mp, s, 1);
-  }
-  BigRatRep(unsigned short int s) {
-    mpq_init(mp);
-    mpq_set_ui(mp, s, 1);
-  }
-  BigRatRep(signed long int l) {
-    mpq_init(mp);
-    mpq_set_si(mp, l, 1);
-  }
-  BigRatRep(unsigned long int l) {
-    mpq_init(mp);
-    mpq_set_ui(mp, l, 1);
-  }
-  BigRatRep(float f) {
-    mpq_init(mp);
-    mpq_set_d(mp, f);
-  }
-  BigRatRep(double d) {
-    mpq_init(mp);
-    mpq_set_d(mp, d);
-  }
-  BigRatRep(const char* s) {
-    mpq_init(mp);
-    mpq_set_str(mp, s, 0);
-  }
-  BigRatRep(const std::string& s) {
-    mpq_init(mp);
-    mpq_set_str(mp, s.c_str(), 0);
-  }
-  explicit BigRatRep(mpq_srcptr q) {
-    mpq_init(mp);
-    mpq_set(mp, q);
-  }
-  BigRatRep(mpz_srcptr z) {
-    mpq_init(mp);
-    mpq_set_z(mp, z);
-  }
-  BigRatRep(mpz_srcptr n, mpz_srcptr d) {
-    mpq_init(mp);
-    mpz_set(mpq_numref(mp), n);
-    mpz_set(mpq_denref(mp), d);
-    mpq_canonicalize(mp);
-  }
-  ~BigRatRep() {
-    mpq_clear(mp);
-  }
+  BigRatRep(const BigRatRep& z)  : RCRepImpl<BigRatRep>(), mp(z.mp)
+  {}
+  
 
-  CGAL_CORE_EXPORT CORE_NEW(BigRatRep)
-  CGAL_CORE_EXPORT CORE_DELETE(BigRatRep)
+  BigRatRep(signed char c)
+    : mp(c)
+  {}
 
-  mpq_srcptr get_mp() const {
+  BigRatRep(unsigned char c)
+    : mp(c)
+  {}
+
+  BigRatRep(signed int i)
+    : mp(i)
+  {}
+
+  BigRatRep(unsigned int i)
+    : mp(i)
+  {}
+
+  BigRatRep(signed short int s)
+    : mp(s)
+  {}
+
+  BigRatRep(unsigned short int s)
+    : mp(s)
+  {}
+
+  BigRatRep(signed long int l)
+    : mp(l)
+  {}
+
+  BigRatRep(unsigned long int l)
+    : mp(l)
+  {}
+
+  BigRatRep(float f)
+    : mp(f)
+  {}
+
+  BigRatRep(double d)
+    : mp(d)
+  {}
+
+  BigRatRep(const char* s)
+    : mp(s)
+  {}
+
+  BigRatRep(const std::string& s)
+    : mp(s)
+  {}
+
+  explicit BigRatRep(const Z& q)
+  : mp(q)
+  {}
+
+  BigRatRep(const Z& n, const Z& d)
+    : mp(n,d)
+  {}
+
+
+  //CGAL_CORE_EXPORT CORE_NEW(BigRatRep)
+//  CGAL_CORE_EXPORT CORE_DELETE(BigRatRep)
+
+  const Q& get_mp() const {
     return mp;
   }
-  mpq_ptr get_mp() {
+  Q& get_mp() {
     return mp;
   }
 private:
-  mpq_t mp;
+  Q mp;
 }; //BigRatRep
 
 class BigFloat;
@@ -152,7 +146,7 @@ public:
   /// constructor for <tt>std::string</tt> with base
   BigRat(const std::string& s) : RCBigRat(new BigRatRep(s)) {}
   /// constructor for <tt>mpq_srcptr</tt>
-  explicit BigRat(mpq_srcptr z) : RCBigRat(new BigRatRep(z)) {}
+  explicit BigRat(const Z& z) : RCBigRat(new BigRatRep(z)) {}
   /// constructor for <tt>BigInt</tt>
   BigRat(const BigInt& z) : RCBigRat(new BigRatRep(z.get_mp())) {}
   /// constructor for two <tt>BigInts</tt>
@@ -187,32 +181,34 @@ public:
   //@{
   BigRat& operator +=(const BigRat& rhs) {
     makeCopy();
-    mpq_add(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() += rhs.get_mp();
     return *this;
   }
   BigRat& operator -=(const BigRat& rhs) {
     makeCopy();
-    mpq_sub(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() -= rhs.get_mp();
     return *this;
   }
   BigRat& operator *=(const BigRat& rhs) {
     makeCopy();
-    mpq_mul(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() *= rhs.get_mp();
     return *this;
   }
   BigRat& operator /=(const BigRat& rhs) {
     makeCopy();
-    mpq_div(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() /= rhs.get_mp();
     return *this;
   }
   BigRat& operator <<=(unsigned long ul) {
     makeCopy();
-    mpq_mul_2exp(get_mp(), get_mp(), ul);
+    assert(false);
+    // AF no shift for Q   get_mp() <<= ul;
     return *this;
   }
   BigRat& operator >>=(unsigned long ul) {
     makeCopy();
-    mpq_div_2exp(get_mp(), get_mp(), ul);
+    assert(false);
+    // AF no >> for Q    get_mp() >>= ul;
     return *this;
   }
   //@}
@@ -223,7 +219,7 @@ public:
   /// exact division by 2 (this method is provided for compatibility)
   BigRat div2() const {
     BigRat r; BigRat t(2);     // probably not most efficient way
-    mpq_div(r.get_mp(), get_mp(), t.get_mp());
+    r.get_mp() /= t.get_mp();
     return r;
   }
   BigRat operator+() const {
@@ -231,17 +227,17 @@ public:
   }
   BigRat operator-() const {
     BigRat r;
-    mpq_neg(r.get_mp(), get_mp());
+    r.get_mp() = - get_mp();
     return r;
   }
   BigRat& operator++() {
     makeCopy();
-    mpz_add(get_num_mp(),get_num_mp(),get_den_mp());
+    get_num_mp() += get_den_mp();
     return *this;
   }
   BigRat& operator--() {
     makeCopy();
-    mpz_sub(get_num_mp(),get_num_mp(),get_den_mp());
+    get_num_mp() -= get_den_mp();
     return *this;
   }
   BigRat operator++(int) {
@@ -261,7 +257,8 @@ public:
   /// Canonicalize
   void canonicalize() {
     makeCopy();
-    mpq_canonicalize(get_mp());
+    assert(false);
+    // AF todo    mpq_canonicalize(get_mp());
   }
   /// Has Exact Division
   static bool hasExactDivision() {
@@ -269,28 +266,28 @@ public:
   }
 
   /// return mpz pointer of numerator (const)
-  mpz_srcptr get_num_mp() const {
-    return mpq_numref(get_mp());
+  Z get_num_mp() const {
+    return numerator(get_mp());
   }
-  /// return mpz pointer of numerator
-  mpz_ptr get_num_mp() {
-    return mpq_numref(get_mp());
-  }
-  /// return mpz pointer of denominator
-  mpz_srcptr get_den_mp() const {
-    return mpq_denref(get_mp());
+  /// return mpz pointer of numerator  // no references as numerator() returns a copy
+  Z get_num_mp() {
+    return numerator(get_mp());
   }
   /// return mpz pointer of denominator
-  mpz_ptr get_den_mp() {
-    return mpq_denref(get_mp());
+  Z get_den_mp() const {
+    return denominator(get_mp());
+  }
+  /// return mpz pointer of denominator
+  Z get_den_mp() {
+    return denominator(get_mp());
   }
 
   /// get mpq pointer (const)
-  mpq_srcptr get_mp() const {
+  const Q& get_mp() const {
     return rep->get_mp();
   }
   /// get mpq pointer
-  mpq_ptr get_mp() {
+  Q& get_mp() {
     return rep->get_mp();
   }
   //@}
@@ -300,16 +297,12 @@ public:
   /// set value from <tt>const char*</tt>
   int set_str(const char* s, int base = 0) {
     makeCopy();
-    return mpq_set_str(get_mp(), s, base);
+    get_mp() = Q(s);
+    return 0;
   }
   /// convert to <tt>std::string</tt>
   std::string get_str(int base = 10) const {
-    int n = mpz_sizeinbase(mpq_numref(get_mp()), base) + mpz_sizeinbase(mpq_denref(get_mp()), base)+ 3;
-    char *buffer = new char[n];
-    mpq_get_str(buffer, base, get_mp());
-    std::string result(buffer);
-    delete [] buffer;
-    return result;
+    return get_mp().convert_to<std::string>();
   }
   //@}
 
@@ -317,20 +310,21 @@ public:
   //@{
   /// intValue
   int intValue() const {
-    return static_cast<int>(doubleValue());
+    return get_mp().convert_to<int>();
   }
   /// longValue
   long longValue() const {
-    return static_cast<long>(doubleValue());
+    return get_mp().convert_to<long>();
   }
+
   /// doubleValue
   double doubleValue() const {
-    return mpq_get_d(get_mp());
+    return get_mp().convert_to<double>();
   }
   /// BigIntValue
   BigInt BigIntValue() const {
     BigInt r;
-    mpz_tdiv_q(r.get_mp(), get_num_mp(), get_den_mp());
+    r.get_mp() = Z( get_num_mp() / get_den_mp()); //  AF check that this is the integer divsion without rest
     return r;
   }
   //@}
@@ -338,22 +332,22 @@ public:
 
 inline BigRat operator+(const BigRat& a, const BigRat& b) {
   BigRat r;
-  mpq_add(r.get_mp(), a.get_mp(), b.get_mp());
+  r.get_mp() = a.get_mp() + b.get_mp();
   return r;
 }
 inline BigRat operator-(const BigRat& a, const BigRat& b) {
   BigRat r;
-  mpq_sub(r.get_mp(), a.get_mp(), b.get_mp());
+  r.get_mp() = a.get_mp() - b.get_mp();
   return r;
 }
 inline BigRat operator*(const BigRat& a, const BigRat& b) {
   BigRat r;
-  mpq_mul(r.get_mp(), a.get_mp(), b.get_mp());
+  r.get_mp() = a.get_mp() * b.get_mp();
   return r;
 }
 inline BigRat operator/(const BigRat& a, const BigRat& b) {
   BigRat r;
-  mpq_div(r.get_mp(), a.get_mp(), b.get_mp());
+  r.get_mp() = a.get_mp() / b.get_mp();
   return r;
 }
 // Chee (3/19/2004):
@@ -362,7 +356,7 @@ inline BigRat operator/(const BigRat& a, const BigRat& b) {
 /// divisible(x,y) = "x | y"
 inline BigRat div_exact(const BigRat& x, const BigRat& y) {
         BigRat z;
-        mpq_div(z.get_mp(), x.get_mp(), y.get_mp());
+        z.get_mp() =  x.get_mp() / y.get_mp();
         return z;
 }
 /// numerator
@@ -396,22 +390,22 @@ inline bool isInteger(const BigRat& x) {
 }
 inline bool isDivisible(const BigRat& x, const BigRat& y) {
   BigRat r;
-  mpq_div(r.get_mp(), x.get_mp(), y.get_mp());
+  r.get_mp() = x.get_mp() / y.get_mp();
   return isInteger(r);
 }
 inline BigRat operator<<(const BigRat& a, unsigned long ul) {
   BigRat r;
-  mpq_mul_2exp(r.get_mp(), a.get_mp(), ul);
+  //AF todo   no << for Q     r.get_mp() = a.get_mp() << int(ul) ; 
   return r;
 }
 inline BigRat operator>>(const BigRat& a, unsigned long ul) {
   BigRat r;
-  mpq_div_2exp(r.get_mp(), a.get_mp(), ul);
+  // AF todo no >> for Q    r.get_mp() =  a.get_mp() >> ul;
   return r;
 }
 
 inline int cmp(const BigRat& x, const BigRat& y) {
-  return mpq_cmp(x.get_mp(), y.get_mp());
+  return x.get_mp().compare(y.get_mp());
 }
 inline bool operator==(const BigRat& a, const BigRat& b) {
   return cmp(a, b) == 0;
@@ -433,29 +427,27 @@ inline bool operator<(const BigRat& a, const BigRat& b) {
 }
 
 inline std::ostream& operator<<(std::ostream& o, const BigRat& x) {
-  //return CORE::operator<<(o, x.get_mp());
-  return CORE::io_write(o, x.get_mp());
+  return o << x.get_mp();
 }
 inline std::istream& operator>>(std::istream& i, BigRat& x) {
   x.makeCopy();
-  //return CORE::operator>>(i, x.get_mp());
-  return CORE::io_read(i, x.get_mp());
+  return i >> x.get_mp();
 }
 
 /// sign
 inline int sign(const BigRat& a) {
-  return mpq_sgn(a.get_mp());
+  return sign(a.get_mp());
 }
 /// abs
 inline BigRat abs(const BigRat& a) {
   BigRat r;
-  mpq_abs(r.get_mp(), a.get_mp());
+  r.get_mp() = abs( a.get_mp());
   return r;
 }
 /// neg
 inline BigRat neg(const BigRat& a) {
   BigRat r;
-  mpq_neg(r.get_mp(), a.get_mp());
+  r.get_mp() = - a.get_mp();
   return r;
 }
 /// div2

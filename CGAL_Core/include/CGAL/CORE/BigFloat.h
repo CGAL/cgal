@@ -69,6 +69,7 @@ public:
       : RCBigFloat(new BigFloatRep(i)) {}
   BigFloat(long& x, const extLong& /*r*/, const extLong& /*a*/)
       : RCBigFloat(new BigFloatRep(x)) {}
+
   /// constructor from <tt>BigInt</tt>, error and exponent values
   BigFloat(const BigInt& I, unsigned long er, long ex)
       : RCBigFloat(new BigFloatRep(I, er, ex)) {}
@@ -77,6 +78,7 @@ public:
       : RCBigFloat(new BigFloatRep(I, ex)) {}
   BigFloat(const BigInt& I)
       : RCBigFloat(new BigFloatRep(I)) {}
+
   /// constructor for <tt>BigRat</tt>
   BigFloat(const BigRat& R, const extLong& r = get_static_defRelPrec(),
            const extLong& a = get_static_defAbsPrec())
@@ -214,10 +216,12 @@ public:
   double doubleValue() const {
     return rep->toDouble();
   }
+
   /// return BigInt value
   BigInt BigIntValue() const {
     return rep->toBigInt();
   }
+
   /// return BigRat value
   BigRat BigRatValue() const {
     return rep->BigRatize();
@@ -262,6 +266,7 @@ public:
   const BigInt& m() const {
     return rep->m;
   }
+
   /// get error bits
   unsigned long err() const {
     return rep->err;
@@ -359,10 +364,12 @@ public:
   /// \name Utility Functions
   //@{
   /// approximate BigInt number
+
   void approx(const BigInt& I, const extLong& r, const extLong& a) {
     makeCopy();
     rep->trunc(I, r, a);
   }
+
   /// approximate BigFloat number
   void approx(const BigFloat& B, const extLong& r, const extLong& a) {
     makeCopy();

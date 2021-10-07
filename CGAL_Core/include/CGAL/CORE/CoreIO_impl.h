@@ -268,6 +268,9 @@ void readFromFile(BigInt& z, std::istream& in, long maxLength) {
 
 CGAL_INLINE_FUNCTION
 void writeToFile(const BigInt& z, std::ostream& out, int base, int charsPerLine) {
+    
+    assert(false);
+    /*
   BigInt c = abs(z);
 
   // get the absoulte value string
@@ -286,10 +289,14 @@ void writeToFile(const BigInt& z, std::ostream& out, int base, int charsPerLine)
   write_base_number(out, buffer, length, base, charsPerLine);
   out << "\n";
   delete[] buffer;
+  */
 }
 
 CGAL_INLINE_FUNCTION
 void readFromFile(BigFloat& bf, std::istream& in, long maxLength) {
+
+    assert(false);
+    /*
   char *buffer;
   long length;
   long exponent;
@@ -326,10 +333,14 @@ void readFromFile(BigFloat& bf, std::istream& in, long maxLength) {
 
   // construct BigFloat
   bf = BigFloat(mantissa, 0, exponent);
+  */
 }
 
 CGAL_INLINE_FUNCTION
 void writeToFile(const BigFloat& bf, std::ostream& out, int base, int charsPerLine) {
+
+    assert(false);
+    /*
   BigInt c(CORE::abs(bf.m()));
 
   // get the absoulte value string
@@ -351,6 +362,7 @@ void writeToFile(const BigFloat& bf, std::ostream& out, int base, int charsPerLi
   write_base_number(out, buffer, length, base, charsPerLine);
   out << '\n';
   delete[] buffer;
+  */
 }
 
 /* Underconstruction ----

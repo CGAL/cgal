@@ -736,6 +736,7 @@ void test_Type_functions( const CGAL::Euclidean_ring_tag&) {
     b = AS(5);
     r = CGAL_NTS mod(a,b);
     q = CGAL_NTS div(a,b);
+    std::cout << r << std::endl << q << std::endl;
     assert( a == b*q+r);
     CGAL_NTS div_mod(a,b,q,r);
     assert( a == b*q+r);
@@ -876,7 +877,9 @@ void test_algebraic_structure(){
     c = b *  AS (-3);
     assert( c ==  AS (-15));
     c = a;
+
     c += b;
+
     assert( c ==  AS (6));
     c = a;
     c -= b;

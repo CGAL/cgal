@@ -24,6 +24,7 @@
 #ifndef _CORE_BIGINT_H_
 #define _CORE_BIGINT_H_
 
+#include <boost/multiprecision/cpp_int.hpp>
 #include <CGAL/CORE/Gmp.h>
 #include <CGAL/CORE/RefCount.h>
 #include <CGAL/CORE/MemoryPool.h>
@@ -31,79 +32,104 @@
 
 namespace CORE {
 
+  typedef  boost::multiprecision::cpp_int Z;
 
-class BigIntRep : public RCRepImpl<BigIntRep> {
+
+
+  class BigIntRep : public RCRepImpl<BigIntRep > {
 public:
-  BigIntRep() {
-    mpz_init(mp);
-  }
-  // Note : should the copy-ctor be alloed at all ? [Sylvain Pion]
-  BigIntRep(const BigIntRep& z) : RCRepImpl<BigIntRep>() {
-    mpz_init_set(mp, z.mp);
-  }
-  BigIntRep(signed char c) {
-    mpz_init_set_si(mp, c);
-  }
-  BigIntRep(unsigned char c) {
-    mpz_init_set_ui(mp, c);
-  }
-  BigIntRep(signed int i) {
-    mpz_init_set_si(mp, i);
-  }
-  BigIntRep(unsigned int i) {
-    mpz_init_set_ui(mp, i);
-  }
-  BigIntRep(signed short int s) {
-    mpz_init_set_si(mp, s);
-  }
-  BigIntRep(unsigned short int s) {
-    mpz_init_set_ui(mp, s);
-  }
-  BigIntRep(signed long int l) {
-    mpz_init_set_si(mp, l);
-  }
-  BigIntRep(unsigned long int l) {
-    mpz_init_set_ui(mp, l);
-  }
-  BigIntRep(float f) {
-    mpz_init_set_d(mp, f);
-  }
-  BigIntRep(double d) {
-    mpz_init_set_d(mp, d);
-  }
-  BigIntRep(const char* s, int base=0) {
-    mpz_init_set_str(mp, s, base);
-  }
-  BigIntRep(const std::string& s, int base=0) {
-    mpz_init_set_str(mp, s.c_str(), base);
-  }
-  explicit BigIntRep(mpz_srcptr z) {
-    mpz_init_set(mp, z);
-  }
+  BigIntRep()
+    : mp()
+    {}
+
+
+  // Note : should the copy-ctor be allowed at all ? [Sylvain Pion]
+    BigIntRep(const BigIntRep& z) : RCRepImpl<BigIntRep >(), mp(z.mp)
+    {}
+
+  BigIntRep(signed char c)
+    : mp(c)
+    {}
+
+  BigIntRep(unsigned char c)
+    : mp(c)
+    {}
+
+  BigIntRep(signed int i)
+    : mp(i)
+    {}
+
+  BigIntRep(unsigned int i)
+    : mp(i)
+    {}
+
+
+  BigIntRep(signed short int s)
+    : mp(s)
+    {}
+  BigIntRep(unsigned short int s)
+    : mp(s)
+    {}
+
+  BigIntRep(signed long int l)
+    : mp(l)
+    {}
+
+  BigIntRep(unsigned long int l)
+    : mp(l)
+    {}
+
+  BigIntRep(float f)
+    : mp(f)
+    {}
+
+  BigIntRep(double d)
+    : mp(d)
+    {}
+
+  BigIntRep(const char* s, int base=0)
+    : mp(s)
+    {}
+
+  BigIntRep(const std::string& s, int base=0)
+    : mp(s)
+    {}
+
+    
+  explicit BigIntRep(const Z& z)
+      : mp(z)
+  {}
+  /*
   ~BigIntRep() {
     mpz_clear(mp);
   }
+    */
 
-  CGAL_CORE_EXPORT CORE_NEW(BigIntRep)
-  CGAL_CORE_EXPORT CORE_DELETE(BigIntRep)
+    //CGAL_CORE_EXPORT CORE_NEW(BigIntRep)
+    //CGAL_CORE_EXPORT CORE_DELETE(BigIntRep)
 
-  mpz_srcptr get_mp() const {
+  const Z& get_mp() const {
     return mp;
   }
-  mpz_ptr get_mp() {
+  Z&  get_mp() {
     return mp;
   }
 private:
-  mpz_t mp;
+  Z mp;
 };
 
-typedef RCImpl<BigIntRep> RCBigInt;
-class CGAL_CORE_EXPORT BigInt : public RCBigInt {
+  //typedef RCImpl<BigIntRep> RCBigInt;
+
+class CGAL_CORE_EXPORT BigInt : public RCImpl<BigIntRep> {
 public:
+
+    typedef RCImpl<BigIntRep> RCBigInt;
+
   /// \name Constructors
   //@{
   /// default constructor
   BigInt() : RCBigInt(new BigIntRep()) {}
+  BigInt(const Z& z) : RCBigInt(new BigIntRep(z)) {}
   /// constructor for <tt>signed char</tt>
   BigInt(signed char x) : RCBigInt(new BigIntRep(x)) {}
   /// constructor for <tt>unsigned char</tt>
@@ -128,8 +154,9 @@ public:
   BigInt(const char* s, int base=0) : RCBigInt(new BigIntRep(s, base)) {}
   /// constructor for <tt>std::string</tt> with base
   BigInt(const std::string& s, int base=0) : RCBigInt(new BigIntRep(s, base)) {}
+
   /// constructor for <tt>mpz_srcptr</tt>
-  explicit BigInt(mpz_srcptr z) : RCBigInt(new BigIntRep(z)) {}
+  // explicit BigInt(mpz_srcptr z) : RCBigInt(new BigIntRep(z)) {}
   //@}
 
   /// \name Copy-Assignment-Destructor
@@ -157,52 +184,53 @@ public:
   //@{
   BigInt& operator +=(const BigInt& rhs) {
     makeCopy();
-    mpz_add(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() += rhs.get_mp();
     return *this;
   }
+
   BigInt& operator -=(const BigInt& rhs) {
     makeCopy();
-    mpz_sub(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() -= rhs.get_mp();
     return *this;
   }
   BigInt& operator *=(const BigInt& rhs) {
     makeCopy();
-    mpz_mul(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() *= rhs.get_mp();
     return *this;
   }
   BigInt& operator /=(const BigInt& rhs) {
     makeCopy();
-    mpz_tdiv_q(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() /= rhs.get_mp();
     return *this;
   }
   BigInt& operator %=(const BigInt& rhs) {
     makeCopy();
-    mpz_tdiv_r(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() %= rhs.get_mp();
     return *this;
   }
   BigInt& operator &=(const BigInt& rhs) {
     makeCopy();
-    mpz_and(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() &= rhs.get_mp();
     return *this;
   }
   BigInt& operator |=(const BigInt& rhs) {
     makeCopy();
-    mpz_ior(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() |= rhs.get_mp();
     return *this;
   }
   BigInt& operator ^=(const BigInt& rhs) {
     makeCopy();
-    mpz_xor(get_mp(), get_mp(), rhs.get_mp());
+    get_mp() ^= rhs.get_mp();
     return *this;
   }
   BigInt& operator <<=(unsigned long ul) {
     makeCopy();
-    mpz_mul_2exp(get_mp(), get_mp(), ul);
+    get_mp() <<= ul;
     return *this;
   }
   BigInt& operator >>=(unsigned long ul) {
     makeCopy();
-    mpz_tdiv_q_2exp(get_mp(), get_mp(), ul);
+    get_mp() >>= ul;
     return *this;
   }
   //@}
@@ -214,17 +242,17 @@ public:
   }
   BigInt operator-() const {
     BigInt r;
-    mpz_neg(r.get_mp(), get_mp());
+    r.get_mp() = -get_mp();
     return r;
   }
   BigInt& operator++() {
     makeCopy();
-    mpz_add_ui(get_mp(), get_mp(), 1);
+    ++get_mp();
     return *this;
   }
   BigInt& operator--() {
     makeCopy();
-    mpz_sub_ui(get_mp(), get_mp(), 1);
+    --get_mp();
     return *this;
   }
   BigInt operator++(int) {
@@ -246,11 +274,11 @@ public:
     return false;
   }
   /// get mpz pointer (const)
-  mpz_srcptr get_mp() const {
+  const Z& get_mp() const {
     return rep->get_mp();
   }
   /// get mpz pointer
-  mpz_ptr get_mp() {
+  Z& get_mp() {
     return rep->get_mp();
   }
   //@}
@@ -260,16 +288,12 @@ public:
   /// set value from <tt>const char*</tt>
   int set_str(const char* s, int base = 0) {
     makeCopy();
-    return mpz_set_str(get_mp(), s, base);
+    get_mp() = Z(s);
+    return 0;  // should be -1 if not correct in the base (we ignore)
   }
   /// convert to <tt>std::string</tt>
   std::string get_str(int base = 10) const {
-    int n = mpz_sizeinbase (get_mp(), base) + 2;
-    char *buffer = new char[n];
-    mpz_get_str(buffer, base, get_mp());
-    std::string result(buffer);
-    delete [] buffer;
-    return result;
+    return get_mp().convert_to<std::string>();
   }
   //@}
 
@@ -277,130 +301,152 @@ public:
   //@{
   /// intValue
   int intValue() const {
-    return static_cast<int>(mpz_get_si(get_mp()));
+    return get_mp().convert_to<int>();
   }
   /// longValue
   long longValue() const {
-    return mpz_get_si(get_mp());
+    return get_mp().convert_to<long>();
   }
   /// ulongValue
   unsigned long ulongValue() const {
-    return mpz_get_ui(get_mp());
+    return get_mp().convert_to<unsigned long>();
   }
   /// doubleValue
   double doubleValue() const {
-    return mpz_get_d(get_mp());
+    return get_mp().convert_to<double>();
   }
   //@}
 };
 
 inline BigInt operator+(const BigInt& a, const BigInt& b) {
   BigInt r;
-  mpz_add(r.get_mp(), a.get_mp(), b.get_mp());
-  return r;
-}
-inline BigInt operator-(const BigInt& a, const BigInt& b) {
-  BigInt r;
-  mpz_sub(r.get_mp(), a.get_mp(), b.get_mp());
-  return r;
-}
-inline BigInt operator*(const BigInt& a, const BigInt& b) {
-  BigInt r;
-  mpz_mul(r.get_mp(), a.get_mp(), b.get_mp());
-  return r;
-}
-inline BigInt operator/(const BigInt& a, const BigInt& b) {
-  BigInt r;
-  mpz_tdiv_q(r.get_mp(), a.get_mp(), b.get_mp());
-  return r;
-}
-inline BigInt operator%(const BigInt& a, const BigInt& b) {
-  BigInt r;
-  mpz_tdiv_r(r.get_mp(), a.get_mp(), b.get_mp());
-  return r;
-}
-inline BigInt operator&(const BigInt& a, const BigInt& b) {
-  BigInt r;
-  mpz_and(r.get_mp(), a.get_mp(), b.get_mp());
-  return r;
-}
-inline BigInt operator|(const BigInt& a, const BigInt& b) {
-  BigInt r;
-  mpz_ior(r.get_mp(), a.get_mp(), b.get_mp());
-  return r;
-}
-inline BigInt operator^(const BigInt& a, const BigInt& b) {
-  BigInt r;
-  mpz_xor(r.get_mp(), a.get_mp(), b.get_mp());
-  return r;
-}
-inline BigInt operator<<(const BigInt& a, unsigned long ul) {
-  BigInt r;
-  mpz_mul_2exp(r.get_mp(), a.get_mp(), ul);
-  return r;
-}
-inline BigInt operator>>(const BigInt& a, unsigned long ul) {
-  BigInt r;
-  mpz_tdiv_q_2exp(r.get_mp(), a.get_mp(), ul);
+  r.get_mp() = a.get_mp() + b.get_mp();
   return r;
 }
 
-inline int cmp(const BigInt& x, const BigInt& y) {
-  return mpz_cmp(x.get_mp(), y.get_mp());
+inline BigInt operator-(const BigInt& a, const BigInt& b) {
+  BigInt r;
+  r.get_mp() = a.get_mp() - b.get_mp();
+  return r;
 }
+
+inline BigInt operator*(const BigInt& a, const BigInt& b) {
+  BigInt r;
+  r.get_mp() = a.get_mp() * b.get_mp();
+  return r;
+}
+
+inline BigInt operator/(const BigInt& a, const BigInt& b) {
+  BigInt r;
+  r.get_mp() = a.get_mp() / b.get_mp();
+  return r;
+}
+
+inline BigInt operator%(const BigInt& a, const BigInt& b) {
+  BigInt r;
+  r.get_mp() = a.get_mp() % b.get_mp();
+  return r;
+}
+
+inline BigInt operator&(const BigInt& a, const BigInt& b) {
+  BigInt r;
+  r.get_mp() = a.get_mp() & b.get_mp();
+  return r;
+}
+
+inline BigInt operator|(const BigInt& a, const BigInt& b) {
+  BigInt r;
+  r.get_mp() = a.get_mp()| b.get_mp();
+  return r;
+}
+
+inline BigInt operator^(const BigInt& a, const BigInt& b) {
+  BigInt r;
+  r.get_mp() = a.get_mp() ^ b.get_mp();
+  return r;
+}
+
+inline BigInt operator<<(const BigInt& a, unsigned long ul) {
+  BigInt r;
+  r.get_mp() = a.get_mp() << ul;
+  return r;
+}
+
+inline BigInt operator>>(const BigInt& a, unsigned long ul) {
+  BigInt r;
+  r.get_mp() = a.get_mp() >> ul;
+  return r;
+}
+
+
+inline int cmp(const BigInt& x, const BigInt& y) {
+  return x.get_mp().compare(y.get_mp());
+}
+
+
 inline bool operator==(const BigInt& a, const BigInt& b) {
   return cmp(a, b) == 0;
 }
+
 inline bool operator!=(const BigInt& a, const BigInt& b) {
   return cmp(a, b) != 0;
 }
+
 inline bool operator>=(const BigInt& a, const BigInt& b) {
   return cmp(a, b) >= 0;
 }
+
 inline bool operator>(const BigInt& a, const BigInt& b) {
   return cmp(a, b) > 0;
 }
+
 inline bool operator<=(const BigInt& a, const BigInt& b) {
   return cmp(a, b) <= 0;
 }
+
 inline bool operator<(const BigInt& a, const BigInt& b) {
   return cmp(a, b) < 0;
 }
 
 inline std::ostream& operator<<(std::ostream& o, const BigInt& x) {
-  //return CORE::operator<<(o, x.get_mp());
-  return CORE::io_write(o, x.get_mp());
+  return o <<x.get_mp();
 }
+
 inline std::istream& operator>>(std::istream& i, BigInt& x) {
   x.makeCopy();
-  //return CORE::operator>>(i, x.get_mp());
-  return CORE::io_read(i, x.get_mp());
+  return i >> x.get_mp();
 }
 
 /// sign
 inline int sign(const BigInt& a) {
-  return mpz_sgn(a.get_mp());
+  return sign(a.get_mp());
 }
+
 /// abs
 inline BigInt abs(const BigInt& a) {
   BigInt r;
-  mpz_abs(r.get_mp(), a.get_mp());
+  r.get_mp() = abs(a.get_mp());
   return r;
 }
+
 /// neg
 inline BigInt neg(const BigInt& a) {
   BigInt r;
-  mpz_neg(r.get_mp(), a.get_mp());
+  r.get_mp() = - a.get_mp();
   return r;
 }
+
 /// negate
 inline void negate(BigInt& a) {
   a.makeCopy();
-  mpz_neg(a.get_mp(), a.get_mp());
+  a.get_mp() = - a.get_mp();
 }
+
 /// cmpabs
 inline int cmpabs(const BigInt& a, const BigInt& b) {
-  return mpz_cmpabs(a.get_mp(), b.get_mp());
+  assert(false);
+  // return mpz_cmpabs(a.get_mp(), b.get_mp());   AF: todo
+  return 0;
 }
 
 /// \name Conversion Functions
@@ -409,63 +455,80 @@ inline int cmpabs(const BigInt& a, const BigInt& b) {
 inline long longValue(const BigInt& a) {
   return a.longValue();
 }
+
 /// ulongValue
 inline unsigned long ulongValue(const BigInt& a) {
   return a.ulongValue();
 }
+
 /// doubleValue
 inline double doubleValue(const BigInt& a) {
   return a.doubleValue();
 }
 //@}
 
+/*
+
 /// \name File I/O Functions
 //@{
 /// read from file
+
 void readFromFile(BigInt& z, std::istream& in, long maxLength = 0);
 /// write to file
 void writeToFile(const BigInt& z, std::ostream& in, int base=10, int charsPerLine=80);
 //@}
+*/
+
 
 /// \name Misc Functions
 //@{
 /// isEven
 inline bool isEven(const BigInt& z) {
-  return mpz_even_p(z.get_mp());
+  return bit_test(z.get_mp(),0) == 0;
 }
 /// isOdd
 inline bool isOdd(const BigInt& z) {
-  return mpz_odd_p(z.get_mp());
+  return bit_test(z.get_mp(),0) == 1;
 }
 
 /// get exponent of power 2
 inline unsigned long getBinExpo(const BigInt& z) {
-  return mpz_scan1(z.get_mp(), 0);
+    return lsb(abs(z.get_mp()));
 }
+
 /// get exponent of power k
 inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long k) {
+  assert(false); // AF: todo
+  /*
   mpz_t f;
   mpz_init_set_ui(f, k);
   m.makeCopy();
   e = mpz_remove(m.get_mp(), z.get_mp(), f);
   mpz_clear(f);
+  */
 }
 
 /// divisible(x,y) = "x | y"
 inline bool isDivisible(const BigInt& x, const BigInt& y) {
-  return mpz_divisible_p(x.get_mp(), y.get_mp()) != 0;
+    assert(false);
+    return true; // AF  mpz_divisible_p(x.get_mp(), y.get_mp()) != 0;
 }
+
 inline bool isDivisible(int x, int y) {
   return x % y == 0;
 }
+
 inline bool isDivisible(long x, long y) {
   return x % y == 0;
+
 }
 /// exact div
 inline void divexact(BigInt& z, const BigInt& x, const BigInt& y) {
   z.makeCopy();
-  mpz_divexact(z.get_mp(), x.get_mp(), y.get_mp());
+  assert(false);
+  // AF: todo     mpz_divexact(z.get_mp(), x.get_mp(), y.get_mp());
 }
+
 // Chee (1/12/2004)   The definition of div_exact(x,y) next
 //   ensure that in Polynomials<NT> works with both NT=BigInt and NT=int:
 inline BigInt div_exact(const BigInt& x, const BigInt& y) {
@@ -473,9 +536,11 @@ inline BigInt div_exact(const BigInt& x, const BigInt& y) {
   divexact(z, x, y); // z is set to x/y;
   return z;
 }
+
 inline int div_exact(int x, int y) {
   return x/y;  // precondition: isDivisible(x,y)
 }
+
 inline long div_exact(long x, long y) {
   return x/y;  // precondition: isDivisible(x,y)
 }
@@ -484,19 +549,21 @@ inline long div_exact(long x, long y) {
 /// gcd
 inline BigInt gcd(const BigInt& a, const BigInt& b) {
   BigInt r;
-  mpz_gcd(r.get_mp(), a.get_mp(), b.get_mp());
+  r.get_mp() = gcd(a.get_mp(), b.get_mp());
   return r;
 }
+
 /// div_rem
 inline void div_rem(BigInt& q, BigInt& r, const BigInt& a, const BigInt& b) {
   q.makeCopy();
   r.makeCopy();
-  mpz_tdiv_qr(q.get_mp(), r.get_mp(), a.get_mp(), b.get_mp());
+  divide_qr(a.get_mp(), b.get_mp(), q.get_mp(), r.get_mp());
 }
+
 /// power
 inline void power(BigInt& c, const BigInt& a, unsigned long ul) {
   c.makeCopy();
-  mpz_pow_ui(c.get_mp(), a.get_mp(), ul);
+  c.get_mp() = pow(a.get_mp(), ul);
 }
 
 // pow
@@ -508,8 +575,9 @@ inline BigInt pow(const BigInt& a, unsigned long ui) {
 
 // bit length
 inline int bitLength(const BigInt& a) {
-  return mpz_sizeinbase(a.get_mp(), 2);
+  return msb(abs(a.get_mp()));    /// AF todo     was    mpz_sizeinbase(a.get_mp(), 2);
 }
+
 /// floorLg -- floor of log_2(a)
 /** Convention: a=0, floorLg(a) returns -1.
  *  This makes sense for integer a.
@@ -517,6 +585,7 @@ inline int bitLength(const BigInt& a) {
 inline long floorLg(const BigInt& a) {
   return (sign(a) == 0) ? (-1) : (bitLength(a)-1);
 }
+
 /// ceilLg -- ceiling of log_2(a) where a=BigInt, int or long
 /** Convention: a=0, ceilLg(a) returns -1.
  *  This makes sense for integer a.
@@ -525,11 +594,14 @@ inline long ceilLg(const BigInt& a) {
   if (sign(a) == 0)
     return -1;
   unsigned long len = bitLength(a);
-  return (mpz_scan1(a.get_mp(), 0) == len-1) ? (len-1) : len;
+
+  return (lsb(a.get_mp()) == len - 1) ? (len - 1) : len;
 }
+
 inline long ceilLg(long a) { // need this for Polynomial<long>
   return ceilLg(BigInt(a));
 }
+
 inline long ceilLg(int a) { // need this for Polynomial<int>
   return ceilLg(BigInt(a));
 }

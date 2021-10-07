@@ -48,7 +48,7 @@ template <> class Algebraic_structure_traits< CORE::BigInt >
         //! computes the largest NT not larger than the square root of \a a.
         Type operator()( const Type& x) const {
           Type result;
-          mpz_sqrt(result.get_mp(), x.get_mp());
+          result.get_mp() = sqrt( x.get_mp());
           return result;
         }
     };
@@ -63,7 +63,7 @@ template <> class Algebraic_structure_traits< CORE::BigInt >
           if ( x == Type(0) && y == Type(0) )
               return Type(0);
           Type result;
-          mpz_gcd(result.get_mp(), x.get_mp(), y.get_mp());
+          result.get_mp() = gcd( x.get_mp(), y.get_mp());
           return result;
         }
     };
