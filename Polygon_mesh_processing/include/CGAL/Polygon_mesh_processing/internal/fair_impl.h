@@ -153,7 +153,7 @@ public:
       compute_row(vd, v_id, A, Bx[v_id], By[v_id], Bz[v_id], 1, vertex_id_map, depth);
     }
     #ifdef CGAL_PMP_FAIR_DEBUG
-    std:cerr << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
+    std::cerr << "**Timer** System construction: " << timer.time() << std::endl; timer.reset();
     #endif
 
     // factorize
