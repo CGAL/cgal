@@ -497,8 +497,17 @@ inline unsigned long getBinExpo(const BigInt& z) {
 }
 
 /// get exponent of power k
-inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long k) {
-  assert(false); // AF: todo
+inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long uk) {
+    BigInt k(uk), q, r;
+    e = 0;
+    m = z;
+    for(;;) {
+        divide_qr(m.get_mp(), k.get_mp(), q.get_mp(), r.get_mp());
+        if (!r.get_mp().is_zero()) break;
+        m.get_mp() = q.get_mp();
+        ++e;
+    }
+
   /*
   mpz_t f;
   mpz_init_set_ui(f, k);
