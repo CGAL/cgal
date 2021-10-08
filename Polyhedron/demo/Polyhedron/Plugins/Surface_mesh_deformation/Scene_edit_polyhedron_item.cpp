@@ -528,8 +528,10 @@ struct Is_constrained_map<SMesh>
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
+
   SMesh::Property_map<sm_vertex_descriptor,int> icmap;
   SMesh* mesh;
+
   Is_constrained_map()
   {}
   Is_constrained_map(std::vector<int>* vec, SMesh* mesh)

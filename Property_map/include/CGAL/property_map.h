@@ -49,7 +49,6 @@ public:
   typedef boost::read_write_property_map_tag category;
 
 public:
-
   inline friend
   value_type
   get(Static_boolean_property_map, const key_type&)
@@ -82,14 +81,14 @@ class OR_property_map {
   {}
 
   inline friend
-    value_type
-    get(const OR_property_map& pm, const key_type& k)
+  value_type
+  get(const OR_property_map& pm, const key_type& k)
   {
     return get(pm.pm1,k) || get(pm.pm2,k);
   }
 
   inline friend
-    void
+  void
   put(OR_property_map& pm, const key_type& k, const value_type& v)
   {
     put(pm.pm1,k, v);
@@ -328,13 +327,14 @@ template <int N, typename Tuple>
 struct Nth_of_tuple_property_map
 {
   typedef Tuple key_type; ///< typedef to `Tuple`
-  #ifdef DOXYGEN_RUNNING
+#ifdef DOXYGEN_RUNNING
   typedef unspecified_type value_type;  ///< typedef to the N-th type of the tuple
-  #else
+#else
   typedef typename boost::tuples::element<N,Tuple>::type value_type;
   #endif
   typedef const value_type& reference; ///< typedef to `value_type&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
+
   /// Access a property map element.
   /// @param tuple a key whose Nth item is accessed
   value_type& operator[](key_type& tuple) const { return tuple.template get<N>(); }
@@ -342,8 +342,8 @@ struct Nth_of_tuple_property_map
   typedef Nth_of_tuple_property_map<N,Tuple> Self;
   /// \name Put/get free functions
   /// @{
-  friend reference get(const Self&,const key_type& k) {return k.template get<N>();}
-  friend void put(const Self&,key_type& k, const value_type& v) {k.template get<N>()=v;}
+  friend reference get(const Self&, key_type& k) { return k.template get<N>(); }
+  friend void put(const Self&, key_type& k, const value_type& v) { k.template get<N>() = v; }
   /// @}
 };
 
@@ -351,6 +351,8 @@ template <int N, typename ... T>
 struct Nth_of_tuple_property_map<N,std::tuple<T...> >
 {
   typedef std::tuple<T...> Tuple;
+  typedef Nth_of_tuple_property_map<N,Tuple> Self;
+
   typedef Tuple key_type;
   typedef typename std::tuple_element<N,Tuple>::type value_type;
   typedef const value_type& reference;
@@ -358,9 +360,8 @@ struct Nth_of_tuple_property_map<N,std::tuple<T...> >
 
   value_type& operator[](key_type& tuple) const { return get<N>(tuple); }
 
-  typedef Nth_of_tuple_property_map<N,Tuple> Self;
-  friend reference get(const Self&,const key_type& k) {return std::get<N>(k);}
-  friend void put(const Self&,key_type& k, const value_type& v) {std::get<N>(k)=v;}
+  friend reference get(const Self&, key_type& k) { return std::get<N>(k); }
+  friend void put(const Self&, key_type& k, const value_type& v) { std::get<N>(k) = v; }
 };
 
 /// Free function to create a Nth_of_tuple_property_map property map.
@@ -555,8 +556,7 @@ struct Cartesian_converter_property_map
 
   friend value_type get(const Cartesian_converter_property_map<GeomObject, Vpm>& pm, const key_type& k)
   {
-    return
-     CGAL::Cartesian_converter<K1, K2>()(get(pm.vpm, k));
+    return CGAL::Cartesian_converter<K1, K2>()(get(pm.vpm, k));
   }
 
   friend void put(Cartesian_converter_property_map<GeomObject, Vpm>& pm, const key_type& k, const value_type& v)

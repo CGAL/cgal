@@ -135,6 +135,7 @@ namespace boost {
     typedef ValueType value_type;
     typedef const value_type& reference;
     typedef lvalue_property_map_tag category;
+
     associative_property_map() : m_c(0) { }
     associative_property_map(C& c) : m_c(&c) { }
     value_type& operator[](const key_type& k) const {
@@ -148,12 +149,12 @@ namespace boost {
     return uhm[key];
   }
 
-  friend
-  void
-  put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
-  {
-    uhm[key] = val;
-  }
+    friend
+    void
+    put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
+    {
+      uhm[key] = val;
+    }
 
   private:
     C* m_c;

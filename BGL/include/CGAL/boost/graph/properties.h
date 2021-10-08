@@ -135,7 +135,7 @@ struct Point_accessor<Handle, ValueType, ConstReference, true>
   : boost::put_get_helper< ConstReference, Point_accessor<Handle, ValueType, ConstReference, true> >
 {
   typedef boost::lvalue_property_map_tag category;
-  typedef ConstReference                      reference;
+  typedef ConstReference                 reference;
   typedef ValueType                      value_type;
   typedef Handle                         key_type;
 

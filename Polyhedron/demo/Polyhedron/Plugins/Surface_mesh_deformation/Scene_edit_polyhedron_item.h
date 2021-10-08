@@ -73,16 +73,18 @@ struct Array_based_vertex_point_map
 {
 public:
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor     key_type;
-  typedef EPICK::Point_3                                           value_type;
+  typedef EPICK::Point_3                                            value_type;
   typedef const value_type&                                         reference;
   typedef boost::read_write_property_map_tag                        category;
+
   std::vector<float>* positions;
   Mesh* mesh;
   Id_setter* id_setter;
-  Array_based_vertex_point_map(std::vector<float>* positions, Mesh* mesh, Id_setter* id_setter) : positions(positions), mesh(mesh), id_setter(id_setter) {}
 
+  Array_based_vertex_point_map(std::vector<float>* positions, Mesh* mesh, Id_setter* id_setter)
+    : positions(positions), mesh(mesh), id_setter(id_setter)
+  {}
 };
-
 
 template<typename Mesh> inline
 typename Array_based_vertex_point_map<Mesh>::reference

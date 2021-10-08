@@ -81,7 +81,6 @@ struct Alpha_expansion_old_API_wrapper_graph
         out.push_back ((*pmap.cost_matrix)[i][idx]);
       return out;
     }
-
   };
 
   typedef CGAL::Pointer_property_map<double>::const_type Edge_cost_map;

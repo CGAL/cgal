@@ -128,6 +128,8 @@ private:
 template <class Gt>
 struct Normal_of_point_with_normal_map
 {
+  typedef Normal_of_point_with_normal_map<Gt> Self;
+
   typedef Point_with_normal_3<Gt> Point_with_normal; ///< Position + normal
   typedef typename Gt::Vector_3 Vector; /// normal
 
@@ -139,7 +141,6 @@ struct Normal_of_point_with_normal_map
   /// Access a property map element
   value_type& operator[](key_type& pwn) const { return pwn.normal(); }
 
-  typedef Normal_of_point_with_normal_map<Gt> Self;
   /// \name Put/get free functions
   /// @{
   friend reference get(const Self&,const key_type& k) {return k.normal();}

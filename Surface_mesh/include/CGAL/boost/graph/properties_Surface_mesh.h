@@ -39,7 +39,7 @@ public:
   typedef boost::readable_property_map_tag                category;
   typedef typename CGAL::Kernel_traits<Point>::type::FT   value_type;
   typedef value_type                                      reference;
-  typedef typename SM::Edge_index                        key_type;
+  typedef typename SM::Edge_index                         key_type;
 
   SM_edge_weight_pmap(const CGAL::Surface_mesh<Point>& sm)
     : pm_(sm. template property_map<
@@ -55,8 +55,8 @@ public:
   }
 
 private:
-   typename SM::template Property_map< typename SM::Vertex_index,
-                                       typename SM::Point > pm_;
+  typename SM::template Property_map< typename SM::Vertex_index,
+                                      typename SM::Point > pm_;
   const SM& sm_;
 };
 

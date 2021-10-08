@@ -1124,9 +1124,9 @@ private:
 
   struct Patch_id_property_map
   {
-    typedef boost::readable_property_map_tag     category;
-    typedef Patch_id                             value_type;
-    typedef Patch_id&                            reference;
+    typedef boost::readable_property_map_tag       category;
+    typedef Patch_id                               value_type;
+    typedef Patch_id&                              reference;
     typedef typename Triangle_list::const_iterator key_type;
 
     const Self* remesher_ptr_;

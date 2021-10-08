@@ -196,6 +196,7 @@ struct Source_point_from_edge_descriptor_map{
   typedef typename boost::property_traits< VertexPointMap >::reference reference;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor key_type;
   typedef boost::readable_property_map_tag category;
+
   //data
   typename boost::remove_const<PolygonMesh>::type* m_pm;
   VertexPointMap m_vpm;

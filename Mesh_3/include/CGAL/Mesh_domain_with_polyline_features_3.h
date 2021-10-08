@@ -1117,7 +1117,8 @@ add_features(InputIterator first, InputIterator end,
 namespace details {
 
 template <typename PolylineWithContext>
-struct Get_content_from_polyline_with_context {
+struct Get_content_from_polyline_with_context
+{
   typedef Get_content_from_polyline_with_context Self;
   typedef const PolylineWithContext& key_type;
   typedef const typename PolylineWithContext::Bare_polyline& value_type;
@@ -1129,7 +1130,8 @@ struct Get_content_from_polyline_with_context {
 }; // end Get_content_from_polyline_with_context<PolylineWithContext>
 
 template <typename PolylineWithContext>
-struct Get_patches_id_from_polyline_with_context {
+struct Get_patches_id_from_polyline_with_context
+{
   typedef Get_patches_id_from_polyline_with_context Self;
   typedef const PolylineWithContext& key_type;
   typedef const typename PolylineWithContext::Context::Patches_ids& value_type;
