@@ -127,7 +127,7 @@ _test_weighted_alpha_shape_3()
   // test a bigger Alpha_shapes
   A.clear();
   L.clear();
-  std::ifstream is("./data/fin", std::ios::in);
+  std::ifstream is("data/fin", std::ios::in);
   assert(is);
   file_input(is,L);
   A.set_mode(Alpha_shape_3::REGULARIZED);

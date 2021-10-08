@@ -53,7 +53,7 @@ int main(int argc, char** argv)
   Surface_mesh surface_mesh;
   Constrained_edge_map constraints_map(surface_mesh);
 
-  const char* filename = (argc > 1) ? argv[1] : "data/cube-meshed.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
   OpenMesh::IO::read_mesh(surface_mesh, filename);
 
   if(!CGAL::is_triangle_mesh(surface_mesh)){

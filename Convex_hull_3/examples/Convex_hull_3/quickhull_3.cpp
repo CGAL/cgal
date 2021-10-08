@@ -14,7 +14,7 @@ typedef CGAL::Surface_mesh<Point_3>               Surface_mesh;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in( (argc>1)? argv[1] : "data/cube.xyz");
+  std::ifstream in( (argc>1)? argv[1] : CGAL::data_file_path("points_3/cube.xyz"));
   std::vector<Point_3> points;
   Point_3 p;
   while(in >> p){

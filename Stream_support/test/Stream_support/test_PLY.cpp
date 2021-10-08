@@ -13,7 +13,7 @@ typedef std::vector<std::size_t>                      Face;
 
 int main(int argc, char** argv)
 {
-  const char* ply_file = (argc > 1) ? argv[1] : "data/colored_tetra.ply";
+  const std::string ply_file = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/colored_tetra.ply");
 
   std::vector<Point> points;
   std::vector<Face> polygons;

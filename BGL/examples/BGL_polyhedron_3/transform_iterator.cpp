@@ -39,7 +39,7 @@ struct Source {
 
 int main(int argc, char** argv)
 {
-  std::ifstream in((argc>1)?argv[1]:"cube.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"));
   Polyhedron P;
   in >> P;
   GraphTraits::vertex_descriptor vd = *(vertices(P).first);

@@ -16,7 +16,7 @@ void OpenOFF(int i)
   switch(i)
   {
    case 1:
-     path = "test1.off";
+     path = CGAL::data_file_path("meshes/mesh_with_colors.off");
      break;
   case 2:
     path = "test2.off";

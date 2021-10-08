@@ -95,9 +95,9 @@ bool test_double_torus_quad(bool draw, int testtorun)
   // Test 0 (double torus, three G1 cycles)
   {
     LCC_3_cmap lcc;
-    if (!CGAL::load_off(lcc, "./data/double-torus.off"))
+    if (!CGAL::load_off(lcc, "data/double-torus.off"))
     {
-      std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl;
+      std::cout<<"PROBLEM reading file data/double-torus.off"<<std::endl;
       return false;
     }
     Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
@@ -119,9 +119,9 @@ bool test_double_torus_quad(bool draw, int testtorun)
   {
     paths.clear();
     LCC_3_cmap lcc;
-    if (!CGAL::load_off(lcc, "./data/double-torus.off")) // "./data/double-torus-smooth.off"))
+    if (!CGAL::load_off(lcc, "data/double-torus.off")) // "data/double-torus-smooth.off"))
     {
-      std::cout<<"PROBLEM reading file ./data/double-torus.off"<<std::endl; // ./data/double-torus-smooth.off"<<std::endl;
+      std::cout<<"PROBLEM reading file data/double-torus.off"<<std::endl; // data/double-torus-smooth.off"<<std::endl;
       return false;
     }
     Curves_on_surface_topology<LCC_3_cmap> cst(lcc);
@@ -152,9 +152,9 @@ bool test_double_torus_quad(bool draw, int testtorun)
   {
     paths.clear();
     LCC_3_cmap lcc;
-    if (!CGAL::load_off(lcc, "./data/3torus-smooth.off")) // 3torus.off
+    if (!CGAL::load_off(lcc, "data/3torus-smooth.off")) // 3torus.off
     {
-      std::cout<<"PROBLEM reading file ./data/3torus-smooth.off"<<std::endl; // 3torus.off
+      std::cout<<"PROBLEM reading file data/3torus-smooth.off"<<std::endl; // 3torus.off
       return false;
     }
     Curves_on_surface_topology<LCC_3_cmap> cst(lcc);

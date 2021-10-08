@@ -37,7 +37,7 @@ int main()
   std::list<Weighted_point> pts;
 
   // read input
-  std::ifstream is("./data/bunny_1000");
+  std::ifstream is("data/bunny_1000");
   int n;
   is >> n;
   std::cout << "Reading " << n << " points " << std::endl;

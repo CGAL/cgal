@@ -29,6 +29,7 @@
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
+#include <CGAL/Weights/utils.h>
 #include <boost/range/has_range_iterator.hpp>
 
 #include <vector>
@@ -110,7 +111,7 @@ public:
     \brief Constructor
   */
   Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
-    : v2v(tm), tm(tm), vpm(vpm)
+    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(vpm)
   {
     build();
   }
@@ -361,7 +362,6 @@ private:
   void
   compute_divergence()
   {
-    typename Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
     typename Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
     typename Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
     Matrix indexD(dimension,1);
@@ -374,36 +374,30 @@ private:
       Index i = get(vertex_id_map, current);
       Index j = get(vertex_id_map, neighbor_one);
       Index k = get(vertex_id_map, neighbor_two);
-      VertexPointMap_reference p_i = get(vpm,current);
+      VertexPointMap_reference p_i = get(vpm, current);
       VertexPointMap_reference p_j = get(vpm, neighbor_one);
       VertexPointMap_reference p_k = get(vpm, neighbor_two);
       Index face_i = get(face_id_map, f);
 
-      Vector_3 v_ij = construct_vector(p_i,p_j);
-      Vector_3 v_ik = construct_vector(p_i,p_k);
-      Vector_3 cross = cross_product(v_ij, v_ik);
-      double norm_cross = CGAL::sqrt(to_double(scalar_product(cross,cross)));
-      double dot = to_double(scalar_product(v_ij, v_ik));
-      double cotan_i = dot/norm_cross;
+      const Vector_3 v_ij = construct_vector(p_i, p_j);
+      const Vector_3 v_ik = construct_vector(p_i, p_k);
+      const Vector_3 v_ji = construct_vector(p_j, p_i);
+      const Vector_3 v_jk = construct_vector(p_j, p_k);
+      const Vector_3 v_ki = construct_vector(p_k, p_i);
+      const Vector_3 v_kj = construct_vector(p_k, p_j);
 
-      Vector_3 v_ji = construct_vector(p_j, p_i);
-      Vector_3 v_jk = construct_vector(p_j, p_k);
+      const Traits traits;
+      const FT cotan_i = CGAL::Weights::cotangent(p_k, p_i, p_j, traits);
+      const FT cotan_j = CGAL::Weights::cotangent(p_k, p_j, p_i, traits);
+      const FT cotan_k = CGAL::Weights::cotangent(p_j, p_k, p_i, traits);
 
-      cross = cross_product(v_ji, v_jk);
-      dot = to_double(scalar_product(v_ji, v_jk));
-      double cotan_j = dot/norm_cross;
-
-      Vector_3 v_ki = construct_vector(p_k,p_i);
-      Vector_3 v_kj = construct_vector(p_k,p_j);
-
-      cross = cross_product(v_ki, v_kj);
-      dot = to_double(scalar_product(v_ki,v_kj));
-      double cotan_k = dot/norm_cross;
-
-      const Vector_3& a  = m_X[face_i];
-      double i_entry = (to_double(scalar_product(a,v_ij)) * cotan_k) + (to_double(scalar_product(a,v_ik)) *  cotan_j);
-      double j_entry = (to_double(scalar_product(a,v_jk)) * cotan_i) + (to_double(scalar_product(a,v_ji)) * cotan_k);
-      double k_entry = (to_double(scalar_product(a,v_ki)) * cotan_j) + (to_double(scalar_product(a,v_kj)) * cotan_i);
+      const Vector_3& a = m_X[face_i];
+      const double i_entry = (CGAL::to_double(scalar_product(a, v_ij) * cotan_k)) +
+                             (CGAL::to_double(scalar_product(a, v_ik) * cotan_j));
+      const double j_entry = (CGAL::to_double(scalar_product(a, v_jk) * cotan_i)) +
+                             (CGAL::to_double(scalar_product(a, v_ji) * cotan_k));
+      const double k_entry = (CGAL::to_double(scalar_product(a, v_ki) * cotan_j)) +
+                             (CGAL::to_double(scalar_product(a, v_kj) * cotan_i));
 
       indexD.add_coef(i, 0, (1./2)*i_entry);
       indexD.add_coef(j, 0, (1./2)*j_entry);
@@ -549,47 +543,40 @@ private:
       Index k = get(vertex_id_map, neighbor_two);
       Point_3 pi, pj, pk;
 
-      VertexPointMap_reference p_i = get(vpm,current);
+      const Traits traits;
+      VertexPointMap_reference p_i = get(vpm, current);
       VertexPointMap_reference p_j = get(vpm, neighbor_one);
       VertexPointMap_reference p_k = get(vpm, neighbor_two);
       pi = p_i;
       pj = p_j;
       pk = p_k;
 
-      Vector_3 v_ij = construct_vector(p_i,p_j);
-      Vector_3 v_ik = construct_vector(p_i,p_k);
+      const double cotan_i = CGAL::to_double(
+        CGAL::Weights::cotangent(pk, pi, pj, traits));
+      m_cotan_matrix.add_coef(j, k, -(1./2) * cotan_i);
+      m_cotan_matrix.add_coef(k, j, -(1./2) * cotan_i);
+      m_cotan_matrix.add_coef(j, j,  (1./2) * cotan_i);
+      m_cotan_matrix.add_coef(k, k,  (1./2) * cotan_i);
 
-      Vector_3 cross = cross_product(v_ij, v_ik);
-      double dot = to_double(scalar_product(v_ij,v_ik));
+      const double cotan_j = CGAL::to_double(
+        CGAL::Weights::cotangent(pk, pj, pi, traits));
+      m_cotan_matrix.add_coef(i, k, -(1./2) * cotan_j);
+      m_cotan_matrix.add_coef(k, i, -(1./2) * cotan_j);
+      m_cotan_matrix.add_coef(i, i,  (1./2) * cotan_j);
+      m_cotan_matrix.add_coef(k, k,  (1./2) * cotan_j);
 
-      double norm_cross = (CGAL::sqrt(to_double(scalar_product(cross,cross))));
+      const double cotan_k = CGAL::to_double(
+        CGAL::Weights::cotangent(pj, pk, pi, traits));
+      m_cotan_matrix.add_coef(i, j, -(1./2) * cotan_k);
+      m_cotan_matrix.add_coef(j, i, -(1./2) * cotan_k);
+      m_cotan_matrix.add_coef(i, i,  (1./2) * cotan_k);
+      m_cotan_matrix.add_coef(j, j,  (1./2) * cotan_k);
 
-      double cotan_i = dot/norm_cross;
-      m_cotan_matrix.add_coef(j,k ,-(1./2)*cotan_i);
-      m_cotan_matrix.add_coef(k,j,-(1./2)* cotan_i);
-      m_cotan_matrix.add_coef(j,j,(1./2)*cotan_i);
-      m_cotan_matrix.add_coef(k,k,(1./2)* cotan_i);
-
-      Vector_3 v_ji = construct_vector(p_j,p_i);
-      Vector_3 v_jk = construct_vector(p_j,p_k);
-
-      cross = cross_product(v_ji, v_jk);
-      dot = to_double(scalar_product(v_ji, v_jk));
-      double cotan_j = dot/norm_cross;
-      m_cotan_matrix.add_coef(i,k ,-(1./2)*cotan_j);
-      m_cotan_matrix.add_coef(k,i,-(1./2)* cotan_j);
-      m_cotan_matrix.add_coef(i,i,(1./2)* cotan_j);
-      m_cotan_matrix.add_coef(k,k,(1./2)* cotan_j);
-
-      Vector_3 v_ki = construct_vector(p_k,p_i);
-      Vector_3 v_kj = construct_vector(p_k,p_j);
-      cross = cross_product(v_ki, v_kj);
-      dot = to_double(scalar_product(v_ki,v_kj));
-      double cotan_k = dot/norm_cross;
-      m_cotan_matrix.add_coef(i,j,-(1./2)*cotan_k);
-      m_cotan_matrix.add_coef(j,i,-(1./2)* cotan_k);
-      m_cotan_matrix.add_coef(i,i,(1./2)* cotan_k);
-      m_cotan_matrix.add_coef(j,j,(1./2)* cotan_k);
+      const Vector_3 v_ij = construct_vector(p_i, p_j);
+      const Vector_3 v_ik = construct_vector(p_i, p_k);
+      const Vector_3 cross = cross_product(v_ij, v_ik);
+      const double norm_cross = CGAL::sqrt(
+        CGAL::to_double(scalar_product(cross, cross)));
 
       //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
       //cross is 2*area
@@ -802,14 +789,14 @@ class Surface_mesh_geodesic_distances_3
         >::Kernel
       >::type,
       Mode,
-      #ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
       typename Default::Get<
         LA,
         Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
       >::type,
-      #else
+#else
       LA,
-      #endif
+#endif
       typename Default::Get<
         VertexPointMap,
         typename boost::property_map< TriangleMesh, vertex_point_t>::const_type
@@ -817,15 +804,18 @@ class Surface_mesh_geodesic_distances_3
     >
 #endif
 {
+  CGAL_static_assertion((std::is_same<Mode, Direct>::value) ||
+                        (std::is_same<Mode, Intrinsic_Delaunay>::value));
+
   // extract real types from Default
-  #ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
   typedef typename Default::Get<
     LA,
     Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
   >::type LA_type;
-  #else
+#else
   typedef LA LA_type;
-  #endif
+#endif
 
   typedef typename Default::Get<
     VertexPointMap,

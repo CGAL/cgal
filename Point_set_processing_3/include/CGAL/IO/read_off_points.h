@@ -190,12 +190,15 @@ bool read_OFF(std::istream& is,
           put(normal_map, pwn, normal); // normal_map[&pwn] = normal
         *output++ = pwn;
         pointsRead++;
+
       }
       // ...or skip comment line
     }
     // Skip remaining lines
   }
-
+  if(is.eof()) {
+    is.clear(is.rdstate() & ~std::ios_base::failbit); // set by getline
+  }
   return true;
 }
 

@@ -58,8 +58,6 @@ if [ ! -d "${CGAL_DOC_BUILD}/${CGAL_RELEASE_ID}" ]; then
 fi
 cd "${CGAL_RELEASE_ID}"
 
-PYTHONPATH=/home/cgal-testsuite/.local/lib/python2.6/site-packages
-export PYTHONPATH
 PATH=/home/cgal-testsuite/local/bin:$PATH
 export PATH
 cd "$PWD/doc/scripts"

@@ -35,10 +35,10 @@ namespace internal {
 template <class K>
 class Ray_2_Iso_rectangle_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Ray_2_Iso_rectangle_2_pair(typename K::Ray_2 const *ray,
                           typename K::Iso_rectangle_2 const *iso)
-      : _known(false), _ref_point(ray->source()), _dir(ray->direction().to_vector()),
+      : _ref_point(ray->source()), _dir(ray->direction().to_vector()),
         _isomin((iso->min)()), _isomax((iso->max)()), _min((typename K::FT)(0)) {}
 
     Intersection_results intersection_type() const;
@@ -46,8 +46,7 @@ public:
     typename K::Point_2   intersection_point() const;
     typename K::Segment_2 intersection_segment() const;
 protected:
-    mutable bool                       _known;
-    mutable Intersection_results       _result;
+    mutable Intersection_results       _result = UNKNOWN;
     mutable typename K::Point_2            _ref_point;
     mutable typename K::Vector_2           _dir;
     mutable typename K::Point_2            _isomin;
@@ -109,9 +108,8 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_type() const
 {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
-    _known = true;
     bool to_infinity = true;
 
     typename K::Construct_cartesian_const_iterator_2 construct_cccit;
@@ -175,7 +173,7 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_segment() const
     typedef typename K::Segment_2 Segment_2;
     typename K::Construct_translated_point_2 translated_point;
     typename K::Construct_scaled_vector_2 construct_scaled_vector;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     typename K::Point_2 p1(translated_point(_ref_point, construct_scaled_vector(_dir,_min)));
@@ -190,7 +188,7 @@ Ray_2_Iso_rectangle_2_pair<K>::intersection_point() const
     typedef typename K::Point_2 Point_2;
     typename K::Construct_translated_point_2 translated_point;
     typename K::Construct_scaled_vector_2 construct_scaled_vector;
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return Point_2(translated_point(_ref_point, construct_scaled_vector(_dir, _min)));

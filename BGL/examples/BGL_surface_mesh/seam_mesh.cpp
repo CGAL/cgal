@@ -33,7 +33,7 @@ typedef boost::graph_traits<Seam_mesh>::face_descriptor           face_descripto
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc>1) ? argv[1] : "data/cube.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/prim.off");
 
   Mesh sm;
   if(!CGAL::IO::read_polygon_mesh(filename, sm))

@@ -131,6 +131,8 @@ _test_fct_constructions_3(const R& r)
   assert( r.construct_projected_point_3_object()(ray, Point(-1,0,0)) == Point(0,0,0));
   assert( r.construct_projected_point_3_object()(s, Point(-1,0,0)) == Point(0,0,0));
   assert( r.construct_projected_point_3_object()(s, Point(2,0,0)) == Point(1,1,0));
+  assert( r.construct_projected_point_3_object()(Point(0,0,0), Point(2,0,0)) == Point(0,0,0));
+
   return true;
 }
 

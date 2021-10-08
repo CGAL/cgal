@@ -56,13 +56,14 @@ def write_out_html(d, fn):
     # this is the normal doxygen doctype, which is thrown away by pyquery
     f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">\n')
     f.write('<html xmlns=\"http://www.w3.org/1999/xhtml\">')
-    f.write(d.html())
+    if d.html() is not None:
+      f.write(d.html())
     f.write('\n')
     f.write('</html>\n')
     f.close()
 
 def package_glob(target):
-    return filter(lambda x: not os.path.join(os.path.join('.','Manual'),'')  in x, glob.glob(target))
+    return [x for x in glob.glob(target) if not os.path.join(os.path.join('.','Manual'),'')  in x]
 
 # remove duplicate files
 def clean_doc():
@@ -127,7 +128,8 @@ def re_replace_first_in_file(pat, s_after, fname):
 def is_concept_file(filename):
   if not path.exists(filename):
     return False;
-  d = pq(filename=filename, parser='html', encoding='utf-8')
+  file_content = codecs.open(filename, 'r', encoding='utf-8')
+  d = pq(file_content.read(),parser="html")
   ident = d('#CGALConcept')
   return ident.size() == 1
 
@@ -190,7 +192,8 @@ def automagically_number_figures():
     return
 
 
-  d = pq(filename="./Manual/packages.html", parser='html', encoding='utf-8')
+  file_content = codecs.open("./Manual/packages.html", 'r', encoding='utf-8')
+  d = pq(file_content.read(),parser="html")
   for el in d('a.elRef'):
     text = pq(el).attr('href')
     if text.find("index.html")!=-1:
@@ -210,14 +213,16 @@ def automagically_number_figures():
     all_pkg_files.remove(userman)
     for fname in [userman]+all_pkg_files:
       infos=figure_anchor_info(pkg_id, global_anchor_map)
-      d = pq(filename=fname, parser='html', encoding='utf-8')
+      file_content = codecs.open(fname, 'r', encoding='utf-8')
+      d = pq(file_content.read(), parser="html")
       d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
     pkg_id+=1
 
   #Figure link dev Manual
   for fname in glob.glob("Manual/*.html"):
     infos=figure_anchor_info(0, global_anchor_map)
-    d = pq(filename=fname, parser='html', encoding='utf-8')
+    file_content = codecs.open(fname, 'r', encoding='utf-8')
+    d = pq(file_content.read(),parser="html")
     d('a.anchor').each( lambda i: collect_figure_anchors(i,infos) )
 
   #replace each link to a figure by its unique id
@@ -227,7 +232,8 @@ def automagically_number_figures():
     with codecs.open(fname, encoding='utf-8') as f:
         if not any(re.search("fig__", line) for line in f):
             continue # pattern does not occur in file so we are done.
-    d = pq(filename=fname, parser='html', encoding='utf-8')
+    file_content = codecs.open(fname, 'r', encoding='utf-8')
+    d = pq(file_content.read(), parser="html")
     d('a.el').each( lambda i: update_figure_ref(i,global_anchor_map) )
     d('a.elRef').each( lambda i: update_figure_ref(i,global_anchor_map) )
     write_out_html(d, fname)
@@ -261,7 +267,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
       re_replace_in_file("<span class=\"icon\">N</span>", "<span class=\"icon-namespace\">N</span>", fn)
       re_replace_in_file("<span class=\"icon\">C</span>", "<span class=\"icon-class\">C</span>", fn)
       dir_name=path.dirname(fn)
-      d = pq(filename=fn, parser='html', encoding='utf-8')
+      file_content = codecs.open(fn, 'r', encoding='utf-8')
+      d = pq(file_content.read(), parser="html")
       tr_tags = d('table.directory tr img')
       tr_tags.each(lambda i: rearrange_img(i, dir_name))
       span_tags = d('table.directory tr span')
@@ -270,7 +277,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     class_files=list(package_glob('./*/class*.html'))
     class_files.extend(package_glob('./*/struct*.html'))
     for fn in class_files:
-        d = pq(filename=fn, parser='html', encoding='utf-8')
+        file_content = codecs.open(fn, 'r', encoding='utf-8')
+        d = pq(file_content.read(), parser="html")
         ident = d('#CGALConcept')
         if ident.size() == 1:
             conceptify(d);
@@ -284,7 +292,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     namespace_files=package_glob('./*/namespace*.html')
     for fn in namespace_files:
-        d = pq(filename=fn, parser='html', encoding='utf-8')
+        file_content = codecs.open(fn, 'r', encoding='utf-8')
+        d = pq(file_content.read(), parser="html")
         ident = d('#CGALConceptNS')
         if ident.size() == 1:
             conceptify_ns(d);
@@ -294,14 +303,16 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # in a group we only need to change the nested-classes
     group_files=package_glob('./*/group*Concepts*.html')
     for fn in group_files:
-        d = pq(filename=fn, parser='html',encoding='utf-8')
+        file_content = codecs.open(fn, 'r', encoding='utf-8')
+        d = pq(file_content.read(), parser="html")
         conceptify_nested_classes(d)
         write_out_html(d, fn)
 
     # fix up Files
     files_files=package_glob('./*/files.html')
     for fn in files_files:
-        d = pq(filename=fn, parser='html',encoding='utf-8')
+        file_content = codecs.open(fn, 'r', encoding='utf-8')
+        d = pq(file_content.read(), parser="html")
         table = d("table.directory")
         row_id=table("td.entry").filter(lambda i: pq(this).text() == 'Concepts').parent().attr('id')
         if row_id != None:
@@ -331,7 +342,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     relationship_pages.extend(package_glob('./*/generalizes.html'))
     relationship_pages.extend(package_glob('./*/refines.html'))
     for fn in relationship_pages:
-        d = pq(filename=fn, parser='html',encoding='utf-8')
+        file_content = codecs.open(fn, 'r', encoding='utf-8')
+        d = pq(file_content.read(), parser="html")
         dts=d(".textblock .reflist dt")
         # no contents() on pyquery, do it the hard way
         # Note that in the following regular expression, the Struct did not appear in doxygen version 1.8.3
@@ -343,7 +355,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # throw out nav-sync
     all_pages=glob.glob('./*/*.html')
     for fn in all_pages:
-        d = pq(filename=fn, parser='html',encoding='utf-8')
+        file_content = codecs.open(fn, 'r', encoding='utf-8')
+        d = pq(file_content.read(), parser="html")
         d('#nav-sync').hide()
         # TODO count figures
         write_out_html(d, fn)
@@ -366,7 +379,8 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # remove class name in Definition section if there is no default template
     # parameter documented
     for fn in class_and_struct_files:
-        d = pq(filename=fn, parser='html',encoding='utf-8')
+        file_content = codecs.open(fn, 'r', encoding='utf-8')
+        d = pq(file_content.read(), parser="html")
         for el in d('h3'):
           text = pq(el).text()
           if text[0:9]=="template<" and text.find('=')==-1:
