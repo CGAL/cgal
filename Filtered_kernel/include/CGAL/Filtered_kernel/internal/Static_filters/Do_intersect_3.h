@@ -320,6 +320,9 @@ public:
       [](const std::array< std::array<double, 3>, 3>& pts, double x, double y, double z)
         -> Uncertain<Orientation>
     {
+      CGAL_BRANCH_PROFILER(std::string("Plane-BBox_3 semi-static Orientation_3 calls to/failures   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
+
       double pqx = pts[1][0] - pts[0][0];
       double pqy = pts[1][1] - pts[0][1];
       double pqz = pts[1][2] - pts[0][2];
@@ -395,6 +398,8 @@ public:
         if (det > eps)  return POSITIVE;
         if (det < -eps) return NEGATIVE;
       }
+
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
       return Uncertain<Orientation>::indeterminate();
     };
 
@@ -485,6 +490,9 @@ public:
   result_type
   operator()(const Triangle_3 &t, const Bbox_3& b) const
   {
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
+
     // check if at least one triangle point is inside the bbox
     Get_approx<Point_3> get_approx;
     std::array< std::array<double, 3>, 3> pts;
@@ -495,9 +503,16 @@ public:
       if (fit_in_double(get_approx(p).x(), pts[i][0]) && fit_in_double(get_approx(p).y(), pts[i][1]) &&
           fit_in_double(get_approx(p).z(), pts[i][2]) )
       {
-        if( (pts[i][0] >= b.xmin() && pts[i][0] <= b.xmax()) && (pts[i][1] >= b.ymin() && pts[i][1] <= b.ymax())  && (pts[i][2] >= b.zmin() && pts[i][2] <= b.zmax()) ){
+        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+        if( (pts[i][0] >= b.xmin() && pts[i][0] <= b.xmax()) &&
+            (pts[i][1] >= b.ymin() && pts[i][1] <= b.ymax()) &&
+            (pts[i][2] >= b.zmin() && pts[i][2] <= b.zmax()) )
+        {
           return true;
         }
+
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
       else
       {
@@ -508,6 +523,8 @@ public:
     // copy of the regular code with do_axis_intersect_aux_impl statically filtered
     auto do_axis_intersect_aux_impl = [](double alpha, double beta, double c_alpha, double c_beta) -> Uncertain<Sign>
     {
+      CGAL_BRANCH_PROFILER_3("certain / uncertain / calls to   : axis_inter", tmp2);
+
       Sign int_tmp_result;
       double double_tmp_result;
       double eps;
@@ -539,12 +556,14 @@ public:
       }
       if( (lower_bound_1 < 5.00368081960964746551e-147) )
       {
+          CGAL_BRANCH_PROFILER_BRANCH_1(tmp2);
           return Uncertain<Sign>::indeterminate();
       }
       else
       {
           if( (upper_bound_1 > 1.67597599124282389316e+153) )
           {
+              CGAL_BRANCH_PROFILER_BRANCH_1(tmp2);
               return Uncertain<Sign>::indeterminate();
           }
           eps = (8.88720573725927976811e-16 * (max1 * max2));
@@ -560,10 +579,13 @@ public:
               }
               else
               {
+                CGAL_BRANCH_PROFILER_BRANCH_1(tmp2);
                 return Uncertain<Sign>::indeterminate();
               }
           }
       }
+
+      CGAL_BRANCH_PROFILER_BRANCH_2(tmp2);
       return int_tmp_result;
     };
 
