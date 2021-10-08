@@ -37,8 +37,8 @@ namespace CGAL
       typedef boost::readable_property_map_tag category;
 
       inline friend
-        typename Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>::reference
-        get(Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>, Iterator it)
+      reference
+      get(Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>, Iterator it)
       {
         typename GeomTraits::Construct_point_3 point;
         return point(it->vertex(1)->point());
