@@ -111,19 +111,19 @@ void test_to_interval_boost() {
 }
 
 // In assert, we use values from impl2.
-void test_to_interval_tight_1() {
+void test_to_interval_tight_rational_1() {
 
   // In green, we compare to impl2.
-  #define TESTCASE10 // pass all three
-  #define TESTCASE11 // impl1: fails tightness (sup is larger, s = 9.3488310472396616291)
-  #define TESTCASE12 // pass all three
-  #define TESTCASE13 // pass all three
-  #define TESTCASE14 // pass all three
-  #define TESTCASE15 // pass all three
-  #define TESTCASE16 // pass all three
-  #define TESTCASE17 // pass all three
-  #define TESTCASE18 // pass all three
-  #define TESTCASE19 // pass all three
+  #define TESTCASE_RAT_10 // pass all three
+  #define TESTCASE_RAT_11 // impl1: fails tightness (sup is larger, s = 9.3488310472396616291)
+  #define TESTCASE_RAT_12 // pass all three
+  #define TESTCASE_RAT_13 // pass all three
+  #define TESTCASE_RAT_14 // pass all three
+  #define TESTCASE_RAT_15 // pass all three
+  #define TESTCASE_RAT_16 // pass all three
+  #define TESTCASE_RAT_17 // pass all three
+  #define TESTCASE_RAT_18 // pass all three
+  #define TESTCASE_RAT_19 // pass all three
 
   using NT = boost::multiprecision::cpp_int;
   using Quotient = CGAL::Quotient<NT>;
@@ -141,10 +141,10 @@ void test_to_interval_tight_1() {
   double i, s;
 
   std::cout << std::endl;
-  std::cout << "- T1 testing tight interval ..." << std::endl;
+  std::cout << "- T1 testing tight interval for rationals ..." << std::endl;
   std::cout << std::endl;
 
-  #ifdef TESTCASE10 // small numbers
+  #ifdef TESTCASE_RAT_10 // small numbers
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE0 RESULT:" << std::endl;
@@ -162,13 +162,12 @@ void test_to_interval_tight_1() {
   std::cout << "ref: 282.74333882308138755" << std::endl;
   std::cout << std::endl;
 
-  // Results for current tight using master to_interval().
   assert(i == 282.7433388230813307);
   assert(s == 282.74333882308138755);
 
   #endif
 
-  #ifdef TESTCASE11 // large numbers
+  #ifdef TESTCASE_RAT_11 // large numbers
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE1 RESULT:" << std::endl;
@@ -192,7 +191,7 @@ void test_to_interval_tight_1() {
 
   #endif
 
-  #ifdef TESTCASE12
+  #ifdef TESTCASE_RAT_12
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE2 RESULT:" << std::endl;
@@ -215,7 +214,7 @@ void test_to_interval_tight_1() {
 
   #endif
 
-  #ifdef TESTCASE13
+  #ifdef TESTCASE_RAT_13
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE3 RESULT:" << std::endl;
@@ -238,7 +237,7 @@ void test_to_interval_tight_1() {
 
   #endif
 
-  #ifdef TESTCASE14
+  #ifdef TESTCASE_RAT_14
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE4 RESULT:" << std::endl;
@@ -261,7 +260,7 @@ void test_to_interval_tight_1() {
 
   #endif
 
-  #ifdef TESTCASE15
+  #ifdef TESTCASE_RAT_15
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE5 RESULT:" << std::endl;
@@ -284,7 +283,7 @@ void test_to_interval_tight_1() {
 
   #endif
 
-  #ifdef TESTCASE16
+  #ifdef TESTCASE_RAT_16
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE6 RESULT:" << std::endl;
@@ -307,7 +306,7 @@ void test_to_interval_tight_1() {
 
   #endif
 
-  #ifdef TESTCASE17
+  #ifdef TESTCASE_RAT_17
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE7 RESULT:" << std::endl;
@@ -330,7 +329,7 @@ void test_to_interval_tight_1() {
 
   #endif
 
-  #ifdef TESTCASE18
+  #ifdef TESTCASE_RAT_18
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE8 RESULT:" << std::endl;
@@ -353,7 +352,7 @@ void test_to_interval_tight_1() {
 
   #endif
 
-  #ifdef TESTCASE19 // small numbers, num > 0 and den < 0
+  #ifdef TESTCASE_RAT_19 // small numbers, num > 0 and den < 0
 
   std::cout << "=============" << std::endl;
   std::cout << "CASE9 RESULT:" << std::endl;
@@ -381,21 +380,21 @@ void test_to_interval_tight_1() {
 }
 
 // In assert, we use values from impl2.
-void test_to_interval_tight_2() {
+void test_to_interval_tight_rational_2() {
 
   // In green, we compare to impl2.
-  #define TESTCASE20  // pass all three
-  #define TESTCASE21  // impl1: fails tightness (sup is larger, s = 0.43464565325999998668)
-  #define TESTCASE22  // pass all three
-  #define TESTCASE23  // pass all three
-  #define TESTCASE24  // pass all three
-  #define TESTCASE25  // pass all three
-  #define TESTCASE26  // pass all three
-  #define TESTCASE27  // pass all three
-  #define TESTCASE28  // pass all three
-  #define TESTCASE29  // pass all three
-  #define TESTCASE210 // impl1, impl3: fails tightness (sup is larger, s = 5.9425938166208590782e+26)
-  #define TESTCASE211 // impl1, impl3: fails tightness (inf is smaller, i = 3602879701896396.5, sup is larger, s = 3602879701896398)
+  #define TESTCASE_RAT_20  // pass all three
+  #define TESTCASE_RAT_21  // impl1: fails tightness (sup is larger, s = 0.43464565325999998668)
+  #define TESTCASE_RAT_22  // pass all three
+  #define TESTCASE_RAT_23  // pass all three
+  #define TESTCASE_RAT_24  // pass all three
+  #define TESTCASE_RAT_25  // pass all three
+  #define TESTCASE_RAT_26  // pass all three
+  #define TESTCASE_RAT_27  // pass all three
+  #define TESTCASE_RAT_28  // pass all three
+  #define TESTCASE_RAT_29  // pass all three
+  #define TESTCASE_RAT_210 // impl1, impl3: fails tightness (sup is larger, s = 5.9425938166208590782e+26)
+  #define TESTCASE_RAT_211 // impl1, impl3: fails tightness (inf is smaller, i = 3602879701896396.5, sup is larger, s = 3602879701896398)
 
   using NT = boost::multiprecision::cpp_int;
   using Quotient = CGAL::Quotient<NT>;
@@ -407,10 +406,10 @@ void test_to_interval_tight_2() {
   double i, s;
 
   std::cout << std::endl;
-  std::cout << "- T2 testing tight interval ..." << std::endl;
+  std::cout << "- T2 testing tight interval for rationals ..." << std::endl;
   std::cout << std::endl;
 
-  #ifdef TESTCASE20
+  #ifdef TESTCASE_RAT_20
 
   std::cout << "TEST 0" << std::endl; // num, case 2
 
@@ -432,7 +431,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE21
+  #ifdef TESTCASE_RAT_21
 
   std::cout << "TEST 1" << std::endl; // num, case 4
 
@@ -453,7 +452,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE22
+  #ifdef TESTCASE_RAT_22
 
   std::cout << "TEST 2" << std::endl; // num, case 4
 
@@ -475,7 +474,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE23
+  #ifdef TESTCASE_RAT_23
 
   std::cout << "TEST 3" << std::endl; // shift = 0
 
@@ -497,7 +496,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE24
+  #ifdef TESTCASE_RAT_24
 
   std::cout << "TEST 4" << std::endl;
 
@@ -519,7 +518,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE25
+  #ifdef TESTCASE_RAT_25
 
   std::cout << "TEST 5" << std::endl;
 
@@ -541,7 +540,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE26
+  #ifdef TESTCASE_RAT_26
 
   std::cout << "TEST 6" << std::endl; // case shift > 0 && p_bits = 51, subcase1
 
@@ -563,7 +562,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE27
+  #ifdef TESTCASE_RAT_27
 
   std::cout << "TEST 7" << std::endl; // non representable double
 
@@ -585,7 +584,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE28
+  #ifdef TESTCASE_RAT_28
 
   std::cout << "TEST 8" << std::endl; // fails assertion (q_bits == num_dbl_digits || r != 0)
 
@@ -607,7 +606,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE29
+  #ifdef TESTCASE_RAT_29
 
   std::cout << "TEST 9" << std::endl; // case shift > 0 && p_bits = 51, subcase3
 
@@ -629,7 +628,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE210
+  #ifdef TESTCASE_RAT_210
 
   std::cout << "TEST 10" << std::endl; // case shift < 0 && p_bits = 51
 
@@ -651,7 +650,7 @@ void test_to_interval_tight_2() {
 
   #endif
 
-  #ifdef TESTCASE211
+  #ifdef TESTCASE_RAT_211
 
   std::cout << "TEST 11" << std::endl; // case shift = 0 && p_bits = 51 && cmp = 0, subcase3
 
@@ -677,6 +676,118 @@ void test_to_interval_tight_2() {
   std::cout << std::endl;
 }
 
+void test_to_interval_tight_integer() {
+
+  #define TESTCASE_INT_0
+  #define TESTCASE_INT_1
+  #define TESTCASE_INT_2
+  #define TESTCASE_INT_3
+
+  using NT = boost::multiprecision::cpp_int;
+  using Traits = CGAL::Real_embeddable_traits<NT>;
+  using Interval = typename Traits::To_interval;
+
+  // std::cout << std::endl;
+  // std::cout << boost::typeindex::type_id<NT>() << std::endl;
+  // std::cout << std::endl;
+  // std::cout << boost::typeindex::type_id<typename Traits::Type>() << std::endl;
+  // std::cout << std::endl;
+
+  NT x;
+  double i, s;
+
+  std::cout << std::endl;
+  std::cout << "- T testing tight interval for integers ..." << std::endl;
+  std::cout << std::endl;
+
+  #ifdef TESTCASE_INT_0
+
+  std::cout << "=============" << std::endl;
+  std::cout << "CASE0 RESULT:" << std::endl;
+  std::cout << "=============" << std::endl;
+
+  x = NT("0");
+  std::tie(i, s) = Interval()(x);
+
+  std::cout << std::endl;
+  std::cout << "inf: " << i << std::endl;
+  std::cout << "ref: 0" << std::endl;
+  std::cout << "sup: " << s << std::endl;
+  std::cout << "ref: 0" << std::endl;
+  std::cout << std::endl;
+
+  assert(i == 0.0);
+  assert(s == 0.0);
+
+  #endif
+
+  #ifdef TESTCASE_INT_1
+
+  std::cout << "=============" << std::endl;
+  std::cout << "CASE1 RESULT:" << std::endl;
+  std::cout << "=============" << std::endl;
+
+  x = NT("5");
+  std::tie(i, s) = Interval()(x);
+
+  std::cout << std::endl;
+  std::cout << "inf: " << i << std::endl;
+  std::cout << "ref: 5" << std::endl;
+  std::cout << "sup: " << s << std::endl;
+  std::cout << "ref: 5" << std::endl;
+  std::cout << std::endl;
+
+  assert(i == 5.0);
+  assert(s == 5.0);
+
+  #endif
+
+  #ifdef TESTCASE_INT_2
+
+  std::cout << "=============" << std::endl;
+  std::cout << "CASE2 RESULT:" << std::endl;
+  std::cout << "=============" << std::endl;
+
+  x = NT(-12);
+  std::tie(i, s) = Interval()(x);
+
+  std::cout << std::endl;
+  std::cout << "inf: " << i << std::endl;
+  std::cout << "ref: -12" << std::endl;
+  std::cout << "sup: " << s << std::endl;
+  std::cout << "ref: -12" << std::endl;
+  std::cout << std::endl;
+
+  assert(i == -12.0);
+  assert(s == -12.0);
+
+  #endif
+
+  #ifdef TESTCASE_INT_3
+
+  std::cout << "=============" << std::endl;
+  std::cout << "CASE3 RESULT:" << std::endl;
+  std::cout << "=============" << std::endl;
+
+  x = NT("772537196160711547532081795586792063331305895970601529435744397743492241616327030886637827664482971614281724796166908515292029740442872965475211471498392497954317530347232852540146110053764627070672243390766540271554856759037331142360111552286202392826786995364211101723592791550906796165626083442695020580821188398298798456115881346136681033873");
+  std::tie(i, s) = Interval()(x);
+
+  std::cout << std::endl;
+  std::cout << "inf: " << i << std::endl;
+  std::cout << "ref: 1.7976931348623157081e+308" << std::endl;
+  std::cout << "sup: " << s << std::endl;
+  std::cout << "ref: inf" << std::endl;
+  std::cout << std::endl;
+
+  assert(i == std::numeric_limits<double>::max());
+  assert(s == std::numeric_limits<double>::infinity());
+
+  #endif
+
+  std::cout << "---SUCCESS ALL---" << std::endl;
+  std::cout << std::endl;
+}
+
 #endif // CGAL_USE_BOOST_MP
 
 int main() {
@@ -693,8 +804,12 @@ int main() {
   test_minimal_boost_gcd();
   test_to_interval_boost();
 
-  test_to_interval_tight_1();
-  test_to_interval_tight_2();
+  // Test rational types.
+  test_to_interval_tight_rational_1();
+  test_to_interval_tight_rational_2();
+
+  // Test integer types.
+  test_to_interval_tight_integer();
 
   #endif // CGAL_USE_BOOST_MP
   return EXIT_SUCCESS;
