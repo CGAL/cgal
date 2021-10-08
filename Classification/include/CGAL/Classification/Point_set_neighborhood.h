@@ -67,10 +67,12 @@ class Point_set_neighborhood
     using value_type = typename boost::property_traits<PointMap>::value_type;
     using reference = typename boost::property_traits<PointMap>::reference;
     using key_type = std::uint32_t;
-    using category = typename boost::property_traits<PointMap>::category;
+    using category = boost::readable_property_map_tag;
+
     My_point_property_map () { }
     My_point_property_map (const PointRange *input, PointMap point_map)
       : input (input), point_map (point_map) { }
+
     friend reference get (const My_point_property_map& ppmap, key_type i)
     { return get(ppmap.point_map, *(ppmap.input->begin()+std::size_t(i))); }
   };

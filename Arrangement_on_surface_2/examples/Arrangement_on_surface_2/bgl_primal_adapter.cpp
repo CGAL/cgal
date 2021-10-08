@@ -43,7 +43,7 @@ public:
   }
 };
 
-double get(Edge_length_func edge_length, Arrangement_2::Halfedge_handle e)
+double get(const Edge_length_func& edge_length, Arrangement_2::Halfedge_handle e)
 {
   return edge_length(e);
 }

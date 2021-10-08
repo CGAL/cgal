@@ -32,7 +32,6 @@ namespace CGAL {
 
 template <typename Point>
 class SM_edge_weight_pmap
-  : public boost::put_get_helper<typename CGAL::Kernel_traits<Point>::type::FT, SM_edge_weight_pmap<Point> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
 public:
@@ -54,6 +53,12 @@ public:
                                                    pm_[target(e, sm_)]));
   }
 
+  friend inline
+  value_type get(const SM_edge_weight_pmap& m, const key_type& k)
+  {
+    return m[k];
+  }
+
 private:
   typename SM::template Property_map< typename SM::Vertex_index,
                                       typename SM::Point > pm_;
@@ -62,7 +67,7 @@ private:
 
 
 template <typename K, typename VEF>
-class SM_index_pmap : public boost::put_get_helper<boost::uint32_t, SM_index_pmap<K,VEF> >
+class SM_index_pmap
 {
 public:
   typedef boost::readable_property_map_tag category;
@@ -73,6 +78,12 @@ public:
   value_type operator[](const key_type& vd) const
   {
     return vd;
+  }
+
+  friend inline
+  value_type get(const SM_index_pmap& m, const key_type& k)
+  {
+    return m[k];
   }
 };
 

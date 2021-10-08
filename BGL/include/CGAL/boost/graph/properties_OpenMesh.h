@@ -37,7 +37,7 @@ public:
                                                                                      OpenMesh::HPropHandleT<Value>,
                                                                                      OpenMesh::EPropHandleT<Value> >::type>::type>::type H;
 
-  typedef boost::read_write_property_map_tag category;
+  typedef boost::lvalue_property_map_tag category;
 
   typedef Descriptor key_type;
   typedef Value value_type;
@@ -132,7 +132,6 @@ public:
 
 template <typename OpenMesh>
 class OM_edge_weight_pmap
-  : public boost::put_get_helper<typename OpenMesh::Scalar , OM_edge_weight_pmap<OpenMesh> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -149,12 +148,14 @@ public:
     return sm_.calc_edge_length(e.halfedge());
   }
 
+  friend inline value_type get(const OM_edge_weight_pmap& m, const key_type& k) { return m[k]; }
+
 private:
   const OpenMesh& sm_;
 };
 
 template <typename K, typename VEF>
-class OM_index_pmap : public boost::put_get_helper<unsigned int, OM_index_pmap<K,VEF> >
+class OM_index_pmap
 {
 public:
   typedef boost::readable_property_map_tag category;
@@ -169,6 +170,8 @@ public:
   {
     return vd.idx();
   }
+
+  friend inline value_type get(const OM_index_pmap& m, const key_type& k) { return m[k]; }
 };
 
 
@@ -176,11 +179,12 @@ template<typename OpenMesh, typename P>
 class OM_point_pmap
 {
 public:
-  typedef boost::read_write_property_map_tag category;
 #if defined(CGAL_USE_OM_POINTS)
+  typedef boost::lvalue_property_map_tag       category;
   typedef typename OpenMesh::Point             value_type;
   typedef const typename OpenMesh::Point&      reference;
 #else
+  typedef boost::read_write_property_map_tag category;
   typedef P value_type;
   typedef P reference;
 #endif
@@ -198,7 +202,7 @@ public:
     : sm_(pm.sm_)
     {}
 
-  value_type operator[](key_type v)
+  reference operator[](key_type v)
   {
 #if defined(CGAL_USE_OM_POINTS)
     return sm_->point(v);

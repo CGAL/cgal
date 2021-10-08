@@ -238,23 +238,21 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
   template <typename PointMap>
   struct Pmap_to_3d
   {
-    PointMap point_map;
     typedef typename Kernel::Point_3 value_type;
-    typedef const value_type& reference;
+    typedef value_type reference;
     typedef typename Kernel::Point_2 key_type;
-    typedef boost::lvalue_property_map_tag category;
+    typedef boost::readable_property_map_tag category;
+
+    PointMap point_map;
 
     Pmap_to_3d () { }
-    Pmap_to_3d (PointMap point_map)
-      : point_map (point_map) { }
+    Pmap_to_3d (PointMap point_map) : point_map (point_map) { }
 
-    friend inline value_type get (const Pmap_to_3d& pmap, key_type p)
+    friend inline value_type get (const Pmap_to_3d& pmap, const key_type& p)
     {
-      typename boost::property_traits<PointMap>::reference
-        p2 = get(pmap.point_map, p);
+      typename boost::property_traits<PointMap>::reference p2 = get(pmap.point_map, p);
       return value_type (p2.x(), p2.y(), 0.);
     }
-
   };
 
   struct Sort_by_distance_to_point

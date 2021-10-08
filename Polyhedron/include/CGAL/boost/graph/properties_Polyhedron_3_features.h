@@ -198,7 +198,7 @@ struct Polyhedron_incident_patches_pmap {
   typedef boost::lvalue_property_map_tag     category;
 
   template <typename Handle_type>
-  value_type& operator[](Handle_type h) const
+  reference operator[](Handle_type h) const
   {
     return get(*this, h);
   }

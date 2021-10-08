@@ -122,7 +122,7 @@ struct Constraints_pmap
 
   typedef edge_descriptor                     key_type;
   typedef bool                                value_type;
-  typedef value_type&                         reference;
+  typedef value_type                          reference;
   typedef boost::read_write_property_map_tag  category;
 
 public:

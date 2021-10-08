@@ -58,7 +58,7 @@ public:
 
   inline friend
   void
-  put(Static_boolean_property_map, const key_type&, const value_type&)
+  put(Static_boolean_property_map, const key_type&, value_type)
   {}
 };
 
@@ -169,14 +169,14 @@ struct Dereference_property_map
 {
   typedef T* key_type; ///< typedef to 'T*'
   typedef T value_type; ///< typedef to 'T'
-  typedef const value_type& reference; ///< typedef to 'T&'
+  typedef T& reference; ///< typedef to 'T&'
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
 
   /// Access a property map element.
   ///
   /// @tparam Iter Type convertible to `key_type`.
   template <class Iter>
-  value_type& operator[](Iter it) const { return reference(*it); }
+  value_type& operator[](Iter it) const { return *it; }
 };
 
 /// Free function to create a `Dereference_property_map` property map.
@@ -197,19 +197,21 @@ make_dereference_property_map(Iter)
 template <typename T>
 struct Identity_property_map
 {
+  typedef Identity_property_map<T> Self;
+
   typedef T key_type; ///< typedef to `T`
   typedef T value_type; ///< typedef to `T`
-  typedef const T& reference; ///< typedef to `T&`
+  typedef const T& reference; ///< typedef to `const T&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
+
   /// Access a property map element.
   /// @param k a key which is returned as mapped value.
   value_type& operator[](key_type& k) const { return k; }
 
-  typedef Identity_property_map<T> Self;
   /// \name Put/get free functions
   /// @{
-  friend reference get(const Self&,const key_type& k) {return k;}
-  friend void put(const Self&,key_type& k, const value_type& v) {k=v;}
+  friend reference get(const Self&, const key_type& k) { return k; }
+  friend void put(const Self&, key_type& k, const value_type& v) { k = v; }
   /// @}
 };
 
@@ -225,7 +227,7 @@ struct Identity_property_map_no_lvalue
 
   typedef Identity_property_map_no_lvalue<T> Self;
 
-  friend reference get(const Self&, const key_type& k) {return k;}
+  friend value_type get(const Self&, const key_type& k) {return k;}
 };
 /// \endcond
 
@@ -249,20 +251,21 @@ Identity_property_map<T>
 template <typename Pair>
 struct First_of_pair_property_map
 {
+  typedef First_of_pair_property_map<Pair> Self;
+
   typedef Pair key_type; ///< typedef to `Pair`
   typedef typename Pair::first_type value_type; ///< typedef to `Pair::first_type`
-  typedef const value_type& reference; ///< typedef to `value_type&`
+  typedef const value_type& reference; ///< typedef to `const value_type&`
   typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
 
   /// Access a property map element.
   /// @param pair a key whose first item is accessed
   value_type& operator[](key_type& pair) const { return pair.first; }
 
-  typedef First_of_pair_property_map<Pair> Self;
   /// \name Put/get free functions
   /// @{
-  friend reference get(const Self&,const key_type& k) {return k.first;}
-  friend void put(const Self&,key_type& k, const value_type& v) {k.first=v;}
+  friend reference get(const Self&, const key_type& k) { return k.first; }
+  friend void put(const Self&, key_type& k, const value_type& v) { k.first = v; }
   /// @}
 };
 
@@ -288,20 +291,21 @@ First_of_pair_property_map<Pair>
 template <typename Pair>
 struct Second_of_pair_property_map
 {
+  typedef Second_of_pair_property_map<Pair> Self;
+
   typedef Pair key_type; ///< typedef to `Pair`
   typedef typename Pair::second_type value_type; ///< typedef to `Pair::second_type`
-  typedef const value_type& reference; ///< typedef to `value_type&`
+  typedef const value_type& reference; ///< typedef to `const value_type&`
   typedef boost::lvalue_property_map_tag category; ///< boost::lvalue_property_map_tag
 
   /// Access a property map element.
   /// @param pair a key whose second item is accessed
   value_type& operator[](key_type& pair) const { return pair.second; }
 
-  typedef Second_of_pair_property_map<Pair> Self;
   /// \name Put/get free functions
   /// @{
-  friend reference get(const Self&,const key_type& k) {return k.second;}
-  friend void put(const Self&,key_type& k, const value_type& v) {k.second=v;}
+  friend reference get(const Self&, const key_type& k) { return k.second; }
+  friend void put(const Self&, key_type& k, const value_type& v) { k.second = v; }
   /// @}
 };
 
@@ -326,23 +330,24 @@ Second_of_pair_property_map<Pair>
 template <int N, typename Tuple>
 struct Nth_of_tuple_property_map
 {
+  typedef Nth_of_tuple_property_map<N,Tuple> Self;
+
   typedef Tuple key_type; ///< typedef to `Tuple`
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type value_type;  ///< typedef to the N-th type of the tuple
 #else
   typedef typename boost::tuples::element<N,Tuple>::type value_type;
-  #endif
-  typedef const value_type& reference; ///< typedef to `value_type&`
+#endif
+  typedef const value_type& reference; ///< typedef to `const value_type&`
   typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
 
   /// Access a property map element.
   /// @param tuple a key whose Nth item is accessed
   value_type& operator[](key_type& tuple) const { return tuple.template get<N>(); }
 
-  typedef Nth_of_tuple_property_map<N,Tuple> Self;
   /// \name Put/get free functions
   /// @{
-  friend reference get(const Self&, key_type& k) { return k.template get<N>(); }
+  friend reference get(const Self&, const key_type& k) { return k.template get<N>(); }
   friend void put(const Self&, key_type& k, const value_type& v) { k.template get<N>() = v; }
   /// @}
 };
@@ -360,7 +365,7 @@ struct Nth_of_tuple_property_map<N,std::tuple<T...> >
 
   value_type& operator[](key_type& tuple) const { return get<N>(tuple); }
 
-  friend reference get(const Self&, key_type& k) { return std::get<N>(k); }
+  friend reference get(const Self&, const key_type& k) { return std::get<N>(k); }
   friend void put(const Self&, key_type& k, const value_type& v) { std::get<N>(k) = v; }
 };
 
@@ -476,7 +481,7 @@ struct Constant_property_map
   Constant_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
 
   /// Free function that returns `pm.default_value`.
-  inline friend value_type
+  inline friend reference
   get (const Constant_property_map& pm, const key_type&){ return pm.default_value; }
 
   /// Free function that does nothing.

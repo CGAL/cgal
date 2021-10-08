@@ -489,8 +489,7 @@ private:
    * @class PVertex_id
    * relaxed heap
    */
-  class PVertex_id :
-  public boost::put_get_helper<typename PVertex::id_type, PVertex_id>
+  class PVertex_id
   {
   public:
     typedef boost::readable_property_map_tag category;
@@ -499,6 +498,12 @@ private:
     typedef PVertex key_type;
 
     value_type operator[] (const key_type& pv) const { return pv.id(); }
+
+    friend inline
+    value_type get(const PVertex_id& m, const key_type& k)
+    {
+      return m[k];
+    }
   };
 
   typedef std::less<PVertex> less_PVertex;

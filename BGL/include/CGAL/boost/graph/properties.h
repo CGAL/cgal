@@ -105,14 +105,15 @@ struct Index_accessor
 
 template<typename Handle>
 struct Edge_index_accessor
-  : boost::put_get_helper< std::size_t, Edge_index_accessor<Handle> >
 {
   typedef boost::readable_property_map_tag category;
   typedef std::size_t                      reference;
   typedef std::size_t                      value_type;
   typedef Handle                           key_type;
 
-  reference operator[](Handle h) const { return h.id(); }
+  value_type operator[](Handle h) const { return h.id(); }
+
+  friend inline value_type get(const Edge_index_accessor& m, const key_type k) { return m[k]; }
 };
 
 template<typename Handle, typename ValueType, typename Reference,

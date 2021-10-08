@@ -34,7 +34,7 @@ struct Border_is_constrained_edge_map
 
   Border_is_constrained_edge_map(const Surface_mesh& sm) : sm_ptr(&sm) {}
 
-  friend bool get(Border_is_constrained_edge_map m, const key_type& edge) {
+  friend value_type get(const Border_is_constrained_edge_map& m, const key_type& edge) {
     return CGAL::is_border(edge, *m.sm_ptr);
   }
 };

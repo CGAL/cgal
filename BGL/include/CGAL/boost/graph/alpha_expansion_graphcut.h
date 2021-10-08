@@ -73,7 +73,7 @@ struct Alpha_expansion_old_API_wrapper_graph
       : cost_matrix (cost_matrix)
     { }
 
-    friend reference get (const Vertex_label_cost_map& pmap, key_type idx)
+    friend value_type get (const Vertex_label_cost_map& pmap, key_type idx)
     {
       std::vector<double> out;
       out.reserve (pmap.cost_matrix->size());

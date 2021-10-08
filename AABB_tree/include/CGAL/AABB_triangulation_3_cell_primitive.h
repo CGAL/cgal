@@ -55,7 +55,7 @@ namespace CGAL
       typedef boost::readable_property_map_tag category;
 
       inline friend
-      reference
+      value_type
       get(Tet_from_cell_iterator_proprety_map<GeomTraits, Iterator>, key_type it)
       {
         typename GeomTraits::Construct_point_3 point;

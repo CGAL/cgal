@@ -77,8 +77,9 @@ namespace internal {
     using Item = typename Iterator::value_type;
 
     using value_type = std::size_t;
+    using reference = std::size_t;
     using key_type = Item;
-    using category = boost::lvalue_property_map_tag;
+    using category = boost::readable_property_map_tag;
 
     using Item_map = std::map<key_type, value_type>;
 
@@ -118,7 +119,7 @@ namespace internal {
   public:
     using key_type = std::size_t;
     using value_type = std::size_t;
-    using category = boost::lvalue_property_map_tag;
+    using category = boost::readable_property_map_tag;
 
     Seed_property_map(const std::vector<std::size_t>& seeds)
       : m_seeds(seeds)

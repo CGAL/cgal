@@ -1499,7 +1499,7 @@ public:
   const VertexPointMap& vpm() const { return vpm_; }
 
   // get function for property map
-  inline friend reference get(const Self& pmap, key_type v) {
+  inline friend value_type get(const Self& pmap, key_type v) {
     return pmap.converter()(get(pmap.vpm(), v));
   }
 

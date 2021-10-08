@@ -611,7 +611,8 @@ public:
     Is_constrained_map(SelectionSet* set_)
       : m_set_ptr(set_)
     {}
-    friend bool get(const Is_constrained_map& map, const key_type& k)
+
+    friend value_type get(const Is_constrained_map& map, const key_type& k)
     {
       CGAL_assertion(map.m_set_ptr != NULL);
       return map.m_set_ptr->count(k);
@@ -629,7 +630,7 @@ public:
   {
     typedef Handle                             key_type;
     typedef std::size_t                        value_type;
-    typedef value_type&                        reference;
+    typedef value_type                         reference;
     typedef boost::read_write_property_map_tag category;
 
     friend value_type get(Index_map, Handle h)
