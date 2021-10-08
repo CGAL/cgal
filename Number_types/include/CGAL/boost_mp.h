@@ -217,7 +217,7 @@ namespace Boost_MP_internal {
     return my_ldexp(intv, -static_cast<int>(shift)).pair();
   }
 
-  // This is a version of to_interval that converts a rational type into
+  // This is a version of to_interval that converts a rational type into a
   // double tight interval.
   template<typename Type, typename ET>
   std::pair<double, double> to_interval(const Type& x, ET xnum, ET xden ) {
@@ -295,6 +295,59 @@ namespace Boost_MP_internal {
         std::tie(l, u) = get_1ulp_interval(shift, p);
       }
     }
+
+    if (change_sign) {
+      const double t = l;
+      l = -u;
+      u = -t;
+    }
+
+    CGAL_assertion(are_bounds_correct(l, u, input));
+    return std::make_pair(l, u);
+  }
+
+  // This is a version of to_interval that converts an integer type into a
+  // double tight interval.
+  template<typename ET>
+  std::pair<double, double> to_interval( ET x ) {
+
+    CGAL_assertion_code(const ET input = x);
+    double l = 0.0, u = 0.0;
+    if (CGAL::is_zero(x)) { // return [0.0, 0.0]
+      CGAL_assertion(are_bounds_correct(l, u, input));
+      return std::make_pair(l, u);
+    }
+    CGAL_assertion(!CGAL::is_zero(x));
+
+    bool change_sign = false;
+    const bool is_pos = CGAL::is_positive(x);
+    if (!is_pos) {
+      change_sign = true;
+      x = -x;
+    }
+    CGAL_assertion(CGAL::is_positive(x));
+
+    int64_t e = 0;
+    const int64_t n = static_cast<int64_t>(boost::multiprecision::msb(x)) + 1;
+    const int64_t num_dbl_digits = std::numeric_limits<double>::digits;
+
+    if (n > num_dbl_digits) {
+      e = n - num_dbl_digits;
+      x >>= e;
+      const uint64_t xx = static_cast<uint64_t>(x);
+      const uint64_t yy = xx + 1;
+      CGAL_assertion(xx > 0 && yy > xx);
+      l = static_cast<double>(xx);
+      u = static_cast<double>(yy);
+    } else {
+      const uint64_t xx = static_cast<uint64_t>(x);
+      CGAL_assertion(xx > 0);
+      l = static_cast<double>(xx);
+      u = l;
+    }
+
+    const Interval_nt<false> intv(l, u);
+    std::tie(l, u) = my_ldexp(intv, e).pair();
 
     if (change_sign) {
       const double t = l;
@@ -405,7 +458,16 @@ struct RET_boost_mp;
 
 template <class NT>
 struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_integer> >
-    : RET_boost_mp_base <NT> {};
+    : RET_boost_mp_base <NT> {
+    typedef NT Type;
+    struct To_interval
+        : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
+
+        std::pair<double, double> operator()( const Type& x ) const {
+          return Boost_MP_internal::to_interval(x);
+        }
+    };
+};
 
 template <class NT>
 struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rational> >
