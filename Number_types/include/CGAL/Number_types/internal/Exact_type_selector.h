@@ -55,6 +55,10 @@ namespace CGAL { namespace internal {
 template < typename >
 struct Exact_field_selector
 
+#if BOOST_VERSION > 107700 && defined(CGAL_USE_BOOST_MP)
+// TODO: That is used for testing, it must be removed when merging into master.
+{ typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
+#else // BOOST_VERSION <= 107700
 #ifdef CGAL_USE_GMPXX
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
@@ -80,6 +84,7 @@ struct Exact_field_selector
 #else
 { typedef Quotient<MP_Float> Type; };
 #endif
+#endif // BOOST_VERSION <= 107700
 
 // By default, a field is a safe choice of ring.
 template < typename T >
