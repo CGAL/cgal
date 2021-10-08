@@ -149,16 +149,29 @@ namespace Boost_MP_internal {
   // e.g. that after multiplication by scale turns into a value that is not minimal double,
   // which is expected for that limit case. So, we avoid multiplication by scale in this version
   // for the limit cases and use it only for normal inf and sup cases.
-  template<bool b>
-  Interval_nt<b> my_ldexp( const Interval_nt<b>& intv, const int e ) {
 
-    CGAL_assertion(intv.inf() > 0.0);
-    CGAL_assertion(intv.sup() > 0.0);
-    const double scale = std::ldexp(1.0, e);
-    return Interval_nt<b>(
-      CGAL_NTS is_finite(scale) ?
-      scale * intv.inf() : CGAL_IA_MAX_DOUBLE,
-      scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup());
+  // template<bool b>
+  // Interval_nt<b> my_ldexp( const Interval_nt<b>& intv, const int e ) {
+  //   CGAL_assertion(intv.inf() > 0.0);
+  //   CGAL_assertion(intv.sup() > 0.0);
+  //   const double scale = std::ldexp(1.0, e);
+  //   Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
+  //   return Interval_nt<b>(
+  //     CGAL_NTS is_finite(scale) ?
+  //     scale * intv.inf() : CGAL_IA_MAX_DOUBLE,
+  //     scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup());
+  // }
+
+  template<typename T>
+  bool is_spliiter_working(const T d) {
+    T num = d;
+    T den = 1.0;
+    while (std::ceil(num) != num) {
+      num *= 2.0;
+      den *= 2.0;
+    }
+    if (d != num / den) return false;
+    return true;
   }
 
   // This function checks if the computed interval is correct and if it is tight.
@@ -169,6 +182,16 @@ namespace Boost_MP_internal {
     CGAL_assertion(u == l || u == std::nextafter(l, +inf));
     const bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
 
+    // This check is required until a bug in double.h:split_numerator_denominator() is fixed.
+    // For the moment, this splitter does not handle certain limit values.
+    // See also: https://github.com/CGAL/cgal/issues/5982
+    // E.g. it fails for d = 2.752961027411077E-308!
+    if (!is_spliiter_working(l) || !is_spliiter_working(u)) {
+      return are_bounds_tight;
+    }
+    CGAL_assertion(is_spliiter_working(l) && is_spliiter_working(u));
+
+    // We cannot convert inf to Type so we skip.
     if (
       CGAL::abs(l) == inf ||
       CGAL::abs(u) == inf ||
@@ -196,9 +219,9 @@ namespace Boost_MP_internal {
     const uint64_t pp = static_cast<uint64_t>(p);
     CGAL_assertion(pp >= 0);
     const double pp_dbl = static_cast<double>(pp);
-    // Here, false means no protection that is rounding is set to_nearest.
     const Interval_nt<false> intv(pp_dbl, pp_dbl);
-    return my_ldexp(intv, -static_cast<int>(shift)).pair();
+    Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
+    return CGAL::ldexp(intv, -static_cast<int>(shift)).pair();
   }
 
   // This one returns 1 unit length interval.
@@ -212,9 +235,9 @@ namespace Boost_MP_internal {
     CGAL_assertion(qq > pp);
     const double pp_dbl = static_cast<double>(pp);
     const double qq_dbl = static_cast<double>(qq);
-    // Here, false means no protection that is rounding is set to_nearest.
     const Interval_nt<false> intv(pp_dbl, qq_dbl);
-    return my_ldexp(intv, -static_cast<int>(shift)).pair();
+    Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
+    return CGAL::ldexp(intv, -static_cast<int>(shift)).pair();
   }
 
   // This is a version of to_interval that converts a rational type into a
@@ -347,7 +370,8 @@ namespace Boost_MP_internal {
     }
 
     const Interval_nt<false> intv(l, u);
-    std::tie(l, u) = my_ldexp(intv, e).pair();
+    Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
+    std::tie(l, u) = CGAL::ldexp(intv, e).pair();
 
     if (change_sign) {
       const double t = l;

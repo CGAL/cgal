@@ -227,13 +227,13 @@ void test_to_interval_tight_rational_1() {
 
   std::cout << std::endl;
   std::cout << "inf: " << i << std::endl;
-  std::cout << "ref: 0" << std::endl;
+  std::cout << "ref: 2.7529610274110770119e-308" << std::endl;
   std::cout << "sup: " << s << std::endl;
-  std::cout << "ref: 4.9406564584124654418e-324" << std::endl;
+  std::cout << "ref: 2.7529610274110775060e-308" << std::endl;
   std::cout << std::endl;
 
-  assert(i == 0.0);
-  assert(s == std::numeric_limits<double>::denorm_min());
+  assert(i == 2.7529610274110770119e-308);
+  assert(s == 2.7529610274110775060e-308);
 
   #endif
 
@@ -530,13 +530,13 @@ void test_to_interval_tight_rational_2() {
 
   std::cout << std::endl;
   std::cout << "inf: " << i << std::endl;
-  std::cout << "ref: 0" << std::endl;
+  std::cout << "ref: 2.7529610274110770119e-308" << std::endl;
   std::cout << "sup: " << s << std::endl;
-  std::cout << "ref: 4.9406564584124654418e-324" << std::endl;
+  std::cout << "ref: 2.7529610274110775060e-308" << std::endl;
   std::cout << std::endl;
 
-  assert(i == 0);
-  assert(s == std::numeric_limits<double>::denorm_min());
+  assert(i == 2.7529610274110770119e-308);
+  assert(s == 2.7529610274110775060e-308);
 
   #endif
 
