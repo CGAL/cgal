@@ -127,37 +127,46 @@ public:
     return Base::operator()(s,b);
   }
 
-
-  result_type
-  operator()(const Tetrahedron_3 &t, const Bbox_3& b) const
-  {
-    Get_approx<Point_3> get_approx;
-    double px, py, pz;
-
-    for(int i = 0; i < 4; ++i) {
-      const Point_3& p = t[i];
-      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-          fit_in_double(get_approx(p).z(), pz) )
-        {
-          if( (px >= b.xmin() && px <= b.xmax()) && (py >= b.ymin() && py <= b.ymax())  && (pz >= b.zmin() && pz <= b.zmax()) ){
-            return true;
-          }
-        }else{
-        return Base::operator()(t,b);
-      }
-    }
-
-    return Base::operator()(t,b);
-  }
-
-
   result_type
   operator()(const Bbox_3& b, const Tetrahedron_3 &t) const
   {
     return this->operator()(t, b);
   }
 
+  result_type
+  operator()(const Tetrahedron_3 &t, const Bbox_3& b) const
+  {
+    CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
+                           std::string(CGAL_PRETTY_FUNCTION), tmp);
 
+    Get_approx<Point_3> get_approx;
+    double px, py, pz;
+
+    for(int i = 0; i < 4; ++i)
+    {
+      const Point_3& p = t[i];
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) )
+      {
+        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+
+        if( (px >= b.xmin() && px <= b.xmax()) &&
+            (py >= b.ymin() && py <= b.ymax()) &&
+            (pz >= b.zmin() && pz <= b.zmax()) )
+        {
+          return true;
+        }
+
+        CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+      }
+      else
+      {
+        return Base::operator()(t,b);
+      }
+    }
+
+    return Base::operator()(t,b);
+  }
 
   result_type
   operator()(const Bbox_3& b, const Ray_3 &r) const
