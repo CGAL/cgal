@@ -216,7 +216,6 @@ public:
     return this->operator()(t, b);
   }
 
-  /// TODO: move in utils
   Uncertain<Sign> sign_of_minor(double px, double py, double qx, double qy, double rx, double ry) const
   {
     CGAL_BRANCH_PROFILER_3("certain / uncertain / calls to   : sign_of_minor", tmp);
