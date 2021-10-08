@@ -71,8 +71,12 @@ struct Exact_field_selector
 // In fact, the new version of cpp_rational from here: https://github.com/boostorg/multiprecision/pull/366
 // is much better than Quotient<cpp_int> because it is using smart gcd and is well-supported
 // while Quotient does not. Though, we can still use it if needed.
-// { typedef Quotient<boost::multiprecision::cpp_int> Type; };
+#if BOOST_VERSION <= 107700
+// See this comment: https://github.com/CGAL/cgal/pull/5937#discussion_r721533675
+{ typedef Quotient<boost::multiprecision::cpp_int> Type; };
+#else
 { typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
+#endif
 #else
 { typedef Quotient<MP_Float> Type; };
 #endif

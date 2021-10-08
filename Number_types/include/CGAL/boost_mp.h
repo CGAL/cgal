@@ -143,18 +143,25 @@ struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T
 
 namespace Boost_MP_internal {
 
-  Interval_nt<false>
-  my_ldexp( const Interval_nt<false>& intv, const int e ) {
+  // We use this function instead of ldexp overload from Interval_nt.h because:
+  // - see this issue: https://github.com/CGAL/cgal/issues/6004
+  // - in the original ldexp, when working with limit cases, we get CGAL_IA_MIN_DOUBLE
+  // e.g. that after multiplication by scale turns into a value that is not minimal double,
+  // which is expected for that limit case. So, we avoid multiplication by scale in this version
+  // for the limit cases and use it only for normal inf and sup cases.
+  template<bool b>
+  Interval_nt<b> my_ldexp( const Interval_nt<b>& intv, const int e ) {
 
     CGAL_assertion(intv.inf() > 0.0);
     CGAL_assertion(intv.sup() > 0.0);
     const double scale = std::ldexp(1.0, e);
-    return Interval_nt<false> (
+    return Interval_nt<b>(
       CGAL_NTS is_finite(scale) ?
       scale * intv.inf() : CGAL_IA_MAX_DOUBLE,
-      scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup() );
+      scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup());
   }
 
+  // This function checks if the computed interval is correct and if it is tight.
   template<typename Type>
   bool are_bounds_correct( const double l, const double u, const Type& x ) {
 
@@ -181,6 +188,7 @@ namespace Boost_MP_internal {
     return are_bounds_tight && are_bounds_respected;
   }
 
+  // This one returns zero length interval that is inf = sup.
   template<typename ET>
   std::pair<double, double> get_0ulp_interval( const int64_t shift, const ET& p ) {
 
@@ -188,10 +196,12 @@ namespace Boost_MP_internal {
     const uint64_t pp = static_cast<uint64_t>(p);
     CGAL_assertion(pp >= 0);
     const double pp_dbl = static_cast<double>(pp);
+    // Here, false means no protection that is rounding is set to_nearest.
     const Interval_nt<false> intv(pp_dbl, pp_dbl);
     return my_ldexp(intv, -static_cast<int>(shift)).pair();
   }
 
+  // This one returns 1 unit length interval.
   template<typename ET>
   std::pair<double, double> get_1ulp_interval( const int64_t shift, const ET& p ) {
 
@@ -202,10 +212,13 @@ namespace Boost_MP_internal {
     CGAL_assertion(qq > pp);
     const double pp_dbl = static_cast<double>(pp);
     const double qq_dbl = static_cast<double>(qq);
+    // Here, false means no protection that is rounding is set to_nearest.
     const Interval_nt<false> intv(pp_dbl, qq_dbl);
     return my_ldexp(intv, -static_cast<int>(shift)).pair();
   }
 
+  // This is a version of to_interval that converts a rational type into
+  // double tight interval.
   template<typename Type, typename ET>
   std::pair<double, double> to_interval(const Type& x, ET xnum, ET xden ) {
 
@@ -402,10 +415,8 @@ struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rat
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
 
         std::pair<double, double> operator()( const Type& x ) const {
-
-          const auto& xnum = boost::multiprecision::numerator(x);
-          const auto& xden = boost::multiprecision::denominator(x);
-          return Boost_MP_internal::to_interval(x, xnum, xden);
+          return Boost_MP_internal::to_interval(x,
+          boost::multiprecision::numerator(x), boost::multiprecision::denominator(x));
         }
     };
 };
@@ -943,7 +954,8 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
         // TODO: This is a temporary implementation and
         // should be replaced by the default one. The default one fails:
         // For some reason, CGAL::ldexp on Interval_nt returns
-        // 2.752961027411077506e-308 instead of denorm_min! We can work it around:
+        // 2.752961027411077506e-308 instead of denorm_min!
+        // We can work it around using
 
         // See get_1ulp_interval() below:
         // const auto res = CGAL::ldexp(intv, -static_cast<int>(shift)).pair();
@@ -952,6 +964,8 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
         //   return std::make_pair(0.0, CGAL_IA_MIN_DOUBLE);
         // }
         // return res;
+
+        // Or alternatively, we can use my_ldexp above.
 
         // Option 2. Stable one!
         std::pair<double, double> operator()( const Type& x ) const {
