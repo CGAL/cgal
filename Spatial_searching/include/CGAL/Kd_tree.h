@@ -21,6 +21,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <vector>
+#include <fstream>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
@@ -387,6 +388,7 @@ public:
     s << tree_root->name() << " ;";
     tree_root->print(s);
     s << std::endl << "}" << std::endl << std::endl;
+    return s;
   }
 
 private:
