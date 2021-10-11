@@ -206,7 +206,7 @@ struct Identity_property_map
 
   /// Access a property map element.
   /// @param k a key which is returned as mapped value.
-  value_type& operator[](key_type& k) const { return k; }
+  const value_type& operator[](const key_type& k) const { return k; }
 
   /// \name Put/get free functions
   /// @{
@@ -260,7 +260,7 @@ struct First_of_pair_property_map
 
   /// Access a property map element.
   /// @param pair a key whose first item is accessed
-  value_type& operator[](key_type& pair) const { return pair.first; }
+  const value_type& operator[](const key_type& pair) const { return pair.first; }
 
   /// \name Put/get free functions
   /// @{
@@ -300,7 +300,7 @@ struct Second_of_pair_property_map
 
   /// Access a property map element.
   /// @param pair a key whose second item is accessed
-  value_type& operator[](key_type& pair) const { return pair.second; }
+  const value_type& operator[](const key_type& pair) const { return pair.second; }
 
   /// \name Put/get free functions
   /// @{
@@ -343,7 +343,7 @@ struct Nth_of_tuple_property_map
 
   /// Access a property map element.
   /// @param tuple a key whose Nth item is accessed
-  value_type& operator[](key_type& tuple) const { return tuple.template get<N>(); }
+  const value_type& operator[](const key_type& tuple) const { return tuple.template get<N>(); }
 
   /// \name Put/get free functions
   /// @{
@@ -363,7 +363,7 @@ struct Nth_of_tuple_property_map<N,std::tuple<T...> >
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 
-  value_type& operator[](key_type& tuple) const { return get<N>(tuple); }
+  const value_type& operator[](const key_type& tuple) const { return get<N>(tuple); }
 
   friend reference get(const Self&, const key_type& k) { return std::get<N>(k); }
   friend void put(const Self&, key_type& k, const value_type& v) { std::get<N>(k) = v; }
