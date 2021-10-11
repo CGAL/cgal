@@ -148,7 +148,9 @@ struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
 // on the fly in order the deformation class to be used
 // with points with minimal requirements
 template <class Vertex_point_map>
-struct SC_on_the_fly_pmap: public Vertex_point_map{
+struct SC_on_the_fly_pmap
+  : public Vertex_point_map
+{
   typedef boost::readable_property_map_tag category;
   typedef CGAL::Simple_cartesian<double>::Point_3 value_type;
   typedef value_type reference;

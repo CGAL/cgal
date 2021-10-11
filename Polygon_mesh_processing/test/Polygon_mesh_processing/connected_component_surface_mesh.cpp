@@ -20,7 +20,6 @@ typedef CGAL::Surface_mesh<Point>          Mesh;
 
 template <typename G, typename GT>
 struct Constraint
-  : public boost::put_get_helper<bool, Constraint<G, GT> >
 {
   typedef typename GT::FT                                  FT;
 
@@ -43,6 +42,12 @@ struct Constraint
              rg.point(target(next(halfedge(e, rg), rg), rg)),
              rg.point(target(next(opposite(halfedge(e, rg), rg), rg), rg)),
           bound) == CGAL::SMALLER;
+  }
+
+  friend inline
+  value_type get(const Constraint& m, const key_type k)
+  {
+    return m[k];
   }
 
   const G* g;

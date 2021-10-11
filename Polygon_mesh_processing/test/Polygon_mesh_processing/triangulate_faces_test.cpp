@@ -186,7 +186,7 @@ struct Dual_vpm
   }
 
   friend
-  Point get(Dual_vpm& map, key_type& f)
+  value_type get(Dual_vpm& map, key_type f)
   {
     std::vector<Point> face_points;
 

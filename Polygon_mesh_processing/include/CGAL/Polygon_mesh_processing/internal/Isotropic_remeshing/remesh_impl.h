@@ -98,7 +98,7 @@ namespace internal {
   public:
     typedef edge_descriptor                     key_type;
     typedef bool                                value_type;
-    typedef value_type&                         reference;
+    typedef value_type                          reference;
     typedef boost::read_write_property_map_tag  category;
 
     Border_constraint_pmap()
@@ -172,7 +172,7 @@ namespace internal {
   public:
     typedef face_descriptor                     key_type;
     typedef Patch_id                            value_type;
-    typedef Patch_id&                           reference;
+    typedef Patch_id                            reference;
     typedef boost::read_write_property_map_tag  category;
 
     //note pmesh is a non-const ref because properties are added and removed
@@ -1181,9 +1181,9 @@ private:
 
   struct Patch_id_property_map
   {
-    typedef boost::readable_property_map_tag     category;
-    typedef Patch_id                             value_type;
-    typedef Patch_id&                            reference;
+    typedef boost::readable_property_map_tag       category;
+    typedef Patch_id                               value_type;
+    typedef Patch_id                               reference;
     typedef typename Triangle_list::const_iterator key_type;
 
     const Self* remesher_ptr_;
@@ -1193,7 +1193,7 @@ private:
     Patch_id_property_map(const Self& remesher)
       : remesher_ptr_(&remesher) {}
 
-    friend Patch_id get(const Patch_id_property_map& m, key_type tr_it)
+    friend value_type get(const Patch_id_property_map& m, key_type tr_it)
     {
       //tr_it is an iterator from triangles_
       std::size_t id_in_vec = std::distance(
