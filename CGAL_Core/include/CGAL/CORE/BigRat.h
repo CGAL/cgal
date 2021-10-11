@@ -396,11 +396,13 @@ inline bool isDivisible(const BigRat& x, const BigRat& y) {
 }
 inline BigRat operator<<(const BigRat& a, unsigned long ul) {
   BigRat r;
+  assert(false);
   //AF todo   no << for Q     r.get_mp() = a.get_mp() << int(ul) ; 
   return r;
 }
 inline BigRat operator>>(const BigRat& a, unsigned long ul) {
   BigRat r;
+  assert(false);
   // AF todo no >> for Q    r.get_mp() =  a.get_mp() >> ul;
   return r;
 }
