@@ -604,7 +604,7 @@ inline long ceilLg(const BigInt& a) {
     return -1;
   unsigned long len = bitLength(a);
 
-  return (lsb(a.get_mp()) == len - 1) ? (len - 1) : len;
+  return (lsb(abs(a.get_mp())) == len - 1) ? (len - 1) : len;
 }
 
 inline long ceilLg(long a) { // need this for Polynomial<long>
