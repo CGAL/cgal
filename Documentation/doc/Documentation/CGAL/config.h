@@ -7,7 +7,7 @@ namespace CGAL{
 /// When using `cmake` and a standard \cgal setup, linking the target using that function
 /// with the target `CGAL::Data` will automatically set the macro `CGAL_DATA_DIR`
 ///  pointing to the data directory of the \cgal version used.
-/// The function will make an attempt to open the file at the location returned
-/// and will print an error message on `std::cerr` if the file could not be opened.
+/// The function will attempt to open the file at the returned location
+/// and will print a warning message via `std::cerr` if the file could not be opened.
 std::string data_file_path(const std::string& filename);
 }
