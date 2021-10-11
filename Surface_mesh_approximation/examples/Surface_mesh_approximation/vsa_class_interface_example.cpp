@@ -20,7 +20,7 @@ typedef Mesh_approximation::Error_metric L21_metric;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/bear.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/bear.off");
 
   // reads input surface triangle mesh
   Mesh mesh;

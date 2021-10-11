@@ -1,3 +1,0 @@
-notangle -RSNC\\_walker.h SNC_walking.nw > CGAL/Nef_3/SNC_walker.h 
-notangle -RSNC\\_walker\\_demo.C SNC_walking.nw > SNC_walker_demo.C
-

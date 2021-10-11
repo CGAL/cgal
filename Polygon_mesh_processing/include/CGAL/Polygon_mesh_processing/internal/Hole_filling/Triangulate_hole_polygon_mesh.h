@@ -191,7 +191,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   ;
 
   #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
-  std:cerr << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
+  std::cerr << "Hole filling: " << timer.time() << " sc." << std::endl; timer.reset();
   #endif
   return std::make_pair(tracer.out, weight);
 }

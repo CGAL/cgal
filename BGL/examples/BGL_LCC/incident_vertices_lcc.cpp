@@ -51,7 +51,7 @@ OutputIterator adjacent_vertices_V2(const LCC& g,
 int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:"cube.off", lcc);
+  CGAL::IO::read_polygon_mesh((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"), lcc);
 
   GraphTraits::vertex_iterator vi = vertices(lcc).first;
   std::list<vertex_descriptor> V;

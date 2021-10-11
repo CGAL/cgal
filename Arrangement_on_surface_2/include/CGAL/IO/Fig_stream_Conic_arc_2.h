@@ -100,6 +100,6 @@ void write_conic_arc
   return;
 }
 
-}} // namespace CGAL:IO
+}} // namespace CGAL::IO
 
 #endif

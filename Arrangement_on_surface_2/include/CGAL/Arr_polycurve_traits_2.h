@@ -815,7 +815,7 @@ public:
 
         right_overlap = false;
 
-        //! EF: the following code is abit suspicious. It may erroneously
+        //! EF: the following code is a bit suspicious. It may erroneously
         //      assume that the subcurves cannot overlap more than once.
         if (! right_coincides && ! left_coincides) {
           // Non of the endpoints of the current subcurve of one polycurve

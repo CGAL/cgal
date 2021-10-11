@@ -21,7 +21,7 @@ typedef Kernel::Point_3 Point_3;
 
 int main (int argc, char** argv)
 {
-  const char* fname = (argc>1)?argv[1]:"data/sphere_20k.xyz";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("points_3/sphere_20k.xyz");
 
   CGAL::Timer task_timer;
 

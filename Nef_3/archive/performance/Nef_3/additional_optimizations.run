@@ -1,4 +1,0 @@
-#!/bin/bash
-
-labrun -v --log=Optimizations -n tetrahedra_and_grid --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-O2 -DNDEBUG -DCGAL_NEF3_OVERLAY_IF_NEEDED_OFF -DCGAL_NEF3_PLANE_SWEEP_OPTIMIZATION_OFF -DCGAL_NEF3_INTERSECTION_BY_KDTREE -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS' ./tetrahedra_and_grid cube.nef3 10 10 10 12345
-labrun -v --log=Optimizations -n tetrahedra_and_grid --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-O2 -DNDEBUG -DCGAL_NEF3_PLANE_SWEEP_OPTIMIZATION_OFF -DCGAL_NEF3_INTERSECTION_BY_KDTREE -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS' ./tetrahedra_and_grid cube.nef3 10 10 10 12345

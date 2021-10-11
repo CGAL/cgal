@@ -50,7 +50,7 @@ protected:
     Q_FOREACH(QPointF p, points)
     {
      /*Translation(-w/2, -h/2) to recenter the scene, then
-      * Scaling then Rotation and finaly the Translation
+      * Scaling then Rotation and finally the Translation
       * + Translation(w/2+h/2) to put it back.    */
      //scaled values
      qreal sx(translation.z()* (p.x()-width() /2.0)), sy(translation.z()* (p.y()-height()/2.0)) ;

@@ -1194,7 +1194,7 @@ int main(int argc, char** argv) {
   const double num_samples = 10.;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   // std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
-  std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  std::string filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   run_examples(error_bound, filepath);
 
   // ------------------------------------------------------------------------ //
@@ -1219,7 +1219,7 @@ int main(int argc, char** argv) {
 
   // --- Compare on real meshes.
 
-  const std::string filepath1 = (argc > 1 ? argv[1] : "data/blobby.off");
+  const std::string filepath1 = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   const std::string filepath2 = (argc > 2 ? argv[2] : "data/tetrahedron-remeshed.off");
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
@@ -1228,7 +1228,7 @@ int main(int argc, char** argv) {
 
   // --- Compare timings.
 
-  filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   test_timings(filepath, bound_hd);

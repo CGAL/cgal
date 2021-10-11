@@ -80,7 +80,7 @@ void test_intersections(Index index, const char* type)
   assert(input);
   input >> tm1;
   input.close();
-  input.open("data/blobby.off");
+  input.open(CGAL::data_file_path("meshes/blobby.off"));
   assert(input);
   input >> tm2;
   input.close();

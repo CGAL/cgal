@@ -80,7 +80,7 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
 int main(int argc, char* argv[])
 {
   std::cout<<"Program unsew_edgewidth_repeatedly started."<<std::endl;
-  std::string filename(argc==1?"data/double-torus.off":argv[1]);
+  std::string filename(argc==1?CGAL::data_file_path("meshes/double-torus-example.off"):argv[1]);
 
 #ifdef CGAL_USE_BASIC_VIEWER
   bool draw=(argc<3?false:std::string(argv[2])=="-draw");
