@@ -19,8 +19,6 @@
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/use.h>
 
-#include <CGAL/remove_isolated_vertices_in_mesh_3.h>
-
 template <typename Concurrency_tag = CGAL::Sequential_tag>
 struct Image_tester : public Tester<K_e_i>
 {
@@ -63,7 +61,7 @@ public:
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
 
-    CGAL::remove_isolated_vertices_in_mesh_3(c3t3);
+    c3t3.remove_isolated_vertices();
 
     // Verify
     this->verify_c3t3_volume(c3t3, 1772330*0.95, 1772330*1.05);
