@@ -23,6 +23,7 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <fstream>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
@@ -619,21 +620,23 @@ public:
     return dim_;
   }
 
-  void print(std::ostream& os) const
-  {
-    os << "graph G" << std::endl;
-    os << "{" << std::endl << std::endl;
-    os << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
-    os << "Num items: " << tree_root->num_items() << ".\"" << std::endl;
-    os << tree_root->name() << " ;";
-    tree_root->print(os);
-    os << std::endl << "}" << std::endl << std::endl;
-  }
-
   template<typename OutputIterator>
   OutputIterator print_leaves(OutputIterator out) const
   {
     return tree_root->print_leaves(out);
+  }
+
+  std::ostream&
+  print(std::ostream& s) const
+  {
+    s << "graph G" << std::endl;
+    s << "{" << std::endl << std::endl;
+    s << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
+    s << "Num items: " << tree_root->num_items() << ".\"" << std::endl;
+    s << tree_root->name() << " ;";
+    tree_root->print(s);
+    s << std::endl << "}" << std::endl << std::endl;
+    return s;
   }
 
 private:

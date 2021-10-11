@@ -64,26 +64,34 @@ namespace CGAL {
 
     bool is_leaf() const { return leaf; }
 
-    inline std::size_t
-    index() const {
-      return m_node_index;
-    }
-
-    inline std::string
-    name() const
+    void
+    print(std::ostream& s) const
     {
-      std::string node_name = "default_name";
-      if (is_leaf()) { // leaf node
-        node_name = "L" + std::to_string(index());
-      } else {
-        if (index() == 0) { // root node
-          node_name = "R" + std::to_string(index());
-        } else { // internal node
-          node_name = "N" + std::to_string(index());
+      if (is_leaf()) { // draw leaf nodes
+
+        Leaf_node_const_handle node =
+          static_cast<Leaf_node_const_handle>(this);
+
+        s << std::endl;
+        if (node->size() > 0) {
+          s << node->name() << " [label=\"" << node->name() << ", Size: "
+          << node->size() << "\"] ;" << std::endl;
+        } else {
+          CGAL_assertion_msg(false, "ERROR: NODE SIZE IS ZERO!");
         }
+
+      } else { // draw internal nodes
+
+        Internal_node_const_handle node =
+          static_cast<Internal_node_const_handle>(this);
+
+        s << std::endl;
+        s << node->name() << " [label=\"" << node->name() << "\"] ;" << std::endl;
+        s << node->name() << " -- " << node->lower()->name() << " ;";
+        node->lower()->print(s);
+        s << node->name() << " -- " << node->upper()->name() << " ;";
+        node->upper()->print(s);
       }
-      CGAL_assertion(node_name != "default_name");
-      return node_name;
     }
 
     std::size_t
@@ -337,6 +345,28 @@ namespace CGAL {
     }
 
   private:
+
+    inline std::size_t
+    index() const {
+      return m_node_index;
+    }
+
+    inline std::string
+    name() const
+    {
+      std::string node_name = "default_name";
+      if (is_leaf()) { // leaf node
+        node_name = "L" + std::to_string(index());
+      } else {
+        if (index() == 0) { // root node
+          node_name = "R" + std::to_string(index());
+        } else { // internal node
+          node_name = "N" + std::to_string(index());
+        }
+      }
+      CGAL_assertion(node_name != "default_name");
+      return node_name;
+    }
 
     // If contains_point_given_as_coordinates does not exist in `FuzzyQueryItem`
     template <typename FuzzyQueryItem>

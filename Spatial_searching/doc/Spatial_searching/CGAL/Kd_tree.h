@@ -254,7 +254,7 @@ Inserts the tree in the <a href="https://graphviz.org/">`Graphviz`</a> format
 into the output stream `s`.
 \cgalModifEnd
 */
-void print(std::ostream& s) const;
+std::ostream& print(std::ostream& s) const;
 
 /// @}
 

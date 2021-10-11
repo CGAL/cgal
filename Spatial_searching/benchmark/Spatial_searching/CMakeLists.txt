@@ -8,7 +8,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 
 include(${CGAL_USE_FILE})
 
-find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
+find_package(Eigen3 3.1.91) # (requires 3.2.0 or greater)
 include(CGAL_Eigen3_support)
 
 include_directories(BEFORE "include")
