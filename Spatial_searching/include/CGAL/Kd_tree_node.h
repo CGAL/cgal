@@ -239,36 +239,6 @@ namespace CGAL {
       return out;
     }
 
-    void
-    print(std::ostream& os) const
-    {
-      if (is_leaf()) { // draw leaf nodes
-
-        Leaf_node_const_handle node =
-          static_cast<Leaf_node_const_handle>(this);
-
-        os << std::endl;
-        if (node->size() > 0) {
-          os << node->name() << " [label=\"" << node->name() << ", Size: "
-          << node->size() << "\"] ;" << std::endl;
-        } else {
-          CGAL_assertion_msg(false, "ERROR: NODE SIZE IS ZERO!");
-        }
-
-      } else { // draw internal nodes
-
-        Internal_node_const_handle node =
-          static_cast<Internal_node_const_handle>(this);
-
-        os << std::endl;
-        os << node->name() << " [label=\"" << node->name() << "\"] ;" << std::endl;
-        os << node->name() << " -- " << node->lower()->name() << " ;";
-        node->lower()->print(os);
-        os << node->name() << " -- " << node->upper()->name() << " ;";
-        node->upper()->print(os);
-      }
-    }
-
     template <class OutputIterator, class FuzzyQueryItem>
     OutputIterator
     search(OutputIterator it, const FuzzyQueryItem& q,
