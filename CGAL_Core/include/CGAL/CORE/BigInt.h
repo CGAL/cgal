@@ -24,7 +24,7 @@
 #ifndef _CORE_BIGINT_H_
 #define _CORE_BIGINT_H_
 
-#include <boost/multiprecision/cpp_int.hpp>
+#include <CGAL/boost_mp.h>
 #include <CGAL/CORE/Gmp.h>
 #include <CGAL/CORE/RefCount.h>
 #include <CGAL/CORE/MemoryPool.h>
