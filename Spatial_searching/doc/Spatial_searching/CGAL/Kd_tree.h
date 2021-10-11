@@ -248,6 +248,14 @@ Inserts statistics of the tree into the output stream `s`.
 */
 std::ostream& statistics(std::ostream& s) const;
 
+/*!
+\cgalModifBegin
+Inserts the tree in the <a href="https://graphviz.org/">`Graphviz`</a> format
+into the output stream `s`.
+\cgalModifEnd
+*/
+std::ostream& print(std::ostream& s) const;
+
 /// @}
 
 }; /* end Kd_tree */

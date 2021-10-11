@@ -377,6 +377,18 @@ public:
     return dim_;
   }
 
+  std::ostream&
+  print(std::ostream& s) const
+  {
+    s << "graph G" << std::endl;
+    s << "{" << std::endl << std::endl;
+    s << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
+    s << "Num items: " << tree_root->num_items() << ".\"" << std::endl;
+    s << tree_root->name() << " ;";
+    tree_root->print(s);
+    s << std::endl << "}" << std::endl << std::endl;
+  }
+
 private:
   //any call to this function is for the moment not threadsafe
   void const_build() const {
