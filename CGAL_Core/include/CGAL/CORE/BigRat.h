@@ -219,7 +219,7 @@ public:
   /// exact division by 2 (this method is provided for compatibility)
   BigRat div2() const {
     BigRat r; BigRat t(2);     // probably not most efficient way
-    r.get_mp() /= t.get_mp();
+    r.get_mp() = get_mp() / t.get_mp();
     return r;
   }
   BigRat operator+() const {
@@ -232,12 +232,12 @@ public:
   }
   BigRat& operator++() {
     makeCopy();
-    get_num_mp() += get_den_mp();
+    ++get_mp();
     return *this;
   }
   BigRat& operator--() {
     makeCopy();
-    get_num_mp() -= get_den_mp();
+    --get_mp();
     return *this;
   }
   BigRat operator++(int) {
@@ -324,7 +324,8 @@ public:
   /// BigIntValue
   BigInt BigIntValue() const {
     BigInt r;
-    r.get_mp() = Z( get_num_mp() / get_den_mp()); //  AF check that this is the integer divsion without rest
+    Z rem;
+    divide_qr(get_num_mp(),get_den_mp(), r.get_mp(), rem);
     return r;
   }
   //@}

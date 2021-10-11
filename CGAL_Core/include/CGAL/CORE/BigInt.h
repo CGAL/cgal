@@ -584,7 +584,7 @@ inline BigInt pow(const BigInt& a, unsigned long ui) {
 
 // bit length
 inline int bitLength(const BigInt& a) {
-  return msb(abs(a.get_mp()));    /// AF todo     was    mpz_sizeinbase(a.get_mp(), 2);
+  return msb(abs(a.get_mp()))+1;    /// AF todo     was    mpz_sizeinbase(a.get_mp(), 2);
 }
 
 /// floorLg -- floor of log_2(a)
