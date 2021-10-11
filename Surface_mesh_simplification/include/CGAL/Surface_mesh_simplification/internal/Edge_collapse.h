@@ -440,7 +440,7 @@ int
 EdgeCollapse<TM,GT,SP,VIM,VPM,HIM,ECM,CF,PF,V>::
 run()
 {
-  CGAL_precondition(is_valid_polygon_mesh(m_tm) && CGAL::is_triangle_mesh(m_tm));
+  CGAL_expensive_precondition(is_valid_polygon_mesh(m_tm) && CGAL::is_triangle_mesh(m_tm));
 
   m_visitor.OnStarted(m_tm);
 
@@ -1110,7 +1110,7 @@ collapse(const Profile& profile,
 
   --m_current_edge_count;
 
-  CGAL_assertion_code(
+  CGAL_expensive_assertion_code(
     size_type resulting_vertex_count = size_type(vertices(m_tm).size());
     size_type result_edge_count = size_type(edges(m_tm).size());
   );
@@ -1135,7 +1135,7 @@ collapse(const Profile& profile,
     }
 
     --m_current_edge_count;
-    CGAL_assertion_code(--result_edge_count);
+    CGAL_expensive_assertion_code(--result_edge_count);
   }
 
   if(profile.right_face_exists())
@@ -1156,7 +1156,7 @@ collapse(const Profile& profile,
     }
 
     --m_current_edge_count;
-    CGAL_assertion_code(--result_edge_count);
+    CGAL_expensive_assertion_code(--result_edge_count);
   }
 
   CGAL_SMS_TRACE(1, "Removing:\n  v0v1: E" << get_edge_id(profile.v0_v1())
@@ -1171,11 +1171,11 @@ collapse(const Profile& profile,
   // All directed edges incident to vertex removed are relink to the vertex kept.
   v_res = halfedge_collapse_bk_compatibility(profile.v0_v1(), m_ecm);
 
-  CGAL_assertion_code(--result_edge_count);
-  CGAL_assertion_code(--resulting_vertex_count);
+  CGAL_expensive_assertion_code(--result_edge_count);
+  CGAL_expensive_assertion_code(--resulting_vertex_count);
 
-  CGAL_assertion(result_edge_count == edges(m_tm).size());
-  CGAL_assertion(resulting_vertex_count == vertices(m_tm).size());
+  CGAL_expensive_assertion(result_edge_count == edges(m_tm).size());
+  CGAL_expensive_assertion(resulting_vertex_count == vertices(m_tm).size());
   CGAL_expensive_assertion(is_valid_polygon_mesh(m_tm) && CGAL::is_triangle_mesh(m_tm));
 
   CGAL_SMS_TRACE(1, "V" << get(m_vim, v_res) << " kept.");
