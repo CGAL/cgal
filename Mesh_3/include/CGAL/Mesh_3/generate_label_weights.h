@@ -158,7 +158,7 @@ CGAL::Image_3 generate_label_weights_with_known_word_type(const CGAL::Image_3& i
   duplicator->SetInputImage(itk_img);
   duplicator->Update();
 
-  for (int id = 0; id < labels.size(); ++id)
+  for (std::size_t id = 0; id < labels.size(); ++id)
   {
     if (id > 0)
     {
