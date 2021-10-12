@@ -81,7 +81,7 @@ int main(const int argc, const char** argv) {
   std::cout << "--- PARSING INPUT: " << std::endl;
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
   std::cout << "* used kernel: " << kernel_name << std::endl;
-  const std::string path_to_save = "/Users/monet/Documents/gf/kinetic/logs/";
+  const std::string path_to_save = "";
   Terminal_parser parser(argc, argv, path_to_save);
 
   Parameters parameters;
