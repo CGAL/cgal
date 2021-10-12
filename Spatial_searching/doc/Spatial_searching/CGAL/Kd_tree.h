@@ -223,7 +223,7 @@ Returns the number of points that are stored in the tree.
 size_type size() const;
 
 /*!
-return the instance of the traits used to construct the tree.
+Returns the instance of the traits used to construct the tree.
 */
 Traits traits() const;
 
@@ -249,10 +249,8 @@ Inserts statistics of the tree into the output stream `s`.
 std::ostream& statistics(std::ostream& s) const;
 
 /*!
-\cgalModifBegin
 Inserts the tree in the <a href="https://graphviz.org/">`Graphviz`</a> format
 into the output stream `s`.
-\cgalModifEnd
 */
 std::ostream& print(std::ostream& s) const;
 
