@@ -574,7 +574,7 @@ private:
         fh->info().index = face_index;
         ++num_faces;
 
-        for (std::size_t i = 0; i < 3; ++i) {
+        for (int i = 0; i < 3; ++i) {
           const auto next = fh->neighbor(i);
           const auto edge = std::make_pair(fh, i);
           const bool is_constrained_edge = cdt.is_constrained(edge);
@@ -670,7 +670,7 @@ private:
         is_new_face_detected = true;
         fh->info().index = face_index;
         fh->info().input = face_index;
-        for (std::size_t i = 0; i < 3; ++i) {
+        for (int i = 0; i < 3; ++i) {
           const auto next = fh->neighbor(i);
           const auto edge = std::make_pair(fh, i);
           bool is_exterior = false, is_interior = false;

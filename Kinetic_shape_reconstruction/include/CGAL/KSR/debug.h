@@ -40,7 +40,7 @@ namespace KSR_3 {
 const std::tuple<unsigned char, unsigned char, unsigned char>
 get_idx_color(const std::size_t idx) {
 
-  CGAL::Random rand(idx);
+  CGAL::Random rand(idx );
   return std::make_tuple(
     static_cast<unsigned char>(rand.get_int(32, 192)),
     static_cast<unsigned char>(rand.get_int(32, 192)),
