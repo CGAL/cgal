@@ -59,8 +59,11 @@ int main()
   }
 
   for (int i = 0; i < 10; i++) {
-    x1 = theRandom.get_int(random_min,random_max);
-    y1 = theRandom.get_int(random_min,random_max);
+    do{
+      x1 = theRandom.get_int(random_min,random_max);
+      y1 = theRandom.get_int(random_min,random_max);
+    }
+    while(x1==0 && y1==0);
     boost::variant< Circular_arc_2, Line_arc_2 > v =
       Circle_2( Point_2(x1,y1), x1*x1 + y1*y1);
     ac.push_back(v);
