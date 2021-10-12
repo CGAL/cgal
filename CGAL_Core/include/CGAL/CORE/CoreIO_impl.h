@@ -268,7 +268,7 @@ void readFromFile(BigInt& z, std::istream& in, long maxLength) {
 
 CGAL_INLINE_FUNCTION
 void writeToFile(const BigInt& z, std::ostream& out, int base, int charsPerLine) {
-    
+
     assert(false);
     /*
   BigInt c = abs(z);

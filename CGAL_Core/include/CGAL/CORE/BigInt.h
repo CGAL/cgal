@@ -95,7 +95,7 @@ public:
     : mp(s)
     {}
 
-    
+
   explicit BigIntRep(const Z& z)
       : mp(z)
   {}

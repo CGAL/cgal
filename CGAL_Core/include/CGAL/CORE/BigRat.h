@@ -36,11 +36,11 @@ public:
   BigRatRep()
   : mp()
   {}
-  
+
   // Note : should the copy-ctor be alloed at all ? [Sylvain Pion]
   BigRatRep(const BigRatRep& z)  : RCRepImpl<BigRatRep>(), mp(z.mp)
   {}
-  
+
 
   BigRatRep(signed char c)
     : mp(c)
@@ -397,7 +397,7 @@ inline bool isDivisible(const BigRat& x, const BigRat& y) {
 inline BigRat operator<<(const BigRat& a, unsigned long ul) {
   BigRat r;
   assert(false);
-  //AF todo   no << for Q     r.get_mp() = a.get_mp() << int(ul) ; 
+  //AF todo   no << for Q     r.get_mp() = a.get_mp() << int(ul) ;
   return r;
 }
 inline BigRat operator>>(const BigRat& a, unsigned long ul) {
