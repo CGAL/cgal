@@ -493,6 +493,7 @@ inline bool isOdd(const BigInt& z) {
 
 /// get exponent of power 2
 inline unsigned long getBinExpo(const BigInt& z) {
+    assert(! z.get_mp().is_zero());
     return lsb(abs(z.get_mp()));
 }
 
