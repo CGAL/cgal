@@ -13,12 +13,12 @@ struct Non_mutable_property_map
 {
   typedef Key                                     key_type;
   typedef Value                                   value_type;
-  typedef value_type                              reference;
+  typedef const value_type&                       reference;
   typedef boost::readable_property_map_tag        category;
 
   Non_mutable_property_map(const Container& c) : m_c(c) { }
 
-  friend reference get(const Non_mutable_property_map<Key, Value, Container>& pmap, key_type k)
+  friend reference get(const Non_mutable_property_map<Key, Value, Container>& pmap, const key_type& k)
   {
     return pmap.m_c.at(k);
   }
@@ -42,7 +42,7 @@ struct RW_property_map
     pmap.m_c[k] = val;
   }
 
-  friend reference get(RW_property_map<Key, Value, Container>& pmap, const key_type& k)
+  friend reference get(const RW_property_map<Key, Value, Container>& pmap, const key_type& k)
   {
     return pmap.m_c[k];
   }

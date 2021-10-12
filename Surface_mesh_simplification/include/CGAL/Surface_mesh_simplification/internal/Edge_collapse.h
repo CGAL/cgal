@@ -157,7 +157,6 @@ public:
   };
 
   struct edge_id
-    : boost::put_get_helper<size_type, edge_id>
   {
     typedef boost::readable_property_map_tag category;
     typedef size_type                        value_type;
@@ -168,6 +167,8 @@ public:
     edge_id(const Self* algorithm) : m_algorithm(algorithm) {}
 
     size_type operator[](const halfedge_descriptor e) const { return m_algorithm->get_edge_id(e); }
+
+    friend inline value_type get(const edge_id& m, const key_type& k) { return m[k]; }
 
     const Self* m_algorithm;
   };

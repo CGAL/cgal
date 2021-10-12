@@ -102,10 +102,11 @@ private:
     typedef const value_type& reference;
     typedef std::size_t key_type;
     typedef boost::lvalue_property_map_tag category;
+
     My_point_property_map (const std::vector<Point>& pts) : points (pts) {}
+
     reference operator[] (key_type k) const { return points[k]; }
-    friend inline reference get (const My_point_property_map& ppmap, key_type i)
-    { return ppmap[i]; }
+    friend inline reference get (const My_point_property_map& ppmap, key_type i) { return ppmap[i]; }
   };
 
   struct Edge
