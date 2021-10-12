@@ -512,7 +512,7 @@ private:
       }
       fh->info().index = KSR::no_element();
 
-      for (std::size_t i = 0; i < 3; ++i) {
+      for (int i = 0; i < 3; ++i) {
         const auto next = fh->neighbor(i);
         const auto edge = std::make_pair(fh, i);
         const bool is_border_edge =

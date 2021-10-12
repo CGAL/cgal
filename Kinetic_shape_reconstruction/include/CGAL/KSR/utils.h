@@ -44,7 +44,7 @@
 #include <CGAL/Polygon_2_algorithms.h>
 
 // Boost includes.
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 namespace KSR {

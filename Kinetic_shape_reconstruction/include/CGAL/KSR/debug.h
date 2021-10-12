@@ -775,7 +775,7 @@ void dump_cdt(
 
   for (auto fit = cdt.finite_faces_begin(); fit != cdt.finite_faces_end(); ++fit) {
     std::array<VIdx, 3> vertices;
-    for (std::size_t i = 0; i < 3; ++i) {
+    for (int i = 0; i < 3; ++i) {
       vertices[i] = map_v2i[fit->vertex(i)];
     }
 

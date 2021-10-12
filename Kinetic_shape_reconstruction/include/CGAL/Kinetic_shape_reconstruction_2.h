@@ -858,8 +858,8 @@ private:
                               {
                                 FT position = m_data.position_of_meta_vertex_on_support_line
                                   (meta_vertex_idx, i);
-                                return ((beginning < position & position <= end)
-                                        || (end <= position & position < beginning));
+                                return (((beginning < position) && (position <= end))
+                                        || ((end <= position) && (position < beginning)));
                               });
 
           for (auto it = support_line.meta_vertices_idx().begin(); it != last_element; ++ it)

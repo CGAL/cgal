@@ -15,8 +15,6 @@
 
 //#include <CGAL/license/Kinetic_shape_reconstruction.h>
 
-#include <boost/function_output_iterator.hpp>
-
 #include <CGAL/KSR/utils.h>
 #include <CGAL/KSR_2/Support_line.h>
 #include <CGAL/KSR_2/Segment.h>
