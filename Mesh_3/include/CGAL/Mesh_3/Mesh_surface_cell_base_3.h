@@ -24,7 +24,7 @@
 #include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/MDS_3/io_signature.h>
+#include <CGAL/TMDS_3/io_signature.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>

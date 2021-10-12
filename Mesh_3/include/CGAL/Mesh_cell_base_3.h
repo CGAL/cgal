@@ -27,7 +27,7 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
 #include <CGAL/Mesh_3/Mesh_surface_cell_base_3.h>
-#include <CGAL/MDS_3/io_signature.h>
+#include <CGAL/TMDS_3/io_signature.h>
 #include <CGAL/tags.h>
 
 #include <boost/type_traits/is_convertible.hpp>

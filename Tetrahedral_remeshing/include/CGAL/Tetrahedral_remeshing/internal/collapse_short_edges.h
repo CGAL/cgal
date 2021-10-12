@@ -28,7 +28,7 @@
 #include <utility>
 #include <unordered_set>
 
-#include <CGAL/MDS_3/tet_soup_to_c3t3.h>
+#include <CGAL/TMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/utility.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
@@ -109,7 +109,7 @@ public:
     // finished
     std::vector<Vertex_handle> new_vertices;
     std::map<Facet, typename C3t3::Surface_patch_index> border_facets;
-     if (CGAL::MDS_3::build_triangulation(triangulation,
+     if (CGAL::TMDS_3::build_triangulation(triangulation,
                                           points, finite_cells, border_facets,
                                           new_vertices /*, verbose*/))
     {

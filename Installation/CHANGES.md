@@ -34,7 +34,7 @@ Release date: December 2021
 
 Release date:
 
-### [Mesh Data Structure 3](https://doc.cgal.org/5.4/Manual/packages.html#PkgMDS3) (new package)
+### [Tetrahedral Mesh Data Structure 3](https://doc.cgal.org/5.4/Manual/packages.html#PkgTMDS3) (new package)
 
 - This new package wraps all the existing code that deals with a
 ` MeshComplex_3InTriangulation_3`, and makes the data structure independant

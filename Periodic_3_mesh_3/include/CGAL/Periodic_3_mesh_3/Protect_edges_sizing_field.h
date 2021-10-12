@@ -31,12 +31,12 @@
 
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
-#include <CGAL/MDS_3/io_signature.h>
+#include <CGAL/TMDS_3/io_signature.h>
 #ifdef CGAL_MESH_3_DUMP_FEATURES_PROTECTION_ITERATIONS
 #include <CGAL/IO/File_binary_mesh_3.h>
 #endif
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
-#include <CGAL/MDS_3/utilities.h>
+#include <CGAL/TMDS_3/utilities.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 
 #include <CGAL/enum.h>
@@ -75,7 +75,7 @@ namespace Periodic_3_mesh_3 {
 
 template <typename C3T3, typename MeshDomain, typename SizingFunction>
 class Protect_edges_sizing_field
-  : public CGAL::MDS_3::internal::Debug_messages_tools
+  : public CGAL::TMDS_3::internal::Debug_messages_tools
 {
   typedef Protect_edges_sizing_field          Self;
 

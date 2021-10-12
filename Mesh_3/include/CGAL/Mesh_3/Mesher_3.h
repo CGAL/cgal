@@ -36,7 +36,7 @@
 
 #include <CGAL/Mesh_error_code.h>
 
-#include <CGAL/MDS_3/Dump_c3t3.h>
+#include <CGAL/TMDS_3/Dump_c3t3.h>
 
 #include <CGAL/Mesh_3/Refine_facets_3.h>
 #include <CGAL/Mesh_3/Refine_facets_manifold_base.h>

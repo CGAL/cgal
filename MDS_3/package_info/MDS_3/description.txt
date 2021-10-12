@@ -1,2 +1,0 @@
-Package MDS_3 :
-Mesh Data Structures for dimension <=3
