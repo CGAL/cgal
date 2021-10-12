@@ -455,6 +455,7 @@ void BigFloatRep::centerize(const BigFloatRep& a, const BigFloatRep& b) {
   // Zilin & Vikram, 08/24/04
   // err = 1 + longValue(chunkShift(r.m, r.exp - exp));
   BigInt E = chunkShift(r.m, r.exp - exp);
+  E = abs(E);
   bigNormal(E);
 }
 
