@@ -57,12 +57,12 @@ print_testresult()
           RESULT="t"
         fi
       else
-  if grep -E -q 'NOTICE: .*(need|require|incompatible).*and.*will not be' CompilerOutput_$1
-  then
-    RESULT="r"
+        if grep -E -q 'NOTICE: .*(need|require|incompatible).*and.*will not be' CompilerOutput_$1
+        then
+          RESULT="r"
         else
           RESULT="y"
-  fi
+        fi
       fi
     fi
     TIMING=`awk '/^      # Running time: / {print $4}' < ErrorOutput_$1`
