@@ -2,28 +2,21 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_3D_Mesh_Data_Structures
-\anchor userchaptermds3
+\anchor Chapter_Tetrahedral_Mesh_Data_Structures
+\anchor userchaptertmds3
 \authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
 \cgalAutoToc
 
 \cgalFigureBegin{figure_tetmesh_knot,knot_full.png}
-A multi-domain 3D tetrahedral mesh generated from a polyhedral surface with multiple surface patches.
+A multi-domain tetrahedral mesh generated from a polyhedral surface with multiple surface patches.
 The complete triangulation is displayed, including cells that belong or do not
 belong to the mesh complex, surface patches and feature edges.
 \cgalFigureEnd
 
-\section MDS_3_section_intro Introduction
 
-This package is devoted to the representation of 3-Dimensional Mesh Data Structures.
+\section TMDS_3_section_c3t3 Mesh Complex
 
-A 3D mesh is a discretization of a given bounded subset of the 3D space,
-that holds all geometric and combinatorial data to construct a valid
-and consistent discretization.
-In this chapter, we describe higher-level data structures available
-for the description of such meshes.
-
-\section MDS_3_section_c3t3 Mesh Complex
+This package is devoted to the representation of 3-Dimensional Tetrahedral Mesh Data Structures.
 
 A 3D simplicial complex is composed of points, line segments, polygons,
 polyhedral, and the combinatorial description of their n-dimension counterparts
@@ -54,7 +47,7 @@ The cells that lie outside the meshing domain are drawn in wire frame.
 \cgalFigureEnd
 
 
-\section MDS_3_section_examples Examples
+\section TMDS_3_section_examples Examples
 
 \subsection TetSoupExample From Tetrahedron Soup to Triangulation_3
 
@@ -65,7 +58,7 @@ The tetrahedron soup is then put back together in a
 `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3` before
 being set as the reference triangulation of a `Mesh_complex_3_in_triangulation_3`.
 
-\cgalExample{MDS_3/tetrahedron_soup_to_c3t3_example.cpp}
+\cgalExample{TMDS_3/tetrahedron_soup_to_c3t3_example.cpp}
 
 
 \subsection IOExample Input/Output Example
@@ -74,7 +67,7 @@ The example below illustrates how to use the IO functions
 for reading and writing a triangulation with the `Medit` file format
 (See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.).
 
-\cgalExample{MDS_3/c3t3_example.cpp}
+\cgalExample{TMDS_3/c3t3_example.cpp}
 
 
 \subsection MoreExamples More Examples In Other Packages
@@ -88,11 +81,11 @@ tetrahedral mesh generation. Some examples can be found in the \ref secTetRemesh
 section.
 
 
-\section MDS_3History Implementation History
+\section TMDS_3History Implementation History
 
-The code of the `MeshComplex_3InTriangulation_3` and its variants was initially part of the package \ref PkgMesh3.
+The code of the `MeshComplex_3InTriangulation_3` and its variants were initially part of the package \ref PkgMesh3.
 With the meshing and remeshing processes becoming more versatile, it was moved to its own package in the
-release 5.4 of \cgal.
+release 5.5 of \cgal.
 
 */
 } /* namespace CGAL */

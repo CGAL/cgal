@@ -1,42 +1,43 @@
-/// \defgroup PkgMDS3Ref 3D Mesh Data Structures Reference
+/// \defgroup PkgTMDS3Ref 3D Mesh Data Structures Reference
 
-/// \defgroup PkgMDS3Concepts Concepts
-/// \ingroup PkgMDS3Ref
+/// \defgroup PkgTMDS3Concepts Concepts
+/// \ingroup PkgTMDS3Ref
 /// The main concepts of this package.
 
-/// \defgroup PkgMDS3Classes Classes
-/// \ingroup PkgMDS3Ref
+/// \defgroup PkgTMDS3Classes Classes
+/// \ingroup PkgTMDS3Ref
 /// The class in this group is the main class involved .
 
-/// \defgroup PkgMDS3Functions Functions
-/// \ingroup PkgMDS3Ref
+/// \defgroup PkgTMDS3Functions Functions
+/// \ingroup PkgTMDS3Ref
 /// The functions to work with the 3D mesh data structures.
 
-/// \defgroup PkgMDS3ExportFunctions Export Functions
-/// \ingroup PkgMDS3Ref
+/// \defgroup PkgTMDS3ExportFunctions Export Functions
+/// \ingroup PkgTMDS3Ref
 /// The free functions that can be used to export meshes to given output file formats.
 
-/// \defgroup PkgMDS3IOFunctions Input/Output Functions
-/// \ingroup PkgMDS3Ref
+/// \defgroup PkgTMDS3IOFunctions Input/Output Functions
+/// \ingroup PkgTMDS3Ref
 /// The free functions that can be used to read and write meshes.
 
 /*!
-\addtogroup PkgMDS3Ref
-\cgalPkgDescriptionBegin{3D Mesh Data Structures,PkgMDS3}
+\addtogroup PkgTMDS3Ref
+\cgalPkgDescriptionBegin{3D Mesh Data Structures,PkgTMDS3}
 \cgalPkgPicture{knot_small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
-\cgalPkgDesc{This package provides a data structure to store three-dimensional meshes and their subcomplexes.
-  It provides an API for 3D meshes generated with %CGAL or not,
+\cgalPkgDesc{This package provides a data structure to store three-dimensional
+  tetrahedral meshes and their subcomplexes.
+  It provides an API for tetrahedral meshes generated with %CGAL or not,
   to be processed with %CGAL 3D mesh generation and remeshing algorithms,
   along with iterators, IO functions and more helper functions.
   }
-\cgalPkgManuals{Chapter_3D_Mesh_Data_Structures,PkgMDS3Ref}
+\cgalPkgManuals{Chapter_3D_Mesh_Data_Structures,PkgTMDS3Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.4}
+\cgalPkgSince{5.5}
 \cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:ajrtty-mds3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
