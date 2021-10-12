@@ -2,7 +2,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_Tetrahedral_Mesh_Data_Structures
+\anchor Chapter_Tetrahedral_Mesh_Data_Structure
 \anchor userchaptertmds3
 \authors Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec
 \cgalAutoToc
