@@ -1,4 +1,4 @@
-/// \defgroup PkgTMDS3Ref 3D Mesh Data Structures Reference
+/// \defgroup PkgTMDS3Ref 3D Tetrahedral Mesh Data Structures Reference
 
 /// \defgroup PkgTMDS3Concepts Concepts
 /// \ingroup PkgTMDS3Ref
@@ -22,7 +22,7 @@
 
 /*!
 \addtogroup PkgTMDS3Ref
-\cgalPkgDescriptionBegin{3D Mesh Data Structures,PkgTMDS3}
+\cgalPkgDescriptionBegin{3D Tetrahedral Mesh Data Structure,PkgTMDS3}
 \cgalPkgPicture{knot_small.png}
 
 \cgalPkgSummaryBegin
@@ -33,7 +33,7 @@
   to be processed with %CGAL 3D mesh generation and remeshing algorithms,
   along with iterators, IO functions and more helper functions.
   }
-\cgalPkgManuals{Chapter_3D_Mesh_Data_Structures,PkgTMDS3Ref}
+\cgalPkgManuals{Chapter_3D_Tetrahedral_Mesh_Data_Structure,PkgTMDS3Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

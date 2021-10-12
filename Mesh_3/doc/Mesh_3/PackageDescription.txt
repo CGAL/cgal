@@ -29,7 +29,7 @@
 
 /// \defgroup PkgMesh3IOFunctions Input/Output Functions
 /// \ingroup PkgMesh3Ref
-/// See \ref PkgMDS3IOFunctions from 3D Mesh Data Structures.
+/// See \ref PkgTMDS3IOFunctions from 3D Tetrahedral Mesh Data Structure
 
 /*!
 \addtogroup PkgMesh3Ref

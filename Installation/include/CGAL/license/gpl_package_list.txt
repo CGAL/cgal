@@ -27,7 +27,6 @@ Jet_fitting_3 Estimation of Local Differential Properties of Point-Sampled Surfa
 Matrix_search Monotone and Sorted Matrix Search
 Mesh_2 2D Conforming Triangulations and Meshes
 Mesh_3 3D Mesh Generation
-MDS_3 3D Mesh Data Structure
 Minkowski_sum_2 2D Minkowski Sums
 Minkowski_sum_3 3D Minkowski Sum of Polyhedra
 Nef_2 2D Boolean Operations on Nef Polygons
@@ -90,6 +89,7 @@ Surface_sweep_2 2D Intersection of Curves
 TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
 Three Three
+TMDS_3 3D Tetrahedral Mesh Data Structure
 Triangulation_2 2D Triangulation
 Triangulation_on_sphere_2 2D Triangulation on Sphere
 Triangulation_3 3D Triangulations
