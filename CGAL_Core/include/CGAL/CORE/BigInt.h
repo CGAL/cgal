@@ -458,6 +458,7 @@ inline long longValue(const BigInt& a) {
 
 /// ulongValue
 inline unsigned long ulongValue(const BigInt& a) {
+    assert(a >= BigInt(0));
   return a.ulongValue();
 }
 
@@ -580,6 +581,9 @@ inline BigInt pow(const BigInt& a, unsigned long ui) {
 
 // bit length
 inline int bitLength(const BigInt& a) {
+    if (a.get_mp().is_zero()) {
+        return 0;
+    }
   return msb(abs(a.get_mp()))+1;    /// AF todo     was    mpz_sizeinbase(a.get_mp(), 2);
 }
 
