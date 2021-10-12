@@ -105,7 +105,7 @@ public:
     {
       return x->ID;
     }
-    
+
     friend inline value_type get(const Id_map& m, const key_type k) { return m[k]; }
   } ;
 
