@@ -55,12 +55,12 @@ namespace KSR {
     // boolean tags
     with_normals(true),
     verbose(true),
-    debug(true),
+    debug(false),
     // shape detection / shape regularization
     k_neighbors(12),
     distance_threshold(noise / FT(2)),
-    angle_threshold(FT(15)),
-    min_region_size(50),
+    angle_threshold(FT(25)),
+    min_region_size(100),
     regularize(false),
     // partitioning
     k_intersections(1),

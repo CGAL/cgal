@@ -25,7 +25,7 @@ struct Parameters_3 {
   unsigned int n = 0; // n subdivisions
 
   FT enlarge_bbox_ratio = FT(11) / FT(10); // ratio to enlarge bbox
-  FT distance_tolerance = FT(5) / FT(10); // distance tolerance between planes
+  FT distance_tolerance =  FT(5) / FT(10); // distance tolerance between planes
 
   bool reorient        = false; // true - optimal bounding box, false - axis aligned
   bool use_hybrid_mode = false; // true - apply exact interesections while all other computations are inexact

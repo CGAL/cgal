@@ -74,7 +74,7 @@ public:
   Kinetic_shape_reconstruction_3(
     const bool verbose = true,
     const bool debug   = false) :
-  m_parameters(verbose, debug, false),
+  m_parameters(verbose, debug, false), // use true here to export all steps
   m_data(m_parameters),
   m_num_events(0)
   { }
