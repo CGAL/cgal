@@ -693,13 +693,15 @@ private:
         const auto& set_b = it_b->first;
 
         std::size_t common_plane_idx = KSR::no_element();
+        const std::function<void(const std::size_t idx)> lambda =
+          [&](const std::size_t idx) {
+            common_plane_idx = idx;
+          };
+
         std::set_intersection(
-          set_a.begin(), set_a.end(), set_b.begin(), set_b.end(),
-          boost::make_function_output_iterator(
-            [&](const std::size_t idx) -> void {
-              common_plane_idx = idx;
-            }
-          )
+          set_a.begin(), set_a.end(),
+          set_b.begin(), set_b.end(),
+          boost::make_function_output_iterator(lambda)
         );
 
         if (common_plane_idx != KSR::no_element()) {

@@ -677,17 +677,18 @@ public:
       const auto& iplanes1 = all_iplanes[ip];
 
       std::size_t common_plane_idx = KSR::no_element();
+      const std::function<void(const std::size_t& idx)> lambda =
+        [&](const std::size_t& idx) {
+          if (idx < 6) {
+            CGAL_assertion(common_plane_idx == KSR::no_element());
+            common_plane_idx = idx;
+          }
+        };
+
       std::set_intersection(
         iplanes0.begin(), iplanes0.end(),
         iplanes1.begin(), iplanes1.end(),
-        boost::make_function_output_iterator(
-          [&](const std::size_t& idx) {
-            if (idx < 6) {
-              CGAL_assertion(common_plane_idx == KSR::no_element());
-              common_plane_idx = idx;
-            }
-          }
-        )
+        boost::make_function_output_iterator(lambda)
       );
 
       // std::cout << "cpi: " << common_plane_idx << std::endl;
@@ -1159,19 +1160,21 @@ public:
     std::vector< std::pair<IEdge, Direction_2> >& iedges) const {
 
     auto inc_iedges = incident_iedges(ivertex);
-    std::copy(inc_iedges.begin(), inc_iedges.end(),
-      boost::make_function_output_iterator(
-        [&](const IEdge& inc_iedge) -> void {
-          const auto iplanes = intersected_planes(inc_iedge);
-          if (iplanes.find(sp_idx) == iplanes.end()) {
-            return;
-          }
-          const Direction_2 direction(
-            point_2(sp_idx, opposite(inc_iedge, ivertex)) -
-            point_2(sp_idx, ivertex));
-          iedges.push_back(std::make_pair(inc_iedge, direction));
+    const std::function<void(const IEdge& inc_iedge)> lambda =
+      [&](const IEdge& inc_iedge) {
+        const auto iplanes = intersected_planes(inc_iedge);
+        if (iplanes.find(sp_idx) == iplanes.end()) {
+          return;
         }
-      )
+        const Direction_2 direction(
+          point_2(sp_idx, opposite(inc_iedge, ivertex)) -
+          point_2(sp_idx, ivertex));
+        iedges.push_back(std::make_pair(inc_iedge, direction));
+      };
+
+    std::copy(
+      inc_iedges.begin(), inc_iedges.end(),
+      boost::make_function_output_iterator(lambda)
     );
 
     std::sort(iedges.begin(), iedges.end(),

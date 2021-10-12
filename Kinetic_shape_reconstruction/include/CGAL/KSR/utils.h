@@ -21,6 +21,7 @@
 #include <array>
 #include <string>
 #include <sstream>
+#include <functional>
 #include <fstream>
 #include <vector>
 #include <deque>
