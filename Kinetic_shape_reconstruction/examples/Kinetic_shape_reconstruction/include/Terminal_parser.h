@@ -290,15 +290,8 @@ namespace KSR {
       const Input_parameters& input_parameters,
       const std::vector<std::string>& exceptions) {
 
-      if (m_path_to_save != "") {
-        save_input_parameters(m_path_to_save, input_parameters, exceptions);
-        return;
-      }
-
-      std::cerr << std::endl <<
-        "ERROR: IT IS IMPOSSIBLE TO SAVE PARAMETERS! THE PATH VARIABLE IS NOT DEFINED!"
-      << std::endl << std::endl;
-      exit(EXIT_FAILURE);
+      save_input_parameters(m_path_to_save, input_parameters, exceptions);
+      return;
     }
 
     void save_input_parameters(

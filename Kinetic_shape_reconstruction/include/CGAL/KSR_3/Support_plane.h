@@ -84,6 +84,7 @@ private:
     std::vector<Segment_2> isegments;
     std::vector<Bbox_2> ibboxes;
     unsigned int k;
+    FT distance_tolerance;
   };
 
   std::shared_ptr<Data> m_data;
@@ -95,7 +96,7 @@ public:
   }
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox) :
+  Support_plane(const PointRange& polygon, const bool is_bbox, const FT distance_tolerance) :
   m_data(std::make_shared<Data>()) {
 
     std::vector<Point_3> points;
@@ -134,6 +135,7 @@ public:
     m_data->plane = Plane_3(points[0], KSR::normalize(normal));
     m_data->centroid = Point_3(cx, cy, cz);
     m_data->is_bbox = is_bbox;
+    m_data->distance_tolerance = distance_tolerance;
     add_property_maps();
   }
 
@@ -327,6 +329,10 @@ public:
   }
 
   Data& data() { return *m_data; }
+
+  FT distance_tolerance() const {
+    return m_data->distance_tolerance;
+  }
 
   void clear_pfaces() {
     m_data->mesh.clear();
@@ -747,7 +753,7 @@ bool operator==(const Support_plane<Kernel>& a, const Support_plane<Kernel>& b) 
 
   // TODO: We should put it as a parameter.
   // TODO: Can we make it work for a smaller parameter: e.g. 0.1?
-  const FT ptol = FT(5) / FT(10);
+  const FT ptol = a.distance_tolerance();
   const auto pa1 = a.centroid();
   const auto pb1 = planeb.projection(pa1);
   const auto pb2 = b.centroid();

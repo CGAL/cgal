@@ -95,6 +95,8 @@ public:
       parameters::get_parameter(np, internal_np::n_subdivisions), 0);
     m_parameters.enlarge_bbox_ratio = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::enlarge_bbox_ratio), FT(11) / FT(10));
+    m_parameters.distance_tolerance = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::distance_tolerance), FT(5) / FT(10));
     m_parameters.reorient = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::reorient), false);
     m_parameters.use_hybrid_mode = parameters::choose_parameter(

@@ -114,6 +114,7 @@ int main(const int argc, const char** argv) {
 
   Timer timer;
   timer.start();
+  const FT distance_tolerance = FT(1) / FT(100);
   const bool is_ksr_success = ksr.reconstruct(
     point_set,
     point_set.point_map(),
@@ -126,7 +127,8 @@ int main(const int argc, const char** argv) {
     min_region_size(parameters.min_region_size).
     regularize(parameters.regularize).
     k_intersections(parameters.k_intersections).
-    graphcut_beta(parameters.graphcut_beta));
+    graphcut_beta(parameters.graphcut_beta).
+    distance_tolerance(distance_tolerance));
   assert(is_ksr_success);
   const std::string success = is_ksr_success ? "SUCCESS" : "FAILED";
   timer.stop();

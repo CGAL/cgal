@@ -519,7 +519,8 @@ public:
   std::pair<std::size_t, bool> add_support_plane(
     const PointRange& polygon, const bool is_bbox) {
 
-    const Support_plane new_support_plane(polygon, is_bbox);
+    const Support_plane new_support_plane(
+      polygon, is_bbox, m_parameters.distance_tolerance);
     std::size_t support_plane_idx = KSR::no_element();
     bool found_coplanar_polygons = false;
     bool is_added = false;
