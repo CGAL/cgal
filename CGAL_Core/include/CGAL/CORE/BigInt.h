@@ -493,7 +493,9 @@ inline bool isOdd(const BigInt& z) {
 
 /// get exponent of power 2
 inline unsigned long getBinExpo(const BigInt& z) {
-    assert(! z.get_mp().is_zero());
+    if (z.get_mp().is_zero()) {
+        return (std::numeric_limits<unsigned long>::max)();
+    }
     return lsb(abs(z.get_mp()));
 }
 
@@ -508,20 +510,13 @@ inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long uk) {
         m.get_mp() = q.get_mp();
         ++e;
     }
-
-  /*
-  mpz_t f;
-  mpz_init_set_ui(f, k);
-  m.makeCopy();
-  e = mpz_remove(m.get_mp(), z.get_mp(), f);
-  mpz_clear(f);
-  */
 }
 
 /// divisible(x,y) = "x | y"
 inline bool isDivisible(const BigInt& x, const BigInt& y) {
-    assert(false);
-    return true; // AF  mpz_divisible_p(x.get_mp(), y.get_mp()) != 0;
+    BigInt z, r;
+    divide_qr(x.get_mp(), y.get_mp(), z.get_mp(), r.get_mp());
+    return r.get_mp().is_zero();
 }
 
 inline bool isDivisible(int x, int y) {
@@ -535,8 +530,8 @@ inline bool isDivisible(long x, long y) {
 /// exact div
 inline void divexact(BigInt& z, const BigInt& x, const BigInt& y) {
   z.makeCopy();
-  assert(false);
-  // AF: todo     mpz_divexact(z.get_mp(), x.get_mp(), y.get_mp());
+  BigInt r;
+  divide_qr(x.get_mp(), y.get_mp(), z.get_mp(), r.get_mp() );  // was void mpz_divexact (mpz_t q, const mpz_t n, const mpz_t d)   Is this faster?
 }
 
 // Chee (1/12/2004)   The definition of div_exact(x,y) next
