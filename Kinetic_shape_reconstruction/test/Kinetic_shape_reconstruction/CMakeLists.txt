@@ -6,8 +6,6 @@ project(Kinetic_shape_reconstruction_Tests)
 cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
-
 find_package(CGAL QUIET COMPONENTS Core)
 include(${CGAL_USE_FILE})
 include(CGAL_CreateSingleSourceCGALProgram)
