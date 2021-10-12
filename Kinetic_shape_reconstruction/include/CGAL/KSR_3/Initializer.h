@@ -610,7 +610,7 @@ private:
         const Segment_2 segment(pj, qj);
         Point_2 inter;
         const bool is_intersected =
-          m_kinetic_traits. template intersection(segment, edge, inter);
+          m_kinetic_traits.intersection(segment, edge, inter);
         if (is_intersected) return false;
       }
     }
@@ -710,7 +710,7 @@ private:
           }
 
           Point_2 point;
-          if (!m_kinetic_traits. template intersection(
+          if (!m_kinetic_traits.intersection(
             m_data.to_2d(common_plane_idx,
               Segment_3(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second))),
             m_data.to_2d(common_plane_idx,

@@ -32,7 +32,10 @@ template<typename GeomTraits>
 class Kinetic_traits_3 {
 
   using IK = GeomTraits; // assume GT is inexact here
-  using IT = typename GeomTraits::FT;
+
+  using IT      = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
+  using Line_2  = typename GeomTraits::Line_2;
 
   // TODO: This is very naive way of doing this. We should compare IT anf ET
   // and, in case they are the same or IT is already exact, abort conversion!
@@ -46,10 +49,9 @@ public:
   Kinetic_traits_3(const bool use_hybrid_mode) :
   m_use_hybrid_mode(use_hybrid_mode) { }
 
-  template<typename ResultType, typename Type1, typename Type2>
-  inline const ResultType intersection(const Type1& t1, const Type2& t2) const {
+  inline const Point_2 intersection(const Line_2& t1, const Line_2& t2) const {
 
-    ResultType out;
+    Point_2 out;
     const bool is_intersection_found = intersection(t1, t2, out);
     CGAL_assertion(is_intersection_found);
     return out;
@@ -82,7 +84,6 @@ private:
       const auto exact_t1 = m_inexact_to_exact(t1);
       const auto exact_t2 = m_inexact_to_exact(t2);
       const auto exact_result = CGAL::intersection(exact_t1, exact_t2);
-      // CGAL_assertion_msg(false, "TODO: FINISH HYBRID MODE!");
       return m_exact_to_inexact(exact_result);
     }
   }

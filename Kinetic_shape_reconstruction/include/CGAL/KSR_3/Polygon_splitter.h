@@ -267,7 +267,7 @@ private:
         const Segment_2 segment(pj, qj);
         Point_2 inter;
         const bool is_intersected =
-          m_kinetic_traits. template intersection(segment, edge, inter);
+          m_kinetic_traits.intersection(segment, edge, inter);
         if (is_intersected) return false;
       }
     }

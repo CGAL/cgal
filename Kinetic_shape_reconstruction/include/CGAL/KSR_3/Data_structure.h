@@ -565,7 +565,7 @@ public:
     const auto all_iedges = m_intersection_graph.edges();
     for (const auto iedge : all_iedges) {
       const auto segment = segment_3(iedge);
-      if (!m_kinetic_traits. template intersection(plane, segment, point)) {
+      if (!m_kinetic_traits.intersection(plane, segment, point)) {
         continue;
       }
 
@@ -2885,7 +2885,7 @@ public:
     bool is_reversed = false;
     if (CGAL::abs(m1 - m3) >= tol) {
       if (m_parameters.debug) std::cout << "- prev intersected lines" << std::endl;
-      const bool is_a_found = m_kinetic_traits. template intersection(
+      const bool is_a_found = m_kinetic_traits.intersection(
         future_line_prev, iedge_line, future_point_a);
       if (!is_a_found) {
         std::cout << "WARNING: A IS NOT FOUND!" << std::endl;
@@ -2938,7 +2938,7 @@ public:
     is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_parameters.debug) std::cout << "- next intersected lines" << std::endl;
-      const bool is_b_found = m_kinetic_traits. template intersection(
+      const bool is_b_found = m_kinetic_traits.intersection(
         future_line_next, iedge_line, future_point_b);
       if (!is_b_found) {
         std::cout << "WARNING: B IS NOT FOUND!" << std::endl;
@@ -3106,7 +3106,7 @@ public:
     bool is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_parameters.debug) std::cout << "- back/front intersected lines" << std::endl;
-      future_point = m_kinetic_traits. template intersection<Point_2>(future_line_next, iedge_line);
+      future_point = m_kinetic_traits.intersection(future_line_next, iedge_line);
       if (m_parameters.debug) {
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
       }
@@ -3228,7 +3228,7 @@ public:
     bool is_reversed = false;
     if (CGAL::abs(m2 - m3) >= tol) {
       if (m_parameters.debug) std::cout << "- open intersected lines" << std::endl;
-      future_point = m_kinetic_traits. template intersection<Point_2>(future_line_next, iedge_line);
+      future_point = m_kinetic_traits.intersection(future_line_next, iedge_line);
       if (m_parameters.debug) {
         std::cout << "- intersected point: " << to_3d(sp_idx, future_point) << std::endl;
       }
@@ -3321,7 +3321,7 @@ public:
     }
 
     Point_2 point;
-    if (!m_kinetic_traits. template intersection(psegment, isegment, point)) {
+    if (!m_kinetic_traits.intersection(psegment, isegment, point)) {
       if (m_parameters.debug) std::cout << "- no intersection case" << std::endl;
       return false;
     }

@@ -1419,7 +1419,7 @@ private:
     const Plane_3 tr_plane(midp + norm * d, norm);
     Point_3 inter;
     const bool is_intersection_found =
-      m_kinetic_traits. template intersection(line, tr_plane, inter);
+      m_kinetic_traits.intersection(line, tr_plane, inter);
     if (!is_intersection_found) {
       std::cout << "d = " << d << std::endl;
     }

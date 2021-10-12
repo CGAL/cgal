@@ -204,7 +204,7 @@ private:
       }
 
       Point_2 inter;
-      if (!m_kinetic_traits. template intersection(pv_segment, po_segment, inter)) {
+      if (!m_kinetic_traits.intersection(pv_segment, po_segment, inter)) {
         continue;
       }
 
@@ -295,7 +295,7 @@ private:
       }
 
       Point_2 inter;
-      if (!m_kinetic_traits. template intersection(pv_segment, po_segment, inter)) {
+      if (!m_kinetic_traits.intersection(pv_segment, po_segment, inter)) {
         continue;
       }
 
@@ -448,7 +448,7 @@ private:
       }
 
       Point_2 inter;
-      if (!m_kinetic_traits. template intersection(pv_segment, segments[i], inter)) {
+      if (!m_kinetic_traits.intersection(pv_segment, segments[i], inter)) {
         continue;
       }
 
