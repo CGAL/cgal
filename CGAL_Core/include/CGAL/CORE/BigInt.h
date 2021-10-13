@@ -505,6 +505,7 @@ inline void getKaryExpo(const BigInt& z, BigInt& m, int& e, unsigned long uk) {
     BigInt k(uk), q, r;
     e = 0;
     m = z;
+    m.makeCopy();
     for(;;) {
         divide_qr(m.get_mp(), k.get_mp(), q.get_mp(), r.get_mp());
         if (!r.get_mp().is_zero()) break;
