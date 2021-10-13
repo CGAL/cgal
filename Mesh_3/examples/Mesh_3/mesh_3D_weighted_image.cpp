@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
   std::ofstream medit_file("out.mesh");
   c3t3.output_to_medit(medit_file);
   std::ofstream bin_file("out.binary.cgal", std::ios_base::binary);
-  CGAL::Mesh_3::save_binary_file(bin_file, c3t3);
+  CGAL::IO::save_binary_file(bin_file, c3t3);
 
   return 0;
 }
