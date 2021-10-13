@@ -79,7 +79,7 @@ int main(const int argc, const char** argv) {
 
   // Parameters.
   const bool         verbose = true;
-  const bool         debug   = true;
+  const bool         debug   = false;
   const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1); // intersections
   const unsigned int subdiv  = 0;
   const double       eratio  = 1.1;
@@ -167,58 +167,60 @@ int main(const int argc, const char** argv) {
   std::cout << "* number of events: "         << num_events         << std::endl;
 
   // Export.
-  // std::cout << std::endl;
-  // std::cout << "--- EXPORT: " << std::endl;
+  std::cout << std::endl;
+  std::cout << "--- EXPORT: " << std::endl;
 
   // Vertices.
-  // std::string output_filename = "partition-vertices.xyz";
-  // std::ofstream output_file_vertices(output_filename);
-  // output_file_vertices.precision(20);
-  // for (const auto& output_vertex : output_vertices)
-  //   output_file_vertices << output_vertex << std::endl;
-  // output_file_vertices.close();
-  // std::cout << "* partition vertices exported successfully" << std::endl;
+  std::string output_filename = "partition-vertices.xyz";
+  std::ofstream output_file_vertices(output_filename);
+  output_file_vertices.precision(20);
+  for (const auto& output_vertex : output_vertices)
+    output_file_vertices << output_vertex << std::endl;
+  output_file_vertices.close();
+  std::cout << "* partition vertices exported successfully" << std::endl;
 
   // Edges.
-  // output_filename = "partition-edges.polylines.txt";
-  // std::ofstream output_file_edges(output_filename);
-  // output_file_edges.precision(20);
-  // for (const auto& output_edge : output_edges)
-  //   output_file_edges << "2 " << output_edge << std::endl;
-  // output_file_edges.close();
-  // std::cout << "* partition edges exported successfully" << std::endl;
+  output_filename = "partition-edges.polylines.txt";
+  std::ofstream output_file_edges(output_filename);
+  output_file_edges.precision(20);
+  for (const auto& output_edge : output_edges)
+    output_file_edges << "2 " << output_edge << std::endl;
+  output_file_edges.close();
+  std::cout << "* partition edges exported successfully" << std::endl;
 
   // Faces.
-  // output_filename = "partition-faces.ply";
-  // std::ofstream output_file_faces(output_filename);
-  // output_file_faces.precision(20);
-  // if (!CGAL::write_PLY(output_file_faces, output_vertices, output_faces)) {
-  //   std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
-  //   return EXIT_FAILURE;
-  // }
-  // output_file_faces.close();
-  // std::cout << "* partition faces exported successfully" << std::endl;
+  output_filename = "partition-faces.ply";
+  std::ofstream output_file_faces(output_filename);
+  output_file_faces.precision(20);
+  if (!CGAL::IO::write_PLY(output_file_faces, output_vertices, output_faces)) {
+    std::cerr << "ERROR: can't write to the file " << output_filename << "!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  output_file_faces.close();
+  std::cout << "* partition faces exported successfully" << std::endl;
 
   // Volumes.
-  // output_filename = "partition-volume-";
-  // for (std::size_t i = 0; i < num_volumes; ++i) {
-  //   const auto output_file = output_filename + std::to_string(i) + ".ply";
-  //   std::ofstream output_file_volume(output_file);
-  //   output_file_volume.precision(20);
-  //   if (!CGAL::write_ply(output_file_volume, output_volumes[i])) {
-  //     std::cerr << "ERROR: can't write to the file " << output_file << "!" << std::endl;
-  //     return EXIT_FAILURE;
-  //   }
-  //   output_file_volume.close();
-  // }
-  // std::cout << "* partition volumes exported successfully" << std::endl;
+  output_filename = "partition-volume-";
+  for (std::size_t i = 0; i < num_volumes; ++i) {
+    const auto output_file = output_filename + std::to_string(i) + ".ply";
+    std::ofstream output_file_volume(output_file);
+    output_file_volume.precision(20);
+    if (!CGAL::IO::write_PLY(output_file_volume, output_volumes[i])) {
+      std::cerr << "ERROR: can't write to the file " << output_file << "!" << std::endl;
+      return EXIT_FAILURE;
+    }
+    output_file_volume.close();
+  }
+  std::cout << "* partition volumes exported successfully" << std::endl;
 
   // Support planes.
+  // For big data sets, this one will print too many data,
+  // so we comment it out.
   // for (std::size_t i = 0; i < support_planes.size(); ++i) {
   //   const std::string filename = "support_plane-" + std::to_string(i) + ".ply";
   //   std::ofstream output_file_support_plane(filename);
   //   output_file_support_plane.precision(20);
-  //   CGAL::write_ply(output_file_support_plane, support_planes[i]);
+  //   CGAL::IO::write_PLY(output_file_support_plane, support_planes[i]);
   //   output_file_support_plane.close();
   // }
   // std::cout << "* partition support planes exported successfully" << std::endl;
