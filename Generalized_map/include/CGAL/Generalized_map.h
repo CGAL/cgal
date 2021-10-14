@@ -196,8 +196,8 @@ namespace CGAL {
               typename Converters, typename DartInfoConverter,
               typename PointConverter>
     void generic_copy(GMap2& amap,
-                      boost::unordered_map<Dart_handle_2, Dart_handle>* origin_to_copy,
-                      boost::unordered_map<Dart_handle, Dart_handle_2>* copy_to_origin,
+                      std::unordered_map<Dart_handle_2, Dart_handle>* origin_to_copy,
+                      std::unordered_map<Dart_handle, Dart_handle_2>* copy_to_origin,
                       const Converters& converters,
                       const DartInfoConverter& dartinfoconverter,
                       const PointConverter& pointconverter,
@@ -223,7 +223,7 @@ namespace CGAL {
       // Create an mapping between darts of the two maps (originals->copies).
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
-      boost::unordered_map<Dart_handle_2, Dart_handle> local_dartmap;
+      std::unordered_map<Dart_handle_2, Dart_handle> local_dartmap;
       if (origin_to_copy==NULL) // Use local_dartmap if user does not provides its own unordered_map
       { origin_to_copy=&local_dartmap; }
 
@@ -251,7 +251,7 @@ namespace CGAL {
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
 
-      typename boost::unordered_map<Dart_handle_2, Dart_handle>::iterator
+      typename std::unordered_map<Dart_handle_2, Dart_handle>::iterator
         dartmap_iter, dartmap_iter_end=origin_to_copy->end();
       for (dartmap_iter=origin_to_copy->begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
@@ -286,9 +286,9 @@ namespace CGAL {
     template<typename GMap2, typename Converters, typename DartInfoConverter,
              typename PointConverter>
     void copy(GMap2& amap,
-              boost::unordered_map
+              std::unordered_map
               <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
-              boost::unordered_map
+              std::unordered_map
               <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
               const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
@@ -307,9 +307,9 @@ namespace CGAL {
     template<typename GMap2, typename Converters, typename DartInfoConverter,
              typename PointConverter>
     void copy_from_const(const GMap2& amap,
-                         boost::unordered_map
+                         std::unordered_map
                          <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
-                         boost::unordered_map
+                         std::unordered_map
                          <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
                          const Converters& converters,
                          const DartInfoConverter& dartinfoconverter,
@@ -327,9 +327,9 @@ namespace CGAL {
     // (2a) copy(amap, converters, dartinfoconverter)
     template<typename GMap2, typename Converters, typename DartInfoConverter>
     void copy(GMap2& amap,
-              boost::unordered_map
+              std::unordered_map
               <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
-              boost::unordered_map
+              std::unordered_map
               <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
               const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
@@ -346,9 +346,9 @@ namespace CGAL {
     // (2b) copy_from_const(const amap, converters, dartinfoconverter)
     template <typename GMap2, typename Converters, typename DartInfoConverter>
     void copy_from_const(const GMap2& amap,
-                         boost::unordered_map
+                         std::unordered_map
                          <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
-                         boost::unordered_map
+                         std::unordered_map
                          <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
                          const Converters& converters,
                          const DartInfoConverter& dartinfoconverter,
@@ -365,9 +365,9 @@ namespace CGAL {
     // (3a) copy(amap, converters)
     template<typename GMap2, typename Converters>
     void copy(GMap2& amap,
-              boost::unordered_map
+              std::unordered_map
               <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
-              boost::unordered_map
+              std::unordered_map
               <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
               const Converters& converters,
               bool copy_perforated_darts=false,
@@ -381,9 +381,9 @@ namespace CGAL {
     // (3b) copy_from_const(const amap, converters)
     template <typename GMap2, typename Converters>
     void copy_from_const(const GMap2& amap,
-                         boost::unordered_map
+                         std::unordered_map
                          <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
-                         boost::unordered_map
+                         std::unordered_map
                          <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
                          const Converters& converters,
                          bool copy_perforated_darts=false,
@@ -397,9 +397,9 @@ namespace CGAL {
     // (4a) copy(amap)
     template<typename GMap2>
     void copy(GMap2& amap,
-              boost::unordered_map
+              std::unordered_map
               <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
-              boost::unordered_map
+              std::unordered_map
               <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr,
               bool copy_perforated_darts=false,
               size_type mark_perforated=INVALID_MARK)
@@ -412,9 +412,9 @@ namespace CGAL {
     // (4b) copy_from_const(const amap)
     template <typename GMap2>
     void copy_from_const(const GMap2& amap,
-                         boost::unordered_map
+                         std::unordered_map
                          <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
-                         boost::unordered_map
+                         std::unordered_map
                          <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr,
                          bool copy_perforated_darts=false,
                          size_type mark_perforated=INVALID_MARK)
