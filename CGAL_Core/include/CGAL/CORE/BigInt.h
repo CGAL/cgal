@@ -32,7 +32,11 @@
 
 namespace CORE {
 
+#ifdef CGAL_CORE_USE_GMP_BACKEND
+  typedef boost::multiprecision::mpz_int Z;
+#else
   typedef  boost::multiprecision::cpp_int Z;
+#endif
 
 
 

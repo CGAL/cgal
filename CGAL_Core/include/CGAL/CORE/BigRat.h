@@ -29,7 +29,11 @@
 
 namespace CORE {
 
+#ifdef CGAL_CORE_USE_GMP_BACKEND
+  typedef boost::multiprecision::mpq_rational Q;
+#else
   typedef  boost::multiprecision::cpp_rational Q;
+#endif
 
 class BigRatRep : public RCRepImpl<BigRatRep> {
 public:
