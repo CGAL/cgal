@@ -36,6 +36,10 @@ namespace Intersections {
 
 namespace internal {
 
+// struct used to report the combinaric of the intersection
+// of 2 2D segments.
+// More information could be gathered if exposed in do_intersect.
+// See comments with DI_MORE_INFO_TAG
 struct S2S2_inter_info
 {
   bool inter = false;
@@ -46,15 +50,17 @@ struct S2S2_inter_info
   : inter(inter)
   {}
 
+  // intersection is an input endpoint
   S2S2_inter_info(int id)
   : inter(true)
   {
     pt_ids[0]=id;
   }
 
-  S2S2_inter_info(int id1,int id2, int dim)
+  // intersection is a segment
+  S2S2_inter_info(int id1,int id2)
   : inter(true)
-  , dim(dim)
+  , dim(1)
   {
     pt_ids[0]=id1;
     pt_ids[1]=id2;
@@ -102,7 +108,7 @@ seg_seg_do_intersect_crossing(
     }
     case COLLINEAR:
       if (extra_test && k.collinear_2_object()(p3,p4,p2))
-        return S2S2_inter_info(i3, i2, 1);
+        return S2S2_inter_info(i3, i2);
       return S2S2_inter_info(i3);
     }
     CGAL_kernel_assertion(false);
@@ -146,7 +152,7 @@ seg_seg_do_intersect_contained(
     }
     case COLLINEAR:
         if (extra_test && k.collinear_2_object()(p3,p4,p2))
-          return S2S2_inter_info(i3, i4, 1);
+          return S2S2_inter_info(i3, i4);
         return S2S2_inter_info(i3);
     }
     CGAL_kernel_assertion(false);
@@ -188,7 +194,7 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
         case SMALLER:
             return S2S2_inter_info(false);
         case EQUAL:
-            return S2S2_inter_info(A2_id, B1_id+2, 0);
+            return S2S2_inter_info(A2_id); // DI_MORE_INFO_TAG: A2==B1 but only A2 is reported
         default: // LARGER
             switch(make_certain(compare_xy(A2,B2))) {
             case SMALLER:
@@ -196,8 +202,8 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
             case EQUAL:
                 // A1 < B1 < B2 = A1
                 if (extra_test && k.collinear_2_object()(A1, A2, B1))
-                  return S2S2_inter_info(B1_id+2, B2_id+2, 1); // TODO: A2==B2 too but bit is not set
-                return S2S2_inter_info(A2_id, B2_id+2, 0);
+                  return S2S2_inter_info(B1_id+2, B2_id+2); // DI_MORE_INFO_TAG: A2==B2 but only B2 is reported
+                return S2S2_inter_info(A2_id); // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
             default: // LARGER
                 return seg_seg_do_intersect_contained(A1,A2,B1,B2, A1_id,A2_id,B1_id+2,B2_id+2, k, extra_test);
             }
@@ -209,24 +215,24 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
           case SMALLER:
             // A1 = B1 < A2 < B2
             if (k.collinear_2_object()(A1,A2,B2))
-              return S2S2_inter_info(A1_id, A2_id, 1); // TODO A1==B1 too but bit is not set
+              return S2S2_inter_info(A1_id, A2_id); // DI_MORE_INFO_TAG: A1==B1 but only A1 is reported
             break;
           case EQUAL:
             // A1 = B1 < A2 = B2
-            return S2S2_inter_info(A1_id, A2_id, 1); // TODO A1==B1 and A2==B2 too but bits are not set
+            return S2S2_inter_info(A1_id, A2_id); // DI_MORE_INFO_TAG: A1==B1 and A2==B2 but only A1 and A2 are reported
           default: // LARGER
             // A1 = B1 < B2 < A2
             if (k.collinear_2_object()(A1,A2,B2))
-              return S2S2_inter_info(B1_id+2, B2_id+2, 1); // TODO A1==B1 too but bit is not set
+              return S2S2_inter_info(B1_id+2, B2_id+2); // DI_MORE_INFO_TAG: A1==B1 but only B1 is reported
           }
         }
-        return S2S2_inter_info(A1_id, B1_id+2, 0);
+        return S2S2_inter_info(A1_id); // DI_MORE_INFO_TAG: A1==B1 but only A1 is reported
     default: // LARGER
         switch(make_certain(compare_xy(B2,A1))) {
         case SMALLER:
             return S2S2_inter_info(false);
         case EQUAL:
-            return S2S2_inter_info(A1_id, B2_id+2, 0);
+            return S2S2_inter_info(A1_id); // DI_MORE_INFO_TAG: A1==B2 but only A1 is reported
         default: // LARGER
             switch(make_certain(compare_xy(B2,A2))) {
             case SMALLER:
@@ -234,8 +240,8 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
             case EQUAL:
                 // B1 < A1 < A2 = B2
                 if (extra_test && k.collinear_2_object()(B1, A1, B2))
-                  return S2S2_inter_info(A1_id, A2_id, 1); // TODO A2==B2 too but bit not set
-                return S2S2_inter_info(A2_id, B2_id+2, 0);
+                  return S2S2_inter_info(A1_id, A2_id); // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
+                return S2S2_inter_info(A2_id); // DI_MORE_INFO_TAG: A2==B2 but only A2 is reported
             default: // LARGER
                 return seg_seg_do_intersect_contained(B1,B2,A1,A2, B1_id+2,B2_id+2,A1_id,A2_id, k, extra_test);
             }
