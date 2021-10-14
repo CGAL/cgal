@@ -455,7 +455,9 @@ namespace CGAL {
     {
       unsigned int res = 0;
 
-      std::map<Point, std::vector<Dart_handle> > one_dart_per_facet;
+      // We store one dart per face, the face being accessed through its
+      // minimal and maximal points.
+      std::map<Point, std::map<Point, std::vector<Dart_handle>>> one_dart_per_facet;
       size_type mymark = get_new_mark();
 
       // First we fill the std::map by one dart per facet, and by using
@@ -466,56 +468,58 @@ namespace CGAL {
         if ( !is_marked(it, mymark) && is_marked(it, AMark) )
         {
           Point min_point=point(it);
-          Dart_handle min_dart = it;
+          Point max_point=min_point;
+          Dart_handle min_dart=it;
           mark(it, mymark);
-          typename Base::template
-            Dart_of_cell_range<2>::iterator it2(*this,it);
+          typename Base::template Dart_of_cell_range<2>::iterator it2(*this,it);
           ++it2;
           for ( ; it2.cont(); ++it2 )
           {
-            Point cur_point=point(it2);
+            Point& cur_point=point(it2);
             this->mark(it2, mymark);
             if ( cur_point < min_point )
             {
               min_point = cur_point;
               min_dart = it2;
             }
+            if (cur_point>max_point)
+            { max_point=cur_point; }
           }
-          one_dart_per_facet[min_point].push_back(min_dart);
+          one_dart_per_facet[min_point][max_point].push_back(min_dart);
         }
         else
           this->mark(it, mymark);
       }
 
       // Second we run through the map: candidates for sew3 have necessary the
-      // same minimal point.
-      typename std::map<Point, std::vector<Dart_handle> >::iterator
-        itmap=one_dart_per_facet.begin(),
-        itmapend=one_dart_per_facet.end();
-
-      for (; itmap!=itmapend; ++itmap)
+      // same minimal and maximal points.
+      for (auto itmap=one_dart_per_facet.begin(),
+           itmapend=one_dart_per_facet.end(); itmap!=itmapend; ++itmap)
       {
-        for (typename std::vector<Dart_handle>::iterator
-               it1=(itmap->second).begin(),
-               it1end=(itmap->second).end(); it1!=it1end; ++it1)
+        for (auto itmap2=(itmap->second).begin(),
+             itmap2end=(itmap->second).end(); itmap2!=itmap2end; ++itmap2)
         {
-          typename std::vector<Dart_handle>::iterator it2=it1;
-          for (++it2; it2!=it1end; ++it2)
+          for (typename std::vector<Dart_handle>::iterator
+               it1=(itmap2->second).begin(),
+               it1end=(itmap2->second).end(); it1!=it1end; ++it1)
           {
-            if (*it1!=*it2 &&
-                !this->template is_opposite_exist<3>(*it1) &&
-                !this->template is_opposite_exist<3>(*it2) &&
-                are_facets_opposite_and_same_geometry
-                (*it1, this->previous(*it2)))
+            typename std::vector<Dart_handle>::iterator it2=it1;
+            for (++it2; it2!=it1end; ++it2)
             {
+              if (*it1!=*it2 &&
+                  !this->template is_opposite_exist<3>(*it1) &&
+                  !this->template is_opposite_exist<3>(*it2) &&
+                  are_facets_opposite_and_same_geometry
+                  (*it1, this->previous(*it2)))
+              {
               ++res;
-              this->template sew<3>(*it1,
-                                    this->other_orientation(previous(*it2)));
+                this->template sew<3>(*it1,
+                    this->other_orientation(previous(*it2)));
+              }
             }
           }
         }
       }
-
       CGAL_assertion( this->is_whole_map_marked(mymark) );
       this->free_mark(mymark);
       return res;
