@@ -28,8 +28,6 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Intersection_traits_2.h>
 
-#include <functional>
-
 namespace CGAL {
 
 namespace Intersections {
@@ -300,16 +298,12 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     if (inter_info.dim==1)
     {
       _result=SEGMENT;
-      // TODO: avoid reference_wrapper?
-      std::vector< std::reference_wrapper<const typename K::Point_2> > pts;
-      for (int i=0;i<2;++i)
-        if (inter_info.pt_ids[i]>1)
-          pts.push_back( std::cref(_seg2->point(inter_info.pt_ids[i]-2)) );
-        else
-          pts.push_back( std::cref(_seg1->point(inter_info.pt_ids[i])) );
-      CGAL_assertion(pts.size()==2);
-      _intersection_point = pts[0];
-      _other_point = pts[1];
+      _intersection_point = (inter_info.pt_ids[0]>1)
+                          ? _seg2->point(inter_info.pt_ids[0]-2)
+                          : _seg1->point(inter_info.pt_ids[0]);
+      _other_point = inter_info.pt_ids[1]>1
+                   ? _seg2->point(inter_info.pt_ids[1]-2)
+                   : _seg1->point(inter_info.pt_ids[1]);
       return _result;
     }
 
@@ -319,10 +313,9 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
     // check if intersection is an input endpoint
     if (inter_info.pt_ids[0]>=0)
     {
-      if (inter_info.pt_ids[0]>1)
-        _intersection_point = _seg2->point(inter_info.pt_ids[0]-2);
-      else
-        _intersection_point = _seg1->point(inter_info.pt_ids[0]);
+      _intersection_point = (inter_info.pt_ids[0]>1)
+                          ? _seg2->point(inter_info.pt_ids[0]-2)
+                          : _seg1->point(inter_info.pt_ids[0]);
       return _result;
     }
 
