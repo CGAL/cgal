@@ -69,7 +69,7 @@ namespace internal{
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    CGAL_assertion(halfedge(v_max, pmesh)!=boost::graph_traits<PolygonMesh>::null_halfedge());
+    CGAL_precondition(halfedge(v_max, pmesh)!=boost::graph_traits<PolygonMesh>::null_halfedge());
 
     //VertexPointMap
     typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
@@ -416,9 +416,9 @@ void orient(TriangleMesh& tm,
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    Vpm;
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
-  CGAL_assertion(is_triangle_mesh(tm));
-  CGAL_assertion(is_valid_polygon_mesh(tm));
-  CGAL_assertion(is_closed(tm));
+  CGAL_precondition(is_triangle_mesh(tm));
+  CGAL_precondition(is_valid_polygon_mesh(tm));
+  CGAL_precondition(is_closed(tm));
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -824,16 +824,15 @@ volume_connected_components(const TriangleMesh& tm,
   typedef typename GT::vertex_descriptor vertex_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::const_type Vpm;
-  typedef typename GetInitializedFaceIndexMap<TriangleMesh,
-                                              NamedParameters>::type FaceIndexMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
+  typedef typename Kernel_traits<typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
 
-  typedef typename Kernel_traits<
-    typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                get_const_property_map(boost::vertex_point, tm));
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, tm));
 
   FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
@@ -848,18 +847,16 @@ volume_connected_components(const TriangleMesh& tm,
   std::vector<std::vector<std::size_t> > nested_cc_per_cc(nb_cc);
 
   // copy cc-id info
-  internal::set_f_cc_id(face_cc, fid_map, parameters::get_parameter(np, internal_np::face_connected_component_map), tm);
+  internal::set_f_cc_id(face_cc, fid_map, get_parameter(np, internal_np::face_connected_component_map), tm);
 
   const bool do_self_intersection_tests =
-        parameters::choose_parameter(parameters::get_parameter(np, internal_np::do_self_intersection_tests),
-                            false);
+    choose_parameter(get_parameter(np, internal_np::do_self_intersection_tests), false);
   const bool ignore_orientation_of_cc =
-    !parameters::choose_parameter(parameters::get_parameter(np, internal_np::do_orientation_tests),
-                         true);
+    ! choose_parameter(get_parameter(np, internal_np::do_orientation_tests), true);
 
+  // indicate if the function is called by does_bound_a_volume
   const bool used_as_a_predicate =
-    parameters::choose_parameter(parameters::get_parameter(np, internal_np::i_used_as_a_predicate),
-                        false); // indicate if the function is called by does_bound_a_volume
+    choose_parameter(get_parameter(np, internal_np::i_used_as_a_predicate), false);
 
   CGAL_assertion(!used_as_a_predicate || !ignore_orientation_of_cc);
 
@@ -1035,7 +1032,7 @@ volume_connected_components(const TriangleMesh& tm,
     }
 
     // early return for orient_to_bound_a_volume
-    if (parameters::choose_parameter(parameters::get_parameter(np, internal_np::i_used_for_volume_orientation),false))
+    if (choose_parameter(get_parameter(np, internal_np::i_used_for_volume_orientation),false))
     {
       internal::copy_container_content(nesting_levels, parameters::get_parameter(np, internal_np::nesting_levels));
       internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
@@ -1363,8 +1360,8 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
-  CGAL_assertion(is_closed(tm));
-  CGAL_assertion(is_triangle_mesh(tm));
+  CGAL_precondition(is_closed(tm));
+  CGAL_precondition(is_triangle_mesh(tm));
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
