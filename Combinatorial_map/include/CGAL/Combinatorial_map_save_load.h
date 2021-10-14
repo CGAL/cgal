@@ -164,12 +164,6 @@ namespace CGAL {
                     std::map<typename CMap::Dart_const_handle,
                                typename CMap::size_type>& myDarts)
     {
-      // to check all i-cells of the map
-      typename CMap::template Attribute_range<i>::type::const_iterator
-        it_attrib, itend_attrib;
-      it_attrib=amap.template attributes<i>().begin();
-      itend_attrib=amap.template attributes<i>().end();
-
       // add dimension & type
       boost::property_tree::ptree& ndim = ptree.add("dimension", "");
       ndim.put("<xmlattr>.index", i);
@@ -177,16 +171,20 @@ namespace CGAL {
       ndim.add("type_point", typeid(typename CMap::Point).name());
 
       // for every attribute of the dimension
-      for (; it_attrib!=itend_attrib; ++it_attrib)
+      for (auto it=amap.template one_dart_per_cell<i>().begin(),
+           itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        // make composant, dart and property node
-        boost::property_tree::ptree & nattr = ndim.add("a", "");
-        /* boost::property_tree::ptree & ndarts = */
-          nattr.add("d", myDarts[it_attrib->dart()]);
+        if (amap.template attribute<i>(it)!=nullptr)
+        {
+          // make composant, dart and property node
+          boost::property_tree::ptree & nattr = ndim.add("a", "");
+          /* boost::property_tree::ptree & ndarts = */
+          nattr.add("d", myDarts[it]);
 
-        // update property node to add a value node (from basic or custom type
-        write_cmap_attribute_node(nattr, it_attrib->info());
-        write_cmap_attribute_node(nattr, it_attrib->point());
+          // update property node to add a value node (from basic or custom type
+          write_cmap_attribute_node(nattr, amap.template info<i>(it));
+          write_cmap_attribute_node(nattr, amap.point(it));
+        }
       }
     }
   };
@@ -199,12 +197,6 @@ namespace CGAL {
                     std::map<typename CMap::Dart_const_handle,
                                typename CMap::size_type>& myDarts)
     {
-      // to check all i-cells of the map
-      typename CMap::template Attribute_range<i>::type::const_iterator
-        it_attrib, itend_attrib;
-      it_attrib=amap.template attributes<i>().begin();
-      itend_attrib=amap.template attributes<i>().end();
-
       // add dimension & type
       boost::property_tree::ptree& ndim = ptree.add("dimension", "");
       ndim.put("<xmlattr>.index", i);
@@ -212,15 +204,19 @@ namespace CGAL {
       ndim.add("type_point", typeid(typename CMap::Point).name());
 
       // for every attribute of the dimension
-      for (; it_attrib!=itend_attrib; ++it_attrib)
+      for (auto it=amap.template one_dart_per_cell<i>().begin(),
+           itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        // make composant, dart and property node
-        boost::property_tree::ptree & nattr = ndim.add("a", "");
-        /* boost::property_tree::ptree & ndarts = */
-        nattr.add("d", myDarts[it_attrib->dart()]);
+        if (amap.template attribute<i>(it)!=nullptr)
+        {
+          // make composant, dart and property node
+          boost::property_tree::ptree & nattr = ndim.add("a", "");
+          /* boost::property_tree::ptree & ndarts = */
+          nattr.add("d", myDarts[it]);
 
-        // update property node to add a value node (from basic or custom type
-        write_cmap_attribute_node(nattr, it_attrib->point());
+          // update property node to add a value node (from basic or custom type
+          write_cmap_attribute_node(nattr, amap.point(it));
+        }
       }
     }
   };
@@ -233,12 +229,6 @@ namespace CGAL {
                     std::map<typename CMap::Dart_const_handle,
                                typename CMap::size_type>& myDarts)
     {
-      // to check all i-cells of the map
-      typename CMap::template Attribute_range<i>::type::const_iterator
-        it_attrib, itend_attrib;
-      it_attrib=amap.template attributes<i>().begin();
-      itend_attrib=amap.template attributes<i>().end();
-
       // add dimension & type
       boost::property_tree::ptree& ndim = ptree.add("dimension", "");
       ndim.put("<xmlattr>.index", i);
@@ -247,15 +237,19 @@ namespace CGAL {
       ndim.add("type_point", "void");
 
       // for every attribute of the dimension
-      for (; it_attrib!=itend_attrib; ++it_attrib)
+      for (auto it=amap.template one_dart_per_cell<i>().begin(),
+           itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        // make composant, dart and property node
-        boost::property_tree::ptree & nattr = ndim.add("a", "");
-        /* boost::property_tree::ptree & ndarts = */
-        nattr.add("d", myDarts[it_attrib->dart()]);
+        if (amap.template attribute<i>(it)!=nullptr)
+        {
+          // make composant, dart and property node
+          boost::property_tree::ptree & nattr = ndim.add("a", "");
+          /* boost::property_tree::ptree & ndarts = */
+          nattr.add("d", myDarts[it]);
 
-        // update property node to add a value node (from basic or custom type
-        write_cmap_attribute_node(nattr, it_attrib->info());
+          // update property node to add a value node (from basic or custom type
+          write_cmap_attribute_node(nattr, amap.template info<i>(it));
+        }
       }
     }
   };
@@ -268,12 +262,6 @@ namespace CGAL {
                     std::map<typename CMap::Dart_const_handle,
                                typename CMap::size_type>& myDarts)
     {
-      // to check all i-cells of the map
-      typename CMap::template Attribute_range<i>::type::const_iterator
-        it_attrib, itend_attrib;
-      it_attrib=amap.template attributes<i>().begin();
-      itend_attrib=amap.template attributes<i>().end();
-
       // add dimension & type
       boost::property_tree::ptree& ndim = ptree.add("dimension", "");
       ndim.put("<xmlattr>.index", i);
@@ -281,12 +269,16 @@ namespace CGAL {
       ndim.add("type_point", "void");
 
       // for every attribute of the dimension
-      for (; it_attrib!=itend_attrib; ++it_attrib)
+      for (auto it=amap.template one_dart_per_cell<i>().begin(),
+           itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        // make composant, dart and property node
-        boost::property_tree::ptree & nattr = ndim.add("a", "");
-        /* boost::property_tree::ptree & ndarts = */
-        nattr.add("d", myDarts[it_attrib->dart()]);
+        if (amap.template attribute<i>(it)!=nullptr)
+        {
+          // make composant, dart and property node
+          boost::property_tree::ptree & nattr = ndim.add("a", "");
+          /* boost::property_tree::ptree & ndarts = */
+          nattr.add("d", myDarts[it]);
+        }
       }
     }
   };

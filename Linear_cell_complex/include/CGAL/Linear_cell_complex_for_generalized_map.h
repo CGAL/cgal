@@ -145,6 +145,18 @@ namespace CGAL {
         Base::operator=(alcc);
         return *this;
       }
+
+      friend std::ostream& operator<< (std::ostream& os, const Self& amap)
+      {
+        save_generalized_map(amap, os);
+        return os;
+      }
+
+      friend std::ifstream& operator>> (std::ifstream& is, Self& amap)
+      {
+        load_generalized_map(is, amap);
+        return is;
+      }
     };
 
 } // namespace CGAL

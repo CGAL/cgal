@@ -146,6 +146,18 @@ namespace CGAL {
         return *this;
       }
 
+      friend std::ostream& operator<< (std::ostream& os, const Self& amap)
+      {
+        save_combinatorial_map(amap, os);
+        return os;
+      }
+
+      friend std::ifstream& operator>> (std::ifstream& is, Self& amap)
+      {
+        load_combinatorial_map(is, amap);
+        return is;
+      }
+
       /** Import the given hds which should be a model of an halfedge graph. */
       template<class HEG, class PointConverter>
       void import_from_halfedge_graph(const HEG& heg              ,
