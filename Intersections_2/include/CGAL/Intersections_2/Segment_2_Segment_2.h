@@ -28,62 +28,137 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/Intersection_traits_2.h>
 
+#include <functional>
+
 namespace CGAL {
 
 namespace Intersections {
 
 namespace internal {
 
+struct S2S2_inter_info
+{
+  bool inter = false;
+  bool dim = 0;
+  std::array<int, 2> pt_ids = {-1,-1};
+
+  S2S2_inter_info(bool inter)
+  : inter(inter)
+  {}
+
+  S2S2_inter_info(int id)
+  : inter(true)
+  {
+    pt_ids[0]=id;
+  }
+
+  S2S2_inter_info(int id1,int id2, int dim)
+  : inter(true)
+  , dim(dim)
+  {
+    pt_ids[0]=id1;
+    pt_ids[1]=id2;
+  }
+};
+
 template <class K>
-inline bool
+inline S2S2_inter_info
 do_intersect(const typename K::Segment_2 &seg1, const typename K::Segment_2 &seg2);
 
 
-
-
+// lexicographic order of points p1 < p3 < p2 < p4, with segments (p1,p2) and (p3,p4)
 template <class K>
-bool seg_seg_do_intersect_crossing(
-        const typename K::Point_2  &p1, const typename K::Point_2 &p2,
-        const typename K::Point_2 &p3, const typename K::Point_2 &p4,
-        const K& k)
+S2S2_inter_info
+seg_seg_do_intersect_crossing(
+        const typename K::Point_2& p1, const typename K::Point_2& p2,
+        const typename K::Point_2& p3, const typename K::Point_2& p4,
+        int i1, int i2, int i3, int i4,
+        const K& k, bool extra_test)
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
-      return ! (k.orientation_2_object()(p3,p4,p2) == RIGHT_TURN); //   right_turn(p3,p4,p2);
+    {
+      switch (k.orientation_2_object()(p3,p4,p2))
+      {
+        case COLLINEAR:
+          return S2S2_inter_info(i2);
+        case RIGHT_TURN:
+          return S2S2_inter_info(false);
+        case LEFT_TURN:
+          return S2S2_inter_info(true);
+      }
+    }
     case RIGHT_TURN:
-        return ! (k.orientation_2_object()(p3,p4,p2) == LEFT_TURN); //left_turn(p3,p4,p2);
+    {
+      switch (k.orientation_2_object()(p3,p4,p2))
+      {
+        case COLLINEAR:
+          return S2S2_inter_info(i2);
+        case RIGHT_TURN:
+          return S2S2_inter_info(true);
+        case LEFT_TURN:
+          return S2S2_inter_info(false);
+      }
+    }
     case COLLINEAR:
-        return true;
+      if (extra_test && k.collinear_2_object()(p3,p4,p2))
+        return S2S2_inter_info(i3, i2, 1);
+      return S2S2_inter_info(i3);
     }
     CGAL_kernel_assertion(false);
-    return false;
+    return S2S2_inter_info(false);
+}
+
+
+// lexicographic order of points p1 < p3 < p4 < p2, with segments (p1,p2) and (p3,p4)
+template <class K>
+S2S2_inter_info
+seg_seg_do_intersect_contained(
+        const typename K::Point_2& p1, const typename K::Point_2& p2,
+        const typename K::Point_2& p3, const typename K::Point_2& p4,
+        int i1, int i2, int i3, int i4,
+        const K& k, bool extra_test)
+{
+    switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
+    case LEFT_TURN:
+    {
+      switch (k.orientation_2_object()(p1,p2,p4))
+      {
+        case COLLINEAR:
+          return S2S2_inter_info(i4);
+        case RIGHT_TURN:
+          return S2S2_inter_info(true);
+        case LEFT_TURN:
+          return S2S2_inter_info(false);
+      }
+    }
+    case RIGHT_TURN:
+    {
+      switch (k.orientation_2_object()(p1,p2,p4))
+      {
+        case COLLINEAR:
+          return S2S2_inter_info(i4);
+        case RIGHT_TURN:
+          return S2S2_inter_info(false);
+        case LEFT_TURN:
+          return S2S2_inter_info(true);
+      }
+    }
+    case COLLINEAR:
+        if (extra_test && k.collinear_2_object()(p3,p4,p2))
+          return S2S2_inter_info(i3, i4, 1);
+        return S2S2_inter_info(i3);
+    }
+    CGAL_kernel_assertion(false);
+    return S2S2_inter_info(false);
 }
 
 
 template <class K>
-bool seg_seg_do_intersect_contained(
-        const typename K::Point_2  &p1, const typename K::Point_2 &p2,
-        const typename K::Point_2 &p3, const typename K::Point_2 &p4,
-        const K& k)
-{
-    switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
-    case LEFT_TURN:
-      return ! (k.orientation_2_object()(p1,p2,p4) == LEFT_TURN); // left_turn(p1,p2,p4);
-    case RIGHT_TURN:
-        return ! (k.orientation_2_object()(p1,p2,p4) == RIGHT_TURN); // right_turn(p1,p2,p4);
-    case COLLINEAR:
-        return true;
-    }
-    CGAL_kernel_assertion(false);
-    return false;
-}
-
-
-template <class K>
-bool
-do_intersect(const typename K::Segment_2 &seg1,
-             const typename K::Segment_2 &seg2,
-             const K& k)
+S2S2_inter_info
+do_intersect_with_info(const typename K::Segment_2 &seg1,
+                       const typename K::Segment_2 &seg2,
+                       const K& k, bool extra_test)
 {
     typename K::Less_xy_2 less_xy;
 
@@ -105,49 +180,81 @@ do_intersect(const typename K::Segment_2 &seg1,
   // first try to filter using the bbox of the segments
     if (less_xy(A2,B1)
      || less_xy(B2,A1))
-        return false;
+        return S2S2_inter_info(false);
 
     switch(make_certain(compare_xy(A1,B1))) {
     case SMALLER:
         switch(make_certain(compare_xy(A2,B1))) {
         case SMALLER:
-            return false;
+            return S2S2_inter_info(false);
         case EQUAL:
-            return true;
+            return S2S2_inter_info(A2_id, B1_id+2, 0);
         default: // LARGER
             switch(make_certain(compare_xy(A2,B2))) {
             case SMALLER:
-                return seg_seg_do_intersect_crossing(A1,A2,B1,B2, k);
+                return seg_seg_do_intersect_crossing(A1,A2,B1,B2, A1_id,A2_id,B1_id+2,B2_id+2, k, extra_test);
             case EQUAL:
-                return true;
+                // A1 < B1 < B2 = A1
+                if (extra_test && k.collinear_2_object()(A1, A2, B1))
+                  return S2S2_inter_info(B1_id+2, B2_id+2, 1); // TODO: A2==B2 too but bit is not set
+                return S2S2_inter_info(A2_id, B2_id+2, 0);
             default: // LARGER
-                return seg_seg_do_intersect_contained(A1,A2,B1,B2, k);
+                return seg_seg_do_intersect_contained(A1,A2,B1,B2, A1_id,A2_id,B1_id+2,B2_id+2, k, extra_test);
             }
         }
     case EQUAL:
-        return true;
+        if (extra_test)
+        {
+          switch(make_certain(compare_xy(A2,B2))) {
+          case SMALLER:
+            // A1 = B1 < A2 < B2
+            if (k.collinear_2_object()(A1,A2,B2))
+              return S2S2_inter_info(A1_id, A2_id, 1); // TODO A1==B1 too but bit is not set
+            break;
+          case EQUAL:
+            // A1 = B1 < A2 = B2
+            return S2S2_inter_info(A1_id, A2_id, 1); // TODO A1==B1 and A2==B2 too but bits are not set
+          default: // LARGER
+            // A1 = B1 < B2 < A2
+            if (k.collinear_2_object()(A1,A2,B2))
+              return S2S2_inter_info(B1_id+2, B2_id+2, 1); // TODO A1==B1 too but bit is not set
+          }
+        }
+        return S2S2_inter_info(A1_id, B1_id+2, 0);
     default: // LARGER
         switch(make_certain(compare_xy(B2,A1))) {
         case SMALLER:
-            return false;
+            return S2S2_inter_info(false);
         case EQUAL:
-            return true;
+            return S2S2_inter_info(A1_id, B2_id+2, 0);
         default: // LARGER
             switch(make_certain(compare_xy(B2,A2))) {
             case SMALLER:
-                return seg_seg_do_intersect_crossing(B1,B2,A1,A2, k);
+                return seg_seg_do_intersect_crossing(B1,B2,A1,A2, B1_id+2,B2_id+2,A1_id,A2_id, k, extra_test);
             case EQUAL:
-                return true;
+                // B1 < A1 < A2 = B2
+                if (extra_test && k.collinear_2_object()(B1, A1, B2))
+                  return S2S2_inter_info(A1_id, A2_id, 1); // TODO A2==B2 too but bit not set
+                return S2S2_inter_info(A2_id, B2_id+2, 0);
             default: // LARGER
-                return seg_seg_do_intersect_contained(B1,B2,A1,A2, k);
+                return seg_seg_do_intersect_contained(B1,B2,A1,A2, B1_id+2,B2_id+2,A1_id,A2_id, k, extra_test);
             }
         }
     }
 
     CGAL_kernel_assertion(false);
-    return false;
+    return S2S2_inter_info(false);
 }
 
+
+template <class K>
+bool
+do_intersect(const typename K::Segment_2 &seg1,
+             const typename K::Segment_2 &seg2,
+             const K& k)
+{
+  return do_intersect_with_info(seg1, seg2, k, false).inter;
+}
 
 template <class K>
 class Segment_2_Segment_2_pair {
@@ -175,10 +282,44 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
   typename K::Construct_vector_2 construct_vector;
     if (_result!=UNKNOWN)
         return _result;
-    if (!internal::do_intersect(*_seg1, *_seg2, K())) {
+
+    S2S2_inter_info inter_info = do_intersect_with_info(*_seg1, *_seg2, K(), true);
+
+    if (!inter_info.inter) {
         _result = NO_INTERSECTION;
         return _result;
     }
+
+    // check if intersection is a segment
+    if (inter_info.dim==1)
+    {
+      _result=SEGMENT;
+      // TODO: avoid reference_wrapper?
+      std::vector< std::reference_wrapper<const typename K::Point_2> > pts;
+      for (int i=0;i<2;++i)
+        if (inter_info.pt_ids[i]>1)
+          pts.push_back( std::cref(_seg2->point(inter_info.pt_ids[i]-2)) );
+        else
+          pts.push_back( std::cref(_seg1->point(inter_info.pt_ids[i])) );
+      CGAL_assertion(pts.size()==2);
+      _intersection_point = pts[0];
+      _other_point = pts[1];
+      return _result;
+    }
+
+    // check if intersection is an input endpoint
+    if (inter_info.pt_ids[0]>=0)
+    {
+      _result = POINT;
+      if (inter_info.pt_ids[0]>1)
+        _intersection_point = _seg2->point(inter_info.pt_ids[0]-2);
+      else
+        _intersection_point = _seg1->point(inter_info.pt_ids[0]);
+      return _result;
+    }
+
+    // TODO: use closed formula for 2 intersecting segments
+
     typename K::Line_2 const &l1 = _seg1->supporting_line();
     typename K::Line_2 const &l2 = _seg2->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, &l2);
