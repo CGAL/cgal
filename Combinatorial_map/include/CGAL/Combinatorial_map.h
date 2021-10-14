@@ -42,6 +42,7 @@
 #include <vector>
 #include <deque>
 #include <tuple>
+#include <map>
 #include <unordered_map>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -2581,7 +2582,7 @@ namespace CGAL {
     /// @return the size (in number of darts) of the biggest cc.
     std::size_t keep_biggest_connected_component()
     {
-      std::unordered_map<std::size_t, Dart_handle> ccs;
+      std::map<std::size_t, Dart_handle> ccs;
 
       size_type treated=get_new_mark();
       for (auto it=darts().begin(), itend=darts().end(); it!=itend; ++it)
