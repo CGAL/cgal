@@ -243,6 +243,19 @@ namespace Point_set {
     void set_k(const std::size_t k) {
       m_number_of_neighbors = k;
     }
+
+    void operator()(
+      const Point_type& query,
+      std::vector<std::size_t>& neighbors) const {
+
+      neighbors.clear();
+      Neighbor_search neighbor_search(
+        m_tree, query,
+        static_cast<unsigned int>(m_number_of_neighbors),
+        0, true, m_distance);
+      for (auto it = neighbor_search.begin(); it != neighbor_search.end(); ++it)
+        neighbors.push_back(it->first);
+    }
     /// \endcond
 
   private:
