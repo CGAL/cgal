@@ -307,10 +307,12 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
       return _result;
     }
 
+    // starting from here we know that the intersection is a point
+    _result = POINT;
+
     // check if intersection is an input endpoint
     if (inter_info.pt_ids[0]>=0)
     {
-      _result = POINT;
       if (inter_info.pt_ids[0]>1)
         _intersection_point = _seg2->point(inter_info.pt_ids[0]-2);
       else
@@ -318,105 +320,17 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
       return _result;
     }
 
-    // TODO: use closed formula for 2 intersecting segments
+    // segments intersect in their interiors
+    typename K::FT s1_dx = _seg1->point(0).x() - _seg1->point(1).x(),
+                   s1_dy = _seg1->point(0).y() - _seg1->point(1).y(),
+                   s2_dx = _seg2->point(1).x() - _seg2->point(0).x(),
+                   s2_dy = _seg2->point(1).y() - _seg2->point(0).y(),
+                   lx    = _seg2->point(1).x() - _seg1->point(1).x(),
+                   ly    = _seg2->point(1).y() - _seg1->point(1).y();
 
-    typename K::Line_2 const &l1 = _seg1->supporting_line();
-    typename K::Line_2 const &l2 = _seg2->supporting_line();
-    Line_2_Line_2_pair<K> linepair(&l1, &l2);
-    switch ( linepair.intersection_type()) {
-    case Line_2_Line_2_pair<K>::NO_INTERSECTION:
-    default:
-        _result = NO_INTERSECTION;
-        break;
-    case Line_2_Line_2_pair<K>::POINT:
-        _intersection_point = linepair.intersection_point();
-        _result = POINT;
-        break;
-    case Line_2_Line_2_pair<K>::LINE:
-        {
-        //typedef typename K::RT RT;
-        typename K::Point_2 const &start1 = _seg1->source();
-        typename K::Point_2 const &end1   = _seg1->target();
-        typename K::Point_2 const &start2 = _seg2->source();
-        typename K::Point_2 const &end2   = _seg2->target();
-        typename K::Vector_2 diff1 = construct_vector(start1, end1);
-        typename K::Point_2 const *minpt;
-        typename K::Point_2 const *maxpt;
-        if (CGAL_NTS abs(diff1.x()) > CGAL_NTS abs(diff1.y())) {
-            if (start1.x() < end1.x()) {
-                minpt = &start1;
-                maxpt = &end1;
-            } else {
-                minpt = &end1;
-                maxpt = &start1;
-            }
-            if (start2.x() < end2.x()) {
-                if (start2.x() > minpt->x()) {
-                    minpt = &start2;
-                }
-                if (end2.x() < maxpt->x()) {
-                    maxpt = &end2;
-                }
-            } else {
-                if (end2.x() > minpt->x()) {
-                    minpt = &end2;
-                }
-                if (start2.x() < maxpt->x()) {
-                    maxpt = &start2;
-                }
-            }
-            if (maxpt->x() < minpt->x()) {
-                _result = NO_INTERSECTION;
-                return _result;
-            }
-            if (maxpt->x() == minpt->x()) {
-                _intersection_point = *minpt;
-                _result = POINT;
-                return _result;
-            }
-            _intersection_point = *minpt;
-            _other_point = *maxpt;
-            _result = SEGMENT;
-            return _result;
-        } else {
-            if (start1.y() < end1.y()) {
-                minpt = &start1;
-                maxpt = &end1;
-            } else {
-                minpt = &end1;
-                maxpt = &start1;
-            }
-            if (start2.y() < end2.y()) {
-                if (start2.y() > minpt->y()) {
-                    minpt = &start2;
-                }
-                if (end2.y() < maxpt->y()) {
-                    maxpt = &end2;
-                }
-            } else {
-                if (end2.y() > minpt->y()) {
-                    minpt = &end2;
-                }
-                if (start2.y() < maxpt->y()) {
-                    maxpt = &start2;
-                }
-            }
-            if (maxpt->y() < minpt->y()) {
-                _result = NO_INTERSECTION;
-                return _result;
-            }
-            if (maxpt->y() == minpt->y()) {
-                _intersection_point = *minpt;
-                _result = POINT;
-                return _result;
-            }
-            _intersection_point = *minpt;
-            _other_point = *maxpt;
-            _result = SEGMENT;
-            return _result;
-        }
-        }
-    }
+    typename K::FT alpha =  (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
+    _intersection_point = K().construct_barycenter_2_object()(_seg1->point(0), alpha, _seg1->point(1));
+
     return _result;
 }
 
