@@ -1319,11 +1319,26 @@ std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexM
  * @pre `CGAL::is_closed(tm)`
  *
  * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{outward_orientation}
+ *     \cgalParamDescription{If `true`, each connected component will be outward oriented (and inward oriented if `false`).}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *     \cgalParamExtra{If the outer connected components are inward oriented,
+ *                     it means that the infinity will be considered as part of the volume bounded by `tm`.}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{face_index_map}
@@ -1333,13 +1348,6 @@ std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexM
  *     \cgalParamDefault{an automatically indexed internal map}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{outward_orientation}
- *     \cgalParamDescription{If `true`, each connected component will be outward oriented (and inward oriented if `false`).}
- *     \cgalParamType{Boolean}
- *     \cgalParamDefault{`true`}
- *     \cgalParamExtra{If the outer connected components are inward oriented,
- *                     it means that the infinity will be considered as part of the volume bounded by `tm`.}
- *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \see `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
@@ -1352,6 +1360,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   typedef typename Graph_traits::face_descriptor                                   face_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    Vpm;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
   CGAL_assertion(is_closed(tm));
@@ -1364,7 +1373,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
 
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(boost::vertex_point, tm));
-
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
@@ -1374,6 +1383,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
 
   volume_connected_components(tm, vidmap,
                               parameters::vertex_point_map(vpm)
+                                          .geom_traits(gt)
                                           .nesting_levels(boost::ref(nesting_levels))
                                           .face_connected_component_map(bind_property_maps(fid_map,make_property_map(face_cc)))
                                           .i_used_for_volume_orientation(true)
