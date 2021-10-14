@@ -23,7 +23,7 @@
 #include <CGAL/Combinatorial_map_functors.h>
 
 #include <algorithm>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <cstdlib>
 #include <iostream>
@@ -161,8 +161,8 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, true, true>
   {
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::map<typename CMap::Dart_const_handle,
-                               typename CMap::size_type>& myDarts)
+                    std::unordered_map<typename CMap::Dart_const_handle,
+                    typename CMap::size_type>& myDarts)
     {
       // add dimension & type
       boost::property_tree::ptree& ndim = ptree.add("dimension", "");
@@ -194,8 +194,8 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, false, true>
   {
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::map<typename CMap::Dart_const_handle,
-                               typename CMap::size_type>& myDarts)
+                    std::unordered_map<typename CMap::Dart_const_handle,
+                    typename CMap::size_type>& myDarts)
     {
       // add dimension & type
       boost::property_tree::ptree& ndim = ptree.add("dimension", "");
@@ -226,8 +226,8 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, true, false>
   {
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::map<typename CMap::Dart_const_handle,
-                               typename CMap::size_type>& myDarts)
+                    std::unordered_map<typename CMap::Dart_const_handle,
+                    typename CMap::size_type>& myDarts)
     {
       // add dimension & type
       boost::property_tree::ptree& ndim = ptree.add("dimension", "");
@@ -259,8 +259,8 @@ namespace CGAL {
   struct My_functor_cmap_save_one_attrib<CMap, i, false, false>
   {
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::map<typename CMap::Dart_const_handle,
-                               typename CMap::size_type>& myDarts)
+                    std::unordered_map<typename CMap::Dart_const_handle,
+                    typename CMap::size_type>& myDarts)
     {
       // add dimension & type
       boost::property_tree::ptree& ndim = ptree.add("dimension", "");
@@ -288,8 +288,8 @@ namespace CGAL {
   {
     template <unsigned int i>
     static void run(CMap& amap, boost::property_tree::ptree& ptree,
-                    std::map<typename CMap::Dart_const_handle,
-                               typename CMap::size_type>& myDarts)
+                    std::unordered_map<typename CMap::Dart_const_handle,
+                    typename CMap::size_type>& myDarts)
     {
       My_functor_cmap_save_one_attrib<CMap, i>::run(amap, ptree, myDarts);
     }
@@ -297,12 +297,12 @@ namespace CGAL {
 
   template < class CMap >
   boost::property_tree::ptree cmap_save_darts
-  (CMap& amap, std::map<typename CMap::Dart_const_handle,
-                                typename CMap::size_type>& myDarts)
+  (CMap& amap, std::unordered_map<typename CMap::Dart_const_handle,
+   typename CMap::size_type>& myDarts)
   {
     CGAL_assertion( myDarts.empty() );
 
-    // First we numbered each dart by using the std::map.
+    // First we numbered each dart by using the unordered_map.
     typename CMap::Dart_range::const_iterator it(amap.darts().begin());
     for(typename CMap::size_type num=1; num<=amap.number_of_darts();
         ++num, ++it)
@@ -341,8 +341,8 @@ namespace CGAL {
 
   template < class CMap >
   boost::property_tree::ptree cmap_save_attributes
-  (const CMap& amap, std::map<typename CMap::Dart_const_handle,
-                                typename CMap::size_type>& myDarts)
+  (const CMap& amap, std::unordered_map<typename CMap::Dart_const_handle,
+   typename CMap::size_type>& myDarts)
   {
     using boost::property_tree::ptree;
     ptree pt;
@@ -375,7 +375,7 @@ namespace CGAL {
     f(tree);
 
     // map dart => number
-    std::map<typename CMap::Dart_const_handle, typename CMap::size_type> myDarts;
+    std::unordered_map<typename CMap::Dart_const_handle, typename CMap::size_type> myDarts;
 
     // Save darts
     ptree pt_darts=cmap_save_darts(amap, myDarts);
