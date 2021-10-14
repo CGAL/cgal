@@ -204,9 +204,7 @@ namespace CGAL {
     m_file_header = scanner;  // Remember file header after return.
 
     Linear_cell_complex_incremental_builder_3<LCC> B(alcc);
-    B.begin_surface(scanner.size_of_vertices(),
-                    scanner.size_of_facets(),
-                    scanner.size_of_halfedges());
+    B.begin_surface();
 
     typedef typename LCC::Point Point;
 
