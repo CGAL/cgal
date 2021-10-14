@@ -232,6 +232,10 @@ namespace Point_set {
     const Index_to_point_map& index_to_point_map() const {
       return m_index_to_point_map;
     }
+
+    void set_sphere_radius(const FT sphere_radius) {
+      m_sphere_radius = sphere_radius;
+    }
     /// \endcond
 
   private:

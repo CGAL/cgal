@@ -239,6 +239,10 @@ namespace Point_set {
     const Index_to_point_map& index_to_point_map() const {
       return m_index_to_point_map;
     }
+
+    void set_k(const std::size_t k) {
+      m_number_of_neighbors = k;
+    }
     /// \endcond
 
   private:
