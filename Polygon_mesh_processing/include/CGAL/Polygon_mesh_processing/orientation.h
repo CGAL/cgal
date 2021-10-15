@@ -873,7 +873,7 @@ volume_connected_components(const TriangleMesh& tm,
   std::vector<Face_pair> si_faces;
   std::set< std::pair<std::size_t, std::size_t> > self_intersecting_cc; // due to self-intersections
   if (do_self_intersection_tests)
-    self_intersections(tm, std::back_inserter(si_faces));
+    self_intersections(tm, std::back_inserter(si_faces), np);
   std::vector<bool> is_involved_in_self_intersection(nb_cc, false);
 
   if (!si_faces.empty() && used_as_a_predicate)
