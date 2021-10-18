@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Yin Xu, Andreas Fabri, Ilker O. Yaz
@@ -13,8 +13,6 @@
 
 #ifndef CGAL_WEIGHTS_PMP_DEPRECATED_H
 #define CGAL_WEIGHTS_PMP_DEPRECATED_H
-
-#include <CGAL/license/Weights.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Weights/internal/pmp_weights_deprecated.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
