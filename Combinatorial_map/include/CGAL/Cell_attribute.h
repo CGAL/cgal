@@ -84,26 +84,13 @@ namespace CGAL {
     const std::size_t& id() const
     { return m_id; }
 
-    static const std::size_t& max_id()
-    { return m_max_id; }
-
   protected:
     void set_id(std::size_t id)
-    {
-      m_id=id;
-      if (m_id+1>m_max_id) { m_max_id=m_id+1; }
-    }
-
-    static void reset_max_id()
-    { m_max_id=0; }
+    { m_id=id; }
 
   protected:
     std::size_t m_id; ///< id of the cell
-    static std::size_t m_max_id; ///< max id used (warning: never decreases)
   };
-
-  template <class WithId>
-  std::size_t Add_id<WithId>::m_max_id=0;
 
   /// If the tag WithId is false, we do not add id to cells.
   template <>
