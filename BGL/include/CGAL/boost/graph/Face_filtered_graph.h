@@ -661,6 +661,27 @@ struct Face_filtered_graph
     return true;
   }
 
+  /// flips the selected status of faces
+  void set_complement()
+  {
+    selected_faces=~selected_faces;
+    selected_halfedges.reset();
+    selected_vertices.reset();
+
+    for(face_descriptor fd : faces(_graph))
+    {
+      if (!selected_faces.test(get(fimap, fd))) continue;
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd, _graph), _graph))
+      {
+        selected_halfedges.set(get(himap, hd));
+        selected_halfedges.set(get(himap, opposite(hd, _graph)));
+        selected_vertices.set(get(vimap, target(hd, _graph)));
+      }
+    }
+
+    reset_indices();
+  }
+
 private:
   Graph& _graph;
   FIM fimap;
