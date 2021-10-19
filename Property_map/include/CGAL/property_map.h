@@ -99,7 +99,8 @@ make_OR_property_map(const PM1& pm1, const PM2& pm2)
 
 // A property map that uses the result of a property map as key.
 template <class KeyMap, class ValueMap>
-struct Property_map_binder{
+struct Property_map_binder
+{
   typedef typename boost::property_traits<KeyMap>::key_type key_type;
   typedef typename boost::property_traits<ValueMap>::value_type value_type;
   typedef typename boost::property_traits<ValueMap>::reference reference;
@@ -108,6 +109,7 @@ struct Property_map_binder{
   KeyMap key_map;
   ValueMap value_map;
 
+  Property_map_binder() { }
   Property_map_binder(const KeyMap& key_map, const ValueMap& value_map)
     : key_map(key_map)
     , value_map(value_map)
