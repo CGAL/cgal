@@ -438,6 +438,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
   Vpm pmap;
   double min_sq_edge_length;
   const Mesh& tm;
+  CGAL::Random rnd;
 
   Triangle_structure_sampler_for_triangle_mesh(const Mesh& m,
                                                PointOutputIterator& out,
@@ -449,6 +450,8 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
     pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(vertex_point, tm));
+    rnd = choose_parameter(get_parameter(np, internal_np::random_generator),
+                           get_default_random());
     min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
 
@@ -549,7 +552,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
   Randomizer get_randomizer()
   {
-    return Randomizer(tm, pmap);
+    return Randomizer(tm, pmap, rnd);
   }
 
   void internal_sample_triangles(double grid_spacing_, bool smpl_fcs, bool smpl_dgs)
@@ -609,6 +612,7 @@ struct Triangle_structure_sampler_for_triangle_soup
   double min_sq_edge_length;
   const PointRange& points;
   const TriangleRange& triangles;
+  Random rnd;
 
   Triangle_structure_sampler_for_triangle_soup(const PointRange& pts,
                                                const TriangleRange& trs,
@@ -616,7 +620,12 @@ struct Triangle_structure_sampler_for_triangle_soup
                                                const NamedParameters& np)
     : Base(out, np), points(pts), triangles(trs)
   {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     min_sq_edge_length = (std::numeric_limits<double>::max)();
+    rnd = choose_parameter(get_parameter(np, internal_np::random_generator),
+                           get_default_random());
   }
 
   std::pair<TriangleIterator, TriangleIterator> get_range()
@@ -681,7 +690,7 @@ struct Triangle_structure_sampler_for_triangle_soup
 
   Randomizer get_randomizer()
   {
-    return Randomizer(triangles, points);
+    return Randomizer(triangles, points, rnd);
   }
 
   void internal_sample_triangles(double distance, bool, bool)
@@ -735,6 +744,12 @@ struct Triangle_structure_sampler_for_triangle_soup
  *     \cgalParamType{a class model of `PMPDistanceTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{random_generator}
+ *     \cgalParamDescription{An instance of `CGAL::Random` used for generating random numbers.}
+ *     \cgalParamType{`CGAL::Random`}
+ *     \cgalParamType{`CGAL::get_default_random()`}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{use_random_uniform_sampling}
@@ -894,6 +909,12 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *     \cgalParamType{a class model of `PMPDistanceTraits`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
  *     \cgalParamExtra{The geometric traits class must be compatible with the point range's point type.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{random_generator}
+ *     \cgalParamDescription{An instance of `CGAL::Random` used for generating random numbers.}
+ *     \cgalParamType{`CGAL::Random`}
+ *     \cgalParamType{`CGAL::get_default_random()`}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{use_random_uniform_sampling}
