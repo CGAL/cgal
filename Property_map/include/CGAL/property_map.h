@@ -19,14 +19,19 @@
 #include <boost/tuple/tuple.hpp>
 #include <CGAL/tuple.h>
 
-#include <utility> // defines std::pair
-
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Cartesian_converter_fwd.h>
 #include <CGAL/Kernel_traits_fwd.h>
 #include <CGAL/assertions.h>
+
+#include <algorithm>
+#include <iterator>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
@@ -109,11 +114,16 @@ struct Property_map_binder
   KeyMap key_map;
   ValueMap value_map;
 
-  Property_map_binder() { }
-  Property_map_binder(const KeyMap& key_map, const ValueMap& value_map)
-    : key_map(key_map)
-    , value_map(value_map)
-  {}
+  Property_map_binder(const KeyMap& key_map = KeyMap(),
+                      const ValueMap& value_map = ValueMap())
+    : key_map(key_map), value_map(value_map)
+  { }
+
+  template <typename VM>
+  Property_map_binder(const VM& value_map,
+                      typename std::enable_if<!std::is_same<KeyMap, VM>::value>::type* = nullptr)
+    : value_map(value_map)
+  { }
 
   friend
   reference get(const Property_map_binder& map, key_type k)
