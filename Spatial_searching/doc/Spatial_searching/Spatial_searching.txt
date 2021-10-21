@@ -172,7 +172,6 @@ because in general the query time will be less than using the default value.
 
 \section Spatial_SearchingSplitting_rule_section Splitting Rules
 
-\cgalModifBegin
 Instead of using the default splitting rule `Sliding_midpoint` described below,
 a user may, depending upon the data, select one from the following splitting rules,
 which determine how a separating hyperplane is computed. Every splitter except for
@@ -180,7 +179,6 @@ the `Balanced_splitter` has degenerated worst cases, which may lead to a linear 
 and a stack overflow. Switching the splitting rule to one of a different kind will solve
 the problem. The `Balanced_splitter` produces the balanced tree by construction whereas
 its degenerated worst cases are not known.
-\cgalModifEnd
 
 <DL>
 
@@ -274,13 +272,11 @@ generate empty cells.
 <DL>
 <DT><B> `Balanced_splitter`</B><DD>
 
-\cgalModifBegin
 This splitting rule first pre-sorts all points in each of k dimensions. It then
 preserves the order of elements in each sort and splits the tree at the median element
 at each step by alternating between these k dimensions. This rule is based on the paper
 by R. A. Brown \cgalCite{cgal:b-bbkdt-15} and guarantees the balanced tree for
 any set of input points including possibly duplicate and collinear points.
-\cgalModifEnd
 
 </DL>
 
@@ -444,7 +440,6 @@ how to perform parallel queries:
 
 \subsection OrthogonalPerfomance Performance of the Orthogonal Search
 
-\cgalModifBegin
 To estimate performance of the tree, we use the Gargoyle data set from aim\@shape
 that contains about 820K points. We first compute a tight axis-aligned bounding box of the input point set.
 We then slightly enlarge it and generate random uniform query points inside this bounding box. The number
@@ -519,7 +514,6 @@ the build time is much lower than the search time. The sliding midpoint splitter
 for nice point sets without duplicate points, however the timings are at the same level for the scenarios `S/S` and `R/R`.
 In case many duplicate and collinear points are present in the input, the balanced splitter is slower but more reliable
 for such noisy data sets.
-\cgalModifEnd
 
 \section Spatial_searchingSoftware Software Design
 
