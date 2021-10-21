@@ -661,8 +661,8 @@ struct Face_filtered_graph
     return true;
   }
 
-  /// flips the selected status of faces
-  void set_complement()
+  /// inverses the selected status of faces
+  void inverse_selection()
   {
     selected_faces=~selected_faces;
     selected_halfedges.reset();
