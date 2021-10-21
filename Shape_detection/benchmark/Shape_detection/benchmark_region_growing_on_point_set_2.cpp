@@ -88,11 +88,11 @@ void benchmark_region_growing_on_point_set_2(
 int main(int argc, char *argv[]) {
 
   // Load xyz data either from a local folder or a user-provided file.
-  std::ifstream in(argc > 1 ? argv[1] : "data/point_set_2.xyz");
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/buildings_outline.xyz"));
   CGAL::IO::set_ascii_mode(in);
 
   if (!in) {
-    std::cout << "ERROR: cannot read the file point_set_2.xyz!" << std::endl;
+    std::cout << "ERROR: cannot read the file buildings_outline.xyz!" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
     input_range.push_back(std::make_pair(Point_2(a, b), Vector_2(d, e)));
   in.close();
 
-  // Default parameter values for the data file point_set_2.xyz.
+  // Default parameter values for the data file buildings_outline.xyz.
   const FT          distance_threshold = FT(45) / FT(10);
   const FT          angle_threshold    = FT(45);
   const std::size_t min_region_size    = 5;

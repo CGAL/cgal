@@ -33,7 +33,7 @@ using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_ty
 int main(int argc, char *argv[]) {
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/point_set_2.xyz"));
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/buildings_outline.xyz"));
   CGAL::IO::set_ascii_mode(in);
   assert(in);
 

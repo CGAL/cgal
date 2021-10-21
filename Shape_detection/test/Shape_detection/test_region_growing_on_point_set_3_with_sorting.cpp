@@ -53,7 +53,7 @@ bool test(
   const std::size_t k = 12;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/point_set_3.xyz"));
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/building.xyz"));
   CGAL::IO::set_ascii_mode(in);
   assert(in);
 
@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions spheres: " << region.size() << std::endl;
-      return (region.size() > 36 && region.size() < 40);
+      return (region.size() > 65 && region.size() < 69);
     }
   );
 
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions cylinders: " << region.size() << std::endl;
-      return (region.size() > 6 && region.size() < 10);
+      return (region.size() > 8 && region.size() < 12);
     }
   );
 

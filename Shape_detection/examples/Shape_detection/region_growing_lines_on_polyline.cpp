@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
   // Load polyline data either from a local folder or a user-provided file.
   const bool is_default_input = argc > 1 ? false : true;
-  std::ifstream in(is_default_input ? "data/polyline_3.polylines.txt" : argv[1]);
+  std::ifstream in(is_default_input ? CGAL::data_file_path("polylines_3/polyline_3.polylines.txt") : argv[1]);
   CGAL::set_ascii_mode(in);
   if (!in) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;

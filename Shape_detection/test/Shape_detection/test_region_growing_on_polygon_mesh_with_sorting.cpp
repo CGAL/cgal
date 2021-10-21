@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   const std::size_t min_region_size    = 5;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("meshes/polygon_mesh.off"));
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("meshes/building.off"));
   CGAL::IO::set_ascii_mode(in);
   assert(in);
 
