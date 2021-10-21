@@ -47,7 +47,7 @@ void test()
 
   // Domain
   std::cout << "\tSeed is\t 0" << std::endl;
-  std::ifstream input("data/cube.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
   Polyhedron polyhedron;
   input >> polyhedron;
   Mesh_domain domain(polyhedron);

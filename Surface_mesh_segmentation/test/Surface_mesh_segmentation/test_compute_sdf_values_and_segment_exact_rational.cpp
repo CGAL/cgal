@@ -16,7 +16,7 @@ int main()
 {
     // create and read Polyhedron
     Polyhedron mesh;
-    std::ifstream input("data/cactus.off");
+    std::ifstream input(CGAL::data_file_path("meshes/cactus.off"));
     if ( !input || !(input >> mesh) || mesh.empty() ) {
         std::cerr << "Not a valid off file." << std::endl;
         return EXIT_FAILURE;

@@ -13,7 +13,7 @@ typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel>                           Mesh;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3> Mesh_with_id;
 
-void mesh_with_id(const char* argv1, const bool save_output)
+void mesh_with_id(const std::string argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -41,7 +41,7 @@ void mesh_with_id(const char* argv1, const bool save_output)
       fccmap(static_cast<unsigned>(num_faces(sm)), get(CGAL::face_index,sm));
 
   std::size_t num = PMP::connected_components(sm, fccmap);
-  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
     assert(num == 3);
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
@@ -53,7 +53,7 @@ void mesh_with_id(const char* argv1, const bool save_output)
                                                                                        .dry_run(true)
                                                                                        .output_iterator(std::back_inserter(faces_to_remove)));
   assert(!faces_to_remove.empty());
-  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
   {
     assert(nb_to_remove == 1);
     assert(num_faces(sm) == nb_faces);
@@ -71,7 +71,7 @@ void mesh_with_id(const char* argv1, const bool save_output)
   ofile.close();
 }
 
-void mesh_no_id(const char* argv1, const bool save_output)
+void mesh_no_id(const std::string argv1, const bool save_output)
 {
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
@@ -96,7 +96,7 @@ void mesh_no_id(const char* argv1, const bool save_output)
 
   std::size_t num = PMP::connected_components(sm, fccmap);
 
-  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
     assert(num == 3);
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
@@ -119,7 +119,7 @@ void test_border_cases()
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
 
-  std::ifstream input("data/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   Mesh_with_id sm;
   input >> sm;
 
@@ -160,7 +160,7 @@ void test_border_cases()
   assert(num_vertices(copy)==0);
 }
 
-void keep_nothing(const char* argv1)
+void keep_nothing(const std::string argv1)
 {
   typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
@@ -187,7 +187,7 @@ void keep_nothing(const char* argv1)
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
   const bool save_output = (argc > 2) ? true : false;
 
   mesh_with_id(filename, save_output);

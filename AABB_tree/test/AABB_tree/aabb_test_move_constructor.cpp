@@ -124,7 +124,7 @@ public:
       assert(in);
       in >> m1;
       in.close();
-      in.open("data/tetrahedron.off");
+      in.open(CGAL::data_file_path("meshes/tetrahedron.off"));
       assert(in);
       in >> m2;
       in.close();

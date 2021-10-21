@@ -609,7 +609,7 @@ void find_smallest_yx(BidirectionalCirculator& first, const Traits& traits)
    current++;
    // find out which direction to go
    typename Traits::Less_yx_2     less_yx = traits.less_yx_2_object();
-   if (less_yx(*current, *first))   // go foward
+   if (less_yx(*current, *first))   // go forward
    {
       do
       {

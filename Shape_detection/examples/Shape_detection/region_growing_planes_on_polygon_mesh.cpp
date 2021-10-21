@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
   // Load data either from a local folder or a user-provided file.
   const bool is_default_input = argc > 1 ? false : true;
-  const std::string filename = is_default_input ? "data/building.off" : argv[1];
+  const std::string filename = is_default_input ? CGAL::data_file_path("meshes/building.off") : argv[1];
   std::ifstream in(filename);
   CGAL::IO::set_ascii_mode(in);
 

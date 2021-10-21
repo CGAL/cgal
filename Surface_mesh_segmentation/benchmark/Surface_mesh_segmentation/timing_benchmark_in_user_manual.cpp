@@ -105,9 +105,9 @@ int main()
   typedef CGAL::Polyhedron_3<Simple_K, CGAL::Polyhedron_items_with_id_3> Simple_K_Polyhedron;
 
   std::vector<std::string> files;
-  files.push_back("data/dino.off");
-  files.push_back("data/bear.off");
-  files.push_back("data/refined_elephant.off");
+  files.push_back(CGAL::data_file_path("meshes/dino.off"));
+  files.push_back(CGAL::data_file_path("meshes/bear_bis.off"));
+  files.push_back(CGAL::data_file_path("meshes/refined_elephant.off"));
 
   std::vector<std::vector<double> > timings_simple;
   std::vector<std::vector<double> > timings_epick;

@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   Point_set points;
 
   // Load points from a file.
-  std::ifstream stream((argc > 1) ? argv[1] : "data/cube.pwn");
+  std::ifstream stream((argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn"));
   stream >> points;
   if (0 == points.number_of_points()) {
 

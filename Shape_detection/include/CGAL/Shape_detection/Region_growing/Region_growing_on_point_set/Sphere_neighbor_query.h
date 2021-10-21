@@ -232,6 +232,20 @@ namespace Point_set {
     const Index_to_point_map& index_to_point_map() const {
       return m_index_to_point_map;
     }
+
+    void set_sphere_radius(const FT sphere_radius) {
+      m_sphere_radius = sphere_radius;
+    }
+
+    void operator()(
+      const Point_type& sphere_center,
+      std::vector<std::size_t>& neighbors) const {
+
+      neighbors.clear();
+      const Fuzzy_sphere sphere(
+        sphere_center, m_sphere_radius, FT(0), m_tree.traits());
+      m_tree.search(std::back_inserter(neighbors), sphere);
+    }
     /// \endcond
 
   private:

@@ -21,7 +21,7 @@ typedef L21_approx::Error_metric L21_metric;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-int main()
+bool test_manifold(const std::string file_name, const FT drop = FT(1e-2))
 {
   const char* file_name = "sphere_remeshed.off";
   const FT drop = FT(1e-2);
@@ -61,3 +61,21 @@ int main()
   return EXIT_FAILURE;
 }
 
+/**
+ * This file tests the meshing of the algorithm.
+ * For now, we can only expect manifold output on simple geometric objects.
+ */
+int main()
+{
+  std::cout << "Meshing manifold test." << std::endl;
+  if (!test_manifold(CGAL::data_file_path("meshes/cube.off")))
+    return EXIT_FAILURE;
+
+  if (!test_manifold(CGAL::data_file_path("meshes/cube-ouvert.off")))
+    return EXIT_FAILURE;
+
+  if (!test_manifold(CGAL::data_file_path("meshes/sphere.off")))
+    return EXIT_FAILURE;
+
+  return EXIT_SUCCESS;
+}

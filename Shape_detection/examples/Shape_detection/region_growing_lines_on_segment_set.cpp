@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 
   // Load data either from a local folder or a user-provided file.
   const bool is_default_input = argc > 1 ? false : true;
-  const std::string filename = is_default_input ? "data/am.off" : argv[1];
+  const std::string filename = is_default_input ? CGAL::data_file_path("meshes/am.off") : argv[1];
 
   Surface_mesh surface_mesh;
   if (!CGAL::IO::read_polygon_mesh(filename, surface_mesh, CGAL::parameters::all_default())) {

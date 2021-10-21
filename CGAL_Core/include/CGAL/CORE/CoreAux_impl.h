@@ -159,7 +159,7 @@ int IntExponent(double d) {
 
 /// core_error is the method to write Core Library warning or error messages
 /**         Both warnings and errors are written to a file called CORE_DIAGFILE.
- *        But errors are also written on std:cerr (similar to std::perror()).
+ *        But errors are also written on std::cerr (similar to std::perror()).
  * */
 // Usage: core_error(message, file_with_error, line_number, err_type)
 //   where err_type=0 means WARNING, error_type=0 means ERROR

@@ -153,7 +153,7 @@ void duplicate_terminal_vertices(Graph& graph,
   {
     typename boost::graph_traits<OrigGraph>::vertex_descriptor orig_v = graph[v];
     typename boost::graph_traits<Graph>::degree_size_type deg = degree(v, graph);
-    if ((deg != 0 && is_terminal(orig_v, orig)) || deg > 2)
+    if (deg != 2 || is_terminal(orig_v, orig))
       {
         out_edge_iterator b, e;
         boost::tie(b, e) = out_edges(v, graph);
@@ -170,7 +170,6 @@ void duplicate_terminal_vertices(Graph& graph,
             const std::pair<edge_descriptor, bool> pair = add_edge(vc, w, graph);
             graph[pair.first] = orig_e;
           }
-        CGAL_assertion(degree(v, graph) == 1);
       }
   }
 

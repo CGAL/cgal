@@ -14,7 +14,7 @@ typedef Triangle_mesh::Property_map<vertex_descriptor,double> Vertex_distance_ma
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "./data/elephant.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Triangle_mesh tm;
   if(!CGAL::IO::read_polygon_mesh(filename, tm) ||
