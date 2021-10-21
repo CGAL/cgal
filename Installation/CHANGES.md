@@ -76,6 +76,8 @@ Release date: December 2021
 ### [dD Spatial Searching](https://doc.cgal.org/5.4/Manual/packages.html#PkgSpatialSearchingD)
 
 -   The kd-tree has a new print method now that enables to output the tree in the stream in the [Graphviz](https://graphviz.org/) format.
+-   Added a new splitter class [`CGAL::Balanced_splitter`](https://doc.cgal.org/5.4/Spatial_searching/classCGAL_1_1Balanced__splitter.html) that
+    guarantees a balanced tree for any point set including data with duplicate and collinear points.
 
 ###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
 
