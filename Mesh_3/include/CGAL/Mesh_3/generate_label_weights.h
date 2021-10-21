@@ -38,20 +38,13 @@ void convert_image_3_to_itk(const CGAL::Image_3& image,
                             itk::Image<Image_word_type, 3>* const itk_img,
                             LabelsSet& labels)
 {
-  using ImageType = itk::Image<Image_word_type, 3/*Dimension*/>;
-
-  typename ImageType::SpacingType spacing;
-  spacing[0] = image.vx();
-  spacing[1] = image.vy();
-  spacing[2] = image.vz();
+  const double spacing[3] = {image.vx(), image.vy(), image.vz()};
   itk_img->SetSpacing(spacing);
 
-  typename ImageType::PointType origin;
-  origin[0] = image.tx();
-  origin[1] = image.ty();
-  origin[2] = image.tz();
+  const double origin[3] =  {image.tx(), image.ty(), image.tz()};
   itk_img->SetOrigin(origin);
 
+  using ImageType = itk::Image<Image_word_type, 3/*Dimension*/>;
   typename ImageType::IndexType  corner = {{0, 0, 0 }};
   typename ImageType::SizeType   size = {{image.xdim(), image.ydim(), image.zdim()}};
   typename ImageType::RegionType region(corner, size);
