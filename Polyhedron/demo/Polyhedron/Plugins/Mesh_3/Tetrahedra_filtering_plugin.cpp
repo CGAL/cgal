@@ -61,7 +61,7 @@ public :
       filter();
     });
   }
-  bool applicable(QAction* a) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const Q_DECL_OVERRIDE
   {
     return qobject_cast<Scene_c3t3_item*>( scene->item( scene->mainSelectionIndex() ) );
   }

@@ -51,7 +51,7 @@ struct Construct{
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:"data/half.xyz");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/half.xyz"));
   std::vector<Point_3> points;
   std::vector<Facet> facets;
   Mesh m;

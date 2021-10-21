@@ -13,7 +13,7 @@ typedef K::Point_3                                               Point_3;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc>1) ? argv[1] : "data/star.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/star.off");
 
   std::vector<Point_3> points;
   if(!CGAL::IO::read_points(filename, std::back_inserter(points)))

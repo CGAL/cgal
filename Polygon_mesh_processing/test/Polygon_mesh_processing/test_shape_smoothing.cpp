@@ -160,8 +160,8 @@ void test_curvature_flow(Mesh mesh)
 
 int main(int, char**)
 {
-  const char* filename_devil = "data/mannequin-devil.off";
-  const char* filename_elephant = "data/elephant.off";
+  const std::string filename_devil = CGAL::data_file_path("meshes/mannequin-devil.off");
+  const std::string filename_elephant = CGAL::data_file_path("meshes/elephant.off");
 
   std::ifstream input1(filename_devil);
   SurfaceMesh mesh_devil;

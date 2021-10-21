@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
 #define CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
 
-#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
+#include <CGAL/license/Polygon_mesh_processing/core.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/boost/graph/iterator.h>

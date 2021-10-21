@@ -43,7 +43,7 @@ bool test_region_growing_on_point_set_3(int argc, char *argv[]) {
   const std::size_t min_region_size    = 50;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/point_set_3.xyz"));
   CGAL::IO::set_ascii_mode(in);
   assert(in);
 

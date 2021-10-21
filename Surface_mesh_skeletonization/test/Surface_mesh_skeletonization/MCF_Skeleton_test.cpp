@@ -69,7 +69,7 @@ bool check_value_equal(T a, T b)
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("data/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr << "Cannot open data/elephant.off" << std::endl;

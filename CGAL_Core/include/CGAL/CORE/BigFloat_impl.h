@@ -39,6 +39,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <string>
 #include <ctype.h>
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/Expr.h>
@@ -1057,8 +1058,8 @@ void BigFloatRep :: fromString(const char *str, extLong prec ) {
 CGAL_INLINE_FUNCTION
 std::istream& BigFloatRep :: operator >>(std::istream& i) {
   int size = 20;
-  char *str = new char[size];
-  char *p = str;
+  std::string str;
+  str.reserve(size);
   char c;
   int d = 0, e = 0, s = 0;
   // d=1 means dot is found
@@ -1084,7 +1085,7 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
 
   // the current content in "c" should be the first non-whitespace char
   if (c == '-' || c == '+') {
-    *p++ = c;
+    str += c;
     i.get(c);
   }
 
@@ -1096,19 +1097,8 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
     //  xxxx.xxxe+xxx.xxx:
     if (e && (c == '.'))
       break;
-    if (p - str == size) {
-      char *t = str;
-      str = new char[size*2];
-      memcpy(str, t, size);
-      delete [] t;
-      p = str + size;
-      size *= 2;
-    }
-#ifdef CGAL_CORE_DEBUG
-    CGAL_assertion((p-str) < size);
-#endif
 
-    *p++ = c;
+    str += c;
     if (c == '.')
       d = 1;
     // Chen Li: fix a bug -- the sign of exponent can not happen before
@@ -1120,24 +1110,8 @@ std::istream& BigFloatRep :: operator >>(std::istream& i) {
       e = 1;
   }
 
-  // chenli: make sure that the p is still in the range
-  if (p - str >= size) {
-    std::size_t len = p - str;
-    char *t = str;
-    str = new char[len + 1];
-    memcpy(str, t, len);
-    delete [] t;
-    p = str + len;
-  }
-
-#ifdef CGAL_CORE_DEBUG
-  CGAL_assertion(p - str < size);
-#endif
-
-  *p = '\0';
   i.putback(c);
-  fromString(str);
-  delete [] str;
+  fromString(str.c_str());
   return i;
 }//operator >>
 

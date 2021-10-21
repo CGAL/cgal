@@ -1848,7 +1848,7 @@ public:
 
       /* The traits class which the basic traits adaptor accepts as a template
        * parameter is a model of the ArrangementBasicTraits_2 concept so it
-       * needs not to support intersections at all, therefor it is complicated
+       * needs not to support intersections at all, therefore it is complicated
        * to check if the x-curves are disjoint in their interiors. Moreover,
        * compare_y_position functor is called only from the arrangement class
        * itself (and some related point-location algorithms), and used only

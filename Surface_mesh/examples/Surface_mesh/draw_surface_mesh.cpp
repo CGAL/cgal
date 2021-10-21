@@ -11,7 +11,7 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc>1) ? argv[1] : "data/elephant.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Mesh sm;
   if(!CGAL::IO::read_polygon_mesh(filename, sm))

@@ -41,11 +41,11 @@ using namespace CGAL;
 
 //#define TESTMESH_GENERAL   "data/??.off"
 
-#define TESTMESH_QUAD      "data/corner.off"
-#define TESTMESH_QUAD_OPEN "data/corner_with_hole.off"
+#define TESTMESH_QUAD      CGAL::data_file_path("meshes/corner.off")
+#define TESTMESH_QUAD_OPEN CGAL::data_file_path("meshes/corner_with_hole.off")
 
-#define TESTMESH_TRI       "data/quint_tris.off"
-#define TESTMESH_TRI_OPEN  "data/nefertiti.off"
+#define TESTMESH_TRI       CGAL::data_file_path("meshes/quint_tris.off")
+#define TESTMESH_TRI_OPEN  CGAL::data_file_path("meshes/nefertiti.off")
 
 void test_Subdivision_surface_3() {
   typedef CGAL::Simple_cartesian<double>     Kernel;

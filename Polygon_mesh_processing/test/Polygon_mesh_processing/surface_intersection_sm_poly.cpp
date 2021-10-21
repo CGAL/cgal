@@ -25,7 +25,7 @@ typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
          <2, 3, MyTraits>::type LCC;
 
 template <class TriangleMesh>
-void run(const char* filename1, const char* filename2, const char* msg)
+void run(const std::string filename1, const std::string filename2, const char* msg)
 {
   TriangleMesh mesh1;
   if ( !PMP::IO::read_polygon_mesh(filename1, mesh1) ) {
@@ -49,8 +49,8 @@ void run(const char* filename1, const char* filename2, const char* msg)
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   run<Mesh>(filename1,filename2,"Surface_mesh");
   run<Polyhedron>(filename1,filename2,"Polyhedron_3");
