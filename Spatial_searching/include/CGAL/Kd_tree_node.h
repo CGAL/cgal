@@ -15,7 +15,9 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
-
+#include <string>
+#include <unordered_map>
+#include <fstream>
 
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
@@ -29,10 +31,6 @@ namespace CGAL {
 
   template <class SearchTraits, class Splitter, class UseExtendedNode, class EnablePointsCache>
   class Kd_tree;
-
-  namespace internal {
-    static std::size_t node_counter = 0;
-  }
 
   template < class TreeTraits, class Splitter, class UseExtendedNode, class EnablePointsCache >
   class Kd_tree_node {
@@ -56,16 +54,33 @@ namespace CGAL {
     typedef typename Kdt::D D;
 
     bool leaf;
-    std::size_t m_node_index = 0;
 
   public :
-    Kd_tree_node(bool leaf) : leaf(leaf),
-    m_node_index(internal::node_counter++) { }
+    Kd_tree_node(bool leaf) : leaf(leaf) { }
 
     bool is_leaf() const { return leaf; }
 
     void
-    print(std::ostream& s) const
+    get_indices(int& index, std::unordered_map<const Kd_tree_node*, int>& node_to_index) const
+    {
+      if (is_leaf()) {
+        Leaf_node_const_handle node =
+          static_cast<Leaf_node_const_handle>(this);
+        ++index;
+        node_to_index[node] = index;
+      } else {
+        Internal_node_const_handle node =
+          static_cast<Internal_node_const_handle>(this);
+        ++index;
+        node_to_index[node] = index;
+        node->lower()->get_indices(index, node_to_index);
+        node->upper()->get_indices(index, node_to_index);
+      }
+    }
+
+    template<typename Node_name>
+    void
+    print(std::ostream& s, const Node_name& node_name) const
     {
       if (is_leaf()) { // draw leaf nodes
 
@@ -74,7 +89,7 @@ namespace CGAL {
 
         s << std::endl;
         if (node->size() > 0) {
-          s << node->name() << " [label=\"" << node->name() << ", Size: "
+          s << node_name(node) << " [label=\"" << node_name(node) << ", Size: "
           << node->size() << "\"] ;" << std::endl;
         } else {
           CGAL_assertion_msg(false, "ERROR: NODE SIZE IS ZERO!");
@@ -86,11 +101,11 @@ namespace CGAL {
           static_cast<Internal_node_const_handle>(this);
 
         s << std::endl;
-        s << node->name() << " [label=\"" << node->name() << "\"] ;" << std::endl;
-        s << node->name() << " -- " << node->lower()->name() << " ;";
-        node->lower()->print(s);
-        s << node->name() << " -- " << node->upper()->name() << " ;";
-        node->upper()->print(s);
+        s << node_name(node) << " [label=\"" << node_name(node) << "\"] ;" << std::endl;
+        s << node_name(node) << " -- " << node_name(node->lower()) << " ;";
+        node->lower()->print(s, node_name);
+        s << node_name(node) << " -- " << node_name(node->upper()) << " ;";
+        node->upper()->print(s, node_name);
       }
     }
 
@@ -315,28 +330,6 @@ namespace CGAL {
     }
 
   private:
-
-    inline std::size_t
-    index() const {
-      return m_node_index;
-    }
-
-    inline std::string
-    name() const
-    {
-      std::string node_name = "default_name";
-      if (is_leaf()) { // leaf node
-        node_name = "L" + std::to_string(index());
-      } else {
-        if (index() == 0) { // root node
-          node_name = "R" + std::to_string(index());
-        } else { // internal node
-          node_name = "N" + std::to_string(index());
-        }
-      }
-      CGAL_assertion(node_name != "default_name");
-      return node_name;
-    }
 
     // If contains_point_given_as_coordinates does not exist in `FuzzyQueryItem`
     template <typename FuzzyQueryItem>

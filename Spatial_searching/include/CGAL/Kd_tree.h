@@ -23,6 +23,8 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <string>
+#include <unordered_map>
 #include <fstream>
 
 #include <CGAL/algorithm.h>
@@ -629,12 +631,32 @@ public:
   std::ostream&
   print(std::ostream& s) const
   {
+    int counter = -1;
+    std::unordered_map<const Node*, int> node_to_index;
+    tree_root->get_indices(counter, node_to_index);
+
+    const auto node_name = [&](const Node* node) {
+      const int index = node_to_index.at(node);
+      std::string node_name = "default_name";
+      if (node->is_leaf()) { // leaf node
+        node_name = "L" + std::to_string(index);
+      } else {
+        if (index == 0) { // root node
+          node_name = "R" + std::to_string(index);
+        } else { // internal node
+          node_name = "N" + std::to_string(index);
+        }
+      }
+      CGAL_assertion(node_name != "default_name");
+      return node_name;
+    };
+
     s << "graph G" << std::endl;
     s << "{" << std::endl << std::endl;
     s << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
     s << "Num items: " << tree_root->num_items() << ".\"" << std::endl;
-    s << tree_root->name() << " ;";
-    tree_root->print(s);
+    s << node_name(tree_root) + " ;";
+    tree_root->print(s, node_name);
     s << std::endl << "}" << std::endl << std::endl;
     return s;
   }
