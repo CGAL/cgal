@@ -113,6 +113,17 @@ seg_seg_do_intersect_crossing(
     return S2S2_inter_info(false);
 }
 
+// used internally by Arr_segment_traits_2template <class K>
+template <class K>
+bool
+seg_seg_do_intersect_crossing(
+        const typename K::Point_2& p1, const typename K::Point_2& p2,
+        const typename K::Point_2& p3, const typename K::Point_2& p4,
+        const K& k)
+{
+  return seg_seg_do_intersect_crossing(p1,p2,p3,p4,0,0,0,0,k,false).inter;
+}
+
 
 // lexicographic order of points p1 < p3 < p4 < p2, with segments (p1,p2) and (p3,p4)
 template <class K>
@@ -157,6 +168,16 @@ seg_seg_do_intersect_contained(
     return S2S2_inter_info(false);
 }
 
+// used internally by Arr_segment_traits_2
+template <class K>
+bool
+seg_seg_do_intersect_contained(
+        const typename K::Point_2& p1, const typename K::Point_2& p2,
+        const typename K::Point_2& p3, const typename K::Point_2& p4,
+        const K& k)
+{
+  return seg_seg_do_intersect_contained(p1,p2,p3,p4,0,0,0,0,k,false).inter;
+}
 
 template <class K>
 S2S2_inter_info
