@@ -283,7 +283,6 @@ template <class K>
 typename Segment_2_Segment_2_pair<K>::Intersection_results
 Segment_2_Segment_2_pair<K>::intersection_type() const
 {
-  typename K::Construct_vector_2 construct_vector;
     if (_result!=UNKNOWN)
         return _result;
 
