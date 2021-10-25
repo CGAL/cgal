@@ -16,6 +16,7 @@
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/algorithm.h>
+#include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -27,6 +28,7 @@
 #include <boost/range/reference.hpp>
 
 #include <array>
+#include <type_traits>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
