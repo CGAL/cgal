@@ -96,6 +96,12 @@ Release date: December 2021
 
 -   Added new shapes to the Region Growing algorithm on a point set: circles in 2D, spheres in 3D,
     and cylinders in 3D.
+    
+### [Tetrahedral Mesh Generation](https://doc.cgal.org/latest/Manual/packages.html#PkgMesh3)
+
+-   Added the function
+    [remove_isolated_vertices()](https://doc.cgal.org/latest/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
+    as a post-processing step for the tetrahedral mesh generation.
 
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
