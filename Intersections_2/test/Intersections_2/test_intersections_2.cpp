@@ -433,10 +433,10 @@ struct Test
     check_intersection     (S(p( 1,  10), p(  1,   2)), S(p(  1,   7), p(  1,   3)), S(P(  1,   3), P(  1,   7)));
 
     // exact point intersection
-    check_intersection     (S(p( 3.14,   0), p( 3.14,   10)), S(p(  3.14,   3.456), p(  5,   10)), p(  3.14,   3.456));
-    check_intersection     (S(p( 3.14,   0), p( 3.14,   10)), S(p(  5,   10), p(  3.14,   3.456)), p(  3.14,   3.456));
-    check_intersection     (S(p( 3.14,   0), p( 3.14,   10)), S(p(  3.14,   3.456), p(  -5,   10)), p(  3.14,   3.456));
-    check_intersection     (S(p( 3.14,   0), p( 3.14,   10)), S(p(  -5,   10), p(  3.14,   3.456)), p(  3.14,   3.456));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  3,   3), p(  5,   10)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  5,   10), p(  3,   3)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  3,   3), p(  -5,   10)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  -5,   10), p(  3,   3)), p(  3,   3));
     check_intersection     (S(p( 0,   0), p( 44,   44)), S(p(  44,   44), p(  55,   55)), p(  44,   44));
     check_intersection     (S(p( 0,   0), p( 44,   44)), S(p(  55,   55), p(  44,   44)), p(  44,   44));
     check_intersection     (S(p( 44,   44), p( 0,   0)), S(p(  44,   44), p(  55,   55)), p(  44,   44));

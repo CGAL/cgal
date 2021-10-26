@@ -76,7 +76,7 @@ S2S2_inter_info
 seg_seg_do_intersect_crossing(
         const typename K::Point_2& p1, const typename K::Point_2& p2,
         const typename K::Point_2& p3, const typename K::Point_2& p4,
-        int i1, int i2, int i3, int i4,
+        int /* i1 */, int i2, int i3, int /* i4 */,
         const K& k, bool extra_test)
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
@@ -88,7 +88,7 @@ seg_seg_do_intersect_crossing(
           return S2S2_inter_info(i2);
         case RIGHT_TURN:
           return S2S2_inter_info(false);
-        case LEFT_TURN:
+        default: // LEFT_TURN
           return S2S2_inter_info(true);
       }
     }
@@ -100,11 +100,11 @@ seg_seg_do_intersect_crossing(
           return S2S2_inter_info(i2);
         case RIGHT_TURN:
           return S2S2_inter_info(true);
-        case LEFT_TURN:
+        default: // LEFT_TURN
           return S2S2_inter_info(false);
       }
     }
-    case COLLINEAR:
+    default: //COLLINEAR
       if (extra_test && k.collinear_2_object()(p3,p4,p2))
         return S2S2_inter_info(i3, i2);
       return S2S2_inter_info(i3);
@@ -131,7 +131,7 @@ S2S2_inter_info
 seg_seg_do_intersect_contained(
         const typename K::Point_2& p1, const typename K::Point_2& p2,
         const typename K::Point_2& p3, const typename K::Point_2& p4,
-        int i1, int i2, int i3, int i4,
+        int /* i1 */, int /* i2 */, int i3, int i4,
         const K& k, bool extra_test)
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
@@ -143,7 +143,7 @@ seg_seg_do_intersect_contained(
           return S2S2_inter_info(i4);
         case RIGHT_TURN:
           return S2S2_inter_info(true);
-        case LEFT_TURN:
+        default: // LEFT_TURN
           return S2S2_inter_info(false);
       }
     }
@@ -155,11 +155,11 @@ seg_seg_do_intersect_contained(
           return S2S2_inter_info(i4);
         case RIGHT_TURN:
           return S2S2_inter_info(false);
-        case LEFT_TURN:
+        default: // LEFT_TURN
           return S2S2_inter_info(true);
       }
     }
-    case COLLINEAR:
+    default: // COLLINEAR
         if (extra_test && k.collinear_2_object()(p3,p4,p2))
           return S2S2_inter_info(i3, i4);
         return S2S2_inter_info(i3);
