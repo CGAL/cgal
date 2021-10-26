@@ -133,6 +133,12 @@ polyhedron_demo_plugin(isotropic_remeshing_plugin Isotropic_remeshing_plugin
 target_link_libraries(isotropic_remeshing_plugin PUBLIC scene_surface_mesh_item
                                                         scene_selection_item)
 
+qt5_wrap_ui(MinimalAngleRemeshingUI_FILES Minimal_angle_remeshing_dialog.ui)
+polyhedron_demo_plugin(minimal_angle_remeshing_plugin Minimal_angle_remeshing_plugin
+                       ${MinimalAngleRemeshingUI_FILES} KEYWORDS PMP)
+target_link_libraries(minimal_angle_remeshing_plugin PUBLIC scene_surface_mesh_item
+                                                        scene_selection_item)
+
 if(TARGET CGAL::TBB_support)
   target_link_libraries(isotropic_remeshing_plugin PUBLIC CGAL::TBB_support)
 endif()
