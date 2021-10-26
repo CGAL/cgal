@@ -164,10 +164,10 @@ if(TARGET CGAL::CGAL_ImageIO)
 
     find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
     if(ITK_FOUND)
-      include(${ITK_USE_FILE})
+      include(CGAL_ITK_support)
       create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
       target_link_libraries(mesh_3D_weighted_image
-                            PUBLIC CGAL::Eigen3_support ${ITK_LIBRARIES})
+                            PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
     endif(ITK_FOUND)
 
   else()
