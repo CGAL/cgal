@@ -197,7 +197,7 @@ void make_surface_mesh(const TriangleMesh& pmesh
   Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
 
   // Vertex point map
-  typedef typename GetVertexPointMap<TM, NamedParameters>::type VPMap;
+  using VPMap = typename GetVertexPointMap<TM, NamedParameters>::type;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_const_property_map(vertex_point, pmesh));
 
@@ -209,7 +209,7 @@ void make_surface_mesh(const TriangleMesh& pmesh
     domain.detect_features(angle_bound); //includes detection of borders
 
   // Sharp features - provided by user
-  using edge_descriptor = boost::graph_traits<TM>::edge_descriptor;
+  using edge_descriptor = typename boost::graph_traits<TM>::edge_descriptor;
   using ECMap = typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters,
