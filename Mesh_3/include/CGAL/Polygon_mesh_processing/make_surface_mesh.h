@@ -23,11 +23,14 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 #include <CGAL/Mesh_facet_topology.h>
+#include <CGAL/Mesh_3/polylines_to_protect.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
+#include <boost/type_traits/is_same.hpp>
 
 #include <limits>
 
@@ -58,6 +61,14 @@ namespace Polygon_mesh_processing {
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *     \cgalParamExtra{Exact constructions kernels are not supported by this function.}
 *   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_point_map}
+*   \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+*   \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                  as key type and `%Point_3` as value type}
+*   \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*   \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                   must be available in `PolygonMesh`.}
 *
 *   \cgalParamNBegin{features_angle_bound}
 *     \cgalParamDescription{The dihedral angle bound for detection of feature edges}
@@ -169,6 +180,7 @@ void make_surface_mesh(const TriangleMesh& pmesh
                          typename Mesh_domain::Curve_index>;
   using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
   using FT = typename GT::FT;
+  using Point_3 = typename GT::Point_3;
 
   if (!CGAL::is_triangle_mesh(pmesh)) {
     std::cerr << "Input geometry is not triangulated." << std::endl;
@@ -184,11 +196,46 @@ void make_surface_mesh(const TriangleMesh& pmesh
   // empty.
   Mesh_domain domain(poly_ptrs_vector.begin(), poly_ptrs_vector.end());
 
-  // Get sharp features
+  // Vertex point map
+  typedef typename GetVertexPointMap<TM, NamedParameters>::type VPMap;
+  VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                 get_const_property_map(vertex_point, pmesh));
+
+  // Sharp features
+  // Sharp features - automatic detection
   const bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
   const FT angle_bound = choose_parameter(get_parameter(np, internal_np::features_angle_bound), 60.);
   if(protect)
     domain.detect_features(angle_bound); //includes detection of borders
+
+  // Sharp features - provided by user
+  using edge_descriptor = boost::graph_traits<TM>::edge_descriptor;
+  using ECMap = typename internal_np::Lookup_named_param_def <
+      internal_np::edge_is_constrained_t,
+      NamedParameters,
+      Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
+  >::type;
+  ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                                 Static_boolean_property_map<edge_descriptor, false>());
+  if (!boost::is_same<ECMap, Static_boolean_property_map<edge_descriptor, false> >::value)
+  {
+    std::vector<std::vector<Point_3> > sharp_edges;
+    for (edge_descriptor e : edges(pmesh))
+    {
+      if (get(ecmap, e))
+      {
+        std::vector<Point_3> ev;
+        Point_3 p = get(vpmap, source(halfedge(e, pmesh), pmesh));
+        ev.push_back(get(vpmap, source(halfedge(e,pmesh), pmesh)));
+        ev.push_back(get(vpmap, target(halfedge(e, pmesh), pmesh)));
+        sharp_edges.push_back(ev);
+      }
+    }
+
+    std::vector<std::vector<Point_3> > features;
+    CGAL::polylines_to_protect(features, sharp_edges.begin(), sharp_edges.end());
+    domain.add_features(features.begin(), features.end());
+  }
 
   // Mesh criteria
   auto esize  = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
