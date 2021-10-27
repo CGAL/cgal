@@ -165,8 +165,7 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \todo mention no self-intersections
-
+* \pre `pmesh` must be free of self-intersections
 */
 template<typename TriangleMesh
        , typename NamedParameters>
