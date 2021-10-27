@@ -369,15 +369,17 @@ using std::max;
 #  define CGAL_NO_UNIQUE_ADDRESS
 #endif
 
-// Macro CGAL_ASSUME
+// Macro CGAL_ASSUME and CGAL_unreachable
 // Call a builtin of the compiler to pass a hint to the compiler
 #if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
+#  define CGAL_unreachable() __builtin_unreachable()
 #elif defined(_MSC_VER)
 // MSVC has __assume
 #  define CGAL_ASSUME(EX) __assume(EX)
+#  define CGAL_unreachable() __assume(0)
 #endif
 // If CGAL_ASSUME is not defined, then CGAL_assume and CGAL_assume_code are
 // defined differently, in <CGAL/assertions.h>
