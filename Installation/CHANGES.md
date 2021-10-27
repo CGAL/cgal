@@ -100,7 +100,7 @@ Release date: December 2021
 ### [Tetrahedral Mesh Generation](https://doc.cgal.org/latest/Manual/packages.html#PkgMesh3)
 
 -   Added the function
-    [remove_isolated_vertices()](https://doc.cgal.org/latest/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
+    [`remove_isolated_vertices()`](https://doc.cgal.org/latest/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
     as a post-processing step for the tetrahedral mesh generation.
 
 
