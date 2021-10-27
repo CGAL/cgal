@@ -34,16 +34,11 @@ int main(int argc, char* argv[])
 
   double fdist = (argc > 3) ? std::stod(std::string(argv[3])) : 0.01;
 
-
   std::cout << "Detect features..." << std::endl;
 
   using EIFMap = boost::property_map<Mesh, CGAL::edge_is_feature_t>::type;
-  using PIMap  = boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type;
-
   EIFMap eif = get(CGAL::edge_is_feature, mesh);
-  PIMap pid = get(CGAL::face_patch_id_t<int>(), mesh);
-  std::size_t number_of_patches
-    = PMP::sharp_edges_segmentation(mesh, 60, eif, pid);
+  PMP::detect_sharp_edges(mesh, 45, eif);
 
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;

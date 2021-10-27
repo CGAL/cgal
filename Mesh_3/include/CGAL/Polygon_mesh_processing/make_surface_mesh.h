@@ -71,7 +71,8 @@ namespace Polygon_mesh_processing {
 *                   must be available in `PolygonMesh`.}
 *
 *   \cgalParamNBegin{features_angle_bound}
-*     \cgalParamDescription{The dihedral angle bound for detection of feature edges}
+*     \cgalParamDescription{The dihedral angle bound for detection of feature edges.
+*          If the given value is `180`, only the border edges are protected.}
 *     \cgalParamType{A number type `FT`, either deduced from the `geom_traits`
 *          \ref bgl_namedparameters "Named Parameters" if provided,
 *          or from the geometric traits class deduced from the point property map
@@ -98,8 +99,10 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{protect_constraints}
-*     \cgalParamDescription{If `true`, the edges set as constrained in `edge_is_constrained_map`
-*                           (or by default the boundary edges) are not split nor collapsed during remeshing.}
+*     \cgalParamDescription{If `true`, the feature edges of the input are re-sampled and present in the output mesh.
+*           If `edge_is_constrained_map` is provided, the corresponding "constrained" edges are protected.
+*           Otherwise, if `features_angle_bound` is provided, the edges that form a sharp dihedral angle with
+*             respect to that bound are protected.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`false`}
 *     \cgalParamExtra{Note that around constrained edges that have their length higher than
@@ -161,6 +164,9 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDefault{`CGAL::FACET_VERTICES_ON_SURFACE`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
+*
+* \todo mention no self-intersections
+
 */
 template<typename TriangleMesh
        , typename NamedParameters>
@@ -202,13 +208,9 @@ void make_surface_mesh(const TriangleMesh& pmesh
                                  get_const_property_map(vertex_point, pmesh));
 
   // Sharp features
-  // Sharp features - automatic detection
-  const bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
-  const FT angle_bound = choose_parameter(get_parameter(np, internal_np::features_angle_bound), 60.);
-  if(protect)
-    domain.detect_features(angle_bound); //includes detection of borders
-
   // Sharp features - provided by user
+  bool protection_of_user_given_constraints = false;
+
   using edge_descriptor = typename boost::graph_traits<TM>::edge_descriptor;
   using ECMap = typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
@@ -235,6 +237,16 @@ void make_surface_mesh(const TriangleMesh& pmesh
     std::vector<std::vector<Point_3> > features;
     CGAL::polylines_to_protect(features, sharp_edges.begin(), sharp_edges.end());
     domain.add_features(features.begin(), features.end());
+
+    protection_of_user_given_constraints = true;
+  }
+
+  // Sharp features - automatic detection
+  const bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
+  if (protect && !protection_of_user_given_constraints)
+  {
+    const FT angle_bound = choose_parameter(get_parameter(np, internal_np::features_angle_bound), 60.);
+    domain.detect_features(angle_bound); //includes detection of borders
   }
 
   // Mesh criteria
