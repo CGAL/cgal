@@ -91,7 +91,7 @@ seg_seg_do_intersect_crossing(
         case LEFT_TURN:
           return S2S2_inter_info(true);
         default:
-          CGAL_assume(false);
+          CGAL_unreachable();
       }
     }
     case RIGHT_TURN:
@@ -105,7 +105,7 @@ seg_seg_do_intersect_crossing(
         case LEFT_TURN:
           return S2S2_inter_info(false);
         default:
-          CGAL_assume(false);
+          CGAL_unreachable();
       }
     }
     case COLLINEAR:
@@ -113,7 +113,7 @@ seg_seg_do_intersect_crossing(
         return S2S2_inter_info(i3, i2);
       return S2S2_inter_info(i3);
     default:
-      CGAL_assume(false);
+      CGAL_unreachable();
     }
     CGAL_kernel_assertion(false);
     return S2S2_inter_info(false);
@@ -152,7 +152,7 @@ seg_seg_do_intersect_contained(
         case LEFT_TURN:
           return S2S2_inter_info(false);
         default:
-          CGAL_assume(false);
+          CGAL_unreachable();
       }
     }
     case RIGHT_TURN:
@@ -166,7 +166,7 @@ seg_seg_do_intersect_contained(
         case LEFT_TURN:
           return S2S2_inter_info(true);
         default:
-          CGAL_assume(false);
+          CGAL_unreachable();
       }
     }
     case COLLINEAR:
@@ -174,7 +174,7 @@ seg_seg_do_intersect_contained(
           return S2S2_inter_info(i3, i4);
         return S2S2_inter_info(i3);
     default:
-      CGAL_assume(false);
+      CGAL_unreachable();
     }
     CGAL_kernel_assertion(false);
     return S2S2_inter_info(false);
@@ -238,10 +238,10 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
             case LARGER:
                 return seg_seg_do_intersect_contained(A1,A2,B1,B2, A1_id,A2_id,B1_id+2,B2_id+2, k, extra_test);
             default:
-              CGAL_assume(false);
+              CGAL_unreachable();
             }
         default:
-          CGAL_assume(false);
+          CGAL_unreachable();
 
         }
     case EQUAL:
@@ -262,7 +262,7 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
               return S2S2_inter_info(B1_id+2, B2_id+2); // DI_MORE_INFO_TAG: A1==B1 but only B1 is reported
           break;
           default:
-            CGAL_assume(false);
+            CGAL_unreachable();
           }
         }
         return S2S2_inter_info(A1_id); // DI_MORE_INFO_TAG: A1==B1 but only A1 is reported
@@ -284,13 +284,13 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
             case LARGER:
                 return seg_seg_do_intersect_contained(B1,B2,A1,A2, B1_id+2,B2_id+2,A1_id,A2_id, k, extra_test);
             default:
-              CGAL_assume(false);
+              CGAL_unreachable();
             }
         default:
-          CGAL_assume(false);
+          CGAL_unreachable();
         }
     default:
-      CGAL_assume(false);
+      CGAL_unreachable();
     }
 
     CGAL_kernel_assertion(false);

@@ -106,6 +106,8 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
 #endif // no CGAL_NO_ASSERTIONS
 
+#define CGAL_unreachable() CGAL_assume(false)
+
 # define CGAL_static_assertion(EX) \
      static_assert(EX, #EX)
 
