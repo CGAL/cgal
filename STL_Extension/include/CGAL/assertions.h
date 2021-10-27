@@ -79,14 +79,6 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_destructor_assertion_catch(CODE) CODE
 #  define CGAL_assertion_msg(EX,MSG) (static_cast<void>(0))
 #  define CGAL_assertion_code(CODE)
-#  ifdef CGAL_ASSUME
-#    define CGAL_assume(EX) CGAL_ASSUME(EX)
-#    define CGAL_assume_code(CODE) CODE
-#  else // not def CGAL_ASSUME
-#    define CGAL_assume(EX)  CGAL_assertion(EX)
-#    define CGAL_unreachable()  CGAL_assertion(false)
-#    define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
-#  endif // not def CGAL_ASSUME
 #else // no CGAL_NO_ASSERTIONS
 #  define CGAL_ASSERTIONS_ENABLED true
 #  define CGAL_assertion(EX) \
@@ -103,9 +95,21 @@ inline bool possibly(Uncertain<bool> c);
 #  define CGAL_assertion_msg(EX,MSG)                                    \
    (CGAL::possibly(EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
 #  define CGAL_assertion_code(CODE) CODE
-#  define CGAL_assume(EX) CGAL_assertion(EX)
-#  define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
 #endif // no CGAL_NO_ASSERTIONS
+
+#  ifdef CGAL_ASSUME
+#    define CGAL_assume(EX) CGAL_ASSUME(EX)
+#    define CGAL_assume_code(CODE) CODE
+#  else // not def CGAL_ASSUME
+#    define CGAL_assume(EX)  CGAL_assertion(EX)
+#    define CGAL_assume_code(CODE) CGAL_assertion_code(CODE)
+#  endif // CGAL_ASSUME
+
+#  ifdef CGAL_UNREACHABLE
+#    define CGAL_unreachable() CGAL_UNREACHABLE()
+#  else // not def CGAL_UNREACHABLE
+#    define CGAL_unreachable()  CGAL_assertion(false)
+#  endif // CGAL_UNREACHABLE
 
 # define CGAL_static_assertion(EX) \
      static_assert(EX, #EX)
