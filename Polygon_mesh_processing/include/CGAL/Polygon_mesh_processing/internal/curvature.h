@@ -45,7 +45,6 @@ vertex_discrete_gaussian_curvature(typename boost::graph_traits<TriangleMesh>::v
   typename GeomTraits::Compute_scalar_product_3 scalar_product = gt.compute_scalar_product_3_object();
   typename GeomTraits::Compute_squared_length_3 squared_length = gt.compute_squared_length_3_object();
   typename GeomTraits::Construct_cross_product_vector_3 cross_product = gt.construct_cross_product_vector_3_object();
-  typename GeomTraits::Compute_approximate_angle_3 approximate_angle = gt.compute_approximate_angle_3_object();
 
   const FT two_pi = 2 * CGAL_PI;
 
@@ -65,12 +64,6 @@ vertex_discrete_gaussian_curvature(typename boost::graph_traits<TriangleMesh>::v
     if(dot != FT(0) && sqcn != FT(0))
     {
       const FT loc_ki = std::atan2(CGAL::approximate_sqrt(sqcn), dot);
-
-      FT ia = approximate_angle(get(vpm, source(h, tm)),
-                                get(vpm, target(h, tm)),
-                                get(vpm, target(next(h, tm), tm)));
-      ia *= CGAL_PI / FT(180.);
-
       ki += loc_ki;
     }
   }
