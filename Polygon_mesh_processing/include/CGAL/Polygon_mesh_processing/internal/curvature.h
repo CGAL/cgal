@@ -60,11 +60,18 @@ vertex_discrete_gaussian_curvature(typename boost::graph_traits<TriangleMesh>::v
     const FT dot = scalar_product(v0, v1);
     const Vector_3 cross = cross_product(v0, v1);
     const FT sqcn = squared_length(cross);
-
-    if(dot != FT(0) && sqcn != FT(0))
+    if(dot == FT(0))
+      ki += CGAL_PI/FT(2);
+    else
     {
-      const FT loc_ki = std::atan2(CGAL::approximate_sqrt(sqcn), dot);
-      ki += loc_ki;
+      if (sqcn == FT(0))
+      {
+        if (dot < 0)
+          ki += CGAL_PI;
+      }
+      else{
+        ki += std::atan2(CGAL::approximate_sqrt(sqcn), dot);
+      }
     }
   }
 
