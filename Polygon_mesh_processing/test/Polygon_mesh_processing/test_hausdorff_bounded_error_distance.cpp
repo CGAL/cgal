@@ -781,8 +781,7 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
   get_mesh(filepath, mesh1);
   PMP::isotropic_remeshing(faces(mesh1), 0.005, mesh1);
   mesh1.collect_garbage();
-  mesh2=mesh1;
-
+  mesh2 = mesh1;
 
   timer.reset();
   timer.start();
@@ -809,7 +808,9 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   assert(timea > 0.0);
   assert(timeb > 0.0);
-  assert(timeab < timea + timeb);
+
+  // If the machine is loaded, this assert may go false.
+  // assert(timeab < timea + timeb);
 
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(FT(0), FT(0), FT(1))), mesh2);
@@ -839,7 +840,9 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   assert(timea > 0.0);
   assert(timeb > 0.0);
-  assert(timeab < timea + timeb);
+
+  // If the machine is loaded, this assert may go false.
+  // assert(timeab < timea + timeb);
 
   std::cout << "* dista  = " << dista1 << " , " << dista2 << std::endl;
   std::cout << "* distb  = " << distb1 << " , " << distb2 << std::endl;
@@ -1057,8 +1060,6 @@ void test_realizing_triangles(
 
   PMP::transform(Affine_transformation_3(
     CGAL::Translation(), Vector_3(0, 0, 10 * error_bound)), tmp2);
-
-
 
   mesh1.join(tmp1);
   mesh2.join(tmp2);
