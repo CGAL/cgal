@@ -98,8 +98,6 @@ public:
       const Point_2& pt1 = e1->point();
       if (is_isolated2 || is_closed_interior2) {
         const Point_2& pt2 = e2->point();
-        Arr_parameter_space ps_x2 = e2->parameter_space_in_x();
-        Arr_parameter_space ps_y2 = e2->parameter_space_in_y();
         return _compare_points(pt1, ps_x1, ps_y1, pt2, ps_x2, ps_y2);
       }
       Arr_curve_end ind2;
