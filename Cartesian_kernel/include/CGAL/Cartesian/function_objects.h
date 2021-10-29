@@ -3341,8 +3341,17 @@ namespace CartesianKernelFunctors {
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Ray_3      Ray_3;
     typedef typename K::FT         FT;
+
   public:
-    typedef Point_3                result_type;
+    template<typename>
+    struct result {
+      typedef const Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Point_3, Point_3)> {
+      typedef const Point_3& type;
+    };
 
     Point_3
     operator()( const Line_3& l, const Point_3& p ) const
@@ -3369,15 +3378,19 @@ namespace CartesianKernelFunctors {
 
     Point_3
     operator()( const Triangle_3& t, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(t,p,K()); }
 
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(s,p,K()); }
 
     Point_3
     operator()( const Ray_3& r, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(r,p,K()); }
+
+    const Point_3&
+    operator()( const Point_3& p, const Point_3& q) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,q,K()); }
   };
 
   template <class K>
@@ -4367,6 +4380,8 @@ namespace CartesianKernelFunctors {
     typedef typename K::Circle_2       Circle_2;
     typedef typename K::Line_2         Line_2;
     typedef typename K::Triangle_2     Triangle_2;
+    typedef typename K::Segment_2      Segment_2;
+    typedef typename K::FT             FT;
   public:
     typedef typename K::Oriented_side  result_type;
 
@@ -4402,6 +4417,30 @@ namespace CartesianKernelFunctors {
          && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
         ? result_type(ON_ORIENTED_BOUNDARY)
         : opposite(ot);
+    }
+
+    result_type
+    operator()(const Segment_2& s, const Triangle_2& t) const
+    {
+      typename K::Construct_source_2 source;
+      typename K::Construct_target_2 target;
+      const Point_2& a = source(s);
+      const Point_2& b = target(s);
+      CGAL_assertion(a != b);
+
+      typename K::Construct_vertex_2 vertex;
+      const Point_2& p0 = vertex(t, 0);
+      const Point_2& p1 = vertex(t, 1);
+      const Point_2& p2 = vertex(t, 2);
+      CGAL_assertion(p0 != p1 && p1 != p2 && p2 != p0);
+
+      return circumcenter_oriented_side_of_oriented_segmentC2(
+                  a.x(), a.y(),
+                  b.x(), b.y(),
+                  p0.x(), p0.y(),
+                  p1.x(), p1.y(),
+                  p2.x(), p2.y()
+      );
     }
   };
 

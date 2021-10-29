@@ -781,8 +781,7 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
   get_mesh(filepath, mesh1);
   PMP::isotropic_remeshing(faces(mesh1), 0.005, mesh1);
   mesh1.collect_garbage();
-  mesh2=mesh1;
-
+  mesh2 = mesh1;
 
   timer.reset();
   timer.start();
@@ -809,7 +808,9 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   assert(timea > 0.0);
   assert(timeb > 0.0);
-  assert(timeab < timea + timeb);
+
+  // If the machine is loaded, this assert may go false.
+  // assert(timeab < timea + timeb);
 
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(FT(0), FT(0), FT(1))), mesh2);
@@ -839,7 +840,9 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   assert(timea > 0.0);
   assert(timeb > 0.0);
-  assert(timeab < timea + timeb);
+
+  // If the machine is loaded, this assert may go false.
+  // assert(timeab < timea + timeb);
 
   std::cout << "* dista  = " << dista1 << " , " << dista2 << std::endl;
   std::cout << "* distb  = " << distb1 << " , " << distb2 << std::endl;
@@ -1058,8 +1061,6 @@ void test_realizing_triangles(
   PMP::transform(Affine_transformation_3(
     CGAL::Translation(), Vector_3(0, 0, 10 * error_bound)), tmp2);
 
-
-
   mesh1.join(tmp1);
   mesh2.join(tmp2);
 
@@ -1194,7 +1195,7 @@ int main(int argc, char** argv) {
   const double num_samples = 10.;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   // std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
-  std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  std::string filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   run_examples(error_bound, filepath);
 
   // ------------------------------------------------------------------------ //
@@ -1219,7 +1220,7 @@ int main(int argc, char** argv) {
 
   // --- Compare on real meshes.
 
-  const std::string filepath1 = (argc > 1 ? argv[1] : "data/blobby.off");
+  const std::string filepath1 = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   const std::string filepath2 = (argc > 2 ? argv[2] : "data/tetrahedron-remeshed.off");
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
@@ -1228,7 +1229,7 @@ int main(int argc, char** argv) {
 
   // --- Compare timings.
 
-  filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   test_timings(filepath, bound_hd);

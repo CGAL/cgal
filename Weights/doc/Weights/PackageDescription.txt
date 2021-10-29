@@ -510,7 +510,7 @@ a model of `AnalyticWeightTraits_3` for 3D points
 
 
 \cgalPkgDescriptionBegin{Weight Interface, PkgWeightsRef}
-\cgalPkgPicture{logo_120x120.png}
+\cgalPkgPicture{weights_logo_120x120.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov}
@@ -524,7 +524,7 @@ weights, and weighting regions. All weights are available both in 2D and 3D.}
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.4}
 \cgalPkgBib{cgal:a-wi}
-\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 

@@ -82,11 +82,10 @@ struct Vector_to_pmap
   Vector_to_pmap (std::vector<bool>* vec = nullptr) : vec (vec) { }
 
   friend inline
-  reference get(const Vector_to_pmap& map, key_type p)
+  value_type get(const Vector_to_pmap& map, key_type i)
   {
-    return (*map.vec)[p];
+    return (*map.vec)[i];
   }
-
 };
 
 using namespace CGAL::Three;

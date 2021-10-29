@@ -23,7 +23,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 int main(int argc, char** argv) {
 
   const double error_bound = 1e-4;
-  const std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  const std::string filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
 
   // We create a tetrahedron, remesh it, and compute the distance.
   // The expected distance is error_bound.

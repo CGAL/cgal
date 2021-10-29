@@ -9258,6 +9258,16 @@ public:
   Oriented_side operator()(const Kernel::Triangle_2&t,
                            const Kernel::Point_2&p);
 
+  /*!
+  * returns \ref CGAL::ON_ORIENTED_BOUNDARY,
+  * \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE,
+  * depending on the position of the circumcenter of `t` relative
+  * to the oriented supporting line of `s`. The orientation of the
+  * supporting line is the same as the orientation of `s`.
+  */
+  Oriented_side operator()(const Kernel::Segment_2& s,
+                           const Kernel::Triangle_2& t);
+
   /// @}
 
 }; /* end Kernel::OrientedSide_2 */

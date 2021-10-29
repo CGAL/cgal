@@ -44,7 +44,7 @@ void draw(const PH& aph);
 namespace CGAL
 {
 
-// Viewer class for Polygon_2
+// Viewer class for Polygon_with_holes_2
 template<class P2>
 class SimplePolygonWithHoles2ViewerQt : public Basic_viewer_qt
 {
@@ -52,16 +52,25 @@ class SimplePolygonWithHoles2ViewerQt : public Basic_viewer_qt
   typedef typename P2::General_polygon_2::Point_2 Point;
 
 public:
+  /// Construct the viewer without drawing anything.
+  /// @param title the title of the window
+  SimplePolygonWithHoles2ViewerQt(QWidget* parent,
+                                  const char* title="Basic Polygon_with_holes_2 Viewer") :
+    Base(parent, title, true, true, true, false, false)
+  {
+      clear();
+  }
+
   /// Construct the viewer.
   /// @param ap2 the polygon to view
   /// @param title the title of the window
   SimplePolygonWithHoles2ViewerQt(QWidget* parent, const P2& ap2,
                                   const char* title="Basic Polygon_with_holes_2 Viewer") :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false),
-    p2(ap2)
+    Base(parent, title, true, true, true, false, false)
   {
-    compute_elements();
+    clear();
+    compute_elements(ap2);
   }
 
 protected:
@@ -85,10 +94,8 @@ protected:
     add_segment(*prev, *(p.vertices_begin()));
   }
 
-  void compute_elements()
+  void compute_elements(const P2& p2)
   {
-    clear();
-
     if (p2.outer_boundary().is_empty()) return;
 
     CGAL::IO::Color c(75,160,255);
@@ -120,9 +127,6 @@ protected:
     // Call the base method to process others/classicals key
     Base::keyPressEvent(e);
   }
-
-protected:
-  const P2& p2;
 };
 
 // Specialization of draw function.

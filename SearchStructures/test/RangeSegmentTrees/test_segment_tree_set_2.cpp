@@ -26,7 +26,7 @@ int main()
 
   int ignore = 0;
   std::list<Iso_rectangle_2> rectangles;
-  std::ifstream ifs("./data.rect");
+  std::ifstream ifs("data.rect");
   std::copy(std::istream_iterator<Iso_rectangle_2>(ifs),
             std::istream_iterator<Iso_rectangle_2>(),
             std::back_inserter(rectangles));

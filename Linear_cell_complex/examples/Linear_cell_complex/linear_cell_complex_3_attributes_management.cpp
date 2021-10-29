@@ -50,7 +50,7 @@ int main(int narg, char** argv)
   std::string filename;
   if ( narg==1 )
   {
-    filename=std::string("data/armadillo.off");
+    filename=std::string(CGAL::data_file_path("meshes/armadillo.off"));
     std::cout<<"No filename given: use data/armadillo.off by default."<<std::endl;
   }
   else filename=std::string(argv[1]);

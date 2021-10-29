@@ -49,7 +49,7 @@ int main()
     return 1;
   }
   in.close();
-  in.open("data/tetrahedron.off");
+  in.open(CGAL::data_file_path("meshes/tetrahedron.off"));
   if(in)
     in >> m2;
   else{

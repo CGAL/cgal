@@ -355,14 +355,13 @@ test_graph_range(const std::vector<Graph>& graphs)
 typedef SM::Point Point_3;
 
 template<class Mesh, typename VertexPointPMap>
-struct Constraint : public boost::put_get_helper<bool,Constraint<Mesh, VertexPointPMap> >
+struct Constraint
 {
   typedef typename boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
   typedef boost::readable_property_map_tag      category;
   typedef bool                                  value_type;
   typedef bool                                  reference;
   typedef edge_descriptor                       key_type;
-
 
   Constraint()
     :g_(NULL)
@@ -406,9 +405,12 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<Mesh, VertexPoi
       return false;
   }
 
+  friend inline value_type get(const Constraint& m, const key_type k) { return m[k]; }
+
   const Mesh* g_;
   VertexPointPMap vppmap;
 };
+
 template<class Mesh, class FCCMAP, class Adapter>
 void test_mesh(Adapter fga)
 {

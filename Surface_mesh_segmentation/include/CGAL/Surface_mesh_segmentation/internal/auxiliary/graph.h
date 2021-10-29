@@ -109,7 +109,7 @@ a minimum cut on the following graph:
 
 ///////////////////////////////////////////////////
 
-#include <stdio.h>
+#include <iostream>
 #include "graph.h"
 
 void main()
@@ -125,16 +125,16 @@ void main()
 
         Graph::flowtype flow = g -> maxflow();
 
-        printf("Flow = %d\n", flow);
+        std::cout << "Flow = " << flow << std::endl;
         printf("Minimum cut:\n");
         if (g->what_segment(nodes[0]) == Graph::SOURCE)
-                printf("node0 is in the SOURCE set\n");
+                std::cout << "node0 is in the SOURCE set\n";
         else
-                printf("node0 is in the SINK set\n");
+                std::cout << "node0 is in the SINK set\n";
         if (g->what_segment(nodes[1]) == Graph::SOURCE)
-                printf("node1 is in the SOURCE set\n");
+                std::cout << "node1 is in the SOURCE set\n";
         else
-                printf("node1 is in the SINK set\n");
+                std::cout << "node1 is in the SINK set\n";
 
         delete g;
 }

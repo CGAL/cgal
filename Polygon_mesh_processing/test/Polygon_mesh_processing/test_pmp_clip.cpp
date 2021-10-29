@@ -24,8 +24,8 @@ void test()
   // test with a clipper mesh
   {
     TriangleMesh tm1, tm2;
-    std::ifstream("data-coref/elephant.off") >> tm1;
-    std::ifstream("data-coref/sphere.off") >> tm2;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> tm2;
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
     CGAL::BGL::internal::initialize_face_index_map(custom_face_index_map_1, tm1);
@@ -40,8 +40,8 @@ void test()
 
   {
     TriangleMesh tm1, tm2;
-    std::ifstream("data-coref/elephant.off") >> tm1;
-    std::ifstream("data-coref/sphere.off") >> tm2;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> tm2;
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
     CGAL::BGL::internal::initialize_face_index_map(custom_face_index_map_1, tm1);
@@ -74,7 +74,7 @@ void test()
   // test with a iso-cuboid
   {
     TriangleMesh tm1;
-    std::ifstream("data-coref/elephant.off") >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
     K::Iso_cuboid_3 iso_cuboid(K::Point_3(0,0,0), K::Point_3(0.4, 0.6, 0.4));
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
@@ -562,7 +562,7 @@ void test_split_plane()
 {
 //test with a splitter mesh
   Mesh tm1;
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm1;
 
   if(!input)
@@ -654,7 +654,7 @@ void test_split()
   // test with a clipper mesh
   TriangleMesh tm1, tm2;
   //closed intersection curves
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm1;
 
   if(!input)
@@ -666,7 +666,7 @@ void test_split()
 
   input.close();
 
-  input.open("data-coref/sphere.off");
+  input.open(CGAL::data_file_path("meshes/sphere.off"));
   input >> tm2;
 
   if(!input)
@@ -779,7 +779,7 @@ void test_isocuboid()
 {
   TriangleMesh tm;
   //closed intersection curves
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm;
 
   if(!input)

@@ -15,7 +15,7 @@ typedef Kernel::Point_3 Point;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1) ? argv[1] : "data/oni.xyz";
+  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/oni.pwn");
 
   // Reads a point set file in points[].
   std::vector<Point> points;

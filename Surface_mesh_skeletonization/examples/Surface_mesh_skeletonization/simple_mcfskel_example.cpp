@@ -46,7 +46,7 @@ struct Display_polylines{
 // This example extracts a medially centered skeleton from a given mesh.
 int main(int argc, char* argv[])
 {
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
+  std::ifstream input((argc>1)?argv[1]:CGAL::data_file_path("meshes/elephant.off"));
   Polyhedron tmesh;
   input >> tmesh;
   if (!CGAL::is_triangle_mesh(tmesh))

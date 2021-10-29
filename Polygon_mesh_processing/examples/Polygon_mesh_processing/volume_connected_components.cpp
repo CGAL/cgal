@@ -18,7 +18,7 @@ namespace params = CGAL::parameters;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
 
   Surface_mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))

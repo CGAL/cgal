@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 {
   // read OFF file into a polyhedron
   Polyhedron P;
-  std::ifstream ifs((argc > 1) ? argv[1] : "data/cross.off");
+  std::ifstream ifs((argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross_quad.off"));
   ifs >> P;
 
   // initialize nef from polyhedron
