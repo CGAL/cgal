@@ -10,8 +10,8 @@
 //
 // Author(s)     : Jane Tournois
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_MAKE_SURFACE_MESH_H
-#define CGAL_POLYGON_MESH_PROCESSING_MAKE_SURFACE_MESH_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_DELAUNAY_REMESHING_H
+#define CGAL_POLYGON_MESH_PROCESSING_DELAUNAY_REMESHING_H
 
 #include <CGAL/license/Mesh_3.h>
 
@@ -44,7 +44,8 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
-* @brief remeshes a surface triangle mesh.
+* @brief remeshes a surface triangle mesh following the Delaunay refinement
+* algorithm described in the \ref
 *
 * @tparam TriangleMesh model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -169,7 +170,7 @@ namespace Polygon_mesh_processing {
 */
 template<typename TriangleMesh
        , typename NamedParameters>
-void make_surface_mesh(const TriangleMesh& pmesh
+void delaunay_remeshing(const TriangleMesh& pmesh
                      , TriangleMesh& out
                      , const NamedParameters& np)
 {
@@ -272,10 +273,10 @@ void make_surface_mesh(const TriangleMesh& pmesh
 }
 
 template<typename TriangleMesh>
-void make_surface_mesh(const TriangleMesh& tmesh,
+void delaunay_remeshing(const TriangleMesh& tmesh,
                        TriangleMesh& out)
 {
-  make_surface_mesh(tmesh, out, parameters::all_default());
+  delaunay_remeshing(tmesh, out, parameters::all_default());
 }
 
 
@@ -285,4 +286,4 @@ void make_surface_mesh(const TriangleMesh& tmesh,
 
 #include <CGAL/enable_warnings.h>
 
-#endif //CGAL_POLYGON_MESH_PROCESSING_MAKE_SURFACE_MESH_H
+#endif //CGAL_POLYGON_MESH_PROCESSING_DELAUNAY_REMESHING_H

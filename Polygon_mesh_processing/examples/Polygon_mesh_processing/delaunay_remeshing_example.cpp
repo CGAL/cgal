@@ -2,7 +2,7 @@
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
-#include <CGAL/Polygon_mesh_processing/make_surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/delaunay_remeshing.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <CGAL/Mesh_constant_domain_field_3.h>
@@ -44,9 +44,9 @@ int main(int argc, char* argv[])
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   Mesh outmesh;
-  PMP::make_surface_mesh(mesh,
-                         outmesh,
-                         PMP::parameters::protect_constraints(true)
+  PMP::delaunay_remeshing(mesh,
+                          outmesh,
+                          PMP::parameters::protect_constraints(true)
                          .mesh_edge_size(size)
                          .mesh_facet_distance(fdist)
                          .edge_is_constrained_map(eif));
