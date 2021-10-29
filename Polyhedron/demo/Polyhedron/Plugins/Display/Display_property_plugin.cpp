@@ -15,6 +15,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
+#include <CGAL/Polygon_mesh_processing/internal/curvature.h>
 
 #include "Scene_points_with_normal_item.h"
 
@@ -526,10 +527,12 @@ private Q_SLOTS:
 
     if(sm_item)
     {
-        dock_widget->propertyBox->addItem("Smallest Angle Per Face");
-        dock_widget->propertyBox->addItem("Scaled Jacobian");
-        dock_widget->propertyBox->addItem("Heat Intensity");
-        dock_widget->propertyBox->addItem("Heat Intensity (Intrinsic Delaunay)");
+      dock_widget->propertyBox->addItem("Smallest Angle Per Face");
+      dock_widget->propertyBox->addItem("Scaled Jacobian");
+      dock_widget->propertyBox->addItem("Heat Intensity");
+      dock_widget->propertyBox->addItem("Heat Intensity (Intrinsic Delaunay)");
+      dock_widget->propertyBox->addItem("Discrete Mean Curvature");
+      dock_widget->propertyBox->addItem("Discrete Gaussian Curvature");
       detectSMScalarProperties(sm_item->face_graph());
 
     }
@@ -604,6 +607,14 @@ private Q_SLOTS:
         return;
       sm_item->setRenderingMode(Gouraud);
       break;
+    case 4: // Discrete Mean Curvature
+      displayDiscreteMeanCurvature(sm_item);
+      sm_item->setRenderingMode(Gouraud);
+      break;
+    case 5: // Discrete Gaussian Curvature
+      displayDiscreteGaussianCurvature(sm_item);
+      sm_item->setRenderingMode(Gouraud);
+      break;
     default:
       if(dock_widget->propertyBox->currentText().contains("v:"))
       {
@@ -638,6 +649,14 @@ private Q_SLOTS:
           sm_item->face_graph()->property_map<face_descriptor,double>("f:angle");
       if(does_exist)
         sm_item->face_graph()->remove_property_map(pmap);
+      std::tie(pmap, does_exist) =
+          sm_item->face_graph()->property_map<face_descriptor,double>("v:discrete_mean_curvature");
+      if(does_exist)
+        sm_item->face_graph()->remove_property_map(pmap);
+      std::tie(pmap, does_exist) =
+          sm_item->face_graph()->property_map<face_descriptor,double>("v:discrete_gaussian_curvature");
+      if(does_exist)
+        sm_item->face_graph()->remove_property_map(pmap);
     });
     QApplication::restoreOverrideCursor();
     sm_item->invalidateOpenGLBuffers();
@@ -669,12 +688,20 @@ private Q_SLOTS:
       switch(dock_widget->propertyBox->currentIndex())
       {
       case 0:
-        dock_widget->zoomToMinButton->setEnabled(angles_max.count(sm_item)>0 );
+        dock_widget->zoomToMinButton->setEnabled(angles_min.count(sm_item)>0 );
         dock_widget->zoomToMaxButton->setEnabled(angles_max.count(sm_item)>0 );
         break;
       case 1:
-        dock_widget->zoomToMinButton->setEnabled(jacobian_max.count(sm_item)>0);
+        dock_widget->zoomToMinButton->setEnabled(jacobian_min.count(sm_item)>0);
         dock_widget->zoomToMaxButton->setEnabled(jacobian_max.count(sm_item)>0);
+        break;
+      case 4:
+        dock_widget->zoomToMinButton->setEnabled(dmc_min.count(sm_item)>0);
+        dock_widget->zoomToMaxButton->setEnabled(dmc_max.count(sm_item)>0);
+        break;
+      case 5:
+        dock_widget->zoomToMinButton->setEnabled(dgc_min.count(sm_item)>0);
+        dock_widget->zoomToMaxButton->setEnabled(dgc_max.count(sm_item)>0);
         break;
       default:
         break;
@@ -702,11 +729,22 @@ private Q_SLOTS:
     {
       smesh.remove_property_map(angles);
     }
+    SMesh::Property_map<vertex_descriptor, double> dmc;
+    std::tie(dmc, found) = smesh.property_map<vertex_descriptor,double>("v:discrete_mean_curvature");
+    if(found)
+    {
+      smesh.remove_property_map(dmc);
+    }
+    SMesh::Property_map<vertex_descriptor, double> dgc;
+    std::tie(dgc, found) = smesh.property_map<vertex_descriptor,double>("v:discrete_gaussian_curvature");
+    if(found)
+    {
+      smesh.remove_property_map(dgc);
+    }
   }
 
   void displayScaledJacobian(Scene_surface_mesh_item* item)
   {
-
     SMesh& smesh = *item->face_graph();
     //compute and store the jacobian per face
     bool non_init;
@@ -743,18 +781,77 @@ private Q_SLOTS:
     treat_sm_property<face_descriptor>("f:jacobian", item->face_graph());
   }
 
-  bool resetScaledJacobian(Scene_surface_mesh_item* item)
+  void displayDiscreteMeanCurvature(Scene_surface_mesh_item* item)
   {
     SMesh& smesh = *item->face_graph();
-    if(!smesh.property_map<face_descriptor, double>("f:jacobian").second)
+    //compute once and store the value per vertex
+    bool non_init;
+    SMesh::Property_map<vertex_descriptor, double> mcurvature;
+    std::tie(mcurvature, non_init) = smesh.add_property_map<vertex_descriptor, double>("v:discrete_mean_curvature", 0);
+    if(non_init)
     {
-      return false;
+      CGAL::Polygon_mesh_processing::discrete_mean_curvature(smesh, mcurvature);
+
+      double res_min = ARBITRARY_DBL_MAX,
+          res_max = -ARBITRARY_DBL_MAX;
+      SMesh::Vertex_index min_index, max_index;
+      for (SMesh::Vertex_index v : vertices(smesh))
+      {
+        if (mcurvature[v] > res_max)
+        {
+          res_max = mcurvature[v];
+          max_index = v;
+        }
+        if (mcurvature[v] < res_min)
+        {
+          res_min = mcurvature[v];
+          min_index = v;
+        }
+      }
+      dmc_max[item]=std::make_pair(res_max, max_index);
+      dmc_min[item]=std::make_pair(res_min, min_index);
+
+      connect(item, &Scene_surface_mesh_item::itemChanged,
+              this, &DisplayPropertyPlugin::resetProperty);
     }
-    dock_widget->minBox->setValue(jacobian_min[item].first-0.01);
-    dock_widget->maxBox->setValue(jacobian_max[item].first);
-    return true;
+    treat_sm_property<vertex_descriptor>("v:discrete_mean_curvature", item->face_graph());
   }
 
+  void displayDiscreteGaussianCurvature(Scene_surface_mesh_item* item)
+  {
+    SMesh& smesh = *item->face_graph();
+    //compute once and store the value per vertex
+    bool non_init;
+    SMesh::Property_map<vertex_descriptor, double> mcurvature;
+    std::tie(mcurvature, non_init) = smesh.add_property_map<vertex_descriptor, double>("v:discrete_gaussian_curvature", 0);
+    if(non_init)
+    {
+      CGAL::Polygon_mesh_processing::discrete_gaussian_curvature(smesh, mcurvature);
+
+      double res_min = ARBITRARY_DBL_MAX,
+          res_max = -ARBITRARY_DBL_MAX;
+      SMesh::Vertex_index min_index, max_index;
+      for (SMesh::Vertex_index v : vertices(smesh))
+      {
+        if (mcurvature[v] > res_max)
+        {
+          res_max = mcurvature[v];
+          max_index = v;
+        }
+        if (mcurvature[v] < res_min)
+        {
+          res_min = mcurvature[v];
+          min_index = v;
+        }
+      }
+      dgc_max[item]=std::make_pair(res_max, max_index);
+      dgc_min[item]=std::make_pair(res_min, min_index);
+
+      connect(item, &Scene_surface_mesh_item::itemChanged,
+              this, &DisplayPropertyPlugin::resetProperty);
+    }
+    treat_sm_property<vertex_descriptor>("v:discrete_gaussian_curvature", item->face_graph());
+  }
 
   void displayAngles(Scene_surface_mesh_item* item)
   {
@@ -1058,6 +1155,30 @@ private Q_SLOTS:
       case 3:
         dock_widget->sourcePointsButton->setEnabled(true);
         CGAL_FALLTHROUGH;
+      case 4:
+        dock_widget->groupBox->  setEnabled(true);
+        dock_widget->groupBox_3->setEnabled(true);
+
+        dock_widget->minBox->setMinimum(-1000);
+        dock_widget->minBox->setMaximum(1000);
+        dock_widget->minBox->setValue(0);
+
+        dock_widget->maxBox->setMinimum(-1000);
+        dock_widget->maxBox->setMaximum(1000);
+        dock_widget->maxBox->setValue(2);
+        break;
+      case 5:
+        dock_widget->groupBox->  setEnabled(true);
+        dock_widget->groupBox_3->setEnabled(true);
+
+        dock_widget->minBox->setMinimum(-1000);
+        dock_widget->minBox->setMaximum(1000);
+        dock_widget->minBox->setValue(0);
+
+        dock_widget->maxBox->setMinimum(-1000);
+        dock_widget->maxBox->setMaximum(1000);
+        dock_widget->maxBox->setValue(2);
+        break;
       default:
         dock_widget->maxBox->setMinimum(-99999999);
         dock_widget->maxBox->setMaximum(99999999);
@@ -1103,6 +1224,24 @@ private Q_SLOTS:
                  dummy_p);
     }
       break;
+    case 4:
+    {
+      ::zoomToId(*item->face_graph(),
+                 QString("v%1").arg(dmc_min[item].second),
+                 getActiveViewer(),
+                 dummy_fd,
+                 dummy_p);
+    }
+      break;
+    case 5:
+    {
+      ::zoomToId(*item->face_graph(),
+                 QString("v%1").arg(dgc_min[item].second),
+                 getActiveViewer(),
+                 dummy_fd,
+                 dummy_p);
+    }
+      break;
     default:
       break;
     }
@@ -1131,6 +1270,24 @@ private Q_SLOTS:
     {
       ::zoomToId(*item->face_graph(),
                  QString("f%1").arg(jacobian_max[item].second),
+                 getActiveViewer(),
+                 dummy_fd,
+                 dummy_p);
+    }
+      break;
+    case 4:
+    {
+      ::zoomToId(*item->face_graph(),
+                 QString("v%1").arg(dmc_max[item].second),
+                 getActiveViewer(),
+                 dummy_fd,
+                 dummy_p);
+    }
+      break;
+    case 5:
+    {
+      ::zoomToId(*item->face_graph(),
+                 QString("v%1").arg(dgc_max[item].second),
                  getActiveViewer(),
                  dummy_fd,
                  dummy_p);
@@ -1425,6 +1582,13 @@ private:
 
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
   boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+
+  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Vertex_index> > dmc_min;
+  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Vertex_index> > dmc_max;
+
+  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Vertex_index> > dgc_min;
+  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Vertex_index> > dgc_max;
+
   boost::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
 
