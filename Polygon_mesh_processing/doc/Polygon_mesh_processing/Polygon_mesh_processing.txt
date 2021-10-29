@@ -105,6 +105,7 @@ maximizes the minimum angle of all the angles of the triangles in the triangulat
 
 \subsubsection Remeshing
 
+\paragraph Local Isotropic Remeshing
 The incremental triangle-based isotropic remeshing algorithm introduced by Botsch et al
  \cgalCite{botsch2004remeshing}, \cgalCite{botsch2010PMP} is implemented in this package.
 This algorithm incrementally performs simple operations such as edge splits, edge collapses,
@@ -130,6 +131,25 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 (c) Selection of a range of faces to be remeshed.
 (d) Surface mesh with the selection uniformly remeshed.
 \cgalFigureEnd
+
+\paragraph Delaunay-Based Surface Remeshing
+The mesh generation algorithm implemented in the \ref PkgMesh3 package can be used to remesh a given triangulated surface mesh.
+The algorithm, based on Delaunay refinement of a restricted Delaunay triangulation,
+generates a triangle surface mesh that provably has the required properties on simplices size,
+surface approximation, shape of facets, and topology of the surface.
+A set of edges from the input mesh can be given as constraints to build and protect a
+set of polylines features, that are resampled while preserving the topology of the
+input feature graph.
+
+This solution for triangle surface remeshing is available in this package with the function
+`CGAL::Polygon_mesh_processing::delaunay_remeshing()`.
+All the meshing criteria defined for `CGAL::make_mesh_3()` can be used directly
+for size of simplices, shape of facets, surface approximation, topology,
+and one-dimensional features sampling.
+
+An example of how to remesh a given triangulated surface mesh with the Delaunay refinement
+algorithm while preserving the detected sharp edges
+is given in \ref Polygon_mesh_processing/delaunay_remeshing_example.cpp
 
 \subsubsection Smoothing
 
