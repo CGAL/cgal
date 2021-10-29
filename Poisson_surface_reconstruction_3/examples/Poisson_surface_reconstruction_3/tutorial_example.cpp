@@ -63,10 +63,11 @@ int main(int argc, char*argv[])
   ///////////////////////////////////////////////////////////////////
   //! [Outlier removal]
 
-  CGAL::remove_outliers<CGAL::Sequential_tag>
+  typename Point_set::iterator rout_it = CGAL::remove_outliers<CGAL::Sequential_tag>
     (points,
      24, // Number of neighbors considered for evaluation
      points.parameters().threshold_percent (5.0)); // Percentage of points to remove
+  points.remove(rout_it, points.end());
 
   std::cout << points.number_of_removed_points()
             << " point(s) are outliers." << std::endl;
@@ -86,7 +87,8 @@ int main(int argc, char*argv[])
   double spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (points, 6);
 
   // Simplify using a grid of size 2 * average spacing
-  CGAL::grid_simplify_point_set (points, 2. * spacing);
+  typename Point_set::iterator gsim_it = CGAL::grid_simplify_point_set (points, 2. * spacing);
+  points.remove(gsim_it, points.end());
 
   std::cout << points.number_of_removed_points()
             << " point(s) removed after simplification." << std::endl;
