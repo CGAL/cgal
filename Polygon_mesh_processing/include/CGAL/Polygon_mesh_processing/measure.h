@@ -121,7 +121,7 @@ edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, pmesh));
+                             get_property_map(CGAL::vertex_point, pmesh));
 
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
@@ -213,7 +213,7 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descript
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, pmesh));
+                             get_property_map(CGAL::vertex_point, pmesh));
 
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
@@ -473,7 +473,7 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_property_map(CGAL::vertex_point, tmesh));
 
   halfedge_descriptor hd = halfedge(f, tmesh);
   halfedge_descriptor nhd = next(hd, tmesh);
@@ -553,7 +553,7 @@ squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_property_map(CGAL::vertex_point, tmesh));
 
   halfedge_descriptor hd = halfedge(f, tmesh);
   halfedge_descriptor nhd = next(hd, tmesh);
@@ -761,7 +761,7 @@ volume(const TriangleMesh& tmesh,
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_property_map(CGAL::vertex_point, tmesh));
   typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3 origin(0, 0, 0);
 
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
@@ -847,7 +847,7 @@ face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
   typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_property_map(CGAL::vertex_point, tmesh));
 
   halfedge_descriptor h = halfedge(f, tmesh);
 
@@ -958,7 +958,7 @@ centroid(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
 
   typedef typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type Vpm;
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, tmesh));
+                             get_property_map(CGAL::vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type Kernel;
   typedef typename Kernel::Point_3                                      Point_3;
@@ -1089,9 +1089,9 @@ void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
   using parameters::get_parameter;
 
   const VPMap1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                                       get_const_property_map(vertex_point, m1));
+                                       get_property_map(vertex_point, m1));
   const VPMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                                       get_const_property_map(vertex_point, m2));
+                                       get_property_map(vertex_point, m2));
   CGAL_static_assertion_msg((boost::is_same<typename boost::property_traits<VPMap1>::value_type,
                              typename boost::property_traits<VPMap2>::value_type>::value),
                             "Both vertex point maps must have the same point type.");
