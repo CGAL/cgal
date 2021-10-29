@@ -41,6 +41,14 @@ Release date: December 2021
 
 -   Added documentation for the class `Projection_traits_3`, which enables the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
 
+-   Most operations on `Exact_predicates_exact_constructions_kernel` objects are now thread-safe
+    if `CGAL::Exact_rational` is `mpq_class` (from `GMPXX`), `boost::multiprecision::mpq_rational` or
+    `CGAL::Quotient<CGAL::MP_Float>`. The objects are not atomic though, so the usual restrictions
+    on avoiding race conditions apply. For users who do not use threads, this can be disabled with `CGAL_HAS_NO_THREADS`.
+
+### [dD Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernelD)
+-   Most operations on `Epeck_d` objects are now thread-safe, see 2D and 3D Linear Geometry Kernel for details.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
 
 -   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes,
