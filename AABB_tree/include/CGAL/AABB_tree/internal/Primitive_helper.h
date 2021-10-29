@@ -47,8 +47,8 @@ struct Primitive_helper<AABBTraits,true>{
   {
     return p.datum(traits.shared_data());
   }
-  typedef typename Point_result_type<typename AABBTraits::Primitive>::type Reference_point_type;
-  static Reference_point_type get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits& traits) {
+
+  static decltype(auto) get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits& traits) {
     return p.reference_point(traits.shared_data());
   }
 };
@@ -57,8 +57,8 @@ template <class AABBTraits>
 struct Primitive_helper<AABBTraits,false>{
   typedef typename Datum_result_type<typename AABBTraits::Primitive>::type Datum_type;
   static Datum_type get_datum(const typename AABBTraits::Primitive& p,const AABBTraits&) {return p.datum();}
-  typedef typename Point_result_type<typename AABBTraits::Primitive>::type Reference_point_type;
-  static Reference_point_type get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits&) {return p.reference_point();}
+
+  static decltype(auto) get_reference_point(const typename AABBTraits::Primitive& p,const AABBTraits&) {return p.reference_point();}
 };
 
 } } //namespace CGAL::internal

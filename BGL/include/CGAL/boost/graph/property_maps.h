@@ -154,30 +154,40 @@ struct One_point_from_face_descriptor_map{
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor key_type;
   typedef typename boost::property_traits< VertexPointMap >::value_type value_type;
   typedef typename boost::property_traits< VertexPointMap >::reference reference;
-  typedef boost::lvalue_property_map_tag category;
+  typedef boost::readable_property_map_tag category;
+
+  value_type bar(key_type f) const
+  {
+    const auto& p0 = get(m_vpm, target(halfedge(f, *m_pm), *m_pm));
+    const auto& p1 = get(m_vpm, target(next(halfedge(f, *m_pm), *m_pm), *m_pm));
+    const auto& p2 = get(m_vpm, source(halfedge(f, *m_pm), *m_pm));
+
+    return CGAL::barycenter(p0, 0.25, p1, 0.25, p2, 0.5);
+  }
 
   //get function for property map
   inline friend
-  reference
+  value_type
   get(const One_point_from_face_descriptor_map<PolygonMesh,VertexPointMap>& m,
       key_type f)
   {
-    return get(m.m_vpm, target(halfedge(f, *m.m_pm), *m.m_pm));
+    return m.bar(f);
   }
 
   inline friend
-  reference
+  value_type
   get(const One_point_from_face_descriptor_map<PolygonMesh,VertexPointMap>& m,
       const std::pair<key_type, const PolygonMesh*>& f)
   {
-    return get(m.m_vpm, target(halfedge(f.first, *m.m_pm), *m.m_pm));
+    return m.bar(f.first);
   }
 };
 
 //property map to access a point from an edge
 template < class PolygonMesh,
            class VertexPointMap = typename boost::property_map<PolygonMesh,vertex_point_t>::type >
-struct Source_point_from_edge_descriptor_map{
+struct Source_point_from_edge_descriptor_map
+{
   Source_point_from_edge_descriptor_map()  : m_pm(nullptr)
   {}
 
@@ -202,19 +212,21 @@ struct Source_point_from_edge_descriptor_map{
 
   //get function for property map
   inline friend
-  reference
+  value_type
   get(const Source_point_from_edge_descriptor_map<PolygonMesh,VertexPointMap>& pmap,
       key_type h)
   {
-    return get(pmap.m_vpm,  source(h, *pmap.m_pm) );
+    return CGAL::midpoint(get(pmap.m_vpm, source(h, *pmap.m_pm)),
+                          get(pmap.m_vpm, target(h, *pmap.m_pm)));
   }
 
   inline friend
-  reference
+  value_type
   get(const Source_point_from_edge_descriptor_map<PolygonMesh,VertexPointMap>& pmap,
       const std::pair<key_type, const PolygonMesh*>& h)
   {
-    return get(pmap.m_vpm,  source(h.first, *pmap.m_pm) );
+    return CGAL::midpoint(get(pmap.m_vpm, source(h.first, *pmap.m_pm)),
+                          get(pmap.m_vpm, target(h.first, *pmap.m_pm)));
   }
 };
 

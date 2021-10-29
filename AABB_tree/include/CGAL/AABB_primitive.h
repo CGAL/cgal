@@ -157,7 +157,7 @@ public:
   typename Base::Datum_reference
   datum() const { return get(m_obj_pmap,this->m_id); }
 
-  typename Base::Point_reference
+  decltype(auto)
   reference_point() const { return get(m_pt_pmap,this->m_id); }
 };
 
@@ -184,7 +184,7 @@ public:
 
   Datum_reference datum() const { return m_datum; }
 
-  typename Base::Point_reference
+  decltype(auto)
   reference_point() const { return get(m_pt_pmap,this->m_id); }
 };
 
@@ -209,7 +209,7 @@ public:
   typename Base::Datum_reference
   datum(const Shared_data& data) const { return get(data.first,this->m_id); }
 
-  typename Base::Point_reference
+  decltype(auto)
   reference_point(const Shared_data& data) const { return get(data.second,this->m_id); }
 
   static Shared_data construct_shared_data(ObjectPropertyMap obj, PointPropertyMap pt) {return Shared_data(obj,pt);}
@@ -238,7 +238,7 @@ public:
 
   Datum_reference datum(Shared_data) const { return m_datum; }
 
-  typename Base::Point_reference
+  decltype(auto)
   reference_point(const Shared_data& data) const { return get(data,this->m_id); }
 
   static Shared_data construct_shared_data(ObjectPropertyMap, PointPropertyMap pt) {return pt;}
