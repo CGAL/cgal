@@ -113,6 +113,13 @@ namespace CGAL {
     return pms.get_const_pmap(p, pmesh);
   }
 
+  template<typename PolygonMesh, typename PropertyTag>
+  typename property_map_selector<PolygonMesh, PropertyTag>::const_type
+  get_property_map(const PropertyTag& p, const PolygonMesh& pmesh)
+  {
+    return get_const_property_map(p, pmesh);
+  }
+
   // Shortcut for accessing the value type of the property map
   template <class Graph, class Property>
   class property_map_value {
