@@ -28,6 +28,7 @@
 #include <limits>
 #include <set>
 #include <cstdlib>
+#include <string>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -162,6 +163,11 @@ public:
   bool read(const char* file)
   {
     return private_read(::_readImage(file));
+  }
+
+  bool read(const std::string& file)
+  {
+    return read(file.c_str());
   }
 
   bool read_raw(const char* file,
