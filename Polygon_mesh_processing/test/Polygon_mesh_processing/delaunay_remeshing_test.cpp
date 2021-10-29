@@ -16,7 +16,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/anchor_dense.off";
+  const char* filename = (argc > 1) ? argv[1] : "data_remeshing/anchor_dense.off";
 
   Mesh mesh;
   if (!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.02;
+  double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.1;
 
   double fdist = (argc > 3) ? std::stod(std::string(argv[3])) : 0.01;
 
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     .mesh_facet_distance(fdist)
     .edge_is_constrained_map(eif));
 
-  std::cout << "Remeshing done with edge_is_constrained_map done." << std::endl;
+  std::cout << "Remeshing with edge_is_constrained_map done." << std::endl;
 
   auto vpmap = get_property_map(boost::vertex_point, mesh);
   std::vector<std::vector<Point> > segments;
@@ -69,7 +69,10 @@ int main(int argc, char* argv[])
     .mesh_facet_distance(fdist)
     .polyline_constraints(segments));
 
-  std::cout << "Remeshing done with polyline_constraints done." << std::endl;
+  std::cout << "Remeshing with polyline_constraints done." << std::endl;
+
+  assert(outmesh.number_of_vertices() == outmesh2.number_of_vertices());
+  assert(outmesh.number_of_faces() == outmesh2.number_of_faces());
 
   return 0;
 }
