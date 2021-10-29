@@ -197,7 +197,7 @@ CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 
 // tetrahedral remeshing parameters
 CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
-CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_selector)
+CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_is_selected_map)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
 
