@@ -48,7 +48,7 @@ public:
 public:
   friend void put(Constrained_edges_property_map& map,
                   const key_type& k,
-                  const bool b)
+                  const value_type b)
   {
     CGAL_assertion(map.m_set_ptr != nullptr);
     CGAL_assertion(k.first < k.second);
@@ -57,7 +57,7 @@ public:
   }
 
   friend value_type get(const Constrained_edges_property_map& map,
-                              const key_type& k)
+                        const key_type& k)
   {
     CGAL_assertion(map.m_set_ptr != nullptr);
     CGAL_assertion(k.first < k.second);
