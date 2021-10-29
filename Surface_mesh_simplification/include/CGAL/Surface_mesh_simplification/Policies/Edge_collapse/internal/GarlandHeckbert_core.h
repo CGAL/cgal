@@ -200,6 +200,8 @@ struct GarlandHeckbert_core
 
       const Vector_3 plane_n = gt.construct_vector_3_object()(a, b, c);
       const FT norm = CGAL::sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
+      if (norm==0)
+        continue;
       const FT den = FT(1) / norm;
 
       Row4 plane_mtr_r;
@@ -224,6 +226,8 @@ struct GarlandHeckbert_core
         const FT disc_d = - gt.compute_scalar_product_3_object()(disc_plane_n, vvt);
 
         const FT disc_norm = CGAL::sqrt(gt.compute_squared_length_3_object()(disc_plane_n));
+        if (disc_norm==0)
+          continue;
         const FT disc_den = FT(1) / disc_norm;
 
         Row4 disc_mtr_r;
