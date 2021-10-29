@@ -204,14 +204,9 @@ struct PPMAP
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
 
   Mesh* _mesh;
-  PPMAP<Mesh>()
-    :_mesh(NULL){}
-  PPMAP<Mesh>(Mesh* mesh)
-    :_mesh(mesh)
-  {
-  }
 
-
+  PPMAP() :_mesh(NULL){}
+  PPMAP(Mesh* mesh) :_mesh(mesh) { }
 
   friend reference get(const PPMAP<Mesh>&ppmap, key_type v)
   {

@@ -441,10 +441,12 @@ struct ROI_faces_pmap<SMesh>
 {
   typedef sm_face_descriptor                        key_type;
   typedef std::size_t                               value_type;
-  typedef std::size_t&                              reference;
+  typedef std::size_t                               reference;
   typedef boost::read_write_property_map_tag        category;
+
   SMesh* mesh;
   SMesh::Property_map<sm_face_descriptor,bool> irmap;
+
   ROI_faces_pmap(std::map<key_type, value_type>*, SMesh* mesh)
     :mesh(mesh)
   {
@@ -482,7 +484,8 @@ struct ROI_border_pmap
   ROI_border_pmap(std::set<m_ed>* set_)
     : m_set_ptr(set_)
   {}
-  friend bool get(const ROI_border_pmap<Mesh>& map, const key_type& k)
+
+  friend value_type get(const ROI_border_pmap<Mesh>& map, const key_type& k)
   {
     CGAL_assertion(map.m_set_ptr != NULL);
     return map.m_set_ptr->count(k);
@@ -528,8 +531,10 @@ struct Is_constrained_map<SMesh>
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
+
   SMesh::Property_map<sm_vertex_descriptor,int> icmap;
   SMesh* mesh;
+
   Is_constrained_map()
   {}
   Is_constrained_map(std::vector<int>* vec, SMesh* mesh)
@@ -544,7 +549,7 @@ struct Is_constrained_map<SMesh>
 
   void clean(){ mesh->remove_property_map(icmap); }
 
-  friend bool get(const Is_constrained_map<SMesh>& map, const key_type& k)
+  friend value_type get(const Is_constrained_map<SMesh>& map, const key_type& k)
   {
     return map.icmap[k] != -1;
   }

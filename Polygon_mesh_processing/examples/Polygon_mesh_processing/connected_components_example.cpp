@@ -17,7 +17,7 @@ typedef CGAL::Surface_mesh<Point>                           Mesh;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename G>
-struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
+struct Constraint
 {
   typedef typename boost::graph_traits<G>::edge_descriptor edge_descriptor;
   typedef boost::readable_property_map_tag      category;
@@ -33,7 +33,7 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
     : g_(&g), bound_(bound)
   {}
 
-  bool operator[](edge_descriptor e) const
+  value_type operator[](edge_descriptor e) const
   {
     const G& g = *g_;
     return compare_(g.point(source(e, g)),
@@ -41,6 +41,12 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >
                     g.point(target(next(halfedge(e, g), g), g)),
                     g.point(target(next(opposite(halfedge(e, g), g), g), g)),
                    bound_) == CGAL::SMALLER;
+  }
+
+  friend inline
+  value_type get(const Constraint& m, const key_type k)
+  {
+    return m[k];
   }
 
   const G* g_;

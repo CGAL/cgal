@@ -20,8 +20,8 @@ struct Exact_vertex_point_map
   // typedef for the property map
   typedef boost::property_traits<Exact_point_map>::value_type value_type;
   typedef boost::property_traits<Exact_point_map>::reference reference;
-  typedef boost::property_traits<Exact_point_map>::category category;
   typedef boost::property_traits<Exact_point_map>::key_type key_type;
+  typedef boost::read_write_property_map_tag category;
 
   // exterior references
   Exact_point_map exact_point_map;

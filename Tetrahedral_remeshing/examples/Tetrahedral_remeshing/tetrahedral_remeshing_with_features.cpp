@@ -52,7 +52,7 @@ public:
   }
 
   friend value_type get(const Constrained_edges_property_map& map,
-                              const key_type& k)
+                        const key_type& k)
   {
     CGAL_assertion(map.m_set_ptr != NULL);
     CGAL_assertion(k.first < k.second);

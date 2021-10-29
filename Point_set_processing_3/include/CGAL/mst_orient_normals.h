@@ -133,7 +133,7 @@ public:
 
   /// Free function to access the map elements.
   friend inline
-  reference get(const Default_constrained_map& map, key_type p)
+  value_type get(const Default_constrained_map& map, const key_type& p)
   {
     return (p == *map.m_source_point);
   }

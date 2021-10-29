@@ -93,7 +93,7 @@ class Polygon_soup_offset_function {
   public:
     typedef Polygon_iterator key_type;
     typedef EPICK::Point_3 value_type;
-    typedef value_type reference;
+    typedef const value_type& reference;
     typedef boost::readable_property_map_tag category;
 
     Polygon_soup_point_property_map() = default;
@@ -122,8 +122,8 @@ class Polygon_soup_offset_function {
       : points_vector_ptr(ptr)
     {}
 
-    friend reference get(Polygon_soup_triangle_property_map map,
-                         key_type polygon_it)
+    friend value_type get(Polygon_soup_triangle_property_map map,
+                          key_type polygon_it)
     {
       auto it = polygon_it->begin();
       CGAL_assertion(it != polygon_it->end());

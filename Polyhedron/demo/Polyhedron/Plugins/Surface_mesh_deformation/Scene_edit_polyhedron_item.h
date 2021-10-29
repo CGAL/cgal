@@ -73,21 +73,24 @@ struct Array_based_vertex_point_map
 {
 public:
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor     key_type;
-  typedef EPICK::Point_3                                           value_type;
+  typedef EPICK::Point_3                                            value_type;
   typedef const value_type&                                         reference;
   typedef boost::read_write_property_map_tag                        category;
+
   std::vector<float>* positions;
   Mesh* mesh;
   Id_setter* id_setter;
-  Array_based_vertex_point_map(std::vector<float>* positions, Mesh* mesh, Id_setter* id_setter) : positions(positions), mesh(mesh), id_setter(id_setter) {}
 
+  Array_based_vertex_point_map(std::vector<float>* positions, Mesh* mesh, Id_setter* id_setter)
+    : positions(positions), mesh(mesh), id_setter(id_setter)
+  {}
 };
-
 
 template<typename Mesh> inline
 typename Array_based_vertex_point_map<Mesh>::reference
-get(Array_based_vertex_point_map<Mesh> map,
-  typename Array_based_vertex_point_map<Mesh>::key_type key) {
+get(const Array_based_vertex_point_map<Mesh>& map,
+    typename Array_based_vertex_point_map<Mesh>::key_type key)
+{
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
   VertexPointMap pmap = get(boost::vertex_point, *map.mesh);
   return get(pmap, key);
@@ -96,9 +99,9 @@ get(Array_based_vertex_point_map<Mesh> map,
 
 template<typename Mesh> inline
 void
-put(Array_based_vertex_point_map<Mesh> map,
-  typename Array_based_vertex_point_map<Mesh>::key_type key,
-  typename Array_based_vertex_point_map<Mesh>::value_type val)
+put(const Array_based_vertex_point_map<Mesh>& map,
+    typename Array_based_vertex_point_map<Mesh>::key_type key,
+    const typename Array_based_vertex_point_map<Mesh>::value_type& val)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::type VertexPointMap;
   VertexPointMap vpmap = get(boost::vertex_point, *map.mesh);

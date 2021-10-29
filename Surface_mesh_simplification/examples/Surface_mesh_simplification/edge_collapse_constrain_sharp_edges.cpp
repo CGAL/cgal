@@ -25,7 +25,6 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 
 // BGL property map which indicates whether an edge is marked as non-removable
 struct Constrained_edge_map
-  : public boost::put_get_helper<bool, Constrained_edge_map>
 {
   typedef boost::readable_property_map_tag      category;
   typedef bool                                  value_type;
@@ -36,7 +35,9 @@ struct Constrained_edge_map
     : mConstraints(aConstraints)
   {}
 
-  reference operator[](const key_type& e) const { return  is_constrained(e); }
+  value_type operator[](const key_type& e) const { return is_constrained(e); }
+
+  friend inline value_type get(const Constrained_edge_map& m, const key_type& k) { return m[k]; }
 
   bool is_constrained(const key_type& e) const { return mConstraints.is_defined(e); }
 

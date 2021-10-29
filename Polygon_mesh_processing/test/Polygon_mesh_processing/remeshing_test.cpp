@@ -122,7 +122,7 @@ struct Constraints_pmap
 
   typedef edge_descriptor                     key_type;
   typedef bool                                value_type;
-  typedef value_type&                         reference;
+  typedef value_type                          reference;
   typedef boost::read_write_property_map_tag  category;
 
 public:
@@ -139,8 +139,7 @@ public:
     return !map.set_ptr_->empty()
          && map.set_ptr_->count(e);
   }
-  friend void put(Constraints_pmap& map
-                , const key_type& e, const value_type is)
+  friend void put(Constraints_pmap& map, const key_type& e, const value_type is)
   {
     CGAL_assertion(map.set_ptr_ != NULL);
     if (is)                map.set_ptr_->insert(e);

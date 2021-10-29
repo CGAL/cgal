@@ -37,7 +37,7 @@ namespace internal {
     typedef boost::readable_property_map_tag category;
 
     inline friend
-    typename Source_of_segment_3_iterator_property_map<GeomTraits,Iterator>::reference
+    reference
     get(Source_of_segment_3_iterator_property_map<GeomTraits,Iterator>, Iterator it)
     {
       return typename GeomTraits::Construct_source_3()( *it );

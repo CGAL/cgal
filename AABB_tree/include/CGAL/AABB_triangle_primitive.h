@@ -37,7 +37,7 @@ namespace internal {
     typedef boost::readable_property_map_tag category;
 
     inline friend
-    typename Point_from_triangle_3_iterator_property_map<GeomTraits,Iterator>::reference
+    reference
     get(Point_from_triangle_3_iterator_property_map<GeomTraits,Iterator>, Iterator it)
     {
       return typename GeomTraits::Construct_vertex_3()( *it, 0 );
