@@ -859,18 +859,6 @@ private Q_SLOTS:
     treat_sm_property<face_descriptor>("f:angle", item->face_graph());
   }
 
-  bool resetAngles(Scene_surface_mesh_item* item)
-  {
-    SMesh& smesh = *item->face_graph();
-    if(!smesh.property_map<face_descriptor, double>("f:angle").second)
-    {
-      return false;
-    }
-    dock_widget->minBox->setValue(angles_min[item].first);
-    dock_widget->maxBox->setValue(angles_max[item].first);
-    return true;
-  }
-
   // AF: This function gets called when we click on the button "Colorize"
   bool displayHeatIntensity(Scene_surface_mesh_item* item, bool iDT = false)
   {
