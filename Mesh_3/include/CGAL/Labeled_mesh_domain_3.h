@@ -39,6 +39,7 @@
 // support for `CGAL::Image_3`
 #include <CGAL/Image_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
+#include <CGAL/Mesh_3/Image_plus_weights_to_labeled_function_wrapper.h>
 
 // support for implicit functions
 #include <CGAL/Implicit_to_labeling_function_wrapper.h>
@@ -418,6 +419,7 @@ public:
                                   (optional
                                    (relative_error_bound_, (const FT&),
                                     FT(1e-3))
+                                   (weights_, (const CGAL::Image_3&), CGAL::Image_3())
                                    (value_outside_, *, 0)
                                    (p_rng_, (CGAL::Random*), (CGAL::Random*)(0))
                                    (image_values_to_subdomain_indices_, *,
@@ -429,18 +431,37 @@ public:
                                   )
   {
     namespace p = CGAL::parameters;
-    return Labeled_mesh_domain_3
-      (create_labeled_image_wrapper
+    if (weights_.is_valid())
+    {
+      return Labeled_mesh_domain_3
+      (create_weighted_labeled_image_wrapper
        (image_,
+        weights_,
         image_values_to_subdomain_indices_,
         value_outside_),
-       Mesh_3::internal::compute_bounding_box(image_),
-       p::relative_error_bound = relative_error_bound_,
-       p::p_rng = p_rng_,
-       p::null_subdomain_index =
-         create_null_subdomain_index(null_subdomain_index_),
-       p::construct_surface_patch_index =
-         create_construct_surface_patch_index(construct_surface_patch_index_));
+        Mesh_3::internal::compute_bounding_box(image_),
+        p::relative_error_bound = relative_error_bound_,
+        p::p_rng = p_rng_,
+        p::null_subdomain_index =
+        create_null_subdomain_index(null_subdomain_index_),
+        p::construct_surface_patch_index =
+        create_construct_surface_patch_index(construct_surface_patch_index_));
+    }
+    else
+    {
+      return Labeled_mesh_domain_3
+      (create_labeled_image_wrapper
+      (image_,
+        image_values_to_subdomain_indices_,
+        value_outside_),
+        Mesh_3::internal::compute_bounding_box(image_),
+        p::relative_error_bound = relative_error_bound_,
+        p::p_rng = p_rng_,
+        p::null_subdomain_index =
+        create_null_subdomain_index(null_subdomain_index_),
+        p::construct_surface_patch_index =
+        create_construct_surface_patch_index(construct_surface_patch_index_));
+    }
   }
 
   BOOST_PARAMETER_MEMBER_FUNCTION(
@@ -866,6 +887,33 @@ protected:
                    transform_fct(value_outside));
   }
 
+  template <typename Image_word_type,
+            typename FT, typename Functor>
+  static
+  Function
+  create_weighted_labeled_image_wrapper_with_know_word_type
+  (const CGAL::Image_3& image,
+   const CGAL::Image_3& weights,
+   const Functor& image_values_to_subdomain_indices,
+   const FT& value_outside)
+  {
+    using Mesh_3::internal::Create_labeled_image_values_to_subdomain_indices;
+    typedef Create_labeled_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
+    typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
+    Image_values_to_subdomain_indices transform_fct =
+      C_i_v_t_s_i()(image_values_to_subdomain_indices);
+
+    typedef Mesh_3::Image_plus_weights_to_labeled_function_wrapper<
+      Image_word_type,
+      int, //interpolation type
+      unsigned char, // Weights_type,
+      Subdomain_index> Wrapper;
+    return Wrapper(image,
+                   weights,
+                   transform_fct,
+                   transform_fct(value_outside));
+  }
+
   template <typename FT, typename Functor>
   static
   Function
@@ -882,6 +930,27 @@ protected:
     CGAL_error_msg("This place should never be reached, because it would mean "
                    "the image word type is a type that is not handled by "
                    "CGAL_ImageIO.");
+    return Function();
+  }
+
+  template <typename FT, typename Functor>
+  static
+  Function
+  create_weighted_labeled_image_wrapper(const CGAL::Image_3& image,
+                                        const CGAL::Image_3& weights,
+                                        const Functor& image_values_to_subdomain_indices,
+                                        const FT& value_outside)
+  {
+    CGAL_IMAGE_IO_CASE(image.image(),
+      return create_weighted_labeled_image_wrapper_with_know_word_type<Word>
+                        (image,
+                         weights,
+                         image_values_to_subdomain_indices,
+                         value_outside);
+                        );
+    CGAL_error_msg("This place should never be reached, because it would mean "
+      "the image word type is a type that is not handled by "
+      "CGAL_ImageIO.");
     return Function();
   }
 
