@@ -9130,6 +9130,31 @@ public:
 }; /* end Kernel::LessZ_3 */
 
 
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with one arguments)
+*/
+class NonZeroDimension_3
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns any of `0`, `1`, or `2`, if this dimension of vector `v` is not
+    equal to zero, and `-1` if `v` equals the null vector.
+  */
+  int operator(const Kernel::Vector_3&v);
+
+  /// @}
+
+};
+
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
