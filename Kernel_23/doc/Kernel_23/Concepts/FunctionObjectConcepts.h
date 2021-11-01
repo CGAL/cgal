@@ -9140,6 +9140,8 @@ public:
 */
 class NonZeroDimension_3
 {
+public:
+
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
