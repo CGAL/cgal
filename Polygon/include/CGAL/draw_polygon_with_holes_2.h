@@ -25,7 +25,8 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawPolygonWithHoles2
 
-opens a new window and draws `aph`, an instance of the `CGAL::Polygon_with_holes_2` class. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+opens a new window and draws `aph`, an instance of the `CGAL::Polygon_with_holes_2` class. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` add the definition.
 \tparam PH an instance of the `CGAL::Polygon_with_holes_2` class.
 \param aph the polygon with holes to draw.
 

@@ -4,6 +4,10 @@ Release History
 -----------
 
 Release date: December 2021
+### General changes
+-   Added the cmake target `CGAL::CGAL_Basic_viewer` to ease the compilation of programs using
+    the basic viewer based function `CGAL::draw`. This target will define the macro and link with
+    `CGAL_Qt5` target when linked with it.
 
 ### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
 
