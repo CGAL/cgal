@@ -191,4 +191,14 @@ if(NOT TARGET CGAL::Data)
   endif()
 endif()
 
+#
+# Define a specific target for basic viewer
+#
+if (NOT TARGET CGAL::CGAL_Basic_viewer)
+  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED)
+    set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+endif()
+
 include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")
