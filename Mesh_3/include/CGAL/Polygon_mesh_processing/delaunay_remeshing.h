@@ -45,7 +45,7 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 * @brief remeshes a surface triangle mesh following the Delaunay refinement
-* algorithm described in the \ref
+* algorithm described in the TODO_ADD_REF
 *
 * @tparam TriangleMesh model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
