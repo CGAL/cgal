@@ -167,10 +167,12 @@ endforeach()
 #
 # Define a specific target for basic viewer
 #
-add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED)
-  set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
-    INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
-    INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+if (NOT TARGET CGAL::CGAL_Basic_viewer)
+  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED)
+    set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+endif()
 
 include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 
