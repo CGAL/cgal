@@ -9139,7 +9139,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with one arguments)
 */
 class NonZeroDimension_3
-
+{
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
