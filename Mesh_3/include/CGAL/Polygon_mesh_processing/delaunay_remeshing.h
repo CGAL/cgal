@@ -61,11 +61,11 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{vertex_point_map}
 *   \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
-*   \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*   \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                  as key type and `%Point_3` as value type}
 *   \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
 *   \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-*                   must be available in `PolygonMesh`.}
+*                   must be available in `TriangleMesh`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{features_angle_bound}
@@ -236,8 +236,9 @@ void delaunay_remeshing(const TriangleMesh& tmesh
   }
 
   // Sharp features - provided by user as a set of polylines
-  auto polylines = choose_parameter(get_parameter_reference(np, internal_np::polyline_constraints),
-                                    std::vector<std::vector<Point_3> >());
+  const auto& polylines
+    = choose_parameter(get_parameter_reference(np, internal_np::polyline_constraints),
+                       std::vector<std::vector<Point_3> >());
   if (!polylines.empty() && !protection_of_user_given_constraints)
   {
     std::vector<std::vector<Point_3> > features;
