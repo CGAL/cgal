@@ -89,7 +89,6 @@ Release date: December 2021
  -  A new geometry traits , namely, `Arr_geodesic_arc_on_sphere_traits_2`, is introduced. It handles arcs of great circles embedded on the unit sphere.
 
 
-
 ### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
 
 -   Added support for `libpointmatcher::GenericDescriptorOutlierFilter`
@@ -112,6 +111,11 @@ Release date: December 2021
     [`symmetric_difference()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__symmetric__difference.html),
     and [`oriented_side`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__oriented__side.html))
     to control whether to use `Arr_polyline_traits_2` as default traits. It is the new default as it provides better performances in general.
+
+### [3D Mesh Generation](https://doc.cgal.org/latest/Manual/packages.html#PkgMesh3)
+
+-   Added support of weighted images for an improved quality of meshes generated from labeled images,
+    along with a function `CGAL::Mesh_3::generate_label_weights()` to generate the weights.
 
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
