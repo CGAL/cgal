@@ -88,7 +88,7 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{polyline_constraints}
 *     \cgalParamDescription{a set of polylines that will be resampled and appear as protected
 *        polyline constraints in the output mesh}
-*     \cgalParamType{a class model of `Range` which value type is model of `MeshPolyline_3`}
+*     \cgalParamType{a class model of `Range`, of which value type is model of `MeshPolyline_3`}
 *     \cgalParamDefault{an empty range of segments}
 *   \cgalParamNEnd
 *
