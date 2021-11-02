@@ -96,7 +96,7 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDescription{If `true`, the feature edges of the input are re-sampled and present in the output mesh.
 *           If `edge_is_constrained_map` is provided, the corresponding "constrained" edges are protected.
 *           Else, if `polyline_constraints` is provided, the corresponding polylines are protected.
-*           Otherwise, if `features_angle_bound` is provided, the edges that form a sharp dihedral angle with
+*           Otherwise, `features_angle_bound` is used, and the edges that form a sharp dihedral angle with
 *             respect to that bound are protected.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`false`}
