@@ -47,10 +47,10 @@ namespace Polygon_mesh_processing {
 * @brief remeshes a surface triangle mesh following the Delaunay refinement
 * algorithm described in the \ref PkgMesh3 package.
 *
-* @tparam TriangleMesh model of `FaceListGraph`
+* @tparam TriangleMesh model of `FaceListGraph` and of `MutableFaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param pmesh a triangle surface mesh
+* @param tmesh a triangle surface mesh
 * @param out the output triangle surface mesh
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
@@ -64,25 +64,26 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_point_map}
-*   \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
-*   \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*   \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+*   \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
 *                  as key type and `%Point_3` as value type}
-*   \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+*   \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
 *   \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 *                   must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
 *
 *   \cgalParamNBegin{features_angle_bound}
-*     \cgalParamDescription{The dihedral angle bound for detection of feature edges.
-*          If the given value is `180`, only the border edges are protected.}
+*     \cgalParamDescription{the dihedral angle bound (in degrees) for detection of feature edges}
 *     \cgalParamType{A number type `FT`, either deduced from the `geom_traits`
 *          \ref bgl_namedparameters "Named Parameters" if provided,
 *          or from the geometric traits class deduced from the point property map
 *         of `TriangleMesh`.}
 *     \cgalParamDefault{`60`}
+*     \cgalParamExtra{If the given value is `180`, only the border edges are protected.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{edge_is_constrained_map}
-*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no edge is constrained}
@@ -91,7 +92,7 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{polyline_constraints}
 *     \cgalParamDescription{a set of polylines that will be resampled and appear as protected
 *        polyline constraints in the output mesh}
-*     \cgalParamType{a class model of `Range`, which value type is model of `MeshPolyline_3`}
+*     \cgalParamType{a class model of `Range` which value type is model of `MeshPolyline_3`}
 *     \cgalParamDefault{an empty range of segments}
 *   \cgalParamNEnd
 *
@@ -110,16 +111,16 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{face_patch_map}
 *     \cgalParamDescription{a property map with the patch id's associated to the faces of `faces`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
-*                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable` as value type.}
+*                    as key type and the desired property, model of `CopyConstructible` and `LessThanComparable`, as value type.}
 *     \cgalParamDefault{a default property map where each face is associated with the ID of
 *                       the connected component it belongs to. Connected components are
 *                       computed with respect to the constrained edges listed in the property map
-*                       `edge_is_constrained_map`}
+*                       `edge_is_constrained_map`.}
 *     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{mesh_edge_size}
-*     \cgalParamDescription{A scalar field (resp. a constant) providing a space varying
+*     \cgalParamDescription{A scalar field (resp. a constant) providing a space-varying
 *          (resp. a uniform) upper bound for the lengths of curve edges.
 *          This parameter has to be set to a positive value when 1-dimensional features protection is used
 *          (when `protect_constraints` is `true`).}
@@ -131,8 +132,8 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{mesh_facet_size}
-*     \cgalParamDescription{A scalar field (resp. a constant) describing a space varying
-*          (resp. a uniform) upper-bound for the radii of the surface Delaunay balls.}
+*     \cgalParamDescription{A scalar field (resp. a constant) describing a space-varying
+*          (resp. a uniform) upper bound for the radii of the surface Delaunay balls.}
 *     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept
 *          `MeshDomainField_3`}
 *     \cgalParamDefault{`0.`}
@@ -145,7 +146,7 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{mesh_facet_distance}
-*     \cgalParamDescription{A scalar field (resp. a constant) describing a space varying
+*     \cgalParamDescription{A scalar field (resp. a constant) describing a space-varying
 *          (resp. a uniform) upper bound for the distance between the facet circumcenter
 *          and the center of its surface Delaunay ball.}
 *     \cgalParamType{A number type `FT` model of the concept `Field`, or a model of the concept
@@ -156,17 +157,17 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{mesh_facet_topology}
 *     \cgalParamDescription{The set of topological constraints which have to be verified
 *          by each surface facet. The default value is `CGAL::FACET_VERTICES_ON_SURFACE`.
-*          See `CGAL::Mesh_facet_topology` manual page to get all possible values.}
+*          See `CGAL::Mesh_facet_topology` manual page for a description of the possible values.}
 *     \cgalParamType{`CGAL::Mesh_facet_topology`}
 *     \cgalParamDefault{`CGAL::FACET_VERTICES_ON_SURFACE`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \pre `pmesh` must be free of self-intersections
+* \pre `tmesh` must be free of self-intersections.
 */
 template<typename TriangleMesh
        , typename NamedParameters>
-void delaunay_remeshing(const TriangleMesh& pmesh
+void delaunay_remeshing(const TriangleMesh& tmesh
                      , TriangleMesh& out
                      , const NamedParameters& np)
 {
@@ -184,14 +185,14 @@ void delaunay_remeshing(const TriangleMesh& pmesh
   using FT = typename GT::FT;
   using Point_3 = typename GT::Point_3;
 
-  if (!CGAL::is_triangle_mesh(pmesh)) {
+  if (!CGAL::is_triangle_mesh(tmesh)) {
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return;
   }
 
   // Create a vector with only one element: the pointer to the polyhedron.
   std::vector<const TM*> poly_ptrs_vector(1);
-  poly_ptrs_vector[0] = &pmesh;
+  poly_ptrs_vector[0] = &tmesh;
 
   // Create a polyhedral domain, with only one polyhedron,
   // and no "bounding polyhedron", so the volumetric part of the domain will be
@@ -201,7 +202,7 @@ void delaunay_remeshing(const TriangleMesh& pmesh
   // Vertex point map
   using VPMap = typename GetVertexPointMap<TM, NamedParameters>::type;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                 get_const_property_map(vertex_point, pmesh));
+                                 get_const_property_map(vertex_point, tmesh));
 
   // Sharp features
   // Sharp features - provided by user as a pmap on input edges
@@ -218,14 +219,14 @@ void delaunay_remeshing(const TriangleMesh& pmesh
   if (!boost::is_same<ECMap, Static_boolean_property_map<edge_descriptor, false> >::value)
   {
     std::vector<std::vector<Point_3> > sharp_edges;
-    for (edge_descriptor e : edges(pmesh))
+    for (edge_descriptor e : edges(tmesh))
     {
       if (get(ecmap, e))
       {
         std::vector<Point_3> ev;
-        Point_3 p = get(vpmap, source(halfedge(e, pmesh), pmesh));
-        ev.push_back(get(vpmap, source(halfedge(e,pmesh), pmesh)));
-        ev.push_back(get(vpmap, target(halfedge(e, pmesh), pmesh)));
+        Point_3 p = get(vpmap, source(halfedge(e, tmesh), tmesh));
+        ev.push_back(get(vpmap, source(halfedge(e,tmesh), tmesh)));
+        ev.push_back(get(vpmap, target(halfedge(e, tmesh), tmesh)));
         sharp_edges.push_back(ev);
       }
     }
