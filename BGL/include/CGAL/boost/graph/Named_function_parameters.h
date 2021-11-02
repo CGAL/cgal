@@ -19,6 +19,7 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 #include <type_traits>
+#include <utility>
 
 #define CGAL_BGL_NP_TEMPLATE_PARAMETERS T, typename Tag, typename Base
 #define CGAL_BGL_NP_CLASS CGAL::Named_function_parameters<T,Tag,Base>
