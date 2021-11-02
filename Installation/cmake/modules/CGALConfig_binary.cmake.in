@@ -200,7 +200,7 @@ endif()
 set(CGAL_DATA_DIR "@CGAL_DATA_DIR@")
 
 if(NOT TARGET CGAL::Data)
-  add_library(CGAL::Data INTERFACE IMPORTED)
+  add_library(CGAL::Data INTERFACE IMPORTED GLOBAL)
   if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
     set_target_properties(CGAL::Data PROPERTIES
       INTERFACE_COMPILE_DEFINITIONS "CGAL_DATA_DIR=\"${CGAL_DATA_DIR}\"")
@@ -211,7 +211,7 @@ endif()
 # Define a specific target for basic viewer
 #
 if (NOT TARGET CGAL::CGAL_Basic_viewer)
-  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED)
+  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
     set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
       INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
