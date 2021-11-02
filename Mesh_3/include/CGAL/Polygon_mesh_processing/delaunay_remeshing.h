@@ -154,7 +154,7 @@ namespace Polygon_mesh_processing {
 *     \cgalParamDescription{The set of topological constraints which have to be verified
 *          by each surface facet. The default value is `CGAL::FACET_VERTICES_ON_SURFACE`.
 *          See `CGAL::Mesh_facet_topology` manual page for a description of the possible values.}
-*     \cgalParamType{`CGAL::Mesh_facet_topology`}
+*     \cgalParamType{\link PkgMesh3Enum `CGAL::Mesh_facet_topology` \endlink}
 *     \cgalParamDefault{`CGAL::FACET_VERTICES_ON_SURFACE`}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
