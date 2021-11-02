@@ -30,8 +30,6 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <boost/type_traits/is_same.hpp>
-
 #include <limits>
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -216,7 +214,7 @@ void delaunay_remeshing(const TriangleMesh& tmesh
   >::type;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                  Static_boolean_property_map<edge_descriptor, false>());
-  if (!boost::is_same<ECMap, Static_boolean_property_map<edge_descriptor, false> >::value)
+  if (!parameters::is_default_parameter(ecmap))
   {
     std::vector<std::vector<Point_3> > sharp_edges;
     for (edge_descriptor e : edges(tmesh))
