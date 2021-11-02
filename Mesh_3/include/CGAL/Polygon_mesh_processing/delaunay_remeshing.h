@@ -15,8 +15,6 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-#include <CGAL/disable_warnings.h>
-
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -171,6 +169,7 @@ void delaunay_remeshing(const TriangleMesh& tmesh
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
+  using parameters::get_parameter_reference;
 
   using TM   = TriangleMesh;
   using GT   = typename GetGeomTraits<TM, NamedParameters>::type;
@@ -237,7 +236,7 @@ void delaunay_remeshing(const TriangleMesh& tmesh
   }
 
   // Sharp features - provided by user as a set of polylines
-  auto polylines = choose_parameter(get_parameter(np, internal_np::polyline_constraints),
+  auto polylines = choose_parameter(get_parameter_reference(np, internal_np::polyline_constraints),
                                     std::vector<std::vector<Point_3> >());
   if (!polylines.empty() && !protection_of_user_given_constraints)
   {
