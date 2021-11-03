@@ -141,9 +141,8 @@ Construct_holes construct_holes_object() const;
 /*!
 returns a functor that determines if the polygon with holes is unbounded
 */
-Is_unbounded construct_is_unbounded_object();
+Is_unbounded is_unbounded_object();
 
 /// @}
 
 }; /* end GeneralPolygonSetTraits_2 */
-

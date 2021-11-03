@@ -163,7 +163,7 @@ public:
     { return pol_wh.is_unbounded(); }
   };
 
-  Is_unbounded construct_is_unbounded_object() const { return Is_unbounded(); }
+  Is_unbounded is_unbounded_object() const { return Is_unbounded(); }
 
   // Equality operator
   class Equal_2 {
