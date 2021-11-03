@@ -24,7 +24,7 @@
 
 namespace CGAL {
 
-template <typename Arr_traits,
+template <typename ArrTraits_2,
           typename GeneralPolygon_2 = General_polygon_2<ArrTraits_2> >
 class Gps_traits_2 : public ArrTraits_2 {
   typedef ArrTraits_2                                   Base;
@@ -130,8 +130,7 @@ public:
    */
   class Construct_polygon_with_holes_2 {
   public:
-    General_polygon_with_holes_2
-    operator()(const Polygon_2& pgn_boundary) const
+    Polygon_with_holes_2 operator()(const Polygon_2& pgn_boundary) const
     { return Polygon_with_holes_2(pgn_boundary); }
 
     template <class HolesInputIterator>
