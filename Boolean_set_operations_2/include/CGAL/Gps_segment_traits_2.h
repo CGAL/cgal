@@ -168,7 +168,7 @@ public:
 
   Construct_polygon_with_holes_2 construct_polygon_with_holes_2_object() const
   {
-    return Construct_general_polygon_with_holes_2();
+    return Construct_polygon_with_holes_2();
   }
 
   //functor returns true if the outer boundary is unbounded, and false otherwise.
