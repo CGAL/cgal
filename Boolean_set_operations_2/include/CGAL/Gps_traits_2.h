@@ -35,14 +35,14 @@ public:
   typedef typename Base::X_monotone_curve_2             X_monotone_curve_2;
   typedef typename Base::Multiplicity                   Multiplicity;
 
-  //Polygon_2 type is required by GeneralPolygonSetTraits Concept
+  // Polygon_2 type is required by GeneralPolygonSetTraits Concept
   typedef GeneralPolygon_2                              Polygon_2;
-  //Polygon_2 is a model of the GeneralPolygon2 concept
+  // Backward compatibility
   typedef Polygon_2                                     General_polygon_2;
 
-  //Polygon_with_holes_2 type required by GeneralPolygonSetTraits Concept.
+  // Polygon_with_holes_2 type required by GeneralPolygonSetTraits Concept.
   typedef CGAL::General_polygon_with_holes_2<Polygon_2> Polygon_with_holes_2;
-  //Polygon_with_Holes_2 is a model of the GeneralPolygonWithHoles2 concept.
+  // Backward compatibility
   typedef Polygon_with_holes_2
     General_polygon_with_holes_2;
 
