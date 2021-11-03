@@ -9138,7 +9138,7 @@ public:
 
   \cgalRefines `AdaptableFunctor` (with one arguments)
 */
-class NonZeroDimension_3
+class NonZeroCoordinateIndex_3
 {
 public:
 

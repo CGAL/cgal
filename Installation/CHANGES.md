@@ -39,8 +39,8 @@ Release date: December 2021
 -   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
     and `Projection_traits_yz_3` classes.
 -   Added documentation for the class `Projection_traits_3`, which enables the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
--   Added the functor `NonZeroDimension_3`to the concept `Kernel` with `int operator(Kernel::Vector_3)`
-    which returns any dimension of the vector different from zero or `-1`.
+-   Added the functor `NonZeroCoordinateIndex_3`to the concept `Kernel` with `int operator(Kernel::Vector_3)`
+    which returns the index of any coordinate of the vector different from zero, or `-1`.
 
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)

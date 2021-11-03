@@ -40,7 +40,7 @@ namespace CommonKernelFunctors {
 
 
   template <typename K>
-  class Non_zero_dimension_3
+  class Non_zero_coordinate_index_3
   {
     typedef typename K::Vector_3 Vector_3;
 
