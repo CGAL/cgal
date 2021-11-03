@@ -1534,11 +1534,6 @@ public:
   typedef unspecified_type Is_degenerate_3;
 
   /*!
-    a model of `Kernel::HasNonZeroCoordinateIndex_3`
-  */
-  typedef unspecified_type Has_non_zero_coordinate_index_3;
-
-  /*!
     a model of `Kernel::HasOn_3`
   */
   typedef unspecified_type Has_on_3;
@@ -1567,6 +1562,11 @@ public:
     a model of `Kernel::HasOnNegativeSide_3`
   */
   typedef unspecified_type Has_on_negative_side_3;
+
+  /*!
+    a model of `Kernel::NonZeroCoordinateIndex_3`
+  */
+  typedef unspecified_type Non_zero_coordinate_index_3;
 
   /*!
     a model of `Kernel::OrientedSide_3`
