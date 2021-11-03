@@ -144,8 +144,8 @@ public:
   Construct_holes construct_holes_object() const
   { return Construct_holes(); }
 
-  /* A functor for constructing a General_polygon_with_holes from a
-   * General_Polygon (and possibly a range of holes).
+  /* A functor for constructing a Polygon_with_holes from a polygon (and
+   * possibly a range of holes).
    *
    * constructs a general polygon with holes using a given general polygon
    * outer as the outer boundary and a given range of holes. If outer is an
