@@ -9147,10 +9147,10 @@ public:
   /// @{
 
   /*!
-    returns any of `0`, `1`, or `2`, if this dimension of vector `v` is not
-    equal to zero, and `-1` if `v` equals the null vector.
+    returns any of `0`, `1`, or `2` if the corresponding coordinate of the vector `v` is not
+    equal to zero, and `-1` if `v` is the null vector.
   */
-  int operator(const Kernel::Vector_3&v);
+  int operator(const Kernel::Vector_3& v);
 
   /// @}
 
