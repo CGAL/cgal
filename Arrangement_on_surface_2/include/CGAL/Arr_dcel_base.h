@@ -1230,53 +1230,12 @@ public:
   /*! Delete all DCEL features. */
   void delete_all()
   {
-    // Free all vertices.
-    Vertex_iterator vit = vertices.begin(), v_curr;
-    while (vit != vertices.end()) {
-      v_curr = vit;
-      ++vit;
-      delete_vertex(&(*v_curr));
-    }
-
-    // Free all halfedges.
-    Halfedge_iterator  hit = halfedges.begin(), h_curr;
-    while (hit != halfedges.end()) {
-      h_curr = hit;
-      ++hit;
-      _delete_halfedge(&(*h_curr));
-    }
-
-    // Free all faces.
-    Face_iterator fit = faces.begin(), f_curr;
-    while (fit != faces.end()) {
-      f_curr = fit;
-      ++fit;
-      delete_face(&(*f_curr));
-    }
-
-    // Free all outer CCBs.
-    typename Outer_ccb_list::iterator ocit = out_ccbs.begin(), oc_curr;
-    while (ocit != out_ccbs.end()) {
-      oc_curr = ocit;
-      ++ocit;
-      delete_outer_ccb(&(*oc_curr));
-    }
-
-    // Free all inner CCBs.
-    typename Inner_ccb_list::iterator icit = in_ccbs.begin(), ic_curr;
-    while (icit != in_ccbs.end()) {
-      ic_curr = icit;
-      ++icit;
-      delete_inner_ccb(&(*ic_curr));
-    }
-
-    // Free all isolated vertices.
-    typename Iso_vert_list::iterator ivit = iso_verts.begin(), iv_curr;
-    while (ivit != iso_verts.end()) {
-      iv_curr = ivit;
-      ++ivit;
-      delete_isolated_vertex(&(*iv_curr));
-    }
+    vertices.clear();
+    halfedges.clear();
+    faces.clear();
+    out_ccbs.clear();
+    in_ccbs.clear();
+    iso_verts.clear();
   }
   //@}
 
