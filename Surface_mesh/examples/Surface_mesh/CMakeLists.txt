@@ -25,11 +25,6 @@ endif()
 #CGAL_Qt5 is needed for the drawing.
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-if(CGAL_Qt5_FOUND)
-  #required to use basic_viewer
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
-
 create_single_source_cgal_program("sm_derivation.cpp")
 create_single_source_cgal_program("sm_join.cpp")
 create_single_source_cgal_program("sm_aabbtree.cpp")
@@ -48,9 +43,9 @@ create_single_source_cgal_program("draw_surface_mesh.cpp")
 if(CGAL_Qt5_FOUND)
 
   #link it with the required CGAL libraries
-  target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Basic_viewer)
 
-  target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
 
 #end of the file

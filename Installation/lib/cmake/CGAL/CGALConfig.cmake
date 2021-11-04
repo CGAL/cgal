@@ -91,7 +91,7 @@ if (NOT CGAL_DATA_DIR)
 endif()
 
 if(NOT TARGET CGAL::Data)
-  add_library(CGAL::Data INTERFACE IMPORTED)
+  add_library(CGAL::Data INTERFACE IMPORTED GLOBAL)
   if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
     set_target_properties(CGAL::Data PROPERTIES
       INTERFACE_COMPILE_DEFINITIONS "CGAL_DATA_DIR=\"${CGAL_DATA_DIR}\"")
@@ -163,6 +163,16 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
     CGAL_setup_target_dependencies(${cgal_lib})
   endif()
 endforeach()
+
+#
+# Define a specific target for basic viewer
+#
+if (NOT TARGET CGAL::CGAL_Basic_viewer)
+  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+endif()
 
 include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 
