@@ -5,6 +5,11 @@ Release History
 
 Release date: December 2021
 
+### [General changes](https://doc.cgal.org/5.4/Manual/general_intro.html)
+-   The kernel providing exact constructions and exact predicates (`Exact_predicates_exact_constructions_kernel`)
+    has been made thread-safe. See changes in 2D and 3D Linear Geometry Kernel
+    for more details.
+
 ### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
 
 -   This package provides a simple and unified interface to different types of weights.
