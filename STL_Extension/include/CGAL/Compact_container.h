@@ -343,10 +343,10 @@ public:
     a.swap(b);
   }
 
-  iterator begin() { return iterator(first_item, 0, 0); }
+  iterator begin() { return empty()?iterator(last_item, 0):iterator(first_item, 0, 0); }
   iterator end()   { return iterator(last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(first_item, 0, 0); }
+  const_iterator begin() const { return empty()?const_iterator(last_item, 0):const_iterator(first_item, 0, 0); }
   const_iterator end()   const { return const_iterator(last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -734,7 +734,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::merge(Self 
   size_ += d.size_;
   // Add the capacities.
   capacity_ += d.capacity_;
-  // It seems reasonnable to take the max of the block sizes.
+  // It seems reasonable to take the max of the block sizes.
   block_size = (std::max)(block_size, d.block_size);
   // Clear d.
   d.init();
