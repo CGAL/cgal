@@ -267,6 +267,83 @@ namespace Weights {
     }
   };
 
+  namespace cotangent_ns {
+
+  template<typename PolygonMesh, typename VPM, typename GeomTraits>
+  typename GeomTraits::FT cotangent(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor he,
+                                    const PolygonMesh& pmesh,
+                                    const VPM pmap,
+                                    const GeomTraits& traits,
+                                    bool use_clamped_version)
+  {
+    using FT = typename GeomTraits::FT;
+
+    const auto v0 = target(he, pmesh);
+    const auto v1 = source(he, pmesh);
+
+    const auto& p0 = get(pmap, v0);
+    const auto& p1 = get(pmap, v1);
+
+    FT weight = FT(0);
+    if (is_border_edge(he, pmesh)) {
+      const auto he_cw = opposite(next(he, pmesh), pmesh);
+      auto v2 = source(he_cw, pmesh);
+
+      if (is_border_edge(he_cw, pmesh)) {
+        const auto he_ccw = prev(opposite(he, pmesh), pmesh);
+        v2 = source(he_ccw, pmesh);
+
+        const auto& p2 = get(pmap, v2);
+        if (use_clamped_version) {
+          weight = internal::cotangent_3_clamped(traits, p1, p2, p0);
+        } else {
+          weight = internal::cotangent_3(traits, p1, p2, p0);
+        }
+        weight = (CGAL::max)(FT(0), weight);
+        weight /= FT(2);
+      } else {
+        const auto& p2 = get(pmap, v2);
+        if (use_clamped_version) {
+          weight = internal::cotangent_3_clamped(traits, p0, p2, p1);
+        } else {
+          weight = internal::cotangent_3(traits, p0, p2, p1);
+        }
+        weight = (CGAL::max)(FT(0), weight);
+        weight /= FT(2);
+      }
+
+    } else {
+      const auto he_cw = opposite(next(he, pmesh), pmesh);
+      const auto v2 = source(he_cw, pmesh);
+      const auto he_ccw = prev(opposite(he, pmesh), pmesh);
+      const auto v3 = source(he_ccw, pmesh);
+
+      const auto& p2 = get(pmap, v2);
+      const auto& p3 = get(pmap, v3);
+      FT cot_beta = FT(0), cot_gamma = FT(0);
+
+      if (use_clamped_version) {
+        cot_beta = internal::cotangent_3_clamped(traits, p0, p2, p1);
+      } else {
+        cot_beta = internal::cotangent_3(traits, p0, p2, p1);
+      }
+
+      if (use_clamped_version) {
+        cot_gamma = internal::cotangent_3_clamped(traits, p1, p3, p0);
+      } else {
+        cot_gamma = internal::cotangent_3(traits, p1, p3, p0);
+      }
+
+      cot_beta  = (CGAL::max)(FT(0), cot_beta);  cot_beta  /= FT(2);
+      cot_gamma = (CGAL::max)(FT(0), cot_gamma); cot_gamma /= FT(2);
+      weight = cot_beta + cot_gamma;
+    }
+
+    return weight;
+  }
+
+  } // namespace cotangent_ns
+
   // Undocumented cotangent weight class.
   // Its constructor takes a boolean flag to choose between default and clamped
   // versions of the cotangent weights and its operator() is defined based on the
@@ -292,70 +369,9 @@ namespace Weights {
 
       using GeomTraits = typename CGAL::Kernel_traits<
         typename boost::property_traits<VertexPointMap>::value_type>::type;
-      using FT = typename GeomTraits::FT;
       const GeomTraits traits;
 
-      const auto v0 = target(he, pmesh);
-      const auto v1 = source(he, pmesh);
-
-      const auto& p0 = get(pmap, v0);
-      const auto& p1 = get(pmap, v1);
-
-      FT weight = FT(0);
-      if (is_border_edge(he, pmesh)) {
-        const auto he_cw = opposite(next(he, pmesh), pmesh);
-        auto v2 = source(he_cw, pmesh);
-
-        if (is_border_edge(he_cw, pmesh)) {
-          const auto he_ccw = prev(opposite(he, pmesh), pmesh);
-          v2 = source(he_ccw, pmesh);
-
-          const auto& p2 = get(pmap, v2);
-          if (m_use_clamped_version) {
-            weight = internal::cotangent_3_clamped(traits, p1, p2, p0);
-          } else {
-            weight = internal::cotangent_3(traits, p1, p2, p0);
-          }
-          weight = (CGAL::max)(FT(0), weight);
-          weight /= FT(2);
-        } else {
-          const auto& p2 = get(pmap, v2);
-          if (m_use_clamped_version) {
-            weight = internal::cotangent_3_clamped(traits, p0, p2, p1);
-          } else {
-            weight = internal::cotangent_3(traits, p0, p2, p1);
-          }
-          weight = (CGAL::max)(FT(0), weight);
-          weight /= FT(2);
-        }
-
-      } else {
-        const auto he_cw = opposite(next(he, pmesh), pmesh);
-        const auto v2 = source(he_cw, pmesh);
-        const auto he_ccw = prev(opposite(he, pmesh), pmesh);
-        const auto v3 = source(he_ccw, pmesh);
-
-        const auto& p2 = get(pmap, v2);
-        const auto& p3 = get(pmap, v3);
-        FT cot_beta = FT(0), cot_gamma = FT(0);
-
-        if (m_use_clamped_version) {
-          cot_beta = internal::cotangent_3_clamped(traits, p0, p2, p1);
-        } else {
-          cot_beta = internal::cotangent_3(traits, p0, p2, p1);
-        }
-
-        if (m_use_clamped_version) {
-          cot_gamma = internal::cotangent_3_clamped(traits, p1, p3, p0);
-        } else {
-          cot_gamma = internal::cotangent_3(traits, p1, p3, p0);
-        }
-
-        cot_beta  = (CGAL::max)(FT(0), cot_beta);  cot_beta  /= FT(2);
-        cot_gamma = (CGAL::max)(FT(0), cot_gamma); cot_gamma /= FT(2);
-        weight = cot_beta + cot_gamma;
-      }
-      return weight;
+      return cotangent_ns::cotangent(he, pmesh, pmap, traits, m_use_clamped_version);
     }
   };
 
@@ -391,7 +407,7 @@ namespace Weights {
     }
 
     FT w_ij(const halfedge_descriptor he) const {
-      return cotangent_clamped(he);
+      return cotangent_ns::cotangent(he, m_pmesh, m_pmap, m_traits, true /*clamped*/);
     }
 
   private:
