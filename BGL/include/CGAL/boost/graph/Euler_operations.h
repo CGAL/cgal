@@ -307,29 +307,29 @@ split_face(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
 
 /**
  * splits the halfedge `h` and afterwards:
- * - calls `split_face()` with `prev(h, pmesh)` and `next(h, pmesh)`, if `h` is not a border halfedge
- * - calls `split_face()` with `opposite(h, pmesh)` and `next(next(h, pmesh), pmesh)`, if `oppiste(h, pmesh)`
+ * - calls `split_face()` with `prev(h, g)` and `next(h, g)`, if `h` is not a border halfedge
+ * - calls `split_face()` with `opposite(h, g)` and `next(next(h, g), g)`, if `oppiste(h, g)`
  *   is not a border halfedge
  *
  * \tparam Graph must be a `MutableFaceGraph`
  *
  * \returns the halfedge `hnew` pointing to the inserted vertex in the edge split.
  */
-template <typename PolygonMesh>
-typename boost::graph_traits<PolygonMesh>::halfedge_descriptor
-split_edge_and_incident_faces(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-                              PolygonMesh& pmesh)
+template <typename Graph>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+split_edge_and_incident_faces(typename boost::graph_traits<Graph>::halfedge_descriptor h,
+                              Graph& g)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
+  typedef typename boost::graph_traits<Graph>::halfedge_descriptor             halfedge_descriptor;
 
-  halfedge_descriptor res = Euler::split_edge(h, pmesh);
+  halfedge_descriptor res = Euler::split_edge(h, g);
 
-  if(!is_border(res, pmesh))
-    Euler::split_face(res, next(h, pmesh), pmesh);
+  if(!is_border(res, g))
+    Euler::split_face(res, next(h, g), g);
 
-  halfedge_descriptor opp_h = opposite(h, pmesh);
-  if(!is_border(opp_h, pmesh))
-    Euler::split_face(opp_h, next(next(opp_h, pmesh), pmesh), pmesh);
+  halfedge_descriptor opp_h = opposite(h, g);
+  if(!is_border(opp_h, g))
+    Euler::split_face(opp_h, next(next(opp_h, g), g), g);
 
   return res;
 }
