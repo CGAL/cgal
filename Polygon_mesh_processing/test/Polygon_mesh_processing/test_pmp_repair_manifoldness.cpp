@@ -30,7 +30,7 @@ template <typename PolygonMesh>
 void read_mesh(const std::string fname,
                PolygonMesh& mesh)
 {
-  if(!CGAL::read_polygon_mesh(fname, mesh) || is_empty(mesh))
+  if(!CGAL::IO::read_polygon_mesh(fname, mesh) || is_empty(mesh))
   {
     std::cerr << fname << " is not a valid input file.\n";
     std::exit(1);
@@ -77,7 +77,7 @@ void repair_nm_with_treatment(const std::string fname,
     oss << "results/" << extract_filename(fname) << "_merge.off" << std::ends;
 
   std::cout << "write " << oss.str() << std::endl;
-  CGAL::write_polygon_mesh(oss.str().c_str(), pmesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh(oss.str().c_str(), pmesh, CGAL::parameters::stream_precision(17));
 
   assert(count_nm_vertices(pmesh) == 0);
 }

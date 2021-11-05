@@ -224,8 +224,10 @@ void test_triangulate_refine_and_fair_hole(const char* file_name) {
   for(typename std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
-    CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
-      *it, back_inserter(patch_facets), back_inserter(patch_vertices));
+    auto res = CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
+                 poly, *it, back_inserter(patch_facets), back_inserter(patch_vertices));
+
+    assert(res.first);
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
