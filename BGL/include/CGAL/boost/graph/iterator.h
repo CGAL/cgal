@@ -871,6 +871,18 @@ halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h
 
 /**
  * \ingroup PkgBGLIterators
+ * returns an iterator range over all halfedges incident to `f`.
+ */
+template<typename Graph>
+Iterator_range<Halfedge_around_face_iterator<Graph> >
+halfedges_around_face(typename boost::graph_traits<Graph>::face_descriptor f, const Graph& g)
+{
+  CGAL_precondition(f != boost::graph_traits<Graph>::null_face());
+  return halfedges_around_face(halfedge(f, g), g);
+}
+
+/**
+ * \ingroup PkgBGLIterators
  * A bidirectional iterator with value type `boost::graph_traits<Graph>::%face_descriptor`.
  * It iterates over the same halfedges as the `Halfedge_around_face_iterator`,
  * and provides the face descriptor associated to the opposite halfedge.  The face descriptor
