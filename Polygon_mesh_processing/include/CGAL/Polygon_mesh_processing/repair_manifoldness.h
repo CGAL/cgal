@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Mael Rouxel-Labbé
+// Author(s)     : Mael Rouxel-Labbé,
+//                 Sébastien Loriot
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_MANIFOLDNESS_H
 #define CGAL_POLYGON_MESH_PROCESSING_REPAIR_MANIFOLDNESS_H
@@ -21,10 +22,12 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/clip_self_intersecting.h>
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Canvas/BGL_canvas.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -48,15 +51,13 @@
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/utility.h>
 
-#include <boost/shared_ptr.hpp>
-
+#include <fstream>
 #include <iostream>
 #include <iterator>
-#include <fstream>
 #include <map>
 #include <stack>
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -297,14 +298,14 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh,
                                   internal_np::vertex_is_constrained_t,
                                   NamedParameters,
                                   Static_boolean_property_map<vertex_descriptor, false> // default (no constraint pmap)
-                                  >::type                            VerticesMap;
+                                  >::type                                      VerticesMap;
   VerticesMap cmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                                       Static_boolean_property_map<vertex_descriptor, false>());
 
   typedef typename internal_np::Lookup_named_param_def<
                                   internal_np::output_iterator_t,
                                   NamedParameters,
-                                  Emptyset_iterator>::type           Output_iterator;
+                                  Emptyset_iterator>::type                     Output_iterator;
   Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator),
                                          Emptyset_iterator());
 
@@ -337,7 +338,7 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 
 // main:
 // @todo VPM for heat method / heat method on a FFG
-//
+
 enum NM_TREATMENT
 {
   SEPARATE = 0,
@@ -347,13 +348,290 @@ enum NM_TREATMENT
 
 namespace internal {
 
-template <typename PolygonMesh, typename VPM, typename GeomTraits>
-void sample_non_manifold_edges(const typename GeomTraits::FT r,
+template <class PolygonMesh, class NamedParameters>
+void preprocess_mesh_for_treatment_of_non_manifold_vertices(PolygonMesh& pmesh,
+                                                            const bool join_when_looking_from_outside,
+                                                            const NamedParameters& np)
+{
+  namespace pred = CGAL::Polygon_mesh_processing::Corefinement;
+
+  // extract types from NPs
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type               Traits;
+  typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh, NamedParameters>::type VertexIndexMap;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type           VPM;
+
+  typedef typename Traits::Point_3                                                 Point_3;
+
+  typedef boost::graph_traits<PolygonMesh>                                         Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor                                 vertex_descriptor;
+  typedef typename Graph_traits::edge_descriptor                                   edge_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor                               halfedge_descriptor;
+  typedef typename Graph_traits::face_descriptor                                   face_descriptor;
+
+  typedef std::size_t                                                              PID;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  VertexIndexMap vim = CGAL::get_initialized_vertex_index_map(pmesh, np);
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_property_map(vertex_point, pmesh));
+
+  std::unordered_map<Point_3, PID> point_ids; // Point_3 to unique-id
+  std::vector<Point_3> points; // All the points: id -> Point_3
+  std::vector<PID> pids(num_vertices(pmesh)); // maps each vertex to its id (through vim)
+
+  // identifies identical vertices
+  points.reserve(num_vertices(pmesh));
+  for(vertex_descriptor v : vertices(pmesh))
+  {
+    auto insert_res = point_ids.emplace(get(vpm, v), points.size());
+    if(insert_res.second)
+      points.push_back(get(vpm, v));
+
+    pids[get(vim, v)] = insert_res.first->second;
+  }
+
+  std::cout << "points.size() " << points.size() << "\n";
+  std::cout << "vertices.size() " << vertices(pmesh).size() << "\n";
+
+  // collect duplicated edges
+  std::vector<std::unordered_map<std::size_t, std::vector<edge_descriptor> > > edge_map(points.size());
+  for(edge_descriptor ed : edges(pmesh))
+  {
+    std::pair<PID,PID> e_pids = CGAL::make_sorted_pair(pids[get(vim, source(ed, pmesh))],
+                                                       pids[get(vim, target(ed, pmesh))]);
+    edge_map[e_pids.first][e_pids.second].push_back(ed);
+  }
+
+  std::vector<std::vector<halfedge_descriptor> > sorted_hedges; // use a list?
+  for(PID pid0 = 0; pid0<points.size(); ++pid0)
+  {
+    for(const auto& pid1_and_edges : edge_map[pid0])
+    {
+      if(pid1_and_edges.second.size() > 1)
+      {
+        std::cout << "processing a non-manifold edge...\n";
+
+        for(edge_descriptor ed : pid1_and_edges.second)
+        {
+          // @todo remove the limitation or return without doing nothing
+          CGAL_assertion(!is_border(ed, pmesh));
+          if(is_border(ed, pmesh))
+            return;
+        }
+
+        PID pid1 = pid1_and_edges.first;
+        sorted_hedges.resize(sorted_hedges.size()+1);
+
+        for(edge_descriptor ed : pid1_and_edges.second)
+        {
+          halfedge_descriptor h = halfedge(ed, pmesh);
+          if(!is_border(h, pmesh))
+            sorted_hedges.back().push_back(h);
+
+          h = opposite(h, pmesh);
+          if(!is_border(h, pmesh))
+            sorted_hedges.back().push_back(h);
+        }
+
+        const Point_3& ref = get(vpm, target(next(sorted_hedges.back()[0], pmesh), pmesh));
+        auto less = [&ref, &pmesh, &points, vpm, pid0, pid1](halfedge_descriptor h1, halfedge_descriptor h2)
+        {
+          return pred::sorted_around_edge<Traits>(points[pid0], points[pid1], ref,
+                                                  get(vpm, target(next(h1,pmesh), pmesh)),
+                                                  get(vpm, target(next(h2, pmesh), pmesh)));
+        };
+
+        std::sort(sorted_hedges.back().begin()+1, sorted_hedges.back().end(), less);
+
+        // we have the faces of sorted_hedges.back()[0](f0) and sorted_hedges.back()[1](f1)
+        // that are consecutive along the edge defined by(points[pid0],points[pid1]),
+        // and in counterclockwise order when looking from points[pids0].
+        // To know if the volume between f0 and f1 is inside or outside we need to look at
+        // the order of the vertices in f0 and we enter the interior of the volume
+        // if in f0 id(src(sorted_hedges.back()[0]) == pid0
+
+        const bool sweeping_interior = (pids[get(vim,source(sorted_hedges.back()[0], pmesh))] == pid0);
+        if(sweeping_interior == join_when_looking_from_outside)
+          std::rotate(sorted_hedges.back().begin(), sorted_hedges.back().begin()+1, sorted_hedges.back().end());
+
+        // @todo: if we want to avoid the rotate we should change sorted_hedges.back()[0] to be
+      }
+    }
+  }
+
+  // collect vertices per pid for edges that we are going to update
+  std::set<PID> pids_to_update;
+  std::vector< std::set<vertex_descriptor> > vertices_per_pid(points.size());
+  for(const std::vector<halfedge_descriptor>& hedges : sorted_hedges)
+  {
+    for(halfedge_descriptor h : hedges)
+    {
+      PID src_id = pids[get(vim, source(h, pmesh))];
+      PID tgt_id = pids[get(vim, target(h, pmesh))];
+
+      vertices_per_pid[ src_id].insert(source(h, pmesh));
+      vertices_per_pid[ tgt_id ].insert(target(h, pmesh));
+
+      pids_to_update.insert(src_id);
+      pids_to_update.insert(tgt_id);
+    }
+  }
+
+  // pick one vertex for all vertex with the same point
+  for(PID pid : pids_to_update)
+  {
+    std::cout << "PID vertices:";
+    CGAL_assertion(!vertices_per_pid[pid].empty());
+    vertex_descriptor ref = *std::prev(vertices_per_pid[pid].end());
+    for(vertex_descriptor v : vertices_per_pid[pid])
+    {
+      std::cout << " " << v;
+      halfedge_descriptor h = halfedge(v, pmesh);
+      if(target(h, pmesh) != ref)
+      {
+        for(halfedge_descriptor h2up : halfedges_around_target(h, pmesh))
+          set_target(h2up, ref, pmesh);
+      }
+      set_halfedge(v, Graph_traits::null_halfedge(), pmesh); // to indicate that the vertex has not been processed
+    }
+    vertices_per_pid[pid].erase(std::prev(vertices_per_pid[pid].end()));
+
+    std::cout << " -- ref = " << ref << "\n";
+  }
+
+  // update halfedges
+  auto replace_halfedge = [&pmesh](halfedge_descriptor h_new, halfedge_descriptor h_old)
+  {
+    halfedge_descriptor prv = prev(h_old, pmesh);
+    halfedge_descriptor nxt = next(h_old, pmesh);
+    face_descriptor f = face(h_old, pmesh);
+    vertex_descriptor tgt = target(h_old, pmesh);
+
+    set_face(h_new, f, pmesh);
+    set_next(h_new, nxt, pmesh);
+    set_next(prv, h_new, pmesh);
+    set_halfedge(f, h_new, pmesh);
+    set_target(h_new, tgt, pmesh);
+    set_face(h_old, Graph_traits::null_face(), pmesh);
+  };
+
+//   std::size_t kk=0;
+  std::vector<std::vector<halfedge_descriptor> > hedges_to_postprocess;
+  hedges_to_postprocess.reserve(sorted_hedges.size());
+  for(const std::vector<halfedge_descriptor>& hedges : sorted_hedges)
+  {
+    hedges_to_postprocess.resize(hedges_to_postprocess.size()+1);
+
+    CGAL_assertion(hedges.size()%2 == 0);
+    std::set<edge_descriptor> edges_to_remove;
+    for(std::size_t i=0; i<hedges.size(); i+=2)
+    {
+      halfedge_descriptor h1 = hedges[i], h2 = hedges[i+1];
+
+//      std::ofstream debug("results/wedge_"+std::to_string(kk++)+".polylines.txt");
+//      debug << "3 " << pmesh.point(source(h1,pmesh)) << " " << pmesh.point(target(next(h1,pmesh),pmesh)) << " " << pmesh.point(target(h1,pmesh)) << "\n";
+//      debug << "3 " << pmesh.point(source(h2,pmesh)) << " " << pmesh.point(target(next(h2,pmesh),pmesh)) << " " << pmesh.point(target(h2,pmesh)) << "\n";
+
+      if(opposite(h1, pmesh) != h2)
+      {
+        // we create a new halfedge
+        halfedge_descriptor h_new = halfedge(add_edge(pmesh), pmesh);
+        replace_halfedge(h_new, hedges[i]);
+        replace_halfedge(opposite(h_new, pmesh), hedges[i+1]);
+        edges_to_remove.insert(edge(h1, pmesh));
+        edges_to_remove.insert(edge(h2, pmesh));
+        hedges_to_postprocess.back().push_back(h_new);
+        hedges_to_postprocess.back().push_back(opposite(h_new, pmesh));
+      }
+      else
+      {
+        hedges_to_postprocess.back().push_back(h1);
+        hedges_to_postprocess.back().push_back(h2);
+      }
+    }
+
+    for(edge_descriptor ed : edges_to_remove)
+      remove_edge(ed, pmesh);
+  }
+
+  // set vertex per umbrella
+  for(const std::vector<halfedge_descriptor>& hedges : hedges_to_postprocess)
+  {
+    for(halfedge_descriptor h : hedges)
+    {
+      if(halfedge(target(h, pmesh), pmesh) == Graph_traits::null_halfedge())
+      {
+        // vertex needs to be updated
+        PID pid = pids[ get(vim, target(h, pmesh))];
+
+        if(!vertices_per_pid[pid].empty())
+        {
+          set_target(h, *std::prev(vertices_per_pid[pid].end()), pmesh);
+          vertices_per_pid[pid].erase(std::prev(vertices_per_pid[pid].end()));
+        }
+
+        set_halfedge(target(h, pmesh), h, pmesh);
+
+        for(halfedge_descriptor hat : halfedges_around_target(h, pmesh))
+          set_target(hat, target(h, pmesh), pmesh);
+      }
+    }
+  }
+
+  // @todo: find a better way to erase ref vertices
+  std::vector<vertex_descriptor> vertices_to_remove;
+  for(vertex_descriptor v : vertices(pmesh))
+    if(halfedge(v, pmesh) == Graph_traits::null_halfedge())
+      vertices_to_remove.push_back(v);
+
+  std::cout <<"removing " << vertices_to_remove.size() << " vertices\n";
+
+  for(vertex_descriptor v : vertices_to_remove)
+  {
+    std::cout << "removing " << v << "\n";
+    remove_vertex(v, pmesh);
+  }
+
+  // post-processing for edges that need to be split as still non-manifold:
+  // look for edges with the same vertices as endpoint
+  // @todo: This will not work for boundary hedges
+  for(const std::vector<halfedge_descriptor>& hedges : hedges_to_postprocess)
+  {
+    std::map<std::pair<vertex_descriptor,vertex_descriptor>, std::vector<halfedge_descriptor> > l_edge_map;
+    for(std::size_t k=0; k<hedges.size(); k+=2)
+      l_edge_map[CGAL::make_sorted_pair(source(hedges[k], pmesh),
+                                        target(hedges[k], pmesh))].push_back(hedges[k]);
+
+    for(const auto& vrts_and_hedges : l_edge_map)
+    {
+      if(vrts_and_hedges.second.size() > 1)
+      {
+        Point_3 midpt = midpoint(get(vpm, source(vrts_and_hedges.second.front(), pmesh)),
+                                 get(vpm, target(vrts_and_hedges.second.front(), pmesh)));
+        for(halfedge_descriptor h_to_split : vrts_and_hedges.second)
+        {
+          halfedge_descriptor hnew = Euler::split_edge(h_to_split, pmesh);
+          put(vpm, target(hnew, pmesh), midpt);
+          Euler::split_face(hnew, next(next(hnew, pmesh), pmesh), pmesh);
+          hnew = opposite(h_to_split, pmesh);
+          Euler::split_face(hnew, next(next(hnew, pmesh), pmesh), pmesh);
+        }
+      }
+    }
+  }
+}
+
+template <typename NMEdgeRange, typename PolygonMesh, typename VPM, typename GeomTraits>
+void sample_non_manifold_edges(const NMEdgeRange& nm_edges,
+                               const typename GeomTraits::FT r,
                                PolygonMesh& pmesh,
                                VPM vpm,
                                const GeomTraits& gt)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor           edge_descriptor;
 
   typedef typename boost::property_traits<VPM>::value_type                     Point;
   typedef typename boost::property_traits<VPM>::reference                      Point_ref;
@@ -363,30 +641,16 @@ void sample_non_manifold_edges(const typename GeomTraits::FT r,
 
   CGAL_precondition(! CGAL_NTS is_zero(r));
 
-  std::map<std::pair<Point, Point>, std::vector<halfedge_descriptor> > nm_edges;
-
-  for(const halfedge_descriptor h : halfedges(pmesh))
+  for(const edge_descriptor e : nm_edges)
   {
-    Point_ref sp = get(vpm, source(h, pmesh));
-    Point_ref tp = get(vpm, target(h, pmesh));
+    halfedge_descriptor h = halfedge(e, pmesh);
 
-    if(sp > tp)
-      continue;
+    // to get a canonical direction and the same subdivision
+    if(get(vpm, source(h, pmesh)) > get(vpm, target(h, pmesh)))
+      h = opposite(h, pmesh);
 
-    auto is_insert_successful = nm_edges.emplace(std::make_pair(sp, tp),
-                                                 std::initializer_list<halfedge_descriptor>{h});
-
-    if(!is_insert_successful.second)
-      is_insert_successful.first->second.push_back(h);
-  }
-
-  for(const auto& e : nm_edges)
-  {
-    if(e.second.size() == 1) // manifold edge, nothing to do
-      continue;
-
-    const Point& sp = e.first.first;
-    const Point& tp = e.first.second;
+    const Point_ref sp = get(vpm, source(h, pmesh));
+    const Point_ref tp = get(vpm, target(h, pmesh));
 
     // Need the balls of radius `r` to cover the halfedge
     const FT length = CGAL_NTS approximate_sqrt(gt.compute_squared_distance_3_object()(sp, tp));
@@ -408,27 +672,95 @@ void sample_non_manifold_edges(const typename GeomTraits::FT r,
     for(int i=1; i<=points_n; ++i)
     {
       const Point new_pos = gt.construct_translated_point_3_object()(sp, i * d);
-      for(halfedge_descriptor h : e.second)
-      {
-        halfedge_descriptor new_h = Euler::split_edge_and_incident_faces(h, pmesh);
-        put(vpm, target(new_h, pmesh), new_pos);
-      }
+      halfedge_descriptor new_h = Euler::split_edge(h, pmesh);
+      put(vpm, target(new_h, pmesh), new_pos);
     }
   }
 
-#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  CGAL::write_polygon_mesh("results/post_sampling.off", pmesh, parameters::stream_precision(17));
-#endif
+  Polygon_mesh_processing::triangulate_faces(faces(pmesh), pmesh); // @speed
 }
 
-template <typename NMPointContainer, typename SelectedFaceContainer,
+template <typename DistanceMap, typename VertexSet,
+          typename PolygonMesh, typename VPM, typename GT>
+void compute_distances_with_Campen(DistanceMap distances,
+                                   const VertexSet& sources,
+                                   const PolygonMesh& pmesh,
+                                   const VPM vpm,
+                                   const GT& gt)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor         vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor           edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor           face_descriptor;
+
+  typedef typename GT::FT                                                      FT;
+  typedef typename boost::property_traits<VPM>::value_type                     Point;
+  typedef typename boost::property_traits<VPM>::reference                      Point_ref;
+  typedef typename GT::Vector_3                                                Vector;
+
+  using Metric_field = CGAL::Canvas::Metric_fields::Euclidean_metric_field<GT>;
+  using Canvas = CGAL::Canvas::BGL_canvas<PolygonMesh, VPM, Metric_field, GT>;
+
+  Metric_field* metric_field = new Metric_field(1.0, 1.0, 1.0);
+  Canvas canvas(pmesh, vpm, metric_field, gt);
+
+  canvas.initialize();
+  canvas.initialize_seeds(sources);
+  canvas.paint(distances);
+}
+
+template <typename VertexSet,
           typename PolygonMesh, typename VPM, typename GeomTraits>
-void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
+void split_too_long_incident_edges(const VertexSet& sources,
+                                   const typename GeomTraits::FT radius,
+                                   PolygonMesh& pmesh,
+                                   VPM vpm,
+                                   const GeomTraits& gt)
+{
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+
+  using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+
+  const FT sq_radius = CGAL::square(radius);
+
+  std::set<edge_descriptor> edges_to_treat;
+  for(const vertex_descriptor v : sources)
+  {
+    for(const halfedge_descriptor h : halfedges_around_target(halfedge(v, pmesh), pmesh))
+    {
+      const vertex_descriptor vs = source(h, pmesh);
+      if(sources.find(vs) == sources.end())
+        continue;
+
+      const FT sq_length = gt.compute_squared_distance_3_object()(get(vpm, vs), get(vpm, v));
+      if(sq_length > sq_radius)
+        edges_to_treat.insert(edge(h, pmesh));
+    }
+  }
+
+  for(edge_descriptor e : edges_to_treat)
+  {
+    const Point_3 new_pos = gt.construct_midpoint_3_object()(get(vpm, source(e, pmesh)),
+                                                             get(vpm, target(e, pmesh)));
+    halfedge_descriptor new_h = CGAL::Euler::split_edge(halfedge(e, pmesh), pmesh);
+    put(vpm, target(new_h, pmesh), new_pos);
+  }
+
+  Polygon_mesh_processing::triangulate_faces(faces(pmesh), pmesh); // @speed
+}
+
+template <typename HalfedgeSet, typename EdgeSet, typename FaceSet,
+          typename PolygonMesh, typename VPM, typename GeomTraits>
+void geodesic_refine_and_select_faces(const HalfedgeSet& nm_vertices,
+                                      const EdgeSet& nm_edges,
                                       const typename GeomTraits::FT radius,
                                       PolygonMesh& pmesh,
                                       VPM vpm,
                                       const GeomTraits& gt,
-                                      SelectedFaceContainer& selected_faces)
+                                      FaceSet& selected_faces)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
@@ -440,25 +772,98 @@ void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
   typedef typename boost::property_traits<VPM>::reference                      Point_ref;
   typedef typename GeomTraits::Vector_3                                        Vector;
 
-  Heat_method_3::Surface_mesh_geodesic_distances_3<PolygonMesh, CGAL::Heat_method_3::Intrinsic_Delaunay, VPM> smgd(pmesh, vpm);
-
-  for(const halfedge_descriptor h : nm_points)
-    smgd.add_source(target(h, pmesh));
-
   typedef CGAL::dynamic_vertex_property_t<FT>                                  Distance_tag;
   typedef typename boost::property_map<PolygonMesh, Distance_tag>::type        Vertex_distance_map;
   Vertex_distance_map distances = get(Distance_tag(), pmesh);
 
+#ifdef CGAL_PMP_REPAIR_NM_USE_HEAT_METHOD
+  Heat_method_3::Surface_mesh_geodesic_distances_3<PolygonMesh, CGAL::Heat_method_3::Intrinsic_Delaunay, VPM> smgd(pmesh, vpm);
+#else
+  std::set<vertex_descriptor> sources;
+#endif
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  auto vim = CGAL::get_initialized_vertex_index_map(pmesh);
+  std::set<std::size_t> unique_source_ids;
+
+  std::ofstream out_s("results/HM_sources.xyz");
+  out_s.precision(17);
+#endif
+
+  for(const halfedge_descriptor h : nm_vertices)
+  {
+#ifdef CGAL_PMP_REPAIR_NM_USE_HEAT_METHOD
+    smgd.add_source(target(h, pmesh));
+#else
+    sources.insert(target(h, pmesh));
+#endif
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+    unique_source_ids.insert(get(vim, target(h, pmesh)));
+    out_s << get(vpm, target(h, pmesh)) << "\n";
+#endif
+  }
+
+  // @todo most extremities of nm_edges are already in nm_vertices
+  for(const edge_descriptor e : nm_edges)
+  {
+#ifdef CGAL_PMP_REPAIR_NM_USE_HEAT_METHOD
+    smgd.add_source(source(e, pmesh));
+    smgd.add_source(target(e, pmesh));
+#else
+    sources.insert(source(e, pmesh));
+    sources.insert(target(e, pmesh));
+#endif
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+    unique_source_ids.insert(get(vim, source(e, pmesh)));
+    unique_source_ids.insert(get(vim, target(e, pmesh)));
+    out_s << get(vpm, source(e, pmesh)) << "\n";
+    out_s << get(vpm, target(e, pmesh)) << "\n";
+#endif
+  }
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::ofstream out_sel("results/HM_sources.selection.txt");
+  for(std::size_t i : unique_source_ids)
+    out_sel << i << " ";
+  out_sel << std::endl;
+#endif
+
+  // Avoid big faces being iso-refined due to to their vertices all being sources
+#ifdef CGAL_PMP_REPAIR_NM_USE_HEAT_METHOD
+  split_too_long_incident_edges(smgd.sources(), radius, pmesh, vpm, gt);
+#else
+  split_too_long_incident_edges(sources, radius, pmesh, vpm, gt);
+#endif
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  CGAL::IO::write_polygon_mesh("results/post_long_edge_split.off", pmesh, CGAL::parameters::stream_precision(17));
+#endif
+
+#ifdef CGAL_PMP_REPAIR_NM_USE_HEAT_METHOD
   smgd.estimate_geodesic_distances(distances);
+#else
+  compute_distances_with_Campen(distances, sources, pmesh, vpm, gt);
+#endif
+
+  for(const vertex_descriptor& v : vertices(pmesh))
+    std::cout << "Vertex " << v << " pos " << pmesh.point(v) << " Distance: " << get(distances, v) << std::endl;
 
   // Corefine the mesh with a piecewise(face)-linear approximation of the union of the geodesic circles
   std::set<face_descriptor> faces_to_consider;
-  std::vector<halfedge_descriptor> edges_to_split;
+  std::set<halfedge_descriptor> edges_to_split;
 
   std::stack<halfedge_descriptor> halfedges_to_consider;
 
-  for(halfedge_descriptor h : nm_points)
+  for(halfedge_descriptor h : nm_vertices)
     halfedges_to_consider.push(h);
+
+  for(edge_descriptor e : nm_edges)
+  {
+    halfedges_to_consider.push(halfedge(e, pmesh));
+    halfedges_to_consider.push(opposite(halfedge(e, pmesh), pmesh));
+  }
 
   typedef CGAL::dynamic_edge_property_t<bool>                                  Considered_tag;
   typedef typename boost::property_map<PolygonMesh, Considered_tag>::type      Considered_edge_map;
@@ -470,6 +875,9 @@ void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
     halfedges_to_consider.pop();
 
     const edge_descriptor curr_e = edge(curr_h, pmesh);
+    if(get(considered_edges, curr_e))
+      continue;
+
     put(considered_edges, curr_e, true);
 
     const bool is_s_in = (get(distances, source(curr_e, pmesh)) <= radius);
@@ -484,7 +892,7 @@ void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
     }
 
     if(is_s_in != is_t_in)
-      edges_to_split.push_back(curr_h);
+      edges_to_split.insert(curr_h);
 
     for(const halfedge_descriptor adj_h : CGAL::halfedges_around_source(curr_h, pmesh))
     {
@@ -500,6 +908,14 @@ void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
   std::cout << edges_to_split.size() << " edges to split" << std::endl;
 #endif
 
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  CGAL::IO::write_polygon_mesh("results/pre_geodesy.off", pmesh, parameters::stream_precision(17));
+#endif
+
+  // Don't insert points too close to the isovalue, it can create small edges,
+  // which isotropic_remeshing has trouble dealing with
+  const FT eps = 0.05 * radius;
+
   // Actual split
   for(halfedge_descriptor h : edges_to_split)
   {
@@ -511,7 +927,7 @@ void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
 
     const FT dist_at_vs = get(distances, vs);
     const FT dist_at_vt = get(distances, vt);
-    if(dist_at_vs == radius || dist_at_vt == radius) // nothing to do
+    if(std::abs(radius - dist_at_vs) < eps || std::abs(radius - dist_at_vt) < eps) // nothing to do
       continue;
 
     Point new_p;
@@ -529,6 +945,26 @@ void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
       new_p = gt.construct_translated_point_3_object()(
                 tpt, gt.construct_scaled_vector_3_object()(tsv, lambda));
     }
+
+    // avoid inexact constructions creating degenerate faces, which is problematic later during fairing
+    // --
+    if(new_p == spt || new_p == tpt)
+      continue;
+
+    if(!is_border(h, pmesh))
+    {
+      const Point_ref opt = get(vpm, target(next(h, pmesh), pmesh));
+      if(gt.collinear_3_object()(opt, spt, new_p) || gt.collinear_3_object()(opt, tpt, new_p))
+        continue;
+    }
+
+    if(!is_border(opposite(h, pmesh), pmesh))
+    {
+      const Point_ref opt = get(vpm, target(next(opposite(h, pmesh), pmesh), pmesh));
+      if(gt.collinear_3_object()(opt, spt, new_p) || gt.collinear_3_object()(opt, tpt, new_p))
+        continue;
+    }
+    // --
 
     halfedge_descriptor new_h = Euler::split_edge_and_incident_faces(h, pmesh);
     put(vpm, target(new_h, pmesh), new_p);
@@ -571,303 +1007,176 @@ void geodesic_refine_and_select_faces(const NMPointContainer& nm_points,
     if(is_face_in)
       selected_faces.insert(f);
   }
-}
-
-template <typename NMPointContainer, typename SelectedFaceContainer,
-          typename PolygonMesh, typename VPM, typename GeomTraits>
-void select_faces_with_expansion(const NMPointContainer& nm_points,
-                                 const int expand_selection_k,
-                                 PolygonMesh& pmesh,
-                                 VPM vpm,
-                                 const GeomTraits& gt,
-                                 SelectedFaceContainer& selected_faces,
-                                 Boolean_property_map<SelectedFaceContainer>& sf_pm)
-{
-  select_incident_faces(nm_points, pmesh, std::inserter(selected_faces, selected_faces.end()));
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  std::cout << selected_faces.size() << " faces in non-manifold umbrellas" << std::endl;
-#endif
-
-  expand_face_selection(selected_faces, pmesh, expand_selection_k,
-                        sf_pm, std::inserter(selected_faces, selected_faces.end()));
-#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  std::cout << selected_faces.size() << " selected faces after expansion" << std::endl;
+  CGAL::IO::write_polygon_mesh("results/post_geodesy.off", pmesh, parameters::stream_precision(17));
 #endif
 }
 
-template <typename NMPointContainer, typename SelectedFaceContainer,
+template <typename HalfedgeSet, typename EdgeSet, typename FaceSet,
           typename PolygonMesh, typename VPM, typename GeomTraits>
-void select_treatment_faces(const NMPointContainer& nm_points,
-                            const NM_TREATMENT treatment,
-                            const int expand_selection_k,
-                            const bool regularize_selection,
+void select_treatment_faces(const HalfedgeSet& nm_vertices,
+                            const EdgeSet& nm_edges,
                             const typename GeomTraits::FT radius,
                             PolygonMesh& pmesh,
                             VPM vpm,
                             const GeomTraits& gt,
-                            SelectedFaceContainer& selected_faces)
+                            FaceSet& selected_faces)
 {
-  typedef Boolean_property_map<SelectedFaceContainer>                          Face_selection_map;
+  typedef Boolean_property_map<FaceSet>                                        Face_selection_map;
   Face_selection_map sf_pm(selected_faces);
 
-  if(! CGAL_NTS is_zero(radius))
-    geodesic_refine_and_select_faces(nm_points, radius, pmesh, vpm, gt, selected_faces);
-  else
-    select_faces_with_expansion(nm_points, expand_selection_k, pmesh, vpm, gt, selected_faces, sf_pm);
+  // 3*radius because fair() needs a continuous sampling, so we will remesh a larger area,
+  // and then only keep a subset of the selected faces
+  geodesic_refine_and_select_faces(nm_vertices, nm_edges, 3 * radius, pmesh, vpm, gt, selected_faces);
 
   // Regularize and sanitize for both settings
-  if(regularize_selection)
-  {
-    regularize_face_selection_borders(pmesh, sf_pm, 0.5,
-                                      CGAL::parameters::prevent_unselection(true)
-                                                       .vertex_point_map(vpm)
-                                                       .geom_traits(gt));
+  regularize_face_selection_borders(pmesh, sf_pm, 0.5 /*weight*/,
+                                    CGAL::parameters::prevent_unselection(true)
+                                                     .vertex_point_map(vpm)
+                                                     .geom_traits(gt));
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-    std::cout << selected_faces.size() << " selected faces after regularization" << std::endl;
+  std::cout << selected_faces.size() << " selected faces after regularization" << std::endl;
 #endif
-  }
 
   // Sanitize to ensure no non-manifold vertices on the border
   expand_face_selection_for_removal(selected_faces, pmesh, sf_pm);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::cout << selected_faces.size() << " selected faces" << std::endl;
   dump_cc(selected_faces, pmesh, "results/face_selection.off");
-  std::cout << selected_faces.size() << " selected faces in final selection" << std::endl;
 #endif
 }
 
-// @todo something nicer?
-template <typename PolygonMesh, typename VPM, typename GeomTraits>
-typename boost::property_traits<VPM>::value_type
-construct_adjusted_position(const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                            const PolygonMesh& pmesh,
-                            VPM vpm,
-                            const GeomTraits& gt)
+template <typename VertexSet, typename EdgeSet, typename FaceSet, typename FT,
+          typename PolygonMesh, typename VPM, typename GT>
+void remesh_selection(VertexSet& nm_vertices,
+                      const EdgeSet& nm_edges,
+                      const FaceSet& faces,
+                      const FT radius,
+                      PolygonMesh& pmesh,
+                      VPM vpm,
+                      const GT& gt)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor           edge_descriptor;
 
-  typedef typename GeomTraits::Vector_3                                        Vector_3;
-  typedef typename boost::property_traits<VPM>::reference                      Point_ref;
+  typedef Boolean_property_map<VertexSet>                                      CVPM;
+  CVPM cvm(nm_vertices);
 
-  const typename boost::graph_traits<PolygonMesh>::degree_size_type d = degree(v, pmesh);
-  CGAL_assertion(d > 1);
+  typedef Boolean_property_map<EdgeSet>                                        CEPM;
+  EdgeSet features_edges;
+  CEPM cem(features_edges);
+  Polygon_mesh_processing::detect_sharp_edges(pmesh, 60, cem,
+                                              CGAL::parameters::vertex_point_map(vpm)
+                                                               .geom_traits(gt));
 
-  const Point_ref pt = get(vpm, v);
+  // Prevent non-manifold edges from being remeshed
+  for(edge_descriptor e : nm_edges)
+    put(cem, e, true);
 
-  Vector_3 move{CGAL::NULL_VECTOR};
-  for(auto hn : CGAL::halfedges_around_target(v, pmesh))
-  {
-    if(is_border(hn, pmesh))
-      continue;
-
-    const Point_ref opt1 = get(vpm, source(prev(hn, pmesh), pmesh));
-    const Point_ref opt2 = get(vpm, source(hn, pmesh));
-    const auto mpt = gt.construct_midpoint_3_object()(opt1, opt2);
-
-    // - "/2" to get a point within the adjacent face
-    // - (d-1) is the number of faces in the sector
-    move = gt.construct_sum_of_vectors_3_object()(
-             move, gt.construct_scaled_vector_3_object()(Vector_3{pt, mpt}, 0.5 / (d - 1)));
-  }
-
-  return gt.construct_translated_point_3_object()(pt, move);
+  // Not protecting constraints because they are either:
+  // - nm edges and in that case they have been sampled and should not be affected
+  // - sharp edges living in the work area, and in that case they should be split/merged
+  CGAL::Polygon_mesh_processing::isotropic_remeshing(faces, 0.5 * radius, pmesh,
+                                                     CGAL::parameters::vertex_point_map(vpm)
+                                                                      .geom_traits(gt)
+                                                                      .number_of_iterations(5)
+                                                                      .number_of_relaxation_steps(5)
+                                                                      .do_project(false)
+                                                                      .protect_constraints(false)
+                                                                      .collapse_constraints(false)
+                                                                      .vertex_is_constrained_map(cvm)
+                                                                      .edge_is_constrained_map(cem));
 }
 
-template <typename SelectedFaceContainer, typename PolygonMesh, typename VPM, typename GeomTraits>
-void treat_with_separation(const SelectedFaceContainer& selected_faces,
-                           PolygonMesh& pmesh,
-                           VPM vpm,
-                           const GeomTraits& gt,
-                           const int smoothing_iterations)
+template <typename HalfedgeSet, typename EdgeSet, typename FaceSet, typename FT,
+          typename PolygonMesh, typename VPM, typename GeomTraits>
+void treat_with_fairing(const HalfedgeSet& nm_vertices,
+                        const EdgeSet& nm_edges,
+                        FaceSet& selected_faces,
+                        const FT radius,
+                        PolygonMesh& pmesh,
+                        VPM vpm,
+                        const GeomTraits& gt)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor         vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor           face_descriptor;
-
-  typedef typename boost::property_traits<VPM>::value_type                     Point;
-
-  // map rather than dynamic pmap as it should be a small set
-  std::vector<std::pair<vertex_descriptor, Point> > updated_positions;
-
-  for(face_descriptor f : selected_faces)
-  {
-    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
-    {
-      const vertex_descriptor v = target(h, pmesh);
-      bool is_unconstrained_vertex = true;
-      for(face_descriptor inc_f : CGAL::faces_around_target(h, pmesh))
-      {
-        // a vertex not in a selected face must be constrained
-        if(inc_f != boost::graph_traits<PolygonMesh>::null_face() && selected_faces.count(inc_f) == 0)
-        {
-          is_unconstrained_vertex = false;
-          break;
-        }
-      }
-
-      if(is_unconstrained_vertex)
-        updated_positions.emplace_back(v, CGAL::ORIGIN);
-    }
-  }
-
-  for(int i=0; i<smoothing_iterations; ++i)
-  {
-    for(auto& e : updated_positions)
-      e.second = construct_adjusted_position(e.first, pmesh, vpm, gt);
-
-    for(const auto& e : updated_positions)
-      put(vpm, e.first, e.second);
-  }
-}
-
-template <typename FFG, typename PolygonMesh, typename VPM, typename GT, typename NewFacesContainer>
-bool fill_holes(const FFG& ffg,
-                PolygonMesh& pmesh,
-                VPM vpm,
-                const GT& gt,
-                NewFacesContainer& new_faces)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor         vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor           face_descriptor;
-
-  typedef typename boost::property_traits<VPM>::value_type                     Point;
-
-  bool all_went_well = true;
-
-  std::set<halfedge_descriptor> visited_halfedges;
-  std::vector<halfedge_descriptor> borders_to_fill_reps;
-
-  for(halfedge_descriptor h : halfedges(ffg))
-  {
-    // seek a halfedge on an unvisited border, on the boundary of the selection zone,
-    // but not on the border of the mesh
-    if(!CGAL::is_border(h, ffg) || CGAL::is_border(h, pmesh) || !visited_halfedges.insert(h).second)
-      continue;
-
-#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-    std::cout << "border representative " << h << std::endl;
-#endif
-
-    // keep a single representative by boundary cycle
-    bool is_boundary_cycle_eligible_for_filling = true;
-    halfedge_descriptor done = h;
-    do
-    {
-      // Post face deletion, all is left are internal halfedges
-      if(CGAL::is_border(h, pmesh))
-      {
-        is_boundary_cycle_eligible_for_filling = false;
-        // could break here, but continue to mark all the cycle's halfedges as visited
-      }
-
-      visited_halfedges.insert(h);
-      h = next(h, ffg);
-    }
-    while(h != done);
-
-    if(is_boundary_cycle_eligible_for_filling)
-      borders_to_fill_reps.push_back(h);
-  }
-
-  // Dig
-  for(face_descriptor f : faces(ffg))
-    Euler::remove_face(halfedge(f, pmesh), pmesh);
-
-  // Fill where it makes sense
-  for(halfedge_descriptor bh : borders_to_fill_reps)
-  {
-    CGAL_assertion(!CGAL::is_border(bh, pmesh) && CGAL::is_border(opposite(bh, pmesh), pmesh));
-
-    // @todo two pass with delaunay&whatnot?
-    std::vector<vertex_descriptor> unused_new_vertices;
-    auto res = triangulate_refine_and_fair_hole(pmesh, opposite(bh, pmesh),
-                                                std::back_inserter(new_faces),
-                                                std::back_inserter(unused_new_vertices),
-                                                parameters::vertex_point_map(vpm)
-                                                           .geom_traits(gt));
-
-    if(!std::get<0>(res))
-    {
-#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-      std::cout << "Warning: Failed hole filling" << std::endl;
-#endif
-      all_went_well = false;
-    }
-  }
-
-  CGAL_postcondition(is_valid_polygon_mesh(pmesh));
-
-  return all_went_well;
-}
-
-template <typename SelectedFaceContainer, typename PolygonMesh, typename VPM, typename GeomTraits>
-void treat_with_clipping(const SelectedFaceContainer& selected_faces,
-                         PolygonMesh& pmesh,
-                         VPM vpm,
-                         const GeomTraits& gt)
-{
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor           face_descriptor;
 
-  // split the selected faces into CCs
-  typedef CGAL::dynamic_edge_property_t<bool>                                  Constraint_tag;
-  typedef typename boost::property_map<PolygonMesh, Constraint_tag>::type      Constrained_edges;
-  Constrained_edges cepm = get(Constraint_tag(), pmesh);
+  typedef std::set<vertex_descriptor>                                          Vertex_set;
+  typedef Boolean_property_map<Vertex_set>                                     Vertex_selection_map;
 
-  for(const edge_descriptor e : edges(pmesh))
+  Vertex_set selected_vertices;
+  Vertex_selection_map sv_pm(selected_vertices);
+
+  for(const halfedge_descriptor h : nm_vertices)
+    selected_vertices.insert(target(h, pmesh));
+
+  for(const edge_descriptor e : nm_edges)
   {
-    const halfedge_descriptor h = halfedge(e, pmesh);
-    const face_descriptor f = face(h, pmesh);
-    const bool is_f_selected = (!is_border(h, pmesh) && selected_faces.count(f));
-    const face_descriptor fn = face(opposite(h, pmesh), pmesh);
-    const bool is_fn_selected = (!is_border(opposite(h, pmesh), pmesh) && selected_faces.count(fn));
-    const bool is_constrained = (is_f_selected != is_fn_selected);
-    put(cepm, e, is_constrained);
+    selected_vertices.insert(source(e, pmesh));
+    selected_vertices.insert(target(e, pmesh));
   }
 
-  typedef typename boost::graph_traits<PolygonMesh>::faces_size_type           faces_size_type;
-  typedef CGAL::dynamic_face_property_t<faces_size_type>                       Face_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Patch_ids_map;
-  Patch_ids_map patch_ids_map = get(Face_property_tag(), pmesh);
+  // Remesh to improve the stability and quality of fairing
+  internal::remesh_selection(selected_vertices, nm_edges, selected_faces, radius, pmesh, vpm, gt);
 
-  const std::size_t ccn = Polygon_mesh_processing::connected_components(
-                            pmesh, patch_ids_map, parameters::edge_is_constrained_map(cepm));
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  CGAL::IO::write_polygon_mesh("results/pre_fairing-remeshed.off", pmesh, parameters::stream_precision(17));
+#endif
 
-  // Deal with each CC independently
-  bool all_went_well = true;
-  for(std::size_t i=0; i<ccn; ++i)
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::ofstream out_sv_base("results/selected_vertices_base.xyz");
+  out_sv_base.precision(17);
+  for(const vertex_descriptor v : selected_vertices)
+    out_sv_base << pmesh.point(v) << "\n";
+  out_sv_base.close();
+#endif
+
+  // Get the vertex selection for fairing
+  // @fixme? border vertices
+  expand_vertex_selection(selected_vertices, pmesh, 2 /*iterations*/, sv_pm,
+                          std::inserter(selected_vertices, selected_vertices.end()));
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::ofstream out("results/selected_vertices.xyz");
+  out.precision(17);
+  for(const vertex_descriptor v : selected_vertices)
+    out << pmesh.point(v) << "\n";
+  out.close();
+
+  // clean selection, for the garbage-less mesh 'pre_fairing-remeshed.off'
+  std::ofstream out_sel("results/fairing_vertices.selection.txt");
+  int i = 0;
+  for(vertex_descriptor v : vertices(pmesh))
   {
-    // FFG is easy on the eyes, but it's not the cheapest (it's still iterating over the underlying graph)
-    CGAL::Face_filtered_graph<PolygonMesh> ffg(pmesh, i, patch_ids_map);
+    if(selected_vertices.count(v) != 0)
+      out_sel << i << " ";
 
-    if(is_empty(ffg) || selected_faces.count(*(faces(ffg).begin())) == 0)
-      continue; // not an interesting cc
-
-    std::vector<face_descriptor> new_faces;
-    if(!fill_holes(ffg, pmesh, vpm, gt, new_faces))
-      all_went_well = false;
-
-    // Probably not necessary, but just to be safe in case the ID map has weird default initialization
-    for(const face_descriptor f : new_faces)
-      put(patch_ids_map, f, i);
+    ++i;
   }
 
-  return all_went_well;
-}
+  out_sel << std::endl << std::endl << std::endl;
+  out_sel.close();
+#endif
 
-template <typename SelectedFaceContainer, typename PolygonMesh, typename VPM, typename GeomTraits>
-void treat_with_merge(const SelectedFaceContainer& /*selected_faces*/,
-                      PolygonMesh& /*pmesh*/,
-                      VPM /*vpm*/,
-                      const GeomTraits& /*gt*/)
-{
-  CGAL_assertion(false); // @todo ?
+  bool res = CGAL::Polygon_mesh_processing::fair(pmesh, selected_vertices,
+                                                 CGAL::parameters::fairing_continuity(2)
+                                                                  .vertex_point_map(vpm)
+                                                                  .geom_traits(gt));
+
+  if(!res)
+    std::cerr << "Warning: fairing failed" << std::endl;
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  CGAL::IO::write_polygon_mesh("results/faired.off", pmesh, CGAL::parameters::stream_precision(17));
+#endif
 }
 
 } // namespace internal
+
+namespace experimental {
 
 template <typename PolygonMesh, typename NamedParameters>
 std::size_t repair_non_manifoldness(PolygonMesh& pmesh,
@@ -876,6 +1185,7 @@ std::size_t repair_non_manifoldness(PolygonMesh& pmesh,
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor           edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor           face_descriptor;
 
   using parameters::choose_parameter;
@@ -891,239 +1201,112 @@ std::size_t repair_non_manifoldness(PolygonMesh& pmesh,
   typedef typename Geom_traits::FT                                             FT;
   typedef typename boost::property_traits<VertexPointMap>::value_type          Point;
 
-  // @todo nps
-  const int expand_selection_k = 2;
-  const bool regularize_selection = true;
-  const FT radius = 0.1;
-  const int smoothing_iterations = expand_selection_k;
+  const FT radius = 0.1; // @todo np (+ default value?)
 
-  // Ensure that halfedge(v, pmesh) is canonical and unique umbrella (+ no pinched stars)
+  CGAL_precondition(! CGAL_NTS is_zero(radius));
+
+  // Ensure that halfedge(v, pmesh) is canonical and describes a unique umbrella (+ no pinched stars)
   duplicate_non_manifold_vertices(pmesh, np);
 
-  if(treatment == CLIP && ! CGAL_NTS is_zero(radius))
-  {
-    // If the radius is small compare to edge size, we need to ensure a whole nm edge
-    // will be clipped away, and not just the area around the extremities.
-    //
-    // Not a problem in the separation strategy since pushing away extremities pushes away
-    // the whole edge.
-    internal::sample_non_manifold_edges(radius, pmesh, vpm, gt);
-  }
+  if(treatment == SEPARATE)
+    internal::preprocess_mesh_for_treatment_of_non_manifold_vertices(pmesh, false /*join_when_looking_from_outside*/, np);
+  else if(treatment == MERGE)
+    internal::preprocess_mesh_for_treatment_of_non_manifold_vertices(pmesh, true /*join_when_looking_from_outside*/, np);
 
-  // Collect the non-manifold vertices
-  std::set<halfedge_descriptor> nm_points;
-  geometrically_non_manifold_vertices(pmesh, std::inserter(nm_points, nm_points.end()), np);
-  const std::size_t initial_n = nm_points.size();
+  // @fixme is this actually needed?
+  PMP::stitch_borders(pmesh);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  std::cout << nm_points.size() << " case(s) to treat:" << std::endl;
-  for(const halfedge_descriptor h : nm_points)
+  CGAL::IO::write_polygon_mesh("results/preprocessed_input.off", pmesh, parameters::stream_precision(17));
+#endif
+
+  std::set<edge_descriptor> nm_edges;
+  non_manifold_edges(pmesh, std::inserter(nm_edges, nm_edges.end()), np);
+
+  // If the radius is small compare to edge size, we need to ensure the distance field is correct
+  //
+  // Not a problem in the separation strategy since pushing away extremities pushes away
+  // the whole edge.
+  //
+  // !! Don't change this '0.5' without changing the other one (in iso_remesh)
+  internal::sample_non_manifold_edges(nm_edges, 0.5 * radius, pmesh, vpm, gt);
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  CGAL::IO::write_polygon_mesh("results/post_sampling.off", pmesh, parameters::stream_precision(17));
+#endif
+
+  // @speed avoid this by just updating the set during sampling
+  // ---
+  nm_edges.clear();
+  non_manifold_edges(pmesh, std::inserter(nm_edges, nm_edges.end()), np);
+  // ---
+
+  // @todo there is a lot of redundancy between non-manifold vertices and non-manifold edges
+  std::set<halfedge_descriptor> nm_vertices;
+  geometrically_non_manifold_vertices(pmesh, std::inserter(nm_vertices, nm_vertices.end()), np);
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::ofstream out_nmv("results/nm_vertices.xyz");
+  out_nmv.precision(17);
+
+  std::cout << nm_vertices.size() << " vertice(s) to treat:" << std::endl;
+  for(const halfedge_descriptor h : nm_vertices)
   {
     std::cout << "NM vertex at pos (" << get(vpm, target(h, pmesh)) << ") "
               << "canonical halfedge: " << h << std::endl;
+    out_nmv << pmesh.point(target(h, pmesh)) << "\n";
   }
+  out_nmv.close();
+
+  std::ofstream out_nme("results/nm_edges.polylines.txt");
+  out_nme.precision(17);
+
+  std::cout << nm_edges.size() << " edge(s) to treat:" << std::endl;
+  for(const edge_descriptor e : nm_edges)
+  {
+    std::cout << "NM edge (" << get(vpm, source(e, pmesh)) << ") - ("
+                             << get(vpm, target(e, pmesh)) << ")" << std::endl;
+    out_nme << "2 " << get(vpm, source(e, pmesh)) << " " << get(vpm, target(e, pmesh)) << "\n";
+  }
+  out_nme.close();
 #endif
+
+  // @todo is that even meaningful
+  const std::size_t initial_n = nm_vertices.size() + nm_edges.size();
+  if(initial_n == 0)
+    return initial_n;
 
   // Construct the zone(s) that will be modified
   std::set<face_descriptor> selected_faces;
-  internal::select_treatment_faces(nm_points, treatment, expand_selection_k, expand_selection_k, radius,
-                                   pmesh, vpm, gt, selected_faces);
+  internal::select_treatment_faces(nm_vertices, nm_edges, radius, pmesh, vpm, gt, selected_faces);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
   internal::dump_cc(selected_faces, pmesh, "results/selected_faces.off");
-  CGAL::write_polygon_mesh("results/pre_treatment.off", pmesh, parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("results/pre_fairing.off", pmesh, parameters::stream_precision(17));
 #endif
 
+  // @speed avoid recomputing it (this is because geodesic refinement messes up the halfedges)
+  nm_vertices.clear();
+  geometrically_non_manifold_vertices(pmesh, std::inserter(nm_vertices, nm_vertices.end()), np);
+
   // Update the mesh to remove non-manifoldness
-  if(treatment == SEPARATE)
-    internal::treat_with_separation(selected_faces, pmesh, vpm, gt, smoothing_iterations);
-  else if(treatment == CLIP)
-    internal::treat_with_clipping(selected_faces, pmesh, vpm, gt);
-  else
-    internal::treat_with_merge(selected_faces, pmesh, vpm, gt);
+  internal::treat_with_fairing(nm_vertices, nm_edges, selected_faces, radius, pmesh, vpm, gt);
 
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  write_polygon_mesh("post_treatment.off", pmesh, CGAL::parameters::stream_precision(17));
+  IO::write_polygon_mesh("results/post_fairing.off", pmesh, CGAL::parameters::stream_precision(17));
 #endif
 
   CGAL_postcondition(is_valid_polygon_mesh(pmesh, true));
-  CGAL_postcondition_code(nm_points.clear();)
-  CGAL_postcondition_code(geometrically_non_manifold_vertices(pmesh, std::inserter(nm_points, nm_points.end()), np);)
-  CGAL_postcondition(nm_points.empty());
+
+  CGAL_postcondition_code(nm_edges.clear();)
+  CGAL_postcondition_code(non_manifold_edges(pmesh, std::inserter(nm_edges, nm_edges.end()), np);)
+  CGAL_postcondition(nm_edges.empty());
+
+  CGAL_postcondition_code(nm_vertices.clear();)
+  CGAL_postcondition_code(geometrically_non_manifold_vertices(pmesh, std::inserter(nm_vertices, nm_vertices.end()), np);)
+  CGAL_postcondition(nm_vertices.empty());
 
   return initial_n;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template <class TriangleMesh, class GeomTraits>
-class Offset_function
-{
-  typedef AABB_halfedge_graph_segment_primitive<TriangleMesh> Primitive;
-  typedef AABB_traits<GeomTraits, Primitive> Traits;
-  typedef AABB_tree<Traits> Tree;
-
-public:
-  template <typename EdgeRange>
-  Offset_function(TriangleMesh& tm,
-                  const EdgeRange& edges,
-                  double offset_distance)
-    : m_tree_ptr(new Tree(std::begin(edges), std::end(edges), tm) ),
-      m_offset_distance(offset_distance)
-  {}
-
-  double operator()(const typename GeomTraits::Point_3& p) const
-  {
-    typename GeomTraits::Point_3 closest_point = m_tree_ptr->closest_point(p);
-    double distance = sqrt(squared_distance(p, closest_point));
-
-    return m_offset_distance - distance;
-  }
-
-private:
-  boost::shared_ptr<Tree> m_tree_ptr;
-  double m_offset_distance;
-};
-
-template <typename PolygonMesh, typename NamedParameters>
-void repair_non_manifold_edges_with_clipping(PolygonMesh& pmesh,
-                                             const NamedParameters& np)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor      edge_descriptor;
-
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type       VertexPointMap;
-  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                        get_property_map(vertex_point, pmesh));
-
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type           Geom_traits;
-  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
-
-  // default triangulation for Surface_mesher
-  typedef typename CGAL::Surface_mesher::Surface_mesh_default_triangulation_3_generator<Geom_traits>::Type Tr;
-
-  // c2t3
-  typedef CGAL::Complex_2_in_triangulation_3<Tr> C2t3;
-  typedef typename Geom_traits::Sphere_3 Sphere;
-  typedef typename Geom_traits::Point_3 Point;
-  typedef typename Geom_traits::FT FT;
-
-  typedef typename boost::property_traits<VertexPointMap>::reference           Point_ref;
-
-  typedef Offset_function<PolygonMesh, Geom_traits> Offset_function;
-  typedef CGAL::Implicit_surface_3<Geom_traits, Offset_function> Surface_3;
-
-  double offset_distance = 0.1;
-  double angle_bound = 20;
-  double radius_bound = 0.1;
-  double distance_bound = 0.01;
-
-  CGAL::Bbox_3 bbox = CGAL::Polygon_mesh_processing::bbox_3(pmesh);
-
-  Point center((bbox.xmax() + bbox.xmin())/2,
-               (bbox.ymax() + bbox.ymin())/2,
-               (bbox.zmax() + bbox.zmin())/2);
-  double sqrad = 0.6 * std::sqrt(CGAL::square(bbox.xmax() - bbox.xmin()) +
-                                 CGAL::square(bbox.ymax() - bbox.ymin()) +
-                                 CGAL::square(bbox.zmax() - bbox.zmin()))
-                + offset_distance;
-  sqrad = CGAL::square(sqrad);
-
-  std::cout << "Offset distance = " << offset_distance << "\n";
-  std::cout << "Bounding sphere center = " << center << "\n";
-  std::cout << "Bounding sphere squared radius = " << sqrad << "\n";
-  std::cout << "Angular bound " << angle_bound << "\n";
-  std::cout << "Radius bound " << radius_bound << "\n";
-  std::cout << "Distance bound " << distance_bound << "\n";
-
-  std::map<std::pair<Point, Point>, std::vector<halfedge_descriptor> > nm_edges;
-
-  for(const halfedge_descriptor h : halfedges(pmesh))
-  {
-    Point_ref sp = get(vpm, source(h, pmesh));
-    Point_ref tp = get(vpm, target(h, pmesh));
-
-    if(sp > tp)
-      continue;
-
-    auto is_insert_successful = nm_edges.emplace(std::make_pair(sp, tp),
-                                                 std::initializer_list<halfedge_descriptor>{h});
-
-    if(!is_insert_successful.second)
-      is_insert_successful.first->second.push_back(h);
-  }
-
-  std::cout << nm_edges.size() << " nm edges" << std::endl;
-
-  std::set<edge_descriptor> nmes;
-  for(const auto& e : nm_edges)
-  {
-    if(e.second.size() == 1)
-      continue;
-    for(const halfedge_descriptor h : e.second)
-      nmes.insert(edge(h, pmesh));
-  }
-
-  Offset_function offset_function(pmesh, nmes, offset_distance);
-
-  Tr tr;
-  C2t3 c2t3(tr);
-
-  // defining the surface
-  Surface_3 surface(offset_function, Sphere(center, sqrad)); // bounding sphere
-
-  // defining meshing criteria
-  CGAL::Surface_mesh_default_criteria_3<Tr> criteria(angle_bound, radius_bound, distance_bound);
-
-  // meshing surface
-  std::cout << nmes.size() << " nm edges" << std::endl;
-  std::cout << "Make..." << std::endl;
-  CGAL::make_surface_mesh(c2t3, surface, criteria, CGAL::Manifold_tag());
-  std::cout << "Final number of points: " << tr.number_of_vertices() << "\n";
-
-  // write to file
-  std::string output_name = "offset";
-  output_name.resize(output_name.size()-4); // strip .off
-  std::stringstream sstr;
-  sstr << "results/" << output_name << "_OD" << offset_distance
-                                    << "_AB" << angle_bound
-                                    << "_RB" << radius_bound
-                                    << "_DB" << distance_bound
-                                    << ".off";
-
-  std::cout << "Writing result in " << sstr.str() << "\n";
-
-  std::ofstream output(sstr.str().c_str());
-  CGAL::output_surface_facets_to_off(output, c2t3);
-
-  PolygonMesh nm_edge_offset;
-  CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, nm_edge_offset);
-
-  if(is_outward_oriented(nm_edge_offset))
-    reverse_face_orientations(nm_edge_offset);
-
-  //extend the bbox a bit to avoid border cases
-  const double xd = (std::max)(1., 0.01 * (bbox.xmax() - bbox.xmin()));
-  const double yd = (std::max)(1., 0.01 * (bbox.ymax() - bbox.ymin()));
-  const double zd = (std::max)(1., 0.01 * (bbox.zmax() - bbox.zmin()));
-  bbox = CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
-                      bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
-
-  typename Geom_traits::Iso_cuboid_3 ic(bbox);
-  PolygonMesh bbox_mesh;
-  make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7], bbox_mesh);
-  triangulate_faces(bbox_mesh);
-
-  copy_face_graph(bbox_mesh, nm_edge_offset);
-  write_polygon_mesh("results/clipper.off", nm_edge_offset, parameters::stream_precision(17));
-
-  generic_clip(pmesh, nm_edge_offset);
-
-  write_polygon_mesh("results/clipped.off", pmesh, CGAL::parameters::stream_precision(17));
 }
 
 template <typename PolygonMesh>
@@ -1139,6 +1322,7 @@ std::size_t repair_non_manifoldness(PolygonMesh& pmesh)
   return repair_non_manifoldness(pmesh, SEPARATE, parameters::all_default());
 }
 
+} // namespace experimental
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
