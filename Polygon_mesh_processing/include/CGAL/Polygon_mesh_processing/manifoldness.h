@@ -25,6 +25,9 @@
 #include <CGAL/iterator.h>
 #include <CGAL/property_map.h>
 
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+
+#include <array>
 #include <iterator>
 #include <utility>
 
@@ -280,6 +283,89 @@ OutputIterator geometrically_non_manifold_vertices(const PolygonMesh& pmesh,
                                                    OutputIterator out)
 {
   return geometrically_non_manifold_vertices(pmesh, out, parameters::all_default());
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// \ingroup PMP_repairing_grp
+/// collects the non-manifold edges (if any) present in the mesh.
+///
+/// @tparam PolygonMesh a model of `HalfedgeListGraph`
+/// @tparam OutputIterator a model of `OutputIterator` holding objects of type
+///                         `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+///
+/// @param pm a triangle mesh
+/// @param out the output iterator that collects non-manifold edges
+///
+/// \sa `non_manifold_vertices()`
+/// \sa `repair_non_manifoldness()`
+///
+/// \return the output iterator.
+template <typename PolygonMesh, typename OutputIterator, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+OutputIterator non_manifold_edges(const PolygonMesh& pmesh,
+                                  OutputIterator out,
+                                  const CGAL_PMP_NP_CLASS& np)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor                     edge_descriptor;
+
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_PMP_NP_CLASS>::type                   Geom_traits;
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type         VertexPointMap;
+  typedef typename boost::property_traits<VertexPointMap>::value_type                    Point_3;
+
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                        get_const_property_map(vertex_point, pmesh));
+
+  auto cmp = [&](const edge_descriptor lh, const edge_descriptor rh) -> bool
+  {
+    // @todo avoid copies
+    std::array<Point_3*, 2> lp = {{ &(get(vpm, source(lh, pmesh))), &(get(vpm, target(lh, pmesh))) }};
+    std::array<Point_3*, 2> rp = {{ &(get(vpm, source(rh, pmesh))), &(get(vpm, target(rh, pmesh))) }};
+
+    if(gt.less_xyz_3_object()(*(lp[1]), *(lp[0])))
+      std::swap(lp[0], lp[1]);
+    if(gt.less_xyz_3_object()(*(rp[1]), *(rp[0])))
+      std::swap(rp[0], rp[1]);
+
+    struct Point_ptr_derefencer
+    {
+      const Point_3& operator()(const Point_3* ptr) const { return *ptr; }
+    };
+
+    return std::lexicographical_compare(boost::make_transform_iterator(lp.cbegin(), Point_ptr_derefencer()),
+                                        boost::make_transform_iterator(lp.cend(), Point_ptr_derefencer()),
+                                        boost::make_transform_iterator(rp.cbegin(), Point_ptr_derefencer()),
+                                        boost::make_transform_iterator(rp.cend(), Point_ptr_derefencer()));
+  };
+
+  std::map<edge_descriptor, bool, decltype(cmp)> unique_edges(cmp);
+  for(const edge_descriptor e : edges(pmesh))
+  {
+    auto r = unique_edges.emplace(e, false);
+    if(!r.second)
+    {
+      if(!r.first->second) // first report of this edge being non-manifold
+      {
+        *out++ = r.first->first;
+        r.first->second = true; // don't report it again
+      }
+
+      *out++ = e;
+    }
+  }
+
+  return out;
+}
+
+template <typename PolygonMesh, typename OutputIterator>
+OutputIterator non_manifold_edges(const PolygonMesh& pmesh,
+                                  OutputIterator out)
+{
+  return non_manifold_edges(pmesh, out, CGAL::parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing
