@@ -450,7 +450,9 @@ namespace CGAL {
     }
 
     /// Sew3 the marked facets having same geometry
-    /// (a facet is considered marked if one of its dart is marked).
+    /// (a facet is considered marked if ALL its darts are marked).
+    /// Only marked faces are proceed, but they can be 3-sewn with non
+    /// marked faces.
     unsigned int sew3_same_facets(size_type AMark)
     {
       unsigned int res = 0;
@@ -465,19 +467,19 @@ namespace CGAL {
       for (typename Dart_range::iterator it(darts().begin()),
              itend(darts().end()); it!=itend; ++it )
       {
-        if ( !is_marked(it, mymark) && is_marked(it, AMark) )
+        if (!is_marked(it, mymark) && !this->template is_opposite_exist<3>(it))
         {
           Point min_point=point(it);
           Point max_point=min_point;
           Dart_handle min_dart=it;
-          mark(it, mymark);
-          typename Base::template Dart_of_cell_range<2>::iterator it2(*this,it);
+          auto it2=this->template darts_of_cell_basic<2>(it, mymark).begin();
+          this->mark(it2, mymark);
           ++it2;
           for ( ; it2.cont(); ++it2 )
           {
-            Point& cur_point=point(it2);
             this->mark(it2, mymark);
-            if ( cur_point < min_point )
+            Point& cur_point=point(it2);
+            if (cur_point<min_point)
             {
               min_point = cur_point;
               min_dart = it2;
@@ -488,7 +490,7 @@ namespace CGAL {
           one_dart_per_facet[min_point][max_point].push_back(min_dart);
         }
         else
-          this->mark(it, mymark);
+        { this->mark(it, mymark); }
       }
 
       // Second we run through the map: candidates for sew3 have necessary the
@@ -503,18 +505,26 @@ namespace CGAL {
                it1=(itmap2->second).begin(),
                it1end=(itmap2->second).end(); it1!=it1end; ++it1)
           {
-            typename std::vector<Dart_handle>::iterator it2=it1;
-            for (++it2; it2!=it1end; ++it2)
+            // We only proceed 3-free marked faces for it1
+            if (!this->template is_opposite_exist<3>(*it1) &&
+                is_marked(*it1, AMark))
             {
-              if (*it1!=*it2 &&
-                  !this->template is_opposite_exist<3>(*it1) &&
-                  !this->template is_opposite_exist<3>(*it2) &&
-                  are_facets_opposite_and_same_geometry
-                  (*it1, this->previous(*it2)))
+              typename std::vector<Dart_handle>::iterator it2=it1;
               {
-              ++res;
-                this->template sew<3>(*it1,
-                    this->other_orientation(previous(*it2)));
+                for (++it2; it2!=it1end; )
+                {
+                  assert(*it1!=*it2);
+                  if (!this->template is_opposite_exist<3>(*it2) &&
+                      are_facets_opposite_and_same_geometry
+                      (*it1, this->previous(*it2)))
+                  {
+                    ++res;
+                    this->template sew<3>(*it1,
+                        this->other_orientation(previous(*it2)));
+                    it2=it1end; // to leave the "for loop" since it1 is no more 3-free
+                  }
+                  else { ++it2; }
+                }
               }
             }
           }
