@@ -28,7 +28,7 @@
 #include <list>
 #include <map>
 #include <CGAL/N_step_adaptor_derived.h>
-#include <CGAL/Compact_container.h>
+#include <CGAL/In_place_list.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
@@ -88,9 +88,6 @@ public:
 
   /*! Destructor. */
   virtual ~Arr_vertex_base() {}
-
-  void* for_compact_container() const { return static_cast<void*>(p_pt); }
-  void for_compact_container(void* ptr) { p_pt = static_cast<Point*>(ptr); }
 
   // Access/modification for pointer squatting
   void* inc() const { return p_inc; }
@@ -183,9 +180,6 @@ public:
 
   /*! Destructor. */
   virtual ~Arr_halfedge_base() {}
-
-  void* for_compact_container() const { return static_cast<void*>(p_cv); }
-  void for_compact_container(void* ptr) { p_cv = static_cast<X_monotone_curve*>(ptr); }
 
   /*! Check if the curve pointer is nullptr. */
   bool has_null_curve() const { return (p_cv == nullptr); }
@@ -288,7 +282,7 @@ template <class V, class H, class F> class Arr_isolated_vertex;
  * The default arrangement DCEL vertex class.
  */
 template <class V, class H, class F>
-class Arr_vertex : public V
+class Arr_vertex : public V, public In_place_list_base<Arr_vertex<V,H,F> >
 {
 public:
 
@@ -355,7 +349,8 @@ public:
  * The default arrangement DCEL halfedge class.
  */
 template <class V, class H, class F>
-class Arr_halfedge : public H
+class Arr_halfedge : public H,
+                     public In_place_list_base<Arr_halfedge<V,H,F> >
 {
 public:
   typedef H                     Base;
@@ -535,7 +530,7 @@ public:
  */
 template <class V, class H, class F>
 class Arr_face : public F,
-                 public Compact_container_base
+                 public In_place_list_base<Arr_face<V,H,F> >
 {
 public:
   typedef F                            Base;
@@ -726,7 +721,7 @@ public:
  * Representation of an outer CCB.
  */
 template <class V, class H, class F>
-class Arr_outer_ccb {
+class Arr_outer_ccb : public In_place_list_base<Arr_outer_ccb<V,H,F> > {
 public:
   typedef Arr_outer_ccb<V,H,F>               Self;
   typedef Arr_halfedge<V,H,F>                Halfedge;
@@ -746,9 +741,6 @@ public:
   Arr_outer_ccb(const Arr_outer_ccb& other) :
     p_f(other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   { if (other.iter_is_not_singular) iter = other.iter; }
-
-  void* for_compact_container() const { return static_cast<void*>(p_f); }
-  void for_compact_container(void* ptr) { p_f = static_cast<Face*>(ptr); }
 
   /*! Get a halfedge along the component (const version). */
   const Halfedge* halfedge() const { return (*iter); }
@@ -794,7 +786,7 @@ public:
  * Representation of an inner CCB.
  */
 template <class V, class H, class F>
-class Arr_inner_ccb : public Compact_container_base
+class Arr_inner_ccb : public In_place_list_base<Arr_inner_ccb<V,H,F> >
 {
 public:
   typedef Arr_inner_ccb<V,H,F>               Self;
@@ -914,7 +906,8 @@ public:
  * Representation of an isolated vertex.
  */
 template <class V, class H, class F>
-class Arr_isolated_vertex {
+class Arr_isolated_vertex :
+public In_place_list_base<Arr_isolated_vertex<V,H,F> > {
 public:
   typedef Arr_isolated_vertex<V,H,F>                Self;
   typedef Arr_face<V,H,F>                           Face;
@@ -933,9 +926,6 @@ public:
   Arr_isolated_vertex(const Arr_isolated_vertex& other) :
     p_f(other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   { if (other.iter_is_not_singular) iv_it = other.iv_it; }
-
-  void* for_compact_container() const { return static_cast<void*>(p_f); }
-  void for_compact_container(void* ptr) { p_f = static_cast<Face*>(ptr); }
 
   /*! Get the containing face (const version). */
   const Face* face() const { return (p_f); }
@@ -987,6 +977,13 @@ public:
   typedef Inner_ccb                   Hole;
 
 protected:
+  // The vetices, halfedges and faces are stored in three in-place lists.
+  typedef In_place_list<Vertex, false>           Vertex_list;
+  typedef In_place_list<Halfedge, false>         Halfedge_list;
+  typedef In_place_list<Face, false>             Face_list;
+  typedef In_place_list<Outer_ccb, false>        Outer_ccb_list;
+  typedef In_place_list<Inner_ccb, false>        Inner_ccb_list;
+  typedef In_place_list<Isolated_vertex, false>  Iso_vert_list;
 
     typedef std::allocator_traits<Allocator> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Vertex>          Vertex_allocator;
@@ -995,13 +992,6 @@ protected:
     typedef typename Allocator_traits::template rebind_alloc<Outer_ccb>       Outer_ccb_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Inner_ccb>       Inner_ccb_allocator;
     typedef typename Allocator_traits::template rebind_alloc<Isolated_vertex> Iso_vert_allocator;
-
-  typedef Compact_container<Vertex, Vertex_allocator>             Vertex_list;
-  typedef Compact_container<Halfedge, Halfedge_allocator>         Halfedge_list;
-  typedef Compact_container<Face, Face_allocator>                 Face_list;
-  typedef Compact_container<Outer_ccb, Outer_ccb_allocator>       Outer_ccb_list;
-  typedef Compact_container<Inner_ccb, Inner_ccb_allocator>       Inner_ccb_list;
-  typedef Compact_container<Isolated_vertex, Iso_vert_allocator>  Iso_vert_list;
 
 public:
   typedef typename Halfedge_list::size_type              Size;
@@ -1018,6 +1008,13 @@ protected:
   Outer_ccb_list      out_ccbs;             // The outer CCBs.
   Inner_ccb_list      in_ccbs;              // The inner CCBs.
   Iso_vert_list       iso_verts;            // The isolated vertices.
+
+  Vertex_allocator    vertex_alloc;         // An allocator for vertices.
+  Halfedge_allocator  halfedge_alloc;       // An allocator for halfedges.
+  Face_allocator      face_alloc;           // An allocator for faces.
+  Outer_ccb_allocator out_ccb_alloc;        // An allocator for outer CCBs.
+  Inner_ccb_allocator in_ccb_alloc;         // An allocator for inner CCBs.
+  Iso_vert_allocator  iso_vert_alloc;       // Allocator for isolated vertices.
 
 public:
   // Definitions of iterators.
@@ -1145,7 +1142,10 @@ public:
   /*! Create a new vertex. */
   Vertex* new_vertex()
   {
-    return &*vertices.emplace();
+    Vertex* v = vertex_alloc.allocate(1);
+    std::allocator_traits<Vertex_allocator>::construct(vertex_alloc,v);
+    vertices.push_back(*v);
+    return v;
   }
 
   /*! Create a new pair of opposite halfedges. */
@@ -1165,25 +1165,37 @@ public:
   /*! Create a new face. */
   Face* new_face()
   {
-    return &*faces.emplace();
+    Face* f = face_alloc.allocate(1);
+    std::allocator_traits<Face_allocator>::construct(face_alloc, f);
+    faces.push_back (*f);
+    return(f);
   }
 
   /*! Create a new outer CCB. */
   Outer_ccb* new_outer_ccb()
   {
-    return &*out_ccbs.emplace();
+    Outer_ccb* oc = out_ccb_alloc.allocate(1);
+    std::allocator_traits<Outer_ccb_allocator>::construct(out_ccb_alloc, oc);
+    out_ccbs.push_back(*oc);
+    return (oc);
   }
 
   /*! Create a new inner CCB. */
   Inner_ccb* new_inner_ccb()
   {
-    return &*in_ccbs.emplace();
+    Inner_ccb* ic = in_ccb_alloc.allocate(1);
+    std::allocator_traits<Inner_ccb_allocator>::construct(in_ccb_alloc, ic);
+    in_ccbs.push_back(*ic);
+    return (ic);
   }
 
   /*! Create a new isolated vertex. */
   Isolated_vertex* new_isolated_vertex()
   {
-    return &*iso_verts.emplace();
+    Isolated_vertex* iv = iso_vert_alloc.allocate(1);
+    std::allocator_traits<Iso_vert_allocator>::construct(iso_vert_alloc, iv);
+    iso_verts.push_back(*iv);
+    return (iv);
   }
   //@}
 
@@ -1192,7 +1204,9 @@ public:
   /*! Delete an existing vertex. */
   void delete_vertex(Vertex* v)
   {
-    vertices.erase (vertices.iterator_to(*v));
+    vertices.erase(v);
+    std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
+    vertex_alloc.deallocate(v,1);
   }
 
   /*! Delete an existing pair of opposite halfedges. */
@@ -1206,36 +1220,85 @@ public:
   /*! Delete an existing face. */
   void delete_face(Face* f)
   {
-    faces.erase (faces.iterator_to(*f));
+    faces.erase(f);
+    std::allocator_traits<Face_allocator>::destroy(face_alloc, f);
+    face_alloc.deallocate(f, 1);
   }
 
   /*! Delete an existing outer CCB. */
   void delete_outer_ccb(Outer_ccb* oc)
   {
-    out_ccbs.erase (out_ccbs.iterator_to(*oc));
+    out_ccbs.erase(oc);
+    std::allocator_traits<Outer_ccb_allocator>::destroy(out_ccb_alloc, oc);
+    out_ccb_alloc.deallocate(oc, 1);
   }
 
   /*! Delete an existing inner CCB. */
   void delete_inner_ccb(Inner_ccb* ic)
   {
-    in_ccbs.erase (in_ccbs.iterator_to(*ic));
+    in_ccbs.erase(ic);
+    std::allocator_traits<Inner_ccb_allocator>::destroy(in_ccb_alloc, ic);
+    in_ccb_alloc.deallocate(ic, 1);
   }
 
   /*! Delete an existing isolated vertex. */
   void delete_isolated_vertex(Isolated_vertex* iv)
   {
-    iso_verts.erase (iso_verts.iterator_to(*iv));
+    iso_verts.erase(iv);
+    std::allocator_traits<Iso_vert_allocator>::destroy(iso_vert_alloc, iv);
+    iso_vert_alloc.deallocate(iv, 1);
   }
 
   /*! Delete all DCEL features. */
   void delete_all()
   {
-    vertices.clear();
-    halfedges.clear();
-    faces.clear();
-    out_ccbs.clear();
-    in_ccbs.clear();
-    iso_verts.clear();
+    // Free all vertices.
+    Vertex_iterator vit = vertices.begin(), v_curr;
+    while (vit != vertices.end()) {
+      v_curr = vit;
+      ++vit;
+      delete_vertex(&(*v_curr));
+    }
+
+    // Free all halfedges.
+    Halfedge_iterator  hit = halfedges.begin(), h_curr;
+    while (hit != halfedges.end()) {
+      h_curr = hit;
+      ++hit;
+      _delete_halfedge(&(*h_curr));
+    }
+
+    // Free all faces.
+    Face_iterator fit = faces.begin(), f_curr;
+    while (fit != faces.end()) {
+      f_curr = fit;
+      ++fit;
+      delete_face(&(*f_curr));
+    }
+
+    // Free all outer CCBs.
+    typename Outer_ccb_list::iterator ocit = out_ccbs.begin(), oc_curr;
+    while (ocit != out_ccbs.end()) {
+      oc_curr = ocit;
+      ++ocit;
+      delete_outer_ccb(&(*oc_curr));
+    }
+
+    // Free all inner CCBs.
+    typename Inner_ccb_list::iterator icit = in_ccbs.begin(), ic_curr;
+    while (icit != in_ccbs.end()) {
+      ic_curr = icit;
+      ++icit;
+      delete_inner_ccb(&(*ic_curr));
+    }
+
+    // Free all isolated vertices.
+    typename Iso_vert_list::iterator ivit = iso_verts.begin(), iv_curr;
+    while (ivit != iso_verts.end()) {
+      iv_curr = ivit;
+      ++ivit;
+      delete_isolated_vertex(&(*iv_curr));
+    }
   }
   //@}
 
@@ -1442,13 +1505,18 @@ protected:
   /*! Create a new halfedge. */
   Halfedge* _new_halfedge()
   {
-    return &*halfedges.emplace();
+    Halfedge* h = halfedge_alloc.allocate(1);
+    std::allocator_traits<Halfedge_allocator>::construct(halfedge_alloc, h);
+    halfedges.push_back(*h);
+    return (h);
   }
 
   /*! Delete an existing halfedge. */
   void _delete_halfedge(Halfedge* h)
   {
-    halfedges.erase (halfedges.iterator_to(*h));
+    halfedges.erase(h);
+    std::allocator_traits<Halfedge_allocator>::destroy(halfedge_alloc,h);
+    halfedge_alloc.deallocate(h, 1);
   }
 };
 
