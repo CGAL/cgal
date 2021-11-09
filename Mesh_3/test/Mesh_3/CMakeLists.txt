@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project( Mesh_3_Tests )
 
 find_package(CGAL QUIET COMPONENTS ImageIO)
