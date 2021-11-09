@@ -198,31 +198,43 @@ make_dereference_property_map(Iter)
 
 /// \ingroup PkgPropertyMapRef
 /// A `LvaluePropertyMap` property map mapping a key to itself (by reference).
+/// It is mutable if `T` is not `const` and non-mutable otherwise.
 ///
 /// \cgalModels `LvaluePropertyMap`
 template <typename T>
 struct Identity_property_map
 {
+/// \cond SKIP_IN_MANUAL
   typedef Identity_property_map<T> Self;
 
-  typedef T key_type; ///< typedef to `T`
-  typedef T value_type; ///< typedef to `T`
-  typedef const T& reference; ///< typedef to `const T&`
-  typedef boost::lvalue_property_map_tag category; ///< `boost::lvalue_property_map_tag`
+  typedef T key_type;
+  typedef T value_type;
+  typedef T& reference;
+  typedef boost::lvalue_property_map_tag category;
 
-  /// Access a property map element.
-  /// @param k a key which is returned as mapped value.
-  const value_type& operator[](const key_type& k) const { return k; }
+  value_type& operator[](key_type& k) const { return k; }
 
-  /// \name Put/get free functions
-  /// @{
-  friend reference get(const Self&, const key_type& k) { return k; }
+  friend value_type& get(const Self&, key_type& k) { return k; }
+  friend const value_type& get(const Self&, const key_type& k) { return k; }
   friend void put(const Self&, key_type& k, const value_type& v) { k = v; }
-  /// @}
+/// \endcond
 };
 
-
 /// \cond SKIP_IN_MANUAL
+template <typename T>
+struct Identity_property_map<const T>
+{
+  typedef Identity_property_map<const T> Self;
+
+  typedef T key_type;
+  typedef T value_type;
+  typedef const T& reference;
+  typedef boost::lvalue_property_map_tag category;
+
+  const value_type& operator[](key_type& k) const { return k; }
+  friend const value_type& get(const Self&, const key_type& k) { return k; }
+};
+
 template <typename T>
 struct Identity_property_map_no_lvalue
 {
@@ -399,7 +411,7 @@ struct Property_map_to_unary_function{
   {}
 
   template <class KeyType>
-  result_type
+  auto
   operator()(const KeyType& a) const
   {
     return get(map,a);
