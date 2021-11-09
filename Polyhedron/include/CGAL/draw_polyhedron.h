@@ -46,8 +46,8 @@ void draw(const CGAL_POLY_TYPE& apoly,
   if (!cgal_test_suite)
   {
     CGAL::Qt::init_ogl_context(4,3);
-    int argc=2;
-    const char* argv[2]={"polyhedron_viewer","--old"};
+    int argc=1;
+    const char* argv[2]={"polyhedron_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
     SimpleFaceGraphViewerQt
       mainwindow(app.activeWindow(), apoly, title, nofill);
