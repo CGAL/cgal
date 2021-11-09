@@ -6,10 +6,6 @@ project(Hyperbolic_triangulation_2_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
-include(CGAL_CreateSingleSourceCGALProgram)
-
 create_single_source_cgal_program("ht2_test_clear.cpp")
 create_single_source_cgal_program("ht2_test_locate.cpp")
 create_single_source_cgal_program("ht2_test_remove.cpp")

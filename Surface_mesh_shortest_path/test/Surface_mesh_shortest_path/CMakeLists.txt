@@ -3,8 +3,6 @@ project(Surface_mesh_shortest_path_Tests)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 find_package(LEDA QUIET)
 
 include_directories(BEFORE "include")

@@ -7,8 +7,6 @@ project(Polygon_mesh_processing_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 # Boost and its components
 find_package(Boost REQUIRED)
 

@@ -8,7 +8,6 @@ project(Number_types_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
 include(CGAL_VersionUtils)
 
 include_directories(BEFORE include)

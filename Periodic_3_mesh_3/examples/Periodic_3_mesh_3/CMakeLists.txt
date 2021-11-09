@@ -11,8 +11,6 @@ endif()
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
-include(${CGAL_USE_FILE})
-
 # include for local package
 
 # Use Eigen

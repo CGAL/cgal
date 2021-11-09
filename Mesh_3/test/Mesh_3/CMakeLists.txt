@@ -13,7 +13,6 @@ endif()
 find_package(CGAL QUIET COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
-  include( ${CGAL_USE_FILE} )
 
   find_package( TBB QUIET )
   include(CGAL_TBB_support)

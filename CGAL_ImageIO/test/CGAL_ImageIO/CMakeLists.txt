@@ -10,8 +10,6 @@ endif()
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
-include(${CGAL_USE_FILE})
-
 if(WITH_CGAL_ImageIO)
   create_single_source_cgal_program("test_trilinear_interpolation.cpp")
 else()

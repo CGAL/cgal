@@ -6,7 +6,6 @@ project(Periodic_3_triangulation_3_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
 include_directories(BEFORE "include")
 
 create_single_source_cgal_program("test_p3rt3_as_p3t3.cpp")

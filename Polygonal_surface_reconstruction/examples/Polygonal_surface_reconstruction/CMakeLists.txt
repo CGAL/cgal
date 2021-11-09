@@ -8,9 +8,6 @@ cmake_minimum_required(VERSION 3.1...3.20)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# include helper file
-include(${CGAL_USE_FILE})
-
 # Boost and its components
 find_package(Boost REQUIRED)
 
@@ -27,8 +24,6 @@ endif()
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include(CGAL_CreateSingleSourceCGALProgram)
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)

@@ -6,8 +6,6 @@ project(AABB_tree_Tests)
 
 find_package(CGAL REQUIRED)
 
-include(${CGAL_USE_FILE}) # Kept to test the old behaviour.
-
 # create a target per cppfile
 file(
   GLOB cppfiles

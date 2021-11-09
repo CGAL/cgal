@@ -15,8 +15,6 @@ set(TRAP 1) # Trapezoidal decomposition
 set(NAIVE 2)
 set(WALK 3)
 
-include(${CGAL_USE_FILE})
-
 function(compile name source_file point_location traits)
   #    message(compile ${source_file})
   add_executable(${name} ${source_file})

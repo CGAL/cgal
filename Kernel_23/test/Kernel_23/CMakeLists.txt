@@ -6,7 +6,6 @@ project(Kernel_23_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
 include_directories(BEFORE "include")
 
 # create a target per cppfile

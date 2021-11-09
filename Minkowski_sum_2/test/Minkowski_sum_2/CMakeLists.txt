@@ -13,8 +13,6 @@ project(Minkowski_sum_2_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 # create a target per cppfile
 file(
   GLOB cppfiles

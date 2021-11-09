@@ -7,8 +7,6 @@ project(Surface_mesh_simplification_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-include(${CGAL_USE_FILE})
-
 # Boost and its components
 find_package(Boost)
 if(NOT Boost_FOUND)

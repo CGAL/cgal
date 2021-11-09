@@ -10,7 +10,6 @@ find_package(GMP QUIET)
 
 if(GMP_FOUND)
 
-  include(${CGAL_USE_FILE})
   include(CGAL_VersionUtils)
 
   get_dependency_version(GMP)

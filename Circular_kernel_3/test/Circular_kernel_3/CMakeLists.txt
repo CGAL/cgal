@@ -6,8 +6,6 @@ project(Circular_kernel_3_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
-include(${CGAL_USE_FILE})
-
 include_directories(BEFORE include)
 
 # The following `include_directories` is used in the git layout

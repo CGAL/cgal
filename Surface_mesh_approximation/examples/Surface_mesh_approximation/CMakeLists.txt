@@ -7,9 +7,6 @@ project(Surface_mesh_approximation_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-# include helper file
-include(${CGAL_USE_FILE})
-
 # Boost
 find_package(Boost)
 if(NOT Boost_FOUND)
@@ -29,8 +26,6 @@ endif()
 
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
-
-include(CGAL_CreateSingleSourceCGALProgram)
 
 create_single_source_cgal_program("vsa_approximation_2_example.cpp")
 target_link_libraries(vsa_approximation_2_example PUBLIC CGAL::Eigen3_support)

@@ -25,11 +25,6 @@ if(NOT Boost_FOUND)
 
 endif()
 
-# include for local directory
-
-# include for local package
-include(${CGAL_USE_FILE})
-
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 

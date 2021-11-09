@@ -7,7 +7,6 @@ project(Cone_spanners_2_Tests)
 find_package(CGAL REQUIRED COMPONENTS Core)
 
 if(CGAL_Core_FOUND)
-  include(${CGAL_USE_FILE})
   include_directories(BEFORE "include")
 
   # create a target per cppfile
