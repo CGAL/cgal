@@ -4,10 +4,6 @@
 cmake_minimum_required(VERSION 3.1...3.20)
 project(Periodic_3_mesh_3_Examples)
 
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif()
-
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
