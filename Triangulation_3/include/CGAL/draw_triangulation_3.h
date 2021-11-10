@@ -153,7 +153,7 @@ void draw(const CGAL_T3_TYPE& at3,
   {
     CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"t3_viewer","\0"};
+    const char* argv[1]={"t3_viewer"};
     QApplication app(argc,const_cast<char**>(argv));
     DefaultColorFunctorT3 fcolor;
     SimpleTriangulation3ViewerQt<CGAL_T3_TYPE, DefaultColorFunctorT3>

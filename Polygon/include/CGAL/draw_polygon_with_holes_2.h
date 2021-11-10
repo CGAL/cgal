@@ -145,7 +145,7 @@ void draw(const CGAL::Polygon_with_holes_2<T, C>& ap2,
   {
     CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"t2_viewer","\0"};
+    const char* argv[1]={"t2_viewer"};
     QApplication app(argc,const_cast<char**>(argv));
     SimplePolygonWithHoles2ViewerQt<CGAL::Polygon_with_holes_2<T, C> >
       mainwindow(app.activeWindow(), ap2, title);

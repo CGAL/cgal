@@ -55,7 +55,7 @@ void draw(const Surface_mesh<K>& amesh,
   {
     CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"surface_mesh_viewer","\0"};
+    const char* argv[1]={"surface_mesh_viewer"};
     QApplication app(argc,const_cast<char**>(argv));
     SimpleFaceGraphViewerQt mainwindow(app.activeWindow(), amesh, title,
                                        nofill);
