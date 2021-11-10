@@ -86,7 +86,7 @@ public:
         return fc(a);
     }
 
-    // This intentionally does not check that K1::RT is constructible from T, because otherwise
+    // This intentionally does not require that K1::RT is constructible from T, because otherwise
     // the function `bool Enum_converter::operator()(bool)` might be called instead, with an implicit
     // conversion from the fundamental type to bool, which is usually unintended.
     template <typename T>
