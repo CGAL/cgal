@@ -30,6 +30,8 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Origin.h>
 
+#include <type_traits>
+
 namespace CGAL {
 
 template <class K1, class K2,
@@ -83,6 +85,31 @@ public:
     {
         return fc(a);
     }
+
+    // This intentionally does not check that K1::RT is constructible from T, because otherwise
+    // the function `bool Enum_converter::operator()(bool)` might be called instead, with an implicit
+    // conversion from the fundamental type to bool, which is usually unintended.
+    template <typename T>
+    typename K2::RT
+    operator()(const T& t,
+               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr,
+               typename std::enable_if<std::is_constructible<typename K1::RT, T>::value>::type* = nullptr,
+               typename std::enable_if<!std::is_same<T, typename K1::RT>::value>::type* = nullptr,
+               typename std::enable_if<!std::is_same<T, typename K1::FT>::value>::type* = nullptr)
+    {
+        return rc(typename K1::RT(t));
+    }
+
+    template <typename T>
+    typename K2::FT
+    operator()(const T& t,
+               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr,
+               typename std::enable_if<!std::is_constructible<typename K1::RT, T>::value>::type* = nullptr,
+               typename std::enable_if<!std::is_same<T, typename K1::FT>::value>::type* = nullptr)
+    {
+        return fc(typename K1::FT(t));
+    }
+
 
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
