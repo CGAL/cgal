@@ -28,6 +28,7 @@
 #include <CGAL/Enum_converter.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Origin.h>
 
 namespace CGAL {
 
@@ -47,13 +48,25 @@ public:
 
     using Base::operator();
 
-    Bbox_2
+    const Origin&
+    operator()(const Origin& o) const
+    {
+        return o;
+    }
+
+    const Null_vector&
+    operator()(const Null_vector& n) const
+    {
+        return n;
+    }
+
+    const Bbox_2&
     operator()(const Bbox_2& b)
     {
         return b;
     }
 
-    Bbox_3
+    const Bbox_3&
     operator()(const Bbox_3& b)
     {
         return b;

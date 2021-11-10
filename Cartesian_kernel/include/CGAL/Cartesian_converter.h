@@ -95,25 +95,25 @@ public:
 
     using Base::operator();
 
-    Origin
+    const Origin&
     operator()(const Origin& o) const
     {
         return o;
     }
 
-    Null_vector
+    const Null_vector&
     operator()(const Null_vector& n) const
     {
         return n;
     }
 
-    Bbox_2
+    const Bbox_2&
     operator()(const Bbox_2& b) const
     {
         return b;
     }
 
-    Bbox_3
+    const Bbox_3&
     operator()(const Bbox_3& b) const
     {
         return b;
