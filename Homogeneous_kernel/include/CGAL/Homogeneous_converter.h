@@ -86,9 +86,6 @@ public:
         return fc(a);
     }
 
-    // This intentionally does not require that K1::RT is constructible from T, because otherwise
-    // the function `bool Enum_converter::operator()(bool)` might be called instead, with an implicit
-    // conversion from the fundamental type to bool, which is usually unintended.
     template <typename T>
     typename K2::RT
     operator()(const T& t,
@@ -100,6 +97,9 @@ public:
         return rc(typename K1::RT(t));
     }
 
+    // This intentionally does not require that K1::FT is constructible from T, because otherwise
+    // the function `bool Enum_converter::operator()(bool)` might be called instead, with an implicit
+    // conversion from the fundamental type to bool, which is usually unintended.
     template <typename T>
     typename K2::FT
     operator()(const T& t,
