@@ -75,13 +75,13 @@ public:
     typename K2::RT
     operator()(const typename K1::RT &a) const
     {
-        return c(a);
+        return rc(a);
     }
 
     typename K2::FT
     operator()(const typename K1::FT &a) const
     {
-        return c(a);
+        return fc(a);
     }
 
     typename K2::Point_2
