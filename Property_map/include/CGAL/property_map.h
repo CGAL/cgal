@@ -411,7 +411,7 @@ struct Property_map_to_unary_function{
   {}
 
   template <class KeyType>
-  auto
+  decltype(auto)
   operator()(const KeyType& a) const
   {
     return get(map,a);
