@@ -6,6 +6,8 @@ project(Segment_Delaunay_graph_Linf_2_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
+include_directories(BEFORE "include")
+
 # create a target per cppfile
 file(
   GLOB cppfiles
