@@ -78,7 +78,7 @@ void draw(const CGAL::Polygon_set_2<T, C>& aps2,
   {
     CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[1]={"t2_viewer"};
+    const char* argv[2]={"t2_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     SimplePolygonSet2ViewerQt<CGAL::Polygon_set_2<T, C> >
       mainwindow(app.activeWindow(), aps2, title);
