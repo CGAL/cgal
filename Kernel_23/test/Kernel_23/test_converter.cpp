@@ -28,6 +28,7 @@ int main()
   CGAL::Cartesian_converter<EPECK, EPICK> epeck_to_epick;
   CGAL::Homogeneous_converter<SHI, SHD> shi_to_shd;
   CGAL::Homogeneous_converter<SHE, SHD> she_to_shd;
+  CGAL::Homogeneous_converter<SHE, SHE> she_to_she;
 
   assert(sci_to_epick(SCI::FT(2)) == EPICK::FT(2));
   assert(sci_to_epick((long int)(2)) == EPICK::FT(2)); // long int --> SCI::FT --> EPICK::FT
@@ -62,6 +63,11 @@ int main()
   assert(she_to_shd(SHE::RT(2)) == SHD::RT(2));
   assert(she_to_shd(SHE::FT(2.)) == SHD::FT(2.));
   assert(she_to_shd(2.) == SHD::FT(2)); // double --> SHE::RT --> SHD::FT
+  assert(she_to_she(2.) == 2.);
+
+  std::cout << "NT_exact is " << typeid(NT_exact).name() << std::endl;
+  CGAL::NT_converter<CGAL::Quotient<NT_exact>, CGAL::Quotient<NT_exact> > qnte_to_qnte;
+  assert(qnte_to_qnte(2.) == CGAL::Quotient<NT_exact>(2.));
 
   std::cout << "Done" << std::endl;
 
