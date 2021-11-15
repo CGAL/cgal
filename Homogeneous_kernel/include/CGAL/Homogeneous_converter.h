@@ -50,14 +50,14 @@ public:
 
     using Base::operator();
 
-    const Origin&
-    operator()(const Origin& o) const
+    Origin
+    operator()(Origin o) const
     {
         return o;
     }
 
-    const Null_vector&
-    operator()(const Null_vector& n) const
+    Null_vector
+    operator()(Null_vector n) const
     {
         return n;
     }
