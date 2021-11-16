@@ -50,9 +50,6 @@ typedef K::Vector_3 Vector_3;
 typedef std::vector<Point_3>  Polyline;
 typedef std::vector<Polyline> Polylines;
 
-typedef Polylines(*create_polylines_fct)(const int /* prec */);
-
-typedef Point_3 P;
 
 #include <boost/range/join.hpp>
 
@@ -64,6 +61,7 @@ bool add_1D_features(const CGAL::Image_3& image,
                      Mesh_domain& domain)
 {
   typedef unsigned char Word_type;
+  CGAL::Mesh_3::Triple_line_extractor<Point_3> lines;
 
   Polylines features_inside;
 
@@ -142,8 +140,8 @@ bool add_1D_features(const CGAL::Image_3& image,
               std::cerr << "reference cube " << reference_cube << std::endl;
               std::cerr << "  with transformation " << cube_isometries[(*case_it)[9]] << "\n";
 #endif // CGAL_DEBUG_TRIPLE_LINES
-              auto fct_it = create_polylines_fcts.find(reference_cube);
-              if (fct_it != create_polylines_fcts.end()) {
+              auto fct_it = lines.create_polylines_fcts.find(reference_cube);
+              if (fct_it != lines.create_polylines_fcts.end()) {
 #ifdef CGAL_DEBUG_TRIPLE_LINES
                   std::cerr << "Using the function of " << Cube(fct_it->first) << "\n";
 #endif // CGAL_DEBUG_TRIPLE_LINES

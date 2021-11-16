@@ -1,35 +1,36 @@
-﻿#ifndef TRIPLE_LIGNES_H
-#define TRIPLE_LIGNES_H
+﻿#ifndef CGAL_MESH_3_TRIPLE_LINES_H
+#define CGAL_MESH_3_TRIPLE_LINES_H
 
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <vector>
+#include <CGAL/Point_3.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_3 Point_3;
-typedef Point_3 P;
-typedef std::vector<Point_3> Polyline;
-typedef std::vector<Polyline>   Polylines;
-
-typedef Polylines (*create_polylines_fct)(const int /* prec */);
-
+#include <CGAL/Mesh_3/triple_lines_extraction/cube.h>
 
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
 
-#include <CGAL/Mesh_3/triple_lines_extraction/cube.h>
+#include <vector>
 
-//extern boost::unordered_map<Cube, create_polylines_fct> create_polylines_fcts;
+namespace CGAL
+{
+namespace Mesh_3
+{
+
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using P = CGAL::Point_3<K>;
+using Polylines = std::vector<std::vector<P> >;
 
 template <typename Functor>
-Polyline create_polyline(const double start,
+std::vector<P> create_polyline(const double start,
     const double end,
     P starting_point,
     P ending_point,
     Functor f,
     const int prec)
 {
+    using Polyline = std::vector<P>;
     Polyline poly;
     poly.reserve(prec + 1);
     poly.push_back(std::move(starting_point));
@@ -57,7 +58,7 @@ Polyline create_polyline(const double start,
 }
 
 template <typename Functor>
-Polyline create_polyline(const double start,
+std::vector<P> create_polyline(const double start,
     const double end,
     P starting_point,
     Functor f,
@@ -67,7 +68,7 @@ Polyline create_polyline(const double start,
 }
 
 template <typename Functor>
-Polyline create_polyline(const double start,
+std::vector<P> create_polyline(const double start,
     const double end,
     Functor f,
     const int prec)
@@ -605,52 +606,63 @@ Polylines poly00121201(const int prec = 10)
 }
 
 
-#include <boost/functional/hash.hpp>
-#include <boost/unordered_map.hpp>
+template<typename Point>
+class Triple_line_extractor
+{
+    using P = Point;
+    using Polyline = std::vector<P>;
+    using Polylines = std::vector<Polyline>;
 
-boost::unordered_map<Cube, create_polylines_fct> create_polylines_fcts{
-    // One internal corner
-      { 00001221_c, poly00001221 } ,
-      { 00111202_c, poly00111202 } ,
-      { 01101001_c, poly01101001 } ,
-      // Two curves
-      { 00011022_c, poly00011022 } ,
-      { 00011221_c, poly00011221 } ,
-      { 00011222_c, poly00011222 } ,
-      { 00121200_c, poly00121200 } ,
-      { 00121221_c, poly00121221 } ,
-      { 00122100_c, poly00122100 } ,
-      { 00122101_c, poly00122101 } ,
-      // One curve
-      { 00000012_c, poly00000012 } ,
-      { 00000112_c, poly00000112 } ,
-      { 00000121_c, poly00000121 } ,
-      { 00001112_c, poly00001112 } ,
-      { 00001122_c, poly00001122 } ,
-      { 00010121_c, poly00010121 } ,
-      { 00010122_c, poly00010122 } ,
-      { 00011002_c, poly00011002 } ,
-      { 00011012_c, poly00011012 } ,
-      { 00011110_c, poly00011110 } ,
-      { 00011120_c, poly00011120 } ,
-      { 00011121_c, poly00011121 } ,
-      { 00011122_c, poly00011122 } ,
-      { 00011220_c, poly00011220 } ,
-      { 00012002_c, poly00012002 } ,
-      { 00012012_c, poly00012012 } ,
-      { 00012021_c, poly00012021 } ,
-      { 00012110_c, poly00012110 } ,
-      { 00012112_c, poly00012112 } ,
-      { 00012120_c, poly00012120 } ,
-      { 00012121_c, poly00012121 } ,
-      { 00012122_c, poly00012122 } ,
-      { 00012221_c, poly00012221 } ,
-      { 00111100_c, poly00111100 } ,
-      { 00111102_c, poly00111102 } ,
-      { 00111220_c, poly00111220 } ,
-      { 00121201_c, poly00121201 }
-};
+    typedef Polylines(*create_polylines_fct)(const int /* prec */);
 
 
+public:
+    boost::unordered_map<Cube, create_polylines_fct> create_polylines_fcts {
+        // One internal corner
+        { 00001221_c, CGAL::Mesh_3::poly00001221 } ,
+        { 00111202_c, CGAL::Mesh_3::poly00111202 } ,
+        { 01101001_c, CGAL::Mesh_3::poly01101001 } ,
+        // Two curves
+        { 00011022_c, CGAL::Mesh_3::poly00011022 } ,
+        { 00011221_c, CGAL::Mesh_3::poly00011221 } ,
+        { 00011222_c, CGAL::Mesh_3::poly00011222 } ,
+        { 00121200_c, CGAL::Mesh_3::poly00121200 } ,
+        { 00121221_c, CGAL::Mesh_3::poly00121221 } ,
+        { 00122100_c, CGAL::Mesh_3::poly00122100 } ,
+        { 00122101_c, CGAL::Mesh_3::poly00122101 } ,
+        // One curve
+        { 00000012_c, CGAL::Mesh_3::poly00000012 } ,
+        { 00000112_c, CGAL::Mesh_3::poly00000112 } ,
+        { 00000121_c, CGAL::Mesh_3::poly00000121 } ,
+        { 00001112_c, CGAL::Mesh_3::poly00001112 } ,
+        { 00001122_c, CGAL::Mesh_3::poly00001122 } ,
+        { 00010121_c, CGAL::Mesh_3::poly00010121 } ,
+        { 00010122_c, CGAL::Mesh_3::poly00010122 } ,
+        { 00011002_c, CGAL::Mesh_3::poly00011002 } ,
+        { 00011012_c, CGAL::Mesh_3::poly00011012 } ,
+        { 00011110_c, CGAL::Mesh_3::poly00011110 } ,
+        { 00011120_c, CGAL::Mesh_3::poly00011120 } ,
+        { 00011121_c, CGAL::Mesh_3::poly00011121 } ,
+        { 00011122_c, CGAL::Mesh_3::poly00011122 } ,
+        { 00011220_c, CGAL::Mesh_3::poly00011220 } ,
+        { 00012002_c, CGAL::Mesh_3::poly00012002 } ,
+        { 00012012_c, CGAL::Mesh_3::poly00012012 } ,
+        { 00012021_c, CGAL::Mesh_3::poly00012021 } ,
+        { 00012110_c, CGAL::Mesh_3::poly00012110 } ,
+        { 00012112_c, CGAL::Mesh_3::poly00012112 } ,
+        { 00012120_c, CGAL::Mesh_3::poly00012120 } ,
+        { 00012121_c, CGAL::Mesh_3::poly00012121 } ,
+        { 00012122_c, CGAL::Mesh_3::poly00012122 } ,
+        { 00012221_c, CGAL::Mesh_3::poly00012221 } ,
+        { 00111100_c, CGAL::Mesh_3::poly00111100 } ,
+        { 00111102_c, CGAL::Mesh_3::poly00111102 } ,
+        { 00111220_c, CGAL::Mesh_3::poly00111220 } ,
+        { 00121201_c, CGAL::Mesh_3::poly00121201 }
+    };
 
-#endif // TRIPLE_LIGNES_H
+};//class Triple_line_extractor
+}//namespace Mesh_3
+}//namespace CGAL
+
+
+#endif // CGAL_MESH_3_TRIPLE_LINES_H
