@@ -1,6 +1,8 @@
 #ifndef CASES_TABLES_H
 #define CASES_TABLES_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <array>
 #include <unordered_map>
 #include <boost/functional/hash.hpp>

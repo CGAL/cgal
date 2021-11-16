@@ -1,6 +1,8 @@
 #ifndef CUBE_H
 #define CUBE_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <array>
 #include <cassert>
 #include <string>

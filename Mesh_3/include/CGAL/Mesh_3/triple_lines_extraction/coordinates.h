@@ -1,6 +1,8 @@
 #ifndef COORDINATES_H
 #define COORDINATES_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <array>
 
 typedef std::array<int, 3> Coordinates;

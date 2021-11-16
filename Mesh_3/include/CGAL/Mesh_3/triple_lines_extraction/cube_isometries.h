@@ -1,6 +1,8 @@
 #ifndef CUBE_ISOMETRIES_H
 #define CUBE_ISOMETRIES_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <array>
 
 typedef std::array<unsigned char, 8> Permutation;

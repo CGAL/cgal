@@ -1,6 +1,8 @@
 #ifndef COMBINATIONS_H
 #define COMBINATIONS_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <array>
 
 typedef std::array<unsigned char, 8> Cube;
