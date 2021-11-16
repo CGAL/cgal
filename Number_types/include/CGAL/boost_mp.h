@@ -243,10 +243,10 @@ namespace Boost_MP_internal {
   // This is a version of to_interval that converts a rational type into a
   // double tight interval.
   template<typename Type, typename ET>
-  std::pair<double, double> to_interval(const Type& x, ET xnum, ET xden ) {
+  std::pair<double, double> to_interval( ET xnum, ET xden ) {
 
     CGAL_assertion(!CGAL::is_zero(xden));
-    CGAL_assertion_code(const Type input = x);
+    CGAL_assertion_code(const Type input(xnum, xden));
     double l = 0.0, u = 0.0;
     if (CGAL::is_zero(xnum)) { // return [0.0, 0.0]
       CGAL_assertion(are_bounds_correct(l, u, input));
@@ -501,8 +501,8 @@ struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rat
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
 
         std::pair<double, double> operator()( const Type& x ) const {
-          return Boost_MP_internal::to_interval(x,
-          boost::multiprecision::numerator(x), boost::multiprecision::denominator(x));
+          return Boost_MP_internal::to_interval(
+            boost::multiprecision::numerator(x), boost::multiprecision::denominator(x));
         }
     };
 };
@@ -1055,7 +1055,7 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
 
         // Option 2. Stable one!
         std::pair<double, double> operator()( const Type& x ) const {
-          return Boost_MP_internal::to_interval(x, x.num, x.den);
+          return Boost_MP_internal::to_interval(x.num, x.den);
         }
     };
 };
