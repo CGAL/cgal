@@ -247,9 +247,9 @@ remove_outliers(
 
   if (threshold_distance != FT(0))
     f2r = std::partition (sorted_points.begin(), sorted_points.end(),
-                          [sq_threshold_distance = CGAL::square(threshold_distance)](const std::pair<FT, value_type>& p) -> bool 
-                          { 
-                            return p.first < sq_threshold_distance; 
+                          [sq_threshold_distance = CGAL::square(threshold_distance)](const std::pair<FT, value_type>& p) -> bool
+                          {
+                            return p.first < sq_threshold_distance;
                           });
 
   iterator out = points.end();
