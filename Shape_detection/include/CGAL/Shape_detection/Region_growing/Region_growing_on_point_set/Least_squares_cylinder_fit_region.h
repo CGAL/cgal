@@ -414,6 +414,14 @@ namespace Point_set {
 
     /// @}
 
+    /// \cond SKIP_IN_MANUAL
+    std::pair<FT, Line_3> get_cylinder(
+      const std::vector<std::size_t>& region) const {
+      return internal::create_cylinder(
+        m_input_range, m_point_map, m_normal_map, region, m_traits, false).first;
+    }
+    /// \endcond
+
   private:
     const Input_range& m_input_range;
     const Point_map m_point_map;

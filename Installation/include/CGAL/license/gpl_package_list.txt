@@ -97,4 +97,3 @@ Triangulation dD Triangulations
 Visibility_2 2D Visibility Computation
 Voronoi_diagram_2 2D Voronoi Diagram Adaptor
 Tetrahedral_remeshing Tetrahedral Remeshing
-Weights Weights

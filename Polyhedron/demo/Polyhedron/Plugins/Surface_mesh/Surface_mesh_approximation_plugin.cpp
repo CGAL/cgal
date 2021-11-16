@@ -37,7 +37,7 @@ class Polyhedron_demo_surface_mesh_approximation_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   typedef boost::property_map<SMesh, CGAL::face_patch_id_t<int> >::type Face_id_map;
-  struct Patch_id_pmap : public boost::put_get_helper<std::size_t, Patch_id_pmap>
+  struct Patch_id_pmap
   {
   public:
     typedef boost::read_write_property_map_tag category;

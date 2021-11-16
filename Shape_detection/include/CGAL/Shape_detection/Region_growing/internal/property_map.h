@@ -60,8 +60,8 @@ namespace internal {
       return get(m_property_map, key);
     }
 
-    friend inline reference get(
-      const Item_property_map& item_map, const key_type key) {
+    friend inline reference get(const Item_property_map& item_map,
+                                const key_type key) {
       return item_map[key];
     }
 
@@ -97,8 +97,8 @@ namespace internal {
       return value->second;
     }
 
-    friend inline value_type get(
-      const Item_to_index_property_map& item_to_index_map, const key_type& key) {
+    friend inline value_type get(const Item_to_index_property_map& item_to_index_map,
+                                 const key_type& key) {
       return item_to_index_map[key];
     }
 
@@ -112,20 +112,18 @@ namespace internal {
   public:
     using key_type = std::size_t;
     using value_type = std::size_t;
-    using reference = value_type;
     using category = boost::readable_property_map_tag;
 
-    Seed_property_map(
-      const std::vector<std::size_t>& seeds) :
-    m_seeds(seeds)
+    Seed_property_map(const std::vector<std::size_t>& seeds)
+      : m_seeds(seeds)
     { }
 
     value_type operator[](const key_type key) const {
       return m_seeds[key];
     }
 
-    friend value_type get(
-      const Seed_property_map& seed_map, const key_type key) {
+    friend value_type get(const Seed_property_map& seed_map,
+                          const key_type key) {
       return seed_map[key];
     }
 

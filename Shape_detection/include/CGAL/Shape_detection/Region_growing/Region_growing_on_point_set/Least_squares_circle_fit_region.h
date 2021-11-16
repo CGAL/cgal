@@ -405,6 +405,14 @@ namespace Point_set {
 
     /// @}
 
+    /// \cond SKIP_IN_MANUAL
+    std::pair<FT, Point_2> get_circle(
+      const std::vector<std::size_t>& region) const {
+      return internal::create_circle_2(
+        m_input_range, m_point_map, region, m_traits, false).first;
+    }
+    /// \endcond
+
   private:
     const Input_range& m_input_range;
     const Point_map m_point_map;

@@ -63,14 +63,14 @@ template<typename Output_iterator>
 struct Throw_at_count_reached_functor {
 
   std::atomic<unsigned int>& counter;
-  const unsigned int& max;
+  const unsigned int& maxval;
 
   Output_iterator out;
 
   Throw_at_count_reached_functor(std::atomic<unsigned int>& counter,
-                                 const unsigned int& max,
+                                 const unsigned int& maxval,
                                  Output_iterator out)
-    : counter(counter), max(max), out(out)
+    : counter(counter), maxval(maxval), out(out)
   {}
 
   template<class T>
@@ -78,7 +78,7 @@ struct Throw_at_count_reached_functor {
   {
     *out++ = t;
     ++counter;
-    if(counter >= max)
+    if(counter >= maxval)
     {
       throw CGAL::internal::Throw_at_output_exception();
     }
