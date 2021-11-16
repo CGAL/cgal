@@ -266,7 +266,7 @@ remove_outliers(
 
   // Replaces [points.begin(), points.end()) range by the sorted content.
   iterator pit = points.begin();
-  iterator out = points.begin();
+  iterator out = points.end();
 
   for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
   {
