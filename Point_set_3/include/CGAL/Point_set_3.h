@@ -1110,7 +1110,7 @@ public:
     typedef Index key_type;
     typedef typename Property::value_type value_type;
     typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
+    typedef boost::read_write_property_map_tag category;
 
     Point_set* ps;
     Property* prop;
@@ -1121,7 +1121,7 @@ public:
                       Index ind=Index())
       : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(const Push_property_map& pm, Index& i, reference t)
+    friend void put(const Push_property_map& pm, Index& i, const value_type& t)
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->insert();

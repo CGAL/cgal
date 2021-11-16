@@ -12,11 +12,14 @@
 #ifndef CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
 #define CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
 
+#ifndef CGAL_NO_STATIC_ASSERTION_TESTS
 #include <CGAL/basic.h>
+#endif
 
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 #include <type_traits>
+#include <utility>
 
 #define CGAL_BGL_NP_TEMPLATE_PARAMETERS T, typename Tag, typename Base
 #define CGAL_BGL_NP_CLASS CGAL::Named_function_parameters<T,Tag,Base>
@@ -154,7 +157,9 @@ template <typename T, typename Tag, typename Base, typename Query_tag>
 typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::type
 get_parameter_impl(const Named_params_impl<T, Tag, Base>& np, Query_tag tag)
 {
+#ifndef CGAL_NO_STATIC_ASSERTION_TEST
   CGAL_static_assertion( (!boost::is_same<Query_tag, Tag>::value) );
+#endif
   return get_parameter_impl(static_cast<const typename Base::base&>(np), tag);
 }
 
@@ -359,6 +364,7 @@ bool is_default_parameter(const T&)
 
 } //namespace CGAL
 
+#ifndef CGAL_NO_STATIC_ASSERTION_TESTS
 // code added to avoid silent runtime issues in non-updated code
 namespace boost
 {
@@ -368,5 +374,6 @@ namespace boost
     CGAL_static_assertion(B && "You must use CGAL::parameters::get_parameter instead of boost::get_param");
   }
 }
+#endif
 
 #endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

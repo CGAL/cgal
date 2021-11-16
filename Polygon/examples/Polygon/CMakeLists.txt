@@ -6,10 +6,6 @@ project(Polygon_Examples)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-if(CGAL_Qt5_FOUND)
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
-
 # create a target per cppfile
 file(
   GLOB cppfiles
@@ -20,6 +16,6 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 if(CGAL_Qt5_FOUND)
-  target_link_libraries(draw_polygon PUBLIC CGAL::CGAL_Qt5)
-  target_link_libraries(draw_polygon_with_holes PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(draw_polygon PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_polygon_with_holes PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

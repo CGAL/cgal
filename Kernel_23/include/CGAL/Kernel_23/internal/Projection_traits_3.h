@@ -115,6 +115,41 @@ public:
     }
 };
 
+template <class R, int dim>
+class Oriented_side_projected_3
+{
+public:
+  typedef typename R::Segment_2   Segment_2;
+  typedef typename R::Triangle_2  Triangle_2;
+
+  typedef typename R::Point_3     Point;
+  typedef typename R::Segment_3   Segment_3;
+  typedef typename R::Triangle_3  Triangle_3;
+
+  typename R::FT x(const Point& p) const { return Projector<R, dim>::x(p); }
+  typename R::FT y(const Point& p) const { return Projector<R, dim>::y(p); }
+
+  typename R::Point_2 project(const Point& p) const
+  {
+    return typename R::Point_2(x(p), y(p));
+  }
+  Triangle_2 project(const Triangle_3& t) const
+  {
+    typename R::Construct_vertex_3 v;
+    return Triangle_2(project(v(t, 0)), project(v(t, 1)), project(v(t, 2)));
+  }
+  Segment_2 project(const Segment_3& s) const
+  {
+    typename R::Construct_source_3 source;
+    typename R::Construct_target_3 target;
+    return Segment_2(project(source(s)), project(target(s)));
+  }
+  CGAL::Oriented_side operator()(const Segment_3& s, const Triangle_3& t) const
+  {
+    return typename R::Oriented_side_2()(project(s), project(t));
+  }
+};
+
 template <class R,int dim>
 class Side_of_oriented_circle_projected_3
 {
@@ -854,6 +889,7 @@ public:
   typedef typename Projector<R,dim>::Compare_x_2              Compare_x_2;
   typedef typename Projector<R,dim>::Compare_y_2              Compare_y_2;
   typedef Orientation_projected_3<Rp,dim>                     Orientation_2;
+  typedef Oriented_side_projected_3<Rp,dim>                   Oriented_side_2;
   typedef Angle_projected_3<Rp,dim>                           Angle_2;
   typedef Side_of_oriented_circle_projected_3<Rp,dim>         Side_of_oriented_circle_2;
   typedef Less_signed_distance_to_line_projected_3<Rp,dim>    Less_signed_distance_to_line_2;
@@ -1013,6 +1049,10 @@ public:
   Orientation_2
   orientation_2_object() const
     { return Orientation_2();}
+
+  Oriented_side_2
+  oriented_side_2_object() const
+    { return Oriented_side_2();}
 
   Side_of_oriented_circle_2
   side_of_oriented_circle_2_object() const
