@@ -1,6 +1,8 @@
 ﻿#ifndef TRIPLE_LIGNES_H
 #define TRIPLE_LIGNES_H
 
+#include <CGAL/license/Mesh_3.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <vector>
 
