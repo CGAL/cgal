@@ -137,6 +137,9 @@ if(TARGET CGAL::CGAL_ImageIO)
   create_single_source_cgal_program("mesh_3D_image_with_features.cpp")
   target_link_libraries(mesh_3D_image_with_features PUBLIC CGAL::Eigen3_support)
 
+  create_single_source_cgal_program("mesh_3D_image_with_detection_of_features.cpp")
+  target_link_libraries(mesh_3D_image_with_detection_of_features PUBLIC CGAL::Eigen3_support)
+
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program("mesh_optimization_example.cpp")
     target_link_libraries(mesh_optimization_example PUBLIC CGAL::Eigen3_support)
@@ -195,6 +198,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_3D_image_with_custom_initialization
     mesh_3D_gray_image_with_custom_initialization
     mesh_3D_image_with_features
+    mesh_3D_image_with_detection_of_features
     mesh_implicit_domains
     mesh_implicit_sphere
     mesh_implicit_sphere_variable_size
