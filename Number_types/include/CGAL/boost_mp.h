@@ -501,7 +501,7 @@ struct RET_boost_mp <NT, boost::mpl::int_<boost::multiprecision::number_kind_rat
         : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
 
         std::pair<double, double> operator()( const Type& x ) const {
-          return Boost_MP_internal::to_interval(
+          return Boost_MP_internal::to_interval<Type>(
             boost::multiprecision::numerator(x), boost::multiprecision::denominator(x));
         }
     };
@@ -1055,7 +1055,7 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
 
         // Option 2. Stable one!
         std::pair<double, double> operator()( const Type& x ) const {
-          return Boost_MP_internal::to_interval(x.num, x.den);
+          return Boost_MP_internal::to_interval<Type>(x.num, x.den);
         }
     };
 };
