@@ -371,7 +371,7 @@ namespace Boost_MP_internal {
 
     const Interval_nt<false> intv(l, u);
     Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
-    std::tie(l, u) = CGAL::ldexp(intv, e).pair();
+    std::tie(l, u) = CGAL::ldexp(intv, static_cast<int>(e)).pair();
 
     if (change_sign) {
       const double t = l;
