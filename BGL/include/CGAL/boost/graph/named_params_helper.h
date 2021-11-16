@@ -291,7 +291,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       typedef boost::readable_property_map_tag category;
 
       typedef DummyNormalPmap Self;
-      friend reference get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
+      friend value_type get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
     };
 
   public:
@@ -422,7 +422,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef boost::read_write_property_map_tag category;
 
         typedef DummyNormalMap Self;
-        friend reference get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
+        friend value_type get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
         friend void put(const Self&, const key_type&, const value_type&) { }
       };
 
@@ -466,7 +466,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef boost::readable_property_map_tag category;
 
         typedef DummyPlaneIndexMap Self;
-        friend reference get(const Self&, const key_type&) { return -1; }
+        friend value_type get(const Self&, const key_type&) { return -1; }
       };
 
     public:
@@ -489,7 +489,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef boost::readable_property_map_tag category;
 
         typedef DummyConstrainedMap Self;
-        friend reference get(const Self&, const key_type&) { return false; }
+        friend value_type get(const Self&, const key_type&) { return false; }
       };
 
     public:

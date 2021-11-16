@@ -125,7 +125,7 @@ Segment_2_Line_2_pair<K>::intersection_type() const
         _result = SEGMENT;
         break;
     default:
-      CGAL_assume(false);
+      CGAL_unreachable();
     }
     return _result;
 }

@@ -30,7 +30,7 @@ public:
     sm_.add_property(constraint);
   }
 
-  inline friend reference get(const Constrained_edge_map& em, key_type e)
+  inline friend value_type get(const Constrained_edge_map& em, key_type e)
   {
     bool b = em.sm_.property(em.constraint,em.sm_.edge_handle(e.idx()));
     return b;

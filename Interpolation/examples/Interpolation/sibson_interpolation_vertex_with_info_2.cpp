@@ -50,8 +50,13 @@ struct Value_function
 
 template <typename V, typename G>
 struct Gradient_function
-  : public std::iterator<std::output_iterator_tag, void, void, void, void>
 {
+  typedef void value_type;
+  typedef void Distance;
+  typedef void Pointer;
+  typedef void Reference;
+  typedef std::output_iterator_tag category;
+
   typedef V                                                argument_type;
   typedef std::pair<G, bool>                               result_type;
 

@@ -189,6 +189,27 @@ if [ -n "${not_existing_headers}" ]; then
   exit 1
 fi
 
+#check documented function named parameters exists
+echo '.. Checking documented function named parameters'
+nps=$(git ls-files --stage | egrep '\.h' | awk '{print $4}' | xargs egrep "cgalParamNBegin\{.+\}" | perl -lne 'print for /cgalParamNBegin{(.+)}/' | sort -u )
+git_dir=`pwd`
+tmp_dir=`mktemp -d`
+cd $tmp_dir
+echo $tmp_dir
+echo "#include <CGAL/boost/graph/Named_function_parameters.h>\nstruct A{};\nint main(){" > main.cpp
+for i in `echo $nps`; do
+  echo "  CGAL::parameters::${i}(A()).${i}(A());" >> main.cpp
+done
+echo "}" >> main.cpp
+if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I$git_dir/BGL/include main.cpp; then
+  echo "ERROR: At least one documented named parameter does not exist"
+  cd -
+  rm -r $tmp_dir
+  exit 1;
+fi
+cd -
+rm -r $tmp_dir
+
 current_rev=$(${git} rev-parse HEAD)
 trap 'echo "(aborting the merge now)" && ${git} reset --quiet --hard ${current_rev}' EXIT
 

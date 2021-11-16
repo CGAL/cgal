@@ -33,13 +33,12 @@ public:
   typedef typename CGAL::Triangulation_data_structure_2<VB,FB>::Vertex_handle key_type;
 
   friend reference get(TDS2_vertex_point_map<VB,FB>, key_type vh) { return vh->point(); }
-  friend void put(TDS2_vertex_point_map<VB,FB>, key_type vh, reference v) { vh->point() = v; }
+  friend void put(TDS2_vertex_point_map<VB,FB>, key_type vh, const value_type& p) { vh->point() = p; }
   reference operator[](key_type vh) const { return vh->point(); }
 };
 
 template <class VB, class FB>
 class TDS2_edge_weight_map
-  : public boost::put_get_helper<typename VB::FT, TDS2_edge_weight_map<VB, FB> >
 {
 public:
   typedef boost::readable_property_map_tag                           category;
@@ -51,13 +50,14 @@ public:
 
   value_type operator[](key_type e) const { return approximate_sqrt(tds.segment(e).squared_length()); }
 
+  friend inline value_type get(const TDS2_edge_weight_map& m, const key_type k) { return m[k]; }
+
 private:
   const CGAL::Triangulation_data_structure_2<VB,FB>& tds;
 };
 
 template <class VB, class FB>
 class TDS2_vertex_id_map
-  : public boost::put_get_helper<int, TDS2_vertex_id_map<VB, FB> >
 {
 public:
   typedef boost::readable_property_map_tag                                    category;
@@ -67,12 +67,13 @@ public:
 
   TDS2_vertex_id_map() {}
 
-  long operator[](key_type vh) const { return vh->id(); }
+  value_type operator[](key_type vh) const { return vh->id(); }
+
+  friend inline value_type get(const TDS2_vertex_id_map& m, const key_type k) { return m[k]; }
 };
 
 template <class VB, class FB>
 class TDS2_halfedge_id_map
-  : public boost::put_get_helper<int, TDS2_halfedge_id_map<VB, FB> >
 {
   typedef typename CGAL::Triangulation_data_structure_2<VB,FB>     TDS;
 
@@ -98,11 +99,12 @@ public:
     else
       return 2*(3 * f2->id() + f2->index(f1)) + 1;
   }
+
+  friend inline value_type get(const TDS2_halfedge_id_map& m, const key_type k) { return m[k]; }
 };
 
 template <class VB, class FB>
 class TDS2_edge_id_map
-  : public boost::put_get_helper<int, TDS2_edge_id_map<VB, FB> >
 {
   typedef typename CGAL::Triangulation_data_structure_2<VB,FB>       TDS;
 
@@ -126,11 +128,12 @@ public:
     else
       return 3 * f2->id() + f2->index(f1);
   }
+
+  friend inline value_type get(const TDS2_edge_id_map& m, const key_type k) { return m[k]; }
 };
 
 template <class VB, class FB>
 class TDS2_face_id_map
-  : public boost::put_get_helper<int, TDS2_face_id_map<VB, FB> >
 {
   typedef typename CGAL::Triangulation_data_structure_2<VB,FB>     TDS;
 
@@ -143,6 +146,8 @@ public:
   TDS2_face_id_map() { }
 
   value_type operator[](key_type f) const { return f->id(); }
+
+  friend inline value_type get(const TDS2_face_id_map& m, const key_type k) { return m[k]; }
 };
 
 template <class VB, class FB, class Tag>
