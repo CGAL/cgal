@@ -252,28 +252,32 @@ remove_outliers(
                             return p.first < sq_threshold_distance; 
                           });
 
-  if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
-  {
-    std::nth_element (f2r,
-                      sorted_points.begin() + first_index_to_remove,
-                      sorted_points.end(),
-                      [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
-                      {
-                        return v1.first<v2.first;
-                      });
-    f2r = sorted_points.begin() + first_index_to_remove;
-  }
-
-  // Replaces [points.begin(), points.end()) range by the sorted content.
-  iterator pit = points.begin();
   iterator out = points.end();
 
-  for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+  if (f2r != sorted_points.end())
   {
-    *pit = sit->second;
-    if (sit == f2r)
-      out = pit;
-    ++ pit;
+    if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
+    {
+      std::nth_element (f2r,
+                        sorted_points.begin() + first_index_to_remove,
+                        sorted_points.end(),
+                        [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
+                        {
+                          return v1.first<v2.first;
+                        });
+      f2r = sorted_points.begin() + first_index_to_remove;
+    }
+
+    // Replaces [points.begin(), points.end()) range by the sorted content.
+    iterator pit = points.begin();
+
+    for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+    {
+      *pit = sit->second;
+      if (sit == f2r)
+        out = pit;
+      ++ pit;
+    }
   }
 
   callback_wrapper.join();
