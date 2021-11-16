@@ -122,15 +122,26 @@ struct NT_converter < Interval_nt<b>, Interval_nt<b> >
     }
 };
 
+template < class NT >
+struct NT_converter < Quotient<NT>, Quotient<NT> >
+  : public CGAL::cpp98::unary_function< Quotient<NT>, Quotient<NT> >
+{
+    const Quotient<NT>&
+    operator()(const Quotient<NT> & q) const
+    {
+        return q;
+    }
+};
+
 template < class NT1, class NT2 >
 struct NT_converter < Quotient<NT1>, Quotient<NT2> >
   : public CGAL::cpp98::unary_function< Quotient<NT1>, Quotient<NT2> >
 {
     Quotient<NT2>
-    operator()(const Quotient<NT1> & q1) const
+    operator()(const Quotient<NT1> & q) const
     {
         NT_converter < NT1, NT2 > nt;
-        return Quotient<NT2>(nt(q1.numerator()), nt(q1.denominator()));
+        return Quotient<NT2>(nt(q.numerator()), nt(q.denominator()));
     }
 };
 
