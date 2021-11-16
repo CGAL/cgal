@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions spheres: " << region.size() << std::endl;
-      return (region.size() > 65 && region.size() < 69);
+      return (region.size() >= 57 && region.size() <= 77);
     }
   );
 
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions cylinders: " << region.size() << std::endl;
-      return (region.size() > 8 && region.size() < 12);
+      return (region.size() >= 4 && region.size() <= 14);
     }
   );
 
