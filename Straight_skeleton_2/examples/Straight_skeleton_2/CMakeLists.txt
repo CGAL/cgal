@@ -9,10 +9,6 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 
 find_package(CGAL COMPONENTS Qt5)
 
-if(CGAL_Qt5_FOUND)
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
-
 include(${CGAL_USE_FILE})
 
 # create a target per cppfile
@@ -22,7 +18,7 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 if(CGAL_Qt5_FOUND)
-  target_link_libraries(draw_straight_skeleton_2 PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(draw_straight_skeleton_2 PUBLIC CGAL::CGAL_Basic_viewer)
 else()
   message(STATUS "NOTICE: The example draw_straight_skeleton_2 requires Qt and will not be compiled.")
 endif()

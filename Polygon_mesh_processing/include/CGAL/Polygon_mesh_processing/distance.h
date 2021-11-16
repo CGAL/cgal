@@ -738,8 +738,10 @@ struct Triangle_structure_sampler_for_triangle_soup
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{use_random_uniform_sampling}
- *     \cgalParamDescription{If `true` is passed, points are generated in a random and uniform way
- *                           on the surface of `tm`, and/or on edges of `tm`.}
+ *     \cgalParamDescription{If `true` is passed, points are generated uniformly at random on faces and/or edges of `tm`.
+                             If `do_sample_faces` is `true`, random points will be iteratively generated uniformly at random in the triangle of a face
+                             selected with probability proportional to its area. If `do_sample_edges` is `true`, random points will be iteratively generated uniformly at random in the segment of an edge
+                             selected with probability proportional to its length.}
  *     \cgalParamType{Boolean}
  *     \cgalParamType{`true`}
  *     \cgalParamExtra{For faces, the number of sample points is the value passed to the named
@@ -785,19 +787,19 @@ struct Triangle_structure_sampler_for_triangle_soup
  *                     is used as if it was passed to `number_of_points_per_distance_unit`.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_vertices}
+ *   \cgalParamNBegin{do_sample_vertices}
  *     \cgalParamDescription{If `true` is passed, the vertices of `tm` are part of the sample.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_edges}
+ *   \cgalParamNBegin{do_sample_edges}
  *     \cgalParamDescription{If `true` is passed, edges of `tm` are sampled.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_faces}
+ *   \cgalParamNBegin{do_sample_faces}
  *     \cgalParamDescription{If `true` is passed, faces of `tm` are sampled.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
@@ -930,13 +932,13 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                     by the square of the length of the smallest non-null edge of the soup.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_vertices}
+ *   \cgalParamNBegin{do_sample_vertices}
  *     \cgalParamDescription{If `true` is passed, the points of `points` are part of the sample.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_faces}
+ *   \cgalParamNBegin{do_sample_faces}
  *     \cgalParamDescription{If `true` is passed, faces of the soup are sampled.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}

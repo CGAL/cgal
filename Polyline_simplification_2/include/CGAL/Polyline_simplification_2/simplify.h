@@ -93,18 +93,20 @@ public:
 
   } ;
 
-  struct Id_map : public boost::put_get_helper<std::size_t, Id_map>
+  struct Id_map
   {
     typedef boost::readable_property_map_tag category;
     typedef std::size_t                      value_type;
     typedef value_type                       reference;
-    typedef Vertex_handle  key_type;
+    typedef Vertex_handle                    key_type;
 
 
-    reference operator[] ( key_type const& x ) const
+    value_type operator[](const key_type& x) const
     {
-        return x->ID;
+      return x->ID;
     }
+
+    friend inline value_type get(const Id_map& m, const key_type k) { return m[k]; }
   } ;
 
   typedef CGAL::Modifiable_priority_queue<Vertex_handle,Compare_cost,Id_map> MPQ ;

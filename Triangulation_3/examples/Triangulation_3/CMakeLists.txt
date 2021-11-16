@@ -12,10 +12,6 @@ endif()
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-if(CGAL_Qt5_FOUND)
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
-
 include_directories(BEFORE "../../include")
 
 create_single_source_cgal_program("for_loop.cpp")
@@ -37,7 +33,7 @@ create_single_source_cgal_program("simplex.cpp")
 
 create_single_source_cgal_program("draw_triangulation_3.cpp")
 if(CGAL_Qt5_FOUND)
-  target_link_libraries(draw_triangulation_3 PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(draw_triangulation_3 PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
 
 find_package(TBB QUIET)

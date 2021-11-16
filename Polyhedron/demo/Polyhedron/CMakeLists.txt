@@ -268,6 +268,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   endif()
   add_item(scene_tetrahedra_item Scene_tetrahedra_item.cpp)
   target_link_libraries(scene_tetrahedra_item PUBLIC scene_c3t3_item)
+
   add_item(scene_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp)
   add_item(scene_image_item Scene_image_item.cpp)

@@ -36,6 +36,10 @@ auto make_not_null(T&& t) {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
 #include "Image_type.h"
+#ifdef CGAL_USE_ITK
+#include <CGAL/Mesh_3/generate_label_weights.h>
+#endif
+
 #endif
 
 #include "Meshing_thread.h"
@@ -590,6 +594,29 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       }
     }
   }
+
+  //Labeled (weighted) image
+  connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
+          ui.weightsSigma, SLOT(setEnabled(bool)));
+  connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
+          ui.weightsSigma_label, SLOT(setEnabled(bool)));
+  ui.weightsSigma->setValue(1.);
+  bool input_is_labeled_img = (image_item != nullptr && !image_item->isGray());
+  ui.labeledImgGroup->setVisible(input_is_labeled_img);
+
+#ifndef CGAL_USE_ITK
+  if (input_is_labeled_img)
+  {
+    ui.labeledImgGroup->setDisabled(true);
+    ui.labeledImgGroup->setToolTip(
+      QString("The use of weighted images is disabled "
+        "because the Insight Toolkit (ITK) is not available."));
+    ui.useWeights_checkbox->setDisabled(true);
+    ui.weightsSigma_label->setDisabled(true);
+    ui.weightsSigma->setDisabled(true);
+  }
+#endif
+
   // -----------------------------------
   // Get values
   // -----------------------------------
@@ -621,6 +648,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   const float iso_value = float(ui.iso_value_spinBox->value());
   const float value_outside = float(ui.value_outside_spinBox->value());
   const bool inside_is_less = ui.inside_is_less_checkBox->isChecked();
+  const float sigma_weights = ui.useWeights_checkbox->isChecked()
+                            ? ui.weightsSigma->value() : 0.f;
+
   as_facegraph = (mesh_type == Mesh_type::SURFACE_ONLY)
                      ? ui.facegraphCheckBox->isChecked()
                      : false;
@@ -692,6 +722,18 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
     }
+#ifdef CGAL_USE_ITK
+    if ( sigma_weights > 0
+      && sigma_weights != image_item->sigma_weights())
+    {
+      image_item->set_image_weights(
+        CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights),
+        sigma_weights);
+    }
+#endif
+    const Image* pWeights = sigma_weights > 0
+      ? image_item->image_weights()
+      : nullptr;
 
     Scene_polylines_item::Polylines_container plc;
 
@@ -711,7 +753,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         image_item->isGray(),
         iso_value,
         value_outside,
-        inside_is_less);
+        inside_is_less,
+        pWeights);
     break;
   }
   default:
