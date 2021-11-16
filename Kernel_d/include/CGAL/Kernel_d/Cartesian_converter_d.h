@@ -99,6 +99,17 @@ public:
         return c(a);
     }
 
+    template <typename T>
+    typename K2::FT
+    operator()(const T&,
+               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr) const
+    {
+        // Disable fundamental types (other than K1::FT) to avoid unexpected results
+        // More details: https://github.com/CGAL/cgal/issues/4982
+        CGAL_static_assertion(!(std::is_fundamental<T>::value));
+        return typename K2::FT();
+    }
+
     std::vector<Object>
     operator()(const std::vector<Object>& v) const
     {

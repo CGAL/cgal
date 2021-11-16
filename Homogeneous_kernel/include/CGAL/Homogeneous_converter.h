@@ -87,29 +87,15 @@ public:
     }
 
     template <typename T>
-    typename K2::RT
-    operator()(const T& t,
-               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr,
-               typename std::enable_if<std::is_constructible<typename K1::RT, T>::value>::type* = nullptr,
-               typename std::enable_if<!std::is_same<T, typename K1::RT>::value>::type* = nullptr,
-               typename std::enable_if<!std::is_same<T, typename K1::FT>::value>::type* = nullptr)
-    {
-        return rc(typename K1::RT(t));
-    }
-
-    // This intentionally does not require that K1::FT is constructible from T, because otherwise
-    // the function `bool Enum_converter::operator()(bool)` might be called instead, with an implicit
-    // conversion from the fundamental type to bool, which is usually unintended.
-    template <typename T>
     typename K2::FT
-    operator()(const T& t,
-               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr,
-               typename std::enable_if<!std::is_constructible<typename K1::RT, T>::value>::type* = nullptr,
-               typename std::enable_if<!std::is_same<T, typename K1::FT>::value>::type* = nullptr)
+    operator()(const T&,
+               typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr)
     {
-        return fc(typename K1::FT(t));
+        // Disable fundamental types (other than K1::FT) to avoid unexpected results
+        // More details: https://github.com/CGAL/cgal/issues/4982
+        CGAL_static_assertion(!(std::is_fundamental<T>::value));
+        return typename K2::FT();
     }
-
 
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
