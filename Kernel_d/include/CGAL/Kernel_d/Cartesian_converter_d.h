@@ -82,13 +82,13 @@ public:
         : c(), k(), result_point_(20) {}
 
     Origin
-    operator()(const Origin& o) const
+    operator()(Origin o) const
     {
         return o;
     }
 
     Null_vector
-    operator()(const Null_vector& n) const
+    operator()(Null_vector n) const
     {
         return n;
     }
