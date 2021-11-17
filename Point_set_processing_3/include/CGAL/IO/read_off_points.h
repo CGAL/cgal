@@ -123,6 +123,7 @@ bool read_OFF(std::istream& is,
   }
 
   // scan points
+  std::string signature;
   long pointsCount = 0, facesCount = 0, edgesCount = 0; // number of items in file
   int pointsRead = 0; // current number of points read
   int lineNumber = 0; // current line number
@@ -142,12 +143,10 @@ bool read_OFF(std::istream& is,
     // Reads file signature on first line
     if (lineNumber == 1)
     {
-      std::string signature;
-      if ( !(iss >> signature)
-        || (signature != "OFF" && signature != "NOFF") )
+      if ( !(iss >> signature) || (signature != "OFF" && signature != "NOFF") )
       {
         // if wrong file format
-        std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
+        std::cerr << "Error line " << lineNumber << " of file (unexpected header)" << std::endl;
         return false;
       }
     }
@@ -184,6 +183,12 @@ bool read_OFF(std::istream& is,
             return false;
           }
         }
+        else if (signature == "NOFF")
+        {
+          std::cerr << "Error line " << lineNumber << " of file (expected normal coordinates)" << std::endl;
+          return false;
+        }
+
         Enriched_point pwn;
         put(point_map,  pwn, point);  // point_map[&pwn] = point
         if (has_normals)
