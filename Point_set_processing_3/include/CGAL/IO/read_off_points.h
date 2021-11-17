@@ -138,7 +138,7 @@ bool read_OFF(std::istream& is,
     if (line.empty () || line[0] == '#')
       continue;
 
-    lineNumber++;
+    ++lineNumber;
 
     // Reads file signature on first line
     if (lineNumber == 1)
@@ -150,13 +150,12 @@ bool read_OFF(std::istream& is,
         return false;
       }
     }
-
     // Reads number of points on 2nd line
     else if (lineNumber == 2)
     {
       if ( !(iss >> pointsCount >> facesCount >> edgesCount) )
       {
-        std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+        std::cerr << "Error line " << lineNumber << " of file (incorrect header format)" << std::endl;
         return false;
       }
     }
@@ -179,7 +178,7 @@ bool read_OFF(std::istream& is,
           if(iss  >> IO::iformat(ny) >> IO::iformat(nz)){
             normal = Vector(FT(nx),FT(ny),FT(nz));
           } else {
-            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+            std::cerr << "Error line " << lineNumber << " of file (incomplete normal coordinates)" << std::endl;
             return false;
           }
         }
@@ -193,17 +192,16 @@ bool read_OFF(std::istream& is,
         put(point_map,  pwn, point);  // point_map[&pwn] = point
         if (has_normals)
           put(normal_map, pwn, normal); // normal_map[&pwn] = normal
-        *output++ = pwn;
-        pointsRead++;
 
+        *output++ = pwn;
+        ++pointsRead;
       }
-      // ...or skip comment line
     }
-    // Skip remaining lines
   }
-  if(is.eof()) {
+
+  if(is.eof())
     is.clear(is.rdstate() & ~std::ios_base::failbit); // set by getline
-  }
+
   return true;
 }
 
