@@ -168,8 +168,7 @@ bool read_OFF(std::istream& is,
       double nx,ny,nz;
       if (iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z))
       {
-        //the extra `()` seem to fix a very strange bug. Without them, the put() won't compile.
-        Point point((FT(x)), (FT(y)), (FT(z)));
+        Point point{FT(x), FT(y), FT(z)};
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
         if (iss >> IO::iformat(nx))
