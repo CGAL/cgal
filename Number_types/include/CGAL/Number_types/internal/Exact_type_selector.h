@@ -24,10 +24,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
 
-#ifdef CGAL_USE_BOOST_MP
 #include <CGAL/boost_mp.h>
-#endif
-
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>

@@ -1,6 +1,7 @@
 #include <boost/config.hpp>
 
 //#define BOOST_RESULT_OF_USE_DECLTYPE 1
+#define CGAL_DO_NOT_USE_BOOST_MP // this test does not compile with cpp_rational
 #include <CGAL/Epick_d.h>
 #include <CGAL/Epeck_d.h>
 #include <typeinfo>
