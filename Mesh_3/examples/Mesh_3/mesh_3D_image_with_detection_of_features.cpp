@@ -75,6 +75,10 @@ bool add_1D_features(const CGAL::Image_3& image,
   const std::size_t ydim = image.ydim();
   const std::size_t zdim = image.zdim();
 
+  const double tx = image.tx();
+  const double ty = image.ty();
+  const double tz = image.tz();
+
   using CGAL::IMAGEIO::static_evaluate;
 
   typedef CGAL::Delaunay_triangulation_3<K> Del;
@@ -85,7 +89,9 @@ bool add_1D_features(const CGAL::Image_3& image,
     for (std::size_t j = 0, end_j = ydim - 1; j < end_j; ++j)
       for (std::size_t i = 0, end_i = xdim - 1; i < end_i; ++i)
       {
-        const K::Vector_3 translation{ i * vx, j * vy, k * vz };
+        const K::Vector_3 translation{ i * vx + tx,
+                                       j * vy + ty,
+                                       k * vz + tz };
         const Cube cube = {
           static_evaluate<unsigned char>(image.image(), i  , j  , k),
           static_evaluate<unsigned char>(image.image(), i + 1, j  , k),
