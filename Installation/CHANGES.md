@@ -86,6 +86,11 @@ Release date: December 2021
     and [`Projection_traits_yz_3`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Projection__traits__yz__3.html)
     classes.
 
+-   Added the functor
+    [`NonZeroCoordinateIndex_3`](https://doc.cgal.org/5.4/Kernel_23/classKernel_1_1NonZeroCoordinateIndex__3.html)
+    to the concept [`Kernel`](https://doc.cgal.org/5.4/Kernel_23/classKernel.html) with `int operator()(Vector_3)`
+    which returns the index of any coordinate of the vector different from zero, or `-1`.
+
 ### [dD Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernelD)
 
 -   Most operations on [`Epeck_d`](https://doc.cgal.org/5.4/Kernel_d/structCGAL_1_1Epeck__d.html)
