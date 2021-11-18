@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Algebraic_kernel_d_Tests)
 
 # CGAL and its components
@@ -27,8 +27,6 @@ endif()
 
 # include for local directory
 include_directories(BEFORE include)
-
-include(${CGAL_USE_FILE})
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
