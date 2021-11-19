@@ -362,8 +362,8 @@ void divide_segment_by_plane( Segment_3 s, Plane_3 pl,
       // First of all, we need to find out wheather we are working over an extended kernel or on a standard kernel. As precondition we have that ray is oriented in the minus x axis direction.  When having an extended kernel, the ray can be subtituted by a segment with the endpoint on the 'intersection' between the ray and the bounding infimaximal box.  In the presence of a standard kernel, the intersection is computed with the bounding box with the vertices of the Nef polyhedron.
       Point_3 p(r.source()), q;
       Bounding_box_3 b = k.bounding_box;
-      typename Kernel::Non_zero_dimension_3 non_zero_dimension_3;
-      int c = non_zero_dimension_3(vec);
+      typename Kernel::Non_zero_coordinate_index_3 non_zero_coordinate_index_3;
+      int c = non_zero_coordinate_index_3(vec);
 
       Point_3 pt_on_minus_x_plane = vec[c] < 0 ?
         Point_3(FT(b.min_coord(0)), FT(b.min_coord(1)),FT(b.min_coord(2))) :
