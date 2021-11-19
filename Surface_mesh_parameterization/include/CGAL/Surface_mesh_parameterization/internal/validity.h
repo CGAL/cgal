@@ -26,7 +26,8 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-
+#include <boost/utility/enable_if.hpp>
+#include <boost/range/has_range_iterator.hpp>
 #include <vector>
 
 namespace CGAL {
@@ -240,7 +241,10 @@ template <typename TriangleMesh,
           typename VertexUVMap>
 bool is_one_to_one_mapping(const TriangleMesh& mesh,
                            const Faces_Container& faces,
-                           const VertexUVMap uvmap)
+                           const VertexUVMap uvmap,
+                           typename boost::enable_if<
+                              boost::has_range_iterator<Faces_Container>
+                           >::type* = nullptr)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
