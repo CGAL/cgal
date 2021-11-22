@@ -98,7 +98,7 @@ void partition_dual_graph(const TriangleMesh& tm,
   CGAL_assertion_code(int ret =)
     METIS_PartMeshDual(&ne, &nn, eptr, eind,
                        nullptr /* elements weights*/, nullptr /*elements sizes*/,
-                       &ncommon, &nparts,
+                       &ncommon, static_cast<idx_t*>(&nparts),
                        nullptr /* partitions weights */,
                        *options,
                        &objval, epart, npart);

@@ -130,7 +130,7 @@ void partition_graph(const TriangleMesh& tm,
   CGAL_assertion_code(int ret =)
     METIS_PartMeshNodal(&ne, &nn, eptr, eind,
                         nullptr /* nodes weights */, nullptr /* nodes sizes */,
-                        &nparts,
+                        static_cast<idx_t*>(&nparts),
                         nullptr /* partitions weights */,
                         *options,
                         &objval, epart, npart);
