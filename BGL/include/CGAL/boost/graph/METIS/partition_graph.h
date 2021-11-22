@@ -112,6 +112,8 @@ void partition_graph(const TriangleMesh& tm,
     eptr[i + 1] = j;
   }
 
+  idx_t nparts_as_idx_t = nparts;
+
   // either the edgecut or the total communication volume of the dual graph’s partitioning
   idx_t objval;
 
@@ -130,7 +132,7 @@ void partition_graph(const TriangleMesh& tm,
   CGAL_assertion_code(int ret =)
     METIS_PartMeshNodal(&ne, &nn, eptr, eind,
                         nullptr /* nodes weights */, nullptr /* nodes sizes */,
-                        static_cast<idx_t*>(&nparts),
+                        &nparts_as_idx_t,
                         nullptr /* partitions weights */,
                         *options,
                         &objval, epart, npart);

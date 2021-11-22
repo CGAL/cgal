@@ -79,6 +79,7 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   // a dual edge between elements exists if they share 'nparts' vertices
   idx_t ncommon = 2;
+  idx_t nparts_as_idx_t = nparts;
 
   // either the edgecut or the total communication volume of the dual graph’s partitioning
   idx_t objval;
@@ -98,7 +99,7 @@ void partition_dual_graph(const TriangleMesh& tm,
   CGAL_assertion_code(int ret =)
     METIS_PartMeshDual(&ne, &nn, eptr, eind,
                        nullptr /* elements weights*/, nullptr /*elements sizes*/,
-                       &ncommon, static_cast<idx_t*>(&nparts),
+                       &ncommon, &nparts_as_idx_t,
                        nullptr /* partitions weights */,
                        *options,
                        &objval, epart, npart);
