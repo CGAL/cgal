@@ -51,7 +51,7 @@ void test_print(const std::string filename) {
   // Use this command to print in png:
   // dot -Tpng tree.graphviz > tree.png
   std::ofstream outfile("tree.graphviz");
-  tree.print(outfile);
+  tree.write_graphviz(outfile);
 
   assert(tree.root()->num_items() == points.size());
   assert(tree.root()->num_nodes() == 8);

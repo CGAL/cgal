@@ -252,7 +252,7 @@ std::ostream& statistics(std::ostream& s) const;
 Inserts the tree in the <a href="https://graphviz.org/">`Graphviz`</a> format
 into the output stream `s`.
 */
-std::ostream& print(std::ostream& s) const;
+std::ostream& write_graphviz(std::ostream& s) const;
 
 /// @}
 
