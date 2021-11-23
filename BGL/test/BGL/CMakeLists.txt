@@ -89,6 +89,8 @@ create_single_source_cgal_program( "test_test_face.cpp" )
 
 create_single_source_cgal_program( "test_Collapse_edge.cpp" )
 
+create_single_source_cgal_program( "test_Collapse_edge_with_constraints.cpp" )
+
 create_single_source_cgal_program("test_graph_traits.cpp")
 
 create_single_source_cgal_program("test_Properties.cpp")

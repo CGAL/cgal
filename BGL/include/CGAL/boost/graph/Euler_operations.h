@@ -1603,7 +1603,20 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
       if (!is_border(edges_to_erase[1],g))
         join_face(edges_to_erase[1],g);
       else
-        remove_face(opposite(edges_to_erase[1],g),g);
+      {
+        if (!is_border(pq, g))
+          remove_face(opposite(edges_to_erase[1],g),g);
+        else
+        {
+          if(!is_border(opposite(next(qp,g),g),g))
+          {
+            // q will be removed, swap it with p
+            internal::swap_vertices(p, q, g);
+          }
+          remove_face(opposite(edges_to_erase[1],g),g);
+          return q;
+        }
+      }
       join_vertex(pq,g);
       return q;
     }
