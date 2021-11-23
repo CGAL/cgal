@@ -309,23 +309,26 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
 
   template<typename PointRange,
            typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t>,
-           bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value>
+           bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value,
+           typename NP_TAG = internal_np::point_t
+  >
   class GetPointMap
   {
     typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
     typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
+    typedef typename CGAL::Identity_property_map<const Point> DefaultConstPMap;
 
   public:
     typedef typename internal_np::Lookup_named_param_def<
-    internal_np::point_t,
+    NP_TAG,
     NamedParameters,
     DefaultPMap
     > ::type  type;
 
     typedef typename internal_np::Lookup_named_param_def<
-    internal_np::point_t,
+    NP_TAG,
     NamedParameters,
-    DefaultPMap
+    DefaultConstPMap
     > ::type  const_type;
   };
 
@@ -336,7 +339,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     struct Dummy_point{};
   public:
     typedef typename CGAL::Identity_property_map<Dummy_point> type;
-    typedef typename CGAL::Identity_property_map<Dummy_point> const_type;
+    typedef typename CGAL::Identity_property_map<const Dummy_point> const_type;
   };
 
   namespace Point_set_processing_3 {
@@ -373,26 +376,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
           typename PointRange::iterator
           >::value_type
         >::Kernel::FT type;
-    };
-
-    template<typename PointRange, typename NamedParameters>
-    class GetQueryPointMap
-    {
-      typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
-      typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
-
-    public:
-      typedef typename internal_np::Lookup_named_param_def<
-      internal_np::query_point_t,
-      NamedParameters,
-      DefaultPMap
-      > ::type  type;
-
-      typedef typename internal_np::Lookup_named_param_def<
-      internal_np::query_point_t,
-      NamedParameters,
-      DefaultPMap
-      > ::type  const_type;
     };
 
     template<typename PointRange, typename NamedParameters>
@@ -440,6 +423,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     {
       typedef typename PlaneRange::iterator::value_type Plane;
       typedef typename CGAL::Identity_property_map<Plane> DefaultPMap;
+      typedef typename CGAL::Identity_property_map<const Plane> DefaultConstPMap;
 
     public:
       typedef typename internal_np::Lookup_named_param_def<
@@ -451,7 +435,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       typedef typename internal_np::Lookup_named_param_def<
       internal_np::plane_t,
       NamedParameters,
-      DefaultPMap
+      DefaultConstPMap
       > ::type  const_type;
     };
 

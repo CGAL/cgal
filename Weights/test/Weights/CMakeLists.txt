@@ -3,12 +3,10 @@
 
 project(Weights_Tests)
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.22)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
-include(${CGAL_USE_FILE})
-include(CGAL_CreateSingleSourceCGALProgram)
 
 create_single_source_cgal_program("test_uniform_weights.cpp")
 create_single_source_cgal_program("test_shepard_weights.cpp")
