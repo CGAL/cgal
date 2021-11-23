@@ -381,7 +381,7 @@ public:
   }
 
   std::ostream&
-  print(std::ostream& s) const
+  write_graphviz(std::ostream& s) const
   {
     int counter = -1;
     std::unordered_map<const Node*, int> node_to_index;
