@@ -25,7 +25,7 @@
 #include <algorithm>
 #include <string>
 #include <unordered_map>
-#include <fstream>
+#include <ostream>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
@@ -629,7 +629,7 @@ public:
   }
 
   std::ostream&
-  print(std::ostream& s) const
+  write_graphviz(std::ostream& s) const
   {
     int counter = -1;
     std::unordered_map<const Node*, int> node_to_index;
