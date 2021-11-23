@@ -1623,37 +1623,37 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
   }
   else
   {
-      if (lTopFaceExists)
-      {
-        if (!(is_border(edges_to_erase[0],g))){
-          join_face(edges_to_erase[0],g);
-          join_vertex(pq,g);
-          return q;
-        }
-        if( is_border(opposite(next(pq,g),g),g) )
-        {
-          // q will be removed, swap it with p
-          internal::swap_vertices(p, q, g);
-        }
-        remove_face(opposite(edges_to_erase[0],g),g);
-        return q;
-      }
-
-      if (! (is_border(edges_to_erase[0],g))){
-        // q will be removed, swap it with p
-        internal::swap_vertices(p, q, g);
+    if (lTopFaceExists)
+    {
+      if (!(is_border(edges_to_erase[0],g))){
         join_face(edges_to_erase[0],g);
-        join_vertex(qp,g);
+        join_vertex(pq,g);
         return q;
       }
-      if(!is_border(opposite(next(qp,g),g),g))
+      if( is_border(opposite(next(pq,g),g),g) )
       {
         // q will be removed, swap it with p
         internal::swap_vertices(p, q, g);
       }
       remove_face(opposite(edges_to_erase[0],g),g);
       return q;
-  };
+    }
+
+    if (! (is_border(edges_to_erase[0],g))){
+      // q will be removed, swap it with p
+      internal::swap_vertices(p, q, g);
+      join_face(edges_to_erase[0],g);
+      join_vertex(qp,g);
+      return q;
+    }
+    if(!is_border(opposite(next(qp,g),g),g))
+    {
+      // q will be removed, swap it with p
+      internal::swap_vertices(p, q, g);
+    }
+    remove_face(opposite(edges_to_erase[0],g),g);
+    return q;
+  }
 }
 
 /// performs an edge flip, rotating the edge pointed by
