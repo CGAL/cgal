@@ -17,7 +17,7 @@
 
 #include <string>
 #include <unordered_map>
-#include <fstream>
+#include <ostream>
 
 #include <CGAL/Splitters.h>
 #include <CGAL/Compact_container.h>
