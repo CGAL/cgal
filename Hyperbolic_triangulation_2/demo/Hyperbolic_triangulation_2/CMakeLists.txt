@@ -36,6 +36,9 @@ if(CGAL_Qt5_FOUND
   else()
     target_link_libraries ( HDT2 ${LEDA_LIBRARIES})
   endif()
+
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test( HDT2 )
 else()
   message(
     STATUS

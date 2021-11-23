@@ -1050,7 +1050,7 @@ double approximate_Hausdorff_distance(
   Point_3 hint = get(vpm, *vertices(tm).first);
 
   return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>
-    (original_sample_points, tree, hint);
+    (sample_points, tree, hint);
 }
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh,

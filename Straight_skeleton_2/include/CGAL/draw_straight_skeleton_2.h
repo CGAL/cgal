@@ -162,7 +162,7 @@ void draw(const CGAL_SS_TYPE& ass2,
   if (!cgal_test_suite)
   {
     int argc=1;
-    const char* argv[2]={"ss2_viewer","\0"};
+    const char* argv[2]={"ss2_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     DefaultColorFunctorSS2 fcolor;
     SimpleStraightSkeleton2ViewerQt<CGAL_SS_TYPE, DefaultColorFunctorSS2>

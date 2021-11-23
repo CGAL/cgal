@@ -314,7 +314,6 @@ bool write_STL(std::ostream& os,
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   typedef typename boost::property_traits<PointMap>::value_type             Point;
-  typedef typename boost::property_traits<PointMap>::reference              Point_ref;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
   typedef typename K::Vector_3                                              Vector_3;
 
@@ -331,9 +330,9 @@ bool write_STL(std::ostream& os,
 
     for(const Triangle& face : facets)
     {
-      const Point_ref p = get(point_map, points[face[0]]);
-      const Point_ref q = get(point_map, points[face[1]]);
-      const Point_ref r = get(point_map, points[face[2]]);
+      const Point& p = get(point_map, points[face[0]]);
+      const Point& q = get(point_map, points[face[1]]);
+      const Point& r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
 
@@ -352,9 +351,9 @@ bool write_STL(std::ostream& os,
     os << "solid\n";
     for(const Triangle& face : facets)
     {
-      const Point_ref p = get(point_map, points[face[0]]);
-      const Point_ref q = get(point_map, points[face[1]]);
-      const Point_ref r = get(point_map, points[face[2]]);
+      const Point& p = get(point_map, points[face[0]]);
+      const Point& q = get(point_map, points[face[1]]);
+      const Point& r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
       os << "facet normal " << n << "\nouter loop\n";
