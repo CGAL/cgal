@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
-#include <string>
 #include <unordered_map>
 #include <ostream>
 
