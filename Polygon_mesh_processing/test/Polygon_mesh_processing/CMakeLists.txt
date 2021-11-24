@@ -1,13 +1,11 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Polygon_mesh_processing_Tests)
 
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS Core)
-
-include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package(Boost REQUIRED)

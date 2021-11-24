@@ -263,7 +263,7 @@ void draw_surface_mesh_with_small_faces(CGAL::Surface_mesh<K>& amesh)
   if (!cgal_test_suite)
   {
     int argc=1;
-    const char* argv[2]={"surface_mesh_viewer","\0"};
+    const char* argv[2]={"surface_mesh_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     SimpleSurfaceMeshWithSmallFacesViewerQt<CGAL::Surface_mesh<K>>
       mainwindow(app.activeWindow(), amesh);
