@@ -1,18 +1,14 @@
 TODO:
 
-- fixed error with nullptr for add_vertex() inside front_and_back_34() in DS but we should try to create a minimal example for epick and epeck
-
 - stress-test-2/test-4-rnd-polygons-1-3.off - random failure, does it happen because we use EPECK, maybe it is because we still use queue which is based on doubles while in the original code it is exact, we cannot use exact with boost queue now because it does not allow changing numbers while in EPECK they can change in time
 
 - try to add custom exact queue that supports EPECK
 
-- what about accumulative errors in EPICK? Maybe we could use hybrid mode doing only important computations exactly like intersections e.g.
+- what about accumulative errors in EPICK? Maybe we could use hybrid mode doing only important computations exactly like intersections e.g. Another idea is to compute intersections with respect to the original input data instead of the data obtained from the previous iteration.
 
 - fix case with touching along an edge polygons at the initialization step, they should propagate while now they do not
 
 - can we avoid any inexact computations such as sqrt e.g.?
-
-- in EPECK some assertions are extremely slow
 
 - fix stress-test-6 cases - they are random, their results may depend on initial unlucky configuration so we need to implement random perturbation before running it
 
