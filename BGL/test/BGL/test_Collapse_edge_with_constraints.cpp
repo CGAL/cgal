@@ -30,7 +30,7 @@ int main()
   Mesh m;
   Mesh::Halfedge_index h = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
   Mesh::Halfedge_index h2c = CGAL::Euler::add_center_vertex(h, m);
-  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
+  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
   bool res = test(h2c, m);
   assert(res);
   }
@@ -72,7 +72,7 @@ int main()
   Mesh::Halfedge_index hb1 = opposite(prev(h2c, m), m);
   assert(is_border(hb1, m));
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
-  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
+  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
   bool res = test(h2c, m);
   assert(res);
   }
@@ -123,7 +123,7 @@ int main()
   Mesh::Halfedge_index hb2 = opposite(next(opposite(h2c,m), m), m);
   assert(is_border(hb2, m));
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb2, m), hb2, m);
-  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
+  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
   bool res = test(h2c, m);
   assert(res);
   }
@@ -177,7 +177,7 @@ int main()
   Mesh::Halfedge_index hb2 = opposite(next(opposite(h2c,m), m), m);
   assert(is_border(hb2, m));
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb2, m), hb2, m);
-  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
+  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
   bool res = test(h2c, m);
   assert(res);
   }
@@ -238,7 +238,7 @@ int main()
   Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
   Mesh::Halfedge_index hb1=opposite(next(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
-  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
+  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
   bool res = test(h2c, m);
   assert(res);
   }
@@ -268,7 +268,7 @@ int main()
   Mesh::Halfedge_index h2c = CGAL::make_triangle(Point_3(),Point_3(),Point_3(),m);
   Mesh::Halfedge_index hb2=opposite(prev(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb2, m), hb2, m);
-  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
+  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
   bool res = test(h2c, m);
   assert(res);
   }
@@ -300,7 +300,7 @@ int main()
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb1, m), hb1, m);
   Mesh::Halfedge_index hb2=opposite(prev(h2c,m),m);
   CGAL::Euler::add_vertex_and_face_to_border(prev(hb2, m), hb2, m);
-  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
+  /* ECM ecm =  */m.add_property_map<Mesh::Edge_index, bool>("ecm", false);
   bool res = test(h2c, m);
   assert(res);
   }
