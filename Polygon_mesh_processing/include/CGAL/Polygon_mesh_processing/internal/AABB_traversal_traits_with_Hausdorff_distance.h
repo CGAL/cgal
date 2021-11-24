@@ -207,26 +207,26 @@ namespace CGAL {
       // Compute distance of the bounding boxes.
       // Distance along the x-axis.
       FT dist_x = FT(0);
-      if (tri_max.x() < bbox.min(0)) {
-        dist_x = bbox.min(0) - tri_max.x();
-      } else if (bbox.max(0) < tri_min.x()) {
-        dist_x = tri_min.x() - bbox.max(0);
+      if (tri_max.x() < (bbox.min)(0)) {
+        dist_x = (bbox.min)(0) - tri_max.x();
+      } else if ((bbox.max)(0) < tri_min.x()) {
+        dist_x = tri_min.x() - (bbox.max)(0);
       }
 
       // Distance along the y-axis.
       FT dist_y = FT(0);
-      if (tri_max.y() < bbox.min(1)) {
-        dist_y = bbox.min(1) - tri_max.y();
-      } else if (bbox.max(1) < tri_min.y()) {
-        dist_y = tri_min.y() - bbox.max(1);
+      if (tri_max.y() < (bbox.min)(1)) {
+        dist_y = (bbox.min)(1) - tri_max.y();
+      } else if ((bbox.max)(1) < tri_min.y()) {
+        dist_y = tri_min.y() - (bbox.max)(1);
       }
 
       // Distance along the z-axis.
       FT dist_z = FT(0);
-      if (tri_max.z() < bbox.min(2)) {
-        dist_z = bbox.min(2) - tri_max.z();
-      } else if (bbox.max(2) < tri_min.z()) {
-        dist_z = tri_min.z() - bbox.max(2);
+      if (tri_max.z() < (bbox.min)(2)) {
+        dist_z = (bbox.min)(2) - tri_max.z();
+      } else if ((bbox.max)(2) < tri_min.z()) {
+        dist_z = tri_min.z() - (bbox.max)(2);
       }
 
       // Lower bound on the distance between the two bounding boxes is given
@@ -443,11 +443,11 @@ namespace CGAL {
 
       // Shift the vector to be the difference between the farthest corner
       // of the bounding box away from the closest point on TM2.
-      FT diff_x = (bbox.max(0) - bbox.min(0)) / FT(2);
+      FT diff_x = ((bbox.max)(0) - (bbox.min)(0)) / FT(2);
       if (difference.x() < 0) diff_x = diff_x * -FT(1);
-      FT diff_y = (bbox.max(1) - bbox.min(1)) / FT(2);
+      FT diff_y = ((bbox.max)(1) - (bbox.min)(1)) / FT(2);
       if (difference.y() < 0) diff_y = diff_y * -FT(1);
-      FT diff_z = (bbox.max(2) - bbox.min(2)) / FT(2);
+      FT diff_z = ((bbox.max)(2) - (bbox.min)(2)) / FT(2);
       if (difference.z() < 0) diff_z = diff_z * -FT(1);
       difference = difference + Vector_3(diff_x, diff_y, diff_z); // it is (9) in the paper
 

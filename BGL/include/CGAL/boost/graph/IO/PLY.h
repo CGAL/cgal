@@ -335,7 +335,7 @@ bool write_PLY(std::ostream& os,
 
   typedef typename CGAL::GetInitializedVertexIndexMap<Graph, CGAL_BGL_NP_CLASS>::const_type VIMap;
   typedef typename GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::const_type                  Vpm;
-  typedef typename boost::property_traits<Vpm>::reference                                   Point_3;
+  typedef typename boost::property_traits<Vpm>::value_type                                  Point_3;
   typedef CGAL::IO::Color                                                                   Color;
   typedef typename internal_np::Lookup_named_param_def<
                      internal_np::vertex_color_map_t,
@@ -407,7 +407,7 @@ bool write_PLY(std::ostream& os,
 
   for(vertex_descriptor vd : vertices(g))
   {
-    Point_3 p = get(vpm, vd);
+    const Point_3& p = get(vpm, vd);
     internal::output_properties(os, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
     if(has_vcolor)
     {

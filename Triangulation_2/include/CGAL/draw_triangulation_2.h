@@ -147,7 +147,7 @@ void draw(const CGAL_T2_TYPE& at2,
   {
     CGAL::Qt::init_ogl_context(4,3);
     int argc=1;
-    const char* argv[2]={"t2_viewer","\0"};
+    const char* argv[2]={"t2_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     DefaultColorFunctorT2 fcolor;
     SimpleTriangulation2ViewerQt<CGAL_T2_TYPE, DefaultColorFunctorT2>
