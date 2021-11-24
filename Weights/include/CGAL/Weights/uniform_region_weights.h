@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Dmitry Anisimov
@@ -13,8 +13,6 @@
 
 #ifndef CGAL_UNIFORM_REGION_WEIGHTS_H
 #define CGAL_UNIFORM_REGION_WEIGHTS_H
-
-#include <CGAL/license/Weights.h>
 
 // Internal includes.
 #include <CGAL/Weights/internal/utils.h>

@@ -204,7 +204,7 @@ bool test_face_graph_wrapper()
 
   typedef CGAL::Surface_mesh<CGAL::Simple_cartesian<double>::Point_3> SMesh;
   SMesh m;
-  std::ifstream in1("data/head.off");
+  std::ifstream in1(CGAL::data_file_path("meshes/head.off"));
   if (in1.fail())
   {
     std::cout<<"Error: impossible to open 'data/head.off'"<<std::endl;
@@ -226,7 +226,7 @@ bool test_face_graph_wrapper()
 
   typedef CGAL::Polyhedron_3<CGAL::Simple_cartesian<double> > Polyhedron;
   Polyhedron p;
-  std::ifstream in2("data/head.off");
+  std::ifstream in2(CGAL::data_file_path("meshes/head.off"));
   if (in2.fail())
   {
     std::cout<<"Error: impossible to open 'data/head.off'"<<std::endl;

@@ -44,6 +44,11 @@ public:
   const Image* image() const { return m_image; }
   bool isGray();
   Image* m_image;
+
+  const Image* image_weights() const;
+  void set_image_weights(const Image& img, const float sigma);
+  float sigma_weights() const;
+
   void invalidateOpenGLBuffers();
   void initializeBuffers(Viewer_interface *) const;
   void computeElements() const;

@@ -71,7 +71,7 @@ bool is_mesh_valid(Polyhedron& pMesh)
 int main()
 {
   Polyhedron mesh;
-  std::ifstream input("data/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
 
   if ( !input || !(input >> mesh) || mesh.empty() ) {
     std::cerr << "Cannot open data/elephant.off" << std::endl;

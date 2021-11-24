@@ -13,7 +13,7 @@ using Dart_const_handle=LCC_3::Dart_const_handle;
 int main(int argc, char* argv[])
 {
   std::cout<<"Program facewidth_on_unweighted_map started."<<std::endl;
-  std::string filename(argc==1?"data/double-torus.off":argv[1]);
+  std::string filename(argc==1?CGAL::data_file_path("meshes/double-torus-example.off"):argv[1]);
   bool draw=(argc<3?false:std::string(argv[2])=="-draw");
 
   std::ifstream inp(filename);

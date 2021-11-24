@@ -202,7 +202,7 @@ public:
     // Invalid arc:
     if (dir_res == EQUAL) return;
 
-    this->_info = (Conic_arc_2::IS_VALID | DEGREE_1);
+    this->_info = (static_cast<int>(Conic_arc_2::IS_VALID) | static_cast<int>(DEGREE_1));
     if (dir_res == SMALLER)
       this->_info = (this->_info | IS_DIRECTED_RIGHT);
 

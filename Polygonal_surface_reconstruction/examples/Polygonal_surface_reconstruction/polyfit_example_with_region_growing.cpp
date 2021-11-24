@@ -57,20 +57,18 @@ public:
 
   Index_map() { }
   template<typename PointRange>
-  Index_map(
-    const PointRange& points,
-    const std::vector< std::vector<std::size_t> >& regions) :
-  m_indices(new std::vector<int>(points.size(), -1)) {
-
+  Index_map(const PointRange& points,
+            const std::vector< std::vector<std::size_t> >& regions)
+    : m_indices(new std::vector<int>(points.size(), -1))
+  {
     for (std::size_t i = 0; i < regions.size(); ++i)
       for (const std::size_t idx : regions[i])
         (*m_indices)[idx] = static_cast<int>(i);
   }
 
-  inline friend value_type get(
-    const Index_map& index_map,
-    const key_type key) {
-
+  inline friend value_type get(const Index_map& index_map,
+                               const key_type key)
+  {
     const auto& indices = *(index_map.m_indices);
     return indices[key];
   }
@@ -90,7 +88,7 @@ int main()
   Point_vector points;
 
   // Load point set from a file.
-  const std::string input_file("data/cube.pwn");
+  const std::string input_file(CGAL::data_file_path("points_3/cube.pwn"));
     std::ifstream input_stream(input_file.c_str());
   if (input_stream.fail()) {
     std::cerr << "Failed open file \'" << input_file << "\'" << std::endl;

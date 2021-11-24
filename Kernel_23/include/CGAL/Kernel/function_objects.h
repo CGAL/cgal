@@ -40,7 +40,7 @@ namespace CommonKernelFunctors {
 
 
   template <typename K>
-  class Non_zero_dimension_3
+  class Non_zero_coordinate_index_3
   {
     typedef typename K::Vector_3 Vector_3;
 
@@ -49,19 +49,19 @@ namespace CommonKernelFunctors {
 
     result_type operator()(const Vector_3& vec) const
     {
-      if(certainly_not(is_zero(vec.x()))){
+      if(certainly_not(is_zero(vec.hx()))){
         return 0;
-      } else if(certainly_not(is_zero(vec.y()))){
+      } else if(certainly_not(is_zero(vec.hy()))){
         return 1;
-      }else if(certainly_not(is_zero(vec.z()))){
+      }else if(certainly_not(is_zero(vec.hz()))){
         return 2;
       }
 
-      if(! is_zero(vec.x())){
+      if(! is_zero(vec.hx())){
         return 0;
-      } else if(! is_zero(vec.y())){
+      } else if(! is_zero(vec.hy())){
         return 1;
-      } else if(! is_zero(vec.z())){
+      } else if(! is_zero(vec.hz())){
         return 2;
       }
 

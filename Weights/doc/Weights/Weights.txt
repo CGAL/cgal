@@ -45,7 +45,7 @@ the following \cgal packages make use of weights described in this package:
 \ref PkgSurfaceMeshDeformation "Triangulated Surface Mesh Deformation",
 \ref PkgSurfaceMeshParameterization "Triangulated Surface Mesh Parameterization",
 \ref PkgSurfaceMeshSkeletonization "Triangulated Surface Mesh Skeletonization", and
-\ref PkgHeatMethodSummary "The Heat Method".
+\ref PkgHeatMethod "The Heat Method".
 
 
 \section Weights_Groups Weights

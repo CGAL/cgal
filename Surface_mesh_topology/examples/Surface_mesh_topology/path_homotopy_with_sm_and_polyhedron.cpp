@@ -42,13 +42,13 @@ void test(const FaceGraph& mesh, bool draw, const char* title)
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-  const char* file = (argc == 1) ? "data/elephant.off" : argv[1];
+  const std::string file = (argc == 1) ? CGAL::data_file_path("meshes/elephant.off") : argv[1];
   bool draw = (argc>2) ? std::string(argv[2])=="-draw" : false;
   seed=static_cast<unsigned int>(CGAL::get_default_random().get_int(0,INT_MAX));
 
   {
     LCC_3_cmap lcc;
-    if (!CGAL::load_off(lcc, file))
+    if (!CGAL::load_off(lcc, file.c_str()))
     {
       std::cout<<"ERROR reading file "<<file<<" for linear cell complex."<<std::endl;
       exit(EXIT_FAILURE);

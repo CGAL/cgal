@@ -692,7 +692,7 @@ void correct_invalid_attributes();
 
 /*!
   Return the current dynamic onsplit function associated with i-attributes.
-  This is a boost:function returning void and having two references to \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
+  This is a boost::function returning void and having two references to \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
   The onsplit function is returned by reference so that we can modify it.
 */
   template<int i>
@@ -702,7 +702,7 @@ void correct_invalid_attributes();
 
 /*!
   Return the current dynamic onsplit function associated with i-attributes, when *this is const.
-  This is a boost:function returning void and having two references to \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
+  This is a boost::function returning void and having two references to \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
 */
   template<int i>
   const boost::function<void(typename Attribute_type< i >::type&,
@@ -711,7 +711,7 @@ void correct_invalid_attributes();
 
 /*!
   Return the current dynamic onmerge function associated with i-attributes.
-  This is a boost:function returning void and having two references to \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
+  This is a boost::function returning void and having two references to \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
   The onmerge function is returned by reference so that we can modify it.
 */
   template<int i>
@@ -721,7 +721,7 @@ void correct_invalid_attributes();
 
 /*!
   Return the current dynamic onmerge function associated with i-attributes, when *this is const.
-  This is a boost:function returning void and having two references to \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
+  This is a boost::function returning void and having two references to \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink as parameters.
 */
   template<int i>
   const boost::function<void(typename Attribute_type< i >::type&,

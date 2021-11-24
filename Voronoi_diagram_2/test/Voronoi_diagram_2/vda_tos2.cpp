@@ -34,7 +34,7 @@ typedef CGAL::Voronoi_diagram_2<DToS2, AT, AP> VD;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/radar.xyz";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/radar.xyz");
   const double radius = (argc > 2) ? std::stod(argv[2]) : 1;
   const double step = (argc > 3) ? std::stod(argv[3]) : 0.01;
 

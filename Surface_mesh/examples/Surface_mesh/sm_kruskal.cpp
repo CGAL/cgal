@@ -58,7 +58,8 @@ void kruskal(const Mesh& sm)
 int main(int argc, char** argv)
 {
   Mesh sm;
-  if(argc < 2 || !CGAL::IO::read_polygon_mesh(argv[1], sm))
+  std::string fname = argc==1?CGAL::data_file_path("meshes/knot1.off"):argv[1];
+  if(!CGAL::IO::read_polygon_mesh(fname, sm))
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;

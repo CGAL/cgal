@@ -25,7 +25,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))

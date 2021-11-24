@@ -1,7 +1,0 @@
-#!/bin/bash
-./grid_as_sat cube.nef3 2 2 2 >"ACIS/grid2.sat"
-for (( i=3; $i<30; i=$i+1 )); do
-  ./tetrahedra_as_sat $i $i $i 100 12345 >"ACIS/tetrahedra$i.sat"
-  ./grid_as_sat cube.nef3 $i $i $i >"ACIS/grid$i.sat"
-done
-./tetrahedra_as_sat $30 $30 $30 100 12345 >"ACIS/tetrahedra30.sat"

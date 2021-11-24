@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Algebraic_kernel_d_Examples)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -6,7 +6,6 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 find_package(MPFI QUIET)
 
 if(MPFI_FOUND AND NOT CGAL_DISABLE_GMP)
-  include(${CGAL_USE_FILE})
   include(${MPFI_USE_FILE})
   include(CGAL_VersionUtils)
   create_single_source_cgal_program("Compare_1.cpp")
