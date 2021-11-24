@@ -366,7 +366,6 @@ protected Q_SLOTS:
   //!Hides not available operations and show available operations in all the
   //!menus.
   void filterOperations(bool hide);
-  void filterOperations(){ filterOperations(false); };
   //!Updates the bounding box and moves the camera to fits the scene.
   void recenterScene();
   //!Resizes the header of the scene view
