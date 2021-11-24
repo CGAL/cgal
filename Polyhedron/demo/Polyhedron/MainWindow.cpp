@@ -228,6 +228,9 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
           this, SLOT(updateInfo()));
 
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
+          this, SLOT(filterOperations()));
+
+  connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateDisplayInfo()));
 
   connect(viewer, &Viewer::needNewContext,
