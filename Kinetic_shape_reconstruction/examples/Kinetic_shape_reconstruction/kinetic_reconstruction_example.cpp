@@ -1,5 +1,3 @@
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Kinetic_shape_reconstruction_3.h>
 #include <CGAL/Point_set_3.h>
@@ -10,12 +8,7 @@
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"
 
-using SCF   = CGAL::Simple_cartesian<float>;
-using SCD   = CGAL::Simple_cartesian<double>;
-using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
-using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
-
-using Kernel    = EPICK;
+using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT        = typename Kernel::FT;
 using Point_3   = typename Kernel::Point_3;
 using Segment_3 = typename Kernel::Segment_3;
