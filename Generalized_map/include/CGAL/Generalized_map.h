@@ -204,7 +204,7 @@ namespace CGAL {
                       bool copy_perforated_darts=false,
                       size_type mark_perforated=INVALID_MARK)
     {
-      this->clear();
+      //this->clear();
 
       /*this->mnb_used_marks = amap.mnb_used_marks;
       this->mmask_marks    = amap.mmask_marks;
