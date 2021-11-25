@@ -227,6 +227,10 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
 
+ connect(scene, &Scene::dataChanged,
+         this, [this]() { filterOperations(false); });
+
+
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateDisplayInfo()));
 
