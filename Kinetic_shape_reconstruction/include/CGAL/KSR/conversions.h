@@ -78,15 +78,16 @@ private:
   template<typename Type1, typename Type2>
   decltype(auto) intersection_impl(const Type1& t1, const Type2& t2) const {
 
-    // TODO: It does not compile with EPECK when using in the reconstruction example.
-    if (!m_use_hybrid_mode) {
+    // if (!m_use_hybrid_mode) {
       return CGAL::intersection(t1, t2);
-    } { // convert to exact
-      const auto exact_t1 = m_inexact_to_exact(t1);
-      const auto exact_t2 = m_inexact_to_exact(t2);
-      const auto exact_result = CGAL::intersection(exact_t1, exact_t2);
-      return m_exact_to_inexact(exact_result);
-    }
+    // } else { // convert to exact
+
+    //   // TODO: It does not compile with EPECK as input kernel.
+    //   const auto exact_t1 = m_inexact_to_exact(t1);
+    //   const auto exact_t2 = m_inexact_to_exact(t2);
+    //   const auto exact_result = CGAL::intersection(exact_t1, exact_t2);
+    //   return m_exact_to_inexact(exact_result);
+    // }
   }
 };
 

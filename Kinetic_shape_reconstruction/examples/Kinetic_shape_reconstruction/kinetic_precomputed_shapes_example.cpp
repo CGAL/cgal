@@ -84,7 +84,7 @@ int main(const int argc, const char** argv) {
   const unsigned int subdiv  = 0;
   const double       eratio  = 1.1;
   const bool         orient  = false;
-  const bool         use_hm  = true;
+  const bool         use_hm  = false;
 
   // Algorithm.
   KSR ksr(verbose, debug);
@@ -129,8 +129,8 @@ int main(const int argc, const char** argv) {
   const std::size_t num_faces = ksr.number_of_faces(support_plane_idx);
   std::vector< std::vector<std::size_t> > output_faces;
   ksr.output_partition_faces(
-    std::back_inserter(output_faces), support_plane_idx);
-  assert(num_faces == output_faces.size());
+    std::back_inserter(output_faces), support_plane_idx, 6);
+  assert(num_faces >= output_faces.size());
 
   int volume_level = -1;
   const int num_volume_levels = ksr.number_of_volume_levels();

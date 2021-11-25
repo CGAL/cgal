@@ -27,8 +27,11 @@ struct Parameters_3 {
   FT enlarge_bbox_ratio = FT(11) / FT(10); // ratio to enlarge bbox
   FT distance_tolerance =  FT(5) / FT(10); // distance tolerance between planes
 
-  bool reorient        = false; // true - optimal bounding box, false - axis aligned
-  bool use_hybrid_mode = false; // true - apply exact interesections while all other computations are inexact
+  bool reorient = false; // true - optimal bounding box, false - axis aligned
+
+  // true - apply exact interesections while all other computations are inexact,
+  // works only with EPICK as input kernel
+  bool use_hybrid_mode = false;
 
   bool verbose    =  true; // print basic verbose information
   bool debug      = false; // print all steps and substeps + export initial and final configurations
