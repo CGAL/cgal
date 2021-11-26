@@ -11,7 +11,7 @@ namespace KSR {
   struct All_parameters {
 
     // Path to the input data file.
-    std::string data;
+    std::string data; // required!
 
     // Label indices defined in the ply header:
     // ground (gi),
@@ -26,10 +26,11 @@ namespace KSR {
 
     // Boolean tags.
     const bool with_normals; // do we use normals
-    const bool verbose;
-    const bool debug;
+    const bool verbose;// verbose basic info
+    const bool debug; // verbose more info
 
-    // Shape detection / shape regularization.
+    // Shape detection / Shape regularization.
+    // See the corresponding CGAL packages.
     std::size_t k_neighbors;
     FT distance_threshold;
     FT angle_threshold;
@@ -37,18 +38,19 @@ namespace KSR {
     bool regularize;
 
     // Partitioning.
+    // See KSR/parameters.h
     unsigned int k_intersections;
     const unsigned int n_subdivisions;
     const FT enlarge_bbox_ratio;
     const bool reorient;
 
     // Reconstruction.
-    FT graphcut_beta;
+    FT graphcut_beta; // magic parameter between 0 and 1
 
     // Constructor.
     All_parameters() :
     data(""),
-    gi("0"), bi("1"), ii("2"), vi("3"),
+    gi("0"), bi("1"), ii("2"), vi("3"), // semantic labels mapping
     // main parameters
     scale(FT(4)),
     noise(FT(2)),

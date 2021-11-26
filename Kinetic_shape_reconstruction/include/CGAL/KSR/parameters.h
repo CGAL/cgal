@@ -22,7 +22,7 @@ template<typename FT>
 struct Parameters_3 {
 
   unsigned int k = 1; // k intersections
-  unsigned int n = 0; // n subdivisions
+  unsigned int n = 0; // n subdivisions, not implemented yet
 
   FT enlarge_bbox_ratio = FT(11) / FT(10); // ratio to enlarge bbox
   FT distance_tolerance =  FT(5) / FT(10); // distance tolerance between planes
@@ -30,9 +30,10 @@ struct Parameters_3 {
   bool reorient = false; // true - optimal bounding box, false - axis aligned
 
   // true - apply exact interesections while all other computations are inexact,
-  // works only with EPICK as input kernel
+  // works only with EPICK as input kernel, switched off currently, see conversions.h
   bool use_hybrid_mode = false;
 
+  // All files are saved in the current build directory.
   bool verbose    =  true; // print basic verbose information
   bool debug      = false; // print all steps and substeps + export initial and final configurations
   bool export_all = false; // export all intermediate configurations and events
