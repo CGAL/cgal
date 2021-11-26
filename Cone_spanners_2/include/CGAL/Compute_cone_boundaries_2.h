@@ -80,7 +80,7 @@ public:
      * and output them to `result` in the counterclockwise order.
      * Finally, the past-the-end iterator for the resulting directions is returned.
      *
-         * \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
+     * \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
      * \param cone_number The number of cones
      * \param initial_direction The direction of the first ray
      * \param result  The output iterator
