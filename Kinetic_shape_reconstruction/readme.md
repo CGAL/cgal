@@ -1,3 +1,5 @@
+** GENERAL **
+
 All the test data are placed in the folder examples/data. The name of the folder indicates the type of data or its complexity.
 The complexity 1 is low while the complexity 6 is high.
 
@@ -10,6 +12,7 @@ Examples are the entry point to the package:
 Tests:
 - kinetic_2d_stress_test: tests the 2D kinetic algorithm
 - kinetic_3d_test_all: tests 3D kinetic algorithm on all data from the examples folder
+
 
 ** INTERSTING CASES **
 
@@ -36,9 +39,11 @@ with EPECK but we lose speed.
 use EPICK for all other computations. This way we avoid accumulating errors and should
 keep speed.
 
+
 ** INTERNALS **
 
 - Epsilon usage inside the code.
 - File descriptions.
-- Important functions.
-- Possible failures.
+- Important parts of the code.
+- Possible failures and warnings.
+- Parameters.

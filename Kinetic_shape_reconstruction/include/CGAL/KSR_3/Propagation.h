@@ -75,9 +75,11 @@ public:
     std::size_t num_events = 0;
     while (initialize_queue()) {
 
+      // ++num_queue_calls; // alternative way to build next time
       num_events = run(num_events);
       m_min_time = m_max_time;
       m_max_time += time_step;
+      // m_max_time = FT(num_queue_calls + 1) * time_step;
       CGAL_assertion(m_data.check_integrity());
       ++num_queue_calls;
 
