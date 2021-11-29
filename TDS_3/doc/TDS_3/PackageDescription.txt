@@ -6,6 +6,8 @@
 /// \defgroup PkgTDS3Classes Classes
 /// \ingroup PkgTDS3Ref
 
+/// \defgroup PkgIOTDS3 I/O for a Triangulation_data_structure_3
+/// \ingroup PkgTDS3Ref
 /*!
 \addtogroup PkgTDS3Ref
 \todo check generated documentation
@@ -47,7 +49,6 @@ Section  \ref TDS3secintro.)
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-
 - `TriangulationDataStructure_3`
 - `TriangulationDataStructure_3::Cell`
 - `TriangulationDataStructure_3::Cell_data`

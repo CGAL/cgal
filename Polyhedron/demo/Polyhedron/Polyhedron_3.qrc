@@ -33,6 +33,9 @@
         <file>resources/help_button.png</file>
         <file>resources/exit.png</file>
         <file>resources/menu.png</file>
+        <file>resources/play.jpeg</file>
+        <file>resources/pause.jpeg</file>
+        <file>resources/reset.jpg</file>
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>
@@ -102,6 +105,8 @@
         <file>resources/heat_intensity_shader.vert</file>
         <file>resources/compatibility_shaders/heat_intensity_shader.frag</file>
         <file>resources/compatibility_shaders/heat_intensity_shader.vert</file>
+        <file>resources/shader_tet_filter.frag</file>
+        <file>resources/shader_tet_filter.vert</file>
     </qresource>
     <qresource prefix="/cgal/cursors">
         <file>resources/rotate_around_cursor.png</file>

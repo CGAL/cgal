@@ -26,7 +26,7 @@
 #define CGAL_DEPRECATED_HEADER "<CGAL/Regular_complex_d.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
   "The Triangulation package (see https://doc.cgal.org/latest/Triangulation) should be used instead."
-#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/basic.h>
 #include <CGAL/Iterator_project.h>
@@ -87,7 +87,7 @@ public:
 
   void* pp;
   void*   for_compact_container() const { return pp; }
-  void* & for_compact_container()       { return pp; }
+  void for_compact_container(void *p) { pp = p; }
 
 #ifdef CGAL_USE_LEDA
   LEDA_MEMORY(RC_vertex_d)
@@ -153,7 +153,7 @@ public:
 
   void* pp;
   void*   for_compact_container() const { return pp; }
-  void* & for_compact_container()       { return pp; }
+  void for_compact_container(void *p) { pp = p; }
 
   #if 0
   struct Point_const_iterator {

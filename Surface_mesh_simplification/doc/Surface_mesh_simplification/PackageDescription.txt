@@ -27,6 +27,7 @@
 - `StopPredicate`
 - `GetCost`
 - `GetPlacement`
+- `PlacementFilter`
 - `EdgeCollapseSimplificationVisitor`
 
 \cgalCRPSection{Functions}
@@ -44,5 +45,7 @@
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
 - `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
+- `CGAL::Surface_mesh_simplification::Bounded_normal_change_filter<Filter>`
+- `CGAL::Surface_mesh_simplification::Polyhedral_envelope_filter<Filter>`
 - `CGAL::Surface_mesh_simplification::Constrained_placement<Placement, TriangleMesh>`
 */

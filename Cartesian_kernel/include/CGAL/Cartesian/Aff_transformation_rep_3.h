@@ -31,6 +31,7 @@ public:
   typedef typename R::Point_3              Point_3;
   typedef typename R::Vector_3             Vector_3;
   typedef typename R::Direction_3          Direction_3;
+  typedef typename R::Plane_3              Plane_3;
   typedef typename R::Aff_transformation_3 Aff_transformation_3;
 
   virtual ~Aff_transformation_rep_baseC3(){}
@@ -38,6 +39,7 @@ public:
   virtual Point_3     transform(const Point_3 &p) const = 0;
   virtual Vector_3    transform(const Vector_3 &v) const = 0;
   virtual Direction_3 transform(const Direction_3 &d) const = 0;
+  virtual Plane_3     transform(const Plane_3& p) const = 0;
 
   virtual Aff_transformation_3 operator*(
                        const Aff_transformation_rep_baseC3 &t) const = 0;
@@ -54,6 +56,9 @@ public:
   virtual Aff_transformation_3 inverse() const = 0;
   virtual Aff_transformation_3 transpose() const = 0;
   virtual bool                 is_even() const = 0;
+
+  virtual bool                 is_translation() const { return false; }
+  virtual bool                 is_scaling() const { return false; }
   virtual FT                   cartesian(int i, int j) const = 0;
   virtual std::ostream         &print(std::ostream &os) const = 0;
 };
@@ -75,6 +80,7 @@ public:
   typedef typename Transformation_base_3::Point_3       Point_3;
   typedef typename Transformation_base_3::Vector_3      Vector_3;
   typedef typename Transformation_base_3::Direction_3   Direction_3;
+  typedef typename Transformation_base_3::Plane_3       Plane_3;
   typedef typename Transformation_base_3::
                                    Aff_transformation_3 Aff_transformation_3;
 
@@ -127,6 +133,17 @@ public:
                        t31 * v.x() + t32 * v.y() + t33 * v.z());
   }
 
+  virtual Plane_3 transform(const Plane_3& p) const
+  {
+      if (is_even())
+      return Plane_3(transform(p.point()),
+                 transpose().inverse().transform(p.orthogonal_direction()));
+    else
+      return Plane_3(transform(p.point()),
+               - transpose().inverse().transform(p.orthogonal_direction()));
+  }
+
+
   // Note that Aff_transformation is not defined yet,
   // so the following 6 functions have to be implemented
   // outside class body
@@ -143,6 +160,7 @@ public:
                                   t21, t22, t23,
                                   t31, t32, t33) == POSITIVE;
   }
+
 
   virtual FT cartesian(int i, int j) const
   {
@@ -183,8 +201,8 @@ public:
   virtual std::ostream &print(std::ostream &os) const
   {
     os <<"Aff_transformationC3("<<t11<<' '<<t12<<' '<<t13<<' '<<t14<<std::endl;
-    os <<"                    "<< t21<<' '<<t22<<' '<<t23<<' '<<t24<<std::endl;
-    os <<"                    "<< t31<<' '<<t32<<' '<<t33<<' '<<t34<<")";
+    os <<"                     "<<t21<<' '<<t22<<' '<<t23<<' '<<t24<<std::endl;
+    os <<"                     "<<t31<<' '<<t32<<' '<<t33<<' '<<t34<<")";
     return os;
   }
 

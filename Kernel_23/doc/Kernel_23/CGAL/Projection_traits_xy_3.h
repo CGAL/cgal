@@ -13,12 +13,13 @@ deal with projections on the
 `zx`- and the `zy`-plane,
 respectively.
 
-\cgalHeading{Parameters}
+\tparam K must be a model of `Kernel`.
 
-The template parameter `K` has to
-be instantiated by a model of the `Kernel` concept.
-`Projection_traits_xy_3` uses types
-and predicates defined in `K`.
+\note Internal constructions (projections) are used in the predicate and
+construction functors of this class. If `K` is a model of `Kernel` providing exact
+constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
+`CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
+provides exact predicates.
 
 \cgalModels The class is a model of several 2D triangulation traits class concepts,
   except that it does not provide the type and constructors
@@ -30,7 +31,10 @@ and predicates defined in `K`.
 \cgalModels `ConstrainedTriangulationTraits_2`
 \cgalModels `ConvexHullTraits_2`
 \cgalModels `DelaunayMeshTraits_2`
+\cgalModels `AnalyticWeightTraits_2`
+\cgalModels `BarycentricTraits_2`
 
+\sa `CGAL::Projection_traits_3`
 */
 template< typename K >
 class Projection_traits_xy_3 {
@@ -77,7 +81,7 @@ typedef Line_3<K> Line_2;
 A construction object.
 Provides the operator :
 
-`Object_2 operator()(Segment_2 s1, Segment_2 s2);`
+`boost::optional< boost::variant<Point_2,Segment_2> > operator()(Segment_2 s1, Segment_2 s2);`
 which returns a 3D object whose projection on the xy-plane
 is the intersection of the projections of `s1` and `s2`.
 If non empty, the returned object is either a segment or a point.

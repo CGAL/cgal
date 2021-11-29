@@ -104,7 +104,7 @@ struct Intersect_facets {
     }
 };
 
-void write_off() {
+void write_OFF() {
     cout << "OFF\n" << (triangles.size() * 3) << ' ' << triangles.size()
          << " 0\n";
     for ( std::vector<Triangle>::iterator i = triangles.begin();
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
     cerr << "Loading OFF file ... " << endl;
     user_time.start();
     Polyhedron P;
-    std::ifstream in1((argc>1)?argv[1]:"data/tetra_intersected_by_triangle.off");
+    std::ifstream in1((argc>1)?argv[1]:CGAL::data_file_path("meshes/tetra_intersected_by_triangle.off"));
     in1 >> P;
     cerr << "Loading OFF file   : " << user_time.time() << " seconds." << endl;
     if ( ! P.is_pure_triangle()) {
@@ -154,7 +154,7 @@ int main(int argc, char* argv[]) {
     cerr << "Intersection ... " << endl;
     intersection( P);
     cerr << "Intersection       : " << user_time.time() << " seconds." << endl;
-    write_off();
+    write_OFF();
 
     return 0;
 }

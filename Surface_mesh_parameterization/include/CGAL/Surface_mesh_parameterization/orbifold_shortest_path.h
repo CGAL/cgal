@@ -103,7 +103,7 @@ public:
 
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-/// Compute the shortest path between `source` and `target` over `mesh`, using
+/// computes the shortest path between `source` and `target` over `mesh`, using
 /// <a href="https://www.boost.org/doc/libs/release/libs/graph/doc/dijkstra_shortest_paths.html">
 /// boost::dijkstra_shortest_paths()</a>.
 ///
@@ -190,8 +190,8 @@ void compute_shortest_paths_between_cones(const TriangleMesh& mesh,
     compute_shortest_paths_between_two_cones(mesh, *first, *next, std::back_inserter(seams));
   }
 
-  std::ofstream out("shortest_path.selection.txt");
 #ifdef CGAL_SMP_ORBIFOLD_DEBUG
+  std::ofstream out("shortest_path.selection.txt");
   internal::output_shortest_paths_to_selection_file(mesh, seams, out);
 #endif
 }

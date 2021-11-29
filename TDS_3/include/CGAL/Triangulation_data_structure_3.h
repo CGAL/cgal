@@ -33,7 +33,7 @@
 #include <boost/unordered_set.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
-#include <CGAL/internal/Has_member_visited.h>
+#include <CGAL/STL_Extension/internal/Has_member_visited.h>
 
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/triangulation_assertions.h>
@@ -47,15 +47,15 @@
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
 #include <CGAL/Triangulation_simplex_3.h>
 
-#include <CGAL/internal/Triangulation_ds_iterators_3.h>
-#include <CGAL/internal/Triangulation_ds_circulators_3.h>
+#include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
+#include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
 #include <CGAL/tss.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #  include <tbb/scalable_allocator.h>
 #endif
 
-#include <boost/type_traits/is_convertible.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -122,23 +122,27 @@ public:
   // Cells
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef typename boost::mpl::if_c
+  typedef typename std::conditional
   <
-    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<Cell, tbb::scalable_allocator<Cell> >,
     Compact_container<Cell>
   >::type                                                Cell_range;
 
 # else
+  CGAL_static_assertion_msg
+    (!(std::is_convertible<Concurrency_tag, Parallel_tag>::value),
+     "In CGAL triangulations, `Parallel_tag` can only be used with the Intel TBB library. "
+     "Make TBB available in the build system and then define the macro `CGAL_LINKED_WITH_TBB`.");
   typedef Compact_container<Cell>                        Cell_range;
 #endif
 
   // Vertices
   // N.B.: Concurrent_compact_container requires TBB
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef typename boost::mpl::if_c
+  typedef typename std::conditional
   <
-    boost::is_convertible<Concurrency_tag, Parallel_tag>::value,
+    std::is_convertible<Concurrency_tag, Parallel_tag>::value,
     Concurrent_compact_container<Vertex, tbb::scalable_allocator<Vertex> >,
     Compact_container<Vertex>
   >::type                                                Vertex_range;
@@ -189,6 +193,7 @@ public:
 
       return hf ^ 419 * hs;
     }
+
   };
 
   static const int maximal_nb_of_facets_of_small_hole = 128;
@@ -230,6 +235,15 @@ public:
     copy_tds(tds);
   }
 
+  Triangulation_data_structure_3(Tds && tds)
+    noexcept(noexcept(Cell_range(std::move(tds._cells))) &&
+             noexcept(Vertex_range(std::move(tds._vertices))))
+    : _dimension(std::exchange(tds._dimension, -2))
+    , _cells(std::move(tds._cells))
+    , _vertices(std::move(tds._vertices))
+  {
+  }
+
   Tds & operator= (const Tds & tds)
   {
     if (&tds != this) {
@@ -238,6 +252,17 @@ public:
     }
     return *this;
   }
+
+  Tds & operator= (Tds && tds)
+    noexcept(noexcept(Tds(std::move(tds))))
+  {
+    _cells = std::move(tds._cells);
+    _vertices = std::move(tds._vertices);
+    _dimension = std::exchange(tds._dimension, -2);
+    return *this;
+  }
+
+  ~Triangulation_data_structure_3() = default; // for the rule-of-five
 
   size_type number_of_vertices() const { return vertices().size(); }
 
@@ -916,12 +941,6 @@ public:
         *output++ = e;
         return *this;
       }
-      Facet_it& operator=(const Facet_it& f) {
-        output = f.output;
-        filter = f.filter;
-        return *this;
-      }
-      Facet_it(const Facet_it&)=default;
     };
     Facet_it facet_it() {
       return Facet_it(output, filter);
@@ -990,9 +1009,7 @@ public:
     Vertex_extractor(Vertex_handle _v, OutputIterator _output, const Tds* _t, Filter _filter):
     v(_v), treat(_output), t(_t), filter(_filter)
     {
-#if ( BOOST_VERSION >= 105000 )
       tmp_vertices.reserve(64);
-#endif
     }
 
     void operator()(Cell_handle c) {
@@ -1045,6 +1062,15 @@ public:
         }
       }
     }
+
+    // Implement the rule-of-five, to please the diagnostic
+    // `cppcoreguidelines-special-member-functions` of clang-tidy.
+    // Instead of defaulting those special member functions, let's
+    // delete them, to prevent any misuse.
+    Vertex_extractor(const Vertex_extractor&) = delete;
+    Vertex_extractor(Vertex_extractor&&) = delete;
+    Vertex_extractor& operator=(const Vertex_extractor&) = delete;
+    Vertex_extractor& operator=(Vertex_extractor&&) = delete;
 
     ~Vertex_extractor()
     {
@@ -1225,7 +1251,7 @@ public:
     return visit_incident_cells_threadsafe<
       Vertex_extractor<Edge_feeder_treatment<OutputIterator>,
                        OutputIterator, Filter,
-                       internal::Has_member_visited<Vertex>::value>,
+                       false>,
       OutputIterator>(v, edges, f);
   }
 
@@ -1295,6 +1321,52 @@ public:
   adjacent_vertices(Vertex_handle v, OutputIterator vertices) const
   {
     return adjacent_vertices<False_filter>(v, vertices);
+  }
+
+  template <class OutputIterator>
+  OutputIterator
+  adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices) const
+  {
+    return adjacent_vertices_threadsafe<False_filter>(v, vertices);
+  }
+
+  template <class Filter, class OutputIterator>
+  OutputIterator
+  adjacent_vertices_threadsafe(Vertex_handle v, OutputIterator vertices,
+                               Filter f = Filter()) const
+  {
+    CGAL_triangulation_precondition(v != Vertex_handle());
+    CGAL_triangulation_precondition(dimension() >= -1);
+    CGAL_triangulation_expensive_precondition(is_vertex(v));
+    CGAL_triangulation_expensive_precondition(is_valid());
+
+    if (dimension() == -1)
+      return vertices;
+
+    if (dimension() == 0) {
+      Vertex_handle v1 = v->cell()->neighbor(0)->vertex(0);
+      if (!f(v1)) *vertices++ = v1;
+      return vertices;
+    }
+
+    if (dimension() == 1) {
+      CGAL_triangulation_assertion(number_of_vertices() >= 3);
+      Cell_handle n0 = v->cell();
+      const int index_v_in_n0 = n0->index(v);
+      CGAL_assume(index_v_in_n0 <= 1);
+      Cell_handle n1 = n0->neighbor(1 - index_v_in_n0);
+      const int index_v_in_n1 = n1->index(v);
+      CGAL_assume(index_v_in_n1 <= 1);
+      Vertex_handle v1 = n0->vertex(1 - index_v_in_n0);
+      Vertex_handle v2 = n1->vertex(1 - index_v_in_n1);
+      if (!f(v1)) *vertices++ = v1;
+      if (!f(v2)) *vertices++ = v2;
+      return vertices;
+    }
+    return visit_incident_cells_threadsafe<
+      Vertex_extractor<Vertex_feeder_treatment<OutputIterator>, OutputIterator, Filter,
+                       false>,
+      OutputIterator>(v, vertices, f);
   }
 
   template <class Visitor, class OutputIterator, class Filter>
@@ -1521,6 +1593,73 @@ public:
     return s <= maximal_nb_of_facets_of_small_hole;
   }
 
+  //IO
+  template <typename TDS_src,
+            typename ConvertVertex,
+            typename ConvertCell>
+  std::istream& file_input(std::istream& is,
+                           ConvertVertex convert_vertex = ConvertVertex(),
+                           ConvertCell convert_cell = ConvertCell())
+  {
+    // reads
+    // the dimension
+    // the number of finite vertices
+    // the non combinatorial information on vertices (point, etc)
+    // the number of cells
+    // the cells by the indices of their vertices in the preceding list
+    // of vertices, plus the non combinatorial information on each cell
+    // the neighbors of each cell by their index in the preceding list of cells
+    // when dimension < 3 : the same with faces of maximal dimension
+
+    // If this is used for a TDS, the vertices are processed from 0 to n.
+    // Else, we make V[0] the infinite vertex and work from 1 to n+1.
+
+    typedef typename Tds::Vertex_handle  Vertex_handle;
+    typedef typename Tds::Cell_handle    Cell_handle;
+
+    typedef typename TDS_src::Vertex Vertex1;
+    typedef typename TDS_src::Cell Cell1;
+    clear();
+    cells().clear();
+
+    std::size_t n;
+    int d;
+    if(IO::is_ascii(is))
+      is >> d >> n;
+    else {
+      read(is, d);
+      read(is, n);
+    }
+    if(!is) return is;
+    set_dimension(d);
+
+    std::size_t V_size = n;
+    std::vector< Vertex_handle > V(V_size);
+
+    // the infinite vertex is numbered 0
+    for (std::size_t i=0 ; i < V_size; ++i) {
+      Vertex1 v;
+      if(!(is >> v)) return is;
+      Vertex_handle vh=create_vertex( convert_vertex(v) );
+      V[i] = vh;
+      convert_vertex(v, *V[i]);
+    }
+
+    std::vector< Cell_handle > C;
+
+    std::size_t m;
+    read_cells(is, V, m, C);
+
+    for (std::size_t j=0 ; j < m; j++) {
+      Cell1 c;
+      if(!(is >> c)) return is;
+      convert_cell(c, *C[j]);
+    }
+
+    CGAL_triangulation_assertion(is_valid(false));
+    return is;
+  }
+
 private:
 
   // Change the orientation of the cell by swapping indices 0 and 1.
@@ -1550,6 +1689,7 @@ private:
   // counts but does not check
   bool count_cells(size_type &i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
+
 };
 
 #ifdef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3
@@ -1782,7 +1922,7 @@ create_star_2(Vertex_handle v, Cell_handle c, int li )
     // pnew is null at the first iteration
     v1->set_cell(cnew);
     //pnew->set_neighbor( cw(pnew->index(v1)), cnew );
-    if (pnew != Cell_handle()) { pnew->set_neighbor( 1, cnew );}
+    if (pnew != nullptr) { pnew->set_neighbor( 1, cnew );}
 
     bound = cur;
     i1 = ccw(i1);
@@ -1815,7 +1955,7 @@ operator>>(std::istream& is, Triangulation_data_structure_3<Vb,Cb,Ct>& tds)
 
   std::size_t n;
   int d;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
      is >> d >> n;
   else {
     read(is, n);
@@ -1866,7 +2006,7 @@ operator<<(std::ostream& os, const Triangulation_data_structure_3<Vb,Cb,Ct> &tds
   // outputs dimension and number of vertices
   size_type n = tds.number_of_vertices();
 
-  if (is_ascii(os))
+  if (IO::is_ascii(os))
       os << tds.dimension() << std::endl << n << std::endl;
   else
   {
@@ -2382,7 +2522,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
   case 2:
   case 1:
     {
-      if(is_ascii(is))
+      if(IO::is_ascii(is))
         is >> m;
       else
         read(is, m);
@@ -2393,7 +2533,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
         Cell_handle c = create_cell();
         for (int k=0; k<=dimension(); ++k) {
           std::size_t ik;
-            if(is_ascii(is))
+            if(IO::is_ascii(is))
                is >> ik;
             else
               read(is, ik);
@@ -2406,7 +2546,7 @@ read_cells(std::istream& is, const std::vector< Vertex_handle > &V,
         Cell_handle c = C[j];
         for (int k=0; k<=dimension(); ++k) {
           std::size_t ik;
-            if(is_ascii(is))
+            if(IO::is_ascii(is))
               is >> ik;
             else
               read(is, ik);
@@ -2456,7 +2596,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
   case 3:
     {
       std::size_t m = number_of_cells();
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << m << std::endl;
       else
         write(os, m);
@@ -2466,7 +2606,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       for(it = cells_begin(); it != cells_end(); ++it) {
         C[it] = i++;
         for(int j = 0; j < 4; j++){
-          if(is_ascii(os)) {
+          if(IO::is_ascii(os)) {
             os << V[it->vertex(j)];
             if ( j==3 )
               os << '\n';
@@ -2482,7 +2622,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = cells_begin(); it != cells_end(); ++it) {
         for (int j = 0; j < 4; j++) {
-          if(is_ascii(os)){
+          if(IO::is_ascii(os)){
             os << C[it->neighbor(j)];
             if(j==3)
               os << '\n';
@@ -2498,7 +2638,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
   case 2:
     {
       size_type m = number_of_facets();
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << m << '\n';
       else
         write(os, m);
@@ -2508,7 +2648,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       for(it = facets_begin(); it != facets_end(); ++it) {
         C[(*it).first] = i++;
         for(int j = 0; j < 3; j++){
-          if(is_ascii(os)) {
+          if(IO::is_ascii(os)) {
             os << V[(*it).first->vertex(j)];
             if ( j==2 )
               os << '\n';
@@ -2525,7 +2665,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = facets_begin(); it != facets_end(); ++it) {
         for (int j = 0; j < 3; j++) {
-          if(is_ascii(os)){
+          if(IO::is_ascii(os)){
             os << C[(*it).first->neighbor(j)];
             if(j==2)
               os << '\n';
@@ -2542,7 +2682,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
   case 1:
     {
       size_type m = number_of_edges();
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << m << '\n';
       else
         write(os, m);
@@ -2551,7 +2691,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       for(it = edges_begin(); it != edges_end(); ++it) {
         C[(*it).first] = i++;
         for(int j = 0; j < 2; j++){
-          if(is_ascii(os)) {
+          if(IO::is_ascii(os)) {
             os << V[(*it).first->vertex(j)];
             if ( j==1 )
               os << '\n';
@@ -2568,7 +2708,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
       // write the neighbors
       for(it = edges_begin(); it != edges_end(); ++it) {
         for (int j = 0; j < 2; j++) {
-          if(is_ascii(os)){
+          if(IO::is_ascii(os)){
             os << C[(*it).first->neighbor(j)];
             if(j==1)
               os << '\n';
@@ -3531,7 +3671,7 @@ is_valid(bool verbose, int level ) const
     {
       if ( number_of_vertices() < 2 ) {
         if (verbose)
-            std::cerr << "less than 2 vertices but dimension 0" << std::endl;
+            std::cerr << "fewer than 2 vertices but dimension 0" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
@@ -3901,32 +4041,27 @@ copy_tds(const TDS_src& tds,
                                           || tds.is_vertex(vert) );
 
   clear();
-
-  size_type n = tds.number_of_vertices();
   set_dimension(tds.dimension());
 
-  if (n == 0)  return Vertex_handle();
+  if(tds.number_of_vertices() == 0)
+    return Vertex_handle();
 
   // Number of pointers to cell/vertex to copy per cell.
-  int dim = (std::max)(1, dimension() + 1);
+  const int dim = (std::max)(1, dimension() + 1);
 
-  // Create the vertices.
-  std::vector<typename TDS_src::Vertex_handle> TV(n);
-  size_type i = 0;
+  // Number of neighbors to set
+  const int nn = (std::max)(0, dimension() + 1);
 
-  for (typename TDS_src::Vertex_iterator vit = tds.vertices_begin();
-       vit != tds.vertices_end(); ++vit)
-    TV[i++] = vit;
-
-  CGAL_triangulation_assertion( i == n );
-
+  // Initializes maps
   Unique_hash_map< typename TDS_src::Vertex_handle,Vertex_handle > V;
   Unique_hash_map< typename TDS_src::Cell_handle,Cell_handle > F;
 
-  for (i=0; i <= n-1; ++i){
-    Vertex_handle vh=create_vertex( convert_vertex(*TV[i]) );
-    V[ TV[i] ] = vh;
-    convert_vertex(*TV[i],*vh);
+  // Create the vertices.
+  for (typename TDS_src::Vertex_iterator vit = tds.vertices_begin();
+       vit != tds.vertices_end(); ++vit) {
+    Vertex_handle vh = create_vertex( convert_vertex(*vit) );
+    V[vit] = vh;
+    convert_vertex(*vit,*vh);
   }
 
   // Create the cells.
@@ -3947,7 +4082,7 @@ copy_tds(const TDS_src& tds,
   // Hook neighbor pointers of the cells.
   for (typename TDS_src::Cell_iterator cit2 = tds.cells().begin();
           cit2 != tds.cells_end(); ++cit2) {
-    for (int j = 0; j < dim; j++)
+    for (int j = 0; j < nn; j++)
       F[cit2]->set_neighbor(j, F[cit2->neighbor(j)] );
   }
 

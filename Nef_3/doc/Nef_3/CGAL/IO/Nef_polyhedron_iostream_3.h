@@ -32,8 +32,8 @@ using a proprietary file format. It includes the complete incidence
 structure, the geometric data, and the marks of each item.
 
 Using \cgal stream modifiers the following output formats can be
-chosen: ASCII (`set_ascii_mode()`), binary (`set_binary_mode()`) or
-pretty (`set_pretty_mode()`). The mandatory format is the ASCII
+chosen: \ascii (`set_ascii_mode()`), binary (`set_binary_mode()`) or
+pretty (`set_pretty_mode()`). The mandatory format is the \ascii
 format. It is recommended to use this format for file input and
 output.
 

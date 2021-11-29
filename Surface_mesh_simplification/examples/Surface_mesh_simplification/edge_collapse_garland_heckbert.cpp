@@ -21,7 +21,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/cube-meshed.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube-meshed.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {
@@ -68,9 +68,7 @@ int main(int argc, char** argv)
 
   std::cout << "\nFinished!\n" << r << " edges removed.\n" << surface_mesh.number_of_edges() << " final edges.\n";
 
-  std::ofstream os(argc > 3 ? argv[3] : "out.off");
-  os.precision(17);
-  os << surface_mesh;
+  CGAL::IO::write_polygon_mesh((argc > 3) ? argv[3] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

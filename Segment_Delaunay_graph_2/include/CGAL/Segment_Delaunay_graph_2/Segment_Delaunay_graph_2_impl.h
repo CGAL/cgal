@@ -2975,71 +2975,71 @@ file_output(std::ostream& os, const Storage_site_2& t,
   if ( t.is_point() ) {
     // 0 for point
     os << 0;
-    if ( is_ascii(os) ) { os << ' '; }
+    if ( IO::is_ascii(os) ) { os << ' '; }
     if ( t.is_input() ) {
       // 0 for input
       os << 0;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.point()];
     } else {
       // 1 for non-input
       os << 1;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site(1)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site(1)];
     }
   } else { // t is a segment
     // 1 for segment
     os << 1;
-    if ( is_ascii(os) ) { os << ' '; }
+    if ( IO::is_ascii(os) ) { os << ' '; }
     if ( t.is_input() ) {
       // 0 for input
       os << 0;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site()];
     } else if ( t.is_input(0) ) {
       // 1 for input source
       os << 1;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_crossing_site(1)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_crossing_site(1)];
     } else if ( t.is_input(1) ) {
       // 2 for input target
       os << 2;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_crossing_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_crossing_site(0)];
     } else {
       // 3 for non-input src & trg
       os << 3;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_crossing_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_crossing_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_crossing_site(1)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_crossing_site(1)];
     }
   }
@@ -3133,7 +3133,7 @@ file_output(std::ostream& os, Point_handle_mapper& P,
 
   CGAL_assertion( n >= 1 );
 
-  if( is_ascii(os) ) {
+  if( IO::is_ascii(os) ) {
     os << n << ' ' << m << ' ' << dimension() << std::endl;
   } else {
     os << n << m << dimension();
@@ -3141,24 +3141,24 @@ file_output(std::ostream& os, Point_handle_mapper& P,
 
   // points in point container and input sites container
   if ( print_point_container ) {
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     os << pc_.size();
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     for (const_Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
       os << *ph;
-      if ( is_ascii(os) ) { os << std::endl; }
+      if ( IO::is_ascii(os) ) { os << std::endl; }
     }
 
     // print the input sites container
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     os << isc_.size();
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     for (typename Input_sites_container::const_iterator it = isc_.begin();
          it != isc_.end(); ++it) {
       os << P[boost::tuples::get<0>(*it)];
-      if ( is_ascii(os) ) { os << " "; }
+      if ( IO::is_ascii(os) ) { os << " "; }
       os << P[boost::tuples::get<1>(*it)];
-      if ( is_ascii(os) ) { os << std::endl; }
+      if ( IO::is_ascii(os) ) { os << std::endl; }
     }
   }
 
@@ -3170,7 +3170,7 @@ file_output(std::ostream& os, Point_handle_mapper& P,
   V[infinite_vertex()] = inum++;
 
   // finite vertices
-  if (is_ascii(os)) os << std::endl;
+  if (IO::is_ascii(os)) os << std::endl;
   for (Finite_vertices_iterator vit = finite_vertices_begin();
        vit != finite_vertices_end(); ++vit) {
     V[vit] = inum++;
@@ -3178,9 +3178,9 @@ file_output(std::ostream& os, Point_handle_mapper& P,
     file_output(os, vit->storage_site(), P);
     // write non-combinatorial info of the vertex
     //    os << *vit ;
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
   }
-  if ( is_ascii(os) ) { os << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl; }
 
   // vertices of the faces
   inum = 0;
@@ -3190,25 +3190,25 @@ file_output(std::ostream& os, Point_handle_mapper& P,
     F[fit] = inum++;
     for(int j = 0; j < dim ; ++j) {
       os << V[ fit->vertex(j) ];
-      if( is_ascii(os) ) { os << ' '; }
+      if( IO::is_ascii(os) ) { os << ' '; }
     }
     // write non-combinatorial info of the face
     //    os << *fit ;
-    if( is_ascii(os) ) { os << std::endl; }
+    if( IO::is_ascii(os) ) { os << std::endl; }
   }
-  if( is_ascii(os) ) { os << std::endl; }
+  if( IO::is_ascii(os) ) { os << std::endl; }
 
   // neighbor pointers of the  faces
   for( All_faces_iterator it = all_faces_begin();
        it != all_faces_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[ it->neighbor(j) ];
-      if( is_ascii(os) ) { os << ' '; }
+      if( IO::is_ascii(os) ) { os << ' '; }
     }
-    if( is_ascii(os) ) { os << std::endl; }
+    if( IO::is_ascii(os) ) { os << std::endl; }
   }
 
-  if ( is_ascii(os) ) { os << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl; }
 }
 
 

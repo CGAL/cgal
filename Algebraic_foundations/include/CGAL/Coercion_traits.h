@@ -13,7 +13,7 @@
 // =============================================================================
 
 /*! \file NiX/Coercion_traits.h
- *  \brief Defines class NiX::Coercion_traits.
+ *  \brief defines class NiX::Coercion_traits.
  *
  *  Provides the general definition of the \c Coercion_traits<A,B> class, with
  *  specializations for the builtin number types.
@@ -148,33 +148,26 @@ template<class A , class B, int > struct Coercion_traits_for_level;
 
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,int)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,long)
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,long long)
-#endif
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,long long)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,float)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,double)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short,long double)
 
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,long)
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,long long)
-#endif
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,long long)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,float)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,double)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int,long double)
 
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,long long)
-#endif
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,long long)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,float)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,double)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long,long double)
 
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,float)
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,double)
-  CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,long double)
-#endif
+
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,double)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long long,long double)
 
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float,double)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float,long double)
@@ -198,9 +191,7 @@ struct Coercion_traits<A,A>{
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(short)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(int)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(long)
-#ifdef CGAL_USE_LONG_LONG
-  CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(long long)
-#endif
+CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(long long)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(float)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(double)
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(long double)

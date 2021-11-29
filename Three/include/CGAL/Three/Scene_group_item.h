@@ -39,20 +39,20 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item_rendering_helpe
     Q_OBJECT
 public :
     Scene_group_item(QString name = QString("New group"));
-    ~Scene_group_item() {}
+    ~Scene_group_item() { delete children;}
     //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const Q_DECL_OVERRIDE;
     //!Returns true to avoid disturbing the BBox of the scene.
     bool isEmpty() const Q_DECL_OVERRIDE;
     /*!
-         * \brief Locks a child
+         * \brief locks a child
          *
          * A locked child cannot be moved out of the group nor can it be deleted.
          * Use it to prevent a child to be destroyed without its parent.
          */
         void lockChild(CGAL::Three::Scene_item*);
         /*!
-        * \brief Locks a child
+        * \brief locks a child
         *
         * A locked child cannot be moved out of the group nor can it be deleted.
         * Use it to prevent a child to be destroyed without its parent.
@@ -60,25 +60,25 @@ public :
         void lockChild(Scene_interface::Item_id id);
 
         /*!
-         * \brief Unlocks a child
+         * \brief unlocks a child
          *
          * @see lockChild()
          */
         void unlockChild(CGAL::Three::Scene_item*);
         /*!
-         * \brief Unlocks a child
+         * \brief unlocks a child
          *
          * @see lockChild()
          */
         void unlockChild(Scene_interface::Item_id id);
         /*!
-         * \brief Tells if a child is locked.
+         * \brief tells if a child is locked.
          * \return true if the child is locked.
          * @see lockChild()
          */
         bool isChildLocked(CGAL::Three::Scene_item*);
         /*!
-             * \brief Tells if a child is locked.
+             * \brief tells if a child is locked.
              * \return true if the child is locked.
              * @see lockChild()
              */
@@ -94,7 +94,7 @@ public :
     //!Returns an empty Bbox to avoid disturbing the Bbox of the scene.
     Bbox bbox() const Q_DECL_OVERRIDE;
     //!Not supported.
-    Scene_item* clone() const Q_DECL_OVERRIDE {return 0;}
+    Scene_item* clone() const Q_DECL_OVERRIDE {return nullptr;}
     //! Indicates if the rendering mode is supported.
     //! \returns true for all rendering modes that are shared by
     //! all of the children.
@@ -192,11 +192,11 @@ public :
     //!Sets the alpha value for the froup and all its children.
         virtual void setAlpha(int) Q_DECL_OVERRIDE;
 
-    //! \brief Returns a list of all the direct children.
+    //! \brief returns a list of all the direct children.
     //!
     //! Only returns children that have this item as a parent.
     //! Children of these children are not returned.
-    QList<Scene_interface::Item_id> getChildren() const {return children;}
+    QList<Scene_interface::Item_id> getChildren() const {return *children;}
 
     //! \brief getChildrenForSelection returns the list of
     //! children to select along with the group.
@@ -205,7 +205,7 @@ public :
     //! this function defines which of its children will be added too.
     //! Typically overriden to allow applying an operation from the
     //! Operation menu only to the parent item and not to its children.
-    virtual QList<Scene_interface::Item_id> getChildrenForSelection() const {return children;}
+    virtual QList<Scene_interface::Item_id> getChildrenForSelection() const {return *children;}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren() @see addChild()
     void removeChild( Scene_item* item)
@@ -213,8 +213,8 @@ public :
      if(isChildLocked(item))
       return;
      update_group_number(item,0);
-     item->moveToGroup(0);
-     children.removeOne(scene->item_id(item));
+     item->moveToGroup(nullptr);
+     children->removeOne(scene->item_id(item));
     }
     //!Removes a Scene_item from the list of children using its index.
     //!@see getChildren() @see addChild()
@@ -229,7 +229,7 @@ public :
 
     void compute_bbox() const Q_DECL_OVERRIDE{};
 public Q_SLOTS:
-    //!\brief Redraws children.
+    //!\brief redraws children.
     //!
     //! As each drawing function of a group draws all parts of its children,
     //! once any of these functions is called, we skip all drawing calls
@@ -243,10 +243,14 @@ public Q_SLOTS:
     //!
     void adjustIds(Scene_interface::Item_id removed_id)
     {
-      for(int i = 0; i < children.size(); ++i)
+      for(int i = 0; i < children->size(); ++i)
       {
-        if(children[i] >= removed_id)
-          --children[i];
+        if((*children)[i] > removed_id)
+          --(*children)[i];
+        else if((*children)[i] == removed_id)//child has been removed from the scene, it doesn't exist anymore.
+        {
+          children->removeAll(removed_id);
+        }
       }
     }
 private:
@@ -256,7 +260,7 @@ private:
 protected:
     Scene_interface *scene;
     //!Contains a reference to all the children of this group.
-    QList<Scene_interface::Item_id> children;
+    QList<Scene_interface::Item_id>* children;
 
 }; //end of class Scene_group_item
 

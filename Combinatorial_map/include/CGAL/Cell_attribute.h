@@ -23,16 +23,16 @@ namespace CGAL {
   template <class, class>
   class Concurrent_compact_container;
 
-  template<unsigned int, class, class>
+  template<unsigned int, class, class, class>
   class Combinatorial_map_storage_1;
 
-  template<unsigned int, class, class>
+  template<unsigned int, class, class, class>
   class Generalized_map_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class>
+  template<unsigned int, unsigned int, class, class, class, class>
   class CMap_linear_cell_complex_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class>
+  template<unsigned int, unsigned int, class, class, class, class>
   class GMap_linear_cell_complex_storage_1;
 
   namespace internal {
@@ -108,16 +108,16 @@ namespace CGAL {
                                     OnMerge, OnSplit, WithID>:
       public Add_id<WithID>
   {
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
@@ -197,8 +197,8 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return vp; }
-    void * & for_compact_container()
-    { return vp; }
+    void for_compact_container(void *p)
+    { vp = p; }
 
   private:
     /// Reference counting: the number of darts linked to this cell.
@@ -218,16 +218,16 @@ namespace CGAL {
   class Cell_attribute_without_info<Refs, Tag_true,
                                     OnMerge, OnSplit, WithID>: public Add_id<WithID>
   {
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
@@ -310,8 +310,8 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return mdart.for_compact_container(); }
-    void * & for_compact_container()
-    { return mdart.for_compact_container(); }
+    void for_compact_container(void *p)
+    { mdart.for_compact_container(p); }
 
   private:
     /// The dart handle associated with the cell.
@@ -334,16 +334,16 @@ namespace CGAL {
   class Cell_attribute<Refs, void, Tag_, OnMerge, OnSplit, WithID> :
     public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>
   {
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
@@ -374,16 +374,16 @@ namespace CGAL {
     public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>,
     public Info_for_cell_attribute<Info_>
   {
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Combinatorial_map_storage_1;
 
-    template<unsigned int, class, class>
+    template<unsigned int, class, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class>
+    template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>

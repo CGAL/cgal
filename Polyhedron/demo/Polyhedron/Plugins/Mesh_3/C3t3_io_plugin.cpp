@@ -90,17 +90,19 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
 
 
         if(item->load_binary(in)) {
-          if(add_to_scene)
+          if(add_to_scene){
+            item->resetCutPlane();
             CGAL::Three::Three::scene()->addItem(item);
+          }
           return QList<Scene_item*>() << item;
         }
 
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_other_binary_format(in, item->c3t3())) {
+          item->resetCutPlane();
           item->c3t3_changed();
           item->changed();
-          item->resetCutPlane();
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>()<< item;
@@ -109,9 +111,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_a_cdt_3(in, item->c3t3())) {
+          item->resetCutPlane();
           item->c3t3_changed();
           item->changed();
-          item->resetCutPlane();
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>()<<item;
@@ -127,15 +129,17 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
-      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))
+      if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation(), true))
       {
+        item->c3t3().rescan_after_load_of_triangulation(); //fix counters for facets and cells
         for( C3t3::Triangulation::Finite_cells_iterator
              cit = item->c3t3().triangulation().finite_cells_begin();
              cit != item->c3t3().triangulation().finite_cells_end();
              ++cit)
         {
-            CGAL_assertion(cit->info() >= 0);
-            item->c3t3().add_to_complex(cit, cit->info());
+            CGAL_assertion(cit->subdomain_index() >= 0);
+            if(cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
+              item->c3t3().add_to_complex(cit, cit->subdomain_index());
             for(int i=0; i < 4; ++i)
             {
               if(cit->surface_patch_index(i)>0)
@@ -168,8 +172,8 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
           }
         }
 
-        item->c3t3_changed();
         item->resetCutPlane();
+        item->c3t3_changed();
         if(add_to_scene)
           CGAL::Three::Three::scene()->addItem(item);
         return QList<Scene_item*>()<<item;
@@ -247,7 +251,7 @@ save(QFileInfo fileinfo, QList<Scene_item *> &items)
   else if (fileinfo.suffix() == "am")
   {
     std::ofstream avizo_file (qPrintable(path));
-    CGAL::output_to_avizo(avizo_file, c3t3_item->c3t3());
+    CGAL::IO::output_to_avizo(avizo_file, c3t3_item->c3t3());
     items.pop_front();
     return true;
   }
@@ -301,7 +305,7 @@ operator>>( std::istream& is, Fake_CDT_3_vertex_base<Vb>& v)
 {
   is >> static_cast<typename Fake_CDT_3_vertex_base<Vb>::Base&>(v);
   char s;
-  if( CGAL::is_ascii(is) ) {
+  if( CGAL::IO::is_ascii(is) ) {
     is >> s;
     if( s == 'S' ) {
       v.steiner = true;
@@ -358,13 +362,13 @@ std::istream&
 operator>>( std::istream& is, Fake_CDT_3_cell_base<Cb>& c) {
   char s;
   for( int li = 0; li < 4; ++li ) {
-    if( CGAL::is_ascii(is) )
+    if( CGAL::IO::is_ascii(is) )
       is >> c.constrained_facet[li];
     else
       CGAL::read( is, c.constrained_facet[li] );
   }
 
-  if( CGAL::is_ascii(is) ) {
+  if( CGAL::IO::is_ascii(is) ) {
     is >> s;
     CGAL_assertion(s == '-');
   }
@@ -406,6 +410,11 @@ struct Update_vertex
   typedef typename Tr2::Vertex                  V2;
   typedef typename Tr2::Point                   Point;
 
+  V2 operator()(const V1&)
+  {
+    return V2();
+  }
+
   bool operator()(const V1& v1, V2& v2)
   {
     v2.set_point(Point(v1.point()));
@@ -418,7 +427,7 @@ struct Update_vertex
       const Sp_index sp_index = boost::get<Sp_index>(index);
       v2.set_index((std::max)(sp_index.first, sp_index.second));
     }
-    break;
+      break;
     default:// -1, 0, 1, 3
       v2.set_index(boost::get<int>(v1.index()));
     }
@@ -427,7 +436,9 @@ struct Update_vertex
 }; // end struct Update_vertex
 
 struct Update_cell {
+
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
+
   template <typename C1, typename C2>
   bool operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(c1.subdomain_index());
@@ -442,7 +453,6 @@ struct Update_cell {
   }
 }; // end struct Update_cell
 
-#include <CGAL/Triangulation_file_input.h>
 
 template <typename Tr1, typename Tr2>
 struct Update_vertex_from_CDT_3 {
@@ -452,24 +462,28 @@ struct Update_vertex_from_CDT_3 {
   typedef typename Tr2::Vertex          V2;
   typedef typename Tr2::Point           Point;
 
-  bool operator()(const V1& v1, V2& v2)
+   V2 operator()(const V1&)
+  {
+    return V2();
+  }
+  void operator()(const V1& v1, V2& v2)
   {
     v2.set_point(Point(v1.point()));
     v2.set_dimension(2);
     v2.set_special(false);
-    return true;
   }
 }; // end struct Update_vertex
 
 struct Update_cell_from_CDT_3 {
+
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
-  template <typename C1, typename C2>
-  bool operator()(const C1& c1, C2& c2) {
+
+  template <typename C1,typename C2>
+  void operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(1);
     for(int i = 0; i < 4; ++i) {
       c2.set_surface_patch_index(i, c1.constrained_facet[i]);
     }
-    return true;
   }
 }; // end struct Update_cell
 
@@ -499,12 +513,11 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
       return false;
     }
   }
-  if(binary) CGAL::set_binary_mode(is);
-  if(CGAL::file_input<
+  if(binary) CGAL::IO::set_binary_mode(is);
+  if(c3t3.triangulation().file_input<
        Fake_CDT_3,
-       C3t3::Triangulation,
        Update_vertex_from_CDT_3<Fake_CDT_3, C3t3::Triangulation>,
-       Update_cell_from_CDT_3>(is, c3t3.triangulation()))
+       Update_cell_from_CDT_3>(is))
   {
     c3t3.rescan_after_load_of_triangulation();
     std::cerr << "Try load a CDT_3... DONE";
@@ -519,7 +532,7 @@ bool
 Polyhedron_demo_c3t3_binary_io_plugin::
 try_load_other_binary_format(std::istream& is, C3t3& c3t3)
 {
-  CGAL::set_ascii_mode(is);
+  CGAL::IO::set_ascii_mode(is);
   std::string s;
   if(!(is >> s)) return false;
   bool binary = false;
@@ -542,13 +555,12 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
       return false;
     }
   }
-  if(binary) CGAL::set_binary_mode(is);
-  else CGAL::set_ascii_mode(is);
-  std::istream& f_is = CGAL::file_input<
+  if(binary) CGAL::IO::set_binary_mode(is);
+  else CGAL::IO::set_ascii_mode(is);
+  std::istream& f_is = c3t3.triangulation().file_input<
                          Fake_c3t3::Triangulation,
-                         C3t3::Triangulation,
                          Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
-                         Update_cell>(is, c3t3.triangulation());
+                         Update_cell>(is);
 
   c3t3.rescan_after_load_of_triangulation();
   return f_is.good();

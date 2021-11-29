@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -49,8 +49,8 @@ int main (int argc, char** argv){
          cit != c3t3.triangulation().finite_cells_end();
          ++cit)
     {
-      CGAL_assertion(cit->info() >= 0);
-      c3t3.add_to_complex(cit, cit->info());
+      CGAL_assertion(cit->subdomain_index() >= 0);
+      c3t3.add_to_complex(cit, cit->subdomain_index());
       for(int i=0; i < 4; ++i)
       {
         if(cit->surface_patch_index(i)>0)

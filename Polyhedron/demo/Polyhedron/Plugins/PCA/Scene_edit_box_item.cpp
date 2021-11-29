@@ -263,7 +263,7 @@ struct Scene_edit_box_item_priv{
 
 Scene_edit_box_item::Scene_edit_box_item()
 {
-  d = NULL;
+  d = nullptr;
 }
 Scene_edit_box_item::Scene_edit_box_item(const Scene_interface *scene_interface)
 {
@@ -392,16 +392,16 @@ void Scene_edit_box_item::compute_bbox() const
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
 
-  QVector3D min(d->pool[0], d->pool[1], d->pool[2]);
-  QVector3D max(d->pool[3], d->pool[4], d->pool[5]);
+  QVector3D vmin(d->pool[0], d->pool[1], d->pool[2]);
+  QVector3D vmax(d->pool[3], d->pool[4], d->pool[5]);
 
   for(int i=0; i< 3; ++i)
   {
-    min[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
-    max[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
+    vmin[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
+    vmax[i] += d->frame->translation()[i]-d->center_[i]-offset[i];
   }
 
-  setBbox(Scene_item::Bbox(min.x(),min.y(),min.z(),max.x(),max.y(),max.z()));
+  setBbox(Scene_item::Bbox(vmin.x(),vmin.y(),vmin.z(),vmax.x(),vmax.y(),vmax.z()));
 }
 
 
@@ -772,6 +772,7 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
       int type, picked;
       d->picked_pixel = e->pos();
       d->picking(type, picked, viewer);
+      viewer->makeCurrent();
       if(type !=-1)
       {
         bool found = false;
@@ -809,12 +810,14 @@ bool Scene_edit_box_item::eventFilter(QObject *obj, QEvent *event)
             d->selected_vertices.push_back(d->faces[picked].vertices[i]);
           Kernel::Point_3 a1(d->faces[picked].vertices[1]->position()), a0(d->faces[picked].vertices[0]->position())
               ,a3(d->faces[picked].vertices[3]->position());
-          QVector3D a(a1.x()-a0.x(), a1.y()-a0.y(),a1.z()-a0.z()),b(a3.x()-a0.x(), a3.y()-a0.y(),a3.z()-a0.z());
-          QVector3D n = QVector3D::crossProduct(a,b);
+          Kernel::Vector_3 a = a1 - a0,
+                           b = a3 - a0;
+          Kernel::Vector_3 n = CGAL::cross_product(a,b);
 
           d->remodel_frame->setConstraint(&d->constraint);
           d->constraint.setTranslationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::AXIS);
           d->constraint.setTranslationConstraintDirection(CGAL::qglviewer::Vec(n.x(), n.y(), n.z()));
+
         }
 
         viewer->setManipulatedFrame(d->remodel_frame);

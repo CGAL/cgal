@@ -17,8 +17,8 @@ struct X_not_positive {
 // An iterator that only enumerates dD points with positive x-coordinate
 typedef CGAL::Filter_iterator<NN_iterator, X_not_positive> NN_positive_x_iterator;
 
-int main() {
-
+int main()
+{
   Tree tree;
   tree.insert(Point_d(0,0));
   tree.insert(Point_d(1,1));
@@ -35,7 +35,7 @@ int main() {
 
   std::cout <<  "The first 5 nearest neighbours with positive x-coord are: " << std::endl;
   for (int j=0; (j < 5)&&(it!=end); ++j,++it)
-    std::cout <<   (*it).first << "  at squared distance = " << (*it).second << std::endl;
+    std::cout <<   (*it).first << "  at squared distance = " << it->second << std::endl;
 
   return 0;
 }

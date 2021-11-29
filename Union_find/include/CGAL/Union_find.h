@@ -114,8 +114,7 @@ public:
 #ifdef _MSC_VER
     typedef CGAL_ALLOCATOR(Union_find_struct)                allocator;
 #else
-    typedef typename A::template rebind<Union_find_struct>   Rebind;
-    typedef typename Rebind::other                           allocator;
+    typedef typename std::allocator_traits<A>::template rebind_alloc<Union_find_struct> allocator;
 #endif
 
 private:

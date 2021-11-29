@@ -1,8 +1,7 @@
 #ifndef POLYFIT_TEST_FRAMEWORK_H_
 #define POLYFIT_TEST_FRAMEWORK_H_
 
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
@@ -85,37 +84,36 @@ int reconstruct(const std::string& input_file, bool force_extract_planes)
         CGAL::Timer t;
         t.start();
         if (extension == ".pwn") {
-        if (!CGAL::read_xyz_points(
-                    input_stream,
-                    std::back_inserter(points),
-                    CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
-                {
+          if (!CGAL::IO::read_XYZ(input_stream,
+                                  std::back_inserter(points),
+                                  CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
+          {
             std::cerr << " Error: cannot read file " << input_file << std::endl;
-                        return EXIT_FAILURE;
-                }
-                else
-                        std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
+            return EXIT_FAILURE;
+          }
+          else
+            std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
         }
         else if (extension == ".ply") {
-        if (!CGAL::read_ply_points_with_properties(
+        if (!CGAL::IO::read_PLY_with_properties(
                     input_stream,
                     std::back_inserter(points),
                     CGAL::make_ply_point_reader(Point_map()),
                     CGAL::make_ply_normal_reader(Normal_map()),
                     std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
-                {
-            std::cerr << " Error: cannot read file " << input_file << std::endl;
-                        return EXIT_FAILURE;
-                }
-                else
-                        std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
+        {
+          std::cerr << " Error: cannot read file " << input_file << std::endl;
+          return EXIT_FAILURE;
+        }
+        else
+          std::cout << " Done. " << points.size() << " points. Time: " << t.time() << " sec." << std::endl;
 
-                int max_plane_index = 0;
+        int max_plane_index = 0;
         for (std::size_t i = 0; i < points.size(); ++i) {
-            int plane_index = points[i].template get<2>();
-                        if (plane_index > max_plane_index)
-                                max_plane_index = plane_index;
-                }
+          int plane_index = points[i].template get<2>();
+          if (plane_index > max_plane_index)
+            max_plane_index = plane_index;
+        }
 
                 int num_planes = max_plane_index + 1;
                 // if fewer than 4 planes provided, we consider it as not provided.

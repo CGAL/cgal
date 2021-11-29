@@ -13,7 +13,7 @@
 #ifndef CGAL_MESH_3_IO_SIGNATURE_H
 #define CGAL_MESH_3_IO_SIGNATURE_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #define CGAL_MESH_3_IO_H // the old include macro, tested by other files
 
@@ -219,12 +219,10 @@ struct Get_io_signature<Weighted_point_3<K> >
 };
 
 #ifdef CGAL_TRIANGULATION_3_H
-template <class Gt, class Vb, class Cb, class C_tag>
+template <class Gt, class Tds>
 struct
-Get_io_signature<Triangulation_3<Gt, Triangulation_data_structure_3<Vb, Cb, C_tag> > >
+Get_io_signature<Triangulation_3<Gt, Tds > >
 {
-  typedef Triangulation_data_structure_3<Vb, Cb, C_tag> Tds;
-
   std::string operator()() {
     return std::string("Triangulation_3(") +
       Get_io_signature<typename Tds::Vertex::Point>()() +

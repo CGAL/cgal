@@ -61,11 +61,13 @@ const char* Sub::name = "-";
  ********************************************************/
 CGAL_INLINE_FUNCTION
 const Expr& Expr::getZero() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(Expr, Zero,0);
   return Zero;
 }
 CGAL_INLINE_FUNCTION
 const Expr& Expr::getOne() {
+  init_CORE();
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(Expr, One,1);
   return One;
 }
@@ -1223,21 +1225,6 @@ CORE_MEMORY_IMPL(SqrtRep)
 
 CORE_MEMORY_IMPL(MultRep)
 CORE_MEMORY_IMPL(DivRep)
-
-
- template class AddSubRep<Add>;
- template class AddSubRep<Sub>;
-
-template class Realbase_for<long>;
-template class Realbase_for<double>;
-template class Realbase_for<BigInt>;
-template class Realbase_for<BigRat>;
-template class Realbase_for<BigFloat>;
-
- template class ConstPolyRep<Expr>;
- template class ConstPolyRep<BigFloat>;
- template class ConstPolyRep<BigInt>;
- template class ConstPolyRep<BigRat>;
 } //namespace CORE
 
 #include <CGAL/enable_warnings.h>

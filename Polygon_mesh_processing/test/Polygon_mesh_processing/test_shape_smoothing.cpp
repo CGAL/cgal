@@ -1,4 +1,4 @@
-#define CGAL_PMP_SMOOTHING_VERBOSE
+#define CGAL_PMP_SMOOTHING_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -31,7 +31,7 @@ bool equal_doubles(double d1, double d2, double e)
 template <typename Mesh>
 void test_implicit_constrained_devil(Mesh mesh)
 {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   std::cout << "-- test_implicit_constrained_devil --" << std::endl;
 #endif
 
@@ -69,7 +69,7 @@ void test_implicit_constrained_devil(Mesh mesh)
     ++i;
   }
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   std::ofstream out("output_implicit_constrained_devil.off");
   out << mesh;
   out.close();
@@ -79,7 +79,7 @@ void test_implicit_constrained_devil(Mesh mesh)
 template <typename Mesh>
 void test_implicit_constrained_elephant(Mesh mesh)
 {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   std::cout << "-- test_implicit_constrained_elephant --" << std::endl;
 #endif
 
@@ -117,7 +117,7 @@ void test_implicit_constrained_elephant(Mesh mesh)
     ++i;
   }
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   std::ofstream out("output_implicit_constrained_elephant.off");
   out << mesh;
   out.close();
@@ -127,14 +127,14 @@ void test_implicit_constrained_elephant(Mesh mesh)
 template <typename Mesh>
 void test_curvature_flow_time_step(Mesh mesh)
 {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   std::cout << "-- test_curvature_flow_time_step --" << std::endl;
 #endif
 
   const double time_step = 1e-15;
   PMP::smooth_shape(mesh, time_step);
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   std::ofstream out("output_devil_time_step.off");
   out << mesh;
   out.close();
@@ -144,14 +144,14 @@ void test_curvature_flow_time_step(Mesh mesh)
 template <typename Mesh>
 void test_curvature_flow(Mesh mesh)
 {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   std::cout << "-- test_curvature_flow --" << std::endl;
 #endif
 
   const double time_step = 1.0;
   PMP::smooth_shape(mesh, time_step);
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   std::ofstream out("output_precision_elephant.off");
   out << mesh;
   out.close();
@@ -160,8 +160,8 @@ void test_curvature_flow(Mesh mesh)
 
 int main(int, char**)
 {
-  const char* filename_devil = "data/mannequin-devil.off";
-  const char* filename_elephant = "data/elephant.off";
+  const std::string filename_devil = CGAL::data_file_path("meshes/mannequin-devil.off");
+  const std::string filename_elephant = CGAL::data_file_path("meshes/elephant.off");
 
   std::ifstream input1(filename_devil);
   SurfaceMesh mesh_devil;

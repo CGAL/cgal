@@ -252,7 +252,7 @@ private:
   template <typename Strategy, Pl_strategy id>
   void init_pl(const std::string& name)
   {
-    m_locators[id].m_variant = static_cast<Strategy*>(NULL);
+    m_locators[id].m_variant = static_cast<Strategy*>(nullptr);
     m_locators[id].m_name = name;
     m_locators[id].m_active = true;
   }
@@ -262,7 +262,7 @@ private:
   void allocate_pl()
   {
     Strategy* locator = new Strategy();
-    CGAL_assertion(locator);
+    assert(locator);
     m_locators[id].m_variant = locator;
   }
 
@@ -293,7 +293,7 @@ private:
     Strategy* strategy = boost::get<Strategy*>(m_locators[id].m_variant);
     if (strategy) {
       delete strategy;
-      m_locators[id].m_variant = static_cast<Strategy*>(NULL);
+      m_locators[id].m_variant = static_cast<Strategy*>(nullptr);
     }
   }
 
@@ -667,12 +667,12 @@ Point_location_test<GeomTraits, TopolTraits>::
 Point_location_test(const Geom_traits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits),
-  m_arr(NULL),
-  m_random_g(NULL),
-  m_grid_g(NULL),
-  m_halton_g(NULL),
-  m_middle_edges_g(NULL),
-  m_specified_points_g(NULL)
+  m_arr(nullptr),
+  m_random_g(nullptr),
+  m_grid_g(nullptr),
+  m_halton_g(nullptr),
+  m_middle_edges_g(nullptr),
+  m_specified_points_g(nullptr)
 {
   m_locators.resize(NUM_PL_STRATEGIES);
 
@@ -773,7 +773,7 @@ deallocate_arrangement()
 {
   if (m_arr) {
     delete m_arr;
-    m_arr = NULL;
+    m_arr = nullptr;
   }
 }
 

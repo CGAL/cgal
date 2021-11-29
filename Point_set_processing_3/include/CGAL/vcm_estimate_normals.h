@@ -231,16 +231,25 @@ vcm_convolve (ForwardIterator first,
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param ccov output range of covariance matrices.
    \param offset_radius offset_radius.
    \param convolution_radius convolution_radius.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \sa `CGAL::vcm_is_on_feature_edge()`
@@ -395,23 +404,39 @@ vcm_estimate_normals_internal (PointRange& points,
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param offset_radius offset_radius.
    \param convolution_radius convolution_radius.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd
-       \cgalParamBegin{diagonalize_traits} a model of `DiagonalizeTraits`. It can be omitted:
-       if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
-       using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
-       `CGAL::Diagonalize_traits` is used.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
-   \cgalNamedParamsEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
 
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{diagonalize_traits}
+       \cgalParamDescription{the solver used for diagonalizing covariance matrices}
+       \cgalParamType{a class model of `DiagonalizeTraits`}
+       \cgalParamDefault{If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
+                         then an overload using `Eigen_diagonalize_traits` is provided.
+                         Otherwise, the internal implementation `CGAL::Diagonalize_traits` is used}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
+   \cgalNamedParamsEnd
 */
 template <typename PointRange,
           typename NamedParameters
@@ -454,21 +479,38 @@ vcm_estimate_normals (PointRange& points,
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param offset_radius offset_radius.
    \param k number of neighbor points used for convolution.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `WritablePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd
-       \cgalParamBegin{diagonalize_traits} a model of `DiagonalizeTraits`. It can be omitted:
-       if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload
-       using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation
-       `CGAL::Diagonalize_traits` is used.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{diagonalize_traits}
+       \cgalParamDescription{the solver used for diagonalizing covariance matrices}
+       \cgalParamType{a class model of `DiagonalizeTraits`}
+       \cgalParamDefault{If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
+                         then an overload using `Eigen_diagonalize_traits` is provided.
+                         Otherwise, the internal implementation `CGAL::Diagonalize_traits` is used}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 */
 template < typename PointRange,

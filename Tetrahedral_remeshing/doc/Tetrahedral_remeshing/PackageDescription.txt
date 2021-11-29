@@ -1,0 +1,61 @@
+// Tetrahedral Remeshing
+
+/// \defgroup PkgTetrahedralRemeshingRef Tetrahedral Remeshing Reference
+/// \defgroup PkgTetrahedralRemeshingConcepts Concepts
+/// \ingroup PkgTetrahedralRemeshingRef
+
+/// \defgroup PkgTetrahedralRemeshingClasses Classes
+/// \ingroup PkgTetrahedralRemeshingRef
+
+/*!
+\addtogroup PkgTetrahedralRemeshingRef
+
+\cgalPkgDescriptionBegin{Tetrahedral Remeshing,PkgTetrahedralRemeshing}
+\cgalPkgPicture{bimba_back_small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur}
+\cgalPkgDesc{
+The package provides a function for remeshing tetrahedral meshes,
+targeting high quality meshes with respect to dihedral angles.
+This practical iterative remeshing algorithm is designed to remesh
+multi-material tetrahedral meshes, by iteratively performing a sequence of
+elementary operations such as edge splits, edge collapses, edge flips,
+and vertex relocations following a Laplacian smoothing.
+The algorithm results in high-quality uniform isotropic meshes,
+with the desired mesh density,
+while preserving the input geometric curve and surface features.
+}
+\cgalPkgManuals{Chapter_Tetrahedral_Remeshing,PkgTetrahedralRemeshingRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.1}
+\cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgBib{cgal:tftb-tr}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `RemeshingTriangulationTraits_3`
+- `RemeshingVertexBase_3`
+- `RemeshingCellBase_3`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3`
+- `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
+- `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
+
+\cgalCRPSection{Function Templates}
+
+- `CGAL::tetrahedral_isotropic_remeshing()`
+- `CGAL::convert_to_triangulation_3()`
+
+*/

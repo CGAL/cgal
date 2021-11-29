@@ -22,8 +22,8 @@ int main()
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
 #include <CGAL/use.h>
-
-# include <tbb/task_scheduler_init.h>
+#define TBB_PREVIEW_GLOBAL_CONTROL 1
+# include <tbb/global_control.h>
 # include <tbb/parallel_for.h>
 # include <atomic>
 
@@ -33,7 +33,6 @@ struct Node_1
 : public CGAL::Compact_container_base
 {
   Node_1() {}
-  Node_1(const Node_1& o) : time_stamp_(o.time_stamp_) {}
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -61,14 +60,14 @@ public:
   int      rnd;
 
   Node_2()
-  : p(NULL), rnd(CGAL::get_default_random().get_int(0, 100)) {}
+  : p(nullptr), rnd(CGAL::get_default_random().get_int(0, 100)) {}
 
   bool operator==(const Node_2 &n) const { return rnd == n.rnd; }
   bool operator!=(const Node_2 &n) const { return rnd != n.rnd; }
   bool operator< (const Node_2 &n) const { return rnd <  n.rnd; }
 
   void *   for_compact_container() const { return p_cc; }
-  void * & for_compact_container()       { return p_cc; }
+  void for_compact_container(void *p) { p_cc = p; }
 };
 
 template < class Cont >
@@ -87,11 +86,6 @@ public:
   Insert_in_CCC_functor(
     const Values_vec &values, Cont &cont, Iterators_vec &iterators)
     : m_values(values), m_cont(cont), m_iterators(iterators)
-  {}
-
-  Insert_in_CCC_functor(const Insert_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont),
-      m_iterators(other.m_iterators)
   {}
 
   void operator() (const tbb::blocked_range<size_t>& r) const
@@ -116,11 +110,6 @@ public:
   Erase_in_CCC_functor(
     Cont &cont, Iterators_vec &iterators)
     : m_cont(cont), m_iterators(iterators)
-  {}
-
-  Erase_in_CCC_functor(const Erase_in_CCC_functor &other)
-    : m_cont(other.m_cont),
-      m_iterators(other.m_iterators)
   {}
 
   void operator() (const tbb::blocked_range<size_t>& r) const
@@ -149,19 +138,13 @@ public:
     m_free_elements(free_elements), m_num_erasures(num_erasures)
   {}
 
-  Insert_and_erase_in_CCC_functor(const Insert_and_erase_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont),
-      m_iterators(other.m_iterators), m_free_elements(other.m_free_elements),
-      m_num_erasures(other.m_num_erasures)
-  {}
-
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
     for( size_t i = r.begin() ; i != r.end() ; ++i)
     {
       m_iterators[i] = m_cont.insert(m_values[i]);
       // Random-pick an element to erase
-      int index_to_erase = rand() % m_values.size();
+      auto index_to_erase = rand() % m_values.size();
       // If it exists
       bool comparand = false;
       if (m_free_elements[index_to_erase].compare_exchange_weak(comparand, true) )
@@ -183,6 +166,10 @@ private:
 template < class Cont >
 void test(const Cont &)
 {
+  static_assert(std::is_nothrow_move_constructible<Cont>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cont>::value,
+                "move assignment is missing");
   // Testing if all types are provided.
 
   typename Cont::value_type              t0;
@@ -464,7 +451,7 @@ int main()
     std::cout << "cc2: " << it->rnd << " / " << std::endl;
   }*/
 
-  tbb::task_scheduler_init init(1);
+  tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test_time_stamps<CGAL::Concurrent_compact_container<Node_1> >();
   return 0;
 }

@@ -15,7 +15,7 @@ typedef K::FT                                                       FT;
 typedef K::Point_3                                                  Point_3;
 typedef CGAL::Surface_mesh<Point_3>                                 Surface_mesh;
 
-void check_edge_degeneracy(const char* fname)
+void check_edge_degeneracy(const std::string fname)
 {
   std::cout << "test edge degeneracy...";
 
@@ -24,7 +24,7 @@ void check_edge_degeneracy(const char* fname)
   std::ifstream input(fname);
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
   std::vector<edge_descriptor> all_edges(edges(mesh).begin(), edges(mesh).end());
@@ -35,7 +35,7 @@ void check_edge_degeneracy(const char* fname)
   std::cout << "done" << std::endl;
 }
 
-void check_triangle_face_degeneracy(const char* fname)
+void check_triangle_face_degeneracy(const std::string fname)
 {
   std::cout << "test face degeneracy...";
 
@@ -44,7 +44,7 @@ void check_triangle_face_degeneracy(const char* fname)
   std::ifstream input(fname);
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 
@@ -57,7 +57,7 @@ void check_triangle_face_degeneracy(const char* fname)
   std::cout << "done" << std::endl;
 }
 
-void test_needles_and_caps(const char* fname)
+void test_needles_and_caps(const std::string fname)
 {
   std::cout << "test needles&caps...";
 
@@ -70,7 +70,7 @@ void test_needles_and_caps(const char* fname)
   std::ifstream input(fname);
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 

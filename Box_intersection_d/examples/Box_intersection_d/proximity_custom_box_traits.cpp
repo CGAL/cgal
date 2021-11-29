@@ -41,7 +41,7 @@ void report( const Point_3* a, const Point_3* b) {
 
 int main(int argc, char*argv[]) {
 
-  std::ifstream in((argc>1)?argv[1]:"data/points.xyz");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/points.xyz"));
   Point_3 p;
   while(in >> p){
     points.push_back(p);

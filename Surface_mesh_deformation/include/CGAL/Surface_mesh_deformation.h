@@ -21,8 +21,8 @@
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
-#include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 #include <vector>
 #include <list>
@@ -54,12 +54,15 @@ enum Deformation_algorithm_tag
 
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal {
+
 template<class TriangleMesh, Deformation_algorithm_tag deformation_algorithm_tag>
 struct Types_selectors;
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
-  typedef internal::Single_cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::Single_cotangent_weight<TriangleMesh> Weight_calculator;
 
   struct ARAP_visitor{
     template <class VertexPointMap>
@@ -80,7 +83,9 @@ struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
-  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::Cotangent_weight<TriangleMesh> Weight_calculator;
 
   typedef typename Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS>
     ::ARAP_visitor ARAP_visitor;
@@ -88,7 +93,9 @@ struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
-  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::Cotangent_weight<TriangleMesh> Weight_calculator;
 
   class ARAP_visitor{
     double m_nb_edges_incident;
@@ -141,7 +148,9 @@ struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
 // on the fly in order the deformation class to be used
 // with points with minimal requirements
 template <class Vertex_point_map>
-struct SC_on_the_fly_pmap: public Vertex_point_map{
+struct SC_on_the_fly_pmap
+  : public Vertex_point_map
+{
   typedef boost::readable_property_map_tag category;
   typedef CGAL::Simple_cartesian<double>::Point_3 value_type;
   typedef value_type reference;

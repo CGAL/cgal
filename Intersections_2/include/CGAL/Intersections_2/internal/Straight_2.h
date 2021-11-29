@@ -18,8 +18,8 @@
 #ifndef CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H
 #define CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H
 
+#include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
-#include <CGAL/squared_distance_utils.h>
 #include <CGAL/Kernel/global_functions_internal_2.h>
 
 namespace CGAL {
@@ -275,6 +275,7 @@ cut_right_off(typename K::Line_2 const & cutter)
     Line_2_Line_2_pair<K> pair(&support_, &cutter);
     switch (pair.intersection_type()) {
     case Line_2_Line_2_pair<K>::NO_INTERSECTION:
+    default:
         if (cutter.has_on_negative_side(support_.point()))
             bound_state_ = LINE_EMPTY;
         break;

@@ -257,12 +257,12 @@ public:
       return temp;
     }
 
-    bool operator==(const Source_point_iterator& other)
+    bool operator==(const Source_point_iterator& other) const
     {
       return m_iterator == other.m_iterator;
     }
 
-    bool operator!=(const Source_point_iterator& other)
+    bool operator!=(const Source_point_iterator& other) const
     {
       return m_iterator != other.m_iterator;
     }
@@ -413,7 +413,7 @@ public:
                                  + (sizeof(Cone_expansion_event) + (sizeof(Cone_expansion_event*)) * m_peakQueueSize)
                                  + (sizeof(Cone_tree_node) * m_nodesAtPeakQueue);
 
-    return std::max(peakNodeUsage, peakQueueUsage);
+    return (std::max)(peakNodeUsage, peakQueueUsage);
   }
 
   /// \endcond
@@ -977,8 +977,6 @@ private:
     typename Traits::Construct_point_on_2 cpo2(m_traits.construct_point_on_2_object());
     typename Traits::Compute_parametric_distance_along_segment_2 pdas2(m_traits.compute_parametric_distance_along_segment_2_object());
 
-    typedef typename cpp11::result_of<typename Traits::Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
-
     Point_2 leftPoint;
     Point_2 rightPoint;
 
@@ -1003,7 +1001,7 @@ private:
     }
     else
     {
-      LineLineIntersectResult cgalIntersection = i2(cl2(segment), cl2(leftBoundary));
+      const auto cgalIntersection = i2(cl2(segment), cl2(leftBoundary));
 
       if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
       {
@@ -1015,7 +1013,7 @@ private:
       }
       else
       {
-        Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 >= FT(1))
@@ -1061,7 +1059,7 @@ private:
     }
     else
     {
-      LineLineIntersectResult cgalIntersection = i2(cl2(segment), cl2(rightBoundary));
+      const auto cgalIntersection = i2(cl2(segment), cl2(rightBoundary));
 
       if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
       {
@@ -1073,7 +1071,7 @@ private:
       }
       else
       {
-        Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 <= FT(0))
@@ -1611,6 +1609,8 @@ private:
 
     for (boost::tie(current, end) = vertices(m_graph); current != end; ++current)
     {
+      if (halfedge(*current, m_graph)==Graph_traits::null_halfedge())
+        continue;
       std::size_t vertexIndex = get(m_vertexIndexMap, *current);
       m_vertexIsPseudoSource[vertexIndex] = (is_saddle_vertex(*current) || is_boundary_vertex(*current));
     }
@@ -1695,8 +1695,6 @@ private:
     typename Traits::Construct_target_2 construct_target_2(m_traits.construct_target_2_object());
     typename Traits::Intersect_2 intersect_2(m_traits.intersect_2_object());
 
-    typedef typename cpp11::result_of<typename Traits::Intersect_2 (Line_2, Line_2)>::type LineLineIntersectResult;
-
     Cone_tree_node* current = startNode;
     Point_2 currentLocation(startLocation);
 
@@ -1711,7 +1709,7 @@ private:
           const Point_2& currentSourceImage = current->source_image();
           Ray_2 rayToLocation(construct_ray_2(currentSourceImage, currentLocation));
 
-          LineLineIntersectResult cgalIntersection = intersect_2(construct_line_2(entrySegment), construct_line_2(rayToLocation));
+          const auto cgalIntersection = intersect_2(construct_line_2(entrySegment), construct_line_2(rayToLocation));
 
           CGAL_assertion(bool(cgalIntersection));
 
@@ -2192,7 +2190,7 @@ public:
   /// @{
 
   /*!
-  \brief Creates a shortest paths object using `tm` as input.
+  \brief creates a shortest paths object using `tm` as input.
 
   Equivalent to `Surface_mesh_shortest_path(tm, get(boost::vertex_index, tm), get(boost::halfedge_index, tm),
                                             get(boost::face_index, tm), get(CGAL::vertex_point, tm), traits)`.
@@ -2215,7 +2213,7 @@ public:
   }
 
   /*!
-  \brief Creates a shortest paths object using `tm` as input.
+  \brief creates a shortest paths object using `tm` as input.
 
   \details No copy of the `Triangle_mesh` is made, only a reference to the `tm` is held.
 
@@ -2271,7 +2269,7 @@ public:
   /// @{
 
   /*!
-  \brief Adds `v` as a source for the shortest path queries.
+  \brief adds `v` as a source for the shortest path queries.
 
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
@@ -2286,7 +2284,7 @@ public:
   }
 
   /*!
-  \brief Adds a point inside the face `f` as a source for the shortest path queries.
+  \brief adds a point inside the face `f` as a source for the shortest path queries.
 
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
@@ -2303,7 +2301,7 @@ public:
   }
 
   /*!
-  \brief Adds a point inside a face as a source for the shortest path queries,
+  \brief adds a point inside a face as a source for the shortest path queries,
   equivalent to `Surface_mesh_shortest_path::add_source_point(location.first, location.second);`
   */
   Source_point_iterator add_source_point(const Face_location& location)
@@ -2319,7 +2317,7 @@ public:
   }
 
   /*!
-  \brief Adds a range of points as sources for the shortest path queries.
+  \brief adds a range of points as sources for the shortest path queries.
 
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
@@ -2339,7 +2337,7 @@ public:
   }
 
   /*!
-  \brief Removes a source point for the shortest path queries.
+  \brief removes a source point for the shortest path queries.
 
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
@@ -2359,7 +2357,7 @@ public:
   }
 
   /*!
-  \brief Removes all source points for the shortest path queries.
+  \brief removes all source points for the shortest path queries.
 
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
@@ -2394,7 +2392,7 @@ public:
   }
 
   /*!
-  \brief Removes all data, the class is as if it was constructed.
+  \brief removes all data, the class is as if it was constructed.
 
   \details All internal containers are cleared  and the internal
   sequence tree is also cleared.  For a version which defers deletion until
@@ -2411,7 +2409,7 @@ public:
   /// @{
 
   /*!
-  \brief Returns an iterator to the first source point location
+  \brief returns an iterator to the first source point location
 
   \details The elements will appear in the order they were inserted to the
   structure by calls to `add_source_point()` or `add_source_points()`.  Deleted
@@ -2428,7 +2426,7 @@ public:
   }
 
   /*!
-  \brief Returns an iterator to one past the last source point location
+  \brief returns an iterator to one past the last source point location
 
   \return An iterator to one past-the-end in the list of stored source points.
   */
@@ -2438,7 +2436,7 @@ public:
   }
 
   /*!
-  \brief Returns the total number of source points used for the shortest path queries.
+  \brief returns the total number of source points used for the shortest path queries.
   */
   std::size_t number_of_source_points() const
   {
@@ -2446,7 +2444,7 @@ public:
   }
 
   /*!
-  \brief Determines if the internal sequence tree is valid (already built and no new source point has been added).
+  \brief determines if the internal sequence tree is valid (already built and no new source point has been added).
 
   \return true if the structure needs to be rebuilt, false otherwise
   */
@@ -2522,7 +2520,7 @@ public:
   /// @{
 
   /*!
-  \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
+  \brief visits the sequence of edges, vertices and faces traversed by the shortest path
   from a vertex to any source point.
 
   \details Visits simplices, starting from the query vertex, back to
@@ -2560,7 +2558,7 @@ public:
   }
 
   /*!
-  \brief Visits the sequence of edges, vertices and faces traversed by the shortest path
+  \brief visits the sequence of edges, vertices and faces traversed by the shortest path
   from any surface location to any source point.
 
   \details Visits simplices, starting from the query point, back to
@@ -2657,7 +2655,7 @@ public:
   /// @{
 
   /*!
-  \brief Returns the 3-dimensional coordinates at the barycentric coordinates
+  \brief returns the 3-dimensional coordinates at the barycentric coordinates
     of the given face.
 
   \details The following static overloads are also available:
@@ -2698,7 +2696,7 @@ public:
   /// \endcond
 
   /*!
-  \brief Returns the 3-dimensional coordinates at the parametric location
+  \brief returns the 3-dimensional coordinates at the parametric location
     along the given edge.
 
   \details The following static overloads are also available:
@@ -2737,7 +2735,7 @@ public:
   /// \endcond
 
   /*!
-  \brief Returns the 3-dimensional coordinates of the given vertex.
+  \brief returns the 3-dimensional coordinates of the given vertex.
 
   \param vertex A vertex of the input face graph
   */
@@ -2752,7 +2750,7 @@ public:
   /// @{
 
   /*!
-  \brief Returns the location of the given vertex as a `Face_location`
+  \brief returns the location of the given vertex as a `Face_location`
 
   \details The following static overload is also available:
     - `static Face_location face_location(vertex_descriptor vertex, const Triangle_mesh& tm, const Traits& traits = Traits())`
@@ -2789,7 +2787,7 @@ public:
   /// \endcond
 
   /*!
-  \brief Returns a location along the given edge as a `Face_location`.
+  \brief returns a location along the given edge as a `Face_location`.
 
   \details The following static overload is also available:
     - `static Face_location face_location(halfedge_descriptor he, FT t, const Triangle_mesh& tm, const Traits& traits = Traits())`
@@ -2830,7 +2828,7 @@ public:
   /// @{
 
   /*!
-  \brief Returns the nearest face location to the given point.
+  \brief returns the nearest face location to the given point.
     Note that this will (re-)build an `AABB_tree` on each call. If you need
     to  call this function more than once, use `build_aabb_tree()` to cache a
     copy of the `AABB_tree`, and use the overloads of this function
@@ -2865,7 +2863,7 @@ public:
   /// \endcond
 
   /*!
-  \brief Returns the face location nearest to the given point.
+  \brief returns the face location nearest to the given point.
 
   \details The following static overload is also available:
     - static Face_location locate(const %Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
@@ -2902,7 +2900,7 @@ public:
   /// \endcond
 
   /*!
-  \brief Returns the face location along `ray` nearest to its source point.
+  \brief returns the face location along `ray` nearest to its source point.
     Note that this will (re-)build an `AABB_tree` on each call. If you need
     to  call this function more than once, use `build_aabb_tree()` to cache a
     copy of the `AABB_tree`, and use the overloads of this function
@@ -2937,7 +2935,7 @@ public:
   /// \endcond
 
   /*!
-  \brief Returns the face location along `ray` nearest to
+  \brief returns the face location along `ray` nearest to
     its source point.
 
   \details The following static overload is also available:
@@ -3015,7 +3013,7 @@ public:
   /// \endcond
 
   /*!
-  \brief Creates an `AABB_tree` suitable for use with `locate`.
+  \brief creates an `AABB_tree` suitable for use with `locate`.
 
   \details The following static overload is also available:
     - `static void build_aabb_tree(const Triangle_mesh& tm, AABB_tree<AABBTraits>& outTree)`

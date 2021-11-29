@@ -36,8 +36,8 @@ struct Scene_edit_polyhedron_item_priv
     nb_control = 0;
     nb_axis = 0;
     nb_bbox = 0;
-    spheres = NULL;
-    spheres_ctrl = NULL;
+    spheres = nullptr;
+    spheres_ctrl = nullptr;
     need_change = false;
   }
   ~Scene_edit_polyhedron_item_priv()
@@ -139,7 +139,7 @@ struct Facegraph_selector
 {
 
   Facegraph_selector()
-    :d(NULL){} //used for the const functions
+    :d(nullptr){} //used for the const functions
 
   Scene_edit_polyhedron_item_priv* d;
   Facegraph_selector(Scene_edit_polyhedron_item_priv* d)
@@ -357,7 +357,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
 
             if(spheres)
             {
-              CGAL::Color c(0,255,0);
+              CGAL::IO::Color c(0,255,0);
               EPICK::Point_3 point(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
               spheres->add_sphere(EPICK::Sphere_3(point, length_of_axis/15.0*length_of_axis/15.0), 0, c);
             }
@@ -391,7 +391,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
 
             if(spheres_ctrl)
             {
-              CGAL::Color c(255*r,0,255*b);
+              CGAL::IO::Color c(255*r,0,255*b);
 
               EPICK::Point_3 center(p.x()+offset.x,
                                      p.y()+offset.y,
@@ -441,10 +441,12 @@ struct ROI_faces_pmap<SMesh>
 {
   typedef sm_face_descriptor                        key_type;
   typedef std::size_t                               value_type;
-  typedef std::size_t&                              reference;
+  typedef std::size_t                               reference;
   typedef boost::read_write_property_map_tag        category;
+
   SMesh* mesh;
   SMesh::Property_map<sm_face_descriptor,bool> irmap;
+
   ROI_faces_pmap(std::map<key_type, value_type>*, SMesh* mesh)
     :mesh(mesh)
   {
@@ -482,14 +484,15 @@ struct ROI_border_pmap
   ROI_border_pmap(std::set<m_ed>* set_)
     : m_set_ptr(set_)
   {}
-  friend bool get(const ROI_border_pmap<Mesh>& map, const key_type& k)
+
+  friend value_type get(const ROI_border_pmap<Mesh>& map, const key_type& k)
   {
-    CGAL_assertion(map.m_set_ptr != NULL);
+    CGAL_assertion(map.m_set_ptr != nullptr);
     return map.m_set_ptr->count(k);
   }
   friend void put(ROI_border_pmap<Mesh>& map, const key_type& k, const value_type b)
   {
-    CGAL_assertion(map.m_set_ptr != NULL);
+    CGAL_assertion(map.m_set_ptr != nullptr);
     if (b)              map.m_set_ptr->insert(k);
     else if(get(map,k)) map.m_set_ptr->erase(k);
   }
@@ -528,8 +531,10 @@ struct Is_constrained_map<SMesh>
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
+
   SMesh::Property_map<sm_vertex_descriptor,int> icmap;
   SMesh* mesh;
+
   Is_constrained_map()
   {}
   Is_constrained_map(std::vector<int>* vec, SMesh* mesh)
@@ -544,7 +549,7 @@ struct Is_constrained_map<SMesh>
 
   void clean(){ mesh->remove_property_map(icmap); }
 
-  friend bool get(const Is_constrained_map<SMesh>& map, const key_type& k)
+  friend value_type get(const Is_constrained_map<SMesh>& map, const key_type& k)
   {
     return map.icmap[k] != -1;
   }
@@ -767,7 +772,7 @@ struct Is_selected_property_map{
   Mesh* mesh;
   std::vector<bool>* is_selected_ptr;
   Is_selected_property_map()
-    : mesh(NULL), is_selected_ptr(NULL) {}
+    : mesh(NULL), is_selected_ptr(nullptr) {}
   Is_selected_property_map(std::vector<bool>& is_selected, Mesh* mesh)
     : mesh(mesh), is_selected_ptr( &is_selected) {}
 
@@ -779,13 +784,13 @@ struct Is_selected_property_map{
 
   friend bool get(Is_selected_property_map<Mesh> map, mesh_vd v)
   {
-    CGAL_assertion(map.is_selected_ptr!=NULL);
+    CGAL_assertion(map.is_selected_ptr!=nullptr);
     return (*map.is_selected_ptr)[map.id(v)];
   }
 
   friend void put(Is_selected_property_map<Mesh> map, mesh_vd v, bool b)
   {
-    CGAL_assertion(map.is_selected_ptr!=NULL);
+    CGAL_assertion(map.is_selected_ptr!=nullptr);
     (*map.is_selected_ptr)[map.id(v)]=b;
   }
 };
@@ -885,7 +890,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
      &&d->state.shift_pressing)
   {
     QWheelEvent *w_event = static_cast<QWheelEvent*>(event);
-    int steps = w_event->delta() / 120;
+    int steps = w_event->angleDelta().y() / 120;
     d->expand_or_reduce(steps, d->sm_item->polyhedron());
   }
   if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)
@@ -1135,7 +1140,7 @@ void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
     Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
-      if(viewer == NULL)
+      if(viewer == nullptr)
         continue;
       setBuffersInit(viewer, false);
       viewer->update();
@@ -1187,7 +1192,7 @@ void Scene_edit_polyhedron_item::setVisible(bool b) {
   d->sm_item->setVisible(b);
   Scene_item::setVisible(b);
   if(!b) {
-    Three::mainViewer()->setManipulatedFrame(NULL);
+    Three::mainViewer()->setManipulatedFrame(nullptr);
   }
 }
 void Scene_edit_polyhedron_item::setColor(QColor c) {
@@ -1204,7 +1209,7 @@ void Scene_edit_polyhedron_item::setRenderingMode(RenderingMode m) {
   Scene_item::setRenderingMode(m);
 }
 Scene_edit_polyhedron_item* Scene_edit_polyhedron_item::clone() const {
-  return 0;
+  return nullptr;
 }
 void Scene_edit_polyhedron_item::select(
           double orig_x,
@@ -1260,7 +1265,7 @@ struct Reset_spheres_ctrl
 {
   Scene_edit_polyhedron_item_priv* d;
   Reset_spheres_ctrl(Scene_edit_polyhedron_item_priv* d) : d(d) {}
-  void operator()() const { d->spheres_ctrl = NULL; }
+  void operator()() const { d->spheres_ctrl = nullptr; }
 };
 
 void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
@@ -1294,13 +1299,13 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
   }
   else if(!b )
   {
-    if(d->spheres!=0)
+    if(d->spheres!=nullptr)
     {
       unlockChild(d->spheres);
       removeChild(d->spheres);
       scene->erase(scene->item_id(d->spheres));
     }
-    if(d->spheres_ctrl!=0)
+    if(d->spheres_ctrl!=nullptr)
     {
       unlockChild(d->spheres_ctrl);
       removeChild(d->spheres_ctrl);
@@ -1320,7 +1325,7 @@ void Scene_edit_polyhedron_item::set_k_ring(int v) { d->k_ring_selector.k_ring =
 
 void Scene_edit_polyhedron_item::reset_spheres()
 {
-  d->spheres = NULL;
+  d->spheres = nullptr;
 }
 
 
@@ -1684,9 +1689,9 @@ bool Scene_edit_polyhedron_item::activate_closest_manipulated_frame(int x, int y
 
   if(!d->state.ctrl_pressing)
   {
-    if(viewer->manipulatedFrame() == NULL)
+    if(viewer->manipulatedFrame() == nullptr)
     { return false;}
-    viewer->setManipulatedFrame(NULL);
+    viewer->setManipulatedFrame(nullptr);
     return true;
   }
 

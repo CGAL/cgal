@@ -10,8 +10,8 @@ maximum value of the `z`-coordinate of a face of a triangulation.
 the value type  `Face`, which must have a
 nested type `Vertex`, which must have a nested type `Point`,
 whose `Kernel_traits<Point>::Kernel` must have a nested type `FT`.
-These requirements are fulfilled, if one uses a %CGAL triangulation
-and a %CGAL `Kernel`.
+These requirements are fulfilled, if one uses a \cgal triangulation
+and a \cgal `Kernel`.
 
 \cgalModels `Interval`
 

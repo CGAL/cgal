@@ -1,13 +1,16 @@
 (function() {
   'use strict';
 
-  var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+))\//;
+  var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+)(-beta\d)?)\//;
   var url_local =  /.*\/doc_output\//;
-  var current_version_local = '5.1-dev'
+  var current_version_local = '5.3-beta1'
   var all_versions = [
       'master',
+      '5.3',
       'latest',
-      '5.0.2',
+      '5.2.3',
+      '5.1.5',
+      '5.0.4',
       '4.14.3',
       '4.13.2',
       '4.12.2',
@@ -23,6 +26,15 @@
   ];
 
   function build_select(current_version) {
+    if( current_version == 'master') {
+      let top_elt = document.getElementById("top");
+
+      let first_element = top_elt.childNodes[0];
+      let new_div = document.createElement("p");
+      new_div.innerHTML = '⚠️ This documentation corresponds to the <a style="font-familly: monospace;" href="https://github.com/CGAL/cgal/tree/master">master</a> development branch of CGAL. It might diverge from the official releases.';
+      new_div.style.cssText = "background-color: #ff9800; margin: 1ex auto 1ex 1em; padding: 1ex; border-radius: 1ex; display: inline-block;"
+      let OK = top_elt.insertBefore(new_div, first_element);
+    }
     var buf = ['<select>'];
     $.each(all_versions, function(id) {
       var version = all_versions[id];
@@ -44,7 +56,7 @@
   }
 
   function patch_url(url, new_version) {
-    if(url.includes("doc.cgal.org")||url.includes("cgal.geometryfactory.com")){  
+    if(url.includes("doc.cgal.org")||url.includes("cgal.geometryfactory.com")){
       return url.replace(url_re, 'doc.cgal.org/' + new_version + '/');
     }
     else{
@@ -65,7 +77,7 @@
       var motherNode=$("#back-nav ul")[0];
       var node = document.createElement("LI");
       var spanNode = document.createElement("SPAN");
-      var titleNode =document.createTextNode("CGAL Version: "); 
+      var titleNode =document.createTextNode("CGAL Version: ");
       var textNode = document.createTextNode("x.y");
       spanNode.setAttribute("class", "version_menu");
       spanNode.appendChild(textNode);
@@ -90,4 +102,4 @@
         }
      }
   });
-})(); 
+})();

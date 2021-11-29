@@ -6,7 +6,6 @@
 /// \defgroup PkgTriangulation3TriangulationClasses Triangulation Classes
 /// \ingroup PkgTriangulation3Ref
 
-
 /// \defgroup PkgTriangulation3TraitsClasses Traits Classes
 /// \ingroup PkgTriangulation3Ref
 
@@ -19,6 +18,9 @@
   \endcode
 */
 /// \defgroup PkgDrawTriangulation3 Draw a Triangulation 3
+/// \ingroup PkgTriangulation3Ref
+
+/// \defgroup PkgIOTriangulation3 I/O for a Triangulation 3
 /// \ingroup PkgTriangulation3Ref
 
 /*!
@@ -121,5 +123,8 @@ is opposite to the vertex with the same index. See
 
 - \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink
 
+\cgalCRPSection{I/O}
+ - \link PkgIOTriangulation3 CGAL::Triangulation_3::file_input<Tr_src, ConvertVertex, ConvertCell>()\endlink
+ - \link PkgIOTriangulation3 CGAL::file_input<Tr_src, Tr_tgt, ConvertVertex, ConvertCell>()\endlink
 */
 

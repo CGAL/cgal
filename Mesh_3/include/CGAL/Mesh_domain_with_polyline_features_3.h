@@ -29,7 +29,7 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/Mesh_3/internal/indices_management.h>
 
 #include <vector>
 #include <set>
@@ -40,8 +40,7 @@
 #include <boost/variant.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 namespace CGAL {
 
@@ -568,27 +567,15 @@ public:
 /// of the base class.
 /// @{
 
-  Mesh_domain_with_polyline_features_3()
-    : MeshDomain_3()
+  template <typename ... T>
+  Mesh_domain_with_polyline_features_3(const T& ...o)
+    : MeshDomain_3(o...)
     , current_corner_index_(1)
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-  template <typename T1>
-  Mesh_domain_with_polyline_features_3
-  (const T1& o1, typename boost::disable_if<boost::is_same<T1,Self>,
-                                            CGAL::Tag_false>::type* = 0)
-    : MeshDomain_3(o1)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
+  Mesh_domain_with_polyline_features_3(const Mesh_domain_with_polyline_features_3&) = default;
 
-  template <typename T1, typename T2, typename ... T>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, const T& ...o)
-    : MeshDomain_3(o1, o2, o...)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
 /// @}
 
 /// \name Operations
@@ -871,7 +858,7 @@ public:
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
 
 private:
-  mutable boost::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
+  mutable std::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
@@ -896,7 +883,7 @@ public:
     if(curves_aabb_tree_ptr_) {
       curves_aabb_tree_ptr_->clear();
     } else {
-      curves_aabb_tree_ptr_ = boost::make_shared<Curves_AABB_tree>();
+      curves_aabb_tree_ptr_ = std::make_shared<Curves_AABB_tree>();
     }
     for(typename Edges::const_iterator
           edges_it = edges_.begin(),
@@ -1117,25 +1104,29 @@ add_features(InputIterator first, InputIterator end,
 namespace details {
 
 template <typename PolylineWithContext>
-struct Get_content_from_polyline_with_context {
+struct Get_content_from_polyline_with_context
+{
   typedef Get_content_from_polyline_with_context Self;
-  typedef const PolylineWithContext& key_type;
-  typedef const typename PolylineWithContext::Bare_polyline& value_type;
-  typedef value_type reference;
+  typedef PolylineWithContext key_type;
+  typedef typename PolylineWithContext::Bare_polyline value_type;
+  typedef const value_type& reference;
   typedef boost::readable_property_map_tag category;
-  friend value_type get(const Self, key_type polyline) {
+
+  friend reference get(const Self&, const key_type& polyline) {
     return polyline.polyline_content;
   }
 }; // end Get_content_from_polyline_with_context<PolylineWithContext>
 
 template <typename PolylineWithContext>
-struct Get_patches_id_from_polyline_with_context {
+struct Get_patches_id_from_polyline_with_context
+{
   typedef Get_patches_id_from_polyline_with_context Self;
-  typedef const PolylineWithContext& key_type;
-  typedef const typename PolylineWithContext::Context::Patches_ids& value_type;
-  typedef value_type reference;
+  typedef PolylineWithContext key_type;
+  typedef typename PolylineWithContext::Context::Patches_ids value_type;
+  typedef const value_type& reference;
   typedef boost::readable_property_map_tag category;
-  friend value_type get(const Self, key_type polyline) {
+
+  friend reference get(const Self&, const key_type& polyline) {
     return polyline.context.adjacent_patches_ids;
   }
 }; // end Get_patches_id_from_polyline_with_context<PolylineWithContext>
@@ -1165,6 +1156,13 @@ add_features_and_incidences(InputIterator first, InputIterator end,
 
     Curve_index curve_id = insert_edge(polyline.begin(), polyline.end());
     edges_incidences_[curve_id].insert(patches_ids.begin(), patches_ids.end());
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
+    std::cerr << "Curve #" << curve_id << " is incident to the following patches: {";
+    for(auto id: patches_ids) {
+      std::cerr << " " << id;
+    }
+    std::cerr << "}\n";
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 1
     *indices_out++ = curve_id;
   }
 
@@ -1410,7 +1408,7 @@ compute_corners_incidences()
                      std::inserter(incidences,
                                    incidences.begin()));
     }
-#ifdef CGAL_MESH_3_PROTECTION_DEBUG
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
     display_corner_incidences(std::cerr, cit->first, id);
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 

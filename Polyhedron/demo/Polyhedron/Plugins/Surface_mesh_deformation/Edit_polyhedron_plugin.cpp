@@ -27,7 +27,7 @@ class Polyhedron_demo_edit_polyhedron_plugin :
 
 public:
   Polyhedron_demo_edit_polyhedron_plugin()
-    : Polyhedron_demo_plugin_helper(), dock_widget(NULL)
+    : Polyhedron_demo_plugin_helper(), dock_widget(nullptr)
   { }
   ~Polyhedron_demo_edit_polyhedron_plugin()
   {
@@ -376,14 +376,14 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
   else
   {
     ui_widget.ShowAsSphereCheckBox->setChecked(false);
-    Scene_polyhedron_selection_item* selection_item = NULL;
+    Scene_polyhedron_selection_item* selection_item = nullptr;
     for(int i = 0; i<scene->numberOfEntries(); i++)
     {
       selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
       if (selection_item)
         break;
       else
-        selection_item = NULL;
+        selection_item = nullptr;
     }
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id i , scene->selectionIndices())
     {
@@ -494,8 +494,8 @@ Polyhedron_demo_edit_polyhedron_plugin::convert_to_plain_facegraph(Item_id i,
 void Polyhedron_demo_edit_polyhedron_plugin::on_importSelectionPushButton_clicked()
 {
 
-Scene_polyhedron_selection_item* selection_item = NULL;
-Scene_edit_polyhedron_item* edit_item = NULL;
+Scene_polyhedron_selection_item* selection_item = nullptr;
+Scene_edit_polyhedron_item* edit_item = nullptr;
 bool need_sel(true), need_edit(true);
 
 // find selection_item and edit_item in selection

@@ -36,6 +36,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QDialog>
+#include <QMessageBox>
 
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
@@ -213,13 +214,13 @@ protected:
   bool eventFilter(QObject *obj, QEvent *ev)
   {
     QGraphicsView* v = qobject_cast<QGraphicsView*>(obj);
-    if(v == NULL) {
+    if(v == nullptr) {
       QWidget* viewport = qobject_cast<QWidget*>(obj);
-      if(viewport == NULL) {
+      if(viewport == nullptr) {
         return false;
       }
       v = qobject_cast<QGraphicsView*>(viewport->parent());
-      if(v == NULL) {
+      if(v == nullptr) {
         return false;
       }
     }
@@ -249,12 +250,17 @@ protected:
     }
     case QEvent::Wheel: {
       QWheelEvent* event = static_cast<QWheelEvent*>(ev);
-      QPointF old_pos = v->mapToScene(event->pos());
-      if(event->delta() <0)
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+      QPoint pos = event->pos();
+#else
+      QPointF pos = event->position();
+#endif
+      QPointF old_pos = v->mapToScene(pos.x(), pos.y());
+      if(event->angleDelta().y() <0)
         v->scale(1.2, 1.2);
       else
         v->scale(0.8, 0.8);
-      QPointF new_pos = v->mapToScene(event->pos());
+      QPointF new_pos = v->mapToScene(pos.x(), pos.y());
       QPointF delta = new_pos - old_pos;
       v->translate(delta.x(), delta.y());
       v->update();
@@ -450,17 +456,28 @@ public Q_SLOTS:
           qobject_cast<Scene_polyhedron_selection_item*>
           (scene->item(scene->mainSelectionIndex()));
     if(!sel_item)
+    {
+      QMessageBox::information(mw, "Error", "No selection found.");
       return;
+    }
     if(sel_item->selected_facets.empty())
     {
+      QMessageBox::information(mw, "Error", "No selected facets.");
       cleanup();
       return;
     }
     if(!CGAL::is_closed(*sel_item->polyhedron()))
     {
+      QMessageBox::information(mw, "Error", "The surface mesh must be closed.");
       cleanup();
       return;
     }
+
+    connect(sel_item, &Scene_polyhedron_selection_item::aboutToBeDestroyed, this,
+            [this](){
+      sel_item = nullptr;
+    });
+
     if(visu_item)
       scene->erase(scene->item_id(visu_item));
     visu_item = nullptr;
@@ -490,10 +507,10 @@ public Q_SLOTS:
       }
 
       std::cout << "Parameterized with ARAP (SM) computed." << std::endl;
-      xmin = std::numeric_limits<double>::max();
-      xmax = std::numeric_limits<double>::min();
-      ymin = std::numeric_limits<double>::max();
-      ymax = std::numeric_limits<double>::min();
+      xmin = (std::numeric_limits<double>::max)();
+      xmax = (std::numeric_limits<double>::min)();
+      ymin = (std::numeric_limits<double>::max)();
+      ymax = (std::numeric_limits<double>::min)();
       uv_map_3 =
           sm->add_property_map<SMesh::Vertex_index, Point_3>("v:uv3").first;
       for(SMesh::Vertex_index v : sm->vertices())
@@ -568,7 +585,10 @@ public Q_SLOTS:
     Tree aabb_tree(faces(*sm).first, faces(*sm).second, *sm, uv_map_3);
 
     visu_item = new Scene_polylines_item;
-
+    connect(visu_item, &Scene_polylines_item::aboutToBeDestroyed, this,
+            [this](){
+      visu_item = nullptr;
+    });
 
     // compute 3D coordinates
     transfo =
@@ -752,6 +772,8 @@ public Q_SLOTS:
     }
 
     SMesh result;
+    if(!sel_item)
+      return;
     CGAL::copy_face_graph(*sel_item->polyhedron(), result);
     bool OK = PMP::corefine_and_compute_difference(result, text_mesh_complete, result);
 
@@ -795,7 +817,8 @@ public Q_SLOTS:
       textMesh = new Scene_surface_mesh_item(text_mesh);
       connect(textMesh, &Scene_surface_mesh_item::aboutToBeDestroyed,
               this, [this](){
-        textMesh = nullptr;});
+        textMesh = nullptr;
+      });
       textMesh->setName("Extruded Text");
       scene->addItem(textMesh);
     }
@@ -902,7 +925,8 @@ private:
     dock_widget->rot_slider->setValue(0);
     translation = EPICK::Vector_2(0,0);
     uv_map_3.reset();
-    graphics_scene->clear();
+    if(graphics_scene)
+      graphics_scene->clear();
     if(sel_item)
     {
       scene->erase(scene->item_id(sel_item));

@@ -18,7 +18,7 @@
 #ifndef CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 #define CGAL_MESH_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_BASE_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -65,7 +65,23 @@ namespace CGAL {
                                  CGAL::internal::CC_iterator<DSC, Const> > >()(p);
   }
 
-
+  struct Hash_compare_for_TBB {
+    template < class DSC, bool Const >
+    std::size_t hash(const std::pair<CGAL::internal::CC_iterator<DSC, Const>,
+                           CGAL::internal::CC_iterator<DSC, Const> >& p) const
+    {
+      return tbb_hasher(p);
+    }
+    template < class DSC, bool Const >
+    std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& it)
+    {
+      return CGAL::internal::hash_value(it);
+    }
+    template <typename T>
+    bool equal(const T& v1, const T& v2) const {
+      return v1 == v2;
+    }
+  };
 }
 #endif
 
@@ -191,6 +207,20 @@ public:
     init(number_of_cells_, rhs.number_of_cells_);
   }
 
+  /// Move constructor
+  Mesh_complex_3_in_triangulation_3_base(Self&& rhs)
+    : Base()
+    , tr_(std::move(rhs.tr_))
+    , edge_facet_counter_(std::move(rhs.edge_facet_counter_))
+    , manifold_info_initialized_(std::exchange(rhs.manifold_info_initialized_, false))
+  {
+    Init_number_of_elements<Concurrency_tag> init;
+    init(number_of_facets_, rhs.number_of_facets_);
+    init(number_of_cells_, rhs.number_of_cells_);
+    init(rhs.number_of_facets_); // set to 0
+    init(rhs.number_of_cells_); // set to 0
+  }
+
   /// Destructor
   ~Mesh_complex_3_in_triangulation_3_base() {}
 
@@ -203,6 +233,13 @@ public:
 
   /// Assignment operator
   Self& operator=(Self rhs)
+  {
+    swap(rhs);
+    return *this;
+  }
+
+  /// Assignment operator, also serves as move-assignment
+  Self& operator=(Self&& rhs)
   {
     swap(rhs);
     return *this;
@@ -441,15 +478,15 @@ public:
                        bool show_patches = false) const
   {
     // Call global function
-    CGAL::output_to_medit(os,*this,rebind,show_patches);
+    CGAL::IO::output_to_medit(os,*this,rebind,show_patches);
   }
 
   /// Outputs the mesh to maya
-  void output_to_maya(std::ofstream& os,
+  void output_to_maya(std::ostream& os,
                       bool surfaceOnly = true) const
   {
     // Call global function
-    CGAL::output_to_maya(os,*this,surfaceOnly);
+    CGAL::IO::output_to_maya(os,*this,surfaceOnly);
   }
 
   //-------------------------------------------------------
@@ -861,6 +898,11 @@ private:
     {
       a = b;
     }
+    template<typename T>
+    void operator()(T& a)
+    {
+      a = 0;
+    }
   };
 
   template<typename Concurrency_tag2, typename dummy = void>
@@ -888,6 +930,11 @@ private:
     {
       a = b.load();
     }
+    template<typename T>
+    void operator()(T& a)
+    {
+      a = 0;
+    }
   };
 
   template<typename dummy>
@@ -909,7 +956,8 @@ private:
 
   typedef typename Base::Pair_of_vertices Pair_of_vertices;
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef tbb::concurrent_hash_map<Pair_of_vertices, int> Edge_facet_counter;
+  typedef tbb::concurrent_hash_map<Pair_of_vertices, int,
+                                   Hash_compare_for_TBB> Edge_facet_counter;
 #else // not CGAL_LINKED_WITH_TBB
   typedef std::map<Pair_of_vertices, int> Edge_facet_counter;
 #endif // not CGAL_LINKED_WITH_TBB

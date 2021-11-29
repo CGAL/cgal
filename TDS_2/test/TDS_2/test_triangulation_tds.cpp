@@ -27,6 +27,7 @@
 
 #include <CGAL/_test_traits.h>
 #include <CGAL/_test_cls_tds_2.h>
+#include <CGAL/boost/graph/IO/Tds_2_off.h>
 
 
 

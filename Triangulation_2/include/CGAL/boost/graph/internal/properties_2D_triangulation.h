@@ -59,8 +59,6 @@ public:
 
 template <typename Tr>
 class T2_edge_weight_map
-  : public boost::put_get_helper<typename Tr::Geom_traits::FT,
-                                 T2_edge_weight_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                        category;
@@ -72,13 +70,14 @@ public:
 
   value_type operator[](key_type e) const { return approximate_sqrt(tr.segment(e).squared_length()); }
 
+  friend inline value_type get(const T2_edge_weight_map& m, key_type k) { return m[k]; }
+
 private:
   const Tr& tr;
 };
 
 template <typename Tr>
 class T2_vertex_id_map
-  : public boost::put_get_helper<int, T2_vertex_id_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -93,12 +92,13 @@ public:
     return v->id();
   }
 
+  friend inline value_type get(const T2_vertex_id_map& m, key_type k) { return m[k]; }
+
   const Tr& tr;
 };
 
 template <typename Tr>
 class T2_halfedge_id_map
-  : public boost::put_get_helper<int, T2_halfedge_id_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -128,13 +128,14 @@ public:
       return 2*(f1->edge_id(h.second)) + 1;
   }
 
+  friend inline value_type get(const T2_halfedge_id_map& m, key_type k) { return m[k]; }
+
 private:
   const Tr& tr;
 };
 
 template <typename Tr>
 class T2_edge_id_map
-  : public boost::put_get_helper<int, T2_edge_id_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -157,13 +158,14 @@ public:
       return f1->edge_id(e.second);
   }
 
+  friend inline value_type get(const T2_edge_id_map& m, key_type k) { return m[k]; }
+
 private:
   const Tr& tr;
 };
 
 template <typename Tr>
 class T2_face_id_map
-  : public boost::put_get_helper<int, T2_face_id_map<Tr> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
@@ -177,6 +179,8 @@ public:
     CGAL_precondition(!tr.is_infinite(f));
     return f->id();
   }
+
+  friend inline value_type get(const T2_face_id_map& m, key_type k) { return m[k]; }
 
 private:
   const Tr& tr;
@@ -235,23 +239,31 @@ struct T2_property_map<Tr, boost::face_index_t>
 // overloads and specializations in the boost namespace
 namespace boost {
 
-// g++ 'enumeral_type' in template unification not implemented workaround
-template <CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS, class Tag>
-struct property_map<CGAL_2D_TRIANGULATION, Tag>
-{
-  typedef typename CGAL::internal::T2_property_map<CGAL_2D_TRIANGULATION, Tag>  map_gen;
-  typedef typename map_gen::type                                                type;
-  typedef typename map_gen::const_type                                          const_type;
+#define CGAL_PM_SPECIALIZATION(TAG) \
+template <CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS> \
+struct property_map<CGAL_2D_TRIANGULATION, TAG> \
+{ \
+  typedef typename CGAL::internal::T2_property_map<CGAL_2D_TRIANGULATION, TAG>  map_gen; \
+  typedef typename map_gen::type                                                type; \
+  typedef typename map_gen::const_type                                          const_type; \
+}; \
+\
+template <CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS> \
+struct property_map<const CGAL_2D_TRIANGULATION, TAG> \
+{ \
+  typedef typename CGAL::internal::T2_property_map<CGAL_2D_TRIANGULATION, TAG>  map_gen; \
+  typedef typename map_gen::type                                                type; \
+  typedef typename map_gen::const_type                                          const_type; \
 };
 
-// see struct property_map in Polyehdron for an explanation
-template <CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS, class Tag>
-struct property_map<const CGAL_2D_TRIANGULATION, Tag>
-{
-  typedef typename CGAL::internal::T2_property_map<CGAL_2D_TRIANGULATION, Tag>  map_gen;
-  typedef typename map_gen::type                                                type;
-  typedef typename map_gen::const_type                                          const_type;
-};
+CGAL_PM_SPECIALIZATION(vertex_point_t)
+CGAL_PM_SPECIALIZATION(edge_weight_t)
+CGAL_PM_SPECIALIZATION(vertex_index_t)
+CGAL_PM_SPECIALIZATION(halfedge_index_t)
+CGAL_PM_SPECIALIZATION(edge_index_t)
+CGAL_PM_SPECIALIZATION(face_index_t)
+
+#undef CGAL_PM_SPECIALIZATION
 
 } // end namespace boost
 

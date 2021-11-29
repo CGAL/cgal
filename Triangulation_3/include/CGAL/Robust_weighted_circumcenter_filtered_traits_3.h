@@ -49,27 +49,7 @@ public:
       traits(k)
   { }
 
-#ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else // CGAL_CFG_MATCHING_BUG_6
-  typedef typename Kernel::Sphere_3                    Sphere_3;
-  typedef typename Kernel::Circle_3                    Circle_3;
-
-  result_type operator()(const Sphere_3& s) const
-  { return this->Base::operator()(s); }
-
-  result_type operator()(const Circle_3& c) const
-  { return this->Base::operator()(c); }
-
-  result_type operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
-  { return this->Base::operator()(p,q,r); }
-
-  result_type operator()(const Point_3& p, const Point_3& q) const
-  { return this->Base::operator()(p,q); }
-
-  result_type operator()(const Point_3& p) const
-  { return this->Base::operator()(p); }
-#endif // CGAL_CFG_MATCHING_BUG_6
 
   FT operator()(const Point_3& p,
                 const Point_3& q,

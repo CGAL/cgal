@@ -7,19 +7,6 @@ namespace CGAL {
 An object of class `Quadratic_program_solution` represents the solution of a linear or
 convex quadratic program of the general form
 
-\f$
-\newcommand{\qprel}{\gtreqless}
-\newcommand{\qpx}{\mathbf{x}}
-\newcommand{\qpl}{\mathbf{l}}
-\newcommand{\qpu}{\mathbf{u}}
-\newcommand{\qpc}{\mathbf{c}}
-\newcommand{\qpb}{\mathbf{b}}
-\newcommand{\qpy}{\mathbf{y}}
-\newcommand{\qpw}{\mathbf{w}}
-\newcommand{\qplambda}{\mathbf{\lambda}}
-\f$
-
-
 \f{eqnarray*}{
 \mbox{(QP)}& \mbox{minimize}
 & \qpx^{T}D\qpx+\qpc^{T}\qpx+c_0 \\

@@ -1,6 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/Writer_OFF.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
@@ -58,20 +57,18 @@ public:
 
   Index_map() { }
   template<typename PointRange>
-  Index_map(
-    const PointRange& points,
-    const std::vector< std::vector<std::size_t> >& regions) :
-  m_indices(new std::vector<int>(points.size(), -1)) {
-
+  Index_map(const PointRange& points,
+            const std::vector< std::vector<std::size_t> >& regions)
+    : m_indices(new std::vector<int>(points.size(), -1))
+  {
     for (std::size_t i = 0; i < regions.size(); ++i)
       for (const std::size_t idx : regions[i])
         (*m_indices)[idx] = static_cast<int>(i);
   }
 
-  inline friend value_type get(
-    const Index_map& index_map,
-    const key_type key) {
-
+  inline friend value_type get(const Index_map& index_map,
+                               const key_type key)
+  {
     const auto& indices = *(index_map.m_indices);
     return indices[key];
   }
@@ -91,20 +88,19 @@ int main()
   Point_vector points;
 
   // Load point set from a file.
-  const std::string input_file("data/cube.pwn");
+  const std::string input_file(CGAL::data_file_path("points_3/cube.pwn"));
     std::ifstream input_stream(input_file.c_str());
   if (input_stream.fail()) {
     std::cerr << "Failed open file \'" << input_file << "\'" << std::endl;
     return EXIT_FAILURE;
   }
+  input_stream.close();
   std::cout << "Loading point cloud: " << input_file << "...";
 
   CGAL::Timer t;
   t.start();
-    if (!input_stream ||
-    !CGAL::read_xyz_points(input_stream,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
+  if (!CGAL::IO::read_points(input_file.c_str(), std::back_inserter(points),
+                             CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()))) {
 
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;
@@ -177,8 +173,7 @@ int main()
   std::cout << "Saving...";
   t.reset();
   const std::string& output_file("data/cube_result.off");
-  std::ofstream output_stream(output_file.c_str());
-  if (output_stream && CGAL::write_off(output_stream, model))
+  if (CGAL::IO::write_OFF(output_file, model))
     std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
   else {
     std::cerr << " Failed saving file." << std::endl;

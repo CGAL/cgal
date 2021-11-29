@@ -341,9 +341,7 @@ compare_signed_distance_to_line(const typename K::Point_2& p,
                                 const typename K::Point_2& s,
                                 const K& k)
 {
-  if (k.less_signed_distance_to_line_2_object()(p, q, r, s)) return SMALLER;
-  if (k.less_signed_distance_to_line_2_object()(p, q, s, r)) return LARGER;
-  return EQUAL;
+  return k.compare_signed_distance_to_line_2_object()(p, q, r, s);
 }
 
 template <class K>
@@ -354,9 +352,7 @@ compare_signed_distance_to_line(const typename K::Line_2& l,
                                 const typename K::Point_2& q,
                                 const K& k)
 {
-  if (k.less_signed_distance_to_line_2_object()(l, p, q)) return SMALLER;
-  if (k.less_signed_distance_to_line_2_object()(l, q, p)) return LARGER;
-  return EQUAL;
+  return k.compare_signed_distance_to_line_2_object()(l, p, q);
 }
 
 template < class K >
@@ -375,6 +371,17 @@ compare_slope(const typename K::Segment_2 &s1,
               const typename K::Segment_2 &s2, const K& k)
 {
   return k.compare_slope_2_object()(s1, s2);
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_slope(const typename K::Point_2 &s1s,
+              const typename K::Point_2 &s1t,
+              const typename K::Point_2 &s2s,
+              const typename K::Point_2 &s2t,const K& k)
+{
+  return k.compare_slope_2_object()(s1s, s1t, s2s, s2t);
 }
 
 template < class K >
@@ -790,6 +797,14 @@ midpoint(const typename K::Point_2 &p,
          const typename K::Point_2 &q, const K &k)
 {
   return k.construct_midpoint_2_object()(p, q);
+}
+
+template < class K >
+inline
+typename K::Point_2
+midpoint(const typename K::Segment_2 &s, const K &k)
+{
+  return k.construct_midpoint_2_object()(s);
 }
 
 template < class K >

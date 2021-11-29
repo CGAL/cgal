@@ -87,6 +87,14 @@ Meshing_thread* cgal_code_mesh_3(QList<const SMesh*> pMeshes,
   std::cerr << " done (" << timer.time() * 1000 << " ms)" << std::endl;
 
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
+  if(polylines.empty()) {
+    if(protect_features) {
+      p_new_item->set_sharp_edges_angle(sharp_edges_angle);
+    }
+    else if (protect_borders) {
+      p_new_item->set_detect_borders(true);
+    }
+  }
 
   QString tooltip = QString("<div>From \"") + filename +
     QString("\" with the following mesh parameters"
@@ -161,6 +169,9 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.tet_shape = tet_shape;
   param.edge_sizing = edge_size;
   param.manifold = manifold;
+  param.detect_connected_components = false; // to avoid random values
+                                             // in the debug displays
+
 
   typedef ::Mesh_function<Function_mesh_domain,
                           Mesh_fnt::Implicit_domain_tag> Mesh_function;
@@ -192,7 +203,8 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  bool is_gray,
                                  float iso_value,
                                  float value_outside,
-                                 bool inside_is_less)
+                                 bool inside_is_less,
+                                 const Image* pWeights)
 {
   if (nullptr == pImage) { return nullptr; }
 
@@ -210,12 +222,50 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.tet_shape = tet_shape;
   param.manifold = manifold;
   param.image_3_ptr = pImage;
+  param.weights_ptr = pWeights;
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(surface_only);
+
+  QString tooltip = QString("\" With the following mesh parameters"
+      "<ul>"
+      "<li>Angle: %1</li>"
+      "<li>Edge size bound: %2</li>"
+      "<li>Facets size bound: %3</li>"
+      "<li>Approximation bound: %4</li>")
+    .arg(facet_angle)
+    .arg(edge_size)
+    .arg(facet_sizing)
+    .arg(facet_approx);
+  if (!surface_only)
+    tooltip += QString("<li>Tetrahedra size bound: %1</li>")
+    .arg(tet_sizing);
+  tooltip += QString("<li>Use Weighted Image: %1</li>")
+    .arg(pWeights == nullptr ? "No" : "Yes");
+  tooltip += "</ul></div>";
+
+  p_new_item->setProperty("toolTip", tooltip);
+
   if(!is_gray)
   {
     namespace p = CGAL::parameters;
 
-    Image_mesh_domain* p_domain = new Image_mesh_domain
+    Image_mesh_domain* p_domain;
+#ifdef CGAL_USE_ITK
+    if(nullptr != pWeights)
+    {
+      p_domain = new Image_mesh_domain
+      (Image_mesh_domain::create_labeled_image_mesh_domain
+       (p::image = *pImage,
+        p::weights = *pWeights,
+        p::relative_error_bound = 1e-6,
+        p::construct_surface_patch_index =
+        [](int i, int j) { return (i * 1000 + j); }
+       )
+      );
+    }
+    else
+#endif
+    {
+      p_domain = new Image_mesh_domain
       (Image_mesh_domain::create_labeled_image_mesh_domain
        (p::image = *pImage,
         p::relative_error_bound = 1e-6,
@@ -223,6 +273,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
           [](int i, int j) { return (i * 1000 + j); }
         )
        );
+    }
 
     if(protect_features && polylines.empty()){
       std::vector<std::vector<Bare_point> > polylines_on_bbox;

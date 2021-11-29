@@ -1,6 +1,0 @@
-#!/bin/bash
-
-export OPTIMIZATION_FLAGS="-O2 -DNDEBUG -I/KM/usr/hachenb/CGAL2/Nef_3/include"
-
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 
-labrun -v --log=Kernel -n union_of_rotated_cylinders --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_EXTENDED_HOMOGENEOUS' ./union_of_rotated_cylinders off/ngon1000.off input/10e-4.sinus 

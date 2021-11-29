@@ -37,7 +37,7 @@ class Cluster_size : public CGAL::Classification::Feature_base
 public:
 
   /*!
-    \brief Constructs the feature.
+    \brief constructs the feature.
 
     \tparam ClusterRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator` and its value type is the key type of

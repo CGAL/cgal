@@ -2,8 +2,8 @@
 \page windows Using %CGAL on Windows (with Visual C++)
 \cgalAutoToc
 
-\cgal \cgalReleaseNumber is supported for the following \sc{MS} Visual `C++` compilers:
-14.0, 15.9, 16.0 (\sc{Visual Studio} 2015, 2017, and 2019).
+\cgal \cgalReleaseNumber is supported for the following \ms Visual `C++` compilers:
+14.0, 15.9, 16.0 (\visualstudio 2015, 2017, and 2019).
 
 \cgal is a library that has mandatory dependencies that must be first installed:
 \ref thirdpartyBoost and \ref thirdpartyMPFR.
@@ -16,9 +16,9 @@ installation instructions.
 
 If you choose to use `vcpkg`, you might have to bootstrap and download
 and compile it, but from then on `vcpkg` will make your life easier.
-On the other hand, if you need to specify a specific version, or have already installed
+On the other hand, if you need to use a specific version, or have already installed
 a certain version of a dependency and do not wish to potentially have multiple versions installed,
-you will want to use the \cgal Installer.
+you will want to use the \cgal source archive.
 
 We explain the two approaches in the next two sections.
 
@@ -43,12 +43,16 @@ We refer to the
 <a href="https://github.com/microsoft/vcpkg/blob/master/docs/examples/installing-and-using-packages.md#step-2-use">official documentation</a>
 of `vcpkg` if you want to compile for an older version of a compiler.
 
+Because of a bug with gmp in vcpkg for windows, you need to install `yasm-tool` in 32 bits to be able to correctly build gmp 64bits, needed for cgal:
+
+    C:\dev\vcpkg> ./vcpkg.exe install yasm-tool:x86-windows
+
 You are now ready to install \cgal:
 
     C:\dev\vcpkg> ./vcpkg.exe install cgal
 
-This will take several minutes as it downloads \mpir (a fork of \gmp),
-\mpfr, all boost header files, and it will compile \mpir and \mpfr, as well
+This will take several minutes as it downloads  \gmp,
+\mpfr, all boost header files, and it will compile \gmp and \mpfr, as well
 as several boost libraries.
 Afterwards, you will find the include files, libraries, and dlls in the
 subdirectory `C:\dev\vcpkg\installed\x64-windows`.
@@ -60,7 +64,7 @@ Note that \cgal is a header-only library, and there are therefore no `lib` or `d
 In this section we show how to compile a program that uses \cgal.
 The examples you find in these User Manual pages are not downloaded when you install \cgal
 with the Vcpkg library manager. You must download them separately from the following download page:
-<a href="https://github.com/CGAL/cgal/releases/download/releases/CGAL-\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.zip">CGAL-\cgalReleaseNumber-examples.zip</a>
+<a href="https://github.com/CGAL/cgal/releases/download/v\cgalReleaseNumber/CGAL-\cgalReleaseNumber-examples.zip">CGAL-\cgalReleaseNumber-examples.zip</a>
 
 Assuming you have unzipped this file in your home directory `C:\Users\Me`,
 we will next compile an example from the 2D Triangulation package.
@@ -88,6 +92,11 @@ When you hit the *Configure* button, you must:
 <li>select *Specify toolchain file for cross compilation* (the file `vcpkg.cmake` within the directory
 where you have installed `vcpkg`, e.g. `C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake`).</li>
 </ul>
+
+\cgalFigureBegin{toolchain,toolchain.png}
+The box to check to get to the toolchain option
+\cgalFigureEnd
+
 Once the configuration process is done, tick *Advanced* and *Grouped* in `cmake-gui`.
 You will see entries for where header files and libraries are taken from.
 
@@ -146,11 +155,19 @@ you are advised to look at the `CMakeLists.txt` files in the example
 folder of the package(s) that you are using to learn how to specify \cgal and additional third party
 dependencies.
 
-\section install-with-installer Installing with the CGAL Installer
+\section install-from-source Installing from the Source Archive
 
-You can download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from https://www.cgal.org/download/windows.html.
-It is a self-extracting executable that downloads the \cgal header files, and optionally the source code of the
-examples and demos. Additionally, it can download precompiled versions of \gmp and \mpfr.
+You can download and extract `CGAL-\cgalReleaseNumber``.zip` from https://www.cgal.org/download/windows.html.
+
+\subsection ssect-installer-gmp-mpfr Installing GMP and MPFR
+
+Precompiled version of \gmp and \mpfr are provided in the asset <i>GMP and MPFR libraries, for Windows 64bits</i>
+from https://github.com/CGAL/cgal/releases.
+If you only install those libraries to use \cgal, then you should extract this archive inside the directory
+`CGAL-\cgalReleaseNumber` created when extracting the \cgal zip source archive.
+That way those dependencies will be automatically detected by cmake
+(you should then get the directory `CGAL-\cgalReleaseNumber``\``auxiliary``\``gmp`).
+
 
 \subsection ssect-installer-boost Installing Boost
 
@@ -172,17 +189,6 @@ A typical installation of `Boost` would consist of the following steps:
 as this will help `cmake` to find Boost.</li>
 <li>Add the path to the Boost `dlls` (`C:\dev\libboost_1_71_0\lib64-msvc-XX.Y`) files to the `PATH` environment variable.</li>
 </ul>
-
-\subsection ssect-installer-install-cgal Installing CGAL Itself
-
-Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from
-<a href="https://www.cgal.org/download/windows.html">https://www.cgal.org/download/windows.html</a>.
-It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
-examples and demos. Additionally, it can download the precompiled versions of \gmp and \mpfr. You must
-specify if you want the 32 or the 64 bit versions of these two libraries.
-
-Setting the environment variable `CGAL_DIR` to `C:\dev\CGAL-\cgalReleaseNumber` is a good idea
-to help `cmake` to find \cgal during the configuration process, detailed in the next section.
 
 \subsection ssect-installer-compile-example Compiling an Example
 
@@ -228,8 +234,8 @@ A typical `Qt` installation would consist of the following steps:
 <ul>
 <li>
 Download and install the Qt library for open source development package for your Visual Studio version at
-<a href="https://www.qt.io/download/">https://www.qt.io/download/</a>
-(here is the direct link to the <a href="https://www1.qt.io/offline-installers/">offline installers</a>).</li>
+<a href="https://www.qt.io/download">https://www.qt.io/download</a>
+(here is the direct link to the <a href="https://www.qt.io/offline-installers">offline installers</a>).</li>
 <li>Add the environment variable `QTDIR` pointing to the place you installed Qt, e.g., `C:\dev\Qt\Qt5.13.1`,
 as this will help `cmake` to find Qt.</li>
 <li>Add the bin directory of Qt, e.g. add  `C:\dev\Qt\Qt5.13.1\msvcXXXX_YY\bin` to `PATH`, where `XXXX_YY` is something like `vc2017_64`.
@@ -267,9 +273,11 @@ you are advised to look at the `CMakeLists.txt` files in the example
 folder of the package(s) that you are using to learn how to specify \cgal and additional third party
 dependencies.
 
-\section install-with-tarball Installing from the Source Archive
-
-Instead of the installer you can also download release tarballs. The sole difference
-is that the installer also downloads precompiled \gmp and \mpfr libraries.
+\section sec-win-demo Trying CGAL algorithms using a Precompiled Demo
+\cgal provides a few demos offering a graphical user interface for some \cgal algorithms.
+All precompiled demos are available for download on the \ref packages page.
+Two links are provided in the column on the right: the demo itself (under **Windows Demo**) and a set of dlls (under **Common Demo Dlls**)
+that contains dlls files that must be placed in the same directory as the `.exe` of the demo.
+See for example the \ref PkgConvexHull3 package.
 
 */

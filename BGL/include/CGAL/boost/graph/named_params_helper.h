@@ -1,18 +1,8 @@
-//=======================================================================
-// Copyright 1997, 1998, 1999, 2000 University of Notre Dame.
-// Authors: Andrew Lumsdaine, Lie-Quan Lee, Jeremy G. Siek
-//
-// This file is part of the Boost Graph Library
-//
-// Distributed under the Boost Software License, Version 1.0. (See
-// accompanying file LICENSE_1_0.txt or copy at
-// https://www.boost.org/LICENSE_1_0.txt)
-//=======================================================================
 // Copyright (c) 2007-2015  GeometryFactory (France).  All rights reserved.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: BSL-1.0
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola, Jane Tournois
 
@@ -25,6 +15,8 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
+#include <CGAL/iterator.h>
+
 #include <CGAL/property_map.h>
 
 #include <boost/mpl/if.hpp>
@@ -35,11 +27,26 @@
 
 namespace CGAL {
 
+  namespace parameters
+  {
+    template <class Parameter, class NamedParameters>
+    struct Is_default
+    {
+      typedef typename internal_np::Lookup_named_param_def <
+        Parameter,
+        NamedParameters,
+        internal_np::Param_not_found > ::type NP_type;
+      static const bool value = boost::is_same<NP_type, internal_np::Param_not_found>::value;
+      typedef CGAL::Boolean_tag<value> type;
+    };
+  } // end of parameters namespace
+
   // forward declarations to avoid dependency to Solver_interface
   template <typename FT, unsigned int dim>
   class Default_diagonalize_traits;
   class Eigen_svd;
   class Lapack_svd;
+  struct Alpha_expansion_boost_adjacency_list_tag;
   //
 
 
@@ -135,8 +142,6 @@ namespace CGAL {
       > ::type  const_type;
   };
 
-  namespace Polygon_mesh_processing {
-
   template<typename PolygonMesh, typename NamedParameters>
   class GetK
   {
@@ -146,8 +151,6 @@ namespace CGAL {
   public:
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   };
-
-  } // namespace Polygon_mesh_processing
 
   template<typename PolygonMesh,
            typename NamedParametersGT = Named_function_parameters<bool, internal_np::all_default_t>,
@@ -166,7 +169,7 @@ namespace CGAL {
     struct Fake_GT {};//to be used if there is no internal vertex_point_map in PolygonMesh
 
     typedef typename boost::mpl::if_c<Has_internal_pmap::value || !boost::is_same<internal_np::Param_not_found, NP_vpm>::value,
-                                     typename Polygon_mesh_processing::GetK<PolygonMesh, NamedParametersVPM>::Kernel,
+                                     typename GetK<PolygonMesh, NamedParametersVPM>::Kernel,
                                      Fake_GT>::type DefaultKernel;
 
   public:
@@ -222,7 +225,7 @@ typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_
                                                CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
                                                Graph, NamedParameters>::const_type                 \
 get_initialized_##DTYPE##_index_map(const Graph& g,                                                \
-                                   const NamedParameters& np)                                      \
+                                    const NamedParameters& np)                                     \
 {                                                                                                  \
   typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                \
                                                 boost::DTYPE##_index_t,                            \
@@ -250,7 +253,7 @@ typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_
                                                CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
                                                Graph, NamedParameters>::type                       \
 get_initialized_##DTYPE##_index_map(Graph& g,                                                      \
-                                   const NamedParameters& np)                                      \
+                                    const NamedParameters& np)                                     \
 {                                                                                                  \
   typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                \
                                                 boost::DTYPE##_index_t,                            \
@@ -288,7 +291,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       typedef boost::readable_property_map_tag category;
 
       typedef DummyNormalPmap Self;
-      friend reference get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
+      friend value_type get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
     };
 
   public:
@@ -300,30 +303,32 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       > ::type  type;
   };
 
-
   namespace internal {
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
   }
 
   template<typename PointRange,
            typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t>,
-           bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value>
+           bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value,
+           typename NP_TAG = internal_np::point_t
+  >
   class GetPointMap
   {
     typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
     typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
+    typedef typename CGAL::Identity_property_map<const Point> DefaultConstPMap;
 
   public:
     typedef typename internal_np::Lookup_named_param_def<
-    internal_np::point_t,
+    NP_TAG,
     NamedParameters,
     DefaultPMap
     > ::type  type;
 
     typedef typename internal_np::Lookup_named_param_def<
-    internal_np::point_t,
+    NP_TAG,
     NamedParameters,
-    DefaultPMap
+    DefaultConstPMap
     > ::type  const_type;
   };
 
@@ -334,7 +339,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     struct Dummy_point{};
   public:
     typedef typename CGAL::Identity_property_map<Dummy_point> type;
-    typedef typename CGAL::Identity_property_map<Dummy_point> const_type;
+    typedef typename CGAL::Identity_property_map<const Dummy_point> const_type;
   };
 
   namespace Point_set_processing_3 {
@@ -374,26 +379,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     };
 
     template<typename PointRange, typename NamedParameters>
-    class GetQueryPointMap
-    {
-      typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
-      typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
-
-    public:
-      typedef typename internal_np::Lookup_named_param_def<
-      internal_np::query_point_t,
-      NamedParameters,
-      DefaultPMap
-      > ::type  type;
-
-      typedef typename internal_np::Lookup_named_param_def<
-      internal_np::query_point_t,
-      NamedParameters,
-      DefaultPMap
-      > ::type  const_type;
-    };
-
-    template<typename PointRange, typename NamedParameters>
     class GetK
     {
       typedef typename GetPointMap<PointRange, NamedParameters>::type Vpm;
@@ -420,7 +405,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef boost::read_write_property_map_tag category;
 
         typedef DummyNormalMap Self;
-        friend reference get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
+        friend value_type get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
         friend void put(const Self&, const key_type&, const value_type&) { }
       };
 
@@ -438,6 +423,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     {
       typedef typename PlaneRange::iterator::value_type Plane;
       typedef typename CGAL::Identity_property_map<Plane> DefaultPMap;
+      typedef typename CGAL::Identity_property_map<const Plane> DefaultConstPMap;
 
     public:
       typedef typename internal_np::Lookup_named_param_def<
@@ -449,7 +435,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       typedef typename internal_np::Lookup_named_param_def<
       internal_np::plane_t,
       NamedParameters,
-      DefaultPMap
+      DefaultConstPMap
       > ::type  const_type;
     };
 
@@ -464,7 +450,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef boost::readable_property_map_tag category;
 
         typedef DummyPlaneIndexMap Self;
-        friend reference get(const Self&, const key_type&) { return -1; }
+        friend value_type get(const Self&, const key_type&) { return -1; }
       };
 
     public:
@@ -487,7 +473,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef boost::readable_property_map_tag category;
 
         typedef DummyConstrainedMap Self;
-        friend reference get(const Self&, const key_type&) { return false; }
+        friend value_type get(const Self&, const key_type&) { return false; }
       };
 
     public:
@@ -496,6 +482,18 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         internal_np::point_is_constrained_t,
         NamedParameters,
         DummyConstrainedMap //default
+        > ::type  type;
+    };
+
+    template<typename PointRange, typename NamedParameters>
+    class GetAdjacencies
+    {
+    public:
+      typedef Emptyset_iterator Empty;
+      typedef typename internal_np::Lookup_named_param_def <
+        internal_np::adjacencies_t,
+        NamedParameters,
+        Empty//default
         > ::type  type;
     };
 
@@ -550,6 +548,31 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     > ::type type;
   };
 
+  template<typename NamedParameters>
+  class GetImplementationTag
+  {
+  public:
+    typedef typename internal_np::Lookup_named_param_def <
+    internal_np::implementation_tag_t,
+    NamedParameters,
+    Alpha_expansion_boost_adjacency_list_tag
+    >::type type;
+  };
+
+  template<typename NP>
+  void set_stream_precision_from_NP(std::ostream& os, const NP& np)
+  {
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+    using parameters::is_default_parameter;
+
+    if(!is_default_parameter(get_parameter(np, internal_np::stream_precision)))
+    {
+      const int precision = choose_parameter<int>(get_parameter(np,
+                              internal_np::stream_precision));
+      os.precision(precision);
+    }
+  }
 } //namespace CGAL
 
 

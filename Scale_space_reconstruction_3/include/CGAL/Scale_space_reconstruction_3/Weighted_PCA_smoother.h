@@ -23,7 +23,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Default_diagonalize_traits.h>
 
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/blocked_range.h"

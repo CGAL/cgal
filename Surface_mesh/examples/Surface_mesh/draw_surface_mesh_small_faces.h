@@ -78,7 +78,7 @@ protected:
     bool issmall=false;
 
     // Default color of faces
-    CGAL::Color c(75,160,255);
+    CGAL::IO::Color c(75,160,255);
 
     // Compare the size of the face with the % m_threshold
     bool exist;
@@ -89,7 +89,7 @@ protected:
     // It it is smaller, color the face in red.
     if (get(faces_size, fh)<m_min_size+((m_max_size-m_min_size)/(100-m_threshold)))
     {
-      c=CGAL::Color(255,20,20);
+      c=CGAL::IO::Color(255,20,20);
       issmall=true;
     }
 
@@ -263,7 +263,7 @@ void draw_surface_mesh_with_small_faces(CGAL::Surface_mesh<K>& amesh)
   if (!cgal_test_suite)
   {
     int argc=1;
-    const char* argv[2]={"surface_mesh_viewer","\0"};
+    const char* argv[2]={"surface_mesh_viewer", nullptr};
     QApplication app(argc,const_cast<char**>(argv));
     SimpleSurfaceMeshWithSmallFacesViewerQt<CGAL::Surface_mesh<K>>
       mainwindow(app.activeWindow(), amesh);

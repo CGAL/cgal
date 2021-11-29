@@ -37,6 +37,10 @@ struct Tester
 
   typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
   typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+  typedef CGAL::Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr,
+    CGAL::Sequential_tag> C3t3_base_sequential;
+  typedef CGAL::Mesh_3::Mesh_complex_3_in_triangulation_3_base<Tr,
+    CGAL::Parallel_tag> C3t3_base_parallel;
 
   typedef typename Tr::Bare_point Bare_point;
   typedef typename Tr::Weighted_point Weighted_point;
@@ -120,6 +124,35 @@ struct Tester
     assert(c3t3.is_in_complex(ch));
     assert(c3t3.subdomain_index(ch) == subdomain_index);
 
+    //-------------------------------------------------------
+    // Test move construction
+    //-------------------------------------------------------
+    C3t3 c3t3_moved{std::move(c3t3)};
+    assert(c3t3_moved.is_valid());
+    assert(c3t3.is_valid());
+    assert(ch == (Cell_handle)c3t3_moved.cells_in_complex_begin());
+    assert(c3t3_moved.number_of_cells_in_complex() == 1);
+    assert(c3t3_moved.number_of_cells_in_complex() ==
+           (size_type)std::distance(c3t3_moved.cells_in_complex_begin(),
+                                    c3t3_moved.cells_in_complex_end()));
+    assert(c3t3_moved.is_in_complex(ch));
+    assert(c3t3_moved.subdomain_index(ch) == subdomain_index);
+
+    assert(c3t3.number_of_cells_in_complex() == 0);
+    assert(c3t3.number_of_cells_in_complex() == (size_type)std::distance(c3t3.cells_in_complex_begin(),
+                                                                         c3t3.cells_in_complex_end()));
+    c3t3 = std::move(c3t3_moved);
+    assert(ch == (Cell_handle)c3t3.cells_in_complex_begin());
+    assert(c3t3.number_of_cells_in_complex() == 1);
+    assert(c3t3.number_of_cells_in_complex() == (size_type)std::distance(c3t3.cells_in_complex_begin(),
+                                                                         c3t3.cells_in_complex_end()));
+    assert(c3t3.is_in_complex(ch));
+    assert(c3t3.subdomain_index(ch) == subdomain_index);
+
+    assert(c3t3_moved.number_of_cells_in_complex() == 0);
+    assert(c3t3_moved.number_of_cells_in_complex() ==
+           (size_type)std::distance(c3t3_moved.cells_in_complex_begin(),
+                                    c3t3_moved.cells_in_complex_end()));
     // -----------------------------------
     // Test Cell_in_complex_iterator
     // The goal here is to test operators and conversion on iterator type
@@ -360,8 +393,8 @@ struct Tester
     assert ( c3t3.surface_patch_index(*patch_fit_bis) == surface_patch_index_bis );
 
     std::ofstream out_medit("test-medit.mesh");
-    CGAL::output_to_medit(out_medit, c3t3);
-    CGAL::output_to_tetgen("test-tetgen", c3t3);
+    CGAL::IO::output_to_medit(out_medit, c3t3);
+    CGAL::IO::output_to_tetgen("test-tetgen", c3t3);
   }
 };
 

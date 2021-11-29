@@ -14,9 +14,10 @@
 #ifndef CGAL_IO_FILE_MEDIT_H
 #define CGAL_IO_FILE_MEDIT_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/Mesh_3/config.h>
+#include <CGAL/Mesh_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
@@ -754,7 +755,7 @@ output_to_medit(std::ostream& os,
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
-  typedef typename Tr::Weighted_point Weighted_point;
+  typedef typename Tr::Point Point; //can be weighted or not
 
   const Tr& tr = c3t3.triangulation();
 
@@ -783,7 +784,7 @@ output_to_medit(std::ostream& os,
        ++vit)
   {
     V[vit] = inum++;
-    Weighted_point p = tr.point(vit);
+    Point p = tr.point(vit);
     os << CGAL::to_double(p.x()) << ' '
        << CGAL::to_double(p.y()) << ' '
        << CGAL::to_double(p.z()) << ' '
@@ -861,6 +862,8 @@ output_to_medit(std::ostream& os,
 
 } // end namespace Mesh_3
 
+namespace IO {
+
 /**
  * @brief outputs mesh to medit format
  * @param os the stream
@@ -869,6 +872,7 @@ output_to_medit(std::ostream& os,
  * @param show_patches if true, patches are labeled with different labels than
  * cells. If false, each surface facet is written twice, using label of
  * each adjacent cell.
+ * \see \ref IOStreamMedit
  */
 template <class C3T3>
 void
@@ -892,6 +896,29 @@ output_to_medit(std::ostream& os,
       Mesh_3::output_to_medit<C3T3,false,true>(os,c3t3);
   }
 }
+
+
+template<typename T3>
+void write_MEDIT(std::ostream& os, const T3& t3)
+{
+  CGAL::Mesh_complex_3_in_triangulation_3<T3, int, int> c3t3;
+  c3t3.triangulation() = t3;
+  c3t3.rescan_after_load_of_triangulation();
+  output_to_medit(os, c3t3);
+}
+
+template<typename T3>
+bool read_MEDIT(std::istream& in, T3& t3)
+{
+  CGAL_assertion(!(!in));
+  return CGAL::build_triangulation_from_file<T3, true>(in, t3);
+}
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_to_medit;
+#endif
 
 } // end namespace CGAL
 

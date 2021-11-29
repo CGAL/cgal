@@ -196,8 +196,6 @@ namespace Point_set {
       const std::size_t,
       const std::size_t query_index,
       const std::vector<std::size_t>&) const {
-
-      CGAL_precondition(query_index >= 0);
       CGAL_precondition(query_index < m_input_range.size());
 
       const auto& key = *(m_input_range.begin() + query_index);
@@ -246,8 +244,6 @@ namespace Point_set {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference line and normal
-
-        CGAL_precondition(region[0] >= 0);
         CGAL_precondition(region[0] < m_input_range.size());
 
         // The best fit line will be a line through this point with
@@ -272,8 +268,6 @@ namespace Point_set {
         points.reserve(region.size());
 
         for (std::size_t i = 0; i < region.size(); ++i) {
-
-          CGAL_precondition(region[i] >= 0);
           CGAL_precondition(region[i] < m_input_range.size());
 
           const auto& key = *(m_input_range.begin() + region[i]);

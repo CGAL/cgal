@@ -24,7 +24,7 @@ set(CGAL_SetupCGAL_Qt5Dependencies_included TRUE)
 # Used Modules
 # ^^^^^^^^^^^^
 #   - :module:`Qt5Config`
-find_package(Qt5 QUIET COMPONENTS OpenGL Svg Xml)
+find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
 
 set(CGAL_Qt5_MISSING_DEPS "")
 if(NOT Qt5OpenGL_FOUND)
@@ -54,9 +54,9 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
 
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
 
-  if(CGAL_HEADER_ONLY AND (WITH_demos OR WITH_examples OR WITH_tests OR NOT CGAL_BUILDING_LIBS) AND NOT TARGET CGAL_Qt5_moc_and_resources)
-    add_library(CGAL_Qt5_moc_and_resources STATIC 
-      ${_CGAL_Qt5_MOC_FILES_private} 
+  if(NOT TARGET CGAL_Qt5_moc_and_resources)
+    add_library(CGAL_Qt5_moc_and_resources STATIC
+      ${_CGAL_Qt5_MOC_FILES_private}
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsViewNavigation.h
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/DemosMainWindow.h
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsItem.h
@@ -75,7 +75,7 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
       POSITION_INDEPENDENT_CODE TRUE
       EXCLUDE_FROM_ALL TRUE
       AUTOMOC TRUE)
-    target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg Qt5::Xml)
+    target_link_libraries(CGAL_Qt5_moc_and_resources CGAL::CGAL Qt5::Widgets Qt5::OpenGL Qt5::Svg )
 
     add_library(CGAL::CGAL_Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
     add_library(CGAL::Qt5_moc_and_resources ALIAS CGAL_Qt5_moc_and_resources)
@@ -99,33 +99,26 @@ endif()
 #
 #   Link the target with the dependencies of `CGAL_Qt5`::
 #
-#     CGAL_setup_CGAL_Qt5_dependencies( target [INTERFACE] )
+#     CGAL_setup_CGAL_Qt5_dependencies( target )
 #
-#   If the option ``INTERFACE`` is passed, the dependencies are
+#   The dependencies are
 #   added using :command:`target_link_libraries` with the ``INTERFACE``
-#   keyword, or ``PUBLIC`` otherwise.
+#   keyword.
 #
 function(CGAL_setup_CGAL_Qt5_dependencies target)
-  if(ARGV1 STREQUAL INTERFACE)
-    set(keyword INTERFACE)
-  else()
-    set(keyword PUBLIC)
-  endif()
 
   if($ENV{CGAL_FAKE_PUBLIC_RELEASE})
-    target_compile_definitions( ${target} ${keyword} CGAL_FAKE_PUBLIC_RELEASE=1 )
+    target_compile_definitions( ${target} INTERFACE CGAL_FAKE_PUBLIC_RELEASE=1 )
   endif()
-  target_link_libraries( ${target} ${keyword} CGAL::CGAL)
-  if(CGAL_HEADER_ONLY)
-    target_link_libraries( ${target} ${keyword} CGAL::Qt5_moc_and_resources)
-  endif()
-  target_link_libraries( ${target} ${keyword} Qt5::OpenGL Qt5::Svg Qt5::Xml)
+  target_link_libraries( ${target} INTERFACE CGAL::CGAL)
+  target_link_libraries( ${target} INTERFACE CGAL::Qt5_moc_and_resources)
+  target_link_libraries( ${target} INTERFACE Qt5::OpenGL Qt5::Svg )
 
   # Remove -Wdeprecated-copy, for g++ >= 9.0, because Qt5, as of
   # version 5.12, has a lot of [-Wdeprecated-copy] warnings.
   if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU"
       AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9" )
-    target_compile_options( ${target} ${keyword} "-Wno-deprecated-copy" "-Wno-cast-function-type" )
+    target_compile_options( ${target} INTERFACE "-Wno-deprecated-copy" "-Wno-cast-function-type" )
   endif()
 
 endfunction()

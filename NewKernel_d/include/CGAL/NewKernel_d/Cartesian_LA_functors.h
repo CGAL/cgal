@@ -50,7 +50,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
           // Makes no sense for an unknown dimension.
                 return typename Constructor::Dimension()(this->kernel().dimension());
         }
-        result_type operator()(result_type const& v)const{
+        result_type const& operator()(result_type const& v)const{
                 return v;
         }
         result_type operator()(result_type&& v)const{
@@ -58,7 +58,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
         }
         template<class...U>
         typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-                std::is_same<Dimension_tag<sizeof...(U)>, Dimension>::value,
+                std::is_same<Dimension_tag<int(sizeof...(U))>, Dimension>::value,
           result_type>::type
         operator()(U&&...u)const{
                 return typename Constructor::Values()(std::forward<U>(u)...);
@@ -66,7 +66,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
         //template<class...U,class=typename std::enable_if<Constructible_from_each<RT,U...>::value>::type,class=typename std::enable_if<(sizeof...(U)==static_dim+1)>::type,class=void>
         template<class...U>
         typename std::enable_if<Constructible_from_each<RT,U...>::value &&
-                std::is_same<Dimension_tag<sizeof...(U)-1>, Dimension>::value,
+                std::is_same<Dimension_tag<int(sizeof...(U)-1)>, Dimension>::value,
           result_type>::type
         operator()(U&&...u)const{
                 return Apply_to_last_then_rest()(typename Constructor::Values_divide(),std::forward<U>(u)...);
@@ -137,7 +137,7 @@ template<class R_> struct Compute_cartesian_coordinate {
         typedef typename Get_type<R, RT_tag>::type RT;
         typedef typename R::Vector_ first_argument_type;
         typedef int second_argument_type;
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
         typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
 
         template <typename index_type>
@@ -153,7 +153,7 @@ template<class R_> struct Construct_cartesian_const_iterator {
         typedef typename R::LA_vector S_;
         typedef typename R::Point_cartesian_const_iterator result_type;
         // same as Vector
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
 
         result_type operator()(argument_type const& v,Begin_tag)const{
                 return S_::vector_begin(v);
@@ -224,6 +224,7 @@ template<class R_> struct Scalar_product {
 };
 
 template<class R_> struct Squared_distance_to_origin_stored {
+        // What about weighted points, should they store sdo-w?
         CGAL_FUNCTOR_INIT_IGNORE(Squared_distance_to_origin_stored)
         typedef R_ R;
         typedef typename R::LA_vector LA;
@@ -281,7 +282,7 @@ template<class R_> struct PV_dimension {
         typedef typename R::Vector_ argument_type;
         typedef int result_type;
         typedef typename R::LA_vector LA;
-        typedef Tag_true Is_exact;
+        typedef Tag_true Uses_no_arithmetic;
 
         template<class T>
         result_type operator()(T const& v) const {

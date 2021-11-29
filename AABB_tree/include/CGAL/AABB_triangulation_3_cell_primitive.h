@@ -18,7 +18,6 @@
 
 
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/result_of.h>
 #include <iterator>
 
 namespace CGAL
@@ -31,14 +30,18 @@ namespace CGAL
       //classical typedefs
       typedef Iterator key_type;
       typedef typename GeomTraits::Point_3 value_type;
-      typedef typename cpp11::result_of<
-        typename GeomTraits::Construct_vertex_3(typename GeomTraits::Tetrahedron_3, int)
-      >::type reference;
+      typedef decltype(
+        std::declval<typename GeomTraits::Construct_vertex_3>()(
+          std::declval<typename GeomTraits::Tetrahedron_3>(),
+          std::declval<int>())) reference;
+      // typedef decltype(
+      //   typename GeomTraits::Construct_vertex_3()(
+      //     *std::declval<key_type&>(), 0)) reference; // fails polyhedron demo!
       typedef boost::readable_property_map_tag category;
+      typedef Point_from_cell_iterator_proprety_map<GeomTraits, Iterator> Self;
 
-      inline friend
-        typename Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>::reference
-        get(Point_from_cell_iterator_proprety_map<GeomTraits, Iterator>, Iterator it)
+      inline friend reference
+      get(Self, key_type it)
       {
         typename GeomTraits::Construct_point_3 point;
         return point(it->vertex(1)->point());
@@ -55,8 +58,8 @@ namespace CGAL
       typedef boost::readable_property_map_tag category;
 
       inline friend
-        reference
-        get(Tet_from_cell_iterator_proprety_map<GeomTraits, Iterator>, key_type it)
+      value_type
+      get(Tet_from_cell_iterator_proprety_map<GeomTraits, Iterator>, key_type it)
       {
         typename GeomTraits::Construct_point_3 point;
         return value_type(point(it->vertex(0)->point()),

@@ -27,11 +27,7 @@
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
+#define CGAL_DEPRECATED
 #endif
 
 namespace CGAL {
@@ -43,21 +39,27 @@ namespace CGAL {
     *  computes a bounding box of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeListGraph`
-    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param pmesh a polygon mesh
-    * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
-    *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-    *       If this parameter is omitted, an internal property map for
-    *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-    *    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
-    *       providing the functor `Construct_bbox_3` and the function
-    *       `Construct_bbox_3 construct_bbox_3_object()`. `Construct_bbox_3`
-    *       must provide `BBox_3 operator()(Point_3)` where `Point_3` is the value type
-    *       of the vertex point map.
-    *     \cgalParamEnd
+    *   \cgalParamNBegin{vertex_point_map}
+    *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+    *                    as key type and `%Point_3` as value type}
+    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+    *                     must be available in `PolygonMesh`.}
+    *   \cgalParamNEnd
+    *
+    *   \cgalParamNBegin{geom_traits}
+    *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`
+    *                           and the function `Construct_bbox_3 construct_bbox_3_object()`.
+    *                           `Construct_bbox_3` must provide `Bbox_3 operator()(Point_3)`
+    *                           where `%Point_3` is the value type of the vertex point map.}
+    *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
     * @return a bounding box of `pmesh`
@@ -92,22 +94,28 @@ namespace CGAL {
     *  computes a bounding box of a vertex of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param vd a descriptor of a vertex in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
-    *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-    *       If this parameter is omitted, an internal property map for
-    *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-    *    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
-    *       providing the functor `Construct_bbox_3` and the function
-    *       `Construct_bbox_3 construct_bbox_3_object()`. `Construct_bbox_3`
-    *       must provide `BBox_3 operator()(Point_3)` where `Point_3` is the value type
-    *       of the vertex point map.
-    *     \cgalParamEnd
+    *   \cgalParamNBegin{vertex_point_map}
+    *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+    *                    as key type and `%Point_3` as value type}
+    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+    *                     must be available in `PolygonMesh`.}
+    *   \cgalParamNEnd
+    *
+    *   \cgalParamNBegin{geom_traits}
+    *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`
+    *                           and the function `Construct_bbox_3 construct_bbox_3_object()`.
+    *                           `Construct_bbox_3` must provide `Bbox_3 operator()(Point_3)`
+    *                           where `%Point_3` is the value type of the vertex point map.}
+    *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
     * @return a bounding box of `pmesh`
@@ -135,22 +143,28 @@ namespace CGAL {
     *  computes a bounding box of an edge of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param ed a descriptor of an edge in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
-    *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-    *       If this parameter is omitted, an internal property map for
-    *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-    *    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
-    *       providing the functor `Construct_bbox_3` and the function
-    *       `Construct_bbox_3 construct_bbox_3_object()`. `Construct_bbox_3`
-    *       must provide `BBox_3 operator()(Point_3)` where `Point_3` is the value type
-    *       of the vertex point map.
-    *     \cgalParamEnd
+    *   \cgalParamNBegin{vertex_point_map}
+    *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+    *                    as key type and `%Point_3` as value type}
+    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+    *                     must be available in `PolygonMesh`.}
+    *   \cgalParamNEnd
+    *
+    *   \cgalParamNBegin{geom_traits}
+    *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`
+    *                           and the function `Construct_bbox_3 construct_bbox_3_object()`.
+    *                           `Construct_bbox_3` must provide `Bbox_3 operator()(Point_3)`
+    *                           where `%Point_3` is the value type of the vertex point map.}
+    *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
     * @return a bounding box of `pmesh`
@@ -180,22 +194,29 @@ namespace CGAL {
     *  computes a bounding box of a face of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeGraph`
-    * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+    * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param fd a descriptor of a face in `pmesh`
     * @param pmesh a polygon mesh
-    * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+    * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
-    *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-    *       If this parameter is omitted, an internal property map for
-    *       `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
-    *    \cgalParamBegin{geom_traits} an instance of a geometric traits class,
-    *       providing the functor `Construct_bbox_3` and the function
-    *       `Construct_bbox_3 construct_bbox_3_object()`. `Construct_bbox_3`
-    *       must provide `BBox_3 operator()(Point_3)` where `Point_3` is the value type
-    *       of the vertex point map.
-    *     \cgalParamEnd
+    *   \cgalParamNBegin{vertex_point_map}
+    *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+    *                    as key type and `%Point_3` as value type}
+    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+    *                     must be available in `PolygonMesh`.}
+    *   \cgalParamNEnd
+    *
+    *   \cgalParamNBegin{geom_traits}
+    *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`
+    *                           and the function `Construct_bbox_3 construct_bbox_3_object()`.
+    *                           `Construct_bbox_3` must provide `Bbox_3 operator()(Point_3)`
+    *                           where `%Point_3` is the value type of the vertex point map.}
+    *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+    *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
     * @return a bounding box of `pmesh`
@@ -279,4 +300,3 @@ namespace CGAL {
 }
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_BOUNDING_BOX_H
-

@@ -184,18 +184,18 @@ struct Segments_function
   Segments_function()
     : segments(), nb_evals(0)
   {
-    const FT min = 1, max = 3;
-    const FT mid = 0.5 * (min + max);
+    const FT vmin = 1, vmax = 3;
+    const FT mid = 0.5 * (vmin + vmax);
     const Point pmid(mid, mid, mid);
 
-    segments.push_back(Segment(Point(min, mid, min), pmid));
-    segments.push_back(Segment(Point(max, mid, min), pmid));
-    segments.push_back(Segment(Point(min, mid, max), pmid));
-    segments.push_back(Segment(Point(max, mid, max), pmid));
-    segments.push_back(Segment(Point(mid, min, min), pmid));
-    segments.push_back(Segment(Point(mid, max, min), pmid));
-    segments.push_back(Segment(Point(mid, min, max), pmid));
-    segments.push_back(Segment(Point(mid, max, max), pmid));
+    segments.push_back(Segment(Point(vmin, mid, vmin), pmid));
+    segments.push_back(Segment(Point(vmax, mid, vmin), pmid));
+    segments.push_back(Segment(Point(vmin, mid, vmax), pmid));
+    segments.push_back(Segment(Point(vmax, mid, vmax), pmid));
+    segments.push_back(Segment(Point(mid, vmin, vmin), pmid));
+    segments.push_back(Segment(Point(mid, vmax, vmin), pmid));
+    segments.push_back(Segment(Point(mid, vmin, vmax), pmid));
+    segments.push_back(Segment(Point(mid, vmax, vmax), pmid));
   }
 
   FT operator()(const Point& p)
@@ -204,7 +204,7 @@ struct Segments_function
 
     FT min_distance = 1000000;
     for (Segments::const_iterator si = segments.begin(); si != segments.end(); ++si)
-      min_distance = std::min(CGAL::squared_distance(p, *si), min_distance);
+      min_distance = (std::min)(CGAL::squared_distance(p, *si), min_distance);
 
     return min_distance - 0.01; // Change the squared beam radius here
   }
@@ -305,7 +305,7 @@ int main(int, char**)
         oss_2 << iter->first << "__" << it->first << "__" << *i  << ".mesh";
         std::string output_filename = oss_2.str();
         std::ofstream medit_file( output_filename.data() );
-        CGAL::output_periodic_mesh_to_medit(medit_file, c3t3, *i);
+        CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3, *i);
         medit_file.close();
 
         std::cout << ", " << *i << "-copy Saved" << std::flush;

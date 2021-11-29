@@ -20,9 +20,9 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Cartesian_converter.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
-#include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
+#include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -51,9 +51,9 @@ class Traversal_traits_with_transformation_helper
 
     AK::Aff_transformation_3 a_at = c2f(at);
 
-    AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
-                       c2f(bbox.min(1)), c2f(bbox.max(1)),
-                       c2f(bbox.min(2)), c2f(bbox.max(2)) };
+    AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                       c2f((bbox.min)(1)), c2f((bbox.max)(1)),
+                       c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
 
     typename AK::Point_3 ps[8];
     ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );
@@ -83,9 +83,9 @@ class Traversal_traits_with_transformation_helper
 
     AK::Aff_transformation_3 a_at = c2f(at);
 
-    AK::FT xtrm[6] = { c2f(bbox.min(0)), c2f(bbox.max(0)),
-                       c2f(bbox.min(1)), c2f(bbox.max(1)),
-                       c2f(bbox.min(2)), c2f(bbox.max(2)) };
+    AK::FT xtrm[6] = { c2f((bbox.min)(0)), c2f((bbox.max)(0)),
+                       c2f((bbox.min)(1)), c2f((bbox.max)(1)),
+                       c2f((bbox.min)(2)), c2f((bbox.max)(2)) };
 
     typename AK::Point_3 ps[2];
     ps[0] = a_at( AK::Point_3(xtrm[0], xtrm[2], xtrm[4]) );

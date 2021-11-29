@@ -27,7 +27,7 @@ class Surf_io_plugin:
 public:
 
   QString name() const { return "surf_io_plugin"; }
-  QString nameFilters() const { return "Amira files (*.surf)"; }
+  QString nameFilters() const { return "Amira files (*.surf);;Amira binary files (*.surf.am)"; }
   bool canLoad(QFileInfo) const{ return true; }
   template<class FaceGraphItem>
   CGAL::Three::Scene_item* actual_load(QFileInfo fileinfo);
@@ -68,7 +68,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return NULL;
+    return nullptr;
   }
 
   if(fileinfo.size() == 0)

@@ -116,7 +116,7 @@ void * for_compact_container() const;
 /*!
 
 */
-void * & for_compact_container();
+void for_compact_container(void *);
 
 /*!
 Inputs the non-combinatorial information given by the vertex.

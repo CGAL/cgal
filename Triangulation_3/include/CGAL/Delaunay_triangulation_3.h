@@ -72,7 +72,7 @@ template < class Gt,
 class Delaunay_triangulation_3;
 
 // There is a specialization Delaunay_triangulation_3<Gt, Tds, Fast_location>
-// defined in <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>.
+// defined in <CGAL/Triangulation_3/internal/Delaunay_triangulation_hierarchy_3.h>.
 
 // Here is the specialization Delaunay_triangulation_3<Gt, Tds>, with three
 // arguments, that is if Location_policy being the default value 'Default'.
@@ -888,11 +888,6 @@ protected:
     : m_dt(dt), m_points(points), m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point(const Insert_point& ip)
-    : m_dt(ip.m_dt), m_points(ip.m_points), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -968,12 +963,6 @@ protected:
       m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point_with_info(const Insert_point_with_info& ip)
-      : m_dt(ip.m_dt), m_points(ip.m_points), m_infos(ip.m_infos),
-      m_indices(ip.m_indices), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -1045,12 +1034,6 @@ protected:
                  tbb::concurrent_vector<Vertex_handle>& vertices_to_remove_sequentially)
     : m_dt(dt), m_vertices(vertices),
       m_vertices_to_remove_sequentially(vertices_to_remove_sequentially)
-    {}
-
-    // Constructor
-    Remove_point(const Remove_point& rp)
-    : m_dt(rp.m_dt), m_vertices(rp.m_vertices),
-      m_vertices_to_remove_sequentially(rp.m_vertices_to_remove_sequentially)
     {}
 
     // operator()
@@ -2076,7 +2059,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
 } //namespace CGAL
 
-#include <CGAL/internal/Delaunay_triangulation_hierarchy_3.h>
+#include <CGAL/Triangulation_3/internal/Delaunay_triangulation_hierarchy_3.h>
 
 #include <CGAL/enable_warnings.h>
 

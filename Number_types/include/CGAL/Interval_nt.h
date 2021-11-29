@@ -438,9 +438,9 @@ private:
       if(c == '['){ // read original output from operator <<
         double inf,sup;
         CGAL_SWALLOW(is, '[');// read the "["
-        is >> iformat(inf);
+        is >> IO::iformat(inf);
         CGAL_SWALLOW(is, ';');// read the ";"
-        is >> iformat(sup);
+        is >> IO::iformat(sup);
         CGAL_SWALLOW(is, ']');// read the "]"
         I = Interval_nt(inf,sup);
       }else{ //read double (backward compatibility)
@@ -1141,17 +1141,15 @@ namespace INTERN_INTERVAL_NT {
       // it helps significantly, it might even hurt by introducing a
       // dependency.
     }
-#else
+#else // no __AVX512F__
     // TODO: Alternative for computing CGAL_IA_SQRT_DOWN(d.inf()) exactly
     // without changing the rounding mode:
     // - compute x = CGAL_IA_SQRT(d.inf())
     // - compute y = CGAL_IA_SQUARE(x)
     // - if y==d.inf() use x, else use -CGAL_IA_SUB(CGAL_IA_MIN_DOUBLE,x)
-    FPU_set_cw(CGAL_FE_DOWNWARD);
-    double i = (d.inf() > 0.0) ? CGAL_IA_SQRT(d.inf()) : 0.0;
-    FPU_set_cw(CGAL_FE_UPWARD);
-#endif
-    return Interval_nt<Protected>(i, CGAL_IA_SQRT(d.sup()));
+    double i = IA_sqrt_toward_zero(d.inf());
+#endif // no __AVX512F__
+    return Interval_nt<Protected>(i, IA_sqrt_up(d.sup()));
   }
 
   template <bool Protected>
@@ -1159,8 +1157,13 @@ namespace INTERN_INTERVAL_NT {
   Interval_nt<Protected>
   square (const Interval_nt<Protected> & d)
   {
-    //TODO: SSE version, possibly using abs
     typename Interval_nt<Protected>::Internal_protector P;
+#ifdef CGAL_USE_SSE2
+    __m128d a = IA_opacify128(CGAL::abs(d).simd());   // {-i,s} 0<=i<=s
+    __m128d b = _mm_xor_pd(a, _mm_setr_pd(-0., 0.));  // {i,s}
+    __m128d r = _mm_mul_pd(a, b);                     // {-i*i,s*s}
+    return Interval_nt<Protected>(IA_opacify128(r));
+#else
     if (d.inf()>=0.0)
         return Interval_nt<Protected>(-CGAL_IA_MUL(-d.inf(), d.inf()),
                                  CGAL_IA_SQUARE(d.sup()));
@@ -1169,6 +1172,7 @@ namespace INTERN_INTERVAL_NT {
                                CGAL_IA_SQUARE(-d.inf()));
     return Interval_nt<Protected>(0.0, CGAL_IA_SQUARE((std::max)(-d.inf(),
                      d.sup())));
+#endif
   }
 
   template <bool Protected>
@@ -1573,6 +1577,8 @@ namespace Eigen {
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }
+    static inline Real highest() { return Real((std::numeric_limits<double>::max)(), std::numeric_limits<double>::infinity()); }
+    static inline Real lowest() { return Real(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::lowest()); }
 
     // Costs could depend on b.
     enum {
@@ -1585,6 +1591,16 @@ namespace Eigen {
       MulCost = 10
     };
   };
+
+  template<class A, class B, class C>struct ScalarBinaryOpTraits;
+  template<bool b, typename BinaryOp>
+    struct ScalarBinaryOpTraits<CGAL::Interval_nt<b>, double, BinaryOp> {
+      typedef CGAL::Interval_nt<b> ReturnType;
+    };
+  template<bool b, typename BinaryOp>
+    struct ScalarBinaryOpTraits<double, CGAL::Interval_nt<b>, BinaryOp> {
+      typedef CGAL::Interval_nt<b> ReturnType;
+    };
 
   namespace internal {
     template<class> struct significant_decimals_impl;

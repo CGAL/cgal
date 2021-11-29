@@ -173,21 +173,36 @@ public:
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param epsilon tolerance value when merging 3D points.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{callback} an instance of
-      `std::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped and simplification stops with
-      no guarantee on the output.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{callback}
+       \cgalParamDescription{a mechanism to get feedback on the advancement of the algorithm
+                             while it's running and to interrupt it if needed}
+       \cgalParamType{an instance of `std::function<bool(double)>`.}
+       \cgalParamDefault{unused}
+       \cgalParamExtra{It is called regularly when the
+                       algorithm is running: the current advancement (between 0. and
+                       1.) is passed as parameter. If it returns `true`, then the
+                       algorithm continues its execution normally; if it returns
+                       `false`, the algorithm is stopped and simplification stops with no guarantee on the output. }
+       \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \return iterator over the first point to remove.

@@ -16,7 +16,7 @@
 
 
 /*! \file CGAL/Sqrt_extension.h
-    \brief Defines class CGAL::Sqrt_extension.
+    \brief defines class CGAL::Sqrt_extension.
 
     Provides the Number type Sqrt_extension that extends a given number type
     \c NT by a square root. One can add several square roots recursively.
@@ -146,7 +146,7 @@ public:
 
 
 
-    /*! \brief Expicite constructor of Sqrt_extension, from
+    /*! \brief Explicit constructor of Sqrt_extension, from
      *  \c Sqrt_extension<NTX,ROOTX>.
      *  \pre NT must constructible from NTX
      *  \pre ROOT must constructible from ROOTX */
@@ -525,7 +525,7 @@ compare (const NT& num) const {
 }
 
 // compare of two values that may be in different extension
-// However, the default is, that the the numbers are defined over the same
+// However, the default is, that the numbers are defined over the same
 // extension.
 CGAL::Comparison_result
   compare(const Self& y, bool in_same_extension = !ACDE_TAG::value ) const

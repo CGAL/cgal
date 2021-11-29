@@ -18,7 +18,7 @@
 #ifndef CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 #define CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/Triangulation_3.h>
 
 
 #include <CGAL/Mesh_3/config.h>
@@ -97,7 +97,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits | (1 << facet), current_bits) != current_bits)
+    while (bits_.compare_exchange_weak(current_bits, current_bits | (1 << facet)) )
     {
       current_bits = bits_;
     }
@@ -108,7 +108,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits & (15 & ~(1 << facet)), current_bits) != current_bits)
+    while (bits_.compare_exchange_weak(current_bits, current_bits & (15 & ~(1 << facet))))
     {
       current_bits = bits_;
     }
@@ -283,7 +283,7 @@ operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb> &c)
   is >> static_cast<Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> index;
     else
     {
@@ -303,8 +303,8 @@ operator<<(std::ostream &os,
   os << static_cast<const Cb&>(c);
   for(int i = 0; i < 4; ++i)
   {
-    if(is_ascii(os))
-      os << ' ' << oformat(c.surface_patch_index(i));
+    if(IO::is_ascii(os))
+      os << ' ' << IO::oformat(c.surface_patch_index(i));
     else
       write(os, c.surface_patch_index(i));
   }

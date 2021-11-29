@@ -608,15 +608,15 @@ protected:
     }
 
     // Now we know that all vertices lie in different regions.
-    Hyperbolic_translation min(7, 2, 5);
+    Hyperbolic_translation vmin(7, 2, 5);
     Hyperbolic_translation trans;
     for(int i=0; i<3; ++i)
     {
       int j = (i + 1) % 3; // the index of the 'next' vertex
       Hyperbolic_translation tmp = fh->translation(i).inverse() * fh->translation(j);
-      if(tmp < min)
+      if(tmp < vmin)
       {
-        min = tmp;
+        vmin = tmp;
         trans = fh->translation(i).inverse();
       }
     }
@@ -671,7 +671,7 @@ has_cycles_length_2(typename TDS::Vertex_handle v) const
   return false;
 }
 
-/*! \brief Tests if the triangulation is valid.
+/*! \brief tests if the triangulation is valid.
  *
  * A triangulation is valid if
  * - A cell is not its own neighbor.

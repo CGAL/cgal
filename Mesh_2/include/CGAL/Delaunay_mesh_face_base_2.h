@@ -17,6 +17,7 @@
 
 
 #include <CGAL/Constrained_Delaunay_triangulation_face_base_2.h>
+#include <CGAL/Has_timestamp.h>
 
 namespace CGAL {
 
@@ -67,6 +68,14 @@ public:
   /** compatibility with CGAL-3.2 */
   inline
   void set_marked(const bool b) { in_domain=b; }
+
+  typedef Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const { return time_stamp_; }
+
+  void set_time_stamp(const std::size_t& ts) { time_stamp_ = ts; }
+
+  std::size_t time_stamp_;
 };
 
 } // namespace CGAL

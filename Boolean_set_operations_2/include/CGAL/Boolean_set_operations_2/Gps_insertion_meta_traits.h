@@ -75,7 +75,7 @@ public:
   Construct_min_vertex_2 construct_min_vertex_2_object () const
   {
     return Construct_min_vertex_2
-      (this->m_base_tr->construct_min_vertex_2_object());
+      (this->m_base_traits->construct_min_vertex_2_object());
   }
 
 
@@ -100,7 +100,7 @@ public:
   Construct_max_vertex_2 construct_max_vertex_2_object () const
   {
     return Construct_max_vertex_2
-      (this->m_base_tr->construct_max_vertex_2_object());
+      (this->m_base_traits->construct_max_vertex_2_object());
   }
 
   class Compare_xy_2
@@ -123,7 +123,7 @@ public:
   /*! Get a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object () const
   {
-    return Compare_xy_2(m_base_tr->compare_xy_2_object());
+    return Compare_xy_2(m_base_traits->compare_xy_2_object());
   }
 
 };

@@ -129,6 +129,15 @@ class Quotient
   Quotient<NT>& operator*= (const CGAL_double(NT)& r);
   Quotient<NT>& operator/= (const CGAL_double(NT)& r);
 
+  friend bool operator==(const Quotient& x, const Quotient& y)
+  { return x.num * y.den == x.den * y.num; }
+  friend bool operator==(const Quotient& x, const NT& y)
+  { return x.den * y == x.num; }
+  friend inline bool operator==(const Quotient& x, const CGAL_int(NT) & y)
+  { return x.den * y == x.num; }
+  friend inline bool operator==(const Quotient& x, const CGAL_double(NT) & y)
+  { return x.den * y == x.num; } // Uh?
+
   Quotient<NT>&    normalize();
 
   const NT&   numerator()   const { return num; }
@@ -142,7 +151,7 @@ class Quotient
   }
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
-  int tam() const { return std::max(num.tam(), den.tam()); }
+  int tam() const { return (std::max)(num.tam(), den.tam()); }
 #endif
 
  public:
@@ -438,31 +447,6 @@ quotient_truncation(const Quotient<NT>& r)
 
 
 
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return x.num * y.den == x.den * y.num; }
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const Quotient<NT>& x, const NT& y)
-{ return x.den * y == x.num; }
-
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_int(NT) & y)
-{ return x.den * y == x.num; }
-
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_double(NT) & y)
-{ return x.den * y == x.num; }
-
-
 
 template <class NT>
 CGAL_MEDIUM_INLINE
@@ -581,7 +565,7 @@ namespace INTERN_QUOTIENT {
         public:
           NT operator()( const NT& x ) const {
             CGAL_precondition(x > 0);
-            return NT(CGAL_NTS sqrt(x.numerator()*x.denominator()),
+            return NT(CGAL_NTS sqrt(typename NT::NT(x.numerator()*x.denominator())),
                       x.denominator());
           }
       };

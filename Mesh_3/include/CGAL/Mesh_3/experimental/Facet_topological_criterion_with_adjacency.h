@@ -87,8 +87,16 @@ protected:
 
           Index_set set;
           domain->get_corner_incidences(corner_id, std::back_inserter(set));
-          if(std::find(set.begin(), set.end(), patch_index) == set.end())
+          if(std::find(set.begin(), set.end(), patch_index) == set.end()) {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+            std::cerr << "Bad facet "
+                         "(Facet_topological_criterion_with_adjacency: corner #"
+                      << corner_id << ", point " << v->point()
+                      << ", is not incident to patch #" << patch_index << ")"
+                      << std::endl;
+#endif
             return Is_bad(Quality(1)); // bad!
+          }
         }
         break;
       case 1:
@@ -98,13 +106,28 @@ protected:
             domain->curve_index(v->index());
           Index_set set;
           domain->get_incidences(curve_id, std::back_inserter(set));
-          if(std::find(set.begin(), set.end(), patch_index) == set.end())
+          if(std::find(set.begin(), set.end(), patch_index) == set.end()) {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+            std::cerr << "Bad facet "
+                         "(Facet_topological_criterion_with_adjacency: curve #"
+                      << curve_id << ", at point " << v->point()
+                      << ", is not incident to patch #" << patch_index << ")"
+                      << std::endl;
+#endif
             return Is_bad(Quality(1)); // bad!
+          }
         }
         break;
       case 2:
-        if(domain->surface_patch_index(v->index()) != patch_index)
+        if(domain->surface_patch_index(v->index()) != patch_index) {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+          std::cerr << "Bad facet (Facet_topological_criterion_with_adjacency: "
+                       "vertex at point "
+                    << v->point() << " is not on patch #" << patch_index << ")"
+                    << std::endl;
+#endif
           return Is_bad(Quality(1)); // bad!
+        }
         break;
       default:
         return Is_bad(Quality(1));
@@ -112,6 +135,10 @@ protected:
       }
     }
     if(nb_vertices_on_curves == 3) {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+      std::cerr << "Bad facet (Facet_topological_criterion_with_adjacency: "
+                   "three points on a curve)\n";
+#endif
       return Is_bad(Quality(1)); // bad!
       // All vertices are on curves. That means that the facet could be on
       // several different patches. Let's disallow that.

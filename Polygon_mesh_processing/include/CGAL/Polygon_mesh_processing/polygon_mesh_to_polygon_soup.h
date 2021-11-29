@@ -17,6 +17,7 @@
 
 #include <CGAL/algorithm.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Container_helper.h>
 #include <CGAL/Dynamic_property_map.h>
@@ -30,7 +31,7 @@ namespace Polygon_mesh_processing {
 
 /// \ingroup PMP_repairing_grp
 ///
-/// Adds the vertices and faces of a mesh into a (possibly non-empty) polygon soup.
+/// adds the vertices and faces of a mesh into a (possibly non-empty) polygon soup.
 ///
 /// \tparam PolygonMesh a model of `FaceListGraph`
 /// \tparam PointRange a model of the concepts `RandomAccessContainer` and
@@ -39,19 +40,20 @@ namespace Polygon_mesh_processing {
 /// \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence` whose
 ///                      value type is itself a model of the concepts `RandomAccessContainer` and
 ///                      `BackInsertionSequence` whose value type is `std::size_t`
-/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param mesh the mesh whose faces are being put in the polygon soup
 /// \param points points making the polygons of the soup
 /// \param polygons each element in the vector describes a polygon using the indices of the points in `points`
-/// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     a model of `ReadablePropertyMap`, the property map with the points associated to the vertices of `mesh`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, mesh)`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \cgalAdvancedBegin
@@ -115,6 +117,8 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
+
 template<typename PolygonMesh, typename PointRange, typename PolygonRange>
 void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
                                   PointRange& points,
@@ -122,6 +126,8 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
 {
   return polygon_mesh_to_polygon_soup(mesh, points, polygons, CGAL::parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

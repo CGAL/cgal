@@ -53,7 +53,7 @@ For any 2D non-degenerate strictly-simple polygon with holes called the <I>sourc
 
 An offset edge is always located to the bounded side of its source edge (which is an oriented straight line segment).
 
-An offset polygon can have less, equal or more sides as its source polygon.
+An offset polygon can have fewer, equal, or more sides as its source polygon.
 
 If the source polygon has no holes, no offset polygon has holes. If the source polygon has holes, any of the offset polygons can have holes itself, but it might as well have no holes at all (if the distance is sufficiently large).
 
@@ -144,21 +144,21 @@ straight skeleton have degree \f$ >=3\f$.
 
 A <I>contour vertex</I> is a vertex for which 2 of its incident edges are contour edges.
 
-A <I>skeleton vertex</I> is a vertex who's incident edges are all skeleton edges.
+A <I>skeleton vertex</I> is a vertex whose incident edges are all skeleton edges.
 
-A <I>contour bisector</I> is a bisector who's defining contour edges
+A <I>contour bisector</I> is a bisector whose defining contour edges
 are consecutive. Such a bisector is incident upon 1 contour vertex and
 1 skeleton vertex and touches the input polygon at exactly 1 endpoint.
 
-An <I>inner bisector</I> is a bisector who's defining contour edges are
+An <I>inner bisector</I> is a bisector whose defining contour edges are
 not consecutive. Such a bisector is incident upon 2 skeleton vertices
 and is strictly contained in the interior of the polygon.
 
 \section Straight_skeleton_2Representation Representation
 
-This \cgal package represents a straight skeleton as a specialized `Halfedge Data Structure` (HDS) whose vertices embeds 2D Points (see the `StraightSkeleton_2` concept in the reference manual for details).
+This \cgal package represents a straight skeleton as a specialized `Halfedge Data Structure` (HDS) whose vertices embed 2D Points (see the `StraightSkeleton_2` concept in the reference manual for details).
 
-Its halfedges, by considering the source and target points, implicitly embeds 2D oriented straight line segments (each halfedge per see does not embed a segment explicitly).
+Its halfedges, by considering the source and target points, implicitly embed 2D oriented straight line segments (each halfedge per see does not embed a segment explicitly).
 
 A face of the straight skeleton is represented as a face in the
 HDS. Both contour and skeleton edges are represented by pairs of
@@ -207,7 +207,7 @@ skeleton edge is defined by 2 contour edges, any vertex is itself
 defined by a unique set of contour edges. These are called the
 <I>defining contour edges</I> of the vertex.
 
-A vertex is identified by it's set of defining contour edges. Two
+A vertex is identified by its set of defining contour edges. Two
 vertices are distinct if they have differing sets of defining contour
 edges. Note that vertices can be distinct even if they are geometrically
 embedded at the same point.
@@ -266,7 +266,7 @@ If `Polygon_with_holes_2` is used, you can pass an instance of it directly to th
 
 \subsection Straight_skeleton_2CreateOffsetPolygonsfrom Create Offset Polygons from a Straight Skeleton
 
-If you already have a straight skeleton instance, the simpler way to generate offset polygons is to call `create_offset_polygons_2()` as shown in the next example, passing the desired offset and the straight skeleton. You can reuse the same skeleton to generate offsets at a different distance, which is recommended because producing the straight skeleton is much slower then generating offset polygons.
+If you already have a straight skeleton instance, the simpler way to generate offset polygons is to call `create_offset_polygons_2()` as shown in the next example, passing the desired offset and the straight skeleton. You can reuse the same skeleton to generate offsets at a different distance, which is recommended because producing the straight skeleton is much slower than generating offset polygons.
 
 \cgalExample{Straight_skeleton_2/Create_offset_polygons_2.cpp}
 
@@ -374,7 +374,7 @@ into a resulting sequence (typically, a back insertion iterator)
 Each element in the resulting sequence is an <I>offset contour</I>, given by
 a `boost::shared_ptr` holding a dynamically allocated instance
 of the Container type. Such a container can be any model of the
-`VertexContainer_2` concept, for example, a `Polygon_2`,
+`SequenceContainer` concept, for example, a `CGAL::Polygon_2`,
 or just a `std::vector` of 2D points.
 
 The resulting sequence of offset contours can contain both outer and inner contours.
@@ -403,7 +403,7 @@ This \cgal package can only construct the straight skeleton and offset contours 
 Say you have some polygon made of 1 outer contour C0 and 1 hole C1, and you need to obtain some exterior offset contours.
 
 The interior region of a polygon with holes is connected while the exterior region is not: there is an unbounded region outside the outer contour, and one bounded region inside each hole.
-To construct an offset contour you need to construct an straight skeleton. Thus, to construct exterior offset contours for a polygon with holes, you need to construct, <I>separately</I>, the exterior skeleton of the outer contour and the interior skeleton of each hole.
+To construct an offset contour you need to construct a straight skeleton. Thus, to construct exterior offset contours for a polygon with holes, you need to construct, <I>separately</I>, the exterior skeleton of the outer contour and the interior skeleton of each hole.
 
 Constructing the interior skeleton of a hole is directly supported by this \cgal package; you just need to input the hole's vertices in reversed order as if it were an outer contour.
 

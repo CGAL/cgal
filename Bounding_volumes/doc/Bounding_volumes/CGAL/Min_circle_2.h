@@ -23,9 +23,9 @@ The underlying algorithm can cope with all kinds of input, e.g. \f$ P\f$ may be
 empty or points may occur more than once. The algorithm computes a support
 set \f$ S\f$ which remains fixed until the next insert or clear operation.
 
-<B>Please note:</B> This class is (almost) obsolete. The class
+\note This class is (almost) obsolete. The class
 `CGAL::Min_sphere_of_spheres_d<Traits>` solves a more general problem
-and is faster then `Min_circle_2` even if used only for points in two
+and is faster than `Min_circle_2` even if used only for points in two
 dimensions as input. Most importantly,
 `CGAL::Min_sphere_of_spheres_d<Traits>` has
 a specialized implementation for floating-point arithmetic which

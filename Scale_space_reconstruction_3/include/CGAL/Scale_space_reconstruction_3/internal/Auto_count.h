@@ -1,4 +1,3 @@
-//A unary operator to that counts instances.
 //Copyright (C) 2013  INRIA - Sophia Antipolis
 //
 // This file is part of CGAL (www.cgal.org).

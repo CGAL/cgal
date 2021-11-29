@@ -115,6 +115,7 @@ and their associated classes:
 - `CGAL::lloyd_optimize_mesh_3()`
 - `CGAL::odt_optimize_mesh_3()`
 - `CGAL::facets_in_complex_3_to_triangle_mesh()`
+- `CGAL::Mesh_3::generate_label_weights()`
 
 \cgalCRPSection{CGAL::parameters Functions}
 
@@ -138,7 +139,7 @@ and their associated classes:
 - `CGAL::Mesh_facet_topology`
 
 \cgalCRPSection{Input/Output Functions}
-- `CGAL::output_to_medit()`
-- `CGAL::output_to_vtu()`
+- `CGAL::IO::output_to_medit()`
+- `CGAL::IO::output_to_vtu()`
 */
 

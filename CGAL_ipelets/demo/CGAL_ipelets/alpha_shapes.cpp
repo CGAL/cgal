@@ -94,7 +94,7 @@ void ASphapeIpelet::protected_run(int fn)
   }
 
 
-  A.set_alpha(alpha==0?std::max(std::numeric_limits<double>::epsilon(),A.get_nth_alpha(0)/2.):
+  A.set_alpha(alpha==0?(std::max)(std::numeric_limits<double>::epsilon(),A.get_nth_alpha(0)/2.):
               (std::size_t) alpha==A.number_of_alphas()?A.get_nth_alpha(alpha-1)+1:A.get_nth_alpha(alpha-1)/2.+A.get_nth_alpha(alpha)/2.);
   for ( Alpha_shape_2::Alpha_shape_edges_iterator it=A.alpha_shape_edges_begin();it!=A.alpha_shape_edges_end();++it)
     draw_in_ipe(A.segment(*it));

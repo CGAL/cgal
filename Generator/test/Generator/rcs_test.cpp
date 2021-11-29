@@ -37,7 +37,7 @@ using std::back_inserter;
 using CGAL::Simple_cartesian;
 using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
-using CGAL::set_pretty_mode;
+using CGAL::IO::set_pretty_mode;
 using CGAL::random_convex_set_2;
 
 
