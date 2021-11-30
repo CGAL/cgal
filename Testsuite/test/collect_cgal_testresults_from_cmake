@@ -30,7 +30,10 @@ RESULT_FILE=''
 # print timings on fd3
 print_testresult()
 {
-  if [ ! -f ErrorOutput_$1 ] ; then
+  if [ -f skipped ]; then
+    RESULT="s"
+    TIMING="0"
+  elif [ ! -f ErrorOutput_$1 ] ; then
     RESULT="?"
     TIMING="?"
   else
@@ -57,7 +60,7 @@ print_testresult()
           RESULT="t"
         fi
       else
-        if grep -E -q 'NOTICE: .*(need|require|incompatible).*and.*will not be' CompilerOutput_$1
+        if grep -E -q 'NOTICE: .*(need|require|incompatible).*will not be' CompilerOutput_$1
         then
           RESULT="r"
         else
