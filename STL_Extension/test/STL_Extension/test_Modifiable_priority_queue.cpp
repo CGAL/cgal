@@ -73,7 +73,7 @@ int main()
   assert( q.top()->first == 4 );
   assert( queue_size(q,45) == 4 );
 
-  q.erase(&data[0]+4,false);
+  q.erase(&data[0]+4);
   assert( q.top()->first == 1 );
   assert( queue_size(q,45) == 3 );
 
@@ -82,7 +82,7 @@ int main()
   assert( queue_size(q,45) == 4 );
 
   data[5].second=43;
-  q.update(&data[0]+5,true);
+  q.update(&data[0]+5);
   assert( q.top()->first == 1 );
   assert( queue_size(q,45) == 4 );
 
@@ -110,19 +110,19 @@ int main()
   assert( q.top()->first == 0 );
   assert( queue_size(q,45) == 4 );
 
-  q.erase(&data[0]+1,true);
+  q.erase(&data[0]+1);
   assert( q.top()->first == 0 );
   assert( queue_size(q,45) == 3 );
 
-  q.erase(&data[0]+2,true);
+  q.erase(&data[0]+2);
   assert( q.top()->first == 0 );
   assert( queue_size(q,45) == 2 );
 
-  q.erase(&data[0],true);
+  q.erase(&data[0]);
   assert( q.top()->first == 3 );
   assert( queue_size(q,45) == 1 );
 
-  q.erase(&data[0]+3,true);
+  q.erase(&data[0]+3);
   assert( queue_size(q,45) == 0 );
   assert( q.empty() );
 
@@ -152,13 +152,13 @@ int main()
 
   for (unsigned int i=0;i<10;++i){
     data[i].second=9-i;
-    q.update(&data[0]+i,true);
+    q.update(&data[0]+i);
     assert(q.top()->first==i);
   }
 
 //testing contains
   for (int i=0;i<10;++i){
-    q.erase(&data[0]+i,true);
+    q.erase(&data[0]+i);
     assert(queue_size(q,45)==9-i);
   }
 
@@ -172,20 +172,20 @@ int main()
 
   for (unsigned int i=0;i<9;++i){
     data[i].second=10+i;
-    q.update(&data[0]+i,true);
+    q.update(&data[0]+i);
     assert(q.top()->first==i+1);
   }
 
 //revert order
   for (unsigned int i=0;i<10;++i){
     data[9-i].second=i;
-    q.update(&data[0]+9-i,true);
+    q.update(&data[0]+9-i);
     assert(q.top()->first==9);
   }
 //testing remove (emulate pop)
   for (std::size_t i=0;i<10;++i){
     assert(q.top()->first==9-i);
-    q.erase(&data[0]-i+9,true);
+    q.erase(&data[0]-i+9);
   }
   assert( q.empty() );
 
@@ -199,7 +199,7 @@ int main()
 
   for (std::size_t i=0;i<10;++i){
     assert(q.top()->first==0);
-    q.erase(&data[0]-i+9,true);
+    q.erase(&data[0]-i+9);
     for (std::size_t k=0;k<9-i;++k)
       assert(q.contains(&data[0]+k)==true);
     for (std::size_t k=0;k<i+1;++k)

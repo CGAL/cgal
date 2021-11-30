@@ -13,45 +13,11 @@
 
 #include <climits> // Needed by the following Boost header for CHAR_BIT.
 #include <boost/optional.hpp>
+
 #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
 #else
 #include <CGAL/STL_Extension/internal/boost/mutable_queue.hpp>
-
-namespace CGAL {
-  namespace internal {
-template <class IndexedType,
-          class RandomAccessContainer = std::vector<IndexedType>,
-          class Comp = std::less<typename RandomAccessContainer::value_type>,
-          class ID = ::boost::identity_property_map >
-class mutable_queue_with_remove : public internal::boost_::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
-{
-  typedef internal::boost_::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
-public:
-  typedef typename Base::size_type size_type;
-  typedef typename Base::Node Node;
-
-  mutable_queue_with_remove(size_type n, const Comp& x=Comp(), const ID& _id=ID()) : Base(n,x,_id,true)
-  {}
-
-  void remove(const IndexedType& x){
-    //first place element at the top
-    size_type current_pos = this->index_array[ get(this->id, x) ];
-    this->c[current_pos] = x;
-
-    Node node(this->c.begin(), this->c.end(), this->c.begin()+current_pos, this->id);
-    while (node.has_parent())
-      node.swap(node.parent(), this->index_array);
-    //then pop it
-    this->pop();
-  }
-
-  bool contains(const IndexedType& x) const {
-    return this->index_array[ get(this->id, x) ] !=this->index_array.size();
-  }
-};
-
-} } //namespace CGAL::internal
 #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 
 namespace CGAL {
@@ -73,7 +39,7 @@ public:
   #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
   typedef boost::relaxed_heap<IndexedType,Compare,ID> Heap;
   #else
-  typedef  internal::mutable_queue_with_remove<IndexedType,std::vector<IndexedType>,Compare,ID> Heap;
+  typedef  internal::boost_::mutable_queue<IndexedType,std::vector<IndexedType>,Compare,ID> Heap;
   #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
   typedef typename Heap::value_type value_type;
   typedef typename Heap::size_type  size_type;
