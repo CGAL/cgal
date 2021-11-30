@@ -24,7 +24,7 @@
 #sets the umask to 022 & 0777
 umask 022
 
-# Warn deprecated use of enviroment variables to pass on flags
+# Warn deprecated use of environment variables to pass on flags
 if [ -n "$TESTSUITE_CXXFLAGS" ] ; then
   echo "\$TESTSUITE_CXXFLAGS is deprecated. Please use the CMAKE variable (CMAKE|CGAL)_CXX_FLAGS instead" >&2;
 fi
@@ -380,6 +380,8 @@ setup_dirs()
   CGAL_DIR=`readlink "${CGAL_ROOT}/CGAL-I"`
 
   CGAL_TEST_DIR=${CGAL_DIR}/test
+  CGAL_DATA_DIR=${CGAL_DIR}/data
+  export CGAL_DATA_DIR=$(echo "$CGAL_DATA_DIR" | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 
   if [ ! -d "${CGAL_DIR}/cmake" ]; then
     mkdir "${CGAL_DIR}/cmake"
@@ -619,9 +621,7 @@ LIST_TEST_PACKAGES='${LIST_TEST_PACKAGES}'
 CGAL_ROOT='${CGAL_ROOT}'
 
 rm -rf '${CGAL_BINARY_DIR}/test';
-
 if [ -f '${LIST_TEST_PACKAGES}' ]; then
-
   mkdir '${CGAL_BINARY_DIR}/test'
 
   cp '${CGAL_TEST_DIR}/collect_cgal_testresults_from_cmake' '${CGAL_BINARY_DIR}/test'
@@ -633,7 +633,10 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
   for PACKAGE in \$(ls "${CGAL_TEST_DIR}"); do
     if [ -d "${CGAL_TEST_DIR}/\$PACKAGE" ]; then
       if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | egrep -q \$PACKAGE; then
-        mkdir "\${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+        mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
+        cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
+      elif [ "\$PACKAGE" = "resources" ]; then
+        mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
         cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
       else
         mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
@@ -661,7 +664,20 @@ echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then
   echo 'COLLECTING DEMOS BINARIES';
-  tar czvf '${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz' *_Demo/*.exe *_Demo/*.dll *_Demo/*/*.dll *_Demo/*/*/*.dll
+  echo "cp ${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh ${CGAL_BINARY_DIR}/test"
+  cp "${CGAL_TEST_DIR}/../developer_scripts/cgal_demo_copy_all_dlls_cygwin.sh" "${CGAL_BINARY_DIR}/test"
+EOF
+  cat >> "$file" <<'EOF'
+  for demo_dir in *_Demo; do
+    echo "pushd ${demo_dir}"
+    pushd "${demo_dir}"
+    bash ../cgal_demo_copy_all_dlls_cygwin.sh "${demo_dir}_with_dlls" ""
+    mv "${demo_dir}_with_dlls" ..
+    popd
+  done
+EOF
+cat >> "$file" <<EOF
+  tar czvf "${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" *_Demo_with_dlls/*
 fi
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';
