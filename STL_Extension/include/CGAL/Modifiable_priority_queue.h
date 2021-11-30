@@ -11,13 +11,12 @@
 #ifndef CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 #define CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 
-#include <climits> // Neeeded by the following Boost header for CHAR_BIT.
+#include <climits> // Needed by the following Boost header for CHAR_BIT.
 #include <boost/optional.hpp>
 #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
 #else
 #include <CGAL/STL_Extension/internal/boost/mutable_queue.hpp>
-
 
 namespace CGAL {
   namespace internal {
@@ -83,11 +82,13 @@ public:
 
 public:
 
-  Modifiable_priority_queue( size_type largest_ID, Compare const& c, ID const& id ) : mHeap(largest_ID,c,id) {}
+  Modifiable_priority_queue( size_type largest_ID, Compare const& c = Compare(), ID const& id = ID() ) : mHeap(largest_ID,c,id) {}
 
   handle push ( value_type const& v ) { mHeap.push(v) ; return handle(true) ; }
 
   handle update ( value_type const& v, handle h ) { mHeap.update(v); return h ; }
+
+  void update ( value_type const& v ) { mHeap.update(v); }
 
   handle erase ( value_type const& v, handle  ) { mHeap.remove(v); return null_handle() ; }
   handle erase ( value_type const& v  ) { mHeap.remove(v); return null_handle() ; }
@@ -110,6 +111,14 @@ public:
       r = boost::optional<value_type>(v) ;
     }
     return r ;
+  }
+
+  value_type top_and_pop()
+  {
+    CGAL_precondition(!empty());
+    value_type v = top();
+    pop();
+    return v;
   }
 
   static handle null_handle() { return handle(false); }
