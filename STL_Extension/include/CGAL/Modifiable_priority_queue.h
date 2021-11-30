@@ -78,22 +78,17 @@ public:
   typedef typename Heap::value_type value_type;
   typedef typename Heap::size_type  size_type;
 
-  typedef bool handle ;
-
 public:
 
   Modifiable_priority_queue( size_type largest_ID, Compare const& c = Compare(), ID const& id = ID() ) : mHeap(largest_ID,c,id) {}
 
-  handle push ( value_type const& v ) { mHeap.push(v) ; return handle(true) ; }
-
-  handle update ( value_type const& v, handle h ) { mHeap.update(v); return h ; }
+  void push ( value_type const& v ) { mHeap.push(v) ; }
 
   void update ( value_type const& v ) { mHeap.update(v); }
 
-  handle erase ( value_type const& v, handle  ) { mHeap.remove(v); return null_handle() ; }
-  handle erase ( value_type const& v  ) { mHeap.remove(v); return null_handle() ; }
+  void erase ( value_type const& v  ) { mHeap.remove(v); }
 
-  value_type top() const { return mHeap.top() ; }
+  value_type top() const { return mHeap.top(); }
 
   void pop() { mHeap.pop(); }
 
@@ -120,8 +115,6 @@ public:
     pop();
     return v;
   }
-
-  static handle null_handle() { return handle(false); }
 
 private:
 

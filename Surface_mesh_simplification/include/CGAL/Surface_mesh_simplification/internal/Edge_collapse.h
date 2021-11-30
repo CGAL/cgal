@@ -174,27 +174,22 @@ public:
   };
 
   typedef Modifiable_priority_queue<halfedge_descriptor, Compare_cost, edge_id>     PQ;
-  typedef typename PQ::handle                                                       PQ_handle;
 
   // An Edge_data is associated with EVERY _ edge in the mesh (collapsable or not).
-  // It relates the edge with the PQ-handle needed to update the priority queue
+  // It contains the edge status wrt the priority queue
   // It also relates the edge with a policy-based cache
-  class Edge_data
+  struct Edge_data
   {
-  public :
-    Edge_data() : m_PQ_h() {}
-
     const Cost_type& cost() const { return m_cost; }
     Cost_type& cost() { return m_cost; }
 
-    PQ_handle queue_handle() const { return m_PQ_h;}
-    bool is_in_PQ() const { return m_PQ_h != PQ::null_handle(); }
-    void set_PQ_handle(PQ_handle h) { m_PQ_h = h; }
-    void reset_queue_handle() { m_PQ_h = PQ::null_handle(); }
+    bool is_in_PQ() const { return m_is_in_PQ; }
+    void set_is_in_PQ() { m_is_in_PQ=true; }
+    void reset_in_queue_status() { m_is_in_PQ = false; }
 
   private:
     Cost_type m_cost;
-    PQ_handle m_PQ_h;
+    bool m_is_in_PQ = false;
   };
 
   typedef Edge_data*                                                                Edge_data_ptr;
@@ -301,7 +296,8 @@ private:
     CGAL_expensive_assertion(!data.is_in_PQ());
     CGAL_expensive_assertion(!mPQ->contains(h));
 
-    data.set_PQ_handle(mPQ->push(h));
+    mPQ->push(h);
+    data.set_is_in_PQ();
 
     CGAL_expensive_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
@@ -313,7 +309,8 @@ private:
     CGAL_expensive_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
 
-    data.set_PQ_handle(mPQ->update(h, data.queue_handle()));
+    mPQ->update(h);
+    data.set_is_in_PQ();
 
     CGAL_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
@@ -325,7 +322,8 @@ private:
     CGAL_expensive_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
 
-    data.set_PQ_handle(mPQ->erase(h, data.queue_handle()));
+    mPQ->erase(h);
+    data.reset_in_queue_status();
 
     CGAL_expensive_assertion(!data.is_in_PQ());
     CGAL_expensive_assertion(!mPQ->contains(h));
@@ -339,7 +337,7 @@ private:
       CGAL_assertion(is_primary_edge(*opt_h));
       CGAL_expensive_assertion(get_data(*opt_h).is_in_PQ());
 
-      get_data(*opt_h).reset_queue_handle();
+      get_data(*opt_h).reset_in_queue_status();
 
       CGAL_expensive_assertion(!get_data(*opt_h).is_in_PQ());
       CGAL_expensive_assertion(!mPQ->contains(*opt_h));
