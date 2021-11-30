@@ -14,17 +14,19 @@
 #include <climits> // Needed by the following Boost header for CHAR_BIT.
 #include <boost/optional.hpp>
 
-#ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
-#include <boost/pending/relaxed_heap.hpp>
-#else
+#include <CGAL/STL_Extension/internal/boost/relaxed_heap.hpp>
 #include <CGAL/STL_Extension/internal/boost/mutable_queue.hpp>
-#endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
+
+#include <type_traits>
 
 namespace CGAL {
+
+enum Heap_type { CGAL_BOOST_PENDING_MUTABLE_QUEUE, CGAL_BOOST_PENDING_RELAXED_HEAP };
 
 template <class IndexedType_
          ,class Compare_ = std::less<IndexedType_>
          ,class ID_      = boost::identity_property_map
+         , Heap_type heap_type = CGAL_BOOST_PENDING_MUTABLE_QUEUE
          >
 class Modifiable_priority_queue
 {
@@ -36,11 +38,10 @@ public:
   typedef Compare_     Compare;
   typedef ID_          ID ;
 
-  #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
-  typedef boost::relaxed_heap<IndexedType,Compare,ID> Heap;
-  #else
-  typedef  internal::boost_::mutable_queue<IndexedType,std::vector<IndexedType>,Compare,ID> Heap;
-  #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
+  typedef std::conditional_t<heap_type == CGAL_BOOST_PENDING_MUTABLE_QUEUE,
+                             internal::boost_::mutable_queue<IndexedType,std::vector<IndexedType>,Compare,ID>,
+                             internal::boost_::relaxed_heap<IndexedType,Compare,ID> > Heap;
+
   typedef typename Heap::value_type value_type;
   typedef typename Heap::size_type  size_type;
 

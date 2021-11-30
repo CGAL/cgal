@@ -41,7 +41,6 @@ int queue_size(Queue& q,int n){
 
 int main()
 {
-  #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
   //testing min-heap
   typedef CGAL::Modifiable_priority_queue<Type*,Less,First_of_pair> Queue;
   Queue q(45,Queue::Compare(),Queue::ID());
@@ -210,8 +209,4 @@ int main()
   std::cout << "OK" << std::endl;
 
   return 0;
-  #else
-  std::cerr << "ERROR: Nothing is tested" << std::endl;
-  return 1;
-  #endif
 }
