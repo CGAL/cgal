@@ -133,6 +133,7 @@ CGAL_add_named_parameter(use_one_sided_hausdorff_t, use_one_sided_hausdorff, use
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
 CGAL_add_named_parameter(filter_t, filter, filter)
+CGAL_add_named_parameter(use_relaxed_order_t, use_relaxed_order, use_relaxed_order)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
