@@ -62,6 +62,12 @@ if(TARGET CGAL::Eigen3_support)
     scene_color_ramp
     CGAL::Eigen3_support)
 
+    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+      set_tests_properties(
+        compilation_of__classification_plugin
+        PROPERTIES RESOURCE_LOCK Selection_test_resources)
+    endif()
+
   if(TARGET CGAL::Boost_serialization_support AND TARGET CGAL::Boost_iostreams_support)
     target_link_libraries(classification_plugin PUBLIC
       CGAL::Boost_serialization_support
