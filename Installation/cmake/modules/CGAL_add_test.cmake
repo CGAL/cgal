@@ -141,10 +141,6 @@ function(cgal_add_compilation_test exe_name)
         PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
     endif()
   endif()
-  if(POLICY CMP0066) # cmake 3.7 or later
-    set_property(TEST "compilation_of__${exe_name}"
-      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
-  endif()
   if(TARGET CGAL_Qt5_moc_and_resources) # if CGAL_Qt5 was searched, and is header-only
     get_property(linked_libraries TARGET "${exe_name}" PROPERTY LINK_LIBRARIES)
     #  message(STATUS "${exe_name} depends on ${linked_libraries}")
@@ -156,7 +152,7 @@ function(cgal_add_compilation_test exe_name)
       add_custom_target(compilation_of__CGAL_Qt5_moc_and_resources)
       add_dependencies( compilation_of__CGAL_Qt5_moc_and_resources CGAL_Qt5_moc_and_resources )
       add_test(NAME "compilation_of__CGAL_Qt5_moc_and_resources"
-        COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "compilation_of__CGAL_Qt5_moc_and_resources" --config "$<CONFIG>")
+        COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "CGAL_Qt5_moc_and_resources" --config "$<CONFIG>")
       set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
         APPEND PROPERTY LABELS "CGAL_build_system")
       set_property(TEST "compilation_of__CGAL_Qt5_moc_and_resources"
