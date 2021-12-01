@@ -17,13 +17,13 @@
 #include <CGAL/STL_Extension/internal/boost/relaxed_heap.hpp>
 #include <CGAL/STL_Extension/internal/boost/mutable_queue.hpp>
 
-#include <boost/heap/fibonacci_heap.hpp>
+#include <boost/heap/pairing_heap.hpp>
 
 #include <type_traits>
 
 namespace CGAL {
 
-enum Heap_type { CGAL_BOOST_FIBONACCI_HEAP, CGAL_BOOST_PENDING_MUTABLE_QUEUE, CGAL_BOOST_PENDING_RELAXED_HEAP };
+enum Heap_type { CGAL_BOOST_PAIRING_HEAP, CGAL_BOOST_PENDING_MUTABLE_QUEUE, CGAL_BOOST_PENDING_RELAXED_HEAP };
 
 template <class IndexedType_
          ,class Compare_ = std::less<IndexedType_>
@@ -92,12 +92,10 @@ private:
 } ;
 
 template <class IndexedType_
-         ,class Compare_ 
+         ,class Compare_
          ,class ID_>
-class Modifiable_priority_queue<IndexedType_, Compare_, ID_, CGAL_BOOST_FIBONACCI_HEAP>
+struct Modifiable_priority_queue<IndexedType_, Compare_, ID_, CGAL_BOOST_PAIRING_HEAP>
 {
-public:
-
   typedef Modifiable_priority_queue Self;
 
   typedef IndexedType_ IndexedType ;
@@ -105,20 +103,44 @@ public:
   typedef ID_          ID ;
 
   struct Reverse_compare{
-    const Compare c;
-    Reverse_compare(){}
-    Reverse_compare(Compare const& c):c(c){}
-    template<typename T>
-     bool operator() (T const& a, T const& b) const
-     {
-       return !c(a,b);
-     }
+    Compare c;
+    Reverse_compare(const Compare& c):c(c){}
+    bool operator() (const IndexedType& a, const IndexedType& b) const
+    {
+      return !c(a,b);
+    }
   };
 
-  typedef boost::heap::fibonacci_heap<IndexedType,boost::heap::compare<Reverse_compare> > Heap;
+  // reference time (SMS Iphigenia, keeping 0.05% of edges, all default parameters + Surface_mesh): 12045ms
+  // --
+  // boost::heap::priority_queue is ummutable and cannot be used
+  // --
+  // typedef boost::heap::d_ary_heap<IndexedType, boost::heap::arity<2>, boost::heap::compare<Reverse_compare>, boost::heap::mutable_<true> > Heap; //(15291ms)
+  // typedef boost::heap::d_ary_heap<IndexedType, boost::heap::arity<3>, boost::heap::compare<Reverse_compare>, boost::heap::mutable_<true> > Heap; //(14351ms)
+  // typedef boost::heap::d_ary_heap<IndexedType, boost::heap::arity<4>, boost::heap::compare<Reverse_compare>, boost::heap::mutable_<true> > Heap; //(13869ms)
+  // typedef boost::heap::d_ary_heap<IndexedType, boost::heap::arity<5>, boost::heap::compare<Reverse_compare>, boost::heap::mutable_<true> > Heap; //(13879ms)
+  // typedef boost::heap::d_ary_heap<IndexedType, boost::heap::arity<6>, boost::heap::compare<Reverse_compare>, boost::heap::mutable_<true> > Heap; //(13881ms)
+  // --
+  //typedef boost::heap::binomial_heap<IndexedType, boost::heap::compare<Reverse_compare>> Heap; //(16216ms)
+  // --
+  // typedef boost::heap::fibonacci_heap<IndexedType, boost::heap::compare<Reverse_compare>> Heap; // (13523ms)
+  // --
+  typedef boost::heap::pairing_heap<IndexedType, boost::heap::compare<Reverse_compare>> Heap; // (12174ms)
+  // --
+  // typedef boost::heap::skew_heap<IndexedType, boost::heap::compare<Reverse_compare>, boost::heap::mutable_<true>> Heap; //(17957ms)
+  // --
 
   typedef typename Heap::value_type value_type;
   typedef typename Heap::size_type  size_type;
+
+private:
+  void reserve_impl(size_type r, std::true_type)
+  {
+    mHeap.reserve(r);
+  }
+
+  void reserve_impl(size_type, std::false_type)
+  {}
 
 public:
 
@@ -126,13 +148,15 @@ public:
     : mHeap(Reverse_compare(c))
     , mID(id)
     , mHandles(largest_ID)
-  {}
+  {
+    reserve(largest_ID);
+  }
 
   void push ( value_type const& v ) { mHandles[get(mID, v)]=mHeap.push(v) ; }
 
   void update ( value_type const& v ) { mHeap.update(mHandles[get(mID, v)]); }
 
-  void erase ( value_type const& v  ) { 
+  void erase ( value_type const& v  ) {
     auto vid = get(mID, v);
     mHeap.erase(mHandles[vid]);
     mHandles[vid]=typename Heap::handle_type();
@@ -165,6 +189,12 @@ public:
     pop();
     return v;
   }
+
+  void reserve(size_type r)
+  {
+    reserve_impl(r, std::integral_constant<bool, Heap::has_reserve>());
+  }
+
 
 private:
 
