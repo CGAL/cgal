@@ -78,7 +78,7 @@ int main ()
 
   // Compute the intersection of the two polygons.
   std::list<Polygon_with_holes_2> res;
-  CGAL::intersection (P, Q, std::back_inserter(res));
+  CGAL::Boolean_set_operations_2::intersection (P, Q, std::back_inserter(res));
 
   std::copy (res.begin(), res.end(),       // export to standard output
              std::ostream_iterator<Polygon_with_holes_2>(std::cout, "\n"));

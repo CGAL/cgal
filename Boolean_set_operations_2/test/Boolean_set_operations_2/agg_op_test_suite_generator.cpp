@@ -27,6 +27,8 @@ typedef std::vector<Polygon_with_holes_2>    Polygons_with_holes_vec;
 typedef std::back_insert_iterator<Polygons_with_holes_vec>
                                              Output_itr;
 
+namespace BSO2 = CGAL::Boolean_set_operations_2;
+
 template <class Vec>
 bool are_polygons_valid(Vec& vec)
 {
@@ -121,21 +123,21 @@ int main(int argc, char *argv[])
     std::cout<<"invalid input polygon with hole !!!" << std::endl;;
   }
 
-  CGAL::join(polygons.begin(), polygons.end(), oi);
+  BSO2::join(polygons.begin(), polygons.end(), oi);
   if(!are_polygons_valid(result))
   {
     std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
-  CGAL::join(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
+  BSO2::join(polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
     std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
-  CGAL::join(polygons.begin(), polygons.end(),
+  BSO2::join(polygons.begin(), polygons.end(),
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
@@ -144,14 +146,14 @@ int main(int argc, char *argv[])
   write_result_to_file(result, out);
 
 
-  CGAL::intersection(polygons.begin(), polygons.end(), oi);
+  BSO2::intersection(polygons.begin(), polygons.end(), oi);
   if(!are_polygons_valid(result))
   {
     std::cout<<"invalid polygon was created !!!" << std::endl;;
   }
   write_result_to_file(result, out);
 
-  CGAL::intersection(polygons_with_holes.begin(),
+  BSO2::intersection(polygons_with_holes.begin(),
                      polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
@@ -159,7 +161,7 @@ int main(int argc, char *argv[])
   }
   write_result_to_file(result, out);
 
-  CGAL::intersection(polygons.begin(), polygons.end(),
+  BSO2::intersection(polygons.begin(), polygons.end(),
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
@@ -168,14 +170,14 @@ int main(int argc, char *argv[])
   write_result_to_file(result, out);
 
 
-  CGAL::symmetric_difference(polygons.begin(), polygons.end(), oi);
+  BSO2::symmetric_difference(polygons.begin(), polygons.end(), oi);
   if(!are_polygons_valid(result))
   {
     std::cout<<"invalid polygon was created !!!" << std::endl;
   }
   write_result_to_file(result, out);
 
-  CGAL::symmetric_difference(polygons_with_holes.begin(),
+  BSO2::symmetric_difference(polygons_with_holes.begin(),
                              polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {
@@ -183,7 +185,7 @@ int main(int argc, char *argv[])
   }
   write_result_to_file(result, out);
 
-  CGAL::symmetric_difference(polygons.begin(), polygons.end(),
+  BSO2::symmetric_difference(polygons.begin(), polygons.end(),
              polygons_with_holes.begin(), polygons_with_holes.end(), oi);
   if(!are_polygons_valid(result))
   {

@@ -35,8 +35,8 @@
 #include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
 #include <CGAL/is_iterator.h>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace Boolean_set_operations_2 {
 
 /// \name difference() functions.
 //@{
@@ -252,7 +252,7 @@ difference(const General_polygon_with_holes_2<Polygon_>& pgn1,
 
 //@}
 
-} //namespace CGAL
+} } //namespace CGAL::Boolean_set_operations_2
 
 #include <CGAL/enable_warnings.h>
 

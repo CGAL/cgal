@@ -25,6 +25,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arrangement_2/Arr_do_intersect_traits_adaptor_2.h>
 
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Boolean_set_operations_2/Gps_do_intersect_functor.h>
@@ -295,30 +296,55 @@ public:
               PolygonWithHolesIterator pgn_with_holes_end);
 
   // test for intersection with a simple polygon
-  bool do_intersect(const Polygon_2& pgn) const
+  bool do_intersect(const Polygon_2& pgn, bool strict = true) const
   {
     ValidationPolicy::is_valid(pgn, *m_traits);
     Self other(pgn, *m_traits);
-    return (do_intersect(other));
+    return (do_intersect(other, strict));
   }
 
   // test for intersection with a polygon with holes
-  bool do_intersect(const Polygon_with_holes_2& pgn_with_holes) const
+  bool do_intersect(const Polygon_with_holes_2& pgn_with_holes, bool strict = true) const
   {
     ValidationPolicy::is_valid(pgn_with_holes, *m_traits);
     Self other(pgn_with_holes, *m_traits);
-    return (do_intersect(other));
+    return (do_intersect(other, strict));
   }
 
   //test for intersection with another Gps_on_surface_base_2 object
-  bool do_intersect(const Self& other) const
+  bool do_intersect(const Self& other, bool strict = true) const
   {
     if (this->is_empty() || other.is_empty()) return false;
     if (this->is_plane() || other.is_plane()) return true;
-    Aos_2 res_arr;
+
+    if (strict)
+    {
+      Aos_2 res_arr;
+      Gps_do_intersect_functor<Aos_2>  func;
+      overlay(*m_arr, *(other.m_arr), res_arr, func);
+      return func.found_reg_intersection();
+    }
+    // else
+    using Do_intersect_traits = Arr_do_intersect_traits_adaptor_2<Traits_2>;
+    using Aos_do_intersect
+      = CGAL::Arrangement_on_surface_2
+      <Do_intersect_traits,
+       typename Topology_traits::template rebind
+       <Do_intersect_traits,
+        typename Topology_traits::Dcel>::other >;
+
+    Aos_do_intersect res_arr;
     Gps_do_intersect_functor<Aos_2>  func;
-    overlay(*m_arr, *(other.m_arr), res_arr, func);
-    return func.found_reg_intersection();
+    try
+    {
+      overlay(*m_arr, *(other.m_arr), res_arr, func);
+    }
+    catch (typename Do_intersect_traits::Exception&)
+    {
+      std::cerr << "Caught exception" << std::endl;
+      return true;
+    }
+    return func.found_reg_intersection() || func.found_boundary_intersection();
   }
 
   // intersection with a simple polygon

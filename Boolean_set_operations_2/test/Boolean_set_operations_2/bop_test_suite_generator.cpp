@@ -22,6 +22,8 @@ typedef CGAL::Polygon_2<Kernel>                        Polygon_2;
 typedef CGAL::Polygon_with_holes_2<Kernel>             Polygon_with_holes_2;
 typedef CGAL::Gps_segment_traits_2<Kernel>             Traits_2;
 
+namespace BSO2 = CGAL::Boolean_set_operations_2;
+
 bool are_polygons_valid(const std::vector<Polygon_with_holes_2>& vec)
 {
   Traits_2 tr;
@@ -43,7 +45,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1,
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(res);
 
   Polygon_with_holes_2 res_pgn;
-  bool intersect = CGAL::join(p1, p2, res_pgn);
+  bool intersect = BSO2::join(p1, p2, res_pgn);
   if(intersect)
   {
     out << 1 << std::endl;
@@ -57,7 +59,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1,
   }
 
   out<<std::endl;
-  CGAL::intersection        (p1, p2, oi);
+  BSO2::intersection        (p1, p2, oi);
   out<< res.size()<<std::endl;
   std::copy(res.begin(),
             res.end(),
@@ -67,7 +69,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1,
   res.clear();
 
   out<<std::endl;
-  CGAL::difference          (p1, p2, oi);
+  BSO2::difference          (p1, p2, oi);
   out<< res.size()<<std::endl;
   std::copy(res.begin(),
             res.end(),
@@ -77,7 +79,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1,
   res.clear();
 
   out<<std::endl;
-  CGAL::difference          (p2, p1, oi);
+  BSO2::difference          (p2, p1, oi);
   out<< res.size()<<std::endl;
   std::copy(res.begin(),
             res.end(),
@@ -87,7 +89,7 @@ std::ostream& write_result_to_file(std::ostream& out, const T_P1& p1,
   res.clear();
 
   out<<std::endl;
-  CGAL::symmetric_difference(p2, p1, oi);
+  BSO2::symmetric_difference(p2, p1, oi);
   out<< res.size()<<std::endl;
   std::copy(res.begin(),
             res.end(),
@@ -103,7 +105,7 @@ std::ostream& write_complement_to_file(std::ostream& out, const Polygon_2& pgn)
 {
   out<<std::endl;
   Polygon_with_holes_2 res_pgn;
-  CGAL::complement(pgn, res_pgn);
+  BSO2::complement(pgn, res_pgn);
   //result of a complement of Polygon_2 is one Polygon_with_holes_2
   out << 1 << std::endl;
   out << res_pgn << std::endl;
@@ -121,7 +123,7 @@ std::ostream& write_complement_to_file(std::ostream& out,
   out<<std::endl;
   std::vector<Polygon_with_holes_2> res;
   std::back_insert_iterator<std::vector<Polygon_with_holes_2> > oi(res);
-  CGAL::complement(pgn, oi);
+  BSO2::complement(pgn, oi);
 
   out<< res.size()<<std::endl;
   std::copy(res.begin(),

@@ -49,7 +49,7 @@ int main ()
   Pwh_list_2 symmR;
   Pwh_list_2::const_iterator it;
 
-  CGAL::symmetric_difference (P, Q, std::back_inserter(symmR));
+  CGAL::Boolean_set_operations_2::symmetric_difference (P, Q, std::back_inserter(symmR));
 
   std::cout << "The symmetric difference:" << std::endl;
   for (it = symmR.begin(); it != symmR.end(); ++it) {

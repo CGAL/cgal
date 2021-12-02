@@ -828,7 +828,7 @@ public:
               boost::get<X_monotone_subcurve_2>(&xection);
             if (subcv_p != nullptr) {
               ocv.push_back(*subcv_p);
-              oi = output_ocv (ocv, invert_ocv, oi);
+              output_ocv (ocv, invert_ocv, oi);
               continue;
             }
 
@@ -885,7 +885,7 @@ public:
             // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
             CGAL_assertion(ocv.size() > 0);
-            oi = output_ocv (ocv, invert_ocv, oi);
+            output_ocv (ocv, invert_ocv, oi);
           }
           else {
             // The left point of the current subcurve of one
@@ -931,7 +931,7 @@ public:
 
         // Output the remaining overlapping polycurve, if necessary.
       if (ocv.size() > 0) {
-        oi = output_ocv (ocv, invert_ocv, oi);
+        output_ocv (ocv, invert_ocv, oi);
       }
       else if (right_coincides) {
         typedef std::pair<Point_2,Multiplicity> return_point;
@@ -987,8 +987,8 @@ public:
   private:
 
     template <typename OutputIterator>
-    inline OutputIterator output_ocv
-    (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
+    inline void output_ocv
+    (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator& oi) const
     {
       typedef std::pair<Point_2, Multiplicity>        Intersection_point;
       typedef boost::variant<Intersection_point, X_monotone_curve_2>
@@ -1001,8 +1001,6 @@ public:
       *(oi ++) = Intersection_result(curve);
 
       ocv.clear();
-
-      return oi;
     }
   };
 

@@ -39,6 +39,7 @@ public:
 
   {}
 
+  template <typename Face_handle>
    void create_face (Face_const_handle f1,
                      Face_const_handle f2,
                      Face_handle )
@@ -48,7 +49,7 @@ public:
       m_found_reg_intersection = true;
   }
 
-
+  template <typename Vertex_handle>
   void create_vertex(Vertex_const_handle ,
                      Vertex_const_handle ,
                      Vertex_handle  )
@@ -56,6 +57,7 @@ public:
     m_found_boudary_intersection = true;
   }
 
+  template <typename Vertex_handle>
   void create_vertex(Vertex_const_handle ,
                      Halfedge_const_handle ,
                      Vertex_handle )
@@ -63,6 +65,7 @@ public:
     m_found_boudary_intersection = true;
   }
 
+  template <typename Vertex_handle>
   void create_vertex(Halfedge_const_handle ,
                      Vertex_const_handle ,
                      Vertex_handle )
@@ -70,22 +73,26 @@ public:
     m_found_boudary_intersection = true;
   }
 
+  template <typename Vertex_handle>
   void create_vertex(Halfedge_const_handle ,
                      Halfedge_const_handle ,
                      Vertex_handle )
   {}
 
 
+  template <typename Vertex_handle>
   void create_vertex(Face_const_handle ,
                      Vertex_const_handle ,
                      Vertex_handle )
   {}
 
+  template <typename Vertex_handle>
   void create_vertex(Vertex_const_handle ,
                      Face_const_handle ,
                      Vertex_handle )
   {}
 
+  template <typename Halfedge_handle>
   void create_edge(Halfedge_const_handle ,
                    Halfedge_const_handle ,
                    Halfedge_handle )
@@ -93,11 +100,13 @@ public:
     m_found_boudary_intersection = true;
   }
 
+  template <typename Halfedge_handle>
   void create_edge(Halfedge_const_handle ,
                    Face_const_handle ,
                    Halfedge_handle )
   {}
 
+  template <typename Halfedge_handle>
   void create_edge(Face_const_handle ,
                    Halfedge_const_handle ,
                    Halfedge_handle )

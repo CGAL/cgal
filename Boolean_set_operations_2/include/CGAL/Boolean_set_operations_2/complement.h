@@ -35,8 +35,8 @@
 #include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
 #include <CGAL/is_iterator.h>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace Boolean_set_operations_2 {
 
 /// \name complement() functions.
 //@{
@@ -132,7 +132,7 @@ OutputIterator complement(General_polygon_with_holes_2<Polygon_>& pgn,
 
 //@}
 
-} //namespace CGAL
+} } //namespace CGAL::Boolean_set_operations_2
 
 #include <CGAL/enable_warnings.h>
 

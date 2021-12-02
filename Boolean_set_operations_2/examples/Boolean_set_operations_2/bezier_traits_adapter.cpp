@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
 
   timer.reset();
   timer.start();
-  CGAL::intersection(P1, P2, std::back_inserter(R));
+  CGAL::Boolean_set_operations_2::intersection(P1, P2, std::back_inserter(R));
   timer.stop();
 
   std::cout << "The intersection polygons are of sizes: {";

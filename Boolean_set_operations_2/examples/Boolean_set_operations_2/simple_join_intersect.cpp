@@ -38,7 +38,7 @@ int main ()
   // Compute the union of P and Q.
   Polygon_with_holes_2 unionR;
 
-  if (CGAL::join (P, Q, unionR)) {
+  if (CGAL::Boolean_set_operations_2::join (P, Q, unionR)) {
     std::cout << "The union: ";
     print_polygon_with_holes (unionR);
   } else
@@ -50,7 +50,7 @@ int main ()
   Pwh_list_2                  intR;
   Pwh_list_2::const_iterator  it;
 
-  CGAL::intersection (P, Q, std::back_inserter(intR));
+  CGAL::Boolean_set_operations_2::intersection (P, Q, std::back_inserter(intR));
 
   std::cout << "The intersection:" << std::endl;
   for (it = intR.begin(); it != intR.end(); ++it) {

@@ -688,7 +688,7 @@ bool are_holes_and_boundary_pairwise_disjoint
     /* gps.join() and gps.insert()requires that the polyon insrted is valid,
      * and therfore hole orientation must be reversed
      */
-    bool intersect = gps.do_intersect(hole);
+    bool intersect = gps.do_intersect(hole, true);
     if (intersect) return false;
     else {
       /* to use gps.insert(hole) it is required that the set coponents and the

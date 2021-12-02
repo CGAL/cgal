@@ -28,6 +28,28 @@
 
 namespace CGAL {
 
+/// \name unregularized _do_intersect() functions.
+//@{
+
+template <class Pgn1, class Pgn2, class Traits>
+inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2, Traits& tr)
+{
+  General_polygon_set_2<Traits> gps(tr);
+  gps.insert(pgn1);
+  return (gps.do_intersect(pgn2, false));
+}
+
+template <class Pgn1, class Pgn2>
+inline bool _do_intersect(const Pgn1& pgn1, const Pgn2& pgn2)
+{
+  typename Gps_default_traits<Pgn1>::Traits    tr;
+  return _do_intersect(pgn1, pgn2, tr);
+}
+
+//@}
+
+namespace Boolean_set_operations_2 {
+
 /// \name s_do_intersect() and r_do_intersect() functions.
 //@{
 
@@ -75,7 +97,7 @@ template <typename InputIterator1, typename InputIterator2, typename Traits>
 inline bool r_do_intersect(InputIterator1 begin1, InputIterator1 end1,
                            InputIterator2 begin2, InputIterator2 end2,
                            Traits& traits, unsigned int k=5) {
-  if (begin1 == end1) return do_intersect(begin2, end2, traits, k);
+  if (begin1 == end1) return r_do_intersect(begin2, end2, traits, k);
   General_polygon_set_2<Traits> gps(*begin1, traits);
   return gps.do_intersect(std::next(begin1), end1, begin2, end2, k);
 }
@@ -534,7 +556,7 @@ void _complement(const Polygon_2<Kernel, Container>& pgn, Pwh& pwh) {
   pwh = convert_polygon_back<Kernel, Container>(general_pwh);
 }
 
-// Compute the complemenet of a polygon with holes
+// Compute the complement of a polygon with holes
 template <typename Kernel, typename Container, typename OutputIterator>
 OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
                            OutputIterator oi) {
@@ -544,12 +566,14 @@ OutputIterator _complement(const Polygon_with_holes_2<Kernel, Container>& pgn,
 
   typename Gps_polyline_traits<Pgn>::Traits traits;
   const Polyline_traits& ptraits(traits);
-  complement(convert_polygon(pgn, ptraits), convert_polygon_back(oi, pgn),
+  _complement(convert_polygon(pgn, ptraits), convert_polygon_back(oi, pgn),
              traits);
   return oi;
 }
 
 //@}
+
+} //namespace Boolean_set_operations_2
 
 } //namespace CGAL
 

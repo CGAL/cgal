@@ -29,17 +29,17 @@ int main() {
   Polygon_with_holes_2 pwh(out, &hole, &hole+1);
   std::cout << pwh << std::endl;
 
-  auto os = CGAL::oriented_side(Point_2(0, 0), pwh);
+  auto os = CGAL::Boolean_set_operations_2::oriented_side(Point_2(0, 0), pwh);
   std::cout << "(0,0) is : " << nice(os) << std::endl;
-  os = CGAL::oriented_side(Point_2(0.5, 0.5), pwh);
+  os = CGAL::Boolean_set_operations_2::oriented_side(Point_2(0.5, 0.5), pwh);
   std::cout << "(0,0) is : " << nice(os) << std::endl;
-  os = CGAL::oriented_side(Point_2(1, 1), pwh);
+  os = CGAL::Boolean_set_operations_2::oriented_side(Point_2(1, 1), pwh);
   std::cout << "(0,0) is : " << nice(os) << std::endl;
-  os = CGAL::oriented_side(Point_2(2.5, 2.5), pwh);
+  os = CGAL::Boolean_set_operations_2::oriented_side(Point_2(2.5, 2.5), pwh);
   std::cout << "(0,0) is : " << nice(os) << std::endl;
-  os = CGAL::oriented_side(Point_2(3, 3), pwh);
+  os = CGAL::Boolean_set_operations_2::oriented_side(Point_2(3, 3), pwh);
   std::cout << "(0,0) is : " << nice(os) << std::endl;
-  os = CGAL::oriented_side(Point_2(3.5, 3.5), pwh);
+  os = CGAL::Boolean_set_operations_2::oriented_side(Point_2(3.5, 3.5), pwh);
   std::cout << "(0,0) is : " << nice(os) << std::endl;
   return 0;
 }

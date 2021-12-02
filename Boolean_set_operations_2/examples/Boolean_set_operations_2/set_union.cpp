@@ -70,7 +70,7 @@ int main (int argc, char* argv[])
 
   // Compute the union aggregately.
   std::list<Polygon_with_holes_2> res;
-  CGAL::join (circles.begin(), circles.end(), std::back_inserter (res));
+  CGAL::Boolean_set_operations_2::join (circles.begin(), circles.end(), std::back_inserter (res));
 
   // Print the result.
   std::copy (res.begin(), res.end(),

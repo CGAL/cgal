@@ -35,8 +35,8 @@
 #include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
 #include <CGAL/is_iterator.h>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace Boolean_set_operations_2 {
 
 /// \name symmetric_difference() functions.
 //@{
@@ -350,7 +350,7 @@ symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
 
 //@}
 
-} //namespace CGAL
+} } //namespace CGAL::Boolean_set_operations_2
 
 #include <CGAL/enable_warnings.h>
 

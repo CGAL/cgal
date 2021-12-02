@@ -25,5 +25,6 @@
 #include <CGAL/Boolean_set_operations_2/join.h>
 #include <CGAL/Boolean_set_operations_2/oriented_side.h>
 #include <CGAL/Boolean_set_operations_2/symmetric_difference.h>
+#include <CGAL/do_polygons_intersect.h>
 
 #endif

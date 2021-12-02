@@ -35,8 +35,8 @@
 #include <CGAL/Boolean_set_operations_2/Polygon_conversions.h>
 #include <CGAL/is_iterator.h>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace Boolean_set_operations_2 {
 
 /// \name oriented_side() functions.
 //@{
@@ -333,7 +333,7 @@ Oriented_side oriented_side(const typename Polygon_::Point_2& p,
 
 //@}
 
-} //namespace CGAL
+} } //namespace CGAL::Boolean_set_operations_2
 
 #include <CGAL/enable_warnings.h>
 
