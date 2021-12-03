@@ -45,7 +45,7 @@ Therefore, this package offers also
 functionality to compute the regularized visibility area
 \f$ \overline{V_q} = closure(interior(V_q)) = (V_q\setminus\partial V_q) \cup  \partial (V_q\setminus\partial V_q)\f$,
 as shown in \cgalFigureRef{definition-fig} (2).
-For more information about regularization, refer to Chapter \ref PkgBooleanSetOperations2.
+For more information about regularization, refer to Chapter \ref PkgRegularizedBooleanSetOperations2.
 
 \section visibility_2_classes Classes and Algorithms
 

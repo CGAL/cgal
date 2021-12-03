@@ -21,7 +21,7 @@ enclosed by the polygons (boundary included). If you are looking for a regulariz
 do-intersect function (i.e. existence of an infinitesimal disk covered by both polygons),
 see the function \link boolean_do_intersect `CGAL::Regularized_boolean_operations_2::do_intersect()` \endlink.
 
-\note This function depends on the package \ref PkgBooleanSetOperations2 and is documented here for convenience.
+\note This function depends on the package \ref PkgRegularizedBooleanSetOperations2 and is documented here for convenience.
 
 */
 template <class Polygon1, class Polygon2>

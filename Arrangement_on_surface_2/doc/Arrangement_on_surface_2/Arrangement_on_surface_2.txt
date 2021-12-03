@@ -4114,7 +4114,7 @@ are both parameterized by a geometric kernel and model the concepts
 `ArrangementTraits_2` and `ArrangementLandmarkTraits_2`.
 \cgalFootnote{They also model the refined concept
 `ArrangementDirectionalXMonotoneTraits_2`, which enables Boolean set
-operations; see Package \ref PkgBooleanSetOperations2Ref.} The class
+operations; see Package \ref PkgRegularizedBooleanSetOperations2Ref.} The class
 template `Arr_non_caching_segment_traits_2<Kernel>` derives from the
 instance `Arr_non_caching_segment_basic_traits_2<Kernel>`, which
 models the `ArrangementLandmarkTraits_2` traits concept but not the
@@ -4215,7 +4215,7 @@ polylines. It models the following three concepts:
 - `ArrangementDirectionalXMonotoneTraits_2`, and
 
 - `ArrangementConstructXMonotoneCurveTraits_2`; see Package \ref
-PkgBooleanSetOperations2Ref.
+PkgRegularizedBooleanSetOperations2Ref.
 
 The type that substitutes the template parameter `SubcurveTraits_2`
 when `Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be
@@ -4507,7 +4507,7 @@ class-template called `Arr_circle_segment_traits_2<Kernel>` that
 exclusively handles line segments, circular arcs, and whole circles
 and models the concepts `ArrangementTraits_2` and
 `ArrangementDirectionalXMonotoneTraits_2`; see Package \ref
-PkgBooleanSetOperations2Ref. Note that it is not a model of the
+PkgRegularizedBooleanSetOperations2Ref. Note that it is not a model of the
 `ArrangementLandmarkTraits_2` concept.  It exploits efficient
 computations with square root numbers, which makes it attractive for
 arrangements induced by line segments, circular arcs, and whole
@@ -4856,7 +4856,7 @@ template models the concepts `ArrangementTraits_2` and
 `ArrangementOpenBoundaryTraits_2`, but it does not model the
 `ArrangementLandmarkTraits_2` concept. It also models the refined
 concept `ArrangementDirectionalXMonotoneTraits_2`, which enables
-Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
+Boolean set operations; see Package \ref PkgRegularizedBooleanSetOperations2Ref.
 Note that it is not a model of `ArrangementLandmarkTraits_2` concept,
 so it is impossible to use the landmark point-location strategy with
 this traits class.
@@ -5086,7 +5086,7 @@ Every instance of the `Arr_Bezier_curve_traits_2` class templates
 models the concept `ArrangementTraits_2` (but it does not model the
 `ArrangementLandmarkTraits_2` concept). It also models the refined
 concept `ArrangementDirectionalXMonotoneTraits_2`, which enables
-Boolean set operations; see Package \ref PkgBooleanSetOperations2Ref.
+Boolean set operations; see Package \ref PkgRegularizedBooleanSetOperations2Ref.
 
 <!-- ------------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-bezier_curves,bezier_curves.png}

@@ -143,7 +143,7 @@
 - Arrangement_on_surface_2 demo
   Cannot change the background color
 
-- Boolean_set_operations_2 demo
+- Regularized_boolean_set_operations_2 demo
   Enter a red polygon.
   Enter a blue polygon.
   Perform a Boolean operation.

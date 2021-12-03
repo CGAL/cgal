@@ -3,7 +3,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 // test that there is no conflict with overloads defined in BSO_2 package
-#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Regularized_boolean_set_operations_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K1;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K2;

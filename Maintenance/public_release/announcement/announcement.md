@@ -49,7 +49,7 @@ can be used to find out which CGAL data structures can be used given a specific 
     which enable determining if the transformations use a specialized representation internally.
 
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.3/Manual/packages.html#PkgBooleanSetOperations2)
--   Added documentation for the free functions [`oriented_side(const Point_2& p, ....)`](https://doc.cgal.org/5.3/Boolean_set_operations_2/group__boolean__oriented__side.html)
+-   Added documentation for the free functions [`oriented_side(const Point_2& p, ....)`](https://doc.cgal.org/5.3/Regularized_boolean_set_operations_2/group__boolean__oriented__side.html)
     that accept a point and a polygon.
 -   Documentation has been improved across the whole package.
 
