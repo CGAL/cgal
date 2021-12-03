@@ -13,6 +13,7 @@ Release date: December 2021
 - The functions [`CGAL::do_intersect()`](https://doc.cgal.org/5.5/Kernel_23/group__do__intersect__polygons__grp.html) and
   [`CGAL::Regularized_boolean_operations_2::do_intersect()`](https://doc.cgal.org/5.5/Regularized_boolean_set_operations_2/group__boolean__do__intersect.html)
   requires only a Kernel with exact predicates to report a guaranteed results (no exact constructions needed anymore).
+- The directory `CGAL/Boolean_set_operations_2` has been renamed to `CGAL/Regularized_boolean_set_operations_2`.
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
