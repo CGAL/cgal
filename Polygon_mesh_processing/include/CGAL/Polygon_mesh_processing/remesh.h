@@ -105,7 +105,7 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{protect_constraints}
 *     \cgalParamDescription{If `true`, the edges set as constrained in `edge_is_constrained_map`
-*                           (or by default the boundary edges) are not split nor collapsed during remeshing.}
+*                           (or by default the boundary edges) are neither split nor collapsed during remeshing.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`false`}
 *     \cgalParamExtra{Note that around constrained edges that have their length higher than
