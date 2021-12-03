@@ -100,14 +100,20 @@ public:
     }
 
     template <typename T>
-    typename K2::FT
-    operator()(const T&,
+    T
+    operator()(const T t,
                typename std::enable_if<std::is_fundamental<T>::value>::type* = nullptr) const
     {
-        // Disable fundamental types (other than K1::FT) to avoid unexpected results
-        // More details: https://github.com/CGAL/cgal/issues/4982
-        CGAL_static_assertion(!(std::is_fundamental<T>::value));
-        return typename K2::FT();
+        return t;
+    }
+
+    template <typename T>
+    T
+    operator()(const T t,
+               typename std::enable_if<!std::is_fundamental<T>::value>::type* = nullptr) const
+    {
+        CGAL_static_assertion(!(std::is_same<T, T>::value));
+        return t;
     }
 
     std::vector<Object>
@@ -119,11 +125,6 @@ public:
         res.push_back(operator()(v[i]));
       }
       return res;
-    }
-
-    int operator()(const int &a)
-    {
-        return a;
     }
 
     typename K2::Point_d
