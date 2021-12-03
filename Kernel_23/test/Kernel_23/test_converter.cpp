@@ -51,9 +51,14 @@ int main()
 #endif
 
   // int* is not a fundamental type, so this goes through Enum_converter(bool)
+  assert(sci_to_epick(true) == true);
+  assert(sci_to_epick(false) == false);
+  assert(sci_to_epick(CGAL::ON_POSITIVE_SIDE) == CGAL::ON_POSITIVE_SIDE);
+
   int a = 123;
-  auto a_ptr = &a;
-  assert(sci_to_epick(a_ptr) == true);
+  int* a_ptr = &a;
+  CGAL_USE(a_ptr);
+//  assert(sci_to_epick(a_ptr) == a_ptr); // unauthorized since 'int*' isn't a fundamental type
 
   // fundamental type, static assertion failure
 //  assert(sci_to_epeck(2.) == EPECK::FT(2));
@@ -62,13 +67,12 @@ int main()
 //  assert(epeck_to_epick(2.) == EPICK::FT(2));
 
   // Homogeneous
-//  assert(shi_to_shd(2.) == SHD::FT(2));
-  assert(shi_to_shd(SHI::RT(2.)) == SHD::FT(2));
+  assert(shi_to_shd(2.) == 2.);
+  assert(shi_to_shd(SHI::RT(2.)) == SHD::RT(2.));
 
   assert(she_to_shd(SHE::RT(2)) == SHD::RT(2));
   assert(she_to_shd(SHE::FT(2.)) == SHD::FT(2.));
-//  assert(she_to_shd(2.) == SHD::FT(2));
-//  assert(she_to_she(2.) == 2.);
+  assert(she_to_shd(2.) == 2.);
   assert(she_to_she(SHE::RT(2)) == SHE::RT(2));
 
   std::cout << "NT_exact is " << typeid(NT_exact).name() << std::endl;
