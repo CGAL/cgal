@@ -1573,6 +1573,8 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
     {
       CGAL::Polygon_mesh_processing::repair_polygon_soup(points, faces);
       CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
+
+      clear(*(d->smesh_));
       CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, *(d->smesh_));
     }
   }
