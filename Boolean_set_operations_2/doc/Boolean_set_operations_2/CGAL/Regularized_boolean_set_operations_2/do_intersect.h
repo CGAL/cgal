@@ -79,7 +79,7 @@ namespace Regularized_boolean_set_operations_2 {
  * \sa \link boolean_join `CGAL::Regularized_boolean_operations_2::join()` \endlink
  * \sa \link boolean_difference `CGAL::Regularized_boolean_operations_2::difference()` \endlink
  * \sa \link boolean_symmetric_difference `CGAL::Regularized_boolean_operations_2::symmetric_difference()` \endlink
- * \sa \link do_intersect_polygons_grp `CGAL::do_intersect()` \endlink
+ * \sa \sa `do_intersect_polygons_grp`
  */
 
 /// @{
