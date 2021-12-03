@@ -341,7 +341,6 @@ public:
     }
     catch (typename Do_intersect_traits::Exception&)
     {
-      std::cerr << "Caught exception" << std::endl;
       return true;
     }
     return func.found_reg_intersection() || func.found_boundary_intersection();
