@@ -16,7 +16,6 @@ namespace ArrDirectionalTraits {}
 
 /*!
 \addtogroup PkgBooleanSetOperations2Ref
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Regularized Boolean Set-Operations,PkgBooleanSetOperations2}
 \cgalPkgPicture{Boolean_set_operations_2.png}
 \cgalPkgSummaryBegin
@@ -61,13 +60,13 @@ containment predicates.
 - `CGAL::Gps_default_dcel<Traits>`
 
 \cgalCRPSection{Functions}
-- \link boolean_complement `CGAL::complement()` \endlink
-- \link boolean_do_intersect `CGAL::do_intersect()` \endlink
-- \link boolean_intersection `CGAL::intersection()` \endlink
-- \link boolean_join `CGAL::join()` \endlink
-- \link boolean_difference `CGAL::difference()` \endlink
-- \link boolean_symmetric_difference `CGAL::symmetric_difference()` \endlink
-- \link boolean_oriented_side `CGAL::oriented_side()` \endlink
+- \link boolean_complement `CGAL::Regularized_boolean_operations_2::complement()` \endlink
+- \link boolean_do_intersect `CGAL::Regularized_boolean_operations_2::do_intersect()` \endlink
+- \link boolean_intersection `CGAL::Regularized_boolean_operations_2::intersection()` \endlink
+- \link boolean_join `CGAL::Regularized_boolean_operations_2::join()` \endlink
+- \link boolean_difference `CGAL::Regularized_boolean_operations_2::difference()` \endlink
+- \link boolean_symmetric_difference `CGAL::Regularized_boolean_operations_2::symmetric_difference()` \endlink
+- \link boolean_oriented_side `CGAL::Regularized_boolean_operations_2::oriented_side()` \endlink
 - \link boolean_connect_holes `CGAL::connect_holes()` \endlink
 
 \cgalCRPSection{Draw a Polygon_set_2}
