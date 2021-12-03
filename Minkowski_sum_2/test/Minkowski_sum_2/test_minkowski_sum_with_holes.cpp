@@ -1,7 +1,7 @@
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
-#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Regularized_boolean_set_operations_2.h>
 #include <CGAL/Small_side_angle_bisector_decomposition_2.h>
 
 #include "read_polygon.h"

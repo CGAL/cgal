@@ -4,7 +4,7 @@
 #include <list>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Regularized_boolean_set_operations_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
 typedef Kernel::Point_2                            Point_2;

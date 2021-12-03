@@ -20,7 +20,7 @@ R = RU Groningen
  Arithmetic_kernel                       M
  Arrangement_on_surface_2                T
  BGL                                     G
- Boolean_set_operations_2                T
+ Regularized_boolean_set_operations_2    T
  Box_intersection_d                      M
  CGAL_Core                               NYU; Chee Yap agreed to upgrade
  CGAL_ImageIO                            third party lib under LGPL

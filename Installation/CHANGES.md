@@ -1,6 +1,20 @@
 Release History
 ===============
 
+[Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.4)
+-----------
+
+Release date: December 2021
+
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.5/Manual/packages.html#PkgRegularizedBooleanSetOperations2)
+- **Breaking change**: All free functions of the packages are moved into the namespace `CGAL::Regularized_boolean_operations_2`.
+- Added the function [`CGAL::do_intersect()`](https://doc.cgal.org/5.5/Kernel_23/group__do__intersect__polygons__grp.html) for polygons
+  that is also reporting intersections between polygons on their boundaries
+- The functions [`CGAL::do_intersect()`](https://doc.cgal.org/5.5/Kernel_23/group__do__intersect__polygons__grp.html) and
+  [`CGAL::Regularized_boolean_operations_2::do_intersect()`](https://doc.cgal.org/5.5/Regularized_boolean_set_operations_2/group__boolean__do__intersect.html)
+  requires only a Kernel with exact predicates to report a guaranteed results (no exact constructions needed anymore).
+- The directory `CGAL/Boolean_set_operations_2` has been renamed to `CGAL/Regularized_boolean_set_operations_2`.
+
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 

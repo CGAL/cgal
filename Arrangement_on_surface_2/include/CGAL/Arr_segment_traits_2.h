@@ -62,7 +62,7 @@ public:
   // Category tags:
   typedef Tag_true                        Has_left_category;
   typedef Tag_true                        Has_merge_category;
-  typedef Tag_false                       Has_do_intersect_category;
+  typedef Tag_true                        Has_do_intersect_category;
 
   typedef Arr_oblivious_side_tag          Left_side_category;
   typedef Arr_oblivious_side_tag          Bottom_side_category;
@@ -621,7 +621,7 @@ public:
   /*! Obtain a Split_2 functor object. */
   Split_2 split_2_object() const { return Split_2(*this); }
 
-  class Intersect_2 {
+  class Do_intersect_2 {
   protected:
     typedef Arr_segment_traits_2<Kernel>        Traits;
 
@@ -631,10 +631,22 @@ public:
     /*! Construct
      * \param traits the traits (in case it has state)
      */
-    Intersect_2(const Traits& traits) : m_traits(traits) {}
+    Do_intersect_2(const Traits& traits) : m_traits(traits) {}
 
     friend class Arr_segment_traits_2<Kernel>;
 
+  public:
+
+    bool operator() (const X_monotone_curve_2& xcv1,
+                     const X_monotone_curve_2& xcv2) const
+    {
+      if (!do_bboxes_overlap (xcv1, xcv2))
+        return false;
+      const Kernel& kernel = m_traits;
+      return do_intersect(xcv1.left(), xcv1.right(), xcv2.left(), xcv2.right());
+    }
+
+  protected:
     // Specialized do_intersect with many tests skipped because at
     // this point, we already know which point is left / right for
     // both segments
@@ -689,6 +701,24 @@ public:
       auto bbox2 = construct_bbox(cv2.source()) + construct_bbox(cv2.target());
       return CGAL::do_overlap(bbox1, bbox2);
     }
+  };
+
+  /*! Obtain an Intersect_2 functor object. */
+  Do_intersect_2 do_intersect_2_object() const { return Do_intersect_2(*this); }
+
+  class Intersect_2 {
+  protected:
+    typedef Arr_segment_traits_2<Kernel>        Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Construct
+     * \param traits the traits (in case it has state)
+     */
+    Intersect_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_segment_traits_2<Kernel>;
 
   public:
     /*! Find the intersections of the two given curves and insert them into the
@@ -708,17 +738,21 @@ public:
       typedef boost::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
-      // Early ending with Bbox overlapping test
-      if (! do_bboxes_overlap(cv1, cv2)) return oi;
+      typename Traits::Do_intersect_2
+        do_intersect_2 = m_traits.do_intersect_2_object();
 
       // Early ending with specialized do_intersect
-      const Kernel& kernel = m_traits;
-      if (! do_intersect(cv1.left(), cv1.right(), cv2.left(), cv2.right()))
+      if (!do_intersect_2 (cv1, cv2))
         return oi;
 
       // An intersection is guaranteed.
 
+      if (inexact_segment_to_segment_adjacency (cv1, cv2, oi,
+                                                Boolean_tag<std::is_floating_point<FT>::value>()))
+        return oi;
+
       // Intersect the two supporting lines.
+      const Kernel& kernel = m_traits;
       auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
       CGAL_assertion(bool(res));
 
@@ -776,6 +810,47 @@ public:
       X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
       *oi++ = Intersection_result(overlap_seg);
       return oi;
+    }
+
+  protected:
+
+    template <typename OutputIterator>
+    bool inexact_segment_to_segment_adjacency (const X_monotone_curve_2& cv1,
+                                               const X_monotone_curve_2& cv2,
+                                               OutputIterator& oi,
+                                               const Tag_false&) const
+    {
+      return false;
+    }
+
+    template <typename OutputIterator>
+    bool inexact_segment_to_segment_adjacency (const X_monotone_curve_2& cv1,
+                                               const X_monotone_curve_2& cv2,
+                                               OutputIterator& oi,
+                                               const Tag_true&) const
+    {
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+      bool left_adjacency = false;
+      bool right_adjacency = false;
+
+      if (cv1.left() == cv2.left() || cv1.left() == cv2.right())
+        left_adjacency = true;
+      if (cv1.right() == cv2.left() || cv1.right() == cv2.right())
+        right_adjacency = true;
+
+      if (left_adjacency == right_adjacency)
+        return false;
+
+      if (left_adjacency)
+        *oi++ = Intersection_result (Intersection_point(cv1.left(), 1));
+      else
+      {
+        CGAL_assertion (right_adjacency);
+        *oi++ = Intersection_result (Intersection_point(cv1.right(), 1));
+      }
+      return true;
     }
   };
 

@@ -3,7 +3,7 @@
 #include <CGAL/Polygon_triangulation_decomposition_2.h>
 #include <CGAL/Polygon_vertical_decomposition_2.h>
 #include <CGAL/Polygon_convex_decomposition_2.h>
-#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Regularized_boolean_set_operations_2.h>
 #include <CGAL/Timer.h>
 
 #include "read_polygon.h"

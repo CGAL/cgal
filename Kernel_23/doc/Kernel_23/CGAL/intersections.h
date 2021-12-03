@@ -16,6 +16,7 @@ function are available.
 
 \sa `do_intersect_circular_grp`
 \sa `do_intersect_spherical_grp`
+\sa `do_intersect_polygons_grp`
 \sa `intersection_grp`
 
 \details See Chapter  \ref chapterkernel23 "2D and 3D Geometry Kernel" for details on a linear kernel instantiation.

@@ -18,7 +18,7 @@
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
-#include <CGAL/Boolean_set_operations_2.h>
+#include <CGAL/Regularized_boolean_set_operations_2.h>
 #include <CGAL/General_polygon_set_2.h>
 #include <CGAL/Gps_segment_traits_2.h>
 #include <list>

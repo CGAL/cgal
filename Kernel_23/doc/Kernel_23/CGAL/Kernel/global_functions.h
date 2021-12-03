@@ -1808,6 +1808,8 @@ const CGAL::Vector_3<Kernel>& w);
 /// \ingroup do_intersect_grp
 /// \defgroup do_intersect_spherical_grp CGAL::do_intersect() (3D Spherical Kernel)
 /// \ingroup do_intersect_grp
+/// \defgroup do_intersect_polygons_grp CGAL::do_intersect() (2D Polygons)
+/// \ingroup do_intersect_grp
 
 /// \defgroup equidistant_line_grp CGAL::equidistant_line()
 /// \ingroup kernel_global_function
