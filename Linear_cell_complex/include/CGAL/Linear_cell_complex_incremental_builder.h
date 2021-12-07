@@ -206,80 +206,46 @@ struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
   }
 };
 ///////////////////////////////////////////////////////////////////////////////
-  // Incremental builder
-  template < class LCC_ >
-  class Linear_cell_complex_incremental_builder_3
+// Incremental builder
+template < class LCC_ >
+class Linear_cell_complex_incremental_builder_3
+{
+public:
+  typedef LCC_ LCC;
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  typedef typename LCC::Point                   Point_3;
+  typedef typename LCC::size_type               size_type;
+
+  Linear_cell_complex_incremental_builder_3(LCC & alcc) :
+    lcc(alcc)
+  {}
+
+  VAH add_vertex(const Point_3& p)
   {
-  public:
-    typedef LCC_ LCC;
-    typedef typename LCC::Dart_handle             DH;
-    typedef typename LCC::Vertex_attribute_handle VAH;
-    typedef typename LCC::Point                   Point_3;
-    typedef typename LCC::size_type               size_type;
-
-    Linear_cell_complex_incremental_builder_3(LCC & alcc) :
-      lcc(alcc)
-    {}
-
-    VAH add_vertex(const Point_3& p)
-    {
     VAH res=lcc.create_vertex_attribute(p);
-      vertex_map.push_back(res);
-      return res;
-    }
+    vertex_map.push_back(res);
+    return res;
+  }
 
-    void begin_facet()
+  void begin_facet()
   { // std::cout<<"Begin facet: "<<std::flush;
     first_dart=lcc.null_handle;
     prev_dart =lcc.null_handle;
-    }
+  }
 
-    void add_vertex_to_facet(size_type i)
-    {
-      CGAL_assertion(i<vertex_map.size());
-      // std::cout<<i<<"  "<<std::flush;
+  void add_vertex_to_facet(size_type i)
+  {
+    CGAL_assertion(i<vertex_map.size());
+    // std::cout<<i<<"  "<<std::flush;
     DH cur_dart=Add_vertex_to_face<LCC>::run(lcc, vertex_map[i], prev_dart);
-      if ( prev_dart!=lcc.null_handle )
-      {
-        DH opposite=Find_opposite_2_with_control<LCC>::
-                  run(lcc,
-                      vertex_to_dart_map_in_surface,
-                      lcc.vertex_attribute(prev_dart),
-                      lcc.vertex_attribute(cur_dart));
-        if ( opposite!=lcc.null_handle )
-        {
-          CGAL_assertion( lcc.template is_free<2>(opposite) );
-          lcc.template set_opposite<2>(prev_dart, opposite);
-        }
-
-        Add_edge_in_associative_array<LCC>::run(lcc, prev_dart,
-                                                vertex_to_dart_map_in_surface);
-
-        if (i<min_vertex) { min_vertex=i; min_dart=cur_dart; }
-        if (i>max_vertex) { max_vertex=i; }
-      }
-      else
-      { first_dart=cur_dart; min_vertex=max_vertex=i; min_dart=cur_dart; }
-
-    prev_dart=cur_dart;
-    }
-
-    // End of the facet. Return the first dart of this facet.
-    DH end_facet()
+    if ( prev_dart!=lcc.null_handle )
     {
-      CGAL_assertion( first_dart!=lcc.null_handle && prev_dart!=lcc.null_handle );
-
-    Add_vertex_to_face<LCC>::run_for_last(lcc,
-                                          lcc.vertex_attribute(first_dart),
-                                            prev_dart);
-
-      lcc.set_next(prev_dart, first_dart);
-
       DH opposite=Find_opposite_2_with_control<LCC>::
-                run(lcc,
-                    vertex_to_dart_map_in_surface,
-                    lcc.vertex_attribute(prev_dart),
-                    lcc.vertex_attribute(first_dart));
+        run(lcc,
+            vertex_to_dart_map_in_surface,
+            lcc.vertex_attribute(prev_dart),
+            lcc.vertex_attribute(cur_dart));
       if ( opposite!=lcc.null_handle )
       {
         CGAL_assertion( lcc.template is_free<2>(opposite) );
@@ -289,32 +255,70 @@ struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
       Add_edge_in_associative_array<LCC>::run(lcc, prev_dart,
                                               vertex_to_dart_map_in_surface);
 
-    opposite=opposite_face();
-    if(opposite!=nullptr)
+      if (i<min_vertex) { min_vertex=i; min_dart=cur_dart; }
+      if (i>max_vertex) { max_vertex=i; }
+    }
+    else
+    { first_dart=cur_dart; min_vertex=max_vertex=i; min_dart=cur_dart; }
+
+    prev_dart=cur_dart;
+  }
+
+  // End of the facet. Return the first dart of this facet.
+  DH end_facet()
+  {
+    CGAL_assertion( first_dart!=lcc.null_handle && prev_dart!=lcc.null_handle );
+
+    Add_vertex_to_face<LCC>::run_for_last(lcc,
+                                          lcc.vertex_attribute(first_dart),
+                                          prev_dart);
+
+    lcc.set_next(prev_dart, first_dart);
+
+    DH opposite=Find_opposite_2_with_control<LCC>::
+                run(lcc,
+                    vertex_to_dart_map_in_surface,
+                    lcc.vertex_attribute(prev_dart),
+                    lcc.vertex_attribute(first_dart));
+    if ( opposite!=lcc.null_handle )
     {
-      if(!lcc.template is_free<3>(opposite))
+      CGAL_assertion( lcc.template is_free<2>(opposite) );
+      lcc.template set_opposite<2>(prev_dart, opposite);
+    }
+
+    Add_edge_in_associative_array<LCC>::run(lcc, prev_dart,
+                                            vertex_to_dart_map_in_surface);
+
+    if(LCC::dimension>2)
+    {
+      opposite=opposite_face();
+      if(opposite!=nullptr)
       {
-        std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: it exists more than 2 faces with same indices."<<std::endl;
+        if(!lcc.template is_free<3>(opposite))
+        {
+          std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: "
+                   <<"it exists more than 2 faces with same indices."<<std::endl;
+        }
+        else
+        { lcc.template sew<3>(lcc.other_orientation(opposite), min_dart); }
       }
-      else
-      { lcc.template sew<3>(lcc.other_orientation(opposite), min_dart); }
+      add_face_in_array();
     }
-    add_face_in_array();
-      return first_dart;
-    }
+    return first_dart;
+  }
 
-    DH add_facet(std::initializer_list<size_type> l)
-    {
-      begin_facet();
-      for (std::size_t i:l)
-      { add_vertex_to_facet(i); }
-      return end_facet();
-    }
+  DH add_facet(std::initializer_list<size_type> l)
+  {
+    begin_facet();
+    for (std::size_t i:l)
+    { add_vertex_to_facet(i); }
+    return end_facet();
+  }
 
-    void begin_surface()
-    {
-      vertex_to_dart_map_in_surface.clear();
-    }
+  void begin_surface()
+  {
+    vertex_to_dart_map_in_surface.clear();
+  }
 
     // End of the surface. Return one dart of the created surface.
     DH end_surface()
@@ -327,7 +331,7 @@ struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
    *         orientation.
    */
   bool are_facets_opposite_and_same_vertex_handles(DH d1, DH d2) const
-    {
+  {
     DH s1=d1;
     DH s2=d2;
     do
@@ -347,7 +351,7 @@ struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
   }
 
   DH opposite_face()
-      {
+  {
     auto it1=faces.find(min_vertex);
     if(it1==faces.end()) { return nullptr; }
     auto it2=it1->second.find(max_vertex);
@@ -356,16 +360,16 @@ struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
     {
       if (are_facets_opposite_and_same_vertex_handles(*it3, min_dart))
       { return lcc.previous(*it3); }
-      }
-    return nullptr;
     }
+    return nullptr;
+  }
 
   void add_face_in_array()
-    {
+  {
     faces[min_vertex][max_vertex].push_back(min_dart);
-    }
+  }
 
-  private:
+private:
   LCC& lcc;
   std::vector<VAH> vertex_map; // Map each index to the corresponding vertex handle
 
@@ -378,7 +382,7 @@ struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
   DH prev_dart; /// Prev dart of the current face
   DH min_dart; /// dart with the min vertex of the current facet.
   std::size_t min_vertex, max_vertex; /// min and max indices of vertices of the current face
-  };
+};
 
 } //namespace CGAL
 
