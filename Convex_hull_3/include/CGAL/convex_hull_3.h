@@ -1111,8 +1111,6 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
                    typename std::enable_if<boost::has_range_iterator<PointRange>::value>::type* = 0,
                    typename std::enable_if<boost::has_range_iterator<TriangleRange>::value>::type* = 0)
 {
-  typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
-
   Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
   convex_hull_3(first, beyond, its, traits);
 }

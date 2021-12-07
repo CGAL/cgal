@@ -26,11 +26,14 @@ namespace CGAL {
 namespace Convex_hull_3 {
 namespace internal {
 
-  template <typename V, typename F>
+template <typename V, typename F>
 struct Indexed_triangle_set
 {
   V& vertices;
   F& faces;
+
+  typedef typename std::iterator_traits<typename F::iterator>::value_type Index_triple;
+  typedef typename std::iterator_traits<typename Index_triple::iterator>::value_type Index;
 
   Indexed_triangle_set(V& vertices,
                        F& faces)
@@ -55,11 +58,13 @@ void copy_ch2_to_face_graph(const std::list<P>& CH_2,
     its.vertices.push_back(p);
   }
 
+  typedef typename Indexed_triangle_set<V,F>::Index Index;
+
   for(std::size_t i = 1; i < CH_2.size()-1; ++i){
       CGAL::internal::resize(its.faces[i-1], 3);
-      its.faces[i-1][0] = i;
-      its.faces[i-1][1] = i + 1;
-      its.faces[i-1][2] = i + 2;
+      its.faces[i-1][0] = static_cast<Index>(i);
+      its.faces[i-1][1] = static_cast<Index>(i + 1);
+      its.faces[i-1][2] = static_cast<Index>(i + 2);
   }
 
 }
@@ -74,11 +79,12 @@ void copy_face_graph(const TDS& tds, Convex_hull_3::internal::Indexed_triangle_s
   typedef typename TDS::Face_iterator Face_iterator;
   CGAL::internal::resize(its.vertices, tds.number_of_vertices());
   CGAL::internal::resize(its.faces, tds.number_of_faces());
-  std::size_t i = 0;
+  typename Convex_hull_3::internal::Indexed_triangle_set<V,F>::Index i = 0;
   for(Vertex_iterator vit = tds.vertices_begin(); vit != tds.vertices_end(); ++vit){
       its.vertices[i] = vit->point();
     vit->info() = i++;
   }
+
   i = 0;
   for (Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit) {
     CGAL::internal::resize(its.faces[i], 3);
