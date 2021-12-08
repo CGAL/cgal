@@ -384,10 +384,27 @@ public:
       return std::make_pair(operator()(pp.first), operator()(pp.second));
     }
 
+    typename K2::Aff_transformation_2
+    operator()(const typename K1::Aff_transformation_2 &a) const
+    {
+      typedef typename K2::Aff_transformation_2 Aff_transformation_2;
+      typename K2::FT t[6];
+      for(int i=0; i< 2; ++i)
+      {
+        for(int j=0; j<3; ++j)
+        {
+          t[i*3+j] = a.m(i,j);
+        }
+      }
+      return Aff_transformation_2(t[0],t[1],t[2],
+				  t[3],t[4],t[5],
+				  a.m(2,2));
+    }
+
     typename K2::Aff_transformation_3
     operator()(const typename K1::Aff_transformation_3 &a) const
     {
-        typedef typename K2::Aff_transformation_3 Aff_transformation_3;
+      typedef typename K2::Aff_transformation_3 Aff_transformation_3;
       typename K2::FT t[12];
       for(int i=0; i< 3; ++i)
       {
