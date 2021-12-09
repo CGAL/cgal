@@ -814,6 +814,7 @@ template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
 halfedges_around_source(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
+  CGAL_precondition(h != boost::graph_traits<Graph>::null_halfedge());
   typedef Halfedge_around_source_iterator<Graph> I;
   return make_range(I(h,g), I(h,g,1));
 }
@@ -826,6 +827,7 @@ template<typename Graph>
 Iterator_range<Halfedge_around_source_iterator<Graph> >
 halfedges_around_source(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
+  CGAL_precondition(v != boost::graph_traits<Graph>::null_vertex());
   return halfedges_around_source(opposite(halfedge(v,g),g),g);
 }
 
@@ -837,6 +839,7 @@ template<typename Graph>
 Iterator_range<Halfedge_around_target_iterator<Graph> >
 halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
+  CGAL_precondition(h != boost::graph_traits<Graph>::null_halfedge());
   typedef Halfedge_around_target_iterator<Graph> I;
   return make_range(I(h,g), I(h,g,1));
 }
@@ -849,6 +852,7 @@ template<typename Graph>
 Iterator_range<Halfedge_around_target_iterator<Graph> >
 halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
+  CGAL_precondition(v != boost::graph_traits<Graph>::null_vertex());
   return halfedges_around_target(halfedge(v,g),g);
 }
 
@@ -860,8 +864,21 @@ template<typename Graph>
 Iterator_range<Halfedge_around_face_iterator<Graph> >
 halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, const Graph& g)
 {
+  CGAL_precondition(h != boost::graph_traits<Graph>::null_halfedge());
   typedef Halfedge_around_face_iterator<Graph> I;
   return make_range(I(h,g), I(h,g,1));
+}
+
+/**
+ * \ingroup PkgBGLIterators
+ * returns an iterator range over all halfedges incident to `f`.
+ */
+template<typename Graph>
+Iterator_range<Halfedge_around_face_iterator<Graph> >
+halfedges_around_face(typename boost::graph_traits<Graph>::face_descriptor f, const Graph& g)
+{
+  CGAL_precondition(f != boost::graph_traits<Graph>::null_face());
+  return halfedges_around_face(halfedge(f, g), g);
 }
 
 /**

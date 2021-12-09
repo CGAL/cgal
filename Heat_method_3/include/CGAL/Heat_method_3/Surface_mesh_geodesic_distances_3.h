@@ -802,7 +802,7 @@ class Surface_mesh_geodesic_distances_3
         typename boost::property_map< TriangleMesh, vertex_point_t>::const_type
       >::type
     >
-#endif
+#endif // DOXYGEN_RUNNING
 {
   CGAL_static_assertion((std::is_same<Mode, Direct>::value) ||
                         (std::is_same<Mode, Intrinsic_Delaunay>::value));

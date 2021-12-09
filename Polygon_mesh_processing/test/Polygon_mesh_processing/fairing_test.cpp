@@ -45,11 +45,11 @@ void test_polyhedron(const std::string filename, const K&, const bool save_outpu
   sel_vert[7] = Vertex_index(2053);
   sel_vert[8] = Vertex_index(140);
   sel_vert[9] = Vertex_index(2052);
-  CGAL::Polygon_mesh_processing::fair(poly, sel_vert);
 
-  std::size_t nbv2 =
-    std::distance(vertices(poly).first, vertices(poly).second);
+  auto res = CGAL::Polygon_mesh_processing::fair(poly, sel_vert);
+  assert(res.first);
 
+  std::size_t nbv2 = std::distance(vertices(poly).first, vertices(poly).second);
   assert(nbv == nbv2);
 
   if (!save_output)

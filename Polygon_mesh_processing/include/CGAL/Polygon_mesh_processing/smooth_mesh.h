@@ -207,6 +207,14 @@ void smooth_mesh(const FaceRange& faces,
   const bool use_safety_constraints = choose_parameter(get_parameter(np, internal_np::use_safety_constraints), true);
   const bool use_Delaunay_flips = choose_parameter(get_parameter(np, internal_np::use_Delaunay_flips), true);
 
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+  std::cout << "smooth_mesh() called; parameters:"
+            << "\nnb_iterations: " << nb_iterations << "\t"
+            << "\ndo_project: " << do_project
+            << "\nuse_safety_constraints: " << use_safety_constraints
+            << "\nuse_Delaunay_flips: " << use_Delaunay_flips << std::endl;
+#endif
+
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                                  get(Vertex_property_tag(), tmesh));
 

@@ -303,5 +303,7 @@ int main(int /*argc*/, char** /*argv*/)
   test_pinched_triangles<Polyhedron>("data_repair/three_triangles_sharing_a_vertex.off", 2);
   test_many_umbrellas<Polyhedron>(); // data_repair/many_umbrellas.off
 
+  std::cout << "Done" << std::endl;
+
   return EXIT_SUCCESS;
 }
