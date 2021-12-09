@@ -96,7 +96,7 @@ private:
   bool reference_counted;
 #endif
   int coord;
-  const Point_3& pop;
+  const Point_3 pop;
 };
 
 template <class SNC_decorator>
