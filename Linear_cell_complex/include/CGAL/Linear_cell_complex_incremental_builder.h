@@ -19,6 +19,7 @@
 #include <CGAL/Linear_cell_complex_base.h>
 
 namespace CGAL {
+///////////////////////////////////////////////////////////////////////////////
   template<class LCC, class Combinatorial_data_structure=
            typename LCC::Combinatorial_data_structure>
   struct Add_vertex_to_face
@@ -206,6 +207,31 @@ struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
   }
 };
 ///////////////////////////////////////////////////////////////////////////////
+template<class LCC_, unsigned int dim=LCC_::dimension>
+struct Sew3_for_LCC_incremental_builder
+{
+  static void run(LCC_& lcc,
+                  typename LCC_::Dart_handle dh1, typename LCC_::Dart_handle dh2)
+  {
+    if(dh1!=nullptr)
+    {
+      if(!lcc.template is_free<3>(dh1))
+      {
+        std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: "
+                 <<"it exists more than 2 faces with same indices."<<std::endl;
+      }
+      else
+      { lcc.template sew<3>(lcc.other_orientation(dh1), dh2); }
+    }
+  }
+};
+template<class LCC_>
+struct Sew3_for_LCC_incremental_builder<LCC_, 2>
+{
+  static void run(LCC_&, typename LCC_::Dart_handle, typename LCC_::Dart_handle)
+  {}
+};
+///////////////////////////////////////////////////////////////////////////////
 // Incremental builder
 template < class LCC_ >
 class Linear_cell_complex_incremental_builder_3
@@ -292,16 +318,7 @@ public:
     if(LCC::dimension>2)
     {
       opposite=opposite_face();
-      if(opposite!=nullptr)
-      {
-        if(!lcc.template is_free<3>(opposite))
-        {
-          std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: "
-                   <<"it exists more than 2 faces with same indices."<<std::endl;
-        }
-        else
-        { lcc.template sew<3>(lcc.other_orientation(opposite), min_dart); }
-      }
+      Sew3_for_LCC_incremental_builder<LCC>::run(lcc, opposite, min_dart);
       add_face_in_array();
     }
     return first_dart;
