@@ -40,15 +40,13 @@ namespace CGAL {
 
 /// A boolean property map return a const value at compile time
 template <typename Key, bool default_value>
-class Static_boolean_property_map
+struct Static_boolean_property_map
 {
-public:
   typedef Key key_type;
   typedef bool value_type;
   typedef bool reference;
   typedef boost::read_write_property_map_tag category;
 
-public:
   inline friend
   value_type
   get(Static_boolean_property_map, const key_type&)
@@ -65,15 +63,16 @@ public:
 
 template <typename PM1, typename PM2>
 class OR_property_map {
+  PM1 pm1;
+  PM2 pm2;
+
+ public:
+
   typedef typename PM1::key_type key_type;
   typedef typename PM1::value_type value_type;
   typedef typename PM1::reference reference;
   typedef boost::read_write_property_map_tag category;
 
-  PM1 pm1;
-  PM2 pm2;
-
- public:
   OR_property_map() {} // required by boost::connected_components
 
   OR_property_map(PM1 pm1, PM2 pm2)
