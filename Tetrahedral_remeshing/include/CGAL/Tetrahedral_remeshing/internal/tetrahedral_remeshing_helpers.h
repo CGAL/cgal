@@ -642,6 +642,27 @@ OutputIterator incident_surface_patches(const typename C3t3::Edge& e,
   return oit;
 }
 
+template<typename C3t3, typename OutputIterator>
+OutputIterator incident_surface_patches(const typename C3t3::Vertex_handle& v,
+                                        const C3t3& c3t3,
+                                        OutputIterator oit)
+{
+  typedef typename C3t3::Triangulation::Facet Facet;
+  boost::unordered_set<Facet> facets;
+  c3t3.triangulation().incident_facets(v, std::inserter(facets, facets.begin()));
+
+  for (typename boost::unordered_set<Facet>::iterator fit = facets.begin();
+    fit != facets.end();
+    ++fit)
+  {
+    const Facet& f = *fit;
+    if (c3t3.is_in_complex(f))
+      *oit++ = c3t3.surface_patch_index(f);
+  }
+
+  return oit;
+}
+
 template<typename C3t3>
 std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
                                    const C3t3& c3t3)
