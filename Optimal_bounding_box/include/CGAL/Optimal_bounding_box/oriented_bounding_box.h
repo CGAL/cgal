@@ -97,7 +97,7 @@ void construct_oriented_bounding_box(const PointRange& points,
   obb_points[6] = cp(xmax, ymin, zmax);
   obb_points[7] = cp(xmax, ymax, zmax);
 
-  // Apply the inverse rotation to the rotated axis aligned bounding box
+  // Apply the inverse rotation to the rotated axis-aligned bounding box
   for(std::size_t i=0; i<8; ++i)
   {
     obb_points[i] = inverse_transformation.transform(obb_points[i]);
@@ -146,13 +146,13 @@ void compute_best_transformation(const PointRange& points,
                                         rot(1, 0), rot(1, 1), rot(1, 2),
                                         rot(2, 0), rot(2, 1), rot(2, 2));
 
-  // inverse transformation is simply the transposed since the matrix is unitary
+  // the inverse transformation is simply the transposed matrix since the matrix is unitary
   inverse_transformation = Aff_transformation_3(rot(0, 0), rot(1, 0), rot(2, 0),
                                                 rot(0, 1), rot(1, 1), rot(2, 1),
                                                 rot(0, 2), rot(1, 2), rot(2, 2));
 }
 
-// Following two functions are overloads to dispatch depending on return type
+// The following two functions are overloads to dispatch depending on the return type
 template <typename PointRange, typename K, typename Traits>
 void construct_oriented_bounding_box(const PointRange& points,
                                      CGAL::Aff_transformation_3<K>& transformation,

@@ -654,7 +654,7 @@ struct Face_filtered_graph
 
       std::size_t border_halfedge_counter = 0;
 
-      // Can't simply call halfedges_around_target(vd, *this) because 'halfedge(vd)' is not necessarily 'hd'
+      // Can't call halfedges_around_target(vd, *this) because 'halfedge(vd)' is not necessarily 'hd'
       halfedge_descriptor ihd = hd;
       do
       {
@@ -1059,7 +1059,8 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 next(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(w.is_in_cc(h));
+  CGAL_precondition(w.is_in_cc(h));
+
   if(w.is_in_cc(next(h, w.graph())))
     return next(h, w.graph());
 
@@ -1083,8 +1084,8 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 prev(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
+  CGAL_precondition(w.is_in_cc(h));
 
-  CGAL_assertion(w.is_in_cc(h));
   if(w.is_in_cc(prev(h, w.graph())))
     return prev(h, w.graph());
 
