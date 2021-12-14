@@ -12,7 +12,7 @@
 //
 
 #include <string>
-
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/config.h>
 
 #if defined(BOOST_MSVC)
