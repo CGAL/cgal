@@ -14,9 +14,9 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 | Linux            | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
 |                  | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 11.1.0 |
 | \ms Windows      | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                  | \ms Visual `C++` 14.0, 15.9, 16.10 (\visualstudio 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
+|                  | \ms Visual `C++` 14.0, 15.9, 16.10, 17.0 (\visualstudio 2015, 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
 | MacOS X          | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                  | Apple `Clang` compiler versions 10.0.1 and 12.0.0 |
+|                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 13.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
