@@ -330,6 +330,7 @@ void oriented_bounding_box(const PointRange& points,
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
+  using CGAL::parameters::is_default_parameter;
 
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type               PointMap;
 
@@ -355,7 +356,8 @@ void oriented_bounding_box(const PointRange& points,
   const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), -1); // undocumented
 
   CGAL::Random fixed_seed_rng(seed);
-  CGAL::Random& rng = (seed == unsigned(-1)) ? CGAL::get_default_random() : fixed_seed_rng;
+  CGAL::Random& rng = is_default_parameter(get_parameter(np, internal_np::random_seed)) ?
+                        CGAL::get_default_random() : fixed_seed_rng;
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
   std::cout << "Random seed: " << rng.get_seed() << std::endl;
