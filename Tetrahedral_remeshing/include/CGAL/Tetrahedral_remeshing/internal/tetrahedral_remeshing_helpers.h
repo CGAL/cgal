@@ -334,6 +334,8 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
   if (c->is_cache_valid())
     return Dihedral_angle_cosine(CGAL::sign(c->sliver_value()),
                                  CGAL::abs(c->sliver_value()), 1.);
+  else if(tr.is_infinite(c))
+    return Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);
 
   Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr,
                                                         c->vertex(0),
