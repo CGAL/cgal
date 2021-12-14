@@ -480,15 +480,6 @@ Defined in `CGAL/IO/io.h`
 std::ostream& operator<<(std::ostream& os,
 const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 
-/*!
-Inserts the alpha shape `A` for the current alpha value into the Geomview stream `W`.
-\pre The insert operator must be defined for `GT::Point` and `GT::Triangle`.
 
-Defined in `CGAL/IO/Geomview_stream.h` and `CGAL/IO/alpha_shape_geomview_ostream_3.h`
-
-\relates Alpha_shape_3
-*/
-Geomview_stream& operator<<(Geomview_stream& W,
-const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 
 } /* end namespace CGAL */
