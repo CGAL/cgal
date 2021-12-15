@@ -484,8 +484,8 @@ void test_invalid_selections()
   face_range.push_back(SM::Face_index(2));
   face_range.push_back(SM::Face_index(3));
 
-  CGAL::Face_filtered_graph<SM> bad_fg(mesh, face_range);
-  assert(!bad_fg.is_selection_valid());
+  CGAL::Face_filtered_graph<SM> pinched_fg(mesh, face_range);
+  assert(pinched_fg.is_selection_valid());
 
   // this creates a non-manifold vertex (multiple umbrellas)
   clear(mesh);
@@ -495,8 +495,8 @@ void test_invalid_selections()
   face_range.clear();
   merge_vertices(SM::Vertex_index(1337), SM::Vertex_index(87), face_range, mesh);
 
-  CGAL::Face_filtered_graph<SM> bad_fg_2(mesh, face_range);
-  assert(!bad_fg_2.is_selection_valid());
+  CGAL::Face_filtered_graph<SM> many_umbrellas_fg(mesh, face_range);
+  assert(!many_umbrellas_fg.is_selection_valid());
 }
 
 int main()
