@@ -446,7 +446,7 @@ struct Face_filtered_graph
       initialize_halfedge_indices();
   }
 
-  ///change the set of selected faces using a patch id
+  /// changes the set of selected faces using a patch id
   template<class FacePatchIndexMap>
   void set_selected_faces(typename boost::property_traits<FacePatchIndexMap>::value_type face_patch_id,
                           FacePatchIndexMap face_patch_index_map)
@@ -475,7 +475,7 @@ struct Face_filtered_graph
 
     reset_indices();
   }
-  /// change the set of selected faces using a range of patch ids
+  /// changes the set of selected faces using a range of patch ids
   template<class FacePatchIndexRange, class FacePatchIndexMap>
   void set_selected_faces(const FacePatchIndexRange& selected_face_patch_indices,
                           FacePatchIndexMap face_patch_index_map
@@ -515,7 +515,7 @@ struct Face_filtered_graph
     reset_indices();
   }
 
-  /// change the set of selected faces using a range of face descriptors
+  /// changes the set of selected faces using a range of face descriptors
   template<class FaceRange>
   void set_selected_faces(const FaceRange& selection)
   {
@@ -578,18 +578,21 @@ struct Face_filtered_graph
   {
     return selected_halfedges[get(himap, halfedge(e,_graph))];
   }
-  ///returns the number of selected faces
-  size_type number_of_faces()const
+
+  /// returns the number of selected faces
+  size_type number_of_faces() const
   {
     return selected_faces.count();
   }
-///returns the number of selected vertices.
-  size_type number_of_vertices()const
+
+  /// returns the number of selected vertices.
+  size_type number_of_vertices() const
   {
     return selected_vertices.count();
   }
-///returns the number of selected halfedges.
-  size_type number_of_halfedges()const
+
+  /// returns the number of selected halfedges.
+  size_type number_of_halfedges() const
   {
     return selected_halfedges.count();
   }
