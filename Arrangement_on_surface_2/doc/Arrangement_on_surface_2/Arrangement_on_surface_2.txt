@@ -3530,6 +3530,29 @@ Most traits classes model the `ArrangementTraits_2` concept, and some
 also model the `ArrangementLandmarkTraits_2` concept.
 
 <!-- ------------------------------------------------------------------------- -->
+\subsubsection aos_sssec-tr_additional_concepts The Construct Curve Concept
+<!-- ------------------------------------------------------------------------- -->
+
+The concept `ArrangementConstructCurveTraits_2` refines the concept
+`ArrangementTraits_2`. A model of the
+`ArrangementConstructCurveTraits_2` concept must support the operation
+below (in addition to fulfilling the requirements listed by the
+`ArrangementTraits_2` concept).
+
+<DL>
+<DT>\link ArrangementConstructCurveTraits_2::Construct_curve_2 <B>`Construct_curve_2`</B>\endlink:
+<DD> Given two points \f$p_1\f$ and \f$p_2\f$, construct
+a curve connecting \f$p_1\f$ and \f$p_2\f$.
+</DL>
+
+The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
+polylines; see Section ~\ref arr_sssectr_polylines.
+The type that substitutes the template parameter `SubcurveTraits_2`
+when `Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be
+a geometry-traits class that models the concept `ArrangementConstructCurveTraits_2`
+to enable the construction of polylines from a sequence of two or more points.
+
+<!-- ------------------------------------------------------------------------- -->
 \subsubsection aos_ssec-traits-curved Supporting Unbounded Curves or Curved Surfaces
 <!-- ------------------------------------------------------------------------- -->
 
@@ -4208,18 +4231,19 @@ arr_sssectr_polycurves.
 <!-- ------------------------------------------------------------------------- -->
 
 The `Arr_polyline_traits_2<SubcurveTraits_2>` class template handles
-polylines. It models the following three concepts:
+polylines. It models the following four concepts:
 
 - `ArrangementTraits_2`,
 
-- `ArrangementDirectionalXMonotoneTraits_2`, and
+- `ArrangementDirectionalXMonotoneTraits_2`
 
-- `ArrangementConstructXMonotoneCurveTraits_2`; see Package \ref
-PkgBooleanSetOperations2Ref.
+- `ArrangementConstructXMonotoneCurveTraits_2`, and
+
+- `ArrangementConstructCurveTraits_2`.
 
 The type that substitutes the template parameter `SubcurveTraits_2`
 when `Arr_polyline_traits_2<SubcurveTraits_2>` is instantiated must be
-a geometry-traits class that models the same three concepts.  We refer
+a geometry-traits class that models the same four concepts.  We refer
 to the type that substitutes the template parameter `SubcurveTraits_2`
 as the <em>subcurve traits</em> hereafter.  If, in addition, the
 subcurve traits also models the concept
@@ -4383,7 +4407,6 @@ typedef CGAL::Arrangement_2<Traits>                        Arrangement;
 \paragraph arr_sssectr_polycurves The Polycurve Traits Class
 <!-- ------------------------------------------------------------------------- -->
 
-<!--
 The traits class `Arr_polycurve_traits_2<SubcurveTraits_2>` handles
 piecewise curves that are not necessarily linear, such as conic arcs,
 circular arcs, B&eacute;zier curves, or line segments. We call such a
@@ -4394,13 +4417,13 @@ is continuous. As a matter of fact, most characteristics of the
 `Arr_polyline_traits_2<SubcurveTraits_2>` traits class template apply
 also to the `Arr_polycurve_traits_2<SubcurveTraits_2>` traits class
 template. The only difference between the two, is that the latter is
-not a model of the concept
-`ArrangementConstructXMonotoneCurveTraits_2`, and as such, it is not
+not a model of the concepts
+`ArrangementConstructXMonotoneCurveTraits_2` nor
+`ArrangementConstructCurveTraits_2`, and as such, it is not
 able to construct a subcurve from only two points. As a consequence,
 it does not support the operations that (i) construct a polycurve from
 a sequence of points, and (ii) push a point at the back or at the
 front of a non-empty polycurve.
- -->
 
 <!-- ------------------------------------------------------------------------- -->
 \subsubsection arr_ssectr_algebraic Traits Classes for Algebraic Curves

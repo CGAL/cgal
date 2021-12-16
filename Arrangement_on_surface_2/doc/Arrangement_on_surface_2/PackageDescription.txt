@@ -117,6 +117,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementBasicTopologyTraits`
 - `ArrangementBasicTraits_2`
 - `ArrangementConstructXMonotoneCurveTraits_2`
+- `ArrangementConstructCurveTraits_2`
 - `ArrangementLandmarkTraits_2`
 - `ArrangementXMonotoneTraits_2`
 - `ArrangementTraits_2`
