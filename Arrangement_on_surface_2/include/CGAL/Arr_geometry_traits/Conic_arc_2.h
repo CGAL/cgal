@@ -199,6 +199,35 @@ public:
     _set (rat_coeffs);
   }
 
+  /*! Construct a segment conic arc from two endpoints.
+   * \param source the source point with rational coordinates.
+   */
+  _Conic_arc_2(Point_2& source, const Point_2& target) :
+    _orient (COLLINEAR),
+    _info(static_cast<int>(IS_VALID)),
+    _source(source),
+    _target(target),
+    _extra_data_P(nullptr)
+  {
+    CGAL_precondition(Alg_kernel().compare_xy_2_object()(_source, _target) !=
+                      EQUAL);
+
+    // Compose the equation of the underlying line.
+    const Algebraic x1 = source.x();
+    const Algebraic y1 = source.y();
+    const Algebraic x2 = target.x();
+    const Algebraic y2 = target.y();
+
+    // The supporting line is A*x + B*y + C = 0, where:
+    //  A = y2 - y1,    B = x1 - x2,    C = x2*y1 - x1*y2
+    // We use the extra data field to store the equation of this line.
+    _extra_data_P = new Extra_data;
+    _extra_data_P->a = y2 - y1;
+    _extra_data_P->b = x1 - x2;
+    _extra_data_P->c = x2*y1 - x1*y2;
+    _extra_data_P->side = ZERO;
+  }
+
   /*!
    * Construct a conic arc from the given line segment.
    * \param seg The line segment with rational endpoints.
@@ -325,7 +354,7 @@ public:
     // and it squared radius is R^2, that its equation is:
     //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
     // Since this equation describes a curve with a negative (clockwise)
-    // orientation, we multiply it by -1 if necessary to obtain a positive
+    // orientation, we multiply it by -1 if nece_Conic_arc_2 ssary to obtain a positive
     // (counterclockwise) orientation.
     const Rational    _zero (0);
     Rational          rat_coeffs[6];
