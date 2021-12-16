@@ -12,7 +12,7 @@
 #define CGAL_PROPERTIES_TRIANGULATION_DATA_STRUCTURE_2_H
 
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/boost/graph/internal/graph_traits_2D_triangulation_helper.h>
+#include <CGAL/boost/graph/internal/graph_traits_2D_TDS_helper.h>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
@@ -81,7 +81,7 @@ public:
   typedef boost::readable_property_map_tag                         category;
   typedef int                                                      value_type;
   typedef int                                                      reference;
-  typedef CGAL::internal::T2_halfedge_descriptor<TDS>              key_type;
+  typedef CGAL::internal::TDS2_halfedge_descriptor<TDS>            key_type;
 
   typedef typename TDS::Face_handle                                face_descriptor;
 
@@ -112,7 +112,7 @@ public:
   typedef boost::readable_property_map_tag                           category;
   typedef int                                                        value_type;
   typedef int                                                        reference;
-  typedef CGAL::internal::T2_edge_descriptor<TDS>                    key_type;
+  typedef CGAL::internal::TDS2_edge_descriptor<TDS>                  key_type;
 
   typedef typename TDS::Face_handle                                  Face_handle;
 

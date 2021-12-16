@@ -12,11 +12,9 @@
 #ifndef CGAL_GRAPH_TRAITS_TRIANGULATION_DATA_STRUCTURE_2_H
 #define CGAL_GRAPH_TRAITS_TRIANGULATION_DATA_STRUCTURE_2_H
 
-#include <functional>
-
 // include this to avoid a VC15 warning
 #include <CGAL/boost/graph/Named_function_parameters.h>
-#include <CGAL/boost/graph/internal/graph_traits_2D_triangulation_helper.h>
+#include <CGAL/boost/graph/internal/graph_traits_2D_TDS_helper.h>
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>
@@ -45,15 +43,15 @@ struct graph_traits<CGAL::Triangulation_data_structure_2<VB, FB> >
 
   typedef CGAL::Triangulation_data_structure_2<VB,FB> Triangulation_data_structure;
 
-  typedef typename Triangulation_data_structure::Vertex_handle                  vertex_descriptor;
-  typedef CGAL::internal::T2_halfedge_descriptor<Triangulation_data_structure>  halfedge_descriptor;
-  typedef CGAL::internal::T2_edge_descriptor<Triangulation_data_structure>      edge_descriptor;
-  typedef typename Triangulation_data_structure::Face_handle                    face_descriptor;
+  typedef typename Triangulation_data_structure::Vertex_handle                        vertex_descriptor;
+  typedef CGAL::internal::TDS2_halfedge_descriptor<Triangulation_data_structure>      halfedge_descriptor;
+  typedef CGAL::internal::TDS2_edge_descriptor<Triangulation_data_structure>          edge_descriptor;
+  typedef typename Triangulation_data_structure::Face_handle                          face_descriptor;
 
   typedef CGAL::Prevent_deref<typename Triangulation_data_structure::Vertex_iterator> vertex_iterator;
-  typedef CGAL::internal::T2_halfedge_iterator<Triangulation_data_structure,
+  typedef CGAL::internal::TDS2_halfedge_iterator<Triangulation_data_structure,
             typename Triangulation_data_structure::Edge_iterator>                     halfedge_iterator;
-  typedef CGAL::internal::T2_edge_iterator<Triangulation_data_structure,
+  typedef CGAL::internal::TDS2_edge_iterator<Triangulation_data_structure,
             typename Triangulation_data_structure::Edge_iterator>                     edge_iterator;
   typedef CGAL::Prevent_deref<typename Triangulation_data_structure::Face_iterator>   face_iterator;
 
