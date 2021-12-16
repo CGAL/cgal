@@ -84,7 +84,7 @@ namespace Polygon_mesh_processing {
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
 *                    as key type and `bool` as value type. It must be default constructible.}
 *     \cgalParamDefault{a default property map where no edges are constrained}
-*     \cgalParamExtra{Patch boundary edges (i.e. incident to only one face in the range) are always considered as constrained edges.}
+*     \cgalParamExtra{Boundary edges are always considered as constrained edges.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_is_constrained_map}
