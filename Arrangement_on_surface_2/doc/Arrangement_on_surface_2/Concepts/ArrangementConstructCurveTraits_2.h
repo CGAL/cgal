@@ -23,7 +23,7 @@ public:
   /// \name Functor Types
   /// @{
 
-  /*! models the concept `ArrTraits::ConstructXMonotoneCurve_2`.
+  /*! models the concept `ArrTraits::ConstructCurve_2`.
    */
   typedef unspecified_type Construct_curve_2;
 

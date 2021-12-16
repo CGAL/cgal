@@ -184,6 +184,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::MakeXMonotone_2`
 - `ArrTraits::Approximate_2`
 - `ArrTraits::ConstructXMonotoneCurve_2`
+- `ArrTraits::ConstructCurve_2`
 
 \cgalCRPSection{Classes}
 
