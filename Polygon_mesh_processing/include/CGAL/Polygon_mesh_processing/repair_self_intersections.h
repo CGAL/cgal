@@ -154,7 +154,7 @@ FaceOutputIterator replace_faces_with_patch_without_reuse(const std::vector<type
     if(new_f == boost::graph_traits<PolygonMesh>::null_face())
     {
       std::cerr << "Error: failed to insert patch face??" << std::endl;
-      return;
+      return out;
     }
 
     out++ = new_f;
@@ -261,9 +261,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
   }
 
   face_descriptor f = boost::graph_traits<PolygonMesh>::null_face();
-#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-  std::vector<face_descriptor> new_faces;
-#endif
 
   for(const Vertex_face& vface : patch_with_vertices)
   {
@@ -279,10 +276,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
 
     CGAL_assertion(f != boost::graph_traits<PolygonMesh>::null_face());
     *out++ = f;
-
-#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    new_faces.push_back(f);
-#endif
 
     std::vector<halfedge_descriptor> hedges;
     hedges.reserve(vface.size());
@@ -345,7 +338,6 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
 #endif
 
   CGAL_postcondition(is_valid_polygon_mesh(pmesh, true));
-  CGAL_postcondition(!does_self_intersect(new_faces, pmesh));
 
   return out;
 }
