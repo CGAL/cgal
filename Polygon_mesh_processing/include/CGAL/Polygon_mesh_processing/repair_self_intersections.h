@@ -38,9 +38,10 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/box_intersection_d.h>
+#ifdef CGAL_PMP_REPAIR_SI_USE_OBB_IN_COMPACTIFICATION
 #include <CGAL/Optimal_bounding_box/oriented_bounding_box.h>
+#endif
 #include <CGAL/utility.h>
-
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -2032,7 +2033,6 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     // in the bounding box of the initial selection
     std::vector<halfedge_descriptor> stack_for_expension;
 
-#define CGAL_PMP_REPAIR_SI_USE_OBB_IN_COMPACTIFICATION
 #ifdef CGAL_PMP_REPAIR_SI_USE_OBB_IN_COMPACTIFICATION
     std::set<Point> cc_points;
     for(face_descriptor f : cc_faces)
