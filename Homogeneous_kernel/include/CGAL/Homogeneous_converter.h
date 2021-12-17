@@ -94,15 +94,6 @@ public:
         return t;
     }
 
-    template <typename T>
-    T
-    operator()(const T t,
-               typename std::enable_if<!std::is_fundamental<T>::value>::type* = nullptr) const
-    {
-        CGAL_static_assertion(!(std::is_same<T, T>::value));
-        return t;
-    }
-
     typename K2::Point_2
     operator()(const typename K1::Point_2 &a) const
     {
