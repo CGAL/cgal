@@ -13,9 +13,9 @@
 // $Id$
 // SPDX-License-Identifier: BSL-1.0
 //
-// NOTE: this file have been taken from boost 1.77 for using
-//       with Modificable_priority_queue
-//       original file is <boost/pending/relaxed_heap.hpp>
+// NOTE: this file has been taken from boost 1.77 to use
+//       with Modificable_priority_queue.
+//       The original file is <boost/pending/relaxed_heap.hpp>
 //
 
 #ifndef BOOST_RELAXED_HEAP_HEADER

@@ -93,8 +93,8 @@ the number of edges effectively removed.
      \cgalParamType{Either `CGAL::Tag_true` or `CGAL::Tag_false`}
      \cgalParamDefault{`CGAL::Tag_false()`}
      \cgalParamExtra{Using a relaxed order will allow the algorithm to use a faster priority queue.
-                     However, if for example a user expects that all elements shorter than a given value to be collapsed,
-                     a relaxed order shall not be used.}
+                     However, the ordering of the priority queue is no longer strict and there is a possibility
+                     that some elements that ought to have been collapsed are not actually collapsed.}
    \cgalParamNEnd
 \cgalNamedParamsEnd
 

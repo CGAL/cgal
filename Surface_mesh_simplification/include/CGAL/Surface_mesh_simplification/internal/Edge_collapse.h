@@ -313,7 +313,6 @@ private:
     CGAL_expensive_assertion(mPQ->contains(h));
 
     mPQ->update(h);
-    data.set_is_in_PQ();
 
     CGAL_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
