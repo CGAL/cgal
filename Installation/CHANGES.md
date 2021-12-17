@@ -4,7 +4,7 @@ Release History
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
-Release date: December 2021
+Release date: January 2022
 
 ### [General changes](https://doc.cgal.org/5.4/Manual/general_intro.html)
 
