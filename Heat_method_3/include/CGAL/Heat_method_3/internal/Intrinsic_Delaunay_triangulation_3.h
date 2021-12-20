@@ -53,8 +53,31 @@ struct IDT_vertex_distance_property_map;
 
 // forward declaration
 namespace internal {
-  template<typename TriangleMesh, typename Traits>
-  bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits);
+template<typename TriangleMesh, typename Traits>
+bool has_degenerate_faces(const TriangleMesh& tm, const Traits& traits)
+{
+  typedef typename Traits::Point_3  Point;
+  typedef typename Traits::Vector_3 Vector_3;
+  typename Traits::Construct_vector_3
+    construct_vector = traits.construct_vector_3_object();
+  typename Traits::Compute_scalar_product_3
+    scalar_product = traits.compute_scalar_product_3_object();
+  typename Traits::Construct_cross_product_vector_3
+    cross_product = traits.construct_cross_product_vector_3_object();
+
+  typename boost::property_map< TriangleMesh, boost::vertex_point_t>::const_type
+    vpm = get(boost::vertex_point, tm);
+  for (typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tm))
+  {
+    const Point p1 = get(vpm, target(halfedge(f, tm), tm));
+    const Point p2 = get(vpm, target(next(halfedge(f, tm), tm), tm));
+    const Point p3 = get(vpm, target(next(next(halfedge(f, tm), tm), tm), tm));
+    Vector_3 v = cross_product(construct_vector(p1, p2), construct_vector(p1, p3));
+    if(scalar_product(v, v) == 0.)
+      return true;
+  }
+  return false;
+}
 }
 
 template <class TriangleMesh>
@@ -611,6 +634,15 @@ vertex(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::
   return typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::vertex_descriptor(hd);
 }
 
+
+template <typename TM,
+          typename T>
+typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::halfedge_descriptor
+halfedge(typename boost::graph_traits<Intrinsic_Delaunay_triangulation_3<TM,T> >::vertex_descriptor vd,
+         const Intrinsic_Delaunay_triangulation_3<TM,T>& /* idt */)
+{
+  return vd.hd;
+}
 
 template <typename TM,
           typename T>
