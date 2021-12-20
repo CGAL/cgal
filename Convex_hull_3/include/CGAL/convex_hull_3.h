@@ -17,18 +17,16 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
-#include <CGAL/disable_warnings.h>
-
-#include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_2.h>
+#include <CGAL/Convex_hull_traits_3.h>
+#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/Convex_hull_face_base_2.h>
+#include <CGAL/Convex_hull_vertex_base_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
-#include <CGAL/Convex_hull_traits_3.h>
-#include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -772,15 +770,15 @@ ch_quickhull_face_graph(std::list<typename Traits::Point_3>& points,
                         const Traits& traits)
 {
   typedef typename Traits::Point_3                            Point_3;
-  typedef typename Traits::Plane_3                                Plane_3;
-  typedef typename std::list<Point_3>::iterator           P3_iterator;
+  typedef typename Traits::Plane_3                            Plane_3;
+  typedef typename std::list<Point_3>::iterator               P3_iterator;
 
   typedef Triangulation_data_structure_2<
-    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<Traits> >,
-    Convex_hull_face_base_2<int, Traits> >                           Tds;
+    Convex_hull_vertex_base_2<int, GT3_for_CH3<Traits> >,
+    Convex_hull_face_base_2<int, Traits> >                    Tds;
 
-  typedef typename Tds::Vertex_handle                     Vertex_handle;
-  typedef typename Tds::Face_handle                     Face_handle;
+  typedef typename Tds::Vertex_handle                         Vertex_handle;
+  typedef typename Tds::Face_handle                           Face_handle;
 
   // found three points that are not collinear, so construct the plane defined
   // by these points and then find a point that has maximum distance from this
@@ -1110,7 +1108,5 @@ extreme_points_3(const InputRange& range, OutputIterator out)
 }
 
 } // namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CONVEX_HULL_3_H
