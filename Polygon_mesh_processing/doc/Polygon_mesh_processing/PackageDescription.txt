@@ -106,7 +106,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::triangulate_face()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
-- \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::delaunay_remeshing()` \endlink
+- \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()` \endlink
 - \link PMP_meshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
 - `CGAL::Polygon_mesh_processing::extrude_mesh()`

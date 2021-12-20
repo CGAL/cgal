@@ -163,9 +163,9 @@ namespace Polygon_mesh_processing {
 */
 template<typename TriangleMesh
        , typename NamedParameters>
-void delaunay_remeshing(const TriangleMesh& tmesh
-                     , TriangleMesh& out
-                     , const NamedParameters& np)
+void surface_Delaunay_remeshing(const TriangleMesh& tmesh
+                              , TriangleMesh& out
+                              , const NamedParameters& np)
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -280,8 +280,8 @@ void delaunay_remeshing(const TriangleMesh& tmesh
 }
 
 template<typename TriangleMesh>
-void delaunay_remeshing(const TriangleMesh& tmesh,
-                       TriangleMesh& out)
+void surface_Delaunay_remeshing(const TriangleMesh& tmesh,
+                                TriangleMesh& out)
 {
   delaunay_remeshing(tmesh, out, parameters::all_default());
 }

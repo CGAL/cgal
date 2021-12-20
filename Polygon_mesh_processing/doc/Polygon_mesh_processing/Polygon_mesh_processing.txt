@@ -142,7 +142,7 @@ set of polylines features, that are resampled while preserving the topology of t
 input feature graph.
 
 This solution for triangle surface remeshing is available in this package with the function
-`CGAL::Polygon_mesh_processing::delaunay_remeshing()`.
+`CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing()`.
 All the meshing criteria defined for `CGAL::make_mesh_3()` can be used directly
 for size of simplices, shape of facets, surface approximation, topology,
 and one-dimensional features sampling.

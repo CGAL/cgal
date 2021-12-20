@@ -7,7 +7,7 @@ HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
 
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h
-INPUT += ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/delaunay_remeshing.h \
+INPUT += ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Polygon_mesh_processing/surface_Delaunay_remeshing.h \
          ${CGAL_Mesh_3_INCLUDE_DIR}/CGAL/Mesh_facet_topology.h
 STRIP_FROM_PATH += ${CGAL_Mesh_3_INCLUDE_DIR}
 
