@@ -692,7 +692,9 @@ public:
 
     // Not sure how to handle non-simple yet @fixme
     if(!is_param_border_simple) {
+#ifdef CGAL_SMP_ARAP_DEBUG
       std::cerr << "Border is not simple!" << std::endl;
+#endif
       return ERROR_NON_CONVEX_BORDER;
     }
 
