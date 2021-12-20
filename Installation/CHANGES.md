@@ -17,6 +17,10 @@ Release date: January 2022
     is now thread-safe.
     See changes in `2D and 3D Linear Geometry Kernel` for more details.
 
+-   The class `Geomview_stream` and all the dependent features have
+    been removed from CGAL. Those features were actually no longer
+    supported since CGAL-5.3 but it was not properly announced.
+
 ### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
 
 -   This package enables to regularize a set of segments and open or closed contours in 2D
