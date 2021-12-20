@@ -95,7 +95,7 @@ class Polygon_soup_offset_function {
   public:
     typedef Polygon_iterator key_type;
     typedef EPICK::Point_3 value_type;
-    typedef value_type reference;
+    typedef const value_type& reference;
     typedef boost::readable_property_map_tag category;
 
     Polygon_soup_point_property_map() = default;
@@ -124,8 +124,8 @@ class Polygon_soup_offset_function {
       : points_vector_ptr(ptr)
     {}
 
-    friend reference get(Polygon_soup_triangle_property_map map,
-                         key_type polygon_it)
+    friend value_type get(Polygon_soup_triangle_property_map map,
+                          key_type polygon_it)
     {
       auto it = polygon_it->begin();
       CGAL_assertion(it != polygon_it->end());
@@ -391,6 +391,9 @@ public:
                                   approx,
                                   edge_size,
                                   tag_index);
+    CGAL::Three::Three::getMutex()->lock();
+    CGAL::Three::Three::getWaitCondition()->wakeAll();
+    CGAL::Three::Three::getMutex()->unlock();
     Q_EMIT resultReady(new_mesh);
   }
 Q_SIGNALS:
@@ -623,6 +626,9 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
           (SMesh *new_mesh){
     QApplication::restoreOverrideCursor();
     if(!new_mesh){
+      CGAL::Three::Three::getMutex()->lock();
+      CGAL::Three::Three::isLocked() = false;
+      CGAL::Three::Three::getMutex()->unlock();
       return;
     }
     Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(new_mesh);
@@ -637,7 +643,9 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
     CGAL::Three::Three::scene()->addItem(new_item);
 //    CGAL::Three::Three::scene()->itemChanged(index);
     QApplication::restoreOverrideCursor();
-
+    CGAL::Three::Three::getMutex()->lock();
+    CGAL::Three::Three::isLocked() = false;
+    CGAL::Three::Three::getMutex()->unlock();
   });
   QMessageBox* message_box = new QMessageBox(QMessageBox::NoIcon,
                                              "Meshing",
@@ -659,6 +667,9 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   message_box->open();
 
   QApplication::setOverrideCursor(Qt::BusyCursor);
+  CGAL::Three::Three::getMutex()->lock();
+  CGAL::Three::Three::isLocked() = true;
+  CGAL::Three::Three::getMutex()->unlock();
   worker->start();
 }
 

@@ -21,10 +21,10 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
-#include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
-#include <CGAL/internal/Has_boolean_tags.h>
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
+#include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
+#include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
 
 #include <boost/optional.hpp>
@@ -160,7 +160,7 @@ class AABB_tree;
 /// \tparam BboxMap must be a model of `ReadablePropertyMap` that has as key type a primitive id,
 ///                 and as value type a `Bounding_box`.
 ///                 If the type is `Default` the `Datum` must have the
-///                 member function `bbox()` that returns the bounding box  of the primitive.
+///                 member function `bbox()` that returns the bounding box of the primitive.
 ///
 /// If the argument `GeomTraits` is a model of the concept \ref
 /// AABBRayIntersectionGeomTraits, this class is also a model of \ref
@@ -332,7 +332,7 @@ public:
     template<typename Query>
     bool operator()(const Query& q, const Bounding_box& bbox) const
     {
-      return CGAL::do_intersect(q, bbox);
+      return GeomTraits().do_intersect_3_object()(q, bbox);
     }
 
     template<typename Query>
@@ -366,7 +366,7 @@ public:
     template<typename Query>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     operator()(const Query& query, const typename AT::Primitive& primitive) const {
-      auto inter_res = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
+      auto inter_res = GeomTraits().intersect_3_object()(query, internal::Primitive_helper<AT>::get_datum(primitive,m_traits));
       if (!inter_res)
         return boost::none;
       return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
@@ -391,9 +391,9 @@ public:
       GeomTraits geom_traits;
       Point closest_point = geom_traits.construct_projected_point_3_object()(
         internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
-      return
-        geom_traits.compare_distance_3_object()(p, closest_point, bound)==LARGER ?
-        bound : closest_point;
+
+      return (geom_traits.compare_distance_3_object()(p, closest_point, bound) == LARGER) ?
+               bound : closest_point;
     }
   };
 
@@ -406,15 +406,6 @@ public:
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
-      template <class Solid>
-      CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
-      {
-          return GeomTraits().do_intersect_3_object()
-          (GeomTraits().construct_sphere_3_object()
-          (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), pr)?
-          CGAL::SMALLER : CGAL::LARGER;
-      }
-
       CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
       {
           return GeomTraits().do_intersect_3_object()
@@ -436,6 +427,16 @@ public:
         return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
       }
 
+      // The following functions seem unused...?
+      template <class Solid>
+      CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
+      {
+          return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()
+          (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), pr)?
+          CGAL::SMALLER : CGAL::LARGER;
+      }
+
       template <class Solid>
       CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
       {
@@ -445,7 +446,6 @@ public:
           CGAL::SMALLER :
           CGAL::LARGER;
       }
-
   };
 
   Closest_point closest_point_object() const {return Closest_point(*this);}

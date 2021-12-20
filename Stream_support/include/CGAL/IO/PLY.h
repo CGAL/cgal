@@ -276,7 +276,7 @@ bool read_PLY(std::istream& is,
  *
  * \attention The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+ * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose value type is the point type
@@ -294,7 +294,7 @@ bool read_PLY(std::istream& is,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -365,7 +365,7 @@ bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -426,7 +426,9 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  *
  * \brief writes the content of `points` and `polygons` in `out`, using the \ref IOStreamPLY.
  *
- * \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+ * \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+ *            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+ *            of the stream must be set to `BINARY`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam PolygonRange a model of the concept `SequenceContainer`
@@ -444,8 +446,8 @@ bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygo
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the stream `os``}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamDefault{the precision of the stream `os`}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -526,7 +528,7 @@ bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& 
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -535,7 +537,7 @@ bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& 
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *

@@ -90,17 +90,19 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
 
 
         if(item->load_binary(in)) {
-          if(add_to_scene)
+          if(add_to_scene){
+            item->resetCutPlane();
             CGAL::Three::Three::scene()->addItem(item);
+          }
           return QList<Scene_item*>() << item;
         }
 
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_other_binary_format(in, item->c3t3())) {
+          item->resetCutPlane();
           item->c3t3_changed();
           item->changed();
-          item->resetCutPlane();
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>()<< item;
@@ -109,9 +111,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_a_cdt_3(in, item->c3t3())) {
+          item->resetCutPlane();
           item->c3t3_changed();
           item->changed();
-          item->resetCutPlane();
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(item);
           return QList<Scene_item*>()<<item;
@@ -129,12 +131,13 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
 
       if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation(), true))
       {
-        item->c3t3().rescan_after_load_of_triangulation();
+        item->c3t3().rescan_after_load_of_triangulation(); //fix counters for facets and cells
         for( C3t3::Triangulation::Finite_cells_iterator
              cit = item->c3t3().triangulation().finite_cells_begin();
              cit != item->c3t3().triangulation().finite_cells_end();
              ++cit)
         {
+            CGAL_assertion(cit->subdomain_index() >= 0);
             if(cit->subdomain_index() != C3t3::Triangulation::Cell::Subdomain_index())
               item->c3t3().add_to_complex(cit, cit->subdomain_index());
             for(int i=0; i < 4; ++i)
@@ -169,8 +172,8 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
           }
         }
 
-        item->c3t3_changed();
         item->resetCutPlane();
+        item->c3t3_changed();
         if(add_to_scene)
           CGAL::Three::Three::scene()->addItem(item);
         return QList<Scene_item*>()<<item;

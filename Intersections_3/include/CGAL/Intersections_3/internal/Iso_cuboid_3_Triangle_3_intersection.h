@@ -121,7 +121,7 @@ template <class K>
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Triangle_3>::result_type
 intersection(
     const typename K::Iso_cuboid_3 &cub,
-    const typename K::Triangle_3 &tr,
+    const typename K::Triangle_3& tr,
     const K& k)
 {
   typedef typename K::Point_3 Point;
@@ -203,7 +203,7 @@ intersection(
 template <class K>
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Triangle_3>::result_type
 intersection(
-    const typename K::Triangle_3 &tr,
+    const typename K::Triangle_3& tr,
     const typename K::Iso_cuboid_3 &cub,
     const K& k)
 {

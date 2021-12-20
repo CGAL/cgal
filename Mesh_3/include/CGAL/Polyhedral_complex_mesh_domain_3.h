@@ -26,7 +26,7 @@
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/internal/Mesh_3/helpers.h>
+#include <CGAL/Mesh_3/internal/helpers.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/boost/graph/helpers.h>

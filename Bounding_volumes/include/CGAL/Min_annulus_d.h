@@ -847,7 +847,7 @@ operator >> ( std::istream& is, CGAL::Min_annulus_d<Traits_>& min_annulus)
 
   case CGAL::IO::PRETTY:
     cerr << endl;
-    cerr << "Stream must be in ascii or binary mode" << endl;
+    cerr << "Stream must be in ASCII or binary mode" << endl;
     break;
 
   case CGAL::IO::ASCII:

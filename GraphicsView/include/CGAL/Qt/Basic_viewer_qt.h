@@ -160,11 +160,11 @@ public:
                                &arrays[SMOOTH_NORMAL_COLORED_FACES])
   {
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
-    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL+::Qt::Key_Q);
+    setShortcut(qglviewer::EXIT_VIEWER, ::Qt::CTRL, ::Qt::Key_Q);
 
     // Add custom key description (see keyPressEvent).
     setKeyDescription(::Qt::Key_C, "Switch clipping plane display mode");
-    setKeyDescription(::Qt::Key_C+::Qt::AltModifier, "Toggle clipping plane rendering on/off");
+    setKeyDescription(::Qt::AltModifier, ::Qt::Key_C, "Toggle clipping plane rendering on/off");
     setKeyDescription(::Qt::Key_E, "Toggles edges display");
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
@@ -175,8 +175,8 @@ public:
     setKeyDescription(::Qt::Key_W, "Toggles faces display");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
-    setKeyDescription(::Qt::Key_Plus+::Qt::ControlModifier, "Increase size of vertices");
-    setKeyDescription(::Qt::Key_Minus+::Qt::ControlModifier, "Decrease size of vertices");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Plus, "Increase size of vertices");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_Minus, "Decrease size of vertices");
     setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
@@ -245,7 +245,10 @@ public:
   void clear()
   {
     for (unsigned int i=0; i<LAST_INDEX; ++i)
-    { arrays[i].clear(); }
+    {
+      if (i!=POS_CLIPPING_PLANE)
+      { arrays[i].clear(); }
+    }
 
     m_bounding_box=CGAL::Bbox_3();
     m_texts.clear();
@@ -312,6 +315,17 @@ public:
       m_buffer_for_mono_lines.has_zero_z() &&
       m_buffer_for_colored_lines.has_zero_z();
   }
+
+  Local_kernel::Plane_3 clipping_plane() const
+  {
+    CGAL::qglviewer::Vec n=m_frame_plane->inverseTransformOf
+        (CGAL::qglviewer::Vec(0.f, 0.f, 1.f));
+    const CGAL::qglviewer::Vec& pos=m_frame_plane->position();
+    return Local_kernel::Plane_3(n[0], n[1], n[2], -n*pos);
+  }
+
+  bool is_clipping_plane_enabled() const
+  { return (m_use_clipping_plane!=CLIPPING_PLANE_OFF); }
 
   template<typename KPoint>
   void add_point(const KPoint& p)
@@ -540,11 +554,9 @@ protected:
     if(!rendering_program_face.link())
     { std::cerr<<"linking Program FAILED"<<std::endl; }
 
-    // clipping plane shader
-
-
     if (isOpenGL_4_3())
     {
+      // clipping plane shader
       source_ = vertex_source_clipping_plane;
 
       QOpenGLShader *vertex_shader_clipping_plane = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -868,6 +880,8 @@ protected:
     // 6) clipping plane shader
     if (isOpenGL_4_3())
     {
+      generate_clipping_plane();
+
       rendering_program_clipping_plane.bind();
 
       vao[VAO_CLIPPING_PLANE].bind();
@@ -956,11 +970,8 @@ protected:
     {
       QMatrix4x4 clipping_mMatrix;
       clipping_mMatrix.setToIdentity();
-      if(m_frame_plane)
-      {
-        for(int i=0; i< 16 ; i++)
-          clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i];
-      }
+      for(int i=0; i< 16 ; i++)
+      { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
 
       rendering_program_clipping_plane.bind();
       int vpLocation = rendering_program_clipping_plane.uniformLocation("vp_matrix");
@@ -983,11 +994,8 @@ protected:
 
     QMatrix4x4 clipping_mMatrix;
     clipping_mMatrix.setToIdentity();
-    if(m_frame_plane)
-    {
-      for(int i=0; i< 16 ; i++)
-        clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i];
-    }
+    for(int i=0; i< 16 ; i++)
+    { clipping_mMatrix.data()[i] =  m_frame_plane->matrix()[i]; }
     QVector4D clipPlane = clipping_mMatrix * QVector4D(0.0, 0.0, 1.0, 0.0);
     QVector4D plane_point = clipping_mMatrix * QVector4D(0,0,0,1);
     if(!m_are_buffers_initialized)
@@ -1377,33 +1385,38 @@ protected:
                                                        bb.ymax(),
                                                        bb.zmax()));
 
-    // init clipping plane array
-    auto generate_clipping_plane = [this](qreal size, int nbSubdivisions)
-    {
-      for (int i = 0; i <= nbSubdivisions; i++)
-      {
-        const float pos = float(size*(2.0*i/nbSubdivisions-1.0));
-        arrays[POS_CLIPPING_PLANE].push_back(pos);
-        arrays[POS_CLIPPING_PLANE].push_back(float(-size));
-        arrays[POS_CLIPPING_PLANE].push_back(0.f);
-
-        arrays[POS_CLIPPING_PLANE].push_back(pos);
-        arrays[POS_CLIPPING_PLANE].push_back(float(+size));
-        arrays[POS_CLIPPING_PLANE].push_back(0.f);
-
-        arrays[POS_CLIPPING_PLANE].push_back(float(-size));
-        arrays[POS_CLIPPING_PLANE].push_back(pos);
-        arrays[POS_CLIPPING_PLANE].push_back(0.f);
-
-        arrays[POS_CLIPPING_PLANE].push_back(float(size));
-        arrays[POS_CLIPPING_PLANE].push_back(pos);
-        arrays[POS_CLIPPING_PLANE].push_back(0.f);
-      }
-    };
-    clipping_plane_rendering_size = ((bb.xmax() - bb.xmin()) + (bb.ymax() - bb.ymin()) + (bb.zmax() - bb.zmin())) / 3;
-    generate_clipping_plane(3.0 * clipping_plane_rendering_size, 30);
+    m_frame_plane=new CGAL::qglviewer::ManipulatedFrame;
 
     this->showEntireScene();
+  }
+
+  void generate_clipping_plane()
+  {
+    qreal size=((bounding_box().xmax() - bounding_box().xmin()) +
+                (bounding_box().ymax() - bounding_box().ymin()) +
+                (bounding_box().zmax() - bounding_box().zmin()));
+    const unsigned int nbSubdivisions=30;
+
+    arrays[POS_CLIPPING_PLANE].clear();
+    for (unsigned int i=0; i<=nbSubdivisions; ++i)
+    {
+      const float pos = float(size*(2.0*i/nbSubdivisions-1.0));
+      arrays[POS_CLIPPING_PLANE].push_back(pos);
+      arrays[POS_CLIPPING_PLANE].push_back(float(-size));
+      arrays[POS_CLIPPING_PLANE].push_back(0.f);
+
+      arrays[POS_CLIPPING_PLANE].push_back(pos);
+      arrays[POS_CLIPPING_PLANE].push_back(float(+size));
+      arrays[POS_CLIPPING_PLANE].push_back(0.f);
+
+      arrays[POS_CLIPPING_PLANE].push_back(float(-size));
+      arrays[POS_CLIPPING_PLANE].push_back(pos);
+      arrays[POS_CLIPPING_PLANE].push_back(0.f);
+
+      arrays[POS_CLIPPING_PLANE].push_back(float(size));
+      arrays[POS_CLIPPING_PLANE].push_back(pos);
+      arrays[POS_CLIPPING_PLANE].push_back(0.f);
+    }
   }
 
   void negate_all_normals()
@@ -1423,21 +1436,14 @@ protected:
       {
         // toggle clipping plane
         m_use_clipping_plane = (m_use_clipping_plane + 1) % CLIPPING_PLANE_END_INDEX;
-        if (m_use_clipping_plane==CLIPPING_PLANE_OFF && m_frame_plane)
-        {
-          setManipulatedFrame(nullptr);
-          delete m_frame_plane;
-          m_frame_plane=nullptr;
-        }
-        else if (m_frame_plane==nullptr)
-        {
-          m_frame_plane=new CGAL::qglviewer::ManipulatedFrame;
-          setManipulatedFrame(m_frame_plane);
-        }
+        if (m_use_clipping_plane==CLIPPING_PLANE_OFF)
+        { setManipulatedFrame(nullptr); }
+        else
+        { setManipulatedFrame(m_frame_plane); }
 
         switch(m_use_clipping_plane)
         {
-        case CLIPPING_PLANE_OFF: displayMessage(QString("Draw clipping = flase")); break;
+        case CLIPPING_PLANE_OFF: displayMessage(QString("Draw clipping = false")); break;
         case CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF: clipping_plane_rendering=true; displayMessage(QString("Draw clipping = solid half & transparent half")); break;
         case CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: displayMessage(QString("Draw clipping = solid half & wireframe half")); break;
         case CLIPPING_PLANE_SOLID_HALF_ONLY: displayMessage(QString("Draw clipping = solid half only")); break;
@@ -1789,7 +1795,6 @@ protected:
   // variables for clipping plane
   bool clipping_plane_rendering = true; // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
   float clipping_plane_rendering_transparency = 0.5f; // to what extent the transparent part should be rendered;
-  float clipping_plane_rendering_size; // to what extent the size of clipping plane should be rendered;
 
   std::vector<std::tuple<Local_point, QString> > m_texts;
 };

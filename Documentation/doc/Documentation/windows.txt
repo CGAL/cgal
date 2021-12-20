@@ -190,17 +190,6 @@ as this will help `cmake` to find Boost.</li>
 <li>Add the path to the Boost `dlls` (`C:\dev\libboost_1_71_0\lib64-msvc-XX.Y`) files to the `PATH` environment variable.</li>
 </ul>
 
-\subsection ssect-installer-install-cgal Installing CGAL Itself
-
-Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from
-<a href="https://www.cgal.org/download/windows.html">https://www.cgal.org/download/windows.html</a>.
-It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
-examples and demos. Additionally, it can download the precompiled versions of \gmp and \mpfr. You must
-specify if you want the 32 or the 64 bit versions of these two libraries.
-
-Setting the environment variable `CGAL_DIR` to `C:\dev\CGAL-\cgalReleaseNumber` is a good idea
-to help `cmake` to find \cgal during the configuration process, detailed in the next section.
-
 \subsection ssect-installer-compile-example Compiling an Example
 
 We assume that you have downloaded the examples with the \cgal Installer.
@@ -245,8 +234,8 @@ A typical `Qt` installation would consist of the following steps:
 <ul>
 <li>
 Download and install the Qt library for open source development package for your Visual Studio version at
-<a href="https://www.qt.io/download/">https://www.qt.io/download/</a>
-(here is the direct link to the <a href="https://www1.qt.io/offline-installers/">offline installers</a>).</li>
+<a href="https://www.qt.io/download">https://www.qt.io/download</a>
+(here is the direct link to the <a href="https://www.qt.io/offline-installers">offline installers</a>).</li>
 <li>Add the environment variable `QTDIR` pointing to the place you installed Qt, e.g., `C:\dev\Qt\Qt5.13.1`,
 as this will help `cmake` to find Qt.</li>
 <li>Add the bin directory of Qt, e.g. add  `C:\dev\Qt\Qt5.13.1\msvcXXXX_YY\bin` to `PATH`, where `XXXX_YY` is something like `vc2017_64`.

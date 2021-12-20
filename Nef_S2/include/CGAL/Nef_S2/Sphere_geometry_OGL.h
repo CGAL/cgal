@@ -200,7 +200,7 @@ class Approximator {
       else                       i=0;
     }
     // now i references the side of maximal angle
-    if ( angle[i] < refinement_angle ) // refinement threshhold
+    if ( angle[i] < refinement_angle ) // refinement threshold
       { T.push_back(t); return; }
     VVector v;
     switch (i) {

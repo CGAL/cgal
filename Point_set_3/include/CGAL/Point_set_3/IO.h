@@ -53,7 +53,7 @@ class Point_set_3;
   normal vectors, the normal map is added to the point set. For PLY
   input, all point properties found in the header are added.
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \param is input stream
   \param ps point set
@@ -113,11 +113,11 @@ namespace IO {
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
       \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
-                       are always ASCII, and the `LAS` format is always binary.}
+                       are always \ascii, and the `LAS` format is always binary.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -151,10 +151,10 @@ bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& 
 {
   return read_point_set(fname, ps, parameters::all_default());
 }
+/// \endcond
 
 } // namespace IO
 
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +167,9 @@ bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& 
 
   All properties are inserted in their instantiation order.
 
-  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+             of the stream must be set to `BINARY`.
 
   \param os the output stream
   \param ps the point set
@@ -207,11 +209,11 @@ namespace IO {
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
       \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
-                      are always ASCII, and the `LAS` format is always binary.}
+                      are always \ascii, and the `LAS` format is always binary.}
     \cgalParamNEnd
 
     \cgalParamNBegin{stream_precision}

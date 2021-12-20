@@ -1041,6 +1041,16 @@ public:
   Comparison_result operator()(const Kernel::Segment_2& s1,
                                const Kernel::Segment_2& s2);
 
+  /*!
+    compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
+    where the slope is the variation of the `y`-coordinate
+    from the left to the right endpoint of the segments.
+  */
+  Comparison_result operator()(const Kernel::Point_2& s1s,
+                               const Kernel::Point_2& s1t,
+                               const Kernel::Point_2& s2s,
+                               const Kernel::Point_2& s2t));
+
   /// @}
 
 }; /* end Kernel::CompareSlope_2 */
@@ -4996,6 +5006,10 @@ public:
   */
   Kernel::Point_2 operator()(const Kernel::Point_2& p,
                              const Kernel::Point_2& q );
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s);
 
   /// @}
 
@@ -5022,6 +5036,11 @@ public:
   */
   Kernel::Point_3 operator()(const Kernel::Point_3& p,
                              const Kernel::Point_3& q );
+
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s);
 
 
   /// @}
@@ -8879,7 +8898,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`, or,
     if both \f$ x\f$- and \f$ y\f$- coordinate are identical and
     the \f$ z\f$-coordinate of `p` is smaller than the \f$ z\f$-coordinate of `q`.
@@ -8909,7 +8928,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_2&p,
@@ -8938,7 +8957,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_3&p,
@@ -9021,7 +9040,7 @@ public:
 
   /*!
     returns true iff the \f$ y\f$-coordinate of `p` is smaller than the
-    \f$ y\f$-coordinate of `q` or if the are the same and
+    \f$ y\f$-coordinate of `q` or if they are the same and
     the \f$ x\f$-coordinate of `p` is smaller than the \f$ x\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_2&p,
@@ -9109,6 +9128,33 @@ public:
   /// @}
 
 }; /* end Kernel::LessZ_3 */
+
+
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with one arguments)
+*/
+class NonZeroCoordinateIndex_3
+{
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns any of `0`, `1`, or `2` if the corresponding coordinate of the vector `v` is not
+    equal to zero, and `-1` if `v` is the null vector.
+  */
+  int operator()(const Kernel::Vector_3& v);
+
+  /// @}
+
+};
 
 
 /*!
@@ -9238,6 +9284,16 @@ public:
   */
   Oriented_side operator()(const Kernel::Triangle_2&t,
                            const Kernel::Point_2&p);
+
+  /*!
+  * returns \ref CGAL::ON_ORIENTED_BOUNDARY,
+  * \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE,
+  * depending on the position of the circumcenter of `t` relative
+  * to the oriented supporting line of `s`. The orientation of the
+  * supporting line is the same as the orientation of `s`.
+  */
+  Oriented_side operator()(const Kernel::Segment_2& s,
+                           const Kernel::Triangle_2& t);
 
   /// @}
 
@@ -9702,7 +9758,6 @@ public:
                            const Kernel::Point_3&r,
                            const Kernel::Point_3&s,
                            const Kernel::Point_3&t);
-
 
   /// @}
 

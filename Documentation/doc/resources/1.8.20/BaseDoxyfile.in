@@ -257,10 +257,11 @@ ALIASES                = "cgal=%CGAL" \
                          "stl=STL" \
                          "gmp=GMP" \
                          "gmpxx=GMPXX" \
-                         "exacus=Exacus" \
                          "iso=ISO" \
                          "lisp=Lisp" \
                          "ieee=IEEE" \
+                         "ascii=ASCII" \
+                         "exacus=Exacus" \
                          "mpir=MPIR" \
                          "mpfr=MPFR" \
                          "leda=LEDA" \
@@ -289,6 +290,7 @@ ALIASES                = "cgal=%CGAL" \
                          "ceres=Ceres" \
                          "glpk=GLPK" \
                          "scip=SCIP" \
+                         "osqp=OSQP" \
                          "rs=RS" \
                          "rs3=RS3" \
                          "unix=Unix" \
@@ -1958,16 +1960,6 @@ LATEX_BATCHMODE        = NO
 
 LATEX_HIDE_INDICES     = NO
 
-# If the LATEX_SOURCE_CODE tag is set to YES then doxygen will include source
-# code with syntax highlighting in the LaTeX output.
-#
-# Note that which sources are shown also depends on other settings such as
-# SOURCE_BROWSER.
-# The default value is: NO.
-# This tag requires that the tag GENERATE_LATEX is set to YES.
-
-LATEX_SOURCE_CODE      = NO
-
 # The LATEX_BIB_STYLE tag can be used to specify the style to use for the
 # bibliography, e.g. plainnat, or ieeetr. See
 # https://en.wikipedia.org/wiki/BibTeX and \cite for more info.
@@ -2047,16 +2039,6 @@ RTF_STYLESHEET_FILE    =
 # This tag requires that the tag GENERATE_RTF is set to YES.
 
 RTF_EXTENSIONS_FILE    =
-
-# If the RTF_SOURCE_CODE tag is set to YES then doxygen will include source code
-# with syntax highlighting in the RTF output.
-#
-# Note that which sources are shown also depends on other settings such as
-# SOURCE_BROWSER.
-# The default value is: NO.
-# This tag requires that the tag GENERATE_RTF is set to YES.
-
-RTF_SOURCE_CODE        = NO
 
 #---------------------------------------------------------------------------
 # Configuration options related to the man page output
@@ -2153,15 +2135,6 @@ GENERATE_DOCBOOK       = NO
 # This tag requires that the tag GENERATE_DOCBOOK is set to YES.
 
 DOCBOOK_OUTPUT         = docbook
-
-# If the DOCBOOK_PROGRAMLISTING tag is set to YES, doxygen will include the
-# program listings (including syntax highlighting and cross-referencing
-# information) to the DOCBOOK output. Note that enabling this will significantly
-# increase the size of the DOCBOOK output.
-# The default value is: NO.
-# This tag requires that the tag GENERATE_DOCBOOK is set to YES.
-
-DOCBOOK_PROGRAMLISTING = NO
 
 #---------------------------------------------------------------------------
 # Configuration options for the AutoGen Definitions output

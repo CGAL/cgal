@@ -31,6 +31,50 @@ struct Result_checking
   Result_checking() : check(false) {}
 };
 
+
+template <class TriangleMesh>
+struct My_visitor :
+  public CGAL::Polygon_mesh_processing::Corefinement::Default_visitor<TriangleMesh>
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor VD;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor FD;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor HD;
+
+  void after_face_copy(FD,const TriangleMesh&, FD, TriangleMesh& tm_tgt)
+  {
+    (*counters).insert(std::make_pair(&tm_tgt, default_value)).first->second[2]+=1;
+  }
+  void after_vertex_copy(VD, const TriangleMesh&, VD, TriangleMesh&  tm_tgt)
+  {
+    (*counters).insert(std::make_pair(&tm_tgt, default_value)).first->second[0]+=1;
+  }
+  void after_edge_copy (HD, const TriangleMesh&, HD, TriangleMesh& tm_tgt)
+  {
+    (*counters).insert(std::make_pair(&tm_tgt, default_value)).first->second[1]+=1;
+  }
+  void intersection_edge_copy(HD, const TriangleMesh&, HD, const TriangleMesh&, HD, TriangleMesh& tm_tgt)
+  {
+    (*counters).insert(std::make_pair(&tm_tgt, default_value)).first->second[1]+=1;
+  }
+
+  My_visitor()
+    : counters(new std::map<const TriangleMesh*, std::array<std::size_t,3>>())
+    , default_value({0,0,0})
+  {}
+
+  std::shared_ptr<std::map<const TriangleMesh*, std::array<std::size_t,3>> > counters;
+  const std::array<std::size_t, 3> default_value;
+};
+
+#define CHECK_VISITOR(MESH) \
+  if (&MESH!=&tm1 && &MESH!=&tm2)\
+  {\
+    assert(vertices(MESH).size()==(*uv.counters)[&MESH][0]);\
+    assert(edges(MESH).size()==(*uv.counters)[&MESH][1]);\
+    assert(faces(MESH).size()==(*uv.counters)[&MESH][2]);\
+  }
+
+
 void run_boolean_operations(
   Surface_mesh& tm1,
   Surface_mesh& tm2,
@@ -56,7 +100,14 @@ void run_boolean_operations(
   std::cout << "  Vertices before " <<  tm1.number_of_vertices()
             << " " << tm2.number_of_vertices() << std::endl;
 
-  std::array<bool,4> res = PMP::corefine_and_compute_boolean_operations(tm1, tm2, output);
+  My_visitor<Surface_mesh> uv;
+  std::array<bool,4> res = PMP::corefine_and_compute_boolean_operations(tm1, tm2, output, CGAL::parameters::visitor(uv));
+
+  // check simple creation tracking in the visitor for out-of-place operations
+  CHECK_VISITOR(union_)
+  CHECK_VISITOR(inter)
+  CHECK_VISITOR(tm1_minus_tm2)
+  CHECK_VISITOR(tm2_minus_tm1)
 
   std::cout << "  Vertices after " <<  tm1.number_of_vertices()
             << " " << tm2.number_of_vertices() << std::endl;

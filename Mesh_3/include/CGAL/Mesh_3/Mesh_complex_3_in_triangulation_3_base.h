@@ -65,7 +65,23 @@ namespace CGAL {
                                  CGAL::internal::CC_iterator<DSC, Const> > >()(p);
   }
 
-
+  struct Hash_compare_for_TBB {
+    template < class DSC, bool Const >
+    std::size_t hash(const std::pair<CGAL::internal::CC_iterator<DSC, Const>,
+                           CGAL::internal::CC_iterator<DSC, Const> >& p) const
+    {
+      return tbb_hasher(p);
+    }
+    template < class DSC, bool Const >
+    std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& it)
+    {
+      return CGAL::internal::hash_value(it);
+    }
+    template <typename T>
+    bool equal(const T& v1, const T& v2) const {
+      return v1 == v2;
+    }
+  };
 }
 #endif
 
@@ -940,7 +956,8 @@ private:
 
   typedef typename Base::Pair_of_vertices Pair_of_vertices;
 #ifdef CGAL_LINKED_WITH_TBB
-  typedef tbb::concurrent_hash_map<Pair_of_vertices, int> Edge_facet_counter;
+  typedef tbb::concurrent_hash_map<Pair_of_vertices, int,
+                                   Hash_compare_for_TBB> Edge_facet_counter;
 #else // not CGAL_LINKED_WITH_TBB
   typedef std::map<Pair_of_vertices, int> Edge_facet_counter;
 #endif // not CGAL_LINKED_WITH_TBB

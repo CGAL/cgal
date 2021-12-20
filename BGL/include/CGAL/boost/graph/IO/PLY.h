@@ -84,7 +84,7 @@ bool read_PLY_BGL(std::istream& is,
 
   The data is expected to represent a 2-manifold (possibly with borders).
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -175,7 +175,7 @@ bool read_PLY(std::istream& is, Graph& g,
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
     \cgalParamNEnd
@@ -266,7 +266,9 @@ bool read_PLY(const std::string& fname, Graph& g,
 
  \brief writes the graph in an output stream, using the \ref IOStreamPLY.
 
- \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+ \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+            of the stream must be set to `BINARY`.
 
  \tparam Graph a model of `FaceListGraph`
  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -310,8 +312,8 @@ bool read_PLY(const std::string& fname, Graph& g,
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`the precision of the stream `os``}
-      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+      \cgalParamDefault{the precision of the stream `os`}
+      \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
 
@@ -333,7 +335,7 @@ bool write_PLY(std::ostream& os,
 
   typedef typename CGAL::GetInitializedVertexIndexMap<Graph, CGAL_BGL_NP_CLASS>::const_type VIMap;
   typedef typename GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::const_type                  Vpm;
-  typedef typename boost::property_traits<Vpm>::reference                                   Point_3;
+  typedef typename boost::property_traits<Vpm>::value_type                                  Point_3;
   typedef CGAL::IO::Color                                                                   Color;
   typedef typename internal_np::Lookup_named_param_def<
                      internal_np::vertex_color_map_t,
@@ -405,7 +407,7 @@ bool write_PLY(std::ostream& os,
 
   for(vertex_descriptor vd : vertices(g))
   {
-    Point_3 p = get(vpm, vd);
+    const Point_3& p = get(vpm, vd);
     internal::output_properties(os, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
     if(has_vcolor)
     {
@@ -482,7 +484,7 @@ bool write_PLY(std::ostream& os, const Graph& g,
 
  \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
     \cgalParamNEnd
@@ -521,7 +523,7 @@ bool write_PLY(std::ostream& os, const Graph& g,
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{`6`}
-      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+      \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
 

@@ -55,6 +55,13 @@ void test_pmesh(const Mesh& pmesh)
       continue;
     else
     {
+       FT edge_length = PMP::edge_length(h, pmesh);
+       FT squared_edge_length = PMP::squared_edge_length(h, pmesh);
+       std::cout << "squared edge length = " << squared_edge_length << std::endl;
+       std::cout << "edge length = " << edge_length << std::endl;
+
+      FT  squared_face_area = PMP::squared_face_area(face(h, pmesh), pmesh);
+      std::cout << "squared face area = " << squared_face_area << std::endl;
       FT face_area = PMP::face_area(face(h, pmesh), pmesh);
       std::cout << "face area = " << face_area << std::endl;
       assert(face_area > 0);
@@ -126,7 +133,7 @@ void test_pmesh(const Mesh& pmesh)
 }
 
 template <typename Polyhedron, typename K>
-void test_polyhedron(const char* filename)
+void test_polyhedron(const std::string filename)
 {
   std::cout << "Test Polyhedron " << filename
     << " with Kernel " << typeid(K).name() << std::endl;
@@ -147,7 +154,7 @@ void test_polyhedron(const char* filename)
 }
 
 template <typename Surface_mesh, typename K>
-void test_closed_surface_mesh(const char* filename)
+void test_closed_surface_mesh(const std::string filename)
 {
   std::cout << "Test Surface_mesh " << filename
     << " with Kernel " << typeid(K).name() << std::endl;
@@ -172,7 +179,7 @@ void test_closed_surface_mesh(const char* filename)
 
 
 template <typename Surface_mesh, typename K>
-void test_centroid(const char* filename)
+void test_centroid(const std::string filename)
 {
   std::cout << "Test Surface_mesh " << filename
     << " with Kernel " << typeid(K).name() << std::endl;
@@ -248,7 +255,7 @@ void test_compare()
   common.clear();
   m1_only.clear();
   m2_only.clear();
-  input.open("data/cube_quad.off");
+  input.open(CGAL::data_file_path("meshes/cube_quad.off"));
   if(! (input >> mesh1))
   {
     std::cerr << "Invalid input." << std::endl;
@@ -349,13 +356,13 @@ void test_compare()
 
 int main(int argc, char* argv[])
 {
-  const char* filename_polyhedron =
-    (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  const std::string filename_polyhedron =
+    (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mech-holes-shark.off");
   test_polyhedron<CGAL::Polyhedron_3<Epic>,Epic>(filename_polyhedron);
   test_polyhedron<CGAL::Polyhedron_3<Epec>,Epec>(filename_polyhedron);
 
-  const char* filename_surface_mesh =
-    (argc > 1) ? argv[1] : "data/elephant.off";
+  const std::string filename_surface_mesh =
+    (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
   test_closed_surface_mesh<CGAL::Surface_mesh<Epic::Point_3>,Epic>(filename_surface_mesh);
   test_closed_surface_mesh<CGAL::Surface_mesh<Epec::Point_3>,Epec>(filename_surface_mesh);
 

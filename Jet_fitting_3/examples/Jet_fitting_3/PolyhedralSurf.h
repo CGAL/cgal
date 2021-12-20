@@ -68,12 +68,12 @@ public:
 
 template <class TPoly>
 class Facet_PM :
-  public boost::put_get_helper<typename TPoly::Traits::Vector_3, Facet_PM<TPoly> >
+  public boost::put_get_helper<typename TPoly::Traits::Vector_3&, Facet_PM<TPoly> >
 {
 public:
 
   //read_write
-  typedef boost::read_write_property_map_tag category;
+  typedef boost::lvalue_property_map_tag category;
   typedef typename TPoly::Facet key_type;
   typedef typename TPoly::Traits::Vector_3 value_type;
   typedef typename TPoly::Traits::Vector_3& reference;
@@ -121,8 +121,6 @@ class HEdge_PM :
   public boost::put_get_helper<typename TPoly::Traits::FT&, HEdge_PM<TPoly> >//double
 {
 public:
-  //read_write or lvalue
-  //typedef boost::read_write_property_map_tag category;
   typedef boost::lvalue_property_map_tag category;
   typedef typename TPoly::Halfedge key_type;
   typedef typename TPoly::Traits::FT value_type;

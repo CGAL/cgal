@@ -69,12 +69,12 @@ void Viewer::init()
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
     /* Add mouse and key description */
-    setKeyDescription( Qt::CTRL + Qt::Key_G, tr("Generate points") );
-    setKeyDescription( Qt::CTRL + Qt::Key_O, tr("Load points") );
-    setKeyDescription( Qt::CTRL + Qt::Key_S, tr("Save points") );
-    setKeyDescription( Qt::CTRL + Qt::Key_Comma, tr("Preference") );
-    setKeyDescription( Qt::CTRL + Qt::Key_H, tr("Hide Kernel Demo") );
-    setKeyDescription( Qt::CTRL + Qt::Key_Q, tr("Quit Kernel Demo") );
+    setKeyDescription( Qt::CTRL, Qt::Key_G, tr("Generate points") );
+    setKeyDescription( Qt::CTRL, Qt::Key_O, tr("Load points") );
+    setKeyDescription( Qt::CTRL, Qt::Key_S, tr("Save points") );
+    setKeyDescription( Qt::CTRL, Qt::Key_Comma, tr("Preference") );
+    setKeyDescription( Qt::CTRL, Qt::Key_H, tr("Hide Kernel Demo") );
+    setKeyDescription( Qt::CTRL, Qt::Key_Q, tr("Quit Kernel Demo") );
     setKeyDescription( Qt::Key_Return,
                        tr("Insert new point to triangulation in <u>Input-Point</u> mode") );
     setKeyDescription( Qt::Key_Escape,

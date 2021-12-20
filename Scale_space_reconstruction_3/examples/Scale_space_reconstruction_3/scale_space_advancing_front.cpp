@@ -23,16 +23,11 @@ typedef Reconstruction::Facet_const_iterator                   Facet_iterator;
 
 int main(int argc, char** argv)
 {
-  if (argc != 2)
-  {
-    std::cerr << "Error, no input file provided\n";
-    return 1;
-  }
-
   // Read the data.
+  std::string fname = argc==1?CGAL::data_file_path("points_3/kitten.off"):argv[1];
   std::cerr << "Reading " << std::flush;
   Point_set points;
-  if(!CGAL::IO::read_point_set(argv[1], points))
+  if(!CGAL::IO::read_point_set(fname, points))
   {
     std::cerr << "Error: cannot read file" << std::endl;
     return EXIT_FAILURE;

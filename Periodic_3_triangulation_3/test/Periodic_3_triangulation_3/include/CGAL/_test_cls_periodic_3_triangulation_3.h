@@ -636,7 +636,7 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   if(test_input_ouput)
   {
     std::cout << "I/O" << std::endl;
-    std::cout << "  ascii" << std::endl;
+    std::cout << "  ASCII" << std::endl;
 
     std::stringstream ss1;
     std::stringstream ss3;

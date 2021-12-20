@@ -18,10 +18,15 @@ jobs:
            if(asso == 'OWNER' || asso == 'MEMBER') {
              const body = context.payload.comment.body
              if(body.includes("build:")) {
-               const re = /\/build:(\w+)\s*/;
+               const re = /\/(force-)?build:(\w+)\s*/;
                if(re.test(body)){
                  const res = re.exec(body)
-                 return res[1];
+                 if(body.includes("force-")) {
+                   return res[2]+":yes"
+                 }
+                 else{
+                   return res[2]+":no"
+                 }
                }
              }
            }
@@ -70,19 +75,22 @@ jobs:
         run: |
           set -ex
           PR_NUMBER=${{ steps.get_pr_number.outputs.result }}
-          ROUND=${{ steps.get_round.outputs.result }}
+          TMP_ROUND=${{ steps.get_round.outputs.result }}
+          ROUND=$(echo $TMP_ROUND | cut -d ":" -f 1)
+          force=$(echo $TMP_ROUND | cut -d ":" -f 2)
           wget --no-verbose cgal.github.io -O tmp.html
-          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html; then
+          if ! egrep -q "\/$PR_NUMBER\/$ROUND" tmp.html || [ "$force" = "yes" ]; then
             #list impacted packages
             LIST_OF_PKGS=$(git diff --name-only HEAD^1 HEAD |cut -s -d/ -f1 |sort -u | xargs -I {} echo {} && ls -d {}/package_info 2>/dev/null  |cut -d/ -f1 |egrep -v Installation||true)
             if [ "$LIST_OF_PKGS" = "" ]; then
+              echo "::set-output name=DoxygenError::No package affected."
               exit 1
             fi
             cd build_doc && make -j2 doc
             make -j2 doc_with_postprocessing 2>tmp.log
             if [ -s tmp.log ]; then
-              content=`cat ./build_doc/tmp.log`
-              echo ::set-output name=DoxygenError::$(cat tmp.log)
+              content=`cat ./tmp.log`
+              echo "::set-output name=DoxygenError::$(cat tmp.log)"
               exit 1
             fi
             cd ..
@@ -101,6 +109,7 @@ jobs:
             mv tmp.html index.html
             git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
+            echo "::set-output name=DoxygenError::This round already exists. Overwrite it with /force-build."
             exit 1
           fi
 
@@ -109,7 +118,10 @@ jobs:
         if: ${{ success() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
-            const address = "The documentation is built. It will be available, after a few minutes, here : https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/${{ steps.get_round.outputs.result }}/Manual/index.html"
+            const tmp_round = "${{ steps.get_round.outputs.result }}";
+            const id = tmp_round.indexOf(":");
+            const round = tmp_round.substring(0,id);
+            const address = "The documentation is built. It will be available, after a few minutes, here: https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/"+round+"/Manual/index.html"
             github.issues.createComment({
               owner: "CGAL",
               repo: "cgal",

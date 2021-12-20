@@ -122,7 +122,7 @@ struct Identity_functor
  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  * @tparam BottomFunctor a functor providing
  * \code {.cpp}
- * void operator()`(boost::graph_traits<InputMesh>::vertex_descriptor input_v,boost::graph_traits<OutputMesh>::vertex_descriptor output_v)
+ * void operator()(boost::graph_traits<InputMesh>::vertex_descriptor input_v,boost::graph_traits<OutputMesh>::vertex_descriptor output_v)
  * \endcode
  *  where `output_v` is the copy of `input_v` from `input` into the bottom part of `output`.
  *

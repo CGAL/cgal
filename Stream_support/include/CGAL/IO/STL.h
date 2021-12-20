@@ -49,7 +49,7 @@ namespace IO {
  *
  * \attention The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+ * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose value type is the point type
@@ -89,7 +89,7 @@ bool read_STL(std::istream& is,
   if(!is.good())
   {
     if(verbose)
-      std::cerr<<"File doesn't exist."<<std::endl;
+      std::cerr << "File doesn't exist." << std::endl;
     return false;
   }
 
@@ -188,7 +188,7 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \brief reads the content of a file named `fname` into `points` and `facets`, using the \ref IOStreamSTL.
  *
- *  If `use_binary_mode` is `true`, but the reading fails, ASCII reading will be automatically tested.
+ *  If `use_binary_mode` is `true`, but the reading fails, \ascii reading will be automatically tested.
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
@@ -204,7 +204,7 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -269,7 +269,9 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *
  * \brief writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
  *
- * \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+ * \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+ *            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+ *            of the stream must be set to `BINARY`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
@@ -286,8 +288,8 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`the precision of the stream `os``}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamDefault{the precision of the stream `os`}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -312,7 +314,6 @@ bool write_STL(std::ostream& os,
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   typedef typename boost::property_traits<PointMap>::value_type             Point;
-  typedef typename boost::property_traits<PointMap>::reference              Point_ref;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
   typedef typename K::Vector_3                                              Vector_3;
 
@@ -329,9 +330,9 @@ bool write_STL(std::ostream& os,
 
     for(const Triangle& face : facets)
     {
-      const Point_ref p = get(point_map, points[face[0]]);
-      const Point_ref q = get(point_map, points[face[1]]);
-      const Point_ref r = get(point_map, points[face[2]]);
+      const Point& p = get(point_map, points[face[0]]);
+      const Point& q = get(point_map, points[face[1]]);
+      const Point& r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
 
@@ -350,9 +351,9 @@ bool write_STL(std::ostream& os,
     os << "solid\n";
     for(const Triangle& face : facets)
     {
-      const Point_ref p = get(point_map, points[face[0]]);
-      const Point_ref q = get(point_map, points[face[1]]);
-      const Point_ref r = get(point_map, points[face[2]]);
+      const Point& p = get(point_map, points[face[0]]);
+      const Point& q = get(point_map, points[face[1]]);
+      const Point& r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
       os << "facet normal " << n << "\nouter loop\n";
@@ -398,7 +399,7 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -407,7 +408,7 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *

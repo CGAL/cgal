@@ -96,11 +96,13 @@ namespace IO {
    be provided for `PropertyMap::value_type` that handles both ASCII
    and binary output (see `CGAL::IO::get_mode()`).
 
-   \attention When writing to a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the `PropertyMap` objects provided
-   within the `PropertyHandler` parameter.
+                      its iterator is the key type of the `PropertyMap` objects provided
+                      within the `PropertyHandler` parameter.
    \tparam PropertyHandler handlers to recover properties.
 
    \returns `true` if writing was successful, `false` otherwise.
@@ -145,10 +147,12 @@ template <typename PointRange,
 
    \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
-   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param os output stream
@@ -177,8 +181,8 @@ template <typename PointRange,
      \cgalParamNBegin{stream_precision}
        \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
-       \cgalParamDefault{`the precision of the stream `os``}
-       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+       \cgalParamDefault{the precision of the stream `os`}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 
@@ -216,11 +220,11 @@ bool write_PLY(std::ostream& os,
 
   set_stream_precision_from_NP(os, np);
 
-  if (has_normals)
+  if(has_normals)
     return write_PLY_with_properties(os, points,
                                      make_ply_point_writer(point_map),
                                      make_ply_normal_writer(normal_map));
-  // else
+
   return write_PLY_with_properties(os, points, make_ply_point_writer(point_map));
 }
 
@@ -241,7 +245,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
    \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param filename the path to the output file
@@ -250,7 +254,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
 
    \cgalNamedParamsBegin
      \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
        \cgalParamType{Boolean}
        \cgalParamDefault{`true`}
      \cgalParamNEnd
@@ -277,7 +281,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
        \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{`6`}
-       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
      \cgalParamNEnd
    \cgalNamedParamsEnd
 

@@ -3,14 +3,14 @@
 
 template<class AK>
 void test_get_arithmetic_kernel(){
-  CGAL_assertion_code(typedef typename AK::Integer Integer);
+  typedef typename AK::Integer Integer;
   {
-    CGAL_assertion_code(typedef CGAL::Polynomial<Integer> POLY;)
-    CGAL_assertion_code(typedef typename CGAL::Get_arithmetic_kernel<POLY>::Arithmetic_kernel AK_;)
+    typedef CGAL::Polynomial<Integer> POLY;
+    typedef typename CGAL::Get_arithmetic_kernel<POLY>::Arithmetic_kernel AK_;
     CGAL_static_assertion((boost::is_same<AK,AK_>::value));
   }{
-    CGAL_assertion_code(typedef CGAL::Polynomial<CGAL::Polynomial<Integer> > POLY;)
-    CGAL_assertion_code(typedef typename CGAL::Get_arithmetic_kernel<POLY>::Arithmetic_kernel AK_;)
+    typedef CGAL::Polynomial<CGAL::Polynomial<Integer> > POLY;
+    typedef typename CGAL::Get_arithmetic_kernel<POLY>::Arithmetic_kernel AK_;
     CGAL_static_assertion((boost::is_same<AK,AK_>::value));
   }
 }

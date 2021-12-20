@@ -77,11 +77,9 @@ int main(int argc, char* argv[]) {
     "|- \n";
   float item_sec;
 
-#ifndef CGAL_CFG_NO_CPP0X_COPY_N
   item_sec = test(v.begin(), n, copy_m, repeats, std_tag());
   format_output("stdlib", "vector<int>", "int*", n, item_sec);
   std::cout << "|- \n";
-#endif
 
   item_sec = test(v.begin(), n, copy_m, repeats, cgal_tag());
   format_output("CGAL", "vector<int>", "int*", n, item_sec);
@@ -93,11 +91,9 @@ int main(int argc, char* argv[]) {
 
   list l(n);
 
-#ifndef CGAL_CFG_NO_CPP0X_COPY_N
   item_sec = test(l.begin(), n, copy_m, repeats, std_tag());
   format_output("stdlib", "list<int>", "int*", n, item_sec);
   std::cout << "|- \n";
-#endif
 
   item_sec = test(l.begin(), n, copy_m, repeats, cgal_tag());
   format_output("CGAL", "list<int>", "int*", n, item_sec);
@@ -108,11 +104,9 @@ int main(int argc, char* argv[]) {
   vector2 v2(n);
   copy_mem2 copy_m2 = new non_trivial_cctor[n];
 
-#ifndef CGAL_CFG_NO_CPP0X_COPY_N
   item_sec = test(v2.begin(), n, copy_m2, repeats, std_tag());
   format_output("stdlib", "vector<non_trivial_cctor>", "non_trivial_cctor*", n, item_sec);
   std::cout << "|- \n";
-#endif
 
   item_sec = test(v2.begin(), n, copy_m2, repeats, cgal_tag());
   format_output("CGAL", "vector<non_trivial_cctor>", "non_trivial_cctor*", n, item_sec);

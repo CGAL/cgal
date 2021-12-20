@@ -127,30 +127,6 @@
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 
-// bug-fix for g++-5.x and Boost.Config<1.57
-//    https://svn.boost.org/trac/boost/ticket/10500
-#if BOOST_VERSION < 105700 && BOOST_GCC < 60000 && \
-  ! defined(__GXX_EXPERIMENTAL_CXX0X__) && defined(BOOST_HAS_VARIADIC_TMPL)
-#  undef BOOST_HAS_VARIADIC_TMPL
-#  define BOOST_NO_CXX11_VARIADIC_TEMPLATES
-#endif
-
-// workaround for the bug https://svn.boost.org/trac10/ticket/12534
-// That bug was introduced in Boost 1.62 and fixed in 1.63.
-#if BOOST_VERSION >= 106200 && BOOST_VERSION < 106300
-#  include <boost/container/flat_map.hpp>
-#endif
-
-// Hack: Boost<1.55 does not detect correctly the C++11 features of ICC.
-// We declare by hand two features that we need (variadic templates and
-// rvalue references).
-#if defined(__INTEL_COMPILER) && defined(__GXX_EXPERIMENTAL_CXX0X__)
-#  undef BOOST_NO_VARIADIC_TEMPLATES
-#  undef BOOST_NO_CXX11_VARIADIC_TEMPLATES
-#  undef BOOST_NO_RVALUE_REFERENCES
-#  undef BOOST_NO_CXX11_RVALUE_REFERENCES
-#endif
-
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
@@ -158,7 +134,7 @@
 //----------------------------------------------------------------------//
 
 #if CGAL_HEADER_ONLY
-#  include <CGAL/internal/enable_third_party_libraries.h>
+#  include <CGAL/Installation/internal/enable_third_party_libraries.h>
 #else
 #  include <CGAL/compiler_config.h>
 #endif
@@ -181,119 +157,6 @@
 #define CGAL_USE_SSE2_FABS
 #endif
 
-//----------------------------------------------------------------------//
-//  Detect features at compile-time. Some macros have only been
-//  introduced as of Boost 1.40. In that case, we simply say that the
-//  feature is not available, even if that is wrong.
-//  ----------------------------------------------------------------------//
-
-#if defined(BOOST_NO_CXX11_RANGE_BASED_FOR) || BOOST_VERSION < 105000
-#define CGAL_CFG_NO_CPP0X_RANGE_BASED_FOR 1
-#endif
-#if defined(BOOST_NO_0X_HDR_ARRAY) || \
-    defined(BOOST_NO_CXX11_HDR_ARRAY) || BOOST_VERSION < 104000
-#define CGAL_CFG_NO_CPP0X_ARRAY 1
-#endif
-#if defined(BOOST_NO_0X_HDR_UNORDERED_SET) || \
-    defined(BOOST_NO_0X_HDR_UNORDERED_MAP) || \
-    defined(BOOST_NO_CXX11_HDR_UNORDERED_SET) || \
-    defined(BOOST_NO_CXX11_HDR_UNORDERED_MAP) || \
-   (defined(_MSC_VER) && (_MSC_VER == 1800)) // std::unordered_set is very bad in MSVC2013
-#define CGAL_CFG_NO_CPP0X_UNORDERED 1
-#endif
-#if defined( BOOST_NO_0X_HDR_THREAD) || \
-    defined( BOOST_NO_CXX11_HDR_THREAD)
-#define CGAL_CFG_NO_STD_THREAD 1
-#endif
-#if defined(BOOST_NO_DECLTYPE) || \
-    defined(BOOST_NO_CXX11_DECLTYPE) || (BOOST_VERSION < 103600)
-#define CGAL_CFG_NO_CPP0X_DECLTYPE 1
-#endif
-#if defined(BOOST_NO_DELETED_FUNCTIONS) || \
-    defined(BOOST_NO_DEFAULTED_FUNCTIONS) || \
-    defined(BOOST_NO_CXX11_DELETED_FUNCTIONS) || \
-    defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS) || (BOOST_VERSION < 103600) || \
-    (defined(_MSC_VER) && _MSC_VER < 1900) // MSVC 2013 has only partial support
-#define CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS 1
-#endif
-#if defined(BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS) || \
-    defined(BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS) || \
-    (BOOST_VERSION < 104100)
-#define CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 1
-#endif
-#if defined(BOOST_NO_INITIALIZER_LISTS) || \
-    defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST) || (BOOST_VERSION < 103900)
-#define CGAL_CFG_NO_CPP0X_INITIALIZER_LISTS 1
-#endif
-#if defined(BOOST_MSVC)
-#define CGAL_CFG_NO_CPP0X_ISFINITE 1 // used in <CGAL/CORE/Filter.h>
-#endif
-#if defined(BOOST_NO_LONG_LONG) || (BOOST_VERSION < 103600)
-#define CGAL_CFG_NO_CPP0X_LONG_LONG 1
-#endif
-#if defined(BOOST_NO_LAMBDAS) || \
-    defined(BOOST_NO_CXX11_LAMBDAS) || BOOST_VERSION < 104000
-#define CGAL_CFG_NO_CPP0X_LAMBDAS 1
-#endif
-#if defined(BOOST_NO_RVALUE_REFERENCES) || \
-    defined(BOOST_NO_CXX11_RVALUE_REFERENCES) || (BOOST_VERSION < 103600)
-#define CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE 1
-#endif
-#if defined(BOOST_NO_STATIC_ASSERT) || \
-    defined(BOOST_NO_CXX11_STATIC_ASSERT) || (BOOST_VERSION < 103600)
-#define CGAL_CFG_NO_CPP0X_STATIC_ASSERT 1
-#endif
-#if defined(BOOST_NO_0X_HDR_TUPLE) || \
-    defined(BOOST_NO_CXX11_HDR_TUPLE) || (BOOST_VERSION < 104000)
-#define CGAL_CFG_NO_CPP0X_TUPLE 1
-#endif
-#if defined(BOOST_NO_VARIADIC_TEMPLATES) || \
-    defined(BOOST_NO_CXX11_VARIADIC_TEMPLATES) || (BOOST_VERSION < 103600)
-#define CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES 1
-#endif
-// never use TR1
-#define CGAL_CFG_NO_TR1_ARRAY 1
-// never use TR1
-#define CGAL_CFG_NO_TR1_TUPLE 1
-#if !defined(__GNUC__) || defined(__INTEL_COMPILER)
-#define CGAL_CFG_NO_STATEMENT_EXPRESSIONS 1
-#endif
-#if defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX) || (BOOST_VERSION < 105100) || _MSC_VER==1800
-#define CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX
-#endif
-#if __cplusplus < 201103L && !(_MSC_VER >= 1600)
-#define CGAL_CFG_NO_CPP0X_COPY_N 1
-#define CGAL_CFG_NO_CPP0X_NEXT_PREV 1
-#endif
-#if defined(BOOST_NO_EXPLICIT_CONVERSION_OPERATIONS) \
-    || defined(BOOST_NO_EXPLICIT_CONVERSION_OPERATORS) \
-    || defined(BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS) \
-    || (BOOST_VERSION < 103600)
-#define CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS 1
-#endif
-#if defined(BOOST_NO_CXX11_TEMPLATE_ALIASES) || \
-    defined(BOOST_NO_TEMPLATE_ALIASES) || (BOOST_VERSION < 103900)
-#define CGAL_CFG_NO_CPP0X_TEMPLATE_ALIASES 1
-#endif
-
-// Some random list to let us write C++11 without thinking about
-// each feature we are using.
-#if ( __cplusplus >= 201103L || _MSVC_LANG >= 201103L ) &&      \
-    !defined CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES && \
-    !defined CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE && \
-    !defined CGAL_CFG_NO_CPP0X_EXPLICIT_CONVERSION_OPERATORS && \
-    !defined CGAL_CFG_NO_CPP0X_TUPLE && \
-    !defined CGAL_CFG_NO_CPP0X_UNIFIED_INITIALIZATION_SYNTAX && \
-    !defined CGAL_CFG_NO_CPP0X_STATIC_ASSERT && \
-    !defined CGAL_CFG_NO_CPP0X_DECLTYPE && \
-    !defined CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS && \
-    !defined CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
-#define CGAL_CXX11 1
-#endif
-// Same for C++14.
-#if __cplusplus >= 201402L || _MSVC_LANG >= 201402L
-#  define CGAL_CXX14 1
-#endif
 // Same for C++17
 #if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
 #  define CGAL_CXX17 1
@@ -301,11 +164,6 @@
 // Same for C++20
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
 #  define CGAL_CXX20 1
-#endif
-
-#if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
-#define CGAL_CFG_NO_STD_HASH 1
-#define CGAL_CFG_NO_STD_FUNCTION 1
 #endif
 
 
@@ -340,56 +198,19 @@
 #define CGAL_END_NAMESPACE }
 #endif
 
-
-#ifndef CGAL_CFG_NO_CPP0X_LONG_LONG
-#  define CGAL_USE_LONG_LONG
-#endif
-
-
 #ifndef CGAL_CFG_TYPENAME_BEFORE_DEFAULT_ARGUMENT_BUG
 #  define CGAL_TYPENAME_DEFAULT_ARG typename
 #else
 #  define CGAL_TYPENAME_DEFAULT_ARG
 #endif
 
-
-#ifdef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
-#  define CGAL_DELETED
-#  define CGAL_EXPLICITLY_DEFAULTED
-#else
-#  define CGAL_DELETED = delete
-#  define CGAL_EXPLICITLY_DEFAULTED = default
-#endif
-
-
 // Big endian or little endian machine.
 // ====================================
 
-#if (BOOST_VERSION >= 105500)
-#  include <boost/predef.h>
-#  if BOOST_ENDIAN_BIG_BYTE
-#    define CGAL_BIG_ENDIAN
-#  elif BOOST_ENDIAN_LITTLE_BYTE
-#    define CGAL_LITTLE_ENDIAN
-#  endif
-#elif defined (__GLIBC__)
-#  include <endian.h>
-#  if (__BYTE_ORDER == __LITTLE_ENDIAN)
-#    define CGAL_LITTLE_ENDIAN
-#  elif (__BYTE_ORDER == __BIG_ENDIAN)
-#    define CGAL_BIG_ENDIAN
-#  endif
-#elif defined(__sparc) || defined(__sparc__) \
-   || defined(_POWER) || defined(__powerpc__) \
-   || defined(__ppc__) || defined(__hppa) \
-   || defined(_MIPSEB) || defined(_POWER) \
-   || defined(__s390__)
+#include <boost/predef.h>
+#if BOOST_ENDIAN_BIG_BYTE
 #  define CGAL_BIG_ENDIAN
-#elif defined(__i386__) || defined(__alpha__) \
-   || defined(__x86_64) || defined(__x86_64__) \
-   || defined(__ia64) || defined(__ia64__) \
-   || defined(_M_IX86) || defined(_M_IA64) \
-   || defined(_M_ALPHA) || defined(_WIN64)
+#elif BOOST_ENDIAN_LITTLE_BYTE
 #  define CGAL_LITTLE_ENDIAN
 #endif
 
@@ -493,7 +314,7 @@ using std::max;
 // Macros to detect features of clang. We define them for the other
 // compilers.
 // See http://clang.llvm.org/docs/LanguageExtensions.html
-// See also http://en.cppreference.com/w/cpp/experimental/feature_test
+// See also https://en.cppreference.com/w/cpp/experimental/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -542,21 +363,23 @@ using std::max;
 #define CGAL_NORETURN  [[noreturn]]
 
 // Macro to specify [[no_unique_address]] if supported
-#if CGAL_CXX11 && __has_cpp_attribute(no_unique_address)
+#if __has_cpp_attribute(no_unique_address)
 #  define CGAL_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else
 #  define CGAL_NO_UNIQUE_ADDRESS
 #endif
 
-// Macro CGAL_ASSUME
+// Macro CGAL_ASSUME and CGAL_UNREACHABLE
 // Call a builtin of the compiler to pass a hint to the compiler
-#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION >= 40500 && !__STRICT_ANSI__)
+#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
+#  define CGAL_UNREACHABLE() __builtin_unreachable()
 #elif defined(_MSC_VER)
 // MSVC has __assume
 #  define CGAL_ASSUME(EX) __assume(EX)
+#  define CGAL_UNREACHABLE() __assume(0)
 #endif
 // If CGAL_ASSUME is not defined, then CGAL_assume and CGAL_assume_code are
 // defined differently, in <CGAL/assertions.h>
@@ -569,25 +392,14 @@ using std::max;
 #  endif
 #endif
 
-#if __has_feature(cxx_thread_local) || \
-    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1900 )
-// see also Installation/cmake/modules/config/support/CGAL_test_cpp_version.cpp
-#define CGAL_CAN_USE_CXX11_THREAD_LOCAL
-#endif
-
-#if ( BOOST_VERSION >= 105000 && ! defined(BOOST_NO_CXX11_HDR_MUTEX) ) || \
-    (__has_include(<mutex>) && __cplusplus >= 201103L ) | \
-    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1700 )
-#define CGAL_CAN_USE_CXX11_MUTEX
-#endif
-
-#if ( BOOST_VERSION >= 105600 && ! defined(BOOST_NO_CXX11_HDR_ATOMIC) ) || \
-    (__has_include(<atomic>) && __cplusplus >= 201103L ) || \
-    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
-    ( _MSC_VER >= 1700 )
-#define CGAL_CAN_USE_CXX11_ATOMIC
+#ifndef CGAL_HAS_THREADS
+  namespace CGAL { inline bool is_currently_single_threaded(){ return true; } }
+#elif __has_include(<sys/single_threaded.h>)
+#  include <sys/single_threaded.h>
+  namespace CGAL { inline bool is_currently_single_threaded(){ return ::__libc_single_threaded; } }
+#else
+  /* This is the conservative default */
+  namespace CGAL { inline bool is_currently_single_threaded(){ return false; } }
 #endif
 
 // Support for LEDA with threads
@@ -600,7 +412,7 @@ using std::max;
 #define LEDA_NUMBERS_DLL 1
 
 // Helper macros to disable macros
-#if defined(__clang__) || (BOOST_GCC >= 40600)
+#if defined(__clang__) || defined(BOOST_GCC)
 #  define CGAL_PRAGMA_DIAG_PUSH _Pragma("GCC diagnostic push")
 #  define CGAL_PRAGMA_DIAG_POP  _Pragma("GCC diagnostic pop")
 #else
@@ -676,7 +488,6 @@ namespace cpp11{
 }//namespace cpp11
 } //namespace CGAL
 
-
 // The fallthrough attribute
 // See for clang:
 //   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
@@ -694,9 +505,10 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-// https://svn.boost.org/trac/boost/ticket/2839
-#if defined(BOOST_MSVC) && BOOST_VERSION < 105600
-#define CGAL_CFG_BOOST_VARIANT_SWAP_BUG 1
+#ifndef CGAL_NO_ASSERTIONS
+#  define CGAL_NO_ASSERTIONS_BOOL false
+#else
+#  define CGAL_NO_ASSERTIONS_BOOL true
 #endif
 
 #if defined( __INTEL_COMPILER)
@@ -736,5 +548,64 @@ namespace cpp11{
 #endif // not BOOST_MSVC
 /// @}
 #include <CGAL/license/lgpl.h>
+
+//----------------------------------------------------------------------//
+//  Function to define data directory
+//----------------------------------------------------------------------//
+#include <cstdlib>
+#include <string>
+#include <fstream>
+#include <iostream>
+
+namespace CGAL {
+
+// Returns filename prefixed by the directory of CGAL containing data.
+// This directory is either defined in the environement variable CGAL_DATA_DIR,
+// otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
+// otherwise it is empty (and thus returns filename unmodified).
+inline std::string data_file_path(const std::string& filename)
+{
+  const char* cgal_dir=nullptr;
+
+#ifdef _MSC_VER
+  char* cgal_dir_windows=nullptr;
+  _dupenv_s( &cgal_dir_windows, nullptr, "CGAL_DATA_DIR");
+  if (cgal_dir_windows!=nullptr)
+  { cgal_dir=cgal_dir_windows; }
+#else
+  cgal_dir=getenv("CGAL_DATA_DIR");
+#endif
+
+#ifdef CGAL_DATA_DIR
+ if (cgal_dir==nullptr)
+ { cgal_dir=CGAL_DATA_DIR; }
+#endif
+
+ std::string cgal_dir_string;
+ if (cgal_dir!=nullptr)
+ { cgal_dir_string=std::string(cgal_dir); }
+
+ std::string res=cgal_dir_string;
+ if (!res.empty() && res.back()!='/')
+ { res+=std::string("/"); }
+ res+=filename;
+
+ // Test if the file exists, write a warning otherwise
+ std::ifstream f(res);
+ if (!f)
+ {
+   std::cerr<<"[WARNING] file "<<res<<" does not exist or cannot be read "
+            <<"(CGAL_DATA_DIR='"<<cgal_dir_string<<"')."<<std::endl;
+ }
+
+#ifdef _MSC_VER
+ if (cgal_dir_windows!=nullptr)
+ { free(cgal_dir_windows); }
+#endif
+
+ return res;
+}
+
+} // end namespace CGAL
 
 #endif // CGAL_CONFIG_H

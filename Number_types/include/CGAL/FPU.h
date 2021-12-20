@@ -172,7 +172,7 @@ inline double IA_opacify(double x)
   // Intel has a bug where -mno-sse still defines __SSE__ and __SSE2__
   // (-mno-sse2 works though), no work-around for now.
 # if defined __SSE2_MATH__ || (defined __INTEL_COMPILER && defined __SSE2__)
-#  if __GNUC__ * 100 + __GNUC_MINOR__ >= 409
+#  if (__GNUC__ > 0)
   // ICEs in reload/LRA with older versions.
   asm volatile ("" : "+gx"(x) );
 #  else
@@ -248,6 +248,8 @@ inline __m128d IA_opacify128(__m128d x)
 #  ifdef _MSC_VER
   // With VS, __m128d is a union, where volatile doesn't disappear automatically
   // However, this version generates wrong code with clang, check before enabling it for more compilers.
+  // The usage here is safe as we write from a __m128d to a __m128d
+  // and we know that this type has 16 bytes
   std::memcpy(&x, (void*)&e, 16);
   return x;
 #  else
@@ -275,8 +277,7 @@ inline __m128d IA_opacify128_weak(__m128d x)
 inline __m128d swap_m128d(__m128d x){
 # ifdef __llvm__
   return __builtin_shufflevector(x, x, 1, 0);
-# elif defined __GNUC__ && !defined __INTEL_COMPILER \
-  && __GNUC__ * 100 + __GNUC_MINOR__ >= 407
+# elif defined __GNUC__ && !defined __INTEL_COMPILER
   return __builtin_shuffle(x, (__m128i){ 1, 0 });
 # else
   return _mm_shuffle_pd(x, x, 1);
@@ -327,11 +328,6 @@ inline double IA_bug_sqrt(double d)
 }
 
 #  define CGAL_BUG_SQRT(d) IA_bug_sqrt(d)
-
-
-#elif defined __SSE2_MATH__
-// For SSE2, we need to call __builtin_sqrt() instead of libc's sqrt().
-#  define CGAL_BUG_SQRT(d) __builtin_sqrt(d)
 #elif defined __CYGWIN__
 inline double IA_bug_sqrt(double d)
 {
@@ -460,7 +456,7 @@ typedef unsigned int FPU_CW_t;
 # elif defined  __aarch64__
 #define CGAL_IA_SETFPCW(CW) asm volatile ("MSR FPCR, %0" : :"r" (CW))
 #define CGAL_IA_GETFPCW(CW) asm volatile ("MRS %0, FPCR" : "=r" (CW))
-typedef unsigned int FPU_CW_t;
+typedef unsigned long FPU_CW_t;
 #define CGAL_FE_TONEAREST    (0x0)
 #define CGAL_FE_TOWARDZERO   (0xC00000)
 #define CGAL_FE_UPWARD       (0x400000)

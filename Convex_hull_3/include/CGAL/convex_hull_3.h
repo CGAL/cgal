@@ -32,7 +32,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
@@ -359,6 +359,8 @@ public:
       }
     }
     catch (Uncertain_conversion_exception&){}
+    Protector protector(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     if (ek_plane_ptr==nullptr) {
       const typename Exact_K::Point_3 ep = to_EK(p);
       ek_plane_ptr = new Vector_plus_point<Exact_K>;

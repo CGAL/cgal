@@ -66,6 +66,9 @@ public:
   Line_2(const RLine_2& l)  // conversion impl -> interface class
     : RLine_2(l) {}
 
+  Line_2(RLine_2&& l)
+    : RLine_2(std::move(l)) {}
+
   Line_2(const Point_2 &p, const Point_2 &q)
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,q)) {}
 
@@ -279,7 +282,7 @@ extract(std::istream& is, Line_2<R>& l)
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)

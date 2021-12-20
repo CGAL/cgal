@@ -480,8 +480,11 @@ public:
         return false;
     }
 
-    if (callback && !callback(0.))
+    if (callback && !callback(0.)) {
+      clear_octrees();
+      clear_shape_factories();
       return false;
+    }
 
     // Reset data structures possibly used by former search
     m_extracted_shapes =
@@ -580,8 +583,10 @@ public:
                    m_shape_index,
                    m_required_samples);
 
-                if (callback && !callback(num_invalid / double(m_num_total_points)))
+                if (callback && !callback(num_invalid / double(m_num_total_points))) {
+                  clear(num_invalid, candidates);
                   return false;
+                }
 
               } while (m_shape_index[first_sample] != -1 || !done);
 
@@ -591,8 +596,10 @@ public:
               bool candidate_success = false;
               for(typename std::vector<Shape *(*)()>::iterator it =
                     m_shape_factories.begin(); it != m_shape_factories.end(); it++)        {
-                if (callback && !callback(num_invalid / double(m_num_total_points)))
+                if (callback && !callback(num_invalid / double(m_num_total_points))) {
+                  clear(num_invalid, candidates);
                   return false;
+                }
                 Shape *p = (Shape *) (*it)();
                 //compute the primitive and says if the candidate is valid
                 p->compute(indices,
@@ -659,8 +666,10 @@ public:
       Shape *best_candidate =
               get_best_candidate(candidates, m_num_available_points - num_invalid);
 
-      if (callback && !callback(num_invalid / double(m_num_total_points)))
+      if (callback && !callback(num_invalid / double(m_num_total_points))) {
+        clear(num_invalid, candidates);
         return false;
+      }
 
       // If search is done and the best candidate is too small, we are done.
       if (!keep_searching && best_candidate->m_score < m_options.min_points)
@@ -683,8 +692,10 @@ public:
       best_candidate->connected_component(best_candidate->m_indices,
                                           m_options.cluster_epsilon);
 
-      if (callback && !callback(num_invalid / double(m_num_total_points)))
+      if (callback && !callback(num_invalid / double(m_num_total_points))) {
+        clear(num_invalid, candidates);
         return false;
+      }
       // check score against min_points and clear out candidates if too low
       if (best_candidate->indices_of_assigned_points().size() <
           m_options.min_points) {
@@ -700,8 +711,10 @@ public:
         delete best_candidate;
         best_candidate = nullptr;
 
-        if (callback && !callback(num_invalid / double(m_num_total_points)))
+        if (callback && !callback(num_invalid / double(m_num_total_points))) {
+          clear(num_invalid, candidates);
           return false;
+        }
 
         // Trimming candidates list
         std::size_t empty = 0, occupied = 0;
@@ -727,8 +740,10 @@ public:
 
         candidates.resize(empty);
 
-        if (callback && !callback(num_invalid / double(m_num_total_points)))
+        if (callback && !callback(num_invalid / double(m_num_total_points))) {
+          clear(num_invalid, candidates);
           return false;
+        }
       } else if (stop_probability((std::size_t) best_candidate->expected_value(),
                                   (m_num_available_points - num_invalid),
                                   generated_candidates,
@@ -742,8 +757,10 @@ public:
         m_extracted_shapes->push_back(
                 boost::shared_ptr<Shape>(best_candidate));
 
-        if (callback && !callback(num_invalid / double(m_num_total_points)))
+        if (callback && !callback(num_invalid / double(m_num_total_points))) {
+          clear(num_invalid, candidates);
           return false;
+        }
 
         //2. remove the points
         const std::vector<std::size_t> &indices_points_best_candidate =
@@ -777,8 +794,10 @@ public:
         failed_candidates = 0;
         best_expected = 0;
 
-        if (callback && !callback(num_invalid / double(m_num_total_points)))
+        if (callback && !callback(num_invalid / double(m_num_total_points))) {
+          clear(num_invalid, candidates);
           return false;
+        }
 
         std::vector<std::size_t> subset_sizes(m_num_subsets);
         subset_sizes[0] = m_available_octree_sizes[0];
@@ -807,8 +826,10 @@ public:
           }
         }
 
-        if (callback && !callback(num_invalid / double(m_num_total_points)))
+        if (callback && !callback(num_invalid / double(m_num_total_points))) {
+          clear(num_invalid, candidates);
           return false;
+        }
 
         std::size_t start = 0, end = candidates.size() - 1;
         while (start < end) {
@@ -828,8 +849,10 @@ public:
       } else if (!keep_searching)
         ++generated_candidates;
 
-      if (callback && !callback(num_invalid / double(m_num_total_points)))
+      if (callback && !callback(num_invalid / double(m_num_total_points))) {
+        clear(num_invalid, candidates);
         return false;
+      }
 
       keep_searching = (stop_probability(m_options.min_points,
                                          m_num_available_points - num_invalid,
@@ -841,13 +864,7 @@ public:
              || best_expected >= m_options.min_points);
 
     // Clean up remaining candidates.
-    for (std::size_t i = 0; i < candidates.size(); i++)
-      delete candidates[i];
-
-    candidates.resize(0);
-
-    m_num_available_points -= num_invalid;
-
+    clear_candidates(num_invalid, candidates);
     return true;
   }
 
@@ -912,6 +929,24 @@ public:
   /// @}
 
 private:
+  void clear(
+    const std::size_t num_invalid, std::vector<Shape *>& candidates) {
+
+    clear_octrees();
+    clear_shape_factories();
+    clear_candidates(num_invalid, candidates);
+  }
+
+  void clear_candidates(
+    const std::size_t num_invalid, std::vector<Shape *>& candidates) {
+
+    for (std::size_t i = 0; i < candidates.size(); i++) {
+      delete candidates[i];
+    }
+    candidates.resize(0);
+    m_num_available_points -= num_invalid;
+  }
+
   int select_random_octree_level() {
     auto upper_bound = static_cast<unsigned int>(m_global_octree->maxLevel() + 1);
     return (int) get_default_random()(upper_bound);

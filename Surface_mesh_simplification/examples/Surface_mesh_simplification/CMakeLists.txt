@@ -1,13 +1,11 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Surface_mesh_simplification_Examples)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
-
-include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package(Boost)

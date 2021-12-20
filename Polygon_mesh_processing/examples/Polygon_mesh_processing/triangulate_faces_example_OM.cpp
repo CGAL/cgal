@@ -15,7 +15,7 @@ typedef OpenMesh::PolyMesh_ArrayKernelT< >                  Mesh;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/cube_quad.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cube_quad.off");
   const char* outfilename = (argc > 2) ? argv[2] : "cube_tri.off";
 
   Mesh mesh;

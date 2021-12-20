@@ -21,12 +21,23 @@ typedef std::pair<Point_3, Vector_3> Pwn;
 typedef CGAL::First_of_pair_property_map<Pwn> Point_map;
 typedef CGAL::Second_of_pair_property_map<Pwn> Normal_map;
 
+struct Weight_map
+{
+  typedef Pwn key_type;
+  typedef typename K::FT value_type;
+  typedef value_type reference;
+  typedef boost::readable_property_map_tag category;
+
+  typedef Weight_map Self;
+  friend reference get(const Self&, const key_type&) { return value_type(1); }
+};
+
 namespace params = CGAL::parameters;
 
 int main(int argc, const char** argv)
 {
-  const char* fname1 = (argc>1)?argv[1]:"data/hippo1.ply";
-  const char* fname2 = (argc>2)?argv[2]:"data/hippo2.ply";
+  const std::string fname1 = (argc>1)?argv[1]:CGAL::data_file_path("points_3/hippo1.ply");
+  const std::string fname2 = (argc>2)?argv[2]:CGAL::data_file_path("points_3/hippo2.ply");
 
   std::vector<Pwn> pwns1, pwns2;
   if(!CGAL::IO::read_points(fname1, std::back_inserter(pwns1),
@@ -63,15 +74,17 @@ int main(int argc, const char** argv)
   point_set_2_filters.push_back( ICP_config { /*.name=*/"MinDistDataPointsFilter"       , /*.params=*/{ {"minDist", "0.5" }}  } );
   point_set_2_filters.push_back( ICP_config { /*.name=*/"RandomSamplingDataPointsFilter", /*.params=*/{ {"prob"   , "0.05"}}  } );
 
-        // Prepare matcher function
+  // Prepare matcher function
   ICP_config matcher { /*.name=*/"KDTreeMatcher", /*.params=*/{ {"knn", "1"}, {"epsilon", "3.16"} } };
 
   // Prepare outlier filters
+  // NOTE: `GenericDescriptorOutlierFilter` supports only one `descName` that is `weights`!
   std::vector<ICP_config> outlier_filters;
   outlier_filters.push_back( ICP_config { /*.name=*/"TrimmedDistOutlierFilter", /*.params=*/{ {"ratio", "0.75" }}  } );
+  outlier_filters.push_back( ICP_config { /*.name=*/"GenericDescriptorOutlierFilter", /*.params=*/{ {"descName", "weights" }}  } );
 
   // Prepare error minimizer
-  ICP_config error_minimizer { /*.name=*/"PointToPointErrorMinimizer"};
+  ICP_config error_minimizer { /*.name=*/"PointToPointErrorMinimizer", /*.params=*/{ } };
 
   // Prepare transformation checker
   std::vector<ICP_config> transformation_checkers;
@@ -81,10 +94,10 @@ int main(int argc, const char** argv)
                                                                                                        {"smoothLength"   , "4"     } }
                                                 } );
   // Prepare inspector
-  ICP_config inspector { /*.name=*/"NullInspector" };
+  ICP_config inspector { /*.name=*/"NullInspector", /*.params=*/{ } };
 
   // Prepare logger
-  ICP_config logger { /*.name=*/"FileLogger" };
+  ICP_config logger { /*.name=*/"FileLogger", /*.params=*/{ } };
 
   const K::Aff_transformation_3 identity_transform = K::Aff_transformation_3(CGAL::Identity_transformation());
 
@@ -92,7 +105,7 @@ int main(int argc, const char** argv)
   std::pair<K::Aff_transformation_3, bool> res =
     CGAL::pointmatcher::compute_registration_transformation
       (pwns1, pwns2,
-       params::point_map(Point_map()).normal_map(Normal_map())
+       params::point_map(Point_map()).normal_map(Normal_map()).scalar_map(Weight_map())
                                      .point_set_filters(point_set_1_filters)
                                      .matcher(matcher)
                                      .outlier_filters(outlier_filters)
@@ -100,7 +113,7 @@ int main(int argc, const char** argv)
                                      .transformation_checkers(transformation_checkers)
                                      .inspector(inspector)
                                      .logger(logger),
-       params::point_map(Point_map()).normal_map(Normal_map())
+       params::point_map(Point_map()).normal_map(Normal_map()).scalar_map(Weight_map())
                                      .point_set_filters(point_set_2_filters)
                                      .transformation(identity_transform) /* initial transform for pwns2.
                                                                           * default value is already identity transform.

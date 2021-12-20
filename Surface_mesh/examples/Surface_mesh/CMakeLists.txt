@@ -6,29 +6,11 @@
 # Used in /CGAL/Documentation/doc/Documentation/Developer_manual/create_and_use_a_cmakelist.txt.
 # Careful when modifying
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Surface_mesh_Examples)
-
-if(POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  if(NOT POLICY CMP0070)
-    cmake_policy(SET CMP0053 OLD)
-  else()
-    cmake_policy(SET CMP0053 NEW)
-  endif()
-endif()
-
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
 
 #CGAL_Qt5 is needed for the drawing.
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
-
-if(CGAL_Qt5_FOUND)
-  #required to use basic_viewer
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
 
 create_single_source_cgal_program("sm_derivation.cpp")
 create_single_source_cgal_program("sm_join.cpp")
@@ -48,9 +30,9 @@ create_single_source_cgal_program("draw_surface_mesh.cpp")
 if(CGAL_Qt5_FOUND)
 
   #link it with the required CGAL libraries
-  target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Basic_viewer)
 
-  target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
 
 #end of the file

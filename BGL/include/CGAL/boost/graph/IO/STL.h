@@ -73,7 +73,7 @@ public:
 
   \attention The graph `g` is not cleared, and the data from the stream are appended.
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -135,7 +135,7 @@ bool read_STL(std::istream& is,
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
     \cgalParamNEnd
@@ -208,7 +208,9 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 
   \brief writes the graph `g` in the output stream `os`, using the \ref IOStreamSTL.
 
-  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink of the stream
+             must be set to `BINARY`.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -230,8 +232,8 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
-       \cgalParamDefault{`the precision of the stream `os``}
-       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+       \cgalParamDefault{the precision of the stream `os`}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -328,7 +330,7 @@ bool write_STL(std::ostream& os,
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
     \cgalParamNEnd
@@ -346,7 +348,7 @@ bool write_STL(std::ostream& os,
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{`6`}
-       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 

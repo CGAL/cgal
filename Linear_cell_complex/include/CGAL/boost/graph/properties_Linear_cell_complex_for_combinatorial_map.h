@@ -42,7 +42,6 @@ namespace CGAL {
 
 template<typename LCC, typename FT>
 struct Wrap_squared_lcc
-  : boost::put_get_helper< double, Wrap_squared_lcc<LCC, FT> >
 {
   typedef typename boost::graph_traits<LCC>::edge_descriptor Handle;
   typedef FT value_type;
@@ -54,12 +53,19 @@ struct Wrap_squared_lcc
   {}
 
   template<typename E>
-  FT operator[](const E& e) const
+  value_type operator[](const E& e) const
   {
     return approximate_sqrt(CGAL::squared_distance
                             (m_lcc.point(e.first_halfedge()),
                              m_lcc.point(e.second_halfedge())));
   }
+
+  friend inline
+  value_type get(const Wrap_squared_lcc& m, const key_type& k)
+  {
+    return m[k];
+  }
+
 private:
   const LCC& m_lcc;
 };
