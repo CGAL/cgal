@@ -1300,6 +1300,61 @@ void collectBoundaryEdgesAndComputeVerticesValences(
   }
 }
 
+template<typename C3T3, typename IncCellsVector>
+Sliver_removal_result flip_n_to_m_on_surface(typename C3T3::Edge& edge,
+    C3T3& c3t3,
+    typename C3T3::Vertex_handle v0i,//v0 of new edge that will replace edge
+    typename C3T3::Vertex_handle v1i,//v1 of new edge that will replace edge
+    const IncCellsVector& cells_around_edge,
+    Flip_Criterion flip_criterion)
+{
+  typedef typename C3T3::Vertex_handle Vertex_handle;
+  typedef typename C3T3::Cell_handle   Cell_handle;
+  typedef typename C3T3::Triangulation::Geom_traits::Point_3 Point_3;
+
+  typename C3T3::Triangulation& tr = c3t3.triangulation();
+
+  Vertex_handle u = edge.first->vertex(edge.second);
+  Vertex_handle v = edge.first->vertex(edge.third);
+
+  typedef std::pair<int, int> IndInCell;
+  std::map<Cell_handle, IndInCell> indices;
+  for (Cell_handle c : cells_around_edge)
+  {
+    indices[c] = std::make_pair(c->index(u), c->index(v));
+  }
+
+  for (Cell_handle c : cells_around_edge)
+  {
+    int i = indices[c].first;
+    int j = indices[c].second;
+    c->set_vertex(i, v0i);
+    c->set_vertex(j, v1i);
+
+    if (!is_well_oriented(tr, c))
+    {
+      c->set_vertex(j, v0i);
+      c->set_vertex(i, v1i);
+      if (!is_well_oriented(tr, c))
+      {
+        //rollback all changes
+        for (Cell_handle cc : cells_around_edge)
+        {
+          int ii = indices[cc].first;
+          if (cc->vertex(ii) != u)
+          {
+            cc->set_vertex(ii, u);
+            cc->set_vertex(indices[cc].second, v);
+          }
+        }
+        return NOT_FLIPPABLE;
+      }
+    }
+  }
+
+  return VALID_FLIP;
+}
+
 //v0i and v1i are the vertices opposite to `edge`
 //on facets of the surface
 template<typename C3T3, typename IncCellsVectorMap, typename Visitor>
@@ -1339,6 +1394,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //        boundary_vertices.push_back(v0i);
 //        boundary_vertices.push_back(v1i);
 //
+//        return flip_n_to_m_on_surface(edge, c3t3, v0i, v1i, cells_around_edge, flip_criterion);
+
 //        return flip_n_to_m(edge, c3t3, boundary_vertices,
 //                           flip_criterion,
 //                           inc_cells,
@@ -1359,6 +1416,11 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
   ch1 = cells_around_edge[1];
   ch2 = cells_around_edge[2];
   ch3 = cells_around_edge[3];
+
+  Dihedral_angle_cosine curr_max_cosdh = max_cos_dihedral_angle(tr, ch0);
+  for (int i = 1; i < 4; ++i)
+    curr_max_cosdh = (std::max)(curr_max_cosdh,
+                                max_cos_dihedral_angle(tr, cells_around_edge[i]));
 
   Vertex_handle vh0, vh1, vh2, vh3, vh4, vh5;
 
@@ -1493,10 +1555,20 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     ch0->set_vertex(ch0->index(vh1), vh0);
     ch2->set_vertex(ch2->index(vh3), vh2);
     ch1->set_vertex(ch1->index(vh1), vh0);
-    if ( !is_well_oriented(tr, ch0)
+
+    Sliver_removal_result db = VALID_FLIP;
+    if (!is_well_oriented(tr, ch0)
       || !is_well_oriented(tr, ch1)
       || !is_well_oriented(tr, ch2)
       || !is_well_oriented(tr, ch3))
+      db = NOT_FLIPPABLE;
+    else if (curr_max_cosdh < max_cos_dihedral_angle(tr, ch0)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch1)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch2)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch3))
+      db = NO_BEST_CONFIGURATION;
+
+    if(db == NOT_FLIPPABLE || db == NO_BEST_CONFIGURATION)
     {
       ch3->set_vertex(ch3->index(vh2), vh3);
       ch0->set_vertex(ch0->index(vh0), vh1);
@@ -1521,7 +1593,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
           c3t3.add_to_complex(f2, it->second);
       }
 
-      return NOT_FLIPPABLE;
+      return db;
     }
 
     //Top cells 2-2 flip
@@ -1582,8 +1654,6 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       if (it != opposite_facet_in_complex.end())
         c3t3.add_to_complex(f2, it->second);
     }
-
-    Sliver_removal_result db = VALID_FLIP;
 
 //    /*
 //    std::cout << "Ch0 "<< ch0->info()<< std::endl;
@@ -1671,10 +1741,20 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     ch2->set_vertex(ch2->index(vh3), vh4);
     ch0->set_vertex(ch0->index(vh1), vh5);
     ch1->set_vertex(ch1->index(vh3), vh4);
-    if ( !is_well_oriented(tr, ch0)
+
+    Sliver_removal_result db = VALID_FLIP;
+    if (!is_well_oriented(tr, ch0)
       || !is_well_oriented(tr, ch1)
       || !is_well_oriented(tr, ch2)
       || !is_well_oriented(tr, ch3))
+      db = NOT_FLIPPABLE;
+    else if (curr_max_cosdh < max_cos_dihedral_angle(tr, ch0)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch1)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch2)
+      || curr_max_cosdh < max_cos_dihedral_angle(tr, ch3))
+      db = NO_BEST_CONFIGURATION;
+
+    if (db == NOT_FLIPPABLE || db == NO_BEST_CONFIGURATION)
     {
       ch3->set_vertex(ch3->index(vh5), vh1);
       ch2->set_vertex(ch2->index(vh4), vh3);
@@ -1699,7 +1779,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
           c3t3.add_to_complex(f2, it->second);
       }
 
-      return NOT_FLIPPABLE;
+      return db;
     }
 
     //Left cells 2-2 flip
@@ -1766,7 +1846,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
         c3t3.add_to_complex(f2, it->second);
     }
 
-    Sliver_removal_result db = VALID_FLIP;
+    db = VALID_FLIP;
 
 //    /*
 //    std::cout << "Ch0 "<< ch0->info()<< std::endl;
@@ -1938,7 +2018,7 @@ std::size_t flipBoundaryEdges(
           int nbf = std::distance(c3t3.facets_in_complex_begin(),
                                   c3t3.facets_in_complex_end());
 
-          CGAL::dump_c3t3(c3t3, "dump_before_flip_");
+//          CGAL::dump_c3t3(c3t3, "dump_before_flip_");
 
           Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
                                                      inc_cells,
@@ -1954,10 +2034,9 @@ std::size_t flipBoundaryEdges(
             nb++;
             std::cout << "Flip done" << std::endl;
 
-            CGAL::dump_c3t3(c3t3, "dump_after_flip_");
+//            CGAL::dump_c3t3(c3t3, "dump_after_flip_");
 
             std::ofstream ofs("dump_edge_flipped.polylines.txt");
-//            ofs << oss_flip.str();
             ofs << "2 " << p0.point() << " " << p1.point() << std::endl;
             ofs.close();
 
