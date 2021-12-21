@@ -90,9 +90,9 @@ void time_all_vector(const std::vector<Surface_mesh>& meshes, const fs::path& ou
   // copying of the meshes
   std::vector<Surface_mesh> temp_meshes = meshes;
   
-  for (int i = 0; i < n_burns; ++i)
+  for(int i = 0; i < n_burns; ++i)
   {
-    for (Surface_mesh& mesh : temp_meshes)
+    for(Surface_mesh& mesh : temp_meshes)
     {
       edge_collapse<Policy>(mesh);
     }
@@ -100,12 +100,12 @@ void time_all_vector(const std::vector<Surface_mesh>& meshes, const fs::path& ou
   temp_meshes = meshes;
 
   // measure each run 
-  for (int i = 0; i < n_samples; ++i)
+  for(int i = 0; i < n_samples; ++i)
   {
     // measure time taken by the edge_collapse function over each mesh individually
     time::time_point start_time = time::steady_clock::now();
 
-    for (Surface_mesh& mesh : temp_meshes)
+    for(Surface_mesh& mesh : temp_meshes)
     {
       edge_collapse<Policy>(mesh);
     }
@@ -150,7 +150,7 @@ std::vector<std::pair<Surface_mesh, std::string>> get_all_meshes(const fs::path&
     Surface_mesh mesh;
 
     // iterate through all files in the given directory
-    for (fs::directory_iterator dir_iter(dir); dir_iter != end_iter; ++dir_iter)
+    for(fs::directory_iterator dir_iter(dir); dir_iter != end_iter; ++dir_iter)
     {
       // look for .off files
       if (fs::is_regular_file(dir_iter->status())
@@ -188,7 +188,7 @@ void time_policy(const fs::path& dir, const fs::path& output_file)
   auto vec = get_all_meshes(dir);
   std::vector<Surface_mesh> meshes { };
 
-  for (const auto& p : vec) {
+  for(const auto& p : vec) {
     std::cout << p.second << '\n';
   }
 
@@ -233,13 +233,13 @@ void hausdorff_errors_mesh(const Surface_mesh& mesh, const fs::path& out, InputI
 {
   fs::ofstream out_stream {out};
 
-  for (InputIt it = begin; it != end; ++it) 
+  for(InputIt it = begin; it != end; ++it)
   {
     std::array<double, 4> errs = hausdorff_errors(mesh, *it);
 
     out_stream << "ratio: " << *it << '\n';
 
-    for (double e : errs) 
+    for(double e : errs)
     {
       out_stream << std::to_string(e) << '\n';
     }
@@ -269,13 +269,13 @@ void hausdorff_errors_dir(const fs::path& dir, const fs::path& out, double ratio
 
   fs::ofstream out_stream {out};
 
-  for (auto& p : meshes)
+  for(auto& p : meshes)
   {
     // calculate the errors and output to file
     std::array<double, 4> errors = hausdorff_errors(p.first, ratio);
 
     out_stream << p.second << '\n';
-    for (double err : errors)
+    for(double err : errors)
     {
       out_stream << std::to_string(err) << '\n';
     }
@@ -284,7 +284,7 @@ void hausdorff_errors_dir(const fs::path& dir, const fs::path& out, double ratio
 
 void write_aspect_ratios(fs::ofstream& out, const Surface_mesh& mesh) 
 {
-  for (auto face : mesh.faces())
+  for(auto face : faces(mesh))
   {
     out << std::to_string(PMP::face_aspect_ratio(face, mesh)) << '\n'; 
   }
