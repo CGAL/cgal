@@ -1427,14 +1427,39 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //  */
 
   typedef std::pair<Vertex_handle, Vertex_handle> Edge_uv;
-  typedef typename C3t3::Edge Edge;
+  typedef typename C3t3::Edge  Edge;
+  typedef typename C3t3::Facet Facet;
+  typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
   if (planar_flip)
   {
-    typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh4));
-    CGAL_assertion(patch != typename C3t3::Surface_patch_index());
+    Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh4));
+    CGAL_assertion(patch != Surface_patch_index());
+    CGAL_assertion(c3t3.is_in_complex(ch0, ch0->index(vh4)));
     c3t3.remove_from_complex(ch0, ch0->index(vh4));
+    CGAL_assertion(c3t3.is_in_complex(ch3, ch3->index(vh4)));
     c3t3.remove_from_complex(ch3, ch3->index(vh4));
+
+    boost::unordered_map<Facet, Surface_patch_index> opposite_facet_in_complex;
+    for (int i = 0; i < 4; ++i)
+    {
+      Cell_handle chi = cells_around_edge[i];
+      Facet f1(chi, chi->index(vh1));
+      Facet f2(chi, chi->index(vh3));
+
+      if (c3t3.is_in_complex(f1))
+      {
+        Surface_patch_index spi = c3t3.surface_patch_index(f1);
+        opposite_facet_in_complex[c3t3.triangulation().mirror_facet(f1)] = spi;
+        c3t3.remove_from_complex(f1);
+      }
+      if (c3t3.is_in_complex(f2))
+      {
+        Surface_patch_index spi = c3t3.surface_patch_index(f2);
+        opposite_facet_in_complex[c3t3.triangulation().mirror_facet(f2)] = spi;
+        c3t3.remove_from_complex(f2);
+      }
+    }
 
     Cell_handle n_ch3_vh1 = ch3->neighbor(ch3->index(vh1));
     Cell_handle n_ch0_vh3 = ch0->neighbor(ch0->index(vh3));
@@ -1480,6 +1505,22 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 
       c3t3.add_to_complex(ch0, ch0->index(vh4), patch);
       c3t3.add_to_complex(ch3, ch3->index(vh4), patch);
+
+      for (int i = 0; i < 4; ++i)
+      {
+        Cell_handle chi = cells_around_edge[i];
+        Facet f1(chi, chi->index(vh1));
+        Facet f2(chi, chi->index(vh3));
+
+        auto it = opposite_facet_in_complex.find(c3t3.triangulation().mirror_facet(f1));
+        if (it != opposite_facet_in_complex.end())
+          c3t3.add_to_complex(f1, it->second);
+
+        it = opposite_facet_in_complex.find(c3t3.triangulation().mirror_facet(f2));
+        if (it != opposite_facet_in_complex.end())
+          c3t3.add_to_complex(f2, it->second);
+      }
+
       return NOT_FLIPPABLE;
     }
 
@@ -1527,6 +1568,21 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       }
     }
 
+    for (int i = 0; i < 4; ++i)
+    {
+      Cell_handle chi = cells_around_edge[i];
+      Facet f1(chi, chi->index(vh0));
+      Facet f2(chi, chi->index(vh2));
+
+      auto it = opposite_facet_in_complex.find(c3t3.triangulation().mirror_facet(f1));
+      if (it != opposite_facet_in_complex.end())
+        c3t3.add_to_complex(f1, it->second);
+
+      it = opposite_facet_in_complex.find(c3t3.triangulation().mirror_facet(f2));
+      if (it != opposite_facet_in_complex.end())
+        c3t3.add_to_complex(f2, it->second);
+    }
+
     Sliver_removal_result db = VALID_FLIP;
 
 //    /*
@@ -1559,96 +1615,187 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //
     return db;
   }
-//  else
-//  {
-//    typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh2));
-//    CGAL_assertion(patch != typename C3t3::Surface_patch_index());
-//
-//    c3t3.remove_from_complex(ch0, ch0->index(vh2));
-//    c3t3.remove_from_complex(ch1, ch1->index(vh2));
-//
-//    // Top Flip
-//    ch3->set_vertex(ch3->index(vh1), vh5);
-//    ch2->set_vertex(ch2->index(vh3), vh4);
-//    ch0->set_vertex(ch0->index(vh1), vh5);
-//    ch1->set_vertex(ch1->index(vh3), vh4);
-//    if ( !is_well_oriented(tr, ch0)
-//      || !is_well_oriented(tr, ch1)
-//      || !is_well_oriented(tr, ch2)
-//      || !is_well_oriented(tr, ch3))
-//    {
-//      ch3->set_vertex(ch3->index(vh5), vh1);
-//      ch2->set_vertex(ch2->index(vh4), vh3);
-//      ch0->set_vertex(ch0->index(vh5), vh1);
-//      ch1->set_vertex(ch1->index(vh4), vh3);
-//
-//      c3t3.add_to_complex(ch0, ch0->index(vh2), patch);
-//      c3t3.add_to_complex(ch1, ch1->index(vh2), patch);
-//
-//      return NOT_FLIPPABLE;
-//    }
-//
-//    //Left cells 2-2 flip
-//    Cell_handle n_ch3_vh3 = ch3->neighbor(ch3->index(vh3));
-//    Cell_handle n_ch2_vh1 = ch2->neighbor(ch2->index(vh1));
-//
-//    ch3->set_neighbor(ch3->index(vh3), ch2);
-//    ch3->set_neighbor(ch3->index(vh4), n_ch2_vh1);
-//    n_ch2_vh1->set_neighbor(n_ch2_vh1->index(ch2), ch3);
-//
-//    ch2->set_neighbor(ch2->index(vh1), ch3);
-//    ch2->set_neighbor(ch2->index(vh5), n_ch3_vh3);
-//    n_ch3_vh3->set_neighbor(n_ch3_vh3->index(ch3), ch2);
-//
-//    //Right cells 2-2 flip
-//    Cell_handle n_ch0_vh3 = ch0->neighbor(ch0->index(vh3));
-//    Cell_handle n_ch1_vh1 = ch1->neighbor(ch1->index(vh1));
-//
-//    ch0->set_neighbor(ch0->index(vh3), ch1);
-//    ch0->set_neighbor(ch0->index(vh4), n_ch1_vh1);
-//    n_ch1_vh1->set_neighbor(n_ch1_vh1->index(ch1), ch0);
-//
-//    ch1->set_neighbor(ch1->index(vh1), ch0);
-//    ch1->set_neighbor(ch1->index(vh5), n_ch0_vh3);
-//    n_ch0_vh3->set_neighbor(n_ch0_vh3->index(ch0), ch1);
-//
-//    for (unsigned int i = 0; i < cells_around_edge.size(); i++){
-//      for (int j = 0; j < 4; j++)
-//        cells_around_edge[i]->vertex(j)->set_cell(cells_around_edge[i]);
-//    }
-//
-//    c3t3.add_to_complex(ch0, ch0->index(vh2), patch);
-//    c3t3.add_to_complex(ch1, ch1->index(vh2), patch);
-//
-//    Sliver_removal_result db = VALID_FLIP;
-////    /*
-////    std::cout << "Ch0 "<< ch0->info()<< std::endl;
-////    if(! c3t3_with_info.triangulation().is_valid(ch0, true) )
-////    db = CELL_PBS;
-////    std::cout << "Ch1 "<< ch1->info()<< std::endl;
-////    if(!c3t3_with_info.triangulation().is_valid(ch1, true))
-////    db = CELL_PBS;
-////    std::cout << "Ch2 "<< ch2->info()<< std::endl;
-////    if(!c3t3_with_info.triangulation().is_valid(ch2, true))
-////    db = CELL_PBS;
-////    std::cout << "Ch3 "<< ch3->info()<< std::endl;
-////    if(!c3t3_with_info.triangulation().is_valid(ch3, true))
-////    db = CELL_PBS;
-////    std::cout << "n_ch3_vh3 "<< n_ch3_vh3->info()<< std::endl;
-////    if(!c3t3_with_info.triangulation().is_valid(n_ch3_vh3, true))
-////    db = CELL_PBS;
-////    std::cout << "n_ch2_vh1 "<< n_ch2_vh1->info()<< std::endl;
-////    if(!c3t3_with_info.triangulation().is_valid(n_ch2_vh1, true))
-////    db = CELL_PBS;
-////    std::cout << "n_ch0_vh3 "<< n_ch0_vh3->info()<< std::endl;
-////    if(!c3t3_with_info.triangulation().is_valid(n_ch0_vh3, true))
-////    db = CELL_PBS;
-////    std::cout << "n_ch1_vh1 "<< n_ch1_vh1->info()<< std::endl;
-////    if(!c3t3_with_info.triangulation().is_valid(n_ch1_vh1, true))
-////    db = CELL_PBS;
-////    */
-//    return db;
-//  }
+  else
+  {
+    typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh2));
+    CGAL_assertion(patch != typename C3t3::Surface_patch_index());
+
+    CGAL_assertion(c3t3.is_in_complex(ch0, ch0->index(vh2)));
+    c3t3.remove_from_complex(ch0, ch0->index(vh2));
+    CGAL_assertion(c3t3.is_in_complex(ch1, ch1->index(vh2)));
+    c3t3.remove_from_complex(ch1, ch1->index(vh2));
+
+    boost::unordered_map<Facet, Surface_patch_index> opposite_facet_in_complex;
+    for (int i = 0; i < 4; ++i)
+    {
+      Cell_handle chi = cells_around_edge[i];
+      Facet f1(chi, chi->index(vh1));
+      Facet f2(chi, chi->index(vh3));
+
+      if (c3t3.is_in_complex(f1))
+      {
+        Surface_patch_index spi = c3t3.surface_patch_index(f1);
+        opposite_facet_in_complex[c3t3.triangulation().mirror_facet(f1)] = spi;
+        c3t3.remove_from_complex(f1);
+      }
+      if (c3t3.is_in_complex(f2))
+      {
+        Surface_patch_index spi = c3t3.surface_patch_index(f2);
+        opposite_facet_in_complex[c3t3.triangulation().mirror_facet(f2)] = spi;
+        c3t3.remove_from_complex(f2);
+      }
+    }
+
+    c3t3.remove_from_complex(ch0, ch0->index(vh2));
+    c3t3.remove_from_complex(ch1, ch1->index(vh2));
+
+    boost::unordered_map<Edge_uv, typename C3t3::Curve_index> complex_edges;
+    for (Cell_handle c : cells_around_edge)
+    {
+      for (int ii = 0; ii < 4; ++ii)
+      {
+        for (int jj = 0; jj < 4; ++jj)
+        {
+          Edge e(c, ii, jj);
+          if (c3t3.is_in_complex(e))
+          {
+            complex_edges[make_vertex_pair(c->vertex(ii), c->vertex(jj))] = c3t3.curve_index(e);
+            c3t3.remove_from_complex(e);
+          }
+        }
+      }
+    }
+
+    // Top Flip
+    ch3->set_vertex(ch3->index(vh1), vh5);
+    ch2->set_vertex(ch2->index(vh3), vh4);
+    ch0->set_vertex(ch0->index(vh1), vh5);
+    ch1->set_vertex(ch1->index(vh3), vh4);
+    if ( !is_well_oriented(tr, ch0)
+      || !is_well_oriented(tr, ch1)
+      || !is_well_oriented(tr, ch2)
+      || !is_well_oriented(tr, ch3))
+    {
+      ch3->set_vertex(ch3->index(vh5), vh1);
+      ch2->set_vertex(ch2->index(vh4), vh3);
+      ch0->set_vertex(ch0->index(vh5), vh1);
+      ch1->set_vertex(ch1->index(vh4), vh3);
+
+      c3t3.add_to_complex(ch0, ch0->index(vh2), patch);
+      c3t3.add_to_complex(ch1, ch1->index(vh2), patch);
+
+      for (int i = 0; i < 4; ++i)
+      {
+        Cell_handle chi = cells_around_edge[i];
+        Facet f1(chi, chi->index(vh1));
+        Facet f2(chi, chi->index(vh3));
+
+        auto it = opposite_facet_in_complex.find(c3t3.triangulation().mirror_facet(f1));
+        if (it != opposite_facet_in_complex.end())
+          c3t3.add_to_complex(f1, it->second);
+
+        it = opposite_facet_in_complex.find(c3t3.triangulation().mirror_facet(f2));
+        if (it != opposite_facet_in_complex.end())
+          c3t3.add_to_complex(f2, it->second);
+      }
+
+      return NOT_FLIPPABLE;
+    }
+
+    //Left cells 2-2 flip
+    Cell_handle n_ch3_vh3 = ch3->neighbor(ch3->index(vh3));
+    Cell_handle n_ch2_vh1 = ch2->neighbor(ch2->index(vh1));
+
+    ch3->set_neighbor(ch3->index(vh3), ch2);
+    ch3->set_neighbor(ch3->index(vh4), n_ch2_vh1);
+    n_ch2_vh1->set_neighbor(n_ch2_vh1->index(ch2), ch3);
+
+    ch2->set_neighbor(ch2->index(vh1), ch3);
+    ch2->set_neighbor(ch2->index(vh5), n_ch3_vh3);
+    n_ch3_vh3->set_neighbor(n_ch3_vh3->index(ch3), ch2);
+
+    //Right cells 2-2 flip
+    Cell_handle n_ch0_vh3 = ch0->neighbor(ch0->index(vh3));
+    Cell_handle n_ch1_vh1 = ch1->neighbor(ch1->index(vh1));
+
+    ch0->set_neighbor(ch0->index(vh3), ch1);
+    ch0->set_neighbor(ch0->index(vh4), n_ch1_vh1);
+    n_ch1_vh1->set_neighbor(n_ch1_vh1->index(ch1), ch0);
+
+    ch1->set_neighbor(ch1->index(vh1), ch0);
+    ch1->set_neighbor(ch1->index(vh5), n_ch0_vh3);
+    n_ch0_vh3->set_neighbor(n_ch0_vh3->index(ch0), ch1);
+
+    for (unsigned int i = 0; i < cells_around_edge.size(); i++){
+      for (int j = 0; j < 4; j++)
+        cells_around_edge[i]->vertex(j)->set_cell(cells_around_edge[i]);
+    }
+
+    c3t3.add_to_complex(ch0, ch0->index(vh2), patch);
+    c3t3.add_to_complex(ch1, ch1->index(vh2), patch);
+
+    for (Cell_handle c : cells_around_edge)
+    {
+      for (int ii = 0; ii < 4; ++ii)
+      {
+        for (int jj = 0; jj < 4; ++jj)
+        {
+          Edge_uv uv = make_vertex_pair(c->vertex(ii), c->vertex(jj));
+          Edge edge_uv(c, ii, jj);
+          if (complex_edges.find(uv) != complex_edges.end())
+          {
+            if (!c3t3.is_in_complex(edge_uv))
+              c3t3.add_to_complex(edge_uv, complex_edges[uv]);
+          }
+        }
+      }
+    }
+
+    for (int i = 0; i < 4; ++i)
+    {
+      Cell_handle chi = cells_around_edge[i];
+      Facet f1(chi, chi->index(vh4));
+      Facet f2(chi, chi->index(vh5));
+
+      auto it = opposite_facet_in_complex.find(c3t3.triangulation().mirror_facet(f1));
+      if (it != opposite_facet_in_complex.end())
+        c3t3.add_to_complex(f1, it->second);
+
+      it = opposite_facet_in_complex.find(c3t3.triangulation().mirror_facet(f2));
+      if (it != opposite_facet_in_complex.end())
+        c3t3.add_to_complex(f2, it->second);
+    }
+
+    Sliver_removal_result db = VALID_FLIP;
+
+//    /*
+//    std::cout << "Ch0 "<< ch0->info()<< std::endl;
+//    if(! c3t3_with_info.triangulation().is_valid(ch0, true) )
+//    db = CELL_PBS;
+//    std::cout << "Ch1 "<< ch1->info()<< std::endl;
+//    if(!c3t3_with_info.triangulation().is_valid(ch1, true))
+//    db = CELL_PBS;
+//    std::cout << "Ch2 "<< ch2->info()<< std::endl;
+//    if(!c3t3_with_info.triangulation().is_valid(ch2, true))
+//    db = CELL_PBS;
+//    std::cout << "Ch3 "<< ch3->info()<< std::endl;
+//    if(!c3t3_with_info.triangulation().is_valid(ch3, true))
+//    db = CELL_PBS;
+//    std::cout << "n_ch3_vh3 "<< n_ch3_vh3->info()<< std::endl;
+//    if(!c3t3_with_info.triangulation().is_valid(n_ch3_vh3, true))
+//    db = CELL_PBS;
+//    std::cout << "n_ch2_vh1 "<< n_ch2_vh1->info()<< std::endl;
+//    if(!c3t3_with_info.triangulation().is_valid(n_ch2_vh1, true))
+//    db = CELL_PBS;
+//    std::cout << "n_ch0_vh3 "<< n_ch0_vh3->info()<< std::endl;
+//    if(!c3t3_with_info.triangulation().is_valid(n_ch0_vh3, true))
+//    db = CELL_PBS;
+//    std::cout << "n_ch1_vh1 "<< n_ch1_vh1->info()<< std::endl;
+//    if(!c3t3_with_info.triangulation().is_valid(n_ch1_vh1, true))
+//    db = CELL_PBS;
+//    */
+    return db;
+  }
 
   return NOT_FLIPPABLE;
 }
@@ -1690,8 +1837,6 @@ std::size_t flipBoundaryEdges(
     }
   }
 
-  CGAL_assertion(debug::are_cell_orientations_valid(c3t3.triangulation()));
-
   std::unordered_map<Vertex_handle,
     boost::optional<boost::container::small_vector<Cell_handle, 64> > > inc_cells;
 
@@ -1700,6 +1845,9 @@ std::size_t flipBoundaryEdges(
     const std::pair<Vertex_handle, Vertex_handle>& vp = candidate_edges_for_flip[ii];
     const Vertex_handle& vh0 = vp.first;
     const Vertex_handle& vh1 = vp.second;
+
+    const typename C3T3::Triangulation::Point p0 = vh0->point();
+    const typename C3T3::Triangulation::Point p1 = vh1->point();
 
     boost::optional<boost::container::small_vector<Cell_handle, 64>>&
       o_inc_vh = inc_cells[vp.first];
@@ -1718,6 +1866,8 @@ std::size_t flipBoundaryEdges(
     std::vector<Facet> boundary_facets;
     Surface_patch_index surfi;
 
+    std::ofstream incf("dump_incident_facets.polylines.txt");
+
     Edge edge(c, i, j);
     typename Tr::Facet_circulator fcirc = tr.incident_facets(edge);
     typename Tr::Facet_circulator done(fcirc);
@@ -1728,8 +1878,15 @@ std::size_t flipBoundaryEdges(
         surfi = c3t3.surface_patch_index(*fcirc);
         boundary_facets.push_back(*fcirc);
         CGAL_assertion(Surface_patch_index() != surfi);
+
+        Facet ff = *fcirc;
+        incf << "4 " << ff.first->vertex((ff.second + 1) % 4)->point().point()
+             << " " << ff.first->vertex((ff.second + 2) % 4)->point().point()
+             << " " << ff.first->vertex((ff.second + 3) % 4)->point().point()
+             << " " << ff.first->vertex((ff.second + 4) % 4)->point().point() << std::endl;
       }
     } while (++fcirc != done);
+    incf.close();
 
     if (boundary_facets.size() == 2)
     {
@@ -1778,15 +1935,31 @@ std::size_t flipBoundaryEdges(
                        + (v3 - m3)*(v3 - m3);
         if (initial_cost > final_cost)
         {
+          int nbf = std::distance(c3t3.facets_in_complex_begin(),
+                                  c3t3.facets_in_complex_end());
+
+          CGAL::dump_c3t3(c3t3, "dump_before_flip_");
+
           Sliver_removal_result db = flip_on_surface(c3t3, edge, vh2, vh3,
                                                      inc_cells,
                                                      flip_criterion,
                                                      visitor);
           if (db == VALID_FLIP)
           {
+            int nbf_post = std::distance(c3t3.facets_in_complex_begin(),
+                                         c3t3.facets_in_complex_end());
+            CGAL_assertion(nbf == nbf_post);
+
             nb_surface_flip_done++;
             nb++;
             std::cout << "Flip done" << std::endl;
+
+            CGAL::dump_c3t3(c3t3, "dump_after_flip_");
+
+            std::ofstream ofs("dump_edge_flipped.polylines.txt");
+//            ofs << oss_flip.str();
+            ofs << "2 " << p0.point() << " " << p1.point() << std::endl;
+            ofs.close();
 
             boundary_vertices_valences[vh0][surfi]--;
             boundary_vertices_valences[vh1][surfi]--;
@@ -1857,15 +2030,21 @@ void flip_edges(C3T3& c3t3,
                         vertices_subdomain_indices, MIN_ANGLE_BASED, visitor);
   }
 
-  std::vector<Edge_vv> inside_edges;
-  get_internal_edges(c3t3,
-                     cell_selector,
-                     std::back_inserter(inside_edges));
+//  std::vector<Edge_vv> inside_edges;
+//  get_internal_edges(c3t3,
+//                     cell_selector,
+//                     std::back_inserter(inside_edges));
+//
+//  //if (criterion == VALENCE_BASED)
+//  //  flip_inside_edges(inside_edges);
+//  //else
+//  //{
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//  nb_flips +=
+//#endif
+//    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, visitor);
+//  //}
 
-  //if (criterion == VALENCE_BASED)
-  //  flip_inside_edges(inside_edges);
-  //else
-  //{
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   nb_flips +=
 #endif
