@@ -10,8 +10,8 @@
 //                 Mael Rouxel-Labbé,
 //                 Julian Komaromy
 
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_POLICIES_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_POLICIES_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_POLICIES_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_POLICIES_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
@@ -78,7 +78,7 @@ public:
 };
 
 template<typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_policies
+class GarlandHeckbert_plane_policies
   : public internal::GarlandHeckbert_placement_base<
              Plane_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>,
     public internal::GarlandHeckbert_cost_base<
@@ -97,7 +97,7 @@ private:
   typedef internal::GarlandHeckbert_quadrics_storage<
             Quadric_calculator, TriangleMesh, GeomTraits>                      Quadrics_storage;
 
-  typedef GarlandHeckbert_policies<TriangleMesh, GeomTraits>                   Self;
+  typedef GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>             Self;
 
 public:
   typedef Self                                                                 Get_cost;
@@ -106,8 +106,8 @@ public:
   typedef typename GeomTraits::FT                                              FT;
 
 public:
-  GarlandHeckbert_policies(TriangleMesh& tmesh,
-                           const FT dm = FT(100))
+  GarlandHeckbert_plane_policies(TriangleMesh& tmesh,
+                                 const FT dm = FT(100))
     : Quadrics_storage(tmesh), Placement_base(), Cost_base(dm)
   { }
 
@@ -119,7 +119,11 @@ public:
   using Placement_base::operator();
 };
 
+// backward compatibility
+template<typename TriangleMesh, typename GeomTraits>
+using GarlandHeckbert_policies = GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>;
+
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_POLICIES_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PLANE_POLICIES_H

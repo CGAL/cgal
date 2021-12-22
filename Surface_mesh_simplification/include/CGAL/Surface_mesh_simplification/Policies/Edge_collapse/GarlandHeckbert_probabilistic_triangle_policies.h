@@ -9,8 +9,8 @@
 //                 Mael Rouxel-Labbé,
 //                 Julian Komaromy
 
-#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_TRI_POLICIES_H
-#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_TRI_POLICIES_H
+#ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_TRIANGLE_POLICIES_H
+#define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_TRIANGLE_POLICIES_H
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
@@ -114,7 +114,7 @@ public:
 template<typename TriangleMesh,
          typename GeomTraits,
          typename FaceVarianceMap = CGAL::Default>
-class GarlandHeckbert_probabilistic_tri_policies
+class GarlandHeckbert_probabilistic_triangle_policies
   : public internal::GarlandHeckbert_placement_base<
              Probabilistic_triangle_quadric_calculator<TriangleMesh, GeomTraits, FaceVarianceMap>,
              TriangleMesh, GeomTraits>,
@@ -136,7 +136,8 @@ private:
   typedef internal::GarlandHeckbert_quadrics_storage<
             Quadric_calculator, TriangleMesh, GeomTraits>                      Quadrics_storage;
 
-  typedef GarlandHeckbert_probabilistic_tri_policies<TriangleMesh, GeomTraits> Self;
+  typedef GarlandHeckbert_probabilistic_triangle_policies<
+            TriangleMesh, GeomTraits>                                          Self;
 
 public:
   typedef Self                                                                 Get_cost;
@@ -146,15 +147,15 @@ public:
 
 public:
   // Only available if the quadric calculator is using the default (constant) variance property map
-  GarlandHeckbert_probabilistic_tri_policies(TriangleMesh& tmesh,
-                                             const FT dm = FT(100))
+  GarlandHeckbert_probabilistic_triangle_policies(TriangleMesh& tmesh,
+                                                  const FT dm = FT(100))
     : Quadrics_storage(tmesh, Quadric_calculator(tmesh)), Placement_base(), Cost_base(dm)
   { }
 
   template <typename FVM>
-  GarlandHeckbert_probabilistic_tri_policies(TriangleMesh& tmesh,
-                                             const FT dm,
-                                             const FVM fvm)
+  GarlandHeckbert_probabilistic_triangle_policies(TriangleMesh& tmesh,
+                                                  const FT dm,
+                                                  const FVM fvm)
     : Quadrics_storage(tmesh, Quadric_calculator(fvm)), Placement_base(), Cost_base(dm)
   { }
 
@@ -169,4 +170,4 @@ public:
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 
-#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_TRI_POLICIES_H
+#endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_GARLANDHECKBERT_PROBABILISTIC_TRIANGLE_POLICIES_H
