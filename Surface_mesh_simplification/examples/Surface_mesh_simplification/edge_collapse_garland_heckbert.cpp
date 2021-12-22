@@ -45,7 +45,7 @@ int main(int argc, char** argv)
   SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
   // Garland&Heckbert simplification policies
-  typedef typename SMS::GarlandHeckbert_policies<Surface_mesh, Kernel>          GH_policies;
+  typedef typename SMS::GarlandHeckbert_plane_policies<Surface_mesh, Kernel>    GH_policies;
   typedef typename GH_policies::Get_cost                                        GH_cost;
   typedef typename GH_policies::Get_placement                                   GH_placement;
   typedef SMS::Bounded_normal_change_placement<GH_placement>                    Bounded_GH_placement;
