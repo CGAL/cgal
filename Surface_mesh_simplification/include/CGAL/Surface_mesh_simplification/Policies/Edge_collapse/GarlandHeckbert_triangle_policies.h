@@ -19,76 +19,29 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_policy_base.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/internal/GarlandHeckbert_functions.h>
 
-#include <Eigen/Dense>
-
-#include <iostream>
-
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-// use triangle quadrics for the faces, classical plane quadrics for the edges
-// and optimize with a check for singular matrices
-//
-// implements classic triangle policies
-template<typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_triangle_policies
-  : public internal::GarlandHeckbert_cost_base<
-             typename boost::property_map<
-               TriangleMesh,
-               CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
-             >::type,
-             GeomTraits,
-             GarlandHeckbert_triangle_policies<TriangleMesh, GeomTraits>
-           >,
-  public internal::GarlandHeckbert_placement_base<
-           typename boost::property_map<
-             TriangleMesh,
-             CGAL::dynamic_vertex_property_t<Eigen::Matrix<typename GeomTraits::FT, 4, 4, Eigen::DontAlign>>
-           >::type,
-           GeomTraits,
-           GarlandHeckbert_triangle_policies<TriangleMesh, GeomTraits> >
+template <typename TriangleMesh, typename GeomTraits>
+class Triangle_quadric_calculator
 {
-public:
-  typedef typename GeomTraits::FT                                              FT;
-
-  typedef Eigen::Matrix<FT, 4, 4, Eigen::DontAlign>                            Mat_4;
-  typedef Eigen::Matrix<FT, 1, 4>                                              Col_4;
-
-  typedef CGAL::dynamic_vertex_property_t<Mat_4>                               Cost_property;
-  typedef typename boost::property_map<TriangleMesh, Cost_property>::type      Vertex_cost_map;
-
-  typedef internal::GarlandHeckbert_placement_base<
-    Vertex_cost_map, GeomTraits, GarlandHeckbert_triangle_policies<TriangleMesh, GeomTraits>
-    >                                                                          Placement_base;
-
-  typedef internal::GarlandHeckbert_cost_base<
-    Vertex_cost_map, GeomTraits, GarlandHeckbert_triangle_policies<TriangleMesh, GeomTraits>
-    >                                                                          Cost_base;
-
-  typedef GarlandHeckbert_triangle_policies                                    Get_cost;
-  typedef GarlandHeckbert_triangle_policies                                    Get_placement;
-
-private:
-  Vertex_cost_map vcm_;
+  typedef typename internal::GarlandHeckbert_matrix_types<GeomTraits>::Mat_4   Mat_4;
+  typedef typename internal::GarlandHeckbert_matrix_types<GeomTraits>::Col_4   Col_4;
 
 public:
-  GarlandHeckbert_triangle_policies(TriangleMesh& tmesh, FT dm = FT(100))
+  Triangle_quadric_calculator() { }
+
+  template <typename VertexPointMap>
+  Mat_4 construct_quadric_from_edge(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor he,
+                                    const TriangleMesh& tmesh,
+                                    const VertexPointMap point_map,
+                                    const GeomTraits& gt) const
   {
-    vcm_ = get(Cost_property(), tmesh);
-
-    Cost_base::init_vcm(vcm_);
-    Placement_base::init_vcm(vcm_);
+    // @fixme "plane"? why not incident triangles?
+    return internal::construct_classic_plane_quadric_from_edge(he, tmesh, point_map, gt);
   }
 
-public:
-  const Get_cost& get_cost() const { return *this; }
-  const Get_placement& get_placement() const { return *this; }
-
-  using Cost_base::operator();
-  using Placement_base::operator();
-
-public:
-  template<typename VertexPointMap>
+  template <typename VertexPointMap>
   Mat_4 construct_quadric_from_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                                     const TriangleMesh& tmesh,
                                     const VertexPointMap point_map,
@@ -97,19 +50,58 @@ public:
     return internal::construct_classic_triangle_quadric_from_face(f, tmesh, point_map, gt);
   }
 
-  template<typename VertexPointMap>
-  Mat_4 construct_quadric_from_edge(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor he,
-                                    const TriangleMesh& tmesh,
-                                    const VertexPointMap point_map,
-                                    const GeomTraits& gt) const
-  {
-    return internal::construct_classic_plane_quadric_from_edge(he, tmesh, point_map, gt);
-  }
-
-  Col_4 construct_optimal_point(const Mat_4& quadric, const Col_4& p0, const Col_4& p1) const
+  Col_4 construct_optimal_point(const Mat_4& quadric,
+                                const Col_4& p0,
+                                const Col_4& p1) const
   {
     return internal::construct_optimal_point_singular<GeomTraits>(quadric, p0, p1);
   }
+};
+
+// use triangle quadrics for the faces, classical plane quadrics for the edges
+// and optimize with a check for singular matrices
+//
+// implements classic triangle policies
+template<typename TriangleMesh, typename GeomTraits>
+class GarlandHeckbert_triangle_policies
+  : public internal::GarlandHeckbert_placement_base<
+             Triangle_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>,
+    public internal::GarlandHeckbert_cost_base<
+             Triangle_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>
+{
+public:
+  typedef Triangle_quadric_calculator<TriangleMesh, GeomTraits>                Quadric_calculator;
+
+private:
+  typedef internal::GarlandHeckbert_placement_base<
+            Quadric_calculator, TriangleMesh, GeomTraits>                      Placement_base;
+  typedef internal::GarlandHeckbert_cost_base<
+            Quadric_calculator, TriangleMesh, GeomTraits>                      Cost_base;
+
+  // Diamond base
+  typedef internal::GarlandHeckbert_quadrics_storage<
+            Quadric_calculator, TriangleMesh, GeomTraits>                      Quadrics_storage;
+
+  typedef GarlandHeckbert_triangle_policies<TriangleMesh, GeomTraits>          Self;
+
+public:
+  typedef Self                                                                 Get_cost;
+  typedef Self                                                                 Get_placement;
+
+  typedef typename GeomTraits::FT                                              FT;
+
+public:
+  GarlandHeckbert_triangle_policies(TriangleMesh& tmesh,
+                                    const FT dm = FT(100))
+    : Quadrics_storage(tmesh), Placement_base(), Cost_base(dm)
+  { }
+
+public:
+  const Get_cost& get_cost() const { return *this; }
+  const Get_placement& get_placement() const { return *this; }
+
+  using Cost_base::operator();
+  using Placement_base::operator();
 };
 
 } // namespace Surface_mesh_simplification
