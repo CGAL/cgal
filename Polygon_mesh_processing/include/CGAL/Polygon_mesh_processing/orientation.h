@@ -1604,6 +1604,206 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   }
 }
 
+template <class PolygonMesh, class FaceBitMap, class NamedParameters = parameters::Default_named_parameters>
+bool connected_components_compatible_orientations(PolygonMesh& pm,
+                                                  FaceBitMap fbm,
+                                                  const NamedParameters& np = parameters::default_values())
+{
+  typedef boost::graph_traits<PolygonMesh> GrT;
+  typedef typename GrT::face_descriptor face_descriptor;
+  typedef typename GrT::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
+
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                         get_const_property_map(vertex_point, pm));
+
+  typedef std::size_t F_cc_id; // Face cc-id
+  typedef std::size_t E_id; // Edge id
+
+  typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Face_cc_map;
+  Face_cc_map f_cc_ids  = get(Face_property_tag(), pm);
+  F_cc_id nb_cc = connected_components(pm, f_cc_ids);
+
+  std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
+  for (face_descriptor f : faces(pm))
+    nb_faces_per_cc[ get(f_cc_ids, f) ]+=1;
+
+  // collect border halfedges
+  std::vector<halfedge_descriptor> border_hedges;
+  for (halfedge_descriptor h : halfedges(pm))
+    if ( is_border(h, pm) )
+      border_hedges.push_back(h);
+  std::size_t nb_bh=border_hedges.size();
+
+  // compute the edge id of all halfedges
+  typedef std::map< std::pair<Point_3, Point_3>, E_id> E_id_map;
+  E_id_map e_id_map;
+  E_id e_id = 0;
+
+  std::vector<E_id> eids;
+  eids.reserve(nb_bh);
+  for (halfedge_descriptor h : border_hedges)
+  {
+    std::pair< typename E_id_map::iterator, bool > insert_res =
+        e_id_map.insert(
+          std::make_pair(
+            make_sorted_pair(get(vpm, source(h, pm)),
+                             get(vpm, target(h,pm))), e_id) );
+    if (insert_res.second)
+      ++e_id;
+    eids.push_back(insert_res.first->second);
+  }
+
+  // fill incidence per edge
+  std::vector< std::vector<halfedge_descriptor> > incident_ccs_per_edge(e_id);
+  for (std::size_t i=0; i<nb_bh; ++i)
+    incident_ccs_per_edge[ eids[i] ].push_back(border_hedges[i]);
+
+  //~ std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > compatible_hedges;
+  //~ std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > incompatible_hedges;
+  std::vector< std::vector<F_cc_id> > compatible_patches(nb_cc);
+  std::vector< std::vector<F_cc_id> > incompatible_patches(nb_cc);
+
+  for (std::vector<halfedge_descriptor>& v : incident_ccs_per_edge)
+  {
+    // ignore non-manifold edges
+    if (v.size()!=2) continue;
+    F_cc_id front_id=get(f_cc_ids, face(opposite(v.front(), pm), pm));
+    F_cc_id back_id=get(f_cc_ids, face(opposite(v.back(), pm), pm));
+
+    if (front_id==back_id) continue;
+
+    if (get(vpm, source(v.front(), pm))==get(vpm, target(v.back(), pm)))
+    {
+      //~ compatible_hedges.push_back( std::make_pair(v.front(), v.back()) );
+      compatible_patches[front_id].push_back(back_id);
+      compatible_patches[back_id].push_back(front_id);
+    }
+    else
+    {
+      //~ incompatible_hedges.push_back( std::make_pair(v.front(), v.back()) );
+      incompatible_patches[front_id].push_back(back_id);
+      incompatible_patches[back_id].push_back(front_id);
+    }
+  }
+
+  for(F_cc_id cc_id=0; cc_id<nb_cc; ++cc_id)
+  {
+    std::sort(compatible_patches[cc_id].begin(), compatible_patches[cc_id].end());
+    std::sort(incompatible_patches[cc_id].begin(), incompatible_patches[cc_id].end());
+  }
+
+  auto is_inside = [](const std::vector<F_cc_id>& cc_ids, F_cc_id cc_id)
+  {
+    return std::find(cc_ids.begin(), cc_ids.end(), cc_id)!=cc_ids.end();
+  };
+
+  // sort the connected components with potential matches using their number
+  // of faces (sorted by decreasing number of faces)
+  std::vector<bool> cc_bits(nb_cc, false);
+  std::vector<bool> cc_bit_set(nb_cc, false);
+
+  std::set< F_cc_id, std::function<bool(F_cc_id,F_cc_id)> > sorted_ids(
+    [&nb_faces_per_cc](F_cc_id i, F_cc_id j)
+    {return nb_faces_per_cc[i]==nb_faces_per_cc[j] ? i<j : nb_faces_per_cc[i]>nb_faces_per_cc[j];}
+  );
+  for(F_cc_id cc_id=0; cc_id<nb_cc; ++cc_id)
+    sorted_ids.insert(cc_id);
+
+  // consider largest CC first, default and set bit to 0
+  for(F_cc_id cc_id : sorted_ids)
+  {
+    if (cc_bit_set[cc_id]) continue;
+
+    // extract compatible components
+    std::set<F_cc_id> bit_0_cc_set;
+    std::set<F_cc_id> bit_1_cc_set;
+    bit_0_cc_set.insert(cc_id);
+    std::vector<F_cc_id> stack_0=compatible_patches[cc_id];
+    std::vector<F_cc_id> stack_1=incompatible_patches[cc_id];
+
+    while( !stack_0.empty() || !stack_1.empty())
+    {
+      while( !stack_0.empty() )
+      {
+        F_cc_id back=stack_0.back();
+        stack_0.pop_back();
+        if (!bit_0_cc_set.insert(back).second) continue;
+        stack_0.insert(stack_0.end(), compatible_patches[back].begin(), compatible_patches[back].end());
+      }
+
+      // extract incompatible components
+      for (F_cc_id cid : bit_0_cc_set)
+        stack_1.insert(stack_1.end(), incompatible_patches[cid].begin(), incompatible_patches[cid].end());
+      while( !stack_1.empty() )
+      {
+        F_cc_id back=stack_1.back();
+        stack_1.pop_back();
+        if (!bit_1_cc_set.insert(back).second) continue;
+        stack_1.insert(stack_1.end(), compatible_patches[back].begin(), compatible_patches[back].end());
+      }
+      for (F_cc_id cid1 : bit_1_cc_set)
+        for (F_cc_id cid0 : incompatible_patches[cid1])
+          if( bit_0_cc_set.count(cid0)==0 )
+            stack_0.push_back(cid0);
+    }
+
+    // set intersection should be empty
+    std::vector<F_cc_id> inter;
+    std::set_intersection( bit_0_cc_set.begin(), bit_0_cc_set.end(),
+                           bit_1_cc_set.begin(), bit_1_cc_set.end(),
+                           std::back_inserter(inter));
+    if (!inter.empty())
+    {
+      std::cout << "inter pas vide!\n";
+      return false;
+    }
+
+    // set bit of compatible patches
+    for (F_cc_id id : bit_0_cc_set)
+    {
+      if (cc_bit_set[id])
+      {
+        if(cc_bits[id] == true)
+        {
+          std::cout << "BOOM 1!\n";
+          return false;
+        }
+        else
+          continue;
+      }
+      cc_bit_set[id]=true;
+    }
+
+    // set bit of incompatible patches
+    for (F_cc_id id : bit_1_cc_set)
+    {
+      if (cc_bit_set[id])
+      {
+        if(cc_bits[id] == false)
+        {
+          std::cout << "BOOM 2!\n";
+          return false;
+        }
+        else
+          continue;
+      }
+      cc_bit_set[id]=true;
+      cc_bits[id]=true;
+    }
+  }
+
+  // set the bit per face
+  for (face_descriptor f : faces(pm))
+    put(fbm, f, cc_bits[get(f_cc_ids,f)]);
+
+
+  return true;
+}
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H
