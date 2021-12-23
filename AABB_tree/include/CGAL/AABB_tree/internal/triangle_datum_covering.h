@@ -359,7 +359,6 @@ public:
     // Convert to intervals to ensure that the bounding box fully covers the subdividing triangle
     using AK = CGAL::Simple_cartesian<CGAL::Interval_nt<true> >;
     using K2AK = CGAL::Cartesian_converter<Kernel, AK>;
-    using AK2K = CGAL::Cartesian_converter<AK, Kernel>;
     using AFT = AK::FT;
     using APoint_3 = AK::Point_3;
 
@@ -393,7 +392,6 @@ public:
     }
 
     K2AK k2ak;
-    AK2K ak2k;
     std::queue<AT> to_treat;
 
     const APoint_3 ap0 = k2ak(p0);
