@@ -430,6 +430,7 @@ generic_clip_impl(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
 // Vertex point maps
   //for input meshes
@@ -482,14 +483,15 @@ generic_clip_impl(
   const bool use_compact_clipper =
     choose_parameter(get_parameter(np1, internal_np::use_compact_clipper), true);
 
-
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
+  >::reference User_visitor;
+
+  Corefinement::Default_visitor<TriangleMesh> default_visitor;
+  User_visitor uv = choose_parameter(get_parameter_reference(np1, internal_np::visitor), default_visitor);
 
   // surface intersection algorithm call
   typedef Corefinement::Generic_clip_output_builder<TriangleMesh,

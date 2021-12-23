@@ -195,6 +195,7 @@ corefine_and_compute_boolean_operations(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   const bool throw_on_self_intersection =
     choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
@@ -361,14 +362,15 @@ corefine_and_compute_boolean_operations(
   FaceIndexMap1 fid_map1 = get_initialized_face_index_map(tm1, np1);
   FaceIndexMap2 fid_map2 = get_initialized_face_index_map(tm2, np2);
 
-
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters1,
-    Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
+    Corefinement::Default_visitor<TriangleMesh> // default
+  >::reference User_visitor;
+
+  Corefinement::Default_visitor<TriangleMesh> default_visitor;
+  User_visitor uv = choose_parameter(get_parameter_reference(np1, internal_np::visitor), default_visitor);
 
   // surface intersection algorithm call
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
@@ -716,8 +718,9 @@ corefine(      TriangleMesh& tm1,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
-  TriangleMesh* const_mesh_ptr=nullptr;
+  TriangleMesh* const_mesh_ptr = nullptr;
   if (choose_parameter(get_parameter(np1, internal_np::do_not_modify), false))
   {
     if (choose_parameter(get_parameter(np2, internal_np::do_not_modify), false))
@@ -775,9 +778,11 @@ corefine(      TriangleMesh& tm1,
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters1,
-    Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
+    Corefinement::Default_visitor<TriangleMesh> // default
+  >::reference User_visitor;
+
+  Corefinement::Default_visitor<TriangleMesh> default_visitor;
+  User_visitor uv = choose_parameter(get_parameter_reference(np1, internal_np::visitor), default_visitor);
 
   static const bool handle_non_manifold_features =
     !parameters::Is_default<internal_np::non_manifold_feature_map_t, NamedParameters1>::value ||
@@ -856,6 +861,7 @@ autorefine(      TriangleMesh& tm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPM;
@@ -875,10 +881,11 @@ autorefine(      TriangleMesh& tm,
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters,
-    Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
+    Corefinement::Default_visitor<TriangleMesh> // default
+  >::reference User_visitor;
 
+  Corefinement::Default_visitor<TriangleMesh> default_visitor;
+  User_visitor uv = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
@@ -949,6 +956,7 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPM;
@@ -958,7 +966,6 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
 // Face index map
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type Fid_map;
   Fid_map fid_map = get_initialized_face_index_map(tm, np);
-
 
 // Edge is-constrained maps
   typedef typename internal_np::Lookup_named_param_def <
@@ -972,9 +979,11 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters,
-    Corefinement::Default_visitor<TriangleMesh>//default
-  > ::type User_visitor;
-  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::visitor)));
+    Corefinement::Default_visitor<TriangleMesh> // default
+  >::reference User_visitor;
+
+  Corefinement::Default_visitor<TriangleMesh> default_visitor;
+  User_visitor uv = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
 
 // surface intersection algorithm call
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,

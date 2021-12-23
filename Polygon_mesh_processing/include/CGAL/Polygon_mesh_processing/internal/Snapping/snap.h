@@ -1104,7 +1104,7 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   const bool is_second_mesh_fixed = choose_parameter(get_parameter(np_B, internal_np::do_lock_mesh), false);
 
   internal::Snapping_default_visitor<TriangleMesh> default_visitor;
-  Visitor& visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
+  Visitor visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
 
   if(visitor.stop())
     return 0;

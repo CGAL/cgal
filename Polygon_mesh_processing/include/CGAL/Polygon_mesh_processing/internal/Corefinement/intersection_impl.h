@@ -219,7 +219,7 @@ class Intersection_of_triangle_meshes
   // here face descriptor are from tmi and tmj such that &tmi<&tmj
   Coplanar_face_set coplanar_faces;
   Node_vector nodes;
-  Node_visitor visitor;
+  Node_visitor& visitor;
   Faces_to_nodes_map         f_to_node;      //Associate a pair of triangles to their intersection points
   std::vector<Node_id> extra_terminal_nodes; //used only for autorefinement
   Non_manifold_feature_map<TriangleMesh> non_manifold_feature_map_1,
@@ -1587,7 +1587,7 @@ public:
   // for autorefinement
   Intersection_of_triangle_meshes(const TriangleMesh& tm,
                                   const VertexPointMap1& vpm,
-                                  const Node_visitor& v=Node_visitor())
+                                  Node_visitor& v)
   : nodes(tm, tm, vpm, vpm)
   , visitor(v)
   {

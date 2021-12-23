@@ -97,7 +97,7 @@ public:
   void operator()(PolygonMesh& pmesh,
                   VertexPointMap vpm,
                   PointMap pm,
-                  const Visitor& visitor = Visitor(),
+                  Visitor& visitor,
                   const bool insert_isolated_vertices = true)
   {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
@@ -306,6 +306,7 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters_PS>::const_type    Point_map;
   Point_map pm = choose_parameter<Point_map>(get_parameter(np_ps, internal_np::point_map));
@@ -317,8 +318,10 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   typedef typename internal_np::Lookup_named_param_def<
                                   internal_np::visitor_t,
                                   NamedParameters_PS,
-                                  internal::Default_PS_to_PM_visitor<PolygonMesh> >::type Visitor;
-  Visitor visitor = choose_parameter<Visitor>(get_parameter(np_ps, internal_np::visitor));
+                                  internal::Default_PS_to_PM_visitor<PolygonMesh> >::reference Visitor;
+
+  internal::Default_PS_to_PM_visitor<PolygonMesh> default_visitor;
+  Visitor visitor = choose_parameter(get_parameter_reference(np_ps, internal_np::visitor), default_visitor);
 
   internal::PS_to_PM_converter<PointRange, PolygonRange> converter(points, polygons);
   converter(out, vpm, pm, visitor);

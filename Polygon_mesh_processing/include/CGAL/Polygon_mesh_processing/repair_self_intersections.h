@@ -1963,6 +1963,7 @@ bool remove_self_intersections(const FaceRange& face_range,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   typedef boost::graph_traits<TriangleMesh>                                 graph_traits;
   typedef typename graph_traits::face_descriptor                            face_descriptor;
@@ -2018,9 +2019,11 @@ bool remove_self_intersections(const FaceRange& face_range,
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters,
-    Remove_self_intersection_default_visitor<TriangleMesh>//default
-  > ::type Visitor;
-  Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor));
+    Remove_self_intersection_default_visitor<TriangleMesh> // default
+  >::reference Visitor;
+
+  Remove_self_intersection_default_visitor<TriangleMesh> default_visitor;
+  Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
 
   visitor.parameters_used(preserve_genus,
                           only_treat_self_intersections_locally,

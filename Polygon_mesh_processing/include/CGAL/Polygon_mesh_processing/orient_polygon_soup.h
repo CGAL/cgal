@@ -523,13 +523,16 @@ bool orient_polygon_soup(PointRange& points,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
     NamedParameters,
     Default_orientation_visitor//default
-  > ::type Visitor;
-  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
+  >::reference Visitor;
+
+  Default_orientation_visitor default_visitor;
+  Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
 
   const std::size_t inital_nb_pts = points.size();
   internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor> orienter(points, polygons, visitor);

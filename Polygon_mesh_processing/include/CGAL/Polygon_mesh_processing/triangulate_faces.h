@@ -101,7 +101,7 @@ public:
     return fh->info().is_external;
   }
 
-  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt, Visitor visitor)
+  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt, Visitor& visitor)
   {
     typedef typename Traits::FT FT;
 
@@ -176,7 +176,7 @@ public:
   }
 
   template<class CDT>
-  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt, Visitor visitor)
+  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt, Visitor& visitor)
   {
     std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
 
@@ -298,7 +298,7 @@ public:
     return true;
   }
 
-  bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh, Visitor visitor)
+  bool triangulate_face_with_hole_filling(face_descriptor f, PM& pmesh, Visitor& visitor)
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -378,7 +378,7 @@ public:
   }
 
   template<typename FaceRange>
-  bool operator()(FaceRange face_range, PM& pmesh, bool use_cdt, Visitor visitor)
+  bool operator()(FaceRange face_range, PM& pmesh, bool use_cdt, Visitor& visitor)
   {
    bool result = true;
     // One need to store facet handles into a vector, because the list of
@@ -469,11 +469,12 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, pmesh));
+                                 get_property_map(vertex_point, pmesh));
 
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
@@ -485,11 +486,11 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   typedef typename internal_np::Lookup_named_param_def<
     internal_np::visitor_t,
     NamedParameters,
-    Triangulate_faces::Default_visitor<PolygonMesh>//default
-  >::type Visitor;
-  Visitor visitor = choose_parameter<Visitor>(
-                             get_parameter(np, internal_np::visitor),
-                             Triangulate_faces::Default_visitor<PolygonMesh>());
+    Triangulate_faces::Default_visitor<PolygonMesh> // default
+  >::reference Visitor;
+
+  Triangulate_faces::Default_visitor<PolygonMesh> default_visitor;
+  Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
   return modifier.triangulate_face(f, pmesh, use_cdt, visitor);
@@ -553,11 +554,12 @@ bool triangulate_faces(FaceRange face_range,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::get_parameter_reference;
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, pmesh));
+                                 get_property_map(vertex_point, pmesh));
 
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
@@ -569,11 +571,11 @@ bool triangulate_faces(FaceRange face_range,
   typedef typename internal_np::Lookup_named_param_def<
     internal_np::visitor_t,
     NamedParameters,
-    Triangulate_faces::Default_visitor<PolygonMesh>//default
-  >::type Visitor;
-  Visitor visitor = choose_parameter<Visitor>(
-                                  get_parameter(np, internal_np::visitor),
-                                  Triangulate_faces::Default_visitor<PolygonMesh>());
+    Triangulate_faces::Default_visitor<PolygonMesh> // default
+  >::reference Visitor;
+
+  Triangulate_faces::Default_visitor<PolygonMesh> default_visitor;
+  Visitor visitor = choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor);
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
   return modifier(face_range, pmesh, use_cdt, visitor);
