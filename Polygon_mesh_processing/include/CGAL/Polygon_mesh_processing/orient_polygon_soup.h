@@ -28,6 +28,7 @@
 #include <iostream>
 #include <set>
 #include <stack>
+#include <type_traits>
 #include <vector>
 
 namespace CGAL {
@@ -357,8 +358,12 @@ struct Polygon_soup_orienter
           vertices_to_duplicate.push_back(std::pair<V_ID, std::vector<P_ID> >());
           vertices_to_duplicate.back().first=v_id;
 
+          // because `Visitor` might be a reference
+          typedef typename std::decay<Visitor>::type VisitorT;
+
           // call the visitor only if the function has been overridden
-          if (nb_link_ccs==2 && &Visitor::link_connected_polygons != &Default_orientation_visitor::link_connected_polygons)
+          if (nb_link_ccs==2 &&
+              &VisitorT::link_connected_polygons != &Default_orientation_visitor::link_connected_polygons)
           {
             std::vector<std::size_t> tmp(visited_polygons.begin(), visited_polygons.end());
             tmp.erase(std::remove(tmp.begin(), tmp.end(), p_id), tmp.end());
@@ -543,13 +548,6 @@ bool orient_polygon_soup(PointRange& points,
   return (inital_nb_pts == points.size());
 }
 
-
-template <class PointRange, class PolygonRange>
-bool orient_polygon_soup(PointRange& points,
-                         PolygonRange& polygons)
-{
-  return orient_polygon_soup(points, polygons, parameters::all_default());
-}
 
 template <class PointRange, class PolygonRange>
 bool orient_polygon_soup(PointRange& points,

@@ -48,13 +48,13 @@ struct Default_PS_to_PM_visitor
   template <typename PID>
   void on_vertex_creation(const PID pid, const vertex_descriptor v, const PolygonMesh& pmesh) const
   {
-    std::cout << "Point[" << pid << "] gives vertex " << v << std::endl;
+    // std::cout << "Point[" << pid << "] gives vertex " << v << std::endl;
   }
 
   template <typename FID>
   void on_face_creation(const FID fid, const face_descriptor f, const PolygonMesh& pmesh) const
   {
-    std::cout << "Face[" << fid << "] gives faces " << f << std::endl;
+    // std::cout << "Face[" << fid << "] gives faces " << f << std::endl;
   }
 };
 
@@ -128,7 +128,7 @@ public:
         continue;
 
       vertices[i] = add_vertex(pmesh);
-      put(vpm, vertices[i], convert_to_pm_point<PM_Point>(get(m_pm, m_points[i]));
+      put(vpm, vertices[i], convert_to_pm_point<PM_Point>(get(pm, m_points[i])));
       visitor.on_vertex_creation(i, vertices[i], pmesh);
     }
 

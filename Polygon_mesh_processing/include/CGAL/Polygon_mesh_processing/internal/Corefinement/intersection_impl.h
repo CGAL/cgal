@@ -181,8 +181,7 @@ struct Node_id_set {
 
 template< class TriangleMesh,
           class VertexPointMap1, class VertexPointMap2,
-          class Node_visitor=Default_surface_intersection_visitor<TriangleMesh>
-         >
+          class Node_visitor>
 class Intersection_of_triangle_meshes
 {
   typedef boost::graph_traits<TriangleMesh> graph_traits;
@@ -1575,7 +1574,7 @@ public:
                                   const TriangleMesh& tm2,
                                   const VertexPointMap1& vpm1,
                                   const VertexPointMap2& vpm2,
-                                  const Node_visitor& v=Node_visitor())
+                                  Node_visitor& v)
   : nodes(tm1, tm2, vpm1, vpm2)
   , visitor(v)
   {

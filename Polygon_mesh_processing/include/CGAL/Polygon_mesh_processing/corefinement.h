@@ -403,8 +403,9 @@ corefine_and_compute_boolean_operations(
     ob.setup_for_clipping_a_surface(use_compact_clipper);
   }
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor >
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm_in));
+  Algo_visitor algo_visitor(uv,ob,ecm_in);
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
+    functor(tm1, tm2, vpm1, vpm2, algo_visitor);
   functor(CGAL::Emptyset_iterator(), throw_on_self_intersection, true);
 
 
@@ -795,8 +796,9 @@ corefine(      TriangleMesh& tm1,
 
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
+  Algo_visitor algo_visitor(uv,ob,ecm,const_mesh_ptr);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr));
+    functor(tm1, tm2, vpm1, vpm2, algo_visitor);
 
   // Fill non-manifold feature maps if provided
   functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
@@ -893,8 +895,9 @@ autorefine(      TriangleMesh& tm,
     TriangleMesh, VPM, VPM, Ob, Ecm, User_visitor,true> Algo_visitor;
   Ob ob;
 
+  Algo_visitor algo_visitor(uv,ob,ecm);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
+    functor(tm, vpm, algo_visitor);
 
   functor(CGAL::Emptyset_iterator(), true);
 }
@@ -996,8 +999,9 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
     TriangleMesh, VPM, VPM, Ob, Ecm, User_visitor,true> Algo_visitor;
   Ob ob(tm, vpm, fid_map, ecm);
 
+  Algo_visitor algo_visitor(uv,ob,ecm);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Algo_visitor>
-    functor(tm, vpm, Algo_visitor(uv,ob,ecm) );
+    functor(tm, vpm, algo_visitor);
 
   functor(CGAL::Emptyset_iterator(), true);
 

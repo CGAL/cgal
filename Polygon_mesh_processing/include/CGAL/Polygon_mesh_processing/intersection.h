@@ -1769,8 +1769,10 @@ surface_intersection(const TriangleMesh& tm1,
   VPM2 vpm2 = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
                                            get_const_property_map(CGAL::vertex_point, tm2));
 
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2>
-    functor(tm1, tm2, vpm1, vpm2);
+  typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh, true> Visitor;
+  Visitor visitor;
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Visitor>
+    functor(tm1, tm2, vpm1, vpm2, visitor);
 
   // Fill non-manifold feature maps if provided
   functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
@@ -1823,7 +1825,8 @@ surface_self_intersection(const TriangleMesh& tm,
 
 // surface intersection algorithm call
   typedef Corefinement::Default_surface_intersection_visitor<TriangleMesh, true> Visitor;
-  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Visitor> functor(tm, vpm);
+  Visitor visitor;
+  Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM, VPM, Visitor> functor(tm, vpm, visitor);
 
   polyline_output=functor(polyline_output, true);
   return polyline_output;
