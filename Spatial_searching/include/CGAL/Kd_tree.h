@@ -21,11 +21,18 @@
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <vector>
+#include <memory>
+#include <algorithm>
+#include <string>
+#include <unordered_map>
+#include <ostream>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
+#include <CGAL/Real_timer.h>
+#include <CGAL/number_utils.h>
 
 #include <boost/container/deque.hpp>
 #include <boost/optional.hpp>
@@ -53,6 +60,7 @@
   be disabled.
  */
 #if defined(CGAL_LINKED_WITH_TBB) && !defined(CGAL_DISABLE_TBB_STRUCTURE_IN_KD_TREE)
+#  include <tbb/parallel_for.h>
 #  include <tbb/parallel_invoke.h>
 #  include <tbb/concurrent_vector.h>
 #  define CGAL_TBB_STRUCTURE_IN_KD_TREE
@@ -136,6 +144,221 @@ private:
   bool built_;
   bool removed_;
 
+  using FTP = typename Point_container::FTP;
+  using Key_compare = typename Point_container::Key_compare;
+
+  static void initialize_reference(
+    const Point_d_const_iterator begin, const Point_d_const_iterator end,
+    const typename SearchTraits::Construct_cartesian_const_iterator_d& construct_it,
+    std::vector<FTP>& reference) {
+
+    std::size_t i = 0;
+    for (auto it = begin; it != end; ++it, ++i) {
+      reference[i] = construct_it(**it); // copy refs to all points
+    }
+  }
+
+  // TODO: Be sure that we have the same reference vectors after we remove duplicates.
+  // See check_consistency() below.
+  // We do not really remove duplicates here but rather move the pointer to the right end.
+  // At the end, all unique points are moved to the beginning of the array and all
+  // duplicates are moved to the end of this array.
+  static std::size_t remove_duplicates(
+    const Key_compare& compare_keys, std::vector<FTP>& reference,
+    const std::size_t axis, const std::size_t dim) {
+
+    std::size_t end = 0;
+    for (std::size_t i = 1; i < reference.size(); ++i) {
+      const auto result = compare_keys( // p[i] > q[i-1]
+        reference[i] /* p */, reference[i-1] /* q */, axis, dim);
+
+      if (result == CGAL::SMALLER) {
+        CGAL_assertion_msg(false, "ERROR: NEGATIVE COMPARE KEYS RESULT!");
+      } else if (result == CGAL::LARGER) {
+        reference[++end] = reference[i];
+      }
+    }
+    return end;
+  }
+
+  // TODO: Can we find a better way to convert FTP to a point?
+  bool are_equal_points(
+    const std::size_t dim, const FTP& p, const FTP& q) const {
+    for (std::size_t i = 0; i < dim; ++i) {
+      if (p[i] != q[i]) return false;
+    }
+    return true;
+  }
+
+  bool check_consistency(
+    const std::size_t dim,
+    const std::vector<std::size_t>& ref_end,
+    const std::vector< std::vector<FTP> >& references) const {
+
+    for (std::size_t i = 0; i < ref_end.size() - 1; ++i) {
+      for (std::size_t j = i + 1; j < ref_end.size(); ++j) {
+        if (ref_end[i] != ref_end[j]) {
+          CGAL_assertion_msg(false, "ERROR: REF END IS WRONG!");
+          return false;
+        }
+      }
+    }
+
+    CGAL_assertion(references.size() == dim);
+    for (std::size_t i = 0; i < references.size() - 1; ++i) {
+      for (std::size_t j = i + 1; j < references.size(); ++j) {
+        const auto& refi = references[i];
+        const auto& refj = references[j];
+
+        for (const FTP& p : refi) {
+          bool found_point = false;
+          for (const FTP& q : refj) {
+            if (are_equal_points(dim, p, q)) {
+              found_point = true; break;
+            }
+          }
+          CGAL_assertion_msg(found_point, "ERROR: POINT FROM REFI IS NOT IN REFJ!");
+          if (!found_point) return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  void print_reference(
+    const std::size_t dim,
+    const std::vector<FTP>& reference) const {
+
+    std::cout << std::endl;
+    for (std::size_t i = 0; i < reference.size(); ++i) {
+      std::cout << *(reference[i]) << std::endl;
+      for (std::size_t k = 0; k < dim; ++k) {
+        std::cout << reference[i][k] << " ";
+      }
+      std::cout << std::endl;
+    }
+  }
+
+  void print_references(
+    const std::size_t dim,
+    const std::vector< std::vector<FTP> >& references,
+    const std::string name) const {
+
+    std::cout << std::endl << "--- " << name << " : " << std::endl;
+    for (const auto& reference : references) {
+      print_reference(dim, reference);
+    }
+  }
+
+  #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
+  class Create_reference {
+
+    const std::size_t m_dim;
+    const Key_compare& m_compare_keys;
+    const std::vector<const Point_d *>& m_data;
+    std::vector< std::vector<FTP> >& m_references;
+    std::vector<std::size_t>& m_ref_end;
+    const SearchTraits m_traits;
+
+  public:
+    Create_reference(
+      const std::size_t dim,
+      const Key_compare& compare_keys,
+      const std::vector<const Point_d *>& data,
+      std::vector< std::vector<FTP> >& references,
+      std::vector<std::size_t>& ref_end) :
+    m_dim(dim), m_compare_keys(compare_keys), m_data(data),
+    m_references(references), m_ref_end(ref_end)
+    { }
+
+    void operator()(const tbb::blocked_range<std::size_t>& range) const {
+
+      for (std::size_t i = range.begin(); i != range.end(); ++i) {
+        initialize_reference(m_data.begin(), m_data.end(),
+        m_traits.construct_cartesian_const_iterator_d_object(), m_references[i]);
+
+        std::stable_sort(m_references[i].begin(), m_references[i].end(),
+          [&](const FTP& p, const FTP& q) {
+            const auto result = m_compare_keys(p, q, i, m_dim);
+            return result == CGAL::SMALLER;
+          }
+        );
+
+        m_ref_end[i] = static_cast<long>(remove_duplicates(
+          m_compare_keys, m_references[i], i, m_dim));
+      }
+    }
+  };
+  #endif
+
+  template<typename ConcurrencyTag>
+  std::pair<long, long> initialize_references(
+    const std::integral_constant<bool, true>,
+    const std::size_t dim, std::vector<const Point_d*>& data) {
+
+    #ifdef KD_TREE_DEBUG
+    CGAL::Real_timer timer;
+    timer.start();
+    #endif
+
+    split.resize(dim, data.size());
+    auto& references = split.get_references();
+    CGAL_assertion(references.size() == dim);
+    CGAL_assertion(references[0].size() == data.size());
+    std::vector<std::size_t> ref_end(references.size());
+    CGAL_assertion(ref_end.size() == dim);
+    const Key_compare compare_keys;
+
+    #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
+    if (boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value) {
+      tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, references.size()),
+        Create_reference(dim, compare_keys, data, references, ref_end));
+    } else
+    #endif
+    {
+      for (std::size_t i = 0; i < references.size(); ++i) {
+        initialize_reference(data.begin(), data.end(),
+        traits_.construct_cartesian_const_iterator_d_object(), references[i]);
+        std::stable_sort(references[i].begin(), references[i].end(),
+          [&](const FTP& p, const FTP& q) {
+            const auto result = compare_keys(p, q, i, dim);
+            return result == CGAL::SMALLER;
+          }
+        );
+        ref_end[i] = static_cast<long>(remove_duplicates(
+          compare_keys, references[i], i, dim));
+      }
+    }
+    CGAL_assertion(check_consistency(dim, ref_end, references));
+
+    #ifdef KD_TREE_DEBUG
+    timer.stop();
+    std::cout << std::endl;
+    std::cout << "- internal preprocessing time: " << timer.time() << " sec.";
+    print_references(dim, references, "REF PREPROCESS");
+    #endif
+
+    const long start = 0;
+    const long end   = ref_end[0];
+    return std::make_pair(start, end);
+  }
+
+  template<typename ConcurrencyTag>
+  std::pair<long, long> initialize_references(
+    const std::integral_constant<bool, false>,
+    const std::size_t /* dim */, std::vector<const Point_d*>& data) {
+    return std::make_pair(0, data.size());
+  }
+
+  void finalize_references(const std::integral_constant<bool, true>) {
+    split.clear();
+  }
+
+  void finalize_references(const std::integral_constant<bool, false>) {
+    return;
+  }
+
   // protected copy constructor
   Kd_tree(const Tree& tree)
     : traits_(tree.traits_),built_(tree.built_),dim_(-1)
@@ -193,7 +416,7 @@ private:
     if (try_parallel_internal_node_creation (nh, c, c_low, tag))
       return;
 
-    if (c_low.size() > split.bucket_size())
+    if (c_low.size() > split.bucket_size() && !c_low.is_last_call())
     {
       nh->lower_ch = new_internal_node();
       create_internal_node (nh->lower_ch, c_low, tag);
@@ -201,7 +424,7 @@ private:
     else
       nh->lower_ch = create_leaf_node(c_low);
 
-    if (c.size() > split.bucket_size())
+    if (c.size() > split.bucket_size() && !c.is_last_call())
     {
       nh->upper_ch = new_internal_node();
       create_internal_node (nh->upper_ch, c, tag);
@@ -336,7 +559,21 @@ public:
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
-    Point_container c(dim_, data.begin(), data.end(),traits_);
+    long start = -1, end = -1;
+    CGAL_assertion(dim_ >= 0);
+    std::tie(start, end) = initialize_references<ConcurrencyTag>(
+      typename std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::type(),
+      static_cast<std::size_t>(dim_), data);
+
+    Point_container c(dim_, data.begin(), data.end(), traits_);
+    CGAL_assertion(start >= 0 && end >= 0);
+    c.set_data(0, start, end);
+
+    #ifdef KD_TREE_DEBUG
+    CGAL::Real_timer timer;
+    timer.start();
+    #endif
+
     bbox = new Kd_tree_rectangle<FT,D>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
@@ -344,6 +581,12 @@ public:
        tree_root = new_internal_node();
        create_internal_node (tree_root, c, ConcurrencyTag());
     }
+
+    #ifdef KD_TREE_DEBUG
+    timer.stop();
+    std::cout << std::endl;
+    std::cout << "- internal building time: " << timer.time() << " sec." << std::endl;
+    #endif
 
     //Reorder vector for spatial locality
     std::vector<Point_d> ptstmp;
@@ -367,7 +610,9 @@ public:
     pts.swap(ptstmp);
 
     data.clear();
-
+    data.shrink_to_fit();
+    finalize_references(
+      typename std::is_same<Splitter, CGAL::Balanced_splitter<SearchTraits> >::type());
     built_ = true;
   }
 
@@ -375,6 +620,45 @@ public:
   int dim() const
   {
     return dim_;
+  }
+
+  template<typename OutputIterator>
+  OutputIterator print_leaves(OutputIterator out) const
+  {
+    return tree_root->print_leaves(out);
+  }
+
+  std::ostream&
+  write_graphviz(std::ostream& s) const
+  {
+    int counter = -1;
+    std::unordered_map<const Node*, int> node_to_index;
+    tree_root->get_indices(counter, node_to_index);
+
+    const auto node_name = [&](const Node* node) {
+      const int index = node_to_index.at(node);
+      std::string node_name = "default_name";
+      if (node->is_leaf()) { // leaf node
+        node_name = "L" + std::to_string(index);
+      } else {
+        if (index == 0) { // root node
+          node_name = "R" + std::to_string(index);
+        } else { // internal node
+          node_name = "N" + std::to_string(index);
+        }
+      }
+      CGAL_assertion(node_name != "default_name");
+      return node_name;
+    };
+
+    s << "graph G" << std::endl;
+    s << "{" << std::endl << std::endl;
+    s << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
+    s << "Num items: " << tree_root->num_items() << ".\"" << std::endl;
+    s << node_name(tree_root) + " ;";
+    tree_root->print(s, node_name);
+    s << std::endl << "}" << std::endl << std::endl;
+    return s;
   }
 
 private:

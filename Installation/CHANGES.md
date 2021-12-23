@@ -132,6 +132,12 @@ Release date: January 2022
     along with a function [`CGAL::Mesh_3::generate_label_weights()`](https://doc.cgal.org/5.4/Mesh_3/namespaceCGAL_1_1Mesh__3.html#ae5914bf77180ff8948c08046154ee727)
     to generate the weights.
 
+### [dD Spatial Searching](https://doc.cgal.org/5.4/Manual/packages.html#PkgSpatialSearchingD)
+
+-   The kd-tree has a new print method now that enables to output the tree in the stream in the [Graphviz](https://graphviz.org/) format.
+-   Added a new splitter class [`CGAL::Balanced_splitter`](https://doc.cgal.org/5.4/Spatial_searching/classCGAL_1_1Balanced__splitter.html) that
+    guarantees a balanced tree for any point set including data with duplicate and collinear points.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
 
 -   Added the function [`CGAL::Polygon_mesh_processing::match_faces()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__measure__grp.html#ga10f7cd81645bafe936ac5eb4e58e67ef),

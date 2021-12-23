@@ -22,8 +22,11 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <memory>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/enum.h>
 
 #include <boost/optional.hpp>
 
@@ -55,6 +58,69 @@ private:
   // box of points
 
 public:
+  using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
+  using FTP = typename Construct_cartesian_const_iterator_d::result_type;
+
+private:
+  bool m_is_last_call = false;
+  std::size_t m_depth = static_cast<std::size_t>(-1);
+  long m_start = -1;
+  long m_end = -1;
+
+public:
+  struct Key_compare {
+
+    CGAL::Comparison_result operator()(
+      const FTP& p, const FTP& q, // refs to points p and q
+      const std::size_t axis, // axis offset in (x, y, z, w, ...)
+      const std::size_t dim) const { // dimension
+
+      CGAL_assertion(p != FTP());
+      CGAL_assertion(q != FTP());
+      CGAL::Comparison_result result;
+      for (std::size_t k = 0; k < dim; ++k) {
+        const std::size_t idx = (k + axis) % dim; // stay inside dim
+        result = CGAL::compare(p[idx], q[idx]);
+        if (result != CGAL::EQUAL) break;
+      }
+      return result;
+    }
+  };
+
+  inline bool
+  is_last_call() const
+  {
+    return m_is_last_call;
+  }
+
+  inline std::size_t
+  get_depth() const
+  {
+    return m_depth;
+  }
+
+  inline std::size_t
+  get_start() const
+  {
+    return m_start;
+  }
+
+  inline std::size_t
+  get_end() const
+  {
+    return m_end;
+  }
+
+  void
+  set_data(const std::size_t depth, const long start, const long end)
+  {
+    m_depth = depth;
+    m_start = start;
+    m_end = end;
+    if (m_end <= m_start + 2) {
+      m_is_last_call = true;
+    }
+  }
 
   inline const Kd_tree_rectangle<FT,D>&
   bounding_box() const
@@ -330,6 +396,32 @@ public:
     return b;
   }
 
+  template <class Separator>
+  void balanced_split(Point_container<Traits>& c, const Separator& sep)
+  {
+    CGAL_assertion(is_valid());
+    CGAL_assertion(dimension() == c.dimension());
+
+    c.bbox = bbox;
+    const int split_coord = sep.cutting_dimension();
+    const FT cutting_value = sep.cutting_value();
+
+    built_coord = split_coord;
+    c.built_coord = split_coord;
+
+    auto construct_it = traits.construct_cartesian_const_iterator_d_object();
+
+    bbox.set_lower_bound(split_coord, cutting_value);
+    c.bbox.set_upper_bound(split_coord, cutting_value);
+
+    tbox. template update_from_point_pointers<
+    typename Traits::Construct_cartesian_const_iterator_d>(begin(), end(), construct_it);
+    c.tbox. template update_from_point_pointers<
+    typename Traits::Construct_cartesian_const_iterator_d>(c.begin(), c.end(), construct_it);
+
+    CGAL_assertion(is_valid());
+    CGAL_assertion(c.is_valid());
+  }
 
   // note that splitting is restricted to the built coordinate
   template <class Separator>
