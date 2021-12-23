@@ -169,9 +169,9 @@ vectors_from_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   const halfedge_descriptor h = halfedge(f, tmesh);
 
   // get all points and turn them into location vectors so we can use cross product on them
-  const Point_reference p = get(vpm, source(h, tmesh));
-  const Point_reference q = get(vpm, target(h, tmesh));
-  const Point_reference r = get(vpm, target(next(h, tmesh), tmesh));
+  const Point_reference p = get(vpm, target(h, tmesh));
+  const Point_reference q = get(vpm, target(next(h, tmesh), tmesh));
+  const Point_reference r = get(vpm, source(h, tmesh));
 
   std::array<typename GeomTraits::Vector_3, 3> arr { vector(ORIGIN, p),
                                                      vector(ORIGIN, q),
@@ -242,18 +242,18 @@ construct_optimal_point_singular(const typename GarlandHeckbert_matrix_types<Geo
     const FT a = (p1mp0.transpose() * quadric * p1mp0)(0, 0);
     const FT b = 2 * (p0.transpose() * quadric * p1mp0)(0, 0);
 
-    if(a == 0)
+    if(is_zero(a))
     {
       if(b < 0)
         opt_pt = p1;
-      else if(b == 0)
+      else if(is_zero(b))
         opt_pt = 0.5 * (p0 + p1);
       else
         opt_pt = p0;
     }
     else
     {
-      FT ext_t = - b / (2 * a);
+      FT ext_t = - b / (FT(2) * a);
       if(ext_t < 0 || ext_t > 1 || a < 0)
       {
         // one of endpoints
@@ -318,7 +318,7 @@ construct_classic_plane_quadric_from_edge(typename boost::graph_traits<TriangleM
 
   // use this normal to construct the quadric analogously to constructing quadric
   // from the normal of the face
-  return construct_classic_plane_quadric_from_normal(normal, get(vpm, source(he, mesh)), gt);
+  return construct_classic_plane_quadric_from_normal(normal, get(vpm, target(he, mesh)), gt);
 }
 
 template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
@@ -331,7 +331,7 @@ construct_classic_plane_quadric_from_face(typename boost::graph_traits<TriangleM
   auto normal = construct_unit_normal_from_face(f, mesh, vpm, gt);
 
   // get any point of the face
-  const auto p = get(vpm, source(halfedge(f, mesh), mesh));
+  const auto p = get(vpm, target(halfedge(f, mesh), mesh));
 
   return construct_classic_plane_quadric_from_normal(normal, p, gt);
 }
@@ -353,10 +353,10 @@ construct_classic_triangle_quadric_from_face(typename boost::graph_traits<Triang
   typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Row_4             Row_4;
 
   auto cross_product = gt.construct_cross_product_vector_3_object();
-  auto sum_vectors = gt.construct_sum_of_vectors_3_object();
   auto dot_product = gt.compute_scalar_product_3_object();
+  auto sum_vectors = gt.construct_sum_of_vectors_3_object();
 
-  auto vectors = vectors_from_face(f, tmesh, vpm, gt);
+  std::array<Vector_3, 3> vectors = vectors_from_face(f, tmesh, vpm, gt);
 
   const Vector_3& a = vectors[0];
   const Vector_3& b = vectors[1];
@@ -366,14 +366,13 @@ construct_classic_triangle_quadric_from_face(typename boost::graph_traits<Triang
   const Vector_3 bc = cross_product(b, c);
   const Vector_3 ca = cross_product(c, a);
 
-  const Vector_3 sum_of_cross_product = sum_vectors(sum_vectors(ab, bc), ca);
+  const Vector_3 sum_of_cross_products = sum_vectors(sum_vectors(ab, bc), ca);
   const FT scalar_triple_product = dot_product(ab, c);
 
   Row_4 row;
-  row << sum_of_cross_product.x(),   sum_of_cross_product.y(),
-         sum_of_cross_product.z(), - scalar_triple_product;
+  row << sum_of_cross_products.x(),   sum_of_cross_products.y(),
+         sum_of_cross_products.z(), - scalar_triple_product;
 
-  // calculate the outer product of row^t * row
   return row.transpose() * row;
 }
 
@@ -400,35 +399,29 @@ construct_prob_plane_quadric_from_normal(const typename GeomTraits::Vector_3& me
   auto squared_length = gt.compute_squared_length_3_object();
 
   const Vector_3 mean_vec = vector(ORIGIN, point);
-  const FT dot_mnmv = dot_product(mean_normal, mean_vec);
-
-  // Eigen column vector of length 3
-  Col_3 mean_n_col { mean_normal.x(), mean_normal.y(), mean_normal.z() };
+  const Col_3 mean_n_col { mean_normal.x(), mean_normal.y(), mean_normal.z() };
 
   // start by setting values along the diagonal
   Mat_4 mat = face_nv * Mat_4::Identity();
 
-  // add outer product of the mean normal with itself
-  // to the upper left 3x3 block
+  // add outer product of the mean normal with itself to the upper left 3x3 block
   mat.block(0, 0, 3, 3) += mean_n_col * mean_n_col.transpose();
 
-  // set the first 3 values of the last row and the first
-  // 3 values of the last column
-  // the negative sign comes from the fact that in the paper,
-  // the b column and row appear with a negative sign
-  const auto b1 = -(dot_mnmv * mean_normal + face_nv * mean_vec);
+  // set the first 3 values of the last row and the first 3 values of the last column
+  const FT dot_mnmv = dot_product(mean_normal, mean_vec);
+  const Vector_3 b1 = dot_mnmv * mean_normal + face_nv * mean_vec;
 
   const Col_3 b { b1.x(), b1.y(), b1.z() };
 
-  mat.col(3).head(3) = b;
-  mat.row(3).head(3) = b.transpose();
+  mat.col(3).head(3) = - b;
+  mat.row(3).head(3) = - b.transpose();
 
   // set the value in the bottom right corner, we get this by considering
   // that we only have single variances given instead of covariance matrices
   mat(3, 3) = square(dot_mnmv)
               + face_nv * squared_length(mean_vec)
               + face_mv * squared_length(mean_normal)
-              + 3 * face_nv * face_mv;
+              + 3 * face_nv * face_mv; // tr(Sigma_n * Sigma_m)
 
   return mat;
 }
@@ -455,6 +448,7 @@ construct_prob_triangle_quadric_from_face(typename boost::graph_traits<TriangleM
   auto cross_product = gt.construct_cross_product_vector_3_object();
   auto sum_vectors = gt.construct_sum_of_vectors_3_object();
   auto dot_product = gt.compute_scalar_product_3_object();
+  auto squared_length = gt.compute_squared_length_3_object();
 
   // array containing the position vectors corresponding to
   // the vertices of the given face
@@ -464,12 +458,10 @@ construct_prob_triangle_quadric_from_face(typename boost::graph_traits<TriangleM
   const Vector_3& b = vectors[1];
   const Vector_3& c = vectors[2];
 
-  // calculate certain vectors used later
   const Vector_3 ab = cross_product(a, b);
   const Vector_3 bc = cross_product(b, c);
   const Vector_3 ca = cross_product(c, a);
 
-  // subtracting vectors using GeomTraits
   const Vector_3 a_minus_b = sum_vectors(a, -b);
   const Vector_3 b_minus_c = sum_vectors(b, -c);
   const Vector_3 c_minus_a = sum_vectors(c, -a);
@@ -479,31 +471,30 @@ construct_prob_triangle_quadric_from_face(typename boost::graph_traits<TriangleM
   const Mat_3 cp_ca = skew_sym_mat_cross_product<GeomTraits>(c_minus_a);
 
   const Vector_3 sum_of_cross_product = sum_vectors(sum_vectors(ab, bc), ca);
-
   const Col_3 sum_cp_col { sum_of_cross_product.x(), sum_of_cross_product.y(), sum_of_cross_product.z() };
 
   Mat_3 A = sum_cp_col * sum_cp_col.transpose();
   A += var * (cp_ab * cp_ab.transpose() + cp_bc * cp_bc.transpose() + cp_ca * cp_ca.transpose());
 
-  // add the 3 simple cross inference matrix - components (we only have one variance here)
+  // Add the 3 simple cross inference matrix - components (we only have one variance here)
   A += 6 * square(var) * Mat_3::Identity();
 
   // we need the determinant of matrix with columns a, b, c - we use the scalar triple product
   const FT det = dot_product(ab, c);
 
-  // compute the b vector, this follows the formula directly - but we can factor
+  // Compute the b vector, this follows the formula directly - but we can factor
   // out the diagonal covariance matrices
   const Col_3 res_b = det * sum_cp_col - var * (vector_to_col_3<GeomTraits>(cross_product(a_minus_b, ab))
                                                 + vector_to_col_3<GeomTraits>(cross_product(b_minus_c, bc))
                                                 + vector_to_col_3<GeomTraits>(cross_product(c_minus_a, ca)))
                       + 2 * square(var) * vector_to_col_3<GeomTraits>(sum_vectors(sum_vectors(a, b), c));
 
-  const FT ab2 = dot_product(ab, ab);
-  const FT bc2 = dot_product(bc, bc);
-  const FT ca2 = dot_product(ca, ca);
-  const FT a2 = dot_product(a, a);
-  const FT b2 = dot_product(b, b);
-  const FT c2 = dot_product(c, c);
+  const FT ab2 = squared_length(ab);
+  const FT bc2 = squared_length(bc);
+  const FT ca2 = squared_length(ca);
+  const FT a2 = squared_length(a);
+  const FT b2 = squared_length(b);
+  const FT c2 = squared_length(c);
 
   const FT res_c = square(det)
                    + var * (ab2 + bc2 + ca2)
@@ -535,6 +526,8 @@ estimate_variances(const TriangleMesh& mesh,
   typedef typename GeomTraits::FT                                              FT;
   typedef typename GeomTraits::Point_3                                         Point_3;
   typedef typename GeomTraits::Vector_3                                        Vector_3;
+
+  CGAL_precondition(!empty(mesh));
 
   auto construct_vector = gt.construct_vector_3_object();
   auto squared_length = gt.compute_squared_length_3_object();
