@@ -4,13 +4,11 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_plane_policies.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_triangle_policies.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_probabilistic_plane_policies.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_probabilistic_triangle_policies.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/GarlandHeckbert_policies.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
+#include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <boost/format.hpp>
 #include <boost/filesystem.hpp>
@@ -60,20 +58,26 @@ Surface_mesh edge_collapse(Surface_mesh& mesh,
 {
   typedef typename Policy::Get_cost Cost;
   typedef typename Policy::Get_placement Placement;
-
   typedef SMS::Bounded_normal_change_placement<Placement> Bounded_placement;
+
+  std::cout << "Edge collapse mesh of " << num_edges(mesh) << " edges. Policy: " << typeid(Policy).name() << std::endl;
 
   const Policy p { mesh, 100 };
 
   const Cost& cost = p.get_cost();
   const Placement& unbounded_placement = p.get_placement();
-
-  Bounded_placement placement(unbounded_placement);
-
+  Bounded_placement bounded_placement(unbounded_placement);
   SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
-  // collapse edges ignoring result code
-  SMS::edge_collapse(mesh, stop, CGAL::parameters::get_cost(cost).get_placement(placement));
+  auto start_time = std::chrono::steady_clock::now();
+
+  SMS::edge_collapse(mesh, stop, CGAL::parameters::get_cost(cost)
+                                                  .get_placement(unbounded_placement));
+
+  auto end_time = std::chrono::steady_clock::now();
+
+  unsigned long elapsed_ns = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+  std::cout << "Elapsed: " << std::to_string(elapsed_ns) << '\n';
 
   return mesh;
 }
@@ -120,13 +124,15 @@ void time_all_vector(const fs::path& output_file,
 bool read_from_file(const fs::path& p,
                     Surface_mesh& mesh)
 {
-  fs::ifstream in { p };
-
   // make sure the mesh is empty and ready for the next set of data
-  mesh.clear();
+  clear(mesh);
 
-  if(!in || !(in >> mesh))
+  std::string filename = fs::canonical(p).string();
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  {
+    std::cerr << "Failed to read input: " << filename << std::endl;
     return false;
+  }
 
   return true;
 }
@@ -191,7 +197,8 @@ void time_policy(const fs::path& dir, const fs::path& output_file)
 }
 
 template <typename Policy>
-double hausdorff_error(const Surface_mesh& mesh, double ratio = 0.2)
+double hausdorff_error(const Surface_mesh& mesh,
+                       double ratio = 0.2)
 {
   // an arbitrarily chosen small value
   constexpr double error_bound = 0.00001;
@@ -281,18 +288,18 @@ void gather_face_aspect_ratio(const fs::path& file, const fs::path& out)
   read_from_file(file, pt);
 
   edge_collapse<Classic_plane>(cp);
-  edge_collapse<Prob_plane>(pp);
   edge_collapse<Classic_tri>(ct);
+  edge_collapse<Prob_plane>(pp);
   edge_collapse<Prob_tri>(pt);
 
   fs::ofstream out_stream { out };
 
   out_stream << "classic_plane\n";
   write_aspect_ratios(out_stream, cp);
-  out_stream << "prob_plane\n";
-  write_aspect_ratios(out_stream, pp);
   out_stream << "classic_tri\n";
   write_aspect_ratios(out_stream, ct);
+  out_stream << "prob_plane\n";
+  write_aspect_ratios(out_stream, pp);
   out_stream << "prob_tri\n";
   write_aspect_ratios(out_stream, pt);
 }
@@ -303,10 +310,10 @@ void time_policy_string(const fs::path& in, const fs::path& out, const std::stri
 {
   if(policy == "classic_plane")
     time_policy<Classic_plane>(in, out);
-  else if(policy == "prob_plane")
-    time_policy<Prob_plane>(in, out);
   else if(policy == "classic_tri")
     time_policy<Classic_tri>(in, out);
+  else if(policy == "prob_plane")
+    time_policy<Prob_plane>(in, out);
   else if(policy == "prob_tri")
     time_policy<Prob_tri>(in, out);
 }
@@ -326,7 +333,7 @@ int main(int argc, char* argv[])
 
       if(argc != 5)
       {
-        std::cerr << "Expected 3 arugments to time: [input_dir] [output_file] [policy].\n";
+        std::cerr << "Expected 3 arguments to time: [input_dir] [output_file] [policy].\n";
         return EXIT_FAILURE;
       }
 
@@ -336,7 +343,7 @@ int main(int argc, char* argv[])
     {
       m = Mode::hausdorff_ratio;
     }
-    else if(input == "mesh")
+    else if(input == "hausdorff")
     {
       m = Mode::hausdorff_mesh;
     }
@@ -348,34 +355,31 @@ int main(int argc, char* argv[])
         std::cerr << "Expected 1 (2) argument(s) to run: [input_file] [ratio].\n";
         return EXIT_FAILURE;
       }
+
       // default init empty mesh
       Surface_mesh sm;
-
-      FT ratio = 0.2;
-      if(argc == 4) {
-        ratio = std::stod(argv[3]);
-      }
-
       read_from_file(argv[2], sm);
 
+      const FT ratio = (argc > 3) ? std::stod(argv[3]) : 0.2;
+
       Surface_mesh cp = sm;
-      Surface_mesh pp = sm;
       Surface_mesh ct = sm;
+      Surface_mesh pp = sm;
       Surface_mesh pt = sm;
 
       edge_collapse<Classic_plane>(cp, ratio);
-      edge_collapse<Prob_plane>(pp, ratio);
       edge_collapse<Classic_tri>(ct, ratio);
+      edge_collapse<Prob_plane>(pp, ratio);
       edge_collapse<Prob_tri>(pt, ratio);
 
       fs::ofstream classic_plane_stream {"run_classic_plane.off"};
-      fs::ofstream prob_plane_stream {"run_prob_plane.off"};
       fs::ofstream classic_tri_stream {"run_classic_tri.off"};
+      fs::ofstream prob_plane_stream {"run_prob_plane.off"};
       fs::ofstream prob_tri_stream {"run_prob_tri.off"};
 
       classic_plane_stream << cp;
-      prob_plane_stream << pp;
       classic_tri_stream << ct;
+      prob_plane_stream << pp;
       prob_tri_stream << pt;
     }
     else if(input == "aspect")
@@ -385,7 +389,7 @@ int main(int argc, char* argv[])
     else
     {
       std::cerr << "Didn't recognise command line argument " << input <<
-        "(options are time, ratio or mesh)\n";
+        "(options are \"time\", \"run\", \"ratio\", \"aspect\", or \"hausdorff\")\n";
 
       return EXIT_FAILURE;
     }
