@@ -531,7 +531,7 @@ namespace Polygon_mesh_processing {
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
       false;
 #else
-      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
+      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
 #endif
 bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
@@ -556,30 +556,36 @@ bool use_dt3 =
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
-    struct Always_valid
+    if (use_cdt)
     {
-      bool operator()(const std::vector<Point>&, int,int,int) const { return true; }
-    };
-    Always_valid is_valid;
+      struct Always_valid
+      {
+        bool operator()(const std::vector<Point>&, int,int,int) const { return true; }
+      };
+      Always_valid is_valid;
 
-    const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
-    typename Kernel::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
-    default_squared_distance /= typename Kernel::FT(16); // one quarter of the bbox height
+      const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
+      typename Kernel::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
+      default_squared_distance /= typename Kernel::FT(16); // one quarter of the bbox height
 
-    const typename Kernel::FT threshold_distance = choose_parameter(
-      get_parameter(np, internal_np::threshold_distance), typename Kernel::FT(-1));
-    typename Kernel::FT max_squared_distance = default_squared_distance;
-    if (threshold_distance >= typename Kernel::FT(0))
-      max_squared_distance = threshold_distance * threshold_distance;
-    CGAL_assertion(max_squared_distance >= typename Kernel::FT(0));
+      const typename Kernel::FT threshold_distance = choose_parameter(
+        get_parameter(np, internal_np::threshold_distance), typename Kernel::FT(-1));
+      typename Kernel::FT max_squared_distance = default_squared_distance;
+      if(threshold_distance >= typename Kernel::FT(0))
+        max_squared_distance = threshold_distance * threshold_distance;
 
-    if(!use_cdt ||
-       !triangulate_hole_polyline_with_cdt(
-         points,
-         tracer,
-         is_valid,
-         choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
-         max_squared_distance))
+      CGAL_assertion(max_squared_distance >= typename Kernel::FT(0));
+      if (triangulate_hole_polyline_with_cdt(
+           points,
+           tracer,
+           is_valid,
+           choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
+           max_squared_distance))
+      {
+        CGAL_assertion(holes.empty());
+        return tracer.out;
+      }
+    }
 #endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,

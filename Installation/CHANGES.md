@@ -4,7 +4,7 @@ Release History
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
-Release date: December 2021
+Release date: January 2022
 
 ### [General changes](https://doc.cgal.org/5.4/Manual/general_intro.html)
 
@@ -16,6 +16,10 @@ Release date: December 2021
     ([`CGAL::Exact_predicates_exact_constructions_kernel`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Exact__predicates__exact__constructions__kernel.html))
     is now thread-safe.
     See changes in `2D and 3D Linear Geometry Kernel` for more details.
+
+-   The class `Geomview_stream` and all the dependent features have
+    been removed from CGAL. Those features were actually no longer
+    supported since CGAL-5.3 but it was not properly announced.
 
 ### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
 

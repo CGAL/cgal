@@ -1086,9 +1086,17 @@ void append_patches_to_triangle_mesh(
   Triangle_mesh_extension_helper<TriangleMesh, reverse_patch_orientation>
     helper(tm_to_output_edges, tm, output);
 
+  std::vector<std::size_t> ids_of_patches_to_append;
+  ids_of_patches_to_append.reserve(patches_to_append.count());
   for (std::size_t i=patches_to_append.find_first();
                    i < patches_to_append.npos;
                    i = patches_to_append.find_next(i))
+  {
+    ids_of_patches_to_append.push_back(i);
+  }
+
+  std::vector<halfedge_descriptor> interior_vertex_halfedges;
+  for (std::size_t i : ids_of_patches_to_append)
   {
     #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
     #warning the size of tm_to_output_edges will increase at each step \
@@ -1098,8 +1106,6 @@ void append_patches_to_triangle_mesh(
     #endif
 
     Patch_description<TriangleMesh>& patch = patches[i];
-
-    std::vector<halfedge_descriptor> interior_vertex_halfedges;
 
     //insert interior halfedges and create interior vertices
     for(halfedge_descriptor h : patch.interior_edges)
@@ -1146,6 +1152,11 @@ void append_patches_to_triangle_mesh(
         interior_vertex_halfedges.push_back( new_h_opp );
       }
     }
+  }
+
+  for (std::size_t i : ids_of_patches_to_append)
+  {
+    Patch_description<TriangleMesh>& patch = patches[i];
 
     //create faces and connect halfedges
     for(face_descriptor f : patch.faces)
@@ -1164,20 +1175,24 @@ void append_patches_to_triangle_mesh(
         set_face(hedges[i], new_f, output);
       }
     }
+  }
 
-    // handle interior edges that are on the border of the mesh:
-    // they do not have a prev/next pointer set since only the pointers
-    // of patch interior halfedges part a face have been. In the following
-    // (i) we set the next/prev pointer around interior vertices on the mesh
-    // boundary and (ii) we collect interior mesh border halfedges incident to
-    // a patch border vertex and set their next/prev pointer (possibly of
-    // another patch)
+  // handle interior edges that are on the border of the mesh:
+  // they do not have a prev/next pointer set since only the pointers
+  // of patch interior halfedges part a face have been. In the following
+  // (i) we set the next/prev pointer around interior vertices on the mesh
+  // boundary and (ii) we collect interior mesh border halfedges incident to
+  // a patch border vertex and set their next/prev pointer (possibly of
+  // another patch)
 
-    // Containers used for step (ii) for collecting mesh border halfedges
-    // with source/target on an intersection polyline that needs it prev/next
-    // pointer to be set
-    std::vector<halfedge_descriptor> border_halfedges_source_to_link;
-    std::vector<halfedge_descriptor> border_halfedges_target_to_link;
+  // Containers used for step (ii) for collecting mesh border halfedges
+  // with source/target on an intersection polyline that needs it prev/next
+  // pointer to be set
+  std::vector<halfedge_descriptor> border_halfedges_source_to_link;
+  std::vector<halfedge_descriptor> border_halfedges_target_to_link;
+  for (std::size_t i : ids_of_patches_to_append)
+  {
+    Patch_description<TriangleMesh>& patch = patches[i];
     for(halfedge_descriptor h : patch.interior_edges)
       if (is_border_edge(h,tm))
       {
@@ -1204,41 +1219,46 @@ void append_patches_to_triangle_mesh(
         CGAL_assertion(is_border(h_out,output) && is_border(h_out_next,output));
         set_next(h_out, h_out_next, output);
       }
-    // now the step (ii) we look for the candidate halfedge by turning around
-    // the vertex in the direction of the interior of the patch
-    for(halfedge_descriptor h_out : border_halfedges_target_to_link)
-    {
-      halfedge_descriptor candidate =
-        opposite(prev(opposite(h_out, output), output), output);
-      CGAL_assertion_code(halfedge_descriptor start=candidate);
-      while (!is_border(candidate, output)){
-        candidate=opposite(prev(candidate, output), output);
-        CGAL_assertion(candidate!=start);
-      }
-      set_next(h_out, candidate, output);
-    }
-    for(halfedge_descriptor h_out : border_halfedges_source_to_link)
-    {
-      halfedge_descriptor candidate =
-      opposite(next(opposite(h_out, output), output), output);
-      while (!is_border(candidate, output))
-        candidate = opposite(next(candidate, output), output);
-      set_next(candidate, h_out, output);
-    }
+  }
 
-    // For all interior vertices, update the vertex pointer
-    // of all but the vertex halfedge
-    for(halfedge_descriptor h_out : interior_vertex_halfedges)
-    {
-      vertex_descriptor v = target(h_out, output);
-      halfedge_descriptor next_around_vertex=h_out;
-      do{
-        CGAL_assertion(next(next_around_vertex, output) != GT::null_halfedge());
-        next_around_vertex=opposite(next(next_around_vertex, output), output);
-        set_target(next_around_vertex, v, output);
-      }while(h_out != next_around_vertex);
+  // now the step (ii) we look for the candidate halfedge by turning around
+  // the vertex in the direction of the interior of the patch
+  for(halfedge_descriptor h_out : border_halfedges_target_to_link)
+  {
+    halfedge_descriptor candidate =
+      opposite(prev(opposite(h_out, output), output), output);
+    CGAL_assertion_code(halfedge_descriptor start=candidate);
+    while (!is_border(candidate, output)){
+      candidate=opposite(prev(candidate, output), output);
+      CGAL_assertion(candidate!=start);
     }
+    set_next(h_out, candidate, output);
+  }
+  for(halfedge_descriptor h_out : border_halfedges_source_to_link)
+  {
+    halfedge_descriptor candidate =
+    opposite(next(opposite(h_out, output), output), output);
+    while (!is_border(candidate, output))
+      candidate = opposite(next(candidate, output), output);
+    set_next(candidate, h_out, output);
+  }
 
+  // For all interior vertices, update the vertex pointer
+  // of all but the vertex halfedge
+  for(halfedge_descriptor h_out : interior_vertex_halfedges)
+  {
+    vertex_descriptor v = target(h_out, output);
+    halfedge_descriptor next_around_vertex=h_out;
+    do{
+      CGAL_assertion(next(next_around_vertex, output) != GT::null_halfedge());
+      next_around_vertex=opposite(next(next_around_vertex, output), output);
+      set_target(next_around_vertex, v, output);
+    }while(h_out != next_around_vertex);
+  }
+
+  for (std::size_t i : ids_of_patches_to_append)
+  {
+    Patch_description<TriangleMesh>& patch = patches[i];
     // For all patch boundary vertices, update the vertex pointer
     // of all but the vertex halfedge
     for(halfedge_descriptor h : patch.shared_edges)
