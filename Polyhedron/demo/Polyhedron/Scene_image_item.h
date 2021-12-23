@@ -28,7 +28,7 @@ public:
   bool isEmpty() const { return false; }
   void compute_bbox() const;
 
-  Scene_image_item* clone() const { return NULL; }
+  Scene_image_item* clone() const { return nullptr; }
 
   // rendering mode
   virtual bool supportsRenderingMode(RenderingMode m) const;
@@ -44,6 +44,11 @@ public:
   const Image* image() const { return m_image; }
   bool isGray();
   Image* m_image;
+
+  const Image* image_weights() const;
+  void set_image_weights(const Image& img, const float sigma);
+  float sigma_weights() const;
+
   void invalidateOpenGLBuffers();
   void initializeBuffers(Viewer_interface *) const;
   void computeElements() const;

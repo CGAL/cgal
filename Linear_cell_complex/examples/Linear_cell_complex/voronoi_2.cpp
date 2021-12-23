@@ -105,11 +105,10 @@ int main(int narg, char** argv)
   std::string filename;
   if ( narg==1 )
   {
-    filename=std::string("data/points_2");
-    std::cout<<"No filename given: use data/points_2 by default."<<std::endl;
+    filename="data/points_2";
+    std::cout<<"No filename given: use "<<filename<<" by default."<<std::endl;
   }
-  else
-    filename=std::string(argv[1]);
+  else { filename=std::string(argv[1]); }
 
   // 1) Compute the Delaunay_triangulation_2.
   Triangulation T;

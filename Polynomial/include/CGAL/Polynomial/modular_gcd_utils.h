@@ -13,7 +13,7 @@
 // ============================================================================
 
 /*! \file CGAL/Polynomial/modular_gcd_utils.h
- *  \brief Provides additional utils for the modular GCD calculation
+ *  \brief provides additional utils for the modular GCD calculation
  */
 
 #ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTILS_H

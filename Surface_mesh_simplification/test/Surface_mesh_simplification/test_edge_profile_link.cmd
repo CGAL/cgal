@@ -8,4 +8,4 @@ data_link/test07.off
 data_link/test08.off
 data_link/test09.off
 data_link/test10.off
-data/elephant.off
+${CGAL_DATA_DIR}/meshes/elephant.off

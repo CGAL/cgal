@@ -178,13 +178,10 @@ z_replace_original_by_original(ForwardIterator y_l_it,
 
     // tmp_l -part
     std::transform(y_l_it, (y_l_it+s), x_l.begin(), tmp_l.begin(),
-        compose2_2(std::plus<ET>(), Identity<ET>(),
-        boost::bind1st(std::multiplies<ET>(), s_delta)));
-
+        [&s_delta](const ET& v1, const ET& v2){ return std::plus<ET>()(v1, s_delta * v2); });
     // tmp_x -part
     std::transform(y_x_it, (y_x_it+b), x_x.begin(), tmp_x.begin(),
-        compose2_2(std::plus<ET>(), Identity<ET>(),
-        boost::bind1st(std::multiplies<ET>(), s_delta)));
+        [&s_delta](const ET& v1, const ET& v2){ return std::plus<ET>()(v1, s_delta * v2); });
     tmp_x[k_i] -= d;
 
     // prepare \hat{k}_{2} -scalar

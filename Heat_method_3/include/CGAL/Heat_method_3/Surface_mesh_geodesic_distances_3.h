@@ -29,12 +29,14 @@
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
+#include <CGAL/Weights/utils.h>
 #include <boost/range/has_range_iterator.hpp>
 
 #include <vector>
 #include <set>
 
 namespace CGAL {
+
 namespace Heat_method_3 {
 
 /**
@@ -103,7 +105,7 @@ public:
     \brief Constructor
   */
   Surface_mesh_geodesic_distances_3(const TriangleMesh& tm, VertexPointMap vpm)
-    : v2v(tm), tm(tm), vpm(vpm)
+    : vertex_id_map(get(Vertex_property_tag(),tm)), face_id_map(get(Face_property_tag(),tm)), v2v(tm), tm(tm), vpm(vpm)
   {
     build();
   }
@@ -354,7 +356,6 @@ private:
   void
   compute_divergence()
   {
-    typename Traits::Construct_cross_product_vector_3 cross_product = Traits().construct_cross_product_vector_3_object();
     typename Traits::Compute_scalar_product_3 scalar_product = Traits().compute_scalar_product_3_object();
     typename Traits::Construct_vector_3 construct_vector = Traits().construct_vector_3_object();
     Matrix indexD(dimension,1);
@@ -367,36 +368,30 @@ private:
       Index i = get(vertex_id_map, current);
       Index j = get(vertex_id_map, neighbor_one);
       Index k = get(vertex_id_map, neighbor_two);
-      VertexPointMap_reference p_i = get(vpm,current);
+      VertexPointMap_reference p_i = get(vpm, current);
       VertexPointMap_reference p_j = get(vpm, neighbor_one);
       VertexPointMap_reference p_k = get(vpm, neighbor_two);
       Index face_i = get(face_id_map, f);
 
-      Vector_3 v_ij = construct_vector(p_i,p_j);
-      Vector_3 v_ik = construct_vector(p_i,p_k);
-      Vector_3 cross = cross_product(v_ij, v_ik);
-      double norm_cross = CGAL::sqrt(to_double(scalar_product(cross,cross)));
-      double dot = to_double(scalar_product(v_ij, v_ik));
-      double cotan_i = dot/norm_cross;
+      const Vector_3 v_ij = construct_vector(p_i, p_j);
+      const Vector_3 v_ik = construct_vector(p_i, p_k);
+      const Vector_3 v_ji = construct_vector(p_j, p_i);
+      const Vector_3 v_jk = construct_vector(p_j, p_k);
+      const Vector_3 v_ki = construct_vector(p_k, p_i);
+      const Vector_3 v_kj = construct_vector(p_k, p_j);
 
-      Vector_3 v_ji = construct_vector(p_j, p_i);
-      Vector_3 v_jk = construct_vector(p_j, p_k);
+      const Traits traits;
+      const FT cotan_i = CGAL::Weights::cotangent(p_k, p_i, p_j, traits);
+      const FT cotan_j = CGAL::Weights::cotangent(p_k, p_j, p_i, traits);
+      const FT cotan_k = CGAL::Weights::cotangent(p_j, p_k, p_i, traits);
 
-      cross = cross_product(v_ji, v_jk);
-      dot = to_double(scalar_product(v_ji, v_jk));
-      double cotan_j = dot/norm_cross;
-
-      Vector_3 v_ki = construct_vector(p_k,p_i);
-      Vector_3 v_kj = construct_vector(p_k,p_j);
-
-      cross = cross_product(v_ki, v_kj);
-      dot = to_double(scalar_product(v_ki,v_kj));
-      double cotan_k = dot/norm_cross;
-
-      const Vector_3& a  = m_X[face_i];
-      double i_entry = (to_double(scalar_product(a,v_ij)) * cotan_k) + (to_double(scalar_product(a,v_ik)) *  cotan_j);
-      double j_entry = (to_double(scalar_product(a,v_jk)) * cotan_i) + (to_double(scalar_product(a,v_ji)) * cotan_k);
-      double k_entry = (to_double(scalar_product(a,v_ki)) * cotan_j) + (to_double(scalar_product(a,v_kj)) * cotan_i);
+      const Vector_3& a = m_X[face_i];
+      const double i_entry = (CGAL::to_double(scalar_product(a, v_ij) * cotan_k)) +
+                             (CGAL::to_double(scalar_product(a, v_ik) * cotan_j));
+      const double j_entry = (CGAL::to_double(scalar_product(a, v_jk) * cotan_i)) +
+                             (CGAL::to_double(scalar_product(a, v_ji) * cotan_k));
+      const double k_entry = (CGAL::to_double(scalar_product(a, v_ki) * cotan_j)) +
+                             (CGAL::to_double(scalar_product(a, v_kj) * cotan_i));
 
       indexD.add_coef(i, 0, (1./2)*i_entry);
       indexD.add_coef(j, 0, (1./2)*j_entry);
@@ -542,47 +537,40 @@ private:
       Index k = get(vertex_id_map, neighbor_two);
       Point_3 pi, pj, pk;
 
-      VertexPointMap_reference p_i = get(vpm,current);
+      const Traits traits;
+      VertexPointMap_reference p_i = get(vpm, current);
       VertexPointMap_reference p_j = get(vpm, neighbor_one);
       VertexPointMap_reference p_k = get(vpm, neighbor_two);
       pi = p_i;
       pj = p_j;
       pk = p_k;
 
-      Vector_3 v_ij = construct_vector(p_i,p_j);
-      Vector_3 v_ik = construct_vector(p_i,p_k);
+      const double cotan_i = CGAL::to_double(
+        CGAL::Weights::cotangent(pk, pi, pj, traits));
+      m_cotan_matrix.add_coef(j, k, -(1./2) * cotan_i);
+      m_cotan_matrix.add_coef(k, j, -(1./2) * cotan_i);
+      m_cotan_matrix.add_coef(j, j,  (1./2) * cotan_i);
+      m_cotan_matrix.add_coef(k, k,  (1./2) * cotan_i);
 
-      Vector_3 cross = cross_product(v_ij, v_ik);
-      double dot = to_double(scalar_product(v_ij,v_ik));
+      const double cotan_j = CGAL::to_double(
+        CGAL::Weights::cotangent(pk, pj, pi, traits));
+      m_cotan_matrix.add_coef(i, k, -(1./2) * cotan_j);
+      m_cotan_matrix.add_coef(k, i, -(1./2) * cotan_j);
+      m_cotan_matrix.add_coef(i, i,  (1./2) * cotan_j);
+      m_cotan_matrix.add_coef(k, k,  (1./2) * cotan_j);
 
-      double norm_cross = (CGAL::sqrt(to_double(scalar_product(cross,cross))));
+      const double cotan_k = CGAL::to_double(
+        CGAL::Weights::cotangent(pj, pk, pi, traits));
+      m_cotan_matrix.add_coef(i, j, -(1./2) * cotan_k);
+      m_cotan_matrix.add_coef(j, i, -(1./2) * cotan_k);
+      m_cotan_matrix.add_coef(i, i,  (1./2) * cotan_k);
+      m_cotan_matrix.add_coef(j, j,  (1./2) * cotan_k);
 
-      double cotan_i = dot/norm_cross;
-      m_cotan_matrix.add_coef(j,k ,-(1./2)*cotan_i);
-      m_cotan_matrix.add_coef(k,j,-(1./2)* cotan_i);
-      m_cotan_matrix.add_coef(j,j,(1./2)*cotan_i);
-      m_cotan_matrix.add_coef(k,k,(1./2)* cotan_i);
-
-      Vector_3 v_ji = construct_vector(p_j,p_i);
-      Vector_3 v_jk = construct_vector(p_j,p_k);
-
-      cross = cross_product(v_ji, v_jk);
-      dot = to_double(scalar_product(v_ji, v_jk));
-      double cotan_j = dot/norm_cross;
-      m_cotan_matrix.add_coef(i,k ,-(1./2)*cotan_j);
-      m_cotan_matrix.add_coef(k,i,-(1./2)* cotan_j);
-      m_cotan_matrix.add_coef(i,i,(1./2)* cotan_j);
-      m_cotan_matrix.add_coef(k,k,(1./2)* cotan_j);
-
-      Vector_3 v_ki = construct_vector(p_k,p_i);
-      Vector_3 v_kj = construct_vector(p_k,p_j);
-      cross = cross_product(v_ki, v_kj);
-      dot = to_double(scalar_product(v_ki,v_kj));
-      double cotan_k = dot/norm_cross;
-      m_cotan_matrix.add_coef(i,j,-(1./2)*cotan_k);
-      m_cotan_matrix.add_coef(j,i,-(1./2)* cotan_k);
-      m_cotan_matrix.add_coef(i,i,(1./2)* cotan_k);
-      m_cotan_matrix.add_coef(j,j,(1./2)* cotan_k);
+      const Vector_3 v_ij = construct_vector(p_i, p_j);
+      const Vector_3 v_ik = construct_vector(p_i, p_k);
+      const Vector_3 cross = cross_product(v_ij, v_ik);
+      const double norm_cross = CGAL::sqrt(
+        CGAL::to_double(scalar_product(cross, cross)));
 
       //double area_face = CGAL::Polygon_mesh_processing::face_area(f,tm);
       //cross is 2*area
@@ -656,6 +644,9 @@ struct Base_helper
   template <class VertexDistanceMap>
   void estimate_geodesic_distances(VertexDistanceMap vdm)
   {
+    CGAL_assertion(
+      !CGAL::Heat_method_3::internal::has_degenerate_faces(
+        base().triangle_mesh(), Traits()));
     base().estimate_geodesic_distances(vdm);
   }
 };
@@ -734,6 +725,7 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
  *                              or `Direct` to indicate that the input mesh should be used as is.
  *                              If `Intrinsic_Delaunay`, then the type `TriangleMesh` must have an internal property for `vertex_point`
  *                              and its value type must be the same as the value type of `VertexPointMap`.
+ *                              If `Direct`, then the input mesh should not have any degenerate faces.
  * \tparam VertexPointMap a model of `ReadablePropertyMap` with
  *         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
  *         `Traits::Point_3` as value type.
@@ -743,7 +735,6 @@ struct Base_helper<TriangleMesh, Traits, Intrinsic_Delaunay, LA, VertexPointMap>
  *         is used as default
  * \tparam Traits a model of `HeatMethodTraits_3`. The default is the Kernel of the value type
  *         of the vertex point map (extracted using `Kernel_traits`).
- *
  */
 template <typename TriangleMesh,
           typename Mode = Direct,
@@ -766,14 +757,14 @@ class Surface_mesh_geodesic_distances_3
         >::Kernel
       >::type,
       Mode,
-      #ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
       typename Default::Get<
         LA,
         Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
       >::type,
-      #else
+#else
       LA,
-      #endif
+#endif
       typename Default::Get<
         VertexPointMap,
         typename boost::property_map< TriangleMesh, vertex_point_t>::const_type
@@ -781,15 +772,18 @@ class Surface_mesh_geodesic_distances_3
     >
 #endif
 {
+  CGAL_static_assertion((std::is_same<Mode, Direct>::value) ||
+                        (std::is_same<Mode, Intrinsic_Delaunay>::value));
+
   // extract real types from Default
-  #ifdef CGAL_EIGEN3_ENABLED
+#ifdef CGAL_EIGEN3_ENABLED
   typedef typename Default::Get<
     LA,
     Eigen_solver_traits<Eigen::SimplicialLDLT<typename Eigen_sparse_matrix<double>::EigenType > >
   >::type LA_type;
-  #else
+#else
   typedef LA LA_type;
-  #endif
+#endif
 
   typedef typename Default::Get<
     VertexPointMap,
@@ -901,6 +895,7 @@ public:
    * \tparam VertexDistanceMap a property map model of `WritablePropertyMap`
    * with `vertex_descriptor` as key type and `double` as value type.
    * \param vdm the vertex distance map to be filled
+   * \pre If `Mode` is `Direct`, the support triangle mesh does not have any degenerate faces
    * \warning The key type is `double` even when used with an exact kernel.
    **/
   template <class VertexDistanceMap>
@@ -921,6 +916,7 @@ public:
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Intrinsic_Delaunay`.
+/// \pre If `Mode` is `Direct`, `tm` does not have any degenerate faces
 /// \warning The return type is `double` even when used with an exact kernel.
 ///
 /// \sa `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
@@ -962,6 +958,7 @@ estimate_geodesic_distances(const TriangleMesh& tm,
 /// \tparam Mode either the tag `Direct` or `Intrinsic_Delaunay`, which determines if the geodesic distance
 ///              is computed directly on the mesh or if the intrinsic Delaunay triangulation is applied first.
 ///              The default is `Intrinsic_Delaunay`.
+/// \pre If `Mode` is `Direct`, `tm` mesh does not have any degenerate faces
 /// \warning The return type is `double` even when used with an exact kernel.
 /// \sa `CGAL::Heat_method_3::Surface_mesh_geodesic_distances_3`
 template <typename TriangleMesh, typename VertexDistanceMap, typename VertexConstRange, typename Mode>

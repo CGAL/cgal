@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup nt_gmp
 
 An object of the class `Gmpq` is an arbitrary precision rational
-number based on the <span class="textsc">Gmp</span> library.
+number based on the \gmp library.
 
 \cgalModels `Field`
 \cgalModels `RealEmbeddable`

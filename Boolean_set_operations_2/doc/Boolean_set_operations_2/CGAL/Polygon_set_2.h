@@ -13,7 +13,7 @@ and the boundaries of all holes of every set member.
 The third template parameter `Dcel` must be instantiated with a
 model of the concept `GeneralPolygonSetDcel`. It is instantiated
 by default with the type `Gps_default_dcel<Traits>`. You can override
-this default, with a different <span class="textsc">Dcel</span> class, typically an extension
+this default, with a different \dcel class, typically an extension
 of the `Gps_default_dcel` class template. Overriding the default is
 necessary only if you intend to obtain the underlying internal arrangement
 and process it further.

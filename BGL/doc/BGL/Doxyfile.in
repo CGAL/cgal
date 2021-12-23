@@ -13,31 +13,23 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Dual.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Seam_mesh.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/io.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/IO/ \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/partition.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/METIS/partition_graph.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/METIS/partition_dual_graph.h \
-         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/alpha_expansion_graphcut.h
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/alpha_expansion_graphcut.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/graph_traits_inheritance_macros.h
 
 
 EXAMPLE_PATH               =  ${CGAL_Surface_mesh_skeletonization_EXAMPLE_DIR} \
                               ${CGAL_Surface_mesh_segmentation_EXAMPLE_DIR} \
                               ${CGAL_Polygon_mesh_processing_EXAMPLE_DIR} \
+                              ${CGAL_Surface_mesh_EXAMPLE_DIR} \
                               ${CGAL_Property_map_EXAMPLE_DIR} \
+                              ${CGAL_Polyhedron_EXAMPLE_DIR} \
                               ${CGAL_BGL_EXAMPLE_DIR}
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"
-
-# macros to be used inside the code
-ALIASES += "cgalNamedParamsBegin=<dl class=\"params\"><dt>Named Parameters</dt><dd> <table class=\"params\">"
-ALIASES += "cgalNamedParamsEnd=</table> </dd> </dl>"
-ALIASES += "cgalParamBegin{1}=<tr><td class=\"paramname\">\ref BGL_\1 \"\1\"</td><td>"
-ALIASES += "cgalParamEnd=</td></tr>"
-
-#macros for NamedParameters.txt
-ALIASES += "cgalNPTableBegin=<dl class=\"params\"><dt></dt><dd> <table class=\"params\">"
-ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
-ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
-ALIASES += "cgalNPEnd=</td></tr>"
 
 EXTRACT_ALL=NO
 HIDE_UNDOC_MEMBERS         =  YES
@@ -46,7 +38,8 @@ HIDE_UNDOC_CLASSES         =  YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 EXPAND_AS_DEFINED      = CGAL_BGL_NP_TEMPLATE_PARAMETERS \
-                         CGAL_BGL_NP_CLASS
+                         CGAL_BGL_NP_CLASS \
+                         CGAL_DEPRECATED
 
 
 # macros to be used inside the code

@@ -14,9 +14,14 @@ typedef K::FT                          FT;
 
 int main(int argc, char* argv[])
 {
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
+
   Mesh sm;
-  std::ifstream input((argc>1)?argv[1]:"data/elephant.off");
-  input>>sm;
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
+  {
+    std::cerr << "Invalid input file." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   CGAL::Polygon_mesh_processing::triangulate_faces(sm);
 

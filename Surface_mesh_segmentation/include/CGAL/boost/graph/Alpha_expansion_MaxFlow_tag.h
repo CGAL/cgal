@@ -1,4 +1,3 @@
-#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_IMPL_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -10,6 +9,7 @@
 //
 // Author(s)     : Ilker O. Yaz, Simon Giraudot
 
+#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_IMPL_H
 #define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_IMPL_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
@@ -20,7 +20,7 @@
 
 namespace MaxFlow
 {
-#include <CGAL/internal/auxiliary/graph.h>
+#include <CGAL/Surface_mesh_segmentation/internal/auxiliary/graph.h>
 }
 
 

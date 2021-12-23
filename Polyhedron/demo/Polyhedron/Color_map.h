@@ -20,7 +20,7 @@ compute_color_map(QColor base_color,
                   Output_color_iterator out)
 {
   qreal hue = base_color.hueF();
-  const qreal step = ((qreal)1) / nb_of_colors;
+  const qreal step = (static_cast<qreal>(1)) / nb_of_colors;
 
   qreal h = hue==-1 ? 0
                     :hue;

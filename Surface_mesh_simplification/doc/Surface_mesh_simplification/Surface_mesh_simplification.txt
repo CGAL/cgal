@@ -185,8 +185,8 @@ the mesh as much as possible.
 
 \subsection Surface_mesh_simplificationCostStrategyPolicies Cost Strategy Policies
 
-The cost strategy used by the algorithm is selected by means of two policies:
-`GetPlacement` and `GetCost`.
+The cost strategy used by the algorithm is selected by means of three policies:
+`GetPlacement`, `GetCost`, and `Filter`.
 
 The `GetPlacement` policy is called to compute the new position
 for the remaining vertex after the halfedge-collapse. It returns
@@ -209,19 +209,31 @@ But this is a trade-off: the cost of a collapse is a function of the placement
 (the new position chosen for the remaining vertex) so before `GetCost`
 is called for each and every edge, `GetPlacement` must also be called to obtain
 the placement parameter to the cost function.
-But that placement, which is a 3D Point, is not attached to each and every edge since
+But that placement, which is a 3D point, is not attached to each and every edge since
 that would easily <I>triple</I> the additional storage requirement.
 On the one hand, this dramatically saves on memory but on the other hand is
 a processing waste because when an edge is effectively collapsed, `GetPlacement`
 must be called <I>again</I> to know were to move the remaining vertex.
 
-Earlier prototypes shown that attaching the placement to the edge, thus avoiding one
+Earlier prototypes showed that attaching the placement to the edge, thus avoiding one
 redundant call to the placement function after the edge collapsed, has little
 impact on the total running time. This is because the cost of an each edge is not just
 computed once but changes several times during the process so the placement function
 must be called several times just as well. Caching the placement can only avoid the
 very last call, when the edge is collapsed, but not all the previous calls which
 are needed because the placement (and cost) changes.
+
+
+Finally, we explain the `PlacementFilter` policy.
+While the cost is a scalar that is used in the priority queue, there may be
+additional criteria coming in to decide if the edge collapse shall be performed or not.
+While such a criterion could be easily integrated into the cost function,
+that is setting the cost to infinity in order not to be considered a candidate for a collapse,
+we test a criterion only for an edge when it is the next edge to collapse.
+This makes the mesh  simplification faster in case the computation of the
+criterion is expensive, for example when we check if the simplified mesh
+is in a tolerance envelope of the input mesh.
+
 
 \section Surface_mesh_simplificationAPI API
 
@@ -245,7 +257,7 @@ returns `true` the algorithm terminates.
 
 \subsection Surface_mesh_simplificationOptionalNamed Optional Named Parameters
 
-The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="https://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>https://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+The notion of <I>named parameters</I> was also introduced in the \bgl. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="https://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>https://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
 Say there is a function `f()` that takes 3 parameters called `name`, `age` and `gender`, and you have variables `n,a and g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, but with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
 
@@ -268,6 +280,7 @@ edge_index_map(eimap)         : property-map giving each edge a unique integer i
 edge_is_constrained_map(ebmap): property-map specifying whether an edge is a constrained edge or not
 get_cost(cf)                  : function object computing the cost of a collapse
 get_placement(pf)             : function object computing the placement for the remaining vertex
+filter(filter)                : function object to reject a candidate chosen for the next edge collapse
 visitor(vis)                  : function object tracking the simplification process
 */
 
@@ -277,6 +290,7 @@ int r = edge_collapse(surface_mesh, stop_predicate,
                                        .edge_is_border_map(ebmap)
                                        .get_cost(cf)
                                        .get_placement(pf)
+                                       .filter(filter
                                        .visitor(vis));
 
 \endcode
@@ -336,12 +350,30 @@ results in a self intersection when one edge is collapsed using the Lindstrom-Tu
 Simple mesh before and after the collapse of edge `v-w` into vertex `w`. While the normals of `f1` and `f2` are almost equal, they are opposed after the edge collapse.
 \cgalFigureEnd
 
-The class `Surface_mesh_simplification::Bounded_normal_change_placement` is a placement that checks if
-another placement would invert the normal of a face around the stars of the
+The class `Surface_mesh_simplification::Bounded_normal_change_filter` checks if
+a placement would invert the normal of a face around the stars of the
 two vertices of an edge that is candidate for an edge collapse.  It then
 rejects this placement by returning `boost::none`.
 
+\note This filter class replaces the usage of the class `Surface_mesh_simplification::Bounded_normal_change_placement`.
+Using the filter is faster as it is only performed on the edge to be collapsed next,
+and not during the update of all edges incident to the vertex that is the result of the edge collapse.
+
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
+
+
+
+\subsection Surface_mesh_simplificationExamplewithEnvelope Example with Polyhedral Envelope
+
+The surface mesh simplification can be done in a way that the simplified mesh stays inside an envelope of the input mesh.
+This makes use of the class `Polyhedral_envelope` which enables to check whether a query point, segment, or triangle lies within
+a polyhedral envelope, which consists of the union of inflated triangles. While the user gives a tolerance \f$\epsilon\f$, the check
+is conservative, that is there may be triangles which would be inside a surface obtained as the Minkowski sum envelope
+with a sphere of radius \f$\epsilon\f$, but which are outside the polyhedral envelope.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_envelope.cpp}
+
+
 
 \subsection Surface_mesh_simplificationExamplewithVisitor Example with Visitor
 

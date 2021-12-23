@@ -10,7 +10,7 @@
 // Author(s)     : Michael Hemmer
 
 /*! \file CGAL/Residue.h
-    \brief Defines the class CGAL::Residue and CGAL::Modular_traits.
+    \brief defines the class CGAL::Residue and CGAL::Modular_traits.
 
     Provides the \c CGAL::Modular_traits specialization for the build in number
     types.

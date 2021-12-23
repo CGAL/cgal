@@ -46,9 +46,7 @@
 #define CGAL_TD_DEFAULT_SIZE_THRESHOLD 12
 
 #ifndef _MSC_VER
-#if !defined __GNUC__ || __GNUC__> 3 || ((__GNUC__== 3) && (__GNUC_MINOR__> 4))
 #define CGAL_PM_FRIEND_CLASS
-#endif
 #endif
 
 #endif

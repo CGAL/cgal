@@ -44,13 +44,14 @@
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
+#include <boost/utility/result_of.hpp>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-#include <CGAL/internal/info_check.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 #endif
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
-#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -304,8 +305,10 @@ public:
   typename boost::result_of<const Construct_point_2(const Point&)>::type
   construct_point(const Point& p) const { return geom_traits().construct_point_2_object()(p); }
 
-  const Point& point(Face_handle c, int i) const;
+
+  const Point& point(Face_handle f, int i) const;
   const Point& point(Vertex_handle v) const;
+
   Segment segment(Face_handle f, int i) const;
   Segment segment(const Edge& e) const;
   Segment segment(const Edge_circulator& ec) const;
@@ -2976,9 +2979,9 @@ exact_locate(const Point& p,
              Face_handle start) const
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 {
+  li = 4; //general init to avoid warnings.
+  lt = OUTSIDE_AFFINE_HULL; //same
   if (dimension() < 0) {
-    lt = OUTSIDE_AFFINE_HULL;
-    li = 4; // li should not be used in this case
     return Face_handle();
   }
   if( dimension() == 0) {
@@ -2987,10 +2990,6 @@ exact_locate(const Point& p,
     if (xy_equal(p,finite_vertex()->face()->vertex(0)->point())){
       lt = VERTEX ;
     }
-    else{
-      lt = OUTSIDE_AFFINE_HULL;
-    }
-    li = 4; // li should not be used in this case
     return Face_handle();
   }
   if(dimension() == 1){

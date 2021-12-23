@@ -47,7 +47,7 @@ enum Verbose_level {
 #ifdef DOXYGEN_RUNNING
 namespace parameters {
 
-/*! \ingroup vsa_namedparameters
+/*! \ingroup bgl_namedparameters
  * This function is used when default parameters are just fine for approximation or meshing.
  */
 unspecified_type all_default();
@@ -62,57 +62,130 @@ unspecified_type all_default();
  * to approximate a triangle surface mesh, with indexed triangles as output.
  *
  * @tparam TriangleMesh model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref vsa_namedparameters
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
  *
  * @param tm triangle surface mesh to be approximated
- * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  * @return `true` if the indexed triangles represent a 2-manifold, oriented surface mesh, and `false` otherwise.
  *
  * \cgalNamedParamsBegin{Approximation Named Parameters}
- *  \cgalParamBegin{geom_traits} a geometric traits class instance, model of Kernel.
- *    Exact constructions kernels are not supported by this function.
- *  \cgalParamEnd
- *  \cgalParamBegin{vertex_point_map} the property map with the points associated
- *    to the vertices of `tm`. Instance of a class model of `ReadablePropertyMap`.
- *  \cgalParamEnd
- *  \cgalParamBegin{verbose_level} set verbose level.
- *  \cgalParamEnd
- *  \cgalParamBegin{seeding_method} selection of seeding method.
- *  \cgalParamEnd
- *  \cgalParamBegin{max_number_of_proxies} maximum number of proxies to approximate the input mesh.
- *  \cgalParamEnd
- *  \cgalParamBegin{min_error_drop} minimum error drop of the approximation, expressed in ratio between two iterations of proxy addition.
- *  \cgalParamEnd
- *  \cgalParamBegin{number_of_relaxations} number of relaxation iterations interleaved within seeding.
- *  \cgalParamEnd
- *  \cgalParamBegin{number_of_iterations} number of partitioning and fitting iterations after seeding.
- *  \cgalParamEnd
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{Exact constructions kernels are not supported by this function.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{verbose_level}
+ *     \cgalParamDescription{the verbose level}
+ *     \cgalParamType{`CGAL::Surface_mesh_approximation::Verbose_level`}
+ *     \cgalParamDefault{`CGAL::Surface_mesh_approximation::SILENT`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{seeding_method}
+ *     \cgalParamDescription{the selection of seeding method}
+ *     \cgalParamType{`CGAL::Surface_mesh_approximation::Seeding_method`}
+ *     \cgalParamDefault{`CGAL::Surface_mesh_approximation::HIERARCHICAL`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{max_number_of_proxies}
+ *     \cgalParamDescription{the maximum number of proxies used to approximate the input mesh}
+ *     \cgalParamType{`std::size_t`}
+ *     \cgalParamDefault{`num_faces(tm) / 3`, used when `min_error_drop` is also not provided}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{min_error_drop}
+ *     \cgalParamDescription{the minimum error drop of the approximation, expressed as
+ *                           the ratio between two iterations of proxy addition}
+ *     \cgalParamType{`geom_traits::FT`}
+ *     \cgalParamDefault{`0.1`, used when `max_number_of_proxies` is also not provided}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_relaxations}
+ *     \cgalParamDescription{the number of relaxation iterations interleaved within seeding}
+ *     \cgalParamType{`std::size_t`}
+ *     \cgalParamDefault{`5`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_iterations}
+ *     \cgalParamDescription{the number of partitioning and fitting iterations after seeding}
+ *     \cgalParamType{`std::size_t`}
+ *     \cgalParamDefault{`std::min(std::max(number_of_faces / max_number_of_proxies, 20), 60)`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ *
  * \cgalNamedParamsBegin{Meshing Named Parameters}
- *  \cgalParamBegin{subdivision_ratio} chord subdivision ratio threshold to the chord length or average edge length.
- *  \cgalParamEnd
- *  \cgalParamBegin{relative_to_chord} if `true` the `subdivision_ratio` is the ratio of the
- *    furthest vertex distance to the chord length, otherwise is the average edge length.
- *  \cgalParamEnd
- *  \cgalParamBegin{with_dihedral_angle} if set to `true` the `subdivision_ratio` is weighted by dihedral angle.
- *  \cgalParamEnd
- *  \cgalParamBegin{optimize_anchor_location} if set to `true`, optimize the anchor locations.
- *  \cgalParamEnd
- *  \cgalParamBegin{pca_plane} set `true` if use PCA plane fitting, otherwise use the default area averaged plane parameters.
- *  \cgalParamEnd
+ *   \cgalParamNBegin{subdivision_ratio}
+ *     \cgalParamDescription{the chord subdivision ratio threshold to the chord length or average edge length}
+ *     \cgalParamType{`geom_traits::FT`}
+ *     \cgalParamDefault{`5.0`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{relative_to_chord}
+ *     \cgalParamDescription{If `true`, the `subdivision_ratio` is the ratio of the furthest vertex distance
+ *                           to the chord length, otherwise is the average edge length}
+ *     \cgalParamType{`Boolean`}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{with_dihedral_angle}
+ *     \cgalParamDescription{If `true`, the `subdivision_ratio` is weighted by dihedral angle}
+ *     \cgalParamType{`Boolean`}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{optimize_anchor_location}
+ *     \cgalParamDescription{If `true`, optimize the anchor locations}
+ *     \cgalParamType{`Boolean`}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{pca_plane}
+ *     \cgalParamDescription{If `true`, use PCA plane fitting, otherwise use the default area averaged plane parameters}
+ *     \cgalParamType{`Boolean`}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ *
  * \cgalNamedParamsBegin{Output Named Parameters}
- *  \cgalParamBegin{face_proxy_map} a `WritablePropertyMap` with
- * `boost::graph_traits<TriangleMesh>::%face_descriptor` as key and `std::size_t` as value type.
- * A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations}).
- * The proxy-ids are contiguous in range [0, number_of_proxies - 1].
- *  \cgalParamEnd
- *  \cgalParamBegin{proxies} output iterator over proxies.
- *  \cgalParamEnd
- *  \cgalParamBegin{anchors} output iterator over anchor points.
- *  \cgalParamEnd
- *  \cgalParamBegin{triangles} output iterator over indexed triangles.
- *  \cgalParamEnd
+ *   \cgalParamNBegin{face_proxy_map}
+ *     \cgalParamDescription{a property map to output the proxy index of each face of the input polygon mesh}
+ *     \cgalParamType{a model of `WritablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+ *                    as key and `std::size_t` as value type}
+ *     \cgalParamDefault{no output operation is performed}
+ *     \cgalParamExtra{A proxy is a set of connected faces which are placed under the same proxy patch (see \cgalFigureRef{iterations})}
+ *     \cgalParamExtra{The proxy-ids are contiguous in range `[0, number_of_proxies - 1]`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{proxies}
+ *     \cgalParamDescription{an `OutputIterator` to put proxies in}
+ *     \cgalParamType{a class model of `OutputIterator` with
+ *                    `CGAL::Surface_mesh_approximation::L21_metric_vector_proxy_no_area_weighting::Proxy` value type}
+ *     \cgalParamDefault{no output operation is performed}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{anchors}
+ *     \cgalParamDescription{an `OutputIterator` to put anchor points in}
+ *     \cgalParamType{a class model of `OutputIterator` with `geom_traits::%Point_3` value type}
+ *     \cgalParamDefault{no output operation is performed}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{triangles}
+ *     \cgalParamDescription{an `OutputIterator` to put indexed triangles in}
+ *     \cgalParamType{a class model of `OutputIterator` with `std::array<std::size_t, 3>` value type}
+ *     \cgalParamDefault{no output operation is performed}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template <typename TriangleMesh, typename NamedParameters>

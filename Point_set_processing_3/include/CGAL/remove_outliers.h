@@ -103,32 +103,60 @@ compute_avg_knn_sq_distance_3(
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 
-   \param points input point range.
+   \param points input point range
    \param k number of neighbors
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{neighbor_radius} spherical neighborhood
-     radius. If provided, the neighborhood of a query point is
-     computed with a fixed spherical radius instead of a fixed number
-     of neighbors. In that case, the parameter `k` is used as a limit
-     on the number of points returned by each spherical query (to
-     avoid overly large number of points in high density areas). If no
-     limit is wanted, use `k=0`.\cgalParamEnd
-     \cgalParamBegin{threshold_percent} maximum percentage of points to remove.\cgalParamEnd
-     \cgalParamBegin{threshold_distance} minimum distance for a point to be considered as outlier
-     (distance here is the square root of the average squared distance to K nearest neighbors).\cgalParamEnd
-     \cgalParamBegin{callback} an instance of
-      `std::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped, all points are left unchanged
-      and the function return `points.end()`.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
-   \cgalNamedParamsEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{neighbor_radius}
+       \cgalParamDescription{the spherical neighborhood radius}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`0` (no limit)}
+       \cgalParamExtra{If provided, the neighborhood of a query point is computed with a fixed spherical
+                       radius instead of a fixed number of neighbors. In that case, the parameter
+                       `k` is used as a limit on the number of points returned by each spherical
+                       query (to avoid overly large number of points in high density areas).}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{threshold_percent}
+       \cgalParamDescription{the maximum percentage of points to remove}
+       \cgalParamType{double}
+       \cgalParamDefault{`10`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{threshold_distance}
+       \cgalParamDescription{the minimum distance for a point to be considered as outlier}
+       \cgalParamType{double}
+       \cgalParamDefault{`0`}
+       \cgalParamExtra{Distance here is the square root of the average squared distance to K-nearest neighbors}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{callback}
+       \cgalParamDescription{a mechanism to get feedback on the advancement of the algorithm
+                             while it's running and to interrupt it if needed}
+       \cgalParamType{an instance of `std::function<bool(double)>`.}
+       \cgalParamDefault{unused}
+       \cgalParamExtra{It is called regularly when the
+                       algorithm is running: the current advancement (between 0. and 1.)
+                       is passed as parameter. If it returns `true`, then the
+                       algorithm continues its execution normally; if it returns
+                       `false`, the algorithm is stopped, all points are left unchanged
+                       and the function return `points.size()`.}
+       \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd\cgalNamedParamsEnd
 
    \return iterator over the first point to remove.
 
@@ -219,29 +247,37 @@ remove_outliers(
 
   if (threshold_distance != FT(0))
     f2r = std::partition (sorted_points.begin(), sorted_points.end(),
-                          [&threshold_distance](const std::pair<FT, value_type>& p) -> bool
+                          [sq_threshold_distance = CGAL::square(threshold_distance)](const std::pair<FT, value_type>& p) -> bool
                           {
-                            return p.first < threshold_distance * threshold_distance;
+                            return p.first < sq_threshold_distance;
                           });
 
-  if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
-  {
-    std::nth_element (f2r,
-                      sorted_points.begin() + first_index_to_remove,
-                      sorted_points.end());
-    f2r = sorted_points.begin() + first_index_to_remove;
-  }
+  iterator out = points.end();
 
-  // Replaces [points.begin(), points.end()) range by the sorted content.
-  iterator pit = points.begin();
-  iterator out = points.begin();
-
-  for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+  if (f2r != sorted_points.end())
   {
-    *pit = sit->second;
-    if (sit == f2r)
-      out = pit;
-    ++ pit;
+    if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
+    {
+      std::nth_element (f2r,
+                        sorted_points.begin() + first_index_to_remove,
+                        sorted_points.end(),
+                        [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
+                        {
+                          return v1.first<v2.first;
+                        });
+      f2r = sorted_points.begin() + first_index_to_remove;
+    }
+
+    // Replaces [points.begin(), points.end()) range by the sorted content.
+    iterator pit = points.begin();
+
+    for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+    {
+      *pit = sit->second;
+      if (sit == f2r)
+        out = pit;
+      ++ pit;
+    }
   }
 
   callback_wrapper.join();

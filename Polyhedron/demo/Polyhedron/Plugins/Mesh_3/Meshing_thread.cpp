@@ -57,7 +57,11 @@ run()
   CGAL::Three::Three::CursorScopeGuard guard(Qt::BusyCursor);
   f_->launch();
   time_ = double(timer.elapsed()) / 1000;
+  CGAL::Three::Three::getMutex()->lock();
+  CGAL::Three::Three::getWaitCondition()->wakeAll();
+  CGAL::Three::Three::getMutex()->unlock();
   Q_EMIT done(this);
+
 }
 
 

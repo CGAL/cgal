@@ -74,7 +74,7 @@ on a polygon mesh.}
 \cgalPkgSince{4.7}
 \cgalPkgBib{cgal:ovja-pssd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
@@ -117,9 +117,15 @@ on a polygon mesh.}
 - `CGAL::Shape_detection::Point_set::K_neighbor_query<GeomTraits, InputRange, PointMap>`
 - `CGAL::Shape_detection::Point_set::Sphere_neighbor_query<GeomTraits, InputRange, PointMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region<GeomTraits, InputRange, PointMap, NormalMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
 - `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap>`
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_sorting<GeomTraits, InputRange, NeighborQuery, PointMap, NormalMap>`
 
 ### Polygon Mesh ###
 - `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`
@@ -130,6 +136,4 @@ on a polygon mesh.}
 - `CGAL::Shape_detection::deprecated::Shape_detection_traits<GeomTraits, InputRange, PointMap, NormalMap>`
 - `CGAL::Shape_detection::deprecated::Region_growing_depr<Traits>`
 
-## Functions ##
-- `CGAL::regularize_planes()`
 */

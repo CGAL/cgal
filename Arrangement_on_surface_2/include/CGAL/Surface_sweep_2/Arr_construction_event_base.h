@@ -134,7 +134,7 @@ public:
 
   /*! using the additional data that we store at the event, we compute
    *  how much we have to jump (he = he->next()->twin()) from the halfedge
-   *  that is stored in the event, to the halefge that is previous to 'curve'
+   *  that is stored in the event, to the halfedge that is previous to 'curve'
    *  that is about to be inserted into the arrangement.
    */
   int compute_halfedge_jump_count(Subcurve* curve)

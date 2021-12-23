@@ -143,7 +143,7 @@ boost::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name)
 
 int main()
 {
-  const char* filename = "./data/finger.off";
+  const char* filename = "data/finger.off";
 
   std::cout << "| Simple cartesian float kernel | ";
   boost::tuple<std::size_t, std::size_t, std::size_t, long> t1 = test<CGAL::Simple_cartesian<float> >(filename);

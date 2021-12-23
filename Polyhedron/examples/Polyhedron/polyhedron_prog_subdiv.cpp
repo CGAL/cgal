@@ -93,7 +93,7 @@ void subdiv( Polyhedron& P) {
 
 int main(int argc, char* argv[]) {
     Polyhedron P;
-    std::ifstream in1((argc>1)?argv[1]:"data/cube.off");
+    std::ifstream in1((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_quad.off"));
     in1 >> P;
     P.normalize_border();
     if ( P.size_of_border_edges() != 0) {

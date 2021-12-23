@@ -42,7 +42,8 @@ public:
     m_original_mesh(amesh),
     m_minimal_quadrangulation(nullptr),
     m_shortest_noncontractible_cycle(nullptr),
-    m_facewidth(nullptr)
+    m_facewidth(nullptr),
+    m_is_verbose(false)
   {}
 
 //================================================================================
@@ -75,7 +76,7 @@ public:
                        bool display_time=false) const
   {
     compute_minimal_quadrangulation(display_time);
-    return m_minimal_quadrangulation->is_contractible(p, display_time);
+    return m_minimal_quadrangulation->is_contractible(p, display_time, m_is_verbose);
   }
 
   /// @return true iff 'p1' and 'p2' are freely homotopic.
@@ -85,7 +86,7 @@ public:
   {
     compute_minimal_quadrangulation(display_time);
     return m_minimal_quadrangulation->are_freely_homotopic(p1, p2,
-                                                           display_time);
+                                                           display_time, m_is_verbose);
   }
 
   /// @return true iff 'p1' and 'p2' are base point freely homotopic.
@@ -95,7 +96,7 @@ public:
   {
     compute_minimal_quadrangulation(display_time);
     return m_minimal_quadrangulation->are_base_point_homotopic(p1, p2,
-                                                               display_time);
+                                                               display_time, m_is_verbose);
   }
 
 //================================================================================
@@ -166,11 +167,32 @@ public:
     return m_facewidth->compute_face_width(display_time);
   }
 
+//================================================================================
+// Test whether a path is homotopic to a simple cycle
+
+  bool is_homotopic_to_simple_cycle(const Path_on_surface<Mesh>& p,
+                       bool display_time=false) const
+  {
+    compute_minimal_quadrangulation(display_time);
+    return m_minimal_quadrangulation->is_homotopic_to_simple_cycle(p, display_time, m_is_verbose);
+  }
+
+//================================================================================
+// Utility functions
+
+  // Set whether to display warning message in `std::cerr` when input doesn't meet
+  // prerequesite
+  void set_verbose(bool is_verbose)
+  {
+    m_is_verbose = is_verbose;
+  }
+
 protected:
   const Mesh&                                             m_original_mesh;
   mutable std::unique_ptr<Minimal_quadrangulation>        m_minimal_quadrangulation;
   mutable std::unique_ptr<Shortest_noncontractible_cycle> m_shortest_noncontractible_cycle;
   mutable std::unique_ptr<Facewidth>                      m_facewidth;
+  bool                                                    m_is_verbose;
 };
 
 } // namespace Surface_mesh_topology

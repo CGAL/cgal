@@ -253,7 +253,7 @@ Scene_polylines_item_private::computeSpheres()
               colors[2] = 200;
           }
 
-          CGAL::Color c(colors[0], colors[1], colors[2]);
+          CGAL::IO::Color c(colors[0], colors[1], colors[2]);
           spheres->add_sphere(K::Sphere_3(center+offset, spheres_drawn_square_radius),s_id++, c);
       }
       spheres->setToolTip(
@@ -264,7 +264,7 @@ Scene_polylines_item_private::computeSpheres()
                     "<li>red: four incident polylines</li>"
                     "<li>fuchsia: five or more incident polylines</li>"
                     "</ul></p>"
-                    "<p>Tip: To erase this item, set its radius to 0 or less. </p>")
+                    "<p>Tip: To remove this item, set the corner radius of its corresponding polyline to 0, or simply delete it. </p>")
                             );
       spheres->computeElements();
       QApplication::restoreOverrideCursor();
@@ -276,7 +276,7 @@ Scene_polylines_item::Scene_polylines_item()
 {
     setRenderingMode(FlatPlusEdges);
     d->nb_lines = 0;
-    d->spheres = NULL;
+    d->spheres = nullptr;
     setEdgeContainer(0,
                      new Ec(Three::mainViewer()->isOpenGL_4_3() ? Vi::PROGRAM_SOLID_WIREFRAME
                                                                 : Vi::PROGRAM_NO_SELECTION
@@ -499,7 +499,7 @@ QMenu* Scene_polylines_item::contextMenu()
         connect(actionSmoothPolylines, SIGNAL(triggered()),this, SLOT(smooth()));
 
         QMenu *container = new QMenu(tr("Line Width"));
-        QWidgetAction *sliderAction = new QWidgetAction(0);
+        QWidgetAction *sliderAction = new QWidgetAction(nullptr);
         connect(d->line_Slider, &QSlider::valueChanged, this, &Scene_polylines_item::itemChanged);
 
         sliderAction->setDefaultWidget(d->line_Slider);
@@ -542,7 +542,7 @@ void Scene_polylines_item::change_corner_radii() {
                                      proposed_radius);
         proposed_radius /= 100;
     }
-    double r = QInputDialog::getDouble(NULL,
+    double r = QInputDialog::getDouble(nullptr,
                                        tr("Display corners with new radius..."),
                                        tr("Radius:"),
                                        proposed_radius, // value
@@ -574,18 +574,20 @@ void Scene_polylines_item::change_corner_radii(double r) {
           }
           d->spheres->invalidateOpenGLBuffers();
           d->computeSpheres();
-
+          CGAL::Three::Three::mainWindow()->installEventFilter(d->spheres);
+          connect(d->spheres, &Scene_spheres_item::destroyMe, this,
+                  [this](){
+            removeEventFilter(d->spheres);
+            unlockChild(d->spheres);
+            scene->erase(scene->item_id(d->spheres));
+          });
         }
         else if(r>0 && d->spheres)
         {
-//          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
-//          {
-//            d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
-//          }
           d->spheres->invalidateOpenGLBuffers();
           d->computeSpheres();
         }
-        else if (r<=0 && d->spheres!=NULL)
+        else if (r<=0 && d->spheres!=nullptr)
         {
           unlockChild(d->spheres);
           scene->erase(scene->item_id(d->spheres));
@@ -680,7 +682,7 @@ void Scene_polylines_item::split_at_sharp_angles()
 
 void
 Scene_polylines_item::merge(Scene_polylines_item* other_item) {
-    if(other_item == 0) return;
+    if(other_item == nullptr) return;
     std::copy(other_item->polylines.begin(),
               other_item->polylines.end(),
               std::back_inserter(polylines));
@@ -696,7 +698,7 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
 
 void Scene_polylines_item::reset_spheres()
 {
-  d->spheres = NULL;
+  d->spheres = nullptr;
 }
 
 void Scene_polylines_item::smooth(){

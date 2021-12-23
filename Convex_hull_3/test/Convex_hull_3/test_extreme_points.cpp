@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/Extreme_points_traits_adapter_3.h>
@@ -7,17 +8,16 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
 #include <vector>
 #include <cassert>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedron_3<K> Polyhedron_3;
 typedef K::Point_3 Point_3;
-
 
 void test_function_overload()
 {
@@ -43,7 +43,7 @@ void test_function_overload()
   }
 }
 
-void test_triangulated_cube(const char* fname)
+void test_triangulated_cube(const std::string fname)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_3 Point_3;
@@ -72,7 +72,7 @@ void test_triangulated_cube(const char* fname)
   assert(extreme_points.size() == 8);
 }
 
-void test_coplanar_points(const char* fname)
+void test_coplanar_points(const std::string fname)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_3 Point_3;
@@ -201,7 +201,7 @@ void test_equal_points()
 }
 
 
-void test_extreme_vertices(const char* fname)
+void test_extreme_vertices(const std::string fname)
 {
   std::ifstream input(fname);
   Polyhedron_3 P;
@@ -235,7 +235,7 @@ int main()
   test_triangulated_cube("data/cube_meshed.off");
   test_coplanar_points("data/coplanar_points.xyz");
   test_equal_points();
-  test_extreme_vertices("data/cross.off");
+  test_extreme_vertices(CGAL::data_file_path("meshes/cross.off"));
 
   return 0;
 }

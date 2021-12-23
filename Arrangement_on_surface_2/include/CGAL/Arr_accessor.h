@@ -22,6 +22,7 @@
  */
 
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
+#include <CGAL/Arr_point_location_result.h>
 
 namespace CGAL {
 
@@ -59,6 +60,9 @@ private:
   typedef typename Arrangement_2::DOuter_ccb            DOuter_ccb;
   typedef typename Arrangement_2::DInner_ccb            DInner_ccb;
   typedef typename Arrangement_2::DIso_vertex           DIso_vertex;
+
+  typedef Arr_point_location_result<Arrangement_2>      Pl_result;
+  typedef typename Pl_result::Type                      Pl_result_type;
 
 private:
   Arrangement_2* p_arr;           // The associated arrangement.
@@ -99,33 +103,29 @@ public:
    *         This object may wrap a Face_const_handle (the general case),
    *         or a Halfedge_const_handle (in case of an overlap).
    */
-  CGAL::Object locate_curve_end(const X_monotone_curve_2& cv,
-                                Arr_curve_end ind,
-                                Arr_parameter_space ps_x,
-                                Arr_parameter_space ps_y) const
+  Pl_result_type locate_curve_end(const X_monotone_curve_2& cv,
+                                  Arr_curve_end ind,
+                                  Arr_parameter_space ps_x,
+                                  Arr_parameter_space ps_y) const
   {
     CGAL_precondition((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
 
     // Use the topology traits to locate the unbounded curve end.
-    CGAL::Object obj =
-      p_arr->topology_traits()->locate_curve_end(cv, ind, ps_x, ps_y);
+    auto obj = p_arr->topology_traits()->locate_curve_end(cv, ind, ps_x, ps_y);
 
     // Return a handle to the DCEL feature.
-    DFace* f;
-    if (CGAL::assign(f, obj))
-      return (CGAL::make_object(p_arr->_const_handle_for(f)));
+    DFace** f_p = boost::get<DFace*>(&obj);
+    if (f_p) return (Pl_result::make_result(p_arr->_const_handle_for(*f_p)));
 
-    DHalfedge* he;
-    if (CGAL::assign(he, obj))
-      return (CGAL::make_object(p_arr->_const_handle_for(he)));
+    DHalfedge** he_p = boost::get<DHalfedge*>(&obj);
+    if (he_p) return (Pl_result::make_result(p_arr->_const_handle_for(*he_p)));
 
-    DVertex* v;
-    if (CGAL::assign(v, obj))
-      return (CGAL::make_object(p_arr->_const_handle_for(v)));
+    DVertex** v_p = boost::get<DVertex*>(&obj);
+    if (v_p) return (Pl_result::make_result(p_arr->_const_handle_for(*v_p)));
 
     // We should never reach here:
     CGAL_error();
-    return Object();
+    return Pl_result::make_result(Vertex_const_handle());
   }
 
   /*!
@@ -302,13 +302,41 @@ public:
 
   /*!
    * Create a new boundary vertex.
-   * \param cv The curve incident to the boundary.
-   * \param ind The relevant curve-end.
-   * \param ps_x The boundary condition in x.
-   * \param by The boundary condition in y.
+   * \param pt the point
+   * \param ps_x The parameter space in x.
+   * \param ps_y The parameter space in y.
    * \param notify Should we send a notification to the topology traits
    *               on the creation of the vertex (true by default).
-   * \pre Either ps_x or by does not equal ARR_INTERIOR.
+   * \pre One of ps_x or ps_y does not equal ARR_INTERIOR.
+   * \return A handle for the newly created vertex.
+   */
+  Vertex_handle create_boundary_vertex(const Point_2& pt,
+                                       Arr_parameter_space ps_x,
+                                       Arr_parameter_space ps_y,
+                                       bool notify = true)
+  {
+    CGAL_precondition(ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
+
+    DVertex* v = p_arr->_create_boundary_vertex (pt, ps_x, ps_y);
+
+    CGAL_assertion(v != NULL);
+
+    // Notify the topology traits on the creation of the boundary vertex.
+    if (notify)
+      p_arr->topology_traits()->notify_on_boundary_vertex_creation(v, pt,
+                                                                   ps_x, ps_y);
+    return (p_arr->_handle_for(v));
+  }
+
+  /*!
+   * Create a new boundary vertex.
+   * \param cv The curve incident to the boundary.
+   * \param ind The relevant curve-end.
+   * \param ps_x The parameter space in x.
+   * \param ps_y The parameter space in y.
+   * \param notify Should we send a notification to the topology traits
+   *               on the creation of the vertex (true by default).
+   * \pre One of ps_x or ps_y does not equal ARR_INTERIOR.
    * \return A handle for the newly created vertex.
    */
   Vertex_handle create_boundary_vertex(const X_monotone_curve_2& cv,
@@ -317,6 +345,8 @@ public:
                                        Arr_parameter_space ps_y,
                                        bool notify = true)
   {
+    CGAL_precondition(ps_x != ARR_INTERIOR || ps_y != ARR_INTERIOR);
+
     DVertex* v = p_arr->_create_boundary_vertex (cv, ind, ps_x, ps_y);
 
     CGAL_assertion(v != nullptr);
@@ -602,7 +632,7 @@ public:
                                 const X_monotone_curve_2& cv1,
                                 const X_monotone_curve_2& cv2)
   {
-    DHalfedge* he = p_arr->_split_edge (p_arr->_halfedge(e), p, cv1, cv2);
+    DHalfedge* he = p_arr->_split_edge(p_arr->_halfedge(e), p, cv1, cv2);
 
     CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for(he));

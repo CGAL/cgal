@@ -16,8 +16,8 @@ typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;
 typedef CGAL::Fuzzy_iso_box<Traits> Fuzzy_iso_box;
 
-int main() {
-
+int main()
+{
   const int N = 1000;
   // generator for random data points in the square ( (-1000,-1000), (1000,1000) )
   Random_points_iterator rpit(4, 1000.0);

@@ -12,13 +12,13 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_traits_2_aux.h>
 #include <CGAL/Straight_skeleton_builder_traits_2.h>
 #include <CGAL/predicates/Polygon_offset_pred_ftC2.h>
 #include <CGAL/constructions/Polygon_offset_cons_ftC2.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#include <boost/optional/optional.hpp>
 
 namespace CGAL {
 
@@ -30,7 +30,6 @@ struct Compare_offset_against_event_time_2 : Functor_base_2<K>
   typedef Functor_base_2<K> Base ;
 
   typedef typename Base::FT               FT ;
-  typedef typename Base::Segment_2        Segment_2 ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef Uncertain<Comparison_result> result_type ;
@@ -49,61 +48,30 @@ struct Construct_offset_point_2 : Functor_base_2<K>
 
   typedef typename Base::FT               FT ;
   typedef typename Base::Point_2          Point_2 ;
-  typedef typename Base::Segment_2        Segment_2 ;
+  typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef boost::optional<Point_2> result_type ;
 
 
-  result_type operator() ( FT               const& aT
-                         , Segment_2        const& aE0
-                         , Segment_2        const& aE1
-                         , Trisegment_2_ptr const& aNode
+  result_type operator() ( FT                const& aT
+                         , Segment_2_with_ID const& aE0
+                         , Segment_2_with_ID const& aE1
+                         , Trisegment_2_ptr  const& aNode
                          ) const
   {
-    typename Has_inexact_constructions<K>::type has_inexact_constructions
-    CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
+    typedef boost::optional< Line_2<K> > Optional_line;
+    No_cache<Optional_line> lCoeff_cache;
 
-    return calc(aT, aE0, aE1, aNode, has_inexact_constructions);
-  }
-
-  result_type calc ( FT               const& aT
-                   , Segment_2        const& aE0
-                   , Segment_2        const& aE1
-                   , Trisegment_2_ptr const& aNode
-                   , Tag_false        // kernel already has exact constructions
-                   ) const
-  {
-    result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode);
+    result_type p = construct_offset_pointC2(aT,aE0,aE1,aNode,lCoeff_cache);
 
     CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
 
     return p ;
   }
 
-  result_type calc ( FT               const& aT
-                   , Segment_2        const& aE0
-                   , Segment_2        const& aE1
-                   , Trisegment_2_ptr const& aNode
-                   , Tag_true         // kernel does not provides exact constructions
-                   ) const
-  {
-    typedef Exact_predicates_exact_constructions_kernel EK ;
-
-    typedef Cartesian_converter<K,EK> BaseC2E;
-    typedef Cartesian_converter<EK,K> BaseE2C;
-
-    SS_converter<BaseC2E> C2E ;
-    SS_converter<BaseE2C> E2C ;
-
-    result_type p = E2C(construct_offset_pointC2(C2E(aT),C2E(aE0),C2E(aE1),C2E(aNode)));
-
-    CGAL_stskel_intrinsic_test_assertion(!p || (p && !is_point_calculation_clearly_wrong(aT,*p,aE0,aE1)));
-
-    return p ;
-  }
-
-  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Segment_2 const& aE0, Segment_2 const& aE1 ) const
+  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p,
+                                           Segment_2_with_ID const& aE0, Segment_2_with_ID const& aE1 ) const
   {
     bool rR = false ;
 
@@ -155,8 +123,23 @@ struct Polygon_offset_builder_traits_2_functors
   typedef CGAL_SS_i::Compare_offset_against_event_time_2<K> Compare_offset_against_event_time_2 ;
   typedef CGAL_SS_i::Compare_ss_event_times_2           <K> Compare_ss_event_times_2 ;
   typedef CGAL_SS_i::Construct_offset_point_2           <K> Construct_offset_point_2 ;
-  typedef CGAL_SS_i::Construct_ss_trisegment_2          <K> Construct_ss_trisegment_2 ;
   typedef CGAL_SS_i::Construct_ss_event_time_and_point_2<K> Construct_ss_event_time_and_point_2 ;
+
+  struct Construct_ss_trisegment_2 : CGAL_SS_i::Functor_base_2<K>
+  {
+    typedef CGAL_SS_i::Functor_base_2<K> Base ;
+
+    typedef typename Base::Segment_2_with_ID Segment_2_with_ID ;
+    typedef typename Base::Trisegment_2     Trisegment_2 ;
+    typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
+
+    typedef Trisegment_2_ptr result_type ;
+
+    result_type operator() ( Segment_2_with_ID const& aS0, Segment_2_with_ID const& aS1, Segment_2_with_ID const& aS2 ) const
+    {
+      return CGAL_SS_i::construct_trisegment(aS0,aS1,aS2,0);
+    }
+  };
 } ;
 
 template<class K>
@@ -166,10 +149,10 @@ struct Polygon_offset_builder_traits_2_base
 
   typedef typename K::FT        FT ;
   typedef typename K::Point_2   Point_2 ;
-  typedef typename K::Segment_2 Segment_2 ;
 
-  typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
-
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2 ;
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
+  typedef CGAL::Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
@@ -236,31 +219,23 @@ public:
 
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_offset_point_2
                                                         , typename Exact      ::Construct_offset_point_2
-                                                        , typename Unfiltering::Construct_offset_point_2
+                                                        , typename Filtering::Construct_offset_point_2
                                                         , C2E
-                                                        , C2C
+                                                        , C2F
                                                         , E2C
-                                                        , C2C
+                                                        , F2C
                                                         >
                                                         Construct_offset_point_2 ;
 
-  typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_trisegment_2
-                                                        , typename Exact      ::Construct_ss_trisegment_2
-                                                        , typename Unfiltering::Construct_ss_trisegment_2
-                                                        , C2E
-                                                        , C2C
-                                                        , E2C
-                                                        , C2C
-                                                        >
-                                                        Construct_ss_trisegment_2 ;
+  typedef typename Unfiltering::Construct_ss_trisegment_2 Construct_ss_trisegment_2 ;
 
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
-                                                        , typename Unfiltering::Construct_ss_event_time_and_point_2
+                                                        , typename Filtering::Construct_ss_event_time_and_point_2
                                                         , C2E
-                                                        , C2C
+                                                        , C2F
                                                         , E2C
-                                                        , C2C
+                                                        , F2C
                                                         >
                                                         Construct_ss_event_time_and_point_2 ;
 } ;

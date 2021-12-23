@@ -90,7 +90,7 @@ class Point_set_demo_outlier_removal_dialog : public QDialog, private Ui::Outlie
 {
   Q_OBJECT
   public:
-    Point_set_demo_outlier_removal_dialog(QWidget * /*parent*/ = 0)
+    Point_set_demo_outlier_removal_dialog(QWidget * /*parent*/ = nullptr)
     {
       setupUi(this);
       m_distanceThreshold->setMinimum(0.0);
@@ -112,7 +112,7 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
   {
     // Gets point set
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
         return;
 
     // Gets options

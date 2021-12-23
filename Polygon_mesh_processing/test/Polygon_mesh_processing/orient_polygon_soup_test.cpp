@@ -4,12 +4,12 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/algorithm.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-
-#include <CGAL/algorithm.h>
 #include <CGAL/Timer.h>
 
 #include <fstream>
@@ -45,8 +45,8 @@ std::istream& read_soup(
     polygons[i].resize(no);
 
     for(std::size_t j = 0; j < no; ++j) {
-      std::size_t id;
-      scanner.scan_facet_vertex_index(id, i);
+      std::size_t id = 0;
+      scanner.scan_facet_vertex_index(id, j+1, i);
       if(id < scanner.size_of_vertices())
       {
         polygons[i][j] = id;
@@ -57,7 +57,7 @@ std::istream& read_soup(
   return stream;
 }
 
-void shuffle_off(const char* fname_in, const char* fname_out)
+void shuffle_off(const std::string fname_in, const std::string fname_out)
 {
   std::ifstream input(fname_in);
   if ( !input ){
@@ -105,7 +105,7 @@ int test_orient(const bool save_oriented) {
   std::vector<Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
 
-  shuffle_off("data/elephant.off", "elephant-shuffled.off");
+  shuffle_off(CGAL::data_file_path("meshes/elephant.off"), "elephant-shuffled.off");
   std::ifstream input("elephant-shuffled.off");
   if ( !input || !read_soup<K>(input, points, polygons)){
     std::cerr << "Error: can not shuffled file.\n";
@@ -147,14 +147,14 @@ int test_pipeline()
   std::vector< std::vector<std::size_t> > polygons;
   Polyhedron ref1;
 
-  shuffle_off("data/elephant.off", "elephant-shuffled.off");
+  shuffle_off(CGAL::data_file_path("meshes/elephant.off"), "elephant-shuffled.off");
   std::ifstream input("elephant-shuffled.off");
   if ( !input || !read_soup<K>(input, points, polygons)){
     std::cerr << "Error: can not shuffled file.\n";
     return 1;
   }
   input.close();
-  input.open("data/elephant.off");
+  input.open(CGAL::data_file_path("meshes/elephant.off"));
   if ( !input || !(input >> ref1)){
     std::cerr << "Error: can not read reference file.\n";
     return 1;

@@ -1,0 +1,42 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{0.8}%
+  \begin{pspicture}(-5.5,-2)(5.5,9)
+    \arraxes(0,0)(-5.5,-2)(5.5,9)
+    \psplot[linecolor=blue,linewidth=0.5pt]{-2.1}{2.1}
+           {x x mul dup dup mul exch 6 mul sub 8 add}% y = x^4 - 6x^2 + 8
+    \psplot[linecolor=olivegreen,linewidth=0.5pt]{-3}{3}
+           {x x x mul 1 add div}% y = x / (1 + x^2)
+    \psplot[linecolor=orange,linewidth=0.5pt]{-2}{3}{8 x x mul sub}% y = 8 - x^2
+    \psplot[linecolor=purple,linewidth=0.5pt]{-3}{0}{0 2 x mul sub}
+    \arrMainVertex(0,0){1}
+    \arrMainVertex(-3,-0.3){2}
+    \arrMainVertex(-3,6){3}
+    \arrMainVertex(-2.1,.9881){4}
+    \arrMainVertex(-2,4){5}
+    \arrMainVertex(2.1,.9881){6}
+    \arrMainVertex(3,-1){7}
+    \arrMainVertex(3,0.3){8}
+    %
+    \arrEmptyVertex(-1.95,-.406){x1}
+    \arrEmptyVertex(-1.52,-.459){x2}
+    \arrEmptyVertex(-1.1,2.2){x0}
+    \arrEmptyVertex(0,8){x3}
+    \arrEmptyVertex(1.33,0.480){x4}
+    \arrEmptyVertex(2.05,0.394){x5}
+    \arrEmptyVertex(2.77,0.31){x6}
+    %
+    \rput(2.8,8.5){\textcolor{blue}{$c_1: y = x^4 - 6x^2 + 8$}}
+    \rput(1.4,4){\textcolor{blue}{$c_1$}}
+    \rput(3.8,7.7){\textcolor{olivegreen}{$c_2: y = \frac{x}{1 + x^2}$}}
+    \rput(-0.9,-0.9){\textcolor{olivegreen}{$c_2$}}
+    \rput(3.6,6.9){\textcolor{orange}{$c_3: y = 8 - x^2$}}
+    \rput(2.8,3){\textcolor{orange}{$c_3$}}
+    \rput(3.7,6.1){\textcolor{purple}{$c_4: y = -2x$}}
+    \rput(-2.2,5.3){\textcolor{purple}{$c_4$}}
+    \psframe[linewidth=0.25pt](-5.5,-2)(5.5,9)
+  \end{pspicture}
+}
+\end{document}

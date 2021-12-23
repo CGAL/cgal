@@ -99,10 +99,6 @@ public:
     }
 };
 
-
-// TODO implement Compare_y_limit_on_boundary_2
-
-
 template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_y_near_boundary_2 :
         public FunctorBase::Compare_y_near_boundary_2 {
@@ -169,12 +165,10 @@ public:
         Coordinate_1 asym_info1, asym_info2;
         CGAL::Arr_parameter_space ps1, ps2;
 
-        obj1 = cv1.curve().asymptotic_value_of_arc(
-                cv1.location(ce), cv1.arcno()
-        );
-        obj2 = cv2.curve().asymptotic_value_of_arc(
-                cv2.location(ce), cv2.arcno()
-        );
+        obj1 =
+          cv1.curve().asymptotic_value_of_arc(cv1.location(ce), cv1.arcno());
+        obj2 =
+          cv2.curve().asymptotic_value_of_arc(cv2.location(ce), cv2.arcno());
 
         CGAL::Comparison_result filter_res = CGAL::EQUAL;
 

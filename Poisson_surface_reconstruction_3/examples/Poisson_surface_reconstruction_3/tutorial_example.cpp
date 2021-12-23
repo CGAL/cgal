@@ -37,17 +37,17 @@ int main(int argc, char*argv[])
 
   Point_set points;
 
+  std::string fname = argc==1?CGAL::data_file_path("points_3/kitten.xyz") : argv[1];
   if (argc < 2)
   {
     std::cerr << "Usage: " << argv[0] << " [input.xyz/off/ply/las]" << std::endl;
-    return EXIT_FAILURE;
+    std::cerr <<"Running " << argv[0] << " data/kitten.xyz -1\n";
   }
 
-  const char* input_file = argv[1];
-  std::ifstream stream (input_file, std::ios_base::binary);
+  std::ifstream stream (fname, std::ios_base::binary);
   if (!stream)
   {
-    std::cerr << "Error: cannot read file " << input_file << std::endl;
+    std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -63,10 +63,11 @@ int main(int argc, char*argv[])
   ///////////////////////////////////////////////////////////////////
   //! [Outlier removal]
 
-  CGAL::remove_outliers<CGAL::Sequential_tag>
+  typename Point_set::iterator rout_it = CGAL::remove_outliers<CGAL::Sequential_tag>
     (points,
      24, // Number of neighbors considered for evaluation
      points.parameters().threshold_percent (5.0)); // Percentage of points to remove
+  points.remove(rout_it, points.end());
 
   std::cout << points.number_of_removed_points()
             << " point(s) are outliers." << std::endl;
@@ -86,7 +87,8 @@ int main(int argc, char*argv[])
   double spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (points, 6);
 
   // Simplify using a grid of size 2 * average spacing
-  CGAL::grid_simplify_point_set (points, 2. * spacing);
+  typename Point_set::iterator gsim_it = CGAL::grid_simplify_point_set (points, 2. * spacing);
+  points.remove(gsim_it, points.end());
 
   std::cout << points.number_of_removed_points()
             << " point(s) removed after simplification." << std::endl;
@@ -104,10 +106,10 @@ int main(int argc, char*argv[])
   //! [Smoothing]
   ///////////////////////////////////////////////////////////////////
 
-  unsigned int reconstruction_choice
-    = (argc < 3 ? 0 : atoi(argv[2]));
+  int reconstruction_choice
+    = argc==1? -1 : (argc < 3 ? 0 : atoi(argv[2]));
 
-  if (reconstruction_choice == 0) // Poisson
+  if (reconstruction_choice == 0 || reconstruction_choice==-1) // Poisson
   {
     ///////////////////////////////////////////////////////////////////
     //! [Normal estimation]
@@ -139,15 +141,15 @@ int main(int argc, char*argv[])
     ///////////////////////////////////////////////////////////////////
     //! [Output poisson]
 
-    std::ofstream f ("out.ply", std::ios_base::binary);
-    CGAL::set_binary_mode (f);
-    CGAL::write_ply (f, output_mesh);
+    std::ofstream f ("out_poisson.ply", std::ios_base::binary);
+    CGAL::IO::set_binary_mode (f);
+    CGAL::IO::write_PLY(f, output_mesh);
     f.close ();
 
     //! [Output poisson]
     ///////////////////////////////////////////////////////////////////
   }
-  else if (reconstruction_choice == 1) // Advancing front
+  if (reconstruction_choice == 1 || reconstruction_choice==-1) // Advancing front
   {
     ///////////////////////////////////////////////////////////////////
     //! [Advancing front reconstruction]
@@ -176,14 +178,14 @@ int main(int argc, char*argv[])
 
     CGAL::Surface_mesh<Point_3> output_mesh;
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh (vertices, facets, output_mesh);
-    std::ofstream f ("out.off");
+    std::ofstream f ("out_af.off");
     f << output_mesh;
     f.close ();
 
     //! [Output advancing front]
     ///////////////////////////////////////////////////////////////////
   }
-  else if (reconstruction_choice == 2) // Scale space
+  if (reconstruction_choice == 2 || reconstruction_choice==-1) // Scale space
   {
     ///////////////////////////////////////////////////////////////////
     //! [Scale space reconstruction]
@@ -202,7 +204,7 @@ int main(int argc, char*argv[])
     ///////////////////////////////////////////////////////////////////
     //! [Output scale space]
 
-    std::ofstream f ("out.off");
+    std::ofstream f ("out_sp.off");
     f << "OFF" << std::endl << points.size () << " "
       << reconstruct.number_of_facets() << " 0" << std::endl;
     for (Point_set::Index idx : points)

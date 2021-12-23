@@ -143,11 +143,6 @@ typedef CGAL::Triangulation_hierarchy_2<CDT_P2>                  Triangulation_h
 
 
 
-static const char* data[] =
-{ "data/7_faces_triangle.off", "data/genus3.off", "data/head.off",
-  "data/hedra.off", "data/hedra_open.off",   "data/open_cube.off",
-  "data/rombus.off", "data/tetrahedron.off", "data/triangle.off",
-  "data/triangular_hole.off", "data/cube.off" };
 
 /*
 #if defined(CGAL_USE_OPENMESH)
@@ -159,9 +154,12 @@ bool read_a_mesh(OMesh& s, const std::string& str) {
 
 template<typename T>
 bool read_a_mesh(T& m, const std::string& str)
-{ return CGAL::read_off(str, m); }
+{
+  return CGAL::IO::read_OFF(str, m);
+}
 
-bool read_a_mesh(Polyhedron& p, const std::string& str) {
+bool read_a_mesh(Polyhedron& p, const std::string& str)
+{
   std::ifstream in(str.c_str());
   in >> p;
   bool success = in.good();
@@ -173,6 +171,12 @@ bool read_a_mesh(Polyhedron& p, const std::string& str) {
 template <typename T>
 std::vector<T> t_data()
 {
+  static const std::string data[] =
+    { "data/7_faces_triangle.off", "data/genus3.off", CGAL::data_file_path("meshes/head.off"),
+      CGAL::data_file_path("meshes/hedra.off"), CGAL::data_file_path("meshes/hedra_open.off"), CGAL::data_file_path("meshes/open_cube.off"),
+      "data/rombus.off", "data/tetrahedron.off", "data/triangle.off",
+      CGAL::data_file_path("meshes/triangular_hole.off"), CGAL::data_file_path("meshes/cube.off") };
+
   std::vector<T> vs;
   for(unsigned int i = 0; i < sizeof(data) / sizeof(data[0]); ++i) {
     vs.push_back(T());
@@ -473,7 +477,7 @@ struct Surface_fixture_6 {
 template <typename Graph>
 struct Surface_fixture_7 {
   Surface_fixture_7() {
-    const bool is_reading_successful = read_a_mesh(m, "data/cube.off");
+    const bool is_reading_successful = read_a_mesh(m, CGAL::data_file_path("meshes/cube.off"));
     assert(is_reading_successful);
     assert(CGAL::is_valid_polygon_mesh(m));
 

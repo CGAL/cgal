@@ -1,0 +1,30 @@
+name: CMake Test Merge Branch
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: install dependencies
+      run: |
+        .github/install.sh
+        set -x
+        sudo apt-get update && sudo apt-get install -y graphviz ssh bibtex2html
+        sudo pip install lxml 
+        sudo pip install 'pyquery==1.4.1' # it seems to be the last py2 compatible version
+        wget --no-verbose -O doxygen_exe https://cgal.geometryfactory.com/~mgimeno/doxygen/build_1_8_13/bin/doxygen
+        sudo mv doxygen_exe /usr/bin/doxygen
+        sudo chmod +x /usr/bin/doxygen
+        git config --global user.email "maxime.gimeno@geometryfactory.com"
+        git config --global user.name "Maxime Gimeno"
+        
+    - name: Run checks
+      run: |
+        zsh Scripts/developer_scripts/test_merge_of_branch HEAD
+        #test dependencies
+        bash Scripts/developer_scripts/cgal_check_dependencies.sh --check_headers /usr/bin/doxygen
+

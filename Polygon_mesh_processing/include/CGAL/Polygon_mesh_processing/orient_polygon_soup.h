@@ -19,6 +19,7 @@
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
@@ -31,19 +32,24 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-namespace internal {
-
-struct Default_PS_orienter_visitor
-{
-  template <typename VID>
-  void on_point_duplication(const VID existing_id, const VID new_id) const
-  {
-    std::cout << "Point [" << existing_id << "] is being duplicated, new point has ID: " << new_id << std::endl;
-  }
+/** \ingroup PMP_orientation_grp
+ *  Default visitor model of `PMPPolygonSoupOrientationVisitor`.
+ *  All of its functions have an empty body. This class can be used as a
+ *  base class if only some of the functions of the concept require to be
+ *  overridden.
+ */
+struct Default_orientation_visitor{
+  void non_manifold_edge(std::size_t, std::size_t, std::size_t){}
+  void non_manifold_vertex(std::size_t,std::size_t){}
+  void duplicated_vertex(std::size_t, std::size_t){}
+  void vertex_id_in_polygon_replaced(std::size_t, std::size_t, std::size_t){}
+  void polygon_orientation_reversed(std::size_t) {}
+  void link_connected_polygons(std::size_t, const std::vector<std::size_t>&){}
 };
 
-template<class PointRange, class PolygonRange,
-         class Visitor = Default_PS_orienter_visitor>
+namespace internal {
+
+template<class PointRange, class PolygonRange, class Visitor = Default_orientation_visitor>
 struct Polygon_soup_orienter
 {
   typedef typename PointRange::value_type                               Point_3;
@@ -69,7 +75,7 @@ struct Polygon_soup_orienter
   Edge_map edges;             //< the set of edges of the input polygons
   Marked_edges marked_edges;  //< the set of singular edges or edges incident
                               //<   to non-compatible orientation polygons
-  const Visitor& visitor;
+  Visitor& visitor;
 
   /// for each polygon referenced by its position in `polygons`, indicates
   /// the connected component it belongs too after orientation.
@@ -89,6 +95,7 @@ struct Polygon_soup_orienter
   static void set_edge_marked(V_ID i, V_ID j, Marked_edges& marked_edges)
   {
     marked_edges.insert(canonical_edge(i,j));
+
   }
 
   static std::array<V_ID,3>
@@ -128,6 +135,7 @@ struct Polygon_soup_orienter
   }
 
   void inverse_orientation(const std::size_t index) {
+    visitor.polygon_orientation_reversed(index);
     std::reverse(polygons[index].begin(), polygons[index].end());
   }
 
@@ -136,6 +144,7 @@ struct Polygon_soup_orienter
     V_ID old_index,
     V_ID new_index)
   {
+    visitor.vertex_id_in_polygon_replaced(polygon_id, old_index, new_index);
     for(V_ID& i : polygons[polygon_id])
       if( i==old_index )
         i=new_index;
@@ -154,12 +163,12 @@ struct Polygon_soup_orienter
     }
   }
 
-  Polygon_soup_orienter(Points& points, Polygons& polygons, const Visitor& visitor)
+  Polygon_soup_orienter(Points& points, Polygons& polygons, Visitor& visitor)
     : points(points), polygons(polygons), edges(points.size()), visitor(visitor)
   {}
 
 //filling containers
-  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons) {
+  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons, Visitor& visitor) {
     // Fill edges
     for (P_ID i = 0; i < polygons.size(); ++i)
     {
@@ -186,14 +195,22 @@ struct Polygon_soup_orienter
         em_it = edges[i1].find(i0);
         if (em_it != edges[i1].end()) nb_edges += em_it->second.size();
 
-        if (nb_edges > 2) set_edge_marked(i0, i1, marked_edges);
+        if (nb_edges > 2)
+        {
+          visitor.non_manifold_edge(i0, i1, nb_edges);
+          set_edge_marked(i0, i1, marked_edges);
+        }
       }
     }
   }
 
+  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons) {
+    Visitor dum;
+    fill_edge_map(edges, marked_edges, polygons, dum);
+  }
   void fill_edge_map()
   {
-    fill_edge_map(edges, marked_edges, polygons);
+    fill_edge_map(edges, marked_edges, polygons, visitor);
   }
 
   /// We try to orient polygon consistently by walking in the dual graph, from
@@ -329,22 +346,31 @@ struct Polygon_soup_orienter
       if ( incident_polygons.empty() ) continue; //isolated vertex
       std::set<P_ID> visited_polygons;
 
-      bool first_pass = true;
+      std::size_t nb_link_ccs=0;
       for(P_ID p_id : incident_polygons)
       {
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
-        if (!first_pass)
+        if (++nb_link_ccs != 1)
         {
+          // the vertex is non-manifold
           vertices_to_duplicate.push_back(std::pair<V_ID, std::vector<P_ID> >());
           vertices_to_duplicate.back().first=v_id;
+
+          // call the visitor only if the function has been overridden
+          if (nb_link_ccs==2 && &Visitor::link_connected_polygons != &Default_orientation_visitor::link_connected_polygons)
+          {
+            std::vector<std::size_t> tmp(visited_polygons.begin(), visited_polygons.end());
+            tmp.erase(std::remove(tmp.begin(), tmp.end(), p_id), tmp.end());
+            visitor.link_connected_polygons(v_id, tmp);
+          }
         }
 
         const std::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
 
         V_ID next = neighbors[2];
 
-        if( !first_pass)
+        if(nb_link_ccs != 1)
           vertices_to_duplicate.back().second.push_back(p_id);
 
         do{
@@ -352,7 +378,7 @@ struct Polygon_soup_orienter
           std::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
-          if( !first_pass)
+          if(nb_link_ccs != 1)
             vertices_to_duplicate.back().second.push_back(other_p_id);
         }
         while(next!=neighbors[0]);
@@ -365,13 +391,15 @@ struct Polygon_soup_orienter
             std::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
             if (next==v_id) break;
             visited_polygons.insert(other_p_id);
-            if( !first_pass)
+            if(nb_link_ccs != 1)
               vertices_to_duplicate.back().second.push_back(other_p_id);
           }
           while(true);
         }
-        first_pass=false;
+        if (nb_link_ccs != 1)
+          visitor.link_connected_polygons(v_id, vertices_to_duplicate.back().second);
       }
+      if (nb_link_ccs != 1) visitor.non_manifold_vertex(v_id, nb_link_ccs);
     }
 
     /// now duplicate the vertices
@@ -380,8 +408,8 @@ struct Polygon_soup_orienter
     for(const V_ID_and_Polygon_ids& vid_and_pids : vertices_to_duplicate)
     {
       V_ID new_index = static_cast<V_ID>(points.size());
+      visitor.duplicated_vertex(vid_and_pids.first, new_index);
       points.push_back( points[vid_and_pids.first] );
-      visitor.on_point_duplication(vid_and_pids.first, new_index);
       for(P_ID polygon_id : vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
     }
@@ -466,21 +494,23 @@ struct Polygon_soup_orienter
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose value type is the point type.
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
- * whose value_type is a model of the concept `RandomAccessContainer`
- * whose value_type is `std::size_t`.
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ * whose `value_type` is a model of the concept `RandomAccessContainer`
+ * whose `value_type` is `std::size_t`.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
  *               non-manifoldness or non-orientability issues.
  * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np optional sequence of named parameters among the ones listed below
  *
-  * \cgalNamedParamsBegin
-  *   \cgalParamBegin{visitor} a class model of `PMPOrientationVisitor`
-  *                            that is used to track the creation of new points.
-  *   \cgalParamEnd
-  * \cgalNamedParamsEnd
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{visitor}
+ *     \cgalParamDescription{a visitor used to be notified of the presence of non-manifold simplices and of the modifications done to polygons during orientation.}
+ *     \cgalParamType{a class model of `PMPPolygonSoupOrientationVisitor`}
+ *     \cgalParamDefault{`Default_orientation_visitor`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
  *
  * @return `true`  if the orientation operation succeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
@@ -494,20 +524,28 @@ bool orient_polygon_soup(PointRange& points,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename internal_np::Lookup_named_param_def<
-                                  internal_np::visitor_t,
-                                  NamedParameters,
-                                  internal::Default_PS_orienter_visitor>::type Visitor;
-  Visitor visitor = choose_parameter<Visitor>(get_parameter(np, internal_np::visitor));
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::visitor_t,
+    NamedParameters,
+    Default_orientation_visitor//default
+  > ::type Visitor;
+  Visitor visitor(choose_parameter<Visitor>(get_parameter(np, internal_np::visitor)));
 
   const std::size_t inital_nb_pts = points.size();
-
   internal::Polygon_soup_orienter<PointRange, PolygonRange, Visitor> orienter(points, polygons, visitor);
   orienter.fill_edge_map();
   orienter.orient();
   orienter.duplicate_singular_vertices();
 
-  return inital_nb_pts==points.size();
+  return (inital_nb_pts == points.size());
+}
+
+
+template <class PointRange, class PolygonRange>
+bool orient_polygon_soup(PointRange& points,
+                         PolygonRange& polygons)
+{
+  return orient_polygon_soup(points, polygons, parameters::all_default());
 }
 
 template <class PointRange, class PolygonRange>

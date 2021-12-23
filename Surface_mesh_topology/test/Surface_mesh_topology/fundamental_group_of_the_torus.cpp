@@ -106,7 +106,7 @@ void create_loop_kl(Path_on_surface<SM>& pkl, int k, int l)
 int main()
 {
   SM sm;
-  std::ifstream in("data/torus_quad.off");
+  std::ifstream in(CGAL::data_file_path("meshes/torus_quad.off"));
   if (!in.is_open())
   {
     std::cout<<"ERROR reading file data/torus_quad.off"<<std::endl;

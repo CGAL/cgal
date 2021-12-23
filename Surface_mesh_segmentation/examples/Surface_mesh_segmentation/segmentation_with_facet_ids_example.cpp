@@ -1,8 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/mesh_segmentation.h>
 
+#include <CGAL/mesh_segmentation.h>
 #include <CGAL/property_map.h>
 
 #include <iostream>
@@ -38,7 +38,7 @@ int main()
 {
     // create and read Polyhedron
     Polyhedron mesh;
-    std::ifstream input("data/cactus.off");
+    std::ifstream input(CGAL::data_file_path("meshes/cactus.off"));
     if ( !input || !(input >> mesh) || mesh.empty() || ( !CGAL::is_triangle_mesh(mesh)) ) {
       std::cerr << "Input is not a triangle mesh" << std::endl;
       return EXIT_FAILURE;

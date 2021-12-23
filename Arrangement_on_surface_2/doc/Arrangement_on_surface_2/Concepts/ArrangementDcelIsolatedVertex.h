@@ -3,7 +3,7 @@
 \ingroup PkgArrangementOnSurface2ConceptsDCEL
 \cgalConcept
 
-An isolated vertex-information record in a <span class="textsc">Dcel</span> data structure, which stores
+An isolated vertex-information record in a \dcel data structure, which stores
 the face that contains the isolated vertex in its interior, along with an
 iterator for the isolated vertex in the isolated vertices' container of this
 face.
@@ -20,7 +20,7 @@ public:
 /// @{
 
 /*!
-the corresponding <span class="textsc">Dcel</span> face type.
+the corresponding \dcel face type.
 */
 typedef unspecified_type Face;
 

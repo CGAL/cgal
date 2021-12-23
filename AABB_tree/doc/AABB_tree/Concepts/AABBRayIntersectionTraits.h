@@ -9,7 +9,6 @@ distance of an intersection along a ray.
 
 \cgalHasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 
-\sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 

@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -28,20 +28,18 @@ typedef CGAL::Shape_detection::Plane<Traits>            Plane;
 int main (int argc, char** argv) {
 
   std::cout << "Efficient RANSAC" << std::endl;
-  const char* filename = (argc > 1) ? argv[1] : "data/cube.pwn";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn");
 
   // Points with normals.
   Pwn_vector points;
 
   // Load point set from a file.
-  std::ifstream stream(filename);
 
-  if (!stream ||
-    !CGAL::read_xyz_points(
-      stream,
-      std::back_inserter(points),
-      CGAL::parameters::point_map(Point_map()).
-      normal_map(Normal_map()))) {
+  if (!CGAL::IO::read_points(
+        filename,
+        std::back_inserter(points),
+        CGAL::parameters::point_map(Point_map()).
+        normal_map(Normal_map()))) {
 
     std::cerr << "Error: cannot read file cube.pwn!" << std::endl;
     return EXIT_FAILURE;

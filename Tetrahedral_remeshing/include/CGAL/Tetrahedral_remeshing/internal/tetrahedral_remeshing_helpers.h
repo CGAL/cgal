@@ -17,6 +17,7 @@
 
 #include <utility>
 #include <array>
+#include <iterator>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
@@ -24,6 +25,9 @@
 #include <CGAL/utility.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
+
+#include <boost/container/flat_set.hpp>
+#include <boost/container/small_vector.hpp>
 
 namespace CGAL
 {
@@ -64,7 +68,7 @@ const int indices_table[4][3] = { { 3, 1, 2 },
                                   { 3, 0, 1 },
                                   { 2, 1, 0 } };
 
-int indices(const int& i, const int& j)
+inline int indices(const int& i, const int& j)
 {
   CGAL_assertion(i < 4 && j < 3);
   if(i < 4 && j < 3)
@@ -94,7 +98,7 @@ typename Geom_traits::FT min_dihedral_angle(const Point& p,
   FT a = CGAL::abs(dihedral_angle(p, q, r, s, gt));
   FT min_dh = a;
 
-  a = CGAL::abs(dihedral_angle(p, r, q, s, gt));
+  a = CGAL::abs(dihedral_angle(p, r, s, q, gt));
   min_dh = (std::min)(a, min_dh);
 
   a = CGAL::abs(dihedral_angle(p, s, q, r, gt));
@@ -103,7 +107,7 @@ typename Geom_traits::FT min_dihedral_angle(const Point& p,
   a = CGAL::abs(dihedral_angle(q, r, p, s, gt));
   min_dh = (std::min)(a, min_dh);
 
-  a = CGAL::abs(dihedral_angle(q, s, p, r, gt));
+  a = CGAL::abs(dihedral_angle(q, s, r, p, gt));
   min_dh = (std::min)(a, min_dh);
 
   a = CGAL::abs(dihedral_angle(r, s, p, q, gt));
@@ -135,6 +139,214 @@ typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
                             c->vertex(1),
                             c->vertex(2),
                             c->vertex(3));
+}
+
+struct Dihedral_angle_cosine
+{
+  CGAL::Sign m_sgn;
+  double m_sq_num;
+  double m_sq_den;
+
+  Dihedral_angle_cosine(const CGAL::Sign& sgn, const double& sq_num, const double& sq_den)
+    : m_sgn(sgn)
+    , m_sq_num(sq_num)
+    , m_sq_den(sq_den)
+  {}
+
+  bool is_one() const
+  {
+    return m_sgn == CGAL::POSITIVE && m_sq_num == m_sq_den;
+  }
+  double signed_square_value() const
+  {
+    switch(m_sgn)
+    {
+    case CGAL::POSITIVE:
+      return m_sq_num / m_sq_den;
+    case CGAL::ZERO:
+      return 0.;
+    default:
+      CGAL_assertion(m_sgn == CGAL::NEGATIVE);
+      return -1. * m_sq_num / m_sq_den;
+    };
+  }
+
+  friend bool operator<(const Dihedral_angle_cosine& l,
+                        const Dihedral_angle_cosine& r)
+  {
+    //if numerators have different signs
+    if (l.m_sgn == CGAL::NEGATIVE && r.m_sgn != CGAL::NEGATIVE)
+      return true;
+
+    else if (l.m_sgn == CGAL::POSITIVE && r.m_sgn != CGAL::POSITIVE)
+      return false;
+
+    else if (l.m_sgn == CGAL::ZERO)
+      return (r.m_sgn == CGAL::POSITIVE);
+
+    //else numerators have the same sign
+    else if (l.m_sgn == CGAL::POSITIVE) //both angles are in [0; PI/2[
+    {
+      CGAL_assertion(r.m_sgn == CGAL::POSITIVE);
+
+      return  (l.m_sq_num * r.m_sq_den < r.m_sq_num* l.m_sq_den);
+    }
+    else //both angles are in [PI/2; PI]
+    {
+      CGAL_assertion(l.m_sgn != CGAL::POSITIVE);
+      CGAL_assertion(r.m_sgn != CGAL::POSITIVE);
+
+      return (l.m_sq_num * r.m_sq_den >= r.m_sq_num* l.m_sq_den);
+    }
+  }
+
+  friend bool operator<=(const Dihedral_angle_cosine& l,
+                         const Dihedral_angle_cosine& r)
+  {
+    if(l < r)
+      return true;
+    else
+      return l.m_sgn == r.m_sgn
+         &&  l.m_sq_num * r.m_sq_den == r.m_sq_num * l.m_sq_den;
+  }
+};
+
+template<typename Gt>
+Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
+                                         const typename Gt::Point_3& j,
+                                         const typename Gt::Point_3& k,
+                                         const typename Gt::Point_3& l,
+                                         const Gt& gt)
+{
+  CGAL_assertion(CGAL::orientation(i, j, k, l) != CGAL::NEGATIVE);
+
+  typename Gt::Construct_vector_3 vector = gt.construct_vector_3_object();
+  typename Gt::Construct_cross_product_vector_3 cross_product =
+    gt.construct_cross_product_vector_3_object();
+  typename Gt::Compute_scalar_product_3 scalar_product =
+    gt.compute_scalar_product_3_object();
+
+  typedef typename Gt::FT FT;
+  typedef typename Gt::Vector_3 Vector_3;
+  const Vector_3 ij = vector(i, j);
+  const Vector_3 ik = vector(i, k);
+  const Vector_3 il = vector(i, l);
+
+  const Vector_3 ijik = cross_product(ij, ik);
+  if(CGAL::NULL_VECTOR == ijik)
+    return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
+
+  const Vector_3 ilij = cross_product(il, ij);
+  if (CGAL::NULL_VECTOR == ilij)
+    return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
+
+  const FT num = scalar_product(ijik, ilij);
+  if(num == 0.)
+    return Dihedral_angle_cosine(CGAL::ZERO, 0.,1.);
+
+  const double sqden = CGAL::to_double(
+    scalar_product(ijik, ijik) * scalar_product(ilij, ilij));
+
+  return Dihedral_angle_cosine(CGAL::sign(num), CGAL::square(num), sqden);
+}
+
+template<typename Point, typename Geom_traits>
+Dihedral_angle_cosine max_cos_dihedral_angle(const Point& p,
+                                             const Point& q,
+                                             const Point& r,
+                                             const Point& s,
+                                             const Geom_traits& gt)
+{
+  Dihedral_angle_cosine a = cos_dihedral_angle(p, q, r, s, gt);
+  Dihedral_angle_cosine max_cos_dh = a;
+  if(max_cos_dh.is_one()) return max_cos_dh;
+
+  a = cos_dihedral_angle(p, r, s, q, gt);
+  if(max_cos_dh < a) max_cos_dh = a;
+  if (max_cos_dh.is_one()) return max_cos_dh;
+
+  a = cos_dihedral_angle(p, s, q, r, gt);
+  if (max_cos_dh < a) max_cos_dh = a;
+  if (max_cos_dh.is_one()) return max_cos_dh;
+
+  a = cos_dihedral_angle(q, r, p, s, gt);
+  if (max_cos_dh < a) max_cos_dh = a;
+  if (max_cos_dh.is_one()) return max_cos_dh;
+
+  a = cos_dihedral_angle(q, s, r, p, gt);
+  if (max_cos_dh < a) max_cos_dh = a;
+  if (max_cos_dh.is_one()) return max_cos_dh;
+
+  a = cos_dihedral_angle(r, s, p, q, gt);
+  if (max_cos_dh < a) max_cos_dh = a;
+
+  return max_cos_dh;
+}
+
+template<typename Tr>
+Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
+                                             const typename Tr::Vertex_handle v0,
+                                             const typename Tr::Vertex_handle v1,
+                                             const typename Tr::Vertex_handle v2,
+                                             const typename Tr::Vertex_handle v3)
+{
+  return max_cos_dihedral_angle(point(v0->point()),
+                                point(v1->point()),
+                                point(v2->point()),
+                                point(v3->point()),
+                                tr.geom_traits());
+}
+
+template<typename Tr>
+Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
+                                             const typename Tr::Cell_handle c)
+{
+  if (c->is_cache_valid())
+    return Dihedral_angle_cosine(CGAL::sign(c->sliver_value()),
+                                 CGAL::abs(c->sliver_value()), 1.);
+
+  Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr,
+                                                        c->vertex(0),
+                                                        c->vertex(1),
+                                                        c->vertex(2),
+                                                        c->vertex(3));
+  c->set_sliver_value(cos_dh.signed_square_value());
+  return cos_dh;
+}
+
+template<typename C3t3>
+bool is_peelable(const C3t3& c3t3,
+                 const typename C3t3::Cell_handle ch,
+                 std::array<bool, 4>& facets_on_surface)
+{
+  typedef typename C3t3::Triangulation::Geom_traits::FT FT;
+  typedef typename C3t3::Facet                          Facet;
+
+  if(!c3t3.is_in_complex(ch))
+    return false;
+
+  bool on_surface = false;
+  for (int i = 0; i < 4; ++i)
+  {
+    facets_on_surface[i] = !c3t3.is_in_complex(ch->neighbor(i));
+    on_surface = on_surface || facets_on_surface[i];
+  }
+  if(!on_surface)
+    return false;
+
+  FT area_on_surface = 0.;
+  FT area_inside = 0.;
+  for (int i = 0; i < 4; ++i)
+  {
+    Facet f(ch, i);
+    const FT facet_area = CGAL::approximate_sqrt(c3t3.triangulation().triangle(f).squared_area());
+    if(facets_on_surface[i])
+      area_on_surface += facet_area;
+    else
+      area_inside += facet_area;
+  }
+
+  return (area_inside < 1.5 * area_on_surface);
 }
 
 template<typename Tr>
@@ -563,6 +775,7 @@ bool is_outside(const typename C3t3::Edge & edge,
   return true; //all incident cells are outside or infinite
 }
 
+// is `v` part of the selection of cells that should be remeshed?
 template<typename C3t3, typename CellSelector>
 bool is_selected(const typename C3t3::Vertex_handle v,
                  const C3t3& c3t3,
@@ -609,6 +822,24 @@ bool is_internal(const typename C3t3::Edge& edge,
   } while (++circ != done);
 
   return true;
+}
+
+// is `e` part of the selection of cells that should be remeshed?
+template<typename C3T3, typename CellSelector>
+bool is_selected(const typename C3T3::Triangulation::Edge& e,
+                 const C3T3& c3t3,
+                 CellSelector cell_selector)
+{
+  typedef typename C3T3::Triangulation::Cell_circulator Cell_circulator;
+  Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  Cell_circulator done = circ;
+  do
+  {
+    if (cell_selector(circ))
+      return true;
+  } while (++circ != done);
+
+  return false;
 }
 
 template<typename Gt>
@@ -725,31 +956,35 @@ Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
                                       const C3t3& c3t3)
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
+  typedef boost::container::flat_set<Subdomain_index,
+    std::less<Subdomain_index>,
+    boost::container::small_vector<Subdomain_index, 30> > Set_of_subdomains;
 
-  std::vector<Subdomain_index> subdomains_v0;
-  incident_subdomains(v0, c3t3, std::back_inserter(subdomains_v0));
-  std::sort(subdomains_v0.begin(), subdomains_v0.end());
+  Set_of_subdomains subdomains_v0;
+  incident_subdomains(v0, c3t3,
+    std::inserter(subdomains_v0, subdomains_v0.begin()));
 
-  std::vector<Subdomain_index> subdomains_v1;
-  incident_subdomains(v1, c3t3, std::back_inserter(subdomains_v1));
-  std::sort(subdomains_v1.begin(), subdomains_v1.end());
+  Set_of_subdomains subdomains_v1;
+  incident_subdomains(v1, c3t3,
+    std::inserter(subdomains_v1, subdomains_v1.begin()));
 
   if (subdomains_v0.size() == subdomains_v1.size())
   {
-    for (unsigned int i = 0; i < subdomains_v0.size(); i++)
-      if (subdomains_v0[i] != subdomains_v1[i])
-        return DIFFERENT;
-    return EQUAL;
+    if(std::equal(subdomains_v0.begin(), subdomains_v0.end(), subdomains_v1.begin()))
+      return EQUAL;
+    else
+      return DIFFERENT;
   }
   else
   {
-    std::vector<Subdomain_index>
-    intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
-    typename std::vector<Subdomain_index>::iterator
+    boost::container::small_vector<Subdomain_index, 30>
+      intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
+    typename boost::container::small_vector<Subdomain_index, 30>::iterator
     end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
                                    subdomains_v1.begin(), subdomains_v1.end(),
                                    intersection.begin());
-    std::ptrdiff_t intersection_size = (end_it - intersection.begin());
+    std::ptrdiff_t intersection_size =
+      std::distance(intersection.begin(), end_it);
 
     if (subdomains_v0.size() > subdomains_v1.size()
         && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
@@ -806,15 +1041,16 @@ void get_edge_info(const typename C3t3::Edge& edge,
   //feature edges and feature vertices
   if (dim0 < 2 || dim1 < 2)
   {
+    if (!topology_test(edge, c3t3, cell_selector))
+    {
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+      nb_topology_test++;
+#endif
+      return;
+    }
+
     if (c3t3.is_in_complex(edge))
     {
-      if (!topology_test(edge, c3t3, cell_selector))
-      {
-#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
-        nb_topology_test++;
-#endif
-        return;
-      }
       const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
       const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
 
@@ -831,6 +1067,19 @@ void get_edge_info(const typename C3t3::Edge& edge,
           update_v0 = true;
         if (!c3t3.is_in_complex(v1))
           update_v1 = true;
+      }
+    }
+    else
+    {
+      if (dim0 == 2 && is_boundary_edge(v0, v1, c3t3, cell_selector))
+      {
+        update_v0 = true;
+        return;
+      }
+      else if(dim1 == 2 && is_boundary_edge(v0, v1, c3t3, cell_selector))
+      {
+        update_v1 = true;
+        return;
       }
     }
     return;
@@ -898,7 +1147,7 @@ void dump_edges(const Bimap& edges, const char* filename)
   std::ofstream ofs(filename);
   ofs.precision(17);
 
-  BOOST_FOREACH(typename Bimap::left_const_reference it, edges.left)
+  for(typename Bimap::left_const_reference it : edges.left)
   {
     ofs << "2 " << point(it.first.first->point())
         << " " << point(it.first.second->point()) << std::endl;
@@ -941,6 +1190,18 @@ void dump_polylines(const CellRange& cells, const char* filename)
       dump_facet(std::make_pair(*it, i), ofs);
   }
   ofs.close();
+}
+
+template<typename C3t3>
+void check_surface_patch_indices(const C3t3& c3t3)
+{
+  typedef typename C3t3::Vertex_handle Vertex_handle;
+  for (Vertex_handle v : c3t3.triangulation().finite_vertex_handles())
+  {
+    if (v->in_dimension() != 2)
+      continue;
+    CGAL_assertion(surface_patch_index(v, c3t3) != typename C3t3::Surface_patch_index());
+  }
 }
 
 template<typename Tr>
@@ -1334,17 +1595,19 @@ void dump_cells_with_small_dihedral_angle(const Tr& tr,
        cit != tr.finite_cells_end(); ++cit)
   {
     Cell_handle c = cit;
-    if ( c->subdomain_index() != Subdomain_index()
-         && cell_select(c)
-         && min_dihedral_angle(tr, c) < angle_bound)
+    if (c->subdomain_index() != Subdomain_index() && cell_select(c))
     {
-
-      cells.push_back(c);
-      indices.push_back(c->subdomain_index());
+      double dh = min_dihedral_angle(tr, c);
+      if (dh < angle_bound)
+      {
+        cells.push_back(c);
+        indices.push_back(c->subdomain_index());
+      }
     }
   }
   std::cout << "bad cells : " << cells.size() << std::endl;
   dump_cells<Tr>(cells, indices, filename);
+  dump_cells_off(cells, tr, "bad_cells.off");
 }
 
 template<typename Tr>
@@ -1408,7 +1671,7 @@ template<typename C3t3>
 void dump_binary(const C3t3& c3t3, const char* filename)
 {
   std::ofstream os(filename, std::ios::binary | std::ios::out);
-  CGAL::Mesh_3::save_binary_file(os, c3t3);
+  CGAL::IO::save_binary_file(os, c3t3);
   os.close();
 }
 

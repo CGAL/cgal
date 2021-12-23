@@ -17,22 +17,20 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
-#include <CGAL/disable_warnings.h>
-
-#include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_2.h>
+#include <CGAL/Convex_hull_traits_3.h>
+#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/Convex_hull_face_base_2.h>
+#include <CGAL/Convex_hull_vertex_base_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
-#include <CGAL/Convex_hull_traits_3.h>
-#include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
@@ -43,7 +41,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/is_iterator.h>
 
-#include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -360,6 +357,8 @@ public:
       }
     }
     catch (Uncertain_conversion_exception&){}
+    Protector protector(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     if (ek_plane_ptr==nullptr) {
       const typename Exact_K::Point_3 ep = to_EK(p);
       ek_plane_ptr = new Vector_plus_point<Exact_K>;
@@ -576,7 +575,8 @@ farthest_outside_point(Face_handle f, std::list<Point>& outside_set,
    Outside_set_iterator farthest_it =
           std::max_element(outside_set.begin(),
                            outside_set.end(),
-                           boost::bind(less_dist_to_plane, plane, _1, _2));
+                           [&less_dist_to_plane,&plane](const Point& p1, const Point& p2)
+                           { return less_dist_to_plane(plane, p1, p2); });
    return farthest_it;
 }
 
@@ -770,15 +770,15 @@ ch_quickhull_face_graph(std::list<typename Traits::Point_3>& points,
                         const Traits& traits)
 {
   typedef typename Traits::Point_3                            Point_3;
-  typedef typename Traits::Plane_3                                Plane_3;
-  typedef typename std::list<Point_3>::iterator           P3_iterator;
+  typedef typename Traits::Plane_3                            Plane_3;
+  typedef typename std::list<Point_3>::iterator               P3_iterator;
 
   typedef Triangulation_data_structure_2<
-    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<Traits> >,
-    Convex_hull_face_base_2<int, Traits> >                           Tds;
+    Convex_hull_vertex_base_2<int, GT3_for_CH3<Traits> >,
+    Convex_hull_face_base_2<int, Traits> >                    Tds;
 
-  typedef typename Tds::Vertex_handle                     Vertex_handle;
-  typedef typename Tds::Face_handle                     Face_handle;
+  typedef typename Tds::Vertex_handle                         Vertex_handle;
+  typedef typename Tds::Face_handle                           Face_handle;
 
   // found three points that are not collinear, so construct the plane defined
   // by these points and then find a point that has maximum distance from this
@@ -795,8 +795,10 @@ ch_quickhull_face_graph(std::list<typename Traits::Point_3>& points,
   // plane.
   std::pair<P3_iterator, P3_iterator> min_max;
   min_max = CGAL::min_max_element(points.begin(), points.end(),
-                                  boost::bind(compare_dist, plane, _1, _2),
-                                  boost::bind(compare_dist, plane, _1, _2));
+                                  [&compare_dist, &plane](const Point_3& p1, const Point_3& p2)
+                                  { return compare_dist(plane, p1, p2); },
+                                  [&compare_dist, &plane](const Point_3& p1, const Point_3& p2)
+                                  { return compare_dist(plane, p1, p2); });
   P3_iterator max_it;
   if (coplanar(*point1_it, *point2_it, *point3_it, *min_max.second))
   {
@@ -929,8 +931,10 @@ convex_hull_3(InputIterator first, InputIterator beyond,
      Less_dist less_dist = traits.less_distance_to_point_3_object();
      P3_iterator_pair endpoints =
       min_max_element(points.begin(), points.end(),
-                      boost::bind(less_dist, *points.begin(), _1, _2),
-                      boost::bind(less_dist, *points.begin(), _1, _2));
+                      [&points, &less_dist](const Point_3& p1, const Point_3& p2)
+                      { return less_dist(*points.begin(), p1, p2); },
+                      [&points, &less_dist](const Point_3& p1, const Point_3& p2)
+                      { return less_dist(*points.begin(), p1, p2); });
 
      typename Traits::Construct_segment_3 construct_segment =
             traits.construct_segment_3_object();
@@ -1032,8 +1036,10 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
     Less_dist less_dist = traits.less_distance_to_point_3_object();
     P3_iterator_pair endpoints =
     min_max_element(points.begin(), points.end(),
-                    boost::bind(less_dist, *points.begin(), _1, _2),
-                    boost::bind(less_dist, *points.begin(), _1, _2));
+                    [&points, &less_dist](const Point_3& p1, const Point_3& p2)
+                    { return less_dist(*points.begin(), p1, p2); },
+                    [&points, &less_dist](const Point_3& p1, const Point_3& p2)
+                    { return less_dist(*points.begin(), p1, p2); });
     Convex_hull_3::internal::add_isolated_points(*endpoints.first, polyhedron);
     Convex_hull_3::internal::add_isolated_points(*endpoints.second, polyhedron);
     return;
@@ -1102,7 +1108,5 @@ extreme_points_3(const InputRange& range, OutputIterator out)
 }
 
 } // namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CONVEX_HULL_3_H

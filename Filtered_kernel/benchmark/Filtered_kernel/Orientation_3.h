@@ -12,8 +12,8 @@
 
 
 #include <CGAL/Profile_counter.h>
-#include <CGAL/internal/Static_filters/Static_filter_error.h>
-#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <cmath>
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {

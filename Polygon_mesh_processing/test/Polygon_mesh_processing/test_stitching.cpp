@@ -11,9 +11,12 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
+#include <algorithm>
+#include <deque>
 #include <iostream>
 #include <iterator>
 #include <fstream>
+#include <set>
 #include <unordered_map>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
@@ -22,7 +25,7 @@ namespace params = CGAL::parameters;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename Mesh>
-void test_stitch_boundary_cycles(const char* fname,
+void test_stitch_boundary_cycles(const std::string fname,
                                  const std::size_t expected_n)
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
@@ -59,6 +62,9 @@ void test_stitch_boundary_cycles(const char* fname,
 
   assert(res == expected_n);
   assert(is_valid_polygon_mesh(mesh));
+
+  // Just to test the API
+  PMP::stitch_boundary_cycles(mesh, params::vertex_point_map(get(CGAL::vertex_point, mesh)));
 }
 
 template <typename Mesh>
@@ -66,15 +72,36 @@ void test_stitch_boundary_cycles()
 {
   test_stitch_boundary_cycles<Mesh>("data_stitching/boundary_cycle.off", 4);
   test_stitch_boundary_cycles<Mesh>("data_stitching/boundary_cycle_2.off", 2);
+  test_stitch_boundary_cycles<Mesh>("data_stitching/complex_hole.off", 3);
+  test_stitch_boundary_cycles<Mesh>("data_stitching/folded_cycle.off", 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename Mesh>
-void test_stitch_borders(const char* fname,
+typename boost::graph_traits<Mesh>::halfedge_descriptor get_border_halfedge(const int edge_id,
+                                                                            const Mesh& mesh)
+{
+  assert(edge_id < static_cast<int>(num_edges(mesh)));
+
+  // id is of the edge because it's easier to
+  typename boost::graph_traits<Mesh>::edge_iterator eit = edges(mesh).begin();
+  std::advance(eit, edge_id);
+
+  typename boost::graph_traits<Mesh>::halfedge_descriptor h = halfedge(*eit, mesh);
+  if(!is_border(h, mesh))
+    h = opposite(h, mesh);
+
+  assert(is_border(h, mesh));
+  return h;
+}
+
+template <typename Mesh>
+void test_stitch_borders(const std::string fname,
                          const std::size_t expected_n,
                          const bool per_cc = false,
-                         std::set<int> unconstrained_edges = { })
+                         std::set<int> unconstrained_edge_ids = { }, // constrained edges must appear in the output
+                         std::set<int> cycle_rep_ids = { }) // restrict stitching to cycles containing these edges
 {
   std::cout << "Testing stitch_borders(); file: " << fname << "..." << std::flush;
 
@@ -93,14 +120,30 @@ void test_stitch_borders(const char* fname,
   typedef PMP::internal::Halfedges_keeper_with_marked_edge_priority<Marked_edges, Mesh> Keeper;
 
   Marked_edges marks = get(Edge_property_tag(), mesh);
-  int id = 0;
+  int eid = 0;
   for(edge_descriptor e : edges(mesh))
-    put(marks, e, (unconstrained_edges.count(id++) == 0));
+    put(marks, e, (unconstrained_edge_ids.count(eid++) == 0));
 
   Keeper kpr(marks, mesh);
 
-  std::size_t res = PMP::stitch_borders(mesh, params::apply_per_connected_component(per_cc)
-                                                     .halfedges_keeper(kpr));
+  // Restrict to given cycles
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor     halfedge_descriptor;
+  std::set<halfedge_descriptor> cycle_reps;
+  for(const int id : cycle_rep_ids)
+    cycle_reps.insert(get_border_halfedge(id, mesh));
+
+  std::size_t res = -1;
+  if(cycle_reps.empty())
+  {
+    res = PMP::stitch_borders(mesh, params::apply_per_connected_component(per_cc)
+                                           .halfedges_keeper(kpr));
+  }
+  else
+  {
+    res = PMP::stitch_borders(cycle_reps, mesh, params::apply_per_connected_component(per_cc)
+                                                       .halfedges_keeper(kpr));
+  }
+
   std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
 
   for(edge_descriptor e : edges(mesh)) {
@@ -109,14 +152,26 @@ void test_stitch_borders(const char* fname,
 
   assert(res == expected_n);
   assert(is_valid_polygon_mesh(mesh));
+
+  // Just to test the API
+  Mesh dummy_mesh;
+  std::deque<halfedge_descriptor> empty_deque;
+  PMP::stitch_borders(empty_deque, dummy_mesh);
+  PMP::stitch_borders(dummy_mesh, params::apply_per_connected_component(true));
+  PMP::stitch_borders(dummy_mesh);
+  std::deque<std::pair<halfedge_descriptor,halfedge_descriptor>> empty_deque_pair;
+  PMP::stitch_borders(dummy_mesh, empty_deque_pair);
 }
 
 template <typename Mesh>
 void test_stitch_borders()
 {
-  test_stitch_borders<Mesh>("data_stitching/deg_border.off", 2, false /*per_cc*/, {9, 12} /*unconstrained edges*/);
+  test_stitch_borders<Mesh>("data_stitching/complex_hole.off", 3, false, {}, {83});
+  test_stitch_borders<Mesh>("data_stitching/pinched.off", 2, false, {130, 94});
+  test_stitch_borders<Mesh>("data_stitching/pinched.off", 2, false, {130, 94}, {94});
+  test_stitch_borders<Mesh>("data_stitching/pinched.off", 0, false, {}, {140}); // outer border, nothing to stitch
   test_stitch_borders<Mesh>("data_stitching/full_border.off", 4);
-  test_stitch_borders<Mesh>("data_stitching/full_border_quads.off", 4);
+  test_stitch_borders<Mesh>(CGAL::data_file_path("meshes/quads_to_stitch.off"), 4);
   test_stitch_borders<Mesh>("data_stitching/half_border.off", 2, false, {23, 15});
   test_stitch_borders<Mesh>("data_stitching/incidence_3.off", 3);
   test_stitch_borders<Mesh>("data_stitching/incoherent_patch_orientation.off", 1);
@@ -127,6 +182,13 @@ void test_stitch_borders()
   test_stitch_borders<Mesh>("data_stitching/non_manifold2.off", 0);
   test_stitch_borders<Mesh>("data_stitching/two_patches.off", 3);
   test_stitch_borders<Mesh>("data_stitching/nm_cubes.off", 4, true /*per cc*/);
+}
+
+template <typename Mesh>
+void test_local_stitch_borders()
+{
+  test_stitch_borders<Mesh>("data_stitching/pinched.off", 2, false, {130, 94});
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,7 +208,8 @@ void test_degenerate()
   CGAL::make_triangle(Point(0,0,0), Point(1,0,0), Point(0,1,0), tm);
   CGAL::make_triangle(Point(0,0,0), Point(1,0,0), Point(0,1,0), tm);
 
-  CGAL::Polygon_mesh_processing::stitch_borders(tm);
+  std::size_t res = CGAL::Polygon_mesh_processing::stitch_borders(tm);
+  assert(res == 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

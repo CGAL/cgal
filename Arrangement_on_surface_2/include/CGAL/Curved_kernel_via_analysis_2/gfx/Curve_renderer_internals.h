@@ -88,21 +88,12 @@ struct Pixel_2_
     Integer sub_x, sub_y; // subpixel coordinates relative to pixel's boundary
                           // (always 0 for pixels)
 
-    Pixel_2_& operator =(const Pixel_2_& pix) {
-#ifdef CGAL_CKVA_RENDER_WITH_REFINEMENT
-        memcpy(this, &pix, sizeof(int)*3 + sizeof(double)*2);
-#else
-        memcpy(this, &pix, sizeof(int)*3);
-#endif
-        sub_x = pix.sub_x;
-        sub_y = pix.sub_y;
-        return *this;
-    }
+    Pixel_2_& operator =(const Pixel_2_& pix) = default;
 
     bool operator ==(const Pixel_2_& pix) const {
-        if(memcmp(this, &pix, sizeof(int)*3))
-            return false;
-        return (sub_x == pix.sub_x && sub_y == pix.sub_y);
+        return (
+          x == pix.x && y == pix.y && level == pix.level &&
+          sub_x == pix.sub_x && sub_y == pix.sub_y);
     }
 };
 
@@ -297,17 +288,11 @@ public:
         const_iterator_1 poly_it = poly.end() - 1;
         der_iterator_1 der_it = der_coeffs.end() - 1;
         NT y(extract(*poly_it--) * (*der_it));
-        while((der_it--) != der_coeffs.begin()) {
+        while(der_it != der_coeffs.begin()) {
+            --der_it;
             y = y * x + extract(*poly_it--) * (*der_it);
         }
         return y;
-    }
-
-    //! \brief the same as \c evaluate but arguments are passed by value
-    //! (needed to substitute variables in bivariate polynomial)
-    inline static NT binded_eval(Poly_1 poly, NT x)
-    {
-        return evaluate(poly, x);
     }
 
     //! \brief evalutates a polynomial at certain x-coordinate
@@ -351,8 +336,10 @@ public:
         Rat_coercion_type r = rit->evaluate(x),
             yc = typename Coercion::Cast()(y);
 
-        while((rit--) != poly.begin())
+        while(rit != poly.begin()) {
+            --rit;
             r = r * yc + rit->evaluate(x);
+        }
         return r;
     }
 
@@ -555,7 +542,8 @@ bool get_range_AF1_1(int var,
     make_exact(x1);
     NT x0_abs = CGAL_ABS(x0), x1_abs = CGAL_ABS(x1);
 
-    while((der_it_2--) != der->begin()) {
+    while(der_it_2 != der->begin()) {
+        --der_it_2;
         // iterate through derivative coefficients
         der_it = der_it_2->end() - 1;
         der_begin = der_it_2->begin();
@@ -565,7 +553,9 @@ bool get_range_AF1_1(int var,
         if(low * up >= 0) {
             v1 = v2 = extract(*cache_it--) * (*der_it);
             // calculate the ith derivative at xa and xb
-            while((der_it--) != der_begin) {
+            while(der_it != der_begin) {
+                --der_it;
+
                 NT cc1 = extract(*cache_it--) * (*der_it);
                 v1 = v1 * l1 + cc1;
                 v2 = v2 * r1 + cc1;
@@ -575,7 +565,9 @@ bool get_range_AF1_1(int var,
 
             NT y0 = extract(*cache_it) * (*der_it), y1(0), e1(0);
             cache_it--;
-            while((der_it--)!=der_begin) {
+            while(der_it!=der_begin) {
+                --der_it;
+
                 e1 = x0_abs*e1 + x1_abs*(CGAL_ABS(y1) + CGAL_ABS(e1));
                 y1 = y1*x0 + x1*y0;
                 y0 = x0*y0 + extract(*cache_it) * (*der_it);
@@ -596,7 +588,8 @@ bool get_range_AF1_1(int var,
         begin = poly.begin();
 
         NT y0 = extract(*cache_it), y1(0), e1(0);
-        while((cache_it--) != begin) {
+        while(cache_it != begin) {
+            --cache_it;
             e1 = x0_abs*e1 + x1_abs*(CGAL_ABS(y1) + CGAL_ABS(e1));
             y1 = y1*x0 + x1*y0;
             y0 = x0*y0 + extract(*cache_it);
@@ -673,8 +666,8 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
     make_exact(x1);
     NT x0_abs = CGAL_ABS(x0), xsum_abs = CGAL_ABS(x1) + x0_abs;
 
-    while((der_it_2--)!=der->begin()) {
-
+    while(der_it_2!=der->begin()) {
+        --der_it_2;
         // iterate through derivative coefficients
         der_it = (*der_it_2).end()-1;
         der_begin = (*der_it_2).begin();
@@ -685,7 +678,9 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
         if(low * up >= 0) {
             v1 = v2 = extract(*cache_it--)* (*der_it);
             // calculate the ith derivative at xa and xb
-            while((der_it--) != der_begin) {
+            while(der_it != der_begin) {
+                --der_it;
+
                 NT cc1 = extract(*cache_it--)* (*der_it);
                 v1 = v1 * l1 + cc1;
                 v2 = v2 * r1 + cc1;
@@ -696,7 +691,9 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
 
             NT y0 = extract(*cache_it) * (*der_it), y1(0), z1(0), e1(0);
             cache_it--;
-            while((der_it--)!=der_begin) {
+            while(der_it != der_begin) {
+                --der_it;
+
                 e1 = xsum_abs * e1 + CGAL_ABS(x1 * z1);
                 z1 = x0*z1 + x1*y1;
                 y1 = y1*x0 + x1*y0;
@@ -726,7 +723,8 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
         cache_it = poly.end()-1;
         begin = poly.begin();
         NT y0 = extract(*cache_it), y1(0), z1(0), e1(0);
-        while((cache_it--) != begin) {
+        while(cache_it != begin) {
+            --cache_it;
             e1 = xsum_abs * e1 + CGAL_ABS(x1*z1);
             z1 = x0*z1 + x1*y1;
             y1 = y1*x0 + x1*y0;
@@ -861,8 +859,9 @@ bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key,
             eval1 = CGAL_SGN(low);
             eval2 = CGAL_SGN(up);
 
-        } else if(d == 0)
+        } else if(d == 0) {
             ;//Gfx_DETAILED_OUT("MAA bounds: sign change\n");
+        }
 
         if(d == 1 && check == 3) {
             first_der = (eval1*eval2 < 0);
@@ -874,8 +873,9 @@ bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key,
             return (eval1*eval2 < 0);
         }
         d--; der_it_2--;
-        if((eval_it--) == der_cache.begin())
+        if(eval_it == der_cache.begin())
             break;
+        eval_it--;
     }
     return true;
 }
@@ -906,10 +906,9 @@ void get_precached_poly(int var, const NT& key, int /* level */, Poly_1& poly)
 //     }
 
     if(not_cached||not_found) {
-        poly = Poly_1(::boost::make_transform_iterator(coeffs->begin(),
-                            boost::bind2nd(std::ptr_fun(binded_eval), key1)),
-                      ::boost::make_transform_iterator(coeffs->end(),
-                            boost::bind2nd(std::ptr_fun(binded_eval), key1)));
+        auto fn = [&key1](const Poly_1& poly){ return evaluate(poly, key1); };
+        poly = Poly_1(::boost::make_transform_iterator(coeffs->begin(), fn),
+                      ::boost::make_transform_iterator(coeffs->end(), fn));
         if(not_cached)
             return;
     // all available space consumed: drop the least recently used entry
@@ -928,13 +927,11 @@ void get_precached_poly(int var, const NT& key, int /* level */, Poly_1& poly)
 //! recomputed with modular or exact rational arithmetic
 int evaluate_generic(int var, const NT& c, const NT& key, const Poly_1& poly)
 {
-    NT x = key, y = c, c1;
+    NT c1;
 
-    if(var == CGAL_X_RANGE) {
-        x = c;
-        y = key;
+    if(var == CGAL_X_RANGE)
         c1 = x_min + c*pixel_w;
-    } else
+    else
         c1 = y_min + c*pixel_h;
 
     bool error_bounds_;
@@ -977,7 +974,7 @@ void precompute(const Polynomial_2& in) {
     Coeff_src max_c = max_coeff(in);
     /////// magic symbol ////////////
     // somehow relates to double precision fix
-    std::cerr << ' ';
+    // std::cerr << ' ';
 
     typedef Reduce_by<Rat_coercion_type, Coeff_src> Reduce_op;
     Transform<Rational_poly_2, Polynomial_2, Reduce_op> transform;
@@ -1038,7 +1035,7 @@ void precompute(const Polynomial_2& in) {
 }
 
 //! \brief activates the cache entry \c cache_id
-void select_cache_entry(int cache_id)
+void select_cache_entry(std::size_t cache_id)
 {
     coeffs_x = coeffs_x_ + cache_id;
     coeffs_y = coeffs_y_ + cache_id;

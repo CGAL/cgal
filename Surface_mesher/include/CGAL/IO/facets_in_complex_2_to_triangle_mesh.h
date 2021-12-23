@@ -1,7 +1,5 @@
 // Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
 // Copyright (c) 2017 GeometryFactory (France).
-
-
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -11,6 +9,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno, Pierre Alliez
+
 #ifndef CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 #define CGAL_FACETS_IN_COMPLEX_2_TO_TRIANGLE_MESH_H
 
@@ -19,7 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <map>
+#include <unordered_map>
 #include <stack>
 
 namespace CGAL{
@@ -58,6 +57,9 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
   VertexPointMap vpmap = get(boost::vertex_point, graph);
   const typename Tr::size_type number_of_facets = c2t3.number_of_facets();
   {
+    //used to set indices of vertices
+    std::unordered_map<Vertex_handle, int> V;
+
     // Finite vertices coordinates.
     Finite_facets_iterator fit = tr.finite_facets_begin();
     std::set<Facet> oriented_set;
@@ -65,7 +67,7 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
 
     CGAL_assertion_code(typename Tr::size_type nb_facets = 0; )
 
-        while (oriented_set.size() != number_of_facets) {
+    while (oriented_set.size() != number_of_facets) {
       while ( fit->first->is_facet_on_surface(fit->second) == false ||
               oriented_set.find(*fit) != oriented_set.end() ||
 
@@ -105,12 +107,17 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
           (top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 0))->point().z()
            + top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 1))->point().z()
            + top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 2))->point().z())/3.;
-      double z =
-          (fit->first->vertex(tr.vertex_triple_index(fit->second, 0))->point().z()
-           + fit->first->vertex(tr.vertex_triple_index(fit->second, 1))->point().z()
-           + fit->first->vertex(tr.vertex_triple_index(fit->second, 2))->point().z())/3.;
-      if (top_z < z)
+      Vertex_handle v0 = fit->first->vertex(tr.vertex_triple_index(fit->second, 0));
+      Vertex_handle v1 = fit->first->vertex(tr.vertex_triple_index(fit->second, 1));
+      Vertex_handle v2 = fit->first->vertex(tr.vertex_triple_index(fit->second, 2));
+      double z = (v0->point().z() + v1->point().z() + v2->point().z())/3.;
+      if (top_z < z){
         top_facet = fit;
+      }
+      // we just put them in the map and index them later
+      V[v0] = 0;
+      V[v1] = 0;
+      V[v2] = 0;
     }
     // - orient the facet with max z towards +Z axis
     Vertex_handle v0 = top_facet->first->vertex(tr.vertex_triple_index(top_facet->second, 0));
@@ -120,8 +127,6 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
     const Vector Z(0, 0, 1);
     bool regular_orientation = (Z * normal >= 0);
 
-    //used to set indices of vertices
-    std::map<Vertex_handle, int> V;
     int inum = 0;
     //add vertices
     std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> vertices;
@@ -129,17 +134,19 @@ void facets_in_complex_2_to_triangle_mesh(const C2T3& c2t3, TriangleMesh& graph)
         vit != tr.finite_vertices_end();
         ++vit)
     {
-
-      typename boost::graph_traits<TriangleMesh>::vertex_descriptor v = add_vertex(graph);
-      vertices.push_back(v);
-      put(vpmap,
-          v,
-           Point_3(
-            vit->point().x(),
-            vit->point().y(),
-            vit->point().z())
-          );
-      V.insert(std::make_pair(vit, inum++));
+      auto it = V.find(vit);
+      if(it != V.end()){
+        typename boost::graph_traits<TriangleMesh>::vertex_descriptor v = add_vertex(graph);
+        vertices.push_back(v);
+        put(vpmap,
+            v,
+            Point_3(
+                    vit->point().x(),
+                    vit->point().y(),
+                    vit->point().z())
+            );
+        it->second = inum++;
+      }
     }
     //add faces
     for(typename std::set<Facet>::const_iterator fit =

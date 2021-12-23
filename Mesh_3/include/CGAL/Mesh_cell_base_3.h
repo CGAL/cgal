@@ -20,7 +20,7 @@
 
 // #define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_cell_base_3.h>"
 // #define CGAL_REPLACEMENT_HEADER "<CGAL/Compact_mesh_cell_base_3.h>"
-// #include <CGAL/internal/deprecation_warning.h>
+// #include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -248,7 +248,7 @@ operator>>(std::istream &is,
            Mesh_cell_base_3<GT, MT, Cb> &c)
 {
   typename Mesh_cell_base_3<GT, MT, Cb>::Subdomain_index index;
-  if(is_ascii(is))
+  if(IO::is_ascii(is))
     is >> index;
   else
     read(is, index);
@@ -263,7 +263,7 @@ std::ostream&
 operator<<(std::ostream &os,
            const Mesh_cell_base_3<GT, MT, Cb> &c)
 {
-  if(is_ascii(os))
+  if(IO::is_ascii(os))
      os << c.subdomain_index();
   else
     write(os, c.subdomain_index());

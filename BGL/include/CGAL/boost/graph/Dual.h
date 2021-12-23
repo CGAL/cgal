@@ -56,18 +56,18 @@ public:
   /*! The underlying primal type. */
   typedef Primal_ Primal;
 
-  /*! Construct a Dual from a given primal. */
+  /*! constructs a Dual from a given primal. */
   Dual(const Primal& primal)
     : primal_(primal) {}
 
-  /*! Returns the underlying primal. */
+  /*! returns the underlying primal. */
   const Primal& primal() const
   { return primal_; }
 };
 
 
 /*!
-  Construct a `Dual` from a given `primal`.
+  constructs a `Dual` from a given `primal`.
   \relates CGAL::Dual
  */
 template<typename Primal>
@@ -128,7 +128,7 @@ struct Dual_vertex_index_pmap{
   typedef typename boost::graph_traits<G>::face_descriptor key_type;
   typedef typename Property_map::value_type value_type;
   typedef typename Property_map::reference reference;
-  typedef typename Property_map::category category;
+  typedef boost::readable_property_map_tag category;
 
   Dual_vertex_index_pmap(const G& g)
     : m_pmap( get(boost::face_index, g) )
@@ -147,7 +147,7 @@ struct Dual_face_index_pmap{
   typedef typename boost::graph_traits<G>::vertex_descriptor key_type;
   typedef typename Property_map::value_type value_type;
   typedef typename Property_map::reference reference;
-  typedef typename Property_map::category category;
+  typedef boost::readable_property_map_tag category;
 
   Dual_face_index_pmap(const G& g)
     : m_pmap( get(boost::vertex_index, g) )

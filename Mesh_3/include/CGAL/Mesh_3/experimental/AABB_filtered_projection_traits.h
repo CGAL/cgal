@@ -11,7 +11,7 @@
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb, Laurent Rineau
 //
-// File adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
+// File adapted from <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 //
 
 #ifndef CGAL_MESH_3_AABB_FILTERED_PROJECTION_TRAITS_H
@@ -22,8 +22,8 @@
 #include <CGAL/property_map.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/internal/AABB_tree/AABB_node.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_node.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 
 namespace CGAL {
 namespace Mesh_3 {
@@ -48,7 +48,7 @@ class Filtered_projection_traits
 
   typedef typename boost::property_traits<IndexPropertyMap>::value_type Index_type;
 
-  typedef std::set<typename boost::remove_const<Index_type>::type> Set_of_indices;
+  typedef std::set<Index_type> Set_of_indices;
 
 public:
   template <typename IndexToIgnoreIterator>

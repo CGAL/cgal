@@ -26,7 +26,7 @@
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/internal/Mesh_3/helpers.h>
+#include <CGAL/Mesh_3/internal/helpers.h>
 
 #include <CGAL/enum.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -196,8 +196,8 @@ public:
              corresponding input polyhedral surface.
   @param indices_end past the end iterator on the pairs of subdomain indices
 
-  @tparam InputPolyhedraIterator model of `InputIterator`, holding `Polyhedron`'s
-  @tparam InputPairOfSubdomainIndicesIterator model of `InputIterator`, holding
+  @tparam InputPolyhedraIterator model of `ForwardIterator`, holding `Polyhedron`'s
+  @tparam InputPairOfSubdomainIndicesIterator model of `ForwardIterator`, holding
               `std::pair<Subdomain_index, Subdomain_index>`
 
   @pre `std::distance(begin, end) == std::distance(indices_begin, indices_end)`

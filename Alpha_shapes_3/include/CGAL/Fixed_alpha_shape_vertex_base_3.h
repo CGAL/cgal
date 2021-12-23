@@ -19,7 +19,7 @@
 
 #include <utility>
 #include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/internal/Classification_type.h>
+#include <CGAL/Alpha_shapes_3/internal/Classification_type.h>
 
 namespace CGAL {
 

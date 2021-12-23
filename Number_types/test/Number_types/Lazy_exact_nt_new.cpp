@@ -96,9 +96,9 @@ void test_lazy_exact_nt() {
     {  // see also  Coercion_traits_test.C
 #ifdef CGAL_USE_LEDA
 #ifdef CGAL_USE_CORE
-        CGAL_assertion_code(typedef CGAL::Lazy_exact_nt<leda_integer> T1;)
-        CGAL_assertion_code(typedef CGAL::Lazy_exact_nt<CORE::Expr> T2;)
-        CGAL_assertion_code(typedef CGAL::Coercion_traits<T1, T2> CT;)
+        typedef CGAL::Lazy_exact_nt<leda_integer> T1;
+        typedef CGAL::Lazy_exact_nt<CORE::Expr> T2;
+        typedef CGAL::Coercion_traits<T1, T2> CT;
         CGAL_static_assertion((boost::is_same< typename CT::Are_implicit_interoperable,CGAL::Tag_false>::value));
         CGAL_static_assertion((boost::is_same< typename CT::Are_explicit_interoperable,CGAL::Tag_false>::value));
 #endif
@@ -115,4 +115,3 @@ int main() {
 #endif
   return 0;
 }
-

@@ -17,7 +17,7 @@
 //         they may be wrong now.
 
 /*! \file CGAL/Polynomial.h
- *  \brief Defines class CGAL::Polynomial.
+ *  \brief defines class CGAL::Polynomial.
  *
  *  Polynomials in one variable (or more, by recursion)
  */
@@ -130,7 +130,7 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
   operations (e.g. for symbolic computation with an infimaximal \e x ),
   and various algebraic operations (gcd, resultant).
 
-  \c CGAL:Polynomial offers a full set of algebraic operators, i.e.
+  \c CGAL::Polynomial offers a full set of algebraic operators, i.e.
   binary +, -, *, / as well as +=, -=, *=, /=; not only for polynomials
   but also for a polynomial and a number of the coefficient type.
   (The / operator must only be used for integral divisions, i.e.
@@ -538,7 +538,7 @@ public:
       y+=abs(pow(x,d)*to_Interval(this->ptr()->coeff[d]));
       return y;
       } */
-    /*! \brief return the sign of the leading coefficient
+    /*! \brief returns the sign of the leading coefficient
      *
      *  For univariate real polynomials, this is the sign
      *  of the limit process \e x --> oo.
@@ -829,7 +829,7 @@ public:
      * of <I>x<SUP>i</SUP></I>. Missing coefficients are set to zero.
      * Whitespace is ignored.
      * The format of the coefficients must be understandable for
-     * <TT> is >> iformat(ai) </TT>.
+     * <TT> is >> IO::iformat(ai) </TT>.
      *
      * Example: A \c CGAL::Polynomial<int> with a value of
      * 4<I>x</I><SUP>2</SUP> - 1 has to be written as
@@ -1223,7 +1223,7 @@ Polynomial<NT> division(const Polynomial<NT>& p1,
  */
 template <class NT>
 std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p) {
-  switch(CGAL::get_mode(os)) {
+  switch(CGAL::IO::get_mode(os)) {
   case CGAL::IO::PRETTY:
     p.output_maple(os); break;
   default:
@@ -1242,7 +1242,7 @@ std::ostream& operator << (std::ostream& os, const Polynomial<NT>& p) {
  */
 template <class NT>
 std::istream& operator >> (std::istream& is, Polynomial<NT>& p) {
-  CGAL_precondition(!CGAL::is_pretty(is));
+  CGAL_precondition(!CGAL::IO::is_pretty(is));
   p = Polynomial<NT>::input_ascii(is);
   return is;
 }
@@ -1253,12 +1253,12 @@ void print_maple_monomial(std::ostream& os, const NT& coeff,
                           const std::string& var, int expn)
 {
   if (expn == 0 || coeff != NT(1)) {
-    os << CGAL::oformat(coeff, Parens_as_product_tag());
+    os << CGAL::IO::oformat(coeff, Parens_as_product_tag());
     if (expn >= 1) os << "*";
   }
   if (expn >= 1) {
     os << var;
-    if (expn > 1) os << "^" << CGAL::oformat(expn);
+    if (expn > 1) os << "^" << CGAL::IO::oformat(expn);
   }
 }
 
@@ -1291,12 +1291,12 @@ void Polynomial<NT>::output_maple(std::ostream& os) const {
 template <class NT>
 void Polynomial<NT>::output_ascii(std::ostream &os) const {
   const Polynomial<NT> &p = *this;
-  if (p.is_zero()) { os << "P[0 (0," << oformat(NT(0)) << ")]"; return; }
+  if (p.is_zero()) { os << "P[0 (0," << IO::oformat(NT(0)) << ")]"; return; }
 
-  os << "P[" << oformat(p.degree());
+  os << "P[" << IO::oformat(p.degree());
   for (int i = 0; i <= p.degree(); i++) {
-    if (p[i] != NT(0)) os << "(" << CGAL::oformat(i) << ","
-                          << CGAL::oformat(p[i]) << ")";
+    if (p[i] != NT(0)) os << "(" << CGAL::IO::oformat(i) << ","
+                          << CGAL::IO::oformat(p[i]) << ")";
   }
   os << "]";
 }
@@ -1371,7 +1371,7 @@ Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
 
   internal::swallow(is, 'P');
   internal::swallow(is, '[');
-  is >> CGAL::iformat(degr);
+  is >> CGAL::IO::iformat(degr);
   if (degr < 0) {
     CGAL_error_msg( "input error: negative degree of polynomial specified");
   }
@@ -1381,12 +1381,12 @@ Polynomial<NT> Polynomial<NT>::input_ascii(std::istream &is) {
   do is.get(c); while (isspace(c));
   do {
     if (c != '(') CGAL_error_msg( "input error: ( expected");
-    is >> CGAL::iformat(i);
+    is >> CGAL::IO::iformat(i);
     if (!(i >= 0 && i <= degr && p[i] == NT(0))) {
       CGAL_error_msg( "input error: invalid exponent in polynomial");
     };
     internal::swallow(is, ',');
-    is >> CGAL::iformat(p.coeff(i));
+    is >> CGAL::IO::iformat(p.coeff(i));
     internal::swallow(is, ')');
     do is.get(c); while (isspace(c));
   } while (c != ']');

@@ -27,6 +27,7 @@
 
 namespace CGAL {
 
+namespace IO {
 
 /*!
   \ingroup PkgStreamSupportRef
@@ -39,8 +40,6 @@ namespace CGAL {
   The alpha parameter (representing transparency) is often ignored and
   left to its default value (255 = no transparency), which is why we
   often refer to the <I>rgb-value</I> of the color.
-
-  \sa `CGAL::Geomview_stream`
 
 */
 
@@ -221,8 +220,6 @@ public:
   /*!
     replaces the rgb values of the colors by the conversion to rgb of
     the hsv values given as parameters.
-
-    Double values given as parameters should take range between 0 and 1.
   */
   void set_hsv (double hue,
                 double saturation,
@@ -232,8 +229,8 @@ public:
     saturation /= 100.;
     value /= 100.;
     double C = value*saturation;
-    int hh = (int)(hue/60.);
-    double X = C * (1-std::abs (hh % 2 - 1));
+    double hh = (hue/60.);
+    double X = C * (1-std::abs(std::fmod(hh, 2) - 1));
     double r = 0, g = 0, b = 0;
 
     if( hh>=0 && hh<1 )
@@ -352,6 +349,22 @@ inline Color white() { return Color(255,255,255); }
 */
 inline Color yellow() { return Color(255,255,0); }
 
+} //namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::Color;
+using IO::black;
+using IO::blue;
+using IO::deep_blue;
+using IO::gray;
+using IO::green;
+using IO::orange;
+using IO::purple;
+using IO::red;
+using IO::violet;
+using IO::white;
+using IO::yellow;
+#endif
 
 } //namespace CGAL
 

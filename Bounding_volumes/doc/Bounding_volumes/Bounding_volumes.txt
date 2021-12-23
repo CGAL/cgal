@@ -9,37 +9,16 @@ namespace CGAL {
 \authors Kaspar Fischer, Bernd G&auml;rtner, Thomas Herrmann, Michael Hoffmann, and Sven Sch&ouml;nherr
 
 \image html ball.png
-\image latex ball.png
 
 This chapter describes algorithms which for a given point set compute
 the <i>best</i> circumscribing object from a specific
 class. If the class consists of all spheres in \f$ d\f$-dimensional
 Euclidean space and <i>best</i> is defined as having smallest radius,
-then we obtain the smallest enclosing sphere problem already mentioned
-above.
+then we obtain the smallest enclosing sphere.
 
-In the following example a smallest enclosing circle
-(`Min_circle_2<Traits>`) is constructed from points
-on a line and written to standard output. The example
-shows that it is advisable to switch on random shuffling
-in order to deal with a <i>bad</i> order of the input points.
 
-\cgalExample{Min_circle_2/min_circle_2.cpp}
 
-Other classes for which we provide solutions are ellipses
-(`Min_ellipse_2<Traits>`), rectangles
-(`min_rectangle_2()`), parallelograms
-(`min_parallelogram_2()`) and strips (`min_strip_2()`)
-in the plane, with appropriate optimality criteria. For arbitrary
-dimensions we provide smallest enclosing spheres for points
-(`Min_sphere_d<Traits>`) and spheres for spheres
-(`Min_sphere_of_spheres_d<Traits>`), smallest enclosing
-annuli (`Min_annulus_d<Traits>`), and approximate
-minimum-volume enclosing ellipsoid with user-specified
-approximation ratio (`Approximate_min_ellipsoid_d<Traits>`).
-
-\image html annulus.png
-\image latex annulus.png
+\section SectBoundingIntroduction Introduction
 
 Bounding volumes can be used to obtain simple approximations of
 complicated objects. For example, consider the problem of deciding
@@ -60,13 +39,74 @@ geometric properties of objects. For example, the smallest enclosing
 annulus of a point set can be used to test whether a set of points is
 approximately cospherical. Here, the width of the annulus (or its
 area, or still another criterion that we use) is a good measure for
-this property. The largest area triangle is for example used in
-heuristics for matching archaeological aerial photographs. Largest
-perimeter triangles are used in scoring cross country soaring flights,
-where the goal is basically to fly as far as possible, but still
-return to the departure airfield. To score simply based on the total
-distance flown is not a good measure, since circling in thermals
-allows to increase it easily.
+this property.
+
+\section SectBoundingSphere Bounding Spheres in dD
+
+We provide the class `Min_sphere_of_spheres_d<Traits>` for arbitrary dimensions
+to compute the smallest enclosing spheres for points as well as for spheres.
+The dimension as well as the input type depend on the chosen traits class.
+
+The following example is for 2D points
+
+\cgalExample{Min_circle_2/min_circle_2.cpp}
+
+The example for 2D circles as input looks rather similar.
+
+
+\cgalExample{Min_sphere_of_spheres_d/min_sphere_of_spheres_d_2.cpp}
+
+
+
+\subsection  SectBoundingSphereHomogeneous Bounding Spheres for the Homogeneous Kernel
+
+In the previous section we saw that we used `Min_sphere_of_spheres_d`
+to compute the smallest circle for points. This package also provides
+the classes `Min_circle_2` and `Min_sphere_d`, but they are slower,
+and they should only be used in case of homogeneous coordinates which
+are not supported by `Min_sphere_of_spheres_d`.
+
+In the following example a smallest enclosing circle
+(`Min_circle_2<Traits>`) is constructed from points
+on a line and written to standard output. The example
+shows that it is advisable to switch on random shuffling
+in order to deal with a <i>bad</i> order of the input points.
+
+\cgalExample{Min_circle_2/min_circle_homogeneous_2.cpp}
+
+
+\section SectBoundingAnnulus Bounding Annulus in dD
+
+We provide the class `Min_annulus_d<Traits>` for arbitrary dimensions
+to compute the smalles enclosing annulus for a set of points.
+In 2D the annulus consists of two concentric circles, in 3D of
+two concentric spheres.
+
+\image html annulus.png
+
+
+
+
+\section SectBounding2D Various Bounding Areas in 2D
+
+Other classes for which we provide solutions are ellipses
+(`Min_ellipse_2<Traits>`), rectangles
+(`min_rectangle_2()`), parallelograms
+(`min_parallelogram_2()`) and strips (`min_strip_2()`)
+in the plane, with appropriate optimality criteria.
+
+
+\section SectBoundingEllipsoid Approximate Bounding Ellipsoid in dD
+
+While this package provides an exact smallest 2D ellipse, it also
+provides the class `Approximate_min_ellipsoid_d<Traits>` to compute
+an approximate minimum-volume enclosing ellipsoid with user-specified
+approximation ratio.
+
+
+
+
+\section SectBoundingPcenter Rectangular P-Center
 
 Bounding volumes also define geometric "center points" of objects.
 For example, if two objects are to be matched (approximately), one
@@ -81,8 +121,6 @@ planar point set with between two and four minimal boxes
 three boxes; the center points are shown in red.
 
 \image html pcenter.png
-\image latex pcenter.png
 
 */
 } /* namespace CGAL */
-

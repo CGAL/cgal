@@ -1,0 +1,51 @@
+\documentclass[11pt]{report}
+\input{header}
+\pagestyle{empty}
+\begin{document}
+\psscalebox{1.8}{\arrset{1}%
+  \begin{pspicture}(-1,-1)(7,6)
+    \arraxes(0,0)(-1,-1)(7,6)
+    \arrMainVertex(0,2){a}
+    %
+    \arrPolygon(3,0)(5,5)(1,0)(5,3)(5,5)(5,0)(6,0)(0,2){lightred}
+    %
+    \arrMainVertex(1,0){b}
+    \arrMainVertex(2,4){c}
+    \arrMainVertex(3,0){d}
+    \arrMainVertex(5,0){e}
+    \arrMainVertex(5,3){f}
+    \arrMainVertex(5,5){g}
+    \arrMainVertex(6,0){h}
+    %
+    \arrEmptyVertex(5,0.33){i}
+    \arrEmptyIntersectionVertex(0,2)(6,0)(1,0)(2,4){j}
+    \arrEmptyIntersectionVertex(0,2)(6,0)(3,0)(5,5){k}
+    \arrEmptyIntersectionVertex(0,2)(6,0)(1,0)(5,3){l}
+    \arrEmptyIntersectionVertex(0,2)(6,0)(1,0)(5,3){m}
+    \arrEmptyIntersectionVertex(1,0)(5,3)(3,0)(5,5){n}
+    %
+    \ncline[linecolor=blue]{a}{j}\Bput[1pt]{$s_4$}
+    \ncline[linecolor=blue]{j}{l}
+    \ncline[linecolor=blue]{l}{k}
+    \ncline[linecolor=blue]{k}{i}
+    \ncline[linecolor=blue]{i}{h}
+    %
+    \ncline[linecolor=blue]{b}{j}
+    \ncline[linecolor=blue]{j}{c}\Aput[1pt]{$s_1$}
+    %
+    \ncline[linecolor=blue]{b}{l}\Bput[1pt]{$s_3$}
+    \ncline[linecolor=blue]{l}{n}
+    \ncline[linecolor=blue]{n}{f}
+    %
+    \ncline[linecolor=blue]{d}{k}
+    \ncline[linecolor=blue]{k}{n}
+    \ncline[linecolor=blue]{n}{g}\Aput[1pt]{$s_5$}
+    %
+    \ncline[linecolor=blue]{e}{i}
+    \ncline[linecolor=blue]{i}{f}\Bput[1pt]{$s_2$}
+    \ncline[linecolor=blue]{f}{g}
+    %
+    \arrCrossVertex(4,1){o}\uput[0]{0}(4,1){$q$}
+  \end{pspicture}
+}
+\end{document}

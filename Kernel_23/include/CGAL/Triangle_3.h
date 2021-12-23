@@ -82,13 +82,13 @@ public:
   }
 
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Triangle_3, int )>::type
+  decltype(auto)
   vertex(int i) const
   {
     return R().construct_vertex_3_object()(*this, i);
   }
 
-  typename cpp11::result_of<typename R::Construct_vertex_3( Triangle_3, int )>::type
+  decltype(auto)
   operator[](int i) const
   {
     return vertex(i);
@@ -117,7 +117,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Triangle_3<R> &t)
 {
-    switch(get_mode(os)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << t[0] << ' ' << t[1] << ' ' << t[2];
     case IO::BINARY :

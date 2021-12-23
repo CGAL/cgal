@@ -28,7 +28,9 @@
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
+#include <boost/container/flat_set.hpp>
 
+#include <array>
 #include <set>
 #include <type_traits>
 #include <vector>
@@ -55,6 +57,20 @@ struct Default_PS_to_PM_visitor
     std::cout << "Face[" << fid << "] gives faces " << f << std::endl;
   }
 };
+
+template <typename PM_Point, typename PS_Point>
+PM_Point convert_to_pm_point(const PS_Point& p)
+{
+  CGAL_static_assertion((std::is_convertible<PS_Point, PM_Point>::value));
+  return PM_Point(p);
+}
+
+// just for backward compatibility reasons
+template <typename PM_Point, typename PS_FT>
+PM_Point convert_to_pm_point(const std::array<PS_FT, 3>& p)
+{
+  return PM_Point(p[0], p[1], p[2]);
+}
 
 template <typename PointRange,
           typename PolygonRange>
@@ -86,9 +102,7 @@ public:
   {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
 
-    CGAL_assertion_code(typedef typename boost::property_traits<VertexPointMap>::value_type     VPM_Point;)
-    CGAL_assertion_code(typedef typename boost::property_traits<PointMap>::value_type           Point;)
-    CGAL_static_assertion((std::is_convertible<Point, VPM_Point>::value));
+    typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
 
     reserve(pmesh, static_cast<typename boost::graph_traits<PolygonMesh>::vertices_size_type>(m_points.size()),
             static_cast<typename boost::graph_traits<PolygonMesh>::edges_size_type>(2*m_polygons.size()),
@@ -114,7 +128,7 @@ public:
         continue;
 
       vertices[i] = add_vertex(pmesh);
-      put(vpm, vertices[i], get(pm, m_points[i]));
+      put(vpm, vertices[i], convert_to_pm_point<PM_Point>(get(m_pm, m_points[i]));
       visitor.on_vertex_creation(i, vertices[i], pmesh);
     }
 
@@ -138,8 +152,6 @@ public:
   void operator()(PolygonMesh& pmesh,
                   const bool insert_isolated_vertices = true)
   {
-    typedef typename CGAL::GetPointMap<PointRange>::const_type Point_map;
-
     return operator()(pmesh, get(CGAL::vertex_point, pmesh), insert_isolated_vertices);
   }
 
@@ -166,8 +178,8 @@ private:
 * boundaries of the polygons provided in `polygons`.
 *
 * @tparam PolygonRange a model of the concept `RandomAccessContainer`
-* whose value_type is a model of the concept `RandomAccessContainer`
-* whose value_type is `std::size_t`.
+* whose `value_type` is a model of the concept `RandomAccessContainer`
+* whose `value_type` is `std::size_t`.
 *
 * @param polygons each element in the range describes a polygon
 * using the indices of the vertices.
@@ -186,14 +198,16 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   //check there is no duplicated ordered edge, and
   //check there is no polygon with twice the same vertex
   std::set<std::pair<V_ID, V_ID> > edge_set;
+  boost::container::flat_set<V_ID> polygon_vertices;
   V_ID max_id = 0;
+
   for(const Polygon& polygon : polygons)
   {
     std::size_t nb_edges = boost::size(polygon);
     if(nb_edges < 3)
       return false;
 
-    std::set<V_ID> polygon_vertices;
+    polygon_vertices.clear();
     V_ID prev = *std::prev(boost::end(polygon));
     for(V_ID id : polygon)
     {
@@ -239,32 +253,39 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * whose value type is the point type
 * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose
 * value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
-* @tparam NamedParameters_PS a sequence of \ref pmp_namedparameters "Named Parameters"
-* @tparam NamedParameters_PM a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters_PS a sequence of \ref bgl_namedparameters "Named Parameters"
+* @tparam NamedParameters_PM a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param points points of the soup of polygons
-* @param polygons each element in the vector describes a polygon using the indices of the points in `points`
+* @param polygons each element in the range describes a polygon using the indices of the points in `points`
 * @param out the polygon mesh to be built
-* @param np_ps optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np_ps an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamBegin{point_map}
-*     a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
-*     of the vertex point map associated to the polygon mesh. If this parameter is omitted, `CGAL::Identity_property_map` is used.
-*   \cgalParamEnd
-*   \cgalParamBegin{visitor} a class model of `PMPPS_to_PMVisitor`
-*                            that is used to track the creation of new points.
-*   \cgalParamEnd
+*   \cgalParamNBegin{point_map}
+*     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+*     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
+*                    of the vertex point map associated to the polygon mesh}
+*     \cgalParamDefault{`CGAL::Identity_property_map`}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{visitor}
+*     \cgalParamDescription{a visitor used to track the creation of new vertices and faces}
+*     \cgalParamType{a class model of `@TODO`}
+*     \cgalParamDefault{`Default_PS_to_PM_visitor<PolygonMesh>`}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* @param np_pm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np_pm an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamBegin{vertex_point_map}
-*     a model of `WritablePropertyMap`, the property map with the points associated to the vertices of `out`.
-*     If this parameter is omitted, an internal property map for
-*     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-*   \cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `out`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, out)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `PolygonMesh`.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
@@ -303,6 +324,19 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   converter(out, vpm, pm, visitor);
 }
 
+/// \cond SKIP_IN_MANUAL
+
+template<typename PolygonMesh,
+         typename PointRange, typename PolygonRange,
+         typename NamedParameters_PS>
+void polygon_soup_to_polygon_mesh(const PointRange& points,
+                                  const PolygonRange& polygons,
+                                  PolygonMesh& out,
+                                  const NamedParameters_PS& np_ps)
+{
+  return polygon_soup_to_polygon_mesh(points, polygons, out, np_ps, parameters::all_default());
+}
+
 template<typename PolygonMesh, typename PointRange, typename PolygonRange>
 void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const PolygonRange& polygons,
@@ -310,6 +344,8 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
 {
   return polygon_soup_to_polygon_mesh(points, polygons, out, parameters::all_default(), parameters::all_default());
 }
+
+/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

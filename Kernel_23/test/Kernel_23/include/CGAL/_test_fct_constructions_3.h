@@ -69,6 +69,7 @@ _test_fct_constructions_3(const R& r)
   assert( CGAL::midpoint( p110, p001) == p);
   assert( CGAL::midpoint( p010, p101) == p);
   assert( CGAL::midpoint( p100, p011) == p);
+  assert( CGAL::midpoint( Segment{p100, p011}) == p);
 
   // circumcenter
   assert( CGAL::circumcenter( p111, p001, p010, p000) == p);
@@ -130,6 +131,8 @@ _test_fct_constructions_3(const R& r)
   assert( r.construct_projected_point_3_object()(ray, Point(-1,0,0)) == Point(0,0,0));
   assert( r.construct_projected_point_3_object()(s, Point(-1,0,0)) == Point(0,0,0));
   assert( r.construct_projected_point_3_object()(s, Point(2,0,0)) == Point(1,1,0));
+  assert( r.construct_projected_point_3_object()(Point(0,0,0), Point(2,0,0)) == Point(0,0,0));
+
   return true;
 }
 

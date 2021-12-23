@@ -34,19 +34,7 @@
 
 #include <CGAL/bounding_box.h>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include <CGAL/Real_timer.h>
-#include <CGAL/demangle.h>
-
-#ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/task_group.h>
-#include <mutex>
-#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 
@@ -55,7 +43,7 @@ namespace Classification {
 /*!
   \ingroup PkgClassificationMesh
 
-  \brief Generates a set of generic features for surface mesh
+  \brief generates a set of generic features for surface mesh
   classification.
 
   This class takes care of computing and storing all necessary data
@@ -79,7 +67,7 @@ namespace Classification {
   is `GeomTraits::Point_3`.
   \tparam ConcurrencyTag enables sequential versus parallel
   computation of `CGAL::Classification::Local_eigen_analysis`
-  objects. Possible values are `Parallel_tag` (default value if %CGAL
+  objects. Possible values are `Parallel_tag` (default value if \cgal
   is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
   matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -101,55 +89,44 @@ class Mesh_feature_generator
 {
 
 public:
-  typedef typename GeomTraits::Iso_cuboid_3             Iso_cuboid_3;
+  using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
 
   /// \cond SKIP_IN_MANUAL
-  typedef typename boost::graph_traits<FaceListGraph>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<FaceListGraph>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<FaceListGraph>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<FaceListGraph>::face_iterator face_iterator;
-  typedef typename CGAL::Iterator_range<face_iterator> Face_range;
+  using face_descriptor = typename boost::graph_traits<FaceListGraph>::face_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<FaceListGraph>::halfedge_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<FaceListGraph>::vertex_descriptor;
+  using face_iterator = typename boost::graph_traits<FaceListGraph>::face_iterator;
+  using Face_range = typename CGAL::Iterator_range<face_iterator>;
 
-  typedef typename PointMap::value_type       Point;
-  typedef CGAL::Identity_property_map<face_descriptor> Face_map;
+  using Point = typename PointMap::value_type;
+  using Face_map = CGAL::Identity_property_map<face_descriptor>;
   /// \endcond
-
 
 public:
 
-  typedef Classification::Planimetric_grid
-  <GeomTraits, Face_range, PointMap>                    Planimetric_grid;
-  typedef Classification::Mesh_neighborhood
-  <FaceListGraph>                                        Neighborhood;
-  typedef Classification::Local_eigen_analysis           Local_eigen_analysis;
+  using Planimetric_grid = Classification::Planimetric_grid<GeomTraits, Face_range, PointMap>;
+  using Neighborhood = Classification::Mesh_neighborhood<FaceListGraph>;
+  using Local_eigen_analysis = Classification::Local_eigen_analysis;
 
   /// \cond SKIP_IN_MANUAL
-  typedef Classification::Feature_handle                 Feature_handle;
-
-  typedef Classification::Feature::Distance_to_plane
-  <Face_range, PointMap>                                 Distance_to_plane;
-  typedef Classification::Feature::Elevation
-  <GeomTraits, Face_range, PointMap>                    Elevation;
-  typedef Classification::Feature::Height_below
-  <GeomTraits, Face_range, PointMap>                    Height_below;
-  typedef Classification::Feature::Height_above
-  <GeomTraits, Face_range, PointMap>                    Height_above;
-  typedef Classification::Feature::Vertical_range
-  <GeomTraits, Face_range, PointMap>                    Vertical_range;
-  typedef Classification::Feature::Vertical_dispersion
-  <GeomTraits, Face_range, PointMap>                    Dispersion;
-  typedef Classification::Feature::Verticality
-  <GeomTraits>                                          Verticality;
-  typedef Classification::Feature::Eigenvalue           Eigenvalue;
+  using Feature_handle = Classification::Feature_handle;
+  using Distance_to_plane = Classification::Feature::Distance_to_plane<Face_range, PointMap>;
+  using Elevation = Classification::Feature::Elevation<GeomTraits, Face_range, PointMap>;
+  using Height_below = Classification::Feature::Height_below<GeomTraits, Face_range, PointMap>;
+  using Height_above =  Classification::Feature::Height_above<GeomTraits, Face_range, PointMap>;
+  using Vertical_range = Classification::Feature::Vertical_range<GeomTraits, Face_range, PointMap>;
+  using Dispersion = Classification::Feature::Vertical_dispersion<GeomTraits, Face_range, PointMap>;
+  using Verticality = Classification::Feature::Verticality<GeomTraits>;
+  using Eigenvalue = Classification::Feature::Eigenvalue;
   /// \endcond
 
 private:
 
   struct Scale
   {
-    Neighborhood* neighborhood;
-    Planimetric_grid* grid;
-    Local_eigen_analysis* eigen;
+    std::unique_ptr<Neighborhood> neighborhood;
+    std::unique_ptr<Planimetric_grid> grid;
+    std::unique_ptr<Local_eigen_analysis> eigen;
     float voxel_size;
 
     Scale (const FaceListGraph& input,
@@ -157,12 +134,13 @@ private:
            PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
            std::size_t nb_scale,
-           Planimetric_grid* lower_grid = nullptr)
+           const std::unique_ptr<Planimetric_grid>& lower_grid
+           = std::unique_ptr<Planimetric_grid>())
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
       t.start();
-      neighborhood = new Neighborhood (input);
+      neighborhood = std::make_unique<Neighborhood> (input);
       t.stop();
 
       CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
@@ -170,7 +148,7 @@ private:
       t.reset();
       t.start();
 
-      eigen = new Local_eigen_analysis
+      eigen = std::make_unique<Local_eigen_analysis>
         (Local_eigen_analysis::create_from_face_graph
          (input, neighborhood->n_ring_neighbor_query(nb_scale + 1),
           ConcurrencyTag(), DiagonalizeTraits()));
@@ -183,42 +161,22 @@ private:
       t.reset();
       t.start();
 
-      if (lower_grid == nullptr)
-        grid = new Planimetric_grid (range, point_map, bbox, this->voxel_size);
+      if (!lower_grid)
+        grid = std::make_unique<Planimetric_grid> (range, point_map, bbox, this->voxel_size);
       else
-        grid = new Planimetric_grid(lower_grid);
+        grid = std::make_unique<Planimetric_grid>(lower_grid.get());
       t.stop();
       CGAL_CLASSIFICATION_CERR << "Planimetric grid computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
-    }
-    ~Scale()
-    {
-      if (neighborhood != nullptr)
-        delete neighborhood;
-      if (grid != nullptr)
-        delete grid;
-      delete eigen;
-    }
-
-    void reduce_memory_footprint(bool delete_neighborhood)
-    {
-      delete grid;
-      grid = nullptr;
-      if (delete_neighborhood)
-      {
-        delete neighborhood;
-        neighborhood = nullptr;
-      }
     }
 
     float grid_resolution() const { return voxel_size; }
     float radius_neighbors() const { return voxel_size * 3; }
     float radius_dtm() const { return voxel_size * 10; }
-
   };
 
   Iso_cuboid_3 m_bbox;
-  std::vector<Scale*> m_scales;
+  std::vector<std::unique_ptr<Scale> > m_scales;
 
   const FaceListGraph& m_input;
   Face_range m_range;
@@ -231,7 +189,7 @@ public:
   /// @{
 
   /*!
-    \brief Initializes a feature generator from an input range.
+    \brief initializes a feature generator from an input range.
 
     If not provided by the user, The size of the smallest scale is
     automatically estimated using a method equivalent to
@@ -256,14 +214,14 @@ public:
   {
 
     m_bbox = CGAL::bounding_box
-      (boost::make_transform_iterator (m_range.begin(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)),
-       boost::make_transform_iterator (m_range.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
+      (CGAL::make_transform_iterator_from_property_map (m_range.begin(), m_point_map),
+       CGAL::make_transform_iterator_from_property_map (m_range.end(), m_point_map));
 
     CGAL::Real_timer t; t.start();
 
     m_scales.reserve (nb_scales);
 
-    m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, 0));
+    m_scales.emplace_back (std::make_unique<Scale> (m_input, m_range, m_point_map, m_bbox, voxel_size, 0));
 
     if (voxel_size == -1.f)
       voxel_size = m_scales[0]->grid_resolution();
@@ -271,7 +229,7 @@ public:
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
-      m_scales.push_back (new Scale (m_input, m_range, m_point_map, m_bbox, voxel_size, i, m_scales[i-1]->grid));
+      m_scales.emplace_back (std::make_unique<Scale> (m_input, m_range, m_point_map, m_bbox, voxel_size, i, m_scales[i-1]->grid));
     }
     t.stop();
     CGAL_CLASSIFICATION_CERR << "Scales computed in " << t.time() << " second(s)" << std::endl;
@@ -280,28 +238,11 @@ public:
 
   /// @}
 
-  /// \cond SKIP_IN_MANUAL
-  virtual ~Mesh_feature_generator()
-  {
-    clear();
-  }
-
-  void reduce_memory_footprint()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-    {
-      m_scales[i]->reduce_memory_footprint(i > 0);
-    }
-  }
-  /// \endcond
-
-
   /// \name Feature Generation
   /// @{
 
-
   /*!
-    \brief Generate geometric features based on face information.
+    \brief generates geometric features based on face information.
 
     At each scale, the following features are generated:
 
@@ -320,7 +261,7 @@ public:
   }
 
   /*!
-    \brief Generate geometric features based on point position information.
+    \brief generates geometric features based on point position information.
 
     At each scale, the following features are generated by considering
     the mesh as a point cloud through `PointMap`:
@@ -356,19 +297,19 @@ public:
   /// @{
 
   /*!
-    \brief Returns the bounding box of the input point set.
+    \brief returns the bounding box of the input point set.
   */
   const Iso_cuboid_3& bbox() const { return m_bbox; }
   /*!
-    \brief Returns the neighborhood structure at scale `scale`.
+    \brief returns the neighborhood structure at scale `scale`.
   */
   const Neighborhood& neighborhood(std::size_t scale = 0) const { return (*m_scales[scale]->neighborhood); }
   /*!
-    \brief Returns the planimetric grid structure at scale `scale`.
+    \brief returns the planimetric grid structure at scale `scale`.
   */
   const Planimetric_grid& grid(std::size_t scale = 0) const { return *(m_scales[scale]->grid); }
   /*!
-    \brief Returns the local eigen analysis structure at scale `scale`.
+    \brief returns the local eigen analysis structure at scale `scale`.
   */
   const Local_eigen_analysis& eigen(std::size_t scale = 0) const { return *(m_scales[scale]->eigen); }
 
@@ -378,41 +319,32 @@ public:
   /// @{
 
   /*!
-    \brief Returns the number of scales that were computed.
+    \brief returns the number of scales that were computed.
   */
   std::size_t number_of_scales() const { return m_scales.size(); }
 
   /*!
-    \brief Returns the grid resolution at scale `scale`. This
+    \brief returns the grid resolution at scale `scale`. This
     resolution is the length and width of a cell of the
     `Planimetric_grid` defined at this scale.
   */
   float grid_resolution(std::size_t scale = 0) const { return m_scales[scale]->grid_resolution(); }
   /*!
 
-    \brief Returns the radius used for neighborhood queries at scale
+    \brief returns the radius used for neighborhood queries at scale
     `scale`. This radius is the smallest radius that is relevant from
     a geometric point of view at this scale (that is to say that
     encloses a few cells of `Planimetric_grid`).
   */
   float radius_neighbors(std::size_t scale = 0) const { return m_scales[scale]->radius_neighbors(); }
   /*!
-    \brief Returns the radius used for digital terrain modeling at
+    \brief returns the radius used for digital terrain modeling at
     scale `scale`. This radius represents the minimum size of a
     building at this scale.
   */
   float radius_dtm(std::size_t scale = 0) const { return m_scales[scale]->radius_dtm(); }
 
   /// @}
-
-private:
-
-  void clear()
-  {
-    for (std::size_t i = 0; i < m_scales.size(); ++ i)
-      delete m_scales[i];
-    m_scales.clear();
-  }
 
 };
 

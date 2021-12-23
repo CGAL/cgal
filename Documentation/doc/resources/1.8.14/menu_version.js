@@ -1,14 +1,17 @@
 (function() {
   'use strict';
 
-  var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+))\//;
+  var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+)(-beta\d)?)\//;
   var url_local =  /.*\/doc_output\//;
-  var current_version_local = '5.1-beta1'
+  var current_version_local = 'master'
   var all_versions = [
       'master',
+      '5.4-beta1',
       'latest',
-      '5.1-beta1',
-      '5.0.2',
+      '5.3.1',
+      '5.2.4',
+      '5.1.5',
+      '5.0.4',
       '4.14.3',
       '4.13.2',
       '4.12.2',

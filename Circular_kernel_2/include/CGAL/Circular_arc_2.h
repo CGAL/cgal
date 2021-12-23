@@ -22,7 +22,6 @@
 
 
 #include <CGAL/config.h>
-#include <CGAL/result_of.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/enum.h>
 namespace CGAL {
@@ -107,25 +106,25 @@ public:
   {}
 
 
-  typename cpp11::result_of<typename R::Construct_circular_source_vertex_2(Circular_arc_2)>::type
+  decltype(auto)
   source() const
   {
     return typename R::Construct_circular_source_vertex_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_circular_target_vertex_2(Circular_arc_2)>::type
+  decltype(auto)
   target() const
   {
     return typename R::Construct_circular_target_vertex_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_circular_min_vertex_2(Circular_arc_2)>::type
+  decltype(auto)
   left() const
   {
     return typename R::Construct_circular_min_vertex_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_circular_max_vertex_2(Circular_arc_2)>::type
+  decltype(auto)
   right() const
   {
     return typename R::Construct_circular_max_vertex_2()(*this);
@@ -141,19 +140,19 @@ public:
     return typename R::Is_y_monotone_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_circle_2(Circular_arc_2)>::type
+  decltype(auto)
   supporting_circle() const
   {
     return typename R::Construct_circle_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Construct_center_2(Circular_arc_2)>::type
+  decltype(auto)
   center() const
   {
     return typename R::Construct_center_2()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_squared_radius_2( Circular_arc_2)>::type
+  decltype(auto)
   squared_radius() const
   {
     return typename R::Compute_squared_radius_2()(*this);

@@ -13,7 +13,7 @@ typedef K::Vector_3 Vector_3;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1)?argv[1]:"data/half.xyz");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("points_3/half.xyz"));
   std::istream_iterator<Point_3> begin(in);
   std::istream_iterator<Point_3> end;
 

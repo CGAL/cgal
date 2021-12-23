@@ -16,8 +16,6 @@ int main(){
   (void)CGAL::compare(a,a);
   unsigned long b = 42;
   (void)CGAL::compare(b,b);
-#ifdef CGAL_USE_LONG_LONG
   unsigned long long c = 42;
   (void)CGAL::compare(c,c);
-#endif
 }

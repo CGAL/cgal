@@ -75,6 +75,15 @@ class SHalfloop_base {
         return *this;
       }
 
+    SHalfloop_base<Refs>& operator=(SHalfloop_base<Refs>&& l) noexcept
+      { twin_ = std::move(l.twin_);
+        incident_sface_ = std::move(l.incident_sface_);
+        facet_ = std::move(l.facet_);
+        mark_ = std::move(l.mark_);
+        circle_ = std::move(l.circle_);
+        return *this;
+      }
+
     Mark& mark() { return mark_;}
     const Mark& mark() const { return mark_; }
 
@@ -93,7 +102,7 @@ class SHalfloop_base {
  public:
     std::string debug() const
       { std::stringstream os;
-        set_pretty_mode(os);
+        CGAL::IO::set_pretty_mode(os);
         os<<"sl [ "<<circle_<<" ] ";
         return os.str();
       }

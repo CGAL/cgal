@@ -7,7 +7,7 @@
 
 \cgalRefines TriangulationFaceBase_2
 
-The concept HyperbolicTriangulationFaceBase_2 describes the requirements for the base
+The concept `HyperbolicTriangulationFaceBase_2` describes the requirements for the base
 face class of a hyperbolic triangulation data structure.
 
 This concept provides an interface for the functionality needed in faces to compute

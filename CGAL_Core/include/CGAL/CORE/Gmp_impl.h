@@ -198,10 +198,6 @@ io_read (std::istream &i, mpq_ptr q)
       ok = true;
     }
 
-  if (i.flags() & ios::skipws)
-    while (isspace(c) && i.get(c)) // skip whitespace
-      ;
-
   if (c == '/') // there's a denominator
     {
       bool zero2 = false;

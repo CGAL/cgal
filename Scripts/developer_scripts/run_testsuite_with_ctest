@@ -176,7 +176,7 @@ setup_dirs()
   if [ -n "${USE_REFERENCE_PLATFORMS}" ]; then
     collect_all_reference_platforms
   fi
-  
+
   for PLATFORM in ${PLATFORMS}; do
 
     CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
@@ -226,9 +226,9 @@ publish_results()
   ${TAR} cf "test_results-${HOST}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
   ${COMPRESSOR} -9f "test_results-${HOST}_${PLATFORM}.tar"
   COMPILER=`printf "%s" "$1" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
-  
+
   FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
-  
+
   LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
   ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
   mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
@@ -258,20 +258,25 @@ run_test_on_platform()
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
-  INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
+
+  if [ -f "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
+    source "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
+  else
+    INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
+  fi
   if [ ! -f "${INIT_FILE}" ]; then
     echo "error NEED A INIT FILE !"
   fi
-  cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=OFF -DWITH_tests=OFF -DWITH_CGAL_Qt5=OFF -DCGAL_HEADER_ONLY=ON $CGAL_DIR>installation.log 2>&1
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
   rm CMakeCache.txt
-  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON"
+  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DWITH_tests=ON"
   if [ -n "${SCRIPTS_DIR}" ]; then
     CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
   fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}' -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1 
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
   else
-    cmake ${INIT_FILE:+"-C${INIT_FILE}"} '${CMAKE_GENERATOR}'  -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
   fi
   LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
   if [ -f ${LIST_TEST_FILE} ]; then
@@ -279,7 +284,7 @@ run_test_on_platform()
   fi
   INIT=""
   for pkg in $LIST_TEST_PACKAGES; do
-    if [ -z "$INIT" ]; then 
+    if [ -z "$INIT" ]; then
       TO_TEST=$pkg
       INIT="y"
     else
@@ -289,11 +294,15 @@ run_test_on_platform()
   #unsets the limit of 1024 bits for the logs through ssh
   echo "SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000000)" > CTestCustom.cmake
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
-  CTEST_OPTS="-T Start -T Test --timeout 1200 -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} "
+
+  CTEST_OPTS="-T Start -T Test --timeout 1200 ${DO_NOT_TEST:+-E execution___of__}"
+  if uname | grep -q "CYGWIN"; then
+    CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS}"
+  fi
   if [ -z "${SHOW_PROGRESS}" ]; then
-    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}>tmp.txt
   else
-    ctest ${CTEST_OPTS} ${TO_TEST:+-L ${TO_TEST}} ${KEEP_TESTS:+-FC .}|tee tmp.txt
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}|tee tmp.txt
   fi
   #####################
   ##   GET RESULTS   ##
@@ -309,18 +318,21 @@ run_test_on_platform()
   else
     echo "CGAL_VERSION ${CGAL_GIT_VERSION}">> "$RESULT_FILE"
   fi
+  sed -n '/The CXX compiler/s/-- The CXX compiler identification is/COMPILER_VERSION =/p' < "${CGAL_BINARY_DIR}/installation.log" |sed -E "s/ = (.*)/\ = '\1\'/">> "$RESULT_FILE"
   echo "TESTER ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_NAME ${CGAL_TESTER}" >> "$RESULT_FILE"
   echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
   echo "CGAL_TEST_PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
-  grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE 
+  grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log"|sort -u >> $RESULT_FILE
+  #Use sed to get the content of DEBUG or RELEASE CXX FLAGS so that Multiconfiguration platforms do provide their CXXXFLAGS to the testsuite page (that greps USING CXXFLAGS to get info)
+  sed -i -E 's/(^-- USING )(DEBUG|RELEASE) (CXXFLAGS)/\1\3/' $RESULT_FILE
   echo "------------" >> "$RESULT_FILE"
   #if git branch, create empty scm file for python script
   if [ -n "${SCRIPTS_DIR}" ]; then
     touch ../../../../../.scm-branch
   fi
   python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
-  
+
   for file in $(ls|grep _Tests); do
     mv $file "$(echo "$file" | sed 's/_Tests//g')"
   done
@@ -329,7 +341,7 @@ run_test_on_platform()
   mkdir -p Installation
   chmod 777 Installation
   cat "${CGAL_BINARY_DIR}/package_installation.log" >> "Installation/${TEST_REPORT}"
-  
+
   #call the python script to complete the results report.
   python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/post_process_ctest_results.py Installation/${TEST_REPORT} ${TEST_REPORT} results_${CGAL_TESTER}_${PLATFORM}.txt
   rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
@@ -351,7 +363,7 @@ run_test_on_host()
     collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
   fi
 
-  for PLATFORM in ${PLATFORMS}; do  
+  for PLATFORM in ${PLATFORMS}; do
     run_test_on_platform "${PLATFORM}"
     publish_results "${PLATFORM}"
     if [ -z "${KEEP_TESTS}" ]; then
@@ -365,21 +377,7 @@ run_test_on_host()
 setup_dirs
 
 
-# Setup cmake 
-if uname | grep -q "CYGWIN"; then
-  JOM="`which jom`"
-  if [ -e "$JOM" ]; then 
-    CMAKE_GENERATOR='-GNMake Makefiles JOM'
-    MAKE_CMD='jom'
-  else 
-    CMAKE_GENERATOR='-GNMake Makefiles'
-    MAKE_CMD='nmake'
-  fi
-  IS_CYGWIN='y'
-else
-  MAKE_CMD='make'
-fi
-
+# Setup cmake
 log "${ACTUAL_LOGFILE}" "running the testsuites"
 if [ -n "${CONSOLE_OUTPUT}" ]; then
     printf "\n-------------------------------------------------------\n"

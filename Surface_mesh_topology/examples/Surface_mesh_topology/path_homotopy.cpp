@@ -100,7 +100,7 @@ void process_command_line(int argc, char** argv,
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-  std::string file="data/elephant.off";
+  std::string file=CGAL::data_file_path("meshes/elephant.off");
   bool draw=false;
   int l1=10, l2=100;
   int d1=10, d2=100;

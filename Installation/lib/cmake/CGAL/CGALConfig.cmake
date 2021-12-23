@@ -9,8 +9,6 @@ set(CGAL_LIBRARIES CGAL)
 
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-set(CGAL_HEADER_ONLY TRUE)
-
 function(cgal_detect_branch_build VAR_NAME)
   if(IS_DIRECTORY ${CGAL_CONFIG_DIR}/../../../../Installation/package_info/Installation/)
     set(${VAR_NAME} TRUE PARENT_SCOPE)
@@ -35,10 +33,10 @@ if(BRANCH_BUILD)
   foreach(package_dir ${packages_dirs})
     set(inc_dir ${package_dir}/include)
     if(IS_DIRECTORY ${inc_dir}
-	AND IS_DIRECTORY ${package_dir}/package_info)
+  AND IS_DIRECTORY ${package_dir}/package_info)
       list(APPEND CGAL_INCLUDE_DIRS ${inc_dir})
       if(EXISTS ${inc_dir}/CGAL/config.h)
-	set(CGAL_FOUND TRUE)
+  set(CGAL_FOUND TRUE)
       endif()
     endif()
   endforeach()
@@ -74,6 +72,32 @@ else()
   endif()
 endif()
 
+#set CGAL_DATA_DIR
+if (NOT CGAL_DATA_DIR)
+  if(DEFINED ENV{CGAL_DATA_DIR})
+    set(CGAL_DATA_DIR $ENV{CGAL_DATA_DIR})
+  else()
+    if (EXISTS "${CGAL_ROOT}/Data/data")
+      set(CGAL_DATA_DIR "${CGAL_ROOT}/Data/data")
+    else()
+      if (EXISTS "${CGAL_ROOT}/data")
+        set(CGAL_DATA_DIR "${CGAL_ROOT}/data")
+      else()
+        message("CGAL_ROOT = ${CGAL_ROOT}")
+        message(WARNING "CGAL_DATA_DIR cannot be deduced, set the variable CGAL_DATA_DIR to set the default value of CGAL::data_file_path()")
+      endif()
+    endif()
+  endif()
+endif()
+
+if(NOT TARGET CGAL::Data)
+  add_library(CGAL::Data INTERFACE IMPORTED GLOBAL)
+  if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
+    set_target_properties(CGAL::Data PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_DATA_DIR=\"${CGAL_DATA_DIR}\"")
+  endif()
+endif()
+
 include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
@@ -81,21 +105,15 @@ include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 
-
-if(CGAL_BUILDING_LIBS)
-  foreach(comp ${CGAL_FIND_COMPONENTS})
-    if(CGAL_${comp}_FOUND)
-      list(APPEND CGAL_LIBRARIES CGAL_${comp})
-    endif()
-  endforeach()
-  return()
-endif()
-
 foreach(comp ${CGAL_FIND_COMPONENTS})
   if(NOT comp MATCHES "Core|ImageIO|Qt5")
     message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
   endif()
-  list(APPEND CGAL_LIBRARIES CGAL_${comp})
+  if(comp MATCHES "Core" AND CGAL_DISABLE_GMP)
+    message("CGAL_Core needs GMP and won't be used.")
+  else()
+    list(APPEND CGAL_LIBRARIES CGAL_${comp})
+  endif()
 endforeach()
 
 set(CGALConfig_all_targets_are_defined TRUE)
@@ -138,18 +156,25 @@ include(CGAL_setup_target_dependencies)
 foreach(cgal_lib ${CGAL_LIBRARIES})
   set(WITH_${cgal_lib} TRUE)
   if(${cgal_lib}_FOUND AND NOT TARGET ${cgal_lib})
-    if(CGAL_BUILDING_LIBS OR CMAKE_VERSION VERSION_LESS "3.11")
-      add_library(${cgal_lib} INTERFACE)
-    else()
-      add_library(${cgal_lib} INTERFACE IMPORTED GLOBAL)
-    endif()
+    add_library(${cgal_lib} INTERFACE IMPORTED GLOBAL)
     if(NOT TARGET CGAL::${cgal_lib})
       add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
     endif()
-    CGAL_setup_target_dependencies(${cgal_lib} INTERFACE)
+    CGAL_setup_target_dependencies(${cgal_lib})
   endif()
 endforeach()
 
+#
+# Define a specific target for basic viewer
+#
+if (NOT TARGET CGAL::CGAL_Basic_viewer)
+  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+endif()
+
+include(${CGAL_CONFIG_DIR}/CGALConfigVersion.cmake)
 
 #
 #
@@ -160,15 +185,6 @@ cgal_setup_module_path()
 
 set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
-
-include("${CGAL_MODULES_DIR}/CGAL_parse_version_h.cmake")
-cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
-  "CGAL_VERSION_NAME"
-  "CGAL_MAJOR_VERSION"
-  "CGAL_MINOR_VERSION"
-  "CGAL_BUGFIX_VERSION"
-  "CGAL_BUILD_VERSION")
-set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}.${CGAL_BUILD_VERSION}")
 
 if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
   # Do not use -isystem for CGAL include paths

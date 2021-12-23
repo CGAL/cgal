@@ -7,8 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
-// Author(s)         : Oren Nechushtan <theoren@math.tau.ac.il>
+// Author(s): Oren Nechushtan <theoren@math.tau.ac.il>
+
 #ifndef CGAL_TD_TRAITS_H
 #define CGAL_TD_TRAITS_H
 
@@ -245,12 +245,12 @@ public:
            (ce2_x_prm_spc == ARR_INTERIOR)  )
       {
         //both ce1 and ce2 are not y prm spc interior
-        Comparison_result res = m_traits->compare_x_at_limit_2_object()
+        Comparison_result res = m_traits->compare_x_on_boundary_2_object()
                                             (ce1.cv(),ce1.ce(),
                                              ce2.cv(),ce2.ce());
         if (res != EQUAL)
           return res;
-        //if equal need to compare near limit
+        //if equal need to compare near boundary
 
         //if param space in y is not the same (one is top and one is bottom)
         //  the bottom is smaller than the top
@@ -262,7 +262,7 @@ public:
           return (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER;
 
         //both have the same Curve end
-        return (m_traits->compare_x_near_limit_2_object()
+        return (m_traits->compare_x_near_boundary_2_object()
                                               (ce1.cv(),ce2.cv(),ce2.ce()));
       }
 
@@ -320,7 +320,7 @@ public:
                               (ce.cv(),ce.ce()) == ARR_INTERIOR)
       {
           //if curve end y prm space is not interior
-          return (m_traits->compare_x_at_limit_2_object()
+          return (m_traits->compare_x_on_boundary_2_object()
                                 (p,ce.cv(),ce.ce()));
       }
 
@@ -676,7 +676,7 @@ public:
         if ( is_ce2_vertical)
         {
           //res = m_traits->compare_x_near_boundary_2_object()
-          res = m_traits->compare_x_at_limit_2_object()
+          res = m_traits->compare_x_on_boundary_2_object()
                      (((ce1.ce() == ARR_MIN_END) ?
                        m_traits->construct_min_vertex_2_object()(ce1.cv()) :
                        m_traits->construct_max_vertex_2_object()(ce1.cv())  ),
@@ -705,7 +705,7 @@ public:
         if ( is_ce1_vertical )
         {
           //res = m_traits->compare_x_near_boundary_2_object()
-          res = m_traits->compare_x_at_limit_2_object()
+          res = m_traits->compare_x_on_boundary_2_object()
                      ((( ce2.ce() == ARR_MIN_END) ?
                        m_traits->construct_min_vertex_2_object()( ce2.cv()) :
                        m_traits->construct_max_vertex_2_object()( ce2.cv())  ),
@@ -732,7 +732,7 @@ public:
       //if both curve ends are of unbounded curves with a vertical asymptote
       if ( is_ce1_vertical && is_ce2_vertical )
       {
-        Comparison_result res = m_traits->compare_x_at_limit_2_object()
+        Comparison_result res = m_traits->compare_x_on_boundary_2_object()
                                             (ce1.cv(),ce1.ce(),
                                              ce2.cv(),ce2.ce());
 
@@ -740,7 +740,7 @@ public:
           return res;
 
         //res == EQUAL
-        //if equal - need to compare near limit
+        //if equal - need to compare near boundary
 
         Arr_parameter_space ce1_y_prm_spc =
           m_traits->parameter_space_in_y_2_object()(ce1.cv(),ce1.ce()) ;
@@ -757,8 +757,8 @@ public:
           return (ce1.ce() == ARR_MIN_END) ? LARGER : SMALLER;
 
         //both have the same Curve end
-        return (m_traits->compare_x_near_limit_2_object()
-                                          (ce1.cv(),ce2.cv(),ce2.ce()));
+        return (m_traits->compare_x_near_boundary_2_object()
+                (ce1.cv(),ce2.cv(),ce2.ce()));
       }
 
       //if only the first curve end is of a curve with a vertical asymptote
@@ -829,7 +829,7 @@ public:
       //  x prm spc is interior, y prm spc is not interior
       if ( is_ce_vertical)
       {
-        res = m_traits->compare_x_at_limit_2_object()
+        res = m_traits->compare_x_on_boundary_2_object()
                            (p, ce.cv(), ce.ce());
 
         if (res != EQUAL)
@@ -932,7 +932,7 @@ public:
 
   /* returns true if bottom halfedges of input are the same */
   inline bool is_trapezoids_bottom_equal(const Td_active_trapezoid& left,
-                                                                       const Td_active_trapezoid& right) const
+                                         const Td_active_trapezoid& right) const
   {
     if (left.is_on_bottom_boundary())
       return (right.is_on_bottom_boundary());
@@ -946,7 +946,7 @@ public:
 
   /* returns true if top halfedges of input are the same */
   inline bool is_trapezoids_top_equal(const Td_active_trapezoid& left,
-                                                                    const Td_active_trapezoid& right) const
+                                      const Td_active_trapezoid& right) const
   {
     if (left.is_on_top_boundary())
       return (right.is_on_top_boundary());
@@ -1100,7 +1100,7 @@ public:
 
       // test top side
       if (!tr.is_on_top_boundary() &&
-                compare_curve_end_y_at_x_2_object()(ce,tr.top()) == LARGER)
+          compare_curve_end_y_at_x_2_object()(ce,tr.top()) == LARGER)
       {
         return false;
       }

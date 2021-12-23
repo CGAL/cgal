@@ -493,7 +493,6 @@ void
 remove_face(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor f,
             CGAL::Surface_mesh<P>& sm)
 {
-
   sm.remove_face(f);
 }
 

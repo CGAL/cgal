@@ -185,7 +185,7 @@ compute_update_sample_point(
     if (dist2 < 1e-10) continue;
     FT dist = std::sqrt(dist2);
 
-    weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2); // L1
+    weight = std::exp(dist2 * iradius16) * CGAL::square(FT(1.0) / dist); // L1
 
     if (!is_sample_densities_empty)
     {
@@ -341,9 +341,9 @@ compute_density_weight_for_sample_point(
    For more details, please refer to \cgalCite{wlop-2009}.
 
    A parallel version of WLOP is provided and requires the executable to be
-   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+   See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
@@ -353,34 +353,76 @@ compute_density_weight_for_sample_point(
    \tparam OutputIterator Type of the output iterator.
    It must accept objects of type `geom_traits::Point_3`.
 
-   \param points input point range.
+   \param points input point range
    \param output iterator where output points are put.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
-     \cgalParamBegin{point_map} a model of `ReadWritePropertyMap` with value type `geom_traits::Point_3`.
-     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
-     \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
-     `geom_traits::Vector_3`.\cgalParamEnd
-     \cgalParamBegin{select_percentage} percentage of points to retain. The default value is set to
-     5 (\%).\cgalParamEnd
-     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. This is a key parameter that needs to be
-     finely tuned. The result will be irregular if too small, but a larger value will impact the runtime. In
-     practice, choosing a radius such that the neighborhood of each sample point includes at least two rings
-     of neighboring sample points gives satisfactory result. If this parameter is not provided, it is
-     automatically set to 8 times the average spacing of the point set.\cgalParamEnd
-     \cgalParamBegin{number_of_iterations} number of iterations to solve the optimsation problem. The default
-     value is 35. More iterations give a more regular result but increase the runtime.\cgalParamEnd
-     \cgalParamBegin{require_uniform_sampling} an optional preprocessing, which will give better result if the
-     distribution of the input points is highly non-uniform. The default value is `false`. \cgalParamEnd
-     \cgalParamBegin{callback} an instance of
-      `std::function<bool(double)>`. It is called regularly when the
-      algorithm is running: the current advancement (between 0. and
-      1.) is passed as parameter. If it returns `true`, then the
-      algorithm continues its execution normally; if it returns
-      `false`, the algorithm is stopped, no output points are
-      generated.\cgalParamEnd
-     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+     \cgalParamNBegin{point_map}
+       \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+       \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{normal_map}
+       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
+       \cgalParamType{a model of `ReadWritePropertyMap` whose key type is the value type
+                      of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{select_percentage}
+       \cgalParamDescription{percentage of points to retain}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{`5`}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{neighbor_radius}
+       \cgalParamDescription{the spherical neighborhood radius}
+       \cgalParamType{floating scalar value}
+       \cgalParamDefault{8 times the average spacing of the point set}
+       \cgalParamExtra{This is a key parameter that needs to be finely tuned.
+                       The result will be irregular if too small, but a larger value will impact the runtime.
+                       In practice, choosing a radius such that the neighborhood of each sample point
+                       includes at least two rings of neighboring sample points gives satisfactory result.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{number_of_iterations}
+       \cgalParamDescription{number of iterations to solve the optimsation problem}
+       \cgalParamType{unsigned int}
+       \cgalParamDefault{`35`}
+       \cgalParamExtra{More iterations give a more regular result but increase the runtime}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{require_uniform_sampling}
+       \cgalParamDescription{If `true`, an optional preprocessing is applied, which will give
+                             better results if the distribution of the input points is highly non-uniform.}
+       \cgalParamType{Boolean}
+       \cgalParamDefault{`35`}
+       \cgalParamExtra{More iterations give a more regular result but increase the runtime}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{callback}
+       \cgalParamDescription{a mechanism to get feedback on the advancement of the algorithm
+                             while it's running and to interrupt it if needed}
+       \cgalParamType{an instance of `std::function<bool(double)>`.}
+       \cgalParamDefault{unused}
+       \cgalParamExtra{It is called regularly when the
+                       algorithm is running: the current advancement (between 0. and
+                       1.) is passed as parameter. If it returns `true`, then the
+                       algorithm continues its execution normally; if it returns
+                       `false`, the algorithm is stopped, no output points are
+                       generated.}
+       \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
+       \cgalParamExtra{When `CGAL::Parallel_tag` is used, the `callback` mechanism is called asynchronously
+                       on a separate thread and shouldn't access or modify the variables that are parameters of the algorithm.}
+     \cgalParamNEnd
+
+     \cgalParamNBegin{geom_traits}
+       \cgalParamDescription{an instance of a geometric traits class}
+       \cgalParamType{a model of `Kernel`}
+       \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+     \cgalParamNEnd
    \cgalNamedParamsEnd
 
 */

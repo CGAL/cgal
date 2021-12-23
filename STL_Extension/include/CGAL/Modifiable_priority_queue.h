@@ -16,7 +16,7 @@
 #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
 #else
-#include <CGAL/internal/boost/mutable_queue.hpp>
+#include <CGAL/STL_Extension/internal/boost/mutable_queue.hpp>
 
 
 namespace CGAL {
