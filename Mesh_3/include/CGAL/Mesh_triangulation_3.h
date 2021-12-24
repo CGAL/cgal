@@ -154,7 +154,7 @@ private:
                                                      Concurrency_tag> {};
   using Triangulation =
       Mesh_3_regular_triangulation_3_wrapper<Geom_traits, Tds>;
-  ;
+  
 
 public:
   using type = Triangulation;
