@@ -332,7 +332,7 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
           }
         }
       }
-      else if (auto group =
+      else if (nullptr !=
         qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(ind))) {
         continue;
       }
