@@ -42,7 +42,7 @@ namespace Polygon_mesh_processing {
 * is projected back to the tangent plane to the surface at `v`, iteratively.
 * The connectivity remains unchanged.
 *
-* @tparam TriangleMesh model of `MutableFaceGraph`.
+* @tparam TriangleMesh model of `FaceGraph`.
 *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
 *         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
