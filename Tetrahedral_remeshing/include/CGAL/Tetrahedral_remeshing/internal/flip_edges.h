@@ -1400,7 +1400,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 
   if (cells_around_edge.size() != 4)
   {
-    nb_surface_nm_configs++;
+//    nb_surface_nm_configs++;
     if (cells_around_edge.size() > 4){
 //////      if (flip_criterion == VALENCE_BASED){
 //////        return find_best_n_m_flip(edge, vh0_index, vh1_index);
@@ -1422,7 +1422,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
       return NOT_FLIPPABLE;
   }
 
-  nb_surface_44_configs++;
+//  nb_surface_44_configs++;
 
   if(inc_cells[edge.first->vertex(edge.second)] != boost::none)
     inc_cells[edge.first->vertex(edge.second)].get().clear();
@@ -2007,7 +2007,7 @@ std::size_t flipBoundaryEdges(
       int t_i0, t_i1;
       if (!tr.is_edge(vh2, vh3, t_ch, t_i0, t_i1))
       {
-        nb_surface_flip_candidates++;
+//        nb_surface_flip_candidates++;
 
         int v0 = boundary_vertices_valences[vh0][surfi];
         int v1 = boundary_vertices_valences[vh1][surfi];
@@ -2062,7 +2062,7 @@ std::size_t flipBoundaryEdges(
                                          c3t3.facets_in_complex_end());
             CGAL_assertion(nbf == nbf_post);
 
-            nb_surface_flip_done++;
+//            nb_surface_flip_done++;
             nb++;
 
 //            CGAL::dump_c3t3(c3t3, "dump_after_flip_");
