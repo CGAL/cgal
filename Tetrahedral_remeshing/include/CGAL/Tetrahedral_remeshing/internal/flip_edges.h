@@ -2118,7 +2118,6 @@ void flip_edges(C3T3& c3t3,
   typedef boost::unordered_map<Surface_patch_index, unsigned int> Spi_map;
   if (!protect_boundaries)
   {
-    std::cout << "\tBoundary flips" << std::endl;
     //Boundary flip
     std::vector<Edge> boundary_edges;
     boost::unordered_map<Vertex_handle, Spi_map> boundary_vertices_valences;
@@ -2129,8 +2128,10 @@ void flip_edges(C3T3& c3t3,
                                                    boundary_vertices_valences,
                                                    vertices_subdomain_indices);
 
-    if(!debug::are_cell_orientations_valid(c3t3.triangulation()))
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+   if(!debug::are_cell_orientations_valid(c3t3.triangulation()))
       std::cerr << "ERROR in ORIENTATION" << std::endl;
+#endif
 
   //  if (criterion == VALENCE_BASED)
   //    flipBoundaryEdges(boundary_edges, boundary_vertices_valences, VALENCE_BASED);
