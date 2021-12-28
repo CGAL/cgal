@@ -200,7 +200,7 @@ namespace Point_set {
 
       m_max_radius = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::maximum_radius),
-        FT(std::numeric_limits<double>::max()));
+        FT((std::numeric_limits<double>::max)()));
       CGAL_precondition(m_max_radius >= m_min_radius);
     }
 
@@ -256,7 +256,7 @@ namespace Point_set {
       const FT angle_threshold = FT(25),
       const std::size_t min_region_size = 3,
       const FT minimum_radius = FT(0),
-      const FT maximum_radius = FT(std::numeric_limits<double>::max()),
+      const FT maximum_radius = FT((std::numeric_limits<double>::max)()),
       const PointMap point_map = PointMap(),
       const NormalMap normal_map = NormalMap(),
       const GeomTraits traits = GeomTraits()) :

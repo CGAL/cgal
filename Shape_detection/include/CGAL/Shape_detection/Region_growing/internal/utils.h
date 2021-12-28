@@ -441,7 +441,7 @@ namespace internal {
     if (eigenvectors[3] == IFT(0)) {
       return std::make_pair(
         std::make_pair(FT(-1), Point_2()),
-        static_cast<FT>(std::numeric_limits<double>::max()));
+        static_cast<FT>(((std::numeric_limits<double>::max))()));
     }
     CGAL_assertion(eigenvectors[3] != IFT(0));
 
@@ -567,7 +567,7 @@ namespace internal {
     if (eigenvectors[4] == IFT(0)) {
       return std::make_pair(
         std::make_pair(FT(-1), Point_3()),
-        static_cast<FT>(std::numeric_limits<double>::max()));
+        static_cast<FT>((std::numeric_limits<double>::max)()));
     }
     CGAL_assertion(eigenvectors[4] != IFT(0));
 
@@ -677,7 +677,7 @@ namespace internal {
     if (nb == 0) {
       return std::make_pair(
         std::make_pair(FT(-1), Line_3()),
-        static_cast<FT>(std::numeric_limits<double>::max()));
+        static_cast<FT>((std::numeric_limits<double>::max)()));
     }
 
     mean_axis = mean_axis / sqrt(mean_axis * mean_axis);

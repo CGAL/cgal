@@ -46,7 +46,7 @@
 // and other names leading to name clashes
 #include <windows.h>
 #endif
-
+#include <windows.h>
 #if defined(CGAL_TEST_SUITE) && defined(NDEBUG)
 #  error The test-suite needs no NDEBUG defined
 #endif // CGAL_TEST_SUITE and NDEBUG
