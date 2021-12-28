@@ -450,12 +450,12 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
   Cell_circulator cell_circulator = tr.incident_cells(edge);
   Cell_circulator done = cell_circulator;
 
-  boost::container::small_vector<Facet, 60> facets;
   for (std::size_t i = 0; i < opposite_vertices.size(); ++i)
   {
     Vertex_handle vh = opposite_vertices[i];
     bool keep = true;
 
+    boost::container::small_vector<Facet, 60> facets;
     do
     {
       //Store it if it do not have vh
@@ -730,11 +730,20 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
 
   //TODO!!!! Check that the created edges do not exist!!!
 
+  boost::container::small_vector<Facet, 2> facets_in_complex;
+  typename C3t3::Surface_patch_index patch;
+
   Facet_circulator facet_circulator = tr.incident_facets(edge);
   Facet_circulator done_facet_circulator = facet_circulator;
   bool look_for_vh_iterator = true;
   do
   {
+    if (c3t3.is_in_complex(*facet_circulator))
+    {
+      patch = c3t3.surface_patch_index(*facet_circulator);
+      facets_in_complex.push_back(*facet_circulator);
+    }
+
     facet_circulator++;
 
     //Get the ids of the opposite vertices
@@ -743,6 +752,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
       if (facet_circulator->first->vertex(indices(facet_circulator->second, i)) == vh)
         look_for_vh_iterator = false;
     }
+
   } while (facet_circulator != done_facet_circulator && look_for_vh_iterator);
 
   if (look_for_vh_iterator) {
@@ -860,9 +870,12 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   //}
   ///*************************************************************/
 
+  //Surface
+  for (const Facet& f : facets_in_complex)
+    c3t3.remove_from_complex(f);
+
   //Subdomain index?
   typedef typename C3t3::Subdomain_index Subdomain_index;
-  Subdomain_index subdomain = to_remove[0]->subdomain_index();
   bool selected = get(cell_selector, to_remove[0]);
   visitor.before_flip(to_remove[0]);
 
@@ -1034,11 +1047,12 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
     Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
     Cell_circulator done = circ;
 
-    Dihedral_angle_cosine curr_max_cosdh = max_cos_dihedral_angle(tr, circ++);
-    while (circ != done)
+    Dihedral_angle_cosine curr_max_cosdh(CGAL::POSITIVE, 1., 1.);
+    do
     {
-      curr_max_cosdh = (std::max)(curr_max_cosdh, max_cos_dihedral_angle(tr, circ++));
-    }
+      curr_max_cosdh = (std::max)(curr_max_cosdh, max_cos_dihedral_angle(tr, circ));
+    } while (++circ != done);
+
     if (boundary_vertices.size() == 2)
       find_best_flip_to_improve_dh(c3t3, edge, boundary_vertices[0], boundary_vertices[1],
                                    candidates, curr_max_cosdh);
@@ -1382,29 +1396,33 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     cells_around_edge.push_back(circ);
   } while (++circ != done);
 
+  std::cout << cells_around_edge.size();
+
   if (cells_around_edge.size() != 4)
   {
-    std::cout << "nb cells = " << cells_around_edge.size() << std::endl;
-//    if (cells_around_edge.size() > 4){
+    nb_surface_nm_configs++;
+    if (cells_around_edge.size() > 4){
 //////      if (flip_criterion == VALENCE_BASED){
 //////        return find_best_n_m_flip(edge, vh0_index, vh1_index);
 //////      }
 //////      else {
-//        std::vector<Vertex_handle> boundary_vertices;
-//        boundary_vertices.push_back(v0i);
-//        boundary_vertices.push_back(v1i);
-//
+        std::vector<Vertex_handle> boundary_vertices;
+        boundary_vertices.push_back(v0i);
+        boundary_vertices.push_back(v1i);
+
 //        return flip_n_to_m_on_surface(edge, c3t3, v0i, v1i, cells_around_edge, flip_criterion);
 
-//        return flip_n_to_m(edge, c3t3, boundary_vertices,
-//                           flip_criterion,
-//                           inc_cells,
-//                           visitor);
-////      }
-//    }
-//    else
+        return flip_n_to_m(edge, c3t3, boundary_vertices,
+                           flip_criterion,
+                           inc_cells,
+                           visitor);
+//      }
+    }
+    else
       return NOT_FLIPPABLE;
   }
+
+  nb_surface_44_configs++;
 
   if(inc_cells[edge.first->vertex(edge.second)] != boost::none)
     inc_cells[edge.first->vertex(edge.second)].get().clear();
@@ -2026,19 +2044,32 @@ std::size_t flipBoundaryEdges(
                                                      visitor);
           if (db == VALID_FLIP)
           {
+            CGAL_assertion(tr.tds().is_edge(vh2, vh3));
+            Cell_handle c;
+            int li, lj, lk;
+            CGAL_assertion_code(bool b =)
+            tr.tds().is_facet(vh2, vh3, vh0, c, li, lj, lk);
+            CGAL_assertion(b);
+            c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
+
+            CGAL_assertion_code(b = )
+            tr.tds().is_facet(vh2, vh3, vh1, c, li, lj, lk);
+            CGAL_assertion(b);
+            c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
+
+            std::cout << " done" << std::endl;
             int nbf_post = std::distance(c3t3.facets_in_complex_begin(),
                                          c3t3.facets_in_complex_end());
             CGAL_assertion(nbf == nbf_post);
 
             nb_surface_flip_done++;
             nb++;
-            std::cout << "Flip done" << std::endl;
 
 //            CGAL::dump_c3t3(c3t3, "dump_after_flip_");
 
-            std::ofstream ofs("dump_edge_flipped.polylines.txt");
-            ofs << "2 " << p0.point() << " " << p1.point() << std::endl;
-            ofs.close();
+//            std::ofstream ofs("dump_edge_flipped.polylines.txt");
+//            ofs << "2 " << p0.point() << " " << p1.point() << std::endl;
+//            ofs.close();
 
             boundary_vertices_valences[vh0][surfi]--;
             boundary_vertices_valences[vh1][surfi]--;
@@ -2050,6 +2081,8 @@ std::size_t flipBoundaryEdges(
             std::cout << "Cell problem" << std::endl;
             return nb;
           }
+          else
+            std::cout << " failed" << std::endl;
         }
       }
     }

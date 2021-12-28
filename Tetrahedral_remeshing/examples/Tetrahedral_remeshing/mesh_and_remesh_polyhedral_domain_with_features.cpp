@@ -1,18 +1,37 @@
+#define CGAL_MESH_3_VERBOSE 1
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#define CGAL_DUMP_REMESHING_STEPS
+#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#define CGAL_TETRAHEDRAL_REMESHING_NO_EXTRA_ITERATIONS
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
 
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
-#include <CGAL/make_mesh_3.h>
 
+#include <CGAL/make_mesh_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
+
+#include <CGAL/IO/File_binary_mesh_3.h>
+
+#include <boost/container/flat_set.hpp>
+
+int nb_surface_flip_candidates = 0;
+int nb_surface_flip_done = 0;
+int nb_surface_44_configs = 0;
+int nb_surface_nm_configs = 0;
+std::ostringstream oss_flip("flipped_surface_edges.polylines.txt");
+
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
-typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
+typedef CGAL::Surface_mesh<K::Point_3> Polyhedron;
+typedef CGAL::Polyhedral_mesh_domain_with_features_3<K, Polyhedron> Mesh_domain;
+
 
 #ifdef CGAL_CONCURRENT_MESH_3
 typedef CGAL::Parallel_tag Concurrency_tag;
@@ -20,26 +39,32 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
-// Triangulation for Meshing
+// Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
+
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr, Mesh_domain::Corner_index, Mesh_domain::Curve_index> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// Triangulation for Remeshing
-typedef CGAL::Triangulation_3<typename Tr::Geom_traits,
-  typename Tr::Triangulation_data_structure> Triangulation_3;
-
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
+  //"data/Shape1/shape1.off" 40. "data/Shape1/mesh_40.binary.cgal" "data/Shape1/remesh_40.binary.cgal"
+  const char* fname = (argc > 1) ? argv[1] : "data/tensileASCII.off";
+  const double target = (argc > 2) ? atof(argv[2]) : 200.;
+  const int nb_iter = (argc > 3) ? atoi(argv[3]) : 1;
+  const char* fname_mesh3 = (argc > 4) ? argv[4] : "data/Tensile/mesh_200.binary.cgal";
+  const char* fname_remesh = (argc > 5) ? argv[5] : "data/Tensile/remesh_200.binary.cgal";
+
   std::ifstream input(fname);
   Polyhedron polyhedron;
+
+  std::string filename(fname);
+  //  if (filename.substr(filename.find_last_of(".")).compare(".off") == 0)
   input >> polyhedron;
   if (input.fail()) {
     std::cerr << "Error: Cannot read file " << fname << std::endl;
@@ -58,24 +83,41 @@ int main(int argc, char* argv[])
   domain.detect_features();
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.025,
-    facet_angle = 25, facet_size = 0.05, facet_distance = 0.005,
-    cell_radius_edge_ratio = 3, cell_size = 0.05);
+  double CellSize = 31.3082;
+  int mesh_factor = 50;
+  double size = (CellSize * mesh_factor) / 100;
+  //const double size = 40.;
+  Mesh_criteria criteria(edge_size = size,
+    facet_angle = 25,
+    facet_size = size,
+    cell_radius_edge_ratio = 2,
+    cell_size = size);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
-  Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3));
-  //note we use the move semantic, with std::move(c3t3),
-  //  to avoid a copy of the triangulation by the function
-  //  `CGAL::convert_to_triangulation_3()`
-  //  After the call to this function, c3t3 is an empty and valid C3t3.
-  //It is possible to use :  CGAL::convert_to_triangulation_3(c3t3),
-  //  Then the triangulation is copied and duplicated, and c3t3 remains as is.
+  // Output
+//  std::ofstream os(fname_mesh3, std::ios_base::out | std::ios_base::binary);
+//  CGAL::Mesh_3::save_binary_file(os, c3t3);
+  CGAL::dump_c3t3(c3t3, "out_after_meshing");
 
-  const double target_edge_length = 0.1;//coarsen the mesh
-  CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
-    CGAL::parameters::number_of_iterations(3));
+  // Remeshing
+  CGAL::tetrahedral_isotropic_remeshing(c3t3, CellSize,
+    CGAL::parameters::number_of_iterations(nb_iter));
+  //    .smooth_constrained_edges(true));
+
+    // Output
+  //  std::ofstream osr(fname_remesh, std::ios_base::out | std::ios_base::binary);
+  //  CGAL::Mesh_3::save_binary_file(osr, c3t3);
+  CGAL::dump_c3t3(c3t3, "out_after_remeshing");
+
+  std::cout << "Meshing and remeshing done." << std::endl;
+
+  std::cout << "Surface flip attempts : " << nb_surface_flip_candidates << std::endl;
+  std::cout << "Surface flip done     : " << nb_surface_flip_done << std::endl;
+  std::cout << "Surface 4/4 flips candidates proportion : "
+    << 100.*nb_surface_44_configs / (double)(nb_surface_nm_configs + nb_surface_44_configs)
+    << " percent" << std::endl;
 
   return EXIT_SUCCESS;
 }
