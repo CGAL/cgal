@@ -1396,7 +1396,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     cells_around_edge.push_back(circ);
   } while (++circ != done);
 
-  std::cout << cells_around_edge.size();
+//  std::cout << cells_around_edge.size();
 
   if (cells_around_edge.size() != 4)
   {
@@ -2057,7 +2057,7 @@ std::size_t flipBoundaryEdges(
             CGAL_assertion(b);
             c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
 
-            std::cout << " done" << std::endl;
+//            std::cout << " done" << std::endl;
             int nbf_post = std::distance(c3t3.facets_in_complex_begin(),
                                          c3t3.facets_in_complex_end());
             CGAL_assertion(nbf == nbf_post);
@@ -2081,8 +2081,8 @@ std::size_t flipBoundaryEdges(
             std::cout << "Cell problem" << std::endl;
             return nb;
           }
-          else
-            std::cout << " failed" << std::endl;
+//          else
+//            std::cout << " failed" << std::endl;
         }
       }
     }
