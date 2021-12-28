@@ -658,8 +658,8 @@ algorithm is the fastest.
 
 Function `grid_simplify_point_set()` considers a regular grid covering
 the bounding box of the input point set, and clusters all points
-sharing the same cell of the grid by picking as representant one
-arbitrarily chosen point: representants may only be retained in cells
+sharing the same cell of the grid by picking as representative one
+arbitrarily chosen point: representatives may only be retained in cells
 that have more than a user-defined minimum number of points in order
 to also filter out low density areas and outliers. This algorithm is
 still fast, although slower than `random_simplify_point_set()`.
