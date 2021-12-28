@@ -120,7 +120,6 @@ namespace Polygon_mesh_processing {
   using parameters::choose_parameter;
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
-  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VPMap;
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
