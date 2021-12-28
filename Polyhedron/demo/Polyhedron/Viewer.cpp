@@ -309,7 +309,7 @@ void Viewer::doBindings()
   setKeyDescription(Qt::Key_M,
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
-  setKeyDescription(Qt::Key_I + Qt::CTRL,
+  setKeyDescription(Qt::CTRL, Qt::Key_I,
                       tr("Toggle the primitive IDs visibility of the selected Item, for the types selected in the context menu of the said item."));
   setKeyDescription(Qt::Key_D,
                       tr("Disable the distance between two points  visibility."));
@@ -1022,6 +1022,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_FLAT:
     case PROGRAM_NO_INTERPOLATION:
     case PROGRAM_HEAT_INTENSITY:
+    case PROGRAM_TETRA_FILTERING:
         program->setUniformValue("light_pos", light_pos);
         program->setUniformValue("light_diff",d->diffuse);
         program->setUniformValue("light_spec", d->specular);
@@ -1045,6 +1046,7 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_FLAT:
     case PROGRAM_NO_INTERPOLATION:
     case PROGRAM_HEAT_INTENSITY:
+    case PROGRAM_TETRA_FILTERING:
       program->setUniformValue("mv_matrix", mv_mat);
       program->setUniformValue("norm_matrix", norm_mat);
       break;
@@ -1240,6 +1242,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasTransparency", true);
     program->setProperty("hasCenter", true);
     program->setProperty("hasSurfaceMode", true);
+    program->setProperty("hasSubdomainIndicesValues", true);
     return program;
   }
   case PROGRAM_C3T3_EDGES:
@@ -1250,6 +1253,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_edges.frag");
     program->setProperty("hasCutPlane", true);
     program->setProperty("hasSurfaceMode", true);
+    program->setProperty("hasSubdomainIndicesValues", true);
     return program;
   }
   case PROGRAM_WITH_LIGHT:
@@ -1444,6 +1448,19 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
     program->setProperty("drawLinesAdjacency", true);
+    return program;
+  }
+  case PROGRAM_TETRA_FILTERING:
+  {
+    if(!isOpenGL_4_3())
+    {
+      std::cerr<<"An OpenGL context of version 4.3 is required for the program ("<<name<<")."<<std::endl;
+      return nullptr;
+    }
+    QOpenGLShaderProgram* program = declare_program(name, ":/cgal/Polyhedron_3/resources/shader_tet_filter.vert", ":/cgal/Polyhedron_3/resources/shader_tet_filter.frag");
+    program->setProperty("hasLight", true);
+    program->setProperty("hasNormals", true);
+    program->setProperty("hasDistanceValues", true);
     return program;
   }
   default:

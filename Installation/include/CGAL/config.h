@@ -285,12 +285,6 @@ using std::min;
 using std::max;
 #endif
 
-//-------------------------------------------------------------------//
-// Is Geomview usable ?
-//#if !defined(_MSC_VER) && !defined(__MINGW32__)
-//#  define CGAL_USE_GEOMVIEW
-//#endif
-
 
 //-------------------------------------------------------------------//
 // Compilers provide different macros to access the current function name
@@ -369,15 +363,17 @@ using std::max;
 #  define CGAL_NO_UNIQUE_ADDRESS
 #endif
 
-// Macro CGAL_ASSUME
+// Macro CGAL_ASSUME and CGAL_UNREACHABLE
 // Call a builtin of the compiler to pass a hint to the compiler
 #if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
+#  define CGAL_UNREACHABLE() __builtin_unreachable()
 #elif defined(_MSC_VER)
 // MSVC has __assume
 #  define CGAL_ASSUME(EX) __assume(EX)
+#  define CGAL_UNREACHABLE() __assume(0)
 #endif
 // If CGAL_ASSUME is not defined, then CGAL_assume and CGAL_assume_code are
 // defined differently, in <CGAL/assertions.h>
@@ -546,5 +542,64 @@ namespace cpp11{
 #endif // not BOOST_MSVC
 /// @}
 #include <CGAL/license/lgpl.h>
+
+//----------------------------------------------------------------------//
+//  Function to define data directory
+//----------------------------------------------------------------------//
+#include <cstdlib>
+#include <string>
+#include <fstream>
+#include <iostream>
+
+namespace CGAL {
+
+// Returns filename prefixed by the directory of CGAL containing data.
+// This directory is either defined in the environement variable CGAL_DATA_DIR,
+// otherwise it is taken from the constant CGAL_DATA_DIR (defined in CMake),
+// otherwise it is empty (and thus returns filename unmodified).
+inline std::string data_file_path(const std::string& filename)
+{
+  const char* cgal_dir=nullptr;
+
+#ifdef _MSC_VER
+  char* cgal_dir_windows=nullptr;
+  _dupenv_s( &cgal_dir_windows, nullptr, "CGAL_DATA_DIR");
+  if (cgal_dir_windows!=nullptr)
+  { cgal_dir=cgal_dir_windows; }
+#else
+  cgal_dir=getenv("CGAL_DATA_DIR");
+#endif
+
+#ifdef CGAL_DATA_DIR
+ if (cgal_dir==nullptr)
+ { cgal_dir=CGAL_DATA_DIR; }
+#endif
+
+ std::string cgal_dir_string;
+ if (cgal_dir!=nullptr)
+ { cgal_dir_string=std::string(cgal_dir); }
+
+ std::string res=cgal_dir_string;
+ if (!res.empty() && res.back()!='/')
+ { res+=std::string("/"); }
+ res+=filename;
+
+ // Test if the file exists, write a warning otherwise
+ std::ifstream f(res);
+ if (!f)
+ {
+   std::cerr<<"[WARNING] file "<<res<<" does not exist or cannot be read "
+            <<"(CGAL_DATA_DIR='"<<cgal_dir_string<<"')."<<std::endl;
+ }
+
+#ifdef _MSC_VER
+ if (cgal_dir_windows!=nullptr)
+ { free(cgal_dir_windows); }
+#endif
+
+ return res;
+}
+
+} // end namespace CGAL
 
 #endif // CGAL_CONFIG_H

@@ -85,13 +85,13 @@ class Iterator_adaptor_base
     return tmp;
   }
 
-  bool operator==(const Iterator& other) const {
+  bool operator==(const Self& other) const {
     if ( vda_ == nullptr ) { return other.vda_ == nullptr; }
     if ( other.vda_ == nullptr ) { return vda_ == nullptr; }
     return ( vda_ == other.vda_ && cur_ == other.cur_ );
   }
 
-  bool operator!=(const Iterator& other) const {
+  bool operator!=(const Self& other) const {
     return !(*this == other);
   }
 
@@ -235,12 +235,12 @@ private:
     return *this;
   }
 
-  bool operator==(const Self& other) const {
-    return Base::operator==(other) && is_first_ == other.is_first_;
+  friend bool operator==(const Self& i, const Self& other) {
+    return i.Base::operator==(other) && i.is_first_ == other.is_first_;
   }
 
-  bool operator!=(const Self& other) const {
-    return !(*this == other);
+  friend bool operator!=(const Self& i, const Self& other) {
+    return !(i == other);
   }
 
  private:

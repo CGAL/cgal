@@ -1556,7 +1556,7 @@ protected:
   { return !N1.difference(*this).is_empty() && difference(N1).is_empty(); }
 
   bool operator>(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { return difference(*this).is_empty() && !difference(N1).is_empty(); }
+  { return N1.difference(*this).is_empty() && !difference(N1).is_empty(); }
 
   bool operator<=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   { return difference(N1).is_empty(); }

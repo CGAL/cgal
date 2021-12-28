@@ -191,28 +191,12 @@ int main() {
   image.set_data(nullptr); // trick to avoid ~Image_3 segfault.
 
 
-  const char* filenames[] = {
-    "data/skull_2.9.inr",
-    "../../examples/Surface_mesher/data/skull_2.9.inr",
-    "../../../Surface_mesher/examples/Surface_mesher/data/skull_2.9.inr",
-    "../Surface_mesher_Examples/data/skull_2.9.inr"
-  };
+  const std::string filename = CGAL::data_file_path("images/skull_2.9.inr");
 
-  std::size_t file_index = 0;
-  for(   ; file_index < sizeof(filenames); ++file_index)
-  {
-    std::ifstream image_file(filenames[file_index], std::ios_base::binary | std::ios_base::in );
-    if(image_file) {
-      break;
-    }
-  }
-
-  assert(file_index < sizeof(filenames) );
-
-  std::cerr << "Opening file " << filenames[file_index] << "...\n";
+  std::cerr << "Opening file " << filename << "...\n";
 
   CGAL::Image_3 image2;
-  const bool result = image2.read(filenames[file_index]);
+  const bool result = image2.read(filename);
   assert(result);
 
   std::cerr << "Image info:"

@@ -74,6 +74,7 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> p(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     if(! oep){
       oep.emplace(c2e(o1));
     }

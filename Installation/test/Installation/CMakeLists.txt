@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.20)
+cmake_minimum_required(VERSION 3.12...3.22)
 
 project( Installation_Tests )
 
@@ -50,7 +50,7 @@ endif()
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
 create_single_source_cgal_program("test_TBB.cpp")
-if(TARGET CGAl::TBB_support)
+if(TARGET CGAL::TBB_support)
   target_link_libraries(test_TBB PUBLIC CGAL::TBB_support)
 endif()
 

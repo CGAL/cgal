@@ -37,7 +37,7 @@ void alpha_edges(const Alpha_shape_2& A, OutputIterator out)
 
 bool file_input(std::list<Weighted_point>& L)
 {
-  std::ifstream is("./data/fin_weighted", std::ios::in);
+  std::ifstream is("data/fin_weighted", std::ios::in);
 
   if(is.fail())
   {

@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
   }
 
   int d = (argc > 1) ? boost::lexical_cast<int>(argv[1]) : 1;
-  const char* in_file = (argc > 2) ? argv[2] : "data/quint_tris.off";
+  const std::string in_file = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/quint_tris.off");
   const char* out_file = (argc > 3) ? argv[3] : "result.off";
 
   PolygonMesh pmesh;

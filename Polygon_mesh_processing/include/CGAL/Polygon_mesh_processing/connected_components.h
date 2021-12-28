@@ -326,7 +326,7 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh,
                                            const CGAL_PMP_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::faces_size_type                faces_size_type;
-  typedef CGAL::dynamic_face_property_t<faces_size_type>                             Face_property_tag;
+  typedef CGAL::dynamic_face_property_t<faces_size_type>                            Face_property_tag;
   typedef typename boost::property_map<PolygonMesh, Face_property_tag >::const_type Patch_ids_map;
 
   Patch_ids_map patch_ids_map = get(Face_property_tag(), pmesh);

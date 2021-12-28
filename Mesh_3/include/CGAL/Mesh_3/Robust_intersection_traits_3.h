@@ -25,7 +25,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Mesh_3/Profile_counter.h>
-#include <CGAL/Filtered_kernel/internal/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 
 
 namespace CGAL {

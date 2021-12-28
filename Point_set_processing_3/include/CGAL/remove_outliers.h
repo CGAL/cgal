@@ -247,33 +247,37 @@ remove_outliers(
 
   if (threshold_distance != FT(0))
     f2r = std::partition (sorted_points.begin(), sorted_points.end(),
-                          [&threshold_distance](const std::pair<FT, value_type>& p) -> bool
+                          [sq_threshold_distance = CGAL::square(threshold_distance)](const std::pair<FT, value_type>& p) -> bool
                           {
-                            return p.first < threshold_distance * threshold_distance;
+                            return p.first < sq_threshold_distance;
                           });
 
-  if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
-  {
-    std::nth_element (f2r,
-                      sorted_points.begin() + first_index_to_remove,
-                      sorted_points.end(),
-                      [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
-                      {
-                        return v1.first<v2.first;
-                      });
-    f2r = sorted_points.begin() + first_index_to_remove;
-  }
+  iterator out = points.end();
 
-  // Replaces [points.begin(), points.end()) range by the sorted content.
-  iterator pit = points.begin();
-  iterator out = points.begin();
-
-  for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+  if (f2r != sorted_points.end())
   {
-    *pit = sit->second;
-    if (sit == f2r)
-      out = pit;
-    ++ pit;
+    if (static_cast<std::size_t>(std::distance (sorted_points.begin(), f2r)) < first_index_to_remove)
+    {
+      std::nth_element (f2r,
+                        sorted_points.begin() + first_index_to_remove,
+                        sorted_points.end(),
+                        [](const std::pair<FT, value_type>& v1, const std::pair<FT, value_type>& v2)
+                        {
+                          return v1.first<v2.first;
+                        });
+      f2r = sorted_points.begin() + first_index_to_remove;
+    }
+
+    // Replaces [points.begin(), points.end()) range by the sorted content.
+    iterator pit = points.begin();
+
+    for (auto sit = sorted_points.begin(); sit != sorted_points.end(); ++ sit)
+    {
+      *pit = sit->second;
+      if (sit == f2r)
+        out = pit;
+      ++ pit;
+    }
   }
 
   callback_wrapper.join();

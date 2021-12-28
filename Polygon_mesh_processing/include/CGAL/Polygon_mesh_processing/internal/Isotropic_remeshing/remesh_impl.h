@@ -18,7 +18,7 @@
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
@@ -101,7 +101,7 @@ namespace internal {
   public:
     typedef edge_descriptor                     key_type;
     typedef bool                                value_type;
-    typedef value_type&                         reference;
+    typedef value_type                          reference;
     typedef boost::read_write_property_map_tag  category;
 
     Border_constraint_pmap()
@@ -175,7 +175,7 @@ namespace internal {
   public:
     typedef face_descriptor                     key_type;
     typedef Patch_id                            value_type;
-    typedef Patch_id&                           reference;
+    typedef Patch_id                            reference;
     typedef boost::read_write_property_map_tag  category;
 
     //note pmesh is a non-const ref because properties are added and removed
@@ -1125,9 +1125,9 @@ private:
 
   struct Patch_id_property_map
   {
-    typedef boost::readable_property_map_tag     category;
-    typedef Patch_id                             value_type;
-    typedef Patch_id&                            reference;
+    typedef boost::readable_property_map_tag       category;
+    typedef Patch_id                               value_type;
+    typedef Patch_id                               reference;
     typedef typename Triangle_list::const_iterator key_type;
 
     const Self* remesher_ptr_;
@@ -1137,7 +1137,7 @@ private:
     Patch_id_property_map(const Self& remesher)
       : remesher_ptr_(&remesher) {}
 
-    friend Patch_id get(const Patch_id_property_map& m, key_type tr_it)
+    friend value_type get(const Patch_id_property_map& m, key_type tr_it)
     {
       //tr_it is an iterator from triangles_
       std::size_t id_in_vec = std::distance(
@@ -1436,6 +1436,8 @@ private:
           || GeomTraits().collinear_3_object()(t, p, q))
           continue;
 
+        typename GeomTraits::Construct_cross_product_vector_3 cross_product
+          = GeomTraits().construct_cross_product_vector_3_object();
 #ifdef CGAL_PMP_REMESHING_DEBUG
         typename GeomTraits::Construct_normal_3 normal
           = GeomTraits().construct_normal_3_object();
@@ -1443,13 +1445,13 @@ private:
         Vector_3 normal_after_collapse  = normal(t, p, q);
 
         CGAL::Sign s1 = CGAL::sign(normal_before_collapse * normal_after_collapse);
-        CGAL::Sign s2 = CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
-                                 * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)));
+        CGAL::Sign s2 = CGAL::sign(cross_product(Vector_3(s, p), Vector_3(s, q))
+                                 * cross_product(Vector_3(t, p), Vector_3(t, q)));
         CGAL_assertion(s1 == s2);
 #endif
 
-        if(CGAL::sign(CGAL::cross_product(Vector_3(s, p), Vector_3(s, q))
-                    * CGAL::cross_product(Vector_3(t, p), Vector_3(t, q)))
+        if(CGAL::sign(cross_product(Vector_3(s, p), Vector_3(s, q))
+                    * cross_product(Vector_3(t, p), Vector_3(t, q)))
           != CGAL::POSITIVE)
           return true;
       }

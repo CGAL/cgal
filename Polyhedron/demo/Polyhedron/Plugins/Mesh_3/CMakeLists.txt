@@ -28,6 +28,12 @@ target_link_libraries(
          ${OPENGL_gl_LIBRARY})
 target_include_directories(mesh_3_plugin PRIVATE include)
 
+find_package(ITK QUIET COMPONENTS ITKCommon ITKThresholding ITKSmoothing ITKImageIntensity)
+if(ITK_FOUND)
+  include(CGAL_ITK_support)
+  target_link_libraries(mesh_3_plugin PUBLIC CGAL::ITK_support)
+endif(ITK_FOUND)
+
 find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
 if(VTK_FOUND)
   if(VTK_USE_FILE)
@@ -109,6 +115,10 @@ endif() #eigen
 
 polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS Viewer Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
+
+qt5_wrap_ui(tetraUI_FILES Tetrahedra_filter_widget.ui)
+polyhedron_demo_plugin(tetrahedra_filtering_plugin Tetrahedra_filtering_plugin ${tetraUI_FILES} KEYWORDS Mesh_3 Viewer)
+target_link_libraries(tetrahedra_filtering_plugin  PUBLIC scene_c3t3_item scene_tetrahedra_item)
 
 qt5_wrap_ui(ribUI_FILES Rib_dialog.ui)
 polyhedron_demo_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin

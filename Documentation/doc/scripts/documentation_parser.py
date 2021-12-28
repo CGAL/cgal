@@ -4,6 +4,7 @@ from pyquery import PyQuery as pq
 from collections import defaultdict
 from sys import argv 
 import os.path as op
+import codecs
 
 # if _in is part of args, return true.
 def check_type(_in, args):
@@ -33,7 +34,8 @@ for i in range(0,len(compounds)):
       filepath='class'+compound+'.xml'
       total_path=op.join(op.sep, root_path,filepath)
       if(op.isfile(total_path)):
-        e = pq(filename=total_path, parser="xml")
+        file_content = codecs.open(total_path, 'rb')
+        e = pq(file_content.read(), parser="xml")
         compoundnames=[p.text() for p in list(e('includes').items())]
         
         if(len(compoundnames) > 1 and compoundnames[0].find("Concept") != -1):

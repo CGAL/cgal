@@ -113,6 +113,8 @@ public:
     float getShrinkFactor() const;
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
+    const std::set<int> &subdomain_indices() const;
+    QColor getSubdomainIndexColor(int i) const;
   public Q_SLOTS:
 
   void on_spheres_color_changed();
@@ -125,6 +127,7 @@ public:
   void show_intersection(bool b);
   void show_grid(bool b);
   void show_spheres(bool b);
+  void computeIntersection();
 
   virtual QPixmap graphicalToolTip() const Q_DECL_OVERRIDE;
 
@@ -137,6 +140,8 @@ public:
   void build_histogram();
 
   QColor get_histogram_color(const double v) const;
+
+  void switchVisibleSubdomain(int);
 
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 

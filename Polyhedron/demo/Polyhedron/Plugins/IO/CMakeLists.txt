@@ -136,7 +136,7 @@ if(3MF_LIBRARIES
   include_directories(${3MF_INCLUDE_DIR})
   polyhedron_demo_plugin(io_3mf_plugin 3mf_io_plugin KEYWORDS Viewer PMP)
   target_link_libraries(io_3mf_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
-  target_compile_definitions(3mf_io_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
+  target_compile_definitions(io_3mf_plugin PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
   message(
     STATUS

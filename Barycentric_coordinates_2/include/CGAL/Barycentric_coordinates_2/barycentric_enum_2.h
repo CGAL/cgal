@@ -73,6 +73,8 @@ enum class Computation_policy_2 {
 namespace CGAL {
 namespace Barycentric_coordinates {
 
+#if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
 /// \name Locations of a Query Point
 /// @{
 
@@ -141,6 +143,8 @@ enum Type_of_polygon {
 };
 
 /// \endcond
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace Barycentric_coordinates
 } // namespace CGAL
