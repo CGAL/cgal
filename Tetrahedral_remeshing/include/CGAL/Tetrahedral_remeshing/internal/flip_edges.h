@@ -476,7 +476,7 @@ void find_best_flip_to_improve_dh(C3t3& c3t3,
     Dihedral_angle_cosine max_flip_cos_dh(CGAL::NEGATIVE, 1., 1.);
     for (const Facet& fi : facets)
     {
-      if (!tr.is_infinite(fi.first))
+      if (!tr.is_infinite(fi.first) && c3t3.is_in_complex(fi.first))
       {
         if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                              fi.first->vertex(indices(fi.second, 1)),
@@ -1047,7 +1047,7 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
     Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
     Cell_circulator done = circ;
 
-    Dihedral_angle_cosine curr_max_cosdh(CGAL::POSITIVE, 1., 1.);
+    Dihedral_angle_cosine curr_max_cosdh = max_cos_dihedral_angle(tr, circ++);
     do
     {
       curr_max_cosdh = (std::max)(curr_max_cosdh, max_cos_dihedral_angle(tr, circ));
@@ -1066,10 +1066,10 @@ Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
       CosAngle_and_vertex curr_cost_vpair = candidates.top();
       candidates.pop();
 
-//      std::cout << "\tcurrent   cos = " << curr_max_cosdh
-//        << "\t angle = " << std::acos(curr_max_cosdh) * 180./CGAL_PI << std::endl;
-//      std::cout << "\tcandidate cos = " << curr_cost_vpair.first
-//        << "\t angle = " << std::acos(curr_cost_vpair.first) * 180./CGAL_PI << std::endl;
+//      std::cout << "\tcurrent   cos = " << curr_max_cosdh.value()
+//        << "\t angle = " << std::acos(curr_max_cosdh.value()) * 180./CGAL_PI << std::endl;
+//      std::cout << "\tcandidate cos = " << curr_cost_vpair.first.value()
+//        << "\t angle = " << std::acos(curr_cost_vpair.first.value()) * 180./CGAL_PI << std::endl;
 //      std::cout << std::endl;
 
       if (curr_max_cosdh <= curr_cost_vpair.first)

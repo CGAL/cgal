@@ -201,6 +201,20 @@ struct Dihedral_angle_cosine
     };
   }
 
+  double value() const
+  {
+    switch (m_sgn)
+    {
+    case CGAL::POSITIVE:
+      return CGAL::approximate_sqrt(m_sq_num / m_sq_den);
+    case CGAL::ZERO:
+      return 0.;
+    default:
+      CGAL_assertion(m_sgn == CGAL::NEGATIVE);
+      return -1. * CGAL::approximate_sqrt(m_sq_num / m_sq_den);
+    };
+  }
+
   friend bool operator<(const Dihedral_angle_cosine& l,
                         const Dihedral_angle_cosine& r)
   {
