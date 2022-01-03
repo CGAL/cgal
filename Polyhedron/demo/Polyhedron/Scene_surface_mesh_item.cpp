@@ -1144,7 +1144,6 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
       sm->collect_garbage();
       Input_facets_AABB_tree* tree =
           new Input_facets_AABB_tree();
-      int index =0;
       for(face_descriptor f : faces(*sm))
       {
         //if face is degenerate, skip it
@@ -1155,7 +1154,6 @@ void* Scene_surface_mesh_item_priv::get_aabb_tree()
         if(!CGAL::is_triangle(halfedge(f, *sm), *sm))
         {
           EPICK::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, *sm);
-          index +=3;
           Q_FOREACH(EPICK::Triangle_3 triangle, triangulate_primitive(f,normal))
           {
             Primitive primitive(triangle, f);
