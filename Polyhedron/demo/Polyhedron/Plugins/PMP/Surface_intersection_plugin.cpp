@@ -310,8 +310,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfacePolyline()
   PMP::internal::compute_face_polylines_intersection(faces(*itemA->face_graph()),
                                                      polylines,
                                                      *itemA->face_graph(),
-                                                     std::back_inserter(poly_intersections),
-                                                     CGAL::Polygon_mesh_processing::parameters::all_default());
+                                                     std::back_inserter(poly_intersections));
 
   Q_FOREACH(const Poly_intersection& inter, poly_intersections)
   {

@@ -112,8 +112,7 @@ int main(int argc, char** argv)
 
   // a halfedge on the (possibly virtual) border
   // only used in output (will also be used to handle multiple connected components in the future)
-  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh,
-                CGAL::Polygon_mesh_processing::parameters::all_default()).first;
+  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
 
   parameterizer.parameterize(mesh, bhd, cmap, uvmap, vimap);
 
