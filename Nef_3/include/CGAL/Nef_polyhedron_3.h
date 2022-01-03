@@ -43,6 +43,7 @@
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Nef_3/Mark_bounded_volumes.h>
+#include <CGAL/Nef_3/Append_volumes.h>
 
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Nef_3/polygon_mesh_to_nef_3.h>
@@ -1439,6 +1440,16 @@ protected:
     Binary_operation bo(res.snc());
     bo(res.pl(), snc(), pl(), N1.snc(), N1.pl(), _or);
     return res;
+  }
+
+  Nef_polyhedron_3<Kernel,Items, Mark>
+  append(const Nef_polyhedron_3<Kernel,Items, Mark>& N1)
+  /*{\Mop returns |\Mvar| with N1 appended }*/ {
+    CGAL_NEF_TRACEN(" append between nef3 "<<&*this<<" and "<<&N1);
+    Append_volumes<Nef_polyhedron_3> appender(N1);
+    delegate(appender,true,false);
+    mark_bounded_volumes();
+    return *this;
   }
 
   Nef_polyhedron_3<Kernel,Items, Mark>
