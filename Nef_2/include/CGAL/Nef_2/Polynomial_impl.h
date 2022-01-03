@@ -180,15 +180,20 @@ Polynomial<double> Polynomial<double>::gcd(
   Polynomial<double> f2 = p2.abs();
   double f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
-  Polynomial<double> q,r; double M=1,D;
+  Polynomial<double> q,r; double D;
+#ifdef CGAL_USE_TRACE
+  double M=1;
   bool first = true;
+#endif
   while ( ! f2.is_zero() ) {
     Polynomial<double>::pseudo_div(f1,f2,q,r,D);
+#ifdef CGAL_USE_TRACE
     if (!first) M*=D;
+    first=false;
+#endif
     CGAL_NEF_TRACEV(f1);CGAL_NEF_TRACEV(f2);CGAL_NEF_TRACEV(q);CGAL_NEF_TRACEV(r);CGAL_NEF_TRACEV(M);
     r /= r.content();
     f1=f2; f2=r;
-    first=false;
   }
   CGAL_NEF_TRACEV(f1.content());
   return Polynomial<double>(1)*f1.abs();
