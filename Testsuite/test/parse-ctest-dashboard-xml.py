@@ -56,7 +56,7 @@ for t in testing.findall('Test'):
         if 'encoding' in t_output.attrib and t_output.attrib['encoding'] == 'base64':
            t_output_value = base64.standard_b64decode(t_output_value)
         if 'compression' in t_output.attrib and t_output.attrib['compression'] == 'gzip':
-           t_output_value = zlib.decompress(t_output_value).decode("utf-8")
+           t_output_value = zlib.decompress(t_output_value).decode("utf-8", 'backslashreplace')
     tests[tests_ids[t.find('FullName').text]] = \
          { \
            "Name":   t.find('Name').text, \
