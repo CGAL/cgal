@@ -238,13 +238,6 @@ struct Named_function_parameters
   Named_function_parameters(const T& v) : base(v) {}
   Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
 
-  Named_function_parameters<bool, internal_np::all_default_t, self>
-  all_default() const
-  {
-    typedef Named_function_parameters<bool, internal_np::all_default_t, self> Params;
-    return Params(*this);
-  }
-
 // create the functions for new named parameters and the one imported boost
 // used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)                          \
@@ -266,14 +259,13 @@ typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_nam
 Default_named_parameters
 inline all_default()
 {
-  typedef Named_function_parameters<bool, internal_np::all_default_t> Params;
-  return Params();
+  return Default_named_parameters();
 }
 
 Default_named_parameters
 inline use_default_values()
 {
-  return all_default();
+  return Default_named_parameters();
 }
 
 template <typename T, typename Tag, typename Base>
