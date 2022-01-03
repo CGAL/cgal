@@ -32,7 +32,7 @@ public:
    {
      Shell_entry_const_iterator si;
      CGAL_forall_shells_of(si,nef.volumes_begin())
-       CGAL::shell_to_nef_3(nef,si,snc);
+       CGAL::shell_to_nef_3(nef,si,snc,true);
    }
 private:
   const Nef_3& nef;
