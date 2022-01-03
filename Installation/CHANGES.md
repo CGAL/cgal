@@ -2,7 +2,7 @@ Release History
 ===============
 
 
-### [dD Spatial Searching](https://doc.cgal.org/5.4/Manual/packages.html#PkgSpatialSearchingD)
+### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
 
 -   Added the member function `write_graphviz()` to the class The Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
 
@@ -133,7 +133,6 @@ Release date: December 2021
 -   Added support of weighted images for an improved quality of meshes generated from labeled images,
     along with a function [`CGAL::Mesh_3::generate_label_weights()`](https://doc.cgal.org/5.4/Mesh_3/namespaceCGAL_1_1Mesh__3.html#ae5914bf77180ff8948c08046154ee727)
     to generate the weights.
-
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
 
