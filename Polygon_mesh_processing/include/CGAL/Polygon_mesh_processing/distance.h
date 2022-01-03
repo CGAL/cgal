@@ -447,11 +447,12 @@ struct Triangle_structure_sampler_for_triangle_mesh
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(vertex_point, tm));
-    rnd = choose_parameter(get_parameter(np, internal_np::random_generator),
-                           get_default_random());
+    if (!(is_default_parameter(get_parameter(np, internal_np::random_seed))))
+      rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
     min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
 
@@ -622,10 +623,11 @@ struct Triangle_structure_sampler_for_triangle_soup
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     min_sq_edge_length = (std::numeric_limits<double>::max)();
-    rnd = choose_parameter(get_parameter(np, internal_np::random_generator),
-                           get_default_random());
+    if (!(is_default_parameter(get_parameter(np, internal_np::random_seed))))
+      rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
   }
 
   std::pair<TriangleIterator, TriangleIterator> get_range()
@@ -746,10 +748,10 @@ struct Triangle_structure_sampler_for_triangle_soup
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{random_generator}
- *     \cgalParamDescription{An instance of `CGAL::Random` used for generating random numbers.}
- *     \cgalParamType{`CGAL::Random`}
- *     \cgalParamType{`CGAL::get_default_random()`}
+ *   \cgalParamNBegin{random_seed}
+ *     \cgalParamDescription{a value to seed the random number generator}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{a value generated with `std::time()`}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{use_random_uniform_sampling}
@@ -911,10 +913,10 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *     \cgalParamExtra{The geometric traits class must be compatible with the point range's point type.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{random_generator}
- *     \cgalParamDescription{An instance of `CGAL::Random` used for generating random numbers.}
- *     \cgalParamType{`CGAL::Random`}
- *     \cgalParamType{`CGAL::get_default_random()`}
+ *   \cgalParamNBegin{random_seed}
+ *     \cgalParamDescription{a value to seed the random number generator}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{a value generated with `std::time()`}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{use_random_uniform_sampling}
