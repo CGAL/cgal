@@ -24,7 +24,7 @@
 #include <CGAL/disable_warnings.h>
 #include <CGAL/iterator.h>
 #include <CGAL/TMDS_3/utilities.h>
-#include <CGAL/internal/TMDS_3/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
+#include <CGAL/TMDS_3/internal/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Union_find.h>

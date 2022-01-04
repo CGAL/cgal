@@ -59,7 +59,7 @@
 
 // To handle I/O for Surface_patch_index if that is a pair of `int` (the
 // default)
-#include <CGAL/internal/TMDS_3/Handle_IO_for_pair_of_int.h>
+#include <CGAL/TMDS_3/internal/Handle_IO_for_pair_of_int.h>
 
 #include <CGAL/Mesh_3/internal/indices_management.h>
 

@@ -21,7 +21,7 @@
 #include <CGAL/license/TMDS_3.h>
 
 #include <CGAL/TMDS_3/tet_soup_to_c3t3.h>
-#include <CGAL/internal/TMDS_3/TMDS_3_helper.h>
+#include <CGAL/TMDS_3/internal/TMDS_3_helper.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
