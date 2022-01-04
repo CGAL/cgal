@@ -54,7 +54,7 @@ bool read_OFF(std::istream& in,
   typedef typename Kernel_traits<Def_point>::Kernel                                     Def_kernel;
 
   typedef typename CGAL::GetVertexPointMap<Polyhedron_3<Traits, Items, HDS, Alloc>,
-                                                        CGAL_BGL_NP_CLASS>::type        VPM;
+                                                        NamedParameters>::type          VPM;
   typedef typename boost::property_traits<VPM>::value_type                              Point;
   typedef typename Kernel_traits<Point>::Kernel                                         Kernel;
 
@@ -142,7 +142,7 @@ bool write_OFF(std::ostream& out,
 
   // writes P to `out' in PRETTY, ASCII or BINARY format as the stream indicates.
   File_header_OFF header(is_binary(out), ! is_pretty(out), false);
-  typename CGAL::GetVertexPointMap<Polyhedron_3<Traits, Items, HDS, Alloc>, CGAL_BGL_NP_CLASS>::const_type
+  typename CGAL::GetVertexPointMap<Polyhedron_3<Traits, Items, HDS, Alloc>, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, P));
 

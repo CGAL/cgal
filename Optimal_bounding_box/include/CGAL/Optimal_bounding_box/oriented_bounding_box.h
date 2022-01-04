@@ -312,10 +312,10 @@ void construct_oriented_bounding_box(const PointRange& points,
 ///
 template <typename PointRange,
           typename Output,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename NamedParameters = parameters::Default_named_parameters>
 void oriented_bounding_box(const PointRange& points,
                            Output& out,
-                           const CGAL_BGL_NP_CLASS& np
+                           const NamedParameters& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                            , typename boost::enable_if<
                                typename boost::has_range_iterator<PointRange>
@@ -326,7 +326,7 @@ void oriented_bounding_box(const PointRange& points,
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type               PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type               PointMap;
 
 #if defined(CGAL_EIGEN3_ENABLED)
   typedef typename boost::property_traits<PointMap>::value_type                         Point;
@@ -337,7 +337,7 @@ void oriented_bounding_box(const PointRange& points,
 #endif
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
-                                                       CGAL_BGL_NP_CLASS,
+                                                       NamedParameters,
                                                        Default_traits>::type            Geom_traits;
 
   CGAL_static_assertion_msg(!(std::is_same<Geom_traits, void>::value),
@@ -427,7 +427,7 @@ void oriented_bounding_box(const PolygonMesh& pmesh,
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
-  typedef typename CGAL::GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type  VPM;
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::const_type  VPM;
 
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));

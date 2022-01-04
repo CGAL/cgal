@@ -355,7 +355,7 @@ public:
     if(is_polygon_mesh)
     {
       FaceGraph* poly = new FaceGraph();
-      if (CGAL::IO::internal::vtkPointSet_to_polygon_mesh(data, *poly))
+      if (CGAL::IO::internal::vtkPointSet_to_polygon_mesh(data, *poly, CGAL::parameters::use_default_values()))
       {
         Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
         if(group)

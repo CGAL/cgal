@@ -388,13 +388,13 @@ bool build_binary_surf_patch(DuplicatedPointsOutIterator& out,
  * read_surf reads a file which extension is .surf and fills `output` with one `Mesh` per patch.
  * Mesh is a model of FaceListGraph.
  */
-template<class Mesh, typename DuplicatedPointsOutIterator, class NamedParameters = parameters::Default_named_parameters>
+template<class Mesh, typename DuplicatedPointsOutIterator, class NamedParameters = CGAL::parameters::Default_named_parameters>
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
     std::vector<MaterialData>& metadata,
     CGAL::Bbox_3& grid_box,
     std::array<unsigned int, 3>& grid_size,
     DuplicatedPointsOutIterator out,
-    const NamedParameters& = parameters::use_default_values())
+    const NamedParameters& = CGAL::parameters::use_default_values())
 {
   typedef typename CGAL::GetGeomTraits<Mesh, NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;
