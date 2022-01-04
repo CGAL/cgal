@@ -22,7 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/boost/graph/helpers.h>
@@ -30,11 +30,6 @@
 #include <boost/tuple/tuple.hpp>
 
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 
@@ -634,11 +629,11 @@ bool use_dt3 =
 */
   template <typename PointRange,
             typename OutputIterator,
-            typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+            typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
   OutputIterator
   triangulate_hole_polyline(const PointRange& points,
                             OutputIterator out,
-                            const CGAL_PMP_NP_CLASS& np)
+                            const CGAL_BGL_NP_CLASS& np)
   {
     typedef typename std::iterator_traits<
       typename PointRange::iterator>::value_type Point;

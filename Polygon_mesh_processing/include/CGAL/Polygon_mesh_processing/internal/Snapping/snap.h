@@ -25,7 +25,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/snap_vertices.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -1371,10 +1371,10 @@ std::size_t snap_borders(TriangleMesh& tm_A,
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh,
           typename ToleranceMap,
-          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t snap_borders(TriangleMesh& tm,
                          ToleranceMap tolerance_map,
-                         const CGAL_PMP_NP_CLASS& np)
+                         const CGAL_BGL_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
@@ -1397,9 +1397,9 @@ std::size_t snap_borders(TriangleMesh& tm,
 
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh,
-          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t snap_borders(TriangleMesh& tm,
-                         const CGAL_PMP_NP_CLASS& np)
+                         const CGAL_BGL_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 

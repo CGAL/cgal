@@ -41,14 +41,8 @@
 #include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 
 namespace CGAL {
 namespace Polygon_mesh_processing{
@@ -321,9 +315,9 @@ namespace internal {
 //  *
 //  */
 template <typename PolygonMesh,
-          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t number_of_connected_components(const PolygonMesh& pmesh,
-                                           const CGAL_PMP_NP_CLASS& np)
+                                           const CGAL_BGL_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::faces_size_type                faces_size_type;
   typedef CGAL::dynamic_face_property_t<faces_size_type>                            Face_property_tag;
@@ -917,10 +911,10 @@ void remove_connected_components(PolygonMesh& pmesh
 */
 template <typename PolygonMesh
         , typename FaceRange
-        , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+        , typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void remove_connected_components(PolygonMesh& pmesh
                                 , const FaceRange& components_to_remove
-                                , const CGAL_PMP_NP_CLASS& np)
+                                , const CGAL_BGL_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -931,7 +925,7 @@ void remove_connected_components(PolygonMesh& pmesh
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
 
-  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
+  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_BGL_NP_CLASS>::type FaceIndexMap;
   FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fim);
@@ -987,10 +981,10 @@ void remove_connected_components(PolygonMesh& pmesh
 */
 template <typename PolygonMesh
         , typename FaceRange
-        , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+        , typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void keep_connected_components(PolygonMesh& pmesh
                              , const FaceRange& components_to_keep
-                             , const CGAL_PMP_NP_CLASS& np)
+                             , const CGAL_BGL_NP_CLASS& np)
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
@@ -998,7 +992,7 @@ void keep_connected_components(PolygonMesh& pmesh
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
+  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_BGL_NP_CLASS>::type FaceIndexMap;
   FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fim);

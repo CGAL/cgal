@@ -25,11 +25,6 @@
 
 #include <CGAL/property_map.h>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
@@ -335,8 +330,8 @@ void smooth_mesh(const FaceRange& face_range, TriangleMesh& tmesh)
   smooth_mesh(face_range, tmesh, parameters::all_default());
 }
 
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void smooth_mesh(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+void smooth_mesh(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np)
 {
   smooth_mesh(faces(tmesh), tmesh, np);
 }

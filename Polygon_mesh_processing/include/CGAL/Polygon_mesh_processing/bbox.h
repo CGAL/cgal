@@ -20,15 +20,8 @@
 
 #include <boost/graph/graph_traits.hpp>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 
@@ -64,18 +57,18 @@ namespace CGAL {
     *
     * @return a bounding box of `pmesh`
     */
-    template<typename PolygonMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+    template<typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
     CGAL::Bbox_3 bbox(const PolygonMesh& pmesh,
-                      const CGAL_PMP_NP_CLASS& np)
+                      const CGAL_BGL_NP_CLASS& np)
     {
       using parameters::choose_parameter;
       using parameters::get_parameter;
 
-      typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type
+      typename GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type
         vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(CGAL::vertex_point, pmesh));
 
-      typedef typename GetGeomTraits<PolygonMesh, CGAL_PMP_NP_CLASS>::type GT;
+      typedef typename GetGeomTraits<PolygonMesh, CGAL_BGL_NP_CLASS>::type GT;
       GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
@@ -283,9 +276,9 @@ namespace CGAL {
     * \ingroup PkgPolygonMeshProcessingRef
     * \deprecated This function is deprecated since \cgal 4.10, `CGAL::Polygon_mesh_processing::bbox()` should be used instead.
     */
-    template<typename PolygonMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+    template<typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
     CGAL_DEPRECATED CGAL::Bbox_3 bbox_3(const PolygonMesh& pmesh,
-                        const CGAL_PMP_NP_CLASS& np)
+                        const CGAL_BGL_NP_CLASS& np)
     {
       return bbox(pmesh, np);
     }

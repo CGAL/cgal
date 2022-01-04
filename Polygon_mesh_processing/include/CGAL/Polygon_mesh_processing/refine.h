@@ -16,7 +16,7 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/refine_impl.h>

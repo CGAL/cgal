@@ -2110,8 +2110,8 @@ bool remove_self_intersections(const FaceRange& face_range, TriangleMesh& tmesh)
   return remove_self_intersections(face_range, tmesh, parameters::all_default());
 }
 
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np)
 {
   return remove_self_intersections(faces(tmesh), tmesh, np);
 }

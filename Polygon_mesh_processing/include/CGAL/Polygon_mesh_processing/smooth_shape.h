@@ -30,11 +30,6 @@
 #include <sstream>
 #endif
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
@@ -210,10 +205,10 @@ void smooth_shape(const FaceRange& faces,
   smooth_shape(faces, tmesh, time, parameters::all_default());
 }
 
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void smooth_shape(TriangleMesh& tmesh,
                   const double time,
-                  const CGAL_PMP_NP_CLASS& np)
+                  const CGAL_BGL_NP_CLASS& np)
 {
   smooth_shape(faces(tmesh), tmesh, time, np);
 }

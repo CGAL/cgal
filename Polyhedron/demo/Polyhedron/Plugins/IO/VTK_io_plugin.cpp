@@ -67,7 +67,7 @@
 #include <vtkCommand.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;

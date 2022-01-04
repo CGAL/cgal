@@ -21,7 +21,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/algorithm.h>
@@ -49,11 +49,6 @@
 #include <type_traits>
 #include <typeinfo>
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -539,11 +534,11 @@ self_intersections(const FaceRange& face_range,
 template <class ConcurrencyTag = Sequential_tag,
           class TriangleMesh,
           class FacePairOutputIterator,
-          class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+          class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 FacePairOutputIterator
 self_intersections(const TriangleMesh& tmesh,
                          FacePairOutputIterator out,
-                   const CGAL_PMP_NP_CLASS& np)
+                   const CGAL_BGL_NP_CLASS& np)
 {
   return self_intersections<ConcurrencyTag>(faces(tmesh), tmesh, out, np);
 }
@@ -660,9 +655,9 @@ bool does_self_intersect(const FaceRange& face_range,
  */
 template <class ConcurrencyTag = Sequential_tag,
           class TriangleMesh,
-          class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+          class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool does_self_intersect(const TriangleMesh& tmesh,
-                         const CGAL_PMP_NP_CLASS& np)
+                         const CGAL_BGL_NP_CLASS& np)
 {
   return does_self_intersect<ConcurrencyTag>(faces(tmesh), tmesh, np);
 }

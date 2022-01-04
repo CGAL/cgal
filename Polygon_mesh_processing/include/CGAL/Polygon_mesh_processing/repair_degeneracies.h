@@ -920,12 +920,12 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                                         CGAL::parameters::all_default());
 }
 
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool remove_almost_degenerate_faces(TriangleMesh& tmesh,
                                     const double cap_threshold,
                                     const double needle_threshold,
                                     const double collapse_length_threshold,
-                                    const CGAL_PMP_NP_CLASS& np)
+                                    const CGAL_BGL_NP_CLASS& np)
 {
   return remove_almost_degenerate_faces(faces(tmesh), tmesh, cap_threshold, needle_threshold,
                                         collapse_length_threshold, np);
@@ -1728,18 +1728,18 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   return all_removed;
 }
 
-template <typename EdgeRange, typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+template <typename EdgeRange, typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool remove_degenerate_edges(const EdgeRange& edge_range,
                              TriangleMesh& tmesh,
-                             const CGAL_PMP_NP_CLASS& np)
+                             const CGAL_BGL_NP_CLASS& np)
 {
   std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> face_set;
   return remove_degenerate_edges(edge_range, tmesh, face_set, np);
 }
 
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool remove_degenerate_edges(TriangleMesh& tmesh,
-                             const CGAL_PMP_NP_CLASS& np)
+                             const CGAL_BGL_NP_CLASS& np)
 {
   std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor> face_set;
   return remove_degenerate_edges(edges(tmesh), tmesh, face_set, np);
@@ -2624,9 +2624,9 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   return remove_degenerate_faces(face_range, tmesh, CGAL::parameters::all_default());
 }
 
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool remove_degenerate_faces(TriangleMesh& tmesh,
-                             const CGAL_PMP_NP_CLASS& np)
+                             const CGAL_BGL_NP_CLASS& np)
 {
   return remove_degenerate_faces(faces(tmesh), tmesh, np);
 }

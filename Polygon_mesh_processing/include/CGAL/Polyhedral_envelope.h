@@ -88,11 +88,6 @@
 #include <unordered_set>
 #include <unordered_map>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
 /**
@@ -2249,14 +2244,14 @@ public:
    *       the initial list of prisms.
    * \todo apply that to the soup versions
    */
-  template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+  template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
   bool
-  operator()(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np) const
+  operator()(const TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np) const
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
+    typename GetVertexPointMap<TriangleMesh, CGAL_BGL_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 

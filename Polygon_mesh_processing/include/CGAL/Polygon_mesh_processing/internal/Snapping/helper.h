@@ -17,7 +17,7 @@
 
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 namespace CGAL {
