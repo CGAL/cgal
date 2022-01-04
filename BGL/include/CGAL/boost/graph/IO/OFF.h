@@ -28,12 +28,6 @@
 #include <iostream>
 #include <string>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
-
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

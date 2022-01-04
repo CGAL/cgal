@@ -32,11 +32,6 @@
 
 #if defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 namespace IO {
 namespace internal {

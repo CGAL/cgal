@@ -32,11 +32,6 @@
 #include <utility>
 #include <vector>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
