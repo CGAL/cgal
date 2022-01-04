@@ -28,12 +28,13 @@ namespace experimental {
 enum Polyline_simplification_algorithms { DOUGLAS_PEUCKER, ITERATIVE };
 
 template <typename PointRangeIn, typename PointRangeOut,
-          typename NamedParametersIn, typename NamedParametersOut>
+          typename NamedParametersIn = parameters::Default_named_parameters,
+          typename NamedParametersOut = parameters::Default_named_parameters>
 void simplify_polyline(const PointRangeIn& input,
                              PointRangeOut& output,
                        const double max_squared_frechet_distance,
-                       const NamedParametersIn& np_in,
-                       const NamedParametersOut& np_out)
+                       const NamedParametersIn& np_in = parameters::use_default_values(),
+                       const NamedParametersOut& np_out = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -180,25 +181,6 @@ void simplify_polyline(const PointRangeIn& input,
       //TODO if is_closed-==true, shall we add en extra step to see if we can remove output.front() and output[output.size()-2] (inital endpoints)
     }
   }
-}
-
-
-template <typename PointRangeIn, typename PointRangeOut>
-void simplify_polyline(const PointRangeIn& input,
-                             PointRangeOut& output,
-                       const double max_squared_frechet_distance)
-{
-  simplify_polyline(input, output, max_squared_frechet_distance,
-                    parameters::all_default(), parameters::all_default());
-}
-
-template <typename PointRangeIn, typename PointRangeOut, typename NamedParametersIn>
-void simplify_polyline(const PointRangeIn& input,
-                             PointRangeOut& output,
-                       const double max_squared_frechet_distance,
-                       const NamedParametersIn& np_in)
-{
-  simplify_polyline(input, output, max_squared_frechet_distance, np_in, parameters::all_default());
 }
 
 } } } // end of CGAL::Polygon_mesh_processing::experimental namespace

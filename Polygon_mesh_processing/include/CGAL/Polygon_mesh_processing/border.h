@@ -177,11 +177,11 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   template<typename PolygonMesh
          , typename FaceRange
          , typename HalfedgeOutputIterator
-         , typename NamedParameters>
+         , typename NamedParameters = parameters::Default_named_parameters>
   HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
                                   , const PolygonMesh& pmesh
                                   , HalfedgeOutputIterator out
-                                  , const NamedParameters& np)
+                                  , const NamedParameters& np = parameters::use_default_values())
   {
     if (face_range.empty())
       return out;
@@ -204,18 +204,6 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
         *out++ = hd;
     return out;
   }
-
-  template<typename PolygonMesh
-         , typename FaceRange
-         , typename HalfedgeOutputIterator>
-  HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
-                                        , const PolygonMesh& pmesh
-                                        , HalfedgeOutputIterator out)
-  {
-    return border_halfedges(face_range, pmesh, out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
-  }
-
 
   // counts the number of connected components of the boundary of the mesh.
   //

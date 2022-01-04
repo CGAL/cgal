@@ -595,13 +595,13 @@ generic_clip_impl(
   *         If `false` is returned `tm` and `clipper` are only corefined.
   */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 bool
 clip(TriangleMesh& tm,
      TriangleMesh& clipper,
-     const NamedParameters1& np_tm,
-     const NamedParameters2& np_c)
+     const NamedParameters1& np_tm = parameters::use_default_values(),
+     const NamedParameters2& np_c = parameters::use_default_values())
 {
   if (parameters::choose_parameter(parameters::get_parameter(np_c, internal_np::do_not_modify), false))
   {
@@ -693,14 +693,14 @@ clip(TriangleMesh& tm,
   *         If `false` is returned `tm` is only refined by the intersection with `plane`.
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool clip(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
           const Plane_3& plane,
 #else
           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-          const NamedParameters& np)
+          const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -796,14 +796,14 @@ bool clip(TriangleMesh& tm,
   *         If `false` is returned `tm` is only refined by the intersection with `iso_cuboid`.
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool clip(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
           const Iso_cuboid_3& iso_cuboid,
 #else
           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
 #endif
-          const NamedParameters& np)
+          const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -876,12 +876,12 @@ bool clip(TriangleMesh& tm,
   * \cgalNamedParamsEnd
 */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
            TriangleMesh& splitter,
-           const NamedParameters1& np_tm,
-           const NamedParameters2& np_s)
+           const NamedParameters1& np_tm = parameters::use_default_values(),
+           const NamedParameters2& np_s = parameters::use_default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -964,14 +964,14 @@ void split(TriangleMesh& tm,
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
            const Plane_3& plane,
 #else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -1067,14 +1067,14 @@ void split(TriangleMesh& tm,
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
            #ifdef DOXYGEN_RUNNING
            const Iso_cuboid_3& iso_cuboid,
            #else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
            #endif
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -1089,81 +1089,6 @@ void split(TriangleMesh& tm,
   const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   return split(tm, splitter, np, params::do_not_modify(do_not_modify));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-// convenience overloads
-template <class TriangleMesh>
-bool clip(TriangleMesh& tm,
-          const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
-{
-  return clip(tm, plane, parameters::all_default());
-}
-
-// convenience overloads
-template <class TriangleMesh>
-bool clip(TriangleMesh& tm,
-          const typename GetGeomTraits<TriangleMesh>::type::Iso_cuboid_3& iso_cuboid)
-{
-  return clip(tm, iso_cuboid, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh,
-          class NamedParameters1>
-bool
-clip(TriangleMesh& tm,
-     TriangleMesh& clipper,
-     const NamedParameters1& np_tm)
-{
-  return clip(tm, clipper, np_tm, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh>
-bool
-clip(TriangleMesh& tm,
-     TriangleMesh& clipper)
-{
-  return clip(tm, clipper, parameters::all_default());
-}
-
-
-// convenience overload
-template <class TriangleMesh,
-          class NamedParameters1>
-void
-split(TriangleMesh& tm,
-      TriangleMesh& splitter,
-      const NamedParameters1& np_tm)
-{
-  split(tm, splitter, np_tm, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh>
-void
-split(TriangleMesh& tm,
-      TriangleMesh& splitter)
-{
-  split(tm, splitter, parameters::all_default());
-}
-
-template <class TriangleMesh>
-void split(TriangleMesh& tm,
-           const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
-{
-   split(tm, plane, parameters::all_default());
-}
-
-template <class TriangleMesh>
-void split(TriangleMesh& tm,
-           const typename GetGeomTraits<TriangleMesh>::type::Iso_cuboid_3& iso_cuboid)
-{
-  split(tm, iso_cuboid, parameters::all_default());
-}
-
-/// \endcond
 
 } } //end of namespace CGAL::Polygon_mesh_processing
 

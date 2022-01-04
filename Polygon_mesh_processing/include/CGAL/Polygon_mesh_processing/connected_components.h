@@ -117,13 +117,13 @@ namespace internal {
  */
 template <typename PolygonMesh
           , typename FaceOutputIterator
-          , typename NamedParameters
+          , typename NamedParameters = parameters::Default_named_parameters
           >
 FaceOutputIterator
 connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face
                     , const PolygonMesh& pmesh
                     , FaceOutputIterator out
-                    , const NamedParameters& np)
+                    , const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -158,16 +158,6 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
       }
     }
   return out;
-}
-
-template <typename PolygonMesh, typename OutputIterator>
-OutputIterator
-connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor seed_face,
-                    const PolygonMesh& pmesh,
-                    OutputIterator out)
-{
-  return connected_component(seed_face, pmesh, out,
-          CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /*!
@@ -205,12 +195,12 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 
 template <typename PolygonMesh
         , typename FaceComponentMap
-        , typename NamedParameters
+        , typename NamedParameters = parameters::Default_named_parameters
 >
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap fcm,
-                     const NamedParameters& np)
+                     const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -263,22 +253,15 @@ connected_components(const PolygonMesh& pmesh,
   return i;
 }
 
-template <typename PolygonMesh, typename FaceComponentMap>
-typename boost::property_traits<FaceComponentMap>::value_type
-connected_components(const PolygonMesh& pmesh,
-                     FaceComponentMap fcm)
-{
-  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm, CGAL::parameters::all_default());
-}
 
 template <typename PolygonMesh
         , typename ComponentRange
         , typename FaceComponentMap
-        , typename NamedParameters>
+        , typename NamedParameters = parameters::Default_named_parameters>
 void keep_connected_components(PolygonMesh& pmesh
                               , const ComponentRange& components_to_keep
                               , const FaceComponentMap& fcm
-                              , const NamedParameters& np);
+                              , const NamedParameters& np = parameters::use_default_values());
 
 namespace internal {
 
@@ -400,10 +383,10 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  * \return the number of connected components removed (ignoring isolated vertices).
  */
 template <typename PolygonMesh,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
                                               std::size_t nb_components_to_keep,
-                                              const NamedParameters& np)
+                                              const NamedParameters& np = parameters::use_default_values())
 {
   typedef PolygonMesh                                                   PM;
   typedef typename boost::graph_traits<PM>::face_descriptor             face_descriptor;
@@ -480,15 +463,6 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   return num - nb_components_to_keep;
 }
 
-template <typename PolygonMesh>
-std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
-                                              std::size_t nb_components_to_keep)
-{
-  return keep_largest_connected_components(pmesh,
-    nb_components_to_keep,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
 /*!
  * \ingroup keep_connected_components_grp
  * removes connected components whose size is (strictly) smaller than a given threshold value,
@@ -556,10 +530,10 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  */
 template <typename PolygonMesh,
           typename ThresholdValueType,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 std::size_t keep_large_connected_components(PolygonMesh& pmesh,
                                             const ThresholdValueType threshold_value,
-                                            const NamedParameters& np)
+                                            const NamedParameters& np = parameters::use_default_values())
 {
   typedef PolygonMesh                                                     PM;
   typedef typename boost::graph_traits<PM>::face_descriptor               face_descriptor;
@@ -627,25 +601,17 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   return num - res;
 }
 
-template <typename PolygonMesh>
-std::size_t keep_large_connected_components(PolygonMesh& pmesh,
-                                            std::size_t threshold_components_to_keep)
-{
-  return keep_large_connected_components(pmesh,
-    threshold_components_to_keep,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
 
 
 template <typename PolygonMesh
         , typename ComponentRange
         , typename FaceComponentMap
-        , typename NamedParameters>
+        , typename NamedParameters = parameters::Default_named_parameters>
 void keep_or_remove_connected_components(PolygonMesh& pmesh
                                         , const ComponentRange& components_to_keep
                                         , const FaceComponentMap& fcm
                                         , bool  keep
-                                        , const NamedParameters& np)
+                                        , const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -858,11 +824,11 @@ void keep_connected_components(PolygonMesh& pmesh
 template <typename PolygonMesh
         , typename ComponentRange
         , typename FaceComponentMap
-        , typename NamedParameters>
+        , typename NamedParameters = parameters::Default_named_parameters>
 void remove_connected_components(PolygonMesh& pmesh
                                 , const ComponentRange& components_to_remove
                                 , const FaceComponentMap& fcm
-                                , const NamedParameters& np)
+                                , const NamedParameters& np = parameters::use_default_values())
 {
   if (components_to_remove.empty()) return;
   keep_or_remove_connected_components(pmesh, components_to_remove, fcm, false, np);
@@ -914,7 +880,7 @@ template <typename PolygonMesh
         , typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void remove_connected_components(PolygonMesh& pmesh
                                 , const FaceRange& components_to_remove
-                                , const CGAL_BGL_NP_CLASS& np)
+                                , const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -984,7 +950,7 @@ template <typename PolygonMesh
         , typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void keep_connected_components(PolygonMesh& pmesh
                              , const FaceRange& components_to_keep
-                             , const CGAL_BGL_NP_CLASS& np)
+                             , const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
@@ -1005,45 +971,6 @@ void keep_connected_components(PolygonMesh& pmesh
   keep_connected_components(pmesh, cc_to_keep, face_cc, np);
 }
 
-// non-documented overloads so that named parameters can be omitted
-
-template <typename PolygonMesh, typename FaceRange>
-void remove_connected_components(PolygonMesh& pmesh
-                                , const FaceRange& components_to_remove)
-{
-  remove_connected_components(pmesh, components_to_remove,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-template <typename PolygonMesh
-        , typename ComponentRange
-        , typename FaceComponentMap>
-void keep_connected_components(PolygonMesh& pmesh
-                              , const ComponentRange& components_to_keep
-                              , const FaceComponentMap& fcm)
-{
-  keep_connected_components(pmesh, components_to_keep, fcm,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-template <typename PolygonMesh
-        , typename ComponentRange
-        , typename FaceComponentMap>
-void remove_connected_components(PolygonMesh& pmesh
-                                , const ComponentRange& components_to_remove
-                                , const FaceComponentMap& fcm )
-{
-    remove_connected_components(pmesh, components_to_remove, fcm,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-template <typename PolygonMesh, typename FaceRange>
-void keep_connected_components(PolygonMesh& pmesh
-                             , const FaceRange& components_to_keep)
-{
-  keep_connected_components(pmesh, components_to_keep,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
 
 namespace internal {
 
@@ -1160,10 +1087,10 @@ void split_connected_components_impl(FIMap fim,
  * \cgalNamedParamsEnd
  *
  */
-template <class PolygonMesh, class PolygonMeshRange, class NamedParameters>
+template <class PolygonMesh, class PolygonMeshRange, class NamedParameters = parameters::Default_named_parameters>
 void split_connected_components(const PolygonMesh& pmesh,
                                 PolygonMeshRange& cc_meshes,
-                                const NamedParameters& np)
+                                const NamedParameters& np = parameters::use_default_values())
 {
   typedef Static_boolean_property_map<
     typename boost::graph_traits<PolygonMesh>::edge_descriptor, false> Default_ecm;
@@ -1183,13 +1110,6 @@ void split_connected_components(const PolygonMesh& pmesh,
                                             CGAL::get_initialized_halfedge_index_map(pmesh, np),
                                             CGAL::get_initialized_vertex_index_map(pmesh, np),
                                             ecm, cc_meshes, pmesh, np);
-}
-
-template <class PolygonMesh, class PolygonMeshRange>
-void split_connected_components(const PolygonMesh& pmesh,
-                                PolygonMeshRange& cc_meshes)
-{
-  split_connected_components(pmesh, cc_meshes, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing

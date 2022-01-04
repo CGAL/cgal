@@ -42,12 +42,12 @@ void vertices_as_halfedges(const VertexRange& vertex_range,
 template <typename HalfedgeRange,
           typename ToleranceMap,
           typename PolygonMesh,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge_range,
                                                    ToleranceMap& tolerance_map,
                                                    const typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT tolerance,
                                                    PolygonMesh& mesh,
-                                                   const NamedParameters& np)
+                                                   const NamedParameters& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
@@ -90,17 +90,6 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge
 #endif
     put(tolerance_map, vd, CGAL::min<FT>(0.9 * CGAL::approximate_sqrt(min_sq_dist), tolerance));
   }
-}
-
-template <typename HalfedgeRange,
-          typename ToleranceMap,
-          typename PolygonMesh>
-void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge_range,
-                                                   ToleranceMap& tolerance_map,
-                                                   const typename GetGeomTraits<PolygonMesh>::type::FT tolerance,
-                                                   PolygonMesh& mesh)
-{
-  return assign_tolerance_with_local_edge_length_bound(halfedge_range, tolerance_map, tolerance, mesh, CGAL::parameters::all_default());
 }
 
 template <typename GeomTraits>
