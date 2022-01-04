@@ -221,19 +221,6 @@ private:
        low-density areas.}
      \cgalParamNEnd
 
-     \cgalParamNBegin{callback}
-       \cgalParamDescription{a mechanism to get feedback on the advancement of the algorithm
-                             while it's running and to interrupt it if needed}
-       \cgalParamType{an instance of `std::function<bool(double)>`.}
-       \cgalParamDefault{unused}
-       \cgalParamExtra{It is called regularly when the
-                       algorithm is running: the current advancement (between 0. and
-                       1.) is passed as parameter. If it returns `true`, then the
-                       algorithm continues its execution normally; if it returns
-                       `false`, the algorithm is stopped and simplification stops with no guarantee on the output. }
-       \cgalParamExtra{The callback will be copied and therefore needs to be lightweight.}
-     \cgalParamNEnd
-
      \cgalParamNBegin{geom_traits}
        \cgalParamDescription{an instance of a geometric traits class}
        \cgalParamType{a model of `Kernel`}
@@ -255,8 +242,6 @@ grid_simplify_point_set(
 
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
-                                                                 std::function<bool(double)>());
 
   unsigned int min_points_per_cell = choose_parameter(get_parameter(np, internal_np::min_points_per_cell), 1);
 
