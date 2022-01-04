@@ -307,7 +307,7 @@ of the concept `MeshDomain_3`.
 
 \tparam Vb is the vertex base class. It has to be a model
 of the concept `RegularTriangulationVertexBase_3` and defaults to
-`Regular_triangulation_vertex_base_3<Gt>`.
+`Regular_triangulation_vertex_base_3<GT>`.
 
 \cgalModels `MeshVertexBase_3`
 
