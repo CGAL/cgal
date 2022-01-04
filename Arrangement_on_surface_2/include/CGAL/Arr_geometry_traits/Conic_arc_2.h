@@ -202,7 +202,7 @@ public:
   /*! Construct a segment conic arc from two endpoints.
    * \param source the source point with rational coordinates.
    */
-  _Conic_arc_2(Point_2& source, const Point_2& target) :
+  _Conic_arc_2(const Point_2& source, const Point_2& target) :
     _orient (COLLINEAR),
     _info(static_cast<int>(IS_VALID)),
     _source(source),
