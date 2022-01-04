@@ -20,7 +20,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
+#include <CGAL/Polygon_mesh_processing/angle_and_area_smoothing.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #ifndef CGAL_PMP_REMOVE_SELF_INTERSECTION_NO_POLYHEDRAL_ENVELOPE_CHECK
 #include <CGAL/Polyhedral_envelope.h>
@@ -481,9 +481,11 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
                                    dihedral_angle, weak_DA, local_vpm, gt);
 
   // @todo choice of number of iterations? Till convergence && max of 100?
-  Polygon_mesh_processing::smooth_mesh(faces(local_mesh), local_mesh, CP::edge_is_constrained_map(eif)
-                                                                         .number_of_iterations(100)
-                                                                         .use_safety_constraints(false));
+  Polygon_mesh_processing::angle_and_area_smoothing(faces(local_mesh),
+                                                    local_mesh,
+                                                    CP::edge_is_constrained_map(eif)
+                                                    .number_of_iterations(100)
+                                                    .use_safety_constraints(false));
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
   CGAL::IO::write_polygon_mesh("results/post_smoothing_local_mesh.off", local_mesh, CGAL::parameters::stream_precision(17));
