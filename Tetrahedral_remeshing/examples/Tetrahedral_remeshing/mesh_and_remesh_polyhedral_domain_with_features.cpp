@@ -3,6 +3,7 @@
 #define CGAL_DUMP_REMESHING_STEPS
 #define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 #define CGAL_TETRAHEDRAL_REMESHING_NO_EXTRA_ITERATIONS
+//#define PROTECT_ANGLES_FROM_COLLAPSE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -24,6 +25,9 @@ int nb_surface_flip_candidates = 0;
 int nb_surface_flip_done = 0;
 int nb_surface_44_configs = 0;
 int nb_surface_nm_configs = 0;
+int nb_surface_44_flips_done = 0;
+int nb_surface_nm_flips_done = 0;
+
 std::ostringstream oss_flip("flipped_surface_edges.polylines.txt");
 
 
@@ -56,7 +60,7 @@ int main(int argc, char* argv[])
   //"data/Shape1/shape1.off" 40. "data/Shape1/mesh_40.binary.cgal" "data/Shape1/remesh_40.binary.cgal"
   const char* fname = (argc > 1) ? argv[1] : "data/tensileASCII.off";
   const double target = (argc > 2) ? atof(argv[2]) : 200.;
-  const int nb_iter = (argc > 3) ? atoi(argv[3]) : 1;
+  const int nb_iter = (argc > 3) ? atoi(argv[3]) : 10;
   const char* fname_mesh3 = (argc > 4) ? argv[4] : "data/Tensile/mesh_200.binary.cgal";
   const char* fname_remesh = (argc > 5) ? argv[5] : "data/Tensile/remesh_200.binary.cgal";
 
@@ -102,7 +106,7 @@ int main(int argc, char* argv[])
   CGAL::dump_c3t3(c3t3, "out_after_meshing");
 
   // Remeshing
-  CGAL::tetrahedral_isotropic_remeshing(c3t3, CellSize,
+  CGAL::tetrahedral_isotropic_remeshing(c3t3, CellSize * 5.,
     CGAL::parameters::number_of_iterations(nb_iter));
   //    .smooth_constrained_edges(true));
 
@@ -118,6 +122,10 @@ int main(int argc, char* argv[])
   std::cout << "Surface 4/4 flips candidates proportion : "
     << 100.*nb_surface_44_configs / (double)(nb_surface_nm_configs + nb_surface_44_configs)
     << " percent" << std::endl;
+
+  std::cout << "nb surface flips 4/4 done = " << nb_surface_44_flips_done << std::endl;
+  std::cout << "nb surface flips n/m done = " << nb_surface_nm_flips_done << std::endl;
+
 
   return EXIT_SUCCESS;
 }
