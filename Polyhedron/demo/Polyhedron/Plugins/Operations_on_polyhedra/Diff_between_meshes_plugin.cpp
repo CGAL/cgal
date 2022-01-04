@@ -8,10 +8,12 @@
 #include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/boost/graph/Face_filtered_graph.h>
 #include "Messages_interface.h"
 
 using namespace CGAL::Three;
@@ -48,7 +50,6 @@ public Q_SLOTS:
 private:
   CGAL::Three::Scene_interface* scene;
   QAction* actionDiff;
-  SMesh* diff(SMesh* m1, SMesh* m2, bool compute_common);
 
 }; // end Polyhedron_demo_diff_between_meshes_plugin
 
@@ -67,131 +68,80 @@ QList<QAction*> Polyhedron_demo_diff_between_meshes_plugin::actions() const {
   return QList<QAction*>() << actionDiff;
 }
 
-SMesh* Polyhedron_demo_diff_between_meshes_plugin::diff(SMesh* m1, SMesh* m2, bool compute_common = false)
-{
-  std::map<Point_3, std::size_t> point_id_map;
-  std::vector<std::size_t> m1_vertex_id(num_vertices(*m1), -1);
-  std::vector<std::size_t> m2_vertex_id(num_vertices(*m2), -1);
-
-  //iterate both meshes to set ids to all points, and set vertex/point_id maps.
-  std::size_t id =0;
-  for(auto v : m1->vertices())
-  {
-    Point_3 p = m1->point(v);
-    auto res = point_id_map.insert(std::make_pair(p, id));
-    if(res.second)
-      id++;
-    m1_vertex_id[(std::size_t)v]=res.first->second;
-  }
-  for(auto v : m2->vertices())
-  {
-    Point_3 p = m2->point(v);
-    auto res = point_id_map.insert(std::make_pair(p, id));
-    if(res.second)
-      id++;
-    m2_vertex_id[(std::size_t)v]=res.first->second;
-  }
-
-  //fill a set with the "faces point-ids" of m1 and then iterate faces of m2 to compare.
-  std::set<std::vector<std::size_t> > m1_faces;
-  for(auto f : m1->faces())
-  {
-    std::vector<std::size_t> ids;
-    for(auto v : CGAL::vertices_around_face(halfedge(f, *m1), *m1))
-    {
-      ids.push_back(m1_vertex_id[(std::size_t)v]);
-    }
-    std::sort(ids.begin(), ids.end());
-    m1_faces.insert(ids);
-  }
-
-  std::vector<SMesh::Face_index> common_faces;
-  std::vector<Point_3> common_points;
-  std::map<SMesh::Vertex_index, std::size_t> id_map;
-  id = 0;
-
-  for(auto f : m2->faces())
-  {
-    std::vector<std::size_t> ids;
-    for(auto v : CGAL::vertices_around_face(halfedge(f, *m2), *m2))
-    {
-      ids.push_back(m2_vertex_id[(std::size_t)v]);
-    }
-    std::sort(ids.begin(), ids.end());
-    if(!((m1_faces.find(ids) != m1_faces.end()) ^ compute_common))
-    {
-      common_faces.push_back(f);
-      for(auto v : CGAL::vertices_around_face(halfedge(f, *m2), *m2))
-      {
-        auto res = id_map.insert(std::make_pair(v,id));
-        if(res.second)
-        {
-          common_points.push_back(m2->point(v));
-          id++;
-        }
-      }
-    }
-  }
-
-  //iterate m1_faces and fill a polygon vector using the id_map previously filled.
-  std::vector<std::vector<std::size_t> > polygons(common_faces.size());
-  id = 0;
-  for(auto f : common_faces)
-  {
-    for(auto v : vertices_around_face(halfedge(f, *m2),*m2))
-    {
-      polygons[id].push_back(id_map[v]);
-    }
-    ++id;
-  }
-
-  SMesh* common = new SMesh();
-  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<SMesh>(
-    common_points, polygons, *common);
-  return common;
-
-}
-
 
 void Polyhedron_demo_diff_between_meshes_plugin::diff()
 {
 
+  typedef CGAL::Face_filtered_graph<SMesh> Filtered_graph;
+
   QCursor c(Qt::WaitCursor);
   CGAL::Three::Three::CursorScopeGuard guard(c);
 
-  //Get the two meshes. No need to check their existance, applicable()
+  //Get the two meshes. No need to check their existence, applicable()
   //is not permissive enough to let it crash.
   Scene_surface_mesh_item* m1_item = qobject_cast<Scene_surface_mesh_item*>(
         scene->item(scene->selectionIndices().front())),
       *m2_item = qobject_cast<Scene_surface_mesh_item*>(
         scene->item(scene->selectionIndices().back()));
 
-  SMesh* m1=m1_item->face_graph(),
-      *m2=m2_item->face_graph();
+  SMesh m1=*m1_item->face_graph(),
+      m2=*m2_item->face_graph();
+  std::vector<face_descriptor> m1_only, m2_only;
+  std::vector<std::pair<face_descriptor, face_descriptor> > common;
+  CGAL::Polygon_mesh_processing::match_faces(
+        m1,
+        m2,
+        std::back_inserter(common),
+        std::back_inserter(m1_only),
+        std::back_inserter(m2_only));
 
-  SMesh* m1_over_m2 = diff(m1, m2);
-  SMesh* m2_over_m1 = diff(m2, m1);
-  SMesh* common = diff(m2, m1, true);
+  Filtered_graph filter1(m1, m1_only);
+  SMesh mesh1_only, mesh2_only, common_mesh;
+  CGAL::copy_face_graph(filter1, mesh1_only);
+  Scene_surface_mesh_item* mesh1_only_item = nullptr;
+  if(mesh1_only.faces().size() > 0)
+  {
+    mesh1_only_item = new Scene_surface_mesh_item(mesh1_only);
+    mesh1_only_item->setColor(QColor(Qt::blue));
+    mesh1_only_item->setName(QString("%1_only").arg(m1_item->name()));
+    CGAL::Three::Three::scene()->addItem(mesh1_only_item);
+  }
 
-  Scene_surface_mesh_item* m1_over_m2_item = new Scene_surface_mesh_item(m1_over_m2);
-  m1_over_m2_item->setColor(QColor(Qt::blue));
-  m1_over_m2_item->setName(QString("%2 - %1").arg(m1_item->name()).arg(m2_item->name()));
-  CGAL::Three::Three::scene()->addItem(m1_over_m2_item);
-  Scene_surface_mesh_item* m2_over_m1_item = new Scene_surface_mesh_item(m2_over_m1);
-  m2_over_m1_item->setColor(QColor(Qt::red));
-  m2_over_m1_item->setName(QString("%1 - %2").arg(m1_item->name()).arg(m2_item->name()));
-  CGAL::Three::Three::scene()->addItem(m2_over_m1_item);
-  Scene_surface_mesh_item* common_item = new Scene_surface_mesh_item(common);
-  common_item->setColor(QColor(Qt::green));
-  CGAL::Three::Three::scene()->addItem(common_item);
-  common_item->setName(QString("%1 && %2").arg(m1_item->name()).arg(m2_item->name()));
-
+  Filtered_graph filter2(m2, m2_only);
+  CGAL::copy_face_graph(filter2, mesh2_only);
+  Scene_surface_mesh_item* mesh2_only_item = nullptr;
+  if(mesh2_only.faces().size() > 0)
+  {
+    mesh2_only_item = new Scene_surface_mesh_item(mesh2_only);
+    mesh2_only_item->setColor(QColor(Qt::red));
+    mesh2_only_item->setName(QString("%1_only").arg(m2_item->name()));
+    CGAL::Three::Three::scene()->addItem(mesh2_only_item);
+  }
+  m1_only.clear();
+  m1_only.reserve(common.size());
+  for(const auto& f_pair : common)
+  {
+    m1_only.push_back(f_pair.first);
+  }
+  Filtered_graph filter_common(m1, m1_only);
+  CGAL::copy_face_graph(filter_common, common_mesh);
+  Scene_surface_mesh_item* common_item = nullptr;
+  if(common_mesh.faces().size() > 0)
+  {
+    common_item = new Scene_surface_mesh_item(common_mesh);
+    common_item->setColor(QColor(Qt::green));
+    CGAL::Three::Three::scene()->addItem(common_item);
+    common_item->setName(QString("%1 && %2").arg(m1_item->name()).arg(m2_item->name()));
+  }
   Scene_group_item* group = new Scene_group_item();
   group->setName("Diff result");
   CGAL::Three::Three::scene()->addItem(group);
-  CGAL::Three::Three::scene()->changeGroup(m1_over_m2_item, group);
-  CGAL::Three::Three::scene()->changeGroup(m2_over_m1_item, group);
-  CGAL::Three::Three::scene()->changeGroup(common_item, group);
+  if(mesh1_only_item)
+    CGAL::Three::Three::scene()->changeGroup(mesh1_only_item, group);
+  if(mesh2_only_item)
+    CGAL::Three::Three::scene()->changeGroup(mesh2_only_item, group);
+  if(common_item)
+    CGAL::Three::Three::scene()->changeGroup(common_item, group);
 
   m1_item->setVisible(false);
   m2_item->setVisible(false);

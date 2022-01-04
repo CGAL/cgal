@@ -1,5 +1,5 @@
 namespace CGAL {
-
+namespace IO {
 /// \ingroup PkgMesh3IOFunctions
 ///
 /// \brief outputs a mesh complex to the medit (`.mesh`) file format.
@@ -18,4 +18,4 @@ void output_to_medit(std::ostream& os,
                      bool rebind = false,
                      bool show_patches = false);
 
-} // end namespace CGAL
+}} // end namespace CGAL::IO

@@ -2,18 +2,12 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project( Mesh_3_Tests )
-
-
-if(POLICY CMP0074)
-  cmake_policy(SET CMP0074 NEW)
-endif()
 
 find_package(CGAL QUIET COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
-  include( ${CGAL_USE_FILE} )
 
   find_package( TBB QUIET )
   include(CGAL_TBB_support)
@@ -127,8 +121,6 @@ if ( CGAL_FOUND )
         execution___of__test_meshing_verbose
         execution___of__test_meshing_polyhedron_with_features
         execution___of__test_meshing_implicit_function
-        execution___of__test_meshing_3D_image
-        execution___of__test_meshing_3D_gray_image
         execution___of__test_meshing_unit_tetrahedron
         execution___of__test_meshing_polyhedron
         execution___of__test_meshing_polyhedral_complex
@@ -136,7 +128,13 @@ if ( CGAL_FOUND )
         execution___of__test_mesh_3_issue_1554
         execution___of__test_mesh_polyhedral_domain_with_features_deprecated
         execution___of__test_mesh_cell_base_3
-      PROPERTY RUN_SERIAL 1)
+        PROPERTY RUN_SERIAL 1)
+      if(TARGET test_meshing_3D_image)
+        set_property(TEST
+          execution___of__test_meshing_3D_image
+          execution___of__test_meshing_3D_gray_image
+          PROPERTY RUN_SERIAL 1)
+      endif()
     endif()
   endif()
   if(TARGET ITT::ITT)

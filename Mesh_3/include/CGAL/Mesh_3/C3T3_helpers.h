@@ -46,7 +46,7 @@
 #include <boost/unordered_set.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/parallel_do.h>
+# include <tbb/parallel_for_each.h>
 # include <mutex>
 #endif
 
@@ -1684,9 +1684,8 @@ private:
   /**
    * Returns the least square plane from v, using adjacent surface points
    */
-  boost::optional<Plane_3>
+  std::pair<boost::optional<Plane_3>, Bare_point>
   get_least_square_surface_plane(const Vertex_handle& v,
-                                 Bare_point& ref_point,
                                  Surface_patch_index index = Surface_patch_index()) const;
 
   /**
@@ -1941,7 +1940,7 @@ private:
     // Parallel
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
-      tbb::parallel_do(
+      tbb::parallel_for_each(
         outdated_cells.begin(), outdated_cells.end(),
         Update_cell_facets<Self, FacetUpdater>(tr_, updater));
     }
@@ -2831,7 +2830,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(first_cell, last_cell,
+    tbb::parallel_for_each(first_cell, last_cell,
       Update_cell<C3T3, Update_c3t3>(c3t3_, updater));
   }
   // Sequential
@@ -2853,7 +2852,7 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    tbb::parallel_do(
+    tbb::parallel_for_each(
       facets.begin(), facets.end(),
       Update_facet<Self, C3T3, Update_c3t3, Vertex_to_proj_set>(
         *this, c3t3_, updater, vertex_to_proj)
@@ -3414,10 +3413,10 @@ project_on_surface_aux(const Bare_point& p,
 
 
 template <typename C3T3, typename MD>
-boost::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>
+std::pair<boost::optional<typename C3T3_helpers<C3T3,MD>::Plane_3>,
+          typename C3T3_helpers<C3T3, MD>::Bare_point>
 C3T3_helpers<C3T3,MD>::
 get_least_square_surface_plane(const Vertex_handle& v,
-                               Bare_point& reference_point,
                                Surface_patch_index patch_index) const
 {
   typedef typename C3T3::Triangulation::Triangle Triangle;
@@ -3467,7 +3466,7 @@ get_least_square_surface_plane(const Vertex_handle& v,
 
   // In some cases point is not a real surface point
   if ( triangles.empty() )
-    return boost::none;
+    return std::make_pair(boost::none, Bare_point());
 
   // Compute least square fitting plane
   Plane_3 plane;
@@ -3481,9 +3480,8 @@ get_least_square_surface_plane(const Vertex_handle& v,
                                        tr_.geom_traits(),
                                        Default_diagonalize_traits<FT, 3>());
 
-  reference_point = ref_facet.first->get_facet_surface_center(ref_facet.second);
-
-  return plane;
+   return std::make_pair(plane,
+     ref_facet.first->get_facet_surface_center(ref_facet.second));
 }
 
 
@@ -3515,9 +3513,10 @@ project_on_surface_if_possible(const Vertex_handle& v,
   typename Gt::Equal_3 equal = tr_.geom_traits().equal_3_object();
 
   // Get plane
-  Bare_point reference_point;
-  boost::optional<Plane_3> opt_plane = get_least_square_surface_plane(v, reference_point, index);
+  std::pair<boost::optional<Plane_3>, Bare_point> pl_rp
+    = get_least_square_surface_plane(v, index);
 
+  boost::optional<Plane_3> opt_plane = pl_rp.first;
   if(!opt_plane) return boost::none;
 
   // Project
@@ -3525,7 +3524,10 @@ project_on_surface_if_possible(const Vertex_handle& v,
   if ( ! equal(p, cp(position)) )
     return project_on_surface_aux(p, cp(position), opt_plane->orthogonal_vector());
   else
+  {
+    const Bare_point& reference_point = pl_rp.second;
     return project_on_surface_aux(p, reference_point, opt_plane->orthogonal_vector());
+  }
 }
 
 

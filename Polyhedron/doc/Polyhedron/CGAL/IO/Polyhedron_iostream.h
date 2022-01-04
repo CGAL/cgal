@@ -36,8 +36,8 @@ bool read_OFF( std::istream& in, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
-\deprecated This function is deprecated since \cgal 5.2,
-            \link PkgPolyhedronIOFunc `CGAL::read_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
+\deprecated This function is deprecated since \cgal 5.3,
+            \link PkgPolyhedronIOFunc `CGAL::IO::read_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
 */
 template <class Traits>
 bool read_off( std::ostream& out, Polyhedron_3<Traits>& P);
@@ -56,15 +56,15 @@ std::istream& operator>>( std::istream& in, Polyhedron_3<Traits>& P);
 
 writes the polyhedral surface \f$P\f$ to the output
 stream `out` using the %Object File Format, OFF, with file extension
-<TT>.off</TT>. The output is in ASCII format. From the polyhedral surface, only the point
+<TT>.off</TT>. The output is in \ascii format. From the polyhedral surface, only the point
 coordinates and facets are written. Neither normal vectors nor color
 attributes are used.
 
-For OFF an ASCII and a binary format exist. The format can be selected
+For `OFF` an \ascii and a binary format exist. The format can be selected
 with the \cgal modifiers for streams, `set_ascii_mode()` and
 `set_binary_mode()` respectively. The modifier `set_pretty_mode()` can be used
 to allow for (a few) structuring comments in the output. Otherwise,
-the output would be free of comments. The default for writing is ASCII
+the output would be free of comments. The default for writing is \ascii
 without comments.
 
 This function overloads the generic function \link PkgBGLIoFuncsOFF `write_OFF(std::istream&,FaceGraph)` \endlink
@@ -79,8 +79,8 @@ bool write_OFF( std::ostream& out, Polyhedron_3<Traits>& P);
 
 /*!
 \relates Polyhedron_3
-\deprecated This function is deprecated since \cgal 5.2,
-            \link PkgPolyhedronIOFunc `CGAL::write_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
+\deprecated This function is deprecated since \cgal 5.3,
+            \link PkgPolyhedronIOFunc `CGAL::IO::write_OFF(std::ostream&, Polyhedron_3<Traits>&)` \endlink should be used instead.
 */
 template <class Traits>
 bool write_off( std::ostream& out, Polyhedron_3<Traits>& P);

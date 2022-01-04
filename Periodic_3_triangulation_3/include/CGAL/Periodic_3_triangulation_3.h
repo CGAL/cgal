@@ -21,8 +21,7 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
-#include <CGAL/result_of.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_triangulation_iterators_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
@@ -30,16 +29,16 @@
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/triangulation_assertions.h>
-#include <CGAL/internal/canonicalize_helper.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/canonicalize_helper.h>
 
 #include <CGAL/array.h>
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/use.h>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
-#include <CGAL/internal/Static_filters/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -2753,7 +2752,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
   return vir_vertices[0][0][0];
 }
 #define CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
-#include <CGAL/internal/Periodic_3_triangulation_dummy_36.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_triangulation_dummy_36.h>
 #undef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 
 /** finds all cells that are in conflict with the currently added point
@@ -4023,7 +4022,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr)
   int cx=0, cy=0, cz=0;
   size_type n=0;
 
-  if(is_ascii(is)) {
+  if(IO::is_ascii(is)) {
     is >> domain;
     is >> cx >> cy >> cz;
     is >> n;
@@ -4079,7 +4078,7 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS>& tr)
   // read offsets
   int off[4] = {0,0,0,0};
   for(std::size_t j=0; j < m; j++) {
-    if(is_ascii(is))
+    if(IO::is_ascii(is))
       is >> off[0] >> off[1] >> off[2] >> off[3];
     else {
       read(is,off[0]);
@@ -4130,7 +4129,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
   Covering_sheets cover = tr.number_of_sheets();
   size_type n = tr.number_of_vertices();
 
-  if(is_ascii(os))
+  if(IO::is_ascii(os))
     os << domain << std::endl
        << cover[0] << " " << cover[1] << " " << cover[2] << std::endl
        << n*cover[0]*cover[1]*cover[2] << std::endl;
@@ -4152,7 +4151,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
     for(Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it) {
       V[it] = i++;
       os << it->point();
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << std::endl;
     }
   } else {
@@ -4164,7 +4163,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
         continue;
 
       V[it]=i++;
-      if(is_ascii(os))
+      if(IO::is_ascii(os))
         os << it->point() << std::endl
            << Offset(0,0,0) << std::endl;
       else os << it->point() << Offset(0,0,0);
@@ -4176,7 +4175,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
         vvit = tr.virtual_vertices.find(vv[j]);
         CGAL_triangulation_assertion(vvit != tr.virtual_vertices.end());
         V[vv[j]] = i++;
-        if(is_ascii(os))
+        if(IO::is_ascii(os))
           os << vv[j]->point() << std::endl
              << vvit->second.second << std::endl;
         else os << vv[j]->point() << vvit->second.second;
@@ -4196,7 +4195,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
     //Cell_handle ch = std::find(tr.cells_begin(), tr.cells_end(), i);
     Cell_handle ch(it);
     for(int j=0; j<4; j++) {
-      if(is_ascii(os)) {
+      if(IO::is_ascii(os)) {
         os << ch->offset(j);
         if( j==3 )
           os << std::endl;
@@ -4214,7 +4213,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
   if(tr.number_of_vertices() != 0) {
       for(Cell_iterator it=tr.cells_begin(); it != tr.cells_end(); ++it) {
     os << *it; // other information
-    if(is_ascii(os))
+    if(IO::is_ascii(os))
       os << std::endl;
     }
   }

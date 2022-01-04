@@ -22,8 +22,8 @@ struct Exact_vertex_point_map
   // typedef for the property map
   typedef boost::property_traits<Exact_point_map>::value_type value_type;
   typedef boost::property_traits<Exact_point_map>::reference reference;
-  typedef boost::property_traits<Exact_point_map>::category category;
   typedef boost::property_traits<Exact_point_map>::key_type key_type;
+  typedef boost::read_write_property_map_tag category;
 
   // exterior references
   Exact_point_map exact_point_map;
@@ -65,11 +65,11 @@ struct Exact_vertex_point_map
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
-  if(!PMP::read_polygon_mesh(filename1, mesh1) || !PMP::read_polygon_mesh(filename2, mesh2))
+  if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
                                          params::vertex_point_map(mesh2_vpm) ) )
     {
       std::cout << "Intersection and union were successfully computed\n";
-      CGAL::write_polygon_mesh("inter_union.off", mesh2, CGAL::parameters::stream_precision(17));
+      CGAL::IO::write_polygon_mesh("inter_union.off", mesh2, CGAL::parameters::stream_precision(17));
       return 0;
     }
 

@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Cone_spanners_2_Examples)
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)
-include(${CGAL_USE_FILE})
 find_package(LEDA QUIET)
 
 if(CGAL_Core_FOUND OR LEDA_FOUND)

@@ -79,14 +79,13 @@ struct Vector_to_pmap
 
   std::vector<bool>* vec;
 
-  Vector_to_pmap (std::vector<bool>* vec = NULL) : vec (vec) { }
+  Vector_to_pmap (std::vector<bool>* vec = nullptr) : vec (vec) { }
 
   friend inline
-  reference get(const Vector_to_pmap& map, key_type p)
+  value_type get(const Vector_to_pmap& map, key_type i)
   {
-    return (*map.vec)[p];
+    return (*map.vec)[i];
   }
-
 };
 
 using namespace CGAL::Three;
@@ -146,7 +145,7 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::Norm
 {
   Q_OBJECT
   public:
-    Point_set_demo_normal_estimation_dialog(QWidget* /*parent*/ = 0)
+    Point_set_demo_normal_estimation_dialog(QWidget* /*parent*/ = nullptr)
     {
       setupUi(this);
       m_offset_radius->setMinimum(0.01);
@@ -183,7 +182,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalInversio
   {
     // Gets point set
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
         return;
 
     for(Point_set::iterator it = points->begin_or_selection_begin(); it != points->end(); ++it){
@@ -203,17 +202,17 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
 
   if(item)
   {
-    // Gets point set
-    Point_set* points = item->point_set();
-    if(points == NULL)
-        return;
-    if (!(points->has_normal_map()))
-      points->add_normal_map();
-
     // Gets options
     Point_set_demo_normal_estimation_dialog dialog;
     if(!dialog.exec())
       return;
+
+    // Gets point set
+    Point_set* points = item->point_set();
+    if(points == nullptr)
+        return;
+    if (!(points->has_normal_map()))
+      points->add_normal_map();
 
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
@@ -304,7 +303,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
   {
     // Gets point set
     Point_set* points = item->point_set();
-    if(points == NULL)
+    if(points == nullptr)
         return;
 
     // Chose method
@@ -325,8 +324,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
       neighborhood->setRange (1, 10000000);
       neighborhood->setValue (18);
 
-      QRadioButton* use_seed_points = NULL;
-      QRadioButton* orient_selection = NULL;
+      QRadioButton* use_seed_points = nullptr;
+      QRadioButton* orient_selection = nullptr;
 
       if (points->nb_selected_points() != 0)
       {
@@ -391,7 +390,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
       // Warns user
       if (nb_unoriented_normals > 0)
       {
-        QMessageBox::information(NULL,
+        QMessageBox::information(nullptr,
                                  tr("Points with an unoriented normal"),
                                  tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson reconstruction.")
                                  .arg(nb_unoriented_normals));

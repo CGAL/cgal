@@ -22,14 +22,14 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char*argv[])
 {
-  const char* input_filename = (argc>1) ? argv[1] : "data/fin90_with_PCA_normals.xyz";
+  const std::string input_filename = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/fin90_with_PCA_normals.xyz");
   const char* output_filename = (argc>2) ? argv[2] : "data/fin90_with_PCA_normals_bilateral_smoothed.xyz";
 
   // Reads a point set file in points[] * with normals *.
   std::vector<PointVectorPair> points;
-  if(!CGAL::read_points(input_filename, std::back_inserter(points),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                         .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+  if(!CGAL::IO::read_points(input_filename, std::back_inserter(points),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                             .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
   {
      std::cerr << "Error: cannot read file " << input_filename << std::endl;
      return EXIT_FAILURE;
@@ -54,10 +54,10 @@ int main(int argc, char*argv[])
   }
 
   //// Save point set.
-  if(!CGAL::write_XYZ(output_filename, points,
-                      CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                       .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
-                                       .stream_precision(17)))
+  if(!CGAL::IO::write_XYZ(output_filename, points,
+                          CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                           .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
+                                           .stream_precision(17)))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

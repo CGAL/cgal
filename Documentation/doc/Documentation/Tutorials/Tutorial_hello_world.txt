@@ -308,7 +308,7 @@ there must be a global function `halfedges(const G&)`, etc.
 
 An example for a concept with a required traits class is `InputIterator`.
 For a model of an `InputIterator` a specialization of the class
-<a href="http://en.cppreference.com/w/cpp/iterator/iterator_traits"> `std::iterator_traits`</a>
+<a href="https://en.cppreference.com/w/cpp/iterator/iterator_traits"> `std::iterator_traits`</a>
 must exist (or the generic template must be applicable).
 
 \section intro_further Further Reading

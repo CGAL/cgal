@@ -48,8 +48,8 @@ include(${CGAL_USE_FILE})
 
 find_package(
   Qt5 QUIET
-  COMPONENTS OpenGL Script
-  OPTIONAL_COMPONENTS ScriptTools WebSockets)
+  COMPONENTS OpenGL Script Widgets
+  OPTIONAL_COMPONENTS ScriptTools WebSockets Network)
 
 set_package_properties(
   Qt5 PROPERTIES
@@ -78,7 +78,7 @@ find_package(METIS)
 include(CGAL_METIS_support)
 set_package_properties(
   METIS PROPERTIES
-  DESCRIPTION "A library for partitionning."
+  DESCRIPTION "A library for partitioning."
   PURPOSE "Requiered for the partition plugin.")
 
 # Activate concurrency?
@@ -217,7 +217,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
       STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()
 
-  cgal_add_compilation_test(demo_framework)
+  #compilation_of__demo_framework is defined in polyhedron_demo_macros.cmake
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
   # CMake). That is to deal with the visibility of symbols of
@@ -241,37 +241,34 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(point_dialog PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script
                                             Qt5::Widgets)
 
-  add_custom_target(all_scene_items)
-  if(BUILD_TESTING)
-    cgal_add_compilation_test(all_scene_items)
-    set_property(
-      TEST compilation_of__all_scene_items
-      APPEND
-      PROPERTY DEPENDS compilation_of__demo_framework)
-    set_property(TEST compilation_of__all_scene_items APPEND PROPERTY TIMEOUT
-                                                                      1700)
-  endif(BUILD_TESTING)
-
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(
       ${item_name} PUBLIC demo_framework ${CGAL_LIBRARIES} Qt5::OpenGL Qt5::Gui
                           Qt5::Script Qt5::Widgets)
-    add_dependencies(all_scene_items ${item_name})
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${item_name})
   endmacro(add_item)
 
+  add_item(scene_triangulation_3_item Scene_triangulation_3_item.cpp)
+  target_link_libraries(scene_triangulation_3_item PUBLIC scene_basic_objects)
+
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(
-    scene_c3t3_item PUBLIC scene_surface_mesh_item scene_polygon_soup_item
-                           scene_basic_objects ${TBB_LIBRARIES})
+    scene_c3t3_item PUBLIC scene_triangulation_3_item
+    scene_surface_mesh_item scene_polygon_soup_item
+    scene_basic_objects ${TBB_LIBRARIES})
+
   if(TARGET CGAL::TBB_support)
     target_link_libraries(scene_c3t3_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_triangulation_3_item PUBLIC CGAL::TBB_support)
   endif()
   if(COMMAND target_precompile_headers)
     # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
     target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]])
   endif()
+  add_item(scene_tetrahedra_item Scene_tetrahedra_item.cpp)
+  target_link_libraries(scene_tetrahedra_item PUBLIC scene_c3t3_item)
+
   add_item(scene_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp)
   add_item(scene_image_item Scene_image_item.cpp)
@@ -434,9 +431,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_PMP)
 
   #WS Server
-  if(TARGET Qt5::WebSockets)
+  if(TARGET Qt5::WebSockets AND TARGET Qt5::Network)
     add_executable(WS_server Server_ws.cpp)
-    target_link_libraries(WS_server PUBLIC Qt5::WebSockets)
+    target_link_libraries(WS_server PUBLIC Qt5::WebSockets Qt5::Widgets Qt5::Network)
     message(
       STATUS "Qt5WebSockets was found. Using WebSockets is therefore possible.")
   endif()

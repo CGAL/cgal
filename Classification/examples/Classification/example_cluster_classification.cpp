@@ -48,7 +48,7 @@ typedef Classification::Cluster<Point_set, Pmap>                             Clu
 
 int main (int argc, char** argv)
 {
-  std::string filename        = "data/b9.ply";
+  std::string filename        = CGAL::data_file_path("meshes/b9.ply");
   std::string filename_config = "data/b9_clusters_config.bin";
 
   if (argc > 1)
@@ -58,9 +58,9 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   Point_set pts;
-  if(!(CGAL::read_point_set(filename, pts,
-                            // the PLY reader expects a binary file by default
-                            CGAL::parameters::use_binary_mode(true))))
+  if(!(CGAL::IO::read_point_set(filename, pts,
+                                // the PLY reader expects a binary file by default
+                                CGAL::parameters::use_binary_mode(true))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;

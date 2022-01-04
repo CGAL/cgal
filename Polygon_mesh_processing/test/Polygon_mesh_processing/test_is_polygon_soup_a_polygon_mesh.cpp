@@ -40,7 +40,7 @@ void test_polygon_soup(std::string fname, bool expected)
     exit(EXIT_FAILURE);
   }
 
-  if(!CGAL::read_OFF(input, points, polygons))
+  if(!CGAL::IO::read_OFF(input, points, polygons))
   {
     std::cerr << "Error parsing the OFF file " << fname << "\n";
     exit(EXIT_FAILURE);
@@ -141,10 +141,10 @@ int main()
   test_polygon_soup<SC>("data_polygon_soup/partial_overlap.off", false);
   test_polygon_soup<SC>("data_polygon_soup/incompatible_orientation.off", false);
 
-  test_polygon_soup<SC>("data/blobby_3cc.off", true);
-  test_polygon_soup<SC>("data/elephant.off", true);
+  test_polygon_soup<SC>(CGAL::data_file_path("meshes/blobby_3cc.off"), true);
+  test_polygon_soup<SC>(CGAL::data_file_path("meshes/elephant.off"), true);
   test_polygon_soup<SC>("data/joint_refined.off", true);
-  test_polygon_soup<SC>("data/mech-holes-shark.off", true);
+  test_polygon_soup<SC>(CGAL::data_file_path("meshes/mech-holes-shark.off"), true);
   test_polygon_soup<SC>("data/non_manifold_vertex.off", false);
   test_polygon_soup<SC>("data/two_tris_collinear.off", true);
   test_polygon_soup<SC>("data/U.off", true);

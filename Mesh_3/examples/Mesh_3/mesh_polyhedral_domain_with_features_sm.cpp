@@ -35,7 +35,7 @@ using namespace CGAL::parameters;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("meshes/fandisk.off");
   std::ifstream input(fname);
   Polyhedron polyhedron;
   input >> polyhedron;
@@ -65,7 +65,7 @@ int main(int argc, char*argv[])
 
   // Output
   std::ofstream file("out-sm.vtu");
-  CGAL::output_to_vtu(file, c3t3, CGAL::IO::ASCII);
+  CGAL::IO::output_to_vtu(file, c3t3, CGAL::IO::ASCII);
   // Could be replaced by:
   // c3t3.output_to_medit(file);
 

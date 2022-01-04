@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Simple_cartesian.h>
 
@@ -18,7 +18,7 @@ typedef Kernel::Vector_3 Vector_3;
 int main()
 {
   CGAL::Point_set_3<Point_3, Vector_3> ps, ps2;
-  std::ifstream is("data/oni.pwn");
+  std::ifstream is(CGAL::data_file_path("points_3/oni.pwn"));
   std::ofstream os;
 
   if(!CGAL::read_xyz_point_set(is, ps))

@@ -19,7 +19,7 @@ typedef Mesh::Property_map<face_descriptor, std::size_t> Face_proxy_pmap;
 int main()
 {
   Mesh mesh;
-  std::ifstream file("data/sphere.off");
+  std::ifstream file(CGAL::data_file_path("meshes/sphere.off"));
   if (!file || !(file >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;

@@ -23,13 +23,13 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1) ? argv[1] : "data/sphere_1k.xyz";
+  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/sphere_1k.xyz");
 
   // Reads a point set file in points[].
   std::list<PointVectorPair> points;
-  if(!CGAL::read_points(fname,
-                        std::back_inserter(points),
-                        CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
+  if(!CGAL::IO::read_points(fname,
+                            std::back_inserter(points),
+                            CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
   {
     std::cerr << "Error: cannot read file " << fname<< std::endl;
     return EXIT_FAILURE;

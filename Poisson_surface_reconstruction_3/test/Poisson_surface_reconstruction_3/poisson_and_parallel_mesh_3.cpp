@@ -37,9 +37,9 @@ int main(int, char**)
 {
   std::vector<Pwn> points;
 
-  std::ifstream stream("data/oni.pwn");
+  std::ifstream stream(CGAL::data_file_path("points_3/oni.pwn"));
   if (!stream ||
-      !CGAL::read_XYZ
+      !CGAL::IO::read_XYZ
       (stream, std::back_inserter(points),
        CGAL::parameters::
        point_map(Point_map()).

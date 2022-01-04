@@ -53,14 +53,14 @@ I/O streams. Classes external to \cgal are also supported, by means of `oformat(
 (Section \ref seciofornoncgaltypes "I/O for Non CGAL Types").
 The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
-characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii,
+characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw \ascii,
 a raw binary, and a pretty printing format.
 
 \code{.cpp}
 enum Mode {ASCII = 0, BINARY, PRETTY};
 \endcode
 
-In `ASCII` mode, objects are written as
+In \ascii mode, objects are written as
 a set of numbers, e.g. the coordinates of a point or
 the coefficients of a line, in a machine independent format.
 In `BINARY` mode,
@@ -72,15 +72,15 @@ object is written, as well as the data defining the object. For example
 for a point at the origin with Cartesian double coordinates, the output
 would be `PointC2(0.0, 0.0)`. At the moment \cgal does not
 provide input operations for pretty printed data. By default a stream
-is in <span class="textsc">Ascii</span> mode.
+is in \ascii mode.
 
 \cgal provides the following functions to modify the mode of an I/O stream.
 
 \code{.cpp}
 IO::Mode set_mode(std::ios& s, IO::Mode m);
-IO::Mode set_ascii_mode(std::ios& s);
-IO::Mode set_binary_mode(std::ios& s);
-IO::Mode set_pretty_mode(std::ios& s);
+IO::Mode IO::set_ascii_mode(std::ios& s);
+IO::Mode IO::set_binary_mode(std::ios& s);
+IO::Mode IO::set_pretty_mode(std::ios& s);
 \endcode
 
 The following functions enable testing whether a stream is in a certain mode:
@@ -120,11 +120,11 @@ main()
   Point p, q;
   Segment s;
 
-  CGAL::set_ascii_mode(std::cin);
+  CGAL::IO::set_ascii_mode(std::cin);
   std::cin >> p >> q;
 
   std::ifstream f("data.txt");
-  CGAL::set_binary_mode(f);
+  CGAL::IO::set_binary_mode(f);
   f >> s >> p;
 
   return 1;
@@ -161,11 +161,11 @@ int main()
   Point p(0,1), q(2,2);
   Segment s(p,q);
 
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
   std::cout << p << std::endl << q << std::endl;
 
   std::ofstream f("data.txt");
-  CGAL::set_binary_mode(f);
+  CGAL::IO::set_binary_mode(f);
   f << s << p ;
 
   return 1;
@@ -176,17 +176,18 @@ int main()
 
 \subsubsection IOstreamUsingOutputFormatting Using Output Formatting
 
-To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used.
+To ensure that non-\cgal types are formatted correctly (i.e., respecting \link PkgStreamSupportEnumRef `IO::Mode` \endlink),
+`oformat()` can be used.
 For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
 will be called by `oformat()`. Otherwise, the stream output operator will be called.
 
 \code{.cpp}
-std::cout << CGAL::oformat( myobject );
+std::cout << CGAL::IO::oformat( myobject );
 \endcode
 
 Optionally, you can provide a second template parameter `F` as a formatting tag:
 \code{.cpp}
-std::cout << CGAL::oformat( myobject, My_formatting_tag() );
+std::cout << CGAL::IO::oformat( myobject, My_formatting_tag() );
 \endcode
 
 For a list of formatting tags supported by the type `T`, please
@@ -197,7 +198,8 @@ refer to the documentation of the respective type.
 In some situations, you want to control the output formatting for a
 type `T`. For external types (third party libraries etc.),
 there might be problems if their stream output operator does not
-respect `IO::Mode`. The purpose of `Output_rep` is to provide a way to
+respect \link PkgStreamSupportEnumRef `IO::Mode` \endlink.
+The purpose of `Output_rep` is to provide a way to
 control output formatting that works independently of the object's
 stream output operator.
 
@@ -252,10 +254,10 @@ for drawing operations in many \cgal output streams.
 
 Each color is defined by a triple of integers `(r,g,b)` with
 0 \f$ \le \f$ r,g,b \f$ \le \f$ 255, the so-called <I>rgb-value</I> of the color.
-There are a 11 predefined `Color` constants available:
-`BLACK`, `WHITE`, `GRAY`, `RED`, `GREEN`,
-`DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
-and `YELLOW`.
+There are a 11 predefined `Color` functions available:
+`black()`, `white()`, `gray()`, `red()`, `green()`,
+`deep_blue()`, `blue()`, `purple()`, `violet()`, `orange()`,
+and `yellow()`.
 
 \subsection IOstreamStream Stream Support
 
@@ -322,7 +324,7 @@ All of these functions (with the exception of the LAS format) can read
 and write either points alone or points with normals (depending on
 whether the `normal_map` named parameter is used by the user or not).
 
-Note that the %PLY format handles both ASCII and binary formats. In
+Note that the %PLY format handles both \ascii and binary formats. In
 addition, %PLY and %LAS are extensible formats that can embed additional
 properties. These can also be read by \cgal (see Section \ref
 Point_set_processing_3Properties_io).
@@ -448,7 +450,7 @@ See the reference manual of each data structure for more information.
 
 The functions above require the input to represent a 2-manifold surface (possibly with boundaries).
 If this is not the case, the package \ref PkgPolygonMeshProcessing offers the function
-\link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()` \endlink
+\link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()` \endlink
 which can perform some combinatorial repairing to ensure the input data is a 2-manifold.
 
 \subsection IOstream2DGeo Simple 2D Geometry IO

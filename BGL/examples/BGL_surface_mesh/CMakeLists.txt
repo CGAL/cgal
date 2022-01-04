@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(BGL_surface_mesh_Examples)
 
 find_package(CGAL REQUIRED)

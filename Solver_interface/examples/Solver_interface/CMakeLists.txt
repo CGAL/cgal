@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Solver_interface_Examples)
 
 find_package(CGAL REQUIRED)
@@ -19,13 +19,27 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(diagonalize_matrix PUBLIC CGAL::Eigen3_support)
 endif()
 
-create_single_source_cgal_program("mixed_integer_program.cpp")
+find_package(OSQP QUIET)
+include(CGAL_OSQP_support)
+
+if(TARGET CGAL::OSQP_support)
+
+  create_single_source_cgal_program("osqp_quadratic_program.cpp")
+  target_link_libraries(osqp_quadratic_program PUBLIC CGAL::OSQP_support)
+  message("OSQP found and used")
+
+else()
+
+  message(STATUS "NOTICE: OSQP was not found. OSQP examples won't be available.")
+
+endif()
 
 find_package(SCIP QUIET)
 include(CGAL_SCIP_support)
 
 if(TARGET CGAL::SCIP_support)
 
+  create_single_source_cgal_program("mixed_integer_program.cpp")
   target_link_libraries(mixed_integer_program PUBLIC CGAL::SCIP_support)
   message("SCIP found and used")
 
@@ -36,6 +50,7 @@ else()
 
   if(TARGET CGAL::GLPK_support)
 
+    create_single_source_cgal_program("mixed_integer_program.cpp")
     target_link_libraries(mixed_integer_program PUBLIC CGAL::GLPK_support)
     message("GLPK found and used")
 

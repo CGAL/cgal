@@ -1,6 +1,4 @@
 #!/bin/bash
-
-#!/bin/bash
 #usage : script [-c -l -n -s -k] testsuite_dir
 
 ##########################
@@ -23,7 +21,7 @@ export TAR="tar"
 export GUNZIP="gunzip"
 export COMPRESSOR="gzip"
 export CONSOLE_OUTPUT="y"
-export CGAL_HOME=`pwd`
+export CGAL_HOME=$(pwd | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 export USE_TARGZ="y"
 export USE_TARBZ="n"
 export CGAL_RELEASE=""
@@ -99,8 +97,10 @@ download_latest()
   fi
     log "${ACTUAL_LOGFILE}" "getting LATEST"
     if [ -n "${USE_CURL}" ]; then
+      echo "using curl..."
       ${CURL} ${CURL_OPTS} "${LATEST_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
     else
+      echo "using wget..."
       ${WGET} ${WGET_OPTS} "${LATEST_LOCATION}" >> "${ACTUAL_LOGFILE}" 2>&1
     fi
   if [ ! -f "LATEST" ]; then
@@ -116,8 +116,7 @@ download_latest()
 abort_if_latest_already_tested()
 {
   if [ -r "RELEASE_NR" ]; then
-    cmp LATEST RELEASE_NR >> "${ACTUAL_LOGFILE}"
-    if [ ! ${?} != 0 ]; then
+    if cmp LATEST RELEASE_NR >> "${ACTUAL_LOGFILE}"; then
       log "${ACTUAL_LOGFILE}" "This release has already been tested."
       rm -f "$LOCK_FILE";
       exit 1;
@@ -283,6 +282,8 @@ if [ -n "${SCRIPTS_DIR}" ]; then
 else
   CGAL_DIR=`readlink "${CGAL_HOME}/CGAL-I"`
 fi
+
+CGAL_DIR=$(echo "$CGAL_DIR" | sed -E 's/\/cygdrive\/([a-z])\//\U\1:\//')
 
 CGAL_RELEASE_ID=$(cat last_release_id)
 for HOST in ${BUILD_HOSTS}; do

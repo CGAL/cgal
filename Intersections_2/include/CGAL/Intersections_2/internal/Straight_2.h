@@ -18,8 +18,8 @@
 #ifndef CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H
 #define CGAL_INTERSECTIONS_2_INTERNAL_STRAIGHT_2_H
 
+#include <CGAL/Distance_2/internal/squared_distance_utils_2.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
-#include <CGAL/squared_distance_utils.h>
 #include <CGAL/Kernel/global_functions_internal_2.h>
 
 namespace CGAL {

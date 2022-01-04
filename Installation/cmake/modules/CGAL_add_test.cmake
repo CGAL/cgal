@@ -74,13 +74,36 @@ function(expand_list_with_globbing list_name)
 endfunction()
 
 function(cgal_add_compilation_test exe_name)
-  if(TEST compilation_of__${exe_name})
-    return()
-  endif()
-  add_test(NAME "compilation_of__${exe_name}"
-    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
-  set_property(TEST "compilation_of__${exe_name}"
-    APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  cmake_policy(SET CMP0064 NEW)
+  if(NOT CMAKE_VS_MSBUILD_COMMAND)
+    if(TEST compilation_of__${exe_name})
+      return()
+    endif()
+    add_test(NAME "compilation_of__${exe_name}"
+      COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  elseif(NOT TARGET compilation_of__${PROJECT_NAME})#CMAKE_VS_MSBUILD_COMMAND
+    #this target is just a flag, to deal with the scope problem with the tests
+    add_custom_target(compilation_of__${PROJECT_NAME})
+    add_test(NAME "compilation_of__${PROJECT_NAME}"
+      COMMAND ${TIME_COMMAND} "${CMAKE_VS_MSBUILD_COMMAND}" "${PROJECT_BINARY_DIR}/${PROJECT_NAME}.sln" "-m:$ENV{NUMBER_OF_PROCESSORS}" "/t:Build" "/p:Configuration=$<CONFIG>")
+    set_property(TEST "compilation_of__${PROJECT_NAME}"
+      APPEND PROPERTY LABELS "${PROJECT_NAME}")
+    set_property(TEST "compilation_of__${PROJECT_NAME}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+    set_tests_properties("compilation_of__${PROJECT_NAME}"
+      PROPERTIES RUN_SERIAL TRUE)
+    #because of the scope of the tests, this part cannot go in the relevant CMakeLists
+    if("${PROJECT_NAME}" STREQUAL "Polyhedron_Demo")
+      set_tests_properties(compilation_of__Polyhedron_Demo PROPERTIES TIMEOUT 2400)
+    elseif("${PROJECT_NAME}" STREQUAL "Mesh_3_Tests" OR "${PROJECT_NAME}" STREQUAL "Mesh_3_Examples")
+      set_tests_properties(compilation_of__${PROJECT_NAME} PROPERTIES TIMEOUT 1600)
+    endif()
+
+  endif()#CMAKE_VS_MSBUILD_COMMAND
   if(NOT TARGET ALL_CGAL_TARGETS)
     add_custom_target( ALL_CGAL_TARGETS )
   endif()
@@ -94,8 +117,6 @@ function(cgal_add_compilation_test exe_name)
     set_property(TEST "check_build_system"
        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
   endif()
-  set_property(TEST "compilation_of__${exe_name}"
-    APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
   if(TARGET CGAL_Qt5_moc_and_resources) # if CGAL_Qt5 was searched, and is header-only
     get_property(linked_libraries TARGET "${exe_name}" PROPERTY LINK_LIBRARIES)
     #  message(STATUS "${exe_name} depends on ${linked_libraries}")
@@ -135,8 +156,13 @@ function(cgal_setup_test_properties test_name)
   endif()
 
   if(exe_name)
-    set_property(TEST "${test_name}"
-      APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+    if(NOT CMAKE_VS_MSBUILD_COMMAND)
+      set_property(TEST "${test_name}"
+        APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
+    else()#CMAKE_VS_MSBUILD_COMMAND
+      set_property(TEST "${test_name}"
+        APPEND PROPERTY DEPENDS "compilation_of__${PROJECT_NAME}")
+    endif()#CMAKE_VS_MSBUILD_COMMAND
   endif()
 
   get_filename_component(_source_dir_abs ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
@@ -217,8 +243,13 @@ function(cgal_setup_test_properties test_name)
     if(exe_name)
       set_property(TEST ${test_name}
         APPEND PROPERTY FIXTURES_REQUIRED "${exe_name}")
-      set_property(TEST "compilation_of__${exe_name}"
-        PROPERTY FIXTURES_SETUP "${exe_name}")
+      if(NOT CMAKE_VS_MSBUILD_COMMAND)
+        set_property(TEST "compilation_of__${exe_name}"
+          PROPERTY FIXTURES_SETUP "${exe_name}")
+      else()#CMAKE_VS_MSBUILD_COMMAND
+        set_property(TEST "compilation_of__${PROJECT_NAME}"
+          PROPERTY FIXTURES_SETUP "${exe_name}")
+      endif()#CMAKE_VS_MSBUILD_COMMAND
       if((ANDROID OR CGAL_RUN_TESTS_THROUGH_SSH) AND NOT TEST push_of__${exe_name})
         if(ANDROID)
           add_test(NAME "push_of__${exe_name}"
@@ -295,6 +326,7 @@ function(cgal_add_test exe_name)
       endif()
       if(EXISTS ${cmd_file})
         file(STRINGS "${cmd_file}" CMD_LINES)
+        string(CONFIGURE "${CMD_LINES}" CMD_LINES)
         set(ARGS)
         #	  message(STATUS "DEBUG test ${exe_name}")
         foreach(CMD_LINE ${CMD_LINES})

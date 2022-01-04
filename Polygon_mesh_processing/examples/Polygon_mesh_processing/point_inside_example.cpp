@@ -30,10 +30,10 @@ double max_coordinate(const Polyhedron& poly)
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Polyhedron poly;
-  if(!PMP::read_polygon_mesh(filename, poly) || CGAL::is_empty(poly) || !CGAL::is_triangle_mesh(poly))
+  if(!PMP::IO::read_polygon_mesh(filename, poly) || CGAL::is_empty(poly) || !CGAL::is_triangle_mesh(poly))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

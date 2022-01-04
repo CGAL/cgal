@@ -88,7 +88,7 @@ float Scene_item_rendering_helper::alpha() const
 {
   if(!priv->alphaSlider)
     return 1.0f;
-  return (float)priv->alphaSlider->value() / 255.0f;
+  return static_cast<float>(priv->alphaSlider->value()) / 255.0f;
 }
 
 void Scene_item_rendering_helper::initGL(CGAL::Three::Viewer_interface* viewer) const

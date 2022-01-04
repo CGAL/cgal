@@ -17,11 +17,11 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/P.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
   const char* outfilename = (argc > 2) ? argv[2] : "P_tri.off";
 
   Surface_mesh mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     if(!CGAL::is_triangle(halfedge(f, mesh), mesh))
       std::cerr << "Error: non-triangular face left in mesh." << std::endl;
 
-  CGAL::write_polygon_mesh(outfilename, mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh(outfilename, mesh, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

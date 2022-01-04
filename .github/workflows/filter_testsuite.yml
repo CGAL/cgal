@@ -1,0 +1,70 @@
+name: Filter Testsuite
+
+on:
+  issue_comment:
+      types: [created]
+
+jobs:
+  build:
+    if: (github.event.comment.user.login == 'sloriot' || github.event.comment.user.login == 'lrineau') && contains(github.event.comment.body, '/testme')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3
+        id: get_label
+        with:
+         result-encoding: string
+         script: |
+           //get branch name and username
+           const pr_url = context.payload.issue.pull_request.url
+           const pr_content = await github.request(pr_url)
+           const label = pr_content.data.head.label
+           const base = pr_content.data.base.ref
+           console.log(label)
+           return label+":"+base
+      - name: Run Testsuite
+        run: |
+          mkdir -p ~/.ssh
+          #ssh key
+          (
+          cat <<EOF
+          ${{ secrets.ssh_key }}
+          EOF
+          )>> ~/.ssh/id_rsa
+          chmod 600 /home/runner/.ssh/id_rsa 
+          #ssh public key
+          (
+          cat <<EOF
+          ${{ secrets.ssh_key_pub }}
+          EOF
+          )>> ~/.ssh/id_rsa.pub
+          chmod 644 /home/runner/.ssh/id_rsa.pub
+          #known hosts
+          wget --no-check-certificate https://cgal.geometryfactory.com/CGAL/ssh_known_hosts -O ~/.ssh/known_hosts
+          #config file
+          wget --no-check-certificate https://cgal.geometryfactory.com/CGAL/ssh_config -O ~/.ssh/config
+          #list of hosts
+          wget --no-check-certificate https://cgal.geometryfactory.com/CGAL/ssh_host_list -O ~/ssh_host_list
+          #ssh command
+          LABEL="${{ steps.get_label.outputs.result }}"
+          USER_NAME=$(echo $LABEL | cut -d':' -f 1)
+          BRANCH_NAME=$(echo $LABEL | cut -d':' -f 2)
+          BASE=$(echo $LABEL | cut -d':' -f 3)
+          PR_NUMBER=${{ github.event.issue.number }}
+          mapfile -t HOSTS < ~/ssh_host_list;
+          for i in ${!HOSTS[@]}; do
+            HOST=$(echo ${HOSTS[$i]}|cut -d' ' -f 1 )
+            PATH_TO_SCRIPT=$(echo ${HOSTS[$i]}|cut -d' ' -f 2 )
+            echo "ssh ${HOST} ${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE $PR_NUMBER"
+            ssh ${HOST} "${PATH_TO_SCRIPT}/run_testsuite_from_branch_name.sh $USER_NAME $BRANCH_NAME $BASE $PR_NUMBER"
+          done
+      - name: Post address
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const address = "Testsuite launched. Results will appear on the following page: https://cgal.geometryfactory.com/~cgaltest/test_suite/TESTRESULTS/index.shtml "
+            github.issues.createComment({
+              owner: "CGAL",
+              repo: "cgal",
+              issue_number: ${{ github.event.issue.number }},
+              body: address
+            });

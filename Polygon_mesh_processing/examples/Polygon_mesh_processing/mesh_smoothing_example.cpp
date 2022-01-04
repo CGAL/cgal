@@ -17,10 +17,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
-  const char* filename = argc > 1 ? argv[1] : "data/anchor_dense.off";
+  const std::string filename = argc > 1 ? argv[1] : CGAL::data_file_path("meshes/anchor_dense.off");
 
   Mesh mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -47,7 +47,7 @@ int main(int argc, char** argv)
                                          .use_safety_constraints(false) // authorize all moves
                                          .edge_is_constrained_map(eif));
 
-  CGAL::write_polygon_mesh("mesh_smoothed.off", mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("mesh_smoothed.off", mesh, CGAL::parameters::stream_precision(17));
 
   std::cout << "Done!" << std::endl;
 

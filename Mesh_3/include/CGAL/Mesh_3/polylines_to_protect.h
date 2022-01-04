@@ -22,7 +22,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
-#include <CGAL/internal/Mesh_3/Graph_manipulations.h>
+#include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Labeled_mesh_domain_3.h> // for CGAL::Null_subdomain_index
 #include <boost/utility.hpp> // for boost::prior
@@ -525,10 +525,10 @@ polylines_to_protect
                                  Image_word_type> Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
-            {{ {{ { pix00, Point_3(), Domain_type(), 0, false },
-                  { pix01, Point_3(), Domain_type(), 0, false } }},
-               {{ { pix10, Point_3(), Domain_type(), 0, false },
-                  { pix11, Point_3(), Domain_type(), 0, false } }} }};
+            {{ {{ { pix00, Point_3(), Domain_type(), 0, false, false },
+                  { pix01, Point_3(), Domain_type(), 0, false, false } }},
+               {{ { pix10, Point_3(), Domain_type(), 0, false, false },
+                  { pix11, Point_3(), Domain_type(), 0, false, false } }} }};
 
           std::map<Domain_type, int> pixel_values_set;
           for(int ii = 0; ii < 2; ++ii) {

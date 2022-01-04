@@ -13,6 +13,7 @@
 #include <deque>
 #include <fstream>
 #include <typeindex>
+#include <iterator>
 
 // Windows
 #include <windows.h>
@@ -24,7 +25,6 @@
 #include <boost/concept_check.hpp>
 #include <boost/config.hpp>
 #include <boost/format.hpp>
-#include <boost/iterator.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>
 #include <boost/iterator/iterator_categories.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -131,7 +131,7 @@
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/thread/tss.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/type_traits.hpp>
@@ -185,17 +185,17 @@
 #include <CGAL/Hilbert_sort_middle_base.h>
 #include <CGAL/Hilbert_sort_middle_d.h>
 #include <CGAL/Image_3.h>
-#include <CGAL/internal/Dummy_tds_3.h>
-#include <CGAL/internal/Exact_type_selector.h>
-#include <CGAL/internal/info_check.h>
+#include <CGAL/TDS_3/internal/Dummy_tds_3.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
+#include <CGAL/STL_Extension/internal/info_check.h>
 //#include <CGAL/internal/Regular_triangulation_filtered_traits_3.h>
-#include <CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h>
-#include <CGAL/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Compare_weighted_squared_radius_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Power_side_of_oriented_power_sphere_3.h>
 //#include <CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h>
-#include <CGAL/internal/Static_filters/Static_filter_error.h>
-#include <CGAL/internal/Static_filters/tools.h>
-//#include <CGAL/internal/Triangulation_ds_circulators_3.h>
-//#include <CGAL/internal/Triangulation_ds_iterators_3.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
+//#include <CGAL/TDS_3/internal/Triangulation_ds_circulators_3.h>
+//#include <CGAL/TDS_3/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/iterator.h>

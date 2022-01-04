@@ -554,7 +554,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
 
   d->m_points->clear();
 
-  bool ok = CGAL::read_PLY(stream, *(d->m_points), d->m_comments) && !isEmpty();
+  bool ok = CGAL::IO::read_PLY(stream, *(d->m_points), d->m_comments) && !isEmpty();
 
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   std::cerr << d->m_points->info();
@@ -586,9 +586,9 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
     return false;
 
   if (binary)
-    CGAL::set_binary_mode (stream);
+    CGAL::IO::set_binary_mode (stream);
 
-  return CGAL::write_PLY(stream, *(d->m_points), d->m_comments);
+  return CGAL::IO::write_PLY(stream, *(d->m_points), d->m_comments);
 }
 
 // Loads point set from .OFF file
@@ -597,7 +597,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
   Q_ASSERT(d->m_points != nullptr);
 
   d->m_points->clear();
-  bool ok = CGAL::read_OFF(stream, *(d->m_points)) && !isEmpty();
+  bool ok = CGAL::IO::read_OFF(stream, *(d->m_points)) && !isEmpty();
 
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
@@ -611,7 +611,7 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 
   d->m_points->reset_indices();
 
-  return CGAL::write_OFF(stream, *(d->m_points));
+  return CGAL::IO::write_OFF(stream, *(d->m_points));
 }
 
 // Loads point set from .XYZ file
@@ -621,7 +621,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
 
   d->m_points->clear();
 
-  bool ok = CGAL::read_XYZ (stream, *(d->m_points)) && !isEmpty();
+  bool ok = CGAL::IO::read_XYZ (stream, *(d->m_points)) && !isEmpty();
 
   d->point_Slider->setValue(CGAL::Three::Three::getDefaultPointSize());
   invalidateOpenGLBuffers();
@@ -635,7 +635,7 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
 
   d->m_points->reset_indices();
 
-  return CGAL::write_XYZ(stream, *(d->m_points));
+  return CGAL::IO::write_XYZ(stream, *(d->m_points));
 }
 
 QString
@@ -671,7 +671,7 @@ void Scene_points_with_normal_item::drawEdges(CGAL::Three::Viewer_interface* vie
     double ratio_displayed = 1.0;
     if (viewer->inFastDrawing () &&
         (d->nb_lines/6 > limit_fast_drawing)) // arbitrary large value
-      ratio_displayed = 6 * limit_fast_drawing / (double)(d->nb_lines);
+      ratio_displayed = 6 * limit_fast_drawing / static_cast<double>(d->nb_lines);
     if(!isInit(viewer))
       initGL(viewer);
     if ( getBuffersFilled() &&
@@ -699,7 +699,7 @@ drawPoints(CGAL::Three::Viewer_interface* viewer) const
   double ratio_displayed = 1.0;
   if ((viewer->inFastDrawing () || d->isPointSliderMoving())
       &&((d->nb_points )/3 > limit_fast_drawing)) // arbitrary large value
-    ratio_displayed = 3 * limit_fast_drawing / (double)(d->nb_points);
+    ratio_displayed = 3 * limit_fast_drawing / static_cast<double>(d->nb_points);
 
   if(!isInit(viewer))
     initGL(viewer);

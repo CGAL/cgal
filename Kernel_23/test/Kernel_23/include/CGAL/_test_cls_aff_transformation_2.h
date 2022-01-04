@@ -135,7 +135,9 @@ _test_cls_aff_transformation_2(const R& )
 
  CGAL::Aff_transformation_2<R> rot3( CGAL::ROTATION, RT(3),RT(4),RT(5));
 
-
+ CGAL::Aff_transformation_2<R> refle(CGAL::REFLECTION, CGAL::Line_2<R>(
+                                      CGAL::Point_2<R>(1,3),
+                                      CGAL::Point_2<R>(2,1)));
 
  CGAL::Aff_transformation_2<R> a[14];
 
@@ -294,6 +296,34 @@ _test_cls_aff_transformation_2(const R& )
  assert( rot2.is_even() );
  assert( rot3.is_even() );
  assert( xrefl.is_odd() );
+
+ // translation
+ assert( translate.is_translation() );
+ assert( ! scale11.is_translation() );
+ assert( ! gtrans.is_translation() );
+ assert( ! rot90.is_translation() );
+ assert( ! refle.is_translation() );
+
+ // scaling
+ assert( scale11.is_scaling() );
+ assert( ! translate.is_scaling() );
+ assert( ! gscale.is_scaling() );
+ assert( ! rot90.is_scaling() );
+ assert( ! refle.is_scaling() );
+
+ // reflection
+ assert( ! scale11.is_reflection() );
+ assert( ! translate.is_reflection() );
+ assert( ! gscale.is_reflection() );
+ assert( ! rot90.is_reflection() );
+ assert( refle.is_reflection() );
+
+ // rotation
+ assert( ! scale11.is_rotation() );
+ assert( ! translate.is_rotation() );
+ assert( ! gscale.is_rotation() );
+ assert( rot90.is_rotation() );
+ assert( !refle.is_rotation() );
 
  // rotation
  assert( d0.transform( rot90 ) == d1 );

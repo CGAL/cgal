@@ -184,7 +184,8 @@ int main(int argc, char * argv[])
       std::cerr << "  using a Minimum Spanning Tree (default=MST)\n";
       std::cerr << "  -nb_neighbors_mst <int>              Number of neighbors\n";
       std::cerr << "  to compute the MST (default=18)\n";
-      return EXIT_FAILURE;
+      std::cerr << "Running with " << argv[0] << "data/ChineseDragon-10kv.off ChineseDragon-10kv.pwn"
+                                   << " -nb_neighbors_jet_fitting 10 -nb_neighbors_mst 10\n";
     }
 
     // Normals Computing options
@@ -197,8 +198,14 @@ int main(int argc, char * argv[])
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
 
     // decode parameters
-    std::string input_filename  = argv[1];
-    std::string output_filename = argv[2];
+    std::string input_filename  = argc == 1 ?  CGAL::data_file_path("meshes/ChineseDragon-10kv.off") : argv[1];
+    std::string output_filename = argc == 1 ?  "ChineseDragon-10kv.pwn" : argv[2];
+    if (argc==1)
+    {
+      nb_neighbors_jet_fitting_normals = 10;
+      nb_neighbors_mst = 10;
+    }
+
     for (int i=3; i+1<argc ; ++i)
     {
       if (std::string(argv[i])=="-estimate") {
@@ -244,8 +251,8 @@ int main(int argc, char * argv[])
     PointList points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
-    if(!CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
-                          CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
+    if(!CGAL::IO::read_points(input_filename.c_str(), std::back_inserter(points),
+                              CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "Error: cannot read file " << input_filename << std::endl;
       return EXIT_FAILURE;
@@ -290,10 +297,10 @@ int main(int argc, char * argv[])
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
-    if(!CGAL::write_points(output_filename, points,
-                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-                                            .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
-                                            .stream_precision(17)))
+    if(!CGAL::IO::write_points(output_filename, points,
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                                .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
+                                                .stream_precision(17)))
     {
       std::cerr << "Error: cannot write file " << output_filename << std::endl;
       return EXIT_FAILURE;

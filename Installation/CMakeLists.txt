@@ -22,8 +22,6 @@ include(GNUInstallDirs)
 #
 #--------------------------------------------------------------------------------------------------
 
-message("== Setting paths ==")
-
 if(CGAL_BRANCH_BUILD)
 
   message(
@@ -469,11 +467,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
       uniquely_add_flags(CGAL_CXX_FLAGS "-frounding-math")
     endif()
 
-    if("${GCC_VERSION}" MATCHES "^4.2")
-      message(STATUS "Using gcc version 4.2. Adding -fno-strict-aliasing")
-      uniquely_add_flags(CGAL_CXX_FLAGS "-fno-strict-aliasing")
-    endif()
-
     if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "alpha")
       message(STATUS "Using gcc on alpha. Adding -mieee -mfp-rounding-mode=d")
       uniquely_add_flags(CGAL_CXX_FLAGS "-mieee -mfp-rounding-mode=d")
@@ -660,9 +653,10 @@ cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
 install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt5)
-install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
-install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
-
+if(CGAL_BRANCH_BUILD)
+  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
+  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
+endif()
 
 #
 # Variables used when WITH_{demos|examples|tests} are TRUE
@@ -856,6 +850,8 @@ if(NOT RUNNING_CGAL_AUTO_TEST)
     add_programs(test tests OFF)
   endif()
 endif()
+
+message("== Setting paths ==")
 
 #--------------------------------------------------------------------------------------------------
 #

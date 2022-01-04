@@ -21,13 +21,13 @@ typedef Kernel::Point_3 Point_3;
 
 int main (int argc, char** argv)
 {
-  const char* fname = (argc>1)?argv[1]:"data/sphere_20k.xyz";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("points_3/sphere_20k.xyz");
 
   CGAL::Timer task_timer;
 
   // read input
   std::vector<Point_3> points;
-  if(!CGAL::read_points(fname, std::back_inserter(points)))
+  if(!CGAL::IO::read_points(fname, std::back_inserter(points)))
   {
     std::cerr << "Error: can't read input file" << std::endl;
     return EXIT_FAILURE;

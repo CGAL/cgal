@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
   std::cout.precision(17);
 
-  const char* filename = (argc > 1) ? argv[1] : "data/radar.xyz";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/radar.xyz");
 
   std::vector<Point> points;
   double x, y, z;
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
   std::cout << dtos.number_of_vertices() << " vertices" << std::endl;
   std::cout << dtos.number_of_faces() << " solid faces" << std::endl;
 
-  CGAL::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_OFF("result.off", dtos, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

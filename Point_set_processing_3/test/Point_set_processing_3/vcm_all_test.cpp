@@ -33,11 +33,11 @@ std::cout << "=== test_fandisk ===\n";
   points.reserve(nb_points);
   cov.reserve(nb_points);
 
-  if(!CGAL::read_points("data/fandisk.off",
-                        std::back_inserter(points),
-                        CGAL::parameters::point_map(pmap)))
+  if(!CGAL::IO::read_points(CGAL::data_file_path("meshes/fandisk_large.off"),
+                            std::back_inserter(points),
+                            CGAL::parameters::point_map(pmap)))
   {
-    std::cerr << "Error: cannot read file data/fandisk.off" << std::endl;
+    std::cerr << "Error: cannot read file data/fandisk_large.off" << std::endl;
     return false;
   }
 

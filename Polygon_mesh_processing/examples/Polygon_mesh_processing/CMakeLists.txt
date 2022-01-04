@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Polygon_mesh_processing_Examples)
 
 # CGAL and its components
@@ -37,6 +37,7 @@ include(CGAL_Eigen3_support)
 # ##########################################################
 
 create_single_source_cgal_program("hausdorff_distance_remeshing_example.cpp")
+create_single_source_cgal_program( "hausdorff_bounded_error_distance_example.cpp")
 
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("hole_filling_example.cpp")
@@ -90,6 +91,7 @@ create_single_source_cgal_program("locate_example.cpp")
 create_single_source_cgal_program("orientation_pipeline_example.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
+create_single_source_cgal_program("match_faces.cpp")
 
 if(OpenMesh_FOUND)
 
@@ -121,12 +123,23 @@ if(OpenMesh_FOUND)
                         PRIVATE ${OPENMESH_LIBRARIES})
 endif(OpenMesh_FOUND)
 
+find_package(METIS)
+include(CGAL_METIS_support)
+if(TARGET CGAL::METIS_support)
+  target_link_libraries(hausdorff_bounded_error_distance_example PUBLIC CGAL::METIS_support)
+else()
+  message(STATUS "Tests, which use the METIS library will not be compiled.")
+endif()
+
 find_package(TBB)
 include(CGAL_TBB_support)
 if(TARGET CGAL::TBB_support)
   target_link_libraries(self_intersections_example PUBLIC CGAL::TBB_support)
   target_link_libraries(hausdorff_distance_remeshing_example
                         PUBLIC CGAL::TBB_support)
+  target_link_libraries(hausdorff_bounded_error_distance_example
+                        PUBLIC CGAL::TBB_support)
+
 
   create_single_source_cgal_program("corefinement_parallel_union_meshes.cpp")
   target_link_libraries(corefinement_parallel_union_meshes PUBLIC CGAL::TBB_support)

@@ -24,12 +24,12 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
-  const char* input_filename = (argc < 2) ? "data/blobby-shuffled.off" : argv[1];
-  const char* reference_filename = (argc < 2) ? "data/blobby.off" : argv[2];
+  const std::string input_filename = (argc < 2) ? CGAL::data_file_path("meshes/blobby-shuffled.off") : argv[1];
+  const std::string reference_filename = (argc < 2) ? CGAL::data_file_path("meshes/blobby.off") : argv[2];
 
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > polygons;
-  if(!CGAL::read_polygon_soup(input_filename, points, polygons) ||
+  if(!CGAL::IO::read_polygon_soup(input_filename, points, polygons) ||
      points.size() == 0 || polygons.size() == 0)
   {
     std::cerr << "Error: can not read input file.\n";
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
   }
 
   Mesh ref1;
-  if(!PMP::read_polygon_mesh(reference_filename, ref1))
+  if(!PMP::IO::read_polygon_mesh(reference_filename, ref1))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Snap_rounding_2_Tests)
 
 find_package(CGAL REQUIRED)
@@ -19,7 +19,7 @@ function(add_Snap_rounding_tests name)
     cgal_add_test(${name} TEST_NAME ${test_name} ARGUMENTS ${data_dir}/${file}
                   ${data_dir}/output_${file})
     add_test(NAME "${test_name}_compare_results"
-             COMMAND ${CMAKE_COMMAND} -E compare_files
+             COMMAND ${CMAKE_COMMAND} -E compare_files --ignore-eol
                      ${data_dir}/output_${file} ${data_dir}/gold_${file})
     cgal_setup_test_properties("${test_name}_compare_results")
     set_property(

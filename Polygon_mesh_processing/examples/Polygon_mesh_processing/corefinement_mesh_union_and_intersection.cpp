@@ -15,11 +15,11 @@ namespace params = CGAL::Polygon_mesh_processing::parameters;
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
-  if(!PMP::read_polygon_mesh(filename1, mesh1) || !PMP::read_polygon_mesh(filename2, mesh2))
+  if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
   if (res[PMP::Corefinement::UNION])
   {
     std::cout << "Union was successfully computed\n";
-    CGAL::write_polygon_mesh("union.off", out_union, CGAL::parameters::stream_precision(17));
+    CGAL::IO::write_polygon_mesh("union.off", out_union, CGAL::parameters::stream_precision(17));
   }
   else
     std::cout << "Union could not be computed\n";
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   if (res[PMP::Corefinement::INTERSECTION])
   {
     std::cout << "Intersection was successfully computed\n";
-    CGAL::write_polygon_mesh("intersection.off", out_intersection, CGAL::parameters::stream_precision(17));
+    CGAL::IO::write_polygon_mesh("intersection.off", out_intersection, CGAL::parameters::stream_precision(17));
   }
   else
     std::cout << "Intersection could not be computed\n";

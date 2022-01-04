@@ -45,10 +45,10 @@ int main(int argc, char** argv)
   CGAL::Timer task_timer;
   task_timer.start();
 
-  const char* filename = (argc>1) ? argv[1] : "data/bear.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/bear.off");
 
   SurfaceMesh sm;
-  if(!CGAL::read_polygon_mesh(filename, sm))
+  if(!CGAL::IO::read_polygon_mesh(filename, sm))
   {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;

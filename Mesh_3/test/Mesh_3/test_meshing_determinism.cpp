@@ -9,7 +9,7 @@
 #include <CGAL/odt_optimize_mesh_3.h>
 #include <CGAL/perturb_mesh_3.h>
 #include <CGAL/exude_mesh_3.h>
-#include <CGAL/IO/facets_in_complex_3_to_triangle_mesh.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <fstream>
 #include <sstream>
@@ -47,7 +47,7 @@ void test()
 
   // Domain
   std::cout << "\tSeed is\t 0" << std::endl;
-  std::ifstream input("data/cube.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
   Polyhedron polyhedron;
   input >> polyhedron;
   Mesh_domain domain(polyhedron);

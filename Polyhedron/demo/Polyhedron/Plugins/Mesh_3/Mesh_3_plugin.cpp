@@ -8,7 +8,6 @@
 
 #include <QObject>
 #include <QAction>
-#include <QMainWindow>
 #include <QApplication>
 #include <QtPlugin>
 #include "Scene_c3t3_item.h"
@@ -37,6 +36,10 @@ auto make_not_null(T&& t) {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
 #include "Image_type.h"
+#ifdef CGAL_USE_ITK
+#include <CGAL/Mesh_3/generate_label_weights.h>
+#endif
+
 #endif
 
 #include "Meshing_thread.h"
@@ -335,6 +338,9 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
   features_protection_available = false;
   if (auto poly_items = get<Polyhedral_mesh_items>(&*items)) {
     auto& sm_items = poly_items->sm_items;
+    if(sm_items.empty()) {
+      return tr("ERROR: there must be at least one surface mesh item.");
+    }
     for (auto sm_item : sm_items) {
       if (nullptr == sm_item->polyhedron()) {
         return tr("ERROR: no data in selected item %1").arg(sm_item->name());
@@ -588,6 +594,29 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       }
     }
   }
+
+  //Labeled (weighted) image
+  connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
+          ui.weightsSigma, SLOT(setEnabled(bool)));
+  connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
+          ui.weightsSigma_label, SLOT(setEnabled(bool)));
+  ui.weightsSigma->setValue(1.);
+  bool input_is_labeled_img = (image_item != nullptr && !image_item->isGray());
+  ui.labeledImgGroup->setVisible(input_is_labeled_img);
+
+#ifndef CGAL_USE_ITK
+  if (input_is_labeled_img)
+  {
+    ui.labeledImgGroup->setDisabled(true);
+    ui.labeledImgGroup->setToolTip(
+      QString("The use of weighted images is disabled "
+        "because the Insight Toolkit (ITK) is not available."));
+    ui.useWeights_checkbox->setDisabled(true);
+    ui.weightsSigma_label->setDisabled(true);
+    ui.weightsSigma->setDisabled(true);
+  }
+#endif
+
   // -----------------------------------
   // Get values
   // -----------------------------------
@@ -619,6 +648,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   const float iso_value = float(ui.iso_value_spinBox->value());
   const float value_outside = float(ui.value_outside_spinBox->value());
   const bool inside_is_less = ui.inside_is_less_checkBox->isChecked();
+  const float sigma_weights = ui.useWeights_checkbox->isChecked()
+                            ? ui.weightsSigma->value() : 0.f;
+
   as_facegraph = (mesh_type == Mesh_type::SURFACE_ONLY)
                      ? ui.facegraphCheckBox->isChecked()
                      : false;
@@ -690,6 +722,18 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
     }
+#ifdef CGAL_USE_ITK
+    if ( sigma_weights > 0
+      && sigma_weights != image_item->sigma_weights())
+    {
+      image_item->set_image_weights(
+        CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights),
+        sigma_weights);
+    }
+#endif
+    const Image* pWeights = sigma_weights > 0
+      ? image_item->image_weights()
+      : nullptr;
 
     Scene_polylines_item::Polylines_container plc;
 
@@ -709,7 +753,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         image_item->isGray(),
         iso_value,
         value_outside,
-        inside_is_less);
+        inside_is_less,
+        pWeights);
     break;
   }
   default:
@@ -727,6 +772,10 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   // Launch thread
   source_item_ = item;
   source_item_name_ = item_name;
+  CGAL::Three::Three::getMutex()->lock();
+  CGAL::Three::Three::isLocked() = true;
+  CGAL::Three::Three::getMutex()->unlock();
+
   launch_thread(thread);
 
   QApplication::restoreOverrideCursor();
@@ -869,6 +918,9 @@ treat_result(Scene_item& source_item,
     scene->setSelectedItem(new_item_id);
     delete result_item;
   }
+  CGAL::Three::Three::getMutex()->lock();
+  CGAL::Three::Three::isLocked() = false;
+  CGAL::Three::Three::getMutex()->unlock();
 }
 
 #include "Mesh_3_plugin.moc"

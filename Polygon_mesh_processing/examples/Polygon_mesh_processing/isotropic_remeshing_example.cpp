@@ -33,10 +33,10 @@ struct halfedge2edge
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/pig.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
 
   Mesh mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

@@ -205,6 +205,11 @@ ALIASES += "gmp=GMP"
 ALIASES += "gmpxx=GMPXX"
 ALIASES += "mpir=MPIR"
 ALIASES += "mpfr=MPFR"
+ALIASES += "exacus=Exacus"
+ALIASES += "ascii=ASCII"
+ALIASES += "iso=ISO"
+ALIASES += "lisp=Lisp"
+ALIASES += "ieee=IEEE"
 ALIASES += "leda=LEDA"
 ALIASES += "gcc=GCC"
 ALIASES += "dcel=DCEL"
@@ -231,6 +236,7 @@ ALIASES += "zlib=zlib"
 ALIASES += "ceres=Ceres"
 ALIASES += "glpk=GLPK"
 ALIASES += "scip=SCIP"
+ALIASES += "osqp=OSQP"
 ALIASES += "rs=RS"
 ALIASES += "rs3=RS3"
 ALIASES += "unix=Unix"
@@ -1081,7 +1087,7 @@ HTML_STYLESHEET        = ${CGAL_DOC_RESOURCE_DIR}/stylesheet.css
 # user-defined cascading style sheet that is included after the standard
 # style sheets created by doxygen. Using this option one can overrule
 # certain style aspects. This is preferred over using HTML_STYLESHEET
-# since it does not replace the standard style sheet and is therefor more
+# since it does not replace the standard style sheet and is therefore more
 # robust against future updates. Doxygen will copy the style sheet file to
 # the output directory.
 

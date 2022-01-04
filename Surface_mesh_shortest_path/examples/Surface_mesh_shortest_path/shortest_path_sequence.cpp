@@ -79,10 +79,10 @@ struct Print_visitor : public boost::static_visitor<> {
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc>1) ? argv[1] : "data/elephant.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Triangle_mesh tmesh;
-  if(!CGAL::read_polygon_mesh(filename, tmesh) ||
+  if(!CGAL::IO::read_polygon_mesh(filename, tmesh) ||
      !CGAL::is_triangle_mesh(tmesh))
   {
     std::cerr << "Invalid input file." << std::endl;
