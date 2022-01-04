@@ -107,8 +107,8 @@ public:
 
     typename Traits::Vector_3 normal =
       Polygon_mesh_processing::compute_face_normal(
-        f, pmesh, CGAL::Polygon_mesh_processing::parameters::geom_traits(_traits)
-                                                            .vertex_point_map(_vpmap));
+        f, pmesh, CGAL::parameters::geom_traits(_traits)
+                                   .vertex_point_map(_vpmap));
 
     if(normal == typename Traits::Vector_3(0,0,0))
       return false;
@@ -317,7 +317,7 @@ public:
     typedef CGAL::Triple<int, int, int> Face_indices;
     std::vector<Face_indices> patch;
     PMP::triangulate_hole_polyline(hole_points, std::back_inserter(patch),
-                                   PMP::parameters::geom_traits(_traits));
+                                   parameters::geom_traits(_traits));
 
     if(patch.empty())
       return false;

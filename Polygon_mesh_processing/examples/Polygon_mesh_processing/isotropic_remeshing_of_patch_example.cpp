@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
   PMP::isotropic_remeshing(patch,
                            target_edge_length,
                            mesh,
-                           PMP::parameters::number_of_iterations(nb_iter)
+                           parameters::number_of_iterations(nb_iter)
                            .face_patch_map(selected)
                            .protect_constraints(true)//i.e. protect border, here
                            );

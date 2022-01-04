@@ -87,7 +87,7 @@ void test_triangulate_hole_with_cdt_2(
       pmesh,
       h,
       std::back_inserter(patch_faces),
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(
+      CGAL::parameters::vertex_point_map(
         get(CGAL::vertex_point, pmesh)).
         use_2d_constrained_delaunay_triangulation(true).
         geom_traits(GeomTraits()));

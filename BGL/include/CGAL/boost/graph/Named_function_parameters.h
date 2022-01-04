@@ -362,6 +362,14 @@ bool is_default_parameter(const T&)
 
 } // end of parameters namespace
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+namespace Polygon_mesh_processing {
+
+namespace parameters = CGAL::parameters;
+
+}
+#endif
+
 } //namespace CGAL
 
 #ifndef CGAL_NO_STATIC_ASSERTION_TESTS

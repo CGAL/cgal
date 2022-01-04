@@ -99,7 +99,7 @@ void test_pmesh(const Mesh& pmesh)
   assert(mesh_area >= patch_area);
 
   FT mesh_area_np = PMP::area(pmesh,
-    PMP::parameters::geom_traits(K()));
+    CGAL::parameters::geom_traits(K()));
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
   assert(mesh_area_np > 0);
 

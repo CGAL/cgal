@@ -61,8 +61,8 @@ namespace CGAL {
     CGAL::Bbox_3 bbox(const PolygonMesh& pmesh,
                       const CGAL_BGL_NP_CLASS& np)
     {
-      using parameters::choose_parameter;
-      using parameters::get_parameter;
+      using CGAL::parameters::choose_parameter;
+      using CGAL::parameters::get_parameter;
 
       typename GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type
         vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),

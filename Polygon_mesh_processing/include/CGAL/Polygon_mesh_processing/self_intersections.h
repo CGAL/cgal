@@ -233,7 +233,7 @@ self_intersections_impl(const FaceRange& face_range,
 
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
-  using parameters::is_default_parameter;
+  using CGAL::parameters::is_default_parameter;
 
   typedef TriangleMesh                                                                   TM;
   typedef typename boost::graph_traits<TM>::halfedge_descriptor                          halfedge_descriptor;

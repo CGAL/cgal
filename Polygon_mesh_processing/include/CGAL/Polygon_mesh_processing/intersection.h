@@ -1057,7 +1057,7 @@ void get_one_point_per_cc(TriangleMesh& tm,
 
   int nb_cc = Polygon_mesh_processing::connected_components(tm,
                                                             boost::make_assoc_property_map(fcc_map),
-                                                            Polygon_mesh_processing::parameters::face_index_map(fid_pmap));
+                                                            parameters::face_index_map(fid_pmap));
   std::vector<bool> is_cc_treated(nb_cc, false);
   points_of_interest.resize(nb_cc);
   int cc_treated = 0;
@@ -1572,9 +1572,9 @@ struct Mesh_callback
     //surfacic test
     if(Polygon_mesh_processing::do_intersect(*b1->info(),
                                              *b2->info(),
-                                             Polygon_mesh_processing::parameters::vertex_point_map(vpm1)
+                                             parameters::vertex_point_map(vpm1)
                                              .geom_traits(gt),
-                                             Polygon_mesh_processing::parameters::vertex_point_map(vpm2)
+                                             parameters::vertex_point_map(vpm2)
                                              .geom_traits(gt)))
     {
       *m_iterator++ = std::make_pair(mesh_id_1, mesh_id_2);
@@ -1883,8 +1883,8 @@ surface_intersection(const TriangleMesh& tm1,
                      const bool throw_on_self_intersection)
 {
   return surface_intersection(tm1, tm2, polyline_output,
-    CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(throw_on_self_intersection),
-    CGAL::Polygon_mesh_processing::parameters::all_default());
+    CGAL::parameters::throw_on_self_intersection(throw_on_self_intersection),
+    CGAL::parameters::use_default_values());
 }
 #endif
 

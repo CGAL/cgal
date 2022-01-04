@@ -137,7 +137,7 @@ void Polyhedron_demo_intersection_plugin::intersectionSurfaces()
         PMP::surface_intersection(*itemA->polyhedron(),
                                   *itemB->polyhedron(),
                                   std::back_inserter(new_item->polylines),
-                                  PMP::parameters::throw_on_self_intersection(true));
+                                  CGAL::parameters::throw_on_self_intersection(true));
       }
       catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
       {

@@ -45,13 +45,13 @@ struct Approximate_hd_wrapper {
   Approximate_hd_wrapper(const double num_samples) : m_num_samples(num_samples) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::approximate_Hausdorff_distance<TAG>(tm1, tm2,
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples),
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples));
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples),
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples));
   }
   double symmetric(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::approximate_symmetric_Hausdorff_distance<TAG>(tm1, tm2,
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples),
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples));
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples),
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples));
   }
 };
 
@@ -128,7 +128,7 @@ void remeshing_tetrahedon_example(
   const double target_edge_length = 0.05;
   PMP::isotropic_remeshing(
     mesh2.faces(), target_edge_length, mesh2,
-    PMP::parameters::edge_is_constrained_map(is_constrained_map));
+    CGAL::parameters::edge_is_constrained_map(is_constrained_map));
 
   if (save) save_mesh(mesh1, "mesh1");
   if (save) save_mesh(mesh2, "mesh2");

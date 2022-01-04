@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
   visitor.properties[&mesh2] = mesh2_id;
   visitor.properties[&out] = out_id;
 
-  bool valid_union = PMP::corefine_and_compute_union(mesh1, mesh2, out, PMP::parameters::visitor(visitor));
+  bool valid_union = PMP::corefine_and_compute_union(mesh1, mesh2, out, parameters::visitor(visitor));
 
   for(Mesh::Face_index f : faces(mesh1))
     assert( mesh1_id[f] == 1 );
