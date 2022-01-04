@@ -21,7 +21,7 @@
 #include <type_traits>
 #include <utility>
 
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS T, typename Tag, typename Base
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS T=bool, typename Tag=CGAL::internal_np::all_default_t, typename Base=CGAL::internal_np::No_property
 #define CGAL_BGL_NP_CLASS CGAL::Named_function_parameters<T,Tag,Base>
 
 
