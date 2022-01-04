@@ -29,7 +29,7 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Mesh_3/internal/indices_management.h>
+#include <CGAL/TMDS_3/internal/indices_management.h>
 
 #include <vector>
 #include <set>

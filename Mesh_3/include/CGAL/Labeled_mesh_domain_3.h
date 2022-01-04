@@ -34,7 +34,7 @@
 #include <functional>
 
 #include <CGAL/TMDS_3/internal/Handle_IO_for_pair_of_int.h>
-#include <CGAL/Mesh_3/internal/indices_management.h>
+#include <CGAL/TMDS_3/internal/indices_management.h>
 
 // support for `CGAL::Image_3`
 #include <CGAL/Image_3.h>
