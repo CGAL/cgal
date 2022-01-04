@@ -6,8 +6,11 @@ ALIASES += "cgalDescribePolylineType=A polyline is defined as a sequence of poin
 INPUT += \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Polyhedral_complex_mesh_domain_3.h \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_domain_with_polyline_features_3.h \
-      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_3/generate_label_weights.h
-
+      ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Mesh_3/generate_label_weights.h \
+      ${CGAL_TMDS_3_INCLUDE_DIR}/CGAL/Mesh_vertex_base_3.h \
+      ${CGAL_TMDS_3_INCLUDE_DIR}/CGAL/Mesh_cell_base_3.h \
+      ${CGAL_TMDS_3_INCLUDE_DIR}/CGAL/Compact_mesh_cell_base_3.h \
+      
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Mesh Generation"
 HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_3.jpg \
                               ${CGAL_PACKAGE_DOC_DIR}/fig/implicit_domain_4.jpg \
