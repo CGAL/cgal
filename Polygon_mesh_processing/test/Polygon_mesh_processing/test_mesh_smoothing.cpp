@@ -84,7 +84,7 @@ void test_area_smoothing_without_projection(const std::string filename)
 }
 
 template<typename Mesh>
-void test_tangential_relaxation(const char* filename)
+void test_tangential_relaxation(const std::string filename)
 {
   Mesh mesh;
   read_mesh(filename, mesh);
