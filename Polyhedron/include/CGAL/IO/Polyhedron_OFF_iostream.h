@@ -40,10 +40,10 @@ namespace IO {
 template <class Traits,
           class Items,
           template < class T, class I, class A> class HDS,
-          class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          class Alloc, class NamedParameters = parameters::Default_named_parameters>
 bool read_OFF(std::istream& in,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-              const CGAL_BGL_NP_CLASS& np)
+              const NamedParameters& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<Polyhedron_3<Traits, Items, HDS, Alloc> >::vertex_descriptor Vertex;
 
@@ -93,32 +93,13 @@ bool read_OFF(std::istream& in,
 template <class Traits,
           class Items,
           template < class T, class I, class A> class HDS,
-          class Alloc>
-bool read_OFF(std::istream& in, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
-{
-  return read_OFF(in, P, parameters::all_default());
-}
-
-template <class Traits,
-          class Items,
-          template < class T, class I, class A> class HDS,
-          class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          class Alloc, class NamedParameters = parameters::Default_named_parameters>
 bool read_OFF(const std::string& fname,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-              const CGAL_BGL_NP_CLASS& np)
+              const NamedParameters& np = parameters::use_default_values())
 {
   std::ifstream in(fname);
   return read_OFF(in, P, np);
-}
-
-template <class Traits,
-          class Items,
-          template < class T, class I, class A> class HDS,
-          class Alloc>
-bool read_OFF(const std::string& fname, Polyhedron_3<Traits, Items, HDS, Alloc>& P)
-{
-  std::ifstream in(fname);
-  return read_OFF(in, P, parameters::all_default());
 }
 
 } // namespace IO
@@ -142,10 +123,10 @@ namespace IO {
 template < class Traits,
            class Items,
            template < class T, class I, class A> class HDS,
-           class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+           class Alloc, class NamedParameters = parameters::Default_named_parameters>
 bool write_OFF(std::ostream& out,
                const Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-               const CGAL_BGL_NP_CLASS& np)
+               const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -166,15 +147,6 @@ bool write_OFF(std::ostream& out,
                              get_const_property_map(CGAL::vertex_point, P));
 
   return CGAL::print_polyhedron_with_header_OFF(out, P, header, vpm);
-}
-
-template <class Traits,
-          class Items,
-          template < class T, class I, class A> class HDS,
-          class Alloc>
-bool write_OFF(std::ostream& out, const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
-{
-  return write_OFF(out, P, parameters::all_default());
 }
 
 } // namespace IO

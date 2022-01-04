@@ -413,10 +413,10 @@ void oriented_bounding_box(const PointRange& points,
 ///
 template <typename PolygonMesh,
           typename Output,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename NamedParameters = parameters::Default_named_parameters>
 void oriented_bounding_box(const PolygonMesh& pmesh,
                            Output& out,
-                           const CGAL_BGL_NP_CLASS& np
+                           const NamedParameters& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                            , typename boost::disable_if<
                               typename boost::has_range_iterator<PolygonMesh>
@@ -434,20 +434,6 @@ void oriented_bounding_box(const PolygonMesh& pmesh,
 
   oriented_bounding_box(vertices(pmesh), out, np.point_map(vpm));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/// Convenience overloads
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-template <typename Input /*range or mesh*/, typename Output /*transformation, array, or mesh*/>
-void oriented_bounding_box(const Input& in, Output& out)
-{
-  return oriented_bounding_box(in, out, CGAL::parameters::all_default());
-}
-
-/// \endcond
 
 } // end namespace CGAL
 

@@ -81,10 +81,10 @@ struct Dummy_visitor
 
 } // namespace internal
 
-template<class TM, class ShouldStop,class NamedParameters>
+template<class TM, class ShouldStop,class NamedParameters = parameters::Default_named_parameters>
 int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
-                  const NamedParameters& np)
+                  const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -103,12 +103,6 @@ int edge_collapse(TM& tmesh,
                                  choose_parameter<internal::Dummy_filter>(get_parameter(np, internal_np::filter)),
                                  choose_parameter<internal::Dummy_visitor>(get_parameter(np, internal_np::visitor)));
 
-}
-
-template<class TM, class ShouldStop>
-int edge_collapse(TM& tmesh, const ShouldStop& should_stop)
-{
-  return edge_collapse(tmesh, should_stop, CGAL::parameters::all_default());
 }
 
 } // namespace Surface_mesh_simplification
