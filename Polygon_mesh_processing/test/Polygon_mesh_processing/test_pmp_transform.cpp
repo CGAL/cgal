@@ -21,7 +21,7 @@ int main()
   Mesh m;
   CGAL::make_tetrahedron(Point(0,0,0), Point(0,0,1), Point(0,1,2), Point(1,0,3), m);
   CGAL::Aff_transformation_3<K> trans(0,0,0,1,0,1,0,0,0,0,1,1);
-  PMP::transform(trans, m, params::all_default());
+  PMP::transform(trans, m, params::use_default_values());
   bool ok = true;
   for(Mesh::size_type i = 0; i<m.vertices().size(); ++i)
   {

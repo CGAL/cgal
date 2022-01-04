@@ -99,8 +99,7 @@ void test_triangulate_hole_with_cdt_2(
     assert(patch_faces.size() == num_patch_faces);
   }
   assert(pmesh.is_valid() && is_closed(pmesh));
-  assert(CGAL::Polygon_mesh_processing::is_outward_oriented(pmesh,
-    CGAL::parameters::all_default()));
+  assert(CGAL::Polygon_mesh_processing::is_outward_oriented(pmesh));
 
   // Writing the file.
   if (verbose) {

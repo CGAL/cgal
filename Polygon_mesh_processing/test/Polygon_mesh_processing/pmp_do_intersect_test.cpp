@@ -92,8 +92,8 @@ test_faces_intersections(const std::string filename1,
   CGAL::Polygon_mesh_processing::internal::compute_face_face_intersection(
         m1, m2,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default(),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::Polygon_mesh_processing::parameters::use_default_values(),
+        CGAL::Polygon_mesh_processing::parameters::use_default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 
@@ -150,7 +150,7 @@ test_faces_polyline_intersections(const std::string filename1,
   CGAL::Polygon_mesh_processing::internal::compute_face_polyline_intersection(
         m, points,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::Polygon_mesh_processing::parameters::use_default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 
@@ -211,7 +211,7 @@ test_faces_polylines_intersections(const std::string filename1,
         points,
         m,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::Polygon_mesh_processing::parameters::use_default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 

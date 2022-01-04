@@ -95,7 +95,7 @@ int main()
   volume = sm1;
   volume_copy = volume;
   PMP::orient(sm1);
-  if(!test_orientation(sm1, true, PMP::parameters::all_default()))
+  if(!test_orientation(sm1, true, CGAL::parameters::use_default_values()))
     return 1;
   typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type Ppmap;
   typedef boost::property_map<SMesh, CGAL::face_index_t>::type Fidmap;
@@ -112,7 +112,7 @@ int main()
   }
 
   PMP::orient(sm3, PMP::parameters::outward_orientation(false));
-  if(!test_orientation(sm3, false, PMP::parameters::all_default()))
+  if(!test_orientation(sm3, false, PMP::parameters::use_default_values()))
   {
     std::cerr << "ERROR for test2\n";
     return 1;
