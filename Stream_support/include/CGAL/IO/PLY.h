@@ -307,7 +307,7 @@ template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PA
 bool read_PLY(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -327,17 +327,6 @@ bool read_PLY(std::istream& is,
                             std::back_inserter(dummy_pf),
                             choose_parameter(get_parameter(np, internal_np::verbose), true));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <class PointRange, class PolygonRange>
-bool read_PLY(std::istream& is, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_PLY(is, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
@@ -378,7 +367,7 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool read_PLY(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -398,17 +387,6 @@ bool read_PLY(const std::string& fname,
     return read_PLY(is, points, polygons, np);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool read_PLY(const std::string& fname, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_PLY(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -452,7 +430,7 @@ template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PA
 bool write_PLY(std::ostream& out,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -493,17 +471,6 @@ bool write_PLY(std::ostream& out,
   return out.good();
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <class PointRange, class PolygonRange>
-bool write_PLY(std::ostream& out, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_PLY(out, points, polygons, parameters::all_default());
-}
-
-/// \endcond
-
 /*!
  * \ingroup PkgStreamSupportIoFuncsPLY
  *
@@ -542,7 +509,7 @@ template <class PointRange, class PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PA
 bool write_PLY(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -562,17 +529,6 @@ bool write_PLY(const std::string& fname,
     return write_PLY(os, points, polygons, np);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <class PointRange, class PolygonRange>
-bool write_PLY(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_PLY(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 
