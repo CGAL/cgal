@@ -1696,11 +1696,6 @@ bool connected_components_compatible_orientations(PolygonMesh& pm,
     std::sort(incompatible_patches[cc_id].begin(), incompatible_patches[cc_id].end());
   }
 
-  auto is_inside = [](const std::vector<F_cc_id>& cc_ids, F_cc_id cc_id)
-  {
-    return std::find(cc_ids.begin(), cc_ids.end(), cc_id)!=cc_ids.end();
-  };
-
   // sort the connected components with potential matches using their number
   // of faces (sorted by decreasing number of faces)
   std::vector<bool> cc_bits(nb_cc, false);
