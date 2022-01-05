@@ -359,10 +359,10 @@ public:
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
    *       while the queries are performed
    */
-  template <typename TriangleMesh, typename NamedParameters>
+  template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
   Polyhedral_envelope(const TriangleMesh& tmesh,
                       double epsilon,
-                      const NamedParameters& np)
+                      const NamedParameters& np = parameters::use_default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -459,11 +459,11 @@ public:
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
    *       while the queries are performed
    */
-  template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
+  template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
   Polyhedral_envelope(const FaceRange& face_range,
                       const TriangleMesh& tmesh,
                       double epsilon,
-                      const NamedParameters& np
+                      const NamedParameters& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                       , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
 #endif
@@ -563,11 +563,11 @@ public:
     * \cgalNamedParamsEnd
     *
     */
-  template <typename PointRange, typename TriangleRange, typename NamedParameters>
+  template <typename PointRange, typename TriangleRange, typename NamedParameters = parameters::Default_named_parameters>
   Polyhedral_envelope(const PointRange& points,
                       const TriangleRange& triangles,
                       double epsilon,
-                      const NamedParameters& np
+                      const NamedParameters& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                       , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
 #endif
@@ -617,30 +617,6 @@ public:
   }
 
   /// @}
-
-#ifndef DOXYGEN_RUNNING
-  template <typename TriangleMesh>
-  Polyhedral_envelope(const TriangleMesh& tmesh,
-                      double epsilon)
-    : Polyhedral_envelope(tmesh, epsilon, parameters::all_default())
-  {}
-
-  template <typename FaceRange, typename TriangleMesh>
-  Polyhedral_envelope(const FaceRange& face_range,
-                      const TriangleMesh& tmesh,
-                      double epsilon,
-                      typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0)
-    : Polyhedral_envelope(face_range, tmesh, epsilon, parameters::all_default())
-  {}
-
-  template <typename PointRange, typename TriangleRange>
-  Polyhedral_envelope(const PointRange& points,
-                      const TriangleRange& triangles,
-                      double epsilon,
-                      typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0)
-    : Polyhedral_envelope(points, triangles, epsilon, parameters::all_default())
-  {}
-#endif
 
 private:
 
@@ -2246,7 +2222,12 @@ public:
    */
   template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
   bool
-  operator()(const TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np) const
+  operator()(const TriangleMesh& tmesh,
+             const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+#ifndef DOXYGEN_RUNNING
+             , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+#endif
+    ) const
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -2269,16 +2250,6 @@ public:
 
     return true;
   }
-
-#ifndef DOXYGEN_RUNNING
-  template <typename TriangleMesh>
-  bool
-  operator()(const TriangleMesh& tmesh,
-             typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0) const
-  {
-    return this->operator()(tmesh, parameters::all_default());
-  }
-#endif
 
   /**
     * returns `true`, iff all the triangles in `triangles` are inside the polyhedral envelope.
@@ -2304,10 +2275,10 @@ public:
     * \cgalNamedParamsEnd
     *
     */
-  template <typename PointRange, typename TriangleRange, typename NamedParameters>
+  template <typename PointRange, typename TriangleRange, typename NamedParameters = parameters::Default_named_parameters>
   bool operator()(const PointRange& points,
                   const TriangleRange& triangles,
-                  const NamedParameters& np) const
+                  const NamedParameters& np = parameters::use_default_values()) const
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -2332,16 +2303,6 @@ public:
 
     return true;
   }
-
-#ifndef DOXYGEN_RUNNING
-  template <typename PointRange, typename TriangleRange>
-  bool operator()(const PointRange& points,
-                  const TriangleRange& triangles) const
-  {
-    return this->operator()(points, triangles, parameters::all_default());
-  }
-
-#endif
 
   /**
    * returns `true`, iff all the triangles in `triangle_range` are inside the polyhedral envelope.

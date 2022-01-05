@@ -118,13 +118,13 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  */
 
 template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange,
-          class TriangleMesh, class NamedParameters>
+          class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
 void
 orient_triangle_soup_with_reference_triangle_mesh(
     const TriangleMesh& tm_ref,
     PointRange& points,
     TriangleRange& triangles,
-    const NamedParameters& np)
+    const NamedParameters& np = parameters::use_default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -185,18 +185,6 @@ orient_triangle_soup_with_reference_triangle_mesh(
           boost::counting_iterator<std::size_t> (0),
           boost::counting_iterator<std::size_t> (triangles.size()),
           process_facet);
-}
-
-
-template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange,
-          class TriangleMesh>
-void
-orient_triangle_soup_with_reference_triangle_mesh(
-  const TriangleMesh& tm_ref,
-  PointRange& points,
-  TriangleRange& triangles)
-{
-  orient_triangle_soup_with_reference_triangle_mesh<Concurrency_tag>(tm_ref, points, triangles, CGAL::parameters::all_default());
 }
 
 }}//end namespace CGAL::Polygon_mesh_processing

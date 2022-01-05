@@ -522,10 +522,10 @@ struct Polygon_soup_orienter
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
  */
-template <class PointRange, class PolygonRange, class NamedParameters>
+template <class PointRange, class PolygonRange, class NamedParameters = parameters::Default_named_parameters>
 bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
-                         const NamedParameters& np)
+                         const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -544,14 +544,6 @@ bool orient_polygon_soup(PointRange& points,
   orienter.duplicate_singular_vertices();
 
   return inital_nb_pts==points.size();
-}
-
-
-template <class PointRange, class PolygonRange>
-bool orient_polygon_soup(PointRange& points,
-                         PolygonRange& polygons)
-{
-  return orient_polygon_soup(points, polygons, parameters::all_default());
 }
 
 } }//end namespace CGAL::Polygon_mesh_processing

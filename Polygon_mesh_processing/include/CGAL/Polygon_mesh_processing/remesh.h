@@ -192,11 +192,11 @@ namespace Polygon_mesh_processing {
 */
 template<typename PolygonMesh
        , typename FaceRange
-       , typename NamedParameters>
+       , typename NamedParameters = parameters::Default_named_parameters>
 void isotropic_remeshing(const FaceRange& faces
                        , const double& target_edge_length
                        , PolygonMesh& pmesh
-                       , const NamedParameters& np)
+                       , const NamedParameters& np = parameters::use_default_values())
 {
   if (boost::begin(faces)==boost::end(faces))
     return;
@@ -337,20 +337,6 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 }
 
-template<typename PolygonMesh
-       , typename FaceRange>
-void isotropic_remeshing(
-    const FaceRange& faces
-  , const double& target_edge_length
-  , PolygonMesh& pmesh)
-{
-  isotropic_remeshing(
-    faces,
-    target_edge_length,
-    pmesh,
-    parameters::all_default());
-}
-
 /*!
 * \ingroup PMP_meshing_grp
 * @brief splits the edges listed in `edges` into sub-edges
@@ -404,11 +390,11 @@ void isotropic_remeshing(
 */
 template<typename PolygonMesh
        , typename EdgeRange
-       , typename NamedParameters>
+       , typename NamedParameters = parameters::Default_named_parameters>
 void split_long_edges(const EdgeRange& edges
                     , const double& max_length
                     , PolygonMesh& pmesh
-                    , const NamedParameters& np)
+                    , const NamedParameters& np = parameters::use_default_values())
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
@@ -446,17 +432,6 @@ void split_long_edges(const EdgeRange& edges
              false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length);
-}
-
-template<typename PolygonMesh, typename EdgeRange>
-void split_long_edges(const EdgeRange& edges
-                    , const double& max_length
-                    , PolygonMesh& pmesh)
-{
-  split_long_edges(edges,
-    max_length,
-    pmesh,
-    parameters::all_default());
 }
 
 } //end namespace Polygon_mesh_processing

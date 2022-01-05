@@ -68,11 +68,11 @@ namespace Polygon_mesh_processing {
 ///
 template<typename PolygonMesh,
          typename PointRange, typename PolygonRange,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
                                   PointRange& points,
                                   PolygonRange& polygons,
-                                  const NamedParameters& np)
+                                  const NamedParameters& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor              vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor            halfedge_descriptor;
@@ -116,18 +116,6 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
     polygons.push_back(polygon);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template<typename PolygonMesh, typename PointRange, typename PolygonRange>
-void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
-                                  PointRange& points,
-                                  PolygonRange& polygons)
-{
-  return polygon_mesh_to_polygon_soup(mesh, points, polygons, CGAL::parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

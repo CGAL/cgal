@@ -240,9 +240,9 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
+  template <class NamedParameters = parameters::Default_named_parameters>
   std::size_t add_mesh(const TriangleMesh& tm,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::use_default_values())
   {
     // handle vpm
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
@@ -299,8 +299,8 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
-  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm, const NamedParameters& np)
+  template <class NamedParameters = parameters::Default_named_parameters>
+  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm, const NamedParameters& np = parameters::use_default_values())
   {
     std::size_t id = get_id_for_new_mesh();
     CGAL_assertion( m_aabb_trees[id] == nullptr );
@@ -546,12 +546,12 @@ public:
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   */
-  template <class NamedParameters>
+  template <class NamedParameters = parameters::Default_named_parameters>
   static
   void collect_one_point_per_connected_component(
     const TriangleMesh& tm,
           std::vector<Point_3>& points,
-    const NamedParameters& np)
+    const NamedParameters& np = parameters::use_default_values())
   {
     const bool maybe_several_cc =
       parameters::choose_parameter(
@@ -624,25 +624,6 @@ public:
     m_points_per_cc[id] = points_per_cc;
 
     return id;
-  }
-
-  // versions without NP
-  static
-  void collect_one_point_per_connected_component(
-    const TriangleMesh& tm,
-          std::vector<typename K::Point_3>& points)
-  {
-    collect_one_point_per_connected_component(tm, points, parameters::all_default());
-  }
-
-  std::size_t add_mesh(const TriangleMesh& tm)
-  {
-    return add_mesh(tm, parameters::all_default());
-  }
-
-  std::size_t add_mesh(const AABB_tree& tree, const TriangleMesh& tm)
-  {
-    return add_mesh(tree, tm, parameters::all_default());
   }
 #endif
 };

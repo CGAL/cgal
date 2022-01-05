@@ -462,10 +462,10 @@ public:
 *
 * @return `true` if the face has been triangulated.
 */
-template<typename PolygonMesh, typename NamedParameters>
+template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                       PolygonMesh& pmesh,
-                      const NamedParameters& np)
+                      const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -493,13 +493,6 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
   return modifier.triangulate_face(f, pmesh, use_cdt, visitor);
-}
-
-template<typename PolygonMesh>
-bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
-                      PolygonMesh& pmesh)
-{
-  return triangulate_face(f, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /**
@@ -546,10 +539,10 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *
 * @see triangulate_face()
 */
-template <typename FaceRange, typename PolygonMesh, typename NamedParameters>
+template <typename FaceRange, typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(FaceRange face_range,
                        PolygonMesh& pmesh,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -577,12 +570,6 @@ bool triangulate_faces(FaceRange face_range,
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel, Visitor> modifier(vpmap, traits);
   return modifier(face_range, pmesh, use_cdt, visitor);
-}
-
-template <typename FaceRange, typename PolygonMesh>
-bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
-{
-  return triangulate_faces(face_range, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 /**
@@ -624,17 +611,11 @@ bool triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
 *
 * @see triangulate_face()
 */
-template <typename PolygonMesh, typename NamedParameters>
+template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(PolygonMesh& pmesh,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::use_default_values())
 {
   return triangulate_faces(faces(pmesh), pmesh, np);
-}
-
-template <typename PolygonMesh>
-bool triangulate_faces(PolygonMesh& pmesh)
-{
-  return triangulate_faces(faces(pmesh), pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 } // end namespace Polygon_mesh_processing

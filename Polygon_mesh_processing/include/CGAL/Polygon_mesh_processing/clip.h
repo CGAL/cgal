@@ -717,7 +717,7 @@ bool clip(TriangleMesh& tm,
   bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
                     bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
   TriangleMesh clipper;
-  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::all_default());
+  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::use_default_values());
   switch(os)
   {
     case ON_NEGATIVE_SIDE:

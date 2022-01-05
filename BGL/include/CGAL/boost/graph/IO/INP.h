@@ -87,22 +87,14 @@ bool write_INP(const std::string& fname,
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-template <typename FaceGraph, typename NamedParameters>
+template <typename FaceGraph, typename NamedParameters = parameters::Default_named_parameters>
 CGAL_DEPRECATED bool write_inp(std::ostream& os,
                const FaceGraph& g,
                std::string name,
                std::string type,
-               const NamedParameters& np)
+               const NamedParameters& np = parameters::use_default_values())
 {
   return write_INP(os, name, type, g, np);
-}
-template <typename FaceGraph>
-CGAL_DEPRECATED bool write_inp(std::ostream& os,
-               const FaceGraph& g,
-               std::string name,
-               std::string type)
-{
-  return write_INP(os, name, type, g, parameters::all_default());
 }
 #endif
 /// \endcond

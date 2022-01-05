@@ -230,7 +230,7 @@ bool read_STL(const std::string& fname,
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor                  halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                      face_descriptor;

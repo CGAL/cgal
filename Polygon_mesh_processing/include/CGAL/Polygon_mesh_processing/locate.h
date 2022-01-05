@@ -73,7 +73,7 @@ struct Ray_type_selector<Point, 3>
 
 // Just for convenience
 template <typename TriangleMesh,
-          typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+          typename NamedParameters = parameters::Default_named_parameters>
 struct Location_traits
 {
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type  VertexPointMap;

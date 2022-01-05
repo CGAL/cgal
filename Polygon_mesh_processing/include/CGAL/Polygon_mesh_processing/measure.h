@@ -172,7 +172,7 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
   * @sa `face_border_length()`
   */
 template<typename PolygonMesh,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 FT
 #else
@@ -180,7 +180,7 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 #endif
 squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                     const PolygonMesh& pmesh,
-                    const NamedParameters& np)
+                    const NamedParameters& np = parameters::use_default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
 
@@ -199,34 +199,17 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descript
                                                 get(vpm, target(h, pmesh)));
 }
 
-template<typename PolygonMesh>
-typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
-CGAL::vertex_point_t>::type>::Kernel::FT
-squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-                    const PolygonMesh& pmesh)
-{
-  return squared_edge_length(h, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
-}
+
 // edge overloads
 template<typename PolygonMesh,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
                     const PolygonMesh& pmesh,
-                    const NamedParameters& np)
+                    const NamedParameters& np = parameters::use_default_values())
 {
   return squared_edge_length(halfedge(e, pmesh), pmesh, np);
 }
-
-template<typename PolygonMesh>
-typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
-CGAL::vertex_point_t>::type>::Kernel::FT
-squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
-                    const PolygonMesh& pmesh)
-{
-  return squared_edge_length(halfedge(e, pmesh), pmesh);
-}
-
 
 /**
   * \ingroup measure_grp

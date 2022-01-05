@@ -300,7 +300,7 @@ namespace internal {
 template <typename PolygonMesh,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t number_of_connected_components(const PolygonMesh& pmesh,
-                                           const CGAL_BGL_NP_CLASS& np)
+                                           const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::faces_size_type                faces_size_type;
   typedef CGAL::dynamic_face_property_t<faces_size_type>                            Face_property_tag;
@@ -309,12 +309,6 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh,
   Patch_ids_map patch_ids_map = get(Face_property_tag(), pmesh);
 
   return CGAL::Polygon_mesh_processing::connected_components(pmesh, patch_ids_map, np);
-}
-
-template <typename PolygonMesh>
-std::size_t number_of_connected_components(const PolygonMesh& pmesh)
-{
-  return internal::number_of_connected_components(pmesh, CGAL::parameters::all_default());
 }
 
 } // end namespace internal

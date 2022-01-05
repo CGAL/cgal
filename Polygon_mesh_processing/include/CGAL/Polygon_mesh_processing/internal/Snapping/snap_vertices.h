@@ -1218,17 +1218,16 @@ std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
 
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh,
-          typename T_A, typename Tag_A, typename Base_A,
-          typename T_B, typename Tag_B, typename Base_B>
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS_1,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS_2>
 std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
                           PolygonMesh& tm_A,
                           const HalfedgeRange_B& halfedge_range_B,
                           PolygonMesh& tm_B,
-                          const CGAL::Named_function_parameters<T_A, Tag_A, Base_A>& np_A,
-                          const CGAL::Named_function_parameters<T_B, Tag_B, Base_B>& np_B)
+                          const CGAL_BGL_NP_CLASS_1& np_A=parameters::use_default_values(),
+                          const CGAL_BGL_NP_CLASS_2& np_B=parameters::use_default_values())
 {
-  typedef CGAL::Named_function_parameters<T_A, Tag_A, Base_A>                         NamedParameters_A;
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters_A>::type                GT;
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_BGL_NP_CLASS_1>::type              GT;
   typedef typename GT::FT                                                             FT;
   typedef CGAL::dynamic_vertex_property_t<FT>                                         Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type        Tolerance_map;
@@ -1241,17 +1240,6 @@ std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
   internal::assign_tolerance_with_local_edge_length_bound(halfedge_range_B, tolerance_map_B, max_tol, tm_B, np_B);
 
   return snap_vertices(halfedge_range_A, tm_A, tolerance_map_A, halfedge_range_B, tm_B, tolerance_map_B, np_A, np_B);
-}
-
-template <typename ConcurrencyTag = CGAL::Sequential_tag,
-          typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh>
-std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
-                          PolygonMesh& tm_A,
-                          const HalfedgeRange_B& halfedge_range_B,
-                          PolygonMesh& tm_B)
-{
-  return snap_vertices<ConcurrencyTag>(halfedge_range_A, tm_A, halfedge_range_B, tm_B,
-                                       parameters::all_default(), parameters::all_default());
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

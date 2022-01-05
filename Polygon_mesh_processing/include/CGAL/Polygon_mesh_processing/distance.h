@@ -2288,14 +2288,14 @@ double bounded_error_Hausdorff_naive_impl(
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters >
 double bounded_error_Hausdorff_distance(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const double error_bound = 0.0001,
+  const NamedParameters1& np1 = parameters::use_default_values(),
+  const NamedParameters2& np2 = parameters::use_default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2328,32 +2328,6 @@ double bounded_error_Hausdorff_distance(
     tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out);
 }
 
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 >
-double bounded_error_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1)
-{
-  return bounded_error_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, error_bound, np1, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2 >
-double bounded_error_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound = 0.0001)
-{
-  return bounded_error_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, error_bound, parameters::all_default());
-}
-
 /**
  * \ingroup PMP_distance_grp
  * returns the maximum of `bounded_error_Hausdorff_distance(tm1, tm2, error_bound, np1, np2)`
@@ -2368,14 +2342,14 @@ double bounded_error_Hausdorff_distance(
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters >
 double bounded_error_symmetric_Hausdorff_distance(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double error_bound,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters1& np1 = parameters::use_default_values(),
+  const NamedParameters2& np2 = parameters::use_default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2412,35 +2386,6 @@ double bounded_error_symmetric_Hausdorff_distance(
     tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out1, out2);
 }
 
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 >
-double bounded_error_symmetric_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1)
-{
-  return bounded_error_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, error_bound, np1, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2>
-double bounded_error_symmetric_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound = 0.0001)
-{
-  return bounded_error_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, error_bound, parameters::all_default());
-}
-
-// TODO: Find better name!
-// TODO: Should we use one-sided or symmetric distance here?
-
 /**
  * \ingroup PMP_distance_grp
  * returns `true` if the Hausdorff distance between two meshes is larger than
@@ -2466,15 +2411,15 @@ double bounded_error_symmetric_Hausdorff_distance(
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 bool is_Hausdorff_distance_larger(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double distance_bound,
   const double error_bound,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters1& np1 = parameters::use_default_values(),
+  const NamedParameters2& np2 = parameters::use_default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2523,46 +2468,18 @@ bool is_Hausdorff_distance_larger(
   return hdist > distance_bound;
 }
 
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 >
-double is_Hausdorff_distance_larger(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double max_distance,
-  const double error_bound,
-  const NamedParameters1& np1)
-{
-  return is_Hausdorff_distance_larger<Concurrency_tag>(
-    tm1, tm2, max_distance, error_bound, np1, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2 >
-double is_Hausdorff_distance_larger(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double max_distance = 1.0,
-  const double error_bound = 0.0001)
-{
-  return is_Hausdorff_distance_larger<Concurrency_tag>(
-    tm1, tm2, max_distance, error_bound, parameters::all_default());
-}
-
 // Implementation of the naive Bounded Error Hausdorff distance.
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters >
 double bounded_error_Hausdorff_distance_naive(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double error_bound,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters1& np1 = parameters::use_default_values(),
+  const NamedParameters2& np2 = parameters::use_default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2584,32 +2501,6 @@ double bounded_error_Hausdorff_distance_naive(
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_Hausdorff_naive_impl<Concurrency_tag, Traits>(
     tm1, tm2, error_threshold, vpm1, vpm2);
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 >
-double bounded_error_Hausdorff_distance_naive(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1)
-{
-  return bounded_error_Hausdorff_distance_naive<Concurrency_tag>(
-    tm1, tm2, error_bound, np1, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2 >
-double bounded_error_Hausdorff_distance_naive(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound = 0.0001)
-{
-  return bounded_error_Hausdorff_distance_naive<Concurrency_tag>(
-    tm1, tm2, error_bound, parameters::all_default());
 }
 
 } } // end of namespace CGAL::Polygon_mesh_processing

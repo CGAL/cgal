@@ -129,10 +129,10 @@ namespace Polygon_mesh_processing {
 *
 * @pre `tmesh` does not contain any degenerate faces
 */
-template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void smooth_mesh(const FaceRange& faces,
                  TriangleMesh& tmesh,
-                 const NamedParameters& np)
+                 const NamedParameters& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;
@@ -324,22 +324,10 @@ void smooth_mesh(const FaceRange& faces,
 }
 
 ///\cond SKIP_IN_MANUAL
-template <typename FaceRange, typename TriangleMesh>
-void smooth_mesh(const FaceRange& face_range, TriangleMesh& tmesh)
-{
-  smooth_mesh(face_range, tmesh, parameters::all_default());
-}
-
 template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-void smooth_mesh(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np)
+void smooth_mesh(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   smooth_mesh(faces(tmesh), tmesh, np);
-}
-
-template<typename TriangleMesh>
-void smooth_mesh(TriangleMesh& tmesh)
-{
-  smooth_mesh(faces(tmesh), tmesh, parameters::all_default());
 }
 
 template<typename TriangleMesh, typename GeomTraits, typename Stream>

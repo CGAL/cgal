@@ -2163,6 +2163,10 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = DOXYGEN_RUNNING \
                          "CGAL_BGL_NP_TEMPLATE_PARAMETERS=NamedParameters" \
                          "CGAL_BGL_NP_CLASS=NamedParameters" \
+                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS_1=NamedParameters1" \
+                         "CGAL_BGL_NP_CLASS_1=NamedParameters1" \
+                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2" \
+                         "CGAL_BGL_NP_CLASS_2=NamedParameters2" \
                          CGAL_DEPRECATED
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this

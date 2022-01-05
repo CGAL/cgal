@@ -149,7 +149,7 @@ struct Face_filtered_graph
    */
   template <class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
   Face_filtered_graph(const Graph& graph,
-                      const CGAL_BGL_NP_CLASS& np)
+                      const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
     : _graph(const_cast<Graph&>(graph))
     , fimap(CGAL::get_initialized_face_index_map(graph, np))
     , vimap(CGAL::get_initialized_vertex_index_map(graph, np))
@@ -157,10 +157,6 @@ struct Face_filtered_graph
     , selected_faces(num_faces(graph), 0)
     , selected_vertices(num_vertices(graph), 0)
     , selected_halfedges(num_halfedges(graph), 0)
-  {}
-
-  Face_filtered_graph(const Graph& graph)
-    :Face_filtered_graph(graph, parameters::all_default())
   {}
 
   /*!

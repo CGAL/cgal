@@ -72,13 +72,13 @@ namespace Polygon_mesh_processing {
            typename FaceRange,
            typename FaceOutputIterator,
            typename VertexOutputIterator,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   std::pair<FaceOutputIterator, VertexOutputIterator>
     refine(TriangleMesh& tmesh,
            const FaceRange& faces,
            FaceOutputIterator faces_out,
            VertexOutputIterator vertices_out,
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::use_default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -97,22 +97,6 @@ namespace Polygon_mesh_processing {
     return std::make_pair(faces_out, vertices_out);
   }
 
-///\cond SKIP_IN_MANUAL
-  template<typename TriangleMesh,
-    typename FaceRange,
-    typename FaceOutputIterator,
-    typename VertexOutputIterator>
-
-  std::pair<FaceOutputIterator, VertexOutputIterator>
-    refine(TriangleMesh& tmesh,
-           const FaceRange& faces,
-           FaceOutputIterator faces_out,
-           VertexOutputIterator vertices_out)
-  {
-    return refine(tmesh, faces, faces_out, vertices_out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
-  }
-///\endcond
 }//end namespace Polygon_mesh_processing
 
 }//end namespace CGAL

@@ -148,9 +148,9 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// \return the number of connected components removed (ignoring isolated vertices).
 ///
 template <typename TriangleMesh,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
-                                                           const NamedParameters& np)
+                                                           const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -337,12 +337,6 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   }
 
   return res;
-}
-
-template <typename TriangleMesh>
-std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh)
-{
-  return remove_connected_components_of_negligible_size(tmesh, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing

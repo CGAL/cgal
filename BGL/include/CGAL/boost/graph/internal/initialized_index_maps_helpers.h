@@ -271,7 +271,7 @@ get_initialized_index_map(CGAL::internal_np::Param_not_found,
 
 template <typename PropertyTag, typename Tag, typename DynamicTag,
           typename Graph,
-          typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+          typename NamedParameters = parameters::Default_named_parameters >
 class GetInitializedIndexMap
 {
 public:

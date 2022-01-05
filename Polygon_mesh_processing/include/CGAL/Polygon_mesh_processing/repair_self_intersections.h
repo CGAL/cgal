@@ -1956,10 +1956,10 @@ struct Remove_self_intersection_default_visitor
                         double /* containment_epsilon */ ) {}
 };
 
-template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
+template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool remove_self_intersections(const FaceRange& face_range,
                                TriangleMesh& tmesh,
-                               const NamedParameters& np)
+                               const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -2104,22 +2104,10 @@ bool remove_self_intersections(const FaceRange& face_range,
   return step < max_steps;
 }
 
-template <typename FaceRange, typename TriangleMesh>
-bool remove_self_intersections(const FaceRange& face_range, TriangleMesh& tmesh)
-{
-  return remove_self_intersections(face_range, tmesh, parameters::all_default());
-}
-
 template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np)
+bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   return remove_self_intersections(faces(tmesh), tmesh, np);
-}
-
-template <typename TriangleMesh>
-bool remove_self_intersections(TriangleMesh& tmesh)
-{
-  return remove_self_intersections(tmesh, parameters::all_default());
 }
 
 } // namespace experimental

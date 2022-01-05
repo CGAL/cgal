@@ -175,23 +175,24 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *         will only be corefined.
   */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2,
-          class NamedParametersOut0,
-          class NamedParametersOut1,
-          class NamedParametersOut2,
-          class NamedParametersOut3>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters,
+          class NamedParametersOut0 = parameters::Default_named_parameters,
+          class NamedParametersOut1 = parameters::Default_named_parameters,
+          class NamedParametersOut2 = parameters::Default_named_parameters,
+          class NamedParametersOut3 = parameters::Default_named_parameters>
 std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
   const std::array< boost::optional<TriangleMesh*>,4>& output,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2,
+  const NamedParameters1& np1 = parameters::use_default_values(),
+  const NamedParameters2& np2 = parameters::use_default_values(),
   const std::tuple<NamedParametersOut0,
-                     NamedParametersOut1,
-                     NamedParametersOut2,
-                     NamedParametersOut3>& nps_out)
+                   NamedParametersOut1,
+                   NamedParametersOut2,
+                   NamedParametersOut3>& nps_out
+                    = std::tuple<NamedParametersOut0,NamedParametersOut1,NamedParametersOut2,NamedParametersOut3>())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -412,51 +413,6 @@ corefine_and_compute_boolean_operations(
                           ob.tm2_minus_tm1_is_valid());
 }
 
-template <class TriangleMesh>
-std::array<bool,4>
-corefine_and_compute_boolean_operations(
-        TriangleMesh& tm1,
-        TriangleMesh& tm2,
-  const std::array< boost::optional<TriangleMesh*>,4>& output)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_boolean_operations(tm1, tm2, output,
-                                                 all_default(), all_default(),
-                                                 std::make_tuple(all_default(), all_default(),
-                                                                   all_default(), all_default()));
-}
-
-template <class TriangleMesh, class NamedParameters1>
-std::array<bool,4>
-corefine_and_compute_boolean_operations(
-        TriangleMesh& tm1,
-        TriangleMesh& tm2,
-  const std::array< boost::optional<TriangleMesh*>,4>& output,
-  const NamedParameters1& np1)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_boolean_operations(tm1, tm2, output,
-                                                 np1, all_default(),
-                                                 std::make_tuple(all_default(), all_default(),
-                                                                   all_default(), all_default()));
-}
-
-template <class TriangleMesh, class NamedParameters1, class NamedParameters2>
-std::array<bool,4>
-corefine_and_compute_boolean_operations(
-        TriangleMesh& tm1,
-        TriangleMesh& tm2,
-  const std::array< boost::optional<TriangleMesh*>,4>& output,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_boolean_operations(tm1, tm2, output,
-                                                 np1, np2,
-                                                 std::make_tuple(all_default(), all_default(),
-                                                                   all_default(), all_default()));
-}
-
 #undef CGAL_COREF_SET_OUTPUT_VERTEX_POINT_MAP
 #undef CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP
 
@@ -554,16 +510,16 @@ corefine_and_compute_boolean_operations(
   *         If `false` is returned and if `tm_out` is one of the input surface meshes,
   *         then `tm_out` is only corefined.  */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2,
-          class NamedParametersOut>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters,
+          class NamedParametersOut = parameters::Default_named_parameters>
 bool
 corefine_and_compute_union(      TriangleMesh& tm1,
                                  TriangleMesh& tm2,
                                  TriangleMesh& tm_out,
-                           const NamedParameters1& np1,
-                           const NamedParameters2& np2,
-                           const NamedParametersOut& np_out)
+                           const NamedParameters1& np1 = parameters::use_default_values(),
+                           const NamedParameters2& np2 = parameters::use_default_values(),
+                           const NamedParametersOut& np_out = parameters::use_default_values())
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   std::array< boost::optional<TriangleMesh*>,4> output;
@@ -572,9 +528,9 @@ corefine_and_compute_union(      TriangleMesh& tm1,
   return
    corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
                                            std::make_tuple(np_out,
-                                                             all_default(),
-                                                             all_default(),
-                                                             all_default()))
+                                                             parameters::use_default_values(),
+                                                             parameters::use_default_values(),
+                                                             parameters::use_default_values()))
                                                                 [Corefinement::UNION];
 }
 
@@ -586,16 +542,16 @@ corefine_and_compute_union(      TriangleMesh& tm1,
   * \copydetails CGAL::Polygon_mesh_processing::corefine_and_compute_union()
   */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2,
-          class NamedParametersOut>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters,
+          class NamedParametersOut = parameters::Default_named_parameters>
 bool
 corefine_and_compute_intersection(      TriangleMesh& tm1,
                                         TriangleMesh& tm2,
                                         TriangleMesh& tm_out,
-                                  const NamedParameters1& np1,
-                                  const NamedParameters2& np2,
-                                  const NamedParametersOut& np_out)
+                                  const NamedParameters1& np1 = parameters::use_default_values(),
+                                  const NamedParameters2& np2 = parameters::use_default_values(),
+                                  const NamedParametersOut& np_out = parameters::use_default_values())
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   std::array< boost::optional<TriangleMesh*>,4> output;
@@ -603,10 +559,10 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
 
   return
     corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                            std::make_tuple(all_default(),
+                                            std::make_tuple(parameters::use_default_values(),
                                                               np_out,
-                                                              all_default(),
-                                                              all_default()))
+                                                              parameters::use_default_values(),
+                                                              parameters::use_default_values()))
                                                                 [Corefinement::INTERSECTION];
 }
 
@@ -618,16 +574,16 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
   * \copydetails CGAL::Polygon_mesh_processing::corefine_and_compute_union()
   */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2,
-          class NamedParametersOut>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters,
+          class NamedParametersOut = parameters::Default_named_parameters>
 bool
 corefine_and_compute_difference(      TriangleMesh& tm1,
                                       TriangleMesh& tm2,
                                       TriangleMesh& tm_out,
-                                const NamedParameters1& np1,
-                                const NamedParameters2& np2,
-                                const NamedParametersOut& np_out)
+                                const NamedParameters1& np1 = parameters::use_default_values(),
+                                const NamedParameters2& np2 = parameters::use_default_values(),
+                                const NamedParametersOut& np_out = parameters::use_default_values())
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   using namespace CGAL::Polygon_mesh_processing::Corefinement;
@@ -636,10 +592,10 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 
   return
     corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                            std::make_tuple(all_default(),
-                                                              all_default(),
+                                            std::make_tuple(parameters::use_default_values(),
+                                                              parameters::use_default_values(),
                                                               np_out,
-                                                              all_default()))
+                                                              parameters::use_default_values()))
                                                                 [TM1_MINUS_TM2];
 }
 
@@ -706,13 +662,13 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *
  */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 void
 corefine(      TriangleMesh& tm1,
                TriangleMesh& tm2,
-         const NamedParameters1& np1,
-         const NamedParameters2& np2)
+         const NamedParameters1& np1 = parameters::use_default_values(),
+         const NamedParameters2& np2 = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -849,10 +805,10 @@ namespace experimental {
  *
  */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 void
 autorefine(      TriangleMesh& tm,
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -942,10 +898,10 @@ autorefine(      TriangleMesh& tm,
  *
  */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool
 autorefine_and_remove_self_intersections(      TriangleMesh& tm,
-                                         const NamedParameters& np)
+                                         const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -996,208 +952,6 @@ autorefine_and_remove_self_intersections(      TriangleMesh& tm,
 }
 
 }// end of namespace experimental
-
-// overload with default named parameters
-///// corefine_and_compute_union /////
-template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
-bool
-corefine_and_compute_union(      TriangleMesh& tm1,
-                                 TriangleMesh& tm2,
-                                 TriangleMesh& tm_out,
-                           const NamedParameters1& np1,
-                           const NamedParameters2& np2)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_union(tm1, tm2, tm_out,
-                                    np1, np2, all_default());
-}
-
-template <class TriangleMesh,
-          class NamedParameters1>
-bool
-corefine_and_compute_union(      TriangleMesh& tm1,
-                                 TriangleMesh& tm2,
-                                 TriangleMesh& tm_out,
-                           const NamedParameters1& np1)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_union(tm1, tm2, tm_out,
-                                     np1, all_default(), all_default());
-}
-
-template <class TriangleMesh>
-bool
-corefine_and_compute_union(TriangleMesh& tm1,
-                           TriangleMesh& tm2,
-                           TriangleMesh& tm_out)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_union(tm1, tm2, tm_out,
-                                    all_default(), all_default(), all_default());
-}
-
-///// corefine_and_compute_intersection /////
-template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
-bool
-corefine_and_compute_intersection(       TriangleMesh& tm1,
-                                         TriangleMesh& tm2,
-                                         TriangleMesh& tm_out,
-                                  const  NamedParameters1& np1,
-                                  const  NamedParameters2& np2)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_intersection(tm1, tm2, tm_out,
-                                           np1, np2, all_default());
-}
-
-template <class TriangleMesh,
-          class NamedParameters1>
-bool
-corefine_and_compute_intersection(      TriangleMesh& tm1,
-                                        TriangleMesh& tm2,
-                                        TriangleMesh& tm_out,
-                                  const NamedParameters1& np1)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_intersection(tm1, tm2, tm_out,
-                                           np1, all_default(), all_default());
-}
-
-template <class TriangleMesh>
-bool
-corefine_and_compute_intersection(TriangleMesh& tm1,
-                                  TriangleMesh& tm2,
-                                  TriangleMesh& tm_out)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_intersection(tm1, tm2, tm_out,
-                                           all_default(), all_default(), all_default());
-}
-
-///// difference /////
-template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
-bool
-corefine_and_compute_difference(      TriangleMesh& tm1,
-                                      TriangleMesh& tm2,
-                                      TriangleMesh& tm_out,
-                                const NamedParameters1& np1,
-                                const NamedParameters2& np2)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_difference(tm1, tm2, tm_out,
-                                         np1, np2, all_default());
-}
-
-template <class TriangleMesh,
-          class NamedParameters1>
-bool
-corefine_and_compute_difference(      TriangleMesh& tm1,
-                                      TriangleMesh& tm2,
-                                      TriangleMesh& tm_out,
-                                const NamedParameters1& np1)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_difference(tm1, tm2, tm_out,
-                                         np1, all_default(), all_default());
-}
-
-template <class TriangleMesh>
-bool
-corefine_and_compute_difference(TriangleMesh& tm1,
-                                TriangleMesh& tm2,
-                                TriangleMesh& tm_out)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return corefine_and_compute_difference(tm1, tm2, tm_out,
-                                         all_default(), all_default(), all_default());
-}
-
-///// corefine /////
-template <class TriangleMesh, class NamedParameters1>
-void
-corefine(      TriangleMesh& tm1,
-               TriangleMesh& tm2,
-         const NamedParameters1& np1)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  corefine(tm1, tm2, np1, all_default());
-}
-
-template <class TriangleMesh>
-void
-corefine(           TriangleMesh& tm1,
-                    TriangleMesh& tm2)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  corefine(tm1, tm2, all_default(), all_default());
-}
-
-#ifndef CGAL_NO_DEPRECATED_CODE
- template <class TriangleMesh,
-           class NamedParameters1,
-           class NamedParameters2>
- void
- corefine(      TriangleMesh& tm1,
-                TriangleMesh& tm2,
-          const NamedParameters1& np1,
-          const NamedParameters2& np2,
-          const bool throw_on_self_intersection)
-{
-  corefine(tm1, tm2, np1.throw_on_self_intersection(throw_on_self_intersection), np2);
-}
-
-template <class TriangleMesh, class NamedParameters1>
-void
-corefine(      TriangleMesh& tm1,
-               TriangleMesh& tm2,
-         const NamedParameters1& np1,
-         const bool throw_on_self_intersection)
-{
-  namespace params = CGAL::Polygon_mesh_processing::parameters;
-  corefine(tm1, tm2,
-           np1.throw_on_self_intersection(throw_on_self_intersection),
-           params::all_default());
-}
-
-template <class TriangleMesh>
-void
-corefine(           TriangleMesh& tm1,
-                    TriangleMesh& tm2,
-         const bool throw_on_self_intersection)
-{
-  namespace params = CGAL::Polygon_mesh_processing::parameters;
-  corefine(tm1, tm2,
-           params::throw_on_self_intersection(throw_on_self_intersection),
-           params::all_default());
-}
-#endif
-
-///// autorefine /////
-namespace experimental {
-template <class TriangleMesh>
-void
-autorefine(TriangleMesh& tm)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  autorefine(tm, all_default());
-}
-
-///// autorefine_and_remove_self_intersections /////
-template <class TriangleMesh>
-bool
-autorefine_and_remove_self_intersections(TriangleMesh& tm)
-{
-  using namespace CGAL::Polygon_mesh_processing::parameters;
-  return autorefine_and_remove_self_intersections(tm, all_default());
-}
-
-} // end of namespace experimental
 
 } }  // end of namespace CGAL::Polygon_mesh_processing
 

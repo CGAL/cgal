@@ -277,11 +277,11 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-template <class PolygonMesh, class NamedParameters>
+template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void merge_duplicated_vertices_in_boundary_cycle(
         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
         PolygonMesh& pm,
-        const NamedParameters& np)
+        const NamedParameters& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
@@ -333,9 +333,9 @@ void merge_duplicated_vertices_in_boundary_cycle(
 /// \cgalNamedParamsEnd
 ///
 /// \sa `merge_duplicated_vertices_in_boundary_cycle()`
-template <class PolygonMesh, class NamedParameters>
+template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
-                                                  const NamedParameters& np)
+                                                  const NamedParameters& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
@@ -344,20 +344,6 @@ void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
 
   for(halfedge_descriptor h : cycles)
     merge_duplicated_vertices_in_boundary_cycle(h, pm, np);
-}
-
-template <class PolygonMesh>
-void merge_duplicated_vertices_in_boundary_cycles(PolygonMesh& pm)
-{
-  merge_duplicated_vertices_in_boundary_cycles(pm, parameters::all_default());
-}
-
-template <class PolygonMesh>
-void merge_duplicated_vertices_in_boundary_cycle(
-  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
-  PolygonMesh& pm)
-{
-  merge_duplicated_vertices_in_boundary_cycle(h, pm, parameters::all_default());
 }
 
 } } // end of CGAL::Polygon_mesh_processing
