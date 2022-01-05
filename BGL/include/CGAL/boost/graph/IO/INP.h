@@ -32,7 +32,7 @@ bool write_INP(std::ostream& os,
                const std::string& name,
                const std::string& type,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor                  vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                    face_descriptor;
@@ -80,22 +80,10 @@ template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_INP(const std::string& fname,
                const std::string& type,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values() )
 {
   std::ofstream os(fname);
   return write_INP(os, fname, type, g, np);
-}
-
-template <typename Graph>
-bool write_INP(std::ostream& os, const std::string& name, const std::string& type, const Graph& g)
-{
-  return write_INP(os, name, type, g, parameters::all_default());
-}
-
-template <typename Graph>
-bool write_INP(const std::string& fname, const std::string& type, const Graph& g)
-{
-  return write_INP(fname, type, g, parameters::all_default());
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE

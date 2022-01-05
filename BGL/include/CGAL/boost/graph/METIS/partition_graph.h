@@ -217,18 +217,12 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 ///
 /// \pre `tm` is a pure triangular surface mesh: there are no edges
 ///       without at least one incident face
-template<typename TriangleMesh, typename NamedParameters>
-void partition_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np)
+template<typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
+void partition_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::get_parameter;
 
   return partition_graph(tm, nparts, get_parameter(np, internal_np::METIS_options), np);
-}
-
-template<typename TriangleMesh>
-void partition_graph(const TriangleMesh& tm, const int nparts)
-{
-  return partition_graph(tm, nparts, CGAL::parameters::all_default());
 }
 
 } // end namespace METIS

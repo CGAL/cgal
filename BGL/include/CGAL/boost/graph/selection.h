@@ -498,13 +498,13 @@ reduce_face_selection(
     \cgalParamNEnd
   \cgalNamedParamsEnd
 */
-template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters>
+template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters = parameters::Default_named_parameters>
 void
 regularize_face_selection_borders(
   TriangleMesh& mesh,
   IsSelectedMap is_selected,
   double weight,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -545,20 +545,6 @@ regularize_face_selection_borders(
   for (mesh_face_descriptor fd : faces(mesh))
     put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default np
-template <typename TriangleMesh, typename IsSelectedMap>
-void
-regularize_face_selection_borders(
-  TriangleMesh& fg,
-  IsSelectedMap is_selected,
-  double weight)
-{
-  regularize_face_selection_borders (fg, is_selected, weight,
-                                     CGAL::parameters::all_default());
-}
-/// \endcond
 
 /// \cond SKIP_IN_MANUAL
 

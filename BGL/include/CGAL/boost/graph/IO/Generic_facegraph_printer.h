@@ -88,9 +88,9 @@ public:
   Generic_facegraph_printer(Stream& os) : m_os(os) { }
   Generic_facegraph_printer(Stream& os, FileWriter writer) : m_os(os), m_writer(writer) { }
 
-  template <typename NamedParameters>
+  template <typename NamedParameters = parameters::Default_named_parameters>
   bool operator()(const Graph& g,
-                  const NamedParameters& np)
+                  const NamedParameters& np = parameters::use_default_values())
   {
     typedef typename GetVertexPointMap<Graph, NamedParameters>::const_type         VPM;
     typedef typename boost::property_traits<VPM>::reference                        Point_ref;
@@ -192,8 +192,6 @@ public:
 
     return m_os.good();
   }
-
-  bool operator()(const Graph& g) { return operator()(g, parameters::all_default()); }
 
 protected:
   Stream& m_os;

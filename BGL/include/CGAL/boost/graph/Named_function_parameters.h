@@ -21,9 +21,9 @@
 #include <type_traits>
 #include <utility>
 
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS T=bool, typename Tag=CGAL::internal_np::all_default_t, typename Base=CGAL::internal_np::No_property
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT T, typename Tag, typename Base
-#define CGAL_BGL_NP_CLASS CGAL::Named_function_parameters<T,Tag,Base>
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NP_T=bool, typename NP_Tag=CGAL::internal_np::all_default_t, typename NP_Base=CGAL::internal_np::No_property
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT NP_T, typename NP_Tag, typename NP_Base
+#define CGAL_BGL_NP_CLASS CGAL::Named_function_parameters<NP_T,NP_Tag,NP_Base>
 
 
 namespace CGAL {
@@ -257,11 +257,13 @@ namespace parameters {
 
 typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 Default_named_parameters
 inline all_default()
 {
   return Default_named_parameters();
 }
+#endif
 
 Default_named_parameters
 inline use_default_values()

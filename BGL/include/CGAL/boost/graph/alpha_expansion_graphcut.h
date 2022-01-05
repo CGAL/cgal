@@ -508,12 +508,12 @@ template <typename InputGraph,
           typename EdgeCostMap,
           typename VertexLabelCostMap,
           typename VertexLabelMap,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 double alpha_expansion_graphcut (const InputGraph& input_graph,
                                  EdgeCostMap edge_cost_map,
                                  VertexLabelCostMap vertex_label_cost_map,
                                  VertexLabelMap vertex_label_map,
-                                 const NamedParameters& np)
+                                 const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -660,22 +660,6 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
   return min_cut;
 }
 
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename InputGraph,
-          typename EdgeCostMap,
-          typename VertexLabelCostMap,
-          typename VertexLabelMap>
-double alpha_expansion_graphcut (const InputGraph& input_graph,
-                                 EdgeCostMap edge_cost_map,
-                                 VertexLabelCostMap vertex_label_cost_map,
-                                 VertexLabelMap vertex_label_map)
-{
-  return alpha_expansion_graphcut (input_graph, edge_cost_map,
-                                   vertex_label_cost_map, vertex_label_map,
-                                   CGAL::parameters::all_default());
-}
 
 // Old API
 inline double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::size_t> >& edges,

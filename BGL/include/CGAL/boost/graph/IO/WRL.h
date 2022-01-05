@@ -64,7 +64,7 @@ namespace IO {
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_WRL(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   CGAL::VRML_2_ostream vos(os);
   internal::Generic_facegraph_printer<CGAL::VRML_2_ostream, Graph, CGAL::File_writer_VRML_2> printer(vos);
@@ -103,16 +103,11 @@ bool write_WRL(std::ostream& os,
   \returns `true` if writing was successful, `false` otherwise.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_WRL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_WRL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   std::ofstream os(fname);
   return write_WRL(os, g, np);
 }
-
-template <typename Graph>
-bool write_WRL(std::ostream& os, const Graph& g) { return write_WRL(os, g, parameters::all_default()); }
-template <typename Graph>
-bool write_WRL(const std::string& fname, const Graph& g) { return write_WRL(fname, g, parameters::all_default()); }
 
 } // namespace IO
 
@@ -124,15 +119,9 @@ bool write_WRL(const std::string& fname, const Graph& g) { return write_WRL(fnam
  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_WRL()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_wrl(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+CGAL_DEPRECATED bool write_wrl(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   return IO::write_WRL(os, g, np);
-}
-
-template <typename Graph>
-CGAL_DEPRECATED bool write_wrl(std::ostream& os, const Graph& g)
-{
-  return write_wrl(os, g, parameters::all_default());
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
