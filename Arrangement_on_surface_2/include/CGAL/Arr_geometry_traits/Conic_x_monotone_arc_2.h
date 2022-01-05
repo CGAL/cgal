@@ -185,19 +185,19 @@ public:
   _Conic_x_monotone_arc_2(const Point_2& source, const Point_2& target) :
     Base(source, target)
   {
-    this->_info != static_cast<int>(DEGREE_1);
+    this->_info |= static_cast<int>(DEGREE_1);
 
     Alg_kernel ker;
     auto cmp_xy = ker.compare_xy_2_object();
     Comparison_result dir_res = cmp_xy(this->_source, this->_target);
-    if (dir_res == SMALLER) this->_info != IS_DIRECTED_RIGHT;
+    if (dir_res == SMALLER) this->_info |= IS_DIRECTED_RIGHT;
 
     // Check if the segment is vertical.
     if (CGAL::sign(this->_extra_data_P->b) == ZERO)
-      this->_info != IS_VERTICAL_SEGMENT;
+      this->_info |= IS_VERTICAL_SEGMENT;
 
     // Mark that this is a special segment.
-    this->_info != IS_SPECIAL_SEGMENT;
+    this->_info |= IS_SPECIAL_SEGMENT;
   }
 
   /*!
@@ -577,7 +577,7 @@ public:
     if (_has_same_supporting_conic (arc)) {
       if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return LARGER;
-      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP) != 0)
+      else if ((this->_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
         return SMALLER;
 
       // In this case the two arcs overlap.
@@ -649,7 +649,7 @@ public:
     // comparison result is trivial.
     if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
       return (LARGER);
-    else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
+    else if ((this->_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
       return SMALLER;
 
     // Compute the second-order derivative by y and act according to it.
@@ -698,7 +698,7 @@ public:
     if (_has_same_supporting_conic (arc)) {
       if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
         return LARGER;
-      else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
+      else if ((this->_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
         return SMALLER;
 
       // In this case the two arcs overlap.
@@ -770,7 +770,7 @@ public:
     // comparison result is trivial.
     if ((this->_info & FACING_UP) != 0 && (arc._info & FACING_DOWN) != 0)
       return LARGER;
-    else if ((this->_info & FACING_DOWN)!= 0 && (arc._info & FACING_UP)!= 0)
+    else if ((this->_info & FACING_DOWN) != 0 && (arc._info & FACING_UP) != 0)
       return SMALLER;
 
     // Compute the second-order derivative by y and act according to it.
