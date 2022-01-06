@@ -196,8 +196,7 @@ jet_estimate_normals(
   typedef typename Kernel::FT FT;
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
-  CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                              typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+  CGAL_static_assertion_msg(!(boost::is_same<NormalMap, typename NP_helper::NoMap>::value),
                             "Error: no normal map");
   CGAL_static_assertion_msg(!(boost::is_same<SvdTraits,
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),

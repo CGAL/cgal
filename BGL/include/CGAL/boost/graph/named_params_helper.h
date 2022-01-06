@@ -355,7 +355,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       friend void put(const DummyNormalMap&, const key_type&, const value_type&) { }
     };
 
-    typedef DummyNormalMap NoMap;
+    typedef DummyNormalMap NoMap; // public
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::normal_t,
       NamedParameters,
@@ -367,12 +367,22 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       return parameters::choose_parameter<Point_map>(parameters::get_parameter(np, internal_np::point_map));
     }
 
+    static Point_map get_point_map(const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Point_map>(parameters::get_parameter(np, internal_np::point_map));
+    }
+
     static Const_point_map get_const_point_map(const PointRange&, const NamedParameters& np)
     {
       return parameters::choose_parameter<Const_point_map>(parameters::get_parameter(np, internal_np::point_map));
     }
 
     static Normal_map get_normal_map(const PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Normal_map>(parameters::get_parameter(np, internal_np::normal_map));
+    }
+
+    static Normal_map get_normal_map(const NamedParameters& np)
     {
       return parameters::choose_parameter<Normal_map>(parameters::get_parameter(np, internal_np::normal_map));
     }
@@ -395,67 +405,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef ValueType reference;
         typedef std::random_access_iterator_tag iterator_category;
       };
-    };
-
-    namespace parameters
-    {
-      template <typename PointRange>
-      CGAL::parameters::Default_named_parameters
-      inline all_default(const PointRange&)
-      {
-        return CGAL::parameters::all_default();
-      }
-    }
-
-    template<typename PointRange>
-    class GetFT
-    {
-    public:
-      typedef typename Kernel_traits<
-        typename std::iterator_traits<
-          typename PointRange::iterator
-          >::value_type
-        >::Kernel::FT type;
-    };
-
-    template<typename PointRange, typename NamedParameters>
-    class GetK
-    {
-      typedef typename GetPointMap<PointRange, NamedParameters>::type Vpm;
-      typedef typename Kernel_traits<
-        typename boost::property_traits<Vpm>::value_type
-      >::Kernel Default_kernel;
-
-    public:
-      typedef typename internal_np::Lookup_named_param_def <
-        internal_np::geom_traits_t,
-        NamedParameters,
-        Default_kernel
-      > ::type  Kernel;
-    };
-
-    template<typename PointRange, typename NamedParameters>
-    class GetNormalMap
-    {
-      struct DummyNormalMap
-      {
-        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
-        typedef typename GetK<PointRange, NamedParameters>::Kernel::Vector_3 value_type;
-        typedef value_type reference;
-        typedef boost::read_write_property_map_tag category;
-
-        typedef DummyNormalMap Self;
-        friend value_type get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
-        friend void put(const Self&, const key_type&, const value_type&) { }
-      };
-
-    public:
-      typedef DummyNormalMap NoMap;
-      typedef typename internal_np::Lookup_named_param_def <
-        internal_np::normal_t,
-        NamedParameters,
-        DummyNormalMap//default
-        > ::type  type;
     };
 
     template<typename PlaneRange, typename NamedParameters>

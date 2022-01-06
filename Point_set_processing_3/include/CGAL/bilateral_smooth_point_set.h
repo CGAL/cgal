@@ -278,8 +278,7 @@ bilateral_smooth_point_set(
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
 
-  CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                              typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
+  CGAL_static_assertion_msg(!(boost::is_same<NormalMap, typename NP_helper::NoMap>::value),
                             "Error: no normal map");
 
   typedef typename Kernel::FT FT;

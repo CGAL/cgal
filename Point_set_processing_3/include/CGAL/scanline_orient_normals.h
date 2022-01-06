@@ -478,9 +478,7 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np = pa
     <internal_np::scanline_id_t, NamedParameters, No_map>::type;
   using Fallback_scanline_ID = Boolean_tag<std::is_same<ScanlineIDMap, No_map>::value>;
 
-  CGAL_static_assertion_msg(!(std::is_same<NormalMap,
-                              typename Point_set_processing_3::GetNormalMap
-                              <PointRange, NamedParameters>::NoMap>::value),
+  CGAL_static_assertion_msg(!(std::is_same<NormalMap, typename NP_helper::NoMap>::value),
                             "Error: no normal map");
 
   PointMap point_map = NP_helper::get_point_map(points, np);

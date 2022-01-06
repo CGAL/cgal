@@ -45,7 +45,7 @@ void simplify_polyline(const PointRangeIn& input,
 
   typedef typename GetPointMap<PointRangeIn, NamedParametersIn>::type Point_map_in;
   typedef typename GetPointMap<PointRangeOut, NamedParametersOut>::type Point_map_out;
-  typedef typename Point_set_processing_3::GetK<PointRangeIn, NamedParametersIn>::Kernel Kernel;
+  typedef typename Point_set_processing_3_np_helper<PointRangeIn, NamedParametersIn>::Geom_traits Kernel;
 
   Point_map_in in_pm = choose_parameter<Point_map_in>(get_parameter(np_in, internal_np::point_map));
   Point_map_out out_pm = choose_parameter<Point_map_out>(get_parameter(np_out, internal_np::point_map));
