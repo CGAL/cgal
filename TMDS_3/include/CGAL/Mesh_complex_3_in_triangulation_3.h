@@ -116,7 +116,7 @@ namespace CGAL {
   } //end namesapce TMDS_3
 
 /*!
-  \ingroup PkgMDS3Classes
+  \ingroup PkgTMDS3Classes
 
    * @brief A data-structure to represent and maintain a 3D complex embedded
  * in a 3D triangulation.

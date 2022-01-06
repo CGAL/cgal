@@ -174,7 +174,7 @@ void set_face_patches(const Index2FaceMap& i2f,
 } // end namespace TMDS_3
 
   /**
-   * @ingroup PkgMDS3Functions
+   * @ingroup PkgTMDS3Functions
    *
    * @brief builds a `TriangleMesh` from the surface facets, with a consistent orientation at the interface of two subdomains.
    *

@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMDS3Concepts
+\ingroup PkgTMDS3Concepts
 \cgalConcept
 
 The concept `MeshComplex_3InTriangulation_3` describes a data structure

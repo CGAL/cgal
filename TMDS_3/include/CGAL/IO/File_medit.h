@@ -903,7 +903,7 @@ output_to_medit(std::ostream& os,
 namespace IO {
 
 /**
- * @ingroup PkgMDS3IOFunctions
+ * @ingroup PkgTMDS3IOFunctions
  * @deprecated This function is deprecated. Users should instead use `CGAL::IO::write_MEDIT()`
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
         See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
@@ -948,7 +948,7 @@ output_to_medit(std::ostream& os,
 }
 
 /**
- * @ingroup PkgMDS3IOFunctions
+ * @ingroup PkgTMDS3IOFunctions
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
  *      See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
@@ -1024,7 +1024,7 @@ void write_MEDIT(std::ostream& os,
 }
 
 /**
- * @ingroup PkgMDS3IOFunctions
+ * @ingroup PkgTMDS3IOFunctions
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
  *      See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
@@ -1097,7 +1097,7 @@ void write_MEDIT(std::ostream& os,
 }
 
 /**
- * @ingroup PkgMDS3IOFunctions
+ * @ingroup PkgTMDS3IOFunctions
  * @brief reads a mesh complex written in the medit (`.mesh`) file format.
  *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its

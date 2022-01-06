@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-  /** \ingroup PkgMDS3Functions
+  /** \ingroup PkgTMDS3Functions
   * builds a 3D triangulation from a soup of tetrahedra.
   *
   * @tparam TetrahedronRange a model of `Range` whose value type is
@@ -93,7 +93,7 @@ namespace CGAL {
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
   }
 
-  /** \ingroup PkgMDS3Functions
+  /** \ingroup PkgTMDS3Functions
   * builds a 3D triangulation from a soup of tetrahedra.
   *
   * @tparam PointRange  a model of the concept `RandomAccessContainer`
