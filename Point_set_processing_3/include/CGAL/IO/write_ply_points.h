@@ -187,7 +187,7 @@ template <typename PointRange,
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -197,14 +197,15 @@ bool write_PLY(std::ostream& os,
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type NormalMap;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_BGL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
 
   bool has_normals = !(boost::is_same<NormalMap,
                        typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::NoMap>::value);
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
   if(!os)
   {
@@ -221,17 +222,6 @@ bool write_PLY(std::ostream& os,
 
   return write_PLY_with_properties(os, points, make_ply_point_writer(point_map));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_PLY(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_PLY(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
@@ -286,7 +276,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -306,17 +296,6 @@ bool write_PLY(const std::string& filename,
     return write_PLY(os, points, np);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_PLY(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_PLY(filename, points, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 
@@ -397,20 +376,10 @@ CGAL_DEPRECATED bool write_ply_points_with_properties(std::ostream& os, ///< out
             \link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
+CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   return IO::write_PLY(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points)
-{
-  return IO::write_PLY(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

@@ -143,7 +143,7 @@ namespace IO {
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const CGAL::Point_set_3<Point, Vector>& point_set,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   if(point_set.has_normal_map())
     return Point_set_processing_3::internal::write_OFF_PSP(os, point_set,
@@ -153,16 +153,6 @@ bool write_OFF(std::ostream& os,
   return Point_set_processing_3::internal::write_OFF_PSP(os, point_set,
                                                          np.point_map(point_set.point_map()));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_OFF(os, point_set, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
   \ingroup PkgPointSet3IOOFF
@@ -190,22 +180,11 @@ bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
   \return `true` if the writing was successful, `false` otherwise.
 */
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   std::ofstream os(fname);
   return write_OFF(os, point_set, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  std::ofstream os(fname);
-  return write_OFF(os, point_set, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 

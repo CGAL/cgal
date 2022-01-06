@@ -456,16 +456,17 @@ void orient_scanline (Iterator begin, Iterator end,
      \cgalParamNEnd
    \cgalNamedParamsEnd
 */
-template <typename PointRange, typename NamedParameters>
-void scanline_orient_normals (PointRange& points, const NamedParameters& np)
+template <typename PointRange, typename NamedParameters = parameters::Default_named_parameters>
+void scanline_orient_normals (PointRange& points, const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   using Iterator = typename PointRange::iterator;
   using Value_type = typename std::iterator_traits<Iterator>::value_type;
-  using PointMap = typename CGAL::GetPointMap<PointRange, NamedParameters>::type;
-  using NormalMap = typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type;
+  using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
+  using PointMap = typename NP_helper::Point_map;
+  using NormalMap = typename NP_helper::Normal_map;
 
   using No_map = Constant_property_map<Value_type, int>;
 
@@ -482,8 +483,8 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
                               <PointRange, NamedParameters>::NoMap>::value),
                             "Error: no normal map");
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
   ScanAngleMap scan_angle_map = choose_parameter<ScanAngleMap>
     (get_parameter(np, internal_np::scan_angle_map));
   ScanlineIDMap scanline_id_map = choose_parameter<ScanlineIDMap>
@@ -548,13 +549,6 @@ void scanline_orient_normals (PointRange& points, const NamedParameters& np)
             << std::size_t(points.size() / double(nb_scanlines))
             << " point(s))" << std::endl;
 #endif
-}
-
-template <typename PointRange>
-void scanline_orient_normals (PointRange& points)
-{
-  return scanline_orient_normals (points,
-                               CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 } // namespace CGAL

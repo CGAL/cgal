@@ -182,28 +182,29 @@ jet_smooth_point(
 */
 template <typename ConcurrencyTag,
           typename PointRange,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 void
 jet_smooth_point_set(
   PointRange& points,
   unsigned int k,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // basic geometric types
   typedef typename PointRange::iterator iterator;
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
   CGAL_static_assertion_msg(!(boost::is_same<SvdTraits,
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  PointMap point_map = NP_helper::get_point_map(points, np);
   typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                          typename Kernel::FT(0));
   unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
@@ -270,22 +271,6 @@ jet_smooth_point_set(
        return true;
      });
 }
-
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename ConcurrencyTag,
-          typename PointRange>
-void
-jet_smooth_point_set(
-  PointRange& points,
-  unsigned int k) ///< number of neighbors.
-{
-  jet_smooth_point_set<ConcurrencyTag>
-    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

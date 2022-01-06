@@ -176,24 +176,25 @@ namespace CGAL {
      \return iterator over the first point to remove.
   */
   template <typename PointRange,
-            typename NamedParameters>
+            typename NamedParameters = parameters::Default_named_parameters>
   typename PointRange::iterator
   hierarchy_simplify_point_set (PointRange& points,
-                                const NamedParameters& np)
+                                const NamedParameters& np = parameters::use_default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
     // basic geometric types
-    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Point_map PointMap;
+    typedef typename NP_helper::Geom_traits Kernel;
     typedef typename GetDiagonalizeTraits<NamedParameters, double, 3>::type DiagonalizeTraits;
 
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
     typedef typename Kernel::FT FT;
 
-    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+    PointMap point_map = NP_helper::get_point_map(points, np);
     unsigned int size = choose_parameter(get_parameter(np, internal_np::size), 10);
     double var_max = choose_parameter(get_parameter(np, internal_np::maximum_variation), 1./3.);
     const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
@@ -371,18 +372,6 @@ namespace CGAL {
     return first_point_to_remove;
 
   }
-
-
-  /// \cond SKIP_IN_MANUAL
-  // variant with default NP
-  template <typename PointRange>
-  typename PointRange::iterator
-  hierarchy_simplify_point_set (PointRange& points)
-  {
-    return hierarchy_simplify_point_set
-      (points, CGAL::Point_set_processing_3::parameters::all_default(points));
-  }
-  /// \endcond
 
 } // namespace CGAL
 

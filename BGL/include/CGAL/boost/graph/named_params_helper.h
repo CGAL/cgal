@@ -312,7 +312,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
   };
 
   // to please compiler instantiating non valid overloads
-  template<typename PointRange, typename NamedParameters>
+  template<typename PointRange, typename NamedParameters, typename NP_TAG>
   class GetPointMap<PointRange, NamedParameters, false>
   {
     struct Dummy_point{};
@@ -321,8 +321,69 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     typedef typename CGAL::Identity_property_map<const Dummy_point> const_type;
   };
 
-  namespace Point_set_processing_3 {
+  template <class PointRange, class NamedParameters, typename NP_TAG = internal_np::point_t>
+  struct Point_set_processing_3_np_helper
+  {
+    typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Value_type;
+    typedef CGAL::Identity_property_map<Value_type> DefaultPMap;
+    typedef CGAL::Identity_property_map<const Value_type> DefaultConstPMap;
 
+    typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+      NamedParameters,DefaultPMap> ::type  Point_map; // public
+    typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+      NamedParameters,DefaultConstPMap> ::type  Const_point_map; // public
+
+    typedef typename boost::property_traits<Point_map>::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Default_geom_traits;
+
+    typedef typename internal_np::Lookup_named_param_def <
+        internal_np::geom_traits_t,
+        NamedParameters,
+        Default_geom_traits
+      > ::type  Geom_traits; // public
+
+    typedef typename Geom_traits::FT FT; // public
+
+    struct DummyNormalMap
+    {
+      typedef typename Geom_traits::Vector_3 value_type;
+      typedef Value_type key_type;
+      typedef value_type reference;
+      typedef boost::read_write_property_map_tag category;
+
+      friend value_type get(const DummyNormalMap&, const key_type&) { return CGAL::NULL_VECTOR; }
+      friend void put(const DummyNormalMap&, const key_type&, const value_type&) { }
+    };
+
+    typedef DummyNormalMap NoMap;
+    typedef typename internal_np::Lookup_named_param_def<
+      internal_np::normal_t,
+      NamedParameters,
+      DummyNormalMap
+      > ::type  Normal_map; // public
+
+    static Point_map get_point_map(PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Point_map>(parameters::get_parameter(np, internal_np::point_map));
+    }
+
+    static Const_point_map get_const_point_map(const PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Const_point_map>(parameters::get_parameter(np, internal_np::point_map));
+    }
+
+    static Normal_map get_normal_map(const PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Normal_map>(parameters::get_parameter(np, internal_np::normal_map));
+    }
+
+    static Geom_traits get_geom_traits(const PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
+    }
+  };
+
+  namespace Point_set_processing_3 {
     template <typename ValueType>
     struct Fake_point_range
     {

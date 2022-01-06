@@ -150,22 +150,24 @@ template <typename ConcurrencyTag,
 #ifdef DOXYGEN_RUNNING
   FT
 #else
-  typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel::FT
+  typename Point_set_processing_3_np_helper<PointRange, CGAL_BGL_NP_CLASS>::FT
 #endif
 compute_average_spacing(
   const PointRange& points,
   unsigned int k,
-  const CGAL_BGL_NP_CLASS& np)
+  const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // basic geometric types
   typedef typename PointRange::const_iterator iterator;
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_BGL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
+  typedef typename NP_helper::Geom_traits Kernel;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
 
@@ -225,19 +227,6 @@ compute_average_spacing(
 }
 
 /// \cond SKIP_IN_MANUAL
-
-// variant with default NP
-template <typename ConcurrencyTag, typename PointRange>
-typename Point_set_processing_3::GetFT<PointRange>::type
-compute_average_spacing(
-  const PointRange& points,
-  unsigned int k) ///< number of neighbors.
-{
-  return compute_average_spacing<ConcurrencyTag>
-    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

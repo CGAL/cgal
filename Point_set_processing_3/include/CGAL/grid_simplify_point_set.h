@@ -207,18 +207,19 @@ public:
 
    \return iterator over the first point to remove.
 */
-template <typename PointRange, typename NamedParameters>
+template <typename PointRange, typename NamedParameters = parameters::Default_named_parameters>
 typename PointRange::iterator
 grid_simplify_point_set(
   PointRange& points,
   double epsilon,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  PointMap point_map = NP_helper::get_point_map(points, np);
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
 
@@ -249,18 +250,6 @@ grid_simplify_point_set(
 
   return first_point_to_remove;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-typename PointRange::iterator
-grid_simplify_point_set(PointRange& points, double epsilon)
-{
-  return grid_simplify_point_set
-    (points, epsilon, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

@@ -37,7 +37,7 @@ namespace internal {
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF_PSP(std::ostream& os,
                    const PointRange& points,
-                   const CGAL_BGL_NP_CLASS& np)
+                   const CGAL_BGL_NP_CLASS& np = CGAL::parameters::use_default_values())
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
@@ -132,7 +132,7 @@ namespace IO {
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -140,17 +140,6 @@ bool write_OFF(std::ostream& os,
 {
   return Point_set_processing_3::internal::write_OFF_PSP(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_OFF(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_OFF(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOOff
@@ -199,7 +188,7 @@ template <typename PointRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -209,18 +198,6 @@ bool write_OFF(const std::string& filename,
   set_stream_precision_from_NP(os, np);
   return write_OFF(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_OFF(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  std::ofstream os(filename);
-  return write_OFF(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 } // IO namespace
 
@@ -324,21 +301,10 @@ bool write_off_points(std::ostream& os, ///< output stream.
               \link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
+CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   return IO::write_OFF(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-// variant with default NP
-template <typename PointRange>
-CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points)
-{
-  return IO::write_OFF(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

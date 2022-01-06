@@ -204,11 +204,11 @@ public:
   */
   template <typename PointRange,
             typename PlaneRange,
-            typename NamedParameters>
+            typename NamedParameters = parameters::Default_named_parameters>
   Point_set_with_structure (const PointRange& points,
                             const PlaneRange& planes,
                             double epsilon,
-                            const NamedParameters& np)
+                            const NamedParameters& np = parameters::use_default_values())
   {
     init (points, planes, epsilon, np);
   }
@@ -227,8 +227,9 @@ public:
     using parameters::get_parameter;
 
     // basic geometric types
-    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Const_point_map PointMap;
+    typedef typename NP_helper::Normal_map NormalMap;
     typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
     typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
@@ -239,8 +240,8 @@ public:
                                 typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
                               "Error: no plane index map");
 
-    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+    PointMap point_map = NP_helper::get_const_point_map(points, np);
+    NormalMap normal_map = NP_helper::get_normal_map(points, np);
     PlaneMap plane_map = choose_parameter<PlaneMap>(get_parameter(np, internal_np::plane_map));
     PlaneIndexMap index_map = choose_parameter<PlaneIndexMap>(get_parameter(np, internal_np::plane_index_map));
     double attraction_factor = choose_parameter(get_parameter(np, internal_np::attraction_factor), 3.);
@@ -1552,19 +1553,20 @@ private:
 template <typename PointRange,
           typename PlaneRange,
           typename OutputIterator,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
           >
 OutputIterator
 structure_point_set (const PointRange& points,
                      const PlaneRange& planes,
                      OutputIterator output,
                      double epsilon,
-                     const NamedParameters& np)
+                     const NamedParameters& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Geom_traits Kernel;
 
   Point_set_with_structure<Kernel> pss (points, planes, epsilon, np);
 
@@ -1573,24 +1575,6 @@ structure_point_set (const PointRange& points,
 
   return output;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange,
-          typename PlaneRange,
-          typename OutputIterator>
-OutputIterator
-structure_point_set (const PointRange& points, ///< range of points.
-                     const PlaneRange& planes, ///< range of planes.
-                     OutputIterator output, ///< output iterator where output points are written.
-                     double epsilon) ///< size parameter.
-{
-  return structure_point_set
-    (points, planes, output, epsilon,
-     CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

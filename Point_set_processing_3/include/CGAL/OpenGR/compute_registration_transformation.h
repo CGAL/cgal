@@ -287,40 +287,43 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
    registration score.
 */
 template <class PointRange1, class PointRange2,
-          class NamedParameters1, class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 std::pair<geom_traits::Aff_transformation_3, double>
 #else
-std::pair<typename CGAL::Point_set_processing_3::GetK<PointRange1, NamedParameters1>
-  ::Kernel::Aff_transformation_3, double>
+std::pair<typename Point_set_processing_3_np_helper<PointRange1, NamedParameters1>
+  ::Geom_traits::Aff_transformation_3, double>
 #endif
 compute_registration_transformation (const PointRange1& point_set_1, const PointRange2& point_set_2,
-                                     const NamedParameters1& np1, const NamedParameters2& np2)
+                                     const NamedParameters1& np1 = parameters::use_default_values(),
+                                     const NamedParameters2& np2 = parameters::use_default_values())
 {
-  namespace PSP = CGAL::Point_set_processing_3;
   namespace GR = gr;
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // property map types
-  typedef typename CGAL::GetPointMap<PointRange1, NamedParameters1>::type PointMap1;
-  typedef typename CGAL::GetPointMap<PointRange2, NamedParameters2>::type PointMap2;
+  typedef Point_set_processing_3_np_helper<PointRange1, NamedParameters1> NP_helper1;
+  typedef Point_set_processing_3_np_helper<PointRange2, NamedParameters2> NP_helper2;
+  typedef typename NP_helper1::Const_point_map PointMap1;
+  typedef typename NP_helper2::Const_point_map PointMap2;
   CGAL_static_assertion_msg((boost::is_same< typename boost::property_traits<PointMap1>::value_type,
                                              typename boost::property_traits<PointMap2>::value_type> ::value),
                             "The point type of input ranges must be the same");
 
-  typedef typename PSP::GetNormalMap<PointRange1, NamedParameters1>::type NormalMap1;
-  typedef typename PSP::GetNormalMap<PointRange2, NamedParameters2>::type NormalMap2;
+  typedef typename NP_helper1::Normal_map NormalMap1;
+  typedef typename NP_helper2::Normal_map NormalMap2;
   CGAL_static_assertion_msg((boost::is_same< typename boost::property_traits<NormalMap1>::value_type,
                                              typename boost::property_traits<NormalMap2>::value_type> ::value),
                             "The vector type of input ranges must be the same");
 
-  typedef typename PSP::GetK<PointRange1, NamedParameters1>::Kernel Kernel;
+  typedef typename NP_helper1::Geom_traits Kernel;
 
-  PointMap1 point_map1 = choose_parameter(get_parameter(np1, internal_np::point_map), PointMap1());
-  NormalMap1 normal_map1 = choose_parameter(get_parameter(np1, internal_np::normal_map), NormalMap1());
-  PointMap2 point_map2 = choose_parameter(get_parameter(np2, internal_np::point_map), PointMap2());
-  NormalMap2 normal_map2 = choose_parameter(get_parameter(np2, internal_np::normal_map), NormalMap2());
+  PointMap1 point_map1 = NP_helper1::get_const_point_map(point_set_1, np1);
+  NormalMap1 normal_map1 = NP_helper2::get_normal_map(point_set_1, np1);
+  PointMap2 point_map2 = NP_helper2::get_const_point_map(point_set_2, np2);
+  NormalMap2 normal_map2 = NP_helper2::get_normal_map(point_set_2, np2);
 
   Options<Kernel> options;
   options.sample_size = choose_parameter(get_parameter(np1, internal_np::number_of_samples), 200);
@@ -337,30 +340,6 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
                                                                normal_map1, normal_map2,
                                                                options);
 
-}
-
-// convenience overloads
-template <class PointRange1, class PointRange2,
-          class NamedParameters1>
-std::pair<typename CGAL::Point_set_processing_3::GetK<PointRange1, NamedParameters1>
-  ::Kernel::Aff_transformation_3, double>
-compute_registration_transformation(const PointRange1& point_set_1, PointRange2& point_set_2,
-      const NamedParameters1& np1)
-{
-  namespace params = CGAL::Point_set_processing_3::parameters;
-  return compute_registration_transformation(point_set_1, point_set_2, np1, params::all_default(point_set_1));
-}
-
-template <class PointRange1, class PointRange2>
-std::pair<typename CGAL::Point_set_processing_3::GetK<PointRange1,
-          Named_function_parameters<bool, internal_np::all_default_t> >
-  ::Kernel::Aff_transformation_3, double>
-compute_registration_transformation(const PointRange1& point_set_1, PointRange2& point_set_2)
-{
-  namespace params = CGAL::Point_set_processing_3::parameters;
-  return compute_registration_transformation(point_set_1, point_set_2,
-                                             params::all_default(point_set_1),
-                                             params::all_default(point_set_2));
 }
 
 } } // end of namespace CGAL::OpenGR

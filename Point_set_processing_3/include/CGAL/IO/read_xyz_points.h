@@ -77,7 +77,7 @@ template <typename OutputIteratorValueType,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_XYZ(std::istream& is,
               OutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -226,7 +226,7 @@ template <typename OutputIteratorValueType,
            typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_XYZ(const std::string& fname,
               OutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   std::ifstream is(fname);
   return read_XYZ<OutputIteratorValueType>(is, output, np);
@@ -234,46 +234,19 @@ bool read_XYZ(const std::string& fname,
 
 /// \cond SKIP_IN_MANUAL
 
-// variants with default NP
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_XYZ(std::istream& is, OutputIterator output)
-{
-  return read_XYZ<OutputIteratorValueType>(is, output, parameters::all_default());
-}
-
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_XYZ(const std::string& fname, OutputIterator output)
-{
-  return read_XYZ<OutputIteratorValueType>(fname, output, parameters::all_default());
-}
-
 // variants with default output iterator value type
 template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_XYZ(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
+bool read_XYZ(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values(),
+              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
 {
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
 template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
+bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   std::ifstream is(fname);
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
-}
-
-// variants with default NP and output iterator value type
-template <typename OutputIterator>
-bool read_XYZ(std::istream& is,
-              OutputIterator output,
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
-{
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, parameters::all_default());
-}
-
-template <typename OutputIterator>
-bool read_XYZ(const std::string& fname, OutputIterator output)
-{
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
 } // namespace IO
@@ -436,37 +409,20 @@ template <typename OutputIteratorValueType,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
                                      OutputIterator output,
-                                     const CGAL_BGL_NP_CLASS& np)
+                                     const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   return IO::read_XYZ(is, output, np);
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename OutputIteratorValueType,
-          typename OutputIterator>
-CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
-                                     OutputIterator output)
-{
-  return IO::read_XYZ<OutputIteratorValueType>(is, output, parameters::all_default());
-}
-
 template <typename OutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
                                      OutputIterator output,
-                                     const CGAL_BGL_NP_CLASS& np)
+                                     const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
 {
   return IO::read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
-
-template <typename OutputIterator>
-CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
-                                     OutputIterator output)
-{
-  return IO::read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, parameters::all_default());
-}
-
 /// \endcond
 
 #endif //CGAL_NO_DEPRECATED_CODE
