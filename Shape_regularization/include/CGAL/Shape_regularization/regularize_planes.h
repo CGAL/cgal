@@ -282,13 +282,13 @@ namespace Planes {
   typename PlaneMap,
   typename PointRange,
   typename PointMap,
-  typename NamedParameters>
+  typename NamedParameters = parameters::Default_named_parameters>
   void regularize_planes(
     PlaneRange& planes,
     const PlaneMap plane_map,
     const PointRange& points,
     const PointMap point_map,
-    const NamedParameters& np) {
+    const NamedParameters& np = parameters::use_default_values()) {
 
     using parameters::get_parameter;
     using parameters::choose_parameter;
@@ -336,21 +336,6 @@ namespace Planes {
       points, point_map, planes, plane_map, index_map, kernel,
       reg_prll, reg_orth, reg_copl, reg_symm,
       tol_angle, tol_copln, sym_dir);
-  }
-
-  template<
-  typename PlaneRange,
-  typename PlaneMap,
-  typename PointRange,
-  typename PointMap>
-  void regularize_planes(
-    PlaneRange& planes,
-    const PlaneMap plane_map,
-    const PointRange& points,
-    const PointMap point_map) {
-
-    regularize_planes(
-      planes, plane_map, points, point_map, CGAL::parameters::all_default());
   }
   /// \endcond
 
@@ -455,11 +440,11 @@ namespace Planes {
   template<
   typename PlaneRange,
   typename PointRange,
-  typename NamedParameters>
+  typename NamedParameters = parameters::Default_named_parameters>
   void regularize_planes(
     PlaneRange& planes,
     const PointRange& points,
-    const NamedParameters& np) {
+    const NamedParameters& np = parameters::use_default_values()) {
 
     using parameters::get_parameter;
     using parameters::choose_parameter;
@@ -476,18 +461,6 @@ namespace Planes {
 
     regularize_planes(planes, plane_map, points, point_map, np);
   }
-
-  /// \cond SKIP_IN_MANUAL
-  template<
-  typename PlaneRange,
-  typename PointRange>
-  void regularize_planes(
-    PlaneRange& planes, const PointRange& points) {
-
-    regularize_planes(
-      planes, points, CGAL::parameters::all_default());
-  }
-  /// \endcond
 
 } // namespace Planes
 } // namespace Shape_regularization

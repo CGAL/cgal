@@ -119,10 +119,10 @@ namespace Segments {
       \pre input_range.size() >= 2
       \pre maximum_offset >= 0
     */
-    template<typename NamedParameters>
+    template<typename NamedParameters = parameters::Default_named_parameters>
     Offset_regularization_2(
       InputRange& input_range,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::use_default_values()) :
     m_input_range(input_range),
     m_segment_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::segment_map), SegmentMap())),
@@ -141,14 +141,6 @@ namespace Segments {
       clear();
       create_unique_group();
     }
-
-    /// \cond SKIP_IN_MANUAL
-    Offset_regularization_2(
-      InputRange& input_range) :
-    Offset_regularization_2(
-      input_range, CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /*!
       \brief inserts a group of segments from `input_range`.

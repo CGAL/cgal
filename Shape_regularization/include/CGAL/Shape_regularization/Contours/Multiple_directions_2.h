@@ -120,11 +120,11 @@ namespace Contours {
       \pre input_range.size() >= 3 for closed contours
       \pre input_range.size() >= 2 for open contours
     */
-    template<typename NamedParameters>
+    template<typename NamedParameters = parameters::Default_named_parameters>
     Multiple_directions_2(
       const InputRange& input_range,
       const bool is_closed,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::use_default_values()) :
     m_input_range(input_range),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())) {
@@ -157,15 +157,6 @@ namespace Contours {
         std::cout << std::endl;
       }
     }
-
-    /// \cond SKIP_IN_MANUAL
-    Multiple_directions_2(
-      const InputRange& input_range,
-      const bool is_closed) :
-    Multiple_directions_2(
-      input_range, is_closed, CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /// @}
 
