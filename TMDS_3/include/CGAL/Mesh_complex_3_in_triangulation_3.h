@@ -1976,7 +1976,6 @@ operator<< (std::ostream& os,
             const Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_> &c3t3)
 {
   // TODO: implement edge saving
-  typedef typename Mesh_complex_3_in_triangulation_3<Tr,CI_,CSI_>::Concurrency_tag Concurrency_tag;
   return os << c3t3.triangulation();
 }
 
