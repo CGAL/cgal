@@ -6,7 +6,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/MDS_3/Dump_c3t3.h>
+#include <CGAL/TMDS_3/Dump_c3t3.h>
 
 #include <sstream>
 
