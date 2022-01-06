@@ -14,7 +14,6 @@ Intersections_3
 Interval_support
 Kernel_23
 Kernel_d
-TMDS_3
 Modular_arithmetic
 Number_types
 Polygon
@@ -25,6 +24,7 @@ Random_numbers
 STL_Extension
 Spatial_sorting
 Stream_support
+TMDS_3
 TDS_3
 Triangulation_3
 Union_find
