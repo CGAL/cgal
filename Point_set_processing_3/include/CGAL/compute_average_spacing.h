@@ -226,8 +226,6 @@ compute_average_spacing(
   return sum_spacings / (FT)(nb);
 }
 
-/// \cond SKIP_IN_MANUAL
-
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>

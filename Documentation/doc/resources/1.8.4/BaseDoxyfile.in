@@ -1761,11 +1761,11 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 PREDEFINED             = DOXYGEN_RUNNING \
-                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS=NamedParameters" \
+                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS=NamedParameters = CGAL::parameters::Default_named_parameters" \
                          "CGAL_BGL_NP_CLASS=NamedParameters" \
-                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS_1=NamedParameters1" \
+                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS_1=NamedParameters1 = CGAL::parameters::Default_named_parameter" \
                          "CGAL_BGL_NP_CLASS_1=NamedParameters1" \
-                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2" \
+                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
                          "CGAL_BGL_NP_CLASS_2=NamedParameters2" \
                          CGAL_DEPRECATED
 
