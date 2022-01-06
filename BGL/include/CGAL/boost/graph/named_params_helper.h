@@ -312,7 +312,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
   };
 
   // to please compiler instantiating non valid overloads
-  template<typename PointRange, typename NamedParameters, typename NP_TAG>
+  template<typename PointRange, typename NamedParameters>
   class GetPointMap<PointRange, NamedParameters, false>
   {
     struct Dummy_point{};
