@@ -18,7 +18,7 @@
 #ifndef CGAL_INTERNAL_MESH_3_INDICES_MANAGEMENT_H
 #define CGAL_INTERNAL_MESH_3_INDICES_MANAGEMENT_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/TMDS_3.h>
 
 
 #include <boost/type_traits/is_same.hpp>
@@ -26,7 +26,7 @@
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/variant/apply_visitor.hpp>
-#include <CGAL/Mesh_3/Has_features.h>
+#include <CGAL/TMDS_3/Has_features.h>
 #include <CGAL/IO/io.h>
 
 #include <tuple>

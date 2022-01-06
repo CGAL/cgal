@@ -12,15 +12,15 @@
 #ifndef CGAL_MESH_3_CONFIG_H
 #define CGAL_MESH_3_CONFIG_H 1
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/Mesh_3.h>
 
 
 #include <CGAL/config.h>
+#include <CGAL/TMDS_3/config.h>
 
 //#define CGAL_MESH_3_VERBOSE 1
 
 // Use optimisations of Mesh_3
-#  define CGAL_INTRUSIVE_LIST 1
 #  define CGAL_CONSTRUCT_INTRUSIVE_LIST_RANGE_CONSTRUCTOR 1
 #  define CGAL_MESH_3_NEW_GET_FACETS 1
 #  define CGAL_MESH_3_GET_FACETS_USING_INTRUSIVE_LIST 1

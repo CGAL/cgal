@@ -26,7 +26,7 @@
 #include <CGAL/refine_mesh_3.h>
 #include <CGAL/tags.h>
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
-#include <CGAL/Mesh_3/Has_features.h>
+#include <CGAL/TMDS_3/Has_features.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 
 #include <boost/mpl/has_xxx.hpp>

@@ -14,10 +14,9 @@
 #ifndef CGAL_COMPACT_MESH_CELL_BASE_3_H
 #define CGAL_COMPACT_MESH_CELL_BASE_3_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/TMDS_3.h>
 
-
-#include <CGAL/Mesh_3/config.h>
+#include <CGAL/TMDS_3/config.h>
 
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>

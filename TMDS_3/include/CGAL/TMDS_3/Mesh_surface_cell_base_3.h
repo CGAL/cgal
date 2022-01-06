@@ -18,10 +18,10 @@
 #ifndef CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 #define CGAL_MESH_3_MESH_SURFACE_CELL_BASE_3_H
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/TMDS_3.h>
 
 
-#include <CGAL/Mesh_3/config.h>
+#include <CGAL/TMDS_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/TMDS_3/io_signature.h>
