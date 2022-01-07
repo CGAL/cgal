@@ -321,8 +321,7 @@ vcm_estimate_normals_internal (PointRange& points,
     typedef typename NP_helper::Geom_traits Kernel;
     typedef typename GetDiagonalizeTraits<NamedParameters, double, 3>::type DiagonalizeTraits;
 
-    CGAL_static_assertion_msg(!(boost::is_same<NormalMap, typename NP_helper::NoMap>::value),
-                              "Error: no normal map");
+    CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
 
     PointMap point_map = NP_helper::get_point_map(points, np);
     NormalMap normal_map = NP_helper::get_normal_map(points, np);

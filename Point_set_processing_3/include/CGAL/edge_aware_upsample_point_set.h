@@ -367,8 +367,7 @@ edge_aware_upsample_point_set(
   typedef typename NP_helper::Geom_traits Kernel;
 
 
-  CGAL_static_assertion_msg(!(boost::is_same<NormalMap, typename NP_helper::NoMap>::value),
-                            "Error: no normal map");
+  CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
 
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;

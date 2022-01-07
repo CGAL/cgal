@@ -201,7 +201,7 @@ bool write_PLY(std::ostream& os,
   typedef typename NP_helper::Const_point_map PointMap;
   typedef typename NP_helper::Normal_map NormalMap;
 
-  bool has_normals = !(boost::is_same<NormalMap, typename NP_helper::NoMap>::value);
+  bool has_normals = NP_helper::has_normal_map();
 
   PointMap point_map = NP_helper::get_const_point_map(points, np);
   NormalMap normal_map = NP_helper::get_normal_map(points, np);

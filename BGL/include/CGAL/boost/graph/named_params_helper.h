@@ -355,7 +355,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
       friend void put(const DummyNormalMap&, const key_type&, const value_type&) { }
     };
 
-    typedef DummyNormalMap NoMap; // public
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::normal_t,
       NamedParameters,
@@ -390,6 +389,12 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     static Geom_traits get_geom_traits(const PointRange&, const NamedParameters& np)
     {
       return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
+    }
+
+    static constexpr bool has_normal_map()
+    {
+      return !boost::is_same< typename internal_np::Get_param<typename NamedParameters::base, internal_np::normal_t>::type,
+                              internal_np::Param_not_found> ::value;
     }
   };
 

@@ -617,8 +617,7 @@ mst_orient_normals(
     typedef typename NP_helper::Geom_traits Kernel;
     typedef typename Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::type ConstrainedMap;
 
-    CGAL_static_assertion_msg(!(boost::is_same<NormalMap, typename NP_helper::NoMap>::value),
-                              "Error: no normal map");
+    CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
 
     PointMap point_map = NP_helper::get_point_map(points, np);
     NormalMap normal_map = NP_helper::get_normal_map(points, np);

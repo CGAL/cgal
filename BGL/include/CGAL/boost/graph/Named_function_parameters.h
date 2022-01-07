@@ -356,13 +356,13 @@ const T& choose_parameter(const T& t)
   return t;
 }
 
-bool inline is_default_parameter(const internal_np::Param_not_found&)
+constexpr bool inline is_default_parameter(const internal_np::Param_not_found&)
 {
   return true;
 }
 
 template <class T>
-bool is_default_parameter(const T&)
+constexpr bool is_default_parameter(const T&)
 {
   return false;
 }

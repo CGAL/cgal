@@ -1319,8 +1319,6 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
 
   typedef typename Geom_traits::FT FT; // public
 
-  struct NoMap{};
-
   typedef typename internal_np::Lookup_named_param_def<
     internal_np::normal_t,
     NamedParameters,
@@ -1351,6 +1349,12 @@ struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParamet
   {
     return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
   }
+
+  static constexpr bool has_normal_map()
+  {
+    return true;
+  }
+
 };
 /// \endcond
 
