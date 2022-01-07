@@ -163,7 +163,7 @@ compute_average_spacing(
   // basic geometric types
   typedef typename PointRange::const_iterator iterator;
   typedef Point_set_processing_3_np_helper<PointRange, CGAL_BGL_NP_CLASS> NP_helper;
-  typedef typename NP_helper::Const_point_map PointMap
+  typedef typename NP_helper::Const_point_map PointMap;
   typedef typename NP_helper::Geom_traits Kernel;
 
   PointMap point_map = NP_helper::get_const_point_map(points, np);
