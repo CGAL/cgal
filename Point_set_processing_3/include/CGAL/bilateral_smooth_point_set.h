@@ -25,7 +25,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <functional>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/zip_iterator.hpp>

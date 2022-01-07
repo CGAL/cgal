@@ -117,6 +117,8 @@
 - `CGAL::Fast_location`
 - `CGAL::Compact_location`
 - `CGAL::value_type_traits<T>`
+- `CGAL::parameters::Default_named_parameters`
+- `CGAL::parameters::use_default_values()`
 
 */
 

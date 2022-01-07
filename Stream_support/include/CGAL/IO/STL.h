@@ -18,7 +18,7 @@
 #include <CGAL/IO/STL/STL_reader.h>
 #include <CGAL/IO/helpers.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Kernel/global_functions_3.h>
 

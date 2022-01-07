@@ -22,7 +22,7 @@
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>

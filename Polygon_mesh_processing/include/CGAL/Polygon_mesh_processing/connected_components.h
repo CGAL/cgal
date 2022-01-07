@@ -20,7 +20,7 @@
 #include<set>
 #include<vector>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/property_map/vector_property_map.hpp>
@@ -41,7 +41,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/tuple.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 namespace CGAL {

@@ -29,7 +29,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/box_intersection_d.h>

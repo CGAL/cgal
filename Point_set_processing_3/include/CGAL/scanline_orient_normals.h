@@ -16,7 +16,7 @@
 
 #include <CGAL/squared_distance_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/linear_least_squares_fitting_3.h>

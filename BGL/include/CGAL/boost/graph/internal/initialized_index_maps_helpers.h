@@ -13,7 +13,7 @@
 #define CGAL_BOOST_GRAPH_INITIALIZED_INTERNAL_INDEX_MAPS_HELPERS
 
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/use.h>

@@ -18,7 +18,7 @@
 #include <CGAL/IO/VTK/VTK_reader.h>
 #include <CGAL/IO/VTK/VTK_writer.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #ifdef CGAL_USE_VTK

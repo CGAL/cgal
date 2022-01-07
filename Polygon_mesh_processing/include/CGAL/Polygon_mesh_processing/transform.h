@@ -13,7 +13,7 @@
 #define CGAL_POLYGON_MESH_PROCESSING_TRANSFORM_H
 #include <CGAL/license/Polygon_mesh_processing/core.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 namespace CGAL{

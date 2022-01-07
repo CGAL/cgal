@@ -23,7 +23,7 @@
 
 #include <boost/range/value_type.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <fstream>
 #include <iostream>

@@ -16,7 +16,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/Compute_normal.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/boost/graph/helpers.h>

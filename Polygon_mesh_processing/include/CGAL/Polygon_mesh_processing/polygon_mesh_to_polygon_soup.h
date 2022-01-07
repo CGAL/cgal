@@ -17,7 +17,7 @@
 
 #include <CGAL/algorithm.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Container_helper.h>
 #include <CGAL/Dynamic_property_map.h>

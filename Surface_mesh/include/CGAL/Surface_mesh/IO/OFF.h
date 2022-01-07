@@ -18,7 +18,7 @@
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Kernel_traits.h>
 

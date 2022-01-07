@@ -10,7 +10,7 @@
 #define CGAL_BOOST_GRAPH_NAMED_PARAMETERS_HELPERS_H
 
 #include <CGAL/boost/graph/internal/initialized_index_maps_helpers.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel_traits.h>

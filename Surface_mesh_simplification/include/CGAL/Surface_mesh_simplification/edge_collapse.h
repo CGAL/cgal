@@ -14,7 +14,7 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>

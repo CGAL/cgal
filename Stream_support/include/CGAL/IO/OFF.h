@@ -20,7 +20,7 @@
 
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/use.h>

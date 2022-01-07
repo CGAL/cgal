@@ -16,7 +16,7 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/utility/enable_if.hpp>

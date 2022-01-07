@@ -22,7 +22,7 @@
 #endif
 
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 

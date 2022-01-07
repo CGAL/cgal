@@ -20,7 +20,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_evaluation.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/property_map.h>

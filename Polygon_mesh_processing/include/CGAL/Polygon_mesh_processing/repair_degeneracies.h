@@ -20,7 +20,7 @@
 
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Union_find.h>

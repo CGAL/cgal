@@ -21,7 +21,7 @@
 #include <CGAL/IO/scan_OFF.h>
 
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/Has_conversion.h>
 #include <CGAL/property_map.h>

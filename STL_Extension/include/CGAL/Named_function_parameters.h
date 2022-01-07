@@ -9,8 +9,8 @@
 //
 // Author(s)     : Sebastien Loriot
 
-#ifndef CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
-#define CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
+#ifndef CGAL_NAMED_FUNCTION_PARAMETERS_H
+#define CGAL_NAMED_FUNCTION_PARAMETERS_H
 
 #ifndef CGAL_NO_STATIC_ASSERTION_TESTS
 #include <CGAL/basic.h>
@@ -41,7 +41,7 @@ enum all_default_t { all_default };
 // define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
-#include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 
 template <typename T, typename Tag, typename Base>
@@ -253,7 +253,7 @@ struct Named_function_parameters
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
     return Params(k, *this);                                     \
   }
-#include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 };
 
@@ -292,7 +292,7 @@ inline no_parameters(Named_function_parameters<T,Tag,Base>)
     typedef Named_function_parameters<K, internal_np::X> Params;\
     return Params(p);                          \
   }
-#include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 
 // function to extract a parameter
@@ -398,4 +398,4 @@ namespace boost
 }
 #endif
 
-#endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
+#endif // CGAL_BOOST_FUNCTION_PARAMS_HPP
