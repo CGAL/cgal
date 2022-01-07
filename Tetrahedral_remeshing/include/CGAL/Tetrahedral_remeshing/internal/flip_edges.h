@@ -1507,9 +1507,9 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
 //  */
 
   typedef std::pair<Vertex_handle, Vertex_handle> Edge_uv;
-  typedef typename C3t3::Edge  Edge;
-  typedef typename C3t3::Facet Facet;
-  typedef typename C3t3::Surface_patch_index Surface_patch_index;
+  typedef typename C3T3::Edge  Edge;
+  typedef typename C3T3::Facet Facet;
+  typedef typename C3T3::Surface_patch_index Surface_patch_index;
 
   if (planar_flip)
   {
@@ -1547,7 +1547,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     Cell_handle n_ch2_vh1 = ch2->neighbor(ch2->index(vh1));
     Cell_handle n_ch1_vh3 = ch1->neighbor(ch1->index(vh3));
 
-    boost::unordered_map<Edge_uv, typename C3t3::Curve_index> complex_edges;
+    boost::unordered_map<Edge_uv, typename C3T3::Curve_index> complex_edges;
     for (Cell_handle c : cells_around_edge)
     {
       for (int ii = 0; ii < 4; ++ii)
@@ -1705,8 +1705,8 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
   }
   else
   {
-    typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh2));
-    CGAL_assertion(patch != typename C3t3::Surface_patch_index());
+    typename C3T3::Surface_patch_index patch = c3t3.surface_patch_index(ch0, ch0->index(vh2));
+    CGAL_assertion(patch != typename C3T3::Surface_patch_index());
 
     CGAL_assertion(c3t3.is_in_complex(ch0, ch0->index(vh2)));
     c3t3.remove_from_complex(ch0, ch0->index(vh2));
@@ -1737,7 +1737,7 @@ Sliver_removal_result flip_on_surface(C3T3& c3t3,
     c3t3.remove_from_complex(ch0, ch0->index(vh2));
     c3t3.remove_from_complex(ch1, ch1->index(vh2));
 
-    boost::unordered_map<Edge_uv, typename C3t3::Curve_index> complex_edges;
+    boost::unordered_map<Edge_uv, typename C3T3::Curve_index> complex_edges;
     for (Cell_handle c : cells_around_edge)
     {
       for (int ii = 0; ii < 4; ++ii)
@@ -1978,10 +1978,10 @@ std::size_t flipBoundaryEdges(
         CGAL_assertion(Surface_patch_index() != surfi);
 
         Facet ff = *fcirc;
-        incf << "4 " << ff.first->vertex((ff.second + 1) % 4)->point().point()
-             << " " << ff.first->vertex((ff.second + 2) % 4)->point().point()
-             << " " << ff.first->vertex((ff.second + 3) % 4)->point().point()
-             << " " << ff.first->vertex((ff.second + 4) % 4)->point().point() << std::endl;
+        incf << "4 " << ff.first->vertex((ff.second + 1) % 4)->point()
+             << " " << ff.first->vertex((ff.second + 2) % 4)->point()
+             << " " << ff.first->vertex((ff.second + 3) % 4)->point()
+             << " " << ff.first->vertex((ff.second + 4) % 4)->point() << std::endl;
       }
     } while (++fcirc != done);
     incf.close();
