@@ -406,7 +406,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     {
       typedef Constant_property_map<std::size_t, int> DummyPlaneIndexMap;
     public:
-      typedef DummyPlaneIndexMap NoMap;
       typedef typename internal_np::Lookup_named_param_def <
         internal_np::plane_index_t,
         NamedParameters,

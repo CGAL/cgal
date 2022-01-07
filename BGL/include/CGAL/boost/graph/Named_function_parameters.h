@@ -356,15 +356,22 @@ const T& choose_parameter(const T& t)
   return t;
 }
 
-constexpr bool inline is_default_parameter(const internal_np::Param_not_found&)
+bool inline is_default_parameter(const internal_np::Param_not_found&)
 {
   return true;
 }
 
 template <class T>
-constexpr bool is_default_parameter(const T&)
+bool is_default_parameter(const T&)
 {
   return false;
+}
+
+template <class NP, class TAG>
+constexpr bool is_default_parameter_static()
+{
+  return std::is_same< typename internal_np::Get_param<typename NP::base, TAG>::type,
+                       internal_np::Param_not_found> ::value;
 }
 
 } // end of parameters namespace

@@ -165,7 +165,7 @@ public:
     \param points input point range
     \param planes input plane range.
     \param epsilon size parameter.
-    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    \param np a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{point_map}
@@ -185,7 +185,7 @@ public:
         \cgalParamDescription{a property map associating the index of a point in the input range
                               to the index of plane (`-1` if the point is not assigned to a plane)}
         \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
-        \cgalParamDefault{unused}
+        \cgalParamDefault{There is no default, this parameters is mandatory}
       \cgalParamNEnd
 
       \cgalParamNBegin{plane_map}
@@ -204,11 +204,11 @@ public:
   */
   template <typename PointRange,
             typename PlaneRange,
-            typename NamedParameters = parameters::Default_named_parameters>
+            typename NamedParameters>
   Point_set_with_structure (const PointRange& points,
                             const PlaneRange& planes,
                             double epsilon,
-                            const NamedParameters& np = parameters::use_default_values())
+                            const NamedParameters& np)
   {
     init (points, planes, epsilon, np);
   }
@@ -225,6 +225,7 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter_static;
 
     // basic geometric types
     typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
@@ -234,8 +235,7 @@ public:
     typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
     CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
-    CGAL_static_assertion_msg(!(boost::is_same<PlaneIndexMap,
-                                typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
+    CGAL_static_assertion_msg((!is_default_parameter_static<NamedParameters, internal_np::plane_index_t>()),
                               "Error: no plane index map");
 
     PointMap point_map = NP_helper::get_const_point_map(points, np);

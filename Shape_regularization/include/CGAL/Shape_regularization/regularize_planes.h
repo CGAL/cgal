@@ -292,13 +292,13 @@ namespace Planes {
 
     using parameters::get_parameter;
     using parameters::choose_parameter;
+    using parameters::is_default_parameter_static;
     using PlaneIndexMap = typename CGAL::Point_set_processing_3::
       GetPlaneIndexMap<NamedParameters>::type;
 
-    CGAL_static_assertion_msg(
-      !(boost::is_same<PlaneIndexMap,
-      typename CGAL::Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
-      "Error: no index map found!");
+    CGAL_static_assertion_msg((!is_default_parameter_static<NamedParameters, internal_np::plane_index_t>()),
+                              "Error: no plane index map");
+
     const PlaneIndexMap index_map =
       choose_parameter(get_parameter(np, internal_np::plane_index_map), PlaneIndexMap());
 
@@ -376,9 +376,7 @@ namespace Planes {
     for more details
 
     \param np
-    an optional sequence of \ref bgl_namedparameters "Named Parameters"
-    among the ones listed below; this parameter can be omitted,
-    the default values are then used
+    a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{plane_map}
@@ -396,7 +394,7 @@ namespace Planes {
           in the `points` range to the index of a plane in the `planes` range (-1 if
           point is not assigned to a plane)}
         \cgalParamType{a model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
-        \cgalParamDefault{`PlaneIndexMap()`}
+        \cgalParamDefault{There is no default, this parameters is mandatory}
       \cgalParamNEnd
       \cgalParamNBegin{maximum_angle}
         \cgalParamDescription{maximum allowed angle in degrees between plane normals used
@@ -440,11 +438,11 @@ namespace Planes {
   template<
   typename PlaneRange,
   typename PointRange,
-  typename NamedParameters = parameters::Default_named_parameters>
+  typename NamedParameters>
   void regularize_planes(
     PlaneRange& planes,
     const PointRange& points,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np) {
 
     using parameters::get_parameter;
     using parameters::choose_parameter;
