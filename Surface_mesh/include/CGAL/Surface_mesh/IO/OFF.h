@@ -591,7 +591,7 @@ CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm, 
 template <typename Point>
 CGAL_DEPRECATED bool write_off(const Surface_mesh<Point>& sm, const std::string& filename)
 {
-  return IO::write_OFF(filename, sm, parameters::all_default());
+  return IO::write_OFF(filename, sm, parameters::use_default_values());
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
