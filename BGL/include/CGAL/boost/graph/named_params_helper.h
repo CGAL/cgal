@@ -259,29 +259,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
 
 #undef CGAL_DEF_GET_INITIALIZED_INDEX_MAP
 
-  template<typename PolygonMesh, typename NamedParameters>
-  class GetFaceNormalMap
-  {
-    struct DummyNormalPmap
-    {
-      typedef typename boost::graph_traits<PolygonMesh>::face_descriptor key_type;
-      typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3 value_type;
-      typedef value_type reference;
-      typedef boost::readable_property_map_tag category;
-
-      typedef DummyNormalPmap Self;
-      friend value_type get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
-    };
-
-  public:
-    typedef DummyNormalPmap NoMap;
-    typedef typename internal_np::Lookup_named_param_def <
-      internal_np::face_normal_t,
-      NamedParameters,
-      DummyNormalPmap//default
-      > ::type  type;
-  };
-
   namespace internal {
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
   }
