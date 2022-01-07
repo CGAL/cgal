@@ -96,6 +96,7 @@ jobs:
             cd ..
             git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
+            rm cgal.github.io/${PR_NUMBER}/$ROUND/* -r
             for f in $LIST_OF_PKGS
             do
               if [ -d ./build_doc/doc_output/$f ]; then
