@@ -598,16 +598,18 @@ bool test_data_type()
   assert(stream);
   CGAL::Mesh_3::load_binary_file(stream, c3t3_2);
   assert(stream);
-    std::cout << "Content of c3t3_1:\n"
-              << "*****begin*****\n"
-              << c3t3
-              << "\n******end******" << std::endl;
-  std::cout << "Content of c3t3_2:\n"
-            << "*****begin*****\n"
-            << c3t3_2
-            << "\n******end******" << std::endl;
+  std::ostringstream c3t3_1_oss;
+  c3t3_1_oss << "*****begin*****\n"
+         << c3t3
+         << "\n******end******" << std::endl;
+  std::ostringstream c3t3_2_oss;
+  c3t3_2_oss << "*****begin*****\n"
+         << c3t3_2
+         << "\n******end******" << std::endl;
+  assert(0 == c3t3_1_oss.str().compare(c3t3_2_oss.str()));
+
   assert(stream);
-return true;
+  return true;
 }
 
 int main()
