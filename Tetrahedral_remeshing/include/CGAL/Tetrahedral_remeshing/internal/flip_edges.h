@@ -1989,7 +1989,7 @@ std::size_t flipBoundaryEdges(
     if (boundary_facets.size() == 2)
     {
       const Facet& f0 = boundary_facets[0];
-      const Facet& f1 = boundary_facets[1]; 
+      const Facet& f1 = boundary_facets[1];
 
       Vertex_handle vh2;
       Vertex_handle vh3;

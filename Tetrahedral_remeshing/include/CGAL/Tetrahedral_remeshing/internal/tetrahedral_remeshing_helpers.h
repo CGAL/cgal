@@ -354,7 +354,7 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
   typedef typename Tr::Triangulation_data_structure::Cell::Subdomain_index Subdomain_index;
   if(c->subdomain_index() == Subdomain_index())
     return Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);
-  
+
   Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr,
                                                         c->vertex(0),
                                                         c->vertex(1),
