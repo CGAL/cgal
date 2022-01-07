@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   PMP::isotropic_remeshing(faces(mesh), target_edge_length, mesh,
-                           parameters::number_of_iterations(nb_iter)
+                           CGAL::parameters::number_of_iterations(nb_iter)
                            .protect_constraints(true)); //i.e. protect border, here
 
   std::cout << "Remeshing done." << std::endl;
