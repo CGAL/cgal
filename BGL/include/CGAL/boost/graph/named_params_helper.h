@@ -321,16 +321,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
 
     typedef typename Geom_traits::FT FT; // public
 
-    struct DummyNormalMap
-    {
-      typedef typename Geom_traits::Vector_3 value_type;
-      typedef Value_type key_type;
-      typedef value_type reference;
-      typedef boost::read_write_property_map_tag category;
-
-      friend value_type get(const DummyNormalMap&, const key_type&) { return CGAL::NULL_VECTOR; }
-      friend void put(const DummyNormalMap&, const key_type&, const value_type&) { }
-    };
+    typedef Constant_property_map<Value_type, typename Geom_traits::Vector_3> DummyNormalMap;
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::normal_t,
@@ -413,17 +404,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     template<typename NamedParameters>
     class GetPlaneIndexMap
     {
-      struct DummyPlaneIndexMap
-      {
-        typedef std::size_t key_type;
-        typedef int value_type;
-        typedef value_type reference;
-        typedef boost::readable_property_map_tag category;
-
-        typedef DummyPlaneIndexMap Self;
-        friend value_type get(const Self&, const key_type&) { return -1; }
-      };
-
+      typedef Constant_property_map<std::size_t, int> DummyPlaneIndexMap;
     public:
       typedef DummyPlaneIndexMap NoMap;
       typedef typename internal_np::Lookup_named_param_def <
@@ -436,23 +417,14 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     template<typename PointRange, typename NamedParameters>
     class GetIsConstrainedMap
     {
-      struct DummyConstrainedMap
-      {
-        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
-        typedef bool value_type;
-        typedef value_type reference;
-        typedef boost::readable_property_map_tag category;
-
-        typedef DummyConstrainedMap Self;
-        friend value_type get(const Self&, const key_type&) { return false; }
-      };
-
+      typedef Static_boolean_property_map<
+        typename std::iterator_traits<typename PointRange::iterator>::value_type,
+        false>   Default_map;
     public:
-      typedef DummyConstrainedMap NoMap;
       typedef typename internal_np::Lookup_named_param_def <
         internal_np::point_is_constrained_t,
         NamedParameters,
-        DummyConstrainedMap //default
+        Default_map //default
         > ::type  type;
     };
 

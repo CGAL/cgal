@@ -608,6 +608,7 @@ mst_orient_normals(
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     CGAL_TRACE_STREAM << "Calls mst_orient_normals()\n";
 
@@ -664,8 +665,7 @@ mst_orient_normals(
     //   or vertex j is in the k-neighborhood of vertex i.
     Riemannian_graph riemannian_graph;
 
-    if (boost::is_same<ConstrainedMap,
-        typename CGAL::Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::NoMap>::value)
+    if (is_default_parameter(get_parameter(np, internal_np::point_is_constrained)))
       riemannian_graph = create_riemannian_graph(points,
                                                  point_map, normal_map, index_map,
                                                  Default_constrained_map<typename PointRange::iterator>
