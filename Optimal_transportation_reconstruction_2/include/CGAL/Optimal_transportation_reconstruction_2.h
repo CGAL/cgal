@@ -155,6 +155,7 @@ public:
 
   typedef typename Triangulation::MultiIndex            MultiIndex;
 
+  /// \endcond
   /// @}
 
 protected:
@@ -172,8 +173,6 @@ protected:
 
   PointPMap point_pmap;
   MassPMap  mass_pmap;
-
-  /// \endcond
 
 public:
 
@@ -313,6 +312,7 @@ public:
   }
 
   FT tolerance() const { return m_tolerance; }
+  /// \endcond
 
   /// @}
 
@@ -1160,10 +1160,6 @@ public:
     }
   }
 
-  /// \endcond
-
-
-  /// \cond SKIP_IN_MANUAL
   Vector compute_gradient(Vertex_handle vertex) const {
     Vector grad = m_traits.construct_vector_2_object()(FT(0), FT(0));
     Edge_circulator ecirc = m_dt.incident_edges(vertex);
@@ -1785,8 +1781,6 @@ public:
       e_it++;
     }
   }
-  /// \endcond
-
 
   /// \cond SKIP_IN_MANUAL
   const Triangulation& tds() const { return m_dt; }

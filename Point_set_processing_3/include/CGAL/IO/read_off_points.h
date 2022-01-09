@@ -123,6 +123,7 @@ bool read_OFF(std::istream& is,
   }
 
   // scan points
+  std::string signature;
   long pointsCount = 0, facesCount = 0, edgesCount = 0; // number of items in file
   int pointsRead = 0; // current number of points read
   int lineNumber = 0; // current line number
@@ -137,27 +138,24 @@ bool read_OFF(std::istream& is,
     if (line.empty () || line[0] == '#')
       continue;
 
-    lineNumber++;
+    ++lineNumber;
 
     // Reads file signature on first line
     if (lineNumber == 1)
     {
-      std::string signature;
-      if ( !(iss >> signature)
-        || (signature != "OFF" && signature != "NOFF") )
+      if ( !(iss >> signature) || (signature != "OFF" && signature != "NOFF") )
       {
         // if wrong file format
-        std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
+        std::cerr << "Error line " << lineNumber << " of file (unexpected header)" << std::endl;
         return false;
       }
     }
-
     // Reads number of points on 2nd line
     else if (lineNumber == 2)
     {
       if ( !(iss >> pointsCount >> facesCount >> edgesCount) )
       {
-        std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+        std::cerr << "Error line " << lineNumber << " of file (incorrect header format)" << std::endl;
         return false;
       }
     }
@@ -170,8 +168,7 @@ bool read_OFF(std::istream& is,
       double nx,ny,nz;
       if (iss >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z))
       {
-        //the extra `()` seem to fix a very strange bug. Without them, the put() won't compile.
-        Point point((FT(x)), (FT(y)), (FT(z)));
+        Point point{FT(x), FT(y), FT(z)};
         Vector normal = CGAL::NULL_VECTOR;
         // ... + normal...
         if (iss >> IO::iformat(nx))
@@ -180,25 +177,30 @@ bool read_OFF(std::istream& is,
           if(iss  >> IO::iformat(ny) >> IO::iformat(nz)){
             normal = Vector(FT(nx),FT(ny),FT(nz));
           } else {
-            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+            std::cerr << "Error line " << lineNumber << " of file (incomplete normal coordinates)" << std::endl;
             return false;
           }
         }
+        else if (signature == "NOFF")
+        {
+          std::cerr << "Error line " << lineNumber << " of file (expected normal coordinates)" << std::endl;
+          return false;
+        }
+
         Enriched_point pwn;
         put(point_map,  pwn, point);  // point_map[&pwn] = point
         if (has_normals)
           put(normal_map, pwn, normal); // normal_map[&pwn] = normal
-        *output++ = pwn;
-        pointsRead++;
 
+        *output++ = pwn;
+        ++pointsRead;
       }
-      // ...or skip comment line
     }
-    // Skip remaining lines
   }
-  if(is.eof()) {
+
+  if(is.eof())
     is.clear(is.rdstate() & ~std::ios_base::failbit); // set by getline
-  }
+
   return true;
 }
 

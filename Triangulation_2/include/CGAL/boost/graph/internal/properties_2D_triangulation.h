@@ -9,6 +9,7 @@
 // Author(s)     : Mael Rouxel-Labbé
 
 #include <CGAL/assertions.h>
+#include <CGAL/boost/graph/internal/graph_traits_2D_triangulation_helper.h>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
 #include <CGAL/boost/graph/properties.h>
 
@@ -20,19 +21,13 @@
   #error CGAL_2D_TRIANGULATION is not defined
 #endif
 
-// note only the properties below are protected by the macro,
+// note that only the properties below are protected by the macro,
 // the rest of the file is the shared implementation of properties for all 2D triangulations
 #ifndef CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
 #define CGAL_BOOST_GRAPH_PROPERTIES_2D_TRIANGULATION_H
 
 namespace CGAL {
 namespace internal {
-
-template <class Tr>
-struct T2_halfedge_descriptor;
-
-template <class Tr>
-struct T2_edge_descriptor;
 
 template <typename Tr>
 class T2_vertex_point_map

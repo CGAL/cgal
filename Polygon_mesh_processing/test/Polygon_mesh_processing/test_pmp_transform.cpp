@@ -28,6 +28,6 @@ int main()
     double z = m.point(Mesh::Vertex_index(i)).z();
     ok &= z == i+1;
   }
-  CGAL_assertion(ok);
+  assert(ok);
   return 0;
 }
