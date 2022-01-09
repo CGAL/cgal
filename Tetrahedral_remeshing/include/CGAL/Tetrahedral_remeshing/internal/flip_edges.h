@@ -1300,18 +1300,23 @@ void collectBoundaryEdgesAndComputeVerticesValences(
     }
     else if (vertices_subdomain_indices[v0].size() == 2)
     {
-      Surface_patch_index surfi_0 = surface_patch_index(v0, c3t3);
+      Facet_circulator facet_circulator = tr.incident_facets(e);
+      Facet_circulator done(facet_circulator);
+      Surface_patch_index first_patch = Surface_patch_index();
+      do
+      {
+        if (c3t3.is_in_complex(*facet_circulator))
+        {
+          Surface_patch_index surfi = c3t3.surface_patch_index(*facet_circulator);
+          if (first_patch == Surface_patch_index())
+            first_patch = surfi;
+          else if (first_patch == surfi)
+            continue;
 
-      boundary_vertices_valences[v0][surfi_0]++;
-      boundary_vertices_valences[v1][surfi_0]++;
-
-    }
-    else if (vertices_subdomain_indices[v1].size() == 2)
-    {
-      Surface_patch_index surfi_1 = surface_patch_index(v1, c3t3);
-
-      boundary_vertices_valences[v0][surfi_1]++;
-      boundary_vertices_valences[v1][surfi_1]++;
+          boundary_vertices_valences[v0][surfi]++;
+          boundary_vertices_valences[v1][surfi]++;
+        }
+      } while (++facet_circulator != done);
     }
   }
 }
@@ -2016,15 +2021,16 @@ std::size_t flipBoundaryEdges(
         int v1 = boundary_vertices_valences[vh1][surfi];
         int v2 = boundary_vertices_valences[vh2][surfi];
         int v3 = boundary_vertices_valences[vh3][surfi];
-        int m0 = (vertices_subdomain_indices[vh0].size() >2 ? 4 : 6);
-        int m1 = (vertices_subdomain_indices[vh1].size() >2 ? 4 : 6);
-        int m2 = (vertices_subdomain_indices[vh2].size() >2 ? 4 : 6);
-        int m3 = (vertices_subdomain_indices[vh3].size() >2 ? 4 : 6);
+        int m0 = (boundary_vertices_valences[vh0].size() > 1 ? 4 : 6);
+        int m1 = (boundary_vertices_valences[vh1].size() > 1 ? 4 : 6);
+        int m2 = (boundary_vertices_valences[vh2].size() > 1 ? 4 : 6);
+        int m3 = (boundary_vertices_valences[vh3].size() > 1 ? 4 : 6);
 
         int initial_cost = (v0 - m0)*(v0 - m0)
                          + (v1 - m1)*(v1 - m1)
                          + (v2 - m2)*(v2 - m2)
                          + (v3 - m3)*(v3 - m3);
+
         v0--;
         v1--;
         v2++;
