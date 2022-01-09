@@ -2011,6 +2011,14 @@ std::size_t flipBoundaryEdges(
           vh3 = v3;
       }
 
+      int li, lj, lk;
+      Cell_handle c;
+      CGAL_assertion(tr.is_facet(vh0, vh1, vh2, c, li, lj, lk));
+      CGAL_assertion(c3t3.is_in_complex(c, (6 - li - lj - lk)));
+
+      CGAL_assertion(tr.is_facet(vh0, vh1, vh3, c, li, lj, lk));
+      CGAL_assertion(c3t3.is_in_complex(c, (6 - li - lj - lk)));
+
       Cell_handle t_ch;
       int t_i0, t_i1;
       if (!tr.is_edge(vh2, vh3, t_ch, t_i0, t_i1))
