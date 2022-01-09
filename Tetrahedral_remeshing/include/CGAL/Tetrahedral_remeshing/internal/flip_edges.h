@@ -2117,7 +2117,20 @@ void flip_edges(C3T3& c3t3,
 
   //const Flip_Criterion criterion = VALENCE_MIN_DH_BASED;
 
-  //compute vertices normals map?
+  std::vector<Edge_vv> inside_edges;
+  get_internal_edges(c3t3,
+                     cell_selector,
+                     std::back_inserter(inside_edges));
+
+  //if (criterion == VALENCE_BASED)
+  //  flip_inside_edges(inside_edges);
+  //else
+  //{
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+  nb_flips +=
+#endif
+    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, visitor);
+  //}
 
   if (!protect_boundaries)
   {
