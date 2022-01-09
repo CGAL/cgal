@@ -1245,7 +1245,7 @@ void collectBoundaryEdgesAndComputeVerticesValences(
   boost::unordered_map<typename C3T3::Vertex_handle,
                        boost::unordered_map<typename C3T3::Surface_patch_index, unsigned int> >&
       boundary_vertices_valences,
-  boost::unordered_map<typename C3T3::Vertex_handle, std::vector<typename C3T3::Subdomain_index> >&
+  boost::unordered_map<typename C3T3::Vertex_handle, std::unordered_set<typename C3T3::Subdomain_index> >&
       vertices_subdomain_indices)
 {
   typedef typename C3T3::Subdomain_index     Subdomain_index;
@@ -1276,9 +1276,11 @@ void collectBoundaryEdgesAndComputeVerticesValences(
     const Vertex_handle v1 = e.first->vertex(e.third);
 
     if (vertices_subdomain_indices.find(v0) == vertices_subdomain_indices.end())
-      incident_subdomains(v0, c3t3, std::back_inserter(vertices_subdomain_indices[v0]));
+      incident_subdomains(v0, c3t3,
+        std::inserter(vertices_subdomain_indices[v0], vertices_subdomain_indices[v0].end()));
     if (vertices_subdomain_indices.find(v1) == vertices_subdomain_indices.end())
-      incident_subdomains(v1, c3t3, std::back_inserter(vertices_subdomain_indices[v1]));
+      incident_subdomains(v1, c3t3,
+        std::inserter(vertices_subdomain_indices[v1], vertices_subdomain_indices[v1].end()));
 
     //In case of feature edge
     if (vertices_subdomain_indices[v0].size() > 2
@@ -1903,7 +1905,8 @@ std::size_t flipBoundaryEdges(
   C3T3& c3t3,
   std::vector<typename C3T3::Edge>& boundary_edges,
   SurfaceIndexMapMap& boundary_vertices_valences,
-  boost::unordered_map<typename C3T3::Vertex_handle, std::vector<typename C3T3::Subdomain_index> >&  vertices_subdomain_indices,
+  boost::unordered_map<typename C3T3::Vertex_handle,
+                       std::unordered_set<typename C3T3::Subdomain_index> >&  vertices_subdomain_indices,
   Flip_Criterion flip_criterion,
   Visitor& visitor)
 {
@@ -2065,12 +2068,6 @@ std::size_t flipBoundaryEdges(
 //            nb_surface_flip_done++;
             nb++;
 
-//            CGAL::dump_c3t3(c3t3, "dump_after_flip_");
-
-//            std::ofstream ofs("dump_edge_flipped.polylines.txt");
-//            ofs << "2 " << p0.point() << " " << p1.point() << std::endl;
-//            ofs.close();
-
             boundary_vertices_valences[vh0][surfi]--;
             boundary_vertices_valences[vh1][surfi]--;
             boundary_vertices_valences[vh2][surfi]++;
@@ -2086,6 +2083,8 @@ std::size_t flipBoundaryEdges(
         }
       }
     }
+    else
+      CGAL_assertion(false);
   }
   CGAL_assertion(tr.tds().is_valid(true));
   return nb;
@@ -2114,14 +2113,15 @@ void flip_edges(C3T3& c3t3,
 
   //compute vertices normals map?
 
-  typedef typename C3T3::Surface_patch_index Surface_patch_index;
-  typedef boost::unordered_map<Surface_patch_index, unsigned int> Spi_map;
   if (!protect_boundaries)
   {
+    typedef typename C3T3::Surface_patch_index Surface_patch_index;
+    typedef boost::unordered_map<Surface_patch_index, unsigned int> Spi_map;
+
     //Boundary flip
     std::vector<Edge> boundary_edges;
     boost::unordered_map<Vertex_handle, Spi_map> boundary_vertices_valences;
-    boost::unordered_map<Vertex_handle, std::vector<Subdomain_index> > vertices_subdomain_indices;
+    boost::unordered_map<Vertex_handle, std::unordered_set<Subdomain_index> > vertices_subdomain_indices;
     collectBoundaryEdgesAndComputeVerticesValences(c3t3,
                                                    cell_selector,
                                                    boundary_edges,
@@ -2142,21 +2142,6 @@ void flip_edges(C3T3& c3t3,
       flipBoundaryEdges(c3t3, boundary_edges, boundary_vertices_valences,
                         vertices_subdomain_indices, MIN_ANGLE_BASED, visitor);
   }
-
-//  std::vector<Edge_vv> inside_edges;
-//  get_internal_edges(c3t3,
-//                     cell_selector,
-//                     std::back_inserter(inside_edges));
-//
-//  //if (criterion == VALENCE_BASED)
-//  //  flip_inside_edges(inside_edges);
-//  //else
-//  //{
-//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-//  nb_flips +=
-//#endif
-//    flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, visitor);
-//  //}
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
   nb_flips +=
