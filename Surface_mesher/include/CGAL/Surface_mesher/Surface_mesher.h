@@ -39,6 +39,8 @@
 #include <CGAL/Surface_mesher/Profile_counter.h>
 #include <CGAL/Surface_mesher/Profile_timer.h>
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
   namespace Surface_mesher {
