@@ -89,7 +89,6 @@ FaceOutputIterator replace_faces_with_patch_without_reuse(const std::vector<type
                                                           const std::vector<std::vector<Point> >& patch,
                                                           PolygonMesh& pmesh,
                                                           VertexPointMap vpm,
-                                                          std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor>& working_face_range,
                                                           FaceOutputIterator out)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
@@ -985,12 +984,11 @@ private:
   Tree tree;
 };
 
-// Really rough and absurdly high complexity (at least factorize the AABB tree...)
 template <typename Point, typename Projector, typename TriangleMesh, typename GeomTraits>
 bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
                  const Projector& projector,
-                 const TriangleMesh& tmesh,
-                 const GeomTraits& gt)
+                 const TriangleMesh&,
+                 const GeomTraits&)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor      halfedge_descriptor;
@@ -1000,18 +998,16 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
   typedef typename GeomTraits::FT FT;
 
   std::vector<Point> soup_points;
-  std::vector<std::array<FT, 3> > soup_faces;
+  std::vector<std::array<std::size_t, 3> > soup_faces;
 
-  FT avg_edge_length = 0;
-  int pid = 0;
+  std::size_t pid = 0;
   std::map<Point, std::size_t> point_ids;
   for(const auto& fp : point_patch)
   {
     CGAL_assertion(fp.size() == 3);
-    std::array<FT, 3> f;
+    std::array<std::size_t, 3> f;
     for(std::size_t i=0; i<3; ++i)
     {
-      avg_edge_length += CGAL::approximate_sqrt(squared_distance(fp[i], fp[(i+1)%3]));
       auto res = point_ids.emplace(fp[i], pid);
       if(res.second)
       {
@@ -1023,9 +1019,6 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
     soup_faces.push_back(f);
   }
 
-  avg_edge_length /= FT(3 * soup_faces.size());
-  FT target_edge_length = 0.7 * avg_edge_length;
-
   TriangleMesh local_mesh;
   auto local_vpm = get(vertex_point, local_mesh);
 
@@ -1034,7 +1027,7 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
 
   std::vector<halfedge_descriptor> border_hedges;
   border_halfedges(faces(local_mesh), local_mesh, std::back_inserter(border_hedges));
-  typename TriangleMesh::template Property_map<edge_descriptor, bool> selected_edge =
+  typename TriangleMesh::template Property_map<edge_descriptor, bool> selected_edge = // @fixme BGL
     local_mesh.template add_property_map<edge_descriptor, bool>("e:selected",false).first;
 
   for(halfedge_descriptor h : border_hedges)
@@ -1091,8 +1084,6 @@ bool construct_manifold_hole_patch(std::vector<std::vector<Point> >& point_patch
                                    const VertexPointMap vpm,
                                    const GeomTraits& gt)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor      halfedge_descriptor;
-
   typedef CGAL::Triple<int, int, int>                                          Face_indices;
 
   // Try to triangulate the hole using default parameters
@@ -1406,7 +1397,6 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
   else
   {
     replace_faces_with_patch_without_reuse(cc_border_vertices, cc_faces, patch, tmesh, vpm,
-                                           working_face_range,
                                            std::inserter(working_face_range, working_face_range.end()));
   }
 
@@ -1906,7 +1896,6 @@ bool handle_CC_with_complex_topology(std::vector<typename boost::graph_traits<Tr
 
   // Plug the hole-filling patch in the mesh
   replace_faces_with_patch_without_reuse(all_border_vertices, cc_faces, patch, tmesh, vpm,
-                                         working_face_range,
                                          std::inserter(working_face_range, working_face_range.end()));
 
   return true;
@@ -1930,11 +1919,13 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
                                    Visitor& visitor)
 {
   typedef boost::graph_traits<TriangleMesh>                                    graph_traits;
-  typedef typename graph_traits::vertex_descriptor                             vertex_descriptor;
   typedef typename graph_traits::halfedge_descriptor                           halfedge_descriptor;
   typedef typename graph_traits::face_descriptor                               face_descriptor;
 
+#ifdef CGAL_PMP_REPAIR_SI_USE_OBB_IN_COMPACTIFICATION
+  typedef typename graph_traits::vertex_descriptor                             vertex_descriptor;
   typedef typename boost::property_traits<VertexPointMap>::value_type          Point;
+#endif
 
   std::set<face_descriptor> faces_to_treat_copy = faces_to_treat;
 
