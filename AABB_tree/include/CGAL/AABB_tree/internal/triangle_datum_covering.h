@@ -72,157 +72,61 @@ private:
 
 // Same as the standard traversal traits, but for multiple primitives per datum,
 // such that the final operation on the datum is only performed once.
+template <typename AABBTraits, typename BaseTraversalTraits>
+struct Covered_traversal_traits
+  : BaseTraversalTraits
+{
+  using Base = BaseTraversalTraits;
+  using Primitive = typename AABBTraits::Primitive;
+
+  std::unordered_set<std::size_t> visited_data;
+
+public:
+  template <typename ... Args>
+  Covered_traversal_traits(Args&&... args) : Base(std::forward<Args>(args)...) { }
+
+  template <typename Query>
+  void intersection(const Query& query, const Primitive& primitive)
+  {
+    // check a datum only once
+    auto is_insert_successful = visited_data.insert(primitive.id().second/*unique input face ID*/);
+    if(!is_insert_successful.second)
+      return;
+
+    return Base::intersection(query, primitive);
+  }
+};
+
 template <typename AABBTraits>
 struct Covered_tree_traversal_traits
 {
-  // -----------------------------------------------------------------------------------------------
-  class Projection_traits
-    : public CGAL::internal::AABB_tree::Projection_traits<AABBTraits>
-  {
-    using Base = CGAL::internal::AABB_tree::Projection_traits<AABBTraits>;
-    using Point = typename AABBTraits::Point_3;
-    using Primitive = typename AABBTraits::Primitive;
+  using Base_projection_traits = CGAL::internal::AABB_tree::Projection_traits<AABBTraits>;
+  using Projection_traits = Covered_traversal_traits<AABBTraits, Base_projection_traits>;
 
-    std::unordered_set<std::size_t> visited_data;
-
-public:
-    Projection_traits(const Point& hint,
-                      const typename Primitive::Id& hint_primitive,
-                      const AABBTraits& traits)
-      : Base(hint, hint_primitive, traits)
-    { }
-
-    void intersection(const Point& query, const Primitive& primitive)
-    {
-      // check a datum only once
-      auto is_insert_successful = visited_data.insert(primitive.id().second/*unique input face ID*/);
-      if(!is_insert_successful.second)
-        return;
-
-      return Base::intersection(query, primitive);
-    }
-  };
-
-  // -----------------------------------------------------------------------------------------------
   template <typename Query>
-  class Do_intersect_traits
-    : public CGAL::internal::AABB_tree::Do_intersect_traits<AABBTraits, Query>
-  {
-    using Base = CGAL::internal::AABB_tree::Do_intersect_traits<AABBTraits, Query>;
-    using Primitive = typename AABBTraits::Primitive;
-
-    std::unordered_set<std::size_t> visited_data;
-
-public:
-    Do_intersect_traits(const AABBTraits& traits) : Base(traits) { }
-
-    void intersection(const Query& query, const Primitive& primitive)
-    {
-      // check a datum only once
-      auto is_insert_successful = visited_data.insert(primitive.id().second/*unique input face ID*/);
-      if(!is_insert_successful.second)
-        return;
-
-      return Base::intersection(query, primitive);
-    }
-  };
-
-  // -----------------------------------------------------------------------------------------------
+  using Do_intersect_traits_base = CGAL::internal::AABB_tree::Do_intersect_traits<AABBTraits, Query>;
   template <typename Query>
-  class First_intersection_traits
-    : public CGAL::internal::AABB_tree::First_intersection_traits<AABBTraits, Query>
-  {
-    using Base = CGAL::internal::AABB_tree::First_intersection_traits<AABBTraits, Query>;
-    using Primitive = typename AABBTraits::Primitive;
+  using Do_intersect_traits = Covered_traversal_traits<AABBTraits, Do_intersect_traits_base<Query> >;
 
-    std::unordered_set<std::size_t> visited_data;
-
-public:
-    First_intersection_traits(const AABBTraits& traits) : Base(traits) { }
-
-    void intersection(const Query& query, const Primitive& primitive)
-    {
-      // check a datum only once
-      auto is_insert_successful = visited_data.insert(primitive.id().second/*unique input face ID*/);
-      if(!is_insert_successful.second)
-        return;
-
-      return Base::intersection(query, primitive);
-    }
-  };
-
-  // -----------------------------------------------------------------------------------------------
   template <typename Query>
-  class First_primitive_traits
-    : public CGAL::internal::AABB_tree::First_primitive_traits<AABBTraits, Query>
-  {
-    using Base = CGAL::internal::AABB_tree::First_primitive_traits<AABBTraits, Query>;
-    using Primitive = typename AABBTraits::Primitive;
+  using First_intersection_traits_base = CGAL::internal::AABB_tree::First_intersection_traits<AABBTraits, Query>;
+  template <typename Query>
+  using First_intersection_traits = Covered_traversal_traits<AABBTraits, First_intersection_traits_base<Query> >;
 
-    std::unordered_set<std::size_t> visited_data;
-
-public:
-    First_primitive_traits(const AABBTraits& traits) : Base(traits) { }
-
-    void intersection(const Query& query, const Primitive& primitive)
-    {
-      // check a datum only once
-      auto is_insert_successful = visited_data.insert(primitive.id().second/*unique input face ID*/);
-      if(!is_insert_successful.second)
-        return;
-
-      return Base::intersection(query, primitive);
-    }
-  };
-
-  // -----------------------------------------------------------------------------------------------
-  template <typename Query, typename CountingIterator>
-  class Listing_primitive_traits
-    : public CGAL::internal::AABB_tree::Listing_primitive_traits<AABBTraits, Query, CountingIterator>
-  {
-    using Base = CGAL::internal::AABB_tree::Listing_primitive_traits<AABBTraits, Query, CountingIterator>;
-    using Primitive = typename AABBTraits::Primitive;
-
-    std::unordered_set<std::size_t> visited_data;
-
-  public:
-    template <typename OutputIterator>
-    Listing_primitive_traits(OutputIterator out, const AABBTraits& traits) : Base(out, traits) { }
-
-    void intersection(const Query& query, const Primitive& primitive)
-    {
-      // check a datum only once
-      auto is_insert_successful = visited_data.insert(primitive.id().second/*unique input face ID*/);
-      if(!is_insert_successful.second)
-        return;
-
-      return Base::intersection(query, primitive);
-    }
-  };
+  template <typename Query>
+  using First_primitive_traits_base = CGAL::internal::AABB_tree::First_primitive_traits<AABBTraits, Query>;
+  template <typename Query>
+  using First_primitive_traits = Covered_traversal_traits<AABBTraits, First_primitive_traits_base<Query> >;
 
   template <typename Query, typename CountingIterator>
-  class Listing_intersection_traits
-    : public CGAL::internal::AABB_tree::Listing_intersection_traits<AABBTraits, Query, CountingIterator>
-  {
-    using Base = CGAL::internal::AABB_tree::Listing_intersection_traits<AABBTraits, Query, CountingIterator>;
-    using Primitive = typename AABBTraits::Primitive;
+  using Listing_primitive_traits_base = CGAL::internal::AABB_tree::Listing_primitive_traits<AABBTraits, Query, CountingIterator>;
+  template <typename Query, typename CountingIterator>
+  using Listing_primitive_traits = Covered_traversal_traits<AABBTraits, Listing_primitive_traits_base<Query, CountingIterator> >;
 
-    std::unordered_set<std::size_t> visited_data;
-
-  public:
-    template <typename OutputIterator>
-    Listing_intersection_traits(OutputIterator out, const AABBTraits& traits) : Base(out, traits) { }
-
-    void intersection(const Query& query, const Primitive& primitive)
-    {
-      // check a datum only once
-      auto is_insert_successful = visited_data.insert(primitive.id().second/*unique input face ID*/);
-      if(!is_insert_successful.second)
-        return;
-
-      return Base::intersection(query, primitive);
-    }
-  };
+  template <typename Query, typename CountingIterator>
+  using Listing_intersection_traits_base = CGAL::internal::AABB_tree::Listing_intersection_traits<AABBTraits, Query, CountingIterator>;
+  template <typename Query, typename CountingIterator>
+  using Listing_intersection_traits = Covered_traversal_traits<AABBTraits, Listing_intersection_traits_base<Query, CountingIterator> >;
 };
 
 // Dissociated from the class `AABB_covered_triangle_tree` for clarity
