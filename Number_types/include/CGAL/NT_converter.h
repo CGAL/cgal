@@ -18,16 +18,15 @@
 
 #include <functional>
 
+namespace CGAL {
+
 template <bool>
 class Interval_nt;
 
 template <class NT>
 class Quotient;
 
-namespace CGAL {
-
 // A number type converter usable as default, using the conversion operator.
-
 template < class NT1, class NT2 >
 struct NT_converter
   : public CGAL::cpp98::unary_function< NT1, NT2 >
