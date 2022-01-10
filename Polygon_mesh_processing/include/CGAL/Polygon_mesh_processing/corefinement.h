@@ -521,7 +521,7 @@ corefine_and_compute_union(      TriangleMesh& tm1,
                            const NamedParameters2& np2 = parameters::use_default_values(),
                            const NamedParametersOut& np_out = parameters::use_default_values())
 {
-  using namespace CGAL::Polygon_mesh_processing::parameters;
+  using namespace CGAL::parameters;
   std::array< boost::optional<TriangleMesh*>,4> output;
   output[Corefinement::UNION]=&tm_out;
 
@@ -553,7 +553,7 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
                                   const NamedParameters2& np2 = parameters::use_default_values(),
                                   const NamedParametersOut& np_out = parameters::use_default_values())
 {
-  using namespace CGAL::Polygon_mesh_processing::parameters;
+  using namespace CGAL::parameters;
   std::array< boost::optional<TriangleMesh*>,4> output;
   output[Corefinement::INTERSECTION]=&tm_out;
 
@@ -585,7 +585,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
                                 const NamedParameters2& np2 = parameters::use_default_values(),
                                 const NamedParametersOut& np_out = parameters::use_default_values())
 {
-  using namespace CGAL::Polygon_mesh_processing::parameters;
+  using namespace CGAL::parameters;
   using namespace CGAL::Polygon_mesh_processing::Corefinement;
   std::array< boost::optional<TriangleMesh*>,4> output;
   output[TM1_MINUS_TM2]=&tm_out;
