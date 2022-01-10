@@ -355,8 +355,8 @@ template <typename SourceMesh, typename TargetMesh,
           typename NamedParameters2 = parameters::Default_named_parameters
           >
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     const NamedParameters1& np1 =  parameters::use_default_values(),
-                     const NamedParameters2& np2 = parameters::use_default_values()
+                     const NamedParameters1& np1 =  parameters::default_values(),
+                     const NamedParameters2& np2 = parameters::default_values()
                      )
 {
   using parameters::choose_parameter;

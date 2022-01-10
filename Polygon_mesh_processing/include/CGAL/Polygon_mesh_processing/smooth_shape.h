@@ -99,7 +99,7 @@ template<typename TriangleMesh, typename FaceRange, typename NamedParameters = p
 void smooth_shape(const FaceRange& faces,
                   TriangleMesh& tmesh,
                   const double time,
-                  const NamedParameters& np = parameters::use_default_values())
+                  const NamedParameters& np = parameters::default_values())
 {
   if(std::begin(faces) == std::end(faces))
     return;
@@ -200,7 +200,7 @@ void smooth_shape(const FaceRange& faces,
 template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void smooth_shape(TriangleMesh& tmesh,
                   const double time,
-                  const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                  const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   smooth_shape(faces(tmesh), tmesh, time, np);
 }

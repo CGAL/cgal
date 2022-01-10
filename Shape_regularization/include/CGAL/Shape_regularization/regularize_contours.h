@@ -120,7 +120,7 @@ namespace Contours {
     const InputRange& input_range,
     const ContDirections& directions,
     OutIterator contour,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using PointMap = typename CGAL::GetPointMap<InputRange, NamedParameters>::type;
     using Point_2 = typename PointMap::value_type;
@@ -243,7 +243,7 @@ namespace Contours {
     const InputRange& input_range,
     const ContDirections& directions,
     OutIterator contour,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using PointMap = typename CGAL::GetPointMap<InputRange, NamedParameters>::type;
     using Point_2 = typename PointMap::value_type;

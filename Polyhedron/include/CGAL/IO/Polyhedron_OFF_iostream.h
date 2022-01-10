@@ -43,7 +43,7 @@ template <class Traits,
           class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& in,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<Polyhedron_3<Traits, Items, HDS, Alloc> >::vertex_descriptor Vertex;
 
@@ -96,7 +96,7 @@ template <class Traits,
           class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream in(fname);
   return read_OFF(in, P, np);
@@ -126,7 +126,7 @@ template < class Traits,
            class Alloc, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& out,
                const Polyhedron_3<Traits, Items, HDS, Alloc>& P,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

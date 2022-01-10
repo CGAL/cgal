@@ -132,7 +132,7 @@ namespace Polygon_mesh_processing {
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void smooth_mesh(const FaceRange& faces,
                  TriangleMesh& tmesh,
-                 const NamedParameters& np = parameters::use_default_values())
+                 const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;
@@ -325,7 +325,7 @@ void smooth_mesh(const FaceRange& faces,
 
 ///\cond SKIP_IN_MANUAL
 template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-void smooth_mesh(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+void smooth_mesh(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   smooth_mesh(faces(tmesh), tmesh, np);
 }

@@ -259,7 +259,7 @@ void test_merge_duplicate_polygons(const bool /*verbose*/ = false)
   // Keep one for each duplicate
   std::vector<CGAL_polygon> polygons_copy(polygons);
   res = PMP::merge_duplicate_polygons_in_polygon_soup(points, polygons_copy,
-                                                      params::use_default_values());
+                                                      params::default_values());
   assert(res == 3 && polygons_copy.size() == 3);
 
   // Remove all duplicates

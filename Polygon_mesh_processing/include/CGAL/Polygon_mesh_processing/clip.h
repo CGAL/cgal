@@ -600,8 +600,8 @@ template <class TriangleMesh,
 bool
 clip(TriangleMesh& tm,
      TriangleMesh& clipper,
-     const NamedParameters1& np_tm = parameters::use_default_values(),
-     const NamedParameters2& np_c = parameters::use_default_values())
+     const NamedParameters1& np_tm = parameters::default_values(),
+     const NamedParameters2& np_c = parameters::default_values())
 {
   if (parameters::choose_parameter(parameters::get_parameter(np_c, internal_np::do_not_modify), false))
   {
@@ -700,7 +700,7 @@ bool clip(TriangleMesh& tm,
 #else
           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-          const NamedParameters& np = parameters::use_default_values())
+          const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -717,7 +717,7 @@ bool clip(TriangleMesh& tm,
   bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
                     bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
   TriangleMesh clipper;
-  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::use_default_values());
+  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::default_values());
   switch(os)
   {
     case ON_NEGATIVE_SIDE:
@@ -803,7 +803,7 @@ bool clip(TriangleMesh& tm,
 #else
           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
 #endif
-          const NamedParameters& np = parameters::use_default_values())
+          const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -880,8 +880,8 @@ template <class TriangleMesh,
           class NamedParameters2 = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
            TriangleMesh& splitter,
-           const NamedParameters1& np_tm = parameters::use_default_values(),
-           const NamedParameters2& np_s = parameters::use_default_values())
+           const NamedParameters1& np_tm = parameters::default_values(),
+           const NamedParameters2& np_s = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -971,7 +971,7 @@ void split(TriangleMesh& tm,
 #else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-           const NamedParameters& np = parameters::use_default_values())
+           const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -987,7 +987,7 @@ void split(TriangleMesh& tm,
                       bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
 
   TriangleMesh splitter;
-  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, CGAL::parameters::use_default_values());
+  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, CGAL::parameters::default_values());
 
   if(os == CGAL::ON_ORIENTED_BOUNDARY)
   {
@@ -1074,7 +1074,7 @@ void split(TriangleMesh& tm,
            #else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
            #endif
-           const NamedParameters& np = parameters::use_default_values())
+           const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;

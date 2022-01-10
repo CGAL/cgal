@@ -102,7 +102,7 @@ int main()
                          .face_index_map(std::reference_wrapper<const B>(b))
   );
 
-  auto d = CGAL::parameters::use_default_values();
+  auto d = CGAL::parameters::default_values();
   CGAL_static_assertion( (std::is_same<decltype(d),CGAL::parameters::Default_named_parameters>::value) );
 #ifndef CGAL_NO_DEPRECATED_CODE
   auto d1 = CGAL::parameters::all_default();

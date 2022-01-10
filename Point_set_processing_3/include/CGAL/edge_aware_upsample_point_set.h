@@ -355,7 +355,7 @@ OutputIterator
 edge_aware_upsample_point_set(
   const PointRange& points,
   OutputIterator output,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

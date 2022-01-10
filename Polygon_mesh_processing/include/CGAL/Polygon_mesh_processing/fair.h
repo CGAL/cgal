@@ -127,7 +127,7 @@ namespace internal {
            typename NamedParameters = parameters::Default_named_parameters>
   bool fair(TriangleMesh& tmesh,
             const VertexRange& vertices,
-            const NamedParameters& np = parameters::use_default_values())
+            const NamedParameters& np = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;

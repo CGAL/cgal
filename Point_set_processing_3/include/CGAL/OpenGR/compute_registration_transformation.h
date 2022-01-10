@@ -296,8 +296,8 @@ std::pair<typename Point_set_processing_3_np_helper<PointRange1, NamedParameters
   ::Geom_traits::Aff_transformation_3, double>
 #endif
 compute_registration_transformation (const PointRange1& point_set_1, const PointRange2& point_set_2,
-                                     const NamedParameters1& np1 = parameters::use_default_values(),
-                                     const NamedParameters2& np2 = parameters::use_default_values())
+                                     const NamedParameters1& np1 = parameters::default_values(),
+                                     const NamedParameters2& np2 = parameters::default_values())
 {
   namespace GR = gr;
   using parameters::choose_parameter;

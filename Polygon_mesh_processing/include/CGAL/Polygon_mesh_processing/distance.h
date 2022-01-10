@@ -856,7 +856,7 @@ template<class PointOutputIterator, class TriangleMesh, class NamedParameters = 
 PointOutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
                      PointOutputIterator out,
-                     const NamedParameters& np = parameters::use_default_values())
+                     const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   Vpm;
@@ -982,7 +982,7 @@ PointOutputIterator
 sample_triangle_soup(const PointRange& points,
                      const TriangleRange& triangles,
                      PointOutputIterator out,
-                     const NamedParameters& np = parameters::use_default_values())
+                     const NamedParameters& np = parameters::default_values())
 {
   typedef typename PointRange::value_type         Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
@@ -1087,7 +1087,7 @@ double approximate_Hausdorff_distance(
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * The function `CGAL::parameters::use_default_values()` can be used to indicate to use the default values
+ * The function `CGAL::parameters::default_values()` can be used to indicate to use the default values
  * for `np1` and specify custom values for `np2`.
  */
 template< class Concurrency_tag,
@@ -1096,8 +1096,8 @@ template< class Concurrency_tag,
           class NamedParameters2 = parameters::Default_named_parameters>
 double approximate_Hausdorff_distance( const TriangleMesh& tm1,
                                        const TriangleMesh& tm2,
-                                       const NamedParameters1& np1 = parameters::use_default_values(),
-                                       const NamedParameters2& np2 = parameters::use_default_values())
+                                       const NamedParameters1& np1 = parameters::default_values(),
+                                       const NamedParameters2& np2 = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters1>::type GeomTraits;
@@ -1120,8 +1120,8 @@ template< class Concurrency_tag,
 double approximate_symmetric_Hausdorff_distance(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
-  const NamedParameters1& np1 = parameters::use_default_values(),
-  const NamedParameters2& np2 = parameters::use_default_values())
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   return (std::max)(
     approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,np1,np2),
@@ -1165,7 +1165,7 @@ template< class Concurrency_tag,
           class NamedParameters = parameters::Default_named_parameters>
 double max_distance_to_triangle_mesh(const PointRange& points,
                                      const TriangleMesh& tm,
-                                     const NamedParameters& np = parameters::use_default_values())
+                                     const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters>::type GeomTraits;
@@ -1214,7 +1214,7 @@ template< class TriangleMesh,
 double approximate_max_distance_to_point_set(const TriangleMesh& tm,
                                              const PointRange& points,
                                              const double precision,
-                                             const NamedParameters& np = parameters::use_default_values())
+                                             const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters>::type GeomTraits;
@@ -2294,8 +2294,8 @@ double bounded_error_Hausdorff_distance(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double error_bound = 0.0001,
-  const NamedParameters1& np1 = parameters::use_default_values(),
-  const NamedParameters2& np2 = parameters::use_default_values())
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2348,8 +2348,8 @@ double bounded_error_symmetric_Hausdorff_distance(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double error_bound,
-  const NamedParameters1& np1 = parameters::use_default_values(),
-  const NamedParameters2& np2 = parameters::use_default_values())
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2418,8 +2418,8 @@ bool is_Hausdorff_distance_larger(
   const TriangleMesh2& tm2,
   const double distance_bound,
   const double error_bound,
-  const NamedParameters1& np1 = parameters::use_default_values(),
-  const NamedParameters2& np2 = parameters::use_default_values())
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2478,8 +2478,8 @@ double bounded_error_Hausdorff_distance_naive(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double error_bound,
-  const NamedParameters1& np1 = parameters::use_default_values(),
-  const NamedParameters2& np2 = parameters::use_default_values())
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));

@@ -596,7 +596,7 @@ construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face
                                 std::array<FT, 3> >& loc,
 #endif
                 const TriangleMesh& tm,
-                const NamedParameters& np = parameters::use_default_values())
+                const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type            Geom_traits;
@@ -1107,7 +1107,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
 #endif
                const typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
                const TriangleMesh& tm,
-               const NamedParameters& np = parameters::use_default_values())
+               const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
 
@@ -1577,7 +1577,7 @@ build_AABB_tree(const TriangleMesh& tm,
                     typename GetGeomTraits<TriangleMesh, NamedParameters>::type,
 #endif
                     CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& outTree,
-                const NamedParameters& np = parameters::use_default_values())
+                const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
 
@@ -1654,7 +1654,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
                                 CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
 #endif
                       const TriangleMesh& tm,
-                      const NamedParameters& np = parameters::use_default_values())
+                      const NamedParameters& np = parameters::default_values())
 {
   typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point         Point;
   typedef internal::Point_to_Point_3<TriangleMesh, Point>                                  P_to_P3;
@@ -1738,7 +1738,7 @@ typename internal::Location_traits<TriangleMesh, NamedParameters>::Face_location
 locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Point& p,
 #endif
        const TriangleMesh& tm,
-       const NamedParameters& np = parameters::use_default_values())
+       const NamedParameters& np = parameters::default_values())
 {
   // Wrap the input VPM with a one converting to 3D (costs nothing if the input VPM
   // already has value type Kernel::Point_3)
@@ -1831,7 +1831,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
                       > >& tree,
 #endif
                       const TriangleMesh& tm,
-                      const NamedParameters& np = parameters::use_default_values())
+                      const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                        Geom_traits;
 
@@ -1956,7 +1956,7 @@ typename internal::Location_traits<TriangleMesh>::Face_location
 locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Ray& ray,
 #endif
        const TriangleMesh& tm,
-       const NamedParameters& np = parameters::use_default_values())
+       const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
 

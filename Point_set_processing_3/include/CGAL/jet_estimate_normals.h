@@ -179,7 +179,7 @@ void
 jet_estimate_normals(
   PointRange& points,
   unsigned int k,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

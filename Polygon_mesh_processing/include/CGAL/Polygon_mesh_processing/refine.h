@@ -78,7 +78,7 @@ namespace Polygon_mesh_processing {
            const FaceRange& faces,
            FaceOutputIterator faces_out,
            VertexOutputIterator vertices_out,
-           const NamedParameters& np = parameters::use_default_values())
+           const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;

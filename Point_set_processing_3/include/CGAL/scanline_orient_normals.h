@@ -457,7 +457,7 @@ void orient_scanline (Iterator begin, Iterator end,
    \cgalNamedParamsEnd
 */
 template <typename PointRange, typename NamedParameters = parameters::Default_named_parameters>
-void scanline_orient_normals (PointRange& points, const NamedParameters& np = parameters::use_default_values())
+void scanline_orient_normals (PointRange& points, const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

@@ -513,7 +513,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
                                  EdgeCostMap edge_cost_map,
                                  VertexLabelCostMap vertex_label_cost_map,
                                  VertexLabelMap vertex_label_map,
-                                 const NamedParameters& np = parameters::use_default_values())
+                                 const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

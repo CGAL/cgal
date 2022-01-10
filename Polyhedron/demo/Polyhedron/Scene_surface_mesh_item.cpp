@@ -1551,7 +1551,7 @@ Scene_surface_mesh_item::save(std::ostream& out) const
   }
   else
   {
-    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::use_default_values());
+    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::default_values());
   }
   QApplication::restoreOverrideCursor();
   return (bool) out;

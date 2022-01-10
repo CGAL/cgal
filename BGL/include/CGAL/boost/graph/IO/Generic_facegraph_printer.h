@@ -90,7 +90,7 @@ public:
 
   template <typename NamedParameters = parameters::Default_named_parameters>
   bool operator()(const Graph& g,
-                  const NamedParameters& np = parameters::use_default_values())
+                  const NamedParameters& np = parameters::default_values())
   {
     typedef typename GetVertexPointMap<Graph, NamedParameters>::const_type         VPM;
     typedef typename boost::property_traits<VPM>::reference                        Point_ref;

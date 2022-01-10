@@ -429,7 +429,7 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
 /// \return the number of vertices created.
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
-                                            const NamedParameters& np = parameters::use_default_values())
+                                            const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;

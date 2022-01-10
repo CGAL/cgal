@@ -489,7 +489,7 @@ estimate_local_k_neighbor_scales(
   const PointRange& points,
   const QueryPointRange& queries,
   OutputIterator output,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -558,7 +558,7 @@ template <typename PointRange,
 std::size_t
 estimate_global_k_neighbor_scale(
   const PointRange& points,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -631,7 +631,7 @@ estimate_local_range_scales(
   const PointRange& points,
   const QueryPointRange& queries,
   OutputIterator output,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -707,7 +707,7 @@ template <typename PointRange,
 #endif
 estimate_global_range_scale(
   const PointRange& points,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

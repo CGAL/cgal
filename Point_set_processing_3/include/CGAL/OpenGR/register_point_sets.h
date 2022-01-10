@@ -210,8 +210,8 @@ template <class PointRange1, class PointRange2,
           class NamedParameters2 = parameters::Default_named_parameters>
 double
 register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
-                     const NamedParameters1& np1 = parameters::use_default_values(),
-                     const NamedParameters2& np2 = parameters::use_default_values())
+                     const NamedParameters1& np1 = parameters::default_values(),
+                     const NamedParameters2& np2 = parameters::default_values())
 {
   namespace GR = gr;
   using parameters::choose_parameter;

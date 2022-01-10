@@ -88,7 +88,7 @@ template <typename OutputIteratorValueType,
           typename NamedParameters = parameters::Default_named_parameters>
 bool read_points(const std::string& fname,
                  PointOutputIterator output,
-                 const NamedParameters& np = parameters::use_default_values())
+                 const NamedParameters& np = parameters::default_values())
 {
   const std::string ext = internal::get_file_extension(fname);
 
@@ -110,7 +110,7 @@ bool read_points(const std::string& fname,
 
 // variant with default OutputIteratorType
 template <typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
-bool read_points(const std::string& fname, OutputIterator output, const NamedParameters& np = parameters::use_default_values())
+bool read_points(const std::string& fname, OutputIterator output, const NamedParameters& np = parameters::default_values())
 {
   return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, np);
 }

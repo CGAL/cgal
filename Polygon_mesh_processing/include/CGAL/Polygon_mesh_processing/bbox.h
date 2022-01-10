@@ -59,7 +59,7 @@ namespace CGAL {
     */
     template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
     CGAL::Bbox_3 bbox(const PolygonMesh& pmesh,
-                      const NamedParameters& np = parameters::use_default_values())
+                      const NamedParameters& np = parameters::default_values())
     {
       using CGAL::parameters::choose_parameter;
       using CGAL::parameters::get_parameter;
@@ -116,7 +116,7 @@ namespace CGAL {
     template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
     CGAL::Bbox_3 vertex_bbox(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
                              const PolygonMesh& pmesh,
-                             const NamedParameters& np = parameters::use_default_values())
+                             const NamedParameters& np = parameters::default_values())
     {
       using parameters::choose_parameter;
       using parameters::get_parameter;
@@ -165,7 +165,7 @@ namespace CGAL {
     template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
     CGAL::Bbox_3 edge_bbox(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed,
                            const PolygonMesh& pmesh,
-                           const NamedParameters& np = parameters::use_default_values())
+                           const NamedParameters& np = parameters::default_values())
     {
       using parameters::choose_parameter;
       using parameters::get_parameter;
@@ -217,7 +217,7 @@ namespace CGAL {
     template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
     CGAL::Bbox_3 face_bbox(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
                            const PolygonMesh& pmesh,
-                           const NamedParameters& np = parameters::use_default_values())
+                           const NamedParameters& np = parameters::default_values())
     {
       using parameters::choose_parameter;
       using parameters::get_parameter;

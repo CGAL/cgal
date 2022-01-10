@@ -229,8 +229,8 @@ template <class PointRange1, class PointRange2,
           class NamedParameters2 = parameters::Default_named_parameters>
 bool
 register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
-                     const NamedParameters1& np1 = parameters::use_default_values(),
-                     const NamedParameters2& np2 = parameters::use_default_values())
+                     const NamedParameters1& np1 = parameters::default_values(),
+                     const NamedParameters2& np2 = parameters::default_values())
 {
   typedef typename Point_set_processing_3_np_helper<PointRange1, NamedParameters1>::Geom_traits Kernel;
 

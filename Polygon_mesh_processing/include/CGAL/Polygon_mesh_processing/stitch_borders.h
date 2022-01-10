@@ -1117,7 +1117,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 template <typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                                   PolygonMesh& pmesh,
-                                  const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                                  const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   internal::Dummy_cycle_rep_maintainer<PolygonMesh> dummy_maintainer(pmesh);
   return internal::stitch_boundary_cycle(h, pmesh, dummy_maintainer, np);
@@ -1178,7 +1178,7 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 template <typename BorderHalfedgeRange, typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_representatives,
                                    PolygonMesh& pmesh,
-                                   const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                                   const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   // If this API is called, we are not from stitch_borders() (otherwise there would be a maintainer)
   // so there is only one pass and we don't carea bout maintaining the cycle subset
@@ -1191,7 +1191,7 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 // convenience overloads
 template <typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
-                                   const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                                   const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
@@ -1245,7 +1245,7 @@ template <typename PolygonMesh,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(PolygonMesh& pmesh,
                            const HalfedgePairsRange& hedge_pairs_to_stitch,
-                           const CGAL_BGL_NP_CLASS& np = parameters::use_default_values(),
+                           const CGAL_BGL_NP_CLASS& np = parameters::default_values(),
                            typename boost::enable_if<
                              typename boost::has_range_iterator<HalfedgePairsRange>
                            >::type* = 0)
@@ -1376,7 +1376,7 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 ///
 template <typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(PolygonMesh& pmesh,
-                           const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                           const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
@@ -1438,7 +1438,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 template <typename BorderHalfedgeRange, typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representatives,
                            PolygonMesh& pmesh,
-                           const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+                           const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                            , typename boost::enable_if<
                                typename boost::has_range_iterator<BorderHalfedgeRange>

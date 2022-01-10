@@ -280,7 +280,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -335,7 +335,7 @@ bool write_LAS(std::ostream& os,
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -403,7 +403,7 @@ CGAL_DEPRECATED bool write_las_points_with_properties(std::ostream& os,
   \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_LAS()` should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_las_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+bool write_las_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_LAS(os, points, np);
 }

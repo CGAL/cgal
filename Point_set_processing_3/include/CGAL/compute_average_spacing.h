@@ -155,7 +155,7 @@ template <typename ConcurrencyTag,
 compute_average_spacing(
   const PointRange& points,
   unsigned int k,
-  const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+  const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

@@ -278,7 +278,7 @@ void test_index_property_maps(const Graph& g)
 
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   std::map<g_face_descriptor, std::size_t> map;
-  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::use_default_values());
+  PMP::connected_components(g, boost::make_assoc_property_map(map), CGAL::parameters::default_values());
   Adapter fg(g, -1, boost::make_assoc_property_map(map));
   assert(is_empty(fg));
 

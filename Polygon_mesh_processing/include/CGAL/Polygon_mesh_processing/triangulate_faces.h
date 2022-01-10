@@ -465,7 +465,7 @@ public:
 template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                       PolygonMesh& pmesh,
-                      const NamedParameters& np = parameters::use_default_values())
+                      const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -542,7 +542,7 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 template <typename FaceRange, typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(FaceRange face_range,
                        PolygonMesh& pmesh,
-                       const NamedParameters& np = parameters::use_default_values())
+                       const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -613,7 +613,7 @@ bool triangulate_faces(FaceRange face_range,
 */
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool triangulate_faces(PolygonMesh& pmesh,
-                       const NamedParameters& np = parameters::use_default_values())
+                       const NamedParameters& np = parameters::default_values())
 {
   return triangulate_faces(faces(pmesh), pmesh, np);
 }

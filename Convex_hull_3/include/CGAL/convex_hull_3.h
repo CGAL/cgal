@@ -1063,7 +1063,7 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 template <class VertexListGraph, class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void convex_hull_3(const VertexListGraph& g,
                    PolygonMesh& pm,
-                   const NamedParameters& np = parameters::use_default_values())
+                   const NamedParameters& np = parameters::default_values())
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;

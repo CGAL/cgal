@@ -65,7 +65,7 @@ namespace IO {
 template <typename Gt, typename Tds, typename NamedParameters = parameters::Default_named_parameters>
 bool write_OFF(std::ostream& os,
                const CGAL::Triangulation_on_sphere_2<Gt, Tds>& dt,
-               const NamedParameters& np = parameters::use_default_values())
+               const NamedParameters& np = parameters::default_values())
 {
   typedef Triangulation_on_sphere_2<Gt,Tds>             Tr;
   typedef typename Tr::Vertex_handle                    Vertex_handle;
@@ -156,7 +156,7 @@ bool write_OFF(std::ostream& os,
 template <typename Gt, typename Tds, typename NamedParameters = parameters::Default_named_parameters>
 bool write_OFF(const std::string& fname,
                const CGAL::Triangulation_on_sphere_2<Gt, Tds>& dt,
-               const NamedParameters& np = parameters::use_default_values())
+               const NamedParameters& np = parameters::default_values())
 {
   std::ofstream os(fname); // stream precision will be set in the ostream overload
   return write_OFF(os, dt, np);

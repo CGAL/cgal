@@ -47,7 +47,7 @@ namespace Polygon_mesh_processing{
 template<class Transformation, class PolygonMesh,class NamedParameters = parameters::Default_named_parameters>
 void transform(const Transformation& transformation,
                PolygonMesh& mesh,
-               const NamedParameters& np = parameters::use_default_values())
+               const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
   VPMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),

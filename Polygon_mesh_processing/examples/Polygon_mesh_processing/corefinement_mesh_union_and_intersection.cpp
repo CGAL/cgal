@@ -36,13 +36,13 @@ int main(int argc, char* argv[])
     PMP::corefine_and_compute_boolean_operations(
       mesh1, mesh2,
       output,
-      params::use_default_values(), // mesh1 named parameters
-      params::use_default_values(), // mesh2 named parameters
+      params::default_values(), // mesh1 named parameters
+      params::default_values(), // mesh2 named parameters
       std::make_tuple(
         params::vertex_point_map(get(boost::vertex_point, out_union)), // named parameters for out_union
         params::vertex_point_map(get(boost::vertex_point, out_intersection)), // named parameters for out_intersection
-        params::use_default_values(), // named parameters for mesh1-mesh2 not used
-        params::use_default_values() )// named parameters for mesh2-mesh1 not used)
+        params::default_values(), // named parameters for mesh1-mesh2 not used
+        params::default_values() )// named parameters for mesh2-mesh1 not used)
     );
 
   if (res[PMP::Corefinement::UNION])

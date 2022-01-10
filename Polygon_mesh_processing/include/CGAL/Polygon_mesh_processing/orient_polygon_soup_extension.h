@@ -124,7 +124,7 @@ orient_triangle_soup_with_reference_triangle_mesh(
     const TriangleMesh& tm_ref,
     PointRange& points,
     TriangleRange& triangles,
-    const NamedParameters& np = parameters::use_default_values())
+    const NamedParameters& np = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 

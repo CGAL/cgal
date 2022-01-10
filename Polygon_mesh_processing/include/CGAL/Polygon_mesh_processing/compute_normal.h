@@ -164,7 +164,7 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                     const PolygonMesh& pmesh,
-                    const NamedParameters& np = parameters::use_default_values())
+                    const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -225,7 +225,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 template <typename PolygonMesh, typename Face_normal_map, typename NamedParameters = parameters::Default_named_parameters>
 void compute_face_normals(const PolygonMesh& pmesh,
                           Face_normal_map face_normals,
-                          const NamedParameters& np = parameters::use_default_values())
+                          const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
@@ -646,7 +646,7 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                       const PolygonMesh& pmesh,
-                      const NamedParameters& np = parameters::use_default_values())
+                      const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -759,7 +759,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 template <typename PolygonMesh, typename VertexNormalMap, typename NamedParameters = parameters::Default_named_parameters>
 void compute_vertex_normals(const PolygonMesh& pmesh,
                             VertexNormalMap vertex_normals,
-                            const NamedParameters& np = parameters::use_default_values())
+                            const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -856,7 +856,7 @@ template <typename PolygonMesh,
 void compute_normals(const PolygonMesh& pmesh,
                      VertexNormalMap vertex_normals,
                      FaceNormalMap face_normals,
-                     const NamedParameters& np = parameters::use_default_values())
+                     const NamedParameters& np = parameters::default_values())
 {
   compute_face_normals(pmesh, face_normals, np);
   compute_vertex_normals(pmesh, vertex_normals, np.face_normal_map(face_normals));

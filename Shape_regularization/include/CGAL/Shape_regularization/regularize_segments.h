@@ -135,7 +135,7 @@ namespace Segments {
     NeighQuery& neighbor_query,
     RegType& regularization_type,
     QPSolver& quadratic_program,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
     using Segment_2 = typename SegmentMap::value_type;
@@ -370,7 +370,7 @@ namespace Segments {
   OutIterator parallel_groups(
     const InputRange& input_range,
     OutIterator groups,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
     using Segment_2 = typename SegmentMap::value_type;
@@ -463,7 +463,7 @@ namespace Segments {
   OutIterator collinear_groups(
     const InputRange& input_range,
     OutIterator groups,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
     using Segment_2 = typename SegmentMap::value_type;
@@ -556,7 +556,7 @@ namespace Segments {
   OutIterator orthogonal_groups(
     const InputRange& input_range,
     OutIterator groups,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
     using Segment_2 = typename SegmentMap::value_type;
@@ -648,7 +648,7 @@ namespace Segments {
   OutIterator unique_segments(
     const InputRange& input_range,
     OutIterator segments,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using SegmentMap = typename internal::GetSegmentMap<InputRange, NamedParameters>::type;
     using Segment_2 = typename SegmentMap::value_type;

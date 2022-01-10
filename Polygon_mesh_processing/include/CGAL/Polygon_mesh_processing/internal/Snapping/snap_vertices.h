@@ -1204,8 +1204,8 @@ std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
                           const HalfedgeRange_B& halfedge_range_B,
                           PolygonMesh& tm_B,
                           ToleranceMap_B tolerance_map_B,
-                          const NamedParameters_A& np_A = parameters::use_default_values(),
-                          const NamedParameters_B& np_B = parameters::use_default_values())
+                          const NamedParameters_A& np_A = parameters::default_values(),
+                          const NamedParameters_B& np_B = parameters::default_values())
 {
   CGAL::Emptyset_iterator unused_output_iterator;
 
@@ -1224,8 +1224,8 @@ std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
                           PolygonMesh& tm_A,
                           const HalfedgeRange_B& halfedge_range_B,
                           PolygonMesh& tm_B,
-                          const CGAL_BGL_NP_CLASS_1& np_A=parameters::use_default_values(),
-                          const CGAL_BGL_NP_CLASS_2& np_B=parameters::use_default_values())
+                          const CGAL_BGL_NP_CLASS_1& np_A=parameters::default_values(),
+                          const CGAL_BGL_NP_CLASS_2& np_B=parameters::default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh, CGAL_BGL_NP_CLASS_1>::type              GT;
   typedef typename GT::FT                                                             FT;

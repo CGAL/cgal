@@ -39,7 +39,7 @@ namespace IO {
 template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(std::istream& is,
                        Graph& g,
-                       const NamedParameters& np = parameters::use_default_values())
+                       const NamedParameters& np = parameters::default_values())
 {
   bool ok = false;
   ok = read_OFF(is, g, np, false);
@@ -122,7 +122,7 @@ bool read_polygon_mesh(std::istream& is,
 template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(const std::string& fname,
                        Graph& g,
-                       const NamedParameters& np = parameters::use_default_values())
+                       const NamedParameters& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
@@ -215,7 +215,7 @@ bool read_polygon_mesh(const std::string& fname,
 template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool write_polygon_mesh(const std::string& fname,
                         Graph& g,
-                        const NamedParameters& np = parameters::use_default_values())
+                        const NamedParameters& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 

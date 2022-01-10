@@ -33,8 +33,8 @@ template <typename PointRangeIn, typename PointRangeOut,
 void simplify_polyline(const PointRangeIn& input,
                              PointRangeOut& output,
                        const double max_squared_frechet_distance,
-                       const NamedParametersIn& np_in = parameters::use_default_values(),
-                       const NamedParametersOut& np_out = parameters::use_default_values())
+                       const NamedParametersIn& np_in = parameters::default_values(),
+                       const NamedParametersOut& np_out = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

@@ -210,7 +210,7 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -255,7 +255,7 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool read_OBJ(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -303,7 +303,7 @@ template <typename PointRange,
 bool write_OBJ(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -347,7 +347,7 @@ template <typename PointRange,
 bool write_OBJ(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif

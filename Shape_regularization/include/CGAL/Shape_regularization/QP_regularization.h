@@ -145,7 +145,7 @@ namespace Shape_regularization {
       NeighQuery& neighbor_query,
       RegType& regularization_type,
       QPSolver& quadratic_program,
-      const NamedParameters& np = parameters::use_default_values()) :
+      const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_regularization_type(regularization_type),

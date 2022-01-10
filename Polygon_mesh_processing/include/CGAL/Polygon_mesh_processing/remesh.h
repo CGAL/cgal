@@ -196,7 +196,7 @@ template<typename PolygonMesh
 void isotropic_remeshing(const FaceRange& faces
                        , const double& target_edge_length
                        , PolygonMesh& pmesh
-                       , const NamedParameters& np = parameters::use_default_values())
+                       , const NamedParameters& np = parameters::default_values())
 {
   if (boost::begin(faces)==boost::end(faces))
     return;
@@ -394,7 +394,7 @@ template<typename PolygonMesh
 void split_long_edges(const EdgeRange& edges
                     , const double& max_length
                     , PolygonMesh& pmesh
-                    , const NamedParameters& np = parameters::use_default_values())
+                    , const NamedParameters& np = parameters::default_values())
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;

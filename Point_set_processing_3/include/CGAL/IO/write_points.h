@@ -91,7 +91,7 @@ namespace IO {
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_points(const std::string& fname,
                   const PointRange& points,
-                  const CGAL_BGL_NP_CLASS& np = parameters::use_default_values(),
+                  const CGAL_BGL_NP_CLASS& np = parameters::default_values(),
 #ifndef DOXYGEN_RUNNING
                   typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif

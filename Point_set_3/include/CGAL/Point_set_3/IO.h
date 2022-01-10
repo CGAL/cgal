@@ -121,7 +121,7 @@ namespace IO {
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_point_set(const std::string& fname,
                     CGAL::Point_set_3<Point, Vector>& ps,
-                    const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                    const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   const std::string ext = internal::get_file_extension(fname);
 
@@ -214,7 +214,7 @@ namespace IO {
 template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_point_set(const std::string& fname,
                      CGAL::Point_set_3<Point, Vector>& ps,
-                     const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                     const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   const std::string ext = internal::get_file_extension(fname);
 

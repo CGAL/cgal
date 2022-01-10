@@ -107,7 +107,7 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -163,7 +163,7 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const std::string& fname,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -215,7 +215,7 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -261,7 +261,7 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const std::string& fname,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif

@@ -156,7 +156,7 @@ template<typename VertexRange, typename TriangleMesh, typename NamedParameters =
 void random_perturbation(VertexRange vertices
                        , TriangleMesh& tmesh
                        , const double& perturbation_max_size
-                       , const NamedParameters& np = parameters::use_default_values())
+                       , const NamedParameters& np = parameters::default_values())
 {
   typedef TriangleMesh PM;
   using parameters::get_parameter;
@@ -215,7 +215,7 @@ void random_perturbation(VertexRange vertices
 template<typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 void random_perturbation(TriangleMesh& tmesh
                        , const double& perturbation_max_size
-                       , const NamedParameters& np = parameters::use_default_values())
+                       , const NamedParameters& np = parameters::default_values())
 {
   random_perturbation(vertices(tmesh), tmesh, perturbation_max_size, np);
 }

@@ -525,7 +525,7 @@ struct Polygon_soup_orienter
 template <class PointRange, class PolygonRange, class NamedParameters = parameters::Default_named_parameters>
 bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
-                         const NamedParameters& np = parameters::use_default_values())
+                         const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

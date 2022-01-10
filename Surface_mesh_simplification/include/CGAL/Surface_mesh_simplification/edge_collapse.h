@@ -84,7 +84,7 @@ struct Dummy_visitor
 template<class TM, class ShouldStop,class NamedParameters = parameters::Default_named_parameters>
 int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
-                  const NamedParameters& np = parameters::use_default_values())
+                  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

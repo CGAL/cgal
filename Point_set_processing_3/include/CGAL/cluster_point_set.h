@@ -131,7 +131,7 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
 template <typename PointRange, typename ClusterMap, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t cluster_point_set (PointRange& points,
                                ClusterMap cluster_map,
-                               const NamedParameters& np = parameters::use_default_values())
+                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

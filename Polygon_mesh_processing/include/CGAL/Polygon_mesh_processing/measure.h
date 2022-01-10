@@ -105,7 +105,7 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 #endif
 edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
             const PolygonMesh& pmesh,
-            const NamedParameters& np = parameters::use_default_values())
+            const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
 
@@ -130,7 +130,7 @@ template<typename PolygonMesh,
 typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
             const PolygonMesh& pmesh,
-            const NamedParameters& np = parameters::use_default_values())
+            const NamedParameters& np = parameters::default_values())
 {
   return edge_length(halfedge(e, pmesh), pmesh, np);
 }
@@ -180,7 +180,7 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 #endif
 squared_edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                     const PolygonMesh& pmesh,
-                    const NamedParameters& np = parameters::use_default_values())
+                    const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
 
@@ -206,7 +206,7 @@ template<typename PolygonMesh,
 typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
                     const PolygonMesh& pmesh,
-                    const NamedParameters& np = parameters::use_default_values())
+                    const NamedParameters& np = parameters::default_values())
 {
   return squared_edge_length(halfedge(e, pmesh), pmesh, np);
 }
@@ -260,7 +260,7 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
 #endif
 face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                    const PolygonMesh& pmesh,
-                   const NamedParameters& np = parameters::use_default_values())
+                   const NamedParameters& np = parameters::default_values())
 {
   typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT result = 0;
 
@@ -320,7 +320,7 @@ std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
 typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT>
 #endif
 longest_border(const PolygonMesh& pmesh,
-               const NamedParameters& np = parameters::use_default_values())
+               const NamedParameters& np = parameters::default_values())
 {
   typedef typename CGAL::Kernel_traits<
             typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type>::Kernel::FT  FT;
@@ -405,7 +405,7 @@ typename GetGeomTraits<TriangleMesh, CGAL_BGL_NP_CLASS>::type::FT
 #endif
 face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
           const TriangleMesh& tmesh,
-          const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+          const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -477,7 +477,7 @@ typename GetGeomTraits<TriangleMesh, CGAL_BGL_NP_CLASS>::type::FT
 #endif
 squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                   const TriangleMesh& tmesh,
-                  const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                  const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -554,7 +554,7 @@ typename GetGeomTraits<TriangleMesh, CGAL_BGL_NP_CLASS>::type::FT
 #endif
 area(FaceRange face_range,
      const TriangleMesh& tmesh,
-     const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+     const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
@@ -613,7 +613,7 @@ FT
 #else
 typename GetGeomTraits<TriangleMesh, CGAL_BGL_NP_CLASS>::type::FT
 #endif
-area(const TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+area(const TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   return area(faces(tmesh), tmesh, np);
 }
@@ -661,7 +661,7 @@ FT
 typename GetGeomTraits<TriangleMesh, CGAL_BGL_NP_CLASS>::type::FT
 #endif
 volume(const TriangleMesh& tmesh,
-       const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+       const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   CGAL_assertion(is_triangle_mesh(tmesh));
   CGAL_assertion(is_closed(tmesh));
@@ -735,7 +735,7 @@ typename GetGeomTraits<TriangleMesh, CGAL_BGL_NP_CLASS>::type::FT
 #endif
 face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                   const TriangleMesh& tmesh,
-                  const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                  const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   CGAL_precondition(is_triangle(f, tmesh));
 
@@ -839,7 +839,7 @@ Point_3
 #else
 typename GetGeomTraits<TriangleMesh, CGAL_BGL_NP_CLASS>::type::Point_3
 #endif
-centroid(const TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+centroid(const TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   // See: http://www2.imperial.ac.uk/~rn/centroid.pdf
 
@@ -960,8 +960,8 @@ template< typename PolygonMesh1,
           typename NamedParameters2 = parameters::Default_named_parameters >
 void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
                  FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only,
-                 const NamedParameters1& np1 = parameters::use_default_values(),
-                 const NamedParameters2& np2 = parameters::use_default_values())
+                 const NamedParameters1& np1 = parameters::default_values(),
+                 const NamedParameters2& np2 = parameters::default_values())
 {
   typedef typename GetVertexPointMap<PolygonMesh1, NamedParameters1>::const_type            VPMap1;
   typedef typename GetVertexPointMap<PolygonMesh2, NamedParameters2>::const_type            VPMap2;

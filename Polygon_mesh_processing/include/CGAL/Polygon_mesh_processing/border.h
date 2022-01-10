@@ -181,7 +181,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
                                   , const PolygonMesh& pmesh
                                   , HalfedgeOutputIterator out
-                                  , const NamedParameters& np = parameters::use_default_values())
+                                  , const NamedParameters& np = parameters::default_values())
   {
     if (face_range.empty())
       return out;

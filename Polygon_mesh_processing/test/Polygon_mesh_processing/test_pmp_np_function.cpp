@@ -10,7 +10,7 @@
 namespace CGAL {
 template <class PolygonMesh,
           class NamedParameters = parameters::Default_named_parameters >
-void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters& np = parameters::use_default_values())
+void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters& np = parameters::default_values())
 {
   //The class containing all the geometric definitions for the PolygonMesh
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type  Traits;

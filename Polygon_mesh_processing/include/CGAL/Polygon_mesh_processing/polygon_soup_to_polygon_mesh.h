@@ -273,8 +273,8 @@ template<typename PolygonMesh,
 void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const PolygonRange& polygons,
                                   PolygonMesh& out,
-                                  const NamedParameters_PS& np_ps = parameters::use_default_values(),
-                                  const NamedParameters_PM& np_pm = parameters::use_default_values())
+                                  const NamedParameters_PS& np_ps = parameters::default_values(),
+                                  const NamedParameters_PM& np_pm = parameters::default_values())
 {
   CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                         "Input soup needs to define a valid polygon mesh! See is_polygon_soup_a_polygon_mesh() for further information.");

@@ -69,7 +69,7 @@ namespace Polygon_mesh_processing {
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
                         const PolygonMesh& pm,
-                        const NamedParameters& np = parameters::use_default_values())
+                        const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -118,7 +118,7 @@ template <typename EdgeRange, typename TriangleMesh, typename OutputIterator, ty
 OutputIterator degenerate_edges(const EdgeRange& edges,
                                 const TriangleMesh& tm,
                                 OutputIterator out,
-                                const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                                const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
 
@@ -137,7 +137,7 @@ OutputIterator degenerate_edges(const EdgeRange& edges,
 template <typename TriangleMesh, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_edges(const TriangleMesh& tm,
                                 OutputIterator out,
-                                const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+                                const CGAL_BGL_NP_CLASS& np = parameters::default_values()
                                )
 {
   return degenerate_edges(edges(tm), tm, out, np);
@@ -177,7 +177,7 @@ OutputIterator degenerate_edges(const TriangleMesh& tm,
 template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                                  const TriangleMesh& tm,
-                                 const NamedParameters& np = parameters::use_default_values())
+                                 const NamedParameters& np = parameters::default_values())
 {
   CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));
 
@@ -233,7 +233,7 @@ template <typename FaceRange, typename TriangleMesh, typename OutputIterator, ty
 OutputIterator degenerate_faces(const FaceRange& faces,
                                 const TriangleMesh& tm,
                                 OutputIterator out,
-                                const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                                const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
@@ -253,7 +253,7 @@ OutputIterator degenerate_faces(const FaceRange& faces,
 template <typename TriangleMesh, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_faces(const TriangleMesh& tm,
                                 OutputIterator out,
-                                const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+                                const CGAL_BGL_NP_CLASS& np = parameters::default_values()
                                 )
 {
   return degenerate_faces(faces(tm), tm, out, np);
@@ -295,7 +295,7 @@ typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                         const TriangleMesh& tm,
                         const double threshold,
-                        const NamedParameters& np = parameters::use_default_values())
+                        const NamedParameters& np = parameters::default_values())
 {
   CGAL_precondition(threshold >= 1.);
   CGAL_precondition(f != boost::graph_traits<TriangleMesh>::null_face());
@@ -393,7 +393,7 @@ typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                      const TriangleMesh& tm,
                      const double threshold,
-                     const NamedParameters& np = parameters::use_default_values())
+                     const NamedParameters& np = parameters::default_values())
 {
   CGAL_precondition(f != boost::graph_traits<TriangleMesh>::null_face());
   CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));

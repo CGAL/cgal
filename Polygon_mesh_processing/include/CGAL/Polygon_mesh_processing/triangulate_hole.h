@@ -120,7 +120,7 @@ namespace Polygon_mesh_processing {
   triangulate_hole(PolygonMesh& pmesh,
               typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
               OutputIterator out,
-              const NamedParameters& np = parameters::use_default_values())
+              const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -279,7 +279,7 @@ namespace Polygon_mesh_processing {
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
-      const NamedParameters& np = parameters::use_default_values())
+      const NamedParameters& np = parameters::default_values())
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
@@ -399,7 +399,7 @@ namespace Polygon_mesh_processing {
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
     FaceOutputIterator face_out,
     VertexOutputIterator vertex_out,
-    const NamedParameters& np = parameters::use_default_values())
+    const NamedParameters& np = parameters::default_values())
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
@@ -498,7 +498,7 @@ namespace Polygon_mesh_processing {
   triangulate_hole_polyline(const PointRange1& points,
                             const PointRange2& third_points,
                             OutputIterator out,
-                            const NamedParameters& np = parameters::use_default_values())
+                            const NamedParameters& np = parameters::default_values())
   {
     if (points.empty()) return out;
 
@@ -583,7 +583,7 @@ bool use_dt3 =
   OutputIterator
   triangulate_hole_polyline(const PointRange& points,
                             OutputIterator out,
-                            const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                            const CGAL_BGL_NP_CLASS& np = parameters::default_values())
   {
     typedef typename std::iterator_traits<
       typename PointRange::iterator>::value_type Point;

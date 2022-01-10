@@ -36,7 +36,7 @@ public:
   template <typename PointRange, typename PolygonRange, typename NamedParameters>
   bool operator()(const PointRange& points,
                   const PolygonRange& polygons,
-                  const NamedParameters& np = parameters::use_default_values())
+                  const NamedParameters& np = parameters::default_values())
   {
     typedef typename boost::range_value<PolygonRange>::type                   Poly;
 

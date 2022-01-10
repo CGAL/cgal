@@ -434,7 +434,7 @@ OutputIterator
 wlop_simplify_and_regularize_point_set(
   PointRange& points,
   OutputIterator output,
-  const NamedParameters& np = parameters::use_default_values()
+  const NamedParameters& np = parameters::default_values()
 )
 {
   using parameters::choose_parameter;

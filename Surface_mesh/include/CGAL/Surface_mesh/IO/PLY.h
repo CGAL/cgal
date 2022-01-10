@@ -911,7 +911,7 @@ template <typename P,
 bool write_PLY(std::ostream& os,
                const Surface_mesh<P>& sm,
                const std::string& comments,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef Surface_mesh<P> SMesh;
   typedef typename SMesh::Vertex_index VIndex;
@@ -1107,7 +1107,7 @@ bool write_PLY(std::ostream& os,
 /// \cond SKIP_IN_MANUAL
 
 template <typename P, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+bool write_PLY(std::ostream& os, const Surface_mesh<P>& sm, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   std::string unused_comment;
   return write_PLY(os, sm, unused_comment, np);

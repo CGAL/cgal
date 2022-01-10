@@ -1959,7 +1959,7 @@ struct Remove_self_intersection_default_visitor
 template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool remove_self_intersections(const FaceRange& face_range,
                                TriangleMesh& tmesh,
-                               const NamedParameters& np = parameters::use_default_values())
+                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -2105,7 +2105,7 @@ bool remove_self_intersections(const FaceRange& face_range,
 }
 
 template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   return remove_self_intersections(faces(tmesh), tmesh, np);
 }

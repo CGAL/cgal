@@ -281,7 +281,7 @@ template <class PolygonMesh, class NamedParameters = parameters::Default_named_p
 void merge_duplicated_vertices_in_boundary_cycle(
         typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
         PolygonMesh& pm,
-        const NamedParameters& np = parameters::use_default_values())
+        const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
@@ -335,7 +335,7 @@ void merge_duplicated_vertices_in_boundary_cycle(
 /// \sa `merge_duplicated_vertices_in_boundary_cycle()`
 template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void merge_duplicated_vertices_in_boundary_cycles(      PolygonMesh& pm,
-                                                  const NamedParameters& np = parameters::use_default_values())
+                                                  const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 

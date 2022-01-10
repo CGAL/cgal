@@ -72,7 +72,7 @@ template<typename PolygonMesh,
 void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
                                   PointRange& points,
                                   PolygonRange& polygons,
-                                  const NamedParameters& np = parameters::use_default_values())
+                                  const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor              vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor            halfedge_descriptor;

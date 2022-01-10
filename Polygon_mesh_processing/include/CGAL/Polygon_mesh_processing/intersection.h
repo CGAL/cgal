@@ -1255,8 +1255,8 @@ template <class TriangleMesh,
           class NamedParameters2 = parameters::Default_named_parameters>
 bool do_intersect(const TriangleMesh& tm1,
                   const TriangleMesh& tm2,
-                  const NamedParameters1& np1 = parameters::use_default_values(),
-                  const NamedParameters2& np2 = parameters::use_default_values()
+                  const NamedParameters1& np1 = parameters::default_values(),
+                  const NamedParameters2& np2 = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                   , const typename boost::disable_if<
                                     typename boost::has_range_const_iterator<TriangleMesh>::type
@@ -1340,7 +1340,7 @@ template <class TriangleMesh,
           class NamedParameters = parameters::Default_named_parameters>
 bool do_intersect(const TriangleMesh& tm,
                   const PolylineRange& polylines,
-                  const NamedParameters& np = parameters::use_default_values()
+                  const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                 , const typename boost::enable_if<
                     typename boost::has_range_iterator<
@@ -1405,7 +1405,7 @@ template <class TriangleMesh,
           class NamedParameters = parameters::Default_named_parameters>
 bool do_intersect(const TriangleMesh& tm,
                   const Polyline& polyline,
-                  const NamedParameters& np = parameters::use_default_values()
+                  const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                 , const typename boost::disable_if<
                     typename boost::has_range_iterator<
@@ -1642,7 +1642,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                    const NamedParameters& np)
 {
   std::vector<parameters::Default_named_parameters> nps(
-    std::distance(range.begin(), range.end()), parameters::use_default_values());
+    std::distance(range.begin(), range.end()), parameters::default_values());
   return intersecting_meshes(range, out, np, nps);
 }
 
@@ -1650,7 +1650,7 @@ template <class TriangleMeshRange, class OutputIterator>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out)
 {
-  return intersecting_meshes(range, out, parameters::use_default_values());
+  return intersecting_meshes(range, out, parameters::default_values());
 }
 
 /**
@@ -1705,8 +1705,8 @@ OutputIterator
 surface_intersection(const TriangleMesh& tm1,
                      const TriangleMesh& tm2,
                      OutputIterator polyline_output,
-                     const NamedParameters1& np1 = parameters::use_default_values(),
-                     const NamedParameters2& np2 = parameters::use_default_values())
+                     const NamedParameters1& np1 = parameters::default_values(),
+                     const NamedParameters2& np2 = parameters::default_values())
 {
   const bool throw_on_self_intersection =
     parameters::choose_parameter(parameters::get_parameter(np1, internal_np::throw_on_self_intersection), false);
@@ -1766,7 +1766,7 @@ template <class OutputIterator,
 OutputIterator
 surface_self_intersection(const TriangleMesh& tm,
                          OutputIterator polyline_output,
-                         const NamedParameters& np = parameters::use_default_values())
+                         const NamedParameters& np = parameters::default_values())
 {
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;

@@ -153,7 +153,7 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -237,7 +237,7 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -257,7 +257,7 @@ bool read_OFF(const std::string& fname,
  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   return IO::read_OFF(is, g, np);
 }
@@ -268,7 +268,7 @@ CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g, const CGAL_BGL_NP_CLAS
 \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
  return IO::read_OFF(fname, g, np);
 }
@@ -358,7 +358,7 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -432,7 +432,7 @@ template <typename Graph,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const std::string& fname,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -458,7 +458,7 @@ bool write_OFF(const std::string& fname,
  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_OFF(os, g, np);
 }
@@ -469,7 +469,7 @@ CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_BGL_
 \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF()` should be used instead.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
  return IO::write_OFF(fname, g, np);
 }

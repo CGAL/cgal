@@ -183,7 +183,7 @@ namespace internal{
  */
 template<typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool is_outward_oriented(const TriangleMesh& tm,
-                         const NamedParameters& np = parameters::use_default_values())
+                         const NamedParameters& np = parameters::default_values())
 {
   CGAL_warning(CGAL::is_closed(tm));
   CGAL_warning(CGAL::is_triangle_mesh(tm));
@@ -396,7 +396,7 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 */
 template<class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
 void orient(TriangleMesh& tm,
-            const NamedParameters& np = parameters::use_default_values())
+            const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<TriangleMesh>                                        Graph_traits;
   typedef typename Graph_traits::vertex_descriptor                                 vertex_descriptor;
@@ -798,7 +798,7 @@ template <class TriangleMesh, class VolumeFaceIndexMap, class NamedParameters = 
 std::size_t
 volume_connected_components(const TriangleMesh& tm,
                                   VolumeFaceIndexMap volume_id_map,
-                            const NamedParameters& np = parameters::use_default_values())
+                            const NamedParameters& np = parameters::default_values())
 {
   CGAL_precondition(is_triangle_mesh(tm));
   CGAL_precondition(is_closed(tm));
@@ -1253,7 +1253,7 @@ volume_connected_components(const TriangleMesh& tm,
  * \see `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
  */
 template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
-bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np = parameters::use_default_values())
+bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
@@ -1319,7 +1319,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np = par
  */
 template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
 void orient_to_bound_a_volume(TriangleMesh& tm,
-                              const NamedParameters& np = parameters::use_default_values())
+                              const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<TriangleMesh>                                        Graph_traits;
   typedef typename Graph_traits::face_descriptor                                   face_descriptor;
@@ -1424,7 +1424,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
  */
 template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void merge_reversible_connected_components(PolygonMesh& pm,
-                                           const NamedParameters& np = parameters::use_default_values())
+                                           const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<PolygonMesh> GrT;
   typedef typename GrT::face_descriptor face_descriptor;

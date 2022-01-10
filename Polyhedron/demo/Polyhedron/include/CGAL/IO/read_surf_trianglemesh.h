@@ -394,7 +394,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     CGAL::Bbox_3& grid_box,
     std::array<unsigned int, 3>& grid_size,
     DuplicatedPointsOutIterator out,
-    const NamedParameters& = CGAL::parameters::use_default_values())
+    const NamedParameters& = CGAL::parameters::default_values())
 {
   typedef typename CGAL::GetGeomTraits<Mesh, NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;

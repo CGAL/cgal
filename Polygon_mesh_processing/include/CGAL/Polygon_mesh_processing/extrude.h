@@ -165,8 +165,8 @@ void extrude_mesh(const InputMesh& input,
                   OutputMesh& output,
                   const BottomFunctor& bot,
                   const TopFunctor& top,
-                  const CGAL_BGL_NP_CLASS_1& np_in = parameters::use_default_values(),
-                  const CGAL_BGL_NP_CLASS_2& np_out = parameters::use_default_values())
+                  const CGAL_BGL_NP_CLASS_1& np_in = parameters::default_values(),
+                  const CGAL_BGL_NP_CLASS_2& np_out = parameters::default_values())
 {
   typedef typename boost::graph_traits<InputMesh>::vertex_descriptor input_vertex_descriptor;
   typedef typename boost::graph_traits<InputMesh>::halfedge_descriptor input_halfedge_descriptor;
@@ -285,8 +285,8 @@ void extrude_mesh(const InputMesh& input,
                   #else
                   typename GetGeomTraits<OutputMesh, CGAL_BGL_NP_CLASS_2>::type::Vector_3 v,
                   #endif
-                  const CGAL_BGL_NP_CLASS_1& np_in = parameters::use_default_values(),
-                  const CGAL_BGL_NP_CLASS_2& np_out = parameters::use_default_values())
+                  const CGAL_BGL_NP_CLASS_1& np_in = parameters::default_values(),
+                  const CGAL_BGL_NP_CLASS_2& np_out = parameters::default_values())
 {
   typedef typename GetVertexPointMap < OutputMesh, CGAL_BGL_NP_CLASS_2>::type VPMap;
   VPMap output_vpm = parameters::choose_parameter(parameters::get_parameter(np_out, internal_np::vertex_point),

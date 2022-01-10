@@ -179,7 +179,7 @@ namespace CGAL {
             typename NamedParameters = parameters::Default_named_parameters>
   typename PointRange::iterator
   hierarchy_simplify_point_set (PointRange& points,
-                                const NamedParameters& np = parameters::use_default_values())
+                                const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;

@@ -87,7 +87,7 @@ namespace IO {
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(const std::string& fname,
                        PolygonMesh& g,
-                       const NamedParameters& np = parameters::use_default_values())
+                       const NamedParameters& np = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -125,7 +125,7 @@ bool read_polygon_mesh(const std::string& fname,
     return false;
   }
 
-  PMP::polygon_soup_to_polygon_mesh(points, faces, g, parameters::use_default_values(), np);
+  PMP::polygon_soup_to_polygon_mesh(points, faces, g, parameters::default_values(), np);
 
   return true;
 }

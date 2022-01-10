@@ -6,6 +6,6 @@ typedef unspecified_type Default_named_parameters;
 
 /// \ingroup PkgSTLExtensionRef
 /// returns a default named parameter type indicating that default values should be used.
-Default_named_parameters use_default_values();
+Default_named_parameters default_values();
 
 } }

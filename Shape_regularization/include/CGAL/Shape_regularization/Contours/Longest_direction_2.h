@@ -99,7 +99,7 @@ namespace Contours {
     Longest_direction_2(
       const InputRange& input_range,
       const bool is_closed,
-      const NamedParameters& np = parameters::use_default_values()) :
+      const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())) {

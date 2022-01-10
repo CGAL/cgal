@@ -212,7 +212,7 @@ typename PointRange::iterator
 grid_simplify_point_set(
   PointRange& points,
   double epsilon,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

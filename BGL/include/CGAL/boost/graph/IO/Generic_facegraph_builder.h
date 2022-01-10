@@ -39,7 +39,7 @@ public:
   Generic_facegraph_builder(std::istream& in_) : m_is(in_) { }
 
   template <typename NamedParameters = parameters::Default_named_parameters>
-  bool operator()(Graph& g, const NamedParameters& np = parameters::use_default_values())
+  bool operator()(Graph& g, const NamedParameters& np = parameters::default_values())
   {
     typedef typename GetK<Graph, NamedParameters>::Kernel                              Kernel;
     typedef typename Kernel::Vector_3                                                  Vector;

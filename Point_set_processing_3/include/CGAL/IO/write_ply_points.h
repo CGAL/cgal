@@ -187,7 +187,7 @@ template <typename PointRange,
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -275,7 +275,7 @@ bool write_PLY(std::ostream& os,
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -375,7 +375,7 @@ CGAL_DEPRECATED bool write_ply_points_with_properties(std::ostream& os, ///< out
             \link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink should be used instead.
 */
 template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_PLY(os, points, np);
 }

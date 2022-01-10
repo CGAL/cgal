@@ -270,7 +270,7 @@ inline all_default()
 #endif
 
 Default_named_parameters
-inline use_default_values()
+inline default_values()
 {
   return Default_named_parameters();
 }

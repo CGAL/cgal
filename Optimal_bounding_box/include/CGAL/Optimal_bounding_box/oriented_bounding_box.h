@@ -315,7 +315,7 @@ template <typename PointRange,
           typename NamedParameters = parameters::Default_named_parameters>
 void oriented_bounding_box(const PointRange& points,
                            Output& out,
-                           const NamedParameters& np = parameters::use_default_values()
+                           const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                            , typename boost::enable_if<
                                typename boost::has_range_iterator<PointRange>
@@ -416,7 +416,7 @@ template <typename PolygonMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 void oriented_bounding_box(const PolygonMesh& pmesh,
                            Output& out,
-                           const NamedParameters& np = parameters::use_default_values()
+                           const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                            , typename boost::disable_if<
                               typename boost::has_range_iterator<PolygonMesh>

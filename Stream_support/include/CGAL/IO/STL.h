@@ -72,7 +72,7 @@ template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMP
 bool read_STL(std::istream& is,
               PointRange& points,
               TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
@@ -206,7 +206,7 @@ template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMP
 bool read_STL(const std::string& fname,
               PointRange& points,
               TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
@@ -272,7 +272,7 @@ template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMP
 bool write_STL(std::ostream& os,
                const PointRange& points,
                const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
@@ -380,7 +380,7 @@ template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMP
 bool write_STL(const std::string& fname,
                const PointRange& points,
                const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values()
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif

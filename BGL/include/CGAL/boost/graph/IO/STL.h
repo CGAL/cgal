@@ -158,7 +158,7 @@ bool read_STL(std::istream& is,
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const std::string& fname,
               Graph& g, const
-              CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+              CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -230,7 +230,7 @@ bool read_STL(const std::string& fname,
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor                  halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                      face_descriptor;
@@ -345,7 +345,7 @@ bool write_STL(std::ostream& os,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)

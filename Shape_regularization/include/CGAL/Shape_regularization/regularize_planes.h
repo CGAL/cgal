@@ -288,7 +288,7 @@ namespace Planes {
     const PlaneMap plane_map,
     const PointRange& points,
     const PointMap point_map,
-    const NamedParameters& np = parameters::use_default_values()) {
+    const NamedParameters& np = parameters::default_values()) {
 
     using parameters::get_parameter;
     using parameters::choose_parameter;

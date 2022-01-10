@@ -150,7 +150,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
-                                                           const NamedParameters& np = parameters::use_default_values())
+                                                           const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;

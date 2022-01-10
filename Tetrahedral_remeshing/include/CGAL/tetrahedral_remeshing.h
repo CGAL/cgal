@@ -163,7 +163,7 @@ template<typename Traits, typename TDS, typename SLDS,
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const double& target_edge_length,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
   tetrahedral_isotropic_remeshing(
@@ -178,7 +178,7 @@ template<typename Traits, typename TDS, typename SLDS,
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const float& target_edge_length,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
   tetrahedral_isotropic_remeshing(
@@ -343,7 +343,7 @@ template<typename Tr,
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const double& target_edge_length,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
@@ -358,7 +358,7 @@ template<typename Tr,
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const float& target_edge_length,
-  const NamedParameters& np = parameters::use_default_values)
+  const NamedParameters& np = parameters::default_values)
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
@@ -374,7 +374,7 @@ template<typename Tr,
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const SizingFunction& sizing,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   CGAL_assertion(c3t3.triangulation().tds().is_valid(true));
 

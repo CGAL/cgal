@@ -504,7 +504,7 @@ regularize_face_selection_borders(
   TriangleMesh& mesh,
   IsSelectedMap is_selected,
   double weight,
-  const NamedParameters& np = parameters::use_default_values())
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;

@@ -1297,8 +1297,8 @@ std::size_t snap_borders(TriangleMesh& tm_A,
                          ToleranceMap_A tolerance_map_A,
                          TriangleMesh& tm_B,
                          ToleranceMap_B tolerance_map_B,
-                         const NamedParameters_A& np_A = parameters::use_default_values(),
-                         const NamedParameters_B& np_B = parameters::use_default_values())
+                         const NamedParameters_A& np_A = parameters::default_values(),
+                         const NamedParameters_B& np_B = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
@@ -1318,8 +1318,8 @@ template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename NamedParameters_B = parameters::Default_named_parameters>
 std::size_t snap_borders(TriangleMesh& tm_A,
                          TriangleMesh& tm_B,
-                         const NamedParameters_A& np_A = parameters::use_default_values(),
-                         const NamedParameters_B& np_B = parameters::use_default_values())
+                         const NamedParameters_A& np_A = parameters::default_values(),
+                         const NamedParameters_B& np_B = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
@@ -1355,7 +1355,7 @@ template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t snap_borders(TriangleMesh& tm,
                          ToleranceMap tolerance_map,
-                         const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                         const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
@@ -1371,7 +1371,7 @@ template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t snap_borders(TriangleMesh& tm,
-                         const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+                         const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 

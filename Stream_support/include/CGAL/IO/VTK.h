@@ -137,7 +137,7 @@ bool read_VTP(const std::string& fname,
 template <typename PointRange, typename PolygonRange>
 bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
-  return read_VTP(fname, points, polygons, parameters::use_default_values());
+  return read_VTP(fname, points, polygons, parameters::default_values());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,7 +378,7 @@ template <typename PointRange,
 bool write_VTP(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -464,7 +464,7 @@ template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPL
 bool write_VTP(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np = parameters::use_default_values())
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)

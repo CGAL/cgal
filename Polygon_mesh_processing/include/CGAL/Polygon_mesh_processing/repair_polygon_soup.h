@@ -477,7 +477,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 template <typename PointRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
                                                    PolygonRange& polygons,
-                                                   const NamedParameters& np = parameters::use_default_values())
+                                                   const NamedParameters& np = parameters::default_values())
 {
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
@@ -876,7 +876,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 template <typename PointRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
                                                      PolygonRange& polygons,
-                                                     const NamedParameters& np = parameters::use_default_values())
+                                                     const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -1032,7 +1032,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 template <typename PointRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
 void repair_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
-                         const NamedParameters& np = parameters::use_default_values())
+                         const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;

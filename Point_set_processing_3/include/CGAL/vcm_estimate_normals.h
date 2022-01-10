@@ -263,7 +263,7 @@ compute_vcm (const PointRange& points,
              std::vector< std::array<double, 6> > &ccov,
              double offset_radius,
              double convolution_radius,
-             const NamedParameters& np = parameters::use_default_values())
+             const NamedParameters& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -430,7 +430,7 @@ void
 vcm_estimate_normals (PointRange& points,
                       double offset_radius,
                       double convolution_radius,
-                      const NamedParameters& np = parameters::use_default_values()
+                      const NamedParameters& np = parameters::default_values()
 )
 {
   vcm_estimate_normals_internal(points, offset_radius, convolution_radius, np);
@@ -489,7 +489,7 @@ void
 vcm_estimate_normals (PointRange& points,
                       double offset_radius,
                       unsigned int k,
-                      const NamedParameters& np = parameters::use_default_values()
+                      const NamedParameters& np = parameters::default_values()
 )
 {
   vcm_estimate_normals_internal(points, offset_radius, 0, np, k);

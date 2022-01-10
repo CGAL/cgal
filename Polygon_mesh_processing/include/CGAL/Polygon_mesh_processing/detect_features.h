@@ -149,7 +149,7 @@ typename boost::graph_traits<PolygonMesh>::faces_size_type
 detect_surface_patches(const PolygonMesh& p,
                        PatchIdMap patch_id_map,
                        EdgeIsFeatureMap eif,
-                       const NamedParameters& np = parameters::use_default_values())
+                       const NamedParameters& np = parameters::default_values())
 {
   int offset = static_cast<int>(
           parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index), 1));
@@ -275,7 +275,7 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
                         typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
 #endif
                         EdgeIsFeatureMap edge_is_feature_map,
-                        const NamedParameters& np = parameters::use_default_values())
+                        const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -453,7 +453,7 @@ sharp_edges_segmentation(const PolygonMesh& pmesh,
 #endif
                          EdgeIsFeatureMap edge_is_feature_map,
                          PatchIdMap patch_id_map,
-                         const NamedParameters& np = parameters::use_default_values())
+                         const NamedParameters& np = parameters::default_values())
 {
   detect_sharp_edges(pmesh, angle_in_deg, edge_is_feature_map, np);
 
