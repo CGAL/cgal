@@ -185,6 +185,13 @@ bool read_STL(const std::string& fname,
   return read_STL(is, g, CGAL::parameters::use_binary_mode(false).vertex_point_map(vpm).verbose(v));
 }
 
+/// \cond SKIP_IN_MANUAL
+
+template <typename Graph>
+bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::default_values()); }
+
+/// \endcond
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write

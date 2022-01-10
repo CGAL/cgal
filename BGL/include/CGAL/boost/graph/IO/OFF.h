@@ -272,6 +272,11 @@ CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_BGL_NP_CLA
 {
  return IO::read_OFF(fname, g, np);
 }
+template <typename Graph>
+CGAL_DEPRECATED bool read_off(const std::string& fname, Graph& g)
+{
+ return read_off(fname.c_str(), g, parameters::default_values());
+}
 
 #endif // CGAL_NO_DEPRECATED_CODE
 
