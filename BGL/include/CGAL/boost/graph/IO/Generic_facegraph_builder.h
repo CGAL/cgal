@@ -76,10 +76,10 @@ public:
     using parameters::is_default_parameter;
     using parameters::get_parameter;
 
-    const bool is_vnm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
-    const bool is_vcm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
-    const bool is_vtm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
-    const bool is_fcm_requested = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+    const bool is_vnm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>());
+    const bool is_vcm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_color_map_t>());
+    const bool is_vtm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_texture_map_t>());
+    const bool is_fcm_requested = !(is_default_parameter<NamedParameters, internal_np::face_color_map_t>());
 
     std::vector<Vertex_normal> vertex_normals;
     std::vector<Vertex_color> vertex_colors;

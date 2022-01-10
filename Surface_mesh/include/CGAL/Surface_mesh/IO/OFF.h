@@ -110,7 +110,7 @@ bool read_OFF_with_or_without_fcolors(std::istream& is,
 
   typename Mesh::template Property_map<Face_index, Color> fcm;
 
-  bool is_fcm_requested = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+  bool is_fcm_requested = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::face_color_map_t>());
   if(!is_fcm_requested && scanner.has_colors())
   {
     bool created;
@@ -149,7 +149,7 @@ bool read_OFF_with_or_without_vtextures(std::istream& is,
 
   typename Mesh::template Property_map<Vertex_index, Texture> vtm;
 
-  bool is_vtm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
+  bool is_vtm_requested = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_texture_map_t>());
   if(!is_vtm_requested && scanner.has_textures())
   {
     bool created;
@@ -187,7 +187,7 @@ bool read_OFF_with_or_without_vcolors(std::istream& is,
 
   typename Mesh::template Property_map<Vertex_index, Color> vcm;
 
-  bool is_vcm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
+  bool is_vcm_requested = !(is_default_parameter<CGAL_BGL_NP_CLASS,  internal_np::vertex_color_map_t>());
   if(!is_vcm_requested && scanner.has_colors())
   {
     bool created;
@@ -226,7 +226,7 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 
   typename Mesh::template Property_map<Vertex_index, Normal> vnm;
 
-  bool is_vnm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
+  bool is_vnm_requested = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_normal_map_t>());
   if(!is_vnm_requested && scanner.has_normals())
   {
     bool created;
@@ -394,7 +394,7 @@ bool write_OFF_with_or_without_fcolors(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_fcolors = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+  const bool has_fcolors = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::face_color_map_t>());
 
   typename Mesh::template Property_map<Face_index, Color> fcolors;
   bool has_internal_fcolors;
@@ -421,7 +421,7 @@ bool write_OFF_with_or_without_vtextures(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_vtextures = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
+  const bool has_vtextures = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_texture_map_t>());
 
   typename Mesh::template Property_map<Vertex_index, Texture> vtextures;
   bool has_internal_vtextures;
@@ -446,7 +446,7 @@ bool write_OFF_with_or_without_vcolors(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_vcolors = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
+  const bool has_vcolors = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_color_map_t>());
 
   typename Mesh::template Property_map<Vertex_index, Color> vcolors;
   bool has_internal_vcolors;
@@ -473,7 +473,7 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_vnormals = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
+  const bool has_vnormals = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_normal_map_t>());
 
   typename Mesh::template Property_map<Vertex_index, Normal> vnormals;
   bool has_internal_vnormals;
@@ -563,7 +563,7 @@ bool write_OFF(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_vpoints = !(is_default_parameter(get_parameter(np, internal_np::vertex_point)));
+  const bool has_vpoints = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_point_t>());
   if(has_vpoints)
     return internal::write_OFF_with_or_without_vnormals(os, sm, np);
 

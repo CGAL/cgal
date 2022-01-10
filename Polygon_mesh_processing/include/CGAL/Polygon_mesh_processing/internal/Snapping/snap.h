@@ -1094,7 +1094,6 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   >::reference                                                                    Visitor;
 
   using CGAL::parameters::choose_parameter;
-  using CGAL::parameters::is_default_parameter;
   using CGAL::parameters::get_parameter;
   using CGAL::parameters::get_parameter_reference;
 

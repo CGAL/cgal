@@ -402,7 +402,7 @@ public:
       else
         deg_faces.insert(f);
     }
-    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
       init(epsilon);
     else
     {
@@ -511,7 +511,7 @@ public:
         deg_faces.insert(f);
     }
 
-    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
       init(epsilon);
     else
     {
@@ -594,7 +594,7 @@ public:
       env_faces.emplace_back(face);
     }
 
-    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
       init(epsilon);
     else
     {

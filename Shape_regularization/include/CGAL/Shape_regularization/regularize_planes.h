@@ -292,11 +292,11 @@ namespace Planes {
 
     using parameters::get_parameter;
     using parameters::choose_parameter;
-    using parameters::is_default_parameter_static;
+    using parameters::is_default_parameter;
     using PlaneIndexMap = typename CGAL::Point_set_processing_3::
       GetPlaneIndexMap<NamedParameters>::type;
 
-    CGAL_static_assertion_msg((!is_default_parameter_static<NamedParameters, internal_np::plane_index_t>()),
+    CGAL_static_assertion_msg((!is_default_parameter<NamedParameters, internal_np::plane_index_t>()),
                               "Error: no plane index map");
 
     const PlaneIndexMap index_map =

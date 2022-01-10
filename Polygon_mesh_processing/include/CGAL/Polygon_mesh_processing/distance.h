@@ -220,7 +220,7 @@ struct Triangle_structure_sampler_base
     bool use_ms = choose_parameter(get_parameter(np, internal_np::monte_carlo_sampling), false);
 
     if(use_gs || use_ms)
-      if(is_default_parameter(get_parameter(np, internal_np::random_uniform_sampling)))
+      if(is_default_parameter<NamedParameters, internal_np::random_uniform_sampling_t>())
         use_rs = false;
 
     bool smpl_vrtcs = choose_parameter(get_parameter(np, internal_np::do_sample_vertices), true);

@@ -225,7 +225,7 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    using parameters::is_default_parameter_static;
+    using parameters::is_default_parameter;
 
     // basic geometric types
     typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
@@ -235,7 +235,7 @@ public:
     typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
     CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
-    CGAL_static_assertion_msg((!is_default_parameter_static<NamedParameters, internal_np::plane_index_t>()),
+    CGAL_static_assertion_msg((!is_default_parameter<NamedParameters, internal_np::plane_index_t>()),
                               "Error: no plane index map");
 
     PointMap point_map = NP_helper::get_const_point_map(points, np);

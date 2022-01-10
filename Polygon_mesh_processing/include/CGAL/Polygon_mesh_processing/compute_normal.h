@@ -672,7 +672,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   Face_vector_map default_fvmap;
   Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
                                                   Default_map(default_fvmap));
-  const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
+  const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>();
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << "<----- compute vertex normal at " << get(vpmap, v)
@@ -786,7 +786,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
                                                        Face_normal_dmap>::type   Face_normal_map;
   Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
                                                   get(Face_normal_tag(), pmesh));
-  const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
+  const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>();
 
   if(must_compute_face_normals)
     compute_face_normals(pmesh, face_normals, np);

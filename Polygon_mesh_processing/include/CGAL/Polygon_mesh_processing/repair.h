@@ -175,8 +175,8 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), FT(-1));
 
   // If no threshold is provided, compute it as a % of the bbox
-  const bool is_default_area_threshold = is_default_parameter(get_parameter(np, internal_np::area_threshold));
-  const bool is_default_volume_threshold = is_default_parameter(get_parameter(np, internal_np::volume_threshold));
+  const bool is_default_area_threshold = is_default_parameter<NamedParameters, internal_np::area_threshold_t>();
+  const bool is_default_volume_threshold = is_default_parameter<NamedParameters, internal_np::volume_threshold_t>();
 
   const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
 

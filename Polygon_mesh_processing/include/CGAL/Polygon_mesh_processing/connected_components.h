@@ -600,12 +600,12 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
 template <typename PolygonMesh
         , typename ComponentRange
         , typename FaceComponentMap
-        , typename NamedParameters = parameters::Default_named_parameters>
+        , typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void keep_or_remove_connected_components(PolygonMesh& pmesh
                                         , const ComponentRange& components_to_keep
                                         , const FaceComponentMap& fcm
                                         , bool  keep
-                                        , const NamedParameters& np = parameters::default_values())
+                                        , const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -616,7 +616,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
 
-  typedef typename GetInitializedVertexIndexMap<PolygonMesh, NamedParameters>::type VertexIndexMap;
+  typedef typename GetInitializedVertexIndexMap<PolygonMesh, CGAL_BGL_NP_CLASS>::type VertexIndexMap;
   VertexIndexMap vim = get_initialized_vertex_index_map(pmesh, np);
 
   std::set<std::size_t> cc_to_keep;
@@ -720,13 +720,13 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   for(vertex_descriptor v: vertices(pmesh))
     if (!keep_vertex[v])
       vertices_to_remove.push_back(v);
-  if ( is_default_parameter(get_parameter(np, internal_np::vertex_is_constrained)) )
+  if ( is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_is_constrained_t>() )
     for (vertex_descriptor v : vertices_to_remove)
       remove_vertex(v, pmesh);
   else
   {
    typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
-                                                        NamedParameters,
+                                                        CGAL_BGL_NP_CLASS,
                                                         Static_boolean_property_map<vertex_descriptor, false> // default (not used)
                                                          >::type Vertex_map;
     Vertex_map is_cst = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
@@ -995,7 +995,7 @@ void split_connected_components_impl(FIMap fim,
                                 get(CGAL::dynamic_face_property_t<faces_size_type>(), tm));
 
   faces_size_type nb_patches = 0;
-  if(is_default_parameter(get_parameter(np, internal_np::face_patch)))
+  if(is_default_parameter<NamedParameters, internal_np::face_patch_t>())
   {
     nb_patches = CGAL::Polygon_mesh_processing::connected_components(
           tm, pidmap, CGAL::parameters::face_index_map(fim)

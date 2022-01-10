@@ -217,7 +217,7 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 
   static const bool need_aabb_tree =
-    parameters::is_default_parameter(get_parameter(np, internal_np::projection_functor));
+    parameters::is_default_parameter<NamedParameters, internal_np::projection_functor_t>();
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -254,7 +254,7 @@ void isotropic_remeshing(const FaceRange& faces
   FPMap fpmap = choose_parameter(
     get_parameter(np, internal_np::face_patch),
     internal::Connected_components_pmap<PM, FIMap>(faces, pmesh, ecmap, fimap,
-      parameters::is_default_parameter(get_parameter(np, internal_np::face_patch)) && (need_aabb_tree
+      parameters::is_default_parameter<NamedParameters, internal_np::face_patch_t>() && (need_aabb_tree
 #if !defined(CGAL_NO_PRECONDITIONS)
       || protect // face patch map is used to identify patch border edges to check protected edges are short enough
 #endif

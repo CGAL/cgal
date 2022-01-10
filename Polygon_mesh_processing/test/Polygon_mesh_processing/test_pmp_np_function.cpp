@@ -44,6 +44,9 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
   //boolean NP example. Default value is `false`
   bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), false);
 
+  // check is a parameter has been given by the user
+  constexpr bool do_project_is_default = is_default_parameter<NamedParameters, internal_np::do_project_t>();
+
   VCM vcm_np = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained), Default_VCM());
 
 
@@ -53,10 +56,16 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
     std::cout<<"vertex #"<<get(vim, v)<<" : "<<get(vpm, v)<<" : "<<get(vcm_np, v)<<std::endl;
   }
 
-  if(do_project)
-    std::cout<<"do project"<<std::endl;
-  else
-      std::cout<<"don't project"<<std::endl;
+  if (!do_project_is_default)
+  {
+    if(do_project)
+      std::cout<<"do project"<<std::endl;
+    else
+        std::cout<<"don't project"<<std::endl;
+  }
+    else
+        std::cout<<"use default for project"<<std::endl;
+
 }
 
 }
