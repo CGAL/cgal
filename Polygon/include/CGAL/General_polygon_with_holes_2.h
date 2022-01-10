@@ -43,9 +43,10 @@ public:
 /// @{
   /// polygon without hole type
   typedef Polygon_                                    Polygon_2;
-
+#ifndef DOXYGEN_RUNNING
   // Backward compatibility
   typedef Polygon_2                                   General_polygon_2;
+#endif
 /// @}
 
   typedef std::deque<Polygon_2>                       Holes_container;
