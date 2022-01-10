@@ -185,7 +185,7 @@ public:
         \cgalParamDescription{a property map associating the index of a point in the input range
                               to the index of plane (`-1` if the point is not assigned to a plane)}
         \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
-        \cgalParamDefault{There is no default, this parameters is mandatory}
+        \cgalParamDefault{There is no default, this parameters is mandatory.}
       \cgalParamNEnd
 
       \cgalParamNBegin{plane_map}
@@ -1504,7 +1504,7 @@ private:
    \param planes input plane range.
    \param output output iterator where output points are written
    \param epsilon size parameter.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+   \param np a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
       \cgalParamNBegin{point_map}
@@ -1524,8 +1524,7 @@ private:
         \cgalParamDescription{a property map associating the index of a point in the input range
                               to the index of plane (`-1` if the point is not assigned to a plane)}
         \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
-        \cgalParamDefault{unused}
-      \cgalParamNEnd
+        \cgalParamDefault{There is no default, this parameters is mandatory.}
 
       \cgalParamNBegin{plane_map}
         \cgalParamDescription{a property map containing the planes associated to the elements of the plane range `planes`}
@@ -1551,14 +1550,14 @@ private:
 template <typename PointRange,
           typename PlaneRange,
           typename OutputIterator,
-          typename NamedParameters = parameters::Default_named_parameters
+          typename NamedParameters
           >
 OutputIterator
 structure_point_set (const PointRange& points,
                      const PlaneRange& planes,
                      OutputIterator output,
                      double epsilon,
-                     const NamedParameters& np = parameters::use_default_values())
+                     const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
