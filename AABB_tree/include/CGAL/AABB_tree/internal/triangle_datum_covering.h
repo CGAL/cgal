@@ -261,12 +261,14 @@ public:
   void split_and_insert(const Triangle_3& tr)
   {
     // Convert to intervals to ensure that the bounding box fully covers the subdividing triangle
-    using AK = CGAL::Simple_cartesian<CGAL::Interval_nt<true> >;
+    using IT = CGAL::Interval_nt<true>;
+    using NT = typename IT::value_type;
+    using AK = CGAL::Simple_cartesian<IT>;
     using K2AK = CGAL::Cartesian_converter<Kernel, AK>;
     using AFT = AK::FT;
     using APoint_3 = AK::Point_3;
 
-    using APL = std::pair<APoint_3, AFT>; // point and length of the opposite edge
+    using APL = std::pair<APoint_3, NT>; // point and upper bound of the length of the opposite edge
     using AT = std::array<APL, 3>;
 
     m_data.push_back(tr);
@@ -305,9 +307,9 @@ public:
     const AFT sq_l1 = CGAL::squared_distance(ap2, ap0);
     const AFT sq_l2 = CGAL::squared_distance(ap0, ap1);
 
-    to_treat.push(CGAL::make_array(std::make_pair(ap0, sq_l0),
-                                   std::make_pair(ap1, sq_l1),
-                                   std::make_pair(ap2, sq_l2)));
+    to_treat.push(CGAL::make_array(std::make_pair(ap0, sq_l0.sup()),
+                                   std::make_pair(ap1, sq_l1.sup()),
+                                   std::make_pair(ap2, sq_l2.sup())));
 
     while(!to_treat.empty())
     {
@@ -318,11 +320,11 @@ public:
       const APL& apl1 = t[1];
       const APL& apl2 = t[2];
 
-      int i = (apl0.second.sup() >= apl1.second.sup())
-                ? (apl0.second.sup() >= apl2.second.sup()) ? 0 : 2
-                : (apl1.second.sup() >= apl2.second.sup()) ? 1 : 2;
+      int i = (apl0.second >= apl1.second)
+                ? (apl0.second >= apl2.second) ? 0 : 2
+                : (apl1.second >= apl2.second) ? 1 : 2;
 
-      const AFT max_sql = t[i].second.sup();
+      const NT max_sql = t[i].second;
 
       // If the face is too big, do a split (two small bboxes rather than a big one)
       if(max_sql > m_sq_length)
@@ -332,33 +334,42 @@ public:
         {
           // 0 1 2 into 0 1 A and 0 A 2
           const APoint_3 amp = CGAL::midpoint(apl1.first, apl2.first);
-          to_treat.push(CGAL::make_array(std::make_pair(apl0.first, CGAL::squared_distance(apl1.first, amp)),
-                                         std::make_pair(apl1.first, CGAL::squared_distance(amp, apl0.first)),
+          const NT sq_half_length = apl0.second / NT(4);
+          const NT sq_diag_length = CGAL::squared_distance(amp, apl0.first).sup();
+
+          to_treat.push(CGAL::make_array(std::make_pair(apl0.first, sq_half_length),
+                                         std::make_pair(apl1.first, sq_diag_length),
                                          std::make_pair(amp, apl2.second)));
-          to_treat.push(CGAL::make_array(std::make_pair(apl2.first, CGAL::squared_distance(apl0.first, amp)),
-                                         std::make_pair(apl0.first, CGAL::squared_distance(amp, apl2.first)),
+          to_treat.push(CGAL::make_array(std::make_pair(apl2.first, sq_diag_length),
+                                         std::make_pair(apl0.first, sq_half_length),
                                          std::make_pair(amp, apl1.second)));
         }
         else if(i == 1)
         {
           // 0 1 2 into 0 1 A and 1 2 A
           const APoint_3 amp = CGAL::midpoint(apl2.first, apl0.first);
-          to_treat.push(CGAL::make_array(std::make_pair(apl0.first, CGAL::squared_distance(apl1.first, amp)),
-                                         std::make_pair(apl1.first, CGAL::squared_distance(amp, apl0.first)),
+          const NT sq_half_length = apl1.second / NT(4);
+          const NT sq_diag_length = CGAL::squared_distance(amp, apl1.first).sup();
+
+          to_treat.push(CGAL::make_array(std::make_pair(apl0.first, sq_diag_length),
+                                         std::make_pair(apl1.first, sq_half_length),
                                          std::make_pair(amp, apl2.second)));
-          to_treat.push(CGAL::make_array(std::make_pair(apl1.first, CGAL::squared_distance(apl2.first, amp)),
-                                         std::make_pair(apl2.first, CGAL::squared_distance(amp, apl1.first)),
+          to_treat.push(CGAL::make_array(std::make_pair(apl1.first, sq_half_length),
+                                         std::make_pair(apl2.first, sq_diag_length),
                                          std::make_pair(amp, apl0.second)));
         }
         else // i == 2
         {
           // 0 1 2 into 0 A 2 and 2 A 1
           const APoint_3 amp = CGAL::midpoint(apl0.first, apl1.first);
-          to_treat.push(CGAL::make_array(std::make_pair(apl2.first, CGAL::squared_distance(apl0.first, amp)),
-                                         std::make_pair(apl0.first, CGAL::squared_distance(amp, apl2.first)),
+          const NT sq_half_length = apl2.second / NT(4);
+          const NT sq_diag_length = CGAL::squared_distance(amp, apl2.first).sup();
+
+          to_treat.push(CGAL::make_array(std::make_pair(apl2.first, sq_half_length),
+                                         std::make_pair(apl0.first, sq_diag_length),
                                          std::make_pair(amp, apl1.second)));
-          to_treat.push(CGAL::make_array(std::make_pair(apl1.first, CGAL::squared_distance(apl2.first, amp)),
-                                         std::make_pair(apl2.first, CGAL::squared_distance(amp, apl1.first)),
+          to_treat.push(CGAL::make_array(std::make_pair(apl1.first, sq_diag_length),
+                                         std::make_pair(apl2.first, sq_half_length),
                                          std::make_pair(amp, apl0.second)));
         }
       }
