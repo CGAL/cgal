@@ -254,7 +254,7 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   // get proxies
   approx.proxies( get_parameter(np, internal_np::proxies) );
 
-  if (!is_default_parameter<NamedParameters,internal_np::proxies>()
+  if (!is_default_parameter<NamedParameters,internal_np::proxies_t>()
     && (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get proxies done." << std::endl;
 
