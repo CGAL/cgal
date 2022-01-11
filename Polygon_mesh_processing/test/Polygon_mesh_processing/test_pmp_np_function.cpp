@@ -61,10 +61,10 @@ void my_function_with_named_parameters(PolygonMesh& mesh, const NamedParameters&
     if(do_project)
       std::cout<<"do project"<<std::endl;
     else
-        std::cout<<"don't project"<<std::endl;
+      std::cout<<"don't project"<<std::endl;
   }
-    else
-        std::cout<<"use default for project"<<std::endl;
+  else
+    std::cout<<"use default for project"<<std::endl;
 
 }
 
