@@ -451,7 +451,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
     pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(vertex_point, tm));
-    if (!(is_default_parameter(get_parameter(np, internal_np::random_seed))))
+    if (!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
       rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
     min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
@@ -626,7 +626,7 @@ struct Triangle_structure_sampler_for_triangle_soup
     using parameters::is_default_parameter;
 
     min_sq_edge_length = (std::numeric_limits<double>::max)();
-    if (!(is_default_parameter(get_parameter(np, internal_np::random_seed))))
+    if (!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
       rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
   }
 
