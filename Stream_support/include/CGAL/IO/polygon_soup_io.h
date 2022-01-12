@@ -52,8 +52,8 @@ namespace IO {
  * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
- *                      whose `value_type` is itself a model of the concepts `SequenceContainer`
+ * \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                      whose `value_type` is itself a model of the concepts `RandomAccessContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
  *                      convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

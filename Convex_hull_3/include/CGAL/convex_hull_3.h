@@ -29,6 +29,7 @@
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Convex_hull_3/internal/Indexed_triangle_set.h>
 
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
@@ -1084,6 +1085,36 @@ void convex_hull_3(const VertexListGraph& g,
 {
   convex_hull_3(g,pm,CGAL::parameters::all_default());
 }
+
+template <class InputIterator, class PointRange, class TriangleRange>
+void convex_hull_3(InputIterator first, InputIterator beyond,
+                   PointRange& vertices,
+                   TriangleRange& faces,
+                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0,
+                   typename std::enable_if<boost::has_range_iterator<PointRange>::value>::type* = 0,
+                   typename std::enable_if<boost::has_range_iterator<TriangleRange>::value>::type* = 0)
+{
+  typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::type Traits;
+
+  Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
+  convex_hull_3(first, beyond, its, Traits());
+}
+
+
+template <class InputIterator, class P, class PointRange, class TriangleRange, class Traits>
+void convex_hull_3(InputIterator first, InputIterator beyond,
+                   PointRange& vertices,
+                   TriangleRange& faces,
+                   const Traits& traits,
+                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0,
+                   typename std::enable_if<boost::has_range_iterator<PointRange>::value>::type* = 0,
+                   typename std::enable_if<boost::has_range_iterator<TriangleRange>::value>::type* = 0)
+{
+  Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
+  convex_hull_3(first, beyond, its, traits);
+}
+
 
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator
