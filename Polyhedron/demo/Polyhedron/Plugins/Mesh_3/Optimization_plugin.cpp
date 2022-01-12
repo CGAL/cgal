@@ -242,7 +242,7 @@ Mesh_3_optimization_plugin::odt()
 
   ui.objectName->setText(item->name());
 
-  namespace cgpd = CGAL::parameters::default_values;
+  namespace cgpd = CGAL::parameters::default_values_for_mesh_3;
   ui.convergenceRatio->setValue(cgpd::odt_convergence_ratio);
   ui.freezeRatio->setValue(cgpd::odt_freeze_ratio);
 
@@ -310,7 +310,7 @@ Mesh_3_optimization_plugin::lloyd()
 
   ui.objectName->setText(item->name());
 
-  namespace cgpd = CGAL::parameters::default_values;
+  namespace cgpd = CGAL::parameters::default_values_for_mesh_3;
   ui.convergenceRatio->setValue(cgpd::lloyd_convergence_ratio);
   ui.freezeRatio->setValue(cgpd::lloyd_freeze_ratio);
 

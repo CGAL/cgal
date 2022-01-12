@@ -14,7 +14,7 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
@@ -82,10 +82,10 @@ struct Dummy_visitor
 
 } // namespace internal
 
-template<class TM, class ShouldStop,class NamedParameters>
+template<class TM, class ShouldStop,class NamedParameters = parameters::Default_named_parameters>
 int edge_collapse(TM& tmesh,
                   const ShouldStop& should_stop,
-                  const NamedParameters& np)
+                  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -107,12 +107,6 @@ int edge_collapse(TM& tmesh,
                                  choose_parameter<internal::Dummy_filter>(get_parameter(np, internal_np::filter)),
                                  choose_parameter<internal::Dummy_visitor>(get_parameter(np, internal_np::visitor)));
 
-}
-
-template<class TM, class ShouldStop>
-int edge_collapse(TM& tmesh, const ShouldStop& should_stop)
-{
-  return edge_collapse(tmesh, should_stop, CGAL::parameters::all_default());
 }
 
 } // namespace Surface_mesh_simplification

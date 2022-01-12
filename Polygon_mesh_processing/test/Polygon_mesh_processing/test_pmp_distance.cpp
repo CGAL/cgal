@@ -256,8 +256,8 @@ void general_tests(const TriangleMesh& m1,
   std::cout << "Symmetric distance between meshes (sequential) "
               << PMP::approximate_symmetric_Hausdorff_distance<CGAL::Sequential_tag>(
                   m1,m2,
-                  PMP::parameters::number_of_points_per_area_unit(4000),
-                  PMP::parameters::number_of_points_per_area_unit(4000))
+                  CGAL::parameters::number_of_points_per_area_unit(4000),
+                  CGAL::parameters::number_of_points_per_area_unit(4000))
               << "\n";
 
   std::cout << "Max distance to point set "
@@ -304,7 +304,7 @@ int main(int argc, char** argv)
   time.start();
    std::cout << "Distance between meshes (parallel) "
              << PMP::approximate_Hausdorff_distance<CGAL::Parallel_tag>(
-                  m1,m2,PMP::parameters::number_of_points_per_area_unit(4000))
+                  m1,m2,CGAL::parameters::number_of_points_per_area_unit(4000))
              << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";
@@ -314,7 +314,7 @@ int main(int argc, char** argv)
   time.start();
   std::cout << "Distance between meshes (sequential) "
             << PMP::approximate_Hausdorff_distance<CGAL::Sequential_tag>(
-                 m1,m2,PMP::parameters::number_of_points_per_area_unit(4000))
+                 m1,m2,CGAL::parameters::number_of_points_per_area_unit(4000))
             << "\n";
   time.stop();
   std::cout << "done in " << time.time() << "s.\n";

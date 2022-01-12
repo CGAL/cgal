@@ -23,11 +23,6 @@
 #include <iostream>
 #include <string>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,7 +158,7 @@ bool read_STL(std::istream& is,
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const std::string& fname,
               Graph& g, const
-              CGAL_BGL_NP_CLASS& np)
+              CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -193,9 +188,7 @@ bool read_STL(const std::string& fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph>
-bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::all_default()); }
-template <typename Graph>
-bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
+bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::default_values()); }
 
 /// \endcond
 
@@ -244,7 +237,7 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor                  halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                      face_descriptor;
@@ -359,7 +352,7 @@ bool write_STL(std::ostream& os,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -376,15 +369,6 @@ bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
     return write_STL(os, g, np);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool write_STL(std::ostream& os, const Graph& g) { return write_STL(os, g, parameters::all_default()); }
-template <typename Graph>
-bool write_STL(const std::string& fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
-
-/// \endcond
 
 }} // namespace CGAL::IO
 

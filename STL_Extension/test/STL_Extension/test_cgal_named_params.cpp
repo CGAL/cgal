@@ -1,6 +1,6 @@
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 #include <cstdlib>
 
@@ -23,7 +23,7 @@ struct B
 template <int i, class T>
 void check_same_type(T)
 {
-  static const bool b = boost::is_same< A<i>, T >::value;
+  static const bool b = std::is_same< A<i>, T >::value;
   CGAL_static_assertion(b);
   assert(b);
 }
@@ -46,7 +46,7 @@ template<class NamedParameters>
 void test_no_copyable(const NamedParameters& np)
 {
   typedef typename inp::Get_param<typename NamedParameters::base,inp::visitor_t>::type NP_type;
-  CGAL_static_assertion( (boost::is_same<NP_type,std::reference_wrapper<const B> >::value) );
+  CGAL_static_assertion( (std::is_same<NP_type,std::reference_wrapper<const B> >::value) );
 
   const A<4>& a  = params::choose_parameter(params::get_parameter_reference(np, inp::edge_index), A<4>(4));
   assert(a.v==4);
@@ -101,6 +101,15 @@ int main()
                          .vertex_index_map(A<0>(0))
                          .face_index_map(std::reference_wrapper<const B>(b))
   );
+
+  auto d = CGAL::parameters::default_values();
+  CGAL_static_assertion( (std::is_same<decltype(d),CGAL::parameters::Default_named_parameters>::value) );
+#ifndef CGAL_NO_DEPRECATED_CODE
+  auto d1 = CGAL::parameters::all_default();
+  CGAL_static_assertion( (std::is_same<decltype(d1),CGAL::parameters::Default_named_parameters>::value) );
+  auto d2 = CGAL::Polygon_mesh_processing::parameters::all_default();
+  CGAL_static_assertion( (std::is_same<decltype(d2),CGAL::parameters::Default_named_parameters>::value) );
+#endif
 
   return EXIT_SUCCESS;
 }

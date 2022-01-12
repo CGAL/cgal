@@ -1057,7 +1057,7 @@ void get_one_point_per_cc(TriangleMesh& tm,
 
   int nb_cc = Polygon_mesh_processing::connected_components(tm,
                                                             boost::make_assoc_property_map(fcc_map),
-                                                            Polygon_mesh_processing::parameters::face_index_map(fid_pmap));
+                                                            parameters::face_index_map(fid_pmap));
   std::vector<bool> is_cc_treated(nb_cc, false);
   points_of_interest.resize(nb_cc);
   int cc_treated = 0;
@@ -1251,12 +1251,18 @@ bool do_intersect(const Polyline& polyline1,
  *
  */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 bool do_intersect(const TriangleMesh& tm1,
                   const TriangleMesh& tm2,
-                  const NamedParameters1& np1,
-                  const NamedParameters2& np2)
+                  const NamedParameters1& np1 = parameters::default_values(),
+                  const NamedParameters2& np2 = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+                  , const typename boost::disable_if<
+                                    typename boost::has_range_const_iterator<TriangleMesh>::type
+                  >::type* = 0
+#endif
+                  )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1292,19 +1298,6 @@ bool do_intersect(const TriangleMesh& tm1,
            internal::is_mesh2_in_mesh1(tm2, tm1, vpm2, vpm1, gt);
   }
   return false;
-}
-
-//convenient overload
-template <class TriangleMesh>
-bool do_intersect(const TriangleMesh& tm1,
-                  const TriangleMesh& tm2,
-                  const typename boost::disable_if<
-                                    typename boost::has_range_const_iterator<TriangleMesh>::type
-                  >::type* = 0)
-{
-  CGAL_precondition(CGAL::is_triangle_mesh(tm1));
-  CGAL_precondition(CGAL::is_triangle_mesh(tm2));
-  return CGAL::Polygon_mesh_processing::do_intersect(tm1, tm2, parameters::all_default(), parameters::all_default());
 }
 
 /**
@@ -1344,10 +1337,10 @@ bool do_intersect(const TriangleMesh& tm1,
  */
 template <class TriangleMesh,
           class PolylineRange,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool do_intersect(const TriangleMesh& tm,
                   const PolylineRange& polylines,
-                  const NamedParameters& np
+                  const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                 , const typename boost::enable_if<
                     typename boost::has_range_iterator<
@@ -1409,10 +1402,10 @@ bool do_intersect(const TriangleMesh& tm,
  */
 template <class TriangleMesh,
           class Polyline,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool do_intersect(const TriangleMesh& tm,
                   const Polyline& polyline,
-                  const NamedParameters& np
+                  const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                 , const typename boost::disable_if<
                     typename boost::has_range_iterator<
@@ -1436,46 +1429,6 @@ bool do_intersect(const TriangleMesh& tm,
   { return true; }
 
   return false;
-}
-
-template <class TriangleMesh,
-          class PolylineRange>
-bool do_intersect(const TriangleMesh& tm,
-                  const PolylineRange& polylines,
-                  const typename boost::enable_if<
-                    typename boost::has_range_iterator<
-                      typename boost::mpl::eval_if<
-                        boost::has_range_iterator<PolylineRange>,
-                        boost::range_value<PolylineRange>,
-                        boost::false_type
-                      >::type
-                    >::type
-                  >::type* = 0)
-{
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
-  return CGAL::Polygon_mesh_processing::do_intersect(tm, polylines, parameters::all_default());
-}
-
-
-template <class TriangleMesh,
-          class Polyline>
-bool do_intersect(const TriangleMesh& tm,
-                  const Polyline& polyline,
-                  const typename boost::disable_if<
-                    typename boost::has_range_const_iterator<TriangleMesh>::type
-                  >::type* = 0,
-                  const typename boost::disable_if<
-                    typename boost::has_range_iterator<
-                      typename boost::mpl::eval_if<
-                        boost::has_range_iterator<Polyline>,
-                        boost::range_value<Polyline>,
-                        boost::false_type
-                      >::type
-                    >::type
-                  >::type* = 0)
-{
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
-  return CGAL::Polygon_mesh_processing::do_intersect(tm, polyline, parameters::all_default());
 }
 
 namespace internal{
@@ -1572,9 +1525,9 @@ struct Mesh_callback
     //surfacic test
     if(Polygon_mesh_processing::do_intersect(*b1->info(),
                                              *b2->info(),
-                                             Polygon_mesh_processing::parameters::vertex_point_map(vpm1)
+                                             parameters::vertex_point_map(vpm1)
                                              .geom_traits(gt),
-                                             Polygon_mesh_processing::parameters::vertex_point_map(vpm2)
+                                             parameters::vertex_point_map(vpm2)
                                              .geom_traits(gt)))
     {
       *m_iterator++ = std::make_pair(mesh_id_1, mesh_id_2);
@@ -1688,8 +1641,8 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
                                    const NamedParameters& np)
 {
-  std::vector<Named_function_parameters<bool, internal_np::all_default_t> >nps(
-    std::distance(range.begin(), range.end()), parameters::all_default());
+  std::vector<parameters::Default_named_parameters> nps(
+    std::distance(range.begin(), range.end()), parameters::default_values());
   return intersecting_meshes(range, out, np, nps);
 }
 
@@ -1697,7 +1650,7 @@ template <class TriangleMeshRange, class OutputIterator>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out)
 {
-  return intersecting_meshes(range, out, parameters::all_default());
+  return intersecting_meshes(range, out, parameters::default_values());
 }
 
 /**
@@ -1746,14 +1699,14 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  */
 template <class OutputIterator,
           class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters >
 OutputIterator
 surface_intersection(const TriangleMesh& tm1,
                      const TriangleMesh& tm2,
                      OutputIterator polyline_output,
-                     const NamedParameters1& np1,
-                     const NamedParameters2& np2)
+                     const NamedParameters1& np1 = parameters::default_values(),
+                     const NamedParameters2& np2 = parameters::default_values())
 {
   const bool throw_on_self_intersection =
     parameters::choose_parameter(parameters::get_parameter(np1, internal_np::throw_on_self_intersection), false);
@@ -1809,11 +1762,11 @@ namespace experimental {
  */
 template <class OutputIterator,
           class TriangleMesh,
-          class NamedParameters >
+          class NamedParameters = parameters::Default_named_parameters >
 OutputIterator
 surface_self_intersection(const TriangleMesh& tm,
                          OutputIterator polyline_output,
-                         const NamedParameters& np)
+                         const NamedParameters& np = parameters::default_values())
 {
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
@@ -1827,77 +1780,6 @@ surface_self_intersection(const TriangleMesh& tm,
 
   polyline_output=functor(polyline_output, true);
   return polyline_output;
-}
-
-} //end of namespace experimental
-
-
-template <class OutputIterator,
-          class TriangleMesh >
-OutputIterator
-surface_intersection(const TriangleMesh& tm1,
-                     const TriangleMesh& tm2,
-                     OutputIterator polyline_output)
-{
-  return surface_intersection(tm1, tm2, polyline_output,
-    CGAL::Polygon_mesh_processing::parameters::all_default(),
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-template <class OutputIterator,
-          class TriangleMesh,
-          class NamedParameters1>
-OutputIterator
-surface_intersection(const TriangleMesh& tm1,
-                     const TriangleMesh& tm2,
-                     OutputIterator polyline_output,
-                     const NamedParameters1& np)
-{
-  return surface_intersection(tm1, tm2, polyline_output, np,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-template <class OutputIterator,
-          class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2 >
-OutputIterator
-surface_intersection(const TriangleMesh& tm1,
-                     const TriangleMesh& tm2,
-                     OutputIterator polyline_output,
-                     const NamedParameters1& np1,
-                     const NamedParameters2& np2,
-                     const bool throw_on_self_intersection)
-{
-  return surface_intersection(tm1, tm2, polyline_output,
-                     np1.throw_on_self_intersection(throw_on_self_intersection), np2);
-}
-
-template <class OutputIterator,
-          class TriangleMesh >
-OutputIterator
-surface_intersection(const TriangleMesh& tm1,
-                     const TriangleMesh& tm2,
-                     OutputIterator polyline_output,
-                     const bool throw_on_self_intersection)
-{
-  return surface_intersection(tm1, tm2, polyline_output,
-    CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(throw_on_self_intersection),
-    CGAL::Polygon_mesh_processing::parameters::all_default());
-}
-#endif
-
-namespace experimental {
-template <class OutputIterator,
-          class TriangleMesh >
-OutputIterator
-surface_self_intersection(const TriangleMesh& tm,
-                         OutputIterator polyline_output)
-{
-  return surface_self_intersection(tm, polyline_output,
-    CGAL::Polygon_mesh_processing::parameters::all_default()
-  );
 }
 
 } //end of namespace experimental

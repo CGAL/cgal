@@ -18,18 +18,12 @@
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
 
 #include <CGAL/boost/graph/IO/OFF.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/IO/Color.h>
 #include <CGAL/Kernel_traits.h>
 
 #include <iostream>
 #include <tuple>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 
@@ -40,7 +34,7 @@ namespace IO {
 namespace internal {
 
 template<typename PolygonMesh, typename K,
-         typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+         typename NamedParameters = parameters::Default_named_parameters >
 class GetVertexNormalMap
 {
   typedef typename PolygonMesh::template Property_map<typename PolygonMesh::Vertex_index,
@@ -55,7 +49,7 @@ public:
 };
 
 template<typename PolygonMesh,
-         typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+         typename NamedParameters = parameters::Default_named_parameters >
 class GetVertexColorMap
 {
   typedef typename PolygonMesh::template Property_map<typename PolygonMesh::Vertex_index,
@@ -69,7 +63,7 @@ public:
 };
 
 template<typename PolygonMesh, typename K,
-         typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+         typename NamedParameters = parameters::Default_named_parameters >
 class GetVertexTextureMap
 {
   typedef typename PolygonMesh::template Property_map<typename PolygonMesh::Vertex_index,
@@ -84,7 +78,7 @@ public:
 };
 
 template<typename PolygonMesh,
-         typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+         typename NamedParameters = parameters::Default_named_parameters >
 class GetFaceColorMap
 {
   typedef typename PolygonMesh::template Property_map<typename PolygonMesh::Face_index,
@@ -116,7 +110,7 @@ bool read_OFF_with_or_without_fcolors(std::istream& is,
 
   typename Mesh::template Property_map<Face_index, Color> fcm;
 
-  bool is_fcm_requested = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+  bool is_fcm_requested = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::face_color_map_t>());
   if(!is_fcm_requested && scanner.has_colors())
   {
     bool created;
@@ -155,7 +149,7 @@ bool read_OFF_with_or_without_vtextures(std::istream& is,
 
   typename Mesh::template Property_map<Vertex_index, Texture> vtm;
 
-  bool is_vtm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
+  bool is_vtm_requested = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_texture_map_t>());
   if(!is_vtm_requested && scanner.has_textures())
   {
     bool created;
@@ -193,7 +187,7 @@ bool read_OFF_with_or_without_vcolors(std::istream& is,
 
   typename Mesh::template Property_map<Vertex_index, Color> vcm;
 
-  bool is_vcm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
+  bool is_vcm_requested = !(is_default_parameter<CGAL_BGL_NP_CLASS,  internal_np::vertex_color_map_t>());
   if(!is_vcm_requested && scanner.has_colors())
   {
     bool created;
@@ -232,7 +226,7 @@ bool read_OFF_with_or_without_vnormals(std::istream& is,
 
   typename Mesh::template Property_map<Vertex_index, Normal> vnm;
 
-  bool is_vnm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
+  bool is_vnm_requested = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_normal_map_t>());
   if(!is_vnm_requested && scanner.has_normals())
   {
     bool created;
@@ -328,7 +322,7 @@ template <typename Point,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               Surface_mesh<Point>& sm,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -345,29 +339,14 @@ bool read_OFF(std::istream& is,
   return res;
 }
 
-template <typename Point>
-bool read_OFF(std::istream& is,
-              Surface_mesh<Point>& sm)
-{
-  return read_OFF(is, sm, parameters::all_default());
-}
-
 template <typename Point,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname,
               Surface_mesh<Point>& sm,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream in(fname.c_str());
   return read_OFF(in, sm, np);
-}
-
-template <typename Point,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname,
-              Surface_mesh<Point>& sm)
-{
-  return read_OFF(fname, sm, parameters::all_default());
 }
 
 } // namespace IO
@@ -379,7 +358,7 @@ bool read_OFF(const std::string& fname,
   \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm, const CGAL_BGL_NP_CLASS& np)
+CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   return IO::read_OFF(is, sm, np);
 }
@@ -389,21 +368,10 @@ CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm, const C
   \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point>
-CGAL_DEPRECATED bool read_off(std::istream& is, Surface_mesh<Point>& sm)
-{
-  return IO::read_OFF(is, sm, parameters::all_default());
-}
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF(std::istream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-template <typename Point>
 CGAL_DEPRECATED bool read_off(Surface_mesh<Point>& sm, const std::string& filename)
 {
-  return IO::read_OFF(filename, sm, parameters::all_default());
+  return IO::read_OFF(filename, sm, parameters::default_values());
 }
-
 #endif // CGAL_NO_DEPRECATED_CODE
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -426,7 +394,7 @@ bool write_OFF_with_or_without_fcolors(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_fcolors = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+  const bool has_fcolors = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::face_color_map_t>());
 
   typename Mesh::template Property_map<Face_index, Color> fcolors;
   bool has_internal_fcolors;
@@ -453,7 +421,7 @@ bool write_OFF_with_or_without_vtextures(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_vtextures = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
+  const bool has_vtextures = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_texture_map_t>());
 
   typename Mesh::template Property_map<Vertex_index, Texture> vtextures;
   bool has_internal_vtextures;
@@ -478,7 +446,7 @@ bool write_OFF_with_or_without_vcolors(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_vcolors = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
+  const bool has_vcolors = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_color_map_t>());
 
   typename Mesh::template Property_map<Vertex_index, Color> vcolors;
   bool has_internal_vcolors;
@@ -505,7 +473,7 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_vnormals = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
+  const bool has_vnormals = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_normal_map_t>());
 
   typename Mesh::template Property_map<Vertex_index, Normal> vnormals;
   bool has_internal_vnormals;
@@ -589,13 +557,13 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const Surface_mesh<Point>& sm,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
 
-  const bool has_vpoints = !(is_default_parameter(get_parameter(np, internal_np::vertex_point)));
+  const bool has_vpoints = !(is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_point_t>());
   if(has_vpoints)
     return internal::write_OFF_with_or_without_vnormals(os, sm, np);
 
@@ -611,7 +579,7 @@ bool write_OFF(std::ostream& os,
   \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm, const CGAL_BGL_NP_CLASS& np)
+CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_OFF(os, sm, np);
 }
@@ -621,19 +589,9 @@ CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm, 
   \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
 */
 template <typename Point>
-CGAL_DEPRECATED bool write_off(std::ostream& os, const Surface_mesh<Point>& sm)
-{
-  return IO::write_OFF(os, sm, parameters::all_default());
-}
-
-/*!
-  \ingroup PkgSurfaceMeshIOFuncDeprecated
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF(std::ostream&, const Surface_mesh<Point>&)` should be used instead.
-*/
-template <typename Point>
 CGAL_DEPRECATED bool write_off(const Surface_mesh<Point>& sm, const std::string& filename)
 {
-  return IO::write_OFF(filename, sm, parameters::all_default());
+  return IO::write_OFF(filename, sm, parameters::default_values());
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

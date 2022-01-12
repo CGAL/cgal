@@ -24,7 +24,7 @@
 #include <CGAL/Mesh_3/sliver_criteria.h>
 
 namespace CGAL {
-namespace parameters { namespace default_values {
+namespace parameters { namespace default_values_for_mesh_3 {
 
 // exude_mesh_3
 const double exude_sliver_bound = 0.;
@@ -51,7 +51,7 @@ const double lloyd_convergence_ratio = 0.02;
 const double odt_freeze_ratio = 0.01;
 const double odt_convergence_ratio = 0.02;
 
-} } // end namespace parameters::default_values
+} } // end namespace parameters::default_values_for_mesh_3
 } // end namespace CGAL
 
 #endif // CGAL_MESH_3_PARAMETERS_DEFAULTS_H
