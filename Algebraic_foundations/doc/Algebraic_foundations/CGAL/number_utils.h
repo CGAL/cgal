@@ -81,7 +81,7 @@ and \f$ r\f$ minimal with respect to the Euclidean Norm of the
 `result_type`.
 
 The function `div_mod()` computes the integral quotient and remainder of
-division with remainder.
+division with the remainder.
 
 In case the argument types `NT1` and `NT2` differ,
 the `result_type` is determined via `Coercion_traits`.
