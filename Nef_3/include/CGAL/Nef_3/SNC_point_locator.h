@@ -190,37 +190,13 @@ public:
 
 
   virtual void initialize(SNC_structure* W) {
-#ifdef CGAL_NEF_LIST_OF_TRIANGLES
-    this->set_snc(*W);
-    candidate_provider = new SNC_candidate_provider(W);
-#else // CGAL_NEF_LIST_OF_TRIANGLES
-    CGAL_NEF_TIMER(ct_t.start());
-    this->version_ = std::string("Point Locator by Spatial Subdivision (tm)");
-    CGAL_NEF_CLOG(version());
-    CGAL_assertion( W != nullptr);
-//    (Base) *this = SNC_decorator(*W);
-    this->set_snc(*W);
-    Object_list objects;
-    Vertex_iterator v;
-    Halfedge_iterator e;
-    Halffacet_iterator f;
-    CGAL_forall_vertices( v, *this->sncp())
-      objects.push_back(make_object(Vertex_handle(v)));
-    typename Object_list::difference_type v_end = objects.size();
-    CGAL_forall_edges( e, *this->sncp())
-      objects.push_back(make_object(Halfedge_handle(e)));
-    CGAL_forall_facets( f, *this->sncp()) {
-      objects.push_back(make_object(Halffacet_handle(f)));
-    }
+
     if(initialized)
       delete candidate_provider;
 
-    Object_list_iterator oli=objects.begin()+v_end;
-    candidate_provider = new SNC_candidate_provider(objects,oli);
+    this->set_snc(*W);
+    candidate_provider = new SNC_candidate_provider(W);
 
-    // CGAL_NEF_TRACEN(*candidate_provider);
-    CGAL_NEF_TIMER(ct_t.stop());
-#endif // CGAL_NEF_LIST_OF_TRIANGLES
     initialized = true;
   }
 
