@@ -1152,7 +1152,9 @@ private:
         target_px = max_nb_proxies;
       else
         target_px *= 2;
-      add_proxies_error_diffusion(target_px - m_proxies.size());
+      // if no proxies could be added, stop
+      if( add_proxies_error_diffusion(target_px - m_proxies.size()) == 0)
+        break;
       const FT err = run(nb_relaxations);
       error_drop = err / initial_err;
     }
