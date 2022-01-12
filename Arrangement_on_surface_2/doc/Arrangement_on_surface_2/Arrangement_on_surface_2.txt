@@ -2213,11 +2213,9 @@ vertex and the remaining one is vertical.
 \cgalFigureBegin{aos_fig-bounded_vd,bounded_vertical_decomposition.png}
 An arrangement of four line segments and its vertical decomposition
 into pseudo trapezoids, as constructed in \ref
-Arrangement_on_surface_2/bounded_vertical_decomposition.cpp.  The
-segments of \f$\mathcal{S}_1\f$ are drawn in solid lines and the
-segments of \f$\mathcal{S}_2\f$ are drawn in dark dashed lines. Note
-that the segment \f$ s\f$ (light dashed line) overlaps one of the
-segments in \f$\mathcal{S}_1\f$.
+Arrangement_on_surface_2/bounded_vertical_decomposition.cpp. The
+segments of the arrangement are drawn in solid blue lines and the
+segments of the vertical decomposition are drawn in dark dotted lines.
 \cgalFigureEnd
 <!-- ------------------------------------------------------------------------- -->
 
