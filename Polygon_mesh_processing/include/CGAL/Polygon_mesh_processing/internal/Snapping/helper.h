@@ -233,6 +233,10 @@ struct Snapping_default_visitor
   template <typename Vertex, typename Mesh>
   void after_vertex_edge_snap(const Vertex /*new_vertex*/, const Mesh&) { }
 
+  // Called after CGAL::Euler::split_face(h1, h2, tm)
+  template <typename Halfedge_descriptor, typename Mesh>
+  void after_split_face(const Halfedge_descriptor /*h1*/, const Halfedge_descriptor /*h2*/, const Mesh& /*tm*/) { }
+
   // ------------------------------- Two passes (segmentation or not) ------------------------------
 
   // Called at the start of the snapping pass that is restricted to compatible patch (first pass).
