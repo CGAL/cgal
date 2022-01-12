@@ -660,6 +660,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
   return min_cut;
 }
 
+/// \cond SKIP_IN_MANUAL
 
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
