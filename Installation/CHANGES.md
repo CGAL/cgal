@@ -1,6 +1,12 @@
 Release History
 ===============
 
+
+### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
+
+-   Added the member function `write_graphviz()` to the class The Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
+
+
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
