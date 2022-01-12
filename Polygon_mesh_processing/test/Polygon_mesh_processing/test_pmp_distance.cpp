@@ -269,7 +269,7 @@ void general_tests(const TriangleMesh& m1,
             << "\n";
 
   std::vector<typename GeomTraits::Point_3> samples;
-  PMP::sample_triangle_mesh(m1, std::back_inserter(samples));
+  PMP::sample_triangle_mesh(m1, std::back_inserter(samples), CGAL::parameters::random_seed(0));
   std::cout << samples.size()<<" points sampled on mesh."<<std::endl;
 
 }
