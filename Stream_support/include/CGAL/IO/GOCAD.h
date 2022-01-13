@@ -158,8 +158,6 @@ bool read_GOCAD(std::istream& is,
 }
 /// \endcond
 
-/// \endcond
-
 /*!
  * \ingroup PkgStreamSupportIoFuncsGOCAD
  *
