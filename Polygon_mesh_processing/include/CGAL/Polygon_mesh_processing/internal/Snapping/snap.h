@@ -1360,7 +1360,9 @@ template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 std::size_t snap_borders(TriangleMesh& tm,
                          ToleranceMap tolerance_map,
-                         const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                         const CGAL_BGL_NP_CLASS& np = parameters::default_values(),
+                         const typename std::enable_if_t<!std::is_same<TriangleMesh, ToleranceMap>::value>* = 0
+)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
