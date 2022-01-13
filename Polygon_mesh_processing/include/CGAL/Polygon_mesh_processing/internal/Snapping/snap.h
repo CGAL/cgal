@@ -1301,7 +1301,9 @@ std::size_t snap_borders(TriangleMesh& tm_A,
                          TriangleMesh& tm_B,
                          ToleranceMap_B tolerance_map_B,
                          const NamedParameters_A& np_A = parameters::default_values(),
-                         const NamedParameters_B& np_B = parameters::default_values())
+                         const NamedParameters_B& np_B = parameters::default_values(),
+                         const typename std::enable_if_t<!std::is_same<TriangleMesh, ToleranceMap_A>::value>* = 0
+  )
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
