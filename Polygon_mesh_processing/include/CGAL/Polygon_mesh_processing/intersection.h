@@ -1251,12 +1251,12 @@ bool do_intersect(const Polyline& polyline1,
  *
  */
 template <class TriangleMesh,
-          class NamedParameters1 = parameters::Default_named_parameters,
-          class NamedParameters2 = parameters::Default_named_parameters>
+          class CGAL_BGL_NP_TEMPLATE_PARAMETERS_1,
+          class CGAL_BGL_NP_TEMPLATE_PARAMETERS_2>
 bool do_intersect(const TriangleMesh& tm1,
                   const TriangleMesh& tm2,
-                  const NamedParameters1& np1 = parameters::default_values(),
-                  const NamedParameters2& np2 = parameters::default_values()
+                  const CGAL_BGL_NP_CLASS_1& np1 = parameters::default_values(),
+                  const CGAL_BGL_NP_CLASS_2& np2 = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                   , const typename boost::disable_if<
                                     typename boost::has_range_const_iterator<TriangleMesh>::type
@@ -1285,13 +1285,13 @@ bool do_intersect(const TriangleMesh& tm1,
 
   if (test_overlap)
   {
-    typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type VertexPointMap1;
-    typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type VertexPointMap2;
+    typedef typename GetVertexPointMap<TriangleMesh, CGAL_BGL_NP_CLASS_1>::const_type VertexPointMap1;
+    typedef typename GetVertexPointMap<TriangleMesh, CGAL_BGL_NP_CLASS_2>::const_type VertexPointMap2;
     VertexPointMap1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm1));
     VertexPointMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm2));
-    typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
+    typedef typename GetGeomTraits<TriangleMesh, CGAL_BGL_NP_CLASS_1>::type GeomTraits;
     GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np1, internal_np::geom_traits));
 
     return internal::is_mesh2_in_mesh1(tm1, tm2, vpm1, vpm2, gt) ||
@@ -1402,10 +1402,10 @@ bool do_intersect(const TriangleMesh& tm,
  */
 template <class TriangleMesh,
           class Polyline,
-          class NamedParameters = parameters::Default_named_parameters>
+          class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool do_intersect(const TriangleMesh& tm,
                   const Polyline& polyline,
-                  const NamedParameters& np = parameters::default_values()
+                  const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                 , const typename boost::disable_if<
                     typename boost::has_range_iterator<
