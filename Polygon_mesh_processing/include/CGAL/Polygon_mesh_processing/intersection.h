@@ -1409,7 +1409,7 @@ bool do_intersect(const TriangleMesh& tm,
 #ifndef DOXYGEN_RUNNING
                 , const typename boost::disable_if<
                     typename boost::mpl::or_<
-                      typename boost::is_same<TriangleMesh, Polyline>::type,
+                      typename boost::is_same<TriangleMesh, Polyline>::type, // Added to please MSVC 2015
                       typename boost::mpl::not_<typename boost::has_range_iterator<Polyline>::type>::type, // not a range
                       typename boost::has_range_iterator<
                         typename boost::mpl::eval_if<
