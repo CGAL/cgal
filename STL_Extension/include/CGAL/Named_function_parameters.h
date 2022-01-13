@@ -21,14 +21,14 @@
 #include <type_traits>
 #include <utility>
 
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NP_T=bool, typename NP_Tag=CGAL::internal_np::all_default_t, typename NP_Base=CGAL::internal_np::No_property
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT NP_T, typename NP_Tag, typename NP_Base
-#define CGAL_BGL_NP_CLASS CGAL::Named_function_parameters<NP_T,NP_Tag,NP_Base>
+#define CGAL_NP_TEMPLATE_PARAMETERS NP_T=bool, typename NP_Tag=CGAL::internal_np::all_default_t, typename NP_Base=CGAL::internal_np::No_property
+#define CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT NP_T, typename NP_Tag, typename NP_Base
+#define CGAL_NP_CLASS CGAL::Named_function_parameters<NP_T,NP_Tag,NP_Base>
 
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS_1 NP_T1=bool, typename NP_Tag1=CGAL::internal_np::all_default_t, typename NP_Base1=CGAL::internal_np::No_property
-#define CGAL_BGL_NP_CLASS_1 CGAL::Named_function_parameters<NP_T1,NP_Tag1,NP_Base1>
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS_2 NP_T2=bool, typename NP_Tag2=CGAL::internal_np::all_default_t, typename NP_Base2=CGAL::internal_np::No_property
-#define CGAL_BGL_NP_CLASS_2 CGAL::Named_function_parameters<NP_T2,NP_Tag2,NP_Base2>
+#define CGAL_NP_TEMPLATE_PARAMETERS_1 NP_T1=bool, typename NP_Tag1=CGAL::internal_np::all_default_t, typename NP_Base1=CGAL::internal_np::No_property
+#define CGAL_NP_CLASS_1 CGAL::Named_function_parameters<NP_T1,NP_Tag1,NP_Base1>
+#define CGAL_NP_TEMPLATE_PARAMETERS_2 NP_T2=bool, typename NP_Tag2=CGAL::internal_np::all_default_t, typename NP_Base2=CGAL::internal_np::No_property
+#define CGAL_NP_CLASS_2 CGAL::Named_function_parameters<NP_T2,NP_Tag2,NP_Base2>
 
 namespace CGAL {
 namespace internal_np{

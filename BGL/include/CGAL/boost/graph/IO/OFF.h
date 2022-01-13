@@ -64,12 +64,12 @@ public:
 
 // Because some packages can provide overloads with the same signature to automatically initialize
 // property maps (see Surface_mesh/IO/ for example)
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF_BGL(std::istream& is,
                   Graph& g,
-                  const CGAL_BGL_NP_CLASS& np)
+                  const CGAL_NP_CLASS& np)
 {
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type  VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                  Point;
 
   internal::OFF_builder<Graph, Point> builder(is);
@@ -150,10 +150,10 @@ bool read_OFF_BGL(std::istream& is,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -234,10 +234,10 @@ bool read_OFF(std::istream& is,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -256,8 +256,8 @@ bool read_OFF(const std::string& fname,
 
  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF()` should be used instead.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::read_OFF(is, g, np);
 }
@@ -267,8 +267,8 @@ CGAL_DEPRECATED bool read_off(std::istream& is, Graph& g, const CGAL_BGL_NP_CLAS
 
 \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_OFF()` should be used instead.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_off(const char* fname, Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
  return IO::read_OFF(fname, g, np);
 }
@@ -287,10 +287,10 @@ CGAL_DEPRECATED bool read_off(const std::string& fname, Graph& g)
 namespace IO {
 namespace internal {
 
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF_BGL(std::ostream& os,
                    const Graph& g,
-                   const CGAL_BGL_NP_CLASS& np)
+                   const CGAL_NP_CLASS& np)
 {
   internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_OFF> printer(os);
   return printer(g, np);
@@ -360,10 +360,10 @@ bool write_OFF_BGL(std::ostream& os,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -434,10 +434,10 @@ bool write_OFF(std::ostream& os,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const std::string& fname,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
@@ -462,8 +462,8 @@ bool write_OFF(const std::string& fname,
 
  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF()` should be used instead.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_OFF(os, g, np);
 }
@@ -473,8 +473,8 @@ CGAL_DEPRECATED bool write_off(std::ostream& os, const Graph& g, const CGAL_BGL_
 
 \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_OFF()` should be used instead.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_off(const char* fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
  return IO::write_OFF(fname, g, np);
 }

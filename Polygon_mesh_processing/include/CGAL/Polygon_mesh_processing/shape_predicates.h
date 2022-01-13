@@ -114,11 +114,11 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 ///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
-template <typename EdgeRange, typename TriangleMesh, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename EdgeRange, typename TriangleMesh, typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_edges(const EdgeRange& edges,
                                 const TriangleMesh& tm,
                                 OutputIterator out,
-                                const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
 
@@ -134,10 +134,10 @@ OutputIterator degenerate_edges(const EdgeRange& edges,
 ///
 /// See above for the comprehensive description of the parameters.
 ///
-template <typename TriangleMesh, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename TriangleMesh, typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_edges(const TriangleMesh& tm,
                                 OutputIterator out,
-                                const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+                                const CGAL_NP_CLASS& np = parameters::default_values()
                                )
 {
   return degenerate_edges(edges(tm), tm, out, np);
@@ -229,11 +229,11 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-template <typename FaceRange, typename TriangleMesh, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename FaceRange, typename TriangleMesh, typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_faces(const FaceRange& faces,
                                 const TriangleMesh& tm,
                                 OutputIterator out,
-                                const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
@@ -250,10 +250,10 @@ OutputIterator degenerate_faces(const FaceRange& faces,
 ///
 /// See above for the comprehensive description of the parameters.
 ///
-template <typename TriangleMesh, typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename TriangleMesh, typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_faces(const TriangleMesh& tm,
                                 OutputIterator out,
-                                const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+                                const CGAL_NP_CLASS& np = parameters::default_values()
                                 )
 {
   return degenerate_faces(faces(tm), tm, out, np);

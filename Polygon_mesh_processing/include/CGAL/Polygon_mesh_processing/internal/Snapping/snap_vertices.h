@@ -1218,16 +1218,16 @@ std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
 
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS_1,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS_2>
+          typename CGAL_NP_TEMPLATE_PARAMETERS_1,
+          typename CGAL_NP_TEMPLATE_PARAMETERS_2>
 std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
                           PolygonMesh& tm_A,
                           const HalfedgeRange_B& halfedge_range_B,
                           PolygonMesh& tm_B,
-                          const CGAL_BGL_NP_CLASS_1& np_A=parameters::default_values(),
-                          const CGAL_BGL_NP_CLASS_2& np_B=parameters::default_values())
+                          const CGAL_NP_CLASS_1& np_A=parameters::default_values(),
+                          const CGAL_NP_CLASS_2& np_B=parameters::default_values())
 {
-  typedef typename GetGeomTraits<PolygonMesh, CGAL_BGL_NP_CLASS_1>::type              GT;
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS_1>::type              GT;
   typedef typename GT::FT                                                             FT;
   typedef CGAL::dynamic_vertex_property_t<FT>                                         Vertex_property_tag;
   typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type        Tolerance_map;

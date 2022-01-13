@@ -147,9 +147,9 @@ struct Face_filtered_graph
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
-  template <class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+  template <class CGAL_NP_TEMPLATE_PARAMETERS>
   Face_filtered_graph(const Graph& graph,
-                      const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                      const CGAL_NP_CLASS& np = parameters::default_values())
     : _graph(const_cast<Graph&>(graph))
     , fimap(CGAL::get_initialized_face_index_map(graph, np))
     , vimap(CGAL::get_initialized_vertex_index_map(graph, np))
@@ -208,11 +208,11 @@ struct Face_filtered_graph
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
-  template <typename FacePatchIndexMap, class FacePatchIndexRange, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+  template <typename FacePatchIndexMap, class FacePatchIndexRange, class CGAL_NP_TEMPLATE_PARAMETERS>
   Face_filtered_graph(const Graph& graph,
                       const FacePatchIndexRange& selected_face_patch_indices,
                       FacePatchIndexMap face_patch_index_map,
-                      const CGAL_BGL_NP_CLASS& np
+                      const CGAL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
                     , typename boost::enable_if<
                         typename boost::has_range_const_iterator<FacePatchIndexRange>::type
@@ -290,11 +290,11 @@ struct Face_filtered_graph
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
-  template <typename FacePatchIndexMap, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+  template <typename FacePatchIndexMap, class CGAL_NP_TEMPLATE_PARAMETERS>
   Face_filtered_graph(const Graph& graph,
                       typename boost::property_traits<FacePatchIndexMap>::value_type selected_face_patch_index,
                       FacePatchIndexMap face_patch_index_map,
-                      const CGAL_BGL_NP_CLASS& np)
+                      const CGAL_NP_CLASS& np)
     : _graph(const_cast<Graph&>(graph)),
       fimap(CGAL::get_initialized_face_index_map(graph, np)),
       vimap(CGAL::get_initialized_vertex_index_map(graph, np)),
@@ -360,10 +360,10 @@ struct Face_filtered_graph
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    */
-  template <typename FaceRange, class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+  template <typename FaceRange, class CGAL_NP_TEMPLATE_PARAMETERS>
   Face_filtered_graph(const Graph& graph,
                       const FaceRange& selected_faces,
-                      const CGAL_BGL_NP_CLASS& np)
+                      const CGAL_NP_CLASS& np)
     : _graph(const_cast<Graph&>(graph)),
       fimap(CGAL::get_initialized_face_index_map(graph, np)),
       vimap(CGAL::get_initialized_vertex_index_map(graph, np)),

@@ -2161,12 +2161,12 @@ INCLUDE_FILE_PATTERNS  =
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
 PREDEFINED             = DOXYGEN_RUNNING \
-                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS=NamedParameters = CGAL::parameters::Default_named_parameters" \
-                         "CGAL_BGL_NP_CLASS=NamedParameters" \
-                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS_1=NamedParameters1 = CGAL::parameters::Default_named_parameter" \
-                         "CGAL_BGL_NP_CLASS_1=NamedParameters1" \
-                         "CGAL_BGL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
-                         "CGAL_BGL_NP_CLASS_2=NamedParameters2" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS=NamedParameters = CGAL::parameters::Default_named_parameters" \
+                         "CGAL_NP_CLASS=NamedParameters" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS_1=NamedParameters1 = CGAL::parameters::Default_named_parameter" \
+                         "CGAL_NP_CLASS_1=NamedParameters1" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
+                         "CGAL_NP_CLASS_2=NamedParameters2" \
                          CGAL_DEPRECATED
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this

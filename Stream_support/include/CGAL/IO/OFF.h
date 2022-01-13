@@ -178,11 +178,11 @@ bool read_OFF(std::istream& is,
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -231,11 +231,11 @@ bool read_OFF(std::istream& is,
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -276,11 +276,11 @@ bool read_OFF(const std::string& fname,
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -317,11 +317,11 @@ bool write_OFF(std::ostream& os,
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif

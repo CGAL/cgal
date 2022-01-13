@@ -456,17 +456,17 @@ bool read_LAS_with_properties(std::istream& is,
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(std::istream& is,
               PointOutputIterator output,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
 
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::type PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   return read_LAS_with_properties(is, output, make_las_point_reader(point_map));
@@ -474,8 +474,8 @@ bool read_LAS(std::istream& is,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np = parameters::default_values(),
+template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
               typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
@@ -520,10 +520,10 @@ bool read_LAS(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& 
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(const std::string& filename,
               PointOutputIterator output,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(filename, std::ios::binary);
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
@@ -532,8 +532,8 @@ bool read_LAS(const std::string& filename,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(fname, std::ios::binary);
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
@@ -610,16 +610,16 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_las_points(std::istream& is,
                                      OutputIterator output,
-                                     const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type point_map =
-      choose_parameter<typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type>(get_parameter(np, internal_np::point_map));
+  typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_NP_CLASS>::type point_map =
+      choose_parameter<typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_NP_CLASS>::type>(get_parameter(np, internal_np::point_map));
 
   return IO::read_LAS(is, output, make_las_point_reader(point_map));
 }
@@ -628,8 +628,8 @@ CGAL_DEPRECATED bool read_las_points(std::istream& is,
 
 
 // variant with default output iterator value type
-template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }

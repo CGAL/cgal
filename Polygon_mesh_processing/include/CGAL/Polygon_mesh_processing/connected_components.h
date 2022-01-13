@@ -298,9 +298,9 @@ namespace internal {
 //  *
 //  */
 template <typename PolygonMesh,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t number_of_connected_components(const PolygonMesh& pmesh,
-                                           const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::faces_size_type                faces_size_type;
   typedef CGAL::dynamic_face_property_t<faces_size_type>                            Face_property_tag;
@@ -600,12 +600,12 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
 template <typename PolygonMesh
         , typename ComponentRange
         , typename FaceComponentMap
-        , typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+        , typename CGAL_NP_TEMPLATE_PARAMETERS>
 void keep_or_remove_connected_components(PolygonMesh& pmesh
                                         , const ComponentRange& components_to_keep
                                         , const FaceComponentMap& fcm
                                         , bool  keep
-                                        , const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                        , const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -616,7 +616,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
 
-  typedef typename GetInitializedVertexIndexMap<PolygonMesh, CGAL_BGL_NP_CLASS>::type VertexIndexMap;
+  typedef typename GetInitializedVertexIndexMap<PolygonMesh, CGAL_NP_CLASS>::type VertexIndexMap;
   VertexIndexMap vim = get_initialized_vertex_index_map(pmesh, np);
 
   std::set<std::size_t> cc_to_keep;
@@ -720,13 +720,13 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   for(vertex_descriptor v: vertices(pmesh))
     if (!keep_vertex[v])
       vertices_to_remove.push_back(v);
-  if ( is_default_parameter<CGAL_BGL_NP_CLASS, internal_np::vertex_is_constrained_t>() )
+  if ( is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_is_constrained_t>() )
     for (vertex_descriptor v : vertices_to_remove)
       remove_vertex(v, pmesh);
   else
   {
    typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
-                                                        CGAL_BGL_NP_CLASS,
+                                                        CGAL_NP_CLASS,
                                                         Static_boolean_property_map<vertex_descriptor, false> // default (not used)
                                                          >::type Vertex_map;
     Vertex_map is_cst = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
@@ -871,10 +871,10 @@ void remove_connected_components(PolygonMesh& pmesh
 */
 template <typename PolygonMesh
         , typename FaceRange
-        , typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+        , typename CGAL_NP_TEMPLATE_PARAMETERS>
 void remove_connected_components(PolygonMesh& pmesh
                                 , const FaceRange& components_to_remove
-                                , const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                , const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -885,7 +885,7 @@ void remove_connected_components(PolygonMesh& pmesh
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
 
-  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_BGL_NP_CLASS>::type FaceIndexMap;
+  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_NP_CLASS>::type FaceIndexMap;
   FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fim);
@@ -941,10 +941,10 @@ void remove_connected_components(PolygonMesh& pmesh
 */
 template <typename PolygonMesh
         , typename FaceRange
-        , typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+        , typename CGAL_NP_TEMPLATE_PARAMETERS>
 void keep_connected_components(PolygonMesh& pmesh
                              , const FaceRange& components_to_keep
-                             , const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                             , const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
@@ -952,7 +952,7 @@ void keep_connected_components(PolygonMesh& pmesh
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_BGL_NP_CLASS>::type FaceIndexMap;
+  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, CGAL_NP_CLASS>::type FaceIndexMap;
   FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(static_cast<unsigned>(num_faces(pmesh)), fim);

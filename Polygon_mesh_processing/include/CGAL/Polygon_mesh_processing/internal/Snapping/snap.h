@@ -1357,10 +1357,10 @@ std::size_t snap_borders(TriangleMesh& tm_A,
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh,
           typename ToleranceMap,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t snap_borders(TriangleMesh& tm,
                          ToleranceMap tolerance_map,
-                         const CGAL_BGL_NP_CLASS& np = parameters::default_values(),
+                         const CGAL_NP_CLASS& np = parameters::default_values(),
                          const typename std::enable_if_t<!std::is_same<TriangleMesh, ToleranceMap>::value>* = 0
 )
 {
@@ -1376,9 +1376,9 @@ std::size_t snap_borders(TriangleMesh& tm,
 
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t snap_borders(TriangleMesh& tm,
-                         const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                         const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 

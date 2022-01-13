@@ -40,12 +40,12 @@ namespace IO {
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is,
                 std::pair<std::string, std::string>& name_and_color,
                 PointRange& points,
                 PolygonRange& polygons,
-                const CGAL_BGL_NP_CLASS& np)
+                const CGAL_NP_CLASS& np)
 {
   typedef typename boost::range_value<PointRange>::type     Point;
   typedef typename boost::range_value<PolygonRange>::type   Poly;
@@ -189,11 +189,11 @@ bool read_GOCAD(std::istream& is,
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(std::istream& is,
                 PointRange& points,
                 PolygonRange& polygons,
-                const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                 , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -234,11 +234,11 @@ bool read_GOCAD(std::istream& is,
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_GOCAD(const std::string& fname,
                 PointRange& points,
                 PolygonRange& polygons,
-                const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                 , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -258,19 +258,19 @@ namespace internal {
 
 template <typename PointRange,
           typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
                  const char* fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS& np)
+                 const CGAL_NP_CLASS& np)
 {
   typedef typename boost::range_value<PolygonRange>::type                   Poly;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type   PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::type   PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   if(!os.good())
@@ -342,11 +342,11 @@ bool write_GOCAD(std::ostream& os,
 */
 template <typename PointRange,
           typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(std::ostream& os,
                  const PointRange& points,
                  const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+                 const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                  , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
@@ -384,11 +384,11 @@ bool write_GOCAD(std::ostream& os,
 */
 template <typename PointRange,
           typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_GOCAD(const std::string& fname,
                  const PointRange& points,
                  const PolygonRange& polygons,
-                 const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+                 const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                  , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif

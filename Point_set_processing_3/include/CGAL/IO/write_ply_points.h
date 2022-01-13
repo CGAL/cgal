@@ -184,10 +184,10 @@ template <typename PointRange,
 
    \sa `write_PLY_with_properties()`
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -197,7 +197,7 @@ bool write_PLY(std::ostream& os,
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef Point_set_processing_3_np_helper<PointRange, CGAL_BGL_NP_CLASS> NP_helper;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
   typedef typename NP_helper::Const_point_map PointMap;
   typedef typename NP_helper::Normal_map NormalMap;
 
@@ -272,10 +272,10 @@ bool write_PLY(std::ostream& os,
 
    \sa `write_PLY_with_properties()`
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -374,8 +374,8 @@ CGAL_DEPRECATED bool write_ply_points_with_properties(std::ostream& os, ///< out
 \deprecated This function is deprecated since \cgal 5.3,
             \link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink should be used instead.
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_PLY(os, points, np);
 }

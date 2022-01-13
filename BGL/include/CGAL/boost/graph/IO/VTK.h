@@ -140,10 +140,10 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  * \returns `true` if reading was successful, `false` otherwise.
 */
 template<typename Graph,
-         typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_VTP(const std::string& fname,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream test(fname);
   if(!test.good())
@@ -412,10 +412,10 @@ void write_polys_points(std::ostream& os,
  *
  * \returns `true` if writing was successful, `false` otherwise.
  */
-template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template<typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -511,8 +511,8 @@ bool write_VTP(std::ostream& os,
  *
  * \returns `true` if writing was successful, `false` otherwise.
  */
-template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template<typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_VTP(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   std::ofstream os;
@@ -536,8 +536,8 @@ bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
 
  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_VTP()` should be used instead.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_VTP(os, g, np);
 }

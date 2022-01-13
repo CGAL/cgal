@@ -324,8 +324,8 @@ void smooth_mesh(const FaceRange& faces,
 }
 
 ///\cond SKIP_IN_MANUAL
-template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-void smooth_mesh(TriangleMesh& tmesh, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
+void smooth_mesh(TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   smooth_mesh(faces(tmesh), tmesh, np);
 }

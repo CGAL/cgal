@@ -333,11 +333,11 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname,
               CGAL::Point_set_3<Point, Vector>& point_set,
               std::string& comments,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -355,8 +355,8 @@ bool read_PLY(const std::string& fname,
 }
 
 /// \cond SKIP_IN_MANUAL
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::string unused_comments;
   return read_PLY(fname, point_set, unused_comments, np);
@@ -446,11 +446,11 @@ namespace IO {
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const CGAL::Point_set_3<Point, Vector>& point_set,
                const std::string& comments,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::Index Index;
@@ -663,8 +663,8 @@ bool write_PLY(std::ostream& os,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return write_PLY(os, point_set, std::string(), np);
 }
@@ -709,11 +709,11 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& fname,
                const CGAL::Point_set_3<Point, Vector>& point_set,
                const std::string& comments,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np)
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -732,8 +732,8 @@ bool write_PLY(const std::string& fname,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return write_PLY(fname, point_set, std::string(), np);
 }

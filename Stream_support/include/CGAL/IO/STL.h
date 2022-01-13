@@ -68,11 +68,11 @@ namespace IO {
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
               PointRange& points,
               TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
@@ -202,11 +202,11 @@ bool read_STL(std::istream& is,
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const std::string& fname,
               PointRange& points,
               TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
@@ -268,11 +268,11 @@ bool read_STL(const std::string& fname,
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
                const PointRange& points,
                const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
@@ -283,7 +283,7 @@ bool write_STL(std::ostream& os,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type   PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::type   PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   typedef typename boost::property_traits<PointMap>::value_type             Point;
@@ -376,11 +376,11 @@ bool write_STL(std::ostream& os,
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const std::string& fname,
                const PointRange& points,
                const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif

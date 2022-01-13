@@ -77,10 +77,10 @@ namespace IO {
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               PointOutputIterator output,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
 #endif
@@ -92,7 +92,7 @@ bool read_OFF(std::istream& is,
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
 
   // basic geometric types
-  typedef Point_set_processing_3_np_helper<PointRange, CGAL_BGL_NP_CLASS> NP_helper;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
   typedef typename NP_helper::Point_map PointMap;
   typedef typename NP_helper::Normal_map NormalMap;
   typedef typename NP_helper::Geom_traits Kernel;
@@ -239,10 +239,10 @@ bool read_OFF(std::istream& is,
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname,
               PointOutputIterator output,
-              const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , typename std::enable_if<CGAL::is_iterator<PointOutputIterator>::value>::type* = nullptr
 #endif
@@ -256,15 +256,15 @@ bool read_OFF(const std::string& fname,
 
 // variants with default output iterator value type
 template <typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np = parameters::default_values(),
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
               typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
 {
   return read_OFF<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
-template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np = parameters::default_values(),
+template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
               typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
 {
   std::ifstream is(fname);
@@ -422,10 +422,10 @@ bool read_off_points(std::istream& is, ///< input stream.
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_off_points(std::istream& is,
                                      OutputIterator output,
-                                     const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::read_OFF(is, output, np);
 }
@@ -439,8 +439,8 @@ CGAL_DEPRECATED bool read_off_points(std::istream& is, OutputIterator output)
 }
 
 // variant with default output iterator value type
-template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_off_points(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_off_points(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::read_OFF(is, output, np);
 }

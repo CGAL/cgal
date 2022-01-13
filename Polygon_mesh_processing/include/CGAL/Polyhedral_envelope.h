@@ -2220,10 +2220,10 @@ public:
    *       the initial list of prisms.
    * \todo apply that to the soup versions
    */
-  template <typename TriangleMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+  template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
   bool
   operator()(const TriangleMesh& tmesh,
-             const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+             const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
              , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
 #endif
@@ -2232,7 +2232,7 @@ public:
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    typename GetVertexPointMap<TriangleMesh, CGAL_BGL_NP_CLASS>::const_type
+    typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 

@@ -361,20 +361,20 @@ template <typename HalfedgeRange,
           typename PolygonMesh,
           typename HalfedgeKeeper,
           typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator collect_duplicated_stitchable_boundary_edges(const HalfedgeRange& halfedge_range,
                                                             PolygonMesh& pmesh,
                                                             const HalfedgeKeeper& hd_kpr,
                                                             const bool per_cc,
                                                             OutputIterator out,
-                                                            const CGAL_BGL_NP_CLASS& np)
+                                                            const CGAL_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor          halfedge_descriptor;
 
-  typedef typename GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type  VPM;
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_NP_CLASS>::const_type  VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
@@ -1021,11 +1021,11 @@ std::size_t zip_boundary_cycle(typename boost::graph_traits<PolygonMesh>::halfed
 
 /// High-level functions
 
-template <typename PolygonMesh, typename CycleRepMaintainer, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PolygonMesh, typename CycleRepMaintainer, typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                                   PolygonMesh& pmesh,
                                   CycleRepMaintainer& cycle_reps_maintainer,
-                                  const CGAL_BGL_NP_CLASS& np)
+                                  const CGAL_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
   typedef typename std::pair<halfedge_descriptor, halfedge_descriptor>             halfedges_pair;
@@ -1037,12 +1037,12 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type   VPM;
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_NP_CLASS>::const_type   VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_keeper_t,
-                                                       CGAL_BGL_NP_CLASS,
+                                                       CGAL_NP_CLASS,
                                                        Default_halfedges_keeper<PolygonMesh> >::type  Halfedge_keeper;
   const Halfedge_keeper hd_kpr = choose_parameter(get_parameter(np, internal_np::halfedges_keeper),
                                                   Default_halfedges_keeper<PolygonMesh>());
@@ -1114,10 +1114,10 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 /// \sa `stitch_boundary_cycles()`
 /// \sa `stitch_borders()`
 ///
-template <typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                                   PolygonMesh& pmesh,
-                                  const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   internal::Dummy_cycle_rep_maintainer<PolygonMesh> dummy_maintainer(pmesh);
   return internal::stitch_boundary_cycle(h, pmesh, dummy_maintainer, np);
@@ -1126,11 +1126,11 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 namespace internal {
 
 template <typename BorderHalfedgeRange, typename PolygonMesh,
-          typename CycleRepMaintainer, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CycleRepMaintainer, typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_representatives,
                                    PolygonMesh& pmesh,
                                    CycleRepMaintainer& cycle_reps_maintainer,
-                                   const CGAL_BGL_NP_CLASS& np)
+                                   const CGAL_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
@@ -1175,10 +1175,10 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 /// \sa `stitch_boundary_cycle()`
 /// \sa `stitch_borders()`
 ///
-template <typename BorderHalfedgeRange, typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename BorderHalfedgeRange, typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_representatives,
                                    PolygonMesh& pmesh,
-                                   const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
   // If this API is called, we are not from stitch_borders() (otherwise there would be a maintainer)
   // so there is only one pass and we don't carea bout maintaining the cycle subset
@@ -1189,9 +1189,9 @@ std::size_t stitch_boundary_cycles(const BorderHalfedgeRange& boundary_cycle_rep
 ///\cond SKIP_IN_MANUAL
 
 // convenience overloads
-template <typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
-                                   const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
@@ -1242,10 +1242,10 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
 */
 template <typename PolygonMesh,
           typename HalfedgePairsRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(PolygonMesh& pmesh,
                            const HalfedgePairsRange& hedge_pairs_to_stitch,
-                           const CGAL_BGL_NP_CLASS& np = parameters::default_values(),
+                           const CGAL_NP_CLASS& np = parameters::default_values(),
                            typename boost::enable_if<
                              typename boost::has_range_iterator<HalfedgePairsRange>
                            >::type* = 0)
@@ -1253,7 +1253,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type  VPM;
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_NP_CLASS>::const_type  VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
@@ -1264,11 +1264,11 @@ namespace internal {
 
 template <typename BorderHalfedgeRange, typename PolygonMesh,
           typename CycleRepMaintainer,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representatives,
                            PolygonMesh& pmesh,
                            CycleRepMaintainer& cycle_maintainer,
-                           const CGAL_BGL_NP_CLASS& np)
+                           const CGAL_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
@@ -1278,12 +1278,12 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
   if(boundary_cycle_representatives.size() == 0)
     return 0;
 
-  typedef typename GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type  VPM;
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_NP_CLASS>::const_type  VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_keeper_t,
-                                                       CGAL_BGL_NP_CLASS,
+                                                       CGAL_NP_CLASS,
                                                        Default_halfedges_keeper<PolygonMesh> >::type  Halfedge_keeper;
   const Halfedge_keeper hd_kpr = choose_parameter(get_parameter(np, internal_np::halfedges_keeper),
                                                   Default_halfedges_keeper<PolygonMesh>());
@@ -1374,9 +1374,9 @@ std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representat
 /// \sa `stitch_boundary_cycle()`
 /// \sa `stitch_boundary_cycles()`
 ///
-template <typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(PolygonMesh& pmesh,
-                           const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                           const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor           halfedge_descriptor;
 
@@ -1435,10 +1435,10 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 /// \sa `stitch_boundary_cycle()`
 /// \sa `stitch_boundary_cycles()`
 ///
-template <typename BorderHalfedgeRange, typename PolygonMesh, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename BorderHalfedgeRange, typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 std::size_t stitch_borders(const BorderHalfedgeRange& boundary_cycle_representatives,
                            PolygonMesh& pmesh,
-                           const CGAL_BGL_NP_CLASS& np = parameters::default_values()
+                           const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                            , typename boost::enable_if<
                                typename boost::has_range_iterator<BorderHalfedgeRange>

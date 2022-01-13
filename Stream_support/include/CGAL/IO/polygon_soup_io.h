@@ -73,11 +73,11 @@ namespace IO {
  *
  * \return `true` if reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_polygon_soup(const std::string& fname,
                        PointRange& points,
                        PolygonRange& polygons,
-                       const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
@@ -153,11 +153,11 @@ bool read_polygon_soup(const std::string& fname,
  *
  * \return `true` if writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_polygon_soup(const std::string& fname,
                         const PointRange& points,
                         const PolygonRange& polygons,
-                        const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                        const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 

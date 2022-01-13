@@ -145,24 +145,24 @@ compute_average_spacing(const typename NeighborQuery::Kernel::Point_3& query, //
 */
 template <typename ConcurrencyTag,
           typename PointRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+          typename CGAL_NP_TEMPLATE_PARAMETERS
 >
 #ifdef DOXYGEN_RUNNING
   FT
 #else
-  typename Point_set_processing_3_np_helper<PointRange, CGAL_BGL_NP_CLASS>::FT
+  typename Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS>::FT
 #endif
 compute_average_spacing(
   const PointRange& points,
   unsigned int k,
-  const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // basic geometric types
   typedef typename PointRange::const_iterator iterator;
-  typedef Point_set_processing_3_np_helper<PointRange, CGAL_BGL_NP_CLASS> NP_helper;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
   typedef typename NP_helper::Const_point_map PointMap;
   typedef typename NP_helper::Geom_traits Kernel;
 

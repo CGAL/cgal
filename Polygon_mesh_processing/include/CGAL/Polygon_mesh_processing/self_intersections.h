@@ -520,11 +520,11 @@ self_intersections(const FaceRange& face_range,
 template <class ConcurrencyTag = Sequential_tag,
           class TriangleMesh,
           class FacePairOutputIterator,
-          class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          class CGAL_NP_TEMPLATE_PARAMETERS>
 FacePairOutputIterator
 self_intersections(const TriangleMesh& tmesh,
                          FacePairOutputIterator out,
-                   const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return self_intersections<ConcurrencyTag>(faces(tmesh), tmesh, out, np);
 }
@@ -632,9 +632,9 @@ bool does_self_intersect(const FaceRange& face_range,
  */
 template <class ConcurrencyTag = Sequential_tag,
           class TriangleMesh,
-          class CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          class CGAL_NP_TEMPLATE_PARAMETERS>
 bool does_self_intersect(const TriangleMesh& tmesh,
-                         const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                         const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return does_self_intersect<ConcurrencyTag>(faces(tmesh), tmesh, np);
 }

@@ -158,15 +158,15 @@ template <class InputMesh,
           class OutputMesh,
           class BottomFunctor,
           class TopFunctor,
-          class CGAL_BGL_NP_TEMPLATE_PARAMETERS_1,
-          class CGAL_BGL_NP_TEMPLATE_PARAMETERS_2
+          class CGAL_NP_TEMPLATE_PARAMETERS_1,
+          class CGAL_NP_TEMPLATE_PARAMETERS_2
           >
 void extrude_mesh(const InputMesh& input,
                   OutputMesh& output,
                   const BottomFunctor& bot,
                   const TopFunctor& top,
-                  const CGAL_BGL_NP_CLASS_1& np_in = parameters::default_values(),
-                  const CGAL_BGL_NP_CLASS_2& np_out = parameters::default_values())
+                  const CGAL_NP_CLASS_1& np_in = parameters::default_values(),
+                  const CGAL_NP_CLASS_2& np_out = parameters::default_values())
 {
   typedef typename boost::graph_traits<InputMesh>::vertex_descriptor input_vertex_descriptor;
   typedef typename boost::graph_traits<InputMesh>::halfedge_descriptor input_halfedge_descriptor;
@@ -175,8 +175,8 @@ void extrude_mesh(const InputMesh& input,
   typedef typename boost::graph_traits<OutputMesh>::halfedge_descriptor output_halfedge_descriptor;
 
   CGAL_assertion(!CGAL::is_closed(input));
-  typedef typename GetVertexPointMap < OutputMesh, CGAL_BGL_NP_CLASS_2>::type VPMap;
-  typedef typename GetVertexPointMap < InputMesh, CGAL_BGL_NP_CLASS_1>::const_type IVPMap;
+  typedef typename GetVertexPointMap < OutputMesh, CGAL_NP_CLASS_2>::type VPMap;
+  typedef typename GetVertexPointMap < InputMesh, CGAL_NP_CLASS_1>::const_type IVPMap;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -276,25 +276,25 @@ void extrude_mesh(const InputMesh& input,
  */
 template <class InputMesh,
           class OutputMesh,
-          class CGAL_BGL_NP_TEMPLATE_PARAMETERS_1,
-          class CGAL_BGL_NP_TEMPLATE_PARAMETERS_2>
+          class CGAL_NP_TEMPLATE_PARAMETERS_1,
+          class CGAL_NP_TEMPLATE_PARAMETERS_2>
 void extrude_mesh(const InputMesh& input,
                   OutputMesh& output,
                   #ifdef DOXYGEN_RUNNING
                   Vector_3 v,
                   #else
-                  typename GetGeomTraits<OutputMesh, CGAL_BGL_NP_CLASS_2>::type::Vector_3 v,
+                  typename GetGeomTraits<OutputMesh, CGAL_NP_CLASS_2>::type::Vector_3 v,
                   #endif
-                  const CGAL_BGL_NP_CLASS_1& np_in = parameters::default_values(),
-                  const CGAL_BGL_NP_CLASS_2& np_out = parameters::default_values())
+                  const CGAL_NP_CLASS_1& np_in = parameters::default_values(),
+                  const CGAL_NP_CLASS_2& np_out = parameters::default_values())
 {
-  typedef typename GetVertexPointMap < OutputMesh, CGAL_BGL_NP_CLASS_2>::type VPMap;
+  typedef typename GetVertexPointMap < OutputMesh, CGAL_NP_CLASS_2>::type VPMap;
   VPMap output_vpm = parameters::choose_parameter(parameters::get_parameter(np_out, internal_np::vertex_point),
                                   get_property_map(vertex_point, output));
 
   extrude_impl::Const_dist_translation<
-      typename GetVertexPointMap<OutputMesh, CGAL_BGL_NP_CLASS_2>::type,
-      typename GetGeomTraits<OutputMesh, CGAL_BGL_NP_CLASS_2>::type::Vector_3> bot(output_vpm,
+      typename GetVertexPointMap<OutputMesh, CGAL_NP_CLASS_2>::type,
+      typename GetGeomTraits<OutputMesh, CGAL_NP_CLASS_2>::type::Vector_3> bot(output_vpm,
                                                                                 v);
   extrude_impl::Identity_functor top;
   extrude_mesh(input, output, bot,top, np_in, np_out);

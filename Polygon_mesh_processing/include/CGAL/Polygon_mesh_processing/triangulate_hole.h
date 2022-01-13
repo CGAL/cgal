@@ -579,11 +579,11 @@ bool use_dt3 =
 */
   template <typename PointRange,
             typename OutputIterator,
-            typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+            typename CGAL_NP_TEMPLATE_PARAMETERS>
   OutputIterator
   triangulate_hole_polyline(const PointRange& points,
                             OutputIterator out,
-                            const CGAL_BGL_NP_CLASS& np = parameters::default_values())
+                            const CGAL_NP_CLASS& np = parameters::default_values())
   {
     typedef typename std::iterator_traits<
       typename PointRange::iterator>::value_type Point;
