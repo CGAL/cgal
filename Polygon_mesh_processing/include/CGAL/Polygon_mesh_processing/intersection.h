@@ -1408,12 +1408,15 @@ bool do_intersect(const TriangleMesh& tm,
                   const CGAL_BGL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                 , const typename boost::disable_if<
-                    typename boost::has_range_iterator<
-                      typename boost::mpl::eval_if<
-                        boost::has_range_iterator<Polyline>,
-                        boost::range_value<Polyline>,
-                        boost::false_type
-                      >::type
+                    typename boost::mpl::or_<
+                      typename boost::mpl::not_<typename boost::has_range_iterator<Polyline>::type>::type, // not a range
+                      typename boost::has_range_iterator<
+                        typename boost::mpl::eval_if<
+                          boost::has_range_iterator<Polyline>,
+                          boost::range_value<Polyline>,
+                          boost::false_type
+                        >::type
+                      >::type // not a range of a range
                     >::type
                   >::type* = 0
 #endif
