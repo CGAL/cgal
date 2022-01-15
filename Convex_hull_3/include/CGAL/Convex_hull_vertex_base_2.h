@@ -48,16 +48,16 @@ public:
   };
 
   Convex_hull_vertex_base_2()
-    : Vb() {}
+    : Vb(),_info(),_p() {}
 
   Convex_hull_vertex_base_2(const Point& p)
-    : Vb(), _p(p) {}
+    : Vb(),_info(),_p(p) {}
 
   Convex_hull_vertex_base_2(const Point& p, Face_handle f)
-    : Vb(f), _p(p) {}
+    : Vb(f),_info(),_p(p) {}
 
   Convex_hull_vertex_base_2(Face_handle f)
-    : Vb(f) {}
+    : Vb(f),_info(),_p() {}
 
   void set_point(const Point& p) { _p = p; }
   const Point&  point() const { return _p; }
