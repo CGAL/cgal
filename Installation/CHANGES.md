@@ -5,7 +5,7 @@ Release History
 [Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
 -----------
 
-Release date: January 2022
+Release date: June 2022
 
 ### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
 
