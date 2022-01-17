@@ -19,6 +19,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Modifiable_priority_queue.h>
+#include <CGAL/use.h>
 
 #include <boost/scoped_array.hpp>
 
@@ -311,6 +312,7 @@ private:
     CGAL_assertion(is_primary_edge(h));
     CGAL_expensive_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
+    CGAL_USE(data);
 
     mPQ->update(h);
 
