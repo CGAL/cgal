@@ -196,12 +196,12 @@ git_dir=`pwd`
 tmp_dir=`mktemp -d`
 cd $tmp_dir
 echo $tmp_dir
-echo "#include <CGAL/boost/graph/Named_function_parameters.h>\nstruct A{};\nint main(){" > main.cpp
+echo "#include <CGAL/Named_function_parameters.h>\nstruct A{};\nint main(){" > main.cpp
 for i in `echo $nps`; do
   echo "  CGAL::parameters::${i}(A()).${i}(A());" >> main.cpp
 done
 echo "}" >> main.cpp
-if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I$git_dir/BGL/include main.cpp; then
+if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I$git_dir/STL_Extension/include main.cpp; then
   echo "ERROR: At least one documented named parameter does not exist"
   cd -
   rm -r $tmp_dir

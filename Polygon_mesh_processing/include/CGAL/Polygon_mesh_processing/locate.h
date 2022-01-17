@@ -73,7 +73,7 @@ struct Ray_type_selector<Point, 3>
 
 // Just for convenience
 template <typename TriangleMesh,
-          typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+          typename NamedParameters = parameters::Default_named_parameters>
 struct Location_traits
 {
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type  VertexPointMap;
@@ -586,7 +586,7 @@ get_descriptor_from_location(const std::pair<typename boost::graph_traits<Triang
 /// \returns a point whose type is the same as the value type of the vertex point property map
 ///          provided by the user or via named parameters, or the internal point map of the mesh `tm`.
 ///
-template <typename FT, typename TriangleMesh, typename NamedParameters>
+template <typename FT, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Point
 construct_point(const Face_location<TriangleMesh, FT>& loc,
@@ -596,7 +596,7 @@ construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face
                                 std::array<FT, 3> >& loc,
 #endif
                 const TriangleMesh& tm,
-                const NamedParameters& np)
+                const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type            Geom_traits;
@@ -621,19 +621,6 @@ construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face
 
   internal::Barycentric_point_constructor<Geom_traits, Point> bp_constructor;
   return bp_constructor(p0, loc.second[0], p1, loc.second[1], p2, loc.second[2], gt);
-}
-
-template <typename FT, typename TriangleMesh>
-typename property_map_value<TriangleMesh, boost::vertex_point_t>::type
-#ifdef DOXYGEN_RUNNING
-construct_point(const Face_location<TriangleMesh, FT>& loc,
-#else
-construct_point(const std::pair<typename boost::graph_traits<TriangleMesh>::face_descriptor,
-                                std::array<FT, 3> >& loc,
-#endif
-                const TriangleMesh& tm)
-{
-  return construct_point(loc, tm, parameters::all_default());
 }
 
 /// \name Location Predicates
@@ -1110,7 +1097,7 @@ locate_on_halfedge(const typename boost::graph_traits<TriangleMesh>::halfedge_de
 ///          the user via named parameters (with `geom_traits`) or using `CGAL::Kernel_traits`
 ///          and the point type of the vertex point property map in use.
 ///
-template <typename TriangleMesh, typename NamedParameters>
+template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate_in_face(const Point& query,
@@ -1120,7 +1107,7 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
 #endif
                const typename boost::graph_traits<TriangleMesh>::face_descriptor fd,
                const TriangleMesh& tm,
-               const NamedParameters& np)
+               const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor          vertex_descriptor;
 
@@ -1165,16 +1152,6 @@ locate_in_face(const typename internal::Location_traits<TriangleMesh, NamedParam
   return std::make_pair(fd, coords);
 }
 
-#ifndef DOXYGEN_RUNNING // because this is in the middle of a @{ @} doxygen group
-template <typename TriangleMesh>
-typename internal::Location_traits<TriangleMesh>::Face_location
-locate_in_face(const typename internal::Location_traits<TriangleMesh>::Point& query,
-               const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-               const TriangleMesh& tm)
-{
-  return locate_in_face(query, f, tm, parameters::all_default());
-}
-#endif
 
 /// \ingroup PMP_locate_grp
 ///
@@ -1589,7 +1566,7 @@ void build_AABB_tree(const TriangleMesh& tm,
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-template <typename TriangleMesh, typename Point3VPM, typename NamedParameters>
+template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = parameters::Default_named_parameters>
 void
 build_AABB_tree(const TriangleMesh& tm,
                 AABB_tree<
@@ -1600,7 +1577,7 @@ build_AABB_tree(const TriangleMesh& tm,
                     typename GetGeomTraits<TriangleMesh, NamedParameters>::type,
 #endif
                     CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& outTree,
-                const NamedParameters& np)
+                const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
 
@@ -1612,14 +1589,6 @@ build_AABB_tree(const TriangleMesh& tm,
 
   return internal::build_AABB_tree(tm, outTree, vpm);
 }
-
-#ifndef DOXYGEN_RUNNING
-template <typename TriangleMesh, typename AABBTraits>
-void build_AABB_tree(const TriangleMesh& tm, AABB_tree<AABBTraits>& outTree)
-{
-  return build_AABB_tree(tm, outTree, parameters::all_default());
-}
-#endif
 
 /// \ingroup PMP_locate_grp
 ///
@@ -1671,7 +1640,7 @@ void build_AABB_tree(const TriangleMesh& tm, AABB_tree<AABBTraits>& outTree)
 ///          the user via named parameters (with `geom_traits`) or using `CGAL::Kernel_traits`
 ///          and the point type of the vertex point property map in use.
 ///
-template <typename TriangleMesh, typename Point3VPM, typename NamedParameters>
+template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate_with_AABB_tree(const Point& p,
@@ -1685,7 +1654,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
                                 CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
 #endif
                       const TriangleMesh& tm,
-                      const NamedParameters& np)
+                      const NamedParameters& np = parameters::default_values())
 {
   typedef typename internal::Location_traits<TriangleMesh, NamedParameters>::Point         Point;
   typedef internal::Point_to_Point_3<TriangleMesh, Point>                                  P_to_P3;
@@ -1717,17 +1686,6 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 
   return locate_in_face(result.first, result.second, tm, CGAL::parameters::vertex_point_map(wrapped_vpm));
 }
-
-#ifndef DOXYGEN_RUNNING
-template <typename TriangleMesh, typename AABBTraits>
-typename internal::Location_traits<TriangleMesh>::Face_location
-locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Point& p,
-                      const AABB_tree<AABBTraits>& tree,
-                      const TriangleMesh& tm)
-{
-  return locate_with_AABB_tree(p, tree, tm, parameters::all_default());
-}
-#endif
 
 /// \ingroup PMP_locate_grp
 ///
@@ -1771,7 +1729,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Po
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-template <typename TriangleMesh, typename NamedParameters>
+template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate(const Point& p,
@@ -1780,7 +1738,7 @@ typename internal::Location_traits<TriangleMesh, NamedParameters>::Face_location
 locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Point& p,
 #endif
        const TriangleMesh& tm,
-       const NamedParameters& np)
+       const NamedParameters& np = parameters::default_values())
 {
   // Wrap the input VPM with a one converting to 3D (costs nothing if the input VPM
   // already has value type Kernel::Point_3)
@@ -1811,16 +1769,6 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   const Point_3& p3 = P_to_P3()(p);
   return locate_with_AABB_tree(p3, tree, tm, parameters::vertex_point_map(wrapped_vpm));
 }
-
-#ifndef DOXYGEN_RUNNING
-template <typename TriangleMesh>
-typename internal::Location_traits<TriangleMesh>::Face_location
-locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::type& p,
-       const TriangleMesh& tm)
-{
-  return locate(p, tm, parameters::all_default());
-}
-#endif
 
 /// \ingroup PMP_locate_grp
 ///
@@ -1868,7 +1816,7 @@ locate(const typename property_map_value<TriangleMesh, boost::vertex_point_t>::t
 ///
 /// \pre `ray` is an object with the same ambient dimension as the point type (the value type of the vertex point map).
 ///
-template <typename TriangleMesh, typename Point3VPM, typename NamedParameters>
+template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate_with_AABB_tree(const Ray& ray,
@@ -1883,7 +1831,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
                       > >& tree,
 #endif
                       const TriangleMesh& tm,
-                      const NamedParameters& np)
+                      const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                        Geom_traits;
 
@@ -1952,17 +1900,6 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
                           CGAL::make_array(FT(0), FT(0), FT(0)));
 }
 
-#ifndef DOXYGEN_RUNNING
-template <typename TriangleMesh, typename AABBTraits>
-typename internal::Location_traits<TriangleMesh>::Face_location
-locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Ray& ray,
-                      const AABB_tree<AABBTraits>& tree,
-                      const TriangleMesh& tm)
-{
-  return locate_with_AABB_tree(ray, tree, tm, parameters::all_default());
-}
-#endif
-
 /// \ingroup PMP_locate_grp
 ///
 /// \brief returns the face location along `ray` nearest to its source point.
@@ -2010,7 +1947,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh>::Ra
 ///
 /// \pre `ray` is an object with the same ambient dimension as the point type (the value type of the vertex point map).
 ///
-template <typename TriangleMesh, typename NamedParameters>
+template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate(const Ray& ray,
@@ -2019,7 +1956,7 @@ typename internal::Location_traits<TriangleMesh>::Face_location
 locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Ray& ray,
 #endif
        const TriangleMesh& tm,
-       const NamedParameters& np)
+       const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type     VertexPointMap;
 
@@ -2043,17 +1980,6 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
 
   return locate_with_AABB_tree(ray, tree, tm, np);
 }
-
-#ifndef DOXYGEN_RUNNING
-template <typename TriangleMesh>
-typename internal::Location_traits<TriangleMesh>::Face_location
-locate(const typename internal::Ray_type_selector<
-               typename internal::Location_traits<TriangleMesh>::Point>::type& ray,
-       const TriangleMesh& tm)
-{
-  return locate(ray, tm, parameters::all_default());
-}
-#endif
 
 /// @}
 

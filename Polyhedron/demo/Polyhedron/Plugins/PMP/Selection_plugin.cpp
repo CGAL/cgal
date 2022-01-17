@@ -1189,7 +1189,7 @@ bool selfIntersect(Mesh* mesh, std::vector<std::pair<typename boost::graph_trait
   // compute self-intersections
   CGAL::Polygon_mesh_processing::self_intersections
     (*mesh, std::back_inserter(faces),
-    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, *mesh)));
+    CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, *mesh)));
 
   std::cout << "ok (" << faces.size() << " triangle pair(s))" << std::endl;
   return !faces.empty();

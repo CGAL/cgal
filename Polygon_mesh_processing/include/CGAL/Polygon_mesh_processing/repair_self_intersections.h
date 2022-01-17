@@ -29,7 +29,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/box_intersection_d.h>
@@ -1956,10 +1956,10 @@ struct Remove_self_intersection_default_visitor
                         double /* containment_epsilon */ ) {}
 };
 
-template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
+template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool remove_self_intersections(const FaceRange& face_range,
                                TriangleMesh& tmesh,
-                               const NamedParameters& np)
+                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -2104,22 +2104,10 @@ bool remove_self_intersections(const FaceRange& face_range,
   return step < max_steps;
 }
 
-template <typename FaceRange, typename TriangleMesh>
-bool remove_self_intersections(const FaceRange& face_range, TriangleMesh& tmesh)
-{
-  return remove_self_intersections(face_range, tmesh, parameters::all_default());
-}
-
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool remove_self_intersections(TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return remove_self_intersections(faces(tmesh), tmesh, np);
-}
-
-template <typename TriangleMesh>
-bool remove_self_intersections(TriangleMesh& tmesh)
-{
-  return remove_self_intersections(tmesh, parameters::all_default());
 }
 
 } // namespace experimental

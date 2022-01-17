@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 
   Surface_mesh chull;
   // compute convex hull
-  auto np = CGAL::parameters::all_default();
+  auto np = CGAL::parameters::default_values();
   CGAL::convex_hull_3(poly, chull, np);
   std::cout << "The convex hull contains " << chull.number_of_vertices() << " vertices" << std::endl;
   return 0;

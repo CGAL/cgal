@@ -119,14 +119,14 @@ int main()
 
   {
     std::ofstream os("tmp2.las", std::ios_base::binary);
-    CGAL::write_las_points(os, ps, CGAL::parameters::all_default());
+    CGAL::write_las_points(os, ps);
     assert(ok);
   }
 
   {
     ps.clear();
     std::ifstream is("tmp2.las", std::ios::binary);
-    ok = CGAL::read_las_points(is, std::back_inserter (ps),CGAL::parameters::all_default());
+    ok = CGAL::read_las_points(is, std::back_inserter (ps));
     assert(ok);
     assert(ps.size() == 3);
   }
@@ -168,7 +168,7 @@ int main()
   {
     std::ofstream os("tmp2.ply");
     assert(os.good());
-    ok = CGAL::write_ply_points(os, ps, CGAL::parameters::all_default());
+    ok = CGAL::write_ply_points(os, ps);
     assert(! os.fail());
     assert(ok);
   }
@@ -177,8 +177,7 @@ int main()
     std::ifstream is("tmp2.ply");
     assert(is.good());
     ps.clear();
-    ok = CGAL::read_ply_points(is, std::back_inserter (ps),
-                               CGAL::parameters::all_default());
+    ok = CGAL::read_ply_points(is, std::back_inserter (ps));
     assert(! is.fail());
     assert(ok);
     assert(ps.size() == 3);
@@ -188,7 +187,7 @@ int main()
   {
     std::ofstream os("tmp.off");
     assert(os.good());
-    ok = CGAL::write_off_points(os, ps, CGAL::parameters::all_default());
+    ok = CGAL::write_off_points(os, ps);
     assert(! os.fail());
     assert(ok);
   }
@@ -197,8 +196,7 @@ int main()
     std::ifstream is("tmp.off");
     assert(is.good());
     ps.clear();
-    ok = CGAL::read_off_points(is, std::back_inserter (ps),
-                               CGAL::parameters::all_default());
+    ok = CGAL::read_off_points(is, std::back_inserter (ps));
     assert(! is.fail());
     assert(ok);
     assert(ps.size() == 3);
@@ -208,7 +206,7 @@ int main()
   {
     std::ofstream os("tmp.xyz");
     assert(os.good());
-    ok = CGAL::write_xyz_points(os, ps, CGAL::parameters::all_default());
+    ok = CGAL::write_xyz_points(os, ps);
     assert(! os.fail());
     assert(ok);
   }
@@ -217,8 +215,7 @@ int main()
     std::ifstream is("tmp.xyz");
     assert(is.good());
     ps.clear();
-    ok = CGAL::read_xyz_points(is, std::back_inserter (ps),
-                               CGAL::parameters::all_default());
+    ok = CGAL::read_xyz_points(is, std::back_inserter (ps));
     assert(! is.fail());
     assert(ok);
     assert(ps.size() == 3);

@@ -33,7 +33,7 @@
 
 #include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 #include <CGAL/Polyhedron_3_fwd.h>
@@ -1061,10 +1061,10 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   convex_hull_3(first, beyond, polyhedron, Traits());
 }
 
-template <class VertexListGraph, class PolygonMesh, class NamedParameters>
+template <class VertexListGraph, class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void convex_hull_3(const VertexListGraph& g,
                    PolygonMesh& pm,
-                   const NamedParameters& np)
+                   const NamedParameters& np = parameters::default_values())
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
@@ -1079,12 +1079,7 @@ void convex_hull_3(const VertexListGraph& g,
                 boost::make_transform_iterator(vertices(g).end(), v2p), pm);
 }
 
-template <class VertexListGraph, class PolygonMesh>
-void convex_hull_3(const VertexListGraph& g,
-                   PolygonMesh& pm)
-{
-  convex_hull_3(g,pm,CGAL::parameters::all_default());
-}
+
 
 template <class InputIterator, class PointRange, class TriangleRange>
 void convex_hull_3(InputIterator first, InputIterator beyond,

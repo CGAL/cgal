@@ -15,7 +15,7 @@
 #include <functional>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/config.hpp>
 #include <boost/iterator/iterator_adaptor.hpp>

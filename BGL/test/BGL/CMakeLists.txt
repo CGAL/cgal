@@ -71,8 +71,6 @@ create_single_source_cgal_program("test_Has_member_clear.cpp")
 
 create_single_source_cgal_program("test_Has_member_id.cpp")
 
-create_single_source_cgal_program("test_cgal_bgl_named_params.cpp")
-
 create_single_source_cgal_program("test_bgl_read_write.cpp")
 
 create_single_source_cgal_program("graph_concept_Face_filtered_graph.cpp")

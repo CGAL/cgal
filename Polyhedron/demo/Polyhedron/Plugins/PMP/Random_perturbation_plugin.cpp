@@ -108,13 +108,13 @@ public Q_SLOTS:
       {
         unsigned int seed = static_cast<unsigned int>(ui.seed_spinbox->value());
         PMP::random_perturbation(pmesh, max_move,
-            PMP::parameters::do_project(project)
+            CGAL::parameters::do_project(project)
             .random_seed(seed));
       }
       else
       {
         PMP::random_perturbation(pmesh, max_move,
-            PMP::parameters::do_project(project));
+            CGAL::parameters::do_project(project));
       }
 
       poly_item->invalidateOpenGLBuffers();
@@ -141,7 +141,7 @@ public Q_SLOTS:
             selection_item->selected_vertices,
             pmesh,
             max_move,
-            PMP::parameters::do_project(project)
+            CGAL::parameters::do_project(project)
             .random_seed(seed));
       }
       else
@@ -152,7 +152,7 @@ public Q_SLOTS:
           selection_item->selected_vertices,
           pmesh,
           max_move,
-          PMP::parameters::do_project(project));
+          CGAL::parameters::do_project(project));
       }
 
       selection_item->invalidateOpenGLBuffers();

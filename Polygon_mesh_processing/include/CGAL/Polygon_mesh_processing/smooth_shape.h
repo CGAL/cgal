@@ -30,11 +30,6 @@
 #include <sstream>
 #endif
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
@@ -100,11 +95,11 @@ namespace Polygon_mesh_processing {
 *
 *  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
 */
-template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void smooth_shape(const FaceRange& faces,
                   TriangleMesh& tmesh,
                   const double time,
-                  const NamedParameters& np)
+                  const NamedParameters& np = parameters::default_values())
 {
   if(std::begin(faces) == std::end(faces))
     return;
@@ -202,27 +197,12 @@ void smooth_shape(const FaceRange& faces,
 }
 
 /// \cond SKIP_IN_MANUAL
-template<typename TriangleMesh, typename FaceRange>
-void smooth_shape(const FaceRange& faces,
-                  TriangleMesh& tmesh,
-                  const double time)
-{
-  smooth_shape(faces, tmesh, time, parameters::all_default());
-}
-
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void smooth_shape(TriangleMesh& tmesh,
                   const double time,
-                  const CGAL_PMP_NP_CLASS& np)
+                  const CGAL_NP_CLASS& np = parameters::default_values())
 {
   smooth_shape(faces(tmesh), tmesh, time, np);
-}
-
-template<typename TriangleMesh>
-void smooth_shape(TriangleMesh& tmesh,
-                  const double time)
-{
-  smooth_shape(faces(tmesh), tmesh, time, parameters::all_default());
 }
 /// \endcond
 

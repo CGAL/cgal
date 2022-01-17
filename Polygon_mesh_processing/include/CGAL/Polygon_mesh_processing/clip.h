@@ -595,13 +595,13 @@ generic_clip_impl(
   *         If `false` is returned `tm` and `clipper` are only corefined.
   */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 bool
 clip(TriangleMesh& tm,
      TriangleMesh& clipper,
-     const NamedParameters1& np_tm,
-     const NamedParameters2& np_c)
+     const NamedParameters1& np_tm = parameters::default_values(),
+     const NamedParameters2& np_c = parameters::default_values())
 {
   if (parameters::choose_parameter(parameters::get_parameter(np_c, internal_np::do_not_modify), false))
   {
@@ -693,19 +693,19 @@ clip(TriangleMesh& tm,
   *         If `false` is returned `tm` is only refined by the intersection with `plane`.
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool clip(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
           const Plane_3& plane,
 #else
           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-          const NamedParameters& np)
+          const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
+  namespace params = CGAL::parameters;
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
 
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
@@ -717,7 +717,7 @@ bool clip(TriangleMesh& tm,
   bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
                     bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
   TriangleMesh clipper;
-  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::all_default());
+  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::default_values());
   switch(os)
   {
     case ON_NEGATIVE_SIDE:
@@ -796,19 +796,19 @@ bool clip(TriangleMesh& tm,
   *         If `false` is returned `tm` is only refined by the intersection with `iso_cuboid`.
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool clip(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
           const Iso_cuboid_3& iso_cuboid,
 #else
           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
 #endif
-          const NamedParameters& np)
+          const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
+  namespace params = CGAL::parameters;
 
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
   TriangleMesh clipper;
@@ -876,12 +876,12 @@ bool clip(TriangleMesh& tm,
   * \cgalNamedParamsEnd
 */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
            TriangleMesh& splitter,
-           const NamedParameters1& np_tm,
-           const NamedParameters2& np_s)
+           const NamedParameters1& np_tm = parameters::default_values(),
+           const NamedParameters2& np_s = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -964,19 +964,19 @@ void split(TriangleMesh& tm,
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
            const Plane_3& plane,
 #else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
+  namespace params = CGAL::parameters;
 
   // create a splitter mesh for the splitting plane using an internal CGAL function
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm, np);
@@ -987,7 +987,7 @@ void split(TriangleMesh& tm,
                       bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
 
   TriangleMesh splitter;
-  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, PMP::parameters::all_default());
+  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, CGAL::parameters::default_values());
 
   if(os == CGAL::ON_ORIENTED_BOUNDARY)
   {
@@ -1067,19 +1067,19 @@ void split(TriangleMesh& tm,
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
            #ifdef DOXYGEN_RUNNING
            const Iso_cuboid_3& iso_cuboid,
            #else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
            #endif
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
+  namespace params = CGAL::parameters;
   TriangleMesh splitter;
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],
@@ -1089,81 +1089,6 @@ void split(TriangleMesh& tm,
   const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   return split(tm, splitter, np, params::do_not_modify(do_not_modify));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-// convenience overloads
-template <class TriangleMesh>
-bool clip(TriangleMesh& tm,
-          const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
-{
-  return clip(tm, plane, parameters::all_default());
-}
-
-// convenience overloads
-template <class TriangleMesh>
-bool clip(TriangleMesh& tm,
-          const typename GetGeomTraits<TriangleMesh>::type::Iso_cuboid_3& iso_cuboid)
-{
-  return clip(tm, iso_cuboid, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh,
-          class NamedParameters1>
-bool
-clip(TriangleMesh& tm,
-     TriangleMesh& clipper,
-     const NamedParameters1& np_tm)
-{
-  return clip(tm, clipper, np_tm, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh>
-bool
-clip(TriangleMesh& tm,
-     TriangleMesh& clipper)
-{
-  return clip(tm, clipper, parameters::all_default());
-}
-
-
-// convenience overload
-template <class TriangleMesh,
-          class NamedParameters1>
-void
-split(TriangleMesh& tm,
-      TriangleMesh& splitter,
-      const NamedParameters1& np_tm)
-{
-  split(tm, splitter, np_tm, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh>
-void
-split(TriangleMesh& tm,
-      TriangleMesh& splitter)
-{
-  split(tm, splitter, parameters::all_default());
-}
-
-template <class TriangleMesh>
-void split(TriangleMesh& tm,
-           const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
-{
-   split(tm, plane, parameters::all_default());
-}
-
-template <class TriangleMesh>
-void split(TriangleMesh& tm,
-           const typename GetGeomTraits<TriangleMesh>::type::Iso_cuboid_3& iso_cuboid)
-{
-  split(tm, iso_cuboid, parameters::all_default());
-}
-
-/// \endcond
 
 } } //end of namespace CGAL::Polygon_mesh_processing
 
