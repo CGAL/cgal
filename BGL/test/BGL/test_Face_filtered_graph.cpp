@@ -13,6 +13,7 @@
 #include <map>
 #include <memory>
 #include <utility>
+#include <cassert>
 
 typedef boost::unordered_set<std::size_t> id_map;
 
@@ -416,29 +417,29 @@ void test_mesh(Adapter fga)
 {
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
   //check that there is the right number of simplices in fga
-  CGAL_assertion(CGAL::is_valid_polygon_mesh(fga));
-  CGAL_assertion(num_faces(fga) == 2);
-  CGAL_assertion(num_edges(fga) == 5);
-  CGAL_assertion(num_halfedges(fga) == 10);
-  CGAL_assertion(num_vertices(fga) == 4);
+  assert(CGAL::is_valid_polygon_mesh(fga));
+  assert(num_faces(fga) == 2);
+  assert(num_edges(fga) == 5);
+  assert(num_halfedges(fga) == 10);
+  assert(num_vertices(fga) == 4);
   halfedge_descriptor h = halfedge(*faces(fga).first, fga);
   CGAL_assertion_code( vertex_descriptor v = source(h, fga));
   //check that next() works inside the patch
-  CGAL_assertion(next(next(next(h, fga), fga), fga) == h);
+  assert(next(next(next(h, fga), fga), fga) == h);
   //check that next() works on bordure of the patch
   h = opposite(h, fga);
-  CGAL_assertion(next(next(next(next(h, fga), fga), fga), fga) == h);
+  assert(next(next(next(next(h, fga), fga), fga), fga) == h);
   //check that prev() works inside the patch
   h = halfedge(*faces(fga).first, fga);
-  CGAL_assertion(prev(prev(prev(h, fga), fga), fga) == h);
+  assert(prev(prev(prev(h, fga), fga), fga) == h);
   //check that prev() works on bordure of the patch
   h = opposite(h, fga);
-  CGAL_assertion(prev(prev(prev(prev(h, fga), fga), fga), fga) == h);
+  assert(prev(prev(prev(prev(h, fga), fga), fga), fga) == h);
   //check degree
-  CGAL_assertion(degree(v, fga) == 3);
+  assert(degree(v, fga) == 3);
   //check in_edges and out_edges
-  CGAL_assertion(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 3);
-  CGAL_assertion(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 3);
+  assert(std::distance(in_edges(v, fga).first ,in_edges(v, fga).second) == 3);
+  assert(std::distance(out_edges(v, fga).first ,out_edges(v, fga).second) == 3);
 
   Mesh copy;
   CGAL::copy_face_graph(fga, copy);
