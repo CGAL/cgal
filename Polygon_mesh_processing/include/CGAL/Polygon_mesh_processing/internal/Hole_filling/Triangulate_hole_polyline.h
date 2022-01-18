@@ -1492,11 +1492,11 @@ triangulate_hole_polyline(const PointRange1& points,
 
   typedef Kernel        K;
   typedef typename K::Point_3    Point_3;
-  #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
   typedef CGAL::internal::Triangulate_hole_polyline_DT<K, Tracer, WeightCalculator> Fill_DT;
-  #else
+#else
   CGAL_USE(use_delaunay_triangulation);
-  #endif
+#endif
   typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator>    Fill;
 
   std::vector<Point_3> P(boost::begin(points), boost::end(points));
@@ -1510,20 +1510,19 @@ triangulate_hole_polyline(const PointRange1& points,
   }
 
   typename WeightCalculator::Weight w =
-  #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
+#ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
     use_delaunay_triangulation ? Fill_DT().operator()(P,Q,tracer,WC) :
-  #endif
+#endif
     Fill().operator()(P,Q,tracer,WC);
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-  if (use_delaunay_triangulation
-      && w == WeightCalculator::Weight::NOT_VALID())
+  if(use_delaunay_triangulation && w == WeightCalculator::Weight::NOT_VALID())
     w = Fill().operator()(P, Q, tracer, WC);
 #endif
 
-  #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
+#ifdef CGAL_PMP_HOLE_FILLING_DEBUG
   std::cerr << w << std::endl;
-  #endif
+#endif
   return w;
 }
 

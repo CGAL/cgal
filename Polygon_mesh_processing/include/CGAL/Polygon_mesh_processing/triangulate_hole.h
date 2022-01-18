@@ -136,7 +136,7 @@ namespace Polygon_mesh_processing {
 
     CGAL_precondition(face(border_halfedge, pmesh) == boost::graph_traits<PolygonMesh>::null_face());
     bool use_cdt =
-    #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
+#ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
         false;
 #else
         choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
@@ -174,22 +174,6 @@ namespace Polygon_mesh_processing {
       choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
       use_cdt,
       max_squared_distance).first;
-  }
-
-  template<typename PM, typename VertexRange>
-  void test_in_edges(const PM& pmesh, const VertexRange& patch)
-  {
-    for(typename boost::graph_traits<PM>::vertex_descriptor v0 : patch)
-    {
-      typename boost::graph_traits<PM>::in_edge_iterator e, e_end;
-      for (boost::tie(e, e_end) = in_edges(v0, pmesh); e != e_end; e++)
-      {
-        typename boost::graph_traits<PM>::halfedge_descriptor he = halfedge(*e, pmesh);
-        if (is_border(he, pmesh)) { continue; }
-
-        CGAL_assertion(v0 == target(he, pmesh) || v0 == source(he, pmesh));
-      }
-    }
   }
 
   /*!
@@ -284,8 +268,6 @@ namespace Polygon_mesh_processing {
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
     face_out = std::copy(patch.begin(), patch.end(), face_out);
-
-    test_in_edges(pmesh, vertices(pmesh));
 
     return refine(pmesh, patch, face_out, vertex_out, np);
   }
@@ -401,16 +383,13 @@ namespace Polygon_mesh_processing {
     VertexOutputIterator vertex_out,
     const NamedParameters& np = parameters::default_values())
   {
+    CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
+
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
-
-    CGAL_assertion(CGAL::is_triangle_mesh(pmesh));
-
     face_out = triangulate_and_refine_hole
       (pmesh, border_halfedge, face_out, std::back_inserter(patch), np).first;
 
-    CGAL_assertion(CGAL::is_triangle_mesh(pmesh));
-
-    test_in_edges(pmesh, patch);
+    CGAL_postcondition(CGAL::is_triangle_mesh(pmesh));
 
     bool fair_success = fair(pmesh, patch, np);
 
@@ -536,9 +515,9 @@ bool use_dt3 =
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
     if (use_cdt)
     {
-      struct Always_valid{
-        bool operator()(const std::vector<Point>&, int,int,int)const
-        {return true;}
+      struct Always_valid
+      {
+        bool operator()(const std::vector<Point>&, int,int,int) const { return true; }
       };
       Always_valid is_valid;
 
@@ -549,8 +528,9 @@ bool use_dt3 =
       const typename Kernel::FT threshold_distance = choose_parameter(
         get_parameter(np, internal_np::threshold_distance), typename Kernel::FT(-1));
       typename Kernel::FT max_squared_distance = default_squared_distance;
-      if (threshold_distance >= typename Kernel::FT(0))
+      if(threshold_distance >= typename Kernel::FT(0))
         max_squared_distance = threshold_distance * threshold_distance;
+
       CGAL_assertion(max_squared_distance >= typename Kernel::FT(0));
       if (triangulate_hole_polyline_with_cdt(
            points,

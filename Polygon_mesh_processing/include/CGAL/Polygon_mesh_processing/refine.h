@@ -27,7 +27,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PMP_meshing_grp
-  @brief refines a region of a triangle mesh
+  @brief refines a region of a triangle mesh.
 
   @tparam TriangleMesh model of `MutableFaceGraph`
   @tparam FaceRange range of face descriptors, model of `Range`.
