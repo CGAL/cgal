@@ -38,16 +38,10 @@ int main()
   // fundamental types != FT
   assert(sci_to_epick((long int)(2)) == (long int)(2));
   assert(sci_to_epick(2.) == 2.);
-  assert(sci_to_epick(bool(2.)) == true);
+  assert(sci_to_epick(bool(true)) == true);
   assert(sci_to_epick(true) == true);
   assert(sci_to_epick(false) == false);
   assert(sci_to_epick(CGAL::ON_POSITIVE_SIDE) == CGAL::ON_POSITIVE_SIDE);
-
-  // int* is not a fundamental type, so this will (unfortunately) go through the bool path
-  int a = 123;
-  int* a_ptr = &a;
-  CGAL_USE(a_ptr);
-  assert(sci_to_epick(a_ptr) == 1);
 
 #ifdef CGAL_USE_CORE
   using SSCE = CGAL::Simple_cartesian<CORE::Expr>;
