@@ -112,7 +112,7 @@ int main (int, char**)
 
   std::cout << unique_vertices_from_rt3.size() << " unique vertices (rt3)" << std::endl;
   std::cout << p3rt3.number_of_vertices() << " unique vertices (p3rt3)" << std::endl;
-  CGAL_assertion(unique_vertices_from_rt3.size() == p3rt3.number_of_vertices());
+  assert(unique_vertices_from_rt3.size() == p3rt3.number_of_vertices());
 
   // compare cells
   std::set<std::set<int> > unique_cells_from_rt3;
@@ -138,7 +138,7 @@ int main (int, char**)
 
   std::cout << unique_cells_from_rt3.size() << " unique cells (rt3)" << std::endl;
   std::cout << p3rt3.number_of_cells() << " unique cells (p3rt3)" << std::endl;
-  CGAL_assertion(unique_cells_from_rt3.size() == p3rt3.number_of_cells());
+  assert(unique_cells_from_rt3.size() == p3rt3.number_of_cells());
 
   std::cout << t.time() << " sec." << std::endl;
   std::cout << "EXIT SUCCESS" << std::endl;
