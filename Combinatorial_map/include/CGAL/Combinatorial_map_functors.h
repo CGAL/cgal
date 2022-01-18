@@ -97,7 +97,7 @@ struct Test_is_valid_attribute_functor
     amap.negate_mark(mark);
     if ( !amap.is_whole_map_marked(mark) )
     {
-      for ( typename CGAL::template CMap_dart_const_iterator_basic_of_cell<CMap,i>
+      for ( CGAL::CMap_dart_const_iterator_basic_of_cell<CMap,i>
             it(*amap, adart, mark); it.cont(); ++it )
         amap.unmark(it, mark);
     }
