@@ -54,10 +54,9 @@ struct Lloyd_tester
     assert( 580 <= cdt.number_of_vertices() &&
                     cdt.number_of_vertices() <= 640 );
 
-    CGAL_assertion_code(
-      const size_type number_of_constraints = number_of_constrained_edges(cdt));
-    CGAL_assertion_code(
-      const size_type number_of_vertices1 = cdt.number_of_vertices());
+
+    const size_type number_of_constraints = number_of_constrained_edges(cdt);
+    const size_type number_of_vertices1 = cdt.number_of_vertices();
 
     CGAL::Mesh_optimization_return_code rc
       = CGAL::lloyd_optimize_mesh_2(cdt,
