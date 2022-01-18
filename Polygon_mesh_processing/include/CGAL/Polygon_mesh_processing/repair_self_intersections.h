@@ -995,7 +995,6 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor          edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor          face_descriptor;
 
-  typedef typename GeomTraits::FT FT;
 
   std::vector<Point> soup_points;
   std::vector<std::array<std::size_t, 3> > soup_faces;
