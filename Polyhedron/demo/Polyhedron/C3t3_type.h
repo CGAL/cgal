@@ -28,6 +28,8 @@
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 
+#include <CGAL/Polyhedral_complex_mesh_domain_3.h>
+
 #include <CGAL/tags.h>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -51,6 +53,8 @@ private:
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
           EPICK, SMesh, CGAL::Default, int> Polyhedral_mesh_domain;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
+
+typedef CGAL::Polyhedral_complex_mesh_domain_3<EPICK, SMesh> Polyhedral_complex_mesh_domain;
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 typedef CGAL::Labeled_mesh_domain_3<EPICK, int, int>            Image_domain;

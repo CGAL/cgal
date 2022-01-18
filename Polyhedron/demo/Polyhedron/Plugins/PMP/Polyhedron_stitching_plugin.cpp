@@ -146,7 +146,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered(
   if(!item)
     return;
   CGAL::Polygon_mesh_processing::stitch_borders(*item->polyhedron(),
-                                                CGAL::Polygon_mesh_processing::parameters::apply_per_connected_component(true));
+                                                CGAL::parameters::apply_per_connected_component(true));
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
 }

@@ -23,7 +23,7 @@
 #include <functional>
 #include <boost/functional/hash.hpp>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -230,18 +230,19 @@ private:
 
    \return iterator over the first point to remove.
 */
-template <typename PointRange, typename NamedParameters>
+template <typename PointRange, typename NamedParameters = parameters::Default_named_parameters>
 typename PointRange::iterator
 grid_simplify_point_set(
   PointRange& points,
   double epsilon,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  PointMap point_map = NP_helper::get_point_map(points, np);
 
   unsigned int min_points_per_cell = choose_parameter(get_parameter(np, internal_np::min_points_per_cell), 1);
 
@@ -263,18 +264,6 @@ grid_simplify_point_set(
   internal::Epsilon_point_set_3<Enriched_point, PointMap, Tag_true> point_set(epsilon, point_map, min_points_per_cell);
   return std::partition (points.begin(), points.end(), [&](const auto& p) -> bool { return point_set.insert(p); });
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-typename PointRange::iterator
-grid_simplify_point_set(PointRange& points, double epsilon)
-{
-  return grid_simplify_point_set
-    (points, epsilon, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

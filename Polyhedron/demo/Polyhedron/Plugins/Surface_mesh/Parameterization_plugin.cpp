@@ -698,7 +698,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
       CGAL::Polygon_mesh_processing::connected_components(
         tMesh,
         fccmap,
-        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
+        CGAL::parameters::edge_is_constrained_map(
           edge_pmap));
 
   // Next is the gathering of the border halfedges of the connected component.

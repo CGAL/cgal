@@ -22,7 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/fair.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/boost/graph/helpers.h>
@@ -30,11 +30,6 @@
 #include <boost/tuple/tuple.hpp>
 
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 
@@ -120,12 +115,12 @@ namespace Polygon_mesh_processing {
   */
   template<typename PolygonMesh,
            typename OutputIterator,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   OutputIterator
   triangulate_hole(PolygonMesh& pmesh,
               typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
               OutputIterator out,
-              const NamedParameters& np)
+              const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -179,16 +174,6 @@ namespace Polygon_mesh_processing {
       choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
       use_cdt,
       max_squared_distance).first;
-  }
-
-  template<typename PolygonMesh, typename OutputIterator>
-  OutputIterator
-    triangulate_hole(PolygonMesh& pmesh,
-      typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-      OutputIterator out)
-  {
-    return triangulate_hole(pmesh, border_halfedge, out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
   template<typename PM, typename VertexRange>
@@ -288,13 +273,13 @@ namespace Polygon_mesh_processing {
   template<typename PolygonMesh,
            typename FaceOutputIterator,
            typename VertexOutputIterator,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   std::pair<FaceOutputIterator, VertexOutputIterator>
     triangulate_and_refine_hole(PolygonMesh& pmesh,
       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
       FaceOutputIterator face_out,
       VertexOutputIterator vertex_out,
-      const NamedParameters& np)
+      const NamedParameters& np = parameters::default_values())
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor> patch;
     triangulate_hole(pmesh, border_halfedge, std::back_inserter(patch), np);
@@ -303,20 +288,6 @@ namespace Polygon_mesh_processing {
     test_in_edges(pmesh, vertices(pmesh));
 
     return refine(pmesh, patch, face_out, vertex_out, np);
-  }
-
-  template<typename PolygonMesh,
-           typename FaceOutputIterator,
-           typename VertexOutputIterator>
-  std::pair<FaceOutputIterator, VertexOutputIterator>
-    triangulate_and_refine_hole(PolygonMesh& pmesh,
-       typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-       FaceOutputIterator face_out,
-       VertexOutputIterator vertex_out)
-  {
-    return triangulate_and_refine_hole(pmesh, border_halfedge,
-      face_out, vertex_out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
   /*!
@@ -422,13 +393,13 @@ namespace Polygon_mesh_processing {
   template<typename PolygonMesh,
            typename FaceOutputIterator,
            typename VertexOutputIterator,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
   triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
     typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
     FaceOutputIterator face_out,
     VertexOutputIterator vertex_out,
-    const NamedParameters& np)
+    const NamedParameters& np = parameters::default_values())
   {
     std::vector<typename boost::graph_traits<PolygonMesh>::vertex_descriptor> patch;
 
@@ -445,20 +416,6 @@ namespace Polygon_mesh_processing {
 
     vertex_out = std::copy(patch.begin(), patch.end(), vertex_out);
     return std::make_tuple(fair_success, face_out, vertex_out);
-  }
-
-  template<typename PolygonMesh,
-           typename FaceOutputIterator,
-           typename VertexOutputIterator>
-  std::tuple<bool, FaceOutputIterator, VertexOutputIterator>
-  triangulate_refine_and_fair_hole(PolygonMesh& pmesh,
-        typename boost::graph_traits<PolygonMesh>::halfedge_descriptor border_halfedge,
-        FaceOutputIterator face_out,
-        VertexOutputIterator vertex_out)
-  {
-    return triangulate_refine_and_fair_hole(pmesh, border_halfedge,
-      face_out, vertex_out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
   /*!
@@ -536,12 +493,12 @@ namespace Polygon_mesh_processing {
   template <typename PointRange1,
             typename PointRange2,
             typename OutputIterator,
-            typename NamedParameters>
+            typename NamedParameters = parameters::Default_named_parameters>
   OutputIterator
   triangulate_hole_polyline(const PointRange1& points,
                             const PointRange2& third_points,
                             OutputIterator out,
-                            const NamedParameters& np)
+                            const NamedParameters& np = parameters::default_values())
   {
     if (points.empty()) return out;
 
@@ -552,7 +509,7 @@ namespace Polygon_mesh_processing {
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
       false;
 #else
-      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), true);
+      choose_parameter(get_parameter(np, internal_np::use_2d_constrained_delaunay_triangulation), false);
 #endif
 bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
@@ -577,30 +534,35 @@ bool use_dt3 =
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
-    struct Always_valid{
-      bool operator()(const std::vector<Point>&, int,int,int)const
-      {return true;}
-    };
-    Always_valid is_valid;
+    if (use_cdt)
+    {
+      struct Always_valid{
+        bool operator()(const std::vector<Point>&, int,int,int)const
+        {return true;}
+      };
+      Always_valid is_valid;
 
-    const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
-    typename Kernel::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
-    default_squared_distance /= typename Kernel::FT(16); // one quarter of the bbox height
+      const typename Kernel::Iso_cuboid_3 bbox = CGAL::bounding_box(points.begin(), points.end());
+      typename Kernel::FT default_squared_distance = CGAL::abs(CGAL::squared_distance(bbox.vertex(0), bbox.vertex(5)));
+      default_squared_distance /= typename Kernel::FT(16); // one quarter of the bbox height
 
-    const typename Kernel::FT threshold_distance = choose_parameter(
-      get_parameter(np, internal_np::threshold_distance), typename Kernel::FT(-1));
-    typename Kernel::FT max_squared_distance = default_squared_distance;
-    if (threshold_distance >= typename Kernel::FT(0))
-      max_squared_distance = threshold_distance * threshold_distance;
-    CGAL_assertion(max_squared_distance >= typename Kernel::FT(0));
-
-    if(!use_cdt ||
-       !triangulate_hole_polyline_with_cdt(
-         points,
-         tracer,
-         is_valid,
-         choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
-         max_squared_distance))
+      const typename Kernel::FT threshold_distance = choose_parameter(
+        get_parameter(np, internal_np::threshold_distance), typename Kernel::FT(-1));
+      typename Kernel::FT max_squared_distance = default_squared_distance;
+      if (threshold_distance >= typename Kernel::FT(0))
+        max_squared_distance = threshold_distance * threshold_distance;
+      CGAL_assertion(max_squared_distance >= typename Kernel::FT(0));
+      if (triangulate_hole_polyline_with_cdt(
+           points,
+           tracer,
+           is_valid,
+           choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
+           max_squared_distance))
+      {
+        CGAL_assertion(holes.empty());
+        return tracer.out;
+      }
+    }
 #endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
@@ -610,18 +572,6 @@ bool use_dt3 =
     return tracer.out;
   }
 
-  template <typename PointRange1,
-            typename PointRange2,
-            typename OutputIterator>
-  OutputIterator
-  triangulate_hole_polyline(const PointRange1& points,
-                            const PointRange2& third_points,
-                            OutputIterator out)
-  {
-    return triangulate_hole_polyline(points, third_points, out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
-  }
-
   /*!
   \ingroup  hole_filling_grp
   Same as above but the range of third points is omitted. They are not
@@ -629,26 +579,16 @@ bool use_dt3 =
 */
   template <typename PointRange,
             typename OutputIterator,
-            typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+            typename CGAL_NP_TEMPLATE_PARAMETERS>
   OutputIterator
   triangulate_hole_polyline(const PointRange& points,
                             OutputIterator out,
-                            const CGAL_PMP_NP_CLASS& np)
+                            const CGAL_NP_CLASS& np = parameters::default_values())
   {
     typedef typename std::iterator_traits<
       typename PointRange::iterator>::value_type Point;
     std::vector< Point > third_points;
     return triangulate_hole_polyline(points, third_points, out, np);
-  }
-
-  template <typename PointRange,
-            typename OutputIterator>
-  OutputIterator
-  triangulate_hole_polyline(const PointRange& points,
-                            OutputIterator out)
-  {
-    return triangulate_hole_polyline(points, out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
 } //end namespace Polygon_mesh_processing

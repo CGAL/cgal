@@ -108,12 +108,12 @@ namespace Contours {
     */
     template<
     typename DirectionRange,
-    typename NamedParameters>
+    typename NamedParameters = parameters::Default_named_parameters>
     User_defined_directions_2(
       const InputRange& input_range,
       const bool is_closed,
       const DirectionRange& direction_range,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())),
@@ -138,17 +138,6 @@ namespace Contours {
         std::cout << std::endl;
       }
     }
-
-    /// \cond SKIP_IN_MANUAL
-    template<typename DirectionRange>
-    User_defined_directions_2(
-      const InputRange& input_range,
-      const bool is_closed,
-      const DirectionRange& direction_range) :
-    User_defined_directions_2(
-      input_range, is_closed, direction_range, CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /// @}
 

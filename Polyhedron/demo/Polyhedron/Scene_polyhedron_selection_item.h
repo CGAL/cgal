@@ -967,8 +967,8 @@ template<typename HandleRange>
         get_face(*selection.begin()),
         *polyhedron(),
         std::back_inserter(selected_cc),
-        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
-                                                                           Is_selected_property_map<fg_edge_descriptor,PM>(mark, get(boost::edge_index,*polyhedron()))));
+        CGAL::parameters::edge_is_constrained_map(
+                            Is_selected_property_map<fg_edge_descriptor,PM>(mark, get(boost::edge_index,*polyhedron()))));
        treat_selection(selected_cc);
     }
     else

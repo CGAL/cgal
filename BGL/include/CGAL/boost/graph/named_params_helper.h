@@ -10,7 +10,7 @@
 #define CGAL_BOOST_GRAPH_NAMED_PARAMETERS_HELPERS_H
 
 #include <CGAL/boost/graph/internal/initialized_index_maps_helpers.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel_traits.h>
@@ -122,7 +122,7 @@ namespace CGAL {
   };
 
   template<typename PolygonMesh,
-           typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+           typename NamedParameters = parameters::Default_named_parameters >
   class GetVertexPointMap
   {
     typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::const_type
@@ -153,7 +153,7 @@ namespace CGAL {
   };
 
   template<typename PolygonMesh,
-           typename NamedParametersGT = Named_function_parameters<bool, internal_np::all_default_t>,
+           typename NamedParametersGT = parameters::Default_named_parameters,
            typename NamedParametersVPM = NamedParametersGT >
   class GetGeomTraits
   {
@@ -189,8 +189,7 @@ namespace CGAL {
 
 #define CGAL_DEF_GET_INDEX_TYPE(CTYPE, DTYPE, STYPE)                                               \
 template <typename Graph,                                                                          \
-          typename NamedParameters =                                                               \
-            CGAL::Named_function_parameters<bool, CGAL::internal_np::all_default_t> >              \
+          typename NamedParameters = parameters::Default_named_parameters>                                    \
 struct GetInitialized##CTYPE##IndexMap                                                             \
   : public BGL::internal::GetInitializedIndexMap<internal_np::DTYPE##_index_t,                     \
                                                  boost::DTYPE##_index_t,                           \
@@ -219,13 +218,13 @@ CGAL_DEF_GET_INDEX_TYPE(Face, face, typename boost::graph_traits<Graph>::faces_s
 
 #define CGAL_DEF_GET_INITIALIZED_INDEX_MAP(DTYPE, STYPE)                                           \
 template <typename Graph,                                                                          \
-          typename NamedParameters>                                                                \
+          typename NamedParameters = parameters::Default_named_parameters>                         \
 typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                 \
                                                boost::DTYPE##_index_t,                             \
                                                CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
                                                Graph, NamedParameters>::const_type                 \
 get_initialized_##DTYPE##_index_map(const Graph& g,                                                \
-                                    const NamedParameters& np)                                     \
+                                    const NamedParameters& np = parameters::default_values())  \
 {                                                                                                  \
   typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                \
                                                 boost::DTYPE##_index_t,                            \
@@ -233,18 +232,9 @@ get_initialized_##DTYPE##_index_map(const Graph& g,                             
                                                 Graph, NamedParameters>          Index_map_getter; \
   return Index_map_getter::get_const(CGAL::internal_np::DTYPE##_index_t{}, g, np);                 \
 }                                                                                                  \
-template <typename Graph>                                                                          \
-typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                 \
-                                               boost::DTYPE##_index_t,                             \
-                                               CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
-                                               Graph>::const_type                                  \
-get_initialized_##DTYPE##_index_map(const Graph& g)                                                \
-{                                                                                                  \
-  return get_initialized_##DTYPE##_index_map(g, CGAL::parameters::all_default());                  \
-}                                                                                                  \
 /* same as above, non-const version*/                                                              \
 template <typename Graph,                                                                          \
-          typename NamedParameters,                                                                \
+          typename NamedParameters = parameters::Default_named_parameters,                                                                \
           /*otherwise compilers will try to use 'Graph := const PM' and things will go badly*/     \
           std::enable_if_t<                                                                        \
             !std::is_const<typename std::remove_reference<Graph>::type>::value, int> = 0>          \
@@ -253,7 +243,7 @@ typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_
                                                CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
                                                Graph, NamedParameters>::type                       \
 get_initialized_##DTYPE##_index_map(Graph& g,                                                      \
-                                    const NamedParameters& np)                                     \
+                                    const NamedParameters& np = parameters::default_values())  \
 {                                                                                                  \
   typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                \
                                                 boost::DTYPE##_index_t,                            \
@@ -261,17 +251,6 @@ get_initialized_##DTYPE##_index_map(Graph& g,                                   
                                                 Graph, NamedParameters>          Index_map_getter; \
   return Index_map_getter::get(CGAL::internal_np::DTYPE##_index_t{}, g, np);                       \
 }                                                                                                  \
-template <typename Graph,                                                                          \
-          std::enable_if_t<                                                                        \
-            !std::is_const<typename std::remove_reference<Graph>::type>::value, int> = 0>          \
-typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                 \
-                                               boost::DTYPE##_index_t,                             \
-                                               CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
-                                               Graph>::type                                        \
-get_initialized_##DTYPE##_index_map(Graph& g)                                                      \
-{                                                                                                  \
-  return get_initialized_##DTYPE##_index_map(g, CGAL::parameters::all_default());                  \
-}
 
 CGAL_DEF_GET_INITIALIZED_INDEX_MAP(vertex, typename boost::graph_traits<Graph>::vertices_size_type)
 CGAL_DEF_GET_INITIALIZED_INDEX_MAP(halfedge, typename boost::graph_traits<Graph>::halfedges_size_type)
@@ -280,35 +259,12 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
 
 #undef CGAL_DEF_GET_INITIALIZED_INDEX_MAP
 
-  template<typename PolygonMesh, typename NamedParameters>
-  class GetFaceNormalMap
-  {
-    struct DummyNormalPmap
-    {
-      typedef typename boost::graph_traits<PolygonMesh>::face_descriptor key_type;
-      typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3 value_type;
-      typedef value_type reference;
-      typedef boost::readable_property_map_tag category;
-
-      typedef DummyNormalPmap Self;
-      friend value_type get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
-    };
-
-  public:
-    typedef DummyNormalPmap NoMap;
-    typedef typename internal_np::Lookup_named_param_def <
-      internal_np::face_normal_t,
-      NamedParameters,
-      DummyNormalPmap//default
-      > ::type  type;
-  };
-
   namespace internal {
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
   }
 
   template<typename PointRange,
-           typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t>,
+           typename NamedParameters = parameters::Default_named_parameters,
            bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value,
            typename NP_TAG = internal_np::point_t
   >
@@ -342,8 +298,75 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     typedef typename CGAL::Identity_property_map<const Dummy_point> const_type;
   };
 
-  namespace Point_set_processing_3 {
+  template <class PointRange, class NamedParameters, typename NP_TAG = internal_np::point_t>
+  struct Point_set_processing_3_np_helper
+  {
+    typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Value_type;
+    typedef CGAL::Identity_property_map<Value_type> DefaultPMap;
+    typedef CGAL::Identity_property_map<const Value_type> DefaultConstPMap;
 
+    typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+      NamedParameters,DefaultPMap> ::type  Point_map; // public
+    typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+      NamedParameters,DefaultConstPMap> ::type  Const_point_map; // public
+
+    typedef typename boost::property_traits<Point_map>::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Default_geom_traits;
+
+    typedef typename internal_np::Lookup_named_param_def <
+        internal_np::geom_traits_t,
+        NamedParameters,
+        Default_geom_traits
+      > ::type  Geom_traits; // public
+
+    typedef typename Geom_traits::FT FT; // public
+
+    typedef Constant_property_map<Value_type, typename Geom_traits::Vector_3> DummyNormalMap;
+
+    typedef typename internal_np::Lookup_named_param_def<
+      internal_np::normal_t,
+      NamedParameters,
+      DummyNormalMap
+      > ::type  Normal_map; // public
+
+    static Point_map get_point_map(PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Point_map>(parameters::get_parameter(np, internal_np::point_map));
+    }
+
+    static Point_map get_point_map(const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Point_map>(parameters::get_parameter(np, internal_np::point_map));
+    }
+
+    static Const_point_map get_const_point_map(const PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Const_point_map>(parameters::get_parameter(np, internal_np::point_map));
+    }
+
+    static Normal_map get_normal_map(const PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Normal_map>(parameters::get_parameter(np, internal_np::normal_map));
+    }
+
+    static Normal_map get_normal_map(const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Normal_map>(parameters::get_parameter(np, internal_np::normal_map));
+    }
+
+    static Geom_traits get_geom_traits(const PointRange&, const NamedParameters& np)
+    {
+      return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
+    }
+
+    static constexpr bool has_normal_map()
+    {
+      return !boost::is_same< typename internal_np::Get_param<typename NamedParameters::base, internal_np::normal_t>::type,
+                              internal_np::Param_not_found> ::value;
+    }
+  };
+
+  namespace Point_set_processing_3 {
     template <typename ValueType>
     struct Fake_point_range
     {
@@ -355,67 +378,6 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef ValueType reference;
         typedef std::random_access_iterator_tag iterator_category;
       };
-    };
-
-    namespace parameters
-    {
-      template <typename PointRange>
-      Named_function_parameters<bool, internal_np::all_default_t>
-      inline all_default(const PointRange&)
-      {
-        return CGAL::parameters::all_default();
-      }
-    }
-
-    template<typename PointRange>
-    class GetFT
-    {
-    public:
-      typedef typename Kernel_traits<
-        typename std::iterator_traits<
-          typename PointRange::iterator
-          >::value_type
-        >::Kernel::FT type;
-    };
-
-    template<typename PointRange, typename NamedParameters>
-    class GetK
-    {
-      typedef typename GetPointMap<PointRange, NamedParameters>::type Vpm;
-      typedef typename Kernel_traits<
-        typename boost::property_traits<Vpm>::value_type
-      >::Kernel Default_kernel;
-
-    public:
-      typedef typename internal_np::Lookup_named_param_def <
-        internal_np::geom_traits_t,
-        NamedParameters,
-        Default_kernel
-      > ::type  Kernel;
-    };
-
-    template<typename PointRange, typename NamedParameters>
-    class GetNormalMap
-    {
-      struct DummyNormalMap
-      {
-        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
-        typedef typename GetK<PointRange, NamedParameters>::Kernel::Vector_3 value_type;
-        typedef value_type reference;
-        typedef boost::read_write_property_map_tag category;
-
-        typedef DummyNormalMap Self;
-        friend value_type get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
-        friend void put(const Self&, const key_type&, const value_type&) { }
-      };
-
-    public:
-      typedef DummyNormalMap NoMap;
-      typedef typename internal_np::Lookup_named_param_def <
-        internal_np::normal_t,
-        NamedParameters,
-        DummyNormalMap//default
-        > ::type  type;
     };
 
     template<typename PlaneRange, typename NamedParameters>
@@ -442,19 +404,8 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     template<typename NamedParameters>
     class GetPlaneIndexMap
     {
-      struct DummyPlaneIndexMap
-      {
-        typedef std::size_t key_type;
-        typedef int value_type;
-        typedef value_type reference;
-        typedef boost::readable_property_map_tag category;
-
-        typedef DummyPlaneIndexMap Self;
-        friend value_type get(const Self&, const key_type&) { return -1; }
-      };
-
+      typedef Constant_property_map<std::size_t, int> DummyPlaneIndexMap;
     public:
-      typedef DummyPlaneIndexMap NoMap;
       typedef typename internal_np::Lookup_named_param_def <
         internal_np::plane_index_t,
         NamedParameters,
@@ -465,23 +416,14 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     template<typename PointRange, typename NamedParameters>
     class GetIsConstrainedMap
     {
-      struct DummyConstrainedMap
-      {
-        typedef typename std::iterator_traits<typename PointRange::iterator>::value_type key_type;
-        typedef bool value_type;
-        typedef value_type reference;
-        typedef boost::readable_property_map_tag category;
-
-        typedef DummyConstrainedMap Self;
-        friend value_type get(const Self&, const key_type&) { return false; }
-      };
-
+      typedef Static_boolean_property_map<
+        typename std::iterator_traits<typename PointRange::iterator>::value_type,
+        false>   Default_map;
     public:
-      typedef DummyConstrainedMap NoMap;
       typedef typename internal_np::Lookup_named_param_def <
         internal_np::point_is_constrained_t,
         NamedParameters,
-        DummyConstrainedMap //default
+        Default_map //default
         > ::type  type;
     };
 
@@ -566,7 +508,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     using parameters::choose_parameter;
     using parameters::is_default_parameter;
 
-    if(!is_default_parameter(get_parameter(np, internal_np::stream_precision)))
+    if(!is_default_parameter<NP, internal_np::stream_precision_t>())
     {
       const int precision = choose_parameter<int>(get_parameter(np,
                               internal_np::stream_precision));
