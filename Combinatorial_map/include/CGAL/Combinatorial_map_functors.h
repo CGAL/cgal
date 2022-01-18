@@ -92,12 +92,12 @@ struct Test_is_valid_attribute_functor
     size_type mark=amap.get_new_mark();
     bool res = true;
     CGAL::internal::Test_is_valid_attribute_functor<CMap>::
-        run<i>(amap, adart, mark, &res);
+        template run<i>(amap, adart, mark, &res);
 
     amap.negate_mark(mark);
     if ( !amap.is_whole_map_marked(mark) )
     {
-      for ( CGAL::CMap_dart_const_iterator_basic_of_cell<CMap,i>
+      for ( typename CGAL::template CMap_dart_const_iterator_basic_of_cell<CMap,i>
             it(*amap, adart, mark); it.cont(); ++it )
         amap.unmark(it, mark);
     }
