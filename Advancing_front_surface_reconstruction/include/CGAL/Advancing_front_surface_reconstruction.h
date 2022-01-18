@@ -394,7 +394,7 @@ namespace CGAL {
     bool deal_with_2d;
     Priority priority;
     int max_connected_component;
-    double K_init, K_step;
+    coord_type K_init, K_step;
     std::list<Vertex_handle> interior_edges;
     std::list< Incidence_request_elt > incidence_requests;
     typename std::list< Incidence_request_elt >::iterator sentinel;
