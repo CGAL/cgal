@@ -248,7 +248,7 @@ void test(const char* filename)
   }
 
   test_no_cover(mesh);
-  test_cover(mesh, CGAL::parameters::all_default());
+  test_cover(mesh, CGAL::parameters::default_values());
 }
 
 int main(int, char**)
