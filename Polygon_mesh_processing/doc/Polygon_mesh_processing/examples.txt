@@ -31,6 +31,7 @@
 \example Polygon_mesh_processing/repair_polygon_soup_example.cpp
 \example Polygon_mesh_processing/mesh_smoothing_example.cpp
 \example Polygon_mesh_processing/shape_smoothing_example.cpp
+\example Polygon_mesh_processing/tangential_relaxation_example.cpp
 \example Polygon_mesh_processing/locate_example.cpp
 \example Polygon_mesh_processing/orientation_pipeline_example.cpp
 \example Polygon_mesh_processing/triangulate_faces_split_visitor_example.cpp

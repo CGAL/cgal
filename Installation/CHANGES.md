@@ -15,6 +15,11 @@ Release date: June 2022
 
 -   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
 
+### [Polygon Mesh Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function `CGAL::Polygon_mesh_processing::tangential_relaxation()`, which
+applies an area-based tangential mesh smoothing to a surface triangle mesh vertices.
+
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
