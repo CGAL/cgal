@@ -19,18 +19,12 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <tuple>
 #include <type_traits>
 #include <unordered_map>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
-
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -107,11 +101,11 @@ namespace Polygon_mesh_processing {
 *
 * \todo check if it should really be a triangle mesh or if a polygon mesh is fine
 */
-  template <typename VertexRange, class TriangleMesh, class NamedParameters>
-  void tangential_relaxation(const VertexRange& vertices,
-                             TriangleMesh& tm,
-                             const NamedParameters& np)
-  {
+template <typename VertexRange, class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
+void tangential_relaxation(const VertexRange& vertices,
+                           TriangleMesh& tm,
+                           const NamedParameters& np = parameters::default_values())
+{
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
@@ -289,30 +283,16 @@ namespace Polygon_mesh_processing {
 #endif
 }
 
-template <typename VertexRange, class TriangleMesh>
-void tangential_relaxation(const VertexRange& vertices, TriangleMesh& tm)
-{
-  tangential_relaxation(vertices, tm, parameters::all_default());
-}
-
 /*!
 * \ingroup PMP_meshing_grp
 * applies `tangential_relaxation()` to all the vertices of `tm`.
 */
 template <class TriangleMesh,
-          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void tangential_relaxation(TriangleMesh& tm, const CGAL_PMP_NP_CLASS& np)
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+void tangential_relaxation(TriangleMesh& tm, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   tangential_relaxation(vertices(tm), tm, np);
 }
-
-template <class TriangleMesh>
-void tangential_relaxation(TriangleMesh& tm)
-{
-  tangential_relaxation(vertices(tm), tm, parameters::all_default());
-}
-
-
 
 } } // CGAL::Polygon_mesh_processing
 

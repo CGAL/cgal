@@ -20,15 +20,10 @@
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_evaluation.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/property_map.h>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -134,10 +129,10 @@ namespace Polygon_mesh_processing {
 *
 * @pre `tmesh` does not contain any degenerate faces.
 */
-template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void angle_and_area_smoothing(const FaceRange& faces,
                               TriangleMesh& tmesh,
-                              const NamedParameters& np)
+                              const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;
@@ -329,22 +324,10 @@ void angle_and_area_smoothing(const FaceRange& faces,
 }
 
 ///\cond SKIP_IN_MANUAL
-template <typename FaceRange, typename TriangleMesh>
-void angle_and_area_smoothing(const FaceRange& face_range, TriangleMesh& tmesh)
-{
-  angle_and_area_smoothing(face_range, tmesh, parameters::all_default());
-}
-
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void angle_and_area_smoothing(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
+void angle_and_area_smoothing(TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   angle_and_area_smoothing(faces(tmesh), tmesh, np);
-}
-
-template<typename TriangleMesh>
-void angle_and_area_smoothing(TriangleMesh& tmesh)
-{
-  angle_and_area_smoothing(faces(tmesh), tmesh, parameters::all_default());
 }
 
 template<typename TriangleMesh, typename GeomTraits, typename Stream>
