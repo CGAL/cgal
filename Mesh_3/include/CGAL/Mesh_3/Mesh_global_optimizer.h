@@ -81,7 +81,7 @@ protected:
   typedef unsigned int                                      Nb_frozen_points_type;
 
   Mesh_global_optimizer_base(const Bbox_3 &, int)
-    : big_moves_size_(0) {}
+    : nb_frozen_points_(0), big_moves_size_(0) {}
 
   void update_big_moves(const FT& new_sq_move)
   {
@@ -136,7 +136,7 @@ protected:
   typedef std::atomic<unsigned int>                         Nb_frozen_points_type ;
 
   Mesh_global_optimizer_base(const Bbox_3 &bbox, int num_grid_cells_per_axis)
-    : big_moves_size_(0)
+    : nb_frozen_points_(0), big_moves_size_(0)
     , m_lock_ds(bbox, num_grid_cells_per_axis)
   {
     big_moves_current_size_ = 0;
@@ -200,7 +200,7 @@ protected:
 public:
 
 protected:
-  mutable std::atomic<unsigned int> nb_frozen_points_ = 0;
+  mutable std::atomic<unsigned int> nb_frozen_points_;
   std::atomic<std::size_t>  big_moves_current_size_;
   std::atomic<FT>           big_moves_smallest_;
   std::size_t               big_moves_size_;
