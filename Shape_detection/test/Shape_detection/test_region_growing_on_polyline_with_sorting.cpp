@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   const FT angle_threshold    = FT(45);
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("polylines_3/polyline_3.polylines.txt"));
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("polylines_3/wavy_circle.polylines.txt"));
   CGAL::set_ascii_mode(in);
   assert(in);
 

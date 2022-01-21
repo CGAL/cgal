@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
   // Load polyline data either from a local folder or a user-provided file.
   const bool is_default_input = argc > 1 ? false : true;
-  std::ifstream in(is_default_input ? CGAL::data_file_path("polylines_3/polyline_3.polylines.txt") : argv[1]);
+  std::ifstream in(is_default_input ? CGAL::data_file_path("polylines_3/wavy_circle.polylines.txt") : argv[1]);
   CGAL::set_ascii_mode(in);
   if (!in) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   std::cout << "* number of input vertices: " << polyline_3.size() << std::endl;
   assert(is_default_input && polyline_3.size() == 249);
 
-  // Default parameter values for the data file polyline_3.polylines.txt.
+  // Default parameter values for the data file wavy_circle.polylines.txt.
   const FT max_distance = FT(45) / FT(10);
   const FT max_angle    = FT(45);
 
