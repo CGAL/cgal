@@ -21,3 +21,13 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("vda_tos2.cpp")
   target_link_libraries(vda_tos2 PUBLIC CGAL::Eigen3_support)
 endif()
+
+if(BUILD_TESTING)
+    set_tests_properties(
+      execution___of__vda_ag
+      execution___of__vda_dt
+      execution___of__vda_pt
+      execution___of__vda_rt
+      execution___of__vda_sdg
+      PROPERTIES RESOURCE_LOCK VDA_Tests_IO)
+endif()
