@@ -117,11 +117,11 @@ namespace Polyline {
 
       \pre `input_range.size() > 0`
     */
-    template<typename NamedParameters>
+    template<typename NamedParameters = parameters::Default_named_parameters>
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
@@ -135,15 +135,6 @@ namespace Polyline {
       std::iota(m_order.begin(), m_order.end(), 0);
       m_scores.resize(m_input_range.size());
     }
-
-    /// \cond SKIP_IN_MANUAL
-    Least_squares_line_fit_sorting(
-      const InputRange& input_range,
-      NeighborQuery& neighbor_query) :
-    Least_squares_line_fit_sorting(
-      input_range, neighbor_query, CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /// @}
 

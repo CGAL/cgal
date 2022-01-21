@@ -32,7 +32,7 @@
 
 // Named parameters.
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 // Face graph includes.
 #include <CGAL/Iterator_range.h>

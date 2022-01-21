@@ -159,10 +159,10 @@ namespace Point_set {
       \pre `minimum_radius >= 0`
       \pre `maximum_radius >= minimum_radius`
     */
-    template<typename NamedParameters>
+    template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_circle_fit_region(
       const InputRange& input_range,
-      const NamedParameters& np) :
+      const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())),
@@ -273,15 +273,6 @@ namespace Point_set {
     { }
 
     #endif // CGAL_NO_DEPRECATED_CODE
-
-    /// \cond SKIP_IN_MANUAL
-    // TODO: Should be off until the deprecated code is removed.
-    // Least_squares_circle_fit_region(
-    //   const InputRange& input_range) :
-    // Least_squares_circle_fit_region(
-    //   input_range, CGAL::parameters::all_default())
-    // { }
-    /// \endcond
 
     /// @}
 

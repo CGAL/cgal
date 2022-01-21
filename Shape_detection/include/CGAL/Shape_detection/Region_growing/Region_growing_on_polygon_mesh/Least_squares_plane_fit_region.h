@@ -159,10 +159,10 @@ namespace Polygon_mesh {
       \pre `cosine_value >= 0 && cosine_value <= 1`
       \pre `minimum_region_size > 0`
     */
-    template<typename NamedParameters>
+    template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_plane_fit_region(
       const PolygonMesh& pmesh,
-      const NamedParameters& np) :
+      const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
     m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
@@ -246,15 +246,6 @@ namespace Polygon_mesh {
     { }
 
     #endif // CGAL_NO_DEPRECATED_CODE
-
-    /// \cond SKIP_IN_MANUAL
-    // TODO: Should be off until the deprecated code is removed.
-    // Least_squares_plane_fit_region(
-    //   const PolygonMesh& pmesh) :
-    // Least_squares_plane_fit_region(
-    //   pmesh, CGAL::parameters::all_default())
-    // { }
-    /// \endcond
 
     /// @}
 

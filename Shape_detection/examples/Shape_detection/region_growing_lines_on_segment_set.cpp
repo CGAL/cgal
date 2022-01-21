@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   const std::string filename = is_default_input ? CGAL::data_file_path("meshes/am.off") : argv[1];
 
   Surface_mesh surface_mesh;
-  if (!CGAL::IO::read_polygon_mesh(filename, surface_mesh, CGAL::parameters::all_default())) {
+  if (!CGAL::IO::read_polygon_mesh(filename, surface_mesh)) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 
   // Find planar regions.
   One_ring_query one_ring_query(surface_mesh);
-  Plane_region plane_region(surface_mesh, CGAL::parameters::all_default());
+  Plane_region plane_region(surface_mesh);
   RG_planes rg_planes(face_range, one_ring_query, plane_region);
 
   std::vector< std::vector<std::size_t> > regions;

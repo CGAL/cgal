@@ -128,10 +128,10 @@ namespace Point_set {
       \pre `input_range.size() > 0`
       \pre `sphere_radius > 0`
     */
-    template<typename NamedParameters>
+    template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Sphere_neighbor_query(
       const InputRange& input_range,
-      const NamedParameters& np) :
+      const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())),
@@ -182,15 +182,6 @@ namespace Point_set {
     { }
 
     #endif // CGAL_NO_DEPRECATED_CODE
-
-    /// \cond SKIP_IN_MANUAL
-    // TODO: Should be off until the deprecated code is removed.
-    // Sphere_neighbor_query(
-    //   const InputRange& input_range) :
-    // Sphere_neighbor_query(
-    //   input_range, CGAL::parameters::all_default())
-    // { }
-    /// \endcond
 
     /// @}
 

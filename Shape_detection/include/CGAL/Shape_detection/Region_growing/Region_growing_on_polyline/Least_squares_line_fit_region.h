@@ -139,10 +139,10 @@ namespace Polyline {
       \pre `cosine_value >= 0 && cosine_value <= 1`
       \pre `minimum_region_size > 0`
     */
-    template<typename NamedParameters>
+    template<typename NamedParameters = parameters::Default_named_parameters>
     Least_squares_line_fit_region(
       const InputRange& input_range,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::point_map), PointMap())),
@@ -174,14 +174,6 @@ namespace Polyline {
       CGAL_precondition(cos_value >= FT(0) && cos_value <= FT(1));
       m_cos_value_threshold = cos_value;
     }
-
-    /// \cond SKIP_IN_MANUAL
-    Least_squares_line_fit_region(
-      const InputRange& input_range) :
-    Least_squares_line_fit_region(
-      input_range, CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /// @}
 

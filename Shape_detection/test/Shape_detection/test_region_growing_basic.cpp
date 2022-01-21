@@ -45,8 +45,8 @@ int main(int argc, char *argv[]) {
   assert(input_range.size() == 3634);
 
   // Create parameter classes.
-  Neighbor_query neighbor_query(input_range, CGAL::parameters::all_default());
-  Region_type region_type(input_range, CGAL::parameters::all_default());
+  Neighbor_query neighbor_query(input_range);
+  Region_type region_type(input_range);
 
   // Run region growing.
   Region_growing region_growing(

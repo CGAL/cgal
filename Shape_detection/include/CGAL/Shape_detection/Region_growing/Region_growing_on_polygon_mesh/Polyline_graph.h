@@ -162,10 +162,10 @@ namespace Polygon_mesh {
       \pre `faces(pmesh).size() > 0`
       \pre `edges(pmesh).size() > 0`
     */
-    template<typename NamedParameters>
+    template<typename NamedParameters = parameters::Default_named_parameters>
     Polyline_graph(
       const PolygonMesh& pmesh,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::default_values()) :
     m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
     m_edge_range(edges(m_face_graph)),
@@ -181,14 +181,6 @@ namespace Polygon_mesh {
       CGAL_precondition(m_edge_range.size() > 0);
       build_graph();
     }
-
-    /// \cond SKIP_IN_MANUAL
-    Polyline_graph(
-      const PolygonMesh& pmesh) :
-    Polyline_graph(
-      pmesh, CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /// \cond SKIP_IN_MANUAL
     void build_graph() {

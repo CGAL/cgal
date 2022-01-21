@@ -33,9 +33,9 @@ namespace internal {
 template<
 typename InputRange,
 typename OutputIterator,
-typename NamedParameters>
+typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator region_growing_lines(
-  const InputRange& points_with_normals, OutputIterator regions, const NamedParameters& np) {
+  const InputRange& points_with_normals, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
 
   using Input_range = InputRange;
   using Point_with_normal = typename Input_range::value_type;
@@ -62,20 +62,10 @@ OutputIterator region_growing_lines(
 
 template<
 typename InputRange,
-typename OutputIterator>
-OutputIterator region_growing_lines(
-  const InputRange& points_with_normals, OutputIterator regions) {
-
-  return region_growing_lines(
-    points_with_normals, regions, CGAL::parameters::all_default());
-}
-
-template<
-typename InputRange,
 typename OutputIterator,
-typename NamedParameters>
+typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator region_growing_planes(
-  const InputRange& points_with_normals, OutputIterator regions, const NamedParameters& np) {
+  const InputRange& points_with_normals, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
 
   using Input_range = InputRange;
   using Point_with_normal = typename Input_range::value_type;
@@ -101,22 +91,12 @@ OutputIterator region_growing_planes(
 }
 
 template<
-typename InputRange,
-typename OutputIterator>
-OutputIterator region_growing_planes(
-  const InputRange& points_with_normals, OutputIterator regions) {
-
-  return region_growing_planes(
-    points_with_normals, regions, CGAL::parameters::all_default());
-}
-
-template<
 typename PointType,
 typename VectorType,
 typename OutputIterator,
-typename NamedParameters>
+typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT>
 OutputIterator region_growing_planes(
-  const CGAL::Point_set_3<PointType, VectorType>& point_set, OutputIterator regions, const NamedParameters& np) {
+  const CGAL::Point_set_3<PointType, VectorType>& point_set, OutputIterator regions, const CGAL_NP_CLASS& np) {
 
   using Point_type = PointType;
   using Vector_type = VectorType;
@@ -158,10 +138,10 @@ OutputIterator region_growing_planes(
 template<
 typename GeomTraits,
 typename OutputIterator,
-typename NamedParameters>
+typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator region_growing_planes(
   const CGAL::Polyhedron_3<GeomTraits, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>& polyhedron,
-  OutputIterator regions, const NamedParameters& np) {
+  OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
 
   using Traits = GeomTraits;
   using Polyhedron = CGAL::Polyhedron_3<Traits, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
@@ -184,22 +164,11 @@ OutputIterator region_growing_planes(
 }
 
 template<
-typename GeomTraits,
-typename OutputIterator>
-OutputIterator region_growing_planes(
-  const CGAL::Polyhedron_3<GeomTraits, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>& polyhedron,
-  OutputIterator regions) {
-
-  return region_growing_planes(
-    polyhedron, regions, CGAL::parameters::all_default());
-}
-
-template<
 typename PointType,
 typename OutputIterator,
-typename NamedParameters>
+typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator region_growing_planes(
-  const CGAL::Surface_mesh<PointType>& surface_mesh, OutputIterator regions, const NamedParameters& np) {
+  const CGAL::Surface_mesh<PointType>& surface_mesh, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
 
   using Point_type = PointType;
   using Traits = typename Kernel_traits<Point_type>::Kernel;
@@ -223,21 +192,11 @@ OutputIterator region_growing_planes(
 }
 
 template<
-typename PointType,
-typename OutputIterator>
-OutputIterator region_growing_planes(
-  const CGAL::Surface_mesh<PointType>& surface_mesh, OutputIterator regions) {
-
-  return region_growing_planes(
-    surface_mesh, regions, CGAL::parameters::all_default());
-}
-
-template<
 typename InputRange,
 typename OutputIterator,
-typename NamedParameters>
+typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator region_growing_polylines(
-  const InputRange& polyline, OutputIterator regions, const NamedParameters& np) {
+  const InputRange& polyline, OutputIterator regions, const CGAL_NP_CLASS& np = parameters::default_values()) {
 
   using Input_range = InputRange;
   using Point_type = typename Input_range::value_type;
@@ -258,16 +217,6 @@ OutputIterator region_growing_polylines(
     polyline, neighbor_query, region_type, sorting.seed_map());
   region_growing.detect(regions);
   return regions;
-}
-
-template<
-typename InputRange,
-typename OutputIterator>
-OutputIterator region_growing_polylines(
-  const InputRange& polyline, OutputIterator regions) {
-
-  return region_growing_polylines(
-    polyline, regions, CGAL::parameters::all_default());
 }
 
 } // namespace internal

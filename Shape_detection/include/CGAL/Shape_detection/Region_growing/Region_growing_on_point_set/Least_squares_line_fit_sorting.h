@@ -112,11 +112,11 @@ namespace Point_set {
 
       \pre `input_range.size() > 0`
     */
-    template<typename NamedParameters>
+    template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_line_fit_sorting(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
-      const NamedParameters& np) :
+      const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_point_map(parameters::choose_parameter(parameters::get_parameter(
@@ -161,16 +161,6 @@ namespace Point_set {
     { }
 
     #endif // CGAL_NO_DEPRECATED_CODE
-
-    /// \cond SKIP_IN_MANUAL
-    // TODO: Should be off until the deprecated code is removed.
-    // Least_squares_line_fit_sorting(
-    //   const InputRange& input_range,
-    //   NeighborQuery& neighbor_query) :
-    // Least_squares_line_fit_sorting(
-    //   input_range, neighbor_query, CGAL::parameters::all_default())
-    // { }
-    /// \endcond
 
     /// @}
 

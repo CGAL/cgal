@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   CGAL::IO::set_ascii_mode(in);
 
   Polygon_mesh polygon_mesh;
-  if (!CGAL::IO::read_polygon_mesh(filename, polygon_mesh, CGAL::parameters::all_default())) {
+  if (!CGAL::IO::read_polygon_mesh(filename, polygon_mesh)) {
     std::cerr << "ERROR: cannot read the input file!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -65,8 +65,7 @@ int main(int argc, char *argv[]) {
 
   // Sort face indices.
   Sorting sorting(
-    polygon_mesh, neighbor_query,
-    CGAL::parameters::all_default());
+    polygon_mesh, neighbor_query);
   sorting.sort();
 
   // Create an instance of the region growing class.

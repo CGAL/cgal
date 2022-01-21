@@ -118,11 +118,11 @@ namespace Polygon_mesh {
 
       \pre `faces(pmesh).size() > 0`
     */
-    template<typename NamedParameters>
+    template<typename CGAL_NP_TEMPLATE_PARAMETERS>
     Least_squares_plane_fit_sorting(
       const PolygonMesh& pmesh,
       NeighborQuery& neighbor_query,
-      const NamedParameters& np) :
+      const CGAL_NP_CLASS& np = parameters::default_values()) :
     m_face_graph(pmesh),
     m_neighbor_query(neighbor_query),
     m_face_range(faces(m_face_graph)),
@@ -168,16 +168,6 @@ namespace Polygon_mesh {
     { }
 
     #endif // CGAL_NO_DEPRECATED_CODE
-
-    /// \cond SKIP_IN_MANUAL
-    // TODO: Should be off until the deprecated code is removed.
-    // Least_squares_plane_fit_sorting(
-    //   const PolygonMesh& pmesh,
-    //   NeighborQuery& neighbor_query) :
-    // Least_squares_plane_fit_sorting(
-    //   pmesh, neighbor_query, CGAL::parameters::all_default())
-    // { }
-    /// \endcond
 
     /// @}
 
