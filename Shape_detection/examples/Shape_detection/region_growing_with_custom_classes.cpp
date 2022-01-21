@@ -1,9 +1,11 @@
 // STL includes.
 #include <map>
+#include <list>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <iterator>
+#include <cassert>
 
 // CGAL includes.
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
@@ -17,7 +19,7 @@ namespace Custom {
   };
 
   // A range of objects.
-  using Objects = std::vector<Object>;
+  using Objects = std::vector<Object>; // std::list<Object> works as well
 
   // The Neighbor_query functor that accesses neighbors stored in
   // the object struct above.
@@ -36,9 +38,7 @@ namespace Custom {
       std::size_t i = 0;
       for (const auto& object : m_objects) {
         if (i == query_index) {
-
-          neighbors = object.neighbors;
-          return;
+          neighbors = object.neighbors; return;
         } ++i;
       }
     }
@@ -60,14 +60,10 @@ namespace Custom {
       const std::size_t query_index,
       const std::vector<std::size_t>& region) const {
 
-      if (region.size() == 0)
-        return false;
-
+      if (region.size() == 0) return false;
       const std::size_t index = region[0];
-
       if (index == 0 && query_index == 1) return true;
       if (query_index == 0 && index == 1) return true;
-
       return false;
     }
 
@@ -75,8 +71,9 @@ namespace Custom {
       return m_is_valid;
     }
 
-    void update(const std::vector<std::size_t>&) {
+    bool update(const std::vector<std::size_t>&) {
       m_is_valid = true;
+      return m_is_valid;
     }
   };
 
@@ -111,24 +108,15 @@ namespace Custom {
 
 } // namespace Custom
 
-// Type declarations.
+// Typedefs.
 using Object         = Custom::Object;
 using Objects        = Custom::Objects;
 using Neighbor_query = Custom::Neighbor_query;
 using Region_type    = Custom::Region_type;
 using Seed_map       = Custom::Seed_map;
-
-using Region  = std::vector<std::size_t>;
-using Regions = std::vector<Region>;
-
-using Region_growing =
-CGAL::Shape_detection::Region_growing<Objects, Neighbor_query, Region_type, Seed_map>;
+using Region_growing = CGAL::Shape_detection::Region_growing<Objects, Neighbor_query, Region_type, Seed_map>;
 
 int main() {
-
-  std::cout << std::endl <<
-    "region_growing_with_custom_classes example started"
-  << std::endl << std::endl;
 
   // Define a range of objects, where the first two objects form
   // the first region, while the third object forms the second region.
@@ -152,6 +140,8 @@ int main() {
   // Extra object to skip.
   Object object4;
   objects.push_back(object4);
+  std::cout << "* number of input objects: " << objects.size() << std::endl;
+  assert(objects.size() == 4);
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query = Neighbor_query(objects);
@@ -170,17 +160,9 @@ int main() {
     objects, neighbor_query, region_type, seed_map);
 
   // Run the algorithm.
-  Regions regions;
+  std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-
-  // Print the number of found regions. It must be two regions.
-  std::cout << "* " << regions.size() <<
-    " regions have been found among " << objects.size() <<  " objects"
-  << std::endl;
-
-  std::cout << std::endl <<
-    "region_growing_with_custom_classes example finished"
-  << std::endl << std::endl;
-
+  std::cout << "* number of found regions: " << regions.size() << std::endl;
+  assert(regions.size() == 2);
   return EXIT_SUCCESS;
 }

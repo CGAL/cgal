@@ -218,9 +218,19 @@ CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_r
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
 
+// List of named parameters used in Shape_detection package
+CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
+CGAL_add_named_parameter(maximum_distance_t, maximum_distance, maximum_distance)
+CGAL_add_named_parameter(minimum_region_size_t, minimum_region_size, minimum_region_size)
+CGAL_add_named_parameter(sphere_radius_t, sphere_radius, sphere_radius)
+CGAL_add_named_parameter(k_neighbors_t, k_neighbors, k_neighbors)
+CGAL_add_named_parameter(segment_t, segment_map, segment_map)
+CGAL_add_named_parameter(cosine_value_t, cosine_value, cosine_value)
+CGAL_add_named_parameter(minimum_radius_t, minimum_radius, minimum_radius)
+CGAL_add_named_parameter(maximum_radius_t, maximum_radius, maximum_radius)
+
 // List of named parameters used in Shape_regularization package
 CGAL_add_named_parameter(minimum_length_t, minimum_length, minimum_length)
-CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
 CGAL_add_named_parameter(maximum_offset_t, maximum_offset, maximum_offset)
 CGAL_add_named_parameter(regularize_parallelism_t, regularize_parallelism, regularize_parallelism)
 CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, regularize_orthogonality)
@@ -229,4 +239,3 @@ CGAL_add_named_parameter(regularize_axis_symmetry_t, regularize_axis_symmetry, r
 CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_direction)
 CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
 CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
-CGAL_add_named_parameter(segment_t, segment_map, segment_map)

@@ -9,9 +9,14 @@ A region is represented by a set of `indices` of the items, which are included i
 this region.
 
 \cgalHasModel
-- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`,
-- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`,
+- `CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`
+- `CGAL::Shape_detection::Point_set::Least_squares_circle_fit_region`
+- `CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`
+- `CGAL::Shape_detection::Point_set::Least_squares_sphere_fit_region`
+- `CGAL::Shape_detection::Point_set::Least_squares_cylinder_fit_region`
+- `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_region`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`
+- `CGAL::Shape_detection::Polyline::Least_squares_line_fit_region`
 */
 class RegionType {
 
@@ -50,8 +55,27 @@ public:
     represented by `indices`.
 
     `CGAL::Shape_detection::Region_growing` calls this function each time when a
-    new seed item is selected. In this case, `indices.size() = 1`. This function
-    is also called periodically when enlarging the region. In this case, `indices.size() > 1`.
+    new seed item is selected. This case can be identified by checking the
+    condition `indices.size() == 1`. This function is also called periodically
+    when enlarging the region. This case can be identified by checking the
+    condition `indices.size() > 1`.
+
+    This function also returns a Boolean at the first call when a new region
+    with one seed item is being created. When it is `true`, the new region is
+    further propagated, otherwise, it is rejected.
+  */
+  bool update(
+    const std::vector<std::size_t>& indices) {
+
+  }
+
+  /*!
+    enables to update any information that is maintained with the region
+    represented by `indices`.
+
+    \deprecated This is deprecated function that was used in all versions before \cgal 5.4.
+    The change from `void` in the old version to `bool` in the new version affects
+    only user-defined region types.
   */
   void update(
     const std::vector<std::size_t>& indices) {

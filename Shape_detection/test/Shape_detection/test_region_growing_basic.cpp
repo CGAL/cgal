@@ -31,76 +31,55 @@ using Region_type    = SD::Point_set::Least_squares_line_fit_region<Kernel, Inpu
 using Region_growing = SD::Region_growing<Input_range, Neighbor_query, Region_type>;
 
 int main(int argc, char *argv[]) {
-  bool success = true;
 
   // Load data.
-  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/point_set_2.xyz"));
+  std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/buildings_outline.xyz"));
   CGAL::IO::set_ascii_mode(in);
+  assert(in);
 
-  if (!in) {
-    std::cout <<
-    "Error: cannot read the file point_set_2.xyz!" << std::endl;
-    std::cout <<
-    "You can either create a symlink to the data folder or provide this file by hand."
-    << std::endl << std::endl;
-    assert(false);
-    return EXIT_FAILURE;
-  }
-
-  Input_range input_range;
   FT a, b, c, d, e, f;
-
+  Input_range input_range;
   while (in >> a >> b >> c >> d >> e >> f)
     input_range.push_back(std::make_pair(Point_2(a, b), Vector_2(d, e)));
-
   in.close();
-
   assert(input_range.size() == 3634);
-  if (input_range.size() != 3634)
-    success = false;
 
   // Create parameter classes.
-  Neighbor_query neighbor_query(
-    input_range);
-  Region_type region_type(
-    input_range);
+  Neighbor_query neighbor_query(input_range, CGAL::parameters::all_default());
+  Region_type region_type(input_range, CGAL::parameters::all_default());
 
   // Run region growing.
   Region_growing region_growing(
     input_range, neighbor_query, region_type);
 
-  // Test data.
   std::vector<std::size_t> unassigned_points;
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
-
   assert(unassigned_points.size() == 3634);
-  if (unassigned_points.size() != 3634)
-    success = false;
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
-
-  assert(regions.size() != 0);
-  if (regions.size() == 0)
-    success = false;
+  const std::size_t num_regions = regions.size();
+  assert(num_regions != 0);
 
   unassigned_points.clear();
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  const std::size_t num_unassigned_points = unassigned_points.size();
+  assert(num_unassigned_points != 3634);
 
-  assert(unassigned_points.size() != 3634);
-  if (unassigned_points.size() == 3634)
-    success = false;
-
-  const std::size_t num_regions = regions.size();
   regions.clear();
   region_growing.detect(std::back_inserter(regions));
-
   assert(regions.size() == num_regions);
-  if (regions.size() != num_regions)
-    success = false;
 
-  std::cout << "basic_test_success: " << success << std::endl;
-  assert(success);
+  unassigned_points.clear();
+  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  assert(unassigned_points.size() == num_unassigned_points);
 
-  return (success) ? EXIT_SUCCESS : EXIT_FAILURE;
+  region_growing.clear();
+
+  unassigned_points.clear();
+  region_growing.unassigned_items(std::back_inserter(unassigned_points));
+  assert(unassigned_points.size() == 3634);
+
+  std::cout << "rg_basic, epick_test_success: " << true << std::endl;
+  return EXIT_SUCCESS;
 }
