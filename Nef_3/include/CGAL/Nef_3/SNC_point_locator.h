@@ -216,6 +216,26 @@ public:
       delete candidate_provider;
   }
 
+  static inline bool v_vertex_of_e(Vertex_handle v, Halfedge_handle e) {
+    return (e->source() == v) || (e->twin()->source() == v);
+  }
+
+  // We next check if v is a vertex on the face to avoid a geometric test
+  static inline bool v_vertex_of_f(Vertex_handle v, Halffacet_handle f) {
+    Halffacet_cycle_iterator fci;
+    for(fci=f->facet_cycles_begin(); fci!=f->facet_cycles_end(); ++fci) {
+      if(fci.is_shalfedge()) {
+        SHalfedge_around_facet_circulator sfc(fci), send(sfc);
+        CGAL_For_all(sfc,send) {
+          if(sfc->source()->center_vertex() ==  v){
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   virtual Object_handle shoot(const Ray_3& ray, int mask=255) const {
     CGAL_NEF_TIMER(rs_t.start());
     CGAL_assertion( initialized);
@@ -250,7 +270,7 @@ public:
         else if( CGAL::assign( e, *o) && ((mask&2) != 0)) {
           Point_3 q;
           _CGAL_NEF_TRACEN("trying edge on "<< Segment_3(e->source()->point(),e->twin()->source()->point()));
-          if( is.does_intersect_internally( ray, Segment_3(e->source()->point(),
+          if( !v_vertex_of_e(v,e) && is.does_intersect_internally( ray, Segment_3(e->source()->point(),
                                                            e->twin()->source()->point()), q)) {
             _CGAL_NEF_TRACEN("ray intersects edge on "<<q);
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
@@ -272,7 +292,7 @@ public:
           Point_3 q;
           _CGAL_NEF_TRACEN("trying facet with on plane "<<f->plane()<<
                   " with point on "<<f->plane().point());
-          if( is.does_intersect_internally( ray, f, q, true) ) {
+          if( !v_vertex_of_f(v,f) && is.does_intersect_internally( ray, f, q, true) ) {
             _CGAL_NEF_TRACEN("ray intersects facet on "<<q);
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
             if( hit) { _CGAL_NEF_TRACEN("prev. intersection on "<<eor); }
@@ -421,7 +441,7 @@ public:
         _CGAL_NEF_TRACEN("found on edge "<< ss);
           return make_object(e);
         }
-        if((e->source() != v)  && (e->twin()->source() != v) && is.does_intersect_internally(s, ss, ip)) {
+        if(!v_vertex_of_e(v,e) && is.does_intersect_internally(s, ss, ip)) {
           // first = false;
           s = Segment_3(p, normalized(ip));
           result = make_object(e);
@@ -435,23 +455,7 @@ public:
           return make_object(f);
         }
 
-        // We next check if v is a vertex on the face to avoid a geometric test
-        bool v_vertex_of_f = false;
-        Halffacet_cycle_iterator fci;
-        for(fci=f->facet_cycles_begin(); (! v_vertex_of_f) && (fci!=f->facet_cycles_end()); ++fci) {
-          if(fci.is_shalfedge()) {
-            SHalfedge_around_facet_circulator sfc(fci), send(sfc);
-            CGAL_For_all(sfc,send) {
-              if(sfc->source()->center_vertex() ==  v){
-                v_vertex_of_f = true;
-                break;
-              }
-            }
-          }
-        }
-
-
-        if( (! v_vertex_of_f) &&  is.does_intersect_internally(s,f,ip) ) {
+        if( !v_vertex_of_f(v,f) && is.does_intersect_internally(s,f,ip) ) {
           s = Segment_3(p, normalized(ip));
           result = make_object(f);
         }
