@@ -14,6 +14,7 @@
 
 #include <boost/unordered_set.hpp>
 #include <utility>
+#include <cassert>
 
 namespace CGAL
 {
@@ -42,7 +43,7 @@ namespace Tetrahedral_remeshing
       else
         c->set_subdomain_index(2);
     }
-    CGAL_assertion(tr.is_valid(true));
+    assert(tr.is_valid(true));
   }
 
 
@@ -66,7 +67,7 @@ namespace Tetrahedral_remeshing
     for (typename Tr::Cell_handle c : tr.finite_cell_handles())
       c->set_subdomain_index(1);
 
-    CGAL_assertion(tr.is_valid(true));
+    assert(tr.is_valid(true));
   }
 
   template<typename Tr>
@@ -185,7 +186,7 @@ namespace Tetrahedral_remeshing
     add_edge(v2, v6, tr, constraints);
     add_edge(v3, v7, tr, constraints);
 
-    CGAL_assertion(tr.is_valid(true));
+    assert(tr.is_valid(true));
   }
 }
 }

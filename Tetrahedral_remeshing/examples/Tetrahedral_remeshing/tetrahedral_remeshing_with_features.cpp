@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <utility>
+#include <cassert>
 
 #include "tetrahedral_remeshing_generate_input.h"
 
@@ -45,8 +46,8 @@ public:
                   const key_type& k,
                   const bool b)
   {
-    CGAL_assertion(map.m_set_ptr != nullptr);
-    CGAL_assertion(k.first < k.second);
+    assert(map.m_set_ptr != nullptr);
+    assert(k.first < k.second);
     if (b)  map.m_set_ptr->insert(k);
     else    map.m_set_ptr->erase(k);
   }
@@ -54,8 +55,8 @@ public:
   friend value_type get(const Constrained_edges_property_map& map,
                         const key_type& k)
   {
-    CGAL_assertion(map.m_set_ptr != nullptr);
-    CGAL_assertion(k.first < k.second);
+    assert(map.m_set_ptr != nullptr);
+    assert(k.first < k.second);
     return (map.m_set_ptr->count(k) > 0);
   }
 };
@@ -80,7 +81,6 @@ int main(int argc, char* argv[])
 
   CGAL::Tetrahedral_remeshing::generate_input_cube(nbv, t3, constraints);
   make_constraints_from_cube_edges(t3, constraints);
-  CGAL_assertion(t3.is_valid());
 
   CGAL::tetrahedral_isotropic_remeshing(t3, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
@@ -89,4 +89,3 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;
 }
-

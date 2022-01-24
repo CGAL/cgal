@@ -26,7 +26,6 @@ int main() {
     for (  Facet_iterator i = P.facets_begin(); i != P.facets_end(); ++i) {
         Halfedge_facet_circulator j = i->facet_begin();
         // Facets in polyhedral surfaces are at least triangles.
-        CGAL_assertion( CGAL::circulator_size(j) >= 3);
         std::cout << CGAL::circulator_size(j) << ' ';
         do {
             std::cout << ' ' << std::distance(P.vertices_begin(), j->vertex());
