@@ -149,40 +149,6 @@ namespace Point_set {
       m_tree.build();
     }
 
-    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
-
-    /*!
-      \brief initializes a Kd-tree with input points.
-
-      \deprecated This constructor is deprecated since the version 5.4 of \cgal.
-
-      \param input_range
-      an instance of `InputRange` with 2D or 3D points
-
-      \param sphere_radius
-      the fixed radius of the fuzzy sphere used for searching neighbors
-      of a query point. %Default is 1.
-
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_2` or to `Kernel::Point_3`
-
-      \pre `input_range.size() > 0`
-      \pre `sphere_radius > 0`
-    */
-    CGAL_DEPRECATED_MSG("This constructor is deprecated since the version 5.4 of CGAL!")
-    Sphere_neighbor_query(
-      const InputRange& input_range,
-      const FT sphere_radius = FT(1),
-      const PointMap point_map = PointMap()) :
-    Sphere_neighbor_query(
-      input_range, CGAL::parameters::
-    sphere_radius(sphere_radius).
-    point_map(point_map))
-    { }
-
-    #endif // CGAL_NO_DEPRECATED_CODE
-
     /// @}
 
     /// \name Access

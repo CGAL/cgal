@@ -130,38 +130,6 @@ namespace Point_set {
       m_scores.resize(m_input_range.size());
     }
 
-    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \deprecated This constructor is deprecated since the version 5.5 of \cgal.
-
-      \param input_range
-      an instance of `InputRange` with 3D points
-
-      \param neighbor_query
-      an instance of `NeighborQuery` that is used internally to
-      access point's neighbors
-
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_3`
-
-      \pre `input_range.size() > 0`
-    */
-    CGAL_DEPRECATED_MSG("This constructor is deprecated since the version 5.5 of CGAL!")
-    Least_squares_sphere_fit_sorting(
-      const InputRange& input_range,
-      NeighborQuery& neighbor_query,
-      const PointMap point_map = PointMap()) :
-    Least_squares_sphere_fit_sorting(
-      input_range, neighbor_query, CGAL::parameters::
-    point_map(point_map))
-    { }
-
-    #endif // CGAL_NO_DEPRECATED_CODE
-
     /// @}
 
     /// \name Sorting

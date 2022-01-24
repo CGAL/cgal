@@ -21,6 +21,15 @@ Release date: June 2022
     a `boolean` instead of  `void` that is used inside the class `Region_growing` for detecting if
     the input conditions for the new region are satisfied. This change affects only user-defined
     types of regions.
+-   **Breaking change**: Constructors of all models of the concepts [`RegionType`](https://doc.cgal.org/5.5/Shape_detection/classRegionType.html`) 
+    and [`NeighborQuery`](https://doc.cgal.org/5.5/Shape_detection/classNeighborQuery.html`) have been updated to used named parameters. 
+    Namely, the following classes are affected: 
+      - [`CGAL::Shape_detection::Point_set::Least_squares_line_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Least__squares__line__fit__region.html)
+      - [`CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Least__squares__plane__fit__region.html)
+      - [`CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1Least__squares__plane__fit__region.html)
+      - [`CGAL::Shape_detection::Point_set::K_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1K__neighbor__query.html)
+      - [`CGAL::Shape_detection::Point_set::Sphere_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Point__set_1_1Sphere__neighbor__query.html)
+      - [`CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query`](https://doc.cgal.org/5.5/Shape_detection/classCGAL_1_1Shape__detection_1_1Polygon__mesh_1_1One__ring__neighbor__query.html)
 -   The constructors of all models used together with the region growing algorithm now enable users
     to provide parameters through the named parameters mechanism. The old constructors without named
     parameters are deprecated.

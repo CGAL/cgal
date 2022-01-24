@@ -137,38 +137,6 @@ namespace Polygon_mesh {
       m_scores.resize(m_face_range.size());
     }
 
-    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \deprecated This constructor is deprecated since the version 5.4 of \cgal.
-
-      \param pmesh
-      an instance of `PolygonMesh` that represents a polygon mesh
-
-      \param neighbor_query
-      an instance of `NeighborQuery` that is used internally to
-      access face's neighbors
-
-      \param vertex_to_point_map
-      an instance of `VertexToPointMap` that maps a polygon mesh
-      vertex to `Kernel::Point_3`
-
-      \pre `faces(pmesh).size() > 0`
-    */
-    CGAL_DEPRECATED_MSG("This constructor is deprecated since the version 5.4 of CGAL!")
-    Least_squares_plane_fit_sorting(
-      const PolygonMesh& pmesh,
-      NeighborQuery& neighbor_query,
-      const VertexToPointMap vertex_to_point_map = VertexToPointMap()) :
-    Least_squares_plane_fit_sorting(
-      pmesh, neighbor_query, CGAL::parameters::
-    vertex_point_map(vertex_to_point_map))
-    { }
-
-    #endif // CGAL_NO_DEPRECATED_CODE
-
     /// @}
 
     /// \name Sorting

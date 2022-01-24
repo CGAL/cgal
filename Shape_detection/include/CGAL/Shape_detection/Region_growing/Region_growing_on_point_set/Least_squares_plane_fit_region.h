@@ -182,63 +182,6 @@ namespace Point_set {
       m_cos_value_threshold = cos_value;
     }
 
-    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \deprecated This constructor is deprecated since the version 5.4 of \cgal.
-
-      \param input_range
-      an instance of `InputRange` with 3D points and
-      corresponding 3D normal vectors
-
-      \param distance_threshold
-      the maximum distance from a point to a plane. %Default is 1.
-
-      \param angle_threshold
-      the maximum accepted angle in degrees between the normal of a point and
-      the normal of a plane. %Default is 25 degrees.
-
-      \param min_region_size
-      the minimum number of 3D points a region must have. %Default is 3.
-
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_3`
-
-      \param normal_map
-      an instance of `NormalMap` that maps an item from `input_range`
-      to `Kernel::Vector_3`
-
-      \param traits
-      an instance of `GeomTraits`.
-
-      \pre `input_range.size() > 0`
-      \pre `distance_threshold >= 0`
-      \pre `angle_threshold >= 0 && angle_threshold <= 90`
-      \pre `min_region_size > 0`
-    */
-    CGAL_DEPRECATED_MSG("This constructor is deprecated since the version 5.4 of CGAL!")
-    Least_squares_plane_fit_region(
-      const InputRange& input_range,
-      const FT distance_threshold = FT(1),
-      const FT angle_threshold = FT(25),
-      const std::size_t min_region_size = 3,
-      const PointMap point_map = PointMap(),
-      const NormalMap normal_map = NormalMap(),
-      const GeomTraits traits = GeomTraits()) :
-    Least_squares_plane_fit_region(
-      input_range, CGAL::parameters::
-    maximum_distance(distance_threshold).
-    maximum_angle(angle_threshold).
-    minimum_region_size(min_region_size).
-    point_map(point_map).
-    normal_map(normal_map).
-    geom_traits(traits))
-    { }
-
-    #endif // CGAL_NO_DEPRECATED_CODE
     /// @}
 
     /// \name Access

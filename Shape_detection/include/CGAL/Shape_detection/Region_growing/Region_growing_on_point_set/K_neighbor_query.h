@@ -154,40 +154,6 @@ namespace Point_set {
       m_tree.build();
     }
 
-    #if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
-
-    /*!
-      \brief initializes a Kd-tree with input points.
-
-      \deprecated This constructor is deprecated since the version 5.4 of \cgal.
-
-      \param input_range
-      an instance of `InputRange` with 2D or 3D points
-
-      \param k
-      the number of returned neighbors per each query point. %Default is 12.
-
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range`
-      to `Kernel::Point_2` or to `Kernel::Point_3`
-
-      \pre `input_range.size() > 0`
-
-      \pre `k > 0`
-    */
-    CGAL_DEPRECATED_MSG("This constructor is deprecated since the version 5.4 of CGAL!")
-    K_neighbor_query(
-      const InputRange& input_range,
-      const std::size_t k = 12,
-      const PointMap point_map = PointMap()) :
-    K_neighbor_query(
-      input_range, CGAL::parameters::
-    k_neighbors(k).
-    point_map(point_map))
-    { }
-
-    #endif // CGAL_NO_DEPRECATED_CODE
-
     /// @}
 
     /// \name Access
