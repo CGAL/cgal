@@ -97,20 +97,20 @@ bool test_polylines_equal_points() {
 
   using Point_2 = typename Kernel::Point_2;
   const std::vector<Point_2> polyline_2 = {
-    Point_2(0.10, 0.00), Point_2(0.10, 0.00), Point_2(0.30, 0.00), Point_2(0.50, 0.00),
-    Point_2(0.90, 0.00), Point_2(0.90, 0.10), Point_2(0.90, 0.30), Point_2(0.90, 0.50),
-    Point_2(0.90, 0.50), Point_2(0.90, 0.90), Point_2(0.90, 0.90), Point_2(0.70, 0.90),
-    Point_2(0.50, 0.90), Point_2(0.10, 0.90), Point_2(0.10, 0.90), Point_2(0.10, 0.70),
-    Point_2(0.10, 0.50), Point_2(0.10, 0.30), Point_2(0.10, 0.10), Point_2(0.10, 0.00)
+    Point_2(0, 0), Point_2(1, 0), Point_2(2, 0), Point_2(3, 0),
+    Point_2(7, 1), Point_2(8, 1), Point_2(9, 1), Point_2(10, 1),
+    Point_2(14, 2), Point_2(15, 2), Point_2(16, 2), Point_2(17, 2),
+    Point_2(19, 3), Point_2(20, 3), Point_2(21, 3), Point_2(22, 3)
   };
 
-  assert(polyline_2.size() == 20);
+  assert(polyline_2.size() == 16);
   std::vector< std::vector<std::size_t> > regions;
   CGAL::Shape_detection::internal::region_growing_polylines(
-    polyline_2, std::back_inserter(regions));
+    polyline_2, std::back_inserter(regions), CGAL::parameters::maximum_distance(0.01));
   assert(regions.size() == 4);
-  assert(regions[0].size() == 6);
-  assert(regions[1].size() == 6);
+
+  assert(regions[0].size() == 4);
+  assert(regions[1].size() == 4);
   assert(regions[2].size() == 4);
   assert(regions[3].size() == 4);
   return true;
