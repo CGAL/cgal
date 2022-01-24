@@ -15,7 +15,7 @@ int main()
 
   // Add two edges along two opposite facets.
   assert( cm.is_insertable_cell_1_in_cell_2
-	  (cm.beta(dh1,1),cm.beta(dh1,0)) );
+          (cm.beta(dh1,1),cm.beta(dh1,0)) );
 
   cm.insert_cell_1_in_cell_2(cm.beta(dh1,1), cm.beta(dh1,0));
   assert( cm.is_valid() );
@@ -23,7 +23,7 @@ int main()
   Dart_handle dh2=cm.beta(dh1,2,1,1,2);
 
   assert( cm.is_insertable_cell_1_in_cell_2
-	  (dh2,cm.beta(dh2,1,1)) );
+          (dh2,cm.beta(dh2,1,1)) );
 
   cm.insert_cell_1_in_cell_2(dh2, cm.beta(dh2,1,1));
   assert( cm.is_valid() );
