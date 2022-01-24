@@ -437,7 +437,7 @@ struct Face_filtered_graph
       initialize_halfedge_indices();
   }
 
-  ///change the set of selected faces using a patch id
+  /// changes the set of selected faces using a patch id
   template<class FacePatchIndexMap>
   void set_selected_faces(typename boost::property_traits<FacePatchIndexMap>::value_type face_patch_id,
                           FacePatchIndexMap face_patch_index_map)
@@ -466,7 +466,7 @@ struct Face_filtered_graph
 
     reset_indices();
   }
-  /// change the set of selected faces using a range of patch ids
+  /// changes the set of selected faces using a range of patch ids
   template<class FacePatchIndexRange, class FacePatchIndexMap>
   void set_selected_faces(const FacePatchIndexRange& selected_face_patch_indices,
                           FacePatchIndexMap face_patch_index_map
@@ -506,7 +506,7 @@ struct Face_filtered_graph
     reset_indices();
   }
 
-  /// change the set of selected faces using a range of face descriptors
+  /// changes the set of selected faces using a range of face descriptors
   template<class FaceRange>
   void set_selected_faces(const FaceRange& selection)
   {
@@ -569,18 +569,21 @@ struct Face_filtered_graph
   {
     return selected_halfedges[get(himap, halfedge(e,_graph))];
   }
-  ///returns the number of selected faces
-  size_type number_of_faces()const
+
+  /// returns the number of selected faces
+  size_type number_of_faces() const
   {
     return selected_faces.count();
   }
-///returns the number of selected vertices.
-  size_type number_of_vertices()const
+
+  /// returns the number of selected vertices.
+  size_type number_of_vertices() const
   {
     return selected_vertices.count();
   }
-///returns the number of selected halfedges.
-  size_type number_of_halfedges()const
+
+  /// returns the number of selected halfedges.
+  size_type number_of_halfedges() const
   {
     return selected_halfedges.count();
   }
@@ -612,18 +615,15 @@ struct Face_filtered_graph
     return bind_property_maps(himap, make_property_map(halfedge_indices) );
   }
 
-  /// returns `true` if around any vertex of a selected face,
-  /// there is at most one connected set of selected faces.
+  /// returns `true` if around any vertex of a selected face there is at most a single umbrella
   bool is_selection_valid() const
   {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor      vertex_descriptor;
     typedef typename boost::graph_traits<Graph>::halfedge_descriptor    halfedge_descriptor;
 
-    // Non-manifoldness can appear either:
-    // - if 'pm' is pinched at a vertex. While traversing the incoming halfedges at this vertex,
-    //   we will meet strictly more than one border halfedge.
-    // - if there are multiple umbrellas around a vertex. In that case, we will find a non-visited
-    //   halfedge that has for target a vertex that is already visited.
+    // Non-manifoldness can appear if there are multiple umbrellas around a vertex.
+    // In that case, we will find a non-visited halfedge that has for target a vertex
+    // that is already visited.
 
     boost::unordered_set<vertex_descriptor> vertices_visited;
     boost::unordered_set<halfedge_descriptor> halfedges_handled;
@@ -643,15 +643,11 @@ struct Face_filtered_graph
       if(!vertices_visited.insert(vd).second)
         return false;
 
-      std::size_t border_halfedge_counter = 0;
-
-      // Can't simply call halfedges_around_target(vd, *this) because 'halfedge(vd)' is not necessarily 'hd'
+      // Can't call halfedges_around_target(vd, *this) because 'halfedge(vd)' is not necessarily 'hd'
       halfedge_descriptor ihd = hd;
       do
       {
         halfedges_handled.insert(ihd);
-        if(is_border(ihd, *this))
-          ++border_halfedge_counter;
 
         do
         {
@@ -660,9 +656,6 @@ struct Face_filtered_graph
         while(!is_in_cc(ihd) && ihd != hd);
       }
       while(ihd != hd);
-
-      if(border_halfedge_counter > 1)
-        return false;
     }
 
     return true;
@@ -1050,7 +1043,8 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 next(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
-  CGAL_assertion(w.is_in_cc(h));
+  CGAL_precondition(w.is_in_cc(h));
+
   if(w.is_in_cc(next(h, w.graph())))
     return next(h, w.graph());
 
@@ -1074,8 +1068,8 @@ typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >:
 prev(typename boost::graph_traits< Face_filtered_graph<Graph, FIMap, VIMap, HIMap> >::halfedge_descriptor h,
      const Face_filtered_graph<Graph, FIMap, VIMap, HIMap> & w)
 {
+  CGAL_precondition(w.is_in_cc(h));
 
-  CGAL_assertion(w.is_in_cc(h));
   if(w.is_in_cc(prev(h, w.graph())))
     return prev(h, w.graph());
 
