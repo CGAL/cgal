@@ -19,12 +19,17 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/HalfedgeDS_vector.h>
 
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_point_set.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polygon_mesh.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_polyline.h>
 #include <CGAL/Shape_detection/Region_growing/Region_growing_on_segment_set.h>
+
+// TODO: this is not using generic programming for FaceGraph and PointSet
+//       as a consequence, artifical depencencies on Surface_mesh, Polyhedron,
+//       HDS and Point_set_3 are done.
 
 namespace CGAL {
 namespace Shape_detection {

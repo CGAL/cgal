@@ -6,7 +6,6 @@ Circulator
 Distance_2
 Distance_3
 Filtered_kernel
-HalfedgeDS
 Hash_map
 Homogeneous_kernel
 Installation
@@ -19,7 +18,6 @@ Modifier
 Modular_arithmetic
 Number_types
 Orthtree
-Polyhedron
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools
@@ -30,4 +28,3 @@ Shape_detection
 Solver_interface
 Spatial_searching
 Stream_support
-Surface_mesh

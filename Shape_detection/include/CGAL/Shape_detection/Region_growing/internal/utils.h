@@ -34,13 +34,6 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
 
-// Face graph includes.
-#include <CGAL/Iterator_range.h>
-#include <CGAL/HalfedgeDS_vector.h>
-#include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
@@ -50,6 +43,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Iterator_range.h>
 
 namespace CGAL {
 namespace Shape_detection {
