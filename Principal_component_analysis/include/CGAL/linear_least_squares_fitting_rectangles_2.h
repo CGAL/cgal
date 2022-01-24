@@ -93,7 +93,7 @@ linear_least_squares_fitting_2(InputIterator first,
     Matrix transformation = init_matrix<FT>(2,delta);
     FT area = (x1-x0)*(y2-y0);
 
-    CGAL_assertion(area != 0.0);
+    CGAL_assertion(area != FT(0));
 
     // Find the 2nd order moment for the rectangle wrt to the origin by an affine transformation.
 
@@ -115,9 +115,9 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += -mass * (c.x() * c.x());
-  covariance[1] += -mass * (c.x() * c.y());
-  covariance[2] += -mass * (c.y() * c.y());
+  covariance[0] -= mass * (c.x() * c.x());
+  covariance[1] -= mass * (c.x() * c.y());
+  covariance[2] -= mass * (c.y() * c.y());
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order,

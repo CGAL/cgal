@@ -89,7 +89,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
     Matrix transformation = init_matrix<FT>(2,delta);
     FT area = FT(0.5) * CGAL::abs(LA::determinant(transformation));
-    CGAL_assertion(area!=0);
+    CGAL_assertion(area!=FT(0));
 
     // Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
 
@@ -112,9 +112,9 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] += -mass * (c.x() * c.x());
-  covariance[1] += -mass * (c.x() * c.y());
-  covariance[2] += -mass * (c.y() * c.y());
+  covariance[0] -= mass * (c.x() * c.x());
+  covariance[1] -= mass * (c.x() * c.y());
+  covariance[2] -= mass * (c.y() * c.y());
 
   //  std::cout<<"cov: "<<covariance[0]*covariance[2]<<" =? "<<covariance[1]*covariance[1]<<std::endl;
 
