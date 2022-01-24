@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
     },
     [](const auto& region) -> bool {
       std::cout << "- num regions spheres: " << region.size() << std::endl;
-      return (region.size() >= 57 && region.size() <= 77);
+      return (region.size() >= 30 && region.size() <= 77);
     }
   );
 
