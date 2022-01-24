@@ -56,7 +56,7 @@ public:
     }
     void  set_opposite( Halfedge_handle h) {
         asseert(( &* h - 1 == &* HDS::halfedge_handle(this)) ||
-		( &* h + 1 == &* HDS::halfedge_handle(this)));
+                ( &* h + 1 == &* HDS::halfedge_handle(this)));
         if ( &* h - 1 == &* HDS::halfedge_handle(this))
             nxt |= 1;
         else

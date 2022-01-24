@@ -65,7 +65,7 @@ int main()
 
   const std::size_t nb_patches = sizeof(filenames) / sizeof(const char*);
   assert(sizeof(incident_subdomains) ==
-	 nb_patches * sizeof(std::pair<int, int>));
+         nb_patches * sizeof(std::pair<int, int>));
   std::vector<Face_graph> patches(nb_patches);
   for(std::size_t i = 0; i < nb_patches; ++i) {
     std::ifstream input(CGAL::data_file_path(filenames[i]));
