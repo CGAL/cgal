@@ -291,6 +291,7 @@ void io() {
         // successful re-reading of output
         POLY p(NT(-3), NT(5), NT(0), NT(0), NT(-7), NT(9)), q;
         std::ostringstream os;
+        os.precision(17);
         os << p;
         std::istringstream is(os.str());
         is >> q;
