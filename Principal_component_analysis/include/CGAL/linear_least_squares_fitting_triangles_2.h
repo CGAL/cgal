@@ -89,7 +89,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
     Matrix transformation = init_matrix<FT>(2,delta);
     FT area = FT(0.5) * CGAL::abs(LA::determinant(transformation));
-    CGAL_assertion(area!=FT(0));
+    CGAL_assertion(!CGAL::is_zero(area));
 
     // Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
 
@@ -108,7 +108,7 @@ linear_least_squares_fitting_2(InputIterator first,
     mass += area;
   }
 
-  CGAL_assertion_msg (mass != FT(0), "Can't compute PCA of null measure.");
+  CGAL_assertion_msg (!CGAL::is_zero(mass), "Can't compute PCA of null measure.");
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.

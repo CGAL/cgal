@@ -85,7 +85,7 @@ linear_least_squares_fitting_2(InputIterator first,
     Matrix transformation = init_matrix<FT>(2,delta);
     using std::sqrt;
     FT length = CGAL::approximate_sqrt(t.squared_length());
-    CGAL_assertion(length != FT(0));
+    CGAL_assertion(!CGAL::is_zero(length));
 
     // Find the 2nd order moment for the segment wrt to the origin by an affine transformation.
 

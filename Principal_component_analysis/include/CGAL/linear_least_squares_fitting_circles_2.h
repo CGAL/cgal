@@ -88,7 +88,7 @@ linear_least_squares_fitting_2(InputIterator first,
                    0.0, radius};
     Matrix transformation = init_matrix<FT>(2,delta);
     FT area = t.squared_radius();
-    CGAL_assertion(area != 0.0);
+    CGAL_assertion(!CGAL::is_zero(area));
 
     // Find the 2nd order moment for the circle wrt to the origin by an affine transformation.
 
@@ -194,7 +194,7 @@ linear_least_squares_fitting_2(InputIterator first,
                    0.0, radius};
     Matrix transformation = init_matrix<FT>(2,delta);
     FT length = 2 * radius;
-    CGAL_assertion(length != FT(0));
+    CGAL_assertion(!CGAL::is_zero(length));
 
     // Find the 2nd order moment for the circle wrt to the origin by an affine transformation.
 
