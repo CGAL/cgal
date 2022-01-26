@@ -31,15 +31,8 @@ namespace Polygon_mesh {
     This class returns all edges, which form polylines splitting the polygon mesh
     being a `PolygonMesh` into planar regions.
 
-    \tparam GeomTraits
-    a model of `Kernel`
-
     \tparam PolygonMesh
     a model of `FaceListGraph`
-
-    \tparam FaceToRegionMap
-    a model of `ReadablePropertyMap` whose key type is `face_descriptor` of the `PolygonMesh`
-    and value type is `std::size_t`
 
     \tparam VertexToPointMap
     a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
@@ -48,14 +41,14 @@ namespace Polygon_mesh {
     \cgalModels `NeighborQuery`
   */
   template<
-    typename GeomTraits,
     typename PolygonMesh,
-    typename FaceToRegionMap = typename property_map_selector<PolygonMesh, CGAL::face_index_t>::const_type,
-    typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
+    typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type
+    >
   class Polyline_graph {
 
     using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
     using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+    using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
 
     struct PEdge {
       std::size_t index = std::size_t(-1);
@@ -67,10 +60,6 @@ namespace Polygon_mesh {
 
   public:
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
-    using Face_graph = PolygonMesh;
-    using Face_to_region_map = FaceToRegionMap;
-
     using Vertex_to_point_map = VertexToPointMap;
     /// \endcond
 
@@ -109,7 +98,7 @@ namespace Polygon_mesh {
 
     /// \cond SKIP_IN_MANUAL
     using Segment_range = Iterator_range<Transform_iterator>;
-    using Segment_map = Segment_from_edge_descriptor_map<Face_graph, Vertex_to_point_map>;
+    using Segment_map = Segment_from_edge_descriptor_map<PolygonMesh, Vertex_to_point_map>;
     /// \endcond
 
   public:
@@ -118,23 +107,22 @@ namespace Polygon_mesh {
 
     /*!
       \brief initializes all internal data structures.
+      \tparam FaceToRegionMap
+      a model of `ReadablePropertyMap` whose key type is `face_descriptor` of the `PolygonMesh`
+      and value type is `std::size_t`
 
       \tparam NamedParameters
-      a sequence of \ref bgl_namedparameters "Named Parameters"
+      a sequence of optional \ref bgl_namedparameters "Named Parameters"
 
-      \param pmesh
-      an instance of a `PolygonMesh` that represents a polygon mesh
+      \param pmesh a polygon mesh
 
-      \param np
-      a sequence of \ref bgl_namedparameters "Named Parameters"
-      among the ones listed below
+      \param face_to_region_map maps each face of `pmesh` to
+             the corresponding planar regions id
+
+      \param np a sequence of \ref bgl_namedparameters "Named Parameters"
+        among the ones listed below
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{face_index_map}  // TODO THIS IS NOT OPTIONAL ---> parameter
-          \cgalParamDescription{an instance of `FaceToRegionMap` that maps faces of polygon mesh to
-          the corresponding planar regions they belong to}
-          \cgalParamDefault{`boost::get(CGAL::face_index, pmesh)`}
-        \cgalParamNEnd
         \cgalParamNBegin{vertex_point_map}
           \cgalParamDescription{an instance of `VertexToPointMap` that maps a polygon mesh
           vertex to `Kernel::Point_3`}
@@ -145,46 +133,54 @@ namespace Polygon_mesh {
       \pre `faces(pmesh).size() > 0`
       \pre `edges(pmesh).size() > 0`
     */
-    template<typename NamedParameters = parameters::Default_named_parameters>
+    template<typename FaceToRegionMap,
+             typename NamedParameters = parameters::Default_named_parameters>
     Polyline_graph(
       const PolygonMesh& pmesh,
+      FaceToRegionMap face_to_region_map,
       const NamedParameters& np = parameters::default_values())
-      : m_face_graph(pmesh)
-      , m_face_to_region_map(parameters::choose_parameter(parameters::get_parameter(
-          np, internal_np::face_index), get_const_property_map(CGAL::face_index, pmesh)))
-      ,  m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
+      :  m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
           np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh)))
-      ,  m_face_to_index_map(faces(m_face_graph))
-      ,  m_edge_to_index_map(edges(m_face_graph))
-      ,  m_segment_map(&m_face_graph, m_vertex_to_point_map)
+      ,  m_edge_to_index_map(edges(pmesh))
+      ,  m_segment_map(&pmesh, m_vertex_to_point_map)
     {
-      build_graph();
-    }
-
-    /// \cond SKIP_IN_MANUAL
-    void build_graph() {
-
       clear();
-      long r1 = -1, r2 = -1;
+
       std::vector<std::size_t> pedge_map(
-        edges(m_face_graph).size(), std::size_t(-1));
-      for (const auto& edge : edges(m_face_graph)) {
-        std::tie(r1, r2) = get_regions(edge);
+        edges(pmesh).size(), std::size_t(-1));
+
+      // collect edges either on the boundary or having two different incident regions
+      for (const auto& edge : edges(pmesh))
+      {
+        halfedge_descriptor h1 = halfedge(edge, pmesh),
+                            h2 = opposite(h1, pmesh);
+
+        face_descriptor f1  = face(h1, pmesh),
+                        f2  = face(h2, pmesh);
+
+        std::size_t r1 = -1, r2 = -1;
+
+        if (f1 != boost::graph_traits<PolygonMesh>::null_face())
+          r1 = get(face_to_region_map, f1);
+        if (f2 != boost::graph_traits<PolygonMesh>::null_face())
+          r2 = get(face_to_region_map, f2);
+
         if (r1 == r2) continue;
         add_graph_edge(edge, r1, r2, pedge_map);
       }
 
+      // build adjacency between edges
       for (std::size_t i = 0; i < m_pedges.size(); ++i) {
         auto& pedge = m_pedges[i];
         CGAL_precondition(pedge.regions.first != pedge.regions.second);
         CGAL_precondition(pedge.index != std::size_t(-1));
 
         const auto& edge = pedge.ed;
-        const auto s = source(edge, m_face_graph);
-        const auto t = target(edge, m_face_graph);
+        const auto s = source(edge, pmesh);
+        const auto t = target(edge, pmesh);
 
-        add_vertex_neighbors(s, i, pedge_map, pedge.sneighbors);
-        add_vertex_neighbors(t, i, pedge_map, pedge.tneighbors);
+        add_vertex_neighbors(s, i, pedge_map, pedge.sneighbors, pmesh);
+        add_vertex_neighbors(t, i, pedge_map, pedge.tneighbors, pmesh);
       }
     }
     /// \endcond
@@ -305,36 +301,11 @@ namespace Polygon_mesh {
     /// \endcond
 
   private:
-    const Face_graph& m_face_graph;
-
-    const Face_to_region_map m_face_to_region_map;
     const Vertex_to_point_map m_vertex_to_point_map;
-    const Face_to_index_map m_face_to_index_map;
     const Edge_to_index_map m_edge_to_index_map;
 
     const Segment_map m_segment_map;
     std::vector<PEdge> m_pedges;
-
-    // what about boundary edges??
-    std::pair<long, long> get_regions(edge_descriptor edge) const {
-
-      const auto hedge1 = halfedge(edge, m_face_graph);
-      const auto hedge2 = opposite(hedge1, m_face_graph);
-
-      const auto face1 = face(hedge1, m_face_graph);
-      const auto face2 = face(hedge2, m_face_graph);
-
-      const std::size_t fi1 = get(m_face_to_index_map, face1);
-      const std::size_t fi2 = get(m_face_to_index_map, face2);
-      CGAL_precondition(fi1 != fi2);
-
-      long r1 = -1, r2 = -1;
-      if (fi1 != std::size_t(-1))
-        r1 = get(m_face_to_region_map, face1);
-      if (fi2 != std::size_t(-1))
-        r2 = get(m_face_to_region_map, face2);
-      return std::make_pair(r1, r2);
-    }
 
     void add_graph_edge(
       edge_descriptor edge, const long region1, const long region2,
@@ -358,13 +329,14 @@ namespace Polygon_mesh {
     void add_vertex_neighbors(
       const VertexType& vertex, const std::size_t curr_pe,
       const std::vector<std::size_t>& pedge_map,
-      std::set<std::size_t>& neighbors) const {
+      std::set<std::size_t>& neighbors,
+      const PolygonMesh& pmesh) const {
 
-      const auto query_hedge = halfedge(vertex, m_face_graph);
-      const auto hedges = halfedges_around_target(query_hedge, m_face_graph);
+      const auto query_hedge = halfedge(vertex, pmesh);
+      const auto hedges = halfedges_around_target(query_hedge, pmesh);
       CGAL_precondition(hedges.size() > 0);
       for (const auto& hedge : hedges) {
-        const auto e = edge(hedge, m_face_graph);
+        const auto e = edge(hedge, pmesh);
         const std::size_t ei = get(m_edge_to_index_map, e);
         CGAL_precondition(ei < pedge_map.size());
         const std::size_t pe = pedge_map[ei];

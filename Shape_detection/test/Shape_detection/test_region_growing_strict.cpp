@@ -180,7 +180,7 @@ bool test_lines_segment_set_3() {
   using Face_to_region_map = typename Plane_region::Face_to_region_map;
 
   using Polyline_graph = CGAL::Shape_detection::
-    Polygon_mesh::Polyline_graph<Kernel, Surface_mesh, Face_to_region_map>;
+    Polygon_mesh::Polyline_graph<Surface_mesh>;
   using Segment_range = typename Polyline_graph::Segment_range;
   using Segment_map = typename Polyline_graph::Segment_map;
 
@@ -209,7 +209,7 @@ bool test_lines_segment_set_3() {
   assert(face_range.size() == 7320);
 
   const Face_to_region_map face_to_region_map(face_range, regions);
-  Polyline_graph pgraph(surface_mesh, CGAL::parameters::face_index_map(face_to_region_map));
+  Polyline_graph pgraph(surface_mesh, face_to_region_map);
   const auto& segment_range = pgraph.segment_range();
 
   Region_type region_type(
