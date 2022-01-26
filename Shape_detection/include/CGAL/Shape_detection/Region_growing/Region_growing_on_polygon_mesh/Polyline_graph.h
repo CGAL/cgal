@@ -34,7 +34,7 @@ namespace Polygon_mesh {
     \tparam PolygonMesh
     a model of `FaceListGraph`
 
-    \tparam VertexToPointMap
+    \tparam VertexPointMap
     a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
 
@@ -42,7 +42,7 @@ namespace Polygon_mesh {
   */
   template<
     typename PolygonMesh,
-    typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type
+    typename VertexPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type
     >
   class Polyline_graph {
 
@@ -59,12 +59,6 @@ namespace Polygon_mesh {
       std::pair<long, long> regions;
     };
 
-  public:
-    /// \cond SKIP_IN_MANUAL
-    using Vertex_to_point_map = VertexToPointMap;
-    /// \endcond
-
-  private:
     using Face_to_index_map = internal::Item_to_index_property_map<face_descriptor>;
     using Edge_to_index_map = internal::Item_to_index_property_map<edge_descriptor>;
 
@@ -99,7 +93,7 @@ namespace Polygon_mesh {
 
     /// \cond SKIP_IN_MANUAL
     using Segment_range = Iterator_range<Transform_iterator>;
-    using Segment_map = Segment_from_edge_descriptor_map<PolygonMesh, Vertex_to_point_map>;
+    using Segment_map = Segment_from_edge_descriptor_map<PolygonMesh, VertexPointMap>;
     /// \endcond
 
   public:
@@ -125,7 +119,7 @@ namespace Polygon_mesh {
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{vertex_point_map}
-          \cgalParamDescription{an instance of `VertexToPointMap` that maps a polygon mesh
+          \cgalParamDescription{an instance of `VertexPointMap` that maps a polygon mesh
           vertex to `Kernel::Point_3`}
           \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
         \cgalParamNEnd
@@ -146,9 +140,9 @@ namespace Polygon_mesh {
       const PolygonMesh& pmesh,
       FaceToRegionMap face_to_region_map,
       const NamedParameters& np = parameters::default_values())
-      :  m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
+      :  m_vpm(parameters::choose_parameter(parameters::get_parameter(
           np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh)))
-      ,  m_segment_map(&pmesh, m_vertex_to_point_map)
+      ,  m_segment_map(&pmesh, m_vpm)
     {
       clear();
 
@@ -310,7 +304,7 @@ namespace Polygon_mesh {
     /// \endcond
 
   private:
-    const Vertex_to_point_map m_vertex_to_point_map;
+    const VertexPointMap m_vpm;
 
     const Segment_map m_segment_map;
     std::vector<PEdge> m_pedges;
