@@ -2,6 +2,7 @@
 // Constructing an arrangement of algebraic segments.
 
 #include <iostream>
+#include <cassert>
 #include <CGAL/config.h>
 
 #if (!CGAL_USE_CORE) && (!CGAL_USE_LEDA) && (!(CGAL_USE_GMP && CGAL_USE_MPFI))
@@ -52,7 +53,7 @@ int main() {
   std::vector<X_monotone_curve> segs;
   for(size_t i = 0; i < pre_segs.size(); ++i) {
     auto* curr_p = boost::get<X_monotone_curve>(&pre_segs[i]);
-    CGAL_assertion(curr_p);
+    assert(curr_p);
     segs.push_back(*curr_p);
   }
   // Construct an ellipse (C2) with the equation 2*x^2+5*y^2-7=0.
