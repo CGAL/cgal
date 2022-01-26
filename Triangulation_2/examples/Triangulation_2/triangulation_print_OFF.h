@@ -4,6 +4,7 @@
 #define CGAL_TRIANGULATION_PRINT_OFF_H 1
 
 #include <map>
+#include <cassert>
 
 namespace CGAL {
 
@@ -23,17 +24,17 @@ triangulation_print_OFF( std::ostream& out,
     std::size_t vn = 0;
     Vertex_iterator vi = triang.vertices_begin();
     for ( ; vi != triang.vertices_end(); ++vi) {
-        CGAL_assertion( ! triang.is_infinite( vi));
+        assert( ! triang.is_infinite( vi));
         mapping[ &*vi] = vn;
         vn++;
     }
-    CGAL_assertion( vn == std::size_t( triang.number_of_vertices()));
+    assert( vn == std::size_t( triang.number_of_vertices()));
 
     // Count finite and infinite faces.
     std::size_t fn  = 0;
     Face_iterator fi = triang.faces_begin();
     for ( ; fi != triang.faces_end(); ++fi) {
-        CGAL_assertion( ! triang.is_infinite( fi));
+        assert( ! triang.is_infinite( fi));
         fn++;
     }
     std::size_t fin = triang.number_of_faces() - fn;
@@ -44,7 +45,7 @@ triangulation_print_OFF( std::ostream& out,
 
     vi = triang.vertices_begin();
     for ( ; vi != triang.vertices_end(); ++vi) {
-        CGAL_assertion( ! triang.is_infinite( vi));
+        assert( ! triang.is_infinite( vi));
         writer.write_vertex( to_double(vi->point().x()),
                              to_double(vi->point().y()),
                              to_double(vi->point().z()));
@@ -54,16 +55,16 @@ triangulation_print_OFF( std::ostream& out,
     fi = triang.faces_begin();
     while ( fn --) {
         writer.write_facet_begin( 3);
-        CGAL_assertion( mapping.find(&*(fi->vertex(0))) != mapping.end());
-        CGAL_assertion( mapping.find(&*(fi->vertex(1))) != mapping.end());
-        CGAL_assertion( mapping.find(&*(fi->vertex(2))) != mapping.end());
+        assert( mapping.find(&*(fi->vertex(0))) != mapping.end());
+        assert( mapping.find(&*(fi->vertex(1))) != mapping.end());
+        assert( mapping.find(&*(fi->vertex(2))) != mapping.end());
         writer.write_facet_vertex_index( mapping[ &*(fi->vertex(0))]);
         writer.write_facet_vertex_index( mapping[ &*(fi->vertex(1))]);
         writer.write_facet_vertex_index( mapping[ &*(fi->vertex(2))]);
         writer.write_facet_end();
         ++fi;
     }
-    CGAL_assertion( fi == triang.faces_end());
+    assert( fi == triang.faces_end());
     writer.write_footer();
 }
 
