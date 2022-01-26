@@ -112,13 +112,14 @@ int main (int argc, char** argv)
   const std::size_t min_region_size  = 10;
 
   Neighbor_query neighbor_query (
-    pts,
-    search_sphere_radius,
-    pts.point_map());
-  Region_type region_type (
-    pts,
-    max_distance_to_plane, max_accepted_angle, min_region_size,
-    pts.point_map(), pts.normal_map());
+    pts, CGAL::parameters::sphere_radius(search_sphere_radius)
+                          .point_map(pts.point_map()));
+  Region_type region_type(
+    pts, CGAL::parameters::maximum_distance(max_distance_to_plane)
+                          .maximum_angle(max_accepted_angle)
+                          .minimum_region_size(min_region_size)
+                          .point_map(pts.point_map())
+                          .normal_map(pts.normal_map()));
   Region_growing region_growing (
     pts, neighbor_query, region_type);
 
