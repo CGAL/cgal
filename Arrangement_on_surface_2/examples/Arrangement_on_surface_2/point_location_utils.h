@@ -1,3 +1,4 @@
+#include <cassert>
 #include <CGAL/Arr_point_location_result.h>
 
 //-----------------------------------------------------------------------------
@@ -106,7 +107,7 @@ void shoot_vertical_ray(const VerticalRayShooting& vrs,
   else if ((e = boost::get<Halfedge_const_handle>(&obj)) ) // hit an edge
     std::cout << "an edge: " << (*e)->curve() << std::endl;
   else if ((f = boost::get<Face_const_handle>(&obj))) {    // hit nothing
-    CGAL_assertion((*f)->is_unbounded());
+    assert((*f)->is_unbounded());
     std::cout << "nothing." << std::endl;
   }
   else CGAL_error_msg("Invalid object.");
