@@ -64,9 +64,12 @@ namespace Polygon_mesh {
   typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
   class Polyline_graph {
 
-  private:
+    using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+    using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+
     struct PEdge {
       std::size_t index = std::size_t(-1);
+      edge_descriptor ed;
       std::set<std::size_t> sneighbors;
       std::set<std::size_t> tneighbors;
       std::pair<long, long> regions;
@@ -81,9 +84,6 @@ namespace Polygon_mesh {
     using Face_range = FaceRange;
     using Edge_range = EdgeRange;
     using Vertex_to_point_map = VertexToPointMap;
-
-    using face_descriptor = typename boost::graph_traits<Face_graph>::face_descriptor;
-    using edge_descriptor = typename boost::graph_traits<Face_graph>::edge_descriptor;
     /// \endcond
 
   private:
@@ -91,13 +91,8 @@ namespace Polygon_mesh {
     using Edge_to_index_map = internal::Item_to_index_property_map<Edge_range>;
 
     struct Transform_pedge {
-      const Edge_range& m_edge_range;
-      Transform_pedge(const Edge_range& edge_range) :
-      m_edge_range(edge_range) { }
-
       const edge_descriptor operator()(const PEdge& pedge) const {
-        CGAL_precondition(pedge.index < m_edge_range.size());
-        return *(m_edge_range.begin() + pedge.index);
+        return pedge.ed;
       }
     };
 
@@ -199,9 +194,8 @@ namespace Polygon_mesh {
         auto& pedge = m_pedges[i];
         CGAL_precondition(pedge.regions.first != pedge.regions.second);
         CGAL_precondition(pedge.index != std::size_t(-1));
-        CGAL_precondition(pedge.index < m_edge_range.size());
 
-        const auto& edge = *(m_edge_range.begin() + pedge.index);
+        const auto& edge = pedge.ed;
         const auto s = source(edge, m_face_graph);
         const auto t = target(edge, m_face_graph);
 
@@ -250,8 +244,8 @@ namespace Polygon_mesh {
     */
     const Segment_range segment_range() const {
       return CGAL::make_range(
-        boost::make_transform_iterator(m_pedges.begin(), Transform_pedge(m_edge_range)),
-        boost::make_transform_iterator(m_pedges.end(), Transform_pedge(m_edge_range)));
+        boost::make_transform_iterator(m_pedges.begin(), Transform_pedge()),
+        boost::make_transform_iterator(m_pedges.end(), Transform_pedge()));
     }
 
     /*!
@@ -297,7 +291,6 @@ namespace Polygon_mesh {
       \pre `query_index < segment_range().size()`
     */
     std::size_t edge_index(const std::size_t query_index) const {
-
       CGAL_precondition(query_index < segment_range().size());
       return m_pedges[query_index].index;
     }
@@ -340,8 +333,7 @@ namespace Polygon_mesh {
     const Segment_map m_segment_map;
     std::vector<PEdge> m_pedges;
 
-    template<typename EdgeType>
-    std::pair<long, long> get_regions(const EdgeType& edge) const {
+    std::pair<long, long> get_regions(edge_descriptor edge) const {
 
       const auto hedge1 = halfedge(edge, m_face_graph);
       const auto hedge2 = opposite(hedge1, m_face_graph);
@@ -361,9 +353,8 @@ namespace Polygon_mesh {
       return std::make_pair(r1, r2);
     }
 
-    template<typename EdgeType>
     void add_graph_edge(
-      const EdgeType& edge, const long region1, const long region2,
+      edge_descriptor edge, const long region1, const long region2,
       std::vector<std::size_t>& pedge_map) {
 
       PEdge pedge;
@@ -372,6 +363,7 @@ namespace Polygon_mesh {
       CGAL_precondition(ei != std::size_t(-1));
 
       pedge.index = ei;
+      pedge.ed = edge;
       pedge.regions.first = region1;
       pedge.regions.second = region2;
       CGAL_precondition(pedge.index < pedge_map.size());
