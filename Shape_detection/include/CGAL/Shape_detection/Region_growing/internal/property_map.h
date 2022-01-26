@@ -70,18 +70,19 @@ namespace internal {
     const PropertyMap& m_property_map;
   };
 
-  template<typename ItemRange>
+  // remove that
+  template<typename Item>
   class Item_to_index_property_map {
 
   public:
-    using key_type = typename ItemRange::const_iterator::value_type;
+    using key_type = Item;
     using value_type = std::size_t;
     using reference = value_type;
     using category = boost::readable_property_map_tag;
 
-    Item_to_index_property_map(const ItemRange& item_range) :
-    m_item_range(item_range) {
-
+    template <class ItemRange>
+    Item_to_index_property_map(const ItemRange& item_range)
+    {
       value_type i = 0;
       for (const auto& item : item_range) {
         m_item_map[item] = i;
@@ -103,7 +104,6 @@ namespace internal {
     }
 
   private:
-    const ItemRange& m_item_range;
     std::map<key_type, value_type> m_item_map;
   };
 

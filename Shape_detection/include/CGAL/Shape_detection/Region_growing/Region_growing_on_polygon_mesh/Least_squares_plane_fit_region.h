@@ -67,7 +67,8 @@ namespace Polygon_mesh {
     using Face_range = FaceRange;
     using Vertex_to_point_map = VertexToPointMap;
 
-    using Face_to_index_map = internal::Item_to_index_property_map<Face_range>;
+    using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
+    using Face_to_index_map = internal::Item_to_index_property_map<face_descriptor>;
     using Face_to_region_index_map = internal::Item_to_region_index_map<Face_to_index_map>;
 
     struct Face_to_region_map : public Face_to_region_index_map {

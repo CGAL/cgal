@@ -41,14 +41,6 @@ namespace Polygon_mesh {
     a model of `ReadablePropertyMap` whose key type is `face_descriptor` of the `PolygonMesh`
     and value type is `std::size_t`
 
-    \tparam FaceRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the face type of a polygon mesh
-
-    \tparam EdgeRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
-    value type is the edge type of a polygon mesh
-
     \tparam VertexToPointMap
     a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
@@ -56,12 +48,10 @@ namespace Polygon_mesh {
     \cgalModels `NeighborQuery`
   */
   template<
-  typename GeomTraits,
-  typename PolygonMesh,
-  typename FaceToRegionMap = typename property_map_selector<PolygonMesh, CGAL::face_index_t>::const_type,
-  typename FaceRange = typename PolygonMesh::Face_range,
-  typename EdgeRange = typename PolygonMesh::Edge_range,
-  typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
+    typename GeomTraits,
+    typename PolygonMesh,
+    typename FaceToRegionMap = typename property_map_selector<PolygonMesh, CGAL::face_index_t>::const_type,
+    typename VertexToPointMap = typename property_map_selector<PolygonMesh, CGAL::vertex_point_t>::const_type>
   class Polyline_graph {
 
     using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
@@ -81,14 +71,12 @@ namespace Polygon_mesh {
     using Face_graph = PolygonMesh;
     using Face_to_region_map = FaceToRegionMap;
 
-    using Face_range = FaceRange;
-    using Edge_range = EdgeRange;
     using Vertex_to_point_map = VertexToPointMap;
     /// \endcond
 
   private:
-    using Face_to_index_map = internal::Item_to_index_property_map<Face_range>;
-    using Edge_to_index_map = internal::Item_to_index_property_map<Edge_range>;
+    using Face_to_index_map = internal::Item_to_index_property_map<face_descriptor>;
+    using Edge_to_index_map = internal::Item_to_index_property_map<edge_descriptor>;
 
     struct Transform_pedge {
       const edge_descriptor operator()(const PEdge& pedge) const {
@@ -142,7 +130,7 @@ namespace Polygon_mesh {
       among the ones listed below
 
       \cgalNamedParamsBegin
-        \cgalParamNBegin{face_index_map}
+        \cgalParamNBegin{face_index_map}  // TODO THIS IS NOT OPTIONAL ---> parameter
           \cgalParamDescription{an instance of `FaceToRegionMap` that maps faces of polygon mesh to
           the corresponding planar regions they belong to}
           \cgalParamDefault{`boost::get(CGAL::face_index, pmesh)`}
@@ -160,20 +148,16 @@ namespace Polygon_mesh {
     template<typename NamedParameters = parameters::Default_named_parameters>
     Polyline_graph(
       const PolygonMesh& pmesh,
-      const NamedParameters& np = parameters::default_values()) :
-    m_face_graph(pmesh),
-    m_face_range(faces(m_face_graph)),
-    m_edge_range(edges(m_face_graph)),
-    m_face_to_region_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::face_index), get_const_property_map(CGAL::face_index, pmesh))),
-    m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
-      np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh))),
-    m_face_to_index_map(m_face_range),
-    m_edge_to_index_map(m_edge_range),
-    m_segment_map(&m_face_graph, m_vertex_to_point_map) {
-
-      CGAL_precondition(m_face_range.size() > 0);
-      CGAL_precondition(m_edge_range.size() > 0);
+      const NamedParameters& np = parameters::default_values())
+      : m_face_graph(pmesh)
+      , m_face_to_region_map(parameters::choose_parameter(parameters::get_parameter(
+          np, internal_np::face_index), get_const_property_map(CGAL::face_index, pmesh)))
+      ,  m_vertex_to_point_map(parameters::choose_parameter(parameters::get_parameter(
+          np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, pmesh)))
+      ,  m_face_to_index_map(faces(m_face_graph))
+      ,  m_edge_to_index_map(edges(m_face_graph))
+      ,  m_segment_map(&m_face_graph, m_vertex_to_point_map)
+    {
       build_graph();
     }
 
@@ -183,8 +167,8 @@ namespace Polygon_mesh {
       clear();
       long r1 = -1, r2 = -1;
       std::vector<std::size_t> pedge_map(
-        m_edge_range.size(), std::size_t(-1));
-      for (const auto& edge : m_edge_range) {
+        edges(m_face_graph).size(), std::size_t(-1));
+      for (const auto& edge : edges(m_face_graph)) {
         std::tie(r1, r2) = get_regions(edge);
         if (r1 == r2) continue;
         add_graph_edge(edge, r1, r2, pedge_map);
@@ -322,8 +306,6 @@ namespace Polygon_mesh {
 
   private:
     const Face_graph& m_face_graph;
-    const Face_range m_face_range;
-    const Edge_range m_edge_range;
 
     const Face_to_region_map m_face_to_region_map;
     const Vertex_to_point_map m_vertex_to_point_map;
@@ -333,6 +315,7 @@ namespace Polygon_mesh {
     const Segment_map m_segment_map;
     std::vector<PEdge> m_pedges;
 
+    // what about boundary edges??
     std::pair<long, long> get_regions(edge_descriptor edge) const {
 
       const auto hedge1 = halfedge(edge, m_face_graph);

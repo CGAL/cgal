@@ -47,12 +47,13 @@ namespace Polygon_mesh {
 
   public:
     /// \cond SKIP_IN_MANUAL
+    using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
     using Face_graph = PolygonMesh;
     using Face_range = FaceRange;
     /// \endcond
 
   private:
-    using Face_to_index_map = internal::Item_to_index_property_map<Face_range>;
+    using Face_to_index_map = internal::Item_to_index_property_map<face_descriptor>;
 
   public:
     /// \name Initialization

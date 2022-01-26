@@ -283,7 +283,7 @@ private:
     CGAL::Shape_detection::Region_growing<Point_set, Neighbor_query, Region_type, typename Sorting::Seed_map>;
 
     using Point_to_index_map =
-    CGAL::Shape_detection::internal::Item_to_index_property_map<Point_set>;
+    CGAL::Shape_detection::internal::Item_to_index_property_map<Point_set::Point_3>;
     using Point_to_region_index_map =
     CGAL::Shape_detection::internal::Item_to_region_index_map<Point_to_index_map>;
 
