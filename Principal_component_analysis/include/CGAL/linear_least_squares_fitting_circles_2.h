@@ -100,9 +100,9 @@ linear_least_squares_fitting_2(InputIterator first,
     FT y0 = t.center().y();
 
     // and add to covariance matrix
-    covariance[0] += transformation[0][0] + area * x0*x0;
+    covariance[0] += transformation[0][0] + area * CGAL::square(x0);
     covariance[1] += transformation[0][1] + area * x0*y0;
-    covariance[2] += transformation[1][1] + area * y0*y0;
+    covariance[2] += transformation[1][1] + area * CGAL::square(y0);
 
     mass += area;
   }
@@ -111,9 +111,9 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] -= mass * (c.x() * c.x());
+  covariance[0] -= mass * (CGAL::square(c.x()));
   covariance[1] -= mass * (c.x() * c.y());
-  covariance[2] -= mass * (c.y() * c.y());
+  covariance[2] -= mass * (CGAL::square(c.y()));
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order,
@@ -206,9 +206,9 @@ linear_least_squares_fitting_2(InputIterator first,
     FT y0 = t.center().y();
 
     // and add to covariance matrix
-    covariance[0] += transformation[0][0] + length * x0*x0;
+    covariance[0] += transformation[0][0] + length * CGAL::square(x0);
     covariance[1] += transformation[0][1] + length * x0*y0;
-    covariance[2] += transformation[1][1] + length * y0*y0;
+    covariance[2] += transformation[1][1] + length * CGAL::square(y0);
 
     mass += length;
   }
@@ -217,9 +217,9 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // Translate the 2nd order moment calculated about the origin to
   // the center of mass to get the covariance.
-  covariance[0] -= mass * (c.x() * c.x());
+  covariance[0] -= mass * (CGAL::square(c.x()));
   covariance[1] -= mass * (c.x() * c.y());
-  covariance[2] -= mass * (c.y() * c.y());
+  covariance[2] -= mass * (CGAL::square(c.y()));
 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order,
