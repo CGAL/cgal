@@ -527,7 +527,7 @@ estimate_variances(const TriangleMesh& mesh,
   typedef typename GeomTraits::Point_3                                         Point_3;
   typedef typename GeomTraits::Vector_3                                        Vector_3;
 
-  CGAL_precondition(!empty(mesh));
+  CGAL_precondition(!CGAL::is_empty(mesh));
 
   auto construct_vector = gt.construct_vector_3_object();
   auto squared_length = gt.compute_squared_length_3_object();
