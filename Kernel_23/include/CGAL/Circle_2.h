@@ -231,7 +231,7 @@ insert(std::ostream& os, const Circle_2<R>& c)
         break;
     case IO::BINARY :
         os << c.center();
-        write(os, c.squared_radius());
+        write(os, to_double(c.squared_radius()));
         write(os, static_cast<int>(c.orientation()));
         break;
     default:
@@ -272,10 +272,14 @@ extract(std::istream& is, Circle_2<R>& c)
         is >> center >> IO::iformat(squared_radius) >> o;
         break;
     case IO::BINARY :
+    {
+        double d;
         is >> center;
-        read(is, squared_radius);
+        read(is, d);
+        squared_radius = d;
         is >> o;
         break;
+    }
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;

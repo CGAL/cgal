@@ -143,21 +143,37 @@ template <typename NT, bool Filter>
 std::ostream& operator<<(std::ostream& os,
                          const _One_root_point_2<NT, Filter>& p)
 {
-  os << CGAL::to_double(p.x()) << ' ' << CGAL::to_double(p.y());
-  return (os);
+  switch(IO::get_mode(os)) {
+    case IO::ASCII :
+      os << p.x() << ' ' << p.y();
+      break;
+    default:
+      os.setstate(std::ios::failbit);
+      break;
+  }
+
+  return os;
 }
 
-/*
 template <class NT, bool Filter>
 std::istream & operator >> (std::istream & is,
                             _One_root_point_2<NT, Filter>& p)
 {
-  typename _One_root_point_2<NT, Filter>::CoordNT ort1,ort2;
-  is >> ort1 >> ort2;
-  p=_One_root_point_2<NT, Filter>(ort1,ort2);
+  typename _One_root_point_2<NT, Filter>::CoordNT x, y;
+  switch(IO::get_mode(is)) {
+    case IO::ASCII :
+      is >> x >> y;
+      break;
+    default:
+      is.setstate(std::ios::failbit);
+      break;
+  }
+
+  if (is)
+    p=_One_root_point_2<NT, Filter>(x, y);
+
   return is;
 }
-*/
 
 /*! \class
  * Representation of a circle, a circular arc or a line segment.
@@ -2078,11 +2094,78 @@ std::ostream&
 operator<<(std::ostream& os,
            const _X_monotone_circle_segment_2<Kernel, Filter> & arc)
 {
-  if (! arc.is_linear())
-    os << "(" << arc.supporting_circle() << ") ";
+  switch(IO::get_mode(os)) {
+    case IO::ASCII :
+      if (! arc.is_linear())
+        os << "C(" << arc.supporting_circle() << ") ";
+      else
+        os << "L(" << arc.supporting_line() << ") ";
 
-  os << "[" << arc.source() << " --> " << arc.target() << "]";
+      os << "[" << arc.source() << " --> " << arc.target() << "]";
+      break;
+    default:
+      os.setstate(std::ios::failbit);
+      break;
+  }
+
   return (os);
+}
+
+template <class Kernel, bool Filter>
+std::istream&
+operator>>(std::istream& is,
+           _X_monotone_circle_segment_2<Kernel, Filter> & arc)
+{
+  typedef _X_monotone_circle_segment_2<Kernel, Filter> X_monotone_curve;
+
+  switch(IO::get_mode(is)) {
+    case IO::ASCII :
+    {
+      typename X_monotone_curve::Point_2 source, target;
+      char c;
+
+      do { is.get(c); } while(isspace(c));
+      if (c == 'C') {
+        typename Kernel::Circle_2 circ;
+
+        swallow(is, '(');
+        is >> circ;
+        swallow(is, ')');
+
+        swallow(is, '[');
+        is >> source;
+        swallow(is, "-->");
+        is >> target;
+        swallow(is, ']');
+
+        arc = X_monotone_curve(circ, source, target, circ.orientation());
+      } else if (c == 'L') {
+        typename Kernel::Line_2 line;
+
+        swallow(is, '(');
+        is >> line;
+        swallow(is, ')');
+
+        swallow(is, '[');
+        is >> source;
+        swallow(is, "-->");
+        is >> target;
+        swallow(is, ']');
+
+        arc = X_monotone_curve(line, source, target);
+      } else {
+        std::stringstream msg;
+        msg << "input error: expected 'C' or 'L', but got '" << c << "'";
+        CGAL_error_msg( msg.str().c_str() );
+      }
+      break;
+    }
+    default:
+      is.setstate(std::ios::failbit);
+      break;
+  }
+
+  return (is);
 }
 
 } //namespace CGAL

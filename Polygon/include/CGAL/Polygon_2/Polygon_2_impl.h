@@ -84,7 +84,16 @@ std::istream &
 operator>>(std::istream &is, Polygon_2<Traits_P,Container_P>& p)
 {
   int n = 0; // number of vertices
-  is >> n;
+
+  switch(IO::get_mode(is)) {
+    case IO::ASCII :
+      is >> n;
+      break;
+    case IO::BINARY :
+      read(is, n);
+      break;
+  }
+
   typename Traits_P::Point_2 point;
 
   if (is) {
@@ -121,7 +130,10 @@ operator<<(std::ostream &os, const Polygon_2<Traits_P,Container_P>& p)
       return os;
 
     case IO::BINARY :
-      os << p.size();
+      {
+          int n = p.size();
+          write(os, n);
+      }
       for (i = p.vertices_begin(); i != p.vertices_end(); ++i) {
         os << *i;
       }

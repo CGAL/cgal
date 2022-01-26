@@ -169,7 +169,16 @@ template <class Traits>
 std::istream &operator>>(std::istream &is, General_polygon_2<Traits>& p)
 {
   int n; // number of edges
-  is >> n;
+
+  switch(IO::get_mode(is)) {
+    case IO::ASCII :
+      is >> n;
+      break;
+    case IO::BINARY :
+      read(is, n);
+      break;
+  }
+
   typename Traits::X_monotone_curve_2 cv;
 
   if (is) {
@@ -202,7 +211,10 @@ std::ostream
       return os;
 
     case IO::BINARY :
-      os << p.size();
+      {
+          int n = p.size();
+          write(os, n);
+      }
       for (i = p.curves_begin(); i != p.curves_end(); ++i) {
         os << *i;
       }

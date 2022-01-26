@@ -111,7 +111,11 @@ std::ostream& operator<<(std::ostream &os,
       return os;
 
     case IO::BINARY :
-       os << p.outer_boundary() << p.number_of_holes();
+      os << p.outer_boundary();
+      {
+          unsigned int n = p.number_of_holes();
+          write(os, n);
+      }
       for (i = p.holes_begin(); i != p.holes_end(); ++i) {
         os << *i ;
       }
@@ -163,7 +167,16 @@ std::istream &operator>>(std::istream &is,
   is >> p.outer_boundary();
 
   unsigned int n; // number of holes;
-  is >> n;
+
+  switch(IO::get_mode(is)) {
+    case IO::ASCII :
+      is >> n;
+      break;
+    case IO::BINARY :
+      read(is, n);
+      break;
+  }
+
   if(is)
   {
      for (unsigned int i=0; i<n; i++)

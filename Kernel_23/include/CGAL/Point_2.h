@@ -194,16 +194,16 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Point_2<R>& p,const Cartesian_tag&)
 {
-    switch(IO::get_mode(os)) {
-    case IO::ASCII :
-        return os << p.x() << ' ' << p.y();
-    case IO::BINARY :
-        write(os, p.x());
-        write(os, p.y());
-        return os;
-    default:
-        return os << "PointC2(" << p.x() << ", " << p.y() << ')';
-    }
+  switch(IO::get_mode(os)) {
+  case IO::ASCII :
+      return os << p.x() << ' ' << p.y();
+  case IO::BINARY :
+      write(os, to_double(p.x()));
+      write(os, to_double(p.y()));
+      return os;
+  default:
+      return os << "PointC2(" << p.x() << ", " << p.y() << ')';
+  }
 }
 
 template <class R >
@@ -215,9 +215,9 @@ insert(std::ostream& os, const Point_2<R>& p,const Homogeneous_tag&)
     case IO::ASCII :
         return os << p.hx() << ' ' << p.hy() << ' ' << p.hw();
     case IO::BINARY :
-        write(os, p.hx());
-        write(os, p.hy());
-        write(os, p.hw());
+        write(os, to_double(p.hx()));
+        write(os, to_double(p.hy()));
+        write(os, to_double(p.hw()));
         return os;
     default:
         return os << "PointH2(" << p.hx() << ", "
@@ -244,9 +244,14 @@ extract(std::istream& is, Point_2<R>& p, const Cartesian_tag&)
         is >> IO::iformat(x) >> IO::iformat(y);
         break;
     case IO::BINARY :
-        read(is, x);
-        read(is, y);
+    {
+        double dx, dy;
+        read(is, dx);
+        read(is, dy);
+        x = dx;
+        y = dy;
         break;
+    }
     default:
         is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
@@ -270,9 +275,15 @@ extract(std::istream& is, Point_2<R>& p, const Homogeneous_tag&)
         is >> hx >> hy >> hw;
         break;
     case IO::BINARY :
-        read(is, hx);
-        read(is, hy);
-        read(is, hw);
+    {
+        double f, g, h;
+        read(is, f);
+        read(is, g);
+        read(is, h);
+        hx = f;
+        hy = g;
+        hw = h;
+    }
         break;
     default:
         is.setstate(std::ios::failbit);
