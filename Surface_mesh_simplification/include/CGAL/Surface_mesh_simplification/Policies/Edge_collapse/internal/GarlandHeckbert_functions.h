@@ -15,6 +15,7 @@
 #include <CGAL/license/Surface_mesh_simplification.h>
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
+#include <CGAL/boost/graph/helpers.h>
 
 #include <CGAL/Origin.h>
 
