@@ -1469,6 +1469,11 @@ public:
   typedef unspecified_type Less_distance_to_point_3;
 
   /*!
+    a model of `Kernel::CompareAngle_3`
+  */
+  typedef unspecified_type Compare_angle_3;
+
+  /*!
     a model of `Kernel::CompareDihedralAngle_3`
   */
   typedef unspecified_type Compare_dihedral_angle_3;

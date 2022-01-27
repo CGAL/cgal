@@ -15,6 +15,11 @@ Release date: June 2022
 
 -   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
 
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.5/Manual/packages.html#PkgKernel23)
+-   Added the functor
+    [`CompareAngle_3`](https://doc.cgal.org/5.5/Kernel_23/classKernel_1_1CompareAngle__3.html)
+    to the concept [`Kernel`](https://doc.cgal.org/5.5/Kernel_23/classKernel.html) to compare
+    an angle defined by three points to the cosinus of another angle.
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
