@@ -226,26 +226,29 @@ namespace CGAL {
                       const Converters& converters,
                       const DartInfoConverter& dartinfoconverter,
                       const PointConverter& pointconverter,
+                      bool copy_marks=true,
                       bool copy_perforated_darts=false,
                       size_type mark_perforated=INVALID_MARK)
     {
-      // this->clear();
-
-      /*this->mnb_used_marks = amap.mnb_used_marks;
-      this->mmask_marks    = amap.mmask_marks;
-      this->automatic_attributes_management =
-          amap.automatic_attributes_management;
-
-      for (size_type i = 0; i < NB_MARKS; ++i)
+      if(copy_marks)
       {
-        this->mfree_marks_stack[i]        = amap.mfree_marks_stack[i];
-        this->mused_marks_stack[i]        = amap.mused_marks_stack[i];
-        this->mindex_marks[i]             = amap.mindex_marks[i];
-        this->mnb_marked_darts[i]         = amap.mnb_marked_darts[i];
-        this->mnb_times_reserved_marks[i] = amap.mnb_times_reserved_marks[i];
+        // Reserve all marks of amap not yet reserved
+        for (size_type i=0; i<NB_MARKS; ++i)
+        {
+          if(!is_reserved(i) && amap.is_reserved(i))
+          {
+            CGAL_assertion(mnb_used_marks<NB_MARKS);
+            // 1) Remove mark i from mfree_marks_stack (replace it by the last free mark)
+            mfree_marks_stack[mindex_marks[i]]=mfree_marks_stack[NB_MARKS-mnb_used_marks-1];
+            mindex_marks[mfree_marks_stack[mindex_marks[i]]]=mindex_marks[i];
+            // 2) Update use mark stack
+            mused_marks_stack[mnb_used_marks]=i;
+            mindex_marks[i]=mnb_used_marks;
+            mnb_times_reserved_marks[i]=1;
+            ++mnb_used_marks;
+          }
+        }
       }
-
-      init_dart(null_dart_handle, amap.get_marks(amap.null_dart_handle));*/
 
       // Create an mapping between darts of the two maps (originals->copies).
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
@@ -261,10 +264,20 @@ namespace CGAL {
         if (copy_perforated_darts || !amap.is_perforated(it))
         {
           new_dart=mdarts.emplace();
-          init_dart(new_dart); // , amap.get_marks(it));
+          init_dart(new_dart);
 
           if (mark_perforated!=INVALID_MARK && amap.is_perforated(it))
           { mark(new_dart, mark_perforated); }
+
+          if(copy_marks)
+          {
+            // Copy marks of amap
+            for(size_type i=0; i<amap.number_of_used_marks(); ++i)
+            {
+              if(amap.is_marked(it, amap.mused_marks_stack[i]))
+              { mark(new_dart, amap.mused_marks_stack[i]); }
+            }
+          }
 
           (*origin_to_copy)[it]=new_dart;
           if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
@@ -320,13 +333,14 @@ namespace CGAL {
               const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
               const PointConverter& pointconverter,
+              bool copy_marks=true,
               bool copy_perforated_darts=false,
               size_type mark_perforated=INVALID_MARK)
     {
       generic_copy<CMap2, typename CMap2::Dart_handle, Converters,
           DartInfoConverter, PointConverter>
           (amap,  origin_to_copy, copy_to_origin,
-           converters, dartinfoconverter, pointconverter,
+           converters, dartinfoconverter, pointconverter, copy_marks,
            copy_perforated_darts, mark_perforated);
     }
 
@@ -341,13 +355,14 @@ namespace CGAL {
                          const Converters& converters,
                          const DartInfoConverter& dartinfoconverter,
                          const PointConverter& pointconverter,
+                         bool copy_marks=true,
                          bool copy_perforated_darts=false,
                          size_type mark_perforated=INVALID_MARK)
    {
       generic_copy<CMap2, typename CMap2::Dart_const_handle, Converters,
           DartInfoConverter, PointConverter>
           (const_cast<CMap2&>(amap), origin_to_copy, copy_to_origin,
-           converters, dartinfoconverter, pointconverter,
+           converters, dartinfoconverter, pointconverter, copy_marks,
            copy_perforated_darts, mark_perforated);
     }
 
@@ -360,13 +375,14 @@ namespace CGAL {
               <Dart_handle, typename CMap2::Dart_handle>* copy_to_origin,
               const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
+              bool copy_marks=true,
               bool copy_perforated_darts=false,
               size_type mark_perforated=INVALID_MARK)
     {
       Default_converter_cmap_0attributes_with_point<typename CMap2::Refs, Refs>
         pointconverter;
       copy(amap, origin_to_copy, copy_to_origin,
-           converters, dartinfoconverter, pointconverter,
+           converters, dartinfoconverter, pointconverter, copy_marks,
            copy_perforated_darts, mark_perforated);
     }
 
@@ -379,13 +395,14 @@ namespace CGAL {
                          <Dart_handle, typename CMap2::Dart_const_handle>* copy_to_origin,
                          const Converters& converters,
                          const DartInfoConverter& dartinfoconverter,
+                         bool copy_marks=true,
                          bool copy_perforated_darts=false,
                          size_type mark_perforated=INVALID_MARK)
     {
       Default_converter_cmap_0attributes_with_point<typename CMap2::Refs, Refs>
           pointconverter;
       copy_from_const(amap, origin_to_copy, copy_to_origin,
-                      converters, dartinfoconverter, pointconverter,
+                      converters, dartinfoconverter, pointconverter, copy_marks,
                       copy_perforated_darts, mark_perforated);
     }
 
@@ -397,12 +414,13 @@ namespace CGAL {
               std::unordered_map
               <Dart_handle, typename CMap2::Dart_handle>* copy_to_origin,
               const Converters& converters,
+              bool copy_marks=true,
               bool copy_perforated_darts=false,
               size_type mark_perforated=INVALID_MARK)
     {
       Default_converter_dart_info<typename CMap2::Refs, Refs> dartinfoconverter;
       copy(amap, origin_to_copy, copy_to_origin, converters, dartinfoconverter,
-           copy_perforated_darts, mark_perforated);
+           copy_marks, copy_perforated_darts, mark_perforated);
     }
 
     // (3b) copy_from_const(const amap, converters)
@@ -413,12 +431,13 @@ namespace CGAL {
                          std::unordered_map
                          <Dart_handle, typename CMap2::Dart_const_handle>* copy_to_origin,
                          const Converters& converters,
+                         bool copy_marks=true,
                          bool copy_perforated_darts=false,
                          size_type mark_perforated=INVALID_MARK)
     {
       Default_converter_dart_info<typename CMap2::Refs, Refs> dartinfoconverter;
       copy_from_const(amap, origin_to_copy, copy_to_origin, converters, dartinfoconverter,
-                      copy_perforated_darts, mark_perforated);
+                      copy_marks, copy_perforated_darts, mark_perforated);
     }
 
     // (4a) copy(amap)
@@ -428,11 +447,12 @@ namespace CGAL {
               <typename CMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
               std::unordered_map
               <Dart_handle, typename CMap2::Dart_handle>* copy_to_origin=nullptr,
+              bool copy_marks=true,
               bool copy_perforated_darts=false,
               size_type mark_perforated=INVALID_MARK)
     {
       std::tuple<> converters;
-      copy(amap, origin_to_copy, copy_to_origin, converters,
+      copy(amap, origin_to_copy, copy_to_origin, converters, copy_marks,
            copy_perforated_darts, mark_perforated);
     }
 
@@ -443,17 +463,22 @@ namespace CGAL {
                          <typename CMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
                          std::unordered_map
                          <Dart_handle, typename CMap2::Dart_const_handle>* copy_to_origin=nullptr,
+                         bool copy_marks=true,
                          bool copy_perforated_darts=false,
                          size_type mark_perforated=INVALID_MARK)
     {
       std::tuple<> converters;
-      copy_from_const(amap, origin_to_copy, copy_to_origin, converters,
+      copy_from_const(amap, origin_to_copy, copy_to_origin, converters, copy_marks,
                       copy_perforated_darts, mark_perforated);
     }
 
     // Copy constructor from a map having exactly the same type.
-    Combinatorial_map_base (const Self & amap): Combinatorial_map_base()
+    Combinatorial_map_base(const Self & amap): Combinatorial_map_base()
     { copy_from_const(amap); }
+
+    // Move constructor
+    Combinatorial_map_base(Self && amap): Combinatorial_map_base()
+    { this->swap(amap); }
 
     // "Copy constructor" from a map having different type.
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
@@ -4770,6 +4795,9 @@ namespace CGAL {
     {}
 
     Combinatorial_map(const Self & amap) : Base(amap)
+    {}
+
+    Combinatorial_map(Self && amap) : Base(amap)
     {}
 
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,

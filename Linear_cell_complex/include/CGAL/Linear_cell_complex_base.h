@@ -150,6 +150,9 @@ namespace CGAL {
     Linear_cell_complex_base(const Self& alcc) : Base(alcc)
     {}
 
+    Linear_cell_complex_base(Self&& alcc) : Base(alcc)
+    {}
+
     template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
               class Items2, class Alloc2,
               template<unsigned int,class,class,class,class> class CMap2,
