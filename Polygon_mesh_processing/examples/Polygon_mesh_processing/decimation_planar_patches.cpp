@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/planar_segmentation.h>
+#include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
@@ -36,7 +36,7 @@ int main()
   assert(faces(sm).size()>100);
   
   // decimate the mesh
-  PMP::decimate(sm);
+  PMP::remesh_planar_patches(sm);
   std::ofstream("cube_decimated.off") << sm;
 
   // we should be back to 12 faces

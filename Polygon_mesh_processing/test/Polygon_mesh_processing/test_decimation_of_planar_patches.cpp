@@ -4,7 +4,7 @@
 #else
 #include <CGAL/Surface_mesh.h>
 #endif
-#include <CGAL/Polygon_mesh_processing/planar_segmentation.h>
+#include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 
 #include <iostream>
 #include <fstream>
@@ -35,7 +35,7 @@ int main()
     in >> sm;
 
     // call the decimation function
-    if (!PMP::decimate(sm))
+    if (!PMP::remesh_planar_patches(sm))
     {
       std::cerr << "ERROR: decimate cannot be done correctly\n";
       continue;
@@ -58,7 +58,7 @@ int main()
     in >> sm;
 
     // call the decimation function
-    if (!PMP::decimate(sm, 0.9801))
+    if (!PMP::remesh_planar_patches(sm, 0.9801))
     {
       std::cerr << "ERROR: decimate cannot be done correctly\n";
       continue;
@@ -206,7 +206,7 @@ int main()
     std::cout << "decimate of data/decimation/sphere.off using approximate predicates\n";
     std::ifstream in("data/decimation/sphere.off");
     in >> sm;
-    if (!PMP::decimate(sm,0.9801))
+    if (!PMP::remesh_planar_patches(sm,0.9801))
       std::cout << "ERROR: decimate cannot be done correctly (this is the expected behavior)\n";
     else
     {
@@ -220,7 +220,7 @@ int main()
     std::cout << "decimate of data/decimation/sphere_selection.off using approximate predicates\n";
     std::ifstream in("data/decimation/sphere_selection.off");
     in >> sm;
-    if (!PMP::decimate(sm,0.9801))
+    if (!PMP::remesh_planar_patches(sm,0.9801))
       std::cout << "ERROR: decimate cannot be done correctly (this is the expected behavior)\n";
     else
     {

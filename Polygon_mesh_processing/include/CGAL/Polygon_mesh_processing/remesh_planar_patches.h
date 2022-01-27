@@ -19,8 +19,8 @@
 //
 // Author(s)     : Sebastien Loriot
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_PLANAR_SEGMENTATION_H
-#define CGAL_POLYGON_MESH_PROCESSING_PLANAR_SEGMENTATION_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_PLANAR_PATCHES_H
+#define CGAL_POLYGON_MESH_PROCESSING_REMESH_PLANAR_PATCHES_H
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -1114,9 +1114,9 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
 } //end of namespace Planar_segmentation
 
 template <typename TriangleMesh>
-bool decimate(TriangleMesh& tm, double min_cosinus_squared=1)
+bool remesh_planar_patches(TriangleMesh& tm, double min_cosinus_squared=1)
 {
-  CGAL_assertion(min_cosinus_squared>=0);
+  CGAL_precondition(min_cosinus_squared>=0);
   typedef typename boost::graph_traits<TriangleMesh> graph_traits;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
   typedef typename graph_traits::vertex_descriptor vertex_descriptor;
@@ -1385,4 +1385,4 @@ bool decimate_with_pca_for_coplanarity(TriangleMesh& tm,
 
 } } // end of CGAL::Polygon_mesh_processing
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_PLANAR_SEGMENTATION_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_REMESH_PLANAR_PATCHES_H
