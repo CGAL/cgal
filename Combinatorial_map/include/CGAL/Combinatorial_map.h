@@ -306,7 +306,7 @@ namespace CGAL {
               converters, pointconverter);
       }
 
-      CGAL_assertion (is_valid());
+      CGAL_expensive_assertion(is_valid());
     }
 
     // (1a) copy(amap, converters, dartinfoconverter, pointconverter)
@@ -601,7 +601,7 @@ namespace CGAL {
         }
       }
 
-      CGAL_assertion (is_valid());
+      CGAL_expensive_assertion(is_valid());
     }
 
     /** Clear the combinatorial map. Remove all darts and all attributes.
@@ -3413,8 +3413,6 @@ namespace CGAL {
           amap.basic_link_beta(d, dual[beta<dimension>(it)], dimension);
         }
       }
-
-      //  CGAL_postcondition(amap2.is_valid());
 
       if ( res==amap.null_handle ) res = amap.darts().begin();
       return res;
