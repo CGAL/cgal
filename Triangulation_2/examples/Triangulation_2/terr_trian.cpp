@@ -5,9 +5,12 @@
 
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/OFF.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Delaunay_triangulation_2.h>
+#include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
 
 #include <cstddef>
 #include <cstdlib>
@@ -15,7 +18,6 @@
 #include <iostream>
 #include <fstream>
 
-#include "triangulation_print_OFF.h"
 
 using namespace std;
 
@@ -43,8 +45,6 @@ typedef  CGAL::Triangulation_2<Gt>                 Triangulation;
 typedef  CGAL::Delaunay_triangulation_2<Gt>        Delaunay_triangulation;
 
 bool  verbose      = false;
-bool  binary       = false;
-bool  noc          = false;
 bool  delaunay     = false;
 bool  incr         = false;
 
@@ -57,10 +57,6 @@ int main( int argc, char **argv) {
     for (int i = 1; i < argc; i++) { // check commandline options
         if ( strcmp( "-v", argv[i]) == 0)
             verbose = true;
-        else if ( strcmp( "-b", argv[i]) == 0)
-            binary = true;
-        else if ( strcmp( "-noc", argv[i]) == 0)
-            noc = true;
         else if ( strcmp( "-delaunay", argv[i]) == 0)
             delaunay = true;
         else if ( strcmp( "-incr", argv[i]) == 0)
@@ -83,8 +79,6 @@ int main( int argc, char **argv) {
         cerr << "       Terrain triangulation in the xy-plane." << endl;
         cerr << "       -delaunay  Delaunay triangulation (default)." << endl;
         cerr << "       -incr      Incremental insertion (no flips)." << endl;
-        cerr << "       -b         binary output (default is ASCII)." << endl;
-        cerr << "       -noc       no comments in file." << endl;
         cerr << "       -v         verbose." << endl;
         exit( ! help);
     }
@@ -139,9 +133,8 @@ int main( int argc, char **argv) {
             triang.insert( p);
         }
         vout << "    .... done." << endl;
-        vout << "write_triangulation( " << oname
-             << (binary ? ", binary" : ", ASCII") << ") ...." << endl;
-        CGAL::triangulation_print_OFF( *p_out, triang, binary, noc, verbose);
+        vout << "write_triangulation( " << oname << ") ...." << endl;
+        CGAL::IO::write_OFF(*p_out, triang);
         vout << "    .... done." << endl;
     } else {
         Triangulation triang;
@@ -153,9 +146,8 @@ int main( int argc, char **argv) {
             triang.insert( p);
         }
         vout << "    .... done." << endl;
-        vout << "write_triangulation( " << oname
-             << (binary ? ", binary" : ", ASCII") << ") ...." << endl;
-        CGAL::triangulation_print_OFF( *p_out, triang, binary, noc, verbose);
+        vout << "write_triangulation( " << oname << ") ...." << endl;
+        CGAL::IO::write_OFF(*p_out, triang);
         vout << "    .... done." << endl;
     }
     if ( !*p_in) {
