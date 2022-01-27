@@ -27,12 +27,7 @@
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Combinatorial_map_save_load.h>
-
-#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
-#include <CGAL/Combinatorial_map_min_items.h>
-#else
 #include <CGAL/Generic_map_min_items.h>
-#endif
 
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
@@ -185,11 +180,6 @@ namespace CGAL {
      */
     Combinatorial_map_base()
     {
-#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
-      CGAL_static_assertion_msg(Dart::dimension==dimension,
-                  "Dimension of dart different from dimension of map");
-#endif
-
       CGAL_static_assertion_msg(Helper::nb_attribs<=dimension+1,
                   "Too many attributes in the tuple Attributes_enabled");
       this->init_storage();
@@ -3458,10 +3448,6 @@ namespace CGAL {
                            bool testAttributes=true,
                            bool testPoint=true) const
     {
-#if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
-      CGAL_USE(testDartInfo);
-#endif
-
       typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2, Storage2> Map2;
 
       bool match = true;
@@ -3510,11 +3496,9 @@ namespace CGAL {
             map2.mark(other, m2);
 
             // We first test info of darts
-#if !defined(CGAL_CMAP_DART_DEPRECATED) || defined(CGAL_NO_DEPRECATED_CODE)
             if (match && testDartInfo)
               match=internal::Test_is_same_dart_info_functor<Self, Map2>::
                   run(*this, map2, current, other);
-#endif
 
             // We need to test in both direction because
             // Foreach_enabled_attributes only test non void attributes
