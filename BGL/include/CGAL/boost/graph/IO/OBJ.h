@@ -18,7 +18,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
@@ -27,11 +27,6 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 
@@ -68,7 +63,6 @@ public:
 };
 
 } // namespace internal
-} // namespace IO
 
 /*!
   \ingroup PkgBGLIoFuncsOBJ
@@ -110,32 +104,21 @@ public:
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+              , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
               )
 {
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type  VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                  Point;
 
-  IO::internal::OBJ_builder<Graph, Point> builder(is);
+  internal::OBJ_builder<Graph, Point> builder(is);
   return builder(g, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool read_OBJ(std::istream& is, Graph& g,
-              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return read_OBJ(is, g, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
   \ingroup PkgBGLIoFuncsOBJ
@@ -177,30 +160,19 @@ bool read_OBJ(std::istream& is, Graph& g,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const std::string& fname,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+              , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
               )
 {
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   return read_OBJ(is, g, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool read_OBJ(const std::string& fname, Graph& g,
-              typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return read_OBJ(fname, g, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -231,7 +203,7 @@ bool read_OBJ(const std::string& fname, Graph& g,
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`6`}
+      \cgalParamDefault{the precision of the stream `os`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -240,29 +212,18 @@ bool read_OBJ(const std::string& fname, Graph& g,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                )
 {
-  IO::internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_wavefront> printer(os);
+  internal::Generic_facegraph_printer<std::ostream, Graph, CGAL::File_writer_wavefront> printer(os);
   return printer(g, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool write_OBJ(std::ostream& os, const Graph& g,
-               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return write_OBJ(os, g, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
 \ingroup PkgBGLIoFuncsOBJ
@@ -285,6 +246,11 @@ bool write_OBJ(std::ostream& os, const Graph& g,
       \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
                       must be available in `Graph`.}
     \cgalParamNEnd
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{`6`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful, `false` otherwise.
@@ -292,31 +258,20 @@ bool write_OBJ(std::ostream& os, const Graph& g,
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
 template <typename Graph,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const std::string& fname,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
 #endif
                )
 {
   std::ofstream os(fname);
-  CGAL::set_mode(os, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(os, CGAL::IO::ASCII);
   return write_OBJ(os, g, np);
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool write_OBJ(const std::string& fname, const Graph& g,
-               typename boost::disable_if<IO::internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr)
-{
-  return write_OBJ(fname, g, parameters::all_default());
-}
-
-/// \endcond
-
-} // namespace CGAL
+}} // namespace CGAL::IO
 
 #endif // CGAL_BGL_IO_OBJ_H

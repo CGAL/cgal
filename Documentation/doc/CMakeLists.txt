@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Documentation NONE)
 
 # Minimal version of CMake:
@@ -27,7 +27,7 @@ else()
 endif()
 
 find_package(Doxygen)
-find_package(PythonInterp 2.6.7)
+find_package(Python3 COMPONENTS Interpreter)
 
 if(NOT DOXYGEN_FOUND)
   message(WARNING "Cannot build the documentation without Doxygen!")
@@ -252,7 +252,7 @@ set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
 #Setting the resource directory depending on the version of doxygen
-set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.8.20")
+set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.9.3")
 
 #  first look if resources for the specific doxygen version is available, fallback
 #  on the default otherwise
@@ -322,9 +322,9 @@ endif()
 set(CGAL_DOC_VERSION ${CGAL_CREATED_VERSION_NUM})
 
 ## generate how_to_cite files
-if(PYTHONINTERP_FOUND)
+if(Python3_Interpreter_FOUND)
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
+    COMMAND ${Python3_EXECUTABLE} ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
             ${CGAL_ROOT} ${CMAKE_BINARY_DIR} "${CGAL_BRANCH_BUILD}"
     RESULT_VARIABLE GENERATE_HOW_TO_CITE_RESULT)
   if(NOT GENERATE_HOW_TO_CITE_RESULT EQUAL "0")
@@ -436,25 +436,25 @@ add_dependencies(Documentation_copy_doc_tags doc_pre)
 #total level doc dependencies
 add_dependencies(doc doc_post)
 
-if(PYTHONINTERP_FOUND)
+if(Python3_Interpreter_FOUND)
   set(CGAL_DOC_TESTSUITE_SCRIPT "${CGAL_DOC_SCRIPT_DIR}/testsuite.py")
 
   add_custom_target(
     doc_with_postprocessing
-    ${PYTHON_EXECUTABLE} ${CGAL_DOC_SCRIPT_DIR}/html_output_post_processing.py
+    ${Python3_EXECUTABLE} ${CGAL_DOC_SCRIPT_DIR}/html_output_post_processing.py
     --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CGAL_DOC_RESOURCE_DIR})
   add_dependencies(doc_with_postprocessing doc)
 
   if(CGAL_DOC_CREATE_LOGS)
     add_custom_target(
       Documentation_test
-      ${PYTHON_EXECUTABLE} ${CGAL_DOC_TESTSUITE_SCRIPT} --output-dir
+      ${Python3_EXECUTABLE} ${CGAL_DOC_TESTSUITE_SCRIPT} --output-dir
       ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR})
     add_dependencies(Documentation_test doc)
 
     add_custom_target(
       Documentation_test_publish
-      ${PYTHON_EXECUTABLE}
+      ${Python3_EXECUTABLE}
       ${CGAL_DOC_TESTSUITE_SCRIPT}
       --output-dir
       ${CGAL_DOC_OUTPUT_DIR}
@@ -467,7 +467,7 @@ if(PYTHONINTERP_FOUND)
 
     add_custom_target(
       doc_and_publish_testsuite
-      ${PYTHON_EXECUTABLE}
+      ${Python3_EXECUTABLE}
       ${CGAL_DOC_TESTSUITE_SCRIPT}
       --output-dir
       ${CGAL_DOC_OUTPUT_DIR}

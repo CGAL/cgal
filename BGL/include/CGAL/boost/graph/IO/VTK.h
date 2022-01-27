@@ -16,7 +16,7 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
@@ -31,12 +31,6 @@
 #endif
 
 #if defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 
@@ -113,7 +107,6 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
 }
 
 } // namespace internal
-} // namespace IO
 
 /*!
  * \ingroup PkgBGLIoFuncsVTP
@@ -147,10 +140,10 @@ bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
  * \returns `true` if reading was successful, `false` otherwise.
 */
 template<typename Graph,
-         typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_VTP(const std::string& fname,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream test(fname);
   if(!test.good())
@@ -160,27 +153,19 @@ bool read_VTP(const std::string& fname,
   }
   test.close();
   vtkSmartPointer<vtkPointSet> data;
-  vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
-    vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();
+  vtkSmartPointer<internal::ErrorObserverVtk> obs =
+    vtkSmartPointer<internal::ErrorObserverVtk>::New();
 
-  data = vtkPolyData::SafeDownCast(IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
+  data = vtkPolyData::SafeDownCast(internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput());
   if (obs->GetError())
     return false;
-  return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
+  return internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template<typename Graph>
-bool read_VTP(const std::string& fname, Graph& g) { return read_VTP(fname, g, parameters::all_default()); }
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
-namespace IO {
 namespace internal {
 
 // writes the polys appended data at the end of the .vtp file
@@ -381,7 +366,6 @@ void write_polys_points(std::ostream& os,
 }
 
 } // namespace internal
-} // namespace IO
 
 /*! \ingroup PkgBGLIoFuncsVTP
  *
@@ -396,7 +380,7 @@ void write_polys_points(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -420,7 +404,7 @@ void write_polys_points(std::ostream& os,
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
+ *     \cgalParamDefault{the precision of the stream `os`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -428,10 +412,10 @@ void write_polys_points(std::ostream& os,
  *
  * \returns `true` if writing was successful, `false` otherwise.
  */
-template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template<typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -439,8 +423,7 @@ bool write_VTP(std::ostream& os,
   if(!os.good())
     return false;
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   os << "<?xml version=\"1.0\"?>\n"
      << "<VTKFile type=\"PolyData\" version=\"0.1\"";
@@ -466,16 +449,16 @@ bool write_VTP(std::ostream& os,
   std::size_t offset = 0;
   const bool binary = choose_parameter(get_parameter(np, internal_np::use_binary_mode), true);
 
-  IO::internal::write_points_tag(os, g, binary, offset, np);
-  IO::internal::write_polys_tag(os, g, binary, offset, np);
+  internal::write_points_tag(os, g, binary, offset, np);
+  internal::write_polys_tag(os, g, binary, offset, np);
 
   os << "   </Piece>\n"
      << "  </PolyData>\n";
   if(binary)
   {
     os << "<AppendedData encoding=\"raw\">\n_";
-    IO::internal::write_polys_points(os, g, np);
-    IO::internal::write_polys(os, g, np);
+    internal::write_polys_points(os, g, np);
+    internal::write_polys(os, g, np);
   }
   os << "</VTKFile>" << std::endl;
 
@@ -496,7 +479,7 @@ bool write_VTP(std::ostream& os,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -528,40 +511,35 @@ bool write_VTP(std::ostream& os,
  *
  * \returns `true` if writing was successful, `false` otherwise.
  */
-template<typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_VTP(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+template<typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_VTP(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   std::ofstream os;
   if(binary){
     os.open(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   }
   else
     os.open(fname);
+
   return write_VTP(os, g, np);
 }
 
-/// \cond SKIP_IN_MANUAL
 
-template<typename Graph>
-bool write_VTP(std::ostream& os, const Graph& g) { return write_VTP(os, g, CGAL::parameters::all_default()); }
-template<typename Graph>
-bool write_VTP(const std::string& fname, const Graph& g) { return write_VTP(fname, g, parameters::all_default()); }
-
-/// \endcond
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
  \ingroup PkgBGLIOFctDeprecated
 
- \deprecated This function is deprecated since \cgal 5.2, `CGAL::write_VTP()` should be used instead.
+ \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_VTP()` should be used instead.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_vtp(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return write_VTP(os, g, np);
+  return IO::write_VTP(os, g, np);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

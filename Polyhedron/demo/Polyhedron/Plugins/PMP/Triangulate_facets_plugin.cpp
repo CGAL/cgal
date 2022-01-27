@@ -82,7 +82,7 @@ public Q_SLOTS:
       Scene_polyhedron_selection_item* selection_item =
         qobject_cast<Scene_polyhedron_selection_item*>(scene->item(index));
 
-      SMesh* pMesh = (sm_item != NULL)
+      SMesh* pMesh = (sm_item != nullptr)
                     ? sm_item->polyhedron()
                     : selection_item->polyhedron();
 
@@ -103,7 +103,7 @@ public Q_SLOTS:
         if (!CGAL::Polygon_mesh_processing::triangulate_faces(
                  selection_item->selected_facets,
                  *pMesh,
-                 CGAL::Polygon_mesh_processing::parameters::visitor(visitor)))
+                 CGAL::parameters::visitor(visitor)))
           CGAL::Three::Three::warning(tr("Some facets could not be triangulated."));
 
         sm_item = selection_item->polyhedron_item();

@@ -17,7 +17,7 @@ typedef OpenMesh::TriMesh_ArrayKernelT</* MyTraits*/> Mesh;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc>1) ? argv[1] : "data/cube.xyz");
+  std::ifstream in((argc>1) ? argv[1] : CGAL::data_file_path("points_3/cube.xyz"));
   std::vector<Point_3> points;
   Point_3 p, n;
   while(in >> p >> n)
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   Mesh sm;
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
 
-  CGAL::write_polygon_mesh((argc>2)?argv[2]:"out.off", sm);
+  CGAL::IO::write_polygon_mesh((argc>2)?argv[2]:"out.off", sm);
 
   return 0;
 }

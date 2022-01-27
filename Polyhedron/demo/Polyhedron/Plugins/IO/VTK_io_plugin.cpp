@@ -67,7 +67,7 @@
 #include <vtkCommand.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
@@ -241,7 +241,7 @@ public:
         std::ofstream os(output_filename.data());
         os << std::setprecision(16);
         //write header
-        CGAL::write_VTP(os, *mesh);
+        CGAL::IO::write_VTP(os, *mesh);
       }
     }
     else
@@ -255,7 +255,7 @@ public:
       os << std::setprecision(16);
       const C3t3& c3t3 = c3t3_item->c3t3();
 
-      CGAL::output_to_vtu(os, c3t3);
+      CGAL::IO::output_to_vtu(os, c3t3);
     }
     items.pop_front();
     return true;
@@ -355,7 +355,7 @@ public:
     if(is_polygon_mesh)
     {
       FaceGraph* poly = new FaceGraph();
-      if (CGAL::IO::internal::vtkPointSet_to_polygon_mesh(data, *poly, CGAL::parameters::all_default()))
+      if (CGAL::IO::internal::vtkPointSet_to_polygon_mesh(data, *poly, CGAL::parameters::default_values()))
       {
         Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
         if(group)

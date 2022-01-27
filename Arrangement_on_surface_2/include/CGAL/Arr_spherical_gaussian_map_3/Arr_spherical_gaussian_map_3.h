@@ -133,9 +133,12 @@ public:
                                  const Vector_3 & normal2,
                                  OutputIterator oi)
   {
-    Curve_2 cv(normal1.direction(), normal2.direction());
-    const Geometry_traits_2 * traits = this->m_sgm.geometry_traits();
-    oi = traits->make_x_monotone_2_object()(cv, oi);
+    const Geometry_traits_2* traits = this->m_sgm.geometry_traits();
+    auto ctr_point = traits->construct_point_2_object();
+    Curve_2 cv =
+      traits->construct_curve_2_object()(ctr_point(normal1.direction()),
+                                         ctr_point(normal2.direction()));
+    *oi++ = traits->make_x_monotone_2_object()(cv, oi);
     return oi;
   }
 
@@ -349,8 +352,8 @@ public:
   typedef Traits                                            Geometry_traits_2;
 
   typedef Arrangement_on_surface_2<Traits,
-        Arr_spherical_topology_traits_2<Traits, T_Dcel<Traits> > >
-                                                                                                                        Base;
+    Arr_spherical_topology_traits_2<Traits, T_Dcel<Traits> > >
+                                                            Base;
 
   /*! Parameter-less Constructor */
   Arr_spherical_gaussian_map_3() { }

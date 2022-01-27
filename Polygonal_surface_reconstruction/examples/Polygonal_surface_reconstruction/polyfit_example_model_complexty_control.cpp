@@ -41,7 +41,7 @@ typedef CGAL::Nth_of_tuple_property_map<2, PNI>                                 
 
 int main()
 {
-    const std::string& input_file("data/building.ply");
+    const std::string& input_file(CGAL::data_file_path("points_3/building.ply"));
   std::ifstream input_stream(input_file.c_str());
 
   std::vector<PNI> points; // store points
@@ -50,11 +50,11 @@ int main()
   CGAL::Timer t;
   t.start();
 
-  if (!CGAL::read_PLY_with_properties(input_stream,
-                                      std::back_inserter(points),
-                                      CGAL::make_ply_point_reader(Point_map()),
-                                      CGAL::make_ply_normal_reader(Normal_map()),
-                                      std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
+  if (!CGAL::IO::read_PLY_with_properties(input_stream,
+                                          std::back_inserter(points),
+                                          CGAL::make_ply_point_reader(Point_map()),
+                                          CGAL::make_ply_normal_reader(Normal_map()),
+                                          std::make_pair(Plane_index_map(), CGAL::PLY_property<int>("segment_index"))))
   {
     std::cerr << "Error: cannot read file " << input_file << std::endl;
     return EXIT_FAILURE;
@@ -91,7 +91,7 @@ int main()
   }
   else {
        const std::string& output_file = "data/building_result-0.05.off";
-       if (CGAL::write_OFF(output_file, model)) {
+       if (CGAL::IO::write_OFF(output_file, model)) {
            std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
        }
        else {
@@ -109,7 +109,7 @@ int main()
   }
   else {
        const std::string& output_file = "data/building_result-0.5.off";
-       if (CGAL::write_OFF(output_file, model))
+       if (CGAL::IO::write_OFF(output_file, model))
            std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
        else {
            std::cerr << " Failed saving file." << std::endl;
@@ -126,7 +126,7 @@ int main()
   }
   else {
     const std::string& output_file = "data/building_result-0.7.off";
-    if (CGAL::write_OFF(output_file, model)){
+    if (CGAL::IO::write_OFF(output_file, model)){
       std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
                 }
     else {

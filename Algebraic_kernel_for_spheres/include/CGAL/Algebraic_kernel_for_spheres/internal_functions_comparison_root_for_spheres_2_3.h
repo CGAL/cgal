@@ -30,19 +30,19 @@ namespace CGAL {
     template <typename RT>
       Comparison_result
       compare_x(const CGAL::Root_for_spheres_2_3<RT>& r1, const CGAL::Root_for_spheres_2_3<RT>& r2){
-      return compare(r1.x(), r2.x());
+      return CGAL::compare(r1.x(), r2.x());
     }
 
     template <typename RT>
       Comparison_result
       compare_y(const CGAL::Root_for_spheres_2_3<RT>& r1, const CGAL::Root_for_spheres_2_3<RT>& r2){
-      return compare(r1.y(), r2.y());
+      return CGAL::compare(r1.y(), r2.y());
     }
 
     template <typename RT>
       Comparison_result
       compare_z(const CGAL::Root_for_spheres_2_3<RT>& r1, const CGAL::Root_for_spheres_2_3<RT>& r2){
-      return compare(r1.z(), r2.z());
+      return CGAL::compare(r1.z(), r2.z());
     }
 
     template <typename RT>

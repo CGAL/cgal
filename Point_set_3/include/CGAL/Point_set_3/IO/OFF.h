@@ -13,7 +13,7 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/helpers.h>
 #include <CGAL/IO/read_off_points.h>
@@ -21,12 +21,6 @@
 
 #include <fstream>
 #include <string>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 
@@ -36,6 +30,8 @@ class Point_set_3;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
+
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IOOFF
@@ -55,9 +51,9 @@ bool read_OFF(std::istream& is,
 {
   point_set.add_normal_map();
 
-  bool out = CGAL::read_OFF(is, point_set.index_back_inserter(),
-                            CGAL::parameters::point_map(point_set.point_push_map())
-                                             .normal_map(point_set.normal_push_map()));
+  bool out = CGAL::IO::read_OFF(is, point_set.index_back_inserter(),
+                                CGAL::parameters::point_map(point_set.point_push_map())
+                                                 .normal_map(point_set.normal_push_map()));
 
   bool has_normals = false;
   for(typename CGAL::Point_set_3<Point, Vector>::const_iterator it=point_set.begin(); it!=point_set.end(); ++it)
@@ -94,19 +90,21 @@ bool read_OFF(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
   return read_OFF(is, point_set);
 }
 
+} // namespace IO
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::read_OFF()` \endlink  should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSet3IO `CGAL::IO::read_OFF()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set)  ///< point set.
 {
-  return read_OFF(is, point_set);
+  return IO::read_OFF(is, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
@@ -114,6 +112,8 @@ CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
+
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IOOFF
@@ -134,16 +134,16 @@ CGAL_DEPRECATED bool read_off_point_set(std::istream& is,  ///< input stream.
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`6`}
+      \cgalParamDefault{the precision of the stream `os`}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const CGAL::Point_set_3<Point, Vector>& point_set,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   if(point_set.has_normal_map())
     return Point_set_processing_3::internal::write_OFF_PSP(os, point_set,
@@ -153,16 +153,6 @@ bool write_OFF(std::ostream& os,
   return Point_set_processing_3::internal::write_OFF_PSP(os, point_set,
                                                          np.point_map(point_set.point_map()));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_OFF(os, point_set, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
   \ingroup PkgPointSet3IOOFF
@@ -189,37 +179,28 @@ bool write_OFF(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 
   \return `true` if the writing was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream os(fname);
   return write_OFF(os, point_set, np);
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_OFF(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  std::ofstream os(fname);
-  return write_OFF(os, point_set, parameters::all_default());
-}
-
-/// \endcond
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::write_OFF()` \endlink  should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSet3IO `CGAL::IO::write_OFF()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_off_point_set(std::ostream& os, ///< output stream.
                                          const CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
-  return write_OFF(os, point_set);
+  return IO::write_OFF(os, point_set);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

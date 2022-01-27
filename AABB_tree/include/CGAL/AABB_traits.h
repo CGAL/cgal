@@ -21,9 +21,11 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Default.h>
 #include <CGAL/intersections.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
-#include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
+#include <CGAL/AABB_tree/internal/Is_ray_intersection_geomtraits.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
+#include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
+
 
 #include <boost/optional.hpp>
 
@@ -158,7 +160,7 @@ class AABB_tree;
 /// \tparam BboxMap must be a model of `ReadablePropertyMap` that has as key type a primitive id,
 ///                 and as value type a `Bounding_box`.
 ///                 If the type is `Default` the `Datum` must have the
-///                 member function `bbox()` that returns the bounding box  of the primitive.
+///                 member function `bbox()` that returns the bounding box of the primitive.
 ///
 /// If the argument `GeomTraits` is a model of the concept \ref
 /// AABBRayIntersectionGeomTraits, this class is also a model of \ref
@@ -190,14 +192,14 @@ public:
   typedef typename std::pair<typename GeomTraits::Point_3, typename Primitive::Id> Point_and_primitive_id;
 
   /// `Intersection_and_primitive_id<Query>::%Type::first_type` is found according to
-  /// the result type of `GeomTraits::Intersect_3::operator()`,
-  /// (that is cpp11::result_of<GeomTraits::Intersect_3(Query, Primitive::Datum)>::type). If it is
+  /// the result type of `GeomTraits::Intersect_3::operator()`. If it is
   /// `boost::optional<T>` then it is `T`, and the result type otherwise.
   template<typename Query>
   struct Intersection_and_primitive_id {
-    typedef typename cpp11::result_of<
-      typename GeomTraits::Intersect_3(Query, typename Primitive::Datum)
-    >::type Intersection_type;
+    typedef decltype(
+      std::declval<typename GeomTraits::Intersect_3>()(
+        std::declval<Query>(),
+        std::declval<typename Primitive::Datum>())) Intersection_type;
 
     typedef std::pair<
       typename internal::AABB_tree::Remove_optional<Intersection_type>::type,
@@ -330,7 +332,7 @@ public:
     template<typename Query>
     bool operator()(const Query& q, const Bounding_box& bbox) const
     {
-      return CGAL::do_intersect(q, bbox);
+      return GeomTraits().do_intersect_3_object()(q, bbox);
     }
 
     template<typename Query>
@@ -364,8 +366,7 @@ public:
     template<typename Query>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     operator()(const Query& query, const typename AT::Primitive& primitive) const {
-      typename cpp11::result_of<typename GeomTraits::Intersect_3(Query, typename Primitive::Datum) >::type
-        inter_res = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
+      auto inter_res = GeomTraits().intersect_3_object()(query, internal::Primitive_helper<AT>::get_datum(primitive,m_traits));
       if (!inter_res)
         return boost::none;
       return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
@@ -390,9 +391,9 @@ public:
       GeomTraits geom_traits;
       Point closest_point = geom_traits.construct_projected_point_3_object()(
         internal::Primitive_helper<AT>::get_datum(pr,m_traits), p);
-      return
-        geom_traits.compare_distance_3_object()(p, closest_point, bound)==LARGER ?
-        bound : closest_point;
+
+      return (geom_traits.compare_distance_3_object()(p, closest_point, bound) == LARGER) ?
+               bound : closest_point;
     }
   };
 
@@ -405,6 +406,28 @@ public:
       typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_true) const
+      {
+          return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()
+           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), bb,true)?
+          CGAL::SMALLER : CGAL::LARGER;
+      }
+
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound, Tag_false) const
+      {
+          return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()
+           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), bb)?
+          CGAL::SMALLER : CGAL::LARGER;
+      }
+
+      CGAL::Comparison_result operator()(const Point& p, const Bounding_box& bb, const Point& bound) const
+      {
+        return (*this)(p, bb, bound, Boolean_tag<internal::Has_static_filters<GeomTraits>::value>());
+      }
+
+      // The following functions seem unused...?
       template <class Solid>
       CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const Point& bound) const
       {
@@ -428,6 +451,11 @@ public:
   Closest_point closest_point_object() const {return Closest_point(*this);}
   Compare_distance compare_distance_object() const {return Compare_distance();}
 
+  typedef enum { CGAL_AXIS_X = 0,
+                 CGAL_AXIS_Y = 1,
+                 CGAL_AXIS_Z = 2} Axis;
+
+  static Axis longest_axis(const Bounding_box& bbox);
 
 private:
   /**
@@ -445,13 +473,6 @@ private:
   {
     return internal::Primitive_helper<AT>::get_datum(pr,*this).bbox();
   }
-
-
-  typedef enum { CGAL_AXIS_X = 0,
-                 CGAL_AXIS_Y = 1,
-                 CGAL_AXIS_Z = 2} Axis;
-
-  static Axis longest_axis(const Bounding_box& bbox);
 
   /// Comparison functions
   static bool less_x(const Primitive& pr1, const Primitive& pr2,const AABB_traits<GeomTraits,AABBPrimitive, BboxMap>& traits)

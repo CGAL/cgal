@@ -1,0 +1,566 @@
+namespace CGAL {
+namespace Weights {
+
+/*!
+\defgroup PkgWeightsRef Weight Interface Reference
+
+\defgroup PkgWeightsRefConcepts Concepts
+\ingroup PkgWeightsRef
+
+Concepts which are used to parameterize and define the functions and classes of this package.
+
+
+\defgroup PkgWeightsRefAnalytic Analytic Weights
+\ingroup PkgWeightsRef
+
+Models and functions that can be used to compute weights which have a simple analytic expression.
+
+
+\defgroup PkgWeightsRefUniformWeights Uniform Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/uniform_weights.h>
+\endverbatim
+
+This weight is always equal to 1.
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefShepardWeights Shepard Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/shepard_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = \frac{1}{d^a}\f$
+with notations shown in the figure below and \f$a\f$ any real number
+being the power parameter.
+
+Here, the distance is computed between the points `p` and `q`.
+
+\cgalFigureBegin{shepard_weight, shepard.svg}
+  Notation used for the Shepard weight.
+\cgalFigureEnd
+
+\cgalHeading{Specializations}
+- For \f$a = 1\f$, this weight is equal to the \ref PkgWeightsRefInverseDistanceWeights "Inverse Distance Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\pre d != 0
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefInverseDistanceWeights Inverse Distance Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/inverse_distance_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = \frac{1}{d}\f$
+with notations shown in the figure below.
+
+Here, the distance is computed between the points `p` and `q`.
+
+Alternative formulations are explained in \ref Weights_Implementation.
+
+\cgalFigureBegin{inverse_distance_weight, inverse_distance.svg}
+  Notation used for the inverse distance weight.
+\cgalFigureEnd
+
+\cgalHeading{Alternative Formulations}
+This weight is a special case of the \ref PkgWeightsRefShepardWeights "Shepard Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\pre d != 0
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefThreePointFamilyWeights Three Point Family Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/three_point_family_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
+with notations shown in the figure below and \f$a\f$ any real number
+being the power parameter.
+
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
+
+This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
+while alternative formulations are explained in \ref Weights_Implementation.
+
+\cgalFigureBegin{three_point_family_weight, three_point_family.svg}
+  Notation used for the three point family weight.
+\cgalFigureEnd
+
+\cgalHeading{Specializations}
+- For \f$a = 0\f$, this weight is equal to the
+\ref PkgWeightsRefWachspressWeights "Wachspress Weight" and
+\ref PkgWeightsRefAuthalicWeights "Authalic Weight".
+- For \f$a = 1\f$, this weight is equal to the
+\ref PkgWeightsRefMeanValueWeights "Mean Value Weight" and
+\ref PkgWeightsRefTangentWeights "Tangent Weight".
+- For \f$a = 2\f$, this weight is equal to the
+\ref PkgWeightsRefDiscreteHarmonicWeights "Discrete Harmonic Weight" and
+\ref PkgWeightsRefCotangentWeights "Cotangent Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\pre A1 != 0 && A2 != 0
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefWachspressWeights Wachspress Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/wachspress_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = \frac{C}{A_1 A_2}\f$
+with notations shown in the figure below.
+
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
+
+This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
+while alternative formulations are explained in \ref Weights_Implementation.
+
+\cgalFigureBegin{wachspress_weight, wachspress.svg}
+  Notation used for the Wachspress weight.
+\cgalFigureEnd
+
+\cgalHeading{Alternative Formulations}
+- This weight is equal to the \ref PkgWeightsRefAuthalicWeights "Authalic Weight".
+- This weight is a special case of the \ref PkgWeightsRefThreePointFamilyWeights "Three Point Family Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\pre A1 != 0 && A2 != 0
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefAuthalicWeights Authalic Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/authalic_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = 2 \frac{\cot\beta + \cot\gamma}{d^2}\f$
+with notations shown in the figure below.
+
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
+
+Alternative formulations are explained in \ref Weights_Implementation.
+
+\cgalFigureBegin{authalic_weight, authalic.svg}
+  Notation used for the authalic weight.
+\cgalFigureEnd
+
+\cgalHeading{Alternative Formulations}
+- This weight is equal to the \ref PkgWeightsRefWachspressWeights "Wachspress Weight".
+- This weight is a special case of the \ref PkgWeightsRefThreePointFamilyWeights "Three Point Family Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\pre d != 0
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefMeanValueWeights Mean Value Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/mean_value_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = \pm 2 \sqrt{\frac{2 (d_1 d_2 - D)}{(d d_1 + D_1)(d d_2 + D_2)}}\f$
+with notations shown in the figure below and dot products
+
+\f$D_1 = (p_0 - q) \cdot (p_1 - q)\f$,
+\f$D_2 = (p_1 - q) \cdot (p_2 - q)\f$, and
+\f$D   = (p_0 - q) \cdot (p_2 - q)\f$.
+
+The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
+
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
+
+This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
+while alternative formulations are explained in \ref Weights_Implementation.
+
+\cgalFigureBegin{mean_value_weight, mean_value.svg}
+  Notation used for the mean value weight.
+\cgalFigureEnd
+
+\cgalHeading{Alternative Formulations}
+- This weight is equal to the \ref PkgWeightsRefTangentWeights "Tangent Weight".
+- This weight is a special case of the \ref PkgWeightsRefThreePointFamilyWeights "Three Point Family Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\pre (d * d1 + D1) != 0 && (d * d2 + D2) != 0
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefTangentWeights Tangent Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/tangent_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = 2 \frac{t_1 + t_2}{d}\f$, where
+\f$t_1 = \frac{2 A_1}{d d_1 + D_1}\f$ and
+\f$t_2 = \frac{2 A_2}{d d_2 + D_2}\f$
+with notations shown in the figure below and dot products
+
+\f$D_1 = (p_0 - q) \cdot (p_1 - q)\f$ and
+\f$D_2 = (p_1 - q) \cdot (p_2 - q)\f$.
+
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
+
+Alternative formulations are explained in \ref Weights_Implementation.
+
+\cgalFigureBegin{tangent_weight, tangent.svg}
+  Notation used for the tangent weight.
+\cgalFigureEnd
+
+\cgalHeading{Alternative Formulations}
+- This weight is equal to the \ref PkgWeightsRefMeanValueWeights "Mean Value Weight".
+- This weight is a special case of the \ref PkgWeightsRefThreePointFamilyWeights "Three Point Family Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\pre (d * d1 + D1) != 0 && (d * d2 + D2) != 0 && d != 0
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefDiscreteHarmonicWeights Discrete Harmonic Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/discrete_harmonic_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = \frac{d_2^2 A_1 - d^2 B + d_1^2 A_2}{A_1 A_2}\f$
+with notations shown in the figure below.
+
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
+
+This weight supports only planar configurations (see more in section about \ref Weights_Implementation_Coplanarity)
+while alternative formulations are explained in \ref Weights_Implementation.
+
+\cgalFigureBegin{discrete_harmonic_weight, discrete_harmonic.svg}
+  Notation used for the discrete harmonic weight.
+\cgalFigureEnd
+
+\cgalHeading{Alternative Formulations}
+- This weight is equal to the \ref PkgWeightsRefCotangentWeights "Cotangent Weight".
+- This weight is a special case of the \ref PkgWeightsRefThreePointFamilyWeights "Three Point Family Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\pre A1 != 0 && A2 != 0
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefCotangentWeights Cotangent Weight
+\ingroup PkgWeightsRefAnalytic
+
+\verbatim
+#include <CGAL/Weights/cotangent_weights.h>
+\endverbatim
+
+This weight is computed as
+\f$w = 2 (\cot\beta + \cot\gamma)\f$
+with notations shown in the figure below.
+
+Here, `q` is a query point and the points `p0`, `p1`, and `p2` are its neighbors.
+
+Alternative formulations are explained in \ref Weights_Implementation.
+
+\cgalFigureBegin{cotangent_weight, cotangent.svg}
+  Notation used for the cotangent weight.
+\cgalFigureEnd
+
+\cgalHeading{Alternative Formulations}
+- This weight is equal to the \ref PkgWeightsRefDiscreteHarmonicWeights "Discrete Harmonic Weight".
+- This weight is a special case of the \ref PkgWeightsRefThreePointFamilyWeights "Three Point Family Weight".
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\addtogroup PkgWeightsRefAnalytic
+
+
+\defgroup PkgWeightsRefBarycentric Barycentric Weights
+\ingroup PkgWeightsRef
+
+Models and functions that can be used to compute barycentric weights with respect
+to polygons. These weights are then normalized in order to obtain barycentric coordinates.
+
+
+\defgroup PkgWeightsRefBarycentricWachspressWeights Wachspress Weights
+\ingroup PkgWeightsRefBarycentric
+
+\verbatim
+#include <CGAL/Weights/wachspress_weights.h>
+\endverbatim
+
+Wachspress weights which can be computed for a query point with respect to the
+vertices of a strictly convex polygon.
+
+\addtogroup PkgWeightsRefBarycentric
+
+
+\defgroup PkgWeightsRefBarycentricMeanValueWeights Mean Value Weights
+\ingroup PkgWeightsRefBarycentric
+
+\verbatim
+#include <CGAL/Weights/mean_value_weights.h>
+\endverbatim
+
+Mean value weights which can be computed for a query point with respect to the
+vertices of a simple polygon.
+
+\addtogroup PkgWeightsRefBarycentric
+
+
+\defgroup PkgWeightsRefBarycentricDiscreteHarmonicWeights Discrete Harmonic Weights
+\ingroup PkgWeightsRefBarycentric
+
+\verbatim
+#include <CGAL/Weights/discrete_harmonic_weights.h>
+\endverbatim
+
+Discrete Harmonic weights which can be computed for a query point with respect to the
+vertices of a strictly convex polygon.
+
+\addtogroup PkgWeightsRefBarycentric
+
+
+\defgroup PkgWeightsRefRegions Weighting Regions
+\ingroup PkgWeightsRef
+
+Models and functions that can be used to compute weighting regions. These weights are
+used to balance other weights.
+
+
+\defgroup PkgWeightsRefUniformRegionWeights Uniform Region Weight
+\ingroup PkgWeightsRefRegions
+
+\verbatim
+#include <CGAL/Weights/uniform_region_weights.h>
+\endverbatim
+
+This weight is always equal to 1.
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\addtogroup PkgWeightsRefRegions
+
+
+\defgroup PkgWeightsRefTriangularRegionWeights Triangular Region Weight
+\ingroup PkgWeightsRefRegions
+
+\verbatim
+#include <CGAL/Weights/triangular_region_weights.h>
+\endverbatim
+
+This weight is the area of the shaded region in the figure below. The region is
+the triangle `[p, q, r]`.
+
+\cgalFigureBegin{triangular_area, triangular_cell.svg}
+  Notation used for the triangular cell.
+\cgalFigureEnd
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\addtogroup PkgWeightsRefRegions
+
+
+\defgroup PkgWeightsRefBarycentricRegionWeights Barycentric Region Weight
+\ingroup PkgWeightsRefRegions
+
+\verbatim
+#include <CGAL/Weights/barycentric_region_weights.h>
+\endverbatim
+
+This weight is the area of the shaded region in the figure below. The region
+is formed by the two midpoints of the edges incident to `q` and the barycenter of
+the triangle `[p, q, r]`.
+
+\cgalFigureBegin{barycentric_area, barycentric_cell.svg}
+  Notation used for the barycentric cell.
+\cgalFigureEnd
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\addtogroup PkgWeightsRefRegions
+
+
+\defgroup PkgWeightsRefVoronoiRegionWeights Voronoi Region Weight
+\ingroup PkgWeightsRefRegions
+
+\verbatim
+#include <CGAL/Weights/voronoi_region_weights.h>
+\endverbatim
+
+This weight is the area of the shaded region in the figure below. The region
+is formed by the two midpoints of the edges incident to `q` and the circumcenter of
+the triangle `[p, q, r]`.
+
+\cgalFigureBegin{voronoi_area, voronoi_cell.svg}
+  Notation used for the Voronoi cell.
+\cgalFigureEnd
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\sa \ref PkgWeightsRefMixedVoronoiRegionWeights "Mixed Voronoi Region Weight"
+
+\addtogroup PkgWeightsRefRegions
+
+
+\defgroup PkgWeightsRefMixedVoronoiRegionWeights Mixed Voronoi Region Weight
+\ingroup PkgWeightsRefRegions
+
+\verbatim
+#include <CGAL/Weights/mixed_voronoi_region_weights.h>
+\endverbatim
+
+This weight is the area of the shaded region in the figure below. The region
+is formed by the two midpoints of the edges incident to `q` and the circumcenter of
+the triangle `[p, q, r]`.
+
+\cgalFigureBegin{mixed_voronoi_area, mixed_voronoi_cell.svg}
+  Notation used for the mixed Voronoi cell.
+\cgalFigureEnd
+
+However, unlike the original \ref PkgWeightsRefVoronoiRegionWeights "Voronoi Region Weight",
+if one of the angles in the triangle `[p, q, r]` is obtuse and the circumcenter vertex of the region
+is outside this triangle, this vertex is moved to the midpoint of the edge `[r, p]` as shown in
+the figure below.
+
+\cgalFigureBegin{mixed_voronoi_area_obtuse, mixed_voronoi_cell_obtuse.svg}
+  The case with the obtuse angle.
+\cgalFigureEnd
+
+\tparam GeomTraits
+a model of `AnalyticWeightTraits_2` for 2D points;
+a model of `AnalyticWeightTraits_3` for 3D points
+
+\sa \ref PkgWeightsRefVoronoiRegionWeights "Voronoi Region Weight"
+
+\addtogroup PkgWeightsRefRegions
+
+\addtogroup PkgWeightsRef
+
+
+\cgalPkgDescriptionBegin{Weight Interface, PkgWeights}
+\cgalPkgPicture{weights_logo_120x120.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Dmitry Anisimov}
+\cgalPkgDesc{Many geometric algorithms rely on weighted constructions. This package
+provides a simple and unified interface to different types of weights. In particular,
+it includes numerous weights with a simple analytic expression, generalized barycentric
+weights, and weighting regions. All weights are available both in 2D and 3D.}
+\cgalPkgManuals{Chapter_Weights, PkgWeightsRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.4}
+\cgalPkgBib{cgal:a-wi}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+## Weight Interface ##
+
+### Concepts ###
+- `BarycentricWeights_2`
+- `AnalyticWeightTraits_2`
+- `AnalyticWeightTraits_3`
+
+### Analytic %Weights ###
+- \ref PkgWeightsRefUniformWeights "Uniform Weight"
+- \ref PkgWeightsRefShepardWeights "Shepard Weight"
+- \ref PkgWeightsRefInverseDistanceWeights "Inverse Distance Weight"
+- \ref PkgWeightsRefThreePointFamilyWeights "Three Point Family Weight"
+- \ref PkgWeightsRefWachspressWeights "Wachspress Weight"
+- \ref PkgWeightsRefAuthalicWeights "Authalic Weight"
+- \ref PkgWeightsRefMeanValueWeights "Mean Value Weight"
+- \ref PkgWeightsRefTangentWeights "Tangent Weight"
+- \ref PkgWeightsRefDiscreteHarmonicWeights "Discrete Harmonic Weight"
+- \ref PkgWeightsRefCotangentWeights "Cotangent Weight"
+
+### Barycentric %Weights ###
+- \ref PkgWeightsRefBarycentricWachspressWeights "Wachspress Weights"
+- \ref PkgWeightsRefBarycentricMeanValueWeights "Mean Value Weights"
+- \ref PkgWeightsRefBarycentricDiscreteHarmonicWeights "Discrete Harmonic Weights"
+
+### Weighting Regions ###
+- \ref PkgWeightsRefUniformRegionWeights "Uniform Region Weight"
+- \ref PkgWeightsRefTriangularRegionWeights "Triangular Region Weight"
+- \ref PkgWeightsRefBarycentricRegionWeights "Barycentric Region Weight"
+- \ref PkgWeightsRefVoronoiRegionWeights "Voronoi Region Weight"
+- \ref PkgWeightsRefMixedVoronoiRegionWeights "Mixed Voronoi Region Weight"
+*/
+
+} /* namespace Weights */
+} /* namespace CGAL */

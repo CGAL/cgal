@@ -25,8 +25,10 @@
 \cgalCRPSection{Concepts}
 - `AABBPrimitive`
 - `AABBPrimitiveWithSharedData`
-- `AABBTraits`
 - `AABBGeomTraits`
+- `AABBTraits`
+- `AABBRayIntersectionGeomTraits`
+- `AABBRayIntersectionTraits`
 
 \cgalCRPSection{Classes}
 - `CGAL::AABB_traits<GeomTraits,Primitive>`

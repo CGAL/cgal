@@ -1,4 +1,4 @@
-#include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/Cartesian_d.h>
@@ -28,7 +28,7 @@ typedef double FT;
 
 int main()
 {
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_KD_SETDTHREAD(193);
   CGAL_TEST_START;
   {

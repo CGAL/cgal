@@ -15,10 +15,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/P.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
 
   Mesh mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
   std::size_t number_of_patches
     = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
-                                    PMP::parameters::vertex_incident_patches_map(vip));
+                                    CGAL::parameters::vertex_incident_patches_map(vip));
 
   std::size_t nb_sharp_edges = 0;
   for(boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))

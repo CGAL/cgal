@@ -18,6 +18,8 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Handle_for.h>
+#include <CGAL/Nef_S2/Sphere_point.h>
+#include <CGAL/Nef_S2/Sphere_circle.h>
 #include <vector>
 
 namespace CGAL {
@@ -35,14 +37,14 @@ Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
 
 Sphere_segment_rep(const Point& p1, const Point& p2,
                    bool shorter_arc=true) :
-  ps_(p1), pt_(p2), c_(Plane_3(p1,p2,Point_3(0,0,0)))
+  ps_(p1), pt_(p2), c_(Plane_3(p1,p2,Point_3(CGAL::ORIGIN)))
 { // warning stays as reminder that one gets an arbitrary plane equation
   // in this degenerate case
   CGAL_warning(p1 != p2.antipode());
   CGAL_assertion(p1 != p2.antipode());
   if ( p1 == p2 ) {
-    Plane_3 h(Point_3(0,0,0),(p1-CGAL::ORIGIN));
-    c_ = Sphere_circle<R_>(Plane_3(Point_3(0,0,0),h.base1()));
+    Plane_3 h(Point_3(CGAL::ORIGIN),(p1-CGAL::ORIGIN));
+    c_ = Sphere_circle<R_>(Plane_3(Point_3(CGAL::ORIGIN),h.base1()));
   }
   if (!shorter_arc) c_ = c_.opposite();
   CGAL_exactness_assertion(c_.has_on(p1) && c_.has_on(p2));
@@ -57,7 +59,7 @@ Sphere_segment_rep(const Circle& c1,
 { CGAL_assertion(!equal_as_sets(c1,c2));
   ps_ = intersection(c1,c2);
   pt_ = ps_.antipode();
-  if ( R_::orientation(Point_3(0,0,0),ps_,pt_,
+  if ( R_::orientation(Point_3(CGAL::ORIGIN),ps_,pt_,
                    CGAL::ORIGIN + c_.orthogonal_vector()) !=
        CGAL::POSITIVE ) std::swap(ps_,pt_);
 }
@@ -174,30 +176,29 @@ void split_halfcircle(Sphere_segment<R>& s1,
 /*{\Mop splits a halfcircle into two equally sized segments.
 \precond |\Mvar| is a halfcircle.}*/
 { CGAL_assertion( is_halfcircle() );
-  Plane_3 h(Point_3(0,0,0),(target()-CGAL::ORIGIN));
+  Plane_3 h(Point_3(CGAL::ORIGIN),(target()-CGAL::ORIGIN));
   Sphere_point<R> p =
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
-  if ( !has_on(p) ) p = p.antipode();
-  s1 = Sphere_segment<R>(this->ptr()->ps_,p,this->ptr()->c_);
-  s2 = Sphere_segment<R>(p,this->ptr()->pt_,this->ptr()->c_);
+  if ( !has_on_after_intersection(p) ) p = p.antipode();
+  s1 = Sphere_segment<R>(source(),p,sphere_circle());
+  s2 = Sphere_segment<R>(p,target(),sphere_circle());
 }
 
 bool is_short() const
 /*{\Mop a segment is short iff it is shorter than a halfcircle.}*/
 {
-  return R().orientation_3_object()(Point_3(0,0,0),
+  return R().orientation_3_object()(Point_3(CGAL::ORIGIN),
                                     Point_3(source()),
                                     Point_3(target()),
-                                    CGAL::ORIGIN +
-                                    this->ptr()->c_.orthogonal_vector())
+                                    orthogonal_pole())
     == CGAL::POSITIVE; }
 
 bool is_long() const
 /*{\Mop a segment is long iff it is longer than a halfcircle.}*/
-{ return R().orientation_3_object()(Point_3(0,0,0),
+{ return R().orientation_3_object()(Point_3(CGAL::ORIGIN),
                                     Point_3(source()),
                                     Point_3(target()),
-                                    CGAL::ORIGIN + this->ptr()->c_.orthogonal_vector())
+                                    orthogonal_pole())
     == CGAL::NEGATIVE; }
 
 bool is_degenerate() const { return source() == target(); }
@@ -210,7 +211,7 @@ bool has_on(const Sphere_point<R>& p) const;
 /*{\Mop return true iff |\Mvar| contains |p|.}*/
 bool has_on_after_intersection(const Sphere_point<R>& p) const;
 
-bool has_in_relative_interior(const Sphere_point<R>& p) const;
+  bool has_in_relative_interior(const Sphere_point<R>& p, bool check_has_on = true) const;
 /*{\Mop return true iff |\Mvar| contains |p| in
 its relative interior.}*/
 
@@ -221,6 +222,25 @@ bool operator==(const Sphere_segment<R>& so) const
 
 bool operator!=(const Sphere_segment<R>& so) const
 { return !operator==(so); }
+
+private:
+
+Point_3 orthogonal_pole() const
+{ return CGAL::ORIGIN + sphere_circle().orthogonal_vector(); }
+
+CGAL::Orientation source_orientation(const CGAL::Sphere_point<R>& p) const
+{ return orientation(Point_3(CGAL::ORIGIN),
+                     orthogonal_pole(),
+                     source(),
+                     p);
+}
+
+CGAL::Orientation target_orientation(const CGAL::Sphere_point<R>& p) const
+{ return orientation(Point_3(CGAL::ORIGIN),
+                     target(),
+                     orthogonal_pole(),
+                     p);
+}
 
 };
 
@@ -280,59 +300,31 @@ bool Sphere_segment<R>::
 has_on(const CGAL::Sphere_point<R>& p) const
 { if ( !sphere_circle().has_on(p) ) return false;
   if ( !is_long() ) {
-    return orientation(Point_3(0,0,0),
-                       CGAL::ORIGIN + sphere_circle().orthogonal_vector(),
-                       source(),p) !=
-           CGAL::NEGATIVE &&
-           orientation(Point_3(0,0,0),target(),
-                       CGAL::ORIGIN +
-                       sphere_circle().orthogonal_vector(),p) !=
-           CGAL::NEGATIVE;
+    return source_orientation(p) != CGAL::NEGATIVE &&
+           target_orientation(p) != CGAL::NEGATIVE;
   } else {
-    return orientation(Point_3(0,0,0),
-                       CGAL::ORIGIN + sphere_circle().orthogonal_vector(),
-                       source(),p) !=
-           CGAL::NEGATIVE ||
-           orientation(Point_3(0,0,0),target(),
-                       CGAL::ORIGIN +
-                       sphere_circle().orthogonal_vector(),p) !=
-           CGAL::NEGATIVE;
+    return source_orientation(p) != CGAL::NEGATIVE ||
+           target_orientation(p) != CGAL::NEGATIVE;
   }
 }
 
 template <typename R>
 bool Sphere_segment<R>::
-has_on_after_intersection(const CGAL::Sphere_point<R>& p) const {
-    return orientation(Point_3(0,0,0),
-                       CGAL::ORIGIN + sphere_circle().orthogonal_vector(),
-                       source(),p) !=
-           CGAL::NEGATIVE &&
-           orientation(Point_3(0,0,0),target(),
-                       CGAL::ORIGIN +
-                       sphere_circle().orthogonal_vector(),p) !=
-           CGAL::NEGATIVE;
+has_on_after_intersection(const CGAL::Sphere_point<R>& p) const
+{ return source_orientation(p) != CGAL::NEGATIVE &&
+         target_orientation(p) != CGAL::NEGATIVE;
 }
 
 template <typename R>
 bool Sphere_segment<R>::
-has_in_relative_interior(const CGAL::Sphere_point<R>& p) const
-{ if ( !sphere_circle().has_on(p) ) return false;
+has_in_relative_interior(const CGAL::Sphere_point<R>& p, bool check_has_on) const
+{ if (check_has_on &&( !sphere_circle().has_on(p) ) ) return false;
   if ( !is_long() ) {
-    return orientation(Point_3(0,0,0),
-                       CGAL::ORIGIN + sphere_circle().orthogonal_vector(),
-                       source(),p) == CGAL::POSITIVE &&
-           orientation(Point_3(0,0,0),target(),
-                       CGAL::ORIGIN +
-                       sphere_circle().orthogonal_vector(),p) ==
-           CGAL::POSITIVE;
+    return source_orientation(p) == CGAL::POSITIVE &&
+           target_orientation(p) == CGAL::POSITIVE;
   } else {
-    return orientation(Point_3(0,0,0),
-                       CGAL::ORIGIN + sphere_circle().orthogonal_vector(),
-                       source(),p) == CGAL::POSITIVE ||
-           orientation(Point_3(0,0,0),target(),
-                       CGAL::ORIGIN +
-                       sphere_circle().orthogonal_vector(),p) ==
-           CGAL::POSITIVE;
+    return source_orientation(p) == CGAL::POSITIVE ||
+           target_orientation(p) == CGAL::POSITIVE;
   }
 }
 
@@ -360,11 +352,11 @@ bool do_intersect_internally(const Sphere_segment<R>& s1,
   if ( equal_as_sets(s1.sphere_circle(),s2.sphere_circle()) )
     return false;
   p = CGAL::intersection(s1.sphere_circle(),s2.sphere_circle());
-  if ( s1.has_in_relative_interior(p) &&
-       s2.has_in_relative_interior(p) ) return true;
+  if ( s1.has_in_relative_interior(p, false) &&
+       s2.has_in_relative_interior(p, false) ) return true;
   p = p.antipode();
-  if ( s1.has_in_relative_interior(p) &&
-       s2.has_in_relative_interior(p) ) return true;
+  if ( s1.has_in_relative_interior(p, false) &&
+       s2.has_in_relative_interior(p, false) ) return true;
   return false;
 }
 
@@ -377,9 +369,9 @@ bool do_intersect_internally(const Sphere_circle<R>& c1,
   if ( equal_as_sets(c1,s2.sphere_circle()) )
     return false;
   p = CGAL::intersection(c1,s2.sphere_circle());
-  if ( s2.has_in_relative_interior(p) ) return true;
+  if ( s2.has_in_relative_interior(p, false) ) return true;
   p = p.antipode();
-  if ( s2.has_in_relative_interior(p) ) return true;
+  if ( s2.has_in_relative_interior(p, false) ) return true;
   return false;
 }
 

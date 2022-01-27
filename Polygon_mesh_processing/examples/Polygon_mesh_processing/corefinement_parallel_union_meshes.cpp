@@ -16,7 +16,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
-  std::ifstream in(argc>1?argv[1]:"data/eight.off");
+  std::ifstream in(argc>1?argv[1]:CGAL::data_file_path("meshes/eight.off"));
   int nb_copies = argc > 2 ? atoi(argv[2]) : 100;
   if (nb_copies<=0) return 1;
   std::vector<Mesh> meshes(nb_copies);

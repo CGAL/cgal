@@ -19,7 +19,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -105,7 +105,7 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{protect_constraints}
 *     \cgalParamDescription{If `true`, the edges set as constrained in `edge_is_constrained_map`
-*                           (or by default the boundary edges) are not split nor collapsed during remeshing.}
+*                           (or by default the boundary edges) are neither split nor collapsed during remeshing.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`false`}
 *     \cgalParamExtra{Note that around constrained edges that have their length higher than
@@ -130,6 +130,24 @@ namespace Polygon_mesh_processing {
 *                       computed with respect to the constrained edges listed in the property map
 *                       `edge_is_constrained_map`}
 *     \cgalParamExtra{The map is updated during the remeshing process while new faces are created.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_split}
+*     \cgalParamDescription{whether edges that are too long with respect to the given sizing are split}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_collapse}
+*     \cgalParamDescription{whether edges that are too short with respect to the given sizing are collapsed}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_flip}
+*     \cgalParamDescription{whether edge flips are performed to improve shape and valence}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{number_of_relaxation_steps}
@@ -174,11 +192,11 @@ namespace Polygon_mesh_processing {
 */
 template<typename PolygonMesh
        , typename FaceRange
-       , typename NamedParameters>
+       , typename NamedParameters = parameters::Default_named_parameters>
 void isotropic_remeshing(const FaceRange& faces
                        , const double& target_edge_length
                        , PolygonMesh& pmesh
-                       , const NamedParameters& np)
+                       , const NamedParameters& np = parameters::default_values())
 {
   if (boost::begin(faces)==boost::end(faces))
     return;
@@ -199,7 +217,7 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
 
   static const bool need_aabb_tree =
-    parameters::is_default_parameter(get_parameter(np, internal_np::projection_functor));
+    parameters::is_default_parameter<NamedParameters, internal_np::projection_functor_t>();
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -236,7 +254,7 @@ void isotropic_remeshing(const FaceRange& faces
   FPMap fpmap = choose_parameter(
     get_parameter(np, internal_np::face_patch),
     internal::Connected_components_pmap<PM, FIMap>(faces, pmesh, ecmap, fimap,
-      parameters::is_default_parameter(get_parameter(np, internal_np::face_patch)) && (need_aabb_tree
+      parameters::is_default_parameter<NamedParameters, internal_np::face_patch_t>() && (need_aabb_tree
 #if !defined(CGAL_NO_PRECONDITIONS)
       || protect // face patch map is used to identify patch border edges to check protected edges are short enough
 #endif
@@ -278,6 +296,9 @@ void isotropic_remeshing(const FaceRange& faces
   unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   bool smoothing_1d = choose_parameter(get_parameter(np, internal_np::relax_constraints), false);
   unsigned int nb_laplacian = choose_parameter(get_parameter(np, internal_np::number_of_relaxation_steps), 1);
+  bool do_collapse = choose_parameter(get_parameter(np, internal_np::do_collapse), true);
+  bool do_split = choose_parameter(get_parameter(np, internal_np::do_split), true);
+  bool do_flip = choose_parameter(get_parameter(np, internal_np::do_flip), true);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -293,10 +314,13 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
     if (target_edge_length>0)
     {
-      remesher.split_long_edges(high);
-      remesher.collapse_short_edges(low, high, collapse_constraints);
+      if(do_split)
+        remesher.split_long_edges(high);
+      if(do_collapse)
+        remesher.collapse_short_edges(low, high, collapse_constraints);
     }
-    remesher.equalize_valences();
+    if(do_flip)
+      remesher.flip_edges_for_valence_and_shape();
     remesher.tangential_relaxation(smoothing_1d, nb_laplacian);
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));
@@ -311,20 +335,6 @@ void isotropic_remeshing(const FaceRange& faces
   std::cout << ", #iter = " << nb_iterations;
   std::cout << ", " << t.time() << " sec )." << std::endl;
 #endif
-}
-
-template<typename PolygonMesh
-       , typename FaceRange>
-void isotropic_remeshing(
-    const FaceRange& faces
-  , const double& target_edge_length
-  , PolygonMesh& pmesh)
-{
-  isotropic_remeshing(
-    faces,
-    target_edge_length,
-    pmesh,
-    parameters::all_default());
 }
 
 /*!
@@ -380,11 +390,11 @@ void isotropic_remeshing(
 */
 template<typename PolygonMesh
        , typename EdgeRange
-       , typename NamedParameters>
+       , typename NamedParameters = parameters::Default_named_parameters>
 void split_long_edges(const EdgeRange& edges
                     , const double& max_length
                     , PolygonMesh& pmesh
-                    , const NamedParameters& np)
+                    , const NamedParameters& np = parameters::default_values())
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
@@ -422,17 +432,6 @@ void split_long_edges(const EdgeRange& edges
              false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length);
-}
-
-template<typename PolygonMesh, typename EdgeRange>
-void split_long_edges(const EdgeRange& edges
-                    , const double& max_length
-                    , PolygonMesh& pmesh)
-{
-  split_long_edges(edges,
-    max_length,
-    pmesh,
-    parameters::all_default());
 }
 
 } //end namespace Polygon_mesh_processing

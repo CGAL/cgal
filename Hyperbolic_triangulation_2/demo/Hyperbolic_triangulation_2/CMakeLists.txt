@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.20)
 project(Hyperbolic_triangulation_2_Demo)
 
 # Find includes in corresponding build directories
@@ -30,7 +30,15 @@ if(CGAL_Qt5_FOUND
   add_executable ( HDT2 HDT2.cpp ${CGAL_Qt5_RESOURCE_FILES} ${RESOURCE_FILES} ${UIS})
   target_include_directories(HDT2 PRIVATE ./ ./include)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS HDT2 )
-  target_link_libraries ( HDT2 CGAL::CGAL CGAL::CGAL_Qt5 CGAL::CGAL_Core Qt5::Widgets)
+  target_link_libraries ( HDT2 CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets)
+  if(CGAL_Core_FOUND)
+    target_link_libraries ( HDT2 CGAL::CGAL_Core)
+  else()
+    target_link_libraries ( HDT2 ${LEDA_LIBRARIES})
+  endif()
+
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test( HDT2 )
 else()
   message(
     STATUS

@@ -21,7 +21,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/is_iterator.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <fstream>
@@ -29,13 +29,9 @@
 #include <sstream>
 #include <string>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
-
 namespace CGAL {
+
+namespace IO {
 
 /**
    \ingroup PkgPointSetProcessing3IOXyz
@@ -78,10 +74,10 @@ namespace CGAL {
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_XYZ(std::istream& is,
               OutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -89,15 +85,15 @@ bool read_XYZ(std::istream& is,
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
 
   // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type NormalMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
+  typedef typename NP_helper::Geom_traits Kernel;
 
-  bool has_normals = !(boost::is_same<NormalMap,
-                       typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::NoMap>::value);
+  bool has_normals = NP_helper::has_normal_map();
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_point_map(np);
+  NormalMap normal_map = NP_helper::get_normal_map(np);
 
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   //typedef typename value_type_traits<OutputIterator>::type Enriched_point;
@@ -137,35 +133,37 @@ bool read_XYZ(std::istream& is,
       continue;
     }
     // ...or reads position...
-    else {
+    else
+    {
       iss.clear();
       iss.str(line);
       if (iss >> iformat(x) >> iformat(y) >> iformat(z))
+      {
+        Point point(x,y,z);
+        Vector normal = CGAL::NULL_VECTOR;
+        // ... + normal...
+        if (iss >> iformat(nx))
         {
-          Point point(x,y,z);
-          Vector normal = CGAL::NULL_VECTOR;
-          // ... + normal...
-          if (iss >> iformat(nx))
-            {
-              // In case we could read one number, we expect that there are two more
-              if(iss  >> iformat(ny) >> iformat(nz)){
-                normal = Vector(nx,ny,nz);
-              } else {
-                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                return false;
-              }
-            }
-          Enriched_point pwn;
-          put(point_map,  pwn, point);  // point_map[pwn] = point
-
-          if (has_normals)
-            put(normal_map, pwn, normal); // normal_map[pwn] = normal
-
-          *output++ = pwn;
-          continue;
+          // In case we could read one number, we expect that there are two more
+          if(iss >> iformat(ny) >> iformat(nz)){
+            normal = Vector(nx,ny,nz);
+          } else {
+            std::cerr << "Error line " << lineNumber << " of file (incomplete normal coordinates)" << std::endl;
+            return false;
+          }
         }
 
+        Enriched_point pwn;
+        put(point_map,  pwn, point);  // point_map[pwn] = point
+
+        if (has_normals)
+          put(normal_map, pwn, normal); // normal_map[pwn] = normal
+
+        *output++ = pwn;
+        continue;
+      }
     }
+
     // ...or skips number of points on first line (optional)
     if (lineNumber == 1 && std::istringstream(line) >> pointsCount)
     {
@@ -173,10 +171,13 @@ bool read_XYZ(std::istream& is,
     }
     else // if wrong file format
     {
-      std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+      std::cerr << "Error line " << lineNumber << " of file (expected point coordinates)" << std::endl;
       return false;
     }
   }
+
+  if(is.eof())
+    is.clear(is.rdstate() & ~std::ios_base::failbit); // set by getline
 
   return true;
 }
@@ -222,58 +223,33 @@ bool read_XYZ(std::istream& is,
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
-           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_XYZ(const std::string& fname,
               OutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(fname);
-  return read_XYZ(is, output, np);
+  return read_XYZ<OutputIteratorValueType>(is, output, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 
-// variants with default NP
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_XYZ(std::istream& is, OutputIterator output)
-{
-  return read_XYZ<OutputIteratorValueType>(is, output, parameters::all_default());
-}
-
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_XYZ(const std::string& fname, OutputIterator output)
-{
-  return read_XYZ<OutputIteratorValueType>(fname, output, parameters::all_default());
-}
-
 // variants with default output iterator value type
-template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_XYZ(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
+template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_XYZ(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
+              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
 {
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
-template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
+template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_XYZ(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(fname);
   return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
 
-// variants with default NP and output iterator value type
-template <typename OutputIterator>
-bool read_XYZ(std::istream& is,
-              OutputIterator output,
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
-{
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, parameters::all_default());
-}
-
-template <typename OutputIterator>
-bool read_XYZ(const std::string& fname, OutputIterator output)
-{
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
-}
+} // namespace IO
 
 /// \endcond
 
@@ -293,10 +269,10 @@ bool read_xyz_points_and_normals(std::istream& is, ///< input stream.
                                  NormalPMap normal_map, ///< property map: value_type of OutputIterator -> Vector_3.
                                  const Kernel& /*kernel*/) ///< geometric traits.
 {
-  return read_XYZ<OutputIteratorValueType>(is, output,
-                                           parameters::point_map(point_map)
-                                                      .normal_map(normal_map)
-                                                      .geom_traits(Kernel()));
+  return IO::read_XYZ<OutputIteratorValueType>(is, output,
+                                               parameters::point_map(point_map)
+                                                          .normal_map(normal_map)
+                                                          .geom_traits(Kernel()));
 }
 
 template <typename OutputIterator,
@@ -310,10 +286,10 @@ bool read_xyz_points_and_normals(std::istream& is, ///< input stream.
                                  NormalPMap normal_map, ///< property map: value_type of OutputIterator -> Vector_3.
                                  const Kernel& kernel) ///< geometric traits.
 {
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
-                                                                    parameters::point_map(point_map)
-                                                                               .normal_map(normal_map)
-                                                                               .geom_traits(kernel));
+  return IO::read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
+                                                                        parameters::point_map(point_map)
+                                                                                   .normal_map(normal_map)
+                                                                                   .geom_traits(kernel));
 }
 
 template <typename OutputIteratorValueType,
@@ -326,9 +302,9 @@ bool read_xyz_points_and_normals(std::istream& is, ///< input stream.
                                  PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
                                  NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_XYZ<OutputIteratorValueType>(is, output,
-                                           parameters::point_map(point_map)
-                                                      .normal_map(normal_map));
+  return IO::read_XYZ<OutputIteratorValueType>(is, output,
+                                               parameters::point_map(point_map)
+                                                          .normal_map(normal_map));
 }
 
 template <typename OutputIterator,
@@ -340,9 +316,9 @@ bool read_xyz_points_and_normals(std::istream& is, ///< input stream.
                                  PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
                                  NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
-                                                                    parameters::point_map(point_map)
-                                                                               .normal_map(normal_map));
+  return IO::read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
+                                                                        parameters::point_map(point_map)
+                                                                                   .normal_map(normal_map));
 }
 
 template <typename OutputIteratorValueType,
@@ -353,7 +329,7 @@ bool read_xyz_points_and_normals(std::istream& is, ///< input stream.
                                  OutputIterator output, ///< output iterator over points.
                                  NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_XYZ<OutputIteratorValueType>(is, output, parameters::normal_map(normal_map));
+  return IO::read_XYZ<OutputIteratorValueType>(is, output, parameters::normal_map(normal_map));
 }
 
 template <typename OutputIterator,
@@ -363,8 +339,8 @@ bool read_xyz_points_and_normals(std::istream& is, ///< input stream.
                                  OutputIterator output, ///< output iterator over points.
                                  NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
-                                                                    parameters::normal_map(normal_map));
+  return IO::read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
+                                                                        parameters::normal_map(normal_map));
 }
 
 template <typename OutputIteratorValueType,
@@ -377,9 +353,9 @@ bool read_xyz_points(std::istream& is, ///< input stream.
                      PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
                      const Kernel& kernel) ///< geometric traits.
 {
-  return read_XYZ<OutputIteratorValueType>(is, output,
-                                           parameters::point_map(point_map)
-                                                      .geom_traits(kernel));
+  return IO::read_XYZ<OutputIteratorValueType>(is, output,
+                                               parameters::point_map(point_map)
+                                                          .geom_traits(kernel));
 }
 
 template <typename OutputIterator,
@@ -391,9 +367,9 @@ bool read_xyz_points(std::istream& is, ///< input stream.
                      PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
                      const Kernel& kernel) ///< geometric traits.
 {
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
-                                                                    parameters::point_map(point_map)
-                                                                               .geom_traits(kernel));
+  return IO::read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
+                                                                        parameters::point_map(point_map)
+                                                                                   .geom_traits(kernel));
 }
 
 template <typename OutputIteratorValueType,
@@ -404,7 +380,7 @@ bool read_xyz_points(std::istream& is, ///< input stream.
                      OutputIterator output, ///< output iterator over points.
                      PointPMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return read_XYZ<OutputIteratorValueType>(is, output, parameters::point_map(point_map));
+  return IO::read_XYZ<OutputIteratorValueType>(is, output, parameters::point_map(point_map));
 }
 
 template <typename OutputIterator,
@@ -414,8 +390,8 @@ bool read_xyz_points(std::istream& is, ///< input stream.
                      OutputIterator output, ///< output iterator over points.
                      PointPMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
-                                                                    parameters::point_map(point_map));
+  return IO::read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output,
+                                                                        parameters::point_map(point_map));
 }
 
 /// \endcond
@@ -423,47 +399,30 @@ bool read_xyz_points(std::istream& is, ///< input stream.
 /**
    \ingroup PkgPointSetProcessing3IODeprecated
 
-   \deprecated This function is deprecated since \cgal 5.2,
-               \link PkgPointSetProcessing3IOXyz `CGAL::read_XYZ()` \endlink should be used instead.
+   \deprecated This function is deprecated since \cgal 5.3,
+               \link PkgPointSetProcessing3IOXyz `CGAL::IO::read_XYZ()` \endlink should be used instead.
 
    \returns `true` if reading was successful, `false` otherwise.
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
                                      OutputIterator output,
-                                     const CGAL_BGL_NP_CLASS& np)
+                                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return read_XYZ(is, output, np);
+  return IO::read_XYZ(is, output, np);
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename OutputIteratorValueType,
-          typename OutputIterator>
-CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
-                                     OutputIterator output)
-{
-  return read_XYZ<OutputIteratorValueType>(is, output, parameters::all_default());
-}
-
 template <typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
                                      OutputIterator output,
-                                     const CGAL_BGL_NP_CLASS& np)
+                                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
+  return IO::read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, np);
 }
-
-template <typename OutputIterator>
-CGAL_DEPRECATED bool read_xyz_points(std::istream& is,
-                                     OutputIterator output)
-{
-  return read_XYZ<typename value_type_traits<OutputIterator>::type>(is, output, parameters::all_default());
-}
-
 /// \endcond
 
 #endif //CGAL_NO_DEPRECATED_CODE

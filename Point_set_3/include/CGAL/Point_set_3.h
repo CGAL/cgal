@@ -15,11 +15,13 @@
 
 #include <CGAL/license/Point_set_3.h>
 
+#include <typeindex>
+
 #include <CGAL/Surface_mesh/Properties.h>
 
 #include <CGAL/Point_set_3/IO.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/demangle.h>
 
@@ -935,15 +937,15 @@ public:
   /*!
     \brief returns a vector of pairs that describe properties and associated types.
   */
-  std::vector<std::pair<std::string, std::type_info> > properties_and_types() const
+  std::vector<std::pair<std::string, std::type_index> > properties_and_types() const
   {
     std::vector<std::string> prop = m_base.properties();
     prop.erase (prop.begin()); // remove "index"
     prop.erase (prop.begin()); // remove "point"
 
-    std::vector<std::pair<std::string, std::type_info> > out; out.reserve (prop.size());
+    std::vector<std::pair<std::string, std::type_index> > out; out.reserve (prop.size());
     for (std::size_t i = 0; i < prop.size(); ++ i)
-      out.push_back (std::make_pair (prop[i], m_base.get_type(prop[i])));
+      out.push_back (std::make_pair (prop[i], std::type_index(m_base.get_type(prop[i]))));
     return out;
   }
 
@@ -1108,7 +1110,7 @@ public:
     typedef Index key_type;
     typedef typename Property::value_type value_type;
     typedef value_type& reference;
-    typedef boost::lvalue_property_map_tag category;
+    typedef boost::read_write_property_map_tag category;
 
     Point_set* ps;
     Property* prop;
@@ -1119,7 +1121,7 @@ public:
                       Index ind=Index())
       : ps(ps), prop(prop), ind(ind) {}
 
-    friend void put(const Push_property_map& pm, Index& i, reference t)
+    friend void put(const Push_property_map& pm, Index& i, const value_type& t)
     {
       if(pm.ps->size() <= (pm.ind))
         pm.ps->insert();
@@ -1292,36 +1294,68 @@ Point_set_3<Point, Vector>& operator+=(Point_set_3<Point, Vector>& ps,
   return ps;
 }
 
-
-
 /// \cond SKIP_IN_MANUAL
-namespace Point_set_processing_3
+// specialization for default named parameters
+template <typename Point, typename Vector, typename NamedParameters, typename NP_TAG>
+struct Point_set_processing_3_np_helper<Point_set_3<Point, Vector>, NamedParameters, NP_TAG>
 {
-  template<typename Point, typename Vector>
-  class GetFT<CGAL::Point_set_3<Point, Vector> >
-  {
-  public:
-    typedef typename Kernel_traits<Point>::Kernel::FT type;
-  };
+  typedef typename std::iterator_traits<typename Point_set_3<Point, Vector>::iterator>::value_type Value_type;
 
-  namespace parameters
+  typedef typename Kernel_traits<Point>::Kernel Default_geom_traits;
+  typedef typename Point_set_3<Point, Vector>::template Property_map<Vector> DefaultNMap;
+  typedef typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultPMap;
+  typedef const typename Point_set_3<Point, Vector>::template Property_map<Point> DefaultConstPMap;
+
+  typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+    NamedParameters,DefaultPMap> ::type  Point_map; // public
+  typedef typename internal_np::Lookup_named_param_def<NP_TAG,
+    NamedParameters,DefaultConstPMap> ::type  Const_point_map; // public
+
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::geom_traits_t,
+      NamedParameters,
+      Default_geom_traits
+    > ::type  Geom_traits; // public
+
+  typedef typename Geom_traits::FT FT; // public
+
+  typedef typename internal_np::Lookup_named_param_def<
+    internal_np::normal_t,
+    NamedParameters,
+    DefaultNMap
+    > ::type  Normal_map; // public
+
+  static Point_map get_point_map(Point_set_3<Point, Vector>& ps, const NamedParameters& np)
   {
-    template <typename Point, typename Vector>
-    Named_function_parameters
-    <typename Kernel_traits<Point>::Kernel,
-     internal_np::geom_traits_t,
-     Named_function_parameters
-     <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Vector>,
-      internal_np::normal_t,
-      Named_function_parameters
-      <typename CGAL::Point_set_3<Point, Vector>::template Property_map<Point>,
-       internal_np::point_t> > >
-    inline all_default(const CGAL::Point_set_3<Point, Vector>& ps)
-    {
-      return ps.parameters();
-    }
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), ps.point_map());
   }
-}
+
+  static Const_point_map get_const_point_map(const Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map), ps.point_map());
+  }
+
+  static const Normal_map get_normal_map(const Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), ps.normal_map());
+  }
+
+  static Normal_map get_normal_map(Point_set_3<Point, Vector>& ps, const NamedParameters& np)
+  {
+    return parameters::choose_parameter(parameters::get_parameter(np, internal_np::normal_map), ps.normal_map());
+  }
+
+  static Geom_traits get_geom_traits(const Point_set_3<Point, Vector>&, const NamedParameters& np)
+  {
+    return parameters::choose_parameter<Geom_traits>(parameters::get_parameter(np, internal_np::geom_traits));
+  }
+
+  static constexpr bool has_normal_map()
+  {
+    return true;
+  }
+
+};
 /// \endcond
 
 } // namespace CGAL

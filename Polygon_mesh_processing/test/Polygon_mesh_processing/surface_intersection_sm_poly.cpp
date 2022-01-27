@@ -25,16 +25,16 @@ typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
          <2, 3, MyTraits>::type LCC;
 
 template <class TriangleMesh>
-void run(const char* filename1, const char* filename2, const char* msg)
+void run(const std::string filename1, const std::string filename2, const char* msg)
 {
   TriangleMesh mesh1;
-  if ( !CGAL::Polygon_mesh_processing::read_polygon_mesh(filename1, mesh1) ) {
+  if ( !PMP::IO::read_polygon_mesh(filename1, mesh1) ) {
     std::cerr << filename1 << " is not a valid off file.\n";
     exit(1);
   }
 
   TriangleMesh mesh2;
-  if ( !CGAL::Polygon_mesh_processing::read_polygon_mesh(filename2, mesh2) ) {
+  if ( !PMP::IO::read_polygon_mesh(filename2, mesh2) ) {
     std::cerr << filename2 << " is not a valid off file.\n";
     exit(1);
   }
@@ -49,8 +49,8 @@ void run(const char* filename1, const char* filename2, const char* msg)
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   run<Mesh>(filename1,filename2,"Surface_mesh");
   run<Polyhedron>(filename1,filename2,"Polyhedron_3");

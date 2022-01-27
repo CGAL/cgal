@@ -21,6 +21,7 @@
 
 #include <CGAL/basic.h>
 #include <iostream>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 // OpenInventor and VRML 1.0 are quite similar formats, so
 // output operators could be shared if they use the following
@@ -88,6 +89,12 @@ private:
          << std::endl;
   }
 };
+
+template<typename NP>
+void set_stream_precision_from_NP(Inventor_ostream_base& os, const NP& np)
+{
+  return set_stream_precision_from_NP(os.os(), np);
+}
 
 } // namespace CGAL
 

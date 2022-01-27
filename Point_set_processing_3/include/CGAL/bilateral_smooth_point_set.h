@@ -25,7 +25,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <functional>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/zip_iterator.hpp>
@@ -90,7 +90,7 @@ compute_denoise_projection(
   Vector normal_sum = CGAL::NULL_VECTOR;
 
   FT cos_sigma = cos(sharpness_angle * CGAL_PI / 180.0);
-  FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
+  FT sharpness_bandwidth = CGAL::square((CGAL::max)(1e-8, 1 - cos_sigma));
 
   for (typename PointRange::iterator it : neighbor_pwns)
   {
@@ -101,7 +101,7 @@ compute_denoise_projection(
     if (dist2 < radius2)
     {
       FT theta = std::exp(dist2 * iradius16);
-      FT psi = std::exp(-std::pow(1 - get(normal_map, vt) * nn, 2)
+      FT psi = std::exp(-CGAL::square(1 - get(normal_map, vt) * nn)
         / sharpness_bandwidth);
 
       weight = theta * psi;
@@ -178,9 +178,9 @@ compute_max_spacing(
    For more details, please see section 4 in \cgalCite{ear-2013}.
 
    A parallel version of this function is provided and requires the executable to be
-   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+   See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
    for more details.
 
    \pre Normals must be unit vectors
@@ -258,12 +258,12 @@ compute_max_spacing(
 */
 template <typename ConcurrencyTag,
           typename PointRange,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 double
 bilateral_smooth_point_set(
   PointRange& points,
   unsigned int k,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -271,15 +271,14 @@ bilateral_smooth_point_set(
   // basic geometric types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
+  typedef typename NP_helper::Geom_traits Kernel;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Vector_3 Vector_3;
 
-  CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                              typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
-                            "Error: no normal map");
+  CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
 
   typedef typename Kernel::FT FT;
 
@@ -293,8 +292,8 @@ bilateral_smooth_point_set(
   // types for K nearest neighbors search structure
   typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
   FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
 
   std::size_t nb_points = points.size();
@@ -438,22 +437,6 @@ bilateral_smooth_point_set(
 
    return sum_move_error / nb_points;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename ConcurrencyTag,
-          typename PointRange>
-double
-bilateral_smooth_point_set(
-  PointRange& points,
-  unsigned int k)           ///< size of the neighborhood for the implicit surface patch fitting.
-                            ///< The larger the value is, the smoother the result will be.
-{
-  return bilateral_smooth_point_set<ConcurrencyTag>
-    (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

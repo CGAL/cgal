@@ -78,7 +78,7 @@ class Point_set_item_classification : public Item_classification_base
   ~Point_set_item_classification();
 
   CGAL::Three::Scene_item* item() { return m_points; }
-  void erase_item() { m_points = NULL; }
+  void erase_item() { m_points = nullptr; }
 
   CGAL::Bbox_3 bbox()
   {
@@ -216,7 +216,7 @@ class Point_set_item_classification : public Item_classification_base
   bool run (int method, int classifier, std::size_t subdivisions, double smoothing);
 
   void update_color () { change_color (m_index_color); }
-  void change_color (int index, float* vmin = NULL, float* vmax = NULL);
+  void change_color (int index, float* vmin = nullptr, float* vmax = nullptr);
   CGAL::Three::Scene_item* generate_one_item (const char* name,
                                               int label) const
   {
@@ -239,7 +239,7 @@ class Point_set_item_classification : public Item_classification_base
                                    const char* name) const
   {
     std::vector<Scene_points_with_normal_item*> points_item
-      (m_labels.size(), NULL);
+      (m_labels.size(), nullptr);
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       {
         points_item[i] = new Scene_points_with_normal_item;
@@ -399,7 +399,7 @@ class Point_set_item_classification : public Item_classification_base
   Point_set::Property_map<unsigned char> m_red;
   Point_set::Property_map<unsigned char> m_green;
   Point_set::Property_map<unsigned char> m_blue;
-  Point_set::Property_map<CGAL::Color> m_color;
+  Point_set::Property_map<CGAL::IO::Color> m_color;
   std::vector<std::vector<float> > m_label_probabilities;
 
   Point_set::Property_map<int> m_training;

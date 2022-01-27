@@ -28,16 +28,18 @@
 
 namespace CGAL {
 
+namespace IO {
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Read
 
 //not for now : some readers will return "ok" despite not managing to read anything
 /*
-template <class Graph, typename NamedParameters>
+template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(std::istream& is,
                        Graph& g,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   bool ok = false;
   ok = read_OFF(is, g, np, false);
@@ -68,12 +70,6 @@ bool read_polygon_mesh(std::istream& is,
   return ok;
 }
 
-template <class Graph>
-bool read_polygon_mesh(std::istream& is,
-                       Graph& g)
-{
-  return read_polygon_mesh(is, g, parameters::all_default());
-}
 */
 
 /*!
@@ -121,16 +117,16 @@ bool read_polygon_mesh(std::istream& is,
  *
  * \return `true` if reading was successful, `false` otherwise.
  *
- * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::read_polygon_mesh()`\endlink if the data is not 2-manifold
+ * \sa \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()`\endlink if the data is not 2-manifold
 */
-template <class Graph, typename NamedParameters>
+template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(const std::string& fname,
                        Graph& g,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == std::string())
   {
     if(verbose)
@@ -161,16 +157,6 @@ bool read_polygon_mesh(const std::string& fname,
 
   return false;
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <class Graph>
-bool read_polygon_mesh(const std::string& fname, Graph& g)
-{
-  return read_polygon_mesh(fname, g, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +198,7 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{verbose}
@@ -226,14 +212,14 @@ bool read_polygon_mesh(const std::string& fname, Graph& g)
  *
  * \return `true` if writing was successful, `false` otherwise.
  */
-template <class Graph, typename NamedParameters>
+template <class Graph, typename NamedParameters = parameters::Default_named_parameters>
 bool write_polygon_mesh(const std::string& fname,
                         Graph& g,
-                        const NamedParameters& np)
+                        const NamedParameters& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == std::string())
   {
     if(verbose)
@@ -265,16 +251,6 @@ bool write_polygon_mesh(const std::string& fname,
   return false;
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <class Graph>
-bool write_polygon_mesh(const std::string& fname, Graph& g)
-{
-  return write_polygon_mesh(fname, g, parameters::all_default());
-}
-
-/// \endcond
-
-} // namespace CGAL
+}} // namespace CGAL::IO
 
 #endif // CGAL_BOOST_GRAPH_POLYGON_MESH_IO_H

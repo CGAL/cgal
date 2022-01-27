@@ -1,13 +1,10 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Periodic_4_hyperbolic_triangulation_2_Tests)
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core)
-include(${CGAL_USE_FILE})
 find_package(LEDA QUIET)
 
 if((CGAL_Core_FOUND OR LEDA_FOUND))
-
-  include(CGAL_CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program("test_p4ht2_construct_point_2.cpp")
   create_single_source_cgal_program("test_p4ht2_exact_complex_numbers.cpp")

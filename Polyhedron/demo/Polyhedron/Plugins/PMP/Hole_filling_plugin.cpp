@@ -17,8 +17,10 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Weights/uniform_weights.h>
+#include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/Timer.h>
 #include <CGAL/iterator.h>
 
@@ -132,7 +134,7 @@ public:
   }
 
   Scene_hole_visualizer* clone() const {
-    return 0;
+    return nullptr;
   }
   QString toolTip() const {
     return tr("%1 with %2 holes").arg(name()).arg(polyline_data_list.size());
@@ -459,7 +461,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
                                       CGAL::Three::Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
-  last_active_item = NULL;
+  last_active_item = nullptr;
 
   mw = mainWindow;
   scene = scene_interface;
@@ -657,17 +659,17 @@ void Polyhedron_demo_hole_filling_plugin::on_Create_polyline_items_button(){
   }
 }
 void Polyhedron_demo_hole_filling_plugin::on_Accept_button() {
-  if(last_active_item == NULL) { return; }
+  if(last_active_item == nullptr) { return; }
 
   accept_reject_toggle(false);
   if(Scene_hole_visualizer* hole_visualizer = get_hole_visualizer(last_active_item))
   { hole_visualizer->poly_item_changed();}
 
   new_facets.clear();
-  last_active_item = NULL;
+  last_active_item = nullptr;
 }
 void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
-  if(last_active_item == NULL) { return; }
+  if(last_active_item == nullptr) { return; }
 
   accept_reject_toggle(false);
   FaceGraph& graph = *(last_active_item->polyhedron());
@@ -677,7 +679,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
   change_poly_item_by_blocking(last_active_item, get_hole_visualizer(last_active_item));
 
   new_facets.clear();
-  last_active_item = NULL;
+  last_active_item = nullptr;
 }
 // To delete Scene_hole_visualizer when it becomes empty
 void Polyhedron_demo_hole_filling_plugin::hole_visualizer_changed() {
@@ -701,12 +703,12 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   if(action_index == 0) {
     CGAL::Polygon_mesh_processing::triangulate_hole(poly,
              it, std::back_inserter(patch),
-             CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+             CGAL::parameters::use_delaunay_triangulation(use_DT));
   }
   else if(action_index == 1) {
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly,
              it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-             CGAL::Polygon_mesh_processing::parameters::density_control_factor(alpha).
+             CGAL::parameters::density_control_factor(alpha).
              use_delaunay_triangulation(use_DT));
   }
   else {
@@ -716,16 +718,18 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     if(weight_index == 0) {
       success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::Polygon_mesh_processing::parameters::weight_calculator
-                (CGAL::internal::Uniform_weight_fairing<Face_graph>(poly)).
+              CGAL::parameters::
+              weight_calculator(CGAL::Weights::Uniform_weight<Face_graph>()).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));
     }
     else {
+      auto pmap = get_property_map(CGAL::vertex_point, poly);
       success = std::get<0>(CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
               it, std::back_inserter(patch), CGAL::Emptyset_iterator(),
-              CGAL::Polygon_mesh_processing::parameters::weight_calculator(CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<Face_graph>(poly)).
+              CGAL::parameters::
+              weight_calculator(CGAL::Weights::Secure_cotangent_weight_with_voronoi_area<Face_graph, decltype(pmap)>(poly, pmap)).
               density_control_factor(alpha).
               fairing_continuity(continuity).
               use_delaunay_triangulation(use_DT)));
@@ -749,7 +753,7 @@ bool Polyhedron_demo_hole_filling_plugin::fill
     Intersected_facets intersected_facets;
     CGAL::Polygon_mesh_processing::self_intersections(poly,
       std::back_inserter(intersected_facets),
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, poly)));
+      CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, poly)));
 
     print_message(QString("Self intersecting test: finding intersecting triangles in %1 sec.").arg(timer.time()));
     timer.reset();
@@ -883,7 +887,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_from_selection_button() {
   std::vector<CGAL::Triple<int, int, int> > patch;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(points,
                                                            std::back_inserter(patch),
-                                                           CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
+                                                           CGAL::parameters::use_delaunay_triangulation(use_DT));
   if(patch.size()<3)
     print_message("There is not enough points. Please try again.");
   for(std::size_t i=0; i<patch.size(); ++i)
@@ -926,7 +930,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
 
   bool use_DT =
     QMessageBox::Yes == QMessageBox::question(
-    NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
+    nullptr, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QApplication::processEvents();
@@ -939,7 +943,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
       continue;
     }
     if(it->size() < 4) { // no triangle, skip it (needs at least 3 + 1 repeat)
-      print_message("Warning: skipping polyline which has less than 4 points!");
+      print_message("Warning: skipping polyline which has fewer than 4 points!");
       continue;
     }
 
@@ -947,7 +951,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
     std::vector<Face> patch;
     CGAL::Polygon_mesh_processing::triangulate_hole_polyline(*it,
       std::back_inserter(patch),
-      PMP::parameters::use_delaunay_triangulation(use_DT));
+      CGAL::parameters::use_delaunay_triangulation(use_DT));
     print_message(QString("Triangulated in %1 sec.").arg(timer.time()));
 
     if(patch.empty()) {
@@ -971,7 +975,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_filling_polyline_action() {
       timer.reset();
       CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
                                             Nop_out(), Nop_out(),
-                                            CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
+                                            CGAL::parameters::density_control_factor(density_control_factor));
       print_message(QString("Refined in %1 sec.").arg(timer.time()));
     }
 

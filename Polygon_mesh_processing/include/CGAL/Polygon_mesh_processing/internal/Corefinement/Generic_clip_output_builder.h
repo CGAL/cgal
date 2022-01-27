@@ -35,7 +35,6 @@ namespace Corefinement {
 
 
 namespace PMP=Polygon_mesh_processing;
-namespace params=PMP::parameters;
 
 template <class TriangleMesh,
           class VertexPointMap1,
@@ -154,8 +153,8 @@ public:
     std::size_t nb_patches_tm1 =
       PMP::connected_components(tm1,
                                 bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
-                                params::edge_is_constrained_map(ecm1)
-                                       .face_index_map(fids1));
+                                parameters::edge_is_constrained_map(ecm1)
+                                           .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)

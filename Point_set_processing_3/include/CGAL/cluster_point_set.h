@@ -20,7 +20,7 @@
 #include <CGAL/Point_set_processing_3/internal/bbox_diagonal.h>
 #include <CGAL/for_each.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <queue>
@@ -128,10 +128,10 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
 
    \return the number of clusters identified.
 */
-template <typename PointRange, typename ClusterMap, typename NamedParameters>
+template <typename PointRange, typename ClusterMap, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t cluster_point_set (PointRange& points,
                                ClusterMap cluster_map,
-                               const NamedParameters& np)
+                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -139,15 +139,17 @@ std::size_t cluster_point_set (PointRange& points,
   // basic geometric types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef typename boost::property_traits<ClusterMap>::value_type Cluster_index_t;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
   typedef typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::type Adjacencies;
 
   CGAL_static_assertion_msg(!(boost::is_same<typename GetSvdTraits<NamedParameters>::type,
                                              typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = NP_helper::get_point_map(points, np);
   typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                          typename Kernel::FT(-1));
   typename Kernel::FT factor = choose_parameter(get_parameter(np, internal_np::attraction_factor),
@@ -175,7 +177,7 @@ std::size_t cluster_point_set (PointRange& points,
 
   // Init cluster map with -1
   for (const value_type& p : points)
-    put (cluster_map, p, -1);
+    put (cluster_map, p, Cluster_index_t(-1));
 
   Neighbor_query neighbor_query (points, point_map);
 
@@ -190,7 +192,7 @@ std::size_t cluster_point_set (PointRange& points,
   {
     const value_type& p = *it;
 
-    if (int(get (cluster_map, p)) != -1)
+    if (get (cluster_map, p) != Cluster_index_t(-1))
       continue;
 
     todo.push (it);
@@ -200,10 +202,10 @@ std::size_t cluster_point_set (PointRange& points,
       iterator current = todo.front();
       todo.pop();
 
-      if (int(get (cluster_map, *current)) != -1)
+      if (get (cluster_map, *current) != Cluster_index_t(-1))
         continue;
 
-      put (cluster_map, *current, nb_clusters);
+      put (cluster_map, *current, Cluster_index_t(nb_clusters));
       ++ done;
 
       if (callback && !callback (callback_factor * (done + 1) / double(size)))
@@ -230,7 +232,7 @@ std::size_t cluster_point_set (PointRange& points,
     done = 0;
     for (const value_type& p : points)
     {
-      std::size_t c0 = get (cluster_map, p);
+      std::size_t c0 = std::size_t(get (cluster_map, p));
 
       neighbors.clear();
       neighbor_query.get_iterators (get (point_map, p), 0, neighbor_radius,
@@ -238,7 +240,7 @@ std::size_t cluster_point_set (PointRange& points,
 
       for (const iterator& it : neighbors)
       {
-        std::size_t c1 = get (cluster_map, *it);
+        std::size_t c1 = std::size_t(get (cluster_map, *it));
         if (c0 < c1)
           adj.push_back (std::make_pair (c0, c1));
         else if (c0 > c1)
@@ -257,18 +259,6 @@ std::size_t cluster_point_set (PointRange& points,
 
   return nb_clusters;
 }
-
-/// \cond SKIP_IN_MANUAL
-// overload with default NP
-template <typename PointRange, typename ClusterMap>
-std::size_t cluster_point_set (PointRange& points,
-                               ClusterMap cluster_map,
-                               unsigned int k)
-{
-  return cluster_point_set (points, cluster_map, k,
-                            CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
 
 } // namespace CGAL
 

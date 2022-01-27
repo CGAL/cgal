@@ -24,7 +24,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/use.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -133,7 +133,7 @@ public:
 
   /// Free function to access the map elements.
   friend inline
-  reference get(const Default_constrained_map& map, key_type p)
+  value_type get(const Default_constrained_map& map, const key_type& p)
   {
     return (p == *map.m_source_point);
   }
@@ -245,7 +245,7 @@ mst_find_source(
     NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3
     const Kernel& /*kernel*/)    ///< geometric traits.
 {
-    CGAL_TRACE("  mst_find_source()\n");
+  CGAL_TRACE_STREAM << "  mst_find_source()\n";
 
     // Input points types
     typedef typename boost::property_traits<NormalMap>::value_type Vector;
@@ -270,8 +270,8 @@ mst_find_source(
     Vector_ref normal = get(normal_map,*top_point);
     const Vector Z(0, 0, 1);
     if (Z * normal < 0) {
-      CGAL_TRACE("  Flip top point normal\n");
-    put(normal_map,*top_point, -normal);
+      CGAL_TRACE_STREAM << "  Flip top point normal\n";
+      put(normal_map,*top_point, -normal);
     }
 
     return top_point;
@@ -329,13 +329,15 @@ create_riemannian_graph(
     // Number of input points
     const std::size_t num_input_points = points.size();
 
-    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("  Creates KD-tree\n");
+    std::size_t memory = CGAL::Memory_sizer().virtual_size();
+    CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+    CGAL_TRACE_STREAM << "  Creates KD-tree\n";
 
     Neighbor_query neighbor_query (points, point_map);
 
-    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("  Creates Riemannian Graph\n");
+    memory = CGAL::Memory_sizer().virtual_size();
+    CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+    CGAL_TRACE_STREAM << "  Creates Riemannian Graph\n";
 
     // Iterates over input points and creates Riemannian Graph:
     // - vertices are numbered like the input points index.
@@ -465,8 +467,9 @@ create_mst_graph(
     // Number of input points
     const std::size_t num_input_points = num_vertices(riemannian_graph) - 1;
 
-    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("  Calls boost::prim_minimum_spanning_tree()\n");
+    std::size_t memory = CGAL::Memory_sizer().virtual_size();
+    CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+    CGAL_TRACE_STREAM << "  Calls boost::prim_minimum_spanning_tree()\n";
 
     // Computes Minimum Spanning Tree.
     std::size_t source_point_index = num_input_points;
@@ -478,8 +481,9 @@ create_mst_graph(
                                       weight_map( riemannian_graph_weight_map )
                                      .root_vertex( vertex(source_point_index, riemannian_graph) ));
 
-    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("  Creates MST Graph\n");
+    memory = CGAL::Memory_sizer().virtual_size();
+    CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+    CGAL_TRACE_STREAM << "  Creates MST Graph\n";
 
     // Converts predecessor map to a MST graph:
     // - vertices are numbered like the input points index.
@@ -594,30 +598,30 @@ create_mst_graph(
    \return iterator over the first point with an unoriented normal.
 */
 template <typename PointRange,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 typename PointRange::iterator
 mst_orient_normals(
   PointRange& points,
   unsigned int k,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
-    CGAL_TRACE("Calls mst_orient_normals()\n");
+    CGAL_TRACE_STREAM << "Calls mst_orient_normals()\n";
 
-    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
-    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Point_map PointMap;
+    typedef typename NP_helper::Normal_map NormalMap;
+    typedef typename NP_helper::Geom_traits Kernel;
     typedef typename Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::type ConstrainedMap;
 
-    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
-                              "Error: no normal map");
+    CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
 
-    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+    PointMap point_map = NP_helper::get_point_map(points, np);
+    NormalMap normal_map = NP_helper::get_normal_map(points, np);
     typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                            typename Kernel::FT(0));
     ConstrainedMap constrained_map = choose_parameter<ConstrainedMap>(get_parameter(np, internal_np::point_is_constrained));
@@ -643,8 +647,9 @@ mst_orient_normals(
     // Precondition: at least 2 nearest neighbors
     CGAL_point_set_processing_precondition(k >= 2);
 
-    std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("  Create Index_property_map\n");
+    std::size_t memory = CGAL::Memory_sizer().virtual_size();
+    CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+    CGAL_TRACE_STREAM << "  Create Index_property_map\n";
 
     // Create a property map Iterator -> index.
     // - if typename PointRange::iterator is a random access iterator (typically vector and deque),
@@ -660,8 +665,7 @@ mst_orient_normals(
     //   or vertex j is in the k-neighborhood of vertex i.
     Riemannian_graph riemannian_graph;
 
-    if (boost::is_same<ConstrainedMap,
-        typename CGAL::Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::NoMap>::value)
+    if (is_default_parameter<NamedParameters, internal_np::point_is_constrained_t>())
       riemannian_graph = create_riemannian_graph(points,
                                                  point_map, normal_map, index_map,
                                                  Default_constrained_map<typename PointRange::iterator>
@@ -686,8 +690,9 @@ mst_orient_normals(
                                            kernel,
                                            riemannian_graph);
 
-    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("  Calls boost::breadth_first_search()\n");
+    memory = CGAL::Memory_sizer().virtual_size();
+    CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+    CGAL_TRACE_STREAM << "  Calls boost::breadth_first_search()\n";
 
     const std::size_t num_input_points = distance(points.begin(), points.end());
     std::size_t source_point_index = num_input_points;
@@ -717,27 +722,14 @@ mst_orient_normals(
     std::copy(unoriented_points.begin(), unoriented_points.end(), first_unoriented_point);
 
     // At this stage, we have typically 0 unoriented normals if k is large enough
-    CGAL_TRACE("  => %u normals are unoriented\n", unoriented_points.size());
+    CGAL_TRACE_STREAM << "  => " << unoriented_points.size() << " normals are unoriented\n";
 
-    memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
-    CGAL_TRACE("End of mst_orient_normals()\n");
+    memory = CGAL::Memory_sizer().virtual_size();
+    CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
+    CGAL_TRACE_STREAM << "End of mst_orient_normals()\n";
 
     return first_unoriented_point;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-typename PointRange::iterator
-mst_orient_normals(
-  PointRange& points,
-  unsigned int k) ///< number of neighbors
-
-{
-  return mst_orient_normals (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

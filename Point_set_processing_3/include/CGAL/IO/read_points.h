@@ -28,6 +28,8 @@
 
 namespace CGAL {
 
+namespace IO {
+
 /**
   \ingroup PkgPointSetProcessing3IO
 
@@ -71,11 +73,11 @@ namespace CGAL {
      \cgalParamNEnd
 
      \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+       \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
        \cgalParamType{Boolean}
        \cgalParamDefault{`true`}
        \cgalParamExtra{This parameter is only relevant for `PLY` reading: the `OFF` and `XYZ` formats
-                       are always ASCII, and the `LAS` format is always binary.}
+                       are always \ascii, and the `LAS` format is always binary.}
      \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -83,12 +85,12 @@ namespace CGAL {
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 bool read_points(const std::string& fname,
                  PointOutputIterator output,
-                 const NamedParameters& np)
+                 const NamedParameters& np = parameters::default_values())
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz" || ext == "pwn")
     return read_XYZ<OutputIteratorValueType>(fname, output, np);
@@ -107,27 +109,15 @@ bool read_points(const std::string& fname,
 /// \cond SKIP_IN_MANUAL
 
 // variant with default OutputIteratorType
-template <typename OutputIterator, typename NamedParameters>
-bool read_points(const std::string& fname, OutputIterator output, const NamedParameters& np)
+template <typename OutputIterator, typename NamedParameters = parameters::Default_named_parameters>
+bool read_points(const std::string& fname, OutputIterator output, const NamedParameters& np = parameters::default_values())
 {
   return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, np);
 }
 
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_points(const std::string& fname, OutputIterator output)
-{
-  return read_points<OutputIteratorValueType>(fname, output, parameters::all_default());
-}
-
-// variant with all default
-template<typename OutputIterator>
-bool read_points(const std::string& fname, OutputIterator output)
-{
-  return read_points<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
-}
 
 /// \endcond
 
-} // namespace CGAL
+} } // namespace CGAL::IO
 
 #endif // CGAL_POINT_SET_PROCESSING_READ_POINTS_H

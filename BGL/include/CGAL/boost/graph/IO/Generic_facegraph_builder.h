@@ -38,13 +38,13 @@ protected:
 public:
   Generic_facegraph_builder(std::istream& in_) : m_is(in_) { }
 
-  template <typename NamedParameters>
-  bool operator()(Graph& g, const NamedParameters& np)
+  template <typename NamedParameters = parameters::Default_named_parameters>
+  bool operator()(Graph& g, const NamedParameters& np = parameters::default_values())
   {
     typedef typename GetK<Graph, NamedParameters>::Kernel                              Kernel;
     typedef typename Kernel::Vector_3                                                  Vector;
     typedef typename Kernel::Point_2                                                   Texture;
-    typedef CGAL::Color                                                                Color;
+    typedef CGAL::IO::Color                                                            Color;
 
     typedef typename CGAL::GetVertexPointMap<Graph, NamedParameters>::type             VPM;
 
@@ -76,10 +76,10 @@ public:
     using parameters::is_default_parameter;
     using parameters::get_parameter;
 
-    const bool is_vnm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
-    const bool is_vcm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
-    const bool is_vtm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));
-    const bool is_fcm_requested = !(is_default_parameter(get_parameter(np, internal_np::face_color_map)));
+    const bool is_vnm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>());
+    const bool is_vcm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_color_map_t>());
+    const bool is_vtm_requested = !(is_default_parameter<NamedParameters, internal_np::vertex_texture_map_t>());
+    const bool is_fcm_requested = !(is_default_parameter<NamedParameters, internal_np::face_color_map_t>());
 
     std::vector<Vertex_normal> vertex_normals;
     std::vector<Vertex_color> vertex_colors;
@@ -153,8 +153,6 @@ public:
 
     return is_valid(g);
   }
-
-  bool operator()(Graph& g) { return operator()(g, parameters::all_default()); }
 
 protected:
   std::istream& m_is;

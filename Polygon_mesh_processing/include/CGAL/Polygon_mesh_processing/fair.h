@@ -18,8 +18,9 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/fair_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
@@ -123,10 +124,10 @@ namespace internal {
   */
   template<typename TriangleMesh,
            typename VertexRange,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   bool fair(TriangleMesh& tmesh,
             const VertexRange& vertices,
-            const NamedParameters& np)
+            const NamedParameters& np = parameters::default_values())
   {
     using parameters::get_parameter;
     using parameters::choose_parameter;
@@ -162,24 +163,16 @@ namespace internal {
     // Cotangent_weight_with_voronoi_area_fairing has been changed to the version:
     // Cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from
     // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
-    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing_secure<TriangleMesh, VPMap>
-      Default_Weight_calculator;
+    typedef CGAL::Weights::Secure_cotangent_weight_with_voronoi_area<TriangleMesh, VPMap> Default_weight_calculator;
 
     VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                     get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
       choose_parameter<Default_solver>(get_parameter(np, internal_np::sparse_linear_solver)),
-      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
+      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_weight_calculator(tmesh, vpmap_)),
       choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
       vpmap_);
-  }
-
-  template<typename TriangleMesh, typename VertexRange>
-  bool fair(TriangleMesh& tmesh, const VertexRange& vertices)
-  {
-    return fair(tmesh, vertices,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
 } //end namespace Polygon_mesh_processing

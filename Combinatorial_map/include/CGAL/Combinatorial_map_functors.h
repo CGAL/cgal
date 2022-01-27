@@ -13,7 +13,7 @@
 #define CGAL_COMBINATORIAL_MAP_FUNCTORS_H
 
 #include <CGAL/Dart_const_iterators.h>
-#include <CGAL/internal/Combinatorial_map_internal_functors.h>
+#include <CGAL/Combinatorial_map/internal/Combinatorial_map_internal_functors.h>
 #include <vector>
 #include <boost/mpl/has_xxx.hpp>
 
@@ -92,7 +92,7 @@ struct Test_is_valid_attribute_functor
     size_type mark=amap.get_new_mark();
     bool res = true;
     CGAL::internal::Test_is_valid_attribute_functor<CMap>::
-        run<i>(amap, adart, mark, &res);
+        template run<i>(amap, adart, mark, &res);
 
     amap.negate_mark(mark);
     if ( !amap.is_whole_map_marked(mark) )

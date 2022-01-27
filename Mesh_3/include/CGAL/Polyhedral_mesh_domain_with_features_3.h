@@ -31,7 +31,7 @@
 #include <CGAL/Mesh_3/Polyline_with_context.h>
 
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/internal/Mesh_3/helpers.h>
+#include <CGAL/Mesh_3/internal/helpers.h>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -399,9 +399,9 @@ detect_features(FT angle_in_degree, std::vector<Polyhedron>& poly)
     nb_of_patch_plus_one += PMP::sharp_edges_segmentation(p, angle_in_degree
       , eif_map
       , pid_map
-      , PMP::parameters::first_index(nb_of_patch_plus_one)
-                        .face_index_map(get_initialized_face_index_map(p))
-                        .vertex_incident_patches_map(vip_map));
+      , CGAL::parameters::first_index(nb_of_patch_plus_one)
+                         .face_index_map(get_initialized_face_index_map(p))
+                         .vertex_incident_patches_map(vip_map));
 
     Mesh_3::internal::Is_featured_edge<Polyhedron> is_featured_edge(p);
 

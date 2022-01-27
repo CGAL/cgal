@@ -76,7 +76,7 @@ struct Visitor
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/P.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
   std::ifstream input(filename);
 
   Surface_mesh mesh;
@@ -90,11 +90,11 @@ int main(int argc, char* argv[])
 
   Surface_mesh copy;
 
-  copy_face_graph(mesh, copy, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),Insert_iterator(t2q));
+  CGAL::copy_face_graph(mesh, copy, CGAL::parameters::face_to_face_output_iterator(Insert_iterator(t2q)));
 
   Visitor v(t2q);
   CGAL::Polygon_mesh_processing::triangulate_faces(copy,
-                                                   CGAL::Polygon_mesh_processing::parameters::visitor(v));
+                                                   CGAL::parameters::visitor(v));
 
 
   for(boost::unordered_map<face_descriptor,face_descriptor>::iterator it = t2q.begin(); it != t2q.end(); ++it){

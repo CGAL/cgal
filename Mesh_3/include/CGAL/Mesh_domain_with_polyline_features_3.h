@@ -29,7 +29,7 @@
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/internal/Mesh_3/indices_management.h>
+#include <CGAL/Mesh_3/internal/indices_management.h>
 
 #include <vector>
 #include <set>
@@ -40,8 +40,7 @@
 #include <boost/variant.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 namespace CGAL {
 
@@ -859,7 +858,7 @@ public:
   typedef CGAL::AABB_tree<AABB_curves_traits> Curves_AABB_tree;
 
 private:
-  mutable boost::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
+  mutable std::shared_ptr<Curves_AABB_tree> curves_aabb_tree_ptr_;
   mutable bool curves_aabb_tree_is_built;
 
 public:
@@ -884,7 +883,7 @@ public:
     if(curves_aabb_tree_ptr_) {
       curves_aabb_tree_ptr_->clear();
     } else {
-      curves_aabb_tree_ptr_ = boost::make_shared<Curves_AABB_tree>();
+      curves_aabb_tree_ptr_ = std::make_shared<Curves_AABB_tree>();
     }
     for(typename Edges::const_iterator
           edges_it = edges_.begin(),
@@ -1105,25 +1104,29 @@ add_features(InputIterator first, InputIterator end,
 namespace details {
 
 template <typename PolylineWithContext>
-struct Get_content_from_polyline_with_context {
+struct Get_content_from_polyline_with_context
+{
   typedef Get_content_from_polyline_with_context Self;
-  typedef const PolylineWithContext& key_type;
-  typedef const typename PolylineWithContext::Bare_polyline& value_type;
-  typedef value_type reference;
+  typedef PolylineWithContext key_type;
+  typedef typename PolylineWithContext::Bare_polyline value_type;
+  typedef const value_type& reference;
   typedef boost::readable_property_map_tag category;
-  friend value_type get(const Self, key_type polyline) {
+
+  friend reference get(const Self&, const key_type& polyline) {
     return polyline.polyline_content;
   }
 }; // end Get_content_from_polyline_with_context<PolylineWithContext>
 
 template <typename PolylineWithContext>
-struct Get_patches_id_from_polyline_with_context {
+struct Get_patches_id_from_polyline_with_context
+{
   typedef Get_patches_id_from_polyline_with_context Self;
-  typedef const PolylineWithContext& key_type;
-  typedef const typename PolylineWithContext::Context::Patches_ids& value_type;
-  typedef value_type reference;
+  typedef PolylineWithContext key_type;
+  typedef typename PolylineWithContext::Context::Patches_ids value_type;
+  typedef const value_type& reference;
   typedef boost::readable_property_map_tag category;
-  friend value_type get(const Self, key_type polyline) {
+
+  friend reference get(const Self&, const key_type& polyline) {
     return polyline.context.adjacent_patches_ids;
   }
 }; // end Get_patches_id_from_polyline_with_context<PolylineWithContext>

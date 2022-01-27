@@ -74,7 +74,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
  public:
   Single_wall_creator(SVertex_handle e, Vector_3 d)
-    : ein(e), dir(d)
+    : ein(e), dir(d), sncp(nullptr), pl(nullptr)
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
     , index1(0), index2(0)
 #endif
@@ -204,8 +204,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       opp->twin() = lateral_svertex;
       lateral_svertex->twin() = opp;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-      opp->set_index();
-      lateral_svertex->set_index(opp->get_index());
+      lateral_svertex->set_index(opp->new_index());
 #endif
       pl->add_edge(lateral_svertex);
 
@@ -237,8 +236,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     lateral_svertex->twin() = opp;
 
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-      opp->set_index();
-      lateral_svertex->set_index(opp->get_index());
+      lateral_svertex->set_index(opp->new_index());
 #endif
     pl->add_edge(lateral_svertex);
 
@@ -275,8 +273,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
       opp->twin() = lateral_svertex;
       lateral_svertex->twin() = opp;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-      opp->set_index();
-      lateral_svertex->set_index(opp->get_index());
+      lateral_svertex->set_index(opp->new_index());
 #endif
       pl->add_edge(lateral_svertex);
 
@@ -308,8 +305,7 @@ class Single_wall_creator : public Modifier_base<typename Nef_::SNC_and_PL> {
     opp->twin() = lateral_svertex;
     lateral_svertex->twin() = opp;
 #ifndef CGAL_NEF_NO_INDEXED_ITEMS
-      opp->set_index();
-      lateral_svertex->set_index(opp->get_index());
+      lateral_svertex->set_index(opp->new_index());
 #endif
     pl->add_edge(lateral_svertex);
 

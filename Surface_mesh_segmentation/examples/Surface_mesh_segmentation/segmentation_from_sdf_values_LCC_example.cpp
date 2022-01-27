@@ -17,11 +17,11 @@ typedef LCC::Attribute_const_handle<2>::type Facet_const_handle;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/cactus.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cactus.off");
 
   // create and read LCC
   LCC mesh;
-  if(!CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, mesh) ||
+  if(!CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, mesh) ||
      !CGAL::is_triangle_mesh(mesh))
   {
     std::cerr << "Invalid input file." << std::endl;

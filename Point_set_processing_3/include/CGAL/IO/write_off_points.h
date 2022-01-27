@@ -17,7 +17,7 @@
 #include <CGAL/IO/helpers.h>
 #include <CGAL/IO/OFF.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -30,33 +30,28 @@
 #include <fstream>
 #include <iterator>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 namespace Point_set_processing_3 {
 namespace internal {
 
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF_PSP(std::ostream& os,
                    const PointRange& points,
-                   const CGAL_BGL_NP_CLASS& np)
+                   const CGAL_NP_CLASS& np = CGAL::parameters::default_values())
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
+  using CGAL::parameters::is_default_parameter;
 
   // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type                         PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type      NormalMap;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
 
-  bool has_normals = !(std::is_same<NormalMap,
-                                    typename Point_set_processing_3::GetNormalMap<
-                                      PointRange, CGAL_BGL_NP_CLASS>::NoMap>::value);
+  const bool has_normals = !(is_default_parameter<CGAL_NP_CLASS, internal_np::normal_t>());
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
@@ -66,11 +61,13 @@ bool write_OFF_PSP(std::ostream& os,
     return false;
   }
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   // Write header
-  os << "NOFF" << std::endl;
+  if (has_normals)
+    os << "NOFF" << std::endl;
+  else
+    os << "OFF" << std::endl;
   os << points.size() << " 0 0" << std::endl;
 
   // Write positions + normals
@@ -89,6 +86,8 @@ bool write_OFF_PSP(std::ostream& os,
 
 } // namespace internal
 } // namespace Point_set_processing_3
+
+namespace IO {
 
 /**
    \ingroup PkgPointSetProcessing3IOOff
@@ -125,34 +124,23 @@ bool write_OFF_PSP(std::ostream& os,
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
-      \cgalParamDefault{`6`}
+      \cgalParamDefault{the precision of the stream `os`}
     \cgalParamNEnd
    \cgalNamedParamsEnd
 
    \returns `true` if writing was successful, `false` otherwise.
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                )
 {
   return Point_set_processing_3::internal::write_OFF_PSP(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_OFF(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_OFF(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOOff
@@ -198,30 +186,21 @@ bool write_OFF(std::ostream& os, const PointRange& points,
    \sa \ref IOStreamOFF
 */
 template <typename PointRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                )
 {
   std::ofstream os(filename);
+  set_stream_precision_from_NP(os, np);
   return write_OFF(os, points, np);
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_OFF(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  std::ofstream os(filename);
-  return write_OFF(os, points, parameters::all_default());
-}
-
-/// \endcond
+} // IO namespace
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
@@ -319,25 +298,14 @@ bool write_off_points(std::ostream& os, ///< output stream.
 /**
   \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSetProcessing3IOOff `CGAL::write_OFF()` \endlink should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSetProcessing3IOOff `CGAL::IO::write_OFF()` \endlink should be used instead.
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  return write_OFF(os, points, np);
+  return IO::write_OFF(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-// variant with default NP
-template <typename PointRange>
-CGAL_DEPRECATED bool write_off_points(std::ostream& os, const PointRange& points)
-{
-  return write_OFF(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

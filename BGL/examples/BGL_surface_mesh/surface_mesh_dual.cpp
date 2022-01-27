@@ -17,7 +17,7 @@ typedef boost::graph_traits<Dual>::edge_descriptor edge_descriptor;
 
 template <typename G>
 struct noborder {
-  noborder() : g(NULL) {} // default-constructor required by filtered_graph
+  noborder() : g(nullptr) {} // default-constructor required by filtered_graph
   noborder(G& g) : g(&g) {}
 
   bool operator()(const edge_descriptor& e) const
@@ -37,10 +37,10 @@ typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/prim.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/prim.off");
 
   Mesh primal;
-  if(!CGAL::read_polygon_mesh(filename, primal))
+  if(!CGAL::IO::read_polygon_mesh(filename, primal))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

@@ -1,15 +1,10 @@
 # Created by the script cgal_create_cmake_script.
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Shape_detection_Tests)
 
-set(CMAKE_CXX_STANDARD 11)
-
 find_package(CGAL REQUIRED COMPONENTS Core)
-
-include(${CGAL_USE_FILE})
-include(CGAL_CreateSingleSourceCGALProgram)
 
 # Use Eigen.
 find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
@@ -51,10 +46,10 @@ if(EIGEN3_FOUND)
     file(GLOB proto_misc_src "${RANSAC_PROTO_DIR}/MiscLib/*.cpp")
     add_library(libproto STATIC  ${proto_src} ${proto_misc_src})
     add_executable(test_validity_sampled_data "test_validity_sampled_data.cpp")
-    target_link_libraries(test_validity_sampled_data libproto CGAL::CGAL CGAL::Eigen3_support)
+    target_link_libraries(test_validity_sampled_data libproto CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
   else()
     add_executable(test_validity_sampled_data "test_validity_sampled_data.cpp")
-    target_link_libraries(test_validity_sampled_data CGAL::CGAL CGAL::Eigen3_support)
+    target_link_libraries(test_validity_sampled_data CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
   endif()
   cgal_add_test(test_validity_sampled_data)
 endif()
@@ -81,4 +76,3 @@ create_single_source_cgal_program(
 create_single_source_cgal_program("test_efficient_RANSAC_torus_parameters.cpp")
 
 create_single_source_cgal_program("test_efficient_RANSAC_scene.cpp")
-create_single_source_cgal_program("test_efficient_RANSAC_regularization.cpp")

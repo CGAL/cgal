@@ -24,7 +24,7 @@ public:
   typedef Point_3 value_type;
   typedef const value_type& reference;
   typedef Point key_type;
-  typedef boost::lvalue_property_map_tag category;
+  typedef boost::readable_property_map_tag category;
 
   My_point_property_map(const std::vector<Point_3>& pts):points(pts){}
 
@@ -41,7 +41,7 @@ typedef K_neighbor_search::Distance Distance;
 
 
 int main() {
-  const unsigned int N = 50;
+  // const unsigned int N = 50;
   CGAL::Timer timer;
   timer.start();
 
@@ -82,7 +82,7 @@ int main() {
   double d = 0;
   timer.reset();
   timer.start();
-  for(int i = 0; i < queries.size(); i++){
+  for(std::size_t i = 0; i < queries.size(); i++){
     K_neighbor_search search(tree, queries[i], 50, 0, true, tr_dist);
 
     // report the N nearest neighbors and their distance

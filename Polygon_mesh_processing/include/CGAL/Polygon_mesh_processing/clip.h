@@ -41,30 +41,11 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <bitset>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
-
-namespace internal
-{
-
-template <class Geom_traits, class Plane_3, class Point_3>
-int
-inter_pt_index(int i, int j,
-               const Plane_3& plane,
-               std::vector<Point_3>& points,
-               std::map<std::pair<int,int>, int>& id_map)
-{
-  std::pair<std::map<std::pair<int,int>, int>::iterator, bool> res =
-    id_map.insert(std::make_pair(make_sorted_pair(i,j),
-                  static_cast<int> (points.size())));
-  if(res.second)
-    points.push_back(
-      typename Geom_traits::Construct_plane_line_intersection_point_3()
-        (plane, points[i], points[j]));
-
-  return res.first->second;
-}
+namespace internal {
 
 template <class Plane_3,
           class TriangleMesh,
@@ -106,19 +87,42 @@ clip_to_bbox(const Plane_3& plane,
   }};
 
   // description of faces of the bbox
-  std::array<int, 24> face_indices =
-    {{ 0, 1, 2, 3,
-       2, 1, 5, 6,
-       3, 2, 6, 7,
-       1, 0, 4, 5,
-       4, 0, 3, 7,
-       6, 5, 4, 7 }};
+  constexpr std::array<int, 24> face_indices
+    { { 0, 1, 2, 3,
+        2, 1, 5, 6,
+        3, 2, 6, 7,
+        1, 0, 4, 5,
+        4, 0, 3, 7,
+        6, 5, 4, 7 } };
 
-  std::map<std::pair<int,int>, int> id_map;
+  constexpr std::array<int, 24> edge_indices
+    { { 0,  1,  2, 3,
+        1,  4,  5, 6,
+        2,  6,  7, 8,
+        0,  9, 10, 4,
+        9,  3,  8, 11,
+        5, 10, 11, 7 } };
+
+  std::array<int, 12> edge_ipt_id;
+  edge_ipt_id.fill(-1);
+
+  auto inter_pt_index =
+    [&plane, &corners, &edge_ipt_id](int i, int j, int edge_id)
+  {
+    if (edge_ipt_id[edge_id]==-1)
+    {
+      edge_ipt_id[edge_id] = static_cast<int> (corners.size());
+      corners.push_back(typename Geom_traits::Construct_plane_line_intersection_point_3()
+                      (plane, corners[i], corners[j]));
+    }
+
+    return edge_ipt_id[edge_id];
+  };
+
   std::vector< std::vector<int> > output_faces(6);
   bool all_in = true;
   bool all_out = true;
-  std::set<int> in_point_ids; // to collect the set of points in the clipped bbox
+  std::bitset<14> in_point_bits; // to collect the set of points in the clipped bbox
 
   // for each face of the bbox, we look for intersection of the plane with its edges
   for(int i=0; i<6; ++i)
@@ -127,6 +131,7 @@ clip_to_bbox(const Plane_3& plane,
     {
       int current_id = face_indices[4*i + k];
       int next_id = face_indices[4*i + (k+1)%4];
+      int edge_id = edge_indices[4 * i + k];
 
       switch(orientations[ current_id ])
       {
@@ -135,13 +140,13 @@ clip_to_bbox(const Plane_3& plane,
           all_out=false;
           // point on or on the negative side
           output_faces[i].push_back(current_id);
-          in_point_ids.insert(output_faces[i].back());
+          in_point_bits.set(output_faces[i].back());
           // check for intersection of the edge
           if(orientations[ next_id ] == ON_POSITIVE_SIDE)
           {
             output_faces[i].push_back(
-              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map));
-            in_point_ids.insert(output_faces[i].back());
+              inter_pt_index(current_id, next_id, edge_id));
+            in_point_bits.set(output_faces[i].back());
           }
           break;
         }
@@ -152,15 +157,15 @@ clip_to_bbox(const Plane_3& plane,
           if(orientations[ next_id ] == ON_NEGATIVE_SIDE)
           {
             output_faces[i].push_back(
-              inter_pt_index<Geom_traits>(current_id, next_id, plane, corners, id_map));
-            in_point_ids.insert(output_faces[i].back());
+              inter_pt_index(current_id, next_id, edge_id));
+            in_point_bits.set(output_faces[i].back());
           }
           break;
         }
         case ON_ORIENTED_BOUNDARY:
         {
           output_faces[i].push_back(current_id);
-          in_point_ids.insert(output_faces[i].back());
+          in_point_bits.set(output_faces[i].back());
         }
       }
     }
@@ -182,11 +187,14 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename graph_traits::face_descriptor face_descriptor;
 
   std::map<int, vertex_descriptor> out_vertices;
-  for(int i : in_point_ids)
+  for(int i=0; i<14;++i)
   {
-    vertex_descriptor v = add_vertex(tm_out);
-    out_vertices.insert(std::make_pair(i, v));
-    put(vpm_out, v, corners[i]);
+    if (in_point_bits.test(i))
+    {
+      vertex_descriptor v = add_vertex(tm_out);
+      out_vertices.insert(std::make_pair(i, v));
+      put(vpm_out, v, corners[i]);
+    }
   }
 
   std::map< std::pair<int,int>, halfedge_descriptor> hedge_map;
@@ -306,6 +314,7 @@ void split_along_edges(TriangleMesh& tm,
   std::set<halfedge_descriptor> extra_border_hedges;
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
+    if (is_border(shared_edges[k], tm)) continue;
     for(halfedge_descriptor h : halfedges_around_target(target(shared_edges[k], tm), tm))
       if(is_border(h, tm))
         extra_border_hedges.insert(h);
@@ -324,6 +333,7 @@ void split_along_edges(TriangleMesh& tm,
   // now duplicate the edge and set its pointers
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
+    if (is_border(shared_edges[k], tm)) continue;
     halfedge_descriptor h    = halfedge(shared_edges[k], tm);
     face_descriptor fh = face(h, tm);
     //add edge
@@ -434,8 +444,8 @@ generic_clip_impl(
   Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                               get_property_map(boost::vertex_point, tm1));
 
-  Vpm vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                              get_property_map(boost::vertex_point, tm2));
+  Vpm2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                               get_property_map(boost::vertex_point, tm2));
 
   if (&tm1==&tm2)
   {
@@ -585,13 +595,13 @@ generic_clip_impl(
   *         If `false` is returned `tm` and `clipper` are only corefined.
   */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 bool
 clip(TriangleMesh& tm,
      TriangleMesh& clipper,
-     const NamedParameters1& np_tm,
-     const NamedParameters2& np_c)
+     const NamedParameters1& np_tm = parameters::default_values(),
+     const NamedParameters2& np_c = parameters::default_values())
 {
   if (parameters::choose_parameter(parameters::get_parameter(np_c, internal_np::do_not_modify), false))
   {
@@ -683,19 +693,19 @@ clip(TriangleMesh& tm,
   *         If `false` is returned `tm` is only refined by the intersection with `plane`.
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool clip(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
           const Plane_3& plane,
 #else
           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-          const NamedParameters& np)
+          const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
+  namespace params = CGAL::parameters;
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
 
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
@@ -707,7 +717,7 @@ bool clip(TriangleMesh& tm,
   bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
                     bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
   TriangleMesh clipper;
-  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::all_default());
+  Oriented_side os = internal::clip_to_bbox(plane, bbox, clipper, parameters::default_values());
   switch(os)
   {
     case ON_NEGATIVE_SIDE:
@@ -786,19 +796,19 @@ bool clip(TriangleMesh& tm,
   *         If `false` is returned `tm` is only refined by the intersection with `iso_cuboid`.
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 bool clip(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
           const Iso_cuboid_3& iso_cuboid,
 #else
           const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
 #endif
-          const NamedParameters& np)
+          const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
+  namespace params = CGAL::parameters;
 
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
   TriangleMesh clipper;
@@ -866,12 +876,12 @@ bool clip(TriangleMesh& tm,
   * \cgalNamedParamsEnd
 */
 template <class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
            TriangleMesh& splitter,
-           const NamedParameters1& np_tm,
-           const NamedParameters2& np_s)
+           const NamedParameters1& np_tm = parameters::default_values(),
+           const NamedParameters2& np_s = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -954,19 +964,19 @@ void split(TriangleMesh& tm,
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
 #ifdef DOXYGEN_RUNNING
            const Plane_3& plane,
 #else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Plane_3& plane,
 #endif
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
+  namespace params = CGAL::parameters;
 
   // create a splitter mesh for the splitting plane using an internal CGAL function
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm, np);
@@ -977,7 +987,7 @@ void split(TriangleMesh& tm,
                       bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
 
   TriangleMesh splitter;
-  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, PMP::parameters::all_default());
+  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, CGAL::parameters::default_values());
 
   if(os == CGAL::ON_ORIENTED_BOUNDARY)
   {
@@ -1057,19 +1067,19 @@ void split(TriangleMesh& tm,
   * \cgalNamedParamsEnd
   */
 template <class TriangleMesh,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 void split(TriangleMesh& tm,
            #ifdef DOXYGEN_RUNNING
            const Iso_cuboid_3& iso_cuboid,
            #else
            const typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Iso_cuboid_3& iso_cuboid,
            #endif
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
+  namespace params = CGAL::parameters;
   TriangleMesh splitter;
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],
@@ -1079,81 +1089,6 @@ void split(TriangleMesh& tm,
   const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
   return split(tm, splitter, np, params::do_not_modify(do_not_modify));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-// convenience overloads
-template <class TriangleMesh>
-bool clip(TriangleMesh& tm,
-          const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
-{
-  return clip(tm, plane, parameters::all_default());
-}
-
-// convenience overloads
-template <class TriangleMesh>
-bool clip(TriangleMesh& tm,
-          const typename GetGeomTraits<TriangleMesh>::type::Iso_cuboid_3& iso_cuboid)
-{
-  return clip(tm, iso_cuboid, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh,
-          class NamedParameters1>
-bool
-clip(TriangleMesh& tm,
-     TriangleMesh& clipper,
-     const NamedParameters1& np_tm)
-{
-  return clip(tm, clipper, np_tm, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh>
-bool
-clip(TriangleMesh& tm,
-     TriangleMesh& clipper)
-{
-  return clip(tm, clipper, parameters::all_default());
-}
-
-
-// convenience overload
-template <class TriangleMesh,
-          class NamedParameters1>
-void
-split(TriangleMesh& tm,
-      TriangleMesh& splitter,
-      const NamedParameters1& np_tm)
-{
-  split(tm, splitter, np_tm, parameters::all_default());
-}
-
-// convenience overload
-template <class TriangleMesh>
-void
-split(TriangleMesh& tm,
-      TriangleMesh& splitter)
-{
-  split(tm, splitter, parameters::all_default());
-}
-
-template <class TriangleMesh>
-void split(TriangleMesh& tm,
-           const typename GetGeomTraits<TriangleMesh>::type::Plane_3& plane)
-{
-   split(tm, plane, parameters::all_default());
-}
-
-template <class TriangleMesh>
-void split(TriangleMesh& tm,
-           const typename GetGeomTraits<TriangleMesh>::type::Iso_cuboid_3& iso_cuboid)
-{
-  split(tm, iso_cuboid, parameters::all_default());
-}
-
-/// \endcond
 
 } } //end of namespace CGAL::Polygon_mesh_processing
 

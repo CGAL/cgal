@@ -115,8 +115,7 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
-
-      return EXIT_FAILURE;
+      std::cerr << "Running " << argv[0] << "data/kitten.xyz kitten_poisson-20-100-0.5.off -sm_distance 0.5\n";
     }
 
     // Poisson options
@@ -128,8 +127,8 @@ int main(int argc, char * argv[])
     double average_spacing_ratio = 5;
 
     // decode parameters
-    std::string input_filename  = argv[1];
-    std::string output_filename = argv[2];
+    std::string input_filename  = argc == 1 ? CGAL::data_file_path("points_3/kitten.xyz") : argv[1];
+    std::string output_filename = argc == 1 ? "kitten_poisson-20-100-0.5.off" : argv[2];
     for (int i=3; i+1<argc ; ++i)
     {
       if (std::string(argv[i])=="-sm_radius")
@@ -147,6 +146,8 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
       }
     }
+
+    if (argc == 1) sm_distance = 0.5;
 
     CGAL::Timer task_timer; task_timer.start();
 
@@ -187,9 +188,9 @@ int main(int argc, char * argv[])
       // Reads the point set file in points[].
       // Note: read_points() requires an iterator over points
       // + property maps to access each point's position and normal.
-      if (!CGAL::read_points(input_filename.c_str(), std::back_inserter(points),
-                             CGAL::parameters::point_map(CGAL::make_first_of_pair_property_map(Point_with_normal()))
-                                              .normal_map(CGAL::make_second_of_pair_property_map(Point_with_normal()))))
+      if (!CGAL::IO::read_points(input_filename.c_str(), std::back_inserter(points),
+                                  CGAL::parameters::point_map(CGAL::make_first_of_pair_property_map(Point_with_normal()))
+                                                    .normal_map(CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {
         std::cerr << "Error: cannot read input file!" << input_filename << std::endl;
         return EXIT_FAILURE;

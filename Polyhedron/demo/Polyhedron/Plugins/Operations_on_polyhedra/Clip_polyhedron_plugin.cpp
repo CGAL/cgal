@@ -175,7 +175,7 @@ if it has a closed contour on the clipping polyhedron. Otherwise, it will be lef
 public Q_SLOTS:
   void on_plane_destroyed()
   {
-    plane = NULL;
+    plane = nullptr;
     dock_widget->hide();
   }
 
@@ -255,7 +255,7 @@ public Q_SLOTS:
             {
               CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                                                   plane->plane(),
-                                                  CGAL::Polygon_mesh_processing::parameters::clip_volume(
+                                                  CGAL::parameters::clip_volume(
                                                     ui_widget.close_checkBox->isChecked()).
                                                   throw_on_self_intersection(true).
                                                   use_compact_clipper(
@@ -263,7 +263,7 @@ public Q_SLOTS:
                                                   .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
             }
           }
-          catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+          catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
           {
             CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
           }
@@ -279,11 +279,11 @@ public Q_SLOTS:
               {
                 CGAL::Polygon_mesh_processing::split(*(sm_item->face_graph()),
                                                     plane->plane(),
-                                                     CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(true)
+                                                     CGAL::parameters::throw_on_self_intersection(true)
                                                      .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
               }
             }
-            catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+            catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
             {
               CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
             }
@@ -411,14 +411,14 @@ public Q_SLOTS:
           try {
             CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                                                 clipper,
-                                                CGAL::Polygon_mesh_processing::parameters::clip_volume(
+                                                CGAL::parameters::clip_volume(
                                                   ui_widget.close_checkBox->isChecked()).
                                                 throw_on_self_intersection(true).
                                                 use_compact_clipper(
                                                   !ui_widget.coplanarCheckBox->isChecked()),
-                                                CGAL::Polygon_mesh_processing::parameters::do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
+                                                CGAL::parameters::do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
           }
-          catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+          catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
           {
             CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
           }
@@ -430,10 +430,10 @@ public Q_SLOTS:
         try {
           CGAL::Polygon_mesh_processing::split(*pos_side,
                                                clipper,
-                                               CGAL::Polygon_mesh_processing::parameters::throw_on_self_intersection(true),
-                                               CGAL::Polygon_mesh_processing::parameters::do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
+                                               CGAL::parameters::throw_on_self_intersection(true),
+                                               CGAL::parameters::do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
         }
-        catch(CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception)
+        catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
         {
           CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
         }

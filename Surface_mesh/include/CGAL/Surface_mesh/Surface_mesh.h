@@ -26,7 +26,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/Iterator_range.h>
@@ -600,7 +600,7 @@ public:
     /// \name Range Types
     ///
     /// Each range `R` in this section has a nested type `R::iterator`,
-    /// is convertible to `std:pair<R::iterator,R::iterator>`, so that one can use `boost::tie()`,
+    /// is convertible to `std::pair<R::iterator,R::iterator>`, so that one can use `boost::tie()`,
     /// and can be used with `BOOST_FOREACH()`, as well as with the C++11 range based for-loop.
 
     ///@{
@@ -1529,6 +1529,9 @@ public:
 
     /// performs a validity check on a single vertex.
     bool is_valid(Vertex_index v) const {
+        if(!has_valid_index(v))
+         return false;
+
         Halfedge_index h = vconn_[v].halfedge_;
         if(h!= null_halfedge() && (!has_valid_index(h) || is_removed(h))) {
           std::cerr << "Vertex connectivity halfedge error in " << (size_type)v
@@ -1540,6 +1543,9 @@ public:
 
     /// performs a validity check on a single halfedge.
     bool is_valid(Halfedge_index h) const {
+        if(!has_valid_index(h))
+          return false;
+
         Face_index f = hconn_[h].face_;
         Vertex_index v = hconn_[h].vertex_;
         Halfedge_index hn = hconn_[h].next_halfedge_;
@@ -1581,6 +1587,9 @@ public:
 
     /// performs a validity check on a single edge.
     bool is_valid(Edge_index e) const {
+      if(!has_valid_index(e))
+        return false;
+
       Halfedge_index h = halfedge(e);
       return is_valid(h) && is_valid(opposite(h));
     }
@@ -1588,6 +1597,9 @@ public:
 
     /// performs a validity check on a single face.
     bool is_valid(Face_index f) const {
+        if(!has_valid_index(f))
+          return false;
+
         Halfedge_index h = fconn_[f].halfedge_;
         if(!has_valid_index(h) || is_removed(h)) {
           std::cerr << "Face connectivity halfedge error in " << (size_type)f
@@ -2171,7 +2183,7 @@ private: //------------------------------------------------------- private data
    template <typename P>
   std::ostream& operator<<(std::ostream& os, const Surface_mesh<P>& sm)
   {
-    write_OFF(os, sm);
+    IO::write_OFF(os, sm);
     return os;
   }
 
@@ -2183,7 +2195,7 @@ private: //------------------------------------------------------- private data
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
-    read_OFF(is, sm);
+    IO::read_OFF(is, sm);
     return is;
   }
 

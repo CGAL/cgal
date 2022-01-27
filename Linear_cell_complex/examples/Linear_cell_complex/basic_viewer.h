@@ -22,7 +22,7 @@
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 
-#include <CGAL/Triangulation_2_projection_traits_3.h>
+#include <CGAL/Projection_traits_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -211,7 +211,7 @@ class Basic_viewer : public CGAL::QGLViewer, public QOpenGLFunctions
     bool is_process;
   };
 
-  typedef CGAL::Triangulation_2_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+  typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
   typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
 
   typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits> Fb1;
@@ -286,7 +286,7 @@ public:
     { bb=bb+p.bbox(); }
   }
 
-  void add_color(const CGAL::Color& acolor, std::vector<float>& color_vector)
+  void add_color(const CGAL::IO::Color& acolor, std::vector<float>& color_vector)
   {
     color_vector.push_back((double)color_of_face.red()/(double)255);
     color_vector.push_back((double)color_of_face.green()/(double)255);
@@ -303,7 +303,7 @@ public:
   void add_mono_point(const Local_point& p)
   { add_point(p, arrays[POS_MONO_POINTS]); }
 
-  void add_colored_point(const Local_point& p, const CGAL::Color& acolor)
+  void add_colored_point(const Local_point& p, const CGAL::IO::Color& acolor)
   {
     add_point(p, arrays[POS_COLORED_POINTS]);
     add_color(acolor, arrays[COLOR_POINTS]);
@@ -316,7 +316,7 @@ public:
   }
 
   void add_colored_segment(const Local_point& p1, const Local_point& p2,
-                           const CGAL::Color& acolor)
+                           const CGAL::IO::Color& acolor)
   {
     add_point(p1, arrays[POS_COLORED_SEGMENTS]);
     add_point(p2, arrays[POS_COLORED_SEGMENTS]);
@@ -341,7 +341,7 @@ public:
   }
 
   /// Start a new face, with a given color.
-  void colored_face_begin(const CGAL::Color& acolor)
+  void colored_face_begin(const CGAL::IO::Color& acolor)
   {
     color_of_face=acolor;
     m_started_face_is_colored=true;
@@ -887,7 +887,6 @@ protected:
   virtual void init()
   {
     // Restore previous viewer state.
-    restoreStateFromFile();
     initializeOpenGLFunctions();
 
     // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
@@ -1133,9 +1132,9 @@ private:
   double m_size_points;
   double m_size_edges;
 
-  CGAL::Color m_vertices_mono_color;
-  CGAL::Color m_edges_mono_color;
-  CGAL::Color m_faces_mono_color;
+  CGAL::IO::Color m_vertices_mono_color;
+  CGAL::IO::Color m_edges_mono_color;
+  CGAL::IO::Color m_faces_mono_color;
   QVector4D   m_ambient_color;
 
   bool m_are_buffers_initialized;
@@ -1185,7 +1184,7 @@ private:
   bool m_started_face_is_colored;
   std::vector<Local_point> points_of_face;
   std::vector<Local_vector> vertex_normals_for_face;
-  CGAL::Color color_of_face;
+  CGAL::IO::Color color_of_face;
 };
 
 #endif // CGAL_BASIC_VIEWER_H

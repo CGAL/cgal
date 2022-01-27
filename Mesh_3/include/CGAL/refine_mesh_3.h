@@ -28,9 +28,10 @@
 #include <CGAL/Mesh_3/Mesher_3.h>
 #include <CGAL/Mesh_error_code.h>
 #include <CGAL/optimize_mesh_3.h>
-#include <CGAL/atomic.h>
 
 #include <boost/parameter/preprocessor.hpp>
+
+#include <atomic>
 
 namespace CGAL {
 
@@ -196,7 +197,7 @@ struct Manifold_options {
 // Various Mesh_3 option
 struct Mesh_3_options {
 #ifndef CGAL_NO_ATOMIC
-      typedef CGAL::cpp11::atomic<bool>* Pointer_to_stop_atomic_boolean_t;
+      typedef std::atomic<bool>* Pointer_to_stop_atomic_boolean_t;
 #else
       typedef bool* Pointer_to_stop_atomic_boolean_t;
 #endif
@@ -253,7 +254,7 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 // -----------------------------------
 BOOST_PARAMETER_FUNCTION((internal::Perturb_options), perturb, tag,
                          (optional (time_limit_, *, internal::undef_parameter )
-                                   (sliver_bound_, *, default_values::perturb_sliver_bound )))
+                                   (sliver_bound_, *, default_values_for_mesh_3::perturb_sliver_bound )))
 {
   internal::Perturb_options options(true);
 
@@ -272,7 +273,7 @@ inline internal::Perturb_options no_perturb() { return internal::Perturb_options
 // -----------------------------------
 BOOST_PARAMETER_FUNCTION((internal::Exude_options), exude, tag,
                          (optional (time_limit_, *, internal::undef_parameter )
-                                   (sliver_bound_, *, default_values::exude_sliver_bound )))
+                                   (sliver_bound_, *, default_values_for_mesh_3::exude_sliver_bound )))
 {
   internal::Exude_options options(true);
 
@@ -292,8 +293,8 @@ inline internal::Exude_options no_exude() { return internal::Exude_options(false
 BOOST_PARAMETER_FUNCTION((internal::Odt_options), odt, tag,
                          (optional (time_limit_, *, 0 )
                                    (max_iteration_number_, *, 0 )
-                                   (convergence_, *, default_values::odt_convergence_ratio )
-                                   (freeze_bound_, *, default_values::odt_freeze_ratio )))
+                                   (convergence_, *, default_values_for_mesh_3::odt_convergence_ratio )
+                                   (freeze_bound_, *, default_values_for_mesh_3::odt_freeze_ratio )))
 {
   internal::Odt_options options(true);
 
@@ -313,8 +314,8 @@ inline internal::Odt_options no_odt() { return internal::Odt_options(false); }
 BOOST_PARAMETER_FUNCTION((internal::Lloyd_options), lloyd, tag,
                          (optional (time_limit_, *, 0 )
                                    (max_iteration_number_, *, 0 )
-                                   (convergence_, *, default_values::lloyd_convergence_ratio )
-                                   (freeze_bound_, *, default_values::lloyd_freeze_ratio )))
+                                   (convergence_, *, default_values_for_mesh_3::lloyd_convergence_ratio )
+                                   (freeze_bound_, *, default_values_for_mesh_3::lloyd_freeze_ratio )))
 {
   internal::Lloyd_options options(true);
 

@@ -577,33 +577,13 @@ private:
 
 namespace CGAL
 {
-namespace Point_set_processing_3
-{
-  template<typename Kernel>
-  class GetFT< ::Point_set_3<Kernel> >
-  {
-  public:
-    typedef typename Kernel::FT type;
-  };
 
-  namespace parameters
-  {
-    template <typename Kernel>
-    Named_function_parameters
-    <Kernel,
-     internal_np::geom_traits_t,
-     Named_function_parameters
-     <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Vector_3>,
-      internal_np::normal_t,
-      Named_function_parameters
-      <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Point_3>,
-       internal_np::point_t> > >
-    inline all_default(const ::Point_set_3<Kernel>& ps)
-    {
-      return ps.parameters();
-    }
-  }
-}
+// specialization for default named parameters
+template <typename Gt, typename NamedParameters, typename NP_TAG>
+struct Point_set_processing_3_np_helper<::Point_set_3<Gt>, NamedParameters, NP_TAG>
+    : public Point_set_processing_3_np_helper<typename ::Point_set_3<Gt>::Base, NamedParameters, NP_TAG>
+{};
+
 }
 
 #endif // POINT_SET_3_H

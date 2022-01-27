@@ -48,7 +48,7 @@ typedef Classification::Cluster<Point_set, Pmap>                             Clu
 
 int main (int argc, char** argv)
 {
-  std::string filename        = "data/b9.ply";
+  std::string filename        = CGAL::data_file_path("meshes/b9.ply");
   std::string filename_config = "data/b9_clusters_config.bin";
 
   if (argc > 1)
@@ -58,9 +58,9 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   Point_set pts;
-  if(!(CGAL::read_point_set(filename, pts,
-                            // the PLY reader expects a binary file by default
-                            CGAL::parameters::use_binary_mode(true))))
+  if(!(CGAL::IO::read_point_set(filename, pts,
+                                // the PLY reader expects a binary file by default
+                                CGAL::parameters::use_binary_mode(true))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;
@@ -86,7 +86,12 @@ int main (int argc, char** argv)
 #endif
 
   generator.generate_point_based_features (pointwise_features);
-  generator.generate_normal_based_features (pointwise_features, pts.normal_map());
+
+  // Generator should only be used with variables defined at the scope
+  // of the generator object, thus we instantiate the normal map
+  // outside of the function
+  Vmap normal_map = pts.normal_map();
+  generator.generate_normal_based_features (pointwise_features, normal_map);
 
 #ifdef CGAL_LINKED_WITH_TBB
   pointwise_features.end_parallel_additions();
@@ -156,8 +161,8 @@ int main (int argc, char** argv)
 
   // First, compute means of features.
   features.begin_parallel_additions();
-  for (Feature_handle fh : pointwise_features)
-    features.add<Feature::Cluster_mean_of_feature> (clusters, fh);
+  for (std::size_t i = 0; i < pointwise_features.size(); ++ i)
+    features.add<Feature::Cluster_mean_of_feature> (clusters, pointwise_features[i]);
   features.end_parallel_additions();
 
   // Then, compute variances of features (and remaining cluster features).

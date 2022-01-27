@@ -81,6 +81,7 @@ public:
 
   Light_MQ(const Local_map& m): m_map(m)
   {}
+  Light_MQ(const Light_MQ&) = default;
 
   const Local_map& get_local_map() const
   { return m_map; }
@@ -141,6 +142,8 @@ public:
   #endif //CGAL_PWRLE_TURN_V2
   {}
 
+  Path_on_surface_with_rle(const Self&) = default;
+
   /// Creates a Path_on_surface_with_rle from a Path_on_surface.
   /// If use_only_positive, consider only positive flats and not negative ones.
   /// If use_only_negative, consider only negative flats and not positive ones.
@@ -148,7 +151,7 @@ public:
   /// Both cannot be true at the same time.
   /// Note that for a minimal surface of genus>=2, we cannot have both -2 and
   /// +2 as turn, and thus these parameters are useless.
-  /// However, this case can occured for our unit tests on the cube, this is
+  /// However, this case can occur for our unit tests on the cube, this is
   /// the reason of these parameters.
   Path_on_surface_with_rle(const MQ& aMQ, const Path_on_surface<Map>& apath,
                            bool use_only_positive=false,
@@ -167,15 +170,15 @@ public:
 
     if (apath.is_closed())
     {
-      if (!use_only_negative && apath.next_positive_turn(i)==2)
+      if (!use_only_negative && apath.prev_positive_turn(i)==2)
       { positive_flat=true; negative_flat=false; }
-      else if (!use_only_positive && apath.next_negative_turn(i)==2)
+      else if (!use_only_positive && apath.prev_negative_turn(i)==2)
       { positive_flat=false; negative_flat=true; }
 
-      while ((positive_flat && apath.next_positive_turn(i)==2) ||
-             (negative_flat && apath.next_negative_turn(i)==2))
+      while ((positive_flat && apath.prev_positive_turn(i)==2) ||
+             (negative_flat && apath.prev_negative_turn(i)==2))
       {
-        i=apath.next_index(i);
+        i=apath.prev_index(i);
         if (i==0) // Case of a closed path, made of only one flat part.
         {
           m_path.push_back(Flat(apath.real_front(), apath.real_back(),
@@ -186,8 +189,7 @@ public:
           return;
         }
       }
-      // Here i is the last dart of a flat
-      i=apath.next_index(i); // Now we are sure that i is the beginning of a flat
+      // Here i is the first dart of a flat
     }
 
     starti=i;
@@ -1212,6 +1214,15 @@ public:
   {
     bool dummy1, dummy2;
     return is_next_flat_can_be_extended_at_beginning(it, dh, dummy1, dummy2);
+  }
+
+  /// @return true iff the flat 'it' forms a switchable subpath (aka left-L-shape)
+  bool is_switchable(const List_iterator& it)
+  {
+    CGAL_assertion(is_valid_iterator(it));
+    if (it == m_path.begin() || std::next(it) == m_path.end()) { return false; }
+    std::size_t t=next_positive_turn(it);
+    return (t==1 && flat_length(it) >= 0);
   }
 
   /// Add the given dart 'dh' before the flat 'it'.

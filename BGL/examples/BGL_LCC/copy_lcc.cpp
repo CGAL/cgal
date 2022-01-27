@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 {
   Source S;
 
-  std::ifstream in((argc>1)?argv[1]:"cube.off");
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"));
   in >> S;
 
   // Note that the vertex_point property of the Source and Target1
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   Target1 T1;
   {
     CGAL::copy_face_graph(S, T1);
-    CGAL::write_OFF("lcc.off", T1);
+    CGAL::IO::write_OFF("lcc.off", T1);
   }
 
   S.clear();

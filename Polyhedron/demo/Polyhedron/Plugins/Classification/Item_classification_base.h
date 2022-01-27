@@ -15,10 +15,6 @@
 #include <CGAL/Classification/ETHZ/Random_forest_classifier.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
 
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-#  include <CGAL/Classification/TensorFlow/Neural_network_classifier.h>
-#endif
-
 #ifdef CGAL_LINKED_WITH_OPENCV
 #  include <CGAL/Classification/OpenCV/Random_forest_classifier.h>
 #endif
@@ -26,14 +22,11 @@
 #define CGAL_CLASSIFICATION_ETHZ_ID "Random Forest (ETHZ)"
 #define CGAL_CLASSIFICATION_ETHZ_NUMBER 0
 
-#define CGAL_CLASSIFICATION_TENSORFLOW_ID "Neural Network (TensorFlow)"
-#define CGAL_CLASSIFICATION_TENSORFLOW_NUMBER 1
-
 #define CGAL_CLASSIFICATION_OPENCV_ID "Random Forest (OpenCV)"
-#define CGAL_CLASSIFICATION_OPENCV_NUMBER 2
+#define CGAL_CLASSIFICATION_OPENCV_NUMBER 1
 
 #define CGAL_CLASSIFICATION_SOWF_ID "Sum of Weighted Features"
-#define CGAL_CLASSIFICATION_SOWF_NUMBER 3
+#define CGAL_CLASSIFICATION_SOWF_NUMBER 2
 
 
 class Item_classification_base
@@ -48,9 +41,6 @@ public:
 
 #ifdef CGAL_LINKED_WITH_OPENCV
   typedef CGAL::Classification::OpenCV::Random_forest_classifier Random_forest;
-#endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-  typedef CGAL::Classification::TensorFlow::Neural_network_classifier<> Neural_network;
 #endif
 
 public:
@@ -78,7 +68,7 @@ public:
   virtual bool run (int method, int classifier, std::size_t subdivisions, double smoothing) = 0;
 
   virtual void update_color () = 0;
-  virtual void change_color (int index, float* vmin = NULL, float* vmax = NULL) = 0;
+  virtual void change_color (int index, float* vmin = nullptr, float* vmax = nullptr) = 0;
   virtual CGAL::Three::Scene_item* generate_one_item (const char* name,
                                                       int label) const = 0;
   virtual void generate_one_item_per_label(std::vector<CGAL::Three::Scene_item*>& items,
@@ -113,11 +103,6 @@ public:
     m_random_forest = new Random_forest (m_labels, m_features);
 #endif
 
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    delete m_neural_network;
-    m_neural_network = new Neural_network (m_labels, m_features);
-#endif
-
     return label_qcolor (m_labels[m_labels.size() - 1]);
   }
   virtual void remove_label (std::size_t position)
@@ -135,10 +120,6 @@ public:
     m_random_forest = new Random_forest (m_labels, m_features);
 #endif
 
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    delete m_neural_network;
-    m_neural_network = new Neural_network (m_labels, m_features);
-#endif
   }
 
   virtual void clear_labels ()
@@ -156,10 +137,6 @@ public:
     m_random_forest = new Random_forest (m_labels, m_features);
 #endif
 
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    delete m_neural_network;
-    m_neural_network = new Neural_network (m_labels, m_features);
-#endif
   }
   std::size_t number_of_labels() const { return m_labels.size(); }
   Label_handle label(std::size_t i) { return m_labels[i]; }
@@ -208,13 +185,6 @@ public:
       m_random_forest->save_configuration (filename);
 #endif
     }
-    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
-    {
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-      std::ofstream f (filename);
-      m_neural_network->save_configuration (f);
-#endif
-    }
   }
   void load_config(const char* filename, int classifier)
   {
@@ -231,7 +201,7 @@ public:
     }
     else if (classifier == CGAL_CLASSIFICATION_ETHZ_NUMBER)
     {
-      if (m_ethz == NULL)
+      if (m_ethz == nullptr)
         m_ethz = new ETHZ_random_forest (m_labels, m_features);
       std::ifstream f (filename, std::ios_base::in | std::ios_base::binary);
 
@@ -249,15 +219,6 @@ public:
       m_random_forest->load_configuration (filename);
 #endif
     }
-    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER)
-    {
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-      if (m_neural_network == NULL)
-        m_neural_network = new Neural_network (m_labels, m_features);
-      std::ifstream f (filename);
-      m_neural_network->load_configuration (f, true);
-#endif
-    }
   }
 
   QColor label_color(std::size_t i) const
@@ -267,7 +228,7 @@ public:
   void change_label_color (std::size_t position, const QColor& color)
   {
     m_labels[position]->set_color
-      (CGAL::Color (color.red(), color.green(), color.blue()));
+      (CGAL::IO::Color (color.red(), color.green(), color.blue()));
   }
   void change_label_name (std::size_t position, const std::string& name)
   {
@@ -282,9 +243,6 @@ protected:
   ETHZ_random_forest* m_ethz;
 #ifdef CGAL_LINKED_WITH_OPENCV
   Random_forest* m_random_forest;
-#endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-  Neural_network* m_neural_network;
 #endif
 
 };

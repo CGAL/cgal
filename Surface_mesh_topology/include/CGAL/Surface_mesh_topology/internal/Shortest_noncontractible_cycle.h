@@ -65,8 +65,8 @@ public:
   using Path          =CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
 
   // Associations between original darts and their copy.
-  using Origin_to_copy=boost::unordered_map<Original_dart_const_handle, Dart_handle>;
-  using Copy_to_origin=boost::unordered_map<Dart_handle, Original_dart_const_handle>;
+  using Origin_to_copy=std::unordered_map<Original_dart_const_handle, Dart_handle>;
+  using Copy_to_origin=std::unordered_map<Dart_handle, Original_dart_const_handle>;
 
   /// @return the local map
   const Local_map& get_local_map() const

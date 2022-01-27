@@ -17,12 +17,12 @@
 #define CGAL_VERSION_H
 
 #ifndef SWIG
-#define CGAL_VERSION 5.3-dev
+#define CGAL_VERSION 5.5-dev
 #define CGAL_GIT_HASH abcdef
 #endif
-#define CGAL_VERSION_NR 1050300000
+#define CGAL_VERSION_NR 1050500900
 #define CGAL_SVN_REVISION 99999
-#define CGAL_RELEASE_DATE 20210630
+#define CGAL_RELEASE_DATE 20220531
 
 #include <CGAL/version_macros.h>
 

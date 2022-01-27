@@ -116,7 +116,7 @@ template <typename ForwardIterator,
           typename PropertyMap>
 void property_write(std::ostream& stream, ForwardIterator it, PropertyMap map)
 {
-  stream << CGAL::oformat(get(map, *it));
+  stream << CGAL::IO::oformat(get(map, *it));
 }
 
 template <typename T>
@@ -132,7 +132,7 @@ void simple_property_write(std::ostream& stream,
                            ForwardIterator it,
                            std::pair<PropertyMap, PLY_property<T> > map)
 {
-  if(CGAL::get_mode(stream) == CGAL::IO::ASCII)
+  if(CGAL::IO::get_mode(stream) == CGAL::IO::ASCII)
     stream << no_char_character(get(map.first, *it));
   else
   {
@@ -148,9 +148,9 @@ void simple_property_write(std::ostream& stream,
                            ForwardIterator it,
                            std::pair<PropertyMap, PLY_property<std::vector<T> > > map)
 {
-  const typename PropertyMap::reference value = get(map.first, *it);
+  const typename PropertyMap::value_type& value = get(map.first, *it);
 
-  if(CGAL::get_mode(stream) == CGAL::IO::ASCII)
+  if(CGAL::IO::get_mode(stream) == CGAL::IO::ASCII)
   {
     stream << value.size();
     for(std::size_t i = 0; i < value.size(); ++ i)
@@ -176,7 +176,7 @@ void output_properties(std::ostream& stream,
                        std::tuple<PropertyMap, PLY_property<T>... >&& current)
 {
   property_write(stream, it, std::get<0>(current));
-  if(get_mode(stream) == CGAL::IO::ASCII)
+  if(CGAL::IO::get_mode(stream) == CGAL::IO::ASCII)
     stream << std::endl;
 }
 

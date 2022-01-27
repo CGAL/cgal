@@ -36,7 +36,7 @@ does not make sense if the traits class already provides exact constructions.
 <ul>
 <li>When the tag `ExactAlphaComparisonTag` is set to \link Tag_true `Tag_true`\endlink,
 the class `Cartesian_converter` is used internally to switch between the traits class
-and the %CGAL kernel `CGAL::Simple_cartesian<NT>`, where `NT` can be either `CGAL::Interval_nt` or
+and the \cgal kernel `CGAL::Simple_cartesian<NT>`, where `NT` can be either `CGAL::Interval_nt` or
 `CGAL::Exact_rational`. `Cartesian_converter` must thus offer the necessary functors
 to convert a three-dimensional point of the traits class to a three-dimensional point
 of `CGAL::Simple_cartesian<NT>`. However, these functors are not necessarily provided by
@@ -103,7 +103,7 @@ allowing filtered exact comparisons (that is, interval arithmetic is first used 
 resorting to exact arithmetic). Access to the interval containing the exact value is provided through the function
 `FT::Approximate_nt approx() const` where `FT::Approximate_nt` is `Interval_nt<Protected>`
 with `Protected=true`. Access to the exact value is provided through the function
-`FT::Exact_nt exact() const` where `FT::Exact_nt` depends on the configuration of %CGAL
+`FT::Exact_nt exact() const` where `FT::Exact_nt` depends on the configuration of \cgal
 (it may be `mpq_class`, `Gmpq`, `Quotient<CGAL::MP_Float>`, etc).
 An overload for the function `double to_double(FT)` is also available. Its
 precision is controlled through `FT::set_relative_precision_of_to_double()` in
@@ -480,15 +480,6 @@ Defined in `CGAL/IO/io.h`
 std::ostream& operator<<(std::ostream& os,
 const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 
-/*!
-Inserts the alpha shape `A` for the current alpha value into the Geomview stream `W`.
-\pre The insert operator must be defined for `GT::Point` and `GT::Triangle`.
 
-Defined in `CGAL/IO/Geomview_stream.h` and `CGAL/IO/alpha_shape_geomview_ostream_3.h`
-
-\relates Alpha_shape_3
-*/
-Geomview_stream& operator<<(Geomview_stream& W,
-const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A);
 
 } /* end namespace CGAL */

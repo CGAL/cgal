@@ -18,7 +18,7 @@
 #include <CGAL/IO/STL/STL_reader.h>
 #include <CGAL/IO/helpers.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
@@ -29,12 +29,9 @@
 #include <fstream>
 #include <string>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
+
+namespace IO {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +44,7 @@ namespace CGAL {
  *
  * \attention The polygon soup is not cleared, and the data from the stream are appended.
  *
- * \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+ * \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
  *
  * \tparam PointRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
  *                    whose value type is the point type
@@ -71,13 +68,13 @@ namespace CGAL {
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
               PointRange& points,
               TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+              , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
               )
 {
@@ -87,7 +84,7 @@ bool read_STL(std::istream& is,
   if(!is.good())
   {
     if(verbose)
-      std::cerr<<"File doesn't exist."<<std::endl;
+      std::cerr << "File doesn't exist." << std::endl;
     return false;
   }
 
@@ -114,7 +111,7 @@ bool read_STL(std::istream& is,
   {
     if(binary)
       return false;
-    return IO::internal::parse_ASCII_STL(is, points, facets, verbose);
+    return internal::parse_ASCII_STL(is, points, facets, verbose);
   }
 
   // We are within the first 80 characters, both ASCII and binary are possible
@@ -141,7 +138,7 @@ bool read_STL(std::istream& is,
   // If the first word is not 'solid', the file must be binary
   if(s != "solid" || (word[5] !='\n' && word[5] !='\r' && word[5] != ' '))
   {
-    if(IO::internal::parse_binary_STL(is, points, facets, verbose))
+    if(internal::parse_binary_STL(is, points, facets, verbose))
     {
       return true;
     }
@@ -151,14 +148,14 @@ bool read_STL(std::istream& is,
       // The file does not start with 'solid' anyway, so it's fine to reset it.
       is.clear();
       is.seekg(0, std::ios::beg);
-      return IO::internal::parse_ASCII_STL(is, points, facets, verbose);
+      return internal::parse_ASCII_STL(is, points, facets, verbose);
     }
 
   }
   // Now, we have found the keyword "solid" which is supposed to indicate that the file is ASCII
   is.clear();
   is.seekg(0, std::ios::beg); // the parser needs to read all "solid" to work correctly.
-  if(IO::internal::parse_ASCII_STL(is, points, facets, verbose))
+  if(internal::parse_ASCII_STL(is, points, facets, verbose))
   {
     // correctly read the input as an ASCII file
     return true;
@@ -166,27 +163,16 @@ bool read_STL(std::istream& is,
   else// Failed to read the ASCII file
   {
     // It might have actually have been a binary file... ?
-    return IO::internal::parse_binary_STL(is, points, facets, verbose);
+    return internal::parse_binary_STL(is, points, facets, verbose);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename TriangleRange>
-bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
-              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
-{
-  return read_STL(is, points, facets, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
  *
  * \brief reads the content of a file named `fname` into `points` and `facets`, using the \ref IOStreamSTL.
  *
- *  If `use_binary_mode` is `true`, but the reading fails, ASCII reading will be automatically tested.
+ *  If `use_binary_mode` is `true`, but the reading fails, \ascii reading will be automatically tested.
  * \attention The polygon soup is not cleared, and the data from the file are appended.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
@@ -202,7 +188,7 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -216,13 +202,13 @@ bool read_STL(std::istream& is, PointRange& points, TriangleRange& facets,
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const std::string& fname,
               PointRange& points,
               TriangleRange& facets,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+              , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
               )
 {
@@ -232,7 +218,7 @@ bool read_STL(const std::string& fname,
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
-    CGAL::set_mode(is, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(is, BINARY);
     if(read_STL(is, points, facets, np))
     {
       return true;
@@ -241,22 +227,11 @@ bool read_STL(const std::string& fname,
     facets.clear();
   }
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   bool v = choose_parameter(get_parameter(np, internal_np::verbose),
                             false);
   return read_STL(is, points, facets, CGAL::parameters::verbose(v).use_binary_mode(false));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename TriangleRange>
-bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facets,
-              typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
-{
-  return read_STL(fname, points, facets, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -267,7 +242,9 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *
  * \brief writes the content of `points` and `facets` in `os`, using the \ref IOStreamSTL.
  *
- * \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+ * \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+ *            of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+ *            of the stream must be set to `BINARY`.
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * \tparam TriangleRange a model of the concept `SequenceContainer`
@@ -284,20 +261,20 @@ bool read_STL(const std::string& fname, PointRange& points, TriangleRange& facet
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamDefault{the precision of the stream `os`}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
                const PointRange& points,
                const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
                )
 {
@@ -306,21 +283,19 @@ bool write_STL(std::ostream& os,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type   PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::type   PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   typedef typename boost::property_traits<PointMap>::value_type             Point;
-  typedef typename boost::property_traits<PointMap>::reference              Point_ref;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                       K;
   typedef typename K::Vector_3                                              Vector_3;
 
   if(!os.good())
     return false;
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
-  if(get_mode(os) == IO::BINARY)
+  if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(facets.size());
@@ -328,9 +303,9 @@ bool write_STL(std::ostream& os,
 
     for(const Triangle& face : facets)
     {
-      const Point_ref p = get(point_map, points[face[0]]);
-      const Point_ref q = get(point_map, points[face[1]]);
-      const Point_ref r = get(point_map, points[face[2]]);
+      const Point& p = get(point_map, points[face[0]]);
+      const Point& q = get(point_map, points[face[1]]);
+      const Point& r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
 
@@ -349,9 +324,9 @@ bool write_STL(std::ostream& os,
     os << "solid\n";
     for(const Triangle& face : facets)
     {
-      const Point_ref p = get(point_map, points[face[0]]);
-      const Point_ref q = get(point_map, points[face[1]]);
-      const Point_ref r = get(point_map, points[face[2]]);
+      const Point& p = get(point_map, points[face[0]]);
+      const Point& q = get(point_map, points[face[1]]);
+      const Point& r = get(point_map, points[face[2]]);
 
       const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
       os << "facet normal " << n << "\nouter loop\n";
@@ -365,17 +340,6 @@ bool write_STL(std::ostream& os,
 
   return !os.fail();
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename TriangleRange>
-bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& facets,
-               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
-{
-  return write_STL(os, points, facets, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsSTL
@@ -397,7 +361,7 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_binary_mode}
- *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+ *     \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
@@ -406,19 +370,19 @@ bool write_STL(std::ostream& os, const PointRange& points, const TriangleRange& 
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
  *     \cgalParamDefault{`6`}
- *     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+ *     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename TriangleRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename TriangleRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(const std::string& fname,
                const PointRange& points,
                const TriangleRange& facets,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<TriangleRange> >::type* = nullptr
 #endif
                )
 {
@@ -426,27 +390,18 @@ bool write_STL(const std::string& fname,
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_STL(os, points, facets, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
     return write_STL(os, points, facets, np);
   }
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename TriangleRange>
-bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets,
-               typename boost::enable_if<IO::internal::is_Range<TriangleRange> >::type* = nullptr)
-{
-  return write_STL(fname, points, facets, parameters::all_default());
-}
-
-/// \endcond
+} // namespace IO
 
 } // namespace CGAL
 

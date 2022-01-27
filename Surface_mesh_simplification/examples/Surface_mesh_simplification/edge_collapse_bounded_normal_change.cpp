@@ -35,7 +35,7 @@ struct Dummy_placement {
 int main(int argc, char** argv)
 {
   Surface_mesh surface_mesh;
-  const char* filename = (argc > 1) ? argv[1] : "data/fold.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fold.off");
   std::ifstream is(filename);
   if(!is || !(is >> surface_mesh))
   {
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
                                       .get_placement(Placement()));
 
   std::cout << t.time() << " sec" << std::endl;
-  CGAL::write_polygon_mesh((argc > 3) ? argv[3] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh((argc > 3) ? argv[3] : "out.off", surface_mesh, CGAL::parameters::stream_precision(17));
 
   return EXIT_SUCCESS;
 }

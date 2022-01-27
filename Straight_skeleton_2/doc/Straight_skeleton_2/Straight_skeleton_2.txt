@@ -266,7 +266,7 @@ If `Polygon_with_holes_2` is used, you can pass an instance of it directly to th
 
 \subsection Straight_skeleton_2CreateOffsetPolygonsfrom Create Offset Polygons from a Straight Skeleton
 
-If you already have a straight skeleton instance, the simpler way to generate offset polygons is to call `create_offset_polygons_2()` as shown in the next example, passing the desired offset and the straight skeleton. You can reuse the same skeleton to generate offsets at a different distance, which is recommended because producing the straight skeleton is much slower then generating offset polygons.
+If you already have a straight skeleton instance, the simpler way to generate offset polygons is to call `create_offset_polygons_2()` as shown in the next example, passing the desired offset and the straight skeleton. You can reuse the same skeleton to generate offsets at a different distance, which is recommended because producing the straight skeleton is much slower than generating offset polygons.
 
 \cgalExample{Straight_skeleton_2/Create_offset_polygons_2.cpp}
 

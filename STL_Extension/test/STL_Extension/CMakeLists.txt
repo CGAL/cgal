@@ -1,13 +1,23 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.22)
 project( STL_Extension_Tests )
 
 
 find_package(CGAL REQUIRED)
 find_package( TBB QUIET )
 include(CGAL_TBB_support)
+
+find_package(OpenMesh QUIET)
+
+if(OpenMesh_FOUND)
+  include(UseOpenMesh)
+  add_definitions(-DCGAL_USE_OPENMESH)
+else()
+  message(STATUS "Tests that use OpenMesh will not be compiled.")
+endif()
+
 
 create_single_source_cgal_program( "test_Boolean_tag.cpp" )
 create_single_source_cgal_program( "test_Cache.cpp" )
@@ -29,6 +39,7 @@ create_single_source_cgal_program( "test_is_streamable.cpp" )
 create_single_source_cgal_program( "test_lexcompare_outputrange.cpp" )
 create_single_source_cgal_program( "test_Modifiable_priority_queue.cpp" )
 create_single_source_cgal_program( "test_multiset.cpp" )
+create_single_source_cgal_program("test_cgal_named_params.cpp")
 
 add_executable( test_multiset_cc "test_multiset.cpp" )
 target_link_libraries( test_multiset_cc PUBLIC CGAL::CGAL )
@@ -48,4 +59,9 @@ create_single_source_cgal_program( "test_join_iterators.cpp" )
 create_single_source_cgal_program( "test_for_each.cpp" )
 if(TARGET CGAL::TBB_support)
   target_link_libraries(test_for_each PUBLIC CGAL::TBB_support)
+endif()
+
+if(OpenMesh_FOUND)
+  create_single_source_cgal_program("test_hash_OpenMesh.cpp")
+  target_link_libraries(test_hash_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
 endif()

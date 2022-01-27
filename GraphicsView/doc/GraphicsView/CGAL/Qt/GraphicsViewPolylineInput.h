@@ -45,7 +45,7 @@ bool closed = true);
 /// @{
 
 /*!
-The object `o` contains a `std:list<K::Point_2>`.
+The object `o` contains a `std::list<K::Point_2>`.
 */
 void generate(CGAL::Object o);
 

@@ -20,15 +20,15 @@ typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/sphere_20k.xyz";
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("points_3/sphere_20k.xyz");
 
   // Reads a file in points.
   // As the point is the second element of the tuple (that is with index 1)
   // we use a property map that accesses the 1st element of the tuple.
 
   std::vector<IndexedPointWithColorTuple> points;
-  if (!CGAL::read_points(fname, std::back_inserter(points),
-                         CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<1, IndexedPointWithColorTuple>())))
+  if (!CGAL::IO::read_points(fname, std::back_inserter(points),
+                             CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<1, IndexedPointWithColorTuple>())))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

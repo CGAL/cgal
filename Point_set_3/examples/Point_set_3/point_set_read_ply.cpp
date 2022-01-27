@@ -14,12 +14,12 @@ typedef CGAL::Point_set_3<Point> Point_set;
 
 int main (int argc, char** argv)
 {
-  std::ifstream f(argc > 1 ? argv[1] : "data/example.ply",
+  std::ifstream f(argc > 1 ? argv[1] : CGAL::data_file_path("points_3/example.ply"),
                   std::ios_base::binary); // Mandatory on Windows if input is binary PLY
 
   Point_set point_set;
 
-  if(!CGAL::read_PLY(f, point_set)) // same as `f >> point_set`
+  if(!CGAL::IO::read_PLY(f, point_set)) // same as `f >> point_set`
   {
     std::cerr << "Can't read input file " << std::endl;
     return EXIT_FAILURE;
@@ -45,11 +45,11 @@ int main (int argc, char** argv)
 
   if(argc > 2 && strcmp (argv[2], "-b") == 0) // Optional binary output
   {
-    CGAL::write_PLY("out.ply", point_set, CGAL::parameters::stream_precision(17));
+    CGAL::IO::write_PLY("out.ply", point_set, CGAL::parameters::stream_precision(17));
   }
   else // ASCII output
   {
-    CGAL::write_PLY("out.ply", point_set, CGAL::parameters::stream_precision(17)
+    CGAL::IO::write_PLY("out.ply", point_set, CGAL::parameters::stream_precision(17)
                                                            .use_binary_mode(false));
   }
 

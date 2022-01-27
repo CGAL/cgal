@@ -31,7 +31,7 @@ typedef Classification::Mesh_feature_generator<Kernel, Mesh, Face_point_map>    
 
 int main (int argc, char** argv)
 {
-  std::string filename = "data/b9_mesh.off";
+  std::string filename = CGAL::data_file_path("meshes/b9_mesh.off");
   std::string filename_config = "data/b9_mesh_config.bin";
 
   if (argc > 1)
@@ -40,9 +40,9 @@ int main (int argc, char** argv)
     filename_config = argv[2];
 
   Mesh mesh;
-  if(!CGAL::read_polygon_mesh(filename, mesh,
-                              // the PLY reader expects a binary file by default
-                              CGAL::parameters::use_binary_mode(false)))
+  if(!CGAL::IO::read_polygon_mesh(filename, mesh,
+                                  // the PLY reader expects a binary file by default
+                                  CGAL::parameters::use_binary_mode(false)))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;

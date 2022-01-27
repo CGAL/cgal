@@ -44,7 +44,7 @@ private:
 
 int main(int argc, char* argv[])
 {
-  std::ifstream input((argc>1)?argv[1]:"data/161.off");
+  std::ifstream input((argc>1)?argv[1]:CGAL::data_file_path("meshes/bear.off"));
   Polyhedron tmesh;
   input >> tmesh;
   if (!CGAL::is_triangle_mesh(tmesh))

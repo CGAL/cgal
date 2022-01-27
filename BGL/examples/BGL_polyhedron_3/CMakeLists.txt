@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(BGL_polyhedron_3_Examples)
 
 # CGAL and its components
@@ -51,12 +51,10 @@ else()
 endif()
 
 find_package( METIS )
-if( METIS_FOUND )
+include(CGAL_METIS_support)
+if( TARGET CGAL::METIS_support )
   create_single_source_cgal_program( "polyhedron_partition.cpp" )
-  if( METIS_FOUND )
-    target_include_directories( polyhedron_partition PRIVATE ${METIS_INCLUDE_DIRS} )
-    target_link_libraries( polyhedron_partition PRIVATE ${METIS_LIBRARIES} )
-  else()
-    message( STATUS "Examples that use the METIS library will not be compiled." )
-  endif()
+  target_link_libraries( polyhedron_partition PUBLIC CGAL::METIS_support)
+else()
+  message( STATUS "Examples that use the METIS library will not be compiled." )
 endif()

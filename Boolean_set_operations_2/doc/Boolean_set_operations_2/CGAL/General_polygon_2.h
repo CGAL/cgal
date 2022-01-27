@@ -35,6 +35,21 @@ number of edges size type.
 */
 typedef unspecified_type Size;
 
+/*!
+a general planar curve.
+*/
+typedef typename ArrTraits::Curve_2 Curve_2;
+
+/// @}
+
+/// \name Construction
+/// @{
+
+/*! constructs a `General_polygon_2` from a \f$X\f$-monotone curves.
+ */
+template <class CurveIterator>
+General_polygon_2(CurveIterator begin, CurveIterator end);
+
 /// @}
 
 /// \name Operations
@@ -84,7 +99,7 @@ Orientation orientation();
 /*!
 This operator imports a general polygon from the input stream `in`.
 
-Both ASCII and binary formats are supported, and the format is automatically detected.
+Both \ascii and binary formats are supported, and the format is automatically detected.
 
 The format consists of the number of points of the outer boundary followed
 by the points themselves in counterclockwise order, followed by the number of holes,
@@ -100,11 +115,11 @@ std::istream& operator>>(std::istream& in, CGAL::General_polygon_2<ArrTraits>& P
 /*!
 This operator exports a general polygon to the output stream `out`.
 
-An ASCII and a binary format exist. The format can be selected with
+An \ascii and a binary format exist. The format can be selected with
 the \cgal modifiers for streams, `set_ascii_mode` and `set_binary_mode`
 respectively. The modifier `set_pretty_mode` can be used to allow for (a
 few) structuring comments in the output. Otherwise, the output would
-be free of comments. The default for writing is ASCII without
+be free of comments. The default for writing is \ascii without
 comments.
 
 The number of curves of the outer boundary is exported followed by the

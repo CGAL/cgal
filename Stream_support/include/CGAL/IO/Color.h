@@ -27,6 +27,7 @@
 
 namespace CGAL {
 
+namespace IO {
 
 /*!
   \ingroup PkgStreamSupportRef
@@ -39,8 +40,6 @@ namespace CGAL {
   The alpha parameter (representing transparency) is often ignored and
   left to its default value (255 = no transparency), which is why we
   often refer to the <I>rgb-value</I> of the color.
-
-  \sa `CGAL::Geomview_stream`
 
 */
 
@@ -350,6 +349,22 @@ inline Color white() { return Color(255,255,255); }
 */
 inline Color yellow() { return Color(255,255,0); }
 
+} //namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::Color;
+using IO::black;
+using IO::blue;
+using IO::deep_blue;
+using IO::gray;
+using IO::green;
+using IO::orange;
+using IO::purple;
+using IO::red;
+using IO::violet;
+using IO::white;
+using IO::yellow;
+#endif
 
 } //namespace CGAL
 

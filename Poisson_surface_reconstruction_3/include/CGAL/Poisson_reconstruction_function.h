@@ -43,7 +43,7 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/array.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
@@ -110,18 +110,19 @@ struct Poisson_visitor {
 // The wrapper stores only pointers to the two functors.
 template <typename F1, typename F2>
 struct Special_wrapper_of_two_functions_keep_pointers {
+  typedef typename F2::FT FT;
   F1 *f1;
   F2 *f2;
   Special_wrapper_of_two_functions_keep_pointers(F1* f1, F2* f2)
     : f1(f1), f2(f2) {}
 
   template <typename X>
-  double operator()(const X& x) const {
+  FT operator()(const X& x) const {
     return (std::max)((*f1)(x), CGAL::square((*f2)(x)));
   }
 
   template <typename X>
-  double operator()(const X& x) {
+  FT operator()(const X& x) {
     return (std::max)((*f1)(x), CGAL::square((*f2)(x)));
   }
 }; // end struct Special_wrapper_of_two_functions_keep_pointers<F1, F2>
@@ -211,7 +212,7 @@ private:
   {
   private:
     std::atomic<Cache_state> m_state;
-    std::array<double, 9> m_bary;
+    std::array<FT, 9> m_bary;
   public:
     Cached_bary_coord() : m_state (UNINITIALIZED) { }
 
@@ -242,8 +243,8 @@ private:
 
     void set_initialized() { m_state = INITIALIZED; }
 
-    const double& operator[] (const std::size_t& idx) const { return m_bary[idx]; }
-    double& operator[] (const std::size_t& idx) { return m_bary[idx]; }
+    const FT& operator[] (const std::size_t& idx) const { return m_bary[idx]; }
+    FT& operator[] (const std::size_t& idx) { return m_bary[idx]; }
   };
 
   // Wrapper for thread safety of maintained cell hint for fast
@@ -273,7 +274,7 @@ private:
 
   // operator() is pre-computed on vertices of *m_tr by solving
   // the Poisson equation Laplacian(f) = divergent(normals field).
-  boost::shared_ptr<Triangulation> m_tr;
+  std::shared_ptr<Triangulation> m_tr;
   mutable std::shared_ptr<std::vector<Cached_bary_coord> > m_bary;
   mutable std::vector<Point> Dual;
   mutable std::vector<Vector> Normal;
@@ -769,7 +770,7 @@ private:
     SparseLinearAlgebraTraits_d solver, ///< sparse linear solver
     double lambda)
   {
-    CGAL_TRACE("Calls solve_poisson()\n");
+    CGAL_TRACE_STREAM << "Calls solve_poisson()\n";
 
     double time_init = clock();
 
@@ -785,7 +786,7 @@ private:
     m_tr->index_unconstrained_vertices();
     unsigned int nb_variables = static_cast<unsigned int>(m_tr->number_of_vertices()-1);
 
-    CGAL_TRACE("  Number of variables: %ld\n", (long)(nb_variables));
+    CGAL_TRACE_STREAM  << "  Number of variables: " <<  nb_variables << std::endl;
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(nb_variables); // matrix is symmetric definite positive
@@ -814,9 +815,9 @@ private:
     clear_duals();
     clear_normals();
     duration_assembly = (clock() - time_init)/CLOCKS_PER_SEC;
-    CGAL_TRACE("  Creates matrix: done (%.2lf s)\n", duration_assembly);
+    CGAL_TRACE_STREAM << "  Creates matrix: done (" << duration_assembly << "sec.)\n";
 
-    CGAL_TRACE("  Solve sparse linear system...\n");
+    CGAL_TRACE_STREAM << "  Solve sparse linear system...\n";
 
     // Solve "A*X = B". On success, solution is (1/D) * X.
     time_init = clock();
@@ -826,7 +827,7 @@ private:
     CGAL_surface_reconstruction_points_assertion(D == 1.0);
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
 
-    CGAL_TRACE("  Solve sparse linear system: done (%.2lf s)\n", duration_solve);
+    CGAL_TRACE_STREAM << "  Solve sparse linear system: done (" << duration_solve << "sec.)\n";
 
     // copy function's values to vertices
     unsigned int index = 0;
@@ -834,7 +835,7 @@ private:
       if(!m_tr->is_constrained(v))
         v->f() = X[index++];
 
-    CGAL_TRACE("End of solve_poisson()\n");
+    CGAL_TRACE_STREAM << "End of solve_poisson()\n";
 
     return true;
   }

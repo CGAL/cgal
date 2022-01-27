@@ -10,6 +10,7 @@
 #include <fstream>
 #include <vector>
 #include <CGAL/Memory_sizer.h>
+#include <CGAL/IO/io.h>
 
 using namespace std;
 using namespace nanoflann;
@@ -42,7 +43,7 @@ struct PointCloud
         inline size_t kdtree_get_point_count() const { return pts.size(); }
 
         // Returns the distance between the vector "p1[0:size-1]" and the data point with index "idx_p2" stored in the class:
-        inline T kdtree_distance(const T *p1, const size_t idx_p2,size_t size) const
+        inline T kdtree_distance(const T *p1, const size_t idx_p2,size_t /* size */) const
         {
                 const T d0=p1[0]-pts[idx_p2].x;
                 const T d1=p1[1]-pts[idx_p2].y;
@@ -64,7 +65,7 @@ struct PointCloud
         //   Return true if the BBOX was already computed by the class and returned in "bb" so it can be avoided to redo it again.
         //   Look at bb.size() to find out the expected dimensionality (e.g. 2 or 3 for point clouds)
         template <class BBOX>
-        bool kdtree_get_bbox(BBOX &bb) const { return false; }
+        bool kdtree_get_bbox(BBOX & /* bb */) const { return false; }
 
 };
 
@@ -90,7 +91,7 @@ void kdtree_demo(int argc, char** argv)
 
         // Generate points:
         std::ifstream input(argv[1], std::ios::in | std::ios::binary);
-        CGAL::set_binary_mode(input);
+        CGAL::IO::set_binary_mode(input);
         //        input >> n >> n; // dimension and # of points
         CGAL::read(input,n);
         CGAL::read(input,n);
@@ -98,7 +99,7 @@ void kdtree_demo(int argc, char** argv)
 
         std::vector<Point<double> > queries;
         std::ifstream queries_stream(argv[2], std::ios::in | std::ios::binary);
-        CGAL::set_binary_mode(queries_stream);
+        CGAL::IO::set_binary_mode(queries_stream);
         CGAL::read(queries_stream,n);
         CGAL::read(queries_stream,n);
         // queries_stream >> n >> n;
@@ -162,7 +163,7 @@ void kdtree_demo(int argc, char** argv)
             index.findNeighbors(resultSet, &query_pt[0], nanoflann::SearchParams(10,0));
             timer.stop();
 
-            for (int k=0; k<num_results; ++k){
+            for (size_t k=0; k<num_results; ++k){
               if(dump)
                 std::cerr <<cloud.pts[ret_index[k]] << std::endl;
             }

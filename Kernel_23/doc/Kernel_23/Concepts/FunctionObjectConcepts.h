@@ -1041,6 +1041,16 @@ public:
   Comparison_result operator()(const Kernel::Segment_2& s1,
                                const Kernel::Segment_2& s2);
 
+  /*!
+    compares the slopes of the segments `(s1s,s1t)` and `(s2s,s2t)`,
+    where the slope is the variation of the `y`-coordinate
+    from the left to the right endpoint of the segments.
+  */
+  Comparison_result operator()(const Kernel::Point_2& s1s,
+                               const Kernel::Point_2& s1t,
+                               const Kernel::Point_2& s2s,
+                               const Kernel::Point_2& s2t));
+
   /// @}
 
 }; /* end Kernel::CompareSlope_2 */
@@ -3882,8 +3892,6 @@ public:
     If `l1` and `l2` are parallel, then the bisector is defined as the line
     which has the same direction as `l1`, and which is at the same distance
     from `l1` and `l2`.
-    This function requires that `Kernel::RT` supports the `sqrt()`
-    operation.
   */
   Kernel::Line_2 operator()(const Kernel::Line_2&l1,
                             const Kernel::Line_2&l2);
@@ -3925,8 +3933,6 @@ public:
     If `h1` and `h2` are parallel, then the bisector is defined as the
     plane which has the same oriented normal vector as `h1`, and which is at
     the same distance from `h1` and `h2`.
-    This function requires that `Kernel::RT` supports the `sqrt()`
-    operation.
   */
   Kernel::Plane_3 operator()(const Kernel::Plane_3&h1,
                              const Kernel::Plane_3&h2);
@@ -5000,6 +5006,10 @@ public:
   */
   Kernel::Point_2 operator()(const Kernel::Point_2& p,
                              const Kernel::Point_2& q );
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s);
 
   /// @}
 
@@ -5026,6 +5036,11 @@ public:
   */
   Kernel::Point_3 operator()(const Kernel::Point_3& p,
                              const Kernel::Point_3& q );
+
+  /*!
+    computes the midpoint of the segment `s`.
+  */
+  Kernel::Point_3 operator()(const Kernel::Segment_3& s);
 
 
   /// @}
@@ -6909,7 +6924,7 @@ public:
   /// @{
 
   /*!
-    computes the unit normal of the vectors`q-p` and `r-p`.
+    computes the unit normal of the vectors `q-p` and `r-p`.
     This requires that `Kernel::FT` supports the `sqrt` operation.
   */
   Kernel::Vector_3 operator()(const Kernel::Point_3& p,
@@ -8413,8 +8428,6 @@ public:
   \cgalRefines `AdaptableFunctor` (with two arguments)
 
   \sa \link intersection_grp `CGAL::intersection()` \endlink
-  \sa `CGAL::cpp11::result_of`
-
 */
 class Intersect_2 {
 public:
@@ -8428,7 +8441,7 @@ public:
     `Type1` and `Type2`, for all pairs `Type1` and `Type2`.
     For details see the reference manual page for \link intersection_grp `CGAL::intersection()` \endlink.
   */
-  CGAL::cpp11::result_of<Kernel::Intersect_2(Type1, Type2)>::type
+  decltype(auto)
   operator()(Type1 obj1, Type2 obj2);
 
   /// @}
@@ -8442,8 +8455,6 @@ public:
   \cgalRefines `AdaptableFunctor` (with two or three arguments)
 
   \sa intersection_linear_grp
-  \sa `CGAL::cpp11::result_of`
-
 */
 class Intersect_3 {
 public:
@@ -8457,8 +8468,8 @@ public:
     objects of type `Type1` and `Type2`.
     For details see the reference manual page for \ref intersection_linear_grp.
   */
-  CGAL::cpp11::result_of<Kernel::Intersect_3(Type1, Type2)>::type
- operator()(Type1 obj1, Type2 obj2);
+  decltype(auto)
+  operator()(Type1 obj1, Type2 obj2);
 
 
 
@@ -8887,7 +8898,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`, or,
     if both \f$ x\f$- and \f$ y\f$- coordinate are identical and
     the \f$ z\f$-coordinate of `p` is smaller than the \f$ z\f$-coordinate of `q`.
@@ -8917,7 +8928,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_2&p,
@@ -8946,7 +8957,7 @@ public:
 
   /*!
     returns true iff the \f$ x\f$-coordinate of `p` is smaller than the
-    \f$ x\f$-coordinate of `q` or if the are the same and
+    \f$ x\f$-coordinate of `q` or if they are the same and
     the \f$ y\f$-coordinate of `p` is smaller than the \f$ y\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_3&p,
@@ -9029,7 +9040,7 @@ public:
 
   /*!
     returns true iff the \f$ y\f$-coordinate of `p` is smaller than the
-    \f$ y\f$-coordinate of `q` or if the are the same and
+    \f$ y\f$-coordinate of `q` or if they are the same and
     the \f$ x\f$-coordinate of `p` is smaller than the \f$ x\f$-coordinate of `q`.
   */
   bool operator()(const Kernel::Point_2&p,
@@ -9117,6 +9128,33 @@ public:
   /// @}
 
 }; /* end Kernel::LessZ_3 */
+
+
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with one arguments)
+*/
+class NonZeroCoordinateIndex_3
+{
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns any of `0`, `1`, or `2` if the corresponding coordinate of the vector `v` is not
+    equal to zero, and `-1` if `v` is the null vector.
+  */
+  int operator()(const Kernel::Vector_3& v);
+
+  /// @}
+
+};
 
 
 /*!
@@ -9247,6 +9285,16 @@ public:
   Oriented_side operator()(const Kernel::Triangle_2&t,
                            const Kernel::Point_2&p);
 
+  /*!
+  * returns \ref CGAL::ON_ORIENTED_BOUNDARY,
+  * \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE,
+  * depending on the position of the circumcenter of `t` relative
+  * to the oriented supporting line of `s`. The orientation of the
+  * supporting line is the same as the orientation of `s`.
+  */
+  Oriented_side operator()(const Kernel::Segment_2& s,
+                           const Kernel::Triangle_2& t);
+
   /// @}
 
 }; /* end Kernel::OrientedSide_2 */
@@ -9271,7 +9319,7 @@ public:
 
   /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY,
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE,
+    \ref CGAL::ON_NEGATIVE_SIDE, or \ref CGAL::ON_POSITIVE_SIDE,
     depending on the position of `p` relative to the oriented plane `h`.
   */
   Oriented_side operator()(const Kernel::Plane_3&h,
@@ -9279,7 +9327,17 @@ public:
 
   /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY,
-    \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE,
+    \ref CGAL::ON_NEGATIVE_SIDE, or \ref CGAL::ON_POSITIVE_SIDE,
+    depending on the position of `p` relative to the oriented plane constructed
+    from `plane_point` and `plane_vector`.
+  */
+  Oriented_side operator()(const Kernel::Point_3& plane_point,
+                           const Kernel::Vector_3& plane_vector,
+                           const Kernel::Point_3&p);
+
+  /*!
+    returns \ref CGAL::ON_ORIENTED_BOUNDARY,
+    \ref CGAL::ON_NEGATIVE_SIDE, or \ref CGAL::ON_POSITIVE_SIDE,
     depending on the position of `p` relative to the oriented tetrahedron `t`.
   */
   Oriented_side operator()(const Kernel::Tetrahedron_3&t,
@@ -9287,7 +9345,7 @@ public:
 
   /*!
     returns \ref CGAL::ON_ORIENTED_BOUNDARY,
-    \ref CGAL::ON_NEGATIVE_SIDE, or the \ref CGAL::ON_POSITIVE_SIDE,
+    \ref CGAL::ON_NEGATIVE_SIDE, or \ref CGAL::ON_POSITIVE_SIDE,
     depending on the position of `p` relative to the oriented sphere `s`.
   */
   Oriented_side operator()(const Kernel::Sphere_3& s,
@@ -9700,7 +9758,6 @@ public:
                            const Kernel::Point_3&r,
                            const Kernel::Point_3&s,
                            const Kernel::Point_3&t);
-
 
   /// @}
 

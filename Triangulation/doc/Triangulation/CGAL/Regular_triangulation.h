@@ -123,6 +123,53 @@ type `Weighted_point`.
 template< typename ForwardIterator >
 std::ptrdiff_t insert(ForwardIterator s, ForwardIterator e);
 
+/*!
+inserts the weighted point `p` in the triangulation on the
+condition that the vertex `star_center` appears
+in the conflict zone of `p` (that is, `p` would appear
+in the star of `star_center` after the insertion).
+
+If the insertion of `p` creates a new vertex, this vertex is returned.
+Otherwise, a default constructed handle is returned.
+
+If the dimension of the triangulation is `0` and if `p` coincides
+with an existing vertex and has a greater weight,
+then `p` replaces it as vertex of the triangulation
+and this vertex is returned.
+
+If `p` coincides with an already existing vertex, with both point and
+weights being equal, then this vertex is returned and the triangulation
+remains unchanged.
+
+By convention, if the insertion of `p` would increase the dimension
+of the triangulation, it is inserted.
+
+Prior to the actual insertion, `p` is located in the triangulation;
+`start` is used as a starting place for locating `p`.
+
+\sa `Regular_triangulation::compute_conflict_zone()`
+*/
+Vertex_handle insert_if_in_star(const Weighted_point& p, Vertex_handle star_center,
+                                Full_cell_handle start = Full_cell_handle());
+
+/*!
+Same as the above `insert_if_in_star()`, but uses a vertex as starting place for the search.
+*/
+Vertex_handle insert_if_in_star(const Weighted_point& p, Vertex_handle star_center,
+                                Vertex_handle hint);
+
+/*!
+inserts the weighted point `p` in the triangulation.
+
+This function is similar to the above `insert_if_in_star()` function,
+but takes as additional parameters the return values of the location query
+of `p`.
+
+\sa `Triangulation::locate()`.
+*/
+Vertex_handle insert_if_in_star(const Weighted_point& p, Vertex_handle star_center, Locate_type lt,
+                                const Face& f, const Facet& ft, Full_cell_handle s);
+
 /// @}
 
 /// \name Queries

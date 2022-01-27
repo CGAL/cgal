@@ -195,7 +195,7 @@ using namespace CGAL::parameters;
 
 int main()
 {
-  const char* fname = "data/cube.off";
+  const std::string fname = CGAL::data_file_path("meshes/cube.off");
   // Create input polyhedron
   Polyhedron polyhedron;
   std::ifstream input(fname);

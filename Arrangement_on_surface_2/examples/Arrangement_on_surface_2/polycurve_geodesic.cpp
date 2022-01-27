@@ -1,8 +1,6 @@
 //! \file examples/Arrangement_on_surface_2/polycurve_geodesic.cpp
 // Constructing an arrangement of polygeodesics.
 
-#define CGAL_IDENTIFICATION_XY 2
-
 #include <vector>
 #include <list>
 
@@ -31,20 +29,24 @@ typedef CGAL::Arr_spherical_topology_traits_2<Segment_traits_2>
 typedef CGAL::Arrangement_on_surface_2<Segment_traits_2, Topol_segment_traits_2>
                                                              Segment_arr;
 
-int main()
-{
-  Point_2 p1(0, 1, -1);
-  Point_2 p2(-11, 7, -7);
-  Point_2 p3(-1, 0, 0);
-  Point_2 p4(-11, 7, 7);
-  Point_2 p5(-1, 1, 1);
-
+int main() {
   Segment_traits_2 seg_traits;
+  Segment_traits_2::Construct_point_2 ctr_p =
+    seg_traits.construct_point_2_object();
+  Segment_traits_2::Construct_x_monotone_curve_2 ctr_seg =
+    seg_traits.construct_x_monotone_curve_2_object();
+
+  Point_2 p1 = ctr_p(0, 1, -1);
+  Point_2 p2 = ctr_p(-11, 7, -7);
+  Point_2 p3 = ctr_p(-1, 0, 0);
+  Point_2 p4 = ctr_p(-11, 7, 7);
+  Point_2 p5 = ctr_p(-1, 1, 1);
+
   Segment_arr seg_arr(&seg_traits);
-  X_seg_curve_2 seg_cv1(p1, p2);
-  X_seg_curve_2 seg_cv2(p2, p3);
-  X_seg_curve_2 seg_cv3(p3, p4);
-  X_seg_curve_2 seg_cv4(p4, p5);
+  X_seg_curve_2 seg_cv1 = ctr_seg(p1, p2);
+  X_seg_curve_2 seg_cv2 = ctr_seg(p2, p3);
+  X_seg_curve_2 seg_cv3 = ctr_seg(p3, p4);
+  X_seg_curve_2 seg_cv4 = ctr_seg(p4, p5);
 
   insert(seg_arr, seg_cv1);
   insert(seg_arr, seg_cv2);

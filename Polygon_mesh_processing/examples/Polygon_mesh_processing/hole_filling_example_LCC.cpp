@@ -22,10 +22,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mech-holes-shark.off");
 
   LCC mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -43,8 +43,8 @@ int main(int argc, char* argv[])
                                                                        h,
                                                                        std::back_inserter(patch_facets),
                                                                        std::back_inserter(patch_vertices),
-                                                                       PMP::parameters::vertex_point_map(get(CGAL::vertex_point, mesh))
-                                                                                       .geom_traits(Kernel())));
+                                                                       CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, mesh))
+                                                                                        .geom_traits(Kernel())));
 
       std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 
   std::ofstream out("filled_LCC.off");
   out.precision(17);
-  CGAL::write_OFF(out, mesh);
+  CGAL::IO::write_OFF(out, mesh);
 
   return 0;
 }

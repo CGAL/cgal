@@ -24,11 +24,6 @@
 #include <fstream>
 #include <string>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
 template <typename Point, typename Vector>
@@ -53,7 +48,7 @@ class Point_set_3;
   normal vectors, the normal map is added to the point set. For PLY
   input, all point properties found in the header are added.
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \param is input stream
   \param ps point set
@@ -73,19 +68,20 @@ std::istream& operator>>(std::istream& is,
 
   is.seekg(0);
   if(line.find("OFF") == 0 || line.find("NOFF") == 0)
-    CGAL::read_OFF(is, ps);
+    CGAL::IO::read_OFF(is, ps);
   else if(line.find("ply") == 0)
-    CGAL::read_PLY(is, ps);
+    CGAL::IO::read_PLY(is, ps);
 #ifdef CGAL_LINKED_WITH_LASLIB
   else if(line.find("LASF") == 0)
-    CGAL::read_LAS(is, ps);
+    CGAL::IO::read_LAS(is, ps);
 #endif // LAS
   else
-    CGAL::read_XYZ(is, ps);
+    CGAL::IO::read_XYZ(is, ps);
 
   return is;
 }
 
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IO
@@ -112,22 +108,22 @@ std::istream& operator>>(std::istream& is,
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
       \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
-                       are always ASCII, and the `LAS` format is always binary.}
+                       are always \ascii, and the `LAS` format is always binary.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \return `true` if the reading was successful, `false` otherwise.
  */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_point_set(const std::string& fname,
                     CGAL::Point_set_3<Point, Vector>& ps,
-                    const CGAL_BGL_NP_CLASS& np)
+                    const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz" || ext == "pwn")
     return read_XYZ(fname, ps);
@@ -143,15 +139,8 @@ bool read_point_set(const std::string& fname,
   return false;
 }
 
-/// \cond SKIP_IN_MANUAL
+} // namespace IO
 
-template <typename Point, typename Vector>
-bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& ps)
-{
-  return read_point_set(fname, ps, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,7 +153,9 @@ bool read_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& 
 
   All properties are inserted in their instantiation order.
 
-  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+             of the stream must be set to `BINARY`.
 
   \param os the output stream
   \param ps the point set
@@ -175,9 +166,11 @@ template <typename Point, typename Vector>
 std::ostream& operator<<(std::ostream& os,
                          const CGAL::Point_set_3<Point, Vector>& ps)
 {
-  write_PLY(os, ps);
+  IO::write_PLY(os, ps);
   return os;
 }
+
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IO
@@ -202,11 +195,11 @@ std::ostream& operator<<(std::ostream& os,
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
       \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
-                      are always ASCII, and the `LAS` format is always binary.}
+                      are always \ascii, and the `LAS` format is always binary.}
     \cgalParamNEnd
 
     \cgalParamNBegin{stream_precision}
@@ -218,12 +211,12 @@ std::ostream& operator<<(std::ostream& os,
 
   \return `true` if the writing was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_point_set(const std::string& fname,
                      CGAL::Point_set_3<Point, Vector>& ps,
-                     const CGAL_BGL_NP_CLASS& np)
+                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz")
     return write_XYZ(fname, ps, np);
@@ -239,15 +232,7 @@ bool write_point_set(const std::string& fname,
   return false;
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_point_set(const std::string& fname, CGAL::Point_set_3<Point, Vector>& ps)
-{
-  return write_point_set(fname, ps, parameters::all_default());
-}
-
-/// \endcond
+} // namespace IO
 
 } // namespace CGAL
 

@@ -23,7 +23,7 @@
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/compute_average_spacing.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/algorithm.h>
 #include <iterator>
@@ -185,7 +185,7 @@ compute_update_sample_point(
     if (dist2 < 1e-10) continue;
     FT dist = std::sqrt(dist2);
 
-    weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2); // L1
+    weight = std::exp(dist2 * iradius16) * CGAL::square(FT(1.0) / dist); // L1
 
     if (!is_sample_densities_empty)
     {
@@ -341,9 +341,9 @@ compute_density_weight_for_sample_point(
    For more details, please refer to \cgalCite{wlop-2009}.
 
    A parallel version of WLOP is provided and requires the executable to be
-   linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+   linked against the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+   See the <a href="https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top.html">TBB documentation</a>
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
@@ -429,22 +429,23 @@ compute_density_weight_for_sample_point(
 template <typename ConcurrencyTag,
           typename PointRange,
           typename OutputIterator,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 OutputIterator
 wlop_simplify_and_regularize_point_set(
   PointRange& points,
   OutputIterator output,
-  const NamedParameters& np
+  const NamedParameters& np = parameters::default_values()
 )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef CGAL::Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  PointMap point_map = NP_helper::get_point_map(points, np);
   double select_percentage = choose_parameter(get_parameter(np, internal_np::select_percentage), 5.);
   double radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
   unsigned int iter_number = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 35);
@@ -611,22 +612,6 @@ wlop_simplify_and_regularize_point_set(
 
   return output;
 }
-
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename ConcurrencyTag,
-          typename PointRange,
-          typename OutputIterator>
-OutputIterator
-wlop_simplify_and_regularize_point_set(
-  PointRange& points,
-  OutputIterator output)       ///< output iterator where output points are put.
-{
-  return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
-    (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
 
 } //namespace CGAL
 

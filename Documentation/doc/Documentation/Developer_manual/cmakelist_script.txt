@@ -26,7 +26,7 @@ source file</B>.
 libraries (i.e.\ "Core", "ImageIO", and "Qt5"). An example is `-c Core`.
 
 <DT><B>`-b boost1:boost2:...`</B><DD> Lists components ("boost1",
-"boost2") of \sc{Boost} to which the executable(s) should be
+"boost2") of \boost to which the executable(s) should be
 linked. Valid options are, for instance, "filesystem" or "program_options".
 
 </DL>

@@ -35,7 +35,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 // Compute cotangent Laplacian
-#include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 // Compute the vertex normal
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -44,7 +44,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 
 // Curve skeleton data structure
-#include <CGAL/internal/Surface_mesh_skeletonization/Curve_skeleton.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Curve_skeleton.h>
 
 // For Voronoi diagram
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -53,13 +53,13 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
 // For debugging macro
-#include <CGAL/internal/Surface_mesh_skeletonization/Debug.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Debug.h>
 
 // Some helper functions
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
 // For detect_degenarcy
-#include <CGAL/internal/Surface_mesh_skeletonization/Detect_degeneracy.h>
+#include <CGAL/Surface_mesh_skeletonization/internal/Detect_degeneracy.h>
 
 // Inside mesh test
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -222,12 +222,8 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::edge_descriptor         edge_descriptor;
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
 
-  // Cotangent weight calculator
-  typedef internal::Cotangent_weight<mTriangleMesh,
-    typename boost::property_map<mTriangleMesh, vertex_point_t>::type,
-    internal::Cotangent_value_minimum_zero<mTriangleMesh,
-      typename boost::property_map<mTriangleMesh, vertex_point_t>::type,
-      internal::Cotangent_value_Meyer_secure<mTriangleMesh> > >                Weight_calculator;
+  // Get weight from the weight interface.
+  typedef CGAL::Weights::Cotangent_weight<mTriangleMesh>                       Weight_calculator;
 
   typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
@@ -375,14 +371,14 @@ public:
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       VertexPointMap vertex_point_map,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(m_tmesh)
+    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
   {
     init(tmesh, vertex_point_map);
   }
 
   Mean_curvature_flow_skeletonization(const TriangleMesh& tmesh,
                                       const Traits& traits = Traits())
-    : m_traits(traits), m_weight_calculator(m_tmesh)
+    : m_traits(traits), m_weight_calculator(true /* use_clamped_version */)
   {
     init(tmesh);
   }
@@ -732,7 +728,7 @@ public:
     MCFSKEL_DEBUG(print_edges();)
 
     MCFSKEL_INFO(double area = CGAL::Polygon_mesh_processing::area(m_tmesh,
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(m_tmesh_point_pmap));)
+      CGAL::parameters::vertex_point_map(m_tmesh_point_pmap));)
     MCFSKEL_INFO(std::cout << "area " << area << "\n";)
   }
 
@@ -756,7 +752,7 @@ public:
       detect_degeneracies();
 
       double area = CGAL::Polygon_mesh_processing::area(m_tmesh,
-        CGAL::Polygon_mesh_processing::parameters::vertex_point_map(m_tmesh_point_pmap)
+        CGAL::parameters::vertex_point_map(m_tmesh_point_pmap)
         .geom_traits(m_traits));
       double area_ratio = fabs(last_area - area) / m_original_area;
 
@@ -861,7 +857,7 @@ private:
     m_are_poles_computed = false;
 
     m_original_area = CGAL::Polygon_mesh_processing::area(m_tmesh,
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(m_tmesh_point_pmap)
+      CGAL::parameters::vertex_point_map(m_tmesh_point_pmap)
       .geom_traits(m_traits));
 
     m_vertex_id_count = static_cast<int>(num_vertices(m_tmesh));
@@ -890,7 +886,7 @@ private:
     m_edge_weight.reserve(2 * num_edges(m_tmesh));
     for(halfedge_descriptor hd : halfedges(m_tmesh))
     {
-      m_edge_weight.push_back(m_weight_calculator(hd));
+      m_edge_weight.push_back(m_weight_calculator(hd, m_tmesh, m_tmesh_point_pmap));
     }
   }
 
@@ -1355,7 +1351,7 @@ private:
       int vid = static_cast<int>(get(m_vertex_id_pmap, v));
       m_normals[vid] = PMP::compute_vertex_normal(v
                           , m_tmesh
-                          , PMP::parameters::geom_traits(m_traits)
+                          , CGAL::parameters::geom_traits(m_traits)
                           .face_normal_map(normals_pmap));
     }
   }

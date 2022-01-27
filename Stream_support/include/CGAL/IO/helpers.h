@@ -26,6 +26,7 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
+// @MaelRL Shall we update that code now?
 // Ideally this should be a std::is_constructible(double, double, double) but boost::is_constructible
 // is not safe to use without CXX11
 template <typename Kernel>

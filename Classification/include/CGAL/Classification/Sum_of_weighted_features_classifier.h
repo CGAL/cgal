@@ -692,11 +692,7 @@ public:
     }
     // Write property tree to XML file
     boost::property_tree::write_xml(output, tree,
-#if BOOST_VERSION >= 105600
                                     boost::property_tree::xml_writer_make_settings<std::string>(' ', 3));
-#else
-                                    boost::property_tree::xml_writer_make_settings<char>(' ', 3));
-#endif
   }
 
   /*!

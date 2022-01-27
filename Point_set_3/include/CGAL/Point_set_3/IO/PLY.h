@@ -13,7 +13,7 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/io.h>
@@ -21,12 +21,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 
@@ -97,7 +91,7 @@ public:
 
     for(std::size_t j=0; j<element.number_of_properties(); ++j)
     {
-      IO::internal::PLY_read_number* property = element.property(j);
+      internal::PLY_read_number* property = element.property(j);
 
       const std::string& name = property->name();
       if(name == "x" ||
@@ -213,8 +207,6 @@ public:
 };
 
 } // namespace internal
-} // namespace IO
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -223,7 +215,7 @@ public:
 /*!
   \ingroup PkgPointSet3IOPLY
 
-  \brief reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
+  \brief reads a point set with properties from an input stream in \ascii or binary \ref IOStreamPLY.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -236,7 +228,7 @@ public:
   header. Each line starting by "comment " in the header is
   appended to the `comments` string (without the "comment " word).
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \param is the input stream
   \param point_set the point set
@@ -255,8 +247,8 @@ bool read_PLY(std::istream& is,
     return false;
   }
 
-  IO::internal::PLY_reader reader(true);
-  IO::internal::Point_set_3_filler<Point, Vector> filler(point_set);
+  internal::PLY_reader reader(true);
+  internal::Point_set_3_filler<Point, Vector> filler(point_set);
 
   if(!(reader.init(is)))
   {
@@ -268,7 +260,7 @@ bool read_PLY(std::istream& is,
 
   for(std::size_t i=0; i<reader.number_of_elements(); ++i)
   {
-    IO::internal::PLY_element& element = reader.element(i);
+    internal::PLY_element& element = reader.element(i);
 
     bool is_vertex = (element.name() == "vertex" || element.name() == "vertices");
     if(is_vertex)
@@ -281,7 +273,7 @@ bool read_PLY(std::istream& is,
     {
       for(std::size_t k=0; k<element.number_of_properties(); ++k)
       {
-        IO::internal::PLY_read_number* property = element.property(k);
+        internal::PLY_read_number* property = element.property(k);
         property->get(is);
         if(is.fail())
           return false;
@@ -309,7 +301,7 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 /*!
   \ingroup PkgPointSet3IOPLY
 
-  \brief reads a point set with properties from an input stream in ASCII or Binary \ref IOStreamPLY.
+  \brief reads a point set with properties from an input stream in \ascii or binary \ref IOStreamPLY.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -333,7 +325,7 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
     \cgalParamNEnd
@@ -341,60 +333,47 @@ bool read_PLY(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname,
               CGAL::Point_set_3<Point, Vector>& point_set,
               std::string& comments,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
-    CGAL::set_mode(is, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(is, CGAL::IO::BINARY);
     return read_PLY(is, point_set, comments);
   }
   else
   {
     std::ifstream is(fname);
-    CGAL::set_mode(is, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(is, CGAL::IO::ASCII);
     return read_PLY(is, point_set, comments);
   }
 }
 
 /// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, std::string& comments)
-{
-  return read_PLY(fname, point_set, comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::string unused_comments;
   return read_PLY(fname, point_set, unused_comments, np);
 }
-
-template <typename Point, typename Vector>
-bool read_PLY(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  std::string unused_comments;
-  return read_PLY(fname, point_set, unused_comments, parameters::all_default());
-}
-
 /// \endcond
+
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::read_PLY()` \endlink  should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSet3IO `CGAL::IO::read_PLY()` \endlink  should be used instead.
 
-  \brief reads a point set with properties from an input stream in ASCII or Binary PLY format.
+  \brief reads a point set with properties from an input stream in \ascii or binary PLY format.
 
   - the operator reads the vertex `point` property;
   - if three PLY properties `nx`, `ny` and `nz` with type `float`
@@ -412,7 +391,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set, ///< point set
                                         std::string& comments) ///< PLY comments.
 {
-  return read_PLY(is, point_set, comments);
+  return IO::read_PLY(is, point_set, comments);
 }
 
 template <typename Point, typename Vector>
@@ -420,7 +399,7 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
                                         CGAL::Point_set_3<Point, Vector>& point_set) ///< point set
 {
   std::string dummy;
-  return read_PLY(is, point_set, dummy);
+  return IO::read_PLY(is, point_set, dummy);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
@@ -428,6 +407,8 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
+
+namespace IO {
 
 /*!
   \ingroup PkgPointSet3IOPLY
@@ -441,7 +422,9 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
   the header of the PLY stream (each line will be precedeed by
   "comment ").
 
-  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+             of the stream must be set to `BINARY`.
 
   \tparam Point the point type of the `Point_set_3`
   \tparam Vector the vector type of the `Point_set_3`
@@ -456,18 +439,18 @@ CGAL_DEPRECATED bool read_ply_point_set(std::istream& is, ///< input stream.
    \cgalParamNBegin{stream_precision}
      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
      \cgalParamType{int}
-     \cgalParamDefault{`6`}
-     \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+     \cgalParamDefault{the precision of the stream `os`}
+     \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const CGAL::Point_set_3<Point, Vector>& point_set,
                const std::string& comments,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef CGAL::Point_set_3<Point, Vector> Point_set;
   typedef typename Point_set::Index Index;
@@ -493,11 +476,10 @@ bool write_PLY(std::ostream& os,
     return false;
   }
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
   os << "ply" << std::endl
-     << ((get_mode(os) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
+     << ((CGAL::IO::get_mode(os) == CGAL::IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
      << "comment Generated by the CGAL library" << std::endl;
 
   if(comments != std::string())
@@ -514,7 +496,7 @@ bool write_PLY(std::ostream& os,
   os << "element vertex " << point_set.number_of_points() << std::endl;
 
   std::vector<std::string> prop = point_set.base().properties();
-  std::vector<IO::internal::Abstract_property_printer<Index>*> printers;
+  std::vector<internal::Abstract_property_printer<Index>*> printers;
 
   for(std::size_t i=0; i<prop.size(); ++i)
   {
@@ -535,7 +517,7 @@ bool write_PLY(std::ostream& os,
            << "property double y" << std::endl
            << "property double z" << std::endl;
       }
-      printers.push_back(new IO::internal::Property_printer<Index,Point_map>(point_set.point_map()));
+      printers.push_back(new internal::Property_printer<Index,Point_map>(point_set.point_map()));
       continue;
     }
     if(prop[i] == "normal")
@@ -552,7 +534,7 @@ bool write_PLY(std::ostream& os,
            << "property double ny" << std::endl
            << "property double nz" << std::endl;
       }
-      printers.push_back(new IO::internal::Property_printer<Index,Vector_map>(point_set.normal_map()));
+      printers.push_back(new internal::Property_printer<Index,Vector_map>(point_set.normal_map()));
       continue;
     }
 
@@ -563,7 +545,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property char " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Char_property_printer<Index,Int8_map>(pmap));
+        printers.push_back(new internal::Char_property_printer<Index,Int8_map>(pmap));
         continue;
       }
     }
@@ -573,7 +555,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property uchar " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Char_property_printer<Index,Uint8_map>(pmap));
+        printers.push_back(new internal::Char_property_printer<Index,Uint8_map>(pmap));
         continue;
       }
     }
@@ -583,7 +565,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property short " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Simple_property_printer<Index,Int16_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int16_map>(pmap));
         continue;
       }
     }
@@ -593,7 +575,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property ushort " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Simple_property_printer<Index,Uint16_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint16_map>(pmap));
         continue;
       }
     }
@@ -603,7 +585,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property int " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Simple_property_printer<Index,Int32_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int32_map>(pmap));
         continue;
       }
     }
@@ -613,7 +595,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property uint " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Simple_property_printer<Index,Uint32_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint32_map>(pmap));
         continue;
       }
     }
@@ -623,7 +605,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property int " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
         continue;
       }
     }
@@ -633,7 +615,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property uint " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
         continue;
       }
     }
@@ -643,7 +625,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property float " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Simple_property_printer<Index,Float_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Float_map>(pmap));
         continue;
       }
     }
@@ -653,7 +635,7 @@ bool write_PLY(std::ostream& os,
       if(okay)
       {
         os << "property double " << prop[i] << std::endl;
-        printers.push_back(new IO::internal::Simple_property_printer<Index,Double_map>(pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Double_map>(pmap));
         continue;
       }
     }
@@ -666,11 +648,11 @@ bool write_PLY(std::ostream& os,
     for(std::size_t i=0; i<printers.size(); ++i)
     {
       printers[i]->print(os, *it);
-      if(get_mode(os) == IO::ASCII)
+      if(get_mode(os) == ASCII)
         os << " ";
     }
 
-    if(get_mode(os) == IO::ASCII)
+    if(get_mode(os) == ASCII)
       os << std::endl;
   }
 
@@ -681,22 +663,10 @@ bool write_PLY(std::ostream& os,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return write_PLY(os, point_set, std::string(), np);
-}
-
-template <typename Point, typename Vector>
-bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set, const std::string& comments)
-{
-  return write_PLY(os, point_set, comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector>
-bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_PLY(os, point_set, std::string(), parameters::all_default());
 }
 
 /// \endcond
@@ -724,7 +694,7 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
     \cgalParamNEnd
@@ -733,70 +703,59 @@ bool write_PLY(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{`6`}
-      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+      \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \return `true` if the reading was successful, `false` otherwise.
 */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& fname,
                const CGAL::Point_set_3<Point, Vector>& point_set,
                const std::string& comments,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np)
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, BINARY);
     return write_PLY(os, point_set, comments, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, ASCII);
     return write_PLY(os, point_set, comments, np);
   }
 }
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename Point, typename Vector>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set,
-               const std::string& comments)
-{
-  return write_PLY(fname, point_set, comments, parameters::all_default());
-}
-
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return write_PLY(fname, point_set, std::string(), np);
 }
 
-template <typename Point, typename Vector>
-bool write_PLY(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_PLY(fname, point_set, std::string(), parameters::all_default());
-}
-
 /// \endcond
+
+} // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 /*!
   \ingroup PkgPointSet3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.2,
-              \link PkgPointSet3IO `CGAL::write_PLY()` \endlink  should be used instead.
+  \deprecated This function is deprecated since \cgal 5.3,
+              \link PkgPointSet3IO `CGAL::IO::write_PLY()` \endlink  should be used instead.
  */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_ply_point_set(std::ostream& os,
                                          const CGAL::Point_set_3<Point, Vector>& point_set,
                                          const std::string& comments = std::string())
 {
-  return write_PLY(os, point_set, comments);
+  return IO::write_PLY(os, point_set, comments);
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE

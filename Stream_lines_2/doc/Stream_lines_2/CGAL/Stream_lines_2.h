@@ -109,7 +109,7 @@ returns the saturation ratio.
 FT get_saturation_ratio() const;
 
 /*!
-prints the streamlines to an ASCII file: line by line, and point by point.
+prints the streamlines to an \ascii file: line by line, and point by point.
 */
 void print_stream_lines(std::ofstream & fw);
 

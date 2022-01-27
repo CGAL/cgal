@@ -17,24 +17,23 @@
 
 #include <CGAL/license/Convex_hull_3.h>
 
-#include <CGAL/disable_warnings.h>
-
-#include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/convex_hull_2.h>
+#include <CGAL/Convex_hull_traits_3.h>
+#include <CGAL/Convex_hull_2/ch_assertions.h>
+#include <CGAL/Convex_hull_face_base_2.h>
+#include <CGAL/Convex_hull_vertex_base_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
-#include <CGAL/Convex_hull_traits_3.h>
-#include <CGAL/Convex_hull_2/ch_assertions.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Convex_hull_3/internal/Indexed_triangle_set.h>
 
-#include <CGAL/internal/Exact_type_selector.h>
+#include <CGAL/Number_types/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 #include <CGAL/Polyhedron_3_fwd.h>
@@ -359,6 +358,8 @@ public:
       }
     }
     catch (Uncertain_conversion_exception&){}
+    Protector protector(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     if (ek_plane_ptr==nullptr) {
       const typename Exact_K::Point_3 ep = to_EK(p);
       ek_plane_ptr = new Vector_plus_point<Exact_K>;
@@ -770,15 +771,15 @@ ch_quickhull_face_graph(std::list<typename Traits::Point_3>& points,
                         const Traits& traits)
 {
   typedef typename Traits::Point_3                            Point_3;
-  typedef typename Traits::Plane_3                                Plane_3;
-  typedef typename std::list<Point_3>::iterator           P3_iterator;
+  typedef typename Traits::Plane_3                            Plane_3;
+  typedef typename std::list<Point_3>::iterator               P3_iterator;
 
   typedef Triangulation_data_structure_2<
-    Triangulation_vertex_base_with_info_2<int, GT3_for_CH3<Traits> >,
-    Convex_hull_face_base_2<int, Traits> >                           Tds;
+    Convex_hull_vertex_base_2<int, GT3_for_CH3<Traits> >,
+    Convex_hull_face_base_2<int, Traits> >                    Tds;
 
-  typedef typename Tds::Vertex_handle                     Vertex_handle;
-  typedef typename Tds::Face_handle                     Face_handle;
+  typedef typename Tds::Vertex_handle                         Vertex_handle;
+  typedef typename Tds::Face_handle                           Face_handle;
 
   // found three points that are not collinear, so construct the plane defined
   // by these points and then find a point that has maximum distance from this
@@ -1060,10 +1061,10 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
   convex_hull_3(first, beyond, polyhedron, Traits());
 }
 
-template <class VertexListGraph, class PolygonMesh, class NamedParameters>
+template <class VertexListGraph, class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void convex_hull_3(const VertexListGraph& g,
                    PolygonMesh& pm,
-                   const NamedParameters& np)
+                   const NamedParameters& np = parameters::default_values())
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
@@ -1078,12 +1079,37 @@ void convex_hull_3(const VertexListGraph& g,
                 boost::make_transform_iterator(vertices(g).end(), v2p), pm);
 }
 
-template <class VertexListGraph, class PolygonMesh>
-void convex_hull_3(const VertexListGraph& g,
-                   PolygonMesh& pm)
+
+
+template <class InputIterator, class PointRange, class TriangleRange>
+void convex_hull_3(InputIterator first, InputIterator beyond,
+                   PointRange& vertices,
+                   TriangleRange& faces,
+                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0,
+                   typename std::enable_if<boost::has_range_iterator<PointRange>::value>::type* = 0,
+                   typename std::enable_if<boost::has_range_iterator<TriangleRange>::value>::type* = 0)
 {
-  convex_hull_3(g,pm,CGAL::parameters::all_default());
+  typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::type Traits;
+
+  Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
+  convex_hull_3(first, beyond, its, Traits());
 }
+
+
+template <class InputIterator, class P, class PointRange, class TriangleRange, class Traits>
+void convex_hull_3(InputIterator first, InputIterator beyond,
+                   PointRange& vertices,
+                   TriangleRange& faces,
+                   const Traits& traits,
+                   typename std::enable_if<CGAL::is_iterator<InputIterator>::value>::type* = 0,
+                   typename std::enable_if<boost::has_range_iterator<PointRange>::value>::type* = 0,
+                   typename std::enable_if<boost::has_range_iterator<TriangleRange>::value>::type* = 0)
+{
+  Convex_hull_3::internal::Indexed_triangle_set<PointRange, TriangleRange> its(vertices,faces);
+  convex_hull_3(first, beyond, its, traits);
+}
+
 
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator
@@ -1108,7 +1134,5 @@ extreme_points_3(const InputRange& range, OutputIterator out)
 }
 
 } // namespace CGAL
-
-#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CONVEX_HULL_3_H

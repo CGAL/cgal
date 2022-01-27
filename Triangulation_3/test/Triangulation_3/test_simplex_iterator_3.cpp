@@ -323,7 +323,7 @@ void test_triangulation_on_a_grid()
 
 int main(int argc, char* argv[])
 {
-  const char* fname = (argc>1) ? argv[1] : "data/blobby.xyz";
+  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/blobby.xyz");
   int nb_seg = (argc > 2) ? atoi(argv[2]) : 3;
 
   // Reads a .xyz point set file in points.
@@ -333,7 +333,7 @@ int main(int argc, char* argv[])
   std::vector<Point_3> points;
   std::ifstream stream(fname);
   if (!stream ||
-    !CGAL::read_XYZ(stream, std::back_inserter(points)))
+    !CGAL::IO::read_XYZ(stream, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

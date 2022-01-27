@@ -18,12 +18,9 @@
 #include <CGAL/IO/3MF.h>
 #include <CGAL/IO/OBJ.h>
 #include <CGAL/IO/OFF.h>
-// #include <CGAL/IO/OI.h>
 #include <CGAL/IO/PLY.h>
 #include <CGAL/IO/STL.h>
-// #include <CGAL/IO/VRML.h>
 #include <CGAL/IO/VTK.h>
-// #include <CGAL/IO/WKT.h>
 #include <CGAL/IO/GOCAD.h>
 
 #include <algorithm>
@@ -32,6 +29,8 @@
 #include <vector>
 
 namespace CGAL {
+
+namespace IO {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,8 +52,8 @@ namespace CGAL {
  * The format is detected from the filename extension (letter case is not important).
  *
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
- * \tparam PolygonRange a model of the concepts `SequenceContainer` and `BackInsertionSequence`
- *                      whose `value_type` is itself a model of the concepts `SequenceContainer`
+ * \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                      whose `value_type` is itself a model of the concepts `RandomAccessContainer`
  *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
  *                      convertible to `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -74,15 +73,15 @@ namespace CGAL {
  *
  * \return `true` if reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_polygon_soup(const std::string& fname,
                        PointRange& points,
                        PolygonRange& polygons,
-                       const CGAL_BGL_NP_CLASS& np)
+                       const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == std::string())
   {
     if(verbose)
@@ -113,16 +112,6 @@ bool read_polygon_soup(const std::string& fname,
 
   return false;
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool read_polygon_soup(const std::string& fname, PointRange& points, PolygonRange& polygons)
-{
-  return read_polygon_soup(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,15 +153,15 @@ bool read_polygon_soup(const std::string& fname, PointRange& points, PolygonRang
  *
  * \return `true` if writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_polygon_soup(const std::string& fname,
                         const PointRange& points,
                         const PolygonRange& polygons,
-                        const CGAL_BGL_NP_CLASS& np)
+                        const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
 
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
   if(ext == std::string())
   {
     if(verbose)
@@ -208,15 +197,7 @@ bool write_polygon_soup(const std::string& fname,
   return false;
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool write_polygon_soup(const std::string& fname, PointRange& points, PolygonRange& polygons)
-{
-  return write_polygon_soup(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
+} // namespace IO
 
 } // namespace CGAL
 

@@ -282,7 +282,8 @@ A polyhedron can be visualized by calling the \link PkgDrawPolyhedron CGAL::draw
 
 \cgalExample{Polyhedron/draw_polyhedron.cpp}
 
-This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_polyhedron,draw_polyhedron.png}
 Result of the run of the draw_polyhedron program. A window shows the polyhedron and allows to navigate through the 3D scene.
@@ -318,9 +319,7 @@ CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 Additional formats supported for writing are OpenInventor (<TT>.iv</TT>)
 \cgalCite{cgal:w-impoo-94}, VRML 1.0 and 2.0 (<TT>.wrl</TT>)
 \cgalCite{cgal:bpp-vrml-95}, \cgalCite{cgal:vrmls-97}, \cgalCite{cgal:hw-vrml2h-96},
-and \ref IOStreamOBJ (<TT>.obj</TT>). Another convenient output
-function writes a polyhedral surface to a Geomview process spawned
-from the \cgal program. These output functions are provided as
+and \ref IOStreamOBJ (<TT>.obj</TT>). These output functions are provided as
 stream operators, now acting on the stream type of the respective
 format.
 
@@ -328,7 +327,6 @@ format.
 #include <CGAL/IO/Polyhedron_inventor_ostream.h>
 #include <CGAL/IO/Polyhedron_VRML_1_ostream.h>
 #include <CGAL/IO/Polyhedron_VRML_2_ostream.h>
-#include <CGAL/IO/Polyhedron_geomview_ostream.h>
 
 template <class PolyhedronTraits_3>
 Inventor_ostream& operator<<( Inventor_ostream& out,
@@ -340,10 +338,6 @@ const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 template <class PolyhedronTraits_3>
 VRML_2_ostream& operator<<( VRML_2_ostream& out,
-const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
-
-template <class PolyhedronTraits_3>
-Geomview_stream& operator<<( Geomview_stream& out,
 const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);
 
 \endcode
@@ -430,7 +424,7 @@ faces but would be for vertices - and add the color attribute.
 
 template <class Refs>
 struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-CGAL::Color color;
+CGAL::IO::Color color;
 };
 
 \endcode
@@ -562,4 +556,3 @@ create the triangle in the halfedge data structure.
 
 */
 } /* namespace CGAL */
-

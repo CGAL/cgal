@@ -42,14 +42,14 @@ void test(const std::string& filename, const bool is_pm)
 
   Mesh g;
   std::cout<<"0"<<std::endl;
-  bool success = CGAL::read_polygon_mesh(filename, g, CGAL::parameters::verbose(true));
+  bool success = CGAL::IO::read_polygon_mesh(filename, g, CGAL::parameters::verbose(true));
   std::cout<<"1"<<std::endl;
   assert(is_pm == success); // if it's a pm, BGL reader should be enough
 
   g.clear();
-  success = CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, g,
-                                                             CGAL::parameters::verbose(true)
-                                                                              .erase_all_duplicates(true));
+  success = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, g,
+                                                                 CGAL::parameters::verbose(true)
+                                                                                  .erase_all_duplicates(true));
   std::cout<<"2"<<std::endl;
   assert(success);
   assert(is_valid(g));
@@ -60,9 +60,9 @@ std::cout<<"3"<<std::endl;
   Custom_VPM<Mesh> cvpm(cpoints);
 std::cout<<"4"<<std::endl;
   Mesh g2;
-  success = CGAL::Polygon_mesh_processing::read_polygon_mesh(filename, g2,
-                                                             CGAL::parameters::vertex_point_map(cvpm)
-                                                                              .erase_all_duplicates(true));
+  success = CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(filename, g2,
+                                                                 CGAL::parameters::vertex_point_map(cvpm)
+                                                                                  .erase_all_duplicates(true));
   std::cout<<"5"<<std::endl;
   assert(success);
   assert(num_vertices(g) == num_vertices(g2));
@@ -86,9 +86,9 @@ int main()
   typedef CGAL::Linear_cell_complex_traits<3, Kernel>                                        LCC_traits;
   typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper<2, 3, LCC_traits>::type LCC;
 
-  test<SM>("data/pig.off", true);
-  test<Polyhedron>("data/pig.off", true);
-  test<LCC>("data/pig.off", true);
+  test<SM>(CGAL::data_file_path("meshes/pig.off"), true);
+  test<Polyhedron>(CGAL::data_file_path("meshes/pig.off"), true);
+  test<LCC>(CGAL::data_file_path("meshes/pig.off"), true);
 
   test<SM>("data_polygon_soup/nm_vertex_and_edge.off", false);
   test<Polyhedron>("data_polygon_soup/nm_vertex_and_edge.off", false);

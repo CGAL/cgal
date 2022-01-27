@@ -26,12 +26,9 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
+
+namespace IO {
 
 /**
   \ingroup PkgPointSetProcessing3IO
@@ -74,33 +71,33 @@ namespace CGAL {
     \cgalParamNEnd
 
      \cgalParamNBegin{use_binary_mode}
-       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+       \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
        \cgalParamType{Boolean}
        \cgalParamDefault{`true`}
        \cgalParamExtra{This parameter is only relevant for `PLY` writing: the `OFF` and `XYZ` formats
-                       are always ASCII, and the `LAS` format is always binary.}
+                       are always \ascii, and the `LAS` format is always binary.}
      \cgalParamNEnd
 
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
       \cgalParamType{int}
       \cgalParamDefault{`6`}
-      \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+      \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful, `false` otherwise.
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_points(const std::string& fname,
                   const PointRange& points,
-                  const CGAL_BGL_NP_CLASS& np,
+                  const CGAL_NP_CLASS& np = parameters::default_values(),
 #ifndef DOXYGEN_RUNNING
-                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr
+                  typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
                   )
 {
-  const std::string ext = IO::internal::get_file_extension(fname);
+  const std::string ext = internal::get_file_extension(fname);
 
   if(ext == "xyz" || ext == "pwn")
     return write_XYZ(fname, points, np);
@@ -116,17 +113,6 @@ bool write_points(const std::string& fname,
   return false;
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_points(const std::string& fname,const PointRange& points,
-                  typename boost::enable_if<IO::internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_points(fname, points, parameters::all_default());
-}
-
-/// \endcond
-
-} // namespace CGAL
+} } // namespace CGAL::IO
 
 #endif // CGAL_POINT_SET_PROCESSING_WRITE_POINTS_H

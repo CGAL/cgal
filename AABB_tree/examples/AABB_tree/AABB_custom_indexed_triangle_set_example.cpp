@@ -106,7 +106,7 @@ public:
 // types
 typedef CGAL::AABB_traits<K, My_triangle_primitive> My_AABB_traits;
 typedef CGAL::AABB_tree<My_AABB_traits> Tree;
-const std::vector<My_point>* My_triangle_primitive::point_container = 0;
+const std::vector<My_point>* My_triangle_primitive::point_container = nullptr;
 
 int main()
 {

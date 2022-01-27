@@ -28,6 +28,7 @@
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
+#include <boost/container/flat_set.hpp>
 
 #include <array>
 #include <set>
@@ -177,14 +178,16 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   //check there is no duplicated ordered edge, and
   //check there is no polygon with twice the same vertex
   std::set<std::pair<V_ID, V_ID> > edge_set;
+  boost::container::flat_set<V_ID> polygon_vertices;
   V_ID max_id = 0;
+
   for(const Polygon& polygon : polygons)
   {
     std::size_t nb_edges = boost::size(polygon);
     if(nb_edges < 3)
       return false;
 
-    std::set<V_ID> polygon_vertices;
+    polygon_vertices.clear();
     V_ID prev = *std::prev(boost::end(polygon));
     for(V_ID id : polygon)
     {
@@ -266,12 +269,12 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 */
 template<typename PolygonMesh,
          typename PointRange, typename PolygonRange,
-         typename NamedParameters_PS, typename NamedParameters_PM>
+         typename NamedParameters_PS = parameters::Default_named_parameters, typename NamedParameters_PM = parameters::Default_named_parameters>
 void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const PolygonRange& polygons,
                                   PolygonMesh& out,
-                                  const NamedParameters_PS& np_ps,
-                                  const NamedParameters_PM& np_pm)
+                                  const NamedParameters_PS& np_ps = parameters::default_values(),
+                                  const NamedParameters_PM& np_pm = parameters::default_values())
 {
   CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                         "Input soup needs to define a valid polygon mesh! See is_polygon_soup_a_polygon_mesh() for further information.");
@@ -289,29 +292,6 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   internal::PS_to_PM_converter<PointRange, PolygonRange, Point_map> converter(points, polygons, pm);
   converter(out, vpm);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template<typename PolygonMesh,
-         typename PointRange, typename PolygonRange,
-         typename NamedParameters_PS>
-void polygon_soup_to_polygon_mesh(const PointRange& points,
-                                  const PolygonRange& polygons,
-                                  PolygonMesh& out,
-                                  const NamedParameters_PS& np_ps)
-{
-  return polygon_soup_to_polygon_mesh(points, polygons, out, np_ps, parameters::all_default());
-}
-
-template<typename PolygonMesh, typename PointRange, typename PolygonRange>
-void polygon_soup_to_polygon_mesh(const PointRange& points,
-                                  const PolygonRange& polygons,
-                                  PolygonMesh& out)
-{
-  return polygon_soup_to_polygon_mesh(points, polygons, out, parameters::all_default(), parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

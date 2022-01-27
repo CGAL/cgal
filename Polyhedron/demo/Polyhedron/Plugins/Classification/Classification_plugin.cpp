@@ -416,7 +416,7 @@ public Q_SLOTS:
   void update_plugin_from_item(Item_classification_base* classif)
   {
     disable_everything();
-    if (classif != NULL)
+    if (classif != nullptr)
       {
         enable_computation();
 
@@ -466,13 +466,13 @@ public Q_SLOTS:
       }
   }
 
-  Item_classification_base* get_classification(Scene_item* item = NULL)
+  Item_classification_base* get_classification(Scene_item* item = nullptr)
   {
     if (!item)
       item = scene->item(scene->mainSelectionIndex());
 
     if (!item)
-      return NULL;
+      return nullptr;
 
     Scene_polyhedron_selection_item* selection_item
       = qobject_cast<Scene_polyhedron_selection_item*>(item);
@@ -488,7 +488,7 @@ public Q_SLOTS:
       return it->second;
     }
 
-    return NULL;
+    return nullptr;
   }
 
 
@@ -502,7 +502,7 @@ public Q_SLOTS:
     if (points_item->point_set()->has_property_map<int> ("shape"))
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Point Set Classification",
+        = QMessageBox::question(nullptr, "Point Set Classification",
                                 "This point set is divided in clusters. Do you want to classify clusters instead of points?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -542,8 +542,6 @@ public Q_SLOTS:
   {
     if (classifier->text() == QString(CGAL_CLASSIFICATION_ETHZ_ID))
       return CGAL_CLASSIFICATION_ETHZ_NUMBER;
-    if (classifier->text() == QString(CGAL_CLASSIFICATION_TENSORFLOW_ID))
-      return CGAL_CLASSIFICATION_TENSORFLOW_NUMBER;
     if (classifier->text() == QString(CGAL_CLASSIFICATION_OPENCV_ID))
       return CGAL_CLASSIFICATION_OPENCV_NUMBER;
     if (classifier->text() == QString(CGAL_CLASSIFICATION_SOWF_ID))
@@ -667,13 +665,6 @@ public Q_SLOTS:
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
 #endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER) // Neural Network (TensorFlow)
-      filename = QFileDialog::getSaveFileName(mw,
-                                              tr("Save classification configuration"),
-                                              tr("%1 (CGAL Neural Network config).xml").arg(classif->item()->name()),
-                                              "CGAL TensorFlow Neural Network classification configuration (*.xml);;");
-#endif
 
     if (filename == QString())
       return;
@@ -724,13 +715,6 @@ public Q_SLOTS:
                                               tr("OpenCV %2.%3 random forest configuration (*.xml);;All Files (*)")
                                               .arg(CV_MAJOR_VERSION)
                                               .arg(CV_MINOR_VERSION));
-#endif
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER) // Neural Network (TensorFlow)
-      filename = QFileDialog::getOpenFileName(mw,
-                                              tr("Open CGAL Neural Network classification configuration"),
-                                              ".",
-                                              tr("CGAL Neural Network classification configuration (*.xml);;All Files (*)"));
 #endif
 
     if (filename == QString())
@@ -945,7 +929,7 @@ public Q_SLOTS:
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
 
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1065,7 +1049,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Classification",
+        = QMessageBox::question(nullptr, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1092,7 +1076,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Classification",
+        = QMessageBox::question(nullptr, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1120,7 +1104,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Classification",
+        = QMessageBox::question(nullptr, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1161,7 +1145,7 @@ public Q_SLOTS:
     if (classif->number_of_labels() != 0)
     {
       QMessageBox::StandardButton reply
-        = QMessageBox::question(NULL, "Classification",
+        = QMessageBox::question(nullptr, "Classification",
                                 "Current labels will be discarded. Continue?",
                                 QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes);
 
@@ -1213,7 +1197,7 @@ public Q_SLOTS:
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1299,10 +1283,6 @@ public Q_SLOTS:
 
     QRadioButton* sowf = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_SOWF_ID);
 
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    QRadioButton* tensorflow = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_TENSORFLOW_ID);
-#endif
-
 #ifdef CGAL_LINKED_WITH_OPENCV
     QRadioButton* opencv = dialog.add<QRadioButton> (CGAL_CLASSIFICATION_OPENCV_ID);
 #endif
@@ -1314,10 +1294,6 @@ public Q_SLOTS:
       classifier->setText(CGAL_CLASSIFICATION_ETHZ_ID);
     else if (sowf->isChecked())
       classifier->setText(CGAL_CLASSIFICATION_SOWF_ID);
-#ifdef CGAL_LINKED_WITH_TENSORFLOW
-    else if (tensorflow->isChecked())
-      classifier->setText(CGAL_CLASSIFICATION_TENSORFLOW_ID);
-#endif
 #ifdef CGAL_LINKED_WITH_OPENCV
     else if (opencv->isChecked())
       classifier->setText(CGAL_CLASSIFICATION_OPENCV_ID);
@@ -1360,21 +1336,6 @@ public Q_SLOTS:
       QSpinBox* depth = dialog.add<QSpinBox> ("Maximum depth of tree: ", "max_depth");
       depth->setRange (1, 9999);
       depth->setValue (20);
-    }
-    else if (classifier == CGAL_CLASSIFICATION_TENSORFLOW_NUMBER) // Neural Network (TensorFlow)
-    {
-      QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
-      trials->setRange (1, 99999);
-      trials->setValue (500);
-      DoubleEdit* rate = dialog.add<DoubleEdit> ("Learning rate: ", "learning_rate");
-      rate->setRange (0.00001, 10000.0);
-      rate->setValue (0.001);
-      QSpinBox* batch = dialog.add<QSpinBox> ("Batch size: ", "batch_size");
-      batch->setRange (1, 2000000000);
-      batch->setValue (1000);
-      dialog.add<QLineEdit> ("Hidden layer size(s): ", "hidden_layers");
-      QCheckBox* restart = dialog.add<QCheckBox> ("Restart from scratch: ", "restart");
-      restart->setChecked (false);
     }
 
     if (dialog.exec() != QDialog::Accepted)
@@ -1486,7 +1447,7 @@ public Q_SLOTS:
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1537,7 +1498,7 @@ public Q_SLOTS:
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1572,7 +1533,7 @@ public Q_SLOTS:
     }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {
@@ -1613,7 +1574,7 @@ public Q_SLOTS:
       }
 
     QPushButton* label_clicked = qobject_cast<QPushButton*>(QObject::sender()->parent()->parent());
-    if (label_clicked == NULL)
+    if (label_clicked == nullptr)
       std::cerr << "Error" << std::endl;
     else
     {

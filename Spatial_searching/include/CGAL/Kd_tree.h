@@ -21,11 +21,14 @@
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <vector>
+#include <string>
+#include <unordered_map>
+#include <ostream>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Splitters.h>
-#include <CGAL/internal/Get_dimension_tag.h>
+#include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 
 #include <boost/container/deque.hpp>
 #include <boost/optional.hpp>
@@ -281,10 +284,8 @@ public:
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
           Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false), removed_(false)
-  {
-    pts.insert(pts.end(), first, beyond);
-  }
+    : traits_(traits), split(s), pts(first, beyond), built_(false), removed_(false)
+  { }
 
   bool empty() const {
     return pts.empty();
@@ -377,6 +378,39 @@ public:
   int dim() const
   {
     return dim_;
+  }
+
+  std::ostream&
+  write_graphviz(std::ostream& s) const
+  {
+    int counter = -1;
+    std::unordered_map<const Node*, int> node_to_index;
+    tree_root->get_indices(counter, node_to_index);
+
+    const auto node_name = [&](const Node* node) {
+      const int index = node_to_index.at(node);
+      std::string node_name = "default_name";
+      if (node->is_leaf()) { // leaf node
+        node_name = "L" + std::to_string(index);
+      } else {
+        if (index == 0) { // root node
+          node_name = "R" + std::to_string(index);
+        } else { // internal node
+          node_name = "N" + std::to_string(index);
+        }
+      }
+      CGAL_assertion(node_name != "default_name");
+      return node_name;
+    };
+
+    s << "graph G" << std::endl;
+    s << "{" << std::endl << std::endl;
+    s << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
+    s << "Num items: " << tree_root->num_items() << ".\"" << std::endl;
+    s << node_name(tree_root) + " ;";
+    tree_root->print(s, node_name);
+    s << std::endl << "}" << std::endl << std::endl;
+    return s;
   }
 
 private:

@@ -17,7 +17,7 @@
 #ifndef CGAL_IO_GENERIC_WRITER_H
 #define CGAL_IO_GENERIC_WRITER_H
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iostream>
@@ -36,7 +36,7 @@ public:
   template <typename PointRange, typename PolygonRange, typename NamedParameters>
   bool operator()(const PointRange& points,
                   const PolygonRange& polygons,
-                  const NamedParameters& np)
+                  const NamedParameters& np = parameters::default_values())
   {
     typedef typename boost::range_value<PolygonRange>::type                   Poly;
 
@@ -49,13 +49,12 @@ public:
     if(!m_os.good())
       return false;
 
-    const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-    m_os.precision(precision);
+    set_stream_precision_from_NP(m_os, np);
 
     m_writer.write_header(m_os, points.size(), 0, polygons.size());
     for(std::size_t i=0, end=points.size(); i<end; ++i)
     {
-      const typename boost::property_traits<PointMap>::reference p = get(point_map, points[i]);
+      const typename boost::property_traits<PointMap>::value_type& p = get(point_map, points[i]);
       m_writer.write_vertex(p.x(), p.y(), p.z());
     }
 
@@ -73,13 +72,6 @@ public:
     m_writer.write_footer();
 
     return m_os.good();
-  }
-
-  template <typename PointRange, typename PolygonRange, typename NamedParameters>
-  bool operator()(const PointRange& points,
-                  const PolygonRange& polygons)
-  {
-    return this->operator()(points, polygons, parameters::all_default());
   }
 
 protected:

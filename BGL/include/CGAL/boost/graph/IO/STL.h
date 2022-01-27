@@ -23,11 +23,6 @@
 #include <iostream>
 #include <string>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +58,6 @@ public:
 };
 
 } // namespace internal
-} // namespace IO
 
 /*!
   \ingroup PkgBGLIoFuncsSTL
@@ -74,7 +68,7 @@ public:
 
   \attention The graph `g` is not cleared, and the data from the stream are appended.
 
-  \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+  \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
   \tparam Graph a model of `MutableFaceGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -104,16 +98,16 @@ public:
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np)
 {
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
   if(!is.good())
     return false;
-  IO::internal::STL_builder<Graph, Point> builder(is);
+  internal::STL_builder<Graph, Point> builder(is);
   return builder(g, np);
 }
 
@@ -136,7 +130,7 @@ bool read_STL(std::istream& is,
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be read in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
     \cgalParamNEnd
@@ -161,10 +155,10 @@ bool read_STL(std::istream& is,
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const std::string& fname,
               Graph& g, const
-              CGAL_BGL_NP_CLASS& np)
+              CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -173,7 +167,7 @@ bool read_STL(const std::string& fname,
   if(binary)
   {
     std::ifstream is(fname, std::ios::binary);
-    CGAL::set_mode(is, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(is, CGAL::IO::BINARY);
     if(read_STL(is, g, np))
     {
       return true;
@@ -181,9 +175,9 @@ bool read_STL(const std::string& fname,
     g.clear();
   }
   std::ifstream is(fname);
-  CGAL::set_mode(is, CGAL::IO::ASCII);
+  CGAL::IO::set_mode(is, CGAL::IO::ASCII);
 
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::type      VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(CGAL::vertex_point, g));
   bool v = choose_parameter(get_parameter(np, internal_np::verbose),
@@ -194,9 +188,7 @@ bool read_STL(const std::string& fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph>
-bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::all_default()); }
-template <typename Graph>
-bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
+bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::default_values()); }
 
 /// \endcond
 
@@ -209,7 +201,9 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 
   \brief writes the graph `g` in the output stream `os`, using the \ref IOStreamSTL.
 
-  \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+  \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+             of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink of the stream
+             must be set to `BINARY`.
 
   \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
   \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -231,8 +225,8 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
     \cgalParamNBegin{stream_precision}
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
-       \cgalParamDefault{`6`}
-       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+       \cgalParamDefault{the precision of the stream `os`}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -240,15 +234,15 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 
   \returns `true` if writing was successful, `false` otherwise.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor                  halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                      face_descriptor;
 
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::const_type    VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::const_type    VPM;
   typedef typename boost::property_traits<VPM>::reference                           Point_ref;
   typedef typename boost::property_traits<VPM>::value_type                          Point;
   typedef typename Kernel_traits<Point>::Kernel::Vector_3                           Vector;
@@ -262,10 +256,9 @@ bool write_STL(std::ostream& os,
   if(!os.good())
     return false;
 
-  const int precision = choose_parameter(get_parameter(np, internal_np::stream_precision), 6);
-  os.precision(precision);
+  set_stream_precision_from_NP(os, np);
 
-  if(get_mode(os) == IO::BINARY)
+  if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(g).size());
@@ -330,7 +323,7 @@ bool write_STL(std::ostream& os,
 
   \cgalNamedParamsBegin
     \cgalParamNBegin{use_binary_mode}
-      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in ASCII (`false`)}
+      \cgalParamDescription{indicates whether data should be written in binary (`true`) or in \ascii (`false`)}
       \cgalParamType{Boolean}
       \cgalParamDefault{`true`}
     \cgalParamNEnd
@@ -348,7 +341,7 @@ bool write_STL(std::ostream& os,
       \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
        \cgalParamType{int}
        \cgalParamDefault{`6`}
-       \cgalParamExtra{This parameter is only meaningful while using ASCII encoding.}
+       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
@@ -358,33 +351,25 @@ bool write_STL(std::ostream& os,
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_STL(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
   {
     std::ofstream os(fname, std::ios::binary);
-    CGAL::set_mode(os, CGAL::IO::BINARY);
+    CGAL::IO::set_mode(os, CGAL::IO::BINARY);
     return write_STL(os, g, np);
   }
   else
   {
     std::ofstream os(fname);
-    CGAL::set_mode(os, CGAL::IO::ASCII);
+    CGAL::IO::set_mode(os, CGAL::IO::ASCII);
+
     return write_STL(os, g, np);
   }
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool write_STL(std::ostream& os, const Graph& g) { return write_STL(os, g, parameters::all_default()); }
-template <typename Graph>
-bool write_STL(const std::string& fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
-
-/// \endcond
-
-} // namespace CGAL
+}} // namespace CGAL::IO
 
 #endif // CGAL_BGL_IO_STL_H

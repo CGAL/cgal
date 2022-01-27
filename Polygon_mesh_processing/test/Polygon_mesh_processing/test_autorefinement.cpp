@@ -22,7 +22,7 @@ struct My_visitor :
     : i (new int(0) )
   {}
 
-  boost::shared_ptr<int> i;
+  std::shared_ptr<int> i;
 };
 
 void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_points,
@@ -52,7 +52,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
     assert(total_nb_points == total_nb_pt);
     assert( !triple_intersection );
   }
-  catch(PMP::Corefinement::Triple_intersection_exception)
+  catch(const PMP::Corefinement::Triple_intersection_exception&)
   {
     assert( triple_intersection );
   }
@@ -61,13 +61,13 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
   try{
     My_visitor<Mesh> visitor;
     PMP::experimental::autorefine(mesh,
-      PMP::parameters::visitor(visitor));
+      CGAL::parameters::visitor(visitor));
     mesh.collect_garbage();
     assert( nb_vertices_after_autorefine==num_vertices(mesh));
     assert( (nb_vertices_before_autorefine!=nb_vertices_after_autorefine)== (*(visitor.i) != 0) );
     assert( !triple_intersection );
   }
-  catch(PMP::Corefinement::Triple_intersection_exception)
+  catch(const PMP::Corefinement::Triple_intersection_exception&)
   {
     assert( triple_intersection );
   }
@@ -83,7 +83,7 @@ void test(const char* fname, std::size_t nb_polylines, std::size_t total_nb_poin
     assert( nb_vertices_after_fix==num_vertices(mesh));
     assert( !triple_intersection );
   }
-  catch(PMP::Corefinement::Triple_intersection_exception)
+  catch(const PMP::Corefinement::Triple_intersection_exception&)
   {
     assert( triple_intersection );
   }

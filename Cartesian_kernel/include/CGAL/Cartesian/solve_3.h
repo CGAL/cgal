@@ -29,13 +29,27 @@ void solve (const VectorC3<R> &v0,
             const VectorC3<R> &v1,
             const VectorC3<R> &v2,
             const VectorC3<R> &d,
+            typename R::FT &alpha, typename R::FT &beta, typename R::FT &gamma, typename R::FT &denom)
+{
+  CGAL::solve(v0.x(), v0.y(), v0.z(),
+              v1.x(), v1.y(), v1.z(),
+              v2.x(), v2.y(), v2.z(),
+              d.x(),  d.y(),  d.z(),
+              alpha, beta, gamma, denom);
+}
+
+template <class R>
+void solve (const VectorC3<R> &v0,
+            const VectorC3<R> &v1,
+            const VectorC3<R> &v2,
+            const VectorC3<R> &d,
             typename R::FT &alpha, typename R::FT &beta, typename R::FT &gamma)
 {
   CGAL::solve(v0.x(), v0.y(), v0.z(),
-        v1.x(), v1.y(), v1.z(),
-        v2.x(), v2.y(), v2.z(),
-        d.x(),  d.y(),  d.z(),
-        alpha, beta, gamma);
+              v1.x(), v1.y(), v1.z(),
+              v2.x(), v2.y(), v2.z(),
+              d.x(),  d.y(),  d.z(),
+              alpha, beta, gamma);
 }
 
 } // namespace Cartesian_internal

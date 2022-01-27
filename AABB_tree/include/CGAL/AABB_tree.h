@@ -21,11 +21,11 @@
 
 #include <vector>
 #include <iterator>
-#include <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
-#include <CGAL/internal/AABB_tree/AABB_node.h>
-#include <CGAL/internal/AABB_tree/AABB_search_tree.h>
-#include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
-#include <CGAL/internal/AABB_tree/Primitive_helper.h>
+#include <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
+#include <CGAL/AABB_tree/internal/AABB_node.h>
+#include <CGAL/AABB_tree/internal/AABB_search_tree.h>
+#include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
+#include <CGAL/AABB_tree/internal/Primitive_helper.h>
 #include <boost/optional.hpp>
 #include <boost/lambda/lambda.hpp>
 
@@ -126,7 +126,7 @@ namespace CGAL {
     Self& operator=(const Self&) = delete;
 
     /**
-     * @brief Builds the datastructure from a sequence of primitives.
+     * @brief Builds the data structure from a sequence of primitives.
      * @param first iterator over first primitive to insert
      * @param beyond past-the-end iterator
      *
@@ -524,6 +524,36 @@ public:
         break;
       default: // if(size() >= 2)
         root_node()->template traversal<Traversal_traits,Query>(query, traits, m_primitives.size());
+      }
+    }
+
+    template <class Query, class Traversal_traits>
+    void traversal_with_priority(const Query& query, Traversal_traits& traits) const
+    {
+      switch(size())
+      {
+      case 0:
+        break;
+      case 1:
+        traits.intersection(query, singleton_data());
+        break;
+      default: // if(size() >= 2)
+        root_node()->template traversal_with_priority<Traversal_traits,Query>(query, traits, m_primitives.size());
+      }
+    }
+
+    template <class Query, class Traversal_traits>
+    void traversal_with_priority_and_group_traversal(const Query& query, Traversal_traits& traits, const std::size_t group_traversal_bound) const
+    {
+      switch(size())
+      {
+      case 0:
+        break;
+      case 1:
+        traits.intersection(query, singleton_data());
+        break;
+      default: // if(size() >= 2)
+        root_node()->template traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
       }
     }
 
@@ -1028,7 +1058,7 @@ public:
 
 } // end namespace CGAL
 
-#include <CGAL/internal/AABB_tree/AABB_ray_intersection.h>
+#include <CGAL/AABB_tree/internal/AABB_ray_intersection.h>
 
 #include <CGAL/enable_warnings.h>
 

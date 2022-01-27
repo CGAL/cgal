@@ -53,7 +53,7 @@ bool check_strict_ordering(const std::vector<FT> &error)
 int main()
 {
   Mesh mesh;
-  std::ifstream input("./data/plane-sphere-high.off");
+  std::ifstream input("data/plane-sphere-high.off");
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -66,7 +66,7 @@ int main()
   L21_approx approx(mesh, vpmap, error_metric);
 
   std::cout << "Random seeding by number." << std::endl;
-  std::srand(static_cast<unsigned int>(std::time(0)));
+  std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
   std::size_t count = 0;
   while (!count) {

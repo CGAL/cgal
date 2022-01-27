@@ -198,7 +198,7 @@ template <class R>
 CGAL_KERNEL_MEDIUM_INLINE
 Oriented_side
 SphereH3<R>::oriented_side(const typename SphereH3<R>::Point_3& p) const
-{ return Oriented_side(bounded_side(p) * orientation()); }
+{ return Oriented_side(static_cast<int>(bounded_side(p)) * static_cast<int>(orientation())); }
 
 template <class R>
 CGAL_KERNEL_INLINE

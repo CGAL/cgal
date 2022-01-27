@@ -79,7 +79,7 @@ void border_cases()
 int main()
 {
   SM sm;
-  std::ifstream input("data/head.off");
+  std::ifstream input(CGAL::data_file_path("meshes/head.off"));
   input >> sm;
 
 // define my selection of faces to remove

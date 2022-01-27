@@ -66,13 +66,13 @@ public:
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : "data/b9.ply");
+  std::string filename (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/b9.ply"));
   std::vector<Point> pts;
 
   std::cerr << "Reading input" << std::endl;
-  if (!(CGAL::read_points(filename, std::back_inserter(pts),
-                          // the PLY reader expects a binary file by default
-                          CGAL::parameters::use_binary_mode(false))))
+  if (!(CGAL::IO::read_points(filename, std::back_inserter(pts),
+                              // the PLY reader expects a binary file by default
+                              CGAL::parameters::use_binary_mode(false))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;

@@ -102,7 +102,7 @@ struct Regularization_graph
     typedef vertex_descriptor key_type;
     typedef std::size_t value_type;
     typedef std::size_t& reference;
-    typedef boost::lvalue_property_map_tag category;
+    typedef boost::read_write_property_map_tag category;
 
     Regularization_graph* rg;
 
@@ -132,7 +132,7 @@ struct Regularization_graph
       : rg (rg)
     { }
 
-    friend reference get (const Vertex_label_probability_map& pmap, key_type fd)
+    friend value_type get (const Vertex_label_probability_map& pmap, key_type fd)
     {
       double value = (1. - pmap.rg->weight) * pmap.rg->area (fd) / pmap.rg->total_area;
 
@@ -167,7 +167,7 @@ struct Regularization_graph
     Edge_cost_map (const Regularization_graph* rg)
       : rg (rg) { }
 
-    friend reference get (const Edge_cost_map& pmap, key_type ed)
+    friend value_type get (const Edge_cost_map& pmap, key_type ed)
     {
       fg_vertex_descriptor esource = source(ed, pmap.rg->fg);
       fg_vertex_descriptor etarget = target(ed, pmap.rg->fg);
@@ -484,7 +484,7 @@ reduce_face_selection(
     \cgalParamNEnd
 
     \cgalParamNBegin{prevent_unselection}
-      \cgalParamDescription{Boolean used to indicate if selection can be only extended or if it can also be shrinked.}
+      \cgalParamDescription{Boolean used to indicate if selection can be only expanded or if it can also be shrinked.}
       \cgalParamType{`bool`}
       \cgalParamDefault{`false`}
       \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
@@ -498,13 +498,13 @@ reduce_face_selection(
     \cgalParamNEnd
   \cgalNamedParamsEnd
 */
-template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters>
+template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters = parameters::Default_named_parameters>
 void
 regularize_face_selection_borders(
   TriangleMesh& mesh,
   IsSelectedMap is_selected,
   double weight,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -547,20 +547,9 @@ regularize_face_selection_borders(
 }
 
 /// \cond SKIP_IN_MANUAL
-// variant with default np
-template <typename TriangleMesh, typename IsSelectedMap>
-void
-regularize_face_selection_borders(
-  TriangleMesh& fg,
-  IsSelectedMap is_selected,
-  double weight)
-{
-  regularize_face_selection_borders (fg, is_selected, weight,
-                                     CGAL::parameters::all_default());
-}
-/// \endcond
 
-/// \cond SKIP_IN_MANUAL
+namespace experimental {
+
 // TODO: improve and document if useful
 //
 // Variant of regularization without graphcut but with brut-force
@@ -702,6 +691,8 @@ regularize_face_selection_borders(
     for (fg_face_descriptor fd : faces_around_target (hd, fg))
       put(is_selected, fd, true);
   }
+}
+
 }
 /// \endcond
 
@@ -1132,8 +1123,8 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
 
 //todo: take non-manifold vertices into account.
 template<class PolygonMesh, class FaceRange>
-bool is_selection_a_topological_disk(const FaceRange& face_selection,
-                                           PolygonMesh& pm)
+int euler_characteristic_of_selection(const FaceRange& face_selection,
+                                            PolygonMesh& pm)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -1149,8 +1140,18 @@ bool is_selection_a_topological_disk(const FaceRange& face_selection,
       sel_edges.insert(edge(h,pm));
     }
   }
-  return (sel_vertices.size() - sel_edges.size() + face_selection.size() == 1);
+  return  static_cast<int>(sel_vertices.size())
+        - static_cast<int>(sel_edges.size())
+        + static_cast<int>(face_selection.size());
 }
+
+template<class PolygonMesh, class FaceRange>
+bool is_selection_a_topological_disk(const FaceRange& face_selection,
+                                           PolygonMesh& pm)
+{
+  return euler_characteristic_of_selection(face_selection, pm) == 1;
+}
+
 } //end of namespace CGAL
 
 #endif //CGAL_BOOST_GRAPH_SELECTION_H

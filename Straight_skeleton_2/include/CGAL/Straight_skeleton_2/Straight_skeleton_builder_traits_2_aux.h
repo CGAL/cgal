@@ -136,20 +136,23 @@ public:
   result_type
   operator()(A&& ... a) const
   {
-    try
     {
       Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(std::forward<A>(a))...);
+      try
+      {
+        FC_result_type fr = Filter_construction(To_Filtered(std::forward<A>(a))...);
 
-      const double precision =
-        Lazy_exact_nt<double>::get_relative_precision_of_to_double();
+        const double precision =
+          Lazy_exact_nt<double>::get_relative_precision_of_to_double();
 
-      if ( fr && has_enough_precision(*fr, precision) )
-        return From_Filtered(fr);
+        if ( fr && has_enough_precision(*fr, precision) )
+          return From_Filtered(fr);
+      }
+      catch (Uncertain_conversion_exception&) {}
     }
-    catch (Uncertain_conversion_exception&) {}
 
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
+    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
     EC_result_type er = Exact_construction(To_Exact(std::forward<A>(a))...) ;
     return From_Exact(er);
   }

@@ -34,7 +34,7 @@ typedef CGAL::Polyhedron_3<EPICK, CGAL::Polyhedron_items_with_id_3>   Polyhedron
 typedef CGAL::Surface_mesh<EPICK::Point_3>                            Surface_mesh;
 
 template <typename Kernel, typename Mesh>
-void read_mesh(const char* filename,
+void read_mesh(const std::string filename,
                Mesh& sm)
 {
   typedef typename Kernel::Point_3                                    Point;
@@ -51,7 +51,7 @@ void read_mesh(const char* filename,
   {
     std::vector<Point> points;
     std::vector<std::array<int, 3> > faces;
-    CGAL::read_STL(in, points, faces);
+    CGAL::IO::read_STL(in, points, faces);
 
     if(!CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces))
       std::cerr << "W: File does not describe a polygon mesh" << std::endl;
@@ -69,7 +69,7 @@ void read_mesh(const char* filename,
 }
 
 template <typename Kernel, typename Mesh>
-void test(const char* filename,
+void test(const std::string filename,
           const double large_tolerance,
           const double good_tolerance,
           const double small_tolerance)
@@ -138,7 +138,7 @@ void test(const char* filename,
   out4.close();
 }
 
-void test(const char* filename,
+void test(const std::string filename,
           const double large_tolerance,
           const double good_tolerance,
           const double small_tolerance)
@@ -165,7 +165,7 @@ int main(int, char**)
   test("data_snapping/real_data.off", 1., 0.05, 0.0008);
   test("data_snapping/real_data_2.off", 2, 0.05, 0.000001);
 
-  test("data_snapping/pig.stl", 20, 0.3, 0.001);
+  test(CGAL::data_file_path("meshes/pig.stl"), 20, 0.3, 0.001);
 
   return EXIT_SUCCESS;
 }

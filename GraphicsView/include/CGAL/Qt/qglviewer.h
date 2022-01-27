@@ -72,11 +72,11 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
 
 public:
   //todo check if this is used. If not remove it
-  explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
+  explicit QGLViewer(QGLContext* context, QWidget *parent = nullptr,
                      ::Qt::WindowFlags flags = ::Qt::WindowType(0));
-  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = 0,
+  explicit QGLViewer(QOpenGLContext* context, QWidget *parent = nullptr,
                      ::Qt::WindowFlags flags = ::Qt::WindowType(0));
-  explicit QGLViewer(QWidget *parent = 0,
+  explicit QGLViewer(QWidget *parent = nullptr,
                      ::Qt::WindowFlags flags = ::Qt::WindowType(0));
 
   virtual ~QGLViewer();
@@ -179,9 +179,7 @@ public:
   /*! Returns the background color of the viewer.
 
   This method is provided for convenience since the background color is an
-  OpenGL state variable set with \c glClearColor(). However, this internal
-  representation has the advantage that it is saved (resp. restored) with
-  saveStateToFile() (resp. restoreStateFromFile()).
+  OpenGL state variable set with \c glClearColor().
 
   Use setBackgroundColor() to define and activate a background color.
 
@@ -667,9 +665,8 @@ protected:
   initialize some of the OpenGL flags. The default implementation is empty. See
   initializeGL().
 
-  Typical usage include camera() initialization (showEntireScene()), previous
-  viewer state restoration (restoreStateFromFile()), OpenGL state modification
-  and display list creation.
+  Typical usage include camera() initialization (showEntireScene()),
+ OpenGL state modification and display list creation.
 
   Note that initializeGL() modifies the standard OpenGL context. These values
   can be restored back in this method.
@@ -719,7 +716,6 @@ protected:
   virtual void keyPressEvent(QKeyEvent *);
   virtual void keyReleaseEvent(QKeyEvent *);
   virtual void timerEvent(QTimerEvent *);
-  virtual void closeEvent(QCloseEvent *);
   //@}
 
   /*! @name Object selection */
@@ -837,8 +833,26 @@ public:
 
 public Q_SLOTS:
   void setShortcut(qglviewer::KeyboardAction action, unsigned int key);
+  void setShortcut(qglviewer::KeyboardAction action, ::Qt::Modifier modifier, ::Qt::Key key)
+  {
+    setShortcut(action,
+                static_cast<unsigned int>(modifier)+
+                static_cast<unsigned int>(key));
+  }
 
   void setKeyDescription(unsigned int key, QString description);
+  void setKeyDescription(::Qt::KeyboardModifier modifier, ::Qt::Key key, QString description)
+  {
+    setKeyDescription(static_cast<unsigned int>(modifier) +
+                      static_cast<unsigned int>(key),
+                      description);
+  }
+  void setKeyDescription(::Qt::Modifier modifier, ::Qt::Key key, QString description)
+  {
+    setKeyDescription(static_cast<unsigned int>(modifier) +
+                      static_cast<unsigned int>(key),
+                      description);
+  }
   void clearShortcuts();
 
 // Key Frames shortcut keys
@@ -921,35 +935,11 @@ protected:
   //@{
 public:
   QString stateFileName() const;
-  virtual QDomElement domElement(const QString &name,
-                                 QDomDocument &document) const;
 Q_SIGNALS:
   void needNewContext();
 
-public Q_SLOTS:
-  virtual void initFromDOMElement(const QDomElement &element);
-  virtual void saveStateToFile(); // cannot be const because of QMessageBox
-  virtual bool restoreStateFromFile();
-
-  /*! Defines the stateFileName() used by saveStateToFile() and
-    restoreStateFromFile().
-
-    The file name can have an optional prefix directory (no prefix meaning
-    current directory). If the directory does not exist, it will be created by
-    saveStateToFile().
-
-    \code
-    // Name depends on the displayed 3D model. Saved in current directory.
-    setStateFileName(3DModelName() + ".xml");
-
-    // Files are stored in a dedicated directory under user's home directory.
-    setStateFileName(QDir::homeDirPath + "/.config/myApp.xml");
-    \endcode */
-  void setStateFileName(const QString &name) { stateFileName_ = name; }
-
 
 protected:
-  static void saveStateToFileForAllViewers();
   //@}
 
   /*! @name QGLViewer pool */
@@ -1167,8 +1157,6 @@ protected:
   QMap<WheelBindingPrivate, MouseActionPrivate> wheelBinding_;
   QMap<ClickBindingPrivate, qglviewer::ClickAction> clickBinding_;
   ::Qt::Key currentlyPressedKey_;
-  // S t a t e   F i l e
-  QString stateFileName_;
 
   // H e l p   w i n d o w
   QTabWidget *helpWidget_;

@@ -1,7 +1,6 @@
 set(list_of_whitelisted_headers_txt [=[
   CGAL/SCIP_mixed_integer_program_traits.h
   CGAL/GLPK_mixed_integer_program_traits.h
-  CGAL/Classification/TensorFlow/Neural_network_classifier.h
   CGAL/Linear_cell_complex_constructors.h
   CGAL/CGAL_Ipelet_base.h
   CGAL/IO/read_las_points.h
@@ -42,7 +41,7 @@ set(list_of_whitelisted_headers_txt [=[
   CGAL/IO/Triangulation_geomview_ostream_3.h
   CGAL/IO/Triangulation_geomview_ostream_2.h
   CGAL/IO/Polyhedron_geomview_ostream.h
-
+  CGAL/Mesh_3/generate_label_weights.h
 ]=])
 
 separate_arguments(list_of_whitelisted_headers UNIX_COMMAND ${list_of_whitelisted_headers_txt})

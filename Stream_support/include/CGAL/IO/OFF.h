@@ -20,7 +20,7 @@
 
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/use.h>
@@ -31,11 +31,6 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 
@@ -72,7 +67,7 @@ bool read_OFF(std::istream& is,
   typedef typename Kernel::Point_2                                                    Texture;
   typedef typename Kernel::Vector_3                                                   Normal;
   typedef typename Kernel::FT                                                         FT;
-  typedef CGAL::Color                                                                 Color;
+  typedef CGAL::IO::Color                                                                 Color;
 
 
   if(!is.good()){
@@ -92,7 +87,7 @@ bool read_OFF(std::istream& is,
     double x(0), y(0), z(0), w(0);
     scanner.scan_vertex(x, y, z, w);
     CGAL_assertion(w != 0);
-    IO::internal::fill_point(x, y, z, w, points[i]);
+    internal::fill_point(x, y, z, w, points[i]);
 
     if(scanner.has_normals())
     {
@@ -153,7 +148,6 @@ bool read_OFF(std::istream& is,
 }
 
 } // namespace internal
-} // namespace IO
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
@@ -184,41 +178,30 @@ bool read_OFF(std::istream& is,
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
               )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  return IO::internal::read_OFF(is, points, polygons,
-                                choose_parameter(get_parameter(np, internal_np::vertex_normal_output_iterator),
-                                                 CGAL::Emptyset_iterator()),
-                                choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
-                                                 CGAL::Emptyset_iterator()),
-                                choose_parameter(get_parameter(np, internal_np::vertex_texture_output_iterator),
-                                                 CGAL::Emptyset_iterator()),
-                                choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
-                                                 CGAL::Emptyset_iterator()),
-                                choose_parameter(get_parameter(np, internal_np::verbose), true));
+  return internal::read_OFF(is, points, polygons,
+                            choose_parameter(get_parameter(np, internal_np::vertex_normal_output_iterator),
+                                             CGAL::Emptyset_iterator()),
+                            choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
+                                             CGAL::Emptyset_iterator()),
+                            choose_parameter(get_parameter(np, internal_np::vertex_texture_output_iterator),
+                                             CGAL::Emptyset_iterator()),
+                            choose_parameter(get_parameter(np, internal_np::face_color_output_iterator),
+                                             CGAL::Emptyset_iterator()),
+                            choose_parameter(get_parameter(np, internal_np::verbose), true));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OFF(is, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
@@ -248,30 +231,19 @@ bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons,
  *
  * \returns `true` if the reading was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
               )
 {
   std::ifstream in(fname);
   return read_OFF(in, points, polygons, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OFF(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -298,36 +270,25 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
  *   \cgalParamNBegin{stream_precision}
  *     \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
  *     \cgalParamType{int}
- *     \cgalParamDefault{`6`}
+ *     \cgalParamDefault{the precision of the stream `os`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
                )
 {
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
   return writer(points, polygons, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& polygons
-               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_OFF(os, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsOFF
@@ -356,13 +317,13 @@ bool write_OFF(std::ostream& os, const PointRange& points, const PolygonRange& p
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr
+               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
 #endif
                )
 {
@@ -371,16 +332,7 @@ bool write_OFF(const std::string& fname,
   return writer(points, polygons, np);
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool write_OFF(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<IO::internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_OFF(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
+} // namespace IO
 
 } // namespace CGAL
 

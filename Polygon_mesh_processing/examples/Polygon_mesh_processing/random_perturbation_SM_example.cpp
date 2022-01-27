@@ -18,10 +18,10 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/eight.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/eight.off");
 
   Surface_mesh mesh;
-  if(!PMP::read_polygon_mesh(filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 
   PMP::random_perturbation(mesh, max_size, CGAL::parameters::vertex_point_map(mesh.points()).geom_traits(K()));
 
-  CGAL::write_polygon_mesh("data/eight_perturbed.off", mesh, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_mesh("data/eight_perturbed.off", mesh, CGAL::parameters::stream_precision(17));
 
   return 0;
 }

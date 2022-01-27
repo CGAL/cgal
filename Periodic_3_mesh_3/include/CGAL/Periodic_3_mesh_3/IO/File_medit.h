@@ -330,6 +330,8 @@ void output_to_medit(std::ostream& os,
 
 } // namespace Periodic_3_mesh_3
 
+namespace IO {
+
 /**
  * \brief outputs a periodic mesh to the .mesh file format, which can be visualized
  *        using medit. By default, 7 copies are used, for a total of 8 instances of the domains.
@@ -366,6 +368,12 @@ void output_periodic_mesh_to_medit(std::ostream& os,
       Periodic_3_mesh_3::output_to_medit<C3T3, false, true>(os, c3t3, occurrence_count, distinguish_copies);
   }
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_periodic_mesh_to_medit;
+#endif
 
 } // namespace CGAL
 

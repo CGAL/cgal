@@ -43,7 +43,7 @@ collapse_edge_test()
 
   const std::string fname = "data/flat_hexahedron.off";
   Mesh m;
-  if(!CGAL::read_OFF(fname, m))
+  if(!CGAL::IO::read_OFF(fname, m))
     std::cout << "Error reading file: " << fname << std::endl;
 
   bool m_is_valid = CGAL::is_valid(m);

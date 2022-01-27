@@ -30,6 +30,7 @@ public:
   typedef TDS                          Triangulation_data_structure;
   typedef typename TDS::Vertex_handle  Vertex_handle;
   typedef typename TDS::Face_handle    Face_handle;
+  typedef typename TDS::Face_data      TDS_data;
 
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_face_base_2<TDS2> Other; };
@@ -37,6 +38,7 @@ public:
 private:
   Vertex_handle V[3];
   Face_handle   N[3];
+  TDS_data      _tds_data;
 
 public:
   Triangulation_ds_face_base_2();
@@ -81,6 +83,9 @@ public:
   void * for_compact_container() const {return N[0].for_compact_container(); }
   void for_compact_container(void* p) { N[0].for_compact_container(p);}
 
+  // TDS internal data access functions.
+        TDS_data& tds_data()       { return _tds_data; }
+  const TDS_data& tds_data() const { return _tds_data; }
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
   static int  cw(int i) {return Triangulation_cw_ccw_2::cw(i);}
@@ -235,7 +240,7 @@ Triangulation_ds_face_base_2<TDS> ::
 set_neighbor(int i, Face_handle n)
 {
   CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
-  CGAL_triangulation_precondition( this != &*n );
+  CGAL_triangulation_precondition( this != n.operator->() );
   N[i] = n;
 }
 

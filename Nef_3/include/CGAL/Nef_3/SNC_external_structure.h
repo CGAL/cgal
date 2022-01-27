@@ -660,7 +660,7 @@ public:
                cet->source()->twin() == ce->source() )
             break;
 
-#ifndef NDEBUG
+#ifdef CGAL_USE_TRACE
       if( cet->circle() != ce->circle().opposite() )
         CGAL_NEF_TRACEN("assertion failed!");
 
@@ -883,9 +883,9 @@ public:
       }
     }
 
-    // finaly, we go through all the Shells which do not correspond to a Volume
-    //     and we assign them to its enclosing Volume determined via a facet below
-    //     check.
+    // finally, we go through all the Shells which do not correspond to a Volume
+    // and we assign them to its enclosing Volume determined via a facet below
+    // check.
 
     CGAL_forall_sfaces(f,*this->sncp()) {
       //    progress3++;

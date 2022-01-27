@@ -17,10 +17,9 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Polygon_mesh_processing/Weights.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
-
+#include <CGAL/Weights/cotangent_weights.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/utility.h>
 
@@ -40,45 +39,6 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
-
-// Empirically, _Meyer seems to produce the best results from the various weights available in Weights.h
-template<typename TriangleMesh,
-         typename VertexPointMap,
-         typename CotangentValue = CGAL::internal::Cotangent_value_Meyer<TriangleMesh, VertexPointMap> >
-struct Edge_cotangent_weight
-  : public CotangentValue
-{
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
-
-  Edge_cotangent_weight(TriangleMesh& pmesh_, VertexPointMap vpmap_) : CotangentValue(pmesh_, vpmap_) {}
-
-  TriangleMesh& pmesh() { return CotangentValue::pmesh(); }
-
-  double operator()(halfedge_descriptor he)
-  {
-    if(is_border_edge(he, pmesh()))
-    {
-      halfedge_descriptor h1 = next(he, pmesh());
-      vertex_descriptor vs = source(he, pmesh());
-      vertex_descriptor vt = target(he, pmesh());
-      vertex_descriptor v1 = target(h1, pmesh());
-
-      return CotangentValue::operator()(vs, v1, vt);
-    }
-    else
-    {
-      halfedge_descriptor h1 = next(he, pmesh());
-      halfedge_descriptor h2 = prev(opposite(he, pmesh()), pmesh());
-      vertex_descriptor vs = source(he, pmesh());
-      vertex_descriptor vt = target(he, pmesh());
-      vertex_descriptor v1 = target(h1, pmesh());
-      vertex_descriptor v2 = source(h2, pmesh());
-
-      return CotangentValue::operator()(vs, v1, vt) + CotangentValue::operator()(vs, v2, vt);
-    }
-  }
-};
 
 template<typename TriangleMesh,
          typename VertexPointMap,
@@ -409,7 +369,7 @@ private:
   std::vector<bool> constrained_flags_;
 
   const GeomTraits& traits_;
-  Edge_cotangent_weight<TriangleMesh, VertexPointMap> weight_calculator_;
+  const CGAL::Weights::Edge_cotangent_weight<TriangleMesh, VertexPointMap> weight_calculator_;
 };
 
 } // internal

@@ -21,6 +21,7 @@ Modular_arithmetic
 Number_types
 Polygon
 Polygon_mesh_processing
+Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
 Random_numbers
@@ -34,3 +35,4 @@ TDS_3
 Triangulation_2
 Triangulation_3
 Union_find
+Weights

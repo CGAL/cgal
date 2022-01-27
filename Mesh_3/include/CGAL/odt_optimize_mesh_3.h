@@ -27,7 +27,7 @@
 #include <CGAL/Mesh_3/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
-#include <CGAL/internal/Mesh_3/check_weights.h>
+#include <CGAL/Mesh_3/internal/check_weights.h>
 
 #include <boost/parameter/preprocessor.hpp>
 
@@ -51,9 +51,9 @@ BOOST_PARAMETER_FUNCTION(
   (optional
     (time_limit_, *, 0 )
     (max_iteration_number_, *, 0 )
-    (convergence_, *, parameters::default_values::odt_convergence_ratio )
-    (freeze_bound_, *, parameters::default_values::odt_freeze_ratio )
-    (do_freeze_, *, parameters::default_values::do_freeze ))
+    (convergence_, *, parameters::default_values_for_mesh_3::odt_convergence_ratio )
+    (freeze_bound_, *, parameters::default_values_for_mesh_3::odt_freeze_ratio )
+    (do_freeze_, *, parameters::default_values_for_mesh_3::do_freeze ))
 )
 {
   return odt_optimize_mesh_3_impl(c3t3, domain,

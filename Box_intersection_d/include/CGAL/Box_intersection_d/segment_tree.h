@@ -207,24 +207,19 @@ median_of_three( RandomAccessIter a, RandomAccessIter b, RandomAccessIter c,
 }
 
 
-template< class RandomAccessIter, class Predicate_traits >
+template< class RandomAccessIter, class Predicate_traits, class Generator>
 class Iterative_radon {
 
   RandomAccessIter begin;
-  std::ptrdiff_t size;
   Predicate_traits traits;
   int dim;
-
-  boost::rand48 rng;
-  boost::uniform_int<std::ptrdiff_t> dist;
-  boost::variate_generator<boost::rand48&, boost::uniform_int<std::ptrdiff_t> > generator;
+  Generator& generator;
 
 public:
 
-Iterative_radon( RandomAccessIter begin, RandomAccessIter end,
-                 Predicate_traits traits, int dim, int /*num_levels*/ )
-  : begin(begin), size(end-begin), traits(traits), dim(dim),
-    rng(), dist(0,size-1), generator(rng,dist)
+  Iterative_radon( const RandomAccessIter& begin_, const Predicate_traits& traits_,
+                   int dim_, Generator& generator_)
+  : begin(begin_), traits(traits_), dim(dim_), generator(generator_)
   {}
 
   RandomAccessIter
@@ -247,7 +242,10 @@ RandomAccessIter
 iterative_radon( RandomAccessIter begin, RandomAccessIter end,
                  Predicate_traits traits, int dim, int num_levels )
 {
-  Iterative_radon<RandomAccessIter, Predicate_traits> IR(begin,end,traits,dim,num_levels);
+  typedef typename boost::variate_generator<boost::rand48&, boost::uniform_int<std::ptrdiff_t> > Generator;
+  boost::rand48 rng;
+  Generator generator(rng, boost::uniform_int<std::ptrdiff_t>(0, (end-begin)-1));
+  Iterative_radon<RandomAccessIter, Predicate_traits, Generator> IR(begin, traits, dim, generator);
   return IR(num_levels);
 }
 

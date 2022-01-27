@@ -18,7 +18,7 @@ int main() {
     P.make_tetrahedron( p, q, r, s);
 
     // Write polyhedron in Object File Format (OFF).
-    CGAL::set_ascii_mode( std::cout);
+    CGAL::IO::set_ascii_mode( std::cout);
     std::cout << "OFF" << std::endl << P.size_of_vertices() << ' '
               << P.size_of_facets() << " 0" << std::endl;
     std::copy( P.points_begin(), P.points_end(),

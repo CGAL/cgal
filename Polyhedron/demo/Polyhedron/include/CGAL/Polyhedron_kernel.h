@@ -94,7 +94,7 @@ public:
                         lp.set_a(index_x4, j, -1.0); // -x4
 
                         // right hand side (>= -dj)
-                        FT dj = distance_to_origin(plane) * CGAL::sign(plane.d());
+                        FT dj = distance_to_origin(plane) * static_cast<int>(CGAL::sign(plane.d()));
                         lp.set_b(j, -dj);
                 }
 

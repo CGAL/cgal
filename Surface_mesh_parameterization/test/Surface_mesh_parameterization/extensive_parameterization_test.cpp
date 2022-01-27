@@ -79,7 +79,7 @@ typedef boost::graph_traits<SM_Seam_mesh>::halfedge_descriptor    SM_SE_halfedge
 int main(int, char**)
 {
   std::cout.precision(17);
-  CGAL::set_pretty_mode(std::cout);
+  CGAL::IO::set_pretty_mode(std::cout);
 
   // ***************************************************************************
   // Default case
@@ -89,7 +89,7 @@ int main(int, char**)
   {
     std::cout << " ----------- MVC POLYHEDRON -----------" << std::endl;
 
-    std::ifstream in("data/mushroom.off");
+    std::ifstream in(CGAL::data_file_path("meshes/mushroom.off"));
     PMesh pm;
     in >> pm;
     if(!in || num_vertices(pm) == 0) {
@@ -126,7 +126,7 @@ int main(int, char**)
   {
     std::cout << " ----------- ARAP POLYHEDRON -----------" << std::endl;
 
-    std::ifstream in("data/three_peaks.off");
+    std::ifstream in(CGAL::data_file_path("meshes/three_peaks.off"));
     PMesh pm;
     in >> pm;
     if(!in || num_vertices(pm) == 0) {
@@ -227,7 +227,7 @@ int main(int, char**)
   {
     std::cout << " ----------- ARAP SURFACE MESH -----------" << std::endl;
 
-    std::ifstream in("data/nefertiti.off");
+    std::ifstream in(CGAL::data_file_path("meshes/nefertiti.off"));
     SMesh sm;
     in >> sm;
     if(!in || num_vertices(sm) == 0) {
@@ -277,7 +277,7 @@ int main(int, char**)
   {
     std::cout << " ----------- DCM POLYHEDRON SEAM MESH -----------" << std::endl;
 
-    std::ifstream in("data/fandisk.off");
+    std::ifstream in(CGAL::data_file_path("meshes/fandisk.off"));
     PMesh pm;
     in >> pm;
     if(!in || num_vertices(pm) == 0) {
@@ -341,7 +341,7 @@ int main(int, char**)
   {
     std::cout << " ----------- DAC SURFACE MESH SEAM MESH -----------" << std::endl;
 
-    std::ifstream in("data/bear.off");
+    std::ifstream in(CGAL::data_file_path("meshes/bear.off"));
     SMesh sm;
     in >> sm;
     if(!in || num_vertices(sm) == 0) {
@@ -404,7 +404,7 @@ int main(int, char**)
 
     SMesh sm; // underlying mesh of the seam mesh
 
-    std::ifstream in("data/fandisk.off");
+    std::ifstream in(CGAL::data_file_path("meshes/fandisk.off"));
     in >> sm;
     if(!in || num_vertices(sm) == 0) {
       std::cerr << "Problem loading the input data" << std::endl;
@@ -460,7 +460,7 @@ int main(int, char**)
 
     // a halfedge on the (possibly virtual) border
     // only used in output (will also be used to handle multiple connected components in the future)
-    SM_SE_halfedge_descriptor hd = PMP::longest_border(mesh, PMP::parameters::all_default()).first;
+    SM_SE_halfedge_descriptor hd = PMP::longest_border(mesh).first;
 
     SMP::Error_code status = parameterizer.parameterize(mesh, hd, cmap, uvmap, vimap);
 

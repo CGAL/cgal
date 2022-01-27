@@ -39,7 +39,7 @@ int main()
   typedef EDec::Standard_RT RT;
 
   EDec D;
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
   EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);
@@ -149,7 +149,7 @@ int main()
   typedef EDec::Standard_RT RT;
 
   EDec D;
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
   EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);
@@ -256,7 +256,7 @@ int main()
   typedef EDec::Standard_RT RT;
 
   EDec D;
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   Point ps1(0,0), ps2(1,1), ps3(1,0), ps4(0,1), ps5(1,1,2);
   EDec::Point_type t1,t2,t3;
   EP eps1 = D.construct_point(ps1);

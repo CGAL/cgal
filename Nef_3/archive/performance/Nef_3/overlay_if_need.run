@@ -1,4 +1,0 @@
-#!/bin/bash
-
-labrun -v --log=Overlay_if_needed -n abdruck --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-O2 -DNDEBUG -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS' ./abdruck shark.nef3 
-labrun -v --log=Overlay_if_needed -n abdruck --nocvs labmex -v --clean before -m ADDITIONAL_CXXFLAGS='-O2 -DNDEBUG -DCGAL_NEF3_USE_LEDA_INTEGER -DCGAL_NEF3_USE_HOMOGENEOUS -DCGAL_NEF3_OVERLAY_IF_NEEDED_OFF' ./abdruck shark.nef3 
