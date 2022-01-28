@@ -23,6 +23,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #ifndef CGAL_DO_NOT_USE_PCA
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #endif
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
