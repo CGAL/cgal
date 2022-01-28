@@ -34,7 +34,7 @@ int main()
   PMP::isotropic_remeshing(faces(sm), 0.1, sm, CGAL::parameters::edge_is_constrained_map(ecm));
   std::ofstream("cube_remeshed.off") << sm;
   assert(faces(sm).size()>100);
-  
+
   // decimate the mesh
   PMP::remesh_planar_patches(sm);
   std::ofstream("cube_decimated.off") << sm;

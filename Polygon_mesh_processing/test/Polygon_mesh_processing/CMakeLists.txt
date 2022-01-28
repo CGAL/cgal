@@ -42,7 +42,7 @@ if(TARGET CGAL::Eigen3_support)
                         PUBLIC CGAL::Eigen3_support)
   create_single_source_cgal_program("test_shape_smoothing.cpp")
   target_link_libraries(test_shape_smoothing PUBLIC CGAL::Eigen3_support)
-  
+
   create_single_source_cgal_program("test_decimation_of_planar_patches.cpp")
   target_link_libraries(test_decimation_of_planar_patches PUBLIC CGAL::Eigen3_support)
 endif()
