@@ -19,7 +19,7 @@ _test_compare_angle_3(const R& rep)
   typename R::Compare_angle_3 compare_angle
     = rep.compare_angle_3_object();
 
-  for(int theta1 = -170; theta1 <= 180; theta1+= 10) 
+  for(int theta1 = -170; theta1 <= 180; theta1+= 10)
   {
     const double angle1 = CGAL_PI*theta1/180.;
     Point_3 a(1, 0, 0);
@@ -32,7 +32,7 @@ _test_compare_angle_3(const R& rep)
       if ( CGAL::compare(abs(theta1), abs(theta2)) != CGAL::compare_angle(a, b, c, FT(std::cos(angle2))) )
         return false;
       if ( CGAL::compare(abs(theta1), abs(theta2)) != compare_angle(a, b, c, FT(std::cos(angle2))) )
-        return false;      
+        return false;
     } // end loop on theta2
   } // end loop and theta1
   return true;
