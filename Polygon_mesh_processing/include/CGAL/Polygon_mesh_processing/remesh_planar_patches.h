@@ -22,6 +22,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_PLANAR_PATCHES_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_PLANAR_PATCHES_H
 
+#include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
+
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -32,8 +34,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #endif
 #include <CGAL/boost/graph/properties.h>
-#include <boost/foreach.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 #ifdef DEBUG_PCA
 #include <fstream>
@@ -42,129 +43,12 @@
 #include <algorithm>
 
 /// @TODO remove Kernel_traits
-/// @TODO function to move in segmentation package: segment_via_plane_fitting(in, vci, ecm, fccid, np) (pca is a np option)
-///       + version with a range of meshes
 /// @TODO function to move in PMP: retriangulate_planar_patches(in, out, vci, ecm, fccid, np) (pca is a np option)
 /// @TODO check if PCA performance is improved when using Eigen
 
 namespace CGAL{
 
 namespace Polygon_mesh_processing {
-
-/// @TODO these predicates should probably end-up in the Kernel
-namespace Predicates {
-
-// predicates
-template <typename K>
-struct Is_dihedral_angle_close_to_Pi_impl{
-  typedef bool result_type;
-
-  /// Compares the value of the dihedral angle between the triangles `pqr` and `pqs`
-  /// with the angles \$f\theta\f$ and \f$\pi + \theta\f$.
-  /// `false` is returned if the dihedral angle is less or equal to \f$\pi\f$.
-  /// If the cosinus of the dihedral angle is smaller or equal to the cosinus of \f$\theta\f$
-  /// `true` is returned and `false` otherwise. \f$theta\f$ is provided using the square of its
-  /// cosinus.
-  bool
-  operator()(const typename K::Point_3& p,
-             const typename K::Point_3& q,
-             const typename K::Point_3& r,
-             const typename K::Point_3& s,
-             const typename K::FT min_cosinus_squared) const
-  {
-    const typename K::Vector_3 pq(p,q);
-    const typename K::Vector_3 pr(p,r);
-    const typename K::Vector_3 ps(p,s);
-
-    typename K::Construct_cross_product_vector_3 cross_product =
-      K().construct_cross_product_vector_3_object();
-    const typename K::Vector_3 pqpr = cross_product(pq, pr);
-    const typename K::Vector_3 pqps = cross_product(pq, ps);
-    const typename K::FT sc_prod_1 = pqpr * pqps;
-
-    typename K::Compute_squared_length_3 squared_length = K().compute_squared_length_3_object();
-    if (sign(sc_prod_1) != NEGATIVE) return false;
-    return compare( square(sc_prod_1),
-                    min_cosinus_squared
-                      * squared_length(pqpr)
-                      * squared_length(pqps) ) != SMALLER;
-  }
-};
-
-template <typename K>
-struct Is_angle_close_to_Pi_impl{
-  typedef bool result_type;
-
-  /// Compares the value of the angle between the vectors `pq` and `pr`
-  /// with the angles \$f\theta\f$ and \f$\pi + \theta\f$.
-  /// `false` is returned if the angle is less or equal to \f$\pi\f$.
-  /// If the cosinus of the angle is smaller or equal to the cosinus of \f$\theta\f$
-  /// `true` is returned and `false` otherwise. \f$theta\f$ is provided using the square of its
-  /// cosinus.
-
-  bool
-  operator()(const typename K::Point_3& p,
-             const typename K::Point_3& q,
-             const typename K::Point_3& r,
-             const typename K::FT min_cosinus_squared) const
-  {
-    const typename K::Vector_3 pq(p,q);
-    const typename K::Vector_3 pr(p,r);
-
-    typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
-    typename K::FT pqpr = scalar_product(pq, pr);
-    // this assumes that cos_theta_bound was meant to be negative
-    if (sign(pqpr) != NEGATIVE) return false;
-    return compare( square(pqpr),
-                    min_cosinus_squared
-                      * scalar_product(pq, pq)
-                      * scalar_product(pr, pr) ) != SMALLER;
-  }
-};
-
-template <typename K, template <class Kernel> class Pred>
-struct Get_filtered_predicate_RT
-{
-  typedef typename Exact_kernel_selector<K>::Exact_kernel_rt Exact_kernel_rt;
-  typedef typename Exact_kernel_selector<K>::C2E_rt C2E_rt;
-  typedef Simple_cartesian<Interval_nt_advanced>        Approximate_kernel;
-  typedef Cartesian_converter<K, Approximate_kernel>   C2F;
-
-
-  typedef Filtered_predicate<Pred<Exact_kernel_rt>,
-                             Pred<Approximate_kernel>,
-                             C2E_rt, C2F> type;
-};
-
-template<typename K, bool has_filtered_predicates = K::Has_filtered_predicates>
-struct Is_dihedral_angle_close_to_Pi
-  : public Is_dihedral_angle_close_to_Pi_impl<K>
-{
-  using Is_dihedral_angle_close_to_Pi_impl<K>::operator();
-};
-
-template<typename K>
-struct Is_dihedral_angle_close_to_Pi<K, true>
-  : public Get_filtered_predicate_RT<K, Is_dihedral_angle_close_to_Pi_impl>::type
-{
-  using Get_filtered_predicate_RT<K, Is_dihedral_angle_close_to_Pi_impl>::type::operator();
-};
-
-template<typename K, bool has_filtered_predicates = K::Has_filtered_predicates>
-struct Is_angle_close_to_Pi
-  : public Is_angle_close_to_Pi_impl<K>
-{
-  using Is_angle_close_to_Pi_impl<K>::operator();
-};
-
-template<typename K>
-struct Is_angle_close_to_Pi<K, true>
-  : public Get_filtered_predicate_RT<K, Is_angle_close_to_Pi_impl>::type
-{
-  using Get_filtered_predicate_RT<K, Is_angle_close_to_Pi_impl>::type::operator();
-};
-
-} //end of Predicates namespace
 
 #ifndef CGAL_DO_NOT_USE_PCA
 // forward declaration
@@ -249,8 +133,8 @@ bool is_edge_between_coplanar_faces(edge_descriptor e,
     return coplanar(p, q, r, s);
   else
   {
-    Predicates::Is_dihedral_angle_close_to_Pi<K> pred;
-    return pred(p, q, r, s, min_cosinus_squared);
+    typename K::Compare_dihedral_angle_3 pred;
+    return pred(p, q, r, s, -std::sqrt(min_cosinus_squared)) == CGAL::LARGER;
   }
 }
 
@@ -283,16 +167,16 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   // (for example when there is a tangency between surfaces and is shared)
   if (h2 == graph_traits::null_halfedge()) return true;
 
-  const Point_3& p = get(vpm, target(h, tm));
-  const Point_3& q = get(vpm, source(h, tm));
+  const Point_3& p = get(vpm, source(h, tm));
+  const Point_3& q = get(vpm, target(h, tm));
   const Point_3& r = get(vpm, source(h2, tm));
 
   if (min_cosinus_squared==1)
     return !collinear(p, q, r);
   else
   {
-    Predicates::Is_angle_close_to_Pi<K> pred;
-    return !pred(p, q, r, min_cosinus_squared);
+    typename K::Compare_angle_3 pred;
+    return pred(p, q, r, -std::sqrt(min_cosinus_squared))==CGAL::SMALLER;
   }
 }
 
@@ -443,7 +327,7 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
   std::size_t nbv=cdt.number_of_vertices();
 
   // insert constrained edges
-  boost::unordered_map<std::size_t, typename CDT::Vertex_handle> vertex_map;
+  std::unordered_map<std::size_t, typename CDT::Vertex_handle> vertex_map;
   for(typename CDT::Finite_vertices_iterator vit = cdt.finite_vertices_begin(),
                                              end = cdt.finite_vertices_end(); vit!=end; ++vit)
   {
@@ -1189,7 +1073,7 @@ coplanarity_segmentation_with_pca(TriangleMesh& tm,
     while( get(face_cc_ids, *fit_seed)!=std::size_t(-1) )
     {
       ++fit_seed;
-      CGAL_assertion( fit_seed!=boost::end(faces(tm)) );
+      CGAL_assertion( fit_seed!=faces(tm).end() );
     }
     typename graph_traits::face_descriptor seed = *fit_seed;
 
@@ -1312,7 +1196,6 @@ bool decimate_meshes_with_common_interfaces_and_pca_for_coplanarity(
     meshes, max_frechet_distance, min_cosinus_squared, CGAL::Identity_property_map<TriangleMesh>());
 }
 
-///@TODO use something better than a fitting score
 ///@TODO remove debug
 template <typename TriangleMesh>
 bool decimate_with_pca_for_coplanarity(TriangleMesh& tm,
