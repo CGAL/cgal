@@ -58,7 +58,7 @@ int main()
     in >> sm;
 
     // call the decimation function
-    if (!PMP::remesh_planar_patches(sm, 0.9801))
+    if (!PMP::remesh_planar_patches(sm, CGAL::parameters::cosinus_threshold(-0.99)))
     {
       std::cerr << "ERROR: decimate cannot be done correctly\n";
       continue;
@@ -110,7 +110,7 @@ int main()
   }
 
   std::cout << "decimate a range of meshes with common interfaces (approximate coplanar/collinear)\n";
-  if (!PMP::decimate_meshes_with_common_interfaces(meshes, 0.9801))
+  if (!PMP::decimate_meshes_with_common_interfaces(meshes, -0.99))
     std::cerr << "ERROR: decimate cannot be done correctly\n";
   else
   {
@@ -139,7 +139,7 @@ int main()
 
     // call the decimation function
 
-    if (!PMP::decimate_with_pca_for_coplanarity(sm, 1e-5, 0.9801))
+    if (!PMP::decimate_with_pca_for_coplanarity(sm, 1e-5, -0.99))
     {
       std::cerr << "ERROR: decimate cannot be done correctly\n";
       continue;
@@ -153,7 +153,7 @@ int main()
 
 // testing decimation of meshes,  preserving common interface with almost coplanar/collinear tests using PCA
   std::cout << "decimate a range of meshes with common interfaces (approximate coplanar/collinear with PCA)\n";
-  if (!PMP::decimate_meshes_with_common_interfaces_and_pca_for_coplanarity(meshes, 0.99, 0.9801))
+  if (!PMP::decimate_meshes_with_common_interfaces_and_pca_for_coplanarity(meshes, 0.99, -0.99))
     std::cerr << "ERROR: decimate cannot be done correctly\n";
   else
   {
@@ -176,7 +176,7 @@ int main()
     std::cout << "decimate of data/decimation/sphere.off using PCA\n";
     std::ifstream in("data/decimation/sphere.off");
     in >> sm;
-    if (!PMP::decimate_with_pca_for_coplanarity(sm,1e-5,0.9801))
+    if (!PMP::decimate_with_pca_for_coplanarity(sm,1e-5,-0.99))
       std::cout << "ERROR: decimate cannot be done correctly\n";
     else
     {
@@ -190,7 +190,7 @@ int main()
     std::cout << "decimate of data/decimation/sphere_selection.off using PCA\n";
     std::ifstream in("data/decimation/sphere_selection.off");
     in >> sm;
-    if (!PMP::decimate_with_pca_for_coplanarity(sm,1e-5,0.9801))
+    if (!PMP::decimate_with_pca_for_coplanarity(sm,1e-5,-0.99))
       std::cout << "ERROR: decimate cannot be done correctly\n";
     else
     {
@@ -206,7 +206,7 @@ int main()
     std::cout << "decimate of data/decimation/sphere.off using approximate predicates\n";
     std::ifstream in("data/decimation/sphere.off");
     in >> sm;
-    if (!PMP::remesh_planar_patches(sm,0.9801))
+    if (!PMP::remesh_planar_patches(sm, CGAL::parameters::cosinus_threshold(-0.99)))
       std::cout << "ERROR: decimate cannot be done correctly (this is the expected behavior)\n";
     else
     {
@@ -220,7 +220,7 @@ int main()
     std::cout << "decimate of data/decimation/sphere_selection.off using approximate predicates\n";
     std::ifstream in("data/decimation/sphere_selection.off");
     in >> sm;
-    if (!PMP::remesh_planar_patches(sm,0.9801))
+    if (!PMP::remesh_planar_patches(sm, CGAL::parameters::cosinus_threshold(-0.99)))
       std::cout << "ERROR: decimate cannot be done correctly (this is the expected behavior)\n";
     else
     {
