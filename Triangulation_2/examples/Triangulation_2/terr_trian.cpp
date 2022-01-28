@@ -21,25 +21,10 @@
 
 using namespace std;
 
-template <class K>
-class Indexed_point: public CGAL::Point_3<K> {
-    typedef CGAL::Point_3<K>  Point_3;
-public:
-    int*  index;
-    Indexed_point()                                 {}
-    Indexed_point( Point_3 p) : Point_3(p)    {}
-    Indexed_point( double x, double y, double z, int* i)
-        : Point_3(x,y,z), index(i)               {}
-};
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef CGAL::Point_3<Kernel>  Point_3;
 
-typedef Indexed_point<Kernel>                              IPoint;
-typedef CGAL::Projection_traits_xy_3<Kernel>               Gtraits;
-
-struct Gt : public Gtraits {
-    typedef IPoint Point;
-};
+typedef CGAL::Projection_traits_xy_3<Kernel>               Gt;
 
 typedef  CGAL::Triangulation_2<Gt>                 Triangulation;
 typedef  CGAL::Delaunay_triangulation_2<Gt>        Delaunay_triangulation;
@@ -118,18 +103,13 @@ int main( int argc, char **argv) {
         exit( 1);
     }
 
-    // index array.
-    int* indices = new int[ scanner.size_of_vertices()];
-    for ( std::size_t k = 0; k < scanner.size_of_vertices(); k++)
-        indices[k] = -1;
-
     if ( delaunay || ! incr) {
         Delaunay_triangulation triang;
         vout << "Scanning and triangulating ..." << endl;
         for ( std::size_t j = 0; j < scanner.size_of_vertices(); j++) {
             double x, y, z;
             scanner.scan_vertex( x, y, z);
-            IPoint p( x, y, z, indices + j);
+            Point_3 p( x, y, z);
             triang.insert( p);
         }
         vout << "    .... done." << endl;
@@ -142,7 +122,7 @@ int main( int argc, char **argv) {
         for ( std::size_t j = 0; j < scanner.size_of_vertices(); j++) {
             double x, y, z;
             scanner.scan_vertex( x, y, z);
-            IPoint p( x, y, z, indices + j);
+            Point_3 p( x, y, z);
             triang.insert( p);
         }
         vout << "    .... done." << endl;
@@ -160,6 +140,6 @@ int main( int argc, char **argv) {
              << endl;
         exit( 1);
     }
-    delete[] indices;
+
     return 0;
 }
