@@ -474,12 +474,16 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
   typedef typename Traits::SHalfloop_handle SHalfloop_handle;
   typedef typename Traits::SM_decorator SM_decorator;
   typedef typename Traits::SVertex_handle SVertex_handle;
+  typedef typename Traits::Vertex_handle Vertex_handle;
 
   std::list<SFace_handle> SFaceCandidates;
   std::list<Halffacet_handle> FacetCandidates;
-  CGAL::Generic_handle_map<bool> Done(false);
+  CGAL::Unique_hash_map<SFace_handle,bool> Done_sf(false);
+  CGAL::Unique_hash_map<SVertex_handle,bool> Done_sv(false);
+  CGAL::Unique_hash_map<Vertex_handle,bool> Done_v(false);
+  CGAL::Unique_hash_map<Halffacet_handle,bool> Done_f(false);
 
-  SFaceCandidates.push_back(f);  Done[f] = true;
+  SFaceCandidates.push_back(f);  Done_sf[f] = true;
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
     if ( !FacetCandidates.empty() ) {
@@ -493,16 +497,16 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
           SHalfedge_handle she;
           SHalfedge_around_facet_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { she = ec->twin();
-            if ( Done[she->incident_sface()] ) continue;
+            if ( Done_sf[she->incident_sface()] ) continue;
             SFaceCandidates.push_back(she->incident_sface());
-            Done[she->incident_sface()] = true;
+            Done_sf[she->incident_sface()] = true;
           }
         } else if (fc.is_shalfloop() ) {
           SHalfloop_handle l(fc);
           SHalfloop_handle ll = l->twin();
-          if ( Done[ll->incident_sface()] ) continue;
+          if ( Done_sf[ll->incident_sface()] ) continue;
           SFaceCandidates.push_back(ll->incident_sface());
-          Done[ll->incident_sface()] = true;
+          Done_sf[ll->incident_sface()] = true;
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
@@ -510,9 +514,9 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
       SFace_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf);
-      if ( !Done[sf->center_vertex()] )
+      if ( !Done_v[sf->center_vertex()] )
         V.visit(sf->center_vertex()); // report vertex
-      Done[sf->center_vertex()] = true;
+      Done_v[sf->center_vertex()] = true;
       //      SVertex_const_handle sv;
       SM_decorator SD(&*sf->center_vertex());
       /*
@@ -529,23 +533,23 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
           CGAL_For_all(ec,ee) {
             V.visit(SHalfedge_handle(ec));
             SVertex_handle vv = ec->twin()->source();
-            if ( !SD.is_isolated(vv) && !Done[vv] ) {
+            if ( !SD.is_isolated(vv) && !Done_sv[vv] ) {
               V.visit(vv); // report edge
-              Done[vv] = Done[vv->twin()] = true;
+              Done_sv[vv] = Done_sv[vv->twin()] = true;
             }
             Halffacet_handle f = ec->twin()->facet();
-            if ( Done[f] ) continue;
-            FacetCandidates.push_back(f); Done[f] = true;
+            if ( Done_f[f] ) continue;
+            FacetCandidates.push_back(f); Done_f[f] = true;
           }
         } else if (fc.is_svertex() ) {
           SVertex_handle v(fc);
-          if ( Done[v] ) continue;
+          if ( Done_sv[v] ) continue;
           V.visit(v); // report edge
           V.visit(v->twin());
-          Done[v] = Done[v->twin()] = true;
+          Done_sv[v] = Done_sv[v->twin()] = true;
           CGAL_assertion(SD.is_isolated(v));
           SFaceCandidates.push_back(v->twin()->incident_sface());
-          Done[v->twin()->incident_sface()]=true;
+          Done_sf[v->twin()->incident_sface()]=true;
           // note that v is isolated, thus twin(v) is isolated too
           //          SM_const_decorator SD;
           //          SFace_const_handle fo;
@@ -560,8 +564,8 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
           SHalfloop_handle l(fc);
           V.visit(l);
           Halffacet_handle f = l->twin()->facet();
-          if ( Done[f] ) continue;
-          FacetCandidates.push_back(f);  Done[f] = true;
+          if ( Done_f[f] ) continue;
+          FacetCandidates.push_back(f);  Done_f[f] = true;
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
