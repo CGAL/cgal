@@ -330,6 +330,7 @@ class Binary_operation : public CGAL::SNC_decorator<Map> {
     CGAL_forall_shalfloops(sli, snc2)
       A.initialize_hash(sli);
 
+    ignore.reserve(snc1.number_of_vertices());
     CGAL_forall_vertices( v0, snc1) {
       CGAL_assertion(!ignore[v0]);
       Point_3 p0(v0->point());

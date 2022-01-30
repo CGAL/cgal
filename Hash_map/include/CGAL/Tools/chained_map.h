@@ -125,7 +125,7 @@ public:
     return (it == &stop) ? nullptr : it;
   }
 
-  size_type number_of_entries()
+  size_type number_of_entries() const
   {
     size_type n = 0;
     if (!table.begin)

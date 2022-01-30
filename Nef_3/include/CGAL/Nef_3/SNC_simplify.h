@@ -656,6 +656,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 
     SNC_decorator D(*this->sncp());
     Volume_setter setter(D);
+    setter.reserve(this->sncp()->number_of_sfaces());
 
     SFace_iterator sf;
     Volume_handle c;
