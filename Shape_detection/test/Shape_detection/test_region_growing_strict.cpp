@@ -192,7 +192,7 @@ bool test_lines_segment_set_3() {
     Region_growing<Segment_range, Polyline_graph, Region_type, typename Sorting::Seed_map>;
 
   std::ifstream in(CGAL::data_file_path("meshes/am.off"));
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
   assert(in);
 
   Surface_mesh surface_mesh;
@@ -331,7 +331,7 @@ bool test_planes_surface_mesh() {
   using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 
   std::ifstream in(CGAL::data_file_path("meshes/am.off"));
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
   assert(in);
 
   Surface_mesh surface_mesh;

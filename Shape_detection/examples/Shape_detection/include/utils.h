@@ -30,7 +30,7 @@ namespace CGAL {
     static const bool is_specialized = true;
     Output_rep(const ::std::array<unsigned char, 3>& c) : c(c) { }
     std::ostream& operator()(std::ostream& out) const {
-      if (is_ascii(out)) { out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]);
+      if (IO::is_ascii(out)) { out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]);
       } else { out.write(reinterpret_cast<const char*>(&c), sizeof(c)); }
       return out;
     }
@@ -288,7 +288,7 @@ void save_polygon_mesh_regions(
   const std::vector< std::vector<std::size_t> >& regions,
   const std::string fullpath) {
 
-  using Color      = CGAL::Color;
+  using Color      = CGAL::IO::Color;
   using Face_index = typename Polygon_mesh::Face_index;
   using size_type  = typename Polygon_mesh::size_type;
   srand(static_cast<unsigned int>(time(NULL)));

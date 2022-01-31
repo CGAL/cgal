@@ -46,7 +46,7 @@ bool test_region_growing_on_polyline(int argc, char *argv[]) {
 
   // Load data.
   std::ifstream in(argc > 1 ? argv[1] : CGAL::data_file_path("polylines_3/wavy_circle.polylines.txt"));
-  CGAL::set_ascii_mode(in);
+  CGAL::IO::set_ascii_mode(in);
   assert(in);
 
   // Create 3D polyline.
