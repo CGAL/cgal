@@ -357,44 +357,6 @@ bool add_triangle_faces(const std::vector< std::pair<std::size_t, std::size_t> >
 }
 
 template <typename TriangleMesh,
-          typename EdgeIsConstrainedMap,
-          typename FaceCCIdMap>
-std::size_t connected_components_wrapper(TriangleMesh& tm,
-                                         FaceCCIdMap& face_cc_ids,
-                                         EdgeIsConstrainedMap& edge_is_constrained,
-                                         CGAL::Tag_true)
-{
-  return connected_components(tm,
-                              face_cc_ids,
-                              parameters::edge_is_constrained_map(edge_is_constrained));
-}
-
-template <typename TriangleMesh,
-          typename EdgeIsConstrainedMap,
-          typename FaceCCIdMap>
-std::size_t connected_components_wrapper(TriangleMesh& tm,
-                                         FaceCCIdMap& face_cc_ids,
-                                         EdgeIsConstrainedMap& edge_is_constrained,
-                                         CGAL::Tag_false)
-{
-  typename boost::property_map<TriangleMesh, CGAL::dynamic_face_property_t<std::size_t> >::type
-    face_id_map =  get(CGAL::dynamic_face_property_t<std::size_t>(), tm);
-
-  //init the map
-  std::size_t i=0;
-  for(typename boost::graph_traits<TriangleMesh>::face_descriptor f : faces(tm))
-    put(face_id_map, f, i++);
-
-  std::size_t res =
-    connected_components(tm,
-                         face_cc_ids,
-                         parameters::edge_is_constrained_map(edge_is_constrained).
-                         face_index_map(face_id_map));
-
-  return res;
-}
-
-template <typename TriangleMesh,
           typename VertexCornerIdMap,
           typename EdgeIsConstrainedMap,
           typename FaceCCIdMap,
@@ -412,10 +374,8 @@ tag_corners_and_constrained_edges(TriangleMesh& tm,
   mark_constrained_edges(tm, edge_is_constrained, coplanar_cos_threshold, vpm);
 
   // mark connected components (cc) delimited by constrained edges
-  std::size_t nb_cc = connected_components_wrapper(tm,
-                                           face_cc_ids,
-                                           edge_is_constrained,
-                                           CGAL::graph_has_property<TriangleMesh, face_index_t>());
+  std::size_t nb_cc = Polygon_mesh_processing::connected_components(
+    tm, face_cc_ids, parameters::edge_is_constrained_map(edge_is_constrained));
 
   if (coplanar_cos_threshold!=-1)
   {
@@ -996,7 +956,7 @@ template <typename TriangleMesh, typename NamedParameters = parameters::Default_
 bool remesh_planar_patches(TriangleMesh& tm,
                            const NamedParameters& np = parameters::default_values())
 {
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type  Traits;
+  // typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type  Traits;
   typedef typename GetVertexPointMap <TriangleMesh, NamedParameters>::type VPM;
   using parameters::choose_parameter;
   using parameters::get_parameter;
