@@ -186,7 +186,6 @@ namespace Polygon_mesh {
         add_vertex_neighbors(t, i, pedge_map, pedge.tneighbors, pmesh, eimap);
       }
     }
-    /// \endcond
 
     /// @}
 
