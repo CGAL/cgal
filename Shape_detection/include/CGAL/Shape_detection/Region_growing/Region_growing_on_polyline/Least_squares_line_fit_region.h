@@ -18,6 +18,7 @@
 
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/region_growing_traits.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -207,6 +208,7 @@ namespace Polyline {
       const std::size_t index1, const std::size_t index2,
       const std::vector<std::size_t>& region) {
 
+      CGAL_USE(region);
       CGAL_precondition(region.size() > 0);
       CGAL_precondition(index1 < m_input_range.size());
       CGAL_precondition(index2 < m_input_range.size());

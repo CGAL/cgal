@@ -310,7 +310,7 @@ namespace Polygon_mesh {
 
     template <class EdgeIndexMap>
     void add_graph_edge(
-      edge_descriptor edge, const long region1, const long region2,
+      edge_descriptor edge, const std::size_t region1, const std::size_t region2,
       std::vector<std::size_t>& pedge_map,
       EdgeIndexMap eimap) {
 
