@@ -262,11 +262,11 @@ namespace CGAL {
 
     /// @return the Vertex_attribute_range for all vertex_attributes.
     Vertex_attribute_range& vertex_attributes()
-    { return this->template attributes<0>(); }
+    { return Base::template attributes<0>(); }
 
     /// @return the Vertex_attribute_const_range for all vertex_attributes.
     Vertex_attribute_const_range& vertex_attributes() const
-    { return this->template attributes<0>(); }
+    { return Base::template attributes<0>(); }
 
     /// @return the size of the vertex_attribute container.
     typename Base::size_type number_of_vertex_attributes() const
@@ -276,22 +276,22 @@ namespace CGAL {
     /// @param a dart
     /// @return the vertex_attribute.
     Vertex_attribute_handle vertex_attribute(Dart_handle adart)
-    { return this->template attribute<0>(adart); }
+    { return Base::template attribute<0>(adart); }
 
     /// Get the vertex_attribute associated with a const dart.
     /// @param a dart
     /// @return the vertex_const_attribute.
     Vertex_attribute_const_handle
     vertex_attribute(Dart_const_handle adart) const
-    { return this->template attribute<0>(adart); }
+    { return Base::template attribute<0>(adart); }
 
     /// Get the point associated with a dart.
     /// @param a dart
     /// @return the point.
     Point& point(Dart_handle adart)
     {
-      CGAL_assertion(this->template attribute<0>(adart)!=null_handle );
-      return point_of_vertex_attribute(this->template attribute<0>(adart));
+      CGAL_assertion(Base::template attribute<0>(adart)!=null_handle );
+      return point_of_vertex_attribute(Base::template attribute<0>(adart));
     }
 
     /// Get the point associated with a const dart.
@@ -299,8 +299,8 @@ namespace CGAL {
     /// @return the point.
     const Point& point(Dart_const_handle adart) const
     {
-      CGAL_assertion(this->template attribute<0>(adart)!=null_handle );
-      return point_of_vertex_attribute(this->template attribute<0>(adart));
+      CGAL_assertion(Base::template attribute<0>(adart)!=null_handle );
+      return point_of_vertex_attribute(Base::template attribute<0>(adart));
     }
 
     /** Test if the lcc is valid.
@@ -503,13 +503,13 @@ namespace CGAL {
           for (++it2; it2!=it1end; ++it2)
           {
             if (*it1!=*it2 &&
-                !this->template is_opposite_exist<3>(*it1) &&
-                !this->template is_opposite_exist<3>(*it2) &&
+                !Base::template is_opposite_exist<3>(*it1) &&
+                !Base::template is_opposite_exist<3>(*it2) &&
                 are_facets_opposite_and_same_geometry
                 (*it1, this->previous(*it2)))
             {
               ++res;
-              this->template sew<3>(*it1,
+              Base::template sew<3>(*it1,
                                     this->other_orientation(previous(*it2)));
             }
           }
