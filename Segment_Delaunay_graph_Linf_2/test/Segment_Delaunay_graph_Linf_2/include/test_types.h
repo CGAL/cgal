@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cassert>
 #include <string>
+#include <sstream>
 
 #include "IO/Null_output_stream.h"
 #include "IO/io_aux.h"
@@ -72,7 +73,7 @@ struct Level_finder< Segment_Delaunay_graph_Linf_2<Gt,SDGDS,LTag> >
 //========================================================================
 
 template<class SDG, class InputStream>
-bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
+bool test_sdg(InputStream&, const SDG&, const char* ifname,
               bool test_remove)
 {
   typedef SDG SDG2;
@@ -524,19 +525,18 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     size_type npc1 = sdg.point_container().size();
     size_type nv1 = sdg.number_of_vertices();
 
-    std::ofstream ofs(ofname);
-    assert( ofs );
-    sdg.file_output(ofs);
+    std::ostringstream oss;
+    sdg.file_output(oss);
     assert( sdg.is_valid() );
-    ofs.close();
+    oss.flush();
+    std::string input = oss.str();
 
     sdg.clear();
 
-    std::ifstream ifs(ofname);
-    assert( ifs );
-    sdg.file_input(ifs);
+    std::istringstream iss(input);
+
+    sdg.file_input(iss);
     assert( sdg.is_valid() );
-    ifs.close();
 
     size_type nisc2 = sdg.number_of_input_sites();
     size_type npc2 = sdg.point_container().size();
