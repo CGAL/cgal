@@ -56,7 +56,7 @@ namespace Polygon_mesh {
       edge_descriptor ed;
       std::set<std::size_t> sneighbors;
       std::set<std::size_t> tneighbors;
-      std::pair<long, long> regions;
+      std::pair<std::size_t, std::size_t> regions;
     };
 
     using Face_to_index_map = internal::Item_to_index_property_map<face_descriptor>;
@@ -283,7 +283,7 @@ namespace Polygon_mesh {
 
       \pre `query_index < segment_range().size()`
     */
-    const std::pair<long, long>& edge_regions(
+    const std::pair<std::size_t, std::size_t>& edge_regions(
       const std::size_t query_index) const {
 
       CGAL_precondition(query_index < segment_range().size());
