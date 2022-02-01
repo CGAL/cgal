@@ -53,12 +53,16 @@ public:
     size_type n = number_of_entries();
     if (reserved_size < n)
       std::cout << "reserved: " << reserved_size << " entries: " << n << std::endl;
+
+    if(rehash_count>0)
+      std::cout << "rehash_count: " << rehash_count << std::endl;
 #endif
     destroy(table);
   }
 
   void reserve(size_type n)
   {
+    CGAL_assertion(!table.begin);
     reserved_size = n;
   }
 
@@ -200,6 +204,9 @@ private:
 
   void rehash()
   {
+#ifdef CHAINED_MAP_DEBUG
+    ++rehash_count;
+#endif
     table_type old_table = table;
 
     item old_table_mid = table.begin + table.size;
@@ -304,6 +311,9 @@ private:
   size_type reserved_size;
   key_type old_key;
   allocator_type alloc;
+#ifdef CHAINED_MAP_DEBUG
+  size_type rehash_count=0;
+#endif
 };
 
 } // namespace internal
