@@ -484,10 +484,10 @@ public:
   }
 
   template <typename H>
-  bool is_boundary_object(H h)
+  bool is_boundary_object(H h) const
   { return boundary_item_[h]!=boost::none; }
   template <typename H>
-  bool is_sm_boundary_object(H h)
+  bool is_sm_boundary_object(H h) const
   { return sm_boundary_item_[h]!=boost::none; }
 
   template <typename H>
