@@ -17,7 +17,7 @@ Release date: June 2022
 
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.5/Manual/packages.html#PkgBGL)
 
--   Added the function `invert_selection()` in the class `Face_filtered_graph` to unselect selected faces
+-   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html) to unselect selected faces
     and to select unselected one.
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
