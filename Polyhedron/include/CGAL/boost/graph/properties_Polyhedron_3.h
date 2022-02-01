@@ -52,12 +52,12 @@ private:
 // Special case for edges.
 template<class Polyhedron>
 class Polyhedron_edge_index_map_external
-  : public boost::put_get_helper<std::size_t, Polyhedron_edge_index_map_external<Polyhedron> >
+  : public boost::put_get_helper<std::size_t&, Polyhedron_edge_index_map_external<Polyhedron> >
 {
 public:
-  typedef boost::readable_property_map_tag                          category;
+  typedef boost::lvalue_property_map_tag                            category;
   typedef std::size_t                                               value_type;
-  typedef std::size_t                                               reference;
+  typedef std::size_t&                                              reference;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
 
 private:
@@ -80,7 +80,6 @@ private:
 
   template<typename Handle, typename FT>
 struct Wrap_squared
-    : boost::put_get_helper< double, Wrap_squared<Handle,FT> >
 {
   typedef FT value_type;
   typedef FT reference;
@@ -88,9 +87,15 @@ struct Wrap_squared
   typedef boost::readable_property_map_tag category;
 
   template<typename E>
-  FT
-  operator[](const E& e) const {
-    return approximate_sqrt(CGAL::squared_distance(e.halfedge()->vertex()->point(), e.halfedge()->opposite()->vertex()->point()));
+  FT operator[](const E& e) const {
+    return approximate_sqrt(CGAL::squared_distance(e.halfedge()->vertex()->point(),
+                                                   e.halfedge()->opposite()->vertex()->point()));
+  }
+
+  friend inline
+  value_type get(const Wrap_squared& m, const key_type k)
+  {
+    return m[k];
   }
 };
 

@@ -1,15 +1,11 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Point_set_3_Examples)
 
 # CGAL and its components
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
-
-if(CGAL_Qt5_FOUND)
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
 
 # Boost and its components
 find_package(Boost REQUIRED)
@@ -44,5 +40,5 @@ endif()
 
 create_single_source_cgal_program("draw_point_set_3.cpp")
 if(CGAL_Qt5_FOUND)
-  target_link_libraries(draw_point_set_3 PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(draw_point_set_3 PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

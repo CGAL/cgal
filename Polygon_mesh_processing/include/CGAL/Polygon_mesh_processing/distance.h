@@ -25,7 +25,7 @@
 #include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/utility.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Spatial_sort_traits_adapter_3.h>
@@ -220,7 +220,7 @@ struct Triangle_structure_sampler_base
     bool use_ms = choose_parameter(get_parameter(np, internal_np::monte_carlo_sampling), false);
 
     if(use_gs || use_ms)
-      if(is_default_parameter(get_parameter(np, internal_np::random_uniform_sampling)))
+      if(is_default_parameter<NamedParameters, internal_np::random_uniform_sampling_t>())
         use_rs = false;
 
     bool smpl_vrtcs = choose_parameter(get_parameter(np, internal_np::do_sample_vertices), true);
@@ -438,6 +438,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
   Vpm pmap;
   double min_sq_edge_length;
   const Mesh& tm;
+  CGAL::Random rnd;
 
   Triangle_structure_sampler_for_triangle_mesh(const Mesh& m,
                                                PointOutputIterator& out,
@@ -446,9 +447,12 @@ struct Triangle_structure_sampler_for_triangle_mesh
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(vertex_point, tm));
+    if (!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
+      rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
     min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
 
@@ -549,7 +553,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
   Randomizer get_randomizer()
   {
-    return Randomizer(tm, pmap);
+    return Randomizer(tm, pmap, rnd);
   }
 
   void internal_sample_triangles(double grid_spacing_, bool smpl_fcs, bool smpl_dgs)
@@ -609,6 +613,7 @@ struct Triangle_structure_sampler_for_triangle_soup
   double min_sq_edge_length;
   const PointRange& points;
   const TriangleRange& triangles;
+  Random rnd;
 
   Triangle_structure_sampler_for_triangle_soup(const PointRange& pts,
                                                const TriangleRange& trs,
@@ -616,7 +621,13 @@ struct Triangle_structure_sampler_for_triangle_soup
                                                const NamedParameters& np)
     : Base(out, np), points(pts), triangles(trs)
   {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+    using parameters::is_default_parameter;
+
     min_sq_edge_length = (std::numeric_limits<double>::max)();
+    if (!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
+      rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
   }
 
   std::pair<TriangleIterator, TriangleIterator> get_range()
@@ -681,7 +692,7 @@ struct Triangle_structure_sampler_for_triangle_soup
 
   Randomizer get_randomizer()
   {
-    return Randomizer(triangles, points);
+    return Randomizer(triangles, points, rnd);
   }
 
   void internal_sample_triangles(double distance, bool, bool)
@@ -737,9 +748,17 @@ struct Triangle_structure_sampler_for_triangle_soup
  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{random_seed}
+ *     \cgalParamDescription{a value to seed the random number generator}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{a value generated with `std::time()`}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{use_random_uniform_sampling}
- *     \cgalParamDescription{If `true` is passed, points are generated in a random and uniform way
- *                           on the surface of `tm`, and/or on edges of `tm`.}
+ *     \cgalParamDescription{If `true` is passed, points are generated uniformly at random on faces and/or edges of `tm`.
+                             If `do_sample_faces` is `true`, random points will be iteratively generated uniformly at random in the triangle of a face
+                             selected with probability proportional to its area. If `do_sample_edges` is `true`, random points will be iteratively generated uniformly at random in the segment of an edge
+                             selected with probability proportional to its length.}
  *     \cgalParamType{Boolean}
  *     \cgalParamType{`true`}
  *     \cgalParamExtra{For faces, the number of sample points is the value passed to the named
@@ -785,19 +804,19 @@ struct Triangle_structure_sampler_for_triangle_soup
  *                     is used as if it was passed to `number_of_points_per_distance_unit`.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_vertices}
+ *   \cgalParamNBegin{do_sample_vertices}
  *     \cgalParamDescription{If `true` is passed, the vertices of `tm` are part of the sample.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_edges}
+ *   \cgalParamNBegin{do_sample_edges}
  *     \cgalParamDescription{If `true` is passed, edges of `tm` are sampled.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_faces}
+ *   \cgalParamNBegin{do_sample_faces}
  *     \cgalParamDescription{If `true` is passed, faces of `tm` are sampled.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
@@ -850,11 +869,11 @@ struct Triangle_structure_sampler_for_triangle_soup
  *
  * @see `CGAL::Polygon_mesh_processing::sample_triangle_soup()`
  */
-template<class PointOutputIterator, class TriangleMesh, class NamedParameters>
+template<class PointOutputIterator, class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
 PointOutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
                      PointOutputIterator out,
-                     const NamedParameters& np)
+                     const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   Vpm;
@@ -896,6 +915,12 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *     \cgalParamExtra{The geometric traits class must be compatible with the point range's point type.}
  *   \cgalParamNEnd
  *
+ *   \cgalParamNBegin{random_seed}
+ *     \cgalParamDescription{a value to seed the random number generator}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{a value generated with `std::time()`}
+ *   \cgalParamNEnd
+ *
  *   \cgalParamNBegin{use_random_uniform_sampling}
  *     \cgalParamDescription{If `true` is passed, points are generated in a random and uniform way
  *                           over the triangles of the soup.}
@@ -930,13 +955,13 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                     by the square of the length of the smallest non-null edge of the soup.}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_vertices}
+ *   \cgalParamNBegin{do_sample_vertices}
  *     \cgalParamDescription{If `true` is passed, the points of `points` are part of the sample.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  *
- *   \cgalParamNBegin{sample_faces}
+ *   \cgalParamNBegin{do_sample_faces}
  *     \cgalParamDescription{If `true` is passed, faces of the soup are sampled.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
@@ -975,12 +1000,12 @@ sample_triangle_mesh(const TriangleMesh& tm,
 template<class PointOutputIterator,
          class TriangleRange,
          class PointRange,
-         class NamedParameters>
+         class NamedParameters = parameters::Default_named_parameters>
 PointOutputIterator
 sample_triangle_soup(const PointRange& points,
                      const TriangleRange& triangles,
                      PointOutputIterator out,
-                     const NamedParameters& np)
+                     const NamedParameters& np = parameters::default_values())
 {
   typedef typename PointRange::value_type         Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
@@ -997,25 +1022,6 @@ sample_triangle_soup(const PointRange& points,
   performer.procede();
 
   return performer.out;
-}
-
-template<class PointOutputIterator, class TriangleMesh>
-PointOutputIterator
-sample_triangle_mesh(const TriangleMesh& tm,
-                     PointOutputIterator out)
-{
-  return sample_triangle_mesh(tm, out, parameters::all_default());
-}
-
-template<class PointOutputIterator,
-         class TriangleRange,
-         class PointRange>
-PointOutputIterator
-sample_triangle_soup(const PointRange& points,
-                     const TriangleRange& triangles,
-                     PointOutputIterator out)
-{
-  return sample_triangle_soup(points, triangles, out, parameters::all_default());
 }
 
 template <class Concurrency_tag,
@@ -1048,7 +1054,7 @@ double approximate_Hausdorff_distance(
   Point_3 hint = get(vpm, *vertices(tm).first);
 
   return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>
-    (original_sample_points, tree, hint);
+    (sample_points, tree, hint);
 }
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh,
@@ -1104,17 +1110,17 @@ double approximate_Hausdorff_distance(
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values
+ * The function `CGAL::parameters::default_values()` can be used to indicate to use the default values
  * for `np1` and specify custom values for `np2`.
  */
 template< class Concurrency_tag,
           class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 double approximate_Hausdorff_distance( const TriangleMesh& tm1,
                                        const TriangleMesh& tm2,
-                                       const NamedParameters1& np1,
-                                       const NamedParameters2& np2)
+                                       const NamedParameters1& np1 = parameters::default_values(),
+                                       const NamedParameters2& np2 = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters1>::type GeomTraits;
@@ -1132,13 +1138,13 @@ double approximate_Hausdorff_distance( const TriangleMesh& tm1,
  */
 template< class Concurrency_tag,
           class TriangleMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 double approximate_symmetric_Hausdorff_distance(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   return (std::max)(
     approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,np1,np2),
@@ -1179,10 +1185,10 @@ double approximate_symmetric_Hausdorff_distance(
 template< class Concurrency_tag,
           class TriangleMesh,
           class PointRange,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 double max_distance_to_triangle_mesh(const PointRange& points,
                                      const TriangleMesh& tm,
-                                     const NamedParameters& np)
+                                     const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters>::type GeomTraits;
@@ -1227,11 +1233,11 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  */
 template< class TriangleMesh,
           class PointRange,
-          class NamedParameters>
+          class NamedParameters = parameters::Default_named_parameters>
 double approximate_max_distance_to_point_set(const TriangleMesh& tm,
                                              const PointRange& points,
                                              const double precision,
-                                             const NamedParameters& np)
+                                             const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<TriangleMesh,
                                  NamedParameters>::type GeomTraits;
@@ -1255,71 +1261,6 @@ double approximate_max_distance_to_point_set(const TriangleMesh& tm,
     ref.add(points[0], points[1], points[2], tree);
   }
   return to_double(ref.refine(precision, tree));
-}
-
-// convenience functions with default parameters
-
-template< class Concurrency_tag,
-          class TriangleMesh,
-          class PointRange>
-double max_distance_to_triangle_mesh(const PointRange& points,
-                                     const TriangleMesh& tm)
-{
-   return max_distance_to_triangle_mesh<Concurrency_tag,
-           TriangleMesh,
-           PointRange>
-           (points, tm, parameters::all_default());
-}
-
-template< class TriangleMesh,
-          class PointRange>
-double approximate_max_distance_to_point_set(const TriangleMesh& tm,
-                                             const PointRange& points,
-                                             const double precision)
-{
-  return approximate_max_distance_to_point_set(tm, points, precision,
-                                               parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh,
-          class NamedParameters>
-double approximate_Hausdorff_distance(const TriangleMesh& tm1,
-                                      const TriangleMesh& tm2,
-                                      const NamedParameters& np)
-{
-  return approximate_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, np, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh>
-double approximate_Hausdorff_distance(const TriangleMesh& tm1,
-                                      const TriangleMesh& tm2)
-{
-  return approximate_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, parameters::all_default(), parameters::all_default());
-}
-
-
-template< class Concurrency_tag,
-          class TriangleMesh,
-          class NamedParameters>
-double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
-                                                const TriangleMesh& tm2,
-                                                const NamedParameters& np)
-{
-  return approximate_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, np, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh>
-double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
-                                                const TriangleMesh& tm2)
-{
-  return approximate_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, parameters::all_default(), parameters::all_default());
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -2370,14 +2311,14 @@ double bounded_error_Hausdorff_naive_impl(
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters >
 double bounded_error_Hausdorff_distance(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const double error_bound = 0.0001,
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2410,32 +2351,6 @@ double bounded_error_Hausdorff_distance(
     tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out);
 }
 
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 >
-double bounded_error_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1)
-{
-  return bounded_error_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, error_bound, np1, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2 >
-double bounded_error_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound = 0.0001)
-{
-  return bounded_error_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, error_bound, parameters::all_default());
-}
-
 /**
  * \ingroup PMP_distance_grp
  * returns the maximum of `bounded_error_Hausdorff_distance(tm1, tm2, error_bound, np1, np2)`
@@ -2450,14 +2365,14 @@ double bounded_error_Hausdorff_distance(
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters >
 double bounded_error_symmetric_Hausdorff_distance(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double error_bound,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2494,35 +2409,6 @@ double bounded_error_symmetric_Hausdorff_distance(
     tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out1, out2);
 }
 
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 >
-double bounded_error_symmetric_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1)
-{
-  return bounded_error_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, error_bound, np1, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2>
-double bounded_error_symmetric_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound = 0.0001)
-{
-  return bounded_error_symmetric_Hausdorff_distance<Concurrency_tag>(
-    tm1, tm2, error_bound, parameters::all_default());
-}
-
-// TODO: Find better name!
-// TODO: Should we use one-sided or symmetric distance here?
-
 /**
  * \ingroup PMP_distance_grp
  * returns `true` if the Hausdorff distance between two meshes is larger than
@@ -2548,15 +2434,15 @@ double bounded_error_symmetric_Hausdorff_distance(
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 bool is_Hausdorff_distance_larger(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double distance_bound,
   const double error_bound,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2605,46 +2491,18 @@ bool is_Hausdorff_distance_larger(
   return hdist > distance_bound;
 }
 
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 >
-double is_Hausdorff_distance_larger(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double max_distance,
-  const double error_bound,
-  const NamedParameters1& np1)
-{
-  return is_Hausdorff_distance_larger<Concurrency_tag>(
-    tm1, tm2, max_distance, error_bound, np1, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2 >
-double is_Hausdorff_distance_larger(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double max_distance = 1.0,
-  const double error_bound = 0.0001)
-{
-  return is_Hausdorff_distance_larger<Concurrency_tag>(
-    tm1, tm2, max_distance, error_bound, parameters::all_default());
-}
-
 // Implementation of the naive Bounded Error Hausdorff distance.
 template< class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
-          class NamedParameters1,
-          class NamedParameters2 >
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters >
 double bounded_error_Hausdorff_distance_naive(
   const TriangleMesh1& tm1,
   const TriangleMesh2& tm2,
   const double error_bound,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2)
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
   CGAL_assertion_code(
     const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
@@ -2666,32 +2524,6 @@ double bounded_error_Hausdorff_distance_naive(
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_Hausdorff_naive_impl<Concurrency_tag, Traits>(
     tm1, tm2, error_threshold, vpm1, vpm2);
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 >
-double bounded_error_Hausdorff_distance_naive(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1)
-{
-  return bounded_error_Hausdorff_distance_naive<Concurrency_tag>(
-    tm1, tm2, error_bound, np1, parameters::all_default());
-}
-
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2 >
-double bounded_error_Hausdorff_distance_naive(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound = 0.0001)
-{
-  return bounded_error_Hausdorff_distance_naive<Concurrency_tag>(
-    tm1, tm2, error_bound, parameters::all_default());
 }
 
 } } // end of namespace CGAL::Polygon_mesh_processing

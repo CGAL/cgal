@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 {
   //read in mesh
   Surface_mesh sm;
-  const char* filename = (argc > 1) ? argv[1] : "./data/rectangle_with_degenerate_faces.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/rectangle_with_degenerate_faces.off";
   std::ifstream in(filename);
   in >> sm;
   //property map for the distance values to the source set

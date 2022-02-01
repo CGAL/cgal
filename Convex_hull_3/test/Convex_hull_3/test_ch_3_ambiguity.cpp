@@ -12,7 +12,7 @@ typedef CGAL::Surface_mesh<Point_3>                          Surface_mesh;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc>1)? argv[1] : "data/cross.off";
+  const std::string filename = (argc>1)? argv[1] : CGAL::data_file_path("meshes/cross.off");
 
   Surface_mesh poly;
   if(!CGAL::IO::read_polygon_mesh(filename, poly))
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 
   Surface_mesh chull;
   // compute convex hull
-  auto np = CGAL::parameters::all_default();
+  auto np = CGAL::parameters::default_values();
   CGAL::convex_hull_3(poly, chull, np);
   std::cout << "The convex hull contains " << chull.number_of_vertices() << " vertices" << std::endl;
   return 0;

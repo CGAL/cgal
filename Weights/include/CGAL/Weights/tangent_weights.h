@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Dmitry Anisimov
@@ -13,8 +13,6 @@
 
 #ifndef CGAL_TANGENT_WEIGHTS_H
 #define CGAL_TANGENT_WEIGHTS_H
-
-#include <CGAL/license/Weights.h>
 
 // Internal includes.
 #include <CGAL/Weights/internal/utils.h>
@@ -371,6 +369,67 @@ namespace Weights {
     const GeomTraits traits;
     return tangent_weight(t, r, p, q, traits);
   }
+
+  // Undocumented tangent weight class.
+  // Its constructor takes a polygon mesh and a vertex to point map
+  // and its operator() is defined based on the halfedge_descriptor only.
+  // This version is currently used in:
+  // Surface_mesh_parameterizer -> Iterative_authalic_parameterizer_3.h
+  template<
+  typename PolygonMesh,
+  typename VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
+  class Edge_tangent_weight {
+
+    using GeomTraits = typename CGAL::Kernel_traits<
+        typename boost::property_traits<VertexPointMap>::value_type>::type;
+    using FT = typename GeomTraits::FT;
+
+    const PolygonMesh& m_pmesh;
+    const VertexPointMap m_pmap;
+    const GeomTraits m_traits;
+
+  public:
+    using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+    using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+
+    Edge_tangent_weight(const PolygonMesh& pmesh, const VertexPointMap pmap) :
+    m_pmesh(pmesh), m_pmap(pmap), m_traits() { }
+
+    FT operator()(const halfedge_descriptor he) const {
+
+      FT weight = FT(0);
+      if (is_border_edge(he, m_pmesh)) {
+        const auto h1 = next(he, m_pmesh);
+
+        const auto v0 = target(he, m_pmesh);
+        const auto v1 = source(he, m_pmesh);
+        const auto v2 = target(h1, m_pmesh);
+
+        const auto& p0 = get(m_pmap, v0);
+        const auto& p1 = get(m_pmap, v1);
+        const auto& p2 = get(m_pmap, v2);
+
+        weight = internal::tangent_3(m_traits, p0, p2, p1);
+
+      } else {
+        const auto h1 = next(he, m_pmesh);
+        const auto h2 = prev(opposite(he, m_pmesh), m_pmesh);
+
+        const auto v0 = target(he, m_pmesh);
+        const auto v1 = source(he, m_pmesh);
+        const auto v2 = target(h1, m_pmesh);
+        const auto v3 = source(h2, m_pmesh);
+
+        const auto& p0 = get(m_pmap, v0);
+        const auto& p1 = get(m_pmap, v1);
+        const auto& p2 = get(m_pmap, v2);
+        const auto& p3 = get(m_pmap, v3);
+
+        weight = tangent_weight(p2, p1, p3, p0) / FT(2);
+      }
+      return weight;
+    }
+  };
 
   // Undocumented tangent weight class.
   // Its constructor takes three points either in 2D or 3D.

@@ -248,6 +248,8 @@ inline __m128d IA_opacify128(__m128d x)
 #  ifdef _MSC_VER
   // With VS, __m128d is a union, where volatile doesn't disappear automatically
   // However, this version generates wrong code with clang, check before enabling it for more compilers.
+  // The usage here is safe as we write from a __m128d to a __m128d
+  // and we know that this type has 16 bytes
   std::memcpy(&x, (void*)&e, 16);
   return x;
 #  else

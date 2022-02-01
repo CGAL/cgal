@@ -33,7 +33,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/iterator/counting_iterator.hpp>
@@ -102,10 +102,11 @@ private:
     typedef const value_type& reference;
     typedef std::size_t key_type;
     typedef boost::lvalue_property_map_tag category;
+
     My_point_property_map (const std::vector<Point>& pts) : points (pts) {}
+
     reference operator[] (key_type k) const { return points[k]; }
-    friend inline reference get (const My_point_property_map& ppmap, key_type i)
-    { return ppmap[i]; }
+    friend inline reference get (const My_point_property_map& ppmap, key_type i) { return ppmap[i]; }
   };
 
   struct Edge
@@ -164,7 +165,7 @@ public:
     \param points input point range
     \param planes input plane range.
     \param epsilon size parameter.
-    \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    \param np a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{point_map}
@@ -184,7 +185,7 @@ public:
         \cgalParamDescription{a property map associating the index of a point in the input range
                               to the index of plane (`-1` if the point is not assigned to a plane)}
         \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
-        \cgalParamDefault{unused}
+        \cgalParamDefault{There is no default, this parameters is mandatory.}
       \cgalParamNEnd
 
       \cgalParamNBegin{plane_map}
@@ -224,22 +225,21 @@ public:
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     // basic geometric types
-    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Const_point_map PointMap;
+    typedef typename NP_helper::Normal_map NormalMap;
     typedef typename Point_set_processing_3::GetPlaneMap<PlaneRange, NamedParameters>::type PlaneMap;
     typedef typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type PlaneIndexMap;
 
-    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
-                              "Error: no normal map");
-    CGAL_static_assertion_msg(!(boost::is_same<PlaneIndexMap,
-                                typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
+    CGAL_static_assertion_msg(NP_helper::has_normal_map(), "Error: no normal map");
+    CGAL_static_assertion_msg((!is_default_parameter<NamedParameters, internal_np::plane_index_t>()),
                               "Error: no plane index map");
 
-    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+    PointMap point_map = NP_helper::get_const_point_map(points, np);
+    NormalMap normal_map = NP_helper::get_normal_map(points, np);
     PlaneMap plane_map = choose_parameter<PlaneMap>(get_parameter(np, internal_np::plane_map));
     PlaneIndexMap index_map = choose_parameter<PlaneIndexMap>(get_parameter(np, internal_np::plane_index_map));
     double attraction_factor = choose_parameter(get_parameter(np, internal_np::attraction_factor), 3.);
@@ -1504,7 +1504,7 @@ private:
    \param planes input plane range.
    \param output output iterator where output points are written
    \param epsilon size parameter.
-   \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+   \param np a sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 
    \cgalNamedParamsBegin
       \cgalParamNBegin{point_map}
@@ -1524,8 +1524,7 @@ private:
         \cgalParamDescription{a property map associating the index of a point in the input range
                               to the index of plane (`-1` if the point is not assigned to a plane)}
         \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `int` as value type}
-        \cgalParamDefault{unused}
-      \cgalParamNEnd
+        \cgalParamDefault{There is no default, this parameters is mandatory.}
 
       \cgalParamNBegin{plane_map}
         \cgalParamDescription{a property map containing the planes associated to the elements of the plane range `planes`}
@@ -1563,7 +1562,8 @@ structure_point_set (const PointRange& points,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Geom_traits Kernel;
 
   Point_set_with_structure<Kernel> pss (points, planes, epsilon, np);
 
@@ -1572,24 +1572,6 @@ structure_point_set (const PointRange& points,
 
   return output;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange,
-          typename PlaneRange,
-          typename OutputIterator>
-OutputIterator
-structure_point_set (const PointRange& points, ///< range of points.
-                     const PlaneRange& planes, ///< range of planes.
-                     OutputIterator output, ///< output iterator where output points are written.
-                     double epsilon) ///< size parameter.
-{
-  return structure_point_set
-    (points, planes, output, epsilon,
-     CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

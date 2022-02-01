@@ -3398,8 +3398,17 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Triangle_3 Triangle_3;
     typedef typename K::Segment_3  Segment_3;
     typedef typename K::Ray_3      Ray_3;
+
   public:
-    typedef Point_3          result_type;
+    template<typename>
+    struct result {
+      typedef const Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Point_3, Point_3)> {
+      typedef const Point_3& type;
+    };
 
     Point_3
     operator()( const Line_3& l, const Point_3& p ) const
@@ -3429,15 +3438,19 @@ namespace HomogeneousKernelFunctors {
 
     Point_3
     operator()( const Triangle_3& t, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,t,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(t,p,K()); }
 
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(s,p,K()); }
 
     Point_3
     operator()( const Ray_3& r, const Point_3& p ) const
-    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(r,p,K()); }
+
+    const Point_3&
+    operator()( const Point_3& p, const Point_3& q) const
+    { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,q,K()); }
   };
 
   template <class K>
@@ -4670,12 +4683,13 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Circle_2       Circle_2;
     typedef typename K::Line_2         Line_2;
     typedef typename K::Triangle_2     Triangle_2;
+    typedef typename K::Segment_2      Segment_2;
   public:
     typedef typename K::Oriented_side  result_type;
 
     result_type
     operator()( const Circle_2& c, const Point_2& p) const
-    { return Oriented_side(c.bounded_side(p) * c.orientation()); }
+    { return Oriented_side(static_cast<int>(c.bounded_side(p)) * static_cast<int>(c.orientation())); }
 
     result_type
     operator()( const Line_2& l, const Point_2& p) const
@@ -4708,6 +4722,41 @@ namespace HomogeneousKernelFunctors {
          && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
         ? ON_ORIENTED_BOUNDARY
         : -ot;
+    }
+
+    result_type
+    operator()(const Segment_2& s, const Triangle_2& t) const
+    {
+      typename K::Construct_source_2 source;
+      typename K::Construct_target_2 target;
+      typename K::Construct_vertex_2 vertex;
+      typename K::Construct_circumcenter_2 circumcenter;
+      typename K::Orientation_2 orientation;
+
+      const Point_2& a = source(s);
+      const Point_2& b = target(s);
+      CGAL_assertion(a != b);
+
+      const Point_2& p0 = vertex(t, 0);
+      const Point_2& p1 = vertex(t, 1);
+      const Point_2& p2 = vertex(t, 2);
+      CGAL_assertion(p0 != p1 && p1 != p2 && p2 != p0);
+
+      const Point_2 cc = circumcenter(t);
+
+      CGAL::Orientation o_abc = orientation(a, b, cc);
+      if (o_abc == CGAL::COLLINEAR)
+        return CGAL::ON_ORIENTED_BOUNDARY;
+
+      CGAL::Orientation o_abt = orientation(a, b, p0);
+      if (o_abt == CGAL::COLLINEAR)
+        o_abt = orientation(a, b, p1);
+      if (o_abt == CGAL::COLLINEAR)
+        o_abt = orientation(a, b, p2);
+      CGAL_assertion(o_abt != CGAL::COLLINEAR);
+
+      if (o_abc == o_abt) return CGAL::ON_POSITIVE_SIDE;
+      else                return CGAL::ON_NEGATIVE_SIDE;
     }
   };
 

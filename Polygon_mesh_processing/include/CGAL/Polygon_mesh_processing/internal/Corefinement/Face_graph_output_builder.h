@@ -56,7 +56,6 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION,
                              TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
 
 namespace PMP=Polygon_mesh_processing;
-namespace params=PMP::parameters;
 
 // extra functions for handling non-documented functions for user visitors
 // with no extra functions
@@ -709,8 +708,8 @@ public:
     std::size_t nb_patches_tm1 =
       PMP::connected_components(tm1,
                                 bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
-                                params::edge_is_constrained_map(is_marked_1)
-                                       .face_index_map(fids1));
+                                parameters::edge_is_constrained_map(is_marked_1)
+                                           .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)
@@ -722,8 +721,8 @@ public:
     std::size_t nb_patches_tm2 =
       PMP::connected_components(tm2,
                                 bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
-                                params::edge_is_constrained_map(is_marked_2)
-                                       .face_index_map(fids2));
+                                parameters::edge_is_constrained_map(is_marked_2)
+                                           .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
     for(Node_id i : tm2_patch_ids)

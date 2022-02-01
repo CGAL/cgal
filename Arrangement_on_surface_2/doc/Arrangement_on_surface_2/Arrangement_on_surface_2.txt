@@ -2213,11 +2213,9 @@ vertex and the remaining one is vertical.
 \cgalFigureBegin{aos_fig-bounded_vd,bounded_vertical_decomposition.png}
 An arrangement of four line segments and its vertical decomposition
 into pseudo trapezoids, as constructed in \ref
-Arrangement_on_surface_2/bounded_vertical_decomposition.cpp.  The
-segments of \f$\mathcal{S}_1\f$ are drawn in solid lines and the
-segments of \f$\mathcal{S}_2\f$ are drawn in dark dashed lines. Note
-that the segment \f$ s\f$ (light dashed line) overlaps one of the
-segments in \f$\mathcal{S}_1\f$.
+Arrangement_on_surface_2/bounded_vertical_decomposition.cpp. The
+segments of the arrangement are drawn in solid blue lines and the
+segments of the vertical decomposition are drawn in dark dotted lines.
 \cgalFigureEnd
 <!-- ------------------------------------------------------------------------- -->
 
@@ -6746,7 +6744,7 @@ corresponding faces.
 <!-- ------------------------------------------------------------------------- -->
 
 Arrangement instances are adapted to \boost graphs by specializing the
-\link BGLArgtGT `boost:graph_traits` \endlink template for
+\link BGLArgtGT `boost::graph_traits` \endlink template for
 `Arrangement_2` instances. The graph-traits states the graph concepts
 that the arrangement class models (see below) and defines the types
 required by these concepts.
@@ -6879,7 +6877,7 @@ one described in the previous section. A dual-graph representation
 refers to the graph, where each arrangement face corresponds to a
 graph vertex, and two vertices are adjacent iff the corresponding faces
 share a common edge on their boundaries. This is done by specializing
-the `boost:graph_traits` template for `Dual<Arrangement_2>` instances,
+the `boost::graph_traits` template for `Dual<Arrangement_2>` instances,
 where `Dual<Arrangement_2>` is a template specialization that gives a
 dual interpretation to an arrangement instance.
 

@@ -180,7 +180,7 @@ int main( int argc, char* argv[]) {
         exit(1);
     }
     int n = 1;
-    std::ifstream in1((argc>1)?argv[1]:"data/lshape_with_boundary.off");
+    std::ifstream in1((argc>1)?argv[1]:CGAL::data_file_path("meshes/corner_with_hole.off"));
     if ( argc == 3)
         n = atoi( argv[2]);
     if ( n < 1 || n > 12) {

@@ -21,7 +21,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/is_iterator.h>
 
@@ -54,12 +54,6 @@
 
 #ifdef BOOST_MSVC
 #  pragma warning(pop)
-#endif
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
 #endif
 
 namespace CGAL {
@@ -365,7 +359,7 @@ void process_properties (const LASpoint& reader, OutputValueType& new_element,
    - `LAS_property::B` with type `unsigned short`
    - `LAS_property::I` with type `unsigned short`
 
-   \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+   \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
    It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
@@ -430,7 +424,7 @@ bool read_LAS_with_properties(std::istream& is,
 
    Potential additional properties are ignored.
 
-   \attention When reading a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ifstream`.
+   \attention To read a binary file, the flag `std::ios::binary` must be set during the creation of the `ifstream`.
 
    \tparam OutputIteratorValueType type of objects that can be put in `PointOutputIterator`.
    It must be a model of `DefaultConstructible` and defaults to `value_type_traits<PointOutputIterator>::%type`.
@@ -462,17 +456,17 @@ bool read_LAS_with_properties(std::istream& is,
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(std::istream& is,
               PointOutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
 
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::type PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   return read_LAS_with_properties(is, output, make_las_point_reader(point_map));
@@ -480,25 +474,11 @@ bool read_LAS(std::istream& is,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np,
+template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values(),
               typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
 {
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
-}
-
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_LAS(std::istream& is, OutputIterator output,
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
-{
-  return read_LAS<OutputIteratorValueType>(is, output, CGAL::parameters::all_default());
-}
-
-template <typename OutputIterator>
-bool read_LAS(std::istream& is, OutputIterator output,
-              typename std::enable_if<CGAL::is_iterator<OutputIterator>::value>::type* = nullptr)
-{
-  return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, parameters::all_default());
 }
 
 /// \endcond
@@ -540,10 +520,10 @@ bool read_LAS(std::istream& is, OutputIterator output,
 */
 template <typename OutputIteratorValueType,
           typename PointOutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_LAS(const std::string& filename,
               PointOutputIterator output,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(filename, std::ios::binary);
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
@@ -552,24 +532,12 @@ bool read_LAS(const std::string& filename,
 
 /// \cond SKIP_IN_MANUAL
 
-template <typename OutputIterator,typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
+template <typename OutputIterator,typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_LAS(const std::string& fname, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ifstream is(fname, std::ios::binary);
   CGAL::IO::set_mode(is, CGAL::IO::BINARY);
   return read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
-}
-
-template <typename OutputIteratorValueType, typename OutputIterator>
-bool read_LAS(const std::string& fname, OutputIterator output)
-{
-  return read_LAS<OutputIteratorValueType>(fname, output, parameters::all_default());
-}
-
-template <typename OutputIterator>
-bool read_LAS(const std::string& fname, OutputIterator output)
-{
-  return read_LAS<typename value_type_traits<OutputIterator>::type>(fname, output, parameters::all_default());
 }
 
 /// \endcond
@@ -642,41 +610,28 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
 */
 template <typename OutputIteratorValueType,
           typename OutputIterator,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 CGAL_DEPRECATED bool read_las_points(std::istream& is,
                                      OutputIterator output,
-                                     const CGAL_BGL_NP_CLASS& np)
+                                     const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type point_map =
-      choose_parameter<typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_BGL_NP_CLASS>::type>(get_parameter(np, internal_np::point_map));
+  typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_NP_CLASS>::type point_map =
+      choose_parameter<typename CGAL::GetPointMap<Point_set_processing_3::Fake_point_range<OutputIteratorValueType>, CGAL_NP_CLASS>::type>(get_parameter(np, internal_np::point_map));
 
   return IO::read_LAS(is, output, make_las_point_reader(point_map));
 }
 
 /// \cond SKIP_IN_MANUAL
 
-// variant with default NP
-template <typename OutputIteratorValueType, typename OutputIterator>
-CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output)
-{
-  return IO::read_LAS<OutputIteratorValueType>(is, output, CGAL::parameters::all_default());
-}
 
 // variant with default output iterator value type
-template <typename OutputIterator, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output, const CGAL_BGL_NP_CLASS& np)
+template <typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, np);
-}
-
-// variant with default NP and output iterator value type
-template <typename OutputIterator>
-CGAL_DEPRECATED bool read_las_points(std::istream& is, OutputIterator output)
-{
-  return IO::read_LAS<typename value_type_traits<OutputIterator>::type>(is, output, CGAL::parameters::all_default());
 }
 
 /// \endcond

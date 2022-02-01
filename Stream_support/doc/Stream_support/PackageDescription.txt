@@ -58,7 +58,7 @@
 All classes in the \cgal kernel provide input and output operators for
 I/O streams.
 \cgal provides three different printing mode, defined in the enum
-`IO::Mode`, as well as different functions to set and get
+\link PkgStreamSupportEnumRef `IO::Mode` \endlink, as well as different functions to set and get
 the printing mode.
 
 \cgalClassifedRefPages

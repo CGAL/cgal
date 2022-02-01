@@ -45,13 +45,13 @@ struct Approximate_hd_wrapper {
   Approximate_hd_wrapper(const double num_samples) : m_num_samples(num_samples) { }
   double operator()(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::approximate_Hausdorff_distance<TAG>(tm1, tm2,
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples),
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples));
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples),
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples));
   }
   double symmetric(const Surface_mesh& tm1, const Surface_mesh& tm2) const {
     return PMP::approximate_symmetric_Hausdorff_distance<TAG>(tm1, tm2,
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples),
-      PMP::parameters::number_of_points_per_area_unit(m_num_samples));
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples),
+      CGAL::parameters::number_of_points_per_area_unit(m_num_samples));
   }
 };
 
@@ -128,7 +128,7 @@ void remeshing_tetrahedon_example(
   const double target_edge_length = 0.05;
   PMP::isotropic_remeshing(
     mesh2.faces(), target_edge_length, mesh2,
-    PMP::parameters::edge_is_constrained_map(is_constrained_map));
+    CGAL::parameters::edge_is_constrained_map(is_constrained_map));
 
   if (save) save_mesh(mesh1, "mesh1");
   if (save) save_mesh(mesh2, "mesh2");
@@ -781,8 +781,7 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
   get_mesh(filepath, mesh1);
   PMP::isotropic_remeshing(faces(mesh1), 0.005, mesh1);
   mesh1.collect_garbage();
-  mesh2=mesh1;
-
+  mesh2 = mesh1;
 
   timer.reset();
   timer.start();
@@ -809,7 +808,9 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   assert(timea > 0.0);
   assert(timeb > 0.0);
-  assert(timeab < timea + timeb);
+
+  // If the machine is loaded, this assert may go false.
+  // assert(timeab < timea + timeb);
 
   PMP::transform(Affine_transformation_3(CGAL::Translation(),
     Vector_3(FT(0), FT(0), FT(1))), mesh2);
@@ -839,7 +840,9 @@ void test_timings(const std::string filepath, const FunctionWrapper& functor) {
 
   assert(timea > 0.0);
   assert(timeb > 0.0);
-  assert(timeab < timea + timeb);
+
+  // If the machine is loaded, this assert may go false.
+  // assert(timeab < timea + timeb);
 
   std::cout << "* dista  = " << dista1 << " , " << dista2 << std::endl;
   std::cout << "* distb  = " << distb1 << " , " << distb2 << std::endl;
@@ -1058,8 +1061,6 @@ void test_realizing_triangles(
   PMP::transform(Affine_transformation_3(
     CGAL::Translation(), Vector_3(0, 0, 10 * error_bound)), tmp2);
 
-
-
   mesh1.join(tmp1);
   mesh2.join(tmp2);
 
@@ -1131,7 +1132,7 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.0 = 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0, 0.0001));
   timer.stop();
   const double timea = timer.time();
 
@@ -1141,25 +1142,25 @@ void test_early_quit(const std::string filepath) {
   std::cout << " ---- distance 0.5 < 1.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 1.0));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 1.0, 0.0001));
   timer.stop();
   const double timeb = timer.time();
   std::cout << " ---- distance 0.5 < 0.6 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.6));
+  assert(!PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.6, 0.0001));
   timer.stop();
   const double timec = timer.time();
   std::cout << " ---- distance 0.5 > 0.4 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.4));
+  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.4, 0.0001));
   timer.stop();
   const double timed = timer.time();
   std::cout << " ---- distance 0.5 > 0.0 ---- " << std::endl;
   timer.reset();
   timer.start();
-  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0));
+  assert(PMP::is_Hausdorff_distance_larger<TAG>(mesh1, mesh2, 0.0, 0.0001));
   timer.stop();
   const double timee = timer.time();
 
@@ -1194,7 +1195,7 @@ int main(int argc, char** argv) {
   const double num_samples = 10.;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   // std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
-  std::string filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  std::string filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   run_examples(error_bound, filepath);
 
   // ------------------------------------------------------------------------ //
@@ -1219,7 +1220,7 @@ int main(int argc, char** argv) {
 
   // --- Compare on real meshes.
 
-  const std::string filepath1 = (argc > 1 ? argv[1] : "data/blobby.off");
+  const std::string filepath1 = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   const std::string filepath2 = (argc > 2 ? argv[2] : "data/tetrahedron-remeshed.off");
 
   // test_real_meshes(filepath1, filepath2, apprx_hd, naive_hd);
@@ -1228,7 +1229,7 @@ int main(int argc, char** argv) {
 
   // --- Compare timings.
 
-  filepath = (argc > 1 ? argv[1] : "data/blobby.off");
+  filepath = (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/blobby.off"));
   // test_timings(filepath, apprx_hd);
   // test_timings(filepath, naive_hd);
   test_timings(filepath, bound_hd);

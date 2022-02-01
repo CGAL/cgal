@@ -4,6 +4,7 @@
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/Three/Scene_group_item.h>
 #include "Messages_interface.h"
 
 #include <QObject>
@@ -16,6 +17,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QVariant>
 #include <fstream>
 
 #include <gsl/pointers>
@@ -36,6 +38,10 @@ auto make_not_null(T&& t) {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
 #include "Image_type.h"
+#ifdef CGAL_USE_ITK
+#include <CGAL/Mesh_3/generate_label_weights.h>
+#endif
+
 #endif
 
 #include "Meshing_thread.h"
@@ -210,6 +216,7 @@ private:
     QList<gsl::not_null<Scene_surface_mesh_item*>> sm_items;
     Scene_surface_mesh_item* bounding_sm_item;
     Scene_polylines_item* polylines_item;
+    QList<std::pair<QVariant, QVariant>> incident_subdomains;
   };
   struct Image_mesh_items {
     Image_mesh_items(gsl::not_null<Scene_image_item*> ptr) : image_item(ptr) {}
@@ -324,7 +331,12 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
             image_items.polylines_item = polylines_item;
           }
         }
-      } else {
+      }
+      else if (nullptr !=
+        qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(ind))) {
+        continue;
+      }
+      else {
         return tr("Wrong selection of items");
       }
     } catch (const boost::bad_get&) { return tr("Wrong selection of items"); }
@@ -590,6 +602,29 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       }
     }
   }
+
+  //Labeled (weighted) image
+  connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
+          ui.weightsSigma, SLOT(setEnabled(bool)));
+  connect(ui.useWeights_checkbox, SIGNAL(toggled(bool)),
+          ui.weightsSigma_label, SLOT(setEnabled(bool)));
+  ui.weightsSigma->setValue(1.);
+  bool input_is_labeled_img = (image_item != nullptr && !image_item->isGray());
+  ui.labeledImgGroup->setVisible(input_is_labeled_img);
+
+#ifndef CGAL_USE_ITK
+  if (input_is_labeled_img)
+  {
+    ui.labeledImgGroup->setDisabled(true);
+    ui.labeledImgGroup->setToolTip(
+      QString("The use of weighted images is disabled "
+        "because the Insight Toolkit (ITK) is not available."));
+    ui.useWeights_checkbox->setDisabled(true);
+    ui.weightsSigma_label->setDisabled(true);
+    ui.weightsSigma->setDisabled(true);
+  }
+#endif
+
   // -----------------------------------
   // Get values
   // -----------------------------------
@@ -621,6 +656,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   const float iso_value = float(ui.iso_value_spinBox->value());
   const float value_outside = float(ui.value_outside_spinBox->value());
   const bool inside_is_less = ui.inside_is_less_checkBox->isChecked();
+  const float sigma_weights = ui.useWeights_checkbox->isChecked()
+                            ? ui.weightsSigma->value() : 0.f;
+
   as_facegraph = (mesh_type == Mesh_type::SURFACE_ONLY)
                      ? ui.facegraphCheckBox->isChecked()
                      : false;
@@ -633,20 +671,44 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     const auto bounding_sm_item = poly_items.bounding_sm_item;
     const auto polylines_item = poly_items.polylines_item;
     QList<const SMesh*> polyhedrons;
-    if(mesh_type != Mesh_type::SURFACE_ONLY) {
+    QList<std::pair<int, int> > incident_sub;
+
+    bool material_ids_valid = true;
+    for (auto sm_item : sm_items)
+    {
+      if(!sm_item->property("inner material id").isValid()
+         || !sm_item->property("outer material id").isValid())
+      {
+        material_ids_valid = false;
+        break;
+      }
+      else
+      {
+        incident_sub.append(std::make_pair<int, int>(
+            sm_item->property("inner material id").toInt(),
+            sm_item->property("outer material id").toInt()));
+      }
+    }
+
+    if(mesh_type != Mesh_type::SURFACE_ONLY && !material_ids_valid)
+    {
       sm_items.removeAll(make_not_null(bounding_sm_item));
     }
-    std::transform(sm_items.begin(), sm_items.end(),
-                   std::back_inserter(polyhedrons),
-                   [](Scene_surface_mesh_item* item) {
-                     return item->polyhedron();
-                   });
+
     Scene_polylines_item::Polylines_container plc;
     SMesh* bounding_polyhedron = (bounding_sm_item == nullptr)
                                      ? nullptr
                                      : bounding_sm_item->polyhedron();
 
-    thread = cgal_code_mesh_3(
+    std::transform(sm_items.begin(), sm_items.end(),
+      std::back_inserter(polyhedrons),
+      [](Scene_surface_mesh_item* item) {
+        return item->polyhedron();
+      });
+
+    if(bounding_polyhedron != nullptr)
+    {
+      thread = cgal_code_mesh_3(
         polyhedrons,
         (polylines_item == nullptr) ? plc : polylines_item->polylines,
         bounding_polyhedron,
@@ -662,8 +724,27 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         sharp_edges_angle_bound,
         manifold,
         mesh_type == Mesh_type::SURFACE_ONLY);
+    }
+    else if(!incident_sub.empty())
+    {
+      thread = cgal_code_mesh_3(
+        polyhedrons,
+        incident_sub,
+        item_name,
+        angle,
+        facets_sizing,
+        approx,
+        tets_sizing,
+        edges_sizing,
+        tets_shape,
+        protect_features,
+        protect_borders,
+        sharp_edges_angle_bound,
+        manifold,
+        mesh_type == Mesh_type::SURFACE_ONLY);
+     }
     break;
-  }
+  }//end case POLYHEDRAL_MESH_ITEMS
   // Image
 #  ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   case IMPLICIT_MESH_ITEMS: {
@@ -692,6 +773,18 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
       return;
     }
+#ifdef CGAL_USE_ITK
+    if ( sigma_weights > 0
+      && sigma_weights != image_item->sigma_weights())
+    {
+      image_item->set_image_weights(
+        CGAL::Mesh_3::generate_label_weights(*pImage, sigma_weights),
+        sigma_weights);
+    }
+#endif
+    const Image* pWeights = sigma_weights > 0
+      ? image_item->image_weights()
+      : nullptr;
 
     Scene_polylines_item::Polylines_container plc;
 
@@ -711,7 +804,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         image_item->isGray(),
         iso_value,
         value_outside,
-        inside_is_less);
+        inside_is_less,
+        pWeights);
     break;
   }
   default:

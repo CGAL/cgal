@@ -65,14 +65,14 @@ private:
 };
 
 bool get_data(Surface_mesh& sm) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in(CGAL::data_file_path("meshes/3torus.off"));
   if (in.fail()) return false;
   in >> sm;
   return true;
 }
 
 bool get_data(Polyhedron& sm) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in(CGAL::data_file_path("meshes/3torus.off"));
   if (in.fail()) return false;
   in >> sm;
   return true;
@@ -80,7 +80,7 @@ bool get_data(Polyhedron& sm) {
 
 template <class T>
 bool get_data(T& lcc) {
-  std::ifstream in("./data/3torus.off");
+  std::ifstream in(CGAL::data_file_path("meshes/3torus.off"));
   if (in.fail()) return false;
   CGAL::load_off(lcc, in);
   return true;

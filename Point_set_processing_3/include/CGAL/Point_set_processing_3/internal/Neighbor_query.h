@@ -57,7 +57,7 @@ public:
     typedef input_iterator key_type;
     typedef typename boost::property_traits<PointMap>::reference reference;
     typedef typename boost::property_traits<PointMap>::value_type value_type;
-    typedef typename boost::property_traits<PointMap>::category category;
+    typedef typename boost::readable_property_map_tag category;
 
     PointMap point_map;
 

@@ -28,6 +28,7 @@
 #include <limits>
 #include <set>
 #include <cstdlib>
+#include <string>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -102,7 +103,7 @@ public:
 //     std::cerr << "Image_3::copy_constructor\n";
   }
 
-  Image_3(_image* im, Own own_the_data = OWN_THE_DATA)
+  explicit Image_3(_image* im, Own own_the_data = OWN_THE_DATA)
   {
     private_read(im, own_the_data);
   }
@@ -146,9 +147,9 @@ public:
   double vy() const { return image_ptr->vy; }
   double vz() const { return image_ptr->vz; }
 
-  double tx() const { return image_ptr->tx; }
-  double ty() const { return image_ptr->ty; }
-  double tz() const { return image_ptr->tz; }
+  float tx() const { return image_ptr->tx; }
+  float ty() const { return image_ptr->ty; }
+  float tz() const { return image_ptr->tz; }
 
   float value(const std::size_t i,
               const std::size_t j,
@@ -157,11 +158,21 @@ public:
     return ::evaluate(image(),i,j,k);
   }
 
+  bool is_valid() const
+  {
+    return image_ptr.get() != nullptr;
+  }
+
 public:
 
   bool read(const char* file)
   {
     return private_read(::_readImage(file));
+  }
+
+  bool read(const std::string& file)
+  {
+    return read(file.c_str());
   }
 
   bool read_raw(const char* file,

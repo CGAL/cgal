@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Dmitry Anisimov
@@ -13,8 +13,6 @@
 
 #ifndef CGAL_WEIGHTS_INTERNAL_UTILS_H
 #define CGAL_WEIGHTS_INTERNAL_UTILS_H
-
-#include <CGAL/license/Weights.h>
 
 // STL includes.
 #include <cmath>
@@ -187,7 +185,7 @@ namespace internal {
     const FT cross = cross_product_2(v1, v2);
 
     const FT length = CGAL::abs(cross);
-    CGAL_assertion(length != FT(0));
+    // CGAL_assertion(length != FT(0)); not really necessary
     if (length != FT(0)) {
       return dot / length;
     } else {
@@ -218,7 +216,7 @@ namespace internal {
     const FT cross = cross_product_2(v1, v2);
 
     const FT length = CGAL::abs(cross);
-    CGAL_assertion(dot != FT(0));
+    // CGAL_assertion(dot != FT(0)); not really necessary
     if (dot != FT(0)) {
       return length / dot;
     } else {
@@ -293,7 +291,11 @@ namespace internal {
     const auto cross = cross_product_3(v1, v2);
 
     const FT length = length_3(traits, cross);
-    CGAL_assertion(length != FT(0));
+    // TODO:
+    // Not really necessary: since we handle case length = 0. Does this case happen?
+    // Yes, e.g. in Surface Parameterization tests. Does it affect the results?
+    // In current applications, not really.
+    // CGAL_assertion(length != FT(0));
     if (length != FT(0)) {
       return dot / length;
     } else {
@@ -324,7 +326,7 @@ namespace internal {
     const auto cross = cross_product_3(v1, v2);
 
     const FT length = length_3(traits, cross);
-    CGAL_assertion(dot != FT(0));
+    // CGAL_assertion(dot != FT(0)); not really necessary
     if (dot != FT(0)) {
       return length / dot;
     } else {

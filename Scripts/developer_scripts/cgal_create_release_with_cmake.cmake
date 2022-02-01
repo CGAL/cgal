@@ -161,6 +161,9 @@ endif()
 file(COPY ${GIT_REPO}/GraphicsView/demo/resources ${GIT_REPO}/GraphicsView/demo/icons
   DESTINATION "${release_dir}/cmake/modules/demo")
 
+#copy data
+file(COPY ${GIT_REPO}/Data/data DESTINATION "${release_dir}/")
+
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
 
@@ -296,6 +299,7 @@ file(REMOVE ${release_dir}/include/CGAL/license/package_list.txt)
 if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
   # Taken from create_new_release.
   file(REMOVE_RECURSE ${release_dir}/test)
+  file(REMOVE_RECURSE ${release_dir}/data/test)
   file(REMOVE_RECURSE ${release_dir}/package_info)
   file(REMOVE_RECURSE ${release_dir}/developer_scripts)
   file(REMOVE_RECURSE ${release_dir}/doc)
@@ -322,7 +326,7 @@ if (GENERATE_TARBALLS)
 
   #create examples+demos
   execute_process(
-  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/data CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
   RESULT_VARIABLE RESULT_VAR
   OUTPUT_VARIABLE OUT_VAR
   )
@@ -336,6 +340,7 @@ if (GENERATE_TARBALLS)
     file(REMOVE_RECURSE ${release_dir}/include/CGAL/Test)
     file(REMOVE_RECURSE ${release_dir}/include/CGAL/Testsuite/)
   endif()
+  file(REMOVE_RECURSE ${release_dir}/data)
   file(REMOVE_RECURSE ${release_dir}/demo)
   file(REMOVE_RECURSE ${release_dir}/examples)
   file(REMOVE_RECURSE ${release_dir}/scripts)

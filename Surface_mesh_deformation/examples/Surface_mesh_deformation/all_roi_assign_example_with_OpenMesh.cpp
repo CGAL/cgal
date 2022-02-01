@@ -17,7 +17,7 @@ typedef CGAL::Surface_mesh_deformation<Mesh> Surface_mesh_deformation;
 int main()
 {
   Mesh mesh;
-  OpenMesh::IO::read_mesh(mesh, "data/plane.off");
+  OpenMesh::IO::read_mesh(mesh, CGAL::data_file_path("meshes/plane.off"));
 
   // Create a deformation object
   Surface_mesh_deformation deform_mesh(mesh);

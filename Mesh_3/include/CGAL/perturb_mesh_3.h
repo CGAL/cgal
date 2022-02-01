@@ -52,9 +52,9 @@ BOOST_PARAMETER_FUNCTION(
   (required (in_out(c3t3),*) (domain,*) )
   (optional
     (time_limit_, *, 0 )
-    (sliver_bound_, *, parameters::default_values::perturb_sliver_bound )
+    (sliver_bound_, *, parameters::default_values_for_mesh_3::perturb_sliver_bound )
     (sliver_criterion_, *,
-       parameters::default_values::default_sliver_criterion(c3t3,sliver_bound_))
+       parameters::default_values_for_mesh_3::default_sliver_criterion(c3t3,sliver_bound_))
     (perturbation_vector_, *,
        default_perturbation_vector(c3t3,domain,sliver_criterion_))
   )

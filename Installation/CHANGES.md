@@ -1,66 +1,40 @@
 Release History
 ===============
+
+
+[Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
+-----------
+
+Release date: June 2022
+
+### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
+
+-   Added the member function `write_graphviz()` to the class The Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.5/Manual/packages.html#PkgConvexHull3)
+
+-   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
+
+
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
-Release date: December 2021
+Release date: January 2022
 
-### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
+### [General changes](https://doc.cgal.org/5.4/Manual/general_intro.html)
 
--   This package provides a simple and unified interface to different types of weights.
-    In particular, it groups all weights into three category: analytic weights including
-    all basic weights which can be computed analytically for a query point with respect to its
-    local neighbors in 2D and 3D; barycentric weights including all weights which can be computed
-    for a query point with respect to the vertices of a planar polygon; and weighting regions
-    including all weights which are used to balance other weights.
+-   Added the cmake target `CGAL::CGAL_Basic_viewer` to ease the compilation of programs using
+    the basic viewer-based function `CGAL::draw()`. This target will define the macro and link with
+    `CGAL_Qt5` target when linked with it.
 
-### [2D Generalized Barycentric Coordinates](https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2) (breaking change, major changes)
+-   The kernel providing exact constructions and exact predicates
+    ([`CGAL::Exact_predicates_exact_constructions_kernel`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Exact__predicates__exact__constructions__kernel.html))
+    is now thread-safe.
+    See changes in `2D and 3D Linear Geometry Kernel` for more details.
 
--   **Breaking change**: The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are
-    renamed to `segment_coordinates_2.h` and `triangle_coordinates_2.h`.
--   The classes `Segment_coordinates_2` and `Triangle_coordinates_2` are deprecated. The free functions
-    `compute_segment_coordinates_2()` and `compute_triangle_coordinates_2()` are deprecated as well.
-    Instead, the free functions `segment_coordinates_2()` and `triangle_coordinates_2()` must be used.
--   The enums `Query_point_location` and `Type_of_algorithm` are deprecated. Instead, the enum
-    `Computation_policy_2` must be used.
--   The clases `Wachspress_2`, `Discrete_harmonic_2`, `Mean_value_2`, and
-    `Generalized_barycentric_coordinates_2` are deprecated. As consequence, the concept `BarycentricCoordinates_2` is deprecated as well. Instead, the classes `Wachspress_coordinates_2`,
-    `Discrete_harmonic_coordinates_2`, and `Mean_value_coordinates_2` must be used.
--   Added the class `Harmonic_coordinates_2` for computing approximate harmonic coordinates in 2D.
-    These coordinates satisfy all properties of barycentric coordinates inside any simple polygon.
--   Added a new concept `DiscretizedDomain_2` and a model of this concept called `Delaunay_domain_2`
-    which is based on the [Mesh 2](https://doc.cgal.org/5.4/Manual/packages.html#PkgMesh2) package.
-    A model of this concept is required for computing `Harmonic_coordinates_2`.
--   Added free functions for computing Wachspress, discrete harmonic, and mean value coordinates.
--   All free functions and classes are now using ranges and property maps.
-
-### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
-
--   Added `construct_centroid_2_object()` and `compute_determinant_2_object()` in `Projection_traits_xy_3`, `Projection_traits_xz_3`,
-    and`Projection_traits_yz_3` classes.
-
--   Added documentation for the class `Projection_traits_3`, which enables the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
-
-### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
-
--   Added the function `CGAL::Polygon_mesh_processing::match_faces()`, which, given two polygon meshes,
-    identifies their common faces as well as faces present in only either of them.
-
--   Added the functions: `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()` that
-    computes an estimate of the one-sided Hausdorff distance between two triangle meshes which
-    is bounded by a user-specified error bound;  `CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()` that computes
-    an estimate of the symmetric Hausdorff distance bounded by a user-specified error bound;
-    and `CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()` that returns `true`
-    if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
-    max distance.
-
--   Added the functions `CGAL::Polygon_mesh_processing::squared_edge_length()`
-    and `CGAL::Polygon_mesh_processing::squared_face_area()` which do not perform a `sqrt()` operation.
-
--   Added more functions in the [visitor of the corefinement based methods](https://doc.cgal.org/5.4/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
-    to track all vertex creations.
-
--   Added an option to [`CGAL::Polygon_mesh_processing::self_intersections()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__intersection__grp.html#gaf19c80ec12cbff7ebe9e69453f1d40b8) to report only a limited number of intersections (`maximum_number()`)
+-   The class `Geomview_stream` and all the dependent features have
+    been removed from CGAL. Those features were actually no longer
+    supported since CGAL-5.3 but it was not properly announced.
 
 ### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
 
@@ -69,28 +43,145 @@ Release date: December 2021
     user-specified conditions. In addition, it provides a global regularization framework that can be
     adjusted for the user needs and any type of geometric objects.
 
-###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
+### [Weights](https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights) (new package)
 
--   Added the [OSQP solver](https://osqp.org/) support. This solver enables to efficiently compute the convex Quadratic Programming (QP) problems arising in the context of several packages.
+-   This package provides a simple and unified interface to different types of weights.
+    In particular, it groups all weights into three category: analytic weights including
+    all basic weights which can be computed analytically for a query point with respect to its
+    local neighbors in 2D and 3D; barycentric weights, including all weights which can be computed
+    for a query point with respect to the vertices of a planar polygon; and weighting regions,
+    including all weights which are used to balance other weights.
+
+### [2D Generalized Barycentric Coordinates](https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2) (major changes)
+
+-   **Breaking change**: The headers `Segment_coordinates_2.h` and `Triangle_coordinates_2.h` are
+    renamed to `segment_coordinates_2.h` and `triangle_coordinates_2.h`.
+-   The classes [`Segment_coordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Segment__coordinates__2.html)
+    and [`Triangle_coordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Triangle__coordinates__2.html)
+    are deprecated. The free functions [`compute_segment_coordinates_2()`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Segment__coordinates__2.html#a134d363dccaeecb5621fa608fac76eaf)
+    and [`compute_triangle_coordinates_2()`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Triangle__coordinates__2.html#a958fee3ad9613d7bfa9d7a976aa3548f)
+    are deprecated as well. Instead, the free functions [`segment_coordinates_2()`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/group__PkgBarycentricCoordinates2RefFunctions.html#gab856ca68d37f58e6cdf74c8aac6f4245)
+    and [`triangle_coordinates_2()`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/group__PkgBarycentricCoordinates2RefFunctions.html#gaa378786f8996dbcefe7923ebb711e4dd)
+    should be used.
+-   The enums [`Query_point_location`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/namespaceCGAL_1_1Barycentric__coordinates.html#aedeeb072a2024053a016afd15e591331)
+    and [`Type_of_algorithm`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/namespaceCGAL_1_1Barycentric__coordinates.html#a5e5682512438422f23d6080edc49c05b)
+    are deprecated. Instead, the enum [`Computation_policy_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/namespaceCGAL_1_1Barycentric__coordinates.html#a478bbcec416216b2274ee4b4e97b0e6c)
+    should be used.
+-   The classes [`Wachspress_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Wachspress__2.html),
+    [`Discrete_harmonic_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Discrete__harmonic__2.html),
+    [`Mean_value_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Mean__value__2.html),
+    and [`Generalized_barycentric_coordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Generalized__barycentric__coordinates__2.html)
+    are deprecated. As consequence, the concept [`BarycentricCoordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1BarycentricCoordinates__2.html)
+    is deprecated as well. Instead, the classes [`Wachspress_coordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Wachspress__coordinates__2.html),
+    [`Discrete_harmonic_coordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Discrete__harmonic__coordinates__2.html),
+    and [`Mean_value_coordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Mean__value__coordinates__2.html)
+    should be used.
+-   Added the class [`Harmonic_coordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Harmonic__coordinates__2.html)
+    to compute approximate harmonic coordinates in 2D.
+    These coordinates satisfy all properties of barycentric coordinates inside any simple polygon.
+-   Added a new concept [`DiscretizedDomain_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1DiscretizedDomain__2.html)
+    and a model of this concept called [`Delaunay_domain_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Delaunay__domain__2.html),
+    which is based on the [Mesh 2](https://doc.cgal.org/5.4/Manual/packages.html#PkgMesh2) package.
+    A model of this concept is required to use [`Harmonic_coordinates_2`](https://doc.cgal.org/5.4/Barycentric_coordinates_2/classCGAL_1_1Barycentric__coordinates_1_1Harmonic__coordinates__2.html).
+-   Added free functions to compute Wachspress, discrete harmonic, and mean value coordinates.
+-   All free functions and classes are now using ranges and property maps.
+
+### [2D and 3D Linear Geometry Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernel23)
+
+-   Most operations on [`CGAL::Exact_predicates_exact_constructions_kernel`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Exact__predicates__exact__constructions__kernel.html)
+    objects are now thread-safe if [`CGAL::Exact_rational`](https://doc.cgal.org/5.4/Number_types/group__nt__cgal.html#ga0849ff44771b19582218ebdfa5614f64)
+    is [`mpq_class`](https://doc.cgal.org/5.3/Number_types/classmpq__class.html) (from `GMPXX`),
+    `boost::multiprecision::mpq_rational`
+    or [`CGAL::Quotient<CGAL::MP_Float>`](https://doc.cgal.org/5.3/Number_types/classCGAL_1_1MP__Float.html).
+    The objects are not atomic though, so the usual restrictions on avoiding race conditions apply.
+    For users who do not use threads, this can be disabled with `CGAL_HAS_NO_THREADS`.
+
+-   Added documentation for the class [`Projection_traits_3`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Projection__traits__3.html),
+    which enables the use of 2D algorithms on the projections of 3D data onto an arbitrary plane.
+
+-   Added `construct_centroid_2_object()` and `compute_determinant_2_object()`
+    in [`Projection_traits_xy_3`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Projection__traits__xy__3.html),
+    [`Projection_traits_xz_3`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Projection__traits__xz__3.html),
+    and [`Projection_traits_yz_3`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Projection__traits__yz__3.html)
+    classes.
+
+-   Added the functor
+    [`NonZeroCoordinateIndex_3`](https://doc.cgal.org/5.4/Kernel_23/classKernel_1_1NonZeroCoordinateIndex__3.html)
+    to the concept [`Kernel`](https://doc.cgal.org/5.4/Kernel_23/classKernel.html) with `int operator()(Vector_3)`
+    which returns the index of any coordinate of the vector different from zero, or `-1`.
+
+### [dD Kernel](https://doc.cgal.org/5.4/Manual/packages.html#PkgKernelD)
+
+-   Most operations on [`Epeck_d`](https://doc.cgal.org/5.4/Kernel_d/structCGAL_1_1Epeck__d.html)
+    objects are now thread-safe, see 2D and 3D Linear Geometry Kernel for details.
 
 ### [2D Arrangements](https://doc.cgal.org/5.4/Manual/packages.html#PkgArrangementOnSurface2)
 
- -  A new hierarchy of traits concepts is introduced.
+-   **Breaking Change:** The traits function objects `Compare_x_at_limit_2` and `Compare_x_near_limit_2`
+    are renamed to `Compare_x_on_boundary_2` and `Compare_x_near_boundary_2`, respectively.
+
+-   A [new hierarchy of traits concepts](https://doc.cgal.org/5.4/Arrangement_on_surface_2/group__PkgArrangementOnSurface2Concepts.html)
+    has been introduced.
     It captures all the valid combinations of boundary conditions for the 4 boundary sides of the parameter space.
     The 4 boundaries are Bottom, Top, Left, and Right. Each boundary side can be either contracted, identified, close, open, or oblivious.
     Not all possible combinations are valid. If one side is identified then the other must be as well. Two adjacent sides cannot be contracted.
 
- -  **Breaking Change:** The traits function objects `Compare_x_at_limit_2` and `Compare_x_near_limit_2` are renamed to `Compare_x_on_boundary_2` and `Compare_x_near_boundary_2`, respectively.
+-   A new geometric traits, [`Arr_geodesic_arc_on_sphere_traits_2`](https://doc.cgal.org/5.4/Arrangement_on_surface_2/classCGAL_1_1Arr__geodesic__arc__on__sphere__traits__2.html)
+    has been introduced. It handles arcs of great circles embedded on the unit sphere.
 
- -  A new geometry traits , namely, `Arr_geodesic_arc_on_sphere_traits_2`, is introduced. It handles arcs of great circles embedded on the unit sphere.
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.4/Manual/packages.html#PkgBooleanSetOperations2)
 
+-   Added an extra parameter (`UsePolylines`) to all free functions (
+    [`complement()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__complement.html),
+    [`do_intersect()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__do__intersect.html),
+    [`intersection()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__intersection.html),
+    [`join()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__join.html),
+    [`difference()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__difference.html),
+    [`symmetric_difference()`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__symmetric__difference.html),
+    and [`oriented_side`](https://doc.cgal.org/5.4/Boolean_set_operations_2/group__boolean__oriented__side.html))
+    to control whether to use `Arr_polyline_traits_2` as default traits. It is the new default as it provides better performances in general.
 
+### [3D Mesh Generation](https://doc.cgal.org/5.4/Manual/packages.html#PkgMesh3)
+
+-   Added support of weighted images for an improved quality of meshes generated from labeled images,
+    along with a function [`CGAL::Mesh_3::generate_label_weights()`](https://doc.cgal.org/5.4/Mesh_3/namespaceCGAL_1_1Mesh__3.html#ae5914bf77180ff8948c08046154ee727)
+    to generate the weights.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPolygonMeshProcessing)
+
+-   Added the function [`CGAL::Polygon_mesh_processing::match_faces()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__measure__grp.html#ga10f7cd81645bafe936ac5eb4e58e67ef),
+    which, given two polygon meshes, identifies their common faces as well as faces present in only either of them.
+
+-   Added the functions: [`CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__distance__grp.html#ga6d4ecea831c33ac10eec42b5021fc183)
+    that computes an estimate of the one-sided Hausdorff distance between two triangle meshes which
+    is bounded by a user-specified error bound; [`CGAL::Polygon_mesh_processing::bounded_error_symmetric_Hausdorff_distance()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__distance__grp.html#ga9a7a682b5d9523135c8502e72117dffd)
+    that computes an estimate of the symmetric Hausdorff distance bounded by a user-specified error bound;
+    and [`CGAL::Polygon_mesh_processing::is_Hausdorff_distance_larger()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__distance__grp.html#gab19e751107025a443e86baa9763aebf3)
+    that returns `true` if the bounded-error Hausdorff distance between two meshes is larger than the user-specified
+    max distance.
+
+-   Added the functions [`CGAL::Polygon_mesh_processing::squared_edge_length()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__measure__grp.html#ga30fa03722cd7aa599f6dcb115f54fec5)
+    and [`CGAL::Polygon_mesh_processing::squared_face_area()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__measure__grp.html#ga6eda3738815fd678df225f79ccfc3e03),
+    which, compared to [`CGAL::Polygon_mesh_processing::edge_length()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__measure__grp.html#gae1674775d9fecada7f25710f425cff3a)
+    and [`CGAL::Polygon_mesh_processing::face_area()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__measure__grp.html#ga6a1d7a825c09490b1e6613295343482b),
+    enable avoiding square-root operations.
+
+-   Added more functions in the [visitor of the corefinement based methods](https://doc.cgal.org/5.4/Polygon_mesh_processing/classPMPCorefinementVisitor.html)
+    to track all vertex creations.
+
+-   Added an option to [`CGAL::Polygon_mesh_processing::self_intersections()`](https://doc.cgal.org/5.4/Polygon_mesh_processing/group__PMP__intersection__grp.html#gaf19c80ec12cbff7ebe9e69453f1d40b8)
+    to report only a limited number of intersections (`maximum_number()`).
+
+### [The Heat Method](https://doc.cgal.org/5.4/Manual/packages.html#PkgHeatMethod)
+
+-   **Breaking change**: Added the functor `Compute_squared_length_3` providing `operator(const Vector_3& v)`,
+    which computes the squared length of `v`, to the [`HeatMethodTraits_3`](https://doc.cgal.org/5.4/Heat_method_3/classHeatMethodTraits__3.html)
+    concept.
 
 ### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
 
--   Added support for `libpointmatcher::GenericDescriptorOutlierFilter`
-    that enables to provide a map from a point to a weight associated with this point.
-
+-   Added support for [`libpointmatcher::GenericDescriptorOutlierFilter`](https://github.com/ethz-asl/libpointmatcher)
+    that enables providing a map from a point to a weight associated with this point.
 
 ### [Shape Detection](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeDetection)
 
@@ -103,6 +194,10 @@ Release date: December 2021
     [`remove_isolated_vertices()`](https://doc.cgal.org/latest/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
     as a post-processing step for the tetrahedral mesh generation.
 
+###  [CGAL and Solvers](https://doc.cgal.org/5.4/Manual/packages.html#PkgSolverInterface)
+
+-   Added support for the [OSQP solver](https://osqp.org/). This solver enables to efficiently compute
+    the convex Quadratic Programming (QP) problems arising in the context of several packages.
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)
 -----------
@@ -113,10 +208,14 @@ Release date: July 2021
 
 -   The support for the compiled version of CGAL is dropped. Only the header-only version is supported.
 
--   On Windows, the type used for `Exact_rational`, in `Epick` and indirectly (through `Lazy_exact_nt`)
+-   On Windows, the type used for [`CGAL::Exact_rational`](https://doc.cgal.org/5.3/Number_types/group__nt__cgal.html#ga0849ff44771b19582218ebdfa5614f64),
+    in `Epick` and indirectly (through [`Lazy_exact_nt`](https://doc.cgal.org/5.3/Number_types/classCGAL_1_1Lazy__exact__nt.html))
    `Epeck` may now be `boost::multiprecision::mpq_rational`, as has been the case on other platforms
    for several releases. This depends on various options and is added to a list that includes
-   `mpq_class`, `CGAL::Gmpq`, `leda_rational` and `CGAL::Quotient<CGAL::MP_Float>`.
+   [`mpq_class`](https://doc.cgal.org/5.3/Number_types/classmpq__class.html),
+   [`CGAL::Gmpq`](https://doc.cgal.org/5.3/Number_types/classCGAL_1_1Gmpq.html),
+   [`leda_rational`](https://doc.cgal.org/5.3/Number_types/classleda__rational.html)
+   and [`CGAL::Quotient<CGAL::MP_Float>`](https://doc.cgal.org/5.3/Number_types/classCGAL_1_1MP__Float.html).
 
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthtree) (new package)
 
@@ -629,7 +728,7 @@ Release date: November 2019
      `CGAL::Sphere_3`, `CGAL::Vector_2`, `CGAL::Vector_3`,
      `CGAL::Weighted_point_2` and `CGAL::Weighted_point_3`.
 
-### [Polygon Mesh Processing](https://doc.cgal.org/latest/Manual/packages.html#PkgPolygonMeshProcessing)
+### [Polygon Mesh Processing](https://doc.cgal.org/5.0/Manual/packages.html#PkgPolygonMeshProcessing)
  -   Introduced a [wide range of new functions](https://doc.cgal.org/5.0/Polygon_mesh_processing/index.html#title36)
      related to location of queries on a triangle mesh,
      such as [`CGAL::Polygon_mesh_processing::locate(Point, Mesh)`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__locate__grp.html#gada09bd8740ba69ead9deca597d53cf15).
@@ -660,7 +759,7 @@ Release date: November 2019
  -   The [PLY IO functions](https://doc.cgal.org/5.0/Point_set_3/group__PkgPointSet3IO.html) now take an additional optional parameter to
      read/write comments from/in the PLY header.
 
-### [Point Set Processing](https://doc.cgal.org/latest/Manual/packages.html#PkgPointSetProcessing3)
+### [Point Set Processing](https://doc.cgal.org/5.0/Manual/packages.html#PkgPointSetProcessing3)
  -   **Breaking change**: the API using iterators and overloads for optional parameters (deprecated since
      CGAL 4.12) has been removed. The current (and now only) API uses ranges and Named Parameters.
  -   Added the possibility to use the named parameter
@@ -689,7 +788,7 @@ Release date: November 2019
      [`CGAL::Triangulation_data_structure_2`](https://doc.cgal.org/5.0/TDS_2/classCGAL_1_1Triangulation__data__structure__2.html)).
  -   **Breaking change**: The `insert()` function
      of
-     [`CGAL::Triangulation_2`](https://doc.cgal.org/latest/Triangulation_2/classCGAL_1_1Triangulation__2.html)
+     [`CGAL::Triangulation_2`](https://doc.cgal.org/5.0/Triangulation_2/classCGAL_1_1Triangulation__2.html)
      which takes a range of points as argument is now guaranteed to
      insert the points following the order of `InputIterator`.  Note
      that this change only affects the base class `Triangulation_2`

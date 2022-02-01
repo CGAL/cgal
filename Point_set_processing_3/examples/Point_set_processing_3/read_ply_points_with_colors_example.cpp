@@ -23,7 +23,7 @@ typedef CGAL::Nth_of_tuple_property_map<3, PNCI> Intensity_map;
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1) ? argv[1] : "data/colors.ply";
+  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/colors.ply");
 
   // Reads a .ply point set file with normal vectors and colors
   std::vector<PNCI> points; // store points

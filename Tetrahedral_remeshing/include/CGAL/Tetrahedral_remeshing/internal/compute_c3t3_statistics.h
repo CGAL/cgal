@@ -46,8 +46,6 @@ void compute_statistics(const Triangulation& tr,
 
   std::size_t nb_edges = 0;
   double total_edges = 0;
-  std::size_t nb_angle = 0;
-  double total_angle = 0;
 
   double min_edges_length = (std::numeric_limits<double>::max)();
   double max_edges_length = 0.;
@@ -156,33 +154,27 @@ void compute_statistics(const Triangulation& tr,
     double a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p1, p2, p3)));
     if (a < min_dihedral_angle) { min_dihedral_angle = a; }
     if (a > max_dihedral_angle) { max_dihedral_angle = a; }
-    total_angle += a;
-    ++nb_angle;
+
     a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p2, p1, p3)));
     if (a < min_dihedral_angle) { min_dihedral_angle = a; }
     if (a > max_dihedral_angle) { max_dihedral_angle = a; }
-    total_angle += a;
-    ++nb_angle;
+
     a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p0, p3, p1, p2)));
     if (a < min_dihedral_angle) { min_dihedral_angle = a; }
     if (a > max_dihedral_angle) { max_dihedral_angle = a; }
-    total_angle += a;
-    ++nb_angle;
+
     a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p1, p2, p0, p3)));
     if (a < min_dihedral_angle) { min_dihedral_angle = a; }
     if (a > max_dihedral_angle) { max_dihedral_angle = a; }
-    total_angle += a;
-    ++nb_angle;
+
     a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p1, p3, p0, p2)));
     if (a < min_dihedral_angle) { min_dihedral_angle = a; }
     if (a > max_dihedral_angle) { max_dihedral_angle = a; }
-    total_angle += a;
-    ++nb_angle;
+
     a = CGAL::to_double(CGAL::abs(approx_dihedral_angle(p2, p3, p0, p1)));
     if (a < min_dihedral_angle) { min_dihedral_angle = a; }
     if (a > max_dihedral_angle) { max_dihedral_angle = a; }
-    total_angle += a;
-    ++nb_angle;
+
   }
 
   std::size_t nb_subdomains = sub_ids.size();

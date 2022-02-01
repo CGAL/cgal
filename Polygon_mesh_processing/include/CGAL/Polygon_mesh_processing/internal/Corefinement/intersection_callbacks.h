@@ -353,12 +353,12 @@ public:
       Polygon_mesh_processing::does_self_intersect(
         *tmf_collected_faces_ptr,
         this->tm_faces,
-        Polygon_mesh_processing::parameters::vertex_point_map(this->vpmap_tmf))
+        CGAL::parameters::vertex_point_map(this->vpmap_tmf))
     ||
       Polygon_mesh_processing::does_self_intersect(
         *tme_collected_faces_ptr,
         this->tm_edges,
-        Polygon_mesh_processing::parameters::vertex_point_map(this->vpmap_tme));
+        CGAL::parameters::vertex_point_map(this->vpmap_tme));
   }
 };
 

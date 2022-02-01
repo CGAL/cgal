@@ -17,7 +17,7 @@
 #include <CGAL/license/Surface_mesh.h>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -493,7 +493,6 @@ void
 remove_face(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor f,
             CGAL::Surface_mesh<P>& sm)
 {
-
   sm.remove_face(f);
 }
 

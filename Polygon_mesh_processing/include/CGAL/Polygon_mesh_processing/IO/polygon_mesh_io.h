@@ -22,7 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
@@ -84,10 +84,10 @@ namespace IO {
  *
  * \sa \link PkgBGLIOFct `CGAL::IO::write_polygon_mesh()` \endlink
  */
-template <typename PolygonMesh, typename NamedParameters>
+template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(const std::string& fname,
                        PolygonMesh& g,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -125,20 +125,10 @@ bool read_polygon_mesh(const std::string& fname,
     return false;
   }
 
-  PMP::polygon_soup_to_polygon_mesh(points, faces, g, parameters::all_default(), np);
+  PMP::polygon_soup_to_polygon_mesh(points, faces, g, parameters::default_values(), np);
 
   return true;
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PolygonMesh>
-bool read_polygon_mesh(const std::string& fname, PolygonMesh& g)
-{
-  return CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(fname, g, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 } // namespace Polygon_mesh_processing

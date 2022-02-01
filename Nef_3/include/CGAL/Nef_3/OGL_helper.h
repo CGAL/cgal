@@ -22,6 +22,7 @@
 #include <qgl.h>
 #include <CGAL/glu.h>
 #include <cstdlib>
+#include <iostream>
 
 #define CGAL_NEF3_MARKED_VERTEX_COLOR 183,232,92
 #define CGAL_NEF3_MARKED_EDGE_COLOR 171,216,86
@@ -226,7 +227,7 @@ namespace OGL {
   inline void CGAL_GLU_TESS_CALLBACK errorCallback(GLenum errorCode)
   { const GLubyte *estring;
     estring = gluErrorString(errorCode);
-    fprintf(stderr, "Tessellation Error: %s\n", estring);
+    std::cerr << "Tessellation Error: " << estring << std::endl;
     std::exit (0);
   }
 

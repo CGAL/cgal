@@ -46,7 +46,7 @@ std::vector<vertex_descriptor> extract_k_ring(const Mesh &P, vertex_descriptor v
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc>1) ? argv[1] : "data/plane.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/plane.off");
 
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(filename, mesh))

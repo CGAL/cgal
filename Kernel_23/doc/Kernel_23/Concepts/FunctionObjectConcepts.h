@@ -9130,6 +9130,33 @@ public:
 }; /* end Kernel::LessZ_3 */
 
 
+
+
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with one arguments)
+*/
+class NonZeroCoordinateIndex_3
+{
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+  /*!
+    returns any of `0`, `1`, or `2` if the corresponding coordinate of the vector `v` is not
+    equal to zero, and `-1` if `v` is the null vector.
+  */
+  int operator()(const Kernel::Vector_3& v);
+
+  /// @}
+
+};
+
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -9257,6 +9284,16 @@ public:
   */
   Oriented_side operator()(const Kernel::Triangle_2&t,
                            const Kernel::Point_2&p);
+
+  /*!
+  * returns \ref CGAL::ON_ORIENTED_BOUNDARY,
+  * \ref CGAL::ON_NEGATIVE_SIDE, or the constant \ref CGAL::ON_POSITIVE_SIDE,
+  * depending on the position of the circumcenter of `t` relative
+  * to the oriented supporting line of `s`. The orientation of the
+  * supporting line is the same as the orientation of `s`.
+  */
+  Oriented_side operator()(const Kernel::Segment_2& s,
+                           const Kernel::Triangle_2& t);
 
   /// @}
 

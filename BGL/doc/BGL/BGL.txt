@@ -300,7 +300,7 @@ class as well as for its dual graph.
 \subsection arr_sssecbgl_primal Example for the Arrangement as Graph
 
 Arrangement instances are adapted to <I>boost</I> graphs by specializing the
-`boost:graph_traits` template for `Arrangement_2` instances. The
+`boost::graph_traits` template for `Arrangement_2` instances. The
 graph-traits states the graph concepts that the arrangement class models
 (see below) and defines the types required by these concepts.
 
@@ -378,7 +378,7 @@ It is possible to give a dual graph representation for an arrangement instance,
 such that each arrangement face corresponds to a graph vertex and two vertices
 are adjacent iff the corresponding faces share a common edge on their
 boundaries. This is done by specializing the
-`boost:graph_traits` template for `Dual<Arrangement_2>` instances,
+`boost::graph_traits` template for `Dual<Arrangement_2>` instances,
 where `Dual<Arrangement_2>` is a template specialization that gives a
 dual interpretation to an arrangement instance.
 

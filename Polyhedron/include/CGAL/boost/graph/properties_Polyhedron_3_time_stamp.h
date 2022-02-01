@@ -33,8 +33,7 @@ std::size_t get(Polyhedron_face_time_stamp_pmap, Handle_type h)
 }
 
 template <typename Handle_type>
-void put(Polyhedron_face_time_stamp_pmap, Handle_type h,
-         std::size_t ts)
+void put(Polyhedron_face_time_stamp_pmap, Handle_type h, std::size_t ts)
 {
   h->set_time_stamp(ts);
 }

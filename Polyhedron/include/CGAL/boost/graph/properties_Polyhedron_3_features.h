@@ -50,8 +50,7 @@ Patch_id get(Polyhedron_face_patch_id_pmap<Patch_id>, Handle_type h)
 }
 
 template <typename Patch_id, typename Handle_type>
-void put(Polyhedron_face_patch_id_pmap<Patch_id>, Handle_type h,
-         Patch_id pid)
+void put(Polyhedron_face_patch_id_pmap<Patch_id>, Handle_type h, Patch_id pid)
 {
   h->set_patch_id(pid);
 }
@@ -199,11 +198,10 @@ struct Polyhedron_incident_patches_pmap {
   typedef boost::lvalue_property_map_tag     category;
 
   template <typename Handle_type>
-  value_type& operator[](Handle_type h) const
+  reference operator[](Handle_type h) const
   {
     return get(*this, h);
   }
-
 };
 
 template <typename Patch_id, typename Handle_type>

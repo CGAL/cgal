@@ -8,7 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <unordered_set>
+#include <unordered_map>
 
 using LCC_3            =CGAL::Linear_cell_complex_for_generalized_map<2, 3>;
 using Dart_handle      =LCC_3::Dart_handle;
@@ -80,7 +80,7 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
 int main(int argc, char* argv[])
 {
   std::cout<<"Program unsew_edgewidth_repeatedly started."<<std::endl;
-  std::string filename(argc==1?"data/double-torus.off":argv[1]);
+  std::string filename(argc==1?CGAL::data_file_path("meshes/double-torus-example.off"):argv[1]);
 
 #ifdef CGAL_USE_BASIC_VIEWER
   bool draw=(argc<3?false:std::string(argv[2])=="-draw");
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
   CGAL::load_off(lccoriginal, inp);
   std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
 
-  boost::unordered_map<Dart_handle, Dart_handle> origin_to_copy;
+  std::unordered_map<Dart_handle, Dart_handle> origin_to_copy;
   lcccopy.copy(lccoriginal, &origin_to_copy, nullptr);
 
   LCC_3::size_type is_root=lccoriginal.get_new_mark();

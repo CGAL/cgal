@@ -21,7 +21,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Iterator_range.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/utility/enable_if.hpp>
@@ -31,12 +31,6 @@
 #include <fstream>
 #include <iterator>
 #include <tuple>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 
@@ -96,11 +90,13 @@ namespace IO {
    be provided for `PropertyMap::value_type` that handles both ASCII
    and binary output (see `CGAL::IO::get_mode()`).
 
-   \attention When writing to a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the `PropertyMap` objects provided
-   within the `PropertyHandler` parameter.
+                      its iterator is the key type of the `PropertyMap` objects provided
+                      within the `PropertyHandler` parameter.
    \tparam PropertyHandler handlers to recover properties.
 
    \returns `true` if writing was successful, `false` otherwise.
@@ -145,10 +141,12 @@ template <typename PointRange,
 
    \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
-   \attention When writing a binary file, the flag `std::ios::binary` flag must be set during the creation of the `ofstream`.
+   \attention To write to a binary file, the flag `std::ios::binary` must be set during the creation
+              of the `ofstream`, and the \link PkgStreamSupportEnumRef `IO::Mode` \endlink
+              of the stream must be set to `BINARY`.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param os output stream
@@ -186,10 +184,10 @@ template <typename PointRange,
 
    \sa `write_PLY_with_properties()`
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -199,14 +197,14 @@ bool write_PLY(std::ostream& os,
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
-  typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type NormalMap;
+  typedef Point_set_processing_3_np_helper<PointRange, CGAL_NP_CLASS> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename NP_helper::Normal_map NormalMap;
 
-  bool has_normals = !(boost::is_same<NormalMap,
-                       typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::NoMap>::value);
+  bool has_normals = NP_helper::has_normal_map();
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
+  NormalMap normal_map = NP_helper::get_normal_map(points, np);
 
   if(!os)
   {
@@ -216,24 +214,13 @@ bool write_PLY(std::ostream& os,
 
   set_stream_precision_from_NP(os, np);
 
-  if (has_normals)
+  if(has_normals)
     return write_PLY_with_properties(os, points,
                                      make_ply_point_writer(point_map),
                                      make_ply_normal_writer(normal_map));
-  // else
+
   return write_PLY_with_properties(os, points, make_ply_point_writer(point_map));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_PLY(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_PLY(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 /**
    \ingroup PkgPointSetProcessing3IOPly
@@ -241,7 +228,7 @@ bool write_PLY(std::ostream& os, const PointRange& points,
    \brief writes the range of `points` (positions + normals, if available) using \ref IOStreamPLY.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
-   its iterator is the key type of the named parameter `point_map`.
+                      its iterator is the key type of the named parameter `point_map`.
    \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 
    \param filename the path to the output file
@@ -285,10 +272,10 @@ bool write_PLY(std::ostream& os, const PointRange& points,
 
    \sa `write_PLY_with_properties()`
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_PLY(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
 #endif
@@ -308,17 +295,6 @@ bool write_PLY(const std::string& filename,
     return write_PLY(os, points, np);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-bool write_PLY(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_PLY(filename, points, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 
@@ -398,21 +374,11 @@ CGAL_DEPRECATED bool write_ply_points_with_properties(std::ostream& os, ///< out
 \deprecated This function is deprecated since \cgal 5.3,
             \link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink should be used instead.
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_PLY(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange>
-CGAL_DEPRECATED bool write_ply_points(std::ostream& os, const PointRange& points)
-{
-  return IO::write_PLY(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 #endif // CGAL_NO_DEPRECATED_CODE
 

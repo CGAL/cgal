@@ -42,7 +42,7 @@ public:
     // Data generation
     //-------------------------------------------------------
     Image image;
-    image.read("data/liver.inr.gz");
+    image.read(CGAL::data_file_path("images/liver.inr.gz"));
 
     std::cout << "\tSeed is\t"
       << CGAL::get_default_random().get_seed() << std::endl;

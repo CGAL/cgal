@@ -53,7 +53,11 @@ PATH_TO_MASTER="$PWD/doxygen_master/build/bin/doxygen"
 echo "done."
 
 echo "comparing versions 1.8.4 and 1.8.13"
-bash -$- test_doxygen_versions.sh $PATH_TO_1_8_4 $PATH_TO_1_8_13 $PWD/doc_1_8_4 $PWD/doc_1_8_13 $PUBLISH_DIR
+bash -$- test_doxygen_versions.sh $PATH_TO_1_8_4 $PATH_TO_1_8_13 $PWD/doc_1_8_4 $PWD/doc_1_8_13  $PUBLISH_DIR
+if [ ! -d $PWD/doc_1_8_13/doc_log ]; then
+  echo "NO DOC LOGS."
+  exit 1
+fi
 mv diff.txt diff1.txt
 
 echo "comparing versions 1.8.4 and master"
@@ -70,13 +74,13 @@ fi
 #update overview
 CGAL_NAME=$(cat cgal_version)
 if [ "$DO_COMPARE" = "TRUE" ]; then
-  python ${PWD}/testsuite.py --output-dir1 $PWD/doc_1_8_4/doc_output/ --output-dir2 $PWD/doc_1_8_13/doc_output/ --doc-log-dir1 $PWD/doc_1_8_4/doc_log/ \
+  python3 ${PWD}/testsuite.py --output-dir1 $PWD/doc_1_8_4/doc_output/ --output-dir2 $PWD/doc_1_8_13/doc_output/ --doc-log-dir1 $PWD/doc_1_8_4/doc_log/ \
     --doc-log-dir2 $PWD/doc_1_8_13/doc_log/ --doc-log-dir-master $PWD/doc_master/doc_log/ \
     --publish $PUBLISH_DIR --diff1 $PWD/diff1.txt --diff2 $PWD/diff2.txt --master-dir $PWD/doc_master/doc_output/ \
     --cgal-version "$CGAL_NAME" --do-copy-results --version-to-keep 10 --doxygen-version1 "$DOXYGEN_1" --doxygen-version2 "$DOXYGEN_2" --master-describe "$MASTER_DESCRIBE"
 else
   echo "NO MASTER"
-  python ${PWD}/testsuite.py --output-dir1 $PWD/doc_1_8_4/doc_output/ --output-dir2 $PWD/doc_1_8_13/doc_output/ --doc-log-dir1 $PWD/doc_1_8_4/doc_log/ \
+  python3 ${PWD}/testsuite.py --output-dir1 $PWD/doc_1_8_4/doc_output/ --output-dir2 $PWD/doc_1_8_13/doc_output/ --doc-log-dir1 $PWD/doc_1_8_4/doc_log/ \
     --doc-log-dir2 $PWD/doc_1_8_13/doc_log/ --doc-log-dir-master $PWD/doc_master/ \
     --publish $PUBLISH_DIR --diff1 $PWD/diff1.txt \
     --cgal-version "$CGAL_NAME" --do-copy-results --version-to-keep 10 --doxygen-version1 "$DOXYGEN_1" --doxygen-version2 "$DOXYGEN_2"

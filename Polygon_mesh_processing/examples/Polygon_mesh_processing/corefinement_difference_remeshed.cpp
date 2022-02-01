@@ -18,7 +18,7 @@ typedef boost::graph_traits<Mesh>::edge_descriptor            edge_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor            face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 struct Vector_pmap_wrapper
 {
@@ -36,8 +36,8 @@ struct Vector_pmap_wrapper
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
   if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
     PMP::corefine_and_compute_difference(mesh1,
                                          mesh2,
                                          mesh1,
-                                         params::all_default(), // default parameters for mesh1
-                                         params::all_default(), // default parameters for mesh2
+                                         params::default_values(), // default parameters for mesh1
+                                         params::default_values(), // default parameters for mesh2
                                          params::edge_is_constrained_map(is_constrained_map));
 
   if (valid_difference)

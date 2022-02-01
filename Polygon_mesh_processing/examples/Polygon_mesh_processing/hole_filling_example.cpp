@@ -20,7 +20,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mech-holes-shark.off");
 
   Polyhedron poly;
   if(!PMP::IO::read_polygon_mesh(filename, poly))
@@ -41,8 +41,8 @@ int main(int argc, char* argv[])
                                                                        h,
                                                                        std::back_inserter(patch_facets),
                                                                        std::back_inserter(patch_vertices),
-                                                                       PMP::parameters::vertex_point_map(get(CGAL::vertex_point, poly))
-                                                                                       .geom_traits(Kernel())));
+                                                                       CGAL::parameters::vertex_point_map(get(CGAL::vertex_point, poly))
+                                                                                        .geom_traits(Kernel())));
 
       std::cout << " Number of facets in constructed patch: " << patch_facets.size() << std::endl;
       std::cout << " Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
