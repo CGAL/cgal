@@ -549,6 +549,8 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       Union_find< SFace_handle>& uf ) {
     Unique_hash_map< SHalfedge_handle, bool> linked(false);
     linked.reserve(this->sncp()->number_of_shalfedges());
+    this->sncp()->reserve_sm_boundary_items(this->sncp()->number_of_sfaces());
+
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e, *this->sncp()) {
