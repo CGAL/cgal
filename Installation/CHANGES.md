@@ -15,6 +15,11 @@ Release date: June 2022
 
 -   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
 
+### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.5/Manual/packages.html#PkgBooleanSetOperations2)
+-   The concept `GeneralPolygonSetTraits_2` now requires the nested type `Construct_polygon_with_holes_2` instead of `Construct_general_polygon_with_holes_2`.
+
+### [2D Polygon](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygon2)
+-   The concept `GeneralPolygonWithHoles_2` now requires the nested type `Polygon_2` instead of `General_polygon_2`.
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
