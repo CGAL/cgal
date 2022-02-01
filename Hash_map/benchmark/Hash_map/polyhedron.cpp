@@ -2,12 +2,10 @@
 #include <fstream>
 #include <map>
 #include <algorithm>
+#include <random>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
 
 #include <CGAL/Timer.h>
@@ -18,7 +16,7 @@
 #include <boost/random/random_number_generator.hpp>
 #include <boost/random/linear_congruential.hpp>
 
-typedef CGAL::Simple_cartesian<double>  Kernel;
+typedef CGAL::Simple_cartesian<int>  Kernel;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
 
@@ -27,6 +25,41 @@ typedef CGAL::Polyhedron_3<Kernel>      Mesh;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
 typedef CGAL::Timer                     Timer;
+
+
+template <typename Map, typename VPM>
+double fct(int ii, int jj, const std::vector<vertex_descriptor>& V, const VPM& vpm, const std::string& s)
+{
+  int x = 0;
+  Timer construct, query;
+  construct.start();
+  for(int j=0; j <jj; j++){
+    Map sm;
+    for(vertex_descriptor vh : V){
+      sm[vh] = get(vpm,vh);
+    }
+  }
+  construct.stop();
+
+  Map sm;
+  for(vertex_descriptor vh : V){
+    sm[vh] = get(vpm,vh);
+  }
+
+  query.start();
+  for(int j=0; j <jj; j++){
+    for(vertex_descriptor vh : V){
+      x+= sm[vh].x();
+    }
+  }
+  query.stop();
+
+
+  std::cerr << s << " construction : "<< construct.time() << " sec.    ";
+  std::cerr      << " queries      : "<< query.time()     << " sec." << std::endl;
+
+  return x;
+}
 
 
 
@@ -42,9 +75,6 @@ void  fct(int ii, int jj)
   typedef boost::property_map<Mesh,CGAL::vertex_point_t>::type  VPM;
   VPM vpm = get(CGAL::vertex_point,mesh);
 
-
-  Vector_3 v(0,0,0);
-
   for(int i =0; i < ii; i++){
     vertex_descriptor vd = add_vertex(mesh);
     put(vpm,vd, Point_3(i,0,0));
@@ -54,89 +84,22 @@ void  fct(int ii, int jj)
   for(vertex_descriptor vd : vertices(mesh)){
     V.push_back(vd);
   }
-  random_shuffle(V.begin(), V.end());
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(V.begin(), V.end(), g);
 
 
-  Timer tsmc, tsumc, tbumc, tuhmc;
-  Timer tsmq, tsumq, tbumq, tuhmq;
+    std::cerr << std::endl << ii << " items and queries (repeated " << jj << " times)" << std::endl;
 
-  for(int j=0; j <jj; j++){
-
-    {
-      tsmc.start();
-      SM sm;
-      for(vertex_descriptor vh : V){
-        sm[vh] = get(vpm,vh);
-      }
-      tsmc.stop();
-
-
-      tsmq.start();
-      for(vertex_descriptor vh : V){
-        v = v + (sm[vh] - CGAL::ORIGIN);
-      }
-      tsmq.stop();
-    }
-    {
-      tsumc.start();
-      SUM sm;
-      for(vertex_descriptor vh : V){
-        sm[vh] = get(vpm,vh);
-      }
-      tsumc.stop();
-
-
-      tsumq.start();
-      for(vertex_descriptor vh : V){
-        v = v + (sm[vh] - CGAL::ORIGIN);
-      }
-      tsumq.stop();
-    }
-    {
-      tbumc.start();
-      BUM sm;
-      for(vertex_descriptor vh : V){
-        sm[vh] = get(vpm,vh);
-      }
-      tbumc.stop();
-
-
-      tbumq.start();
-      for(vertex_descriptor vh : V){
-        v = v + (sm[vh] - CGAL::ORIGIN);
-      }
-      tbumq.stop();
-    }
-
-    {
-      tuhmc.start();
-      UHM sm;
-      for(vertex_descriptor vh : V){
-        sm[vh] = get(vpm,vh);
-      }
-      tuhmc.stop();
-
-
-      tuhmq.start();
-      for(vertex_descriptor vh : V){
-        v = v + (sm[vh] - CGAL::ORIGIN);
-      }
-      tuhmq.stop();
-    }
-  }
-  std::cerr << ii << " items and queries (repeated " << jj << " times)" << std::endl;
-  std::cerr << "std::map             construction : "<< tsmc.time() << " sec." << std::endl;
-  std::cerr << "std::map             queries      : "<< tsmq.time() << " sec." << std::endl;
-
-  std::cerr << "std::unordered_map   construction : "<< tsumc.time() << " sec." << std::endl;
-  std::cerr << "std::unordered_map   queries      : "<< tsumq.time() << " sec." << std::endl;
-
-  std::cerr << "boost::unordered_map construction : "<< tbumc.time() << " sec." << std::endl;
-  std::cerr << "boost::unordered_map queries      : "<< tbumq.time() << " sec.\n" << std::endl;
-
-  std::cerr << "Unique_hash_map      construction : "<< tuhmc.time() << " sec." << std::endl;
-  std::cerr << "Unique_hash_map      queries      : "<< tuhmq.time() << " sec.\n" << std::endl;
-
+  int temp;
+  int res = fct<SM>(ii,jj, V, vpm, "std::map             " );
+  temp = fct<SUM>(ii,jj,V, vpm, "std::unordered_map   " );
+  if(temp != res){ std::cout << temp << " != " << res << std::endl;}
+  temp = fct<BUM>(ii,jj, V, vpm, "boost::unordered_map " );
+  if(temp != res){ std::cout << temp << " != " << res << std::endl;}
+  temp = fct<UHM>(ii,jj, V, vpm, "CGAL::Unique_hash_map" );
+  if(temp != res){ std::cout << temp << " != " << res << std::endl;}
 }
 
 int main(int , char* argv[])
@@ -148,5 +111,6 @@ int main(int , char* argv[])
   fct(500,  20000);
   fct(250,  40000);
   fct(100, 100000);
+  fct(10, 1000000);
   return 0;
 }
