@@ -37,14 +37,14 @@ public:
         // pointer arithmetic, then convert pointer back to handle again.
         Halfedge_handle h = HDS::halfedge_handle(this); // proper handle
         if ( nxt & 1)
-            return HDS::halfedge_handle( &* h + 1);
-        return HDS::halfedge_handle( &* h - 1);
+            return HDS::halfedge_handle( std::next(&*h) );
+        return HDS::halfedge_handle( std::prev(&*h));
     }
     Halfedge_const_handle opposite() const { // same as above
         Halfedge_const_handle h = HDS::halfedge_handle(this); // proper handle
         if ( nxt & 1)
-            return HDS::halfedge_handle( &* h + 1);
-        return HDS::halfedge_handle( &* h - 1);
+            return HDS::halfedge_handle( std::next(&*h));
+        return HDS::halfedge_handle( std::prev(&*h));
     }
     Halfedge_handle next() {
         return HDS::halfedge_handle((Halfedge*)(nxt & (~ std::ptrdiff_t(1))));
@@ -54,9 +54,9 @@ public:
                                                  (~ std::ptrdiff_t(1))));
     }
     void  set_opposite( Halfedge_handle h) {
-        CGAL_precondition(( &* h - 1 == &* HDS::halfedge_handle(this)) ||
-                          ( &* h + 1 == &* HDS::halfedge_handle(this)));
-        if ( &* h - 1 == &* HDS::halfedge_handle(this))
+        CGAL_precondition(( std::prev(&*h) == &* HDS::halfedge_handle(this)) ||
+                          ( std::next(&*h)== &* HDS::halfedge_handle(this)));
+        if ( std::prev(&*h) == &* HDS::halfedge_handle(this))
             nxt |= 1;
         else
             nxt &= (~ std::ptrdiff_t(1));
