@@ -153,7 +153,9 @@ FaceOutputIterator replace_faces_with_patch_without_reuse(const std::vector<type
 
     if(new_f == boost::graph_traits<PolygonMesh>::null_face())
     {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
       std::cerr << "Error: failed to insert patch face??" << std::endl;
+#endif
       return out;
     }
 
