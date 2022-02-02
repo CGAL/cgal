@@ -39,7 +39,6 @@ template <typename T>
 void
 test_copy_face_graph_isolated_vertices()
 {
-  typedef Kernel::Point_3 Point_3;
   Kernel::Point_3 p(0,0,0);
   {
     T s, t;
