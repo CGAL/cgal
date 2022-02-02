@@ -26,6 +26,10 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
 typedef CGAL::Timer                     Timer;
 
+template <typename Map>
+auto reserve(Map& sm, typename Map::size_type ii) -> decltype(sm.reserve(ii), void()){
+    sm.reserve(ii);
+}
 
 template <typename Map, typename VPM>
 double fct(int ii, int jj, const std::vector<vertex_descriptor>& V, const VPM& vpm, const std::string& s)
@@ -35,6 +39,7 @@ double fct(int ii, int jj, const std::vector<vertex_descriptor>& V, const VPM& v
   construct.start();
   for(int j=0; j <jj; j++){
     Map sm;
+    reserve(sm,ii);
     for(vertex_descriptor vh : V){
       sm[vh] = get(vpm,vh);
     }
