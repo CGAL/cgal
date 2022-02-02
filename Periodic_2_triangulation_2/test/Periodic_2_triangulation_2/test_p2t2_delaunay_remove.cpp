@@ -16,13 +16,13 @@ int main()
   Triangulation::Locate_type lt;
   int i;
   fh = t.locate(Point(0, 0) + midpoint, lt, i);
-  CGAL_assertion(lt == Triangulation::EMPTY);
+  assert(lt == Triangulation::EMPTY);
 
   Vertex_handle vh_midpoint = t.insert(Point(0, 0) + midpoint);
   fh = t.locate(Point(0, 0) + midpoint, lt, i);
-  CGAL_assertion(lt == Triangulation::VERTEX && fh->vertex(i) == vh_midpoint);
+  assert(lt == Triangulation::VERTEX && fh->vertex(i) == vh_midpoint);
   t.remove(vh_midpoint);
-  CGAL_assertion(t.empty());
+  assert(t.empty());
 
   // High degree vertex
   for (int n = 3; n < 8; ++n)
@@ -33,11 +33,11 @@ int main()
           t.insert(Point(0.3 * sin(i * 1.0 / n * 2 * M_PI), 0.3 * cos(i * 1.0 / n * 2 * M_PI)) + midpoint);
         }
       t.remove(vh_midpoint);
-      CGAL_assertion(t.is_valid(true));
+      assert(t.is_valid(true));
       while (!t.empty())
         {
           t.remove(t.vertices_begin());
-          CGAL_assertion(t.is_valid(true));
+          assert(t.is_valid(true));
         }
     }
 
@@ -45,14 +45,14 @@ int main()
   std::cout << "Seed: " << random.get_seed () << std::endl;
   Random_points_in_square g(0.495, random);
 
-  CGAL_assertion(t.is_valid());
+  assert(t.is_valid());
 
   std::cout << "Removing first point" << std::endl;
   Vertex_handle vh0 = t.insert(Point(0.5, 0.5));
-  CGAL_assertion(t.is_valid());
+  assert(t.is_valid());
   t.remove(vh0);
-  CGAL_assertion(t.is_valid());
-  CGAL_assertion(t.empty());
+  assert(t.is_valid());
+  assert(t.empty());
 
   {
     Random random(1284141159);
@@ -62,14 +62,14 @@ int main()
     Vector midpoint(0.5, 0.5);
 
     Triangulation t;
-    CGAL_assertion(t.is_valid());
+    assert(t.is_valid());
 
     std::cout << "Removing first point" << std::endl;
     Vertex_handle vh0 = t.insert(Point(0.5, 0.5));
-    CGAL_assertion(t.is_valid());
+    assert(t.is_valid());
     t.remove(vh0);
-    CGAL_assertion(t.is_valid());
-    CGAL_assertion(t.empty());
+    assert(t.is_valid());
+    assert(t.empty());
 
     std::cout << "Inserting random points and removing them." << std::endl;
 
@@ -77,7 +77,7 @@ int main()
       {
         t.insert(*(++g) + midpoint);
       }
-    CGAL_assertion(t.is_valid());
+    assert(t.is_valid());
 
     for (int i = 0; i < N_PTS; ++i)
       {
@@ -85,7 +85,7 @@ int main()
         Vertex_handle vh = t.locate(*(++g) + midpoint)->vertex(0);
         vh = t.get_original_vertex(vh);
         t.remove(vh);
-        CGAL_assertion(t.is_valid());
+        assert(t.is_valid());
       }
   }
   return 0;

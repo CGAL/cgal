@@ -22,6 +22,7 @@
 #include <vector>
 #include <cstdlib>
 #include <cstring>
+#include <cassert>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -101,7 +102,7 @@ void test_precondition(const char* filename,
   {
     exception_caught = true;
   }
-  CGAL_assertion(exception_caught);
+  assert(exception_caught);
 #endif
 }
 
@@ -137,13 +138,13 @@ public:
 
   friend value_type get(const Constraints_pmap& map, const key_type& e)
   {
-    CGAL_assertion(map.set_ptr_ != nullptr);
+    assert(map.set_ptr_ != nullptr);
     return !map.set_ptr_->empty()
          && map.set_ptr_->count(e);
   }
   friend void put(Constraints_pmap& map, const key_type& e, const value_type is)
   {
-    CGAL_assertion(map.set_ptr_ != nullptr);
+    assert(map.set_ptr_ != nullptr);
     if (is)                map.set_ptr_->insert(e);
     else if(get(map, e))   map.set_ptr_->erase(e);
   }
