@@ -48,7 +48,7 @@ namespace CGAL {
                 typename SearchTraits::Construct_min_vertex_d construct_min_vertex;
                 typename SearchTraits::Construct_max_vertex_d construct_max_vertex;
                 Min_vertex minv = construct_min_vertex(q);
-		Max_vertex maxv = construct_max_vertex(q);
+                Max_vertex maxv = construct_max_vertex(q);
                 typename SearchTraits::Cartesian_const_iterator_d qmaxit = construct_it(maxv),
                   qe = construct_it(maxv,1), qminit = construct_it(minv),
                   pit = construct_it(p);
