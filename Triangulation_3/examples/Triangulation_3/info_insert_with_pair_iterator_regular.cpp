@@ -26,8 +26,6 @@ int main()
 
   Regular rt( points.begin(),points.end() );
 
-  CGAL_assertion( rt.number_of_vertices() == 6 );
-
   // check that the info was correctly set.
   for (Regular::Vertex_handle v : rt.finite_vertex_handles())
     if( points[ v->info() ].first != v->point() ){

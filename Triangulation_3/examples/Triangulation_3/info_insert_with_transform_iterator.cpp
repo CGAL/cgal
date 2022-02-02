@@ -38,8 +38,6 @@ int main()
   Delaunay T( boost::make_transform_iterator(points.begin(),Auto_count()),
               boost::make_transform_iterator(points.end(),  Auto_count() )  );
 
-  CGAL_assertion( T.number_of_vertices() == 6 );
-
   // check that the info was correctly set.
   for (Delaunay::Vertex_handle v : T.finite_vertex_handles())
     if( points[ v->info() ] != v->point() ){

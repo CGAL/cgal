@@ -1,6 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/overlay_color.cpp
 // The overlay of two arrangement with extended dcel structures
 
+#include <cassert>
+
 #include <CGAL/basic.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arr_overlay_2.h>
@@ -25,7 +27,7 @@ int main() {
   insert(arr1, Segment(Point(0, 0), Point(0, 4)));
   insert(arr1, Segment(Point(2, 0), Point(2, 4)));
   insert(arr1, Segment(Point(4, 0), Point(4, 4)));
-  CGAL_assertion(arr1.number_of_faces() == 5);
+  assert(arr1.number_of_faces() == 5);
   for (auto vit = arr1.vertices_begin(); vit != arr1.vertices_end(); ++vit)
     vit->set_data(vcol1);
   for (auto hit = arr1.halfedges_begin(); hit != arr1.halfedges_end(); ++hit)
@@ -41,7 +43,7 @@ int main() {
   insert(arr2, Segment(Point(0, 0), Point(0, 6)));
   insert(arr2, Segment(Point(3, 0), Point(3, 6)));
   insert(arr2, Segment(Point(6, 0), Point(6, 6)));
-  CGAL_assertion(arr2.number_of_faces() == 5);
+  assert(arr2.number_of_faces() == 5);
   for (auto vit = arr2.vertices_begin(); vit != arr2.vertices_end(); ++vit)
     vit->set_data(vcol2);
   for (auto hit = arr2.halfedges_begin(); hit != arr2.halfedges_end(); ++hit)
