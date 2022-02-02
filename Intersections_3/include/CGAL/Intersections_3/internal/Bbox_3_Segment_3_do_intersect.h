@@ -173,11 +173,11 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
     }
     else
     {
-      tmax = bxmax - px;
+      tmax = CFT(bxmax) - px;
       dmax = qx - px;
     }
 
-    tmin = bxmin - px;
+    tmin = CFT(bxmin) - px;
     dmin = qx - px;
   }
   else
@@ -194,11 +194,11 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
     }
     else
     {
-      tmax = px - bxmin;
+      tmax = px - CFT(bxmin);
       dmax = px - qx;
     }
 
-    tmin = px - bxmax;
+    tmin = px - CFT(bxmax);
     dmin = px - qx;
   }
 
@@ -246,11 +246,11 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
     }
     else
     {
-      tymax = bymax - py;
+      tymax = CFT(bymax) - py;
       dymax = qy - py;
     }
 
-    tymin = bymin - py;
+    tymin = CFT(bymin) - py;
     dymin = qy - py;
   }
   else
@@ -267,11 +267,11 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
     }
     else
     {
-      tymax = py - bymin;
+      tymax = py - CFT(bymin);
       dymax = py - qy;
     }
 
-    tymin = py - bymax;
+    tymin = py - CFT(bymax);
     dymin = py - qy;
   }
 
@@ -317,11 +317,11 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
     }
     else
     {
-      tzmax = bzmax - pz;
+      tzmax = CFT(bzmax) - pz;
       dzmax = qz - pz;
     }
 
-    tzmin = bzmin - pz;
+    tzmin = CFT(bzmin) - pz;
     dzmin = qz - pz;
   }
   else
@@ -338,11 +338,11 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
     }
     else
     {
-      tzmax = pz - bzmin;
+      tzmax = pz - CFT(bzmin);
       dzmax = pz - qz;
     }
 
-    tzmin = pz - bzmax;
+    tzmin = pz - CFT(bzmax);
     dzmin = pz - qz;
   }
 
