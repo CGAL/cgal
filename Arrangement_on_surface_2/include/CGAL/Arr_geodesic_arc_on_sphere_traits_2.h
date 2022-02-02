@@ -1663,7 +1663,8 @@ public:
      * Once we do a better dispatching of the functors (LR-ident + TB-contraction),
      * an implementation of this signature becomes obsolete.
      */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+    Comparison_result operator()(const Point_2& /* p1 */,
+                                 const Point_2& /* p2 */) const
     {
       CGAL_error(); return EQUAL;
     }
