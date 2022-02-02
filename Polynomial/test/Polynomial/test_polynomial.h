@@ -285,6 +285,13 @@ void division(CGAL::Integral_domain_tag) {
 
 template <class NT>
 void io() {
+
+    // https://github.com/CGAL/cgal/issues/6272#issuecomment-1022005703
+    // VCbug:  Setting the rounding mode influences output of double
+    // The rounding mode is set to CGAL_FE_UPWARD in the test ccp files
+    // in order to test Modular Arithmetic
+    // Without this change which is local to the function  p == q will fail
+    CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
     typedef CGAL::Polynomial<NT> POLY;
 
     {
