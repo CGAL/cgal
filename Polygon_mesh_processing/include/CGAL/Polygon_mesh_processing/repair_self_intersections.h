@@ -474,12 +474,15 @@ void constrain_edges(const FaceRange& faces,
       // @speed cache normals
       const Vector n1 = compute_face_normal(f1, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
       const Vector n2 = compute_face_normal(f2, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt));
-      const FT c = gt.compute_scalar_product_3_object()(n1, n2);
+      if(n1 != CGAL::NULL_VECTOR && n2 != CGAL::NULL_VECTOR)
+      {
+        const FT c = gt.compute_scalar_product_3_object()(n1, n2);
 
-      // Do not mark as sharp edges with a dihedral angle that is almost `pi` because this is likely
-      // due to a foldness on the mesh rather than a sharp edge that we wish to preserve
-      // (Ideally this would be pre-treated as part of the flatness treatment)
-      flag = (c <= cos_angle && c >= -cos_angle);
+        // Do not mark as sharp edges with a dihedral angle that is almost `pi` because this is likely
+        // due to a fold on the mesh rather than a sharp edge that we would like to preserve
+        // (Ideally this would be pre-treated as part of the flatness treatment)
+        flag = (c <= cos_angle && c >= -cos_angle);
+      }
     }
 
     is_border_of_selection[ep.first] = flag; // Only needed for output, really
