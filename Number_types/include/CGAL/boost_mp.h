@@ -143,27 +143,28 @@ struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T
 
 namespace Boost_MP_internal {
 
-  // We use this function instead of ldexp overload from Interval_nt.h because:
-  // - see this issue: https://github.com/CGAL/cgal/issues/6004
-  // - in the original ldexp, when working with limit cases, we get CGAL_IA_MIN_DOUBLE
-  // e.g. that after multiplication by scale turns into a value that is not minimal double,
-  // which is expected for that limit case. So, we avoid multiplication by scale in this version
-  // for the limit cases and use it only for normal inf and sup cases.
+  Interval_nt<false> shift_positive_interval( const Interval_nt<false>& intv, const int e ) {
+    CGAL_assertion(intv.inf() > 0.0);
+    CGAL_assertion(intv.sup() > 0.0);
+    typedef std::numeric_limits<double> limits;
 
-  // template<bool b>
-  // Interval_nt<b> my_ldexp( const Interval_nt<b>& intv, const int e ) {
-  //   CGAL_assertion(intv.inf() > 0.0);
-  //   CGAL_assertion(intv.sup() > 0.0);
-  //   const double scale = std::ldexp(1.0, e);
-  //   Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
-  //   return Interval_nt<b>(
-  //     CGAL_NTS is_finite(scale) ?
-  //     scale * intv.inf() : CGAL_IA_MAX_DOUBLE,
-  //     scale == 0.0 ? CGAL_IA_MIN_DOUBLE : scale * intv.sup());
-  // }
+    if (e < std::numeric_limits<double>::min_exponent)
+    {
+      if ( e+std::numeric_limits<double>::digits < std::numeric_limits<double>::min_exponent)
+        return CGAL::Interval_nt<false>(0, (limits::min)());
+      // following calls to ldexp call are exact (e+digits is larger or equal to min_exponent) is less than min_exponent
+      return CGAL::Interval_nt<false>(std::ldexp(intv.inf(), e), std::ldexp(intv.sup(), e));
+    }
+    if (e > limits::max_exponent)
+      return CGAL::Interval_nt<false>((limits::max)(), limits::infinity()); // no multiplication as intv is positive
 
+    const double scale = std::ldexp(1.0, e); // ldexp call is exact (e is less than min_exponent)
+    return scale * intv;
+  }
+
+/*
   template<typename T>
-  bool is_spliiter_working(const T d) {
+  bool is_splitter_working(const T d) {
     T num = d;
     T den = 1.0;
     while (std::ceil(num) != num) {
@@ -173,40 +174,46 @@ namespace Boost_MP_internal {
     if (d != num / den) return false;
     return true;
   }
+*/
 
   // This function checks if the computed interval is correct and if it is tight.
   template<typename Type>
   bool are_bounds_correct( const double l, const double u, const Type& x ) {
+    typedef std::numeric_limits<double> limits;
 
     const double inf = std::numeric_limits<double>::infinity();
-    CGAL_assertion(u == l || u == std::nextafter(l, +inf));
+    if ( u!=l && (u==-inf || l==inf
+                          || (u==0 && l >=  -(limits::min)())
+                          || (l==0 && u <= (limits::min)())) )
+    {
+      return x >  Type((limits::max)()) ||
+             x < Type(-(limits::max)()) ||
+             (x > Type(-(limits::min)()) && x < Type((limits::min)()));
+    }
+
+//    CGAL_assertion(u == l || u == std::nextafter(l, +inf));
     const bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
 
+/*
     // This check is required until a bug in double.h:split_numerator_denominator() is fixed.
     // For the moment, this splitter does not handle certain limit values.
     // See also: https://github.com/CGAL/cgal/issues/5982
     // E.g. it fails for d = 2.752961027411077E-308!
-    if (!is_spliiter_working(l) || !is_spliiter_working(u)) {
+    if (!is_splitter_working(l) || !is_splitter_working(u)) {
       return are_bounds_tight;
     }
     CGAL_assertion(is_spliiter_working(l) && is_spliiter_working(u));
-
+*/
     // We cannot convert inf to Type so we skip.
     if (
       CGAL::abs(l) == inf ||
       CGAL::abs(u) == inf ||
       CGAL::abs(l) == 0.0 ||
-      CGAL::abs(u) == 0.0) {
+      CGAL::abs(u) == 0.0)
+    {
       return are_bounds_tight;
     }
-    CGAL_assertion(CGAL::abs(l) != inf);
-    CGAL_assertion(CGAL::abs(u) != inf);
-    CGAL_assertion(CGAL::abs(l) != 0.0);
-    CGAL_assertion(CGAL::abs(u) != 0.0);
-
     const Type lb(l), ub(u);
-    CGAL_assertion(lb <= x);
-    CGAL_assertion(ub >= x);
     const bool are_bounds_respected = (lb <= x && x <= ub);
     return are_bounds_tight && are_bounds_respected;
   }
@@ -220,8 +227,8 @@ namespace Boost_MP_internal {
     CGAL_assertion(pp >= 0);
     const double pp_dbl = static_cast<double>(pp);
     const Interval_nt<false> intv(pp_dbl, pp_dbl);
-    Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
-    return CGAL::ldexp(intv, -static_cast<int>(shift)).pair();
+
+    return shift_positive_interval(intv, -static_cast<int>(shift)).pair();
   }
 
   // This one returns 1 unit length interval.
@@ -237,7 +244,7 @@ namespace Boost_MP_internal {
     const double qq_dbl = static_cast<double>(qq);
     const Interval_nt<false> intv(pp_dbl, qq_dbl);
     Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
-    return CGAL::ldexp(intv, -static_cast<int>(shift)).pair();
+    return shift_positive_interval(intv, -static_cast<int>(shift)).pair();
   }
 
   // This is a version of to_interval that converts a rational type into a
