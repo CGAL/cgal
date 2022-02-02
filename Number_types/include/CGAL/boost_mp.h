@@ -143,6 +143,7 @@ struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T
 
 namespace Boost_MP_internal {
 
+  inline
   Interval_nt<false> shift_positive_interval( const Interval_nt<false>& intv, const int e ) {
     CGAL_assertion(intv.inf() > 0.0);
     CGAL_assertion(intv.sup() > 0.0);
