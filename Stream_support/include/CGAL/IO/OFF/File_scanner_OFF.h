@@ -710,7 +710,7 @@ public:
       if(entries.empty())
       {
         m_in.clear(std::ios::badbit);
-	size = 0;
+        size = 0;
         return;
       }
       size = static_cast<std::size_t>(entries[0]);
