@@ -623,6 +623,94 @@ bool order_border_halfedge_range(std::vector<typename boost::graph_traits<Triang
   return true;
 }
 
+template <class Box, class TM, class VPM, class GT, class OutputIterator>
+struct Strict_intersect_edges // "strict" as in "not sharing a vertex"
+{
+  typedef typename boost::graph_traits<TM>::halfedge_descriptor               halfedge_descriptor;
+  typedef typename GT::Segment_3                                              Segment;
+
+  mutable OutputIterator m_iterator;
+  const TM& m_tmesh;
+  const VPM m_vpmap;
+
+  typename GT::Construct_segment_3 m_construct_segment;
+  typename GT::Do_intersect_3 m_do_intersect;
+
+  Strict_intersect_edges(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
+    :
+      m_iterator(it),
+      m_tmesh(tmesh),
+      m_vpmap(vpmap),
+      m_construct_segment(gt.construct_segment_3_object()),
+      m_do_intersect(gt.do_intersect_3_object())
+  {}
+
+  void operator()(const Box* b, const Box* c) const
+  {
+    const halfedge_descriptor h = b->info();
+    const halfedge_descriptor g = c->info();
+
+    if(source(h, m_tmesh) == target(g, m_tmesh) || target(h, m_tmesh) == source(g, m_tmesh))
+      return;
+
+    const Segment s1 = m_construct_segment(get(m_vpmap, source(h, m_tmesh)), get(m_vpmap, target(h, m_tmesh)));
+    const Segment s2 = m_construct_segment(get(m_vpmap, source(g, m_tmesh)), get(m_vpmap, target(g, m_tmesh)));
+
+    if(m_do_intersect(s1, s2))
+      *m_iterator++ = std::make_pair(b->info(), c->info());
+  }
+};
+
+template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
+bool is_simple_3(const std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& cc_border_hedges,
+                 const TriangleMesh& tmesh,
+                 VertexPointMap vpm,
+                 const GeomTraits& gt)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor                       halfedge_descriptor;
+
+  typedef typename boost::property_traits<VertexPointMap>::reference                            Point_ref;
+
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS                                         Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
+
+  std::vector<Box> boxes;
+  boxes.reserve(cc_border_hedges.size());
+
+  for(halfedge_descriptor h : cc_border_hedges)
+  {
+    const Point_ref p = get(vpm, source(h, tmesh));
+    const Point_ref q = get(vpm, target(h, tmesh));
+    CGAL_assertion(!gt.equal_3_object()(p, q));
+
+    boxes.emplace_back(p.bbox() + q.bbox(), h);
+  }
+
+  // generate box pointers
+  std::vector<const Box*> box_ptr;
+  box_ptr.reserve(boxes.size());
+
+  for(Box& b : boxes)
+    box_ptr.push_back(&b);
+
+  typedef boost::function_output_iterator<CGAL::internal::Throw_at_output>          Throwing_output_iterator;
+  typedef internal::Strict_intersect_edges<Box, TriangleMesh, VertexPointMap,
+                                           GeomTraits, Throwing_output_iterator>    Throwing_filter;
+  Throwing_filter throwing_filter(tmesh, vpm, gt, Throwing_output_iterator());
+
+  try
+  {
+    const std::ptrdiff_t cutoff = 2000;
+    CGAL::box_self_intersection_d<Parallel_if_available_tag>(box_ptr.begin(), box_ptr.end(), throwing_filter, cutoff);
+  }
+  catch(CGAL::internal::Throw_at_output_exception&)
+  {
+    return false;
+  }
+
+  return true;
+}
+
 // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
@@ -766,6 +854,14 @@ bool check_patch_compatibility(const std::vector<std::vector<Point> >& patch,
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor      halfedge_descriptor;
+
+  if(patch.empty())
+  {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+    std::cout << "  DEBUG: Empty patch" << std::endl;
+#endif
+    return false;
+  }
 
   std::map<Point, vertex_descriptor> point_to_vd;
   for(vertex_descriptor v : border_vertices)
@@ -940,9 +1036,9 @@ bool construct_hole_patch(std::vector<CGAL::Triple<int, int, int> >& hole_faces,
   std::vector<std::vector<Point> > to_dump;
   for(const auto& face : hole_faces)
   {
-    to_dump.emplace_back(std::initializer_list<Point>{hole_points[face.first],
-                                                      hole_points[face.second],
-                                                      hole_points[face.third]});
+    to_dump.emplace_back(std::initializer_list<Point>{ hole_points[face.first],
+                                                       hole_points[face.second],
+                                                       hole_points[face.third] });
   }
 
   CGAL_assertion(to_dump.size() == hole_faces.size());
@@ -1000,6 +1096,11 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor          edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor          face_descriptor;
 
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
+  dump_patch("results/pre-adapt.off", point_patch);
+#endif
+
+  CGAL_precondition(!point_patch.empty());
 
   std::vector<Point> soup_points;
   std::vector<std::array<std::size_t, 3> > soup_faces;
@@ -1023,6 +1124,8 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
     soup_faces.push_back(f);
   }
 
+  CGAL_assertion(is_polygon_soup_a_polygon_mesh(soup_faces));
+
   TriangleMesh local_mesh;
   auto local_vpm = get(vertex_point, local_mesh);
 
@@ -1041,7 +1144,7 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
   refine(local_mesh, faces(local_mesh), CGAL::Emptyset_iterator(), std::back_inserter(new_vertices));
 
   for(vertex_descriptor v : new_vertices)
-    local_mesh.point(v) = projector(get(local_vpm, v)); // @fixme BGL
+    put(local_vpm, v, projector(get(local_vpm, v)));
 
   // The projector can create degenerate faces
   if(!remove_degenerate_faces(local_mesh))
@@ -1286,6 +1389,14 @@ bool construct_tentative_sub_hole_patch(std::vector<std::vector<typename boost::
     return false;
   }
 
+  if(!is_simple_3(cc_border_hedges, tmesh, vpm, gt))
+  {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+    std::cout << "Hole filling cannot handle non-simple sub border" << std::endl;
+#endif
+    return false;
+  }
+
   // @todo we don't care about these sets, so instead there could be a system of output iterators
   // in construct_tentative_hole_patch instead (and here would be emptyset iterators).
   std::set<vertex_descriptor> cc_interior_vertices;
@@ -1347,16 +1458,6 @@ bool fill_hole(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
   std::cout << "  DEBUG: Attempting hole-filling (no constraints), " << cc_faces.size() << " faces\n";
 #endif
-
-  if(!order_border_halfedge_range(cc_border_hedges, tmesh))
-  {
-#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
-    std::cout << "  DEBUG: Failed to orient the boundary??\n";
-#endif
-
-    CGAL_assertion(false); // we shouldn't fail to orient the boundary cycle of the complete hole
-    return false;
-  }
 
   std::set<vertex_descriptor> cc_interior_vertices;
   std::set<edge_descriptor> cc_interior_edges;
@@ -1538,94 +1639,6 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
   return true;
 }
 
-template <class Box, class TM, class VPM, class GT, class OutputIterator>
-struct Strict_intersect_edges // "strict" as in "not sharing a vertex"
-{
-  typedef typename boost::graph_traits<TM>::halfedge_descriptor               halfedge_descriptor;
-  typedef typename GT::Segment_3                                              Segment;
-
-  mutable OutputIterator m_iterator;
-  const TM& m_tmesh;
-  const VPM m_vpmap;
-
-  typename GT::Construct_segment_3 m_construct_segment;
-  typename GT::Do_intersect_3 m_do_intersect;
-
-  Strict_intersect_edges(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
-    :
-      m_iterator(it),
-      m_tmesh(tmesh),
-      m_vpmap(vpmap),
-      m_construct_segment(gt.construct_segment_3_object()),
-      m_do_intersect(gt.do_intersect_3_object())
-  {}
-
-  void operator()(const Box* b, const Box* c) const
-  {
-    const halfedge_descriptor h = b->info();
-    const halfedge_descriptor g = c->info();
-
-    if(source(h, m_tmesh) == target(g, m_tmesh) || target(h, m_tmesh) == source(g, m_tmesh))
-      return;
-
-    const Segment s1 = m_construct_segment(get(m_vpmap, source(h, m_tmesh)), get(m_vpmap, target(h, m_tmesh)));
-    const Segment s2 = m_construct_segment(get(m_vpmap, source(g, m_tmesh)), get(m_vpmap, target(g, m_tmesh)));
-
-    if(m_do_intersect(s1, s2))
-      *m_iterator++ = std::make_pair(b->info(), c->info());
-  }
-};
-
-template <typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
-bool is_simple_3(const std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& cc_border_hedges,
-                 const TriangleMesh& tmesh,
-                 VertexPointMap vpm,
-                 const GeomTraits& gt)
-{
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor                       halfedge_descriptor;
-
-  typedef typename boost::property_traits<VertexPointMap>::reference                            Point_ref;
-
-  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS                                         Box_policy;
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
-
-  std::vector<Box> boxes;
-  boxes.reserve(cc_border_hedges.size());
-
-  for(halfedge_descriptor h : cc_border_hedges)
-  {
-    const Point_ref p = get(vpm, source(h, tmesh));
-    const Point_ref q = get(vpm, target(h, tmesh));
-    CGAL_assertion(!gt.equal_3_object()(p, q));
-
-    boxes.emplace_back(p.bbox() + q.bbox(), h);
-  }
-
-  // generate box pointers
-  std::vector<const Box*> box_ptr;
-  box_ptr.reserve(boxes.size());
-
-  for(Box& b : boxes)
-    box_ptr.push_back(&b);
-
-  typedef boost::function_output_iterator<CGAL::internal::Throw_at_output>          Throwing_output_iterator;
-  typedef internal::Strict_intersect_edges<Box, TriangleMesh, VertexPointMap,
-                                           GeomTraits, Throwing_output_iterator>    Throwing_filter;
-  Throwing_filter throwing_filter(tmesh, vpm, gt, Throwing_output_iterator());
-
-  try
-  {
-    const std::ptrdiff_t cutoff = 2000;
-    CGAL::box_self_intersection_d<Parallel_if_available_tag>(box_ptr.begin(), box_ptr.end(), throwing_filter, cutoff);
-  }
-  catch(CGAL::internal::Throw_at_output_exception&)
-  {
-    return false;
-  }
-
-  return true;
-}
-
 template <typename PolyhedralEnvelope, typename Projector, typename TriangleMesh, typename VertexPointMap, typename GeomTraits>
 bool remove_self_intersections_with_hole_filling(std::vector<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor>& cc_border_hedges,
                                                  const std::set<typename boost::graph_traits<TriangleMesh>::face_descriptor>& cc_faces,
@@ -1645,6 +1658,16 @@ bool remove_self_intersections_with_hole_filling(std::vector<typename boost::gra
     out << "2 " << tmesh.point(source(h, tmesh)) << " " << tmesh.point(target(h, tmesh)) << std::endl;
   out.close();
 #endif
+
+  if(!order_border_halfedge_range(cc_border_hedges, tmesh))
+  {
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+    std::cout << "  DEBUG: Failed to orient the boundary??\n";
+#endif
+
+    CGAL_assertion(false); // we shouldn't fail to orient the boundary cycle of the complete hole
+    return false;
+  }
 
   if(!is_simple_3(cc_border_hedges, tmesh, vpm, gt))
   {
@@ -1670,7 +1693,8 @@ bool remove_self_intersections_with_hole_filling(std::vector<typename boost::gra
   }
 #endif // CGAL_PMP_REMOVE_SELF_INTERSECTIONS_NO_CONSTRAINTS_IN_HOLE_FILLING
 
-  fixed_by_hole_filling = fill_hole(cc_border_hedges, cc_faces, working_face_range, cc_envelope, projector, tmesh, vpm, gt);
+  fixed_by_hole_filling = fill_hole(cc_border_hedges, cc_faces, working_face_range, cc_envelope,
+                                    projector, tmesh, vpm, gt);
   if(fixed_by_hole_filling)
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
