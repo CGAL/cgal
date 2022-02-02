@@ -153,7 +153,7 @@ namespace Boost_MP_internal {
     {
       if ( e+std::numeric_limits<double>::digits < std::numeric_limits<double>::min_exponent)
         return CGAL::Interval_nt<false>(0, (limits::min)());
-      // following calls to ldexp call are exact (e+digits is larger or equal to min_exponent) is less than min_exponent
+      // following calls to ldexp call are exact (e+digits is larger or equal to min_exponent)
       return CGAL::Interval_nt<false>(std::ldexp(intv.inf(), e), std::ldexp(intv.sup(), e));
     }
     if (e > limits::max_exponent)
