@@ -394,7 +394,7 @@ public Q_SLOTS:
     if (dialog.exec() != QDialog::Accepted)
       return;
 
-    boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
+    std::unordered_map<fg_face_descriptor, bool> is_selected_map;
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
     {
       if(selection_item->selected_facets.find(fh)
@@ -752,7 +752,7 @@ public Q_SLOTS:
         print_message("Error: Please select a selection item with a selection of faces.");
         return;
       }
-      boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
+      std::unordered_map<fg_face_descriptor, bool> is_selected_map;
       int index = 0;
       for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
@@ -1171,7 +1171,7 @@ private:
   Ui::Selection ui_widget;
   std::map<QString, int> operations_map;
   std::vector<QString> operations_strings;
-typedef boost::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
+  typedef std::unordered_map<Scene_face_graph_item*, Scene_polyhedron_selection_item*> Selection_item_map;
   Selection_item_map selection_item_map;
   int last_mode;
   bool from_plugin;

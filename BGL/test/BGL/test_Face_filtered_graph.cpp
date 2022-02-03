@@ -6,16 +6,16 @@
 #include "test_Prefix.h"
 
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <fstream>
 #include <map>
 #include <memory>
 #include <utility>
 #include <cassert>
 
-typedef boost::unordered_set<std::size_t> id_map;
+typedef std::unordered_set<std::size_t> id_map;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -25,7 +25,7 @@ void test_halfedge_around_vertex_iterator(const  Graph& g)
   typedef typename boost::graph_traits<Graph>::face_descriptor g_face_descriptor;
   typedef CGAL::Face_filtered_graph<Graph> Adapter;
   CGAL_GRAPH_TRAITS_MEMBERS(Adapter);
-  boost::unordered_map<g_face_descriptor, std::size_t> map(num_faces(g));
+  std::unordered_map<g_face_descriptor, std::size_t> map(num_faces(g));
   PMP::connected_components(g, boost::make_assoc_property_map(map));
 
   Adapter fg(g, 0, boost::make_assoc_property_map(map));
@@ -526,7 +526,7 @@ int main()
     *sm, fccmap, CGAL::parameters::edge_is_constrained_map(Constraint<SM, SM::Property_map<boost::graph_traits<SM>::vertex_descriptor,
                                                            SM::Point> >(*sm, positions)));
 
-  boost::unordered_set<long unsigned int> pids;
+  std::unordered_set<long unsigned int> pids;
   pids.insert(0);
   pids.insert(2);
   SM_Adapter sm_adapter(*sm, pids, fccmap);

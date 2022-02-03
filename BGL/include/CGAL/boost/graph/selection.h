@@ -14,7 +14,6 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/boost/graph/iterator.h>
-#include <boost/unordered_set.hpp>
 
 #include <CGAL/boost/graph/Dual.h>
 #include <boost/graph/filtered_graph.hpp>
@@ -22,6 +21,8 @@
 
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #include <CGAL/squared_distance_3.h>
+
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -1037,7 +1038,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 
-  boost::unordered_set<vertex_descriptor> vertices_queue;
+  std::unordered_set<vertex_descriptor> vertices_queue;
 
   // collect vertices belonging to at least a triangle that will be removed
   for(face_descriptor fd : faces_to_be_deleted)
@@ -1130,8 +1131,8 @@ int euler_characteristic_of_selection(const FaceRange& face_selection,
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  boost::unordered_set<vertex_descriptor> sel_vertices;
-  boost::unordered_set<edge_descriptor> sel_edges;
+  std::unordered_set<vertex_descriptor> sel_vertices;
+  std::unordered_set<edge_descriptor> sel_edges;
   for(face_descriptor f : face_selection)
   {
     for(halfedge_descriptor h : halfedges_around_face(halfedge(f, pm), pm))

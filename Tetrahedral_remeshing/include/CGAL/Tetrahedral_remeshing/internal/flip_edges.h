@@ -20,11 +20,12 @@
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/optional.hpp>
+#include <boost/functional/hash.hpp>
 
+#include <unordered_map>
+#include <unordered_set>
 #include <limits>
 #include <queue>
 
@@ -226,8 +227,8 @@ Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
 
   //Keep the facets
   typedef CGAL::Triple<Vertex_handle, Vertex_handle, Vertex_handle> Facet_vvv;
-  typedef boost::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
-  boost::unordered_set<Facet> outer_mirror_facets;
+  typedef std::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
+  std::unordered_set<Facet, boost::hash<Facet>> outer_mirror_facets;
 
   FaceMapIndex facet_map_indices;
   std::vector<Facet> mirror_facets;
@@ -782,7 +783,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   boost::container::small_vector<Cell_handle, 20> to_remove;
 
   //Neighbors that will need to be updated after flip
-  boost::unordered_set<Facet> neighbor_facets;
+  std::unordered_set<Facet, boost::hash<Facet>> neighbor_facets;
 
   //Facets that will be used to create new cells
   // i.e. all the facets opposite to vh1 and don't have vh
@@ -895,7 +896,7 @@ Sliver_removal_result flip_n_to_m(C3t3& c3t3,
   }
 
   typedef CGAL::Triple<Vertex_handle, Vertex_handle, Vertex_handle> Facet_vvv;
-  typedef boost::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
+  typedef std::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
 
   FaceMapIndex facet_map_indices;
   std::vector<Facet> facets;
@@ -1092,12 +1093,12 @@ Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
   Facet_circulator done = circ;
 
   //Identify the vertices around this edge
-  boost::unordered_set<Vertex_handle> vertices_around_edge;
+  std::unordered_set<Vertex_handle> vertices_around_edge;
   bool boundary_edge = false;
   bool hull_edge = false;
 
-  boost::unordered_set<Vertex_handle> boundary_vertices;
-//  boost::unordered_set<Vertex_handle> hull_vertices;
+  std::unordered_set<Vertex_handle> boundary_vertices;
+//  std::unordered_set<Vertex_handle> hull_vertices;
   do
   {
     //Get the ids of the opposite vertices
@@ -1242,7 +1243,7 @@ void flip_edges(C3T3& c3t3,
   //compute vertices normals map?
 
   // typedef typename C3T3::Surface_patch_index Surface_patch_index;
-  // typedef boost::unordered_map<Surface_patch_index, unsigned int> Spi_map;
+  // typedef std::unordered_map<Surface_patch_index, unsigned int> Spi_map;
   //if (!protect_boundaries)
   //{
   //  std::cout << "\tBoundary flips" << std::endl;

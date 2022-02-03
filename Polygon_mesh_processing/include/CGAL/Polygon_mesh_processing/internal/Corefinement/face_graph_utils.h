@@ -602,7 +602,7 @@ class Border_edge_map {
   typedef boost::graph_traits<PolygonMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GT::edge_descriptor edge_descriptor;
-  typedef boost::unordered_set<edge_descriptor> Intersection_edge_map;
+  typedef std::unordered_set<edge_descriptor> Intersection_edge_map;
   const Intersection_edge_map* intersection_edges;
   const PolygonMesh* tm;
 public:
@@ -979,7 +979,7 @@ struct Triangle_mesh_extension_helper<TriangleMesh, true>
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  typedef boost::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
+  typedef std::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
   Edge_map& tm_to_output_edges;
   const TriangleMesh& tm;
   TriangleMesh& output;
@@ -1020,7 +1020,7 @@ struct Triangle_mesh_extension_helper<TriangleMesh, false>
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::face_descriptor face_descriptor;
 
-  typedef boost::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
+  typedef std::unordered_map< edge_descriptor, edge_descriptor> Edge_map;
   Edge_map& tm_to_output_edges;
   const TriangleMesh& tm;
   TriangleMesh& output;
@@ -1070,7 +1070,7 @@ void append_patches_to_triangle_mesh(
   const VertexPointMap& vpm_tm,
   EdgeMarkMapOut& edge_mark_map_out,
   const EdgeMarkMapIn& edge_mark_map_in,
-  boost::unordered_map<
+  std::unordered_map<
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
     typename boost::graph_traits<TriangleMesh>::edge_descriptor
   >& tm_to_output_edges,
@@ -1333,8 +1333,8 @@ void fill_new_triangle_mesh(
 
   //add a polyline inside O for each intersection polyline
   std::size_t nb_polylines = polylines.lengths.size();
-  boost::unordered_map<vertex_descriptor, vertex_descriptor> tm1_to_output_vertices;
-  boost::unordered_map<edge_descriptor, edge_descriptor> tm1_to_output_edges,
+  std::unordered_map<vertex_descriptor, vertex_descriptor> tm1_to_output_vertices;
+  std::unordered_map<edge_descriptor, edge_descriptor> tm1_to_output_edges,
                                                          tm2_to_output_edges;
 
   for (std::size_t i=0; i < nb_polylines; ++i)
@@ -1423,7 +1423,7 @@ void disconnect_patches(
     // start the duplicate step
     std::size_t nb_shared_edges = patch.shared_edges.size();
     new_patch_border.reserve( nb_shared_edges );
-    boost::unordered_map<halfedge_descriptor, halfedge_descriptor> old_to_new;
+    std::unordered_map<halfedge_descriptor, halfedge_descriptor> old_to_new;
 
     // save faces inside the patch and set the halfedge
     // to be duplicated on the boundary
@@ -1580,7 +1580,7 @@ void compute_inplace_operation_delay_removal_and_insideout(
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef boost::unordered_map<edge_descriptor, edge_descriptor> Edge_map;
+  typedef std::unordered_map<edge_descriptor, edge_descriptor> Edge_map;
 
   Edge_map tm2_edge_to_tm1_edge, tm1_edge_to_tm2_edge;
   //maps intersection edges from tm2 to tm1
@@ -1734,13 +1734,13 @@ void compute_inplace_operation(
         EdgeMarkMapIn1& edge_mark_map_in1,
   const EdgeMarkMapIn2& edge_mark_map_in2,
         EdgeMarkMapOut1& edge_mark_map_out1,
-  boost::unordered_map<
+  std::unordered_map<
     typename boost::graph_traits<TriangleMesh>::edge_descriptor,
     typename boost::graph_traits<TriangleMesh>::edge_descriptor
   >& tm2_edge_to_tm1_edge,
   UserVisitor& user_visitor)
 {
-  typedef boost::unordered_map<
+  typedef std::unordered_map<
       typename boost::graph_traits<TriangleMesh>::edge_descriptor,
       typename boost::graph_traits<TriangleMesh>::edge_descriptor> EdgeMap;
   //clean up patches not kept
@@ -1848,7 +1848,7 @@ void compute_inplace_operation(
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::edge_descriptor edge_descriptor;
 
-  boost::unordered_map<edge_descriptor, edge_descriptor> tm2_edge_to_tm1_edge;
+  std::unordered_map<edge_descriptor, edge_descriptor> tm2_edge_to_tm1_edge;
 
   //maps intersection edges from tm2 to the equivalent in tm1
   compute_border_edge_map(tm1, tm2,

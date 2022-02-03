@@ -34,6 +34,7 @@
 
 #include <boost/range.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <iostream>
 #include <iterator>
@@ -690,8 +691,10 @@ filter_stitchable_pairs(PolygonMesh& pmesh,
   // We look for vertex to be stitched and collect all incident edges with another endpoint
   // to be stitched (that is not an edge scheduled for stitching). That way we can detect
   // if more that one edge will share the same two "master" endpoints.
-  typedef boost::unordered_map<std::pair<vertex_descriptor, vertex_descriptor>,
-                               std::vector<halfedge_descriptor> >           Halfedges_after_stitching;
+  typedef std::pair<vertex_descriptor, vertex_descriptor> Vertex_pair;
+  typedef std::unordered_map<Vertex_pair,
+                             std::vector<halfedge_descriptor>,
+                             boost::hash<Vertex_pair>>           Halfedges_after_stitching;
   Halfedges_after_stitching halfedges_after_stitching;
 
   typedef std::pair<const vertex_descriptor, typename Uf_vertices::handle> Pair_type;

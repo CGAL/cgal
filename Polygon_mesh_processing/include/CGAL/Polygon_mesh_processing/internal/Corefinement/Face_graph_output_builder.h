@@ -157,7 +157,7 @@ class Face_graph_output_builder
 // Internal typedefs
   typedef std::size_t                                          Node_id;
   typedef std::pair<Node_id,Node_id>                      Node_id_pair;
-  typedef boost::unordered_set<edge_descriptor>  Intersection_edge_map;
+  typedef std::unordered_set<edge_descriptor>  Intersection_edge_map;
   // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
   // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
   // second is the number of edges -1 in the polyline
@@ -167,9 +167,9 @@ class Face_graph_output_builder
                                std::pair<bool,std::size_t> > >
                                               An_edge_per_polyline_map;
 
-  typedef boost::unordered_map<vertex_descriptor, Node_id> Node_id_map;
-  typedef boost::unordered_map<edge_descriptor,
-                               edge_descriptor>               Edge_map;
+  typedef std::unordered_map<vertex_descriptor, Node_id>   Node_id_map;
+  typedef std::unordered_map<edge_descriptor,
+                             edge_descriptor>                 Edge_map;
 //Data members
   TriangleMesh &tm1, &tm2;
   // property maps of input meshes
@@ -556,8 +556,8 @@ public:
     typename An_edge_per_polyline_map::iterator
       epp_it=input_have_coplanar_faces ? an_edge_per_polyline.begin()
                                        : epp_it_end;
-    boost::unordered_set<edge_descriptor> inter_edges_to_remove1,
-                                          inter_edges_to_remove2;
+    std::unordered_set<edge_descriptor> inter_edges_to_remove1,
+                                        inter_edges_to_remove2;
 
     // Each vector contains a subset of coplanar faces. More particularly only
     // the coplanar faces incident to an intersection edge. Note
@@ -1576,7 +1576,7 @@ public:
     typedef Patch_container<TriangleMesh, FaceIdMap1, Intersection_edge_map> Patches1;
     typedef Patch_container<TriangleMesh, FaceIdMap2, Intersection_edge_map> Patches2;
 
-    boost::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
+    std::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
     if (used_to_clip_a_surface)
     {
       if (!is_tm1_closed)
@@ -1960,7 +1960,7 @@ public:
           for(vertex_descriptor vd : border_nm_vertices)
           {
             // first check if at least one incident patch will be kept
-            boost::unordered_set<std::size_t> id_p_rm;
+            std::unordered_set<std::size_t> id_p_rm;
             bool all_removed=true;
             for(halfedge_descriptor h : halfedges_around_target(vd, tm1))
             {

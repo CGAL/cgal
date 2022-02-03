@@ -32,8 +32,8 @@
 
 
 #include <boost/iterator/transform_iterator.hpp>
-#include <boost/unordered_map.hpp>
 
+#include <unordered_map>
 #include <set>
 #include <stack>
 #include <cmath>
@@ -485,7 +485,7 @@ private:
   std::vector<int> mark_edges;
 public:
 
-  boost::unordered_map<vertex_descriptor,vertex_descriptor> v2v, vtov;
+  std::unordered_map<vertex_descriptor,vertex_descriptor> v2v, vtov;
 };
 
 } // namespace Heat_method_3

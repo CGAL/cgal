@@ -27,7 +27,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/copy.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/property_map/property_map.hpp>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
@@ -68,6 +67,7 @@
 #include <CGAL/Bbox_3.h>
 
 #include <queue>
+#include <unordered_map>
 
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -1339,9 +1339,9 @@ private:
   {
     namespace PMP = CGAL::Polygon_mesh_processing;
 
-    boost::unordered_map<face_descriptor, Vector> normals;
+    std::unordered_map<face_descriptor, Vector> normals;
     boost::associative_property_map<
-      boost::unordered_map<face_descriptor, Vector> > normals_pmap(normals);
+      std::unordered_map<face_descriptor, Vector> > normals_pmap(normals);
     PMP::compute_face_normals(m_tmesh, normals_pmap);
 
     m_normals.resize(num_vertices(m_tmesh));

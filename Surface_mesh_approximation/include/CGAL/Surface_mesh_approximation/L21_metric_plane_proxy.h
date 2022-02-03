@@ -22,7 +22,8 @@
 
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/unordered_map.hpp>
+
+#include <unordered_map>
 
 namespace CGAL {
 namespace Surface_mesh_approximation {

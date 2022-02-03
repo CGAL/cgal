@@ -616,7 +616,7 @@ std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  boost::unordered_set<Subdomain_index> indices;
+  std::unordered_set<Subdomain_index> indices;
   incident_subdomains(v, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -628,7 +628,7 @@ std::size_t nb_incident_subdomains(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Subdomain_index Subdomain_index;
 
-  boost::unordered_set<Subdomain_index> indices;
+  std::unordered_set<Subdomain_index> indices;
   incident_subdomains(e, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -640,7 +640,7 @@ std::size_t nb_incident_surface_patches(const typename C3t3::Edge& e,
 {
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
-  boost::unordered_set<Surface_patch_index> indices;
+  std::unordered_set<Surface_patch_index, boost::hash<Surface_patch_index>> indices;
   incident_surface_patches(e, c3t3, std::inserter(indices, indices.begin()));
 
   return indices.size();
@@ -651,7 +651,7 @@ std::size_t nb_incident_complex_edges(const typename C3t3::Vertex_handle v,
                                       const C3t3& c3t3)
 {
   typedef typename C3t3::Edge Edge;
-  boost::unordered_set<Edge> edges;
+  std::unordered_set<Edge> edges;
   c3t3.triangulation().finite_incident_edges(v, std::inserter(edges, edges.begin()));
 
   std::size_t count = 0;
@@ -1309,7 +1309,7 @@ void dump_cells_off(const CellRange& cells, const Tr& /*tr*/, const char* filena
 
   Bimap_t vertices;
   int index = 0;
-  boost::unordered_set<std::array<Vertex_handle, 3> > facets;
+  std::unordered_set<std::array<Vertex_handle, 3>, boost::hash<std::array<Vertex_handle, 3>> > facets;
 
   for (Cell_handle c : cells)
   {

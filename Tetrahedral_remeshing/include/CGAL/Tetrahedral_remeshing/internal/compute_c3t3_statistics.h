@@ -19,8 +19,7 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
-
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
@@ -87,7 +86,7 @@ void compute_statistics(const Triangulation& tr,
     = tr.geom_traits().compute_approximate_dihedral_angle_3_object();
 
   std::size_t nb_tets = 0;
-  boost::unordered_set<Vertex_handle> selected_vertices;
+  std::unordered_set<Vertex_handle> selected_vertices;
   std::vector<Subdomain_index> sub_ids;
   for (Finite_cells_iterator cit = tr.finite_cells_begin();
        cit != tr.finite_cells_end();

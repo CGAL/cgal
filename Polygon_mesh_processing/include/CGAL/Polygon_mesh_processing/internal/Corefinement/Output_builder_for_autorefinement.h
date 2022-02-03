@@ -90,10 +90,10 @@ class Output_builder_for_autorefinement
 
   // to maintain the two halfedges on each polyline
   typedef std::map< Node_id_pair, Shared_halfedges >   An_edge_per_polyline_map;
-  typedef boost::unordered_map<vertex_descriptor, Node_id> Node_id_map;
-  // typedef boost::unordered_map<edge_descriptor,
-  //                              edge_descriptor>               Edge_map;
-  typedef boost::unordered_map<Node_id_pair, Shared_halfedges> All_intersection_edges_map;
+  typedef std::unordered_map<vertex_descriptor, Node_id> Node_id_map;
+  // typedef std::unordered_map<edge_descriptor,
+  //                            edge_descriptor>               Edge_map;
+  typedef std::unordered_map<Node_id_pair, Shared_halfedges, boost::hash<Node_id_pair>> All_intersection_edges_map;
 //Data members
   TriangleMesh &tm;
   // property maps of input mesh
@@ -215,7 +215,7 @@ public:
   {
     // first build an unordered_map mapping a vertex to its node id + a set
     // of all intersection edges
-    typedef boost::unordered_set<edge_descriptor> Intersection_edge_map;
+    typedef std::unordered_set<edge_descriptor> Intersection_edge_map;
     Intersection_edge_map intersection_edges;
 
     typedef std::pair<const Node_id_pair, Shared_halfedges> Pair_type;
@@ -256,7 +256,7 @@ public:
     typename An_edge_per_polyline_map::iterator
       epp_it=input_have_coplanar_faces ? an_edge_per_polyline.begin()
                                        : epp_it_end;
-    boost::unordered_set<edge_descriptor> inter_edges_to_remove;
+    std::unordered_set<edge_descriptor> inter_edges_to_remove;
     for (;epp_it!=epp_it_end;)
     {
       halfedge_descriptor h1  = epp_it->second.h1;
@@ -347,7 +347,7 @@ public:
     // component limited by intersection edges of the surface they are.
     // ... for tm
     std::vector<std::size_t> patch_ids( num_faces(tm),NID );
-    Boolean_property_map< boost::unordered_set<edge_descriptor> >
+    Boolean_property_map< std::unordered_set<edge_descriptor> >
       is_intersection(intersection_edges);
     std::size_t nb_patches =
       PMP::connected_components(tm,

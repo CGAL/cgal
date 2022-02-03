@@ -373,8 +373,8 @@ private:
   typedef typename Graph_traits::vertex_descriptor            vertex_descriptor;
   typedef typename Graph_traits::halfedge_descriptor        halfedge_descriptor;
    typedef std::vector<Node_id>                                        Node_ids;
-   typedef boost::unordered_map<face_descriptor,Node_ids>           On_face_map;
-   typedef boost::unordered_map<edge_descriptor,Node_ids>           On_edge_map;
+   typedef std::unordered_map<face_descriptor,Node_ids>             On_face_map;
+   typedef std::unordered_map<edge_descriptor,Node_ids>             On_edge_map;
    //to keep the correspondance between node_id and vertex_handle in each mesh
    typedef std::vector<vertex_descriptor>                     Node_id_to_vertex;
    typedef std::map<const TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
@@ -382,7 +382,7 @@ private:
    typedef std::multimap<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
    typedef std::map<TriangleMesh*,Node_to_target_of_hedge_map>
                                            Mesh_to_vertices_on_intersection_map;
-   typedef boost::unordered_map<vertex_descriptor,Node_id>    Vertex_to_node_id;
+   typedef std::unordered_map<vertex_descriptor,Node_id>      Vertex_to_node_id;
    typedef std::map<TriangleMesh*, Vertex_to_node_id> Mesh_to_vertex_to_node_id;
    typedef Non_manifold_feature_map<TriangleMesh>               NM_features_map;
 // typedef for the CDT
@@ -828,7 +828,7 @@ public:
 
   };
 
-  typedef boost::unordered_map<face_descriptor,Face_boundary>  Face_boundaries;
+  typedef std::unordered_map<face_descriptor,Face_boundary>  Face_boundaries;
 
   //update the id of input mesh vertex that are also a node
   void update_face_indices(
@@ -837,7 +837,7 @@ public:
     Vertex_to_node_id& vertex_to_node_id)
   {
     for (int k=0;k<3;++k){
-      typename boost::unordered_map<vertex_descriptor,Node_id>::iterator it =
+      typename std::unordered_map<vertex_descriptor,Node_id>::iterator it =
         vertex_to_node_id.find(f_vertices[k]);
       if (it!=vertex_to_node_id.end())
         f_indices[k]=it->second;

@@ -44,9 +44,9 @@
 #include <atomic>
 #endif // CGAL_LINKED_WITH_TBB
 
-#include <boost/unordered_set.hpp>
 #include <boost/any.hpp>
 
+#include <unordered_set>
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -345,8 +345,8 @@ sample_triangles(const FaceRange& triangles,
   typedef typename GT::face_descriptor face_descriptor;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
-  boost::unordered_set<typename GT::edge_descriptor> sampled_edges;
-  boost::unordered_set<typename GT::vertex_descriptor> endpoints;
+  std::unordered_set<typename GT::edge_descriptor> sampled_edges;
+  std::unordered_set<typename GT::vertex_descriptor> endpoints;
 
   for(face_descriptor fd : triangles)
   {

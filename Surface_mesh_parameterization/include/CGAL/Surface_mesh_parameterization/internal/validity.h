@@ -52,7 +52,7 @@ bool has_flips(const TriangleMesh& mesh,
   typedef typename Kernel::Vector_3                                   Vector_3;
 
   // Fill containers
-  boost::unordered_set<vertex_descriptor> vertices;
+  std::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
   internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);
@@ -302,7 +302,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor    face_descriptor;
 
-  boost::unordered_set<vertex_descriptor> vertices;
+  std::unordered_set<vertex_descriptor> vertices;
   std::vector<face_descriptor> faces;
 
   internal::Containers_filler<TriangleMesh> fc(mesh, vertices, &faces);

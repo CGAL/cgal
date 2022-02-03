@@ -30,10 +30,10 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/utility.h>
 
-#include <boost/unordered_set.hpp>
 #include <boost/dynamic_bitset.hpp>
 #include <boost/ref.hpp>
 
+#include <unordered_set>
 #include <functional>
 namespace CGAL {
 
@@ -300,7 +300,7 @@ void reverse_face_orientations_of_mesh_with_polylines(PolygonMesh& pmesh)
     reverse_orientation(halfedge(fd,pmesh),pmesh);
 
   //extract all border cycles
-  boost::unordered_set<halfedge_descriptor> already_seen;
+  std::unordered_set<halfedge_descriptor> already_seen;
   std::vector<halfedge_descriptor> border_cycles;
   for(halfedge_descriptor h : halfedges(pmesh))
     if ( is_border(h,pmesh) && already_seen.insert(h).second )

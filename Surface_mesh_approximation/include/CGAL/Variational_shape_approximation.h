@@ -1652,7 +1652,7 @@ private:
     typedef typename SubGraph::vertex_descriptor sg_vertex_descriptor;
     typedef std::vector<sg_vertex_descriptor> VertexVector;
 
-    typedef boost::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
+    typedef std::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
     typedef boost::associative_property_map<VertexMap> ToSGVertexMap;
     VertexMap vmap;
     ToSGVertexMap to_sgv_map(vmap);

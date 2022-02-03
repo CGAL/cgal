@@ -20,7 +20,7 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Union_find.h>
 
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 #ifndef DOXYGEN_RUNNING
 
@@ -107,7 +107,7 @@ void collect_close_stitchable_boundary_edges(PM& pm,
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
 
-  typedef boost::unordered_map<halfedge_descriptor, int> Halfedge_multiplicity;
+  typedef std::unordered_map<halfedge_descriptor, int> Halfedge_multiplicity;
   typedef std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > Halfedge_pairs;
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;

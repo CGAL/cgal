@@ -40,8 +40,6 @@
 #include <boost/bimap/set_of.hpp>
 #include <boost/range.hpp>
 #include <boost/range/join.hpp>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
 #include <memory>
 #include <boost/container/flat_set.hpp>
 #include <boost/optional.hpp>
@@ -52,6 +50,8 @@
 #include <iterator>
 #include <fstream>
 #include <tuple>
+#include <unordered_map>
+#include <unordered_set>
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
@@ -1698,7 +1698,7 @@ private:
     {
       CGAL_assertion_code(std::size_t nb_done = 0);
 
-      boost::unordered_set<halfedge_descriptor> degenerate_faces;
+      std::unordered_set<halfedge_descriptor> degenerate_faces;
       for(halfedge_descriptor h :
           halfedges_around_target(halfedge(v, mesh_), mesh_))
       {

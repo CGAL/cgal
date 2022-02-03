@@ -26,8 +26,8 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/range/has_range_iterator.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <bitset>
 #include <utility>
 #include <vector>
@@ -486,8 +486,8 @@ struct Face_filtered_graph
     selected_halfedges.reset();
 
     typedef typename boost::property_traits<FacePatchIndexMap>::value_type Patch_index;
-    boost::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
-                                           boost::end(selected_face_patch_indices));
+    std::unordered_set<Patch_index> pids(boost::begin(selected_face_patch_indices),
+                                         boost::end(selected_face_patch_indices));
 
     for(face_descriptor fd : faces(_graph) )
     {
@@ -625,8 +625,8 @@ struct Face_filtered_graph
     // In that case, we will find a non-visited halfedge that has for target a vertex
     // that is already visited.
 
-    boost::unordered_set<vertex_descriptor> vertices_visited;
-    boost::unordered_set<halfedge_descriptor> halfedges_handled;
+    std::unordered_set<vertex_descriptor> vertices_visited;
+    std::unordered_set<halfedge_descriptor> halfedges_handled;
 
     for(halfedge_descriptor hd : halfedges(*this))
     {

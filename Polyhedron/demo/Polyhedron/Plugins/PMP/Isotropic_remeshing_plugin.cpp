@@ -18,10 +18,9 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/utility.h>
+#include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/unordered_set.hpp>
-#include <CGAL/property_map.h>
 
 #include <QElapsedTimer>
 #include <QAction>
@@ -37,6 +36,7 @@
 #include <queue>
 #include <sstream>
 #include <cmath>
+#include <unordered_set>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/parallel_for.h"
@@ -177,7 +177,7 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   typedef boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
 
-  typedef boost::unordered_set<edge_descriptor>    Edge_set;
+  typedef std::unordered_set<edge_descriptor>    Edge_set;
   typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
   struct Visitor
