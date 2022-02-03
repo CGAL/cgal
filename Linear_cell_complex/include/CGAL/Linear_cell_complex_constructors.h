@@ -14,7 +14,7 @@
 
 #include <CGAL/IO/OFF.h>
 #include <CGAL/Linear_cell_complex_incremental_builder.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <algorithm>
 #include <iostream>

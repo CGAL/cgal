@@ -22,6 +22,7 @@
 
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 

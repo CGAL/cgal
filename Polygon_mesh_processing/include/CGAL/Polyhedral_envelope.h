@@ -69,7 +69,7 @@
 #include <CGAL/AABB_primitive.h>
 
 #include <CGAL/Dynamic_property_map.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_ENVELOPE_DEBUG
 // This is for computing the surface mesh of a prism

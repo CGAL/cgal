@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <initializer_list>
 #include <CGAL/Linear_cell_complex_base.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 ///////////////////////////////////////////////////////////////////////////////

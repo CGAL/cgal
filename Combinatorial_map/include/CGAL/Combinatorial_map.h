@@ -13,7 +13,7 @@
 #define CGAL_COMBINATORIAL_MAP_H 1
 
 #include <CGAL/disable_warnings.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Combinatorial_map_fwd.h>
 

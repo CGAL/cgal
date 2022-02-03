@@ -17,7 +17,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/enum.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 

@@ -22,7 +22,7 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Random.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <unordered_map>
 

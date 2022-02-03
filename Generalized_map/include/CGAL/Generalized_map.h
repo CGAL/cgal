@@ -12,7 +12,7 @@
 #ifndef CGAL_GENERALIZED_MAP_H
 #define CGAL_GENERALIZED_MAP_H 1
 
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Generalized_map_fwd.h>
 #include <CGAL/Combinatorial_map/internal/Combinatorial_map_utility.h>

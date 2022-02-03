@@ -27,7 +27,7 @@
 
 #include <CGAL/Compact_container.h>
 
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>

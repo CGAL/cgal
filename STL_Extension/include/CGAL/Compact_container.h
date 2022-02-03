@@ -32,7 +32,7 @@
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/Has_member.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <boost/mpl/if.hpp>
 

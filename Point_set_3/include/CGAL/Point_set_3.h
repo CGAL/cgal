@@ -24,7 +24,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/demangle.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <algorithm>
 #include <iterator>

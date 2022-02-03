@@ -13,7 +13,7 @@
 #define CGAL_FACE_GRAPH_WRAPPER_H 1
 
 #include <CGAL/license/Surface_mesh_topology.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Surface_mesh_topology/internal/Functors_for_face_graph_wrapper.h>
 #include <CGAL/Surface_mesh_topology/internal/Iterators_for_face_graph_wrapper.h>

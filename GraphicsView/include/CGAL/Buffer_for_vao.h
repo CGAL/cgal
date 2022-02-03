@@ -22,7 +22,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/IO/Color.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <vector>
 #include <cstdlib>

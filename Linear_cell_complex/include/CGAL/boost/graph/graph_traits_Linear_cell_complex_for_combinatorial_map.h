@@ -29,7 +29,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/iterator.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #define CGAL_LCC_TEMPLATE_ARGS template<unsigned int d_, unsigned int ambient_dim, \
                                         class Traits_,                \

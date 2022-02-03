@@ -15,7 +15,7 @@
 #include <CGAL/Cell_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Origin.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 

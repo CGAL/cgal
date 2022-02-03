@@ -13,7 +13,7 @@
 #define CGAL_PATH_GENERATORS_H 1
 
 #include <CGAL/license/Surface_mesh_topology.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Random.h>
 #include <unordered_set>

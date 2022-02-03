@@ -52,7 +52,7 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <CGAL/Qt/constraint.h>
 #include <CGAL/Random.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL
 {

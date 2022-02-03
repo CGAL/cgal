@@ -22,7 +22,7 @@
 #define BOOST_RELAXED_HEAP_HEADER
 
 
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <functional>
 #include <boost/property_map/property_map.hpp>

@@ -15,7 +15,7 @@
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
 #include <CGAL/disable_warnings.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>

@@ -18,7 +18,7 @@
 #include <initializer_list>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Path_on_surface.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 

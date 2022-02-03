@@ -19,7 +19,7 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/unordered_set.hpp>
