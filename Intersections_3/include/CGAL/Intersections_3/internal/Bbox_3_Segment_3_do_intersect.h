@@ -162,9 +162,9 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   CFT dmin, tmin, tmax, dmax;
   if(qx >= px)
   {
-    if(bounded_0 && px > to_CFT(bxmax))
+    if(bounded_0 && compare(px, bxmax) == LARGER)
       return false; // segment on the right of bbox
-    if(bounded_1 && qx < to_CFT(bxmin))
+    if(bounded_1 && compare(qx, bxmin) == SMALLER)
       return false; // segment on the left of bbox
 
     if(bounded_1 && bxmax > qx)
@@ -183,12 +183,12 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   }
   else
   {
-    if(bounded_1 && qx > to_CFT(bxmax))
+    if(bounded_1 && compare(qx, bxmax) == LARGER)
       return false; // segment on the right of bbox
-    if(bounded_0 && px < to_CFT(bxmin))
+    if(bounded_0 && compare(px, bxmin) == SMALLER)
       return false; // segment on the left of bbox
 
-    if(bounded_1 && to_CFT(bxmin) < qx)
+    if(bounded_1 && compare(bxmin, qx) == SMALLER)
     {
       tmax = 1;
       dmax = 1;
@@ -211,7 +211,7 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   if((px == qx) &&  // <=> (dmin == 0)
      (!(bounded_0 && bounded_1))) // do not check for a segment
   {
-    if(px > to_CFT(bxmax) || px < to_CFT(bxmin))
+    if(compare(px, bxmax) == LARGER || compare(px, bxmin) == SMALLER)
       return false;
 
     // Note: for a segment the condition has already been tested by the two
@@ -235,12 +235,12 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   CFT dymin, tymin, tymax, dymax;
   if(qy >= py)
   {
-    if(bounded_0 && py > to_CFT(bymax))
+    if(bounded_0 && compare(py, bymax) == LARGER)
       return false; // segment on the right of bbox
-    if(bounded_1 && qy < to_CFT(bymin))
+    if(bounded_1 && compare(qy, bymin) == SMALLER)
       return false; // segment on the left of bbox
 
-    if(bounded_1 && to_CFT(bymax) > qy)
+    if(bounded_1 && compare(bymax, qy) == LARGER)
     {
       tymax = 1;
       dymax = 1;
@@ -256,12 +256,12 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   }
   else
   {
-    if(bounded_1 && qy > to_CFT(bymax))
+    if(bounded_1 && compare(qy, bymax) == LARGER)
       return false; // segment on the right of bbox
-    if(bounded_0 && py < to_CFT(bymin))
+    if(bounded_0 && compare(py, bymin) == SMALLER)
       return false; // segment on the left of bbox
 
-    if(bounded_1 && to_CFT(bymin) < qy)
+    if(bounded_1 && compare(bymin, qy) == SMALLER)
     {
       tymax = 1;
       dymax = 1;
@@ -284,7 +284,7 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   if((py == qy) &&  // <=> (dmin == 0)
      (! (bounded_0 && bounded_1))) // do not check for a segment
   {
-    if(py > to_CFT(bymax) || py < to_CFT(bymin))
+    if(py > to_CFT(bymax) || compare(py, bymin) == SMALLER)
       return false;
   }
 
@@ -306,12 +306,12 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   CFT dzmin, tzmin, tzmax, dzmax;
   if(qz >= pz)
   {
-    if(bounded_0 && pz > to_CFT(bzmax))
+    if(bounded_0 && compare(pz, bzmax)== LARGER)
       return false; // segment on the right of bbox
-    if(bounded_1 && qz < to_CFT(bzmin))
+    if(bounded_1 && compare(qz, bzmin) == SMALLER)
       return false; // segment on the left of bbox
 
-    if(bounded_1 && to_CFT(bzmax) > qz)
+    if(bounded_1 && compare(bzmax, qz) == LARGER)
     {
       tzmax = 1;
       dzmax = 1;
@@ -327,12 +327,12 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   }
   else
   {
-    if(bounded_1 && qz > to_CFT(bzmax))
+    if(bounded_1 && compare(qz, bzmax) == LARGER)
       return false; // segment on the right of bbox
-    if(bounded_0 && pz < to_CFT(bzmin))
-      return false; // segment on the left of bbox
+    if(bounded_0 && compare(pz, bzmin) == SMALLER)
+    return false; // segment on the left of bbox
 
-    if(bounded_1 && to_CFT(bzmin) < qz)
+    if(bounded_1 && compare(bzmin, qz) == SMALLER)
     {
       tzmax = 1;
       dzmax = 1;
@@ -355,7 +355,7 @@ do_intersect_bbox_segment_aux(const FT& px, const FT& py, const FT& pz,
   if((pz == qz) &&  // <=> (dmin == 0)
      (! (bounded_0 && bounded_1))) // do not check for a segment
   {
-    if(pz > to_CFT(bzmax) || pz < to_CFT(bzmin))
+    if(compare(pz, bzmax) == LARGER || compare(pz, bzmin) == SMALLER)
       return false;
   }
 
