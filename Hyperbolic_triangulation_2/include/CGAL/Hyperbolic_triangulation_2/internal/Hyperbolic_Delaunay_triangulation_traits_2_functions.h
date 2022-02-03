@@ -17,6 +17,7 @@
 
 #include <CGAL/Origin.h>
 #include <CGAL/enum.h>
+#include <CGAL/assertion.h>
 
 namespace CGAL {
 
@@ -123,7 +124,7 @@ public:
 
     Circle_2 circle = _gt.construct_circle_2_object()(center, sq_radius);
     // uncomment!!!
-    //assert(circle.has_on_boundary(p) && circle.has_on_boundary(q));
+    // CGAL_assertion(circle.has_on_boundary(p) && circle.has_on_boundary(q));
 
     if(_gt.orientation_2_object()(p, q, center) == LEFT_TURN)
       return Circular_arc_2(circle, p, q);

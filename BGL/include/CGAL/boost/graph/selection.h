@@ -1112,7 +1112,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
 
       for(halfedge_descriptor f_hd : faces_traversed)
       {
-        assert(target(f_hd, tm) == vd);
+        CGAL_assertion(target(f_hd, tm) == vd);
         put(is_selected, face(f_hd, tm), true);
         vertices_queue.insert( target( next(f_hd, tm), tm) );
         vertices_queue.insert( source(f_hd, tm) );

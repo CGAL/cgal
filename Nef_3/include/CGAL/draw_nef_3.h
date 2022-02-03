@@ -22,6 +22,8 @@
 #include <CGAL/Nef_3/SNC_iteration.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Random.h>
+#include <CGAL/assertion.h>
+
 #include <unordered_map>
 
 namespace CGAL {
@@ -209,7 +211,7 @@ protected:
       ++nb;
     }
 
-    assert(nb > 0);
+    CGAL_assertion(nb > 0);
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0 / nb));
   }
 

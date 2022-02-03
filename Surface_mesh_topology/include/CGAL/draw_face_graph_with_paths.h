@@ -18,6 +18,7 @@
 #include <initializer_list>
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/assertion.h>
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
@@ -52,7 +53,7 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
     }
     while(adart!=dh);
 
-    assert(nb>0);
+    CGAL_assertion(nb>0);
     return typename Get_traits<Mesh>::Kernel::Construct_scaled_vector_3()
       (normal, 1.0/nb);
   }

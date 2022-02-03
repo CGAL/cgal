@@ -15,6 +15,7 @@
 #include <CGAL/Cell_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Origin.h>
+#include <CGAL/assertion.h>
 
 namespace CGAL {
 
@@ -82,7 +83,7 @@ namespace CGAL {
     }
     while(adart!=start);
 
-    assert(nb>0);
+    CGAL_assertion(nb>0);
     return (typename LCC::Traits::Construct_scaled_vector()(normal, 1.0/nb));
     //  return normal / std::sqrt(normal * normal);
   }
@@ -201,7 +202,7 @@ namespace CGAL {
       }
       while(adart!=start);
 
-      assert(nb>1);
+      CGAL_assertion(nb>1);
       return typename LCC::Traits::Construct_translated_point()
         (CGAL::ORIGIN, typename LCC::Traits::Construct_scaled_vector()
          (vec, 1.0/nb));

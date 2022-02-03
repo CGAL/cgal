@@ -24,6 +24,7 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/demangle.h>
+#include <CGAL/assertion.h>
 
 #include <algorithm>
 #include <iterator>
@@ -475,7 +476,7 @@ public:
   iterator insert (const Point& p, const Vector& n)
   {
     iterator out = insert (p);
-    assert (has_normal_map());
+    CGAL_assertion(has_normal_map());
     m_normals[size()-1] = n;
     return out;
   }

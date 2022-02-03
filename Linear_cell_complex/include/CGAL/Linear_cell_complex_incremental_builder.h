@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <initializer_list>
 #include <CGAL/Linear_cell_complex_base.h>
+#include <CGAL/assertion.h>
 
 namespace CGAL {
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,7 +71,7 @@ namespace CGAL {
                              typename LCC::Dart_handle prev_dart)
     {
       // here we need to create a last dart and 0-link it
-      assert(prev_dart!=lcc.null_handle);
+      CGAL_assertion(prev_dart!=lcc.null_handle);
       lcc.template link_alpha<0>(prev_dart, lcc.create_dart(vh));
     }
   };
@@ -353,8 +354,8 @@ public:
     DH s2=d2;
     do
     {
-      assert(lcc.is_next_exist(d1) && lcc.is_previous_exist(d2));
-      assert(lcc.other_extremity(d2)!=lcc.null_handle);
+      CGAL_assertion(lcc.is_next_exist(d1) && lcc.is_previous_exist(d2));
+      CGAL_assertion(lcc.other_extremity(d2)!=lcc.null_handle);
 
       if (lcc.vertex_attribute(d1)!=lcc.vertex_attribute(d2))
       { return false; }

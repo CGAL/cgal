@@ -14,6 +14,7 @@
 
 #include <CGAL/IO/OFF.h>
 #include <CGAL/Linear_cell_complex_incremental_builder.h>
+#include <CGAL/assertion.h>
 
 #include <algorithm>
 #include <iostream>
@@ -341,7 +342,7 @@ namespace CGAL {
         do
         {
           ++n;
-          assert(alcc.is_next_exist(cur));
+          CGAL_assertion(alcc.is_next_exist(cur));
           cur=alcc.next(cur);
         }
         while(cur!=itall);
@@ -356,7 +357,7 @@ namespace CGAL {
           writer.write_facet_vertex_index(index[VCI(alcc.vertex_attribute(cur))]);
           alcc.mark(cur, m);
           alcc.mark(alcc.other_orientation(cur), m); // for GMap only, for CMap
-          assert(alcc.is_next_exist(cur));           // marks the same dart twice
+          CGAL_assertion(alcc.is_next_exist(cur));           // marks the same dart twice
           cur=alcc.next(cur);
         }
         while(cur!=itall);

@@ -13,6 +13,7 @@
 #define CGAL_COMBINATORIAL_MAP_H 1
 
 #include <CGAL/disable_warnings.h>
+#include <CGAL/assertion.h>
 
 #include <CGAL/Combinatorial_map_fwd.h>
 
@@ -2627,7 +2628,7 @@ namespace CGAL {
         if ( marks[acells[i]]==INVALID_MARK )
         {
           marks[acells[i]] = get_new_mark();
-          assert(is_whole_map_unmarked(marks[acells[i]]));
+          CGAL_assertion(is_whole_map_unmarked(marks[acells[i]]));
         }
       }
 
@@ -3636,9 +3637,9 @@ namespace CGAL {
         }
       }
 
-      assert(is_whole_map_unmarked(m1));
-      assert(is_whole_map_unmarked(markpush));
-      assert(map2.is_whole_map_unmarked(m2));
+      CGAL_postcondition(is_whole_map_unmarked(m1));
+      CGAL_postcondition(is_whole_map_unmarked(markpush));
+      CGAL_postcondition(map2.is_whole_map_unmarked(m2));
       free_mark(m1);
       free_mark(markpush);
       map2.free_mark(m2);
@@ -4660,7 +4661,7 @@ namespace CGAL {
       }
 
       // Make copies of the new facet for dimension >=4
-      assert(!is_free(first, 2));
+      CGAL_assertion(!is_free(first, 2));
       for ( unsigned int dim=4; dim<=dimension; ++dim )
       {
         if ( !is_free(beta(first, 2), dim) )
@@ -4684,7 +4685,7 @@ namespace CGAL {
                 basic_link_beta_for_involution<2>(beta(it, 3, 2, dim), dd);
             }
 
-            assert(!is_free(it, 2));
+            CGAL_assertion(!is_free(it, 2));
             this->template basic_link_beta_for_involution<2>(beta(it, 2, dim), d);
 
             if ( prec!=null_handle )

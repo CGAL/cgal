@@ -22,6 +22,8 @@
 #define BOOST_RELAXED_HEAP_HEADER
 
 
+#include <CGAL/assertion.h>
+
 #include <functional>
 #include <boost/property_map/property_map.hpp>
 #include <boost/optional.hpp>
@@ -192,7 +194,7 @@ public:
     void remove(const value_type& x)
     {
         group* a = &index_to_group[get(id, x) / log_n];
-        assert(groups[get(id, x)]);
+        CGAL_assertion(groups[get(id, x)]);
         a->value = x;
         a->kind = smallest_key;
         promote(a);
@@ -203,14 +205,14 @@ public:
     value_type& top()
     {
         find_smallest();
-        assert(smallest_value->value != boost::none);
+        CGAL_assertion(smallest_value->value != boost::none);
         return *smallest_value->value;
     }
 
     const value_type& top() const
     {
         find_smallest();
-        assert(smallest_value->value != boost::none);
+        CGAL_assertion(smallest_value->value != boost::none);
         return *smallest_value->value;
     }
 
@@ -236,7 +238,7 @@ public:
         rank_type r = x->rank;
         group* p = x->parent;
         {
-            assert(x->value != boost::none);
+            CGAL_assertion(x->value != boost::none);
 
             // Find x's group
             size_type start = get(id, *x->value) - get(id, *x->value) % log_n;
@@ -276,7 +278,7 @@ public:
             y->parent = p;
             p->children[r] = y;
 
-            assert(r == y->rank);
+            CGAL_assertion(r == y->rank);
             if (A[y->rank] == x)
                 A[y->rank] = do_compare(y, p) ? y : 0;
         }
@@ -368,7 +370,7 @@ public:
             }
             else
             {
-                assert(p->parent == p);
+                CGAL_assertion(p->parent == p);
             }
         }
         if (!in_progress)
@@ -481,10 +483,10 @@ private:
 
     void promote(group* a)
     {
-        assert(a != 0);
+        CGAL_assertion(a != 0);
         rank_type r = a->rank;
         group* p = a->parent;
-        assert(p != 0);
+        CGAL_assertion(p != 0);
         if (do_compare(a, p))
         {
             // s is the rank + 1 sibling
@@ -500,7 +502,7 @@ private:
             }
             else
             {
-                assert(s != 0);
+                CGAL_assertion(s != 0);
                 if (A[r + 1] == s)
                     active_sibling_transform(a, s);
                 else
@@ -511,7 +513,7 @@ private:
 
     group* combine(group* a1, group* a2)
     {
-        assert(a1->rank == a2->rank);
+        CGAL_assertion(a1->rank == a2->rank);
         if (do_compare(a2, a1))
             do_swap(a1, a2);
         a1->children[a1->rank++] = a2;
@@ -528,7 +530,7 @@ private:
         rank_type s = q->rank - 2;
         group* x = q->children[s];
         group* xp = qp->children[s];
-        assert(s == x->rank);
+        CGAL_assertion(s == x->rank);
 
         // If x is active, swap x and xp
         if (A[s] == x)
@@ -549,35 +551,35 @@ private:
 
         // p is a's parent
         group* p = a->parent;
-        assert(p != 0);
+        CGAL_assertion(p != 0);
 
         // g is p's parent (a's grandparent)
         group* g = p->parent;
-        assert(g != 0);
+        CGAL_assertion(g != 0);
 
         // a' <- A(r)
-        assert(A[r] != 0);
+        CGAL_assertion(A[r] != 0);
         group* ap = A[r];
-        assert(ap != 0);
+        CGAL_assertion(ap != 0);
 
         // A(r) <- nil
         A[r] = 0;
 
         // let a' have parent p'
         group* pp = ap->parent;
-        assert(pp != 0);
+        CGAL_assertion(pp != 0);
 
         // let a' have grandparent g'
         group* gp = pp->parent;
-        assert(gp != 0);
+        CGAL_assertion(gp != 0);
 
         // Remove a and a' from their parents
-        assert(ap
+        CGAL_assertion(ap
             == pp->children[pp->rank - 1]); // Guaranteed because ap is active
         --pp->rank;
 
         // Guaranteed by caller
-        assert(a == p->children[p->rank - 1]);
+        CGAL_assertion(a == p->children[p->rank - 1]);
         --p->rank;
 
         // Note: a, ap, p, pp all have rank r
@@ -590,7 +592,7 @@ private:
 
         // Assuming k(p) <= k(p')
         // make p' the rank r child of p
-        assert(r == p->rank);
+        CGAL_assertion(r == p->rank);
         p->children[p->rank++] = pp;
         pp->parent = p;
 
@@ -598,7 +600,7 @@ private:
         group* c = combine(a, ap);
 
         // make c the rank r+1 child of g'
-        assert(gp->rank > r + 1);
+        CGAL_assertion(gp->rank > r + 1);
         gp->children[r + 1] = c;
         c->parent = gp;
 
@@ -622,10 +624,10 @@ private:
         group* g = p->parent;
 
         // remove a, s from their parents
-        assert(s->parent == p);
-        assert(p->children[p->rank - 1] == s);
+        CGAL_assertion(s->parent == p);
+        CGAL_assertion(p->children[p->rank - 1] == s);
         --p->rank;
-        assert(p->children[p->rank - 1] == a);
+        CGAL_assertion(p->children[p->rank - 1] == a);
         --p->rank;
 
         rank_type r = a->rank;
@@ -634,7 +636,7 @@ private:
         group* c = combine(a, s);
 
         // make c the rank r+2 child of g
-        assert(g->children[r + 2] == p);
+        CGAL_assertion(g->children[r + 2] == p);
         g->children[r + 2] = c;
         c->parent = g;
         if (A[r + 2] == p)
@@ -650,7 +652,7 @@ private:
 #endif
         rank_type r = a->rank;
         group* c = s->children[s->rank - 1];
-        assert(c->rank == r);
+        CGAL_assertion(c->rank == r);
         if (A[r] == c)
         {
 #if defined(BOOST_RELAXED_HEAP_DEBUG) && BOOST_RELAXED_HEAP_DEBUG > 1
@@ -667,7 +669,7 @@ private:
             p->children[r] = s;
 
             // combine a, c and let the result by the rank r+1 child of p
-            assert(p->rank > r + 1);
+            CGAL_assertion(p->rank > r + 1);
             group* x = combine(a, c);
             x->parent = p;
             p->children[r + 1] = x;
