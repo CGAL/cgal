@@ -17,12 +17,18 @@
 #include <boost/random/linear_congruential.hpp>
 
 typedef CGAL::Simple_cartesian<int>  Kernel;
-typedef Kernel::Point_3                 Point_3;
+struct Point_3 : Kernel::Point_3 {
+	using Kernel::Point_3::operator=;
+	Point_3() : Kernel::Point_3(0,0,0) {}
+	Point_3(int i) : Kernel::Point_3(i,0,0) {}
+};
 typedef Kernel::Vector_3                Vector_3;
 
 
 typedef CGAL::Polyhedron_3<Kernel>      Mesh;
+typedef boost::property_map<Mesh,CGAL::vertex_point_t>::type  VPM;
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef std::vector<vertex_descriptor> Vertex_list;
 
 typedef CGAL::Timer                     Timer;
 
@@ -31,11 +37,26 @@ auto reserve(Map& sm, typename Map::size_type ii) -> decltype(sm.reserve(ii), vo
     sm.reserve(ii);
 }
 
-template <typename Map, typename VPM>
-double fct(int ii, int jj, const std::vector<vertex_descriptor>& V, const VPM& vpm, const std::string& s)
+
+template <typename Map>
+Point_3 lookup(Map& sm,vertex_descriptor vh){
+    auto search = sm.find(vh);
+    if(search != sm.end())
+        return search->second;
+    return Point_3();
+}
+
+template <typename X, typename Y>
+Point_3 lookup(CGAL::Unique_hash_map<X,Y>& sm,vertex_descriptor vh){
+    const CGAL::Unique_hash_map<X,Y>& const_sm = sm;
+    return const_sm[vh];
+}
+
+template <typename Map>
+double fct(int ii, int jj, const Vertex_list& V, const Vertex_list& V2, const VPM& vpm, const std::string& s)
 {
   int x = 0;
-  Timer construct, query;
+  Timer construct, query, lookups;
   construct.start();
   for(int j=0; j <jj; j++){
     Map sm;
@@ -59,14 +80,41 @@ double fct(int ii, int jj, const std::vector<vertex_descriptor>& V, const VPM& v
   }
   query.stop();
 
+  int y=0;
+  lookups.start();
+  for(int j=0; j <jj; j++){
+    for(vertex_descriptor vh : V2){
+      y+= lookup(sm,vh).x();
+    }
+  }
+  lookups.stop();
+  if(y != 0) { std::cout << y << " != 0" << std::endl;}
+
 
   std::cerr << s << " construction : "<< construct.time() << " sec.    ";
-  std::cerr      << " queries      : "<< query.time()     << " sec." << std::endl;
+  std::cerr      << " queries      : "<< query.time()     << " sec.";
+  std::cerr      << " lookup       : "<< lookups.time()    << " sec." << std::endl;
 
   return x;
 }
 
+void random_mesh(int ii, int jj,Mesh& mesh,VPM& vpm,Vertex_list& V)
+{
 
+  for(int i =0; i < ii; i++){
+    vertex_descriptor vd = add_vertex(mesh);
+    put(vpm,vd, Point_3(i));
+  }
+
+
+  for(vertex_descriptor vd : vertices(mesh)){
+    V.push_back(vd);
+  }
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(V.begin(), V.end(), g);
+}
 
 void  fct(int ii, int jj)
 {
@@ -75,35 +123,26 @@ void  fct(int ii, int jj)
   typedef boost::unordered_map<vertex_descriptor,Point_3> BUM;
   typedef CGAL::Unique_hash_map<vertex_descriptor, Point_3> UHM;
 
+  Mesh mesh1;
+  VPM vpm1 = get(CGAL::vertex_point,mesh1);
+  Vertex_list V1;
+  random_mesh(ii,jj,mesh1,vpm1,V1);
 
-  Mesh mesh;
-  typedef boost::property_map<Mesh,CGAL::vertex_point_t>::type  VPM;
-  VPM vpm = get(CGAL::vertex_point,mesh);
-
-  for(int i =0; i < ii; i++){
-    vertex_descriptor vd = add_vertex(mesh);
-    put(vpm,vd, Point_3(i,0,0));
-  }
-
-  std::vector<vertex_descriptor> V;
-  for(vertex_descriptor vd : vertices(mesh)){
-    V.push_back(vd);
-  }
-
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(V.begin(), V.end(), g);
+  Mesh mesh2;
+  VPM vpm2 = get(CGAL::vertex_point,mesh2);
+  Vertex_list V2;
+  random_mesh(ii,jj,mesh2,vpm2,V2);
 
 
     std::cerr << std::endl << ii << " items and queries (repeated " << jj << " times)" << std::endl;
 
   int temp;
-  int res = fct<SM>(ii,jj, V, vpm, "std::map             " );
-  temp = fct<SUM>(ii,jj,V, vpm, "std::unordered_map   " );
+  int res = fct<SM>(ii,jj, V1,V2, vpm1, "std::map             " );
+  temp = fct<SUM>(ii,jj,V1,V2, vpm1, "std::unordered_map   " );
   if(temp != res){ std::cout << temp << " != " << res << std::endl;}
-  temp = fct<BUM>(ii,jj, V, vpm, "boost::unordered_map " );
+  temp = fct<BUM>(ii,jj, V1,V2, vpm1, "boost::unordered_map " );
   if(temp != res){ std::cout << temp << " != " << res << std::endl;}
-  temp = fct<UHM>(ii,jj, V, vpm, "CGAL::Unique_hash_map" );
+  temp = fct<UHM>(ii,jj,V1,V2, vpm1, "CGAL::Unique_hash_map" );
   if(temp != res){ std::cout << temp << " != " << res << std::endl;}
 }
 
