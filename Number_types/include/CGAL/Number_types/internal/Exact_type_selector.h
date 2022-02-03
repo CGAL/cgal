@@ -55,10 +55,10 @@ namespace CGAL { namespace internal {
 template < typename >
 struct Exact_field_selector
 
-#if BOOST_VERSION > 107700 && defined(CGAL_USE_BOOST_MP)
+#if BOOST_VERSION > 107800 && defined(CGAL_USE_BOOST_MP)
 // TODO: That is used for testing, it must be removed when merging into master.
 { typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
-#else // BOOST_VERSION <= 107700
+#else // BOOST_VERSION <= 107800
 #ifdef CGAL_USE_GMPXX
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
@@ -75,7 +75,7 @@ struct Exact_field_selector
 // In fact, the new version of cpp_rational from here: https://github.com/boostorg/multiprecision/pull/366
 // is much better than Quotient<cpp_int> because it is using smart gcd and is well-supported
 // while Quotient does not. Though, we can still use it if needed.
-#if BOOST_VERSION <= 107700
+#if BOOST_VERSION <= 107800
 // See this comment: https://github.com/CGAL/cgal/pull/5937#discussion_r721533675
 { typedef Quotient<boost::multiprecision::cpp_int> Type; };
 #else
@@ -84,7 +84,7 @@ struct Exact_field_selector
 #else
 { typedef Quotient<MP_Float> Type; };
 #endif
-#endif // BOOST_VERSION <= 107700
+#endif // BOOST_VERSION <= 107800
 
 // By default, a field is a safe choice of ring.
 template < typename T >

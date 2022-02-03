@@ -50,10 +50,10 @@ typedef unspecified_type Exact_integer;
 
 #else // not DOXYGEN_RUNNING
 
-#if BOOST_VERSION > 107700 && defined(CGAL_USE_BOOST_MP)
+#if BOOST_VERSION > 107800 && defined(CGAL_USE_BOOST_MP)
 // TODO: That is used for testing, it must be removed when merging into master.
 typedef BOOST_cpp_arithmetic_kernel::Integer Exact_integer;
-#else // BOOST_VERSION <= 107700
+#else // BOOST_VERSION <= 107800
 #ifdef CGAL_USE_GMPXX
 typedef mpz_class Exact_integer;
 #elif defined(CGAL_USE_GMP)
@@ -71,7 +71,7 @@ typedef CORE::BigInt Exact_integer;
 #else
 #error "ERROR: Cannot determine a BigInt type!"
 #endif // CGAL_USE_CORE
-#endif // BOOST_VERSION <= 107700
+#endif // BOOST_VERSION <= 107800
 
 #endif // not DOXYGEN_RUNNING
 
