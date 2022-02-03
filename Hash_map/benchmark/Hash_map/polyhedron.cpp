@@ -18,9 +18,9 @@
 
 typedef CGAL::Simple_cartesian<int>  Kernel;
 struct Point_3 : Kernel::Point_3 {
-	using Kernel::Point_3::operator=;
-	Point_3() : Kernel::Point_3(0,0,0) {}
-	Point_3(int i) : Kernel::Point_3(i,0,0) {}
+  using Kernel::Point_3::operator=;
+  Point_3() : Kernel::Point_3(0,0,0) {}
+  Point_3(int i) : Kernel::Point_3(i,0,0) {}
 };
 typedef Kernel::Vector_3                Vector_3;
 
