@@ -1187,7 +1187,7 @@ intersect(Face_handle f, int i,
             << " , Exact_intersections_tag)\n";
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
   Point pi(ORIGIN); // initialize although we are sure that it will be
-                    // set by the intersection, but to quit a warning
+                    // set by the intersection, but to quiet a warning
   Intersection_tag itag = Intersection_tag();
   CGAL_triangulation_assertion_code( bool ok = )
   intersection(geom_traits(), pa, pb, pc, pd, pi, itag );
