@@ -143,6 +143,7 @@ struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T
 
 namespace Boost_MP_internal {
 
+  // here we know that `intv` contains int64 numbers such that their msb is std::numeric_limits<double>::digits-1
   inline
   Interval_nt<false> shift_positive_interval( const Interval_nt<false>& intv, const int e ) {
     CGAL_assertion(intv.inf() > 0.0);
