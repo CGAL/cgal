@@ -37,6 +37,7 @@
 #include <set>
 #include <stack>
 #include <cmath>
+#include <list>
 
 #ifndef DOXYGEN_RUNNING
 
