@@ -91,9 +91,7 @@ double fct(int ii, int jj, const Vertex_list& V, const Vertex_list& V2, const VP
   if(y != 0) { std::cout << y << " != 0" << std::endl;}
 
 
-  std::cerr << s << " construction : "<< construct.time() << " sec.    ";
-  std::cerr      << " queries      : "<< query.time()     << " sec.";
-  std::cerr      << " lookup       : "<< lookups.time()    << " sec." << std::endl;
+  std::cerr << s << construct.time() << " sec.\t| " << query.time() << " sec.\t| " << lookups.time() << " sec." << std::endl;
 
   return x;
 }
@@ -134,15 +132,16 @@ void  fct(int ii, int jj)
   random_mesh(ii,jj,mesh2,vpm2,V2);
 
 
-    std::cerr << std::endl << ii << " items and queries (repeated " << jj << " times)" << std::endl;
+  std::cerr << std::endl << ii << " items and queries (repeated " << jj << " times)" << std::endl;
+  std::cerr << "Name\t\t\t| Version\t| Construction\t| Queries\t| Lookups" << std::endl;
 
   int temp;
-  int res = fct<SM>(ii,jj, V1,V2, vpm1, "std::map             " );
-  temp = fct<SUM>(ii,jj,V1,V2, vpm1, "std::unordered_map   " );
+  int res = fct<SM>(ii,jj, V1,V2, vpm1, "std::map\t\t|\t\t| " );
+  temp = fct<SUM>(ii,jj,V1,V2, vpm1, "std::unordered_map\t|\t\t| " );
   if(temp != res){ std::cout << temp << " != " << res << std::endl;}
-  temp = fct<BUM>(ii,jj, V1,V2, vpm1, "boost::unordered_map " );
+  temp = fct<BUM>(ii,jj, V1,V2, vpm1, "boost::unordered_map\t|\t\t| " );
   if(temp != res){ std::cout << temp << " != " << res << std::endl;}
-  temp = fct<UHM>(ii,jj,V1,V2, vpm1, "CGAL::Unique_hash_map" );
+  temp = fct<UHM>(ii,jj,V1,V2, vpm1, "CGAL::Unique_hash_map\t| master\t| " );
   if(temp != res){ std::cout << temp << " != " << res << std::endl;}
 }
 
