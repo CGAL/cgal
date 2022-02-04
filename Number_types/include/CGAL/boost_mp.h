@@ -150,7 +150,7 @@ namespace Boost_MP_internal {
     CGAL_assertion(intv.sup() > 0.0);
     typedef std::numeric_limits<double> limits;
 
-    if (e < std::numeric_limits<double>::min_exponent)
+    if (e < limits::min_exponent)
     {
       if ( e+std::numeric_limits<double>::digits < std::numeric_limits<double>::min_exponent)
         return CGAL::Interval_nt<false>(0, (limits::min)());
