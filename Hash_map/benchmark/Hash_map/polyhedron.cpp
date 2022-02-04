@@ -53,7 +53,7 @@ Point_3 lookup(CGAL::Unique_hash_map<X,Y>& sm,vertex_descriptor vh){
 }
 
 template <typename Map>
-double fct(int ii, int jj, const Vertex_list& V, const Vertex_list& V2, const VPM& vpm, const std::string& s)
+int fct(int ii, int jj, const Vertex_list& V, const Vertex_list& V2, const VPM& vpm, const std::string& s)
 {
   int x = 0;
   Timer construct, query, lookups;
