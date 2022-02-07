@@ -1326,7 +1326,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
 
   FT x = FT(0), y = FT(0), z = FT(0);
-  std::size_t num_normals = 0;
+  FT num_normals = 0;
   const Point_3& ref_point = P[0];
   const std::size_t size = P.size() - 1;
   for (std::size_t i = 1; i < size - 1; ++i) {
@@ -1361,9 +1361,9 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   }
 
   // Setting the final normal.
-  x /= static_cast<FT>(num_normals);
-  y /= static_cast<FT>(num_normals);
-  z /= static_cast<FT>(num_normals);
+  x /= num_normals;
+  y /= num_normals;
+  z /= num_normals;
   const Vector_3 avg_normal = Vector_3(x, y, z);
   // std::cout << "avg normal: " << avg_normal << std::endl;
 
