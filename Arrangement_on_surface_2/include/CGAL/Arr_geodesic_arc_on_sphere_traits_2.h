@@ -1283,8 +1283,8 @@ public:
                                  const X_monotone_curve_2& xc2,
                                  const Point_2& p) const
     {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
+      CGAL_precondition(! xc1.is_degenerate());
+      CGAL_precondition(! xc2.is_degenerate());
 
       // CGAL_precondition(p == xc1.left());
       // CGAL_precondition(p == xc2.left());
@@ -1296,10 +1296,35 @@ public:
 
       // Non of the arcs is verticel. Thus, non of the endpoints coincide with
       // a pole.
-      // Compare the y-coord. at the x-coord of the most left right-endpoint.
       const Point_2& r1 = xc1.right();
       const Point_2& r2 = xc2.right();
-      if (!r1.is_no_boundary()) {
+
+      // if p and r1 are antipodal, compare the plane normals
+      const Kernel& kernel = m_traits;
+      auto opposite_3 = kernel.construct_opposite_direction_3_object();
+      // VC 10 does not like the following:
+      // if (!kernel.equal_3_object()(opposite_3(p), r1)) return EQUAL;
+      Direction_3 tmp1 = opposite_3(p);     // pacify msvc 10
+      if (kernel.equal_3_object()(tmp1, Direction_3(r1))) {
+        Sign xsign = Traits::x_sign(p);
+        Sign ysign = Traits::y_sign(p);
+        Project project = (xsign == ZERO) ?
+          ((ysign == POSITIVE) ? Traits::project_minus_xz : Traits::project_xz) :
+          ((xsign == POSITIVE) ? Traits::project_yz : Traits::project_minus_yz);
+
+        Direction_2 n1 = project(xc1.normal());
+        Direction_2 n2 = project(xc2.normal());
+        auto opposite_2 = kernel.construct_opposite_direction_2_object();
+        if (! xc1.is_directed_right()) n1 = opposite_2(n1);
+        if (! xc2.is_directed_right()) n2 = opposite_2(n2);
+        if (kernel.equal_2_object()(n1, n2)) return EQUAL;
+        const Direction_2 d(1, 0);
+        return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ?
+          SMALLER : LARGER;
+      }
+
+      // Compare the y-coord. at the x-coord of the most left right-endpoint.
+      if (! r1.is_no_boundary()) {
         // use r2 and xc1:
         Oriented_side os = m_traits.oriented_side(xc1.normal(), r2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -1307,7 +1332,7 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      if (!r2.is_no_boundary()) {
+      if (! r2.is_no_boundary()) {
         // use r1 and xc2:
         Oriented_side os = m_traits.oriented_side(xc2.normal(), r1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -1333,32 +1358,7 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
       // res == equal
-      // if p and r1 are antipodal, compare the plane normals
-      const Kernel& kernel = m_traits;
-      typename Kernel::Construct_opposite_direction_3 opposite_3 =
-        kernel.construct_opposite_direction_3_object();
-      // VC 10 does not like the following:
-      // if (!kernel.equal_3_object()(opposite_3(p), r1)) return EQUAL;
-      Direction_3 tmp1 = opposite_3(p);     // pacify msvc 10
-      if (!kernel.equal_3_object()(tmp1, Direction_3(r1)))
-        return EQUAL;
-
-      Sign xsign = Traits::x_sign(p);
-      Sign ysign = Traits::y_sign(p);
-      Project project = (xsign == ZERO) ?
-        ((ysign == POSITIVE) ? Traits::project_minus_xz : Traits::project_xz) :
-        ((xsign == POSITIVE) ? Traits::project_yz : Traits::project_minus_yz);
-
-      Direction_2 n1 = project(xc1.normal());
-      Direction_2 n2 = project(xc2.normal());
-      typename Kernel::Construct_opposite_direction_2 opposite_2 =
-        kernel.construct_opposite_direction_2_object();
-      if (!xc1.is_directed_right()) n1 = opposite_2(n1);
-      if (!xc2.is_directed_right()) n2 = opposite_2(n2);
-      if (kernel.equal_2_object()(n1, n2)) return EQUAL;
-      const Direction_2 d(1, 0);
-      return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ?
-        SMALLER : LARGER;
+      return EQUAL;
     }
   };
 
