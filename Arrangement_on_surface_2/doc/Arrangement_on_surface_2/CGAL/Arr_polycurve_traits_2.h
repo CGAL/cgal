@@ -448,8 +448,6 @@ namespace CGAL {
       /*! \deprecated
        * Add a new point to the polycurvs, which becomes the new target point
        * of `pi`.
-       * \pre SubcurveTraits_2 is a model of
-       * ArrangementConstructXMonotoneCurveTraits_2.
        */
       void push_back(const Point_2 & p);
 
