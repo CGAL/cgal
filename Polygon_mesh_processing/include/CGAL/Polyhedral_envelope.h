@@ -69,6 +69,7 @@
 #include <CGAL/AABB_primitive.h>
 
 #include <CGAL/Dynamic_property_map.h>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_ENVELOPE_DEBUG
 // This is for computing the surface mesh of a prism
@@ -1753,7 +1754,7 @@ private:
               inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip, filtered_intersection, intersect_face, coverlist, jump1, check_id);
 
 
-              assert(inter != 2);// the point must exist because it is a seg-halfplane intersection
+              CGAL_assertion(inter != 2);// the point must exist because it is a seg-halfplane intersection
               if (inter == 1) {
 
                 return true;
@@ -2084,7 +2085,7 @@ private:
           std::cout << p.ep << " | "  << p.eq << " | "  << p.er << std::endl;
           ePoint_3 pv(ver[faces[i][0]].x(), ver[faces[i][0]].y(),ver[faces[i][0]].z());
           Orientation ori = orientation(p.ep, p.eq, p.er, pv);
-          assert(ori == NEGATIVE);
+          CGAL_assertion(ori == NEGATIVE);
         }
 #endif
 
