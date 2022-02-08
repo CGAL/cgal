@@ -1305,7 +1305,9 @@ public:
       // VC 10 does not like the following:
       // if (!kernel.equal_3_object()(opposite_3(p), r1)) return EQUAL;
       Direction_3 tmp1 = opposite_3(p);     // pacify msvc 10
-      if (kernel.equal_3_object()(tmp1, Direction_3(r1))) {
+      if (kernel.equal_3_object()(tmp1, Direction_3(r1)) ||
+          kernel.equal_3_object()(tmp1, Direction_3(r2)))
+      {
         Sign xsign = Traits::x_sign(p);
         Sign ysign = Traits::y_sign(p);
         Project project = (xsign == ZERO) ?
@@ -2317,31 +2319,22 @@ public:
       if (equal(l1, r2)) {
         // 1. l1 = r2 < r1 < l2 < l1 | One intersection
         // 2. l1 = r2 < r1 = l2 < l1 | Two intersections
-        // 3. l1 = r2 < l2 < r1 < l1 | One intersection and one overlap
+        // 3. l1 = r2 < l2 < r1 < l1 | One overlap
         // 4. l1 = r2 < l2 < r1 = l1 | One overlap (handled above)
+        // 5. l1 = r2 < r1 < l2 = l1 | One overlap (handled above)
         if (in_between(r1, r2, l2)) {
-          // If the intersection point lies on the identification curve, this
-          // intersection point should be ignored (see below). However, it
-          // cannot occur.
+          // Case 1.
           *oi++ = Intersection_result(Intersection_point(l1_3, 1));
           return oi;
         }
         if (equal(r1, l2)) {
-          // Case 2. This can happen only if one of the intersection points
-          // lies on the identification curve, and this points should be
-          // ignored.
-          if (! m_traits.is_on_y_identification_2_object()(l1_3)) {
-            *oi++ = Intersection_result(Intersection_point(l1_3, 1));
-            return oi;
-          }
-          CGAL_assertion(! m_traits.is_on_y_identification_2_object()(l2_3));
+          // Case 2.
+          *oi++ = Intersection_result(Intersection_point(l1_3, 1));
           *oi++ = Intersection_result(Intersection_point(l2_3, 1));
           return oi;
         }
         CGAL_assertion(in_between(r1, l2, r2));
-        // Case 3. This can happen only the intersection point lies on the
-        // identification curve; in this case this point should be ignored.
-        CGAL_assertion(m_traits.is_on_y_identification_2_object()(l1_3));
+        // Case 3.
         X_monotone_curve_2 xc(l2_3, r1_3, normal, vertical, true);
         *oi++ = Intersection_result(xc);
         return oi;
@@ -2351,19 +2344,15 @@ public:
       if (equal(r1, l2)) {
         // 1. l1 < r1 = l2 < r2 < l1 | One intersection
         // 2. l1 < r1 = l2 < r2 = l1 | Two intersections (handled above)
-        // 3. l1 < r2 < r1 = l2 < l1 | One intersection and one overlap
+        // 3. l1 < r2 < r1 = l2 < l1 | One overlap
         // 4. l1 < r2 = r1 = l2 < l1 | One overlap (handled above)
+        // 5. l1 < l1 = r1 = l2 < r2 | One overlap (handled above)
         if (in_between(r2, r1, l1)) {
-          // If the intersection point lies on the identification curve, this
-          // intersection point should be ignored (see below). However, it
-          // cannot occur.
+          // Case 1.
           *oi++ = Intersection_result(Intersection_point(l2_3, 1));
           return oi;
         }
-        // Case 3. This can happen only the intersection point lies on the
-        // identification curve; in this case this point should be ignored.
-        CGAL_assertion(in_between(r2, l1, r1));
-        CGAL_assertion(m_traits.is_on_y_identification_2_object()(l2_3));
+        // Case 3.
         X_monotone_curve_2 xc(l1_3, r2_3, normal, vertical, true);
         *oi++ = Intersection_result(xc);
         return oi;
@@ -2551,10 +2540,8 @@ public:
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
-        Counterclockwise_in_between_2 ccib =
-          kernel.counterclockwise_in_between_2_object();
-        typename Traits::Clockwise_in_between_2 cib =
-          m_traits.clockwise_in_between_2_object();
+        auto ccib = kernel.counterclockwise_in_between_2_object();
+        auto cib = m_traits.clockwise_in_between_2_object();
 
         if (xc1.is_vertical()) {
           // Both arcs are vertical
@@ -2619,23 +2606,19 @@ public:
                                     normal, false, ccib, Traits::project_xy, oi);
       }
 
-      Vector_3 v =
-        kernel.construct_cross_product_vector_3_object()(xc1.normal().vector(),
-                                                         xc2.normal().vector());
+      auto cross_prod = kernel.construct_cross_product_vector_3_object();
+      Vector_3 v = cross_prod(xc1.normal().vector(), xc2.normal().vector());
 
-      // Determine which one of the two directions:
+      // Observe that xc1 and xc2 may share two endpoints.
       Point_2 ed = m_traits.construct_point_2_object()(v.direction());
-      if (is_in_between(ed, xc1) && is_in_between(ed, xc2)) {
+      if (is_in_between(ed, xc1) && is_in_between(ed, xc2))
         *oi++ = Intersection_result(Intersection_point(ed, 1));
-        return oi;
-      }
 
       Vector_3 vo(kernel.construct_opposite_vector_3_object()(v));
       Point_2 edo = m_traits.construct_point_2_object()(vo.direction());
-      if (is_in_between(edo, xc1) && is_in_between(edo, xc2)) {
+      if (is_in_between(edo, xc1) && is_in_between(edo, xc2))
         *oi++ = Intersection_result(Intersection_point(edo, 1));
-        return oi;
-      }
+
       return oi;
     }
   };
