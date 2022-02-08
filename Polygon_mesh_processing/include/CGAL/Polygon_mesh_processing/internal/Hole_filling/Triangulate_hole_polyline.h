@@ -1243,7 +1243,7 @@ bool is_planar_2(
   const Squared_distance_3 squared_distance_3 =
     traits.compute_squared_distance_3_object();
 
-  const std::size_t n = points.size() - 1; // the first equals to the last
+  const double n(points.size() - 1); // the first equals to the last
   if (n < 3) {
     return false; // cant be a plane!
   }
@@ -1255,8 +1255,8 @@ bool is_planar_2(
   // Compute covariance matrix.
   FT xx = FT(0), yy = FT(0), zz = FT(0);
   FT xy = FT(0), xz = FT(0), yz = FT(0);
-  for (std::size_t i = 0; i < n; ++i) {
-    const Point_3& p = points[i];
+  for (const Point_3& p : points)
+  {
     const FT dx = p.x() - centroid.x();
     const FT dy = p.y() - centroid.y();
     const FT dz = p.z() - centroid.z();
@@ -1280,12 +1280,12 @@ bool is_planar_2(
   CGAL_assertion(avg_normal != typename Traits::Vector_3());
   const Plane_3 plane = Plane_3(centroid, avg_normal);
   FT avg_squared_distance = FT(0);
-  for (std::size_t i = 0; i < n; ++i) {
-    const Point_3& p = points[i];
+  for (const Point_3& p : points)
+  {
     const Point_3  q = projection_3(plane, p);
     avg_squared_distance += CGAL::abs(squared_distance_3(p, q));
   }
-  avg_squared_distance /= static_cast<FT>(n);
+  avg_squared_distance /= FT(n);
   // std::cout << "avg squared distance: " << avg_squared_distance << std::endl;
 
   CGAL_assertion(max_squared_distance >= FT(0));
