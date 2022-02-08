@@ -1399,8 +1399,7 @@ public:
       typename Kernel::Equal_3 equal_3 = kernel.equal_3_object();
       if (xc1.is_full() || xc2.is_full()) {
         if (!xc1.is_full() || !xc2.is_full()) return false;
-        typename Kernel::Construct_opposite_direction_3 opposite_3 =
-          kernel.construct_opposite_direction_3_object();
+        auto opposite_3 = kernel.construct_opposite_direction_3_object();
         return (equal_3(xc1.normal(), xc2.normal()) ||
                 equal_3(opposite_3(xc1.normal()), xc2.normal()));
       }
@@ -1765,113 +1764,108 @@ public:
      * \param ce the arc end indicator.
      * \return the second comparison result.
      * \pre the ce ends of the arcs xcv1 and xcv2 lie either on the left
-     *      boundary or on the right boundary of the parameter space (implying
-     *      that they cannot be vertical).
+     *      boundary or on the right boundary of the parameter space.
+     * \pre the curves cannot reach a pole
      * There is no horizontal identification curve!
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const
     {
-      CGAL_precondition(!xcv1.is_degenerate());
-      CGAL_precondition(!xcv2.is_degenerate());
+      CGAL_precondition(! xcv1.is_degenerate());
+      CGAL_precondition(! xcv2.is_degenerate());
 
+      CGAL_precondition((ce != ARR_MIN_END) ||
+                        (xcv1.left().is_mid_boundary() &&
+                         xcv2.left().is_mid_boundary()));
+      CGAL_precondition((ce != ARR_MAX_END) ||
+                        (xcv1.right().is_mid_boundary() &&
+                         xcv2.right().is_mid_boundary()));
+
+      // If the curves lie on the same plane return EQUAL.
+      const Kernel& kernel = m_traits;
+      const Direction_3& n1 = xcv1.normal();
+      const Direction_3& n2 = xcv2.normal();
+      if (xcv1.is_directed_right() == xcv2.is_directed_right()) {
+        if (kernel.equal_3_object()(n1, n2)) return EQUAL;
+      }
+      else {
+        auto opposite_3 = kernel.construct_opposite_direction_3_object();
+        auto opposite_n2 = opposite_3(n2);
+        if (kernel.equal_3_object()(n1, opposite_n2)) return EQUAL;
+      }
+
+      // The queves do not lie on the same plane!
       const Point_2& l1 = xcv1.left();
-      const Point_2& r1 = xcv1.right();
       const Point_2& l2 = xcv2.left();
+      const Point_2& r1 = xcv1.right();
       const Point_2& r2 = xcv2.right();
 
-      // If xcv1 is vertical, xcv1 coincides with the discontinuity arc:
-      if (xcv1.is_vertical()) {
-        CGAL_precondition(!l1.is_no_boundary());
-        CGAL_precondition(!r1.is_no_boundary());
-      }
-
-      // If xcv2 is vertical, xcv2 coincides with the discontinuity arc:
-      if (xcv2.is_vertical()) {
-        CGAL_precondition(!l2.is_no_boundary());
-        CGAL_precondition(!r2.is_no_boundary());
-      }
-
       if (ce == ARR_MIN_END) {
-        // Handle the south pole. It has the smallest y coords:
-        if (l1.is_min_boundary())
-          return (l2.is_min_boundary()) ? EQUAL : SMALLER;
-        if (l2.is_min_boundary()) return LARGER;
-
         // None of xcv1 and xcv2 endpoints coincide with a pole:
         Comparison_result cr = m_traits.compare_y(l1, l2);
         if (cr != EQUAL) return cr;
 
         // If Both arcs are vertical, they overlap:
-        if (xcv1.is_vertical() && xcv2.is_vertical()) return EQUAL;
         if (xcv1.is_vertical()) return LARGER;
         if (xcv2.is_vertical()) return SMALLER;
 
-        // Non of the arcs is verticel. Thus, non of the endpoints coincide
-        // with a pole.
-        // Compare the y-coord. at the x-coord of the most left right-endpoint.
-        CGAL_assertion(r1.is_no_boundary());
-        CGAL_assertion(r2.is_no_boundary());
+        // There are 4 cases based on the sign of the z component of the normals
+        auto cross_prod = kernel.construct_cross_product_vector_3_object();
+        Vector_3 v = cross_prod(n1.vector(), n2.vector());
 
-        if (m_traits.compare_xy(r1, r2) == LARGER) {
-          // use r2 and xcv1:
-          Oriented_side os =
-            m_traits.oriented_side(xcv1.normal(), r2);
-          return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-            (xcv1.is_directed_right()) ?
-            ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
-            ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
+        // std::cout << "min sign(n1.z): " << CGAL::sign(n1.dz()) << std::endl;
+        // std::cout << "min sign(n2.z): " << CGAL::sign(n2.dz()) << std::endl;
+        // std::cout << "min sign(v.x): " << CGAL::sign(v.x()) << std::endl;
+
+        if (CGAL::sign(n1.dz()) == POSITIVE) {
+          if (CGAL::sign(n2.dz()) == POSITIVE) {
+            // pos pos
+            return (CGAL::sign(v.x()) == POSITIVE) ? LARGER : SMALLER;
+          }
+          // pos neg
+          return (CGAL::sign(v.x()) == POSITIVE) ? SMALLER : LARGER;
         }
-        // use r1 and xcv2:
-        Oriented_side os = m_traits.oriented_side(xcv2.normal(), r1);
-        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-          (xcv2.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+        if (CGAL::sign(n2.dz()) == POSITIVE) {
+          // neg pos
+          return (CGAL::sign(v.x()) == POSITIVE) ? SMALLER : LARGER;
+        }
+        // neg neg
+        return (CGAL::sign(v.x()) == POSITIVE) ? LARGER : SMALLER;
       }
 
       // ce == ARR_MAX_END
 
-      // Handle the north pole. It has the largest y coords:
-      if (r1.is_max_boundary()) return (r2.is_max_boundary()) ? EQUAL : LARGER;
-      if (r2.is_max_boundary()) return SMALLER;
-
       // None of xcv1 and xcv2 endpoints coincide with a pole:
-      Direction_2 r1_xy = Traits::project_xy(r1);
       Comparison_result cr = m_traits.compare_y(r1, r2);
       if (cr != EQUAL) return cr;
 
       // If Both arcs are vertical, they overlap:
-      if (xcv1.is_vertical() && xcv2.is_vertical()) return EQUAL;
       if (xcv1.is_vertical()) return LARGER;
       if (xcv2.is_vertical()) return SMALLER;
 
-      // Compare to the left:
-      Direction_2 p_r1 = Traits::project_xy(r1);
-      cr = m_traits.compare_y(r1, r2);
-      if (cr != EQUAL) return cr;
+      // There are 4 cases based on the sign of the z component of the normals
+      auto cross_prod = kernel.construct_cross_product_vector_3_object();
+      Vector_3 v = cross_prod(n1.vector(), n2.vector());
 
-      // Non of the arcs is verticel. Thus, non of the endpoints coincide with
-      // a pole.
-      // Compare the y-coord. at the x-coord of the most right left-endpoint.
-      CGAL_assertion(l1.is_no_boundary());
-      CGAL_assertion(l2.is_no_boundary());
+      // std::cout << "max sign(n1.z): " << CGAL::sign(n1.dz()) << std::endl;
+      // std::cout << "max sign(n2.z): " << CGAL::sign(n2.dz()) << std::endl;
+      // std::cout << "max sign(v.x): " << CGAL::sign(v.x()) << std::endl;
 
-      if (m_traits.compare_xy(l1, l2) == SMALLER) {
-        // use l2 and xcv1:
-        Oriented_side os = m_traits.oriented_side(xcv1.normal(), l2);
-        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-          (xcv1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
+      if (CGAL::sign(n1.dz()) == POSITIVE) {
+        if (CGAL::sign(n2.dz()) == POSITIVE) {
+          // pos pos
+          return (CGAL::sign(v.x()) == POSITIVE) ? SMALLER : LARGER;
+        }
+        // pos neg
+        return (CGAL::sign(v.x()) == POSITIVE) ? LARGER: SMALLER;
       }
-      // use l1 and xcv2:
-      Oriented_side os = m_traits.oriented_side(xcv2.normal(), l1);
-      return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-        (xcv2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
-        ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      if (CGAL::sign(n2.dz()) == POSITIVE) {
+        // neg pos
+        return (CGAL::sign(v.x()) == POSITIVE) ? LARGER : SMALLER;
+      }
+      // neg neg
+      return (CGAL::sign(v.x()) == POSITIVE) ? SMALLER : LARGER;
     }
   };
 
