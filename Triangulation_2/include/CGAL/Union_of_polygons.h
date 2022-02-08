@@ -12,6 +12,8 @@
 #ifndef CGAL_UNION_OF_POLYGONS_POYGONS_H
 #define CGAL_UNION_OF_POLYGONS_POYGONS_H
 
+#include <CGAL/license/Triangulation_2.h>
+
 #include <iostream>
 #include <fstream>
 
