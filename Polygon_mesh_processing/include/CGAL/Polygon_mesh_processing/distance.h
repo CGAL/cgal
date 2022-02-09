@@ -1200,9 +1200,9 @@ double max_distance_to_triangle_mesh(const PointRange& points,
 
 /*!
  *\ingroup PMP_distance_grp
- * returns an approximation of the distance between `points` and the point lying on `tm` that is the farthest from `points`
+ * returns an approximation of the distance between `points` and the point lying on `tm` that is the farthest from `points`.
  *
- * @tparam PointRange a range of `Point_3`, model of `Range`.
+ * @tparam PointRange a range of `Point_3`, model of `Range`
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -2290,19 +2290,19 @@ double bounded_error_Hausdorff_naive_impl(
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `tm1` and `tm2` (`np1` and `np2`, respectively)}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tmX`}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMeshX>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmX)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     must be available in `TriangleMeshX`.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{match_faces}
- *     \cgalParamDescription{a boolean tag that turns on the preprocessing step that filters out all faces,
+ *     \cgalParamDescription{a boolean tag that turns on the preprocessing step that filters out all faces
  *                           which belong to both meshes and hence do not contribute to the final distance}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{true}
- *     \cgalParamExtra{Both `np1` and `np2` must have this tag true in order to activate this preprocessing.}
+ *     \cgalParamExtra{Both `np1` and `np2` must have this tag set to `true` in order to activate this preprocessing.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -2416,7 +2416,7 @@ double bounded_error_symmetric_Hausdorff_distance(
  * to compute the proximity of the meshes is the bounded-error Hausdorff distance.
  *
  * Instead of computing the full distance and checking it against the user-provided
- * value, this function early quits in case certain criteria show that the meshes
+ * value, this function returns early if certain criteria show that the meshes
  * do not satisfy the provided `distance_bound`.
  *
  * \cgalNamedParamsBegin
