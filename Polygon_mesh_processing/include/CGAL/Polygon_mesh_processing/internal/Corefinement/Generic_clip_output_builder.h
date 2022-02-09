@@ -28,13 +28,9 @@
 
 #include <boost/dynamic_bitset.hpp>
 
-
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
-
-
-namespace PMP=Polygon_mesh_processing;
 
 template <class TriangleMesh,
           class VertexPointMap1,
@@ -115,7 +111,7 @@ public:
     , ecm1(ecm1)
     , fids1(fids1)
     , use_compact_clipper(use_compact_clipper)
-    , is_tm2_inside_out( !PMP::is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
+    , is_tm2_inside_out( !is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
     , NID((std::numeric_limits<Node_id>::max)())
   {}
 
@@ -151,10 +147,10 @@ public:
     std::vector<std::size_t> tm1_patch_ids( num_faces(tm1),NID );
 
     std::size_t nb_patches_tm1 =
-      PMP::connected_components(tm1,
-                                bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
-                                parameters::edge_is_constrained_map(ecm1)
-                                           .face_index_map(fids1));
+      connected_components(tm1,
+                           bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
+                           parameters::edge_is_constrained_map(ecm1)
+                                      .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)
@@ -232,7 +228,7 @@ public:
       }
     }
 
-    PMP::keep_connected_components(tm1, cc_to_keep, bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])));
+    keep_connected_components(tm1, cc_to_keep, bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])));
   }
 };
 
