@@ -41,8 +41,13 @@ compare_y_near_boundary 96 97 MIN_END LARGER
 compare_y_near_boundary 97 96 MIN_END SMALLER
 compare_y_near_boundary 98 99 MAX_END SMALLER
 compare_y_near_boundary 99 98 MAX_END LARGER
-# #
+#
 compare_y_near_boundary 100 101 MAX_END SMALLER
 compare_y_near_boundary 101 100 MAX_END LARGER
 compare_y_near_boundary 102 103 MIN_END LARGER
 compare_y_near_boundary 103 102 MIN_END SMALLER
+#
+compare_y_near_boundary 104 105 MIN_END LARGER
+compare_y_near_boundary 105 104 MIN_END SMALLER
+compare_y_near_boundary 106 107 MAX_END LARGER
+compare_y_near_boundary 107 106 MAX_END SMALLER
