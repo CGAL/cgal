@@ -1243,7 +1243,7 @@ bool is_planar_2(
   const Squared_distance_3 squared_distance_3 =
     traits.compute_squared_distance_3_object();
 
-  const double n(points.size() - 1); // the first equals to the last
+  const double n = static_cast<double>(points.size() - 1); // the first equals to the last
   if (n < 3) {
     return false; // cant be a plane!
   }
