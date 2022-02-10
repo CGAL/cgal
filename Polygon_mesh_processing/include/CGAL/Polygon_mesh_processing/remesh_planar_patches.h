@@ -127,7 +127,7 @@ bool is_edge_between_coplanar_faces(edge_descriptor e,
   else
   {
     typename K::Compare_dihedral_angle_3 pred;
-    return pred(p, q, r, s, coplanar_cos_threshold) == CGAL::LARGER;
+    return pred(p, q, r, s, typename K::FT(coplanar_cos_threshold)) == CGAL::LARGER;
   }
 }
 
@@ -169,7 +169,7 @@ bool is_target_vertex_a_corner(halfedge_descriptor h,
   else
   {
     typename K::Compare_angle_3 pred;
-    return pred(p, q, r, coplanar_cos_threshold)==CGAL::SMALLER;
+    return pred(p, q, r, typename K::FT(coplanar_cos_threshold))==CGAL::SMALLER;
   }
 }
 
