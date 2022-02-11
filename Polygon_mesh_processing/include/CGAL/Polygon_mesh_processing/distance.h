@@ -65,20 +65,21 @@ triangle_grid_sampling(const typename Kernel::Point_3& p0,
                        PointOutputIterator out)
 {
   typename Kernel::Compute_squared_distance_3 squared_distance;
-  const double d_p0p1 = to_double(approximate_sqrt( squared_distance(p0, p1) ));
-  const double d_p0p2 = to_double(approximate_sqrt( squared_distance(p0, p2) ));
 
-  const double n = (std::max)(std::ceil( d_p0p1 / distance ),
-                              std::ceil( d_p0p2 / distance ));
+  const double d_p0p1 = to_double(approximate_sqrt(squared_distance(p0, p1)));
+  const double d_p0p2 = to_double(approximate_sqrt(squared_distance(p0, p2)));
+
+  const double n = (std::max)(std::ceil(d_p0p1 / distance),
+                              std::ceil(d_p0p2 / distance));
 
   for(double i=1; i<n; ++i)
   {
     for(double j=1; j<n-i; ++j)
     {
       const double c0=(1-(i+j)/n), c1=i/n, c2=j/n;
-      *out++ = typename Kernel::Point_3(p0.x()*c0+p1.x()*c1+p2.x()*c2,
-                                        p0.y()*c0+p1.y()*c1+p2.y()*c2,
-                                        p0.z()*c0+p1.z()*c1+p2.z()*c2);
+      *out++ = typename Kernel::Point_3(p0.x()*c0 + p1.x()*c1 + p2.x()*c2,
+                                        p0.y()*c0 + p1.y()*c1 + p2.y()*c2,
+                                        p0.z()*c0 + p1.z()*c1 + p2.z()*c2);
     }
   }
 
@@ -87,49 +88,51 @@ triangle_grid_sampling(const typename Kernel::Point_3& p0,
 
 #if defined(CGAL_LINKED_WITH_TBB)
 template <class AABB_tree, class PointRange>
-struct Distance_computation{
+struct Distance_computation
+{
   typedef typename PointRange::const_iterator::value_type Point_3;
 
   const AABB_tree& tree;
   const PointRange& sample_points;
   Point_3 initial_hint;
   double distance;
+
   //constructor
-  Distance_computation(
-          const AABB_tree& tree,
-          const Point_3& p,
-          const PointRange& sample_points)
-    : tree(tree)
-    , sample_points(sample_points)
-    , initial_hint(p)
-    , distance(-1)
-  {}
-  //split constructor
-  Distance_computation(Distance_computation& s, tbb::split )
-    : tree(s.tree)
-    , sample_points(s.sample_points)
-    , initial_hint(s.initial_hint)
-    , distance(-1)
+  Distance_computation(const AABB_tree& tree,
+                       const Point_3& p,
+                       const PointRange& sample_points)
+    : tree(tree),
+      sample_points(sample_points),
+      initial_hint(p),
+      distance(-1)
   {}
 
-  void
-  operator()(const tbb::blocked_range<std::size_t>& range)
+  //split constructor
+  Distance_computation(Distance_computation& s, tbb::split)
+    : tree(s.tree),
+      sample_points(s.sample_points),
+      initial_hint(s.initial_hint),
+      distance(-1)
+  {}
+
+  void operator()(const tbb::blocked_range<std::size_t>& range)
   {
     Point_3 hint = initial_hint;
     double hdist = 0;
-    for( std::size_t i = range.begin(); i != range.end(); ++i)
+    for(std::size_t i = range.begin(); i != range.end(); ++i)
     {
       hint = tree.closest_point(*(sample_points.begin() + i), hint);
       typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
-      double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,*(sample_points.begin() + i)) ));
+      double d = to_double(CGAL::approximate_sqrt(squared_distance(hint,*(sample_points.begin() + i))));
       if(d > hdist)
-        hdist=d;
+        hdist = d;
     }
+
     if(hdist > distance)
       distance = hdist;
   }
 
-  void join( Distance_computation& rhs ) {distance = (std::max)(rhs.distance, distance); }
+  void join(Distance_computation& rhs) {distance = (std::max)(rhs.distance, distance); }
 };
 #endif
 
@@ -137,10 +140,9 @@ template <class Concurrency_tag,
           class Kernel,
           class PointRange,
           class AABBTree>
-double approximate_Hausdorff_distance_impl(
-  const PointRange& sample_points,
-  const AABBTree& tree,
-  typename Kernel::Point_3 hint)
+double approximate_Hausdorff_distance_impl(const PointRange& sample_points,
+                                           const AABBTree& tree,
+                                           typename Kernel::Point_3 hint)
 {
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
@@ -149,7 +151,7 @@ double approximate_Hausdorff_distance_impl(
   if(boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
     std::atomic<double> distance;
-    distance=0;
+    distance = 0;
     Distance_computation<AABBTree, PointRange> f(tree, hint, sample_points);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return f.distance;
@@ -162,10 +164,10 @@ double approximate_Hausdorff_distance_impl(
     {
       hint = tree.closest_point(pt, hint);
       typename Kernel::Compute_squared_distance_3 squared_distance;
-      typename Kernel::FT dist = squared_distance(hint,pt);
+      typename Kernel::FT dist = squared_distance(hint, pt);
       double d = to_double(CGAL::approximate_sqrt(dist));
-      if(d>hdist)
-        hdist=d;
+      if(d > hdist)
+        hdist = d;
     }
     return hdist;
   }
@@ -214,14 +216,15 @@ struct Triangle_structure_sampler_base
 
     gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
 
-
     bool use_rs = choose_parameter(get_parameter(np, internal_np::random_uniform_sampling), true);
     bool use_gs = choose_parameter(get_parameter(np, internal_np::grid_sampling), false);
     bool use_ms = choose_parameter(get_parameter(np, internal_np::monte_carlo_sampling), false);
 
     if(use_gs || use_ms)
+    {
       if(is_default_parameter<NamedParameters, internal_np::random_uniform_sampling_t>())
         use_rs = false;
+    }
 
     bool smpl_vrtcs = choose_parameter(get_parameter(np, internal_np::do_sample_vertices), true);
     bool smpl_dgs = choose_parameter(get_parameter(np, internal_np::do_sample_edges), true);
@@ -283,7 +286,7 @@ struct Triangle_structure_sampler_base
           }
 
           // extract triangle face points
-          std::array<typename GeomTraits::Point_3, 3>points = static_cast<Derived*>(this)->get_tr_points(tr);
+          std::array<typename GeomTraits::Point_3, 3> points = static_cast<Derived*>(this)->get_tr_points(tr);
 
           Random_points_in_triangle_3<typename GeomTraits::Point_3, Creator> g(points[0], points[1], points[2]);
           out = std::copy_n(g, nb_points, out);
@@ -354,14 +357,14 @@ sample_triangles(const FaceRange& triangles,
     halfedge_descriptor hd = halfedge(fd, tm);
     for(int i=0;i<3; ++i)
     {
-      if(sample_edges && sampled_edges.insert(edge(hd, tm)).second )
+      if(sample_edges && sampled_edges.insert(edge(hd, tm)).second)
       {
         Point_ref p0 = get(vpm, source(hd, tm));
         Point_ref p1 = get(vpm, target(hd, tm));
         typename Kernel::Compute_squared_distance_3 squared_distance;
         const double d_p0p1 = to_double(approximate_sqrt(squared_distance(p0, p1)));
 
-        const double nb_pts = std::ceil( d_p0p1 / distance );
+        const double nb_pts = std::ceil(d_p0p1 / distance);
         const Vector_3 step_vec =  typename Kernel::Construct_scaled_vector_3()(
           typename Kernel::Construct_vector_3()(p0, p1),
           typename Kernel::FT(1)/typename Kernel::FT(nb_pts));
@@ -451,7 +454,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
     pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(vertex_point, tm));
-    if (!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
+    if(!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
       rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
     min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
@@ -478,9 +481,8 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
     for(edge_descriptor ed : edges(tm))
     {
-      const double sq_el = CGAL::to_double(
-                             typename GeomTraits::Compute_squared_distance_3()(get(pmap, source(ed, tm)),
-                                                                               get(pmap, target(ed, tm))));
+      const double sq_el = to_double(this->gt.compute_squared_distance_3_object()(get(pmap, source(ed, tm)),
+                                                                                  get(pmap, target(ed, tm))));
 
       if(sq_el > 0. && sq_el < min_sq_edge_length)
         min_sq_edge_length = sq_el;
@@ -491,7 +493,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
   double get_tr_area(const typename boost::graph_traits<Mesh>::face_descriptor& tr)
   {
-    return to_double(face_area(tr,tm,parameters::geom_traits(this->gt)));
+    return to_double(face_area(tr, tm, parameters::geom_traits(this->gt)));
   }
 
   template<typename Tr>//tr = face_descriptor here
@@ -533,6 +535,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
       this->out = std::copy_n(g, nb_points, this->out);
     }
   }
+
   void ru_edges_sample(double nb_pts_l_u,
                        double nb_pts_a_u)
   {
@@ -626,7 +629,7 @@ struct Triangle_structure_sampler_for_triangle_soup
     using parameters::is_default_parameter;
 
     min_sq_edge_length = (std::numeric_limits<double>::max)();
-    if (!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
+    if(!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
       rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
   }
 
@@ -652,7 +655,7 @@ struct Triangle_structure_sampler_for_triangle_soup
         const Point_3& a = points[tr[i]];
         const Point_3& b = points[tr[(i+1)%3]];
 
-        const double sq_el = CGAL::to_double(typename GeomTraits::Compute_squared_distance_3()(a, b));
+        const double sq_el = CGAL::to_double(this->gt.compute_squared_distance_3_object()(a, b));
         if(sq_el > 0. && sq_el < min_sq_edge_length)
           min_sq_edge_length = sq_el;
       }
@@ -869,7 +872,8 @@ struct Triangle_structure_sampler_for_triangle_soup
  *
  * @see `CGAL::Polygon_mesh_processing::sample_triangle_soup()`
  */
-template<class PointOutputIterator, class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
+template<class PointOutputIterator, class TriangleMesh,
+         class NamedParameters = parameters::Default_named_parameters>
 PointOutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
                      PointOutputIterator out,
@@ -878,11 +882,11 @@ sample_triangle_mesh(const TriangleMesh& tm,
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   Vpm;
 
-  internal::Triangle_structure_sampler_for_triangle_mesh<TriangleMesh,
+  internal::Triangle_structure_sampler_for_triangle_mesh<
+      TriangleMesh,
       PointOutputIterator,
       GeomTraits,
-      Creator_uniform_3<typename GeomTraits::FT,
-      typename GeomTraits::Point_3>,
+      Creator_uniform_3<typename GeomTraits::FT, typename GeomTraits::Point_3>,
       Vpm,
       NamedParameters> performer(tm, out, np);
   performer.procede();
@@ -1012,12 +1016,12 @@ sample_triangle_soup(const PointRange& points,
 
   static_assert(std::is_same<Point_3, typename GeomTraits::Point_3>::value, "Wrong point type.");
 
-  internal::Triangle_structure_sampler_for_triangle_soup<PointRange,
+  internal::Triangle_structure_sampler_for_triangle_soup<
+      PointRange,
       TriangleRange,
       PointOutputIterator,
       GeomTraits,
-      Creator_uniform_3<typename GeomTraits::FT,
-      typename GeomTraits::Point_3>,
+      Creator_uniform_3<typename GeomTraits::FT, typename GeomTraits::Point_3>,
       NamedParameters> performer(points, triangles, out, np);
   performer.procede();
 
@@ -1029,42 +1033,39 @@ template <class Concurrency_tag,
           class PointRange,
           class TriangleMesh,
           class VertexPointMap>
-double approximate_Hausdorff_distance(
-  const PointRange& original_sample_points,
-  const TriangleMesh& tm,
-  VertexPointMap vpm)
+double approximate_Hausdorff_distance(const PointRange& original_sample_points,
+                                      const TriangleMesh& tm,
+                                      VertexPointMap vpm)
 {
-  CGAL_assertion_code(  bool is_triangle = is_triangle_mesh(tm) );
-  CGAL_assertion_msg (is_triangle,
-        "Mesh is not triangulated. Distance computing impossible.");
+  CGAL_assertion(is_triangle_mesh(tm));
+
   typedef typename Kernel::Point_3 Point_3;
-  std::vector<Point_3> sample_points
-    (boost::begin(original_sample_points), boost::end(original_sample_points) );
-  #ifdef CGAL_HAUSDORFF_DEBUG
+
+  std::vector<Point_3> sample_points(std::begin(original_sample_points), std::end(original_sample_points));
+#ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "Nb sample points " << sample_points.size() << "\n";
-  #endif
+#endif
 
   spatial_sort(sample_points.begin(), sample_points.end());
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
   typedef AABB_tree< AABB_traits<Kernel, Primitive> > Tree;
 
-  Tree tree( faces(tm).first, faces(tm).second, tm);
+  Tree tree(faces(tm).first, faces(tm).second, tm);
   tree.build();
+
   Point_3 hint = get(vpm, *vertices(tm).first);
 
-  return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>
-    (sample_points, tree, hint);
+  return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>(sample_points, tree, hint);
 }
 
 template <class Concurrency_tag, class Kernel, class TriangleMesh,
           class NamedParameters,
-          class VertexPointMap >
-double approximate_Hausdorff_distance(
-   const TriangleMesh& tm1,
-   const TriangleMesh& tm2,
-   const NamedParameters& np,
-   VertexPointMap vpm_2)
+          class VertexPointMap>
+double approximate_Hausdorff_distance(const TriangleMesh& tm1,
+                                      const TriangleMesh& tm2,
+                                      const NamedParameters& np,
+                                      VertexPointMap vpm_2)
 {
   std::vector<typename Kernel::Point_3> sample_points;
   sample_triangle_mesh(tm1, std::back_inserter(sample_points), np);
@@ -1117,17 +1118,17 @@ template< class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1 = parameters::Default_named_parameters,
           class NamedParameters2 = parameters::Default_named_parameters>
-double approximate_Hausdorff_distance( const TriangleMesh& tm1,
-                                       const TriangleMesh& tm2,
-                                       const NamedParameters1& np1 = parameters::default_values(),
-                                       const NamedParameters2& np2 = parameters::default_values())
+double approximate_Hausdorff_distance(const TriangleMesh& tm1,
+                                      const TriangleMesh& tm2,
+                                      const NamedParameters1& np1 = parameters::default_values(),
+                                      const NamedParameters2& np2 = parameters::default_values())
 {
-  typedef typename GetGeomTraits<TriangleMesh,
-                                 NamedParameters1>::type GeomTraits;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
 
   return approximate_Hausdorff_distance<Concurrency_tag, GeomTraits>(
-    tm1, tm2, np1, parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
-                                get_const_property_map(vertex_point, tm2)));
+        tm1, tm2, np1,
+        parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm2)));
 }
 
 /**
@@ -1136,20 +1137,17 @@ double approximate_Hausdorff_distance( const TriangleMesh& tm1,
  * It returns the maximum of `approximate_Hausdorff_distance(tm1, tm2, np1, np2)`
  * and `approximate_Hausdorff_distance(tm2, tm1, np2, np1)`.
  */
-template< class Concurrency_tag,
+template <class Concurrency_tag,
           class TriangleMesh,
           class NamedParameters1 = parameters::Default_named_parameters,
           class NamedParameters2 = parameters::Default_named_parameters>
-double approximate_symmetric_Hausdorff_distance(
-  const TriangleMesh& tm1,
-  const TriangleMesh& tm2,
-  const NamedParameters1& np1 = parameters::default_values(),
-  const NamedParameters2& np2 = parameters::default_values())
+double approximate_symmetric_Hausdorff_distance(const TriangleMesh& tm1,
+                                                const TriangleMesh& tm2,
+                                                const NamedParameters1& np1 = parameters::default_values(),
+                                                const NamedParameters2& np2 = parameters::default_values())
 {
-  return (std::max)(
-    approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,np1,np2),
-    approximate_Hausdorff_distance<Concurrency_tag>(tm2,tm1,np2,np1)
-  );
+  return (std::max)(approximate_Hausdorff_distance<Concurrency_tag>(tm1,tm2,np1,np2),
+                    approximate_Hausdorff_distance<Concurrency_tag>(tm2,tm1,np2,np1));
 }
 
 /**
@@ -1190,12 +1188,12 @@ double max_distance_to_triangle_mesh(const PointRange& points,
                                      const TriangleMesh& tm,
                                      const NamedParameters& np = parameters::default_values())
 {
-  typedef typename GetGeomTraits<TriangleMesh,
-                                 NamedParameters>::type GeomTraits;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
 
-  return approximate_Hausdorff_distance<Concurrency_tag, GeomTraits>
-     (points,tm,parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(vertex_point, tm)));
+  return approximate_Hausdorff_distance<Concurrency_tag, GeomTraits>(
+           points, tm,
+           parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                        get_const_property_map(vertex_point, tm)));
 }
 
 /*!
@@ -1260,6 +1258,7 @@ double approximate_max_distance_to_point_set(const TriangleMesh& tm,
     }
     ref.add(points[0], points[1], points[2], tree);
   }
+
   return to_double(ref.refine(precision, tree));
 }
 
@@ -1273,7 +1272,7 @@ double approximate_max_distance_to_point_set(const TriangleMesh& tm,
 
 namespace internal {
 
-template< class Kernel,
+template <class Kernel,
           class TriangleMesh1,
           class TriangleMesh2,
           class VPM1,
@@ -1283,40 +1282,39 @@ template< class Kernel,
           class TM1Tree,
           class TM2Tree,
           class FaceHandle1,
-          class FaceHandle2 >
-std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const bool compare_meshes,
-  const VPM1& vpm1,
-  const VPM2& vpm2,
-  const bool is_one_sided_distance,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2,
-  TM1Tree& tm1_tree,
-  TM2Tree& tm2_tree,
-  std::vector<FaceHandle1>& tm1_only,
-  std::vector<FaceHandle2>& tm2_only)
+          class FaceHandle2>
+std::pair<typename Kernel::FT, bool>
+preprocess_bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
+                                        const TriangleMesh2& tm2,
+                                        const bool compare_meshes,
+                                        const VPM1& vpm1,
+                                        const VPM2& vpm2,
+                                        const bool is_one_sided_distance,
+                                        const NamedParameters1& np1,
+                                        const NamedParameters2& np2,
+                                        TM1Tree& tm1_tree,
+                                        TM2Tree& tm2_tree,
+                                        std::vector<FaceHandle1>& tm1_only,
+                                        std::vector<FaceHandle2>& tm2_only)
 {
-  using FT      = typename Kernel::FT;
+  using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
   Timer timer;
   timer.start();
   std::cout << "* preprocessing begin ...." << std::endl;
   std::cout.precision(17);
-  #endif
+#endif
 
   // Compute the max value that is used as infinity value for the given meshes.
   // In our case, it is twice the length of the diagonal of the bbox of two input meshes.
   const auto bbox1 = bbox(tm1);
   const auto bbox2 = bbox(tm2);
   const auto bb = bbox1 + bbox2;
-  const FT sq_dist = CGAL::squared_distance(
-    Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
-    Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
+  const FT sq_dist = CGAL::squared_distance(Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
+                                            Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
   FT infinity_value = CGAL::approximate_sqrt(sq_dist) * FT(2);
   CGAL_assertion(infinity_value >= FT(0));
 
@@ -1333,44 +1331,57 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
 
   // Compare meshes.
   bool rebuild = false;
-  if (compare_meshes) { // exact check
+  if(compare_meshes) // exact check
+  {
     match_faces(tm1, tm2, std::back_inserter(common),
-      std::back_inserter(tm1_only), std::back_inserter(tm2_only), np1, np2);
+                std::back_inserter(tm1_only), std::back_inserter(tm2_only), np1, np2);
 
-    #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
     std::cout << "-   common: " <<   common.size() << std::endl;
     std::cout << "- tm1 only: " << tm1_only.size() << std::endl;
     std::cout << "- tm2 only: " << tm2_only.size() << std::endl;
-    #endif
+#endif
 
-    if (is_one_sided_distance) { // one-sided distance
-
-      if (tm1_only.size() > 0) { // create TM1 and and full TM2
+    if(is_one_sided_distance) // one-sided distance
+    {
+      if(tm1_only.size() > 0) // create TM1 and and full TM2
+      {
         tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
         tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
-      } else { // do not create trees
+      }
+      else // do not create trees
+      {
         CGAL_assertion(tm1_only.size() == 0);
         infinity_value = -FT(1);
       }
-
-    } else { // symmetric distance
-
-      if (tm1_only.size() == 0 && tm2_only.size() == 0) { // do not create trees
+    }
+    else // symmetric distance
+    {
+      if(tm1_only.size() == 0 && tm2_only.size() == 0) // do not create trees
+      {
         infinity_value = -FT(1);
-      } else if (common.size() == 0) { // create full TM1 and TM2
+      }
+      else if(common.size() == 0)  // create full TM1 and TM2
+      {
         tm1_tree.insert(faces1.begin(), faces1.end(), tm1, vpm1);
         tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
-      } else if (tm1_only.size() == 0) { // create TM2 and full TM1
+      }
+      else if(tm1_only.size() == 0) // create TM2 and full TM1
+      {
         CGAL_assertion(tm2_only.size() > 0);
         CGAL_assertion(tm2_only.size() < faces2.size());
         tm1_tree.insert(faces1.begin(), faces1.end(), tm1, vpm1);
         tm2_tree.insert(tm2_only.begin(), tm2_only.end(), tm2, vpm2);
-      } else if (tm2_only.size() == 0) { // create TM1 and full TM2
+      }
+      else if(tm2_only.size() == 0) // create TM1 and full TM2
+      {
         CGAL_assertion(tm1_only.size() > 0);
         CGAL_assertion(tm1_only.size() < faces1.size());
         tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
         tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
-      } else { // create TM1 and full TM2 and set tag to rebuild them later
+      }
+      else // create TM1 and full TM2 and set tag to rebuild them later
+      {
         CGAL_assertion(tm1_only.size() > 0);
         CGAL_assertion(tm1_only.size() < faces1.size());
         tm1_tree.insert(tm1_only.begin(), tm1_only.end(), tm1, vpm1);
@@ -1378,42 +1389,44 @@ std::pair<typename Kernel::FT, bool> preprocess_bounded_error_Hausdorff_impl(
         rebuild = true;
       }
     }
-  } else { // create full TM1 and TM2
+  }
+  else // create full TM1 and TM2
+  {
     tm1_tree.insert(faces1.begin(), faces1.end(), tm1, vpm1);
     tm2_tree.insert(faces2.begin(), faces2.end(), tm2, vpm2);
   }
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
   std::cout << "* .... end preprocessing" << std::endl;
   std::cout << "* preprocessing time (sec.): " << timer.time() << std::endl;
-  #endif
+#endif
+
   return std::make_pair(infinity_value, rebuild);
 }
 
-template< class Kernel,
+template <class Kernel,
           class TriangleMesh1,
           class TriangleMesh2,
           class VPM1,
           class VPM2,
           class TM1Tree,
           class TM2Tree,
-          class OutputIterator >
-double bounded_error_Hausdorff_impl(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const typename Kernel::FT error_bound,
-  const VPM1& vpm1,
-  const VPM2& vpm2,
-  const typename Kernel::FT infinity_value,
-  const typename Kernel::FT initial_bound,
-  const typename Kernel::FT distance_bound,
-  const TM1Tree& tm1_tree,
-  const TM2Tree& tm2_tree,
-  OutputIterator& out)
+          class OutputIterator>
+double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
+                                    const TriangleMesh2& tm2,
+                                    const typename Kernel::FT error_bound,
+                                    const VPM1& vpm1,
+                                    const VPM2& vpm2,
+                                    const typename Kernel::FT infinity_value,
+                                    const typename Kernel::FT initial_bound,
+                                    const typename Kernel::FT distance_bound,
+                                    const TM1Tree& tm1_tree,
+                                    const TM2Tree& tm2_tree,
+                                    OutputIterator& out)
 {
-  using FT         = typename Kernel::FT;
-  using Point_3    = typename Kernel::Point_3;
+  using FT = typename Kernel::FT;
+  using Point_3 = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
   using TM1_tree = TM1Tree;
@@ -1435,18 +1448,17 @@ double bounded_error_Hausdorff_impl(
   CGAL_precondition(tm2_tree.size() > 0);
 
   // First, we apply culling.
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
   Timer timer;
   timer.start();
   std::cout << "- applying culling" << std::endl;
   std::cout.precision(17);
-  #endif
+#endif
 
   // Build traversal traits for tm1_tree.
-  TM1_hd_traits traversal_traits_tm1(
-    tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2,
-    error_bound, infinity_value, initial_bound, distance_bound);
+  TM1_hd_traits traversal_traits_tm1(tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2,
+                                     error_bound, infinity_value, initial_bound, distance_bound);
 
   // Find candidate triangles in TM1, which might realise the Hausdorff bound.
   // We build a sorted structure while collecting the candidates.
@@ -1456,51 +1468,55 @@ double bounded_error_Hausdorff_impl(
   auto& candidate_triangles = traversal_traits_tm1.get_candidate_triangles();
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "- number of candidate triangles: " << candidate_triangles.size() << std::endl;
   const FT culling_rate = FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100));
   std::cout << "- culling rate: " << culling_rate << "%" << std::endl;
-  #endif
+#endif
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
   std::cout << "* culling (sec.): " << timer.time() << std::endl;
-  #endif
+#endif
 
   CGAL_assertion(global_bounds.lower >= FT(0));
   CGAL_assertion(global_bounds.upper >= FT(0));
   CGAL_assertion(global_bounds.upper >= global_bounds.lower);
 
   // If we already reached the user-defined max distance bound, we quit.
-  if (traversal_traits_tm1.early_quit()) {
+  if(traversal_traits_tm1.early_quit())
+  {
     CGAL_assertion(distance_bound >= FT(0));
     const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
     return hdist;
   }
+
   CGAL_assertion(!traversal_traits_tm1.early_quit());
 
   // Second, we apply subdivision.
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   timer.reset();
   timer.start();
   std::cout << "- applying subdivision" << std::endl;
-  #endif
+#endif
 
   // See Section 5.1 in the paper.
   const FT squared_error_bound = error_bound * error_bound;
-  while (
-    (global_bounds.upper - global_bounds.lower > error_bound) &&
-    !candidate_triangles.empty()) {
-
+  while((global_bounds.upper - global_bounds.lower > error_bound) &&
+        !candidate_triangles.empty())
+  {
     // Check if we can early quit.
-    if (distance_bound >= FT(0)) {
+    if(distance_bound >= FT(0))
+    {
       const FT hdist = (global_bounds.lower + global_bounds.upper) / FT(2);
       const bool early_quit = (hdist >= distance_bound);
-      if (early_quit) break;
+      if(early_quit)
+        break;
     }
 
     // Get the first triangle and its Hausdorff bounds from the candidate set.
     const Candidate triangle_and_bound = candidate_triangles.top();
+
     // Remove it from the candidate set as it will be processed now.
     candidate_triangles.pop();
 
@@ -1514,10 +1530,9 @@ double bounded_error_Hausdorff_impl(
     CGAL_assertion(triangle_bounds.upper >= FT(0));
     CGAL_assertion(triangle_bounds.upper >= triangle_bounds.lower);
 
-    if (
-      (triangle_bounds.upper > global_bounds.lower) &&
-      (triangle_bounds.upper - triangle_bounds.lower > error_bound)) {
-
+    if((triangle_bounds.upper > global_bounds.lower) &&
+       (triangle_bounds.upper - triangle_bounds.lower > error_bound))
+    {
       // Get the triangle that is to be subdivided and read its vertices.
       const Triangle_3& triangle_for_subdivision = triangle_and_bound.triangle;
       const Point_3 v0 = triangle_for_subdivision.vertex(0);
@@ -1532,10 +1547,10 @@ double bounded_error_Hausdorff_impl(
       CGAL_assertion(closest_triangle_v0.second != boost::graph_traits<TriangleMesh2>::null_face());
       CGAL_assertion(closest_triangle_v1.second != boost::graph_traits<TriangleMesh2>::null_face());
       CGAL_assertion(closest_triangle_v2.second != boost::graph_traits<TriangleMesh2>::null_face());
-      if (
-        (closest_triangle_v0.second == closest_triangle_v1.second) &&
-        (closest_triangle_v1.second == closest_triangle_v2.second)) {
 
+      if((closest_triangle_v0.second == closest_triangle_v1.second) &&
+         (closest_triangle_v1.second == closest_triangle_v2.second))
+      {
         // The upper bound of this triangle is the actual Hausdorff distance of
         // the triangle to the second mesh. Use it as new global lower bound.
         // Here, we update the reference to the realizing triangle as this is the best current guess.
@@ -1546,11 +1561,10 @@ double bounded_error_Hausdorff_impl(
 
       // Check third stopping condition: All edge lengths of the triangle are
       // smaller than the given error bound, we cannot get results beyond this bound.
-      if (
-        CGAL::squared_distance(v0, v1) < squared_error_bound &&
-        CGAL::squared_distance(v0, v2) < squared_error_bound &&
-        CGAL::squared_distance(v1, v2) < squared_error_bound) {
-
+      if(CGAL::squared_distance(v0, v1) < squared_error_bound &&
+         CGAL::squared_distance(v0, v2) < squared_error_bound &&
+         CGAL::squared_distance(v1, v2) < squared_error_bound)
+      {
         // The upper bound of this triangle is within error tolerance of
         // the actual upper bound, use it.
         global_bounds.lower = triangle_bounds.upper;
@@ -1562,20 +1576,16 @@ double bounded_error_Hausdorff_impl(
       const Point_3 v01 = CGAL::midpoint(v0, v1);
       const Point_3 v02 = CGAL::midpoint(v0, v2);
       const Point_3 v12 = CGAL::midpoint(v1, v2);
-      const std::array<Triangle_3, 4> sub_triangles = {
-        Triangle_3(v0, v01, v02), Triangle_3(v1 , v01, v12),
-        Triangle_3(v2, v02, v12), Triangle_3(v01, v02, v12) };
+      const std::array<Triangle_3, 4> sub_triangles = { Triangle_3(v0, v01, v02), Triangle_3(v1 , v01, v12),
+                                                        Triangle_3(v2, v02, v12), Triangle_3(v01, v02, v12) };
 
       // Send each of the four triangles to culling on B with the bounds of the parent triangle.
-      for (std::size_t i = 0; i < 4; ++i) {
-
+      for(std::size_t i = 0; i < 4; ++i)
+      {
         // Call culling on B with the single triangle found.
-        TM2_hd_traits traversal_traits_tm2(
-          tm2_tree.traits(), tm2, vpm2,
-          triangle_bounds,
-          infinity_value,
-          infinity_value,
-          infinity_value);
+        TM2_hd_traits traversal_traits_tm2(tm2_tree.traits(), tm2, vpm2,
+                                           triangle_bounds,
+                                           infinity_value, infinity_value, infinity_value);
         tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
 
         // Update global lower Hausdorff bound according to the obtained local bounds.
@@ -1588,34 +1598,37 @@ double bounded_error_Hausdorff_impl(
         CGAL_assertion(local_bounds.lpair == local_bounds.default_face_pair());
         CGAL_assertion(local_bounds.upair == local_bounds.default_face_pair());
 
-        if (local_bounds.lower > global_bounds.lower) {
+        if(local_bounds.lower > global_bounds.lower)
+        {
           global_bounds.lower = local_bounds.lower;
           global_bounds.lpair.second = local_bounds.tm2_lface;
         }
 
         // Add the subtriangle to the candidate list.
-        candidate_triangles.push(
-          Candidate(sub_triangles[i], local_bounds, triangle_and_bound.tm1_face));
+        candidate_triangles.push(Candidate(sub_triangles[i], local_bounds, triangle_and_bound.tm1_face));
       }
 
       // Update global upper Hausdorff bound after subdivision.
       const FT current_max = candidate_triangles.top().bounds.upper;
       CGAL_assertion(current_max >= FT(0));
 
-      if (current_max > global_bounds.lower) {
+      if(current_max > global_bounds.lower)
+      {
         global_bounds.upper = current_max;
         global_bounds.upair.second = candidate_triangles.top().bounds.tm2_uface;
-      } else {
+      }
+      else
+      {
         global_bounds.upper = global_bounds.lower;
         global_bounds.upair.second = global_bounds.lpair.second;
       }
     }
   }
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
   std::cout << "* subdivision (sec.): " << timer.time() << std::endl;
-  #endif
+#endif
 
   // Compute linear interpolation between the found lower and upper bounds.
   CGAL_assertion(global_bounds.lower >= FT(0));
@@ -1639,95 +1652,99 @@ double bounded_error_Hausdorff_impl(
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
 
 template<class TriangleMesh, class VPM, class TMTree>
-struct Triangle_mesh_wrapper {
-
+struct Triangle_mesh_wrapper
+{
   const TriangleMesh& tm; const VPM& vpm;
   const bool is_tm2; TMTree& tm_tree;
-  Triangle_mesh_wrapper(
-    const TriangleMesh& tm, const VPM& vpm,
-    const bool is_tm2, TMTree& tm_tree) :
-  tm(tm), vpm(vpm), is_tm2(is_tm2), tm_tree(tm_tree) { }
+  Triangle_mesh_wrapper(const TriangleMesh& tm, const VPM& vpm,
+                        const bool is_tm2, TMTree& tm_tree)
+    : tm(tm), vpm(vpm), is_tm2(is_tm2), tm_tree(tm_tree)
+  { }
 
-  void build_tree() {
+  void build_tree()
+  {
     tm_tree.insert(faces(tm).begin(), faces(tm).end(), tm, vpm);
     tm_tree.build();
-    if (is_tm2) tm_tree.accelerate_distance_queries();
-    else tm_tree.do_not_accelerate_distance_queries();
+    if(is_tm2)
+      tm_tree.accelerate_distance_queries();
+    else
+      tm_tree.do_not_accelerate_distance_queries();
   }
 };
 
 template<class TM1Wrapper, class TM2Wrapper>
-struct Bounded_error_preprocessing {
-
-  #ifdef CGAL_HAUSDORFF_DEBUG
+struct Bounded_error_preprocessing
+{
+#ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
-  #endif
+#endif
   std::vector<boost::any>& tm_wrappers;
 
   // Constructor.
-  Bounded_error_preprocessing(
-    std::vector<boost::any>& tm_wrappers) :
-  tm_wrappers(tm_wrappers) { }
+  Bounded_error_preprocessing(std::vector<boost::any>& tm_wrappers)
+    : tm_wrappers(tm_wrappers)
+  { }
 
   // Split constructor.
-  Bounded_error_preprocessing(
-    Bounded_error_preprocessing& s, tbb::split) :
-  tm_wrappers(s.tm_wrappers) { }
+  Bounded_error_preprocessing(Bounded_error_preprocessing& s, tbb::split)
+    : tm_wrappers(s.tm_wrappers)
+  { }
 
-  bool is_tm1_wrapper(const boost::any& operand) const {
-    return operand.type() == typeid(TM1Wrapper);
-  }
-
-  bool is_tm2_wrapper(const boost::any& operand) const {
-    return operand.type() == typeid(TM2Wrapper);
-  }
+  bool is_tm1_wrapper(const boost::any& operand) const { return operand.type() == typeid(TM1Wrapper); }
+  bool is_tm2_wrapper(const boost::any& operand) const { return operand.type() == typeid(TM2Wrapper); }
 
   // TODO: make AABB tree build parallel!
-  void operator()(const tbb::blocked_range<std::size_t>& range) {
-
-    #ifdef CGAL_HAUSDORFF_DEBUG
+  void operator()(const tbb::blocked_range<std::size_t>& range)
+  {
+#ifdef CGAL_HAUSDORFF_DEBUG
     Timer timer;
     timer.reset();
     timer.start();
     std::cout.precision(17);
-    #endif
+#endif
 
-    for (std::size_t i = range.begin(); i != range.end(); ++i) {
+    for(std::size_t i = range.begin(); i != range.end(); ++i)
+    {
       CGAL_assertion(i < tm_wrappers.size());
       auto& tm_wrapper = tm_wrappers[i];
-      if (is_tm1_wrapper(tm_wrapper)) {
+      if(is_tm1_wrapper(tm_wrapper))
+      {
         TM1Wrapper& object = boost::any_cast<TM1Wrapper&>(tm_wrapper);
         object.build_tree();
-      } else if (is_tm2_wrapper(tm_wrapper)) {
+      }
+      else if(is_tm2_wrapper(tm_wrapper))
+      {
         TM2Wrapper& object = boost::any_cast<TM2Wrapper&>(tm_wrapper);
         object.build_tree();
-      } else {
+      }
+      else
+      {
         CGAL_assertion_msg(false, "Error: wrong boost any type!");
       }
     }
 
-    #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
     std::cout << "* time operator() preprocessing (sec.): " << timer.time() << std::endl;
-    #endif
+#endif
   }
 
   void join(Bounded_error_preprocessing&) { }
 };
 
-template< class TriangleMesh1,
+template <class TriangleMesh1,
           class TriangleMesh2,
           class VPM1,
           class VPM2,
           class TM1Tree,
           class TM2Tree,
-          class Kernel >
-struct Bounded_error_distance_computation {
-
+          class Kernel>
+struct Bounded_error_distance_computation
+{
   using FT = typename Kernel::FT;
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
-  #endif
+#endif
 
   const std::vector<TriangleMesh1>& tm1_parts; const TriangleMesh2& tm2;
   const FT error_bound; const VPM1& vpm1; const VPM2& vpm2;
@@ -1736,69 +1753,74 @@ struct Bounded_error_distance_computation {
   double distance;
 
   // Constructor.
-  Bounded_error_distance_computation(
-    const std::vector<TriangleMesh1>& tm1_parts, const TriangleMesh2& tm2,
-    const FT error_bound, const VPM1& vpm1, const VPM2& vpm2,
-    const FT infinity_value, const FT initial_bound,
-    const std::vector<TM1Tree>& tm1_trees, const TM2Tree& tm2_tree) :
-  tm1_parts(tm1_parts), tm2(tm2),
-  error_bound(error_bound), vpm1(vpm1), vpm2(vpm2),
-  infinity_value(infinity_value), initial_bound(initial_bound),
-  tm1_trees(tm1_trees), tm2_tree(tm2_tree), distance(-1.0) {
+  Bounded_error_distance_computation(const std::vector<TriangleMesh1>& tm1_parts, const TriangleMesh2& tm2,
+                                     const FT error_bound, const VPM1& vpm1, const VPM2& vpm2,
+                                     const FT infinity_value, const FT initial_bound,
+                                     const std::vector<TM1Tree>& tm1_trees, const TM2Tree& tm2_tree)
+    : tm1_parts(tm1_parts), tm2(tm2),
+      error_bound(error_bound), vpm1(vpm1), vpm2(vpm2),
+      infinity_value(infinity_value), initial_bound(initial_bound),
+      tm1_trees(tm1_trees), tm2_tree(tm2_tree), distance(-1.0)
+  {
     CGAL_assertion(tm1_parts.size() == tm1_trees.size());
   }
 
   // Split constructor.
-  Bounded_error_distance_computation(
-    Bounded_error_distance_computation& s, tbb::split) :
-  tm1_parts(s.tm1_parts), tm2(s.tm2),
-  error_bound(s.error_bound), vpm1(s.vpm1), vpm2(s.vpm2),
-  infinity_value(s.infinity_value), initial_bound(s.initial_bound),
-  tm1_trees(s.tm1_trees), tm2_tree(s.tm2_tree), distance(-1.0) {
+  Bounded_error_distance_computation(Bounded_error_distance_computation& s, tbb::split)
+    : tm1_parts(s.tm1_parts), tm2(s.tm2),
+      error_bound(s.error_bound), vpm1(s.vpm1), vpm2(s.vpm2),
+      infinity_value(s.infinity_value), initial_bound(s.initial_bound),
+      tm1_trees(s.tm1_trees), tm2_tree(s.tm2_tree), distance(-1.0)
+  {
     CGAL_assertion(tm1_parts.size() == tm1_trees.size());
   }
 
-  void operator()(const tbb::blocked_range<std::size_t>& range) {
-
-    #ifdef CGAL_HAUSDORFF_DEBUG
+  void operator()(const tbb::blocked_range<std::size_t>& range)
+  {
+#ifdef CGAL_HAUSDORFF_DEBUG
     Timer timer;
     timer.reset();
     timer.start();
     std::cout.precision(17);
-    #endif
+#endif
 
     double hdist = -1.0;
     auto stub = CGAL::Emptyset_iterator();
 
-    for (std::size_t i = range.begin(); i != range.end(); ++i) {
+    for(std::size_t i = range.begin(); i != range.end(); ++i)
+    {
       CGAL_assertion(i < tm1_parts.size());
       CGAL_assertion(i < tm1_trees.size());
       const auto& tm1 = tm1_parts[i];
       const auto& tm1_tree = tm1_trees[i];
+
       // TODO: add distance_bound (now it is -FT(1)) in case we use parallel
       // for checking if two meshes are close.
-      const double dist = bounded_error_Hausdorff_impl<Kernel>(
-        tm1, tm2, error_bound, vpm1, vpm2,
-        infinity_value, initial_bound, -FT(1),
-        tm1_tree, tm2_tree, stub);
-      if (dist > hdist) hdist = dist;
+      const double dist = bounded_error_Hausdorff_impl<Kernel>(tm1, tm2, error_bound, vpm1, vpm2,
+                                                               infinity_value, initial_bound, -FT(1),
+                                                               tm1_tree, tm2_tree, stub);
+      if(dist > hdist)
+        hdist = dist;
     }
-    if (hdist > distance) distance = hdist;
 
-    #ifdef CGAL_HAUSDORFF_DEBUG
+    if(hdist > distance)
+      distance = hdist;
+
+#ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
     std::cout << "* time operator() computation (sec.): " << timer.time() << std::endl;
-    #endif
+#endif
   }
 
-  void join(Bounded_error_distance_computation& rhs) {
+  void join(Bounded_error_distance_computation& rhs)
+  {
     distance = (CGAL::max)(rhs.distance, distance);
   }
 };
 
 #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
-template< class Concurrency_tag,
+template <class Concurrency_tag,
           class Kernel,
           class TriangleMesh1,
           class TriangleMesh2,
@@ -1806,24 +1828,22 @@ template< class Concurrency_tag,
           class VPM2,
           class NamedParameters1,
           class NamedParameters2,
-          class OutputIterator >
-double bounded_error_one_sided_Hausdorff_impl(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const typename Kernel::FT error_bound,
-  const typename Kernel::FT distance_bound,
-  const bool compare_meshes,
-  const VPM1& vpm1,
-  const VPM2& vpm2,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2,
-  OutputIterator& out)
+          class OutputIterator>
+double bounded_error_one_sided_Hausdorff_impl(const TriangleMesh1& tm1,
+                                              const TriangleMesh2& tm2,
+                                              const typename Kernel::FT error_bound,
+                                              const typename Kernel::FT distance_bound,
+                                              const bool compare_meshes,
+                                              const VPM1& vpm1,
+                                              const VPM2& vpm2,
+                                              const NamedParameters1& np1,
+                                              const NamedParameters2& np2,
+                                              OutputIterator& out)
 {
-  #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
-  CGAL_static_assertion_msg(
-    !(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-    "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
-  #endif
+#if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
+  CGAL_static_assertion_msg(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
+                            "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
+#endif
 
   using FT = typename Kernel::FT;
 
@@ -1847,7 +1867,7 @@ double bounded_error_one_sided_Hausdorff_impl(
   // between BHDs computed for these parts with respect to tm2.
   // This is off by default because the parallel version does not show much of runtime improvement.
   // The slowest part is building AABB trees and this is what should be accelerated in the future.
-  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   using Point_3       = typename Kernel::Point_3;
   using TMF           = CGAL::Face_filtered_graph<TM1>;
   using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
@@ -1859,120 +1879,123 @@ double bounded_error_one_sided_Hausdorff_impl(
   std::vector<TMF> tm1_parts;
   std::vector<TMF_tree> tm1_trees;
   std::vector<boost::any> tm_wrappers;
-  #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+#endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   using Timer = CGAL::Real_timer;
   Timer timer;
   std::cout.precision(17);
-  #endif
+#endif
 
   TM1_tree tm1_tree;
   TM2_tree tm2_tree;
   FT infinity_value = -FT(1);
 
-  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
   // TODO: add to NP!
   const int nb_cores = 4;
   const std::size_t min_nb_faces_to_split = 100; // TODO: increase this number?
-  #ifdef CGAL_HAUSDORFF_DEBUG
+ #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "* num cores: " << nb_cores << std::endl;
-  #endif
+ #endif
 
-  if (
-    boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
-    nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
-
+  if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
+     nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split)
+  {
     // (0) -- Compute infinity value.
-    #ifdef CGAL_HAUSDORFF_DEBUG
+ #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
-    #endif
+ #endif
+
     const auto bbox1 = bbox(tm1);
     const auto bbox2 = bbox(tm2);
     const auto bb = bbox1 + bbox2;
-    const FT sq_dist = CGAL::squared_distance(
-      Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
-      Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
+    const FT sq_dist = CGAL::squared_distance(Point_3(bb.xmin(), bb.ymin(), bb.zmin()),
+                                              Point_3(bb.xmax(), bb.ymax(), bb.zmax()));
     infinity_value = CGAL::approximate_sqrt(sq_dist) * FT(2);
     CGAL_assertion(infinity_value >= FT(0));
-    #ifdef CGAL_HAUSDORFF_DEBUG
+ #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
     const double time0 = timer.time();
     std::cout << "- computing infinity (sec.): " << time0 << std::endl;
-    #endif
+ #endif
 
     // (1) -- Create partition of tm1.
-    #ifdef CGAL_HAUSDORFF_DEBUG
+ #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
-    #endif
+ #endif
+
     using Face_property_tag = CGAL::dynamic_face_property_t<int>;
     auto face_pid_map = get(Face_property_tag(), tm1);
-    CGAL::METIS::partition_graph(
-      tm1, nb_cores, CGAL::parameters::
-      face_partition_id_map(face_pid_map));
-    #ifdef CGAL_HAUSDORFF_DEBUG
+    CGAL::METIS::partition_graph(tm1, nb_cores, CGAL::parameters::face_partition_id_map(face_pid_map));
+
+ #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
     const double time1 = timer.time();
     std::cout << "- computing partition time (sec.): " << time1 << std::endl;
-    #endif
+ #endif
 
     // (2) -- Create a filtered face graph for each part.
-    #ifdef CGAL_HAUSDORFF_DEBUG
+ #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
-    #endif
+ #endif
+
     tm1_parts.reserve(nb_cores);
-    for (int i = 0; i < nb_cores; ++i) {
+    for(int i = 0; i < nb_cores; ++i)
+    {
       tm1_parts.emplace_back(tm1, i, face_pid_map);
       // TODO: why is it triggered sometimes?
       // CGAL_assertion(tm1_parts.back().is_selection_valid());
-      #ifdef CGAL_HAUSDORFF_DEBUG
+ #ifdef CGAL_HAUSDORFF_DEBUG
       std::cout << "- part " << i << " size: " << tm1_parts.back().number_of_faces() << std::endl;
-      #endif
+ #endif
     }
+
     CGAL_assertion(tm1_parts.size() == nb_cores);
-    #ifdef CGAL_HAUSDORFF_DEBUG
+ #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
     const double time2 = timer.time();
     std::cout << "- creating graphs time (sec.): " << time2 << std::endl;
-    #endif
+ #endif
 
     // (3) -- Preprocess all input data.
-    #ifdef CGAL_HAUSDORFF_DEBUG
+ #ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
-    #endif
+ #endif
+
     tm1_trees.resize(tm1_parts.size());
     tm_wrappers.reserve(tm1_parts.size() + 1);
-    for (std::size_t i = 0; i < tm1_parts.size(); ++i) {
+    for(std::size_t i = 0; i < tm1_parts.size(); ++i)
       tm_wrappers.push_back(TM1_wrapper(tm1_parts[i], vpm1, false, tm1_trees[i]));
-    }
+
     tm_wrappers.push_back(TM2_wrapper(tm2, vpm2, true, tm2_tree));
     CGAL_assertion(tm_wrappers.size() == tm1_parts.size() + 1);
     Bounded_error_preprocessing<TM1_wrapper, TM2_wrapper> bep(tm_wrappers);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm_wrappers.size()), bep);
-    #ifdef CGAL_HAUSDORFF_DEBUG
+
+ #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
     const double time3 = timer.time();
     std::cout << "- creating trees time (sec.) " << time3 << std::endl;
-    #endif
+ #endif
 
-    // Final timing.
-    #ifdef CGAL_HAUSDORFF_DEBUG
-    std::cout << "* preprocessing parallel time (sec.) " <<
-      time0 + time1 + time2 + time3 << std::endl;
-    #endif
+ #ifdef CGAL_HAUSDORFF_DEBUG
+    // Final timing
+    std::cout << "* preprocessing parallel time (sec.) " << time0 + time1 + time2 + time3 << std::endl;
+ #endif
 
   } else // sequential version
-  #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+#endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   {
-    #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
     timer.reset();
     timer.start();
     std::cout << "* preprocessing sequential version " << std::endl;
-    #endif
+#endif
     bool rebuild = false;
     std::vector<Face_handle_1> tm1_only;
     std::vector<Face_handle_2> tm2_only;
@@ -1980,77 +2003,79 @@ double bounded_error_one_sided_Hausdorff_impl(
       tm1, tm2, compare_meshes, vpm1, vpm2, true, np1, np2,
       tm1_tree, tm2_tree, tm1_only, tm2_only);
     CGAL_assertion(!rebuild);
-    if (infinity_value >= FT(0)) {
+    if(infinity_value >= FT(0))
+    {
       tm1_tree.build();
       tm2_tree.build();
       tm1_tree.do_not_accelerate_distance_queries();
       tm2_tree.accelerate_distance_queries();
     }
-    #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
     std::cout << "* preprocessing sequential time (sec.) " << timer.time() << std::endl;
-    #endif
+#endif
   }
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << "* infinity_value: " << infinity_value << std::endl;
-  #endif
-  if (infinity_value < FT(0)) {
-    #ifdef CGAL_HAUSDORFF_DEBUG
+#endif
+
+  if(infinity_value < FT(0))
+  {
+#ifdef CGAL_HAUSDORFF_DEBUG
     std::cout << "* culling rate: 100%" << std::endl;
-    #endif
+#endif
     const auto face1 = *(faces(tm1).begin());
     const auto face2 = *(faces(tm2).begin());
     *out++ = std::make_pair(face1, face2);
     *out++ = std::make_pair(face1, face2);
     return 0.0; // TM1 is part of TM2 so the distance is zero
   }
+
   CGAL_assertion(error_bound >= FT(0));
   CGAL_assertion(infinity_value > FT(0));
   const FT initial_bound = error_bound;
   std::atomic<double> hdist;
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   timer.reset();
   timer.start();
-  #endif
+#endif
 
-  #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
-  if (
-    boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
-    nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split) {
-
-    #ifdef CGAL_HAUSDORFF_DEBUG
+#if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
+  if(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value &&
+     nb_cores > 1 && faces(tm1).size() >= min_nb_faces_to_split)
+  {
+#ifdef CGAL_HAUSDORFF_DEBUG
     std::cout << "* executing parallel version " << std::endl;
-    #endif
+#endif
     Bounded_error_distance_computation<TMF, TM2, VPM1, VPM2, TMF_tree, TM2_tree, Kernel> bedc(
       tm1_parts, tm2, error_bound, vpm1, vpm2,
       infinity_value, initial_bound, tm1_trees, tm2_tree);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm1_parts.size()), bedc);
     hdist = bedc.distance;
-
-  } else // sequential version
-  #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
+  }
+  else // sequential version
+#endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   {
-    #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
     std::cout << "* executing sequential version " << std::endl;
-    #endif
-    hdist = bounded_error_Hausdorff_impl<Kernel>(
-      tm1, tm2, error_bound, vpm1, vpm2,
-      infinity_value, initial_bound, distance_bound,
-      tm1_tree, tm2_tree, out);
+#endif
+    hdist = bounded_error_Hausdorff_impl<Kernel>(tm1, tm2, error_bound, vpm1, vpm2,
+                                                 infinity_value, initial_bound, distance_bound,
+                                                 tm1_tree, tm2_tree, out);
   }
 
-  #ifdef CGAL_HAUSDORFF_DEBUG
+#ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
   std::cout << "* computation time (sec.) " << timer.time() << std::endl;
-  #endif
+#endif
 
-  CGAL_assertion(hdist >= 0.0);
+  CGAL_assertion(hdist >= 0.);
   return hdist;
 }
 
-template< class Concurrency_tag,
+template <class Concurrency_tag,
           class Kernel,
           class TriangleMesh1,
           class TriangleMesh2,
@@ -2059,25 +2084,23 @@ template< class Concurrency_tag,
           class NamedParameters1,
           class NamedParameters2,
           class OutputIterator1,
-          class OutputIterator2 >
-double bounded_error_symmetric_Hausdorff_impl(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const typename Kernel::FT error_bound,
-  const typename Kernel::FT distance_bound,
-  const bool compare_meshes,
-  const VPM1& vpm1,
-  const VPM2& vpm2,
-  const NamedParameters1& np1,
-  const NamedParameters2& np2,
-  OutputIterator1& out1,
-  OutputIterator2& out2)
+          class OutputIterator2>
+double bounded_error_symmetric_Hausdorff_impl(const TriangleMesh1& tm1,
+                                              const TriangleMesh2& tm2,
+                                              const typename Kernel::FT error_bound,
+                                              const typename Kernel::FT distance_bound,
+                                              const bool compare_meshes,
+                                              const VPM1& vpm1,
+                                              const VPM2& vpm2,
+                                              const NamedParameters1& np1,
+                                              const NamedParameters2& np2,
+                                              OutputIterator1& out1,
+                                              OutputIterator2& out2)
 {
-  #if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
-  CGAL_static_assertion_msg(
-    !(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
-    "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
-  #endif
+#if !defined(CGAL_LINKED_WITH_TBB) || !defined(CGAL_METIS_ENABLED)
+  CGAL_static_assertion_msg(!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
+                            "Parallel_tag is enabled but at least TBB or METIS is unavailable.");
+#endif
 
   // Optimized version.
   // -- We compare meshes only if it is required.
@@ -2109,18 +2132,19 @@ double bounded_error_symmetric_Hausdorff_impl(
     tm1, tm2, compare_meshes, vpm1, vpm2, false, np1, np2,
     tm1_tree, tm2_tree, tm1_only, tm2_only);
 
-  if (infinity_value < FT(0)) {
-    #ifdef CGAL_HAUSDORFF_DEBUG
+  if(infinity_value < FT(0))
+  {
+#ifdef CGAL_HAUSDORFF_DEBUG
     std::cout.precision(17);
     std::cout << "* culling rate: 100%" << std::endl;
-    #endif
+#endif
     const auto face1 = *(faces(tm1).begin());
     const auto face2 = *(faces(tm2).begin());
     *out1++ = std::make_pair(face1, face2);
     *out1++ = std::make_pair(face1, face2);
     *out2++ = std::make_pair(face2, face1);
     *out2++ = std::make_pair(face2, face1);
-    return 0.0; // TM1 and TM2 are equal so the distance is zero
+    return 0.; // TM1 and TM2 are equal so the distance is zero
   }
   CGAL_assertion(infinity_value > FT(0));
 
@@ -2128,16 +2152,17 @@ double bounded_error_symmetric_Hausdorff_impl(
   FT initial_bound = error_bound;
   double dista = CGAL::to_double(error_bound);
 
-  if (!compare_meshes || (compare_meshes && tm1_only.size() > 0)) {
-    dista = bounded_error_Hausdorff_impl<Kernel>(
-      tm1, tm2, error_bound, vpm1, vpm2,
-      infinity_value, initial_bound, distance_bound,
-      tm1_tree, tm2_tree, out1);
+  if(!compare_meshes || (compare_meshes && tm1_only.size() > 0))
+  {
+    dista = bounded_error_Hausdorff_impl<Kernel>(tm1, tm2, error_bound, vpm1, vpm2,
+                                                 infinity_value, initial_bound, distance_bound,
+                                                 tm1_tree, tm2_tree, out1);
   }
 
   // In case this is true, we need to rebuild trees in order to accelerate
   // computations for the second call.
-  if (rebuild) {
+  if(rebuild)
+  {
     CGAL_assertion(compare_meshes);
     tm1_tree.clear();
     tm2_tree.clear();
@@ -2151,11 +2176,11 @@ double bounded_error_symmetric_Hausdorff_impl(
   initial_bound = static_cast<FT>(dista); // TODO: we should better test this optimization!
   double distb = CGAL::to_double(error_bound);
 
-  if (!compare_meshes || (compare_meshes && tm2_only.size() > 0)) {
-    distb = bounded_error_Hausdorff_impl<Kernel>(
-      tm2, tm1, error_bound, vpm2, vpm1,
-      infinity_value, initial_bound, distance_bound,
-      tm2_tree, tm1_tree, out2);
+  if(!compare_meshes || (compare_meshes && tm2_only.size() > 0))
+  {
+    distb = bounded_error_Hausdorff_impl<Kernel>(tm2, tm1, error_bound, vpm2, vpm1,
+                                                 infinity_value, initial_bound, distance_bound,
+                                                 tm2_tree, tm1_tree, out2);
   }
 
   // Return the maximum.
@@ -2163,28 +2188,23 @@ double bounded_error_symmetric_Hausdorff_impl(
 }
 
 template<class Kernel, class TM2_tree>
-typename Kernel::FT recursive_hausdorff_subdivision(
-  const typename Kernel::Point_3& v0,
-  const typename Kernel::Point_3& v1,
-  const typename Kernel::Point_3& v2,
-  const TM2_tree& tm2_tree,
-  const typename Kernel::FT squared_error_bound)
+typename Kernel::FT recursive_hausdorff_subdivision(const typename Kernel::Point_3& v0,
+                                                    const typename Kernel::Point_3& v1,
+                                                    const typename Kernel::Point_3& v2,
+                                                    const TM2_tree& tm2_tree,
+                                                    const typename Kernel::FT squared_error_bound)
 {
   // If all edge lengths of the triangle are below the error_bound,
   // return maximum of the distances of the three points to TM2 (via TM2_tree).
-  const auto max_squared_edge_length =
-  (CGAL::max)(
-    (CGAL::max)(
-      CGAL::squared_distance(v0, v1),
-      CGAL::squared_distance(v0, v2)),
-    CGAL::squared_distance(v1, v2));
+  const auto max_squared_edge_length = (CGAL::max)((CGAL::max)(CGAL::squared_distance(v0, v1),
+                                                               CGAL::squared_distance(v0, v2)),
+                                                               CGAL::squared_distance(v1, v2));
 
-  if (max_squared_edge_length <  squared_error_bound) {
-    return (CGAL::max)(
-      (CGAL::max)(
-        CGAL::squared_distance(v0, tm2_tree.closest_point(v0)),
-        CGAL::squared_distance(v1, tm2_tree.closest_point(v1))),
-      CGAL::squared_distance(v2, tm2_tree.closest_point(v2)));
+  if(max_squared_edge_length < squared_error_bound)
+  {
+    return (CGAL::max)((CGAL::max)(CGAL::squared_distance(v0, tm2_tree.closest_point(v0)),
+                                   CGAL::squared_distance(v1, tm2_tree.closest_point(v1))),
+                                   CGAL::squared_distance(v2, tm2_tree.closest_point(v2)));
   }
 
   // Else subdivide the triangle and proceed recursively.
@@ -2193,34 +2213,31 @@ typename Kernel::FT recursive_hausdorff_subdivision(
   const auto v12 = midpoint(v1, v2);
 
   return (CGAL::max)(
-    (CGAL::max)(
-      recursive_hausdorff_subdivision<Kernel>(v0, v01, v02, tm2_tree, squared_error_bound),
-      recursive_hausdorff_subdivision<Kernel>(v1, v01, v12, tm2_tree, squared_error_bound)),
-    (CGAL::max)(
-      recursive_hausdorff_subdivision<Kernel>(v2 , v02, v12, tm2_tree, squared_error_bound),
-      recursive_hausdorff_subdivision<Kernel>(v01, v02, v12, tm2_tree, squared_error_bound)));
+           (CGAL::max)(recursive_hausdorff_subdivision<Kernel>(v0, v01, v02, tm2_tree, squared_error_bound),
+                       recursive_hausdorff_subdivision<Kernel>(v1, v01, v12, tm2_tree, squared_error_bound)),
+           (CGAL::max)(recursive_hausdorff_subdivision<Kernel>(v2 , v02, v12, tm2_tree, squared_error_bound),
+                       recursive_hausdorff_subdivision<Kernel>(v01, v02, v12, tm2_tree, squared_error_bound)));
 }
 
-template< class Concurrency_tag,
+template <class Concurrency_tag,
           class Kernel,
           class TriangleMesh1,
           class TriangleMesh2,
           class VPM1,
-          class VPM2 >
-double bounded_error_Hausdorff_naive_impl(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const typename Kernel::FT error_bound,
-  const VPM1& vpm1,
-  const VPM2& vpm2)
+          class VPM2>
+double bounded_error_Hausdorff_naive_impl(const TriangleMesh1& tm1,
+                                          const TriangleMesh2& tm2,
+                                          const typename Kernel::FT error_bound,
+                                          const VPM1& vpm1,
+                                          const VPM2& vpm2)
 {
-  using FT         = typename Kernel::FT;
-  using Point_3    = typename Kernel::Point_3;
+  using FT = typename Kernel::FT;
+  using Point_3 = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
-  using TM2_traits    = AABB_traits<Kernel, TM2_primitive>;
-  using TM2_tree      = AABB_tree<TM2_traits>;
+  using TM2_traits = AABB_traits<Kernel, TM2_primitive>;
+  using TM2_tree = AABB_tree<TM2_traits>;
 
   using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh1, VPM1>;
 
@@ -2239,8 +2256,8 @@ double bounded_error_Hausdorff_naive_impl(
   const TM1_face_to_triangle_map face_to_triangle_map(&tm1, vpm1);
 
   // Iterate over the faces of TM1.
-  for (const auto& face : faces(tm1)) {
-
+  for(const auto& face : faces(tm1))
+  {
     // Get the vertices of the face and pass them on to a recursive method.
     const Triangle_3 triangle = get(face_to_triangle_map, face);
     const Point_3 v0 = triangle.vertex(0);
@@ -2252,7 +2269,7 @@ double bounded_error_Hausdorff_naive_impl(
       v0, v1, v2, tm2_tree, squared_error_bound);
 
     // Store the largest lower bound.
-    if (triangle_bound > squared_lower_bound) {
+    if(triangle_bound > squared_lower_bound) {
       squared_lower_bound = triangle_bound;
     }
   }
@@ -2308,47 +2325,42 @@ double bounded_error_Hausdorff_naive_impl(
  *
  * @return the one-sided Hausdorff distance
  */
-template< class Concurrency_tag,
+template <class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
           class NamedParameters1 = parameters::Default_named_parameters,
-          class NamedParameters2 = parameters::Default_named_parameters >
-double bounded_error_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound = 0.0001,
-  const NamedParameters1& np1 = parameters::default_values(),
-  const NamedParameters2& np2 = parameters::default_values())
+          class NamedParameters2 = parameters::Default_named_parameters>
+double bounded_error_Hausdorff_distance(const TriangleMesh1& tm1,
+                                        const TriangleMesh2& tm2,
+                                        const double error_bound = 0.0001,
+                                        const NamedParameters1& np1 = parameters::default_values(),
+                                        const NamedParameters2& np2 = parameters::default_values())
 {
-  CGAL_assertion_code(
-    const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
-  CGAL_assertion_msg(is_triangle,
-    "Both meshes must be triangulated to compute this distance!");
-
   using Traits = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
   using FT = typename Traits::FT;
 
-  const auto vpm1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::vertex_point),
-    get_const_property_map(vertex_point, tm1));
-  const auto vpm2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::vertex_point),
-    get_const_property_map(vertex_point, tm2));
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  const bool match_faces1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::match_faces), true);
-  const bool match_faces2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::match_faces), true);
+  CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
+
+  const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm1));
+  const auto vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm2));
+
+  const bool match_faces1 = choose_parameter(get_parameter(np1, internal_np::match_faces), true);
+  const bool match_faces2 = choose_parameter(get_parameter(np2, internal_np::match_faces), true);
   const bool match_faces = match_faces1 && match_faces2;
 
-  auto out = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::output_iterator),
-    CGAL::Emptyset_iterator());
+  auto out = choose_parameter(get_parameter(np1, internal_np::output_iterator),
+                              CGAL::Emptyset_iterator());
 
-  CGAL_precondition(error_bound >= 0.0);
+  CGAL_precondition(error_bound >= 0.);
   const FT error_threshold = static_cast<FT>(error_bound);
+
   return internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
-    tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out);
+        tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out);
 }
 
 /**
@@ -2362,49 +2374,43 @@ double bounded_error_Hausdorff_distance(
  * @return the symmetric Hausdorff distance
  * @see `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
  */
-template< class Concurrency_tag,
+template <class Concurrency_tag,
           class TriangleMesh1,
           class TriangleMesh2,
           class NamedParameters1 = parameters::Default_named_parameters,
-          class NamedParameters2 = parameters::Default_named_parameters >
-double bounded_error_symmetric_Hausdorff_distance(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1 = parameters::default_values(),
-  const NamedParameters2& np2 = parameters::default_values())
+          class NamedParameters2 = parameters::Default_named_parameters>
+double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
+                                                  const TriangleMesh2& tm2,
+                                                  const double error_bound,
+                                                  const NamedParameters1& np1 = parameters::default_values(),
+                                                  const NamedParameters2& np2 = parameters::default_values())
 {
-  CGAL_assertion_code(
-    const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
-  CGAL_assertion_msg(is_triangle,
-    "Both meshes must be triangulated to compute this distance!");
-
   using Traits = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
   using FT = typename Traits::FT;
 
-  const auto vpm1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::vertex_point),
-    get_const_property_map(vertex_point, tm1));
-  const auto vpm2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::vertex_point),
-    get_const_property_map(vertex_point, tm2));
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  const bool match_faces1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::match_faces), true);
-  const bool match_faces2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::match_faces), true);
+  CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
+
+  const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm1));
+  const auto vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm2));
+
+  const bool match_faces1 = choose_parameter(get_parameter(np1, internal_np::match_faces), true);
+  const bool match_faces2 = choose_parameter(get_parameter(np2, internal_np::match_faces), true);
   const bool match_faces = match_faces1 && match_faces2;
 
   // TODO: should we return a union of these realizing triangles?
-  auto out1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::output_iterator),
-    CGAL::Emptyset_iterator());
-  auto out2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::output_iterator),
-    CGAL::Emptyset_iterator());
+  auto out1 = choose_parameter(get_parameter(np1, internal_np::output_iterator),
+                               CGAL::Emptyset_iterator());
+  auto out2 = choose_parameter(get_parameter(np2, internal_np::output_iterator),
+                               CGAL::Emptyset_iterator());
 
-  CGAL_precondition(error_bound >= 0.0);
+  CGAL_precondition(error_bound >= 0.);
   const FT error_threshold = static_cast<FT>(error_bound);
+
   return internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
     tm1, tm2, error_threshold, -FT(1), match_faces, vpm1, vpm2, np1, np2, out1, out2);
 }
@@ -2436,97 +2442,91 @@ template< class Concurrency_tag,
           class TriangleMesh2,
           class NamedParameters1 = parameters::Default_named_parameters,
           class NamedParameters2 = parameters::Default_named_parameters>
-bool is_Hausdorff_distance_larger(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double distance_bound,
-  const double error_bound,
-  const NamedParameters1& np1 = parameters::default_values(),
-  const NamedParameters2& np2 = parameters::default_values())
+bool is_Hausdorff_distance_larger(const TriangleMesh1& tm1,
+                                  const TriangleMesh2& tm2,
+                                  const double distance_bound,
+                                  const double error_bound,
+                                  const NamedParameters1& np1 = parameters::default_values(),
+                                  const NamedParameters2& np2 = parameters::default_values())
 {
-  CGAL_assertion_code(
-    const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
-  CGAL_assertion_msg(is_triangle,
-    "Both meshes must be triangulated in order to be compared!");
-
-  using Traits = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
-  using FT = typename Traits::FT;
-
-  const auto vpm1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::vertex_point),
-    get_const_property_map(vertex_point, tm1));
-  const auto vpm2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::vertex_point),
-    get_const_property_map(vertex_point, tm2));
-
-  const bool match_faces1 = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::match_faces), true);
-  const bool match_faces2 = parameters::choose_parameter(
-    parameters::get_parameter(np2, internal_np::match_faces), true);
-  const bool match_faces = match_faces1 && match_faces2;
-
-  const bool use_one_sided = parameters::choose_parameter(
-    parameters::get_parameter(np1, internal_np::use_one_sided_hausdorff), true);
-  CGAL_precondition(error_bound >= 0.0);
-  const FT error_threshold = static_cast<FT>(error_bound);
-  CGAL_precondition(distance_bound >= 0.0);
-  const FT distance_threshold = static_cast<FT>(distance_bound);
-  auto stub = CGAL::Emptyset_iterator();
-
-  double hdist = -1.0;
-  if (use_one_sided) {
-    hdist = internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
-      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2, stub);
-  } else {
-    hdist = internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
-      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2, stub, stub);
-  }
-  CGAL_assertion(hdist >= 0.0);
-
-  #ifdef CGAL_HAUSDORFF_DEBUG
-  std::cout.precision(17);
-  std::cout << "- fin distance: " << hdist << std::endl;
-  std::cout << "- max distance: " << distance_bound << std::endl;
-  #endif
-  return hdist > distance_bound;
-}
-
-// Implementation of the naive Bounded Error Hausdorff distance.
-template< class Concurrency_tag,
-          class TriangleMesh1,
-          class TriangleMesh2,
-          class NamedParameters1 = parameters::Default_named_parameters,
-          class NamedParameters2 = parameters::Default_named_parameters >
-double bounded_error_Hausdorff_distance_naive(
-  const TriangleMesh1& tm1,
-  const TriangleMesh2& tm2,
-  const double error_bound,
-  const NamedParameters1& np1 = parameters::default_values(),
-  const NamedParameters2& np2 = parameters::default_values())
-{
-  CGAL_assertion_code(
-    const bool is_triangle = is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
-  CGAL_assertion_msg(is_triangle,
-    "Both meshes must be triangulated to compute this distance!");
-
   using Traits = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
   using FT = typename Traits::FT;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
-    get_const_property_map(vertex_point, tm1));
-  const auto vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
-    get_const_property_map(vertex_point, tm2));
+  CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
 
-  CGAL_precondition(error_bound >= 0.0);
+  const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm1));
+  const auto vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm2));
+
+  const bool match_faces1 = choose_parameter(get_parameter(np1, internal_np::match_faces), true);
+  const bool match_faces2 = choose_parameter(get_parameter(np2, internal_np::match_faces), true);
+  const bool match_faces = match_faces1 && match_faces2;
+  const bool use_one_sided = choose_parameter(get_parameter(np1, internal_np::use_one_sided_hausdorff), true);
+
+  CGAL_precondition(error_bound >= 0.);
+  const FT error_threshold = static_cast<FT>(error_bound);
+
+  CGAL_precondition(distance_bound >= 0.);
+  const FT distance_threshold = static_cast<FT>(distance_bound);
+  auto stub = CGAL::Emptyset_iterator();
+
+  double hdist = -1.0;
+  if(use_one_sided)
+  {
+    hdist = internal::bounded_error_one_sided_Hausdorff_impl<Concurrency_tag, Traits>(
+      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2, stub);
+  }
+  else
+  {
+    hdist = internal::bounded_error_symmetric_Hausdorff_impl<Concurrency_tag, Traits>(
+      tm1, tm2, error_threshold, distance_threshold, match_faces, vpm1, vpm2, np1, np2, stub, stub);
+  }
+  CGAL_assertion(hdist >= 0.);
+
+#ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout.precision(17);
+  std::cout << "- fin distance: " << hdist << std::endl;
+  std::cout << "- max distance: " << distance_bound << std::endl;
+#endif
+  return hdist > distance_bound;
+}
+
+// Implementation of the naive Bounded Error Hausdorff distance.
+template <class Concurrency_tag,
+          class TriangleMesh1,
+          class TriangleMesh2,
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
+double bounded_error_Hausdorff_distance_naive(const TriangleMesh1& tm1,
+                                              const TriangleMesh2& tm2,
+                                              const double error_bound,
+                                              const NamedParameters1& np1 = parameters::default_values(),
+                                              const NamedParameters2& np2 = parameters::default_values())
+{
+  using Traits = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
+  using FT = typename Traits::FT;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
+
+  const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm1));
+  const auto vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                                     get_const_property_map(vertex_point, tm2));
+
+  CGAL_precondition(error_bound >= 0.);
   const FT error_threshold = static_cast<FT>(error_bound);
   return internal::bounded_error_Hausdorff_naive_impl<Concurrency_tag, Traits>(
     tm1, tm2, error_threshold, vpm1, vpm2);
 }
 
-} } // end of namespace CGAL::Polygon_mesh_processing
-
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_DISTANCE_H
