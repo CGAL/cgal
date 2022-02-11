@@ -15,6 +15,10 @@ Release date: June 2022
 
 -   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
 
+### Combinatorial Maps
+
+- Removed old code deprecated in CGAL 4.9 and 4.10 (global fonctions, and information associated with darts).
+
 ### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.5/Manual/packages.html#PkgMesh3)
 
 -   Added the function
