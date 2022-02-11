@@ -18,6 +18,7 @@
 
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Polygon_mesh_processing/transform.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
@@ -298,6 +299,256 @@ void extrude_mesh(const InputMesh& input,
                                                                                 v);
   extrude_impl::Identity_functor top;
   extrude_mesh(input, output, bot,top, np_in, np_out);
+}
+
+/// \cond SKIP_IN_MANUAL
+namespace sweep_impl {
+
+template <class Kernel>
+void get_rotation(typename Kernel::FT angle,
+                  typename Kernel::Vector_3 axis,
+                  typename Kernel::Aff_transformation_3& rot)
+{
+  //create matrix of the rotation
+  const typename Kernel::RT c = cos(angle),
+                            s = sin(angle),
+                            x(axis.x()), y(axis.y()), z(axis.z());
+  typename Kernel::RT matrix[12] =
+  {
+    x*x*(1-c)+c, x*y*(1-c)-z*s, x*z*(1-c)+y*s, 0,
+    x*y*(1-c)+z*s, y*y*(1-c)+c, y*z*(1-c)-x*s, 0,
+    x*z*(1-c)-y*s, y*z*(1-c)+x*s, z*z*(1-c)+c, 0
+  };
+  rot = typename Kernel::Aff_transformation_3(matrix[0],matrix[1],matrix[2],
+                                              matrix[3],matrix[4],matrix[5],
+                                              matrix[6],matrix[7],matrix[8],
+                                              matrix[9],matrix[10],matrix[11]);
+}
+
+template<class Kernel>
+bool get_transfo(const typename Kernel::Point_3& p1,
+                 const typename Kernel::Point_3& p2,
+                 const typename Kernel::Point_3& p3,
+                 typename Kernel::Aff_transformation_3& rot,
+                 typename Kernel::FT& angle,
+                 bool split_angle = false)
+{
+  if(CGAL::collinear(p1,p2,p3)){
+    angle = 0;
+    return false;
+  }
+  //find the axis of the rotation:
+  typename Kernel::Vector_3 vec1(p1,p2), vec2(p2,p3);
+  typename Kernel::Vector_3 axis = CGAL::cross_product(vec1, vec2);
+  axis /= CGAL::approximate_sqrt(axis.squared_length());
+  //find the angle of the rotation:
+  angle = 180-CGAL::approximate_dihedral_angle(
+        p2, p2+axis,
+        p1, p3);
+  angle = split_angle ? angle * CGAL_PI/360.0
+                      : angle * CGAL_PI/180;
+
+  get_rotation<Kernel>(angle, axis, rot);
+  return true;
+}
+
+} // end of sweep_impl namespace
+
+/// \endcond
+
+/**
+ * \ingroup PMP_meshing_grp
+ *
+ * fills `output` with a closed mesh bounding the volume swept by `input`
+ * when moved along the path defined by the polyline `guide`.
+ * Note that initial position of `guide` does not influence
+ * the final result as it is translated to start on `initial`.
+ * If `use_rotational_term` is set to `true`, in addition to the translation
+ * applied to each layer, a rotation will also be applied using the angle between
+ * two consecutive segments along the path
+ * `output` is oriented so that the faces corresponding to `input`
+ * in `output` have the same orientation.
+ *
+ * \attention `output` may be self intersecting.
+ *
+ * @tparam InputMesh a model of the concept `FaceListGraph`
+ * @tparam OutputMesh a model of the concept `FaceListGraph` and `MutableFaceGraph`
+ * @tparam Point_3 point type from the same CGAL kernel as the point of the vertex point map used for `OutputMesh`.
+ * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
+ * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
+ *
+ * @param input an open surface mesh to extrude.
+ * @param output a surface mesh that will contain the result of the extrusion.
+ * @param v the vector defining the direction of the extrusion
+ * @param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `input`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<InputMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, input)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `input`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * @param np_out an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `output`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<OutputMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, output)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `output`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ */
+template <class InputMesh,
+          class OutputMesh,
+          class Polyline,
+          class CGAL_NP_TEMPLATE_PARAMETERS_1,
+          class CGAL_NP_TEMPLATE_PARAMETERS_2>
+void sweep_extrude(/* const */ InputMesh& input,
+                   const Polyline& guide,
+                   OutputMesh& output,
+                   bool use_rotational_term, // TODO: move to np
+                   const CGAL_NP_CLASS_1& np_in = parameters::default_values(),
+                   const CGAL_NP_CLASS_2& np_out = parameters::default_values())
+{
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
+
+  typedef typename boost::graph_traits<OutputMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<OutputMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename GetGeomTraits<InputMesh, CGAL_NP_CLASS_1>::type GT;
+  // GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+  typedef typename GetVertexPointMap < OutputMesh, CGAL_NP_CLASS_2>::type VPM_out;
+  VPM_out vpm_out = parameters::choose_parameter(parameters::get_parameter(np_out, internal_np::vertex_point),
+                                                    get_property_map(vertex_point, output));
+
+  typedef typename GT::Point_3 Point_3;
+  typedef typename GT::Vector_3 Vector_3;
+  typedef typename GT::Aff_transformation_3 Aff_transformation_3;
+
+  std::vector< std::vector< halfedge_descriptor > > previous_border_cycles, last_border_cycles;
+  copy_face_graph(input, output);
+  reverse_face_orientations(input);
+// NOTE: starting from here input will be used to hold the last layer and we will update it
+// accordingly all along the patch to be in the correct position for the last step.
+
+// translate guide points
+  std::vector<Point_3> guide_points(guide.begin(), guide.end());
+  std::size_t gs = guide.size();
+
+  Vector_3 initial_trans(guide_points[0], get(vpm_out, *output.vertices().begin()));
+  for (std::size_t i=0; i<gs; ++i)
+    guide_points[i] = guide_points[i] + initial_trans;
+
+// collect halfedges per boundary cycle of the first layer (using input that is reversed on purpose)
+  std::size_t nb_input_hedges = num_halfedges(input);
+  std::vector<bool> handled(nb_input_hedges,false);
+  for(halfedge_descriptor h : input.halfedges())
+    if (is_border(h, input) && !handled[h])
+    {
+      previous_border_cycles.resize(previous_border_cycles.size()+1);
+      last_border_cycles.resize(last_border_cycles.size()+1);
+      do{
+        previous_border_cycles.back().push_back(h);
+        last_border_cycles.back().push_back(h);
+        handled[h]=true;
+        h=input.next(h);
+      }
+      while(previous_border_cycles.back().front()!=h);
+    }
+  if (previous_border_cycles.empty()) return;
+
+  // create the middle parts
+  std::size_t nb_strips = guide.size()-1;
+  for (std::size_t s=1; s<nb_strips; ++s)
+  {
+    Vector_3 dir = guide_points[s] - guide_points[s-1];
+
+    // transformations
+    Aff_transformation_3 trans(CGAL::TRANSLATION, dir);
+    Aff_transformation_3 to_origin(CGAL::TRANSLATION, guide_points[s]-CGAL::ORIGIN);
+    Aff_transformation_3 rot;
+    transform(trans, input); // update for last layer
+
+    double angle = 0;
+    if (use_rotational_term)
+    {
+      sweep_impl::get_transfo<GT>(guide_points[s-1], guide_points[s], guide_points[s+1], rot, angle, false);
+      // update for last layer
+      transform(to_origin.inverse(), input);
+      transform(rot, input);
+      transform(to_origin, input);
+    }
+
+    for (std::size_t ci=0;ci<previous_border_cycles.size();++ci)
+    {
+      std::size_t nbh = previous_border_cycles[ci].size();
+      std::vector<halfedge_descriptor> current_hedges(nbh);
+
+      for(std::size_t i=0; i<nbh; ++i)
+      {
+        current_hedges[i] = output.add_edge();
+        vertex_descriptor v = output.add_vertex();
+        output.set_target( current_hedges[i], v );
+        output.set_halfedge(v, current_hedges[i]);
+        output.point(v) = output.point( output.source(previous_border_cycles[ci][i]) );
+        // transform the points
+        output.point(v)=output.point(v).transform(trans);
+        if (use_rotational_term)
+        {
+          output.point(v)=output.point(v).transform(to_origin.inverse());
+          output.point(v)=output.point(v).transform(rot);
+          output.point(v)=output.point(v).transform(to_origin);
+        }
+      }
+
+      for(std::size_t i=0; i<nbh; ++i)
+      {
+        std::size_t j = (i+1)%nbh;
+        vertex_descriptor v = output.target(current_hedges[i]);
+        output.set_target(output.opposite(current_hedges[j]), v);
+        output.set_next(current_hedges[i], current_hedges[j]);
+        output.set_next(output.opposite(current_hedges[j]),
+                        output.opposite(current_hedges[i]));
+      }
+
+      extrude_impl::create_strip(previous_border_cycles[ci], current_hedges, output);
+
+      for(std::size_t i=0; i<nbh; ++i)
+      {
+        previous_border_cycles[ci][i]=output.opposite(current_hedges[i]);
+      }
+    }
+  }
+
+  // handle the last strip
+  CGAL_assertion(!output.has_garbage());
+  std::size_t h_shift = output.num_halfedges();
+
+  //translate the last layer
+  Vector_3 dir = guide_points[gs-1] - guide_points[gs-2];
+  for (vertex_descriptor v : input.vertices())
+    input.point( v ) = input.point( v ) + dir;
+
+  output.join(input);
+
+  for (std::size_t i=0; i<last_border_cycles.size(); ++i)
+  {
+    std::size_t nbh=last_border_cycles[i].size();
+    for (std::size_t k=0; k<nbh; ++k)
+    {
+      last_border_cycles[i][k] = halfedge_descriptor( last_border_cycles[i][k].idx() + h_shift );
+      CGAL_assertion( is_border(last_border_cycles[i][k], output) );
+    }
+    extrude_impl::create_strip(previous_border_cycles[i], last_border_cycles[i], output);
+  }
 }
 
 }} //end CGAL::PMP
