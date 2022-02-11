@@ -178,7 +178,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
   halfedge_range = HalfedgeRange(new_range.begin(), new_range.end());
 
-  CGAL_postcondition(halfedge_range.size() == initial_n - collapsed_n);
+  CGAL_postcondition(halfedge_range.size() <= initial_n - collapsed_n);
 }
 
 // Adapted from <CGAL/AABB_tree/internal/AABB_traversal_traits.h>

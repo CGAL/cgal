@@ -103,7 +103,7 @@ void test_CR_for(const NT& f){
     // try chinese remainder
     do{
         // chinese remainder failed if q > 2*max_coeff(f)
-         CGAL_postcondition_msg(pq < p*(2*max_coeff), " chinese remainder failed ");
+         assert(pq < p*(2*max_coeff));
 
         prime_index++;
         if(prime_index < 1000){

@@ -157,11 +157,8 @@ class Polygon_2 {
     template <class InputIterator>
     Polygon_2(InputIterator first, InputIterator last,
               Traits p_traits = Traits())
-        : d_container(), traits(p_traits)
-    {
-      // Sun STL switches off member templates for binary backward compat.
-      std::copy(first, last, std::back_inserter(d_container));
-    }
+      : d_container(first,last), traits(p_traits)
+    {}
 
 #ifndef DOXYGEN_RUNNING
   Polygon_2& operator=(const Polygon_2&)=default;

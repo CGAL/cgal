@@ -12,6 +12,8 @@
 #ifndef CGAL_GENERALIZED_MAP_H
 #define CGAL_GENERALIZED_MAP_H 1
 
+#include <CGAL/assertions.h>
+
 #include <CGAL/Generalized_map_fwd.h>
 #include <CGAL/Combinatorial_map/internal/Combinatorial_map_utility.h>
 #include <CGAL/Generalized_map/internal/Generalized_map_group_functors.h>
@@ -781,14 +783,14 @@ namespace CGAL {
 
     void set_next(Dart_handle dh1, Dart_handle dh2)
     {
-      assert(!this->template is_free<0>(dh1));
+      CGAL_assertion(!this->template is_free<0>(dh1));
       this->template link_alpha<1>(this->template alpha<0>(dh1), dh2); }
 
     template<unsigned int dim>
     void set_opposite(Dart_handle dh1, Dart_handle dh2)
     {
-      assert(!this->template is_free<0>(dh1));
-      assert(!this->template is_free<0>(dh2));
+      CGAL_assertion(!this->template is_free<0>(dh1));
+      CGAL_assertion(!this->template is_free<0>(dh2));
       this->template link_alpha<dim>(this->template alpha<0>(dh1), dh2);
       this->template link_alpha<dim>(dh1, this->template alpha<0>(dh2));
     }
@@ -806,7 +808,7 @@ namespace CGAL {
 
     size_type number_of_halfedges() const
     {
-      assert(is_without_boundary(0));
+      CGAL_assertion(is_without_boundary(0));
       return number_of_darts()/2;
     }
 
@@ -1778,7 +1780,7 @@ namespace CGAL {
         if ( marks[acells[i]]==INVALID_MARK )
         {
           marks[acells[i]] = get_new_mark();
-          assert(is_whole_map_unmarked(marks[acells[i]]));
+          CGAL_assertion(is_whole_map_unmarked(marks[acells[i]]));
         }
       }
 
@@ -2656,9 +2658,9 @@ namespace CGAL {
         }
       }
 
-      assert(is_whole_map_unmarked(m1));
-      assert(is_whole_map_unmarked(markpush));
-      assert(map2.is_whole_map_unmarked(m2));
+      CGAL_postcondition(is_whole_map_unmarked(m1));
+      CGAL_postcondition(is_whole_map_unmarked(markpush));
+      CGAL_postcondition(map2.is_whole_map_unmarked(m2));
       free_mark(m1);
       free_mark(markpush);
       map2.free_mark(m2);
@@ -2795,11 +2797,11 @@ namespace CGAL {
 
         if (aorientationmark==INVALID_MARK)
         {
-          assert(is_whole_map_marked(orientationmark));
+          CGAL_assertion(is_whole_map_marked(orientationmark));
           free_mark(orientationmark);
         }
 
-        assert(is_whole_map_marked(ccmark));
+        CGAL_assertion(is_whole_map_marked(ccmark));
         free_mark(ccmark);
       }
 
@@ -2841,11 +2843,11 @@ namespace CGAL {
 
       if (aorientationmark==INVALID_MARK)
       {
-        assert(is_whole_map_unmarked(orientationmark));
+        CGAL_assertion(is_whole_map_unmarked(orientationmark));
         free_mark(orientationmark);
       }
 
-      assert(is_whole_map_unmarked(ccmark));
+      CGAL_postcondition(is_whole_map_unmarked(ccmark));
       free_mark(ccmark);
 
       return orientable;

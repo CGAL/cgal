@@ -13,6 +13,7 @@
 #define CGAL_FACE_GRAPH_WRAPPER_H 1
 
 #include <CGAL/license/Surface_mesh_topology.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Surface_mesh_topology/internal/Functors_for_face_graph_wrapper.h>
 #include <CGAL/Surface_mesh_topology/internal/Iterators_for_face_graph_wrapper.h>
@@ -23,6 +24,7 @@
 #include <CGAL/Generalized_map_fwd.h>
 #include <CGAL/Linear_cell_complex_fwd.h>
 #include <CGAL/Polygonal_schema_fwd.h>
+
 #include <bitset>
 
 namespace CGAL
@@ -614,7 +616,7 @@ public:
       if (marks[acells[i]]==INVALID_MARK )
       {
         marks[acells[i]]=get_new_mark();
-        assert(is_whole_map_unmarked(marks[acells[i]]));
+        CGAL_assertion(is_whole_map_unmarked(marks[acells[i]]));
       }
     }
 

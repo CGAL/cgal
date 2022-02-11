@@ -86,7 +86,7 @@ private:
 
   P random_point() const
   {
-    return P(r.get_double(m, M), r.get_double(m, M), r.get_double(m, M));
+    return P(FT(r.get_double(m, M)), FT(r.get_double(m, M)), FT(r.get_double(m, M)));
   }
 
   Pl pl(int a, int b, int c, int d)
@@ -224,7 +224,7 @@ private:
     std::cout << "Segment - Segment" << std::endl;
 
     // coplanar segments (hardcoded)
-    double z = std::sqrt(2.);
+    FT z(std::sqrt(2.));
     P p0{-1, 0, z};
     P p1{ 1, 0, z};
 
@@ -498,9 +498,9 @@ private:
     check_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(0,0,2), p(-1,0,2), p(0,-1,2)}, 4);
     check_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(-1,0,2), p(0,0,2), p(0,-1,2)}, 4);
 
-    check_squared_distance(T{p(1,2,3), P{4.2,5.3,-6}, p(7,-8,9)},
-                           T{P{10.1, 12, -10}, p(15, 14, -12), p(19, 45, -20)},
-                           CGAL::squared_distance(P{4.2,5.3,-6}, P{10.1, 12, -10}));
+    check_squared_distance(T{p(1,2,3), P{FT(4.2),FT(5.3),-6}, p(7,-8,9)},
+                           T{P{FT(10.1), 12, -10}, p(15, 14, -12), p(19, 45, -20)},
+                           CGAL::squared_distance(P{FT(4.2),FT(5.3),-6}, P{FT(10.1), 12, -10}));
 
     // min vertex-edge (hardcoded)
     check_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(1,1,0), p(2,1,0), p(1,2,0)}, 0.5);

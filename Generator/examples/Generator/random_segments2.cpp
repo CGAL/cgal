@@ -8,6 +8,7 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/Counting_iterator.h>
+#include <cassert>
 
 using namespace CGAL;
 
@@ -41,16 +42,16 @@ int main() {
     Count_iterator t2_end( t2, 50);
     std::copy( t2_begin, t2_end, std::back_inserter(segs));
 
-    CGAL_assertion( segs.size() == 100);
+    assert( segs.size() == 100);
     for ( Vector::iterator i = segs.begin(); i != segs.end(); i++){
-        CGAL_assertion( i->source().x() <=  250);
-        CGAL_assertion( i->source().x() >= -250);
-        CGAL_assertion( i->source().y() <=  250);
-        CGAL_assertion( i->source().y() >= -250);
-        CGAL_assertion( i->target().x() <=  250);
-        CGAL_assertion( i->target().x() >= -250);
-        CGAL_assertion( i->target().y() <=  250);
-        CGAL_assertion( i->target().y() >= -250);
+        assert( i->source().x() <=  250);
+        assert( i->source().x() >= -250);
+        assert( i->source().y() <=  250);
+        assert( i->source().y() >= -250);
+        assert( i->target().x() <=  250);
+        assert( i->target().x() >= -250);
+        assert( i->target().y() <=  250);
+        assert( i->target().y() >= -250);
     }
     return 0;
 }

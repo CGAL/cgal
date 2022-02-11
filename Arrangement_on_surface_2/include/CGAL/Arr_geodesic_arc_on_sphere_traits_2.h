@@ -1663,7 +1663,8 @@ public:
      * Once we do a better dispatching of the functors (LR-ident + TB-contraction),
      * an implementation of this signature becomes obsolete.
      */
-    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
+    Comparison_result operator()(const Point_2& /* p1 */,
+                                 const Point_2& /* p2 */) const
     {
       CGAL_error(); return EQUAL;
     }
@@ -3106,40 +3107,6 @@ public:
     return (*this);
   }
 
-  /*! Construct the minor arc from two endpoint directions. The minor arc
-   *  is the one with the smaller angle among the two geodesic arcs with
-   * the given endpoints.
-   * 1. Find out whether the arc is x-monotone.
-   * 2. If it is x-monotone,
-   *    2.1 Find out whether it is vertical, and
-   *    2.2 whether the target is larger than the source (directed right).
-   * The arc is vertical, iff
-   * 1. one of its endpoint direction pierces a pole, or
-   * 2. the projections onto the xy-plane coincide.
-   * \param source the source point.
-   * \param target the target point.
-   * \pre the source and target cannot be equal.
-   * \pre the source and target cannot be antipodal.
-   */
-  Arr_x_monotone_geodesic_arc_on_sphere_3
-  (const Arr_extended_direction_3& source,
-   const Arr_extended_direction_3& target) :
-    m_source(source),
-    m_target(target),
-    m_is_full(false),
-    m_is_degenerate(false),
-    m_is_empty(false)
-  {
-    // MSVC 10 complains when the casting below is not present probably due
-    // to a bug (in MSVC 10).
-    CGAL_precondition_code(Kernel kernel);
-    CGAL_precondition(!kernel.equal_3_object()
-                      (kernel.construct_opposite_direction_3_object()(m_source),
-                       (const typename Kernel::Direction_3&)(m_target)));
-    m_normal = construct_normal_3(m_source, m_target);
-    init();
-  }
-
   /*! Initialize a spherical_arc given that the two endpoint directions
    * have been set. It is assumed that the arc is the one with the smaller
    * angle among the two.
@@ -3528,109 +3495,6 @@ public:
   {
     CGAL_precondition(this->has_on(src));
     CGAL_precondition(this->has_on(trg));
-  }
-
-  /*! Construct a spherical_arc from two endpoint directions. It is assumed
-   * that the arc is the one with the smaller angle among the two.
-   * 1. Find out whether the arc is x-monotone.
-   * 2. If it is x-monotone,
-   *    2.1 Find out whether it is vertical, and
-   *    2.2 whether the target is larger than the source (directed right).
-   * The arc is vertical, iff
-   * 1. one of its endpoint direction pierces a pole, or
-   * 2. the projections onto the xy-plane coincide.
-   * \param source the source point.
-   * \param target the target point.
-   * \pre the source and target cannot be equal.
-   * \pre the source and target cannot be the opoosite of each other.
-   */
-  Arr_geodesic_arc_on_sphere_3(const Arr_extended_direction_3& source,
-                               const Arr_extended_direction_3& target)
-  {
-    this->set_source(source);
-    this->set_target(target);
-    this->set_is_full(false);
-    this->set_is_degenerate(false);
-    this->set_is_empty(false);
-
-    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel>         Traits;
-    typedef typename Kernel::Direction_2                        Direction_2;
-    typedef typename Kernel::Direction_3                        Direction_3;
-
-    Kernel kernel;
-    CGAL_precondition(!kernel.equal_3_object()(Direction_3(source),
-                                               Direction_3(target)));
-    CGAL_precondition(!kernel.equal_3_object()
-                      (kernel.construct_opposite_direction_3_object()(source),
-                       static_cast<const Direction_3&>(target)));
-    this->m_normal = this->construct_normal_3(source, target);
-
-    // Check whether one of the endpoints coincides with a pole: */
-    if (source.is_max_boundary()) {
-      this->set_is_vertical(true);
-      this->set_is_directed_right(false);
-      set_is_x_monotone(true);
-      return;
-    }
-    if (source.is_min_boundary()) {
-      this->set_is_vertical(true);
-      this->set_is_directed_right(true);
-      set_is_x_monotone(true);
-      return;
-    }
-    if (target.is_max_boundary()) {
-      this->set_is_vertical(true);
-      this->set_is_directed_right(true);
-      set_is_x_monotone(true);
-      return;
-    }
-    if (target.is_min_boundary()) {
-      this->set_is_vertical(true);
-      this->set_is_directed_right(false);
-      set_is_x_monotone(true);
-      return;
-    }
-
-    // None of the enpoints coincide with a pole:
-    Direction_3 normal = this->m_normal;
-    if (z_sign(normal) == ZERO) {
-      // The arc is vertical
-      this->set_is_vertical(true);
-      bool s_is_positive, t_is_positive, plane_is_positive;
-      CGAL::Sign xsign = x_sign(normal);
-      if (xsign == ZERO) {
-        s_is_positive = x_sign(source) == POSITIVE;
-        t_is_positive = x_sign(target) == POSITIVE;
-        plane_is_positive = y_sign(normal) == NEGATIVE;
-      } else {
-        s_is_positive = y_sign(source) == POSITIVE;
-        t_is_positive = y_sign(target) == POSITIVE;
-        plane_is_positive = xsign == POSITIVE;
-      }
-      set_is_x_monotone(s_is_positive == t_is_positive);
-      bool ccw = ((plane_is_positive && s_is_positive) ||
-                  (!plane_is_positive && !s_is_positive));
-      this->set_is_directed_right(ccw);
-      return;
-    }
-
-    // The arc is not vertical!
-    this->set_is_vertical(false);
-    Direction_2 s = Traits::project_xy(source);
-    Direction_2 t = Traits::project_xy(target);
-    Orientation orient = Traits::orientation(s, t);
-
-    const Direction_2& d = Traits::identification_xy();
-    if (orient == LEFT_TURN) {
-      this->set_is_directed_right(true);
-      set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(d, s, t));
-      return;
-    }
-
-    // (orient == RIGHT_TURN)
-    this->set_is_directed_right(false);
-    set_is_x_monotone(!kernel.counterclockwise_in_between_2_object()(d, t, s));
-    return;
   }
 
   /*! Construct a spherical_arc from two endpoint directions contained

@@ -17,6 +17,7 @@
 #include <CGAL/Combinatorial_map/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Origin.h>
+#include <CGAL/assertions.h>
 
 #include<map>
 
@@ -516,7 +517,7 @@ namespace CGAL {
               {
                 for (++it2; it2!=it1end; )
                 {
-                  assert(*it1!=*it2);
+                  CGAL_assertion(*it1!=*it2);
                   if (!this->template is_opposite_exist<3>(*it2) &&
                       are_facets_opposite_and_same_geometry
                       (*it1, this->previous(*it2)))
