@@ -363,9 +363,6 @@ bool get_transfo(const typename Kernel::Point_3& p1,
  * when moved along the path defined by the polyline `guide`.
  * Note that initial position of `guide` does not influence
  * the final result as it is translated to start on `initial`.
- * If `use_rotational_term` is set to `true`, in addition to the translation
- * applied to each layer, a rotation will also be applied using the angle between
- * two consecutive segments along the path
  * `output` is oriented so that the faces corresponding to `input`
  * in `output` have the same orientation.
  *
@@ -373,7 +370,7 @@ bool get_transfo(const typename Kernel::Point_3& p1,
  *
  * @tparam InputMesh a model of the concept `FaceListGraph`
  * @tparam OutputMesh a model of the concept `FaceListGraph` and `MutableFaceGraph`
- * @tparam Point_3 point type from the same CGAL kernel as the point of the vertex point map used for `OutputMesh`.
+ * @tparam Polyline a model of `SinglePassRange` containing points from the same CGAL kernel as the point of the vertex point map used for `OutputMesh`.
  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  *
@@ -390,6 +387,14 @@ bool get_transfo(const typename Kernel::Point_3& p1,
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, input)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
  *                     should be available for the vertices of `input`.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{use_rotations}
+ *     \cgalParamDescription{If `false`, `input` will be only translated along `guide`.
+ *                           If `true`, in addition to the translation applied to each layer,
+ *                           a rotation will also be applied using the angle between
+ *                           two consecutive segments along the path.}
+ *     \cgalParamType{`bool`}
+ *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -414,7 +419,6 @@ template <class InputMesh,
 void sweep_extrude(/* const */ InputMesh& input,
                    const Polyline& guide,
                    OutputMesh& output,
-                   bool use_rotational_term, // TODO: move to np
                    const CGAL_NP_CLASS_1& np_in = parameters::default_values(),
                    const CGAL_NP_CLASS_2& np_out = parameters::default_values())
 {
@@ -426,8 +430,11 @@ void sweep_extrude(/* const */ InputMesh& input,
   typedef typename GetGeomTraits<InputMesh, CGAL_NP_CLASS_1>::type GT;
   // GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   typedef typename GetVertexPointMap < OutputMesh, CGAL_NP_CLASS_2>::type VPM_out;
-  VPM_out vpm_out = parameters::choose_parameter(parameters::get_parameter(np_out, internal_np::vertex_point),
-                                                    get_property_map(vertex_point, output));
+  VPM_out vpm_out = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
+                                     get_property_map(vertex_point, output));
+
+  bool use_rotational_term =
+    choose_parameter(get_parameter(np_in, internal_np::use_rotations), true);
 
   typedef typename GT::Point_3 Point_3;
   typedef typename GT::Vector_3 Vector_3;

@@ -48,7 +48,7 @@ int main()
   PMP::reverse_face_orientations(mesh);
   std::ofstream("in.off") << mesh;
 
-  PMP::sweep_extrude(mesh, guide, out, true);
+  PMP::sweep_extrude(mesh, guide, out);
 
   std::ofstream("swept_volume.off") << out;
 
