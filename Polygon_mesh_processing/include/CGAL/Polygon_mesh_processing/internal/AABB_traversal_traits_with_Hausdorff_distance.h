@@ -420,41 +420,24 @@ public:
     if(m_early_quit)
       return std::make_pair(false, FT(0));
 
-    // Have reached a node, determine whether or not to enter it.
-    // Get the bounding box of the nodes.
-    const auto bbox = node.bbox();
+    // Compute an upper bound on the distance between the closest point in TM2 and
+    // the corner of the bbox farthest from the closest point. Thisis an upper bound
+    // on the Hausdorff distance between any children primitive of the node and TM2.
+    const Bbox_3 bbox = node.bbox();
+    const Point_3 bp(bbox.xmin(), bbox.ymin(), bbox.zmin());
+    const Point_3 closest = m_tm2_tree.closest_point(bp);
+    const Vector_3 difference(bp, closest);
+    const Vector_3 diag(bbox.x_span(), bbox.y_span(), bbox.z_span());
+    const FT dist = CGAL::approximate_sqrt(difference.squared_length())
+                    + CGAL::approximate_sqrt(diag.squared_length());
 
-    // Compute its center.
-    const Point_3 center = Point_3((bbox.xmin() + bbox.xmax()) / FT(2),
-                                   (bbox.ymin() + bbox.ymax()) / FT(2),
-                                   (bbox.zmin() + bbox.zmax()) / FT(2));
-
-    // Find the point from TM2 closest to the center.
-    const Point_3 closest = m_tm2_tree.closest_point(center);
-
-    // Compute the difference vector between the bbox center and the closest point in tm2.
-    Vector_3 difference = Vector_3(closest, center);
-
-    // Shift the vector to be the difference between the farthest corner
-    // of the bounding box away from the closest point on TM2.
-    FT diff_x = ((bbox.max)(0) - (bbox.min)(0)) / FT(2);
-    if(difference.x() < 0)
-      diff_x = diff_x * -FT(1);
-    FT diff_y = ((bbox.max)(1) - (bbox.min)(1)) / FT(2);
-    if(difference.y() < 0)
-      diff_y = diff_y * -FT(1);
-    FT diff_z = ((bbox.max)(2) - (bbox.min)(2)) / FT(2);
-    if(difference.z() < 0)
-      diff_z = diff_z * -FT(1);
-    difference = difference + Vector_3(diff_x, diff_y, diff_z); // it is (9) in the paper
-
-    // Compute distance from the farthest corner of the bbox to the closest point in TM2.
-    const FT dist = CGAL::approximate_sqrt(difference.squared_length());
-
-    // See Algorithm 1 here.
-    // If the distance is larger than the global lower bound, enter the node, i.e. return true.
-    CGAL_assertion(h_global_bounds.lower >= FT(0));
-    if(dist > h_global_bounds.lower)
+    // The Hausdorff distance grows with every TM1 face.
+    // If the upper bound is smaller than the current global lower bound,
+    // it is pointless to visit this node (and its children) because a larger distance
+    // has been found somewhere else.
+    std::cout << "dist & global lower bound: " << dist << " " << m_global_bounds.lower << std::endl;
+    CGAL_assertion(m_global_bounds.lower >= FT(0));
+    if(dist > m_global_bounds.lower)
       return std::make_pair(true , +dist);
     else
       return std::make_pair(false, FT(0));
