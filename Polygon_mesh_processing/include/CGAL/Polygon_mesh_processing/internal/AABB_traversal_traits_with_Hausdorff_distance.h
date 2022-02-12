@@ -358,27 +358,15 @@ public:
 
     // Set initial tight bounds.
     CGAL_assertion(primitive.id() != Face_handle_1());
-    std::pair<Face_handle_1, Face_handle_2> fpair;
-    const FT max_dist = get_maximum_distance(primitive.id(), fpair);
-    CGAL_assertion(max_dist >= FT(0));
-    CGAL_assertion(fpair.first == primitive.id());
-
-    Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(m_infinity_value);
-    initial_bounds.lower = max_dist + m_error_bound;
-    initial_bounds.upper = max_dist + m_error_bound;
-    initial_bounds.tm2_lface = fpair.second;
-    initial_bounds.tm2_uface = fpair.second;
+    Face_handle_1 tm1_lface = primitive.id();
 
     // Call Culling on B with the single triangle found.
-    TM2_hd_traits traversal_traits_tm2(
-      m_tm2_tree.traits(), m_tm2, m_vpm2,
-      initial_bounds, // tighter bounds, in the paper, they start from infinity, see below
-      // Bounds<Kernel, Face_handle_1, Face_handle_2>(m_infinity_value), // starting from infinity
-      m_infinity_value,
-      m_infinity_value,
-      m_infinity_value);
+    Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(m_infinity_value);
+    TM2_hd_traits traversal_traits_tm2(m_tm2_tree.traits(), m_tm2, m_vpm2,
+                                       initial_bounds,
+                                       m_infinity_value, m_infinity_value, m_infinity_value);
 
-    const Triangle_3 triangle = get(m_face_to_triangle_map, fpair.first);
+    const Triangle_3 triangle = get(m_face_to_triangle_map, tm1_lface);
     m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
 
     // Update global Hausdorff bounds according to the obtained local bounds.
@@ -394,7 +382,7 @@ public:
     if(local_bounds.lower > h_global_bounds.lower) // it is (6) in the paper, see also Algorithm 1
     {
       h_global_bounds.lower = local_bounds.lower;
-      h_global_bounds.lpair.first  = fpair.first;
+      h_global_bounds.lpair.first = tm1_lface;
       h_global_bounds.lpair.second = local_bounds.tm2_lface;
     }
 
@@ -402,14 +390,14 @@ public:
     if(local_bounds.upper > h_global_bounds.upper)  // it is (6) in the paper, see also Algorithm 1
     {
       h_global_bounds.upper = local_bounds.upper;
-      h_global_bounds.upair.first  = fpair.first;
+      h_global_bounds.upair.first = tm1_lface;
       h_global_bounds.upair.second = local_bounds.tm2_uface;
     }
     CGAL_assertion(h_global_bounds.upper >= h_global_bounds.lower);
 
     // Store the triangle given as primitive here as candidate triangle
     // together with the local bounds it obtained to send it to subdivision later.
-    m_candidate_triangles.push(Candidate(triangle, local_bounds, fpair.first));
+    m_candidate_triangles.emplace(triangle, local_bounds, tm1_lface);
   }
 
   // Determine whether child nodes will still contribute to a larger
