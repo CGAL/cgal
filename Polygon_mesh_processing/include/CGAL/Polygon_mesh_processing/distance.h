@@ -1594,15 +1594,20 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
         CGAL_assertion(local_bounds.lower >= FT(0));
         CGAL_assertion(local_bounds.upper >= FT(0));
         CGAL_assertion(local_bounds.upper >= local_bounds.lower);
-
         CGAL_assertion(local_bounds.lpair == local_bounds.default_face_pair());
         CGAL_assertion(local_bounds.upair == local_bounds.default_face_pair());
 
+        // The global lower bound only grows as more vertices are added through subdivision
         if(local_bounds.lower > global_bounds.lower)
         {
           global_bounds.lower = local_bounds.lower;
           global_bounds.lpair.second = local_bounds.tm2_lface;
         }
+
+        // The global upper bound is:
+        //   max_{query in TM1} min_{primitive in TM2} max_{v in query} (d(v, primitive))
+        // which can go down, so it is recomputed only once splitting is finished,
+        // through the top value of the PQ
 
         // Add the subtriangle to the candidate list.
         candidate_triangles.push(Candidate(sub_triangles[i], local_bounds, triangle_and_bound.tm1_face));
@@ -1612,16 +1617,9 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
       const FT current_max = candidate_triangles.top().bounds.upper;
       CGAL_assertion(current_max >= FT(0));
 
-      if(current_max > global_bounds.lower)
-      {
-        global_bounds.upper = current_max;
-        global_bounds.upair.second = candidate_triangles.top().bounds.tm2_uface;
-      }
-      else
-      {
-        global_bounds.upper = global_bounds.lower;
-        global_bounds.upair.second = global_bounds.lpair.second;
-      }
+      global_bounds.upper = current_max;
+      global_bounds.upair.second = candidate_triangles.top().bounds.tm2_uface;
+
     }
   }
 

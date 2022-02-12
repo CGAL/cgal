@@ -69,19 +69,14 @@ struct Candidate_triangle
   Candidate_bounds bounds;
   Face_handle_1 tm1_face;
 
-  // TODO: no need to use bounds.lower?
-  bool operator>(const Candidate_triangle& other) const
-  {
-    CGAL_assertion(bounds.upper >= FT(0));
-    CGAL_assertion(other.bounds.upper >= FT(0));
-    return bounds.upper < other.bounds.upper;
-  }
-
+  // Comparator for the priority queue.
+  // Provide std::less for Candidate_triangle to have the largest 'upper' value at the top of the PQ
   bool operator<(const Candidate_triangle& other) const
   {
-    CGAL_assertion(bounds.upper >= FT(0));
-    CGAL_assertion(other.bounds.upper >= FT(0));
-    return bounds.upper > other.bounds.upper;
+    CGAL_precondition(bounds.upper >= FT(0));
+    CGAL_precondition(other.bounds.upper >= FT(0));
+
+    return bounds.upper < other.bounds.upper;
   }
 };
 
