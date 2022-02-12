@@ -407,14 +407,10 @@ public:
     // early detect that he is behind his thresholds.
     if(m_distance_bound >= FT(0) && !m_early_quit)
     {
-      CGAL_assertion(h_global_bounds.lower >= FT(0));
-      CGAL_assertion(h_global_bounds.upper >= FT(0));
-      CGAL_assertion(h_global_bounds.upper >= h_global_bounds.lower);
+      CGAL_assertion(m_global_bounds.lower >= FT(0));
+      CGAL_assertion(m_global_bounds.upper >= m_global_bounds.lower);
 
-      const FT hdist = (h_global_bounds.lower + h_global_bounds.upper) / FT(2);
-      m_early_quit = (hdist >= m_distance_bound);
-      // std::cout << "- hdist: " <<  hdist << std::endl;
-      // std::cout << "- early quit: " << m_early_quit << std::endl;
+      m_early_quit = (m_global_bounds.lower > m_distance_bound);
     }
 
     if(m_early_quit)

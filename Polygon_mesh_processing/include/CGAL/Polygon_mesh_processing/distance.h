@@ -1480,18 +1480,14 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
 #endif
 
   CGAL_assertion(global_bounds.lower >= FT(0));
-  CGAL_assertion(global_bounds.upper >= FT(0));
   CGAL_assertion(global_bounds.upper >= global_bounds.lower);
 
   // If we already reached the user-defined max distance bound, we quit.
   if(traversal_traits_tm1.early_quit())
   {
-    CGAL_assertion(distance_bound >= FT(0));
-    const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
-    return hdist;
+    CGAL_assertion(global_bounds.lower > distance_bound);
+    return to_double(global_bounds.lower);
   }
-
-  CGAL_assertion(!traversal_traits_tm1.early_quit());
 
   // Second, we apply subdivision.
 #ifdef CGAL_HAUSDORFF_DEBUG
@@ -1508,10 +1504,14 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
     // Check if we can early quit.
     if(distance_bound >= FT(0))
     {
-      const FT hdist = (global_bounds.lower + global_bounds.upper) / FT(2);
-      const bool early_quit = (hdist >= distance_bound);
+      const bool early_quit = (global_bounds.lower > distance_bound);
       if(early_quit)
+      {
+#ifdef CGAL_HAUSDORFF_DEBUG
+        std::cout << "Quitting early" << std::endl;
+#endif
         break;
+      }
     }
 
     // Get the first triangle and its Hausdorff bounds from the candidate set.
