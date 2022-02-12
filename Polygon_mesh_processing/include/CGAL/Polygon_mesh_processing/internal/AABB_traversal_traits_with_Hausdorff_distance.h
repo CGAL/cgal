@@ -230,15 +230,16 @@ public:
     else if((bbox.max)(2) < tri_min.z())
       dist_z = tri_min.z() - (bbox.max)(2);
 
-    // Lower bound on the distance between the two bounding boxes is given
-    // as the length of the diagonal of the bounding box between them.
-    const FT dist = CGAL::approximate_sqrt(Vector_3(dist_x, dist_y, dist_z).squared_length());
+    const FT dist = CGAL::approximate_sqrt(square(dist_x) + square(dist_y) + square(dist_z));
 
-    // See Algorithm 2.
+
+    // Culling on TM2:
     // Check whether investigating the bbox can still lower the Hausdorff
-    // distance and improve the current global bound. If so, enter the box.
-    CGAL_assertion(h_local_bounds.lower >= FT(0));
-    if(dist <= h_local_bounds.lower)
+    // distance and improve the current global bound.
+    // The value 'dist' is the distance between bboxes and thus a lower bound on the distance
+    // between the query and the primitive.
+    CGAL_assertion(h_local_bounds.upper >= FT(0));
+    if(dist <= h_local_bounds.upper)
       return std::make_pair(true , -dist);
      else
       return std::make_pair(false, FT(0));
