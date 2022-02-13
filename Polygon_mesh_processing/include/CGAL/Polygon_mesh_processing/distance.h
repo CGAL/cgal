@@ -1565,33 +1565,43 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
       for(std::size_t i=0; i<4; ++i)
       {
         // Call culling on B with the single triangle found.
+        // @todo? For each sub-triangle `ts1` that has a vertex of `v` of the triangle `t1` being subdivided,
+        // we have a lower bound on `h(ts1, TM2)` because:
+        //  h_t1_lower = max_{vi in t1} min_{t2 in TM2} d(vi, t2)
+        // and
+        //  h_ts1_lower = max_{vi in ts1} min_{t2 in TM2} d(vi, t2) > min_{t2 in TM2} d(v, t2)
+        // But:
+        // - we don't keep that in memory (not very hard to change, simply put `m_hi_lower`
+        //   from the TM2 traversal traits into the candidate
+        // - what's the point? TM2 culling is performed on the local upper bound, so is there
+        //   a benefit from providing this value?
+        Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(infinity_value);
         TM2_hd_traits traversal_traits_tm2(tm2_tree.traits(), tm2, vpm2,
-                                           triangle_bounds,
-                                           infinity_value, infinity_value, infinity_value);
+                                           global_bounds, infinity_value);
         tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
 
         // Update global lower Hausdorff bound according to the obtained local bounds.
-        const auto& local_bounds = traversal_traits_tm2.get_local_bounds();
+        const auto& sub_triangle_bounds = traversal_traits_tm2.get_local_bounds();
 
-        CGAL_assertion(local_bounds.lower >= FT(0));
-        CGAL_assertion(local_bounds.upper >= local_bounds.lower);
-        CGAL_assertion(local_bounds.lpair == local_bounds.default_face_pair());
-        CGAL_assertion(local_bounds.upair == local_bounds.default_face_pair());
+        CGAL_assertion(sub_triangle_bounds.lower >= FT(0));
+        CGAL_assertion(sub_triangle_bounds.upper >= sub_triangle_bounds.lower);
+        CGAL_assertion(sub_triangle_bounds.lpair == sub_triangle_bounds.default_face_pair());
+        CGAL_assertion(sub_triangle_bounds.upair == sub_triangle_bounds.default_face_pair());
 
         // The global lower bound is the max of the per-face lower bounds
-        if(local_bounds.lower > global_bounds.lower)
+        if(sub_triangle_bounds.lower > global_bounds.lower)
         {
-          global_bounds.lower = local_bounds.lower;
-          global_bounds.lpair.second = local_bounds.tm2_lface;
+          global_bounds.lower = sub_triangle_bounds.lower;
+          global_bounds.lpair.second = sub_triangle_bounds.tm2_lface;
         }
 
         // The global upper bound is:
         //   max_{query in TM1} min_{primitive in TM2} max_{v in query} (d(v, primitive))
-        // which can go down, so it is recomputed only once splitting is finished,
-        // through the top value of the PQ
+        // which can go down, so it is only recomputed once splitting is finished,
+        // using the top value of the PQ
 
         // Add the subtriangle to the candidate list.
-        candidate_triangles.push(Candidate(sub_triangles[i], local_bounds, triangle_and_bound.tm1_face));
+        candidate_triangles.emplace(sub_triangles[i], sub_triangle_bounds, triangle_and_bound.tm1_face);
       }
 
       // Update global upper Hausdorff bound after subdivision.
@@ -1609,10 +1619,9 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
   std::cout << "* subdivision (sec.): " << timer.time() << std::endl;
 #endif
 
-  // Compute linear interpolation between the found lower and upper bounds.
   CGAL_assertion(global_bounds.lower >= FT(0));
-  CGAL_assertion(global_bounds.upper >= FT(0));
   CGAL_assertion(global_bounds.upper >= global_bounds.lower);
+
   const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
 
   // Get realizing triangles.
