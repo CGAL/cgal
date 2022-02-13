@@ -141,9 +141,12 @@ public:
   {
     // not in a single line for clarity: the lhs only goes down with every TM2 face,
     // while the rhs only goes up with every TM1 face
+// #define CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
+#ifndef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
     if(m_local_bounds.upper < m_global_bounds.lower) // Section 4.1, first §
       return false;
     else
+#endif
       return true;
   }
 
@@ -265,7 +268,11 @@ public:
   template<class Node>
   bool do_intersect(const Query& query, const Node& node) const
   {
+#ifdef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
+    return true;
+#else
     return this->do_intersect_with_priority(query, node).first;
+#endif
   }
 
   // Return the local Hausdorff bounds computed for the passed query triangle.
@@ -544,7 +551,11 @@ public:
   template<class Node>
   bool do_intersect(const Query& query, const Node& node)
   {
+#ifdef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
+    return true;
+#else
     return this->do_intersect_with_priority(query, node).first;
+#endif
   }
 
   template<class PrimitiveConstIterator>
