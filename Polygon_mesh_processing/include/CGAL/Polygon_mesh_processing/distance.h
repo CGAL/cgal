@@ -1431,14 +1431,8 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
   using Point_3 = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
-  using TM1_tree = TM1Tree;
-  using TM2_tree = TM2Tree;
-
-  using TM1_traits = typename TM1_tree::AABB_traits;
-  using TM2_traits = typename TM2_tree::AABB_traits;
-
-  using TM1_hd_traits = Hausdorff_primitive_traits_tm1<TM1_traits, Point_3, Kernel, TriangleMesh1, TriangleMesh2, VPM1, VPM2>;
-  using TM2_hd_traits = Hausdorff_primitive_traits_tm2<TM2_traits, Triangle_3, Kernel, TriangleMesh1, TriangleMesh2, VPM2>;
+  using TM1_hd_traits = Hausdorff_primitive_traits_tm1<Point_3, Kernel, TriangleMesh1, TriangleMesh2, VPM1, VPM2>;
+  using TM2_hd_traits = Hausdorff_primitive_traits_tm2<Triangle_3, Kernel, TriangleMesh1, TriangleMesh2, VPM2>;
 
   using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
   using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
@@ -1459,7 +1453,7 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
 #endif
 
   // Build traversal traits for tm1_tree.
-  TM1_hd_traits traversal_traits_tm1(tm1_tree.traits(), tm2_tree, tm1, tm2, vpm1, vpm2,
+  TM1_hd_traits traversal_traits_tm1(tm2_tree, tm1, tm2, vpm1, vpm2,
                                      error_bound, infinity_value, initial_bound, distance_bound);
 
   // Find candidate triangles in TM1, which might realise the Hausdorff bound.
@@ -1576,8 +1570,7 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
         // - what's the point? TM2 culling is performed on the local upper bound, so is there
         //   a benefit from providing this value?
         Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(infinity_value);
-        TM2_hd_traits traversal_traits_tm2(tm2_tree.traits(), tm2, vpm2,
-                                           global_bounds, infinity_value);
+        TM2_hd_traits traversal_traits_tm2(tm2, vpm2, global_bounds, infinity_value);
         tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
 
         // Update global lower Hausdorff bound according to the obtained local bounds.

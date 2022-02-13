@@ -84,8 +84,7 @@ struct Candidate_triangle
 };
 
 // Hausdorff primitive traits on TM2.
-template <class AABBTraits,
-          class Query,
+template <class Query,
           class Kernel,
           class TriangleMesh1,
           class TriangleMesh2,
@@ -111,22 +110,20 @@ public:
 
 private:
   // Input data.
-  const AABBTraits& m_traits;
   const TriangleMesh2& m_tm2;
   const VPM2 m_vpm2;
   const TM2_face_to_triangle_map m_face_to_triangle_map;
+  const Bbox_3 m_t1_bbox;
 
   const Global_bounds& m_global_bounds;
   Local_bounds m_local_bounds; // Local Hausdorff bounds for the query triangle.
   FT m_v0_lower, m_v1_lower, m_v2_lower;
 
 public:
-  Hausdorff_primitive_traits_tm2(const AABBTraits& traits,
-                                 const TriangleMesh2& tm2, const VPM2 vpm2,
+  Hausdorff_primitive_traits_tm2(const TriangleMesh2& tm2, const VPM2 vpm2,
                                  const Global_bounds& global_bounds,
                                  const FT infinity_value)
-    : m_traits(traits),
-      m_tm2(tm2), m_vpm2(vpm2),
+    : m_tm2(tm2), m_vpm2(vpm2),
       m_face_to_triangle_map(&m_tm2, m_vpm2),
       m_global_bounds(global_bounds),
       m_local_bounds(infinity_value),
@@ -299,8 +296,7 @@ public:
 };
 
 // Hausdorff primitive traits on TM1.
-template <class AABBTraits,
-          class Query,
+template <class Query,
           class Kernel,
           class TriangleMesh1,
           class TriangleMesh2,
@@ -316,7 +312,7 @@ class Hausdorff_primitive_traits_tm1
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
   using TM2_traits    = AABB_traits<Kernel, TM2_primitive>;
   using TM2_tree      = AABB_tree<TM2_traits>;
-  using TM2_hd_traits = Hausdorff_primitive_traits_tm2<TM2_traits, Triangle_3, Kernel, TriangleMesh1, TriangleMesh2, VPM2>;
+  using TM2_hd_traits = Hausdorff_primitive_traits_tm2<Triangle_3, Kernel, TriangleMesh1, TriangleMesh2, VPM2>;
 
   using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh1, VPM1>;
 
@@ -332,7 +328,6 @@ public:
 
 private:
   // Input data.
-  const AABBTraits& m_traits;
   const TriangleMesh1& m_tm1;
   const TriangleMesh2& m_tm2;
   const VPM1 m_vpm1;
@@ -352,15 +347,14 @@ private:
   Heap_type m_candidate_triangles;
 
 public:
-  Hausdorff_primitive_traits_tm1(const AABBTraits& traits, const TM2_tree& tree,
+  Hausdorff_primitive_traits_tm1(const TM2_tree& tree,
                                  const TriangleMesh1& tm1, const TriangleMesh2& tm2,
                                  const VPM1 vpm1, const VPM2 vpm2,
                                  const FT error_bound,
                                  const FT infinity_value,
                                  const FT initial_bound,
                                  const FT distance_bound)
-    : m_traits(traits),
-      m_tm1(tm1), m_tm2(tm2),
+    : m_tm1(tm1), m_tm2(tm2),
       m_vpm1(vpm1), m_vpm2(vpm2),
       m_tm2_tree(tree),
       m_face_to_triangle_map(&m_tm1, m_vpm1),
@@ -482,7 +476,7 @@ public:
     const Triangle_3 triangle = get(m_face_to_triangle_map, tm1_face);
 
     // Call culling on TM2 with the TM1 triangle.
-    TM2_hd_traits traversal_traits_tm2(m_tm2_tree.traits(), m_tm2, m_vpm2,
+    TM2_hd_traits traversal_traits_tm2(m_tm2, m_vpm2,
                                        m_global_bounds, m_infinity_value);
     m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
 
