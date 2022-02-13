@@ -1533,29 +1533,9 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
     {
       // Get the triangle that is to be subdivided and read its vertices.
       const Triangle_3& triangle_for_subdivision = triangle_and_bound.triangle;
-      const Point_3 v0 = triangle_for_subdivision.vertex(0);
-      const Point_3 v1 = triangle_for_subdivision.vertex(1);
-      const Point_3 v2 = triangle_for_subdivision.vertex(2);
-
-      // Check second stopping condition: All three vertices of the triangle
-      // are projected onto the same triangle in TM2.
-      const auto closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
-      const auto closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
-      const auto closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
-      CGAL_assertion(closest_triangle_v0.second != boost::graph_traits<TriangleMesh2>::null_face());
-      CGAL_assertion(closest_triangle_v1.second != boost::graph_traits<TriangleMesh2>::null_face());
-      CGAL_assertion(closest_triangle_v2.second != boost::graph_traits<TriangleMesh2>::null_face());
-
-      if((closest_triangle_v0.second == closest_triangle_v1.second) &&
-         (closest_triangle_v1.second == closest_triangle_v2.second))
-      {
-        // The upper bound of this triangle is the actual Hausdorff distance of
-        // the triangle to the second mesh. Use it as new global lower bound.
-        // Here, we update the reference to the realizing triangle as this is the best current guess.
-        global_bounds.lower = triangle_bounds.upper;
-        global_bounds.lpair.second = triangle_bounds.tm2_uface;
-        continue;
-      }
+      const Point_3& v0 = triangle_for_subdivision.vertex(0);
+      const Point_3& v1 = triangle_for_subdivision.vertex(1);
+      const Point_3& v2 = triangle_for_subdivision.vertex(2);
 
       // Check third stopping condition: All edge lengths of the triangle are
       // smaller than the given error bound, we cannot get results beyond this bound.
