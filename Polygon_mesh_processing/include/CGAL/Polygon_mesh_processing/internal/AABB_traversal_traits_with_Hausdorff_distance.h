@@ -18,13 +18,16 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/Bbox_3.h>
 
-#include <vector>
 #include <iostream>
+#include <queue>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
-template< class Kernel,
+template <class Kernel,
           class Face_handle_1,
           class Face_handle_2>
 struct Bounds
@@ -37,7 +40,7 @@ struct Bounds
   FT lower = m_infinity_value;
   FT upper = m_infinity_value;
 
-  // TODO: update
+  // @todo update
   Face_handle_2 tm2_lface = Face_handle_2();
   Face_handle_2 tm2_uface = Face_handle_2();
   std::pair<Face_handle_1, Face_handle_2> lpair = default_face_pair();
@@ -129,11 +132,11 @@ public:
   void intersection(const Query& query, const Primitive& primitive)
   {
     /* Have reached a single triangle, process it.
-    / Determine the distance according to
+    / Determine the upper distance according to
     /   min_{b \in primitive} ( max_{vertex in query} ( d(vertex, b) ) )
     /
     / Here, we only have one triangle in B, i.e. tm2. Thus, it suffices to
-    / compute the distance of the vertices of the query triangles to the
+    / compute the distance of the vertices of the query triangle to the
     / primitive triangle and use the maximum of the obtained distances.
     */
 
@@ -163,7 +166,6 @@ public:
     const FT distance_upper = (CGAL::max)((CGAL::max)(v0_dist, v1_dist), v2_dist); // it is () part of (10) in the paper
 
     CGAL_assertion(distance_lower >= FT(0));
-    CGAL_assertion(distance_upper >= FT(0));
     CGAL_assertion(distance_upper >= distance_lower);
 
     // Since we are at the level of a single triangle in TM2, distance_upper is
@@ -195,9 +197,9 @@ public:
     const auto bbox = node.bbox();
 
     // Get the vertices of the query triangle.
-    const Point_3 v0 = query.vertex(0);
-    const Point_3 v1 = query.vertex(1);
-    const Point_3 v2 = query.vertex(2);
+    const Point_3& v0 = query.vertex(0);
+    const Point_3& v1 = query.vertex(1);
+    const Point_3& v2 = query.vertex(2);
 
     // Find the axis aligned bbox of the triangle.
     const Point_3 tri_min = Point_3((CGAL::min)((CGAL::min)(v0.x(), v1.x()), v2.x()),
@@ -232,10 +234,7 @@ public:
 
     const FT dist = CGAL::approximate_sqrt(square(dist_x) + square(dist_y) + square(dist_z));
 
-
     // Culling on TM2:
-    // Check whether investigating the bbox can still lower the Hausdorff
-    // distance and improve the current global bound.
     // The value 'dist' is the distance between bboxes and thus a lower bound on the distance
     // between the query and the primitive.
     CGAL_assertion(h_local_bounds.upper >= FT(0));
@@ -309,7 +308,7 @@ public:
   using Priority = FT;
   Hausdorff_primitive_traits_tm1(const AABBTraits& traits, const TM2_tree& tree,
                                  const TriangleMesh1& tm1, const TriangleMesh2& tm2,
-                                 const VPM1& vpm1, const VPM2& vpm2,
+                                 const VPM1 vpm1, const VPM2 vpm2,
                                  const FT error_bound,
                                  const FT infinity_value,
                                  const FT initial_bound,
@@ -330,9 +329,9 @@ public:
     CGAL_precondition(m_infinity_value >= FT(0));
     CGAL_precondition(m_initial_bound >= m_error_bound);
 
-    // Initialize the global bounds with 0, they will only grow.
-    // If we leave zero here, then we are very slow even for big input error bounds!
-    // Instead, we can use m_error_bound as our initial guess to filter out all pairs,
+    // Bounds grow with every face of TM1 (Equation (6)).
+    // If we initialize to zero here, then we are very slow even for big input error bounds!
+    // Instead, we can use m_error_bound as our initial guess to filter out all pairs
     // which are already within this bound. It makes the code faster for close meshes.
     // We also use initial_lower_bound here to accelerate the symmetric distance computation.
     h_global_bounds.lower = m_initial_bound; // = FT(0);
@@ -369,10 +368,7 @@ public:
     const auto local_bounds = traversal_traits_tm2.get_local_bounds();
 
     CGAL_assertion(local_bounds.lower >= FT(0));
-    CGAL_assertion(local_bounds.upper >= FT(0));
     CGAL_assertion(local_bounds.upper >= local_bounds.lower);
-    CGAL_assertion(local_bounds.lpair == initial_bounds.default_face_pair());
-    CGAL_assertion(local_bounds.upair == initial_bounds.default_face_pair());
 
     CGAL_assertion(h_global_bounds.lower >= FT(0));
     if(local_bounds.lower > h_global_bounds.lower) // it is (6) in the paper, see also Algorithm 1
@@ -402,9 +398,8 @@ public:
   std::pair<bool, Priority>
   do_intersect_with_priority(const Query&, const Node& node)
   {
-    // Check if we can stop already here. Since our bounds only grow, in case, we are
-    // above the user-defined max distance bound, we return. This way, the user can
-    // early detect that he is behind his thresholds.
+    // Bounds only grow with each additional face of TM1 (Eq. (6)), so if the lower bound is already
+    // larger, we can return early.
     if(m_distance_bound >= FT(0) && !m_early_quit)
     {
       CGAL_assertion(m_global_bounds.lower >= FT(0));
