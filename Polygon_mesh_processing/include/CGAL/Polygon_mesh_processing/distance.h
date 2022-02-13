@@ -1522,8 +1522,7 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
     CGAL_assertion(triangle_bounds.lower >= FT(0));
     CGAL_assertion(triangle_bounds.upper >= triangle_bounds.lower);
 
-    if((triangle_bounds.upper > global_bounds.lower) &&
-       (triangle_bounds.upper - triangle_bounds.lower > error_bound))
+    if(triangle_bounds.upper - triangle_bounds.lower > error_bound)
     {
       // Get the triangle that is to be subdivided and read its vertices.
       const Triangle_3& triangle_for_subdivision = triangle_and_bound.triangle;
