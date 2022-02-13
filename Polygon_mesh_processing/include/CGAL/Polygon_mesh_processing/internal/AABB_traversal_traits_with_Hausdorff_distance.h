@@ -109,21 +109,22 @@ public:
   using Priority = FT;
 
 private:
-  // Input data.
+  const Bbox_3& m_t1_bbox;
   const TriangleMesh2& m_tm2;
   const VPM2 m_vpm2;
   const TM2_face_to_triangle_map m_face_to_triangle_map;
-  const Bbox_3 m_t1_bbox;
 
   const Global_bounds& m_global_bounds;
   Local_bounds m_local_bounds; // Local Hausdorff bounds for the query triangle.
   FT m_v0_lower, m_v1_lower, m_v2_lower;
 
 public:
-  Hausdorff_primitive_traits_tm2(const TriangleMesh2& tm2, const VPM2 vpm2,
+  Hausdorff_primitive_traits_tm2(const Bbox_3& t1_bbox,
+                                 const TriangleMesh2& tm2, const VPM2 vpm2,
                                  const Global_bounds& global_bounds,
                                  const FT infinity_value)
-    : m_tm2(tm2), m_vpm2(vpm2),
+    : m_t1_bbox(t1_bbox),
+      m_tm2(tm2), m_vpm2(vpm2),
       m_face_to_triangle_map(&m_tm2, m_vpm2),
       m_global_bounds(global_bounds),
       m_local_bounds(infinity_value),
@@ -219,47 +220,33 @@ public:
   // Hausdorff distance and thus have to be entered.
   template<class Node>
   std::pair<bool, Priority>
-  do_intersect_with_priority(const Query& query, const Node& node) const
+  do_intersect_with_priority(const Query&, const Node& node) const
   {
-    // Get the bounding box of the nodes.
-    const auto bbox = node.bbox();
-
-    // Get the vertices of the query triangle.
-    const Point_3& v0 = query.vertex(0);
-    const Point_3& v1 = query.vertex(1);
-    const Point_3& v2 = query.vertex(2);
-
-    // Find the axis aligned bbox of the triangle.
-    const Point_3 tri_min = Point_3((CGAL::min)((CGAL::min)(v0.x(), v1.x()), v2.x()),
-                                    (CGAL::min)((CGAL::min)(v0.y(), v1.y()), v2.y()),
-                                    (CGAL::min)((CGAL::min)(v0.z(), v1.z()), v2.z()));
-
-    const Point_3 tri_max = Point_3((CGAL::max)((CGAL::max)(v0.x(), v1.x()), v2.x()),
-                                    (CGAL::max)((CGAL::max)(v0.y(), v1.y()), v2.y()),
-                                    (CGAL::max)((CGAL::max)(v0.z(), v1.z()), v2.z()));
+    std::cout << "Check TM2 node..." << std::endl;
 
     // Compute a lower bound between the query (face of TM1) and a group of TM2 faces.
+    const Bbox_3 node_bbox = node.bbox();
 
     // Distance along the x-axis.
-    FT dist_x = FT(0);
-    if(tri_max.x() < (bbox.min)(0))
-      dist_x = (bbox.min)(0) - tri_max.x();
-    else if((bbox.max)(0) < tri_min.x())
-      dist_x = tri_min.x() - (bbox.max)(0);
+    double dist_x = 0.;
+    if(m_t1_bbox.xmax() < node_bbox.xmin())
+      dist_x = node_bbox.xmin() - m_t1_bbox.xmax();
+    else if(node_bbox.xmax() < m_t1_bbox.xmin())
+      dist_x = m_t1_bbox.xmin() - node_bbox.xmax();
 
     // Distance along the y-axis.
-    FT dist_y = FT(0);
-    if(tri_max.y() < (bbox.min)(1))
-      dist_y = (bbox.min)(1) - tri_max.y();
-     else if((bbox.max)(1) < tri_min.y())
-      dist_y = tri_min.y() - (bbox.max)(1);
+    double dist_y = 0.;
+    if(m_t1_bbox.ymax() < node_bbox.ymin())
+      dist_y = node_bbox.ymin() - m_t1_bbox.ymax();
+    else if(node_bbox.ymax() < m_t1_bbox.ymin())
+      dist_y = m_t1_bbox.ymin() - node_bbox.ymax();
 
     // Distance along the z-axis.
-    FT dist_z = FT(0);
-    if(tri_max.z() < (bbox.min)(2))
-      dist_z = (bbox.min)(2) - tri_max.z();
-    else if((bbox.max)(2) < tri_min.z())
-      dist_z = tri_min.z() - (bbox.max)(2);
+    double dist_z = 0.;
+    if(m_t1_bbox.zmax() < node_bbox.zmin())
+      dist_z = node_bbox.zmin() - m_t1_bbox.zmax();
+    else if(node_bbox.zmax() < m_t1_bbox.zmin())
+      dist_z = m_t1_bbox.zmin() - node_bbox.zmax();
 
     const FT dist = CGAL::approximate_sqrt(square(dist_x) + square(dist_y) + square(dist_z));
 
@@ -476,8 +463,8 @@ public:
     const Triangle_3 triangle = get(m_face_to_triangle_map, tm1_face);
 
     // Call culling on TM2 with the TM1 triangle.
-    TM2_hd_traits traversal_traits_tm2(m_tm2, m_vpm2,
-                                       m_global_bounds, m_infinity_value);
+    const Bbox_3 t1_bbox = triangle.bbox();
+    TM2_hd_traits traversal_traits_tm2(t1_bbox, m_tm2, m_vpm2, m_global_bounds, m_infinity_value);
     m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
 
     // Post traversal, we have computed h_lower(query, TM2) and h_upper(query, TM2)

@@ -1569,8 +1569,9 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
         //   from the TM2 traversal traits into the candidate
         // - what's the point? TM2 culling is performed on the local upper bound, so is there
         //   a benefit from providing this value?
+        const Bbox_3 t1_bbox = sub_triangles[i].bbox();
         Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(infinity_value);
-        TM2_hd_traits traversal_traits_tm2(tm2, vpm2, global_bounds, infinity_value);
+        TM2_hd_traits traversal_traits_tm2(t1_bbox, tm2, vpm2, global_bounds, infinity_value);
         tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
 
         // Update global lower Hausdorff bound according to the obtained local bounds.
