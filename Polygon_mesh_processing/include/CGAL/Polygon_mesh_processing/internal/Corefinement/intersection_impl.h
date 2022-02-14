@@ -31,6 +31,7 @@
 #include <boost/functional/hash.hpp>
 
 #include <stdexcept>
+#include <boost/unordered_map.hpp>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -196,7 +197,7 @@ class Intersection_of_triangle_meshes
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor, Box_policy> Box;
 
   typedef std::unordered_set<face_descriptor> Face_set;
-  typedef std::unordered_map<edge_descriptor, Face_set> Edge_to_faces;
+  typedef boost::unordered_map<edge_descriptor, Face_set> Edge_to_faces;
 
   static const bool Predicates_on_constructions_needed =
     Node_visitor::Predicates_on_constructions_needed;
