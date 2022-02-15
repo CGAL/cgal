@@ -288,18 +288,18 @@ void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
         {
           if (colors[0] == cube[ii])
             continue;
-          if (nb_colors == 1)
+          else if (nb_colors == 1)
           {
             ++nb_colors;
             colors[1] = cube[ii];
           }
-          if (nb_colors == 2)
+          else if (nb_colors == 2)
           {
             if (colors[1] == cube[ii])
               continue;
             else
             {
-              static_evaluate<Weights_type>(weights.image(), i, j, k) = (Weights_type)(255);
+              static_evaluate<Weights_type>(weights.image(), i, j, k) = (Weights_type)(1);
             }
           }
         }
