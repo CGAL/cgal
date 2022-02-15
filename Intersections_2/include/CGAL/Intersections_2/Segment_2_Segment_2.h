@@ -242,8 +242,8 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
     typename K::Compare_xy_2 compare_xy;
 
   // first try to filter using the bbox of the segments
-    if (certainly(less_xy(A2,B1))
-     || certainly(less_xy(B2,A1)))
+    if (less_xy(A2,B1)
+     || less_xy(B2,A1))
         return S2S2_inter_info(false);
 
     switch(make_certain(compare_xy(A1,B1))) {
