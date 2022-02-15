@@ -1615,7 +1615,9 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
   CGAL_assertion(global_bounds.lower >= FT(0));
   CGAL_assertion(global_bounds.upper >= global_bounds.lower);
 
-  const double hdist = CGAL::to_double((global_bounds.lower + global_bounds.upper) / FT(2));
+  // Return the lower bound such that if the correct value is in [0; lower_bound[, the result
+  // is still within error_bound (we have set lower_bound to error_bound initially)
+  const double hdist = to_double(global_bounds.lower);
 
   // Get realizing triangles.
   CGAL_assertion(global_bounds.lpair.first != boost::graph_traits<TriangleMesh1>::null_face());
