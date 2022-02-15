@@ -171,6 +171,10 @@ if(TARGET CGAL::CGAL_ImageIO)
       create_single_source_cgal_program("mesh_3D_weighted_image.cpp")
       target_link_libraries(mesh_3D_weighted_image
                             PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
+
+      create_single_source_cgal_program("mesh_3D_weighted_image_with_detection_of_features.cpp")
+      target_link_libraries(mesh_3D_weighted_image_with_detection_of_features
+                            PUBLIC CGAL::Eigen3_support CGAL::ITK_support)
     else(ITK_FOUND)
         message(STATUS "NOTICE: The examples that need ITK will not be compiled.")
     endif(ITK_FOUND)

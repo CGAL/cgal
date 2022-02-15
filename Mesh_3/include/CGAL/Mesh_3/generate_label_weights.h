@@ -253,6 +253,62 @@ CGAL::Image_3 generate_label_weights(const CGAL::Image_3& image,
   return CGAL::Image_3();
 }
 
+void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
+                                                CGAL::Image_3& weights)
+{
+  typedef unsigned char Weights_type; //from 0 t 255
+  typedef std::array<Weights_type, 8> Cube;
+
+  using CGAL::IMAGEIO::static_evaluate;
+
+  const double tx = image.tx();
+  const double ty = image.ty();
+  const double tz = image.tz();
+
+  for (std::size_t k = 0, end_k = image.zdim() - 1; k < end_k; ++k)
+  {
+    for (std::size_t j = 0, end_j = image.ydim() - 1; j < end_j; ++j)
+    {
+      for (std::size_t i = 0, end_i = image.xdim() - 1; i < end_i; ++i)
+      {
+        const Cube cube = {
+          static_evaluate<Weights_type>(image.image(), i  , j  , k),
+          static_evaluate<Weights_type>(image.image(), i + 1, j  , k),
+          static_evaluate<Weights_type>(image.image(), i  , j + 1, k),
+          static_evaluate<Weights_type>(image.image(), i + 1, j + 1, k),
+          static_evaluate<Weights_type>(image.image(), i  , j  , k + 1),
+          static_evaluate<Weights_type>(image.image(), i + 1, j  , k + 1),
+          static_evaluate<Weights_type>(image.image(), i  , j + 1, k + 1),
+          static_evaluate<Weights_type>(image.image(), i + 1, j + 1, k + 1),
+        };
+        std::array<Weights_type, 2> colors;
+        colors[0] = cube[0];
+        std::size_t nb_colors = 1;
+        for (int ii = 1; ii < 8; ++ii)
+        {
+          if (colors[0] == cube[ii])
+            continue;
+          if (nb_colors == 1)
+          {
+            ++nb_colors;
+            colors[1] = cube[ii];
+          }
+          if (nb_colors == 2)
+          {
+            if (colors[1] == cube[ii])
+              continue;
+            else
+            {
+              static_evaluate<Weights_type>(weights.image(), i, j, k) = (Weights_type)(255);
+            }
+          }
+        }
+      }
+    }
+    _writeImage(weights.image(), "weights-image_postprocessed.inr.gz");
+  }
+}
+
 }//namespace Mesh_3
 }//namespace CGAL
 
