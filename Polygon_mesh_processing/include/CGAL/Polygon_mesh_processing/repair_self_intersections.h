@@ -28,6 +28,7 @@
 #include <CGAL/Polyhedral_envelope.h>
 #endif
 
+#include <CGAL/property_map.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
@@ -1134,11 +1135,12 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
 
   std::vector<halfedge_descriptor> border_hedges;
   border_halfedges(faces(local_mesh), local_mesh, std::back_inserter(border_hedges));
-  typename TriangleMesh::template Property_map<edge_descriptor, bool> selected_edge = // @fixme BGL
-    local_mesh.template add_property_map<edge_descriptor, bool>("e:selected",false).first;
+
+  std::unordered_set<edge_descriptor> selected_edges;
+  CGAL::Boolean_property_map<std::unordered_set<edge_descriptor> > selected_edge_pmap(selected_edges);
 
   for(halfedge_descriptor h : border_hedges)
-    selected_edge[edge(h, local_mesh)] = true;
+    put(selected_edge_pmap, edge(h, local_mesh), true);
 
   std::vector<vertex_descriptor> new_vertices;
   refine(local_mesh, faces(local_mesh), CGAL::Emptyset_iterator(), std::back_inserter(new_vertices));
