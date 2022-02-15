@@ -115,8 +115,10 @@ private:
   const TM2_face_to_triangle_map m_face_to_triangle_map;
 
   const Global_bounds& m_global_bounds;
-  Local_bounds m_local_bounds; // Local Hausdorff bounds for the query triangle.
+  Local_bounds m_local_bounds; // local Hausdorff bounds for the query triangle
   FT m_v0_lower, m_v1_lower, m_v2_lower;
+
+  bool m_early_exit;
 
 public:
   Hausdorff_primitive_traits_tm2(const Bbox_3& t1_bbox,
@@ -130,30 +132,32 @@ public:
       m_local_bounds(infinity_value),
       m_v0_lower(infinity_value),
       m_v1_lower(infinity_value),
-      m_v2_lower(infinity_value)
+      m_v2_lower(infinity_value),
+      m_early_exit(false)
   { }
 
+  // Return the local Hausdorff bounds computed for the passed query triangle.
+  Local_bounds& get_local_bounds() { return m_local_bounds; }
+  const Local_bounds& get_local_bounds() const { return m_local_bounds; }
+
   // Because
-  //  h(TM1, TM2) := max_{query in TM1} h(query, TM2),
+  //   h(TM1, TM2) := max_{query in TM1} h(query, TM2),
   // it is pointless to continue trying to find a smaller bound if the value is already known
   // to be below the current max computed through another TM1 face
-  bool go_further() const
-  {
-    // not in a single line for clarity: the lhs only goes down with every TM2 face,
-    // while the rhs only goes up with every TM1 face
-// #define CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
-#ifndef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
-    if(m_local_bounds.upper < m_global_bounds.lower) // Section 4.1, first §
-      return false;
-    else
-#endif
-      return true;
-  }
+  bool go_further() const { return !m_early_exit; }
 
   // Compute the explicit Hausdorff distance to the given primitive.
   template<class Primitive>
   void intersection(const Query& query, const Primitive& primitive)
   {
+    if(m_early_exit)
+      return;
+
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+    std::cout << "Intersection with TM2's " << primitive.id() << std::endl;
+    std::cout << "Initial local bounds " << m_local_bounds.lower << " " << m_local_bounds.upper << std::endl;
+#endif
+
     /* Have reached a single triangle, process it.
     / Determine the upper distance according to
     /   min_{b \in primitive} ( max_{vertex in query} ( d(vertex, b) ) )
@@ -217,6 +221,19 @@ public:
     }
 
     CGAL_assertion(m_local_bounds.lower <= m_local_bounds.upper);
+
+#define CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
+#ifndef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
+    // the lhs can only go down with every additional TM2 face,
+    // whereas the rhs can only go up with every additional TM1 face
+    if(m_local_bounds.upper < m_global_bounds.lower) // Section 4.1, first §
+    {
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+      std::cout << "Quitting early (TM2 traversal): " << m_global_bounds.lower << std::endl;
+#endif
+      m_early_exit = true;
+    }
+#endif
   }
 
   // Determine whether child nodes will still contribute to a smaller
@@ -225,7 +242,8 @@ public:
   std::pair<bool, Priority>
   do_intersect_with_priority(const Query&, const Node& node) const
   {
-    std::cout << "Check TM2 node..." << std::endl;
+    if(m_early_exit)
+      return std::make_pair(false, FT(0));
 
     // Compute a lower bound between the query (face of TM1) and a group of TM2 faces.
     const Bbox_3 node_bbox = node.bbox();
@@ -258,26 +276,28 @@ public:
     // between the query and the TM2 primitives that are children of this node.
     // If this lower bound is greater than the current upper bound for this query,
     // then none of these primitives will reduce the Hausdorff distance between the query and TM2.
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+    std::cout << "Culling TM1? dist vs local bound upper " << dist << " " << m_local_bounds.upper << std::endl;
+#endif
     CGAL_assertion(m_local_bounds.upper >= FT(0));
     if(dist > m_local_bounds.upper)
       return std::make_pair(false, FT(0));
-     else
+    else
       return std::make_pair(true , -dist);
   }
 
   template<class Node>
   bool do_intersect(const Query& query, const Node& node) const
   {
+    if(m_early_exit)
+      return false;
+
 #ifdef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
     return true;
 #else
     return this->do_intersect_with_priority(query, node).first;
 #endif
   }
-
-  // Return the local Hausdorff bounds computed for the passed query triangle.
-  Local_bounds& get_local_bounds() { return m_local_bounds; }
-  const Local_bounds& get_local_bounds() const { return m_local_bounds; }
 
   template<class PrimitiveConstIterator>
   void traverse_group(const Query& query,
@@ -335,7 +355,7 @@ private:
   const FT m_initial_bound;
   const FT m_distance_bound;
   Global_bounds m_global_bounds;
-  bool m_early_quit;
+  bool m_early_exit;
 
   // All candidate triangles.
   Heap_type m_candidate_triangles;
@@ -357,7 +377,7 @@ public:
       m_initial_bound(initial_bound),
       m_distance_bound(distance_bound),
       m_global_bounds(m_infinity_value),
-      m_early_quit(false)
+      m_early_exit(false)
   {
     CGAL_precondition(m_error_bound >= FT(0));
     CGAL_precondition(m_infinity_value >= FT(0));
@@ -452,16 +472,16 @@ public:
   }
 
   // Traversal-related
-  bool early_quit() const { return m_early_quit; }
+  bool early_exit() const { return m_early_exit; }
 
   // If the distance is already larger than the user-defined bound, traversal can stop
-  bool go_further() const { return !m_early_quit; }
+  bool go_further() const { return !m_early_exit; }
 
   // Compute Hausdorff distance bounds between a TM1 face and TM2
   template<class Primitive>
   void intersection(const Query&, const Primitive& primitive)
   {
-    if(m_early_quit)
+    if(m_early_exit)
       return;
 
     // Set initial tight bounds.
@@ -501,6 +521,17 @@ public:
 
     CGAL_postcondition(m_global_bounds.upper >= m_global_bounds.lower);
 
+    // Bounds only grow with each additional face of TM1 (Eq. (6)),
+    // if the lower bound is already larger than the user-defined upper bound, we can stop
+    if(!m_early_exit && m_distance_bound >= FT(0) && (m_distance_bound <= m_global_bounds.lower))
+    {
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+      std::cout << "Quitting early (TM1 traversal): " << m_global_bounds.lower << std::endl;
+#endif
+      m_early_exit = true;
+      return;
+    }
+
     // Store the TM1 triangle given as primitive in this function as a candidate triangle,
     // together with the local bounds it obtained to send it to subdivision later.
     m_candidate_triangles.emplace(triangle, local_bounds, tm1_face);
@@ -512,17 +543,7 @@ public:
   std::pair<bool, Priority>
   do_intersect_with_priority(const Query&, const Node& node)
   {
-    // Bounds only grow with each additional face of TM1 (Eq. (6)), so if the lower bound is already
-    // larger, we can return early.
-    if(m_distance_bound >= FT(0) && !m_early_quit)
-    {
-      CGAL_assertion(m_global_bounds.lower >= FT(0));
-      CGAL_assertion(m_global_bounds.upper >= m_global_bounds.lower);
-
-      m_early_quit = (m_global_bounds.lower > m_distance_bound);
-    }
-
-    if(m_early_quit)
+    if(m_early_exit)
       return std::make_pair(false, FT(0));
 
     // Compute an upper bound on the distance between the closest point in TM2 and
@@ -551,6 +572,9 @@ public:
   template<class Node>
   bool do_intersect(const Query& query, const Node& node)
   {
+    if(m_early_exit)
+      return false;
+
 #ifdef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
     return true;
 #else

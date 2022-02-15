@@ -1479,7 +1479,7 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
   CGAL_assertion(global_bounds.upper >= global_bounds.lower);
 
   // If we already reached the user-defined max distance bound, we quit.
-  if(traversal_traits_tm1.early_quit())
+  if(traversal_traits_tm1.early_exit())
   {
     CGAL_assertion(global_bounds.lower > distance_bound);
     return to_double(global_bounds.lower);
