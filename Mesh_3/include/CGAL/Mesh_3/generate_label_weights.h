@@ -295,14 +295,15 @@ void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
               continue;
             else
             {
-              static_evaluate<Weights_type>(weights.image(), i, j, k) = (Weights_type)(1);
-              static_evaluate<Weights_type>(weights.image(), i + 1, j, k) = (Weights_type)(1);
-              static_evaluate<Weights_type>(weights.image(), i, j + 1, k) = (Weights_type)(1);
-              static_evaluate<Weights_type>(weights.image(), i + 1, j + 1, k) = (Weights_type)(1);
-              static_evaluate<Weights_type>(weights.image(), i, j, k + 1) = (Weights_type)(1);
-              static_evaluate<Weights_type>(weights.image(), i + 1, j, k + 1) = (Weights_type)(1);
-              static_evaluate<Weights_type>(weights.image(), i, j + 1, k + 1) = (Weights_type)(1);
-              static_evaluate<Weights_type>(weights.image(), i + 1, j + 1, k + 1) = (Weights_type)(1);
+              Weights_type w1(1);
+              static_evaluate<Weights_type>(weights.image(), i, j, k) = w1;
+              static_evaluate<Weights_type>(weights.image(), i + 1, j, k) = w1;
+              static_evaluate<Weights_type>(weights.image(), i, j + 1, k) = w1;
+              static_evaluate<Weights_type>(weights.image(), i + 1, j + 1, k) = w1;
+              static_evaluate<Weights_type>(weights.image(), i, j, k + 1) = w1;
+              static_evaluate<Weights_type>(weights.image(), i + 1, j, k + 1) = w1;
+              static_evaluate<Weights_type>(weights.image(), i, j + 1, k + 1) = w1;
+              static_evaluate<Weights_type>(weights.image(), i + 1, j + 1, k + 1) = w1;
               break;
             }
           }
