@@ -309,8 +309,13 @@ void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
         }
       }
     }
-    _writeImage(weights.image(), "weights-image_postprocessed.inr.gz");
   }
+
+#ifdef CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
+  std::cout << "non white in post-processed image \t= "
+    << internal::count_non_white_pixels<Weights_type>(weights) << std::endl;
+  _writeImage(weights.image(), "weights-image_postprocessed.inr.gz");
+#endif
 }
 
 }//namespace Mesh_3
