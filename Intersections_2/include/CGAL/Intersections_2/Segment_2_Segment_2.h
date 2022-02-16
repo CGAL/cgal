@@ -154,7 +154,7 @@ seg_seg_do_intersect_crossing(
         const typename K::Point_2& p3, const typename K::Point_2& p4,
         const K& k)
 {
-  return seg_seg_do_intersect_crossing(p1,p2,p3,p4,0,0,0,0,k,false).inter;
+  return seg_seg_do_intersect_crossing(p1,p2,p3,p4,0,0,0,0,k,false,-1).inter;
 }
 
 
@@ -215,7 +215,7 @@ seg_seg_do_intersect_contained(
         const typename K::Point_2& p3, const typename K::Point_2& p4,
         const K& k)
 {
-  return seg_seg_do_intersect_contained(p1,p2,p3,p4,0,0,0,0,k,false).inter;
+  return seg_seg_do_intersect_contained(p1,p2,p3,p4,0,0,0,0,k,false,-1).inter;
 }
 
 template <class K>
