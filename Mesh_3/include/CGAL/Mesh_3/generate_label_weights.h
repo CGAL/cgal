@@ -261,10 +261,6 @@ void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
 
   using CGAL::IMAGEIO::static_evaluate;
 
-  const double tx = image.tx();
-  const double ty = image.ty();
-  const double tz = image.tz();
-
   for (std::size_t k = 0, end_k = image.zdim() - 1; k < end_k; ++k)
   {
     for (std::size_t j = 0, end_j = image.ydim() - 1; j < end_j; ++j)
@@ -300,6 +296,14 @@ void postprocess_weights_for_feature_protection(const CGAL::Image_3& image,
             else
             {
               static_evaluate<Weights_type>(weights.image(), i, j, k) = (Weights_type)(1);
+              static_evaluate<Weights_type>(weights.image(), i + 1, j, k) = (Weights_type)(1);
+              static_evaluate<Weights_type>(weights.image(), i, j + 1, k) = (Weights_type)(1);
+              static_evaluate<Weights_type>(weights.image(), i + 1, j + 1, k) = (Weights_type)(1);
+              static_evaluate<Weights_type>(weights.image(), i, j, k + 1) = (Weights_type)(1);
+              static_evaluate<Weights_type>(weights.image(), i + 1, j, k + 1) = (Weights_type)(1);
+              static_evaluate<Weights_type>(weights.image(), i, j + 1, k + 1) = (Weights_type)(1);
+              static_evaluate<Weights_type>(weights.image(), i + 1, j + 1, k + 1) = (Weights_type)(1);
+              break;
             }
           }
         }
