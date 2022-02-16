@@ -1526,89 +1526,148 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
     if(triangle_bounds.upper < global_bounds.lower)
       continue;
 
-    if(triangle_bounds.upper - triangle_bounds.lower > error_bound)
+    if((triangle_bounds.upper - triangle_bounds.lower) <= error_bound)
     {
-      // Get the triangle that is to be subdivided and read its vertices.
-      const Triangle_3& triangle_for_subdivision = triangle_and_bound.triangle;
-      const Point_3& v0 = triangle_for_subdivision.vertex(0);
-      const Point_3& v1 = triangle_for_subdivision.vertex(1);
-      const Point_3& v2 = triangle_for_subdivision.vertex(2);
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+      std::cout << "Candidate triangle bounds are tight enough: " << triangle_bounds.lower << " " << triangle_bounds.upper << std::endl;
+#endif
+      continue;
+    }
 
-      // Check third stopping condition: All edge lengths of the triangle are
-      // smaller than the given error bound, we cannot get results beyond this bound.
-      if(CGAL::squared_distance(v0, v1) < squared_error_bound &&
-         CGAL::squared_distance(v0, v2) < squared_error_bound &&
-         CGAL::squared_distance(v1, v2) < squared_error_bound)
-      {
 #ifdef CGAL_HAUSDORFF_DEBUG
         std::cout << "Third stopping condition, small triangle" << std::endl;
 #endif
 
-        // The upper bound of this triangle is within error tolerance of the actual upper bound, use it.
-        global_bounds.lower = triangle_bounds.upper;
-        global_bounds.lpair.second = triangle_bounds.tm2_uface;
+    // Get the triangle that is to be subdivided and read its vertices.
+    const Triangle_3& triangle_for_subdivision = triangle_and_bound.triangle;
+    const Point_3& v0 = triangle_for_subdivision.vertex(0);
+    const Point_3& v1 = triangle_for_subdivision.vertex(1);
+    const Point_3& v2 = triangle_for_subdivision.vertex(2);
 
-        continue;
-      }
+    // Check third stopping condition: All edge lengths of the triangle are
+    // smaller than the given error bound, we cannot get results beyond this bound.
+    if(CGAL::squared_distance(v0, v1) < squared_error_bound &&
+       CGAL::squared_distance(v0, v2) < squared_error_bound &&
+       CGAL::squared_distance(v1, v2) < squared_error_bound)
+    {
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+      std::cout << "Third stopping condition, small triangle" << std::endl;
+#endif
 
-      // Subdivide the triangle into four smaller triangles.
-      const Point_3 v01 = CGAL::midpoint(v0, v1);
-      const Point_3 v02 = CGAL::midpoint(v0, v2);
-      const Point_3 v12 = CGAL::midpoint(v1, v2);
-      const std::array<Triangle_3, 4> sub_triangles = { Triangle_3(v0, v01, v02), Triangle_3(v1 , v01, v12),
-                                                        Triangle_3(v2, v02, v12), Triangle_3(v01, v02, v12) };
+      // By definition, lower_bound(t1, TM2) is smaller than h(t1, TM2).
+      // Let `v` is the vertex of t1 and `p_l` the point on TM2 realizing the lower bound, i.e.,
+      //   d(v, p_l) = max_{v in t1} min_{t2 in TM2) d(v, t2).
+      // Let `p` be the pair of points resp. on t1 and TM2 realizing the Hausdorff distance, i.e.,
+      //   h(t1, TM2) = d(p.first, p.second),
+      // Since we are here:
+      //   d(p.first, v) < error_bound (1)
+      // From the lower bound
+      //   d(v, p_l) <= d(p.first, p.second)
+      // Because d(p.first, p.second) is the min distance from p.first to TM2,
+      //   d(p.first, p.second) <= d(p.first, p_l)
+      // And by triangular inequality
+      //   d(p.first, p.second) <= d(v, p_l) + d(p.first, v) <= d(v, p_l) + error_bound = lower_bound + epsilon
+      const FT upper_bound = triangle_bounds.lower + error_bound;
 
-      // Send each of the four triangles to culling on B
-      for(std::size_t i=0; i<4; ++i)
+      if(upper_bound > global_bounds.upper)
       {
-        // Call culling on B with the single triangle found.
-        // @todo? For each sub-triangle `ts1` that has a vertex of `v` of the triangle `t1` being subdivided,
-        // we have a lower bound on `h(ts1, TM2)` because:
-        //  h_t1_lower = max_{vi in t1} min_{t2 in TM2} d(vi, t2)
-        // and
-        //  h_ts1_lower = max_{vi in ts1} min_{t2 in TM2} d(vi, t2) > min_{t2 in TM2} d(v, t2)
-        // But:
-        // - we don't keep that in memory (not very hard to change, simply put `m_hi_lower`
-        //   from the TM2 traversal traits into the candidate
-        // - what's the point? TM2 culling is performed on the local upper bound, so is there
-        //   a benefit from providing this value?
-        const Bbox_3 t1_bbox = sub_triangles[i].bbox();
-        Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(infinity_value);
-        TM2_hd_traits traversal_traits_tm2(t1_bbox, tm2, vpm2, global_bounds, infinity_value);
-        tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
-
-        // Update global lower Hausdorff bound according to the obtained local bounds.
-        const auto& sub_triangle_bounds = traversal_traits_tm2.get_local_bounds();
-
-        CGAL_assertion(sub_triangle_bounds.lower >= FT(0));
-        CGAL_assertion(sub_triangle_bounds.upper >= sub_triangle_bounds.lower);
-        CGAL_assertion(sub_triangle_bounds.lpair == sub_triangle_bounds.default_face_pair());
-        CGAL_assertion(sub_triangle_bounds.upair == sub_triangle_bounds.default_face_pair());
-
-        // The global lower bound is the max of the per-face lower bounds
-        if(sub_triangle_bounds.lower > global_bounds.lower)
-        {
-          global_bounds.lower = sub_triangle_bounds.lower;
-          global_bounds.lpair.second = sub_triangle_bounds.tm2_lface;
-        }
-
-        // The global upper bound is:
-        //   max_{query in TM1} min_{primitive in TM2} max_{v in query} (d(v, primitive))
-        // which can go down, so it is only recomputed once splitting is finished,
-        // using the top value of the PQ
-
-        // Add the subtriangle to the candidate list.
-        candidate_triangles.emplace(sub_triangles[i], sub_triangle_bounds, triangle_and_bound.tm1_face);
+        global_bounds.upper = upper_bound;
+        global_bounds.lpair.second = triangle_bounds.tm2_uface;
       }
 
-      // Update global upper Hausdorff bound after subdivision.
-      const FT current_max = candidate_triangles.top().bounds.upper;
-      CGAL_assertion(current_max >= FT(0));
-
-      global_bounds.upper = current_max;
-      global_bounds.upair.second = candidate_triangles.top().bounds.tm2_uface;
-
+      continue;
     }
+
+    // Subdivide the triangle into four smaller triangles.
+    const Point_3 v01 = CGAL::midpoint(v0, v1);
+    const Point_3 v02 = CGAL::midpoint(v0, v2);
+    const Point_3 v12 = CGAL::midpoint(v1, v2);
+    const std::array<Triangle_3, 4> sub_triangles = { Triangle_3(v0, v01, v02), Triangle_3(v1 , v01, v12),
+                                                      Triangle_3(v2, v02, v12), Triangle_3(v01, v02, v12) };
+
+    // Send each of the four triangles to culling on B
+    for(std::size_t i=0; i<4; ++i)
+    {
+      // Call culling on B with the single triangle found.
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+      std::cout << "\nSubface #" << i << "\n"
+                << "Geometry: " << sub_triangles[i] << std::endl;
+#endif
+
+      // Checking as in during TM1 culling is expensive
+
+      // @todo? For each sub-triangle `ts1` that has a vertex of `v` of the triangle `t1` being subdivided,
+      // we have a lower bound on `h(ts1, TM2)` because:
+      //  h_t1_lower = max_{vi in t1} min_{t2 in TM2} d(vi, t2)
+      // and
+      //  h_ts1_lower = max_{vi in ts1} min_{t2 in TM2} d(vi, t2) > min_{t2 in TM2} d(v, t2)
+      // But:
+      // - we don't keep that in memory (not very hard to change, simply put `m_hi_lower`
+      //   from the TM2 traversal traits into the candidate
+      // - what's the point? TM2 culling is performed on the local upper bound, so is there
+      //   a benefit from providing this value?
+      //
+      // (We also have that error_bound is a lower bound.)
+      const Bbox_3 sub_t1_bbox = sub_triangles[i].bbox();
+
+      // Because:
+      //   h_lower(t1, TM2) := max_{v in t1} min_{t2 in TM2} d(v, t2)
+      // adding more vertices can only increase the max (and the lower bound).
+      //
+      // The upper bound is:
+      //   h_upper(t1, TM2) := min_{t2 in TM2} max_{v in t1} d(v, t2)
+      // If t2m is the face of TM2 realizing the minimum of max_{v in t1} d(v, t2),
+      // then subdividing t1 can only decrease this upper bound: let v' be a new vertex v'
+      // of a triangle subdividing t1 is such that
+      //   min_{t2 in TM2} d(v', t2) > h_upper(t1, TM2)
+      // Because the maximum of the distance over t1 is necessarily reached at a vertex,
+      // there must exist a vertex v1 in t1 such that d(v1, t2) > d(v', t2), which contradicts
+      // the definition of v'.
+      // Thus, subdivision can only decrease the upper bound.
+      TM2_hd_traits traversal_traits_tm2(sub_t1_bbox, tm2, vpm2, initial_bounds, global_bounds, infinity_value);
+      tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
+
+      // Update global lower Hausdorff bound according to the obtained local bounds.
+      const auto& sub_triangle_bounds = traversal_traits_tm2.get_local_bounds();
+
+      CGAL_assertion(sub_triangle_bounds.lower >= FT(0));
+      CGAL_assertion(sub_triangle_bounds.upper >= sub_triangle_bounds.lower);
+      CGAL_assertion(sub_triangle_bounds.lpair == sub_triangle_bounds.default_face_pair());
+      CGAL_assertion(sub_triangle_bounds.upair == sub_triangle_bounds.default_face_pair());
+
+      // The global lower bound is the max of the per-face lower bounds
+      if(sub_triangle_bounds.lower > global_bounds.lower)
+      {
+        global_bounds.lower = sub_triangle_bounds.lower;
+        global_bounds.lpair.second = sub_triangle_bounds.tm2_lface;
+      }
+
+      // The global upper bound is:
+      //   max_{query in TM1} min_{primitive in TM2} max_{v in query} (d(v, primitive))
+      // which can go down, so it is only recomputed once splitting is finished,
+      // using the top value of the PQ
+
+      // Add the subtriangle to the candidate list.
+      candidate_triangles.emplace(sub_triangles[i], sub_triangle_bounds, triangle_and_bound.tm1_face);
+    }
+
+    // Update global upper Hausdorff bound after subdivision.
+    const FT current_max = candidate_triangles.top().bounds.upper;
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+    std::cout << "current candidates count: " << candidate_triangles.size() << std::endl;
+    std::cout << "current upper bound = " << current_max << std::endl;
+#endif
+    CGAL_assertion(current_max >= FT(0));
+
+    global_bounds.upper = current_max;
+    global_bounds.upair.second = candidate_triangles.top().bounds.tm2_uface;
+
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+    std::cout << "Global bounds post subdi: " << global_bounds.lower << " " << global_bounds.upper << std::endl;
+#endif
+
+    CGAL_assertion(global_bounds.lower >= FT(0));
+    CGAL_assertion(global_bounds.upper >= global_bounds.lower);
   }
 
 #ifdef CGAL_HAUSDORFF_DEBUG

@@ -34,11 +34,11 @@ struct Bounds
 {
   using FT = typename Kernel::FT;
 
-  Bounds(const FT infinity_value) : m_infinity_value(infinity_value) { }
+  Bounds(const FT infinity_value) : lower(infinity_value), upper(infinity_value) { }
+  Bounds(const FT lower, const FT upper) : lower(lower), upper(upper) { }
 
-  FT m_infinity_value = - FT(1);
-  FT lower = m_infinity_value;
-  FT upper = m_infinity_value;
+  FT lower;
+  FT upper;
 
   // @todo update
   Face_handle_2 tm2_lface = Face_handle_2();
@@ -123,13 +123,14 @@ private:
 public:
   Hausdorff_primitive_traits_tm2(const Bbox_3& t1_bbox,
                                  const TriangleMesh2& tm2, const VPM2 vpm2,
+                                 const Local_bounds& initial_bounds,
                                  const Global_bounds& global_bounds,
                                  const FT infinity_value)
     : m_t1_bbox(t1_bbox),
       m_tm2(tm2), m_vpm2(vpm2),
       m_face_to_triangle_map(&m_tm2, m_vpm2),
+      m_local_bounds(initial_bounds),
       m_global_bounds(global_bounds),
-      m_local_bounds(infinity_value),
       m_v0_lower(infinity_value),
       m_v1_lower(infinity_value),
       m_v2_lower(infinity_value),
@@ -491,7 +492,8 @@ public:
 
     // Call culling on TM2 with the TM1 triangle.
     const Bbox_3 t1_bbox = triangle.bbox();
-    TM2_hd_traits traversal_traits_tm2(t1_bbox, m_tm2, m_vpm2, m_global_bounds, m_infinity_value);
+    Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(m_infinity_value);
+    TM2_hd_traits traversal_traits_tm2(t1_bbox, m_tm2, m_vpm2, initial_bounds, m_global_bounds, m_infinity_value);
     m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
 
     // Post traversal, we have computed h_lower(query, TM2) and h_upper(query, TM2)
