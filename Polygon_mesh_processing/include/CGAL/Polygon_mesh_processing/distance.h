@@ -1269,9 +1269,6 @@ double approximate_max_distance_to_point_set(const TriangleMesh& tm,
 // Use this def in order to get back the parallel version of the one-sided Hausdorff code!
 // #define USE_PARALLEL_BEHD
 
-// Use this def in order to get all DEBUG info related to the bounded-error Hausdorff code!
-// #define CGAL_HAUSDORFF_DEBUG
-
 namespace internal {
 
 template <class Kernel,
@@ -1465,12 +1462,11 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
   auto global_bounds = traversal_traits_tm1.get_global_bounds();
 
 #ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout << "- bounds post traversal: " << global_bounds.lower << " " << global_bounds.upper << std::endl;
   std::cout << "- number of candidate triangles: " << candidate_triangles.size() << std::endl;
   const FT culling_rate = FT(100) - (FT(candidate_triangles.size()) / FT(tm1_tree.size()) * FT(100));
   std::cout << "- culling rate: " << culling_rate << "%" << std::endl;
-#endif
 
-#ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
   std::cout << "* culling (sec.): " << timer.time() << std::endl;
 #endif
@@ -1490,6 +1486,7 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
   timer.reset();
   timer.start();
   std::cout << "- applying subdivision" << std::endl;
+  std::size_t explored_candidates_count = 0;
 #endif
 
   // See Section 5.1 in the paper.
@@ -1500,11 +1497,11 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
     // Check if we can early quit.
     if(distance_bound >= FT(0))
     {
-      const bool early_quit = (global_bounds.lower > distance_bound);
+      const bool early_quit = (distance_bound <= global_bounds.lower);
       if(early_quit)
       {
 #ifdef CGAL_HAUSDORFF_DEBUG
-        std::cout << "Quitting early" << std::endl;
+        std::cout << "Quitting with lower bound: " << global_bounds.lower << std::endl;
 #endif
         break;
       }
@@ -1519,8 +1516,19 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
     // user-given error.
     const auto& triangle_bounds = triangle_and_bound.bounds;
 
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+    std::cout << "Candidate:" << std::endl;
+    std::cout << triangle_and_bound.triangle.vertex(0) << std::endl;
+    std::cout << triangle_and_bound.triangle.vertex(1) << std::endl;
+    std::cout << triangle_and_bound.triangle.vertex(2) << std::endl;
+    std::cout << "triangle_bounds.lower: " << triangle_bounds.lower << std::endl;
+    std::cout << "triangle_bounds.upper: " << triangle_bounds.upper << std::endl;
+#endif
+
     CGAL_assertion(triangle_bounds.lower >= FT(0));
     CGAL_assertion(triangle_bounds.upper >= triangle_bounds.lower);
+
+    // @todo implement the enclosing-based end criterion (Section 5.1, optional step for TM1 & TM2 closed)
 
     // Might have been a good candidate when added to the stack, but rendered useless by later traversals
     if(triangle_bounds.upper < global_bounds.lower)
@@ -1535,7 +1543,7 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
     }
 
 #ifdef CGAL_HAUSDORFF_DEBUG
-        std::cout << "Third stopping condition, small triangle" << std::endl;
+    ++explored_candidates_count;
 #endif
 
     // Get the triangle that is to be subdivided and read its vertices.
@@ -1673,13 +1681,11 @@ double bounded_error_Hausdorff_impl(const TriangleMesh1& tm1,
 #ifdef CGAL_HAUSDORFF_DEBUG
   timer.stop();
   std::cout << "* subdivision (sec.): " << timer.time() << std::endl;
+  std::cout << "Explored " << explored_candidates_count << " candidates" << std::endl;
 #endif
 
-  CGAL_assertion(global_bounds.lower >= FT(0));
-  CGAL_assertion(global_bounds.upper >= global_bounds.lower);
-
-  // Return the lower bound such that if the correct value is in [0; lower_bound[, the result
-  // is still within error_bound (we have set lower_bound to error_bound initially)
+  // Return the lower bound because if the correct value is in [0; lower_bound[, the result
+  // must still be within error_bound (we have set lower_bound to error_bound initially)
   const double hdist = to_double(global_bounds.lower);
 
   // Get realizing triangles.
@@ -2235,35 +2241,38 @@ double bounded_error_symmetric_Hausdorff_impl(const TriangleMesh1& tm1,
 }
 
 template<class Kernel, class TM2_tree>
-typename Kernel::FT recursive_hausdorff_subdivision(const typename Kernel::Point_3& v0,
-                                                    const typename Kernel::Point_3& v1,
-                                                    const typename Kernel::Point_3& v2,
+typename Kernel::FT recursive_hausdorff_subdivision(const typename Kernel::Point_3& p0,
+                                                    const typename Kernel::Point_3& p1,
+                                                    const typename Kernel::Point_3& p2,
                                                     const TM2_tree& tm2_tree,
                                                     const typename Kernel::FT squared_error_bound)
 {
-  // If all edge lengths of the triangle are below the error_bound,
-  // return maximum of the distances of the three points to TM2 (via TM2_tree).
-  const auto max_squared_edge_length = (CGAL::max)((CGAL::max)(CGAL::squared_distance(v0, v1),
-                                                               CGAL::squared_distance(v0, v2)),
-                                                               CGAL::squared_distance(v1, v2));
+  using FT = typename Kernel::FT;
+  using Point_3 = typename Kernel::Point_3;
+
+  // If all edge lengths of the triangle are below the error bound,
+  // return the maximum of the distances of the three points to TM2 (via TM2_tree).
+  const FT max_squared_edge_length = (CGAL::max)((CGAL::max)(CGAL::squared_distance(p0, p1),
+                                                             CGAL::squared_distance(p0, p2)),
+                                                             CGAL::squared_distance(p1, p2));
 
   if(max_squared_edge_length < squared_error_bound)
   {
-    return (CGAL::max)((CGAL::max)(CGAL::squared_distance(v0, tm2_tree.closest_point(v0)),
-                                   CGAL::squared_distance(v1, tm2_tree.closest_point(v1))),
-                                   CGAL::squared_distance(v2, tm2_tree.closest_point(v2)));
+    return (CGAL::max)((CGAL::max)(CGAL::squared_distance(p0, tm2_tree.closest_point(p0)),
+                                   CGAL::squared_distance(p1, tm2_tree.closest_point(p1))),
+                                   CGAL::squared_distance(p2, tm2_tree.closest_point(p2)));
   }
 
   // Else subdivide the triangle and proceed recursively.
-  const auto v01 = midpoint(v0, v1);
-  const auto v02 = midpoint(v0, v2);
-  const auto v12 = midpoint(v1, v2);
+  const Point_3 p01 = midpoint(p0, p1);
+  const Point_3 p02 = midpoint(p0, p2);
+  const Point_3 p12 = midpoint(p1, p2);
 
   return (CGAL::max)(
-           (CGAL::max)(recursive_hausdorff_subdivision<Kernel>(v0, v01, v02, tm2_tree, squared_error_bound),
-                       recursive_hausdorff_subdivision<Kernel>(v1, v01, v12, tm2_tree, squared_error_bound)),
-           (CGAL::max)(recursive_hausdorff_subdivision<Kernel>(v2 , v02, v12, tm2_tree, squared_error_bound),
-                       recursive_hausdorff_subdivision<Kernel>(v01, v02, v12, tm2_tree, squared_error_bound)));
+           (CGAL::max)(recursive_hausdorff_subdivision<Kernel>( p0, p01, p02, tm2_tree, squared_error_bound),
+                       recursive_hausdorff_subdivision<Kernel>( p1, p01, p12, tm2_tree, squared_error_bound)),
+           (CGAL::max)(recursive_hausdorff_subdivision<Kernel>( p2, p02, p12, tm2_tree, squared_error_bound),
+                       recursive_hausdorff_subdivision<Kernel>(p01, p02, p12, tm2_tree, squared_error_bound)));
 }
 
 template <class Concurrency_tag,
@@ -2288,8 +2297,7 @@ double bounded_error_Hausdorff_naive_impl(const TriangleMesh1& tm1,
 
   using TM1_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh1, VPM1>;
 
-  // Initially, no lower bound is known.
-  FT squared_lower_bound = FT(0);
+  FT sq_lower_bound = FT(0);
 
   // Work with squares in the following, only draw sqrt at the very end.
   const FT squared_error_bound = square(error_bound);
@@ -2312,18 +2320,17 @@ double bounded_error_Hausdorff_naive_impl(const TriangleMesh1& tm1,
     const Point_3& v2 = triangle.vertex(2);
 
     // Recursively process the current triangle to obtain a lower bound on its Hausdorff distance.
-    const FT triangle_bound = recursive_hausdorff_subdivision<Kernel>(v0, v1, v2, tm2_tree, squared_error_bound);
+    const FT triangle_sq_bound = recursive_hausdorff_subdivision<Kernel>(v0, v1, v2, tm2_tree, squared_error_bound);
 
     // Store the largest lower bound.
-    if(triangle_bound > squared_lower_bound)
-      squared_lower_bound = triangle_bound;
+    if(triangle_sq_bound > sq_lower_bound)
+      sq_lower_bound = triangle_sq_bound;
   }
 
-  // Return linear interpolation between found upper and lower bound.
-  return CGAL::sqrt(CGAL::to_double(squared_lower_bound));
+  return CGAL::to_double(CGAL::approximate_sqrt(sq_lower_bound));
 }
 
-} // end of namespace internal
+} // namespace internal
 
 /**
  * \ingroup PMP_distance_grp
