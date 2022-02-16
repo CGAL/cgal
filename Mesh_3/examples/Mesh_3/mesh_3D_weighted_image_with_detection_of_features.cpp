@@ -248,8 +248,7 @@ int main(int argc, char* argv[])
   CGAL::Mesh_3::postprocess_weights_for_feature_protection(image, img_weights);
 
   Mesh_domain domain
-    = Mesh_domain::create_labeled_image_mesh_domain(image,
-                                                   weights = img_weights);
+    = Mesh_domain::create_labeled_image_mesh_domain(image, weights = img_weights);
   /// [Domain creation]
 
   /// Declare 1D-features, see above [Call add_1D_features]
