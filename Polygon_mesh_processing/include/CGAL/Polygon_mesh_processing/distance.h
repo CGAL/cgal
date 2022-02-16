@@ -87,15 +87,16 @@ triangle_grid_sampling(const typename Kernel::Point_3& p0,
 }
 
 #if defined(CGAL_LINKED_WITH_TBB)
-template <class AABB_tree, class PointRange>
+template <class Kernel, class AABB_tree, class PointRange>
 struct Distance_computation
 {
+  typedef typename Kernel::FT FT;
   typedef typename PointRange::const_iterator::value_type Point_3;
 
   const AABB_tree& tree;
   const PointRange& sample_points;
   Point_3 initial_hint;
-  double distance;
+  FT sq_distance;
 
   //constructor
   Distance_computation(const AABB_tree& tree,
@@ -104,7 +105,7 @@ struct Distance_computation
     : tree(tree),
       sample_points(sample_points),
       initial_hint(p),
-      distance(-1)
+      sq_distance(-1)
   {}
 
   //split constructor
@@ -112,27 +113,28 @@ struct Distance_computation
     : tree(s.tree),
       sample_points(s.sample_points),
       initial_hint(s.initial_hint),
-      distance(-1)
+      sq_distance(-1)
   {}
 
   void operator()(const tbb::blocked_range<std::size_t>& range)
   {
     Point_3 hint = initial_hint;
-    double hdist = 0;
+    FT sq_hdist = 0;
+    typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
+
     for(std::size_t i = range.begin(); i != range.end(); ++i)
     {
       hint = tree.closest_point(*(sample_points.begin() + i), hint);
-      typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
-      double d = to_double(CGAL::approximate_sqrt(squared_distance(hint,*(sample_points.begin() + i))));
-      if(d > hdist)
-        hdist = d;
+      FT sq_d = squared_distance(hint,*(sample_points.begin() + i));
+      if(sq_d > sq_hdist)
+        sq_hdist = sq_d;
     }
 
-    if(hdist > distance)
-      distance = hdist;
+    if(sq_hdist > sq_distance)
+      sq_distance = sq_hdist;
   }
 
-  void join(Distance_computation& rhs) {distance = (std::max)(rhs.distance, distance); }
+  void join(Distance_computation& rhs) {sq_distance = (std::max)(rhs.sq_distance, sq_distance); }
 };
 #endif
 
@@ -144,6 +146,8 @@ double approximate_Hausdorff_distance_impl(const PointRange& sample_points,
                                            const AABBTree& tree,
                                            typename Kernel::Point_3 hint)
 {
+  using FT = typename Kernel::FT;
+
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
@@ -152,24 +156,25 @@ double approximate_Hausdorff_distance_impl(const PointRange& sample_points,
   {
     std::atomic<double> distance;
     distance = 0;
-    Distance_computation<AABBTree, PointRange> f(tree, hint, sample_points);
+    Distance_computation<Kernel, AABBTree, PointRange> f(tree, hint, sample_points);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
-    return f.distance;
+    return to_double(approximate_sqrt(f.sq_distance));
   }
   else
 #endif
   {
-    double hdist = 0;
+    FT sq_hdist = 0;
+    typename Kernel::Compute_squared_distance_3 squared_distance;
+
     for(const typename Kernel::Point_3& pt : sample_points)
     {
       hint = tree.closest_point(pt, hint);
-      typename Kernel::Compute_squared_distance_3 squared_distance;
-      typename Kernel::FT dist = squared_distance(hint, pt);
-      double d = to_double(CGAL::approximate_sqrt(dist));
-      if(d > hdist)
-        hdist = d;
+      FT sq_d = squared_distance(hint, pt);
+      if(sq_d > sq_hdist)
+        sq_hdist = sq_d;
     }
-    return hdist;
+
+    return to_double(approximate_sqrt(sq_hdist));
   }
 }
 
