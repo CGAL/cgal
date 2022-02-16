@@ -1093,7 +1093,6 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor      halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor          edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor          face_descriptor;
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
