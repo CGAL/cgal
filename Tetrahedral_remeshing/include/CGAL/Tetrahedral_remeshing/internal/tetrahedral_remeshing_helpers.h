@@ -18,6 +18,7 @@
 #include <utility>
 #include <array>
 #include <iterator>
+#include <unordered_set>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Weighted_point_3.h>
