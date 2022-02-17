@@ -197,7 +197,7 @@ struct Triangle_structure_sampler_base
   {}
 
   void sample_points();
-  double get_minimum_edge_length();
+  double get_squared_minimum_edge_length();
   template<typename Tr>
   double get_tr_area(const Tr&);
 
@@ -246,11 +246,9 @@ struct Triangle_structure_sampler_base
     {
       double grid_spacing_ = choose_parameter(get_parameter(np, internal_np::grid_spacing), 0.);
 
+      // set grid spacing to the shortest edge length
       if(grid_spacing_ == 0.)
-      {
-        // set grid spacing to the shortest edge length
-        grid_spacing_ = static_cast<Derived*>(this)->get_minimum_edge_length();
-      }
+        grid_spacing_ = std::sqrt(static_cast<Derived*>(this)->get_squared_minimum_edge_length());
 
       static_cast<Derived*>(this)->internal_sample_triangles(grid_spacing_, smpl_fcs, smpl_dgs);
     }
@@ -269,7 +267,7 @@ struct Triangle_structure_sampler_base
       if((nb_points_per_face == 0 && nb_pts_a_u == 0.) ||
          (nb_points_per_edge == 0 && nb_pts_l_u == 0.))
       {
-        min_sq_edge_length = static_cast<Derived*>(this)->get_minimum_edge_length();
+        min_sq_edge_length = static_cast<Derived*>(this)->get_squared_minimum_edge_length();
       }
 
       // sample faces
@@ -440,6 +438,8 @@ struct Triangle_structure_sampler_for_triangle_mesh
   typedef typename GT::edge_descriptor                                      edge_descriptor;
   typedef typename GT::face_descriptor                                      face_descriptor;
 
+  typedef typename GeomTraits::FT                                           FT;
+
   typedef Random_points_in_triangle_mesh_3<Mesh, Vpm,Creator>               Randomizer;
   typedef typename boost::graph_traits<Mesh>::face_iterator                 TriangleIterator;
 
@@ -459,8 +459,10 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
     pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(vertex_point, tm));
+
     if(!(is_default_parameter<NamedParameters, internal_np::random_seed_t>()))
       rnd = CGAL::Random(choose_parameter(get_parameter(np, internal_np::random_seed),0));
+
     min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
 
@@ -477,22 +479,24 @@ struct Triangle_structure_sampler_for_triangle_mesh
                           this->out);
   }
 
-  double get_minimum_edge_length()
+  double get_squared_minimum_edge_length()
   {
     typedef typename boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
 
     if(min_sq_edge_length != (std::numeric_limits<double>::max)())
       return min_sq_edge_length;
 
+    FT m_sq_el = min_sq_edge_length;
     for(edge_descriptor ed : edges(tm))
     {
-      const double sq_el = to_double(this->gt.compute_squared_distance_3_object()(get(pmap, source(ed, tm)),
-                                                                                  get(pmap, target(ed, tm))));
+      const FT sq_el = this->gt.compute_squared_distance_3_object()(get(pmap, source(ed, tm)),
+                                                                    get(pmap, target(ed, tm)));
 
-      if(sq_el > 0. && sq_el < min_sq_edge_length)
-        min_sq_edge_length = sq_el;
+      if(sq_el < m_sq_el)
+        m_sq_el = sq_el;
     }
 
+    min_sq_edge_length = to_double(m_sq_el);
     return min_sq_edge_length;
   }
 
@@ -615,6 +619,7 @@ struct Triangle_structure_sampler_for_triangle_soup
                                           Creator,
                                           Self>                             Base;
 
+  typedef typename GeomTraits::FT                                           FT;
   typedef typename GeomTraits::Point_3                                      Point_3;
 
   typedef Random_points_in_triangle_soup<PointRange, TriangleType, Creator> Randomizer;
@@ -650,11 +655,12 @@ struct Triangle_structure_sampler_for_triangle_soup
     this->out = std::copy(points.begin(), points.end(), this->out);
   }
 
-  double get_minimum_edge_length()
+  double get_squared_minimum_edge_length()
   {
     if(min_sq_edge_length != (std::numeric_limits<double>::max)())
       return min_sq_edge_length;
 
+    FT m_sq_el = min_sq_edge_length;
     for(const auto& tr : triangles)
     {
       for(std::size_t i = 0; i< 3; ++i)
@@ -662,12 +668,13 @@ struct Triangle_structure_sampler_for_triangle_soup
         const Point_3& a = points[tr[i]];
         const Point_3& b = points[tr[(i+1)%3]];
 
-        const double sq_el = CGAL::to_double(this->gt.compute_squared_distance_3_object()(a, b));
-        if(sq_el > 0. && sq_el < min_sq_edge_length)
-          min_sq_edge_length = sq_el;
+        const FT sq_el = this->gt.compute_squared_distance_3_object()(a, b);
+        if(sq_el < m_sq_el)
+          m_sq_el = sq_el;
       }
     }
 
+    min_sq_edge_length = to_double(m_sq_el);
     return min_sq_edge_length;
   }
 
