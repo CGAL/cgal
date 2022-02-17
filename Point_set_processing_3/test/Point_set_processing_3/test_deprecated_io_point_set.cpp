@@ -90,7 +90,7 @@ int main()
 
   //LAS
 #ifdef CGAL_LINKED_WITH_LASLIB
-  
+
   {
     std::ostringsteam  os(std::ios::binary);
     ok = CGAL::write_las_points_with_properties(os, points,
