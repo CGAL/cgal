@@ -15,7 +15,7 @@
 #include <vector>
 #include <cassert>
 #include <string>
-#include <fstream>
+#include <sstream>
 
 typedef CGAL::Simple_cartesian<double>         Kernel;
 typedef Kernel::Point_3                        Point_3;
@@ -86,10 +86,13 @@ int main()
   ps.push_back(Point_3(0,1,0));
   ps.push_back(Point_3(0,0,1));
 
+  std::string input;
+
   //LAS
 #ifdef CGAL_LINKED_WITH_LASLIB
+  
   {
-    std::ofstream os("tmp1.las", std::ios::binary);
+    std::ostringsteam  os(std::ios::binary);
     ok = CGAL::write_las_points_with_properties(os, points,
                                                 CGAL::make_las_point_writer(CGAL::First_of_pair_property_map<PointWithColor>()),
                                                 std::make_pair(GetRedMap(),CGAL::LAS_property::R()),
@@ -98,12 +101,14 @@ int main()
                                                 std::make_pair(GetAlphaMap(), CGAL::LAS_property::I())
                                                 );
     assert(ok);
+    os.flush();
+    input = os.str();
 
   }
 
   {
     points.clear();
-    std::ifstream is("tmp1.las", std::ios::binary);
+    std::istringstream is(input, std::ios::binary);
     ok = CGAL::read_las_points_with_properties(is, std::back_inserter (points),
                                                CGAL::make_las_point_reader(CGAL::First_of_pair_property_map<PointWithColor>()),
                                                std::make_tuple(CGAL::Second_of_pair_property_map<PointWithColor>(),
@@ -118,14 +123,16 @@ int main()
   }
 
   {
-    std::ofstream os("tmp2.las", std::ios_base::binary);
+    std::ostringstream os(std::ios_base::binary);
     CGAL::write_las_points(os, ps, CGAL::parameters::all_default());
     assert(ok);
+    os.flush();
+    input = os.str();
   }
 
   {
     ps.clear();
-    std::ifstream is("tmp2.las", std::ios::binary);
+    std::istringstream is(input, std::ios::binary);
     ok = CGAL::read_las_points(is, std::back_inserter (ps),CGAL::parameters::all_default());
     assert(ok);
     assert(ps.size() == 3);
@@ -134,7 +141,7 @@ int main()
 
   //PLY
   {
-    std::ofstream os("tmp1.ply");
+    std::ostringstream os;
     assert(os.good());
     ok = CGAL::write_ply_points_with_properties(os, points,
                                                 CGAL::make_ply_point_writer (CGAL::First_of_pair_property_map<PointWithColor>()),
@@ -145,10 +152,12 @@ int main()
                                                 );
     assert(! os.fail());
     assert(ok);
+    os.flush();
+    input = os.str();
   }
 
   {
-    std::ifstream is("tmp1.ply");
+    std::istringstream is(input);
     assert(is.good());
     points.clear();
     ok = CGAL::read_ply_points_with_properties(is, std::back_inserter (points),
@@ -166,15 +175,17 @@ int main()
   }
 
   {
-    std::ofstream os("tmp2.ply");
+    std::ostringstream os;
     assert(os.good());
     ok = CGAL::write_ply_points(os, ps, CGAL::parameters::all_default());
     assert(! os.fail());
     assert(ok);
+    os.flush();
+    input = os.str();
   }
 
   {
-    std::ifstream is("tmp2.ply");
+    std::istringstream is(input);
     assert(is.good());
     ps.clear();
     ok = CGAL::read_ply_points(is, std::back_inserter (ps),
@@ -186,15 +197,17 @@ int main()
 
   //OFF
   {
-    std::ofstream os("tmp.off");
+    std::ostringstream os;
     assert(os.good());
     ok = CGAL::write_off_points(os, ps, CGAL::parameters::all_default());
     assert(! os.fail());
     assert(ok);
+    os.flush();
+    input = os.str();
   }
 
   {
-    std::ifstream is("tmp.off");
+    std::istringstream is(input);
     assert(is.good());
     ps.clear();
     ok = CGAL::read_off_points(is, std::back_inserter (ps),
@@ -206,15 +219,17 @@ int main()
 
   //XYZ
   {
-    std::ofstream os("tmp.xyz");
+    std::ostringstream os;
     assert(os.good());
     ok = CGAL::write_xyz_points(os, ps, CGAL::parameters::all_default());
     assert(! os.fail());
     assert(ok);
+    os.flush();
+    input = os.str();
   }
 
   {
-    std::ifstream is("tmp.xyz");
+    std::istringstream is(input);
     assert(is.good());
     ps.clear();
     ok = CGAL::read_xyz_points(is, std::back_inserter (ps),
