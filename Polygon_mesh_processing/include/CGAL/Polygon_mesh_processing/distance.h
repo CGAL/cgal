@@ -134,7 +134,7 @@ struct Distance_computation
       sq_distance = sq_hdist;
   }
 
-  void join(Distance_computation& rhs) {sq_distance = (std::max)(rhs.sq_distance, sq_distance); }
+  void join(Distance_computation& rhs) { sq_distance = (std::max)(rhs.sq_distance, sq_distance); }
 };
 #endif
 
@@ -154,8 +154,6 @@ double approximate_Hausdorff_distance_impl(const PointRange& sample_points,
 #else
   if(boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
-    std::atomic<double> distance;
-    distance = 0;
     Distance_computation<Kernel, AABBTree, PointRange> f(tree, hint, sample_points);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return to_double(approximate_sqrt(f.sq_distance));
