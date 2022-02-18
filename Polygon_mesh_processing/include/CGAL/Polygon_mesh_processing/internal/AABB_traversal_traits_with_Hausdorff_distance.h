@@ -238,6 +238,10 @@ public:
     // h_lower_i(query, TM2) := max_{v in query} min_{1<=j<=i} d(v, primitive_j)
     const FT distance_lower = (CGAL::max)((CGAL::max)(m_v0_lower, m_v1_lower), m_v2_lower);
 
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+    std::cout << "Distance from vertices of t1 to t2: " << v0_dist << " " << v1_dist << " " << v2_dist << std::endl;
+#endif
+
     CGAL_assertion(distance_lower >= FT(0));
     CGAL_assertion(distance_upper >= distance_lower);
 
@@ -271,7 +275,7 @@ public:
 #endif
     CGAL_assertion(m_local_bounds.lower <= m_local_bounds.upper);
 
-#define CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
+// #define CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
 #ifndef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
     // the lhs can only go down with every additional TM2 face,
     // whereas the rhs can only go up with every additional TM1 face
@@ -346,6 +350,7 @@ public:
       return false;
 
 #ifdef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
+    CGAL_USE(query); CGAL_USE(node);
     return true;
 #else
     return this->do_intersect_with_priority(query, node).first;
@@ -652,6 +657,7 @@ public:
       return false;
 
 #ifdef CGAL_PMP_HDIST_NO_CULLING_DURING_TRAVERSAL
+    CGAL_USE(query); CGAL_USE(node);
     return true;
 #else
     return this->do_intersect_with_priority(query, node).first;

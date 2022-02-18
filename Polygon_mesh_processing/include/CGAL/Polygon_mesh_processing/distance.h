@@ -41,7 +41,6 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_reduce.h>
 #include <tbb/blocked_range.h>
-#include <atomic>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <boost/unordered_set.hpp>
@@ -51,6 +50,12 @@
 #include <array>
 #include <cmath>
 #include <limits>
+
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+ #ifndef CGAL_HAUSDORFF_DEBUG
+  #define CGAL_HAUSDORFF_DEBUG
+ #endif
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -522,7 +527,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
     typename GeomTraits::Compute_squared_distance_3 squared_distance = this->gt.compute_squared_distance_3_object();
 
     if(nb_points_per_edge == 0 && nb_pts_l_u == 0.)
-      nb_pts_l_u = 1. / CGAL::sqrt(min_sq_edge_length);
+      nb_pts_l_u = 1. / std::sqrt(min_sq_edge_length);
 
     for(edge_descriptor ed : edges(tm))
     {
@@ -679,6 +684,7 @@ struct Triangle_structure_sampler_for_triangle_soup
   template<typename Tr>
   double get_tr_area(const Tr& tr)
   {
+    // Kernel_3::Compute_area_3 uses `sqrt()`
     return to_double(approximate_sqrt(
                        this->gt.compute_squared_area_3_object()(
                          points[tr[0]], points[tr[1]], points[tr[2]])));
@@ -689,9 +695,8 @@ struct Triangle_structure_sampler_for_triangle_soup
   {
     std::array<Point_3, 3> points;
     for(int i=0; i<3; ++i)
-    {
       points[i] = this->points[tr[i]];
-    }
+
     return points;
   }
 
@@ -2095,6 +2100,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 
     tm_wrappers.push_back(TM2_wrapper(tm2, vpm2, true, tm2_tree));
     CGAL_assertion(tm_wrappers.size() == tm1_parts.size() + 1);
+
     Bounded_error_preprocessing<TM1_wrapper, TM2_wrapper> bep(tm_wrappers);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm_wrappers.size()), bep);
 
@@ -2135,6 +2141,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
       tm1_tree.do_not_accelerate_distance_queries();
       tm2_tree.accelerate_distance_queries();
     }
+
 #ifdef CGAL_HAUSDORFF_DEBUG
     timer.stop();
     std::cout << "* preprocessing sequential time (sec.) " << timer.time() << std::endl;
@@ -2145,7 +2152,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
   std::cout << "* infinity_value: " << infinity_value << std::endl;
 #endif
 
-  if(infinity_value < FT(0))
+  if(is_negative(infinity_value))
   {
 #ifdef CGAL_HAUSDORFF_DEBUG
     std::cout << "* culling rate: 100%" << std::endl;
@@ -2154,10 +2161,9 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
     const auto face2 = *(faces(tm2).begin());
     *out++ = std::make_pair(face1, face2);
     *out++ = std::make_pair(face1, face2);
-    return 0.0; // TM1 is part of TM2 so the distance is zero
+    return 0.; // TM1 is part of TM2 so the distance is zero
   }
 
-  CGAL_assertion(error_bound >= FT(0));
   CGAL_assertion(infinity_value > FT(0));
   CGAL_assertion(sq_error_bound >= FT(0));
 
@@ -2572,7 +2578,8 @@ double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
  * \cgalNamedParamsEnd
  *
  * @return Boolean `true` or `false`
-* @see `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
+ *
+ * @see `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
  */
 template< class Concurrency_tag,
           class TriangleMesh1,
