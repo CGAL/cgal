@@ -1530,7 +1530,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
               << ((global_bounds.upper - global_bounds.lower) <= sq_error_bound) << std::endl;
 #endif
 
-    if((global_bounds.upper - global_bounds.lower < sq_error_bound))
+    if((global_bounds.upper - global_bounds.lower <= sq_error_bound))
       break;
 
     // Check if we can early quit.
