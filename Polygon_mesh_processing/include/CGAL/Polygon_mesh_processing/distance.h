@@ -2601,6 +2601,9 @@ bool is_Hausdorff_distance_larger(const TriangleMesh1& tm1,
 
   CGAL_precondition(is_triangle_mesh(tm1) && is_triangle_mesh(tm2));
 
+  if(distance_bound <= 0.)
+    return true;
+
   const auto vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                      get_const_property_map(vertex_point, tm1));
   const auto vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
