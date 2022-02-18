@@ -34,8 +34,6 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
 
-namespace PMP=Polygon_mesh_processing;
-
 template <class TriangleMesh,
           class VertexPointMap,
           class FaceIdMap,
@@ -160,7 +158,7 @@ public:
     , fids(fids)
     , ecm(ecm)
     , is_tm_closed( is_closed(tm))
-    , is_tm_inside_out( is_tm_closed && !PMP::is_outward_oriented(tm) )
+    , is_tm_inside_out( is_tm_closed && !is_outward_oriented(tm) )
     , NID((std::numeric_limits<Node_id>::max)())
     , all_fixed(true)
   {}
@@ -350,10 +348,10 @@ public:
     Boolean_property_map< boost::unordered_set<edge_descriptor> >
       is_intersection(intersection_edges);
     std::size_t nb_patches =
-      PMP::connected_components(tm,
-                                bind_property_maps(fids,make_property_map(patch_ids)),
-                                parameters::edge_is_constrained_map(is_intersection)
-                                           .face_index_map(fids));
+      connected_components(tm,
+                           bind_property_maps(fids,make_property_map(patch_ids)),
+                           parameters::edge_is_constrained_map(is_intersection)
+                                      .face_index_map(fids));
 
     // (2-a) Use the orientation around an edge to classify a patch
     boost::dynamic_bitset<> patches_to_keep(nb_patches);
@@ -1179,12 +1177,13 @@ public:
     //remove the extra patch
     remove_patches(tm, ~patches_to_keep,patches, ecm);
 
-    PMP::stitch_borders(tm, hedge_pairs_to_stitch, parameters::vertex_point_map(vpm));
+    stitch_borders(tm, hedge_pairs_to_stitch, parameters::vertex_point_map(vpm));
   }
 };
 
-
-} } } // CGAL::Corefinement
+} // namespace Corefinement
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
