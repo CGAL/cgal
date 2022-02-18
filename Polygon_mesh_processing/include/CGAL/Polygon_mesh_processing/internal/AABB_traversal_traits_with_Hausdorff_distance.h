@@ -32,6 +32,8 @@
 #endif
 
 namespace CGAL {
+namespace Polygon_mesh_processing {
+namespace internal {
 
 template <class Kernel,
           class Face_handle_1,
@@ -45,10 +47,36 @@ struct Bounds
 
   FT lower;
   FT upper;
+};
 
-  // @todo update
+template <class Kernel,
+          class Face_handle_1,
+          class Face_handle_2>
+struct Local_bounds
+  : public Bounds<Kernel, Face_handle_1, Face_handle_2>
+{
+  using Base = Bounds<Kernel, Face_handle_1, Face_handle_2>;
+  using FT = typename Kernel::FT;
+
+  Local_bounds(const FT infinity_value) : Base(infinity_value) { }
+  Local_bounds(const FT lower, const FT upper) : Base(lower, upper) { }
+
   Face_handle_2 tm2_lface = Face_handle_2();
   Face_handle_2 tm2_uface = Face_handle_2();
+};
+
+template <class Kernel,
+          class Face_handle_1,
+          class Face_handle_2>
+struct Global_bounds
+  : public Bounds<Kernel, Face_handle_1, Face_handle_2>
+{
+  using Base = Bounds<Kernel, Face_handle_1, Face_handle_2>;
+  using FT = typename Kernel::FT;
+
+  Global_bounds(const FT infinity_value) : Base(infinity_value) { }
+  Global_bounds(const FT lower, const FT upper) : Base(lower, upper) { }
+
   std::pair<Face_handle_1, Face_handle_2> lpair = default_face_pair();
   std::pair<Face_handle_1, Face_handle_2> upair = default_face_pair();
 
@@ -66,7 +94,7 @@ struct Candidate_triangle
 {
   using FT = typename Kernel::FT;
   using Triangle_3 = typename Kernel::Triangle_3;
-  using Candidate_bounds = Bounds<Kernel, Face_handle_1, Face_handle_2>;
+  using Candidate_bounds = Local_bounds<Kernel, Face_handle_1, Face_handle_2>;
 
   Candidate_triangle(const Triangle_3& triangle,
                      const Candidate_bounds& bounds,
@@ -106,8 +134,8 @@ class Hausdorff_primitive_traits_tm2
   using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
   using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
 
-  using Local_bounds = Bounds<Kernel, Face_handle_1, Face_handle_2>;
-  using Global_bounds = Bounds<Kernel, Face_handle_1, Face_handle_2>;
+  using Local_bounds = internal::Local_bounds<Kernel, Face_handle_1, Face_handle_2>;
+  using Global_bounds = internal::Global_bounds<Kernel, Face_handle_1, Face_handle_2>;
 
   using TM2_face_to_triangle_map = Triangle_from_face_descriptor_map<TriangleMesh2, VPM2>;
 
@@ -120,8 +148,8 @@ private:
   const VPM2 m_vpm2;
   const TM2_face_to_triangle_map m_face_to_triangle_map;
 
-  const Global_bounds& m_global_bounds;
   Local_bounds m_local_bounds; // local Hausdorff bounds for the query triangle
+  const Global_bounds& m_global_bounds;
   FT m_v0_lower, m_v1_lower, m_v2_lower;
 
   bool m_early_exit;
@@ -358,9 +386,9 @@ class Hausdorff_primitive_traits_tm1
   using Face_handle_1 = typename boost::graph_traits<TriangleMesh1>::face_descriptor;
   using Face_handle_2 = typename boost::graph_traits<TriangleMesh2>::face_descriptor;
 
-  using Global_bounds = Bounds<Kernel, Face_handle_1, Face_handle_2>;
-  using Candidate     = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
-  using Heap_type     = std::priority_queue<Candidate>;
+  using Global_bounds = internal::Global_bounds<Kernel, Face_handle_1, Face_handle_2>;
+  using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
+  using Heap_type = std::priority_queue<Candidate>;
 
 public:
   using Priority = FT;
@@ -527,7 +555,7 @@ public:
 
     // Call culling on TM2 with the TM1 triangle.
     const Bbox_3 t1_bbox = triangle.bbox();
-    Bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(m_infinity_value);
+    Local_bounds<Kernel, Face_handle_1, Face_handle_2> initial_bounds(m_infinity_value);
     TM2_hd_traits traversal_traits_tm2(t1_bbox, m_tm2, m_vpm2, initial_bounds, m_global_bounds, m_infinity_value);
     m_tm2_tree.traversal_with_priority(triangle, traversal_traits_tm2);
 
@@ -566,9 +594,6 @@ public:
     if(is_positive(m_sq_distance_bound) &&
        m_sq_distance_bound <= m_global_bounds.lower)
     {
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
-      std::cout << "Quitting early (TM1 traversal): " << m_global_bounds.lower << std::endl;
-#endif
       m_early_exit = true;
       return;
     }
@@ -645,6 +670,8 @@ public:
   }
 };
 
+} // namespace internal
+} // namespace Polygon_mesh_processing
 } // namespace CGAL
 
 #endif // CGAL_PMP_INTERNAL_AABB_TRAVERSAL_TRAITS_WITH_HAUSDORFF_DISTANCE
