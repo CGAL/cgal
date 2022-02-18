@@ -1697,34 +1697,34 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
 
     // Update global upper Hausdorff bound after subdivision.
     const Candidate& top_candidate = candidate_triangles.top();
-    const FT current_uppmost = top_candidate.bounds.upper;
+    const FT current_upmost = top_candidate.bounds.upper;
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
     std::cout << "current candidates count: " << candidate_triangles.size() << std::endl;
-    std::cout << "current upper bound = " << current_uppmost << std::endl;
+    std::cout << "current upper bound = " << current_upmost << std::endl;
 #endif
-    CGAL_assertion(is_positive(current_uppmost));
+    CGAL_assertion(is_positive(current_upmost));
 
     // Below can happen if the subtriangle returned something like [l;u],
     // with l and u both below the global error bound. The lowest bound will not have been updated
     // since it has been initialized with the error bound.
-    if(current_uppmost < global_bounds.lower)
+    if(current_upmost < global_bounds.lower)
     {
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
-      std::cout << "Uppmost is below lowest, end." << std::endl;
+      std::cout << "upmost is below lowest, end." << std::endl;
 #endif
 
       global_bounds.upper = global_bounds.lower; // not really needed since lower is returned but doesn't hurt
       global_bounds.upair.first = global_bounds.lpair.first;
       global_bounds.upair.second = global_bounds.lpair.second;
 
-      // Current uppmost being equal to the lower is fine, but if it's strictly below, it must
+      // Current upmost being equal to the lower is fine, but if it's strictly below, it must
       // be because we crossed the error bound, or there is some issue...
       CGAL_assertion(global_bounds.lower == sq_error_bound);
 
       break;
     }
 
-    global_bounds.upper = current_uppmost;
+    global_bounds.upper = current_upmost;
     global_bounds.upair.first = top_candidate.tm1_face;
     global_bounds.upair.second = top_candidate.bounds.tm2_uface;
 
