@@ -100,11 +100,33 @@ private:
   Equal_2     f_equal;
 
 public:
+  // The pointer to the traits and the flag that indicate ownership should be
+  // replaced with a smart pointer. Meanwhile, the copy constructor and
+  // copy assignment prevent double delition. Notice that once a copy
+  // constructor (assignment) is present, the move constructor (assignment)
+  // is implicitly not generated anyway.
+
   /*! Default constructor. */
   Polygon_vertical_decomposition_2() :
     m_traits(nullptr),
     m_own_traits(false)
   { init(); }
+
+  /*! Copy constructor. */
+  Polygon_vertical_decomposition_2
+  (const Polygon_vertical_decomposition_2& other) :
+    m_traits((other.m_own_traits) ? new Traits_2 : other.m_traits),
+    m_own_traits(other.m_own_traits)
+  { init(); }
+
+  /*! Copy assignment. */
+  Polygon_vertical_decomposition_2&
+  operator=(const Polygon_vertical_decomposition_2& other) {
+    m_traits = (other.m_own_traits) ? new Traits_2 : other.m_traits;
+    m_own_traits = other.m_own_traits;
+    init();
+    return *this;
+  }
 
   /*! Constructor */
   Polygon_vertical_decomposition_2(const Traits_2& traits) :
