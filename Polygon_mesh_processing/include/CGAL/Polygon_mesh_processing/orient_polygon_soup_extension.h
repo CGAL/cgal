@@ -77,6 +77,81 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
   return inital_nb_pts==points.size();
 }
 
+// This is PMP::orient_triangle_soup_with_reference_triangle_mesh() but using a reference polygon soup
+template <class Concurrency_tag = CGAL::Sequential_tag,
+          class PointRange, class FaceRange, class NamedParameters>
+void
+orient_triangle_soup_with_reference_triangle_soup(const PointRange& ref_points,
+                                                  const FaceRange& ref_faces,
+                                                  PointRange& points,
+                                                  FaceRange& faces,
+                                                  const NamedParameters& np)
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
+  typedef typename FaceRange::value_type Face;
+  typedef typename PointRange::value_type Point_3;
+  typedef typename CGAL::Kernel_traits<Point_3>::Kernel K;
+  typedef typename K::Triangle_3 Triangle;
+  typedef typename K::Vector_3 Vector;
+
+  std::vector<Triangle> ref_triangles;
+  ref_triangles.reserve(ref_faces.size());
+  for(const Face& f : faces)
+  {
+    Triangle tr(points[f[0]], points[f[1]], points[f[2]]);
+    if(!tr.is_degenerate())
+      ref_triangles.emplace_back(tr);
+  }
+
+  // build a tree filtering degenerate faces
+  typedef typename std::vector<Triangle>::const_iterator Iterator;
+  typedef CGAL::AABB_triangle_primitive<K, Iterator> Primitive;
+  typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
+
+  CGAL::AABB_tree<Tree_traits> tree(ref_triangles.begin(), ref_triangles.end());
+
+  // now orient the faces
+  tree.build();
+  tree.accelerate_distance_queries();
+
+  auto process_facet = [&ref_triangles, &tree, &points, &faces](std::size_t fid)
+  {
+    const Point_3& p0 = points[faces[fid][0]];
+    const Point_3& p1 = points[faces[fid][1]];
+    const Point_3& p2 = points[faces[fid][2]];
+
+    const Point_3 mid = CGAL::centroid(p0, p1, p2);
+    auto pt_and_ref_tr = tree.closest_point_and_primitive(mid);
+    const Triangle& ref_tr = *(pt_and_ref_tr.second);
+    Vector ref_n = cross_product(ref_tr[1] - ref_tr[0], ref_tr[2] - ref_tr[0]);
+    if(ref_n * cross_product(p1-p0, p2-p0) < 0)
+      std::swap(faces[fid][1], faces[fid][2]);
+  };
+
+#if !defined(CGAL_LINKED_WITH_TBB)
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#else
+  if(boost::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
+    tbb::parallel_for(std::size_t(0), faces.size(), std::size_t(1), process_facet);
+  else
+#endif
+    std::for_each(boost::counting_iterator<std::size_t>(0),
+                  boost::counting_iterator<std::size_t>(faces.size()),
+                  process_facet);
+}
+
+template <class Concurrency_tag = CGAL::Sequential_tag, class PointRange, class FaceRange>
+void orient_triangle_soup_with_reference_triangle_soup(const PointRange& ref_points,
+                                                       const FaceRange& ref_faces,
+                                                       PointRange& points,
+                                                       FaceRange& faces)
+{
+  return orient_triangle_soup_with_reference_triangle_soup<Concurrency_tag>(
+           ref_points, ref_faces, points, faces, CGAL::parameters::all_default());
+}
+
 /*!
  * \ingroup PMP_orientation_grp
  *
