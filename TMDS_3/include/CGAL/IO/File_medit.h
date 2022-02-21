@@ -976,7 +976,7 @@ output_to_medit(std::ostream& os,
  *                         `c->subdomain_index() != Subdomain_index()` are written}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`true`}
- *   \cgalParamExtra{If `all_cells` is `true, this parameter is ignored. It must be
+ *   \cgalParamExtra{If `all_cells` is `true`, this parameter is ignored. It must be
  *                   set to `false` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
  *
@@ -1054,7 +1054,7 @@ void write_MEDIT(std::ostream& os,
  *                         `c->subdomain_index() != Subdomain_index()` are written}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`true`}
- *   \cgalParamExtra{If `all_cells` is `true, this parameter is ignored. It must be
+ *   \cgalParamExtra{If `all_cells` is `true`, this parameter is ignored. It must be
  *                   set to `false` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
  *
