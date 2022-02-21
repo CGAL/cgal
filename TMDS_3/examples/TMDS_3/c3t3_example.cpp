@@ -8,9 +8,9 @@
 
 #include <fstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
-typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
+using Remeshing_triangulation = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K>;
 
 int main(int argc, char* argv[])
 {

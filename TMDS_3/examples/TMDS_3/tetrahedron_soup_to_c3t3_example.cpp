@@ -11,15 +11,15 @@
 #include <vector>
 #include <unordered_map>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
-typedef CGAL::Delaunay_triangulation_3<K> DT3;
-typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Remeshing_triangulation> C3T3;
+using DT3 = CGAL::Delaunay_triangulation_3<K>;
+using Remeshing_triangulation = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K>;
+using C3T3 = CGAL::Mesh_complex_3_in_triangulation_3<Remeshing_triangulation>;
 
-typedef K::Point_3         Point_3;
-typedef K::Tetrahedron_3   Tetrahedron_3;
-typedef DT3::Vertex_handle Vertex_handle;
+using Point_3 = K::Point_3;
+using Tetrahedron_3 = K::Tetrahedron_3;
+using Vertex_handle = DT3::Vertex_handle;
 
 int main(int , char* [])
 {
