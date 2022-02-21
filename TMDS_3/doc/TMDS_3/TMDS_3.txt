@@ -18,11 +18,11 @@ belong to the mesh complex, surface patches and feature edges.
 
 This package is devoted to the representation of 3-Dimensional Tetrahedral Mesh Data Structures.
 
-A 3D simplicial complex is composed of points, line segments, polygons,
+A 3D linear cell complex is composed of points, line segments, polygons,
 polyhedral, and the combinatorial description of their n-dimension counterparts
 (namely vertices, edges, faces and cells).
 CGAL provides 3D triangulations, that describe
-both the geometry and connectivity of a 3D simplicial complex made
+both the geometry and connectivity of a 3D linear cell complex made
 of triangles, implemented in the
 the \ref PkgTriangulation3 and \ref PkgTDS3 packages.
 
