@@ -92,7 +92,7 @@ int main()
 #ifdef CGAL_LINKED_WITH_LASLIB
 
   {
-    std::ostringsteam  os(std::ios::binary);
+    std::ostringstream  os(std::ios::binary);
     ok = CGAL::write_las_points_with_properties(os, points,
                                                 CGAL::make_las_point_writer(CGAL::First_of_pair_property_map<PointWithColor>()),
                                                 std::make_pair(GetRedMap(),CGAL::LAS_property::R()),
