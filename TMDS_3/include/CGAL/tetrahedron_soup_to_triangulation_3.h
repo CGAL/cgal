@@ -96,7 +96,7 @@ namespace CGAL {
 
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
 
-    return std::move(tr);
+    return tr;
   }
 
   /** \ingroup PkgTMDS3Functions
@@ -162,7 +162,7 @@ namespace CGAL {
 
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
 
-    return std::move(tr);
+    return tr;
   }
 
   template<typename Triangulation,
