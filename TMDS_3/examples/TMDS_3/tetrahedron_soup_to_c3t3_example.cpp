@@ -46,17 +46,14 @@ int main(int , char* [])
 
   tetrahedra.reserve(delaunay.number_of_finite_cells());
   tets_by_indices.reserve(delaunay.number_of_finite_cells());
+  subdomains.reserve(delaunay.number_of_finite_cells());
   for (DT3::Cell_handle c : delaunay.finite_cell_handles())
   {
     tetrahedra.push_back(delaunay.tetrahedron(c));
-
-    std::array<int, 4> tet;
-    tet[0] = v2i.at(c->vertex(0));
-    tet[1] = v2i.at(c->vertex(1));
-    tet[2] = v2i.at(c->vertex(2));
-    tet[3] = v2i.at(c->vertex(3));
-
-    tets_by_indices.push_back(tet);
+    tets_by_indices.push_back( { v2i.at(c->vertex(0)),
+                                 v2i.at(c->vertex(1)),
+                                 v2i.at(c->vertex(2)),
+                                 v2i.at(c->vertex(3)) } );
     subdomains.push_back(Subdomain_index(1));
   }
 
@@ -64,7 +61,7 @@ int main(int , char* [])
   Remeshing_triangulation tr
     = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(tetrahedra);
 
-  //buid triangulation from indices
+  //build triangulation from indices
   Remeshing_triangulation tr2
     = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(
         points, tets_by_indices,
