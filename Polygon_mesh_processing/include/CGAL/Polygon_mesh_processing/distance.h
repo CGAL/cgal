@@ -1453,7 +1453,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
 
   using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
 
-  CGAL_precondition(sq_distance_bound > FT(0));
+  CGAL_precondition(sq_distance_bound != FT(0)); // value is -1 if unused
   CGAL_precondition(sq_error_bound >= FT(0));
   CGAL_precondition(tm1_tree.size() > 0);
   CGAL_precondition(tm2_tree.size() > 0);
