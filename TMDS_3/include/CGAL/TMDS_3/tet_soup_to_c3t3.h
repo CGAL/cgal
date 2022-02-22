@@ -111,8 +111,6 @@ bool build_finite_cells(Tr& tr,
     const bool verbose,
     bool replace_domain_0 = false)
 {
-  typedef std::array<int, 4> Tet; // 4 ids
-
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
   typedef typename Tr::Cell::Surface_patch_index                Surface_patch_index;
@@ -128,7 +126,6 @@ bool build_finite_cells(Tr& tr,
   {
     for(std::size_t i=0; i<finite_cells.size(); ++i)
     {
-      const Tet& tet = finite_cells[i];
       if(subdomains[i] > max_domain)
         max_domain = subdomains[i];
     }
@@ -136,7 +133,7 @@ bool build_finite_cells(Tr& tr,
   // build the finite cells
   for(std::size_t i=0; i<finite_cells.size(); ++i)
   {
-    const Tet& tet = finite_cells[i];
+    const auto& tet = finite_cells[i];
     std::array<Vertex_handle, 4> vs;
 
     for(int j=0; j<4; ++j)
