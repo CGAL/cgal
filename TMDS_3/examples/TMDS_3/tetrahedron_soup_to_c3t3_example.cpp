@@ -59,12 +59,12 @@ int main(int , char* [])
   }
 
   //build triangulation from tetrahedra
-  Remeshing_triangulation tr;
-  CGAL::tetrahedron_soup_to_triangulation_3(tetrahedra, tr);
+  Remeshing_triangulation tr
+    = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(tetrahedra);
 
   //buid triangulation from indices
-  Remeshing_triangulation tr2;
-  CGAL::tetrahedron_soup_to_triangulation_3(points, tets_by_indices, tr2);
+  Remeshing_triangulation tr2
+    = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(points, tets_by_indices);
 
   //build a C3T3
   C3T3 c3t3;

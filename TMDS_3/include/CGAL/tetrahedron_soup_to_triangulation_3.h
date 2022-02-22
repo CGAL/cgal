@@ -22,6 +22,7 @@
 
 #include <CGAL/TMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/TMDS_3/internal/TMDS_3_helper.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
@@ -43,17 +44,18 @@ namespace CGAL {
   * @param tets the set of finite tetrahedra of a valid CGAL triangulation.
   * Each element in the range is the geometric description of the
   * corresponding cell in `tr`
-  * @param tr the 3D triangulation to be built
+  *
+  * @returns the 3D triangulation built from \p tets
   *
   * @post the output triangulation must be a triangulation of the convex hull of `tets`
   */
-  template<typename TetrahedronRange, typename Triangulation>
-  void tetrahedron_soup_to_triangulation_3(const TetrahedronRange& tets,
-                                           Triangulation& tr)
+  template<typename Triangulation, typename TetrahedronRange>
+  Triangulation tetrahedron_soup_to_triangulation_3(const TetrahedronRange& tets)
   {
-    typedef Triangulation              Tr;
-    typedef typename Tr::Point         Point;
+    using Tr    = Triangulation;
+    using Point = typename Tr::Point;
 
+    Triangulation tr;
     std::vector<Point> points;
     std::vector<std::array<int, 5> > finite_cells;
     boost::unordered_map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index> border_facets;
@@ -93,6 +95,8 @@ namespace CGAL {
     CGAL::TMDS_3::build_triangulation(tr, points, finite_cells, border_facets);
 
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
+
+    return std::move(tr);
   }
 
   /** \ingroup PkgTMDS3Functions
@@ -116,8 +120,6 @@ namespace CGAL {
   * corresponding point set. The tetrahedra must form a valid triangulation with each
   * pair of neighboring cells sharing exactly one triangle. Combinatorial validity and
   * validity of the geometric embedding are required.
-  * @param tr the 3D triangulation to be built. If non-empty, `tr` will be cleared prior to
-  * building the triangulation.
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
@@ -131,41 +133,46 @@ namespace CGAL {
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
+  * @returns the 3D triangulation built from parameters
+  *
   * @pre `points` contains each point only once
   * @post the output triangulation must be a triangulation of the convex hull of `points`
   * @post `tr.is_valid()` returns `true`
   *
   * @sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
   */
-  template<typename PointRange,
+  template<typename Triangulation,
+           typename PointRange,
            typename TetrahedronRange,
-           typename Triangulation,
            typename NamedParameters>
-  void tetrahedron_soup_to_triangulation_3(const PointRange& points,
-                                           const TetrahedronRange& tets,
-                                           Triangulation& tr,
-                                           const NamedParameters& np)
+  Triangulation tetrahedron_soup_to_triangulation_3(const PointRange& points,
+                                                    const TetrahedronRange& tets,
+                                                    const NamedParameters& np)
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
+    Triangulation tr;
     boost::unordered_map<std::array<int, 3>,
              typename Triangulation::Cell::Surface_patch_index> empty_map;
-    auto facets = choose_parameter(get_parameter(np, internal_np::surface_facets), empty_map);
+    auto facets = choose_parameter(get_parameter(np, internal_np::surface_facets),
+                                   empty_map);
 
     CGAL::TMDS_3::build_triangulation(tr, points, tets, facets);
 
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
+
+    return std::move(tr);
   }
 
-  template<typename PointRange,
-           typename TetrahedronRange,
-           typename Triangulation>
-  void tetrahedron_soup_to_triangulation_3(const PointRange& points,
-                                           const TetrahedronRange& tets,
-                                           Triangulation& tr)
+  template<typename Triangulation,
+           typename PointRange,
+           typename TetrahedronRange>
+  Triangulation tetrahedron_soup_to_triangulation_3(const PointRange& points,
+                                                    const TetrahedronRange& tets)
   {
-    tetrahedron_soup_to_triangulation_3(points, tets, tr, parameters::all_default());
+    return tetrahedron_soup_to_triangulation_3<Triangulation>(
+              points, tets, parameters::all_default());
   }
 
 } //namespace CGAL
