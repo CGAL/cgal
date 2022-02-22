@@ -13,7 +13,7 @@
 #ifndef CGAL_IO_FILE_AVIZO_H
 #define CGAL_IO_FILE_AVIZO_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/TMDS_3.h>
 
 
 #include <CGAL/IO/File_medit.h>
