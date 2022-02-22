@@ -147,8 +147,8 @@ namespace CGAL {
 
   \cgalModels `MeshComplexWithFeatures_3InTriangulation_3`
 
-  \sa `make_mesh_3()`
-  \sa `refine_mesh_3()`
+  \sa \link make_mesh_3() `CGAL::make_mesh_3()`\endlink
+  \sa \link refine_mesh_3() `CGAL::refine_mesh_3()`\endlink
   \sa `MeshComplex_3InTriangulation_3`
   \sa `MeshComplexWithFeatures_3InTriangulation_3`
   \sa `MeshCellBase_3`,
