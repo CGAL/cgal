@@ -60,7 +60,7 @@ intersection(
     } };
 
   // description of faces of the bbox
-  constexpr std::array<int, 24> face_indices
+  static constexpr std::array<int, 24> face_indices
     { { 0, 1, 2, 3,
         2, 1, 5, 6,
         3, 2, 6, 7,
@@ -68,7 +68,7 @@ intersection(
         4, 0, 3, 7,
         6, 5, 4, 7 } };
 
-  constexpr std::array<int, 24> edge_indices
+  static constexpr std::array<int, 24> edge_indices
     { { 0,  1,  2, 3,
         1,  4,  5, 6,
         2,  6,  7, 8,
