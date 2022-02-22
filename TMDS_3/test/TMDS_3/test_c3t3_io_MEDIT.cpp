@@ -13,7 +13,6 @@ int main (int argc, char** argv)
   typedef CGAL::Exact_predicates_inexact_constructions_kernel                 K;
 
   typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Tr;
-  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
   // Open file
   std::ifstream in(argc > 1 ? argv[1] : "data/elephant.mesh",
