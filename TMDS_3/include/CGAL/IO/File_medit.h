@@ -1111,6 +1111,7 @@ void write_MEDIT(std::ostream& os,
  * from \p in,
  * and `false` if the triangulation is empty, or if the connectivity
  * validity of \p t3 could not be built.
+ * If `false` is returned, \p t3 is empty when the function returns.
  *
  * This function reads the data about vertices, surface facets and
  * triangulation cells from `in`, and builds a valid `T3` from it.
@@ -1124,7 +1125,10 @@ template<typename T3>
 bool read_MEDIT(std::istream& in, T3& t3)
 {
   CGAL_assertion(!(!in));
-  return CGAL::TMDS_3::build_triangulation_from_file(in, t3);
+  bool b = CGAL::TMDS_3::build_triangulation_from_file(in, t3);
+  if(!b)
+    t3.clear();
+  return b;
 }
 
 } // namespace IO
