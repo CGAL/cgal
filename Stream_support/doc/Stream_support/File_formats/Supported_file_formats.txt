@@ -432,8 +432,10 @@ A precise specification of the format is available <a href="http://gun.teipir.gr
 
 The VTK libraries use different file formats to handle data structures, but we only support two:
 - The `VTU` format can be used to store a collection of 3D cells, like tetrahedra,
-  but also points, triangles, lines, etc. In the <a href="https://vtk.org/"> VTK Libraries</a>,
-  it is the format reserved to store `Unstructured Grids`, and in \cgal,
+  but also points, triangles, lines, etc. In the <a href="https://vtk.org/"> VTK Libraries</a>.
+  It is the format reserved to store
+  <a href="https://kitware.github.io/vtk-examples/site/VTKFileFormats/#unstructuredgrid">`Unstructured Grids`</a>,
+  and in \cgal,
   we use it to store triangulations (2D and 3D).
 
 - The `VTP` format can be used to store collections of points, lines, and triangles.
