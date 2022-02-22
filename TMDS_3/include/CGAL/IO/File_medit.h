@@ -1107,6 +1107,11 @@ void write_MEDIT(std::ostream& os,
  * @param in the input stream
  * @param t3 the triangulation
  *
+ * @returns `true` if the connectivity of the triangulation could be built consistently
+ * from \p in,
+ * and `false` if the triangulation is empty, or if the connectivity
+ * validity of \p t3 could not be built.
+ *
  * This function reads the data about vertices, surface facets and
  * triangulation cells from `in`, and builds a valid `T3` from it.
  *
