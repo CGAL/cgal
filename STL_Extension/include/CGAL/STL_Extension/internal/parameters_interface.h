@@ -209,8 +209,9 @@ CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_is_selected_map)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
 
-// MDS_3 parameters
+// TMDS_3 parameters
 CGAL_add_named_parameter(surface_facets_t, surface_facets, surface_facets)
+CGAL_add_named_parameter(subdomain_indices_t, subdomain_indices, subdomain_indices)
 CGAL_add_named_parameter(all_vertices_t, all_vertices, all_vertices)
 CGAL_add_named_parameter(all_cells_t, all_cells, all_cells)
 CGAL_add_named_parameter(rebind_labels_t, rebind_labels, rebind_labels)

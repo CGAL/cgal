@@ -100,9 +100,10 @@ bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
   return true;
 }
 
-template<class Tr, typename CellRange, typename FacetPatchMap>
+template<class Tr, typename CellRange, typename SubdomainsRange, typename FacetPatchMap>
 bool build_finite_cells(Tr& tr,
     const CellRange& finite_cells,
+    const SubdomainsRange& subdomains,
     const std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
     boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                         std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
@@ -110,7 +111,7 @@ bool build_finite_cells(Tr& tr,
     const bool verbose,
     bool replace_domain_0 = false)
 {
-  typedef std::array<int, 5>              Tet_with_ref; // 4 ids + 1 reference
+  typedef std::array<int, 4> Tet; // 4 ids
 
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
@@ -122,20 +123,20 @@ bool build_finite_cells(Tr& tr,
     typename Tr::Geom_traits::Orientation_3 orientation =
       tr.geom_traits().orientation_3_object();
   )
-  int max_domain = 0;
+  typename SubdomainsRange::value_type max_domain = 0;
   if(replace_domain_0)
   {
     for(std::size_t i=0; i<finite_cells.size(); ++i)
     {
-      const Tet_with_ref& tet = finite_cells[i];
-      if(tet[4] > max_domain)
-        max_domain=tet[4];
+      const Tet& tet = finite_cells[i];
+      if(subdomains[i] > max_domain)
+        max_domain = subdomains[i];
     }
   }
   // build the finite cells
   for(std::size_t i=0; i<finite_cells.size(); ++i)
   {
-    const Tet_with_ref& tet = finite_cells[i];
+    const Tet& tet = finite_cells[i];
     std::array<Vertex_handle, 4> vs;
 
     for(int j=0; j<4; ++j)
@@ -153,11 +154,12 @@ bool build_finite_cells(Tr& tr,
                      == POSITIVE);
 
     Cell_handle c = tr.tds().create_cell(vs[0], vs[1], vs[2], vs[3]);
-    c->set_subdomain_index(tet[4]); // the cell's info keeps the reference of the tetrahedron
-    if(replace_domain_0 && tet[4] == 0)
+    c->set_subdomain_index(subdomains[i]); // the cell's info keeps the reference of the tetrahedron
+    if(replace_domain_0 && subdomains[i] == 0)
     {
       c->set_subdomain_index(max_domain+1); // the cell's info keeps the reference of the tetrahedron
     }
+
     // assign cells to vertices
     for(int j=0; j<4; ++j)
     {
@@ -342,8 +344,28 @@ template<class Tr,
          typename CellRange,
          typename FacetPatchMap>
 bool build_triangulation(Tr& tr,
+    const PointRange& points,
+    const CellRange& finite_cells,
+    const typename Tr::Cell::Subdomain_index& subdomain,
+    const FacetPatchMap& border_facets,
+    std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
+    const bool verbose = false,
+    bool replace_domain_0 = false)
+{
+  std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
+  return build_triangulation(tr, points, finite_cells, subdomains,
+                             border_facets, vertex_handle_vector,
+                             verbose, replace_domain_0);
+}
+
+template<class Tr,
+         typename PointRange,
+         typename CellRange,
+         typename FacetPatchMap>
+bool build_triangulation(Tr& tr,
                          const PointRange& points,
                          const CellRange& finite_cells,
+                         const std::vector<typename Tr::Cell::Subdomain_index>& subdomains,
                          const FacetPatchMap& border_facets,
                          std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
                          const bool verbose = false,
@@ -378,7 +400,7 @@ bool build_triangulation(Tr& tr,
   }
   if (!finite_cells.empty())
   {
-    if(!build_finite_cells<Tr>(tr, finite_cells, vertex_handle_vector, incident_cells_map,
+    if(!build_finite_cells<Tr>(tr, finite_cells, subdomains, vertex_handle_vector, incident_cells_map,
                            border_facets, verbose, replace_domain_0))
       return false;
     if(!build_infinite_cells<Tr>(tr, incident_cells_map, verbose))
@@ -402,10 +424,12 @@ bool build_triangulation(Tr& tr,
 template<class Tr,
          typename PointRange,
          typename CellRange,
+         typename SubdomainsRange,
          typename FacetPatchMap>
 bool build_triangulation(Tr& tr,
                          const PointRange& points,
                          const CellRange& finite_cells,
+                         const SubdomainsRange& subdomains,
                          const FacetPatchMap& border_facets,
                          const bool verbose = false,
                          bool replace_domain_0 = false)
@@ -414,7 +438,7 @@ bool build_triangulation(Tr& tr,
                                      typename PointRange::value_type>::value);
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
 
-  return build_triangulation(tr, points, finite_cells, border_facets,
+  return build_triangulation(tr, points, finite_cells, subdomains, border_facets,
                              vertex_handle_vector,
                              verbose, replace_domain_0);
 }
@@ -425,12 +449,14 @@ bool build_triangulation_from_file(std::istream& is,
                                    const bool verbose,
                                    bool replace_domain_0)
 {
-  typedef typename Tr::Point                                  Point_3;
+  using Point_3 = typename Tr::Point;
+  using Subdomain_index = typename Tr::Cell::Subdomain_index;
 
-  typedef std::array<int, 3> Facet; // 3 = id
-  typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
+  using Facet        = std::array<int, 3>; // 3 = id
+  using Tet_with_ref = std::array<int, 4>; // 4 = id
 
   std::vector<Tet_with_ref> finite_cells;
+  std::vector<Subdomain_index> subdomains;
   std::vector<Point_3> points;
   boost::unordered_map<Facet, typename Tr::Cell::Surface_patch_index> border_facets;
 
@@ -513,8 +539,8 @@ bool build_triangulation_from_file(std::istream& is,
         t[1] = n1 - 1;
         t[2] = n2 - 1;
         t[3] = n3 - 1;
-        t[4] = reference;
         finite_cells.push_back(t);
+        subdomains.push_back(reference);
       }
     }
   }
@@ -528,9 +554,10 @@ bool build_triangulation_from_file(std::istream& is,
 
   if(finite_cells.empty())
     return false;
+  CGAL_assertion(finite_cells.size() == subdomains.size());
 
   return build_triangulation(tr,
-                      points, finite_cells, border_facets,
+                      points, finite_cells, subdomains, border_facets,
                       verbose,
                       replace_domain_0 && !dont_replace_domain_0);
 }

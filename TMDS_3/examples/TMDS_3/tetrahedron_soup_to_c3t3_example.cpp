@@ -20,6 +20,7 @@ using C3T3 = CGAL::Mesh_complex_3_in_triangulation_3<Remeshing_triangulation>;
 using Point_3 = K::Point_3;
 using Tetrahedron_3 = K::Tetrahedron_3;
 using Vertex_handle = DT3::Vertex_handle;
+using Subdomain_index = C3T3::Subdomain_index;
 
 int main(int , char* [])
 {
@@ -30,7 +31,8 @@ int main(int , char* [])
   std::unordered_map<Vertex_handle, int> v2i;
   std::vector<DT3::Point>                points(nbv);
   std::vector<Tetrahedron_3>             tetrahedra;
-  std::vector<std::array<int, 5> >       tets_by_indices;
+  std::vector<std::array<int, 4> >       tets_by_indices;
+  std::vector< Subdomain_index>          subdomains;
 
   //insert random points
   CGAL::Random_points_in_cube_3<Point_3> randp(2.);
@@ -48,14 +50,14 @@ int main(int , char* [])
   {
     tetrahedra.push_back(delaunay.tetrahedron(c));
 
-    std::array<int, 5> tet;
+    std::array<int, 4> tet;
     tet[0] = v2i.at(c->vertex(0));
     tet[1] = v2i.at(c->vertex(1));
     tet[2] = v2i.at(c->vertex(2));
     tet[3] = v2i.at(c->vertex(3));
-    tet[4] = Remeshing_triangulation::Cell::Subdomain_index(1);
 
     tets_by_indices.push_back(tet);
+    subdomains.push_back(Subdomain_index(1));
   }
 
   //build triangulation from tetrahedra
@@ -64,7 +66,9 @@ int main(int , char* [])
 
   //buid triangulation from indices
   Remeshing_triangulation tr2
-    = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(points, tets_by_indices);
+    = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(
+        points, tets_by_indices,
+        CGAL::parameters::subdomain_indices(subdomains));
 
   //build a C3T3
   C3T3 c3t3;

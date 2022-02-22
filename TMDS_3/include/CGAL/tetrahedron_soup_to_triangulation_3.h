@@ -57,7 +57,7 @@ namespace CGAL {
 
     Triangulation tr;
     std::vector<Point> points;
-    std::vector<std::array<int, 5> > finite_cells;
+    std::vector<std::array<int, 4> > finite_cells;
     boost::unordered_map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index> border_facets;
     boost::unordered_map<Point, int> p2i;
 
@@ -69,7 +69,7 @@ namespace CGAL {
     for (typename TetrahedronRange::value_type tet : tets)
     {
       CGAL_assertion(tet.orientation() == CGAL::POSITIVE);
-      std::array<int, 5> cell;
+      std::array<int, 4> cell;
 
       for (int i = 0; i < 4; ++i)
       {
@@ -84,7 +84,6 @@ namespace CGAL {
         else
           cell[i] = p2i.at(pi);
       }
-      cell[4] = 1;
 
       CGAL_assertion(orientation(points[cell[0]],
         points[cell[1]], points[cell[2]], points[cell[3]]) == CGAL::POSITIVE);
@@ -92,7 +91,8 @@ namespace CGAL {
       finite_cells.push_back(cell);
     }
 
-    CGAL::TMDS_3::build_triangulation(tr, points, finite_cells, border_facets);
+    typename Tr::Cell::Subdomain_index default_si(1);
+    CGAL::TMDS_3::build_triangulation(tr, points, finite_cells, default_si, border_facets);
 
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
 
@@ -115,11 +115,13 @@ namespace CGAL {
   * @param points points of the soup of tetrahedra
   * @param tets the set of finite tetrahedra of a valid CGAL triangulation.
   * Each element in the range describes a tetrahedron using the indices of the points
-  * in `points` (indices 0 to 3), and the associated `Subdomain_index` (index 4). It must
+  * in `points` (indices 0 to 3).
+  * It must
   * describe a non self-intersecting set of tetrahedra, that cover the convex hull of the
   * corresponding point set. The tetrahedra must form a valid triangulation with each
   * pair of neighboring cells sharing exactly one triangle. Combinatorial validity and
   * validity of the geometric embedding are required.
+  *
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
@@ -129,7 +131,16 @@ namespace CGAL {
   *     \cgalParamType{a class model of `AssociativeContainer`
   *                    whose key type is model of `RandomAccessContainer` containing `int`
   *                    and mapped type is `Tr::Cell::Surface_patch_index`}
-  *     \cgalParamDefault{An empty `boost::unordered_map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>`}
+  *     \cgalParamDefault{an empty `boost::unordered_map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>`}
+  *   \cgalParamNEnd
+  *   \cgalParamNBegin{subdomain_indices}
+  *     \cgalParamDescription{each element in the range gives the
+  *       `Triangulation::Cell::Subdomain_index` corresponding to the tetrahedron (cell)
+  *        of same index in `tets`}
+  *     \cgalParamType{a class model of `RandomAccessContainer` whose value type
+  *                    is `Triangulation::Cell::Subdomain_index`}
+  *     \cgalParamDefault{each finite cell of the output triangulation is
+  *                    set to have `1` as `Subdomain_index`}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
@@ -157,8 +168,9 @@ namespace CGAL {
              typename Triangulation::Cell::Surface_patch_index> empty_map;
     auto facets = choose_parameter(get_parameter(np, internal_np::surface_facets),
                                    empty_map);
+    auto subdomains = choose_parameter(get_parameter(np, internal_np::subdomain_indices), 1);
 
-    CGAL::TMDS_3::build_triangulation(tr, points, tets, facets);
+    CGAL::TMDS_3::build_triangulation(tr, points, tets, subdomains, facets);
 
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
 
