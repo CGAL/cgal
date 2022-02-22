@@ -4,9 +4,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <boost/config.hpp>
-#include <boost/version.hpp>
-
 #include <fstream>
 #include <vector>
 #include <cassert>
