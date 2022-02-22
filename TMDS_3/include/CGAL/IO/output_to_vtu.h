@@ -14,7 +14,7 @@
 #ifndef CGAL_OUTPUT_TO_VTU_H
 #define CGAL_OUTPUT_TO_VTU_H
 
-#include <CGAL/license/Mesh_3.h>
+#include <CGAL/license/TMDS_3.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/IO/io.h>
@@ -361,6 +361,7 @@ void output_to_vtu_with_attributes(std::ostream& os,
 //! \param c3t3 the mesh complex
 //! \param mode decides if the data should be written in binary (`IO::BINARY`)
 //!   or in ASCII (`IO::ASCII`).
+//! \see \ref IOStreamVTK
 //!
 template <class C3T3>
 void output_to_vtu(std::ostream& os,
