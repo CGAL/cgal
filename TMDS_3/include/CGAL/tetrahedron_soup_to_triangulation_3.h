@@ -34,7 +34,8 @@ namespace CGAL {
   * builds a 3D triangulation from a soup of tetrahedra.
   *
   * @tparam TetrahedronRange a model of `Range` whose value type is
-  * a `Tetrahedron_3`
+  * a `Tetrahedron_3`. The point type of the tetrahedra must be convertible
+  * to `Triangulation::Point`
   * @tparam Triangulation a 3D triangulation class that has
   * a vertex base model of `MeshVertexBase_3`
   * and a cell base model of `MeshCellBase_3`
@@ -97,8 +98,9 @@ namespace CGAL {
   /** \ingroup PkgTMDS3Functions
   * builds a 3D triangulation from a soup of tetrahedra.
   *
-  * @tparam PointRange  a model of the concept `RandomAccessContainer`
-  * whose value type is the point type
+  * @tparam PointRange a model of the concept `RandomAccessContainer`
+  * whose value type is the point type.
+  * The point type must be convertible to `Triangulation::Point`.
   * @tparam TetrahedronRange a model of the concept `RandomAccessContainer` whose
   * value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
   * @tparam Triangulation a 3D triangulation class that has
