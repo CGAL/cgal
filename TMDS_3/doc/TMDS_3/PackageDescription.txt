@@ -69,7 +69,6 @@ Here are the main concepts of this package:
 - `CGAL::IO::read_MEDIT()`
 - `CGAL::IO::output_to_vtu()`
 - `CGAL::IO::output_to_tetgen()`
-- `CGAL::IO::output_to_avizo()`
 - `CGAL::IO::output_to_medit()` (deprecated)
 */
 

@@ -27,12 +27,14 @@ namespace CGAL {
 namespace IO {
 
 /**
+ * @cond SKIP_IN_MANUAL
  * @ingroup PkgTMDS3ExportFunctions
  * @brief exports a mesh complex to the Avizo (`.am`) file format
  * @tparam C3T3 a class model of `MeshComplex_3InTriangulation_3`
  * @param os the output stream
  * @param c3t3 the mesh complex
  * \see \ref IOStreamAvizo
+ * @endcond
  */
 template <class C3T3>
 void
