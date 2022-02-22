@@ -344,25 +344,6 @@ template<class Tr,
          typename CellRange,
          typename FacetPatchMap>
 bool build_triangulation(Tr& tr,
-    const PointRange& points,
-    const CellRange& finite_cells,
-    const typename Tr::Cell::Subdomain_index& subdomain,
-    const FacetPatchMap& border_facets,
-    std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-    const bool verbose = false,
-    bool replace_domain_0 = false)
-{
-  std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
-  return build_triangulation(tr, points, finite_cells, subdomains,
-                             border_facets, vertex_handle_vector,
-                             verbose, replace_domain_0);
-}
-
-template<class Tr,
-         typename PointRange,
-         typename CellRange,
-         typename FacetPatchMap>
-bool build_triangulation(Tr& tr,
                          const PointRange& points,
                          const CellRange& finite_cells,
                          const std::vector<typename Tr::Cell::Subdomain_index>& subdomains,
@@ -419,6 +400,25 @@ bool build_triangulation(Tr& tr,
 
   return true;// tr.tds().is_valid();
               //TDS not valid when cells do not cover the convex hull of vertices
+}
+
+template<class Tr,
+         typename PointRange,
+         typename CellRange,
+         typename FacetPatchMap>
+bool build_triangulation(Tr& tr,
+    const PointRange& points,
+    const CellRange& finite_cells,
+    const typename Tr::Cell::Subdomain_index& subdomain,
+    const FacetPatchMap& border_facets,
+    std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
+    const bool verbose = false,
+    bool replace_domain_0 = false)
+{
+  std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
+  return build_triangulation(tr, points, finite_cells, subdomains,
+                             border_facets, vertex_handle_vector,
+                             verbose, replace_domain_0);
 }
 
 template<class Tr,

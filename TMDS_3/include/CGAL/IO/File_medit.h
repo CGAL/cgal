@@ -1088,8 +1088,7 @@ void write_MEDIT(std::ostream& os,
 
 template<typename T3,
          typename CornerIndex,
-         typename CurveIndex,
-         typename NamedParameters>
+         typename CurveIndex>
 void write_MEDIT(std::ostream& os,
     const CGAL::Mesh_complex_3_in_triangulation_3<T3, CornerIndex, CurveIndex>& c3t3)
 {
