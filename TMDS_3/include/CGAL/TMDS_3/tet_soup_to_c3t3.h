@@ -340,14 +340,14 @@ template<class Tr,
          typename PointRange,
          typename CellRange,
          typename FacetPatchMap>
-bool build_triangulation(Tr& tr,
-                         const PointRange& points,
-                         const CellRange& finite_cells,
-                         const std::vector<typename Tr::Cell::Subdomain_index>& subdomains,
-                         const FacetPatchMap& border_facets,
-                         std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-                         const bool verbose = false,
-                         bool replace_domain_0 = false)
+bool build_triangulation_impl(Tr& tr,
+    const PointRange& points,
+    const CellRange& finite_cells,
+    const std::vector<typename Tr::Cell::Subdomain_index>& subdomains,
+    const FacetPatchMap& border_facets,
+    std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
+    const bool verbose = false,
+    bool replace_domain_0 = false)
 {
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
@@ -403,7 +403,7 @@ template<class Tr,
          typename PointRange,
          typename CellRange,
          typename FacetPatchMap>
-bool build_triangulation(Tr& tr,
+bool build_triangulation_one_subdomain(Tr& tr,
     const PointRange& points,
     const CellRange& finite_cells,
     const typename Tr::Cell::Subdomain_index& subdomain,
@@ -413,9 +413,28 @@ bool build_triangulation(Tr& tr,
     bool replace_domain_0 = false)
 {
   std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
-  return build_triangulation(tr, points, finite_cells, subdomains,
-                             border_facets, vertex_handle_vector,
-                             verbose, replace_domain_0);
+  return build_triangulation_impl(tr, points, finite_cells, subdomains,
+                                  border_facets, vertex_handle_vector,
+                                  verbose, replace_domain_0);
+}
+
+template<class Tr,
+         typename PointRange,
+         typename CellRange,
+         typename FacetPatchMap>
+bool build_triangulation_one_subdomain(Tr& tr,
+    const PointRange& points,
+    const CellRange& finite_cells,
+    const typename Tr::Cell::Subdomain_index& subdomain,
+    const FacetPatchMap& border_facets,
+    const bool verbose = false,
+    bool replace_domain_0 = false)
+{
+  std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
+  std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
+  return build_triangulation_impl(tr, points, finite_cells, subdomains,
+                                  border_facets, vertex_handle_vector,
+                                  verbose, replace_domain_0);
 }
 
 template<class Tr,
@@ -423,21 +442,22 @@ template<class Tr,
          typename CellRange,
          typename SubdomainsRange,
          typename FacetPatchMap>
-bool build_triangulation(Tr& tr,
-                         const PointRange& points,
-                         const CellRange& finite_cells,
-                         const SubdomainsRange& subdomains,
-                         const FacetPatchMap& border_facets,
-                         const bool verbose = false,
-                         bool replace_domain_0 = false)
+bool build_triangulation_with_subdomains_range(Tr& tr,
+    const PointRange& points,
+    const CellRange& finite_cells,
+    const SubdomainsRange& subdomains,
+    const FacetPatchMap& border_facets,
+    const bool verbose = false,
+    bool replace_domain_0 = false)
 {
   BOOST_STATIC_ASSERT(boost::is_same<typename Tr::Point,
                                      typename PointRange::value_type>::value);
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
-
-  return build_triangulation(tr, points, finite_cells, subdomains, border_facets,
-                             vertex_handle_vector,
-                             verbose, replace_domain_0);
+  std::vector<typename Tr::Cell::Subdomain_index> subdomains_vector(
+      subdomains.begin(), subdomains.end());
+  return build_triangulation_impl(tr, points, finite_cells, subdomains_vector, border_facets,
+                                  vertex_handle_vector,
+                                  verbose, replace_domain_0);
 }
 
 template<class Tr>
@@ -553,7 +573,7 @@ bool build_triangulation_from_file(std::istream& is,
     return false;
   CGAL_assertion(finite_cells.size() == subdomains.size());
 
-  return build_triangulation(tr,
+  return build_triangulation_with_subdomains_range(tr,
                       points, finite_cells, subdomains, border_facets,
                       verbose,
                       replace_domain_0 && !dont_replace_domain_0);

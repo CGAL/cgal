@@ -92,7 +92,7 @@ namespace CGAL {
     }
 
     typename Tr::Cell::Subdomain_index default_si(1);
-    CGAL::TMDS_3::build_triangulation(tr, points, finite_cells, default_si, border_facets);
+    CGAL::TMDS_3::build_triangulation_one_subdomain(tr, points, finite_cells, default_si, border_facets);
 
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
 
@@ -170,7 +170,7 @@ namespace CGAL {
                                    empty_map);
     const auto& subdomains = choose_parameter(get_parameter(np, internal_np::subdomain_indices), 1);
 
-    CGAL::TMDS_3::build_triangulation(tr, points, tets, subdomains, facets);
+    CGAL::TMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets);
 
     CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
 
