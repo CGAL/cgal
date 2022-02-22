@@ -166,9 +166,9 @@ namespace CGAL {
     Triangulation tr;
     boost::unordered_map<std::array<int, 3>,
              typename Triangulation::Cell::Surface_patch_index> empty_map;
-    auto facets = choose_parameter(get_parameter(np, internal_np::surface_facets),
+    const auto& facets = choose_parameter(get_parameter(np, internal_np::surface_facets),
                                    empty_map);
-    auto subdomains = choose_parameter(get_parameter(np, internal_np::subdomain_indices), 1);
+    const auto& subdomains = choose_parameter(get_parameter(np, internal_np::subdomain_indices), 1);
 
     CGAL::TMDS_3::build_triangulation(tr, points, tets, subdomains, facets);
 
