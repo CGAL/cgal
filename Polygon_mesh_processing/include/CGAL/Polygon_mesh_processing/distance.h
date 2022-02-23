@@ -1991,7 +1991,6 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
   // This is off by default because the parallel version does not show much of runtime improvement.
   // The slowest part is building AABB trees and this is what should be accelerated in the future.
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED) && defined(USE_PARALLEL_BEHD)
-  using Point_3       = typename Kernel::Point_3;
   using TMF           = CGAL::Face_filtered_graph<TM1>;
   using TMF_primitive = AABB_face_graph_triangle_primitive<TMF, VPM1>;
   using TMF_traits    = AABB_traits<Kernel, TMF_primitive>;
