@@ -731,6 +731,14 @@ public:
           std::size_t patch_id_q1=patch_ids[ get(fids, face(opposite(h2,tm),tm)) ];
           std::size_t patch_id_q2=patch_ids[ get(fids, face(h2,tm)) ];
 
+          if (patch_id_p1==patch_id_p2 || patch_id_q1==patch_id_q2)
+          {
+            // polyline in the middle of a patch is always impossible to fix but
+            // removing the whole all the patch
+            all_fixed = false;
+            continue;
+          }
+
           //indicates that patch status will be updated
           patch_status_not_set.reset(patch_id_p1);
           patch_status_not_set.reset(patch_id_p2);
