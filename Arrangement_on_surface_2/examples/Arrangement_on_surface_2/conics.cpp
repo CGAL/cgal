@@ -29,7 +29,7 @@ int main() {
   // with (-3, 4) and (4, 3) as its endpoints. We want the arc to be
   // clockwise-oriented, so it passes through (0, 5) as well.
   Conic_arc c4(Rat_point(-3, 4), Rat_point(0, 5), Rat_point(4, 3));
-  CGAL_assertion(c4.is_valid());
+
   insert(arr, c4);
 
   // Insert a full unit circle (C5) that is centered at (0, 4).
@@ -46,7 +46,7 @@ int main() {
               0, 0, 0, 0, 1, 3,                  // the line: y = -3.
               Point(1.41, -2),                   // approximation of the target.
               0, 0, 0, 0, 1, 2);                 // the line: y = -2.
-  CGAL_assertion(c6.is_valid());
+
   insert(arr, c6);
 
   // Insert the right half of the circle centered at (4, 2.5) whose radius

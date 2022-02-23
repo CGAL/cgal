@@ -21,7 +21,7 @@ typedef Triangulation::Periodic_triangle_iterator   Periodic_triangle_iterator;
 
 void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t)
 {
-  CGAL_assertion(t.number_of_vertices() == 1);
+  assert(t.number_of_vertices() == 1);
 
   Point &p = t.vertices_begin()->point();
   Triangulation::Locate_type lt;
@@ -47,7 +47,7 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   CGAL::Bounded_side side = t.side_of_face(p, offset, triang_it.get_face(), lt, li);
                   if (side != CGAL::ON_UNBOUNDED_SIDE)
                     {
-                      CGAL_assertion(lt == Triangulation::VERTEX);
+                      assert(lt == Triangulation::VERTEX);
                     }
                   on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
                   on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
@@ -55,8 +55,8 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   triangle.vertex(0); // Avoid warning
                   ++triang_it;
                 }
-              CGAL_assertion(on_boundary == 6);
-              CGAL_assertion(on_inside == 0);
+              assert(on_boundary == 6);
+              assert(on_inside == 0);
             }
             {
               // Locate point on an edge
@@ -68,7 +68,7 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   CGAL::Bounded_side side = t.side_of_face(p + Vector(0.0, 0.1), offset, triang_it.get_face(), lt, li);
                   if (side != CGAL::ON_UNBOUNDED_SIDE)
                     {
-                      CGAL_assertion(lt == Triangulation::EDGE);
+                      assert(lt == Triangulation::EDGE);
                     }
                   on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
                   on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
@@ -76,8 +76,8 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   triangle.vertex(0); // Avoid warning
                   ++triang_it;
                 }
-              CGAL_assertion(on_boundary == 2);
-              CGAL_assertion(on_inside == 0);
+              assert(on_boundary == 2);
+              assert(on_inside == 0);
             }
             {
               // Locate point inside a face
@@ -89,7 +89,7 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   CGAL::Bounded_side side = t.side_of_face(p + Vector(0.1, 0.2), offset, triang_it.get_face(), lt, li);
                   if (side != CGAL::ON_UNBOUNDED_SIDE)
                     {
-                      CGAL_assertion(lt == Triangulation::FACE);
+                      assert(lt == Triangulation::FACE);
                     }
                   on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
                   on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
@@ -97,8 +97,8 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   triangle.vertex(0); // Avoid warning
                   ++triang_it;
                 }
-              CGAL_assertion(on_boundary == 0);
-              CGAL_assertion(on_inside == 1);
+              assert(on_boundary == 0);
+              assert(on_inside == 1);
             }
           }
           {
@@ -116,14 +116,14 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   CGAL::Bounded_side side = t.side_of_face(p, offset, face_it, lt, li);
                   if (side != CGAL::ON_UNBOUNDED_SIDE)
                     {
-                      CGAL_assertion(lt == Triangulation::VERTEX);
+                      assert(lt == Triangulation::VERTEX);
                     }
                   on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
                   on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
                   ++face_it;
                 }
-              CGAL_assertion(on_boundary == 6);
-              CGAL_assertion(on_inside == 0);
+              assert(on_boundary == 6);
+              assert(on_inside == 0);
             }
             {
               // Locate point on an edge
@@ -135,14 +135,14 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   CGAL::Bounded_side side = t.side_of_face(p + Vector(0.1, 0.0), offset, face_it, lt, li);
                   if (side != CGAL::ON_UNBOUNDED_SIDE)
                     {
-                      CGAL_assertion(lt == Triangulation::EDGE);
+                      assert(lt == Triangulation::EDGE);
                     }
                   on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
                   on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
                   ++face_it;
                 }
-              CGAL_assertion(on_boundary == 2);
-              CGAL_assertion(on_inside == 0);
+              assert(on_boundary == 2);
+              assert(on_inside == 0);
             }
             {
               // Locate point inside a face
@@ -154,14 +154,14 @@ void test_point_location_in_a_triangulation_with_a_single_point(Triangulation &t
                   CGAL::Bounded_side side = t.side_of_face(p + Vector(0.1, 0.2), offset, face_it, lt, li);
                   if (side != CGAL::ON_UNBOUNDED_SIDE)
                     {
-                      CGAL_assertion(lt == Triangulation::FACE);
+                      assert(lt == Triangulation::FACE);
                     }
                   on_boundary += (side == CGAL::ON_BOUNDARY ? 1 : 0);
                   on_inside += (side == CGAL::ON_BOUNDED_SIDE ? 1 : 0);
                   ++face_it;
                 }
-              CGAL_assertion(on_boundary == 0);
-              CGAL_assertion(on_inside == 1);
+              assert(on_boundary == 0);
+              assert(on_inside == 1);
             }
           }
         }
@@ -175,13 +175,13 @@ int main()
   // Insert the first point
   Point first_point(0.5, 0.5);
   t.insert(first_point);
-  CGAL_assertion(t.is_valid(true));
+  assert(t.is_valid(true));
 
   {
     // Testing the point iterator
     Periodic_point_iterator it = t.periodic_points_begin();
     Periodic_point_iterator beyond = t.periodic_points_end();
-    CGAL_assertion(std::distance(it, beyond) == 9);
+    assert(std::distance(it, beyond) == 9);
     while(it != beyond)
       {
         Point p = t.point(*it);
@@ -193,7 +193,7 @@ int main()
     // Testing the segment iterator
     Periodic_segment_iterator it = t.periodic_segments_begin();
     Periodic_segment_iterator beyond = t.periodic_segments_end();
-    CGAL_assertion(std::distance(it, beyond) == 27);
+    assert(std::distance(it, beyond) == 27);
     while(it != beyond)
       {
         Segment s = t.segment(*it);
@@ -205,7 +205,7 @@ int main()
     // Testing the triangle iterator
     Periodic_triangle_iterator it = t.periodic_triangles_begin();
     Periodic_triangle_iterator beyond = t.periodic_triangles_end();
-    CGAL_assertion(std::distance(it, beyond) == 18);
+    assert(std::distance(it, beyond) == 18);
     while(it != beyond)
       {
         Triangle triangle = t.triangle(*it);

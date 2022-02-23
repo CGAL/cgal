@@ -702,10 +702,12 @@ bool clip(TriangleMesh& tm,
 #endif
           const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = CGAL::parameters;
+
+  using params::get_parameter;
+  using params::choose_parameter;
+
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
 
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
@@ -805,10 +807,11 @@ bool clip(TriangleMesh& tm,
 #endif
           const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = CGAL::parameters;
+
+  using params::get_parameter;
+  using params::choose_parameter;
 
   if(boost::begin(faces(tm))==boost::end(faces(tm))) return true;
   TriangleMesh clipper;
@@ -973,10 +976,11 @@ void split(TriangleMesh& tm,
 #endif
            const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = CGAL::parameters;
+
+  using params::get_parameter;
+  using params::choose_parameter;
 
   // create a splitter mesh for the splitting plane using an internal CGAL function
   CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm, np);
@@ -987,11 +991,10 @@ void split(TriangleMesh& tm,
                       bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
 
   TriangleMesh splitter;
-  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, CGAL::parameters::default_values());
+  CGAL::Oriented_side os = PMP::internal::clip_to_bbox(plane, bbox, splitter, params::default_values());
 
   if(os == CGAL::ON_ORIENTED_BOUNDARY)
   {
-
     const bool do_not_modify = choose_parameter(get_parameter(np, internal_np::allow_self_intersections), false);
     return split(tm, splitter, np, params::do_not_modify(do_not_modify));
   }
@@ -1076,10 +1079,12 @@ void split(TriangleMesh& tm,
            #endif
            const NamedParameters& np = parameters::default_values())
 {
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = CGAL::parameters;
+
+  using params::get_parameter;
+  using params::choose_parameter;
+
   TriangleMesh splitter;
 
   make_hexahedron(iso_cuboid[0], iso_cuboid[1], iso_cuboid[2], iso_cuboid[3],

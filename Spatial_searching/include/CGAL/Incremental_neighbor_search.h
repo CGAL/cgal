@@ -17,6 +17,7 @@
 #include <CGAL/license/Spatial_searching.h>
 
 #include <CGAL/disable_warnings.h>
+#include <CGAL/Kd_tree.h>
 #include <CGAL/Kd_tree_node.h>
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Euclidean_distance.h>
@@ -342,7 +343,8 @@ namespace CGAL {
 
           typename SearchTraits::Construct_cartesian_const_iterator_d construct_it =
             m_tree.traits().construct_cartesian_const_iterator_d_object();
-          m_dim = static_cast<int>(std::distance(construct_it(q), construct_it(q, 0)));
+          const Point_d& p = *m_tree.begin();
+          m_dim = static_cast<int>(std::distance(construct_it(p), construct_it(p, 0)));
 
           multiplication_factor= distance.transformed_distance(FT(1)+Eps);
 

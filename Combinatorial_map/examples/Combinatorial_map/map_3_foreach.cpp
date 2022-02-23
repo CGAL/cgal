@@ -1,5 +1,4 @@
 #include <CGAL/Combinatorial_map.h>
-#include <CGAL/Combinatorial_map_constructors.h>
 #include <iostream>
 #include <algorithm>
 

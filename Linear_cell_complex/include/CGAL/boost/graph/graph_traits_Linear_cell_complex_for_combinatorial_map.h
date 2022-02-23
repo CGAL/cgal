@@ -29,6 +29,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/iterator.h>
+#include <CGAL/assertions.h>
 
 #define CGAL_LCC_TEMPLATE_ARGS template<unsigned int d_, unsigned int ambient_dim, \
                                         class Traits_,                \
@@ -66,7 +67,7 @@ struct EdgeHandle : Dart_handle
 
   Dart_handle second_halfedge() const
   {
-    assert(*this!=nullptr);
+    CGAL_assertion(*this!=nullptr);
     return (*this)->get_f(2);
   }
 

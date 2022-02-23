@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 /* // If you want to use exact constructions.
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -48,7 +49,7 @@ void display_voronoi(LCC_3& alcc, Dart_handle adart)
     toremove.pop();
   }
 
-  CGAL_assertion(alcc.is_without_boundary(1) && alcc.is_without_boundary(2));
+  assert(alcc.is_without_boundary(1) && alcc.is_without_boundary(2));
 
   std::cout<<"Voronoi subdvision, only finite volumes:"<<std::endl<<"  ";
   alcc.display_characteristics(std::cout) << ", valid="
@@ -126,7 +127,7 @@ int main(int narg, char** argv)
 
   std::istream_iterator<Point> begin(iFile), end;
   T.insert(begin, end);
-  CGAL_assertion(T.is_valid(false));
+  assert(T.is_valid(false));
 
   // 2) Convert the triangulation into a 3D lcc.
   LCC_3 lcc;
@@ -144,7 +145,7 @@ int main(int narg, char** argv)
   LCC_3 dual_lcc;
   Dart_handle ddh=lcc.dual(dual_lcc, dh);
   // Here, dual_lcc is the 3D Voronoi diagram.
-  CGAL_assertion(dual_lcc.is_without_boundary());
+  assert(dual_lcc.is_without_boundary());
 
   // 4) We update the geometry of dual_lcc by using the std::map
   //    face_to_dart.
@@ -161,4 +162,3 @@ int main(int narg, char** argv)
 
   return EXIT_SUCCESS;
 }
-

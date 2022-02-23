@@ -16,6 +16,7 @@
 #include <fstream>
 #include <vector>
 #include <utility>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -50,8 +51,8 @@ public:
                   const key_type& k,
                   const value_type b)
   {
-    CGAL_assertion(map.m_set_ptr != nullptr);
-    CGAL_assertion(k.first < k.second);
+    assert(map.m_set_ptr != nullptr);
+    assert(k.first < k.second);
     if (b)  map.m_set_ptr->insert(k);
     else    map.m_set_ptr->erase(k);
   }
@@ -59,8 +60,8 @@ public:
   friend value_type get(const Constrained_edges_property_map& map,
                         const key_type& k)
   {
-    CGAL_assertion(map.m_set_ptr != nullptr);
-    CGAL_assertion(k.first < k.second);
+    assert(map.m_set_ptr != nullptr);
+    assert(k.first < k.second);
     return map.m_set_ptr->count(k) > 0;
   }
 };
@@ -101,7 +102,7 @@ void generate_input_cube(const std::size_t& n,
   Vertex_handle v6 = tr.insert(Point( 2.,  2., -2.));
   Vertex_handle v7 = tr.insert(Point( 2.,  2.,  2.));
 
-  CGAL_assertion(tr.is_valid(true));
+  assert(tr.is_valid(true));
 
   // writing file output
 #ifdef CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
@@ -127,7 +128,7 @@ void generate_input_cube(const std::size_t& n,
   add_edge(v2, v6, tr, constraints);
   add_edge(v3, v7, tr, constraints);
 
-  CGAL_assertion(tr.is_valid(true));
+  assert(tr.is_valid(true));
 }
 
 void set_subdomain(Remeshing_triangulation& tr, const int index)
@@ -158,4 +159,3 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;
 }
-
