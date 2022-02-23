@@ -41,12 +41,12 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 struct Approximate_hd_wrapper
 {
-  const double m_num_samples;
+  const std::size_t m_num_samples;
   const double m_error_bound;
 
   std::string name() const { return "approximate"; }
 
-  explicit Approximate_hd_wrapper(const double num_samples,
+  explicit Approximate_hd_wrapper(const std::size_t num_samples,
                                   const double  error_bound)
     : m_num_samples(num_samples), m_error_bound(error_bound)
   { }
@@ -1131,7 +1131,7 @@ int main(int argc, char** argv)
   std::cerr.precision(17);
 
   const double error_bound = 1e-4;
-  const double num_samples = 1000.;
+  const std::size_t num_samples = 1000;
   std::cout << std::endl << "* error bound: " << error_bound << std::endl;
   std::cout << std::endl << "* number of samples: " << num_samples << std::endl;
 
