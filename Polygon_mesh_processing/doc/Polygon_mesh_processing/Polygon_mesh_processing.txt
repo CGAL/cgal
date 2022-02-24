@@ -230,10 +230,11 @@ Once this is done, remeshing is run on all the surface, with protection of const
 \subsubsection ExtrusionExample Extrusion of a Triangle Mesh
 
 The following example extrudes in both directions by projecting points along the vertex normal.
+In case the function `Bottom` was the identity this would have been a one-sided extrusion.
 
 \cgalExample{Polygon_mesh_processing/extrude.cpp}
 
-In case the function `Bottom` was the identity this would have been a one-sided extrusion.
+
 
 
 \section Coref_section Corefinement and Boolean Operations
