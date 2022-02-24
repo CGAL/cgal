@@ -151,7 +151,7 @@ OutputIterator region_growing_planes(
   using Traits = GeomTraits;
   using Polyhedron = CGAL::Polyhedron_3<Traits, CGAL::Polyhedron_items_3, CGAL::HalfedgeDS_vector>;
   using Face_range = typename CGAL::Iterator_range<typename boost::graph_traits<Polyhedron>::face_iterator>;
-  using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<Polyhedron, Face_range>;
+  using Neighbor_query = Polygon_mesh::One_ring_neighbor_query<Polyhedron>;
   using Region_type = Polygon_mesh::Least_squares_plane_fit_region<Traits, Polyhedron, Face_range>;
   using Sorting = Polygon_mesh::Least_squares_plane_fit_sorting<Traits, Polyhedron, Neighbor_query, Face_range>;
   using Region_growing = Region_growing<Face_range, Neighbor_query, Region_type, typename Sorting::Seed_map>;

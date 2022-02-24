@@ -42,7 +42,7 @@ namespace Polygon_mesh {
   */
   template<typename PolygonMesh
 #ifndef CGAL_NO_DEPRECATED_CODE
-  , typename FaceRange = typename PolygonMesh::Face_range
+  , typename FaceRange = void
 #endif
   >
   class One_ring_neighbor_query

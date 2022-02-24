@@ -136,7 +136,7 @@ and the Region Growing approach for detecting shapes in a set of arbitrary items
 - `CGAL::Shape_detection::Segment_set::Least_squares_line_fit_sorting<GeomTraits, InputRange, %NeighborQuery, SegmentMap>`
 
 ### Polygon Mesh ###
-- `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh, FaceRange>`
+- `CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<PolygonMesh>`
 - `CGAL::Shape_detection::Polygon_mesh::Polyline_graph<GeomTraits, PolygonMesh, FaceRange, EdgeRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<GeomTraits, PolygonMesh, FaceRange, VertexToPointMap>`
 - `CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<GeomTraits, PolygonMesh, %NeighborQuery, FaceRange, VertexToPointMap>`
