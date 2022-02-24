@@ -23,10 +23,56 @@
 #include <CGAL/use.h>
 
 #include <fstream>
+#include <sstream>
+
+static constexpr bool verbose =
+#if CGAL_MESH_3_VERBOSE
+  true;
+#else
+  false;
+#endif
+
+
+std::stringstream cerr_output;
 
 template <typename K, typename Concurrency_tag = CGAL::Sequential_tag>
 struct Polyhedron_with_features_tester : public Tester<K>
 {
+  std::streambuf* old_cerr_buf;
+  std::string tag_name;
+
+  Polyhedron_with_features_tester(std::string tag_name)
+    : old_cerr_buf(std::cerr.rdbuf(verbose ? cerr_output.rdbuf() : std::cerr.rdbuf()))
+    , tag_name(tag_name)
+  {
+  }
+  ~Polyhedron_with_features_tester()
+  {
+    std::cerr.rdbuf(old_cerr_buf);
+    if(verbose) {
+      const auto output = cerr_output.str();
+      const auto str_size= output.size();
+      const auto str_begin = output.data();
+      const auto str_end = str_begin + str_size;
+      constexpr auto nb = static_cast<decltype(str_size)>(10000);
+      auto pos1 = str_begin + (std::min)(nb, str_size);
+      assert(pos1 <= str_end);
+      const auto pos2 = str_end - (std::min)(nb, str_size);
+      assert(pos2 >= str_begin);
+      if(pos2 <= pos1) {
+        pos1 = str_end;
+      }
+      std::cerr << "NOW THE FIRST AND LAST 10k CHARACTERS OF THE CERR OUTPUT:\n";
+      std::cerr << "-----\n" << std::string(str_begin, pos1) << "\n-----\n";
+      if(pos1 != str_end) {
+        std::cerr << "[...]\n-----\n" << std::string(pos2, str_end) << "\n-----\n";
+      }
+      const auto file_name = std::string("test_meshing_verbose-") + tag_name + ".txt";
+      std::ofstream file_output(file_name);
+      file_output << output;
+      std::cerr << "Full log is output to " << file_name << "\n";
+    }
+  }
   void operator()() const
   {
     typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Gt;
@@ -107,14 +153,17 @@ struct Polyhedron_with_features_tester : public Tester<K>
 
 int main()
 {
-  Polyhedron_with_features_tester<K_e_i> test_epic;
-  std::cerr << "Mesh generation from a polyhedron with edges:\n";
-  test_epic();
-
+  {
+    std::cerr << "Mesh generation from a polyhedron with edges:\n";
+    Polyhedron_with_features_tester<K_e_i> test_epic("sequential");
+    test_epic();
+  }
 #ifdef CGAL_LINKED_WITH_TBB
-  Polyhedron_with_features_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
-  std::cerr << "Parallel mesh generation from a polyhedron with edges:\n";
-  test_epic_p();
+  {
+    std::cerr << "Parallel mesh generation from a polyhedron with edges:\n";
+    Polyhedron_with_features_tester<K_e_i, CGAL::Parallel_tag> test_epic_p("parallel");
+    test_epic_p();
+  }
 #endif
 
   return EXIT_SUCCESS;
