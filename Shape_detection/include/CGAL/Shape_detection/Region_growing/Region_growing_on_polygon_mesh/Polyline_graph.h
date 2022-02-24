@@ -54,13 +54,9 @@ namespace Polygon_mesh {
     struct PEdge {
       std::size_t index = std::size_t(-1);
       edge_descriptor ed;
-      std::set<std::size_t> sneighbors;
-      std::set<std::size_t> tneighbors;
+      std::vector<std::size_t> neighbors;
       std::pair<std::size_t, std::size_t> regions;
     };
-
-    using Face_to_index_map = internal::Item_to_index_property_map<face_descriptor>;
-    using Edge_to_index_map = internal::Item_to_index_property_map<edge_descriptor>;
 
     struct Transform_pedge {
       const edge_descriptor operator()(const PEdge& pedge) const {
@@ -112,7 +108,7 @@ namespace Polygon_mesh {
       \param pmesh a polygon mesh
 
       \param face_to_region_map maps each face of `pmesh` to
-             the corresponding planar regions id
+             a corresponding planar region id
 
       \param np a sequence of \ref bgl_namedparameters "Named Parameters"
         among the ones listed below
@@ -122,12 +118,6 @@ namespace Polygon_mesh {
           \cgalParamDescription{an instance of `VertexPointMap` that maps a polygon mesh
           vertex to `Kernel::Point_3`}
           \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
-        \cgalParamNEnd
-        \cgalParamNBegin{edge_index_map}
-          \cgalParamDescription{a property map associating to each edge of `pmesh` a unique index between `0` and `num_edges(pmesh) - 1`}
-          \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
-                         as key type and `std::size_t` as value type}
-          \cgalParamDefault{an automatically indexed internal map}
         \cgalParamNEnd
       \cgalNamedParamsEnd
 
@@ -146,11 +136,8 @@ namespace Polygon_mesh {
     {
       clear();
 
-      std::vector<std::size_t> pedge_map(
-        edges(pmesh).size(), std::size_t(-1));
-
-      typedef typename GetInitializedEdgeIndexMap<PolygonMesh, NamedParameters>::const_type EdgeIndexMap;
-      EdgeIndexMap eimap = get_initialized_edge_index_map(pmesh, np);
+      typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_edge_property_t<std::size_t> >::const_type EdgeIndexMap;
+      EdgeIndexMap eimap  = get(CGAL::dynamic_edge_property_t<std::size_t>(), pmesh);
 
       // collect edges either on the boundary or having two different incident regions
       for (const auto& edge : edges(pmesh))
@@ -168,22 +155,37 @@ namespace Polygon_mesh {
         if (f2 != boost::graph_traits<PolygonMesh>::null_face())
           r2 = get(face_to_region_map, f2);
 
-        if (r1 == r2) continue;
-        add_graph_edge(edge, r1, r2, pedge_map, eimap);
+        if (r1 == r2)
+          put(eimap, edge, std::size_t(-1));
+        else
+          add_graph_edge(edge, r1, r2, eimap);
       }
 
       // build adjacency between edges
-      for (std::size_t i = 0; i < m_pedges.size(); ++i) {
+      typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<bool> >::const_type VisitedVertexMap;
+      VisitedVertexMap visited_vertices  = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh);
+      for (std::size_t i = 0; i < m_pedges.size(); ++i)
+      {
+        put(visited_vertices, source(m_pedges[i].ed, pmesh), false);
+        put(visited_vertices, target(m_pedges[i].ed, pmesh), false);
+      }
+
+      for (std::size_t i = 0; i < m_pedges.size(); ++i)
+      {
         auto& pedge = m_pedges[i];
         CGAL_precondition(pedge.regions.first != pedge.regions.second);
         CGAL_precondition(pedge.index != std::size_t(-1));
 
-        const edge_descriptor edge = pedge.ed;
-        const vertex_descriptor s = source(edge, pmesh);
-        const vertex_descriptor t = target(edge, pmesh);
+        std::array<vertex_descriptor, 2> vrts = { source(pedge.ed, pmesh), target(pedge.ed, pmesh) };
 
-        add_vertex_neighbors(s, i, pedge_map, pedge.sneighbors, pmesh, eimap);
-        add_vertex_neighbors(t, i, pedge_map, pedge.tneighbors, pmesh, eimap);
+        for (int k=0; k<2; ++k)
+        {
+          if (!get(visited_vertices, vrts[k]))
+          {
+            add_vertex_neighbors(vrts[k], pmesh, eimap);
+            put(visited_vertices, vrts[k], true);
+          }
+        }
       }
     }
 
@@ -209,15 +211,12 @@ namespace Polygon_mesh {
     */
     void operator()(
       const std::size_t query_index,
-      std::vector<std::size_t>& neighbors) const {
-
+      std::vector<std::size_t>& neighbors) const
+    {
       neighbors.clear();
       CGAL_precondition(query_index < segment_range().size());
       const auto& pedge = m_pedges[query_index];
-      for (const std::size_t sneighbor : pedge.sneighbors)
-        neighbors.push_back(sneighbor);
-      for (const std::size_t tneighbor : pedge.tneighbors)
-        neighbors.push_back(tneighbor);
+      neighbors=pedge.neighbors;
     }
 
     /*!
@@ -240,41 +239,27 @@ namespace Polygon_mesh {
 
     /*!
       \brief returns indices of all edges from `segment_range()`,
-      which are connected to the source vertex of the edge
+      which are connected to a vertex of the edge
       with the index `query_index`.
 
       \pre `query_index < segment_range().size()`
     */
-    const std::set<std::size_t>& source_neighbors(
-      const std::size_t query_index) const {
-
+    const std::vector<std::size_t>& neighbors(
+      const std::size_t query_index) const
+    {
       CGAL_precondition(query_index < segment_range().size());
-      return m_pedges[query_index].sneighbors;
+      return m_pedges[query_index].neighbors;
     }
 
     /*!
-      \brief returns indices of all edges from `segment_range()`,
-      which are connected to the target vertex of the edge
-      with the index `query_index`.
-
-      \pre `query_index < segment_range().size()`
-    */
-    const std::set<std::size_t>& target_neighbors(
-      const std::size_t query_index) const {
-
-      CGAL_precondition(query_index < segment_range().size());
-      return m_pedges[query_index].tneighbors;
-    }
-
-    /*!
-      \brief returns the edge index of the original polygon mesh edge, which
+      \brief returns the edge descriptor which
       corresponds to the edge from `segment_range()` with the index `query_index`.
 
       \pre `query_index < segment_range().size()`
     */
-    std::size_t edge_index(const std::size_t query_index) const {
+    edge_descriptor descriptor(const std::size_t query_index) const {
       CGAL_precondition(query_index < segment_range().size());
-      return m_pedges[query_index].index;
+      return m_pedges[query_index].ed;
     }
 
     /*!
@@ -311,43 +296,38 @@ namespace Polygon_mesh {
     template <class EdgeIndexMap>
     void add_graph_edge(
       edge_descriptor edge, const std::size_t region1, const std::size_t region2,
-      std::vector<std::size_t>& pedge_map,
-      EdgeIndexMap eimap) {
-
+      EdgeIndexMap eimap)
+    {
       PEdge pedge;
       CGAL_precondition(region1 != region2);
-      const std::size_t ei = get(eimap, edge);
-      CGAL_precondition(ei != std::size_t(-1));
+      const std::size_t ei = m_pedges.size();
+      put(eimap, edge, ei);
 
       pedge.index = ei;
       pedge.ed = edge;
-      pedge.regions.first = region1;
-      pedge.regions.second = region2;
-      CGAL_precondition(pedge.index < pedge_map.size());
-      pedge_map[pedge.index] = m_pedges.size();
+      pedge.regions = {region1, region2};
       m_pedges.push_back(pedge);
     }
 
     template<typename EdgeIndexMap>
     void add_vertex_neighbors(
-      const vertex_descriptor vertex, const std::size_t curr_pe,
-      const std::vector<std::size_t>& pedge_map,
-      std::set<std::size_t>& neighbors,
+      const vertex_descriptor vertex,
       const PolygonMesh& pmesh,
-      EdgeIndexMap eimap) const {
-
-      const auto query_hedge = halfedge(vertex, pmesh);
-      const auto hedges = halfedges_around_target(query_hedge, pmesh);
-      CGAL_precondition(hedges.size() > 0);
-      for (const auto& hedge : hedges) {
+      EdgeIndexMap eimap)
+    {
+      std::vector<std::size_t> nei;
+      for (const auto& hedge : halfedges_around_target(vertex, pmesh))
+      {
         const auto e = edge(hedge, pmesh);
         const std::size_t ei = get(eimap, e);
-        CGAL_precondition(ei < pedge_map.size());
-        const std::size_t pe = pedge_map[ei];
-        if (pe == std::size_t(-1)) continue;
-        if (pe == curr_pe) continue;
-        CGAL_precondition(pe < m_pedges.size());
-        neighbors.insert(pe);
+        if (ei == std::size_t(-1)) continue;
+        if (nei.size()==2) return;
+        nei.push_back(ei);
+      }
+      if (nei.size()==2)
+      {
+        m_pedges[nei[0]].neighbors.push_back(nei[1]);
+        m_pedges[nei[1]].neighbors.push_back(nei[0]);
       }
     }
   };
