@@ -331,7 +331,7 @@ private:
   };
 
 private:
-  const Traits& m_traits;
+  const Traits m_traits;
   const Triangle_mesh& m_graph;
 
   Vertex_index_map m_vertexIndexMap;
