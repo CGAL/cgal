@@ -70,7 +70,6 @@ namespace internal {
     const PropertyMap& m_property_map;
   };
 
-  // remove that
   template<typename Item>
   class Item_to_index_property_map {
 
