@@ -10,8 +10,9 @@
 #include <CGAL/Random.h>
 #include <CGAL/property_map.h>
 
-#include <boost/unordered_set.hpp>
+#include <boost/functional/hash.hpp>
 
+#include <unordered_set>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -36,13 +37,13 @@ public:
   typedef boost::read_write_property_map_tag category;
 
 private:
-  boost::unordered_set<key_type>* m_set_ptr;
+  std::unordered_set<key_type, boost::hash<key_type>>* m_set_ptr;
 
 public:
   Constrained_edges_property_map()
     : m_set_ptr(nullptr)
   {}
-  Constrained_edges_property_map(boost::unordered_set<key_type>* set_)
+  Constrained_edges_property_map(std::unordered_set<key_type, boost::hash<key_type>>* set_)
     : m_set_ptr(set_)
   {}
 
@@ -69,7 +70,8 @@ public:
 void add_edge(Vertex_handle v1,
               Vertex_handle v2,
               const Remeshing_triangulation& tr,
-              boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
+              std::unordered_set<std::pair<Vertex_handle, Vertex_handle>,
+                                 boost::hash<std::pair<Vertex_handle, Vertex_handle>>>& constraints)
 {
   Cell_handle c;
   int i, j;
@@ -79,7 +81,8 @@ void add_edge(Vertex_handle v1,
 
 void generate_input_cube(const std::size_t& n,
               Remeshing_triangulation& tr,
-              boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
+              std::unordered_set<std::pair<Vertex_handle, Vertex_handle>,
+                                 boost::hash<std::pair<Vertex_handle, Vertex_handle>> >& constraints)
 {
   CGAL::Random rng;
 
@@ -143,7 +146,8 @@ int main(int argc, char* argv[])
   std::cout << "CGAL Random seed = " << CGAL::get_default_random().get_seed() << std::endl;
 
   Remeshing_triangulation tr;
-  boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
+  std::unordered_set<std::pair<Vertex_handle, Vertex_handle>,
+                     boost::hash<std::pair<Vertex_handle, Vertex_handle>>> constraints;
   generate_input_cube(1000, tr, constraints);
 
   const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.02;

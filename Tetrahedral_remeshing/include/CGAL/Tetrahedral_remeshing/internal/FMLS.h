@@ -562,7 +562,7 @@ void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
   subdomain_FMLS.clear();
   subdomain_FMLS_indices.clear();
 
-  typedef boost::unordered_map<Surface_index, std::size_t> SurfaceIndexMap;
+  typedef std::unordered_map<Surface_index, std::size_t, boost::hash<Surface_index>> SurfaceIndexMap;
 
   SurfaceIndexMap current_subdomain_FMLS_indices;
   SurfaceIndexMap subdomain_sample_numbers;

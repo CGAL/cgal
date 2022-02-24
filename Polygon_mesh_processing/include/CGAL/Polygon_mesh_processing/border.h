@@ -23,8 +23,8 @@
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <set>
 
 namespace CGAL{
@@ -217,7 +217,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
     unsigned int border_counter = 0;
-    boost::unordered_set<halfedge_descriptor> visited;
+    std::unordered_set<halfedge_descriptor> visited;
     for(halfedge_descriptor h : halfedges(pmesh)){
       if(visited.find(h)== visited.end()){
         if(is_border(h,pmesh)){
@@ -250,7 +250,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   {
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-    boost::unordered_set<halfedge_descriptor> hedge_handled;
+    std::unordered_set<halfedge_descriptor> hedge_handled;
     for(halfedge_descriptor h : halfedges(pm))
     {
       if(is_border(h, pm) && hedge_handled.insert(h).second)

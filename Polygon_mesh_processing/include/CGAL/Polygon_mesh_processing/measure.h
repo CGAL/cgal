@@ -28,12 +28,12 @@
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
 
 #include <boost/container/small_vector.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/dynamic_bitset.hpp>
 
 #include <utility>
 #include <algorithm>
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -326,7 +326,7 @@ longest_border(const PolygonMesh& pmesh,
             typename property_map_value<PolygonMesh, CGAL::vertex_point_t>::type>::Kernel::FT  FT;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                       halfedge_descriptor;
 
-  boost::unordered_set<halfedge_descriptor> visited;
+  std::unordered_set<halfedge_descriptor> visited;
   halfedge_descriptor result_halfedge = boost::graph_traits<PolygonMesh>::null_halfedge();
   FT result_len = 0;
   for(halfedge_descriptor h : halfedges(pmesh))

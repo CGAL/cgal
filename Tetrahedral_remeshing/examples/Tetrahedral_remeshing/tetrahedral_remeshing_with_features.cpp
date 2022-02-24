@@ -5,8 +5,7 @@
 
 #include <CGAL/property_map.h>
 
-#include <boost/unordered_set.hpp>
-
+#include <unordered_set>
 #include <iostream>
 #include <utility>
 #include <cassert>
@@ -31,13 +30,13 @@ public:
   typedef boost::read_write_property_map_tag category;
 
 private:
-  boost::unordered_set<key_type>* m_set_ptr;
+  std::unordered_set<key_type, boost::hash<key_type>>* m_set_ptr;
 
 public:
   Constrained_edges_property_map()
     : m_set_ptr(nullptr)
   {}
-  Constrained_edges_property_map(boost::unordered_set<key_type>* set_)
+  Constrained_edges_property_map(std::unordered_set<key_type, boost::hash<key_type>>* set_)
     : m_set_ptr(set_)
   {}
 
@@ -77,7 +76,8 @@ int main(int argc, char* argv[])
   const int nbv = (argc > 3) ? atoi(argv[3]) : 500;
 
   Remeshing_triangulation t3;
-  boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
+  typedef std::pair<Vertex_handle, Vertex_handle> Vertex_pair;
+  std::unordered_set<Vertex_pair, boost::hash<Vertex_pair>> constraints;
 
   CGAL::Tetrahedral_remeshing::generate_input_cube(nbv, t3, constraints);
   make_constraints_from_cube_edges(t3, constraints);

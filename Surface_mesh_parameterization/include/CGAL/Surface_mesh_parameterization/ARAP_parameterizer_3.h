@@ -84,8 +84,8 @@
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <iostream>
 #include <fstream>
 #include <limits>
@@ -223,7 +223,7 @@ private:
   typedef CGAL::Halfedge_around_target_circulator<Triangle_mesh>    halfedge_around_target_circulator;
   typedef CGAL::Halfedge_around_face_circulator<Triangle_mesh>      halfedge_around_face_circulator;
 
-  typedef boost::unordered_set<vertex_descriptor>                   Vertex_set;
+  typedef std::unordered_set<vertex_descriptor>                     Vertex_set;
   typedef std::vector<face_descriptor>                              Faces_vector;
 
   // Traits subtypes:
@@ -378,8 +378,8 @@ private:
     }
 
     // temporary vpmap since we do not need it in the future
-    boost::unordered_set<vertex_descriptor> vs;
-    internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpmap(vs);
+    std::unordered_set<vertex_descriptor> vs;
+    internal::Bool_property_map<std::unordered_set<vertex_descriptor> > vpmap(vs);
 
     // According to the paper, MVC is better for single border and LSCM is better
     // when there are multiple borders
@@ -420,7 +420,7 @@ private:
       // A local uvmap (that is then discarded) is passed to avoid changing
       // the values of the real uvmap. Since we can't get VertexUVMap::C,
       // we build a map with the same key and value types
-      typedef boost::unordered_map<typename VertexUVMap::key_type,
+      typedef std::unordered_map<typename VertexUVMap::key_type,
                                    typename VertexUVMap::value_type> Useless_map;
       typedef boost::associative_property_map<Useless_map>           Useless_pmap;
 

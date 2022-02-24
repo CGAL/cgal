@@ -22,8 +22,8 @@
 #include <CGAL/assertions.h>
 
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <fstream>
 #include <functional>
 #include <iostream>

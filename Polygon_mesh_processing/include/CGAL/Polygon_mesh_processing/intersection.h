@@ -1045,15 +1045,15 @@ void get_one_point_per_cc(TriangleMesh& tm,
                           std::vector<typename GT::Point_3>& points_of_interest)
 {
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-  boost::unordered_map<face_descriptor, int> fid_map;
+  std::unordered_map<face_descriptor, int> fid_map;
   int id = 0;
   for(face_descriptor fd : faces(tm))
   {
     fid_map.insert(std::make_pair(fd,id++));
   }
-  boost::associative_property_map< boost::unordered_map<face_descriptor, int> >
+  boost::associative_property_map< std::unordered_map<face_descriptor, int> >
       fid_pmap(fid_map);
-  boost::unordered_map<face_descriptor, int> fcc_map;
+  std::unordered_map<face_descriptor, int> fcc_map;
 
   int nb_cc = Polygon_mesh_processing::connected_components(tm,
                                                             boost::make_assoc_property_map(fcc_map),

@@ -42,11 +42,9 @@
 #include <vector>
 #include <stack>
 #include <map>
+#include <unordered_set>
 
 #include <CGAL/boost/iterator/transform_iterator.hpp>
-#include <boost/next_prior.hpp>
-#include <boost/unordered_set.hpp>
-#include <boost/next_prior.hpp>
 
 namespace CGAL {
 namespace internal {
@@ -651,7 +649,7 @@ struct Edge_graph
     }
   };
 
-  typedef boost::unordered_set<int> Vertex_container;
+  typedef std::unordered_set<int> Vertex_container;
   // contains edges as key, and each edge contains set of third vertices which denote neighbor facets to that edge
   typedef std::map<std::pair<int, int>, Vertex_container, Edge_comp> Graph;
 
@@ -791,8 +789,8 @@ public:
     Triangulation tr;
     std::vector<bool> edge_exist;
     std::pair<int, int> range(0, n-1);
-    boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, tr, edge_exist);
-    if(!res.template get<2>()) {
+    std::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, tr, edge_exist);
+    if(!std::get<2>(res)) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
       #ifndef CGAL_TEST_SUITE
       CGAL_warning_msg(false, "Returning no output. Dimension of 3D Triangulation is below 2!");
@@ -804,12 +802,12 @@ public:
     }
 
     // all border edges inside 3D Triangulation
-    if(boost::get<1>(res)) {
+    if(std::get<1>(res)) {
       LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
       LookupTable<int>    lambda(n,-1);
 
       typename Incident_facet_circulator_base<Triangulate_hole_polyline_DT>::Edge_wrapper
-        e_start(*boost::get<0>(res));
+        e_start(*std::get<0>(res));
       if(tr.dimension() == 3) {
         triangulate_DT<IFC_3>(P, Q, W, lambda, e_start, tr, WC, false);
       }
@@ -839,7 +837,7 @@ public:
     #else
     // This approach produce better patches when used with Weight_incomplete
     // (which should be arranged in internal::triangulate_hole_Polyhedron, triangulate_polyline)
-    return fill_by_incomplete_patches(tr, res.get<0>(), edge_exist, P, Q, tracer, WC);
+    return fill_by_incomplete_patches(tr, std::get<0>(res), edge_exist, P, Q, tracer, WC);
     #endif
   }
 
@@ -928,7 +926,7 @@ private:
   }
 
   // returns [h.first-h.second edge, true if all edges inside 3D triangulation, true if tr.dimension() >= 2]
-  boost::tuple<boost::optional<Edge>, bool, bool>
+  std::tuple<boost::optional<Edge>, bool, bool>
   construct_3D_triangulation(const Polyline_3& P,
                              std::pair<int,int> h,
                              Triangulation& tr,
@@ -937,11 +935,11 @@ private:
     // construct 3D tr with P[h.first], P[h.second] also assign ids from h.first to h.second
     boost::optional<Edge> e;
     int n_border = h.second - h.first + 1;
-    tr.insert(boost::make_transform_iterator(boost::next(P.begin(), h.first), Auto_count(h.first)),
-              boost::make_transform_iterator(boost::next(P.begin(), h.second +1), Auto_count(h.first)));
+    tr.insert(boost::make_transform_iterator(std::next(P.begin(), h.first), Auto_count(h.first)),
+              boost::make_transform_iterator(std::next(P.begin(), h.second +1), Auto_count(h.first)));
     tr.infinite_vertex()->info() = -1;
 
-    if(tr.dimension() < 2) { return boost::make_tuple(e, false, false); }
+    if(tr.dimension() < 2) { return std::make_tuple(e, false, false); }
 
     // check whether all edges are included in DT, and get v0-vn-1 edge
     edge_exist.assign(n_border, false);
@@ -972,7 +970,7 @@ private:
 
     bool is_3D_T_complete = (nb_exists == n_border);
     if(edge_exist[n_border-1]) { e = *v_first_v_second_edge; }
-    return boost::make_tuple(e, is_3D_T_complete, true);
+    return std::make_tuple(e, is_3D_T_complete, true);
   }
 
   /************************************************************************
@@ -992,7 +990,7 @@ private:
   {
     typedef std::pair<int, int> Range;
     typedef std::back_insert_iterator<std::vector<Range> > Output_hole_iterator;
-    typedef Tracer_polyline_incomplete<boost::tuple<int, int, int>, Emptyset_iterator, Output_hole_iterator> Remaining_holes_tracer;
+    typedef Tracer_polyline_incomplete<std::tuple<int, int, int>, Emptyset_iterator, Output_hole_iterator> Remaining_holes_tracer;
 
     std::vector<Range> remaining_holes;
 
@@ -1055,14 +1053,14 @@ private:
       // construct tr for next coming hole
       h = remaining_holes.back();
       tr.clear();
-      boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, tr, edge_exist);
-      if(!boost::get<0>(res)) {
+      std::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, tr, edge_exist);
+      if(!std::get<0>(res)) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
         CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
 #endif
         return Weight::NOT_VALID();
       }
-      start_edge = *boost::get<0>(res);
+      start_edge = *std::get<0>(res);
       // clear related regions in W, lambda for next coming hole
       W.set_range_to_default(h.first, h.second);
       lambda.set_range_to_default(h.first, h.second);

@@ -31,7 +31,7 @@
 #include <fstream>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Euler_operations.h>
