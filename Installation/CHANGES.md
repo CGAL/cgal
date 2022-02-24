@@ -15,6 +15,10 @@ Release date: June 2022
 
 -   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
 
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.5/Manual/packages.html#PkgBGL)
+
+-   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html), which toggles the selected status of a graph: selected faces are deselected, and unselected faces are selected.
+
 ### Combinatorial Maps
 
 - Removed old code deprecated in CGAL 4.9 and 4.10 (global fonctions, and information associated with darts).
