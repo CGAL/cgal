@@ -40,22 +40,20 @@ namespace Polygon_mesh {
 
     \cgalModels `NeighborQuery`
   */
-  template<
-  typename PolygonMesh,
-  typename FaceRange = typename PolygonMesh::Face_range>
-  class One_ring_neighbor_query {
-
+  template<typename PolygonMesh
+#ifndef CGAL_NO_DEPRECATED_CODE
+  , typename FaceRange = typename PolygonMesh::Face_range
+#endif
+  >
+  class One_ring_neighbor_query
+  {
+    using Face_to_index_map = typename boost::property_map<PolygonMesh, CGAL::dynamic_face_property_t<std::size_t> >::const_type;
   public:
     /// \cond SKIP_IN_MANUAL
     using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
     using Face_graph = PolygonMesh;
-    using Face_range = FaceRange;
     /// \endcond
 
-  private:
-    using Face_to_index_map = internal::Item_to_index_property_map<face_descriptor>;
-
-  public:
     /// \name Initialization
     /// @{
 
@@ -70,9 +68,14 @@ namespace Polygon_mesh {
     One_ring_neighbor_query(
       const PolygonMesh& pmesh) :
     m_face_graph(pmesh),
-    m_face_range(faces(m_face_graph)),
-    m_face_to_index_map(m_face_range) {
-
+    m_face_to_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), pmesh))
+    {
+      m_face_range.reserve(num_faces(pmesh)); // a bit larger if has garbage
+      for (face_descriptor f : faces(pmesh))
+      {
+        put(m_face_to_index_map, f, m_face_range.size());
+        m_face_range.push_back(f);
+      }
       CGAL_precondition(m_face_range.size() > 0);
     }
 
@@ -102,14 +105,16 @@ namespace Polygon_mesh {
 
       neighbors.clear();
       CGAL_precondition(query_index < m_face_range.size());
-      const auto query_face = *(m_face_range.begin() + query_index);
+      face_descriptor query_face = m_face_range[query_index];
       const auto query_hedge = halfedge(query_face, m_face_graph);
 
-      const auto faces = faces_around_face(query_hedge, m_face_graph);
-      for (const auto face : faces) {
-        const std::size_t face_index = get(m_face_to_index_map, face);
-        if (face_index != std::size_t(-1)) // not a null face
+      for (face_descriptor face : faces_around_face(query_hedge, m_face_graph))
+      {
+        if (face != boost::graph_traits<PolygonMesh>::null_face())
+        {
+          const std::size_t face_index = get(m_face_to_index_map, face);
           neighbors.push_back(face_index);
+        }
       }
     }
 
@@ -124,8 +129,8 @@ namespace Polygon_mesh {
 
   private:
     const Face_graph& m_face_graph;
-    const Face_range m_face_range;
-    const Face_to_index_map m_face_to_index_map;
+    std::vector<face_descriptor> m_face_range;
+    Face_to_index_map m_face_to_index_map;
   };
 
 } // namespace Polygon_mesh
