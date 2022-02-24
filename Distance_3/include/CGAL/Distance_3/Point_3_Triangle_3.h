@@ -68,8 +68,8 @@ squared_distance_to_triangle_RT(const typename K::Point_3& pt,
 
   if(normal == NULL_VECTOR)
   {
-    // The case normal==NULL_VECTOR covers the case when the triangle
-    // is colinear, or even more degenerate. In that case, we can
+    // The case normal == NULL_VECTOR covers the case when the triangle
+    // is collinear, or even more degenerate. In that case, we can
     // simply take also the distance to the three segments.
     squared_distance_RT(pt, segment(t2, t0), num, den, k);
 
@@ -161,7 +161,7 @@ squared_distance_to_triangle(const typename K::Point_3& pt,
   if(normal == NULL_VECTOR)
   {
     // The case normal == NULL_VECTOR covers the case when the triangle
-    // is colinear, or even more degenerate. In that case, we can
+    // is collinear, or even more degenerate. In that case, we can
     // simply take also the distance to the three segments.
     //
     // Note that in the degenerate case, at most 2 edges cover the full triangle,
