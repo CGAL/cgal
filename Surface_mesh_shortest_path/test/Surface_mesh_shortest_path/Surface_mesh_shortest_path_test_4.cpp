@@ -5,6 +5,7 @@
 
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path_traits.h>
 #include <CGAL/Surface_mesh_shortest_path/Surface_mesh_shortest_path.h>
+#include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
 #include <CGAL/boost/graph/iterator.h>
 
@@ -152,5 +153,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-
-
