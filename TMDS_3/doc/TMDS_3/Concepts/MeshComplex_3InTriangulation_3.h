@@ -46,7 +46,7 @@ The data structure encodes the final mesh at the end of the meshing process.
 
 \sa `MeshDomain_3`
 \sa `MeshComplexWithFeatures_3InTriangulation_3`
-\sa `CGAL::make_mesh_3()`
+\sa \link make_mesh_3() `CGAL::make_mesh_3()`\endlink
 
 */
 
