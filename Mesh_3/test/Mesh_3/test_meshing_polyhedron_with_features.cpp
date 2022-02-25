@@ -54,7 +54,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
       const auto str_size= output.size();
       const auto str_begin = output.data();
       const auto str_end = str_begin + str_size;
-      constexpr auto nb = static_cast<decltype(str_size)>(10000);
+      constexpr auto nb = static_cast<std::remove_cv_t<decltype(str_size)>>(10000);
       auto pos1 = str_begin + (std::min)(nb, str_size);
       assert(pos1 <= str_end);
       const auto pos2 = str_end - (std::min)(nb, str_size);
