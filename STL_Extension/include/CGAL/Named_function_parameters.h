@@ -156,7 +156,7 @@ typename std::conditional<std::is_copy_constructible<T>::value,
 get_parameter_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
 {
   return np.v;
-};
+}
 
 template <typename T, typename Tag, typename Base, typename Query_tag>
 typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::type
@@ -204,7 +204,7 @@ typename std::conditional<std::is_copy_constructible<T>::value,
 get_parameter_reference_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
 {
   return get_reference(np.v);
-};
+}
 
 template <typename T, typename Tag, typename Base>
 T&
@@ -218,7 +218,7 @@ T&
 get_parameter_reference_impl(const Named_params_impl<std::reference_wrapper<T>, Tag, No_property>& np, Tag)
 {
   return np.v.get();
-};
+}
 
 template <typename T, typename Tag, typename Base, typename Query_tag>
 typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::reference

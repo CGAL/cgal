@@ -182,7 +182,7 @@ bool do_faces_intersect(typename boost::graph_traits<TM>::halfedge_descriptor h,
     return true;
 
   return false;
-};
+}
 
 template <class Box, class TM, class VPM, class GT,
           class OutputIterator>
