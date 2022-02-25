@@ -39,18 +39,6 @@ namespace TMDS_3 {
 
 namespace internal {
 
-template <class Polygon>
-void resize(Polygon& p, std::size_t size)
-{
-  CGAL::internal::resize(p, size);
-}
-
-template <std::size_t N, class INT>
-void resize(std::array<INT, N>&, std::size_t CGAL_assertion_code(size))
-{
-  CGAL_assertion(size == N);
-}
-
 template<class C3T3, class PointContainer, class FaceContainer, class PatchIndexContainer>
 void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                           const typename C3T3::Subdomain_index sd_index,
