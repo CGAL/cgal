@@ -264,7 +264,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *   \cgalParamDescription{an `OutputIterator` containing the pairs source-vertex-index
 *                         from `points`, target-vertex.}
 *   \cgalParamType{a class model of `OutputIterator` accepting
-*                  `std::pair<`int`, `boost::graph_traits<PolygonMesh>::%vertex_descriptor>`}
+*                  `std::pair<int, boost::graph_traits<PolygonMesh>::%vertex_descriptor>`}
 *   \cgalParamDefault{`Emptyset_iterator`}
 * \cgalParamNEnd
 *
@@ -272,7 +272,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *   \cgalParamDescription{an `OutputIterator` containing the pairs polygon-index
 *                         from `polygons`, target-face.}
 *   \cgalParamType{a class model of `OutputIterator` accepting
-*                  `std::pair<`int`, `boost::graph_traits<PolygonMesh>::%face_descriptor>`}
+*                  `std::pair<int, boost::graph_traits<PolygonMesh>::%face_descriptor>`}
 *   \cgalParamDefault{`Emptyset_iterator`}
 * \cgalParamNEnd
 *

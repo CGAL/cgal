@@ -43,7 +43,7 @@ namespace CGAL {
   *
   * @param tets the set of finite tetrahedra of a valid CGAL triangulation.
   * Each element in the range is the geometric description of the
-  * corresponding cell in `tr`
+  * corresponding cell in the triangulation.
   *
   * @returns the 3D triangulation built from \p tets
   *
@@ -115,7 +115,7 @@ namespace CGAL {
   * @param points points of the soup of tetrahedra
   * @param tets the set of finite tetrahedra of a valid CGAL triangulation.
   * Each element in the range describes a tetrahedron using the indices of the points
-  * in `points` (indices 0 to 3).
+  * in `points`.
   * It must
   * describe a non self-intersecting set of tetrahedra, that cover the convex hull of the
   * corresponding point set. The tetrahedra must form a valid triangulation with each
@@ -148,7 +148,7 @@ namespace CGAL {
   *
   * @pre `points` contains each point only once
   * @post the output triangulation must be a triangulation of the convex hull of `points`
-  * @post `tr.is_valid()` returns `true`
+  * @post `is_valid()` returns `true` for the returned triangulation
   *
   * @sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
   */

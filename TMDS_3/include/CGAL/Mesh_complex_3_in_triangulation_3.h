@@ -118,8 +118,8 @@ namespace CGAL {
 /*!
   \ingroup PkgTMDS3Classes
 
-   * @brief A data-structure to represent and maintain a 3D complex embedded
- * in a 3D triangulation.
+  \brief A data-structure to represent and maintain a 3D complex embedded
+  in a 3D triangulation.
 
   The class `Mesh_complex_3_in_triangulation_3` implements a data structure
   to store the 3D restricted Delaunay triangulation used by a mesh

@@ -31,7 +31,7 @@
   tetrahedral meshes and their subcomplexes.
   It provides an API for tetrahedral meshes generated with %CGAL or not,
   to be processed with %CGAL 3D mesh generation and remeshing algorithms,
-  along with iterators, IO functions and more helper functions.
+  along with iterators, IO functions, and additional helper functions.
   }
 \cgalPkgManuals{Chapter_3D_Tetrahedral_Mesh_Data_Structure,PkgTMDS3Ref}
 \cgalPkgSummaryEnd
@@ -48,8 +48,6 @@
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-
-Here are the main concepts of this package:
 
 - `MeshComplex_3InTriangulation_3`
 - `MeshComplexWithFeatures_3InTriangulation_3`

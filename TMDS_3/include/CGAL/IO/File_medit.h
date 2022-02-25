@@ -782,7 +782,7 @@ output_to_medit(std::ostream& os,
          ++vit)
     {
       V[vit] = inum++;
-      Point p = tr.point(vit);
+      const Point& p = tr.point(vit);
       os << CGAL::to_double(p.x()) << ' '
         << CGAL::to_double(p.y()) << ' '
         << CGAL::to_double(p.z()) << ' '
@@ -801,7 +801,7 @@ output_to_medit(std::ostream& os,
         if (V.find(vit) == V.end())
         {
           V[vit] = inum++;
-          Point p = tr.point(vit);
+          const Point& p = tr.point(vit);
           oss << CGAL::to_double(p.x()) << ' '
             << CGAL::to_double(p.y()) << ' '
             << CGAL::to_double(p.z()) << ' '
@@ -962,32 +962,33 @@ output_to_medit(std::ostream& os,
  * \cgalNamedParamsBegin
  * \cgalParamNBegin{all_cells}
  *   \cgalParamDescription{If `true`, all the cells in `t3` are written in `os`,
- *        however they belong to the complex or not.
+ *        whether they belong to the complex or not.
  *        Otherwise, only the cells `c` for which
- *        `c->subdomain_index() != Subdomain_index()` are written}
+ *        `c->subdomain_index() != Subdomain_index()` are written.}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`false`}
  *   \cgalParamExtra{This parameter must be set to `true` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
  *
  * \cgalParamNBegin{all_vertices}
- *   \cgalParamDescription{If `true`, all the vertices in `t3` are written in `os`.
+ *   \cgalParamDescription{If `true`, all the finite vertices in `t3` are written in `os`.
  *                         Otherwise, only the vertices that belong to a cell `c` for which
  *                         `c->subdomain_index() != Subdomain_index()` are written}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`true`}
- *   \cgalParamExtra{If `all_cells` is `true`, this parameter is ignored. It must be
- *                   set to `false` for the file to be readable by `read_MEDIT()`.}
+ *   \cgalParamExtra{If `all_cells` is `true`, the value of this parameter is ignored and
+                     all vertices are written in `os`. It must be
+ *                   set to `true` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
  *
  * \cgalParamNBegin{rebind_labels}
- *  \cgalParamDescription{if `true`, labels of cells are rebinded into `[1..nb_of_labels]`}
+ *  \cgalParamDescription{If `true`, labels of cells are rebinded into `[1..nb_of_labels]`}
  *  \cgalParamType{Boolean}
  *  \cgalParamDefault{`false`}
  * \cgalParamNEnd
  *
  * \cgalParamNBegin{show_patches}
- *  \cgalParamDescription{if `true`, patches are labeled with different labels than
+ *  \cgalParamDescription{If `true`, patches are labeled with different labels than
  *                        cells. If `false`, each surface facet is written twice,
  *                        using the label of each adjacent cell.}
  *  \cgalParamType{Boolean}
@@ -1042,7 +1043,7 @@ void write_MEDIT(std::ostream& os,
  *   \cgalParamDescription{If `true`, all the cells in `t3` are written in `os`,
  *        however they belong to the complex or not.
  *        Otherwise, only the cells `c` for which
- *        `c->subdomain_index() != Subdomain_index()` are written}
+ *        `c->subdomain_index() != Subdomain_index()` are written.}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`false`}
  *   \cgalParamExtra{This parameter must be set to `true` for the file to be readable by `read_MEDIT()`.}
@@ -1054,18 +1055,19 @@ void write_MEDIT(std::ostream& os,
  *                         `c->subdomain_index() != Subdomain_index()` are written}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`true`}
- *   \cgalParamExtra{If `all_cells` is `true`, this parameter is ignored. It must be
- *                   set to `false` for the file to be readable by `read_MEDIT()`.}
+ *   \cgalParamExtra{If `all_cells` is `true`, the value of thsis parameter is ignored
+                     and all vertices are written in `os`. It must be
+ *                   set to `true` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
  *
  * \cgalParamNBegin{rebind_labels}
- *  \cgalParamDescription{if `true`, labels of cells are rebinded into `[1..nb_of_labels]`}
+ *  \cgalParamDescription{If `true`, labels of cells are rebinded into `[1..nb_of_labels]`}
  *  \cgalParamType{Boolean}
  *  \cgalParamDefault{`false`}
  * \cgalParamNEnd
  *
  * \cgalParamNBegin{show_patches}
- *  \cgalParamDescription{if `true`, patches are labeled with different labels than
+ *  \cgalParamDescription{If `true`, patches are labeled with different labels than
  *                        cells. If `false`, each surface facet is written twice,
  *                        using the label of each adjacent cell.}
  *  \cgalParamType{Boolean}
@@ -1109,10 +1111,10 @@ void write_MEDIT(std::ostream& os,
  * @returns `true` if the connectivity of the triangulation could be built consistently
  * from \p in,
  * and `false` if the triangulation is empty, or if the connectivity
- * validity of \p t3 could not be built.
+ * of \p t3 could not be built.
  * If `false` is returned, \p t3 is empty when the function returns.
  *
- * This function reads the data about vertices, surface facets and
+ * This function reads the data about vertices, surface facets, and
  * triangulation cells from `in`, and builds a valid `T3` from it.
  *
  * Note that a valid 3D triangulation of \cgal must have a valid

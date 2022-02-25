@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Tetrahedral Mesh Data Structures"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Tetrahedral Mesh Data Structures"
 
 #custom options
 EXTRACT_ALL                     =  false

@@ -10,16 +10,16 @@ namespace CGAL {
 \cgalFigureBegin{figure_tetmesh_knot,knot_full.png}
 A multi-domain tetrahedral mesh generated from a polyhedral surface with multiple surface patches.
 The complete triangulation is displayed, including cells that belong or do not
-belong to the mesh complex, surface patches and feature edges.
+belong to the mesh complex, surface patches, and feature edges.
 \cgalFigureEnd
 
 
 \section TMDS_3_section_c3t3 Mesh Complex
 
-This package is devoted to the representation of 3-Dimensional Tetrahedral Mesh Data Structures.
+This package is devoted to the representation of 3-Dimensional tetrahedral mesh data structures.
 
 A 3D simplicial complex is composed of points, line segments, triangles,
-tetrahedra, and the combinatorial description of their n-dimension counterparts
+tetrahedra, and their corresponding combinatorial description
 (namely vertices, edges, faces and cells).
 CGAL provides 3D triangulations, that describe
 both the geometry and connectivity of a 3D simplicial complex,
@@ -27,17 +27,17 @@ implemented in the
 the \ref PkgTriangulation3 and \ref PkgTDS3 packages.
 
 We introduce the concept of \em mesh \em complex, that encodes extra information
-on top of a 3D triangulation to represent a complete simplicial
-complex. A mesh complex describes four sub-complexes
+on top of a 3D triangulation to represent a valid simplicial
+complex. A mesh complex describes four subcomplexes
 of simplices
-of the support 3D triangulation, per dimension from 0 to 3 :
-- corner vertices in 0D,
-- feature edges in 1D,
-- surface facets in 2D,
-- domain cells in 3D (see Figure \cgalFigureRef{figure_c3t3_cells}).
+of the support 3D triangulation, per dimension from 0 to 3:
+- corner vertices (0D),
+- feature edges (1D),
+- surface facets (2D),
+- domain cells (3D). See Figure \cgalFigureRef{figure_c3t3_cells}.
 
 The concept `MeshComplex_3InTriangulation_3` is a data structure devised to
-represent these three dimensional complexes embedded in a `Triangulation_3`.
+represent these three-dimensional complexes embedded in a `Triangulation_3`.
 
 \cgalFigureBegin{figure_c3t3_cells,c3t3_cells.png}
 (Left and Middle) A multi-domain 3D mesh is represented by its tetrahedral cells,
@@ -73,7 +73,7 @@ for reading and writing a triangulation with the `Medit` file format
 \subsection MoreExamples More Examples In Other Packages
 
 The `Mesh_complex_3_in_triangulation_3` is widely used in the \ref PkgMesh3 package.
-Numerous more usage examples can be found in its \ref Mesh_3_section_examples section.
+Many more usage examples can be found in its \ref Mesh_3_section_examples section.
 
 The package \ref PkgTetrahedralRemeshing also makes use of the
 `Mesh_complex_3_in_triangulation_3` since it serves as a post-processing for

@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Container_helper.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -41,7 +42,7 @@ namespace internal {
 template <class Polygon>
 void resize(Polygon& p, std::size_t size)
 {
-  p.resize(size);
+  CGAL::internal::resize(p, size);
 }
 
 template <std::size_t N, class INT>
@@ -91,7 +92,7 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
     int s = fit->second;
     const Surface_patch_index spi = c->surface_patch_index(s);
     Face f;
-    resize(f, 3);
+    CGAL::internal::resize(f, 3);
 
     typename C3T3::Subdomain_index cell_sdi = c3t3.subdomain_index(c);
     typename C3T3::Subdomain_index opp_sdi = c3t3.subdomain_index(c->neighbor(s));

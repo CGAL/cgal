@@ -39,13 +39,13 @@
 
 #  if defined(CGAL_LICENSE_WARNING)
      CGAL_pragma_warning("\nThe macro CGAL_TMDS_3_COMMERCIAL_LICENSE is not defined."
-                          "\nYou use the CGAL 3D Mesh Data Structure package under "
+                          "\nYou use the CGAL 3D Tetrahedral Mesh Data Structure package under "
                           "the terms of the GPLv3+.")
 #  endif // CGAL_LICENSE_WARNING
 
 #  ifdef CGAL_LICENSE_ERROR
 #    error "The macro CGAL_TMDS_3_COMMERCIAL_LICENSE is not defined.\
-            You use the CGAL 3D Mesh Data Structure package under the terms of \
+            You use the CGAL 3D Tetrahedral Mesh Data Structure package under the terms of \
             the GPLv3+. You get this error, as you defined CGAL_LICENSE_ERROR."
 #  endif // CGAL_LICENSE_ERROR
 

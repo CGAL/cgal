@@ -98,7 +98,7 @@ protected:
 /*!
 \ingroup PkgMesh3MeshClasses
 <!-- Meta-comment: this class cannot be deprecated by
-Compact_mesh_cell_base_3, because the later has a different API.
+Compact_mesh_cell_base_3, because the latter has a different API.
 -- Laurent Rineau, 2013/10/16
 \deprecated This class is deprecated since \cgal 4.3. Use
 `CGAL::Compact_mesh_cell_base_3<GT,MD,Tds>` instead.
