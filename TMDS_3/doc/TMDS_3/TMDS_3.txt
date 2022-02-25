@@ -73,7 +73,7 @@ for reading and writing a triangulation with the `Medit` file format
 \subsection MoreExamples More Examples In Other Packages
 
 The `Mesh_complex_3_in_triangulation_3` is widely used in the \ref PkgMesh3 package.
-Many more usage examples can be found in its \ref Mesh_3_section_examples section.
+Many more examples can be found in its \ref Mesh_3_section_examples section.
 
 The package \ref PkgTetrahedralRemeshing also makes use of the
 `Mesh_complex_3_in_triangulation_3` since it serves as a post-processing for
