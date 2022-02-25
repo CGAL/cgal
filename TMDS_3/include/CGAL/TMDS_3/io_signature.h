@@ -10,8 +10,8 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_MESH_3_IO_SIGNATURE_H
-#define CGAL_MESH_3_IO_SIGNATURE_H
+#ifndef CGAL_TMDS_3_IO_SIGNATURE_H
+#define CGAL_TMDS_3_IO_SIGNATURE_H
 
 #include <CGAL/license/TMDS_3.h>
 
@@ -360,4 +360,4 @@ Get_io_signature<Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt
 } // end namespace CGAL
 
 
-#endif // CGAL_MESH_3_IO_SIGNATURE_H
+#endif // CGAL_TMDS_3_IO_SIGNATURE_H

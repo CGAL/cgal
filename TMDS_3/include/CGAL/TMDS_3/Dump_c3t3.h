@@ -10,8 +10,8 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_MESH_3_DUMP_C3T3_H
-#define CGAL_MESH_3_DUMP_C3T3_H
+#ifndef CGAL_TMDS_3_DUMP_C3T3_H
+#define CGAL_TMDS_3_DUMP_C3T3_H
 
 #include <CGAL/license/TMDS_3.h>
 
@@ -134,4 +134,4 @@ void dump_c3t3(const C3t3& c3t3, std::string prefix)
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_MESH_3_DUMP_C3T3_H
+#endif // CGAL_TMDS_3_DUMP_C3T3_H
