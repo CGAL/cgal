@@ -158,9 +158,9 @@ squared_distance_to_triangle(const typename K::Point_3& pt,
     // Note that in the degenerate case, at most 2 edges cover the full triangle,
     // and only two distances could be used, but leaving 3 for the case of
     // inexact constructions as it might improve the accuracy.
-    typename K::FT d1 = internal::squared_distance(pt, segment(t2, t0), k);
-    typename K::FT d2 = internal::squared_distance(pt, segment(t1, t2), k);
-    typename K::FT d3 = internal::squared_distance(pt, segment(t0, t1), k);
+    typename K::FT d1 = sq_dist(pt, segment(t2, t0));
+    typename K::FT d2 = sq_dist(pt, segment(t1, t2));
+    typename K::FT d3 = sq_dist(pt, segment(t0, t1));
 
     return (std::min)((std::min)(d1, d2), d3);
   }
