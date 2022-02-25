@@ -132,6 +132,7 @@ namespace CGAL {
   *                    whose key type is model of `RandomAccessContainer` containing `int`
   *                    and mapped type is `Tr::Cell::Surface_patch_index`}
   *     \cgalParamDefault{an empty `boost::unordered_map<std::array<int, 3>, typename Tr::Cell::Surface_patch_index>`}
+  *     \cgalParamExtra{to avoid copies of large data sets, this parameter can be passed using `std::cref`}
   *   \cgalParamNEnd
   *   \cgalParamNBegin{subdomain_indices}
   *     \cgalParamDescription{each element in the range gives the
@@ -141,6 +142,7 @@ namespace CGAL {
   *                    is `Triangulation::Cell::Subdomain_index`}
   *     \cgalParamDefault{each finite cell of the output triangulation is
   *                    set to have `1` as `Subdomain_index`}
+  *     \cgalParamExtra{to avoid copies of large data sets, this parameter can be passed using `std::cref`}
   *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *

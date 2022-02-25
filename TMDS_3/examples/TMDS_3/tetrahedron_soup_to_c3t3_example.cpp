@@ -65,7 +65,7 @@ int main(int , char* [])
   Remeshing_triangulation tr2
     = CGAL::tetrahedron_soup_to_triangulation_3<Remeshing_triangulation>(
         points, tets_by_indices,
-        CGAL::parameters::subdomain_indices(subdomains));
+        CGAL::parameters::subdomain_indices(std::cref(subdomains)));
 
   //build a C3T3
   C3T3 c3t3;
