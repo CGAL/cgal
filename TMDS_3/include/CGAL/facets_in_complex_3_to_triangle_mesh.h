@@ -57,8 +57,7 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
   typedef typename Tr::Vertex_handle                                     Vertex_handle;
   typedef typename Tr::Cell_handle                                       Cell_handle;
   typedef typename Tr::Weighted_point                                    Weighted_point;
-
-  typedef typename C3T3::Facets_in_complex_iterator                      Ficit;
+  typedef typename Tr::Facet                                             Facet;
 
   typedef CGAL::Hash_handles_with_or_without_timestamps                  Hash_fct;
   typedef boost::unordered_map<Vertex_handle, std::size_t, Hash_fct>     VHmap;
@@ -73,11 +72,10 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
   VHmap vh_to_ids;
   std::size_t inum = 0;
 
-  for(Ficit fit = c3t3.facets_in_complex_begin(),
-            end = c3t3.facets_in_complex_end(); fit != end; ++fit)
+  for(Facet fit : c3t3.facets_in_complex())
   {
-    Cell_handle c = fit->first;
-    int s = fit->second;
+    Cell_handle c = fit.first;
+    int s = fit.second;
     const Surface_patch_index spi = c->surface_patch_index(s);
     Face f;
     CGAL::internal::resize(f, 3);
