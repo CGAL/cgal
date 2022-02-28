@@ -230,7 +230,9 @@ save(QFileInfo fileinfo, QList<Scene_item *> &items)
   else  if (fileinfo.suffix() == "mesh")
   {
     std::ofstream medit_file (qPrintable(path));
-    c3t3_item->c3t3().output_to_medit(medit_file,true,true);
+    CGAL::IO::write_MEDIT(medit_file, c3t3_item->c3t3(),
+                          CGAL::parameters::rebind_labels(true)
+                          .show_patches(true));
     items.pop_front();
     return true;
   }

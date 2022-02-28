@@ -389,7 +389,8 @@ struct Tester
     assert ( c3t3.surface_patch_index(*patch_fit_bis) == surface_patch_index_bis );
 
     std::ofstream out_medit("test-medit.mesh");
-    CGAL::IO::output_to_medit(out_medit, c3t3);
+    CGAL::IO::write_MEDIT(out_medit, c3t3);
+    out_medit.close();
     CGAL::IO::output_to_tetgen("test-tetgen", c3t3);
   }
 };
