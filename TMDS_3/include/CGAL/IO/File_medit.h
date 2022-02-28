@@ -869,10 +869,7 @@ output_to_medit(std::ostream& os,
 
   if (all_cells)
   {
-    for (typename C3T3::Triangulation::Finite_cells_iterator
-      cit = c3t3.triangulation().finite_cells_begin();
-      cit != c3t3.triangulation().finite_cells_end();
-      ++cit)
+    for (Cell_handle cit : c3t3.triangulation().finite_cell_handles())
     {
       for (int i = 0; i < 4; i++)
         os << V[cit->vertex(i)] << ' ';
