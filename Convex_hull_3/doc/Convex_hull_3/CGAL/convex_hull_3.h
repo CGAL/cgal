@@ -63,10 +63,10 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
  * \cgalNamedParamsEnd
  * \attention The user must include the header file of the `PolygonMesh` and `VertexListGraph` types.
  */
-template <class VertexListGraph, class PolygonMesh, class NamedParameters>
+template <class VertexListGraph, class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
 void convex_hull_3(const VertexListGraph& g,
                    PolygonMesh& pm,
-                   const NamedParameters& np);
+                   const NamedParameters& np = parameters::default_values());
 
 /*!
 \ingroup PkgConvexHull3Functions

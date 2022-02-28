@@ -110,10 +110,10 @@ and the remaining vertex is re-positioned.
 `visitor` is used to keep track of the simplification process. It has several member functions which
 are called at certain points in the simplification code.
 */
-template<class TriangleMesh, class StopPolicy, class NamedParameters>
+template<class TriangleMesh, class StopPolicy, class NamedParameters = parameters::Default_named_parameters>
 int edge_collapse(TriangleMesh& tmesh,
                   const StopPolicy& should_stop,
-                  const NamedParameters& np);
+                  const NamedParameters& np = parameters::default_values());
 
 } // namespace Surface_mesh_simplification
 } /* namespace CGAL */
