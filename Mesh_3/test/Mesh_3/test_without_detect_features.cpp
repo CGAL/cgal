@@ -52,9 +52,9 @@ struct Tester {
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
-    // Output
-    std::ofstream medit_file(out_fname);
-    CGAL::IO::write_MEDIT(medit_file, c3t3);
+//    // Output
+//    std::ofstream medit_file(out_fname);
+//    CGAL::IO::write_MEDIT(medit_file, c3t3);
 
     return EXIT_SUCCESS;
   }
