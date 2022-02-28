@@ -17,6 +17,7 @@
 
 
 #include <CGAL/basic.h>
+#include <CGAL/Nef_S2/Sphere_point.h>
 
 namespace CGAL {
 
@@ -47,6 +48,7 @@ typedef std::pair< Sphere_segment<R>,Sphere_segment<R> >
 typedef typename R_::Plane_3 Plane_3;
 typedef typename R_::Line_3 Line_3;
 typedef typename R_::Point_3 Point_3;
+typedef typename R_::Vector_3 Vector_3;
 typedef Sphere_circle<R_> Self;
 typedef typename R_::Plane_3 Base;
 
@@ -78,15 +80,20 @@ create any great circle that contains $p$ and $q$.}*/
   }
 }
 
- Sphere_circle(const Plane_3& h) : Base(h)
+Sphere_circle(const Plane_3& h) : Base(h)
 /*{\Mcreate creates the circle of $S_2$ corresponding to the plane
 |h|. If |h| does not contain the origin, then |\Mvar| becomes the
 circle parallel to |h| containing the origin.}*/
 {
-  if(h.d() != 0) *this = Plane_3(h.a(),h.b(),h.c(),RT(0));
+  if(h.d() != 0)
+    *this = Plane_3(h.a(),h.b(),h.c(),RT(0));
 }
 
-Sphere_circle(const RT& x, const RT& y, const RT& z): Base(x,y,z,0) {}
+Sphere_circle(const Origin& o, const Vector_3& v) : Base(o,v) {}
+
+Sphere_circle(const Origin&, const Plane_3& h) : Base(h.a(),h.b(),h.c(),RT(0)) {}
+
+Sphere_circle(const RT& x, const RT& y, const RT& z) : Base(x,y,z,0) {}
 
 /*{\Mcreate creates the circle orthogonal to the vector $(x,y,z)$.}*/
 
@@ -102,10 +109,9 @@ Sphere_circle(Sphere_circle<R> c, const Sphere_point<R>& p)
 }
 
 /*{\Moperations 4 2}*/
-
 Sphere_circle<R> opposite() const
 /*{\Mop returns the opposite of |\Mvar|.}*/
-{ return Base::opposite(); }
+{ return Sphere_circle<R>(Base::opposite(),Private_tag{}); }
 
 bool has_on(const Sphere_point<R>& p) const
 /*{\Mop returns true iff |\Mvar| contains |p|.}*/
@@ -117,7 +123,7 @@ Plane_3 plane() const { return Base(*this); }
 Plane_3 plane_through(const Point_3& p) const
 /*{\Mop returns the plane parallel to |\Mvar| that
 contains point |p|.}*/
-{ return Plane_3(p,((Base*) this)->orthogonal_direction()); }
+{ return Plane_3(p,((Base*) this)->orthogonal_vector()); }
 
 Sphere_point<R> orthogonal_pole() const
 /*{\Mop returns the point that is the pole of the
@@ -133,6 +139,10 @@ Sphere_segment_pair split_at_xy_plane() const;
 of splitting |\Mvar| at the $x$-$y$-coordinate plane if |\Mvar|
 is not part of it. Otherwise |\Mvar| is split at the
 $x$-$z$-coordinate plane.}*/
+
+private:
+struct Private_tag{};
+Sphere_circle(const Plane_3& h,Private_tag) : Base(h){}
 
 }; // Sphere_circle<R>
 

@@ -250,8 +250,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
         with_border = true;
       else {
         std::size_t i = get(fimap,face(pe_prev,P));
-        Plane ss_plane( CGAL::ORIGIN, normals[i]);
-        Sphere_circle ss_circle(ss_plane);
+        Sphere_circle ss_circle(CGAL::ORIGIN, normals[i]);
         CGAL_assertion_code(if(num_edges[i] > 3) {
           CGAL_assertion(ss_circle.has_on(sp));
           CGAL_assertion(ss_circle.has_on(sv_prev->point()));
@@ -283,8 +282,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       e = sv_prev->out_sedge();
     } else {
       std::size_t i = get(fimap,face(pe_prev,P));
-      Plane ss_plane( CGAL::ORIGIN, normals[i]);
-      Sphere_circle ss_circle(ss_plane);
+      Sphere_circle ss_circle(CGAL::ORIGIN, normals[i]);
 
       CGAL_assertion_code(if(num_edges[i] > 3) {
         CGAL_assertion(ss_circle.has_on(sp_0));
