@@ -66,19 +66,10 @@ squared_distance_to_triangle_RT(const typename K::Point_3& pt,
   const Vector_3 oe3 = vector(t0, t2);
   const Vector_3 normal = wcross(e1, oe3, k);
 
-  if(normal != NULL_VECTOR &&
-     on_left_of_triangle_edge(pt, normal, t0, t1, k) &&
-     on_left_of_triangle_edge(pt, normal, t1, t2, k) &&
-     on_left_of_triangle_edge(pt, normal, t2, t0, k))
+  if(normal == NULL_VECTOR)
   {
-    // The projection of pt is inside the triangle
-    inside = true;
-    squared_distance_to_plane_RT(normal, vector(t0, pt), num, den, k);
-  }
-  else
-  {
-    // The case normal == NULL_VECTOR covers the case when the triangle
-    // is collinear, or even more degenerate. In that case, we can
+    // The case normal==NULL_VECTOR covers the case when the triangle
+    // is colinear, or even more degenerate. In that case, we can
     // simply take also the distance to the three segments.
     squared_distance_RT(pt, segment(t2, t0), num, den, k);
 
@@ -97,6 +88,78 @@ squared_distance_to_triangle_RT(const typename K::Point_3& pt,
     {
       num = num2;
       den = den2;
+    }
+
+    return;
+  }
+
+  if(!on_left_of_triangle_edge(pt, normal, t0, t1, k))
+  {
+    if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
+    {
+      // can't be to the right of all three segments
+      squared_distance_RT(pt, segment(t0, t1), num, den, k);
+
+      typename K::RT num2, den2;
+      squared_distance_RT(pt, segment(t1, t2), num2, den2, k);
+      if(compare_quotients(num2,den2, num,den) == SMALLER)
+      {
+        num = num2;
+        den = den2;
+      }
+    }
+    else // on_left_of_triangle_edge(pt, normal, t1, t2, k)
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        squared_distance_RT(pt, segment(t0, t1), num, den, k);
+
+        typename K::RT num2, den2;
+        squared_distance_RT(pt, segment(t2, t0), num2, den2, k);
+        if(compare_quotients(num2,den2, num,den) == SMALLER)
+        {
+          num = num2;
+          den = den2;
+        }
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        return squared_distance_RT(pt, segment(t0, t1), num, den, k);
+      }
+    }
+  }
+  else // on_left_of_triangle_edge(pt, normal, t0, t1, k)
+  {
+    if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        squared_distance_RT(pt, segment(t1, t2), num, den, k);
+
+        typename K::RT num2, den2;
+        squared_distance_RT(pt, segment(t2, t0), num2, den2, k);
+        if(compare_quotients(num2,den2, num,den) == SMALLER)
+        {
+          num = num2;
+          den = den2;
+        }
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        return squared_distance_RT(pt, segment(t1, t2), num, den, k);
+      }
+    }
+    else // on_left_of_triangle_edge(pt, normal, t1, t2, k)
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        return squared_distance_RT(pt, segment(t2, t0), num, den, k);
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        inside = true;
+        return squared_distance_to_plane_RT(normal, vector(t0, pt), num, den, k);
+      }
     }
   }
 }
@@ -140,19 +203,10 @@ squared_distance_to_triangle(const typename K::Point_3& pt,
   const Vector_3 oe3 = vector(t0, t2);
   const Vector_3 normal = wcross(e1, oe3, k);
 
-  if(normal != NULL_VECTOR &&
-     on_left_of_triangle_edge(pt, normal, t0, t1, k) &&
-     on_left_of_triangle_edge(pt, normal, t1, t2, k) &&
-     on_left_of_triangle_edge(pt, normal, t2, t0, k))
-  {
-    // the projection of pt is inside the triangle
-    inside = true;
-    return squared_distance_to_plane(normal, vector(t0, pt), k);
-  }
-  else
+  if(normal == NULL_VECTOR)
   {
     // The case normal == NULL_VECTOR covers the case when the triangle
-    // is collinear, or even more degenerate. In that case, we can
+    // is colinear, or even more degenerate. In that case, we can
     // simply take also the distance to the three segments.
     //
     // Note that in the degenerate case, at most 2 edges cover the full triangle,
@@ -163,6 +217,52 @@ squared_distance_to_triangle(const typename K::Point_3& pt,
     typename K::FT d3 = sq_dist(pt, segment(t0, t1));
 
     return (std::min)((std::min)(d1, d2), d3);
+  }
+
+  if(!on_left_of_triangle_edge(pt, normal, t0, t1, k))
+  {
+    if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
+    {
+      // can't be to the right of all three segments
+      return (std::min)(sq_dist(pt, segment(t0, t1)), sq_dist(pt, segment(t1, t2)));
+    }
+    else // on_left_of_triangle_edge(pt, normal, t1, t2, k)
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        return (std::min)(sq_dist(pt, segment(t0, t1)), sq_dist(pt, segment(t2, t0)));
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        return sq_dist(pt, segment(t0, t1));
+      }
+    }
+  }
+  else // on_left_of_triangle_edge(pt, normal, t0, t1, k)
+  {
+    if(!on_left_of_triangle_edge(pt, normal, t1, t2, k))
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        return (std::min)(sq_dist(pt, segment(t1, t2)), sq_dist(pt, segment(t2, t0)));
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        return sq_dist(pt, segment(t1, t2));
+      }
+    }
+    else // on_left_of_triangle_edge(pt, normal, t1, t2, k)
+    {
+      if(!on_left_of_triangle_edge(pt, normal, t2, t0, k))
+      {
+        return sq_dist(pt, segment(t2, t0));
+      }
+      else // on_left_of_triangle_edge(pt, normal, t2, t0, k)
+      {
+        inside = true;
+        return squared_distance_to_plane(normal, vector(t0, pt), k);
+      }
+    }
   }
 }
 
