@@ -10,7 +10,7 @@
 //                 Jane Tournois
 //
 
-#include <CGAL/TMDS_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <QtCore/qglobal.h>
 
 #include "Scene_surface_mesh_item.h"
@@ -37,7 +37,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
-#include <CGAL/TMDS_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/IO/output_to_vtu.h>
 #include <CGAL/boost/graph/io.h>
 
@@ -425,7 +425,7 @@ public:
         }
       }
 
-      CGAL::TMDS_3::build_triangulation_with_subdomains_range(
+      CGAL::SMDS_3::build_triangulation_with_subdomains_range(
         c3t3_item->c3t3().triangulation(),
         points, finite_cells, subdomains, border_facets);
 

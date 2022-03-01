@@ -13,8 +13,8 @@
 #ifndef CGAL_MESH_3_IO_SIGNATURE_H
 #define CGAL_MESH_3_IO_SIGNATURE_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
-#include <CGAL/TMDS_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 
 #endif // CGAL_MESH_3_IO_SIGNATURE_H

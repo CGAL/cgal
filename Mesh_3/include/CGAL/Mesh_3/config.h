@@ -16,7 +16,7 @@
 
 
 #include <CGAL/config.h>
-#include <CGAL/TMDS_3/config.h>
+#include <CGAL/SMDS_3/config.h>
 
 //#define CGAL_MESH_3_VERBOSE 1
 

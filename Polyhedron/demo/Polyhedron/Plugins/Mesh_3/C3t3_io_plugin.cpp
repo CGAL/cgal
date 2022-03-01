@@ -1,6 +1,6 @@
-#include <CGAL/TMDS_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include "Scene_c3t3_item.h"
-#include <CGAL/TMDS_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/IO/File_avizo.h>
@@ -129,7 +129,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
-      if(CGAL::TMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(), true))
+      if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(), true))
       {
         item->c3t3().rescan_after_load_of_triangulation(); //fix counters for facets and cells
         for( C3t3::Cell_handle cit : item->c3t3().triangulation().finite_cell_handles())

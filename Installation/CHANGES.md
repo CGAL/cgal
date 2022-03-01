@@ -24,6 +24,13 @@ Release date: June 2022
 -   Added the function
     [`remove_isolated_vertices()`](https://doc.cgal.org/5.5/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
     as a post-processing step for the tetrahedral mesh generation.
+    
+### [3D Simplicial Mesh Data Structure](https://doc.cgal.org/5.4/Manual/packages.html#PkgSMDS3) (new package)
+
+- This new package wraps all the existing code that deals with a ` MeshComplex_3InTriangulation_3`
+   to describe 3D simplicial meshess, and makes the data structure independant
+   from the tetrahedral mesh generation package.    
+
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
@@ -201,12 +208,6 @@ Release date: January 2022
 
 -   Added support for the [OSQP solver](https://osqp.org/). This solver enables to efficiently compute
     the convex Quadratic Programming (QP) problems arising in the context of several packages.
-
-### [Tetrahedral Mesh Data Structure 3](https://doc.cgal.org/5.4/Manual/packages.html#PkgTMDS3) (new package)
-
-- This new package wraps all the existing code that deals with a
-` MeshComplex_3InTriangulation_3`, and makes the data structure independant
-from the tetrahedral mesh generation package.
 
 
 [Release 5.3](https://github.com/CGAL/cgal/releases/tag/v5.3)

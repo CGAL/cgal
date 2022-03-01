@@ -7,11 +7,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 
-#ifndef CGAL_TMDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
-#define CGAL_TMDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
+#ifndef CGAL_SMDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
+#define CGAL_SMDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H
 
 /// \file Mesh_complex_3_in_triangulation_3_fwd.h
-/// Forward declarations of the TMDS_3 package.
+/// Forward declarations of the SMDS_3 package.
 
 #ifndef DOXYGEN_RUNNING
 namespace CGAL {
@@ -35,7 +35,7 @@ namespace IO {
   );
 } //namespace IO
 
-namespace TMDS_3 {
+namespace SMDS_3 {
 
   template<class Tr>
   bool build_triangulation_from_file(std::istream& is,
@@ -43,10 +43,10 @@ namespace TMDS_3 {
                                      bool verbose = false,
                                      bool replace_domain_0 = false);
 
-} // namespace TMDS_3
+} // namespace SMDS_3
 } // namespace CGAL
 #endif
 
-#endif /* CGAL_TMDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H */
+#endif /* CGAL_SMDS_3_MESH_COMPLEX_3_IN_TRIANGULATION_3_FWD_H */
 
 

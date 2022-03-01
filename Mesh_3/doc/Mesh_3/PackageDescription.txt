@@ -29,7 +29,7 @@
 
 /// \defgroup PkgMesh3IOFunctions Input/Output Functions
 /// \ingroup PkgMesh3Ref
-/// See \ref PkgTMDS3IOFunctions from \ref PkgTMDS3
+/// See \ref PkgSMDS3IOFunctions from \ref PkgSMDS3
 
 /*!
 \addtogroup PkgMesh3Ref
