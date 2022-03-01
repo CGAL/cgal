@@ -18,10 +18,10 @@
 #ifndef CGAL_TMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
 #define CGAL_TMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
-#include <CGAL/TMDS_3/tet_soup_to_c3t3.h>
-#include <CGAL/TMDS_3/internal/TMDS_3_helper.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/internal/TMDS_3_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-  /** \ingroup PkgTMDS3Functions
+  /** \ingroup PkgSMDS3Functions
   * builds a 3D triangulation from a soup of tetrahedra.
   *
   * @tparam TetrahedronRange a model of `Range` whose value type is
@@ -92,14 +92,14 @@ namespace CGAL {
     }
 
     typename Tr::Cell::Subdomain_index default_si(1);
-    CGAL::TMDS_3::build_triangulation_one_subdomain(tr, points, finite_cells, default_si, border_facets);
+    CGAL::SMDS_3::build_triangulation_one_subdomain(tr, points, finite_cells, default_si, border_facets);
 
-    CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
+    CGAL_assertion(CGAL::SMDS_3::internal::is_convex(tr));
 
     return tr;
   }
 
-  /** \ingroup PkgTMDS3Functions
+  /** \ingroup PkgSMDS3Functions
   * builds a 3D triangulation from a soup of tetrahedra.
   *
   * @tparam PointRange a model of the concept `RandomAccessContainer`
@@ -176,9 +176,9 @@ namespace CGAL {
       get_parameter_reference(np, internal_np::subdomain_indices),
       1);
 
-    CGAL::TMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets);
+    CGAL::SMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets);
 
-    CGAL_assertion(CGAL::TMDS_3::internal::is_convex(tr));
+    CGAL_assertion(CGAL::SMDS_3::internal::is_convex(tr));
 
     return tr;
   }

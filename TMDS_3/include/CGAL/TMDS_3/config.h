@@ -12,7 +12,7 @@
 #ifndef CGAL_TMDS_3_CONFIG_H
 #define CGAL_TMDS_3_CONFIG_H 1
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/config.h>
 

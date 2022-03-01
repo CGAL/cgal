@@ -17,7 +17,7 @@
 #ifndef CGAL_TMDS_3_TET_SOUP_TO_C3T3_H
 #define CGAL_TMDS_3_TET_SOUP_TO_C3T3_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/disable_warnings.h>
 #include <CGAL/assertions.h>
@@ -32,7 +32,7 @@
 
 namespace CGAL
 {
-namespace TMDS_3
+namespace SMDS_3
 {
 template<typename Vh>
 std::array<Vh, 3> make_ordered_vertex_array(const Vh vh0, const Vh vh1, const Vh vh2)
@@ -579,7 +579,7 @@ bool build_triangulation_from_file(std::istream& is,
                       replace_domain_0 && !dont_replace_domain_0);
 }
 
-}  // namespace TMDS_3
+}  // namespace SMDS_3
 }  // namespace CGAL
 
 #include <CGAL/enable_warnings.h>

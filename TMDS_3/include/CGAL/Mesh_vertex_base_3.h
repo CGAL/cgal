@@ -20,12 +20,12 @@
 #ifndef CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 #define CGAL_COMPACT_MESH_VERTEX_BASE_3_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 
 #include <CGAL/Regular_triangulation_vertex_base_3.h>
-#include <CGAL/TMDS_3/internal/indices_management.h>
-#include <CGAL/TMDS_3/io_signature.h>
+#include <CGAL/SMDS_3/internal/indices_management.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/Has_timestamp.h>
 #include <CGAL/tags.h>
 #include <atomic>

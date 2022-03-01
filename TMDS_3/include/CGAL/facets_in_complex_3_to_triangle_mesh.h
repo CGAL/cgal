@@ -14,7 +14,7 @@
 #ifndef CGAL_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
 #define CGAL_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -35,7 +35,7 @@
 
 namespace CGAL {
 
-namespace TMDS_3 {
+namespace SMDS_3 {
 
 namespace internal {
 
@@ -158,10 +158,10 @@ void set_face_patches(const Index2FaceMap& i2f,
 
 } // end namespace internal
 
-} // end namespace TMDS_3
+} // end namespace SMDS_3
 
   /**
-   * @ingroup PkgTMDS3Functions
+   * @ingroup PkgSMDS3Functions
    *
    * @brief builds a `TriangleMesh` from the surface facets, with a consistent orientation at the interface of two subdomains.
    *
@@ -203,7 +203,7 @@ void set_face_patches(const Index2FaceMap& i2f,
     std::vector<Surface_patch_index> patches;
     std::vector<Point_3> points;
 
-    TMDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces, patches);
+    SMDS_3::internal::facets_in_complex_3_to_triangle_soup(c3t3, points, faces, patches);
 
     if (!PMP::is_polygon_soup_a_polygon_mesh(faces))
       PMP::orient_polygon_soup(points, faces);
@@ -216,7 +216,7 @@ void set_face_patches(const Index2FaceMap& i2f,
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    TMDS_3::internal::set_face_patches(i2f,
+    SMDS_3::internal::set_face_patches(i2f,
                                       patches,
                                       get_parameter(np, internal_np::face_patch));
   }

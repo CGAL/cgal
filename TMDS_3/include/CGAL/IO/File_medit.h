@@ -14,11 +14,11 @@
 #ifndef CGAL_IO_FILE_MEDIT_H
 #define CGAL_IO_FILE_MEDIT_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
-#include <CGAL/TMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
+#include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/TMDS_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 
 #include <CGAL/utility.h>
 #include <CGAL/basic.h>
@@ -40,7 +40,7 @@
 
 namespace CGAL {
 
-namespace TMDS_3 {
+namespace SMDS_3 {
 
 //-------------------------------------------------------
 // Needed in verbose mode
@@ -900,7 +900,7 @@ output_to_medit(std::ostream& os,
 namespace IO {
 
 /**
- * @ingroup PkgTMDS3IOFunctions
+ * @ingroup PkgSMDS3IOFunctions
  * @deprecated This function is deprecated. Users should instead use `CGAL::IO::write_MEDIT()`
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
         See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
@@ -927,25 +927,25 @@ output_to_medit(std::ostream& os,
   if ( rebind )
   {
     if ( show_patches )
-      CGAL::TMDS_3::output_to_medit<C3T3,true,false>(os, c3t3,
+      CGAL::SMDS_3::output_to_medit<C3T3,true,false>(os, c3t3,
         all_vertices, all_cells);
     else
-      CGAL::TMDS_3::output_to_medit<C3T3,true,true>(os, c3t3,
+      CGAL::SMDS_3::output_to_medit<C3T3,true,true>(os, c3t3,
         all_vertices, all_cells);
   }
   else
   {
     if ( show_patches )
-      CGAL::TMDS_3::output_to_medit<C3T3,false,false>(os, c3t3,
+      CGAL::SMDS_3::output_to_medit<C3T3,false,false>(os, c3t3,
         all_vertices, all_cells);
     else
-      CGAL::TMDS_3::output_to_medit<C3T3,false,true>(os, c3t3,
+      CGAL::SMDS_3::output_to_medit<C3T3,false,true>(os, c3t3,
         all_vertices, all_cells);
   }
 }
 
 /**
- * @ingroup PkgTMDS3IOFunctions
+ * @ingroup PkgSMDS3IOFunctions
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
  *      See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
@@ -1022,7 +1022,7 @@ void write_MEDIT(std::ostream& os,
 }
 
 /**
- * @ingroup PkgTMDS3IOFunctions
+ * @ingroup PkgSMDS3IOFunctions
  * @brief outputs a mesh complex to the medit (`.mesh`) file format.
  *      See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
@@ -1095,7 +1095,7 @@ void write_MEDIT(std::ostream& os,
 }
 
 /**
- * @ingroup PkgTMDS3IOFunctions
+ * @ingroup PkgSMDS3IOFunctions
  * @brief reads a mesh complex written in the medit (`.mesh`) file format.
  *   See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.
  * @tparam T3 can be instantiated with any 3D triangulation of \cgal provided that its
@@ -1123,7 +1123,7 @@ template<typename T3>
 bool read_MEDIT(std::istream& in, T3& t3)
 {
   CGAL_assertion(!(!in));
-  bool b = CGAL::TMDS_3::build_triangulation_from_file(in, t3);
+  bool b = CGAL::SMDS_3::build_triangulation_from_file(in, t3);
   if(!b)
     t3.clear();
   return b;

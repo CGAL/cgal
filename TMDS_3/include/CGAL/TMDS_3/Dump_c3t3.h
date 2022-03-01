@@ -13,11 +13,11 @@
 #ifndef CGAL_TMDS_3_DUMP_C3T3_H
 #define CGAL_TMDS_3_DUMP_C3T3_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/TMDS_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/IO/File_medit.h>
 
 #include <CGAL/is_streamable.h>

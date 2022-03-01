@@ -17,7 +17,7 @@
 #ifndef CGAL_TMDS_3_UTILITIES_H
 #define CGAL_TMDS_3_UTILITIES_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/Has_timestamp.h>
 #include <iterator>
@@ -25,7 +25,7 @@
 #include <sstream>
 
 namespace CGAL {
-namespace TMDS_3 {
+namespace SMDS_3 {
 namespace internal {
 
 struct Debug_messages_tools {
@@ -115,7 +115,7 @@ public:
 
 
 } // end namespace internal
-} // end namespace TMDS_3
+} // end namespace SMDS_3
 } //namespace CGAL
 
 #endif // CGAL_TMDS_3_UTILITIES_H

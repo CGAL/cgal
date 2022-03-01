@@ -13,7 +13,7 @@
 #ifndef CGAL_IO_FILE_AVIZO_H
 #define CGAL_IO_FILE_AVIZO_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 
 #include <CGAL/IO/File_medit.h>
@@ -28,7 +28,7 @@ namespace IO {
 
 /**
  * @cond SKIP_IN_MANUAL
- * @ingroup PkgTMDS3ExportFunctions
+ * @ingroup PkgSMDS3ExportFunctions
  * @brief exports a mesh complex to the Avizo (`.am`) file format
  * @tparam C3T3 a class model of `MeshComplex_3InTriangulation_3`
  * @param os the output stream

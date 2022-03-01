@@ -1,28 +1,28 @@
-/// \defgroup PkgTMDS3Ref 3D Tetrahedral Mesh Data Structures Reference
+/// \defgroup PkgSMDS3Ref 3D Simplicial Mesh Data Structures Reference
 
-/// \defgroup PkgTMDS3Concepts Concepts
-/// \ingroup PkgTMDS3Ref
+/// \defgroup PkgSMDS3Concepts Concepts
+/// \ingroup PkgSMDS3Ref
 /// The main concepts of this package.
 
-/// \defgroup PkgTMDS3Classes Classes
-/// \ingroup PkgTMDS3Ref
+/// \defgroup PkgSMDS3Classes Classes
+/// \ingroup PkgSMDS3Ref
 /// The class in this group is the main class involved .
 
-/// \defgroup PkgTMDS3Functions Functions
-/// \ingroup PkgTMDS3Ref
+/// \defgroup PkgSMDS3Functions Functions
+/// \ingroup PkgSMDS3Ref
 /// The functions to work with the 3D mesh data structures.
 
-/// \defgroup PkgTMDS3ExportFunctions Export Functions
-/// \ingroup PkgTMDS3Ref
+/// \defgroup PkgSMDS3ExportFunctions Export Functions
+/// \ingroup PkgSMDS3Ref
 /// The free functions that can be used to export meshes to given output file formats.
 
-/// \defgroup PkgTMDS3IOFunctions Input/Output Functions
-/// \ingroup PkgTMDS3Ref
+/// \defgroup PkgSMDS3IOFunctions Input/Output Functions
+/// \ingroup PkgSMDS3Ref
 /// The free functions that can be used to read and write meshes.
 
 /*!
-\addtogroup PkgTMDS3Ref
-\cgalPkgDescriptionBegin{3D Tetrahedral Mesh Data Structure,PkgTMDS3}
+\addtogroup PkgSMDS3Ref
+\cgalPkgDescriptionBegin{3D Simplicial Mesh Data Structure,PkgSMDS3}
 \cgalPkgPicture{knot_small.png}
 
 \cgalPkgSummaryBegin
@@ -33,7 +33,7 @@
   to be processed with %CGAL 3D mesh generation and remeshing algorithms,
   along with iterators, IO functions, and additional helper functions.
   }
-\cgalPkgManuals{Chapter_3D_Tetrahedral_Mesh_Data_Structure,PkgTMDS3Ref}
+\cgalPkgManuals{Chapter_3D_Tetrahedral_Mesh_Data_Structure,PkgSMDS3Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

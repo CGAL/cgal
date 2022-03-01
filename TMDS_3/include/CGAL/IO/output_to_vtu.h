@@ -14,7 +14,7 @@
 #ifndef CGAL_OUTPUT_TO_VTU_H
 #define CGAL_OUTPUT_TO_VTU_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/IO/io.h>
@@ -351,7 +351,7 @@ void output_to_vtu_with_attributes(std::ostream& os,
 
 } // namespace internal
 
-//! \ingroup PkgTMDS3ExportFunctions
+//! \ingroup PkgSMDS3ExportFunctions
 //!
 //! \brief exports a tetrahedral mesh complex using the `UnstructuredGrid` XML format.
 //!

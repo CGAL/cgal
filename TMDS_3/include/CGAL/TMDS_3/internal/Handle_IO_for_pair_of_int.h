@@ -13,12 +13,12 @@
 #ifndef CGAL_INTERNAL_MESH_3_INTERNAL_HANDLE_IO_FOR_PAIR_OF_INT_H
 #define CGAL_INTERNAL_MESH_3_INTERNAL_HANDLE_IO_FOR_PAIR_OF_INT_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/disable_warnings.h>
 
 #include <utility>
-#include <CGAL/TMDS_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <ostream>
 #include <istream>
 #include <boost/variant.hpp>

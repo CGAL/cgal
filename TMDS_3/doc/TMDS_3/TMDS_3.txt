@@ -16,7 +16,7 @@ belong to the mesh complex, surface patches, and feature edges.
 
 \section TMDS_3_section_c3t3 Mesh Complex
 
-This package is devoted to the representation of 3-Dimensional tetrahedral mesh data structures.
+This package is devoted to the representation of 3-Dimensional simplicial mesh data structures.
 
 A 3D simplicial complex is composed of points, line segments, triangles,
 tetrahedra, and their corresponding combinatorial description
@@ -58,7 +58,7 @@ The tetrahedron soup is then put back together in a
 `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3` before
 being set as the reference triangulation of a `Mesh_complex_3_in_triangulation_3`.
 
-\cgalExample{TMDS_3/tetrahedron_soup_to_c3t3_example.cpp}
+\cgalExample{SMDS_3/tetrahedron_soup_to_c3t3_example.cpp}
 
 
 \subsection IOExample Input/Output Example
@@ -67,7 +67,7 @@ The example below illustrates how to use the IO functions
 for reading and writing a triangulation with the `Medit` file format
 (See \cgalCite{frey:inria-00069921} for a comprehensive description of this file format.).
 
-\cgalExample{TMDS_3/c3t3_example.cpp}
+\cgalExample{SMDS_3/c3t3_example.cpp}
 
 
 \subsection MoreExamples More Examples In Other Packages

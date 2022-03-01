@@ -13,7 +13,7 @@
 #ifndef CGAL_IO_FILE_TETGEN_H
 #define CGAL_IO_FILE_TETGEN_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/Time_stamper.h>
 #include <CGAL/IO/File_medit.h>
@@ -25,7 +25,7 @@
 
 namespace CGAL {
 
-namespace TMDS_3 {
+namespace SMDS_3 {
 
 template <class C3T3, bool rebind, bool no_patch>
 void
@@ -185,13 +185,13 @@ output_to_tetgen(std::string filename,
   //-------------------------------------------------------
 } // end output_to_tetgen(...)
 
-} // end namespace TMDS_3
+} // end namespace SMDS_3
 
 namespace IO {
 
 
 /**
- * \ingroup PkgTMDS3ExportFunctions
+ * \ingroup PkgSMDS3ExportFunctions
  * @brief exports a mesh complex to tetgen format
  * @param filename the path to the output file
  * @param c3t3 the mesh complex
@@ -211,16 +211,16 @@ output_to_tetgen(std::string filename,
   if ( rebind )
   {
     if ( show_patches )
-      TMDS_3::output_to_tetgen<C3T3,true,false>(filename,c3t3);
+      SMDS_3::output_to_tetgen<C3T3,true,false>(filename,c3t3);
     else
-      TMDS_3::output_to_tetgen<C3T3,true,true>(filename,c3t3);
+      SMDS_3::output_to_tetgen<C3T3,true,true>(filename,c3t3);
   }
   else
   {
     if ( show_patches )
-      TMDS_3::output_to_tetgen<C3T3,false,false>(filename,c3t3);
+      SMDS_3::output_to_tetgen<C3T3,false,false>(filename,c3t3);
     else
-      TMDS_3::output_to_tetgen<C3T3,false,true>(filename,c3t3);
+      SMDS_3::output_to_tetgen<C3T3,false,true>(filename,c3t3);
   }
 }
 

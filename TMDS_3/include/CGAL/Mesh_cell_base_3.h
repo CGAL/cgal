@@ -15,19 +15,19 @@
 #ifndef CGAL_MESH_CELL_BASE_3_H
 #define CGAL_MESH_CELL_BASE_3_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 
 // #define CGAL_DEPRECATED_HEADER "<CGAL/Mesh_cell_base_3.h>"
 // #define CGAL_REPLACEMENT_HEADER "<CGAL/Compact_mesh_cell_base_3.h>"
 // #include <CGAL/Installation/internal/deprecation_warning.h>
 
-#include <CGAL/TMDS_3/config.h>
+#include <CGAL/SMDS_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
-#include <CGAL/TMDS_3/Mesh_surface_cell_base_3.h>
-#include <CGAL/TMDS_3/io_signature.h>
+#include <CGAL/SMDS_3/Mesh_surface_cell_base_3.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <CGAL/tags.h>
 
 #include <boost/type_traits/is_convertible.hpp>

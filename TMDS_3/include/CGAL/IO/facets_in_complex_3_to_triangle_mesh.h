@@ -14,7 +14,7 @@
 #ifndef CGAL_IO_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
 #define CGAL_IO_FACETS_IN_COMPLEX_3_TO_TRIANGLE_MESH_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>

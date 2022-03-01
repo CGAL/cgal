@@ -13,7 +13,7 @@
 #ifndef CGAL_INTERNAL_TMDS_3_HELPERS_H
 #define CGAL_INTERNAL_TMDS_3_HELPERS_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/enum.h>
 
@@ -21,7 +21,7 @@
 #include <array>
 
 namespace CGAL {
-namespace TMDS_3 {
+namespace SMDS_3 {
 namespace internal {
 
   template<typename Triangulation>
@@ -63,7 +63,7 @@ namespace internal {
   }
 
 } // end namespace internal
-} // end namespace TMDS_3
+} // end namespace SMDS_3
 } // end namespace CGAL
 
 #endif // CGAL_INTERNAL_TMDS_3_HELPERS_H

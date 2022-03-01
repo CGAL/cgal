@@ -13,7 +13,7 @@
 #ifndef CGAL_TMDS_3_IO_SIGNATURE_H
 #define CGAL_TMDS_3_IO_SIGNATURE_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
 #define CGAL_MESH_3_IO_H // the old include macro, tested by other files
 

@@ -18,17 +18,17 @@
 #ifndef CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 #define CGAL_MESH_COMPLEX_3_IN_TRIANGULATION_3_H
 
-#include <CGAL/license/TMDS_3.h>
+#include <CGAL/license/SMDS_3.h>
 
-#include <CGAL/TMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
+#include <CGAL/SMDS_3/Mesh_complex_3_in_triangulation_3_fwd.h>
 #include <CGAL/disable_warnings.h>
 #include <CGAL/iterator.h>
-#include <CGAL/TMDS_3/utilities.h>
-#include <CGAL/TMDS_3/internal/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
+#include <CGAL/SMDS_3/utilities.h>
+#include <CGAL/SMDS_3/internal/Boundary_of_subdomain_of_complex_3_in_triangulation_3_to_off.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Union_find.h>
-#include <CGAL/TMDS_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_maya.h>
@@ -75,7 +75,7 @@ namespace CGAL {
 
 namespace CGAL {
 
-  namespace TMDS_3 {
+  namespace SMDS_3 {
 
     namespace details {
 
@@ -112,11 +112,11 @@ namespace CGAL {
         }
       }; // end class template C3t3_helper_class
 
-    } // end namespace TMDS_3::details
-  } //end namesapce TMDS_3
+    } // end namespace SMDS_3::details
+  } //end namesapce SMDS_3
 
 /*!
-  \ingroup PkgTMDS3Classes
+  \ingroup PkgSMDS3Classes
 
   \brief A data-structure to represent and maintain a 3D complex embedded
   in a 3D triangulation.
@@ -160,8 +160,8 @@ template <typename Tr,
           typename CurveIndex>
 class Mesh_complex_3_in_triangulation_3
 #ifndef DOXYGEN_RUNNING
-  : public CGAL::TMDS_3::details::C3t3_helper_class<Tr>
-  , public CGAL::TMDS_3::internal::Debug_messages_tools
+  : public CGAL::SMDS_3::details::C3t3_helper_class<Tr>
+  , public CGAL::SMDS_3::internal::Debug_messages_tools
 #endif
 {
 public:
@@ -170,7 +170,7 @@ public:
 private:
   typedef Mesh_complex_3_in_triangulation_3<
     Tr,CornerIndex,CurveIndex>                            Self;
-  typedef TMDS_3::details::C3t3_helper_class<Tr>           Base;
+  typedef SMDS_3::details::C3t3_helper_class<Tr>           Base;
   typedef CGAL::Hash_handles_with_or_without_timestamps   Hash_fct;
 
 public:
@@ -864,7 +864,7 @@ private:
     }
   }; // end class Cell_not_in_complex
 
-  typedef TMDS_3::internal::Iterator_not_in_complex<Self> Iterator_not_in_complex;
+  typedef SMDS_3::internal::Iterator_not_in_complex<Self> Iterator_not_in_complex;
 
   class Facet_iterator_not_in_complex
   {
@@ -928,7 +928,7 @@ private:
 
   // Iterator type to get the first element of pair
   typedef boost::transform_iterator <
-    TMDS_3::internal::First_of<typename Vertex_map_filter_iterator::value_type>,
+    SMDS_3::internal::First_of<typename Vertex_map_filter_iterator::value_type>,
     Vertex_map_filter_iterator >                Vertex_map_iterator_first;
 
   // Iterator type to remove a level of referencing

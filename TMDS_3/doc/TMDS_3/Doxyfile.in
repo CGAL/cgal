@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Tetrahedral Mesh Data Structures"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Simplicial Mesh Data Structures"
 
 #custom options
 EXTRACT_ALL                     =  false
@@ -13,7 +13,7 @@ WARN_IF_UNDOCUMENTED =  false
 
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO
 
-EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/internal/TMDS_3
+EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/internal/SMDS_3
 
 HTML_EXTRA_FILES =  ${CGAL_PACKAGE_DOC_DIR}/fig/c3t3.jpg \
 #                              ${CGAL_PACKAGE_DOC_DIR}/fig/no-protection-complex.png
