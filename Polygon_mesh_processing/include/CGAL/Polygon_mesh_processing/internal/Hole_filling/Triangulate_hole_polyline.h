@@ -1278,7 +1278,6 @@ bool is_planar_2(
   }
 
   // Here, avg_squared_distance is a little bit more tolerant than avg_distance^2.
-  CGAL_assertion(avg_normal != typename Traits::Vector_3());
   const Plane_3 plane = Plane_3(centroid, avg_normal);
   FT avg_squared_distance = FT(0);
   for (const Point_3& p : points)
@@ -1368,6 +1367,8 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   z /= ft_nn;
   const Vector_3 avg_normal = Vector_3(x, y, z);
   // std::cout << "avg normal: " << avg_normal << std::endl;
+
+  if (avg_normal==NULL_VECTOR) return false;
 
   // Checking the hole planarity.
   if (!is_planar_2(P, avg_normal, max_squared_distance, traits)) {
