@@ -358,11 +358,11 @@ struct Node_id_to_vertex
   {
     data[i] = v;
   }
-  void set_vertex(std::size_t i, vertex_descriptor v)
+  void set_vertex_for_retriangulation(std::size_t i, vertex_descriptor v)
   {
     data[i] = v;
   }
-  void set_temporary_vertex(std::size_t i, vertex_descriptor v)
+  void set_temporary_vertex_for_retriangulation(std::size_t i, vertex_descriptor v)
   {
     data[i] = v;
   }
@@ -382,7 +382,7 @@ struct Node_id_to_vertex
   }
 };
 
-//version for autorefinement, several vertices per node_id
+//version for autorefinement and non-manifold corefinement, several vertices per node_id
 template <class TriangleMesh>
 struct Node_id_to_vertex<TriangleMesh, true>
 {
@@ -400,16 +400,18 @@ struct Node_id_to_vertex<TriangleMesh, true>
   {
     data[i].push_back(v);
   }
-  void set_temporary_vertex(std::size_t i, vertex_descriptor v)
+  void set_temporary_vertex_for_retriangulation(std::size_t i, vertex_descriptor v)
   {
     data[i].assign(1,v);
   }
   // warning: data[i] might then contains several times the same vertex
   //          but it is probably still a better option than look for the
   //          vertex and remove it
-  void set_vertex(std::size_t i, vertex_descriptor v)
+  void set_vertex_for_retriangulation(std::size_t i, vertex_descriptor v)
   {
-    data[i].push_back(v);
+    assert(!data[i].empty());
+    if (data[i].back()!=v)
+      data[i].push_back(v);
   }
   void resize(std::size_t n)
   {
@@ -465,10 +467,12 @@ private:
    typedef std::unordered_map<edge_descriptor,Node_ids>             On_edge_map;
    //to keep the correspondance between node_id and vertex_handle in each mesh
    typedef internal::Node_id_to_vertex<TriangleMesh,
-                                       doing_autorefinement>  Node_id_to_vertex;
-   typedef std::map<const TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
+                                       doing_autorefinement||
+                                       handle_non_manifold_features>
+                                                              Node_id_to_vertex;
+   typedef std::map<const TriangleMesh*, Node_id_to_vertex >   Mesh_to_map_node;
    //to handle coplanar halfedge of polyhedra that are full in the intersection
-   typedef std::multimap<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
+   typedef std::multimap<Node_id,halfedge_descriptor> Node_to_target_of_hedge_map;
    typedef std::map<TriangleMesh*,Node_to_target_of_hedge_map>
                                            Mesh_to_vertices_on_intersection_map;
    typedef std::unordered_map<vertex_descriptor,Node_id>      Vertex_to_node_id;
@@ -908,7 +912,8 @@ public:
         h = next(h, tm);
         for(std::size_t id : node_ids_array[i])
         {
-          node_id_to_vertex.set_vertex(id, target(h, tm));
+          // needed when we triangulate a face --> need to pick the right vertex
+          node_id_to_vertex.set_vertex_for_retriangulation(id, target(h, tm));
           h = next(h, tm);
         }
         CGAL_assertion(h ==  halfedges[i]);
@@ -1193,9 +1198,9 @@ public:
       triangle_vertices[1]->info()=f_indices[1];
       triangle_vertices[2]->info()=f_indices[2];
 
-      node_id_to_vertex.set_temporary_vertex(nb_nodes, f_vertices[0]);
-      node_id_to_vertex.set_temporary_vertex(nb_nodes+1, f_vertices[1]);
-      node_id_to_vertex.set_temporary_vertex(nb_nodes+2, f_vertices[2]);
+      node_id_to_vertex.set_temporary_vertex_for_retriangulation(nb_nodes, f_vertices[0]);
+      node_id_to_vertex.set_temporary_vertex_for_retriangulation(nb_nodes+1, f_vertices[1]);
+      node_id_to_vertex.set_temporary_vertex_for_retriangulation(nb_nodes+2, f_vertices[2]);
 
       //if one of the triangle input vertex is also a node
       for (int ik=0;ik<3;++ik){
@@ -1206,7 +1211,7 @@ public:
           if (doing_autorefinement || handle_non_manifold_features)
             // update the current vertex in node_id_to_vertex
             // to match the one of the face
-            node_id_to_vertex.set_temporary_vertex(f_indices[ik], f_vertices[ik]);
+            node_id_to_vertex.set_temporary_vertex_for_retriangulation(f_indices[ik], f_vertices[ik]);
             // Note on set_temporary_vertex instead of set_vertex: here since the point is an input point
             // it is OK not to store all vertices corresponding to this id as the approximate version
             // is already tight and the call in Intersection_nodes::finalize() will not fix anything
@@ -1388,7 +1393,6 @@ public:
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
 
-    vertex_descriptor null_vertex = Graph_traits::null_vertex();
     const Node_id nb_nodes = nodes.size();
     // we reserve nb_nodes+3 because we use the last three entries for the
     // face triangulation
