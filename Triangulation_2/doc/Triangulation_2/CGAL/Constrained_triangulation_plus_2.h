@@ -341,7 +341,7 @@ Constraint_iterator constraints_end() const;
 /*!
 returns a range of constraints.
 */
-Subconstraints constraints() const;
+Constraints constraints() const;
 
 /*!
 returns a `Subconstraint_iterator` pointing at the first
