@@ -63,7 +63,7 @@ $q$ are not antipodal on $S_2$, then this circle is unique and oriented
 such that a walk along |\Mvar| meets $p$ just before the shorter segment
 between $p$ and $q$. If $p$ and $q$ are antipodal of each other then we
 create any great circle that contains $p$ and $q$.}*/
-{ Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
+{ Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + Base::orthogonal_vector();
   if ( p != q.antipode() ) {
     if (R_().orientation_3_object()(p1,Point_3(p),
                                     Point_3(q), p4) != CGAL::POSITIVE )
@@ -123,12 +123,12 @@ Plane_3 plane() const { return Base(*this); }
 Plane_3 plane_through(const Point_3& p) const
 /*{\Mop returns the plane parallel to |\Mvar| that
 contains point |p|.}*/
-{ return Plane_3(p,((Base*) this)->orthogonal_vector()); }
+{ return Plane_3(p,Base::orthogonal_vector()); }
 
 Sphere_point<R> orthogonal_pole() const
 /*{\Mop returns the point that is the pole of the
 hemisphere left of |\Mvar|.}*/
-{ return CGAL::ORIGIN+((Base*) this)->orthogonal_vector(); }
+{ return CGAL::ORIGIN+Base::orthogonal_vector(); }
 
 Sphere_segment_pair split_at(const Sphere_point<R>& p) const;
 /*{\Mop returns the pair of circle segments that is the result
