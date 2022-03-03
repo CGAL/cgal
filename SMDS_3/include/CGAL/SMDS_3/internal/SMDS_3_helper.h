@@ -27,7 +27,6 @@ namespace internal {
   template<typename Triangulation>
   bool is_convex(const Triangulation& tr)
   {
-    typedef typename Triangulation::Facet                Facet;
     typedef typename Triangulation::Vertex_handle        Vertex_handle;
     typedef typename Triangulation::Cell_handle          Cell_handle;
     typedef typename Triangulation::Geom_traits::Point_3 Point_3;
