@@ -158,7 +158,7 @@ private:
   short dimension_;
   bool cache_validity;
   std::size_t time_stamp_;
-  
+
 public:
 
   friend std::istream& operator>>(std::istream &is, Simplicial_mesh_vertex_3& v)

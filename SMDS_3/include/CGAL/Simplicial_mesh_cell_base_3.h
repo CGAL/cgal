@@ -413,7 +413,7 @@ is a model of the concept `SimplicialMeshCellBase_3`.
 It is designed to serve as cell base class for...
 
 \tparam GT is the geometric traits class.
-It has to be a model of the concept 
+It has to be a model of the concept
 
 \tparam TDS is the triangulation data structure class to which cells
 belong. That parameter is only used by the rebind mechanism (see
