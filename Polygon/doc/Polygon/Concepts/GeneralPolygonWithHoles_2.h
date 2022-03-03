@@ -36,6 +36,12 @@ over the polygonal holes. Its value type is
 */
 typedef unspecified_type Hole_const_iterator;
 
+
+/*!
+range type for iterating over holes.
+*/
+typedef unspecified_type Holes_container;
+
 /// @}
 
 /// \name Creation
@@ -84,7 +90,12 @@ returns the past-the-end iterator of the holes.
 */
 Hole_const_iterator holes_end() const;
 
+
+/*!
+returns the range of holes.
+*/
+const Holes_container& holes() const;
+
 /// @}
 
 }; /* end GeneralPolygonWithHoles_2 */
-
