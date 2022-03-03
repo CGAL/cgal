@@ -49,6 +49,8 @@
 
 \cgalCRPSection{Concepts}
 
+- `SimplicialMeshVertexBase_3`
+- `SimplicialCellVertexBase_3`
 - `MeshComplex_3InTriangulation_3`
 - `MeshComplexWithFeatures_3InTriangulation_3`
 

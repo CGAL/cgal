@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Mesh_cell_base_3.h>
+#include <CGAL/Simplicial_mesh_cell_base_3.h>
 
 namespace CGAL
 {
@@ -45,19 +45,18 @@ It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 It must be a model of the `TriangulationCellBase_3` concept.
 It has the default value `Triangulation_cell_base_3<Gt>`.
 
-\cgalModels `MeshCellBase_3`
+\cgalModels `SimplicialMeshCellBase_3`
 
 */
-#ifndef DOXYGEN_RUNNING
 template<typename Gt,
-         typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
+         typename Subdomain_index = int,
+         typename Surface_patch_index = int,
+         typename TDS = void>
 using Remeshing_cell_base_3
-  = CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>;
-#else
-template<typename Gt,
-         typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
-class Remeshing_cell_base_3;
-#endif
+  = CGAL::Simplicial_mesh_cell_base_3<Gt,
+                                      Subdomain_index,
+                                      Surface_patch_index,
+                                      TDS>;
 
 }//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
