@@ -105,19 +105,11 @@ bool read_STL(std::istream& is,
       break;
     }
     ++pos;
+    if (pos==80) break; // we stop when we reached the header limit
   }
 
   if(!is.good()) // reached the end
     return true;
-
-  // If we have gone beyond 80 characters and have not read anything yet,
-  // then this must be an ASCII file.
-  if(pos > 80)
-  {
-    if(binary)
-      return false;
-    return internal::parse_ASCII_STL(is, points, facets, verbose);
-  }
 
   // We are within the first 80 characters, both ASCII and binary are possible
 
