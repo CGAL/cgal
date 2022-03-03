@@ -20,10 +20,10 @@ Polygon_mesh_processing
 Profiling_tools
 Property_map
 Random_numbers
+SMDS_3
 STL_Extension
 Spatial_sorting
 Stream_support
-SMDS_3
 TDS_3
 Tetrahedral_remeshing
 Triangulation_3
