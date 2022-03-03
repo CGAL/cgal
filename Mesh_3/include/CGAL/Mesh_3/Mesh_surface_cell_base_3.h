@@ -21,7 +21,7 @@
 #include <CGAL/license/SMDS_3.h>
 
 
-#include <CGAL/SMDS_3/config.h>
+#include <CGAL/Mesh_3/config.h>
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
