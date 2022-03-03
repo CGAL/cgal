@@ -105,13 +105,10 @@ bool read_STL(std::istream& is,
       break;
     }
     ++pos;
-    if (pos==80) break; // we stop when we reached the header limit
   }
 
   if(!is.good()) // reached the end
     return true;
-
-  // We are within the first 80 characters, both ASCII and binary are possible
 
   // Read the 5 first characters to check if the first word is "solid"
   std::string s;
