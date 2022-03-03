@@ -9,8 +9,8 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_TMDS_3_CONFIG_H
-#define CGAL_TMDS_3_CONFIG_H 1
+#ifndef CGAL_SMDS_3_CONFIG_H
+#define CGAL_SMDS_3_CONFIG_H 1
 
 #include <CGAL/license/SMDS_3.h>
 
@@ -20,4 +20,4 @@
 #  define CGAL_INTRUSIVE_LIST 1
 
 
-#endif // CGAL_TMDS_3_CONFIG_H
+#endif // CGAL_SMDS_3_CONFIG_H

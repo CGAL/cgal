@@ -10,8 +10,8 @@
 //
 // Author(s)     : Jane Tournois
 
-#ifndef CGAL_INTERNAL_TMDS_3_HELPERS_H
-#define CGAL_INTERNAL_TMDS_3_HELPERS_H
+#ifndef CGAL_INTERNAL_SMDS_3_HELPERS_H
+#define CGAL_INTERNAL_SMDS_3_HELPERS_H
 
 #include <CGAL/license/SMDS_3.h>
 
@@ -66,4 +66,4 @@ namespace internal {
 } // end namespace SMDS_3
 } // end namespace CGAL
 
-#endif // CGAL_INTERNAL_TMDS_3_HELPERS_H
+#endif // CGAL_INTERNAL_SMDS_3_HELPERS_H

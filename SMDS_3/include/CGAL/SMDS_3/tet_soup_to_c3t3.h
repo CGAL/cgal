@@ -14,8 +14,8 @@
 //
 //******************************************************************************
 
-#ifndef CGAL_TMDS_3_TET_SOUP_TO_C3T3_H
-#define CGAL_TMDS_3_TET_SOUP_TO_C3T3_H
+#ifndef CGAL_SMDS_3_TET_SOUP_TO_C3T3_H
+#define CGAL_SMDS_3_TET_SOUP_TO_C3T3_H
 
 #include <CGAL/license/SMDS_3.h>
 
@@ -584,4 +584,4 @@ bool build_triangulation_from_file(std::istream& is,
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_TMDS_3_TET_SOUP_TO_C3T3_H
+#endif // CGAL_SMDS_3_TET_SOUP_TO_C3T3_H

@@ -14,7 +14,7 @@ belong to the mesh complex, surface patches, and feature edges.
 \cgalFigureEnd
 
 
-\section TMDS_3_section_c3t3 Mesh Complex
+\section SMDS_3_section_c3t3 Mesh Complex
 
 This package is devoted to the representation of 3-Dimensional simplicial mesh data structures.
 
@@ -47,7 +47,7 @@ The cells that lie outside the meshing domain are drawn in wire frame.
 \cgalFigureEnd
 
 
-\section TMDS_3_section_examples Examples
+\section SMDS_3_section_examples Examples
 
 \subsection TetSoupExample From Tetrahedron Soup to Triangulation_3
 
@@ -81,7 +81,7 @@ tetrahedral mesh generation. Some examples can be found in the \ref secTetRemesh
 section.
 
 
-\section TMDS_3History Implementation History
+\section SMDS_3History Implementation History
 
 The code of the `MeshComplex_3InTriangulation_3` and its variants were initially part of the package \ref PkgMesh3.
 With the meshing and remeshing processes becoming more versatile, it was moved to its own package in the

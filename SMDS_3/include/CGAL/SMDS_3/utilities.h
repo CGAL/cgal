@@ -14,8 +14,8 @@
 // File Description :
 //******************************************************************************
 
-#ifndef CGAL_TMDS_3_UTILITIES_H
-#define CGAL_TMDS_3_UTILITIES_H
+#ifndef CGAL_SMDS_3_UTILITIES_H
+#define CGAL_SMDS_3_UTILITIES_H
 
 #include <CGAL/license/SMDS_3.h>
 
@@ -118,4 +118,4 @@ public:
 } // end namespace SMDS_3
 } //namespace CGAL
 
-#endif // CGAL_TMDS_3_UTILITIES_H
+#endif // CGAL_SMDS_3_UTILITIES_H

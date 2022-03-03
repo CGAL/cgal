@@ -15,13 +15,13 @@
 // File Description :
 //******************************************************************************
 
-#ifndef CGAL_TMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
-#define CGAL_TMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
+#ifndef CGAL_SMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
+#define CGAL_SMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
 
 #include <CGAL/license/SMDS_3.h>
 
 #include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
-#include <CGAL/SMDS_3/internal/TMDS_3_helper.h>
+#include <CGAL/SMDS_3/internal/SMDS_3_helper.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
@@ -196,4 +196,4 @@ namespace CGAL {
 } //namespace CGAL
 
 
-#endif // CGAL_TMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
+#endif // CGAL_SMDS_3_TETRAHEDRON_SOUP_TO_C3T3_H
