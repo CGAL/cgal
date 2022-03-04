@@ -84,7 +84,6 @@ bool read_STL(std::istream& is,
               )
 {
   const bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
-  const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
 
   if(!is.good())
   {
