@@ -1485,9 +1485,12 @@ triangulate_hole_polyline(const PointRange1& points,
                           Tracer& tracer,
                           const WeightCalculator& WC,
                           bool use_delaunay_triangulation,
+                          bool skip_cubic_algorithm,
                           const Kernel&)
 {
   CGAL_assertion(!points.empty());
+  if (!use_delaunay_triangulation && skip_cubic_algorithm)
+    return WeightCalculator::Weight::NOT_VALID();
 
   typedef Kernel        K;
   typedef typename K::Point_3    Point_3;
@@ -1515,8 +1518,12 @@ triangulate_hole_polyline(const PointRange1& points,
     Fill().operator()(P,Q,tracer,WC);
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-  if(use_delaunay_triangulation && w == WeightCalculator::Weight::NOT_VALID())
+  if(use_delaunay_triangulation &&
+     w == WeightCalculator::Weight::NOT_VALID()
+     &&!skip_cubic_algorithm)
+  {
     w = Fill().operator()(P, Q, tracer, WC);
+  }
 #endif
 
 #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
