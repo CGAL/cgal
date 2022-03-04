@@ -281,6 +281,7 @@ class Polygon_2 {
     Vertex_const_iterator vertices_end() const
       { return const_cast<Polygon_2&>(*this).d_container.end(); }
 
+    /// returns the range of vertices.
     const Vertices& vertices() const
     {
       return d_container;
@@ -307,6 +308,7 @@ class Polygon_2 {
     Edge_const_iterator edges_end() const
       { return Edge_const_iterator(&d_container, d_container.end()); }
 
+    /// returns the range of edges.
     Edges edges() const
     {
       return make_range(edges_begin(),edges_end());
