@@ -274,11 +274,11 @@ class Polygon_2 {
 
     /// Returns a constant iterator that allows to traverse the
     /// vertices of the polygon.
-    Vertex_const_iterator vertices_begin() const
+    Vertex_iterator vertices_begin() const
       { return const_cast<Polygon_2&>(*this).d_container.begin(); }
 
     /// Returns the corresponding past-the-end iterator.
-    Vertex_const_iterator vertices_end() const
+    Vertex_iterator vertices_end() const
       { return const_cast<Polygon_2&>(*this).d_container.end(); }
 
     /// returns the range of vertices.
@@ -290,12 +290,12 @@ class Polygon_2 {
 //    Vertex_const_circulator vertices_circulator() const
 //      { return Vertex_const_circulator(&d_container, d_container.begin()); }
 
-    /// Returns a mutable circulator that allows to traverse the
+    /// Returns a constant circulator that allows to traverse the
     /// vertices of the polygon.
-    Vertex_const_circulator vertices_circulator() const
+    Vertex_circulator vertices_circulator() const
       {
         Polygon_2& self = const_cast<Polygon_2&>(*this);
-        return Vertex_const_circulator(&self.d_container,
+        return Vertex_circulator(&self.d_container,
                self.d_container.begin());
       }
 
@@ -404,7 +404,7 @@ class Polygon_2 {
                              self.d_container.end(), traits);
     }
 
-    /// Returns topmost vertex of the polygon with the largest
+    /// Returns the topmost vertex of the polygon with the largest
     /// `y`-coordinate.
     Vertex_const_iterator top_vertex() const
     {
