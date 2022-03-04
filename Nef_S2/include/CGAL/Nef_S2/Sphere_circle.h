@@ -85,16 +85,17 @@ Sphere_circle(const Plane_3& h) : Base(h)
 |h|. If |h| does not contain the origin, then |\Mvar| becomes the
 circle parallel to |h| containing the origin.}*/
 {
-  if(h.d() != 0)
+  if(!is_zero(h.d()))
     *this = Plane_3(h.a(),h.b(),h.c(),RT(0));
 }
 
 Sphere_circle(const Origin& o, const Vector_3& v) : Base(o,v) {}
 
-Sphere_circle(const Origin&, const Plane_3& h) : Base(h.a(),h.b(),h.c(),RT(0)) {}
+Sphere_circle(const Origin&, const Plane_3& h) : Base(h.a(),h.b(),h.c(),RT(0))
+{/* Even if |h| does not contain the origin, the circle will contain the origin
+and be parallel to |h| */}
 
 Sphere_circle(const RT& x, const RT& y, const RT& z) : Base(x,y,z,0) {}
-
 /*{\Mcreate creates the circle orthogonal to the vector $(x,y,z)$.}*/
 
 Sphere_circle(Sphere_circle<R> c, const Sphere_point<R>& p)
