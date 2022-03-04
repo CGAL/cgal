@@ -29,6 +29,7 @@
 
 #include <CGAL/algorithm.h>
 #include <CGAL/circulator.h>
+#include <CGAL/Iterator_range.h>
 #include <CGAL/enum.h>
 
 #include <CGAL/Aff_transformation_2.h>
@@ -117,16 +118,25 @@ class Polygon_2 {
     /// vertex iterator type
     typedef typename Container::iterator       Vertex_iterator;
 
+  /// a range type to iterate over the vertices
+    typedef Container Vertices;
 
     //typedef typename Container::const_iterator Vertex_const_iterator; ??
 
 #ifdef DOXYGEN_RUNNING
   /// vertex circulator type
   typedef unspecified_type Vertex_circulator;
-  /// edge circulator type
+
+  /// edge iterator type
   typedef unspecified_type Edge_const_iterator;
+
+  /// a range type to iterate over the vertices
+  typedef unspecified_type Edges;
+
   /// edge circular type
   typedef unspecified_type Edge_const_circulator;
+
+  //
 #else
     typedef Vertex_const_circulator Vertex_circulator;
     typedef Polygon_2_edge_iterator<Traits_P,Container_P> Edge_const_iterator;
@@ -135,6 +145,8 @@ class Polygon_2 {
 
     typedef Polygon_2_edge_iterator<Traits_P,Container_P,
                                     Tag_false> Vertex_pair_iterator;
+
+  typedef Iterator_range<Edge_const_iterator> Edges;
 #endif // DOXYGEN_RUNNING
     /// @}
 
@@ -269,6 +281,11 @@ class Polygon_2 {
     Vertex_const_iterator vertices_end() const
       { return const_cast<Polygon_2&>(*this).d_container.end(); }
 
+    const Vertices& vertices() const
+    {
+      return d_container;
+    }
+
 //    Vertex_const_circulator vertices_circulator() const
 //      { return Vertex_const_circulator(&d_container, d_container.begin()); }
 
@@ -289,6 +306,11 @@ class Polygon_2 {
     /// Returns the corresponding past-the-end iterator.
     Edge_const_iterator edges_end() const
       { return Edge_const_iterator(&d_container, d_container.end()); }
+
+    Edges edges() const
+    {
+      return make_range(edges_begin(),edges_end());
+    }
 
     /// Returns a non-mutable circulator that allows to traverse the
     /// edges of the polygon.
