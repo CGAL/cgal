@@ -93,7 +93,6 @@ bool read_STL(std::istream& is,
     return false;
   }
 
-  int pos = 0;
   // Ignore all initial whitespace
   unsigned char c;
 
@@ -104,7 +103,6 @@ bool read_STL(std::istream& is,
       is.unget(); // move back to the first interesting char
       break;
     }
-    ++pos;
   }
 
   if(!is.good()) // reached the end
@@ -122,7 +120,6 @@ bool read_STL(std::istream& is,
      is.read(reinterpret_cast<char*>(&word[5]), sizeof(c)))
   {
     s = std::string(word, 5);
-    pos += 5;
   }
   else
   {
