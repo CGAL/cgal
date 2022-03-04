@@ -75,7 +75,7 @@ and 3D Linear Geometric %Kernel.
 
 The polygon class provides member functions such as `Polygon_2::vertices_begin()` and `Polygon_2::vertices_end()` to iterate over the
 vertices. It additionally provides a member function `Polygon_2::vertices()` that returns a range, mainly to be used with modern
-`for`loops. The same holds for edges and for the holes of the class `Polygon_with_holes_2`.
+`for` loops. The same holds for edges and for the holes of the class `Polygon_with_holes_2`.
 
 \cgalExample{Polygon/ranges.cpp}
 
