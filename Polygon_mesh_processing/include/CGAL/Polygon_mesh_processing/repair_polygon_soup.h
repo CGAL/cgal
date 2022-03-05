@@ -988,7 +988,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 ///   using the function `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`.
 ///
 /// Note that the point and polygon containers will be modified by the repairing operations,
-/// and thus the indexation of the polygons will also be changed.
+/// and thus the indexing of the polygons will also be changed.
 ///
 /// \tparam PointRange a model of the concepts `SequenceContainer` and `Swappable`
 ///                    and whose value type is the point type.
