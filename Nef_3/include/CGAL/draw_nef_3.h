@@ -104,7 +104,7 @@ protected:
       }
 
 
-      
+
       SHalfedge_const_handle se;
       Halffacet_cycle_const_iterator fc=f->facet_cycles_begin();
 
@@ -145,7 +145,7 @@ protected:
                                  viewer.get_vertex_normal(lastvh));
         ++fc;
       }
-      
+
       viewer.face_end();
       facets_done[f]=true;
       n_faces++;
