@@ -31,7 +31,7 @@ int main( )
   std::vector<Face_handle> faces;
   std::vector<Edge> edges;
 
-  assert(dt2.dimension() == 2); // precondition of get_conflicts_and_bounda
+  assert(dt2.dimension() == 2); // precondition of get_conflicts_and_boundary
   for(const Point_2 p : points){
     faces.clear(); // faster than variables in the scope
     edges.clear();
