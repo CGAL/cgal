@@ -57,7 +57,8 @@ inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& i
 }//namespace internal
 
 /**
-  * \ingroup measure_grp
+  * \ingroup PMP_measure_grp
+  *
   * computes the length of an edge of a given polygon mesh.
   * The edge is given by one of its halfedges, or the edge itself.
   *
@@ -84,10 +85,9 @@ inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& i
  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @return the length of `h`. The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  * or the geometric traits class deduced from the point property map
-  * of `pmesh`.
+  * @return the length of `h`. The return type `FT` is a number type either deduced
+  * from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
+  * or the geometric traits class deduced from the point property map of `pmesh`.
   *
   * \warning This function involves a square root computation.
   * If `FT` does not have a `sqrt()` operation, the square root computation
@@ -136,7 +136,8 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
 }
 
 /**
-  * \ingroup measure_grp
+  * \ingroup PMP_measure_grp
+  *
   * computes the squared length of an edge of a given polygon mesh.
   * The edge is given by one of its halfedges, or the edge itself.
   *
@@ -163,10 +164,9 @@ edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
  *   \cgalParamNEnd
   * \cgalNamedParamsEnd
   *
-  * @return the squared length of `h`. The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  * or the geometric traits class deduced from the point property map
-  * of `pmesh`.
+  * @return the squared length of `h`. The return type `FT` is a number type either deduced
+  * from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
+  * or the geometric traits class deduced from the point property map of `pmesh`.
   *
   * @sa `edge_length()`
   * @sa `face_border_length()`
@@ -212,9 +212,9 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
 }
 
 /**
-  * \ingroup measure_grp
-  * computes the length of the border polyline
-  * that contains a given halfedge.
+  * \ingroup PMP_measure_grp
+  *
+  * computes the length of the border polyline that contains a given halfedge.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -240,10 +240,9 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
   * \cgalNamedParamsEnd
   *
   * @return the length of the sequence of border edges of `face(h, pmesh)`.
-  * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  * or the geometric traits class deduced from the point property map
-  * of `pmesh`.
+  * The return type `FT` is a number type either deduced from the `geom_traits`
+  * \ref bgl_namedparameters "Named Parameters" if provided, or the geometric traits class deduced
+  * from the point property map of `pmesh`.
   *
   * \warning This function involves a square root computation.
   * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
@@ -274,9 +273,10 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
 }
 
 /**
-  * \ingroup measure_grp
+  * \ingroup PMP_measure_grp
+  *
   * finds the longest border of a given triangulated surface and returns
-  * a halfedge that is part of this border and the length of this border.
+  * a halfedge that is part of this border as well as the length of this border.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -305,11 +305,11 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   *     The return type `halfedge_descriptor` is a halfedge descriptor. It is
   *     deduced from the graph traits corresponding to the type `PolygonMesh`.
   *   - `second`: the length of the longest border
-  *     The return type `FT` is a number type. It is
-  *     either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  *     or the geometric traits class deduced from the point property map
-  *     of `pmesh`
+  *     The return type `FT` is a number type either deduced from the `geom_traits`
+  *     \ref bgl_namedparameters "Named Parameters" if provided,
+  *     or the geometric traits class deduced from the point property map of `pmesh`
   *
+  * @see `face_border_length()`
   */
 template<typename PolygonMesh,
          typename NamedParameters = parameters::Default_named_parameters>
@@ -317,7 +317,7 @@ template<typename PolygonMesh,
 std::pair<halfedge_descriptor, FT>
 #else
 std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
-typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT>
+          typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT>
 #endif
 longest_border(const PolygonMesh& pmesh,
                const NamedParameters& np = parameters::default_values())
@@ -354,9 +354,9 @@ longest_border(const PolygonMesh& pmesh,
 }
 
 /**
-  * \ingroup measure_grp
-  * computes the area of a face of a given
-  * triangulated surface mesh.
+  * \ingroup PMP_measure_grp
+  *
+  * computes the area of a face of a given triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -384,10 +384,9 @@ longest_border(const PolygonMesh& pmesh,
   * @pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
   *
   * @return the area of `f`.
-  * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  * or the geometric traits class deduced from the point property map
-  * of `tmesh`.
+  * The return type `FT` is a number type either deduced from the `geom_traits`
+  * \ref bgl_namedparameters "Named Parameters" if provided, or the geometric traits class deduced
+  * from the point property map of `tmesh`.
   *
   * \warning This function involves a square root computation.
   * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
@@ -431,9 +430,9 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 
 
 /**
-  * \ingroup measure_grp
-  * computes the squared area of a face of a given
-  * triangulated surface mesh.
+  * \ingroup PMP_measure_grp
+  *
+  * computes the squared area of a face of a given triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `FaceGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -461,10 +460,9 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   * @pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
   *
   * @return the squared area of `f`.
-  * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  * or the geometric traits class deduced from the point property map
-  * of `tmesh`.
+  * The return type `FT` is a number type either deduced from the `geom_traits`
+  * \ref bgl_namedparameters "Named Parameters" if provided,
+  * or the geometric traits class deduced from the point property map of `tmesh`.
   *
   * @sa `face_area()`
   */
@@ -502,9 +500,9 @@ squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 }
 
 /**
-  * \ingroup measure_grp
-  * computes the area of a range of faces of a given
-  * triangulated surface mesh.
+  * \ingroup PMP_measure_grp
+  *
+  * computes the area of a range of faces of a given triangulated surface mesh.
   *
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`.
@@ -533,10 +531,9 @@ squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   * \cgalNamedParamsEnd
   *
   * @return sum of face areas of `faces`.
-  * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  * or the geometric traits class deduced from the point property map
-  * of `tmesh`.
+  * The return type `FT` is a number type either deduced from the `geom_traits`
+  * \ref bgl_namedparameters "Named Parameters" if provided,
+  * or the geometric traits class deduced from the point property map of `tmesh`.
   *
   * \warning This function involves a square root computation.
   * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
@@ -569,7 +566,7 @@ area(FaceRange face_range,
 }
 
 /**
-  * \ingroup measure_grp
+  * \ingroup PMP_measure_grp
   * computes the surface area of a triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `FaceGraph`
@@ -595,10 +592,9 @@ area(FaceRange face_range,
   * \cgalNamedParamsEnd
   *
   * @return the surface area of `tmesh`.
-  * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  * or the geometric traits class deduced from the point property map
-  * of `tmesh`.
+  * The return type `FT` is a number type either deduced from the `geom_traits`
+  * \ref bgl_namedparameters "Named Parameters" if provided,
+  * or the geometric traits class deduced from the point property map of `tmesh`.
   *
   * \warning This function involves a square root computation.
   * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
@@ -613,15 +609,16 @@ FT
 #else
 typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT
 #endif
-area(const TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::default_values())
+area(const TriangleMesh& tmesh,
+     const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return area(faces(tmesh), tmesh, np);
 }
 
 /**
-  * \ingroup measure_grp
-  * computes the volume of the domain bounded by
-  * a closed triangulated surface mesh.
+  * \ingroup PMP_measure_grp
+  *
+  * computes the volume of the domain bounded by a closed triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -648,10 +645,9 @@ area(const TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::default_va
   * \cgalNamedParamsEnd
   *
   * @return the volume bounded by `tmesh`.
-  * The return type `FT` is a number type. It is
-  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-  * or the geometric traits class deduced from the point property map
-  * of `tmesh`.
+  * The return type `FT` is a number type either deduced from the `geom_traits`
+  * \ref bgl_namedparameters "Named Parameters" if provided,
+  * or the geometric traits class deduced from the point property map of `tmesh`.
   */
 template<typename TriangleMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -693,7 +689,8 @@ volume(const TriangleMesh& tmesh,
 }
 
 /**
-  * \ingroup measure_grp
+  * \ingroup PMP_measure_grp
+  *
   * computes the aspect ratio of a face of a given triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph`
@@ -721,10 +718,13 @@ volume(const TriangleMesh& tmesh,
   *
   * @pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
   *
-  * @return the aspect ratio of `f`. The return type `FT` is a number type. It is
+  * @return the aspect ratio of `f`. The return type `FT` is a number type
   * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
   * or the geometric traits class deduced from the point property map of `tmesh`.
   *
+  * \warning This function involves a square root computation.
+  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+  * will be done approximately.
   */
 template<typename TriangleMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
@@ -803,9 +803,9 @@ face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
 }
 
 /**
-  * \ingroup measure_grp
-  * computes the centroid of a volume bounded by
-  * a closed triangulated surface mesh.
+  * \ingroup PMP_measure_grp
+  *
+  * computes the centroid of a volume bounded by a closed triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `FaceListGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -839,7 +839,8 @@ Point_3
 #else
 typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::Point_3
 #endif
-centroid(const TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::default_values())
+centroid(const TriangleMesh& tmesh,
+         const CGAL_NP_CLASS& np = parameters::default_values())
 {
   // See: http://www2.imperial.ac.uk/~rn/centroid.pdf
 
@@ -903,7 +904,8 @@ centroid(const TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::defaul
 }
 
 /**
-  * \ingroup measure_grp
+  * \ingroup PMP_measure_grp
+  *
   * identifies faces only present in `m1` and `m2` as well as the faces present
   * in both polygon meshes. Two faces are matching if they have the same
   * orientation and the same points.
@@ -911,19 +913,19 @@ centroid(const TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::defaul
   * @tparam PolygonMesh1 a model of `HalfedgeListGraph` and `FaceListGraph`
   * @tparam PolygonMesh2 a model of `HalfedgeListGraph` and `FaceListGraph`
   * @tparam FaceOutputIterator1 model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh1>::%face_descriptor`.
+  *   holding `boost::graph_traits<PolygonMesh1>::%face_descriptor`.
   * @tparam FaceOutputIterator2 model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh2>::%face_descriptor`.
+  *   holding `boost::graph_traits<PolygonMesh2>::%face_descriptor`.
   * @tparam FacePairOutputIterator model of `OutputIterator`
-     holding `std::pair<boost::graph_traits<PolygonMesh1>::%face_descriptor,
-     boost::graph_traits<PolygonMesh2>::%face_descriptor`.
+  *   holding `std::pair<boost::graph_traits<PolygonMesh1>::%face_descriptor,
+  *   boost::graph_traits<PolygonMesh2>::%face_descriptor`.
   *
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param m1 the first `PolygonMesh`
-  * @param m2 the second `PolygonMesh`
-  * @param common output iterator collecting the faces that are common to both meshes.
+  * @param m1 the first polygon mesh
+  * @param m2 the second polygon mesh
+  * @param common output iterator collecting the faces that are common to both meshes
   * @param m1_only output iterator collecting the faces that are only in `m1`
   * @param m2_only output iterator collecting the faces that are only in `m2`
   * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -958,8 +960,11 @@ template< typename PolygonMesh1,
           typename FaceOutputIterator2,
           typename NamedParameters1 = parameters::Default_named_parameters,
           typename NamedParameters2 = parameters::Default_named_parameters >
-void match_faces(const PolygonMesh1& m1, const PolygonMesh2& m2,
-                 FacePairOutputIterator common, FaceOutputIterator1 m1_only, FaceOutputIterator2 m2_only,
+void match_faces(const PolygonMesh1& m1,
+                 const PolygonMesh2& m2,
+                 FacePairOutputIterator common,
+                 FaceOutputIterator1 m1_only,
+                 FaceOutputIterator2 m2_only,
                  const NamedParameters1& np1 = parameters::default_values(),
                  const NamedParameters2& np2 = parameters::default_values())
 {

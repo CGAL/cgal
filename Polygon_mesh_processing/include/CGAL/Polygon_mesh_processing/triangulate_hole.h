@@ -36,7 +36,8 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
   /*!
-  \ingroup hole_filling_grp
+  \ingroup PMP_hole_filling_grp
+
   triangulates a hole in a polygon mesh.
 
   Depending on the choice of the underlying algorithm different preconditions apply.

@@ -333,7 +333,8 @@ struct Throw_at_first_output {
 };
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * reports all the pairs of faces intersecting between two triangulated surface meshes.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -466,12 +467,14 @@ compute_face_face_intersection(const FaceRange& face_range1,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * reports all the pairs of segments and faces intersecting between
  * a triangulated surface mesh and a polyline.
- * \attention If a polyline vertex intersects a face, the intersection will
- * be reported twice (even more if it is on a vertex, edge, or point).
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * \attention If a polyline vertex intersects a face, the intersection will
+ * be reported twice (or more if it is on a vertex, edge, or point).
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -518,11 +521,11 @@ template <class TriangleMesh,
           class OutputIterator,
           class NamedParameters>
 OutputIterator
-compute_face_polyline_intersection( const FaceRange& face_range,
-               const Polyline& polyline,
-               const TriangleMesh& tm,
-               OutputIterator out,
-               const NamedParameters& np)
+compute_face_polyline_intersection(const FaceRange& face_range,
+                                   const Polyline& polyline,
+                                   const TriangleMesh& tm,
+                                   OutputIterator out,
+                                   const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -596,12 +599,14 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * reports all the pairs of segments and faces intersecting between
  * a triangulated surface mesh and a range of polylines.
+ * This function depends on the package \ref PkgBoxIntersectionD.
+ *
  * \attention If a polyline vertex intersects a face, the intersection will
  * be reported twice (even more if it is on a vertex, edge, or point).
- * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -743,11 +748,14 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * detects and records intersections between two polylines.
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
  * \attention If a polyline vertex intersects another polyline, the intersection will
  * be reported twice (even more if it is on a vertex).
+ *
  * \tparam Polyline a `RandomAccessRange` of points.
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<std::size_t, std::size_t>`. This OutputIterator will hold the position of the
@@ -818,11 +826,13 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * detects and records intersections between two ranges of polylines.
- *  \attention If a polyline vertex intersects another polyline, the intersection will
- * be reported twice (even more if it is on a vertex).
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * \attention If a polyline vertex intersects another polyline, the intersection will
+ * be reported twice (even more if it is on a vertex).
  *
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
@@ -925,7 +935,8 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * reports all the pairs of faces intersecting between two triangulated surface meshes.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -980,12 +991,13 @@ compute_face_face_intersection(const TriangleMesh& tm1,
 }
 
 // Note this is not officially documented
-/*
- * detects and records intersections between a triangulated surface mesh
- * and a polyline.
- *  \attention If a polyline vertex intersects a face or another polyline, the intersection will
- * be reported twice (even more if it is on a vertex, edge, or point).
+/* \ingroup PMP_intersection_grp
+ *
+ * detects and records intersections between a triangulated surface mesh and a polyline.
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * \attention If a polyline vertex intersects a face or another polyline, the intersection will
+ * be reported twice (even more if it is on a vertex, edge, or point).
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -995,7 +1007,7 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  * \cgalDescribePolylineType
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<std::size_t, std::size_t>`. This OutputIterator will hold the position of the
- *  elements in their respective range. In the case of the polyline, this position is the index
+ * elements in their respective range. In the case of the polyline, this position is the index
  * of the segment that holds the intersection, so it is the index of the first point of the
  * segment following the range order.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1030,13 +1042,12 @@ template <class TriangleMesh,
           class NamedParameters>
 OutputIterator
 compute_face_polyline_intersection(const TriangleMesh& tm,
-              const Polyline& polyline,
-              OutputIterator out,
-              const NamedParameters& np)
+                                   const Polyline& polyline,
+                                   OutputIterator out,
+                                   const NamedParameters& np)
 {
   return compute_face_polyline_intersection(faces(tm), polyline, tm, out, np);
 }
-
 
 // functions to check for overlap of meshes
 template <class GT, class TriangleMesh, class VPM>
@@ -1114,7 +1125,8 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
 }// namespace internal
 
 /**
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * returns `true` if there exists a segment of a polyline of `polylines1`
  * and a segment of a polyline of `polylines2` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
@@ -1157,7 +1169,8 @@ bool do_intersect(const PolylineRange& polylines1,
 }
 
 /**
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * returns `true` if there exists a segment of `polyline1` and a segment of `polyline2` which intersect,
  * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
@@ -1203,9 +1216,12 @@ bool do_intersect(const Polyline& polyline1,
 }
 
 /**
- * \ingroup PMP_predicates_grp
- * returns `true` if there exists a face of `tm1` and a face of `tm2` which intersect, and `false` otherwise.
- * If `do_overlap_test_of_bounded_sides` is set to `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
+ * \ingroup PMP_intersection_grp
+ *
+ * \brief returns `true` if there exists a face of `tm1` and a face of `tm2` which intersect, and `false` otherwise.
+ *
+ * If `do_overlap_test_of_bounded_sides` is set to `true`, the overlap of bounded sides are tested as well.
+ * In that case, the meshes must be closed.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * @pre `CGAL::is_triangle_mesh(tm1)`
@@ -1249,6 +1265,7 @@ bool do_intersect(const Polyline& polyline1,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \see `intersecting_meshes()`
  */
 template <class TriangleMesh,
           class CGAL_NP_TEMPLATE_PARAMETERS_1,
@@ -1301,10 +1318,12 @@ bool do_intersect(const TriangleMesh& tm1,
 }
 
 /**
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * returns `true` if there exists a face of `tm` and a segment of a polyline of `polylines` which intersect,
  * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
@@ -1367,9 +1386,11 @@ bool do_intersect(const TriangleMesh& tm,
 }
 
 /**
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * returns `true` if there exists a face of `tm` and a segment of `polyline` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
@@ -1551,7 +1572,8 @@ struct Mesh_callback
 }//end internal
 
 /*!
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * detects and reports all the pairs of meshes intersecting in a range of triangulated surface meshes.
  * A pair of meshes intersecting is put in the output iterator `out` as a `std::pair<std::size_t, std::size_t>`,
  * each index refering to the index of the triangle mesh in the input range.
@@ -1596,8 +1618,9 @@ struct Mesh_callback
  *     \cgalParamExtra{All vertex point maps must have the same value type}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ * \see `do_intersect()`
  */
-
 template <class TriangleMeshRange,
           class OutputIterator,
           class NamedParameters,
@@ -1659,6 +1682,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 
 /**
  * \ingroup PMP_corefinement_grp
+ *
  * computes the intersection of triangles of `tm1` and `tm2`. The output is a
  * set of polylines with all vertices but endpoints being of degree 2.
  *
@@ -1700,6 +1724,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \see `do_intersect()`
  */
 template <class OutputIterator,
           class TriangleMesh,

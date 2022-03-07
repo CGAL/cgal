@@ -58,7 +58,9 @@ namespace internal {
 
   /*!
   \ingroup PMP_meshing_grp
+
   @brief fairs a region on a triangle mesh.
+
   The points of the selected vertices are
   relocated to yield an as-smooth-as-possible surface patch,
   based on solving a linear bi-Laplacian system with boundary constraints,
@@ -114,11 +116,11 @@ namespace internal {
     \cgalParamNEnd
   \cgalNamedParamsEnd
 
-  @return `true` if fairing is successful, otherwise no vertices are relocated
+  @return `true` if fairing is successful, otherwise no vertices are relocated.
 
   @pre `is_triangle_mesh(tmesh)`
 
-  @warning This function involves linear algebra, that is computed using a non-exact floating-point arithmetic.
+  @warning This function involves linear algebra, that is computed using non-exact, floating-point arithmetic.
 
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */

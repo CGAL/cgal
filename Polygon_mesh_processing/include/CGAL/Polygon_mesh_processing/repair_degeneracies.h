@@ -1202,6 +1202,45 @@ remove_a_border_edge(typename boost::graph_traits<TriangleMesh>::edge_descriptor
   return remove_a_border_edge(ed, tm, input_range, edge_set, face_set);
 }
 
+// \ingroup PMP_repairing_grp
+//
+// removes the degenerate edges from a triangulated surface mesh.
+// An edge is considered degenerate if its two extremities share the same location.
+//
+// @pre `CGAL::is_triangle_mesh(tmesh)`
+//
+// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+// @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+//
+// @param tmesh the triangulated surface mesh to be repaired
+// @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+//
+// \cgalNamedParamsBegin
+//   \cgalParamNBegin{vertex_point_map}
+//     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+//     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+//                    as key type and `%Point_3` as value type}
+//     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+//     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+//                     must be available in `TriangleMesh`.}
+//   \cgalParamNEnd
+//
+//   \cgalParamNBegin{geom_traits}
+//     \cgalParamDescription{an instance of a geometric traits class}
+//     \cgalParamType{The traits class must provide the nested type `Point_3`,
+//                    and the nested functors:
+//                    - `Compare_distance_3` to compute the distance between 2 points
+//                    - `Less_xyz_3` to compare lexicographically two points
+//                    - `Equal_3` to check whether 2 points are identical.
+//                    For each functor `Foo`, a function `Foo foo_object()` must be provided.}
+//     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+//     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+//   \cgalParamNEnd
+// \cgalNamedParamsEnd
+//
+// \return `true` if all degenerate faces were successfully removed, and `false` otherwise.
+//
+// \sa `degenerate_edges()`
 template <typename EdgeRange, typename TriangleMesh, typename FaceSet, typename NamedParameters = parameters::Default_named_parameters>
 bool remove_degenerate_edges(const EdgeRange& edge_range,
                              TriangleMesh& tmesh,
@@ -1723,6 +1762,7 @@ bool remove_degenerate_edges(TriangleMesh& tmesh,
 }
 
 // \ingroup PMP_repairing_grp
+//
 // removes the degenerate faces from a triangulated surface mesh.
 // A face is considered degenerate if two of its vertices share the same location,
 // or more generally if all its vertices are collinear.
@@ -1732,7 +1772,7 @@ bool remove_degenerate_edges(TriangleMesh& tmesh,
 // @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 // @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 //
-// @param tmesh the  triangulated surface mesh to be repaired
+// @param tmesh the triangulated surface mesh to be repaired
 // @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 //
 // \cgalNamedParamsBegin
@@ -1753,7 +1793,7 @@ bool remove_degenerate_edges(TriangleMesh& tmesh,
 //                    - `Collinear_3` to check whether 3 points are collinear
 //                    - `Less_xyz_3` to compare lexicographically two points
 //                    - `Equal_3` to check whether 2 points are identical.
-//                    For each functor Foo, a function `Foo foo_object()` must be provided.}
+//                    For each functor `Foo`, a function `Foo foo_object()` must be provided.}
 //     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 //     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 //   \cgalParamNEnd
@@ -1763,6 +1803,8 @@ bool remove_degenerate_edges(TriangleMesh& tmesh,
 //       We should probably do something with the return type.
 //
 // \return `true` if all degenerate faces were successfully removed, and `false` otherwise.
+//
+// \sa `degenerate_faces()`
 template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool remove_degenerate_faces(const FaceRange& face_range,
                              TriangleMesh& tmesh,

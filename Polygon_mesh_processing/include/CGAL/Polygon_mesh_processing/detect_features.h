@@ -225,7 +225,8 @@ void sharp_call(const FT angle_in_deg,
 /*!
  * \ingroup PMP_detect_features_grp
  *
- * detects and marks the edges that are considered to be sharp with respect to the given angle bound.
+ * \brief detects and marks the edges that are considered to be sharp with respect to the given angle bound.
+ *
  * `angle_in_deg` gives the maximum angle (in degrees) between the two normal vectors of adjacent triangles.
  * For an edge of the input polygon mesh, if the angle between the two normal vectors of its incident facets is bigger
  * than the given bound, then the edge is marked as being a feature edge.
@@ -261,6 +262,7 @@ void sharp_call(const FT angle_in_deg,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \see `sharp_edges_segmentation()`
  */
 #ifdef DOXYGEN_RUNNING
 template <typename PolygonMesh, typename FT,
@@ -299,13 +301,13 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
  * \tparam PatchIdMap a model of `ReadablePropertyMap` with
-   `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
-   and the desired patch id, model of `CopyConstructible` as value type.
+ *  `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
+ *  and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam VertexIncidentPatchesMap a model of mutable `LvaluePropertyMap` with
-   `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type. Its value type
-   must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
-   A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
-   inserted several times.
+ *  `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type. Its value type
+ *  must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
+ *  A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
+ *  inserted several times.
  * \tparam EdgeIsFeatureMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *  as key type and `bool` as value type.
  *
@@ -314,7 +316,7 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
  * \param vertex_incident_patches_map a property map that will contain the patch ids of all the faces incident to each vertex of `pmesh`.
  * \param edge_is_feature_map a filled property map that will contain the sharp-or-not status of each edge of `pmesh`
  *
- * @see `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
+ * \see `sharp_edges_segmentation()`
  */
 
 template <typename PolygonMesh, typename PatchIdMap,
@@ -369,12 +371,11 @@ void vip_call(const PolygonMesh&, PIDMap, const internal_np::Param_not_found&, E
  * \ingroup PMP_detect_features_grp
  *
  * This function calls successively `CGAL::Polygon_mesh_processing::detect_sharp_edges()`,
- * `CGAL::Polygon_mesh_processing::connected_components()` and
+ * `CGAL::Polygon_mesh_processing::connected_components()`, and
  * `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
  *
  * It detects and marks the sharp edges of `pmesh` according to `angle_in_deg`.
- * The sharp edges define a segmentation of `pmesh`, that is done by
- * computing a
+ * The sharp edges define a segmentation of `pmesh`, that is done by computing a
  * surface patch id for each face.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
@@ -384,8 +385,8 @@ void vip_call(const PolygonMesh&, PIDMap, const internal_np::Param_not_found&, E
  * of `PolygonMesh`.
  * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  * \tparam PatchIdMap a model of `ReadWritePropertyMap` with
-   `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
-   and the desired patch id, model of `CopyConstructible` as value type.
+ *  `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
+ *  and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh

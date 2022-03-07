@@ -31,7 +31,7 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 *
-* \short smooths a triangulated region of a polygon mesh.
+* \brief smooths a triangulated region of a polygon mesh.
 *
 * This function attempts to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
@@ -128,6 +128,8 @@ namespace Polygon_mesh_processing {
 * to use area-based smoothing.
 *
 * @pre `tmesh` does not contain any degenerate faces
+*
+* @see `smooth_shape()`
 */
 template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void smooth_mesh(const FaceRange& faces,

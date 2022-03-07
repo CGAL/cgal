@@ -37,7 +37,8 @@ namespace IO {
 /*!
   \ingroup PMP_IO_grp
 
- * \brief reads the file as a polygon soup, repairs, and orients it as to obtain a polygon mesh.
+ * \brief reads the file as a polygon soup, repairs (using `repair_polygon_soup()`),
+ * and orients it (using `orient_polygon_soup()`) as to obtain a polygon mesh.
  *
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)

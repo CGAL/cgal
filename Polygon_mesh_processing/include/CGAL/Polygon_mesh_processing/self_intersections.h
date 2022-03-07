@@ -386,7 +386,8 @@ self_intersections_impl(const FaceRange& face_range,
     typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, boost::function_output_iterator<Count_and_throw_filter > > Intersecting_faces_limited_filter;
     Intersecting_faces_limited_filter limited_intersect_faces(tmesh, vpmap, gt,
                                                       boost::make_function_output_iterator(max_inter_counter));
-    try{
+    try
+    {
       CGAL::box_self_intersection_d<CGAL::Sequential_tag>(box_ptr.begin(), box_ptr.end(), limited_intersect_faces, cutoff);
     }
     catch (const CGAL::internal::Throw_at_output_exception&)
@@ -404,6 +405,7 @@ self_intersections_impl(const FaceRange& face_range,
 
 /*!
  * \ingroup PMP_intersection_grp
+ *
  * collects intersections between a subset of faces of a triangulated surface mesh.
  * Two faces are said to intersect if the corresponding triangles intersect
  * and the intersection is not an edge nor a vertex incident to both faces.
@@ -451,6 +453,8 @@ self_intersections_impl(const FaceRange& face_range,
  * \cgalNamedParamsEnd
  *
  * @return `out`
+ *
+ * @sa `does_self_intersect()`
  */
 template < class ConcurrencyTag = Sequential_tag,
            class TriangleMesh,
@@ -468,6 +472,7 @@ self_intersections(const FaceRange& face_range,
 
 /**
  * \ingroup PMP_intersection_grp
+ *
  * collects intersections between all the faces of a triangulated surface mesh.
  * Two faces are said to intersect if the corresponding triangles intersect
  * and the intersection is not an edge nor a vertex incident to both faces.
@@ -516,6 +521,8 @@ self_intersections(const FaceRange& face_range,
  * \cgalNamedParamsEnd
  *
  * @return `out`
+ *
+ * @sa `does_self_intersect()`
  */
 template <class ConcurrencyTag = Sequential_tag,
           class TriangleMesh,
@@ -531,8 +538,11 @@ self_intersections(const TriangleMesh& tmesh,
 
 /**
  * \ingroup PMP_intersection_grp
- * tests if a set of faces of a triangulated surface mesh self-intersects.
+ *
+ * \brief tests if a set of faces of a triangulated surface mesh self-intersects.
+ *
  * This function depends on the package \ref PkgBoxIntersectionD
+ *
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
@@ -563,6 +573,8 @@ self_intersections(const TriangleMesh& tmesh,
  * \cgalNamedParamsEnd
  *
  * @return `true` if the faces in `face_range` self-intersect
+ *
+ * @sa `self_intersections()`
  */
 template <class ConcurrencyTag = Sequential_tag,
           class FaceRange,
@@ -599,8 +611,11 @@ bool does_self_intersect(const FaceRange& face_range,
 
 /**
  * \ingroup PMP_intersection_grp
- * tests if a triangulated surface mesh self-intersects.
+ *
+ * \brief tests if a triangulated surface mesh self-intersects.
+ *
  * This function depends on the package \ref PkgBoxIntersectionD
+ *
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
@@ -629,6 +644,8 @@ bool does_self_intersect(const FaceRange& face_range,
  * \cgalNamedParamsEnd
  *
  * @return `true` if `tmesh` self-intersects
+ *
+ * @sa `self_intersections()`
  */
 template <class ConcurrencyTag = Sequential_tag,
           class TriangleMesh,
