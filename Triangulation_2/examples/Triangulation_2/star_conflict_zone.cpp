@@ -22,7 +22,7 @@ int main( )
   dt2.insert(Point_2(10,0));
   dt2.insert(Point_2(0,10));
 
-  std::array<Point_2,3> points = { Point_2(2,2), Point_2(1,0), Point_2(9,9) };
+  std::array<Point_2,3> points = { Point_2(2,2), Point_2(1,0), Point_2(2,2) };
 
   CGAL::spatial_sort(points.begin(), points.end());
 
@@ -40,19 +40,22 @@ int main( )
                                    std::back_inserter(edges),
                                    hint);
 
-    // Do something with the faces before the insertion
+    if(faces.empty()){
+      std::cout << "point " << p << " already in the triangulation" << std::endl;
+    }else{
+      // Do something with the faces before the insertion
 
-    Vertex_handle vh = dt2.star_hole(p,
-                                     edges.begin(), edges.end(),
-                                     faces.begin(), faces.end());
-    hint = vh->face(); // we could also take any element of faces
+      Vertex_handle vh = dt2.star_hole(p,
+                                       edges.begin(), edges.end(),
+                                       faces.begin(), faces.end());
+      hint = vh->face(); // we could also take any element of faces
 
-    // Do something with the faces after the insertion
-    Face_circulator fc = dt2.incident_faces(vh), done(fc);
-    do {
+      // Do something with the faces after the insertion
+      Face_circulator fc = dt2.incident_faces(vh), done(fc);
+      do {
         fc++;
-    } while (fc != done);
-
+      } while (fc != done);
+    }
     draw(dt2);
   }
   return 0;
