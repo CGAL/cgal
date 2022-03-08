@@ -28,12 +28,12 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Pierre Alliez, Clément Jamin, Laurent Rineau, Stéphane Tayeb, Jane Tournois, Mariette Yvinec}
 \cgalPkgDesc{This package provides a data structure to store three-dimensional
-  tetrahedral meshes and their subcomplexes.
+  simplicial meshes and their subcomplexes.
   It provides an API for tetrahedral meshes generated with %CGAL or not,
   to be processed with %CGAL 3D mesh generation and remeshing algorithms,
   along with iterators, IO functions, and additional helper functions.
   }
-\cgalPkgManuals{Chapter_3D_Tetrahedral_Mesh_Data_Structure,PkgSMDS3Ref}
+\cgalPkgManuals{Chapter_3D_Simplicial_Mesh_Data_Structure,PkgSMDS3Ref}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
@@ -49,14 +49,16 @@
 
 \cgalCRPSection{Concepts}
 
-- `SimplicialMeshVertexBase_3`
-- `SimplicialCellVertexBase_3`
 - `MeshComplex_3InTriangulation_3`
 - `MeshComplexWithFeatures_3InTriangulation_3`
+- `SimplicialMeshVertexBase_3`
+- `SimplicialCellVertexBase_3`
 
-\cgalCRPSection{Class}
+\cgalCRPSection{Classes}
 
-- `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+- `CGAL::Mesh_complex_3_in_triangulation_3`
+- `CGAL::Simplicial_mesh_vertex_base_3`
+- `CGAL::Simplicial_mesh_cell_base_3`
 
 \cgalCRPSection{Function Templates}
 
