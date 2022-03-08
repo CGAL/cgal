@@ -83,7 +83,7 @@ namespace IO {
  *
  * \return `true` if the reading, repairing, and orientation operations were successful, `false` otherwise.
  *
- * \sa \link PkgBGLIOFct `CGAL::IO::write_polygon_mesh()` \endlink
+ * \sa \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink
  */
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(const std::string& fname,
