@@ -178,7 +178,7 @@ namespace Polygon_mesh_processing {
   }
 
   /*!
-  \ingroup  hole_filling_grp
+  \ingroup PMP_hole_filling_grp
   @brief triangulates and refines a hole in a polygon mesh.
 
   @tparam PolygonMesh must be model of `MutableFaceGraph`
@@ -274,7 +274,7 @@ namespace Polygon_mesh_processing {
   }
 
   /*!
-  \ingroup  hole_filling_grp
+  \ingroup PMP_hole_filling_grp
   @brief triangulates, refines and fairs a hole in a polygon mesh.
 
   @tparam PolygonMesh a model of `MutableFaceGraph`
@@ -399,7 +399,7 @@ namespace Polygon_mesh_processing {
   }
 
   /*!
-  \ingroup  hole_filling_grp
+  \ingroup PMP_hole_filling_grp
   creates triangles to fill the hole defined by points in the range `points`.
   Triangles are recorded into `out` using the indices of the input points in the range `points`.
   Note that no degenerate triangles will be produced.
@@ -554,7 +554,7 @@ bool use_dt3 =
   }
 
   /*!
-  \ingroup  hole_filling_grp
+  \ingroup PMP_hole_filling_grp
   Same as above but the range of third points is omitted. They are not
   taken into account in the cost computation that leads the hole filling.
 */
