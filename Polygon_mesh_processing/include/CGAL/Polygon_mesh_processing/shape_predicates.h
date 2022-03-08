@@ -35,7 +35,7 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
 ///
 /// checks whether an edge is degenerate.
 /// An edge is considered degenerate if the geometric positions of its two extremities are identical.
@@ -85,7 +85,7 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
   return traits.equal_3_object()(get(vpmap, source(e, pm)), get(vpmap, target(e, pm)));
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
 ///
 /// collects the degenerate edges within a given range of edges.
 ///
@@ -134,7 +134,7 @@ OutputIterator degenerate_edges(const EdgeRange& edges,
   return out;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
 ///
 /// calls the function `degenerate_edges()` with the range: `edges(tm)`.
 ///
@@ -148,7 +148,7 @@ OutputIterator degenerate_edges(const TriangleMesh& tm,
   return degenerate_edges(edges(tm), tm, out, np);
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
 ///
 /// checks whether a triangle face is degenerate.
 /// A triangle face is considered degenerate if the geometric positions of its vertices are collinear.
@@ -204,7 +204,8 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
                                      get(vpmap, target(next(h, tm), tm)));
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// collects the degenerate faces within a given range of faces.
 ///
 /// @tparam FaceRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`
@@ -253,7 +254,7 @@ OutputIterator degenerate_faces(const FaceRange& faces,
   return out;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
 ///
 /// calls the function `degenerate_faces()` with the range: `faces(tm)`.
 ///
@@ -267,7 +268,8 @@ OutputIterator degenerate_faces(const TriangleMesh& tm,
   return degenerate_faces(faces(tm), tm, out, np);
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// checks whether a triangle face is needle.
 /// A triangle is said to be a <i>needle</i> if its longest edge is much longer than its shortest edge.
 ///
@@ -365,7 +367,8 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
     return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// checks whether a triangle face is a cap.
 /// A triangle is said to be a <i>cap</i> if one of the its angles is close to `180` degrees.
 ///
