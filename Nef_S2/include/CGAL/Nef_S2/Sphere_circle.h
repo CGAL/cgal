@@ -112,7 +112,7 @@ Sphere_circle(Sphere_circle<R> c, const Sphere_point<R>& p)
 /*{\Moperations 4 2}*/
 Sphere_circle<R> opposite() const
 /*{\Mop returns the opposite of |\Mvar|.}*/
-{ return Sphere_circle<R>(Base::opposite(),Private_tag{}); }
+{ return Sphere_circle<R>(Base::opposite(),Assume_d_equal_0{}); }
 
 bool has_on(const Sphere_point<R>& p) const
 /*{\Mop returns true iff |\Mvar| contains |p|.}*/
@@ -142,8 +142,8 @@ is not part of it. Otherwise |\Mvar| is split at the
 $x$-$z$-coordinate plane.}*/
 
 private:
-struct Private_tag{};
-Sphere_circle(const Plane_3& h,Private_tag) : Base(h){}
+struct Assume_d_equal_0{};
+Sphere_circle(const Plane_3& h, Assume_d_equal_0) : Base(h){}
 
 }; // Sphere_circle<R>
 
