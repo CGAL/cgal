@@ -1,5 +1,6 @@
 /*!
 
+\example Polygon_mesh_processing/extrude.cpp
 \example Polygon_mesh_processing/polyhedral_envelope.cpp
 \example Polygon_mesh_processing/polyhedral_envelope_of_triangle_soup.cpp
 \example Polygon_mesh_processing/polyhedral_envelope_mesh_containment.cpp
