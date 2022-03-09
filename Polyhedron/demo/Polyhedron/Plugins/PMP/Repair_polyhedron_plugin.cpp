@@ -18,6 +18,7 @@
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
 #include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
 
 #include "ui_RemoveNeedlesDialog.h"
 #include <cmath>
@@ -53,6 +54,7 @@ public:
     actionAutorefine = new QAction(tr("Autorefine Mesh"), mw);
     actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections"), mw);
     actionRemoveNeedlesAndCaps = new QAction(tr("Remove Needles And Caps"));
+    actionSnapBorders = new QAction(tr("Snap Boundaries"));
 
     actionRemoveIsolatedVertices->setObjectName("actionRemoveIsolatedVertices");
     actionRemoveDegenerateFaces->setObjectName("actionRemoveDegenerateFaces");
@@ -64,6 +66,7 @@ public:
     actionAutorefine->setObjectName("actionAutorefine");
     actionAutorefineAndRMSelfIntersections->setObjectName("actionAutorefineAndRMSelfIntersections");
     actionRemoveNeedlesAndCaps->setObjectName("actionRemoveNeedlesAndCaps");
+    actionSnapBorders->setObjectName("actionSnapBorders");
 
     actionRemoveDegenerateFaces->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionStitchCloseBorderHalfedges->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
@@ -74,7 +77,7 @@ public:
     actionMergeDuplicatedVerticesOnBoundaryCycles->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
-    actionRemoveNeedlesAndCaps->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
+    actionSnapBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
     autoConnectActions();
   }
@@ -90,7 +93,8 @@ public:
                              << actionMergeDuplicatedVerticesOnBoundaryCycles
                              << actionAutorefine
                              << actionAutorefineAndRMSelfIntersections
-                             << actionRemoveNeedlesAndCaps;
+                             << actionRemoveNeedlesAndCaps
+                             << actionSnapBorders;
   }
 
   bool applicable(QAction*) const
@@ -128,6 +132,7 @@ public Q_SLOTS:
   void on_actionAutorefine_triggered();
   void on_actionAutorefineAndRMSelfIntersections_triggered();
   void on_actionRemoveNeedlesAndCaps_triggered();
+  void on_actionSnapBorders_triggered();
 
 private:
   QAction* actionRemoveIsolatedVertices;
@@ -140,6 +145,7 @@ private:
   QAction* actionAutorefine;
   QAction* actionAutorefineAndRMSelfIntersections;
   QAction* actionRemoveNeedlesAndCaps;
+  QAction* actionSnapBorders;
 
   Messages_interface* messages;
 }; // end Polyhedron_demo_repair_polyhedron_plugin
@@ -192,6 +198,26 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveNeedlesAndCaps_tri
                                                                                std::cos((ui.capBox->value()/180.0) * CGAL_PI),
                                                                               ui.needleBox->value(),
                                                                               ui.collapseBox->value());
+  sm_item->invalidateOpenGLBuffers();
+  sm_item->itemChanged();
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionSnapBorders_triggered()
+{
+  QCursor tmp_cursor(Qt::WaitCursor);
+  CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
+
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  if(!sm_item)
+  {
+    return;
+  }
+
+  // try to snap remaining boundaries
+  CGAL::Polygon_mesh_processing::experimental::snap_borders(*sm_item->face_graph());
+  CGAL::Polygon_mesh_processing::stitch_borders(*sm_item->face_graph(), CGAL::parameters::do_simplify_border(true));
+
   sm_item->invalidateOpenGLBuffers();
   sm_item->itemChanged();
 }
