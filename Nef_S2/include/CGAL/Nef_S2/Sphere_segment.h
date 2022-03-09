@@ -20,7 +20,6 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Nef_S2/Sphere_point.h>
 #include <CGAL/Nef_S2/Sphere_circle.h>
-#include <CGAL/Kernel/global_functions.h>
 #include <vector>
 
 namespace CGAL {
@@ -38,14 +37,15 @@ Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
 
 Sphere_segment_rep(const Point& p1, const Point& p2,
                    bool shorter_arc=true) :
-  ps_(p1), pt_(p2), c_(CGAL::ORIGIN,CGAL::orthogonal_vector(p1,p2,Point_3(CGAL::ORIGIN)))
+  ps_(p1), pt_(p2),
+  c_(CGAL::ORIGIN,R_().construct_orthogonal_vector_3_object()(p1,p2,Point_3(CGAL::ORIGIN)))
 { // warning stays as reminder that one gets an arbitrary plane equation
   // in this degenerate case
   CGAL_warning(p1 != p2.antipode());
   CGAL_assertion(p1 != p2.antipode());
   if ( p1 == p2 ) {
-    Plane_3 h(Point_3(CGAL::ORIGIN),(p1-CGAL::ORIGIN));
-    c_ = Sphere_circle<R_>(Plane_3(Point_3(CGAL::ORIGIN),h.base1()));
+    Plane_3 h(CGAL::ORIGIN,p1-CGAL::ORIGIN);
+    c_ = Sphere_circle<R_>(CGAL::ORIGIN,h.base1());
   }
   if (!shorter_arc) c_ = c_.opposite();
   CGAL_exactness_assertion(c_.has_on(p1) && c_.has_on(p2));
