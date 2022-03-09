@@ -186,6 +186,7 @@ bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>:
 }
 */
 
+// @todo handle boundary edges
 template <class TriangleMesh, typename VPM, typename Traits>
 boost::optional<typename Traits::FT>
 get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h,
@@ -201,9 +202,9 @@ get_collapse_volume(typename boost::graph_traits<TriangleMesh>::halfedge_descrip
 
   const typename Traits::Point_3 origin(ORIGIN);
 
-// @todo handle boundary edges
-
   h = opposite(h, tmesh); // Euler::collapse edge keeps the target and removes the source
+
+  typename Traits::Compute_volume_3 volume = gt.compute_volume_3_object();
 
   // source is kept, target is removed
   Point_ref kept = get(vpm, source(h, tmesh));
@@ -1052,7 +1053,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
     all_removed = true;
     std::set<edge_descriptor> degenerate_edges_to_remove;
     degenerate_edges(local_edge_range, tmesh, std::inserter(degenerate_edges_to_remove,
-                                                            degenerate_edges_to_remove.end()));
+                                                            degenerate_edges_to_remove.end()), np);
 
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
     std::cout << "Found " << degenerate_edges_to_remove.size() << " null edges.\n";
