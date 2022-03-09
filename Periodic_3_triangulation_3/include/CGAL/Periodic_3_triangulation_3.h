@@ -3205,7 +3205,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
   // in Euclidean space and make a map from the vertices in remover.tmp
   // towards the vertices in *this
 
-  Unique_hash_map<VertexE_handle,Vertex_handle> vmap(Vertex_handle(), vertices_size());
+  Unique_hash_map<VertexE_handle,Vertex_handle> vmap(Vertex_handle(), vertices.size());
   CellE_handle ch;
   remover.tmp.clear();
 
