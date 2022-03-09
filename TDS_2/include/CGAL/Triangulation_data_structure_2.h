@@ -2008,9 +2008,10 @@ copy_tds(const TDS_src& tds_src,
   // Number of neighbors to set in each face (dim -1 has a single face)
   const int nn = (std::max)(0, dimension() + 1);
 
+  std::cout << "in copy_tds" << std::endl;
   //initializes maps
-  Unique_hash_map<typename TDS_src::Vertex_handle,Vertex_handle> vmap;
-  Unique_hash_map<typename TDS_src::Face_handle,Face_handle> fmap;
+  Unique_hash_map<typename TDS_src::Vertex_handle,Vertex_handle> vmap(Vertex_handle(), tds_src.number_of_vertices());
+  Unique_hash_map<typename TDS_src::Face_handle,Face_handle> fmap(Face_handle(), tds_src.number_of_faces());
 
   // create vertices
   typename TDS_src::Vertex_iterator vit1 = tds_src.vertices_begin();
@@ -2120,8 +2121,8 @@ file_output( std::ostream& os, Vertex_handle v, bool skip_first) const
   else     os << n << m << dimension();
   if (n==0) return;
 
-  Unique_hash_map<Vertex_handle,int> V;
-  Unique_hash_map<Face_handle,int> F;
+  Unique_hash_map<Vertex_handle,int> V(-1, number_of_vertices());
+  Unique_hash_map<Face_handle,int> F(-1, number_of_faces());
 
 
   // first vertex
@@ -2257,7 +2258,7 @@ vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
   os << "\t\tcoord Coordinate {" << std::endl;
   os << "\t\t\tpoint [" << std::endl;
 
-  Unique_hash_map<Vertex_handle,int> vmap;
+  Unique_hash_map<Vertex_handle,int> vmap(-1, number_of_vertices());
 
   Vertex_iterator vit;
   Face_iterator fit;
