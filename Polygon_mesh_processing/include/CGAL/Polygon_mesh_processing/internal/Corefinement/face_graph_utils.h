@@ -477,6 +477,7 @@ template < class TriangleMesh,
            class VertexPointMap,
            class Node_id,
            class Node_vector,
+           class Node_id_to_vertex,
            class CDT,
            class OutputBuilder,
            class UserVisitor>
@@ -486,8 +487,7 @@ triangulate_a_face(
   TriangleMesh& tm,
   Node_vector& nodes,
   const std::vector<Node_id>& node_ids,
-  typename std::vector<typename boost::graph_traits<TriangleMesh>
-                            ::vertex_descriptor>& node_id_to_vertex,
+  Node_id_to_vertex& node_id_to_vertex,
   std::map<std::pair<Node_id,Node_id>,
            typename boost::graph_traits<TriangleMesh>
                 ::halfedge_descriptor>& edge_to_hedge,
@@ -513,7 +513,7 @@ triangulate_a_face(
     user_visitor.new_vertex_added(node_id, v, tm);
 
     CGAL_assertion(node_id_to_vertex.size()>node_id);
-    node_id_to_vertex[node_id]=v;
+    node_id_to_vertex.register_vertex(node_id, v);
   }
 
   //insert the new halfedge and set their incident vertex
@@ -535,10 +535,10 @@ triangulate_a_face(
       halfedge_descriptor h=halfedge(e,tm), h_opp=opposite(h,tm);
 
       Node_id i0=cdt_v0->info(), i1=cdt_v1->info();
-      CGAL_assertion( node_id_to_vertex[i0]!=GT::null_vertex());
-      CGAL_assertion( node_id_to_vertex[i1]!=GT::null_vertex());
+      CGAL_assertion( node_id_to_vertex.get_vertex(i0)!=GT::null_vertex());
+      CGAL_assertion( node_id_to_vertex.get_vertex(i1)!=GT::null_vertex());
 
-      vertex_descriptor v0=node_id_to_vertex[i0], v1=node_id_to_vertex[i1];
+      vertex_descriptor v0=node_id_to_vertex.get_vertex(i0), v1=node_id_to_vertex.get_vertex(i1);
 
       set_target(h,v0,tm);
       set_target(h_opp,v1,tm);
@@ -569,9 +569,9 @@ triangulate_a_face(
     halfedge_descriptor h12=edge_to_hedge[std::make_pair(i1,i2)];
     halfedge_descriptor h20=edge_to_hedge[std::make_pair(i2,i0)];
 
-    CGAL_assertion(target(h01,tm)==node_id_to_vertex[i1]);
-    CGAL_assertion(target(h12,tm)==node_id_to_vertex[i2]);
-    CGAL_assertion(target(h20,tm)==node_id_to_vertex[i0]);
+    CGAL_assertion(target(h01,tm)==node_id_to_vertex.get_vertex(i1));
+    CGAL_assertion(target(h12,tm)==node_id_to_vertex.get_vertex(i2));
+    CGAL_assertion(target(h20,tm)==node_id_to_vertex.get_vertex(i0));
 
     set_next(h01,h12,tm);
     set_next(h12,h20,tm);
