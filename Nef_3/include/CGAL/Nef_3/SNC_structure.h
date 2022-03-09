@@ -438,7 +438,7 @@ public:
   ~SNC_structure() { CGAL_NEF_TRACEN("~SNC_structure: clearing "<<this); clear(); }
 
   SNC_structure(const Self& D) :
-    boundary_item_(boost::none), sm_boundary_item_(boost::none),
+    boundary_item_(boost::none, D.boundary_item_.size()), sm_boundary_item_(boost::none, D.sm_boundary_item_.size()),
     vertices_(D.vertices_), halfedges_(D.halfedges_),
     halffacets_(D.halffacets_), volumes_(D.volumes_),
     shalfedges_(D.shalfedges_), shalfloops_(D.shalfloops_),
@@ -450,7 +450,9 @@ public:
       return *this;
     clear();
     boundary_item_.clear(boost::none);
+    boundary_item_.reserve(D.boundary_item_.size());
     sm_boundary_item_.clear(boost::none);
+    sm_boundary_item_.reserve(D.sm_boundary_item_.size());
     vertices_ = D.vertices_;
     halfedges_ = D.halfedges_;
     halffacets_ = D.halffacets_;
@@ -1103,13 +1105,13 @@ template <typename Kernel, typename Items, typename Mark>
 void SNC_structure<Kernel,Items,Mark>::
 pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
 {
-  CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>       VM;
-  CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle>   EM;
-  CGAL::Unique_hash_map<Halffacet_const_handle,Halffacet_handle> FM;
-  CGAL::Unique_hash_map<Volume_const_handle,Volume_handle>       CM;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> SEM;
-  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> SLM;
-  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         SFM;
+  CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>       VM(Vertex_handle(), D.number_of_vertices());
+  CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle>   EM(Halfedge_handle(), D.number_of_halfedges());
+  CGAL::Unique_hash_map<Halffacet_const_handle,Halffacet_handle> FM(Halffacet_handle(), D.number_of_halffacets());
+  CGAL::Unique_hash_map<Volume_const_handle,Volume_handle>       CM(Volume_handle(), D.number_of_volumes());
+  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> SEM(SHalfedge_handle(), D.number_of_shalfedges());
+  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> SLM(SHalfloop_handle(), D.number_of_shalfloops());
+  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         SFM(SFace_handle(), D.number_of_sfaces());
   Vertex_const_iterator vc = D.vertices_begin();
   Vertex_iterator v = vertices_begin();
   for ( ; vc != D.vertices_end(); ++vc,++v) VM[vc] = v;

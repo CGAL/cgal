@@ -34,6 +34,7 @@ class Generic_handle_map : public
 public:
   Generic_handle_map() : Base() {}
   Generic_handle_map(I i) : Base(i) {}
+  Generic_handle_map(I i, std::size_t n) : Base(i,n) {}
 
   template <class H>
   const I& operator[](H h) const
