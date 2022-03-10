@@ -17,6 +17,7 @@ endforeach()
 
 if(CGAL_Qt5_FOUND)
   target_link_libraries(draw_triangulation_2 PUBLIC CGAL::CGAL_Basic_viewer)
+    target_link_libraries(star_conflict_zone PUBLIC CGAL::CGAL_Basic_viewer)
 else()
   message(
     STATUS
