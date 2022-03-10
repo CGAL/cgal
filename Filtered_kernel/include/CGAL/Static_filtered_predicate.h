@@ -7,7 +7,6 @@
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
-//
 // Author(s)     : Andreas Fabri, Laurent Rineau
 
 #ifndef CGAL_STATIC_FILTERED_PREDICATE_H
@@ -127,23 +126,29 @@ public:
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;
+    typedef typename Kernel_traits<A1>::type EK1;
+    typedef typename Type_mapper<A1,EK1,Exact_predicates_inexact_constructions_kernel>::type T1;
     std::pair<T1,bool> aa1 = convert(a1.approx());
     if(! aa1.second){
       return fp(a1, a2, a3, a4);
     }
-    typedef typename Type_mapper<A2,EK,Exact_predicates_inexact_constructions_kernel>::type T2;
+
+    typedef typename Kernel_traits<A2>::type EK2;
+    typedef typename Type_mapper<A2,EK2,Exact_predicates_inexact_constructions_kernel>::type T2;
     std::pair<T2,bool> aa2 = convert(a2.approx());
     if(! aa2.second){
       return fp(a1, a2, a3, a4);
     }
-    typedef typename Type_mapper<A3,EK,Exact_predicates_inexact_constructions_kernel>::type T3;
+
+    typedef typename Kernel_traits<A3>::type EK3;
+    typedef typename Type_mapper<A3,EK3,Exact_predicates_inexact_constructions_kernel>::type T3;
     std::pair<T3,bool> aa3 = convert(a3.approx());
     if(! aa3.second){
       return fp(a1, a2, a3, a4);
     }
-    typedef typename Type_mapper<A4,EK,Exact_predicates_inexact_constructions_kernel>::type T4;
+
+    typedef typename Kernel_traits<A4>::type EK4;
+    typedef typename Type_mapper<A4,EK4,Exact_predicates_inexact_constructions_kernel>::type T4;
     std::pair<T4,bool> aa4 = convert(a4.approx());
     if(! aa4.second){
       return fp(a1, a2, a3, a4);

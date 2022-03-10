@@ -49,7 +49,10 @@ class Epic_converter {
   typedef typename IK::FT IK_FT;
 public:
 
-
+  std::pair<Origin, bool> operator()(Origin o) const
+  {
+    return std::make_pair(o, true);
+  }
 
   std::pair<double,bool> operator()(const typename IK::FT n) const
   {

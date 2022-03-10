@@ -4308,6 +4308,15 @@ namespace CartesianKernelFunctors {
     }
 
     result_type
+    operator()( Origin o, const Point_3& u,
+                const Point_3& v, const Point_3& w) const
+    {
+      return orientationC3(u.x(), u.y(), u.z(),
+                           v.x(), v.y(), v.z(),
+                           w.x(), w.y(), w.z());
+    }
+
+    result_type
     operator()( const Tetrahedron_3& t) const
     {
       return t.rep().orientation();

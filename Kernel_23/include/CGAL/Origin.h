@@ -23,7 +23,18 @@
 namespace CGAL {
 
 class Origin
-{};
+{
+public:
+  const Origin& approx() const
+  {
+    return *this;
+  }
+
+  const Origin& exact() const
+  {
+    return *this;
+  }
+};
 
 class Null_vector
 {};
