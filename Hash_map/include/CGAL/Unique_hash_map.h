@@ -57,7 +57,7 @@ public:
 
     Unique_hash_map() { m_map.xdef() = Data(); }
 
-    Unique_hash_map( const Data& deflt, std::size_t table_size = 1)
+    Unique_hash_map( const Data& deflt, std::size_t table_size = Map::default_size)
         : m_map( table_size) { m_map.xdef() = deflt; }
 
     Unique_hash_map( const Data& deflt,

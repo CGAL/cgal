@@ -83,13 +83,15 @@ private:
    }
 
 public:
+   static constexpr std::size_t min_size = 32;
+   static constexpr std::size_t default_size = 512;
    typedef chained_map_elem<T>*  chained_map_item;
    typedef chained_map_item item;
 
    std::size_t index(chained_map_item it) const { return it->k; }
    T&            inf(chained_map_item it) const { return it->i; }
 
-   chained_map(std::size_t n = 1);
+   chained_map(std::size_t n = default_size);
    chained_map(const chained_map<T, Allocator>& D);
    chained_map& operator=(const chained_map<T, Allocator>& D);
 
@@ -273,8 +275,8 @@ template <typename T, typename Allocator>
 chained_map<T, Allocator>::chained_map(std::size_t n) :
   nullptrKEY(0), NONnullptrKEY(1), old_table(0)
 {
-  if (n < 512)
-    init_table(512);
+  if (n < min_size)
+    init_table(min_size);
   else {
     std::size_t ts = 1;
     while (ts < n) ts <<= 1;
@@ -336,7 +338,7 @@ void chained_map<T, Allocator>::clear()
     destroy(item);
   alloc.deallocate(table, table_end - table);
 
-  init_table(512);
+  init_table(min_size);
 }
 
 template <typename T, typename Allocator>
