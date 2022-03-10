@@ -38,7 +38,7 @@ Sphere_segment_rep() { ps_ = pt_ = Point(); c_ = Circle(); }
 Sphere_segment_rep(const Point& p1, const Point& p2,
                    bool shorter_arc=true) :
   ps_(p1), pt_(p2),
-  c_(CGAL::ORIGIN,R_().construct_orthogonal_vector_3_object()(p1,p2,Point_3(CGAL::ORIGIN)))
+  c_(CGAL::ORIGIN,R_().construct_orthogonal_vector_3_object()(Point_3(CGAL::ORIGIN),p1,p2))
 { // warning stays as reminder that one gets an arbitrary plane equation
   // in this degenerate case
   CGAL_warning(p1 != p2.antipode());
