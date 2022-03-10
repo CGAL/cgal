@@ -316,9 +316,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     CGAL_NEF_TRACEN(">>> simplifying");
     SNC_decorator D(*this->sncp());
 
-    Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
-    Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet;
-    Unique_hash_map< SFace_handle, UFH_sface> hash_sface;
+    Unique_hash_map< Volume_handle, UFH_volume> hash_volume(UFH_volume(), this->sncp()->number_of_volumes());
+    Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet(UFH_facet(), this->sncp()->number_of_halffacets());
+    Unique_hash_map< SFace_handle, UFH_sface> hash_sface(UFH_sface(), this->sncp()->number_of_sfaces());
     Union_find< Volume_handle> uf_volume;
     Union_find< Halffacet_handle> uf_facet;
     Union_find< SFace_handle> uf_sface;
@@ -544,7 +544,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   void create_boundary_links_forall_sfaces(
       Unique_hash_map< SFace_handle, UFH_sface>& hash,
       Union_find< SFace_handle>& uf ) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    Unique_hash_map< SHalfedge_handle, bool> linked(false, this->sncp()->number_of_shalfedges());
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e, *this->sncp()) {
@@ -597,7 +597,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   void create_boundary_links_forall_facets(
       Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
       Union_find< Halffacet_handle>& uf) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    Unique_hash_map< SHalfedge_handle, bool> linked(false, this->sncp()->number_of_shalfedges());
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator u;
     CGAL_forall_shalfedges(u, *this->sncp()) {
