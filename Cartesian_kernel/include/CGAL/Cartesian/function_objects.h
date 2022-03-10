@@ -3031,6 +3031,24 @@ namespace CartesianKernelFunctors {
 
       return construct_vector(vx, vy, vz);
     }
+
+    Vector_3
+    operator()( Origin o , const Point_3& q, const Point_3& r ) const
+    {
+      FT orx = r.x();
+      FT ory = r.y();
+      FT orz = r.z();
+      FT oqx = q.x();
+      FT oqy = q.y();
+      FT oqz = q.z();
+      // Cross product oq * or
+      FT vx = oqy*orz - oqz*ory;
+      FT vy = oqz*orx - oqx*orz;
+      FT vz = oqx*ory - oqy*orx;
+      typename K::Construct_vector_3 construct_vector;
+
+      return construct_vector(vx, vy, vz);
+    }
   };
 
   template <typename K>
