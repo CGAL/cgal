@@ -462,6 +462,10 @@ public:
     return *this;
   }
 
+  void reserve_sm_boundary_items(Size_type n) {
+    sm_boundary_item_.reserve(n);
+  }
+
   void clear_boundary() {
     boundary_item_.clear(boost::none);
     sm_boundary_item_.clear(boost::none);
