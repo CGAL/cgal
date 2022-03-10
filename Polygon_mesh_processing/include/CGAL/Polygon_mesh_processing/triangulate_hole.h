@@ -101,6 +101,16 @@ namespace Polygon_mesh_processing {
       \cgalParamExtra{This parameter is used only in conjunction with
                       the parameter `use_2d_constrained_delaunay_triangulation`.}
     \cgalParamNEnd
+
+    \cgalParamNBegin{do_not_use_cubic_algorithm}
+      \cgalParamDescription{Set this parameter to `true` if you only want to use the Delaunay based versions of the algorithm,
+                            skipping the cubic search space one in case of failure.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`false`}
+      \cgalParamExtra{If `true`, `use_2d_constrained_delaunay_triangulation` or `use_delaunay_triangulation` must be set to `true`
+                      otherwise nothing will be done.}
+    \cgalParamNEnd
+
   \cgalNamedParamsEnd
 
   @return `out`
@@ -173,6 +183,7 @@ namespace Polygon_mesh_processing {
       use_dt3,
       choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
       use_cdt,
+      choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
       max_squared_distance).first;
   }
 
@@ -237,6 +248,15 @@ namespace Polygon_mesh_processing {
       \cgalParamDefault{one quarter of the height of the bounding box of the hole}
       \cgalParamExtra{This parameter is used only in conjunction with
                       the parameter `use_2d_constrained_delaunay_triangulation`.}
+    \cgalParamNEnd
+
+    \cgalParamNBegin{do_not_use_cubic_algorithm}
+      \cgalParamDescription{Set this parameter to `true` if you only want to use the Delaunay based versions of the algorithm,
+                            skipping the cubic search space one in case of failure.}
+      \cgalParamType{Boolean}
+      \cgalParamDefault{`false`}
+      \cgalParamExtra{If `true`, `use_2d_constrained_delaunay_triangulation` or `use_delaunay_triangulation` must be set to `true`
+                      otherwise nothing will be done.}
     \cgalParamNEnd
 
     \cgalParamNBegin{density_control_factor}
@@ -546,6 +566,7 @@ bool use_dt3 =
 #endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
                               use_dt3,
+                              choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
 
     CGAL_assertion(holes.empty());
