@@ -63,15 +63,16 @@ $q$ are not antipodal on $S_2$, then this circle is unique and oriented
 such that a walk along |\Mvar| meets $p$ just before the shorter segment
 between $p$ and $q$. If $p$ and $q$ are antipodal of each other then we
 create any great circle that contains $p$ and $q$.}*/
-{ Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + Base::orthogonal_vector();
+{
   if ( p != q.antipode() ) {
-    if (R_().orientation_3_object()(p1,Point_3(p),
-                                    Point_3(q), p4) != CGAL::POSITIVE )
-      *this = Self(opposite());
+    Point_3 po = CGAL::ORIGIN + Base::orthogonal_vector();
+    //TODO replace Point_3(CGAL::ORIGIN), with CGAL::ORIGIN below
+    if (R_().orientation_3_object()(Point_3(CGAL::ORIGIN), Point_3(p),
+                                    Point_3(q), po) != CGAL::POSITIVE )
+      *this = opposite();
   } else {
-    /* previous method was: *this = Self(Plane_3(p1,q-p));
-       but p, q don't belong to he plane ((0,0,0), q-p) */
-
+    /* previous method was: *this = Self(Plane_3((0,0,0),q-p));
+       but p, q don't belong to the plane ((0,0,0), q-p) */
     if(!Line_3(p,q).has_on(Point_3(1,0,0)))
       *this = Self(Plane_3(p,q,Point_3(1,0,0)));
     else
