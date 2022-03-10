@@ -78,6 +78,9 @@ public:
         insert( first1, beyond1, first2);
     }
 
+    void reserve(std::size_t n)
+    { m_map.reserve(n); }
+
     Data default_value() const { return m_map.cxdef(); }
 
     Hash_function  hash_function() const { return m_hash_function; }

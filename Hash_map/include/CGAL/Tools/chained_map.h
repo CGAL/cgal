@@ -95,7 +95,7 @@ public:
    chained_map(const chained_map<T, Allocator>& D);
    chained_map& operator=(const chained_map<T, Allocator>& D);
 
-
+   void reserve(std::size_t n);
    void clear_entries();
    void clear();
    ~chained_map()
@@ -322,6 +322,13 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
     }
   }
   return *this;
+}
+
+template <typename T, typename Allocator>
+void chained_map<T, Allocator>::reserve(std::size_t n)
+{
+  CGAL_assertion(!table);
+  reserved_size = n;
 }
 
 template <typename T, typename Allocator>
