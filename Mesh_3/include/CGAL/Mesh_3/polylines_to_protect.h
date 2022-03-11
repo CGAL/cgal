@@ -304,6 +304,11 @@ struct Angle_tester
   const double m_angle_rad;//in radian to avoid extra computations
   const bool m_test_angle;
 
+  Angle_tester()
+    : m_angle_rad(0.5 * CGAL_PI)//stored in radian
+    , m_test_angle(false)//under 90 we check for acute, with exact computation
+  {}
+
   Angle_tester(const double angle_deg)//angle given in degrees for readability
     : m_angle_rad(angle_deg * CGAL_PI /180.)//stored in radian
     , m_test_angle(angle_deg != 90.)//under 90 we check for acute, with exact computation
