@@ -301,6 +301,14 @@ struct Polyline_visitor
 template <typename Kernel>
 struct Angle_tester
 {
+  const double m_angle_rad;//in radian to avoid extra computations
+  const bool m_test_angle;
+
+  Angle_tester(const double angle_deg)//angle given in degrees for readability
+    : m_angle_rad(angle_deg * CGAL_PI /180.)//stored in radian
+    , m_test_angle(angle_deg != 90.)//under 90 we check for acute, with exact computation
+  {}
+
   template <typename vertex_descriptor, typename Graph>
   bool operator()(vertex_descriptor& v, const Graph& g) const
   {
@@ -320,15 +328,21 @@ struct Angle_tester
       const typename Kernel::Point_3& p1 = g[v1].point;
       const typename Kernel::Point_3& p2 = g[v2].point;
 
-      if(CGAL::angle(p1, p, p2) == CGAL::ACUTE) {
-        // const typename Kernel::Vector_3 e1 = p1 - p;
-        // const typename Kernel::Vector_3 e2 = p2 - p;
-        // std::cerr << "At point " << p << ": the angle is "
-        //           << ( std::acos(e1 * e2
-        //                          / CGAL::sqrt(e1*e1)
-        //                          / CGAL::sqrt(e2*e2))
-        //                * 180 / CGAL_PI ) << std::endl;
-        return true;
+      if (!m_test_angle)
+      {
+        if (CGAL::angle(p1, p, p2) == CGAL::ACUTE)
+          return true;
+      }
+      else
+      {
+        const typename Kernel::Vector_3 e1 = p1 - p;
+        const typename Kernel::Vector_3 e2 = p2 - p;
+        const double a_rad = std::acos(e1 * e2
+                                      / CGAL::sqrt(e1*e1)
+                                      / CGAL::sqrt(e2*e2));
+        // std::cerr << "At point " << p << ": the angle is " << a << std::endl;
+        if(a_rad < m_angle_rad)
+          return true;
       }
     }
     return false;
@@ -997,7 +1011,8 @@ template <typename P,
 void
 polylines_to_protect(std::vector<std::vector<P> >& polylines,
                      PolylineInputIterator existing_polylines_begin,
-                     PolylineInputIterator existing_polylines_end)
+                     PolylineInputIterator existing_polylines_end,
+                     const double& angle = 90.)//when not provided, check only for acute angles
 {
   typedef P Point_3;
   typedef typename Kernel_traits<P>::Kernel K;
@@ -1035,8 +1050,9 @@ polylines_to_protect(std::vector<std::vector<P> >& polylines,
   Less_for_Graph_vertex_descriptors<Graph> less(graph);
   const Graph& const_graph = graph;
   typedef typename Kernel_traits<P>::Kernel K;
+  Mesh_3::Angle_tester<K> angle_tester(angle);
   split_graph_into_polylines(const_graph, visitor,
-                             Mesh_3::Angle_tester<K>(), less);
+                             angle_tester, less);
 }
 
 template <typename P, typename Image_word_type, typename Null_subdomain_index>
