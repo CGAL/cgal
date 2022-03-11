@@ -54,6 +54,11 @@ public:
     return std::make_pair(o, true);
   }
 
+  std::pair<Null_vector, bool> operator()(Null_vector n) const
+  {
+    return std::make_pair(n, true);
+  }
+
   std::pair<double,bool> operator()(const typename IK::FT n) const
   {
     double d;

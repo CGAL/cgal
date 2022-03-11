@@ -36,17 +36,6 @@ public:
     return epicp(aa1.first);
   }
 
-  template <typename A1>
-  result_type operator()(const A1& a1, const Null_vector& v) const
-  {
-    CGAL::Epic_converter<AK> convert;
-    auto aa1 = convert(approx(a1));
-    if(! aa1.second){
-      return fp(a1, v);
-    }
-
-    return epicp(aa1.first, v);
-  }
 
   template <typename A1, typename A2>
   result_type operator()(const A1& a1, const A2& a2) const
