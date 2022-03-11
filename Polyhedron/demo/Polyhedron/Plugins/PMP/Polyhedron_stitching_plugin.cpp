@@ -170,6 +170,8 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionMergeReversibleCCs_tr
   if(!item)
     return;
   CGAL::Polygon_mesh_processing::merge_reversible_connected_components(*item->polyhedron());
+  if (CGAL::is_closed(*item->polyhedron()))
+    CGAL::Polygon_mesh_processing::orient(*item->polyhedron());
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
 }
