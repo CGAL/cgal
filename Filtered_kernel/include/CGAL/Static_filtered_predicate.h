@@ -63,29 +63,6 @@ public:
     return epicp(aa1.first, aa2.first);
   }
 
-    // We need these two specializations as in general we determine
-    // the kernel for the template argument A1, and this does not work for Bbox_2 and Bbox_3
-  template <typename A2>
-  result_type operator()(const Bbox_2& bb, const A2& a2) const
-  {
-    CGAL::Epic_converter<AK> convert;
-    auto aa2 = convert(approx(a2));
-    if(! aa2.second){
-      return fp(bb, a2);
-    }
-    return epicp(bb, aa2.first);
-  }
-
-  template <typename A2>
-  result_type operator()(const Bbox_3& bb, const A2& a2) const
-  {
-    CGAL::Epic_converter<AK> convert;
-    auto aa2 = convert(approx(a2));
-    if(! aa2.second){
-      return fp(bb, a2);
-    }
-    return epicp(bb, aa2.first);
-  }
 
   template <typename A1, typename A2, typename A3>
   result_type operator()(const A1& a1, const A2& a2, const A3& a3) const
