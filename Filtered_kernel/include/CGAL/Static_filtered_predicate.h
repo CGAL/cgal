@@ -28,9 +28,7 @@ public:
   result_type operator()(const A1& a1) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1);
     }
@@ -42,9 +40,7 @@ public:
   result_type operator()(const A1& a1, const Null_vector& v) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, v);
     }
@@ -56,14 +52,11 @@ public:
   result_type operator()(const A1& a1, const A2& a2) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK, Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(approx(a1));
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2);
     }
-    typedef typename Type_mapper<A2,EK, Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(approx(a2));
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2);
     }
@@ -76,9 +69,7 @@ public:
   result_type operator()(const Bbox_2& bb, const A2& a2) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A2>::type EK;
-    typedef typename Type_mapper<A2,EK, Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(approx(a2));
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(bb, a2);
     }
@@ -89,9 +80,7 @@ public:
   result_type operator()(const Bbox_3& bb, const A2& a2) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A2>::type EK;
-    typedef typename Type_mapper<A2,EK, Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(approx(a2));
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(bb, a2);
     }
@@ -102,19 +91,15 @@ public:
   result_type operator()(const A1& a1, const A2& a2, const A3& a3) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK, Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2, a3);
     }
-    typedef typename Type_mapper<A2, EK, Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2, a3);
     }
-    typedef typename Type_mapper<A3,EK, Exact_predicates_inexact_constructions_kernel>::type T3;
-    std::pair<T3,bool> aa3 = convert(a3.approx());
+    auto aa3 = convert(approx(a3));
     if(! aa3.second){
       return fp(a1, a2, a3);
     }
@@ -126,30 +111,22 @@ public:
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK1;
-    typedef typename Type_mapper<A1,EK1,Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2, a3, a4);
     }
 
-    typedef typename Kernel_traits<A2>::type EK2;
-    typedef typename Type_mapper<A2,EK2,Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2, a3, a4);
     }
 
-    typedef typename Kernel_traits<A3>::type EK3;
-    typedef typename Type_mapper<A3,EK3,Exact_predicates_inexact_constructions_kernel>::type T3;
-    std::pair<T3,bool> aa3 = convert(a3.approx());
+    auto aa3 = convert(approx(a3));
     if(! aa3.second){
       return fp(a1, a2, a3, a4);
     }
 
-    typedef typename Kernel_traits<A4>::type EK4;
-    typedef typename Type_mapper<A4,EK4,Exact_predicates_inexact_constructions_kernel>::type T4;
-    std::pair<T4,bool> aa4 = convert(a4.approx());
+    auto aa4 = convert(approx(a4));
     if(! aa4.second){
       return fp(a1, a2, a3, a4);
     }
@@ -160,29 +137,23 @@ public:
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2, a3, a4, a5);
     }
-    typedef typename Type_mapper<A2,EK,Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2, a3, a4, a5);
     }
-    typedef typename Type_mapper<A3,EK,Exact_predicates_inexact_constructions_kernel>::type T3;
-    std::pair<T3,bool> aa3 = convert(a3.approx());
+    auto aa3 = convert(approx(a3));
     if(! aa3.second){
       return fp(a1, a2, a3, a4, a5);
     }
-    typedef typename Type_mapper<A4,EK,Exact_predicates_inexact_constructions_kernel>::type T4;
-    std::pair<T4,bool> aa4 = convert(a4.approx());
+    auto aa4 = convert(approx(a4));
     if(! aa4.second){
       return fp(a1, a2, a3, a4, a5);
     }
-    typedef typename Type_mapper<A5,EK,Exact_predicates_inexact_constructions_kernel>::type T5;
-    std::pair<T5,bool> aa5 = convert(a5.approx());
+    auto aa5 = convert(approx(a5));
     if(! aa5.second){
       return fp(a1, a2, a3, a4, a5);
     }
@@ -193,34 +164,27 @@ public:
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2, a3, a4, a5, a6);
     }
-    typedef typename Type_mapper<A2,EK,Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2, a3, a4, a5, a6);
     }
-    typedef typename Type_mapper<A3,EK,Exact_predicates_inexact_constructions_kernel>::type T3;
-    std::pair<T3,bool> aa3 = convert(a3.approx());
+    auto aa3 = convert(approx(a3));
     if(! aa3.second){
       return fp(a1, a2, a3, a4, a5, a6);
     }
-    typedef typename Type_mapper<A4,EK,Exact_predicates_inexact_constructions_kernel>::type T4;
-    std::pair<T4,bool> aa4 = convert(a4.approx());
+    auto aa4 = convert(approx(a4));
     if(! aa4.second){
       return fp(a1, a2, a3, a4, a5, a6);
     }
-    typedef typename Type_mapper<A5,EK,Exact_predicates_inexact_constructions_kernel>::type T5;
-    std::pair<T5,bool> aa5 = convert(a5.approx());
+    auto aa5 = convert(approx(a5));
     if(! aa5.second){
       return fp(a1, a2, a3, a4, a5, a6);
     }
-    typedef typename Type_mapper<A6,EK,Exact_predicates_inexact_constructions_kernel>::type T6;
-    std::pair<T6,bool> aa6 = convert(a6.approx());
+    auto aa6 = convert(approx(a6));
     if(! aa6.second){
       return fp(a1, a2, a3, a4, a5, a6);
     }
@@ -231,39 +195,31 @@ public:
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6, const A6& a7) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2, a3, a4, a5, a6, a7);
     }
-    typedef typename Type_mapper<A2,EK,Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2, a3, a4, a5, a6, a7);
     }
-    typedef typename Type_mapper<A3,EK,Exact_predicates_inexact_constructions_kernel>::type T3;
-    std::pair<T3,bool> aa3 = convert(a3.approx());
+    auto aa3 = convert(approx(a3));
     if(! aa3.second){
       return fp(a1, a2, a3, a4, a5, a6, a7);
     }
-    typedef typename Type_mapper<A4,EK,Exact_predicates_inexact_constructions_kernel>::type T4;
-    std::pair<T4,bool> aa4 = convert(a4.approx());
+    auto aa4 = convert(approx(a4));
     if(! aa4.second){
       return fp(a1, a2, a3, a4, a5, a6, a7);
     }
-    typedef typename Type_mapper<A5,EK,Exact_predicates_inexact_constructions_kernel>::type T5;
-    std::pair<T5,bool> aa5 = convert(a5.approx());
+    auto aa5 = convert(approx(a5));
     if(! aa5.second){
       return fp(a1, a2, a3, a4, a5, a6, a7);
     }
-    typedef typename Type_mapper<A6,EK,Exact_predicates_inexact_constructions_kernel>::type T6;
-    std::pair<T6,bool> aa6 = convert(a6.approx());
+    auto aa6 = convert(approx(a6));
     if(! aa6.second){
       return fp(a1, a2, a3, a4, a5, a6, a7);
     }
-    typedef typename Type_mapper<A7,EK,Exact_predicates_inexact_constructions_kernel>::type T7;
-    std::pair<T7,bool> aa7 = convert(a7.approx());
+    auto aa7 = convert(approx(a7));
     if(! aa7.second){
       return fp(a1, a2, a3, a4, a5, a6, a7);
     }
@@ -275,44 +231,35 @@ public:
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6, const A7& a7, const A8& a8) const
   {
     CGAL::Epic_converter<AK> convert;
-    typedef typename Kernel_traits<A1>::type EK;
-    typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+    auto aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2, a3, a4, a5, a6, a7, a8);
     }
-    typedef typename Type_mapper<A2,EK,Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    auto aa2 = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2, a3, a4, a5, a6, a7, a8);
     }
-    typedef typename Type_mapper<A3,EK,Exact_predicates_inexact_constructions_kernel>::type T3;
-    std::pair<T3,bool> aa3 = convert(a3.approx());
+    auto aa3 = convert(approx(a3));
     if(! aa3.second){
       return fp(a1, a2, a3, a4, a5, a6, a7, a8);
     }
-    typedef typename Type_mapper<A4,EK,Exact_predicates_inexact_constructions_kernel>::type T4;
-    std::pair<T4,bool> aa4 = convert(a4.approx());
+    auto aa4 = convert(approx(a4));
     if(! aa4.second){
       return fp(a1, a2, a3, a4, a5, a6, a7, a8);
     }
-    typedef typename Type_mapper<A5,EK,Exact_predicates_inexact_constructions_kernel>::type T5;
-    std::pair<T5,bool> aa5 = convert(a5.approx());
+    auto aa5 = convert(approx(a5));
     if(! aa5.second){
       return fp(a1, a2, a3, a4, a5, a6, a7, a8);
     }
-    typedef typename Type_mapper<A6,EK,Exact_predicates_inexact_constructions_kernel>::type T6;
-    std::pair<T6,bool> aa6 = convert(a6.approx());
+    auto aa6 = convert(approx(a6));
     if(! aa6.second){
       return fp(a1, a2, a3, a5, a5, a6, a7, a8);
     }
-    typedef typename Type_mapper<A7,EK,Exact_predicates_inexact_constructions_kernel>::type T7;
-    std::pair<T7,bool> aa7 = convert(a7.approx());
+    auto aa7 = convert(approx(a7));
     if(! aa7.second){
       return fp(a1, a2, a3, a5, a5, a6, a7, a8);
     }
-    typedef typename Type_mapper<A8,EK,Exact_predicates_inexact_constructions_kernel>::type T8;
-    std::pair<T8,bool> aa8 = convert(a8.approx());
+    auto aa8 = convert(approx(a8));
     if(! aa8.second){
       return fp(a1, a2, a3, a4, a5, a6, a7, a8);
     }
