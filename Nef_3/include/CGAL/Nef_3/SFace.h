@@ -54,13 +54,12 @@ class SFace_base {
     SFace_cycle_const_iterator;
   Vertex_handle  center_vertex_;
   Volume_handle  volume_;
-  //    Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
+  Object_list    boundary_entry_objects_; // SEdges, SLoops, SVertices
   GenPtr         info_;
   // temporary needed:
   Mark           mark_;
 
  public:
-  Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
 
   SFace_base() : center_vertex_(), volume_(), info_(), mark_() {}
 
