@@ -436,6 +436,27 @@ public:
     }
 };
 
+template <typename GenPtr>
+class Visit_info {
+  GenPtr original_info;
+public:
+  Visit_info(const GenPtr& info) : original_info(info) {}
+  static void mark_visited(const GenPtr& info) {
+    const_cast<GenPtr&>(info) = Visit_info(info);
+  }
+  static bool visited(const GenPtr& info) {
+    return info.type() == boost::typeindex::type_id<Visit_info>();
+  }
+  template <typename List>
+  static void restore(const List& modified) {
+    for(const auto& m: modified) {
+      auto& info = m->info();
+      const auto& v = boost::any_cast<Visit_info>(info);
+      const_cast<GenPtr&>(info) = v.original_info;
+    }
+  }
+};
+
 /* visiting shell objects:
 
 Objects are marked as done, when placed in the output list.  We have
@@ -474,12 +495,21 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
   typedef typename Traits::SHalfloop_handle SHalfloop_handle;
   typedef typename Traits::SM_decorator SM_decorator;
   typedef typename Traits::SVertex_handle SVertex_handle;
+  typedef typename Traits::Vertex_handle Vertex_handle;
 
   std::list<SFace_handle> SFaceCandidates;
   std::list<Halffacet_handle> FacetCandidates;
-  CGAL::Generic_handle_map<bool> Done(false);
 
-  SFaceCandidates.push_back(f);  Done[f] = true;
+  typedef Visit_info<GenPtr> Visit_info;
+  std::list<SFace_handle> sf_modified;
+  std::list<SVertex_handle> sv_modified;
+  std::list<Vertex_handle> v_modified;
+  std::list<Halffacet_handle> hf_modified;
+
+  SFaceCandidates.push_back(f);
+  Visit_info::mark_visited(f->info());
+  sf_modified.push_back(f);
+
   while ( true ) {
     if ( SFaceCandidates.empty() && FacetCandidates.empty() ) break;
     if ( !FacetCandidates.empty() ) {
@@ -493,16 +523,18 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
           SHalfedge_handle she;
           SHalfedge_around_facet_circulator ec(e),ee(e);
           CGAL_For_all(ec,ee) { she = ec->twin();
-            if ( Done[she->incident_sface()] ) continue;
+            if(Visit_info::visited(she->incident_sface()->info())) continue;
             SFaceCandidates.push_back(she->incident_sface());
-            Done[she->incident_sface()] = true;
+            Visit_info::mark_visited(she->incident_sface()->info());
+            sf_modified.push_back(she->incident_sface());
           }
         } else if (fc.is_shalfloop() ) {
           SHalfloop_handle l(fc);
           SHalfloop_handle ll = l->twin();
-          if ( Done[ll->incident_sface()] ) continue;
+          if(Visit_info::visited(ll->incident_sface()->info())) continue;
           SFaceCandidates.push_back(ll->incident_sface());
-          Done[ll->incident_sface()] = true;
+          Visit_info::mark_visited(ll->incident_sface()->info());
+          sf_modified.push_back(ll->incident_sface());
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
@@ -510,9 +542,10 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
       SFace_handle sf = *SFaceCandidates.begin();
       SFaceCandidates.pop_front();
       V.visit(sf);
-      if ( !Done[sf->center_vertex()] )
+      if ( !Visit_info::visited(sf->center_vertex()->info()) )
         V.visit(sf->center_vertex()); // report vertex
-      Done[sf->center_vertex()] = true;
+      Visit_info::mark_visited(sf->center_vertex()->info());
+      v_modified.push_back(sf->center_vertex());
       //      SVertex_const_handle sv;
       SM_decorator SD(&*sf->center_vertex());
       /*
@@ -529,23 +562,32 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
           CGAL_For_all(ec,ee) {
             V.visit(SHalfedge_handle(ec));
             SVertex_handle vv = ec->twin()->source();
-            if ( !SD.is_isolated(vv) && !Done[vv] ) {
+            if ( !SD.is_isolated(vv) && !Visit_info::visited(vv->info()) ) {
               V.visit(vv); // report edge
-              Done[vv] = Done[vv->twin()] = true;
+              Visit_info::mark_visited(vv->info());
+              sv_modified.push_back(vv);
+              Visit_info::mark_visited(vv->twin()->info());
+              sv_modified.push_back(vv->twin());
             }
             Halffacet_handle f = ec->twin()->facet();
-            if ( Done[f] ) continue;
-            FacetCandidates.push_back(f); Done[f] = true;
+            if ( Visit_info::visited(f->info()) ) continue;
+            FacetCandidates.push_back(f);
+            Visit_info::mark_visited(f->info());
+            hf_modified.push_back(f);
           }
         } else if (fc.is_svertex() ) {
           SVertex_handle v(fc);
-          if ( Done[v] ) continue;
+          if ( Visit_info::visited(v->info()) ) continue;
           V.visit(v); // report edge
           V.visit(v->twin());
-          Done[v] = Done[v->twin()] = true;
+          Visit_info::mark_visited(v->info());
+          sv_modified.push_back(v);
+          Visit_info::mark_visited(v->twin()->info());
+          sv_modified.push_back(v->twin());
           CGAL_assertion(SD.is_isolated(v));
           SFaceCandidates.push_back(v->twin()->incident_sface());
-          Done[v->twin()->incident_sface()]=true;
+          Visit_info::mark_visited(v->twin()->incident_sface()->info());
+          sf_modified.push_back(v->twin()->incident_sface());
           // note that v is isolated, thus twin(v) is isolated too
           //          SM_const_decorator SD;
           //          SFace_const_handle fo;
@@ -560,12 +602,19 @@ visit_shell_objects(typename Traits::SFace_handle f, Visitor& V) const
           SHalfloop_handle l(fc);
           V.visit(l);
           Halffacet_handle f = l->twin()->facet();
-          if ( Done[f] ) continue;
-          FacetCandidates.push_back(f);  Done[f] = true;
+          if ( Visit_info::visited(f->info()) ) continue;
+          FacetCandidates.push_back(f);
+          Visit_info::mark_visited(f->info());
+          hf_modified.push_back(f);
         } else CGAL_error_msg("Damn wrong handle.");
       }
     }
   }
+
+  Visit_info::restore(sf_modified);
+  Visit_info::restore(sv_modified);
+  Visit_info::restore(v_modified);
+  Visit_info::restore(hf_modified);
 }
 
 

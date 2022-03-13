@@ -27,12 +27,20 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 83
 #include <CGAL/Nef_2/debug.h>
+#ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
+#include <boost/any.hpp>
+#endif
 
 namespace CGAL {
 
 template <typename Refs>
 class Halffacet_base  {
 
+  #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
+  typedef void* GenPtr;
+  #else
+  typedef boost::any GenPtr;
+  #endif
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Plane_3   Plane_3;
   typedef typename Refs::Halffacet_handle         Halffacet_handle;
@@ -49,6 +57,7 @@ class Halffacet_base  {
   Mark                 mark_;
   Halffacet_handle     twin_;
   Volume_handle        volume_;
+  GenPtr               info_;
   Object_list          boundary_entry_objects_; // SEdges, SLoops
 
  public:
@@ -96,6 +105,9 @@ class Halffacet_base  {
 
       Object_list& boundary_entry_objects() { return boundary_entry_objects_; }
       const Object_list& boundary_entry_objects() const { return boundary_entry_objects_; }
+
+      GenPtr& info() { return info_; }
+      const GenPtr& info() const { return info_; }
 
       Halffacet_cycle_iterator facet_cycles_begin()
       { return boundary_entry_objects_.begin(); }
