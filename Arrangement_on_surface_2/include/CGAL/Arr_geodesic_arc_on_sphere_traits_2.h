@@ -1197,8 +1197,8 @@ public:
                                  const Point_2&
                                  CGAL_precondition_code(p)) const
     {
-      CGAL_precondition(!xc1.is_degenerate());
-      CGAL_precondition(!xc2.is_degenerate());
+      CGAL_precondition(! xc1.is_degenerate());
+      CGAL_precondition(! xc2.is_degenerate());
       CGAL_precondition(p == xc1.right());
       CGAL_precondition(p == xc2.right());
 
@@ -1212,6 +1212,7 @@ public:
       // Compare the y-coord. at the x-coord of the most right left-endpoint.
       const Point_2& l1 = xc1.left();
       const Point_2& l2 = xc2.left();
+
       if (!l1.is_no_boundary()) {
         // use l2 and xc1:
         Oriented_side os = m_traits.oriented_side(xc1.normal(), l2);
@@ -1220,7 +1221,34 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      if (!l2.is_no_boundary()) {
+
+      // if p and r1 are antipodal, compare the plane normals
+      const Kernel& kernel = m_traits;
+      auto opposite_3 = kernel.construct_opposite_direction_3_object();
+      // VC 10 does not like the following:
+      // if (!kernel.equal_3_object()(opposite_3(p), r1)) return EQUAL;
+      Direction_3 tmp1 = opposite_3(p);     // pacify msvc 10
+      if (kernel.equal_3_object()(tmp1, Direction_3(l1)) ||
+          kernel.equal_3_object()(tmp1, Direction_3(l2)))
+      {
+        Sign xsign = Traits::x_sign(p);
+        Sign ysign = Traits::y_sign(p);
+        Project project = (xsign == ZERO) ?
+          ((ysign == POSITIVE) ? Traits::project_minus_xz : Traits::project_xz) :
+          ((xsign == POSITIVE) ? Traits::project_yz : Traits::project_minus_yz);
+
+        Direction_2 n1 = project(xc1.normal());
+        Direction_2 n2 = project(xc2.normal());
+        auto opposite_2 = kernel.construct_opposite_direction_2_object();
+        if (! xc1.is_directed_right()) n1 = opposite_2(n1);
+        if (! xc2.is_directed_right()) n2 = opposite_2(n2);
+        if (kernel.equal_2_object()(n1, n2)) return EQUAL;
+        const Direction_2 d(1, 0);
+        return (kernel.counterclockwise_in_between_2_object()(n1, d, n2)) ?
+          LARGER: SMALLER;
+      }
+
+      if (! l2.is_no_boundary()) {
         // use l1 and xc2:
         Oriented_side os = m_traits.oriented_side(xc2.normal(), l1);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -1229,7 +1257,8 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
       }
 
-      if (m_traits.compare_xy(l1, l2) == SMALLER) {
+      Comparison_result res = m_traits.compare_xy(l1, l2);
+      if (res == SMALLER) {
         // use l2 and xc1:
         Oriented_side os = m_traits.oriented_side(xc1.normal(), l2);
         return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
@@ -1237,12 +1266,16 @@ public:
           ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) :
           ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
       }
-      // use l1 and xc2:
-      Oriented_side os = m_traits.oriented_side(xc2.normal(), l1);
-      return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-        (xc2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
-        ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      if (res == LARGER) {
+        // use l1 and xc2:
+        Oriented_side os = m_traits.oriented_side(xc2.normal(), l1);
+        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
+          (xc2.is_directed_right()) ?
+          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) :
+          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
+      }
+      // res == equal
+      return EQUAL;
     }
   };
 
