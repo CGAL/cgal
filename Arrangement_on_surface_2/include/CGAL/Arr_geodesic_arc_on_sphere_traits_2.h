@@ -1194,8 +1194,7 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
-                                 const Point_2&
-                                 CGAL_precondition_code(p)) const
+                                 const Point_2& p) const
     {
       CGAL_precondition(! xc1.is_degenerate());
       CGAL_precondition(! xc2.is_degenerate());
