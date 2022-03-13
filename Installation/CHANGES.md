@@ -21,6 +21,9 @@ Release date: June 2022
     [`remove_isolated_vertices()`](https://doc.cgal.org/5.5/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
     as a post-processing step for the tetrahedral mesh generation.
 
+### [2D Arrangements](https://doc.cgal.org/5.5/Manual/packages.html#PkgArrangementOnSurface2)
+-   Fixed the intersect_2, compare_y_at_x_right, and compare_y_at_x_left function objects of the traits class template that handles geodesic arcs on sphere and applied a small syntactical fix to the tracing traits.
+
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
