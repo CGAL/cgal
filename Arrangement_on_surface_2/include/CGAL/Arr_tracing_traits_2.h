@@ -535,12 +535,12 @@ public:
 
       size_t i = 0;
       for (auto it = container.begin(); it != container.end(); ++it) {
-        if (const auto* xcv = boost::get<X_monotone_curve_2>(*it)) {
+        if (const auto* xcv = boost::get<X_monotone_curve_2>(&*it)) {
           std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        if (const Point_2* p = boost::get<Point_2>(*it)) {
+        if (const auto* p = boost::get<Point_2>(&*it)) {
           std::cout << "  result[" << i++ << "]: p: " << *p << std::endl;
           continue;
         }
