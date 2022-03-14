@@ -163,11 +163,11 @@ void orient_triangle_soup_with_reference_triangle_soup(const PointRange& ref_poi
                         Possible values are `Sequential_tag` (the default),
                         `Parallel_if_available_tag`, and `Parallel_tag`.
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose value type is the point type.
- * @tparam TriangleRange a model of the concept `RandomAccessContainer`
- * whose `value_type` is a model of the concept `RandomAccessContainer`
- * whose `value_type` is `std::size_t`and of size 3.
- * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
+ *                    and `BackInsertionSequence` whose value type is the point type
+ * \tparam TriangleRange a model of the concept `RandomAccessContainer`
+ *                       whose `value_type` is a model of the concept `RandomAccessContainer`
+ *                       whose `value_type` is `std::size_t`and of size 3
+ * \tparam TriangleMesh a model of `FaceListGraph`
  *
  * \param tm_ref the reference triangle_mesh.
  * \param points the points of the soup.
