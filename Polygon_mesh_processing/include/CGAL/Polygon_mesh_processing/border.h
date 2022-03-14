@@ -18,13 +18,13 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_set.hpp>
 
+#include <unordered_set>
 #include <set>
 
 namespace CGAL{
@@ -177,11 +177,11 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   template<typename PolygonMesh
          , typename FaceRange
          , typename HalfedgeOutputIterator
-         , typename NamedParameters>
+         , typename NamedParameters = parameters::Default_named_parameters>
   HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
                                   , const PolygonMesh& pmesh
                                   , HalfedgeOutputIterator out
-                                  , const NamedParameters& np)
+                                  , const NamedParameters& np = parameters::default_values())
   {
     if (face_range.empty())
       return out;
@@ -205,18 +205,6 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
     return out;
   }
 
-  template<typename PolygonMesh
-         , typename FaceRange
-         , typename HalfedgeOutputIterator>
-  HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
-                                        , const PolygonMesh& pmesh
-                                        , HalfedgeOutputIterator out)
-  {
-    return border_halfedges(face_range, pmesh, out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
-  }
-
-
   // counts the number of connected components of the boundary of the mesh.
   //
   // @tparam PolygonMesh model of `HalfedgeGraph`.
@@ -229,7 +217,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
     unsigned int border_counter = 0;
-    boost::unordered_set<halfedge_descriptor> visited;
+    std::unordered_set<halfedge_descriptor> visited;
     for(halfedge_descriptor h : halfedges(pmesh)){
       if(visited.find(h)== visited.end()){
         if(is_border(h,pmesh)){
@@ -262,7 +250,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   {
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
-    boost::unordered_set<halfedge_descriptor> hedge_handled;
+    std::unordered_set<halfedge_descriptor> hedge_handled;
     for(halfedge_descriptor h : halfedges(pm))
     {
       if(is_border(h, pm) && hedge_handled.insert(h).second)

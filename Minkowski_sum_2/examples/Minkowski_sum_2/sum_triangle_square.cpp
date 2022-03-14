@@ -21,7 +21,7 @@ int main()
 
   // Compute the Minkowski sum.
   Polygon_with_holes_2  sum = CGAL::minkowski_sum_2(P, Q);
-  CGAL_assertion(sum.number_of_holes() == 0);
+  assert(sum.number_of_holes() == 0);
   std::cout << "P (+) Q = " << sum.outer_boundary() << std::endl;
   return 0;
 }

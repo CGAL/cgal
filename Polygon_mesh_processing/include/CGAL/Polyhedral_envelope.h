@@ -69,6 +69,7 @@
 #include <CGAL/AABB_primitive.h>
 
 #include <CGAL/Dynamic_property_map.h>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_ENVELOPE_DEBUG
 // This is for computing the surface mesh of a prism
@@ -87,11 +88,6 @@
 #include <type_traits>
 #include <unordered_set>
 #include <unordered_map>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 
@@ -364,10 +360,10 @@ public:
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
    *       while the queries are performed
    */
-  template <typename TriangleMesh, typename NamedParameters>
+  template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
   Polyhedral_envelope(const TriangleMesh& tmesh,
                       double epsilon,
-                      const NamedParameters& np)
+                      const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -407,7 +403,7 @@ public:
       else
         deg_faces.insert(f);
     }
-    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
       init(epsilon);
     else
     {
@@ -464,11 +460,11 @@ public:
    * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
    *       while the queries are performed
    */
-  template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
+  template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
   Polyhedral_envelope(const FaceRange& face_range,
                       const TriangleMesh& tmesh,
                       double epsilon,
-                      const NamedParameters& np
+                      const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                       , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
 #endif
@@ -516,7 +512,7 @@ public:
         deg_faces.insert(f);
     }
 
-    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
       init(epsilon);
     else
     {
@@ -568,11 +564,11 @@ public:
     * \cgalNamedParamsEnd
     *
     */
-  template <typename PointRange, typename TriangleRange, typename NamedParameters>
+  template <typename PointRange, typename TriangleRange, typename NamedParameters = parameters::Default_named_parameters>
   Polyhedral_envelope(const PointRange& points,
                       const TriangleRange& triangles,
                       double epsilon,
-                      const NamedParameters& np
+                      const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
                       , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
 #endif
@@ -599,7 +595,7 @@ public:
       env_faces.emplace_back(face);
     }
 
-    if (is_default_parameter(get_parameter(np, internal_np::face_epsilon_map)))
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
       init(epsilon);
     else
     {
@@ -622,30 +618,6 @@ public:
   }
 
   /// @}
-
-#ifndef DOXYGEN_RUNNING
-  template <typename TriangleMesh>
-  Polyhedral_envelope(const TriangleMesh& tmesh,
-                      double epsilon)
-    : Polyhedral_envelope(tmesh, epsilon, parameters::all_default())
-  {}
-
-  template <typename FaceRange, typename TriangleMesh>
-  Polyhedral_envelope(const FaceRange& face_range,
-                      const TriangleMesh& tmesh,
-                      double epsilon,
-                      typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0)
-    : Polyhedral_envelope(face_range, tmesh, epsilon, parameters::all_default())
-  {}
-
-  template <typename PointRange, typename TriangleRange>
-  Polyhedral_envelope(const PointRange& points,
-                      const TriangleRange& triangles,
-                      double epsilon,
-                      typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0)
-    : Polyhedral_envelope(points, triangles, epsilon, parameters::all_default())
-  {}
-#endif
 
 private:
 
@@ -1782,7 +1754,7 @@ private:
               inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip, filtered_intersection, intersect_face, coverlist, jump1, check_id);
 
 
-              assert(inter != 2);// the point must exist because it is a seg-halfplane intersection
+              CGAL_assertion(inter != 2);// the point must exist because it is a seg-halfplane intersection
               if (inter == 1) {
 
                 return true;
@@ -2113,7 +2085,7 @@ private:
           std::cout << p.ep << " | "  << p.eq << " | "  << p.er << std::endl;
           ePoint_3 pv(ver[faces[i][0]].x(), ver[faces[i][0]].y(),ver[faces[i][0]].z());
           Orientation ori = orientation(p.ep, p.eq, p.er, pv);
-          assert(ori == NEGATIVE);
+          CGAL_assertion(ori == NEGATIVE);
         }
 #endif
 
@@ -2249,14 +2221,19 @@ public:
    *       the initial list of prisms.
    * \todo apply that to the soup versions
    */
-  template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+  template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
   bool
-  operator()(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np) const
+  operator()(const TriangleMesh& tmesh,
+             const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+             , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+#endif
+    ) const
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
+    typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, tmesh));
 
@@ -2274,16 +2251,6 @@ public:
 
     return true;
   }
-
-#ifndef DOXYGEN_RUNNING
-  template <typename TriangleMesh>
-  bool
-  operator()(const TriangleMesh& tmesh,
-             typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0) const
-  {
-    return this->operator()(tmesh, parameters::all_default());
-  }
-#endif
 
   /**
     * returns `true`, iff all the triangles in `triangles` are inside the polyhedral envelope.
@@ -2309,10 +2276,10 @@ public:
     * \cgalNamedParamsEnd
     *
     */
-  template <typename PointRange, typename TriangleRange, typename NamedParameters>
+  template <typename PointRange, typename TriangleRange, typename NamedParameters = parameters::Default_named_parameters>
   bool operator()(const PointRange& points,
                   const TriangleRange& triangles,
-                  const NamedParameters& np) const
+                  const NamedParameters& np = parameters::default_values()) const
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -2337,16 +2304,6 @@ public:
 
     return true;
   }
-
-#ifndef DOXYGEN_RUNNING
-  template <typename PointRange, typename TriangleRange>
-  bool operator()(const PointRange& points,
-                  const TriangleRange& triangles) const
-  {
-    return this->operator()(points, triangles, parameters::all_default());
-  }
-
-#endif
 
   /**
    * returns `true`, iff all the triangles in `triangle_range` are inside the polyhedral envelope.

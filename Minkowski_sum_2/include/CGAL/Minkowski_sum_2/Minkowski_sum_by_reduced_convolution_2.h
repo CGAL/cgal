@@ -20,10 +20,10 @@
 #include <CGAL/Arr_segment_traits_2.h>
 
 #include <CGAL/Minkowski_sum_2/AABB_collision_detector_2.h>
+#include <boost/functional/hash.hpp>
 
 #include <queue>
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -240,7 +240,7 @@ private:
     std::vector<Direction_2> p2_dirs = directions_of_polygon(p2_vertices);
 
     // Contains states that were already visited
-    boost::unordered_set<State> visited_states;
+    std::unordered_set<State, boost::hash<State>> visited_states;
 
     // Init the queue with vertices from the first column
     std::queue<State> state_queue;

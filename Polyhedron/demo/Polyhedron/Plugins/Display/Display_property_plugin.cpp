@@ -22,7 +22,6 @@
 #include "Scene_surface_mesh_item.h"
 #include "Color_ramp.h"
 #include "Color_map.h"
-#include <boost/unordered_map.hpp>
 #include "ui_Display_property.h"
 #include "id_printing.h"
 #include "Scene.h"
@@ -1223,7 +1222,7 @@ private Q_SLOTS:
         scene->addItem(source_points);
         connect(source_points, &Scene_points_with_normal_item::aboutToBeDestroyed,
                 [this](){
-          boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*>::iterator it;
+          std::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*>::iterator it;
           for(it = mesh_sources_map.begin();
               it != mesh_sources_map.end();
               ++it)
@@ -1432,12 +1431,12 @@ private:
   double bm;
   double bM;
   double bI;
-  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
-  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_min;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > jacobian_max;
 
-  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
-  boost::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
-  boost::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_min;
+  std::unordered_map<Scene_surface_mesh_item*, std::pair<double, SMesh::Face_index> > angles_max;
+  std::unordered_map<Scene_surface_mesh_item*, Vertex_source_map> is_source;
 
 
   double minBox;
@@ -1446,11 +1445,11 @@ private:
 
   Scene_surface_mesh_item* current_item;
   Scene_points_with_normal_item* source_points;
-  boost::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
-  boost::unordered_map<Scene_surface_mesh_item*, Scene_heat_item*> mesh_heat_item_map;
+  std::unordered_map<Scene_surface_mesh_item*, Scene_points_with_normal_item*> mesh_sources_map;
+  std::unordered_map<Scene_surface_mesh_item*, Scene_heat_item*> mesh_heat_item_map;
 
-  boost::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
-  boost::unordered_map<Scene_surface_mesh_item*, Heat_method_idt*> mesh_heat_method_idt_map;
+  std::unordered_map<Scene_surface_mesh_item*, Heat_method*> mesh_heat_method_map;
+  std::unordered_map<Scene_surface_mesh_item*, Heat_method_idt*> mesh_heat_method_idt_map;
 
   template<typename, typename, typename> friend class PropertyDisplayer;
 

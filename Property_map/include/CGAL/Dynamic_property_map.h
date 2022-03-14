@@ -19,9 +19,10 @@
 #include <CGAL/property_map.h>
 
 #include <memory>
-#include <boost/unordered_map.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
+
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -69,7 +70,7 @@ struct Dynamic_property_map {
   }
 
 
-  typedef boost::unordered_map<K,V> Map;
+  typedef std::unordered_map<K,V> Map;
   std::shared_ptr<Map> map_;
   V default_value_;
 };

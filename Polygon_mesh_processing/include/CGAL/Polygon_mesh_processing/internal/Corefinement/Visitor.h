@@ -341,6 +341,96 @@ public:
   }
 };
 
+namespace internal{
+//version for corefinement, only one vertex per node_id
+template <class TriangleMesh, bool doing_autorefinement=false>
+struct Node_id_to_vertex
+{
+  typedef boost::graph_traits<TriangleMesh>                        Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor            vertex_descriptor;
+  std::vector<vertex_descriptor> data;
+
+  vertex_descriptor get_vertex(std::size_t i) const
+  {
+    return data[i];
+  }
+  void register_vertex(std::size_t i, vertex_descriptor v)
+  {
+    data[i] = v;
+  }
+  void set_vertex_for_retriangulation(std::size_t i, vertex_descriptor v)
+  {
+    data[i] = v;
+  }
+  void set_temporary_vertex_for_retriangulation(std::size_t i, vertex_descriptor v)
+  {
+    data[i] = v;
+  }
+  void resize(std::size_t n)
+  {
+    data.resize(n,Graph_traits::null_vertex());
+  }
+  std::size_t size() const
+  {
+    return data.size();
+  }
+  template <class VPM, class Point_3>
+  void update_vertex_point(std::size_t i, const Point_3& p, const VPM& vpm) const
+  {
+    if (data[i]!=Graph_traits::null_vertex())
+      put(vpm, data[i], p);
+  }
+};
+
+//version for autorefinement and non-manifold corefinement, several vertices per node_id
+template <class TriangleMesh>
+struct Node_id_to_vertex<TriangleMesh, true>
+{
+  typedef boost::graph_traits<TriangleMesh>                        Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor            vertex_descriptor;
+  std::vector< std::vector<vertex_descriptor> > data;
+
+  vertex_descriptor get_vertex(std::size_t i) const
+  {
+    if (data[i].empty())
+      return Graph_traits::null_vertex();
+    return data[i].back();
+  }
+  void register_vertex(std::size_t i, vertex_descriptor v)
+  {
+    data[i].push_back(v);
+  }
+  void set_temporary_vertex_for_retriangulation(std::size_t i, vertex_descriptor v)
+  {
+    data[i].assign(1,v);
+  }
+  // warning: data[i] might then contains several times the same vertex
+  //          but it is probably still a better option than look for the
+  //          vertex and remove it
+  void set_vertex_for_retriangulation(std::size_t i, vertex_descriptor v)
+  {
+    assert(!data[i].empty());
+    if (data[i].back()!=v)
+      data[i].push_back(v);
+  }
+  void resize(std::size_t n)
+  {
+    data.resize(n);
+  }
+  std::size_t size() const
+  {
+    return data.size();
+  }
+  template <class VPM, class Point_3>
+  void update_vertex_point(std::size_t i, const Point_3& p, const VPM& vpm) const
+  {
+    for (vertex_descriptor v : data[i])
+      put(vpm, v, p);
+  }
+};
+}
+
+
 // A visitor for Intersection_of_triangle_meshes that can be used to corefine
 // two meshes
 template< class TriangleMesh,
@@ -373,16 +463,19 @@ private:
   typedef typename Graph_traits::vertex_descriptor            vertex_descriptor;
   typedef typename Graph_traits::halfedge_descriptor        halfedge_descriptor;
    typedef std::vector<Node_id>                                        Node_ids;
-   typedef boost::unordered_map<face_descriptor,Node_ids>           On_face_map;
-   typedef boost::unordered_map<edge_descriptor,Node_ids>           On_edge_map;
+   typedef std::unordered_map<face_descriptor,Node_ids>             On_face_map;
+   typedef std::unordered_map<edge_descriptor,Node_ids>             On_edge_map;
    //to keep the correspondance between node_id and vertex_handle in each mesh
-   typedef std::vector<vertex_descriptor>                     Node_id_to_vertex;
-   typedef std::map<const TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
+   typedef internal::Node_id_to_vertex<TriangleMesh,
+                                       doing_autorefinement||
+                                       handle_non_manifold_features>
+                                                              Node_id_to_vertex;
+   typedef std::map<const TriangleMesh*, Node_id_to_vertex >   Mesh_to_map_node;
    //to handle coplanar halfedge of polyhedra that are full in the intersection
-   typedef std::multimap<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
+   typedef std::multimap<Node_id,halfedge_descriptor> Node_to_target_of_hedge_map;
    typedef std::map<TriangleMesh*,Node_to_target_of_hedge_map>
                                            Mesh_to_vertices_on_intersection_map;
-   typedef boost::unordered_map<vertex_descriptor,Node_id>    Vertex_to_node_id;
+   typedef std::unordered_map<vertex_descriptor,Node_id>      Vertex_to_node_id;
    typedef std::map<TriangleMesh*, Vertex_to_node_id> Mesh_to_vertex_to_node_id;
    typedef Non_manifold_feature_map<TriangleMesh>               NM_features_map;
 // typedef for the CDT
@@ -667,8 +760,8 @@ public:
           mesh_to_vertices_on_inter[tm2_ptr].insert(std::make_pair(node_id,h_2));
           Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm2_ptr];
           if (node_id_to_vertex.size()<=node_id)
-            node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
-          node_id_to_vertex[node_id]=target(h_2,tm2);
+            node_id_to_vertex.resize(node_id+1);
+          node_id_to_vertex.register_vertex(node_id, target(h_2,tm2));
           all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
           check_node_on_boundary_vertex_case(node_id,h_2,tm2);
           output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
@@ -690,8 +783,8 @@ public:
       mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1));
       Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
       if (node_id_to_vertex.size()<=node_id)
-        node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
-      node_id_to_vertex[node_id]=target(h_1,tm1);
+        node_id_to_vertex.resize(node_id+1);
+      node_id_to_vertex.register_vertex(node_id, target(h_1,tm1));
       all_incident_faces_got_a_node_as_vertex(h_1,node_id, *tm1_ptr);
       // register the vertex in the output builder
       output_builder.set_vertex_id(target(h_1, tm1), node_id, tm1);
@@ -704,8 +797,8 @@ public:
         mesh_to_vertices_on_inter[tm1_ptr].insert(std::make_pair(node_id,h_1_opp));
         Node_id_to_vertex& node_id_to_vertex=mesh_to_node_id_to_vertex[tm1_ptr];
         if(node_id_to_vertex.size()<=node_id)
-          node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
-        node_id_to_vertex[node_id]=source(h_1,tm1);
+          node_id_to_vertex.resize(node_id+1);
+        node_id_to_vertex.register_vertex(node_id, source(h_1,tm1));
         all_incident_faces_got_a_node_as_vertex(h_1_opp,node_id, *tm1_ptr);
         // register the vertex in the output builder
         output_builder.set_vertex_id(source(h_1, tm1), node_id, tm1);
@@ -819,7 +912,8 @@ public:
         h = next(h, tm);
         for(std::size_t id : node_ids_array[i])
         {
-          node_id_to_vertex[id] = target(h, tm);
+          // needed when we triangulate a face --> need to pick the right vertex
+          node_id_to_vertex.set_vertex_for_retriangulation(id, target(h, tm));
           h = next(h, tm);
         }
         CGAL_assertion(h ==  halfedges[i]);
@@ -828,7 +922,7 @@ public:
 
   };
 
-  typedef boost::unordered_map<face_descriptor,Face_boundary>  Face_boundaries;
+  typedef std::unordered_map<face_descriptor,Face_boundary>  Face_boundaries;
 
   //update the id of input mesh vertex that are also a node
   void update_face_indices(
@@ -837,7 +931,7 @@ public:
     Vertex_to_node_id& vertex_to_node_id)
   {
     for (int k=0;k<3;++k){
-      typename boost::unordered_map<vertex_descriptor,Node_id>::iterator it =
+      typename std::unordered_map<vertex_descriptor,Node_id>::iterator it =
         vertex_to_node_id.find(f_vertices[k]);
       if (it!=vertex_to_node_id.end())
         f_indices[k]=it->second;
@@ -1000,7 +1094,7 @@ public:
         nodes.call_put(vpm, vnew, node_id, tm);
         // register the new vertex in the output builder
         output_builder.set_vertex_id(vnew, node_id, tm);
-        node_id_to_vertex[node_id]=vnew;
+        node_id_to_vertex.register_vertex(node_id, vnew);
         if (first){
           first=false;
           hedge_incident_to_src=next(opposite(hedge,tm),tm);
@@ -1088,7 +1182,7 @@ public:
       typename EK::Point_3 p = nodes.to_exact(get(vpm,f_vertices[0])),
                            q = nodes.to_exact(get(vpm,f_vertices[1])),
                            r = nodes.to_exact(get(vpm,f_vertices[2]));
-///TODO use a positive normal and remove all work around to guarantee that triangulation of coplanar patches are compatible
+///TODO use a positive normal and remove all workaround to guarantee that triangulation of coplanar patches are compatible
       CDT_traits traits(typename EK::Construct_normal_3()(p,q,r));
       CDT cdt(traits);
 
@@ -1100,14 +1194,13 @@ public:
       triangle_vertices[2]=cdt.tds().insert_dim_up(cdt.infinite_vertex(), false);
       triangle_vertices[2]->set_point(r);
 
-
       triangle_vertices[0]->info()=f_indices[0];
       triangle_vertices[1]->info()=f_indices[1];
       triangle_vertices[2]->info()=f_indices[2];
 
-      node_id_to_vertex[nb_nodes  ]=f_vertices[0];
-      node_id_to_vertex[nb_nodes+1]=f_vertices[1];
-      node_id_to_vertex[nb_nodes+2]=f_vertices[2];
+      node_id_to_vertex.set_temporary_vertex_for_retriangulation(nb_nodes, f_vertices[0]);
+      node_id_to_vertex.set_temporary_vertex_for_retriangulation(nb_nodes+1, f_vertices[1]);
+      node_id_to_vertex.set_temporary_vertex_for_retriangulation(nb_nodes+2, f_vertices[2]);
 
       //if one of the triangle input vertex is also a node
       for (int ik=0;ik<3;++ik){
@@ -1118,7 +1211,10 @@ public:
           if (doing_autorefinement || handle_non_manifold_features)
             // update the current vertex in node_id_to_vertex
             // to match the one of the face
-            node_id_to_vertex[f_indices[ik]]=f_vertices[ik];
+            node_id_to_vertex.set_temporary_vertex_for_retriangulation(f_indices[ik], f_vertices[ik]);
+            // Note on set_temporary_vertex instead of set_vertex: here since the point is an input point
+            // it is OK not to store all vertices corresponding to this id as the approximate version
+            // is already tight and the call in Intersection_nodes::finalize() will not fix anything
         }
       }
       //insert points on edges
@@ -1297,12 +1393,11 @@ public:
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
 
-    vertex_descriptor null_vertex = Graph_traits::null_vertex();
     const Node_id nb_nodes = nodes.size();
     // we reserve nb_nodes+3 because we use the last three entries for the
     // face triangulation
-    mesh_to_node_id_to_vertex[tm1_ptr].resize(nb_nodes+3, null_vertex);
-    mesh_to_node_id_to_vertex[tm2_ptr].resize(nb_nodes+3, null_vertex);
+    mesh_to_node_id_to_vertex[tm1_ptr].resize(nb_nodes+3);
+    mesh_to_node_id_to_vertex[tm2_ptr].resize(nb_nodes+3);
 
     //store for each triangle face which boundary is intersected by the other surface,
     //original vertices (and halfedges in the refined mesh pointing on these vertices)

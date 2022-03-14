@@ -55,9 +55,6 @@ namespace Corefinement {
 enum Boolean_operation_type {UNION = 0, INTERSECTION,
                              TM1_MINUS_TM2, TM2_MINUS_TM1, NONE };
 
-namespace PMP=Polygon_mesh_processing;
-namespace params=PMP::parameters;
-
 // extra functions for handling non-documented functions for user visitors
 // with no extra functions
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_extra_functions,
@@ -158,7 +155,7 @@ class Face_graph_output_builder
 // Internal typedefs
   typedef std::size_t                                          Node_id;
   typedef std::pair<Node_id,Node_id>                      Node_id_pair;
-  typedef boost::unordered_set<edge_descriptor>  Intersection_edge_map;
+  typedef std::unordered_set<edge_descriptor>  Intersection_edge_map;
   // to maintain a halfedge on each polyline per TriangleMesh + pair<bool,size_t>
   // with first = "is the key (pair<Node_id,Node_id>) was reversed?" and
   // second is the number of edges -1 in the polyline
@@ -168,9 +165,9 @@ class Face_graph_output_builder
                                std::pair<bool,std::size_t> > >
                                               An_edge_per_polyline_map;
 
-  typedef boost::unordered_map<vertex_descriptor, Node_id> Node_id_map;
-  typedef boost::unordered_map<edge_descriptor,
-                               edge_descriptor>               Edge_map;
+  typedef std::unordered_map<vertex_descriptor, Node_id>   Node_id_map;
+  typedef std::unordered_map<edge_descriptor,
+                             edge_descriptor>                 Edge_map;
 //Data members
   TriangleMesh &tm1, &tm2;
   // property maps of input meshes
@@ -428,8 +425,8 @@ public:
     , requested_output(requested_output)
     , is_tm1_closed( is_closed(tm1))
     , is_tm2_closed( is_closed(tm2))
-    , is_tm1_inside_out( is_tm1_closed && !PMP::is_outward_oriented(tm1, parameters::vertex_point_map(vpm1)) )
-    , is_tm2_inside_out( is_tm2_closed && !PMP::is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
+    , is_tm1_inside_out( is_tm1_closed && !is_outward_oriented(tm1, parameters::vertex_point_map(vpm1)) )
+    , is_tm2_inside_out( is_tm2_closed && !is_outward_oriented(tm2, parameters::vertex_point_map(vpm2)) )
     , NID((std::numeric_limits<Node_id>::max)())
     , mesh_to_intersection_edges(tm1, tm2)
     , used_to_clip_a_surface(false)
@@ -557,8 +554,8 @@ public:
     typename An_edge_per_polyline_map::iterator
       epp_it=input_have_coplanar_faces ? an_edge_per_polyline.begin()
                                        : epp_it_end;
-    boost::unordered_set<edge_descriptor> inter_edges_to_remove1,
-                                          inter_edges_to_remove2;
+    std::unordered_set<edge_descriptor> inter_edges_to_remove1,
+                                        inter_edges_to_remove2;
 
     // Each vector contains a subset of coplanar faces. More particularly only
     // the coplanar faces incident to an intersection edge. Note
@@ -707,10 +704,10 @@ public:
     std::vector<std::size_t> tm1_patch_ids( num_faces(tm1),NID );
     Border_edge_map<TriangleMesh> is_marked_1(intersection_edges1, tm1);
     std::size_t nb_patches_tm1 =
-      PMP::connected_components(tm1,
-                                bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
-                                params::edge_is_constrained_map(is_marked_1)
-                                       .face_index_map(fids1));
+      connected_components(tm1,
+                           bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
+                           parameters::edge_is_constrained_map(is_marked_1)
+                                      .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)
@@ -720,10 +717,10 @@ public:
     std::vector<std::size_t> tm2_patch_ids( num_faces(tm2),NID );
     Border_edge_map<TriangleMesh> is_marked_2(intersection_edges2, tm2);
     std::size_t nb_patches_tm2 =
-      PMP::connected_components(tm2,
-                                bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
-                                params::edge_is_constrained_map(is_marked_2)
-                                       .face_index_map(fids2));
+      connected_components(tm2,
+                           bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
+                           parameters::edge_is_constrained_map(is_marked_2)
+                                      .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
     for(Node_id i : tm2_patch_ids)
@@ -1577,7 +1574,7 @@ public:
     typedef Patch_container<TriangleMesh, FaceIdMap1, Intersection_edge_map> Patches1;
     typedef Patch_container<TriangleMesh, FaceIdMap2, Intersection_edge_map> Patches2;
 
-    boost::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
+    std::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
     if (used_to_clip_a_surface)
     {
       if (!is_tm1_closed)
@@ -1961,7 +1958,7 @@ public:
           for(vertex_descriptor vd : border_nm_vertices)
           {
             // first check if at least one incident patch will be kept
-            boost::unordered_set<std::size_t> id_p_rm;
+            std::unordered_set<std::size_t> id_p_rm;
             bool all_removed=true;
             for(halfedge_descriptor h : halfedges_around_target(vd, tm1))
             {

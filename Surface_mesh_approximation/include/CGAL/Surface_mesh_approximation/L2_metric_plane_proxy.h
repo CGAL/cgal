@@ -22,7 +22,7 @@
 #include <CGAL/Dynamic_property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 
 #include <list>
 

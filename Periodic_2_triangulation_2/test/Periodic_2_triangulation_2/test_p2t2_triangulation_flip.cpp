@@ -65,7 +65,7 @@ int main()
 
   greedy_flip_long_edges(t);
   greedy_flip_long_edges(t);
-  CGAL_assertion(t.is_valid());
+  assert(t.is_valid());
 
   size_t n_vertices = t.number_of_vertices();
   size_t n_faces = t.number_of_faces();
@@ -75,26 +75,26 @@ int main()
   std::cout << "Converting to 1 cover" << std::endl;
   t.convert_to_1_sheeted_covering();
   std::cout << "... done" << std::endl;
-  CGAL_assertion(t.is_1_cover());
-  CGAL_assertion(t.is_valid());
-  CGAL_assertion(t.number_of_vertices() == n_vertices);
-  CGAL_assertion(t.number_of_faces() == n_faces);
+  assert(t.is_1_cover());
+  assert(t.is_valid());
+  assert(t.number_of_vertices() == n_vertices);
+  assert(t.number_of_faces() == n_faces);
 
   std::cout << "Converting to 9 cover" << std::endl;
   t.convert_to_9_sheeted_covering();
   std::cout << "... done" << std::endl;
-  CGAL_assertion(!t.is_1_cover());
-  CGAL_assertion(t.is_valid());
-  CGAL_assertion(t.number_of_vertices() == n_vertices);
-  CGAL_assertion(t.number_of_faces() == n_faces);
+  assert(!t.is_1_cover());
+  assert(t.is_valid());
+  assert(t.number_of_vertices() == n_vertices);
+  assert(t.number_of_faces() == n_faces);
 
   std::cout << "Converting to 1 cover" << std::endl;
   t.convert_to_1_sheeted_covering();
   std::cout << "... done" << std::endl;
-  CGAL_assertion(t.is_1_cover());
-  CGAL_assertion(t.is_valid());
-  CGAL_assertion(t.number_of_vertices() == n_vertices);
-  CGAL_assertion(t.number_of_faces() == n_faces);
+  assert(t.is_1_cover());
+  assert(t.is_valid());
+  assert(t.number_of_vertices() == n_vertices);
+  assert(t.number_of_faces() == n_faces);
 
   return 0;
 }

@@ -296,10 +296,8 @@ public:
       for (std::size_t i=0, e=enodes.size(); i!=e; ++i)
       {
         Point_3 pt = exact_to_double(enodes[i]);
-        if ( tm1_vertices[i] != GT::null_vertex() )
-          put(vpm1, tm1_vertices[i], pt);
-        if ( tm2_vertices[i] != GT::null_vertex() )
-          put(vpm2, tm2_vertices[i], pt);
+        tm1_vertices.update_vertex_point(i, pt, vpm1);
+        tm2_vertices.update_vertex_point(i, pt, vpm2);
       }
     }
     else{
@@ -307,8 +305,7 @@ public:
       for (std::size_t i=0, e=enodes.size(); i!=e; ++i)
       {
         Point_3 pt = exact_to_double(enodes[i]);
-        if ( tm1_vertices[i] != GT::null_vertex() )
-          put(vpm1, tm1_vertices[i], pt);
+        tm1_vertices.update_vertex_point(i, pt, vpm1);
       }
     }
   }

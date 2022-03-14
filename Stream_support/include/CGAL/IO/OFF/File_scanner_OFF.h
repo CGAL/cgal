@@ -710,6 +710,7 @@ public:
       if(entries.empty())
       {
         m_in.clear(std::ios::badbit);
+        size = 0;
         return;
       }
       size = static_cast<std::size_t>(entries[0]);
@@ -742,6 +743,7 @@ public:
         m_in.clear(std::ios::badbit);
         if(verbose())
           std::cerr<<"error while reading facet. Missing index."<<std::endl;
+        index=0;
         return;
       }
       index = static_cast<std::size_t>(entries[current_entry]);
@@ -757,7 +759,7 @@ public:
                      "cannot read OFF file beyond facet "
                   << current_facet << "." << std::endl;
       }
-
+      index=0;
       set_off_header(false);
       return;
     }
@@ -777,7 +779,7 @@ public:
                   << index + index_offset() << ": is out of range."
                   << std::endl;
       }
-
+      index = 0;
       set_off_header(false);
       return;
     }

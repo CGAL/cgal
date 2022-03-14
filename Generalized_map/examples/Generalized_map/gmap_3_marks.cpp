@@ -1,6 +1,7 @@
 #include <CGAL/Generalized_map.h>
 #include <iostream>
 #include <cstdlib>
+#include <cassert>
 
 typedef CGAL::Generalized_map<3> GMap_3;
 typedef GMap_3::Dart_handle Dart_handle;
@@ -26,9 +27,9 @@ int main()
   Dart_handle dh1 = gm.make_combinatorial_tetrahedron();
   Dart_handle dh2 = gm.make_combinatorial_tetrahedron();
 
-  CGAL_assertion( gm.is_valid() );
-  CGAL_assertion( gm.is_volume_combinatorial_tetrahedron(dh1) );
-  CGAL_assertion( gm.is_volume_combinatorial_tetrahedron(dh2) );
+  assert( gm.is_valid() );
+  assert( gm.is_volume_combinatorial_tetrahedron(dh1) );
+  assert( gm.is_volume_combinatorial_tetrahedron(dh2) );
 
   // 3) 3-sew them.
   gm.sew<3>(dh1, dh2);
@@ -59,4 +60,3 @@ int main()
 
   return EXIT_SUCCESS;
 }
-

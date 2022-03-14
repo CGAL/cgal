@@ -43,9 +43,9 @@ int main(int argc, char** argv)
   std::cout << "Smoothing mesh... (" << nb_iterations << " iterations)" << std::endl;
 
   // Smooth with both angle and area criteria + Delaunay flips
-  PMP::smooth_mesh(mesh, PMP::parameters::number_of_iterations(nb_iterations)
-                                         .use_safety_constraints(false) // authorize all moves
-                                         .edge_is_constrained_map(eif));
+  PMP::smooth_mesh(mesh, CGAL::parameters::number_of_iterations(nb_iterations)
+                                          .use_safety_constraints(false) // authorize all moves
+                                          .edge_is_constrained_map(eif));
 
   CGAL::IO::write_polygon_mesh("mesh_smoothed.off", mesh, CGAL::parameters::stream_precision(17));
 

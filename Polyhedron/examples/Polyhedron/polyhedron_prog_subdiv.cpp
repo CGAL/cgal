@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
+#include <cassert>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Vector_3                                     Vector;
@@ -27,7 +28,7 @@ void create_center_vertex( Polyhedron& P, Facet_iterator f) {
         vec = vec + ( h->vertex()->point() - CGAL::ORIGIN);
         ++ order;
     } while ( ++h != f->facet_begin());
-    CGAL_assertion( order >= 3); // guaranteed by definition of polyhedron
+    assert( order >= 3); // guaranteed by definition of polyhedron
     Point center =  CGAL::ORIGIN + (vec / static_cast<double>(order));
     Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
     new_center->vertex()->point() = center;
@@ -44,7 +45,7 @@ struct Smooth_old_vertex {
             vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN)
               * alpha / static_cast<double>(degree);
             ++ h;
-            CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
+            assert( h != v.vertex_begin()); // even degree guaranteed
             ++ h;
         } while ( h != v.vertex_begin());
         return (CGAL::ORIGIN + vec);

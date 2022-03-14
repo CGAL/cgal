@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 using namespace std;
 
@@ -188,7 +189,7 @@ struct Converter_map9_points_into_map5_points
   (const CMap9& map1, CMap5& map2, CMap9::Dart_const_handle dh1,
    CMap5::Dart_handle dh2) const
   {
-    CGAL_assertion( map1.attribute<0>(dh1)!=map1.null_handle );
+    assert( map1.attribute<0>(dh1)!=map1.null_handle );
 
     CMap5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
     if ( res==map2.null_handle )
@@ -245,7 +246,7 @@ struct Converter_gmap9_points_into_gmap5_points
   (const GMap9& map1, GMap5& map2, GMap9::Dart_const_handle dh1,
    GMap5::Dart_handle dh2) const
   {
-    CGAL_assertion( map1.attribute<0>(dh1)!=map1.null_handle );
+    assert( map1.attribute<0>(dh1)!=map1.null_handle );
 
     GMap5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
     if ( res==map2.null_handle )
@@ -502,7 +503,7 @@ void create2Dmap(Map& map)
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 template<typename Map>
 void create3Dmap(Map& map)
@@ -526,7 +527,7 @@ void create3Dmap(Map& map)
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 
 template<typename LCC>
@@ -572,7 +573,7 @@ void create4Dmap(Map& map)
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
   CreateAttributes<Map,4>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 
 template<typename Map1,
