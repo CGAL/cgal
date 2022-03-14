@@ -955,8 +955,19 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     {
       if(is_second_mesh_fixed)
       {
+        const Point& new_p = get(vpm_B, vb);
         for(const halfedge_descriptor ha : vs_a)
-          put(vpm_A, target(ha, tm_A), get(vpm_B, vb));
+        {
+          bool skip = false;
+          for (halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
+            if (!is_border(haa,tm_A) && collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
+            {
+              skip=true;
+              break;
+            }
+          if (!skip)
+            put(vpm_A, target(ha, tm_A), new_p);
+        }
       }
       else
       {
@@ -972,12 +983,32 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 #endif
 
         for(const halfedge_descriptor ha : vs_a)
-          put(vpm_A, target(ha, tm_A), new_p);
+        {
+          bool skip = false;
+          for (halfedge_descriptor haa : halfedges_around_target(ha, tm_A))
+            if (!is_border(haa,tm_A) && collinear(get(vpm_A, source(haa,tm_A)), new_p, get(vpm_A, target(next(haa,tm_A),tm_A))))
+            {
+              skip=true;
+              break;
+            }
+          if (!skip)
+            put(vpm_A, target(ha, tm_A), new_p);
+        }
 
         for(const halfedge_descriptor hb : vs_b)
-          put(vpm_B, target(hb, tm_B), new_p);
+        {
+          bool skip = false;
+          for (halfedge_descriptor hbb : halfedges_around_target(hb, tm_B))
+            if (!is_border(hbb,tm_B) && collinear(get(vpm_B, source(hbb,tm_B)), new_p, get(vpm_B, target(next(hbb,tm_B),tm_B))))
+            {
+              skip=true;
+              break;
+            }
+          if (!skip)
+            put(vpm_B, target(hb, tm_B), new_p);
+        }
       }
-
+      //TODO: the counter shall depend on skip?
       ++counter;
     }
 

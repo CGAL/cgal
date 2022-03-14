@@ -151,6 +151,28 @@ void simplify_range(HalfedgeRange& halfedge_range,
             new_tolerance += CGAL::approximate_sqrt(CGAL::squared_distance(new_p, pt));
         }
 
+        bool call_continue = false;
+        for (halfedge_descriptor he : halfedges_around_target(h, tm))
+          if (he!=h && get(vpm, source(he, tm))==new_p)
+          {
+            call_continue = true;
+            break;
+          }
+        if (call_continue)
+          continue;
+        for (halfedge_descriptor he : halfedges_around_target(opposite(h,tm), tm))
+          if (he!=opposite(h,tm) && get(vpm,source(he, tm))==new_p)
+          {
+            call_continue = true;
+            break;
+          }
+        if (call_continue)
+          continue;
+
+        const halfedge_descriptor opoh = opposite(prev(opposite(h, tm), tm), tm);
+        if (is_border(opoh, tm))
+          edges_to_test.erase( opoh );
+
         vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
         put(vpm, v, new_p);
         put(tolerance_map, v, new_tolerance);
@@ -686,6 +708,12 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
          (new_position == get(vpm_T, source(h_to_split, tm_T))))
         do_split = false;
 
+      //in case of self_snapping avoid pinching
+      if(&tm_T==&tm_S && target(next(opposite(h_to_split, tm_T), tm_T), tm_T)==splitter_v)
+      {
+        do_split = false;
+      }
+
       if(!first_split && new_position == previous_split_position)
         do_split = false;
 
@@ -696,6 +724,31 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       std::cout << "With point: " << vnp.second << std::endl;
       std::cout << "Actually split? " << do_split << std::endl;
 #endif
+
+      // check the new faces after split are not degenerated
+      Point p0 = new_position;
+      Point_ref p1 = get(vpm_T, source(h_to_split, tm_T));
+      Point_ref p2 = get(vpm_T, target(next(opposite(h_to_split, tm_T), tm_T), tm_T));
+      Point_ref p3 = get(vpm_T, target(h_to_split, tm_T));
+
+      /* Chooses the diagonal that will split the quad in two triangles that maximize
+       * the scalar product of of the un-normalized normals of the two triangles.
+       * The lengths of the un-normalized normals (computed using cross-products of two vectors)
+       *  are proportional to the area of the triangles.
+       * Maximize the scalar product of the two normals will avoid skinny triangles,
+       * and will also taken into account the cosine of the angle between the two normals.
+       * In particular, if the two triangles are oriented in different directions,
+       * the scalar product will be negative.
+       */
+      auto p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
+      auto p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
+
+      bool is_deg = (p0p2>p1p3)
+                  ? collinear(p0,p1,p2) && collinear(p0,p3,p2)
+                  : collinear(p0,p1,p3) && collinear(p1,p2,p3);
+
+      if (is_deg)
+        do_split = false;
 
       // Split and update positions
       vertex_descriptor new_v = boost::graph_traits<TriangleMesh>::null_vertex();
@@ -711,7 +764,19 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       }
 
       if(!is_source_mesh_fixed)
-        put(vpm_S, splitter_v, new_position);
+      {
+        bool skip = false;
+        for (halfedge_descriptor h : halfedges_around_target(splitter_v, tm_S))
+        {
+          if (!is_border(h,tm_S) && collinear(get(vpm_S, source(h,tm_S)), new_position, get(vpm_S, target(next(h,tm_S),tm_S))))
+          {
+            skip=true;
+            break;
+          }
+        }
+        if(!skip)
+          put(vpm_S, splitter_v, new_position);
+      }
 
       first_split = false;
       previous_split_position = new_position;
@@ -722,6 +787,33 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       if(!do_split)
         continue;
 
+#if 1
+      halfedge_descriptor v0, v1, v2, v3;
+      v0 = opposite(h_to_split, tm_T);
+      Point_ref p0 = get(vpm_T, target(v0, tm_T));
+      v1 = next(v0, tm_T);
+      Point_ref p1 = get(vpm_T, target(v1, tm_T));
+      v2 = next(v1, tm_T);
+      Point_ref p2 = get(vpm_T, target(v2, tm_T));
+      v3 = next(v2, tm_T);
+      Point_ref p3 = get(vpm_T, target(v3, tm_T));
+
+      /* Chooses the diagonal that will split the quad in two triangles that maximize
+       * the scalar product of of the un-normalized normals of the two triangles.
+       * The lengths of the un-normalized normals (computed using cross-products of two vectors)
+       *  are proportional to the area of the triangles.
+       * Maximize the scalar product of the two normals will avoid skinny triangles,
+       * and will also taken into account the cosine of the angle between the two normals.
+       * In particular, if the two triangles are oriented in different directions,
+       * the scalar product will be negative.
+       */
+      auto p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
+      auto p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
+
+      halfedge_descriptor res = (p0p2>p1p3)
+                              ?  CGAL::Euler::split_face(v0, v2, tm_T)
+                              :  CGAL::Euler::split_face(v1, v3, tm_T);
+#else
       /*          new_p
        *         /   \
        *    res /     \ h_to_split
@@ -778,6 +870,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
         h_to_split = opposite(next(new_hd, tm_T), tm_T);
         visitor.after_split_face(opposite(res, tm_T), h2, tm_T);
       }
+#endif
     }
   }
 
@@ -1399,6 +1492,8 @@ std::size_t snap_borders(TriangleMesh& tm,
                                                       border_vertices, tm, tolerance_map,
                                                       true /*self snapping*/, np, np);
 }
+
+//TODO:add an option to preserve orientation?
 
 } // end namespace experimental
 } // end namespace Polygon_mesh_processing
