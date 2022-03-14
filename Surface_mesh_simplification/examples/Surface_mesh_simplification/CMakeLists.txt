@@ -37,22 +37,14 @@ create_single_source_cgal_program("edge_collapse_constrained_border_surface_mesh
 create_single_source_cgal_program("edge_collapse_all_short_edges.cpp")
 create_single_source_cgal_program("edge_collapse_bounded_normal_change.cpp")
 create_single_source_cgal_program("edge_collapse_visitor_surface_mesh.cpp")
-create_single_source_cgal_program("generate_noisy_cube_from_mesh.cpp")
 
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("edge_collapse_garland_heckbert.cpp")
-  create_single_source_cgal_program("gh_statistics.cpp")
   target_link_libraries(edge_collapse_garland_heckbert PUBLIC CGAL::Eigen3_support)
-
-  #  create_single_source_cgal_program("garland_heckbert_policy_comparisons.cpp")
-  # target_link_libraries(garland_heckbert_policy_comparisons PUBLIC CGAL::Eigen3_support)
 else()
-  message(
-    STATUS
-      "Garland-Heckbert polices require the Eigen library, which has not been found; related examples will not be compiled."
-  )
+  message(STATUS "Garland-Heckbert polices require the Eigen library, which has not been found; related examples will not be compiled.")
 endif()
 
 if(OpenMesh_FOUND)
