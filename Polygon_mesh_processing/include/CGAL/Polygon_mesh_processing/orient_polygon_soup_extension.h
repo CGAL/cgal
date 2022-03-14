@@ -194,8 +194,8 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
  * closest non degenerate triangle in `tm_ref`.
  *
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
-                        Possible values are `Sequential_tag` (the default),
-                        `Parallel_if_available_tag`, and `Parallel_tag`.
+ *                         Possible values are `Sequential_tag` (the default),
+ *                         `Parallel_if_available_tag`, and `Parallel_tag`.
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
  *                    and `BackInsertionSequence` whose value type is the point type
  * \tparam TriangleRange a model of the concept `RandomAccessContainer`
@@ -206,7 +206,7 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
  * \param tm_ref the reference triangle_mesh.
  * \param points the points of the soup.
  * \param triangles the triangles of the soup.
- * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -224,17 +224,15 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \attention The types of points in `PointRange`, `geom_traits` and `vertex_point_map` must be the same.
+ * \attention The types of points in `PointRange`, `geom_traits`, and `vertex_point_map` must be the same.
  */
-
-template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange,
-          class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
-void
-orient_triangle_soup_with_reference_triangle_mesh(
-    const TriangleMesh& tm_ref,
-    PointRange& points,
-    TriangleRange& triangles,
-    const NamedParameters& np = parameters::default_values())
+template <class Concurrency_tag = Sequential_tag,
+          class PointRange, class TriangleRange, class TriangleMesh,
+          class NamedParameters = parameters::Default_named_parameters>
+void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_ref,
+                                                       PointRange& points,
+                                                       TriangleRange& triangles,
+                                                       const NamedParameters& np = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -242,16 +240,13 @@ orient_triangle_soup_with_reference_triangle_mesh(
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename PointRange::value_type Point_3;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type K;
-  typedef typename
-  GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
 
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                          get_const_property_map(CGAL::vertex_point, tm_ref));
 
-
   typedef std::function<bool(face_descriptor)> Face_predicate;
-  Face_predicate is_not_deg =
-      [&tm_ref, np](face_descriptor f)
+  Face_predicate is_not_deg = [&tm_ref, np](face_descriptor f)
   {
     return !PMP::is_degenerate_triangle_face(f, tm_ref, np);
   };
@@ -269,18 +264,16 @@ orient_triangle_soup_with_reference_triangle_mesh(
   // now orient the faces
   tree.build();
   tree.accelerate_distance_queries();
-  auto process_facet =
-      [&points, &tree, &tm_ref, &triangles](std::size_t fid) {
+  auto process_facet = [&points, &tree, &tm_ref, &triangles](std::size_t fid)
+  {
     const Point_3& p0 = points[triangles[fid][0]];
     const Point_3& p1 = points[triangles[fid][1]];
     const Point_3& p2 = points[triangles[fid][2]];
     const Point_3 mid = CGAL::centroid(p0, p1, p2);
-    std::pair<Point_3, face_descriptor> pt_and_f =
-        tree.closest_point_and_primitive(mid);
+    std::pair<Point_3, face_descriptor> pt_and_f = tree.closest_point_and_primitive(mid);
     auto face_ref_normal = PMP::compute_face_normal(pt_and_f.second, tm_ref);
-    if(face_ref_normal * cross_product(p1-p0, p2-p0) < 0) {
+    if(face_ref_normal * cross_product(p1-p0, p2-p0) < 0)
       std::swap(triangles[fid][1], triangles[fid][2]);
-    }
   };
 
 #if !defined(CGAL_LINKED_WITH_TBB)
@@ -291,11 +284,12 @@ orient_triangle_soup_with_reference_triangle_mesh(
     tbb::parallel_for(std::size_t(0), triangles.size(), std::size_t(1), process_facet);
   else
 #endif
-    std::for_each(
-          boost::counting_iterator<std::size_t> (0),
-          boost::counting_iterator<std::size_t> (triangles.size()),
-          process_facet);
+    std::for_each(boost::counting_iterator<std::size_t> (0),
+                  boost::counting_iterator<std::size_t> (triangles.size()),
+                  process_facet);
 }
 
-}}//end namespace CGAL::Polygon_mesh_processing
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
+
 #endif // CGAL_ORIENT_POLYGON_SOUP_EXTENSION_H
