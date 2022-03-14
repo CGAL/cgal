@@ -66,8 +66,7 @@ create any great circle that contains $p$ and $q$.}*/
 {
   if ( p != q.antipode() ) {
     Point_3 po = CGAL::ORIGIN + Base::orthogonal_vector();
-    //TODO replace Point_3(CGAL::ORIGIN), with CGAL::ORIGIN below
-    if (R_().orientation_3_object()(Point_3(CGAL::ORIGIN), Point_3(p),
+    if (R_().orientation_3_object()(CGAL::ORIGIN, Point_3(p),
                                     Point_3(q), po) != CGAL::POSITIVE )
       *this = opposite();
   } else {
