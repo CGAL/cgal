@@ -1823,7 +1823,7 @@ public:
         if (kernel.equal_3_object()(n1, opposite_n2)) return EQUAL;
       }
 
-      // The queves do not lie on the same plane!
+      // The curves do not lie on the same plane!
       const Point_2& l1 = xcv1.left();
       const Point_2& l2 = xcv2.left();
       const Point_2& r1 = xcv1.right();
