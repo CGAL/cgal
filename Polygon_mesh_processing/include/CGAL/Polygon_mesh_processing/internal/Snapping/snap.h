@@ -725,7 +725,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       std::cout << "Actually split? " << do_split << std::endl;
 #endif
 
-      // check the new faces after split are not degenerated
+      // check the new faces after split will not be degenerated
       Point p0 = new_position;
       Point_ref p1 = get(vpm_T, source(h_to_split, tm_T));
       Point_ref p2 = get(vpm_T, target(next(opposite(h_to_split, tm_T), tm_T), tm_T));
@@ -742,8 +742,9 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
        */
       auto p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
       auto p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
+      bool first_split_face = (p0p2>p1p3);
 
-      bool is_deg = (p0p2>p1p3)
+      bool is_deg = first_split_face
                   ? collinear(p0,p1,p2) && collinear(p0,p3,p2)
                   : collinear(p0,p1,p3) && collinear(p1,p2,p3);
 
@@ -787,90 +788,27 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       if(!do_split)
         continue;
 
-#if 1
       halfedge_descriptor v0, v1, v2, v3;
       v0 = opposite(h_to_split, tm_T);
-      Point_ref p0 = get(vpm_T, target(v0, tm_T));
       v1 = next(v0, tm_T);
-      Point_ref p1 = get(vpm_T, target(v1, tm_T));
       v2 = next(v1, tm_T);
-      Point_ref p2 = get(vpm_T, target(v2, tm_T));
       v3 = next(v2, tm_T);
-      Point_ref p3 = get(vpm_T, target(v3, tm_T));
-
-      /* Chooses the diagonal that will split the quad in two triangles that maximize
-       * the scalar product of of the un-normalized normals of the two triangles.
-       * The lengths of the un-normalized normals (computed using cross-products of two vectors)
-       *  are proportional to the area of the triangles.
-       * Maximize the scalar product of the two normals will avoid skinny triangles,
-       * and will also taken into account the cosine of the angle between the two normals.
-       * In particular, if the two triangles are oriented in different directions,
-       * the scalar product will be negative.
-       */
-      auto p1p3 = CGAL::cross_product(p2-p1,p3-p2) * CGAL::cross_product(p0-p3,p1-p0);
-      auto p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
-
-      halfedge_descriptor res = (p0p2>p1p3)
-                              ?  CGAL::Euler::split_face(v0, v2, tm_T)
-                              :  CGAL::Euler::split_face(v1, v3, tm_T);
-#else
-      /*          new_p
-       *         /   \
-       *    res /     \ h_to_split
-       *       /       \
-       *      /         \
-       *    left       right
-       *     |         /
-       *     |        /
-       *     |       /
-       *     |      /
-       *     |     /
-       *     |    /
-       *      opp
-       */
-
-      const halfedge_descriptor res = prev(h_to_split, tm_T);
-      const Point_ref left_pt = get(vpm_T, source(res, tm_T));
-      const Point_ref right_pt = get(vpm_T, target(h_to_split, tm_T));
-      const Point_ref opp = get(vpm_T, target(next(opposite(res, tm_T), tm_T), tm_T));
-
-      // Check if 'p' is "visible" from 'opp' (i.e. its projection on the plane 'Pl(left, opp, right)'
-      // falls in the cone with apex 'opp' and sides given by 'left' and 'right')
-      const Vector n = gt.construct_orthogonal_vector_3_object()(right_pt, left_pt, opp);
-      const Point trans_left_pt = gt.construct_translated_point_3_object()(left_pt, n);
-      const Point trans_right_pt = gt.construct_translated_point_3_object()(right_pt, n);
-
-      const Point_ref new_p = get(vpm_T, new_v);
-      const bool left_of_left = (gt.orientation_3_object()(trans_left_pt, left_pt, opp, new_p) == CGAL::POSITIVE);
-      const bool right_of_right = (gt.orientation_3_object()(right_pt, trans_right_pt, opp, new_p) == CGAL::POSITIVE);
-
-      const bool is_visible = (!left_of_left && !right_of_right);
-
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << "Left/Right: " << left_of_left << " " << right_of_right << std::endl;
-      std::cout << "visible from " << opp << " ? " << is_visible << std::endl;
-#endif
-
-      // h_to_split is equal to 'next(res)' after splitting
       const halfedge_descriptor h_to_split_opp = opposite(h_to_split, tm_T);
-
-      if(is_visible)
+      halfedge_descriptor h2 = prev(prev(h_to_split_opp, tm_T), tm_T);
+      const halfedge_descriptor res = prev(h_to_split, tm_T);
+      halfedge_descriptor new_hd = first_split_face
+                                 ?  CGAL::Euler::split_face(v0, v2, tm_T)
+                                 :  CGAL::Euler::split_face(v1, v3, tm_T);
+      if (first_split_face)
       {
-        halfedge_descriptor h2 = prev(prev(h_to_split_opp, tm_T), tm_T);
-        halfedge_descriptor new_hd = CGAL::Euler::split_face(h_to_split_opp,
-                                                             h2, tm_T);
         h_to_split = opposite(prev(new_hd, tm_T), tm_T);
         visitor.after_split_face(h_to_split_opp, h2, tm_T);
       }
       else
       {
-        halfedge_descriptor h2 = prev(h_to_split_opp, tm_T);
-        halfedge_descriptor new_hd = CGAL::Euler::split_face(opposite(res, tm_T),
-                                                             h2, tm_T);
         h_to_split = opposite(next(new_hd, tm_T), tm_T);
         visitor.after_split_face(opposite(res, tm_T), h2, tm_T);
       }
-#endif
     }
   }
 
