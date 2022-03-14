@@ -119,10 +119,6 @@ public:
   using Placement_base::operator();
 };
 
-// backward compatibility
-template<typename TriangleMesh, typename GeomTraits>
-using GarlandHeckbert_policies = GarlandHeckbert_plane_policies<TriangleMesh, GeomTraits>;
-
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 

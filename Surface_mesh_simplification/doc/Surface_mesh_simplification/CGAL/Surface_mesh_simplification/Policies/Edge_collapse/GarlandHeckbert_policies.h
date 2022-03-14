@@ -4,6 +4,10 @@ namespace Surface_mesh_simplification {
 /*!
 \ingroup PkgSurfaceMeshSimplificationRef
 
+\deprecated This class is deprecated since \cgal 5.5 and the introduction of variations
+of Garland-Heckbert policies (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy).
+The class `GarlandHeckbert_plane_policies` is the modern equivalent to this class.
+
 The class `GarlandHeckbert_policies` regroups the cost and placement policies
 based on the Garland-Heckbert strategy (Section \ref SurfaceMeshSimplificationGarlandHeckbertStrategy),
 both oracles must indeed be used together as they internally use and share information

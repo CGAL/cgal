@@ -43,9 +43,16 @@
 - `CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
-- `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
+- `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>` (deprecated)
+
+\cgalCRPSection{Policy Enhancements}
+- `CGAL::Surface_mesh_simplification::Constrained_placement<Placement, TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 - `CGAL::Surface_mesh_simplification::Bounded_normal_change_filter<Filter>`
 - `CGAL::Surface_mesh_simplification::Polyhedral_envelope_filter<Filter>`
-- `CGAL::Surface_mesh_simplification::Constrained_placement<Placement, TriangleMesh>`
+
+\cgalCRPSection{Classes}
+- `CGAL::Surface_mesh_simplification::Edge_profile<TriangleMesh, VertexPointMap, GeomTraits>`
+- `CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<TriangleMesh>`
+
 */
