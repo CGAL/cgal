@@ -10,7 +10,7 @@ typedef CGAL::Timer Timer;
 
 int main(int argc, char* argv[] )
 {
-  std::ifstream ifs((argc>1)? argv[1]:CGAL::data_file_path("points/cube.xyz"));
+  std::ifstream ifs((argc>1)? argv[1]:CGAL::data_file_path("points_3/cube.xyz"));
 
   std::vector<Point_3> points;
   Point_3 p;
@@ -57,7 +57,7 @@ int main(int argc, char* argv[] )
   t.stop();
 
 
-  if(positive =! 0){
+  if(positive != 0){
     std::cout << "Not the same results for Orientation_3"<< std::endl;
     assert(false);
   }
@@ -97,7 +97,7 @@ int main(int argc, char* argv[] )
 
   t.stop();
 
-  if(sumx1 == sumx2){
+  if(sumx1 != sumx2){
     std::cout << "Not the same results for Construct_orthogonal_vector" << std::endl;
     assert(false);
   }
