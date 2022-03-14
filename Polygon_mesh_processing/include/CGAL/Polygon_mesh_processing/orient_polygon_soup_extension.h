@@ -31,9 +31,7 @@
 #include <tbb/parallel_for.h>
 #endif // CGAL_LINKED_WITH_TBB
 
-
 namespace CGAL {
-
 namespace Polygon_mesh_processing {
 
 /*!
@@ -78,29 +76,75 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
   return inital_nb_pts==points.size();
 }
 
-// This is PMP::orient_triangle_soup_with_reference_triangle_mesh() but using a reference polygon soup
+/*!
+ * \ingroup PMP_orientation_grp
+ *
+ * orients each triangle of a triangle soup using the orientation of its
+ * closest non degenerate triangle in a triangle soup.
+ *
+ * \tparam Concurrency_tag enables sequential versus parallel orientation.
+ *                         Possible values are `Sequential_tag` (the default),
+ *                         `Parallel_if_available_tag`, and `Parallel_tag`.
+ * \tparam ReferencePointRange a model of the concepts `RandomAccessContainer` whose value type is the point type.
+ * \tparam ReferenceTriangleRange a model of the concept `RandomAccessContainer`
+ *                                whose `value_type` is a model of the concept `RandomAccessContainer`
+ *                                whose `value_type` is `std::size_t`and of size 3.
+ * \tparam PointRange a model of the concepts `RandomAccessContainer`
+ *                    and `BackInsertionSequence` whose value type is the point type.
+ * \tparam TriangleRange a model of the concept `RandomAccessContainer`
+ *                       whose `value_type` is a model of the concept `RandomAccessContainer`
+ *                       whose `value_type` is `std::size_t`and of size 3.
+ *
+ * \param ref_points the points of the reference soup
+ * \param ref_faces the triangles of the reference soup
+ * \param points the points of the soup
+ * \param triangles the triangles of the soup
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{The traits class must provide the nested functor `Collinear_3` to check whether three points are collinear. }
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \attention The types of points in `PointRange`, `geom_traits`, and `vertex_point_map` must be the same.
+ */
 template <class Concurrency_tag = CGAL::Sequential_tag,
-          class PointRange, class FaceRange, class NamedParameters>
-void
-orient_triangle_soup_with_reference_triangle_soup(const PointRange& ref_points,
-                                                  const FaceRange& ref_faces,
-                                                  PointRange& points,
-                                                  FaceRange& faces,
-                                                  const NamedParameters& np)
+          class ReferencePointRange, class ReferenceFaceRange, class PointRange, class FaceRange,
+          class NamedParameters = parameters::Default_named_parameters>
+void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange& ref_points,
+                                                       const ReferenceFaceRange& ref_faces,
+                                                       PointRange& points,
+                                                       FaceRange& faces,
+                                                       const NamedParameters& np = parameters::default_values())
 {
-  namespace PMP = CGAL::Polygon_mesh_processing;
-
-  typedef typename FaceRange::value_type Face;
-  typedef typename PointRange::value_type Point_3;
+  typedef Point_set_processing_3_np_helper<ReferencePointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename boost::property_traits<PointMap>::value_type Point_3;
   typedef typename CGAL::Kernel_traits<Point_3>::Kernel K;
   typedef typename K::Triangle_3 Triangle;
   typedef typename K::Vector_3 Vector;
 
+  PointMap point_map = NP_helper::get_const_point_map(points, np);
+
   std::vector<Triangle> ref_triangles;
   ref_triangles.reserve(ref_faces.size());
-  for(const Face& f : faces)
+  for(const auto& f : ref_faces)
   {
-    Triangle tr(points[f[0]], points[f[1]], points[f[2]]);
+    Triangle tr(get(point_map, ref_points[f[0]]),
+                get(point_map, ref_points[f[1]]),
+                get(point_map, ref_points[f[2]]));
+
     if(!tr.is_degenerate())
       ref_triangles.emplace_back(tr);
   }
@@ -141,16 +185,6 @@ orient_triangle_soup_with_reference_triangle_soup(const PointRange& ref_points,
     std::for_each(boost::counting_iterator<std::size_t>(0),
                   boost::counting_iterator<std::size_t>(faces.size()),
                   process_facet);
-}
-
-template <class Concurrency_tag = CGAL::Sequential_tag, class PointRange, class FaceRange>
-void orient_triangle_soup_with_reference_triangle_soup(const PointRange& ref_points,
-                                                       const FaceRange& ref_faces,
-                                                       PointRange& points,
-                                                       FaceRange& faces)
-{
-  return orient_triangle_soup_with_reference_triangle_soup<Concurrency_tag>(
-           ref_points, ref_faces, points, faces, CGAL::parameters::all_default());
 }
 
 /*!
