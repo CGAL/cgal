@@ -35,10 +35,10 @@ The template argument `Coeff` determines the coefficient type of the
 kernel, which is also the innermost coefficient type of the supported polynomials.
 
 Currently, the following coefficient types are supported:
-
 - `Gmpz`, `Gmpq`, (requires configuration with external libraries GMP, MPFR and MPFI)
 - `CORE::BigInt`, `CORE::BigRat`, (requires configuration with external library GMP)
 - `leda_integer`, `leda_rational`. (requires configuration with external library LEDA)
+.
 
 \cgalAdvancedBegin
 The template argument type can also be set to
