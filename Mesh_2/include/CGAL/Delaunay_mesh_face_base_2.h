@@ -19,7 +19,29 @@
 #include <CGAL/Constrained_Delaunay_triangulation_face_base_2.h>
 #include <CGAL/Has_timestamp.h>
 
+#include <boost/property_map/property_map.hpp>
+
 namespace CGAL {
+
+template <typename CDT>
+struct In_domain {
+
+  typedef typename CDT::Face_handle key_type;
+  typedef bool value_type;
+  typedef bool reference;
+  typedef boost::read_write_property_map_tag category;
+
+  friend bool get(In_domain, const key_type& k)
+  {
+    return k->is_in_domain();
+  }
+
+  friend void put(In_domain, const key_type& k, const value_type& v)
+  {
+    k->set_in_domain(v);
+  }
+};
+
 
 template <class Gt,
           class Fb = Constrained_Delaunay_triangulation_face_base_2<Gt> >
