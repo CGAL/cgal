@@ -45,7 +45,6 @@ int main() {
       if (vh) std::cout << '(' << (*vh)->point() << ')';
       else {
         auto* hh = boost::get<Halfedge_const_handle>(&*(curr.first));
-        CGAL_assertion(hh);
         if (! (*hh)->is_fictitious())
           std::cout << '[' << (*hh)->curve() << ']';
         else std::cout << "NONE";
@@ -59,7 +58,6 @@ int main() {
       if (vh) std::cout << '(' << (*vh)->point() << ")\n";
       else {
         auto* hh = boost::get<Halfedge_const_handle>(&*(curr.second));
-        CGAL_assertion(hh);
         if (! (*hh)->is_fictitious())
           std::cout << '[' << (*hh)->curve() << "]\n";
         else std::cout << "NONE\n";

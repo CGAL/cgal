@@ -48,7 +48,7 @@ BOOST_PARAMETER_FUNCTION(
   (required (in_out(c3t3),*) )
   (optional
     (time_limit_, *, 0 )
-    (sliver_bound_, *, parameters::default_values::exude_sliver_bound )
+    (sliver_bound_, *, parameters::default_values_for_mesh_3::exude_sliver_bound )
   )
 )
 {

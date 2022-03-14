@@ -85,7 +85,7 @@ contains the following subdirectories:
 | :------------------------- | :----------|
 | `auxiliary` (Windows only) | precompiled \gmp and \mpfr for Windows |
 | `cmake/modules`            | modules for finding and using libraries |
-| `demo`                     | demo programs (most of them need \qt, geomview or other third-party products) |
+| `demo`                     | demo programs (most of them need \qt, or other third-party products) |
 | `doc_html`                 | documentation (HTML) |
 | `examples`                 | example programs |
 | `include`                  | header files |

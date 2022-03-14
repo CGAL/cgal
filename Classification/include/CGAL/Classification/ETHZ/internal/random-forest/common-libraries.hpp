@@ -47,7 +47,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
 #include <iostream>
 #include <cstdio>
 
@@ -63,7 +63,7 @@ inline void init_feature_class_data(FeatureClassDataFloat& /*data*/, int /*n_cla
 {
 //    data.resize(n_samples);
 }
-typedef boost::unordered_set<int> FeatureSet;
+typedef std::unordered_set<int> FeatureSet;
 
 #if BOOST_VERSION >= 104700
 typedef boost::random::uniform_int_distribution<> UniformIntDist;

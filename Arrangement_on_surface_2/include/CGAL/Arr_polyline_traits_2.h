@@ -163,8 +163,7 @@ public:
     // { Base::Push_back_2::operator()(xcv, seg); }
 
     /* Append a point `p` to an existing polyline `cv` at the back. */
-    void operator()(Curve_2& cv, const Point_2& p) const
-    {
+    void operator()(Curve_2& cv, const Point_2& p) const {
       typedef typename Curve_2::size_type size_type;
       size_type num_seg = cv.number_of_subcurves();
       CGAL_precondition(num_seg > 0);
@@ -172,8 +171,8 @@ public:
 
       const Segment_traits_2* seg_traits =
         this->m_poly_traits.subcurve_traits_2();
-      typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        seg_traits->compare_endpoints_xy_2_object();
+      auto cmp_seg_endpts = seg_traits->compare_endpoints_xy_2_object();
+      auto ctr = seg_traits->construct_curve_2_object();
 
       /* Since it is desired to maintain `cv` well-oriented, we have
        * to append the segment [cv[last_seg].target(),p]. The
@@ -181,14 +180,12 @@ public:
        * the target, i.e. the actual end of `cv`.
        */
       if (cmp_seg_endpts(cv[last_seg]) == SMALLER) {
-        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-          seg_traits->construct_max_vertex_2_object();
-        cv.push_back(Subcurve_2(get_max_v(cv[last_seg]), p));
+        auto get_max_v = seg_traits->construct_max_vertex_2_object();
+        cv.push_back(ctr(get_max_v(cv[last_seg]), p));
       }
       else {
-        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-          seg_traits->construct_min_vertex_2_object();
-        cv.push_back(Subcurve_2(get_min_v(cv[last_seg]), p));
+        auto get_min_v = seg_traits->construct_min_vertex_2_object();
+        cv.push_back(ctr(get_min_v(cv[last_seg]), p));
       }
     }
 
@@ -276,8 +273,7 @@ public:
     // { Base::Push_front_2::operator()(xcv, seg); }
 
     /* Append a point `p` to an existing polyline `cv` at the front. */
-    void operator()(Curve_2& cv, const Point_2& p) const
-    {
+    void operator()(Curve_2& cv, const Point_2& p) const {
       CGAL_precondition_code
         (
          typedef typename Curve_2::size_type size_type;
@@ -287,18 +283,16 @@ public:
 
       const Segment_traits_2* geom_traits =
         this->m_poly_traits.subcurve_traits_2();
-      typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        geom_traits->compare_endpoints_xy_2_object();
+      auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
+      auto ctr = geom_traits->construct_curve_2_object();
 
       if (cmp_seg_endpts(cv[0]) == SMALLER) {
-        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-          geom_traits->construct_min_vertex_2_object();
-        cv.push_front(Subcurve_2(p, get_min_v(cv[0])));
+        auto get_min_v = geom_traits->construct_min_vertex_2_object();
+        cv.push_front(ctr(p, get_min_v(cv[0])));
       }
       else {
-        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-          geom_traits->construct_max_vertex_2_object();
-        cv.push_front(Subcurve_2(p, get_max_v(cv[0])));
+        auto get_max_v = geom_traits->construct_max_vertex_2_object();
+        cv.push_front(ctr(p, get_max_v(cv[0])));
       }
     }
 
@@ -369,8 +363,11 @@ public:
 
     /* Obtain an polyline connecting two given endpoints.
      */
-    Curve_2 operator()(const Point_2& p, const Point_2& q) const
-    { return Curve_2(Subcurve_2(p, q)); }
+    Curve_2 operator()(const Point_2& p, const Point_2& q) const {
+      const Segment_traits_2* seg_traits =
+        this->m_poly_traits.subcurve_traits_2();
+      return seg_traits->construct_curve_2_object()(p, q);
+    }
 
     /* Obtain a polyline consists of one given segment.
      */
@@ -433,7 +430,9 @@ public:
       auto point_pair_to_segment = [&](const Zip_iterator_ref& t)->Subcurve_2 {
         CGAL_precondition_msg(! equal(boost::get<0>(t), boost::get<1>(t)),
                               "Cannot construct a degenerated segment");
-        return Subcurve_2(boost::get<0>(t), boost::get<1>(t));
+        const Segment_traits_2* seg_traits =
+          this->m_poly_traits.subcurve_traits_2();
+        return seg_traits->construct_curve_2_object()(boost::get<0>(t), boost::get<1>(t));
       };
       auto begin_next = std::next(begin);
       auto end_prev = std::prev(end);

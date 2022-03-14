@@ -285,12 +285,6 @@ using std::min;
 using std::max;
 #endif
 
-//-------------------------------------------------------------------//
-// Is Geomview usable ?
-//#if !defined(_MSC_VER) && !defined(__MINGW32__)
-//#  define CGAL_USE_GEOMVIEW
-//#endif
-
 
 //-------------------------------------------------------------------//
 // Compilers provide different macros to access the current function name
@@ -529,7 +523,7 @@ namespace cpp11{
 /// Macro `CGAL_WARNING`.
 /// Must be used with `#pragma`, this way:
 ///
-///     #pragma CGAL_WARNING(This line should trigger a warning)
+///     #pragma CGAL_WARNING("This line should trigger a warning")
 ///
 /// @{
 #ifdef BOOST_MSVC

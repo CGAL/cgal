@@ -421,6 +421,3 @@ void Scene_c3t3_item::copyProperties(Scene_item *item)
   show_cnc(c3t3_item->has_cnc());
 
 }
-
-#include "Scene_c3t3_item.moc"
-

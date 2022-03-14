@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 
   std::size_t number_of_patches
     = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
-                                    PMP::parameters::vertex_incident_patches_map(vip));
+                                    CGAL::parameters::vertex_incident_patches_map(vip));
 
   std::size_t nb_sharp_edges = 0;
   for(boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))

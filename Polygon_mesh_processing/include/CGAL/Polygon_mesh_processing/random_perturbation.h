@@ -19,7 +19,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/AABB_tree.h>
@@ -152,11 +152,11 @@ namespace internal {
 * \cgalNamedParamsEnd
 *
 */
-template<typename VertexRange, typename TriangleMesh, typename NamedParameters>
+template<typename VertexRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 void random_perturbation(VertexRange vertices
                        , TriangleMesh& tmesh
                        , const double& perturbation_max_size
-                       , const NamedParameters& np)
+                       , const NamedParameters& np = parameters::default_values())
 {
   typedef TriangleMesh PM;
   using parameters::get_parameter;
@@ -212,32 +212,13 @@ void random_perturbation(VertexRange vertices
 * \ingroup PMP_meshing_grp
 * @brief same as above, but all non-border vertices of `tmesh` are perturbed.
 */
-template<typename TriangleMesh, typename NamedParameters>
+template<typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 void random_perturbation(TriangleMesh& tmesh
                        , const double& perturbation_max_size
-                       , const NamedParameters& np)
+                       , const NamedParameters& np = parameters::default_values())
 {
   random_perturbation(vertices(tmesh), tmesh, perturbation_max_size, np);
 }
-
-template<typename VertexRange, typename TriangleMesh>
-void random_perturbation(VertexRange vertices
-                       , TriangleMesh& tmesh
-                       , const double& perturbation_max_size)
-{
-  random_perturbation(vertices, tmesh, perturbation_max_size,
-                      parameters::all_default());
-}
-
-template<typename TriangleMesh>
-void random_perturbation(TriangleMesh& tmesh
-                       , const double& perturbation_max_size)
-{
-  random_perturbation(tmesh,
-                      perturbation_max_size,
-                      parameters::all_default());
-}
-
 } //end namespace Polygon_mesh_processing
 } //end namespace CGAL
 

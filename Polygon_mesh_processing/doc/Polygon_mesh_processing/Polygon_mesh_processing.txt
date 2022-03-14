@@ -185,6 +185,14 @@ Shape smoothing of the devil model, using the mean curvature flow with a time st
 constraining border vertices (located at the neck, where the mesh is open).
 \cgalFigureCaptionEnd
 
+
+\subsubsection Extrusion
+
+This package provides two functions to extrude a triangle mesh with boundaries. A first one extrudes by offsetting each vertex by a user provided vector.
+A second one is more general: It takes two users provided functors which extrude "up" and "down".  In both cases the boundaries are connected by a triangle strip.
+Note that the extrusion may generate self intersecting surfaces.
+
+
 \subsection MeshingExamples Meshing Examples
 
 \subsubsection MeshingExample_1 Refine and Fair a Region on a Triangle Mesh
@@ -217,6 +225,17 @@ Since the boundary edges will be considered as constrained and protected in this
 Once this is done, remeshing is run on all the surface, with protection of constraints activated, for 3 iterations.
 
 \cgalExample{Polygon_mesh_processing/isotropic_remeshing_example.cpp}
+
+
+\subsubsection ExtrusionExample Extrusion of a Triangle Mesh
+
+The following example extrudes in both directions by projecting points along the vertex normal.
+In case the function `Bottom` was the identity this would have been a one-sided extrusion.
+
+\cgalExample{Polygon_mesh_processing/extrude.cpp}
+
+
+
 
 \section Coref_section Corefinement and Boolean Operations
 

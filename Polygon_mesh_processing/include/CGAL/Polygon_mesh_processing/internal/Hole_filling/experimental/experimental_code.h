@@ -121,7 +121,7 @@ triangulate_hole_polyline_incomplete(InputIterator pbegin, InputIterator pend,
   typedef Weight_incomplete<Weight_min_max_dihedral_and_area>      Weight;
   typedef Weight_calculator<Weight, Is_valid_degenerate_triangle>  WC;
 
-  typedef std::vector<boost::tuple<int, int, int> >                   Facet_vector; /* deliberately not OutputIteratorValueType*/
+  typedef std::vector<std::tuple<int, int, int> >                     Facet_vector; /* deliberately not OutputIteratorValueType*/
   typedef std::back_insert_iterator<Facet_vector>                     OutIt;
   typedef Tracer_polyline_incomplete<Facet_vector::value_type, OutIt> Tracer;
   typedef std::pair<int, int> Range;

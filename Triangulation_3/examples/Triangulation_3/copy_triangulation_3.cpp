@@ -3,6 +3,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 
 #include <CGAL/point_generators_3.h>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 typedef CGAL::Exact_predicates_exact_constructions_kernel EPEC;
@@ -43,5 +44,5 @@ int main()
   dt3_epec.set_infinite_vertex(
     dt3_epec.tds().copy_tds( dt3_epic.tds(),dt3_epic.infinite_vertex(), Convert_vertex(), Convert_cell() ) );
 
-  CGAL_assertion( dt3_epec.is_valid() );
+  assert( dt3_epec.is_valid() );
 }

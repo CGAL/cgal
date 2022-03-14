@@ -22,7 +22,7 @@
 #include <CGAL/property_map.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
 #include "Color_map.h"
 
 typedef Scene_surface_mesh_item Scene_facegraph_item;
@@ -253,7 +253,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
 
         int nb_patch_ids = PMP::connected_components(pmesh
                                                      , fccmap
-                                                     , PMP::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
+                                                     , CGAL::parameters::edge_is_constrained_map(selection_item->constrained_edges_pmap())
                                                      .face_index_map(fim));
 
         for(face_descriptor f : faces(pmesh))

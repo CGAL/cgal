@@ -34,7 +34,7 @@ struct Distance {
   }
 
   double new_distance(double& dist, double old_off, double new_off,
-                      int cutting_dimension)  const {
+                      int /* cutting_dimension */)  const {
     return dist + new_off*new_off - old_off*old_off;
   }
 

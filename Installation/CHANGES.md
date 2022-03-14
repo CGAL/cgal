@@ -1,10 +1,42 @@
 Release History
 ===============
 
+
+[Release 5.5](https://github.com/CGAL/cgal/releases/tag/v5.5)
+-----------
+
+Release date: June 2022
+
+### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
+
+-   Added the member function `write_graphviz()` to the class The Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
+
+### [3D Convex Hulls](https://doc.cgal.org/5.5/Manual/packages.html#PkgConvexHull3)
+
+-   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.5/Manual/packages.html#PkgBGL)
+
+-   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html), which toggles the selected status of a graph: selected faces are deselected, and unselected faces are selected.
+
+### Combinatorial Maps
+
+- Removed old code deprecated in CGAL 4.9 and 4.10 (global fonctions, and information associated with darts).
+
+### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.5/Manual/packages.html#PkgMesh3)
+
+-   Added the function
+    [`remove_isolated_vertices()`](https://doc.cgal.org/5.5/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
+    as a post-processing step for the tetrahedral mesh generation.
+
+### [2D Polygons](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygon2)
+
+-   Add vertex, edge, and hole ranges.
+
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
-Release date: December 2021
+Release date: January 2022
 
 ### [General changes](https://doc.cgal.org/5.4/Manual/general_intro.html)
 
@@ -16,6 +48,10 @@ Release date: December 2021
     ([`CGAL::Exact_predicates_exact_constructions_kernel`](https://doc.cgal.org/5.4/Kernel_23/classCGAL_1_1Exact__predicates__exact__constructions__kernel.html))
     is now thread-safe.
     See changes in `2D and 3D Linear Geometry Kernel` for more details.
+
+-   The class `Geomview_stream` and all the dependent features have
+    been removed from CGAL. Those features were actually no longer
+    supported since CGAL-5.3 but it was not properly announced.
 
 ### [Shape Regularization](https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization) (new package)
 

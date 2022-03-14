@@ -35,7 +35,7 @@
 #include <boost/graph/subgraph.hpp>
 #include <boost/optional.hpp>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <vector>
@@ -1152,7 +1152,9 @@ private:
         target_px = max_nb_proxies;
       else
         target_px *= 2;
-      add_proxies_error_diffusion(target_px - m_proxies.size());
+      // if no proxies could be added, stop
+      if( add_proxies_error_diffusion(target_px - m_proxies.size()) == 0)
+        break;
       const FT err = run(nb_relaxations);
       error_drop = err / initial_err;
     }
@@ -1650,7 +1652,7 @@ private:
     typedef typename SubGraph::vertex_descriptor sg_vertex_descriptor;
     typedef std::vector<sg_vertex_descriptor> VertexVector;
 
-    typedef boost::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
+    typedef std::unordered_map<vertex_descriptor, sg_vertex_descriptor> VertexMap;
     typedef boost::associative_property_map<VertexMap> ToSGVertexMap;
     VertexMap vmap;
     ToSGVertexMap to_sgv_map(vmap);

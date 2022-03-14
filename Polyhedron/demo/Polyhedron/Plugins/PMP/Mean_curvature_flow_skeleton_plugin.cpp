@@ -236,7 +236,7 @@ public:
     // the algorithm is only applicable on a mesh
     // that has only one connected component
 
-    boost::unordered_map<boost::graph_traits<Face_graph>::face_descriptor,int> cc(num_faces(*pMesh));
+    std::unordered_map<boost::graph_traits<Face_graph>::face_descriptor,int> cc(num_faces(*pMesh));
     std::size_t num_component = PMP::connected_components(*pMesh, boost::make_assoc_property_map(cc));
 
     if (num_component != 1)

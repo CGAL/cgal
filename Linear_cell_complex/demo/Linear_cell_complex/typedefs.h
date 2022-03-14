@@ -20,7 +20,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Combinatorial_map_save_load.h>

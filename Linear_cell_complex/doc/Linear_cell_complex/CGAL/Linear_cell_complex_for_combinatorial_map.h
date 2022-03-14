@@ -22,10 +22,6 @@ Note that there is an additional, and undocumented, template parameter `CMap` fo
 \sa `CGAL::Linear_cell_complex_traits<d,K>`
 \sa `CGAL::Linear_cell_complex_min_items<d>`
 
-\deprecated Before CGAL 4.9, this class was named `%Linear_cell_complex`. This old name still exist for backward compatibility.
-
-\deprecated Before CGAL 4.9, `Items` had to define the type of dart used. This is now deprecated, the `Dart` type is no more defined in the item class, but replaced by the `Dart_info` type. See deprecated note in the `Linear_cell_complex_min_items` class. `CGAL_CMAP_DART_DEPRECATED` can be defined to keep the old behavior.
-
 */
 
 template< typename d, typename d2, typename LCCTraits, typename Items, typename Alloc >
