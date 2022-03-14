@@ -7,6 +7,7 @@
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup_extension.h>
@@ -33,15 +34,17 @@ void shuffle_soup(Polygons& polygons)
 template <typename K>
 bool test_orient(const bool save_oriented)
 {
+  std::cout << "test_orient() with K = " << typeid(K).name() << std::endl;
+
   typedef typename K::Point_3 Point_3;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
   typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > polygons;
-  if(!CGAL::IO::read_polygon_soup("meshes/elephant.off", points, polygons))
+  if(!CGAL::IO::read_polygon_soup(CGAL::data_file_path("meshes/elephant.off"), points, polygons))
   {
-    std::cerr << "Error: failed to read polygon soup.\n";
+    std::cerr << "Error " << __LINE__ << ": failed to read polygon soup.\n";
     return false;
   }
 
@@ -76,26 +79,28 @@ bool test_orient(const bool save_oriented)
 template <class K, class Tag>
 bool test_pipeline()
 {
+  std::cout << "test_pipeline() with K = " << typeid(K).name() << std::endl;
+
   typedef typename K::Point_3 Point_3;
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > polygons;
-  if(!CGAL::IO::read_polygon_soup("meshes/elephant.off", points, polygons))
+  if(!CGAL::IO::read_polygon_soup(CGAL::data_file_path("meshes/elephant.off"), points, polygons))
   {
-    std::cerr << "Error: failed to read polygon soup.\n";
-    return false;
-  }
-
-  Polyhedron ref1;
-  if(!CGAL::IO::read_polygon_mesh("meshes/elephant.off", ref1))
-  {
-    std::cerr << "Error: failed to read reference mesh.\n";
+    std::cerr << "Error " << __LINE__ << ": failed to read polygon soup.\n";
     return false;
   }
 
   shuffle_soup(polygons);
   std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
+
+  Polyhedron ref1;
+  if(!CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/elephant.off"), ref1))
+  {
+    std::cerr << "Error " << __LINE__ << ": failed to read reference mesh.\n";
+    return false;
+  }
 
   if(PMP::is_outward_oriented(ref1))
     PMP::reverse_face_orientations(ref1);
@@ -118,26 +123,55 @@ bool test_pipeline()
   if(PMP::connected_components(poly, fccmap, CGAL::parameters::face_index_map(fim)) != 1)
     return false;
 
+  if(PMP::is_outward_oriented(poly))
+    return false;
+
+  PMP::reverse_face_orientations(ref1);
+
+  std::vector<Point_3> ref_points;
+  std::vector<std::vector<std::size_t> > ref_polygons;
+  PMP::polygon_mesh_to_polygon_soup(ref1, ref_points, ref_polygons);
+
+  shuffle_soup(polygons);
+  std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
+
+  PMP::orient_triangle_soup_with_reference_triangle_soup(ref_points, ref_polygons, points, polygons);
+  if(!PMP::is_polygon_soup_a_polygon_mesh(polygons))
+  {
+    std::cerr << "Error: Orient_TS_with_ref_TS failed" << std::endl;
+    return false;
+  }
+
+  CGAL::clear(poly);
+  PMP::polygon_soup_to_polygon_mesh(points, polygons, poly);
+  if(!is_valid_polygon_mesh(poly) || !PMP::is_outward_oriented(poly))
+  {
+    std::cerr << "Error: result is not invalid or not outward oriented" << std::endl;
+    return false;
+  }
+
   return true;
 }
 
 int main()
 {
-  assert(test_orient<Epick>(false /*save_oriented*/));
-  //assert(test_orient<Epeck>(false /*save_oriented*/));
+  bool res = test_orient<Epick>(false /*save_oriented*/);
+  assert(res);
+//  res = test_orient<Epeck>(false /*save_oriented*/);
+//  assert(res);
 
-  int res = test_pipeline<Epick, CGAL::Sequential_tag>();
+  res = test_pipeline<Epick, CGAL::Sequential_tag>();
   assert(res);
 
-  //res = test_pipeline<Epeck, CGAL::Sequential_tag>();
-  //assert(res);
+//  res = test_pipeline<Epeck, CGAL::Sequential_tag>();
+//  assert(res);
 
 #if defined(CGAL_LINKED_WITH_TBB)
   res = test_pipeline<Epick, CGAL::Parallel_tag>();
   assert(res);
 
-  //res = test_pipeline<Epeck, CGAL::Parallel_tag>();
-  //assert(res);
+//  res = test_pipeline<Epeck, CGAL::Parallel_tag>();
+//  assert(res);
 #endif
 
   return 0;
