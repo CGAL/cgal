@@ -98,7 +98,7 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * \param ref_points the points of the reference soup
  * \param ref_faces the triangles of the reference soup
  * \param points the points of the soup
- * \param triangles the triangles of the soup
+ * \param faces the triangles of the soup
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
