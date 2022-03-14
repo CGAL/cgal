@@ -1224,11 +1224,9 @@ public:
       // if p and r1 are antipodal, compare the plane normals
       const Kernel& kernel = m_traits;
       auto opposite_3 = kernel.construct_opposite_direction_3_object();
-      // VC 10 does not like the following:
-      // if (!kernel.equal_3_object()(opposite_3(p), r1)) return EQUAL;
-      Direction_3 tmp1 = opposite_3(p);     // pacify msvc 10
-      if (kernel.equal_3_object()(tmp1, Direction_3(l1)) ||
-          kernel.equal_3_object()(tmp1, Direction_3(l2)))
+      Direction_3 opposite_p = opposite_3(p);
+      if (kernel.equal_3_object()(opposite_p, Direction_3(l1)) ||
+          kernel.equal_3_object()(opposite_p, Direction_3(l2)))
       {
         Sign xsign = Traits::x_sign(p);
         Sign ysign = Traits::y_sign(p);
@@ -1334,11 +1332,9 @@ public:
       // if p and r1 are antipodal, compare the plane normals
       const Kernel& kernel = m_traits;
       auto opposite_3 = kernel.construct_opposite_direction_3_object();
-      // VC 10 does not like the following:
-      // if (!kernel.equal_3_object()(opposite_3(p), r1)) return EQUAL;
-      Direction_3 tmp1 = opposite_3(p);     // pacify msvc 10
-      if (kernel.equal_3_object()(tmp1, Direction_3(r1)) ||
-          kernel.equal_3_object()(tmp1, Direction_3(r2)))
+      Direction_3 opposite_p = opposite_3(p);
+      if (kernel.equal_3_object()(opposite_p, Direction_3(r1)) ||
+          kernel.equal_3_object()(opposite_p, Direction_3(r2)))
       {
         Sign xsign = Traits::x_sign(p);
         Sign ysign = Traits::y_sign(p);
