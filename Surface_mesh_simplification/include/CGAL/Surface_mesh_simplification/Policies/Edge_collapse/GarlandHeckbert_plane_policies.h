@@ -21,12 +21,13 @@
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
+namespace internal {
 
 template <typename TriangleMesh, typename GeomTraits>
 class Plane_quadric_calculator
 {
-  typedef typename internal::GarlandHeckbert_matrix_types<GeomTraits>::Mat_4   Mat_4;
-  typedef typename internal::GarlandHeckbert_matrix_types<GeomTraits>::Col_4   Col_4;
+  typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4             Mat_4;
+  typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Col_4             Col_4;
 
 public:
   Plane_quadric_calculator() { }
@@ -37,7 +38,7 @@ public:
                                     const VertexPointMap point_map,
                                     const GeomTraits& gt) const
   {
-    return internal::construct_classic_plane_quadric_from_edge(he, tmesh, point_map, gt);
+    return construct_classic_plane_quadric_from_edge(he, tmesh, point_map, gt);
   }
 
   template <typename VertexPointMap>
@@ -46,7 +47,7 @@ public:
                                     const VertexPointMap point_map,
                                     const GeomTraits& gt) const
   {
-    return internal::construct_classic_plane_quadric_from_face(f, tmesh, point_map, gt);
+    return construct_classic_plane_quadric_from_face(f, tmesh, point_map, gt);
   }
 
   // @fixme unused?
@@ -73,19 +74,21 @@ public:
                                 const Col_4& p0,
                                 const Col_4& p1) const
   {
-    return internal::construct_optimal_point_singular<GeomTraits>(quadric, p0, p1);
+    return construct_optimal_point_singular<GeomTraits>(quadric, p0, p1);
   }
 };
+
+} // namespace internal
 
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_plane_policies
   : public internal::GarlandHeckbert_placement_base<
-             Plane_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>,
+             internal::Plane_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>,
     public internal::GarlandHeckbert_cost_base<
-             Plane_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>
+             internal::Plane_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>
 {
 public:
-  typedef Plane_quadric_calculator<TriangleMesh, GeomTraits>                   Quadric_calculator;
+  typedef internal::Plane_quadric_calculator<TriangleMesh, GeomTraits>         Quadric_calculator;
 
 private:
   typedef internal::GarlandHeckbert_placement_base<

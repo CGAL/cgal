@@ -27,6 +27,7 @@
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
+namespace internal {
 
 template <typename TriangleMesh, typename GeomTraits, typename FaceVarianceMap>
 class Probabilistic_plane_quadric_calculator
@@ -39,8 +40,8 @@ class Probabilistic_plane_quadric_calculator
   typedef Constant_property_map<face_descriptor, std::pair<FT, FT> >           Default_FVM;
   typedef typename Default::Get<FaceVarianceMap, Default_FVM>::type            Face_variance_map;
 
-  typedef typename internal::GarlandHeckbert_matrix_types<GeomTraits>::Mat_4   Mat_4;
-  typedef typename internal::GarlandHeckbert_matrix_types<GeomTraits>::Col_4   Col_4;
+  typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4             Mat_4;
+  typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Col_4             Col_4;
 
 private:
   // @fixme check the magic values
@@ -83,13 +84,13 @@ public:
     typedef typename GeomTraits::Point_3                                       Point_3;
     typedef typename GeomTraits::Vector_3                                      Vector_3;
 
-    const Vector_3 normal = internal::construct_edge_normal(he, tmesh, vpm, gt);
+    const Vector_3 normal = construct_edge_normal(he, tmesh, vpm, gt);
     const Point_3 p = get(vpm, source(he, tmesh));
 
     FT n_variance, p_variance;
     std::tie(n_variance, p_variance) = get(m_face_variance_map, face(he, tmesh));
 
-    return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, n_variance, p_variance);
+    return construct_prob_plane_quadric_from_normal(normal, p, gt, n_variance, p_variance);
   }
 
   template <typename VertexPointMap>
@@ -102,13 +103,13 @@ public:
     typedef typename GeomTraits::Point_3                                       Point_3;
     typedef typename GeomTraits::Vector_3                                      Vector_3;
 
-    const Vector_3 normal = internal::construct_unit_normal_from_face(f, tmesh, vpm, gt);
+    const Vector_3 normal = construct_unit_normal_from_face(f, tmesh, vpm, gt);
     const Point_3 p = get(vpm, source(halfedge(f, tmesh), tmesh));
 
     FT n_variance, p_variance;
     std::tie(n_variance, p_variance) = get(m_face_variance_map, f);
 
-    return internal::construct_prob_plane_quadric_from_normal(normal, p, gt, n_variance, p_variance);
+    return construct_prob_plane_quadric_from_normal(normal, p, gt, n_variance, p_variance);
   }
 
   Col_4 construct_optimal_point(const Mat_4& quadric,
@@ -116,9 +117,11 @@ public:
                                 const Col_4& /*p1*/) const
   {
     // @fixme check this
-    return internal::construct_optimal_point_invertible<GeomTraits>(quadric);
+    return construct_optimal_point_invertible<GeomTraits>(quadric);
   }
 };
+
+} // namespace internal
 
 // Implements probabilistic plane quadrics,
 // optionally takes a face variance map giving a per-face variance
@@ -127,14 +130,14 @@ template<typename TriangleMesh,
          typename FaceVarianceMap = CGAL::Default>
 class GarlandHeckbert_probabilistic_plane_policies
   : public internal::GarlandHeckbert_placement_base<
-             Probabilistic_plane_quadric_calculator<TriangleMesh, GeomTraits, FaceVarianceMap>,
+             internal::Probabilistic_plane_quadric_calculator<TriangleMesh, GeomTraits, FaceVarianceMap>,
              TriangleMesh, GeomTraits>,
     public internal::GarlandHeckbert_cost_base<
-             Probabilistic_plane_quadric_calculator<TriangleMesh, GeomTraits, FaceVarianceMap>,
+             internal::Probabilistic_plane_quadric_calculator<TriangleMesh, GeomTraits, FaceVarianceMap>,
              TriangleMesh, GeomTraits>
 {
 public:
-  typedef Probabilistic_plane_quadric_calculator<
+  typedef internal::Probabilistic_plane_quadric_calculator<
             TriangleMesh, GeomTraits, FaceVarianceMap>                         Quadric_calculator;
 
 private:
