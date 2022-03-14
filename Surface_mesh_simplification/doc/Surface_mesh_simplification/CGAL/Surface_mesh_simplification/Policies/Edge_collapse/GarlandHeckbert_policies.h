@@ -13,7 +13,7 @@ based on the Garland-Heckbert strategy (Section \ref SurfaceMeshSimplificationGa
 both oracles must indeed be used together as they internally use and share information
 associating quadrics to vertices.
 
-Note however, that they may still be wrapped with slight behavior modifying classes
+Note however, that they may still be wrapped with behavior modifying classes
 such as `Constrained_placement` or `Bounded_normal_change_placement`.
 
 \tparam TriangleMesh is the type of surface mesh being simplified, and must be a model
