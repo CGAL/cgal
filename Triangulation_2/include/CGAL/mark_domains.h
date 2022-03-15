@@ -73,7 +73,7 @@ mark_domains(CDT& cdt, InDomainPmap ipm)
   typedef typename CDT::Face_handle Face_handle;
   typedef typename CDT::Edge Edge;
 
-  typename Unique_hash_map<Face_handle,int> nesting_level(-1, cdt.number_of_faces());
+  Unique_hash_map<Face_handle,int> nesting_level(-1, cdt.number_of_faces());
 
   for(Face_handle f : cdt.all_face_handles()){
     put(ipm, f, false);
