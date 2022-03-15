@@ -11,7 +11,7 @@ to constrained edges bounding the former set and increase the nesting level by 1
 Facets in the domain are those with an odd nesting level.
 
 \tparam CT a constrained triangulation
-\tparam InDomainPmap a modifiable property map with `CT::Face_handle` as key type and `bool` as value type.
+\tparam InDomainPmap a class model of `ReadWritePropertyMap` with `CT::Face_handle` as key type and `bool` as value type.
 */
 template <typename CT, typename InDomainPmap>
 void
