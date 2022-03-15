@@ -3,6 +3,7 @@
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/mark_domain_in_triangulation.h>
 #include <CGAL/draw_constrained_triangulation_2.h>
 
 #include <iostream>
@@ -40,14 +41,12 @@ int main()
   cdt.insert_constraint(vc, vd);
   cdt.insert_constraint(vd, va);
 
-  std::list<Point> list_of_seeds;
-
-  list_of_seeds.push_back(Point(0, 0));
+  CGAL::mark_domain_in_triangulation(cdt);
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
 
   std::cout << "Meshing the domain..." << std::endl;
-  CGAL::refine_Delaunay_mesh_2(cdt, list_of_seeds.begin(), list_of_seeds.end(),
+  CGAL::refine_Delaunay_mesh_2(cdt,
                                Criteria());
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;

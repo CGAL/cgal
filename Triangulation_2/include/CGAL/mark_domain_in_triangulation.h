@@ -19,30 +19,12 @@
 
 #include <boost/property_map/property_map.hpp>
 
+#include <CGAL/Triangulation_2/internal/In_domain.h>
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
 
 namespace internal {
-
-template <typename CDT>
-struct In_domain {
-
-  typedef typename CDT::Face_handle key_type;
-  typedef bool value_type;
-  typedef bool reference;
-  typedef boost::read_write_property_map_tag category;
-
-  friend bool get(In_domain, const key_type& k)
-  {
-    return k->is_in_domain();
-  }
-
-  friend void put(In_domain, const key_type& k, const value_type& v)
-  {
-    k->set_in_domain(v);
-  }
-};
 
 template <typename CDT, typename InDomainPmap>
 void
@@ -117,7 +99,7 @@ mark_domain_in_triangulation(CDT& cdt, InDomainPmap ipm)
 }
 
 
-template <typename CDT, typename InDomainPmap>
+template <typename CDT>
 void
 mark_domain_in_triangulation(CDT& cdt)
 {

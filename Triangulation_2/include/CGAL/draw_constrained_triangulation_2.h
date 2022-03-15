@@ -19,6 +19,7 @@
 
 #include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Constrained_triangulation_2.h>
+#include <CGAL/Triangulation_2/internal/In_domain.h>
 
 namespace CGAL
 {
@@ -121,7 +122,7 @@ protected:
 // Specialization of draw function.
 #define CGAL_T2_TYPE CGAL::Constrained_triangulation_2<Gt, Tds, Itag>
 
-  template<class Gt, class Tds, class Itag, class InDomainPmap>
+template<class Gt, class Tds, class Itag, class InDomainPmap>
 void draw(const CGAL_T2_TYPE& at2,
           InDomainPmap ipm,
           const char* title="Constrained_triangulation_2 Basic Viewer",
@@ -144,6 +145,16 @@ void draw(const CGAL_T2_TYPE& at2,
     mainwindow.show();
     app.exec();
   }
+}
+
+
+template<class Gt, class Tds, class Itag>
+void draw(const CGAL_T2_TYPE& at2,
+          const char* title="Constrained_triangulation_2 Basic Viewer",
+          bool nofill=false)
+{
+  internal::In_domain<CGAL_T2_TYPE> in_domain;
+  draw(at2, in_domain, title, nofill);
 }
 
 #undef CGAL_T2_TYPE
