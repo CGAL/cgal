@@ -3033,7 +3033,7 @@ namespace CartesianKernelFunctors {
     }
 
     Vector_3
-    operator()( Origin o , const Point_3& q, const Point_3& r ) const
+    operator()( Origin, const Point_3& q, const Point_3& r ) const
     {
       // Cross product oq * or
       FT vx = q.y()*r.z() - r.y()*q.z();
@@ -4320,7 +4320,7 @@ namespace CartesianKernelFunctors {
     }
 
     result_type
-    operator()( Origin o, const Point_3& u,
+    operator()( Origin, const Point_3& u,
                 const Point_3& v, const Point_3& w) const
     {
       return orientationC3(u.x(), u.y(), u.z(),
