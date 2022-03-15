@@ -38,6 +38,7 @@ namespace Polygon_mesh_processing {
 
 /*!
  * \ingroup PMP_orientation_grp
+ *
  * duplicates each point \a p at which the intersection
  * of an infinitesimally small ball centered at \a p
  * with the polygons incident to it is not a topological disk.
@@ -96,12 +97,31 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * \tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                       whose `value_type` is a model of the concept `RandomAccessContainer`
  *                       whose `value_type` is `std::size_t`and is of size 3.
+ * \tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+ * \tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param ref_points the points of the reference soup
  * \param ref_faces triples of indices of points in `ref_points` defining the triangles of the reference soup
- * \param points the points of the soup
- * \param faces  triples of indices of points in `points` defining the triangles of the soup
- * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param points the points of the soup to be oriented
+ * \param faces triples of indices of points in `points` defining the triangles of the soup
+ * \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the point set `ref_points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `ReferencePointRange` and whose value type is `geom_traits::Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{point_map}
@@ -110,16 +130,9 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  *                    of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
  *     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
  *   \cgalParamNEnd
- *
- *   \cgalParamNBegin{geom_traits}
- *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{The traits class must provide the nested functor `Collinear_3` to check whether three points are collinear. }
- *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
- *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- * \attention The types of points in `PointRange`, `geom_traits`, and `vertex_point_map` must be the same.
+ * \attention The types of points in `ReferencePointRange`, `PointRange`, and `geom_traits` must be the same.
  */
 template <class Concurrency_tag = CGAL::Sequential_tag,
           class ReferencePointRange, class ReferenceFaceRange, class PointRange, class FaceRange,
@@ -227,10 +240,10 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
  *                       whose `value_type` is `std::size_t`and of size 3
  * \tparam TriangleMesh a model of `FaceListGraph`
  *
- * \param tm_ref the reference triangle_mesh.
- * \param points the points of the soup.
- * \param triangles the triangles of the soup.
- * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ * \param tm_ref the reference triangle_mesh
+ * \param points the points of the soup
+ * \param triangles the triangles of the soup
+ * \param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
@@ -242,9 +255,19 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
  *
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{The traits class must provide the nested functor `Collinear_3` to check whether three points are collinear. }
+ *     \cgalParamType{a class model of `Kernel`}
  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
- *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{point_map}
+ *     \cgalParamDescription{a property map associating points to the elements of the point set `points`}
+ *     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+ *                    of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`}
+ *     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
