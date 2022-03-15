@@ -33,6 +33,7 @@ void write_VTU(std::ostream& os,
 //!
 //! \param os the stream used for writing.
 //! \param tr the triangulated domain to be written.
+//! \param ipm the property map storing if a face is in the domain.
 //! \param mode decides if the data should be written in binary (`BINARY`)
 //!             or in \ascii (`ASCII`).
 //!

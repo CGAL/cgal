@@ -405,7 +405,7 @@ void write_VTU(std::ostream& os,
                const CDT& tr,
                Mode mode = BINARY)
 {
-  internal::In_domain<CDT> in_domain;
+  CGAL::internal::In_domain<CDT> in_domain;
   write_VTU(os, tr, in_domain, mode);
 }
 
