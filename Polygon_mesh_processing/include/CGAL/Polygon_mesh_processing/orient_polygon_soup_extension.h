@@ -8,7 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sebastien Loriot and Maxime Gimeno
+// Author(s)     : Sebastien Loriot
+//                 Maxime Gimeno
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_ORIENT_POLYGON_SOUP_EXTENSION_H
 #define CGAL_ORIENT_POLYGON_SOUP_EXTENSION_H
@@ -121,35 +123,56 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  */
 template <class Concurrency_tag = CGAL::Sequential_tag,
           class ReferencePointRange, class ReferenceFaceRange, class PointRange, class FaceRange,
-          class NamedParameters = parameters::Default_named_parameters>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange& ref_points,
                                                        const ReferenceFaceRange& ref_faces,
                                                        PointRange& points,
                                                        FaceRange& faces,
-                                                       const NamedParameters& np = parameters::default_values())
+                                                       const NamedParameters1& np1 = parameters::default_values(),
+                                                       const NamedParameters2& np2 = parameters::default_values())
 {
-  typedef Point_set_processing_3_np_helper<ReferencePointRange, NamedParameters> NP_helper;
-  typedef typename NP_helper::Const_point_map PointMap;
-  typedef typename boost::property_traits<PointMap>::value_type Point_3;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef Point_set_processing_3_np_helper<ReferencePointRange, NamedParameters1> NP_helper1;
+  typedef typename NP_helper1::Const_point_map PointMap1;
+
+  typedef Point_set_processing_3_np_helper<ReferencePointRange, NamedParameters2> NP_helper2;
+  typedef typename NP_helper2::Const_point_map PointMap2;
+  typedef typename boost::property_traits<PointMap2>::reference PM2_Point_ref;
+
+  typedef typename boost::property_traits<PointMap1>::value_type Point_3;
+  CGAL_static_assertion((std::is_same<Point_3, typename boost::property_traits<PointMap2>::value_type>::value));
+
   typedef typename CGAL::Kernel_traits<Point_3>::Kernel K;
   typedef typename K::Triangle_3 Triangle;
   typedef typename K::Vector_3 Vector;
 
-  PointMap point_map = NP_helper::get_const_point_map(points, np);
+  PointMap1 point_map1 = NP_helper1::get_const_point_map(ref_points, np1);
+  PointMap2 point_map2 = NP_helper2::get_const_point_map(points, np2);
 
+  K k = choose_parameter<K>(get_parameter(np1, internal_np::geom_traits));
+
+  typename K::Construct_centroid_3 centroid = k.construct_centroid_3_object();
+  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+  typename K::Is_degenerate_3 is_degenerate = k.is_degenerate_3_object();
+  typename K::Compute_scalar_product_3 scalar_product = k.compute_scalar_product_3_object();
+  typename K::Construct_cross_product_vector_3 cross_product = k.construct_cross_product_vector_3_object();
+
+  // build a tree filtering degenerate faces
   std::vector<Triangle> ref_triangles;
   ref_triangles.reserve(ref_faces.size());
   for(const auto& f : ref_faces)
   {
-    Triangle tr(get(point_map, ref_points[f[0]]),
-                get(point_map, ref_points[f[1]]),
-                get(point_map, ref_points[f[2]]));
+    Triangle tr(get(point_map1, ref_points[f[0]]),
+                get(point_map1, ref_points[f[1]]),
+                get(point_map1, ref_points[f[2]]));
 
-    if(!tr.is_degenerate())
+    if(!is_degenerate(tr))
       ref_triangles.emplace_back(tr);
   }
 
-  // build a tree filtering degenerate faces
   typedef typename std::vector<Triangle>::const_iterator Iterator;
   typedef CGAL::AABB_triangle_primitive<K, Iterator> Primitive;
   typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
@@ -160,17 +183,18 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
   tree.build();
   tree.accelerate_distance_queries();
 
-  auto process_facet = [&ref_triangles, &tree, &points, &faces](std::size_t fid)
+  auto process_facet = [&](const std::size_t fid)
   {
-    const Point_3& p0 = points[faces[fid][0]];
-    const Point_3& p1 = points[faces[fid][1]];
-    const Point_3& p2 = points[faces[fid][2]];
+    PM2_Point_ref p0 = get(point_map2, points[faces[fid][0]]);
+    PM2_Point_ref p1 = get(point_map2, points[faces[fid][1]]);
+    PM2_Point_ref p2 = get(point_map2, points[faces[fid][2]]);
+    const Point_3 mid = centroid(p0, p1, p2);
 
-    const Point_3 mid = CGAL::centroid(p0, p1, p2);
     auto pt_and_ref_tr = tree.closest_point_and_primitive(mid);
     const Triangle& ref_tr = *(pt_and_ref_tr.second);
-    Vector ref_n = cross_product(ref_tr[1] - ref_tr[0], ref_tr[2] - ref_tr[0]);
-    if(ref_n * cross_product(p1-p0, p2-p0) < 0)
+    Vector ref_n = cross_product(vector(ref_tr[0], ref_tr[1]),
+                                 vector(ref_tr[0], ref_tr[2]));
+    if(is_negative(scalar_product(ref_n, cross_product(vector(p0, p1), vector(p0, p2)))))
       std::swap(faces[fid][1], faces[fid][2]);
   };
 
@@ -228,31 +252,53 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
  */
 template <class Concurrency_tag = Sequential_tag,
           class PointRange, class TriangleRange, class TriangleMesh,
-          class NamedParameters = parameters::Default_named_parameters>
+          class NamedParameters1 = parameters::Default_named_parameters,
+          class NamedParameters2 = parameters::Default_named_parameters>
 void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_ref,
                                                        PointRange& points,
                                                        TriangleRange& triangles,
-                                                       const NamedParameters& np = parameters::default_values())
+                                                       const NamedParameters1& np1 = parameters::default_values(),
+                                                       const NamedParameters2& np2 = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   typedef boost::graph_traits<TriangleMesh> GrT;
   typedef typename GrT::face_descriptor face_descriptor;
-  typedef typename PointRange::value_type Point_3;
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type K;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type K;
+  typedef typename K::Vector_3 Vector;
 
-  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                         get_const_property_map(CGAL::vertex_point, tm_ref));
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
 
-  typedef std::function<bool(face_descriptor)> Face_predicate;
-  Face_predicate is_not_deg = [&tm_ref, np](face_descriptor f)
-  {
-    return !PMP::is_degenerate_triangle_face(f, tm_ref, np);
-  };
+  VPM vpm = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, tm_ref));
+
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters2> NP_helper;
+  typedef typename NP_helper::Const_point_map PointMap;
+  typedef typename boost::property_traits<PointMap>::reference PM2_Point_ref;
+
+  PointMap point_map = NP_helper::get_const_point_map(points, np2);
+
+  CGAL_static_assertion((std::is_same<Point_3, typename boost::property_traits<PointMap>::value_type>::value));
+
+  K k = choose_parameter<K>(get_parameter(np1, internal_np::geom_traits));
+
+  typename K::Construct_centroid_3 centroid = k.construct_centroid_3_object();
+  typename K::Construct_vector_3 vector = k.construct_vector_3_object();
+  typename K::Compute_scalar_product_3 scalar_product = k.compute_scalar_product_3_object();
+  typename K::Construct_cross_product_vector_3 cross_product = k.construct_cross_product_vector_3_object();
 
   // build a tree filtering degenerate faces
-  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Vpm> Primitive;
+  typedef std::function<bool(face_descriptor)> Face_predicate;
+  Face_predicate is_not_deg = [&](face_descriptor f)
+  {
+    return !PMP::is_degenerate_triangle_face(f, tm_ref, np1);
+  };
+
+  typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
   typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
 
   boost::filter_iterator<Face_predicate, typename GrT::face_iterator>
@@ -264,15 +310,17 @@ void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_re
   // now orient the faces
   tree.build();
   tree.accelerate_distance_queries();
-  auto process_facet = [&points, &tree, &tm_ref, &triangles](std::size_t fid)
+  auto process_facet = [&](const std::size_t fid)
   {
-    const Point_3& p0 = points[triangles[fid][0]];
-    const Point_3& p1 = points[triangles[fid][1]];
-    const Point_3& p2 = points[triangles[fid][2]];
-    const Point_3 mid = CGAL::centroid(p0, p1, p2);
+    PM2_Point_ref p0 = get(point_map, points[triangles[fid][0]]);
+    PM2_Point_ref p1 = get(point_map, points[triangles[fid][1]]);
+    PM2_Point_ref p2 = get(point_map, points[triangles[fid][2]]);
+    const Point_3 mid = centroid(p0, p1, p2);
+
     std::pair<Point_3, face_descriptor> pt_and_f = tree.closest_point_and_primitive(mid);
-    auto face_ref_normal = PMP::compute_face_normal(pt_and_f.second, tm_ref);
-    if(face_ref_normal * cross_product(p1-p0, p2-p0) < 0)
+    Vector face_ref_normal = PMP::compute_face_normal(pt_and_f.second, tm_ref,
+                                                      CGAL::parameters::vertex_point_map(vpm));
+    if(is_negative(scalar_product(face_ref_normal, cross_product(vector(p0,p1), vector(p0, p2)))))
       std::swap(triangles[fid][1], triangles[fid][2]);
   };
 
