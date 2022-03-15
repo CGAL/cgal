@@ -26,7 +26,10 @@ void write_VTU(std::ostream& os,
   //! The faces output are those for which `get(ipm, f)` returns
   //! `true` where `f`is a  `CDT::Face_handle`,
 //! the edges are those for which `ConstrainedTriangulationFaceBase_2::is_constrained()` returns `true`.
-//! \tparam CDT a `Constrained_Delaunay_triangulation_2` with face type model of `DelaunayMeshFaceBase_2`.
+//! \tparam CDT a `Constrained_Delaunay_triangulation_2` with face
+//! type model of `DelaunayMeshFaceBase_2`.
+//! \tparam InDomainPmap a class model of `ReadWritePropertyMap` with
+//! `CDT::Face_handle` as key type and `bool` as value type.
 //!
 //! \param os the stream used for writing.
 //! \param tr the triangulated domain to be written.

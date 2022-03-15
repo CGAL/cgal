@@ -20,6 +20,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/IO/VTK/VTK_writer.h>
+#include <CGAL/Triangulation_2/internal/In_domain.h>
 
 #include <iostream>
 #include <vector>
