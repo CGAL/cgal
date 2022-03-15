@@ -41,7 +41,7 @@ public:
   /// @{
 
   /*!
-  Initializes the Garland-Heckbert "Probabilistic Triangle" policies.
+  initializes the Garland-Heckbert "Probabilistic Triangle" policies.
   */
   GarlandHeckbert_probabilistic_triangle_policies(TriangleMesh& tmesh);
 

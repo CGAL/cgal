@@ -41,7 +41,7 @@ public:
   /// @{
 
   /*!
-  Initializes the Garland-Heckbert Probabilistic Plane policies.
+  initializes the Garland-Heckbert Probabilistic Plane policies.
   */
   GarlandHeckbert_probabilistic_plane_policies(TriangleMesh& tmesh);
 

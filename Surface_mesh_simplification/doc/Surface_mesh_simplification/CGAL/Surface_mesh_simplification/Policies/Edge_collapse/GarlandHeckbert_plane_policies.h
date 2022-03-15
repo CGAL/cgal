@@ -40,7 +40,7 @@ public:
   /// @{
 
   /*!
-  Initializes the Garland-Heckbert Plane policies.
+  initializes the Garland-Heckbert Plane policies.
   */
   GarlandHeckbert_plane_policies(TriangleMesh& tmesh);
 

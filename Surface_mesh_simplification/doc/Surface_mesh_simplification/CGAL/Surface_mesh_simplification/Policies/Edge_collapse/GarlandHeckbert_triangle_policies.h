@@ -38,7 +38,7 @@ public:
   /// @{
 
   /*!
-  Initializes the Garland-Heckbert Triangle policies.
+  initializes the Garland-Heckbert Triangle policies.
   */
   GarlandHeckbert_triangle_policies(TriangleMesh& tmesh);
 
