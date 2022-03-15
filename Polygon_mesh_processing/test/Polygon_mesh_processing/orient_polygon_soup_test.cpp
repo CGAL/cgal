@@ -4,6 +4,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
+#include <CGAL/Cartesian_converter.h>
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -20,6 +21,9 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Epeck;
 
+typedef Epeck::Point_3 Exact_point;
+typedef CGAL::Cartesian_converter<Epick, Epeck> I2E;
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename Polygons>
@@ -28,7 +32,7 @@ void shuffle_soup(Polygons& polygons)
   // reverse orientation randomly
   for(std::size_t i=0; i<polygons.size(); ++i)
     if(std::rand() % 2 == 0)
-      std::reverse(std::begin(polygons[i]), std::end(polygons[i]));
+      std::swap(polygons[i][0], polygons[i][1]);
 }
 
 template <typename K>
@@ -67,7 +71,7 @@ bool test_orient(const bool save_oriented)
     PMP::polygon_soup_to_polygon_mesh(points, polygons, poly);
 
     if(save_oriented)
-      CGAL::IO::write_polygon_mesh("elephant-oriented.off", poly);
+      CGAL::IO::write_polygon_mesh("elephant-oriented.stl", poly, CGAL::parameters::use_binary_mode(false));
 
     if(!is_valid_polygon_mesh(poly))
       return false;
@@ -92,6 +96,11 @@ bool test_pipeline()
     return false;
   }
 
+  std::map<Point_3, Exact_point> i2e;
+  boost::associative_property_map<std::map<Point_3, Exact_point>> cpm(i2e);
+  for(const auto& p : points)
+    put(cpm, p, I2E()(p));
+
   shuffle_soup(polygons);
   std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
 
@@ -102,10 +111,19 @@ bool test_pipeline()
     return false;
   }
 
-  if(PMP::is_outward_oriented(ref1))
+  typedef CGAL::dynamic_vertex_property_t<Exact_point>                      Point_property;
+  typedef typename boost::property_map<Polyhedron, Point_property>::type    Custom_VPM;
+  Custom_VPM cvpm = get(Point_property(), ref1);
+  for(auto v : vertices(ref1))
+    put(cvpm, v, I2E()(get(CGAL::vertex_point, ref1, v)));
+
+  if(PMP::is_outward_oriented(ref1, CGAL::parameters::vertex_point_map(cvpm)))
     PMP::reverse_face_orientations(ref1);
 
-  PMP::orient_triangle_soup_with_reference_triangle_mesh<Tag>(ref1, points, polygons);
+  PMP::orient_triangle_soup_with_reference_triangle_mesh<Tag>(ref1, points, polygons,
+                                                              CGAL::parameters::vertex_point_map(cvpm),
+                                                              CGAL::parameters::point_map(cpm));
+
   PMP::duplicate_non_manifold_edges_in_polygon_soup(points, polygons);
 
   Polyhedron poly;
@@ -132,10 +150,17 @@ bool test_pipeline()
   std::vector<std::vector<std::size_t> > ref_polygons;
   PMP::polygon_mesh_to_polygon_soup(ref1, ref_points, ref_polygons);
 
+  std::map<Point_3, Exact_point> ref_i2e;
+  boost::associative_property_map<std::map<Point_3, Exact_point> > ref_cpm(ref_i2e);
+  for(const auto& p : ref_points)
+    put(ref_cpm, p, I2E()(p));
+
   shuffle_soup(polygons);
   std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
 
-  PMP::orient_triangle_soup_with_reference_triangle_soup(ref_points, ref_polygons, points, polygons);
+  PMP::orient_triangle_soup_with_reference_triangle_soup(ref_points, ref_polygons, points, polygons,
+                                                         CGAL::parameters::point_map(ref_cpm),
+                                                         CGAL::parameters::point_map(cpm));
   if(!PMP::is_polygon_soup_a_polygon_mesh(polygons))
   {
     std::cerr << "Error: Orient_TS_with_ref_TS failed" << std::endl;
@@ -162,7 +187,6 @@ int main()
 
   res = test_pipeline<Epick, CGAL::Sequential_tag>();
   assert(res);
-
 //  res = test_pipeline<Epeck, CGAL::Sequential_tag>();
 //  assert(res);
 
