@@ -85,20 +85,20 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
  *                         Possible values are `Sequential_tag` (the default),
  *                         `Parallel_if_available_tag`, and `Parallel_tag`.
- * \tparam ReferencePointRange a model of the concepts `RandomAccessContainer` whose value type is the point type.
+ * \tparam ReferencePointRange a model of the concept `RandomAccessContainer` whose `value_type` is the point type.
  * \tparam ReferenceTriangleRange a model of the concept `RandomAccessContainer`
  *                                whose `value_type` is a model of the concept `RandomAccessContainer`
- *                                whose `value_type` is `std::size_t`and of size 3.
+ *                                whose `value_type` is `std::size_t` and is of size 3.
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
- *                    and `BackInsertionSequence` whose value type is the point type.
+ *                    and `BackInsertionSequence` whose `value_type` is the point type.
  * \tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                       whose `value_type` is a model of the concept `RandomAccessContainer`
- *                       whose `value_type` is `std::size_t`and of size 3.
+ *                       whose `value_type` is `std::size_t`and is of size 3.
  *
  * \param ref_points the points of the reference soup
- * \param ref_faces the triangles of the reference soup
+ * \param ref_faces triples of indices of points in `ref_points` defining the triangles of the reference soup
  * \param points the points of the soup
- * \param faces the triangles of the soup
+ * \param faces  triples of indices of points in `points` defining the triangles of the soup
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -175,10 +175,10 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
   };
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
+  CGAL_static_assertion_msg (!(std::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
-  if(boost::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
+  if(std::is_convertible<Concurrency_tag,CGAL::Parallel_tag>::value)
     tbb::parallel_for(std::size_t(0), faces.size(), std::size_t(1), process_facet);
   else
 #endif
