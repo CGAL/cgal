@@ -44,7 +44,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("edge_collapse_garland_heckbert.cpp")
   target_link_libraries(edge_collapse_garland_heckbert PUBLIC CGAL::Eigen3_support)
 else()
-  message(STATUS "Garland-Heckbert polices require the Eigen library, which has not been found; related examples will not be compiled.")
+  message(STATUS "NOTICE: Garland-Heckbert polices require the Eigen library, which has not been found; related examples will not be compiled.")
 endif()
 
 if(OpenMesh_FOUND)
