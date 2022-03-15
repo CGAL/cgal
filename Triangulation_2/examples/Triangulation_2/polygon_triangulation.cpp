@@ -2,7 +2,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Polygon_2.h>
-#include <CGAL/mark_domains.h>
+#include <CGAL/mark_domain_in_triangulation.h>
 
 #include <iostream>
 #include <unordered_map>
