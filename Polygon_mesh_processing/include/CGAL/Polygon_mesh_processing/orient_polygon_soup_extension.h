@@ -44,10 +44,10 @@ namespace Polygon_mesh_processing {
  * with the polygons incident to it is not a topological disk.
  *
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose `value_type` is the point type.
+ * and `BackInsertionSequence` whose `value_type` is the point type
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose `value_type` is a model of the concept `RandomAccessContainer`
- * whose `value_type` is `std::size_t`, and is also a model of `BackInsertionSequence`.
+ * whose `value_type` is `std::size_t`, and is also a model of `BackInsertionSequence`
  *
  * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
  *               non-manifoldness or non-orientability issues.
@@ -88,12 +88,12 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
  *                         Possible values are `Sequential_tag` (the default),
  *                         `Parallel_if_available_tag`, and `Parallel_tag`.
- * \tparam ReferencePointRange a model of the concept `RandomAccessContainer` whose `value_type` is the point type.
+ * \tparam ReferencePointRange a model of the concept `RandomAccessContainer`
+ *                             whose `value_type` is the point type
  * \tparam ReferenceTriangleRange a model of the concept `RandomAccessContainer`
  *                                whose `value_type` is a model of the concept `RandomAccessContainer`
- *                                whose `value_type` is `std::size_t` and is of size 3.
- * \tparam PointRange a model of the concepts `RandomAccessContainer`
- *                    and `BackInsertionSequence` whose `value_type` is the point type.
+ *                                whose `value_type` is `std::size_t` and is of size 3
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose `value_type` is the point type
  * \tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                       whose `value_type` is a model of the concept `RandomAccessContainer`
  *                       whose `value_type` is `std::size_t`and is of size 3.
@@ -140,7 +140,7 @@ template <class Concurrency_tag = CGAL::Sequential_tag,
           class NamedParameters2 = parameters::Default_named_parameters>
 void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange& ref_points,
                                                        const ReferenceFaceRange& ref_faces,
-                                                       PointRange& points,
+                                                       const PointRange& points,
                                                        FaceRange& faces,
                                                        const NamedParameters1& np1 = parameters::default_values(),
                                                        const NamedParameters2& np2 = parameters::default_values())
@@ -233,8 +233,7 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
  *                         Possible values are `Sequential_tag` (the default),
  *                         `Parallel_if_available_tag`, and `Parallel_tag`.
- * \tparam PointRange a model of the concepts `RandomAccessContainer`
- *                    and `BackInsertionSequence` whose value type is the point type
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                       whose `value_type` is a model of the concept `RandomAccessContainer`
  *                       whose `value_type` is `std::size_t`and of size 3
@@ -278,7 +277,7 @@ template <class Concurrency_tag = Sequential_tag,
           class NamedParameters1 = parameters::Default_named_parameters,
           class NamedParameters2 = parameters::Default_named_parameters>
 void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_ref,
-                                                       PointRange& points,
+                                                       const PointRange& points,
                                                        TriangleRange& triangles,
                                                        const NamedParameters1& np1 = parameters::default_values(),
                                                        const NamedParameters2& np2 = parameters::default_values())
