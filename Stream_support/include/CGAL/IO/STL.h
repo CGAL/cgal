@@ -236,11 +236,9 @@ typename K::Vector_3 construct_normal_of_STL_face(const typename K::Point_3& p,
   if(k.collinear_3_object()(p, q, r))
     return k.construct_vector_3_object()(1, 0, 0);
 
-  const Vector pq = k.construct_vector_3_object()(p, q);
-  const Vector pr = k.construct_vector_3_object()(p, r);
-  Vector res = k.construct_cross_product_vector_3_object()(pq, pr);
+  Vector res = k.construct_orthogonal_vector_3_object()(p, q, r);
   const FT sql = k.compute_squared_length_3_object()(res);
-  res = k.construct_scaled_vector_3_object()(res, FT(1) / CGAL::approximate_sqrt(sql));
+  res = k.construct_divided_vector_3_object()(res, CGAL::approximate_sqrt(sql));
 
   return res;
 }
