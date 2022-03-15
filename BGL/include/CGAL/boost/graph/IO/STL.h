@@ -271,9 +271,9 @@ bool write_STL(std::ostream& os,
     for(const face_descriptor f : faces(g))
     {
       const halfedge_descriptor h = halfedge(f, g);
-      const Point_ref p = get(vpm, target(h, g));
-      const Point_ref q = get(vpm, target(next(h, g), g));
-      const Point_ref r = get(vpm, source(h, g));
+      Point_ref p = get(vpm, target(h, g));
+      Point_ref q = get(vpm, target(next(h, g), g));
+      Point_ref r = get(vpm, source(h, g));
 
       const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
@@ -296,9 +296,9 @@ bool write_STL(std::ostream& os,
     for(const face_descriptor f : faces(g))
     {
       const halfedge_descriptor h = halfedge(f, g);
-      const Point_ref p = get(vpm, target(h, g));
-      const Point_ref q = get(vpm, target(next(h, g), g));
-      const Point_ref r = get(vpm, source(h, g));
+      Point_ref p = get(vpm, target(h, g));
+      Point_ref q = get(vpm, target(next(h, g), g));
+      Point_ref r = get(vpm, source(h, g));
       const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       os << "facet normal " << n << "\nouter loop"<< "\n";
