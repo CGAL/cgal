@@ -26,17 +26,17 @@ namespace CGAL {
 
 namespace internal {
 
-template <typename CDT, typename InDomainPmap>
+template <typename CT, typename InDomainPmap>
 void
-mark_domain_in_triangulation(CDT& ct,
-                             Unique_hash_map<typename CDT::Face_handle,int>& nesting_level,
-                             typename CDT::Face_handle start,
+mark_domain_in_triangulation(CT& ct,
+                             Unique_hash_map<typename CT::Face_handle,int>& nesting_level,
+                             typename CT::Face_handle start,
                              int index,
-                             std::list<typename CDT::Edge>& border,
+                             std::list<typename CT::Edge>& border,
                              InDomainPmap ipm)
 {
-  typedef typename CDT::Face_handle Face_handle;
-  typedef typename CDT::Edge Edge;
+  typedef typename CT::Face_handle Face_handle;
+  typedef typename CT::Edge Edge;
 
   if(nesting_level[start] != -1){
     return;
@@ -73,12 +73,12 @@ mark_domain_in_triangulation(CDT& ct,
 //level of 0. Then we recursively consider the non-explored facets incident
 //to constrained edges bounding the former set and increase the nesting level by 1.
 //Facets in the domain are those with an odd nesting level.
-template <typename CDT, typename InDomainPmap>
+template <typename CT, typename InDomainPmap>
 void
-mark_domain_in_triangulation(CDT& cdt, InDomainPmap ipm)
+mark_domain_in_triangulation(CT& cdt, InDomainPmap ipm)
 {
-  typedef typename CDT::Face_handle Face_handle;
-  typedef typename CDT::Edge Edge;
+  typedef typename CT::Face_handle Face_handle;
+  typedef typename CT::Edge Edge;
 
   Unique_hash_map<Face_handle,int> nesting_level(-1, cdt.number_of_faces());
 
@@ -99,11 +99,11 @@ mark_domain_in_triangulation(CDT& cdt, InDomainPmap ipm)
 }
 
 
-template <typename CDT>
+template <typename CT>
 void
-mark_domain_in_triangulation(CDT& cdt)
+mark_domain_in_triangulation(CT& cdt)
 {
-  internal::In_domain<CDT> in_domain;
+  internal::In_domain<CT> in_domain;
   mark_domain_in_triangulation(cdt, in_domain);
 }
 
