@@ -45,7 +45,7 @@ int main( )
     in_domain(in_domain_map);
 
   //Mark facets that are inside the domain bounded by the polygon
-  CGAL::mark_domains(cdt, in_domain);
+  CGAL::mark_domain_in_triangulation(cdt, in_domain);
 
   int count=0;
   for (Face_handle f : cdt.finite_face_handles())

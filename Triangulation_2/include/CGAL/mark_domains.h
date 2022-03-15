@@ -9,27 +9,49 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_MARK_DOMAINS_H
-#define CGAL_MARK_DOMAINS_H
+#ifndef CGAL_MARK_DOMAIN_IN_TRIANGULATION_H
+#define CGAL_MARK_DOMAIN_IN_TRIANGULATION_H
 
 #include <CGAL/license/Triangulation_2.h>
 
 #include <list>
 #include <deque>
 
+#include <boost/property_map/property_map.hpp>
+
 #include <CGAL/Unique_hash_map.h>
 
 namespace CGAL {
 
+namespace internal {
 
-  template <typename CDT, typename InDomainPmap>
+template <typename CDT>
+struct In_domain {
+
+  typedef typename CDT::Face_handle key_type;
+  typedef bool value_type;
+  typedef bool reference;
+  typedef boost::read_write_property_map_tag category;
+
+  friend bool get(In_domain, const key_type& k)
+  {
+    return k->is_in_domain();
+  }
+
+  friend void put(In_domain, const key_type& k, const value_type& v)
+  {
+    k->set_in_domain(v);
+  }
+};
+
+template <typename CDT, typename InDomainPmap>
 void
-mark_domains(CDT& ct,
-             Unique_hash_map<typename CDT::Face_handle,int>& nesting_level,
-             typename CDT::Face_handle start,
-             int index,
-             std::list<typename CDT::Edge>& border,
-             InDomainPmap ipm)
+mark_domain_in_triangulation(CDT& ct,
+                             Unique_hash_map<typename CDT::Face_handle,int>& nesting_level,
+                             typename CDT::Face_handle start,
+                             int index,
+                             std::list<typename CDT::Edge>& border,
+                             InDomainPmap ipm)
 {
   typedef typename CDT::Face_handle Face_handle;
   typedef typename CDT::Edge Edge;
@@ -60,6 +82,9 @@ mark_domains(CDT& ct,
   }
 }
 
+} // namesapce internal
+
+
 //explore set of facets connected with non constrained edges,
 //and attribute to each such set a nesting level.
 //We start from facets incident to the infinite vertex, with a nesting
@@ -68,7 +93,7 @@ mark_domains(CDT& ct,
 //Facets in the domain are those with an odd nesting level.
 template <typename CDT, typename InDomainPmap>
 void
-mark_domains(CDT& cdt, InDomainPmap ipm)
+mark_domain_in_triangulation(CDT& cdt, InDomainPmap ipm)
 {
   typedef typename CDT::Face_handle Face_handle;
   typedef typename CDT::Edge Edge;
@@ -80,17 +105,26 @@ mark_domains(CDT& cdt, InDomainPmap ipm)
   }
 
   std::list<Edge> border;
-  mark_domains(cdt, nesting_level, cdt.infinite_face(), 0, border, ipm);
+  internal::mark_domain_in_triangulation(cdt, nesting_level, cdt.infinite_face(), 0, border, ipm);
   while(! border.empty()){
     Edge e = border.front();
     border.pop_front();
     Face_handle n = e.first->neighbor(e.second);
     if(nesting_level[n] == -1){
-      mark_domains(cdt, nesting_level, n, nesting_level[e.first]+1, border, ipm);
+      internal::mark_domain_in_triangulation(cdt, nesting_level, n, nesting_level[e.first]+1, border, ipm);
     }
   }
 }
 
+
+template <typename CDT, typename InDomainPmap>
+void
+mark_domain_in_triangulation(CDT& cdt)
+{
+  internal::In_domain<CDT> in_domain;
+  mark_domain_in_triangulation(cdt, in_domain);
+}
+
 } // namespace CGAL
 
-#endif // CGAL_MARK_DOMAINS_H
+#endif // CGAL_MARK_DOMAIN_IN_TRIANGULATION_H
