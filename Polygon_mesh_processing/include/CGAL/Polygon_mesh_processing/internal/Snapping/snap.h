@@ -653,7 +653,6 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
   typedef typename boost::property_traits<VPMS>::value_type                       Point;
   typedef typename boost::property_traits<VPMT>::reference                        Point_ref;
-  typedef typename GeomTraits::Vector_3                                           Vector;
 
   typedef std::pair<halfedge_descriptor, Point>                                   Vertex_with_new_position;
   typedef std::vector<Vertex_with_new_position>                                   Vertices_with_new_position;
