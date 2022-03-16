@@ -349,10 +349,8 @@ public:
 
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "locate "<<p);
-    typename SNC_structure::FT min_distance;
-    typename SNC_structure::FT tmp_distance;
     Object_handle result;
-    Vertex_handle v;
+    Vertex_handle v, closest;
     Halfedge_handle e;
     Halffacet_handle f;
     Object_list candidates = candidate_provider->objects_around_point(p);
@@ -366,23 +364,23 @@ public:
     if(p==v->point())
       return make_object(v);
 
-    min_distance = CGAL::squared_distance(v->point(),p);
-    result = make_object(v);
+    closest = v;
     ++o;
     while(o!=candidates.end() && CGAL::assign(v,*o)) {
       if ( p == v->point()) {
         _CGAL_NEF_TRACEN("found on vertex "<<v->point());
         return make_object(v);
       }
-      tmp_distance = CGAL::squared_distance(v->point(),p);
-      if(tmp_distance < min_distance) {
-        result = make_object(v);
-        min_distance = tmp_distance;
+
+      if(CGAL::has_smaller_distance_to_point(p, v->point(), closest->point())){
+        closest = v;
       }
       ++o;
     }
 
-    CGAL::assign(v, result);
+    v = closest;
+    result = make_object(v);
+
     Segment_3 s(p,v->point());
     // bool first = true;
     Point_3 ip;
