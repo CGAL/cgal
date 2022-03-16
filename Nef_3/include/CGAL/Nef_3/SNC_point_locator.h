@@ -484,8 +484,7 @@ public:
 
       //CGAL_warning("altered code in SNC_point_locator");
       SM_point_locator L(&*v);
-      //      Object_handle so = L.locate(s.source()-s.target(), true);
-      Object_handle so = L.locate(s.source()-s.target());
+      Object_handle so = L.locate(s.source()-s.target(), true);
       SFace_handle sf;
       if(CGAL::assign(sf,so))
         return make_object(sf->volume());
