@@ -319,7 +319,7 @@ public:
         }
       }
       else if( CGAL::assign( e, *o)) {
-        if ( is.does_contain_internally(Segment_3(e->source()->point(),e->twin()->source()->point()), p) ) {
+        if ( is.does_contain_internally(e->source()->point(), e->twin()->source()->point(), p) ) {
           _CGAL_NEF_TRACEN("found on edge "<<Segment_3(e->source()->point(),e->twin()->source()->point()));
           result = make_object(e);
           found = true;
@@ -417,7 +417,7 @@ public:
         //           (e->source() == v  || e->twin()->source() == v)) continue;
         Segment_3 ss(e->source()->point(),e->twin()->source()->point());
         CGAL_NEF_TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
-        if (is.does_contain_internally(ss, p)) {
+        if (is.does_contain_internally(e->source()->point(), e->twin()->source()->point(), p)) {
         _CGAL_NEF_TRACEN("found on edge "<< ss);
           return make_object(e);
         }
