@@ -168,7 +168,7 @@ static bool strong_refine_zero_against(Field& low, Field& high,
     std::cout << "done, " << has_common_root << std::endl;
 
     CGAL::Sign sign_p_low = p.sign_at(low);
-    CGAL::Sign sign_p_high = p.sign_at(high);
+    CGAL_assertion_code(CGAL::Sign sign_p_high = p.sign_at(high));
 
     Field mid;
     CGAL::Sign s;
@@ -191,7 +191,7 @@ static bool strong_refine_zero_against(Field& low, Field& high,
         else {
             CGAL_assertion(s == sign_p_high);
             high = mid;
-            sign_p_high = s; //bogus?
+            CGAL_assertion_code(sign_p_high = s); //bogus?
         }
     }
 
