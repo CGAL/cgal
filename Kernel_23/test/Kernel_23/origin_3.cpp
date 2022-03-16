@@ -22,7 +22,7 @@ int main(int argc, char* argv[] )
   std::cout << "Orientation_3" << std::endl;
   Timer t;
 
-  const int N = points.size()-3;
+  const std::size_t N = points.size()-3;
 
   const K::Orientation_3 orientation = K().orientation_3_object();
 
@@ -31,8 +31,8 @@ int main(int argc, char* argv[] )
   t.start();
   {
     std::cout << "overload with 4 points" << std::endl;
-    for(int k = 0; k < 100; ++k)
-    for(int i = 0; i < N; ++i){
+    for(std::size_t k = 0; k < 100; ++k)
+      for(std::size_t i = 0; i < N; ++i){
        Point_3 o(CGAL::ORIGIN);
       if(orientation(o, points[i], points[i+1], points[i+2]) == CGAL::POSITIVE){
         ++positive;
@@ -47,8 +47,8 @@ int main(int argc, char* argv[] )
   t.start();
   {
     std::cout << "overload with origin and 3 points" << std::endl;
-    for (int k = 0; k < 100; ++k)
-    for(int i = 0; i < N; ++i){
+    for (std::size_t k = 0; k < 100; ++k)
+      for(std::size_t i = 0; i < N; ++i){
       if(orientation(CGAL::ORIGIN, points[i], points[i+1], points[i+2]) == CGAL::POSITIVE){
         --positive;
      }
@@ -73,8 +73,8 @@ int main(int argc, char* argv[] )
  t.start();
   {
     std::cout << "overload with 3 points" << std::endl;
-    for(int k = 0; k < 100; ++k)
-      for(int i = 0; i < N; ++i){
+    for(std::size_t k = 0; k < 100; ++k)
+      for(std::size_t i = 0; i < N; ++i){
         Point_3 o(CGAL::ORIGIN);
         Vector_3 v = construct_orthogonal_vector(o, points[i], points[i+1]);
         sumx1 += CGAL::to_double(v.approx().x());
@@ -88,8 +88,8 @@ int main(int argc, char* argv[] )
   t.start();
   {
     std::cout << "overload with origin and 2 points" << std::endl;
-    for (int k = 0; k < 100; ++k)
-      for(int i = 0; i < N; ++i){
+    for (std::size_t k = 0; k < 100; ++k)
+      for(std::size_t i = 0; i < N; ++i){
         Vector_3 v = construct_orthogonal_vector(CGAL::ORIGIN, points[i], points[i+1]);
         sumx2 += CGAL::to_double(v.approx().x());
       }
