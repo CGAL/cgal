@@ -344,7 +344,6 @@ namespace Barycentric_coordinates {
   };
 
   /*!
-    \anchor seg_coord_global
   * \relates Segment_coordinates_2
   * This is a global function that takes both vertices of a segment and computes segment coordinates at a given query point with respect to these vertices.
 
