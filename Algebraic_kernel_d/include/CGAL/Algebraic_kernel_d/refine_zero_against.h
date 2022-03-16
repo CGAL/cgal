@@ -100,7 +100,7 @@ bool refine_zero_against(Field& low, Field& high, Polynomial p, Polynomial q) {
     if (CGAL::degree(q) == 0) return false;
 
     CGAL::Sign sign_p_low  = p.sign_at(low);
-    CGAL::Sign sign_p_high = p.sign_at(high);
+    CGAL::assertion_code(CGAL::Sign sign_p_high = p.sign_at(high));
     CGAL_precondition(sign_p_low  != CGAL::ZERO);
     CGAL_precondition(sign_p_high != CGAL::ZERO);
     CGAL_precondition(sign_p_high != sign_p_low);
@@ -148,9 +148,9 @@ bool refine_zero_against(Field& low, Field& high, Polynomial p, Polynomial q) {
             low = mid;
             sign_p_low = s;
         } else {
-            CGAL_postcondition(s == sign_p_high);
+            CGAL_assertion(s == sign_p_high);
             high = mid;
-            sign_p_high = s;
+            CGAL_assertion_code(sign_p_high = s);
         }
     }
 }
