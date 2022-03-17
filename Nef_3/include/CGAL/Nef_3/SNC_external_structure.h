@@ -1386,17 +1386,7 @@ public:
     SNC_simplify simp(*this->sncp());
     simp.vertex_simplificationI();
 
-    //    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool>
-      done(false);
 
-    /*
-    SHalfedge_iterator sei;
-    CGAL_forall_shalfedges(sei, *this->sncp()) {
-      hash[sei->get_forward_index()] = sei->get_forward_index();
-      hash[sei->get_backward_index()] = sei->get_backward_index();
-    }
-    */
 
     categorize_facet_cycles_and_create_facets();
     create_volumes();
