@@ -230,14 +230,14 @@ Point_3 orthogonal_pole() const
 { return CGAL::ORIGIN + sphere_circle().orthogonal_vector(); }
 
 CGAL::Orientation source_orientation(const CGAL::Sphere_point<R>& p) const
-{ return orientation(Point_3(CGAL::ORIGIN),
+{ return orientation(CGAL::ORIGIN,
                      orthogonal_pole(),
                      source(),
                      p);
 }
 
 CGAL::Orientation target_orientation(const CGAL::Sphere_point<R>& p) const
-{ return orientation(Point_3(CGAL::ORIGIN),
+{ return orientation(CGAL::ORIGIN,
                      target(),
                      orthogonal_pole(),
                      p);
