@@ -177,7 +177,7 @@ void split_halfcircle(Sphere_segment<R>& s1,
 /*{\Mop splits a halfcircle into two equally sized segments.
 \precond |\Mvar| is a halfcircle.}*/
 { CGAL_assertion( is_halfcircle() );
-  Plane_3 h(Point_3(CGAL::ORIGIN),(target()-CGAL::ORIGIN));
+  Plane_3 h(CGAL::ORIGIN,(target()-CGAL::ORIGIN));
   Sphere_point<R> p =
     CGAL::intersection(sphere_circle(),Sphere_circle<R>(h));
   if ( !has_on_after_intersection(p) ) p = p.antipode();
@@ -189,16 +189,16 @@ bool is_short() const
 /*{\Mop a segment is short iff it is shorter than a halfcircle.}*/
 {
   return R().orientation_3_object()(CGAL::ORIGIN,
-                                    Point_3(source()),
-                                    Point_3(target()),
+                                    source(),
+                                    target(),
                                     orthogonal_pole())
     == CGAL::POSITIVE; }
 
 bool is_long() const
 /*{\Mop a segment is long iff it is longer than a halfcircle.}*/
 { return R().orientation_3_object()(CGAL::ORIGIN,
-                                    Point_3(source()),
-                                    Point_3(target()),
+                                    source(),
+                                    target(),
                                     orthogonal_pole())
     == CGAL::NEGATIVE; }
 
@@ -230,17 +230,17 @@ Point_3 orthogonal_pole() const
 { return CGAL::ORIGIN + sphere_circle().orthogonal_vector(); }
 
 CGAL::Orientation source_orientation(const CGAL::Sphere_point<R>& p) const
-{ return orientation(CGAL::ORIGIN,
-                     orthogonal_pole(),
-                     source(),
-                     p);
+{ return R().orientation_3_object()(CGAL::ORIGIN,
+                                    orthogonal_pole(),
+                                    source(),
+                                    p);
 }
 
 CGAL::Orientation target_orientation(const CGAL::Sphere_point<R>& p) const
-{ return orientation(CGAL::ORIGIN,
-                     target(),
-                     orthogonal_pole(),
-                     p);
+{ return R().orientation_3_object()(CGAL::ORIGIN,
+                                    target(),
+                                    orthogonal_pole(),
+                                    p);
 }
 
 };
