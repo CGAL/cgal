@@ -236,7 +236,7 @@ public:
     );
   }
 
-  Sphere_map(const Self& D) : boundary_item_(boost::none, D.boundary_item_.size()),
+  Sphere_map(const Self& D) : boundary_item_(boost::none),
     svertices_(D.svertices_),
     sedges_(D.sedges_),
     sfaces_(D.sfaces_),
@@ -248,7 +248,6 @@ public:
   Self& operator=(const Self& D)
   { if ( this == &D ) return *this;
     clear();
-    boundary_item_.reserve(D.boundary_item_.size());
     svertices_ = D.svertices_;
     sfaces_ = D.sfaces_;
     sedges_ = D.sedges_;

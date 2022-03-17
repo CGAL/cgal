@@ -127,11 +127,6 @@ sets the table size.
 void reserve(std::size_t table_size);
 
 /*!
-gets the table size.
- */
-std::size_t size();
-
-/*!
 
 resets `*this` to the injective function from `Key` to the
 set of unused variables of type `Data`. The `default_data`

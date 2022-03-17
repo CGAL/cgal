@@ -113,8 +113,6 @@ public:
         return first2;
     }
 
-    std::size_t size() const { return m_map.size(); }
-
     void statistics() const { m_map.statistics(); }
 };
 

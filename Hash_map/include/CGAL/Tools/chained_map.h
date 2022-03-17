@@ -118,7 +118,6 @@ public:
    chained_map_item lookup(std::size_t x) const;
    chained_map_item first_item() const;
    chained_map_item next_item(chained_map_item it) const;
-   std::size_t size() const;
    void statistics() const;
 };
 
@@ -385,10 +384,6 @@ chained_map<T, Allocator>::next_item(chained_map_item it) const
   do it++; while (it < table + table_size && it->k == nullptrKEY);
   return (it < free ? it : 0);
 }
-
-template <typename T, typename Allocator>
-std::size_t chained_map<T, Allocator>::size() const
-{ return table_size; }
 
 template <typename T, typename Allocator>
 void chained_map<T, Allocator>::statistics() const

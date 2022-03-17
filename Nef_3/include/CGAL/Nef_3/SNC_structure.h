@@ -438,7 +438,7 @@ public:
   ~SNC_structure() { CGAL_NEF_TRACEN("~SNC_structure: clearing "<<this); clear(); }
 
   SNC_structure(const Self& D) :
-    boundary_item_(boost::none, D.boundary_item_.size()), sm_boundary_item_(boost::none, D.sm_boundary_item_.size()),
+    boundary_item_(boost::none), sm_boundary_item_(boost::none),
     vertices_(D.vertices_), halfedges_(D.halfedges_),
     halffacets_(D.halffacets_), volumes_(D.volumes_),
     shalfedges_(D.shalfedges_), shalfloops_(D.shalfloops_),
@@ -450,9 +450,7 @@ public:
       return *this;
     clear();
     boundary_item_.clear(boost::none);
-    boundary_item_.reserve(D.boundary_item_.size());
     sm_boundary_item_.clear(boost::none);
-    sm_boundary_item_.reserve(D.sm_boundary_item_.size());
     vertices_ = D.vertices_;
     halfedges_ = D.halfedges_;
     halffacets_ = D.halffacets_;
