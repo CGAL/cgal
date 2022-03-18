@@ -356,10 +356,10 @@ protected:
 
 // code generated using Herbie https://herbie.uwplse.org/
 inline
-double s2s2_interpt(double x0, double y0,
-                    double x1, double y1,
-                    double x2, double y2,
-                    double x3, double y3)
+double s2s2_alpha(double x0, double y0,
+                  double x1, double y1,
+                  double x2, double y2,
+                  double x3, double y3)
 {
 	double tmp;
 	if (x1 <= -9.794158788366665e-11) {
@@ -388,10 +388,10 @@ double s2s2_interpt(double x0, double y0,
 }
 
 template <class FT>
-FT s2s2_interpt(const FT& x0, const FT& y0,
-                const FT& x1, const FT& y1,
-                const FT& x2, const FT& y2,
-                const FT& x3, const FT& y3)
+FT s2s2_alpha(const FT& x0, const FT& y0,
+              const FT& x1, const FT& y1,
+              const FT& x2, const FT& y2,
+              const FT& x3, const FT& y3)
 {
   FT s1_dx = x0 - x1,
      s1_dy = y0 - y1,
@@ -449,7 +449,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
                                            : CGAL::make_array( _seg2->point(s2s2_id[c][2]), _seg2->point(s2s2_id[c][3]),
                                                                _seg1->point(s2s2_id[c][0]), _seg1->point(s2s2_id[c][1]) );
 
-    typename K::FT alpha =  s2s2_interpt(pts[0].x(), pts[0].y(), pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
+    typename K::FT alpha =  s2s2_alpha(pts[0].x(), pts[0].y(), pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
 
     _intersection_point = K().construct_barycenter_2_object()(pts[0], alpha, pts[1]);
 
