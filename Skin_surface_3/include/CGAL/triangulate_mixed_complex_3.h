@@ -15,7 +15,6 @@
 
 #include <CGAL/license/Skin_surface_3.h>
 
-// #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Compute_anchor_3.h>
 
 #include <CGAL/Triangulation_data_structure_3.h>
@@ -254,12 +253,6 @@ private:
   struct Index_c4 { Tmc_Vertex_handle V[4]; };
   struct Index_c6 { Tmc_Vertex_handle V[6]; };
   struct Index_c44 { Tmc_Vertex_handle V[4][4]; };
-  struct Index_v {
-    Unique_hash_map < Rt_Vertex_handle, Tmc_Vertex_handle > V;
-  };
-
-  // index to vertex
-  Unique_hash_map < Rt_Cell_handle, Index_c4 > index_03;
 
   Union_find_anchor                            anchor_del_uf, anchor_vor_uf;
   Simplex_UF_map                               anchor_del_map, anchor_vor_map;
