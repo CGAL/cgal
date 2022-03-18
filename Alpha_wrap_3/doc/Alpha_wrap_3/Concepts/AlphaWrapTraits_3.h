@@ -62,7 +62,7 @@ public:
 
   `FT operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`,
 
-  which returns the squared radius of the smallest sphere enclosing the points.
+  which return the squared radius of the smallest sphere enclosing the points.
   */
   typedef unspecified_type Compute_squared_radius_3;
 
@@ -93,7 +93,7 @@ public:
 
   `CGAL::Bbox_3 operator()(Tetrahedron_3 tet)`,
 
-  which returns the ball centered at `p` with squared radius `sqr`.
+  which return an axis-aligned bounding box that encloses the object.
   */
   typedef unspecified_type Construct_bbox_3;
 

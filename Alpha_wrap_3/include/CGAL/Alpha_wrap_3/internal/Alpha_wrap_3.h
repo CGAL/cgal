@@ -985,7 +985,7 @@ private:
     std::cout << "> Flood fill..." << std::endl;
 #endif
 
-    // Explore all finite cells that are reachable from one of the infinite cells.
+    // Explore all finite cells that are reachable from one of the initial outside cells.
     while(!m_queue.empty())
     {
 #ifdef CGAL_AW3_DEBUG_QUEUE_PP
@@ -1052,7 +1052,7 @@ private:
                             std::back_inserter(boundary_facets),
                             std::back_inserter(conflict_zone));
 
-        // Purge the queue of facets that will be modified with the Steiner point insertion,
+        // Purge the queue of facets that will be deleted/modified by the Steiner point insertion,
         // and which might have been gates
         for(const Cell_handle& cch : conflict_zone)
         {
@@ -1227,9 +1227,8 @@ private:
 
   bool is_manifold() const
   {
-    // Not the best complexity, but it's not so important for now.
-    // Better complexity --> PMP::non_manifold_vertices + throw
-
+    // Not the best complexity, but it's not important: this function is purely for information
+    // Better complexity --> see PMP::non_manifold_vertices + throw
     for(const Vertex_handle v : m_dt.finite_vertex_handles())
       if(is_non_manifold(v))
         return true;
