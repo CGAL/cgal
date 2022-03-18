@@ -1,12 +1,11 @@
 // Copyright (c) 2019-2022 Copyright holders.
 // All rights reserved.
 //
-// This file is part of the 3D Alpha Wrapping package, which is being prepared for
-// submission to CGAL (www.cgal.org).
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : TBA
