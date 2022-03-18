@@ -1,66 +1,46 @@
+// Copyright (c) 2022 GeometryFactory (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
+// Author(s)     : Sébastien Loriot, Jane Tournois
+//
+//******************************************************************************
+//
+//******************************************************************************
 
-#include <iostream>
+#ifndef CGAL_MESH_3_ADD_TRIPLE_LINE_FEATURES_H
+#define CGAL_MESH_3_ADD_TRIPLE_LINE_FEATURES_H
 
-#include <CGAL/Mesh_triangulation_3.h>
-#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_criteria_3.h>
-
-#include <CGAL/make_mesh_3.h>
-#include <CGAL/Image_3.h>
-
-/// [Domain definition]
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Mesh_domain_with_polyline_features_3.h>
-#include <CGAL/Labeled_mesh_domain_3.h>
+#include <vector>
 
 #include <CGAL/Mesh_3/triple_lines_extraction/combinations.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/cases_table.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/triple_lines.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/cube_isometries.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/coordinates.h>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
-typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
-/// [Domain definition]
-
-#ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
-// Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
-
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
-
-// Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
-
-/// [Add 1D features]
-#include "read_polylines.h"
-#include <CGAL/Mesh_3/polylines_to_protect.h> // undocumented header
-
-typedef K::Point_3 Point_3;
-typedef K::Vector_3 Vector_3;
-typedef std::vector<Point_3>  Polyline;
-typedef std::vector<Polyline> Polylines;
-
-
 #include <boost/range/join.hpp>
 
 
 // Protect the intersection of the object with the box of the image,
 // by declaring 1D-features. Note that `CGAL::polylines_to_protect` is
 // not documented.
-bool add_1D_features(const CGAL::Image_3& image,
-                     Mesh_domain& domain)
+template<typename Mesh_domain>
+bool add_triple_line_features(const CGAL::Image_3& image, Mesh_domain& domain)
 {
   typedef unsigned char Word_type;
+
+  using Gt = typename Mesh_domain::R;
+  using Point_3 = typename Gt::Point_3;
+  using Vector_3 = typename Gt::Vector_3;
+  using Polyline_type = std::vector<Point_3>;
+  using Polylines = std::vector<Polyline_type>;
+
   CGAL::Mesh_3::Triple_line_extractor<Point_3> lines;
 
   Polylines features_inside;
@@ -170,9 +150,9 @@ bool add_1D_features(const CGAL::Image_3& image,
             for (auto& polyline : cube_features) {
               for (auto& point : polyline) {
                 point = pa
-                      + point.x() * vu
-                      + point.y() * vv
-                      + point.z() * vw;
+                  + point.x() * vu
+                  + point.y() * vv
+                  + point.z() * vw;
                 point = { vx * point.x(),
                           vy * point.y(),
                           vz * point.z(), };
@@ -199,13 +179,13 @@ bool add_1D_features(const CGAL::Image_3& image,
   // short polylines that were generated per voxel.
   Polylines new_polylines_inside;
   CGAL::polylines_to_protect<Point_3>(new_polylines_inside,
-                                      features_inside.begin(),
-                                      features_inside.end());
+    features_inside.begin(),
+    features_inside.end());
 
   std::vector<std::vector<Point_3> > polylines_on_bbox;
   CGAL::polylines_to_protect<Point_3, Word_type>(image, polylines_on_bbox,
-                                                 new_polylines_inside.begin(),
-                                                 new_polylines_inside.end());
+    new_polylines_inside.begin(),
+    new_polylines_inside.end());
 
   domain.add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
 
@@ -223,46 +203,8 @@ bool add_1D_features(const CGAL::Image_3& image,
 
   return true;
 }
-/// [Add 1D features]
 
-int main(int argc, char* argv[])
-{
-  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/420.inr");
-  // Loads image
-  CGAL::Image_3 image;
-  if(!image.read(fname)){
-    std::cerr << "Error: Cannot read file " <<  fname << std::endl;
-    return EXIT_FAILURE;
-  }
 
-  // Domain
-  Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
 
-  /// Declare 1D-features, see above [Call add_1D_features]
-  if(!CGAL::Mesh_3::add_triple_line_features(image, domain)) {
-    return EXIT_FAILURE;
-  }
-  /// [Call add_1D_features]
 
-  CGAL::Bbox_3 bbox = domain.bbox();
-  double diag = CGAL::sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
-  double sizing_default = diag * 0.05;
-
-  /// Note that `edge_size` is needed with 1D-features [Mesh criteria]
-  Mesh_criteria criteria(edge_size = sizing_default,
-      facet_angle = 30, facet_size = sizing_default, facet_distance = sizing_default / 10,
-      facet_topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH,
-      cell_radius_edge_ratio = 0, cell_size = 0
-  );
-  /// [Mesh criteria]
-
-  // Meshing
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      CGAL::parameters::no_exude(),
-                                      CGAL::parameters::no_perturb());
-
-  // Output
-  CGAL::dump_c3t3(c3t3, "out");
-
-  return 0;
-}
+#endif //CGAL_MESH_3_ADD_TRIPLE_LINE_FEATURES_H
