@@ -157,14 +157,13 @@ public:
   }
 
   Modifiable_priority_queue(const Modifiable_priority_queue&) = delete;
-  Modifiable_priority_queue& operator=(const Modifiable_priority_queue& other) = delete;
+  Modifiable_priority_queue& operator=(const Modifiable_priority_queue&) = delete;
 
 public:
   handle_type push(const value_type& v)
   {
     CGAL_precondition(!contains(v));
     auto vid = get(mID, v);
-    CGAL_assertion(0 <= vid && vid < mHandles.size());
     mHandles[vid] = mHeap.push(v);
     return mHandles[vid];
   }
@@ -173,7 +172,6 @@ public:
   {
     CGAL_precondition(contains(v));
     auto vid = get(mID, v);
-    CGAL_assertion(0 <= vid && vid < mHandles.size());
     mHeap.update(mHandles[vid]);
   }
 
@@ -182,7 +180,6 @@ public:
     CGAL_precondition(contains(v));
     auto vid = get(mID, v);
     mHeap.erase(mHandles[vid]);
-    CGAL_assertion(0 <= vid && vid < mHandles.size());
     mHandles[vid] = handle_type();
   }
 
