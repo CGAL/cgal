@@ -70,9 +70,10 @@ class Ray_hit_generator : public Modifier_base<typename Nef_::SNC_and_PL> {
 
   Vertex_handle create_vertex_on_first_hit(const Ray_3& r) {
 
+    Vertex_handle null_vertex;
     CGAL_NEF_TRACEN( "shoot ray in SNC " << r );
 
-    Object_handle o = pl->shoot(r, mask);
+    Object_handle o = pl->shoot(r, null_vertex, mask);
 
     Vertex_handle v;
     if(assign(v, o)) {
