@@ -68,14 +68,6 @@ namespace CGAL {
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw3_interface).</li></ul>}
 *   \cgalParamNEnd
-*
-*   \cgalParamNBegin{do_subdivide_large_faces}
-*     \cgalParamDescription{whether to preprocess the input faces to limit their size or not}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{`true`}
-*     \cgalParamExtra{<ul><li>If the input contains very anisotropic triangles, this might improve performance.</li>
-*                         <li>The input is not modified.</li></ul>}
-*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \param out_np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -223,14 +215,6 @@ void alpha_wrap_3(const PointRange& points,
 *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
 *     \cgalParamExtra{<ul><li>The geometric traits class must be compatible with the point type.</li>
 *                         <li>The geometric traits should use a floating point number type (see \ref aw3_interface).</li></ul>}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{do_subdivide_large_faces}
-*     \cgalParamDescription{whether to preprocess the input faces to limit their size or not}
-*     \cgalParamType{Boolean}
-*     \cgalParamDefault{`true`}
-*     \cgalParamExtra{<ul><li>If the input contains very anisotropic triangles, this might improve performance.</li>
-*                         <li>The input is not modified.</li></ul>}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
