@@ -353,6 +353,55 @@ protected:
     mutable typename K::Point_2            _intersection_point, _other_point;
 };
 
+
+// code generated using Herbie https://herbie.uwplse.org/
+inline
+double s2s2_interpt(double x0, double y0,
+                    double x1, double y1,
+                    double x2, double y2,
+                    double x3, double y3)
+{
+	double tmp;
+	if (x1 <= -9.794158788366665e-11) {
+		tmp = -(x1 / (x0 - x1));
+	} else {
+		double t_0 = (y1 - y3) / (y1 - y0);
+		double tmp_1;
+		if (x1 <= -1.7579125018815487e-296) {
+			tmp_1 = t_0;
+		} else if (x1 <= 1.7250761038378636e-206) {
+			tmp_1 = x2 / ((fma(x2, y0, fma(y3, x0, (x1 * y2))) - fma(x2, y1, fma(y3, x1, (x0 * y2)))) / (y3 - y1));
+		} else if (x1 <= 3.6888389969707494e-205) {
+			tmp_1 = t_0;
+		} else if (x1 <= 1.4339509931401463e-80) {
+			tmp_1 = (fma(x1, y2, fma(y1, x3, (y3 * x2))) - fma(x2, y1, fma(x1, y3, (y2 * x3)))) / fma((x3 - x2), (y1 - y0), ((x0 - x1) * (y3 - y2)));
+		} else if (x1 <= 1.72960576050945e+52) {
+			tmp_1 = (y1 - y2) / (y1 - y0);
+		} else if (x1 <= 2.145089573601479e+104) {
+			tmp_1 = (x1 - x3) / (x1 - x0);
+		} else {
+			tmp_1 = (x1 - x2) / (x1 - x0);
+		}
+		tmp = tmp_1;
+	}
+	return tmp;
+}
+
+template <class FT>
+FT s2s2_interpt(const FT& x0, const FT& y0,
+                const FT& x1, const FT& y1,
+                const FT& x2, const FT& y2,
+                const FT& x3, const FT& y3)
+{
+  FT s1_dx = x0 - x1,
+     s1_dy = y0 - y1,
+     s2_dx = x3 - x2,
+     s2_dy = y3 - y2,
+     lx    = x3 - x1,
+     ly    = y3 - y1;
+  return (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
+}
+
 template <class K>
 typename Segment_2_Segment_2_pair<K>::Intersection_results
 Segment_2_Segment_2_pair<K>::intersection_type() const
@@ -400,14 +449,8 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
                                            : CGAL::make_array( _seg2->point(s2s2_id[c][2]), _seg2->point(s2s2_id[c][3]),
                                                                _seg1->point(s2s2_id[c][0]), _seg1->point(s2s2_id[c][1]) );
 
-    typename K::FT s1_dx = pts[0].x() - pts[1].x(),
-                   s1_dy = pts[0].y() - pts[1].y(),
-                   s2_dx = pts[3].x() - pts[2].x(),
-                   s2_dy = pts[3].y() - pts[2].y(),
-                   lx    = pts[3].x() - pts[1].x(),
-                   ly    = pts[3].y() - pts[1].y();
+    typename K::FT alpha =  s2s2_interpt(pts[0].x(), pts[0].y(), pts[1].x(), pts[1].y(), pts[2].x(), pts[2].y(), pts[3].x(), pts[3].y());
 
-    typename K::FT alpha =  (lx*s2_dy-ly*s2_dx)/(s1_dx*s2_dy-s1_dy*s2_dx);
     _intersection_point = K().construct_barycenter_2_object()(pts[0], alpha, pts[1]);
 
     return _result;
