@@ -282,7 +282,7 @@ T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>::chained_map(std::size_t n)
-  : table(nullptr), nullptrKEY(0), NONnullptrKEY(1), old_table(0), reserved_size(n)
+  : nullptrKEY(0), NONnullptrKEY(1), table(nullptr), old_table(0), reserved_size(n)
 {
 }
 
