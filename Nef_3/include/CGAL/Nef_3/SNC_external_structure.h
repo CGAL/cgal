@@ -914,7 +914,7 @@ public:
     number_of_ray_shooting_queries++;
     timer_ray_shooting.start();
 #endif
-    Object_handle o = pl->shoot(ray);
+    Object_handle o = pl->shoot(ray, vi);
 #ifdef CGAL_NEF3_TIMER_POINT_LOCATION
     timer_ray_shooting.stop();
 #endif
