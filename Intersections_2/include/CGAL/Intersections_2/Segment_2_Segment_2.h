@@ -361,30 +361,30 @@ double s2s2_alpha(double x0, double y0,
                   double x2, double y2,
                   double x3, double y3)
 {
-	double tmp;
-	if (x1 <= -9.794158788366665e-11) {
-		tmp = -(x1 / (x0 - x1));
-	} else {
-		double t_0 = (y1 - y3) / (y1 - y0);
-		double tmp_1;
-		if (x1 <= -1.7579125018815487e-296) {
-			tmp_1 = t_0;
-		} else if (x1 <= 1.7250761038378636e-206) {
-			tmp_1 = x2 / ((fma(x2, y0, fma(y3, x0, (x1 * y2))) - fma(x2, y1, fma(y3, x1, (x0 * y2)))) / (y3 - y1));
-		} else if (x1 <= 3.6888389969707494e-205) {
-			tmp_1 = t_0;
-		} else if (x1 <= 1.4339509931401463e-80) {
-			tmp_1 = (fma(x1, y2, fma(y1, x3, (y3 * x2))) - fma(x2, y1, fma(x1, y3, (y2 * x3)))) / fma((x3 - x2), (y1 - y0), ((x0 - x1) * (y3 - y2)));
-		} else if (x1 <= 1.72960576050945e+52) {
-			tmp_1 = (y1 - y2) / (y1 - y0);
-		} else if (x1 <= 2.145089573601479e+104) {
-			tmp_1 = (x1 - x3) / (x1 - x0);
-		} else {
-			tmp_1 = (x1 - x2) / (x1 - x0);
-		}
-		tmp = tmp_1;
-	}
-	return tmp;
+  double tmp;
+  if (x1 <= -9.794158788366665e-11) {
+    tmp = -(x1 / (x0 - x1));
+  } else {
+    double t_0 = (y1 - y3) / (y1 - y0);
+    double tmp_1;
+    if (x1 <= -1.7579125018815487e-296) {
+      tmp_1 = t_0;
+    } else if (x1 <= 1.7250761038378636e-206) {
+      tmp_1 = x2 / ((std::fma(x2, y0, std::fma(y3, x0, (x1 * y2))) - std::fma(x2, y1, std::fma(y3, x1, (x0 * y2)))) / (y3 - y1));
+    } else if (x1 <= 3.6888389969707494e-205) {
+      tmp_1 = t_0;
+    } else if (x1 <= 1.4339509931401463e-80) {
+      tmp_1 = (std::fma(x1, y2, std::fma(y1, x3, (y3 * x2))) - std::fma(x2, y1, std::fma(x1, y3, (y2 * x3)))) / std::fma((x3 - x2), (y1 - y0), ((x0 - x1) * (y3 - y2)));
+    } else if (x1 <= 1.72960576050945e+52) {
+      tmp_1 = (y1 - y2) / (y1 - y0);
+    } else if (x1 <= 2.145089573601479e+104) {
+      tmp_1 = (x1 - x3) / (x1 - x0);
+    } else {
+      tmp_1 = (x1 - x2) / (x1 - x0);
+    }
+    tmp = tmp_1;
+  }
+  return tmp;
 }
 
 template <class FT>
