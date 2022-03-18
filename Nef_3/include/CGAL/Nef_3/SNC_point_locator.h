@@ -234,7 +234,7 @@ public:
       CGAL_for_each( o, candidates) {
         if( CGAL::assign( v, *o) && ((mask&1) != 0)) {
           _CGAL_NEF_TRACEN("trying vertex on "<<v->point());
-          if( ray.source() != v->point() && ray.has_on(v->point())) {
+          if( (ray_source_vertex != v) && (ray.source() != v->point()) && ray.has_on(v->point())) {
             _CGAL_NEF_TRACEN("the ray intersects the vertex");
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
             CGAL_assertion_code
