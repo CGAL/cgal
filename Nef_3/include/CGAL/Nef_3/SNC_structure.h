@@ -221,38 +221,6 @@ public:
   typedef Vertex_handle Constructor_parameter;
   typedef Vertex_const_handle Constructor_const_parameter;
 
-  // Halffacet triangle
-
-  class Halffacet_triangle_const_handle : public Halffacet_const_handle {
-    typedef Halffacet_const_handle Base;
-    Triangle_3 triangle;
-  public:
-    Halffacet_triangle_const_handle() : Base() {}
-    Halffacet_triangle_const_handle( Halffacet_const_handle h, Triangle_3& t) :
-      Base(h), triangle(t) {}
-    Triangle_3 get_triangle() { return triangle; }
-    void transform(const Aff_transformation_3& t) {
-      triangle = Triangle_3(triangle[0].transform(t),
-                                  triangle[1].transform(t),
-                              triangle[2].transform(t));
-    }
-  };
-
-  class Halffacet_triangle_handle : public Halffacet_handle {
-    typedef Halffacet_handle Base;
-    Triangle_3 triangle;
-  public:
-    Halffacet_triangle_handle() : Base() {}
-    Halffacet_triangle_handle( Halffacet_handle h, Triangle_3& t) :
-      Base(h), triangle(t) {}
-    Triangle_3 get_triangle() { return triangle; }
-    void transform(const Aff_transformation_3& t) {
-      triangle = Triangle_3(triangle[0].transform(t),
-                                  triangle[1].transform(t),
-                              triangle[2].transform(t));
-    }
-  };
-
   class Halffacet_cycle_iterator : public Object_iterator
   /*{\Mtypemember a generic handle to an object in the boundary
   of a facet. Convertible to |Object_handle|.}*/
