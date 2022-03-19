@@ -224,6 +224,21 @@ public:
   // Halffacet triangle
 
 #ifdef CGAL_NEF_LIST_OF_TRIANGLES
+  class Halffacet_triangle_const_handle : public Halffacet_const_handle {
+    typedef Halffacet_const_handle Base;
+    Triangle_3* triangle;
+  public:
+    Halffacet_triangle_const_handle() : Base() {}
+    Halffacet_triangle_const_handle( Halffacet_const_handle h, Triangle_3& t) :
+      Base(h), triangle(&t) {}
+    Triangle_3& get_triangle() { return *triangle; }
+    void transform(const Aff_transformation_3& t) {
+      *triangle = Triangle_3((*triangle)[0].transform(t),
+                                  (*triangle)[1].transform(t),
+                              (*triangle)[2].transform(t));
+    }
+  };
+
   class Halffacet_triangle_handle : public Halffacet_handle {
     typedef Halffacet_handle Base;
     Triangle_3* triangle;
