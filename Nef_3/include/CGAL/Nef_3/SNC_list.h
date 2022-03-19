@@ -26,8 +26,7 @@ class SNC_in_place_list_sm
       public In_place_list_base<SNC_in_place_list_sm<Sphere_map> > {
 public:
     typedef SNC_in_place_list_sm<Sphere_map> Self;
-    //    typedef typename Vertex::Vertex_handle       Vertex_handle;
-    //    typedef typename Vertex::Vertex_const_handle Vertex_const_handle;
+
     SNC_in_place_list_sm() {}
     SNC_in_place_list_sm(const Self&)=default;
     SNC_in_place_list_sm(const Sphere_map& sm)   // down cast
@@ -46,8 +45,7 @@ class SNC_in_place_list_halffacet
       public In_place_list_base<SNC_in_place_list_halffacet<Halffacet> > {
 public:
     typedef SNC_in_place_list_halffacet<Halffacet> Self;
-    //    typedef typename Halffacet::Halffacet_handle       Halffacet_handle;
-    //    typedef typename Halffacet::Halffacet_const_handle Halffacet_const_handle;
+
     SNC_in_place_list_halffacet() {}
     SNC_in_place_list_halffacet(const Halffacet& v)   // down cast
         : Halffacet(v) {}
@@ -66,8 +64,7 @@ class SNC_in_place_list_volume
       public In_place_list_base<SNC_in_place_list_volume<Volume> > {
 public:
     typedef SNC_in_place_list_volume<Volume> Self;
-    //    typedef typename Volume::Volume_handle       Volume_handle;
-    //    typedef typename Volume::Volume_const_handle Volume_const_handle;
+
     SNC_in_place_list_volume() {}
     SNC_in_place_list_volume(const Volume& v)   // down cast
         : Volume(v) {}
@@ -86,8 +83,7 @@ class SNC_in_place_list_shalfloop
       public In_place_list_base<SNC_in_place_list_shalfloop<SHalfloop> > {
 public:
     typedef SNC_in_place_list_shalfloop<SHalfloop> Self;
-    //    typedef typename SHalfloop::SHalfloop_handle       SHalfloop_handle;
-    //    typedef typename SHalfloop::SHalfloop_const_handle SHalfloop_const_handle;
+
     SNC_in_place_list_shalfloop() {}
     SNC_in_place_list_shalfloop(const SHalfloop& v)   // down cast
         : SHalfloop(v) {}
