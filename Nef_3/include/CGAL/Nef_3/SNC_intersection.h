@@ -72,9 +72,8 @@ class SNC_intersection {
   }
 
   static bool does_contain_internally(Halffacet_const_handle f,
-                                      const Point_3& p,
-                                      bool check_has_on = true) {
-    if(check_has_on && !f->plane().has_on(p))
+                                      const Point_3& p) {
+    if(!f->plane().has_on(p))
       return false;
     return point_in_facet_interior( p, f);
   }
@@ -101,19 +100,15 @@ class SNC_intersection {
 
   static bool does_intersect_internally(const Ray_3& ray,
                                         Halffacet_const_handle f,
-                                        Point_3& p,
-                                        bool check_has_on = true) {
+                                        Point_3& p) {
     CGAL_NEF_TRACEN("-> Intersection facet - ray");
     Plane_3 h( f->plane());
     CGAL_NEF_TRACEN("-> facet's plane: " << h);
     CGAL_NEF_TRACEN("-> a point on the plane: " << h.point());
     CGAL_NEF_TRACEN("-> ray: " << ray);
     CGAL_assertion(!ray.is_degenerate());
-    if(check_has_on) {
-      if(h.has_on(ray.source()))
-        return false;
-    } else
-      CGAL_assertion(!h.has_on(ray.source()));
+    if(h.has_on(ray.source()))
+      return false;
     Object o = intersection( h, ray);
     if( !CGAL::assign( p, o))
       return false;

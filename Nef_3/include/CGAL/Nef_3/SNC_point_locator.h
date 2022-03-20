@@ -272,7 +272,7 @@ public:
           Point_3 q;
           _CGAL_NEF_TRACEN("trying facet with on plane "<<f->plane()<<
                   " with point on "<<f->plane().point());
-          if( is.does_intersect_internally( ray, f, q, true) ) {
+          if( is.does_intersect_internally( ray, f, q) ) {
             _CGAL_NEF_TRACEN("ray intersects facet on "<<q);
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
             if( hit) { _CGAL_NEF_TRACEN("prev. intersection on "<<eor); }
