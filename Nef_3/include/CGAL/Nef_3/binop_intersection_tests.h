@@ -135,7 +135,7 @@ struct binop_intersection_test_segment_tree {
     Halfedge_iterator e0, e1;
     Halffacet_iterator f0, f1;
     std::vector<Nef_box> a, b;
-    SNC_intersection is( sncp );
+    SNC_intersection is;
 
     CGAL_NEF_TRACEN("start edge0 edge1");
     Bop_edge0_edge1_callback<Callback> callback_edge0_edge1( is, cb0 );
