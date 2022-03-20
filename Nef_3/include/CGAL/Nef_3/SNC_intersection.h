@@ -76,7 +76,7 @@ class SNC_intersection {
                                       bool check_has_on = true) {
     if(check_has_on && !f->plane().has_on(p))
       return false;
-    return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE);
+    return point_in_facet_interior( p, f);
   }
 
   static bool does_intersect_internally(const Segment_3& s1,
@@ -118,8 +118,8 @@ class SNC_intersection {
     if( !CGAL::assign( p, o))
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
-    CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
-    return does_contain_internally( f, p, false);
+    CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
+    return point_in_facet_interior( p, f);
   }
 
   static bool does_intersect_internally(const Segment_3& seg,
@@ -138,11 +138,16 @@ class SNC_intersection {
     if( !CGAL::assign( p, o))
       return false;
     CGAL_NEF_TRACEN( "-> intersection point: " << p );
-    CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
-    return( does_contain_internally( f, p, false));
+    CGAL_NEF_TRACEN( "-> point in facet interior? "<<point_in_facet_interior( f, p));
+    return point_in_facet_interior( p, f);
   }
 
  private:
+
+  static bool point_in_facet_interior(const Point_3& p,
+                                      Halffacet_const_handle f) {
+    return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE);
+  }
 
   static Bounded_side locate_point_in_halffacet(const Point_3& p,
                                                 Halffacet_const_handle f) {
