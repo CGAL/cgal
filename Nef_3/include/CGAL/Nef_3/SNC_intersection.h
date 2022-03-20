@@ -71,17 +71,17 @@ class SNC_intersection {
     return are_strictly_ordered_along_line (s, p, t);
   }
 
-  static bool does_contain_internally( Halffacet_const_handle f,
-                                const Point_3& p,
-                                bool check_has_on = true) {
+  static bool does_contain_internally(Halffacet_const_handle f,
+                                      const Point_3& p,
+                                      bool check_has_on = true) {
     if(check_has_on && !f->plane().has_on(p))
       return false;
     return (locate_point_in_halffacet( p, f) == CGAL::ON_BOUNDED_SIDE);
   }
 
-  static bool does_intersect_internally( const Segment_3& s1,
-                                  const Segment_3& s2,
-                                  Point_3& p) {
+  static bool does_intersect_internally(const Segment_3& s1,
+                                        const Segment_3& s2,
+                                        Point_3& p) {
     if(s2.has_on(s1.target()))
       return false;
     Ray_3 r(s1.source(), s1.target());
@@ -91,9 +91,9 @@ class SNC_intersection {
     return (pl.oriented_side(p) == CGAL::NEGATIVE);
   }
 
-  static bool does_intersect_internally( const Ray_3& s1,
-                                  const Segment_3& s2,
-                                  Point_3& p) {
+  static bool does_intersect_internally(const Ray_3& s1,
+                                        const Segment_3& s2,
+                                        Point_3& p) {
     CGAL_NEF_TRACEN("does intersect internally without  LINE3_LINE3_INTERSECTION");
     CGAL_assertion(!s1.is_degenerate());
     CGAL_assertion(!s2.is_degenerate());
@@ -129,10 +129,10 @@ class SNC_intersection {
     return (pl.oriented_side(p) == CGAL::NEGATIVE);
   }
 
-  static bool does_intersect_internally( const Ray_3& ray,
-                                  Halffacet_const_handle f,
-                                  Point_3& p,
-                                  bool check_has_on = true) {
+  static bool does_intersect_internally(const Ray_3& ray,
+                                        Halffacet_const_handle f,
+                                        Point_3& p,
+                                        bool check_has_on = true) {
     CGAL_NEF_TRACEN("-> Intersection facet - ray");
     Plane_3 h( f->plane());
     CGAL_NEF_TRACEN("-> facet's plane: " << h);
@@ -152,9 +152,9 @@ class SNC_intersection {
     return does_contain_internally( f, p, false);
   }
 
-  static bool does_intersect_internally( const Segment_3& seg,
-                                  Halffacet_const_handle f,
-                                  Point_3& p) {
+  static bool does_intersect_internally(const Segment_3& seg,
+                                        Halffacet_const_handle f,
+                                        Point_3& p) {
     CGAL_NEF_TRACEN("-> Intersection facet - segment");
     Plane_3 h( f->plane());
     CGAL_NEF_TRACEN("-> facet's plane: " << h);
@@ -168,8 +168,8 @@ class SNC_intersection {
   }
 
   static bool does_intersect(const Segment_3& seg,
-                      Halffacet_const_handle f,
-                      Point_3& p) {
+                             Halffacet_const_handle f,
+                             Point_3& p) {
     Plane_3 h( f->plane());
     Object o = intersection( h, seg);
     if( !CGAL::assign( p, o))
@@ -179,8 +179,8 @@ class SNC_intersection {
     return( does_contain_internally( f, p, false));
   }
 
-  static Bounded_side locate_point_in_halffacet( const Point_3& p,
-                                          Halffacet_const_handle f) {
+  static Bounded_side locate_point_in_halffacet(const Point_3& p,
+                                                Halffacet_const_handle f) {
     CGAL_NEF_TRACEN("locate point in halffacet " << p << ", " << f->plane());
     typedef Project_shalfedge_point
       < SHalfedge, const Point_3> Project;
