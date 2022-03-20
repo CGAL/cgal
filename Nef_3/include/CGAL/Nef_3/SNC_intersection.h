@@ -82,51 +82,21 @@ class SNC_intersection {
   static bool does_intersect_internally(const Segment_3& s1,
                                         const Segment_3& s2,
                                         Point_3& p) {
-    if(s2.has_on(s1.target()))
+    if(s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
+       s2.has_on(s1.source()) || s2.has_on(s1.target()))
       return false;
-    Ray_3 r(s1.source(), s1.target());
-    if(!does_intersect_internally(r, s2, p))
-      return false;
-    Plane_3 pl(s1.target(), r.to_vector());
-    return (pl.oriented_side(p) == CGAL::NEGATIVE);
+    Object o = intersection(s1, s2);
+    return CGAL::assign(p,o);
   }
 
   static bool does_intersect_internally(const Ray_3& s1,
                                         const Segment_3& s2,
                                         Point_3& p) {
-    CGAL_NEF_TRACEN("does intersect internally without  LINE3_LINE3_INTERSECTION");
-    CGAL_assertion(!s1.is_degenerate());
-    CGAL_assertion(!s2.is_degenerate());
-    if ( orientation( s1.source(), s1.point(1), s2.source(), s2.target())
-         != COPLANAR)
-      // the segments doesn't define a plane
+    if(s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
+       s2.has_on(s1.source()))
       return false;
-    if ( s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
-         s2.has_on(s1.source()))
-      // the segments does intersect at one endpoint
-      return false;
-    Line_3 ls1(s1), ls2(s2);
-    if ( ls1.direction() ==  ls2.direction() ||
-         ls1.direction() == -ls2.direction() )
-      // the segments are parallel
-      return false;
-    Vector_3 vs1(s1.to_vector()), vs2(s2.to_vector()),
-      vt(cross_product( vs1, vs2)),
-      ws1(cross_product( vt, vs1)); // , ws2(cross_product( vt, vs2));
-    Plane_3 hs1( s1.source(), ws1);
-    Object o = intersection(hs1, ls2);
-    CGAL_assertion(CGAL::assign( p, o));
-    // since line(s1) and line(s2) are not parallel they intersects in only
-    //   one point
-    CGAL::assign( p ,o);
-    Plane_3 pl(s1.source(), vs1);
-    if(pl.oriented_side(p) != CGAL::POSITIVE)
-      return false;
-    pl = Plane_3(s2.source(), vs2);
-    if(pl.oriented_side(p) != CGAL::POSITIVE)
-      return false;
-    pl = Plane_3(s2.target(), vs2);
-    return (pl.oriented_side(p) == CGAL::NEGATIVE);
+    Object o = intersection(s1, s2);
+    return CGAL::assign(p,o);
   }
 
   static bool does_intersect_internally(const Ray_3& ray,
@@ -178,6 +148,8 @@ class SNC_intersection {
     CGAL_NEF_TRACEN( "-> point in facet interior? "<<does_contain_internally( f, p));
     return( does_contain_internally( f, p, false));
   }
+
+ private:
 
   static Bounded_side locate_point_in_halffacet(const Point_3& p,
                                                 Halffacet_const_handle f) {
