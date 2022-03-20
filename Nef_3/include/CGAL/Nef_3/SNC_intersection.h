@@ -132,14 +132,14 @@ class SNC_intersection {
   static bool does_intersect_internally( const Ray_3& ray,
                                   Halffacet_const_handle f,
                                   Point_3& p,
-                                  bool checkHasOn = true) {
+                                  bool check_has_on = true) {
     CGAL_NEF_TRACEN("-> Intersection facet - ray");
     Plane_3 h( f->plane());
     CGAL_NEF_TRACEN("-> facet's plane: " << h);
     CGAL_NEF_TRACEN("-> a point on the plane: " << h.point());
     CGAL_NEF_TRACEN("-> ray: " << ray);
     CGAL_assertion(!ray.is_degenerate());
-    if(checkHasOn) {
+    if(check_has_on) {
       if(h.has_on(ray.source()))
         return false;
     } else
