@@ -134,13 +134,6 @@ class SNC_intersection {
     if( h.has_on( seg.source()) || h.has_on(seg.target()))
       /* no possible internal intersection */
       return false;
-    return does_intersect(seg, f, p);
-  }
-
-  static bool does_intersect(const Segment_3& seg,
-                             Halffacet_const_handle f,
-                             Point_3& p) {
-    Plane_3 h( f->plane());
     Object o = intersection( h, seg);
     if( !CGAL::assign( p, o))
       return false;
