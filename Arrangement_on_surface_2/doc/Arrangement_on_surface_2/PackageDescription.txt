@@ -175,6 +175,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::CompareYOnBoundary_2`
 - `ArrTraits::CompareXNearBoundary_2`
 - `ArrTraits::CompareYNearBoundary_2`
+- `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`
 - `ArrTraits::Intersect_2`
 - `ArrTraits::Split_2`
 - `ArrTraits::AreMergeable_2`
