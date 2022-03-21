@@ -24,6 +24,9 @@
 #include <CGAL/Mesh_3/triple_lines_extraction/triple_lines.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/cube_isometries.h>
 #include <CGAL/Mesh_3/triple_lines_extraction/coordinates.h>
+
+#include <CGAL/Mesh_3/polylines_to_protect.h> // undocumented header
+
 #include <boost/range/join.hpp>
 
 
