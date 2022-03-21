@@ -1839,27 +1839,32 @@ public:
         if (xcv2.is_vertical()) return SMALLER;
 
         // There are 4 cases based on the sign of the z component of the normals
-        auto cross_prod = kernel.construct_cross_product_vector_3_object();
-        Vector_3 v = cross_prod(n1.vector(), n2.vector());
+        // Compute the sign of the x-component of the normal cross product.
+        // There is no point computing the intermediate cross product:
+        // auto cross_prod = kernel.construct_cross_product_vector_3_object();
+        // Vector_3 v = cross_prod(n1.vector(), n2.vector());
+        // CGAL::Sign xsign = CGAL::sign(v.x());
+        // This predicate is not yet supported; thus, compute directly:
+        CGAL::Sign xsign = CGAL::sign(n1.dy() * n2.dz() - n1.dz() * n2.dy());
 
-        // std::cout << "min sign(n1.z): " << CGAL::sign(n1.dz()) << std::endl;
-        // std::cout << "min sign(n2.z): " << CGAL::sign(n2.dz()) << std::endl;
-        // std::cout << "min sign(v.x): " << CGAL::sign(v.x()) << std::endl;
+        // std::cout << "sign(n1.z): " << CGAL::sign(n1.dz()) << std::endl;
+        // std::cout << "sign(n2.z): " << CGAL::sign(n2.dz()) << std::endl;
+        // std::cout << "x sign: " << xsign << std::endl;
 
         if (CGAL::sign(n1.dz()) == POSITIVE) {
           if (CGAL::sign(n2.dz()) == POSITIVE) {
             // pos pos
-            return (CGAL::sign(v.x()) == POSITIVE) ? LARGER : SMALLER;
+            return (xsign == POSITIVE) ? LARGER : SMALLER;
           }
           // pos neg
-          return (CGAL::sign(v.x()) == POSITIVE) ? SMALLER : LARGER;
+          return (xsign == POSITIVE) ? SMALLER : LARGER;
         }
         if (CGAL::sign(n2.dz()) == POSITIVE) {
           // neg pos
-          return (CGAL::sign(v.x()) == POSITIVE) ? SMALLER : LARGER;
+          return (xsign == POSITIVE) ? SMALLER : LARGER;
         }
         // neg neg
-        return (CGAL::sign(v.x()) == POSITIVE) ? LARGER : SMALLER;
+        return (xsign == POSITIVE) ? LARGER : SMALLER;
       }
 
       // ce == ARR_MAX_END
@@ -1873,27 +1878,32 @@ public:
       if (xcv2.is_vertical()) return SMALLER;
 
       // There are 4 cases based on the sign of the z component of the normals
-      auto cross_prod = kernel.construct_cross_product_vector_3_object();
-      Vector_3 v = cross_prod(n1.vector(), n2.vector());
+      // Compute the sign of the x-component of the normal cross product.
+      // There is no point computing the intermediate cross product:
+      // auto cross_prod = kernel.construct_cross_product_vector_3_object();
+      // Vector_3 v = cross_prod(n1.vector(), n2.vector());
+      // CGAL::Sign xsign = CGAL::sign(v.x());
+      // This predicate is not yet supported; thus, compute directly:
+      CGAL::Sign xsign = CGAL::sign(n1.dy() * n2.dz() - n1.dz() * n2.dy());
 
-      // std::cout << "max sign(n1.z): " << CGAL::sign(n1.dz()) << std::endl;
-      // std::cout << "max sign(n2.z): " << CGAL::sign(n2.dz()) << std::endl;
-      // std::cout << "max sign(v.x): " << CGAL::sign(v.x()) << std::endl;
+      // std::cout << "sign(n1.z): " << CGAL::sign(n1.dz()) << std::endl;
+      // std::cout << "sign(n2.z): " << CGAL::sign(n2.dz()) << std::endl;
+      // std::cout << "x sign: " << xsign << std::endl;
 
       if (CGAL::sign(n1.dz()) == POSITIVE) {
         if (CGAL::sign(n2.dz()) == POSITIVE) {
           // pos pos
-          return (CGAL::sign(v.x()) == POSITIVE) ? SMALLER : LARGER;
+          return (xsign == POSITIVE) ? SMALLER : LARGER;
         }
         // pos neg
-        return (CGAL::sign(v.x()) == POSITIVE) ? LARGER: SMALLER;
+        return (xsign == POSITIVE) ? LARGER: SMALLER;
       }
       if (CGAL::sign(n2.dz()) == POSITIVE) {
         // neg pos
-        return (CGAL::sign(v.x()) == POSITIVE) ? LARGER : SMALLER;
+        return (xsign == POSITIVE) ? LARGER : SMALLER;
       }
       // neg neg
-      return (CGAL::sign(v.x()) == POSITIVE) ? SMALLER : LARGER;
+      return (xsign == POSITIVE) ? SMALLER : LARGER;
     }
   };
 
