@@ -122,7 +122,6 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementTraits_2`
 - `ArrangementHorizontalSideTraits_2`
 - `ArrangementVerticalSideTraits_2`
-- `ArrangementClosedIdentifiedVerticalTraits_2`
 - `ArrangementIdentifiedVerticalTraits_2`
 - `ArrangementIdentifiedHorizontalTraits_2`
 - `ArrangementOpenBoundaryTraits_2`
