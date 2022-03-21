@@ -29,7 +29,7 @@ public:
   /// \name Functor Types
   /// @{
 
-  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
+  /// models the concept `ArrTraits::CompareYOnBoundary_2`.
   typedef unspecified_type Compare_y_on_boundary_2;
 
   /// @}
