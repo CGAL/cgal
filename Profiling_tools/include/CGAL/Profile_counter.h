@@ -177,11 +177,9 @@ struct Profile_branch_counter
 
     ~Profile_branch_counter()
     {
-      if(j>0){
         std::cerr << "[CGAL::Profile_branch_counter] "
                   << std::setw(10) << internal::dot_it(j) << " / "
                   << std::setw(10) << internal::dot_it(i) << " " << s << std::endl;
-      }
     }
 
 private:
@@ -209,12 +207,10 @@ struct Profile_branch_counter_3
 
     ~Profile_branch_counter_3()
     {
-      if(k>0){
         std::cerr << "[CGAL::Profile_branch_counter_3] "
                   << std::setw(10) << internal::dot_it(k) << " / "
                   << std::setw(10) << internal::dot_it(j) << " / "
                   << std::setw(10) << internal::dot_it(i) << " " << s << std::endl;
-      }
     }
 
 private:

@@ -80,6 +80,8 @@ public:
 
   virtual Object_handle locate(const Point_3& p) const = 0;
 
+  virtual Object_handle shoot(const Ray_3& s, int mask=255) const = 0;
+
   virtual Object_handle shoot(const Ray_3& s, Vertex_handle ray_source_vertex, int mask=255) const = 0;
 
   virtual void intersect_with_edges( Halfedge_handle edge,
@@ -214,6 +216,11 @@ public:
                  candidate_provider == 0); // required?
     if(initialized)
       delete candidate_provider;
+  }
+
+  virtual Object_handle shoot(const Ray_3& ray, int mask=255) const {
+    Vertex_handle null_handle;
+    return this->shoot(ray, null_handle, mask);
   }
 
   virtual Object_handle shoot(const Ray_3& ray, Vertex_handle ray_source_vertex, int mask=255) const {
