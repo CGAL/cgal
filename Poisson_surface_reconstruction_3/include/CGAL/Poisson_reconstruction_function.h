@@ -39,7 +39,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/surface_reconstruction_points_assertions.h>
 #include <CGAL/poisson_refine_triangulation.h>
-#include <CGAL/Robust_circumcenter_filtered_traits_3.h>
+#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 

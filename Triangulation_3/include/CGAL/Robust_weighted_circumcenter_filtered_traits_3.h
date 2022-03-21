@@ -88,10 +88,10 @@ public:
 
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
-    determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), FT(0),
-                                             q.x(), q.y(), q.z(), FT(0),
-                                             r.x(), r.y(), r.z(), FT(0),
-                                             num_x, num_y, num_z, den);
+    determinants_for_circumcenterC3(p.x(), p.y(), p.z(),
+                                    q.x(), q.y(), q.z(),
+                                    r.x(), r.y(), r.z(),
+                                    num_x, num_y, num_z, den);
 
     if(! CGAL_NTS is_zero(den))
     {
