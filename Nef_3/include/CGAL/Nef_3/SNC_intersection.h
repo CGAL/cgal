@@ -81,6 +81,8 @@ class SNC_intersection {
   static bool does_intersect_internally(const Segment_3& s1,
                                         const Segment_3& s2,
                                         Point_3& p) {
+    if(!coplanar(s1.source(), s1.target(), s2.source(), s2.target()))
+      return false;
     if(s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
        s2.has_on(s1.source()) || s2.has_on(s1.target()))
       return false;
@@ -91,6 +93,8 @@ class SNC_intersection {
   static bool does_intersect_internally(const Ray_3& s1,
                                         const Segment_3& s2,
                                         Point_3& p) {
+    if(!coplanar(s1.source(), s1.point(1), s2.source(), s2.target()))
+      return false;
     if(s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
        s2.has_on(s1.source()))
       return false;
