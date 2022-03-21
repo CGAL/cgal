@@ -262,9 +262,6 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
         cc_closeness[face_cc[face(opposite(h, tmesh), tmesh)]] = false;
     }
 
-    typename GT::Compute_volume_3 cv3 = traits.compute_volume_3_object();
-    Point_3 origin(0, 0, 0);
-
     FT total_volume = 0;
     CGAL::Face_filtered_graph<TriangleMesh> fcc(tmesh);
     for (std::size_t i=0; i<num; ++i)
