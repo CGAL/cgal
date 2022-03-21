@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
+#include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <vector>
@@ -241,12 +242,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 
   if(use_areas)
   {
-    for(face_descriptor f : faces(tmesh))
-    {
-      const FT fa = face_area(f, tmesh, np);
-      component_areas[face_cc[f]] += fa;
-      total_area += fa;
-    }
+    total_area = area(tmesh);
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "area threshold: " << area_threshold << std::endl;
@@ -269,26 +265,16 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     typename GT::Compute_volume_3 cv3 = traits.compute_volume_3_object();
     Point_3 origin(0, 0, 0);
 
-    for(face_descriptor f : faces(tmesh))
-    {
-      const std::size_t i = face_cc[f];
-      if(!cc_closeness[i])
-        continue;
-
-      const FT fv = cv3(origin,
-                        get(vpm, target(halfedge(f, tmesh), tmesh)),
-                        get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
-                        get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
-
-      component_volumes[i] += fv;
-    }
-
-    // negative volume means the CC was oriented inward
     FT total_volume = 0;
-    for(std::size_t i=0; i<num; ++i)
+    CGAL::Face_filtered_graph<TriangleMesh> fcc(tmesh);
+    for (std::size_t i=0; i<num; ++i)
     {
-      component_volumes[i] = CGAL::abs(component_volumes[i]);
-      total_volume += component_volumes[i];
+      if (cc_closeness[i])
+      {
+        fcc.set_selected_faces(i, face_cc);
+        component_volumes[i] = volume(fcc);
+        total_volume += CGAL::abs(component_volumes[i]);
+      }
     }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
