@@ -272,8 +272,8 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
       if (cc_closeness[i])
       {
         fcc.set_selected_faces(i, face_cc);
-        component_volumes[i] = volume(fcc);
-        total_volume += CGAL::abs(component_volumes[i]);
+        component_volumes[i] = CGAL::abs(volume(fcc));
+        total_volume += component_volumes[i];
       }
     }
 
