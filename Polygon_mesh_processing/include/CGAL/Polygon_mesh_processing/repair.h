@@ -236,24 +236,8 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   if(!dry_run)
     CGAL::Polygon_mesh_processing::remove_isolated_vertices(tmesh);
 
-  // Compute CC-wide and total areas/volumes
-  FT total_area = 0;
-  std::vector<FT> component_areas(num, 0);
-
-  if(use_areas)
-  {
-    total_area = area(tmesh);
-
-#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
-  std::cout << "area threshold: " << area_threshold << std::endl;
-  std::cout << "total area: " << total_area << std::endl;
-#endif
-  }
-
   // Volumes make no sense for CCs that are not closed
   std::vector<bool> cc_closeness(num, true);
-  std::vector<FT> component_volumes(num, FT(0));
-
   if(use_volumes)
   {
     for(halfedge_descriptor h : halfedges(tmesh))
@@ -261,24 +245,42 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
       if(is_border(h, tmesh))
         cc_closeness[face_cc[face(opposite(h, tmesh), tmesh)]] = false;
     }
+  }
 
-    FT total_volume = 0;
-    CGAL::Face_filtered_graph<TriangleMesh> fcc(tmesh);
-    for (std::size_t i=0; i<num; ++i)
+  // Compute CC-wide and total areas/volumes
+  FT total_area = 0;
+  FT total_volume = 0;
+  std::vector<FT> component_areas(num, 0);
+  std::vector<FT> component_volumes(num, FT(0));
+
+  CGAL::Face_filtered_graph<TriangleMesh> fcc(tmesh);
+  for (std::size_t i=0; i<num; ++i)
+  {
+    fcc.set_selected_faces(i, face_cc);
+    if (use_volumes && cc_closeness[i])
     {
-      if (cc_closeness[i])
-      {
-        fcc.set_selected_faces(i, face_cc);
-        component_volumes[i] = CGAL::abs(volume(fcc));
-        total_volume += component_volumes[i];
-      }
+      component_volumes[i] = CGAL::abs(volume(fcc));
+      total_volume += component_volumes[i];
     }
+    if (use_areas)
+    {
+      component_areas[i] = area(fcc);
+      total_area += component_areas[i];
+    }
+  }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+  if(use_areas)
+  {
+    std::cout << "area threshold: " << area_threshold << std::endl;
+    std::cout << "total area: " << total_area << std::endl;
+  }
+  if (use_volumes)
+  {
     std::cout << "volume threshold: " << volume_threshold << std::endl;
     std::cout << "total volume: " << total_volume << std::endl;
-#endif
   }
+#endif
 
   std::size_t res = 0;
   std::vector<bool> is_to_be_removed(num, false);
