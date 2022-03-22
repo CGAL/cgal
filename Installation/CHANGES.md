@@ -7,6 +7,10 @@ Release History
 
 Release date: June 2022
 
+### [2D Triangulations](https://doc.cgal.org/5.5/Manual/packages.html#PkgTriangulation2)
+
+-   Added the function `mark_domians_in_triangulation()`
+
 ### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
 
 -   Added the member function `write_graphviz()` to the class The Kd_tree` that writes the tree in a stream in the [Graphviz](https://graphviz.org/) format.
@@ -21,7 +25,7 @@ Release date: June 2022
 
 ### Combinatorial Maps
 
-- Removed old code deprecated in CGAL 4.9 and 4.10 (global fonctions, and information associated with darts).
+-   Removed old code deprecated in CGAL 4.9 and 4.10 (global fonctions, and information associated with darts).
 
 ### [Tetrahedral Mesh Generation](https://doc.cgal.org/5.5/Manual/packages.html#PkgMesh3)
 
