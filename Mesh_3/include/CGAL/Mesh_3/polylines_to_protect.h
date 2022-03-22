@@ -19,12 +19,15 @@
 #include <vector>
 #include <map>
 #include <utility> // std::swap
+#include <algorithm> // std::min
+
 #include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Mesh_3/internal/Graph_manipulations.h>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Labeled_mesh_domain_3.h> // for CGAL::Null_subdomain_index
+#include <CGAL/number_utils.h>
 #include <boost/utility.hpp> // for boost::prior
 #include <boost/optional.hpp>
 
@@ -301,17 +304,14 @@ struct Polyline_visitor
 template <typename Kernel>
 struct Angle_tester
 {
-  const double m_angle_rad;//in radian to avoid extra computations
-  const bool m_test_angle;
+  const double m_angle_sq_cosine;// squared cosine of `std:min(90, angle_deg)`
 
   Angle_tester()
-    : m_angle_rad(0.5 * CGAL_PI)//stored in radian
-    , m_test_angle(false)//under 90 we check for acute, with exact computation
+    : m_angle_sq_cosine(0)
   {}
 
   Angle_tester(const double angle_deg)//angle given in degrees for readability
-    : m_angle_rad(angle_deg * CGAL_PI /180.)//stored in radian
-    , m_test_angle(angle_deg != 90.)//under 90 we check for acute, with exact computation
+    : m_angle_sq_cosine(CGAL::square(std::cos((std::min)(90.,angle_deg) * CGAL_PI / 180.)))
   {}
 
   template <typename vertex_descriptor, typename Graph>
@@ -333,20 +333,21 @@ struct Angle_tester
       const typename Kernel::Point_3& p1 = g[v1].point;
       const typename Kernel::Point_3& p2 = g[v2].point;
 
-      if (!m_test_angle)
-      {
-        if (CGAL::angle(p1, p, p2) == CGAL::ACUTE)
-          return true;
-      }
-      else
+      //if angle at v is acute, v must be considered as a terminal vertex
+      // to ensure termination
+      if (CGAL::angle(p1, p, p2) == CGAL::ACUTE)
+        return true;
+      else if (m_angle_sq_cosine > 0.)//check angle only if angle is > 90.
       {
         const typename Kernel::Vector_3 e1 = p1 - p;
         const typename Kernel::Vector_3 e2 = p2 - p;
-        const double a_rad = std::acos(e1 * e2
-                                      / CGAL::sqrt(e1*e1)
-                                      / CGAL::sqrt(e2*e2));
-        // std::cerr << "At point " << p << ": the angle is " << a << std::endl;
-        if(a_rad < m_angle_rad)
+
+        const auto scalar_product = e1 * e2;
+        if (CGAL::is_positive(scalar_product))
+          return true;
+
+        const auto sq_scalar_product = CGAL::square(scalar_product);
+        if (sq_scalar_product <= m_angle_sq_cosine * (e1 * e1) * (e2 * e2))
           return true;
       }
     }
