@@ -130,7 +130,6 @@ construct_edge_normal(typename boost::graph_traits<TriangleMesh>::halfedge_descr
                       const VertexPointMap vpm,
                       const GeomTraits& gt)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::property_traits<VertexPointMap>::reference           Point_ref;
 
   typedef typename GeomTraits::FT                                              FT;
@@ -313,7 +312,6 @@ construct_classic_plane_quadric_from_edge(typename boost::graph_traits<TriangleM
                                           const GeomTraits& gt)
 {
   typedef typename GeomTraits::Vector_3                                        Vector_3;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor        vertex_descriptor;
 
   const Vector_3 normal = construct_edge_normal(he, mesh, vpm, gt);
 

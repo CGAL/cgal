@@ -121,28 +121,24 @@ Surface_mesh edge_collapse(Surface_mesh& mesh,
 // =================================================================================================
 // =================================================================================================
 
+// always decimate meshes in this vector to avoid timing the copying of the meshes
 template <typename Policy, typename TriangleMesh>
 void time_mesh(const TriangleMesh mesh,
                std::ostream& out)
 {
-  // always decimate meshes in this vector to avoid timing the copying of the meshes
-
   std::vector<TriangleMesh> meshes (n_burns + n_samples, mesh);
 
   for(int i=0; i<n_burns; ++i)
     edge_collapse<Policy>(meshes[i]);
 
-  unsigned long elapsed_ns = 0;
+  std::chrono::time_point<std::chrono::steady_clock> start_time = std::chrono::steady_clock::now();
   for(int i=0; i<n_samples; ++i)
   {
     // measure time taken by the edge_collapse function over each mesh individually
-    std::chrono::time_point<std::chrono::steady_clock> start_time = std::chrono::steady_clock::now();
     edge_collapse<Policy>(meshes[n_burns + i]);
-    std::chrono::time_point<std::chrono::steady_clock> end_time = std::chrono::steady_clock::now();
-
-    // get elapsed time in milliseconds
-    elapsed_ns += std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
   }
+  std::chrono::time_point<std::chrono::steady_clock> end_time = std::chrono::steady_clock::now();
+  auto elapsed_ns = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
 
   out << "Policy: " << typeid(Policy).name() << "\n"
       << "Elapsed: " << elapsed_ns << " (ms)\n"
