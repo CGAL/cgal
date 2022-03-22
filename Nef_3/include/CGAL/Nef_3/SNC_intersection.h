@@ -81,13 +81,13 @@ class SNC_intersection {
   static bool does_intersect_internally(const Segment_3& s1,
                                         const Segment_3& s2,
                                         Point_3& p) {
-    if(!coplanar(s1.source(), s1.target(), s2.source(), s2.target()))
+    if(s2.has_on(s1.target()))
       return false;
-    if(s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
-       s2.has_on(s1.source()) || s2.has_on(s1.target()))
+    Ray_3 r(s1.source(), s1.target());
+    if(!does_intersect_internally(r, s2, p))
       return false;
-    Object o = intersection(s1, s2);
-    return CGAL::assign(p,o);
+    Plane_3 pl(s1.target(), r.to_vector());
+    return (pl.oriented_side(p) == CGAL::NEGATIVE);
   }
 
   static bool does_intersect_internally(const Ray_3& s1,
