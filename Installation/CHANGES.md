@@ -9,7 +9,7 @@ Release date: June 2022
 
 ### [2D Triangulations](https://doc.cgal.org/5.5/Manual/packages.html#PkgTriangulation2)
 
--   Added the function `mark_domians_in_triangulation()`
+-   Added the function `mark_domain_in_triangulation()`
 
 ### [dD Spatial Searching](https://doc.cgal.org/5.5/Manual/packages.html#PkgSpatialSearchingD)
 
