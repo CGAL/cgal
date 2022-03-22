@@ -3,7 +3,11 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawTriangulation2
 
-opens a new window and draws a triangulation.
+opens a new window and draws a triangulation.  If the triangulation
+has constraints they are drawn.  If the face type has a member
+function `bool is_in_domain()` the faces inside and outside the
+domain are drawn in different colors.
+
 A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with
 `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
@@ -18,11 +22,12 @@ void draw(const T2& at2);
   /*!
 \ingroup PkgDrawTriangulation2
 
-opens a new window and draws a triangulation.
+opens a new window and draws a constrained triangulation with faces
+marked as being part of a domain.
 A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam CT2 a triangulation class derived from `Triangulation_2`  or `Constrained_triangulation_2`
+\tparam CT2 a triangulation class derived from `Constrained_triangulation_2`
 \tparam InDomainPMap a class model of `ReadWritePropertyMap`  with
 `CT::Face_handle`  as key type and  `bool`  as value type.
 

@@ -155,7 +155,7 @@ void draw(const CGAL_T2_TYPE& at2)
   const char* title="Constrained_triangulation_2 Basic Viewer";
   bool nofill=false;
   internal::In_domain<CGAL_T2_TYPE> in_domain;
-  draw(at2, in_domain, title, nofill);
+  draw(at2, in_domain);
 }
 
 #undef CGAL_T2_TYPE
