@@ -98,8 +98,19 @@ class SNC_intersection {
     if(s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
        s2.has_on(s1.source()))
       return false;
-    Object o = intersection(s1, s2);
-    return CGAL::assign(p,o);
+
+    Vector_3 vs1(s1.to_vector()), vs2(s2.to_vector()),
+      vt(cross_product( vs1, vs2)),
+      ws1(cross_product( vt, vs1));
+    Plane_3 hs1( s1.source(), ws1);
+    Object o = intersection(hs1, s2);
+    if(!CGAL::assign( p ,o))
+      return false;
+    Plane_3 pl(s1.source(), vs1);
+    if(pl.oriented_side(p) != CGAL::POSITIVE)
+      return false;
+
+    return true;
   }
 
   static bool does_intersect_internally(const Ray_3& ray,
