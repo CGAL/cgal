@@ -20,9 +20,44 @@ namespace CGAL {
 
 namespace internal {
 
+  template<class T>
+class Has_member_in_domain
+{
+private:
+  template<class U, U>
+  class check {};
+
+  template<class C>
+  static char f(check<void(C::*)(void), &C::in_domain>*);
+
+  template<class C>
+  static int f(...);
+public:
+  static const bool value = (sizeof(f<T>(0)) == sizeof(char));
+};
+
+  template <typename F, typename FH>
+inline
+typename boost::enable_if<Has_member_in_domain<F>, bool>::type
+get_in_domain_impl(FH fh)
+{
+  return fh->in_domain();
+}
+
+template <typename F, typename FH>
+inline
+typename boost::disable_if<Has_member_in_domain<F>, bool>::type
+get_in_domain_impl(FH fh)
+{
+  return false;
+}
+
+
+
 template <typename CDT>
 struct In_domain {
 
+  typedef typename CDT::Face Face;
   typedef typename CDT::Face_handle key_type;
   typedef bool value_type;
   typedef bool reference;
@@ -30,7 +65,7 @@ struct In_domain {
 
   friend bool get(In_domain, const key_type& k)
   {
-    return k->is_in_domain();
+      return get_in_domain_impl<Face, Face_handle>(k);
   }
 
   friend void put(In_domain, const key_type& k, const value_type& v)

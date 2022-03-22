@@ -19,7 +19,6 @@ typedef CDT::Face_handle                                          Face_handle;
 typedef CDT::Point                                                Point;
 typedef CGAL::Polygon_2<K>                                        Polygon_2;
 
-
 int main( )
 {
   //construct two non-intersecting nested polygons
