@@ -65,7 +65,7 @@ struct In_domain {
 
   friend bool get(In_domain, const key_type& k)
   {
-      return get_in_domain_impl<Face, Face_handle>(k);
+      return get_in_domain_impl<Face, key_type>(k);
   }
 
   friend void put(In_domain, const key_type& k, const value_type& v)
