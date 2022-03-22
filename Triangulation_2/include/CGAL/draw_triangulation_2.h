@@ -21,6 +21,8 @@
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Random.h>
 
+#include <CGAL/draw_constrained_triangulation_2.h>
+
 namespace CGAL
 {
 
