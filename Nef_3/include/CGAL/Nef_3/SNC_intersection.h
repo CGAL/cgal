@@ -93,24 +93,35 @@ class SNC_intersection {
   static bool does_intersect_internally(const Ray_3& s1,
                                         const Segment_3& s2,
                                         Point_3& p) {
-    if(!coplanar(s1.source(), s1.point(1), s2.source(), s2.target()))
+    if (!coplanar( s1.source(), s1.point(1), s2.source(), s2.target()))
+      // the segments doesn't define a plane
       return false;
-    if(s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
-       s2.has_on(s1.source()))
+    if ( s1.has_on(s2.source()) || s1.has_on(s2.target()) ||
+         s2.has_on(s1.source()))
+      // the segments does intersect at one endpoint
       return false;
-
+    Line_3 ls1(s1), ls2(s2);
+    if ( ls1.direction() ==  ls2.direction() ||
+         ls1.direction() == -ls2.direction() )
+      // the segments are parallel
+      return false;
     Vector_3 vs1(s1.to_vector()), vs2(s2.to_vector()),
       vt(cross_product( vs1, vs2)),
       ws1(cross_product( vt, vs1));
     Plane_3 hs1( s1.source(), ws1);
-    Object o = intersection(hs1, s2);
-    if(!CGAL::assign( p ,o))
-      return false;
+    Object o = intersection(hs1, ls2);
+    CGAL_assertion(CGAL::assign( p, o));
+    // since line(s1) and line(s2) are not parallel they intersects in only
+    //   one point
+    CGAL::assign( p ,o);
     Plane_3 pl(s1.source(), vs1);
     if(pl.oriented_side(p) != CGAL::POSITIVE)
       return false;
-
-    return true;
+    pl = Plane_3(s2.source(), vs2);
+    if(pl.oriented_side(p) != CGAL::POSITIVE)
+      return false;
+    pl = Plane_3(s2.target(), vs2);
+    return (pl.oriented_side(p) == CGAL::NEGATIVE);
   }
 
   static bool does_intersect_internally(const Ray_3& ray,
