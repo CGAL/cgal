@@ -714,7 +714,7 @@ where each subdomain corresponds to a specific tissue.
 
 In the following example, the image is read from the file
 `liver.inr.gz` which is encoded in the format of the library Inrimage
-`http://inrimage.gforge.inria.fr/`.
+`https://www-pequan.lip6.fr/~bereziat/inrimage/`.
 The resulting mesh is shown in \cgalFigureRef{figureliver_3d_image_mesh}.
 
 \cgalExample{Mesh_3/mesh_3D_image.cpp}
