@@ -3379,7 +3379,7 @@ additional type called `Multiplicity`.  An object of this type
 indicates the multiplicity of the intersection point of two curves,
 also referred to as the <em>intersection
 number</em>.\cgalFootnote{See, e.g.,
-http://en.wikipedia.org/wiki/Intersection_number for more information
+https://en.wikipedia.org/wiki/Intersection_number for more information
 about intersection numbers.} Loosely speaking, if two curves intersect
 at a point \f$p\f$ but have different tangents (first derivatives) at
 \f$p\f$, The point \f$p\f$ is of multiplicity 1. If the curve tangents
@@ -4489,7 +4489,7 @@ subset that has a particular extension is closed under arithmetic
 operations and order relations; hence, it is a valid algebraic
 structure.\cgalFootnote{The term algebraic structure refers to the set
 closed under one or more operations satisfying some axioms; see, e.g.,
-http://en.wikipedia.org/wiki/Algebraic_structure.  For example, all
+https://en.wikipedia.org/wiki/Algebraic_structure.  For example, all
 numbers that can be expressed as \f$\alpha + \beta\sqrt{K}\f$, where
 \f$\alpha\f$ and \f$\beta\f$ are rational and \f$K\f$ is a rational
 constant, compose an algebraic structure.}  The class template
