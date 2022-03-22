@@ -166,15 +166,28 @@ namespace CGAL {
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
 
+    using Default_facet_map
+      = boost::unordered_map<std::array<int, 3>,
+                             typename Triangulation::Cell::Surface_patch_index>;
+    using Facet_map_ref_type
+      = typename internal_np::Lookup_named_param_def<
+                             internal_np::surface_facets_t,
+                             NamedParameters,
+                             Default_facet_map>::reference;
+    using Subdomains_ref_type
+      = typename internal_np::Lookup_named_param_def<
+                              internal_np::subdomain_indices_t,
+                              NamedParameters,
+                              int>::reference;
+
     Triangulation tr;
-    boost::unordered_map<std::array<int, 3>,
-             typename Triangulation::Cell::Surface_patch_index> empty_map;
-    const auto& facets = choose_parameter(
-      get_parameter_reference(np, internal_np::surface_facets),
-      empty_map);
-    const auto& subdomains = choose_parameter(
-      get_parameter_reference(np, internal_np::subdomain_indices),
-      1);
+    Default_facet_map empty_map;
+    const Facet_map_ref_type& facets = choose_parameter(
+          get_parameter_reference(np, internal_np::surface_facets),
+          empty_map);
+    const Subdomains_ref_type& subdomains = choose_parameter(
+          get_parameter_reference(np, internal_np::subdomain_indices),
+          1);
 
     CGAL::SMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets);
 
