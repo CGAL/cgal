@@ -124,10 +124,11 @@ protected:
 
 template<class Gt, class Tds, class Itag, class InDomainPmap>
 void draw(const CGAL_T2_TYPE& at2,
-          InDomainPmap ipm,
-          const char* title="Constrained_triangulation_2 Basic Viewer",
-          bool nofill=false)
+          InDomainPmap ipm)
 {
+  const char* title="Constrained_triangulation_2 Basic Viewer";
+  bool nofill=false;
+
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
@@ -149,10 +150,10 @@ void draw(const CGAL_T2_TYPE& at2,
 
 
 template<class Gt, class Tds, class Itag>
-void draw(const CGAL_T2_TYPE& at2,
-          const char* title="Constrained_triangulation_2 Basic Viewer",
-          bool nofill=false)
+void draw(const CGAL_T2_TYPE& at2)
 {
+  const char* title="Constrained_triangulation_2 Basic Viewer";
+  bool nofill=false;
   internal::In_domain<CGAL_T2_TYPE> in_domain;
   draw(at2, in_domain, title, nofill);
 }
