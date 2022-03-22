@@ -313,6 +313,13 @@ faces is used to count them.
 
 \cgalExample{Mesh_2/mesh_with_seeds.cpp}
 
+\subsubsection Mesh_2ExampleUsingSeeds Example with a Domain Defined by Nesting Level.
+
+When the domain is defined by polygons for the outer boundaries and the boundaries of holes
+the function `mark_domain_in_triangulation()`  can be called instead of passing seedpoints.
+
+\cgalExample{Mesh_2/mesh_marked_domain.cpp}
+
 
 \subsubsection Mesh_2ExampleLloyd Example Using the Lloyd optimizer
 
@@ -332,4 +339,3 @@ It is possible to export the result of a meshing in VTU, using the function `CGA
 For more information about this format, see \ref IOStreamVTK.
 */
 } /* namespace CGAL */
-
