@@ -7,7 +7,6 @@ project(Surface_mesh_simplification_Tests)
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("edge_collapse_topology.cpp")
-create_single_source_cgal_program("edge_collapse_constrain_sharp_edges.cpp")
 create_single_source_cgal_program("test_edge_collapse_bounded_distance.cpp")
 create_single_source_cgal_program("test_edge_collapse_Envelope.cpp")
 create_single_source_cgal_program("test_edge_collapse_Polyhedron_3.cpp")
