@@ -105,7 +105,6 @@ void alpha_wrap_3(const PointRange& points,
   using AW3 = Alpha_wraps_3::internal::Alpha_wrap_3<Oracle>;
 
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(in_np, internal_np::geom_traits));
-  const bool do_enforce_manifoldness = choose_parameter(get_parameter(in_np, internal_np::do_enforce_manifoldness), true);
 
   Oracle oracle(alpha, gt);
   oracle.add_triangle_soup(points, faces, in_np);

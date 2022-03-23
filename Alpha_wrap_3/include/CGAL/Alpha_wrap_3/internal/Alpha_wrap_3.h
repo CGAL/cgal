@@ -90,7 +90,7 @@ public:
   };
 };
 
-template <typename Oracle> // @todo better name
+template <typename Oracle>
 class Alpha_wrap_3
 {
   using Base_GT = typename Oracle::Geom_traits;
@@ -297,8 +297,8 @@ public:
 #endif
 
 #ifdef CGAL_AW3_DEBUG
-    std::cout << "Alpha wrap vertices:  " << num_vertices(output_mesh) << std::endl;
-    std::cout << "Alpha wrap faces:     " << num_faces(output_mesh) << std::endl;
+    std::cout << "Alpha wrap vertices:  " << vertices(output_mesh).size() << std::endl;
+    std::cout << "Alpha wrap faces:     " << faces(output_mesh).size() << std::endl;
 
  #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
     IO::write_polygon_mesh("final.off", alpha_wrap, CGAL::parameters::stream_precision(17));
@@ -640,9 +640,9 @@ private:
           {
             // There shouldn't be any artificial vertex on the inside/outside boundary
             // (past initialization)
-//            CGAL_assertion(cell->vertex((fid + 1)&3)->info() != BBOX_VERTEX);
-//            CGAL_assertion(cell->vertex((fid + 2)&3)->info() != BBOX_VERTEX);
-//            CGAL_assertion(cell->vertex((fid + 3)&3)->info() != BBOX_VERTEX);
+//            CGAL_assertion(cell->vertex((fid + 1)&3)->info() == DEFAULT);
+//            CGAL_assertion(cell->vertex((fid + 2)&3)->info() == DEFAULT);
+//            CGAL_assertion(cell->vertex((fid + 3)&3)->info() == DEFAULT);
 
             points.push_back(m_dt.point(cell, Dt::vertex_triple_index(fid, 0)));
             points.push_back(m_dt.point(cell, Dt::vertex_triple_index(fid, 1)));
@@ -711,11 +711,6 @@ private:
       const Cell_handle nh = c->neighbor(s);
       if(c->info().is_outside == nh->info().is_outside)
         continue;
-
-      // There shouldn't be any artificial vertex on the inside/outside boundary
-      CGAL_assertion(f.first->vertex((f.second + 1)&3)->info() != BBOX_VERTEX);
-      CGAL_assertion(f.first->vertex((f.second + 2)&3)->info() != BBOX_VERTEX);
-      CGAL_assertion(f.first->vertex((f.second + 3)&3)->info() != BBOX_VERTEX);
 
       std::array<std::size_t, 3> ids;
       for(std::size_t pos=0; pos<3; ++pos)
@@ -950,6 +945,7 @@ private:
                   const SeedRange& seeds)
   {
 #ifdef CGAL_AW3_DEBUG
+    std::cout << "> Initialize..." << std::endl;
     std::cout << "Alpha: " << alpha << std::endl;
     std::cout << "Offset: " << offset << std::endl;
 #endif
@@ -962,10 +958,10 @@ private:
       return;
     }
 
-    m_offset = FT(offset);
-    m_sq_offset = square(m_offset);
     m_alpha = FT(alpha);
     m_sq_alpha = square(m_alpha);
+    m_offset = FT(offset);
+    m_sq_offset = square(m_offset);
 
     m_dt.clear();
     m_queue.clear();

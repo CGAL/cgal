@@ -45,13 +45,10 @@ private:
   const AABBTree& tree;
 };
 
-/// @todo even with EPECK, the precision cannot be 0 (otherwise it will not converge),
-/// thus exactness is pointless. Might as well use a cheap kernel (e.g. SC<double>), as long
-/// as there exists a mechanism to catch when the cheap kernel fails to converge (iterations?
-/// see also Tr_3::locate() or Mesh_3::Robust_intersection_traits_3.h)
-
-/// @todo do we even see this in vtune
-
+// @todo even with EPECK, the precision cannot be 0 (otherwise it will not converge),
+// thus exactness is pointless. Might as well use a cheap kernel (e.g. SC<double>), as long
+// as there exists a mechanism to catch when the cheap kernel fails to converge (iterations?
+// see also Tr_3::locate() or Mesh_3::Robust_intersection_traits_3.h)
 template <class Kernel, class DistanceOracle>
 class Offset_intersection
 {

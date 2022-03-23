@@ -65,6 +65,8 @@ less_squared_radius_of_min_empty_sphere(typename Dt::Geom_traits::FT sq_alpha,
   const Point& p2 = dt.point(c, Dt::vertex_triple_index(ic,1));
   const Point& p3 = dt.point(c, Dt::vertex_triple_index(ic,2));
 
+  // This is not actually possible in the context of alpha wrapping, but keeping it for genericity
+  // and because it does not cost anything.
   if(dt.is_infinite(n))
   {
     Orientation ori = orientation_of_circumcenter(p1, p2, p3,
@@ -106,8 +108,6 @@ less_squared_radius_of_min_empty_sphere(typename Dt::Geom_traits::FT sq_alpha,
   }
 
   // both c and n are finite
-  // @todo: In case it shows up in vtune introduce a new predicate
-  //        Note that in this case we also need a static filter to be faster
   if(orientation_of_circumcenter(p1, p2, p3,
                                  dt.point(c, 0), dt.point(c, 1), dt.point(c, 2), dt.point(c, 3)) !=
      orientation_of_circumcenter(p1, p2, p3,
