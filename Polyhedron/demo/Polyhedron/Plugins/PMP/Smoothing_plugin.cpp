@@ -134,8 +134,7 @@ public:
   }
 
   Ui::Tangential_relaxation_dialog
-  relaxation_dialog(QDialog* dialog,
-                    Scene_facegraph_item* poly_item)
+  relaxation_dialog(QDialog* dialog)
   {
     Ui::Tangential_relaxation_dialog ui;
     ui.setupUi(dialog);
@@ -187,7 +186,7 @@ public Q_SLOTS:
       }
       // Create dialog box
       QDialog dialog(mw);
-      Ui::Tangential_relaxation_dialog ui = relaxation_dialog(&dialog, poly_item);
+      Ui::Tangential_relaxation_dialog ui = relaxation_dialog(&dialog);
 
       // Get values
       int i = dialog.exec();
@@ -223,8 +222,8 @@ public Q_SLOTS:
           pmesh,
           CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
           .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-          .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
-
+          .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+          .relax_constraints(smooth_features));
         selection_item->polyhedron_item()->invalidateOpenGLBuffers();
         Q_EMIT selection_item->polyhedron_item()->itemChanged();
         selection_item->invalidateOpenGLBuffers();
