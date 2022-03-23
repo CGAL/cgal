@@ -29,6 +29,17 @@
 namespace CGAL {
 namespace Polygon_mesh_processing {
 
+namespace internal {
+struct Allow_all_moves{
+  template <class vertex_descriptor, class Point_3>
+  constexpr inline bool operator()(vertex_descriptor, Point_3, Point_3) const
+  {
+    return true;
+  }
+};
+} // internal namespace
+
+
 /*!
 * \ingroup PMP_meshing_grp
 * applies an iterative area-based tangential smoothing to the given range of vertices.
@@ -95,6 +106,13 @@ namespace Polygon_mesh_processing {
 *                           constrained polylines they belong to.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`false`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{allow_move_functor}
+*     \cgalParamDescription{A function object used to determinate if a vertex move should be allowed or not}
+*     \cgalParamType{Unary functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)` returning `true`
+*                    if the vertex `v` can be move from `src` to `tgt`; %Point_3` being the value type of the vertex point map }
+*     \cgalParamDefault{If not provided, all moves are allowed.}
 *   \cgalParamNEnd
 *
 * \cgalNamedParamsEnd
@@ -175,6 +193,14 @@ void tangential_relaxation(const VertexRange& vertices,
 
     return true;
   };
+
+  typedef typename internal_np::Lookup_named_param_def <
+      internal_np::allow_move_functor_t,
+      NamedParameters,
+      internal::Allow_all_moves// default
+    > ::type Shall_move;
+  Shall_move shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
+                                           internal::Allow_all_moves());
 
   for (unsigned int nit = 0; nit < nb_iterations; ++nit)
   {
@@ -267,7 +293,8 @@ void tangential_relaxation(const VertexRange& vertices,
       //check that no inversion happened
       double frac = 1.;
       while (frac > 0.03 //5 attempts maximum
-         && !check_normals(vp.first)) //if a face has been inverted
+          && (   !check_normals(vp.first)
+              || !shall_move(vp.first, initial_pos, get(vpm, vp.first)))) //if a face has been inverted
       {
         frac = 0.5 * frac;
         put(vpm, vp.first, initial_pos + frac * move);//shorten the move by 2

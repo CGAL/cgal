@@ -95,6 +95,22 @@ void test_tangential_relaxation(const std::string filename)
                      .relax_constraints(false));
   PMP::tangential_relaxation(vertices(mesh), mesh);
   PMP::tangential_relaxation(mesh);
+
+  // test allow_move_functor
+  typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Point> >::type vpm =
+    get(CGAL::dynamic_vertex_property_t<Point>(), mesh);
+  for (auto v : vertices(mesh))
+    put(vpm, v, get(CGAL::vertex_point, mesh, v));
+  auto no_move = [](typename boost::graph_traits<Mesh>::vertex_descriptor, Point, Point)
+  {
+    return false;
+  };
+  PMP::tangential_relaxation(vertices(mesh), mesh, CGAL::parameters::allow_move_functor(no_move)
+                                                        .vertex_point_map(vpm));
+  for (auto v : vertices(mesh))
+  {
+    assert(get(vpm, v) == get(CGAL::vertex_point, mesh, v));
+  }
 }
 
 template <typename Mesh>
