@@ -219,7 +219,8 @@ public:
     t.start();
 #endif
 
-    initialize(alpha, offset, seeds);
+    if(!initialize(alpha, offset, seeds))
+      return;
 
 #ifdef CGAL_AW3_DEBUG_DUMP_EVERY_STEP
     extract_surface(output_mesh, ovpm, true /*tolerate non manifoldness*/);
@@ -435,7 +436,7 @@ private:
   // Another way is to simply make faces incident to the seed always traversable, and then
   // we only have to ensure faces opposite of the seed are traversable (i.e., radius ~= 1.65 * alpha)
   template <typename SeedRange>
-  void initialize_with_cavities(const SeedRange& seeds)
+  bool initialize_with_cavities(const SeedRange& seeds)
   {
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
     std::cout << "> Dig cavities" << std::endl;
@@ -534,7 +535,7 @@ private:
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
       std::cerr << "Error: no acceptable seed was provided" << std::endl;
 #endif
-      return;
+      return false;
     }
 
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
@@ -566,15 +567,17 @@ private:
     if(m_queue.empty())
     {
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
-      std::cerr << "Error: Could not initialize the algorithm with these seeds, and alpha|offset values" << std::endl;
+      std::cerr << "Could not initialize the algorithm with these seeds, and alpha|offset values" << std::endl;
 #endif
-      return;
+      return false;
     }
+
+    return true;
   }
 
   // tag all infinite cells OUTSIDE and all finite cells INSIDE
   // init queue with all convex hull facets
-  void initialize_from_infinity()
+  bool initialize_from_infinity()
   {
     for(Cell_handle ch : m_dt.all_cell_handles())
     {
@@ -589,6 +592,8 @@ private:
         ch->info().is_outside = false;
       }
     }
+
+    return true;
   }
 
   // Manifoldness is tolerated while debugging and extracting at intermediate states
@@ -940,7 +945,7 @@ private:
 
 private:
   template <typename SeedRange>
-  void initialize(const double alpha,
+  bool initialize(const double alpha,
                   const double offset,
                   const SeedRange& seeds)
   {
@@ -955,7 +960,7 @@ private:
 #ifdef CGAL_AW3_DEBUG
       std::cout << "Error: invalid input parameters" << std::endl;
 #endif
-      return;
+      return false;
     }
 
     m_alpha = FT(alpha);
@@ -969,9 +974,9 @@ private:
     insert_bbox_corners();
 
     if(seeds.empty())
-      initialize_from_infinity();
+      return initialize_from_infinity();
     else
-      initialize_with_cavities(seeds);
+      return initialize_with_cavities(seeds);
   }
 
   void alpha_flood_fill()
