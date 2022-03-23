@@ -476,7 +476,9 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  * of faces it contains), but it is also possible to pass custom sizes, such as the area of the face.
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
- * \tparam ThresholdValueType the type of the threshold value
+ * \tparam ThresholdValueType the type of the threshold value. If a face size property map is passed
+ *         by the user, `ThresholdValueType` must be the same type as the value type of the property map.
+ *         Otherwise, `ThresholdValueType` must be `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
@@ -526,9 +528,6 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *     \cgalParamDefault{unused}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
- *
- * \pre If a face size property map is passed by the user, `ThresholdValueType` must be the same
- *      type as the value type of the property map. Otherwise, `ThresholdValueType` must be `std::size_t`.
  *
  * \return the number of connected components removed (ignoring isolated vertices).
  *

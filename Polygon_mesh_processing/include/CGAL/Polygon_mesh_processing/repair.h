@@ -33,7 +33,7 @@ namespace Polygon_mesh_processing {
 ///
 /// \brief removes the isolated vertices from any polygon mesh.
 ///
-/// A vertex is considered isolated if it is not incident to any simplex of higher dimension.
+/// A vertex is considered isolated if it is not incident to a simplex of higher dimension.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///

@@ -9,8 +9,9 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
-#include <fstream>
 #include <iostream>
+#include <iterator>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel       K;
 

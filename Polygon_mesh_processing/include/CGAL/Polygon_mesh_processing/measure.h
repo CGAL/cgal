@@ -90,8 +90,8 @@ inline void rearrange_face_ids(boost::container::small_vector<std::size_t, 4>& i
   * or the geometric traits class deduced from the point property map of `pmesh`.
   *
   * \warning This function involves a square root computation.
-  * If `FT` does not have a `sqrt()` operation, the square root computation
-  * will be done approximately.
+  * If `FT` does not support the `sqrt()` operation, the square root computation
+  * will be performed approximately.
   *
   * @sa `squared_edge_length()`
   * @sa `face_border_length()`
@@ -245,8 +245,8 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
   * from the point property map of `pmesh`.
   *
   * \warning This function involves a square root computation.
-  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-  * will be done approximately.
+  * If `Kernel::FT` does not support the `sqrt()` operation, the square root computation
+  * will be performed approximately.
   *
   * @sa `edge_length()`
   */
@@ -308,6 +308,10 @@ face_border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descripto
   *     The return type `FT` is a number type either deduced from the `geom_traits`
   *     \ref bgl_namedparameters "Named Parameters" if provided,
   *     or the geometric traits class deduced from the point property map of `pmesh`
+  *
+  * @warning This function involves a square root computation.
+  * If `Kernel::FT` does not support the `sqrt()` operation, the square root computation
+  * will be performed approximately.
   *
   * @see `face_border_length()`
   */
@@ -389,8 +393,8 @@ longest_border(const PolygonMesh& pmesh,
   * from the point property map of `tmesh`.
   *
   * \warning This function involves a square root computation.
-  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-  * will be done approximately.
+  * If `Kernel::FT` does not support the `sqrt()` operation, the square root computation
+  * will be performed approximately.
   *
   * @sa `squared_face_area()`
   * @sa `area()`
@@ -536,8 +540,8 @@ squared_face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   * or the geometric traits class deduced from the point property map of `tmesh`.
   *
   * \warning This function involves a square root computation.
-  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-  * will be done approximately.
+  * If `Kernel::FT` does not support the `sqrt()` operation, the square root computation
+  * will be performed approximately.
   *
   * @sa `face_area()`
   */
@@ -597,8 +601,8 @@ area(FaceRange face_range,
   * or the geometric traits class deduced from the point property map of `tmesh`.
   *
   * \warning This function involves a square root computation.
-  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-  * will be done approximately.
+  * If `Kernel::FT` does not support the `sqrt()` operation, the square root computation
+  * will be performed approximately.
   *
   * @sa `face_area()`
   */
@@ -723,8 +727,8 @@ volume(const TriangleMesh& tmesh,
   * or the geometric traits class deduced from the point property map of `tmesh`.
   *
   * \warning This function involves a square root computation.
-  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
-  * will be done approximately.
+  * If `Kernel::FT` does not support the `sqrt()` operation, the square root computation
+  * will be performed approximately.
   */
 template<typename TriangleMesh,
          typename CGAL_NP_TEMPLATE_PARAMETERS>

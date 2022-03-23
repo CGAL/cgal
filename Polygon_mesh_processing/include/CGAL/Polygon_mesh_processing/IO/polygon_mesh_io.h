@@ -50,6 +50,9 @@ namespace IO {
  *
  * The format is detected from the filename extension (letter case is not important).
  *
+ * If repairing and orientation are known to not be required, one can use
+ * \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink directly.
+ *
  * \tparam PolygonMesh a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *

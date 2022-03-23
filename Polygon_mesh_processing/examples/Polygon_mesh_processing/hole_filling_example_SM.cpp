@@ -8,9 +8,10 @@
 #include <boost/lexical_cast.hpp>
 
 #include <iostream>
-#include <fstream>
+#include <iterator>
+#include <string>
+#include <tuple>
 #include <vector>
-#include <set>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
