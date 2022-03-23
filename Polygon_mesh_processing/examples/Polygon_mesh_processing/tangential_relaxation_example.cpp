@@ -23,8 +23,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.04;
-  unsigned int nb_iter = (argc > 3) ? std::stoi(std::string(argv[3])) : 10;
+  unsigned int nb_iter = (argc > 2) ? std::stoi(std::string(argv[2])) : 10;
 
   std::cout << "Relax...";
 
