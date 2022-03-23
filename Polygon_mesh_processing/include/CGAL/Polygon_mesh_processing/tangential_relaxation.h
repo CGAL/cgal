@@ -259,7 +259,7 @@ void tangential_relaxation(const VertexRange& vertices,
     // perform moves
     for(const VP_pair& vp : new_locations)
     {
-      const Point_3& initial_pos = get(vpm, vp.first);
+      const Point_3 initial_pos = get(vpm, vp.first); // make a copy on purpose
       const Vector_3 move(initial_pos, vp.second);
 
       put(vpm, vp.first, vp.second);
