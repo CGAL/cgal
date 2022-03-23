@@ -257,7 +257,7 @@ public:
         else if( CGAL::assign( e, *o) && ((mask&2) != 0)) {
           Point_3 q;
           _CGAL_NEF_TRACEN("trying edge on "<< Segment_3(e->source()->point(),e->twin()->source()->point()));
-          if ((ray_source_vertex != Vertex_handle()) && (ray_source_vertex != e->source()) && (ray_source_vertex != e->twin()->source())) {
+          if ( (ray_source_vertex == Vertex_handle()) || ( (ray_source_vertex != e->source()) && (ray_source_vertex != e->twin()->source())) ) {
 
               if (is.does_intersect_internally(ray, Segment_3(e->source()->point(),
                   e->twin()->source()->point()), q)) {
