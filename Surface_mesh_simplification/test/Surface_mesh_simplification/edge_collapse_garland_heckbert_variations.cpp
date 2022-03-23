@@ -104,14 +104,14 @@ Surface_mesh edge_collapse(Surface_mesh& mesh,
   Bounded_placement bounded_placement(unbounded_placement);
   SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
-  auto start_time = std::chrono::steady_clock::now();
+  std::chrono::time_point<std::chrono::steady_clock> start_time = std::chrono::steady_clock::now();
 
   SMS::edge_collapse(mesh, stop, CGAL::parameters::get_cost(cost)
                                                   .get_placement(unbounded_placement));
 
-  auto end_time = std::chrono::steady_clock::now();
+  std::chrono::time_point<std::chrono::steady_clock> end_time = std::chrono::steady_clock::now();
 
-  unsigned long elapsed_ns = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+  auto elapsed_ns = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
   std::cout << edges(mesh).size() << " edges. Elapsed: " << std::to_string(elapsed_ns) << " (ms)\n";
 
   return mesh;
