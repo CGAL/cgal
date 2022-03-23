@@ -499,7 +499,7 @@ private:
 
     if(Infi_box::standard_kernel()) {
       Nef_polyhedron N = load_nef3("star.nef3.SH");
-      SNC_intersection is(*N.sncp());
+      SNC_intersection is;
 
       Point_3 p;
 
