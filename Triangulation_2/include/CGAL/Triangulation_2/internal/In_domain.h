@@ -15,12 +15,13 @@
 #include <CGAL/license/Triangulation_2.h>
 
 #include <boost/property_map/property_map.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
 namespace internal {
 
-  template<class T>
+template<class T>
 class Has_member_in_domain
 {
 private:
@@ -36,9 +37,9 @@ public:
   static const bool value = (sizeof(f<T>(0)) == sizeof(char));
 };
 
-  template <typename F, typename FH>
+template <typename F, typename FH>
 inline
-typename boost::enable_if<Has_member_in_domain<F>, bool>::type
+std::enable_if_t<Has_member_in_domain<F>::value, bool>
 get_in_domain_impl(FH fh)
 {
   return fh->in_domain();
@@ -46,7 +47,7 @@ get_in_domain_impl(FH fh)
 
 template <typename F, typename FH>
 inline
-typename boost::disable_if<Has_member_in_domain<F>, bool>::type
+std::enable_if_t<!Has_member_in_domain<F>::value, bool>
 get_in_domain_impl(FH fh)
 {
   return false;
