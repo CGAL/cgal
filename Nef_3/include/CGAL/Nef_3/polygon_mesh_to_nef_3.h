@@ -171,7 +171,6 @@ template <class PolygonMesh, class SNC_structure, class FaceIndexMap, class Half
 void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap, HalfedgeIndexMap himap)
 {
   typedef typename boost::property_map<PolygonMesh, vertex_point_t>::type PMap;
-  typedef typename SNC_structure::Plane_3                   Plane;
   typedef typename SNC_structure::Vector_3                           Vector_3;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
