@@ -159,7 +159,7 @@ namespace Polygon_mesh_processing {
 *
 *   \cgalParamNBegin{relax_constraints}
 *     \cgalParamDescription{If `true`, the end vertices of the edges set as constrained
-*                           in `edge_is_constrained_map` and boundary edges move along the}
+*                           in `edge_is_constrained_map` and boundary edges move along the
 *                           constrained polylines they belong to.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`false`}
