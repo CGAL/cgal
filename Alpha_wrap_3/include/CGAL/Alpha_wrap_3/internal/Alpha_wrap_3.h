@@ -330,37 +330,40 @@ public:
     return operator()(default_alpha(), output_mesh);
   }
 
+  // This function is public only because it is used in the tests
+  SC_Iso_cuboid_3 construct_bbox(const double offset)
+  {
+    // Input axis-aligned bounding box
+    SC_Iso_cuboid_3 bbox = m_oracle.bbox();
+    const SC_Point_3 bbox_centroid = midpoint(bbox.min(), bbox.max());
+
+    // Scale a bit to create the initial points not too close to the input
+    double scaling = 1.2;
+    CGAL::Aff_transformation_3<SC> scale(SCALING, scaling);
+    bbox = SC_Iso_cuboid_3(scale.transform(bbox.min()), scale.transform(bbox.max()));
+
+    // Translate bbox back to initial centroid
+    const SC_Point_3 bbox_transformed_centroid = midpoint(bbox.min(), bbox.max());
+    const SC_Vector_3 diff_centroid = bbox_centroid - bbox_transformed_centroid;
+    CGAL::Aff_transformation_3<SC> centroid_translate(TRANSLATION, diff_centroid);
+    bbox = SC_Iso_cuboid_3(centroid_translate.transform(bbox.min()), centroid_translate.transform(bbox.max()));
+
+    // Add the offset
+    SC_Vector_3 offset_ext = std::sqrt(3.) * offset * SC_Vector_3(1, 1, 1);
+    CGAL::Aff_transformation_3<SC> translate_m(TRANSLATION, - offset_ext);
+    CGAL::Aff_transformation_3<SC> translate_M(TRANSLATION,   offset_ext);
+    bbox = SC_Iso_cuboid_3(translate_m.transform(bbox.min()), translate_M.transform(bbox.max()));
+
+    std::cout << "Bbox: " << bbox << std::endl;
+
+    return bbox;
+  }
+
 private:
   // Adjust the bbox & insert its corners to construct the starting triangulation
   void insert_bbox_corners()
   {
-    m_bbox = m_oracle.bbox();
-
-    // compute input mesh bbox
-    const SC_Point_3 bbox_centroid = CGAL::midpoint(m_bbox.min(), m_bbox.max());
-    const double bbox_diag_length = std::sqrt(CGAL::squared_distance(m_bbox.min(), m_bbox.max()));
-
-    // use isotropic bbox
-    // @todo keep an aabb? Probaly as good as any other choice (useful for multiscale approach??)
-    const double xs = m_bbox.xmax() - m_bbox.xmin();
-    const double ys = m_bbox.ymax() - m_bbox.ymin();
-    const double zs = m_bbox.zmax() - m_bbox.zmin();
-    const double max_len = (std::max)((std::max)(xs, ys), zs);
-    m_bbox = SC_Iso_cuboid_3(m_bbox.min(), m_bbox.min() + max_len * SC_Vector_3(1, 1, 1));
-
-    // scale bbox proportional to offset value
-    // The "1.2" hard-coded value is because we take the offset into account.
-    // This ensures that Steiner vertices are also inside this box
-    double scaling = 1.2 + (8. * (CGAL::to_double(m_offset) / bbox_diag_length));
-    CGAL::Aff_transformation_3<SC> scale(SCALING, scaling);
-    m_bbox = SC_Iso_cuboid_3(scale.transform(m_bbox.min()), scale.transform(m_bbox.max()));
-
-    // translate bbox back to initial centroid
-    const SC_Point_3 bbox_transformed_centroid = midpoint(m_bbox.min(), m_bbox.max());
-    const SC_Vector_3 diff_centroid = bbox_centroid - bbox_transformed_centroid;
-
-    CGAL::Aff_transformation_3<SC> translate(TRANSLATION, diff_centroid);
-    m_bbox = SC_Iso_cuboid_3(translate.transform(m_bbox.min()), translate.transform(m_bbox.max()));
+    m_bbox = construct_bbox(CGAL::to_double(m_offset));
 
 #ifdef CGAL_AW3_DEBUG_INITIALIZATION
     std::cout << "Insert Bbox vertices" << std::endl;
