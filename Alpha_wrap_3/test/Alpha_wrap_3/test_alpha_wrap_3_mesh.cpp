@@ -1,6 +1,6 @@
 #define CGAL_AW3_TIMER
-#define CGAL_AW3_DEBUG
-#define CGAL_AW3_DEBUG_MANIFOLDNESS
+//#define CGAL_AW3_DEBUG
+//#define CGAL_AW3_DEBUG_MANIFOLDNESS
 //#define CGAL_AW3_DEBUG_STEINER_COMPUTATION
 //#define CGAL_AW3_DEBUG_INITIALIZATION
 //#define CGAL_AW3_DEBUG_QUEUE
@@ -33,6 +33,7 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
   namespace PMP = CGAL::Polygon_mesh_processing;
 
   std::cout << "Input: " << num_vertices(input_mesh) << " vertices, " << num_faces(input_mesh) << " faces" << std::endl;
+  std::cout << "Alpha: " << alpha << " Offset: " << offset << std::endl;
 
   bool has_degeneracies = !PMP::remove_degenerate_faces(input_mesh);
   if(has_degeneracies)
@@ -42,10 +43,12 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
 
 //  CGAL::IO::write_polygon_mesh("input.off", input_mesh, CGAL::parameters::stream_precision(17));
 
+  const bool enforce_manifoldness = true;
+
   Mesh wrap;
   CGAL::alpha_wrap_3(input_mesh, alpha, offset, wrap,
                      CGAL::parameters::default_values(),
-                     CGAL::parameters::do_enforce_manifoldness(true));
+                     CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness));
 
   std::cout << "Result: " << vertices(wrap).size() << " vertices, " << faces(wrap).size() << " faces" << std::endl;
 
@@ -55,10 +58,13 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
   {
     assert(AW3::internal::is_valid_wrap(wrap, true /*manifoldness*/));
     assert(AW3::internal::is_outer_wrap_of_triangle_mesh(wrap, input_mesh));
-    assert(AW3::internal::has_expected_Hausdorff_distance(wrap, input_mesh, alpha, offset));
+
+    if(!enforce_manifoldness)
+      assert(AW3::internal::has_expected_Hausdorff_distance(wrap, input_mesh, alpha, offset));
   }
 
-  assert(AW3::internal::check_edge_length(wrap, alpha));
+  if(!enforce_manifoldness)
+    assert(AW3::internal::check_edge_length(wrap, alpha));
 }
 
 void alpha_wrap_triangle_mesh(const std::string& filename,
@@ -97,8 +103,8 @@ void alpha_wrap_triangle_mesh(const std::string& filename)
 
   for(int i=0; i<2; ++i)
   {
-    const double alpha_expo = r.get_double(0., 7.5); // to have alpha_rel between 1 and ~200
-    const double offset_expo = r.get_double(0., 7.5);
+    const double alpha_expo = r.get_double(0., 6); // to have alpha_rel between 1 and 64
+    const double offset_expo = r.get_double(0., 6);
     const double alpha_rel = std::pow(2, alpha_expo);
     const double offset_rel = std::pow(2, offset_expo);
     const double alpha = longest_diag_length / alpha_rel;

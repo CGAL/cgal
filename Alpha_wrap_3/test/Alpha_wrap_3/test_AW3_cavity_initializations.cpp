@@ -1,6 +1,6 @@
 #define CGAL_AW3_TIMER
 #define CGAL_AW3_DEBUG
-#define CGAL_AW3_DEBUG_INITIALIZATION
+// #define CGAL_AW3_DEBUG_INITIALIZATION
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -21,24 +21,21 @@ using Mesh = CGAL::Surface_mesh<Point_3>;
 
 using Seeds = std::vector<Point_3>;
 
-Point_3 generate_point(const CGAL::Bbox_3 bbox,
-                       CGAL::Random& r)
-{
-  return Point_3(bbox.xmin() + bbox.x_span() * r.get_double(),
-                 bbox.ymin() + bbox.y_span() * r.get_double(),
-                 bbox.zmin() + bbox.z_span() * r.get_double());
-}
-
 template <typename Oracle>
 void generate_random_seeds(const Oracle& oracle,
                            const double offset,
                            Seeds& seeds,
                            CGAL::Random& r)
 {
-  auto sq_offset = CGAL::square(offset);
+  const auto bbox = CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle>(oracle).construct_bbox(offset);
+  const double sq_offset = CGAL::square(offset);
+
   while(seeds.size() < 3)
   {
-    const Point_3 seed = generate_point(oracle.bbox(), r);
+    const Point_3 seed (bbox.xmin() + r.get_double(0., 1.) * (bbox.xmax() - bbox.xmin()),
+                        bbox.ymin() + r.get_double(0., 1.) * (bbox.ymax() - bbox.ymin()),
+                        bbox.zmin() + r.get_double(0., 1.) * (bbox.zmax() - bbox.zmin()));
+
     const FT sqd = oracle.squared_distance(seed);
 #ifdef CGAL_AW3_DEBUG
     std::cout << "Generate " << seed << " at squared distance " << sqd << " (sqo: " << sq_offset << ")" << std::endl;
@@ -66,6 +63,7 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
   if(has_degeneracies)
     std::cerr << "Warning: Failed to remove some degenerate faces." << std::endl;
 
+  std::cout << "Processed input: " << vertices(input_mesh).size() << " vertices, " << faces(input_mesh).size() << " faces" << std::endl;
 //  CGAL::IO::write_polygon_mesh("input.off", input_mesh, CGAL::parameters::stream_precision(17));
 
   Oracle oracle;
@@ -81,12 +79,18 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
 
   assert(!seeds.empty());
 
+  const bool enforce_manifoldness = true;
+
   Mesh wrap;
   aw3(alpha, offset, wrap,
       CGAL::parameters::seed_points(std::ref(seeds))
-                       .do_enforce_manifoldness(true));
+                       .do_enforce_manifoldness(enforce_manifoldness));
 
   std::cout << "Result: " << vertices(wrap).size() << " vertices, " << faces(wrap).size() << " faces" << std::endl;
+
+  // Tolerate failed initialization since we use random seeds and it's difficult to guarantee it
+  if(is_empty(wrap))
+    return;
 
 //  CGAL::IO::write_polygon_mesh("last.off", wrap, CGAL::parameters::stream_precision(17));
 
@@ -94,10 +98,13 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
   {
     assert(AW3::internal::is_valid_wrap(wrap, true /*manifoldness*/));
     assert(AW3::internal::is_outer_wrap_of_triangle_mesh(wrap, input_mesh));
-    // assert(AW3::internal::has_expected_Hausdorff_distance(wrap, input_mesh, alpha, offset));
+
+    if(!enforce_manifoldness)
+      assert(AW3::internal::has_expected_Hausdorff_distance(wrap, input_mesh, alpha, offset));
   }
 
-  // assert(AW3::internal::check_edge_length(wrap, alpha));
+  if(!enforce_manifoldness)
+    assert(AW3::internal::check_edge_length(wrap, alpha));
 }
 
 void alpha_wrap_triangle_mesh(Mesh& input_mesh,
@@ -125,8 +132,8 @@ void alpha_wrap_triangle_mesh(const std::string& filename)
   {
     CGAL::Random r;
 
-    const double alpha_expo = r.get_double(0., 7.5); // to have alpha_rel between 1 and ~200
-    const double offset_expo = r.get_double(0., 7.5);
+    const double alpha_expo = r.get_double(0., 6); // to have alpha_rel between 1 and 64
+    const double offset_expo = r.get_double(0., 6);
     const double alpha_rel = std::pow(2, alpha_expo);
     const double offset_rel = std::pow(2, offset_expo);
     const double alpha = longest_diag_length / alpha_rel;

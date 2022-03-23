@@ -33,6 +33,7 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
   namespace PMP = CGAL::Polygon_mesh_processing;
 
   std::cout << "Input: " << num_vertices(input_mesh) << " vertices, " << num_faces(input_mesh) << " faces" << std::endl;
+  std::cout << "Alpha: " << alpha << " Offset: " << offset << std::endl;
 
   const bool has_degeneracies = !PMP::remove_degenerate_faces(input_mesh);
   if(has_degeneracies)
@@ -49,9 +50,18 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
 
   std::cout << "Result: " << vertices(nm_wrap).size() << " vertices, " << faces(nm_wrap).size() << " faces" << std::endl;
 
+  if(!has_degeneracies)
+  {
+    assert(AW3::internal::is_valid_wrap(nm_wrap, false));
+    assert(AW3::internal::is_outer_wrap_of_triangle_mesh(nm_wrap, input_mesh));
+    assert(AW3::internal::has_expected_Hausdorff_distance(nm_wrap, input_mesh, alpha, offset));
+  }
+
+  assert(AW3::internal::check_edge_length(nm_wrap, alpha));
+
   FT base_vol = 0;
   if(!is_closed(nm_wrap))
-    std::cerr << "Warning: non-manifold wrap is not closed" << std::endl;
+    std::cerr << "W: non-manifold wrap is not closed" << std::endl;
   else
     base_vol = PMP::volume(nm_wrap);
 
@@ -66,12 +76,7 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
   {
     assert(AW3::internal::is_valid_wrap(m_wrap, true /*manifoldness*/));
     assert(AW3::internal::is_outer_wrap_of_triangle_mesh(m_wrap, input_mesh));
-
-    // These assertions might not be honored since we have added material
-    // assert(AW3::internal::has_expected_Hausdorff_distance(m_wrap, input_mesh, alpha, offset));
   }
-
-  // assert(AW3::internal::check_edge_length(wrap, alpha));
 
   const FT final_vol = PMP::volume(m_wrap);
 
@@ -84,7 +89,7 @@ void alpha_wrap_triangle_manifoldness(Mesh& input_mesh,
               << "after:  " << final_vol << "\n"
               << "ratio:  " << ratio << std::endl;
     if(ratio > 1.1) // more than 10% extra volume
-      std::cerr << "Warning: large increase of volume after manifoldness resolution" << std::endl;
+      std::cerr << "W: large increase of volume after manifoldness resolution" << std::endl;
   }
 }
 
@@ -124,8 +129,8 @@ void alpha_wrap_triangle_manifoldness(const std::string& filename)
 
   for(int i=0; i<2; ++i)
   {
-    const double alpha_expo = r.get_double(0., 7.5); // to have alpha_rel between 1 and ~200
-    const double offset_expo = r.get_double(0., 7.5);
+    const double alpha_expo = r.get_double(0., 6); // to have alpha_rel between 1 and 64
+    const double offset_expo = r.get_double(0., 6);
     const double alpha_rel = std::pow(2, alpha_expo);
     const double offset_rel = std::pow(2, offset_expo);
     const double alpha = longest_diag_length / alpha_rel;

@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
 namespace CGAL {
@@ -124,6 +125,22 @@ bool is_valid_wrap(const TriangleMesh& wrap,
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
+  if(is_empty(wrap))
+  {
+#ifdef CGAL_AW3_DEBUG
+    std::cerr << "Error: empty wrap" << std::endl;
+#endif
+    return false;
+  }
+
+  if(!is_valid_polygon_mesh(wrap))
+  {
+#ifdef CGAL_AW3_DEBUG
+    std::cerr << "Error: Invalid wrap mesh" << std::endl;
+#endif
+    return false;
+  }
+
   if(!is_triangle_mesh(wrap))
   {
 #ifdef CGAL_AW3_DEBUG
@@ -134,8 +151,24 @@ bool is_valid_wrap(const TriangleMesh& wrap,
 
   if(!is_closed(wrap))
   {
+    if(check_manifoldness)
+    {
 #ifdef CGAL_AW3_DEBUG
-    std::cerr << "Error: Wrap is not closed" << std::endl;
+      std::cerr << "Error: Wrap is not closed" << std::endl;
+#endif
+      return false;
+    }
+    else
+    {
+#ifdef CGAL_AW3_DEBUG
+      std::cerr << "W: Wrap is not closed" << std::endl;
+#endif
+    }
+  }
+  else if(!PMP::does_bound_a_volume(wrap, np))
+  {
+#ifdef CGAL_AW3_DEBUG
+    std::cerr << "Error: Wrap does not bound a volume" << std::endl;
 #endif
     return false;
   }
@@ -166,16 +199,8 @@ bool is_valid_wrap(const TriangleMesh& wrap,
       return false;
     }
 #ifdef CGAL_AW3_DEBUG
-    std::cerr << "Warning: Wrap self-intersects" << std::endl;
+    std::cerr << "W: Wrap self-intersects" << std::endl;
 #endif
-  }
-
-  if(!PMP::does_bound_a_volume(wrap, np))
-  {
-#ifdef CGAL_AW3_DEBUG
-    std::cerr << "Error: Wrap does not bound a volume" << std::endl;
-#endif
-    return false;
   }
 
   return true;
@@ -268,6 +293,7 @@ bool is_outer_wrap_of_triangle_soup(const TriangleMesh& wrap,
   namespace PMP = CGAL::Polygon_mesh_processing;
 
   // Make a mesh out of the soup
+  PMP::repair_polygon_soup(points, faces);
   PMP::orient_polygon_soup(points, faces);
   CGAL_assertion(PMP::is_polygon_soup_a_polygon_mesh(faces));
 

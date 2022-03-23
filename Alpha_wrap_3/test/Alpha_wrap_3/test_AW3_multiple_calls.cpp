@@ -23,32 +23,30 @@ using Point_3 = Kernel::Point_3;
 using Vector_3 = Kernel::Vector_3;
 
 using Points = std::vector<Point_3>;
-using Face = std::array<std::size_t, 3>;
+using Face = std::vector<std::size_t>;
 using Faces = std::vector<Face>;
 
 using Mesh = CGAL::Surface_mesh<Point_3>;
 
 void alpha_wrap_triangle_soup(Points& pr,
                               Faces& fr,
-                              const double alpha,
-                              const double offset)
+                              double alpha,
+                              double offset)
 {
   namespace AW3 = CGAL::Alpha_wraps_3;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  using Oracle = AW3::internal::Triangle_soup_oracle<Points, Faces, Kernel, int, false>;
+  using Oracle = AW3::internal::Triangle_soup_oracle<Points, Faces, Kernel, int, false /*subdivide*/>;
 
   std::cout << "Input: " << pr.size() << " points, " << fr.size() << " faces" << std::endl;
+
+  PMP::repair_polygon_soup(pr, fr);
+  std::cout << "Processed input: " << pr.size() << " points, " << fr.size() << " faces" << std::endl;
 //  CGAL::IO::write_polygon_soup("input.off", pr, fr, CGAL::parameters::stream_precision(17));
 
-  Mesh input_mesh;
-  if(!PMP::orient_polygon_soup(pr, fr) ||
-     !PMP::is_polygon_soup_a_polygon_mesh(fr))
-  {
-    std::cerr << "Warning: polygon soup does not describe a polygon mesh" << std::endl;
-    return;
-  }
-
+  Mesh input_mesh; // only required for Hausdorff
+  PMP::orient_polygon_soup(pr, fr);
+  assert(PMP::is_polygon_soup_a_polygon_mesh(fr));
   PMP::polygon_soup_to_polygon_mesh(pr, fr, input_mesh);
 
   // AW3
@@ -59,7 +57,7 @@ void alpha_wrap_triangle_soup(Points& pr,
   Mesh wrap;
   aw3(alpha, offset, wrap, CGAL::parameters::do_enforce_manifoldness(false));
 
-  std::cout << "Result: " << vertices(wrap).size() << " vertices, " << faces(wrap).size() << " faces" << std::endl;
+  std::cout << "First call result: " << vertices(wrap).size() << " vertices, " << faces(wrap).size() << " faces" << std::endl;
 
 //  CGAL::IO::write_polygon_mesh("last.off", wrap, CGAL::parameters::stream_precision(17));
 
@@ -68,8 +66,15 @@ void alpha_wrap_triangle_soup(Points& pr,
   assert(AW3::internal::has_expected_Hausdorff_distance(wrap, input_mesh, alpha, offset));
   assert(AW3::internal::check_edge_length(wrap, alpha));
 
+  alpha *= 2;
+  offset *= 2;
+
   Mesh wrap_2;
-  aw3(2 * alpha, 2 * offset, wrap, CGAL::parameters::do_enforce_manifoldness(false));
+  aw3(alpha, offset, wrap_2, CGAL::parameters::do_enforce_manifoldness(false));
+
+  std::cout << "Second call result: " << vertices(wrap).size() << " vertices, " << faces(wrap).size() << " faces" << std::endl;
+
+//  CGAL::IO::write_polygon_mesh("last.off", wrap, CGAL::parameters::stream_precision(17));
 
   assert(num_vertices(wrap_2) <= num_vertices(wrap) && num_faces(wrap_2) <= num_faces(wrap));
   assert(AW3::internal::is_valid_wrap(wrap_2, false /*manifoldness*/));
@@ -95,12 +100,12 @@ void alpha_wrap_triangle_soup(const std::string& filename)
                                 Point_3(bbox.xmin(), bbox.ymin(), bbox.zmin());
   double longest_diag_length = CGAL::to_double(CGAL::approximate_sqrt(longest_diag.squared_length()));
 
+  CGAL::Random r;
+
   for(int i=0; i<2; ++i)
   {
-    CGAL::Random r;
-
-    const double alpha_expo = r.get_double(0., 7.5); // to have alpha_rel between 1 and ~200
-    const double offset_expo = r.get_double(0., 7.5);
+    const double alpha_expo = r.get_double(0., 6); // to have alpha_rel between 1 and 64
+    const double offset_expo = r.get_double(0., 6);
     const double alpha_rel = std::pow(2, alpha_expo);
     const double offset_rel = std::pow(2, offset_expo);
     const double alpha = longest_diag_length / alpha_rel;
@@ -139,7 +144,7 @@ int main(int argc, char** argv)
   alpha_wrap_triangle_soup("data/tetrahedron_self_intersection_tip.off");
   alpha_wrap_triangle_soup("data/tetrahedron_twisted_tip.off");
   alpha_wrap_triangle_soup("data/tetrahedron_random_perturbation.off");
-  alpha_wrap_triangle_soup("data/overlay_triangulation.off");
+//  alpha_wrap_triangle_soup("data/overlay_triangulation.off"); // due to geometrically degenerate faces + using soups here
   alpha_wrap_triangle_soup("data/two_knives.off");
   alpha_wrap_triangle_soup("data/three_knives.off");
   alpha_wrap_triangle_soup("data/bunny_random_perturbation.off");
