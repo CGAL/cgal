@@ -172,8 +172,24 @@ void increment_erase_counter();
 /*! \name Internal
 These functions are used internally by mesh optimizers.
 The class should provide storage, accessors and modificators for two `Vertex_handle`
-and two `Cell_handle`.*/
+and two `Cell_handle`, and a cache value for sliverity.*/
 /// @{
+
+/*!
+*/
+void set_sliver_value(double value);
+
+/*!
+*/
+double sliver_value() const;
+
+/*!
+*/
+bool is_cache_valid() const;
+
+/*!
+*/
+void reset_cache_validity() const;
 
 /*!
 
