@@ -782,13 +782,13 @@ public:
                     const Polyline_3& Q,
                     Tracer& tracer,
                     const WeightCalculator& WC,
-                    Visitor visitor) const
+                    Visitor& visitor) const
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
 
-    visitor("Try Delaunay first");
+    visitor.start_delaunay_triangulation();
 
     int n = static_cast<int>(P.size())-1; // because the first and last point are equal
     Triangulation tr;
@@ -803,6 +803,7 @@ public:
       std::cerr << "W: Returning no output. Dimension of 3D Triangulation is below 2!\n";
       #endif
 #endif
+      visitor.end_delaunay_triangulation(false);
       return Weight::NOT_VALID();
     }
 
@@ -829,21 +830,29 @@ public:
         std::cerr << "W: Returning no output. No possible triangulation is found!\n";
         #endif
 #endif
+        visitor.end_delaunay_triangulation(false);
         return Weight::NOT_VALID();
       }
 
       tracer(lambda, 0, n-1);
+      visitor.end_delaunay_triangulation(true);
       return W.get(0,n-1);
     }
 
     // How to handle missing border edges
     #if 1
-    return fill_by_extra_triangles(tr, edge_exist, P, Q, tracer, WC, visitor);
+    Weight w = fill_by_extra_triangles(tr, edge_exist, P, Q, tracer, WC, visitor);
     #else
     // This approach produce better patches when used with Weight_incomplete
     // (which should be arranged in internal::triangulate_hole_Polyhedron, triangulate_polyline)
-    return fill_by_incomplete_patches(tr, std::get<0>(res), edge_exist, P, Q, tracer, WC, visitor);
+    Weight w = fill_by_incomplete_patches(tr, std::get<0>(res), edge_exist, P, Q, tracer, WC, visitor);
     #endif
+    if(w == Weight::NOT_VALID()){
+      visitor.end_delaunay_triangulation(false);
+    }else{
+      visitor.end_delaunay_triangulation(true);
+    }
+    return w;
   }
 
 private:
@@ -867,7 +876,7 @@ private:
                       Edge_DT e,
                       const Triangulation_DT& tr,
                       const WeightCalculator& WC,
-                      Visitor visitor,
+                      Visitor& visitor,
                       const bool produce_incomplete) const
   {
     /**********************************************************************
@@ -993,7 +1002,7 @@ private:
                                     const Polyline_3& Q,
                                     Tracer& tracer,
                                     const WeightCalculator& WC,
-                                    Visitor visitor) const
+                                    Visitor& visitor) const
   {
     typedef std::pair<int, int> Range;
     typedef std::back_insert_iterator<std::vector<Range> > Output_hole_iterator;
@@ -1107,7 +1116,7 @@ private:
                                  const Polyline_3& Q,
                                  Tracer& tracer,
                                  const WeightCalculator& WC,
-                                 Visitor visitor) const
+                                 Visitor& visitor) const
   {
     int n = static_cast<int>(edge_exist.size());
     LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
@@ -1162,7 +1171,7 @@ public:
                     const Polyline_3& Q,
                     Tracer& tracer,
                     const WeightCalculator& WC,
-                    Visitor visitor) const
+                    Visitor& visitor) const
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -1192,12 +1201,17 @@ public:
   void triangulate_all(const Polyline_3& P,
                        const Polyline_3& Q,
                        const WeightCalculator& WC,
-                       Visitor visitor,
+                       Visitor& visitor,
                        std::pair<int, int> range,
                        LookupTable<Weight>& W,
                        LookupTable<int>& lambda) const
   {
-      visitor("in triangulate_all()");
+    int f = range.first, s = range.second;
+
+    const int N = s * ( -3* f * (s - 1) + s * s - 1) /6;
+    int count = 0;
+
+    visitor.start_cubic_algorithm(N);
     for(int j = 2; j<= range.second; ++j) {              // determines range (2 - 3 - 4 )
       for(int i=range.first; i<= range.second-j; ++i) {  // iterates over ranges and find min triangulation in those ranges
         int k = i+j;                                     // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
@@ -1206,6 +1220,8 @@ public:
         Weight w_min = Weight::NOT_VALID();
         // i is the range start (e.g. 1) k is the range end (e.g. 5) -> [1-5]. Now subdivide the region [1-5] with m -> 2,3,4
         for(int m = i+1; m<k; ++m) {
+          visitor.cubic_algorithm(count);
+          ++count;
           // now the regions i-m and m-k might be valid(constructed) patches,
           if( W.get(i,m) == Weight::NOT_VALID() || W.get(m,k) == Weight::NOT_VALID() )
           { continue; }
@@ -1226,6 +1242,8 @@ public:
         lambda.put(i,k, m_min);
       }
     }
+    CGAL_assertion(N == count);
+    visitor.end_cubic_algorithm();
   }
 };
 
@@ -1317,7 +1335,7 @@ template <
 bool
 triangulate_hole_polyline_with_cdt(const PointRange& points,
                                    Tracer& tracer,
-                                   Visitor visitor,
+                                   Visitor& visitor,
                                    const Validity_checker& is_valid,
                                    const Traits& traits,
                                    const typename Traits::FT max_squared_distance)
@@ -1500,7 +1518,7 @@ triangulate_hole_polyline(const PointRange1& points,
                           const PointRange2& third_points,
                           Tracer& tracer,
                           const WeightCalculator& WC,
-                          Visitor visitor,
+                          Visitor& visitor,
                           bool use_delaunay_triangulation,
                           bool skip_cubic_algorithm,
                           const Kernel&)

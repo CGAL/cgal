@@ -44,16 +44,46 @@ bool is_small_hole(halfedge_descriptor h, Mesh & mesh,
   return true;
 }
 
-struct Hello {
-    void operator()(char* s) const
+struct Progress {
+
+    Progress()
+    {}
+
+    Progress(const Progress&) = delete;
+
+    void start_delaunay_triangulation() const
     {
-        std::cout << s << std::endl;
+        std::cout << "Start Delaunay phase" << std::endl;
     }
 
-    void visit() const
+    void end_delaunay_triangulation(bool success) const
     {
-        std::cout << "Hello::visit()" << std::endl;
+        std::cout << "End Delaunay phase " << ((success)?" (success)":" (failed)") << std::endl;
+
     }
+
+    void start_cubic_algorithm( int n)
+    {
+        cubic_n = n;
+        cubic_i = n / 10;
+        std::cout << "Start Cubic phase with " << n << " steps" << std::endl;
+    }
+
+
+    void cubic_algorithm(int i)
+    {
+        if (i == cubic_i) {
+          std::cout << double(cubic_i) / double(cubic_n) * 100 << "%" << std::endl;
+          cubic_i += cubic_n / 10;
+        }
+    }
+
+    void end_cubic_algorithm() const
+    {
+        std::cout << "End Cubic phase" << std::endl;
+    }
+
+    int cubic_n = 0, cubic_i = 0;
 };
 
 // Incrementally fill the holes that are no larger than given diameter
@@ -88,12 +118,12 @@ int main(int argc, char* argv[])
 
     std::vector<face_descriptor>  patch_facets;
     std::vector<vertex_descriptor> patch_vertices;
-    Hello hello;
+    Progress progress;
     bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
                                                                      h,
                                                                      std::back_inserter(patch_facets),
                                                                      std::back_inserter(patch_vertices),
-                                                                     PMP::parameters::visitor(hello).use_delaunay_triangulation(false)));
+                                                                     PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(false)));
 
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
     std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;

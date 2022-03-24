@@ -104,7 +104,7 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
             const Kernel& k,
             const bool use_cdt,
             const bool skip_cubic_algorithm,
-            Visitor visitor,
+            Visitor& visitor,
             const typename Kernel::FT max_squared_distance)
 {
   typedef Halfedge_around_face_circulator<PolygonMesh>   Hedge_around_face_circulator;
@@ -115,7 +115,6 @@ triangulate_hole_polygon_mesh(PolygonMesh& pmesh,
   typedef std::map<vertex_descriptor, int>    Vertex_map;
   typedef typename Vertex_map::iterator       Vertex_map_it;
 
-  visitor.visit();
 #ifdef CGAL_PMP_HOLE_FILLING_DEBUG
   CGAL::Timer timer; timer.start();
 #endif

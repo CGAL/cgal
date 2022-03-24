@@ -36,13 +36,22 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
     struct Hole_fill_visitor{
-        void operator()(char*) const
-        {}
+      void start_delaunay_triangulation() const
+      {}
 
-        void visit() const
-        {
-            std::cout << "Hole_fill_visitor::visit()" << std::endl;
-        }
+      void end_delaunay_triangulation(bool) const
+      {}
+
+      void start_cubic_algorithm(int /* N*/) const
+      {}
+
+      void cubic_algorithm(int /* I */) const
+      {}
+
+      void end_cubic_algorithm() const
+      {}
+
+
     };
 
   /*!
@@ -144,6 +153,7 @@ namespace Polygon_mesh_processing {
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::get_parameter_reference;
 
     typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type         GeomTraits;
 
@@ -185,6 +195,8 @@ namespace Polygon_mesh_processing {
       CGAL_assertion(max_squared_distance >= typename GeomTraits::FT(0));
     }
 
+    Hole_fill_visitor default_visitor;
+
     return internal::triangulate_hole_polygon_mesh(
       pmesh,
       border_halfedge,
@@ -194,7 +206,7 @@ namespace Polygon_mesh_processing {
       choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
       use_cdt,
       choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
-      choose_parameter(get_parameter(np, internal_np::visitor), Hole_fill_visitor()),
+      choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
       max_squared_distance).first;
   }
 
