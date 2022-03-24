@@ -406,14 +406,31 @@ public:
 };  // end class Simplicial_mesh_cell_3
 
 /*!
-\ingroup PkgMesh3MeshClasses
+\ingroup PkgSMDS3Classes
 
-The class `Simplicial_mesh_cell_base_3<GT, Subdomain_index, Surface_patch_index, TDS>`
+The class `Simplicial_mesh_cell_base_3<Gt, Subdomain_index, Surface_patch_index, TDS>`
 is a model of the concept `SimplicialMeshCellBase_3`.
-It is designed to serve as cell base class for...
+It is designed to serve as cell base class for.3D simplicial mesh data structures.
+It stores and gives access to data about the complex the cell belongs to, such as the
+subdomain it belongs to or surface it takes part to.
 
-\tparam GT is the geometric traits class.
-It has to be a model of the concept
+\tparam Gt is the geometric traits class.
+It must be a model of the concept `RemeshingTriangulationTraits_3`
+
+\tparam Subdomain_index Type of indices for subdomains of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must match the label
+of the exterior of the domain (which contains at least the unbounded component).
+ It must match the `Subdomain_index` of the model
+  of the `MeshDomain_3` concept when used for mesh generation.
+
+\tparam Surface_patch_index Type of indices for surface patches (boundaries and interfaces)
+of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must be the index value
+assigned to a non surface facet.
+ It must match the `Surface_patch_index` of the model
+  of the `MeshDomain_3` concept when used for mesh generation.
 
 \tparam TDS is the triangulation data structure class to which cells
 belong. That parameter is only used by the rebind mechanism (see
@@ -424,16 +441,17 @@ default parameter value `void`.
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
 \sa `CGAL::Mesh_cell_base_3`
-
+\sa `MeshDomain_3`
+\sa `MeshDomainWithFeatures_3`
 */
-template< class GT,
+template< class Gt,
           typename Subdomain_index,
           typename Surface_patch_index,
           class TDS = void >
 class Simplicial_mesh_cell_base_3;
 
 // Specialization for void.
-template <typename GT,
+template <typename Gt,
           typename Subdomain_index,
           typename Surface_patch_index>
 class Simplicial_mesh_cell_base_3<GT, Subdomain_index, Surface_patch_index, void>
@@ -446,7 +464,7 @@ public:
   template <typename TDS2>
   struct Rebind_TDS
   {
-    typedef Simplicial_mesh_cell_3<typename GT::Point_3,
+    typedef Simplicial_mesh_cell_3<typename Gt::Point_3,
                                    Subdomain_index,
                                    Surface_patch_index,
                                    TDS2> Other;

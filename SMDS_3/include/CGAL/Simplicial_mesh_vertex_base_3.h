@@ -33,9 +33,19 @@
 
 namespace CGAL {
 
-// Class Simplicial_mesh_vertex_base_3
-// Adds information to Vb about the localization of the vertex in regards
-// to the 3D input complex.
+  /*!
+\ingroup PkgSMDS3Classes
+Class Simplicial_mesh_vertex_base_3
+Adds information to Vb about the localization of the vertex in regards
+to the 3D input complex.
+
+\cgalModels `SimplicialMeshVertexBase_3`
+
+\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+\sa `CGAL::Mesh_vertex_base_3`
+\sa `MeshDomain_3`
+\sa `MeshDomainWithFeatures_3`
+*/
 template<class GT,
          typename Subdomain_index,
          typename Surface_patch_index,

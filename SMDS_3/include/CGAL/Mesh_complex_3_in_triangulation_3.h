@@ -128,18 +128,25 @@ namespace CGAL {
   This class is a model of the concept
   `MeshComplexWithFeatures_3InTriangulation_3`.
 
-
   \tparam Tr can be instantiated with any 3D
-  regular triangulation of \cgal provided that its
+  triangulation of \cgal provided that its
   vertex and cell base class are models of the concepts
-  `MeshVertexBase_3` and `MeshCellBase_3`, respectively.
+  `SimplicialMeshVertexBase_3` and `SimplicialMeshCellBase_3`, respectively.
 
-  \tparam  CornerIndex is the type of the indices for corners. It must match the `Corner_index` of the model
-  of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+  \tparam  CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
+  of the discretized geometric domain.
+  It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
+  `LessThanComparable`.
+  It must match the `Corner_index` of the model
+  of the `MeshDomainWithFeatures_3` concept when used for mesh generation.
 
-  \tparam CurveIndex is the type of the indices for curves.
+  \tparam CurveIndex Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
+  of the discretized geometric domain.
+  It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
+  `LessThanComparable`. The default constructed value must be the value of an edge which
+  does not approximate a 1-dimensional feature of the geometric domain.
   It must match the `Curve_index` types of the model
-  of the `MeshDomainWithFeatures_3` concept used for mesh generation.
+  of the `MeshDomainWithFeatures_3` concept when used for mesh generation.
 
   Those two last template parameters defaults to `int`, so that they can be ignored
   if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
@@ -151,8 +158,8 @@ namespace CGAL {
   \sa \link refine_mesh_3() `CGAL::refine_mesh_3()`\endlink
   \sa `MeshComplex_3InTriangulation_3`
   \sa `MeshComplexWithFeatures_3InTriangulation_3`
-  \sa `MeshCellBase_3`,
-  \sa `MeshVertexBase_3`
+  \sa `SimplicialMeshCellBase_3`,
+  \sa `SimplicialMeshVertexBase_3`
 
 */
 template <typename Tr,
