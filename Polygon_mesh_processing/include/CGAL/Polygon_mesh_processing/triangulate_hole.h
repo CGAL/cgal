@@ -526,6 +526,7 @@ namespace Polygon_mesh_processing {
 
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::get_parameter_reference;
 
     bool use_cdt =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
@@ -555,6 +556,9 @@ bool use_dt3 =
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
+
+    Hole_fill_visitor default_visitor;
+
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
     if (use_cdt)
     {
@@ -578,6 +582,7 @@ bool use_dt3 =
       if (triangulate_hole_polyline_with_cdt(
            points,
            tracer,
+           choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
            is_valid,
            choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)),
            max_squared_distance))
@@ -588,6 +593,7 @@ bool use_dt3 =
     }
 #endif
     triangulate_hole_polyline(points, third_points, tracer, WC(),
+                              choose_parameter(get_parameter_reference(np, internal_np::visitor), default_visitor),
                               use_dt3,
                               choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
                               choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
