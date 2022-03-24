@@ -4,6 +4,9 @@
 #include <CGAL/Random.h>
 #include <CGAL/Surface_mesh_shortest_path.h>
 
+#include <boost/lexical_cast.hpp>
+
+#include <cstdlib>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>

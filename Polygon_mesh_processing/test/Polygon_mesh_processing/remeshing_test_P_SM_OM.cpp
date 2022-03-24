@@ -45,7 +45,7 @@ int main()
     PMP::isotropic_remeshing(faces(p),
                              0.02,
                              p,
-                             PMP::parameters::face_index_map(boost::make_assoc_property_map(fim)));
+                             CGAL::parameters::face_index_map(boost::make_assoc_property_map(fim)));
     std::ofstream out("p.off");
     out << p << std::endl;
   }

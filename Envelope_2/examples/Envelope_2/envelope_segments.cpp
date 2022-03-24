@@ -10,6 +10,7 @@
 
 #include <list>
 #include <iostream>
+#include <cassert>
 
 typedef CGAL::Exact_rational                            Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
@@ -74,7 +75,7 @@ int main ()
 
     e = v->right();
   }
-  CGAL_assertion (e->is_empty());
+  assert(e->is_empty());
   std::cout << "Edge: [empty]" << std::endl;
 
   return (0);

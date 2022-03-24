@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Core_Examples)
 
 # CGAL and its components
@@ -24,11 +24,6 @@ if(NOT Boost_FOUND)
   return()
 
 endif()
-
-# include for local directory
-
-# include for local package
-include(${CGAL_USE_FILE})
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################

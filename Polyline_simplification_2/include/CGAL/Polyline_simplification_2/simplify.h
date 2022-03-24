@@ -335,7 +335,7 @@ operator()()
       } else {
         (*u)->set_cost(*dist);
         if(mpq->contains(*u)){
-          mpq->update(*u, true);
+          mpq->update(*u);
         }
         else{
           mpq->push(*u);
@@ -353,7 +353,7 @@ operator()()
       } else {
         (*w)->set_cost(*dist);
         if(mpq->contains(*w)){
-          mpq->update(*w, true);
+          mpq->update(*w);
         }
         else{
           mpq->push(*w);

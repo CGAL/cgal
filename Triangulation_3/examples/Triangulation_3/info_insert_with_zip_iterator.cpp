@@ -37,8 +37,6 @@ int main()
   Delaunay T( boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin() )),
               boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end() ) )  );
 
-  CGAL_assertion( T.number_of_vertices() == 6 );
-
   // check that the info was correctly set.
   for (Delaunay::Vertex_handle v : T.finite_vertex_handles() )
     if( points[ v->info() ] != v->point() ){

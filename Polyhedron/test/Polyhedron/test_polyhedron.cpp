@@ -221,7 +221,7 @@ typename Poly::Halfedge_handle make_cube_3( Poly& P) {
     Halfedge_handle e = P.split_edge( f);
     e->vertex()->point() = Point( 1, 1, 1);                        // Fig. (e)
     P.split_facet( e, f->next()->next());                          // Fig. (f)
-    CGAL_postcondition( P.is_valid());
+    assert( P.is_valid());
     return h;
 }
 

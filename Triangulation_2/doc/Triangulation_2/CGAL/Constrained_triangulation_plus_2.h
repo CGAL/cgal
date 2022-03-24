@@ -110,6 +110,11 @@ constraint. The value type of this iterator is `Vertex_handle`.
 typedef unspecified_type Vertices_in_constraint_iterator;
 
 /*!
+A range type for iterating over the vertices of the constraint.
+*/
+typedef unspecified_type Vertices_in_constraint;
+
+/*!
 A context enables the access to the vertices of a constraint that pass
 through a subconstraint.
 
@@ -341,7 +346,7 @@ Constraint_iterator constraints_end() const;
 /*!
 returns a range of constraints.
 */
-Subconstraints constraints() const;
+Constraints constraints() const;
 
 /*!
 returns a `Subconstraint_iterator` pointing at the first

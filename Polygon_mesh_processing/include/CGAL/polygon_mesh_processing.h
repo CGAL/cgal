@@ -57,6 +57,7 @@ namespace Polygon_mesh_processing {
 namespace parameters {
 
 /*! \ingroup namedparameters
+\deprecated This function is deprecated and `default_values()` should be used instead.
 This function can be used to indicate that all optional named parameters
 to be used are the default ones. This is particularly useful when a function
 requires more than one sequence of named parameters and default values is

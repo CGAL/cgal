@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <cassert>
 
 typedef CGAL::Simple_cartesian<double>                           K;
 typedef CGAL::Surface_mesh<K::Point_3>                           SM;
@@ -39,7 +40,7 @@ int main(int argc, char** argv)
   // Extract the part n°0 of the partition into a new, independent mesh
   typedef CGAL::Face_filtered_graph<SM>                            Filtered_graph;
   Filtered_graph filtered_sm(sm, 0 /*id of th part*/, face_pid_map);
-    CGAL_assertion(filtered_sm.is_selection_valid());
+  assert(filtered_sm.is_selection_valid());
   SM part_sm;
   CGAL::copy_face_graph(filtered_sm, part_sm);
 

@@ -16,7 +16,7 @@
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/refine_impl.h>
@@ -27,7 +27,7 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PMP_meshing_grp
-  @brief refines a region of a triangle mesh
+  @brief refines a region of a triangle mesh.
 
   @tparam TriangleMesh model of `MutableFaceGraph`
   @tparam FaceRange range of face descriptors, model of `Range`.
@@ -72,13 +72,13 @@ namespace Polygon_mesh_processing {
            typename FaceRange,
            typename FaceOutputIterator,
            typename VertexOutputIterator,
-           typename NamedParameters>
+           typename NamedParameters = parameters::Default_named_parameters>
   std::pair<FaceOutputIterator, VertexOutputIterator>
     refine(TriangleMesh& tmesh,
            const FaceRange& faces,
            FaceOutputIterator faces_out,
            VertexOutputIterator vertices_out,
-           const NamedParameters& np)
+           const NamedParameters& np = parameters::default_values())
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -97,22 +97,6 @@ namespace Polygon_mesh_processing {
     return std::make_pair(faces_out, vertices_out);
   }
 
-///\cond SKIP_IN_MANUAL
-  template<typename TriangleMesh,
-    typename FaceRange,
-    typename FaceOutputIterator,
-    typename VertexOutputIterator>
-
-  std::pair<FaceOutputIterator, VertexOutputIterator>
-    refine(TriangleMesh& tmesh,
-           const FaceRange& faces,
-           FaceOutputIterator faces_out,
-           VertexOutputIterator vertices_out)
-  {
-    return refine(tmesh, faces, faces_out, vertices_out,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
-  }
-///\endcond
 }//end namespace Polygon_mesh_processing
 
 }//end namespace CGAL

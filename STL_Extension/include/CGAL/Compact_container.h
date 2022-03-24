@@ -32,6 +32,7 @@
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/Has_member.h>
+#include <CGAL/assertions.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -343,10 +344,10 @@ public:
     a.swap(b);
   }
 
-  iterator begin() { return iterator(first_item, 0, 0); }
+  iterator begin() { return empty()?end():iterator(first_item, 0, 0); }
   iterator end()   { return iterator(last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(first_item, 0, 0); }
+  const_iterator begin() const { return empty()?end():const_iterator(first_item, 0, 0); }
   const_iterator end()   const { return const_iterator(last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -480,7 +481,7 @@ public:
     // We use the block structure to provide an efficient version :
     // we check if the address is in the range of each block.
 
-    assert(cit != end());
+    CGAL_assertion(cit != end());
 
     const_pointer c = &*cit;
     size_type res=0;
@@ -732,7 +733,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::merge(Self 
   size_ += d.size_;
   // Add the capacities.
   capacity_ += d.capacity_;
-  // It seems reasonnable to take the max of the block sizes.
+  // It seems reasonable to take the max of the block sizes.
   block_size = (std::max)(block_size, d.block_size);
   // Clear d.
   d.init();
@@ -1050,7 +1051,7 @@ namespace internal {
     bool operator<(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(m_ptr, other.m_ptr);
     }
@@ -1058,7 +1059,7 @@ namespace internal {
     bool operator>(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(other.m_ptr, m_ptr);
     }
@@ -1066,7 +1067,7 @@ namespace internal {
     bool operator<=(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(m_ptr, other.m_ptr)
           || (*this == other);
@@ -1075,7 +1076,7 @@ namespace internal {
     bool operator>=(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(other.m_ptr, m_ptr)
           || (*this == other);

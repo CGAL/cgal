@@ -14,8 +14,7 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <CGAL/iterator.h>
@@ -475,10 +474,10 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 ///
 /// \returns the number of removed points
 ///
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
                                                    PolygonRange& polygons,
-                                                   const NamedParameters& np)
+                                                   const NamedParameters& np = parameters::default_values())
 {
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::P_ID        P_ID;
   typedef typename internal::Polygon_types<PointRange, PolygonRange>::Point_3     Point_3;
@@ -547,13 +546,6 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
 #endif
 
   return removed_points_n;
-}
-
-template <typename PointRange, typename PolygonRange>
-std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
-                                                   PolygonRange& polygons)
-{
-  return merge_duplicate_points_in_polygon_soup(points, polygons, CGAL::parameters::all_default());
 }
 
 namespace internal {
@@ -881,10 +873,10 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 ///
 /// \returns the number of removed polygons
 ///
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
                                                      PolygonRange& polygons,
-                                                     const NamedParameters& np)
+                                                     const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -980,13 +972,6 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
   return removed_polygons_n;
 }
 
-template <typename PointRange, typename PolygonRange>
-std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
-                                                     PolygonRange& polygons)
-{
-  return merge_duplicate_polygons_in_polygon_soup(points, polygons, CGAL::parameters::all_default());
-}
-
 /// \ingroup PMP_repairing_grp
 ///
 /// cleans a given polygon soup through various repairing operations. More precisely, this function
@@ -1003,7 +988,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 ///   using the function `CGAL::Polygon_mesh_processing::remove_isolated_points_in_polygon_soup()`.
 ///
 /// Note that the point and polygon containers will be modified by the repairing operations,
-/// and thus the indexation of the polygons will also be changed.
+/// and thus the indexing of the polygons will also be changed.
 ///
 /// \tparam PointRange a model of the concepts `SequenceContainer` and `Swappable`
 ///                    and whose value type is the point type.
@@ -1044,10 +1029,10 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-template <typename PointRange, typename PolygonRange, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename NamedParameters = parameters::Default_named_parameters>
 void repair_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
-                         const NamedParameters& np)
+                         const NamedParameters& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -1065,13 +1050,6 @@ void repair_polygon_soup(PointRange& points,
   internal::remove_invalid_polygons_in_polygon_soup(points, polygons);
   merge_duplicate_polygons_in_polygon_soup(points, polygons, np);
   remove_isolated_points_in_polygon_soup(points, polygons);
-}
-
-template <typename PointRange, typename PolygonRange>
-void repair_polygon_soup(PointRange& points,
-                         PolygonRange& polygons)
-{
-  return repair_polygon_soup(points, polygons, CGAL::parameters::all_default());
 }
 
 } // end namespace Polygon_mesh_processing

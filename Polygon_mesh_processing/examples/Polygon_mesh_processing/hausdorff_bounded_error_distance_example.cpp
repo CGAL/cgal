@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   const double target_edge_length = 0.05;
   PMP::isotropic_remeshing(
     mesh2.faces(), target_edge_length, mesh2,
-    PMP::parameters::edge_is_constrained_map(is_constrained_map));
+    CGAL::parameters::edge_is_constrained_map(is_constrained_map));
 
   std::cout << "* one-sided bounded-error Hausdorff distance: " <<
     PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;
