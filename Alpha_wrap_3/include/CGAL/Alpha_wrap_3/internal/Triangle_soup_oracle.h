@@ -94,7 +94,7 @@ public:
   //
   // When using this constructor (and thus doing actual splitting), note that the oracle
   // will be adapted to this particular 'alpha', and so when calling again AW3(other_alpha)
-  // the oracle might not performed done a split that is adapted to this other alpha value.
+  // the oracle might not have performed a split that is adapted to this other alpha value.
   Triangle_soup_oracle(const double alpha,
                        const BaseOracle& base_oracle = BaseOracle(),
                        const Base_GT& gt = Base_GT())
