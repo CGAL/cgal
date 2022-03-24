@@ -23,9 +23,10 @@ the facets that have been visited.
 \cgalRefines `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
 \cgalRefines `CopyConstructible`
 
-\cgalHasModel `CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>`
-\cgalHasModel `CGAL::Mesh_cell_base_3<Gt,MD,Cb>`
-\cgalHasModel `CGAL::Simplicial_mesh_cell_base_3<Gt>`
+\cgalHasModel `CGAL::Compact_mesh_cell_base_3`
+\cgalHasModel `CGAL::Mesh_cell_base_3`
+\cgalHasModel `CGAL::Simplicial_mesh_cell_base_3`
+\cgalHasModel `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
 
 */
 

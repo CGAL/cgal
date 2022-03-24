@@ -79,15 +79,6 @@ public:
     dimension_ = short(dimension);
   }
 
-  // Tells if the vertex is marked as a special protecting ball
-  bool is_special() const { return dimension_ < -1; }
-
-  // Marks or unmarks the vertex as a special protecting ball
-  void set_special(bool special = true) {
-    if(special != (dimension_ < -1) )
-      dimension_ = short(-2-dimension_);
-  }
-
   // Returns the index of the lowest dimensional face of the input 3D complex
   // that contains the vertex
   Index index() const { return index_; }
