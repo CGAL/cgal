@@ -722,7 +722,7 @@ private:
         continue;
 
       std::array<std::size_t, 3> ids;
-      for(std::size_t pos=0; pos<3; ++pos)
+      for(int pos=0; pos<3; ++pos)
       {
         Vertex_handle vh = c->vertex(Dt::vertex_triple_index(s, pos));
         auto insertion_res = vertex_to_id.emplace(vh, nv);
