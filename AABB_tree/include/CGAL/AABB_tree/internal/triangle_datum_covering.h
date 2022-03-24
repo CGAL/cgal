@@ -47,8 +47,7 @@ struct Vector_property_map
   using reference = value_type&;
   using category = boost::read_write_property_map_tag;
 
-  Vector_property_map() : m_range_ptr(nullptr) { } // for compilation only
-  Vector_property_map(Range* range_ptr) : m_range_ptr(range_ptr) { }
+  Vector_property_map() : m_range_ptr(std::make_shared<Range>()) { }
 
   inline friend void put(const Vector_property_map& map, const key_type& k, const value_type& v)
   {
@@ -66,8 +65,11 @@ struct Vector_property_map
     return map.m_range_ptr->operator[](k);
   }
 
+  Range& range() { return *m_range_ptr; }
+  const Range& range() const { return *m_range_ptr; }
+
 private:
-  Range* m_range_ptr;
+  std::shared_ptr<Range> m_range_ptr;
 };
 
 // Same as the standard traversal traits, but for multiple primitives per datum,
@@ -189,15 +191,12 @@ struct AABB_covered_triangle_tree
 protected:
   double m_sq_length;
 
-  std::vector<Triangle_3> m_data; // one per face
-  std::vector<std::size_t> m_datum_pos; // possibly more than one per face
-  std::vector<Point> m_ref_points;
-  std::vector<CGAL::Bbox_3> m_bboxes;
+  DPPMB m_dppmb; // std::size_t (id) --> datum pos
 
   BPM m_bpm; // std::size_t (id) --> bounding box
   RPPM m_rppm; // std::size_t (id) --> reference point
-  DPPMB m_dppmb; // std::size_t (id) --> datum pos
   DPMB m_dpmb; // std::size_t (datum pos) --> triangle datum
+
   DPM m_dpm; // std::size_t (id) --> triangle (datum)
 
   std::size_t fid = 0;
@@ -207,10 +206,7 @@ public:
                              const AABB_traits& traits = AABB_traits())
     : Base(traits),
       m_sq_length(square(max_length)),
-      m_bpm(&m_bboxes),
-      m_rppm(&m_ref_points),
-      m_dppmb(&m_datum_pos),
-      m_dpmb(&m_data),
+      m_dppmb(), m_bpm(), m_rppm(), m_dpmb(),
       m_dpm(DPPM(m_dppmb/*first binder's value_map*/)/*second binder's key map*/, m_dpmb)
   {
     initialize_tree_property_maps();
@@ -250,12 +246,12 @@ private:
 public:
   void reserve(std::size_t nf)
   {
-    CGAL::internal::reserve(m_data, m_data.size() + nf);
+    CGAL::internal::reserve(m_dpmb.range(), m_dpmb.range().size() + nf);
 
     // Due to splitting, these might need more than 'nf'
-    CGAL::internal::reserve(m_datum_pos, m_datum_pos.size() + nf);
-    CGAL::internal::reserve(m_ref_points, m_ref_points.size() + nf);
-    CGAL::internal::reserve(m_bboxes, m_bboxes.size() + nf);
+    CGAL::internal::reserve(m_dppmb.range(), m_dppmb.range().size() + nf);
+    CGAL::internal::reserve(m_rppm.value_map.range(), m_rppm.value_map.range().size() + nf);
+    CGAL::internal::reserve(m_bpm.value_map.range(), m_bpm.value_map.range().size() + nf);
   }
 
   void split_and_insert(const Triangle_3& tr)
@@ -271,26 +267,27 @@ public:
     using APL = std::pair<APoint_3, NT>; // point and upper bound of the length of the opposite edge
     using AT = std::array<APL, 3>;
 
-    m_data.push_back(tr);
+    const std::size_t data_size = m_dpmb.range().size();
+    put(m_dpmb, data_size, tr);
 
     auto vertex = Kernel().construct_vertex_3_object();
-
     const Point& p0 = vertex(tr, 0);
     const Point& p1 = vertex(tr, 1);
     const Point& p2 = vertex(tr, 2);
 
     if(m_sq_length == FT(0)) // no splits
     {
-      ID id = std::make_pair(this->size(), fid++);
+      const std::size_t pid = this->size();
+      ID id = std::make_pair(pid, fid++);
 
-      m_datum_pos.push_back(m_data.size() - 1);
-      m_ref_points.push_back(p0); // the ref point that `One_point_from_face_descriptor_map` would give
-      m_bboxes.push_back(Kernel().construct_bbox_3_object()(m_data.back()));
+      put(m_dppmb, pid, data_size);
+      put(m_rppm, id, p1); // the ref point that `One_point_from_face_descriptor_map` would give
+      put(m_bpm, id, Kernel().construct_bbox_3_object()(tr));
 
 //      std::cout << "Primitive[" << id.first << " " << id.second << "]; "
-//                    << "Bbox: [" << m_bboxes.back() << "] "
-//                    << "Point: (" << m_ref_points.back() << ") "
-//                    << "Datum: [" << m_data.back() << "]" << std::endl;
+//                    << "Bbox: [" << get(m_bpm, id) << "] "
+//                    << "Point: (" << get(m_rppm, id) << ") "
+//                    << "Datum: [" << get(m_bpm, id) << "]" << std::endl;
 
       Primitive p(id/*, m_dpm, m_rppm*/); // pmaps are external, shared data
       this->insert(p);
@@ -375,17 +372,18 @@ public:
       }
       else // all edges have length below the threshold, create a primitive
       {
-        ID id = std::make_pair(this->size(), fid);
+        const std::size_t pid = this->size();
+        ID id = std::make_pair(pid, fid);
 
-        m_datum_pos.push_back(m_data.size() - 1);
+        put(m_dppmb, pid, data_size);
 
         // this is basically to_double() of an APoint_3, but FT is not necessarily 'double'
         const APoint_3& apt = compute_reference_point(apl0.first, apl1.first, apl2.first);
-        m_ref_points.emplace_back((FT(apt.x().sup()) + FT(apt.x().inf())) / FT(2),
-                                  (FT(apt.y().sup()) + FT(apt.y().inf())) / FT(2),
-                                  (FT(apt.z().sup()) + FT(apt.z().inf())) / FT(2) );
+        put(m_rppm, id, Point((FT(apt.x().sup()) + FT(apt.x().inf())) / FT(2),
+                              (FT(apt.y().sup()) + FT(apt.y().inf())) / FT(2),
+                              (FT(apt.z().sup()) + FT(apt.z().inf())) / FT(2)));
 
-        m_bboxes.push_back(compute_bbox(apl0.first, apl1.first, apl2.first));
+        put(m_bpm, id, compute_bbox(apl0.first, apl1.first, apl2.first));
 
 //        std::cout << "Primitive[" << std::get<0>(id) << " " << std::get<1>(id) << " " << std::get<2>(id) << "]; "
 //                  << "Bbox: [" << get(m_bpm, id) << "] "
