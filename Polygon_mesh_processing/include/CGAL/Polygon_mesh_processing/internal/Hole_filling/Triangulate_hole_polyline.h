@@ -732,6 +732,7 @@ template<
   class Kernel,
   class Tracer,
   class WeightCalculator,
+  class Visitor,
   template <class> class LookupTable = Lookup_table
 >
 class Triangulate_hole_polyline;
@@ -743,6 +744,7 @@ template<
   class Kernel,
   class Tracer,
   class WeightCalculator,
+  class Visitor,
   template <class> class LookupTable = Lookup_table_map
 >
 class Triangulate_hole_polyline_DT
@@ -779,11 +781,14 @@ public:
   Weight operator()(const Polyline_3& P,
                     const Polyline_3& Q,
                     Tracer& tracer,
-                    const WeightCalculator& WC) const
+                    const WeightCalculator& WC,
+                    Visitor visitor) const
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
+
+    visitor("Try Delaunay first");
 
     int n = static_cast<int>(P.size())-1; // because the first and last point are equal
     Triangulation tr;
@@ -809,11 +814,11 @@ public:
       typename Incident_facet_circulator_base<Triangulate_hole_polyline_DT>::Edge_wrapper
         e_start(*std::get<0>(res));
       if(tr.dimension() == 3) {
-        triangulate_DT<IFC_3>(P, Q, W, lambda, e_start, tr, WC, false);
+        triangulate_DT<IFC_3>(P, Q, W, lambda, e_start, tr, WC, visitor, false);
       }
       else {
         CGAL_assertion(tr.dimension() == 2);
-        triangulate_DT<IFC_2>(P, Q, W, lambda, e_start, tr, WC, false);
+        triangulate_DT<IFC_2>(P, Q, W, lambda, e_start, tr, WC, visitor, false);
       }
 
       if(W.get(0, n-1) == Weight::NOT_VALID()) {
@@ -833,7 +838,7 @@ public:
 
     // How to handle missing border edges
     #if 1
-    return fill_by_extra_triangles(tr, edge_exist, P, Q, tracer, WC);
+    return fill_by_extra_triangles(tr, edge_exist, P, Q, tracer, WC, visitor);
     #else
     // This approach produce better patches when used with Weight_incomplete
     // (which should be arranged in internal::triangulate_hole_Polyhedron, triangulate_polyline)
@@ -854,7 +859,7 @@ private:
   *   - get_third() returning the third vertex of facet pointed by circulator
   *   - edge_first() and edge_second() neighbor edges to get_third() vertex
   ************************************************************************/
-  template<class IncidentFacetCirculator, class Edge_DT, class Triangulation_DT>
+  template<class IncidentFacetCirculator, class Edge_DT, class Triangulation_DT, class Visitor>
   void triangulate_DT(const Polyline_3& P,
                       const Polyline_3& Q,
                       LookupTable<Weight>& W,
@@ -862,6 +867,7 @@ private:
                       Edge_DT e,
                       const Triangulation_DT& tr,
                       const WeightCalculator& WC,
+                      Visitor visitor,
                       const bool produce_incomplete) const
   {
     /**********************************************************************
@@ -895,7 +901,7 @@ private:
 
       Edge_DT e0 = fb.edge_first(); // edge v0-v2
       CGAL_assertion(e0.vertex_first() == v0 && e0.vertex_second() == v2);
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, tr, WC, produce_incomplete); // region v0-v2
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e0, tr, WC, visitor, produce_incomplete); // region v0-v2
       const Weight& we0 = W.get(v0, v2);
 
       if(!produce_incomplete && we0 == Weight::NOT_VALID())
@@ -905,7 +911,7 @@ private:
 
       Edge_DT e1 = fb.edge_second(); // edge v2-v1
       CGAL_assertion(e1.vertex_first() == v2 && e1.vertex_second() == v1);
-      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, tr, WC, produce_incomplete); // region v2-v1
+      triangulate_DT<IncidentFacetCirculator>(P, Q, W, lambda, e1, tr, WC, visitor, produce_incomplete); // region v2-v1
       const Weight& we1 = W.get(v2, v1);
 
       if(!produce_incomplete && we1 == Weight::NOT_VALID())
@@ -986,7 +992,8 @@ private:
                                     const Polyline_3& P,
                                     const Polyline_3& Q,
                                     Tracer& tracer,
-                                    const WeightCalculator& WC) const
+                                    const WeightCalculator& WC,
+                                    Visitor visitor) const
   {
     typedef std::pair<int, int> Range;
     typedef std::back_insert_iterator<std::vector<Range> > Output_hole_iterator;
@@ -1012,8 +1019,8 @@ private:
 
       if(!start_edge) {
         // switch to brute force
-        Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, LookupTable> all_space;
-        all_space.triangulate_all(P, Q, WC, std::make_pair(h.first, h.second), W, lambda);
+        Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, Visitor, LookupTable> all_space;
+        all_space.triangulate_all(P, Q, WC, visitor, std::make_pair(h.first,  h.second), W, lambda);
         if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
           CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
@@ -1035,8 +1042,8 @@ private:
         // check whether there is any improvement (at least we should construct one triangle)
         if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
           // switch to brute force
-          Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, LookupTable> all_space;
-          all_space.triangulate_all(P, Q, WC, std::make_pair(h.first, h.second), W, lambda);
+          Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, Visitor, LookupTable> all_space;
+          all_space.triangulate_all(P, Q, WC, visitor, std::make_pair(h.first, h.second), W, lambda);
           if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
             CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
@@ -1099,7 +1106,8 @@ private:
                                  const Polyline_3& P,
                                  const Polyline_3& Q,
                                  Tracer& tracer,
-                                 const WeightCalculator& WC) const
+                                 const WeightCalculator& WC,
+                                 Visitor visitor) const
   {
     int n = static_cast<int>(edge_exist.size());
     LookupTable<Weight> W(n, Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
@@ -1114,7 +1122,7 @@ private:
 
     Edge_graph::Edge_wrapper e_start(std::make_pair(0, n-1));
     triangulate_DT<Edge_graph::Incident_facet_circulator>
-      (P, Q, W, lambda, e_start, edge_graph, WC, false);
+      (P, Q, W, lambda, e_start, edge_graph, WC, visitor, false);
 
     if(W.get(0, n-1) == Weight::NOT_VALID()) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
@@ -1141,6 +1149,7 @@ template<
   class Kernel,
   class Tracer,
   class WeightCalculator,
+  class Visitor,
   template <class> class LookupTable
 >
 class Triangulate_hole_polyline {
@@ -1152,7 +1161,8 @@ public:
   Weight operator()(const Polyline_3& P,
                     const Polyline_3& Q,
                     Tracer& tracer,
-                    const WeightCalculator& WC) const
+                    const WeightCalculator& WC,
+                    Visitor visitor) const
   {
     CGAL_assertion(P.front() == P.back());
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
@@ -1162,7 +1172,7 @@ public:
     LookupTable<Weight> W(n,Weight::DEFAULT()); // do not forget that these default values are not changed for [i, i+1]
     LookupTable<int>    lambda(n,-1);
 
-    triangulate_all(P, Q, WC, std::make_pair(0,n-1), W, lambda);
+    triangulate_all(P, Q, WC, visitor, std::make_pair(0,n-1), W, lambda);
 
     if(W.get(0,n-1) == Weight::NOT_VALID() || n <= 2) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
@@ -1182,10 +1192,12 @@ public:
   void triangulate_all(const Polyline_3& P,
                        const Polyline_3& Q,
                        const WeightCalculator& WC,
+                       Visitor visitor,
                        std::pair<int, int> range,
                        LookupTable<Weight>& W,
                        LookupTable<int>& lambda) const
   {
+      visitor("in triangulate_all()");
     for(int j = 2; j<= range.second; ++j) {              // determines range (2 - 3 - 4 )
       for(int i=range.first; i<= range.second-j; ++i) {  // iterates over ranges and find min triangulation in those ranges
         int k = i+j;                                     // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
@@ -1298,12 +1310,14 @@ bool is_planar_2(
 template <
   typename PointRange, // need size()
   typename Tracer,
+  typename Visitor,
   typename Validity_checker,
   typename Traits
 >
 bool
 triangulate_hole_polyline_with_cdt(const PointRange& points,
                                    Tracer& tracer,
+                                   Visitor visitor,
                                    const Validity_checker& is_valid,
                                    const Traits& traits,
                                    const typename Traits::FT max_squared_distance)
@@ -1478,6 +1492,7 @@ template <
   typename PointRange2,
   typename Tracer,
   typename WeightCalculator,
+  typename Visitor,
   typename Kernel
 >
 typename WeightCalculator::Weight
@@ -1485,6 +1500,7 @@ triangulate_hole_polyline(const PointRange1& points,
                           const PointRange2& third_points,
                           Tracer& tracer,
                           const WeightCalculator& WC,
+                          Visitor visitor,
                           bool use_delaunay_triangulation,
                           bool skip_cubic_algorithm,
                           const Kernel&)
@@ -1496,11 +1512,11 @@ triangulate_hole_polyline(const PointRange1& points,
   typedef Kernel        K;
   typedef typename K::Point_3    Point_3;
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-  typedef CGAL::internal::Triangulate_hole_polyline_DT<K, Tracer, WeightCalculator> Fill_DT;
+  typedef CGAL::internal::Triangulate_hole_polyline_DT<K, Tracer, WeightCalculator, Visitor> Fill_DT;
 #else
   CGAL_USE(use_delaunay_triangulation);
 #endif
-  typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator>    Fill;
+  typedef CGAL::internal::Triangulate_hole_polyline<K, Tracer, WeightCalculator, Visitor>    Fill;
 
   std::vector<Point_3> P(boost::begin(points), boost::end(points));
   std::vector<Point_3> Q(boost::begin(third_points), boost::end(third_points));
@@ -1514,16 +1530,16 @@ triangulate_hole_polyline(const PointRange1& points,
 
   typename WeightCalculator::Weight w =
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
-    use_delaunay_triangulation ? Fill_DT().operator()(P,Q,tracer,WC) :
+    use_delaunay_triangulation ? Fill_DT().operator()(P, Q, tracer, WC, visitor) :
 #endif
-    Fill().operator()(P,Q,tracer,WC);
+    Fill().operator()(P, Q, tracer, WC, visitor);
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
   if(use_delaunay_triangulation &&
      w == WeightCalculator::Weight::NOT_VALID()
      &&!skip_cubic_algorithm)
   {
-    w = Fill().operator()(P, Q, tracer, WC);
+    w = Fill().operator()(P, Q, tracer, WC, visitor);
   }
 #endif
 

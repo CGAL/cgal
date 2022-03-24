@@ -35,6 +35,16 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
+    struct Hole_fill_visitor{
+        void operator()(char*) const
+        {}
+
+        void visit() const
+        {
+            std::cout << "Hole_fill_visitor::visit()" << std::endl;
+        }
+    };
+
   /*!
   \ingroup hole_filling_grp
   triangulates a hole in a polygon mesh.
@@ -184,6 +194,7 @@ namespace Polygon_mesh_processing {
       choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits)),
       use_cdt,
       choose_parameter(get_parameter(np, internal_np::do_not_use_cubic_algorithm), false),
+      choose_parameter(get_parameter(np, internal_np::visitor), Hole_fill_visitor()),
       max_squared_distance).first;
   }
 

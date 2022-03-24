@@ -44,6 +44,18 @@ bool is_small_hole(halfedge_descriptor h, Mesh & mesh,
   return true;
 }
 
+struct Hello {
+    void operator()(char* s) const
+    {
+        std::cout << s << std::endl;
+    }
+
+    void visit() const
+    {
+        std::cout << "Hello::visit()" << std::endl;
+    }
+};
+
 // Incrementally fill the holes that are no larger than given diameter
 // and with no more than a given number of edges (if specified).
 
@@ -76,10 +88,12 @@ int main(int argc, char* argv[])
 
     std::vector<face_descriptor>  patch_facets;
     std::vector<vertex_descriptor> patch_vertices;
+    Hello hello;
     bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
                                                                      h,
                                                                      std::back_inserter(patch_facets),
-                                                                     std::back_inserter(patch_vertices)));
+                                                                     std::back_inserter(patch_vertices),
+                                                                     PMP::parameters::visitor(hello).use_delaunay_triangulation(false)));
 
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
     std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
