@@ -38,7 +38,7 @@
 #include <CGAL/use.h>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
-#include <CGAL/Filtered_kernel/internal/tools.h>
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -3205,7 +3205,7 @@ periodic_remove(Vertex_handle v, PointRemover& remover, CoverManager& cover_mana
   // in Euclidean space and make a map from the vertices in remover.tmp
   // towards the vertices in *this
 
-  Unique_hash_map<VertexE_handle,Vertex_handle> vmap;
+  Unique_hash_map<VertexE_handle,Vertex_handle> vmap(Vertex_handle(), vertices.size());
   CellE_handle ch;
   remover.tmp.clear();
 
@@ -4145,7 +4145,7 @@ operator<< (std::ostream& os,const Periodic_3_triangulation_3<GT,TDS>& tr)
     return os;
 
   // write the vertices
-  Unique_hash_map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, std::size_t > V(0, tr.number_of_vertices());
   std::size_t i=0;
   if(tr.is_1_cover()) {
     for(Vertex_iterator it=tr.vertices_begin(); it!=tr.vertices_end(); ++it) {

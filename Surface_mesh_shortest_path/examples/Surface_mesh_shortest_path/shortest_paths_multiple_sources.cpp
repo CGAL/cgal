@@ -4,6 +4,9 @@
 #include <CGAL/Random.h>
 #include <CGAL/Surface_mesh_shortest_path.h>
 
+#include <boost/lexical_cast.hpp>
+
+#include <cstdlib>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -21,7 +24,7 @@ typedef Graph_traits::face_descriptor face_descriptor;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc>1) ? argv[1] : "data/elephant.off";
+  const std::string filename = (argc>1) ? argv[1] : CGAL::data_file_path("meshes/elephant.off");
 
   Triangle_mesh tmesh;
   if(!CGAL::IO::read_polygon_mesh(filename, tmesh) ||

@@ -21,6 +21,7 @@
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
+#include <CGAL/Weights/tangent_weights.h>
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
@@ -33,8 +34,7 @@
 
 #include <CGAL/Default.h>
 
-#include <boost/unordered_set.hpp>
-
+#include <unordered_set>
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -116,7 +116,7 @@ private:
   typedef typename boost::graph_traits<Triangle_mesh>::face_iterator        face_iterator;
   typedef typename boost::graph_traits<Triangle_mesh>::vertex_iterator      vertex_iterator;
 
-  typedef boost::unordered_set<vertex_descriptor>       Vertex_set;
+  typedef std::unordered_set<vertex_descriptor>         Vertex_set;
   typedef std::vector<face_descriptor>                  Faces_vector;
 
   // Traits subtypes:
@@ -354,22 +354,6 @@ private:
     return OK;
   }
 
-  //                                                      -> ->
-  // Return angle (in radians) of of (P,Q,R) corner (i.e. QP,QR angle).
-  double compute_angle_rad(const Point_2& P,
-                           const Point_2& Q,
-                           const Point_2& R) const
-  {
-    Vector_2 u = P - Q;
-    Vector_2 v = R - Q;
-
-    double angle = std::atan2(v.y(), v.x()) - std::atan2(u.y(), u.x());
-    if(angle < 0)
-      angle += 2 * CGAL_PI;
-
-    return angle;
-  }
-
   // Fix vertices that are on the convex hull.
   template <typename CT,
             typename VertexParameterizedMap>
@@ -383,23 +367,6 @@ private:
       vertex_descriptor vd = vc->info();
       put(vpmap, vd, true);
     } while (++vc != vend);
-  }
-
-  NT compute_w_ij_mvc(const Point_2& pi, const Point_2& pj, const Point_2& pk) const
-  {
-    //                                                               ->     ->
-    // Compute the angle (pj, pi, pk), the angle between the vectors ij and ik
-    NT angle = compute_angle_rad(pj, pi, pk);
-
-    // For flipped triangles, the connectivity is inversed and thus the angle
-    // computed by the previous function is not the one we need. Instead,
-    // we need the explementary angle.
-    if(angle > CGAL_PI) { // flipped triangle
-      angle = 2 * CGAL_PI - angle;
-    }
-    NT weight = std::tan(0.5 * angle);
-
-    return weight;
   }
 
   void fill_linear_system_matrix_mvc_from_points(const Point_2& pi, int i,
@@ -418,27 +385,25 @@ private:
     // The other parts of A(i,j) and A(i,k) will be added when this function
     // is called from the neighboring faces of F_ijk that share the vertex i
 
-    // Compute: - tan(alpha / 2)
-    NT w_i_base = -1.0 * compute_w_ij_mvc(pi, pj, pk);
-
     // @fixme unefficient: lengths are computed (and inversed!) twice per edge
 
+    // Set w_i_base: - tan(alpha / 2)
+    // Match order of the input points to the new weight implementation.
+    const Point_2& p = pk;
+    const Point_2& q = pi;
+    const Point_2& r = pj;
+    const CGAL::Weights::Tangent_weight<NT> tangent_weight(p, q, r);
+
     // Set w_ij in matrix
-    Vector_2 edge_ij = pi - pj;
-    double len_ij = std::sqrt(edge_ij * edge_ij);
-    CGAL_assertion(len_ij != 0.0); // two points are identical!
-    NT w_ij = w_i_base / len_ij;
+    const NT w_ij = tangent_weight.get_w_r();
     A.add_coef(i, j, w_ij);
 
     // Set w_ik in matrix
-    Vector_2 edge_ik = pi - pk;
-    double len_ik = std::sqrt(edge_ik * edge_ik);
-    CGAL_assertion(len_ik != 0.0); // two points are identical!
-    NT w_ik = w_i_base / len_ik;
+    const NT w_ik = tangent_weight.get_w_p();
     A.add_coef(i, k, w_ik);
 
     // Add to w_ii (w_ii = - sum w_ij)
-    NT w_ii = - w_ij - w_ik;
+    const NT w_ii = - w_ij - w_ik;
     A.add_coef(i, i, w_ii);
   }
 
@@ -726,7 +691,9 @@ public:
 
     // Not sure how to handle non-simple yet @fixme
     if(!is_param_border_simple) {
+#ifdef CGAL_SMP_ARAP_DEBUG
       std::cerr << "Border is not simple!" << std::endl;
+#endif
       return ERROR_NON_CONVEX_BORDER;
     }
 
@@ -736,8 +703,8 @@ public:
 
     // Prepare the constrained triangulation: collect exterior faces (faces in
     // the convex hull but not -- geometrically -- in 'mesh').
-    boost::unordered_set<vertex_descriptor> vs;
-    internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpmap(vs);
+    std::unordered_set<vertex_descriptor> vs;
+    internal::Bool_property_map<std::unordered_set<vertex_descriptor> > vpmap(vs);
     prepare_CT_for_parameterization(ct, vpmap);
 
     // Run the MVC

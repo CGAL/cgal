@@ -31,7 +31,7 @@ using Region_growing = CGAL::Shape_detection::Region_growing
 
 int main (int argc, char** argv)
 {
-  std::ifstream ifile (argc > 1 ? argv[1] : "data/cube.pwn");
+  std::ifstream ifile (argc > 1 ? argv[1] : CGAL::data_file_path("points_3/cube.pwn"));
   Point_set points;
   ifile >> points;
 

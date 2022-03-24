@@ -16,7 +16,7 @@
 
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
-#include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_side_of_oriented_sphere_3.h>
+#include <CGAL/Periodic_3_triangulation_3/internal/Static_filters/Periodic_3_side_of_oriented_sphere_3.h>
 #include <CGAL/Periodic_3_triangulation_3/internal/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
 
 namespace CGAL {

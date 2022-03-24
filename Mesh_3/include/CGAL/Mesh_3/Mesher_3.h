@@ -45,6 +45,7 @@
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/assertions.h>
 
 #ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
 #include <CGAL/Surface_mesher/Surface_mesher_visitor.h>
@@ -764,6 +765,18 @@ initialize()
     // Scan triangulation
     facets_mesher_.scan_triangulation();
     refinement_stage = REFINE_FACETS;
+  }
+
+  if (r_c3t3_.number_of_facets() == 0)
+  {
+    CGAL::warning_fail("r_c3t3_.number_of_facets() == 0",
+      __FILE__,
+      __LINE__,
+      "Warning : The mesh refinement process can't start.\n"
+      "When calling refine_mesh_3(), the input `c3t3` should have been initialized and have "
+      "at least one facet in the complex. Try to solve this issue using :\n"
+      "\t- The automatic initialization provided by make_mesh_3()\n"
+      "\t- Adding more and better chosen points on the input surface\n");
   }
 }
 

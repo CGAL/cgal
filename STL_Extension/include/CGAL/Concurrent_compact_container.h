@@ -27,6 +27,7 @@
 
 #include <CGAL/Compact_container.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
@@ -313,10 +314,10 @@ public:
     a.swap(b);
   }
 
-  iterator begin() { return iterator(m_first_item, 0, 0); }
+  iterator begin() { return empty()?end():iterator(m_first_item, 0, 0); }
   iterator end()   { return iterator(m_last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(m_first_item, 0, 0); }
+  const_iterator begin() const { return empty()?end():const_iterator(m_first_item, 0, 0); }
   const_iterator end()   const { return const_iterator(m_last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -394,10 +395,6 @@ private:
 
     std::allocator_traits<allocator_type>::destroy(m_alloc, &*x);
 
-/* WE DON'T DO THAT BECAUSE OF THE ERASE COUNTER
-#ifndef CGAL_NO_ASSERTIONS
-    std::memset(&*x, 0, sizeof(T));
-#endif*/
     put_on_free_list(&*x, fl);
   }
 public:
@@ -485,7 +482,7 @@ public:
     // We use the block structure to provide an efficient version :
     // we check if the address is in the range of each block.
 
-    assert(cit != end());
+    CGAL_assertion(cit != end());
 
     const_pointer c = &*cit;
     size_type res=0;

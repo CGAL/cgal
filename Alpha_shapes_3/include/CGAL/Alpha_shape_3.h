@@ -24,9 +24,6 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Object.h>
 #include <CGAL/Unique_hash_map.h>
-#ifdef CGAL_USE_GEOMVIEW
-#include <CGAL/IO/Geomview_stream.h>  // TBC
-#endif
 #include <CGAL/Triangulation_utils_3.h>
 
 #include <boost/type_traits/is_same.hpp>
@@ -786,11 +783,6 @@ private:
 
   //---------------------------------------------------------------------
 public:
-#ifdef CGAL_USE_GEOMVIEW
-  void show_triangulation_edges(Geomview_stream &gv) const;
-  void show_alpha_shape_faces(Geomview_stream &gv) const;
-#endif
-
 
   // to Debug
   void print_maps() const;
@@ -1950,8 +1942,5 @@ Alpha_shape_3<Dt,EACT>::print_alpha_status(const Alpha_status& as) const
 
 } //namespace CGAL
 
-#ifdef CGAL_USE_GEOMVIEW
-#include <CGAL/IO/alpha_shape_geomview_ostream_3.h>
-#endif
 
 #endif //CGAL_ALPHA_SHAPE_3_H

@@ -92,7 +92,7 @@ namespace CGAL {
 
     struct Initializer_list {
       result_type operator()(std::initializer_list<NT> l) const {
-        return Iterator()(l.size(),l.begin(),l.end());
+        return Iterator()(static_cast<int>(l.size()),l.begin(),l.end());
       }
     };
 

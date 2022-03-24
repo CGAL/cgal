@@ -1,14 +1,10 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.22)
 project(Periodic_2_triangulation_2_Examples)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
-
-if(CGAL_Qt5_FOUND)
-  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
-endif()
 
 # create a target per cppfile
 file(
@@ -20,5 +16,5 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 if(CGAL_Qt5_FOUND)
-  target_link_libraries(draw_periodic_2_triangulation_2 PUBLIC CGAL::CGAL_Qt5)
+  target_link_libraries(draw_periodic_2_triangulation_2 PUBLIC CGAL::CGAL_Basic_viewer)
 endif()

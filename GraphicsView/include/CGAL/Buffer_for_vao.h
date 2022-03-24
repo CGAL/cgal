@@ -22,6 +22,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/assertions.h>
 
 #include <vector>
 #include <cstdlib>
@@ -58,7 +59,7 @@ namespace internal
       ++nb;
     }
 
-    assert(nb>0);
+    CGAL_assertion(nb>0);
     return (typename Kernel_traits<Vector>::Kernel::Construct_scaled_vector_3()
             (normal, 1.0/nb));
   }
@@ -521,17 +522,15 @@ public:
 
       local_orientation=Local_kernel::Orientation_3()(V1, V2, normal) ;
 
-      if(local_orientation!=CGAL::ZERO && local_orientation!=orientation)
-      { return false; }
-      // V1 and V2 are collinear
-      if(local_orientation==CGAL::ZERO )
+      if(local_orientation!=CGAL::ZERO)
       {
-        //TS and TU are opposite
-        if(CGAL::scalar_product(V1,V2) >=0)
-          return true;
-        //TS and TU have the same direction.
-        else
-          return false;
+        if(local_orientation!=orientation)
+        { return false; }
+      }
+      else
+      {
+        if(CGAL::scalar_product(V1,V2)<0)
+        { return false; }  //TS and TU are opposite
       }
     }
     return true;

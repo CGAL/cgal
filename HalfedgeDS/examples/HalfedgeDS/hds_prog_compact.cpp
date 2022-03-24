@@ -2,6 +2,7 @@
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <cstddef>
+#include <cassert>
 
 // Define a new halfedge class. We assume that the Halfedge_handle can
 // be created from a pointer (e.g. the HalfedgeDS is based here on the
@@ -55,15 +56,15 @@ public:
                                     (nxt & (~ std::ptrdiff_t(1))));
     }
     void  set_opposite( Halfedge_handle h) {
-        CGAL_precondition(( &* h - 1 == &* HDS::halfedge_handle(this)) ||
-                          ( &* h + 1 == &* HDS::halfedge_handle(this)));
+        assert(( &* h - 1 == &* HDS::halfedge_handle(this)) ||
+               ( &* h + 1 == &* HDS::halfedge_handle(this)));
         if ( &* h - 1 == &* HDS::halfedge_handle(this))
             nxt |= 1;
         else
             nxt &= (~ std::ptrdiff_t(1));
     }
     void  set_next( Halfedge_handle h) {
-        CGAL_precondition( ((std::ptrdiff_t)(&*h) & 1) == 0);
+      assert( ((std::ptrdiff_t)(&*h) & 1) == 0);
         nxt = ((std::ptrdiff_t)(&*h)) | (nxt & 1);
     }
 private:    // Support for the Vertex_handle.
@@ -99,6 +100,6 @@ int main() {
     HDS hds(1,2,2);
     Decorator decorator(hds);
     decorator.create_loop();
-    CGAL_assertion( decorator.is_valid());
+    assert( decorator.is_valid());
     return 0;
 }

@@ -95,7 +95,7 @@ class Polygon_soup_offset_function {
   public:
     typedef Polygon_iterator key_type;
     typedef EPICK::Point_3 value_type;
-    typedef value_type reference;
+    typedef const value_type& reference;
     typedef boost::readable_property_map_tag category;
 
     Polygon_soup_point_property_map() = default;
@@ -124,8 +124,8 @@ class Polygon_soup_offset_function {
       : points_vector_ptr(ptr)
     {}
 
-    friend reference get(Polygon_soup_triangle_property_map map,
-                         key_type polygon_it)
+    friend value_type get(Polygon_soup_triangle_property_map map,
+                          key_type polygon_it)
     {
       auto it = polygon_it->begin();
       CGAL_assertion(it != polygon_it->end());
@@ -291,9 +291,10 @@ SMesh* cgal_off_meshing(QWidget*,
      p::relative_error_bound = 1e-7,
      p::construct_surface_patch_index = [](int i, int j) { return (i * 1000 + j); });
 
-  CGAL::Mesh_facet_topology topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
-  if(tag == 1) topology = CGAL::Mesh_facet_topology(topology | CGAL::MANIFOLD_WITH_BOUNDARY);
-  if(tag == 2) topology = CGAL::Mesh_facet_topology(topology | CGAL::MANIFOLD);
+  const CGAL::Mesh_facet_topology topology = CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
+  auto manifold_option = p::non_manifold();
+  if(tag == 1) manifold_option = p::manifold_with_boundary();
+  if(tag == 2) manifold_option = p::manifold();
   Mesh_criteria criteria(p::facet_angle = angle,
                          p::facet_size = sizing,
                          p::facet_distance = approx,
@@ -314,7 +315,8 @@ SMesh* cgal_off_meshing(QWidget*,
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       p::no_perturb(),
-                                      p::no_exude());
+                                      p::no_exude(),
+                                      manifold_option);
 
   const Tr& tr = c3t3.triangulation();
 

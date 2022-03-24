@@ -1467,7 +1467,7 @@ protected:
   bool _is_plane(const Polygon_with_holes_2& pgn) const
   {
     //typedef typename  Traits_2::Is_unbounded  Is_unbounded;
-    bool unbounded = m_traits->construct_is_unbounded_object()(pgn);
+    bool unbounded = m_traits->is_unbounded_object()(pgn);
     std::pair<GP_Holes_const_iterator,
       GP_Holes_const_iterator> pair =
       m_traits->construct_holes_object()(pgn);

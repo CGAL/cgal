@@ -19,9 +19,10 @@
 #include <CGAL/property_map.h>
 
 #include <memory>
-#include <boost/unordered_map.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
+
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -69,7 +70,7 @@ struct Dynamic_property_map {
   }
 
 
-  typedef boost::unordered_map<K,V> Map;
+  typedef std::unordered_map<K,V> Map;
   std::shared_ptr<Map> map_;
   V default_value_;
 };
@@ -96,7 +97,7 @@ struct Dynamic {
   typedef typename PM::key_type key_type;
   typedef typename PM::value_type value_type;
   typedef typename PM::reference reference;
-  typedef typename PM::category category;
+  typedef boost::read_write_property_map_tag category;
 
   typedef Dynamic_property_map_deleter<Mesh,PM> Deleter;
 
@@ -130,9 +131,7 @@ struct Dynamic_with_index
   typedef typename boost::mpl::if_<  boost::is_same<bool, Value>,
                                      value_type,
                                      value_type&>::type  reference;
-  typedef typename boost::mpl::if_<  boost::is_same<bool, Value>,
-                                     boost::read_write_property_map_tag,
-                                     boost::lvalue_property_map_tag>::type  category;
+  typedef boost::read_write_property_map_tag category;
 
   Dynamic_with_index()
     : m_values()

@@ -21,7 +21,7 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 template <typename TM>
 int load_and_remesh_sm(TM &mesh) {
-  std::ifstream input("./data/cube.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -36,7 +36,7 @@ int load_and_remesh_sm(TM &mesh) {
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
@@ -45,7 +45,7 @@ int load_and_remesh_sm(TM &mesh) {
 
 template <typename TM>
 int load_and_remesh_poly(TM &mesh) {
-  std::ifstream input("./data/cube.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
   if (!input || !(input >> mesh) || !CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
@@ -60,7 +60,7 @@ int load_and_remesh_poly(TM &mesh) {
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter).
+    CGAL::parameters::number_of_iterations(nb_iter).
     face_index_map(get(boost::face_external_index, mesh)));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;

@@ -2,12 +2,14 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
 
-#include <boost/unordered_map.hpp>
+
 #include <boost/property_map/property_map.hpp>
 
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <unordered_map>
+
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/helpers.h>
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -79,11 +81,11 @@ void border_cases()
 int main()
 {
   SM sm;
-  std::ifstream input("data/head.off");
+  std::ifstream input(CGAL::data_file_path("meshes/head.off"));
   input >> sm;
 
 // define my selection of faces to remove
-  boost::unordered_map<face_descriptor, bool> is_selected_map;
+  std::unordered_map<face_descriptor, bool> is_selected_map;
 
   const int selection_indices[30] = {652,18,328,698,322,212,808,353,706,869,646,352,788,696,714,796,937,2892,374,697,227,501,786,794,345,16,21,581,347,723};
   std::set<int> index_set(&selection_indices[0], &selection_indices[0]+30);

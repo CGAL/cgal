@@ -112,7 +112,7 @@ int main()
                         << periodic_insert_time <<  ", \t" << periodic_insert_time << std::endl;
             }
         }
-      CGAL_assertion(t.is_valid());
+      assert(t.is_valid());
 
       std::cout << std::endl;
     }

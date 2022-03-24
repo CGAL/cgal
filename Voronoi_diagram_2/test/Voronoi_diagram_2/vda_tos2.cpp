@@ -10,6 +10,7 @@
 #include <iostream>
 #include <iterator>
 #include <fstream>
+#include <sstream>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -34,7 +35,7 @@ typedef CGAL::Voronoi_diagram_2<DToS2, AT, AP> VD;
 
 int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/radar.xyz";
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/radar.xyz");
   const double radius = (argc > 2) ? std::stod(argv[2]) : 1;
   const double step = (argc > 3) ? std::stod(argv[3]) : 0.01;
 
@@ -170,6 +171,10 @@ int main(int argc, char** argv)
   std::cout << vd.number_of_faces() << " faces" << std::endl;
   std::cout << "dimension = " << vd.dual().dimension() << std::endl;
 
+  // redirect std::cout to cout_output
+  std::stringstream cout_output;
+  std::streambuf* old_cout_buf = std::cout.rdbuf(cout_output.rdbuf());
+
   VD::Vertex_iterator vit = vd.vertices_begin(), vend = vd.vertices_end();
   for(; vit!=vend; ++vit)
   {
@@ -196,6 +201,30 @@ int main(int argc, char** argv)
     CGAL_USE(next_h);
     CGAL_USE(opposite_h);
   }
+
+  // now restore std::cout and display the output
+  std::cout.rdbuf(old_cout_buf);
+  const auto output = cout_output.str();
+  const auto str_size = output.size();
+  const auto str_begin = output.data();
+  const auto str_end = str_begin + str_size;
+  constexpr auto nb = static_cast<std::remove_cv_t<decltype(str_size)>>(10000);
+  auto pos1 = str_begin + (std::min)(nb, str_size);
+  assert(pos1 <= str_end);
+  const auto pos2 = str_end - (std::min)(nb, str_size);
+  assert(pos2 >= str_begin);
+  if (pos2 <= pos1) {
+    pos1 = str_end;
+  }
+  std::cout << "NOW THE FIRST AND LAST 10k CHARACTERS OF THE COUT OUTPUT:\n";
+  std::cout << "-----\n" << std::string(str_begin, pos1) << "\n-----\n";
+  if (pos1 != str_end) {
+    std::cout << "[...]\n-----\n" << std::string(pos2, str_end) << "\n-----\n";
+  }
+  const auto file_name = "vda_tos2_test_output.txt";
+  std::ofstream file_output(file_name);
+  file_output << output;
+  std::cout << "Full log is output to " << file_name << "\n";
 
   return EXIT_SUCCESS;
 }

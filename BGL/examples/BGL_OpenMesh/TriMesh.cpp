@@ -26,7 +26,7 @@ int main(int argc, char** argv )
   Mesh mesh;
 
   std::vector<vertex_descriptor> V;
-  const char* filename = (argc>1)?argv[1]:"in.off";
+  const std::string filename = (argc>1)?argv[1]:CGAL::data_file_path("meshes/in.off");
   const char* outname= (argc>2)?argv[2]:"out.off";
   CGAL::IO::read_polygon_mesh(filename, mesh);
 

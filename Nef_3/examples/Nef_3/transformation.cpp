@@ -2,6 +2,7 @@
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/IO/Nef_polyhedron_iostream_3.h>
+#include <cassert>
 
 
 typedef CGAL::Extended_homogeneous<CGAL::Exact_integer>  Kernel;
@@ -21,11 +22,11 @@ int main() {
   Aff_transformation_3 scale(CGAL::SCALING, 3, 2);
 
   N.transform(transl);
-  CGAL_assertion(N == Nef_polyhedron(Plane_3(0,1,0,-7)));
+  assert(N == Nef_polyhedron(Plane_3(0,1,0,-7)));
   N.transform(rotx90);
-  CGAL_assertion(N == Nef_polyhedron(Plane_3(0,0,1,-7)));
+  assert(N == Nef_polyhedron(Plane_3(0,0,1,-7)));
   N.transform(scale);
-  CGAL_assertion(N == Nef_polyhedron(Plane_3(0,0,2,-21)));
+  assert(N == Nef_polyhedron(Plane_3(0,0,2,-21)));
 
   return 0;
 }

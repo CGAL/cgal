@@ -198,8 +198,7 @@ parameters:
   P2Triangulation2secTraits. The concepts that should be refined are
   `Periodic_2TriangulationTraits_2` (for `Periodic_2_triangulation_2`)
   and `Periodic_2DelaunayTriangulationTraits_2` (for
-  `Periodic_2_Delaunay_triangulation_2`) in the reference manual and
-.
+  `Periodic_2_Delaunay_triangulation_2`).
 - the <B>triangulation data structure</B> class, which stores the
   combinatorial structure, described in Section \ref
   P2Triangulation2sectds and in more detail in Chapter \ref

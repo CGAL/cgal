@@ -19,7 +19,7 @@ typedef L21_approx::Error_metric L21_metric;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
+bool test_manifold(const std::string file_name, const FT drop = FT(1e-2))
 {
   Mesh mesh;
   std::ifstream input(file_name);
@@ -41,7 +41,7 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 
@@ -80,13 +80,13 @@ bool test_manifold(const char *file_name, const FT drop = FT(1e-2))
 int main()
 {
   std::cout << "Meshing manifold test." << std::endl;
-  if (!test_manifold("./data/cube.off"))
+  if (!test_manifold(CGAL::data_file_path("meshes/cube.off")))
     return EXIT_FAILURE;
 
-  if (!test_manifold("./data/cube-ouvert.off"))
+  if (!test_manifold(CGAL::data_file_path("meshes/cube-ouvert.off")))
     return EXIT_FAILURE;
 
-  if (!test_manifold("./data/sphere.off"))
+  if (!test_manifold(CGAL::data_file_path("meshes/sphere.off")))
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

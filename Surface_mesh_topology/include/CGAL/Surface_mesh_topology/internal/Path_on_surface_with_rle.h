@@ -151,7 +151,7 @@ public:
   /// Both cannot be true at the same time.
   /// Note that for a minimal surface of genus>=2, we cannot have both -2 and
   /// +2 as turn, and thus these parameters are useless.
-  /// However, this case can occured for our unit tests on the cube, this is
+  /// However, this case can occur for our unit tests on the cube, this is
   /// the reason of these parameters.
   Path_on_surface_with_rle(const MQ& aMQ, const Path_on_surface<Map>& apath,
                            bool use_only_positive=false,
@@ -185,7 +185,7 @@ public:
                                 (positive_flat?(static_cast<int>(apath.length()-1)):
                                  -(static_cast<int>(apath.length()-1)))));
           m_length=apath.length();
-          CGAL_assertion(is_valid());
+          CGAL_expensive_assertion(is_valid());
           return;
         }
       }
@@ -201,7 +201,7 @@ public:
     }
     while(i<apath.length() && i!=starti);
 
-    CGAL_assertion(is_valid(true));
+    CGAL_expensive_assertion(is_valid(true));
   }
 
   void swap(Self& p2)
@@ -1487,7 +1487,7 @@ public:
   /// Canonize the path
   void canonize()
   {
-    CGAL_assertion(is_valid());
+    CGAL_expensive_assertion(is_valid());
 
     if (is_empty()) { return; }
 
@@ -1507,7 +1507,7 @@ public:
 
      CGAL_assertion(remove_brackets()==false);
      CGAL_assertion(remove_spurs()==false);
-     CGAL_assertion(is_valid());
+     CGAL_expensive_assertion(is_valid());
   }
 
   void display_positive_turns()

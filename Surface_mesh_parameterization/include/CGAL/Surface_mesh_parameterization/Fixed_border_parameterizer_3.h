@@ -16,10 +16,8 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Surface_mesh_parameterization/internal/angles.h>
 #include <CGAL/Surface_mesh_parameterization/internal/Containers_filler.h>
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
-
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 
@@ -35,7 +33,8 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/unordered_set.hpp>
+
+#include <unordered_set>
 
 /// \file Fixed_border_parameterizer_3.h
 
@@ -214,7 +213,7 @@ public:
 
     Error_code status = OK;
 
-    typedef boost::unordered_set<vertex_descriptor> Vertex_set;
+    typedef std::unordered_set<vertex_descriptor> Vertex_set;
     Vertex_set vertices;
 
     internal::Containers_filler<Triangle_mesh> fc(mesh, vertices);
@@ -250,7 +249,7 @@ public:
 
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
-    boost::unordered_set<vertex_descriptor> main_border;
+    std::unordered_set<vertex_descriptor> main_border;
 
     for(vertex_descriptor v : vertices_around_face(bhd,mesh)){
       main_border.insert(v);

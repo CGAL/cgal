@@ -193,9 +193,11 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 
 \cgalCRPSection{Geometric Measure Functions}
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::squared_face_area()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::area()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::volume()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::squared_edge_length()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::centroid()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::match_faces()` \endlink

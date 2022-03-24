@@ -15,15 +15,15 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef Mesh::Property_map<vertex_descriptor,EK::Point_3> Exact_point_map;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 struct Exact_vertex_point_map
 {
   // typedef for the property map
   typedef boost::property_traits<Exact_point_map>::value_type value_type;
   typedef boost::property_traits<Exact_point_map>::reference reference;
-  typedef boost::property_traits<Exact_point_map>::category category;
   typedef boost::property_traits<Exact_point_map>::key_type key_type;
+  typedef boost::read_write_property_map_tag category;
 
   // exterior references
   Exact_point_map exact_point_map;
@@ -65,8 +65,8 @@ struct Exact_vertex_point_map
 
 int main(int argc, char* argv[])
 {
-  const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
-  const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
+  const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
+  const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
   if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))

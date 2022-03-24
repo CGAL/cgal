@@ -11,6 +11,7 @@
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Weights/uniform_weights.h>
 
 #include <cassert>
 #include <vector>
@@ -30,7 +31,7 @@ typedef boost::graph_traits<Polyhedron>::halfedge_iterator    Halfedge_iterator;
 typedef CGAL::Halfedge_around_face_circulator<Polyhedron> Halfedge_around_facet_circulator;
 typedef boost::property_map<Polyhedron,CGAL::vertex_point_t>::type Point_property_map;
 
-void read_poly(const char* file_name, Polyhedron& poly) {
+void read_poly(const std::string file_name, Polyhedron& poly) {
   poly.clear();
 
   std::ifstream input(file_name);
@@ -56,7 +57,7 @@ void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
   }
 }
 
-void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
+void read_poly_with_borders(const std::string file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
 {
   read_poly(file_name, poly);
   detect_borders(poly, border_reps);
@@ -95,7 +96,7 @@ CGAL::internal::Weight_min_max_dihedral_and_area
 }
 
 
-void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_t nb_remaining_holes) { //don't test with cdt as we are testing the weights and there is no weight in the cdt version
+void test_triangulate_hole_weight(const std::string file_name, bool use_DT, std::size_t nb_remaining_holes) { //don't test with cdt as we are testing the weights and there is no weight in the cdt version
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
 
   std::cout << "test_triangulate_hole_weight + useDT: " << use_DT << std::endl;
@@ -107,7 +108,7 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
     Weight w_algo = CGAL::Polygon_mesh_processing::internal::triangulate_hole_polygon_mesh(
-      poly, *it, back_inserter(patch), get(CGAL::vertex_point, poly), use_DT, Kernel(), false, 0).second;
+      poly, *it, back_inserter(patch), get(CGAL::vertex_point, poly), use_DT, Kernel(), false/*use_cdt*/, false/*skip_cubic*/, 0).second;
     if(patch.empty()) { continue; }
     Weight w_test = calculate_weight_for_patch(poly, patch.begin(), patch.end());
 
@@ -127,7 +128,7 @@ void test_triangulate_hole_weight(const char* file_name, bool use_DT, std::size_
 }
 /******************************************************************/
 
-void test_triangulate_hole(const char* file_name, bool use_cdt) {
+void test_triangulate_hole(const std::string file_name, bool use_cdt) {
   std::cout << "test_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -152,7 +153,7 @@ void test_triangulate_hole(const char* file_name, bool use_cdt) {
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_hole_should_be_no_output(const char* file_name, bool use_cdt) {
+void test_triangulate_hole_should_be_no_output(const std::string file_name, bool use_cdt) {
   std::cout << "test_triangulate_hole_should_be_no_output:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -162,7 +163,7 @@ void test_triangulate_hole_should_be_no_output(const char* file_name, bool use_c
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-      CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false)
+      CGAL::parameters::use_delaunay_triangulation(false)
         .use_2d_constrained_delaunay_triangulation(use_cdt));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
@@ -170,7 +171,7 @@ void test_triangulate_hole_should_be_no_output(const char* file_name, bool use_c
     }
 
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-      CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(true));
+      CGAL::parameters::use_delaunay_triangulation(true));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
       assert(false);
@@ -180,7 +181,7 @@ void test_triangulate_hole_should_be_no_output(const char* file_name, bool use_c
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_and_refine_hole(const char* file_name, bool use_cdt) {
+void test_triangulate_and_refine_hole(const std::string file_name, bool use_cdt) {
   std::cout << "test_triangulate_and_refine_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -208,7 +209,7 @@ void test_triangulate_and_refine_hole(const char* file_name, bool use_cdt) {
   std::cout << "  Done!" << std::endl;
 }
 
-void test_triangulate_refine_and_fair_hole(const char* file_name, bool use_cdt) {
+void test_triangulate_refine_and_fair_hole(const std::string file_name, bool use_cdt) {
   std::cout << "test_triangulate_refine_and_fair_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
@@ -236,7 +237,7 @@ void test_triangulate_refine_and_fair_hole(const char* file_name, bool use_cdt) 
   std::cout << "  Done!" << std::endl;
 }
 
-void test_ouput_iterators_triangulate_hole(const char* file_name, bool use_cdt) {
+void test_ouput_iterators_triangulate_hole(const std::string file_name, bool use_cdt) {
   std::cout << "test_ouput_iterators_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
@@ -266,7 +267,7 @@ void test_ouput_iterators_triangulate_hole(const char* file_name, bool use_cdt) 
   std::cout << "  Done!" << std::endl;
 }
 
-void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name, bool use_cdt) {
+void test_ouput_iterators_triangulate_and_refine_hole(const std::string file_name, bool use_cdt) {
   std::cout << "test_ouput_iterators_triangulate_and_refine_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
 
@@ -326,16 +327,17 @@ void test_triangulate_refine_and_fair_hole_compile() {
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-  CGAL::Polygon_mesh_processing::parameters::weight_calculator(
-    CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)).
-    sparse_linear_solver(Default_solver()).use_2d_constrained_delaunay_triangulation(false));
+  CGAL::parameters::
+    weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()).
+    sparse_linear_solver(Default_solver()).
+    use_2d_constrained_delaunay_triangulation(false));
 
   // default solver
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-    CGAL::Polygon_mesh_processing::parameters::weight_calculator(
-      CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)));
+    CGAL::parameters::
+      weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()));
 
   // default solver and weight
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
@@ -346,7 +348,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
 void generate_elephant_with_hole()
 {
   Polyhedron poly;
-  read_poly("data/elephant.off", poly);
+  read_poly(CGAL::data_file_path("meshes/elephant.off"), poly);
   int i=0;
   for(Facet_handle fd : faces(poly))
     if (++i==229)
@@ -372,7 +374,7 @@ int main()
   std::vector<std::string> input_files;
   input_files.push_back("elephant_triangle_hole.off");
   input_files.push_back("elephant_quad_hole.off");
-  input_files.push_back("data/mech-holes-shark.off");
+  input_files.push_back(CGAL::data_file_path("meshes/mech-holes-shark.off"));
   // std::cerr.precision(15);
   for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
     test_triangulate_hole(it->c_str(), true);

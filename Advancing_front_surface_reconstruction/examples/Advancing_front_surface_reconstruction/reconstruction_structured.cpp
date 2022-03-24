@@ -111,7 +111,7 @@ int main (int argc, char* argv[])
   // Points with normals.
   Pwn_vector points;
 
-  const char* fname = (argc>1) ? argv[1] : "data/cube.pwn";
+  const std::string fname = (argc>1) ? argv[1] : CGAL::data_file_path("points_3/cube.pwn");
   // Loading point set from a file.
 
   if (!CGAL::IO::read_points(fname, std::back_inserter(points),

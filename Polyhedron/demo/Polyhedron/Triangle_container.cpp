@@ -79,6 +79,7 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
         getVao(viewer)->addVbo(getVbo(Distances));
       }
+
     }
     else
     {
@@ -136,6 +137,27 @@ void Triangle_container::initGL( Viewer_interface* viewer)
         getVao(viewer)->addVbo(getVbo(Texture_map));
         if(!getTexture())
           setTexture(new Texture());
+      }
+      // This is passed as float because to pass an integer type to glsl the function is glVertexAttribIPointer(),
+      // but the qt system only calls glVertexAttribPointer(), whatever type is given. It is far less efforts to
+      // convert floats that to reimplement the whole system without Qt for this attribute.
+      if(viewer->getShaderProgram(getProgram())->property("hasSubdomainIndicesValues").toBool())
+      {
+        if(!getVbo(Subdomain_indices))
+          setVbo(Subdomain_indices,
+                 new Vbo("subdomain_in",
+                         Vbo::GEOMETRY,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 2, 4*sizeof(float)));
+        getVao(viewer)->addVbo(getVbo(Subdomain_indices));
+      }
+      if(viewer->getShaderProgram(getProgram())->property("hasDistanceValues").toBool())
+      {
+        if(!getVbo(Distances))
+          setVbo(Distances,
+                 new Vbo("distance",
+                         Vbo::COLORS,
+                         QOpenGLBuffer::VertexBuffer, GL_FLOAT, 0, 1));
+        getVao(viewer)->addVbo(getVbo(Distances));
       }
     }
   }

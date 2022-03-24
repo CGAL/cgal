@@ -1087,7 +1087,7 @@ HTML_STYLESHEET        = ${CGAL_DOC_RESOURCE_DIR}/stylesheet.css
 # user-defined cascading style sheet that is included after the standard
 # style sheets created by doxygen. Using this option one can overrule
 # certain style aspects. This is preferred over using HTML_STYLESHEET
-# since it does not replace the standard style sheet and is therefor more
+# since it does not replace the standard style sheet and is therefore more
 # robust against future updates. Doxygen will copy the style sheet file to
 # the output directory.
 
@@ -1726,13 +1726,13 @@ ENABLE_PREPROCESSING   = YES
 # compilation will be performed. Macro expansion can be done in a controlled
 # way by setting EXPAND_ONLY_PREDEF to YES.
 
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES
 # then the macro expansion is limited to the macros specified with the
 # PREDEFINED and EXPAND_AS_DEFINED tags.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES (the default) the includes files
 # pointed to by INCLUDE_PATH will be searched when a #include is found.
@@ -1760,7 +1760,14 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator
 # instead of the = operator.
 
-PREDEFINED             = DOXYGEN_RUNNING
+PREDEFINED             = DOXYGEN_RUNNING \
+                         "CGAL_NP_TEMPLATE_PARAMETERS=NamedParameters = CGAL::parameters::Default_named_parameters" \
+                         "CGAL_NP_CLASS=NamedParameters" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS_1=NamedParameters1 = CGAL::parameters::Default_named_parameter" \
+                         "CGAL_NP_CLASS_1=NamedParameters1" \
+                         "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
+                         "CGAL_NP_CLASS_2=NamedParameters2" \
+                         CGAL_DEPRECATED
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.

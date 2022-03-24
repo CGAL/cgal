@@ -182,6 +182,8 @@ namespace Barycentric_coordinates {
 namespace CGAL {
 namespace Barycentric_coordinates {
 
+#if !defined(CGAL_NO_DEPRECATED_CODE) || defined(DOXYGEN_RUNNING)
+
   /*!
   * \ingroup PkgBarycentricCoordinates2RefDeprecated
   * The class `Triangle_coordinates_2` implements barycentric coordinates ( <a href="https://mathworld.wolfram.com/BarycentricCoordinates.html" target=blanc>[1]</a>,
@@ -412,6 +414,8 @@ namespace Barycentric_coordinates {
     // Return the std::array<FT,3> type of coordinates.
     return CGAL::make_array(b_first, b_second, FT(1) - b_first - b_second);
   }
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 } // namespace Barycentric_coordinates
 } // namespace CGAL

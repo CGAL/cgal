@@ -282,6 +282,23 @@ optimization processes.
 Compared effect of a global optimizer and the perturber. The left part shows the distribution of dihedral angles of mesh cells, right after Delaunay refinement (top), after some ODT smoothing (middle) and after perturbation (bottom). The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh.
 \cgalFigureEnd
 
+\subsection Mesh_3PostProcessing Post-processing
+
+The tetrahedral mesh generation algorithm by Delaunay refinement provided by this package
+does not guarantee that all the vertices of the output mesh are actually present in the final mesh.
+
+In most cases, all points are used, but if the geometry of the object
+has small features, compared to the size of the simplices (triangles and tetrahedra),
+it might be that the Delaunay facets that are selected in the restricted Delaunay
+triangulation miss some vertices of the triangulation.
+The concurrent version of the tetrahedral mesh generation algorithm
+also inserts a small set of auxiliary vertices that belong to the triangulation
+but are isolated from the complex at the end of the meshing process.
+
+These so-called \em isolated vertices belong to the triangulation but not to any cell
+of the `C3T3`. They can be removed using the function `remove_isolated_vertices()`.
+
+
 \section Mesh_3_section_interface Interface
 
 \subsection Mesh_3TheGlobalFunctions The Global Functions
@@ -697,7 +714,7 @@ where each subdomain corresponds to a specific tissue.
 
 In the following example, the image is read from the file
 `liver.inr.gz` which is encoded in the format of the library Inrimage
-`http://inrimage.gforge.inria.fr/`.
+`https://www-pequan.lip6.fr/~bereziat/inrimage/`.
 The resulting mesh is shown in \cgalFigureRef{figureliver_3d_image_mesh}.
 
 \cgalExample{Mesh_3/mesh_3D_image.cpp}
@@ -705,6 +722,24 @@ The resulting mesh is shown in \cgalFigureRef{figureliver_3d_image_mesh}.
 \cgalFigureBegin{figureliver_3d_image_mesh,liver.jpg}
 Cut view of a 3D mesh produced from a segmented liver image. Code from subsection \ref Mesh_3_subsection_examples_3d_image generates this file.
 \cgalFigureEnd
+
+\subsubsection Mesh_3DomainsFrom3DImagesWithWeights Domains From Segmented 3D Images, with Weights
+
+When a segmented image is given as input, the generated mesh surface sometimes sticks too closely
+to the voxels surface, causing an aliasing effect.
+A solution to generate a smooth and accurate output surface was described by Stalling et al in
+\cgalCite{stalling1998weighted}. It consists in generating a second input image, made
+of integer coefficients called *weights*, and use those weights to define smoother domain boundaries.
+The 3D image of weights can be generated using `CGAL::Mesh_3::generate_weights()` as shown in
+the following example.
+
+\cgalExample{Mesh_3/mesh_3D_weighted_image.cpp}
+
+\cgalFigureBegin{figure_weightedImage, weighted_images.jpg}
+Surface of the output mesh generated with a very small `facet_distance`
+without the weights (left, 25563 vertices) and with the weights (right, 19936 vertices).
+\cgalFigureEnd
+
 
 \subsubsection Mesh_3DomainsFrom3DImagesWithCustomInitialization Domains From 3D Images, with a Custom Initialization
 

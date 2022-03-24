@@ -5,7 +5,15 @@
 #include <CGAL/point_generators_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Timer.h>
+
+#include <boost/version.hpp>
+#if BOOST_VERSION < 107200
 #include <boost/progress.hpp>
+using boost::progress_display;
+#else
+#include <boost/timer/progress_display.hpp>
+using boost::timer::progress_display;
+#endif
 
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/K_neighbor_search.h>
@@ -115,7 +123,7 @@ int main(int argc,char** argv)
   double OK_tree=time.time();
   time.reset();
 
-boost::progress_display show_progress( nb_queries );
+  progress_display show_progress( nb_queries );
 
 //running NN algorithms
   for (std::vector<Point_3>::const_iterator it=queries.begin();it!=queries.end();++it)

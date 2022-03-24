@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include <fstream>
+#include <cassert>
 
 using std::cerr;
 using std::endl;
@@ -63,7 +64,7 @@ struct Intersect_facets {
         }
         if ( v != Halfedge_const_handle()) {
             // found shared vertex:
-            CGAL_assertion( h->vertex() == v->vertex());
+            assert( h->vertex() == v->vertex());
             // geomtric check if the opposite segments intersect the triangles
             Triangle t1( h->vertex()->point(),
                          h->next()->vertex()->point(),
@@ -142,7 +143,7 @@ int main(int argc, char* argv[]) {
     cerr << "Loading OFF file ... " << endl;
     user_time.start();
     Polyhedron P;
-    std::ifstream in1((argc>1)?argv[1]:"data/tetra_intersected_by_triangle.off");
+    std::ifstream in1((argc>1)?argv[1]:CGAL::data_file_path("meshes/tetra_intersected_by_triangle.off"));
     in1 >> P;
     cerr << "Loading OFF file   : " << user_time.time() << " seconds." << endl;
     if ( ! P.is_pure_triangle()) {

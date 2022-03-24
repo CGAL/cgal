@@ -70,7 +70,7 @@ public:
       { extend_straight_negative(-(it->length), false); }
     }
     update_is_closed();
-    CGAL_assertion(is_valid(true));
+    CGAL_expensive_assertion(is_valid(true));
   }
 
   Path_on_surface(const Self& apath) : m_map(apath.m_map),
@@ -1099,7 +1099,7 @@ public:
   /// @return the primitive root and the power of the path in the sense of string.
   ///         use the linear Knuth-Morris-Pratt search
   std::pair<Self, int> factorize() {
-    CGAL_assertion(is_valid());
+    CGAL_expensive_assertion(is_valid());
     if (!is_closed()) {
       // if a path is not closed, it is already primitive
       return std::make_pair(Path_on_surface<Map>(*this), 1);

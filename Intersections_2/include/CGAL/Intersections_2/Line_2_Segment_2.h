@@ -34,10 +34,10 @@ namespace internal {
 template <class K>
 class Segment_2_Line_2_pair {
 public:
-    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
+    enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT, UNKNOWN};
     Segment_2_Line_2_pair(typename K::Segment_2 const *seg,
                           typename K::Line_2 const *line)
-      : _seg(seg), _line(line), _known(false) {}
+      : _seg(seg), _line(line) {}
 
     Intersection_results intersection_type() const;
 
@@ -46,8 +46,7 @@ public:
 protected:
     typename K::Segment_2 const*_seg;
     typename K::Line_2 const *  _line;
-    mutable bool                    _known;
-    mutable Intersection_results     _result;
+    mutable Intersection_results     _result = UNKNOWN;
     mutable typename K::Point_2         _intersection_point;
 };
 
@@ -108,10 +107,9 @@ template <class K>
 typename Segment_2_Line_2_pair<K>::Intersection_results
 Segment_2_Line_2_pair<K>::intersection_type() const
 {
-    if (_known)
+    if (_result!=UNKNOWN)
         return _result;
     // The non const this pointer is used to cast away const.
-    _known = true;
     const typename K::Line_2 &l1 = _seg->supporting_line();
     Line_2_Line_2_pair<K> linepair(&l1, _line);
     switch ( linepair.intersection_type()) {
@@ -127,7 +125,7 @@ Segment_2_Line_2_pair<K>::intersection_type() const
         _result = SEGMENT;
         break;
     default:
-      CGAL_assume(false);
+      CGAL_unreachable();
     }
     return _result;
 }
@@ -136,7 +134,7 @@ template <class K>
 typename K::Point_2
 Segment_2_Line_2_pair<K>::intersection_point() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == POINT);
     return _intersection_point;
@@ -146,7 +144,7 @@ template <class K>
 typename K::Segment_2
 Segment_2_Line_2_pair<K>::intersection_segment() const
 {
-    if (!_known)
+    if (_result==UNKNOWN)
         intersection_type();
     CGAL_kernel_assertion(_result == SEGMENT);
     return *_seg;

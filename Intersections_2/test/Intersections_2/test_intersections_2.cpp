@@ -431,6 +431,77 @@ struct Test
     check_intersection     (S(p( 0,   0), p( 10,   0)), S(p(  1,   0), p(  8,   0)), S(P(  1,   0), P(  8,   0)));
     check_intersection     (S(p(68, 106), p(192, 106)), S(p(150, 106), p(255, 106)), S(P(150, 106), P(192, 106)));
     check_intersection     (S(p( 1,  10), p(  1,   2)), S(p(  1,   7), p(  1,   3)), S(P(  1,   3), P(  1,   7)));
+
+    // exact point intersection
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  3,   3), p(  5,   10)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  5,   10), p(  3,   3)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  3,   3), p(  -5,   10)), p(  3,   3));
+    check_intersection     (S(p( 3,   0), p( 3,   10)), S(p(  -5,   10), p(  3,   3)), p(  3,   3));
+    check_intersection     (S(p( 0,   0), p( 44,   44)), S(p(  44,   44), p(  55,   55)), p(  44,   44));
+    check_intersection     (S(p( 0,   0), p( 44,   44)), S(p(  55,   55), p(  44,   44)), p(  44,   44));
+    check_intersection     (S(p( 44,   44), p( 0,   0)), S(p(  44,   44), p(  55,   55)), p(  44,   44));
+    check_intersection     (S(p( 44,   44), p( 0,   0)), S(p(  55,   55), p(  44,   44)), p(  44,   44));
+    check_intersection     (S(p( 0,   0), p( -44,   -44)), S(p(  -44,   -44), p(  -55,   -55)), p(  -44,   -44));
+    check_intersection     (S(p( 0,   0), p( -44,   -44)), S(p(  -55,   -55), p(  -44,   -44)), p(  -44,   -44));
+    check_intersection     (S(p( -44,   -44), p( 0,   0)), S(p(  -44,   -44), p(  -55,   -55)), p(  -44,   -44));
+    check_intersection     (S(p( -44,   -44), p( 0,   0)), S(p(  -55,   -55), p(  -44,   -44)), p(  -44,   -44));
+
+    // more segment intersection (containment)
+    check_intersection     (S(p(0,0), p(4,4)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p(0,0), p(4,4)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p(4,4), p(0,0)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p(4,4), p(0,0)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+
+    // more segment intersection (overlap)
+    check_intersection     (S(p( 0,0), p( 2,2)), S(p(1,1), p(4,4)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 0,0), p( 2,2)), S(p(4,4), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 0,0)), S(p(1,1), p(4,4)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 0,0)), S(p(4,4), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 0,0), p( -2,-2)), S(p(-1,-1), p(-4,-4)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( 0,0), p( -2,-2)), S(p(-4,-4), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( 0,0)), S(p(-1,-1), p(-4,-4)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( 0,0)), S(p(-4,-4), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+
+    // more segment intersection (one common point)
+    check_intersection     (S(p( 0,0), p( 2,2)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 0,0), p( 2,2)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 0,0)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 0,0)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 0,0), p( -2,-2)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( 0,0), p( -2,-2)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( 0,0)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( 0,0)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+
+    // more segment intersection (two identical points)
+    check_intersection     (S(p( 1,1), p( 2,2)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 1,1), p( 2,2)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 1,1)), S(p(1,1), p(2,2)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( 2,2), p( 1,1)), S(p(2,2), p(1,1)), S(p(1,1), p(2,2)));
+    check_intersection     (S(p( -1,-1), p( -2,-2)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -1,-1), p( -2,-2)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( -1,-1)), S(p(-1,-1), p(-2,-2)), S(p(-2,-2),p(-1,-1)));
+    check_intersection     (S(p( -2,-2), p( -1,-1)), S(p(-2,-2), p(-1,-1)), S(p(-2,-2),p(-1,-1)));
+
+    //check determinism of crossing point
+    P p1a(-122.37323046264295, 37.7435274415764);
+    P p1b(-122.3711959178425,  37.74348027376899);
+    P p2a(-122.37130249711004, 37.74203327688176);
+    P p2b(-122.3722247426892,  37.74401427059434);
+    std::set<double> ds;
+    auto test = [&ds](S s1, S s2)
+    {
+      P i = boost::get<P>(*CGAL::intersection(s1,s2));
+      ds.insert(CGAL::to_double(i.x())); ds.insert(CGAL::to_double(i.y()));
+      assert(ds.size()==2);
+    };
+    test(S(p1a,p1b), S(p2a,p2b));
+    test(S(p1a,p1b), S(p2b,p2a));
+    test(S(p1b,p1a), S(p2b,p2a));
+    test(S(p1b,p1a), S(p2a,p2b));
+    test(S(p2a,p2b), S(p1a,p1b));
+    test(S(p2b,p2a), S(p1a,p1b));
+    test(S(p2b,p2a), S(p1b,p1a));
+    test(S(p2a,p2b), S(p1b,p1a));
   }
 
   void R_R()

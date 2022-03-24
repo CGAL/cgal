@@ -403,6 +403,18 @@ public:
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(); }
   //@}
+
+  //! \name Functor definitions for constructions.
+  //@{
+
+  //! Functor
+  typedef typename Kernel::Construct_segment_2    Construct_curve_2;
+
+  /*! Obtain a Construct_curve_2 functor object. */
+  Construct_curve_2 construct_curve_2_object() const
+  { return this->construct_segment_2_object(); }
+
+  //@}
 };
 
 } //namespace CGAL

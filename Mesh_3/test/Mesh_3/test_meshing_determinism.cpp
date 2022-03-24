@@ -11,6 +11,7 @@
 #include <CGAL/exude_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
+#include <cassert>
 #include <fstream>
 #include <sstream>
 #include <cstring>
@@ -47,7 +48,7 @@ void test()
 
   // Domain
   std::cout << "\tSeed is\t 0" << std::endl;
-  std::ifstream input("data/cube.off");
+  std::ifstream input(CGAL::data_file_path("meshes/cube.off"));
   Polyhedron polyhedron;
   input >> polyhedron;
   Mesh_domain domain(polyhedron);
@@ -137,12 +138,12 @@ void test()
       if(0 != output_c3t3[5*(i-1)+j].compare(output_c3t3[5*i+j]))
       {
         std::cerr << "Meshing operation " << j << " is not deterministic.\n";
-        CGAL_assertion(false);
+        assert(false);
       }
       if (0 != output_surfaces[5 * (i - 1) + j].compare(output_surfaces[5 * i + j]))
       {
         std::cerr << "Output surface after operation " << j << " is not deterministic.\n";
-        CGAL_assertion(false);
+        assert(false);
       }
     }
   }

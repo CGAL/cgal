@@ -12,7 +12,7 @@
 #include <sstream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
@@ -24,8 +24,8 @@ void test()
   // test with a clipper mesh
   {
     TriangleMesh tm1, tm2;
-    std::ifstream("data-coref/elephant.off") >> tm1;
-    std::ifstream("data-coref/sphere.off") >> tm2;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> tm2;
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
     CGAL::BGL::internal::initialize_face_index_map(custom_face_index_map_1, tm1);
@@ -40,8 +40,8 @@ void test()
 
   {
     TriangleMesh tm1, tm2;
-    std::ifstream("data-coref/elephant.off") >> tm1;
-    std::ifstream("data-coref/sphere.off") >> tm2;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/sphere.off")) >> tm2;
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
     CGAL::BGL::internal::initialize_face_index_map(custom_face_index_map_1, tm1);
@@ -63,7 +63,7 @@ void test()
               params::throw_on_self_intersection(true),
               params::do_not_modify(true));
     std::vector<TriangleMesh> meshes;
-    PMP::split_connected_components(tm1, meshes, params::all_default());
+    PMP::split_connected_components(tm1, meshes, params::default_values());
     assert(meshes.size() == 2);
     //if the order is not deterministc, put the num_vertices in a list and check
     //if the list does contain all those numbers.
@@ -74,7 +74,7 @@ void test()
   // test with a iso-cuboid
   {
     TriangleMesh tm1;
-    std::ifstream("data-coref/elephant.off") >> tm1;
+    std::ifstream(CGAL::data_file_path("meshes/elephant.off")) >> tm1;
     K::Iso_cuboid_3 iso_cuboid(K::Point_3(0,0,0), K::Point_3(0.4, 0.6, 0.4));
 
     auto custom_face_index_map_1 = get(CGAL::dynamic_face_property_t<std::size_t>(), tm1);
@@ -562,7 +562,7 @@ void test_split_plane()
 {
 //test with a splitter mesh
   Mesh tm1;
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm1;
 
   if(!input)
@@ -576,7 +576,7 @@ void test_split_plane()
   PMP::split(tm1,K::Plane_3(0,0,1,0));
 
   std::vector<Mesh> meshes;
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -600,7 +600,7 @@ void test_split_plane()
   input.close();
 
   PMP::split(tm1,K::Plane_3(0,0,1,-1));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 281);
 
   CGAL::clear(tm1);
@@ -619,7 +619,7 @@ void test_split_plane()
   input.close();
 
   PMP::split(tm1,K::Plane_3(0,-1,0,0.3));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 2);
 
   CGAL::clear(tm1);
@@ -637,7 +637,7 @@ void test_split_plane()
   PMP::split(tm1, K::Plane_3(0,0,1,-0.5),
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -654,7 +654,7 @@ void test_split()
   // test with a clipper mesh
   TriangleMesh tm1, tm2;
   //closed intersection curves
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm1;
 
   if(!input)
@@ -666,7 +666,7 @@ void test_split()
 
   input.close();
 
-  input.open("data-coref/sphere.off");
+  input.open(CGAL::data_file_path("meshes/sphere.off"));
   input >> tm2;
 
   if(!input)
@@ -687,7 +687,7 @@ void test_split()
   TriangleMesh, CGAL::dynamic_face_property_t<faces_size_type> >::type
       pidmap = get(CGAL::dynamic_face_property_t<faces_size_type>(), tm1);
   CGAL::Polygon_mesh_processing::connected_components(
-        tm1, pidmap, CGAL::parameters::all_default());
+        tm1, pidmap, CGAL::parameters::default_values());
   PMP::split_connected_components(tm1,
                                   meshes,
                                   params::face_patch_map(pidmap));
@@ -734,7 +734,7 @@ void test_split()
   PMP::split(tm1, tm2);
   PMP::split_connected_components(tm1,
                                   meshes,
-                                  params::all_default());
+                                  params::default_values());
 
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
@@ -761,7 +761,7 @@ void test_split()
   PMP::split(tm1, tm2,
              params::throw_on_self_intersection(true),
              params::do_not_modify(true));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -779,7 +779,7 @@ void test_isocuboid()
 {
   TriangleMesh tm;
   //closed intersection curves
-  std::ifstream input("data-coref/elephant.off");
+  std::ifstream input(CGAL::data_file_path("meshes/elephant.off"));
   input >> tm;
 
   if(!input)
@@ -829,7 +829,7 @@ void test_isocuboid()
   PMP::split(tm, splitter,
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm, meshes, params::all_default());
+  PMP::split_connected_components(tm, meshes, params::default_values());
   assert(meshes.size() == 4);
 
   std::set<std::size_t> sizes;
@@ -848,7 +848,7 @@ void test_isocuboid()
   PMP::clip(tm, splitter,
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm, meshes, params::all_default());
+  PMP::split_connected_components(tm, meshes, params::default_values());
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.

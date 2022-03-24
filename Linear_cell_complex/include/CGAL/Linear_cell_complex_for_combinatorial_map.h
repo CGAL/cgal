@@ -19,6 +19,7 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/CMap_linear_cell_complex_storages.h>
 #include <CGAL/boost/graph/properties.h>
+#include <unordered_map>
 
 namespace CGAL {
 
@@ -96,6 +97,9 @@ namespace CGAL {
       Linear_cell_complex_for_combinatorial_map(const Self& alcc) : Base(alcc)
       {}
 
+      Linear_cell_complex_for_combinatorial_map(Self&& alcc) : Base(alcc)
+      {}
+
       template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
@@ -146,20 +150,32 @@ namespace CGAL {
         return *this;
       }
 
+      friend std::ostream& operator<< (std::ostream& os, const Self& amap)
+      {
+        save_combinatorial_map(amap, os);
+        return os;
+      }
+
+      friend std::ifstream& operator>> (std::ifstream& is, Self& amap)
+      {
+        load_combinatorial_map(is, amap);
+        return is;
+      }
+
       /** Import the given hds which should be a model of an halfedge graph. */
       template<class HEG, class PointConverter>
       void import_from_halfedge_graph(const HEG& heg              ,
                                       const PointConverter& pointconverter,
-                                      boost::unordered_map
+                                      std::unordered_map
                                       <typename boost::graph_traits<HEG>::halfedge_descriptor,
                                       Dart_handle>* origin_to_copy=NULL,
-                                      boost::unordered_map
+                                      std::unordered_map
                                       <Dart_handle,
                                       typename boost::graph_traits<HEG>::halfedge_descriptor>*
                                       copy_to_origin=NULL)
 
       {
-        boost::unordered_map
+        std::unordered_map
             <typename boost::graph_traits<HEG>::halfedge_descriptor,
             Dart_handle> local_dartmap;
         if (origin_to_copy==NULL) // Used local_dartmap if user does not provides its own unordered_map
@@ -171,7 +187,7 @@ namespace CGAL {
             Point_property_map;
         Point_property_map ppmap = get(CGAL::vertex_point, heg);
 
-        typename boost::unordered_map
+        typename std::unordered_map
           <typename boost::graph_traits<HEG>::halfedge_descriptor,
            Dart_handle>::iterator dartmap_iter, dartmap_iter_end=origin_to_copy->end();
         for (dartmap_iter=origin_to_copy->begin(); dartmap_iter!=dartmap_iter_end;
@@ -190,10 +206,10 @@ namespace CGAL {
       /** Import the given hds which should be a model of an halfedge graph. */
       template<class HEG>
       void import_from_halfedge_graph(const HEG& heg,
-                                      boost::unordered_map
+                                      std::unordered_map
                                       <typename boost::graph_traits<HEG>::halfedge_descriptor,
                                       Dart_handle>* origin_to_copy=NULL,
-                                      boost::unordered_map
+                                      std::unordered_map
                                       <Dart_handle,
                                       typename boost::graph_traits<HEG>::halfedge_descriptor>*
                                       copy_to_origin=NULL)

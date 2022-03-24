@@ -53,7 +53,7 @@ struct Display_polylines{
 int main()
 {
   LCC lcc;
-  CGAL::IO::read_polygon_mesh("data/elephant.off", lcc);
+  CGAL::IO::read_polygon_mesh(CGAL::data_file_path("meshes/elephant.off"), lcc);
 
   Skeleton skeleton;
 

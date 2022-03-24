@@ -96,6 +96,7 @@ jobs:
             cd ..
             git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
             mkdir -p cgal.github.io/${PR_NUMBER}/$ROUND
+            rm cgal.github.io/${PR_NUMBER}/$ROUND/* -rf
             for f in $LIST_OF_PKGS
             do
               if [ -d ./build_doc/doc_output/$f ]; then
@@ -109,7 +110,7 @@ jobs:
             mv tmp.html index.html
             git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "base commit" && git push -q -f -u origin master
           else
-            echo "::set-output name=DoxygenError::This round already exists. Overwrite it with /force-build"
+            echo "::set-output name=DoxygenError::This round already exists. Overwrite it with /force-build."
             exit 1
           fi
 
@@ -121,7 +122,7 @@ jobs:
             const tmp_round = "${{ steps.get_round.outputs.result }}";
             const id = tmp_round.indexOf(":");
             const round = tmp_round.substring(0,id);
-            const address = "The documentation is built. It will be available, after a few minutes, here : https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/"+round+"/Manual/index.html"
+            const address = "The documentation is built. It will be available, after a few minutes, here: https://cgal.github.io/${{ steps.get_pr_number.outputs.result }}/"+round+"/Manual/index.html"
             github.issues.createComment({
               owner: "CGAL",
               repo: "cgal",

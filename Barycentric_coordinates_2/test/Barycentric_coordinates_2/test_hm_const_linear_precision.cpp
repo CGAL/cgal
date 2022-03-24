@@ -1,7 +1,3 @@
-// #define HMC_SparseLU
-// #define HMC_SimplicialLLT
-// #define HMC_SimplicialLDLT // default
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
 #include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
