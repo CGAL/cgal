@@ -19,6 +19,7 @@ endif()
 # Creating entries for all C++ files with "main" routine
 # ##########################################################
 create_single_source_cgal_program("test_tetrahedral_remeshing.cpp")
+create_single_source_cgal_program("test_tetrahedral_remeshing_simplicial_cb_vb.cpp")
 create_single_source_cgal_program(
   "test_tetrahedral_remeshing_with_features.cpp")
 create_single_source_cgal_program(

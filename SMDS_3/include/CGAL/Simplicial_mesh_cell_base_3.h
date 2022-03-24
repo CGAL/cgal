@@ -47,17 +47,17 @@ template< class Point_3,
 class Simplicial_mesh_cell_3
 {
 public:
-  typedef TDS                          Triangulation_data_structure;
-  typedef typename TDS::Vertex_handle  Vertex_handle;
-  typedef typename TDS::Cell_handle    Cell_handle;
-  typedef typename TDS::Vertex         Vertex;
-  typedef typename TDS::Cell           Cell;
-  typedef typename TDS::Cell_data      TDS_data;
+  using Triangulation_data_structure = TDS;
+  using Vertex_handle = typename TDS::Vertex_handle;
+  using Cell_handle = typename TDS::Cell_handle;
+  using Vertex = typename TDS::Vertex;
+  using Cell = typename TDS::Cell;
+  using TDS_data = typename TDS::Cell_data;
 
   // Index Type
-  typedef Subdomain_index_      Subdomain_index;
-  typedef Surface_patch_index_  Surface_patch_index;
-  typedef boost::variant<Subdomain_index, Surface_patch_index> Index;
+  using Subdomain_index = Subdomain_index_;
+  using Surface_patch_index = Surface_patch_index_;
+  using Index = boost::variant<Subdomain_index, Surface_patch_index>;
 
 public:
   // Constructors
@@ -74,8 +74,6 @@ public:
   {
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
-      surface_center_table_[i]= rhs.surface_center_table_[i];
-      surface_center_index_table_[i] = rhs.surface_center_index_table_[i];
     }
   }
 
@@ -231,6 +229,7 @@ public:
   void set_subdomain_index(const Subdomain_index& index)
   { subdomain_index_ = index; }
 
+  //
   void set_sliver_value(double value)
   {
     sliver_cache_validity_ = true;
@@ -258,34 +257,6 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     return surface_index_table_[facet];
-  }
-
-  /// Sets surface center of \c facet to \c point
-  void set_facet_surface_center(const int facet, const Point_3& point)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    surface_center_table_[facet] = point;
-  }
-
-  /// Returns surface center of \c facet
-  Point_3 get_facet_surface_center(const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return surface_center_table_[facet];
-  }
-
-  /// Sets surface center index of \c facet to \c index
-  void set_facet_surface_center_index(const int facet, const Index& index)
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    surface_center_index_table_[facet] = index;
-  }
-
-  /// Returns surface center of \c facet
-  Index get_facet_surface_center_index(const int facet) const
-  {
-    CGAL_precondition(facet>=0 && facet<4);
-    return surface_center_index_table_[facet];
   }
 
   /// Returns true if facet lies on a surface patch
@@ -338,17 +309,11 @@ private:
 
   /// Stores surface_index for each facet of the cell
   std::array<Surface_patch_index, 4> surface_index_table_ = {};
-  /// Stores surface center of each facet of the cell
-  std::array<Point_3, 4> surface_center_table_ = {};
-  /// Stores surface center index of each facet of the cell
 
   std::array<Cell_handle, 4> N;
   std::array<Vertex_handle, 4> V;
 
   std::size_t time_stamp_;
-
-  std::array<Index, 4> surface_center_index_table_ = {};
-  /// Stores visited facets (4 first bits)
 
   //  Point_container _hidden;
 
@@ -408,7 +373,7 @@ public:
 /*!
 \ingroup PkgSMDS3Classes
 
-The class `Simplicial_mesh_cell_base_3<Gt, Subdomain_index, Surface_patch_index, TDS>`
+The class `Simplicial_mesh_cell_base_3`
 is a model of the concept `SimplicialMeshCellBase_3`.
 It is designed to serve as cell base class for.3D simplicial mesh data structures.
 It stores and gives access to data about the complex the cell belongs to, such as the
@@ -454,7 +419,7 @@ class Simplicial_mesh_cell_base_3;
 template <typename Gt,
           typename Subdomain_index,
           typename Surface_patch_index>
-class Simplicial_mesh_cell_base_3<GT, Subdomain_index, Surface_patch_index, void>
+class Simplicial_mesh_cell_base_3<Gt, Subdomain_index, Surface_patch_index, void>
 {
 public:
   typedef internal::Dummy_tds_3                         Triangulation_data_structure;
