@@ -335,24 +335,25 @@ public:
   {
     // Input axis-aligned bounding box
     SC_Iso_cuboid_3 bbox = m_oracle.bbox();
-    const SC_Point_3 bbox_centroid = midpoint(bbox.min(), bbox.max());
+    const SC_Point_3 bbox_centroid = midpoint((bbox.min)(), (bbox.max)());
 
     // Scale a bit to create the initial points not too close to the input
     double scaling = 1.2;
     CGAL::Aff_transformation_3<SC> scale(SCALING, scaling);
-    bbox = SC_Iso_cuboid_3(scale.transform(bbox.min()), scale.transform(bbox.max()));
+    bbox = SC_Iso_cuboid_3(scale.transform((bbox.min)()), scale.transform((bbox.max)()));
 
     // Translate bbox back to initial centroid
-    const SC_Point_3 bbox_transformed_centroid = midpoint(bbox.min(), bbox.max());
+    const SC_Point_3 bbox_transformed_centroid = midpoint((bbox.min)(), (bbox.max)());
     const SC_Vector_3 diff_centroid = bbox_centroid - bbox_transformed_centroid;
     CGAL::Aff_transformation_3<SC> centroid_translate(TRANSLATION, diff_centroid);
-    bbox = SC_Iso_cuboid_3(centroid_translate.transform(bbox.min()), centroid_translate.transform(bbox.max()));
+    bbox = SC_Iso_cuboid_3(centroid_translate.transform((bbox.min)()),
+                           centroid_translate.transform((bbox.max)()));
 
     // Add the offset
     SC_Vector_3 offset_ext = std::sqrt(3.) * offset * SC_Vector_3(1, 1, 1);
     CGAL::Aff_transformation_3<SC> translate_m(TRANSLATION, - offset_ext);
     CGAL::Aff_transformation_3<SC> translate_M(TRANSLATION,   offset_ext);
-    bbox = SC_Iso_cuboid_3(translate_m.transform(bbox.min()), translate_M.transform(bbox.max()));
+    bbox = SC_Iso_cuboid_3(translate_m.transform((bbox.min)()), translate_M.transform((bbox.max)()));
 
     std::cout << "Bbox: " << bbox << std::endl;
 
