@@ -842,7 +842,7 @@ public:
     #else
     // This approach produce better patches when used with Weight_incomplete
     // (which should be arranged in internal::triangulate_hole_Polyhedron, triangulate_polyline)
-    return fill_by_incomplete_patches(tr, std::get<0>(res), edge_exist, P, Q, tracer, WC);
+    return fill_by_incomplete_patches(tr, std::get<0>(res), edge_exist, P, Q, tracer, WC, visitor);
     #endif
   }
 
