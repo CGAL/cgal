@@ -859,7 +859,7 @@ private:
   *   - get_third() returning the third vertex of facet pointed by circulator
   *   - edge_first() and edge_second() neighbor edges to get_third() vertex
   ************************************************************************/
-  template<class IncidentFacetCirculator, class Edge_DT, class Triangulation_DT, class Visitor>
+  template<class IncidentFacetCirculator, class Edge_DT, class Triangulation_DT>
   void triangulate_DT(const Polyline_3& P,
                       const Polyline_3& Q,
                       LookupTable<Weight>& W,
