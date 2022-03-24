@@ -22,7 +22,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epick;
 typedef CGAL::Exact_predicates_exact_constructions_kernel Epeck;
 
 typedef Epeck::Point_3 Exact_point;
-typedef CGAL::Cartesian_converter<Epick, Epeck> I2E;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -86,6 +85,8 @@ bool test_pipeline()
   std::cout << "test_pipeline() with K = " << typeid(K).name() << std::endl;
 
   typedef typename K::Point_3 Point_3;
+  typedef CGAL::Cartesian_converter<K, Epeck> K2E;
+
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
   std::vector<Point_3> points;
@@ -96,10 +97,10 @@ bool test_pipeline()
     return false;
   }
 
-  std::map<Point_3, Exact_point> i2e;
-  boost::associative_property_map<std::map<Point_3, Exact_point>> cpm(i2e);
+  std::map<Point_3, Exact_point> k2e;
+  boost::associative_property_map<std::map<Point_3, Exact_point>> cpm(k2e);
   for(const auto& p : points)
-    put(cpm, p, I2E()(p));
+    put(cpm, p, K2E()(p));
 
   shuffle_soup(polygons);
   std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
@@ -115,7 +116,7 @@ bool test_pipeline()
   typedef typename boost::property_map<Polyhedron, Point_property>::type    Custom_VPM;
   Custom_VPM cvpm = get(Point_property(), ref1);
   for(auto v : vertices(ref1))
-    put(cvpm, v, I2E()(get(CGAL::vertex_point, ref1, v)));
+    put(cvpm, v, K2E()(get(CGAL::vertex_point, ref1, v)));
 
   if(PMP::is_outward_oriented(ref1, CGAL::parameters::vertex_point_map(cvpm)))
     PMP::reverse_face_orientations(ref1);
@@ -150,10 +151,10 @@ bool test_pipeline()
   std::vector<std::vector<std::size_t> > ref_polygons;
   PMP::polygon_mesh_to_polygon_soup(ref1, ref_points, ref_polygons);
 
-  std::map<Point_3, Exact_point> ref_i2e;
-  boost::associative_property_map<std::map<Point_3, Exact_point> > ref_cpm(ref_i2e);
+  std::map<Point_3, Exact_point> ref_k2e;
+  boost::associative_property_map<std::map<Point_3, Exact_point> > ref_cpm(ref_k2e);
   for(const auto& p : ref_points)
-    put(ref_cpm, p, I2E()(p));
+    put(ref_cpm, p, K2E()(p));
 
   shuffle_soup(polygons);
   std::cout << "Is the soup a mesh? " << PMP::is_polygon_soup_a_polygon_mesh(polygons) << std::endl;
@@ -182,20 +183,20 @@ int main()
 {
   bool res = test_orient<Epick>(false /*save_oriented*/);
   assert(res);
-//  res = test_orient<Epeck>(false /*save_oriented*/);
-//  assert(res);
+  res = test_orient<Epeck>(false /*save_oriented*/);
+  assert(res);
 
   res = test_pipeline<Epick, CGAL::Sequential_tag>();
   assert(res);
-//  res = test_pipeline<Epeck, CGAL::Sequential_tag>();
-//  assert(res);
+  res = test_pipeline<Epeck, CGAL::Sequential_tag>();
+  assert(res);
 
 #if defined(CGAL_LINKED_WITH_TBB)
   res = test_pipeline<Epick, CGAL::Parallel_tag>();
   assert(res);
 
-//  res = test_pipeline<Epeck, CGAL::Parallel_tag>();
-//  assert(res);
+  res = test_pipeline<Epeck, CGAL::Parallel_tag>();
+  assert(res);
 #endif
 
   return 0;
