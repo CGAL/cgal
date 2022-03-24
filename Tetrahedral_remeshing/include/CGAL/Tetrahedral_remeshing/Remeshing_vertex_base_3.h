@@ -36,6 +36,7 @@ It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 It must be a model of the `TriangulationVertexBase_3` concept.
 It has the default value `Triangulation_vertex_base_3<Gt>`.
 
+\cgalModels `RemeshingVertexBase_3`
 \cgalModels `SimplicialMeshVertexBase_3`
 */
 template<typename GT,

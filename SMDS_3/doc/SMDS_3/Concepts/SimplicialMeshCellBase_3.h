@@ -81,27 +81,4 @@ void set_surface_patch_index(int i, Surface_patch_index index);
 
 /// @}
 
-/*! \name Internal
-These functions are used internally by mesh optimizers and tetrahedral remeshing.
-The class should provide storage, accessors and modificators for a cache value for sliverity.*/
-/// @{
-
-/*!
-*/
-void set_sliver_value(double value);
-
-/*!
-*/
-double sliver_value() const;
-
-/*!
-*/
-bool is_cache_valid() const;
-
-/*!
-*/
-void reset_cache_validity() const;
-
-/// @}
-
 }; /* end SimplicialMeshCellBase_3 */

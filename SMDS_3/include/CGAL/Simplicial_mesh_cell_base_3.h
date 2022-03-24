@@ -64,9 +64,7 @@ public:
     : N(rhs.N)
     , V(rhs.V)
     , time_stamp_(rhs.time_stamp_)
-    , sliver_value_(rhs.sliver_value_)
     , subdomain_index_(rhs.subdomain_index_)
-    , sliver_cache_validity_(false)
   {
     for(int i=0; i <4; i++){
       surface_index_table_[i] = rhs.surface_index_table_[i];
@@ -225,22 +223,6 @@ public:
   void set_subdomain_index(const Subdomain_index& index)
   { subdomain_index_ = index; }
 
-  //
-  void set_sliver_value(double value)
-  {
-    sliver_cache_validity_ = true;
-    sliver_value_ = value;
-  }
-
-  double sliver_value() const
-  {
-    CGAL_assertion(is_cache_valid());
-    return sliver_value_;
-  }
-
-  bool is_cache_valid() const { return sliver_cache_validity_; }
-  void reset_cache_validity() const { sliver_cache_validity_ = false;  }
-
   /// Set surface index of \c facet to \c index
   void set_surface_patch_index(const int facet, const Surface_patch_index& index)
   {
@@ -309,15 +291,10 @@ private:
 
   std::size_t time_stamp_;
 
-  //  Point_container _hidden;
-
-  double sliver_value_ = 0.;
-
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_ = {};
 
   TDS_data      _tds_data;
-  mutable bool sliver_cache_validity_ = false;
 
 public:
 
@@ -388,11 +365,6 @@ assigned to a non surface facet.
  It must match the `Surface_patch_index` of the model
   of the `MeshDomain_3` concept when used for mesh generation.
 
-\tparam TDS is the triangulation data structure class to which cells
-belong. That parameter is only used by the rebind mechanism (see
-`::TriangulationDSCellBase_3::Rebind_TDS`). Users should always use the
-default parameter value `void`.
-
 \cgalModels `SimplicialMeshCellBase_3`
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
@@ -400,21 +372,11 @@ default parameter value `void`.
 \sa `MeshDomain_3`
 \sa `MeshDomainWithFeatures_3`
 */
-template< typename Subdomain_index,
-          typename Surface_patch_index,
-          class TDS = void >
-class Simplicial_mesh_cell_base_3;
-
-// Specialization for void.
 template <typename Subdomain_index,
           typename Surface_patch_index>
-class Simplicial_mesh_cell_base_3<Subdomain_index, Surface_patch_index, void>
+class Simplicial_mesh_cell_base_3
 {
 public:
-  typedef internal::Dummy_tds_3                         Triangulation_data_structure;
-  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
-  typedef Triangulation_data_structure::Cell_handle     Cell_handle;
-
   template <typename TDS2>
   struct Rebind_TDS
   {

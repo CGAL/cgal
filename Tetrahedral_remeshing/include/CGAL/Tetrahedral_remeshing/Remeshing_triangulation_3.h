@@ -21,11 +21,6 @@
 #include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base_3.h>
 #include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base_3.h>
 
-#include <CGAL/Simplicial_mesh_cell_base_3.h>
-#include <CGAL/Simplicial_mesh_vertex_base_3.h>
-
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/tags.h>
 
 #include <boost/static_assert.hpp>
