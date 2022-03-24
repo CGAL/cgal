@@ -397,7 +397,7 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
                                           get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type           Traits;
-  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits)); // @fixme lost
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   const halfedge_descriptor h = halfedge(f, tm);
 
