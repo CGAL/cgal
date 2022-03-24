@@ -29,8 +29,6 @@
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
 
-#include <boost/variant.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 #endif
@@ -40,8 +38,7 @@ namespace CGAL {
 // Class Simplicial_mesh_cell_3
 // Cell base class used for tetrahedral remeshing
 // Adds information to Cb about the cell of the input complex containing it
-template< class Point_3,
-          class Subdomain_index_,
+template< class Subdomain_index_,
           class Surface_patch_index_,
           class TDS>
 class Simplicial_mesh_cell_3
@@ -57,7 +54,6 @@ public:
   // Index Type
   using Subdomain_index = Subdomain_index_;
   using Surface_patch_index = Surface_patch_index_;
-  using Index = boost::variant<Subdomain_index, Surface_patch_index>;
 
 public:
   // Constructors
@@ -286,10 +282,8 @@ public:
   static
   std::string io_signature()
   {
-    using Geom_traits = typename Kernel_traits<Point_3>::type;
     return
-      Get_io_signature<Subdomain_index>()() + "+" +
-      Get_io_signature<Triangulation_cell_base_3<Geom_traits> >()()
+      Get_io_signature<Subdomain_index>()()
       + "+(" + Get_io_signature<Surface_patch_index>()() + ")[4]";
   }
 
@@ -379,9 +373,6 @@ It is designed to serve as cell base class for.3D simplicial mesh data structure
 It stores and gives access to data about the complex the cell belongs to, such as the
 subdomain it belongs to or surface it takes part to.
 
-\tparam Gt is the geometric traits class.
-It must be a model of the concept `RemeshingTriangulationTraits_3`
-
 \tparam Subdomain_index Type of indices for subdomains of the discretized geometric domain.
 Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
 and `EqualityComparable`. The default constructed value must match the label
@@ -405,21 +396,19 @@ default parameter value `void`.
 \cgalModels `SimplicialMeshCellBase_3`
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
-\sa `CGAL::Mesh_cell_base_3`
+\sa \link Mesh_cell_base_3 `CGAL::Mesh_cell_base_3`\endlink
 \sa `MeshDomain_3`
 \sa `MeshDomainWithFeatures_3`
 */
-template< class Gt,
-          typename Subdomain_index,
+template< typename Subdomain_index,
           typename Surface_patch_index,
           class TDS = void >
 class Simplicial_mesh_cell_base_3;
 
 // Specialization for void.
-template <typename Gt,
-          typename Subdomain_index,
+template <typename Subdomain_index,
           typename Surface_patch_index>
-class Simplicial_mesh_cell_base_3<Gt, Subdomain_index, Surface_patch_index, void>
+class Simplicial_mesh_cell_base_3<Subdomain_index, Surface_patch_index, void>
 {
 public:
   typedef internal::Dummy_tds_3                         Triangulation_data_structure;
@@ -429,8 +418,7 @@ public:
   template <typename TDS2>
   struct Rebind_TDS
   {
-    typedef Simplicial_mesh_cell_3<typename Gt::Point_3,
-                                   Subdomain_index,
+    typedef Simplicial_mesh_cell_3<Subdomain_index,
                                    Surface_patch_index,
                                    TDS2> Other;
   };

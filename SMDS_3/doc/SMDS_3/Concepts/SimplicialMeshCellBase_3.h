@@ -36,35 +36,17 @@ public:
 /// @{
 
 /*!
-The bare point type, required to match the `Point_3` type
-of the 3D triangulation traits in which the mesh is embedded.
-*/
-typedef unspecified_type Point_3;
-
-/*!
-The point type, required to match the `Point` type
-of the 3D triangulation in which the mesh is embedded.
-*/
-typedef unspecified_type Point;
-
-/*!
-Type of indices for cells of the input complex.
+Type of indices for cells of the mesh complex.
 Must match the type `MeshDomain_3::Subdomain_index` in the context of mesh generation.
 */
 typedef unspecified_type Subdomain_index;
 
 /*!
-Type of indices for surface patches of the input complex.
+Type of indices for surface patches of the mesh complex.
 Must match the type `MeshDomain_3::Surface_patch_index` in the context of mesh generation.
 */
 typedef unspecified_type Surface_patch_index;
 
-/*!
- Type of indices to be stored at mesh vertices to characterize the lowest dimensional face
- of the input complex on which a possible future Steiner vertex lies.
- Must match the type `MeshDomain_3::Index` in the context of mesh generation.
-*/
-typedef unspecified_type Index;
 
 /// @}
 

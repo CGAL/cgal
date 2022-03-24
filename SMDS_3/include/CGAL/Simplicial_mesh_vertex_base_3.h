@@ -199,7 +199,7 @@ public:
                                                 v.index());
     return os;
   }
-};  // end class Mesh_vertex_3
+};  // end class Simplicial_mesh_vertex_3
 
 
 /*!
@@ -212,7 +212,37 @@ It stores and gives access to data about the complex the vertex belongs to, such
 index of the subcomplex it belongs to.
 
 \tparam Gt is the geometric traits class.
-It must be a model of the concept `RemeshingTriangulationTraits_3`
+It must be a model of the concept `TriangulationTraits_3`
+
+\tparam Subdomain_index Type of indices for subdomains of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must match the label
+of the exterior of the domain (which contains at least the unbounded component).
+ It must match the `Subdomain_index` of the model
+  of the `MeshDomain_3` concept when used for mesh generation.
+
+\tparam Surface_patch_index Type of indices for surface patches (boundaries and interfaces)
+of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must be the index value
+assigned to a non surface facet.
+ It must match the `Surface_patch_index` of the model
+  of the `MeshDomain_3` concept when used for mesh generation.
+
+\tparam Curve_index Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
+of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
+`LessThanComparable`. The default constructed value must be the value for an edge which
+does not approximate a 1-dimensional feature of the geometric domain.
+ It must match the `Curve_index` types of the model
+  of the `MeshDomainWithFeatures_3` concept when used for mesh generation.
+
+\tparam  Corner_index Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
+of the discretized geometric domain.
+It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
+`LessThanComparable`.
+ It must match the `Corner_index` of the model
+  of the `MeshDomainWithFeatures_3` concept when used for mesh generation.
 
 \tparam Vb is the vertex base class. It has to be a model
 of the concept `TriangulationVertexBase_3` and defaults to
@@ -221,7 +251,7 @@ of the concept `TriangulationVertexBase_3` and defaults to
 \cgalModels `SimplicialMeshVertexBase_3`
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3`
-\sa `CGAL::Mesh_vertex_base_3`
+\sa \link Mesh_vertex_base_3 `CGAL::Mesh_vertex_base_3`\endlink
 \sa `MeshDomain_3`
 \sa `MeshDomainWithFeatures_3`
 */

@@ -21,15 +21,6 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-namespace internal
-{
-struct Fake_MD_C
-{
-  typedef int Subdomain_index;
-  typedef int Surface_patch_index;
-  typedef int Index;
-};
-}
 
 /*!
 \ingroup PkgTetrahedralRemeshingClasses
@@ -38,23 +29,16 @@ The class `Remeshing_cell_base_3` is a model of the concept `MeshCellBase_3`.
 It is designed to serve as cell base class for the 3D triangulation
 used in the tetrahedral remeshing process.
 
-\tparam Gt is the geometric traits class.
-It has to be a model of the concept `RemeshingTriangulationTraits_3`.
-
-\tparam Cb is a cell base class from which `Remeshing_cell_base_3` derives.
-It must be a model of the `TriangulationCellBase_3` concept.
-It has the default value `Triangulation_cell_base_3<Gt>`.
+\todo indices
 
 \cgalModels `SimplicialMeshCellBase_3`
 
 */
-template<typename Gt,
-         typename Subdomain_index = int,
+template<typename Subdomain_index = int,
          typename Surface_patch_index = int,
          typename TDS = void>
 using Remeshing_cell_base_3
-  = CGAL::Simplicial_mesh_cell_base_3<Gt,
-                                      Subdomain_index,
+  = CGAL::Simplicial_mesh_cell_base_3<Subdomain_index,
                                       Surface_patch_index,
                                       TDS>;
 
