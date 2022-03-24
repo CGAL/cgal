@@ -33,19 +33,10 @@
 
 namespace CGAL {
 
-  /*!
-\ingroup PkgSMDS3Classes
-Class Simplicial_mesh_vertex_base_3
-Adds information to Vb about the localization of the vertex in regards
-to the 3D input complex.
-
-\cgalModels `SimplicialMeshVertexBase_3`
-
-\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
-\sa `CGAL::Mesh_vertex_base_3`
-\sa `MeshDomain_3`
-\sa `MeshDomainWithFeatures_3`
-*/
+//Class Simplicial_mesh_vertex_3
+//Adds information to Vb about the localization of the vertex in regards
+//to the 3D input complex.
+//\cgalModels `SimplicialMeshVertexBase_3`
 template<class GT,
          typename Subdomain_index,
          typename Surface_patch_index,
@@ -55,13 +46,15 @@ template<class GT,
 class Simplicial_mesh_vertex_3
 : public Vb
 {
+private :
+  using Cmvb3_base = Vb;
+
 public:
-  typedef Vb Cmvb3_base;
-  typedef typename Vb::Vertex_handle  Vertex_handle;
+  using Vertex_handle = typename Vb::Vertex_handle;
 
   // Types
-  typedef boost::variant<Subdomain_index, Surface_patch_index, Curve_index, Corner_index> Index;
-  typedef typename GT::FT             FT;
+  using Index = boost::variant<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
+  using FT = typename GT::FT;
 
   // Constructor
   Simplicial_mesh_vertex_3()
@@ -210,30 +203,34 @@ public:
 
 
 /*!
-\ingroup PkgMesh3MeshClasses
+\ingroup PkgSMDS3Classes
 
 The class `Simplicial_mesh_vertex_base_3` is a model of the concept
 `SimplicialMeshVertexBase_3`.
-It is designed to serve as vertex base class for...
+It is designed to serve as vertex base class for 3D simplicial mesh data structures.
+It stores and gives access to data about the complex the vertex belongs to, such as the
+index of the subcomplex it belongs to.
 
-\tparam GT is the geometric traits class.
-It must be a model of the concept
+\tparam Gt is the geometric traits class.
+It must be a model of the concept `RemeshingTriangulationTraits_3`
 
 \tparam Vb is the vertex base class. It has to be a model
 of the concept `TriangulationVertexBase_3` and defaults to
-`Triangulation_vertex_base_3<GT>`.
+`Triangulation_vertex_base_3<Gt>`.
 
 \cgalModels `SimplicialMeshVertexBase_3`
 
-\sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
+\sa `CGAL::Mesh_complex_3_in_triangulation_3`
 \sa `CGAL::Mesh_vertex_base_3`
+\sa `MeshDomain_3`
+\sa `MeshDomainWithFeatures_3`
 */
-template<class GT,
+template<class Gt,
          typename Subdomain_index,
          typename Surface_patch_index,
          typename Curve_index,
          typename Corner_index,
-         class Vb = Triangulation_vertex_base_3<GT> >
+         class Vb = Triangulation_vertex_base_3<Gt> >
 struct Simplicial_mesh_vertex_base_3
 {
   using Triangulation_data_structure = internal::Dummy_tds_3;
@@ -243,7 +240,7 @@ struct Simplicial_mesh_vertex_base_3
   template < class TDS3 >
   struct Rebind_TDS {
     using Vb3 = typename Vb::template Rebind_TDS<TDS3>::Other;
-    using Other = Simplicial_mesh_vertex_3 <GT,
+    using Other = Simplicial_mesh_vertex_3 <Gt,
       Subdomain_index,
       Surface_patch_index,
       Curve_index,

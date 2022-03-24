@@ -3,9 +3,9 @@
 \cgalConcept
 
 The concept `SimplicialMeshCellBase_3` describes the requirements
-for the `Cell` type of the triangulation
+for the `TriangulationDataStructure_3::Cell` type of the triangulation
 used in the 3D simplicial mesh data structure. The type `SimplicialMeshCellBase_3`
-refines the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
+refines the concept `Cell`
 and must be copy constructible.
 The concept `SimplicialMeshCellBase_3`
 includes a way to store and retrieve
@@ -19,8 +19,7 @@ and four additional helper markers
 used in some operations to mark for instance
 the facets that have been visited.
 
-
-\cgalRefines `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
+\cgalRefines `TriangulationCellBase_3 `
 \cgalRefines `CopyConstructible`
 
 \cgalHasModel `CGAL::Compact_mesh_cell_base_3`
@@ -33,7 +32,6 @@ the facets that have been visited.
 class SimplicialMeshCellBase_3 {
 public:
 
-/// \todo update this file from here
 /// \name Types
 /// @{
 
@@ -50,19 +48,21 @@ of the 3D triangulation in which the mesh is embedded.
 typedef unspecified_type Point;
 
 /*!
-Type of indices for cells of the input complex. Must match the type `MeshDomain_3::Subdomain_index`.
+Type of indices for cells of the input complex.
+Must match the type `MeshDomain_3::Subdomain_index` in the context of mesh generation.
 */
 typedef unspecified_type Subdomain_index;
 
 /*!
-Type of indices for surface patches of the input complex. Must match the type `MeshDomain_3::Surface_patch_index`.
+Type of indices for surface patches of the input complex.
+Must match the type `MeshDomain_3::Surface_patch_index` in the context of mesh generation.
 */
 typedef unspecified_type Surface_patch_index;
 
 /*!
  Type of indices to be stored at mesh vertices to characterize the lowest dimensional face
  of the input complex on which a possible future Steiner vertex lies.
- Must match the type `MeshDomain_3::Index`.
+ Must match the type `MeshDomain_3::Index` in the context of mesh generation.
 */
 typedef unspecified_type Index;
 
@@ -97,85 +97,29 @@ sets `Surface_patch_index` of facet `i` to `index`.
 */
 void set_surface_patch_index(int i, Surface_patch_index index);
 
-/*!
-Returns `true` iff `facet(i)` has been visited.
-*/
-bool is_facet_visited (int i);
-
-/*!
-Marks `facet(i)` as visited.
-*/
-void set_facet_visited (int i);
-
-/*!
-Marks `facet(i)` as non-visited.
-*/
-void reset_visited (int i);
-
-/*!
-Returns a const reference to the surface center of `facet(i)`.
-*/
-const Point_3& get_facet_surface_center(int i);
-
-/*!
-Sets the point `p` as the surface center of `facet(i)`.
-*/
-void set_facet_surface_center (int i, Point_3 p);
-
-/*!
-Sets the surface center index of `facet(i)` to `index`.
-*/
-void set_facet_surface_center_index(int i, Index index);
-
-/*!
-Returns the surface center index of `facet(i)`.
-*/
-Index get_facet_surface_center_index(int i);
-
-/// Get the erase counter.
-/// Only required by the parallel algorithms.
-/// See `CGAL::Compact_container` for more details.
-unsigned int erase_counter() const;
-
-/// Sets the erase counter.
-/// Only required by the parallel algorithms.
-/// See `CGAL::Compact_container` for more details.
-void set_erase_counter(unsigned int c);
-
-/// Increments the erase counter.
-/// Only required by the parallel algorithms.
-/// See `CGAL::Compact_container` for more details.
-void increment_erase_counter();
 /// @}
 
 /*! \name Internal
-These functions are used internally by mesh optimizers.
-The class should provide storage, accessors and modificators for two `Vertex_handle`
-and two `Cell_handle`.*/
+These functions are used internally by mesh optimizers and tetrahedral remeshing.
+The class should provide storage, accessors and modificators for a cache value for sliverity.*/
 /// @{
 
 /*!
-
 */
-Cell_handle next_intrusive() const;
+void set_sliver_value(double value);
 
 /*!
-
 */
-void set_next_intrusive(Cell_handle);
+double sliver_value() const;
 
 /*!
-
 */
-Cell_handle previous_intrusive() const;
+bool is_cache_valid() const;
 
 /*!
-
 */
-void set_previous_intrusive(Cell_handle);
-
+void reset_cache_validity() const;
 
 /// @}
 
-
-}; /* end MeshCellBase_3 */
+}; /* end SimplicialMeshCellBase_3 */
