@@ -315,7 +315,7 @@ public:
   static
   std::string io_signature()
   {
-    using Geom_traits = typename Kernel_traits<Point>::type;
+    using Geom_traits = typename Kernel_traits<Point_3>::type;
     return
       Get_io_signature<Subdomain_index>()() + "+" +
       Get_io_signature<Triangulation_cell_base_3<Geom_traits> >()()
