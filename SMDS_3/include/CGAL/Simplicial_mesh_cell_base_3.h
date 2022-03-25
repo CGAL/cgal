@@ -16,8 +16,6 @@
 
 #include <CGAL/license/SMDS_3.h>
 
-#include <CGAL/SMDS_3/config.h>
-
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>

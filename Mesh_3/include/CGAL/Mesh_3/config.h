@@ -14,9 +14,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-
 #include <CGAL/config.h>
-#include <CGAL/SMDS_3/config.h>
 
 //#define CGAL_MESH_3_VERBOSE 1
 
@@ -27,6 +25,7 @@
 #  define CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE 1
 #  define FORCE_STRUCTURAL_FILTERING 1
 #  define CGAL_NEW_INCIDENT_SLIVERS 1
+#  define CGAL_INTRUSIVE_LIST 1
 
 //experimental
 #  define CGAL_FASTER_BUILD_QUEUE 1
