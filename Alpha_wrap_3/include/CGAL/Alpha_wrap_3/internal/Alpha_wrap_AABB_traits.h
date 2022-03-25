@@ -88,13 +88,7 @@ template <typename GT>
 class Alpha_wrap_AABB_traits
   : public GT
 {
-  using Self = Alpha_wrap_AABB_traits<GT>;
-
 public:
-  using FT = typename GT::FT;
-  using Point_3 = typename GT::Point_3;
-  using Segment_3 = typename GT::Segment_3;
-  using Triangle_3 = typename GT::Triangle_3;
   using Ball_3 = internal::Ball_3<GT>;
 
 public:
@@ -103,6 +97,10 @@ public:
 public:
   class Construct_ball_3
   {
+    using FT = typename GT::FT;
+    using Point_3 = typename GT::Point_3;
+    using Ball_3 = internal::Ball_3<GT>;
+
     const GT& m_base_traits;
 
 public:
@@ -119,6 +117,11 @@ public:
     : public GT::Do_intersect_3
   {
     using Base = typename GT::Do_intersect_3;
+
+    using Point_3 = typename GT::Point_3;
+    using Segment_3 = typename GT::Segment_3;
+    using Triangle_3 = typename GT::Triangle_3;
+    using Ball_3 = internal::Ball_3<GT>;
 
     const GT& m_base_traits;
 
