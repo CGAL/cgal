@@ -38,8 +38,8 @@ namespace CGAL {
   * a `Tetrahedron_3`. The point type of the tetrahedra must be convertible
   * to `Triangulation::Point`
   * @tparam Triangulation a 3D triangulation class that has
-  * a vertex base model of `MeshVertexBase_3`
-  * and a cell base model of `MeshCellBase_3`
+  * a vertex base model of `SimplicialMeshVertexBase_3`
+  * and a cell base model of `SimplicialMeshCellBase_3`
   *
   * @param tets the set of finite tetrahedra of a valid CGAL triangulation.
   * Each element in the range is the geometric description of the
