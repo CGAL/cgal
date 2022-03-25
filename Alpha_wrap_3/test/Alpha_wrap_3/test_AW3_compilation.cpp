@@ -270,7 +270,7 @@ void test_points_API(const std::string& ps_filename,
 
   // No offset
   CGAL::Bbox_3 bbox;
-  for(const int i : point_set)
+  for(const auto i : point_set)
       bbox += point_set.point(i).bbox();
 
   const Vector_3 longest_diag = Point_3(bbox.xmax(), bbox.ymax(), bbox.zmax()) -
