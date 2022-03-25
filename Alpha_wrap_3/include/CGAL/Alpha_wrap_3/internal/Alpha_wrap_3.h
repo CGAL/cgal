@@ -355,8 +355,6 @@ public:
     CGAL::Aff_transformation_3<SC> translate_M(TRANSLATION,   offset_ext);
     bbox = SC_Iso_cuboid_3(translate_m.transform((bbox.min)()), translate_M.transform((bbox.max)()));
 
-    std::cout << "Bbox: " << bbox << std::endl;
-
     return bbox;
   }
 
