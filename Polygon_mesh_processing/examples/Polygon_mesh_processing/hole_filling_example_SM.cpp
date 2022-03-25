@@ -4,6 +4,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
+#include <CGAL/Timer.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -11,7 +12,9 @@
 #include <fstream>
 #include <vector>
 #include <set>
+#include <stdexcept>
 
+typedef CGAL::Timer                                         Timer;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
 typedef CGAL::Surface_mesh<Point>                           Mesh;
@@ -44,15 +47,23 @@ bool is_small_hole(halfedge_descriptor h, Mesh & mesh,
   return true;
 }
 
+struct Stop : std::exception
+{
+    Stop() 
+    {}
+};
+
 struct Progress {
 
-    Progress()
+    Progress(double time_limit)
+        : time_limit(time_limit)
     {}
 
     Progress(const Progress&) = delete;
 
       void start_quadratic_phase(int n)
       {
+        timer.start();
         quadratic_n = n;
         quadratic_report = n / 10;
         std::cout << "Start Quadratic phase with " << n << " steps" << std::endl;
@@ -68,12 +79,15 @@ struct Progress {
 
       void end_quadratic_phase(bool success) const
       {
-        std::cout << "End Quadratic phase " << (success ? "(success)" : "(falied)") << std::endl;
+        timer.stop();
+        std::cout << "End Quadratic phase " << timer.time() << " sec. " << (success ? "(success)" : "(falied)") << std::endl;
+        timer.reset();
       }
 
 
     void start_cubic_phase( int n)
     {
+      timer.start();
         cubic_n = n;
         cubic_report = n / 10;
         std::cout << "Start Cubic phase with " << n << " steps" << std::endl;
@@ -82,6 +96,10 @@ struct Progress {
 
     void cubic_step()
     {
+        if (timer.time() > time_limit) {
+            std::cout << "Let's stop here" << std::endl;
+            throw Stop();
+        }
         if (cubic_i++ == cubic_report) {
           std::cout << double(cubic_i) / double(cubic_n) * 100 << "%" << std::endl;
           cubic_report += cubic_n / 10;
@@ -90,9 +108,11 @@ struct Progress {
 
     void end_cubic_phase() const
     {
-        std::cout << "End Cubic phase" << std::endl;
+        std::cout << "End Cubic phase " << timer.time() << " sec. "  << std::endl;
     }
 
+  mutable Timer timer;
+  double time_limit;
   int quadratic_n = 0, quadratic_i = 0, quadratic_report = 0;
   int cubic_n = 0, cubic_i = 0, cubic_report = 0;
 };
@@ -129,13 +149,20 @@ int main(int argc, char* argv[])
 
     std::vector<face_descriptor>  patch_facets;
     std::vector<vertex_descriptor> patch_vertices;
-    Progress progress;
-    bool success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
-                                                                     h,
-                                                                     std::back_inserter(patch_facets),
-                                                                     std::back_inserter(patch_vertices),
-                                                                     PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(true)));
-
+    Progress progress(10.0);
+    bool success;
+    
+    try {
+        success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
+            h,
+            std::back_inserter(patch_facets),
+            std::back_inserter(patch_vertices),
+            PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(false)));
+    }
+    catch (const Stop&)
+    {
+        std::cout << "We stopped with a timeout" << std::endl;
+    }
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
     std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
     std::cout << "  Is fairing successful: " << success << std::endl;
