@@ -788,8 +788,6 @@ public:
     CGAL_assertion(Q.empty() || (Q.front() == Q.back()));
     CGAL_assertion(Q.empty() || (P.size() == Q.size()));
 
-    visitor.start_delaunay_triangulation();
-
     int n = static_cast<int>(P.size())-1; // because the first and last point are equal
     Triangulation tr;
     std::vector<bool> edge_exist;
@@ -803,7 +801,6 @@ public:
       std::cerr << "W: Returning no output. Dimension of 3D Triangulation is below 2!\n";
       #endif
 #endif
-      visitor.end_delaunay_triangulation(false);
       return Weight::NOT_VALID();
     }
 
@@ -815,6 +812,7 @@ public:
       typename Incident_facet_circulator_base<Triangulate_hole_polyline_DT>::Edge_wrapper
         e_start(*std::get<0>(res));
       if(tr.dimension() == 3) {
+        visitor.start_quadratic_phase(tr.number_of_finite_facets());
         triangulate_DT<IFC_3>(P, Q, W, lambda, e_start, tr, WC, visitor, false);
       }
       else {
@@ -830,33 +828,31 @@ public:
         std::cerr << "W: Returning no output. No possible triangulation is found!\n";
         #endif
 #endif
-        visitor.end_delaunay_triangulation(false);
+        visitor.end_quadratic_phase(false);
         return Weight::NOT_VALID();
       }
 
       tracer(lambda, 0, n-1);
-      visitor.end_delaunay_triangulation(true);
+      visitor.end_quadratic_phase(true);
       return W.get(0,n-1);
     }
 
     // How to handle missing border edges
     #if 1
+    visitor.start_quadratic_phase(tr.number_of_finite_facets());
     Weight w = fill_by_extra_triangles(tr, edge_exist, P, Q, tracer, WC, visitor);
     #else
     // This approach produce better patches when used with Weight_incomplete
     // (which should be arranged in internal::triangulate_hole_Polyhedron, triangulate_polyline)
     Weight w = fill_by_incomplete_patches(tr, std::get<0>(res), edge_exist, P, Q, tracer, WC, visitor);
     #endif
-    if(w == Weight::NOT_VALID()){
-      visitor.end_delaunay_triangulation(false);
-    }else{
-      visitor.end_delaunay_triangulation(true);
-    }
+
+    visitor.end_quadratic_phase(w != Weight::NOT_VALID());
+
     return w;
   }
 
 private:
-
   /************************************************************************
   * Main algorithm which construct a minimum patch top-down searching through the space of tr
   *
@@ -879,6 +875,7 @@ private:
                       Visitor& visitor,
                       const bool produce_incomplete) const
   {
+    visitor.quadratic_step();
     /**********************************************************************
      *  + Default W value is Weight::DEFAULT(), default lambda value is -1.
      *  + DEFAULT() is used to check whether the region (v0-v1) is processed.
@@ -1133,6 +1130,7 @@ private:
     triangulate_DT<Edge_graph::Incident_facet_circulator>
       (P, Q, W, lambda, e_start, edge_graph, WC, visitor, false);
 
+
     if(W.get(0, n-1) == Weight::NOT_VALID()) {
 #ifdef CGAL_HOLE_FILLING_VERBOSE
       #ifndef CGAL_TEST_SUITE
@@ -1209,9 +1207,8 @@ public:
     int f = range.first, s = range.second;
 
     const int N = s * ( -3* f * (s - 1) + s * s - 1) /6;
-    int count = 0;
 
-    visitor.start_cubic_algorithm(N);
+    visitor.start_cubic_phase(N);
     for(int j = 2; j<= range.second; ++j) {              // determines range (2 - 3 - 4 )
       for(int i=range.first; i<= range.second-j; ++i) {  // iterates over ranges and find min triangulation in those ranges
         int k = i+j;                                     // like [0-2, 1-3, 2-4, ...], [0-3, 1-4, 2-5, ...]
@@ -1220,8 +1217,7 @@ public:
         Weight w_min = Weight::NOT_VALID();
         // i is the range start (e.g. 1) k is the range end (e.g. 5) -> [1-5]. Now subdivide the region [1-5] with m -> 2,3,4
         for(int m = i+1; m<k; ++m) {
-          visitor.cubic_algorithm(count);
-          ++count;
+          visitor.cubic_step();
           // now the regions i-m and m-k might be valid(constructed) patches,
           if( W.get(i,m) == Weight::NOT_VALID() || W.get(m,k) == Weight::NOT_VALID() )
           { continue; }
@@ -1242,8 +1238,7 @@ public:
         lambda.put(i,k, m_min);
       }
     }
-    CGAL_assertion(N == count);
-    visitor.end_cubic_algorithm();
+    visitor.end_cubic_phase();
   }
 };
 

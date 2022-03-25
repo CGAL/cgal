@@ -51,39 +51,50 @@ struct Progress {
 
     Progress(const Progress&) = delete;
 
-    void start_delaunay_triangulation() const
-    {
-        std::cout << "Start Delaunay phase" << std::endl;
-    }
+      void start_quadratic_phase(int n)
+      {
+        quadratic_n = n;
+        quadratic_report = n / 10;
+        std::cout << "Start Quadratic phase with " << n << " steps" << std::endl;
+      }
 
-    void end_delaunay_triangulation(bool success) const
-    {
-        std::cout << "End Delaunay phase " << ((success)?" (success)":" (failed)") << std::endl;
+      void quadratic_step()
+      {
+        if (quadratic_i++ == quadratic_report) {
+          std::cout << double(quadratic_i) / double(quadratic_n) * 100 << "%" << std::endl;
+          quadratic_report += quadratic_n / 10;
+        }
+      }
 
-    }
+      void end_quadratic_phase(bool success) const
+      {
+        std::cout << "End Quadratic phase " << (success ? "(success)" : "(falied)") << std::endl;
+      }
 
-    void start_cubic_algorithm( int n)
+
+    void start_cubic_phase( int n)
     {
         cubic_n = n;
-        cubic_i = n / 10;
+        cubic_report = n / 10;
         std::cout << "Start Cubic phase with " << n << " steps" << std::endl;
     }
 
 
-    void cubic_algorithm(int i)
+    void cubic_step()
     {
-        if (i == cubic_i) {
+        if (cubic_i++ == cubic_report) {
           std::cout << double(cubic_i) / double(cubic_n) * 100 << "%" << std::endl;
-          cubic_i += cubic_n / 10;
+          cubic_report += cubic_n / 10;
         }
     }
 
-    void end_cubic_algorithm() const
+    void end_cubic_phase() const
     {
         std::cout << "End Cubic phase" << std::endl;
     }
 
-    int cubic_n = 0, cubic_i = 0;
+  int quadratic_n = 0, quadratic_i = 0, quadratic_report = 0;
+  int cubic_n = 0, cubic_i = 0, cubic_report = 0;
 };
 
 // Incrementally fill the holes that are no larger than given diameter
@@ -123,7 +134,7 @@ int main(int argc, char* argv[])
                                                                      h,
                                                                      std::back_inserter(patch_facets),
                                                                      std::back_inserter(patch_vertices),
-                                                                     PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(false)));
+                                                                     PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(true)));
 
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
     std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;

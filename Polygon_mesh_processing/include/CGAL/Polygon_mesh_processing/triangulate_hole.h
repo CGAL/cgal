@@ -36,19 +36,23 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
     struct Hole_fill_visitor{
-      void start_delaunay_triangulation() const
+
+      void start_quadratic_phase(int /* N*/) const
       {}
 
-      void end_delaunay_triangulation(bool) const
+      void quadratic_step() const
       {}
 
-      void start_cubic_algorithm(int /* N*/) const
+      void end_quadratic_phase(bool) const
       {}
 
-      void cubic_algorithm(int /* I */) const
+      void start_cubic_phase(int /* N*/) const
       {}
 
-      void end_cubic_algorithm() const
+      void cubic_step() const
+      {}
+
+      void end_cubic_phase() const
       {}
 
 
