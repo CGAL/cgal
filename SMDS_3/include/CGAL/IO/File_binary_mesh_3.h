@@ -65,7 +65,7 @@ save_binary_file(std::ostream& os,
  *
  * @tparam C3T3 Type of mesh complex, model of `MeshComplex_3InTriangulation_3`
  *
- * @param os the input stream, opened in binary mode
+ * @param is the input stream, opened in binary mode
  * @param c3t3 the mesh complex
  *
  * @sa `CGAL::IO::save_binary_file()`

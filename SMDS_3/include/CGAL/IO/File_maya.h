@@ -314,10 +314,6 @@ output_to_maya(std::ostream& os,
 } // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-/*!
-* @cond SKIP_IN_MANUAL
-* @endcond
-*/
 using IO::output_to_maya;
 #endif
 
