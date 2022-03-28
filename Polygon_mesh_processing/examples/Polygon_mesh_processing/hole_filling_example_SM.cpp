@@ -49,7 +49,7 @@ bool is_small_hole(halfedge_descriptor h, Mesh & mesh,
 
 struct Stop : std::exception
 {
-    Stop() 
+    Stop()
     {}
 };
 
@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
     std::vector<vertex_descriptor> patch_vertices;
     Progress progress(10.0);
     bool success = false;
-    
+
     try {
         success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
             h,
