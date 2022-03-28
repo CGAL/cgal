@@ -165,6 +165,8 @@ Release date: January 2022
 
 ### [Point Set Processing](https://doc.cgal.org/5.4/Manual/packages.html#PkgPointSetProcessing3)
 
+-   Added the function [`grid_simplify_point_set()`](https://doc.cgal.org/latest/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#gac7c81cc8a2986e3972e86612e4f847a1)
+    which merges points which belong to the same cell of a grid.
 -   Added support for [`libpointmatcher::GenericDescriptorOutlierFilter`](https://github.com/ethz-asl/libpointmatcher)
     that enables providing a map from a point to a weight associated with this point.
 
