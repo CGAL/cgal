@@ -66,7 +66,7 @@ struct Progress {
         timer.start();
         quadratic_n = n;
         quadratic_report = n / 10;
-        std::cout << "Start Quadratic phase with " << n << " steps" << std::endl;
+        std::cout << "Start Quadratic phase with estimated " << n << " steps" << std::endl;
       }
 
       void quadratic_step()
@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
     std::vector<face_descriptor>  patch_facets;
     std::vector<vertex_descriptor> patch_vertices;
     Progress progress(10.0);
-    bool success;
+    bool success = false;
     
     try {
         success = std::get<0>(PMP::triangulate_refine_and_fair_hole(mesh,
@@ -159,8 +159,7 @@ int main(int argc, char* argv[])
             std::back_inserter(patch_vertices),
             PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(false)));
     }
-    catch (const Stop&)
-    {
+    catch (const Stop&) {
         std::cout << "We stopped with a timeout" << std::endl;
     }
     std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
