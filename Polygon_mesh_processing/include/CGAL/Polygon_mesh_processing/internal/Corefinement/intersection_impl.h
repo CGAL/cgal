@@ -305,9 +305,9 @@ class Intersection_of_triangle_meshes
     Callback callback(tm_f, tm_e, edge_to_faces);
     #else
     typedef Collect_face_bbox_per_edge_bbox_with_coplanar_handling<
-      TriangleMesh, VPMF, VPME, Edge_to_faces, Coplanar_face_set>
+      TriangleMesh, VPMF, VPME, Edge_to_faces, Coplanar_face_set, Node_visitor>
      Callback;
-    Callback  callback(tm_f, tm_e, vpm_f, vpm_e, edge_to_faces, coplanar_faces);
+    Callback  callback(tm_f, tm_e, vpm_f, vpm_e, edge_to_faces, coplanar_faces, visitor);
     #endif
     //using pointers in box_intersection_d is about 10% faster
     if (throw_on_self_intersection){
@@ -1625,8 +1625,11 @@ public:
     // used only if throw_on_self_intersection == true
     std::set<face_descriptor> tm1_faces;
     std::set<face_descriptor> tm2_faces;
+
+    visitor.start_filter_intersections();
     filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, false);
     filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, true);
+    visitor.end_filter_intersections();
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);

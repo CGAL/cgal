@@ -69,7 +69,8 @@ public:
 template<class TriangleMesh,
          class VertexPointMapF, class VertexPointMapE,
          class EdgeToFaces,
-         class CoplanarFaceSet>
+         class CoplanarFaceSet,
+         class Visitor>
 class Collect_face_bbox_per_edge_bbox_with_coplanar_handling {
 protected:
   const TriangleMesh& tm_faces;
@@ -78,6 +79,7 @@ protected:
   const VertexPointMapE& vpmap_tme;
   EdgeToFaces& edge_to_faces;
   CoplanarFaceSet& coplanar_faces;
+  const Visitor& visitor;
 
   typedef boost::graph_traits<TriangleMesh> Graph_traits;
   typedef typename Graph_traits::face_descriptor face_descriptor;
@@ -95,13 +97,15 @@ public:
     const VertexPointMapF& vpmap_tmf,
     const VertexPointMapE& vpmap_tme,
     EdgeToFaces& edge_to_faces,
-    CoplanarFaceSet& coplanar_faces)
+    CoplanarFaceSet& coplanar_faces,
+    const Visitor& visitor)
   : tm_faces(tm_faces)
   , tm_edges(tm_edges)
   , vpmap_tmf(vpmap_tmf)
   , vpmap_tme(vpmap_tme)
   , edge_to_faces(edge_to_faces)
   , coplanar_faces(coplanar_faces)
+  , visitor(visitor)
   {}
 
   void operator()( const Box& face_box, const Box& edge_box) const {
@@ -150,6 +154,18 @@ public:
   {
     operator()(*face_box_ptr, *edge_box_ptr);
   }
+
+   bool report(int dim)
+  {
+    return (dim == Box::dimension() - 1);
+  }
+
+
+  void progress(double d)
+  {
+    visitor.progress_filter_intersection(d);
+  }
+
 };
 
 template<class TriangleMesh,

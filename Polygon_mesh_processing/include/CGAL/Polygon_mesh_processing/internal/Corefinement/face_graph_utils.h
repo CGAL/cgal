@@ -460,9 +460,15 @@ struct Default_visitor{
   void before_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/, TriangleMesh& /*tm_tgt*/){}
   void after_vertex_copy(vertex_descriptor /*v_src*/, const TriangleMesh& /*tm_src*/,
                          vertex_descriptor /* v_tgt */, TriangleMesh& /*tm_tgt*/){}
-// calls commented in the code and probably incomplete due to the migration
-// see NODE_VISITOR_TAG
-/*
+
+  // progress tracking
+  void start_filter_intersections() const {}
+  void progress_filter_intersection(double ) const {}
+  void end_filter_intersections() const {}
+
+  // calls commented in the code and probably incomplete due to the migration
+  // see NODE_VISITOR_TAG
+  /*
   // autorefinement only
   void new_node_added_triple_face(std::size_t node_id,
                                   face_descriptor f1,
@@ -470,7 +476,7 @@ struct Default_visitor{
                                   face_descriptor f3,
                                   const TriangleMesh& tm)
   {}
-*/
+  */
 };
 
 template < class TriangleMesh,

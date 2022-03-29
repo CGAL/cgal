@@ -540,7 +540,6 @@ private:
   {
     return get(ecm, ed);
   }
-
 // visitor public functions
 public:
   Surface_intersection_visitor_for_corefinement(
@@ -552,6 +551,24 @@ public:
     , input_with_coplanar_faces(false)
     , const_mesh_ptr(const_mesh_ptr)
   {}
+
+
+  void start_filter_intersections() const
+  {
+    user_visitor.start_filter_intersections();
+  }
+
+
+  void progress_filter_intersection(double d) const
+  {
+    user_visitor.progress_filter_intersection(d);
+  }
+
+  void end_filter_intersections() const
+  {
+    user_visitor.end_filter_intersections();
+  }
+
 
   void
   set_non_manifold_feature_map(

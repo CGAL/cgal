@@ -11,6 +11,57 @@ typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
+struct Visitor_rep{
+
+  Visitor_rep(double normalize = 4)
+    : normalize(normalize)
+  {
+    t.start();
+  }
+
+  void progress_filter_intersection(double d)
+   {
+    d /= normalize;
+    total += d;
+    if(total > bound){
+      std::cout << std::setprecision(3) << total*100 << " %   in " << std::setprecision(5) << t.time() << " sec." << std::endl;
+      bound += 0.1;
+    }
+  }
+
+  double normalize;
+  double bound = 0.1;
+  double total = 0;
+  int count = 0;
+  CGAL::Timer t;
+};
+
+
+struct Visitor :
+  public PMP::Corefinement::Default_visitor<Mesh>
+{
+  std::shared_ptr<Visitor_rep> sptr;
+
+  Visitor()
+    : sptr(std::make_shared<Visitor_rep>())
+  {}
+
+  void progress_filter_intersection(double d)
+  {
+    sptr->progress_filter_intersection(d);
+  }
+
+  void start_filter_intersections() const
+  {
+    std::cout << "Visitor::start_filter_intersections() " << std::endl;
+  }
+  void end_filter_intersections() const
+  {
+    std::cout << "Visitor::end_filter_intersections() " << std::endl;
+  }
+};
+
+
 int main(int argc, char* argv[])
 {
   const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
@@ -24,7 +75,8 @@ int main(int argc, char* argv[])
   }
 
   Mesh out;
-  bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out);
+  Visitor visitor;
+  bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out, CGAL::parameters::visitor(visitor));
 
   if(valid_union)
   {
