@@ -50,6 +50,7 @@ void build_vertices(Tr& tr,
                     std::vector<typename Tr::Vertex_handle>& vertex_handle_vector)
 {
   typedef typename Tr::Vertex_handle            Vertex_handle;
+  typedef typename Tr::Point                          Point;
 
   vertex_handle_vector[0] = tr.tds().create_vertex(); // creates the infinite vertex
   tr.set_infinite_vertex(vertex_handle_vector[0]);
@@ -59,7 +60,7 @@ void build_vertices(Tr& tr,
   {
     Vertex_handle vh = tr.tds().create_vertex();
     vertex_handle_vector[i+1] = vh;
-    vh->set_point(points[i]);
+    vh->set_point(Point(points[i]));
   }
 }
 
