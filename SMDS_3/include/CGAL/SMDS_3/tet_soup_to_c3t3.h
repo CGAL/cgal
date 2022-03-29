@@ -450,8 +450,6 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
     const bool verbose = false,
     bool replace_domain_0 = false)
 {
-  BOOST_STATIC_ASSERT(boost::is_same<typename Tr::Point,
-                                     typename PointRange::value_type>::value);
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
   std::vector<typename Tr::Cell::Subdomain_index> subdomains_vector(
       subdomains.begin(), subdomains.end());
