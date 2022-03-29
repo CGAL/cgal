@@ -205,7 +205,6 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
   Face_graph_index_adder<typename SNC_structure::Items,
                  PolygonMesh, SNC_structure,HalfedgeIndexMap> index_adder(P,himap);
 
-
   for(vertex_descriptor pv : vertices(P) ) {
 
     typename boost::property_traits<PMap>::reference npv = get(pmap,pv);

@@ -59,7 +59,7 @@ class chained_map
    typedef typename Allocator_traits::template rebind_alloc<chained_map_elem<T> > allocator_type;
 
    allocator_type alloc;
-
+   std::size_t reserved_size;
 public:
    T& xdef() { return STOP.i; }
    const T& cxdef() const { return STOP.i; }
@@ -70,7 +70,7 @@ private:
    chained_map_elem<T>*  HASH(std::size_t x)  const
    { return table + (x & table_size_1);  }
 
-   void init_table(std::size_t t);
+   void init_table(std::size_t n);
    void rehash();
    void del_old_table();
 
@@ -83,17 +83,19 @@ private:
    }
 
 public:
+   static constexpr std::size_t min_size = 32;
+   static constexpr std::size_t default_size = 512;
    typedef chained_map_elem<T>*  chained_map_item;
    typedef chained_map_item item;
 
    std::size_t index(chained_map_item it) const { return it->k; }
    T&            inf(chained_map_item it) const { return it->i; }
 
-   chained_map(std::size_t n = 1);
+   chained_map(std::size_t n = default_size);
    chained_map(const chained_map<T, Allocator>& D);
    chained_map& operator=(const chained_map<T, Allocator>& D);
 
-
+   void reserve(std::size_t n);
    void clear_entries();
    void clear();
    ~chained_map()
@@ -104,6 +106,8 @@ public:
          destroy(item);
        alloc.deallocate(old_table, old_table_end - old_table);
      }
+     if(!table)
+       return;
      for (chained_map_item item = table ; item != table_end ; ++item)
        destroy(item);
      alloc.deallocate(table, table_end - table);
@@ -119,7 +123,11 @@ public:
 
 template <typename T, typename Allocator>
 inline T& chained_map<T, Allocator>::access(std::size_t x)
-{ chained_map_item p = HASH(x);
+{
+  if(!table)
+    init_table(reserved_size);
+
+  chained_map_item p = HASH(x);
 
   if (old_table) del_old_table();
   if ( p->k == x ) {
@@ -138,8 +146,11 @@ inline T& chained_map<T, Allocator>::access(std::size_t x)
 }
 
 template <typename T, typename Allocator>
-void chained_map<T, Allocator>::init_table(std::size_t t)
+void chained_map<T, Allocator>::init_table(std::size_t n)
 {
+  std::size_t t = min_size;
+  while (t < n) t <<= 1;
+
   table_size = t;
   table_size_1 = t-1;
   table = alloc.allocate(t + t/2);
@@ -270,16 +281,9 @@ T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
 
 
 template <typename T, typename Allocator>
-chained_map<T, Allocator>::chained_map(std::size_t n) :
-  nullptrKEY(0), NONnullptrKEY(1), old_table(0)
+chained_map<T, Allocator>::chained_map(std::size_t n)
+  : nullptrKEY(0), NONnullptrKEY(1), table(nullptr), old_table(0), reserved_size(n)
 {
-  if (n < 512)
-    init_table(512);
-  else {
-    std::size_t ts = 1;
-    while (ts < n) ts <<= 1;
-    init_table(ts);
-  }
 }
 
 
@@ -321,8 +325,19 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
 }
 
 template <typename T, typename Allocator>
+void chained_map<T, Allocator>::reserve(std::size_t n)
+{
+  CGAL_assertion(!table);
+  reserved_size = n;
+}
+
+template <typename T, typename Allocator>
 void chained_map<T, Allocator>::clear_entries()
-{ for(chained_map_item p = table + 1; p < free; p++)
+{
+  if(!table)
+    return;
+
+  for(chained_map_item p = table + 1; p < free; p++)
     if (p->k != nullptrKEY || p >= table + table_size)
       p->i = T();
 }
@@ -330,23 +345,30 @@ void chained_map<T, Allocator>::clear_entries()
 template <typename T, typename Allocator>
 void chained_map<T, Allocator>::clear()
 {
+  if(!table)
+    return;
+
   clear_entries();
 
   for (chained_map_item item = table ; item != table_end ; ++item)
     destroy(item);
   alloc.deallocate(table, table_end - table);
 
-  init_table(512);
+  table = nullptr;
 }
 
 template <typename T, typename Allocator>
 typename chained_map<T, Allocator>::chained_map_item
 chained_map<T, Allocator>::lookup(std::size_t x) const
-{ chained_map_item p = HASH(x);
+{
+  if(!table)
+    return nullptr;
+
+  chained_map_item p = HASH(x);
   ((std::size_t &)STOP.k) = x;  // cast away const
   while (p->k != x)
   { p = p->succ; }
-  return (p == &STOP) ? 0 : p;
+  return (p == &STOP) ? nullptr : p;
 }
 
 

@@ -796,9 +796,11 @@ public:
     //    CGAL_NEF_SETDTHREAD(37*43*503*509);
 
     CGAL_NEF_TRACEN(">>>>>create_volumes");
-    Sface_shell_hash     ShellSf(0);
-    Face_shell_hash      ShellF(0);
-    SFace_visited_hash Done(false);
+    auto face_count = this->sncp()->number_of_halffacets();
+    auto sface_count = this->sncp()->number_of_sfaces();
+    Sface_shell_hash     ShellSf(0, sface_count);
+    Face_shell_hash      ShellF(0, face_count);
+    SFace_visited_hash Done(false, sface_count);
     Shell_explorer V(*this,ShellSf,ShellF,Done);
     std::vector<SFace_handle> MinimalSFace;
     std::vector<SFace_handle> EntrySFace;
@@ -828,11 +830,14 @@ public:
       Closed.push_back(false);
 
     Halffacet_iterator hf;
-    CGAL_forall_facets(hf,*this)
-      if(ShellF[hf] != ShellF[hf->twin()]) {
-        Closed[ShellF[hf]] = true;
-        Closed[ShellF[hf->twin()]] = true;
+    CGAL_forall_facets(hf,*this) {
+      unsigned int shf = ShellF[hf];
+      unsigned int shf_twin = ShellF[hf->twin()];
+      if(shf != shf_twin) {
+        Closed[shf] = true;
+        Closed[shf_twin] = true;
       }
+    }
 
     CGAL_assertion( pl != nullptr);
 
@@ -1304,7 +1309,7 @@ public:
     link_shalfedges_to_facet_cycles();
 
     std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false);
+    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false, this->sncp()->number_of_shalfedges());
 
     SHalfedge_iterator sei;
     CGAL_forall_shalfedges(sei, *this->sncp()) {
@@ -1381,17 +1386,7 @@ public:
     SNC_simplify simp(*this->sncp());
     simp.vertex_simplificationI();
 
-    //    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool>
-      done(false);
 
-    /*
-    SHalfedge_iterator sei;
-    CGAL_forall_shalfedges(sei, *this->sncp()) {
-      hash[sei->get_forward_index()] = sei->get_forward_index();
-      hash[sei->get_backward_index()] = sei->get_backward_index();
-    }
-    */
 
     categorize_facet_cycles_and_create_facets();
     create_volumes();

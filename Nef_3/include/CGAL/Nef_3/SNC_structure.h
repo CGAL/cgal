@@ -462,6 +462,10 @@ public:
     return *this;
   }
 
+  void reserve_sm_boundary_items(Size_type n) {
+    sm_boundary_item_.reserve(n);
+  }
+
   void clear_boundary() {
     boundary_item_.clear(boost::none);
     sm_boundary_item_.clear(boost::none);
@@ -484,10 +488,10 @@ public:
   }
 
   template <typename H>
-  bool is_boundary_object(H h)
+  bool is_boundary_object(H h) const
   { return boundary_item_[h]!=boost::none; }
   template <typename H>
-  bool is_sm_boundary_object(H h)
+  bool is_sm_boundary_object(H h) const
   { return sm_boundary_item_[h]!=boost::none; }
 
   template <typename H>
@@ -1099,13 +1103,13 @@ template <typename Kernel, typename Items, typename Mark>
 void SNC_structure<Kernel,Items,Mark>::
 pointer_update(const SNC_structure<Kernel,Items,Mark>& D)
 {
-  CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>       VM;
-  CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle>   EM;
-  CGAL::Unique_hash_map<Halffacet_const_handle,Halffacet_handle> FM;
-  CGAL::Unique_hash_map<Volume_const_handle,Volume_handle>       CM;
-  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> SEM;
-  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> SLM;
-  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         SFM;
+  CGAL::Unique_hash_map<Vertex_const_handle,Vertex_handle>       VM(Vertex_handle(), D.number_of_vertices());
+  CGAL::Unique_hash_map<Halfedge_const_handle,Halfedge_handle>   EM(Halfedge_handle(), D.number_of_halfedges());
+  CGAL::Unique_hash_map<Halffacet_const_handle,Halffacet_handle> FM(Halffacet_handle(), D.number_of_halffacets());
+  CGAL::Unique_hash_map<Volume_const_handle,Volume_handle>       CM(Volume_handle(), D.number_of_volumes());
+  CGAL::Unique_hash_map<SHalfedge_const_handle,SHalfedge_handle> SEM(SHalfedge_handle(), D.number_of_shalfedges());
+  CGAL::Unique_hash_map<SHalfloop_const_handle,SHalfloop_handle> SLM(SHalfloop_handle(), D.number_of_shalfloops());
+  CGAL::Unique_hash_map<SFace_const_handle,SFace_handle>         SFM(SFace_handle(), D.number_of_sfaces());
   Vertex_const_iterator vc = D.vertices_begin();
   Vertex_iterator v = vertices_begin();
   for ( ; vc != D.vertices_end(); ++vc,++v) VM[vc] = v;
