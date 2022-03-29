@@ -72,12 +72,8 @@ class SNC_intersection : public SNC_const_decorator<SNC_structure_> {
   SNC_intersection() : Base() {}
   SNC_intersection(const SNC_structure& W) : Base(W) {}
 
-  bool does_contain_internally(const Segment_3& s, const Point_3& p) const {
-    if(!are_strictly_ordered_along_line (s.source(), p, s.target()))
-      return false;
-    if(!s.supporting_line().has_on(p))
-      return false;
-    return true;
+  bool does_contain_internally(const Point_3& s, const Point_3& t, const Point_3& p) const {
+    return are_strictly_ordered_along_line (s, p, t);
   }
 
   bool does_contain_internally( Halffacet_const_handle f,

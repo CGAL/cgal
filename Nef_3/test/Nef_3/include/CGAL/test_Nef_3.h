@@ -504,25 +504,25 @@ private:
       Point_3 p;
 
       assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(0,0,0)));
       assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(2,0,0)));
       assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(3,0,0)));
       assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(-1,0,0)));
       assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(1,1,0)));
       assert(!is.does_contain_internally(
-                            Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+                            Point_3(0,0,0), Point_3(2,0,0),
                             Point_3(7,25,11)));
       assert(is.does_contain_internally(
-                           Segment_3(Point_3(0,0,0), Point_3(2,0,0)),
+                           Point_3(0,0,0), Point_3(2,0,0),
                            Point_3(1,0,0)));
 
       assert(!is.does_intersect_internally(

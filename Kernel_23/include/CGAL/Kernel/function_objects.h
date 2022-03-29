@@ -2047,6 +2047,10 @@ namespace CommonKernelFunctors {
     { return Rep(p, v); }
 
     Rep // Plane_3
+    operator()(Return_base_tag, Origin o, const Vector_3& v) const
+    { return Rep(o, v); }
+
+    Rep // Plane_3
     operator()(Return_base_tag, const Line_3& l, const Point_3& p) const
     { return Rep(l, p); }
 
