@@ -59,8 +59,8 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
     assert(AW3::internal::is_valid_wrap(wrap, true /*manifoldness*/));
     assert(AW3::internal::is_outer_wrap_of_triangle_mesh(wrap, input_mesh));
 
-    if(!enforce_manifoldness)
-      assert(AW3::internal::has_expected_Hausdorff_distance(wrap, input_mesh, alpha, offset));
+//    if(!enforce_manifoldness)
+//      assert(AW3::internal::has_expected_Hausdorff_distance(wrap, input_mesh, alpha, offset));
   }
 
   if(!enforce_manifoldness)
