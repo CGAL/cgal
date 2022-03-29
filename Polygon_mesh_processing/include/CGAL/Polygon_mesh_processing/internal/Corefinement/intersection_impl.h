@@ -120,6 +120,13 @@ struct Default_surface_intersection_visitor{
     const TriangleMesh&,
     const Non_manifold_feature_map<TriangleMesh>&)
   {}
+
+  // needed for progress tracking
+  void progress_filter_intersection(double d){}
+
+  void start_filter_intersections() const {}
+
+  void end_filter_intersections() const {}
 };
 
 struct Node_id_set {
