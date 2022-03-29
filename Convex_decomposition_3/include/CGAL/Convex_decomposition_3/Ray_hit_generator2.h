@@ -87,7 +87,6 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     }
 
     Point_3 ip;
-    SNC_intersection I;
     SNC_constructor C(*sncp);
 
     Halfedge_handle e;
@@ -95,7 +94,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
        CGAL_NEF_TRACEN("Found edge " << e->source()->point()
                        << "->" << e->twin()->source()->point());
       Segment_3 seg(e->source()->point(), e->twin()->source()->point());
-      I.does_intersect_internally(r, seg, ip);
+      SNC_intersection::does_intersect_internally(r, seg, ip);
       ip = normalized(ip);
       v = C.create_from_edge(e,ip);
       pl->add_vertex(v);
@@ -147,7 +146,7 @@ class Ray_hit_generator2 : public Modifier_base<typename Nef_::SNC_and_PL> {
     Halffacet_handle f;
     if(assign(f, o)) {
       CGAL_NEF_TRACEN("Found facet ");
-      I.does_intersect_internally(r, f, ip);
+      SNC_intersection::does_intersect_internally(r, f, ip);
       ip = normalized(ip);
       v = C.create_from_facet(f,ip);
       pl->add_vertex(v);

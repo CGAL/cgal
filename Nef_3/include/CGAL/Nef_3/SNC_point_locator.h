@@ -250,8 +250,8 @@ public:
         else if( CGAL::assign( e, *o) && ((mask&2) != 0)) {
           Point_3 q;
           _CGAL_NEF_TRACEN("trying edge on "<< Segment_3(e->source()->point(),e->twin()->source()->point()));
-          if( is.does_intersect_internally( ray, Segment_3(e->source()->point(),
-                                                           e->twin()->source()->point()), q)) {
+          if( SNC_intersection::does_intersect_internally( ray, Segment_3(e->source()->point(),
+                                                                          e->twin()->source()->point()), q)) {
             _CGAL_NEF_TRACEN("ray intersects edge on "<<q);
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
             CGAL_assertion_code
@@ -272,7 +272,7 @@ public:
           Point_3 q;
           _CGAL_NEF_TRACEN("trying facet with on plane "<<f->plane()<<
                   " with point on "<<f->plane().point());
-          if( is.does_intersect_internally( ray, f, q, true) ) {
+          if( SNC_intersection::does_intersect_internally( ray, f, q) ) {
             _CGAL_NEF_TRACEN("ray intersects facet on "<<q);
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
             if( hit) { _CGAL_NEF_TRACEN("prev. intersection on "<<eor); }
@@ -319,14 +319,14 @@ public:
         }
       }
       else if( CGAL::assign( e, *o)) {
-        if ( is.does_contain_internally(e->source()->point(), e->twin()->source()->point(), p) ) {
+        if ( SNC_intersection::does_contain_internally(e->source()->point(), e->twin()->source()->point(), p) ) {
           _CGAL_NEF_TRACEN("found on edge "<<Segment_3(e->source()->point(),e->twin()->source()->point()));
           result = make_object(e);
           found = true;
         }
       }
       else if( CGAL::assign( f, *o)) {
-        if (is.does_contain_internally( f, p) ) {
+        if (SNC_intersection::does_contain_internally( f, p) ) {
           _CGAL_NEF_TRACEN("found on facet...");
           result = make_object(f);
           found = true;
@@ -415,11 +415,11 @@ public:
         //           (e->source() == v  || e->twin()->source() == v)) continue;
         Segment_3 ss(e->source()->point(),e->twin()->source()->point());
         CGAL_NEF_TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
-        if (is.does_contain_internally(e->source()->point(), e->twin()->source()->point(), p)) {
+        if (SNC_intersection::does_contain_internally(e->source()->point(), e->twin()->source()->point(), p)) {
         _CGAL_NEF_TRACEN("found on edge "<< ss);
           return make_object(e);
         }
-        if((e->source() != v)  && (e->twin()->source() != v) && is.does_intersect_internally(s, ss, ip)) {
+        if((e->source() != v)  && (e->twin()->source() != v) && SNC_intersection::does_intersect_internally(s, ss, ip)) {
           // first = false;
           s = Segment_3(p, normalized(ip));
           result = make_object(e);
@@ -428,7 +428,7 @@ public:
       } else
       if( CGAL::assign( f, *o)) {
         CGAL_NEF_TRACEN("test facet " << f->plane());
-        if (is.does_contain_internally(f,p) ) {
+        if (SNC_intersection::does_contain_internally(f,p) ) {
           _CGAL_NEF_TRACEN("found on facet...");
           return make_object(f);
         }
@@ -449,7 +449,7 @@ public:
         }
 
 
-        if( (! v_vertex_of_f) &&  is.does_intersect_internally(s,f,ip) ) {
+        if( (! v_vertex_of_f) &&  SNC_intersection::does_intersect_internally(s,f,ip) ) {
           s = Segment_3(p, normalized(ip));
           result = make_object(f);
         }
@@ -461,13 +461,13 @@ public:
     /*
       Halffacet_iterator fc;
       CGAL_forall_facets(fc, *this->sncp()) {
-        CGAL_assertion(!is.does_intersect_internally(s,f,ip));
+        CGAL_assertion(!SNC_intersection::does_intersect_internally(s,f,ip));
       }
 
       Halfedge_iterator ec;
       CGAL_forall_edges(ec, *this->sncp()) {
         Segment_3 ss(ec->source()->point(), ec->twin()->source()->point());
-        CGAL_assertion(!is.does_intersect_internally(s,ss,ip));
+        CGAL_assertion(!SNC_intersection::does_intersect_internally(s,ss,ip));
       }
 
       Vertex_iterator vc;
@@ -495,7 +495,7 @@ public:
       for(;ox!=candidates.end();++ox) {
         if(!CGAL::assign(e,*ox)) continue;
         CGAL_NEF_TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
-        if(is.does_intersect_internally(s,Segment_3(e->source()->point(),e->twin()->source()->point()),ip)) {
+        if(SNC_intersection::does_intersect_internally(s,Segment_3(e->source()->point(),e->twin()->source()->point()),ip)) {
           s = Segment_3(p, normalized(ip));
           result = make_object(e);
         }
@@ -551,8 +551,8 @@ public:
 #endif
 
         Point_3 q;
-        if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
-                                                       e->twin()->source()->point()), q)) {
+        if( SNC_intersection::does_intersect_internally( s, Segment_3(e->source()->point(),
+                                                                      e->twin()->source()->point()), q)) {
           q = normalized(q);
           call_back( e0, make_object(Halfedge_handle(e)), q);
           _CGAL_NEF_TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3(e->source()->point(),
@@ -565,7 +565,7 @@ public:
 #endif
 
         Point_3 q;
-        if( is.does_intersect_internally( s, f, q) ) {
+        if( SNC_intersection::does_intersect_internally( s, f, q) ) {
           q = normalized(q);
           call_back( e0, make_object(Halffacet_handle(f)), q);
           _CGAL_NEF_TRACEN("edge intersects facet on plane "<<f->plane()<<" on "<<q);
@@ -600,8 +600,8 @@ public:
 #endif
 
         Point_3 q;
-        if( is.does_intersect_internally( s, Segment_3(e->source()->point(),
-                                                       e->twin()->source()->point()), q)) {
+        if( SNC_intersection::does_intersect_internally( s, Segment_3(e->source()->point(),
+                                                                      e->twin()->source()->point()), q)) {
           q = normalized(q);
           call_back( e0, make_object(Halfedge_handle(e)), q);
           _CGAL_NEF_TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3(e->source()->point(),
@@ -643,7 +643,7 @@ public:
 #endif
 
         Point_3 q;
-        if( is.does_intersect_internally( s, f, q) ) {
+        if( SNC_intersection::does_intersect_internally( s, f, q) ) {
           q = normalized(q);
           call_back( e0, make_object(Halffacet_handle(f)), q);
           _CGAL_NEF_TRACEN("edge intersects facet on plane "<<f->plane()<<" on "<<q);
@@ -705,7 +705,6 @@ public:
 private:
   bool initialized;
   SNC_candidate_provider* candidate_provider;
-  SNC_intersection is;
 };
 
 

@@ -901,9 +901,8 @@ public:
     ++t2;
     if(t2 == segs2.end()) t2=segs2.begin();
 
-    SNC_intersection is;
     Point_3 ip;
-    bool flag=is.does_intersect_internally(Segment_3(*s1,*t1),Segment_3(*s2,*t2),ip);
+    bool flag = SNC_intersection::does_intersect_internally(Segment_3(*s1,*t1),Segment_3(*s2,*t2),ip);
     if(!flag) {
       if(*s1 == *s2) return normalized(*s1);
       else if(*s1 == *t2) return normalized(*s1);
