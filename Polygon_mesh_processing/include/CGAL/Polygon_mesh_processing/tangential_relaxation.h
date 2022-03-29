@@ -220,7 +220,7 @@ void tangential_relaxation(const VertexRange& vertices,
     // at each vertex, compute barycenter of neighbors
     for(vertex_descriptor v : vertices)
     {
-      if (get(vcm, v) || internal::is_isolated(v, tm))
+      if (get(vcm, v) || CGAL::internal::is_isolated(v, tm))
         continue;
 
       // collect hedges to detect if we have to handle boundary cases
