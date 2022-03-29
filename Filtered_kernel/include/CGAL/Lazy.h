@@ -799,7 +799,7 @@ struct Approx_converter
   template < typename T >
   decltype(auto)
   operator()(const T&t) const
-  { return t.approx(); }
+  { return approx(t); }
 
   const Null_vector&
   operator()(const Null_vector& n) const
@@ -824,7 +824,7 @@ struct Exact_converter
   template < typename T >
   decltype(auto)
   operator()(const T&t) const
-  { return t.exact(); }
+  { return exact(t); }
 
   const Null_vector&
   operator()(const Null_vector& n) const
