@@ -122,7 +122,7 @@ struct Default_surface_intersection_visitor{
   {}
 
   // needed for progress tracking
-  void progress_filter_intersection(double d){}
+  void progress_filter_intersection(double d) const{}
 
   void start_filter_intersections() const {}
 
