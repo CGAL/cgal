@@ -82,6 +82,8 @@ public:
 
   virtual Object_handle shoot(const Ray_3& s, int mask=255) const = 0;
 
+  virtual Object_handle shoot(const Ray_3& s, Vertex_handle ray_source_vertex, int mask=255) const = 0;
+
   virtual void intersect_with_edges( Halfedge_handle edge,
                                      const Intersection_call_back& call_back)
     const = 0;
@@ -217,6 +219,11 @@ public:
   }
 
   virtual Object_handle shoot(const Ray_3& ray, int mask=255) const {
+    Vertex_handle null_handle;
+    return this->shoot(ray, null_handle, mask);
+  }
+
+  virtual Object_handle shoot(const Ray_3& ray, Vertex_handle ray_source_vertex, int mask=255) const {
     CGAL_NEF_TIMER(rs_t.start());
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "shooting: "<<ray);
@@ -234,7 +241,7 @@ public:
       CGAL_for_each( o, candidates) {
         if( CGAL::assign( v, *o) && ((mask&1) != 0)) {
           _CGAL_NEF_TRACEN("trying vertex on "<<v->point());
-          if( ray.source() != v->point() && ray.has_on(v->point())) {
+          if( (ray.source() != v->point()) && ray.has_on(v->point())) {
             _CGAL_NEF_TRACEN("the ray intersects the vertex");
             _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
             CGAL_assertion_code
@@ -250,22 +257,25 @@ public:
         else if( CGAL::assign( e, *o) && ((mask&2) != 0)) {
           Point_3 q;
           _CGAL_NEF_TRACEN("trying edge on "<< Segment_3(e->source()->point(),e->twin()->source()->point()));
-          if( SNC_intersection::does_intersect_internally( ray, Segment_3(e->source()->point(),
+          if ( (ray_source_vertex == Vertex_handle()) || ( (ray_source_vertex != e->source()) && (ray_source_vertex != e->twin()->source())) ) {
+
+              if( SNC_intersection::does_intersect_internally( ray, Segment_3(e->source()->point(),
                                                                           e->twin()->source()->point()), q)) {
-            _CGAL_NEF_TRACEN("ray intersects edge on "<<q);
-            _CGAL_NEF_TRACEN("prev. intersection? "<<hit);
-            CGAL_assertion_code
-              (if( hit) _CGAL_NEF_TRACEN("prev. intersection on "<<eor));
-            if( hit && !has_smaller_distance_to_point( ray.source(), q, eor))
-              continue;
-            _CGAL_NEF_TRACEN("is the intersection point on the current cell? "<<
-                    candidate_provider->is_point_on_cell( q, objects_iterator));
-            if( !candidate_provider->is_point_on_cell( q, objects_iterator))
-                continue;
-            eor = q;
-            result = make_object(e);
-            hit = true;
-            _CGAL_NEF_TRACEN("the edge becomes the new hit object");
+                  _CGAL_NEF_TRACEN("ray intersects edge on " << q);
+                  _CGAL_NEF_TRACEN("prev. intersection? " << hit);
+                  CGAL_assertion_code
+                  (if (hit) _CGAL_NEF_TRACEN("prev. intersection on " << eor));
+                  if (hit && !has_smaller_distance_to_point(ray.source(), q, eor))
+                      continue;
+                  _CGAL_NEF_TRACEN("is the intersection point on the current cell? " <<
+                      candidate_provider->is_point_on_cell(q, objects_iterator));
+                  if (!candidate_provider->is_point_on_cell(q, objects_iterator))
+                      continue;
+                  eor = q;
+                  result = make_object(e);
+                  hit = true;
+                  _CGAL_NEF_TRACEN("the edge becomes the new hit object");
+              }
           }
         }
         else if( CGAL::assign( f, *o) && ((mask&4) != 0)) {
