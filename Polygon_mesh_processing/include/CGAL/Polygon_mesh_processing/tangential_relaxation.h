@@ -220,7 +220,7 @@ void tangential_relaxation(const VertexRange& vertices,
     // at each vertex, compute barycenter of neighbors
     for(vertex_descriptor v : vertices)
     {
-      if (get(vcm, v) || halfedge(v, tm)==boost::graph_traits<TriangleMesh>::null_halfedge())
+      if (get(vcm, v) || internal::is_isolated(v, tm))
         continue;
 
       // collect hedges to detect if we have to handle boundary cases
