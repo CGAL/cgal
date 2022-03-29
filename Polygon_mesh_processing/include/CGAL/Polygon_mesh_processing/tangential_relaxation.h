@@ -51,7 +51,7 @@ struct Allow_all_moves{
 *         The descriptor types `boost::graph_traits<TriangleMesh>::%face_descriptor`
 *         and `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
-* @tparam VertexRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
+* @tparam VertexRange range of `boost::graph_traits<TriangleMesh>::%vertex_descriptor`,
 *         model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -78,7 +78,7 @@ struct Allow_all_moves{
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{number_of_iterations}
-*     \cgalParamDescription{the number of iterations smoothing iterations}
+*     \cgalParamDescription{the number of smoothing iterations}
 *     \cgalParamType{unsigned int}
 *     \cgalParamDefault{`1`}
 *   \cgalParamNEnd

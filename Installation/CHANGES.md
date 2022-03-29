@@ -40,7 +40,7 @@ Release date: June 2022
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygonMeshProcessing)
 
 -   Added the function `CGAL::Polygon_mesh_processing::tangential_relaxation()`, which
-applies an area-based tangential mesh smoothing to a surface triangle mesh vertices.
+applies an area-based tangential mesh smoothing to the vertices of a surface triangle mesh.
 
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
