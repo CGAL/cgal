@@ -35,7 +35,8 @@ namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// checks whether an edge is degenerate.
 /// An edge is considered degenerate if the geometric positions of its two extremities are identical.
 ///
@@ -63,9 +64,9 @@ namespace Polygon_mesh_processing {
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-/// \sa `degenerate_edges()`
-///
 /// \return `true` if the edge `e` is degenerate, `false` otherwise.
+///
+/// \sa `degenerate_edges()`
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descriptor e,
                         const PolygonMesh& pm,
@@ -84,7 +85,8 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
   return traits.equal_3_object()(get(vpmap, source(e, pm)), get(vpmap, target(e, pm)));
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// collects the degenerate edges within a given range of edges.
 ///
 /// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`
@@ -114,6 +116,9 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 ///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
+///
+/// \sa `is_degenerate_edge()`
+// \sa `remove_degenerate_edges()`
 template <typename EdgeRange, typename TriangleMesh, typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_edges(const EdgeRange& edges,
                                 const TriangleMesh& tm,
@@ -129,11 +134,11 @@ OutputIterator degenerate_edges(const EdgeRange& edges,
   return out;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// calls the function `degenerate_edges()` with the range: `edges(tm)`.
 ///
-/// See above for the comprehensive description of the parameters.
-///
+/// See the other overload for the comprehensive description of the parameters.
 template <typename TriangleMesh, typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_edges(const TriangleMesh& tm,
                                 OutputIterator out,
@@ -143,7 +148,8 @@ OutputIterator degenerate_edges(const TriangleMesh& tm,
   return degenerate_edges(edges(tm), tm, out, np);
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// checks whether a triangle face is degenerate.
 /// A triangle face is considered degenerate if the geometric positions of its vertices are collinear.
 ///
@@ -171,9 +177,9 @@ OutputIterator degenerate_edges(const TriangleMesh& tm,
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
-/// \sa `degenerate_faces()`
-///
 /// \return `true` if the face `f` is degenerate, `false` otherwise.
+///
+/// \sa `degenerate_faces()`
 template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                                  const TriangleMesh& tm,
@@ -198,7 +204,8 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
                                      get(vpmap, target(next(h, tm), tm)));
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// collects the degenerate faces within a given range of faces.
 ///
 /// @tparam FaceRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`
@@ -229,6 +236,8 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
+/// \sa `is_degenerate_triangle_face()`
+// `\sa remove_degenerate_faces()`
 template <typename FaceRange, typename TriangleMesh, typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_faces(const FaceRange& faces,
                                 const TriangleMesh& tm,
@@ -245,11 +254,11 @@ OutputIterator degenerate_faces(const FaceRange& faces,
   return out;
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// calls the function `degenerate_faces()` with the range: `faces(tm)`.
 ///
-/// See above for the comprehensive description of the parameters.
-///
+/// See the other overload for the comprehensive description of the parameters.
 template <typename TriangleMesh, typename OutputIterator, typename CGAL_NP_TEMPLATE_PARAMETERS>
 OutputIterator degenerate_faces(const TriangleMesh& tm,
                                 OutputIterator out,
@@ -259,7 +268,8 @@ OutputIterator degenerate_faces(const TriangleMesh& tm,
   return degenerate_faces(faces(tm), tm, out, np);
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// checks whether a triangle face is needle.
 /// A triangle is said to be a <i>needle</i> if its longest edge is much longer than its shortest edge.
 ///
@@ -290,6 +300,8 @@ OutputIterator degenerate_faces(const TriangleMesh& tm,
 ///
 /// \return the shortest halfedge if the triangle face is a needle, and a null halfedge otherwise.
 ///         If the face contains degenerate edges, a halfedge corresponding to one of these edges is returned.
+///
+/// \sa `is_cap_triangle_face()`
 template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
@@ -355,7 +367,8 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
     return boost::graph_traits<TriangleMesh>::null_halfedge();
 }
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_predicates_grp
+///
 /// checks whether a triangle face is a cap.
 /// A triangle is said to be a <i>cap</i> if one of the its angles is close to `180` degrees.
 ///
@@ -388,6 +401,8 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 /// \cgalNamedParamsEnd
 ///
 /// \return the halfedge opposite of the largest angle if the face is a cap, and a null halfedge otherwise.
+///
+/// \sa `is_needle_triangle_face()`
 template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
 is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor f,

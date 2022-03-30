@@ -9,6 +9,8 @@
 
 #include <fstream>
 #include <iostream>
+#include <iterator>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 

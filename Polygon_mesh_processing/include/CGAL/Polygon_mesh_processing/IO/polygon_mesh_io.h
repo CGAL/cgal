@@ -37,7 +37,8 @@ namespace IO {
 /*!
   \ingroup PMP_IO_grp
 
- * \brief reads the file as a polygon soup, repairs, and orients it as to obtain a polygon mesh.
+ * \brief reads the file as a polygon soup, repairs (using `repair_polygon_soup()`),
+ * and orients it (using `orient_polygon_soup()`) as to obtain a polygon mesh.
  *
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)
@@ -48,6 +49,9 @@ namespace IO {
  * - \ref IOStreamVTK (`.vtp`)
  *
  * The format is detected from the filename extension (letter case is not important).
+ *
+ * If repairing and orientation are known to not be required, one can use
+ * \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink directly.
  *
  * \tparam PolygonMesh a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -82,7 +86,7 @@ namespace IO {
  *
  * \return `true` if the reading, repairing, and orientation operations were successful, `false` otherwise.
  *
- * \sa \link PkgBGLIOFct `CGAL::IO::write_polygon_mesh()` \endlink
+ * \sa \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink
  */
 template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(const std::string& fname,

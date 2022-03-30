@@ -30,16 +30,16 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /// \ingroup PMP_repairing_grp
-/// removes the isolated vertices from any polygon mesh.
-/// A vertex is considered isolated if it is not incident to any simplex
-/// of higher dimension.
+///
+/// \brief removes the isolated vertices from any polygon mesh.
+///
+/// A vertex is considered isolated if it is not incident to a simplex of higher dimension.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///
 /// @param pmesh the polygon mesh to be repaired
 ///
-/// @return number of removed isolated vertices
-///
+/// @return the number of removed isolated vertices
 template <class PolygonMesh>
 std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 {
@@ -62,7 +62,7 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 
 /// \ingroup PMP_repairing_grp
 ///
-/// removes connected components whose area or volume is under a certain threshold value.
+/// \brief removes connected components whose area or volume is under a certain threshold value.
 ///
 /// Thresholds are provided via \ref bgl_namedparameters "Named Parameters". (see below).
 /// If thresholds are not provided by the user, default values are computed as follows:
@@ -147,6 +147,8 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///
 /// \return the number of connected components removed (ignoring isolated vertices).
 ///
+/// \sa `keep_connected_components()`
+/// \sa `remove_connected_components()`
 template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,

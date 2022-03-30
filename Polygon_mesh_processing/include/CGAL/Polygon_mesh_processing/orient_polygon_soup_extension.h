@@ -53,14 +53,17 @@ namespace Polygon_mesh_processing {
  *               non-manifoldness or non-orientability issues.
  * @param polygons each element in the vector describes a polygon using the indices of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
+ *
  * @return `false` if some points were duplicated, thus producing a self-intersecting surface mesh.
  * @return `true` otherwise.
+ *
  * @sa `orient_polygon_soup()`
+ * @sa `duplicate_non_manifold_vertices()`
  */
 template <class PointRange, class PolygonRange>
 bool
 duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
-                                            PolygonRange& polygons)
+                                             PolygonRange& polygons)
 {
   std::size_t inital_nb_pts = points.size();
   typedef CGAL::Polygon_mesh_processing::internal::
@@ -271,6 +274,8 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
  * \cgalNamedParamsEnd
  *
  * \attention The types of points in `PointRange`, `geom_traits`, and `vertex_point_map` must be the same.
+ *
+ * \sa `orient_polygon_soup()`
  */
 template <class Concurrency_tag = Sequential_tag,
           class PointRange, class TriangleRange, class TriangleMesh,
