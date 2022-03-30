@@ -64,7 +64,7 @@ mark_domain_in_triangulation(CT& ct,
   }
 }
 
-} // namesapce internal
+} // namespace internal
 
 
 //explore set of facets connected with non constrained edges,
