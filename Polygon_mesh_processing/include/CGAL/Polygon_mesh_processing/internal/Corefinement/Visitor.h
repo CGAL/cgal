@@ -1159,9 +1159,11 @@ public:
 
     const Node_id nb_nodes = nodes.size();
 
+    int i = 0;
     for (typename On_face_map::iterator it=on_face_map.begin();
           it!=on_face_map.end();++it)
     {
+      user_visitor.progress_triangulation(i++);
       face_descriptor f = it->first; //the face to be triangulated
       Node_ids& node_ids  = it->second; // ids of nodes in the interior of f
       typename Face_boundaries::iterator it_fb=face_boundaries.find(f);
@@ -1513,14 +1515,26 @@ public:
 
     //2)triangulation of the triangle faces containing intersection point in their interior
     //  and also those with intersection points only on the boundary.
+
+
+    int total_size = 0;
     for (typename std::map<TriangleMesh*,On_face_map>::iterator
-      it=on_face.begin(); it!=on_face.end(); ++it)
+           it=on_face.begin(); it!=on_face.end(); ++it)
+    {
+      total_size += it->second.size();
+    }
+    user_visitor.start_triangulation(total_size);
+
+    for (typename std::map<TriangleMesh*,On_face_map>::iterator
+           it=on_face.begin(); it!=on_face.end(); ++it)
     {
       if(it->first == tm1_ptr)
         triangulate_intersected_faces(it, vpm1, nodes, mesh_to_face_boundaries);
       else
         triangulate_intersected_faces(it, vpm2, nodes, mesh_to_face_boundaries);
     }
+
+    user_visitor.end_triangulation();
 
     nodes.finalize(mesh_to_node_id_to_vertex);
 

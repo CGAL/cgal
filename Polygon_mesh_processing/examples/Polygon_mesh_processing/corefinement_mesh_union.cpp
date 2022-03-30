@@ -29,10 +29,32 @@ struct Visitor_rep{
     }
   }
 
+  void start_triangulation(int tf)
+  {
+    tfaces = tf;
+    bound_faces = tf/10;
+  }
+
+  void progress_triangulation(int i)
+  {
+    if(i> bound_faces){
+      std::cout << double(i)/double(tfaces) * 100  << " %" << std::endl;
+      bound_faces += tfaces/10;
+    }
+  }
+
+  double time() const
+  {
+    return t.time();
+  }
+
   double normalize;
   double bound = 0.1;
   double total = 0;
   int count = 0;
+
+  int bound_faces = 0;
+  int tfaces = 0;
   CGAL::Timer t;
 };
 
@@ -53,11 +75,27 @@ struct Visitor :
 
   void start_filter_intersections() const
   {
-    std::cout << "Visitor::start_filter_intersections() " << std::endl;
+    std::cout << "Visitor::start_filter_intersections() at " << sptr->time() << std::endl;
   }
   void end_filter_intersections() const
   {
-    std::cout << "Visitor::end_filter_intersections() " << std::endl;
+    std::cout << "Visitor::end_filter_intersections() at " << sptr->time()  << std::endl;
+  }
+
+  void start_triangulation(int tf)const
+  {
+    std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->time()  << std::endl;
+    sptr->start_triangulation(tf);
+  }
+
+  void progress_triangulation(int i) const
+  {
+    sptr->progress_triangulation(i);
+  }
+
+  void end_triangulation()const
+  {
+    std::cout << "Visitor::end_triangulation() at " << sptr->time()  << std::endl;
   }
 };
 
@@ -68,15 +106,21 @@ int main(int argc, char* argv[])
   const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
 
   Mesh mesh1, mesh2;
-  if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
+  if(!CGAL::IO::read_polygon_mesh(filename1, mesh1) || !CGAL::IO::read_polygon_mesh(filename2, mesh2))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
+  CGAL::Timer t;
+  t.start();
   Mesh out;
   Visitor visitor;
-  bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out, CGAL::parameters::visitor(visitor));
+  // PMP::corefine(mesh1,mesh2, CGAL::parameters::visitor(visitor));
+  bool valid_union = PMP::corefine_and_compute_union (mesh1,mesh2, out, CGAL::parameters::visitor(visitor));
+
+  std::cout << "total time = " << t.time() << std::endl;
+
 
   if(valid_union)
   {
