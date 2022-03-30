@@ -24,7 +24,7 @@ void write_VTU(std::ostream& os,
 //! a 2D constrained Delaunay triangulation using the `PolyData` XML
 //! format.
   //! The faces output are those for which `get(ipm, f)` returns
-  //! `true` where `f`is a  `CDT::Face_handle`,
+  //! `true` where `f` is a  `CDT::Face_handle`,
 //! the edges are those for which `ConstrainedTriangulationFaceBase_2::is_constrained()` returns `true`.
 //! \tparam CDT a `Constrained_Delaunay_triangulation_2` with face
 //! type model of `DelaunayMeshFaceBase_2`.
