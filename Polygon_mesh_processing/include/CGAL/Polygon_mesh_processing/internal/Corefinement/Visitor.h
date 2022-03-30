@@ -570,6 +570,36 @@ public:
   }
 
 
+  void start_build_output() const
+  {
+    user_visitor.start_build_output();
+  }
+
+  void build_output_step() const
+  {
+    user_visitor.build_output_step();
+  }
+
+  void end_build_output() const
+  {
+    user_visitor.end_build_output();
+  }
+
+  void start_coplanar_faces(int i) const
+  {
+    user_visitor.start_coplanar_faces(i);
+  }
+
+  void coplanar_faces_step() const
+  {
+    user_visitor.coplanar_faces_step();
+  }
+
+  void end_coplanar_faces() const
+  {
+    user_visitor.end_coplanar_faces();
+  }
+
   void
   set_non_manifold_feature_map(
     const TriangleMesh& tm,
@@ -1537,12 +1567,14 @@ public:
     user_visitor.end_triangulation();
 
     nodes.finalize(mesh_to_node_id_to_vertex);
-
+    user_visitor.start_build_output();
     // additional operations
     output_builder(nodes,
                    input_with_coplanar_faces,
                    is_node_of_degree_one,
                    mesh_to_node_id_to_vertex);
+
+    user_visitor.end_build_output();
   }
 };
 

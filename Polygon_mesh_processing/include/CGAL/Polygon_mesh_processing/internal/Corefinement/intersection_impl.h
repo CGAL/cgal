@@ -709,8 +709,10 @@ class Intersection_of_triangle_meshes
     typedef std::map<Key,Node_id> Coplanar_node_map;
     Coplanar_node_map coplanar_node_map;
 
+    visitor.start_coplanar_faces(coplanar_faces.size());
     for(const Face_pair& face_pair : coplanar_faces)
     {
+      visitor.coplanar_faces_step();
       face_descriptor f1=face_pair.first;
       face_descriptor f2=face_pair.second;
 
@@ -814,6 +816,7 @@ class Intersection_of_triangle_meshes
         }
       }
     }
+    visitor.end_coplanar_faces();
   }
 
   //add a new node in the final graph.

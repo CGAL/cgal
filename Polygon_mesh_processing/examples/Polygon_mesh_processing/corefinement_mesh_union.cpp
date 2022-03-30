@@ -97,6 +97,36 @@ struct Visitor :
   {
     std::cout << "Visitor::end_triangulation() at " << sptr->time()  << std::endl;
   }
+
+  void start_coplanar_faces(int) const
+  {
+    std::cout << "Visitor::start_coplanar_faces() at " << sptr->time() << std::endl;
+  }
+
+  void coplanar_faces_step() const
+  {
+    std::cout << "Visitor::coplanar_faces_step() at " << sptr->time() << std::endl;
+  }
+
+  void end_coplanar_faces() const
+  {
+    std::cout << "Visitor::end_coplanar_faces() at " << sptr->time() << std::endl;
+  }
+
+  void start_build_output() const
+  {
+    std::cout << "Visitor::start_build_output() at " << sptr->time() << std::endl;
+  }
+
+  void build_output_step() const
+  {
+    std::cout << "Visitor::build_output_step() at " << sptr->time() << std::endl;
+  }
+
+  void end_build_output() const
+  {
+    std::cout << "Visitor::end_build_output() at " << sptr->time() << std::endl;
+  }
 };
 
 
