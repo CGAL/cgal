@@ -6,8 +6,8 @@
 
 #include <boost/container/flat_map.hpp>
 
-#include <fstream>
 #include <iostream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef CGAL::Surface_mesh<K::Point_3>                       Mesh;

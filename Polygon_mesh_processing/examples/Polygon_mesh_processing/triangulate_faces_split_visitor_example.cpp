@@ -4,16 +4,17 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
-#include <unordered_map>
+#include <iostream>
 #include <fstream>
 #include <map>
+#include <string>
+#include <unordered_map>
+#include <utility>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                    Point;
 typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
-
-
 
 class Insert_iterator
 {

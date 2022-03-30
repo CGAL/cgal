@@ -5,8 +5,11 @@
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
-#include <fstream>
+#include <iostream>
+#include <iterator>
 #include <map>
+#include <utility>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 

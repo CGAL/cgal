@@ -606,6 +606,7 @@ Node_handle build_kdtree(Vertex_list& V, Halfedge_list& E, Halffacet_list& F,
 #else
   Side_of_plane sop(point_on_plane, coord);
 #endif
+  sop.reserve(V.size());
 
   Vertex_list V1,V2;
   classify_objects(V, sop, V1, V2);

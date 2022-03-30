@@ -15,6 +15,10 @@ Release date: June 2022
 
 -   Added an overload of the function `CGAL::convex_hull_3()`, which writes the result in an indexed triangle set.
 
+### Surface Mesh Simplification
+-   Introduced four variations of the Garland-Heckbert simplification algorithm based on the probabilistic approach of Trettner and Kobbelt (Fast and Robust QEF Minimization using Probabilistic Quadrics): `GarlandHeckbert_plane_policies`, `GarlandHeckbert_probabilistic_plane_policies`, `GarlandHeckbert_triangle_policies`, and `GarlandHeckbert_probabilistic_triangle_policies`
+-   The class `GarlandHeckbert_policies` has been deprecated, `GarlandHeckbert_plane_policies` replaces it.
+
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/5.5/Manual/packages.html#PkgBGL)
 
 -   Added the function [`invert_selection()`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html#aa428541ebbdd35f9a6e9a3ffd60178df) in the class [`Face_filtered_graph`](https://doc.cgal.org/5.5/BGL/structCGAL_1_1Face__filtered__graph.html), which toggles the selected status of a graph: selected faces are deselected, and unselected faces are selected.
@@ -28,6 +32,9 @@ Release date: June 2022
 -   Added the function
     [`remove_isolated_vertices()`](https://doc.cgal.org/5.5/Mesh_3/classCGAL_1_1Mesh__complex__3__in__triangulation__3.html#ace57c4e777da457c6e33b4f6e89949ce)
     as a post-processing step for the tetrahedral mesh generation.
+
+### [Polygon Mesh Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygonMeshProcessing)
+-   Added the function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup()`, which enables re-orienting the faces of a triangle soup based on the orientation of the nearest face in a reference triangle soup.
 
 ### [2D Polygons](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygon2)
 

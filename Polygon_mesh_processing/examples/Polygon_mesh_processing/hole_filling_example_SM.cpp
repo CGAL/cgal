@@ -9,9 +9,10 @@
 #include <boost/lexical_cast.hpp>
 
 #include <iostream>
-#include <fstream>
+#include <iterator>
+#include <string>
+#include <tuple>
 #include <vector>
-#include <set>
 #include <stdexcept>
 
 typedef CGAL::Timer                                         Timer;
