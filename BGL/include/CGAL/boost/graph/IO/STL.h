@@ -244,7 +244,6 @@ bool write_STL(std::ostream& os,
 
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::const_type        VPM;
   typedef typename boost::property_traits<VPM>::reference                           Point_ref;
-  typedef typename boost::property_traits<VPM>::value_type                          Point;
 
   typedef typename GetGeomTraits<Graph, CGAL_NP_CLASS>::type                        Kernel;
   typedef typename Kernel::Vector_3                                                 Vector;
