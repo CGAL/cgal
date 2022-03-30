@@ -352,6 +352,15 @@ refine_Delaunay_mesh_2(Tr& t,
   mesher.refine_mesh();
 }
 
+struct Use_existing_in_domain_marks {};
+
+template <typename Tr, typename Criteria>
+void
+refine_Delaunay_mesh_2(Tr& t, Use_existing_in_domain_marks,
+                       const Criteria& criteria = Criteria())
+{
+  refine_Delaunay_mesh_2(t, criteria, true);
+}
 
 template <typename Tr, typename Criteria, typename InputIterator>
 void

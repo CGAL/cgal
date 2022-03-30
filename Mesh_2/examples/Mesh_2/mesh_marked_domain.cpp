@@ -47,8 +47,8 @@ int main()
 
   std::cout << "Meshing the domain..." << std::endl;
   CGAL::refine_Delaunay_mesh_2(cdt,
-                               Criteria(),
-                               true);
+                               CGAL::Use_existing_in_domain_marks(),
+                               Criteria());
 
   std::cout << "Number of vertices: " << cdt.number_of_vertices() << std::endl;
   std::cout << "Number of finite faces: " << cdt.number_of_faces() << std::endl;
