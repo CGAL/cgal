@@ -741,7 +741,8 @@ face_aspect_ratio(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
                   const TriangleMesh& tmesh,
                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
-  CGAL_precondition(is_triangle(f, tmesh));
+  CGAL_precondition(f != boost::graph_traits<TriangleMesh>::null_face());
+  CGAL_precondition(is_triangle(halfedge(f, tmesh), tmesh));
 
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor           halfedge_descriptor;
 
