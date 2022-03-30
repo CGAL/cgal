@@ -570,19 +570,19 @@ public:
   }
 
 
-  void start_build_output() const
+  void start_intersection_points(int i) const
   {
-    user_visitor.start_build_output();
+    user_visitor.start_intersection_points(i);
   }
 
-  void build_output_step() const
+  void intersection_points_step() const
   {
-    user_visitor.build_output_step();
+    user_visitor.intersection_points_step();
   }
 
-  void end_build_output() const
+  void end_intersection_points() const
   {
-    user_visitor.end_build_output();
+    user_visitor.end_intersection_points();
   }
 
   void start_coplanar_faces(int i) const
@@ -598,6 +598,21 @@ public:
   void end_coplanar_faces() const
   {
     user_visitor.end_coplanar_faces();
+  }
+
+  void start_build_output() const
+  {
+    user_visitor.start_build_output();
+  }
+
+  void build_output_step() const
+  {
+    user_visitor.build_output_step();
+  }
+
+  void end_build_output() const
+  {
+    user_visitor.end_build_output();
   }
 
   void

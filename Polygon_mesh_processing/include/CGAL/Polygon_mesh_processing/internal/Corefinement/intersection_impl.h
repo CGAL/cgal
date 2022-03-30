@@ -854,10 +854,12 @@ class Intersection_of_triangle_meshes
   {
     typedef std::tuple<Intersection_type, halfedge_descriptor, bool,bool>  Inter_type;
 
+    visitor.start_intersection_points(tm1_edge_to_tm2_faces.size());
 
     for(typename Edge_to_faces::iterator it=tm1_edge_to_tm2_faces.begin();
                                          it!=tm1_edge_to_tm2_faces.end();++it)
     {
+      visitor.intersection_points_step();
       edge_descriptor e_1=it->first;
 
       halfedge_descriptor h_1=halfedge(e_1,tm1);
@@ -1076,6 +1078,7 @@ class Intersection_of_triangle_meshes
       } // end loop on all faces that intersect the edge
     } // end loop on all entries (edges) in 'edge_to_face'
     CGAL_assertion(nodes.size()==unsigned(current_node+1));
+    visitor.end_intersection_points();
   }
 
   struct Graph_node{

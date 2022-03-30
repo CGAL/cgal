@@ -465,15 +465,23 @@ struct Default_visitor{
   void start_filter_intersections() const {}
   void progress_filter_intersection(double ) const {}
   void end_filter_intersections() const {}
+
   void start_triangulation(int) const {}
   void progress_triangulation(int) const {}
   void end_triangulation() const {}
+
+  void start_coplanar_faces(int) const {}
+  void coplanar_faces_step() const {}
+  void end_coplanar_faces() const {}
+
+  void start_intersection_points(int) const {}
+  void intersection_points_step() const {}
+  void end_intersection_points() const {}
+
   void start_build_output() const {}
   void build_output_step() const {}
   void end_build_output() const {}
-  void start_coplanar_faces() const {}
-  void coplanar_faces_step() const {}
-  void end_coplanar_faces() const {}
+
 
   // calls commented in the code and probably incomplete due to the migration
   // see NODE_VISITOR_TAG

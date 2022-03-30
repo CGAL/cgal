@@ -43,6 +43,40 @@ struct Visitor_rep{
     }
   }
 
+  void start_coplanar_faces(int tc)
+  {
+    std::cout << "Visitor::start_coplanar_faces() at " << t.time() << " sec." << std::endl;
+    tcoplanar= tc;
+    count_coplanar = 0;
+    bound_coplanar = tcoplanar/10;
+  }
+
+  void coplanar_faces_step()
+  {
+    ++count_coplanar;
+    if(count_coplanar> bound_coplanar){
+      std::cout << "Visitor::coplanar_faces: " << double(count_coplanar)/double(tcoplanar) * 100  << " % " << std::endl;
+      bound_coplanar += tcoplanar/10;
+    }
+  }
+
+  void start_intersection_points(int ti)
+  {
+    std::cout << "Visitor::start_intersection_points() at " << t.time() << " sec." << std::endl;
+    tintersection= ti;
+    count_intersection = 0;
+    bound_intersection = tintersection/10;
+  }
+
+  void intersection_points_step()
+  {
+    ++count_intersection;
+    if(count_intersection> bound_intersection){
+      std::cout << "Visitor::intersection_points: " << double(count_intersection)/double(tintersection) * 100  << " % " << std::endl;
+      bound_intersection += tintersection/10;
+    }
+  }
+
   double time() const
   {
     return t.time();
@@ -55,6 +89,14 @@ struct Visitor_rep{
 
   int bound_faces = 0;
   int tfaces = 0;
+
+  int bound_coplanar = 0;
+  int tcoplanar = 0;
+  int count_coplanar = 0;
+
+  int bound_intersection = 0;
+  int tintersection = 0;
+  int count_intersection = 0;
   CGAL::Timer t;
 };
 
@@ -75,16 +117,16 @@ struct Visitor :
 
   void start_filter_intersections() const
   {
-    std::cout << "Visitor::start_filter_intersections() at " << sptr->time() << std::endl;
+    std::cout << "Visitor::start_filter_intersections() at " << sptr->time() << " sec." << std::endl;
   }
   void end_filter_intersections() const
   {
-    std::cout << "Visitor::end_filter_intersections() at " << sptr->time()  << std::endl;
+    std::cout << "Visitor::end_filter_intersections() at " << sptr->time() << " sec."  << std::endl;
   }
 
   void start_triangulation(int tf)const
   {
-    std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->time()  << std::endl;
+    std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->time() << " sec."  << std::endl;
     sptr->start_triangulation(tf);
   }
 
@@ -95,37 +137,52 @@ struct Visitor :
 
   void end_triangulation()const
   {
-    std::cout << "Visitor::end_triangulation() at " << sptr->time()  << std::endl;
+    std::cout << "Visitor::end_triangulation() at " << sptr->time() << " sec."  << std::endl;
   }
 
-  void start_coplanar_faces(int) const
+  void start_coplanar_faces(int i) const
   {
-    std::cout << "Visitor::start_coplanar_faces() at " << sptr->time() << std::endl;
+    sptr->start_coplanar_faces(i);
   }
 
   void coplanar_faces_step() const
   {
-    std::cout << "Visitor::coplanar_faces_step() at " << sptr->time() << std::endl;
+    sptr->coplanar_faces_step();
   }
 
   void end_coplanar_faces() const
   {
-    std::cout << "Visitor::end_coplanar_faces() at " << sptr->time() << std::endl;
+    std::cout << "Visitor::end_coplanar_faces() at " << sptr->time() << " sec." << std::endl;
+  }
+
+  void start_intersection_points(int i) const
+  {
+    sptr->start_intersection_points(i);
+  }
+
+  void intersection_points_step() const
+  {
+    sptr->intersection_points_step();
+  }
+
+  void end_intersection_points() const
+  {
+    std::cout << "Visitor::end_intersection_points() at " << sptr->time() << " sec." << std::endl;
   }
 
   void start_build_output() const
   {
-    std::cout << "Visitor::start_build_output() at " << sptr->time() << std::endl;
+    std::cout << "Visitor::start_build_output() at " << sptr->time()  << " sec."<< std::endl;
   }
 
   void build_output_step() const
   {
-    std::cout << "Visitor::build_output_step() at " << sptr->time() << std::endl;
+    std::cout << "Visitor::build_output_step() at " << sptr->time() << " sec." << std::endl;
   }
 
   void end_build_output() const
   {
-    std::cout << "Visitor::end_build_output() at " << sptr->time() << std::endl;
+    std::cout << "Visitor::end_build_output() at " << sptr->time() << " sec." << std::endl;
   }
 };
 
@@ -146,10 +203,10 @@ int main(int argc, char* argv[])
   t.start();
   Mesh out;
   Visitor visitor;
-  // PMP::corefine(mesh1,mesh2, CGAL::parameters::visitor(visitor));
+
   bool valid_union = PMP::corefine_and_compute_union (mesh1,mesh2, out, CGAL::parameters::visitor(visitor));
 
-  std::cout << "total time = " << t.time() << std::endl;
+  std::cout << "Global timer = " << t.time() << " sec." << std::endl;
 
 
   if(valid_union)
