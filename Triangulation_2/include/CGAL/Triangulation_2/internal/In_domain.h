@@ -22,32 +22,34 @@ namespace CGAL {
 namespace internal {
 
 template<class T>
-class Has_member_in_domain
+class Has_member_is_in_domain
 {
 private:
   template<class U, U>
   class check {};
 
   template<class C>
-  static char f(check<void(C::*)(void), &C::in_domain>*);
+  static char f(check<bool(C::*)(void) const, &C::is_in_domain>*);
+  template<class C>
+  static char f(check<bool(C::*)(void), &C::is_in_domain>*);
 
   template<class C>
   static int f(...);
 public:
-  static const bool value = (sizeof(f<T>(0)) == sizeof(char));
+  static const bool value = (sizeof(f<T>(nullptr)) == sizeof(char));
 };
 
 template <typename F, typename FH>
 inline
-std::enable_if_t<Has_member_in_domain<F>::value, bool>
+std::enable_if_t<Has_member_is_in_domain<F>::value, bool>
 get_in_domain_impl(FH fh)
 {
-  return fh->in_domain();
+  return fh->is_in_domain();
 }
 
 template <typename F, typename FH>
 inline
-std::enable_if_t<!Has_member_in_domain<F>::value, bool>
+std::enable_if_t<!Has_member_is_in_domain<F>::value, bool>
 get_in_domain_impl(FH fh)
 {
   return false;
