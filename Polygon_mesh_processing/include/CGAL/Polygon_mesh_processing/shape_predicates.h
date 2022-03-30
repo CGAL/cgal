@@ -397,7 +397,6 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
                                           get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type           Traits;
-  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   const halfedge_descriptor h = halfedge(f, tm);
 
@@ -537,7 +536,6 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
@@ -545,10 +543,6 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
                                           get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
-  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
-
-  typedef typename Traits::FT                                               FT;
-  typedef typename Traits::Vector_3                                         Vector_3;
 
   const halfedge_descriptor h = halfedge(f, tm);
 
@@ -568,6 +562,7 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
     return prev(h, tm);
 }
 
-} } // end namespaces CGAL and PMP
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_SHAPE_PREDICATES_H
