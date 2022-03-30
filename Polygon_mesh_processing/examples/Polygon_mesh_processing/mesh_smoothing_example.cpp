@@ -6,7 +6,7 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <iostream>
-#include <fstream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Surface_mesh<K::Point_3>                          Mesh;

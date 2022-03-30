@@ -18,7 +18,7 @@ namespace SMS = CGAL::Surface_mesh_simplification;
 int main(int argc, char** argv)
 {
   if(argc!=2){
-    std::cerr << "Please provide only an off-file as input\n";
+    std::cerr << "Please provide only an OFF file as input\n";
     return 1;
   }
 

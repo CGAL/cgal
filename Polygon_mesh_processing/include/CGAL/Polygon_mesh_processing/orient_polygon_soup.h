@@ -480,7 +480,9 @@ struct Polygon_soup_orienter
 
 /**
  * \ingroup PMP_orientation_grp
- * tries to consistently orient a soup of polygons in 3D space.
+ *
+ * \brief tries to consistently orient a soup of polygons in 3D space.
+ *
  * When it is not possible to produce a combinatorial manifold surface,
  * some points are duplicated.
  * Because a polygon soup does not have any connectivity (each point
@@ -521,8 +523,10 @@ struct Polygon_soup_orienter
  * @return `true`  if the orientation operation succeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
+ * @sa `orient_triangle_soup_with_reference_triangle_mesh()`
  */
-template <class PointRange, class PolygonRange, class NamedParameters = parameters::Default_named_parameters>
+template <class PointRange, class PolygonRange,
+          class NamedParameters = parameters::Default_named_parameters>
 bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
                          const NamedParameters& np = parameters::default_values())

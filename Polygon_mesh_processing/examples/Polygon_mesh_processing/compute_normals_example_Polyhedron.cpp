@@ -9,8 +9,8 @@
 #include <boost/property_map/property_map.hpp>
 
 #include <iostream>
-#include <fstream>
 #include <map>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Point_3                                            Point;

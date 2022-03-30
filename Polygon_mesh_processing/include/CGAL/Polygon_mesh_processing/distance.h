@@ -2560,10 +2560,11 @@ double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
 
 /**
  * \ingroup PMP_distance_grp
- * returns `true` if the Hausdorff distance between two meshes is larger than
- * the user-defined max distance, otherwise it returns `false`. The distance used
- * to compute the proximity of the meshes is the bounded-error Hausdorff distance.
  *
+ * \brief returns `true` if the Hausdorff distance between two meshes is larger than
+ * the user-defined max distance, otherwise it returns `false`.
+ *
+ * The distance used to compute the proximity of the meshes is the bounded-error Hausdorff distance.
  * Instead of computing the full distance and checking it against the user-provided
  * value, this function returns early if certain criteria show that the meshes
  * do not satisfy the provided `distance_bound`.
@@ -2576,8 +2577,6 @@ double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
  *     \cgalParamExtra{If this tag is set to `false`, the symmetric Hausdorff distance is used.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
- *
- * @return Boolean `true` or `false`
  *
  * @see `CGAL::Polygon_mesh_processing::bounded_error_Hausdorff_distance()`
  */

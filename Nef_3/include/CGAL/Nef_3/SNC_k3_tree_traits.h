@@ -85,7 +85,7 @@ public:
 #else
   Side_of_plane(const Point_3& p, int c) : OnSideMap(unknown_side), coord(c), pop(p) {}
 #endif
-
+  void reserve(std::size_t n) { OnSideMap.reserve(n); }
   Oriented_side operator()(Vertex_handle v);
   Oriented_side operator()(Halfedge_handle e);
   Oriented_side operator()(Halffacet_handle f);

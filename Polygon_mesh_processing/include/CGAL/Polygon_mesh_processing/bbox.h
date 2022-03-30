@@ -29,9 +29,10 @@ namespace CGAL {
 
     /*!
     * \ingroup PkgPolygonMeshProcessingRef
-    *  computes a bounding box of a polygon mesh.
     *
-    * @tparam PolygonMesh a model of `HalfedgeListGraph`
+    * computes a bounding box of a polygon mesh.
+    *
+    * @tparam PolygonMesh a model of `VertexListGraph`
     * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param pmesh a polygon mesh
@@ -50,12 +51,14 @@ namespace CGAL {
     *   \cgalParamNBegin{geom_traits}
     *     \cgalParamDescription{an instance of a geometric traits class providing the functor `Construct_bbox_3`
     *                           and the function `Construct_bbox_3 construct_bbox_3_object()`.
-    *                           `Construct_bbox_3` must provide `Bbox_3 operator()(Point_3)`
+    *                           `Construct_bbox_3` must provide the functor `Bbox_3 operator()(Point_3)`
     *                           where `%Point_3` is the value type of the vertex point map.}
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
-    * @return a bounding box of `pmesh`
+    * @see `vertex_bbox()`
+    * @see `edge_bbox()`
+    * @see `face_bbox()`
     */
     template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
     CGAL::Bbox_3 bbox(const PolygonMesh& pmesh,
@@ -84,9 +87,10 @@ namespace CGAL {
 
     /*!
     * \ingroup PkgPolygonMeshProcessingRef
-    *  computes a bounding box of a vertex of a polygon mesh.
     *
-    * @tparam PolygonMesh a model of `HalfedgeGraph`
+    * computes a bounding box of the vertex of a polygon mesh.
+    *
+    * @tparam PolygonMesh a model of `Graph`
     * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param vd a descriptor of a vertex in `pmesh`
@@ -111,7 +115,9 @@ namespace CGAL {
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
-    * @return a bounding box of `pmesh`
+    * @see `edge_bbox()`
+    * @see `face_bbox()`
+    * @see `bbox()`
     */
     template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
     CGAL::Bbox_3 vertex_bbox(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd,
@@ -133,9 +139,10 @@ namespace CGAL {
 
     /*!
     * \ingroup PkgPolygonMeshProcessingRef
-    *  computes a bounding box of an edge of a polygon mesh.
     *
-    * @tparam PolygonMesh a model of `HalfedgeGraph`
+    * computes a bounding box of an edge of a polygon mesh.
+    *
+    * @tparam PolygonMesh a model of `Graph`
     * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param ed a descriptor of an edge in `pmesh`
@@ -160,7 +167,9 @@ namespace CGAL {
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
-    * @return a bounding box of `pmesh`
+    * @see `vertex_bbox()`
+    * @see `face_bbox()`
+    * @see `bbox()`
     */
     template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
     CGAL::Bbox_3 edge_bbox(typename boost::graph_traits<PolygonMesh>::edge_descriptor ed,
@@ -184,9 +193,10 @@ namespace CGAL {
 
     /*!
     * \ingroup PkgPolygonMeshProcessingRef
-    *  computes a bounding box of a face of a polygon mesh.
     *
-    * @tparam PolygonMesh a model of `HalfedgeGraph`
+    * computes a bounding box of a face of a polygon mesh.
+    *
+    * @tparam PolygonMesh a model of `Graph`
     * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
     *
     * @param fd a descriptor of a face in `pmesh`
@@ -212,7 +222,9 @@ namespace CGAL {
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
-    * @return a bounding box of `pmesh`
+    * @see `vertex_bbox()`
+    * @see `edge_bbox()`
+    * @see `bbox()`
     */
     template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
     CGAL::Bbox_3 face_bbox(typename boost::graph_traits<PolygonMesh>::face_descriptor fd,
@@ -233,8 +245,7 @@ namespace CGAL {
       typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
       CGAL::Bbox_3 bb;
-      for(halfedge_descriptor h :
-                    halfedges_around_face(halfedge(fd, pmesh), pmesh))
+      for(halfedge_descriptor h : halfedges_around_face(halfedge(fd, pmesh), pmesh))
       {
         bb += get_bbox( get(vpm, target(h, pmesh)) );
       }

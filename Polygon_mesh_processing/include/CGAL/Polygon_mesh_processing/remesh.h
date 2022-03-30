@@ -32,6 +32,7 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup PMP_meshing_grp
+*
 * @brief remeshes a triangulated region of a polygon mesh.
 * This operation sequentially performs edge splits, edge collapses,
 * edge flips, tangential relaxation and projection to the initial surface
@@ -52,7 +53,7 @@ namespace Polygon_mesh_processing {
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
 * @pre if constraints protection is activated, the constrained edges must
-* not be longer than 4/3*`target_edge_length`
+* not be longer than 4/3*`target_edge_length`.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{vertex_point_map}

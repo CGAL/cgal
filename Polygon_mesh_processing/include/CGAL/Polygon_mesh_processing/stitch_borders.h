@@ -1088,7 +1088,8 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 
 /// \ingroup PMP_repairing_grp
 ///
-/// \brief stitches together, whenever possible, two halfedges belonging to the boundary cycle described by the halfedge `h`.
+/// \brief stitches together, whenever possible, two halfedges belonging to the boundary cycle
+/// described by the halfedge `h`.
 ///
 /// Two border halfedges `h1` and `h2` can be stitched
 /// if the points associated to the source and target vertices of `h1` are
@@ -1206,7 +1207,6 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
 
 /// \endcond
 
-
 // The VPM is only used here for debugging info purposes as in this overload, the halfedges
 // to stitch are already provided and all further checks are combinatorial and not geometrical.
 /*!
@@ -1242,6 +1242,8 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pmesh,
 *
 * \return the number of pairs of halfedges that were stitched.
 *
+* \sa `stitch_boundary_cycle()`
+* \sa `stitch_boundary_cycles()`
 */
 template <typename PolygonMesh,
           typename HalfedgePairsRange,

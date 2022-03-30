@@ -145,9 +145,10 @@ private:
 /**
 * \ingroup PMP_repairing_grp
 *
-* returns `true` if the soup of polygons defines a valid polygon
+* \brief returns `true` if the soup of polygons defines a valid polygon
 * mesh that can be handled by
 * `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
+*
 * It checks that each edge has at most two incident faces and such an edge
 * is visited in opposite direction along the two face boundaries,
 * no polygon has twice the same vertex,
@@ -164,7 +165,7 @@ private:
 * @param polygons each element in the range describes a polygon
 * using the indices of the vertices.
 *
-* @sa `orient_polygon_soup()`
+* @sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 */
 template<typename PolygonRange>
 bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
@@ -221,6 +222,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 
 /**
 * \ingroup PMP_repairing_grp
+*
 * builds a polygon mesh from a soup of polygons.
 *
 * @pre the input polygon soup describes a consistently oriented

@@ -7,7 +7,9 @@
 
 #include <boost/iterator/function_output_iterator.hpp>
 
-#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <string>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
