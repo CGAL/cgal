@@ -465,6 +465,9 @@ struct Default_visitor{
   void start_filter_intersections() const {}
   void progress_filter_intersection(double ) const {}
   void end_filter_intersections() const {}
+  void start_triangulation(int) const {}
+  void progress_triangulation(int) const {}
+  void end_triangulation() const {}
 
   // calls commented in the code and probably incomplete due to the migration
   // see NODE_VISITOR_TAG
