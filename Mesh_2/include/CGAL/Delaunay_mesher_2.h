@@ -34,7 +34,7 @@ class Delaunay_mesher_2
 
   typedef typename Tr::Point Point;
 
-  /** \name Types needed for private member datas */
+  /** \name Types needed for private member data */
   typedef Mesh_2::Refine_edges_with_clusters<Tr,
     Mesh_2::Is_locally_conforming_Gabriel<Tr> > Edges_level;
 
@@ -53,7 +53,7 @@ public:
   typedef Seeds_iterator Seeds_const_iterator;
 
 private:
-  // --- PRIVATE MEMBER DATAS ---
+  // --- PRIVATE MEMBER DATA ---
   Tr& tr;
   Criteria criteria;
   Null_mesher_level null_level;
@@ -188,7 +188,7 @@ public:
     propagate_marks(tr.infinite_face(), false);
   }
 
-  /** Propagates the mark \c mark recursivly. */
+  /** Propagates the mark \c mark recursively. */
   static void propagate_marks(const Face_handle fh, bool mark)
   {
     // std::queue only works with std::list on VC++6, and not with
