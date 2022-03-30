@@ -122,11 +122,25 @@ struct Default_surface_intersection_visitor{
   {}
 
   // needed for progress tracking
-  void progress_filter_intersection(double d) const{}
-
   void start_filter_intersections() const {}
-
+  void progress_filter_intersection(double d) const{}
   void end_filter_intersections() const {}
+
+  void start_triangulation(int) const {}
+  void progress_triangulation(int) const {}
+  void end_triangulation() const {}
+
+  void start_coplanar_faces(int) const {}
+  void coplanar_faces_step() const {}
+  void end_coplanar_faces() const {}
+
+  void start_intersection_points(int) const {}
+  void intersection_points_step() const {}
+  void end_intersection_points() const {}
+
+  void start_build_output() const {}
+  void build_output_step() const {}
+  void end_build_output() const {}
 };
 
 struct Node_id_set {
