@@ -47,13 +47,15 @@ int main( )
   //Mark facets that are inside the domain bounded by the polygon
   CGAL::mark_domain_in_triangulation(cdt, in_domain);
 
-  int count=0;
+  unsigned int count=0;
   for (Face_handle f : cdt.finite_face_handles())
   {
     if ( get(in_domain, f) ) ++count;
   }
 
   std::cout << "There are " << count << " faces in the domain." << std::endl;
+  assert(count > 0);
+  assert(count < cdt.number_of_faces());
 
   CGAL::draw(cdt, in_domain);
   return 0;
