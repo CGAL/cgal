@@ -247,7 +247,9 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     {
       const FT fa = face_area(f, tmesh, np);
       component_areas[face_cc[f]] += fa;
+      exact(component_areas[face_cc[f]]);
       total_area += fa;
+      exact(total_area);
     }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
@@ -283,6 +285,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
                         get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
 
       component_volumes[i] += fv;
+      exact(component_volumes[i]);
     }
 
     // negative volume means the CC was oriented inward
@@ -291,6 +294,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
     {
       component_volumes[i] = CGAL::abs(component_volumes[i]);
       total_volume += component_volumes[i];
+      exact(total_volume);
     }
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
