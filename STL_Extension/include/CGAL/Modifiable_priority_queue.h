@@ -19,6 +19,7 @@
 
 #include <boost/heap/pairing_heap.hpp>
 
+#include <algorithm>
 #include <type_traits>
 
 namespace CGAL {
@@ -57,7 +58,7 @@ public:
 
   void erase ( value_type const& v  ) { mHeap.remove(v); }
 
-  value_type top() const { return mHeap.top(); }
+  const value_type& top() const { return mHeap.top(); }
 
   void pop() { mHeap.pop(); }
 
@@ -98,11 +99,12 @@ struct Modifiable_priority_queue<IndexedType_, Compare_, ID_, CGAL_BOOST_PAIRING
 {
   typedef Modifiable_priority_queue Self;
 
-  typedef IndexedType_ IndexedType ;
+  typedef IndexedType_ IndexedType;
   typedef Compare_     Compare;
-  typedef ID_          ID ;
+  typedef ID_          ID;
 
-  struct Reverse_compare{
+  struct Reverse_compare
+  {
     Compare c;
     Reverse_compare(const Compare& c):c(c){}
     bool operator() (const IndexedType& a, const IndexedType& b) const
@@ -132,6 +134,7 @@ struct Modifiable_priority_queue<IndexedType_, Compare_, ID_, CGAL_BOOST_PAIRING
 
   typedef typename Heap::value_type value_type;
   typedef typename Heap::size_type  size_type;
+  typedef typename Heap::handle_type handle_type;
 
 private:
   void reserve_impl(size_type r, std::true_type)
@@ -143,43 +146,83 @@ private:
   {}
 
 public:
-
-  Modifiable_priority_queue( size_type largest_ID, Compare const& c = Compare(), ID const& id = ID() )
+  Modifiable_priority_queue(size_type largest_ID,
+                            const Compare& c = Compare(),
+                            const ID& id = ID())
     : mHeap(Reverse_compare(c))
     , mID(id)
-    , mHandles(largest_ID)
+    , mHandles(largest_ID, handle_type())
   {
     reserve(largest_ID);
   }
 
-  void push ( value_type const& v ) { mHandles[get(mID, v)]=mHeap.push(v) ; }
+  Modifiable_priority_queue(const Modifiable_priority_queue&) = delete;
+  Modifiable_priority_queue& operator=(const Modifiable_priority_queue&) = delete;
 
-  void update ( value_type const& v ) { mHeap.update(mHandles[get(mID, v)]); }
-
-  void erase ( value_type const& v  ) {
+public:
+  handle_type push(const value_type& v)
+  {
+    CGAL_precondition(!contains(v));
     auto vid = get(mID, v);
-    mHeap.erase(mHandles[vid]);
-    mHandles[vid]=typename Heap::handle_type();
+    mHandles[vid] = mHeap.push(v);
+    return mHandles[vid];
   }
 
-  value_type top() const { return mHeap.top(); }
+  void update(const value_type& v)
+  {
+    CGAL_precondition(contains(v));
+    auto vid = get(mID, v);
+    mHeap.update(mHandles[vid]);
+  }
 
-  void pop() { mHeap.pop(); }
+  void erase(const value_type& v)
+  {
+    CGAL_precondition(contains(v));
+    auto vid = get(mID, v);
+    mHeap.erase(mHandles[vid]);
+    mHandles[vid] = handle_type();
+  }
 
-  bool empty() const { return mHeap.empty() ; }
+  const value_type& top() const
+  {
+    return mHeap.top();
+  }
 
-  bool contains ( value_type const& v ) { return mHandles[get(mID, v)] != typename Heap::handle_type(); }
+  void pop()
+  {
+    auto vid = get(mID, top());
+    mHeap.pop();
+    mHandles[vid] = handle_type();
+  }
+
+  size_type size() const { return mHeap.size(); }
+
+  bool empty() const { return mHeap.empty(); }
+
+  void clear()
+  {
+    std::fill(std::begin(mHandles), std::end(mHandles), handle_type());
+    mHeap.clear();
+  }
+
+  bool contains(const value_type& v)
+  {
+    auto vid = get(mID, v);
+    CGAL_precondition(0 <= vid && vid < mHandles.size());
+    return mHandles[vid] != handle_type();
+  }
 
   boost::optional<value_type> extract_top()
   {
-    boost::optional<value_type> r ;
-    if ( !empty() )
+    boost::optional<value_type> r;
+    if(!empty())
     {
       value_type v = top();
       pop();
-      r = boost::optional<value_type>(v) ;
+      r = boost::optional<value_type>(v);
     }
-    return r ;
+
+    return r;
   }
 
   value_type top_and_pop()
@@ -195,15 +238,12 @@ public:
     reserve_impl(r, std::integral_constant<bool, Heap::has_reserve>());
   }
 
-
 private:
-
-  Heap mHeap ;
+  Heap mHeap;
   ID mID;
-  std::vector<typename Heap::handle_type> mHandles;
-} ;
+  std::vector<handle_type> mHandles;
+};
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
-
+#endif // CGAL_MODIFIABLE_PRIORITY_QUEUE_H
