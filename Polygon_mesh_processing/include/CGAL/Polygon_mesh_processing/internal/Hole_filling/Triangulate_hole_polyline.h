@@ -875,7 +875,6 @@ private:
                       Visitor& visitor,
                       const bool produce_incomplete) const
   {
-    visitor.quadratic_step();
     /**********************************************************************
      *  + Default W value is Weight::DEFAULT(), default lambda value is -1.
      *  + DEFAULT() is used to check whether the region (v0-v1) is processed.
@@ -890,6 +889,8 @@ private:
     if( v0 + 1 == v1 || // border edge - should not check v0 = 0, v1 = n-1, because it is the initial edge where the algorithm starts
         W.get(v0, v1) != Weight::DEFAULT() ) // the range is previously processed
     { return; }
+
+    visitor.quadratic_step();
 
     int m_min = -1;
     Weight w_min = Weight::NOT_VALID();
