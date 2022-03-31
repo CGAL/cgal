@@ -670,7 +670,7 @@ int main (int argc, char** argv)
   }
 
   std::size_t nb_vertices
-    = std::accumulate (polylines.begin(), polylines.end(), 0u,
+    = std::accumulate (polylines.begin(), polylines.end(), std::size_t(0),
                        [](std::size_t size, const std::vector<Point_3>& poly) -> std::size_t
                        { return size + poly.size(); });
 
