@@ -20,6 +20,8 @@
 #include <CGAL/Mesh_2/Refine_edges_with_clusters.h>
 #include <CGAL/Mesh_2/Refine_edges_visitor.h>
 #include <CGAL/Mesh_2/Refine_faces.h>
+#include <CGAL/Delaunay_mesh_size_criteria_2.h>
+#include <CGAL/Named_function_parameters.h>
 
 namespace CGAL {
 
@@ -340,7 +342,9 @@ public:
 
 // --- GLOBAL FUNCTIONS ---
 
+#if !defined(CGAL_NO_DEPRECATED_CODE)
 template <typename Tr, typename Criteria>
+CGAL_DEPRECATED
 void
 refine_Delaunay_mesh_2(Tr& t,
                        const Criteria& criteria = Criteria(), bool domain_specified=false)
@@ -352,17 +356,8 @@ refine_Delaunay_mesh_2(Tr& t,
   mesher.refine_mesh();
 }
 
-struct Use_existing_in_domain_marks {};
-
-template <typename Tr, typename Criteria>
-void
-refine_Delaunay_mesh_2(Tr& t, Use_existing_in_domain_marks,
-                       const Criteria& criteria = Criteria())
-{
-  refine_Delaunay_mesh_2(t, criteria, true);
-}
-
 template <typename Tr, typename Criteria, typename InputIterator>
+CGAL_DEPRECATED
 void
 refine_Delaunay_mesh_2(Tr& t,
                        InputIterator b, InputIterator e,
@@ -373,6 +368,47 @@ refine_Delaunay_mesh_2(Tr& t,
 
   Mesher mesher(t, criteria);
   mesher.set_seeds(b, e, mark);
+  mesher.refine_mesh();
+}
+#endif
+
+template<typename Tr, typename CGAL_NP_TEMPLATE_PARAMETERS>
+void
+refine_Delaunay_mesh_2(Tr& t, const CGAL_NP_CLASS& np)
+{
+  typedef Delaunay_mesh_size_criteria_2<Tr> Default_criteria;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::criteria_t,
+                                                       CGAL_NP_CLASS,
+                                                       Default_criteria>::type Criteria;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::get_parameter_reference;
+  using parameters::is_default_parameter;
+
+  Delaunay_mesher_2<Tr, Criteria> mesher(t, choose_parameter<Default_criteria>(get_parameter_reference(np, internal_np::criteria)));
+
+  if (!choose_parameter(get_parameter(np, internal_np::domain_is_initialized), false))
+  {
+    if (is_default_parameter<CGAL_NP_CLASS, internal_np::seeds_t>()) // no seeds provided
+    {
+      mesher.init(false);
+    }
+    else
+    {
+      typedef std::vector<typename Tr::Point_2> Default_seeds;
+      typedef typename internal_np::Lookup_named_param_def<internal_np::seeds_t,
+                                                           CGAL_NP_CLASS,
+                                                           Default_seeds>::reference Seeds;
+      Default_seeds ds;
+      Seeds seeds = choose_parameter(get_parameter_reference(np, internal_np::seeds), ds);
+      mesher.set_seeds(seeds.begin(), seeds.end(),
+                       choose_parameter(get_parameter(np, internal_np::seeds_are_in_domain), false));
+    }
+  }
+  else
+    mesher.init(true);
+
   mesher.refine_mesh();
 }
 

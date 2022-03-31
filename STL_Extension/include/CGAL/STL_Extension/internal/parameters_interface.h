@@ -232,3 +232,9 @@ CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_dire
 CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
 CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
 CGAL_add_named_parameter(segment_t, segment_map, segment_map)
+
+// List of named parameters used in Mesh_2 package
+CGAL_add_named_parameter(seeds_t, seeds, seeds)
+CGAL_add_named_parameter(domain_is_initialized_t, domain_is_initialized, domain_is_initialized)
+CGAL_add_named_parameter(seeds_are_in_domain_t, seeds_are_in_domain, seeds_are_in_domain)
+CGAL_add_named_parameter(criteria_t, criteria, criteria)

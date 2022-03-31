@@ -257,6 +257,62 @@ bool step_by_step_refine_mesh();
 }; /* end Delaunay_mesher_2 */
 
 /*!
+ * \ingroup PkgMesh2Functions
+ * refines the domain defined by a constrained Delaunay
+ * triangulation into a mesh satisfying the criteria
+ * defined by the traits `criteria`.
+ *
+ * Note that the unbounded component of the plane is
+ * never meshed.
+ *
+ * \tparam CDT  must be 2D constrained Delaunay triangulation
+ * and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
+ * The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
+ *
+ * \tparam Criteria must be a model of the concept `MeshingCriteria_2`.
+ *
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * @param t the constrained Delaunay triangulation that will be refined
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{seeds}
+ *     \cgalParamDescription{2D points used to define the domain to mesh.
+ *                           If `seeds_are_in_domain==true`, the mesh domain is the union of
+ *                           the bounded connected components including at least
+ *                           one seed. If `seeds_are_in_domain==false`, the domain is the
+ *                           union of the bounded components including no seed.}
+ *     \cgalParamType{a class model of `ConstRange` with iterator being a model of `InputIterator` with `%Point_2` as value type.}
+ *     \cgalParamDefault{No seed.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{criteria}
+ *     \cgalParamDescription{The meshing criteria}
+ *     \cgalParamType{a class model of a model of the concept `MeshingCriteria_2` with
+ *                    `Criteria::Face_handle` being the same as `CDT::Face_handle`.}
+ *     \cgalParamDefault{`CGAL::Delaunay_mesh_size_criteria_2`}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{domain_is_initialized}
+ *     \cgalParamDescription{If `true` the domain is considered as already initialized (see `DelaunayMeshFaceBase_2::is_in_domain()`).
+ *                           If `false` and no seeds is provided, the domain of the mesh
+ *                           covers all the connected components of the plane defined by the
+ *                           constrained edges of `t`, except for the unbounded component.}
+ *     \cgalParamType{`bool`}
+ *     \cgalParamDefault{false}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{seeds_are_in_domain}
+ *     \cgalParamDescription{specified if seeds indicates bounded connected components inside or outside of the domain.}
+ *     \cgalParamType{`bool`}
+ *     \cgalParamDefault{false}
+ *   \cgalParamNEnd
+ *
+ * \cgalNamedParamsEnd
+ */
+template<typename Tr, typename CGAL_NP_TEMPLATE_PARAMETERS>
+void
+refine_Delaunay_mesh_2(Tr& t, const CGAL_NP_CLASS& np);
+
+/*!
 \ingroup PkgMesh2Functions
 
 \deprecated This function is deprecated since \cgal 5.5
