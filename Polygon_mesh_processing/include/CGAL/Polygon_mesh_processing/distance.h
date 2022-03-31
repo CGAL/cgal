@@ -1670,22 +1670,20 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       // (We also have that error_bound is a lower bound.)
       const Bbox_3 sub_t1_bbox = sub_triangles[i].bbox();
 
-      // Because:
+      // The lower bound is:
       //   h_lower(t1, TM2) := max_{v in t1} min_{t2 in TM2} d(v, t2)
-      // adding more vertices can only increase the max (and the lower bound).
-      //
+
       // The upper bound is:
       //   h_upper(t1, TM2) := min_{t2 in TM2} max_{v in t1} d(v, t2)
-      // If t2m is the face of TM2 realizing the minimum of max_{v in t1} d(v, t2),
-      // then subdividing t1 can only decrease this upper bound: let v' be a new vertex v'
-      // of a triangle subdividing t1 is such that
-      //   min_{t2 in TM2} d(v', t2) > h_upper(t1, TM2)
-      // Because the maximum of the distance over t1 is necessarily reached at a vertex,
-      // there must exist a vertex v1 in t1 such that d(v1, t2) > d(v', t2), which contradicts
-      // the definition of v'.
-      // Thus, subdivision can only decrease the upper bound.
-      // @FIXME using 'triangle_bounds' actually create bugs?...
-      Local_bounds<Kernel, Face_handle_1, Face_handle_2> bounds(infinity_value);
+      // The value max_{p in t1} d(p, t2) is realized at a vertex of t1.
+      // Thus, when splitting t1 into four subtriangles, the distance at the three new vertices
+      // is smaller than max_{v in t1} d(v, t2)
+      // Thus, subdivision can only decrease the min, and the upper bound.
+      Local_bounds<Kernel, Face_handle_1, Face_handle_2> bounds(triangle_bounds.upper);
+
+      // Ensure 'uface' is initialized in case the upper bound is not changed by the subdivision
+      bounds.tm2_uface = triangle_bounds.tm2_uface;
+
       TM2_hd_traits traversal_traits_tm2(sub_t1_bbox, tm2, vpm2, bounds, global_bounds, infinity_value);
       tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
 
