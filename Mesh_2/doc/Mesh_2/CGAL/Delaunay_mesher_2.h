@@ -265,11 +265,9 @@ bool step_by_step_refine_mesh();
  * Note that the unbounded component of the plane is
  * never meshed.
  *
- * \tparam CDT  must be 2D constrained Delaunay triangulation
+ * \tparam CDT  must be a 2D constrained Delaunay triangulation
  * and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
  * The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
- *
- * \tparam Criteria must be a model of the concept `MeshingCriteria_2`.
  *
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -294,7 +292,7 @@ bool step_by_step_refine_mesh();
  *   \cgalParamNEnd
  *   \cgalParamNBegin{domain_is_initialized}
  *     \cgalParamDescription{If `true` the domain is considered as already initialized (see `DelaunayMeshFaceBase_2::is_in_domain()`).
- *                           If `false` and no seeds is provided, the domain of the mesh
+ *                           If `false` and no seeds are provided, the domain of the mesh
  *                           covers all the connected components of the plane defined by the
  *                           constrained edges of `t`, except for the unbounded component.}
  *     \cgalParamType{`bool`}
@@ -308,9 +306,9 @@ bool step_by_step_refine_mesh();
  *
  * \cgalNamedParamsEnd
  */
-template<typename Tr, typename CGAL_NP_TEMPLATE_PARAMETERS>
+template<typename CDTr, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void
-refine_Delaunay_mesh_2(Tr& t, const CGAL_NP_CLASS& np);
+refine_Delaunay_mesh_2(CDT& t, const CGAL_NP_CLASS& np);
 
 /*!
 \ingroup PkgMesh2Functions
@@ -323,7 +321,7 @@ defined by the traits `criteria`. The domain of the mesh
 covers all the connected components of the plane defined by the
 constrained edges of `t`, except for the unbounded component.
 
-\tparam CDT  must be 2D constrained Delaunay triangulation
+\tparam CDT  must be a 2D constrained Delaunay triangulation
 and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
 The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
 
