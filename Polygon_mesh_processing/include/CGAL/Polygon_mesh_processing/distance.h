@@ -1712,8 +1712,9 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       // which can go down, so it is only recomputed once splitting is finished,
       // using the top value of the PQ
 
-      // Add the subtriangle to the candidate list.
-      candidate_triangles.emplace(sub_triangles[i], sub_triangle_bounds, triangle_and_bounds.tm1_face);
+      // Add the subtriangle to the candidate list if it is meaningful
+      if(sub_triangle_bounds.upper >= global_bounds.lower)
+        candidate_triangles.emplace(sub_triangles[i], sub_triangle_bounds, triangle_and_bounds.tm1_face);
     }
 
     // Update global upper Hausdorff bound after subdivision.
