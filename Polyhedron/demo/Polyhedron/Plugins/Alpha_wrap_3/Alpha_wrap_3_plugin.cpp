@@ -94,7 +94,7 @@ public Q_SLOTS:
 
     const bool is_relative_alpha = ui.relativeAlpha->isChecked();
     const bool is_relative_offset = ui.relativeOffset->isChecked();
-    const bool enforce_manifoldenss = ui.runManifoldness->isChecked();
+    const bool enforce_manifoldness = ui.runManifoldness->isChecked();
     double alpha = ui.alphaValue->value();
     double offset = ui.offsetValue->value();
 
@@ -154,7 +154,7 @@ public Q_SLOTS:
 
     SMesh wrap;
     aw3(alpha, offset, wrap,
-        CGAL::parameters::do_enforce_manifoldness(enforce_manifoldenss));
+        CGAL::parameters::do_enforce_manifoldness(enforce_manifoldness));
 
     Scene_surface_mesh_item* wrap_item = new Scene_surface_mesh_item(wrap);
     wrap_item->setName(tr("Wrap alpha %2 offset %3").arg(alpha).arg(offset));
