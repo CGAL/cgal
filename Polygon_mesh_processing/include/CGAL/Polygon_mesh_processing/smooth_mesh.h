@@ -47,6 +47,7 @@ CGAL_DEPRECATED void smooth_mesh(TriangleMesh& tmesh, const CGAL_NP_CLASS& np = 
 {
   smooth_mesh(faces(tmesh), tmesh, np);
 }
+///\endcond
 
 
 } // namespace Polygon_mesh_processing
