@@ -65,6 +65,7 @@ struct Progress {
       void start_quadratic_phase(int n)
       {
         timer.start();
+        quadratic_i = 0;
         quadratic_n = n;
         quadratic_report = n / 10;
         std::cout << "Start Quadratic phase with estimated " << n << " steps" << std::endl;
@@ -158,7 +159,7 @@ int main(int argc, char* argv[])
             h,
             std::back_inserter(patch_facets),
             std::back_inserter(patch_vertices),
-            PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(false)));
+            PMP::parameters::visitor(std::ref(progress)).use_delaunay_triangulation(true)));
     }
     catch (const Stop&) {
         std::cout << "We stopped with a timeout" << std::endl;
