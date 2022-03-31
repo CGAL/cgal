@@ -71,7 +71,7 @@ typedef unspecified_type Seeds_iterator;
 /// @{
 
 /*!
-Create a new mesher, working on `t`, with meshing criteria
+creates a new mesher, working on `t`, with meshing criteria
 `criteria`.
 */
 Delaunay_mesher_2(CDT& t, Criteria criteria = Criteria());
@@ -88,7 +88,7 @@ Delaunay_mesher_2(CDT& t, Criteria criteria = Criteria());
 /// @{
 
 /*!
-Sets seeds to the empty set. All
+sets seeds to the empty set. All
 finite connected components of the constrained triangulation will be
 refined.
 */
@@ -99,7 +99,7 @@ void clear_seeds ();
 
 
 /*!
-Sets seeds to the sequence `[begin, end)`. If `mark==true`, the mesh domain
+sets seeds to the sequence `[begin, end)`. If `mark==true`, the mesh domain
 is the union of the bounded connected
 components including at least one seed. If
 `mark==false`, the domain is the union of
@@ -148,7 +148,7 @@ by a call to `set_bad_faces`.
 /// @{
 
 /*!
-Refines the constrained Delaunay triangulation into a mesh
+refines the constrained Delaunay triangulation into a mesh
 satisfying the criteria defined by the traits.
 
 */
@@ -159,7 +159,7 @@ void refine_mesh();
 
 
 /*!
-Returns a const reference to the criteria traits object.
+returns a const reference to the criteria traits object.
 */
 const Criteria& get_criteria();
 
@@ -168,7 +168,7 @@ const Criteria& get_criteria();
 
 
 /*!
-Assigns `criteria` to the criteria traits object.
+assigns `criteria` to the criteria traits object.
 */
 void set_criteria(Criteria criteria);
 
@@ -177,7 +177,7 @@ void set_criteria(Criteria criteria);
 
 
 /*!
-Assigns `criteria` to the criteria traits object. If
+assigns `criteria` to the criteria traits object. If
 `recalculate_bad_faces` is `false`, the list of bad faces is
 let empty and the function `set_bad_faces()` should be called before
 `refine_mesh`.
@@ -259,7 +259,9 @@ bool step_by_step_refine_mesh();
 /*!
 \ingroup PkgMesh2Functions
 
-Refines the default domain defined by a constrained Delaunay
+\deprecated This function is deprecated since \cgal 5.5
+
+refines the default domain defined by a constrained Delaunay
 triangulation without seeds into a mesh satisfying the criteria
 defined by the traits `criteria`. The domain of the mesh
 covers all the connected components of the plane defined by the
@@ -280,7 +282,9 @@ void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria());
 
 \ingroup PkgMesh2Functions
 
-Refines the default domain defined by a constrained
+\deprecated This function is deprecated since \cgal 5.5
+
+refines the default domain defined by a constrained
 Delaunay triangulation into a mesh
 satisfying the criteria defined by the traits
 `criteria`.The sequence `[begin, end)`
@@ -309,7 +313,5 @@ void refine_Delaunay_mesh_2(CDT& t,
 InputIterator begin, InputIterator end,
 const Criteria& criteria = Criteria(),
 bool mark = false);
-
-
 
 } /* end namespace CGAL */
