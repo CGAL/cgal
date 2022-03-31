@@ -108,11 +108,7 @@ bool has_expected_Hausdorff_distance(const TriangleMesh& wrap,
 
 #ifdef CGAL_AW3_DEBUG
   std::cout << "Alpha: " << alpha << " Offset: " << offset << " Bound: " << bound << " Hausdorff_distance: " << d << std::endl;
-
-  // For versions before CGAL 5.5, we actually use the approximate Hausdorff distance,
-  // which doesn't return the minimizing pairs
-  if(!fpairs.empty())
-    std::cout << "Maximum distance on faces " << fpairs.back().first << " " << fpairs.back().second << std::endl;
+  std::cout << "Maximum distance on faces " << fpairs.back().first << " " << fpairs.back().second << std::endl;
 #endif
 
   return (d < (alpha + offset + bound));
