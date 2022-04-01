@@ -287,6 +287,35 @@ bool Scene_c3t3_item::load_binary(std::istream& is)
     return false;
 }
 
+void Scene_c3t3_item::compute_bbox() const
+{
+  if (isEmpty())
+    _bbox = Bbox();
+  else
+  {
+    bool bbox_init = false;
+    CGAL::Bbox_3 result;
+    for (Tr::Cell_handle c : c3t3().cells_in_complex())
+    {
+      if (bbox_init)
+      {
+        Tr::Vertex_handle v = (c->vertex(0) != c3t3().triangulation().infinite_vertex())
+                             ? c->vertex(0) : c->vertex(1);
+        result = result + v->point().bbox();
+      }
+      else
+      {
+        for(int i = 0; i < 4; ++i)
+          result = c->vertex(i)->point().bbox();
+        bbox_init = true;
+      }
+    }
+    _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
+                 result.xmax(), result.ymax(), result.zmax());
+  }
+}
+
+
 void Scene_c3t3_item::export_facets_in_complex()
 {
   SMesh outmesh;
