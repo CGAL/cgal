@@ -306,7 +306,7 @@ bool step_by_step_refine_mesh();
  *
  * \cgalNamedParamsEnd
  */
-template<typename CDTr, typename CGAL_NP_TEMPLATE_PARAMETERS>
+template<typename CDT, typename CGAL_NP_TEMPLATE_PARAMETERS>
 void
 refine_Delaunay_mesh_2(CDT& t, const CGAL_NP_CLASS& np);
 
