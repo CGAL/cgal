@@ -21,7 +21,7 @@ void test_insertion_xy(int x_order, int y_order)
           t.insert(p);
         }
     }
-  CGAL_assertion(t.is_valid());
+  assert(t.is_valid());
 }
 
 void test_insertion_yx(int x_order, int y_order)
@@ -38,7 +38,7 @@ void test_insertion_yx(int x_order, int y_order)
           t.insert(p);
         }
     }
-  CGAL_assertion(t.is_valid());
+  assert(t.is_valid());
 }
 
 int main()

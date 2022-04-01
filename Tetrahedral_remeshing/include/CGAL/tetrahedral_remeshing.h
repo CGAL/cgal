@@ -23,7 +23,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -159,11 +159,11 @@ namespace CGAL
 * @todo implement non-uniform sizing field instead of uniform target edge length
 */
 template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const double& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
   tetrahedral_isotropic_remeshing(
@@ -174,11 +174,11 @@ void tetrahedral_isotropic_remeshing(
 }
 
 template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const float& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
   tetrahedral_isotropic_remeshing(
@@ -289,15 +289,6 @@ void tetrahedral_isotropic_remeshing(
 #endif
 }
 
-template<typename Traits, typename TDS, typename SLDS>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
-  const double& target_edge_length)
-{
-  tetrahedral_isotropic_remeshing(tr, target_edge_length,
-                                 CGAL::parameters::all_default());
-}
-
 /*!
 * \ingroup PkgTetrahedralRemeshingRef
 * converts the triangulation contained in the input to a `Triangulation_3`.
@@ -348,11 +339,11 @@ convert_to_triangulation_3(
 ///////
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const double& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
@@ -363,11 +354,11 @@ void tetrahedral_isotropic_remeshing(
 
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const float& target_edge_length,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values)
 {
   tetrahedral_isotropic_remeshing(
     c3t3,
@@ -377,23 +368,13 @@ void tetrahedral_isotropic_remeshing(
 }
 
 template<typename Tr,
-         typename CornerIndex, typename CurveIndex>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-  const double& target_edge_length)
-{
-  return tetrahedral_isotropic_remeshing(c3t3, target_edge_length,
-                                        CGAL::parameters::all_default());
-}
-
-template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename SizingFunction,
-         typename NamedParameters>
+         typename NamedParameters = parameters::Default_named_parameters>
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const SizingFunction& sizing,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
   CGAL_assertion(c3t3.triangulation().tds().is_valid(true));
 

@@ -180,7 +180,7 @@ In the setting of \cgal, this library is
 optional: it is used by some models of the
 \ref PkgAlgebraicKernelD "Algebraic Kernel".
 
-\mpfi can be downloaded from <A HREF="https://mpfi.gforge.inria.fr/">`https://mpfi.gforge.inria.fr/`</A>.
+\mpfi can be downloaded from <A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
 \subsection thirdpartyRS3 RS and RS3
 
@@ -194,7 +194,7 @@ from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actual
 successor of \rs, which is used in conjunction with it.
 
 The libraries \rs and \rs3 need \mpfi, which can be downloaded from
-<A HREF="https://mpfi.gforge.inria.fr/">`https://mpfi.gforge.inria.fr/`</A>.
+<A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
 \subsection thirdpartyNTL NTL
 <b>Version 5.1 or later</b>

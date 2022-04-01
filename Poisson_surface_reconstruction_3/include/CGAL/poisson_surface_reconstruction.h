@@ -40,7 +40,7 @@ namespace CGAL {
 
     This function relies mainly on the size parameter `spacing`. A
     reasonable solution is to use the average spacing of the input
-    point set (using `compute_average_spacing()` for example). Higher
+    point set (using `compute_average_spacing()` for example). Smaller
     values increase the precision of the output mesh at the cost of
     higher computation time.
 

@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
   t0.reset();
   t0.start();
-  approx.extract_mesh(CGAL::parameters::all_default());
+  approx.extract_mesh(CGAL::parameters::default_values());
   t0.stop();
   std::cout << "meshing time " << t0.time() << " sec." << std::endl;
 

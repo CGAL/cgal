@@ -1549,7 +1549,7 @@ Scene_surface_mesh_item::save(std::ostream& out) const
   }
   else
   {
-    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::all_default());
+    CGAL::IO::internal::write_OFF_BGL(out,*d->smesh_, CGAL::parameters::default_values());
   }
   QApplication::restoreOverrideCursor();
   return (bool) out;
@@ -1935,8 +1935,7 @@ void Scene_surface_mesh_item::zoomToPosition(const QPoint &point, CGAL::Three::V
         //compute new position and orientation
         EPICK::Vector_3 face_normal = CGAL::Polygon_mesh_processing::
             compute_face_normal(selected_fh,
-                                *d->smesh_,
-                                CGAL::Polygon_mesh_processing::parameters::all_default());
+                                *d->smesh_);
 
 
         double x(0), y(0), z(0),

@@ -20,10 +20,12 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/FMLS.h>
 
-#include <boost/unordered_map.hpp>
+
 #include <boost/optional.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/functional/hash.hpp>
 
+#include <unordered_map>
 #include <vector>
 #include <cmath>
 #include <list>
@@ -50,7 +52,7 @@ class Tetrahedral_remeshing_smoother
 private:
   typedef  CGAL::Tetrahedral_remeshing::internal::FMLS<Gt> FMLS;
   std::vector<FMLS> subdomain_FMLS;
-  boost::unordered_map<Surface_patch_index, std::size_t> subdomain_FMLS_indices;
+  std::unordered_map<Surface_patch_index, std::size_t, boost::hash<Surface_patch_index>> subdomain_FMLS_indices;
   bool m_smooth_constrained_edges;
 
 public:
@@ -60,12 +62,12 @@ public:
             const bool smooth_constrained_edges)
   {
     //collect a map of vertices surface indices
-    boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
+    std::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
     collect_vertices_surface_indices(c3t3, vertices_surface_indices);
 
     //collect a map of normals at surface vertices
-    boost::unordered_map<Vertex_handle,
-          boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
+    std::unordered_map<Vertex_handle,
+          std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>> vertices_normals;
     compute_vertices_normals(c3t3, vertices_normals, cell_selector);
 
     // Build MLS Surfaces
@@ -152,7 +154,7 @@ private:
     const Tr& tr = c3t3.triangulation();
 
     //collect all facet normals
-    boost::unordered_map<Facet, Vector_3> fnormals;
+    std::unordered_map<Facet, Vector_3, boost::hash<Facet>> fnormals;
     for (const Facet& f : tr.finite_facets())
     {
       if (is_boundary(c3t3, f, cell_selector))
@@ -246,8 +248,8 @@ private:
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     osf.close();
     std::ofstream os("dump_normals.polylines.txt");
-    boost::unordered_map<Surface_patch_index,
-          std::vector<typename Tr::Geom_traits::Segment_3 > > ons_map;
+    std::unordered_map<Surface_patch_index,
+          std::vector<typename Tr::Geom_traits::Segment_3 >, boost::hash<Surface_patch_index> > ons_map;
 #endif
 
     //normalize the computed normals
@@ -376,7 +378,7 @@ private:
 
   void collect_vertices_surface_indices(
     const C3t3& c3t3,
-    boost::unordered_map<Vertex_handle,
+    std::unordered_map<Vertex_handle,
     std::vector<Surface_patch_index> >& vertices_surface_indices)
   {
     for (typename C3t3::Facets_in_complex_iterator
@@ -423,18 +425,18 @@ public:
     Tr& tr = c3t3.triangulation();
 
     //collect a map of vertices surface indices
-    boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
+    std::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
     if(m_smooth_constrained_edges)
       collect_vertices_surface_indices(c3t3, vertices_surface_indices);
 
     //collect a map of normals at surface vertices
-    boost::unordered_map<Vertex_handle,
-          boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
+    std::unordered_map<Vertex_handle,
+          std::unordered_map<Surface_patch_index, Vector_3, boost::hash<Surface_patch_index>>> vertices_normals;
     compute_vertices_normals(c3t3, vertices_normals, cell_selector);
 
     //smooth()
     const std::size_t nbv = tr.number_of_vertices();
-    boost::unordered_map<Vertex_handle, std::size_t> vertex_id;
+    std::unordered_map<Vertex_handle, std::size_t> vertex_id;
     std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
     std::vector<int> neighbors(nbv, -1);
     std::vector<bool> free_vertex(nbv, false);//are vertices free to move? indices are in `vertex_id`

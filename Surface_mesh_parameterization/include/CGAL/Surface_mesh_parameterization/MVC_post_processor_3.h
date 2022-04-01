@@ -34,8 +34,7 @@
 
 #include <CGAL/Default.h>
 
-#include <boost/unordered_set.hpp>
-
+#include <unordered_set>
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -117,7 +116,7 @@ private:
   typedef typename boost::graph_traits<Triangle_mesh>::face_iterator        face_iterator;
   typedef typename boost::graph_traits<Triangle_mesh>::vertex_iterator      vertex_iterator;
 
-  typedef boost::unordered_set<vertex_descriptor>       Vertex_set;
+  typedef std::unordered_set<vertex_descriptor>         Vertex_set;
   typedef std::vector<face_descriptor>                  Faces_vector;
 
   // Traits subtypes:
@@ -704,8 +703,8 @@ public:
 
     // Prepare the constrained triangulation: collect exterior faces (faces in
     // the convex hull but not -- geometrically -- in 'mesh').
-    boost::unordered_set<vertex_descriptor> vs;
-    internal::Bool_property_map<boost::unordered_set<vertex_descriptor> > vpmap(vs);
+    std::unordered_set<vertex_descriptor> vs;
+    internal::Bool_property_map<std::unordered_set<vertex_descriptor> > vpmap(vs);
     prepare_CT_for_parameterization(ct, vpmap);
 
     // Run the MVC

@@ -20,15 +20,10 @@
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_evaluation.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/property_map.h>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -36,7 +31,7 @@ namespace Polygon_mesh_processing {
 /*!
 * \ingroup PMP_meshing_grp
 *
-* \short smooths a triangulated region of a polygon mesh.
+* \brief smooths a triangulated region of a polygon mesh.
 *
 * This function attempts to make the triangle angle and area distributions as uniform as possible
 * by moving (non-constrained) vertices.
@@ -133,11 +128,13 @@ namespace Polygon_mesh_processing {
 * to use area-based smoothing.
 *
 * @pre `tmesh` does not contain any degenerate faces
+*
+* @see `smooth_shape()`
 */
-template<typename TriangleMesh, typename FaceRange, typename NamedParameters>
+template<typename TriangleMesh, typename FaceRange, typename NamedParameters = parameters::Default_named_parameters>
 void smooth_mesh(const FaceRange& faces,
                  TriangleMesh& tmesh,
-                 const NamedParameters& np)
+                 const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;
@@ -194,13 +191,17 @@ void smooth_mesh(const FaceRange& faces,
   bool use_area_smoothing = choose_parameter(get_parameter(np, internal_np::use_area_smoothing), true);
 
 #ifndef CGAL_PMP_USE_CERES_SOLVER
-  std::cerr << "Area-based smoothing requires the Ceres Library, which is not available." << std::endl;
-  std::cerr << "No such smoothing will be performed!" << std::endl;
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+  if(use_area_smoothing)
+    std::cerr << "Requested area-based smoothing requires the Ceres Library, which is not available." << std::endl;
+#endif
   use_area_smoothing = false;
 #endif
 
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
   if(!use_angle_smoothing && !use_area_smoothing)
     std::cerr << "Called PMP::smooth_mesh() without any smoothing method selected or available" << std::endl;
+#endif
 
   unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   const bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), true);
@@ -329,22 +330,10 @@ void smooth_mesh(const FaceRange& faces,
 }
 
 ///\cond SKIP_IN_MANUAL
-template <typename FaceRange, typename TriangleMesh>
-void smooth_mesh(const FaceRange& face_range, TriangleMesh& tmesh)
-{
-  smooth_mesh(face_range, tmesh, parameters::all_default());
-}
-
-template <typename TriangleMesh, typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void smooth_mesh(TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
+template <typename TriangleMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
+void smooth_mesh(TriangleMesh& tmesh, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   smooth_mesh(faces(tmesh), tmesh, np);
-}
-
-template<typename TriangleMesh>
-void smooth_mesh(TriangleMesh& tmesh)
-{
-  smooth_mesh(faces(tmesh), tmesh, parameters::all_default());
 }
 
 template<typename TriangleMesh, typename GeomTraits, typename Stream>

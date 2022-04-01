@@ -4,22 +4,21 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 
-#include <boost/foreach.hpp>
-#include <boost/unordered_map.hpp>
-
+#include <iostream>
 #include <fstream>
 #include <map>
+#include <string>
+#include <unordered_map>
+#include <utility>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                    Point;
 typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
 
-
-
 class Insert_iterator
 {
-  typedef boost::unordered_map<face_descriptor,face_descriptor> Container;
+  typedef std::unordered_map<face_descriptor,face_descriptor> Container;
   Container& container;
 public:
 
@@ -44,7 +43,7 @@ public:
 
 struct Visitor
 {
-   typedef boost::unordered_map<face_descriptor,face_descriptor> Container;
+   typedef std::unordered_map<face_descriptor,face_descriptor> Container;
 
   Container& container;
   face_descriptor qfd;
@@ -86,7 +85,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  boost::unordered_map<face_descriptor,face_descriptor> t2q;
+  std::unordered_map<face_descriptor,face_descriptor> t2q;
 
   Surface_mesh copy;
 
@@ -94,10 +93,10 @@ int main(int argc, char* argv[])
 
   Visitor v(t2q);
   CGAL::Polygon_mesh_processing::triangulate_faces(copy,
-                                                   CGAL::Polygon_mesh_processing::parameters::visitor(v));
+                                                   CGAL::parameters::visitor(v));
 
 
-  for(boost::unordered_map<face_descriptor,face_descriptor>::iterator it = t2q.begin(); it != t2q.end(); ++it){
+  for(std::unordered_map<face_descriptor,face_descriptor>::iterator it = t2q.begin(); it != t2q.end(); ++it){
     std::cout << it->first << "  "  << it->second << std::endl;
   }
 

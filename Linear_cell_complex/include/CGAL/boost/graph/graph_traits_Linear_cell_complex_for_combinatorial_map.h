@@ -29,6 +29,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/iterator.h>
+#include <CGAL/assertions.h>
 
 #define CGAL_LCC_TEMPLATE_ARGS template<unsigned int d_, unsigned int ambient_dim, \
                                         class Traits_,                \
@@ -66,7 +67,7 @@ struct EdgeHandle : Dart_handle
 
   Dart_handle second_halfedge() const
   {
-    assert(*this!=nullptr);
+    CGAL_assertion(*this!=nullptr);
     return (*this)->get_f(2);
   }
 
@@ -604,6 +605,31 @@ void set_halfedge(typename boost::graph_traits<CGAL_LCC_TYPE>::face_descriptor f
 { f->set_dart(h); }
 
 } // namespace CGAL
+
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash
+#endif
+
+#ifndef CGAL_CFG_NO_STD_HASH
+
+template <class Dart_handle>
+struct hash<CGAL::internal::EdgeHandle<Dart_handle>>
+{
+  std::size_t operator()(const CGAL::internal::EdgeHandle<Dart_handle>& edge) const
+  {
+    return hash_value(edge);
+  }
+};
+#endif // CGAL_CFG_NO_STD_HASH
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+} // std namespace
 
 #undef CGAL_LCC_TEMPLATE_ARGS
 #undef CGAL_LCC_TYPE

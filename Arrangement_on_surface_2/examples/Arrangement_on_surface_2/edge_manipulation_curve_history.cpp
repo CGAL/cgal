@@ -46,7 +46,6 @@ int main() {
   const Point q{_7_halves, 7};
   Point_location::result_type obj = pl.locate(q);
   auto* e = boost::get<Arr_with_hist::Halfedge_const_handle>(&obj);
-  CGAL_assertion(e);
 
   // Split the edge e to two edges e1 and e2;
   auto e1 = arr.split_edge(arr.non_const_handle(*e), q);

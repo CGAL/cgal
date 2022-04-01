@@ -3031,6 +3031,18 @@ namespace CartesianKernelFunctors {
 
       return construct_vector(vx, vy, vz);
     }
+
+    Vector_3
+    operator()( Origin, const Point_3& q, const Point_3& r ) const
+    {
+      // Cross product oq * or
+      FT vx = q.y()*r.z() - r.y()*q.z();
+      FT vy = q.z()*r.x() - r.z()*q.x();
+      FT vz = q.x()*r.y() - r.x()*q.y();
+      typename K::Construct_vector_3 construct_vector;
+
+      return construct_vector(vx, vy, vz);
+    }
   };
 
   template <typename K>
@@ -3988,7 +4000,7 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Segment_3& s, const Point_3& p) const
-    { return s.has_on(p); }
+    { return s.rep().has_on(p); }
 
     result_type
     operator()( const Plane_3& pl, const Point_3& p) const
@@ -4301,6 +4313,15 @@ namespace CartesianKernelFunctors {
 
     result_type
     operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
+    {
+      return orientationC3(u.x(), u.y(), u.z(),
+                           v.x(), v.y(), v.z(),
+                           w.x(), w.y(), w.z());
+    }
+
+    result_type
+    operator()( Origin, const Point_3& u,
+                const Point_3& v, const Point_3& w) const
     {
       return orientationC3(u.x(), u.y(), u.z(),
                            v.x(), v.y(), v.z(),

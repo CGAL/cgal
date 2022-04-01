@@ -136,10 +136,8 @@ public:
   }
 
   bool has_on(const Point_3 &p) const
-  { // TODO : use one predicate.
-    return R_().are_ordered_along_line_3_object()(source(),
-                                                 p,
-                                                 target());
+  {
+    return R().has_on_3_object()(*this, p);
   }
 
   Segment_3 opposite() const
@@ -149,8 +147,7 @@ public:
 
   Direction_3 direction() const
   {
-    typename R::Construct_vector_3 construct_vector;
-    return Direction_3( construct_vector( source(), target()));
+    return R().construct_direction_3_object()(*this);
   }
 
   bool is_degenerate() const

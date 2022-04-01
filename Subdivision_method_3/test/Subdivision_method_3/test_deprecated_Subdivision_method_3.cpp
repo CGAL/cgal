@@ -329,7 +329,7 @@ void test_Subdivision_surface_3_SM_NP() {
     typedef Kernel::Vector_3                                              Vector;
 
     typedef boost::graph_traits<Polyhedron>::vertex_descriptor            vertex_descriptor;
-    typedef boost::unordered_map<vertex_descriptor, Kernel::Point_3>      Point_pmap;
+    typedef std::unordered_map<vertex_descriptor, Kernel::Point_3>        Point_pmap;
     typedef boost::associative_property_map<Point_pmap>                   APM;
     typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type   VPM;
 

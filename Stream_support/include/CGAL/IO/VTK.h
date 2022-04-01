@@ -18,7 +18,7 @@
 #include <CGAL/IO/VTK/VTK_reader.h>
 #include <CGAL/IO/VTK/VTK_writer.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #ifdef CGAL_USE_VTK
@@ -31,11 +31,6 @@
 #endif
 
 #if defined(CGAL_USE_VTK) || defined(DOXYGEN_RUNNING)
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 namespace IO {
@@ -142,7 +137,7 @@ bool read_VTP(const std::string& fname,
 template <typename PointRange, typename PolygonRange>
 bool read_VTP(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
-  return read_VTP(fname, points, polygons, parameters::all_default());
+  return read_VTP(fname, points, polygons, parameters::default_values());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -379,11 +374,11 @@ void write_soup_polys_points(std::ostream& os,
  */
 template <typename PointRange,
           typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -432,16 +427,6 @@ bool write_VTP(std::ostream& os,
   os << "</VTKFile>" << std::endl;
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& polygons)
-{
-  return write_VTP(os, points, polygons, parameters::all_default());
-}
-
-/// \endcond
-
 /*!
  * \ingroup PkgStreamSupportIoFuncsVTP
  *
@@ -475,11 +460,11 @@ bool write_VTP(std::ostream& os, const PointRange& points, const PolygonRange& p
  *
  * \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_VTP(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -495,16 +480,6 @@ bool write_VTP(const std::string& fname,
     return write_VTP(os, points, polygons, np);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool write_VTP(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
-{
-  return write_VTP(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 

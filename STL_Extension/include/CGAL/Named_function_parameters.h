@@ -9,8 +9,8 @@
 //
 // Author(s)     : Sebastien Loriot
 
-#ifndef CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
-#define CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
+#ifndef CGAL_NAMED_FUNCTION_PARAMETERS_H
+#define CGAL_NAMED_FUNCTION_PARAMETERS_H
 
 #ifndef CGAL_NO_STATIC_ASSERTION_TESTS
 #include <CGAL/basic.h>
@@ -21,9 +21,14 @@
 #include <type_traits>
 #include <utility>
 
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS T, typename Tag, typename Base
-#define CGAL_BGL_NP_CLASS CGAL::Named_function_parameters<T,Tag,Base>
+#define CGAL_NP_TEMPLATE_PARAMETERS NP_T=bool, typename NP_Tag=CGAL::internal_np::all_default_t, typename NP_Base=CGAL::internal_np::No_property
+#define CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT NP_T, typename NP_Tag, typename NP_Base
+#define CGAL_NP_CLASS CGAL::Named_function_parameters<NP_T,NP_Tag,NP_Base>
 
+#define CGAL_NP_TEMPLATE_PARAMETERS_1 NP_T1=bool, typename NP_Tag1=CGAL::internal_np::all_default_t, typename NP_Base1=CGAL::internal_np::No_property
+#define CGAL_NP_CLASS_1 CGAL::Named_function_parameters<NP_T1,NP_Tag1,NP_Base1>
+#define CGAL_NP_TEMPLATE_PARAMETERS_2 NP_T2=bool, typename NP_Tag2=CGAL::internal_np::all_default_t, typename NP_Base2=CGAL::internal_np::No_property
+#define CGAL_NP_CLASS_2 CGAL::Named_function_parameters<NP_T2,NP_Tag2,NP_Base2>
 
 namespace CGAL {
 namespace internal_np{
@@ -36,7 +41,7 @@ enum all_default_t { all_default };
 // define enum types and values for new named parameters
 #define CGAL_add_named_parameter(X, Y, Z)            \
   enum X { Y };
-#include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 
 template <typename T, typename Tag, typename Base>
@@ -151,7 +156,7 @@ typename std::conditional<std::is_copy_constructible<T>::value,
 get_parameter_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
 {
   return np.v;
-};
+}
 
 template <typename T, typename Tag, typename Base, typename Query_tag>
 typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::type
@@ -199,7 +204,7 @@ typename std::conditional<std::is_copy_constructible<T>::value,
 get_parameter_reference_impl(const Named_params_impl<T, Tag, No_property>& np, Tag)
 {
   return get_reference(np.v);
-};
+}
 
 template <typename T, typename Tag, typename Base>
 T&
@@ -213,7 +218,7 @@ T&
 get_parameter_reference_impl(const Named_params_impl<std::reference_wrapper<T>, Tag, No_property>& np, Tag)
 {
   return np.v.get();
-};
+}
 
 template <typename T, typename Tag, typename Base, typename Query_tag>
 typename Get_param<Named_params_impl<T, Tag, Base>, Query_tag>::reference
@@ -238,13 +243,6 @@ struct Named_function_parameters
   Named_function_parameters(const T& v) : base(v) {}
   Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
 
-  Named_function_parameters<bool, internal_np::all_default_t, self>
-  all_default() const
-  {
-    typedef Named_function_parameters<bool, internal_np::all_default_t, self> Params;
-    return Params(*this);
-  }
-
 // create the functions for new named parameters and the one imported boost
 // used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)                          \
@@ -255,17 +253,26 @@ struct Named_function_parameters
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
     return Params(k, *this);                                     \
   }
-#include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 };
 
 namespace parameters {
 
-Named_function_parameters<bool, internal_np::all_default_t>
+typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+Default_named_parameters
 inline all_default()
 {
-  typedef Named_function_parameters<bool, internal_np::all_default_t> Params;
-  return Params();
+  return Default_named_parameters();
+}
+#endif
+
+Default_named_parameters
+inline default_values()
+{
+  return Default_named_parameters();
 }
 
 template <typename T, typename Tag, typename Base>
@@ -285,7 +292,7 @@ inline no_parameters(Named_function_parameters<T,Tag,Base>)
     typedef Named_function_parameters<K, internal_np::X> Params;\
     return Params(p);                          \
   }
-#include <CGAL/boost/graph/parameters_interface.h>
+#include <CGAL/STL_Extension/internal/parameters_interface.h>
 #undef CGAL_add_named_parameter
 
 // function to extract a parameter
@@ -349,18 +356,22 @@ const T& choose_parameter(const T& t)
   return t;
 }
 
-bool inline is_default_parameter(const internal_np::Param_not_found&)
+template <class NP, class TAG>
+constexpr bool is_default_parameter()
 {
-  return true;
-}
-
-template <class T>
-bool is_default_parameter(const T&)
-{
-  return false;
+  return std::is_same< typename internal_np::Get_param<typename NP::base, TAG>::type,
+                       internal_np::Param_not_found> ::value;
 }
 
 } // end of parameters namespace
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+namespace Polygon_mesh_processing {
+
+namespace parameters = CGAL::parameters;
+
+}
+#endif
 
 } //namespace CGAL
 
@@ -376,4 +387,4 @@ namespace boost
 }
 #endif
 
-#endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP
+#endif // CGAL_BOOST_FUNCTION_PARAMS_HPP

@@ -20,6 +20,7 @@
 #define CGAL_INTERSECTION_TRAITS_3_H
 
 #include <CGAL/Intersection_traits.h>
+#include <CGAL/Bbox_3.h>
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>

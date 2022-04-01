@@ -21,7 +21,7 @@
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/container/flat_set.hpp>
@@ -480,7 +480,9 @@ struct Polygon_soup_orienter
 
 /**
  * \ingroup PMP_orientation_grp
- * tries to consistently orient a soup of polygons in 3D space.
+ *
+ * \brief tries to consistently orient a soup of polygons in 3D space.
+ *
  * When it is not possible to produce a combinatorial manifold surface,
  * some points are duplicated.
  * Because a polygon soup does not have any connectivity (each point
@@ -521,11 +523,13 @@ struct Polygon_soup_orienter
  * @return `true`  if the orientation operation succeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
+ * @sa `orient_triangle_soup_with_reference_triangle_mesh()`
  */
-template <class PointRange, class PolygonRange, class NamedParameters>
+template <class PointRange, class PolygonRange,
+          class NamedParameters = parameters::Default_named_parameters>
 bool orient_polygon_soup(PointRange& points,
                          PolygonRange& polygons,
-                         const NamedParameters& np)
+                         const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -544,14 +548,6 @@ bool orient_polygon_soup(PointRange& points,
   orienter.duplicate_singular_vertices();
 
   return inital_nb_pts==points.size();
-}
-
-
-template <class PointRange, class PolygonRange>
-bool orient_polygon_soup(PointRange& points,
-                         PolygonRange& polygons)
-{
-  return orient_polygon_soup(points, polygons, parameters::all_default());
 }
 
 } }//end namespace CGAL::Polygon_mesh_processing

@@ -61,7 +61,7 @@ int main(int argc, char** argv)
   approx.run(10);
 
   // extract approximated mesh with default parameters
-  approx.extract_mesh(CGAL::parameters::all_default());
+  approx.extract_mesh(CGAL::parameters::default_values());
 
   // get approximated triangle soup
   std::vector<Kernel::Point_3> anchors;
