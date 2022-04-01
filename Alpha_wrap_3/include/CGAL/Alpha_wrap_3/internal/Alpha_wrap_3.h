@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2022 Copyright holders.
+// Copyright (c) 2019-2022 Google LLC (USA).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
