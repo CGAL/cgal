@@ -216,6 +216,7 @@ CGAL_add_named_parameter(all_vertices_t, all_vertices, all_vertices)
 CGAL_add_named_parameter(all_cells_t, all_cells, all_cells)
 CGAL_add_named_parameter(rebind_labels_t, rebind_labels, rebind_labels)
 CGAL_add_named_parameter(show_patches_t, show_patches, show_patches)
+CGAL_add_named_parameter(allow_non_manifold_t, allow_non_manifold, allow_non_manifold)
 
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)

@@ -68,7 +68,8 @@ template<class Tr>
 bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
     boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                          std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
-    const bool verbose)
+    const bool verbose,
+    const bool allow_non_manifold)
 {
   typedef typename Tr::Vertex_handle                                Vertex_handle;
   typedef typename Tr::Cell_handle                                  Cell_handle;
@@ -76,8 +77,10 @@ bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
   typedef std::pair<Cell_handle, int>                               Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> > Incident_cells_map;
 
+  bool success = true;
+
   // the opposite vertex of f in c is i
-  Facet_vvv f = make_ordered_vertex_array(c->vertex((i + 1) % 4),
+  Facet_vvv f = CGAL::SMDS_3::make_ordered_vertex_array(c->vertex((i + 1) % 4),
                                           c->vertex((i + 2) % 4),
                                           c->vertex((i + 3) % 4));
   CGAL_precondition(f[0] != f[1] && f[1] != f[2]);
@@ -94,11 +97,12 @@ bool add_facet_to_incident_cells_map(const typename Tr::Cell_handle c, int i,
     {
       if(verbose)
         std::cout << "Error in add_facet_to_incident_cells_map" << std::endl;
-      return false;
+      if(!allow_non_manifold)
+        success = false;
     }
     is_insert_successful.first->second.push_back(e);
   }
-  return true;
+  return success;
 }
 
 template<class Tr, typename CellRange, typename SubdomainsRange, typename FacetPatchMap>
@@ -110,11 +114,13 @@ bool build_finite_cells(Tr& tr,
                         std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
     const FacetPatchMap& border_facets,
     const bool verbose,
-    bool replace_domain_0 = false)
+    const bool replace_domain_0)
 {
   typedef typename Tr::Vertex_handle                            Vertex_handle;
   typedef typename Tr::Cell_handle                              Cell_handle;
   typedef typename Tr::Cell::Surface_patch_index                Surface_patch_index;
+
+  bool success = true;
 
   CGAL_assertion_code(
     typename Tr::Geom_traits::Construct_point_3 cp =
@@ -168,8 +174,9 @@ bool build_finite_cells(Tr& tr,
     // build the map used for adjacency later
     for(int j=0; j<4; ++j)
     {
-      if(!add_facet_to_incident_cells_map<Tr>(c, j, incident_cells_map, verbose))
-        return false;
+      if(!CGAL::SMDS_3::add_facet_to_incident_cells_map<Tr>(c, j, incident_cells_map, verbose, false))
+          //do not allow non-manifold in the finite cells case
+        success = false;
       if(border_facets.size() != 0)
       {
         std::array<int,3> facet;
@@ -208,7 +215,7 @@ bool build_finite_cells(Tr& tr,
       }
     }
   }
-  return true;
+  return success;
 }
 
 template<class Tr>
@@ -216,14 +223,15 @@ bool add_infinite_facets_to_incident_cells_map(typename Tr::Cell_handle c,
      int inf_vert_pos,
      boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                           std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
-     const bool verbose)
+     const bool verbose,
+     const bool allow_non_manifold)
 {
   int l = (inf_vert_pos + 1) % 4;
-  bool b1 = add_facet_to_incident_cells_map<Tr>(c, l, incident_cells_map, verbose);
+  bool b1 = CGAL::SMDS_3::add_facet_to_incident_cells_map<Tr>(c, l, incident_cells_map, verbose, allow_non_manifold);
   l = (inf_vert_pos + 2) % 4;
-  bool b2 = add_facet_to_incident_cells_map<Tr>(c, l, incident_cells_map, verbose);
+  bool b2 = CGAL::SMDS_3::add_facet_to_incident_cells_map<Tr>(c, l, incident_cells_map, verbose, allow_non_manifold);
   l = (inf_vert_pos + 3) % 4;
-  bool b3 = add_facet_to_incident_cells_map<Tr>(c, l, incident_cells_map, verbose);
+  bool b3 = CGAL::SMDS_3::add_facet_to_incident_cells_map<Tr>(c, l, incident_cells_map, verbose, allow_non_manifold);
   return b1 && b2 && b3;
 }
 
@@ -231,13 +239,16 @@ template<class Tr>
 bool build_infinite_cells(Tr& tr,
   boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                        std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
-  const bool verbose)
+  const bool verbose,
+  const bool allow_non_manifold)
 {
   typedef typename Tr::Vertex_handle                               Vertex_handle;
   typedef typename Tr::Cell_handle                                 Cell_handle;
   typedef std::array<Vertex_handle, 3>                             Facet_vvv;
   typedef std::pair<Cell_handle, int>                              Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> > Incident_cells_map;
+
+  bool success = true;
 
   std::vector<Cell_handle> infinite_cells;
 
@@ -289,7 +300,7 @@ bool build_infinite_cells(Tr& tr,
   {
     for (int i = 1; i < 4; ++i)
     {
-      std::array<Vertex_handle, 3> vs = make_ordered_vertex_array(c->vertex((i + 1) % 4),
+      std::array<Vertex_handle, 3> vs = CGAL::SMDS_3::make_ordered_vertex_array(c->vertex((i + 1) % 4),
         c->vertex((i + 2) % 4),
         c->vertex((i + 3) % 4));
       if (facets.find(vs) == facets.end())
@@ -299,42 +310,78 @@ bool build_infinite_cells(Tr& tr,
     }
   }
   for (auto fp : facets)
-    CGAL_assertion(fp.second == 2);
+  {
+    if (fp.second != 2)
+    {
+      std::cout << "Warning : non manifold edge" << std::endl;
+      std::cout << "fp.second = " << fp.second << std::endl;
+      std::cout << fp.first[0]->point() << " "
+        << fp.first[1]->point() << " "
+        << fp.first[2]->point() << std::endl;
+      success = false;
+    }
+//    CGAL_assertion(fp.second == 2);
+  }
 #endif
 
   // add the facets to the incident cells map
   for (const Cell_handle& c : infinite_cells)
-    if(!add_infinite_facets_to_incident_cells_map<Tr>(c, 0, incident_cells_map, verbose))
-      return false;
+    if(!CGAL::SMDS_3::add_infinite_facets_to_incident_cells_map<Tr>(c,
+                                                                    0,
+                                                                    incident_cells_map,
+                                                                    verbose,
+                                                                    allow_non_manifold))
+      success = false;
 
-  return true;
+  return success;
+}
+
+template<typename Tr>
+bool has_infinite_vertex(const std::array<typename Tr::Vertex_handle, 3>& v,
+                         const Tr& tr)
+{
+  for (auto vh : v)
+  {
+    if (tr.infinite_vertex() == vh)
+      return true;
+  }
+  return false;
 }
 
 template<class Tr>
 bool assign_neighbors(Tr& tr,
   const boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
-                             std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map)
+                             std::vector<std::pair<typename Tr::Cell_handle, int> > >& incident_cells_map,
+  const bool allow_non_manifold)
 {
   typedef typename Tr::Cell_handle                                   Cell_handle;
   typedef std::pair<Cell_handle, int>                                Incident_cell;
   typedef boost::unordered_map<std::array<typename Tr::Vertex_handle, 3>,
                                std::vector<Incident_cell> >          Incident_cells_map;
 
+  bool success = true;
+
   typename Incident_cells_map::const_iterator icit = incident_cells_map.begin();
   for(; icit!=incident_cells_map.end(); ++icit)
   {
     const std::vector<Incident_cell>& adjacent_cells = icit->second;
-    if(adjacent_cells.size() != 2)
-      return false;
+    if (adjacent_cells.size() == 2)
+    {
+      Cell_handle c0 = adjacent_cells[0].first;
+      int i0 = adjacent_cells[0].second;
+      Cell_handle c1 = adjacent_cells[1].first;
+      int i1 = adjacent_cells[1].second;
 
-    Cell_handle c0 = adjacent_cells[0].first;
-    int i0 = adjacent_cells[0].second;
-    Cell_handle c1 = adjacent_cells[1].first;
-    int i1 = adjacent_cells[1].second;
-
-    tr.tds().set_adjacency(c0, i0, c1, i1);
+      tr.tds().set_adjacency(c0, i0, c1, i1);
+    }
+    else if(allow_non_manifold)// if (adjacent_cells.size() == 4)
+    {
+      const auto& v = icit->first;
+      CGAL_assertion(has_infinite_vertex(v, tr));
+      success = false;
+    }
   }
-  return true;
+  return success;
 }
 
 template<class Tr,
@@ -347,8 +394,9 @@ bool build_triangulation_impl(Tr& tr,
     const std::vector<typename Tr::Cell::Subdomain_index>& subdomains,
     const FacetPatchMap& border_facets,
     std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-    const bool verbose = false,
-    bool replace_domain_0 = false)
+    const bool verbose,// = false,
+    const bool replace_domain_0,// = false,
+    const bool allow_non_manifold) // = false
 {
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
@@ -357,6 +405,8 @@ bool build_triangulation_impl(Tr& tr,
   // associate to a face the two (at most) incident tets and the id of the face in the cell
   typedef std::pair<Cell_handle, int>                   Incident_cell;
   typedef boost::unordered_map<Facet_vvv, std::vector<Incident_cell> >  Incident_cells_map;
+
+  bool success = true;
 
   Incident_cells_map incident_cells_map;
   vertex_handle_vector.resize(points.size() + 1); // id to vertex_handle
@@ -379,14 +429,23 @@ bool build_triangulation_impl(Tr& tr,
   }
   if (!finite_cells.empty())
   {
-    if(!build_finite_cells<Tr>(tr, finite_cells, subdomains, vertex_handle_vector, incident_cells_map,
-                           border_facets, verbose, replace_domain_0))
-      return false;
-    if(!build_infinite_cells<Tr>(tr, incident_cells_map, verbose))
-      return false;
+    if (!CGAL::SMDS_3::build_finite_cells<Tr>(tr, finite_cells, subdomains, vertex_handle_vector, incident_cells_map,
+                                border_facets, verbose, replace_domain_0))
+    {
+      if(verbose) std::cout << "build_finite_cells went wrong" << std::endl;
+      success = false;
+    }
+    if (!CGAL::SMDS_3::build_infinite_cells<Tr>(tr, incident_cells_map, verbose, allow_non_manifold))
+    {
+      if(verbose) std::cout << "build_infinite_cells went wrong" << std::endl;
+      success = false;
+    }
     tr.tds().set_dimension(3);
-    if (!assign_neighbors<Tr>(tr, incident_cells_map))
-      return false;
+    if (!CGAL::SMDS_3::assign_neighbors<Tr>(tr, incident_cells_map, allow_non_manifold))
+    {
+      if(verbose) std::cout << "assign_neighbors went wrong" << std::endl;
+      success = false;
+    }
     if (verbose)
     {
       std::cout << "built triangulation : " << std::endl;
@@ -396,7 +455,7 @@ bool build_triangulation_impl(Tr& tr,
   if(verbose)
     std::cout << tr.number_of_vertices() << " vertices" << std::endl;
 
-  return true;// tr.tds().is_valid();
+  return success;// tr.tds().is_valid();
               //TDS not valid when cells do not cover the convex hull of vertices
 }
 
@@ -410,13 +469,15 @@ bool build_triangulation_one_subdomain(Tr& tr,
     const typename Tr::Cell::Subdomain_index& subdomain,
     const FacetPatchMap& border_facets,
     std::vector<typename Tr::Vertex_handle>& vertex_handle_vector,
-    const bool verbose = false,
-    bool replace_domain_0 = false)
+    const bool verbose,// = false,
+    const bool replace_domain_0,// = false
+    const bool allow_non_manifold)// = false
 {
   std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
   return build_triangulation_impl(tr, points, finite_cells, subdomains,
                                   border_facets, vertex_handle_vector,
-                                  verbose, replace_domain_0);
+                                  verbose, replace_domain_0,
+                                  allow_non_manifold);
 }
 
 template<class Tr,
@@ -428,14 +489,16 @@ bool build_triangulation_one_subdomain(Tr& tr,
     const CellRange& finite_cells,
     const typename Tr::Cell::Subdomain_index& subdomain,
     const FacetPatchMap& border_facets,
-    const bool verbose = false,
-    bool replace_domain_0 = false)
+    const bool verbose,// = false,
+    const bool replace_domain_0,// = false
+    const bool allow_non_manifold)//= false
 {
   std::vector<typename Tr::Cell::Subdomain_index> subdomains(finite_cells.size(), subdomain);
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
   return build_triangulation_impl(tr, points, finite_cells, subdomains,
                                   border_facets, vertex_handle_vector,
-                                  verbose, replace_domain_0);
+                                  verbose, replace_domain_0,
+                                  allow_non_manifold);
 }
 
 template<class Tr,
@@ -448,22 +511,25 @@ bool build_triangulation_with_subdomains_range(Tr& tr,
     const CellRange& finite_cells,
     const SubdomainsRange& subdomains,
     const FacetPatchMap& border_facets,
-    const bool verbose = false,
-    bool replace_domain_0 = false)
+    const bool verbose,// = false
+    const bool replace_domain_0,// = false,
+    const bool allow_non_manifold)
 {
   std::vector<typename Tr::Vertex_handle> vertex_handle_vector;
   std::vector<typename Tr::Cell::Subdomain_index> subdomains_vector(
       subdomains.begin(), subdomains.end());
   return build_triangulation_impl(tr, points, finite_cells, subdomains_vector, border_facets,
                                   vertex_handle_vector,
-                                  verbose, replace_domain_0);
+                                  verbose, replace_domain_0,
+                                  allow_non_manifold);
 }
 
 template<class Tr>
 bool build_triangulation_from_file(std::istream& is,
                                    Tr& tr,
                                    const bool verbose,
-                                   bool replace_domain_0)
+                                   const bool replace_domain_0,
+                                   const bool allow_non_manifold)
 {
   using Point_3 = typename Tr::Point;
   using Subdomain_index = typename Tr::Cell::Subdomain_index;
@@ -575,7 +641,8 @@ bool build_triangulation_from_file(std::istream& is,
   return build_triangulation_with_subdomains_range(tr,
                       points, finite_cells, subdomains, border_facets,
                       verbose,
-                      replace_domain_0 && !dont_replace_domain_0);
+                      replace_domain_0 && !dont_replace_domain_0,
+                      allow_non_manifold);
 }
 
 }  // namespace SMDS_3

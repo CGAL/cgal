@@ -129,7 +129,8 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       item->setName(fileinfo.baseName());
       item->set_valid(false);
 
-      if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(), true))
+      if(CGAL::SMDS_3::build_triangulation_from_file(in, item->c3t3().triangulation(),
+         /*verbose = */true, /*replace_subdomain_0 = */false, /*allow_non_manifold = */true))
       {
         item->c3t3().rescan_after_load_of_triangulation(); //fix counters for facets and cells
         for( C3t3::Cell_handle cit : item->c3t3().triangulation().finite_cell_handles())

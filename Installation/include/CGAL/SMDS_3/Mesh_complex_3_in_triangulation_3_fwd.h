@@ -41,7 +41,8 @@ namespace SMDS_3 {
   bool build_triangulation_from_file(std::istream& is,
                                      Tr& tr,
                                      bool verbose = false,
-                                     bool replace_domain_0 = false);
+                                     bool replace_domain_0 = false,
+                                     bool allow_non_manifold = false);
 
 } // namespace SMDS_3
 } // namespace CGAL

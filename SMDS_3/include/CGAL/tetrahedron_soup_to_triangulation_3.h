@@ -92,7 +92,8 @@ namespace CGAL {
     }
 
     typename Tr::Cell::Subdomain_index default_si(1);
-    CGAL::SMDS_3::build_triangulation_one_subdomain(tr, points, finite_cells, default_si, border_facets);
+    CGAL::SMDS_3::build_triangulation_one_subdomain(tr, points, finite_cells, default_si, border_facets,
+      /*verbose = */false, /*replace_domain_0 = */false, /*allow_non_manifold =*/false);
 
     CGAL_assertion(CGAL::SMDS_3::internal::is_convex(tr));
 
@@ -144,6 +145,15 @@ namespace CGAL {
   *                    set to have `1` as `Subdomain_index`}
   *     \cgalParamExtra{to avoid copies of large data sets, this parameter can be passed using `std::cref`}
   *   \cgalParamNEnd
+  *\cond SKIP_IN_MANUAL
+  *   \cgalParamNBegin{allow_non_manifold}
+  *     \cgalParamDescription{allows the construction of a triangulation with non-manifold edges
+  *       and non manifold vertices. The triangulation is invalid if this situation is met,
+  *       so it should be used only in advanced cases, and the triangulation will be hardly usable.}
+  *     \cgalParamType{bool}
+  *     \cgalParamDefault{false}
+  *   \cgalParamNEnd
+  *\encond
   * \cgalNamedParamsEnd
   *
   * @returns the 3D triangulation built from parameters
@@ -188,8 +198,12 @@ namespace CGAL {
     const Subdomains_ref_type& subdomains = choose_parameter(
           get_parameter_reference(np, internal_np::subdomain_indices),
           1);
+    const bool non_manifold = choose_parameter(
+          get_parameter(np, internal_np::allow_non_manifold),
+          false);
 
-    CGAL::SMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets);
+    CGAL::SMDS_3::build_triangulation_with_subdomains_range(tr, points, tets, subdomains, facets,
+      /*verbose = */false, /*replace_domain_0 = */false, non_manifold);
 
     CGAL_assertion(CGAL::SMDS_3::internal::is_convex(tr));
 

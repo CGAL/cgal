@@ -111,7 +111,9 @@ public:
     std::map<Facet, typename C3t3::Surface_patch_index> border_facets;
     if (CGAL::SMDS_3::build_triangulation_impl(
             triangulation, points, finite_cells, subdomains, border_facets,
-            new_vertices /*, verbose*/))
+            new_vertices, /*verbose*/ false,
+            /*replace_domain_0*/ false,
+            /*allow_non_manifold*/false))
     {
       CGAL_assertion(triangulation.tds().is_valid());
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
