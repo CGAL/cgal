@@ -427,7 +427,8 @@ public:
 
       CGAL::SMDS_3::build_triangulation_with_subdomains_range(
         c3t3_item->c3t3().triangulation(),
-        points, finite_cells, subdomains, border_facets);
+        points, finite_cells, subdomains, border_facets,
+        false, false, true);
 
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();
