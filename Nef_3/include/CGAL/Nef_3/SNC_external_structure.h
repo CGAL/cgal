@@ -897,8 +897,7 @@ public:
       if ( f->volume() != Volume_handle() )
         continue;
       CGAL_NEF_TRACEN( "Outer shell #" << ShellSf[f] << " volume?");
-      Volume_handle c = determine_volume( MinimalSFace[ShellSf[f]],
-                                          MinimalSFace, ShellSf );
+      Volume_handle c = determine_volume( f, MinimalSFace, ShellSf );
       c->mark() = f->mark();
       link_as_outer_shell( f, c );
     }
