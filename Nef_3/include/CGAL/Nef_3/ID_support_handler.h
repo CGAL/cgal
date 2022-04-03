@@ -56,10 +56,14 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     }
   };
   std::unordered_map<Halffacet_pair, int, Handle_pair_hash_function> f2m;
-  std::map<int, int> hash;
+  std::unordered_map<int, int> hash;
 
  public:
   ID_support_handler() {}
+
+  void reserve(std::size_t n) {
+    hash.reserve(n);
+  }
 
   int get_hash(int i) {
     int root(i);
@@ -78,12 +82,13 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     hash[get_hash(i)] = parent;
   }
 
+  void initialize_hash(int i) {
+    hash[i] = i;
+  }
+
   template<typename Handle>
   void initialize_hash(Handle h) {
-    hash[h->get_index()] = h->get_index();
-  }
-  void initialize_hash(int i) {
-        hash[i] = i;
+    initialize_hash(h->get_index());
   }
 
   void hash_facet_pair(SVertex_handle sv,

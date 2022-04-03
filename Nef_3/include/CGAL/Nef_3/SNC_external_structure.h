@@ -1308,8 +1308,10 @@ public:
      //     O0.print();
     link_shalfedges_to_facet_cycles();
 
-    std::map<int, int> hash;
-    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false, this->sncp()->number_of_shalfedges());
+    std::size_t num_shalfedges = this->sncp()->number_of_shalfedges();
+    std::unordered_map<int, int> hash;
+    hash.reserve(num_shalfedges);
+    CGAL::Unique_hash_map<SHalfedge_handle, bool> done(false, num_shalfedges);
 
     SHalfedge_iterator sei;
     CGAL_forall_shalfedges(sei, *this->sncp()) {
