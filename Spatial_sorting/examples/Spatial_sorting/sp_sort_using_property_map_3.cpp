@@ -31,8 +31,8 @@ int main()
                       indices.end(),
                       Search_traits_3(CGAL::make_property_map(points)) );
 
-  for (auto it=indices.begin();it!=indices.end();++it)
-    std::cout << points[*it] << "\n";
+  for (std::size_t i : indices)
+    std::cout << points[i] << "\n";
 
   std::cout << "Order using middle policy\n";
   CGAL::spatial_sort( indices.begin(),
@@ -40,8 +40,8 @@ int main()
                       Search_traits_3(CGAL::make_property_map(points)),
                       CGAL::Hilbert_sort_middle_policy());
 
-  for (auto it=indices.begin();it!=indices.end();++it)
-    std::cout << points[*it] << "\n";
+  for (std::size_t i : indices)
+    std::cout << points[i] << "\n";
 
   std::cout << "done" << std::endl;
 
