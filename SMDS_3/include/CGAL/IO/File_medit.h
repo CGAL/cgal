@@ -1041,7 +1041,7 @@ void write_MEDIT(std::ostream& os,
  *        Otherwise, only the cells `c` for which
  *        `c->subdomain_index() != Subdomain_index()` are written.}
  *   \cgalParamType{Boolean}
- *   \cgalParamDefault{`false`}
+ *   \cgalParamDefault{`true`}
  *   \cgalParamExtra{If the complex does not form a topological sphere,
  *        this parameter must be set to `true` for the file to be readable by `read_MEDIT()`.
  *        Otherwise the underlying triangulation data structure will not be valid.}
@@ -1053,9 +1053,11 @@ void write_MEDIT(std::ostream& os,
  *                         `c->subdomain_index() != Subdomain_index()` are written}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`true`}
- *   \cgalParamExtra{If `all_cells` is `true`, the value of thsis parameter is ignored
-                     and all vertices are written in `os`. It must be
- *                   set to `true` for the file to be readable by `read_MEDIT()`.}
+ *   \cgalParamExtra{If `all_cells` is `true`, the value of this parameter is ignored
+          and all vertices are written in `os`. If the complex does not
+          form a topological sphere, it must be
+ *        set to `true` for the file to be readable by `read_MEDIT()`.
+ *        Otherwise the underlying triangulation data structure will not be valid.}
  * \cgalParamNEnd
  *
  * \cgalParamNBegin{rebind_labels}
