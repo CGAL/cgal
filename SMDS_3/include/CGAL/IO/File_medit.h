@@ -869,9 +869,7 @@ output_to_medit(std::ostream& os,
 
   if (all_cells)
   {
-    for (auto cit = c3t3.triangulation().finite_cells_begin();
-         cit != c3t3.triangulation().finite_cells_end();
-       ++cit)
+    for (auto cit : c3t3.triangulation().finite_cell_handles())
     {
       for (int i = 0; i < 4; i++)
         os << V[cit->vertex(i)] << ' ';
@@ -965,7 +963,7 @@ output_to_medit(std::ostream& os,
  *        Otherwise, only the cells `c` for which
  *        `c->subdomain_index() != Subdomain_index()` are written.}
  *   \cgalParamType{Boolean}
- *   \cgalParamDefault{`false`}
+ *   \cgalParamDefault{`true`}
  *   \cgalParamExtra{This parameter must be set to `true` for the file to be readable by `read_MEDIT()`.}
  * \cgalParamNEnd
  *
@@ -1010,7 +1008,7 @@ void write_MEDIT(std::ostream& os,
 
   bool rebind = choose_parameter(get_parameter(np, internal_np::rebind_labels), false);;
   bool show_patches = choose_parameter(get_parameter(np, internal_np::show_patches), true);
-  bool all_c = choose_parameter(get_parameter(np, internal_np::all_cells), false);
+  bool all_c = choose_parameter(get_parameter(np, internal_np::all_cells), true);
   bool all_v = all_c || choose_parameter(get_parameter(np, internal_np::all_vertices), true);
 
   output_to_medit(os, c3t3, rebind, show_patches, all_v, all_c);
@@ -1045,7 +1043,9 @@ void write_MEDIT(std::ostream& os,
  *        `c->subdomain_index() != Subdomain_index()` are written.}
  *   \cgalParamType{Boolean}
  *   \cgalParamDefault{`false`}
- *   \cgalParamExtra{This parameter must be set to `true` for the file to be readable by `read_MEDIT()`.}
+ *   \cgalParamExtra{If the complex does not form a topological sphere,
+ *        this parameter must be set to `true` for the file to be readable by `read_MEDIT()`.
+ *        Otherwise the underlying triangulation data structure will not be valid.}
  * \cgalParamNEnd
  *
  * \cgalParamNBegin{all_vertices}
