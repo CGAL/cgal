@@ -2572,7 +2572,7 @@ public:
 
       if (equal_3(normal1, normal2) || equal_3(opposite_normal1, normal2)) {
         // The underlying planes are the same
-        auto ccib = kernel.counterclockwise_in_between_2_object();
+        Counterclockwise_in_between_2 ccib = kernel.counterclockwise_in_between_2_object();
         auto cib = m_traits.clockwise_in_between_2_object();
 
         if (xc1.is_vertical()) {
