@@ -15,10 +15,8 @@ int main (int argc, char** argv)
   using K = CGAL::Exact_predicates_inexact_constructions_kernel;
   using Tr = CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K>;
 
-  // Open file
-  std::string filename = (argc > 1)
-                       ? std::string(argv[1])
-                       : CGAL::data_file_path("meshes/elephant.mesh");
+  // Open file elephant
+  std::string filename = CGAL::data_file_path("meshes/elephant.mesh");
   std::ifstream in(filename, std::ios_base::in);
   if(!in) {
     std::cerr << "Error! Cannot open file " << argv[1] << std::endl;
@@ -30,7 +28,7 @@ int main (int argc, char** argv)
 
   std::ofstream os("elephant_out.mesh");
   CGAL::IO::write_MEDIT(os, tr,
-    CGAL::parameters::all_vertices(false));
+    CGAL::parameters::all_vertices(false).all_cells(true));
   os.close();
 
   CGAL::Bbox_3 bb(tr.finite_vertices_begin()->point().bbox());
