@@ -154,26 +154,25 @@ public:
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
-      K k;
-      double xmin=to_double(k.compute_x_3_object()(*begin)),
-             ymin=to_double(k.compute_y_3_object()(*begin)),
-             zmin=to_double(k.compute_z_3_object()(*begin)),
+      double xmin=to_double(_k.compute_x_3_object()(*begin)),
+             ymin=to_double(_k.compute_y_3_object()(*begin)),
+             zmin=to_double(_k.compute_z_3_object()(*begin)),
                xmax=xmin,
              ymax=ymin,
              zmax=zmin;
       for(RandomAccessIterator it=begin+1; it<end; ++it){
-        if ( to_double(k.compute_x_3_object()(*it)) < xmin)
-          xmin = to_double(k.compute_x_3_object()(*it));
-        if ( to_double(k.compute_y_3_object()(*it)) < ymin)
-          ymin = to_double(k.compute_y_3_object()(*it));
-        if ( to_double(k.compute_z_3_object()(*it)) < zmin)
-          zmin = to_double(k.compute_z_3_object()(*it));
-        if ( to_double(k.compute_x_3_object()(*it)) > xmax)
-          xmax = to_double(k.compute_x_3_object()(*it));
-        if ( to_double(k.compute_y_3_object()(*it)) > ymax)
-          ymax = to_double(k.compute_y_3_object()(*it));
-        if ( to_double(k.compute_z_3_object()(*it)) > zmax)
-          zmax = to_double(k.compute_z_3_object()(*it));
+        if ( to_double(_k.compute_x_3_object()(*it)) < xmin)
+          xmin = to_double(_k.compute_x_3_object()(*it));
+        if ( to_double(_k.compute_y_3_object()(*it)) < ymin)
+          ymin = to_double(_k.compute_y_3_object()(*it));
+        if ( to_double(_k.compute_z_3_object()(*it)) < zmin)
+          zmin = to_double(_k.compute_z_3_object()(*it));
+        if ( to_double(_k.compute_x_3_object()(*it)) > xmax)
+          xmax = to_double(_k.compute_x_3_object()(*it));
+        if ( to_double(_k.compute_y_3_object()(*it)) > ymax)
+          ymax = to_double(_k.compute_y_3_object()(*it));
+        if ( to_double(_k.compute_z_3_object()(*it)) > zmax)
+          zmax = to_double(_k.compute_z_3_object()(*it));
       }
 
       sort <0, false, false, false> (begin, end, xmin,ymin,zmin,xmax,ymax,zmax);
