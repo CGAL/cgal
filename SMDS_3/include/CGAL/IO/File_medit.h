@@ -125,7 +125,7 @@ private:
     if ( elt_it != subdomain_map_.end() )
       return elt_it->second;
     else
-      return -1;
+      return 0;
   }
 
 private:
