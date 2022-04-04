@@ -1717,6 +1717,10 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
         candidate_triangles.emplace(sub_triangles[i], sub_triangle_bounds, triangle_and_bounds.tm1_face);
     }
 
+    // In case all subdividing triangles of the last queue entry are useless
+    if(candidate_triangles.empty())
+      break;
+
     // Update global upper Hausdorff bound after subdivision.
     const Candidate& top_candidate = candidate_triangles.top();
     const FT current_upmost = top_candidate.bounds.upper;
