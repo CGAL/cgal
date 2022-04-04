@@ -33,7 +33,8 @@ using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Triangulation>;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/sphere.mesh";
+  std::string filename = (argc > 1) ? std::string(argv[1])
+                       : CGAL::data_file_path("meshes/elephant.mesh");
 
   Triangulation tr;
 
@@ -43,7 +44,13 @@ int main(int argc, char* argv[])
   // [call a remeshing algorithm]
 
   std::ofstream os("after_remeshing.mesh");
-  CGAL::IO::write_MEDIT(os, tr);
+  CGAL::IO::write_MEDIT(os, tr, CGAL::parameters::all_vertices(true));
+  os.close();
+
+  Triangulation tr2;
+  std::ifstream is2("after_remeshing.mesh");
+  CGAL::IO::read_MEDIT(is2, tr2);
+  is2.close();
 
   return EXIT_SUCCESS;
 }
