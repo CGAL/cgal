@@ -70,8 +70,7 @@ public:
   Rebind_cell_pmap(const C3T3& c3t3)
     : r_c3t3_(c3t3)
   {
-    int first_index = 0;
-    int index_counter = first_index + 1;
+    int index_counter = 1;
 
     for( Cell_handle cell_it : r_c3t3_.cells_in_complex())
     {
@@ -85,7 +84,7 @@ public:
     }
 
     // Rebind indices in alphanumeric order
-    index_counter = first_index + 1;
+    index_counter = 1;
     for ( typename Subdomain_map::iterator mit = subdomain_map_.begin() ;
           mit != subdomain_map_.end() ;
           ++mit )
