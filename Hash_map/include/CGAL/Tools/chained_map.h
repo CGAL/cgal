@@ -83,7 +83,7 @@ private:
    }
 
 public:
-   static constexpr std::size_t min_size = 32;
+   static constexpr std::size_t min_size = 8;
    static constexpr std::size_t default_size = 512;
    typedef chained_map_elem<T>*  chained_map_item;
    typedef chained_map_item item;
@@ -233,7 +233,8 @@ void chained_map<T, Allocator>::del_old_table()
 
   old_table = 0;
 
-  T p = access(old_index);
+  chained_map_item old_item = lookup(old_index);
+  T p = old_item ? old_item->i : xdef();
 
   for (chained_map_item item = table ; item != table_end ; ++item)
     destroy(item);
