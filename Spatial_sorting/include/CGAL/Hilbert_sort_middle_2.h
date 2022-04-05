@@ -31,7 +31,7 @@ struct Fixed_hilbert_cmp_2<K,x,true>
   typedef typename K::Point_2 Point;
   K k;
   double value;
-  Fixed_hilbert_cmp_2 (double v, const K &_k = K()) : k(_k),value(v) {}
+  Fixed_hilbert_cmp_2 (double v, const K &_k) : k(_k),value(v) {}
   bool operator() (const Point &p) const
   {
     return ! Fixed_hilbert_cmp_2<K,x,false> (value, k) (p);
@@ -46,7 +46,7 @@ struct Fixed_hilbert_cmp_2<K,0,false>
   typedef typename K::Point_2 Point;
   K k;
   double value;
-  Fixed_hilbert_cmp_2 (double v, const K &_k = K()) : k(_k),value(v) {}
+  Fixed_hilbert_cmp_2 (double v, const K &_k) : k(_k),value(v) {}
   bool operator() (const Point &p) const
   {
     return to_double(k.compute_x_2_object()(p)) < value;
@@ -61,7 +61,7 @@ struct Fixed_hilbert_cmp_2<K,1,false>
   typedef typename K::Point_2 Point;
   K k;
   double value;
-  Fixed_hilbert_cmp_2 (double v, const K &_k = K()) : k(_k),value(v) {}
+  Fixed_hilbert_cmp_2 (double v, const K &_k) : k(_k),value(v) {}
   bool operator() (const Point &p) const
   {
     return to_double(k.compute_y_2_object()(p)) < value;
@@ -89,7 +89,7 @@ private:
   };
 
 public:
-  Hilbert_sort_middle_2 (const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
+  Hilbert_sort_middle_2 (const Kernel &k, std::ptrdiff_t limit = 1)
     : _k(k), _limit (limit)
   {}
 
