@@ -153,7 +153,7 @@ namespace CGAL {
   *     \cgalParamType{bool}
   *     \cgalParamDefault{false}
   *   \cgalParamNEnd
-  *\encond
+  *\endcond
   * \cgalNamedParamsEnd
   *
   * @returns the 3D triangulation built from parameters
