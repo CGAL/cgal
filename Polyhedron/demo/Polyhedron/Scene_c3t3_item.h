@@ -59,7 +59,7 @@ using namespace CGAL::Three;
     }
     bool load_binary(std::istream& is) override;
 
-    void compute_bbox() const Q_DECL_OVERRIDE;
+    void compute_bbox() const override;
 
     bool is_valid() const;//true if the c3t3 is correct, false if it was made from a .mesh, for example
     void set_valid(bool);
