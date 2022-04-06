@@ -96,10 +96,10 @@ public:
    */
   typedef unspecified_type Parameter_space_in_y_2;
 
-  /*! models the concept `ArrTraits::CompareXOnBoundary_2`.  Required only if
-   * the traits class supports unbounded curves that approach the bottom or the
-   * top sides (the `Bottom_side_category` or the `Top_side_category` categories
-   * are convertible to `CGAL::Arr_open_side_tag`).
+  /*! models the concept `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`.  Required
+   * only if the traits class supports unbounded curves that approach the bottom
+   * or the top sides (the `Bottom_side_category` or the `Top_side_category`
+   * categories are convertible to `CGAL::Arr_open_side_tag`).
    */
   typedef unspecified_type Compare_x_on_boundary_2;
 

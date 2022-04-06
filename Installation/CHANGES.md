@@ -48,6 +48,10 @@ Release date: June 2022
 ### [2D Regularized Boolean Set-Operations](https://doc.cgal.org/5.5/Manual/packages.html#PkgBooleanSetOperations2)
 -   The concept `GeneralPolygonSetTraits_2` now requires the nested type `Construct_polygon_with_holes_2` instead of `Construct_general_polygon_with_holes_2`.
 
+### [2D Arrangements](https://doc.cgal.org/5.5/Manual/packages.html#PkgArrangementOnSurface2)
+-   Fixed the intersect_2, compare_y_at_x_right, and compare_y_at_x_left function objects of the traits class template that handles geodesic arcs on sphere and applied a small syntactical fix to the tracing traits.
+
+
 [Release 5.4](https://github.com/CGAL/cgal/releases/tag/v5.4)
 -----------
 
