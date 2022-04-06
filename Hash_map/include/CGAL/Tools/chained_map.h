@@ -87,7 +87,6 @@ public:
    chained_map& operator=(const chained_map<T, Allocator>& D);
 
    void reserve(std::size_t n);
-   void clear_entries();
    void clear();
    ~chained_map()
    {
@@ -252,12 +251,7 @@ chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D)
 template <typename T, typename Allocator>
 chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_map<T, Allocator>& D)
 {
-  clear_entries();
-
-  for (chained_map_item item = table ; item != table_end ; ++item)
-    destroy(item);
-
-  alloc.deallocate(table, table_end - table);
+  clear();
 
   init_table(D.table_size);
 
@@ -278,23 +272,10 @@ void chained_map<T, Allocator>::reserve(std::size_t n)
 }
 
 template <typename T, typename Allocator>
-void chained_map<T, Allocator>::clear_entries()
-{
-  if(!table)
-    return;
-
-  for(chained_map_item p = table; p < free; p++)
-    if (p->k != nullptrKEY || p >= table + table_size)
-      p->i = T();
-}
-
-template <typename T, typename Allocator>
 void chained_map<T, Allocator>::clear()
 {
   if(!table)
     return;
-
-  clear_entries();
 
   for (chained_map_item item = table ; item != table_end ; ++item)
     destroy(item);
