@@ -1638,7 +1638,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
  */
 template <class PolygonMesh, class FaceBitMap, class NamedParameters = parameters::Default_named_parameters>
 bool connected_components_compatible_orientations(PolygonMesh& pm,
-                                                  const FaceBitMap& fbm,
+                                                  FaceBitMap fbm,
                                                   const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<PolygonMesh> GrT;
