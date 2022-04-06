@@ -230,14 +230,17 @@ public:
     return this->shoot(ray, null_handle, mask);
   }
 
+  enum SOLUTION { is_vertex_, is_edge_, is_facet_ };
+
   virtual Object_handle shoot(const Ray_3& ray, Vertex_handle ray_source_vertex, int mask=255) const {
     CGAL_NEF_TIMER(rs_t.start());
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "shooting: "<<ray);
-    Object_handle result;
-    Vertex_handle v;
-    Halfedge_handle e;
-    Halffacet_handle f;
+
+    SOLUTION solution;
+    Vertex_handle v_res;
+    Halfedge_handle e_res;
+    Halffacet_handle f_res;
     bool hit = false;
     Point_3 eor = CGAL::ORIGIN; // 'end of ray', the latest ray's hit point
 
@@ -258,7 +261,8 @@ public:
             if( hit && !Segment_3( ray.source(), eor).has_on(v->point()))
               continue;
             eor = v->point();
-            result = make_object(v);
+            v_res = v;
+            solution = is_vertex_;
             hit = true;
             _CGAL_NEF_TRACEN("the vertex becomes the new hit object");
           }
@@ -283,7 +287,8 @@ public:
               if( !candidate_provider->is_point_in_node( q, n))
                 continue;
               eor = q;
-              result = make_object(e);
+              e_res = e;
+              solution = is_edge_;
               hit = true;
               _CGAL_NEF_TRACEN("the edge becomes the new hit object");
             }
@@ -307,7 +312,8 @@ public:
             if( !candidate_provider->is_point_in_node( q, n))
               continue;
             eor = q;
-            result = make_object(f);
+            f_res = f;
+            solution = is_facet_;
             hit = true;
             _CGAL_NEF_TRACEN("the facet becomes the new hit object");
           }
@@ -318,7 +324,12 @@ public:
     }
 
     CGAL_NEF_TIMER(rs_t.stop());
-    return result;
+    switch (solution) {
+      case is_vertex_: return make_object(v_res);
+      case is_edge_: return make_object(e_res);
+      case is_facet_: return make_object(f_res);
+    }
+    return Object_handle();
   }
 
   virtual Object_handle locate( const Point_3& p) const {
@@ -360,7 +371,7 @@ public:
 
       CGAL_assertion( initialized);
       _CGAL_NEF_TRACEN( "locate "<<p);
-      Object_handle result;
+      SOLUTION solution;
 
       Node_handle n = candidate_provider->locate_node_containing(p);
       typename Vertex_list::const_iterator vi = n->vertices_begin();
@@ -388,7 +399,11 @@ public:
       }
 
       v = closest;
-      result = make_object(v);
+      Vertex_handle v_res;
+      Halfedge_handle e_res;
+      Halffacet_handle f_res;
+      v_res = v;
+      solution = is_vertex_;
 
       Segment_3 s(p,v->point());
       Point_3 ip;
@@ -404,7 +419,8 @@ public:
         }
         if((e->source() != v)  && (e->twin()->source() != v) && SNC_intersection::does_intersect_internally(s, ss, ip)) {
           s = Segment_3(p, normalized(ip));
-          result = make_object(e);
+          e_res = e;
+          solution = is_edge_;
         }
       }
 
@@ -434,15 +450,16 @@ public:
 
         if( (! v_vertex_of_f) && SNC_intersection::does_intersect_internally(s,f,ip) ) {
           s = Segment_3(p, normalized(ip));
-          result = make_object(f);
+          f_res = f;
+          solution = is_facet_;
         }
       }
 
-      if( CGAL::assign( v, result)) {
-        _CGAL_NEF_TRACEN("vertex hit, obtaining volume..." << v->point());
+      if( solution == is_vertex_) {
+        _CGAL_NEF_TRACEN("vertex hit, obtaining volume..." << v_res->point());
 
         //CGAL_warning("altered code in SNC_point_locator");
-        SM_point_locator L(&*v);
+        SM_point_locator L(&*v_res);
         Object_handle so = L.locate(s.source()-s.target(), true);
         SFace_handle sf;
         if(CGAL::assign(sf,so))
@@ -450,16 +467,16 @@ public:
         CGAL_error_msg( "wrong handle type");
         return Object_handle();
 
-      } else if( CGAL::assign( f, result)) {
+      } else if( solution == is_facet_) {
         _CGAL_NEF_TRACEN("facet hit, obtaining volume...");
-        if(f->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
-          f = f->twin();
-        return make_object(f->incident_volume());
-      } else if( CGAL::assign(e, result)) {
-        SM_decorator SD(&*e->source());
-        if( SD.is_isolated(e))
-          return make_object(e->incident_sface()->volume());
-        return make_object(get_visible_facet(e,Ray_3(s.source(),s.to_vector()))->incident_volume());
+        if(f_res->plane().oriented_side(p) == ON_NEGATIVE_SIDE)
+          f_res = f_res->twin();
+        return make_object(f_res->incident_volume());
+      } else if( solution == is_edge_) {
+        SM_decorator SD(&*e_res->source());
+        if( SD.is_isolated(e_res))
+          return make_object(e_res->incident_sface()->volume());
+        return make_object(get_visible_facet(e_res,Ray_3(s.source(),s.to_vector()))->incident_volume());
       }
       CGAL_error_msg( "wrong handle type");
       return Object_handle();
