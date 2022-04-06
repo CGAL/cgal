@@ -37,8 +37,7 @@ class chained_map_elem
 template <typename T, typename Allocator>
 class chained_map
 {
-   static constexpr std::size_t nullptrKEY = 0;
-   static constexpr std::size_t NONnullptrKEY = 1;
+   static constexpr std::size_t nullptrKEY = (std::numeric_limits<std::size_t>::max)();
 
    chained_map_elem<T>* table;
    chained_map_elem<T>* table_end;
@@ -146,7 +145,6 @@ void chained_map<T, Allocator>::init_table(std::size_t n)
   { p->succ = nullptr;
     p->k = nullptrKEY;
   }
-  table->k = NONnullptrKEY;
 }
 
 
@@ -178,7 +176,7 @@ void chained_map<T, Allocator>::rehash()
 
   chained_map_item p;
 
-  for(p = old_table + 1; p < old_table_mid; p++) // the first element is never used (nullptrKEY vs NONnullptrKEY)
+  for(p = old_table; p < old_table_mid; p++)
   { std::size_t x = p->k;
     if ( x != nullptrKEY ) // list p is non-empty
     { chained_map_item q = HASH(x);
@@ -243,7 +241,7 @@ chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D)
 {
   init_table(D.table_size);
 
-  for(chained_map_item p = D.table + 1; p < D.free; p++)
+  for(chained_map_item p = D.table; p < D.free; p++)
   { if (p->k != nullptrKEY || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //D.copy_inf(p->i);  // see chapter Implementation
@@ -263,7 +261,7 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
 
   init_table(D.table_size);
 
-  for(chained_map_item p = D.table + 1; p < D.free; p++)
+  for(chained_map_item p = D.table; p < D.free; p++)
   { if (p->k != nullptrKEY || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //copy_inf(p->i);    // see chapter Implementation
@@ -285,7 +283,7 @@ void chained_map<T, Allocator>::clear_entries()
   if(!table)
     return;
 
-  for(chained_map_item p = table + 1; p < free; p++)
+  for(chained_map_item p = table; p < free; p++)
     if (p->k != nullptrKEY || p >= table + table_size)
       p->i = T();
 }
@@ -322,7 +320,7 @@ template <typename T, typename Allocator>
 void chained_map<T, Allocator>::statistics() const
 { std::cout << "table_size: " << table_size <<"\n";
   std::size_t n = 0;
-  for (chained_map_item p = table + 1; p < table + table_size; p++)
+  for (chained_map_item p = table; p < table + table_size; p++)
      if (p ->k != nullptrKEY) n++;
   std::size_t used_in_overflow = free - (table + table_size );
   n += used_in_overflow;
