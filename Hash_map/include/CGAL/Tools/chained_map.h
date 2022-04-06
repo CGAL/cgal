@@ -44,13 +44,13 @@ class chained_map
    chained_map_elem<T>* free;
    std::size_t table_size;
    std::size_t table_size_1;
-   T def;
 
    typedef std::allocator_traits<Allocator> Allocator_traits;
    typedef typename Allocator_traits::template rebind_alloc<chained_map_elem<T> > allocator_type;
 
    allocator_type alloc;
    std::size_t reserved_size;
+   T def;
 
 public:
    T& xdef() { return def; }
