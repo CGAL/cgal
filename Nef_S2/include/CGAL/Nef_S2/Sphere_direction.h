@@ -57,8 +57,8 @@ the great circle through $p$ and $q$ (oriented such that the segment
 $pq$ is the shorter one of the two possible ones. \precond $p$ and $q$
 are not opposite on $S_2$.}*/
 { CGAL_assertion(p!=q.opposite());
-  Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
-  if ( CGAL::orientation(p1,p,q,p4) != CGAL::POSITIVE )
+  Point_3 p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
+  if ( CGAL::orientation(CGAL::ORIGIN,p,q,p4) != CGAL::POSITIVE )
     *this = Sphere_direction(opposite());
 }
 
@@ -95,18 +95,17 @@ bool strictly_ordered_ccw_at(const Sphere_point<R>& p,
   const Sphere_direction<R>& d2,
   const Sphere_direction<R>& d3)
 { CGAL_assertion(d1.has_on(p) && d2.has_on(p) && d3.has_on(p));
-  typename R::Point_3 p0(0,0,0);
   typename R::Point_3 p1(CGAL::ORIGIN + d1.orthogonal_vector());
   typename R::Point_3 p2(CGAL::ORIGIN + d2.orthogonal_vector());
   typename R::Point_3 p3(CGAL::ORIGIN + d3.orthogonal_vector());
 
   if ( d1 == d3 ) return false;
-  if ( CGAL::orientation(p0,p,p1,p3) == CGAL::POSITIVE ) {
-    return CGAL::orientation(p0,p,p1,p2) == CGAL::POSITIVE &&
-           CGAL::orientation(p0,p,p3,p2) == CGAL::NEGATIVE;
+  if ( CGAL::orientation(CGAL::ORIGIN,p,p1,p3) == CGAL::POSITIVE ) {
+    return CGAL::orientation(CGAL::ORIGIN,p,p1,p2) == CGAL::POSITIVE &&
+           CGAL::orientation(CGAL::ORIGIN,p,p3,p2) == CGAL::NEGATIVE;
   } else {
-    return CGAL::orientation(p0,p,p1,p2) == CGAL::POSITIVE ||
-           CGAL::orientation(p0,p,p3,p2) == CGAL::NEGATIVE;
+    return CGAL::orientation(CGAL::ORIGIN,p,p1,p2) == CGAL::POSITIVE ||
+           CGAL::orientation(CGAL::ORIGIN,p,p3,p2) == CGAL::NEGATIVE;
   }
 }
 
