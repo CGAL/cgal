@@ -127,6 +127,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()`
 - `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup()`
 - `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
+- `CGAL::Polygon_mesh_processing::connected_components_compatible_orientations()`
 
 \cgalCRPSection{Hole Filling Functions}
 - `CGAL::Polygon_mesh_processing::triangulate_hole()`
