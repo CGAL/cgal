@@ -53,6 +53,16 @@ private:
     Hash_function  m_hash_function;
     Map            m_map;
 
+    template <class It, class Iterator_category>
+    void reserve_impl(It, It, Iterator_category)
+    {}
+
+    template <class It>
+    void reserve_impl(It b, It e, std::forward_iterator_tag)
+    {
+      m_map.reserve(std::distance(b,e));
+    }
+
 public:
 
     Unique_hash_map() = default;
@@ -107,6 +117,7 @@ public:
     }
 
     Data insert( Key first1, Key beyond1, Data first2) {
+        reserve_impl(first1, beyond1, typename std::iterator_traits<Key>::iterator_category());
         for ( ; first1 != beyond1; (++first1, ++first2)) {
             operator[]( first1) = first2;
         }
