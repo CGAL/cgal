@@ -47,7 +47,7 @@ public:
 
 private:
     typedef internal::chained_map<Data, Allocator>   Map;
-    typedef typename Map::item                       Item;
+    typedef typename Map::Item                       Item;
 
 private:
     Hash_function  m_hash_function;
