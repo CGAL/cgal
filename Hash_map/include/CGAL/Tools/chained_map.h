@@ -17,7 +17,6 @@
 #define CGAL_CHAINED_MAP_H
 
 #include <CGAL/memory.h>
-#include <CGAL/tss.h>
 #include <iostream>
 
 namespace CGAL {
@@ -54,11 +53,6 @@ class chained_map
    allocator_type alloc;
    std::size_t reserved_size;
 
-   chained_map_elem<T>& stop() const
-   {
-     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(chained_map_elem<T>,STOP);
-     return STOP;
-   }
 public:
    T& xdef() { return def; }
    const T& cxdef() const { return def; }
@@ -149,7 +143,7 @@ void chained_map<T, Allocator>::init_table(std::size_t n)
   table_end = table + t + t/2;
 
   for (chained_map_item p = table; p < free; p++)
-  { p->succ = &stop();
+  { p->succ = nullptr;
     p->k = nullptrKEY;
   }
   table->k = NONnullptrKEY;
@@ -208,10 +202,9 @@ void chained_map<T, Allocator>::rehash()
 template <typename T, typename Allocator>
 T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
 {
-  stop().k = x;
   chained_map_item q = p->succ;
-  while (q->k != x) q = q->succ;
-  if (q != &stop())
+  while (q && q->k != x) q = q->succ;
+  if (q)
   {
     return q->i;
   }
@@ -320,10 +313,9 @@ chained_map<T, Allocator>::lookup(std::size_t x) const
     return nullptr;
 
   chained_map_item p = HASH(x);
-  const_cast<std::size_t&>(stop().k) = x;  // cast away const
-  while (p->k != x)
+  while (p && p->k != x)
   { p = p->succ; }
-  return (p == &stop()) ? nullptr : p;
+  return p;
 }
 
 template <typename T, typename Allocator>
