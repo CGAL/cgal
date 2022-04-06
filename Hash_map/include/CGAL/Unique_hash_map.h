@@ -23,7 +23,7 @@
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
-#include <CGAL/Tools/chained_map.h>
+#include <CGAL/Hash_map/internal/chained_map.h>
 #include <cstddef>
 
 namespace CGAL {

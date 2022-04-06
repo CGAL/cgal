@@ -13,8 +13,8 @@
 //
 //
 // Author(s)     : Courtesy of LEDA
-#ifndef CGAL_CHAINED_MAP_H
-#define CGAL_CHAINED_MAP_H
+#ifndef CGAL_HASH_MAP_INTERNAL_CHAINED_MAP_H
+#define CGAL_HASH_MAP_INTERNAL_CHAINED_MAP_H
 
 #include <CGAL/memory.h>
 #include <iostream>
@@ -314,4 +314,4 @@ void chained_map<T, Allocator>::statistics() const
 } // namespace internal
 } //namespace CGAL
 
-#endif // CGAL_CHAINED_MAP_H
+#endif // CGAL_HASH_MAP_INTERNAL_CHAINED_MAP_H
