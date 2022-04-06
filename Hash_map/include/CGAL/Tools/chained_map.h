@@ -37,7 +37,7 @@ class chained_map_elem
 template <typename T, typename Allocator>
 class chained_map
 {
-   static constexpr std::size_t nullptrKEY = (std::numeric_limits<std::size_t>::max)();
+   static constexpr std::size_t nullkey = (std::numeric_limits<std::size_t>::max)();
 
    chained_map_elem<T>* table;
    chained_map_elem<T>* table_end;
@@ -114,7 +114,7 @@ inline T& chained_map<T, Allocator>::access(std::size_t x)
      return p->i;
   }
   else {
-    if ( p->k == nullptrKEY ) {
+    if ( p->k == nullkey ) {
       p->k = x;
       init_inf(p->i);  // initializes p->i to xdef
       return p->i;
@@ -141,7 +141,7 @@ void chained_map<T, Allocator>::init_table(std::size_t n)
 
   for (Item p = table; p < free; p++)
   { p->succ = nullptr;
-    p->k = nullptrKEY;
+    p->k = nullkey;
   }
 }
 
@@ -149,7 +149,7 @@ void chained_map<T, Allocator>::init_table(std::size_t n)
 template <typename T, typename Allocator>
 inline void chained_map<T, Allocator>::insert(std::size_t x, T y)
 { Item q = HASH(x);
-  if ( q->k == nullptrKEY ) {
+  if ( q->k == nullkey ) {
     q->k = x;
     q->i = y;
   } else {
@@ -176,7 +176,7 @@ void chained_map<T, Allocator>::rehash()
 
   for(p = old_table; p < old_table_mid; p++)
   { std::size_t x = p->k;
-    if ( x != nullptrKEY ) // list p is non-empty
+    if ( x != nullkey ) // list p is non-empty
     { Item q = HASH(x);
       q->k = x;
       q->i = p->i;
@@ -212,7 +212,7 @@ T& chained_map<T, Allocator>::access(Item p, std::size_t x)
     p = HASH(x);
   }
 
-  if (p->k == nullptrKEY)
+  if (p->k == nullkey)
   { p->k = x;
     init_inf(p->i);  // initializes p->i to xdef
     return p->i;
@@ -240,7 +240,7 @@ chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D)
   init_table(D.table_size);
 
   for(Item p = D.table; p < D.free; p++)
-  { if (p->k != nullptrKEY || p >= D.table + D.table_size)
+  { if (p->k != nullkey || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //D.copy_inf(p->i);  // see chapter Implementation
     }
@@ -255,7 +255,7 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
   init_table(D.table_size);
 
   for(Item p = D.table; p < D.free; p++)
-  { if (p->k != nullptrKEY || p >= D.table + D.table_size)
+  { if (p->k != nullkey || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //copy_inf(p->i);    // see chapter Implementation
     }
@@ -301,7 +301,7 @@ void chained_map<T, Allocator>::statistics() const
 { std::cout << "table_size: " << table_size <<"\n";
   std::size_t n = 0;
   for (Item p = table; p < table + table_size; p++)
-     if (p ->k != nullptrKEY) n++;
+     if (p ->k != nullkey) n++;
   std::size_t used_in_overflow = free - (table + table_size );
   n += used_in_overflow;
   std::cout << "number of entries: " << n << "\n";
