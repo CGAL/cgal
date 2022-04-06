@@ -22,13 +22,11 @@
 #include <CGAL/Nef_3/quotient_coordinates_to_homogeneous_point.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
-#include <boost/container/deque.hpp>
 
-
-#include <deque>
 #include <sstream>
 #include <string>
 #include <map>
+#include <vector>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 503
@@ -212,7 +210,7 @@ private:
   Object_list object_list;
 };
 
-  typedef boost::container::deque<Node> Node_range;
+  typedef std::vector<Node> Node_range;
   typedef Node* Node_handle;
 
 
@@ -439,6 +437,7 @@ public:
     CGAL_NEF_TRACEN("reference counted " << reference_counted);
 #endif
     non_efective_splits=0;
+    nodes.reserve(2 * (vertices.size() + edges.size() + facets.size()));
     root = build_kdtree(vertices, edges, facets, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
