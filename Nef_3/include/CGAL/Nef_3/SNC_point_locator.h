@@ -98,9 +98,10 @@ public:
   class Intersection_call_back
   {
   public:
-    virtual void operator()( Halfedge_handle edge, Object_handle object,
+    virtual void operator()( Halfedge_handle edge0, Halfedge_handle edge1,
                              const Point_3& intersection_point) const = 0;
-
+    virtual void operator()( Halfedge_handle edge0, Halffacet_handle facet1,
+                             const Point_3& intersection_point) const = 0;
     virtual ~Intersection_call_back() {}
   };
 
@@ -511,7 +512,7 @@ private:
           if(SNC_intersection::does_intersect_internally( s, Segment_3((*e)->source()->point(),
                                                                        (*e)->twin()->source()->point()), q)) {
             q = normalized(q);
-            call_back( e0, make_object(Halfedge_handle(*e)), q);
+            call_back( e0, *e, q);
             _CGAL_NEF_TRACEN("edge intersects edge "<<' '<<&*e<< Segment_3((*e)->source()->point(),
                                                                            (*e)->twin()->source()->point())<<" on "<<q);
           }
@@ -534,7 +535,7 @@ private:
           Point_3 q;
           if(SNC_intersection::does_intersect_internally( s, *f, q) ) {
             q = normalized(q);
-            call_back( e0, make_object(Halffacet_handle(*f)), q);
+            call_back( e0, *f, q);
             _CGAL_NEF_TRACEN("edge intersects facet on plane "<<f->plane()<<" on "<<q);
           }
           visited[*f] = true;

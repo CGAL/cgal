@@ -394,7 +394,7 @@ public:
     non_efective_splits=0;
     root = build_kdtree(vertices, edges, facets, 0);
   }
-  Node_handle locate_node_containing( const Point_3 p) const {
+  Node_handle locate_node_containing( const Point_3& p) const {
     return locate_node_containing( p, root);
   }
   Node_list nodes_along_ray( const Ray_3& r) const {
