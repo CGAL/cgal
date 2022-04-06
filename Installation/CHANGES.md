@@ -39,6 +39,9 @@ Release date: June 2022
 
 ### [Polygon Mesh Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygonMeshProcessing)
 -   Added the function `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_soup()`, which enables re-orienting the faces of a triangle soup based on the orientation of the nearest face in a reference triangle soup.
+-   Added the function `CGAL::Polygon_mesh_processing::tangential_relaxation()`, which
+applies an area-based tangential mesh smoothing to the vertices of a surface triangle mesh.
+
 
 ### [2D Polygons](https://doc.cgal.org/5.5/Manual/packages.html#PkgPolygon2)
 
