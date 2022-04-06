@@ -37,8 +37,8 @@ class chained_map_elem
 template <typename T, typename Allocator>
 class chained_map
 {
-   const std::size_t nullptrKEY;
-   const std::size_t NONnullptrKEY;
+   static constexpr std::size_t nullptrKEY = 0;
+   static constexpr std::size_t NONnullptrKEY = 1;
 
    chained_map_elem<T> STOP;
 
@@ -234,14 +234,13 @@ T& chained_map<T, Allocator>::access(chained_map_item p, std::size_t x)
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>::chained_map(std::size_t n)
-  : nullptrKEY(0), NONnullptrKEY(1), table(nullptr), reserved_size(n)
+  : table(nullptr), reserved_size(n)
 {
 }
 
 
 template <typename T, typename Allocator>
-chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D) :
-  nullptrKEY(0), NONnullptrKEY(1)
+chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D)
 {
   init_table(D.table_size);
   STOP.i = D.STOP.i; // xdef
@@ -322,7 +321,6 @@ chained_map<T, Allocator>::lookup(std::size_t x) const
   { p = p->succ; }
   return (p == &STOP) ? nullptr : p;
 }
-
 
 template <typename T, typename Allocator>
 void chained_map<T, Allocator>::statistics() const
