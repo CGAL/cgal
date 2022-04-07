@@ -139,7 +139,7 @@ void chained_map<T, Allocator>::init_table(std::size_t n)
   free = table + t;
   table_end = table + t + t/2;
 
-  for (Item p = table; p < free; p++)
+  for (Item p = table; p < free; ++p)
   { p->succ = nullptr;
     p->k = nullkey;
   }
@@ -173,7 +173,7 @@ void chained_map<T, Allocator>::rehash()
 
   Item p;
 
-  for(p = old_table; p < old_table_mid; p++)
+  for(p = old_table; p < old_table_mid; ++p)
   { std::size_t x = p->k;
     if ( x != nullkey ) // list p is non-empty
     { Item q = HASH(x);
@@ -185,7 +185,7 @@ void chained_map<T, Allocator>::rehash()
   while (p < old_table_end)
   { std::size_t x = p->k;
     insert(x,p->i);
-    p++;
+    ++p;
   }
 
   for (Item item = old_table ; item != old_table_end ; ++item)
@@ -238,7 +238,7 @@ chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D)
 {
   init_table(D.table_size);
 
-  for(Item p = D.table; p < D.free; p++)
+  for(Item p = D.table; p < D.free; ++p)
   { if (p->k != nullkey || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //D.copy_inf(p->i);  // see chapter Implementation
@@ -253,7 +253,7 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
 
   init_table(D.table_size);
 
-  for(Item p = D.table; p < D.free; p++)
+  for(Item p = D.table; p < D.free; ++p)
   { if (p->k != nullkey || p >= D.table + D.table_size)
     { insert(p->k,p->i);
       //copy_inf(p->i);    // see chapter Implementation
@@ -299,8 +299,8 @@ template <typename T, typename Allocator>
 void chained_map<T, Allocator>::statistics() const
 { std::cout << "table_size: " << table_size <<"\n";
   std::size_t n = 0;
-  for (Item p = table; p < table + table_size; p++)
-     if (p ->k != nullkey) n++;
+  for (Item p = table; p < table + table_size; ++p)
+     if (p ->k != nullkey) ++n;
   std::size_t used_in_overflow = free - (table + table_size );
   n += used_in_overflow;
   std::cout << "number of entries: " << n << "\n";
