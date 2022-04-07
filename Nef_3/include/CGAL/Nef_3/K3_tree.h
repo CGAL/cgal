@@ -402,12 +402,12 @@ public:
     return nodes_around_segment(s);
   }
   Node_list nodes_around_segment( const Segment_3& s) const {
-    Node_list nodes;
+    Node_list result;
     Objects_around_segment objects( *this, s);
     for(typename Objects_around_segment::Iterator oas = objects.begin(); oas != objects.end(); ++oas) {
-      nodes.push_back(oas.get_node());
+      result.push_back(oas.get_node());
     }
-    return nodes;
+    return result;
   }
   bool is_point_in_node( const Point_3& p, const Node_handle target) const {
     return is_point_in_node( p, target, root);
