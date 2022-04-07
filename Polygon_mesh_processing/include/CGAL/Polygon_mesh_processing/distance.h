@@ -1740,11 +1740,6 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       std::cout << "Top of the queue is lower than the lowest!" << std::endl;
 #endif
 
-      // This can happen if the actual Hausdorff distance is smaller than sq_initial_bound,
-      // which can happen either if the error bound is really large, or if the initial bound
-      // is non-zero (symmetric Hausdorff distance). In this case, we return 'sq_initial_bound'
-      CGAL_assertion(global_bounds.lower == sq_initial_bound);
-
       global_bounds.upper = global_bounds.lower; // not really needed since lower is returned but doesn't hurt
       global_bounds.upair.first = global_bounds.lpair.first;
       global_bounds.upair.second = global_bounds.lpair.second;
