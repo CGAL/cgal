@@ -1619,31 +1619,23 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     const Point_3& v1 = triangle_for_subdivision.vertex(1);
     const Point_3& v2 = triangle_for_subdivision.vertex(2);
 
-    // Stopping condition: all edge lengths of the triangle are smaller than the given error bound.
-    if(CGAL::squared_distance(v0, v1) < sq_error_bound &&
-       CGAL::squared_distance(v0, v2) < sq_error_bound &&
-       CGAL::squared_distance(v1, v2) < sq_error_bound)
-    {
-#ifdef CGAL_HAUSDORFF_DEBUG_PP
-      std::cout << "Third stopping condition, small triangle" << std::endl;
-      std::cout << CGAL::squared_distance(v0, v1) << " vs " << sq_error_bound << std::endl;
-      std::cout << CGAL::squared_distance(v0, v2) << " vs " << sq_error_bound << std::endl;
-      std::cout << CGAL::squared_distance(v1, v2) << " vs " << sq_error_bound << std::endl;
-#endif
+    // Stopping condition: All three vertices of the triangle are projected onto the same triangle in TM2.
+    const auto closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
+    const auto closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
+    const auto closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
+    CGAL_assertion(closest_triangle_v0.second != boost::graph_traits<TriangleMesh2>::null_face());
+    CGAL_assertion(closest_triangle_v1.second != boost::graph_traits<TriangleMesh2>::null_face());
+    CGAL_assertion(closest_triangle_v2.second != boost::graph_traits<TriangleMesh2>::null_face());
 
-      // By definition, lower_bound(t1, TM2) is smaller than h(t1, TM2).
-      // Let `v` is the vertex of t1 and `p_l` the point on TM2 realizing the lower bound, i.e.,
-      //   d(v, p_l) = max_{v in t1} min_{t2 in TM2) d(v, t2).
-      // Let `p` be the pair of points resp. on t1 and TM2 realizing the Hausdorff distance, i.e.,
-      //   h(t1, TM2) = d(p.first, p.second),
-      // Since we are here:
-      //   d(p.first, v) < error_bound (1)
-      // From the lower bound
-      //   d(v, p_l) <= d(p.first, p.second)
-      // Because d(p.first, p.second) is the min distance from p.first to TM2,
-      //   d(p.first, p.second) <= d(p.first, p_l)
-      // And by triangular inequality
-      //   d(p.first, p.second) <= d(v, p_l) + d(p.first, v) <= d(v, p_l) + error_bound = lower_bound + epsilon
+    if((closest_triangle_v0.second == closest_triangle_v1.second) &&
+       (closest_triangle_v1.second == closest_triangle_v2.second))
+    {
+      // The upper bound of this triangle is the actual Hausdorff distance of
+      // the triangle to the second mesh. Use it as new global lower bound.
+      // Here, we update the reference to the realizing triangle as this is the best current guess.
+      global_bounds.lower = triangle_bounds.upper;
+      global_bounds.lpair.second = triangle_bounds.tm2_uface;
+
       continue;
     }
 
