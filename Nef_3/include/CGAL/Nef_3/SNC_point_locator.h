@@ -230,14 +230,14 @@ public:
     return this->shoot(ray, null_handle, mask);
   }
 
-  enum SOLUTION { is_vertex_, is_edge_, is_facet_ };
+  enum SOLUTION { is_vertex_, is_edge_, is_facet_ , is_none_};
 
   virtual Object_handle shoot(const Ray_3& ray, Vertex_handle ray_source_vertex, int mask=255) const {
     CGAL_NEF_TIMER(rs_t.start());
     CGAL_assertion( initialized);
     _CGAL_NEF_TRACEN( "shooting: "<<ray);
 
-    SOLUTION solution;
+    SOLUTION solution = is_none_;
     Vertex_handle v_res;
     Halfedge_handle e_res;
     Halffacet_handle f_res;
