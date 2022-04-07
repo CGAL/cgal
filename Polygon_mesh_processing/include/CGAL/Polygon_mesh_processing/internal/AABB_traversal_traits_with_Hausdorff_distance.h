@@ -405,7 +405,6 @@ private:
   const TM1_face_to_triangle_map m_face_to_triangle_map;
 
   // Internal bounds and values.
-  const FT m_sq_error_bound;
   const FT m_sq_initial_bound;
   const FT m_sq_distance_bound;
   const FT m_infinity_value;
@@ -421,7 +420,6 @@ public:
                                  const TriangleMesh2& tm2,
                                  const VPM1 vpm1,
                                  const VPM2 vpm2,
-                                 const FT sq_error_bound,
                                  const FT infinity_value,
                                  const FT sq_initial_bound,
                                  const FT sq_distance_bound)
@@ -429,20 +427,17 @@ public:
       m_vpm1(vpm1), m_vpm2(vpm2),
       m_tm2_tree(tree),
       m_face_to_triangle_map(&m_tm1, m_vpm1),
-      m_sq_error_bound(sq_error_bound),
       m_sq_initial_bound(sq_initial_bound),
       m_sq_distance_bound(sq_distance_bound),
       m_infinity_value(infinity_value),
       m_global_bounds(m_infinity_value),
       m_early_exit(false)
   {
-    CGAL_precondition(m_sq_error_bound >= FT(0));
     CGAL_precondition(m_infinity_value >= FT(0));
-    CGAL_precondition(m_sq_initial_bound >= m_sq_error_bound);
 
     // Bounds grow with every face of TM1 (Equation (6)).
     // If we initialize to zero here, then we are very slow even for big input error bounds!
-    // Instead, we can use m_sq_error_bound as our initial guess to filter out all pairs
+    // Instead, we can use the error bound as our initial guess to filter out all pairs
     // which are already within this bound. It makes the code faster for close meshes.
     m_global_bounds.lower = m_sq_initial_bound;
     m_global_bounds.upper = m_sq_initial_bound;
