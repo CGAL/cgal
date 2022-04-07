@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -139,14 +131,17 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
   Site_2 s2 = f->vertex(1)->site();
   Site_2 s3 = f->vertex(2)->site();
 
-  Orientation o =
-    geom_traits().orientation_2_object()(s1, s2, s3);
+  Sign s12i3 = geom_traits().vertex_conflict_2_object()(s1, s2, s3);
+  Sign s21i3 = geom_traits().vertex_conflict_2_object()(s2, s1, s3);
 
-  if ( o != COLLINEAR ) {
-    if ( o == RIGHT_TURN ) {
+  CGAL_assertion(s12i3 != ZERO);
+  CGAL_assertion(s21i3 != ZERO);
+
+  if ( s12i3 != s21i3 ) {
+    if ( s21i3 == NEGATIVE ) {
       f->reorient();
       for (int i = 0; i < 3; i++) {
-	f->neighbor(i)->reorient();
+        f->neighbor(i)->reorient();
       }
     }
   } else {
@@ -157,59 +152,59 @@ insert_third(const Site_2& t, const Storage_site_2& ss)
     if ( xcmp12 == SMALLER ) {        // x1 < x2
       Comparison_result xcmp23 = compare_x(s2, s3);
       if ( xcmp23 == SMALLER ) {            // x2 < x3
-	flip(f, f->index(v1));
+        flip(f, f->index(v1));
       } else {
-	Comparison_result xcmp31 = compare_x(s3, s1);
-	if ( xcmp31 == SMALLER ) {          // x3 < x1
-	  flip(f, f->index(v0));
-	} else {                            // x1 < x3 < x2
-	  flip(f, f->index(v)); 
-	}
+        Comparison_result xcmp31 = compare_x(s3, s1);
+        if ( xcmp31 == SMALLER ) {          // x3 < x1
+          flip(f, f->index(v0));
+        } else {                            // x1 < x3 < x2
+          flip(f, f->index(v));
+        }
       }
     } else if ( xcmp12 == LARGER ) {  // x1 > x2
       Comparison_result xcmp32 = compare_x(s3, s2);
       if ( xcmp32 == SMALLER ) {            // x3 < x2
-	flip(f, f->index(v1));
+        flip(f, f->index(v1));
       } else {
-	Comparison_result xcmp13 = compare_x(s1, s3);
-	if ( xcmp13 == SMALLER ) {          // x1 < x3
-	  flip(f, f->index(v0));
-	} else {                            // x2 < x3 < x1
-	  flip(f, f->index(v));
-	}
+        Comparison_result xcmp13 = compare_x(s1, s3);
+        if ( xcmp13 == SMALLER ) {          // x1 < x3
+          flip(f, f->index(v0));
+        } else {                            // x2 < x3 < x1
+          flip(f, f->index(v));
+        }
       }
     } else {                          // x1 == x2
       typename Geom_traits::Compare_y_2 compare_y =
-	geom_traits().compare_y_2_object();
+        geom_traits().compare_y_2_object();
 
       Comparison_result ycmp12 = compare_y(s1, s2);
       if ( ycmp12 == SMALLER ) {      // y1 < y2
-	Comparison_result ycmp23 = compare_y(s2, s3);
-	if ( ycmp23 == SMALLER ) {          // y2 < y3
-	  flip(f, f->index(v1));
-	} else {
-	  Comparison_result ycmp31 = compare_y(s3, s1);
-	  if ( ycmp31 == SMALLER ) {        // y3 < y1
-	    flip(f, f->index(v0));
-	  } else {                          // y1 < y3 < y2
-	    flip(f, f->index(v));
-	  }
-	}
+        Comparison_result ycmp23 = compare_y(s2, s3);
+        if ( ycmp23 == SMALLER ) {          // y2 < y3
+          flip(f, f->index(v1));
+        } else {
+          Comparison_result ycmp31 = compare_y(s3, s1);
+          if ( ycmp31 == SMALLER ) {        // y3 < y1
+            flip(f, f->index(v0));
+          } else {                          // y1 < y3 < y2
+            flip(f, f->index(v));
+          }
+        }
       } else if ( ycmp12 == LARGER ) { // y1 > y2
-	Comparison_result ycmp32 = compare_y(s3, s2);
-	if ( ycmp32 == SMALLER ) {           // y3 < y2
-	  flip(f, f->index(v1));
-	} else {
-	  Comparison_result ycmp13 = compare_y(s1, s3);
-	  if ( ycmp13 == SMALLER ) {         // y1 < y3
-	    flip(f, f->index(v0));
-	  } else {                           // y2 < y3 < y1
-	    flip(f, f->index(v));
-	  }
-	}
+        Comparison_result ycmp32 = compare_y(s3, s2);
+        if ( ycmp32 == SMALLER ) {           // y3 < y2
+          flip(f, f->index(v1));
+        } else {
+          Comparison_result ycmp13 = compare_y(s1, s3);
+          if ( ycmp13 == SMALLER ) {         // y1 < y3
+            flip(f, f->index(v0));
+          } else {                           // y2 < y3 < y1
+            flip(f, f->index(v));
+          }
+        }
       } else {
-	// this line should never have been reached
-	CGAL_error();
+        // this line should never have been reached
+        CGAL_error();
       }
     }
   }
@@ -240,7 +235,7 @@ insert_third(const Storage_site_2& ss, Vertex_handle , Vertex_handle )
     }
     ++fc;
   }
-  
+
   return v;
 }
 
@@ -271,7 +266,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_point(const Storage_site_2& ss, const Site_2& t,
-	     Vertex_handle vnear)
+             Vertex_handle vnear)
 {
   CGAL_precondition( t.is_point() );
   CGAL_assertion( number_of_vertices() > 2 );
@@ -335,7 +330,8 @@ insert_point(const Storage_site_2& ss, const Site_2& t,
     if ( at_res == AT2::INTERIOR ) {
       CGAL_assertion( t.is_input() );
 
-      Vertex_triple vt = insert_exact_point_on_segment(ss, t, vnearest);
+      Vertex_triple vt = (this->*insert_exact_point_on_segment_ptr)(
+          ss, t, vnearest);
       return vt.first;
     } else {
       // the point to be inserted does not belong to the interior of a
@@ -351,7 +347,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_point2(const Storage_site_2& ss, const Site_2& t,
-	      Vertex_handle vnearest)
+              Vertex_handle vnearest)
 {
   CGAL_precondition( t.is_point() );
   CGAL_assertion( number_of_vertices() > 2 );
@@ -422,12 +418,12 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 #endif
 
       if ( s1 == s2 ) {
-	interior_in_conflict = edge_interior(e, t, s1);
+        interior_in_conflict = edge_interior(e, t, s1);
       } else {
-	// It seems that there was a problem here when one of the
-	// signs was positive and the other zero. In this case we
-	// still check pretending that both signs where positive
-	interior_in_conflict = edge_interior(e, t, POSITIVE);
+        // It seems that there was a problem here when one of the
+        // signs was positive and the other zero. In this case we
+        // still check pretending that both signs where positive
+        interior_in_conflict = edge_interior(e, t, POSITIVE);
       }
 
       if ( interior_in_conflict ) { break; }
@@ -444,7 +440,7 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
   }
 
 
-  // we are in conflict with a Voronoi vertex; start from that and 
+  // we are in conflict with a Voronoi vertex; start from that and
   // find the entire conflict region and then repair the diagram
   List l;
 #ifndef CGAL_SDG_NO_FACE_MAP
@@ -456,13 +452,13 @@ insert_point2(const Storage_site_2& ss, const Site_2& t,
 
   // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
   // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
-  // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
+  // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
 #ifdef CGAL_SDG_NO_FACE_MAP
-  expand_conflict_region(start_f, t, ss, l, vcross);
+  expand_conflict_region(start_f, t, l, vcross);
 #else
-  expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross);
+  expand_conflict_region(start_f, t, l, fm, sign_map, vcross);
 #endif
 
   CGAL_assertion( !vcross.first );
@@ -499,7 +495,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
       if ( is_infinite(fc) ) { n_inf++; }
       fc++;
     } while ( fc != fc_start );
-    CGAL_assertion( n_inf == 0 || n_inf == 2 || n_inf == 4 );
+    CGAL_assertion( n_inf % 2 == 0 );
   }
 #endif
 
@@ -521,21 +517,21 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 
       Site_2 sv_ep;
       if ( is_infinite( ff1->vertex(cw_v) ) ) {
-	CGAL_assertion(  !is_infinite( ff1->vertex(ccw_v) )  );
-	CGAL_assertion( ff1->vertex(ccw_v)->site().is_point() );
-	sv_ep = ff1->vertex(ccw_v)->site();
+        CGAL_assertion(  !is_infinite( ff1->vertex(ccw_v) )  );
+        CGAL_assertion( ff1->vertex(ccw_v)->site().is_point() );
+        sv_ep = ff1->vertex(ccw_v)->site();
+        os1 = oriented_side(v->site(), sv_ep, sitev_supp, t);
       } else {
-	CGAL_assertion(  !is_infinite( ff1->vertex( cw_v) )  );
-	CGAL_assertion( ff1->vertex( cw_v)->site().is_point() );
-	sv_ep = ff1->vertex( cw_v)->site();
+        CGAL_assertion(  !is_infinite( ff1->vertex( cw_v) )  );
+        CGAL_assertion( ff1->vertex( cw_v)->site().is_point() );
+        sv_ep = ff1->vertex( cw_v)->site();
+        os1 = oriented_side(sv_ep, v->site(), sitev_supp, t);
       }
-
-      os1 = oriented_side(sv_ep, sitev_supp, t);
     } else {
       os1 = oriented_side(fc1->vertex(0)->site(),
-			  fc1->vertex(1)->site(),
-			  fc1->vertex(2)->site(),
-			  sitev_supp, t);
+                          fc1->vertex(1)->site(),
+                          fc1->vertex(2)->site(),
+                          sitev_supp, t);
     }
 
     if ( is_infinite(ff2) ) {
@@ -545,31 +541,31 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
 
       Site_2 sv_ep;
       if ( is_infinite( ff2->vertex(cw_v) ) ) {
-	CGAL_assertion(  !is_infinite( ff2->vertex(ccw_v) )  );
-	CGAL_assertion( ff2->vertex(ccw_v)->site().is_point() );
-	sv_ep = ff2->vertex(ccw_v)->site();
+        CGAL_assertion(  !is_infinite( ff2->vertex(ccw_v) )  );
+        CGAL_assertion( ff2->vertex(ccw_v)->site().is_point() );
+        sv_ep = ff2->vertex(ccw_v)->site();
+        os2 = oriented_side(v->site(), sv_ep, sitev_supp, t);
       } else {
-	CGAL_assertion(  !is_infinite( ff2->vertex( cw_v) )  );
-	CGAL_assertion( ff2->vertex( cw_v)->site().is_point() );
-	sv_ep = ff2->vertex( cw_v)->site();
+        CGAL_assertion(  !is_infinite( ff2->vertex( cw_v) )  );
+        CGAL_assertion( ff2->vertex( cw_v)->site().is_point() );
+        sv_ep = ff2->vertex( cw_v)->site();
+        os2 = oriented_side(sv_ep, v->site(), sitev_supp, t);
       }
-
-      os2 = oriented_side(sv_ep, sitev_supp, t);
     } else {
       os2 = oriented_side(fc2->vertex(0)->site(),
-			  fc2->vertex(1)->site(),
-			  fc2->vertex(2)->site(),
-			  sitev_supp, t);
+                          fc2->vertex(1)->site(),
+                          fc2->vertex(2)->site(),
+                          sitev_supp, t);
     }
 
     if ( !found_f1 &&
-	 os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
+         os1 != ON_POSITIVE_SIDE && os2 == ON_POSITIVE_SIDE ) {
       f1 = ff2;
       found_f1 = true;
     }
 
     if ( !found_f2 &&
-	 os1 == ON_POSITIVE_SIDE && os2 != ON_POSITIVE_SIDE ) {
+         os1 != ON_NEGATIVE_SIDE && os2 == ON_NEGATIVE_SIDE ) {
       f2 = ff2;
       found_f2 = true;
     }
@@ -577,7 +573,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t) const
     if ( found_f1 && found_f2 ) { break; }
 
     ++fc1, ++fc2;
-  } while ( fc_start != fc1 ); 
+  } while ( fc_start != fc1 );
 
 
   CGAL_assertion( found_f1 && found_f2 );
@@ -590,7 +586,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_triple
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-			      Vertex_handle v)
+                              Vertex_handle v)
 {
   // splits the segment site v->site() in two and inserts represented by t
   // on return the three vertices are, respectively, the vertex
@@ -599,7 +595,7 @@ insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
   CGAL_assertion( t.is_point() );
   CGAL_assertion( t.is_input() );
 
-  Storage_site_2 ssitev = v->storage_site();  
+  Storage_site_2 ssitev = v->storage_site();
 
   CGAL_assertion( ssitev.is_segment() );
 
@@ -632,7 +628,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_triple
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
-			Vertex_handle v, const Tag_true&)
+                        Vertex_handle v, const Tag_true&)
 {
   // splits the segment site v->site() in two and inserts the point of
   // intersection of t and v->site()
@@ -708,7 +704,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
-			Vertex_handle vnearest)
+                        Vertex_handle vnearest)
 {
   CGAL_precondition( t.is_segment() );
   CGAL_precondition( number_of_vertices() > 2 );
@@ -731,64 +727,64 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 
     if ( vv->is_segment() ) {
       if ( at_res == AT2::DISJOINT || at_res == AT2::TOUCH_1 ||
-	   at_res == AT2::TOUCH_2 || at_res == AT2::TOUCH_11 ||
-	   at_res == AT2::TOUCH_12 || at_res == AT2::TOUCH_21 ||
-	   at_res == AT2::TOUCH_22 ) {
-	// do nothing
+           at_res == AT2::TOUCH_2 || at_res == AT2::TOUCH_11 ||
+           at_res == AT2::TOUCH_12 || at_res == AT2::TOUCH_21 ||
+           at_res == AT2::TOUCH_22 ) {
+        // do nothing
       } else if ( at_res == AT2::IDENTICAL ) {
-	// merge info of identical items
-	merge_info(vv, ss);
-	return vv;
+        // merge info of identical items
+        merge_info(vv, ss);
+        return vv;
       } else if ( at_res == AT2::CROSSING ) {
-	Intersections_tag itag;
-	return insert_intersecting_segment(ss, t, vv, itag);
+        Intersections_tag itag;
+        return insert_intersecting_segment(ss, t, vv, itag);
       } else if ( at_res == AT2::TOUCH_11_INTERIOR_1 ) {
-	Vertex_handle vp = second_endpoint_of_segment(vv);	
-	Storage_site_2 ssvp = vp->storage_site();
-	Storage_site_2 sss = split_storage_site(ss, ssvp, false);
+        Vertex_handle vp = second_endpoint_of_segment(vv);
+        Storage_site_2 ssvp = vp->storage_site();
+        Storage_site_2 sss = split_storage_site(ss, ssvp, false);
 
-	Storage_site_2 sss1 = split_storage_site(ss, ssvp, true);
-	// merge the info of the first (common) subsegment
-	merge_info(vv, sss1);
-	// merge the info of the (common) splitting endpoint
-	merge_info(vp, ss);
+        Storage_site_2 sss1 = split_storage_site(ss, ssvp, true);
+        // merge the info of the first (common) subsegment
+        merge_info(vv, sss1);
+        // merge the info of the (common) splitting endpoint
+        merge_info(vp, ss);
 
-	return insert_segment_interior(sss.site(), sss, vp);
+        return insert_segment_interior(sss.site(), sss, vp);
       } else if ( at_res == AT2::TOUCH_12_INTERIOR_1 ) {
-	Vertex_handle vp = first_endpoint_of_segment(vv);	
-	Storage_site_2 ssvp = vp->storage_site();
-	Storage_site_2 sss = split_storage_site(ss, ssvp, true);
+        Vertex_handle vp = first_endpoint_of_segment(vv);
+        Storage_site_2 ssvp = vp->storage_site();
+        Storage_site_2 sss = split_storage_site(ss, ssvp, true);
 
-	/*Storage_site_2 sss1 =*/
+        /*Storage_site_2 sss1 =*/
   split_storage_site(ss, ssvp, false);
-	// merge the info of the second (common) subsegment
-	//	merge_info(vv, sss);
-	// merge the info of the (common) splitting endpoint
-	merge_info(vp, ss);
+        // merge the info of the second (common) subsegment
+        //        merge_info(vv, sss);
+        // merge the info of the (common) splitting endpoint
+        merge_info(vp, ss);
 
-	return insert_segment_interior(sss.site(), sss, vp);
+        return insert_segment_interior(sss.site(), sss, vp);
       } else {
-	// this should never be reached; the only possible values for
-	// at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
-	// and TOUCH_12_INTERIOR_1
-	CGAL_error();
+        // this should never be reached; the only possible values for
+        // at_res are DISJOINT, CROSSING, TOUCH_11_INTERIOR_1
+        // and TOUCH_12_INTERIOR_1
+        CGAL_error();
       }
     } else {
       CGAL_assertion( vv->is_point() );
       if ( at_res == AT2::INTERIOR ) {
-	Storage_site_2 ssvv = vv->storage_site();
-	if ( ssvv.is_input() ) {
-	  Storage_site_2 ss1 = split_storage_site(ss, ssvv, true);
-	  Storage_site_2 ss2 = split_storage_site(ss, ssvv, false);
-	  // merge the info of the splitting point and the segment
-	  merge_info(vv, ss);
-	  insert_segment_interior(ss1.site(), ss1, vv);
-	  return insert_segment_interior(ss2.site(), ss2, vv);
-	} else {
-	  // this should never be reached; the only possible values for
-	  // at_res are DISJOINT and INTERIOR
-	  CGAL_error();
-	}
+        Storage_site_2 ssvv = vv->storage_site();
+        if ( ssvv.is_input() ) {
+          Storage_site_2 ss1 = split_storage_site(ss, ssvv, true);
+          Storage_site_2 ss2 = split_storage_site(ss, ssvv, false);
+          // merge the info of the splitting point and the segment
+          merge_info(vv, ss);
+          insert_segment_interior(ss1.site(), ss1, vv);
+          return insert_segment_interior(ss2.site(), ss2, vv);
+        } else {
+          // this should never be reached; the only possible values for
+          // at_res are DISJOINT and INTERIOR
+          CGAL_error();
+        }
       }
     }
     ++vc;
@@ -825,7 +821,7 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
   // segments must have a conflict with at least one vertex
   CGAL_assertion( s == NEGATIVE );
 
-  // we are in conflict with a Voronoi vertex; start from that and 
+  // we are in conflict with a Voronoi vertex; start from that and
   // find the entire conflict region and then repair the diagram
   List l;
 #ifndef CGAL_SDG_NO_FACE_MAP
@@ -837,38 +833,38 @@ insert_segment_interior(const Site_2& t, const Storage_site_2& ss,
 
   // MK:: NEED TO WRITE A FUNCTION CALLED find_conflict_region WHICH
   // IS GIVEN A STARTING FACE, A LIST, A FACE MAP, A VERTEX MAP AND A
-  // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT 
+  // LIST OF FLIPPED EDGES AND WHAT IS DOES IS INITIALIZE THE CONFLICT
   // REGION AND EXPANDS THE CONFLICT REGION.
   initialize_conflict_region(start_f, l);
 #ifdef CGAL_SDG_NO_FACE_MAP
-  expand_conflict_region(start_f, t, ss, l, vcross);
+  expand_conflict_region(start_f, t, l, vcross);
 #else
-  expand_conflict_region(start_f, t, ss, l, fm, sign_map, vcross);
+  expand_conflict_region(start_f, t, l, fm, sign_map, vcross);
 #endif
 
   CGAL_assertion( vcross.third == AT2::DISJOINT ||
-		  vcross.third == AT2::CROSSING ||
-		  vcross.third == AT2::INTERIOR );
+                  vcross.third == AT2::CROSSING ||
+                  vcross.third == AT2::INTERIOR );
 
   // the following condition becomes true only if intersecting
   // segments are found
   if ( vcross.first ) {
     if ( t.is_segment() ) {
       if ( vcross.third == AT2::CROSSING ) {
-	Intersections_tag itag;
-	return insert_intersecting_segment(ss, t, vcross.second, itag);
+        Intersections_tag itag;
+        return insert_intersecting_segment(ss, t, vcross.second, itag);
       } else if ( vcross.third == AT2::INTERIOR ) {
-	Storage_site_2 ssvv = vcross.second->storage_site();
-	Storage_site_2 ss1 = split_storage_site(ss, ssvv, true);
-	Storage_site_2 ss2 = split_storage_site(ss, ssvv, false);
-	// merge the info of the splitting point and the segment
-	merge_info(vcross.second, ss);
-	insert_segment_interior(ss1.site(), ss1, vcross.second);
-	return insert_segment_interior(ss2.site(), ss2, vcross.second);
+        Storage_site_2 ssvv = vcross.second->storage_site();
+        Storage_site_2 ss1 = split_storage_site(ss, ssvv, true);
+        Storage_site_2 ss2 = split_storage_site(ss, ssvv, false);
+        // merge the info of the splitting point and the segment
+        merge_info(vcross.second, ss);
+        insert_segment_interior(ss1.site(), ss1, vcross.second);
+        return insert_segment_interior(ss2.site(), ss2, vcross.second);
       } else {
-	// this should never be reached; the only possible values for
-	// vcross.third are CROSSING, INTERIOR and DISJOINT
-	CGAL_error();
+        // this should never be reached; the only possible values for
+        // vcross.third are CROSSING, INTERIOR and DISJOINT
+        CGAL_error();
       }
     }
   }
@@ -894,20 +890,10 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& /* ss */,
-				     const Site_2& /* t */, Vertex_handle /* v */,
-				     Tag_false)
+                                     const Site_2& /* t */, Vertex_handle /* v */,
+                                     Tag_false)
 {
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3) && (__GNUC_MINOR__ == 4)
-  // hack to avoid nasty warning for G++ 3.4 on Darwin
-  static int i;
-#else
-  static int i = 0;
-#endif
-  if ( i == 0 ) {
-    i = 1;
-    print_error_message();
-  }
+  print_error_message();
   return Vertex_handle();
 }
 
@@ -915,8 +901,8 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				     const Site_2& t, Vertex_handle v,
-				     Tag_true tag)
+                                     const Site_2& t, Vertex_handle v,
+                                     Tag_true tag)
 {
   CGAL_precondition( t.is_segment() && v->is_segment() );
 
@@ -928,10 +914,10 @@ insert_intersecting_segment_with_tag(const Storage_site_2& ss,
     return v;
   }
 
-  Vertex_triple vt = insert_point_on_segment(ss, t, v, tag);
+  Vertex_triple vt = (this->*insert_point_on_segment_ptr)(ss, t, v, tag);
 
   Vertex_handle vsx = vt.first;
-  
+
   Storage_site_2 ss3 = st_.construct_storage_site_2_object()(ss, ssitev, true);
   Storage_site_2 ss4 = st_.construct_storage_site_2_object()(ss, ssitev, false);
   Site_2 s3 = ss3.site();
@@ -963,152 +949,190 @@ initialize_conflict_region(const Face_handle& f, List& l)
 
 
 template<class Gt, class ST, class D_S, class LTag>
-void
+bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
-expand_conflict_region(const Face_handle& f, const Site_2& t,
-		       const Storage_site_2& ss,
-#ifdef CGAL_SDG_NO_FACE_MAP
-		       List& l,
-#else
-		       List& l, Face_map& fm,
-		       std::map<Face_handle,Sign>& sign_map,
+check_unregistered_face(const Face_handle& n,
+                        const Site_2& t,
+                        List& l,
+#ifndef CGAL_SDG_NO_FACE_MAP
+                        Face_map& fm,
 #endif
-		       Triple<bool,Vertex_handle,Arrangement_type>& vcross)
+                        Triple<bool, Vertex_handle, Arrangement_type>& vcross)
 {
+  for (int j = 0; j < 3; ++j)
+  {
+    Vertex_handle vf = n->vertex(j);
+
+    if ( is_infinite(vf) )
+      continue;
+
+    Arrangement_type at_res = arrangement_type(t, vf);
+
+    CGAL_assertion( vcross.third == AT2::DISJOINT ||
+                    vcross.third == AT2::CROSSING ||
+                    vcross.third == AT2::INTERIOR );
+
+    if ( vf->is_segment() )
+    {
+      CGAL_assertion( at_res != AT2::IDENTICAL );
+      CGAL_assertion( at_res != AT2::TOUCH_11_INTERIOR_1 );
+      CGAL_assertion( at_res != AT2::TOUCH_12_INTERIOR_1 );
+
+      if ( at_res == AT2::CROSSING )
+      {
+        vcross.first = true;
+        vcross.second = vf;
+        vcross.third = AT2::CROSSING;
+        l.clear();
 #ifdef CGAL_SDG_NO_FACE_MAP
-  if ( f->tds_data().is_in_conflict() ) { return; }
+        fhc_.clear();
 #else
-  if ( fm.find(f) != fm.end() ) { return; }
+        fm.clear();
 #endif
-
-  // this is done to stop the recursion when intersecting segments
-  // are found
-  if ( vcross.first ) { return; }
-
-  // setting fm[f] to true means that the face has been reached and
-  // that the face is available for recycling. If we do not want the
-  // face to be available for recycling we must set this flag to
-  // false.
-#ifdef CGAL_SDG_NO_FACE_MAP
-  f->tds_data().mark_in_conflict();
-  fhc_.push_back(f);
-#else
-  fm[f] = true;
-#endif
-
-  //  CGAL_assertion( fm.find(f) != fm.end() );
-
-  for (int i = 0; i < 3; i++) {
-    Face_handle n = f->neighbor(i);
-
-#ifdef CGAL_SDG_NO_FACE_MAP
-    bool face_registered = n->tds_data().is_in_conflict();
-#else
-    bool face_registered = (fm.find(n) != fm.end());
-#endif
-
-    if ( !face_registered ) {
-      for (int j = 0; j < 3; j++) {
-	Vertex_handle vf = n->vertex(j);
-
-	if ( is_infinite(vf) ) { continue; }
-
-	Arrangement_type at_res = arrangement_type(t, vf);
-
-	CGAL_assertion( vcross.third == AT2::DISJOINT ||
-			vcross.third == AT2::CROSSING ||
-			vcross.third == AT2::INTERIOR );
-
-	if ( vf->is_segment() ) {
-	  CGAL_assertion( at_res != AT2::IDENTICAL );
-	  CGAL_assertion( at_res != AT2::TOUCH_11_INTERIOR_1 );
-	  CGAL_assertion( at_res != AT2::TOUCH_12_INTERIOR_1 );
-
-	  if ( at_res == AT2::CROSSING ) {
-	    vcross.first = true;
-	    vcross.second = vf;
-	    vcross.third = AT2::CROSSING;
-	    l.clear();
-#ifdef CGAL_SDG_NO_FACE_MAP
-	    fhc_.clear();
-#else
-	    fm.clear();
-#endif
-	    return;
-	  } else {
-	    CGAL_assertion ( at_res == AT2::DISJOINT ||
-			     at_res == AT2::TOUCH_1 ||
-			     at_res == AT2::TOUCH_2 ||
-			     at_res == AT2::TOUCH_11 ||
-			     at_res == AT2::TOUCH_12 ||
-			     at_res == AT2::TOUCH_21 ||
-			     at_res == AT2::TOUCH_22 );
-	    // we do nothing in these cases
-	  }
-	} else {
-	  CGAL_assertion( vf->is_point() );
-	  if ( at_res == AT2::INTERIOR ) {
-	    vcross.first = true;
-	    vcross.second = vf;
-	    vcross.third = AT2::INTERIOR;
-	    l.clear();
-#ifdef CGAL_SDG_NO_FACE_MAP
-	    fhc_.clear();
-#else
-	    fm.clear();
-#endif
-	    return;
-	  }
-	}
+        return true;
+      }
+      else // at_res != AT2::CROSSING
+      {
+        CGAL_assertion ( at_res == AT2::DISJOINT ||
+                         at_res == AT2::TOUCH_1 ||
+                         at_res == AT2::TOUCH_2 ||
+                         at_res == AT2::TOUCH_11 ||
+                         at_res == AT2::TOUCH_12 ||
+                         at_res == AT2::TOUCH_21 ||
+                         at_res == AT2::TOUCH_22 );
+        // we do nothing in these cases
       }
     }
+    else // ! vf->is_segment()
+    {
+      CGAL_assertion( vf->is_point() );
+      if ( at_res == AT2::INTERIOR )
+      {
+        vcross.first = true;
+        vcross.second = vf;
+        vcross.third = AT2::INTERIOR;
+        l.clear();
+#ifdef CGAL_SDG_NO_FACE_MAP
+        fhc_.clear();
+#else
+        fm.clear();
+#endif
+        return true;
+      }
+    }
+  }
 
-    Sign s = incircle(n, t);
+  return false;
+}
+
+template<class Gt, class ST, class D_S, class LTag>
+void
+Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
+expand_conflict_region(const Face_handle& in_f,
+                       const Site_2& t,
+                       List& l,
+#ifndef CGAL_SDG_NO_FACE_MAP
+                       Face_map& fm,
+                       std::map<Face_handle, Sign>& sign_map,
+#endif
+                       Triple<bool, Vertex_handle, Arrangement_type>& vcross)
+{
+  std::stack<Face_handle> face_stack;
+  face_stack.push(in_f);
+
+  while(!face_stack.empty())
+  {
+    // Stop as soon as intersecting segments are found
+    if ( vcross.first )
+      break;
+
+    const Face_handle curr_f = face_stack.top();
+    face_stack.pop();
 
 #ifdef CGAL_SDG_NO_FACE_MAP
-    n->tds_data().set_incircle_sign(s);
-
-    Sign s_f = f->tds_data().incircle_sign();
+    if ( curr_f->tds_data().is_in_conflict() )
+      continue;
 #else
-    sign_map[n] = s;
-
-    Sign s_f = sign_map[f];
+    if ( fm.find(curr_f) != fm.end() )
+      continue;
 #endif
 
-    if ( s == POSITIVE ) { continue; }
-    if ( s != s_f ) { continue; }
+    // setting fm[f] to true means that the face has been reached and
+    // that the face is available for recycling. If we do not want the
+    // face to be available for recycling we must set this flag to false.
+#ifdef CGAL_SDG_NO_FACE_MAP
+    curr_f->tds_data().mark_in_conflict();
+    fhc_.push_back(curr_f);
+#else
+    fm[curr_f] = true;
+#endif
 
-    bool interior_in_conflict = edge_interior(f, i, t, s);
+//    CGAL_assertion( fm.find(curr_f) != fm.end() );
 
-    if ( !interior_in_conflict ) { continue; }
-
-    if ( face_registered ) { continue; }
-
-    Edge e = sym_edge(f, i);
-
-    CGAL_assertion( l.is_in_list(e) );
-    int j = this->_tds.mirror_index(f, i);
-    Edge e_before = sym_edge(n, ccw(j));
-    Edge e_after = sym_edge(n, cw(j));
-    if ( !l.is_in_list(e_before) ) {
-      l.insert_before(e, e_before);
-    }
-    if ( !l.is_in_list(e_after) ) {
-      l.insert_after(e, e_after);
-    }
-    l.remove(e);
+    for (int i = 0; i < 3; ++i)
+    {
+      Face_handle n = curr_f->neighbor(i);
 
 #ifdef CGAL_SDG_NO_FACE_MAP
-    expand_conflict_region(n, t, ss, l, vcross);
+      bool face_registered = n->tds_data().is_in_conflict();
 #else
-    expand_conflict_region(n, t, ss, l, fm, sign_map, vcross);
+      bool face_registered = (fm.find(n) != fm.end());
 #endif
 
-    // this is done to stop the recursion when intersecting segments
-    // are found
-    //    if ( fm.size() == 0 && l.size() == 0 ) { return; }
-    if ( vcross.first ) { return; }
-  } // for-loop
+      if ( !face_registered )
+      {
+#ifdef CGAL_SDG_NO_FACE_MAP
+        if(check_unregistered_face(n, t, l, vcross))
+#else
+        if(check_unregistered_face(n, t, l, fm, vcross))
+#endif
+        {
+          CGAL_assertion(vcross.first);
+          break; // intersecting segments were found
+        }
+      }
+
+      Sign s = incircle(n, t);
+
+#ifdef CGAL_SDG_NO_FACE_MAP
+      n->tds_data().set_incircle_sign(s);
+
+      Sign s_f = curr_f->tds_data().incircle_sign();
+#else
+      sign_map[n] = s;
+
+      Sign s_f = sign_map[curr_f];
+#endif
+
+      if ( s == POSITIVE )
+        continue;
+      if ( s != s_f )
+        continue;
+      if ( face_registered )
+        continue;
+
+      bool interior_in_conflict = edge_interior(curr_f, i, t, s);
+      if ( !interior_in_conflict )
+        continue;
+
+      Edge e = sym_edge(curr_f, i);
+      CGAL_assertion( l.is_in_list(e) );
+
+      int j = this->_tds.mirror_index(curr_f, i);
+      Edge e_before = sym_edge(n, ccw(j));
+      Edge e_after = sym_edge(n, cw(j));
+
+      if ( !l.is_in_list(e_before) )
+        l.insert_before(e, e_before);
+
+      if ( !l.is_in_list(e_after) )
+        l.insert_after(e, e_after);
+
+      l.remove(e);
+
+      face_stack.push(n);
+    } // neighbor for-loop
+  }
 }
 
 
@@ -1134,7 +1158,7 @@ add_bogus_vertex(Edge e, List& l)
   int i2 = f2->index(v);
 
   CGAL_assertion( ((f1->neighbor(i1) == g1) && (f2->neighbor(i2) == g2)) ||
-		  ((f1->neighbor(i1) == g2) && (f2->neighbor(i2) == g1)) );
+                  ((f1->neighbor(i1) == g2) && (f2->neighbor(i2) == g1)) );
 
   Edge ee, eesym;
   if ( f1->neighbor(i1) == g1 ) {
@@ -1169,8 +1193,8 @@ add_bogus_vertices(List& l)
     Edge esym = sym_edge(e);
     if ( l.is_in_list(esym) ) {
       if ( !esym.first->tds_data().is_selected(esym.second) ) {
-	e.first->tds_data().mark_selected(e.second);
-	edge_list.push_back(e);
+        e.first->tds_data().mark_selected(e.second);
+        edge_list.push_back(e);
       }
     }
     e = l.next(e);
@@ -1205,7 +1229,7 @@ add_bogus_vertices(List& l)
   do {
     Edge esym = sym_edge(e);
     if ( l.is_in_list(esym) &&
-	 edge_list.find(esym) == edge_list.end() ) {
+         edge_list.find(esym) == edge_list.end() ) {
       edge_list.insert(e);
     }
     e = l.next(e);
@@ -1242,7 +1266,7 @@ Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 retriangulate_conflict_region(Vertex_handle v, List& l)
 #else
 retriangulate_conflict_region(Vertex_handle v, List& l,
-			      Face_map& fm)
+                              Face_map& fm)
 #endif
 
 {
@@ -1347,7 +1371,7 @@ template<class Gt, class ST, class D_S, class LTag>
 bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
-		const Vertex_handle& v2) const
+                const Vertex_handle& v2) const
 {
   Site_2 tt[3] = { v0->site(), v1->site(), v2->site() };
 
@@ -1399,7 +1423,7 @@ is_flippable(const Face_handle& f, int i) const
   Storage_site_2 ss = v->storage_site();
   Storage_site_2 ss_other = v_other->storage_site();
   if ( ss_other.is_point() && ss.is_segment() &&
-       is_endpoint_of_segment(ss_other,	ss) && is_star(v_other) ) {
+       is_endpoint_of_segment(ss_other,        ss) && is_star(v_other) ) {
     return false;
   }
 
@@ -1430,8 +1454,8 @@ minimize_degree(const Vertex_handle& v)
       f = e.first;
 
       if ( !f->has_vertex(v) ) {
-	f = e.first->neighbor(e.second);
-	CGAL_assertion( f->has_vertex(v) );
+        f = e.first->neighbor(e.second);
+        CGAL_assertion( f->has_vertex(v) );
       }
 
       fc = --( incident_faces(v,f) );
@@ -1448,8 +1472,8 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 equalize_degrees(const Vertex_handle& v, Self& small_d,
-		 std::map<Vertex_handle,Vertex_handle>& vmap,
-		 List& l) const
+                 std::map<Vertex_handle,Vertex_handle>& vmap,
+                 List& l) const
 {
   size_type deg = degree(v);
   CGAL_assertion( l.size() <= deg );
@@ -1483,10 +1507,10 @@ equalize_degrees(const Vertex_handle& v, Self& small_d,
       Vertex_handle v_lrg_src = fc->vertex(ccw(id));
       Vertex_handle v_lrg_trg = fc->vertex(cw(id));
       if ( vmap[v_sml_src] == v_lrg_src && vmap[v_sml_trg] == v_lrg_trg ) {
-	found = true;
-	e_large_begin = Edge(fc, id);
-	e_small_begin = e_small;
-	break;
+        found = true;
+        e_large_begin = Edge(fc, id);
+        e_small_begin = e_small;
+        break;
       }
     } while ( ++fc != fc_start );
     if ( found ) { break; }
@@ -1517,10 +1541,10 @@ equalize_degrees(const Vertex_handle& v, Self& small_d,
       Face_handle f2 = e_small_new_sym.first;
 
       if ( f2->vertex(e_small_new_sym.second) == vsml_src ) {
-	std::swap(f1, f2);
-	std::swap(e_small_new, e_small_new_sym);
-	CGAL_assertion( f1->vertex(e_small_new.second) == vsml_src );
-	CGAL_assertion( f2->vertex(e_small_new_sym.second) == vsml_trg );
+        std::swap(f1, f2);
+        std::swap(e_small_new, e_small_new_sym);
+        CGAL_assertion( f1->vertex(e_small_new.second) == vsml_src );
+        CGAL_assertion( f2->vertex(e_small_new_sym.second) == vsml_trg );
       }
 
       Edge to_list1(f1, cw(e_small_new.second));
@@ -1544,7 +1568,7 @@ equalize_degrees(const Vertex_handle& v, Self& small_d,
   std::cerr << "degree of v: " << deg << std::endl;
 #endif
 
-#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)  
+#if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
   // we go around the boundary of the conflict region verify that all
   // edges are there
   CGAL_assertion( l.size() == degree(v) );
@@ -1568,56 +1592,72 @@ equalize_degrees(const Vertex_handle& v, Self& small_d,
 template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
-expand_conflict_region_remove(const Face_handle& f, const Site_2& t,
-			      const Storage_site_2& ss,
-			      List& l, Face_map& fm, Sign_map& sign_map)
+expand_conflict_region_remove(const Face_handle& in_f,
+                              const Site_2& t,
+                              List& l,
+                              Face_map& fm,
+                              Sign_map& sign_map)
 {
-  if ( fm.find(f) != fm.end() ) { return; }
+  std::stack<Face_handle> face_stack;
+  face_stack.push(in_f);
 
-  // setting fm[f] to true means that the face has been reached and
-  // that the face is available for recycling. If we do not want the
-  // face to be available for recycling we must set this flag to
-  // false.
-  fm[f] = true;
+  while(!face_stack.empty())
+  {
+    const Face_handle curr_f = face_stack.top();
+    face_stack.pop();
 
-  //  CGAL_assertion( fm.find(f) != fm.end() );
+    if ( fm.find(curr_f) != fm.end() )
+      continue;
 
-  for (int i = 0; i < 3; i++) {
-    Face_handle n = f->neighbor(i);
+    // setting fm[curr_f] to true means that the face has been reached and
+    // that the face is available for recycling. If we do not want the
+    // face to be available for recycling we must set this flag to
+    // false.
+    fm[curr_f] = true;
 
-    bool face_registered = (fm.find(n) != fm.end());
+    //  CGAL_assertion( fm.find(f) != fm.end() );
 
-    Sign s = incircle(n, t);
+    for (int i = 0; i < 3; ++i)
+    {
+      Face_handle n = curr_f->neighbor(i);
 
-    sign_map[n] = s;
+      bool face_registered = (fm.find(n) != fm.end());
 
-    Sign s_f = sign_map[f];
+      Sign s = incircle(n, t);
 
-    if ( s == POSITIVE ) { continue; }
-    if ( s != s_f ) { continue; }
+      sign_map[n] = s;
 
-    bool interior_in_conflict = edge_interior(f, i, t, s);
+      Sign s_f = sign_map[curr_f];
 
-    if ( !interior_in_conflict ) { continue; }
+      if ( s == POSITIVE )
+        continue;
+      if ( s != s_f )
+        continue;
+      if ( face_registered )
+        continue;
 
-    if ( face_registered ) { continue; }
+      bool interior_in_conflict = edge_interior(curr_f, i, t, s);
+      if ( !interior_in_conflict )
+        continue;
 
-    Edge e = sym_edge(f, i);
+      Edge e = sym_edge(curr_f, i);
+      CGAL_assertion( l.is_in_list(e) );
 
-    CGAL_assertion( l.is_in_list(e) );
-    int j = this->_tds.mirror_index(f, i);
-    Edge e_before = sym_edge(n, ccw(j));
-    Edge e_after = sym_edge(n, cw(j));
-    if ( !l.is_in_list(e_before) ) {
-      l.insert_before(e, e_before);
-    }
-    if ( !l.is_in_list(e_after) ) {
-      l.insert_after(e, e_after);
-    }
-    l.remove(e);
+      int j = this->_tds.mirror_index(curr_f, i);
+      Edge e_before = sym_edge(n, ccw(j));
+      Edge e_after = sym_edge(n, cw(j));
 
-    expand_conflict_region_remove(n, t, ss, l, fm, sign_map);
-  } // for-loop
+      if ( !l.is_in_list(e_before) )
+        l.insert_before(e, e_before);
+
+      if ( !l.is_in_list(e_after) )
+        l.insert_after(e, e_after);
+
+      l.remove(e);
+
+      face_stack.push(n);
+    } // neighbor for-loop
+  }
 }
 
 
@@ -1625,8 +1665,8 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 find_conflict_region_remove(const Vertex_handle& v,
-			    const Vertex_handle& vnearest,
-			    List& l, Face_map& fm, Sign_map&)
+                            const Vertex_handle& vnearest,
+                            List& l, Face_map& fm, Sign_map&)
 {
   CGAL_precondition( vnearest != Vertex_handle() );
   Storage_site_2 ss = v->storage_site();
@@ -1673,12 +1713,12 @@ find_conflict_region_remove(const Vertex_handle& v,
       Sign s2 = sign_map[e.first->neighbor(e.second)];
 
       if ( s1 == s2 ) {
-	interior_in_conflict = edge_interior(e, t, s1);
+        interior_in_conflict = edge_interior(e, t, s1);
       } else {
-	// It seems that there was a problem here when one of the
-	// signs was positive and the other zero. In this case we
-	// still check pretending that both signs where positive
-	interior_in_conflict = edge_interior(e, t, POSITIVE);
+        // It seems that there was a problem here when one of the
+        // signs was positive and the other zero. In this case we
+        // still check pretending that both signs where positive
+        interior_in_conflict = edge_interior(e, t, POSITIVE);
       }
 
       if ( interior_in_conflict ) { break; }
@@ -1695,7 +1735,7 @@ find_conflict_region_remove(const Vertex_handle& v,
   }
 
   initialize_conflict_region(start_f, l);
-  expand_conflict_region_remove(start_f, t, ss,	l, fm, sign_map);
+  expand_conflict_region_remove(start_f, t, l, fm, sign_map);
 }
 
 
@@ -1719,7 +1759,7 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 fill_hole(const Self& small_d, const Vertex_handle& v, const List& l,
-	  std::map<Vertex_handle,Vertex_handle>& vmap)
+          std::map<Vertex_handle,Vertex_handle>& vmap)
 {
 #if 0
   std::cerr << "size of l  : " << l.size() << std::endl;
@@ -1824,17 +1864,17 @@ fill_hole(const Self& small_d, const Vertex_handle& v, const List& l,
       Face_handle f = fmap[ff_small];
       Face_handle n_small = ff_small->neighbor(i);
       if ( fmap.find(n_small) != fmap.end() ) {
-	// this is one of the new faces
-	f->set_neighbor(i, fmap[n_small]);
+        // this is one of the new faces
+        f->set_neighbor(i, fmap[n_small]);
       } else {
-	// otherwise it is one of the old faces outside the conflict
-	// region; we have to use the edge map in this case
-	Edge e_small_sym = small_d.sym_edge(ff_small, i);
-	CGAL_assertion(emap.find(e_small_sym) != emap.end());
+        // otherwise it is one of the old faces outside the conflict
+        // region; we have to use the edge map in this case
+        Edge e_small_sym = small_d.sym_edge(ff_small, i);
+        CGAL_assertion(emap.find(e_small_sym) != emap.end());
 
-	Edge e_large = emap[e_small_sym];
-	f->set_neighbor(i, e_large.first);
-	e_large.first->set_neighbor(e_large.second, f);
+        Edge e_large = emap[e_small_sym];
+        f->set_neighbor(i, e_large.first);
+        e_large.first->set_neighbor(e_large.second, f);
       }
     }
   }
@@ -1883,9 +1923,9 @@ remove_third(const Vertex_handle& v)
     for (int i = 0; i < 4; i++) {
       Edge e = *ec;
       Edge sym = sym_edge(e);
-      if ( e.first->vertex(e.second) !=	sym.first->vertex(sym.second) ) {
-	flip(e);
-	break;
+      if ( e.first->vertex(e.second) !=        sym.first->vertex(sym.second) ) {
+        flip(e);
+        break;
       }
       ++ec;
     }
@@ -1911,15 +1951,15 @@ compute_small_diagram(const Vertex_handle& v, Self& small_d) const
     if ( !is_infinite(vc) ) {
       Site_2 t = vc->site();
       if ( t.is_input() ) {
-	small_d.insert(t);
+        small_d.insert(t);
       } else if ( t.is_point() ) {
-	small_d.insert(t.supporting_site(0));
-	/*Vertex_handle vnear =*/ small_d.insert(t.supporting_site(1));
-	//	vh_small = sdg_small.nearest_neighbor(t, vnear);
+        small_d.insert(t.supporting_site(0));
+        /*Vertex_handle vnear =*/ small_d.insert(t.supporting_site(1));
+        //        vh_small = sdg_small.nearest_neighbor(t, vnear);
       } else {
-	CGAL_assertion( t.is_segment() );
-	/*Vertex_handle vnear =*/ small_d.insert(t.supporting_site());
-	//	vh_small = sdg_small.nearest_neighbor(t, vnear);
+        CGAL_assertion( t.is_segment() );
+        /*Vertex_handle vnear =*/ small_d.insert(t.supporting_site());
+        //        vh_small = sdg_small.nearest_neighbor(t, vnear);
       }
       //      CGAL_assertion( vh_small != Vertex_handle() );
       //      vmap[vh_small] = vh_large;
@@ -1935,7 +1975,7 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 compute_vertex_map(const Vertex_handle& v, const Self& small_d,
-		   std::map<Vertex_handle,Vertex_handle>& vmap) const
+                   std::map<Vertex_handle,Vertex_handle>& vmap) const
 {
   Vertex_circulator vc_start = incident_vertices(v);
   Vertex_circulator vc = vc_start;
@@ -1946,44 +1986,44 @@ compute_vertex_map(const Vertex_handle& v, const Self& small_d,
     if ( is_infinite(vh_large) ) {
       vh_small = small_d.infinite_vertex();
       vmap[vh_small] = vh_large;
-    } else { 
+    } else {
 #if !defined(CGAL_NO_ASSERTIONS) && !defined(NDEBUG)
       vh_small = Vertex_handle();
 #endif
       Site_2 t = vc->site();
       if ( t.is_input() ) {
-	if ( t.is_segment() ) {
-	  Vertex_handle vv = small_d.nearest_neighbor( t.source() );
-	  Vertex_circulator vvc_start = small_d.incident_vertices(vv);
-	  Vertex_circulator vvc = vvc_start;
-	  do {
-	    if ( small_d.same_segments(t, vvc) ) {
-	      vh_small = vvc;
-	      break;
-	    }
-	  } while ( ++vvc != vvc_start );
-	  CGAL_assertion( small_d.same_segments(t, vh_small) );
-	} else {
-	  CGAL_assertion( t.is_point() );
-	  vh_small = small_d.nearest_neighbor( t.point() );
-	  CGAL_assertion( small_d.same_points(t, vh_small->site()) );
-	}
+        if ( t.is_segment() ) {
+          Vertex_handle vv = small_d.nearest_neighbor( t.source() );
+          Vertex_circulator vvc_start = small_d.incident_vertices(vv);
+          Vertex_circulator vvc = vvc_start;
+          do {
+            if ( small_d.same_segments(t, vvc) ) {
+              vh_small = vvc;
+              break;
+            }
+          } while ( ++vvc != vvc_start );
+          CGAL_assertion( small_d.same_segments(t, vh_small) );
+        } else {
+          CGAL_assertion( t.is_point() );
+          vh_small = small_d.nearest_neighbor( t.point() );
+          CGAL_assertion( small_d.same_points(t, vh_small->site()) );
+        }
       } else if ( t.is_segment() ) {
-	Vertex_handle vv =
-	  small_d.nearest_neighbor( t.source_site(), Vertex_handle() );
-	Vertex_circulator vvc_start = small_d.incident_vertices(vv);
-	Vertex_circulator vvc = vvc_start;
-	do {
-	  if ( small_d.same_segments(t, vvc) ) {
-	    vh_small = vvc;
-	    break;
-	  }
-	} while ( ++vvc != vvc_start );
-	CGAL_assertion( small_d.same_segments(t, vh_small) );
+        Vertex_handle vv =
+          small_d.nearest_neighbor( t.source_site(), Vertex_handle() );
+        Vertex_circulator vvc_start = small_d.incident_vertices(vv);
+        Vertex_circulator vvc = vvc_start;
+        do {
+          if ( small_d.same_segments(t, vvc) ) {
+            vh_small = vvc;
+            break;
+          }
+        } while ( ++vvc != vvc_start );
+        CGAL_assertion( small_d.same_segments(t, vh_small) );
       } else {
-	CGAL_assertion( t.is_point() );
-	vh_small = small_d.nearest_neighbor( t, Vertex_handle() );
-	CGAL_assertion( small_d.same_points(t, vh_small->site()) );
+        CGAL_assertion( t.is_point() );
+        vh_small = small_d.nearest_neighbor( t, Vertex_handle() );
+        CGAL_assertion( small_d.same_points(t, vh_small->site()) );
       }
       CGAL_assertion( vh_small != Vertex_handle() );
       vmap[vh_small] = vh_large;
@@ -2047,7 +2087,7 @@ remove_degree_d_vertex(const Vertex_handle& v)
     remove_degree_2(v);
     return;
   }
-  
+
   Self sdg_small;
   compute_small_diagram(v, sdg_small);
 
@@ -2121,7 +2161,7 @@ remove_base(const Vertex_handle& v)
     return remove_first(v);
   } else if ( n == 2 ) {
     return remove_second(v);
-  } 
+  }
 
   // secondly check if the point to be deleted is adjacent to a segment
   if ( ssv.is_point() ) {
@@ -2131,7 +2171,7 @@ remove_base(const Vertex_handle& v)
     do {
       Storage_site_2 ss = vc->storage_site();
       if ( ss.is_segment() && is_endpoint_of_segment(ssv, ss) ) {
-	return false;
+        return false;
       }
       ++vc;
     } while ( vc != vc_start );
@@ -2172,7 +2212,7 @@ remove(const Vertex_handle& v)
   if ( is_point ) {
     h1 = ss.point();
   } else {
-    CGAL_assertion( ss.is_segment() );   
+    CGAL_assertion( ss.is_segment() );
     h1 = ss.source_of_supporting_site();
     h2 = ss.target_of_supporting_site();
   }
@@ -2205,7 +2245,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Vertex_handle
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 nearest_neighbor(const Site_2& p,
-		 Vertex_handle start_vertex) const
+                 Vertex_handle start_vertex) const
 {
   CGAL_precondition( p.is_point() );
 
@@ -2217,7 +2257,7 @@ nearest_neighbor(const Site_2& p,
     start_vertex = finite_vertex();
   }
 
-  //  if ( start_vertex == NULL ) { return start_vertex; }
+  //  if ( start_vertex == nullptr ) { return start_vertex; }
 
   Vertex_handle vclosest;
   Vertex_handle v = start_vertex;
@@ -2228,11 +2268,11 @@ nearest_neighbor(const Site_2& p,
     for (; vit != finite_vertices_end(); ++vit) {
       Vertex_handle v1(vit);
       if ( v1 != vclosest /*&& !is_infinite(v1)*/ ) {
-	Site_2 t0 = vclosest->site();
-	Site_2 t1 = v1->site();
-	if ( side_of_bisector(t0, t1, p) == ON_NEGATIVE_SIDE ) {
-	  vclosest = v1;
-	}
+        Site_2 t0 = vclosest->site();
+        Site_2 t1 = v1->site();
+        if ( side_of_bisector(t0, t1, p) == ON_NEGATIVE_SIDE ) {
+          vclosest = v1;
+        }
       }
     }
     return vclosest;
@@ -2248,14 +2288,14 @@ nearest_neighbor(const Site_2& p,
     Vertex_circulator vc = vc_start;
     do {
       if ( !is_infinite(vc) ) {
-	Vertex_handle v1(vc);
-	Site_2 t1 = v1->site();
-	Oriented_side os = side_of_bisector(t0, t1, p);
+        Vertex_handle v1(vc);
+        Site_2 t1 = v1->site();
+        Oriented_side os = side_of_bisector(t0, t1, p);
 
-	if ( os == ON_NEGATIVE_SIDE ) {
-	  v = v1;
-	  break;
-	}
+        if ( os == ON_NEGATIVE_SIDE ) {
+          v = v1;
+          break;
+        }
       }
       ++vc;
     } while ( vc != vc_start );
@@ -2277,8 +2317,8 @@ incircle(const Face_handle& f, const Site_2& q) const
 {
   if ( !is_infinite(f) ) {
     return incircle(f->vertex(0)->site(),
-		    f->vertex(1)->site(),
-		    f->vertex(2)->site(), q);
+                    f->vertex(1)->site(),
+                    f->vertex(2)->site(), q);
   }
 
   int inf_i(-1); // to avoid compiler warning
@@ -2289,7 +2329,7 @@ incircle(const Face_handle& f, const Site_2& q) const
     }
   }
   return incircle( f->vertex( ccw(inf_i) )->site(),
-		   f->vertex(  cw(inf_i) )->site(), q );
+                   f->vertex(  cw(inf_i) )->site(), q );
 }
 
 
@@ -2297,14 +2337,14 @@ template<class Gt, class ST, class D_S, class LTag>
 Sign
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 incircle(const Vertex_handle& v0, const Vertex_handle& v1,
-	      const Vertex_handle& v2, const Vertex_handle& v) const
+              const Vertex_handle& v2, const Vertex_handle& v) const
 {
   CGAL_precondition( !is_infinite(v) );
 
   if ( !is_infinite(v0) && !is_infinite(v1) &&
        !is_infinite(v2) ) {
     return incircle(v0->site(), v1->site(),
-		    v2->site(), v->site());
+                    v2->site(), v->site());
   }
 
   if ( is_infinite(v0) ) {
@@ -2327,7 +2367,7 @@ template<class Gt, class ST, class D_S, class LTag>
 bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 finite_edge_interior(const Face_handle& f, int i, const Site_2& q,
-		     Sign sgn, int) const
+                     Sign sgn, int) const
 {
   if ( !is_infinite( this->_tds.mirror_vertex(f, i) ) ) {
     CGAL_precondition( is_infinite(f->vertex(i)) );
@@ -2355,11 +2395,11 @@ template<class Gt, class ST, class D_S, class LTag>
 bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
-		     const Vertex_handle& v3, const Vertex_handle& v4,
-		     const Vertex_handle& v, Sign sgn, int) const
+                     const Vertex_handle& v3, const Vertex_handle& v4,
+                     const Vertex_handle& v, Sign sgn, int) const
 {
-  CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) && 
-		     !is_infinite(v) );
+  CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
+                     !is_infinite(v) );
   if ( !is_infinite( v4 ) ) {
     CGAL_precondition( is_infinite(v3) );
 
@@ -2385,7 +2425,7 @@ template<class Gt, class ST, class D_S, class LTag>
 bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 infinite_edge_interior(const Face_handle& f, int i,
-		       const Site_2& q, Sign sgn) const
+                       const Site_2& q, Sign sgn) const
 {
   if ( !is_infinite( f->vertex(ccw(i)) ) ) {
     CGAL_precondition( is_infinite( f->vertex(cw(i)) ) );
@@ -2409,13 +2449,13 @@ template<class Gt, class ST, class D_S, class LTag>
 bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 infinite_edge_interior(const Vertex_handle& v1,
-		       const Vertex_handle& v2,
-		       const Vertex_handle& v3,
-		       const Vertex_handle& v4,
-		       const Vertex_handle& v, Sign sgn) const
+                       const Vertex_handle& v2,
+                       const Vertex_handle& v3,
+                       const Vertex_handle& v4,
+                       const Vertex_handle& v, Sign sgn) const
 {
-  CGAL_precondition( !is_infinite(v3) && !is_infinite(v4) && 
-		     !is_infinite(v) );
+  CGAL_precondition( !is_infinite(v3) && !is_infinite(v4) &&
+                     !is_infinite(v) );
 
   if ( !is_infinite( v1 ) ) {
     CGAL_precondition( is_infinite( v2 ) );
@@ -2440,10 +2480,10 @@ template<class Gt, class ST, class D_S, class LTag>
 bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 edge_interior(const Vertex_handle& v1,
-	      const Vertex_handle& v2,
-	      const Vertex_handle& v3,
-	      const Vertex_handle& v4,
-	      const Vertex_handle& v, Sign sgn) const
+              const Vertex_handle& v2,
+              const Vertex_handle& v3,
+              const Vertex_handle& v4,
+              const Vertex_handle& v, Sign sgn) const
 {
   CGAL_precondition( !is_infinite(v) );
 
@@ -2470,7 +2510,7 @@ template<class Gt, class ST, class D_S, class LTag>
 bool
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 edge_interior(const Face_handle& f, int i,
-	      const Site_2& q, Sign sgn) const
+              const Site_2& q, Sign sgn) const
 {
   Face_handle g = f->neighbor(i);
 
@@ -2564,17 +2604,13 @@ Object
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 primal(const Edge e) const
 {
-  typedef typename Gt::Line_2   Line_2;
-  typedef typename Gt::Ray_2    Ray_2;
-
   CGAL_precondition( !is_infinite(e) );
 
   if ( this->dimension() == 1 ) {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
 
-    Line_2 l = construct_sdg_bisector_2_object()(p,q);
-    return make_object(l);
+    return make_object(construct_sdg_bisector_2_object()(p,q));
   }
 
   // dimension == 2
@@ -2593,22 +2629,21 @@ primal(const Edge e) const
        is_infinite(e.first->neighbor(e.second)) )  {
     Site_2 p = (e.first)->vertex(cw(e.second))->site();
     Site_2 q = (e.first)->vertex(ccw(e.second))->site();
-    Line_2 l = construct_sdg_bisector_2_object()(p,q);
-    return make_object(l);
+    return make_object(construct_sdg_bisector_2_object()(p,q));
   }
 
   // only one of the adjacent faces is infinite
   CGAL_assertion( is_infinite( e.first ) ||
-		  is_infinite( e.first->neighbor(e.second) )
-		  );
+                  is_infinite( e.first->neighbor(e.second) )
+                  );
 
   CGAL_assertion( !(is_infinite( e.first ) &&
-		    is_infinite( e.first->neighbor(e.second) )
-		    )
-		  );
+                    is_infinite( e.first->neighbor(e.second) )
+                    )
+                  );
 
   CGAL_assertion( is_infinite(e.first->vertex(e.second)) ||
-		  is_infinite(this->_tds.mirror_vertex(e.first, e.second)) );
+                  is_infinite(this->_tds.mirror_vertex(e.first, e.second)) );
 
   Edge ee = e;
   if ( is_infinite( e.first->vertex(e.second) )  ) {
@@ -2618,8 +2653,7 @@ primal(const Edge e) const
   Site_2 q = ee.first->vertex(  cw(ee.second) )->site();
   Site_2 r = ee.first->vertex(     ee.second  )->site();
 
-  Ray_2 ray = construct_sdg_bisector_ray_2_object()(p,q,r);
-  return make_object(ray);
+  return make_object(construct_sdg_bisector_ray_2_object()(p,q,r));
 }
 
 //--------------------------------------------------------------------
@@ -2662,7 +2696,7 @@ is_valid(bool verbose, int level) const
     if ( f->vertex(e.second) == v ) { continue; }
     if ( !is_infinite(v) ) {
       result = result &&
-	( incircle(f, v->site()) != NEGATIVE );
+        ( incircle(f, v->site()) != NEGATIVE );
     }
     Edge sym_e = sym_edge(e);
     f = sym_e.first;
@@ -2670,7 +2704,7 @@ is_valid(bool verbose, int level) const
 
     if ( !is_infinite(v) ) {
       result = result &&
-	( incircle(f, v->site()) != NEGATIVE );
+        ( incircle(f, v->site()) != NEGATIVE );
     }
   }
 
@@ -2697,15 +2731,19 @@ void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 print_error_message() const
 {
-  std::cerr << std::endl;
-  std::cerr << "ATTENTION:" << std::endl;
-  std::cerr << "A segment-segment intersection was found."
-	    << std::endl;
-  std::cerr << "The Segment_Delaunay_graph_2 class is not configured"
-	    << " to handle this situation." << std::endl;
-  std::cerr << "Please look at the documentation on how to handle"
-	    << " this behavior." << std::endl;
-  std::cerr << std::endl;
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, once, 0);
+  if(once == 0){
+    ++once;
+    std::cerr << std::endl;
+    std::cerr << "ATTENTION:" << std::endl;
+    std::cerr << "A segment-segment intersection was found."
+              << std::endl;
+    std::cerr << "The Segment_Delaunay_graph_2 class is not configured"
+              << " to handle this situation." << std::endl;
+    std::cerr << "Please look at the documentation on how to handle"
+              << " this behavior." << std::endl;
+    std::cerr << std::endl;
+  }
 }
 
 //--------------------------------------------------------------------
@@ -2718,7 +2756,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Storage_site_2
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
-		  const Tag_false&)
+                  const Tag_false&)
 {
   if ( ss_other.is_segment() ) {
     Point_handle p0 = hm[ ss_other.source_of_supporting_site() ];
@@ -2734,7 +2772,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::Storage_site_2
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy_storage_site(const Storage_site_2& ss_other, Handle_map& hm,
-		  const Tag_true&)
+                  const Tag_true&)
 {
   if ( ss_other.is_segment() ) {
     if ( ss_other.is_input() ) {
@@ -2781,6 +2819,11 @@ void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 copy(Segment_Delaunay_graph_2& other)
 {
+  // copy the insert_on method pointers
+  insert_point_on_segment_ptr = other.insert_point_on_segment_ptr;
+  insert_exact_point_on_segment_ptr =
+    other.insert_exact_point_on_segment_ptr;
+
   // first copy the point container
   pc_ = other.pc_;
 
@@ -2812,11 +2855,11 @@ copy(Segment_Delaunay_graph_2& other, Handle_map& hm)
   for (; iit_other != other.isc_.end(); ++iit_other) {
     Site_rep_2 old_srep = *iit_other;
     Site_rep_2 new_srep( hm[boost::tuples::get<0>(old_srep)],
-			 hm[boost::tuples::get<1>(old_srep)],
-			 boost::tuples::get<2>(old_srep) );
+                         hm[boost::tuples::get<1>(old_srep)],
+                         boost::tuples::get<2>(old_srep) );
     isc_.insert( new_srep );
   }
-  
+
   CGAL_assertion( pc_.size() == other.pc_.size() );
   CGAL_assertion( isc_.size() == other.isc_.size() );
 
@@ -2834,7 +2877,7 @@ copy(Segment_Delaunay_graph_2& other, Handle_map& hm)
   DG::operator=(other);
 
   // now we have to update the sotrage sites in each vertex of the
-  // diagram and also update the 
+  // diagram and also update the
 
   // then update the storage sites for each vertex
   Intersections_tag itag;
@@ -2842,7 +2885,7 @@ copy(Segment_Delaunay_graph_2& other, Handle_map& hm)
   Finite_vertices_iterator vit_other = other.finite_vertices_begin();
   Finite_vertices_iterator vit_this = finite_vertices_begin();
   for (; vit_other != other.finite_vertices_end(); vit_other++,
-	 vit_this++) {
+         vit_this++) {
     Storage_site_2 ss_other = vit_other->storage_site();
 
 #ifndef CGAL_NO_ASSERTIONS
@@ -2880,7 +2923,7 @@ first_endpoint_of_segment(const Vertex_handle& v) const
     // Vertex_handle vv(vc);
     if ( !is_infinite(vc) && vc->is_point() ) {
       if ( same_points(fe, vc->site()) ) {
-	return Vertex_handle(vc);
+        return Vertex_handle(vc);
       }
     }
     vc++;
@@ -2904,7 +2947,7 @@ second_endpoint_of_segment(const Vertex_handle& v) const
     //      Vertex_handle vv(vc);
     if ( !is_infinite(vc) && vc->is_point() ) {
       if ( same_points(fe, vc->site()) ) {
-	return Vertex_handle(vc);
+        return Vertex_handle(vc);
       }
     }
     vc++;
@@ -2925,78 +2968,78 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_output(std::ostream& os, const Storage_site_2& t,
-	    Point_handle_mapper& P) const
+            Point_handle_mapper& P) const
 {
   CGAL_precondition( t.is_defined() );
 
   if ( t.is_point() ) {
     // 0 for point
     os << 0;
-    if ( is_ascii(os) ) { os << ' '; }
+    if ( IO::is_ascii(os) ) { os << ' '; }
     if ( t.is_input() ) {
       // 0 for input
       os << 0;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.point()];
     } else {
       // 1 for non-input
       os << 1;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site(1)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site(1)];
     }
   } else { // t is a segment
     // 1 for segment
     os << 1;
-    if ( is_ascii(os) ) { os << ' '; }
+    if ( IO::is_ascii(os) ) { os << ' '; }
     if ( t.is_input() ) {
       // 0 for input
       os << 0;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site()];
     } else if ( t.is_input(0) ) {
       // 1 for input source
       os << 1;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_crossing_site(1)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_crossing_site(1)];
     } else if ( t.is_input(1) ) {
       // 2 for input target
       os << 2;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_crossing_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_crossing_site(0)];
     } else {
       // 3 for non-input src & trg
       os << 3;
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_supporting_site()];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_crossing_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_crossing_site(0)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.source_of_crossing_site(1)];
-      if ( is_ascii(os) ) { os << ' '; }
+      if ( IO::is_ascii(os) ) { os << ' '; }
       os << P[t.target_of_crossing_site(1)];
     }
   }
@@ -3006,7 +3049,7 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_input(std::istream& is, Storage_site_2& t,
-	   const Point_handle_vector& P, const Tag_false&) const
+           const Point_handle_vector& P, const Tag_false&) const
 {
   int type, input;
   is >> type >> input;
@@ -3030,7 +3073,7 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_input(std::istream& is, Storage_site_2& t,
-	   const Point_handle_vector& P, const Tag_true&) const
+           const Point_handle_vector& P, const Tag_true&) const
 {
   int type, input;
   is >> type >> input;
@@ -3063,15 +3106,15 @@ file_input(std::istream& is, Storage_site_2& t,
       size_type p1, p2, q1, q2;
       is >> p1 >> p2 >> q1 >> q2;
       t = st_.construct_storage_site_2_object()(P[p1], P[p2],
-						P[q1], P[q2], input == 1);
+                                                P[q1], P[q2], input == 1);
     } else {
       // we have a segment whose neither its source nor its target is input
       CGAL_assertion( input == 3 );
       size_type p1, p2, q1, q2, r1, r2;
       is >> p1 >> p2 >> q1 >> q2 >> r1 >> r2;
       t = st_.construct_storage_site_2_object()(P[p1], P[p2],
-						P[q1], P[q2],
-						P[r1], P[r2]);      
+                                                P[q1], P[q2],
+                                                P[r1], P[r2]);
     }
   }
 }
@@ -3082,7 +3125,7 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_output(std::ostream& os, Point_handle_mapper& P,
-	    bool print_point_container) const
+            bool print_point_container) const
 {
   // ouput to a file
   size_type n = this->_tds.number_of_vertices();
@@ -3090,7 +3133,7 @@ file_output(std::ostream& os, Point_handle_mapper& P,
 
   CGAL_assertion( n >= 1 );
 
-  if( is_ascii(os) ) {
+  if( IO::is_ascii(os) ) {
     os << n << ' ' << m << ' ' << dimension() << std::endl;
   } else {
     os << n << m << dimension();
@@ -3098,36 +3141,36 @@ file_output(std::ostream& os, Point_handle_mapper& P,
 
   // points in point container and input sites container
   if ( print_point_container ) {
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     os << pc_.size();
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     for (const_Point_handle ph = pc_.begin(); ph != pc_.end(); ++ph) {
       os << *ph;
-      if ( is_ascii(os) ) { os << std::endl; }
+      if ( IO::is_ascii(os) ) { os << std::endl; }
     }
 
     // print the input sites container
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     os << isc_.size();
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
     for (typename Input_sites_container::const_iterator it = isc_.begin();
-	 it != isc_.end(); ++it) {
+         it != isc_.end(); ++it) {
       os << P[boost::tuples::get<0>(*it)];
-      if ( is_ascii(os) ) { os << " "; }
+      if ( IO::is_ascii(os) ) { os << " "; }
       os << P[boost::tuples::get<1>(*it)];
-      if ( is_ascii(os) ) { os << std::endl; }
+      if ( IO::is_ascii(os) ) { os << std::endl; }
     }
   }
 
   std::map<Vertex_handle,size_type> V;
   std::map<Face_handle,size_type> F;
 
-  // first vertex (infinite vertex) 
+  // first vertex (infinite vertex)
   size_type inum = 0;
   V[infinite_vertex()] = inum++;
-  
+
   // finite vertices
-  if (is_ascii(os)) os << std::endl;
+  if (IO::is_ascii(os)) os << std::endl;
   for (Finite_vertices_iterator vit = finite_vertices_begin();
        vit != finite_vertices_end(); ++vit) {
     V[vit] = inum++;
@@ -3135,9 +3178,9 @@ file_output(std::ostream& os, Point_handle_mapper& P,
     file_output(os, vit->storage_site(), P);
     // write non-combinatorial info of the vertex
     //    os << *vit ;
-    if ( is_ascii(os) ) { os << std::endl; }
+    if ( IO::is_ascii(os) ) { os << std::endl; }
   }
-  if ( is_ascii(os) ) { os << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl; }
 
   // vertices of the faces
   inum = 0;
@@ -3147,25 +3190,25 @@ file_output(std::ostream& os, Point_handle_mapper& P,
     F[fit] = inum++;
     for(int j = 0; j < dim ; ++j) {
       os << V[ fit->vertex(j) ];
-      if( is_ascii(os) ) { os << ' '; }
+      if( IO::is_ascii(os) ) { os << ' '; }
     }
     // write non-combinatorial info of the face
     //    os << *fit ;
-    if( is_ascii(os) ) { os << std::endl; }
+    if( IO::is_ascii(os) ) { os << std::endl; }
   }
-  if( is_ascii(os) ) { os << std::endl; }
-    
+  if( IO::is_ascii(os) ) { os << std::endl; }
+
   // neighbor pointers of the  faces
   for( All_faces_iterator it = all_faces_begin();
        it != all_faces_end(); ++it) {
     for(int j = 0; j < dimension()+1; ++j){
       os << F[ it->neighbor(j) ];
-      if( is_ascii(os) ) { os << ' '; }
+      if( IO::is_ascii(os) ) { os << ' '; }
     }
-    if( is_ascii(os) ) { os << std::endl; }
+    if( IO::is_ascii(os) ) { os << std::endl; }
   }
 
-  if ( is_ascii(os) ) { os << std::endl; }
+  if ( IO::is_ascii(os) ) { os << std::endl; }
 }
 
 
@@ -3174,7 +3217,7 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_2<Gt,ST,D_S,LTag>::
 file_input(std::istream& is, bool read_handle_vector,
-	   Point_handle_vector& P)
+           Point_handle_vector& P)
 {
   //input from file
   size_type n, m;
@@ -3225,9 +3268,9 @@ file_input(std::istream& is, bool read_handle_vector,
     CGAL_assertion( d == 1 );
     if ( number_of_vertices() > 0 ) { clear(); }
     file_input(is, ss, P, Intersections_tag());
-    insert_first(ss, *ss.point());  
+    insert_first(ss, *ss.point());
     file_input(is, ss, P, Intersections_tag());
-    insert_second(ss, *ss.point());  
+    insert_second(ss, *ss.point());
     return;
   }
 
@@ -3251,7 +3294,7 @@ file_input(std::istream& is, bool read_handle_vector,
     // read non-combinatorial info of the vertex
     //    is >> *(V[i]);
   }
-  
+
   // Creation of the faces
   int index;
   int dim = (dimension() == -1 ? 1 : dimension() + 1);
@@ -3269,7 +3312,7 @@ file_input(std::istream& is, bool read_handle_vector,
     //      is >> *(F[i]) ;
   }
 
-  // Setting the neighbor pointers 
+  // Setting the neighbor pointers
   for (i = 0; i < m; ++i) {
     for (int j = 0; j < dimension()+1; ++j){
       is >> index;

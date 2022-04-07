@@ -1,11 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
+
 #include <iostream>
 #include <fstream>
-
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
@@ -37,7 +35,7 @@ adjacent_vertices_V2(const Polyhedron& g,
                      OutputIterator out)
 {
   halfedge_around_target_iterator hi, he;
-  
+
   for(boost::tie(hi, he) = halfedges_around_target(halfedge(vd,g),g); hi != he; ++hi)
   {
     *out++ = source(*hi,g);
@@ -46,9 +44,9 @@ adjacent_vertices_V2(const Polyhedron& g,
 }
 
 
-int main(int, char** argv)
-{ 
-  std::ifstream in(argv[1]);
+int main(int argc, char** argv)
+{
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"));
   Polyhedron P;
   in >> P;
   GraphTraits::vertex_iterator vi = vertices(P).first;

@@ -23,7 +23,7 @@ typedef Nef_polyhedron::Object_handle Object_handle;
 
 int main(int, char**)
 {
-  CGAL::set_pretty_mode ( std::cerr );
+  CGAL::IO::set_pretty_mode ( std::cerr );
   CGAL_NEF_SETDTHREAD(911);
   std::cerr << CGAL::sweepversion << std::endl;
 
@@ -36,10 +36,10 @@ int main(int, char**)
   // SM_constrained_triang_traits 139
   // SM_point_locator 143
 
-  CGAL_TEST_START;    
+  CGAL_TEST_START;
   Sphere_point p1(0,1,0), p2(1,1,0), p3(1,1,1);
   Sphere_point p4(0,-1,0);
-  Sphere_circle c1(1,0,0), c2(0,1,0), c3(0,0,1); 
+  Sphere_circle c1(1,0,0), c2(0,1,0), c3(0,0,1);
   Sphere_segment s1(p4,p1,c3), s2(p1,p4,c1);
   Sphere_segment S[2] = { s1, s2 };
   Sphere_circle C[3] = { c1, c2, c3 };
@@ -49,17 +49,17 @@ int main(int, char**)
 
   // missing construction from segments and random init
 
-  CGAL_TEST((N1*N1) == N1);
-  CGAL_TEST((N1*!N1) == EMPTY);
+  CGAL_TEST((N1*N1) == N1){}
+  CGAL_TEST((N1*!N1) == EMPTY){}
   CGAL_NEF_TRACEV(N1);
   CGAL_NEF_TRACEV(!N1);
   CGAL_NEF_TRACEV(N1+!N1);
-  CGAL_TEST((N1+!N1) == SPHERE);
-  CGAL_TEST((N1^N2) == ((N1-N2)+(N2-N1))); // xor reformulation
+  CGAL_TEST((N1+!N1) == SPHERE){}
+  CGAL_TEST((N1^N2) == ((N1-N2)+(N2-N1))){} // xor reformulation
 
-  CGAL_NEF_TRACEV((N1*N2)); CGAL_NEF_TRACEV(!(N1*N2)); CGAL_NEF_TRACEV((!N1+!N2)); 
+  CGAL_NEF_TRACEV((N1*N2)); CGAL_NEF_TRACEV(!(N1*N2)); CGAL_NEF_TRACEV((!N1+!N2));
   CGAL_NEF_TRACEV(!(N1*N2) ^ (!N1+!N2));
-  CGAL_TEST( (!(N1*N2)) == (!N1+!N2) ); // deMorgan
+  CGAL_TEST( (!(N1*N2)) == (!N1+!N2) ){} // deMorgan
 #if 1
   Nef_polyhedron N3 = N1.intersection(N2);
   /* N3 is the two octants +++ and +-+ including the z-positive yz-halfplane
@@ -68,26 +68,26 @@ int main(int, char**)
   Nef_polyhedron N4(S,S+2,Nef_polyhedron::INCLUDED);
   Nef_polyhedron N5(C,C+3,0.5);
 
-  CGAL_TEST(N3 < N1 && N3 < N2);
-  CGAL_TEST(N3 <= N1 && N3 <= N2);
-  CGAL_TEST(N1 > N3 && N2 > N3);
-  CGAL_TEST(N1 >= N3 && N2 >= N3);
+  CGAL_TEST(N3 < N1 && N3 < N2){}
+  CGAL_TEST(N3 <= N1 && N3 <= N2){}
+  CGAL_TEST(N1 > N3 && N2 > N3){}
+  CGAL_TEST(N1 >= N3 && N2 >= N3){}
 
   SVertex_const_handle v;
   SHalfedge_const_handle e;
   SFace_const_handle f;
   Object_handle h;
   h = N3.locate(p1); // on y-axis
-  CGAL_TEST( CGAL::assign(v,h) );
-  CGAL_TEST( v->point() == p1 && !v->mark() );
+  CGAL_TEST( CGAL::assign(v,h) ){}
+  CGAL_TEST( v->point() == p1 && !v->mark() ){}
   h = N3.locate(p2);
-  CGAL_TEST( CGAL::assign(e,h) );
-  CGAL_TEST( e->circle() == c3 && !e->mark() );
+  CGAL_TEST( CGAL::assign(e,h) ){}
+  CGAL_TEST( e->circle() == c3 && !e->mark() ){}
   h = N3.locate(p3);
-  CGAL_TEST( CGAL::assign(f,h) );
-  CGAL_TEST( f->mark() );
+  CGAL_TEST( CGAL::assign(f,h) ){}
+  CGAL_TEST( f->mark() ){}
 #endif
-  CGAL_TEST_END;     
+  CGAL_TEST_END;
   return 0;
 }
 

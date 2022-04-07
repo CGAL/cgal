@@ -6,14 +6,17 @@
 #include <fstream>
 #include <QObject>
 #include <QFileDialog>
-#include <CGAL/glu.h>
+#include <QOpenGLFunctions_2_1>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
 
-class Scene : public QObject
+class Scene : public QObject, QOpenGLFunctions_2_1
 {
   Q_OBJECT
 
 private:
-  typedef qglviewer::Vec Vec;
+  typedef CGAL::qglviewer::Vec Vec;
   typedef std::set<Segment, Compare_segment<Segment> > Segment_set;
 
   enum Init {EMPTY, GRID, SINGLE, PLANE, RANDOM};
@@ -28,10 +31,11 @@ private:
     CLIPPING_COLOR
   };
 
+  bool gl_init;
 public:
   Scene(Ui::MainWindow* ui_) : ui(ui_), p3dt(),
-				  moving_point(Point(0.2,0.2,0.2)) {
-
+                  moving_point(Point(0.2,0.2,0.2)) {
+    gl_init = false;
     flying_ball = ui->actionFlying_ball->isChecked();
 
     dlocate = ui->actionPoint_location->isChecked();
@@ -65,15 +69,24 @@ public:
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_position()));
     timer->start(100);
+
+    points_cube = new std::vector<float>();
+    points_cylinder= new std::vector<float>();
+    normals_cylinder= new std::vector<float>();
   }
 
   ~Scene() {
-    gluDeleteQuadric(pQuadric);
+    ui->viewer->makeCurrent();
+    for(int i=0; i<24; i++)
+        buffers[i].destroy();
+    for(int i=0; i<12; i++)
+        vao[i].destroy();
   }
 
-public slots:
+public Q_SLOTS:
   void init();
   void draw();
+  void changed();
 
   void load_points(const QString& fileName);
   void update_position();
@@ -94,9 +107,9 @@ public slots:
 
   void insert_mp() {
     insert_point(moving_point);
-    QString str;
-    ui->viewer->displayMessage(str.sprintf("Added point (%f, %f, %f)",
-		   moving_point.x(),moving_point.y(),moving_point.z()));
+    ui->viewer->displayMessage(QString("Added point (%1, %2, %3)").arg(
+           moving_point.x()).arg(moving_point.y()).arg(moving_point.z()));
+    changed();
   }
 
   void insert_random() {
@@ -104,41 +117,41 @@ public slots:
     Point pt = *rp+Vector(0.5,0.5,0.5);
     rp++;
     insert_point(Point(pt.x(),pt.y(),(in_plane? 0.0:pt.z())));
-    QString str;
-    ui->viewer->displayMessage(str.sprintf("Added point (%f, %f, %f)",
-		   pt.x(),pt.y(),(in_plane? 0.0:pt.z())));
+    ui->viewer->displayMessage(QString("Added point (%1, %2, %3)").arg(
+           pt.x()).arg(pt.y()).arg((in_plane? 0.0:pt.z())));
+    changed();
   }
   void insert_point(Point p) {
     bool temp_flags[] = {dlocate, dconflict};
     dlocate = dconflict = false;
-    make_draw_list();
     p3dt.insert(p);
     dlocate = temp_flags[0];
     dconflict = temp_flags[1];
-    make_draw_list();
+    changed();
   }
+
   void grab_image() {
-    ui->viewer->openSnapshotFormatDialog();
-    ui->viewer->saveSnapshot(false);
+    ui->viewer->saveSnapshot();
   }
-  void toggle_dlocate(bool on) { 
+
+  void toggle_dlocate(bool on) {
     dlocate = on;
+    changed();
     ui->viewer->update();
   }
   void toggle_dconflict(bool on) {
-    dconflict = on; 
+    dconflict = on;
+    changed();
     ui->viewer->update();
   }
   void toggle_wireframe(bool on) {
-    wireframe = on;
-    ( on ? glDisable(GL_LIGHTING) : glEnable(GL_LIGHTING) );
-    gl_draw_domain();
-    make_draw_list();
+        wireframe = !(!on && extension_is_found);
+        ( on ? glDisable(GL_LIGHTING) : glEnable(GL_LIGHTING) );
+        changed();
   }
   void toggle_in_plane(bool on) {
     in_plane = on;
-    gl_draw_domain();
-    make_draw_list();
+    changed();
   }
   // TODO: find radio button functionality within menus in QtDesigner
   void toggle_force_1cover(bool on) {
@@ -146,37 +159,37 @@ public slots:
       it_type = ( on ? P3DT::UNIQUE_COVER_DOMAIN : P3DT::STORED_COVER_DOMAIN );
     else
       it_type = ( on ? P3DT::UNIQUE : P3DT::STORED);
-    make_draw_list();
+    changed();
   }
   void toggle_multiple_cells(bool on) {
     if (ui->actionDraw_1_sheeted_covering->isChecked())
       it_type = ( on ? P3DT::UNIQUE_COVER_DOMAIN : P3DT::UNIQUE );
     else
       it_type = ( on ? P3DT::STORED_COVER_DOMAIN : P3DT::STORED );
-    make_draw_list();
+    changed();
   }
   void trigger_draw_type_segment() {
     ui->actionDraw_segments->setChecked(true);
     ui->actionDraw_triangles->setChecked(false);
     ui->actionDraw_tetrahedra->setChecked(false);
     draw_type = SEGMENT;
-    make_draw_list();
+    changed();
   }
   void trigger_draw_type_triangle() {
     ui->actionDraw_segments->setChecked(false);
     ui->actionDraw_triangles->setChecked(true);
     ui->actionDraw_tetrahedra->setChecked(false);
     draw_type = TRIANGLE;
-    make_draw_list();
+    changed();
   }
   void trigger_draw_type_tetrahedron() {
     ui->actionDraw_segments->setChecked(false);
     ui->actionDraw_triangles->setChecked(false);
     ui->actionDraw_tetrahedra->setChecked(true);
     draw_type = TETRAHEDRON;
-    make_draw_list();
+    changed();
   }
-  void toggle_ddomain(bool on) { ddomain = on; }
+  void toggle_ddomain(bool on) { ddomain = on; changed(); }
   void toggle_cube_clipping(bool on) {
     ui->action2_color_clipping->setEnabled(on);
     if (!on) ui->action2_color_clipping->setChecked(false);
@@ -185,53 +198,48 @@ public slots:
     if (on && ui->action2_color_clipping->isChecked())
       toggle_two_color_clipping(true);
     else
-      make_draw_list();
+    changed();
   }
   void toggle_two_color_clipping(bool on) {
     two_color_clipping = on;
-    make_draw_list();
+    changed();
   }
-  bool load_points() { 
+  bool load_points() {
     QString fileName = QFileDialog
       ::getOpenFileName(ui->centralWidget, tr("Open point set"),
-			".", tr("All files (*)"));
+            ".", tr("All files (*)"));
     if(! fileName.isEmpty()){
       load_points(fileName);
     }
    return true;
   }
 
-signals:
-  void message(const QString & message, int timeout = 0 ); 
+Q_SIGNALS:
+  void message(const QString & message, int timeout = 0 );
   void loaded_points(const QString &n);
 
 private:
   // Scene management helpers
-  void make_draw_list();
   void init_scene(Init sceneID);
-  void gl_draw_square();
-  void gl_draw_cube();
-  void gl_draw_domain() {
-    if (in_plane) gl_draw_square();
-    else gl_draw_cube();
-  }
+  GLint project(GLdouble objx, GLdouble objy, GLdouble objz,
+                const GLdouble modelMatrix[16],
+                const GLdouble projMatrix[16],
+                const GLint viewport[4],
+                GLdouble *winx, GLdouble *winy, GLdouble *winz);
 
   // Helper functions
   void get_tri_offsets(const Cell_handle ch, int i,
-		       Offset& off0, Offset& off1, Offset& off2) const;
+               Offset& off0, Offset& off1, Offset& off2) const;
   void get_tet_offsets(const Cell_handle ch, Offset& off0, Offset& off1,
-		       Offset& off2, Offset& off3) const;
+               Offset& off2, Offset& off3) const;
   int get_tri_drawing_offsets(const Cell_handle ch, int i) const;
   int get_tet_drawing_offsets(const Cell_handle ch) const;
   Tetrahedron construct_tetrahedron(const Cell_handle ch, const Offset& off0,
       const Offset& off1,const Offset& off2,const Offset& off3, int off) const;
-  Triangle construct_triangle(const Cell_handle ch, int i, 
+  Triangle construct_triangle(const Cell_handle ch, int i,
       const Offset& off0,const Offset& off1,const Offset& off2, int off) const;
 
   // Drawing functions
-  void gl_draw_vertex(const Point& p, const FT& radius) const;
-  void gl_draw_edge(Point p1, Point p2, FT radius );
-
   void primitives_from_geom_it(Segment_set& sset);
   void segment_clipping(Segment_set& sset);
   void segment_2color_clipping (Segment_set& sset);
@@ -241,6 +249,66 @@ private:
 
   void change_material(const QString& string);
 
+  //Shaders elements
+
+  QColor color;
+  // define material
+   QVector4D        ambient;
+   QVector4D        diffuse;
+   QVector4D        specular;
+   GLfloat      shininess ;
+      int poly_vertexLocation[3];
+      int normalsLocation[3];
+      int mvpLocation[3];
+      int mvLocation[2];
+      int centerLocation[5];
+      int colorLocation[3];
+      int lightLocation[5*2];
+
+
+      std::vector<float> pos_points;
+      std::vector<float> pos_tube;
+      std::vector<float> pos_cube;
+      std::vector<float> pos_square;
+      std::vector<float> pos_location;
+      std::vector<float> pos_conflict;
+      std::vector<float> points_spheres;
+      std::vector<float> normals_spheres;
+      std::vector<float> *points_cylinder;
+      std::vector<float> *normals_cylinder;
+      std::vector<float> *points_cube;
+      std::vector<float> transfo1_cylinder;
+      std::vector<float> transfo2_cylinder;
+      std::vector<float> transfo3_cylinder;
+      std::vector<float> transfo4_cylinder;
+      std::vector<float> transfo1_cube;
+      std::vector<float> transfo2_cube;
+      std::vector<float> transfo3_cube;
+      std::vector<float> transfo4_cube;
+
+      std::vector<float> transfo1_square;
+      std::vector<float> transfo2_square;
+      std::vector<float> transfo3_square;
+      std::vector<float> transfo4_square;
+
+      bool are_buffers_initialized;
+      bool extension_is_found;
+      QOpenGLBuffer buffers[24];
+      QOpenGLVertexArrayObject vao[12];
+      QOpenGLShaderProgram rendering_program;
+      QOpenGLShaderProgram rendering_program_spheres;
+      QOpenGLShaderProgram rendering_program_cylinders;
+      typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+      typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
+      PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
+      PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
+      void initialize_buffers();
+      void compute_elements();
+      void attrib_buffers(CGAL::QGLViewer*);
+      void compile_shaders();
+      void draw_sphere(float R, int prec);
+      void draw_cylinder(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals);
+
 private:
   Ui::MainWindow * ui;
   P3DT p3dt;
@@ -249,7 +317,6 @@ private:
   QString materials[6];
   QTimer* timer;
   GLuint l_triangulation, l_domain;
-  GLUquadricObj* pQuadric;
 
   bool flying_ball;
   bool dlocate, dconflict;

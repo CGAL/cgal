@@ -1,53 +1,55 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.1...3.22)
+project(Triangulation_3_Tests)
 
-project( Triangulation_3_test )
+find_package(CGAL REQUIRED)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
+find_package(TBB QUIET)
+include(CGAL_TBB_support)
+
+include_directories(BEFORE "include")
+
+create_single_source_cgal_program("test_delaunay_3.cpp")
+create_single_source_cgal_program("test_delaunay_hierarchy_3.cpp")
+create_single_source_cgal_program("test_delaunay_hierarchy_3_old.cpp")
+create_single_source_cgal_program("test_regular_3.cpp")
+create_single_source_cgal_program("test_regular_as_delaunay_3.cpp")
+create_single_source_cgal_program("test_regular_insert_range_with_info.cpp")
+create_single_source_cgal_program("test_regular_remove_3.cpp")
+create_single_source_cgal_program("test_regular_traits_3.cpp")
+create_single_source_cgal_program(
+  "test_RT_cell_base_with_weighted_circumcenter_3.cpp")
+create_single_source_cgal_program("test_robust_weighted_circumcenter.cpp")
+create_single_source_cgal_program("test_simplex_3.cpp")
+create_single_source_cgal_program( "test_simplex_iterator_3.cpp" )
+create_single_source_cgal_program( "test_segment_cell_traverser_3.cpp" )
+create_single_source_cgal_program( "test_segment_simplex_traverser_3.cpp" )
+create_single_source_cgal_program("test_static_filters.cpp")
+create_single_source_cgal_program("test_triangulation_3.cpp")
+create_single_source_cgal_program("test_io_triangulation_3.cpp")
+
+if(TARGET CGAL::TBB_support)
+  foreach(target test_delaunay_3 test_regular_3
+                 test_regular_insert_range_with_info)
+    target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+  endforeach()
+  if(BUILD_TESTING)
+    set_property(TEST
+      execution___of__test_delaunay_3
+      execution___of__test_regular_3
+      execution___of__test_regular_insert_range_with_info
+      PROPERTY RUN_SERIAL 1)
   endif()
 endif()
 
-find_package(CGAL QUIET COMPONENTS Core )
-
-if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  find_package( TBB QUIET )
-
-  if( TBB_FOUND )
-    include(${TBB_USE_FILE})
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
-  endif()
-  
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  include_directories (BEFORE "../../include")
-
-    include_directories (BEFORE "include")
-
-  create_single_source_cgal_program( "test_delaunay_3.cpp" )
-  create_single_source_cgal_program( "test_delaunay_hierarchy_3.cpp" )
-  create_single_source_cgal_program( "test_delaunay_hierarchy_3_old.cpp" )
-  create_single_source_cgal_program( "test_regular_3.cpp" )
-  create_single_source_cgal_program( "test_regular_as_delaunay_3.cpp" )
-  create_single_source_cgal_program( "test_regular_insert_range_with_info.cpp" )
-  create_single_source_cgal_program( "test_regular_remove_3.cpp" )
-  create_single_source_cgal_program( "test_regular_traits_3.cpp" )
-  create_single_source_cgal_program( "test_simplex_3.cpp" )
-  create_single_source_cgal_program( "test_static_filters.cpp" )
-  create_single_source_cgal_program( "test_triangulation_3.cpp" )
-  create_single_source_cgal_program( "test_triangulation_tds_3.cpp" )
-
-else()
-  
-    message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+if(BUILD_TESTING)
+  set_tests_properties(
+    execution___of__test_delaunay_hierarchy_3
+    execution___of__test_delaunay_hierarchy_3_old
+    execution___of__test_regular_as_delaunay_3
+    execution___of__test_triangulation_3
+    execution___of__test_delaunay_3
+    PROPERTIES RESOURCE_LOCK Triangulation_3_Tests_IO)
 endif()
-

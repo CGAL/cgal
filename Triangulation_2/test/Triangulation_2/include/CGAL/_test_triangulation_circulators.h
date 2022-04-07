@@ -7,14 +7,14 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
-// source        : 
+//
+// source        :
 // file          : include/CGAL/_test_triangulation_circulators.h
-// revision      : 
-// revision_date : 
+// revision      :
+// revision_date :
 // author(s)     : Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
 //
 // coordinator   : INRIA Sophia-Antipolis
@@ -29,7 +29,7 @@ template < class Tr>
 void
 _test_circulators( const Tr &T )
 {
-  // test the circulators provided by the Triangulation class 
+  // test the circulators provided by the Triangulation class
   typedef typename Tr::All_vertices_iterator All_vertices_iterator;
   typedef typename Tr::All_faces_iterator    All_faces_iterator;
   typedef typename Tr::All_edges_iterator    All_edges_iterator;
@@ -48,24 +48,24 @@ _test_circulators( const Tr &T )
     {
       vc0 = vc = T.incident_vertices( vit, vit->face() );
       if( !vc.is_empty()){
-	if( vc != NULL){
-	  do {
-	    vc++; nvi++;
-	  } while (vc != vc0);
-	}
+        if( vc != nullptr){
+          do {
+            vc++; nvi++;
+          } while (vc != vc0);
+        }
       }
       //test operator --()
        vc0 = vc = T.incident_vertices( vit, vit->face() );
       if( !vc.is_empty()){
-	if( vc != NULL){
-	  do {
-	    vc--; nvi_r++;
-	  } while (vc != vc0);
-	}
+        if( vc != nullptr){
+          do {
+            vc--; nvi_r++;
+          } while (vc != vc0);
+        }
       }
       assert(nvi_r == nvi);
     }
-  
+
   typename Tr::size_type nfi = 0;
   typename Tr::size_type nfi_r = 0;
   Face_circulator fc, fc0;
@@ -73,20 +73,20 @@ _test_circulators( const Tr &T )
     {
       fc0 = fc = T.incident_faces( vit, vit->face() );
       if( !fc.is_empty()){
-	do {
-	  fc++; nfi++;
-	} while (fc != fc0);
+        do {
+          fc++; nfi++;
+        } while (fc != fc0);
       }
       //test operator --()
       fc0 = fc = T.incident_faces( vit, vit->face() );
       if( !fc.is_empty()){
-	do {
-	  fc--; nfi_r++;
-	} while (fc != fc0);
+        do {
+          fc--; nfi_r++;
+        } while (fc != fc0);
       }
       assert(nfi_r == nfi);
     }
-  
+
 
   typename Tr::size_type nei = 0;
   typename Tr::size_type nei_r = 0;
@@ -95,20 +95,20 @@ _test_circulators( const Tr &T )
     {
       ec0 = ec = T.incident_edges( vit, vit->face() );
        if( !ec.is_empty()){
-	 do {
-	   ec++; nei++;
-	 } while (ec != ec0);
+         do {
+           ec++; nei++;
+         } while (ec != ec0);
        }
        //test operator --()
        ec0 = ec = T.incident_edges( vit, vit->face() );
        if( !ec.is_empty()){
-	 do {
-	   ec--; nei_r++;
-	 } while (ec != ec0);
+         do {
+           ec--; nei_r++;
+         } while (ec != ec0);
        }
        assert(nei_r == nei);
     }
-  
+
   //Traverse convex_hull- this count infinite
   //using pre incrementation to test it
   int nch = 0;
@@ -118,14 +118,14 @@ _test_circulators( const Tr &T )
       ++fc; nch++;
     } while (fc != fc0);
   }
-  
-  //Check Total 
+
+  //Check Total
   typename Tr::size_type mf = T.number_of_faces() + nch;
   typename Tr::size_type mv = T.number_of_vertices() +1;
   typename Tr::size_type me ;
   if (T.dimension() <= 0) me=0;
   else me = T.dimension() == 1 ? mv : 3*mv-6 ;
-    
+
   assert ( nvi ==  nei);
   assert ( nvi == 2*me);
   assert ( nfi == 3*mf);

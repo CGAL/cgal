@@ -1,12 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Circular Geometry Kernel"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Circular_kernel_2/doc/Circular_kernel_2/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Circular Geometry Kernel"
 SORT_GROUP_NAMES           =  true
 
 

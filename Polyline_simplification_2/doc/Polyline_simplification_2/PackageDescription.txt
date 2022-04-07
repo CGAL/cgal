@@ -1,0 +1,54 @@
+/// \defgroup PkgPolylineSimplification2Ref 2D Polyline Simplification Reference
+/// \defgroup PkgPolylineSimplification2Concepts Concepts
+/// \ingroup PkgPolylineSimplification2Ref
+
+/// \defgroup PkgPolylineSimplification2Classes Polyline Simplification Classes
+/// \ingroup PkgPolylineSimplification2Ref
+
+
+/// \defgroup PkgPolylineSimplification2Functions Global Functions
+/// \ingroup PkgPolylineSimplification2Ref
+
+
+
+/*!
+\addtogroup PkgPolylineSimplification2Ref
+\cgalPkgDescriptionBegin{2D Polyline Simplification,PkgPolylineSimplification2}
+\cgalPkgPicture{PolylineSimplification-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Andreas Fabri}
+\cgalPkgDesc{This package  enables to simplify polylines with the guarantee that the topology of the polylines does not change. This can be done for a single polyline as well as for a set of polyline constraints in a constrained triangulation. The simplification can be controlled with cost and stop functions.}
+\cgalPkgManuals{Chapter_2D_Polyline_simplification,PkgPolylineSimplification2Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.6}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgBib{cgal:f-ps2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyline Simplification,polyline_simplification_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `PolylineSimplificationCostFunction`
+- `PolylineSimplificationStopPredicate`
+- `PolylineSimplificationVertexBase_2`
+
+\cgalCRPSection{Classes}
+- `CGAL::Polyline_simplification_2::Squared_distance_cost`
+- `CGAL::Polyline_simplification_2::Scaled_squared_distance_cost`
+- `CGAL::Polyline_simplification_2::Hybrid_squared_distance_cost`
+- `CGAL::Polyline_simplification_2::Stop_above_cost_threshold`
+- `CGAL::Polyline_simplification_2::Stop_below_count_threshold`
+- `CGAL::Polyline_simplification_2::Stop_below_count_ratio_threshold`
+- `CGAL::Polyline_simplification_2::Vertex_base_2`
+
+\cgalCRPSection{Global Functions}
+- `CGAL::Polyline_simplification_2::simplify()`
+
+*/
+

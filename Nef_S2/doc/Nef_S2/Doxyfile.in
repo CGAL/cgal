@@ -1,11 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Boolean Operations on Nef Polygons Embedded on the Sphere"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Nef_S2/doc/Nef_S2/
-
-HTML_EXTRA_FILES           =  ${CMAKE_SOURCE_DIR}/Nef_S2/doc/Nef_S2/fig/halfspace.png \
-                              ${CMAKE_SOURCE_DIR}/Nef_S2/doc/Nef_S2/fig/complex.png
-
-EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Nef_S2/demo
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Boolean Operations on Nef Polygons Embedded on the Sphere"
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/halfspace.png \
+                              ${CGAL_PACKAGE_DOC_DIR}/fig/complex.png

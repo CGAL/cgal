@@ -1,9 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Simplification"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Triangulated Surface Mesh Simplification"
 
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Surface_mesh_simplification/doc/Surface_mesh_simplification/
-
-
-
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/sappho.jpg

@@ -1,0 +1,14 @@
+# -*- comment-start: "#"; -*-
+#
+# Push_front for polycurves have 2 types of operators. It can either push a segment into a polycurve or
+# it can push an x-monotone segment into an x-monotone polycurve
+#
+# Format:
+# 1. <command> 
+# 2. <type of operator 0 for curve, 1 for x-curve (mentioned abve)> 
+# 3. <polycurve/x-polycurve id> 
+# 4. <segment/x-segment to be pushed > 
+# 5. <Expectec curve/x_curve id>
+#
+push_front 1 0 1 5
+push_front 0 2 1 1

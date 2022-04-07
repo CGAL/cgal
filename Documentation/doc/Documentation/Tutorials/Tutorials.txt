@@ -1,0 +1,29 @@
+/*!
+
+\page tutorials Tutorials
+
+\cgal provides a large number of data structures and algorithms dedicated to
+various applications. Most of these data structures and algorithms can be
+combined to achieve extensive and complex geometric tasks. The tutorials aim at
+providing help and ideas on how to use CGAL beyond the simple examples of the
+User Manual.
+
+\section tuto_list List of Available Tutorials
+
+- \subpage tutorial_hello_world presents you some short example
+  programs to get a first idea for the look and feel of a program that
+  uses \cgal.  We introduce the notion of the \em kernel which defines
+  geometric primitives, the notion of <em>traits classes</em> which
+  define what primitives are used by a geometric algorithm, the
+  notions of \em concept and \em model.
+
+- \subpage tuto_reconstruction
+
+- \subpage tuto_gis
+
+\section tuto_examples Package Examples
+
+Each \cgal package comes with a set of commented examples that illustrate basic features of the package.
+See for example Section \ref Triangulation3secexamples of the User Manual of the package \ref PkgTriangulation3.
+
+*/

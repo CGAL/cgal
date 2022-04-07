@@ -2,25 +2,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
 #ifndef CGAL_QT_SEGMENTS_GRAPHICS_ITEM_H
 #define CGAL_QT_SEGMENTS_GRAPHICS_ITEM_H
+
+#include <CGAL/license/GraphicsView.h>
+
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/bounding_box.h>
@@ -48,9 +43,9 @@ public:
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& verticesPen() const
   {
@@ -92,7 +87,7 @@ protected:
 template <typename P>
 SegmentsGraphicsItem<P>::SegmentsGraphicsItem(P * p_)
   :  segments(p_), painterostream(0),
-     draw_edges(true), draw_vertices(true)   
+     draw_edges(true), draw_vertices(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
 
@@ -101,7 +96,7 @@ SegmentsGraphicsItem<P>::SegmentsGraphicsItem(P * p_)
 }
 
 template <typename P>
-QRectF 
+QRectF
 SegmentsGraphicsItem<P>::boundingRect() const
 {
   return bounding_rect;
@@ -111,14 +106,14 @@ SegmentsGraphicsItem<P>::boundingRect() const
 
 
 template <typename P>
-void 
-SegmentsGraphicsItem<P>::paint(QPainter *painter, 
+void
+SegmentsGraphicsItem<P>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
 
   painterostream = PainterOstream<Traits>(painter);
-  
+  painter->setPen(QPen(::Qt::black, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     for(typename P::iterator it = segments->begin();
         it != segments->end();
         it++){
@@ -129,7 +124,7 @@ SegmentsGraphicsItem<P>::paint(QPainter *painter,
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename P>
-void 
+void
 SegmentsGraphicsItem<P>::updateBoundingBox()
 {
   Converter<Traits> convert;
@@ -149,7 +144,7 @@ SegmentsGraphicsItem<P>::updateBoundingBox()
 
 
 template <typename P>
-void 
+void
 SegmentsGraphicsItem<P>::modelChanged()
 {
   updateBoundingBox();

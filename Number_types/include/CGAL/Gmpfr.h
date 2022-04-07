@@ -1,19 +1,11 @@
 // Copyright (c) 2007-2009 Inria Lorraine (France). All rights reserved.
-// 
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-// 
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-// 
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-// 
+//
+// This file is part of CGAL (www.cgal.org)
+//
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_GMPFR_H
@@ -34,28 +26,28 @@ public:
         typedef bool            Boolean;
 
         struct Is_zero:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 Boolean operator()(const Type &x)const{
                         return x.is_zero();
                 }
         };
 
         struct Is_one:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 Boolean operator()(const Type &x)const{
                         return x.is_one();
                 }
         };
 
         struct Square:
-        public std::unary_function<Type,Type>{
+        public CGAL::cpp98::unary_function<Type,Type>{
                 Type operator()(const Type &x)const{
                         return x.square();
                 };
         };
 
         struct Is_square:
-        public std::binary_function<Type,Type&,Boolean>{
+        public CGAL::cpp98::binary_function<Type,Type&,Boolean>{
                 Boolean operator()(const Type &x,Type &y)const{
                         return x.is_square(y);
                 };
@@ -65,14 +57,14 @@ public:
         };
 
         struct Sqrt:
-        public std::unary_function<Type,Type>{
+        public CGAL::cpp98::unary_function<Type,Type>{
                 Type operator()(const Type &x)const{
                         return x.sqrt();
                 };
         };
 
         struct Kth_Root:
-        public std::binary_function<int,Type,Type>{
+        public CGAL::cpp98::binary_function<int,Type,Type>{
                 Type operator()(int k,const Type &x)const{
                         return (k==3?x.cbrt():x.kthroot(k));
                 };
@@ -82,7 +74,7 @@ public:
 template <>
 class Real_embeddable_traits<Gmpfr>:
 public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
-  
+
         typedef Algebraic_structure_traits<Type>        AST;
 
         public:
@@ -95,58 +87,58 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
         typedef AST::Is_zero    Is_zero;
 
         struct Is_finite:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return(x.is_number());
                 };
         };
 
         struct Abs:
-        public std::unary_function<Type,Type>{
+        public CGAL::cpp98::unary_function<Type,Type>{
                 inline Type operator()(const Type &x)const{
                         return x.abs();
                 };
         };
 
         struct Sgn:
-        public std::unary_function<Type,Sign>{
+        public CGAL::cpp98::unary_function<Type,Sign>{
                 inline Sign operator()(const Type &x)const{
                         return x.sign();
                 };
         };
 
         struct Is_positive:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return(x.sign()==POSITIVE);
                 };
         };
 
         struct Is_negative:
-        public std::unary_function<Type,Boolean>{
+        public CGAL::cpp98::unary_function<Type,Boolean>{
                 inline Boolean operator()(const Type &x)const{
                         return(x.sign()==NEGATIVE);
                 };
         };
 
         struct Compare:
-        public std::binary_function<Type,Type,Comparison_result>{
+        public CGAL::cpp98::binary_function<Type,Type,Comparison_result>{
                 inline Comparison_result operator()
                         (const Type &x,const Type &y)const{
                                 return x.compare(y);
-                        }; 
+                        };
           CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,Comparison_result)
         };
 
         struct To_double:
-        public std::unary_function<Type,double>{
+        public CGAL::cpp98::unary_function<Type,double>{
                 inline double operator()(const Type &x)const{
                         return x.to_double();
                 };
         };
 
         struct To_interval:
-        public std::unary_function<Type,std::pair<double,double> >{
+        public CGAL::cpp98::unary_function<Type,std::pair<double,double> >{
                 inline std::pair<double,double>operator()(const Type &x)const{
                                 return x.to_interval();
                 };
@@ -162,6 +154,7 @@ namespace Eigen {
     typedef CGAL::Gmpfr Real;
     typedef CGAL::Gmpfr NonInteger;
     typedef CGAL::Gmpfr Nested;
+    typedef CGAL::Gmpfr Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }

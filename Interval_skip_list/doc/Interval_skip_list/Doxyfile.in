@@ -1,9 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Interval Skip List"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Interval_skip_list/doc/Interval_skip_list/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Interval Skip List"

@@ -1,24 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -41,7 +33,7 @@ class DirectionC3
   typedef typename R_::Segment_3            Segment_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef cpp11::array<FT, 3>               Rep;
+  typedef std::array<FT, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -60,10 +52,10 @@ public:
   { *this = l.rep().direction(); }
 
   explicit DirectionC3(const Ray_3 &r)
-  { *this = r.direction(); }
+  { *this = r.rep().direction(); }
 
   explicit DirectionC3(const Segment_3 &s)
-  { *this = s.direction(); }
+  { *this = s.rep().direction(); }
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
     : base(CGAL::make_array(x, y, z)) {}
@@ -76,15 +68,15 @@ public:
 
   const FT & dx() const
   {
-      return get(base)[0];
+      return get_pointee_or_identity(base)[0];
   }
   const FT & dy() const
   {
-      return get(base)[1];
+      return get_pointee_or_identity(base)[1];
   }
   const FT & dz() const
   {
-      return get(base)[2];
+      return get_pointee_or_identity(base)[2];
   }
 
   const FT & hdx() const

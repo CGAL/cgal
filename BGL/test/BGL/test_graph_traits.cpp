@@ -1,11 +1,26 @@
-
-
 #include "test_Prefix.h"
 
-#include <boost/foreach.hpp>
-#include <boost/unordered_set.hpp>
+#include <CGAL/use.h>
 
-typedef boost::unordered_set<std::size_t> id_map;
+#include <boost/numeric/conversion/cast.hpp>
+#include <unordered_set>
+
+typedef std::unordered_set<std::size_t>                        id_map;
+
+template <typename Graph>
+void test_isolated_vertex()
+{
+  Graph G;
+  typedef boost::graph_traits< Graph > Traits;
+  typedef typename Traits::vertex_descriptor vertex_descriptor;
+  typedef typename Traits::halfedge_descriptor halfedge_descriptor;
+  vertex_descriptor v = add_vertex(G);
+  // the connectivity of v may be anything
+  set_halfedge(v, Traits::null_halfedge(), G);
+  halfedge_descriptor h = halfedge(v,G);
+  CGAL_USE(h);
+}
+
 
 template <typename Graph>
 void test_halfedge_around_vertex_iterator(const Graph& g)
@@ -14,7 +29,7 @@ void test_halfedge_around_vertex_iterator(const Graph& g)
   vertex_iterator vit, vend;
   for(boost::tie(vit, vend) = vertices(g); vit != vend; ++vit) {
     halfedge_around_target_iterator havit, havend;
-    for(boost::tie(havit, havend) = CGAL::halfedges_around_target(halfedge(*vit, g), g); 
+    for(boost::tie(havit, havend) = CGAL::halfedges_around_target(halfedge(*vit, g), g);
         havit != havend; ++havit) {
       assert(target(*havit, g) == *vit);
 
@@ -44,18 +59,42 @@ void test_halfedge_around_face_iterator(const Graph& g)
 }
 
 template<typename G>
+void test_halfedge_iterators(const G& g)
+{
+  typedef boost::graph_traits< G > Traits;
+  typedef typename Traits::halfedge_iterator halfedge_iterator;
+  typedef typename Traits::halfedges_size_type halfedges_size_type;
+
+  // do we iterate as many as that?
+  halfedge_iterator hb, he;
+  boost::tie(hb, he) = halfedges(g);
+  assert(boost::numeric_cast<halfedges_size_type>(std::distance(hb, he)) == num_halfedges(g));
+
+  id_map ids;
+  unsigned int count = 0;
+  for(boost::tie(hb, he) = halfedges(g); hb != he; ++hb) {
+    std::pair<id_map::iterator, bool> r = ids.insert(get(boost::halfedge_index, g, *hb));
+    // unique?
+    assert(r.second);
+    ++count;
+  }
+  assert(count == num_halfedges(g));
+}
+
+template<typename G>
 void test_edge_iterators(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::edge_descriptor edge_descriptor;
   typedef typename Traits::edge_iterator edge_iterator;
+  typedef typename Traits::edges_size_type edges_size_type;
 
-  assert(g.size_of_halfedges() / 2 == num_edges(g));
-  
+  // assert(g.size_of_halfedges() / 2 == num_edges(g));
+
   // do we iterate as many as that?
   edge_iterator eb, ee;
   boost::tie(eb, ee) = edges(g);
-  assert(std::distance(eb, ee) == static_cast<std::ptrdiff_t>(g.size_of_halfedges() / 2));
+  assert(boost::numeric_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
 
   id_map ids;
   unsigned int count = 0;
@@ -70,20 +109,22 @@ void test_edge_iterators(const G& g)
 }
 
 template<typename G>
-void test_vertex_iterators(G& g)
+void test_vertex_iterators(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
 
+  vertex_iterator vb, ve;
   std::size_t count = 0;
-  for (typename G::Vertex_iterator it = g.vertices_begin(); it != g.vertices_end(); ++it)
+  for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb){
     ++count;
+  }
 
   assert(count == num_vertices(g));
 
   // check that the iterators reach uniques
   id_map ids;
-  vertex_iterator vb, ve;
+
   count = 0;
   for(boost::tie(vb, ve) = vertices(g); vb != ve; ++vb) {
     std::pair<id_map::iterator, bool> r = ids.insert(get(boost::vertex_index, g, *vb));
@@ -94,7 +135,7 @@ void test_vertex_iterators(G& g)
 }
 
 template<typename G>
-void test_out_edges(const G& g) 
+void test_out_edges(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
@@ -121,7 +162,7 @@ void test_out_edges(const G& g)
 }
 
 template<typename G>
-void test_in_edges(const G& g) 
+void test_in_edges(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
@@ -146,7 +187,7 @@ void test_in_edges(const G& g)
 }
 
 template<typename G>
-void test_in_out_edges(const G& g) 
+void test_in_out_edges(const G& g)
 {
   typedef boost::graph_traits< G > Traits;
   typedef typename Traits::vertex_iterator vertex_iterator;
@@ -182,6 +223,41 @@ void test_in_out_edges(const G& g)
     assert(in.size() == degree(*vb, g));
     assert(degree(*vb, g) == in_degree(*vb, g));
     assert(degree(*vb, g) == out_degree(*vb, g));
+  }
+}
+
+template<typename G>
+void test_adjacent_vertices(const G& g)
+{
+  typedef boost::graph_traits< G > Traits;
+  typedef typename Traits::vertex_descriptor vertex_descriptor;
+  typedef typename Traits::edge_descriptor edge_descriptor;
+  typedef typename Traits::in_edge_iterator in_edge_iterator;
+  typedef typename Traits::out_edge_iterator out_edge_iterator;
+  typedef typename Traits::adjacency_iterator adjacency_iterator;
+  typedef std::pair<edge_descriptor, bool>   ret;
+
+  vertex_descriptor v = *(vertices(g).begin());
+
+  adjacency_iterator vb, ve;
+  boost::tie(vb, ve) = adjacent_vertices(v, g);
+
+  in_edge_iterator ieb, iee;
+  boost::tie(ieb, iee) = in_edges(v, g);
+
+  out_edge_iterator oeb, oee;
+  boost::tie(oeb, oee) = out_edges(v, g);
+
+  assert(std::distance(vb, ve) == std::distance(ieb, iee));
+  assert(std::distance(vb, ve) == std::distance(oeb, oee));
+
+  for(; vb != ve; ++vb)
+  {
+    vertex_descriptor s = *vb;
+    assert(s != v);
+    assert(s != Traits::null_vertex());
+    ret found = edge(s, v, g);
+    assert(found.second);
   }
 }
 
@@ -235,39 +311,59 @@ void test_faces(const G& g)
 template<typename G>
 void test_read(const G& g)
 {
-  assert(CGAL::is_valid(g));
+  assert(CGAL::is_valid_polygon_mesh(g));
 }
 
+template <typename Graph>
+void test_const_graph(const Graph& g)
+{
+  test_vertex_iterators(g);
+  test_halfedge_iterators(g);
+  test_edge_iterators(g);
+  test_read(g);
+  test_out_edges(g);
+  test_in_edges(g);
+  test_in_out_edges(g);
+//  test_adjacent_vertices(g);
+  test_edge_find(g);
+  test_faces(g);
+  test_halfedge_around_vertex_iterator(g);
+  test_halfedge_around_face_iterator(g);
+}
 
 template <typename Graph>
-void
-test(const std::vector<Graph>& graphs)
+void test_graph_range(const std::vector<Graph>& graphs)
 {
-  BOOST_FOREACH(Graph p, graphs){
-    test_edge_iterators(p);
-    test_read(p);
-    test_vertex_iterators(p);
-    test_out_edges(p);
-    test_in_edges(p);
-    test_in_out_edges(p);
-    test_edge_find(p);
-    test_faces(p);
-    test_halfedge_around_vertex_iterator(p);
-    test_halfedge_around_face_iterator(p);
+  for(const Graph& g : graphs)
+  {
+    test_const_graph(g);
+    test_isolated_vertex<Graph>();
   }
 }
 
-int
-main()
+int main()
 {
-  test(poly_data());
+  std::cout << "Test polyhedron data..." << std::endl;
+  test_graph_range(poly_data());
 
-#if defined(CGAL_USE_SURFACE_MESH)
-  test(sm_data());
-#endif
+  std::cout << "Test LCC data..." << std::endl;
+  test_graph_range(lcc_data());
+
+  std::cout << "Test Surface_mesh data..." << std::endl;
+  test_graph_range(sm_data());
+
+  std::cout << "Test T2 data..." << std::endl;
+  test_const_graph(t2_data());
+  test_const_graph(dt2_data());
+  test_const_graph(rt2_data());
+  test_const_graph(ct2_data());
+  test_const_graph(cdt2_data());
+  test_const_graph(cdtp2_data());
+  test_const_graph(t2h_data());
 
 #if defined(CGAL_USE_OPENMESH)
-  test(omesh_data());
+  std::cout << "Test OpenMesh data..." << std::endl;
+  test_graph_range(omesh_data());
 #endif
 
   std::cerr << "done" << std::endl;

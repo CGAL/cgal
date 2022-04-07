@@ -1,0 +1,6 @@
+/*!
+\example Three_examples/Example_plugin.cpp
+\example Three_examples/Basic_item_plugin.cpp
+\example Three_examples/Dock_widget_plugin.cpp
+\example Three_examples/Basic_plugin.cpp
+*/

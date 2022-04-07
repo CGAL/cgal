@@ -1,0 +1,590 @@
+
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Triangulations
+
+\cgalAutoToc
+\authors Olivier Devillers, Samuel Hornus, and Clément Jamin.
+
+This package proposes data structures and algorithms to compute
+triangulations of points in any dimensions \cgalCite{boissonnat2009Delaunay}.
+The `Triangulation_data_structure` handles the
+combinatorial aspect of triangulations while the geometric classes
+`Triangulation`, `Delaunay_triangulation` and `Regular_triangulation` allow to
+compute and maintain triangulations, Delaunay triangulations, and
+regular triangulations of sets of points.
+
+\section TriangulationSecIntro Introduction
+
+## Some Definitions ##
+
+A <I>finite abstract simplicial complex</I> is built on a finite set of
+vertices \f$ V\f$ and consists of a collection \f$ S\f$ of subsets of \f$ V\f$ such that,
+if \f$ s\f$ is a set of vertices in \f$ S\f$, then all the subsets of \f$ s\f$ are also
+in \f$ S\f$.
+
+The sets in \f$ S\f$ (which are subsets of \f$ V\f$) are called
+<I>faces</I> or <I>simplices</I> (the
+singular of which is <I>simplex</I>).
+A simplex \f$ s\in S\f$ is <I>maximal</I> if it is not a proper subset of some other
+set in \f$ S\f$.
+A simplex having \f$ k+1 \f$ vertices is said of dimension \f$ k \f$.
+An \f$ k\f$-face denotes a \f$ k\f$-dimensional simplex, i.e., a simplex with \f$ k+1\f$
+vertices.
+The simplicial complex is <I>pure</I> if all the maximal simplices
+have the same dimension.
+
+A <i>triangulation</i> is a simplicial complex
+that is pure, connected and without boundaries nor singularities. The
+<i>dimension</i> of the triangulation is the dimension of its maximal
+simplices.
+
+<!--- cardinality, i.e., they have the same number of vertices.--->
+In the sequel, we will call these maximal simplices <I>full cells</I>.
+A <I>face</I> of a simplex is a subset of this simplex.
+A <I>proper face</I> of a simplex is a strict subset of this simplex.
+Two faces \f$ \sigma\f$ and \f$ \sigma'\f$ are <I>incident</I> if and only if
+\f$ \sigma'\f$ is a proper face of \f$ \sigma\f$ or <I>vice versa</I>.
+
+A complex has <i>no boundaries</i> if any proper face of a simplex is also a
+proper face of another simplex.
+
+If the triangulation is of dimension \f$ d \f$, we use the following terminology:<UL>
+<LI><I>face</I>: an \f$ i\f$-face for some \f$ i\in[0,d]\f$;
+<LI><I>vertex</I>: a \f$ 0\f$-face;
+<LI><I>edge</I>: a \f$ 1\f$-face;
+<LI><I>ridge</I>: a \f$ (d-2)\f$-face;
+<LI><I>facet</I>: a \f$ (d-1)\f$-face;
+<LI><I>full cell</I>: a \f$ d\f$-face.
+</UL>
+
+If the vertices are embedded into Euclidean space \f$ \mathbb{R}^n\f$,
+we deal with
+<I>finite simplicial complexes</I>, which have slightly different simplices
+and additional requirements:
+<UL>
+<LI>vertices correspond to points in space.
+<LI>a simplex \f$ s\in S\f$ is the convex hull of its vertices.
+<LI>the vertices of a simplex \f$ s\in S\f$ are affinely independent.
+<LI>the intersection of any two simplices of \f$ S\f$ is a proper face of both
+simplices (the empty set counts).
+</UL>
+
+## What is Provided in this Package? ##
+
+This \cgal package provides four main classes
+for creating and manipulating triangulations.
+
+The class `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
+models an <I>abstract triangulation</I>: vertices in this
+class are not embedded in Euclidean space but are only of combinatorial
+nature.
+
+The class `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`
+describes an embedded triangulation that has as vertices a given set of points.
+Methods are provided for the insertion of points in the triangulation, the
+traversal of various elements of the triangulation, as well as the location of a
+query point inside the triangulation.
+The triangulation covers the convex hull of the set of points.
+
+The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`
+builds the Delaunay triangulation of a set of points.
+In a Delaunay triangulation, each face has the so-called
+<I>Delaunay</I> or <I>empty-ball</I> property: there exists a
+circumscribing ball whose interior does not contain
+any vertex of the triangulation.
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`
+builds the regular triangulation
+-- also known as weighted Delaunay triangulation -- of a set of points.
+A detailed definition of such a triangulation is available in section
+\ref TriangulationSecRT.
+
+\section TriangulationSecTDS Triangulation Data Structure
+
+In this section, we describe the concept `TriangulationDataStructure` for
+which \cgal provides one model class:
+`CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`.
+
+A triangulation data structure can represent an abstract triangulation.
+
+The <I>maximal dimension</I> of a triangulation data structure is a
+positive integer equal to the maximum dimension a full cell can have.
+This maximal dimension can be chosen by the user at the creation of the
+triangulation data structure and can then be obtained using the method `tds.maximal_dimension()`.
+A triangulation data structure also knows the <I>current dimension</I> of its full cells,
+which can be obtained using `tds.current_dimension()`. In the sequel, let
+us denote the maximal dimension with \f$ D \f$ and the current dimension with \f$ d \f$.
+The inequalities \f$ -2 \leq d \leq D\f$ and \f$ 0 < D\f$ always hold.
+The special meaning of negative values for \f$d\f$ is explained below.
+
+## The Set of Faces ##
+
+The set of faces of a triangulation data structure with
+current dimension \f$ d \f$ forms a triangulation of the
+topological sphere \f$ \mathbb{S}^d\f$.
+
+Two full cells \f$ \sigma\f$ and \f$ \sigma'\f$ sharing a facet are called
+<I>neighbors</I>. A full cell has always exactly \f$ d+1\f$ neighbors.
+
+Possible values of \f$d\f$ (the <I>current dimension</I> of the triangulation) include
+<BLOCKQUOTE>
+<DL>
+<DT><B>\f$d=-2\f$</B><DD> This corresponds to an empty
+triangulation data structure.
+<DT><B>\f$d=-1\f$</B><DD> This corresponds to an abstract simplicial
+complex reduced to a single vertex.
+ <!---  and a single full cell. In a geometric triangulation, this vertex corresponds to the vertex at infinity.--->
+<DT><B>\f$d=0\f$</B><DD> This corresponds to an abstract simplicial
+complex including two vertices, each corresponding to a full cell;
+the two full cells being neighbors of each other. This is the unique
+triangulation of the \f$ 0\f$-sphere.
+<!--- (geometrically, the finite vertex and the infinite vertex),--->
+<DT><B>\f$ 0< d \le D\f$</B><DD> This corresponds to a triangulation of
+the sphere \f$ \mathbb{S}^d\f$.
+</DL>
+</BLOCKQUOTE>
+
+## The `Triangulation_data_structure` Class ##
+
+We give here some details about the class
+`Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
+implementing the concept `TriangulationDataStructure`.
+
+### Storage ###
+
+A triangulation data structure explicitly stores its vertices and full cells.
+
+Each vertex stores a reference to one of its incident full cells.
+
+Each full cell \f$ \sigma \f$ stores references to its \f$ d+1\f$ vertices and
+neighbors. Its vertices and neighbors are indexed from \f$ 0\f$ to \f$ d \f$. The indices
+of its neighbors have the following meaning: the \f$ i\f$-th neighbor of \f$ \sigma\f$
+is the unique neighbor of \f$ \sigma\f$ that does not contain the \f$ i\f$-th vertex of
+\f$ \sigma\f$; in other words, it is the neighbor of \f$ \sigma\f$ <I>opposite</I> to
+the \f$ i\f$-th vertex of \f$ \sigma\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).
+
+The vertices and full cells of the triangulations are accessed through
+`handles` and `iterators`. A handle is a model of the
+`Handle` concept, and supports the two dereference operators and
+`operator->`.
+
+\cgalFigureBegin{triangulationfigfullcell,simplex-structure.png}
+Indexing the vertices and neighbors of a full cell \f$ c\f$ in dimension \f$ d=2\f$.
+\cgalFigureEnd
+
+Faces of dimension between 0 and \f$ d-1 \f$ can be accessed as
+subfaces of a full cell, through the nested type `Face`. The `Face` instance
+corresponding to a face \f$ f \f$ stores a reference to a full cell `c`
+containing \f$ f \f$, and the indices of the vertices of `c` that belong
+to \f$ f \f$.
+
+\if READY_TO_PUBLISH
+\cgalAdvanced The index of a full cell \f$ c\f$ in the \f$ i\f$-th
+neighbor of \f$ c\f$ is called the <I>\f$ i\f$-th mirror-index</I> of
+\f$ c\f$ (Figure \cgalFigureRef{triangulationfigfullcell}).  Mirror indices are
+often needed for maintaining the triangulation data structure. Thus,
+it might be desirable, for performance reasons, to store the mirror
+indices alongside the references to the vertices and neighbors in a
+full cell. This improves speed a little, but requires more memory.
+
+\cgalAdvanced \cgal provides the class template
+`Triangulation_ds_full_cell<TriangulationDataStructure_,
+TriangulationDSFullCellStoragePolicy>` for representing full cells in a
+triangulation. Its second template parameter is used to specify whether
+or not the mirror indices should be kept in memory or computed
+on-the-fly, which is the default case.  Please refer to the
+documentation of that class template for specific details.
+\endif
+
+###Template Parameters###
+
+The `Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
+class is designed in such a way that its user can choose
+<UL>
+<LI>the maximal dimension of the triangulation data structure by specifying the `Dimensionality` template parameter,
+<LI>the type used to represent vertices by specifying the `TriangulationDSVertex_`
+template parameter and
+<LI>the type used to represent full cells by specifying the
+`TriangulationDSFullCell_` template parameter.
+</UL>
+
+The last two parameters have default values and are thus not necessary, unless
+the user needs custom types (see `Triangulation_data_structure`).
+The first template parameter, `Dimensionality`, must be one of the following:
+<UL>
+<LI>`CGAL::Dimension_tag<D>` for some integer \f$ D \f$. This
+indicates that the triangulation can store full cells of dimension at most
+\f$ D \f$. The maximum dimension \f$ D \f$ is known by the compiler, which
+triggers some optimizations.
+<LI>`CGAL::Dynamic_dimension_tag`. In this case, the maximum
+dimension of the full cells must be passed as an integer argument to an instance
+constructor (see `TriangulationDataStructure`).
+</UL>
+
+The `TriangulationDSVertex_` and `TriangulationDSFullCell_` parameters to the class template
+must be models of the concepts `TriangulationDSVertex` and
+`TriangulationDSFullCell` respectively. \cgal provides models for these
+concepts: `Triangulation_ds_vertex<TriangulationDataStructure_>` and
+`Triangulation_ds_full_cell<TriangulationDataStructure_, TriangulationDSFullCellStoragePolicy>`, which, as one
+can see, take the triangulation data structure as a template parameter in order to get access to
+some nested types in `TriangulationDataStructure_`.
+
+The default values are `CGAL::Triangulation_ds_vertex<TDS>`
+and `CGAL::Triangulation_ds_full_cell<TDS>`
+where `TDS` is the current class
+`Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`.
+<I>This creates a circular dependency</I>, which we resolve in the same way
+as in the \cgal `Triangulation_2` and `Triangulation_3` packages (see
+Chapters \ref Chapter_2D_Triangulation_Data_Structure, \ref Chapter_2D_Triangulations,
+\ref Chapter_3D_Triangulation_Data_Structure, and \ref Chapter_3D_Triangulations).
+In particular, models of the concepts `TriangulationDSVertex` and
+`TriangulationDSFullCell` must provide a nested template `Rebind_TDS`
+which is documented in those two concept's reference manual pages.
+This mechanism can be used to provide a custom vertex or full cell
+class. The user  is encouraged to read the documentation of the \cgal
+`Triangulation_2` or `Triangulation_3` package.
+
+
+## Examples ##
+
+### Incremental Construction ###
+
+The following examples shows how to construct a triangulation data structure by
+inserting vertices. Its main interest is that it demonstrates most of the API
+to insert new vertices into the triangulation.
+<!---
+Therefore, the reader will make
+the best use of this example by reading it slowly, together with the reference
+manual documentation of the methods that are called (see here:
+`TriangulationDataStructure`) and by trying to understand the various
+`assert(...)` statements.--->
+
+\cgalExample{triangulation_data_structure_static.cpp}
+
+In the previous example, the maximal dimension is fixed at compile time.
+It is also possible to fix it at run time, as in the next example.
+
+\cgalExample{triangulation_data_structure_dynamic.cpp}
+
+### Barycentric Subdivision ###
+
+This example provides a function for computing the barycentric subdivision of a
+single full cell `c` in a triangulation data structure. The other
+full cells adjacent to `c` are automatically subdivided to match the
+subdivision of the full cell `c`. The barycentric subdivision of `c` is
+obtained by enumerating all the faces of `c` in order of decreasing
+dimension, from the dimension of `c` to dimension 1, and inserting a new
+vertex in each face.
+
+\cgalFigureBegin{triangulationfigbarycentric,barycentric-subdivision.png}
+Barycentric subdivision in dimension \f$ d=2\f$.
+\cgalFigureEnd
+
+\cgalExample{barycentric_subdivision.cpp}
+
+\section TriangulationSecTriangulations Triangulations
+
+The class `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`
+maintains a triangulation embedded in Euclidean space. The triangulation
+covers the convex hull of the input points (the embedded vertices of the
+triangulation).
+
+To store this triangulation in a triangulation data structure, we turn the set
+of its faces into a topological sphere by adding a
+fictitious vertex, called the <i>infinite vertex</i>, as well as infinite
+simplices incident to boundary faces of the convex hull.
+Each infinite \f$ i\f$-simplex is
+incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the
+convex hull boundary.
+
+See Chapters \ref Chapter_2D_Triangulations "2D Triangulations" or
+\ref Chapter_3D_Triangulations "3D Triangulations" for more details
+about infinite vertices and cells.
+
+Methods are provided for the insertion of points in the triangulation, the
+contraction of faces, the traversal of various elements of the triangulation
+as well as the location of a query point inside the triangulation.
+
+The ordering of the vertices of a full cell defines an orientation of
+that full cell.
+As long as no <I>advanced</I> class method is called, it is guaranteed
+that all finite full cells have positive orientation. Each infinite full
+cell is oriented as if its infinite vertex was on the side of
+the hyperplane supported by its finite facet where there is no other point.
+
+## Implementation ##
+
+The class `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`
+stores a model of the concept `TriangulationDataStructure` that is
+instantiated with a vertex type that stores a point.
+
+The template parameter `TriangulationTraits_` must be a model of the concept
+`TriangulationTraits`, which provides the point type as well
+as various geometric predicates used by the `Triangulation` class.
+
+The `TriangulationTraits` concept includes a nested type
+`TriangulationTraits::Dimension`. This dimension governs the number of points
+given as arguments to the predicates. This type is either
+`CGAL::Dimension_tag<D>` or `CGAL::Dynamic_dimension_tag`.
+In any case, the dimension of the traits
+must match the maximal dimension of the triangulation data structure.
+
+The template parameter `TriangulationDataStructure_` must be a model of the concept
+`TriangulationDataStructure` which provides the triangulation data
+structure as described in the previous section.
+
+## Examples ##
+
+### Incremental Construction ###
+
+The following example shows how to construct a triangulation in which we insert
+random points. In `STEP 1`, we generate one hundred random points in
+\f$ \mathbb{R}^5\f$, which we then insert into a triangulation. In `STEP 2`, we
+ask the triangulation to construct the set of edges
+(\f$ 1\f$ dimensional faces) incident to the vertex at infinity. It is easy to see that
+these edges are in bijection with the vertices on the convex hull of the
+points. This gives us a handy way to count the convex hull vertices
+(include files <tt>triangulation1.cpp</tt> and
+<tt>triangulation2.cpp</tt> are given and commented below).
+
+\cgalExample{triangulation.cpp}
+
+### Traversing the Facets of the Convex Hull ###
+
+Remember that a triangulation covers the convex hull of its
+vertices.
+Each facet of the convex hull is incident
+to one finite full cell and one infinite
+full cell. In fact there is a bijection between the infinite full cells and the
+facets of the convex hull.
+If vertices are not in general position, convex hull faces that are
+not simplices are triangulated.
+In order to traverse the convex hull facets,
+there are (at least) two possibilities:
+
+The first is to iterate over the full cells of the triangulation and check if they
+are infinite or not:
+
+\cgalExample{triangulation1.cpp}
+
+A second possibility is to ask the triangulation to gather all the full cells
+incident to the infinite vertex: they form precisely the set of infinite
+full cells:
+
+
+\cgalExample{triangulation2.cpp}
+
+One important difference between the two examples above is that the first uses
+<I>little</I> memory but traverses <I>all</I> the full cells, while the second
+visits <I>only</I> the infinite full cells but stores handles to them into the
+<I>potentially big</I> array <tt>infinite_full_cells</tt>.
+
+\section TriangulationSecDT Delaunay Triangulations
+
+The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>` derives from
+`CGAL::Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`
+and represents Delaunay triangulations.
+
+A <I>circumscribing ball</I> of a simplex is a ball
+having all vertices of the simplex on its boundary.
+In a Delaunay triangulation, each face has the so-called
+<I>Delaunay</I> or <I>empty-ball</I> property: there exists a
+circumscribing ball whose interior does not contain
+any vertex of the triangulation.
+
+In case of degeneracies (co-spherical points) the triangulation is not
+uniquely defined. Note however that the CGAL implementation computes a
+unique triangulation even in these cases.
+
+When a new point `p` is inserted into a Delaunay triangulation, the
+full cells whose circumscribing ball contains `p` are said to
+<I>be in conflict</I> with point `p`. Note that the circumscribing ball
+of an infinite full cell is the empty half-space bounded by the affine hull
+of the finite facet of this cell. The set of full cells that are in
+conflict with `p` form the <I>conflict zone</I>. The full cells
+in the conflict zone are removed, leaving a hole that contains `p`. That
+hole is ``star shaped'' around `p` and thus is re-triangulated using
+`p` as a center vertex.
+
+Delaunay triangulations support insertion of points, removal of vertices,
+and location of a query point inside the triangulation.
+Note that inserting a large set of points at once is much faster
+than inserting the same points one by one.
+
+## Implementation ##
+
+The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>` derives from
+`CGAL::Triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`. It thus stores a model of
+the concept `TriangulationDataStructure`, which is instantiated with a vertex
+type that stores a geometric point and allows its retrieval.
+
+The template parameter `DelaunayTriangulationTraits_` must be a model of the concept
+`DelaunayTriangulationTraits` which provides the geometric `Point` type as
+well as various geometric predicates used by the `Delaunay_triangulation` class.
+The concept `DelaunayTriangulationTraits` refines the concept
+`TriangulationTraits` by requiring a few additional geometric predicates, necessary
+for the computation of Delaunay triangulations.
+
+## Examples ##
+
+### Access to the Conflict Zone and to the Full Cells Created during Point Insertion ###
+
+When using a full cell type containing additional custom information, it may be
+useful to get an efficient access to the full cells that are going to be erased
+upon the insertion of a new point in the Delaunay triangulation, and to the newly
+created full cells. The second part of code example below shows how one can have efficient
+access to both the conflict zone and the created full cells, while still
+retaining an efficient update of the Delaunay triangulation.
+
+\cgalExample{delaunay_triangulation.cpp}
+
+\section TriangulationSecRT Regular Triangulations
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>` derives from
+`CGAL::Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`
+and represents regular triangulations.
+
+Regular triangulations are also known as weighted Delaunay triangulations.
+
+Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^D\f$. Let
+\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^D, w_p\in\mathbb{R}\f$ and
+\f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^D, w_z\in\mathbb{R}\f$
+be two weighted points.
+A weighted point \f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of
+center \f$ p\f$ and radius \f$ \sqrt{w_p}\f$.
+The <I>power product</I> (or <I>power distance</I> )
+between \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ is
+defined as
+\f[ \Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z} \f]
+where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
+\f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
+are said to be <I>orthogonal</I> if \f$ \Pi({p}^{(w)},{z}^{(w)})
+= 0\f$.
+
+\f$D + 1\f$ weighted points have a unique common orthogonal weighted point
+called the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
+<I>regular</I> if \f$ \forall {p}^{(w)}\in{S}^{(w)},
+\Pi({p}^{(w)},{z}^{(w)})\geq 0\f$.
+
+A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
+of all simplices are regular.
+
+Note that as a result, some points can be hidden and do not result in vertices
+in the triangulation. Those points are discarded and cannot be retrieved.
+
+A weighted point `p` is said to be in conflict
+with a simplex `s` if it has a negative power distance to the power sphere of `s`.
+
+Regular triangulations support insertion of weighted points,
+and location of a query point inside the triangulation.
+Note that inserting a large set of points at once is much faster
+than inserting the same points one by one.
+\warning The removal of vertices is not supported yet.
+
+
+## Implementation ##
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>` derives from
+`CGAL::Triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`. It thus stores a model of
+the concept `TriangulationDataStructure_` which is instantiated with a vertex
+type that stores a weighted point and allows its retrieval.
+
+The template parameter `RegularTriangulationTraits_` must be a model of the concept
+`RegularTriangulationTraits`. It must provide the `%Weighted_point_d`
+type as well as various geometric predicates used by the
+`Regular_triangulation` class.
+The concept `RegularTriangulationTraits` refines the concept
+`TriangulationTraits`.
+
+## Example ##
+
+This simple example shows how to create a regular triangulation.
+
+\cgalExample{regular_triangulation.cpp}
+
+\section TriangulationSecPerf Complexity and Performances
+
+When inserting a batch of points into a Delaunay triangulation,
+the current implementation starts by spatially sorting the points.
+Then, for each point to insert, it locates it by walking in the triangulation,
+using the previously inserted vertex as a "hint". Finally, the point is
+inserted.
+In the worst case scenario, without spatial sort, the expected complexity is
+\f$ O(n^{\lceil\frac{d}{2}\rceil+1}) \f$.
+When the algorithm is run on uniformly distributed points, the localization complexity is
+\f$ O(n^{\frac{1}{d}}) \f$ and the size of the triangulation is \f$ O(n) \f$, which gives
+a complexity of \f$ O(n^{1+\frac{1}{d}}) \f$ for the insertion.
+With spatial sort and random points, one can expect a complexity of \f$ O(n\log n) \f$.
+Please refer to \cgalCite{boissonnat2009Delaunay} for more details.
+
+We provide below (\cgalFigureRef{Triangulationfigbenchmarks100},
+\cgalFigureRef{Triangulationfigbenchmarks1000} and
+\cgalFigureRef{triangulationfigbenchmarkchart}) the
+performance of the Delaunay triangulation on randomly distributed points.
+The machine used is a PC running
+Windows 7 64-bits with an Intel Xeon CPU clocked at 2.80 GHz with 32GB of RAM.
+The program has been compiled with Microsoft Visual C++ 2013 in Release mode.
+
+\cgalFigureAnchor{Triangulationfigbenchmarks100}
+<CENTER>
+<TABLE CELLSPACING=15 align=center>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+<tr><th ALIGN=RIGHT NOWRAP>Dimension</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+<tr align=center><td align=right>Time (s)</td><td>0.003</td><td>0.007</td><td>0.03</td><td>0.14</td><td>0.56</td><td>2.7</td><td>11.3</td><td>45</td><td>185</td><td>686</td><td>2390</td></tr>
+<tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>< 1</td><td>1</td><td>3</td><td>13</td><td>53</td><td>182</td><td>662</td><td>2187</td><td>7156</td></tr>
+<tr align=center><td align=right>Number of maximal simplices</td><td>184</td><td>487</td><td>1,548</td><td>5,548</td><td>19,598</td><td>67,102</td><td>230,375</td><td>715,984</td><td>2,570,623</td><td>7,293,293</td><td>21,235,615</td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>14</td><td>66</td><td>308</td><td>1,164</td><td>4,410</td><td>16,974</td><td>57,589</td><td>238,406</td><td>670,545</td><td>2,574,326</td><td>8,603,589</td></tr></td><td>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+</TABLE>
+</CENTER>
+\cgalFigureCaptionBegin{Triangulationfigbenchmarks100}
+Performance of the insertion of 100 points in a Delaunay triangulation.
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{Triangulationfigbenchmarks1000}
+<CENTER>
+<TABLE CELLSPACING=15 align=center>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
+<tr><th ALIGN=RIGHT NOWRAP>Dimension</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
+<tr align=center><td align=right>Time (s)</td><td>0.01</td><td>0.05</td><td>0.5</td><td>3.4</td><td>24</td><td>183</td><td>1365</td></tr>
+<tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>2.7</td><td>14</td><td>81</td><td>483</td><td>2827</td></tr>
+<tr align=center><td align=right>Number of maximal simplices</td><td>1,979</td><td>6,315</td><td>25,845</td><td>122,116</td><td>596,927</td><td>3,133,318</td><td>16,403,337</td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>19</td><td>138</td><td>963</td><td>6,184</td><td>41,135</td><td>241,540</td><td>1,406,797</td></tr></td><td>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
+</TABLE>
+</CENTER>
+\cgalFigureCaptionBegin{Triangulationfigbenchmarks1000}
+Performance of the insertion of 1000 points in a Delaunay triangulation.
+\cgalFigureCaptionEnd
+
+\cgalFigureBegin{triangulationfigbenchmarkchart,benchmark_DTd.png}
+Running time wrt. number of maximal simplices, for dimensions for 2 to 12.
+\cgalFigureEnd
+
+\section TriangulationSecDesign Design and Implementation History
+
+Starting with the version 2.3 of \cgal, a package written by Susan Hert and Michael Seel
+was the first able to deal with triangulation and convex hulls in arbitrary
+dimension. It is deprecated since the version 4.6 of \cgal and this package should be used
+instead.
+
+This package is heavily inspired by the works of
+Monique Teillaud and Sylvain Pion (`Triangulation_3`)
+and Mariette Yvinec (`Triangulation_2`).
+The first version was written by Samuel Hornus. The final version is a joint
+work by Samuel Hornus, Olivier Devillers and Clément Jamin. In 2017, Clément
+Jamin added the regular triangulations.
+
+Clément Jamin's work was supported by the
+<a href="https://cordis.europa.eu/project/rcn/111529/factsheet/en">Advanced Grant of the European Research Council GUDHI</a>
+(Geometric Understanding in Higher Dimensions).
+
+
+*/
+} /* namespace CGAL */
+

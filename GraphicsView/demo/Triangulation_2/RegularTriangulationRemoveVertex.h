@@ -24,7 +24,7 @@ public:
 protected:
 
   void mousePressEvent(QGraphicsSceneMouseEvent *event);
- 
+
   bool eventFilter(QObject *obj, QEvent *event);
 
   DT * dt;
@@ -33,16 +33,16 @@ protected:
 
 template <typename T>
 RegularTriangulationRemoveVertex<T>::RegularTriangulationRemoveVertex(T * dt_,
-							  QObject* parent)
+                                                          QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_)
 {}
 
 
 
 template <typename T>
-void 
+void
 RegularTriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{  
+{
   if((event->modifiers()  & ::Qt::ShiftModifier)
      && (! (event->modifiers() & ::Qt::ControlModifier))){
     if(dt->number_of_vertices() == 0){
@@ -53,14 +53,14 @@ RegularTriangulationRemoveVertex<T>::mousePressEvent(QGraphicsSceneMouseEvent *e
       typename T::Vertex_handle selected_vertex = dt->nearest_power_vertex(convert(event->scenePos()));
       dt->remove(selected_vertex);
     }
-    emit (modelChanged());
+    Q_EMIT( modelChanged());
   }
 }
 
 
 
 template <typename T>
-bool 
+bool
 RegularTriangulationRemoveVertex<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -71,7 +71,7 @@ RegularTriangulationRemoveVertex<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

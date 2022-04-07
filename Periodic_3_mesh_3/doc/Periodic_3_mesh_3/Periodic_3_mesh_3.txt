@@ -1,0 +1,702 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_3D_Periodic_Mesh_Generation
+\anchor userchapterperiodic3mesh3
+\authors Mikhail Bogdanov, Aymeric Pellé, Mael Rouxel-Labbé, and Monique Teillaud
+\cgalAutoToc
+
+\cgalFigureAnchor{Periodic_3_mesh_3Banner}
+<center>
+<img src="periodic_banner.png" style="max-width:60%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Banner}
+A cut view of a periodic mesh.
+\cgalFigureCaptionEnd
+
+\section Periodic_3_mesh_3_section_intro Introduction
+
+This package is devoted to the generation of isotropic simplicial
+meshes discretizing periodic 3D domains.
+The domain to be meshed is a subset of the three-dimensional flat torus
+(see Section \ref P3Triangulation3secspace of the package \ref PkgPeriodic3Triangulation3).
+The domain may be connected or composed of multiple components
+and/or subdivided in several subdomains.
+The current implementation provides classes to represent
+domains bounded by isosurfaces of implicit functions defined over a cube.
+
+Boundary and subdivision surfaces are either
+smooth or piecewise-smooth surfaces, formed with planar or curved surface patches.
+Surfaces may exhibit 1-dimensional features (e.g. crease edges)
+and 0-dimensional features (e.g. singular points as corners
+tips, cusps or darts), that have to be fairly approximated in the mesh.
+
+The output mesh is a periodic 3-dimensional triangulation,
+including subcomplexes that approximate each input domain feature: subdomain,
+boundary surface patch or input domain feature with dimension 0 or 1.
+Thus, the output mesh includes a 3D submesh covering each subdomain,
+a surface mesh approximating each boundary or subdividing
+surface patch, a polyline approximation for each
+1-dimensional feature and of course a vertex on each corner.
+
+The main entry points of the package are two global functions that
+respectively generate and refine such meshes. The mesh generator is customized
+to output a mesh that fits as much as possible the user needs,
+for instance in terms of sizing field or with respect
+to some user customized quality criteria.
+
+The meshing engine used in this mesh generator is based on Delaunay
+refinement \cgalCite{c-gqmgc-93}, \cgalCite{r-draq2d-95}, \cgalCite{s-tmgdr-98}.
+It uses the notion of restricted Delaunay triangulation
+to approximate 1-dimensional curves and surface patches \cgalCite{cgal:bo-pgsms-05}.
+Before the refinement, a mechanism of protecting balls is set up on 1-dimensional features, if any,
+to ensure a fair representation of those features in the mesh,
+and also to guarantee the termination of the refinement process,
+whatever may be the input geometry, in particular whatever small angles
+the boundary and subdivision surface patches may form \cgalCite{cgal:cdl-pdma-07},
+\cgalCite{cgal:cdr-drpsc-07}. The Delaunay refinement is followed
+by a mesh optimization phase to remove slivers and provide a good quality mesh.
+
+\subsection Periodic_3_mesh_3Mesh_3 Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages
+
+This package is fundamentally linked to the package \ref PkgMesh3,
+which is devoted to the generation of isotropic simplicial
+meshes discretizing (non-periodic) 3D domains and to the \ref PkgPeriodic3Triangulation3 of \cgal,
+which are used as underlying triangulation structures of the mesh.
+
+A periodic mesh extends, by definition, infinitely in space. We consider the flat torus \f$ \mathbb T_c^3\f$,
+whose <I>canonical cube</I> has side length `c` (this canonical cube is named <I>original domain</I>
+in Chapter \ref PkgPeriodic3Triangulation3; we rename it here to avoid the confusion
+with the domain defined in Chapter \ref PkgMesh3). Well-chosen "dummy" points
+are inserted at the beginning of the meshing process, ensuring that the projection
+of the periodic triangulation into the flat torus \f$ \mathbb T_c^3\f$ forms at all times a simplicial complex
+(see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
+of the manual of 3D periodic triangulations).
+Thanks to this construction, the meshing process can be exclusively conducted
+within the canonical cube.
+The mesh can then be created using the \ref PkgMesh3 package of \cgal.
+As this package originally aims to mesh non-periodic domains of \f$ \mathbb R^3\f$, an interface
+is necessary between the packages \ref PkgMesh3 and \ref PkgPeriodic3Triangulation3.
+This package provides this interface.
+
+\subsection Periodic_3_mesh_3InputDomain Input Domain
+
+The domain to be meshed is assumed to be representable as a pure 3D complex.
+A 3D complex is a set of faces with dimension 0, 1, 2, and 3
+such that all faces are pairwise interior disjoint, and the boundary
+of each face of the complex is the union of lower-dimensional faces of the complex.
+The 3D complex is *pure*, meaning that each face is included in a face of dimension 3,
+so that the complex is entirely described by the set of its 3D faces and their subfaces.
+However the 3D complex needs not be connected.
+The set of faces with dimension lower or equal than 2 forms a 2D
+subcomplex which needs not be manifold, neither pure, nor connected:
+some 3D faces may have dangling 2D or 1D faces in their boundary faces.
+
+In the rest of the documentation, we will refer to the
+input 3D complex as the input domain. The faces of the input domain
+with dimension 0, 1, 2, and 3 are called respectively
+<I>corners</I>, <I>curves</I>, <I>surface patches</I>, and <I>subdomains</I>
+to clearly distinguish them from the faces of the mesh
+that are called vertices, edges, facets and cells.
+
+Note that the input complex faces are not required to be linear nor smooth.
+Surface patches, for instance, may be smooth surface patches,
+or portions of surface meshes with boundaries.
+Curves may be for instance straight segments, parameterized curves,
+or polylines. Each of those features will be accurately represented in the final mesh.
+
+The 0 and 1-dimensional features of the input domain are usually singular points
+of the subdomain boundaries, however this is not required. Furthermore, those features
+are not required to cover all the subdomains boundaries singularities
+but only those that need to be accurately represented in the final mesh.
+In the following, we say that a domain has <I>features</I> when it has 0 and
+1-dimensional features that need to be accurately represented in the mesh,
+and we call those features <I>exposed features</I>.
+Therefore, a domain may be without features either because all boundary surface patches
+are smooth closed surfaces, or simply because the curves joining different surface patches
+and the singularities of those patches need not be accurately approximated
+in the final mesh.
+
+Note also that input complex faces are not required to be connected.
+Faces of the input domain are identified by indices.
+If a subdomain is not connected, its different components receive the same index.
+Likewise different surface patches, segment curves, or corners may share the same index.
+Each connected component of a feature will be accurately represented
+in the final mesh.
+Note however that the occurrence of multiply connected faces in the
+input complex may affect the relevance of internal topological checks
+performed by the mesh generator.
+
+The domain is passed to the mesh generation function
+as a domain class, often called the oracle,
+that provides predicates and constructors related to the domain,
+the subdomains, and the boundary surface patches.
+Mainly, the oracle provides a predicate to test
+if a given query point belongs to the domain or not
+and to find in which subdomain it lies in the affirmative case.
+The domain class also provides predicates and constructors to test the intersection of a query line segment
+with the boundary surface patches and to construct intersection points, if any.
+
+\subsubsection Periodic_3_mesh_3ImplicitInputDomain Implicit Domains
+
+An implicit domain is a domain described by an implicit function. The bounding surface
+is described implicitly as the zero level set of a function defined
+over the three dimensional flat torus.
+The domain to be discretized is assumed to be the domain where
+the function has negative values.
+
+\subsubsection Periodic_3_mesh_3InputDomainPeriodicity Periodicity of the Input Domain
+
+As described in Section \ref Periodic_3_mesh_3Mesh_3, the periodic mesh is in fact
+constructed over a single cube of side `c` in \f$ \mathbb R^3\f$, the <I>canonical cube</I>
+of the flat torus \f$ \mathbb T_c^3\f$. The origin (given by three coordinates \f$ \alpha\f$, \f$ \beta\f$,
+and \f$ \gamma\f$) of this cube and the period `c` are input parameters chosen
+by the user. The cube \f$ [\alpha,\alpha+c)\times[\beta,\beta+c)\times[\gamma,\gamma+c)\f$
+contains exactly one representative of each element in \f$ \mathbb T_c^3\f$.
+Although the mesh is only constructed over the canonical cube, some of the oracles
+used during the generation of the mesh must sometimes be evaluated outside of the canonical cube.
+The implicit function describing the domain to be meshed must thus be defined
+over the whole Euclidean space and be periodic, with a period compatible with the canonical cube.
+
+\subsubsection Periodic_3_mesh_3ArtificialPeriodicity Enforcing Domain Periodicity
+
+The specifications of the input implicit function described in the previous section are quite restrictive.
+To relax these requirements, this package also offers a wrapper class,
+`CGAL::Periodic_3_function_wrapper`, to artificially construct
+periodic functions compatible with the user-defined canonical cube,
+from the values of an implicit function over the canonical cube.
+It is thus possible to construct periodic domains described by implicit functions
+that are not intrinsically periodic, for example a sphere (see \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_sphere})
+or a cone (see Section \ref Periodic_3_mesh_3ConeWithSharpFeatures).
+
+\subsection Periodic_3_mesh_3OutputMesh Output Mesh
+
+The resulting mesh is output as a subcomplex of a
+\ref CGAL::Periodic_3_regular_triangulation_3 "weighted Delaunay periodic 3D triangulation",
+in a class that provides various iterators on mesh elements.
+
+This periodic 3D triangulation provides approximations of the subdomains,
+surface patches, curves, and corners according to the restricted
+Delaunay triangulation paradigm. This means that each subdomain is approximated
+by the union of the tetrahedral cells whose circumcenters are located inside
+the domain (or subdomain).
+Each surface patch is approximated by the union of the Delaunay mesh facets
+whose dual Voronoi edges intersect the surface patch. Such mesh facets are called
+<I>surface facets</I> in the following. The 1-dimensional exposed features
+are approximated by sequences of mesh edges and the 0-dimensional exposed features
+are represented by mesh vertices.
+
+It is possible to extract the facets of the complex (restricted to the canonical cube)
+as a `FaceGraph`, using the function `facets_in_complex_3_to_triangle_mesh()`.
+
+\subsection Periodic_3_mesh_3DelaunayRefinement Delaunay Refinement
+
+The mesh generation algorithm is mainly a Delaunay refinement process.
+This Delaunay refinement process is driven by criteria
+concerning either the size and shape of mesh cells
+and surface facets.
+The refinement process terminates when there are
+no more mesh cells or surface facets violating the criteria.
+
+The criteria are designed to achieve a nice spread of the mesh vertices
+while ensuring the termination of the refinement process.
+Those criteria may be somehow tuned to the user needs
+to achieve for instance the respect of a sizing field by mesh elements,
+some topological conditions on the representation of boundary surfaces in the mesh,
+and/or some error bound for the approximation of boundary surfaces.
+To some extent, the user may tune the Delaunay refinement
+to a prescribed trade-off between mesh quality and mesh density.
+The mesh density refers to the number of mesh vertices and cells,
+i.e.\ to the complexity of the mesh.
+The mesh quality referred to here is measured by the radius edge
+ratio of surface facets end mesh cells, where the radius edge ratio of
+a simplex (triangle or tetrahedron) is the ratio between its circumradius
+and its shortest edge length.
+
+\subsection Periodic_3_mesh_3Protectionof0and1dimensionalExposed Protection of 0 and 1-dimensional Exposed Features
+
+If the domain description includes 0 dimensional features,
+the corresponding points are inserted into the Delaunay triangulation
+from the start.
+
+If the domain has 1-dimensional exposed features,
+the method of protecting balls \cgalCite{cgal:cdl-pdma-07}, \cgalCite{cgal:cdr-drpsc-07}
+is used to achieve an accurate representation of those features in the mesh
+and to guarantee that the refinement process terminates
+whatever may be the dihedral angles formed by input surface patches incident to a
+given 1-feature or the angles formed by two 1-features incident to a 0-feature.
+See Section \ref Mesh_3Protectionof0and1dimensionalExposed in the documentation
+of the package \ref PkgMesh3 for further information.
+
+Section \ref Periodic_3_mesh_3MeshingDomainswithSharpFeatures details how
+to prescribe sharp features and examples of periodic meshes with features.
+
+\subsection Periodic_3_mesh_3OptimizationPhase Optimization Phase
+
+The optimization phase is a succession of optimization processes which aim to
+improve the quality of the mesh in terms of shape of its elements.
+All the optimizers offered by the package \ref PkgMesh3 are also available
+for periodic mesh generation:
+
+- The Lloyd and ODT-smoother are global optimizers, moving the mesh vertices
+to minimize a mesh energy.
+- The perturber and the exuder are local optimizers, focusing on improving
+the worst mesh elements.
+
+See Sections \ref Mesh_3OptimizationPhase, \ref Mesh_3TheOptimizationParameters,
+and \ref Mesh_3TuningMeshOptimization in the documentation of the package \ref PkgMesh3
+for further information.
+
+\section Periodic_3_mesh_3_section_interface Interface
+
+\subsection Periodic_3_mesh_3TheGlobalFunctions The Global Functions
+
+A periodic 3D mesh generation process is launched through a call
+to one of the two following functions:
+
+\code{.cpp}
+template <class C3T3, class PeriodicMeshDomain, class MeshCriteria>
+C3T3 make_periodic_3_mesh_3(const PeriodicMeshDomain& domain,
+                            const MeshCriteria& criteria,
+                            parameters::internal::Features_options features = parameters::features(domain),
+                            parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                            parameters::internal::Odt_options odt = parameters::no_odt(),
+                            parameters::internal::Perturb_options perturb = parameters::perturb(),
+                            parameters::internal::Exude_options exude = parameters::exude());
+
+template <class C3T3, class MeshDomain, class MeshCriteria>
+void refine_periodic_3_mesh_3(C3T3& c3t3,
+                              const PeriodicMeshDomain& domain,
+                              const MeshCriteria& criteria,
+                              parameters::internal::Lloyd_options lloyd = parameters::no_lloyd(),
+                              parameters::internal::Odt_options odt = parameters::no_odt(),
+                              parameters::internal::Perturb_options perturb = parameters::perturb(),
+                              parameters::internal::Exude_options exude = parameters::exude());
+\endcode
+
+The function `make_periodic_3_mesh_3()` generates from scratch a periodic mesh
+of the input domain, while the function `refine_periodic_3_mesh_3()` refines
+an existing periodic mesh of the input domain.
+
+\warning The triangulation must form at all times a simplicial complex within
+a single copy of the domain (see Sections \ref P3Triangulation3secspace and \ref P3Triangulation3secintro
+of the manual of 3D periodic triangulations). It is the responsibility of the user to provide
+a triangulation that satisfies this condition when calling the refinement
+function `refine_periodic_3_mesh_3()`. The underlying triangulation of a mesh
+complex obtained through `make_periodic_3_mesh_3()` or `refine_periodic_3_mesh_3()`
+will always satisfy this condition.
+
+The following sections describe the different template parameters
+(and their requirements) of these two global functions.
+
+\subsection Periodic_3_mesh_3TheDataStructure The Data Structure
+
+The template parameter `C3T3` is required to be a model of
+the concept `MeshComplex_3InTriangulation_3`. This data structure is devised to
+represent a three-dimensional complex embedded in a periodic 3D triangulation.
+In both functions, an instance of type `C3T3` is used to maintain the current
+approximating simplicial mesh and to represent a single copy of
+the final periodic 3D mesh at the end of the procedure.
+
+The embedding periodic 3D triangulation is required to be the nested type
+`CGAL::Periodic_3_mesh_triangulation_3::type`, provided by the class template
+`CGAL::Periodic_3_mesh_triangulation_3`. The type for this triangulation is a
+wrapper around the class `CGAL::Periodic_3_regular_triangulation_3` whose vertex and cell
+base classes are respectively models of the concepts `MeshVertexBase_3` and
+`MeshCellBase_3`.
+
+\subsection Periodic_3_mesh_3TheDomainOracleandtheFeaturesParameter The Domain Oracle and the Features Parameter
+
+The template parameter `PeriodicMeshDomain` is required to be a model of
+the concept `Periodic_3MeshDomain_3`. The argument `domain` of type
+`PeriodicMeshDomain` is the sole link through which the periodic domain
+to be discretized is known by the mesh generation algorithm.
+
+This concept provides, among others, member functions to test whether or not
+a query segment intersects boundary surfaces, and to compute an intersection point
+in the affirmative.
+The `Periodic_3MeshDomain_3` concept adds member functions which given a query point
+tell whether the point lies inside or outside the domain and in which subdomain
+the point lies, if inside.
+
+If the domain description includes 0 and 1-dimensional features
+that have to be accurately represented in the final mesh,
+the template parameter `PeriodicMeshDomain` is required to be
+of a model of the concept `Periodic_3MeshDomainWithFeatures_3`,
+which mainly provides the incidence graph of 0, 1 and 2-dimensional features,
+and a member function to construct sample points on curves.
+
+Users whose domain is a model of `Periodic_3MeshDomainWithFeatures_3`
+can choose to have the corners and curves of the domain
+represented in the mesh or not, using the following parameters:
+<UL>
+<LI>`parameters::features()` sets features according to the domain,
+i.e.\ 0 and 1-dimensional features are taken into account if `domain` is a
+`MeshDomainWithFeatures_3`.
+<LI>`parameters::no_features()` prevents the representation
+of 0 and 1-dimensional features in the mesh. This is useful to get a smooth and rough approximation
+of a domain with features.
+</UL>
+
+\subsection Periodic_3_mesh_3TheMeshingCriteria The Meshing Criteria
+
+The template parameter `MeshCriteria` must be a model of the concept
+`MeshCriteria_3`, or a model of the refined concept `MeshCriteriaWithFeatures_3`
+if the domain has exposed features.
+The argument of type `MeshCriteria` passed to the mesh generator specifies the
+size and shape requirements for the tetrahedra in the mesh
+and for the triangles in the boundary surface mesh. These criteria
+condition the rules that drive the refinement process. At the end
+of the refinement process, mesh elements satisfy the criteria.
+This may not be strictly true anymore after the optimization phase, but this
+last phase is devised to only improve the mesh quality.
+
+The periodic mesher makes use of the same criteria as the non-periodic meshing functions.
+This is made possible because criteria use methods directly
+from the underlying triangulation, to know the smallest edge length of a triangle,
+for example. The periodicity is therefore taken into account at this level and
+no modification of the criteria classes are required.
+
+The criteria for surface facets are governed by the four following
+parameters:
+<UL>
+<LI><I>`facet_angle`.</I> This parameter controls the shape of
+surface facets. Specifically, it is a lower bound for the angle (in degree) of
+surface facets. When boundary surfaces are smooth, the termination of the meshing process is
+guaranteed if this angular bound is at most 30 degrees \cgalCite{c-gqmgc-93}.
+<LI><I>`facet_size`.</I> This parameter controls the size of surface facets.
+Each surface facet has
+a surface Delaunay ball which is a ball circumscribing the surface facet and
+centered on the surface patch. The parameter `facet_size` is
+either a constant or a spatially variable scalar field, providing an
+upper bound for the radii of surface Delaunay balls.
+<LI><I>`facet_distance`.</I> This parameter controls the approximation error of boundary and subdivision surfaces.
+Specifically, it is
+either a constant or a spatially variable scalar field. It
+provides an upper bound for the distance between the circumcenter
+of a surface facet and the center of a surface Delaunay ball of this facet.
+<LI><I>`facet_topology`.</I> This parameters controls the set of topological constraints
+which have to be verified by each surface facet. By default, each vertex of a surface
+facet has to be located on a surface patch, on a curve, or on a corner. It can
+also be set to check whether the three vertices of a surface facet belongs to the same
+surface patch. This has to be done cautiously, as such a criterion needs that each
+intersection of input surface patches is an input 1-dimensional feature.
+</UL>
+
+The criteria for mesh cells are governed by two parameters:
+<UL>
+<LI><I>`cell_radius_edge_ratio`.</I> This parameter controls the
+shape of mesh cells (but can't filter slivers, as we discussed earlier).
+It is an upper bound for the ratio
+between the circumradius of a
+mesh tetrahedron and its shortest edge.
+There is a theoretical bound for this parameter:
+the Delaunay refinement process is guaranteed to terminate
+for values of `cell_radius_edge_ratio` bigger than 2.
+<LI><I>`cell_size`.</I>
+This parameter controls the size of mesh tetrahedra.
+It is either a scalar or a spatially variable scalar field.
+It provides an upper bound on the circumradii of the
+mesh tetrahedra.
+</UL>
+
+If the domain has 1-dimensional exposed features, the `criteria` includes
+a sizing field to guide the sampling of 1-dimensional features with protecting balls centers.
+<UL>
+<LI><I>`edge_size`</I>. This constant or variable scalar field is used as an upper bound for the distance between two
+protecting ball centers that are consecutive on a 1-feature. This parameter has to be set to a positive value when
+1-dimensional features protection is used.
+</UL>
+
+\section Periodic_3_mesh_3_section_examples Examples
+
+This section presents various use cases of the periodic mesh generator.
+
+\subsection Periodic_3_mesh_3SubMultipleCopies Visualizing Multiple Copies of a Periodic Mesh
+
+Generated meshes can be output to the `.mesh` file format, which can be visualized with the demo
+of the package \ref PkgPolyhedron. The function \link PkgPeriodic3Mesh3IOFunctions `CGAL::IO::output_periodic_mesh_to_medit()` \endlink
+takes a stream, a mesh complex, and - optionally - the number of periodic copies that should be drawn,
+making it easier to observe the periodicity of the result.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_copies} illustrates the different output
+for the three possible number of copies: `1`, `4`, and `8`.
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_copies}
+<center>
+<img src="periodic_copies.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_copies}
+Example of a periodic mesh output in `1`, `4`, or `8` copies.
+\cgalFigureCaptionEnd
+
+In the following examples (except on \cgalFigureRef{Periodic_3_mesh_3Periodic_multi_domain}),
+each copy of a periodic mesh will be attributed a unique color.
+
+\warning A single copy of the periodic mesh does not necessarily form a visually-pleasing mesh:
+there can be unexpected holes, disconnected elements, non-manifold locations, etc.
+This is because each copy is only made of unique elements and the periodic mesh
+only has meaning when considered with other neighboring periodic copies:
+a strange hole on the "left" of a copy is filled by a tetrahedron on its "right".
+\cgalFigureRef{Periodic_3_mesh_3Periodic_protection} is an example of such phenomenon:
+These (purely visual) issues disappear when considering multiple copies together.
+
+\subsection Periodic_3_mesh_33DDomainsImplicitIsosurfaces 3D Periodic Domains Bounded by Implicit Isosurfaces
+The following code produces a 3D periodic mesh for a domain whose boundary surface
+is an isosurface defined by an implicit function.
+Note the use of named parameters (from the Boost library) in the
+constructor of the `Mesh_criteria` instance.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_shape} shows the resulting mesh.
+
+\cgalExample{Periodic_3_mesh_3/mesh_implicit_shape.cpp}
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_implicit_shape}
+<center>
+<img src="periodic_implicit_domain.png" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_shape}
+A single copy of a periodic mesh produced from an implicit domain (left).
+Cut view (middle). Another cut is shown, using 8 copies (right).
+\cgalFigureCaptionEnd
+
+While the implicit function used in the previous example is defined and periodic
+over the complete space, it is also possible to consider non-periodic implicit functions
+defined entirely within the canonical cube (or over the whole space) by using the wrapper class
+`CGAL::Periodic_3_function_wrapper`. Values will then be periodically duplicated, creating
+a periodic function. For example, replacing the previous domain with the following
+non-periodic implicit function (a sphere):
+
+\code{.cpp}
+...
+typedef CGAL::Periodic_3_function_wrapper<Function, K>              Periodic_function;
+...
+// A sphere centered on (0.5, 0.5, 0.5) with radius sqrt(0.2)
+FT sphere_function (const Point& p) { return CGAL::squared_distance(p, Point(0.5, 0.5, 0.5)) - 0.2; }
+...
+Iso_cuboid_3 canonical_cube(0, 0, 0, 1, 1, 1);
+Periodic_mesh_domain domain =
+  Periodic_mesh_domain::create_implicit_mesh_domain(
+    Periodic_function(sphere_function, canonical_cube), canonical_cube );
+...
+\endcode
+
+will yield the mesh shown on \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_sphere}.
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_implicit_sphere}
+<center>
+<img src="periodic_implicit_spheres.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_sphere}
+Periodic mesh of an implicit sphere that is entirely contained in the input cube,
+shown with 8 copies (left). A cut view along one of the axes (right).
+\cgalFigureCaptionEnd
+
+\subsubsection Periodic_3_mesh_33DDomainsImplicitIsosurfacesBothSides Meshing the Interior and the Exterior of a Domain Bounded by an Isosurface
+In the case of periodic mesh generation, the exterior of an isosurface defined by
+an implicit function can also be meshed because it is a finite space.
+The class `Implicit_to_labeled_subdomains_function_wrapper` is a convenient wrapper
+to achieve this by internally transforming the interior and the exterior as simply
+two subdomains to be meshed. Compared to the previous example, it can be simply achieved
+by adding the line
+\code{.cpp}
+...
+typedef CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function, K> Function_wrapper;
+...
+\endcode
+and wrapping the function as follows:
+\code{.cpp}
+...
+Function_wrapper wrapper(schwarz_p);
+Periodic_mesh_domain domain(wrapper, canonical_cube);
+...
+\endcode
+
+\cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_interior_and_exterior} shows
+the periodic mesh obtained after this change. Note that both subdomains are meshed
+with different cell sizing fields, which can be obtained using the class
+`Mesh_constant_domain_field_3`. See Example \ref Periodic_3_mesh_3/mesh_implicit_shape_with_subdomains.cpp
+"mesh_implicit_shape_with_subdomains.cpp" for the complete code.
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_implicit_interior_and_exterior}
+<center>
+<img src="periodic_implicit_interior_and_exterior.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_implicit_interior_and_exterior}
+A periodic mesh (4 copies, left) of the same implicit function
+as in \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_shape}), where both sides
+of the isosurface are now meshed. On the right, a cut view.
+\cgalFigureCaptionEnd
+
+\subsection Periodic_3_mesh_3MeshingMultipleDomains Meshing Multiple Domains
+
+The following code produces a 3D periodic mesh for a domain consisting of a combination
+of the two implicit functions used in the previous example: a sphere is encompassed
+within the implicit domain of \cgalFigureRef{Periodic_3_mesh_3Periodic_implicit_shape}.
+The class `Implicit_multi_domain_to_labeling_function_wrapper` is used as model
+of `ImplicitFunction`, required by the class `Labeled_mesh_domain_3`.
+The set of subdomains is given by a vector of vector of signs.
+Each subdomain corresponds to a sign vector `[s1, s2, ..., sn]`,
+where `si` is the sign of the function `fi(p)` at a point `p` of the subdomain.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_multi_domain} shows a view and a cut view of the resulting mesh.
+
+\cgalExample{Periodic_3_mesh_3/mesh_implicit_multi_domain.cpp}
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_multi_domain}
+<center>
+<img src="periodic_implicit_multi_domain.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_multi_domain}
+A periodic mesh produced by a combination of implicit functions (with 8 copies, left).
+Cut view without (middle) and with (right) the internal tetrahedra.
+\cgalFigureCaptionEnd
+
+\subsection Periodic_3_mesh_3Optimizers Tuning Mesh Optimization
+
+In the previous examples, the mesh generation is launched through a call
+`make_periodic_3_mesh_3()` with a minimal number of parameters. In such cases,
+the default optimization strategy is applied: after the Delaunay refinement process
+two optimization steps are performed, a perturbation and a sliver exudation.
+The following example shows how to enable and disable the various optimization methods.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_multi_domain} shows the resulting periodic mesh
+before and after optimizations.
+
+\cgalExample{Periodic_3_mesh_3/mesh_implicit_shape_with_optimizers.cpp}
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_optimizers}
+<center>
+<img src="periodic_implicit_optimizers.png" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_optimizers}
+Compared effect of a mesh pre- and post-optimization using all available optimizers.
+The numbers under the histograms give the measure in degrees of the smallest and biggest dihedral angles in the mesh.
+\cgalFigureCaptionEnd
+
+\subsection Periodic_3_mesh_3MeshingDomainswithSharpFeatures Meshing Domains with Sharp Features
+
+The periodic mesh generator currently operates on domains described by one or
+multiple implicit functions. Sharp features to be preserved
+must then be explicitly specified by hand by the user, using the mesh domain
+class `CGAL::Mesh_domain_with_polyline_features_3` and its functions
+`add_corners()` and `add_features()`.
+These functions allow to specify curves (as a polyline -- a list of points
+with two consecutive points forming a segment of the curve) and
+corners which should appear in the final mesh.
+Note that the discretization of the specified curves might change: for example,
+a curve might be subdivided in smaller segments or simplified in larger segments,
+but the prescribed geometry will still be present in the final mesh.
+
+To ensure the good protection of features, some requirements are put on the curves
+and corners that are specified by the user:
+- A corner can only belong to a curve if it is an endpoint of that curve.
+- A curve cannot self-intersect, except at its endpoint (it then forms a so-called `cycle`).
+- Two curves cannot intersect, except at a common endpoint.
+
+\warning For conveniency, curves and corners do not need to be restricted
+to the canonical cube, but users should be mindful that curves and corners will exist
+in all periodic copies and the requirements described above must be satisfied.
+For example, if considering the unit cube as canonical cube, it is not valid
+to add the segment `(2,2,2)--(3,3,3)` as feature and the point `(1.5, 1.5, 1.5)`
+as corner: once the periodicity is taken in account, the point is actually the middle
+of the segment.
+
+\subsubsection Periodic_3_mesh_3ConeWithSharpFeatures Example of a Cone-like Periodic Domain
+
+The example below uses two different types of protecting features: a cycle to
+protect the base of the cone, and a corner at the apex of a cone, which ensures
+that the apex will appear in the mesh.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_protection} shows the comparison between
+the same domain meshed with the same criteria when protection is disabled and enabled.
+
+Note the use of a more complex intrinsically non-periodic implicit function as input domain.
+
+\cgalExample{Periodic_3_mesh_3/mesh_implicit_shape_with_features.cpp}
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_protection}
+<center>
+<img src="periodic_implicit_protection.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_protection}
+A periodic mesh obtained with a cone-like periodic implicit function (8 copies
+are drawn). The base and the apex of the cone
+are badly approximated when protection is unused (left).
+Using protection, we obtain a faithful approximation.
+(Facets seemingly disconnected from other facets of the same color are due to the fact that
+a single copy of the mesh does not necessarily form a visually pleasing mesh by itself;
+see Section \ref Periodic_3_mesh_3SubMultipleCopies for more details.)
+\cgalFigureCaptionEnd
+
+\subsubsection Periodic_3_mesh_3InfiniteFeatures Example of Protecting Curves Extending Continuously Over Multiple Periodic Copies
+
+It is possible to prescribe features that will, due to periodicity, form a
+continuous polyline that extends infinitely in space.
+A simple example of such occurrence is the segment `(0,0,0) -- (1,1,1)` when
+considering the unit cube as canonical cube.
+\cgalFigureRef{Periodic_3_mesh_3Periodic_protection} shows an implicit function
+describing a square-based prism such that the axis of the prism is the (Oz) axis.
+(The prism is thus 'cut' into 4 pieces when considered within a single copy of the periodic space.)
+The canonical cube is the unit cube and the following polylines have been specified to protect edges:
+\code
+  // These are four vertical edges (orthogonal to xOy), strictly in the domain.
+  // They correspond to the four sharp edges of the prism.
+  LV0: ( 0.3,  0.3, -1) -- ( 0.3,  0.3, 0) // canonically, (0.3, 0.3, 0) -- (0.3, 0.3, 1)
+  LV1: ( 1.7,  1.7,  2) -- ( 1.7,  1.7, 3) // canonically, (0.7, 0.7, 0) -- (0.7, 0.7, 1)
+  LV2: ( 0.7,  0.3,  4) -- ( 0.7,  0.3, 5) // canonically, (0.7, 0.3, 0) -- (0.7, 0.3, 1)
+  LV3: (-0.7, -0.3,  6) -- (-0.7, -0.3, 7) // canonically, (0.3, 0.7, 0) -- (0.3, 0.7, 1)
+
+  // These are four vertical edges (orthogonal to xOy) on the border of the domain.
+  // The prism does not intrinsically possess a sharp feature at these locations;
+  // rather, these edges are protected to artificially create features on the border of the domain.
+  LV4: (0.3, 0,   0) -- (0.3, 0,   1)
+  LV5: (0,   1.3, 0) -- (0,   1.3, 1) // canonically, (0.,  0.3, 0) -- (0.,  0.3, 1)
+  LV6: (0,   0.7, 0) -- (0,   0.7, 1)
+  LV7: (2.7, 2,   0) -- (2.7, 2,   1) // canonically, (0.7, 0.,  0) -- (0.7, 0.,  1)
+
+  // These are four horizontal edges (in the plane xOy) on the border of the domain.
+  // As the last four polylines, these polylines do not correspond to a sharp feature
+  // on the prism, but are rather just for aesthetics.
+  //
+  // Note that these polylines cross the border of the input cube.
+  LH0: ( 0.3,  0.3, 0) -- ( 0.3, -0.3, 0)
+  LH1: ( 0.3, -0.3, 1) -- (-0.3, -0.3, 1)
+  LH2: (-0.3, -0.3, 2) -- (-0.3,  0.3, 2)
+  LH3: (-0.3,  0.3, 3) -- ( 0.3,  0.3, 3)
+\endcode
+
+\cgalFigureAnchor{Periodic_3_mesh_3Periodic_protection_infinite}
+<center>
+<img src="periodic_implicit_protection_bis.jpg" style="max-width:90%;"/>
+</center>
+\cgalFigureCaptionBegin{Periodic_3_mesh_3Periodic_protection_infinite}
+A periodic mesh without (left) and with (right) sharp features protection.
+\cgalFigureCaptionEnd
+
+\subsection Periodic_3_mesh_3ComplexExamples Further Examples
+
+Advanced use cases of the 3D mesh generator with implicit domains, its optimizers,
+and protection mechanisms can be found in Section \ref Mesh_3_section_examples
+of the package \ref PkgMesh3.
+
+\section Periodic_3_mesh_3DesignAndImpl Design and Implementation History
+
+\subsection Periodic_3_mesh_3TheoreticalFoundations Theoretical Foundations
+
+Theoretical foundations of periodic meshes are explained in detail in the package
+\ref PkgPeriodic3Triangulation3.
+For the theoretical foundations of the mesh generation process, see Section
+\ref Mesh_3TheoreticalFoundations of the package \ref PkgMesh3.
+
+\subsection Periodic_3_mesh_3ImplementationHistory Implementation History
+
+The work on this package started during the PhD thesis of Mikhail Bogdanov,
+advised by Monique Teillaud, which resulted in a first prototype.
+
+From the beginning of 2014, most of the work was performed by Aymeric
+Pellé, in collaboration with Monique Teillaud.
+Their collaboration produced a first set of design and specifications \cgalCite{cgal:pt-rs-14}.
+
+This initial implementation was enhanced by Mael Rouxel-Labbé in 2017, in collaboration
+with Monique Teillaud, to provide a more robust implementation, integrate optimizations,
+handle 0- and 1-dimensional features, and publish the first version of this package.
+
+*/
+} /* namespace CGAL */

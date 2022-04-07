@@ -41,40 +41,40 @@ int main()
     Face_const_iterator fit = explorer.faces_begin();
     std::cout << "explorer.mark(explorer.faces_begin()) "  << ((explorer.mark(fit))? "is part of polygon" :  "is not part of polygon") << std::endl;
     for(Hole_const_iterator hit = explorer.holes_begin(fit); hit != explorer.holes_end(fit); hit++){
-	std::cout << " A hole" << std::endl;
-	Halfedge_around_face_const_circulator hafc(hit), done(hit);
-	do{
-	  Vertex_const_handle vh = explorer.target(hafc);
-	  std::cout << explorer.point(vh) << " [" << explorer.point(vh).x().exact() << " | " << explorer.point(vh).y().exact() << "],  " ;
-	  hafc++;
-	}while(hafc != done);
-	std::cout << std::endl;
+        std::cout << " A hole" << std::endl;
+        Halfedge_around_face_const_circulator hafc(hit), done(hit);
+        do{
+          Vertex_const_handle vh = explorer.target(hafc);
+          std::cout << explorer.point(vh) << " [" << explorer.point(vh).x().exact() << " | " << explorer.point(vh).y().exact() << "],  " ;
+          hafc++;
+        }while(hafc != done);
+        std::cout << std::endl;
       }
 
 
     // The other faces have outer face cycles, and they may have holes
     for( fit++;
-	fit != explorer.faces_end();
-	fit++){
+        fit != explorer.faces_end();
+        fit++){
 
       Halfedge_around_face_const_circulator hafc = explorer.face_cycle(fit), done(hafc);
       std::cout << "face: " << ((explorer.mark(fit))? "is part of polygon" :  "is not part of polygon") << std::endl;
       do{
-	Vertex_const_handle vh = explorer.target(hafc);
-	  std::cout << explorer.point(vh) << " [" << explorer.point(vh).x().exact() << " | " << explorer.point(vh).y().exact() << "],  " ;
-	  hafc++;
+        Vertex_const_handle vh = explorer.target(hafc);
+          std::cout << explorer.point(vh) << " [" << explorer.point(vh).x().exact() << " | " << explorer.point(vh).y().exact() << "],  " ;
+          hafc++;
       }while(hafc != done);
       std::cout << std::endl;
 
       for(Hole_const_iterator hit = explorer.holes_begin(fit); hit != explorer.holes_end(fit); hit++){
-	std::cout << " A hole" << std::endl;
-	Halfedge_around_face_const_circulator hafc(hit), done(hit);
-	do{
-	  Vertex_const_handle vh = explorer.target(hafc);
-	  std::cout << explorer.point(vh) << " [" << explorer.point(vh).x().exact() << " | " << explorer.point(vh).y().exact() << "],  " ;
-	  hafc++;
-	}while(hafc != done);
-	std::cout << std::endl;
+        std::cout << " A hole" << std::endl;
+        Halfedge_around_face_const_circulator hafc(hit), done(hit);
+        do{
+          Vertex_const_handle vh = explorer.target(hafc);
+          std::cout << explorer.point(vh) << " [" << explorer.point(vh).x().exact() << " | " << explorer.point(vh).y().exact() << "],  " ;
+          hafc++;
+        }while(hafc != done);
+        std::cout << std::endl;
       }
 
     }

@@ -6,31 +6,38 @@ export LC_ALL
 # Returns an error once a command returns an error
 set -e
 
-if [ -d "$1/.git" ]; then
-    pushd "$1" > /dev/null
-    branch=`git rev-parse --abbrev-ref HEAD`
-#    echo "Git repository, in branch '$branch'"
-    git fetch --quiet
-    git reset --quiet --hard origin/$branch
-    git clean --quiet -f
+DRY_RUN=
+QUIET=--quiet
 
-    ln -s -n -f "$1" $HOME/latest-internal-release-branch
-
-    # Hard-reset integration "every day", if today's "$branch" is integration
-    # and create testsuite-Monday, testsuite-Tuesday, and so on...
-    if [ x"$branch" = "xintegration" ]; then
-        git push --quiet -f origin origin/$branch:refs/heads/`date '+testsuite-%A'` origin/master:integration
-    else
-        git push --quiet -f origin origin/$branch:refs/heads/`date '+testsuite-%A'`
-    fi
-
-    popd > /dev/null
-else
-    svn up "$1"
+if [ "x$1" = "x--dry-run" -o "x$1" = "x-n" ]; then
+    DRY_RUN=--dry-run
+    shift
 fi
 
-# Update the candidates branch, if any.
-[ -d "$2" ] && svn up "$2"
+if [ -n "DRY_RUN" ]; then
+    QUIET=
+fi
+
+pushd "$1" > /dev/null
+branch=`git rev-parse --abbrev-ref HEAD`
+remote=`git config branch.${branch}.remote`
+git fetch $DRY_RUN $QUIET -p --all
+[ -z "$DRY_RUN" ] && git reset $QUIET --hard "$remote/$branch"
+git clean $DRY_RUN $QUIET -f -d -x
+
+ln -s -n -f "$1" $HOME/latest-internal-release-branch
+
+# Hard-reset integration "every day", if today's "$branch" is integration
+# and create testsuite-Monday, testsuite-Tuesday, and so on...
+if [ x"$branch" = "xintegration" ]; then
+    git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`" cgal/master:integration
+elif [ x"$branch" = "xintegration-4.5" ]; then
+    git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`" cgal/releases/CGAL-4.5-branch:integration-4.5
+else
+    git push $DRY_RUN $QUIET -f cgal-dev "$remote/$branch:refs/heads/`date '+testsuite-%A'`"
+fi
+
+popd > /dev/null
 
 # Update the symbolic links, using $1 and $2
 rm "$HOME/CGAL/last-release-branch"
@@ -62,5 +69,5 @@ ln -s "$1" "$HOME/CGAL/last-release-branch"
 # "$HOME/bin/update_manual_tools"
 
 # Launch create_new_release, from the branch itself
-exec "$HOME/CGAL/last-release-branch/Scripts/developer_scripts/create_new_release" --no-scm-update "$@"
+[ -z "$DRY_RUN" ] && exec bash -$- "$HOME/CGAL/last-release-branch/Scripts/developer_scripts/create_new_release" --no-scm-update "$@"
 #                       --no-scm-update because branches have already been updated

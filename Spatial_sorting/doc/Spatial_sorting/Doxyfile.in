@@ -1,9 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Spatial Sorting"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Spatial_sorting/doc/Spatial_sorting/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Spatial Sorting"

@@ -1,7 +1,6 @@
 #ifndef CGAL_TRAITS_BASE_TEST_H
 #define CGAL_TRAITS_BASE_TEST_H
 
-#include <CGAL/basic.h>
 
 #include <iostream>
 #include <fstream>
@@ -14,7 +13,6 @@
 #include <boost/lexical_cast.hpp>
 
 #include <CGAL/exceptions.h>
-#include <CGAL/Object.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 #include <CGAL/use.h>
@@ -52,6 +50,7 @@
 
 template <typename Geom_traits_T>
 class Traits_base_test : public IO_test<Geom_traits_T> {
+  Traits_base_test<Geom_traits_T>&  operator=(const Traits_base_test<Geom_traits_T>&);
 protected:
   typedef Geom_traits_T                                 Traits;
   typedef IO_test<Traits>                               Base;
@@ -188,8 +187,7 @@ Traits_base_test<Geom_traits_T>::Traits_base_test(const Traits& traits) :
   m_violation_map[WARNING] = std::string("warning");
 }
 
-/*!
- * Destructor.
+/*! Destructor.
  */
 template <typename Geom_traits_T>
 Traits_base_test<Geom_traits_T>::~Traits_base_test() { clear(); }
@@ -197,6 +195,16 @@ Traits_base_test<Geom_traits_T>::~Traits_base_test() { clear(); }
 template <typename Geom_traits_T>
 bool Traits_base_test<Geom_traits_T>::parse(int argc, char* argv[])
 {
+
+  /* Waqar
+  The arguments are
+  argv 0 is ./test_traits (string)
+  argv 1 is data/polycurves_conics/compare_y_at_x.pt
+  argv 2 is data/polycurves_conics/compare_y_at_x.xcv
+  argv 3 is data/polycurves_conics/compare_y_at_x.cv
+  argv 4 is data/polycurves_conics/compare_y_at_x
+  argv 5 is polycurve_conic_traits (string)
+  */
   Base::parse(argc, argv);
 
   if (argc != 6) {
@@ -212,7 +220,7 @@ bool Traits_base_test<Geom_traits_T>::parse(int argc, char* argv[])
 }
 
 /*! Clear the data structures */
-template<typename Geom_traits_T>
+template <typename Geom_traits_T>
 void Traits_base_test<Geom_traits_T>::clear()
 {
   Base::clear();
@@ -227,29 +235,35 @@ void Traits_base_test<Geom_traits_T>::clear()
 template <typename Geom_traits_T>
 bool Traits_base_test<Geom_traits_T>::perform()
 {
+  //std::cout << "*************" << m_filename_commands.c_str() << std::endl; // output is compare_y_at_x filepath
   std::ifstream is(m_filename_commands.c_str());
-  if (!is.is_open()) {
+
+  if (!is.is_open())
+  {
     this->print_error(std::string("cannot open file ").append(m_filename_commands));
     return false;
   }
 
   bool test_result = true;
-  std::cout << "Performing test: traits type is " << m_traitstype
+  std::cout << "Performing test: traits type is " << m_traitstype //m_traitstype = polycurve_conic_traits, arg 6 in script
             << ", input files are "
             << this->m_filename_points << " "
             << this->m_filename_xcurves << " "
             << this->m_filename_curves << " "
-            << m_filename_commands << std::endl;
+            << m_filename_commands << std::endl << std::endl;;
+
   this->m_eol_printed = true;
   std::string line;
   char buff[1024];
   // bool abort = false;
   int counter = 0;
-  while (this->skip_comments(is, line)) {
+
+  while (this->skip_comments(is, line))
+  {
     std::istringstream str_stream(line, std::istringstream::in);
     buff[0] = '\0';
     str_stream.getline(buff, 1024, ' ');
-    std::string str_command(buff);
+    std::string str_command(buff);    //buff is "compare_y_at_x" which is a string taken from the start of every line of the file compare_y_at_x
     std::size_t location = 0;
     m_violation_occurred = m_violation_tested = NON;
 
@@ -272,6 +286,7 @@ bool Traits_base_test<Geom_traits_T>::perform()
 
     counter++;
     std::cout << "case number : " << counter << std::endl;
+
     if (m_violation_tested != NON) {
 #if !defined(CGAL_NDEBUG)
       str_command = str_command.substr(0, location);
@@ -284,7 +299,8 @@ bool Traits_base_test<Geom_traits_T>::perform()
 #endif
     }
 
-    try {
+    try
+    {
       bool result;
       bool ignore = exec(str_stream, str_command, result);
       if (ignore) continue;
@@ -295,34 +311,48 @@ bool Traits_base_test<Geom_traits_T>::perform()
         result = false;
         // if (m_abort_on_error) abort = true;
       }
+
       this->print_result(result);
       test_result &= result;
     }
-    catch (CGAL::Precondition_exception /* e */) {
-      if (m_violation_tested != PRECONDITION) {
+
+    catch (CGAL::Precondition_exception& /* e */)
+    {
+      if (m_violation_tested != PRECONDITION)
+      {
         test_result = false;
         // if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Postcondition_exception /* e */) {
-      if (m_violation_tested != POSTCONDITION) {
+
+    catch (CGAL::Postcondition_exception& /* e */)
+    {
+      if (m_violation_tested != POSTCONDITION)
+      {
         test_result = false;
         // if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Warning_exception /* e */) {
-      if (m_violation_tested != WARNING) {
+
+    catch (CGAL::Warning_exception& /* e */)
+    {
+      if (m_violation_tested != WARNING)
+      {
         test_result = false;
         // if (m_abort_on_error) abort = true;
       }
     }
-    catch (CGAL::Assertion_exception /* e */) {
-      if (m_violation_tested != ASSERTION) {
+
+    catch (CGAL::Assertion_exception& /* e */)
+    {
+      if (m_violation_tested != ASSERTION)
+      {
         test_result = false;
         // if (m_abort_on_error) abort = true;
       }
     }
-  }
+
+  } //while (this->skip_comments(is, line)) loop
 
   is.close();
   return test_result;
@@ -334,7 +364,7 @@ template <typename Geom_traits_T>
 bool Traits_base_test<Geom_traits_T>::
 translate_boolean(std::string& str_value)
 {
-  if (str_value == "TRUE") return true;
+  if (str_value == "TRUE" || str_value == "true") return true;
   return false;
 }
 

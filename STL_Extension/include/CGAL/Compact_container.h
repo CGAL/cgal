@@ -2,37 +2,37 @@
 // Copyright (c) 2014  GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion
 
 #ifndef CGAL_COMPACT_CONTAINER_H
 #define CGAL_COMPACT_CONTAINER_H
 
-#include <CGAL/basic.h>
+#include <CGAL/disable_warnings.h>
+
+#include <CGAL/config.h>
 #include <CGAL/Default.h>
 
+#include <cmath>
+#include <cstddef>
 #include <iterator>
 #include <algorithm>
 #include <vector>
 #include <cstring>
+#include <functional>
+#include <atomic>
 
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
+#include <CGAL/Has_member.h>
+#include <CGAL/assertions.h>
 
 #include <boost/mpl/if.hpp>
 
@@ -84,24 +84,6 @@
 //   things (e.g. freeing empty blocks automatically) ?
 
 namespace CGAL {
-
-#define CGAL_GENERATE_MEMBER_DETECTOR(X)                                             \
-template<typename T> class has_##X {                                          \
-    struct Fallback { int X; };                                               \
-    struct Derived : T, Fallback { };                                         \
-                                                                              \
-    template<typename U, U> struct Check;                                     \
-                                                                              \
-    typedef char ArrayOfOne[1];                                               \
-    typedef char ArrayOfTwo[2];                                               \
-                                                                              \
-    template<typename U> static ArrayOfOne & func(                            \
-                                            Check<int Fallback::*, &U::X> *); \
-    template<typename U> static ArrayOfTwo & func(...);                       \
-  public:                                                                     \
-    typedef has_##X type;                                                     \
-    enum { value = sizeof(func<Derived>(0)) == 2 };                           \
-} // semicolon is after the macro call
 
 #define CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE 14
 #define CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE 16
@@ -158,7 +140,7 @@ struct Constant_size_policy
 };
 
 // The following base class can be used to easily add a squattable pointer
-// to a class (maybe you loose a bit of compactness though).
+// to a class (maybe you lose a bit of compactness though).
 // TODO : Shouldn't adding these bits be done automatically and transparently,
 //        based on the traits class info ?
 class Compact_container_base
@@ -166,17 +148,17 @@ class Compact_container_base
   void * p;
 public:
   Compact_container_base()
-  : p(NULL) {}
+  : p(nullptr) {}
   void *   for_compact_container() const { return p; }
-  void * & for_compact_container()       { return p; }
+  void for_compact_container(void* ptr)  { p = ptr; }
 };
 
 // The traits class describes the way to access the pointer.
 // It can be specialized.
 template < class T >
 struct Compact_container_traits {
-  static void *   pointer(const T &t) { return t.for_compact_container(); }
-  static void * & pointer(T &t)       { return t.for_compact_container(); }
+  static void *   pointer(const T &t)    { return t.for_compact_container(); }
+  static void set_pointer(T &t, void* p) { t.for_compact_container(p); }
 };
 
 namespace internal {
@@ -233,9 +215,9 @@ class Compact_container
   typedef Allocator_                                Al;
   typedef typename Default::Get< Al, CGAL_ALLOCATOR(T) >::type Allocator;
   typedef Increment_policy_                         Ip;
-  typedef typename Default::Get< Ip, 
+  typedef typename Default::Get< Ip,
             Addition_size_policy<CGAL_INIT_COMPACT_CONTAINER_BLOCK_SIZE,
-                             CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE> 
+                             CGAL_INCREMENT_COMPACT_CONTAINER_BLOCK_SIZE>
           >::type                                   Increment_policy;
   typedef TimeStamper_                              Ts;
   typedef Compact_container <T, Al, Ip, Ts>         Self;
@@ -243,18 +225,22 @@ class Compact_container
 public:
   typedef typename Default::Get< TimeStamper_,
                                  CGAL::Time_stamper_impl<T> >::type
-                                                    Time_stamper_impl;
+                                                    Time_stamper;
+  typedef Time_stamper                              Time_stamper_impl; // backward-compatibility
 
   typedef T                                         value_type;
   typedef Allocator                                 allocator_type;
-  typedef typename Allocator::reference             reference;
-  typedef typename Allocator::const_reference       const_reference;
-  typedef typename Allocator::pointer               pointer;
-  typedef typename Allocator::const_pointer         const_pointer;
-  typedef typename Allocator::size_type             size_type;
-  typedef typename Allocator::difference_type       difference_type;
-  typedef internal::CC_iterator<Self, false> iterator;
-  typedef internal::CC_iterator<Self, true>  const_iterator;
+
+  typedef value_type&                               reference;
+  typedef const value_type&                         const_reference;
+
+  typedef typename std::allocator_traits<Allocator>::pointer               pointer;
+  typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
+  typedef typename std::allocator_traits<Allocator>::size_type             size_type;
+  typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
+
+  typedef internal::CC_iterator<Self, false>        iterator;
+  typedef internal::CC_iterator<Self, true>         const_iterator;
   typedef std::reverse_iterator<iterator>           reverse_iterator;
   typedef std::reverse_iterator<const_iterator>     const_reverse_iterator;
 
@@ -267,16 +253,14 @@ public:
 
   explicit Compact_container(const Allocator &a = Allocator())
   : alloc(a)
-  , time_stamper(new Time_stamper_impl())
   {
-    init ();
+    init();
   }
 
   template < class InputIterator >
   Compact_container(InputIterator first, InputIterator last,
                     const Allocator & a = Allocator())
   : alloc(a)
-  , time_stamper(new Time_stamper_impl())
   {
     init();
     std::copy(first, last, CGAL::inserter(*this));
@@ -285,12 +269,17 @@ public:
   // The copy constructor and assignment operator preserve the iterator order
   Compact_container(const Compact_container &c)
   : alloc(c.get_allocator())
-  , time_stamper(new Time_stamper_impl())
   {
     init();
     block_size = c.block_size;
-    *time_stamper = *c.time_stamper;
+    time_stamp = c.time_stamp.load();
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
+  }
+
+  Compact_container(Compact_container&& c) noexcept
+  : alloc(c.get_allocator())
+  {
+    c.swap(*this);
   }
 
   Compact_container & operator=(const Compact_container &c)
@@ -302,10 +291,21 @@ public:
     return *this;
   }
 
+  Compact_container & operator=(Compact_container&& c) noexcept
+  {
+    Self tmp(std::move(c));
+    tmp.swap(*this);
+    return *this;
+  }
+
   ~Compact_container()
   {
     clear();
-    delete time_stamper;
+  }
+
+  bool is_used(const_iterator ptr) const
+  {
+    return (type(&*ptr)==USED);
   }
 
   bool is_used(size_type i) const
@@ -340,23 +340,14 @@ public:
     return all_items[block_number].first[index_in_block];
   }
 
-  void swap(Self &c)
-  {
-    std::swap(alloc, c.alloc);
-    std::swap(capacity_, c.capacity_);
-    std::swap(size_, c.size_);
-    std::swap(block_size, c.block_size);
-    std::swap(first_item, c.first_item);
-    std::swap(last_item, c.last_item);
-    std::swap(free_list, c.free_list);
-    all_items.swap(c.all_items);
-    std::swap(time_stamper, c.time_stamper);
+  friend void swap(Compact_container& a, Compact_container b) {
+    a.swap(b);
   }
 
-  iterator begin() { return iterator(first_item, 0, 0); }
+  iterator begin() { return empty()?end():iterator(first_item, 0, 0); }
   iterator end()   { return iterator(last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(first_item, 0, 0); }
+  const_iterator begin() const { return empty()?end():const_iterator(first_item, 0, 0); }
   const_iterator end()   const { return const_iterator(last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -383,12 +374,11 @@ public:
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template < typename... Args >
   iterator
   emplace(const Args&... args)
   {
-    if (free_list == NULL)
+    if (free_list == nullptr)
       allocate_new_block();
 
     pointer ret = free_list;
@@ -396,172 +386,21 @@ public:
     new (ret) value_type(args...);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper->set_time_stamp(ret);
+    Time_stamper::set_time_stamp(ret, time_stamp);
     return iterator(ret, 0);
   }
-#else
-  // inserts a default constructed item.
-  iterator emplace()
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type();
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1 >
-  iterator
-  emplace(const T1 &t1)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4, t5);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7, typename T8 >
-  iterator
-  emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-          const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
-  {
-    if (free_list == NULL)
-      allocate_new_block();
-
-    pointer ret = free_list;
-    free_list = clean_pointee(ret);
-    new (ret) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
-    CGAL_assertion(type(ret) == USED);
-    ++size_;
-    time_stamper->set_time_stamp(ret);
-    return iterator(ret, 0);
-  }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
   iterator insert(const T &t)
   {
-    if (free_list == NULL)
+    if (free_list == nullptr)
       allocate_new_block();
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
-    alloc.construct(ret, t);
+    std::allocator_traits<allocator_type>::construct(alloc, ret, t);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    time_stamper->set_time_stamp(ret);
+    Time_stamper::set_time_stamp(ret, time_stamp);
     return iterator(ret, 0);
   }
 
@@ -586,10 +425,8 @@ public:
 
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
-    alloc.destroy(&*x);
-/*#ifndef CGAL_NO_ASSERTIONS
-    std::memset(&*x, 0, sizeof(T));
-#endif*/
+    std::allocator_traits<allocator_type>::destroy(alloc, &*x);
+
     put_on_free_list(&*x);
     --size_;
   }
@@ -614,7 +451,7 @@ public:
 
   size_type max_size() const
   {
-    return alloc.max_size();
+    return std::allocator_traits<allocator_type>::max_size(alloc);
   }
 
   size_type capacity() const
@@ -632,6 +469,40 @@ public:
   allocator_type get_allocator() const
   {
     return alloc;
+  }
+
+  // Returns the index of the iterator "cit", i.e. the number n so that
+  // operator[](n)==*cit.
+  // Complexity : O(#blocks) = O(sqrt(capacity())).
+  // This function is mostly useful for purposes of efficient debugging at
+  // higher levels.
+  size_type index(const_iterator cit) const
+  {
+    // We use the block structure to provide an efficient version :
+    // we check if the address is in the range of each block.
+
+    CGAL_assertion(cit != end());
+
+    const_pointer c = &*cit;
+    size_type res=0;
+
+    for (typename All_items::const_iterator it = all_items.begin(), itend = all_items.end();
+         it != itend; ++it) {
+      const_pointer p = it->first;
+      size_type s = it->second;
+
+      // Are we in the address range of this block (excluding first and last
+      // elements) ?
+      if ( p<c && c<(p+s-1) )
+      {
+        CGAL_assertion_msg( (c-p)+p == c, "wrong alignment of iterator");
+        return res+(c-p-1);
+      }
+
+      res += s-2;
+    }
+
+    return (size_type)-1; // cit does not belong to this compact container
   }
 
   // Returns whether the iterator "cit" is in the range [begin(), end()].
@@ -687,11 +558,11 @@ public:
       all_items.push_back(std::make_pair(new_block, block_size + 2));
       capacity_ += block_size;
       // We insert this new block at the end.
-      if (last_item == NULL) // First time
+      if (last_item == nullptr) // First time
       {
         first_item = new_block;
         last_item  = new_block + block_size + 1;
-        set_type(first_item, NULL, START_END);
+        set_type(first_item, nullptr, START_END);
       }
       else
       {
@@ -699,7 +570,7 @@ public:
         set_type(new_block, last_item, BLOCK_BOUNDARY);
         last_item = new_block + block_size + 1;
       }
-      set_type(last_item, NULL, START_END);
+      set_type(last_item, nullptr, START_END);
       // Increase the block_size for the next time.
       Increment_policy::increase_size(*this);
     }
@@ -736,20 +607,21 @@ private:
   //
   //                          value of the last 2 bits as "Type"
   // pointer part     0              1                2              3
-  //         NULL     user elt       unused           free_list end  start/end
-  //      != NULL     user elt       block boundary   free elt       unused
+  //         nullptr     user elt       unused           free_list end  start/end
+  //      != nullptr     user elt       block boundary   free elt       unused
   //
   // meaning of ptr : user stuff     next/prev block  free_list      unused
 
   enum Type { USED = 0, BLOCK_BOUNDARY = 1, FREE = 2, START_END = 3 };
 
   // The bit squatting is implemented by casting pointers to (char *), then
-  // subtracting to NULL, doing bit manipulations on the resulting integer,
+  // subtracting to nullptr, doing bit manipulations on the resulting integer,
   // and converting back.
 
   static char * clean_pointer(char * p)
   {
-    return ((p - (char *) NULL) & ~ (std::ptrdiff_t) START_END) + (char *) NULL;
+    return reinterpret_cast<char*>(reinterpret_cast<std::ptrdiff_t>(p) &
+                                   ~ (std::ptrdiff_t) START_END);
   }
 
   // Returns the pointee, cleaned up from the squatted bits.
@@ -762,7 +634,8 @@ private:
   static Type type(const_pointer ptr)
   {
     char * p = (char *) Traits::pointer(*ptr);
-    return (Type) (p - clean_pointer(p));
+    return (Type) (reinterpret_cast<std::ptrdiff_t>(p) -
+                   reinterpret_cast<std::ptrdiff_t>(clean_pointer(p)));
   }
 
   // Sets the pointer part and the type of the pointee.
@@ -771,9 +644,30 @@ private:
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 4);
-    Traits::pointer(*ptr) = (void *) ((clean_pointer((char *) p)) + (int) t);
+    Traits::set_pointer(*ptr, reinterpret_cast<void *>
+      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t));
   }
 
+public:
+  // @return true iff pts is on the beginning or on the end of its block.
+  static bool is_begin_or_end(const_pointer ptr)
+  { return type(ptr)==START_END; }
+
+  void swap(Self &c)
+  {
+    std::swap(alloc, c.alloc);
+    std::swap(capacity_, c.capacity_);
+    std::swap(size_, c.size_);
+    std::swap(block_size, c.block_size);
+    std::swap(first_item, c.first_item);
+    std::swap(last_item, c.last_item);
+    std::swap(free_list, c.free_list);
+    all_items.swap(c.all_items);
+
+    // non-atomic swap of time_stamp:
+    c.time_stamp = time_stamp.exchange(c.time_stamp.load());
+  }
+private:
   // We store a vector of pointers to all allocated blocks and their sizes.
   // Knowing all pointers, we don't have to walk to the end of a block to reach
   // the pointer to the next block.
@@ -781,32 +675,31 @@ private:
   // by walking through the block till its end.
   // This opens up the possibility for the compiler to optimize the clear()
   // function considerably when has_trivial_destructor<T>.
-  typedef std::vector<std::pair<pointer, size_type> >  All_items;
+  using All_items = std::vector<std::pair<pointer, size_type> >;
+
+  using time_stamp_t = std::atomic<std::size_t>;
 
   void init()
   {
     block_size = Increment_policy::first_block_size;
     capacity_  = 0;
     size_      = 0;
-    free_list  = NULL;
-    first_item = NULL;
-    last_item  = NULL;
+    free_list  = nullptr;
+    first_item = nullptr;
+    last_item  = nullptr;
     all_items  = All_items();
-    time_stamper->reset();
+    time_stamp = 0;
   }
 
   allocator_type   alloc;
-  size_type        capacity_;
-  size_type        size_;
-  size_type        block_size;
-  pointer          free_list;
-  pointer          first_item;
-  pointer          last_item;
-  All_items        all_items;
-
-  // This is a pointer, so that the definition of Compact_container does
-  // not require a complete type `T`.
-  Time_stamper_impl* time_stamper;
+  size_type        capacity_   = 0;
+  size_type        size_       = 0;
+  size_type        block_size  = Increment_policy::first_block_size;
+  pointer          free_list   = nullptr;
+  pointer          first_item  = nullptr;
+  pointer          last_item   = nullptr;
+  All_items        all_items   = {};
+  time_stamp_t     time_stamp  = {};
 };
 
 template < class T, class Allocator, class Increment_policy, class TimeStamper >
@@ -818,19 +711,19 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::merge(Self 
   CGAL_precondition(get_allocator() == d.get_allocator());
 
   // Concatenate the free_lists.
-  if (free_list == NULL) {
+  if (free_list == nullptr) {
     free_list = d.free_list;
-  } else if (d.free_list != NULL) {
+  } else if (d.free_list != nullptr) {
     pointer p = free_list;
-    while (clean_pointee(p) != NULL)
+    while (clean_pointee(p) != nullptr)
       p = clean_pointee(p);
     set_type(p, d.free_list, FREE);
   }
   // Concatenate the blocks.
-  if (last_item == NULL) { // empty...
+  if (last_item == nullptr) { // empty...
     first_item = d.first_item;
     last_item  = d.last_item;
-  } else if (d.last_item != NULL) {
+  } else if (d.last_item != nullptr) {
     set_type(last_item, d.first_item, BLOCK_BOUNDARY);
     set_type(d.first_item, last_item, BLOCK_BOUNDARY);
     last_item = d.last_item;
@@ -840,7 +733,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::merge(Self 
   size_ += d.size_;
   // Add the capacities.
   capacity_ += d.capacity_;
-  // It seems reasonnable to take the max of the block sizes.
+  // It seems reasonable to take the max of the block sizes.
   block_size = (std::max)(block_size, d.block_size);
   // Clear d.
   d.init();
@@ -855,7 +748,10 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
     size_type s = it->second;
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
       if (type(pp) == USED)
-        alloc.destroy(pp);
+      {
+        std::allocator_traits<allocator_type>::destroy(alloc, pp);
+        set_type(pp, nullptr, FREE);
+      }
     }
     alloc.deallocate(p, s);
   }
@@ -877,14 +773,15 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
   for (size_type i = block_size; i >= 1; --i)
   {
     EraseCounterStrategy::set_erase_counter(*(new_block + i), 0);
+    Time_stamper::initialize_time_stamp(new_block + i);
     put_on_free_list(new_block + i);
   }
   // We insert this new block at the end.
-  if (last_item == NULL) // First time
+  if (last_item == nullptr) // First time
   {
       first_item = new_block;
       last_item  = new_block + block_size + 1;
-      set_type(first_item, NULL, START_END);
+      set_type(first_item, nullptr, START_END);
   }
   else
   {
@@ -892,7 +789,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::allocate_ne
       set_type(new_block, last_item, BLOCK_BOUNDARY);
       last_item = new_block + block_size + 1;
   }
-  set_type(last_item, NULL, START_END);
+  set_type(last_item, nullptr, START_END);
   // Increase the block_size for the next time.
   Increment_policy::increase_size(*this);
 }
@@ -947,14 +844,18 @@ bool operator>=(const Compact_container<T, Allocator, Increment_policy, TimeStam
   return ! (lhs < rhs);
 }
 
+// forward-declare Concurrent_compact_container, for CC_iterator
+template < class T, class Allocator_ >
+class Concurrent_compact_container;
+
 namespace internal {
 
   template < class DSC, bool Const >
   class CC_iterator
   {
-    typedef typename DSC::iterator                    iterator;
     typedef CC_iterator<DSC, Const>                   Self;
   public:
+    typedef DSC                                       CC;
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
@@ -964,105 +865,148 @@ namespace internal {
                                        value_type&>::type reference;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
-    // the initialization with NULL is required by our Handle concept.
+    // the initialization with nullptr is required by our Handle concept.
     CC_iterator()
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
     {
-      m_ptr.p = NULL;
+      m_ptr = nullptr;
     }
 
-    // Either a harmless copy-ctor,
-    // or a conversion from iterator to const_iterator.
-    CC_iterator (const iterator &it)
+    explicit CC_iterator(pointer ptr) : m_ptr(ptr) { }
+
+    // Converting constructor from mutable to constant iterator
+    template <bool OtherConst>
+    CC_iterator(const CC_iterator<
+                typename std::enable_if<(!OtherConst && Const), DSC>::type,
+                OtherConst> &const_it)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+        : ts(Time_stamper::time_stamp(const_it.operator->()))
+#endif
     {
-      m_ptr.p = &(*it);
+      m_ptr = const_it.operator->();
     }
 
-    // Same for assignment operator (otherwise MipsPro warns)
-    CC_iterator & operator= (const iterator &it)
+    // Assignment operator from mutable to constant iterator
+    template <bool OtherConst>
+    CC_iterator & operator= (const CC_iterator<
+                typename std::enable_if<(!OtherConst && Const), DSC>::type,
+                OtherConst> &const_it)
     {
-      m_ptr.p = &(*it);
+      m_ptr = const_it.operator->();
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      ts = Time_stamper::time_stamp(const_it.operator->());
+#endif
       return *this;
     }
 
-    // Construction from NULL
-    CC_iterator (Nullptr_t CGAL_assertion_code(n))
+    // Construction from nullptr
+    CC_iterator (std::nullptr_t /*CGAL_assertion_code(n)*/)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
     {
-      CGAL_assertion (n == NULL);
-      m_ptr.p = NULL;
+      //CGAL_assertion (n == nullptr);
+      m_ptr = nullptr;
     }
 
   private:
 
-    typedef typename DSC::Time_stamper_impl           Time_stamper_impl;
+    typedef typename DSC::Time_stamper           Time_stamper;
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+    std::size_t ts;
+#endif
+    pointer m_ptr;
 
-    union {
-      pointer      p;
-      void        *vp;
-    } m_ptr;
+    // Only Compact_container and Concurrent_compact_container should
+    // access these constructors.
+    template <typename T, typename Al, typename Ip, typename Ts>
+    friend class CGAL::Compact_container;
 
-    // Only Compact_container should access these constructors.
-    friend class Compact_container<value_type,
-                                   typename DSC::Al,
-                                   typename DSC::Ip,
-                                   typename DSC::Ts>;
-
+    friend class CGAL::Concurrent_compact_container<value_type,
+                                                    typename DSC::Al>;
 
     // For begin()
     CC_iterator(pointer ptr, int, int)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
     {
-      m_ptr.p = ptr;
-      if (m_ptr.p == NULL) // empty container.
+      m_ptr = ptr;
+      if (m_ptr == nullptr) // empty container.
         return;
 
-      ++(m_ptr.p); // if not empty, p = start
-      if (DSC::type(m_ptr.p) == DSC::FREE)
+      ++(m_ptr); // if not empty, p = start
+      if (DSC::type(m_ptr) == DSC::FREE)
         increment();
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      else
+        ts = Time_stamper::time_stamp(m_ptr);
+#endif // CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     }
 
     // Construction from raw pointer and for end().
     CC_iterator(pointer ptr, int)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      : ts(0)
+#endif
     {
-      m_ptr.p = ptr;
+      m_ptr = ptr;
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      if(ptr != nullptr){
+        ts = Time_stamper::time_stamp(m_ptr);
+      }
+#endif // end CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     }
 
-    // NB : in case empty container, begin == end == NULL.
+    // NB : in case empty container, begin == end == nullptr.
     void increment()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr.p != NULL,
+      CGAL_assertion_msg(m_ptr != nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
+      CGAL_assertion_msg(DSC::type(m_ptr) != DSC::START_END,
          "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do {
-        ++(m_ptr.p);
-        if (DSC::type(m_ptr.p) == DSC::USED ||
-            DSC::type(m_ptr.p) == DSC::START_END)
+        ++(m_ptr);
+        if (DSC::type(m_ptr) == DSC::USED ||
+            DSC::type(m_ptr) == DSC::START_END)
+        {
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+          ts = Time_stamper::time_stamp(m_ptr);
+#endif
           return;
-
-        if (DSC::type(m_ptr.p) == DSC::BLOCK_BOUNDARY)
-          m_ptr.p = DSC::clean_pointee(m_ptr.p);
+        }
+        if (DSC::type(m_ptr) == DSC::BLOCK_BOUNDARY)
+          m_ptr = DSC::clean_pointee(m_ptr);
       } while (true);
     }
 
     void decrement()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr.p != NULL,
+      CGAL_assertion_msg(m_ptr != nullptr,
          "Decrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
+      CGAL_assertion_msg(DSC::type(m_ptr - 1) != DSC::START_END,
          "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do {
-        --m_ptr.p;
-        if (DSC::type(m_ptr.p) == DSC::USED ||
-            DSC::type(m_ptr.p) == DSC::START_END)
+        --m_ptr;
+        if (DSC::type(m_ptr) == DSC::USED ||
+            DSC::type(m_ptr) == DSC::START_END)
+        {
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+          ts = Time_stamper::time_stamp(m_ptr);
+#endif
           return;
+        }
 
-        if (DSC::type(m_ptr.p) == DSC::BLOCK_BOUNDARY)
-          m_ptr.p = DSC::clean_pointee(m_ptr.p);
+        if (DSC::type(m_ptr) == DSC::BLOCK_BOUNDARY)
+          m_ptr = DSC::clean_pointee(m_ptr);
       } while (true);
     }
 
@@ -1070,21 +1014,21 @@ namespace internal {
 
     Self & operator++()
     {
-      CGAL_assertion_msg(m_ptr.p != NULL,
+      CGAL_assertion_msg(m_ptr != nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
-                         "Incrementing an invalid iterator.");
+      /* CGAL_assertion_msg(DSC::type(m_ptr) == DSC::USED,
+         "Incrementing an invalid iterator."); */
       increment();
       return *this;
     }
 
     Self & operator--()
     {
-      CGAL_assertion_msg(m_ptr.p != NULL,
+      CGAL_assertion_msg(m_ptr != nullptr,
          "Decrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
-                      || DSC::type(m_ptr.p) == DSC::START_END,
-                         "Decrementing an invalid iterator.");
+      /*CGAL_assertion_msg(DSC::type(m_ptr) == DSC::USED
+                      || DSC::type(m_ptr) == DSC::START_END,
+                      "Decrementing an invalid iterator.");*/
       decrement();
       return *this;
     }
@@ -1092,36 +1036,55 @@ namespace internal {
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    reference operator*() const { return *(m_ptr.p); }
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+    bool is_time_stamp_valid() const
+    {
+      return (ts == 0) || (ts == Time_stamper::time_stamp(m_ptr));
+    }
+#endif // CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
 
-    pointer   operator->() const { return (m_ptr.p); }
+    reference operator*() const { return *(m_ptr); }
+
+    pointer   operator->() const { return (m_ptr); }
 
     // For std::less...
     bool operator<(const CC_iterator& other) const
     {
-      return Time_stamper_impl::less(m_ptr.p, other.m_ptr.p);
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      CGAL_assertion( is_time_stamp_valid() );
+#endif
+      return Time_stamper::less(m_ptr, other.m_ptr);
     }
 
     bool operator>(const CC_iterator& other) const
     {
-      return Time_stamper_impl::less(other.m_ptr.p, m_ptr.p);
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      CGAL_assertion( is_time_stamp_valid() );
+#endif
+      return Time_stamper::less(other.m_ptr, m_ptr);
     }
 
     bool operator<=(const CC_iterator& other) const
     {
-      return Time_stamper_impl::less(m_ptr.p, other.m_ptr.p)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      CGAL_assertion( is_time_stamp_valid() );
+#endif
+      return Time_stamper::less(m_ptr, other.m_ptr)
           || (*this == other);
     }
 
     bool operator>=(const CC_iterator& other) const
     {
-      return Time_stamper_impl::less(other.m_ptr.p, m_ptr.p)
+#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
+      CGAL_assertion( is_time_stamp_valid() );
+#endif
+      return Time_stamper::less(other.m_ptr, m_ptr)
           || (*this == other);
     }
 
     // Can itself be used for bit-squatting.
-    void *   for_compact_container() const { return (m_ptr.vp); }
-    void * & for_compact_container()       { return (m_ptr.vp); }
+    void * for_compact_container() const { return m_ptr; }
+    void for_compact_container(void* p) { m_ptr = static_cast<pointer>(p); }
   };
 
   template < class DSC, bool Const1, bool Const2 >
@@ -1129,7 +1092,7 @@ namespace internal {
   bool operator==(const CC_iterator<DSC, Const1> &rhs,
                   const CC_iterator<DSC, Const2> &lhs)
   {
-    return &*rhs == &*lhs;
+    return rhs.operator->() == lhs.operator->();
   }
 
   template < class DSC, bool Const1, bool Const2 >
@@ -1137,30 +1100,73 @@ namespace internal {
   bool operator!=(const CC_iterator<DSC, Const1> &rhs,
                   const CC_iterator<DSC, Const2> &lhs)
   {
-    return &*rhs != &*lhs;
+    return rhs.operator->() != lhs.operator->();
   }
 
-  // Comparisons with NULL are part of CGAL's Handle concept...
+  // Comparisons with nullptr are part of CGAL's Handle concept...
   template < class DSC, bool Const >
   inline
   bool operator==(const CC_iterator<DSC, Const> &rhs,
-                  Nullptr_t CGAL_assertion_code(n))
+                  std::nullptr_t /*CGAL_assertion_code(n)*/)
   {
-    CGAL_assertion( n == NULL);
-    return &*rhs == NULL;
+    //CGAL_assertion( n == nullptr);
+    return rhs.operator->() == nullptr;
   }
 
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator<DSC, Const> &rhs,
-                  Nullptr_t CGAL_assertion_code(n))
+                  std::nullptr_t /*CGAL_assertion_code(n)*/)
   {
-    CGAL_assertion( n == NULL);
-    return &*rhs != NULL;
+    //CGAL_assertion( n == nullptr);
+    return rhs.operator->() != nullptr;
   }
+
+  template <class DSC, bool Const>
+  std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
+  {
+    typedef Time_stamper_impl<typename DSC::value_type> Stamper;
+    return Stamper::hash_value(i.operator->());
+  }
+
+namespace handle {
+  // supply a specialization for Hash_functor
+
+  // forward declare base template
+  template <class H> struct Hash_functor;
+
+  template<class DSC, bool Const>
+  struct Hash_functor<CC_iterator<DSC, Const> >{
+    std::size_t
+    operator()(const CC_iterator<DSC, Const>& i)
+    {
+      return hash_value(i);
+    }
+  };
+} // namespace handle
 
 } // namespace internal
 
 } //namespace CGAL
+
+namespace std {
+
+#ifndef CGAL_CFG_NO_STD_HASH
+
+  template < class DSC, bool Const >
+  struct hash<CGAL::internal::CC_iterator<DSC, Const> >
+    : public CGAL::cpp98::unary_function<CGAL::internal::CC_iterator<DSC, Const>, std::size_t> {
+
+    std::size_t operator()(const CGAL::internal::CC_iterator<DSC, Const>& i) const
+    {
+      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
+    }
+  };
+#endif // CGAL_CFG_NO_STD_HASH
+
+
+} // namespace std
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_COMPACT_CONTAINER_H

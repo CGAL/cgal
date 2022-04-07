@@ -1,27 +1,24 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_VECTOR_3_H
 #define CGAL__TEST_CLS_VECTOR_3_H
+
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -36,7 +33,7 @@ _test_cls_vector_3(const R& )
  typedef typename R::Vector_3::Cartesian_const_iterator CCI;
 
  CGAL::Vector_3<R>  v1;
- CGAL::Vector_3<R>  v2(iv);
+ CGAL::Vector_3<R>  v2(iv); CGAL_USE(v2);
  CGAL::Vector_3<R>  v0(CGAL::NULL_VECTOR);
 
  RT  n1( 12 );
@@ -155,6 +152,23 @@ _test_cls_vector_3(const R& )
   it2 = it - 1;
   it2++;
   assert(it == it2);
+
+  // test arithmetic operators
+  CGAL::Vector_3<R> v_1(2, 4, 6);
+  const CGAL::Vector_3<R> v_1_const=v_1;
+  CGAL::Vector_3<R> v_2(1, 2, 3);
+
+  v_1*=FT(2);
+  assert(v_1==v_1_const * FT(2));
+  v_1=v_1_const;
+  v_1/=FT(2);
+  assert(v_1==v_1_const / FT(2));
+  v_1=v_1_const;
+  v_1+=v_2;
+  assert(v_1==v_1_const + v_2);
+  v_1=v_1_const;
+  v_1-=v_2;
+  assert(v_1==v_1_const - v_2);
 
  std::cout << "done" << std::endl;
  return true;

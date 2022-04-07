@@ -2,43 +2,36 @@
 # This is the CMake script for compiling a CGAL application.
 # Then modified by hand to add Eigen3.
 
+cmake_minimum_required(VERSION 3.1...3.22)
+project(NewKernel_d_Tests)
 
-project( NewKernel_d_test )
-
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
+if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
+  message(
+    STATUS
+      "NOTICE: this directory requires a version of gcc >= 4.4, and will not be compiled."
+  )
+  return()
 endif()
 
-find_package(CGAL QUIET)
+find_package(CGAL REQUIRED)
 
-if ( CGAL_FOUND )
-
-  include( ${CGAL_USE_FILE} )
-
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  find_package(Eigen3)
-  if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-
-    include_directories (BEFORE "../../include")
-
-    create_single_source_cgal_program( "Epick_d.cpp" )
-
-  else()
-
-    message(STATUS "NOTICE: This program requires the Eigen3 library, and will not be compiled.")
-
-  endif()
-
+find_package(Eigen3)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
+  file(
+    GLOB cppfiles
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+  foreach(cppfile ${cppfiles})
+    get_filename_component(target ${cppfile} NAME_WE)
+    create_single_source_cgal_program("${cppfile}")
+    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  endforeach()
 else()
-  
-    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
-endif()
 
+  message(
+    STATUS
+      "NOTICE: These programs require the Eigen3 library, and will not be compiled."
+  )
+
+endif()

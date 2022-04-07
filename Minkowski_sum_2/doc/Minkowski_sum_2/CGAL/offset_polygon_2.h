@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Ref
 
 Computes the inset, or inner offset, of the given polygon `P` by a
 given radius `r` - namely, the function computes the set of points
@@ -29,7 +29,7 @@ OutputIterator oi);
 namespace CGAL {
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Ref
 
 Computes the offset of the given polygon `P` by a given radius
 `r` - namely, the function computes the Minkowski sum
@@ -51,7 +51,7 @@ const typename ConicTraits::Rat_kernel::FT& r,
 const ConicTraits& traits);
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Ref
 
 Computes the offset of the given polygon with holes `pwh` by a given
 radius `r`. It does so by offsetting outer boundary of `pwh` and
@@ -70,7 +70,7 @@ const typename ConicTraits::Rat_kernel::FT& r,
 const ConicTraits& traits);
 
 /*!
-\ingroup PkgMinkowskiSum2
+\ingroup PkgMinkowskiSum2Ref
 
 Computes the exact representation of the offset of the given polygon
 `P` by a radius `r`, as described above.

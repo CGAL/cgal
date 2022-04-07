@@ -3,72 +3,83 @@
 \ingroup PkgBooleanSetOperations2Concepts
 \cgalConcept
 
-A face record in a <span class="textsc">Dcel</span> data structure used by the 
-`General_polygon_set_2` and `Polygon_set_2` class-templates 
-to represent the underlying internal `Arrangement_2` data structure. 
+A face record in a \em Dcel data structure used by the
+`General_polygon_set_2` and `Polygon_set_2` template classes
+to represent the underlying internal `Arrangement_2` data structure.
 
-\cgalRefines `ArrangementDcelFace` 
+\cgalRefines `ArrangementDcelFace`
 
-\sa `ArrangementDcel` 
-\sa `ArrangementDcelVertex` 
-\sa `ArrangementDcelHalfedge` 
+\cgalHasModel `CGAL::Gps_face_base`
+
+\sa `ArrangementDcel`
+\sa `ArrangementDcelVertex`
+\sa `GeneralPolygonSetDcelHalfedge`
 
 */
 
 class GeneralPolygonSetDcelFace {
 public:
 
-/// \name Creation 
+/// \name Access Functions
 /// @{
 
 /*!
-default constructor. 
-*/ 
-Gps_dcel_face(); 
+returns `true` if the face is contained in the general-polygon set,
+and `false` otherwise.
+*/
+bool contained() const;
 
 /*!
-assigns `f` with the contents of the `other` face. 
-*/ 
-void assign (const Self& other); 
+returns `true` if the face has been visited, and `false` otherwise.
+This is used internally by the some of the operations of the
+`General_polygon_set_2` class that traverse the arrangement faces.
+*/
+bool visited();
 
-/// @} 
+/*!
+returns an id associated to the face using `set_id()`;
+If no call to `set_id()` was done or if `reset_id()` was called,
+the returned value is not specified and `id_not_set()` must return `true`.
+*/
+std::size_t id() const;
 
-/// \name Access Functions 
+/*!
+returns `true` if `set_id()` was not called or if `reset_id()` was called,
+amd `false` otherwise.
+*/
+bool id_not_set() const;
+
+/// @}
+
+/// \name Modifiers
 /// @{
 
 /*!
-returns `true` if the face is contained in the general-polygon set, 
-and `false` otherwise. 
-*/ 
-bool contained() const; 
+marks the face as contained (if `flag` is `true`), or as a hole
+(if it is `false`).
+*/
+void set_contained(bool flag);
 
 /*!
-returns `true` if the face has been visited, and `false` otherwise. 
-This is used internally by the some of the operations of the 
-`General_polygon_set_2` class that traverse the arrangement faces. 
-*/ 
-bool visited(); 
-
-/// @} 
-
-/// \name Modifiers 
-/// @{
+marks the face as visited (if `flag` is `true`), or as not visited
+(if it is `false`). This is used internally by the some of the
+operations of the `General_polygon_set_2` class that traverse the
+arrangement faces.
+*/
 
 /*!
-marks the face as contained (if `flag` is `true`), or as a hole 
-(if it is `false`). 
-*/ 
-void set_contained(bool flag); 
+resets the id associated to the face.
+*/
+void reset_id();
 
 /*!
-marks the face as visited (if `flag` is `true`), or as not visited 
-(if it is `false`). This is used internally by the some of the 
-operations of the `General_polygon_set_2` class that traverse the 
-arrangement faces. 
-*/ 
-void set_visited(bool flag); 
+sets the id associated to the face.
+i should be different from the largest possible value that `std::size_t`
+can store.
+*/
+void set_id(std::size_t i);
+
 
 /// @}
 
 }; /* end GeneralPolygonSetDcelFace */
-

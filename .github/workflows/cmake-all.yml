@@ -1,0 +1,32 @@
+name: CMake Testsuite
+
+on: [push, pull_request]
+
+jobs:
+  cmake-testsuite:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: install dependencies
+      run: sudo apt-get install -y libboost-dev libboost-program-options-dev libmpfr-dev libeigen3-dev
+    - name: configure all
+      run: |
+        set -e
+        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DBUILD_TESTING=ON ..
+        ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)
+
+  cmake-testsuite-with-qt5:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: install dependencies
+      run: sudo bash -e .github/install.sh
+    - name: configure all
+      run: |
+        set -e
+        mkdir build && cd build && CXX=clang++ cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON -DBUILD_TESTING=ON ..
+        ctest -L Installation -j $(getconf _NPROCESSORS_ONLN)

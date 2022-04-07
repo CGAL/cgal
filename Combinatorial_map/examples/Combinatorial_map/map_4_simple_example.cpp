@@ -1,5 +1,4 @@
 #include <CGAL/Combinatorial_map.h>
-#include <CGAL/Combinatorial_map_constructors.h>
 #include <iostream>
 #include <cstdlib>
 
@@ -16,7 +15,7 @@ Dart_handle make_triangle(CMap_4& amap)
  amap.link_beta<1>(d3,d1);
  return d1;
 }
- 
+
 Dart_handle make_tetrahedral(CMap_4& amap)
 {
   Dart_handle d1 = make_triangle(amap);
@@ -37,12 +36,11 @@ int main()
   CMap_4 cm;
   Dart_handle d1 = make_tetrahedral(cm);
   Dart_handle d2 = make_tetrahedral(cm);
-  
+
   cm.sew<4>(d1,d2);
-  
+
   cm.display_characteristics(std::cout);
   std::cout<<", valid="<<cm.is_valid()<<std::endl;
 
   return EXIT_SUCCESS;
 }
-

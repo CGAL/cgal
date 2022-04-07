@@ -1,19 +1,11 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -22,9 +14,10 @@
 #ifndef CGAL_CORE_BIGRAT_H
 #define CGAL_CORE_BIGRAT_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/config.h>
 #include <CGAL/number_type_basic.h>
-#include <CGAL/CORE/BigRat.h>
 #include <CGAL/CORE_coercion_traits.h>
 #include <CGAL/CORE_Expr.h> // used for To_interval-functor
 
@@ -64,7 +57,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
   public:
 
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CORE::abs( x );
@@ -72,7 +65,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
@@ -80,7 +73,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -91,7 +84,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
@@ -101,7 +94,7 @@ template <> class Real_embeddable_traits< CORE::BigRat >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x_ ) const {
             CORE::Expr x(x_);
@@ -155,14 +148,14 @@ public:
 };
 
 template <class F>
-class Output_rep< ::CORE::BigRat, F> {
+class Output_rep< ::CORE::BigRat, F> : public IO_rep_is_specialized {
     const ::CORE::BigRat& t;
 public:
     //! initialize with a const reference to \a t.
     Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        switch (get_mode(out)) {
+        switch (IO::get_mode(out)) {
         case IO::PRETTY:{
             if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
                 return out <<CGAL_CORE_NUMERATOR(t);
@@ -192,7 +185,9 @@ struct Needs_parens_as_product< ::CORE::BigRat >{
 };
 
 template <>
-class Output_rep< ::CORE::BigRat, Parens_as_product_tag > {
+class Output_rep< ::CORE::BigRat, Parens_as_product_tag >
+  : public IO_rep_is_specialized
+{
     const ::CORE::BigRat& t;
 public:
     // Constructor
@@ -201,13 +196,13 @@ public:
     std::ostream& operator()( std::ostream& out) const {
         Needs_parens_as_product< ::CORE::BigRat > needs_parens_as_product;
         if (needs_parens_as_product(t))
-            return out <<"("<< oformat(t) <<")";
+            return out <<"("<< IO::oformat(t) <<")";
         else
-            return out << oformat(t);
+            return out << IO::oformat(t);
     }
 };
 
-// Benchmark_rep specialization 
+// Benchmark_rep specialization
 template<>
 class Benchmark_rep< CORE::BigRat > {
     const CORE::BigRat& t;
@@ -215,11 +210,11 @@ public:
     //! initialize with a const reference to \a t.
     Benchmark_rep( const CORE::BigRat& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const { 
+    std::ostream& operator()( std::ostream& out) const {
             out << "Rational(" << numerator(t) << "," << denominator(t) << ")";
             return out;
     }
-    
+
     static std::string get_benchmark_name() {
         return "Rational";
     }
@@ -230,7 +225,6 @@ public:
 //since types are included by CORE_coercion_traits.h:
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/CORE_BigInt.h>
-#include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
 
@@ -241,6 +235,7 @@ namespace Eigen {
     typedef CORE::BigRat Real;
     typedef CORE::BigRat NonInteger;
     typedef CORE::BigRat Nested;
+    typedef CORE::BigRat Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }
@@ -256,5 +251,7 @@ namespace Eigen {
     };
   };
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CORE_BIGRAT_H

@@ -1,0 +1,161 @@
+namespace CGAL {
+
+/*!
+\mainpage User Manual
+\anchor Chapter_2D_Visibility_Computation
+\cgalAutoToc
+
+\authors Michael Hemmer, Kan Huang, Francisc Bungiu, Ning Xu
+
+<!-- \cgalFigureBegin{example_figure,visibility-teaser.png}\cgalFigureEnd -->
+
+\section visibility_2_introduction Introduction
+
+This package provides functionality to compute the visibility region within polygons in two dimensions.
+The package is based on the package \ref PkgArrangementOnSurface2 and uses CGAL::Arrangement_2
+as the fundamental class to specify the input as well as the output.
+Hence, a polygon \f$ P \f$ is represented by a bounded arrangement face \f$ f \f$
+that does not have any isolated vertices and any edge that is adjacent to \f$ f \f$ separates \f$ f \f$ from another face.
+Note that \f$ f \f$ may contain holes.
+Similarly, a simple polygon is represented by a face without holes.
+
+Given two points \f$ p \f$ and \f$ q \f$ in \f$ P \f$, they are said to be
+visible to each other iff the segment \f$ pq \subset  P \f$, where \f$ P \f$ is
+considered to be closed, that is, \f$\partial P \subset P\f$.
+For a query point \f$ q \in P \f$, the set of points that are visible from
+\f$ q \f$ is defined as the visibility region of \f$ q \f$, denoted by \f$ V_q \f$
+
+\subsection visibility_2_degeneracies Degeneracies and Regularization
+
+\cgalFigureBegin{definition-fig, example1.png}
+Non-regularized visibility and regularized visibility.
+\cgalFigureEnd
+
+
+As illustrated in \cgalFigureRef{definition-fig} (1) the visibility
+region \f$ V_q \f$ of a query point \f$ q \f$ may not be a polygon.
+In the figure, all labeled points are collinear, which implies that the
+point \f$ c \f$ is visible to \f$ q \f$, that is,
+the segment \f$ bc \f$ is  part of \f$ V_q \f$.
+We call such low dimensional features that are caused by degeneracies `needles`.
+However, for many applications these needles are actually irrelevant.
+Moreover, for some algorithms it is even more efficient to ignore needles
+in the first place.
+Therefore, this package offers also
+functionality to compute the regularized visibility area
+\f$ \overline{V_q} = closure(interior(V_q)) = (V_q\setminus\partial V_q) \cup  \partial (V_q\setminus\partial V_q)\f$,
+as shown in \cgalFigureRef{definition-fig} (2).
+For more information about regularization, refer to Chapter \ref PkgBooleanSetOperations2.
+
+\section visibility_2_classes Classes and Algorithms
+
+Answering visibility queries is, in many ways, similar to answering point-location queries.
+Thus, we use the same design used to implement \ref PkgArrangementOnSurface2 point location.
+Each of the various visibility class templates employs a different
+algorithm or \em strategy for answering
+queries\cgalFootnote{The term \em strategy is borrowed from the
+design-pattern taxonomy \cgalCite{cgal:ghjv-dpero-95}.
+A \em strategy provides the means to define a family of algorithms,
+each implemented by a separate class. All classes that implement the various
+algorithms are made interchangeable, letting the algorithm in use vary according to the user choice.}.
+Similar to the point-location case, some of the strategies require preprocessing. Thus, before a visibility object is used
+to answer visibility queries, it must be attached to an arrangement object.
+Afterwards, the visibility object observes changes to the attached arrangement.
+Hence, it is possible to modify the arrangement after attaching the visibility object.
+However, this feature should be used with caution as each change to the arrangement also
+requires an update of the auxiliary data structures in the attached object.
+
+An actual query is performed by giving the view point \f$ p \f$ and its containing face \f$ f \f$
+(which must represent a valid polygon) to a visibility object.
+For more details see the documentation of the overloaded member function `Visibility_2::compute_visibility()`.
+
+The following models of the `Visibility_2` concept are provided:
+
+<CENTER>
+Class                                 |        Function                                     |  Preprocessing                |  Query                            |Algorithm
+-------------------------------|-----------------------------------------------------|-------------------------------|-----------------------------------|-------------------------------
+ `Simple_polygon_visibility_2`       | simple polygons                  |       No        |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | B. Joe and R. B. Simpson \cite bjrb-clvpa-87
+ `Rotational_sweep_visibility_2`        |  polygons with holes | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  T. Asano \cite ta-aeafvpprh-85
+`Triangular_expansion_visibility_2`     |  polygons with  holes |  \f$ O(n) \f$ time and \f$ O(n) \f$ space | \f$ O(nh) \f$ time and \f$ O(n) \f$ space.   | Bungiu et al.  \cite ecvp-bhhhk-14
+</CENTER>
+
+Where \f$ n \f$ denotes the number of vertices of \f$ f \f$ and \f$ h \f$ the number of holes+1.
+
+\section benchmarks Running Time in Practice
+
+\cgalFigureBegin{cathedral-fig, cathedral_2.png}
+Example representing a cathedral.
+\cgalFigureEnd
+
+The left hand side of Figure \cgalFigureRef{cathedral-fig} depicts the outer boundary of a cathedral,
+which is a simple polygon with 565 vertices.
+The right hand side shows the cathedral also with its inner pillars, which is a polygon (with holes)
+with 1153 vertices.
+The following table shows the total running time consumption of the computation of
+all visibility polygons for all vertices of the cathedral.
+
+<CENTER>
+Boundary Cathedral                 |        total preprocessing time | total query time  |
+-------------------------------|-----------------------------------------------------|-------------------------------|
+ `Simple_polygon_visibility_2`                |  - |  0.38 |
+ `Rotational_sweep_visibility_2`              |  - |  1.01  |
+`Triangular_expansion_visibility_2`           |  0.01 |  0.06 |
+</CENTER>
+
+The second table shows the same for the complete cathedral.
+The table does not report the time for `Simple_polygon_visibility_2`
+as this algorithm can only handle simple polygons.
+
+<CENTER>
+Complete Cathedral             |        total preprocessing time | total query time          |
+-------------------------------|-----------------------------------------------------|-------------------------------|
+ `Rotational_sweep_visibility_2`              |  -          | 1.91   |
+ `Triangular_expansion_visibility_2`          |  0.01   | 0.04  |
+</CENTER>
+
+Thus, in general we recommend to use `Triangular_expansion_visibility_2` even if the polygon is simple.
+The main advantage of the algorithm is its locality.
+After the triangle that contains the query point is located in the triangulation,
+the algorithm explores neighboring triangles, but only those that are actually seen.
+In this sense the algorithm can be considered as output sensitive.
+Note that the `Triangular_expansion_visibility_2` algorithm performs better on the full
+cathedral since the additional pillars block the view early in many cases.
+However, if the simple polygon is rather convex (i.e., nearly all boundary is seen) or
+if only one (or very little) queries are required, using one of the algorithms that
+does not require preprocessing is advantageous.
+
+
+\section simple_polygon_visibility_example  Example of Visibility in a Simple Polygon
+The following example shows how to obtain the regularized and non-regularized visibility regions.
+
+\cgalFigureBegin{simple_example, simple_example.png}
+The visibility region of \f$ q \f$ in a simple polygon: (1) non-regularized visibility; and (2) regularized visibility.
+\cgalFigureEnd
+\cgalExample{Visibility_2/simple_polygon_visibility_2.cpp}
+
+\section general_polygon_example Example of Visibility in a Polygon with Holes
+The following example shows how to obtain the regularized visibility region using the model
+`Triangular_expansion_visibility_2`, see \cgalFigureRef{general_polygon}.
+The arrangement has six bounded faces and an unbounded face.
+The query point \f$ q \f$ is on a vertex.
+The red arrow denotes the halfedge \f$ \overrightarrow{pq} \f$,
+which also identifies the face in which the visibility region is computed.
+\cgalFigureBegin{general_polygon, general_polygon_example.png}
+The visibility region of \f$ q \f$ in a polygon with two holes.
+\cgalFigureEnd
+\cgalExample{Visibility_2/general_polygon_example.cpp}
+
+\section implementation_history Implementation History
+
+This package was first developed during Google Summer of Code 2013:
+Francisc Bungiu developed the `CGAL::Simple_polygon_visibility_2`,
+Kan Huang developed the `CGAL::Rotational_sweep_visibility_2`,
+and Michael Hemmer developed the `CGAL::Triangular_expansion_visibility_2`.
+
+During Google Summer of Code 2014 Ning Xu fixed a bug in `CGAL::Simple_polygon_visibility_2` and improved the testsuite.
+
+*/
+
+}
+
+// `Preprocessed_rotational_sweep_visibility_2` | polygons with holes    | \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85

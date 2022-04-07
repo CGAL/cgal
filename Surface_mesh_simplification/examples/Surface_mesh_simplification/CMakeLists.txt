@@ -1,84 +1,53 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-project( Surface_mesh_simplification )
-
-
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
- 
-if ( COMMAND cmake_policy )
-
-  cmake_policy( SET CMP0003 NEW )  
-
-endif()
+cmake_minimum_required(VERSION 3.1...3.22)
+project(Surface_mesh_simplification_Examples)
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
-
-if ( NOT CGAL_FOUND )
-
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
-
-endif()
-
-# include helper file
-include( ${CGAL_USE_FILE} )
-
+find_package(CGAL REQUIRED)
 
 # Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()  
-
+find_package(Boost)
+if(NOT Boost_FOUND)
+  message(
+    STATUS "This project requires the Boost library, and will not be compiled.")
+  return()
 endif()
 
+find_package(OpenMesh QUIET)
 
-find_package( OpenMesh QUIET )
-
-if ( OpenMesh_FOUND )
-include( UseOpenMesh )
+if(OpenMesh_FOUND)
+  include(UseOpenMesh)
 else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
 
-# include for local directory
-
-# include for local package
-include_directories( BEFORE ../../include )
-
-
-
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
 
-include( CGAL_CreateSingleSourceCGALProgram )
+create_single_source_cgal_program("edge_collapse_envelope.cpp")
+create_single_source_cgal_program("edge_collapse_constrain_sharp_edges.cpp")
+create_single_source_cgal_program("edge_collapse_constrained_border_polyhedron.cpp")
+create_single_source_cgal_program("edge_collapse_enriched_polyhedron.cpp")
+create_single_source_cgal_program("edge_collapse_polyhedron.cpp")
+create_single_source_cgal_program("edge_collapse_surface_mesh.cpp")
+create_single_source_cgal_program("edge_collapse_linear_cell_complex.cpp")
+create_single_source_cgal_program("edge_collapse_constrained_border_surface_mesh.cpp")
+create_single_source_cgal_program("edge_collapse_all_short_edges.cpp")
+create_single_source_cgal_program("edge_collapse_bounded_normal_change.cpp")
+create_single_source_cgal_program("edge_collapse_visitor_surface_mesh.cpp")
 
-
-create_single_source_cgal_program( "edge_collapse_constrain_sharp_edges.cpp" )
-
-create_single_source_cgal_program( "edge_collapse_constrained_border_polyhedron.cpp" )
-
-create_single_source_cgal_program( "edge_collapse_enriched_polyhedron.cpp" )
-
-create_single_source_cgal_program( "edge_collapse_polyhedron.cpp" )
-
+find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program("edge_collapse_garland_heckbert.cpp")
+  target_link_libraries(edge_collapse_garland_heckbert PUBLIC CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: Garland-Heckbert polices require the Eigen library, which has not been found; related examples will not be compiled.")
+endif()
 
 if(OpenMesh_FOUND)
-create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )
-
-target_link_libraries( edge_collapse_OpenMesh ${OPENMESH_LIBRARIES} )
+  create_single_source_cgal_program("edge_collapse_OpenMesh.cpp")
+  target_link_libraries(edge_collapse_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
 endif()

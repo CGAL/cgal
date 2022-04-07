@@ -1,0 +1,8 @@
+# # -*- comment-start: "#"; -*-
+# #
+# <command> <x-segment 1 id> <curve-end> <x-segment 2 id> <curve-end> <expected result>
+#
+# compare_x 0 MAX_END 1 MAX_END LARGER
+# compare_x 0 MIN_END 1 MAX_END EQUAL
+# compare_x 0 MAX_END 1 MIN_END LARGER
+# compare_x 0 MIN_END 1 MIN_END LARGER

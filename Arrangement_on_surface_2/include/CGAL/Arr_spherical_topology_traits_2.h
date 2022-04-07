@@ -2,26 +2,23 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
-//                 Eric Berberich    <ericb@post.tau.ac.il>
+// Author(s): Efi Fogel         <efif@post.tau.ac.il>
+//            Eric Berberich    <ericb@post.tau.ac.il>
 
 #ifndef CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_SPHERICAL_TOPOLOGY_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 /*! \file
+ *
  * The topology traits for great spherical arcs embedded on a sphere for the
  * arrangement package.
  */
@@ -31,20 +28,10 @@
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_naive_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Sweep_line_2/Arr_construction_event.h>
-#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_batched_pl_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
-
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_insertion_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_overlay_helper.h>
@@ -63,41 +50,46 @@ class Arrangement_on_surface_2;
 /*! This class handles the topology for arrangements of great spherical
  * arcs on the sphere embedded on 2D parametric surdace.
  */
-template <typename GeomTraits_, typename Dcel_ = Arr_default_dcel<GeomTraits_> >
+template <typename GeometryTraits_2,
+          typename Dcel_ = Arr_default_dcel<GeometryTraits_2> >
 class Arr_spherical_topology_traits_2 {
 public:
+  typedef GeometryTraits_2                              Geometry_traits_2;
+  typedef Dcel_                                         Dcel;
 
+private:
+  typedef Geometry_traits_2                             Gt2;
+
+public:
   ///! \name The geometry-traits types.
   //@{
-  typedef GeomTraits_                                     Geometry_traits_2;
-  typedef typename Geometry_traits_2::Point_2             Point_2;
-  typedef typename Geometry_traits_2::X_monotone_curve_2  X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
   //@}
 
   ///! \name The DCEL types.
   //@{
-  typedef Dcel_                                           Dcel;
-  typedef typename Dcel::Size                             Size;
-  typedef typename Dcel::Vertex                           Vertex;
-  typedef typename Dcel::Halfedge                         Halfedge;
-  typedef typename Dcel::Face                             Face;
-  typedef typename Dcel::Outer_ccb                        Outer_ccb;
-  typedef typename Dcel::Inner_ccb                        Inner_ccb;
-  typedef typename Dcel::Isolated_vertex                  Isolated_vertex;
+  typedef typename Dcel::Size                           Size;
+  typedef typename Dcel::Vertex                         Vertex;
+  typedef typename Dcel::Halfedge                       Halfedge;
+  typedef typename Dcel::Face                           Face;
+  typedef typename Dcel::Outer_ccb                      Outer_ccb;
+  typedef typename Dcel::Inner_ccb                      Inner_ccb;
+  typedef typename Dcel::Isolated_vertex                Isolated_vertex;
   //@}
 
   //! \name Arrangement types
   //!@{
-  typedef Arr_spherical_topology_traits_2<Geometry_traits_2, Dcel> Self;
-  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
+  typedef Arr_spherical_topology_traits_2<Gt2, Dcel>    Self;
+  typedef Arr_traits_basic_adaptor_2<Gt2>               Gt_adaptor_2;
   //!@}
 
   ///! \name The side tags
   //@{
-  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
-  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
-  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
-  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
+  typedef typename Gt_adaptor_2::Left_side_category   Left_side_category;
+  typedef typename Gt_adaptor_2::Bottom_side_category Bottom_side_category;
+  typedef typename Gt_adaptor_2::Top_side_category    Top_side_category;
+  typedef typename Gt_adaptor_2::Right_side_category  Right_side_category;
 
   BOOST_MPL_ASSERT
   (
@@ -138,14 +130,14 @@ private:
   //! A container of boundary vertices.
   struct Vertex_key_comparer {
     /*! Construct default */
-    Vertex_key_comparer() : m_geom_traits(NULL) {}
+    Vertex_key_comparer() : m_geom_traits(nullptr) {}
 
     /*! Construct */
-    Vertex_key_comparer(const Traits_adaptor_2* geom_traits) :
+    Vertex_key_comparer(const Gt_adaptor_2* geom_traits) :
       m_geom_traits(geom_traits)
     {}
 
-    const Traits_adaptor_2* m_geom_traits;
+    const Gt_adaptor_2* m_geom_traits;
 
     bool operator()(const Point_2& p1, const Point_2& p2) const
     {
@@ -176,7 +168,7 @@ protected:
   Vertex_map m_boundary_vertices;
 
   //! The geometry-traits adaptor.
-  const Traits_adaptor_2* m_geom_traits;
+  const Gt_adaptor_2* m_geom_traits;
 
   //! Inidicates whether the traits object should evetually be freed.
   bool m_own_geom_traits;
@@ -195,7 +187,7 @@ public:
   /*! Constructor from a geometry-traits object.
    * \param traits the traits.
    */
-  Arr_spherical_topology_traits_2(const Geometry_traits_2* traits);
+  Arr_spherical_topology_traits_2(const Gt2* traits);
 
   /*! Destructor */
   ~Arr_spherical_topology_traits_2();
@@ -243,13 +235,13 @@ public:
    * \param v the vertex.
    * \todo why is this needed, and where used?
    */
-  bool is_valid_vertex (const Vertex* /* v */) const { return true; }
+  bool is_valid_vertex(const Vertex* /* v */) const { return true; }
 
   /*! Obtain the number of valid vertices. */
   Size number_of_valid_vertices() const { return (m_dcel.size_of_vertices()); }
 
   /*! Determine whether the given halfedge is valid. */
-  bool is_valid_halfedge (const Halfedge* /* he */) const { return true; }
+  bool is_valid_halfedge(const Halfedge* /* he */) const { return true; }
 
   /*! Obtain the number of valid halfedges. */
   Size number_of_valid_halfedges() const
@@ -296,172 +288,128 @@ public:
   Vertex* north_pole() { return m_north_pole; }
 
   /*! Obtain a vertex on the line of discontinuity that corresponds to
+   *  the given point (or return NULL if no such vertex exists).
+   */
+  Vertex* discontinuity_vertex(const Point_2& pt)
+  {
+    auto it = m_boundary_vertices.find(pt);
+    return (it != m_boundary_vertices.end()) ? it->second : nullptr;
+  }
+
+  /*! Obtain a vertex on the line of discontinuity that corresponds to
+   *  the given point (or return NULL if no such vertex exists).
+   */
+  const Vertex* discontinuity_vertex(const Point_2& pt) const
+  {
+    auto it = m_boundary_vertices.find(pt);
+    return (it != m_boundary_vertices.end()) ? it->second : nullptr;
+  }
+
+  // TODO remove if all occurences have been replaced with the new signature that queries for a point
+  /*! Obtain a vertex on the line of discontinuity that corresponds to
    *  the given curve-end (or return NULL if no such vertex exists).
    */
-  Vertex* discontinuity_vertex(const X_monotone_curve_2 xc, Arr_curve_end ind)
+  Vertex* discontinuity_vertex(const X_monotone_curve_2& xc, Arr_curve_end ind)
   {
     Point_2 key = (ind == ARR_MIN_END) ?
       m_geom_traits->construct_min_vertex_2_object()(xc) :
       m_geom_traits->construct_max_vertex_2_object()(xc);
     typename Vertex_map::iterator it = m_boundary_vertices.find(key);
-    return (it != m_boundary_vertices.end()) ? it->second : NULL;
+    return (it != m_boundary_vertices.end()) ? it->second : nullptr;
   }
   //@}
 
 private:
   /// \name Auxiliary type definitions.
   //@{
-  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>     Arr;
+  typedef Arrangement_on_surface_2<Gt2, Self>                   Arr;
 
-  // Type definition for the constuction sweep-line visitor.
-  typedef Arr_construction_subcurve<Geometry_traits_2>          CSubcurve;
-  typedef Arr_construction_event<Geometry_traits_2, CSubcurve, Arr>
-                                                                CEvent;
-  typedef Arr_spherical_construction_helper<Geometry_traits_2, Arr,
-    CEvent,CSubcurve>                                           CHelper;
-
-  // Type definition for the basic insertion sweep-line visitor.
-  typedef Arr_basic_insertion_traits_2<Geometry_traits_2, Arr>  BInsTraits;
-  typedef Arr_construction_subcurve<BInsTraits>                 BISubcurve;
-  typedef Arr_construction_event<BInsTraits, BISubcurve, Arr>   BIEvent;
-  typedef Arr_spherical_insertion_helper<BInsTraits, Arr, BIEvent, BISubcurve>
-                                                                BIHelper;
-
-  // Type definition for the insertion sweep-line visitor.
-  typedef Arr_insertion_traits_2<Geometry_traits_2, Arr>        InsTraits;
-  typedef Arr_construction_subcurve<InsTraits>                  ISubcurve;
-  typedef Arr_construction_event<InsTraits,ISubcurve,Arr>       IEvent;
-  typedef Arr_spherical_insertion_helper<InsTraits, Arr, IEvent, ISubcurve>
-                                                                IHelper;
-
-  // Type definition for the batched point-location sweep-line visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>              BplTraits;
-  typedef Arr_spherical_batched_pl_helper<BplTraits, Arr>       BplHelper;
-
-  // Type definition for the vertical decomposition sweep-line visitor.
-  typedef Arr_batched_point_location_traits_2<Arr>              VdTraits;
-  typedef Arr_spherical_vert_decomp_helper<VdTraits, Arr>       VdHelper;
-
-  // Type definition for the overlay sweep-line visitor.
-  template <typename ExGeomTraits_, typename ArrangementA_,
-            typename ArrangementB_>
-  struct _Overlay_helper :
-    public Arr_spherical_overlay_helper
-    <ExGeomTraits_, ArrangementA_, ArrangementB_, Arr,
-     Arr_construction_event<ExGeomTraits_,
-                            Arr_overlay_subcurve<ExGeomTraits_>, Arr>,
-     Arr_overlay_subcurve<ExGeomTraits_> >
+public:
+  // The following definitions of helper functions use a C++11 features called
+  // alias template. This feature can be mimiked by non C++11 support simply by
+  // defining a type that inherits from the template we need to alias.  However,
+  // the non-C++11 code requires the (re)definition of all constructors of the
+  // derived class. The non-C++11 code follows the commented out C++11 code.
+  // When we move to C++11 we can use the more elgant code.
+  // Type definition for the construction surface-sweep visitor.
+  template <typename Evt, typename Crv>
+  struct Construction_helper :
+    public Arr_spherical_construction_helper<Gt2, Arr, Evt, Crv>
   {
-    typedef ExGeomTraits_                               Ex_geomt_raits;
-    typedef ArrangementA_                               Arrangement_a;
-    typedef ArrangementB_                               Arrangement_b;
+    typedef Arr_spherical_construction_helper<Gt2, Arr, Evt, Crv>
+                                                                Base;
+    Construction_helper(Arr* arr) : Base(arr) {}
+  };
 
-    typedef Arr_overlay_subcurve<Ex_geomt_raits>        Overlay_subcurve;
-    typedef Arr_construction_event<Ex_geomt_raits, Overlay_subcurve, Arr>
-                                                        Construction_event;
+  // Type definition for the no-intersection construction surface-sweep visitor.
+  template <typename Evt, typename Crv>
+  struct No_intersection_construction_helper :
+    public Arr_spherical_construction_helper<Gt2, Arr, Evt, Crv>
+  {
+    typedef Arr_spherical_construction_helper<Gt2, Arr, Evt, Crv>
+                                                                Base;
+    No_intersection_construction_helper(Arr* arr) : Base(arr) {}
+  };
 
-    typedef Arr_spherical_overlay_helper<Ex_geomt_raits,
-                                         Arrangement_a, Arrangement_b, Arr,
-                                         Construction_event, Overlay_subcurve>
-                                                        Base;
+  // Type definition for the insertion surface-sweep visitor.
+  typedef Arr_insertion_traits_2<Gt2, Arr>                      I_traits;
+  template <typename Evt, typename Crv>
+  struct Insertion_helper :
+    public Arr_spherical_insertion_helper<I_traits, Arr, Evt, Crv>
+  {
+    typedef Arr_spherical_insertion_helper<I_traits, Arr, Evt, Crv>
+                                                                Base;
+    Insertion_helper(Arr* arr) : Base(arr) {}
+  };
 
-    typedef typename Base::Traits_2                     Traits_2;
-    typedef typename Base::Arrangement_red_2            Arrangement_red_2;
-    typedef typename Base::Arrangement_blue_2           Arrangement_blue_2;
-    typedef typename Base::Arrangement_2                Arrangement_2;
-    typedef typename Base::Event                        Event;
-    typedef typename Base::Subcurve                     Subcurve;
-    typedef typename Base::Construction_helper          Construction_helper;
+  // Type definition for the no-intersection insertion surface-sweep visitor.
+  typedef Arr_basic_insertion_traits_2<Gt2, Arr>                Nxi_traits;
+  template <typename Evt, typename Crv>
+  struct No_intersection_insertion_helper :
+    public Arr_spherical_insertion_helper<Nxi_traits, Arr, Evt, Crv>
+  {
+    typedef Arr_spherical_insertion_helper<Nxi_traits, Arr, Evt, Crv>
+                                                                Base;
+    No_intersection_insertion_helper(Arr* arr) : Base(arr) {}
+  };
 
-    _Overlay_helper(const Arrangement_a* arr_a, const Arrangement_b* arr_b) :
-      Base(arr_a, arr_b)
-    {}
+  // Type definition for the batched point-location surface-sweep visitor.
+  typedef Arr_batched_point_location_traits_2<Arr>              Bpl_traits;
+  template <typename Evt, typename Crv>
+  struct Batched_point_location_helper :
+    public Arr_spherical_batched_pl_helper<Bpl_traits, Arr, Evt, Crv>
+  {
+    typedef Arr_spherical_batched_pl_helper<Bpl_traits, Arr, Evt, Crv>
+                                                                Base;
+    Batched_point_location_helper(const Arr* arr) : Base(arr) {}
+  };
+
+  // Type definition for the vertical decomposition surface-sweep visitor.
+  typedef Arr_batched_point_location_traits_2<Arr>              Vd_traits;
+  template <typename Evt, typename Crv>
+  struct Vertical_decomposition_helper :
+    public Arr_spherical_vert_decomp_helper<Vd_traits, Arr, Evt, Crv>
+  {
+    typedef Arr_spherical_vert_decomp_helper<Vd_traits, Arr, Evt, Crv>
+                                                                Base;
+    Vertical_decomposition_helper(const Arr* arr) : Base(arr) {}
+  };
+
+  // Type definition for the overlay surface-sweep visitor.
+  template <typename Gt, typename Evt, typename Crv,
+            typename ArrA, typename ArrB>
+  struct Overlay_helper :
+    public Arr_spherical_overlay_helper<Gt, ArrA, ArrB, Arr, Evt, Crv>
+  {
+    typedef Arr_spherical_overlay_helper<Gt, ArrA, ArrB, Arr, Evt, Crv>
+                                                                Base;
+    Overlay_helper(const ArrA* arr_a, const ArrB* arr_b) : Base(arr_a, arr_b) {}
   };
   //@}
 
 public:
   ///! \name Visitor types.
   //@{
-
-  typedef Arr_construction_sl_visitor<CHelper>
-    Sweep_line_construction_visitor;
-
-  typedef Arr_insertion_sl_visitor<IHelper>
-    Sweep_line_insertion_visitor;
-
-  typedef Sweep_line_construction_visitor
-    Sweep_line_non_intersecting_construction_visitor;
-
-  typedef Arr_basic_insertion_sl_visitor<BIHelper>
-    Sweep_line_non_intersecting_insertion_visitor;
-
-  template <typename OutputIterator_>
-  struct Sweep_line_batched_point_location_visitor :
-    public Arr_batched_pl_sl_visitor<BplHelper, OutputIterator_>
-  {
-    typedef OutputIterator_                                     Output_iterator;
-
-    typedef Arr_batched_pl_sl_visitor<BplHelper, Output_iterator> Base;
-    typedef typename Base::Traits_2                             Traits_2;
-    typedef typename Base::Event                                Event;
-    typedef typename Base::Subcurve                             Subcurve;
-
-    Sweep_line_batched_point_location_visitor(const Arr* arr,
-                                              Output_iterator& oi) :
-      Base(arr, oi)
-    {}
-  };
-
-  template <typename OutputIterator_>
-  struct Sweep_line_vertical_decomposition_visitor :
-    public Arr_vert_decomp_sl_visitor<VdHelper, OutputIterator_>
-  {
-    typedef OutputIterator_                                     Output_iterator;
-    typedef Arr_vert_decomp_sl_visitor<VdHelper,Output_iterator>  Base;
-
-    typedef typename Base::Traits_2                             Traits_2;
-    typedef typename Base::Event                                Event;
-    typedef typename Base::Subcurve                             Subcurve;
-
-    Sweep_line_vertical_decomposition_visitor(const Arr* arr,
-                                              Output_iterator* oi) :
-      Base(arr, oi)
-    {}
-  };
-
-  template <typename ArrangementA_, typename ArrangementB_,
-            typename OverlayTraits_>
-  struct Sweep_line_overlay_visitor :
-    public Arr_overlay_sl_visitor
-    <_Overlay_helper<Arr_overlay_traits_2<Geometry_traits_2,ArrangementA_,
-                                          ArrangementB_>,
-                     ArrangementA_, ArrangementB_>, OverlayTraits_>
-  {
-    typedef ArrangementA_                               Arrangement_a;
-    typedef ArrangementB_                               Arrangement_b;
-    typedef Arr                                         Arrangement_result_2;
-    typedef OverlayTraits_                              Overlay_traits;
-
-    typedef Arr_overlay_traits_2<Geometry_traits_2,
-                                 Arrangement_a,
-                                 Arrangement_b>         Geom_ovl_traits_2;
-
-    typedef _Overlay_helper<Geom_ovl_traits_2, Arrangement_a, Arrangement_b>
-                                                                Ovl_helper;
-
-    typedef Arr_overlay_sl_visitor<Ovl_helper, Overlay_traits>  Base;
-
-    typedef typename Base::Traits_2                             Traits_2;
-    typedef typename Base::Event                                Event;
-    typedef typename Base::Subcurve                             Subcurve;
-
-    Sweep_line_overlay_visitor(const Arrangement_a* arr_a,
-                               const Arrangement_b* arr_b,
-                               Arrangement_result_2* arr_res,
-                               Overlay_traits* overlay_tr) :
-      Base(arr_a, arr_b, arr_res, overlay_tr)
-    {}
-  };
 
   typedef Arr_inc_insertion_zone_visitor<Arr> Zone_insertion_visitor;
 
@@ -473,7 +421,19 @@ public:
   //@{
 
   /*! Receive a notification on the creation of a new boundary vertex that
-   * corresponds to the given curve end.
+   * corresponds to a point.
+   * \param v The new boundary vertex.
+   * \param p The point.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
+   */
+  void notify_on_boundary_vertex_creation(Vertex* v,
+                                          const Point_2& p,
+                                          Arr_parameter_space ps_x,
+                                          Arr_parameter_space ps_y);
+
+  /*! Receive a notification on the creation of a new boundary vertex that
+   * corresponds to a given curve end.
    * \param v The new boundary vertex.
    * \param xc The x-monotone curve.
    * \param ind The curve end.
@@ -496,13 +456,12 @@ public:
    * \param swap_predecessors Output swap predeccesors or not;
    *        set correctly only if true is returned
    */
-  bool let_me_decide_the_outer_ccb(std::pair< CGAL::Sign, CGAL::Sign> signs1,
-                                   std::pair< CGAL::Sign, CGAL::Sign> signs2,
+  bool let_me_decide_the_outer_ccb(std::pair<CGAL::Sign, CGAL::Sign> signs1,
+                                   std::pair<CGAL::Sign, CGAL::Sign> signs2,
                                    bool& swap_predecessors) const;
 
 
-  /*!
-   * Given signs of two ccbs that show up when splitting upon insertion of
+  /*! Given signs of two ccbs that show up when splitting upon insertion of
    * curve into two, determine what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
    * \param signs2 signs in x and y of the secondd implied ccb
@@ -511,10 +470,10 @@ public:
    *         will form a hole in the original face.
    */
   std::pair<bool, bool>
-  face_split_after_edge_insertion(std::pair< CGAL::Sign,
-                                             CGAL::Sign > /* signs1 */,
-                                  std::pair< CGAL::Sign,
-                                             CGAL::Sign > /* signs2 */) const
+  face_split_after_edge_insertion(std::pair<CGAL::Sign,
+                                            CGAL::Sign> /* signs1 */,
+                                  std::pair<CGAL::Sign,
+                                            CGAL::Sign> /* signs2 */) const
   {
     // In case of a spherical topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
@@ -563,14 +522,14 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that contains the curve end.
    */
-  CGAL::Object place_boundary_vertex(Face* f,
-                                     const X_monotone_curve_2& xc,
-                                     Arr_curve_end ind,
-                                     Arr_parameter_space ps_x,
-                                     Arr_parameter_space ps_y);
+  boost::optional<boost::variant<Vertex*, Halfedge*> >
+  place_boundary_vertex(Face* f,
+                        const X_monotone_curve_2& xc,
+                        Arr_curve_end ind,
+                        Arr_parameter_space ps_x,
+                        Arr_parameter_space ps_y);
 
-  /*!
-   * Locate the predecessor halfedge for the given curve around a given
+  /*! Locate the predecessor halfedge for the given curve around a given
    * vertex with boundary conditions.
    * \param v The vertex.
    * \param cv The x-monotone curve.
@@ -595,9 +554,10 @@ public:
    * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  CGAL::Object locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ce,
-                                Arr_parameter_space ps_x,
-                                Arr_parameter_space ps_y);
+  boost::variant<Vertex*, Halfedge*, Face*>
+  locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ce,
+                   Arr_parameter_space ps_x,
+                   Arr_parameter_space ps_y);
 
   /*! Split a fictitious edge using the given vertex.
    * \param e The edge to split (one of the pair of halfedges).
@@ -610,7 +570,7 @@ public:
   {
     // There are no fictitious halfedges:
     CGAL_error();
-    return NULL;
+    return nullptr;
   }
 
   /*! Determine whether the given face is unbounded.
@@ -644,10 +604,9 @@ public:
 
   //! reference_face (non-const version).
   /*! The function returns a reference face of the arrangement.
-      All reference faces of arrangements of the same type have a common
-      point.
-      \return A pointer to the reference face.
-  */
+   * All reference faces of arrangements of the same type have a common point.
+   * \return A pointer to the reference face.
+   */
   Face* reference_face() { return spherical_face(); }
   //@}
 
@@ -684,12 +643,13 @@ protected:
    * on the line of discontinuity.
    */
   Face* _face_below_vertex_on_discontinuity(Vertex* v) const;
-
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/Arr_topology_traits/Arr_spherical_topology_traits_2_impl.h>
+
+#include <CGAL/enable_warnings.h>
 
 #endif

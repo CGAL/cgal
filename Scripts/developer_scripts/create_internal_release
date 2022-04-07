@@ -7,11 +7,13 @@ use Cwd;
 use File::Find;
 use Getopt::Std;
 use File::Spec;
+use File::Temp;
 use Archive::Tar;
 use Archive::Tar::File;
 use File::Copy;
 use File::Copy::Recursive qw(dircopy);
 use File::Path qw(mkpath);
+use POSIX qw(strftime);
 
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 
@@ -126,6 +128,7 @@ sub list_packages($) {
     my $package_full_path = File::Spec->catdir($packages_directory, $package_name);
     next if $package_name =~ /^\..*$/;
     next if (! -d $package_full_path );
+    next if ($package_full_path =~ /Maintenance$/); # skip Maintenance package
     $LISTOFALLPACKAGES{$package_name} = $packages_directory;
   }
   closedir(PACKAGESDIR);
@@ -159,8 +162,17 @@ sub install_packages() {
     }
     print "\n";
     system(@command);
-    move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
 
+    # generate the list of header file per package that not in an internal subdirectory. Files start with CGAL
+    $tempdir = File::Temp->newdir();
+    if ( -d "$package_full_path/include" ) {
+      @filelistcmd = ('tar', '-tf', "$RELEASEDIR/temppack.tar", '--wildcards', "./include/\*\*.h",
+                      "--transform=s/.\\\/include\\\///", '--show-transformed-names',
+                      '--exclude=**/internal', "--index-file=$tempdir/$package_name.txt");
+      system(@filelistcmd);
+    }
+
+    move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
 
     chdir "$RELEASEDIR/$VERSION" or die;
     my $tar = Archive::Tar->new;
@@ -192,6 +204,14 @@ sub install_packages() {
       }
     }
     system('tar', '-xf', "temppack.tar");
+    if ( -e "$tempdir/$package_name.txt" ) {
+      if ( -d "$RELEASEDIR/$VERSION/doc/$package_name/" ) {
+        system("mv", ,"$tempdir/$package_name.txt", "$RELEASEDIR/$VERSION/doc/$package_name/filelist.txt");
+      } else {
+        system("rm", ,"$tempdir/$package_name.txt");
+      }
+    }
+
 #    $tmp_package_name = "temp_${package_name}";
 #    system("mv", "$package_name", "$tmp_package_name");
 #    opendir packagename, "$tmp_package_name";
@@ -208,7 +228,7 @@ sub install_packages() {
   close(LOG_CONFLICTS);
   unlink 'temppack.tar';
   ( -d "$ALLPACKAGESDIR/.git" ) && system("git --git-dir=$ALLPACKAGESDIR/.git --work-tree=$ALLPACKAGESDIR log -n1 '--format=format:SCM branch:%n%H %d%n%nShort log from master:%n' > .scm-branch");
-  ( -d "$ALLPACKAGESDIR/.git" ) && system("git --git-dir=$ALLPACKAGESDIR/.git --work-tree=$ALLPACKAGESDIR log --first-parent --format='%h %s%n  parents: %p%n' origin/master.. >> .scm-branch");
+  ( -d "$ALLPACKAGESDIR/.git" ) && system("git --git-dir=$ALLPACKAGESDIR/.git --work-tree=$ALLPACKAGESDIR log --first-parent --format='%h %s%n  parents: %p%n' cgal/master.. >> .scm-branch");
   # foreach my $file (sort keys(%files)) {
   #   print "$files{$file}: $file\n";
   # }
@@ -240,6 +260,7 @@ sub create_version_file()
     chdir "$RELEASEDIR/$VERSION/include/CGAL" or die;
     open(TEMPFILE, ">tempfile") or die;
 
+    my $RELEASE_DATE = strftime "%Y%m%d", localtime;
 # TODO : add `svnversion` Revision.
 
     print TEMPFILE << 'EOF';
@@ -260,6 +281,8 @@ sub create_version_file()
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 // Author(s)     : -
 
 // This file is automatically created by create_internal_release.
@@ -276,6 +299,7 @@ EOF
     print TEMPFILE "#define CGAL_VERSION_NR $VERSION_NR\n";
     print TEMPFILE "#define CGAL_SVN_REVISION 0\n";
     print TEMPFILE "#define CGAL_GIT_HASH 0\n";
+    print TEMPFILE "#define CGAL_RELEASE_DATE $RELEASE_DATE\n";
 
 print TEMPFILE << 'EOF';
 #define CGAL_VERSION_STR CGAL_str(CGAL_VERSION)

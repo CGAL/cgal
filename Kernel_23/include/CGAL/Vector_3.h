@@ -1,24 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
 
@@ -28,10 +20,12 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
@@ -39,7 +33,7 @@ template <class R_>
 class Vector_3 : public R_::Kernel_base::Vector_3
 {
   typedef typename R_::RT                    RT;
-// http://www.cgal.org/Members/Manual_test/LAST/Developers_internal_manual/Developers_manual/Chapter_code_format.html#sec:programming_conventions
+// https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::FT                    FT_;
   typedef typename R_::Segment_3             Segment_3;
   typedef typename R_::Ray_3                 Ray_3;
@@ -76,6 +70,9 @@ public:
   Vector_3(const Rep& v)
       : Rep(v) {}
 
+  Vector_3(Rep&& v)
+      : Rep(std::move(v)) {}
+
   Vector_3(const Point_3& a, const Point_3& b)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), a, b)) {}
 
@@ -98,6 +95,15 @@ public:
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z, w)) {}
 
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+  {
+    using std::swap;
+    swap(a.rep(), b.rep());
+  }
+
   Direction_3 direction() const
   {
     return R().construct_direction_3_object()(*this);
@@ -118,9 +124,21 @@ public:
     return R().construct_difference_of_vectors_3_object()(*this,v);
   }
 
+  Vector_3& operator-=(const Vector_3& v)
+  {
+    *this = R().construct_difference_of_vectors_3_object()(*this,v);
+    return *this;
+  }
+
   Vector_3 operator+(const Vector_3& v) const
   {
     return R().construct_sum_of_vectors_3_object()(*this,v);
+  }
+
+  Vector_3& operator+=(const Vector_3& v)
+  {
+    *this = R().construct_sum_of_vectors_3_object()(*this,v);
+    return *this;
   }
 
   Vector_3 operator/(const RT& c) const
@@ -128,54 +146,78 @@ public:
    return R().construct_divided_vector_3_object()(*this,c);
   }
 
+  Vector_3& operator/=(const RT& c)
+  {
+    *this = R().construct_divided_vector_3_object()(*this,c);
+    return *this;
+  }
+
   Vector_3 operator/(const typename First_if_different<FT_,RT>::Type & c) const
   {
    return R().construct_divided_vector_3_object()(*this,c);
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Vector_3)>::type
+  Vector_3& operator/=(const typename First_if_different<FT_,RT>::Type & c)
+  {
+    *this = R().construct_divided_vector_3_object()(*this,c);
+    return *this;
+  }
+
+  Vector_3& operator*=(const RT& c)
+  {
+    *this = R().construct_scaled_vector_3_object()(*this,c);
+    return *this;
+  }
+
+  Vector_3& operator*=(const typename First_if_different<FT_,RT>::Type & c)
+  {
+    *this = R().construct_scaled_vector_3_object()(*this,c);
+    return *this;
+  }
+
+  decltype(auto)
   x() const
   {
     return R().compute_x_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_3(Vector_3)>::type
+  decltype(auto)
   y() const
   {
     return R().compute_y_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_z_3(Vector_3)>::type
+  decltype(auto)
   z() const
   {
     return R().compute_z_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_3(Vector_3)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_3(Vector_3)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hz_3(Vector_3)>::type
+  decltype(auto)
   hz() const
   {
     return R().compute_hz_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_3(Vector_3)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Vector_3)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
@@ -184,7 +226,7 @@ public:
     return z();
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_3(Vector_3)>::type
+  decltype(auto)
   homogeneous(int i) const
   {
     CGAL_kernel_precondition( (i >= 0) || (i <= 3) );
@@ -199,7 +241,7 @@ public:
       return 3;
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Vector_3)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -215,7 +257,7 @@ public:
     return typename R::Construct_cartesian_const_iterator_3()(*this,3);
   }
 
-  typename cpp11::result_of<typename R::Compute_squared_length_3(Vector_3)>::type
+  decltype(auto)
   squared_length() const
   {
     return R().compute_squared_length_3_object()(*this);
@@ -226,9 +268,9 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Vector_3<R>& v, const Cartesian_tag&) 
+insert(std::ostream& os, const Vector_3<R>& v, const Cartesian_tag&)
 {
-  switch(os.iword(IO::mode)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       return os << v.x() << ' ' << v.y()  << ' ' << v.z();
     case IO::BINARY :
@@ -246,7 +288,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Vector_3<R>& v, const Homogeneous_tag&)
 {
-  switch(os.iword(IO::mode))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << v.hx() << ' ' << v.hy() << ' ' << v.hz() << ' ' << v.hw();
@@ -274,12 +316,12 @@ operator<<(std::ostream& os, const Vector_3<R>& v)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&) 
+extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
 {
-  typename R::FT x, y, z;
-  switch(is.iword(IO::mode)) {
+  typename R::FT x(0), y(0), z(0);
+  switch(IO::get_mode(is)) {
     case IO::ASCII :
-      is >> x >> y >> z;
+      is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z);
       break;
     case IO::BINARY :
       read(is, x);
@@ -287,8 +329,9 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
       read(is, z);
       break;
     default:
+      is.setstate(std::ios::failbit);
       std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
       break;
   }
   if (is)
@@ -298,10 +341,10 @@ extract(std::istream& is, Vector_3<R>& v, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&) 
+extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hz, hw;
-  switch(is.iword(IO::mode))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
         is >> hx >> hy >> hz >> hw;
@@ -313,8 +356,9 @@ extract(std::istream& is, Vector_3<R>& v, const Homogeneous_tag&)
         read(is, hw);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

@@ -1,9 +1,12 @@
 /*!
+\example Spatial_sorting/parallel_spatial_sort_3.cpp
 \example Spatial_sorting/hilbert.cpp
 \example Spatial_sorting/hilbert_policies.cpp
 \example Spatial_sorting/small_example_delaunay_2.cpp
+\example Spatial_sorting/hilbert_sort_on_sphere.cpp
 \example Spatial_sorting/myPoint.cpp
 \example Spatial_sorting/sp_sort_using_property_map_2.cpp
 \example Spatial_sorting/sp_sort_using_property_map_3.cpp
 \example Spatial_sorting/sp_sort_using_property_map_d.cpp
+\example Spatial_sorting/spatial_sort_on_sphere.cpp
 */

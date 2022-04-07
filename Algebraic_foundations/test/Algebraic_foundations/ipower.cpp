@@ -1,25 +1,17 @@
 // Copyright (c) 2006-2007 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org)
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// $URL$
+// $Id$
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL: svn+ssh://hemmer@scm.gforge.inria.fr/svn/cgal/trunk/Algebraic_foundations/test/Algebraic_foundations/extended_euclidean_algorithm.cpp $
-// $Id: extended_euclidean_algorithm.cpp 47265 2008-12-08 06:26:27Z hemmer $
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michael Hemmer
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/ipower.h>
 
@@ -46,8 +38,8 @@ void test_ipower() {
 }
 
 int main(){
-    test_ipower<long>();     
+    test_ipower<long>();
     return 0;
 }
 
-// EOF 
+// EOF

@@ -1,5 +1,4 @@
 /*!
 \example Surface_mesher/mesh_an_implicit_function.cpp
 \example Surface_mesher/mesh_a_3d_gray_image.cpp
-\example Surface_mesher/polyhedron_remesher.cpp
 */

@@ -1,0 +1,48 @@
+/// \defgroup PkgSurfaceMeshSkeletonizationRef Triangulated Surface Mesh Skeletonization Reference
+/// \defgroup PkgSurfaceMeshSkeletonizationConcepts Concepts
+/// \ingroup PkgSurfaceMeshSkeletonizationRef
+
+/*!
+\addtogroup PkgSurfaceMeshSkeletonizationRef
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Skeletonization,PkgSurfaceMeshSkeletonization}
+\cgalPkgPicture{mcfskel-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi}
+\cgalPkgDesc{This package provides a (1D) curve skeleton extraction algorithm for a triangulated polygonal mesh without borders based on the mean curvature flow.
+        The particularity of this skeleton is that it captures the topology of the input.
+        For each skeleton vertex one can obtain its location and its corresponding vertices from the input mesh.
+        The code is generic and works with any model of the `FaceListGraph`
+        concept.
+}
+\cgalPkgManuals{Chapter_3D_Surface_mesh_skeletonization,PkgSurfaceMeshSkeletonizationRef}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.7}
+\cgalPkgDependsOn{ \ref PkgSolverInterface}
+\cgalPkgBib{cgal:glt-tsms}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `MeanCurvatureSkeletonizationTraits`
+- `NormalEquationSparseLinearAlgebraTraits_d`
+
+\cgalCRPSection{Classes}
+
+ - `CGAL::Mean_curvature_flow_skeletonization`
+
+ \todo doc+code: mention that to get a better skeleton that is closer to the medial axis,
+                 the surface must be sufficiently well sampled so that the Voronoi poles lie on the media axis (see Amenta's paper).
+                 Propose the usage of the isotropic remeshing and see if we add a boolean to do it automatically in the api (correspondance would be broken)
+ \todo code: implement the random sampling of surface using the work started by Alexandru during its gsoc to get a better approximation of poles
+ \todo code: expose in polygon mesh processing the function to compute the voronoi pole of a close triangle mesh
+ \todo code: expose in polygon mesh processing the function to remesh locally a triangle mesh with the angle and edge length parameters
+ \todo code: avoid using EPEC for the triangulation
+*/
+

@@ -1,27 +1,18 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_COMBINATORIAL_MAP_2_TEST
 #define CGAL_COMBINATORIAL_MAP_2_TEST 1
 
-#include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Combinatorial_map_operations.h>
+#include "Combinatorial_map_test_iterators.h"
 
 #include <iostream>
 #include <fstream>
@@ -33,7 +24,7 @@ void drawAllPoints( Map&amap )
 {
   amap.display_characteristics(std::cout);
   /*  for ( typename Map::Dart_range::iterator it=amap.darts().begin();
-	 it!=amap.darts().end(); ++it )
+         it!=amap.darts().end(); ++it )
     cout << &*it<< ",  ";
     cout<<endl;*/
 }
@@ -45,7 +36,7 @@ bool test2D()
 
     Map map;
     Dart_handle dh, dh2, d1, d2, d3;
-    int mark;
+    typename Map::size_type mark;
     unsigned int nbc, nb2;
 
     cout<<"Size of dart:"<<sizeof(typename Map::Dart)<<std::endl;
@@ -74,10 +65,13 @@ bool test2D()
     cout << "Parcours all : "; drawAllPoints(map);
     cout << endl << endl;
 
-    make_edge ( map );
+    map.make_edge();
 
-    dh = make_combinatorial_tetrahedron ( map );
-    cout << "Nombre de brins : " << map.number_of_darts() << endl;
+    dh = map.make_combinatorial_tetrahedron();
+    cout << "Nb of darts: " << map.number_of_darts() << endl;
+    map.display_darts(std::cout, true);
+    std::cout<<"Faces:"<<std::endl;
+    map.template display_cells<2>(std::cout);
 
     cout << "Parcours de CC : ";
     for ( typename Map::template Dart_of_orbit_range<1,2>::iterator it ( map, dh );
@@ -85,7 +79,7 @@ bool test2D()
     {
         if ( it.prev_operation() != CGAL::OP_BETAI &&
                 it.prev_operation() != CGAL::OP_BETAI_INV )  cout << "\nNew facet : ";
-	//        cout << &*it << ", ";
+        //        cout << &*it << ", ";
     }
     cout << endl;
 
@@ -100,11 +94,11 @@ bool test2D()
 
     cout << "***************************** TEST SEW 2D:" << endl;
 
-    make_edge ( map );
+    map.make_edge();
 
-    d1 = make_combinatorial_polygon ( map,3 );
+    d1 = map.make_combinatorial_polygon(3);
 
-    d2 = make_combinatorial_polygon ( map,3 );
+    d2 = map.make_combinatorial_polygon(3);
 
     cout << "Parcours all : "; drawAllPoints(map);
 
@@ -119,13 +113,13 @@ bool test2D()
 
     cout << "***************************** TEST TRIANGULATION_2 2D:" << endl;
 
-    d1 = make_combinatorial_tetrahedron ( map );
+    d1 = map.make_combinatorial_tetrahedron();
 
     cout << "Parcours all before insert_cell_0_in_cell_2: ";
     drawAllPoints(map);
 
     // Triangulate the facet between the two triangles
-    CGAL::insert_cell_0_in_cell_2( map, d1 );
+    map.insert_cell_0_in_cell_2( d1 );
 
     cout << "Parcours all after insert_cell_0_in_cell_2: ";
     drawAllPoints(map);
@@ -141,14 +135,17 @@ bool test2D()
 
     for ( int i = 0; i < 1000; ++i )
     {
-      d1 = make_combinatorial_polygon ( map,3 );
-      d2 = make_combinatorial_polygon ( map,3 );
-      d3 = make_combinatorial_polygon ( map,3 );
+      d1 = map.make_combinatorial_polygon (3);
+      d2 = map.make_combinatorial_polygon (3);
+      d3 = map.make_combinatorial_polygon (3);
         // Sew the 2 tetrahedra along one facet
         map.template sew<2> ( d1, d2 );
         map.template sew<2> ( map.beta(d2, 1), d3 );
         map.template sew<2> ( map.beta(d1, 1), map.beta (d3, 1) );
     }
+
+    if ( !test_iterators_2(map) )
+    {  assert(false); return false; }
 
     // Two nested iterators
     cout << "Nombre de brins : " << map.number_of_darts() << ", "
@@ -156,13 +153,13 @@ bool test2D()
     mark = map.get_new_mark();
     nbc = 0;
     for ( typename Map::Dart_range::iterator it1=map.darts().begin();
-	  it1!=map.darts().end(); ++it1 )
+          it1!=map.darts().end(); ++it1 )
     {
         if ( !map.is_marked ( it1, mark ) )
         {
             ++nbc;
             for ( typename Map::template Dart_of_orbit_range<1,2>::iterator
-		    it2 ( map, it1 ); it2.cont(); ++it2 )
+                    it2 ( map, it1 ); it2.cont(); ++it2 )
             {
                 map.mark ( it2, mark );
             }
@@ -179,7 +176,7 @@ bool test2D()
     {
         cout << "Parcours orbite " << Map::ORBIT_NAME[i] << " : #cellules=" << flush;
         nbc = 0, nb2 = 0;
-	for ( typename Map::Dart_iterator it1=map.darts_begin();it1!=map.darts_end(); ++for )
+        for ( typename Map::Dart_iterator it1=map.darts_begin();it1!=map.darts_end(); ++for )
         {
             ++nb2;
             if ( !map.is_marked ( *it1, mark ) )
@@ -189,27 +186,27 @@ bool test2D()
                 for ( ;it2.cont(); ++it2 )
                     {}
             }
-	    }
+            }
         cout << nbc << "." << ", #brins=" << nb2 << "." << endl
              << "All the darts marked ? " << map.is_whole_map_marked ( mark )
              << endl;
-	     map.unmark_all ( mark );
+             map.unmark_all ( mark );
     }*/
 
     // Iterator stl like
-    { 
+    {
       nbc = 0; nb2 = 0;
       cout << "Iterator stl like: #cellules=" << flush;
       for ( typename Map::Dart_range::iterator it1= map.darts().begin();
-	    it1!=map.darts().end(); ++it1 )
+            it1!=map.darts().end(); ++it1 )
         {
-	  ++nb2;
-	  if ( !map.is_marked ( it1, mark ) )
+          ++nb2;
+          if ( !map.is_marked ( it1, mark ) )
             {
                 ++nbc;
                 for ( typename Map::template Dart_of_orbit_range<2>::iterator
                         it2 ( map.template darts_of_orbit<2>(it1).begin() );
-		      it2 != map.template darts_of_orbit<2>(it1).end(); ++it2 )
+                      it2 != map.template darts_of_orbit<2>(it1).end(); ++it2 )
                 {
                     map.mark ( it2, mark );
                 }
@@ -227,8 +224,8 @@ bool test2D()
     cout << "***************************** TEST INCIDENCE ITERATORS 2D:"
          << endl;
 
-    d1 = make_combinatorial_polygon ( map,4 );
-    d2 = make_combinatorial_polygon ( map,4 );
+    d1 = map.make_combinatorial_polygon(4);
+    d2 = map.make_combinatorial_polygon(4);
     map.template sew<2> ( d1, d2 );
     cout << "Map valid : " << map.is_valid() << endl;
 
@@ -237,11 +234,11 @@ bool test2D()
     // Un parcours de cellule.
     {
       CGAL::mark_orbit<Map,CGAL::CMap_dart_const_iterator_basic_of_orbit<Map,1> >
-	( map, map.first_dart(), mark);
+        ( map, map.first_dart(), mark);
 
         nbc = 0;
-        for ( typename Map::template One_dart_per_incident_cell_range<0,3, Map::dimension>::iterator 
-		it1 ( map, map.first_dart() ); it1.cont(); ++it1 )
+        for ( typename Map::template One_dart_per_incident_cell_range<0,3, Map::dimension>::iterator
+                it1 ( map, map.first_dart() ); it1.cont(); ++it1 )
         {
             ++nbc;
         }
@@ -259,59 +256,59 @@ bool test2D()
     d1 = map.create_dart ();
     map.display_characteristics ( cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex1: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (cout)<<", valid=" << map.is_valid() << endl;
 
     d1 = map.create_dart ();
     map.template sew<1> ( d1, d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex2: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_edge ( map );
+    d1 = map.make_edge();
     d2 = map.beta(d1, 2);
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex3: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex4: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d2 );
+    map.template remove_cell<0> ( d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_edge ( map );
+    d1 = map.make_edge();
     map.template sew<1> ( d1, d1 );
     map.template sew<1>( map.beta(d1, 2), map.beta (d1, 2) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex5: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_combinatorial_polygon ( map,3 );
+    d1 = map.make_combinatorial_polygon(3);
     d2 = map.beta(d1, 0);
     d3 = map.beta(d1, 1);
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove vertex6: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove vertex7: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d2 );
+    map.template remove_cell<0> ( d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove vertex8: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d3 );
+    map.template remove_cell<0> ( d3 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_combinatorial_polygon ( map,3 );
-    d2 = make_combinatorial_polygon ( map,3 );
+    d1 = map.make_combinatorial_polygon(3);
+    d2 = map.make_combinatorial_polygon(3);
     map.template sew<2> ( d1, d2 );
     map.template sew<2> ( map.beta(d1, 0), map.beta(d2, 1) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove vertex9: " << flush;
-    CGAL::remove_cell<Map,0> ( map, d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     map.clear();
@@ -325,103 +322,103 @@ bool test2D()
     d1 = map.create_dart ();
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge1: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.create_dart ();
     map.template sew<1> ( d1, d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge2: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_edge ( map );
+    d1 = map.make_edge();
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge3: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_edge ( map );
+    d1 = map.make_edge();
     map.template sew<1> ( d1, d1 );
     map.template sew<1> ( map.beta(d1, 2), map.beta (d1, 2) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge4: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_edge ( map );
+    d1 = map.make_edge();
     map.template sew<1> ( d1, d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge5: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_combinatorial_polygon ( map,3 );
+    d1 = map.make_combinatorial_polygon(3);
     d2 = map.beta(d1, 0);
     d3 = map.beta(d1, 1);
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge6: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge7: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d2 );
+    map.template remove_cell<1> ( d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge8: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d3 );
+    map.template remove_cell<1> ( d3 );
     map.display_characteristics ( cout)<<", valid=" << map.is_valid() << endl;
 
-    d1 = make_combinatorial_polygon ( map,3 );
-    d2 = make_combinatorial_polygon ( map,3 );
+    d1 = map.make_combinatorial_polygon(3);
+    d2 = map.make_combinatorial_polygon(3);
     map.template sew<2> ( d1, d2 );
     d2 = map.beta(d1, 0);
     d3 = map.beta(d1, 1);
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge9: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge10: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d2 );
+    map.template remove_cell<1> ( d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge11: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d3 );
+    map.template remove_cell<1> ( d3 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_combinatorial_polygon ( map,3 );
-    d2 = make_combinatorial_polygon ( map,3 );
+    d1 = map.make_combinatorial_polygon(3);
+    d2 = map.make_combinatorial_polygon(3);
     map.template sew<2> ( d1, d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge12: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_combinatorial_polygon ( map,3 );
-    d2 = make_combinatorial_polygon ( map,3 );
+    d1 = map.make_combinatorial_polygon(3);
+    d2 = map.make_combinatorial_polygon(3);
     map.template sew<2> ( d1, d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge13: " << flush;
-    CGAL::remove_cell<Map,1> ( map, map.beta (d1, 1) );
+    map.template remove_cell<1> ( map.beta (d1, 1) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge14: " << flush;
-    CGAL::remove_cell<Map,1> ( map, d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    d1 = make_combinatorial_hexahedron ( map );
+    d1 = map.make_combinatorial_hexahedron();
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
-    CGAL::insert_cell_0_in_cell_2 ( map, d1 );
+    map.insert_cell_0_in_cell_2 ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     std::vector<Dart_handle> V;
     {
       for ( typename Map::template Dart_of_cell_range<0, Map::dimension>::iterator it =
-	      map.template darts_of_cell<0>( d1 ).begin();
-	    it != map.template darts_of_cell<0>( d1 ).end(); ++it )
+              map.template darts_of_cell<0>( d1 ).begin();
+            it != map.template darts_of_cell<0>( d1 ).end(); ++it )
             V.push_back ( it );
     }
 
@@ -430,7 +427,7 @@ bool test2D()
         for ( vector_iterator it = V.begin(); it != V.end(); ++it )
         {
             cout << "remove edge15: " << flush;
-            CGAL::remove_cell<Map,1> ( map, *it );
+            map.template remove_cell<1> ( *it );
             map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
         }
     }
@@ -443,50 +440,23 @@ bool test2D()
     cout << "***************************** TEST INSERT EDGE 2D:"
          << endl;
 
-    /*    d1 = map.create_dart ( Point ( 0, 0, 0 ) );
-    d2 = map.create_dart ( Point ( 1, 0, 0 ) );
-    map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
-    cout << "insert edge1: " << flush;
-    CGAL::insertedge ( map, d1, d2 );
-    map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
-    map.clear();*/
-
-    /*    d1 = make_edge ( map, Point ( 0, 0, 0 ), Point ( 0, 0, 1 ) );
-    map.template sew<1> ( d1, d1 );
-    map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
-    cout << "insert edge2: " << flush;
-    CGAL::insertedge ( map, d1, d1->beta ( 2 ) );
-    map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
-    map.clear();*/
-
-    d1 = make_combinatorial_polygon ( map,4 );
+    d1 = map.make_combinatorial_polygon(4);
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "insert edge3: " << flush;
-    CGAL::insert_cell_1_in_cell_2 ( map, d1, map.beta(d1,1,1) );
+    map.insert_cell_1_in_cell_2 ( d1, map.beta(d1,1,1) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     map.clear();
 
-    d1 = make_combinatorial_polygon ( map,4 );
-    d2 = make_combinatorial_polygon ( map,4 );
+    d1 = map.make_combinatorial_polygon(4);
+    d2 = map.make_combinatorial_polygon(4);
     map.template sew<2> ( d1, d2 );
     map.display_characteristics ( cout ) << ", valid=" << map.is_valid()
-				  << endl;
+                                  << endl;
     cout << "insert edge4: "
          << flush;
-    CGAL::insert_cell_1_in_cell_2 ( map, d1, map.beta(d1,1,1) );
+    map.insert_cell_1_in_cell_2 ( d1, map.beta(d1,1,1) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     map.clear();
-
-    /*    d1 = make_quadrilateral ( map, Point ( 0, 0, 0 ), Point ( 0, 0, 1 ),
-                              Point ( 1, 0, 1 ), Point ( 1, 0, 0 ) );
-    d2 = make_quadrilateral ( map, Point ( 0, 0, 0 ), Point ( 0, 0, 1 ),
-                              Point ( 1, 0, 1 ), Point ( 1, 0, 0 ) );
-    map.template sew<2> ( d1, d2 );
-    map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
-    cout << "insert edge5: " << flush;
-    CGAL::insert_cell_1_in_cell_2 ( map, d1, d2 );
-    map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
-    map.clear();*/
 
     cout << "***************************** TEST INSERT EDGE 2D DONE."
          << endl;

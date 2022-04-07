@@ -2,51 +2,135 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
-//                 Efi Fogel <efif@post.tau.ac.il>
+//                 Efi Fogel <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_OVERLAY_2_H
 #define CGAL_ARR_OVERLAY_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 /*! \file
+ *
  * Definition of the global Arr_overlay_2() function.
  */
 
-#include <boost/optional/optional.hpp>
-
-#include <CGAL/Arrangement_on_surface_2.h>
-#include <CGAL/Sweep_line_2.h>
-#include <CGAL/Sweep_line_2/Arr_default_overlay_traits_base.h>
-
 #include <vector>
+#include <boost/optional/optional.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/type_traits.hpp>
 
+#include <CGAL/Arrangement_on_surface_2.h>
+#include <CGAL/Surface_sweep_2.h>
+#include <CGAL/Surface_sweep_2/Arr_default_overlay_traits_base.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_ss_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_event.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_subcurve.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {
 
-/*!
- * Compute the overlay of two input arrangements.
- * \param arr1 The first arrangement.
- * \param arr2 The second arrangement.
- * \param arr_res Output: The resulting arrangement.
- * \param ovl_tr An overlay-traits class. As arr1, arr2 and res can be
+template <typename Arr1, typename Arr2, typename Curve>
+class Indexed_sweep_accessor
+{
+  const Arr1& arr1;
+  const Arr2& arr2;
+  mutable std::vector<void*> backup_inc;
+
+public:
+
+  Indexed_sweep_accessor (const Arr1& arr1, const Arr2& arr2)
+    : arr1(arr1), arr2(arr2) { }
+
+  std::size_t nb_vertices() const
+  {
+    return arr1.number_of_vertices() + arr2.number_of_vertices();
+  }
+
+  std::size_t min_end_index (const Curve& c) const
+  {
+    if (c.red_halfedge_handle() != typename Curve::HH_red())
+      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->target()->inc());
+    // else
+    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
+    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->target()->inc());
+  }
+
+  std::size_t max_end_index (const Curve& c) const
+  {
+    if (c.red_halfedge_handle() != typename Curve::HH_red())
+      return reinterpret_cast<std::size_t>(c.red_halfedge_handle()->source()->inc());
+    // else
+    CGAL_assertion (c.blue_halfedge_handle() != typename Curve::HH_blue());
+    return reinterpret_cast<std::size_t>(c.blue_halfedge_handle()->source()->inc());
+  }
+
+  const Curve& curve (const Curve& c) const
+  {
+    return c;
+  }
+
+  // Initializes indices by squatting Vertex::inc();
+  void before_init() const
+  {
+    std::size_t idx = 0;
+    backup_inc.resize (nb_vertices());
+    for (typename Arr1::Vertex_const_iterator vit = arr1.vertices_begin();
+         vit != arr1.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      backup_inc[idx] = vit->inc();
+      vit->set_inc (reinterpret_cast<void*>(idx));
+    }
+    for (typename Arr2::Vertex_const_iterator vit = arr2.vertices_begin();
+         vit != arr2.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      backup_inc[idx] = vit->inc();
+      vit->set_inc (reinterpret_cast<void*>(idx));
+    }
+  }
+
+  // Restores state of arrangements before index squatting
+  void after_init() const
+  {
+    std::size_t idx = 0;
+    for (typename Arr1::Vertex_const_iterator vit = arr1.vertices_begin();
+         vit != arr1.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      vit->set_inc (backup_inc[idx]);
+    }
+    for (typename Arr2::Vertex_const_iterator vit = arr2.vertices_begin();
+         vit != arr2.vertices_end(); ++vit, ++idx)
+    {
+      CGAL_assertion (idx < backup_inc.size());
+      vit->set_inc (backup_inc[idx]);
+    }
+  }
+
+private:
+
+};
+
+/*! Compute the overlay of two input arrangements.
+ * \tparam GeometryTraitsA_2 the geometry traits of the first arrangement.
+ * \tparam GeometryTraitsB_2 the geometry traits of the second arrangement.
+ * \tparam GeometryTraitsRes_2 the geometry traits of the resulting arrangement.
+ * \tparam TopologyTraitsA the topology traits of the first arrangement.
+ * \tparam TopologyTraitsB the topology traits of the second arrangement.
+ * \tparam TopologyTraitsRes the topology traits of the resulting arrangement.
+ * \tparam OverlayTraits An overlay-traits class. As arr1, arr2 and res can be
  *               templated with different geometry-traits class and
  *               different DCELs (encapsulated in the various topology-traits
  *               classes). The geometry-traits of the result arrangement is
@@ -56,90 +140,106 @@ namespace CGAL {
  *               in the result geometry-traits.
  *               The overlay-traits class defines the various
  *               overlay operations of pairs of DCEL features from
- *               TopTraitsA and TopTraitsB to the resulting ResDcel.
+ *               TopologyTraitsA and TopologyTraitsB to the resulting ResDcel.
  */
-template <class GeomTraitsA,
-          class GeomTraitsB,
-          class GeomTraitsRes,
-          class TopTraitsA,
-          class TopTraitsB,
-          class TopTraitsRes,
-          class OverlayTraits>
-void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
-             const Arrangement_on_surface_2<GeomTraitsB, TopTraitsB>& arr2,
-             Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>& arr_res,
-             OverlayTraits& ovl_tr)
+template <typename GeometryTraitsA_2,
+          typename GeometryTraitsB_2,
+          typename GeometryTraitsRes_2,
+          typename TopologyTraitsA,
+          typename TopologyTraitsB,
+          typename TopologyTraitsRes,
+          typename OverlayTraits>
+void
+overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
+        const Arrangement_on_surface_2<GeometryTraitsB_2, TopologyTraitsB>& arr2,
+        Arrangement_on_surface_2<GeometryTraitsRes_2, TopologyTraitsRes>& arr,
+        OverlayTraits& ovl_tr)
 {
-  typedef Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>       ArrA;
-  typedef Arrangement_on_surface_2<GeomTraitsB, TopTraitsB>       ArrB;
-  typedef Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>   ArrRes;
+  typedef GeometryTraitsA_2                                     Agt2;
+  typedef GeometryTraitsB_2                                     Bgt2;
+  typedef GeometryTraitsRes_2                                   Rgt2;
+  typedef TopologyTraitsA                                       Att;
+  typedef TopologyTraitsB                                       Btt;
+  typedef TopologyTraitsRes                                     Rtt;
+  typedef OverlayTraits                                         Overlay_traits;
 
-  // some type assertions (not all, but better then nothing).
-  CGAL_static_assertion
-    ((boost::is_convertible<typename GeomTraitsA::Point_2, \
-                            typename GeomTraitsRes::Point_2>::value));
-  CGAL_static_assertion
-    ((boost::is_convertible<typename GeomTraitsB::Point_2, \
-                            typename GeomTraitsRes::Point_2 >::value));
-  CGAL_static_assertion
-    ((boost::is_convertible<typename GeomTraitsA::X_monotone_curve_2, \
-                            typename GeomTraitsRes::X_monotone_curve_2>::value));
-  CGAL_static_assertion
-    ((boost::is_convertible<typename GeomTraitsB::X_monotone_curve_2, \
-                            typename GeomTraitsRes::X_monotone_curve_2>::value));
+  typedef Arrangement_on_surface_2<Agt2, Att>                   Arr_a;
+  typedef Arrangement_on_surface_2<Bgt2, Btt>                   Arr_b;
+  typedef Arrangement_on_surface_2<Rgt2, Rtt>                   Arr_res;
+  typedef typename Arr_res::Allocator                           Allocator;
 
-  typedef typename TopTraitsRes::template
-    Sweep_line_overlay_visitor<ArrA, ArrB, OverlayTraits>
-                                                      Ovl_visitor;
+  // some type assertions (not all, but better than nothing).
+  typedef typename Agt2::Point_2                                A_point;
+  typedef typename Bgt2::Point_2                                B_point;
+  typedef typename Rgt2::Point_2                                Res_point;
+  CGAL_static_assertion((boost::is_convertible<A_point, Res_point>::value));
+  CGAL_static_assertion((boost::is_convertible<B_point, Res_point>::value));
 
-  typedef typename Ovl_visitor::Traits_2              Ovl_traits_2;
-  typedef typename Ovl_traits_2::X_monotone_curve_2   Ovl_x_monotone_curve_2;
-  typedef typename Ovl_traits_2::Point_2              Ovl_point_2;
+  typedef typename Agt2::X_monotone_curve_2                     A_xcv;
+  typedef typename Bgt2::X_monotone_curve_2                     B_xcv;
+  typedef typename Rgt2::X_monotone_curve_2                     Res_xcv;
+  CGAL_static_assertion((boost::is_convertible<A_xcv, Res_xcv>::value));
+  CGAL_static_assertion((boost::is_convertible<B_xcv, Res_xcv>::value));
 
-  typedef typename Ovl_traits_2::Cell_handle_red      Cell_handle_red;
-  typedef typename Ovl_traits_2::Optional_cell_red    Optional_cell_red;
-  typedef typename Ovl_traits_2::Cell_handle_blue     Cell_handle_blue;
-  typedef typename Ovl_traits_2::Optional_cell_blue   Optional_cell_blue;
+  typedef Arr_traits_basic_adaptor_2<Rgt2>              Gt_adaptor_2;
+  typedef Arr_overlay_traits_2<Gt_adaptor_2, Arr_a, Arr_b>
+                                                        Ovl_gt2;
+  typedef Arr_overlay_event<Ovl_gt2, Arr_res, Allocator>
+                                                        Ovl_event;
+  typedef Arr_overlay_subcurve<Ovl_gt2, Ovl_event, Allocator>
+                                                        Ovl_curve;
+  typedef typename TopologyTraitsRes::template
+    Overlay_helper<Ovl_gt2, Ovl_event, Ovl_curve, Arr_a, Arr_b>
+                                                        Ovl_helper;
+  typedef Arr_overlay_ss_visitor<Ovl_helper, Overlay_traits>
+                                                        Ovl_visitor;
+
+  typedef typename Ovl_gt2::X_monotone_curve_2          Ovl_x_monotone_curve_2;
+  typedef typename Ovl_gt2::Point_2                     Ovl_point_2;
+  typedef typename Ovl_gt2::Cell_handle_red             Cell_handle_red;
+  typedef typename Ovl_gt2::Optional_cell_red           Optional_cell_red;
+  typedef typename Ovl_gt2::Cell_handle_blue            Cell_handle_blue;
+  typedef typename Ovl_gt2::Optional_cell_blue          Optional_cell_blue;
 
   CGAL_USE_TYPE(Optional_cell_red);
   CGAL_USE_TYPE(Optional_cell_blue);
 
   // The result arrangement cannot be on of the input arrangements.
-  CGAL_precondition(((void *)(&arr_res) != (void *)(&arr1)) &&
-                    ((void *)(&arr_res) != (void *)(&arr2)));
+  CGAL_precondition(((void*)(&arr) != (void*)(&arr1)) &&
+                    ((void*)(&arr) != (void*)(&arr2)));
 
   // Prepare a vector of extended x-monotone curves that represent all edges
   // in both input arrangements. Each curve is associated with a halfedge
   // directed from right to left.
-  typename ArrA::Halfedge_const_handle invalid_he1;
-  typename ArrB::Halfedge_const_handle invalid_he2;
+  typename Arr_a::Halfedge_const_handle invalid_he1;
+  typename Arr_b::Halfedge_const_handle invalid_he2;
   std::vector<Ovl_x_monotone_curve_2>
     xcvs_vec(arr1.number_of_edges() + arr2.number_of_edges());
   unsigned int i = 0;
 
-  typename ArrA::Edge_const_iterator eit1;
+  typename Arr_a::Edge_const_iterator eit1;
   for (eit1 = arr1.edges_begin(); eit1 != arr1.edges_end(); ++eit1, ++i) {
-    typename ArrA::Halfedge_const_handle he1 = eit1;
+    typename Arr_a::Halfedge_const_handle he1 = eit1;
     if (he1->direction() != ARR_RIGHT_TO_LEFT) he1 = he1->twin();
     xcvs_vec[i] = Ovl_x_monotone_curve_2(eit1->curve(), he1, invalid_he2);
   }
 
-  typename ArrB::Edge_const_iterator eit2;
+  typename Arr_b::Edge_const_iterator eit2;
   for (eit2 = arr2.edges_begin(); eit2 != arr2.edges_end(); ++eit2, ++i) {
-    typename ArrB::Halfedge_const_handle he2 = eit2;
+    typename Arr_b::Halfedge_const_handle he2 = eit2;
     if (he2->direction() != ARR_RIGHT_TO_LEFT) he2 = he2->twin();
     xcvs_vec[i] = Ovl_x_monotone_curve_2(eit2->curve(), invalid_he1, he2);
   }
 
   // Obtain a extended traits-class object and define the sweep-line visitor.
-  const typename ArrRes::Traits_adaptor_2* traits_adaptor =
-    arr_res.traits_adaptor();
+  const typename Arr_res::Traits_adaptor_2* traits_adaptor =
+    arr.traits_adaptor();
 
   /* We would like to avoid copy construction of the geometry traits class.
    * Copy construction is undesired, because it may results with data
    * duplication or even data loss.
    *
-   * If the type Ovl_traits_2 is the same as the type
+   * If the type Ovl_gt2 is the same as the type
    * GeomTraits, use a reference to GeomTraits to avoid constructing a new one.
    * Otherwise, instantiate a local variable of the former and provide
    * the later as a single parameter to the constructor.
@@ -147,15 +247,12 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
    * Use the form 'A a(*b);' and not ''A a = b;' to handle the case where A has
    * only an implicit constructor, (which takes *b as a parameter).
    */
-  typedef Arr_traits_basic_adaptor_2< GeomTraitsRes > Geom_traits_adaptor_2;
-  typename boost::mpl::if_<boost::is_same< Geom_traits_adaptor_2, Ovl_traits_2>,
-                           const Ovl_traits_2&, Ovl_traits_2>::type
+  typename boost::mpl::if_<boost::is_same<Gt_adaptor_2, Ovl_gt2>,
+                           const Ovl_gt2&, Ovl_gt2>::type
     ex_traits(*traits_adaptor);
 
-  Ovl_visitor visitor(&arr1, &arr2, &arr_res, &ovl_tr);
-  Sweep_line_2<Ovl_traits_2, Ovl_visitor,
-               typename Ovl_visitor::Subcurve, typename Ovl_visitor::Event>
-    sweep_line(&ex_traits, &visitor);
+  Ovl_visitor visitor(&arr1, &arr2, &arr, &ovl_tr);
+  Ss2::Surface_sweep_2<Ovl_visitor> surface_sweep(&ex_traits, &visitor);
 
   // In case both arrangement do not contain isolated vertices, go on and
   // overlay them.
@@ -164,8 +261,15 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
 
   if (total_iso_verts == 0) {
     // Clear the result arrangement and perform the sweep to construct it.
-    arr_res.clear();
-    sweep_line.sweep(xcvs_vec.begin(), xcvs_vec.end());
+    arr.clear();
+    if (std::is_same<typename Agt2::Bottom_side_category,
+                     Arr_contracted_side_tag>::value)
+      surface_sweep.sweep (xcvs_vec.begin(), xcvs_vec.end());
+    else
+      surface_sweep.indexed_sweep (xcvs_vec,
+                                   Indexed_sweep_accessor
+                                   <Arr_a, Arr_b, Ovl_x_monotone_curve_2>
+                                   (arr1, arr2));
     xcvs_vec.clear();
     return;
   }
@@ -175,20 +279,20 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   std::vector<Ovl_point_2> pts_vec(total_iso_verts);
 
   i = 0;
-  typename ArrA::Vertex_const_iterator  vit1;
+  typename Arr_a::Vertex_const_iterator  vit1;
   for (vit1 = arr1.vertices_begin(); vit1 != arr1.vertices_end(); ++vit1) {
     if (vit1->is_isolated()) {
-      typename ArrA::Vertex_const_handle v1 = vit1;
+      typename Arr_a::Vertex_const_handle v1 = vit1;
       pts_vec[i++] =
         Ovl_point_2(vit1->point(), boost::make_optional(Cell_handle_red(v1)),
                     boost::optional<Cell_handle_blue>());
     }
   }
 
-  typename ArrB::Vertex_const_iterator  vit2;
+  typename Arr_b::Vertex_const_iterator  vit2;
   for (vit2 = arr2.vertices_begin(); vit2 != arr2.vertices_end(); ++vit2) {
     if (vit2->is_isolated()) {
-      typename ArrB::Vertex_const_handle v2 = vit2;
+      typename Arr_b::Vertex_const_handle v2 = vit2;
       pts_vec[i++] =
         Ovl_point_2(vit2->point(), boost::optional<Cell_handle_red>(),
                     boost::make_optional(Cell_handle_blue(v2)));
@@ -196,36 +300,53 @@ void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
   }
 
   // Clear the result arrangement and perform the sweep to construct it.
-  arr_res.clear();
-  sweep_line.sweep(xcvs_vec.begin(), xcvs_vec.end(),
-                   pts_vec.begin(), pts_vec.end());
+  arr.clear();
+  if (std::is_same<typename Agt2::Bottom_side_category,
+      Arr_contracted_side_tag>::value)
+    surface_sweep.sweep(xcvs_vec.begin(), xcvs_vec.end(),
+                        pts_vec.begin(), pts_vec.end());
+  else
+    surface_sweep.indexed_sweep (xcvs_vec,
+                                 Indexed_sweep_accessor
+                                 <Arr_a, Arr_b, Ovl_x_monotone_curve_2>
+                                 (arr1, arr2),
+                                 pts_vec.begin(), pts_vec.end());
   xcvs_vec.clear();
   pts_vec.clear();
 }
 
-/*!
- * Compute the (simple) overlay of two input arrangements.
- * \param arr1 The first arrangement.
- * \param arr2 The second arrangement.
- * \param arr_res Output: The resulting arrangement.
+/*! Compute the (simple) overlay of two input arrangements.
+ * \param[in] arr1 the first arrangement.
+ * \param[in] arr2 the second arrangement.
+ * \param[out] arr the resulting arrangement.
  */
-template <class GeomTraitsA,
-          class GeomTraitsB,
-          class GeomTraitsRes,
-          class TopTraitsA,
-          class TopTraitsB,
-          class TopTraitsRes>
-void overlay(const Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>& arr1,
-             const Arrangement_on_surface_2<GeomTraitsB, TopTraitsB>& arr2,
-             Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes>& arr_res)
+template <typename GeometryTraitsA_2,
+          typename GeometryTraitsB_2,
+          typename GeometryTraitsRes_2,
+          typename TopologyTraitsA,
+          typename TopologyTraitsB,
+          typename TopologyTraitsRes>
+void
+overlay(const Arrangement_on_surface_2<GeometryTraitsA_2, TopologyTraitsA>& arr1,
+        const Arrangement_on_surface_2<GeometryTraitsB_2, TopologyTraitsB>& arr2,
+        Arrangement_on_surface_2<GeometryTraitsRes_2, TopologyTraitsRes>& arr)
 {
-  typedef Arrangement_on_surface_2<GeomTraitsA, TopTraitsA>     ArrA;
-  typedef Arrangement_on_surface_2<GeomTraitsA, TopTraitsB>     ArrB;
-  typedef Arrangement_on_surface_2<GeomTraitsRes, TopTraitsRes> ArrRes;
-  _Arr_default_overlay_traits_base<ArrA, ArrB, ArrRes> ovl_traits;
-  overlay(arr1, arr2, arr_res, ovl_traits);
+  typedef GeometryTraitsA_2                                     Agt2;
+  typedef GeometryTraitsB_2                                     Bgt2;
+  typedef GeometryTraitsRes_2                                   Rgt2;
+  typedef TopologyTraitsA                                       Att;
+  typedef TopologyTraitsB                                       Btt;
+  typedef TopologyTraitsRes                                     Rtt;
+  typedef Arrangement_on_surface_2<Agt2, Att>                   Arr_a;
+  typedef Arrangement_on_surface_2<Bgt2, Btt>                   Arr_b;
+  typedef Arrangement_on_surface_2<Rgt2, Rtt>                   Arr_res;
+
+  _Arr_default_overlay_traits_base<Arr_a, Arr_b, Arr_res> ovl_traits;
+  overlay(arr1, arr2, arr, ovl_traits);
 }
 
-} //namespace CGAL
+} // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

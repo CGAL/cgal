@@ -2,23 +2,18 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_OFFSET_DECOMP_H
 #define CGAL_OFFSET_DECOMP_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Minkowski_sum_2/Union_of_curve_cycles_2.h>
 #include <list>
@@ -43,16 +38,16 @@ public:
 
   typedef typename Base::Basic_kernel                  Kernel;
   typedef typename Base::Basic_NT                      NT;
-  typedef typename Base::Polygon_2                     Polygon_2;  
+  typedef typename Base::Polygon_2                     Polygon_2;
   typedef typename Base::Offset_polygon_2              Offset_polygon_2;
   typedef DecompStrategy_                              Decomposition_strategy;
-  
+
 private:
 
   typedef std::list<Polygon_2>                         Polygons_list;
   typedef typename Polygons_list::iterator             Polygons_iterator;
 
-  typedef typename Base::Labeled_traits_2              Labeled_traits_2; 
+  typedef typename Base::Labeled_traits_2              Labeled_traits_2;
   typedef typename Base::Labeled_curve_2               Labeled_curve_2;
   typedef std::list<Labeled_curve_2>                   Curves_list;
 
@@ -64,16 +59,16 @@ public:
   /*! Constructor. */
   Offset_by_decomposition_2 (const Base_& base) :
     Base (base)
-  {}    
+  {}
 
   /*!
    * Compute the offset of a simple polygon by a given radius.
-   * Note that as the input polygon may not be convex, its offset may not be 
+   * Note that as the input polygon may not be convex, its offset may not be
    * simply connected. The result is therefore represented as the outer
    * boundary of the Minkowski sum (which is always a simple offset polygon)
    * and a container of offset polygons, representing the holes in this "outer"
    * polygon.
-   * \param traits Arrangement traits that can deal with line segments and 
+   * \param traits Arrangement traits that can deal with line segments and
    *               circular arcs.
    * \param pgn The polygon.
    * \param r The offset radius.

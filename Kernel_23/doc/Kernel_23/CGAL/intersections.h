@@ -1,21 +1,5 @@
 /// \file intersections.h
 
-/*!
-\def CGAL_INTERSECTION_VERSION
-
-\ingroup intersection_grp
-
-The macro `CGAL_INTERSECTION_VERSION` can be used to configure
-which version of the \ref intersection_grp function should be used and
-enables the corresponding APIs in other \cgal packages. It should be
-defined before any \cgal header is included.
-
-- `CGAL_INTERSECTION_VERSION == 1` \ref intersection_grp uses `Object`
-- `CGAL_INTERSECTION_VERSION == 2` \ref intersection_grp uses `boost::optional< boost::variant< T... > >`
-
-*/
-#define CGAL_INTERSECTION_VERSION
-
 namespace CGAL {
 
 /*!
@@ -63,21 +47,23 @@ Also, `Type1` and `Type2` can be both of type
 In three-dimensional space, the types `Type1` and
 `Type2` can be any of the following:
 
+- `Bbox_3`.
+- `Point_3<Kernel>`
 - `Plane_3<Kernel>`
 - `Line_3<Kernel>`
 - `Ray_3<Kernel>`
 - `Segment_3<Kernel>`
+- `Sphere_3<Kernel>`
 - `Triangle_3<Kernel>`.
-- `Bbox_3`.
-
-Also, `Type1` and `Type2` can be respectively of types
-
-- `Triangle_3<Kernel>` and `Tetrahedron_3<Kernel>`
-- `Plane_3<Kernel>` and `Sphere_3<Kernel>` (or the contrary)
-- `Sphere_3<Kernel>` and `Sphere_3<Kernel>`.
-
+- `Tetrahedron_3<Kernel>`.
 */
 bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
+
+/*!
+checks whether `obj1`, `obj2` and `obj3` intersect.
+*/
+bool do_intersect(Plane_3<Kernel> obj1, Plane_3<Kernel> obj2, Plane_3<Kernel> obj3);
+
 /// @}
 
 
@@ -89,20 +75,6 @@ bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 \details Depending on which \cgal kernel is used, different overloads of this global
 function are available.
 
-\cgalHeading{Notes on Backward Compatibility}
-
-The \ref intersection_grp function used to return an `Object`, but starting with
-\cgal 4.2 the
-return type is determined by a metafunction defined by the kernel. To
-preserve backward compatibility `Object` can be
-constructed from the new return types implicitly, but switching to the
-new style is recommended. To enable the old style without any overhead,
-the macro \link CGAL_INTERSECTION_VERSION `CGAL_INTERSECTION_VERSION` \endlink must be defined to
-`1` before any \cgal header is included.
-
-\sa \ref upgrading_object
-\sa \ref do_intersect_grp
-\sa CGAL_INTERSECTION_VERSION
 */
 
 /*!
@@ -127,14 +99,17 @@ depending on the arguments.
 
 The following tables give the possible values for `Type1` and `Type2`.
 
-\cgalHeading{2D intersections}
+\cgalHeading{2D Intersections}
 
-The return type can be obtained through `cpp11::result_of<Kernel::Intersect_2(A, B)>::%type`.
-It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
+The return type of intersecting two objects of the types `Type1` and `Type2` can be
+specified through the placeholder type specifier `auto`. It is equivalent to
+`boost::optional< boost::variant< T... > >`, the last column in the table providing
+the template parameter pack.
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
-<TR> <TH> Type1 </TH>
+<TR>
+ <TH> Type1 </TH>
  <TH> Type2 </TH>
  <TH> Return Type:  `T...` </TH>
 </TR>
@@ -217,14 +192,23 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 </TABLE>
 </DIV>
 
-\cgalHeading{3D intersections}
+Additional overloads are provided for the type `Point_2` combined with any other type with the result type being
+`boost::optional< boost::variant< Point_2 > >`.
+Overloads are also provided for the type `Bbox_2`, for all
+intersections existing with the type `Iso_rectangle_2`. Note that the return type for `Bbox_2` - `Bbox_2`
+ is `Bbox_2` and not `Iso_rectangle_2`.
 
-The return type can be obtained through `cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
-It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
+\cgalHeading{3D Intersections}
+
+The return type of intersecting two objects of the types `Type1` and `Type2` can be
+specified through the placeholder type specifier `auto`. It is equivalent to
+`boost::optional< boost::variant< T... > >`, the last column in the table providing
+the template parameter pack.
 
 <DIV ALIGN="CENTER">
 <TABLE CELLPADDING=3 BORDER="1">
-<TR> <TH> Type1 </TH>
+<TR>
+ <TH> Type1 </TH>
  <TH> Type2 </TH>
  <TH> Return Type: `T...` </TH>
 </TR>
@@ -254,6 +238,16 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
     <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD VALIGN="CENTER" > Plane_3 </TD>
     <TD>Line_3, or Plane_3</TD>
@@ -279,6 +273,16 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
     <TD>Point_3, or Segment_3, or Triangle_3</TD>
 </TR>
 <TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector<Point_3></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector<Point_3></TD>
+</TR>
+<TR>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD>Point_3, or Ray_3, or Segment_3</TD>
@@ -291,7 +295,17 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 <TR>
     <TD VALIGN="CENTER" > Ray_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
-p    <TD>Point_3, or Segment_3</TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
     <TD VALIGN="CENTER" > Segment_3 </TD>
@@ -301,6 +315,16 @@ p    <TD>Point_3, or Segment_3</TD>
 <TR>
     <TD VALIGN="CENTER" > Segment_3 </TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
     <TD>Point_3, or Segment_3</TD>
 </TR>
 <TR>
@@ -313,67 +337,56 @@ p    <TD>Point_3, or Segment_3</TD>
     <TD VALIGN="CENTER" > Triangle_3 </TD>
     <TD>Point_3, or Segment_3, or Triangle_3, or std::vector &lt; Point_3  &gt;</TD>
 </TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD VALIGN="CENTER" > Tetrahedron_3 </TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector &lt; Point_3  &gt;</TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD VALIGN="CENTER" > Iso_cuboid_3 </TD>
+    <TD>Point_3, or Segment_3, or Triangle_3, or std::vector &lt; Point_3  &gt;</TD>
+</TR>
 </TABLE>
 </DIV>
 
-\cgalHeading{Example}
-
-The following example demonstrates the most common use of
-`intersection` routines with the 2D and 3D Linear %Kernel.
-
-\code
-#include <CGAL/intersections.h>
-
-template <typename R>
-struct Intersection_visitor {
-  typedef void result_type;
-  void operator()(const Point_2<R>& p) const
-  {
-    // handle point
-  }
-  void operator()(const Segment_2<R>& s) const
-  {
-    // handle segment
-  }
-};
-
-template <typename R>
-void foo (const Segment_2<R>& seg, const Line_2<R>& lin)
-{
-  // with C++11 support
-  // auto result = intersection(seg, lin);
-
-  // without C++11
-  cpp11::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type
-    result = intersection(seg, lin);
-
-  if (result) { boost::apply_visitor(Intersection_visitor(), *result); }
-  else {
-    // no intersection
-  }
-
-  // alternatively:
-  if (result) {
-    if (const Segment_2<R>* s = boost::get<Segment_2>(&*result)) {
-      // handle segment
-    } else {
-      const Point_2<R>* p = boost::get<Point_2<R> >(&*result);
-      // handle point
-    }
-  }
-}
-\endcode
+Additional overloads are provided for the type `Point_3` combined with any other type with the result type being
+`boost::optional< boost::variant< Point_3 > >`. Overloads are also provided for the type `Bbox_3`, for all
+intersections existing with the type `Iso_cuboid_3`. Note that the return type for `Bbox_3` - `Bbox_3`
+ is `Bbox_3` and not `Iso_cuboid_3`.
 
 
-Another example showing the use of the intersection function as a
-plain function call and with `Dispatch_output_iterator` combined with
+\cgalHeading{Examples}
+
+The following examples demonstrate the most common use of
+`intersection()` functions with the 2D and 3D Linear %Kernel.
+
+In the first two examples we intersect a segment and a line.
+The result type can be specified through the placeholder type specifier `auto`,
+but you must anyway know that the result type is a `boost::optional<boost::variant<..> >`,
+in order to unpack the point or segment.
+
+<A HREF="https://www.boost.org/libs/optional/">`boost::optional`</A> comes in
+as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A> comes in
+as, if there is an intersection, it is either a point or a segment.
+
+As explained in the boost manual pages for <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
+
+\cgalExample{Kernel_23/intersection_get.cpp}
+
+The second example uses `boost::apply_visitor`.
+
+\cgalExample{Kernel_23/intersection_visitor.cpp}
+
+A third example shows the use of the intersection function as a
+plain function call and with `Dispatch_output_iterator`, combined with
 a standard library algorithm.
 
 \cgalExample{Kernel_23/intersections.cpp}
 
 */
 template <typename Kernel>
-cpp11::result_of<Kernel::Intersect_23(Type1, Type2)>::type
+decltype(auto)
 intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);
 
 /*!
@@ -381,7 +394,7 @@ returns the intersection of 3 planes, which can be a
 point, a line, a plane, or empty.
 */
 template <typename Kernel>
-boost::optional< boost::variant< Point_3, Line_3, Plane_3 > >
+decltype(auto)
 intersection(const Plane_3<Kernel>& pl1,
              const Plane_3<Kernel>& pl2,
              const Plane_3<Kernel>& pl3);

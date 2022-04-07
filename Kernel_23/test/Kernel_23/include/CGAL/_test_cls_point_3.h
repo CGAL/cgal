@@ -1,30 +1,32 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_POINT_3_H
 #define CGAL__TEST_CLS_POINT_3_H
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Point_3.h>
+#include <CGAL/Origin.h>
+#include <CGAL/Vector_3.h>
+#include <CGAL/Weighted_point_3.h>
+#include <CGAL/use.h>
+
 #include <cassert>
+#include <iostream>
 
 template <class R>
 bool
@@ -39,7 +41,7 @@ _test_cls_point_3(const R& )
  typedef typename R::Point_3::Cartesian_const_iterator CCI;
 
  CGAL::Point_3<R>  p1;
- CGAL::Point_3<R>  p2(ip);
+ CGAL::Point_3<R>  p2(ip); CGAL_USE(p2);
  CGAL::Point_3<R>  p0(CGAL::ORIGIN);
 
  RT  n1(-35 );
@@ -52,6 +54,14 @@ _test_cls_point_3(const R& )
  CGAL::Point_3<R>  p5(n1, n2, n3, n4);
  CGAL::Point_3<R>  p6( p5 );
                   p1 = p4;
+
+ CGAL::Weighted_point_3<R> wp(p1);
+ CGAL::Point_3<R> p7(wp);
+
+ CGAL_static_assertion(!(boost::is_convertible<CGAL::Weighted_point_3<R>,
+                                               CGAL::Point_3<R> >::value));
+ CGAL_static_assertion(!(boost::is_convertible<CGAL::Point_3<R>,
+                                               CGAL::Weighted_point_3<R> >::value));
 
  std::cout << '.';
 
@@ -183,6 +193,15 @@ _test_cls_point_3(const R& )
  assert(bb.ymax() >= 50.0);
  assert(bb.zmin() <= -20.0);
  assert(bb.zmax() >= -20.0);
+
+  // test compound assignement operator
+  CGAL::Point_3<R>  p_1(1,2,3);
+  const CGAL::Point_3<R>  p_1_const = p_1;
+  CGAL::Vector_3<R> v_1(4,5,6);
+  p_1+=v_1;
+  assert(p_1==p_1_const+v_1);
+  p_1-=v_1;
+  assert(p_1==p_1_const);
 
  std::cout << "done" << std::endl;
  return true;

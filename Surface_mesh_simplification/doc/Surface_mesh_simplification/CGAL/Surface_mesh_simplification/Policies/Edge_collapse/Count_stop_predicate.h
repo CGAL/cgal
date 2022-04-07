@@ -1,48 +1,48 @@
-
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
 /*!
-\ingroup PkgSurfaceMeshSimplification
+\ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Count_stop_predicate` is a model for the `StopPredicate` concept,
-which returns `true` when the number of current edges drops below a certain threshold. 
- 
-\tparam ECM is the type of surface mesh being simplified, and must be a model of the `EdgeCollapsableSurfaceMesh` concept. 
+which returns `true` when the number of current edges drops below a certain threshold.
+
+\tparam TriangleMesh is the type of surface mesh being simplified, and must be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
 
 \cgalModels `StopPredicate`
 
-\sa `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>` 
+\sa `CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<TriangleMesh>`
 
 */
-template< typename ECM >
-class Count_stop_predicate {
+template <typename TriangleMesh>
+class Count_stop_predicate
+{
 public:
 
-/// \name Creation 
-/// @{
+  /// \name Creation
+  /// @{
 
-/*!
-Initializes the predicate establishing the `threshold` value. 
-*/ 
-Count_stop_predicate<ECM>( size_type threshold ); 
+  /*!
+  Initializes the predicate establishing the `threshold` value.
+  */
+  Count_stop_predicate(const Edge_profile::edges_size_type threshold);
 
-/// @} 
+  /// @}
 
-/// \name Operations 
-/// @{
+  /// \name Operations
+  /// @{
 
-/*!
-Returns `(current_count < threshold)`. All other parameters are ignored (but exist since this is a generic policy). 
-*/ 
-bool operator()( FT const& current_cost 
-, Profile const& edge_profile 
-, size_type initial_count 
-, size_type current_count 
-) const ; 
+  /*!
+  Returns `(current_edge_count < threshold)`. All other parameters are ignored (but exist since this is a generic policy).
+  */
+  bool operator()(const Edge_profile::FT& current_cost,
+                  const Edge_profile& edge_profile,
+                  const Edge_profile::edges_size_type initial_edge_count,
+                  const Edge_profile::edges_size_type current_edge_count) const;
 
-/// @}
+  /// @}
 
-}; /* end Surface_mesh_simplification::Count_stop_predicate */
-} /* namespace Surface_mesh_simplification */
-} /* end namespace CGAL */
+};
+
+} // namespace Surface_mesh_simplification
+} // namespace CGAL

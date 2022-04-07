@@ -1,5 +1,4 @@
-#include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Linear_cell_complex_operations.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <iostream>
 #include <algorithm>
 
@@ -7,14 +6,14 @@ template<typename K>
 struct mypoint : public K::Point_3
 {
   typedef typename K::Point_3 Base;
-  
+
   mypoint() : mtype('a')
   {}
 
   mypoint(const Base& apoint) : Base(apoint),
                                 mtype('b')
   {}
-  
+
   mypoint(const mypoint& apoint) : Base(apoint),
                                    mtype('c')
   {}
@@ -25,7 +24,7 @@ struct mypoint : public K::Point_3
 
   char type() const
   { return mtype; }
-  
+
 private:
   char mtype;
 };
@@ -38,7 +37,7 @@ struct mytraits: public CGAL::Linear_cell_complex_traits<3, K>
 
 typedef mytraits<CGAL::Exact_predicates_inexact_constructions_kernel> Traits;
 
-typedef CGAL::Linear_cell_complex<3,3, Traits> LCC_3;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3, Traits> LCC_3;
 typedef LCC_3::Dart_handle                     Dart_handle;
 typedef LCC_3::Point                           Point;
 typedef LCC_3::FT                              FT;
@@ -65,7 +64,7 @@ Dart_handle make_iso_cuboid(LCC_3& lcc, const Point& basepoint, FT lg)
 int main()
 {
   LCC_3 lcc;
-  
+
   // Create two iso_cuboids.
   Dart_handle d1 = make_iso_cuboid(lcc, Point(-2, 0, 0), 1);
   Dart_handle d2 = make_iso_cuboid(lcc, Point(0, 0, 0), 1);
@@ -77,9 +76,9 @@ int main()
   lcc.insert_barycenter_in_cell<2>(lcc.beta(d2, 2));
 
   // Display all the vertices of the map.
-  for (LCC_3::Vertex_attribute_range::iterator 
+  for (LCC_3::Vertex_attribute_range::iterator
          it=lcc.vertex_attributes().begin(),
-         itend=lcc.vertex_attributes().end(); 
+         itend=lcc.vertex_attributes().end();
        it!=itend; ++it)
   {
     std::cout<<"point: "<<lcc.point_of_vertex_attribute(it)

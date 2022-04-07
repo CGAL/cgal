@@ -1,0 +1,9 @@
+/*!
+ \example Surface_mesh_parameterization/discrete_authalic.cpp
+ \example Surface_mesh_parameterization/lscm.cpp
+ \example Surface_mesh_parameterization/orbifold.cpp
+ \example Surface_mesh_parameterization/seam_Polyhedron_3.cpp
+ \example Surface_mesh_parameterization/simple_parameterization.cpp
+ \example Surface_mesh_parameterization/square_border_parameterizer.cpp
+ \example Surface_mesh_parameterization/iterative_authalic_parameterizer.cpp
+*/

@@ -1,23 +1,15 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
@@ -35,32 +27,22 @@
 #include <utility>
 
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/real.h>
-#include <LEDA/interval.h>
-#else
 #include <LEDA/numbers/real.h>
-#endif
 
 
 namespace CGAL {
 
 template <> class Algebraic_structure_traits< leda_real >
 
-#if CGAL_LEDA_VERSION >= 500
   : public Algebraic_structure_traits_base< leda_real,
                                             Field_with_root_of_tag >  {
-#else
-  : public Algebraic_structure_traits_base< leda_real,
-                                            Field_with_kth_root_tag >  {
-#endif
 
   public:
     typedef Tag_true           Is_exact;
     typedef Tag_true           Is_numerical_sensitive;
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CGAL_LEDA_SCOPE::sqrt( x );
@@ -68,7 +50,7 @@ template <> class Algebraic_structure_traits< leda_real >
     };
 
     class Kth_root
-      : public std::binary_function<int, Type, Type> {
+      : public CGAL::cpp98::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -78,7 +60,6 @@ template <> class Algebraic_structure_traits< leda_real >
     };
 
 // Root_of is only available for LEDA versions >= 5.0
-#if CGAL_LEDA_VERSION >= 500
     class Root_of {
       public:
         typedef Type result_type;
@@ -112,7 +93,6 @@ template <> class Algebraic_structure_traits< leda_real >
         };*/
     };
 
-#endif
 
 
 };
@@ -121,7 +101,7 @@ template <> class Real_embeddable_traits< leda_real >
   : public INTERN_RET::Real_embeddable_traits_base< leda_real , CGAL::Tag_true > {
   public:
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CGAL_LEDA_SCOPE::abs( x );
@@ -129,7 +109,7 @@ template <> class Real_embeddable_traits< leda_real >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CGAL_LEDA_SCOPE::sign( x );
@@ -137,7 +117,7 @@ template <> class Real_embeddable_traits< leda_real >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -151,7 +131,7 @@ template <> class Real_embeddable_traits< leda_real >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           // this call is required to get reasonable values for the double
@@ -162,11 +142,10 @@ template <> class Real_embeddable_traits< leda_real >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 
-#if CGAL_LEDA_VERSION >= 501
             leda_bigfloat bnum = x.to_bigfloat();
             leda_bigfloat berr = x.get_bigfloat_error();
 
@@ -180,23 +159,6 @@ template <> class Real_embeddable_traits< leda_real >
             CGAL_postcondition(Type(result.first)<=x);
             CGAL_postcondition(Type(result.second)>=x);
             return result;
-#else
-            CGAL_LEDA_SCOPE::interval temp(x); //bug in leda
-            std::pair<double, double> result(temp.lower_bound(),temp.upper_bound());
-            CGAL_postcondition_msg(Type(result.first)<=x,
-                                                    "Known bug in LEDA <=5.0");
-            CGAL_postcondition_msg(Type(result.first)>=x,
-                                                    "Known bug in LEDA <=5.0");
-            return result;
-            // If x is very small and we look closer at x
-            // (i.e. comparison or to_double() or to_bigfloat())
-            // then x gets 0, which is really bad.
-            // Therefore we do not touch x.
-            // The LEDA interval above returns (-inf, inf) for
-            // very small x, which is also bad and leads to
-            // problems lateron. The postcondition fails in this
-            // situation.
-#endif
               // Original CGAL to_interval:
             //  Protect_FPU_rounding<true> P (CGAL_FE_TONEAREST);
             //  double approx = z.to_double();
@@ -212,7 +174,7 @@ template <> class Real_embeddable_traits< leda_real >
 
 
 template <>
-class Output_rep< ::leda::real > {
+class Output_rep< ::leda::real > : public IO_rep_is_specialized {
     const ::leda::real& t;
 public:
     //! initialize with a const reference to \a t.
@@ -226,15 +188,17 @@ public:
 };
 
 template <>
-class Output_rep< ::leda::real, CGAL::Parens_as_product_tag > {
+class Output_rep< ::leda::real, CGAL::Parens_as_product_tag >
+  : public IO_rep_is_specialized
+{
     const ::leda::real& t;
 public:
     //! initialize with a const reference to \a t.
     Output_rep( const ::leda::real& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const {
-        if (t<0) out << "(" << ::CGAL::oformat(t)<<")";
-        else out << ::CGAL::oformat(t);
+        if (t<0) out << "(" << ::CGAL::IO::oformat(t)<<")";
+        else out << ::CGAL::IO::oformat(t);
         return out;
     }
 };

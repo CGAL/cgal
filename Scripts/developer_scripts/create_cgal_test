@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # =============================================================================
 # $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Scripts/developer_scripts/create_cgal_test $
@@ -9,8 +9,8 @@
 # coordinator   : Utrecht University
 # =============================================================================
 #
-# This script creates a cgal_test_with_cmake script with entries for all .C and .cpp
-# files in the current test directory.
+# This script creates a cgal_test_with_cmake script with entries for files with a common
+# C++ file extension (as mentioned in the g++ man page) in the current test directory.
 
 VERSION=1.1
 
@@ -34,7 +34,7 @@ while [ $1 ]; do
             DO_RUN=""
             shift; continue
         ;;
-        *) 
+        *)
             echo "Unknown option: $1"
             usage
         ;;
@@ -74,19 +74,20 @@ cat << EOF
 
 EOF
   header "configure"
-cat << EOF
+cat << 'EOF'
 
 configure()
 {
   echo "Configuring... "
 
-  if eval 'cmake "\$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \\
-                                     -DCGAL_DIR="\$CGAL_DIR" \\
+  if eval 'cmake ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+                                     -DCGAL_DIR="$CGAL_DIR" \
+                                     --no-warn-unused-cli \
                                      .' ; then
 
-    echo "   successful configuration" >> \$ERRORFILE
+    echo "   successful configuration" >> $ERRORFILE
   else
-    echo "   ERROR:    configuration" >> \$ERRORFILE
+    echo "   ERROR:    configuration" >> $ERRORFILE
   fi
 }
 
@@ -96,10 +97,25 @@ cat << EOF
 
 compile_and_run()
 {
+  if [ -z "\${CGAL_DATA_DIR}" ]; then
+    if [ -d \${CGAL_DIR}/data ]; then
+      export CGAL_DATA_DIR=\${CGAL_DIR}/data
+    else
+      if [ -d \${CGAL_DIR}/Data/data ]; then
+        export CGAL_DATA_DIR=\${CGAL_DIR}/Data/data
+      else
+        echo "ERROR: Cannot run test script, please set the variable CGAL_DATA_DIR"
+        exit 1
+      fi
+    fi
+  fi
+
+  echo "Runs will be using CGAL_DATA_DIR = \${CGAL_DATA_DIR}"
+
   echo "Compiling \$1 ... "
   SUCCESS="y"
 
-  if eval '\${MAKE_CMD} VERBOSE=ON -fMakefile \$1' ; then
+  if eval '"\${MAKE_CMD}" VERBOSE=ON -fMakefile \$1' ; then
     echo "   successful compilation of \$1" >> \$ERRORFILE
   else
     echo "   ERROR:    compilation of \$1" >> \$ERRORFILE
@@ -112,7 +128,7 @@ compile_and_run()
       rm -f \$OUTPUTFILE
       COMMAND="./\$1"
       if [ -f \$1.cmd ] ; then
-        COMMAND="\$COMMAND \`cat \$1.cmd\`"
+        COMMAND="\$COMMAND \`eval echo \$(cat \$1.cmd)\`"
       fi
       if [ -f \$1.cin ] ; then
         COMMAND="cat \$1.cin | \$COMMAND"
@@ -151,13 +167,23 @@ if [ \$# -ne 0 ] ; then
 else
   echo "Run all tests."
 EOF
-  for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+
+  # workaround for Cygwin, to avoid that the 'sort' from
+  # C:\Windows\system32 is used instead of /usr/bin/sort
+  PATH=/usr/bin:$PATH
+
+  for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
     if [ -n "`grep '\<main\>' $file`" ] ; then
-      tmp=`basename $file .C`
-      tmp=`basename $tmp .cpp`
+      BASE=`basename $file .cc`
+      BASE=`basename $BASE .cp`
+      BASE=`basename $BASE .cxx`
+      BASE=`basename $BASE .cpp`
+      BASE=`basename $BASE .CPP`
+      BASE=`basename $BASE .c++`
+      BASE=`basename $BASE .C`
       cat <<EOF
-if grep -qE "^${tmp}:" Makefile; then
-  compile_and_run $tmp
+if grep -qE "^${BASE}:" Makefile; then
+  compile_and_run $BASE
   NEED_CLEAN=y
 fi
 EOF
@@ -172,7 +198,7 @@ fi
 #
 if [ -n "\${NEED_CLEAN}" ]; then
   if ! ( uname | grep -q "CYGWIN" ) ; then
-    \${MAKE_CMD} -fMakefile clean
+    "\${MAKE_CMD}" -fMakefile clean
   fi
 fi
 EOF

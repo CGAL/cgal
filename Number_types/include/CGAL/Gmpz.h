@@ -2,19 +2,11 @@
 // INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
@@ -51,7 +43,7 @@ public:
     typedef INTERN_AST::Is_square_per_sqrt< Type >
     Is_square;
     class Integral_division
-        : public std::binary_function< Type, Type,
+        : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
     public:
         Type operator()( const Type& x,
@@ -64,7 +56,7 @@ public:
     };
 
     class Gcd
-        : public std::binary_function< Type, Type,
+        : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
     public:
         Type operator()( const Type& x,
@@ -96,7 +88,7 @@ public:
     typedef INTERN_AST::Mod_per_operator< Type > Mod;
 
     class Sqrt
-        : public std::unary_function< Type, Type > {
+        : public CGAL::cpp98::unary_function< Type, Type > {
     public:
         Type operator()( const Type& x ) const {
             Gmpz result;
@@ -110,7 +102,7 @@ template <> class Real_embeddable_traits< Gmpz >
     : public INTERN_RET::Real_embeddable_traits_base< Gmpz , CGAL::Tag_true > {
 public:
     class Sgn
-        : public std::unary_function< Type, ::CGAL::Sign > {
+        : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
     public:
         ::CGAL::Sign operator()( const Type& x ) const {
             return x.sign();
@@ -118,7 +110,7 @@ public:
     };
 
     class To_double
-        : public std::unary_function< Type, double > {
+        : public CGAL::cpp98::unary_function< Type, double > {
     public:
         double operator()( const Type& x ) const {
             return x.to_double();
@@ -126,18 +118,33 @@ public:
     };
 
     class To_interval
-        : public std::unary_function< Type, std::pair< double, double > > {
+        : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
     public:
         std::pair<double, double> operator()( const Type& x ) const {
-
-            mpfr_t y;
-            mpfr_init2 (y, 53); /* Assume IEEE-754 */
-            mpfr_set_z (y, x.mpz(), GMP_RNDD);
-            double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
-            mpfr_set_z (y, x.mpz(), GMP_RNDU);
-            double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
-            mpfr_clear (y);
-            return std::pair<double, double>(i, s);
+#if MPFR_VERSION_MAJOR >= 3
+          MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+          int r = mpfr_set_z (y, x.mpz(), MPFR_RNDA);
+          double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+          if (r == 0 && is_finite (i))
+            return std::pair<double, double>(i, i);
+          else
+          {
+            double s = nextafter (i, 0);
+            if (i < 0)
+              return std::pair<double, double>(i, s);
+            else
+              return std::pair<double, double>(s, i);
+          }
+#else
+          mpfr_t y;
+          mpfr_init2 (y, 53); /* Assume IEEE-754 */
+          mpfr_set_z (y, x.mpz(), GMP_RNDD);
+          double i = mpfr_get_d (y, GMP_RNDD); /* EXACT but can overflow */
+          mpfr_set_z (y, x.mpz(), GMP_RNDU);
+          double s = mpfr_get_d (y, GMP_RNDU); /* EXACT but can overflow */
+          mpfr_clear (y);
+          return std::pair<double, double>(i, s);
+#endif
         }
     };
 };
@@ -148,7 +155,7 @@ template<> class Algebraic_structure_traits< Quotient<Gmpz> >
 public:
     typedef Quotient<Gmpz> Type;
 
-    struct To_double: public std::unary_function<Quotient<Gmpz>, double>{
+    struct To_double: public CGAL::cpp98::unary_function<Quotient<Gmpz>, double>{
         double operator()(const Quotient<Gmpz>& quot){
             mpq_t  mpQ;
             mpq_init(mpQ);
@@ -178,8 +185,8 @@ struct Needs_parens_as_product<Gmpz> {
 
 
 /*! \ingroup NiX_Modular_traits_spec
- *  \brief a model of concept ModularTraits, 
- *  specialization of NiX::Modular_traits. 
+ *  \brief a model of concept ModularTraits,
+ *  specialization of NiX::Modular_traits.
  */
 template<>
 class Modular_traits< Gmpz > {
@@ -199,7 +206,7 @@ class Modular_traits< Gmpz > {
         NT operator()(const Residue_type& x){
           return NT(x.get_value());
         }
-    };    
+    };
 };
 
 } //namespace CGAL
@@ -211,10 +218,11 @@ class Modular_traits< Gmpz > {
 namespace Eigen {
   template<class> struct NumTraits;
   template<> struct NumTraits<CGAL::Gmpz>
-  {     
+  {
     typedef CGAL::Gmpz Real;
     typedef CGAL::Gmpq NonInteger;
     typedef CGAL::Gmpz Nested;
+    typedef CGAL::Gmpz Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }
@@ -233,7 +241,6 @@ namespace Eigen {
 
 
 //since types are included by Gmp_coercion_traits.h:
-#include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpzf.h>
 #include <CGAL/GMP_arithmetic_kernel.h>

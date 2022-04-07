@@ -1,40 +1,113 @@
-/// \defgroup PkgPointSetProcessing Point Set Processing Reference
+/// \defgroup PkgPointSetProcessing3Ref Point Set Processing Reference
 
 /*!
-\addtogroup PkgPointSetProcessing
-\todo check generated documentation
-\cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessingSummary}
+\defgroup PkgPointSetProcessing3Algorithms Algorithms
+\ingroup PkgPointSetProcessing3Ref
+
+Collection of algorithms of point set processing (smoothing,
+simplification, etc.).
+
+\defgroup PkgPointSetProcessing3IO I/O Functions
+\ingroup PkgPointSetProcessing3Ref
+
+\defgroup PkgPointSetProcessing3IODeprecated I/O Functions (Deprecated)
+\ingroup PkgPointSetProcessing3IO
+
+\defgroup PkgPointSetProcessing3IOOff I/O (OFF Formats)
+\ingroup PkgPointSetProcessing3Ref
+
+\defgroup PkgPointSetProcessing3IOXyz I/O (XYZ Formats)
+\ingroup PkgPointSetProcessing3Ref
+
+\defgroup PkgPointSetProcessing3IOPly I/O (PLY Format)
+\ingroup PkgPointSetProcessing3Ref
+
+Read and write points (with or without additional properties) in PLY
+format.
+
+\defgroup PkgPointSetProcessing3IOLas I/O (LAS Format)
+\ingroup PkgPointSetProcessing3Ref
+
+Read and write points (with or without additional properties) in LAS
+format.
+
+\addtogroup PkgPointSetProcessing3Ref
+\cgalPkgDescriptionBegin{Point Set Processing,PkgPointSetProcessing3}
 \cgalPkgPicture{point_set_processing_detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Pierre Alliez, Laurent Saboret, Nader Salman}
-\cgalPkgDesc{This \cgal component implements methods to analyze and process unorganized point sets. The input is an unorganized point set, possibly with normal attributes (unoriented or oriented). The point set can be analyzed to measure its average spacing, and processed through functions devoted to the simplification, outlier removal, smoothing, normal estimation and normal orientation.}
-\cgalPkgManuals{Chapter_Point_Set_Processing,PkgPointSetProcessing}
+\cgalPkgAuthors{Pierre Alliez, Simon Giraudot, Clément Jamin, Florent Lafarge, Quentin Mérigot, Jocelyn Meyron, Laurent Saboret, Nader Salman, Shihao Wu, Necip Fazil Yildiran}
+\cgalPkgDesc{This \cgal component implements methods to analyze and process unorganized point sets. The input is an unorganized point set, possibly with normal attributes (unoriented or oriented). The point set can be analyzed to measure its average spacing, and processed through functions devoted to the simplification, outlier removal, smoothing, normal estimation, normal orientation, feature edges estimation and registration.}
+\cgalPkgManuals{Chapter_Point_Set_Processing,PkgPointSetProcessing3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref thirdpartyEigen "Eigen"}
+\cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:ass-psp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
-## Functions ##
+\cgalCRPSection{Algorithms}
 
-- `CGAL::read_off_points()`
-- `CGAL::read_xyz_points()`
 - `CGAL::compute_average_spacing()`
+- `CGAL::estimate_global_k_neighbor_scale()`
+- `CGAL::estimate_global_range_scale()`
+- `CGAL::estimate_local_k_neighbor_scales()`
+- `CGAL::estimate_local_range_scales()`
+- `CGAL::OpenGR::compute_registration_transformation()`
+- `CGAL::OpenGR::register_point_sets()`
+- `CGAL::pointmatcher::compute_registration_transformation()`
+- `CGAL::pointmatcher::register_point_sets()`
 - `CGAL::remove_outliers()`
+- `CGAL::cluster_point_set()`
 - `CGAL::grid_simplify_point_set()`
 - `CGAL::random_simplify_point_set()`
+- `CGAL::hierarchy_simplify_point_set()`
+- `CGAL::wlop_simplify_and_regularize_point_set()`
 - `CGAL::jet_smooth_point_set()`
+- `CGAL::bilateral_smooth_point_set()`
 - `CGAL::jet_estimate_normals()`
 - `CGAL::pca_estimate_normals()`
 - `CGAL::mst_orient_normals()`
-- `CGAL::write_off_points()`
-- `CGAL::write_xyz_points()`
+- `CGAL::scanline_orient_normals()`
+- `CGAL::edge_aware_upsample_point_set()`
+- `CGAL::compute_vcm()`
+- `CGAL::vcm_estimate_normals()`
+- `CGAL::vcm_is_on_feature_edge()`
+- `CGAL::structure_point_set()`
+
+\cgalCRPSection{I/O (All Formats)}
+
+- `CGAL::IO::read_points()`
+- `CGAL::IO::write_points()`
+
+\cgalCRPSection{I/O (XYZ/OFF Formats)}
+
+- \link PkgPointSetProcessing3IOOff OFF I/O Functions (`read_OFF()` and `write_OFF()`)\endlink
+- \link PkgPointSetProcessing3IOXyz XYZ I/O Functions (`read_XYZ()` and `write_XYZ()`)\endlink
+
+\cgalCRPSection{I/O (PLY Format)}
+
+- \link PkgPointSetProcessing3IOPly `CGAL::IO::read_PLY()` \endlink
+- `CGAL::IO::read_PLY_with_properties()`
+- \link PkgPointSetProcessing3IOPly `CGAL::IO::write_PLY()` \endlink
+- `CGAL::IO::write_PLY_with_properties()`
+- `CGAL::IO::PLY_property<T>`
+- `CGAL::IO::make_ply_point_reader()`
+- `CGAL::IO::make_ply_point_writer()`
+- `CGAL::IO::make_ply_normal_reader()`
+- `CGAL::IO::make_ply_normal_writer()`
+
+\cgalCRPSection{I/O (LAS Format)}
+
+- `CGAL::IO::read_LAS()`
+- `CGAL::IO::read_LAS_with_properties()`
+- `CGAL::IO::write_LAS()`
+- `CGAL::IO::write_LAS_with_properties()`
+- `CGAL::IO::make_las_point_reader()`
+- `CGAL::IO::make_las_point_writer()`
 
 */
-

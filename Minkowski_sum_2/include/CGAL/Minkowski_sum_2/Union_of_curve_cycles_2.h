@@ -2,23 +2,18 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_UNION_OF_CURVE_CYCLES_2_H
 #define CGAL_UNION_OF_CURVE_CYCLES_2_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Minkowski_sum_2/Union_of_cycles_2.h>
 
@@ -151,7 +146,7 @@ public:
 
       return (temp);
     }
-      
+
   };
 
   /*! Default constructor. */
@@ -179,7 +174,7 @@ public:
     this->_construct_arrangement (begin, end, arr);
 
     // Produce the result. First set the outer boundary of the union, given
-    // as the inner boundary of the single hole in the unbounded face. 
+    // as the inner boundary of the single hole in the unbounded face.
     Face_iterator                    fit;
     const Face_handle                uf = arr.unbounded_face();
     Inner_ccb_iterator               iccb_it = uf->inner_ccbs_begin();
@@ -193,7 +188,7 @@ public:
     for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit)
     {
       CGAL_assertion (fit->data() != this->UNVISITED);
-      
+
       // If a bounded face has an inside count that equals 0, it forms a hole
       // in the union.
       if (! fit->is_unbounded() && fit->data() == 0)

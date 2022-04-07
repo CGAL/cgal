@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cassert>
 
-#include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 
 #ifdef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
@@ -13,19 +12,19 @@
 
 int main()
 {
-  typedef CGAL::Arithmetic_kernel AK; 
+  typedef CGAL::Arithmetic_kernel AK;
   typedef AK::Integer Integer;
 
   typedef CGAL::Polynomial<Integer> Poly;
-  typedef CGAL::Polynomial_traits_d<Poly> PT; 
+  typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Integer" << std::endl;
   std::cerr << "--------------------------------------" << std::endl;
-  CGAL::Test_Pol::test_multiple_dimensions(PT());  
+  CGAL::Test_Pol::test_multiple_dimensions(PT());
 
   return 0;
 }
-    
+
 #else
 int main()
 {

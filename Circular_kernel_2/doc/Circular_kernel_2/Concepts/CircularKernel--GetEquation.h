@@ -16,16 +16,16 @@ public:
 /// @{
 
 /*!
-Returns the equation of the line. 
-*/ 
-CircularKernel::Polynomial_1_2 
-operator()(const CircularKernel::Line_2 & c); 
+Returns the equation of the line.
+*/
+CircularKernel::Polynomial_1_2
+operator()(const CircularKernel::Line_2 & c);
 
 /*!
-Returns the equation of the circle. 
-*/ 
-CircularKernel::Polynomial_for_circles_2_2 
-operator()(const CircularKernel::Circle_2 & c); 
+Returns the equation of the circle.
+*/
+CircularKernel::Polynomial_for_circles_2_2
+operator()(const CircularKernel::Circle_2 & c);
 
 /// @}
 

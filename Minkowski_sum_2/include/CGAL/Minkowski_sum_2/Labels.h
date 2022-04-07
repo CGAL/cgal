@@ -2,23 +2,18 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein   <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
 #ifndef CGAL_MINKOWSKI_SUM_LABELS_H
 #define CGAL_MINKOWSKI_SUM_LABELS_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 namespace CGAL {
 
@@ -46,7 +41,7 @@ public:
    * \param component The index of the component.
    * \param index Index of the point within the component.
    */
-  Point_label (unsigned int component, 
+  Point_label (unsigned int component,
                unsigned int index) :
     _component (component),
     _index (index)
@@ -67,7 +62,7 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    _index == label._index);
+      _index == label._index);
   }
 
   /*! Get the component. */
@@ -86,7 +81,7 @@ public:
   void set_component (unsigned int component)
   {
     CGAL_precondition (component != 0);
-    
+
     _component = component;
     return;
   }
@@ -134,7 +129,7 @@ public:
    * \param is_last Is this the last curve of the component.
    */
   X_curve_label (bool is_directed_right,
-                 unsigned int component, 
+                 unsigned int component,
                  unsigned int index,
                  bool is_last = false) :
     _component (component),
@@ -173,7 +168,7 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    _index == label._index);
+      _index == label._index);
   }
 
   /*! Check whether the given label is the predecessor of this label. */
@@ -183,8 +178,8 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    (label._index + 1 == _index ||
-	     (label._is_last && _index == 0)));
+      (label._index + 1 == _index ||
+       (label._is_last && _index == 0)));
   }
 
   /*! Check whether the given label is the succcessor of this label. */
@@ -194,8 +189,8 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    (_index + 1 == label._index ||
-	     (_is_last && label._index == 0)));
+      (_index + 1 == label._index ||
+       (_is_last && label._index == 0)));
   }
 
   /*!
@@ -252,13 +247,13 @@ public:
   void set_component (unsigned int component)
   {
     CGAL_precondition (component != 0);
-    
+
     _component = component;
     return;
   }
 
   /*!
-   * Set the curve index within the component. 
+   * Set the curve index within the component.
    * \param index The index in the component.
    * \param is_last Is this the last curve of the component.
    */

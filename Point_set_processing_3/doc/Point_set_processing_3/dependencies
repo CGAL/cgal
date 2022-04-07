@@ -4,7 +4,12 @@ STL_Extension
 Algebraic_foundations
 Circulator
 Stream_support
-Surface_reconstruction_points_3
+Poisson_surface_reconstruction_3
 Property_map
 Bounding_volumes
 Principal_component_analysis
+Jet_fitting_3
+Solver_interface
+Shape_detection
+Advancing_front_surface_reconstruction
+BGL

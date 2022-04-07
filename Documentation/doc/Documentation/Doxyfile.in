@@ -1,22 +1,28 @@
 # this package is a little peculiar and different from the other packages
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME        = "CGAL ${CGAL_CREATED_VERSION_NUM} - Manual"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Manual"
 PROJECT_BRIEF       =
 OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/Manual
 
-INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
+INPUT = ${CGAL_PACKAGE_DOC_DIR} \
         ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt
 
 HTML_HEADER         = ${CGAL_DOC_HEADER}
-LAYOUT_FILE         = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
+LAYOUT_FILE         = ${CGAL_DOC_RESOURCE_DIR}/DoxygenLayout.xml
 GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
-EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples
+EXAMPLE_PATH        = ${CGAL_Convex_hull_2_EXAMPLE_DIR} \
+                      ${CGAL_Kernel_23_EXAMPLE_DIR} \
+                      ${CGAL_Poisson_surface_reconstruction_3_EXAMPLE_DIR} \
+                      ${CGAL_Surface_mesh_EXAMPLE_DIR} \
+                      ${CGAL_Classification_EXAMPLE_DIR}
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
-HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
-                    ${CMAKE_SOURCE_DIR}/Documentation/cgal_stylesheet.css \
+HTML_EXTRA_FILES += ${CGAL_DOC_RESOURCE_DIR}/hacks.js \
+                    ${CGAL_DOC_RESOURCE_DIR}/menu_version.js \
+                    ${CGAL_DOC_RESOURCE_DIR}/cgal_stylesheet.css \
                     ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib \
-                    ${CMAKE_BINARY_DIR}/how_to_cite.html
+                    ${CMAKE_BINARY_DIR}/how_to_cite.html \
+                    ${CGAL_PACKAGE_DOC_DIR}/fig/g-196x196-doc.png
 
 ALLEXTERNALS             = true
 EXTERNAL_GROUPS          = false
@@ -28,88 +34,4 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
-ALIASES                 += "cgalReleaseNumber=${CGAL_CREATED_VERSION_NUM}"
-
-# all image paths, maybe auto-generate this?
-IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
-             ${CMAKE_SOURCE_DIR}/Algebraic_foundations/doc/Algebraic_foundations/fig \
-             ${CMAKE_SOURCE_DIR}/AABB_tree/doc/AABB_tree/fig \
-             ${CMAKE_SOURCE_DIR}/Polygon/doc/Polygon/fig \
-             ${CMAKE_SOURCE_DIR}/Number_types/doc/Number_types/fig \
-             ${CMAKE_SOURCE_DIR}/Alpha_shapes_2/doc/Alpha_shapes_2/fig \
-             ${CMAKE_SOURCE_DIR}/Alpha_shapes_3/doc/Alpha_shapes_3/fig \
-             ${CMAKE_SOURCE_DIR}/Apollonius_graph_2/doc/Apollonius_graph_2/fig \
-             ${CMAKE_SOURCE_DIR}/Bounding_volumes/doc/Bounding_volumes/fig \
-             ${CMAKE_SOURCE_DIR}/Inscribed_areas/doc/Inscribed_areas/fig \
-             ${CMAKE_SOURCE_DIR}/Matrix_search/doc/Matrix_search/fig \
-             ${CMAKE_SOURCE_DIR}/Box_intersection_d/doc/Box_intersection_d/fig \
-             ${CMAKE_SOURCE_DIR}/CGAL_ipelets/doc/CGAL_ipelets/fig \
-             ${CMAKE_SOURCE_DIR}/Circulator/doc/Circulator/fig \
-             ${CMAKE_SOURCE_DIR}/Convex_decomposition_3/doc/Convex_decomposition_3/fig \
-             ${CMAKE_SOURCE_DIR}/Convex_hull_2/doc/Convex_hull_2/fig \
-             ${CMAKE_SOURCE_DIR}/Convex_hull_3/doc/Convex_hull_3/fig \
-             ${CMAKE_SOURCE_DIR}/Convex_hull_d/doc/Convex_hull_d/fig \
-             ${CMAKE_SOURCE_DIR}/Envelope_2/doc/Envelope_2/fig \
-             ${CMAKE_SOURCE_DIR}/Envelope_3/doc/Envelope_3/fig \
-             ${CMAKE_SOURCE_DIR}/Generator/doc/Generator/fig \
-             ${CMAKE_SOURCE_DIR}/Geomview/doc/Geomview/fig \
-             ${CMAKE_SOURCE_DIR}/GraphicsView/doc/GraphicsView/fig \
-             ${CMAKE_SOURCE_DIR}/HalfedgeDS/doc/HalfedgeDS/fig \
-             ${CMAKE_SOURCE_DIR}/BGL/doc/BGL/fig \
-             ${CMAKE_SOURCE_DIR}/Combinatorial_map/doc/Combinatorial_map/fig \
-             ${CMAKE_SOURCE_DIR}/Linear_cell_complex/doc/Linear_cell_complex/fig \
-             ${CMAKE_SOURCE_DIR}/Interval_skip_list/doc/Interval_skip_list/fig \
-             ${CMAKE_SOURCE_DIR}/Nef_2/doc/Nef_2/fig \
-             ${CMAKE_SOURCE_DIR}/Nef_S2/doc/Nef_S2/fig \
-             ${CMAKE_SOURCE_DIR}/Nef_3/doc/Nef_3/fig \
-             ${CMAKE_SOURCE_DIR}/QP_solver/doc/QP_solver/fig \
-             ${CMAKE_SOURCE_DIR}/Mesh_2/doc/Mesh_2/fig \
-             ${CMAKE_SOURCE_DIR}/Surface_mesher/doc/Surface_mesher/fig \
-             ${CMAKE_SOURCE_DIR}/Mesh_3/doc/Mesh_3/fig \
-             ${CMAKE_SOURCE_DIR}/Jet_fitting_3/doc/Jet_fitting_3/fig \
-             ${CMAKE_SOURCE_DIR}/Minkowski_sum_2/doc/Minkowski_sum_2/fig \
-             ${CMAKE_SOURCE_DIR}/Minkowski_sum_3/doc/Minkowski_sum_3/fig \
-             ${CMAKE_SOURCE_DIR}/Miscellany/doc/Miscellany/fig \
-             ${CMAKE_SOURCE_DIR}/Modular_arithmetic/doc/Modular_arithmetic/fig \
-             ${CMAKE_SOURCE_DIR}/Partition_2/doc/Partition_2/fig \
-             ${CMAKE_SOURCE_DIR}/Interpolation/doc/Interpolation/fig \
-             ${CMAKE_SOURCE_DIR}/Kernel_23/doc/Kernel_23/fig \
-             ${CMAKE_SOURCE_DIR}/Circular_kernel_2/doc/Circular_kernel_2/fig \
-             ${CMAKE_SOURCE_DIR}/Circular_kernel_3/doc/Circular_kernel_3/fig \
-             ${CMAKE_SOURCE_DIR}/Algebraic_kernel_d/doc/Algebraic_kernel_d/fig \
-             ${CMAKE_SOURCE_DIR}/Kernel_d/doc/Kernel_d/fig \
-             ${CMAKE_SOURCE_DIR}/Point_set_2/doc/Point_set_2/fig \
-             ${CMAKE_SOURCE_DIR}/SearchStructures/doc/SearchStructures/fig \
-             ${CMAKE_SOURCE_DIR}/Polytope_distance_d/doc/Polytope_distance_d/fig \
-             ${CMAKE_SOURCE_DIR}/Polyhedron/doc/Polyhedron/fig \
-             ${CMAKE_SOURCE_DIR}/Polynomial/doc/Polynomial/fig \
-             ${CMAKE_SOURCE_DIR}/Principal_component_analysis/doc/Principal_component_analysis/fig \
-             ${CMAKE_SOURCE_DIR}/STL_Extension/doc/STL_Extension/fig \
-             ${CMAKE_SOURCE_DIR}/Skin_surface_3/doc/Skin_surface_3/fig \
-             ${CMAKE_SOURCE_DIR}/Snap_rounding_2/doc/Snap_rounding_2/fig \
-             ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Sweep_line_2/fig \
-             ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig \
-             ${CMAKE_SOURCE_DIR}/Boolean_set_operations_2/doc/Boolean_set_operations_2/fig \
-             ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/TDS_2/fig \
-             ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/Triangulation_2/fig \
-             ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/TDS_3/fig \
-             ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/Triangulation_3/fig \
-             ${CMAKE_SOURCE_DIR}/Ridges_3/doc/Ridges_3/fig \
-             ${CMAKE_SOURCE_DIR}/Point_set_processing_3/doc/Point_set_processing_3/fig \
-             ${CMAKE_SOURCE_DIR}/Point_set_processing_3/doc/Property_map/fig \
-             ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_framework/fig \
-             ${CMAKE_SOURCE_DIR}/Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig \
-             ${CMAKE_SOURCE_DIR}/Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig \
-             ${CMAKE_SOURCE_DIR}/Spatial_searching/doc/Spatial_searching/fig \
-             ${CMAKE_SOURCE_DIR}/Spatial_sorting/doc/Spatial_sorting/fig \
-             ${CMAKE_SOURCE_DIR}/Segment_Delaunay_graph_2/doc/Segment_Delaunay_graph_2/fig \
-             ${CMAKE_SOURCE_DIR}/Straight_skeleton_2/doc/Straight_skeleton_2/fig \
-             ${CMAKE_SOURCE_DIR}/Voronoi_diagram_2/doc/Voronoi_diagram_2/fig \
-             ${CMAKE_SOURCE_DIR}/Surface_mesh_simplification/doc/Surface_mesh_simplification/fig \
-             ${CMAKE_SOURCE_DIR}/Surface_mesh_segmentation/doc/Surface_mesh_segmentation/fig \
-             ${CMAKE_SOURCE_DIR}/Subdivision_method_3/doc/Subdivision_method_3/fig \
-             ${CMAKE_SOURCE_DIR}/Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig \
-             ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig \
-             ${CMAKE_SOURCE_DIR}/Stream_lines_2/doc/Stream_lines_2/fig \
-             ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/fig \
-             ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/fig \
+ALIASES                 += "cgalReleaseNumber =${CGAL_DOC_VERSION}"

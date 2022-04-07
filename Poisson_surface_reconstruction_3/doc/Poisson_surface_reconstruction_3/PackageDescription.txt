@@ -1,0 +1,25 @@
+/// \defgroup PkgPoissonSurfaceReconstruction3Ref Poisson Surface Reconstruction Reference
+/*!
+\addtogroup PkgPoissonSurfaceReconstruction3Ref
+\cgalPkgDescriptionBegin{Poisson Surface Reconstruction,PkgPoissonSurfaceReconstruction3}
+\cgalPkgPicture{surface_reconstruction_points_detail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Pierre Alliez, Laurent Saboret, Gaël Guennebaud}
+\cgalPkgDesc{This package implements a surface reconstruction method: Poisson Surface Reconstruction. It takes as input a set of points with oriented normals and computes an implicit function. The \cgal surface mesh generator can then be used to extract an iso-surface from this function.  }
+\cgalPkgManuals{Chapter_Poisson_Surface_Reconstruction,PkgPoissonSurfaceReconstruction3Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.5}
+\cgalPkgDependsOn{\ref PkgSolverInterface}
+\cgalPkgBib{cgal:asg-srps}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+\cgalCRPSection{Classes}
+- `CGAL::Poisson_reconstruction_function<GeomTraits>`
+
+*/
+

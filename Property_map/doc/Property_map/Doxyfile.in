@@ -1,0 +1,6 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - CGAL and Boost Property Maps"
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/property_map.h
+EXCLUDE += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Dynamic_property_map.h
+EXAMPLE_PATH += ${CGAL_Point_set_processing_3_EXAMPLE_DIR}

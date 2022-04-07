@@ -1,0 +1,9 @@
+# -*- comment-start: "#"; -*-
+#
+# Number_of_points_2 functor in 'Arr_polyline_traits_2' returns the number of segments in a polycurve + 1. (note: only polycurves)
+# Format:
+# <command> <polycurve id> <expected result (number of segments in polycurve +1)>
+number_of_points 0 3
+number_of_points 1 3
+number_of_points 2 4
+number_of_points 3 3

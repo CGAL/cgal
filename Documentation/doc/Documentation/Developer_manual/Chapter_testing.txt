@@ -1,0 +1,55 @@
+/*!
+
+\page devman_testing Running a Testsuite Locally
+\authors \cgal developers
+
+\section pkgTestsuite Running the Testsuite Locally of a Single Package
+
+Before submitting a change for integration into \cgal it is good style
+to run the testsuite of the modified package and all packages that
+could be impacted.
+Here is what you need:
+
+- A shell such as bash (install Cygwin, when you are on Windows)
+- <i>optional:</i> put `Scripts/scripts` and `Scripts/developer_scripts` on your `PATH` environment variable or
+  Alternatively, you can call the scripts mentioned below using their full path or a relative path
+- define the environment variable `CGAL_DIR`. It should be the directory where you built CGAL.
+- <i>optional:</i> define the environment variables for Boost, GMP, and any optional third party lib, e.g. Eigen.
+- <i>On Windows:</i> define the environment variable `MAKE_CMD`  (put the line `export MAKE_CMD=nmake` in your `$HOME/.bashrc` for VC++)
+- <i>On Windows:</i> define the environment variable `CMAKE_GENERATOR` (put the line `export CMAKE_GENERATOR='-GNMake Makefiles'`  in your `$HOME/.bashrc` for VC++)
+- go in the directory you want to test
+- Run `cgal_test_with_cmake` in the `test` and `examples` directories of the package. This should run CMake, compile and run, and you can see what happened in the generated file `error.txt`.
+
+\section fullTestsuite Running the Whole Testsuite
+We describe here how to proceed to the testing of a full copy of `master` or any branch by creating a <i>flat release</i>
+(that is having a layout similar to a release rather than a branch layout with header files gathered by packages).
+
+The creation of the flat release is done using the script `create_internal_release` located in the directory `Scripts/developer_scripts`.
+Running the script with no argument will give the complete usage of this script. We only describe one way of using it.
+
+The prerequisite is to have a checkout of the branch we want to test.
+In the example, it will be located in <code>~/Git/cgal/</code>.
+
+First one goes into a directory where the flat release will be created:
+\code
+> cd /tmp
+\endcode
+
+Then the script `create_internal_release` is ran:
+\code
+  >  create_internal_release -r CGAL-I-FOO -a ~/Git/cgal/
+\endcode
+
+The directory `CGAL-I-FOO` now contains the flat release of the branch in `~/Git/cgal`.
+Then you need to compile this flat release and set `CGAL_DIR` accordingly as explained in the installation manual.
+
+To run the test-suite simply do:
+\code
+  > cd CGAL-I-FOO/test
+  > ./run_testsuite_with_cmake
+\endcode
+and wait for the results to be written in the file `error.txt`.
+
+
+
+*/

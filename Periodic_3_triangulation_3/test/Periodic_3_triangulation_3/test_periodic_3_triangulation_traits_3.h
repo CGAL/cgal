@@ -2,25 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
-// $Id$ 
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // $Date$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 
 #include <cassert>
 
@@ -46,6 +38,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Homogeneous.h>
+#include <CGAL/Timer.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -55,6 +48,8 @@
 
 void test_periodic_3_triangulation_traits_3()
 {
+  CGAL::Timer t;
+  t.start();
   std::cout<<"Statically filtered predicates:"<<std::endl;
   _test_periodic_3_static_filters();
 
@@ -95,19 +90,16 @@ void test_periodic_3_triangulation_traits_3()
   std::cout<<"  GMP not available"<<std::endl;
 #endif
 
+#ifdef TEST_CARTESIAN
 #ifdef CGAL_USE_LEDA
   std::cout<<"  LEDA...";std::cout.flush();
 #define RT leda_integer
 #define FT leda_rational
   test_traits<KERNEL>();
-#define LRT CGAL::Lazy_exact_nt< RT >
-#define LFT CGAL::Lazy_exact_nt< FT >
-  test_traits<LAZY_KERNEL>();
+
   std::cout<<" done"<<std::endl;
 #undef RT
 #undef FT
-#undef LRT
-#undef LFT
 #else
   std::cout<<"  LEDA not available"<<std::endl;
 #endif
@@ -117,15 +109,14 @@ void test_periodic_3_triangulation_traits_3()
 #define RT CORE::Expr
 #define FT CGAL::Quotient<RT>
   test_traits<KERNEL>();
-#define LRT CGAL::Lazy_exact_nt< RT >
-#define LFT CGAL::Lazy_exact_nt< FT >
-  test_traits<LAZY_KERNEL>();
+
   std::cout<<" done"<<std::endl;
 #undef RT
 #undef FT
-#undef LRT
-#undef LFT
 #else
   std::cout<<"  CORE not available"<<std::endl;
 #endif
+
+#endif
+  std::cout << t.time() << " sec." << std::endl;
 }

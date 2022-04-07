@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if which python2 2>/dev/null >/dev/null; then 
-    exec python2 ${CMAKE_BINARY_DIR}/pkglist_filter.py "$1"
-elif which python2.7 2>/dev/null >/dev/null; then 
-    exec python2.7 ${CMAKE_BINARY_DIR}/pkglist_filter.py "$1"
-elif which python2.6 2>/dev/null >/dev/null; then 
-    exec python2.6 ${CMAKE_BINARY_DIR}/pkglist_filter.py "$1"
-fi

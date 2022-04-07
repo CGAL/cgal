@@ -2,24 +2,19 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s): Efi Fogel         <efif@post.tau.ac.il>
 //            Naama mayer       <naamamay@post.tau.ac.il>
 
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_H
 #define CGAL_ARR_POLYHEDRAL_SGM_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Polyhedral _sgm is a data dtructure that represents a 3D convex polyhedron.
@@ -43,6 +38,7 @@
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Polygon_2_algorithms.h>
+#include <CGAL/Kernel/global_functions_3.h>
 
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_spherical_gaussian_map_3.h>
@@ -68,14 +64,11 @@ private:
   typedef typename PolyhedralSgm::Geometry_traits_2         Geometry_traits_2;
   typedef typename Geometry_traits_2::Point_2               Point_2;
   typedef typename Geometry_traits_2::X_monotone_curve_2    X_monotone_curve_2;
-  typedef typename Geometry_traits_2::Curve_2               Curve_2;  
+  typedef typename Geometry_traits_2::Curve_2               Curve_2;
 
   typedef typename Geometry_traits_2::Point_3               Point_3;
   typedef typename Geometry_traits_2::Vector_3              Vector_3;
-  
-  /*! */
-  typedef unsigned int*                                     Coord_index_iter;
-  
+
   // Polyhedron types:
   typedef typename Polyhedron::Vertex_const_handle
     Polyhedron_vertex_const_handle;
@@ -94,9 +87,13 @@ private:
   typedef boost::is_same<typename Polyhedron::Plane_3, Vector_3>
     Polyhedron_has_normal;
 
+  typedef typename Polyhedron::HalfedgeDS             HDS;
+  typedef Polyhedron_incremental_builder_3<HDS>       Builder;
+  typedef typename Builder::size_type                 size_type;
+
   /*! Transforms a (planar) facet into a normal */
   struct Normal_equation {
-    template <class Facet>
+    template <typename Facet>
     typename Facet::Plane_3 operator()(Facet& f) {
       typename Facet::Halfedge_handle h = f.halfedge();
       return CGAL::cross_product(h->next()->vertex()->point() -
@@ -111,7 +108,7 @@ private:
     std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
                    polyhedron.planes_begin(), Normal_equation());
   }
-  
+
   /*! Compute the equation of the undelying plane of a facet */
   struct Plane_equation {
     template <typename Facet>
@@ -128,9 +125,9 @@ private:
     std::transform(polyhedron.facets_begin(), polyhedron.facets_end(),
                    polyhedron.planes_begin(), Plane_equation());
   }
-  
+
   /*! A point adder */
-  template <class HDS, class PointIterator_3>
+  template <typename HDS, typename PointIterator>
   class Point_adder {
   private:
     typedef Polyhedron_incremental_builder_3<HDS>               Builder;
@@ -142,8 +139,8 @@ private:
 
     /*! Constructor */
     Point_adder(Builder& B) : m_B(B) {}
-      
-    Polyhedron_vertex_handle operator()(PointIterator_3 pi)
+
+    Polyhedron_vertex_handle operator()(PointIterator pi)
     {
       typedef typename HDS::Vertex      Vertex;
       typedef typename Vertex::Point    Point;
@@ -152,7 +149,7 @@ private:
   };
 
   /*! Specialized point adder */
-  template <class HDS> class Point_adder<HDS, Point_3*> {
+  template <typename HDS> class Point_adder<HDS, Point_3*> {
   private:
     typedef Polyhedron_incremental_builder_3<HDS>               Builder;
     Builder& m_B;
@@ -163,13 +160,13 @@ private:
 
     /*! Constructor */
     Point_adder(Builder& B) : m_B(B) {}
-      
+
     Polyhedron_vertex_handle operator()(Point_3* pi)
     { return m_B.add_vertex(*pi); }
   };
-  
+
   /*! */
-  template <class PointIterator_3>
+  template <typename PointIterator, typename CoordIndexIter>
   class Build_surface : public Modifier_base<typename Polyhedron::HalfedgeDS>
   {
   private:
@@ -180,52 +177,46 @@ private:
     typedef typename Polyhedron::HalfedgeDS             HDS;
     typedef Polyhedron_incremental_builder_3<HDS>       Builder;
     typedef typename Builder::size_type                 size_type;
-    typedef unsigned int*                               Coord_index_iter;
 
     /*! The begin iterator of the points */
-    const PointIterator_3& m_points_begin;
+    const PointIterator& m_points_begin;
 
     /*! The end iterator of the points */
-    const PointIterator_3& m_points_end;
-    
+    const PointIterator& m_points_end;
+
     /*! The number of points */
     size_type m_num_points;
 
     /*! The begin iterator of the indices */
-    const Coord_index_iter& m_indices_begin;
+    const CoordIndexIter& m_indices_begin;
 
     /*! The end iterator of the indices */
-    const Coord_index_iter& m_indices_end;
-    
+    const CoordIndexIter& m_indices_end;
+
     /*! The number of facest */
     size_type m_num_facets;
 
-    /*! The type of the facets. */
-    size_type m_num_vertices_per_facet;
-    
     /*! The index of the marked vertex */
-    unsigned int m_marked_vertex_index;
+    size_type m_marked_vertex_index;
 
     /*! The index of the marked edge */
-    unsigned int m_marked_edge_index;
+    size_type m_marked_edge_index;
 
     /*! The index of the marked face */
-    unsigned int m_marked_facet_index;
-    
+    size_type m_marked_facet_index;
+
   public:
     /*! Constructor */
-    Build_surface(const PointIterator_3& points_begin,
-                  const PointIterator_3& points_end,
-                  unsigned int num_points,
-                  const Coord_index_iter& indices_begin,
-                  const Coord_index_iter& indices_end,
-                  size_type num_facets,
-                  size_type num_vertices_per_facet = 0) :
+    Build_surface(const PointIterator& points_begin,
+                  const PointIterator& points_end,
+                  size_type num_points,
+                  const CoordIndexIter& indices_begin,
+                  const CoordIndexIter& indices_end,
+                  size_type num_facets) :
       m_points_begin(points_begin), m_points_end(points_end),
       m_num_points(num_points),
       m_indices_begin(indices_begin), m_indices_end(indices_end),
       m_num_facets(num_facets),
-      m_num_vertices_per_facet(num_vertices_per_facet),
       m_marked_vertex_index(0),
       m_marked_edge_index(0),
       m_marked_facet_index(0)
@@ -235,13 +226,18 @@ private:
     virtual ~Build_surface() {}
 
     /*! Set the marked-vertex index */
-    void set_marked_vertex_index(unsigned int id) {m_marked_vertex_index = id;}
+    void set_marked_vertex_index(size_type id) {m_marked_vertex_index = id;}
 
     /*! Set the marked-edge index */
-    void set_marked_edge_index(unsigned int id) {m_marked_edge_index = id;}
+    void set_marked_edge_index(size_type id) {m_marked_edge_index = id;}
 
     /*! Set the marked-face index */
-    void set_marked_facet_index(unsigned int id) {m_marked_facet_index = id;}
+    void set_marked_facet_index(size_type id) {m_marked_facet_index = id;}
+
+    /*! Add vertices to the current facet. */
+    template <typename Iterator, typename Builder>
+    void add_vertices_to_facet(Iterator begin, Iterator end, Builder& B)
+    { for (Iterator it = begin; it != end; ++it) B.add_vertex_to_facet(*it); }
 
     /*! builds the polyhedron */
     void operator()(HDS& hds)
@@ -250,61 +246,26 @@ private:
       Builder B(hds, true);
       B.begin_surface(m_num_points, m_num_facets);
       // Add the points:
-      unsigned int counter = 0;
-      Point_adder<HDS, PointIterator_3> add(B);
-      for (PointIterator_3 pi = m_points_begin; pi != m_points_end; ++pi) {
+      size_type counter = 0;
+      Point_adder<HDS, PointIterator> add(B);
+      for (PointIterator pi = m_points_begin; pi != m_points_end; ++pi) {
         Polyhedron_vertex_handle vh = add(pi);
         if (counter == m_marked_vertex_index) vh->set_marked(true);
         ++counter;
       }
-      
+
       // Add the facets:
       counter = 0;
-      switch (m_num_vertices_per_facet) {
-       case 0:          // '0' indicates variant number of vertices per facet
-        {
-         Coord_index_iter ii = m_indices_begin;
-         while (ii != m_indices_end) {
-           Polyhedron_facet_handle fh = B.begin_facet();
-           if (counter == m_marked_facet_index) fh->set_marked(true);
-           int index = *ii++;
-           while (index != -1) {
-             B.add_vertex_to_facet(index);
-             index = *ii++;
-           } 
-           B.end_facet();
-           ++counter;
-         }
-        }
-        break;
-        
-       case 3:
-        // Unfold for to improve preformance:
-        for (Coord_index_iter ii = m_indices_begin; ii != m_indices_end;
-             ii += m_num_vertices_per_facet)
-        {
-          Polyhedron_facet_handle fh = B.begin_facet();
-          if (counter == m_marked_facet_index) fh->set_marked(true);
-          B.add_vertex_to_facet(*ii);
-          B.add_vertex_to_facet(*(ii+1));
-          B.add_vertex_to_facet(*(ii+2));
-          B.end_facet();
-          ++counter;
-        }
-        break;
-
-       default:
-        for (Coord_index_iter ii = m_indices_begin; ii != m_indices_end;
-             ii += m_num_vertices_per_facet)
-        {
-          Polyhedron_facet_handle fh = B.begin_facet();
-          if (counter == m_marked_facet_index) fh->set_marked(true);
-          for (size_type i = 0; i < m_num_vertices_per_facet; ++i)
-            B.add_vertex_to_facet(*(ii + i));
-          B.end_facet();
-          ++counter;
-        }
-        break;
+      for (CoordIndexIter it = m_indices_begin; it != m_indices_end; ++it) {
+        Polyhedron_facet_handle fh = B.begin_facet();
+        if (counter == m_marked_facet_index) fh->set_marked(true);
+        //! \todo EF: when upgrading to C++11 enable the following code and
+        // remove add_vertices_to_facet().
+        // for (const auto& facet : *it) B.add_vertex_to_facet(facet);
+        // B.end_facet();
+        add_vertices_to_facet(it->begin(), it->end(), B);
+        B.end_facet();
+        ++counter;
       }
       B.end_surface();
     }
@@ -312,15 +273,15 @@ private:
 
   /*! A visitor class */
   Visitor* m_visitor;
-  
+
   /*! The index of the marked vertex */
-  unsigned int m_marked_vertex_index;
+  size_type m_marked_vertex_index;
 
   /*! The index of the marked edge */
-  unsigned int m_marked_edge_index;
+  size_type m_marked_edge_index;
 
   /*! The index of the marked face */
-  unsigned int m_marked_facet_index;
+  size_type m_marked_facet_index;
 
   /*! */
   Polyhedron_vertex_const_handle m_src_vertex;
@@ -335,8 +296,7 @@ private:
   virtual void handle_new_edge(typename Base::Halfedge_handle edge)
   {
     typedef typename Base::Face_handle          Arr_face_handle;
-    typedef typename Base::Vertex_handle        Arr_vertex_handle;
-    
+
     Arr_face_handle src_face = edge->twin()->face();
     Arr_face_handle trg_face = edge->face();
     src_face->set_point(m_src_vertex->point());
@@ -354,29 +314,28 @@ private:
       // m_visitor->update_dual_face(m_halfedge->facet(), edge->target());
     }
   }
-  
+
   /*! Update the polyhedron */
-  template <class PointIterator_3>  
+  template <typename PointIterator, typename CoordIndexIter>
   void update_polyhedron(Polyhedron& polyhedron,
-                         const PointIterator_3& points_begin,
-                         const PointIterator_3& points_end,
-                         unsigned int num_points,
-                         const Coord_index_iter indices_begin,
-                         Coord_index_iter indices_end,
-                         unsigned int num_facets,
-                         unsigned int num_vertices_per_facet = 0)
+                         const PointIterator& points_begin,
+                         const PointIterator& points_end,
+                         size_type num_points,
+                         const CoordIndexIter indices_begin,
+                         const CoordIndexIter indices_end,
+                         size_type num_facets)
   {
     /*! The builder */
-    Build_surface<PointIterator_3>
+    Build_surface<PointIterator, CoordIndexIter>
       surface(points_begin, points_end, num_points,
-              indices_begin, indices_end, num_facets, num_vertices_per_facet);
+              indices_begin, indices_end, num_facets);
     surface.set_marked_vertex_index(m_marked_vertex_index);
     surface.set_marked_edge_index(m_marked_edge_index);
     surface.set_marked_facet_index(m_marked_facet_index);
     polyhedron.delegate(surface);
 
     // Mark the marked (half) edges:
-    unsigned int counter = 0;
+    size_type counter = 0;
     typedef typename Polyhedron::Edge_iterator Polyhedron_edge_iterator;
     Polyhedron_edge_iterator ei;
     for (ei = polyhedron.edges_begin(); ei != polyhedron.edges_end(); ++ei) {
@@ -393,7 +352,7 @@ private:
   template <typename Facet>
   const Vector_3& get_normal(const Facet& facet, boost::true_type) const
   { return facet->plane(); }
-  
+
   /*! Obtain the normal of a facet of a polyhedron that supports planes */
   template <typename Facet>
   Vector_3 get_normal(const Facet& facet, boost::false_type) const
@@ -413,7 +372,7 @@ private:
     typedef typename Base::Halfedge_handle              Halfedge_handle;
 
     Vertex_handle invalid_vertex;
-    
+
     // For each vertex, traverse incident faces:
     Polyhedron_halfedge_around_vertex_circulator hec = src->vertex_begin();
 
@@ -461,7 +420,7 @@ private:
                   << static_cast<float>(todouble(m_trg_vertex->point().z()))
                   << std::endl;
 #endif
-        
+
         m_halfedge = next_hec;
 #if 0
         Halfedge_handle he = this->insert(normal1, normal2);
@@ -526,7 +485,7 @@ private:
       ++hec;
     } while (hec != begin_hec);
   }
-  
+
   /*! Compute the spherical gaussian map of a convex polyhedron
    * \param polyhedron the input polyhedron
    */
@@ -552,17 +511,17 @@ private:
     // Traverse all verticess recursively:
     process_vertex(polyhedron.vertices_begin(), true);
   }
-  
+
 public:
   /*! Constructor */
   Arr_polyhedral_sgm_initializer(PolyhedralSgm& sgm) :
     Base(sgm),
-    m_visitor(NULL),
+    m_visitor(nullptr),
     m_marked_vertex_index(0),
     m_marked_edge_index(0),
     m_marked_facet_index(0)
   {}
-    
+
   /*! Destructor */
   virtual ~Arr_polyhedral_sgm_initializer() {}
 
@@ -571,7 +530,7 @@ public:
    * \param visitor
    * \pre The polyhedron polyhedron does not have coplanar facets.
    */
-  void operator()(Polyhedron& polyhedron, Visitor* visitor = NULL)
+  void operator()(Polyhedron& polyhedron, Visitor* visitor = nullptr)
   {
 #if 0
     std::copy(polyhedron.points_begin(), polyhedron.points_end(),
@@ -592,24 +551,22 @@ public:
 
     compute_sgm(polyhedron);
   }
-  
+
   /*! Initialize the Spherical Gaussian map */
-  template <class PointIterator_3>
-  void operator()(const PointIterator_3& points_begin,
-                  const PointIterator_3& points_end,
-                  unsigned int num_points,
-                  const Coord_index_iter indices_begin,
-                  Coord_index_iter indices_end,
-                  unsigned int num_facets,
-                  unsigned int num_vertices_per_facet = 0,
-                  Visitor* visitor = NULL)
+  template <typename PointIterator, typename CoordIndexIter>
+  void operator()(const PointIterator& points_begin,
+                  const PointIterator& points_end,
+                  size_type num_points,
+                  const CoordIndexIter indices_begin,
+                  const CoordIndexIter indices_end,
+                  size_type num_facets,
+                  Visitor* visitor = nullptr)
   {
     m_visitor = visitor;
- 
+
     Polyhedron polyhedron;
     update_polyhedron(polyhedron, points_begin, points_end, num_points,
-                      indices_begin, indices_end, num_facets,
-                      num_vertices_per_facet);
+                      indices_begin, indices_end, num_facets);
 
 #if 0
     std::copy(polyhedron.points_begin(), polyhedron.points_end(),
@@ -631,35 +588,37 @@ public:
   }
 
   /*! Set the marked-vertex index */
-  void set_marked_vertex_index(unsigned int id) {m_marked_vertex_index = id;}
+  void set_marked_vertex_index(size_type id) {m_marked_vertex_index = id;}
 
   /*! Set the marked-edge index */
-  void set_marked_edge_index(unsigned int id) {m_marked_edge_index = id;}
+  void set_marked_edge_index(size_type id) {m_marked_edge_index = id;}
 
   /*! Set the marked-face index */
-  void set_marked_facet_index(unsigned int id) {m_marked_facet_index = id;}
+  void set_marked_facet_index(size_type id) {m_marked_facet_index = id;}
 };
 
 /*!
  */
-template <class Geometry_traits_2,
+template <typename Geometry_traits_2,
           template <class T>
-          class T_Dcel = Arr_polyhedral_sgm_arr_dcel>
+          class Dcel_T = Arr_polyhedral_sgm_arr_dcel>
 class Arr_polyhedral_sgm :
-  public Arr_spherical_gaussian_map_3<Geometry_traits_2, T_Dcel>
+  public Arr_spherical_gaussian_map_3<Geometry_traits_2, Dcel_T>
 {
 private:
-  typedef Arr_polyhedral_sgm<Geometry_traits_2, T_Dcel>     Self;
-  
+  typedef Arr_polyhedral_sgm<Geometry_traits_2, Dcel_T>     Self;
+
 public:
   typedef typename Geometry_traits_2::Point_3               Point_3;
   typedef typename Geometry_traits_2::Vector_3              Vector_3;
 
-  typedef T_Dcel<Geometry_traits_2>                         Dcel;
-  
+  typedef Dcel_T<Geometry_traits_2>                         Dcel;
+  typedef typename Dcel::Size                               size_type;
+
+
   // For some reason MSVC barfs on the friend statement below. Therefore,
   // we declare the Base to be public to overcome the problem.
-  typedef Arr_spherical_gaussian_map_3<Geometry_traits_2, T_Dcel>   Base;
+  typedef Arr_spherical_gaussian_map_3<Geometry_traits_2, Dcel_T>   Base;
 
   // WE NEED TO ADD THE CGAL NAMESPACE TO PACIFY THE G++ 4.3.3 COMPILER.
   typedef CGAL::Arr_polyhedral_sgm_overlay<Self>
@@ -667,17 +626,17 @@ public:
 
 #if 0
   /*! Allow the initializer to update the SGM data members */
-  template <class Polyhedron, class Visitor>
+  template <typename Polyhedron, typename Visitor>
   friend class Arr_polyhedral_sgm_initializer<Self, Polyhedron, Visitor>;
 #endif
-  
+
 private:
   /*! The gravity center */
   Point_3 m_center;
-  
+
   /*! Indicated whether the center has been calculated */
   bool m_dirty_center;
-  
+
   /*! Calculate the center of the polyhedron */
   void calculate_center()
   {
@@ -695,16 +654,13 @@ private:
 
     m_dirty_center = false;
   }
-  
+
 public:
   /*! Parameter-less Constructor */
   Arr_polyhedral_sgm() : m_dirty_center(true) {}
-  
+
   /*! Copy Constructor */
-  Arr_polyhedral_sgm(const Self& sgm)
-  {
-    assign(sgm);
-  }
+  Arr_polyhedral_sgm(const Self& sgm) { assign(sgm); }
 
   /*! Assign a spherical Gaussian map to this */
   void assign(const Self& sgm)
@@ -714,15 +670,15 @@ public:
 
     typename Dcel::Face_iterator fit;
     typename Base::Face_const_iterator fit1 = sgm.faces_begin();
-	  
+
     // Set the points of the faces.
     for (fit = this->_dcel().faces_begin(); fit != this->_dcel().faces_end();
          ++fit)
     {
-      fit->set_point (fit1->point());
+      fit->set_point(fit1->point());
       ++fit1;
     }
-	  	  
+
     typename Dcel::Edge_iterator eit;
     typename Base::Edge_const_iterator eit1 = sgm.edges_begin();
 
@@ -735,7 +691,7 @@ public:
       ++eit1;
     }
   }
-  
+
   /*! Destructor */
   virtual ~Arr_polyhedral_sgm() { clear(); }
 
@@ -746,14 +702,14 @@ public:
     m_dirty_center = true;
     Base::clear();
   }
-  
+
  // /*! Compute the minkowski sum of a range of objects of type
  //  * Arr_polyhedral_sgm
  //  */
- // template <class SgmIterator>  
+ // template <typename SgmIterator>
  // void minkowski_sum(SgmIterator begin, SgmIterator end)
  // {
-	//typename SgmIterator::value_type* sgm1 = *begin++;
+        //typename SgmIterator::value_type* sgm1 = *begin++;
  //   typename SgmIterator::value_type* sgm2 = *begin;
  //   minkowski_sum(sgm1, sgm2);
  // }
@@ -761,7 +717,7 @@ public:
  // /*! Compute the minkowski sum of a range of objects of type
  //  * Arr_polyhedral_sgm
  //  */
- // template <typename SgmIterator, typename OverlayTraits>  
+ // template <typename SgmIterator, typename OverlayTraits>
  // void minkowski_sum(SgmIterator begin, SgmIterator end,
  //                    OverlayTraits& overlay_traits)
  // {
@@ -769,12 +725,12 @@ public:
  //   typename SgmIterator::value_type* sgm2 = *begin;
  //   minkowski_sum(sgm1, sgm2, overlay_traits);
  // }
- 
+
   /*! Compute the Minkowski sum of 2 objects of type Arr_polyhedral_sgm
    * \param sgm1 the first Arr_polyhedral_sgm object
    * \param sgm2 the second Arr_polyhedral_sgm object
    */
-  template <class Arr_polyhedral_sgm>
+  template <typename Arr_polyhedral_sgm>
   void minkowski_sum(const Arr_polyhedral_sgm& sgm1,
                      const Arr_polyhedral_sgm& sgm2)
   {
@@ -788,25 +744,25 @@ public:
    * \param sgm1 the first Arr_polyhedral_sgm object
    * \param sgm2 the second Arr_polyhedral_sgm object
    */
-  template <class Arr_polyhedral_sgm, typename OverlayTraits>
+  template <typename Arr_polyhedral_sgm, typename OverlayTraits>
   void minkowski_sum(const Arr_polyhedral_sgm& sgm1,
                      const Arr_polyhedral_sgm& sgm2,
                      OverlayTraits& overlay_traits)
   { CGAL::overlay(sgm1, sgm2, *this, overlay_traits); }
-  
+
   /*! Obtain the number of (primal) vertices */
-  unsigned int number_of_vertices() const
+  size_type number_of_vertices() const
   { return (static_cast<const Base*>(this))->number_of_faces(); }
-  
+
   /*! Obtain the number of (primal) edges
    * \return the number of (primal) edges.
    * Edges that connect vertices of degree 2 are not counted, as they have
    * been introduced only to make non-x-monotone curves x-monotone.
    *
    */
-  unsigned int number_of_edges() const
+  size_type number_of_edges() const
   {
-    unsigned int size = 0;
+    size_type size = 0;
     typename Base::Vertex_const_iterator vit;
     for (vit = this->vertices_begin(); vit != this->vertices_end(); ++vit)
       if (vit->degree() == 2) size++;
@@ -818,17 +774,17 @@ public:
    * Vertices of degree 2 are not counted, as they have been introduced only
    * to make non-x-monotone curves x-monotone.
    */
-  unsigned int number_of_facets() const
+  size_type number_of_facets() const
   {
-    unsigned int size = 0;
+    size_type size = 0;
     typename Base::Vertex_const_iterator vit;
     for (vit = this->vertices_begin(); vit != this->vertices_end(); ++vit)
       if (vit->degree() > 2) size++;
     return size;
   }
-  
+
   /* Print the sgm vertices */
-  void print_vertices()   
+  void print_vertices()
   {
     typename Base::Face_const_iterator vit;
     for (vit = this->faces_begin(); vit != this->faces_end(); ++vit)
@@ -839,7 +795,7 @@ public:
   void print_stat()
   {
     Base::print_stat();
-    
+
     std::cout << "Polyhedron"
               << ", no. facets: " << number_of_facets()
               << ", no. edges: " << number_of_edges()

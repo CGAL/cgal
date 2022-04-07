@@ -4,9 +4,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 
 #include <list>
+#include <iostream>
 
 typedef CGAL::Quotient<int>                           Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
@@ -32,7 +32,7 @@ int main ()
   expected_intersect[0] = false;
   expected_intersect[1] = true;
   expected_intersect[2] = true;
-  
+
   insert(arr, Segment_2(Point_2(0, 0), Point_2(2, 0)));
   insert(arr, Segment_2(Point_2(2, 0), Point_2(2, 2)));
   insert(arr, Segment_2(Point_2(2, 2), Point_2(0, 2)));
@@ -41,15 +41,14 @@ int main ()
   for (k = 0; k < N_SEGMENTS; k++)
   {
     bool do_inter = do_intersect(arr, segs[k]);
-    
+
     std::cout << "Segment: " << segs[k];
     std::cout << "        Expected: " << expected_intersect[k];
     std::cout << "        Actual: " << do_inter << std::endl;
-    
+
     if (expected_intersect[k] != do_inter)
       return (1);
   }
-  
+
   return (0);
 }
-

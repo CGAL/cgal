@@ -1,19 +1,11 @@
 // Copyright (c) 2001-2007  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion
@@ -21,6 +13,7 @@
 #ifndef CGAL_MP_FLOAT_H
 #define CGAL_MP_FLOAT_H
 
+#include <CGAL/disable_warnings.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/Real_embeddable_traits.h>
@@ -34,6 +27,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <boost/operators.hpp>
 
 // MP_Float : multiprecision scaled integers.
 
@@ -84,7 +78,7 @@ std::pair<double,double> to_interval(const Quotient<MP_Float>&);
 MP_Float div(const MP_Float& n1, const MP_Float& n2);
 
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
-  
+
 } //namespace INTERN_MP_FLOAT
 
 std::pair<double, int>
@@ -113,12 +107,19 @@ MP_Float operator*(const MP_Float &a, const MP_Float &b);
 MP_Float operator%(const MP_Float &a, const MP_Float &b);
 
 
-class MP_Float
+class MP_Float : boost::totally_ordered1<MP_Float
+#ifdef _MSC_VER
+                 , boost::ordered_ring_operators2<MP_Float, int
+                 , boost::ordered_ring_operators2<MP_Float, double
+                 > >
+#endif
+                 >
 {
 public:
-  typedef short      limb;
-  typedef int        limb2;
-  typedef double     exponent_type;
+  typedef short          limb;
+  typedef unsigned short unsigned_limb;
+  typedef int            limb2;
+  typedef double         exponent_type;
 
   typedef std::vector<limb>  V;
   typedef V::const_iterator  const_iterator;
@@ -140,7 +141,7 @@ private:
     iterator i = v.begin();
     for (++i; *i == 0; ++i)
       ;
-    exp += i-v.begin();
+    exp += static_cast<exponent_type>(i-v.begin());
     v.erase(v.begin(), i);
   }
 
@@ -159,12 +160,13 @@ public:
   void split(limb2 l, limb & high, limb & low)
   {
     const unsigned int sizeof_limb=8*sizeof(limb);
-    const limb2 mask= ~( static_cast<limb2>(-1) << sizeof_limb ); //0000ffff
-    //Note: For Integer type, if the destination type is signed, the value is unchanged 
+    const limb2 mask = 0x0000ffff;
+
+    //Note: For Integer type, if the destination type is signed, the value is unchanged
     //if it can be represented in the destination type)
-    low=static_cast<limb>(l & mask); //extract low bits from l 
-    high = (l - low) >> sizeof_limb; //extract high bits from l
-    
+    low = static_cast<limb>(l & mask); //extract low bits from l
+    high= static_cast<limb>((l - low) >> sizeof_limb); //extract high bits from l
+
     CGAL_postcondition ( l == low + ( static_cast<limb2>(high) << sizeof_limb ) );
   }
 
@@ -186,6 +188,7 @@ public:
   MP_Float()
       : exp(0)
   {
+    CGAL_assertion(sizeof(limb2)==4); // so that the above 0x0000ffff is correct
     CGAL_assertion(sizeof(limb2) == 2*sizeof(limb));
     CGAL_assertion(v.empty());
     // Creates zero.
@@ -227,9 +230,25 @@ public:
   MP_Float& operator*=(const MP_Float &a) { return *this = *this * a; }
   MP_Float& operator%=(const MP_Float &a) { return *this = *this % a; }
 
+  friend bool operator<(const MP_Float &a, const MP_Float &b)
+  { return INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
+
+  friend bool operator==(const MP_Float &a, const MP_Float &b)
+  { return (a.v == b.v) && (a.v.empty() || (a.exp == b.exp)); }
+
+#ifdef _MSC_VER
+  // Needed because without /permissive-, it makes hidden friends visible (from Quotient)
+  friend bool operator==(const MP_Float &a, int    b) { return a == MP_Float(b); }
+  friend bool operator==(const MP_Float &a, double b) { return a == MP_Float(b); }
+  friend bool operator< (const MP_Float &a, int    b) { return a <  MP_Float(b); }
+  friend bool operator< (const MP_Float &a, double b) { return a <  MP_Float(b); }
+  friend bool operator> (const MP_Float &a, int    b) { return a >  MP_Float(b); }
+  friend bool operator> (const MP_Float &a, double b) { return a >  MP_Float(b); }
+#endif
+
   exponent_type max_exp() const
   {
-    return v.size() + exp;
+    return exponent_type(v.size()) + exp;
   }
 
   exponent_type min_exp() const
@@ -302,7 +321,7 @@ public:
   // a value with an exponent close to 0.
   exponent_type find_scale() const
   {
-    return exp + v.size();
+    return exp + exponent_type(v.size());
   }
 
   // Rescale the value by some factor (in limbs).  (substract the exponent)
@@ -313,11 +332,11 @@ public:
   }
 
   // Accessory function that finds the least significant bit set (its position).
-  static unsigned short 
+  static unsigned short
   lsb(limb l)
   {
     unsigned short nb = 0;
-    for (; (l&1)==0; ++nb, l>>=1)
+    for (; (l&1)==0; ++nb, l=(limb)(l>>1) )
       ;
     return nb;
   }
@@ -347,7 +366,7 @@ public:
     CGAL_assertion(r.v.begin() != r.v.end());
     unsigned short nb = lsb(r.v[0]);
     r.v.clear();
-    r.v.push_back(1<<nb);
+    r.v.push_back((limb)(1<<nb));
     return (sign() > 0) ? r : -r;
   }
 
@@ -369,30 +388,6 @@ inline
 void swap(MP_Float &m, MP_Float &n)
 { m.swap(n); }
 
-inline
-bool operator<(const MP_Float &a, const MP_Float &b)
-{ return INTERN_MP_FLOAT::compare(a, b) == SMALLER; }
-
-inline
-bool operator>(const MP_Float &a, const MP_Float &b)
-{ return b < a; }
-
-inline
-bool operator>=(const MP_Float &a, const MP_Float &b)
-{ return ! (a < b); }
-
-inline
-bool operator<=(const MP_Float &a, const MP_Float &b)
-{ return ! (a > b); }
-
-inline
-bool operator==(const MP_Float &a, const MP_Float &b)
-{ return (a.v == b.v) && (a.v.empty() || (a.exp == b.exp)); }
-
-inline
-bool operator!=(const MP_Float &a, const MP_Float &b)
-{ return ! (a == b); }
-
 MP_Float
 approximate_sqrt(const MP_Float &d);
 
@@ -405,7 +400,7 @@ approximate_division(const MP_Float &n, const MP_Float &d);
 template <> class Algebraic_structure_traits< MP_Float >
   : public Algebraic_structure_traits_base< MP_Float,
                                             Unique_factorization_domain_tag
-	    // with some work on mod/div it could be Euclidean_ring_tag
+            // with some work on mod/div it could be Euclidean_ring_tag
                                           >  {
   public:
 
@@ -413,7 +408,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     typedef Tag_true            Is_numerical_sensitive;
 
     struct Unit_part
-      : public std::unary_function< Type , Type >
+      : public CGAL::cpp98::unary_function< Type , Type >
     {
       Type operator()(const Type &x) const {
         return x.unit_part();
@@ -421,7 +416,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     struct Integral_division
-        : public std::binary_function< Type,
+        : public CGAL::cpp98::binary_function< Type,
                                  Type,
                                  Type > {
     public:
@@ -437,7 +432,7 @@ template <> class Algebraic_structure_traits< MP_Float >
 
 
     class Square
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::square(x);
@@ -445,7 +440,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     class Gcd
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -455,7 +450,7 @@ template <> class Algebraic_structure_traits< MP_Float >
     };
 
     class Div
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -466,19 +461,19 @@ template <> class Algebraic_structure_traits< MP_Float >
 
   typedef INTERN_AST::Mod_per_operator< Type > Mod;
 // Default implementation of Divides functor for unique factorization domains
-  // x divides y if gcd(y,x) equals x up to inverses 
-  class Divides 
-    : public std::binary_function<Type,Type,bool>{ 
+  // x divides y if gcd(y,x) equals x up to inverses
+  class Divides
+    : public CGAL::cpp98::binary_function<Type,Type,bool>{
   public:
-    bool operator()( const Type& x,  const Type& y) const {  
+    bool operator()( const Type& x,  const Type& y) const {
       return internal::division(y,x).second == 0 ;
     }
-    // second operator computing q = x/y 
-    bool operator()( const Type& x,  const Type& y, Type& q) const {    
+    // second operator computing q = x/y
+    bool operator()( const Type& x,  const Type& y, Type& q) const {
       std::pair<Type,Type> qr = internal::division(y,x);
       q=qr.first;
       return qr.second == 0;
-      
+
     }
     CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type , bool)
   };
@@ -490,7 +485,7 @@ template <> class Real_embeddable_traits< MP_Float >
   public:
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return x.sign();
@@ -498,7 +493,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -508,7 +503,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_double( x );
@@ -516,7 +511,7 @@ template <> class Real_embeddable_traits< MP_Float >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return INTERN_MP_FLOAT::to_interval( x );
@@ -529,7 +524,7 @@ template <> class Real_embeddable_traits< MP_Float >
 namespace INTERN_MP_FLOAT{
 
 //Sqrt_extension internally uses Algebraic_structure_traits
-template <class ACDE_TAG_, class FP_TAG>  
+template <class ACDE_TAG_, class FP_TAG>
 double
 to_double(const Sqrt_extension<MP_Float,MP_Float,ACDE_TAG_,FP_TAG> &x)
 {
@@ -564,7 +559,7 @@ to_double(const Sqrt_extension<MP_Float,MP_Float,ACDE_TAG_,FP_TAG> &x)
   std::pair<double, int> v3 = to_double_exp(d3);
   double scale3 = std::ldexp(1.0, n3.second - v3.second);
 
-  return ((n1.first / v1.first) * scale1) + 
+  return ((n1.first / v1.first) * scale1) +
          ((n2.first / v2.first) * scale2) *
          std::sqrt((n3.first / v3.first) * scale3);
 }
@@ -809,11 +804,11 @@ simplify_quotient(MP_Float & numerator, MP_Float & denominator)
 inline void simplify_root_of_2(MP_Float &/*a*/, MP_Float &/*b*/, MP_Float&/*c*/) {
 #if 0
   if(is_zero(a)) {
-  	simplify_quotient(b,c); return;
+          simplify_quotient(b,c); return;
   } else if(is_zero(b)) {
-  	simplify_quotient(a,c); return;
+          simplify_quotient(a,c); return;
   } else if(is_zero(c)) {
-  	simplify_quotient(a,b); return;
+          simplify_quotient(a,b); return;
   }
   MP_Float::exponent_type va = a.exp +
     (MP_Float::exponent_type) a.v.size();
@@ -848,14 +843,14 @@ class Real_embeddable_traits< Quotient<MP_Float> >
     : public INTERN_QUOTIENT::Real_embeddable_traits_quotient_base<
 Quotient<MP_Float> >{
 public:
-    struct To_double: public std::unary_function<Quotient<MP_Float>, double>{
+    struct To_double: public CGAL::cpp98::unary_function<Quotient<MP_Float>, double>{
          inline
          double operator()(const Quotient<MP_Float>& q) const {
             return INTERN_MP_FLOAT::to_double(q);
         }
     };
     struct To_interval
-        : public std::unary_function<Quotient<MP_Float>, std::pair<double,double> > {
+        : public CGAL::cpp98::unary_function<Quotient<MP_Float>, std::pair<double,double> > {
         inline
         std::pair<double,double> operator()(const Quotient<MP_Float>& q) const {
             return INTERN_MP_FLOAT::to_interval(q);
@@ -864,16 +859,18 @@ public:
 };
 
 inline MP_Float min BOOST_PREVENT_MACRO_SUBSTITUTION(const MP_Float& x,const MP_Float& y){
-  return (x<=y)?x:y; 
+  return (x<=y)?x:y;
 }
 inline MP_Float max BOOST_PREVENT_MACRO_SUBSTITUTION(const MP_Float& x,const MP_Float& y){
-  return (x>=y)?x:y; 
+  return (x>=y)?x:y;
 }
 
 
 // Coercion_traits
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(MP_Float)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int, MP_Float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float, MP_Float)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double, MP_Float)
 
 
 } //namespace CGAL
@@ -885,6 +882,7 @@ namespace Eigen {
     typedef CGAL::MP_Float Real;
     typedef CGAL::Quotient<CGAL::MP_Float> NonInteger;
     typedef CGAL::MP_Float Nested;
+    typedef CGAL::MP_Float Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }
@@ -906,4 +904,5 @@ namespace Eigen {
 //specialization for Get_arithmetic_kernel
 #include <CGAL/MP_Float_arithmetic_kernel.h>
 
+#include <CGAL/enable_warnings.h>
 #endif // CGAL_MP_FLOAT_H

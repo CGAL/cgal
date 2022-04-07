@@ -1,4 +1,0 @@
-/// \example Kinetic_data_structures/Kinetic_regular_triangulation_3.cpp
-/// \example Kinetic_data_structures/Kinetic_sort.cpp
-/// \example Kinetic_framework/defining_a_simulation_traits.cpp
-/// \example Kinetic_framework/trivial_kds.cpp

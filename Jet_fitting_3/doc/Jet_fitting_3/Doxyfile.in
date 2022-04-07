@@ -1,9 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Estimation of Local Differential Properties of Point-Sampled Surfaces"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Jet_fitting_3/doc/Jet_fitting_3/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Estimation of Local Differential Properties of Point-Sampled Surfaces"

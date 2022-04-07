@@ -1,9 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Linear Cell Complex"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Linear_cell_complex/doc/Linear_cell_complex/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Linear Cell Complex"

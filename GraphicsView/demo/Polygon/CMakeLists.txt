@@ -1,63 +1,69 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (GraphicsView)
+cmake_minimum_required(VERSION 3.1...3.20)
+project(Polygon_Demo)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
 endif()
 
-find_package(CGAL COMPONENTS Qt4 Core)
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 
-include(${CGAL_USE_FILE})
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5 Core)
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+include(CGAL_Eigen3_support)
+if(NOT TARGET CGAL::Eigen3_support)
+  message(
+    STATUS
+      "NOTICE: This project requires the Eigen library, and will not be compiled."
+  )
+  return()
+endif()
 
-#find_package(Qt4)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
 
-include_directories (BEFORE ../../include)
+if(CGAL_Qt5_FOUND AND Qt5_FOUND)
+  include(${CGAL_USE_FILE})
+  add_definitions(-DQT_NO_KEYWORDS)
+  set(CMAKE_AUTOMOC ON)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
-
-  if( CGAL_Core_FOUND)
+  if(CGAL_Core_FOUND)
     add_definitions(-DCGAL_USE_CORE)
   endif()
 
-  include(${QT_USE_FILE})
   #--------------------------------
   # Demo: Polygon_2
   #--------------------------------
   # UI files (Qt Designer files)
-  qt4_wrap_ui( DT_UI_FILES Polygon_2.ui )
+  qt5_wrap_ui(DT_UI_FILES Polygon_2.ui)
 
   # qrc files (resources files, that contain icons, at least)
-  qt4_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
+  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ./Polygon_2.qrc)
 
-  # use the Qt MOC preprocessor on classes that derives from QObject
-  qt4_generate_moc( Polygon_2.cpp "${CMAKE_CURRENT_BINARY_DIR}/Polygon_2.moc" )
-
-#  add_library( CGAL SHARED IMPORTED ) 
-#  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )
+  #  add_library( CGAL SHARED IMPORTED )
+  #  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )
 
   # The executable itself.
-  add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+  add_executable(Polygon_2 Polygon_2.cpp ${DT_UI_FILES} ${DT_RESOURCE_FILES}
+                           ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polygon_2 )
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS Polygon_2)
 
+  target_link_libraries(Polygon_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
+                                          CGAL::Eigen3_support Qt5::Gui)
 
-  # Link with Qt libraries
-  target_link_libraries( Polygon_2 ${QT_LIBRARIES} )
-  # And with CGAL libraries
-  target_link_libraries( Polygon_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Polygon_2)
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt4, and will not be compiled.")
+  message(
+    STATUS
+      "NOTICE: This demo requires CGAL, CGAL_Core, and Qt5, and will not be compiled."
+  )
 
 endif()

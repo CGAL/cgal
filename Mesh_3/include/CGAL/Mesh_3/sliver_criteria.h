@@ -2,28 +2,24 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_SLIVER_CRITERIA_H
 #define CGAL_MESH_3_SLIVER_CRITERIA_H
+
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/min_dihedral_angle.h>
 #include <CGAL/Mesh_3/radius_ratio.h>
@@ -46,6 +42,7 @@ public:
   typedef Cell_vector_ Cell_vector;
 
 public:
+  virtual double get_default_value() const = 0;
   virtual double get_max_value() const = 0;
   //Sliver_perturber performs perturbation "unit-per-unit"
   // so it needs to know how much is a unit for each criterion
@@ -59,26 +56,26 @@ public:
       if( ! cell->is_cache_valid() )
       {
         // cell->sliver_value() is stored in a plain 64 bits floating point
-        // number, and the value computed by operator() might be 
+        // number, and the value computed by operator() might be
         // computed using the 80 bits floating point registers of the x87
-        // unit. 
-        // This could cause comparisons between sliver values to be 
+        // unit.
+        // This could cause comparisons between sliver values to be
         // inconsistent when comparing caches and registers values
         // (see also the comment below)
         // IA_force_to_double is available in CGAL/FPU.h
-        double value 
+        double value
           = CGAL::IA_force_to_double(operator()(tr_.tetrahedron(cell)));
         cell->set_sliver_value(value);
       }
       return cell->sliver_value();
-    }  
+    }
     return operator()(tr_.tetrahedron(cell));
   }
 
   virtual double operator()(const Tetrahedron_3& t) const = 0;
 
   virtual void before_move(const Cell_vector& cells) const = 0;
-  virtual bool valid_move(const Cell_vector& cells, 
+  virtual bool valid_move(const Cell_vector& cells,
                           const bool soft = false) const = 0;
 
   // Sliver bound
@@ -92,7 +89,7 @@ public:
     , sliver_bound_(bound)
   {}
 
-  virtual ~Sliver_criterion(){};
+  virtual ~Sliver_criterion(){}
 
 protected:
   const Tr& tr_;
@@ -104,7 +101,7 @@ class Min_value;
 
 template <typename Tr,
           bool update_sliver_cache = true>
-class Min_dihedral_angle_criterion 
+class Min_dihedral_angle_criterion
   : public Sliver_criterion<Tr, update_sliver_cache>
 {
 protected:
@@ -112,14 +109,11 @@ protected:
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
   typedef typename Base::Gt             Gt;
-  
+
 public:
   typedef typename Base::Cell_handle    Cell_handle;
 
-  static double default_value;
-  static double max_value;
-  static double min_value;
-
+  virtual double get_default_value() const { return 12.; }
   virtual double get_max_value() const { return 90.; }
   virtual double get_perturbation_unit() const { return 1.; }
 
@@ -134,7 +128,7 @@ public:
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
-    return CGAL::to_double(minimum_dihedral_angle(t, Gt()));
+    return CGAL::to_double(minimum_dihedral_angle(t, this->tr_.geom_traits()));
   }
 
   virtual void before_move(const Cell_vector& cells) const
@@ -147,7 +141,7 @@ public:
   {
     Min_value<Min_dihedral_angle_criterion, Cell_vector> min_value_op(*this);
     double min_val = min_value_op(cells);
-    return (min_val > min_value_before_move_) 
+    return (min_val > min_value_before_move_)
         || (soft && min_val > this->sliver_bound_);
   }
 
@@ -156,21 +150,15 @@ public:
                                const Tr& tr)
     : Base(sliver_bound, tr), min_value_before_move_(0.)
   {}
-  
+
 private:
   mutable double min_value_before_move_;
 };
 
-template<typename Tr, bool update_sliver_cache> 
-double Min_dihedral_angle_criterion<Tr, update_sliver_cache>::default_value = 12.;
-template<typename Tr, bool update_sliver_cache> 
-double Min_dihedral_angle_criterion<Tr, update_sliver_cache>::max_value = 90.; 
-template<typename Tr, bool update_sliver_cache> 
-double Min_dihedral_angle_criterion<Tr, update_sliver_cache>::min_value = 0.; 
 
 template <typename Tr,
           bool update_sliver_cache = true>
-class Radius_ratio_criterion 
+class Radius_ratio_criterion
   : public Sliver_criterion<Tr, update_sliver_cache>
 {
 protected:
@@ -179,12 +167,10 @@ protected:
   typedef typename Base::Tetrahedron_3  Tetrahedron_3;
   typedef typename Base::Cell_vector    Cell_vector;
   typedef Radius_ratio_criterion<Tr, update_sliver_cache> RR_criterion;
-  
-public:
-  static double default_value;
-  static double max_value;
-  static double min_value;
 
+public:
+
+  virtual double get_default_value() const { return 0.25; }
   virtual double get_max_value() const { return 1.; }
   virtual double get_perturbation_unit() const { return 0.05; }
 
@@ -192,7 +178,7 @@ public:
 
   virtual double operator()(const Tetrahedron_3& t) const
   {
-    return CGAL::to_double(radius_ratio(t, Gt()));
+    return CGAL::to_double(radius_ratio(t, this->tr_.geom_traits()));
   }
 
   virtual void before_move(const Cell_vector& cells) const
@@ -205,7 +191,7 @@ public:
   {
     Min_value<RR_criterion, Cell_vector> min_value_op(*this);
     double min_val = min_value_op(cells);
-    return (min_val > min_value_before_move_) 
+    return (min_val > min_value_before_move_)
         || (soft && min_val > this->sliver_bound_);
   }
 
@@ -214,17 +200,10 @@ public:
                const Tr& tr)
     : Base(sliver_bound, tr)
   {}
-  
+
 private:
   mutable double min_value_before_move_;
 };
-
-template<typename Tr, bool update_sliver_cache> 
-double Radius_ratio_criterion<Tr, update_sliver_cache>::default_value = 0.25; 
-template<typename Tr, bool update_sliver_cache> 
-double Radius_ratio_criterion<Tr, update_sliver_cache>::max_value = 1.;
-template<typename Tr, bool update_sliver_cache> 
-double Radius_ratio_criterion<Tr, update_sliver_cache>::min_value = 0.; 
 
 
 template<typename SliverCriterion, typename Cell_vector>
@@ -250,12 +229,11 @@ public:
 private:
   SliverCriterion criterion_;
 };
-  
+
 } // end namespace Mesh_3
-  
+
 } // end namespace CGAL
 
-
-
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_SLIVER_CRITERIA_H

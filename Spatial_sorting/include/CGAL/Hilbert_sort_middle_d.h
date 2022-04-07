@@ -1,28 +1,21 @@
 // Copyright (c) 2011  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     :  Olivier Devillers
 
 #ifndef CGAL_HILBERT_SORT_MIDDLE_d_H
 #define CGAL_HILBERT_SORT_MIDDLE_d_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <functional>
 #include <cstddef>
+#include <vector>
 #include <CGAL/Hilbert_sort_middle_base.h>
 
 namespace CGAL {
@@ -31,21 +24,21 @@ namespace internal {
 
     template <class K>
     struct Fixed_hilbert_cmp_d
-        : public std::binary_function<typename K::Point_d,
+        : public CGAL::cpp98::binary_function<typename K::Point_d,
                                       typename K::Point_d, bool>
     {
         typedef typename K::Point_d Point;
         K k;
-	int axe;
-	bool orient;
-	double value;
-        Fixed_hilbert_cmp_d (int a, bool o, double v, const K &_k = K()) 
-	  :  k(_k), axe(a), orient(o), value(v) {}
+        int axe;
+        bool orient;
+        double value;
+        Fixed_hilbert_cmp_d (int a, bool o, double v, const K &_k)
+          :  k(_k), axe(a), orient(o), value(v) {}
         bool operator() (const Point &p) const
         {
-	  return (orient  
-		  ? ( to_double( k.compute_coordinate_d_object() (p,axe) ) >  value)
-		  : ( to_double( k.compute_coordinate_d_object() (p,axe) ) <= value));
+          return (orient
+                  ? ( to_double( k.compute_coordinate_d_object() (p,axe) ) >  value)
+                  : ( to_double( k.compute_coordinate_d_object() (p,axe) ) <= value));
         }
     };
 
@@ -67,18 +60,18 @@ private:
     mutable int two_to_dim;
 
     struct Cmp : public internal::Fixed_hilbert_cmp_d<Kernel>
-    { Cmp (int a, bool dir, double v, const Kernel &k) 
-	: internal::Fixed_hilbert_cmp_d<Kernel> (a,dir,v,k) {} };
+    { Cmp (int a, bool dir, double v, const Kernel &k)
+        : internal::Fixed_hilbert_cmp_d<Kernel> (a,dir,v,k) {} };
 
 public:
-    Hilbert_sort_middle_d (const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
+    Hilbert_sort_middle_d (const Kernel &k, std::ptrdiff_t limit = 1)
         : _k(k), _limit (limit)
     {}
 
     template <class RandomAccessIterator>
     void sort (RandomAccessIterator begin, RandomAccessIterator end,
-	       Starting_position start, int direction, 
-	       Corner mini, Corner maxi) const
+               Starting_position start, int direction,
+               Corner mini, Corner maxi) const
    {
      if (end - begin <= _limit) return;
 
@@ -101,14 +94,14 @@ public:
        int right=current_level_step;
        bool orient = start[current_dir];
        do{
-	 dir[middle]    = current_dir; 
-	 places[middle] = internal::fixed_hilbert_split 
-                             (places[left], places[right], 
-			      Cmp (current_dir,orient,med[current_dir],_k));
-	 left =right;
-	 right+=current_level_step;
-	 middle+=current_level_step;
-	 orient = ! orient;
+         dir[middle]    = current_dir;
+         places[middle] = internal::fixed_hilbert_split
+                             (places[left], places[right],
+                              Cmp (current_dir,orient,med[current_dir],_k));
+         left =right;
+         right+=current_level_step;
+         middle+=current_level_step;
+         orient = ! orient;
        }while( left< two_to_dim);
        current_level_step = half_step;
        current_dir = (current_dir +1) % _dimension;
@@ -117,29 +110,33 @@ public:
      /////////////start recursive calls
      last_dir = (direction + _dimension -1) % _dimension;
      // first step is special
-     sort( places[0], places[1], start, last_dir,cmin,cmax);
+     if (places[1]!=end)
+       sort( places[0], places[1], start, last_dir,cmin,cmax);
      cmin[last_dir] = med[last_dir];
      cmax[last_dir] = maxi[last_dir];
-     
+
 
      for(int i=1; i<two_to_dim-1; i +=2){
        //std::cout<<i<<";"<<start[0]<<start[1]<<start[2]<<start[3]<<"/"<<dir[i+1]<<std::endl;
-       sort( places[i  ], places[i+1], start, dir[i+1],cmin,cmax);
+       if (places[i]!=begin || places[i+1]!=end)
+         sort( places[i  ], places[i+1], start, dir[i+1],cmin,cmax);
        cmax[ dir[i+1] ] =  (cmin[ dir[i+1]]==mini[ dir[i+1]])
-	                    ? maxi[ dir[i+1] ] : mini[ dir[i+1] ];
+                            ? maxi[ dir[i+1] ] : mini[ dir[i+1] ];
        cmin[ dir[i+1] ] =  med[ dir[i+1] ];
 
-       sort( places[i+1], places[i+2], start, dir[i+1],cmin,cmax);
+       if (places[i+1]!=begin || places[i+2]!=end)
+         sort( places[i+1], places[i+2], start, dir[i+1],cmin,cmax);
        cmin[ dir[i+1] ] =  cmax[ dir[i+1] ];
        cmax[ dir[i+1] ] =  med[ dir[i+1] ];
        cmax[ last_dir ] = (cmax[last_dir]==maxi[last_dir])
-	                    ? mini[ last_dir ] : maxi[ last_dir ];
+                            ? mini[ last_dir ] : maxi[ last_dir ];
        start[dir[i+1]] = !  start[dir[i+1]];
        start[last_dir] = !  start[last_dir];
      }
 
      //last step is special
-     sort( places[two_to_dim-1], places[two_to_dim], start, last_dir,cmin,cmax);
+     if (places[two_to_dim-1]!=begin)
+       sort( places[two_to_dim-1], places[two_to_dim], start, last_dir,cmin,cmax);
     }
 
 
@@ -151,24 +148,24 @@ public:
       Starting_position start(_dimension);
       Corner mini(_dimension),maxi(_dimension);
 
-      for (int i=0; i<_dimension; ++i) 
-	mini[i]=maxi[i]=to_double( _k.compute_coordinate_d_object() (*begin,i) );
+      for (int i=0; i<_dimension; ++i)
+        mini[i]=maxi[i]=to_double( _k.compute_coordinate_d_object() (*begin,i) );
       for(RandomAccessIterator it=begin+1; it<end; ++it){
-	for (int i=0; i<_dimension; ++i){
-	  double d=  to_double( _k.compute_coordinate_d_object() (*it,i) );
-	  if (d < mini[i]) mini[i] = d;
-	  if (d > maxi[i]) maxi[i] = d;
-	}
+        for (int i=0; i<_dimension; ++i){
+          double d=  to_double( _k.compute_coordinate_d_object() (*it,i) );
+          if (d < mini[i]) mini[i] = d;
+          if (d > maxi[i]) maxi[i] = d;
+        }
       }
 
 
       for (int i=0; i<_dimension; ++i) {
-	start[i]=false; 	// we start below in all coordinates
-	two_to_dim *= 2;        // compute 2^_dimension
-	if (two_to_dim*2 <= 0) {
-	  CGAL_assertion(end-begin < two_to_dim);//too many points in such dim
-	  break;
-	}
+        start[i]=false;         // we start below in all coordinates
+        two_to_dim *= 2;        // compute 2^_dimension
+        if (two_to_dim*2 <= 0) {
+          CGAL_assertion(end-begin < two_to_dim);//too many points in such dim
+          break;
+        }
       }
 
 

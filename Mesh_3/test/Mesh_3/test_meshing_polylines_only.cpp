@@ -20,7 +20,7 @@ typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
-  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
+  Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_index> C3t3;
 
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -42,13 +42,13 @@ int main(int argc, char** argv)
   // Create domain
   Polyhedron p;
   p.make_tetrahedron(Point(0, 0, 0),
-		     Point(1, 0, 0),
-		     Point(0, 1, 0),
-		     Point(0, 0, 1));
+                     Point(1, 0, 0),
+                     Point(0, 1, 0),
+                     Point(0, 0, 1));
 
     std::cout << "\tSeed is\t"
-      << CGAL::default_random.get_seed() << std::endl;
-  Mesh_domain domain(p, &CGAL::default_random);
+      << CGAL::get_default_random().get_seed() << std::endl;
+  Mesh_domain domain(p, &CGAL::get_default_random());
 
   typedef std::vector<K::Point_3> Polyline;
   typedef std::vector<Polyline> Polylines;
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
       else return 1;
     }
     std::cerr << "Reading polyline #" << polylines.size()
-	      << " with " << n << " vertices\n";
+              << " with " << n << " vertices\n";
     polyline.reserve(n);
     while( n > 0 ) {
       K::Point_3 p;
@@ -82,21 +82,18 @@ int main(int argc, char** argv)
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.1);
   typedef Mesh_criteria::Edge_criteria Edge_criteria;
-  typedef CGAL::internal::Mesh_3::Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
-  CGAL::Mesh_3::Protect_edges_sizing_field<C3t3,
-					   Mesh_domain,
-					   Sizing_field>
-    protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()),
-		  0.01);
+  typedef CGAL::Mesh_3::internal::Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
+  CGAL::Mesh_3::Protect_edges_sizing_field<C3t3, Mesh_domain, Sizing_field>
+    protect_edges(c3t3, domain, Sizing_field(criteria.edge_criteria_object()), 0.01);
   protect_edges(true);
 
-  // CGAL::internal::Mesh_3::init_c3t3_with_features(c3t3, domain, criteria);
+  // CGAL::Mesh_3::internal::init_c3t3_with_features(c3t3, domain, criteria);
 
   // Output
   std::ofstream medit_file("out-mesh-polylines.mesh");
   c3t3.output_to_medit(medit_file);
   std::ofstream binary_file("out-mesh-polylines.binary.cgal", std::ios::binary|std::ios::out);
-  save_binary_file(binary_file, c3t3);
+  CGAL::IO::save_binary_file(binary_file, c3t3);
   std::cout << "Number of vertices in c3t3: "
             << c3t3.triangulation().number_of_vertices() << std::endl;
   assert(c3t3.triangulation().number_of_vertices() > 900);

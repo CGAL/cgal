@@ -1,10 +1,11 @@
 // Testing the handling of isolated vertices.
 
+#include <iostream>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 
 typedef CGAL::Quotient<int>                           Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
@@ -75,7 +76,7 @@ int main ()
   insert_non_intersecting_curve (arr,
                                  Segment_2 (Point_2 (4, 7), Point_2 (6, 6)));
   TEST_VALIDITY(7);
-  
+
   insert_non_intersecting_curve (arr,
                                  Segment_2 (Point_2 (2, 7), Point_2 (3, 3)));
   TEST_VALIDITY(8);
@@ -91,9 +92,9 @@ int main ()
   std::cout << "Arrangement size:"
             << "   V = " << arr.number_of_vertices()
             << " (" << arr.number_of_isolated_vertices() << " isolated)"
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
-   
+
   // Check the validity more thoroughly.
   valid = is_valid(arr);
   std::cout << "Arrangement is "
@@ -101,4 +102,3 @@ int main ()
 
   return (0);
 }
-

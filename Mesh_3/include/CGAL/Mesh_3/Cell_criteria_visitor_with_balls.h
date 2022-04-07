@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -25,6 +17,9 @@
 #ifndef CGAL_MESH_3_CELL_CRITERIA_VISITOR_WITH_BALLS_H
 #define CGAL_MESH_3_CELL_CRITERIA_VISITOR_WITH_BALLS_H
 
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/Mesh_3/mesh_standard_criteria.h>
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
 
 namespace CGAL {
@@ -42,51 +37,56 @@ public:
   typedef Abstract_criterion<Tr, Self> Criterion;
   typedef Mesh_3::Cell_radius_criterion<Tr, Self> Cell_radius_criterion;
   typedef Mesh_3::Cell_radius_edge_criterion<Tr, Self> Cell_radius_edge_criterion;
-        
+
   typedef typename Base::Quality Cell_quality;
-  typedef typename Base::Badness Cell_badness;
-  typedef typename Base::Handle Handle;
+  typedef typename Base::Is_bad  Is_cell_bad;
+  typedef typename Base::Handle  Handle;
   typedef Handle Cell_handle;
 
-  typedef typename Tr::Point Point_3;
-  typedef typename Tr::Geom_traits::Compute_squared_radius_smallest_orthogonal_sphere_3 
-  Squared_radius_orthogonal_sphere;
+  typedef typename Tr::Bare_point      Bare_point;
+  typedef typename Tr::Weighted_point  Weighted_point;
+  typedef typename Tr::Geom_traits     Gt;
+  typedef typename Gt::FT              FT;
+
   int nb_weighted_points;
-  std::vector<Point_3> points;
+  std::vector<Weighted_point> points;
   double radius_ortho_shpere;
-        
+
   typedef typename Tr::Cell::Surface_patch_index Surface_patch_index;
   typedef typename Tr::Vertex_handle Vertex_handle;
 
   // Constructor
-  Cell_criteria_visitor_with_balls(const Cell_handle& ch)
-    : Base(ch) 
+  Cell_criteria_visitor_with_balls(const Tr& tr, const Cell_handle& ch)
+    : Base(tr, ch)
   {
+    typename Gt::Compare_weighted_squared_radius_3 compare_sq_radius =
+      tr.geom_traits().compare_weighted_squared_radius_3_object();
+    typename Gt::Squared_radius_orthogonal_sphere sq_radius_ortho_sphere =
+      tr.geom_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object();
 
-    const Point_3& p = ch->vertex(0)->point();
-    const Point_3& q = ch->vertex(1)->point();
-    const Point_3& r = ch->vertex(2)->point();
-    const Point_3& s = ch->vertex(3)->point();
+    const Weighted_point& p = tr.point(ch, 0);
+    const Weighted_point& q = tr.point(ch, 1);
+    const Weighted_point& r = tr.point(ch, 2);
+    const Weighted_point& s = tr.point(ch, 3);
 
-    if(p.weight() > 0) points.push_back(p);
-    if(q.weight() > 0) points.push_back(q);
-    if(r.weight() > 0) points.push_back(r);
-    if(s.weight() > 0) points.push_back(s);
+    if(compare_sq_radius(p, FT(0)) == CGAL::SMALLER) points.push_back(p);
+    if(compare_sq_radius(q, FT(0)) == CGAL::SMALLER) points.push_back(q);
+    if(compare_sq_radius(r, FT(0)) == CGAL::SMALLER) points.push_back(r);
+    if(compare_sq_radius(s, FT(0)) == CGAL::SMALLER) points.push_back(s);
 
     nb_weighted_points = (int)points.size();
-                
+
     if(nb_weighted_points ==4)
-      radius_ortho_shpere = Squared_radius_orthogonal_sphere()( points[0], points[1], points[2], points[3]);
+      radius_ortho_shpere = sq_radius_ortho_sphere(points[0], points[1], points[2], points[3]);
     else if(nb_weighted_points ==3)
-      radius_ortho_shpere = Squared_radius_orthogonal_sphere()( points[0], points[1], points[2]);
+      radius_ortho_shpere = sq_radius_ortho_sphere(points[0], points[1], points[2]);
     else if(nb_weighted_points ==2)
-      radius_ortho_shpere = Squared_radius_orthogonal_sphere()( points[0], points[1]);
-                
+      radius_ortho_shpere = sq_radius_ortho_sphere(points[0], points[1]);
   }
 
   // Destructor
-  ~Cell_criteria_visitor_with_balls() { };
-        
+  ~Cell_criteria_visitor_with_balls() { }
+
   //      void visit(const Criterion& criterion)
   //      {
   //              Base::do_visit(criterion);
@@ -104,7 +104,7 @@ public:
       Base::do_visit(criterion);
     else
       Base::do_visit(criterion);
-                                
+
   }
 
   void visit(const Cell_radius_edge_criterion& criterion)
@@ -123,7 +123,7 @@ public:
 
 };  // end class Cell_criterion_visitor
 
-} // end namespace Mesh_3 
+} // end namespace Mesh_3
 } // end namespace CGAL
 
 #endif // CGAL_MESH_3_CELL_CRITERIA_VISITOR_WITH_BALLS_H

@@ -2,24 +2,19 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Kaspar Fischer
 
 #ifndef CGAL_MINIBALL_SUPPORTSET
 #define CGAL_MINIBALL_SUPPORTSET
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <utility>
 #include <functional>
@@ -53,8 +48,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
     template<>
       struct Selector<float> {
-	typedef float Result;
-	typedef Tag_false Is_exact;
+        typedef float Result;
+        typedef Tag_false Is_exact;
       };
 
     template<>
@@ -172,7 +167,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     public: // modification:
       void reset();
       bool pivot(std::vector<const typename Traits::Sphere *>& l,
-  	       int& e,const int d);
+                 int& e,const int d);
 
     private: // modification:
       bool push(const Sphere& ball);
@@ -195,7 +190,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
       #endif
 
     private: // member fields:
-      int m;                    // number of pushed balls
+      unsigned int m;           // number of pushed balls
       const Sphere *b[D+1];     // pointers to pushed balls
       Result center[D+1];       // contains, when is_spanning() returns true,
                                 // the center of the miniball

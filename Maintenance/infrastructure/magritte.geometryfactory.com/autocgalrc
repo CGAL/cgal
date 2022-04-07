@@ -21,13 +21,12 @@ LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
 #  Laurent Rineau, 2013/04/08: rename the platforms, and add llvm-gcc-4.2
 #COMPILERS_localhost="x86-64_Darwin-13.0_Apple-clang-3.2_Debug x86-64_Darwin-13.0_Apple-clang-3.2_Release x86-64_Darwin-13.0_Apple-llvm-gcc-4.2_Release"
 #  Laurent Rineau, 2013/05/21: add clang-3.2-cpp11 
+
+
+#  Laurent Rineau, 2015/08/20. Only one compiler, after upgrade to Yosemit
 COMPILERS_localhost=""
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-5.0_Release"
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-5.0_Release-cpp11"
-COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-llvm-gcc-4.2_Release"
-COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_Release-cpp11"
-COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_Debug"
-COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-3.2_Release"
 COMPILERS_localhost="${COMPILERS_localhost} x86-64_Darwin-13.0_Apple-clang-5.1_Release-LEDA-without-GMP"
 BUILD_ON_localhost=all
 

@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -21,11 +13,15 @@
 #ifndef CGAL_IO_FILE_TETGEN_H
 #define CGAL_IO_FILE_TETGEN_H
 
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/Time_stamper.h>
 #include <CGAL/IO/File_medit.h>
-#include <iostream>
-#include <map>
-#include <string>
 #include <CGAL/utility.h>
+
+#include <fstream>
+#include <iostream>
+#include <string>
 
 namespace CGAL {
 
@@ -87,12 +83,14 @@ output_to_tetgen(std::string filename,
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
-  typedef typename Tr::Point Point_3;
+  typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Facet Facet;
+
+  typedef CGAL::Hash_handles_with_or_without_timestamps Hash_fct;
 
   const Tr& tr = c3t3.triangulation();
 
-  std::map<Vertex_handle, std::size_t> V;
+  boost::unordered_map<Vertex_handle, std::size_t, Hash_fct> V;
 
   //-------------------------------------------------------
   // File output
@@ -114,7 +112,7 @@ output_to_tetgen(std::string filename,
         end = tr.finite_vertices_end();
       vit != end; ++vit)
   {
-    const Point_3& p = vit->point();
+    const Weighted_point& p = tr.point(vit);
     const double x = CGAL::to_double(p.x());
     const double y = CGAL::to_double(p.y());
     const double z = CGAL::to_double(p.z());
@@ -131,7 +129,7 @@ output_to_tetgen(std::string filename,
   // Elements
   //-------------------------------------------------------
 
-  std::string elem_filename = filename + ".elem";
+  std::string elem_filename = filename + ".ele";
   std::ofstream elem_stream(elem_filename.c_str());
 
   elem_stream << std::setprecision(17);
@@ -189,18 +187,8 @@ output_to_tetgen(std::string filename,
 
 } // end namespace Mesh_3
 
+namespace IO {
 
-
-
-/**
- * @brief outputs mesh to tetgen format
- * @param os the stream
- * @param c3t3 the mesh
- * @param rebind if true, labels of cells are rebinded into [1..nb_of_labels]
- * @param show_patches if true, patches are labeled with different labels than
- * cells. If false, each surface facet is written twice, using label of
- * each adjacent cell.
- */
 template <class C3T3>
 void
 output_to_tetgen(std::string filename,
@@ -223,6 +211,12 @@ output_to_tetgen(std::string filename,
       Mesh_3::output_to_tetgen<C3T3,false,true>(filename,c3t3);
   }
 }
+
+} // namespace IO
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+using IO::output_to_tetgen;
+#endif
 
 } // end namespace CGAL
 

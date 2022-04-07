@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // source        : $URL$
 // file          : include/CGAL/_test_cls_delaunay_triangulation_2.C
 // revision      : $Id$
@@ -20,24 +20,30 @@
 // coordinator   : INRIA Sophia-Antipolis <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
 
-#include <iostream>
-#include <iterator>
-//#include <vector>
 #include <CGAL/_test_cls_triangulation_short_2.h>
 
+#include <cassert>
+#include <iostream>
+#include <iterator>
+#include <fstream>
+#include <vector>
 #include <cstdlib>
-using std::rand;
 
+using std::rand;
 
 template <class Del>
 void
 _test_delaunay_duality( const Del &T );
 
-
 template <class Del>
 void
 _test_cls_delaunay_triangulation_2( const Del & )
 {
+  static_assert(std::is_nothrow_move_constructible<Del>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Del>::value,
+                "move assignment is missing");
+
   //typedef Del  Delaunay;
   typedef typename Del::Point                Point;
   typedef typename Del::Locate_type          Locate_type;
@@ -58,14 +64,14 @@ _test_cls_delaunay_triangulation_2( const Del & )
   for (m=0; m<20; m++)
       T1.insert( Point(3*m, 2*m) );
   assert( T1.is_valid() );
-   
+
   Del T2;
   for (m=0; m<20; m++)
       for (p=0; p<20; p++)
-	//	  T2.insert( Point(3*m+p, m-2*p) );
-	T2.insert(Point(m,p));
+        //          T2.insert( Point(3*m+p, m-2*p) );
+        T2.insert(Point(m,p));
   assert( T2.is_valid() );
-  
+
   Del T3;
   // All these points are on a circle of radius 325
   Point pt[28] = {
@@ -78,15 +84,15 @@ _test_cls_delaunay_triangulation_2( const Del & )
       Point(-36,323), Point(-80,315), Point(-91,312),
       Point(-125,300), Point(-165,280), Point(-195,260), Point(-204,253)
   };
-  for (m=0; m<28; m++) 
+  for (m=0; m<28; m++)
       T3.insert( Point(pt[m]) );
   assert( T3.is_valid() );
- 
+
 
   // test nearest_vertex
   Vertex_handle vnn;
   Face_handle cible;
-  int i; 
+  int i;
   Locate_type lt;
   cible = T2.locate(Point(0,0,1),lt,i);
   assert( lt == Del::VERTEX);
@@ -106,21 +112,21 @@ _test_cls_delaunay_triangulation_2( const Del & )
   std::back_insert_iterator<std::list<Face_handle> > c_inserter(conflicts);
   std::back_insert_iterator<std::list<Edge> > be_inserter(hole_bd);
   std::pair<std::back_insert_iterator<std::list<Face_handle> >,
-            std::back_insert_iterator<std::list<Edge> > > 
+            std::back_insert_iterator<std::list<Edge> > >
     pit(c_inserter,be_inserter);
   c_inserter = T2.get_conflicts(Point(1,1,2), std::back_inserter(conflicts));
   conflicts.clear();
-  pit = T2.get_conflicts_and_boundary(Point(1,1,2), 
-				      std::back_inserter(conflicts),
-				      std::back_inserter(hole_bd));
+  pit = T2.get_conflicts_and_boundary(Point(1,1,2),
+                                      std::back_inserter(conflicts),
+                                      std::back_inserter(hole_bd));
   c_inserter = pit.first;
   be_inserter = pit.second;
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
   hole_bd.clear();
   T2.get_conflicts(Point(0,1,2), std::back_inserter(conflicts));
-  T2.get_boundary_of_conflicts(Point(0,1,2), 
-			       std::back_inserter(hole_bd));
+  T2.get_boundary_of_conflicts(Point(0,1,2),
+                               std::back_inserter(hole_bd));
   assert(hole_bd.size() == conflicts.size() + 2);
   conflicts.clear();
   hole_bd.clear();
@@ -136,14 +142,58 @@ _test_cls_delaunay_triangulation_2( const Del & )
   // test insertion through get_conflicts + star_hole
   conflicts.clear();
   hole_bd.clear();
-  T2.get_conflicts_and_boundary(Point(1,1,2), 
-				std::back_inserter(conflicts),
-				std::back_inserter(hole_bd));
+  Point query(1,1,2);
+  T2.get_conflicts_and_boundary(query,
+                                std::back_inserter(conflicts),
+                                std::back_inserter(hole_bd));
+
+  // check the sanity of the boundary (faces are not in conflict && edges are ccw ordered)
+  typename std::list<Edge>::iterator curr = hole_bd.begin(), last = --(hole_bd.end());
+  Vertex_handle prev_vh = last->first->vertex(T2.ccw(last->second));
+  do
+  {
+    assert(curr->first->vertex(T2.cw(curr->second)) == prev_vh);
+    assert(!T2.test_conflict(query, curr->first));
+    prev_vh = curr->first->vertex(T2.ccw(curr->second));
+    ++curr;
+  }
+  while(curr != hole_bd.end());
+
   T2.star_hole (Point(1,1,2), hole_bd.begin(), hole_bd.end(),
-		      conflicts.begin(), conflicts.end() );
+                      conflicts.begin(), conflicts.end() );
   assert(T2.is_valid());
 
-  
+
+  // check get_conflict for a large enough point set (to use the non-recursive function)
+  double x, y;
+  std::vector<Point> layer_pts;
+
+  std::ifstream in("data/layers.xy");
+  assert(in);
+  while(in >> x >> y)
+    layer_pts.push_back(Point(x, y));
+
+  Del T2b(layer_pts.begin(), layer_pts.end());
+
+  conflicts.clear();
+  hole_bd.clear();
+
+  query = Point(12.25, 0.031250);
+  T2b.get_conflicts_and_boundary(query,
+                                 std::back_inserter(conflicts),
+                                 std::back_inserter(hole_bd));
+
+  // check the sanity of the boundary (faces are not in conflict && edges are ccw ordered)
+  curr = hole_bd.begin(), last = --(hole_bd.end());
+  prev_vh = last->first->vertex(T2b.ccw(last->second));
+  do
+  {
+    assert(curr->first->vertex(T2b.cw(curr->second)) == prev_vh);
+    assert(!T2b.test_conflict(query, curr->first));
+    prev_vh = curr->first->vertex(T2b.ccw(curr->second));
+    ++curr;
+  }
+  while(curr != hole_bd.end());
 
   /********************/
   /***** Duality ******/
@@ -158,7 +208,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
   std::cout << "    displacements" << std::endl;
 
   std::cout << "    degenerate cases: " << std::endl;
-  
+
   Del TM_0, TM_1;
   Vertex_handle tmv1 = TM_0.insert(Point(0,0));
   Vertex_handle tmv2 = TM_0.insert(Point(1,0));
@@ -184,7 +234,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
   TM_0.move_if_no_collision(tmv3, Point(2, 0));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
-  assert(TM_0.dimension() == 1);  
+  assert(TM_0.dimension() == 1);
 
   Vertex_handle tmv4 = TM_0.insert(Point(1,1));
   assert(TM_0.dimension() == 2);
@@ -248,7 +298,8 @@ _test_cls_delaunay_triangulation_2( const Del & )
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 2);
-  assert(TM_0.move_if_no_collision(tmv1, Point(3, 0)) != tmv1);
+  Vertex_handle mtmv1 = TM_0.move_if_no_collision(tmv1, Point(3, 0));
+  assert(mtmv1 != tmv1);
 
   TM_0.move_if_no_collision(tmv1, Point(0, 1));
   assert(TM_0.tds().is_valid());
@@ -258,7 +309,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
   TM_0.move_if_no_collision(tmv4, Point(1, 2));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
-  assert(TM_0.dimension() == 1);   
+  assert(TM_0.dimension() == 1);
 
   TM_0.move_if_no_collision(tmv4, Point(3, 0));
   assert(TM_0.tds().is_valid());
@@ -284,7 +335,7 @@ _test_cls_delaunay_triangulation_2( const Del & )
   TM_1.insert(points.begin(), points.end());
   Vertex_handle vTM_1;
   for(int i=0; i<5; i++) {
-    for(typename Del::Finite_vertices_iterator 
+    for(typename Del::Finite_vertices_iterator
          fvi = TM_1.finite_vertices_begin();
          fvi != TM_1.finite_vertices_end(); fvi++) {
       Point p = Point(rand()%30000, rand()%30000);
@@ -295,7 +346,8 @@ _test_cls_delaunay_triangulation_2( const Del & )
 
   // A simple test to see if move return the good vertex
   // when there is a collision
-  assert(TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point()) == vTM_1); 
+  Vertex_handle mvTM_1 = TM_1.move(TM_1.finite_vertices_begin(), vTM_1->point());
+  assert(mvTM_1 == vTM_1);
 }
 
 
@@ -312,10 +364,10 @@ _test_delaunay_duality( const Del &T )
   Face_iterator fit;
   for (fit = T.finite_faces_begin(); fit !=  T.finite_faces_end(); ++fit)
     {
-      assert( T.side_of_oriented_circle(fit, T.dual(fit)) == 
-	      CGAL::ON_POSITIVE_SIDE );
+      assert( T.side_of_oriented_circle(fit, T.dual(fit)) ==
+              CGAL::ON_POSITIVE_SIDE );
     }
-  
+
   // Test dual(edge iterator)
   Edge_iterator eit;
   for (eit =  T.finite_edges_begin(); eit !=  T.finite_edges_end(); ++eit)
@@ -326,11 +378,11 @@ _test_delaunay_duality( const Del &T )
       typename Gt::Line_2 l;
       if ( CGAL::assign(s,o) ) {
         assert(  ! T.is_infinite((*eit).first) );
-	assert( ! T.is_infinite(((*eit).first)->neighbor((*eit).second )) );
-      } 
+        assert( ! T.is_infinite(((*eit).first)->neighbor((*eit).second )) );
+      }
       else if ( CGAL::assign(l,o) ) {
         assert( T.dimension() == 1 );
-      } 
+      }
       else {
         assert( CGAL::assign(r,o) );
       }
@@ -338,15 +390,15 @@ _test_delaunay_duality( const Del &T )
 
   // Test dual(edge circulator)
   Edge_circulator ec=T.incident_edges(T.finite_vertices_begin()), done(ec);
-  if ( !ec.is_empty() ) 
-  do  
+  if ( !ec.is_empty() )
+  do
     {
       if (! T.is_infinite(ec)){
-	CGAL::Object o = T.dual(ec);
-	typename Gt::Ray_2 r;
+        CGAL::Object o = T.dual(ec);
+        typename Gt::Ray_2 r;
         typename Gt::Segment_2 s;
-	typename Gt::Line_2 l;
-	assert( CGAL::assign(s,o) || CGAL::assign(r,o) || CGAL::assign(l,o) );
+        typename Gt::Line_2 l;
+        assert( CGAL::assign(s,o) || CGAL::assign(r,o) || CGAL::assign(l,o) );
       }
       ++ec;
     } while ( ec == done);

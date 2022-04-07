@@ -1,12 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Spherical Geometry Kernel"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Circular_kernel_3/doc/Circular_kernel_3/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Spherical Geometry Kernel"
 SORT_GROUP_NAMES           =  true
 
 

@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -21,6 +13,9 @@
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_VERTEX_BASE_2_H
+
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Dummy_tds_2.h>
@@ -35,21 +30,22 @@ template < class Gt, class Vb = CGAL::Triangulation_vertex_base_2<Gt> >
 class Periodic_2_triangulation_vertex_base_2
   : public Vb
 {
-  typedef Vb                                           Base;
-  typedef typename Vb::Triangulation_data_structure    Tds;
-public:
-  typedef Gt                                    Geom_traits;
-  typedef typename Gt::Point_2                  Point;
-  typedef Tds                                   Triangulation_data_structure;
-  typedef typename Tds::Face_handle             Face_handle;
-  typedef typename Tds::Vertex_handle           Vertex_handle;
+  typedef Vb                                            Base;
+  typedef typename Vb::Triangulation_data_structure     Tds;
 
-  typedef Periodic_2_offset_2                   Offset;
+public:
+  typedef Gt                                            Geom_traits;
+  typedef Tds                                           Triangulation_data_structure;
+
+  typedef typename Tds::Vertex_handle                   Vertex_handle;
+  typedef typename Tds::Face_handle                     Face_handle;
+  typedef typename Gt::Point_2                          Point;
+  typedef Periodic_2_offset_2                           Offset;
 
   template < typename Tds2 >
   struct Rebind_TDS
   {
-    typedef typename Vb::template Rebind_TDS<Tds2>::Other     Vb2;
+    typedef typename Vb::template Rebind_TDS<Tds2>::Other      Vb2;
     typedef Periodic_2_triangulation_vertex_base_2<Gt, Vb2>    Other;
   };
 
@@ -114,21 +110,6 @@ operator<<(std::ostream &os,
 {
   return os;
 }
-
-// Specialization for void.
-template <>
-class Periodic_2_triangulation_vertex_base_2<void>
-{
-public:
-  typedef Dummy_tds_2                                   Triangulation_data_structure;
-  typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
-  typedef Triangulation_data_structure::Face_handle     Face_handle;
-  template <typename Tds2>
-  struct Rebind_Tds
-  {
-    typedef Periodic_2_triangulation_vertex_base_2<Tds2> Other;
-  };
-};
 
 } //namespace CGAL
 

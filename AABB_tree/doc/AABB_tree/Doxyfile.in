@@ -1,9 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Fast Intersection and Distance Computation (AABB Tree)"
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/AABB_tree/doc/AABB_tree/ \ 
-                              ${CMAKE_SOURCE_DIR}/AABB_tree/include
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Fast Intersection and Distance Computation (AABB Tree)"
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true

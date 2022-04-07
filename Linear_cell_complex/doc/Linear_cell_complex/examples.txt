@@ -2,4 +2,6 @@
 \example Linear_cell_complex/linear_cell_complex_3_with_colored_vertices.cpp
 \example Linear_cell_complex/linear_cell_complex_3.cpp
 \example Linear_cell_complex/linear_cell_complex_4.cpp
+\example Linear_cell_complex/linear_cell_complex_3_attributes_management.cpp
+\example Linear_cell_complex/draw_linear_cell_complex.cpp
 */

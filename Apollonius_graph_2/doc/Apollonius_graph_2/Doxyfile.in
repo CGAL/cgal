@@ -1,13 +1,7 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Apollonius Graphs (Delaunay Graphs of Disks)"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Apollonius_graph_2/doc/Apollonius_graph_2/
-
-
-
-EXCLUDE_SYMBOLS           +=  Agvb
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Apollonius Graphs (Delaunay Graphs of Disks)"
+EXCLUDE_SYMBOLS +=  Agvb
 
             
 

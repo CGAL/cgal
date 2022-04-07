@@ -7,7 +7,7 @@
 
 #include <CGAL/boost/graph/dijkstra_shortest_paths.h>
 
-#include <CGAL/graph_traits_Dual_Arrangement_2.h>
+#include <CGAL/graph_traits_dual_arrangement_2.h>
 
 // leda_rational, or Gmpq, or Quotient<MP_float>
 typedef CGAL::Exact_rational                                 Number_type;

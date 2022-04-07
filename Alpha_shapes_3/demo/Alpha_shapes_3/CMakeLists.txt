@@ -1,52 +1,53 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Alpha_shape_3)
+cmake_minimum_required(VERSION 3.1...3.20)
+project(Alpha_shapes_3_Demo)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
+endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL  COMPONENTS Qt4)
-include(${CGAL_USE_FILE})
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
 
-find_package(OpenGL)
-find_package(QGLViewer)
+if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+  add_definitions(-DQT_NO_KEYWORDS)
 
-  include(${QT_USE_FILE})
-
-  include_directories (${QGLVIEWER_INCLUDE_DIR})
-  include_directories (BEFORE ../../include ./ )
+  # include(${QT_USE_FILE})
+  include_directories(BEFORE ./)
 
   # ui file, created wih Qt Designer
-  qt4_wrap_ui( uis MainWindow.ui )
+  qt5_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)
-  qt4_add_resources ( RESOURCE_FILES ./Alpha_shape_3.qrc )
+  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ./Alpha_shape_3.qrc)
 
-  qt4_automoc( MainWindow.cpp Viewer.cpp)
+  add_executable(
+    Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis}
+                  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS Alpha_shape_3)
 
-  add_executable  ( Alpha_shape_3 Alpha_shape_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${RESOURCE_FILES} )
+  target_link_libraries(Alpha_shape_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
+                                              Qt5::OpenGL Qt5::Gui)
 
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Alpha_shape_3 )
-
-  target_link_libraries( Alpha_shape_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( Alpha_shape_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
-  target_link_libraries( Alpha_shape_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Alpha_shape_3)
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, OpenGL and Qt4, and will not be compiled.")
+  message(
+    STATUS "NOTICE: This demo requires CGAL, and Qt5, and will not be compiled."
+  )
 
 endif()

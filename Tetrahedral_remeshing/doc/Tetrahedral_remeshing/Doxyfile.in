@@ -1,0 +1,11 @@
+@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Tetrahedral Remeshing"
+
+#custom options for this package
+EXTRACT_ALL          = false
+HIDE_UNDOC_CLASSES   = true
+WARN_IF_UNDOCUMENTED = false
+
+EXAMPLE_PATH += ${CGAL_Tetrahedral_remeshing_EXAMPLE_DIR}
+
+EXCLUDE = ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Tetrahedral_remeshing/internal

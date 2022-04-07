@@ -3,7 +3,7 @@
 
 if( RS3_FOUND AND NOT RS3_SETUP )
 
-    include( CGAL_UseRS )
+    include( ${CMAKE_CURRENT_LIST_DIR}/CGAL_UseRS.cmake )
 
     # add rs3 parameters, if necessary (rs3 must be always after rsexport)
     message( STATUS "UseRS3" )
@@ -40,7 +40,7 @@ if( RS3_FOUND AND NOT RS3_SETUP )
       message( STATUS "Using old RS signatures" )
     endif( RS3_OLD_INCLUDES )
 
-    include(CGAL_UseMPFI)
+    include(${CMAKE_CURRENT_LIST_DIR}/CGAL_UseMPFI.cmake)
 
   set (RS3_SETUP TRUE)
 

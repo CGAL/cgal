@@ -1,0 +1,226 @@
+#!/bin/zsh
+
+zmodload zsh/stat
+setopt extendedglob
+
+dir=`dirname "$0"`
+PATH=$dir:$PATH
+
+if [ -z "`git --version`" ]; then
+    echo 'This script needs git!' >&2
+    exit 1
+fi
+
+git=git
+if hub --version 2> /dev/null > /dev/null; then
+    case "$(hub --version)" in
+	*hub\ version*) git=hub;;
+    esac
+fi
+
+if ! ${git} diff --exit-code > /dev/null || ! ${git} diff --staged --exit-code  > /dev/null ; then
+    echo 'Your working directory contains local modifications!' >&2
+    exit 1
+fi
+
+cd "`${git} rev-parse --show-toplevel`"
+
+if [ -n "`${git} ls-files --other --exclude-standard --exclude=build\*`" ]; then
+    echo 'You have untracked files!' >&2
+    exit 1
+fi
+
+branch=$1
+# if ! ${git} rev-parse "$branch" > /dev/null 2>&1; then
+#     echo "\"$branch\" is not a valid branch!" >&2
+#     exit 1
+#fi
+
+trap 'echo "(aborting the merge now)" && ${git} merge --abort' EXIT
+
+echo ".. Test merging of the branch \"$branch\"..."
+${git} merge --no-ff --no-commit "$branch" && ${git} status && ${git} diff --staged --summary
+
+if true; then # REMOVE
+echo '.. Testing permissions...'
+detect_wrong_permissions || exit 1
+
+echo '.. Testing licenses...'
+detect_packages_licenses || exit 1
+if ! ${git} diff --exit-code > /dev/null; then
+    echo '=> There are modifications in licenses (check if all modified/added headers files contain a valid SPDX tag compatible with the one in package_info/PKG/license and that no license text is present):'
+    ${git} status --porcelain
+    exit 1
+fi
+
+
+fi # REMOVE
+
+if [ -d build ] && \
+   [ -f build/CMakeCache.txt ] && \
+   [ "$(grep -c -iE 'WITH_(demos|examples|tests):BOOL=(ON|TRUE|1)'  build/CMakeCache.txt)" -eq "3" ]; then
+    echo '.. Testing CMake configuration...'
+    cmake_output=$(cmake build 2>&1)
+    cmake_exit_code=$?
+    if [ "$cmake_exit_code" -ne 0 ]; then
+	echo 'CMake error:'
+	printf '%s\n' "${cmake_output}"
+	exit 1
+    else
+	echo OK
+    fi
+else
+    echo '.. Skip the CMake test (please configure a build/ CMake binary directory,'
+    echo 'with -DWITH_tests:BOOL=TRUE  -DWITH_examples:BOOL=TRUE  -DWITH_demos:BOOL=TRUE)'
+fi
+
+echo '.. List of new files (please check that it is the expected list:'
+new_files=( ${(f)"$(${git} status --porcelain | grep -E '^A')"} )
+if [ ${#new_files[@]} -gt 0 ]; then
+    string=${(F)new_files}
+    echo $string
+else
+    echo 'No new files.'
+fi
+
+#check cmake scripts of tests, examples are present
+echo '.. Checking if all CMakeLists.txt are present...'
+for i in `ls -d ^build*/examples/*/ ^build*/test/*/ ^build*/demo/^(icons|resources)/`; do
+  if ! [ -f $i/CMakeLists.txt ]; then
+    echo "Error: $i/CMakeLists.txt does not exist!"
+    exit 1
+  fi
+done
+
+
+# check project in cmake scripts is correct
+echo '.. Checking if all CMakeLists.txt project names are correct...'
+project_name_tests=$(for i in ^build*/test/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Tests\s*\)" -L $i;  done)
+project_name_examples=$(for i in ^build*/examples/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Examples\s*\)" -L $i;  done)
+project_name_demo=$(for i in ^build*/demo/*/CMakeLists.txt; do pkg=$(echo $i | awk -F "/" '{print $3}'); egrep "${pkg}_Demo\s*\)" -L $i;  done)
+
+if [ -n "${project_name_tests}" ]; then
+  echo "CMakeLists with incorrect project name"
+  echo ${project_name_tests}
+  exit 1
+fi
+
+if [ -n "${project_name_examples}" ]; then
+  echo "CMakeLists with incorrect project name"
+  echo ${project_name_examples}
+  exit 1
+fi
+
+if [ -n "${project_name_demo}" ]; then
+  echo "CMakeLists with incorrect project name"
+  echo ${project_name_demo}
+  exit 1
+fi
+
+#check header files without SPDX license identifier
+echo '.. Checking SPDX license identifier presence in header files...'
+file_without_SPDX_identifiers=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f \( -name '*.h' -o -name '*.hpp' \) | xargs -r grep -L "SPDX-License-Identifier"; fi; done)
+if [ -n "${file_without_SPDX_identifiers}" ]; then
+    echo "The following files do not have a SPDX license identifier:"
+    echo ${file_without_SPDX_identifiers}
+    exit 1
+fi
+
+#check header files without $Id$ tags
+echo '.. Checking $Id$ tag presence in header files...'
+file_without_Id_tag=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f \( -name '*.h' -o -name '*.hpp' \) | xargs -r grep -L '$Id\$'; fi; done)
+if [ -n "${file_without_Id_tag}" ]; then
+    echo 'The following files do not have a $Id$ tag:'
+    echo ${file_without_Id_tag}
+    exit 1
+fi
+
+#check header files without $URL$ tags
+echo '.. Checking $URL$ tag presence in header files...'
+file_without_URL_tag=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f \( -name '*.h' -o -name '*.hpp' \) | xargs -r grep -L '$URL\$'; fi; done)
+if [ -n "${file_without_URL_tag}" ]; then
+    echo 'The following files do not have a $URL$:'
+    echo ${file_without_URL_tag}
+    exit 1
+fi
+
+#check GPL header files without license include directive
+echo '.. Checking include directives in GPL header files...'
+file_without_license_include=$(for pkg in `find */package_info -name 'license.txt' | awk -F "/" '{print $1}'`; do if [ -e ${pkg}/include ]; then find ${pkg}/include -type f -name '*.h' | xargs -r egrep -l "^#\s*define\s+CGAL_.*_H\s*$" | xargs -r egrep -l "SPDX-License-Identifier.*[ (]GPL" | xargs -r grep -L "#include <CGAL/license"; fi; done)
+if [ -n "${file_without_license_include}" ]; then
+    echo "The following files do not have an include directive of the package license header:"
+    echo ${file_without_license_include}
+    exit 1
+fi
+
+#check no file contains non-utf8 characters
+echo '.. Checking if non utf-8 characters are used...'
+txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf "%s\n", $2; }' | xargs file -N | grep "text" | egrep -v "UTF-8|ASCII|CSV|XML|EPS|FIG|assembler source|Perl script|from flex")
+if [ -n "${txt_not_utf8}" ]; then
+  echo "The following files have non utf-8 characters:"
+  echo ${txt_not_utf8}
+  exit 1
+fi
+
+#check no file contains tab characters
+echo '.. Checking if tab character is used...'
+file_with_tabs=$(git ls-files --stage | egrep '\.txt|\.h$|\.cpp|\.hpp' | awk '{print $4}' | xargs grep -P -l '\t')
+if [ -n "${file_with_tabs}" ]; then
+  echo "The following files have tabs:"
+  echo ${file_with_tabs}
+  exit 1
+fi
+
+#check no file contains trailing whitespaces characters
+echo '.. Look for trailing whitespaces...'
+files_with_trailingws=$(git ls-files --stage | egrep '\.txt|\.h$|\.cpp|\.hpp' | awk '{print $4}' | xargs grep -P -l '\s+$')
+if [ -n "${files_with_trailingws}" ]; then
+  echo "The following files have trailing whitespaces:"
+  echo ${files_with_trailingws}
+  exit 1
+fi
+
+#check all headers in documentation actually exist
+echo '.. Checking if all documentation headers exist'
+not_existing_headers=$(bash ./Scripts/developer_scripts/check_headers.sh $PWD)
+if [ -n "${not_existing_headers}" ]; then
+  echo "The following files are referenced in the documentation but do not exist:"
+  echo ${not_existing_headers}
+  exit 1
+fi
+
+#check documented function named parameters exists
+echo '.. Checking documented function named parameters'
+nps=$(git ls-files --stage | egrep '\.h' | awk '{print $4}' | xargs egrep "cgalParamNBegin\{.+\}" | perl -lne 'print for /cgalParamNBegin{(.+)}/' | sort -u )
+git_dir=`pwd`
+tmp_dir=`mktemp -d`
+cd $tmp_dir
+echo $tmp_dir
+echo "#include <CGAL/Named_function_parameters.h>\nstruct A{};\nint main(){" > main.cpp
+for i in `echo $nps`; do
+  echo "  CGAL::parameters::${i}(A()).${i}(A());" >> main.cpp
+done
+echo "}" >> main.cpp
+if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I$git_dir/STL_Extension/include main.cpp; then
+  echo "ERROR: At least one documented named parameter does not exist"
+  cd -
+  rm -r $tmp_dir
+  exit 1;
+fi
+cd -
+rm -r $tmp_dir
+
+current_rev=$(${git} rev-parse HEAD)
+trap 'echo "(aborting the merge now)" && ${git} reset --quiet --hard ${current_rev}' EXIT
+
+echo '.. Dummy merge commit...'
+conflicts=( ${(f)"$(${git} status --porcelain | awk '/^[^ ][^ ]/ {print $2}')"} )
+if [ ${#conflicts[@]} -gt 0 ]; then ${git} add $conflicts || exit 1; fi
+${git} commit --allow-empty -m 'dummy merge commit' || exit 1
+
+echo '.. Size of the gzipped bundle'
+trap 'echo "(aborting the merge now)" && rm bundle.gz && ${git} reset --quiet --hard ${current_rev}' EXIT
+${git} bundle create bundle ${current_rev}..HEAD > /dev/null 2>&1 && gzip bundle || exit 1
+size=$(zstat +size bundle.gz)
+echo "=> $size"
+exit 0

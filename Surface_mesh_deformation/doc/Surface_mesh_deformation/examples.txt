@@ -1,0 +1,7 @@
+/*!
+\example Surface_mesh_deformation/all_roi_assign_example.cpp
+\example Surface_mesh_deformation/k_ring_roi_translate_rotate_example.cpp
+\example Surface_mesh_deformation/deform_polyhedron_with_custom_pmap_example.cpp
+\example Surface_mesh_deformation/custom_weight_for_edges_example.cpp
+\example Surface_mesh_deformation/deform_mesh_for_botsch08_format_sre_arap.cpp
+*/

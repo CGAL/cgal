@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>,
@@ -21,6 +13,9 @@
 
 #ifndef CGAL_SNAP_ROUNDING_2_TRAITS_H
 #define CGAL_SNAP_ROUNDING_2_TRAITS_H
+
+#include <CGAL/license/Snap_rounding_2.h>
+
 
 #include <CGAL/basic.h>
 #include <map>
@@ -67,10 +62,25 @@ public:
       NT x_tmp = p.x() / pixel_size;
       NT y_tmp = p.y() / pixel_size;
 
-      double x_floor = std::floor(CGAL::to_double(x_tmp));
-      double y_floor = std::floor(CGAL::to_double(y_tmp));
-      x = NT(x_floor) * pixel_size + pixel_size / NT(2.0);
-      y = NT(y_floor) * pixel_size + pixel_size / NT(2.0);
+      NT x_floor = std::floor(CGAL::to_double(x_tmp));
+      NT y_floor = std::floor(CGAL::to_double(y_tmp));
+
+      // fix the usage of to_double and floor:
+      // there is no guarantee that the double approximation of *_tmp
+      // has the same integer part as the NT version. The while loops
+      // is a simple way to ensure that *_tmp are the true floor.
+      while(x_floor>x_tmp) x_floor-=NT(1);
+      while(y_floor>y_tmp) y_floor-=NT(1);
+      while(x_floor+1<=x_tmp) x_floor+=NT(1);
+      while(y_floor+1<=y_tmp) y_floor+=NT(1);
+
+      CGAL_assertion(x_floor<=x_tmp);
+      CGAL_assertion(y_floor<=y_tmp);
+      CGAL_assertion(x_floor+1>x_tmp);
+      CGAL_assertion(y_floor+1>y_tmp);
+
+      x = x_floor * pixel_size + pixel_size / NT(2.0);
+      y = y_floor * pixel_size + pixel_size / NT(2.0);
     }
   };
 

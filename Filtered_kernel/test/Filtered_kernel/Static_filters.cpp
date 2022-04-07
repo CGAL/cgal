@@ -4,6 +4,8 @@
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Kernel_checker.h>
 #include <CGAL/Random.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 typedef CGAL::Simple_cartesian<double>   K0;
 typedef CGAL::Filtered_kernel<K0, true>  K2;
@@ -287,7 +289,7 @@ void compute_epsilons()
 int main(int argc, char **argv)
 {
   int loops = (argc < 2) ? 2000 : std::atoi(argv[1]);
-  int seed  = (argc < 3) ? CGAL::default_random.get_int(0, 1<<30)
+  int seed  = (argc < 3) ? CGAL::get_default_random().get_int(0, 1<<30)
                          : std::atoi(argv[2]);
 
   std::cout << "Initializing random generator with seed = " << seed
@@ -300,6 +302,26 @@ int main(int argc, char **argv)
 
   std::cout.precision(20);
   std::cerr.precision(20);
+
+  #ifndef CGAL_NO_STATIC_FILTERS
+  assert(  CGAL::Epick::Has_static_filters);
+  #else
+  assert( !CGAL::Epick::Has_static_filters);
+  #endif
+
+  #ifdef CGAL_DONT_USE_LAZY_KERNEL
+    #ifdef CGAL_NO_STATIC_FILTERS
+    assert(  !CGAL::Epeck::Has_static_filters);
+    #else
+    assert(  CGAL::Epeck::Has_static_filters);
+    #endif
+  #else
+    #ifdef CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
+    assert(  CGAL::Epeck::Has_static_filters);
+    #else
+    assert( !CGAL::Epeck::Has_static_filters);
+    #endif
+  #endif
 
   assert(  K2::Has_static_filters);
   assert(! K4::Has_static_filters);
@@ -326,7 +348,7 @@ int main(int argc, char **argv)
 
   std::cout << "Testing Compare_squared_radius_3" << std::endl;
   for(int i=0; i<loops; ++i)
-    test_compare_squared_radius_3();  
+    test_compare_squared_radius_3();
 
   return 0;
 }

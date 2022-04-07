@@ -1,0 +1,65 @@
+/// \defgroup PkgSurface_mesh Surface Mesh Reference
+
+/*!
+  \code
+   #include <CGAL/draw_surface_mesh.h>
+  \endcode
+*/
+/// \defgroup PkgDrawSurfaceMesh Draw a Surface Mesh
+/// \ingroup PkgSurface_mesh
+
+/// \defgroup PkgSurfaceMeshIOFunc I/O Functions
+/// \ingroup PkgSurface_mesh
+
+/// \defgroup PkgSurfaceMeshIOFuncOFF I/O Functions (OFF)
+/// I/O Functions for the \ref IOStreamOFF
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFuncPLY I/O Functions (PLY)
+/// I/O Functions for the \ref IOStreamPLY
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFunc3MF I/O Functions (3MF)
+/// I/O Functions for the \ref IOStream3MF
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/// \defgroup PkgSurfaceMeshIOFuncDeprecated I/O Functions (Deprecated)
+/// \ingroup PkgSurfaceMeshIOFunc
+
+/*!
+\addtogroup PkgSurface_mesh
+\cgalPkgDescriptionBegin{Surface Mesh,PkgSurfaceMesh}
+\cgalPkgPicture{Surface_mesh_teaser.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Mario Botsch, Daniel Sieger, Philipp Moeller, and Andreas Fabri}
+\cgalPkgDesc{The surface mesh class provided by this package is an implementation
+ of the halfedge data structure allowing to represent polyhedral surfaces. It is
+an alternative to the packages \ref PkgHalfedgeDS and \ref PkgPolyhedron.
+The main differences are that it is indexed based and not pointer based,
+and that the mechanism for adding information to vertices, halfedges, edges,
+and faces is much simpler and can be used at runtime and not at compile time.}
+\cgalPkgManuals{Chapter_3D_Surface_mesh,PkgSurface_mesh}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.6}
+\cgalPkgBib{cgal:bsmf-sm}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Surface_mesh<P>`
+
+\cgalCRPSection{Draw a Surface Mesh}
+
+- \link PkgDrawSurfaceMesh CGAL::draw<SM>() \endlink
+
+\cgalCRPSection{I/O Functions}
+- \link PkgSurfaceMeshIOFuncOFF I/O for `OFF` files \endlink
+- \link PkgSurfaceMeshIOFuncPLY I/O for `PLY` files \endlink
+- `read_3MF()`
+*/
+

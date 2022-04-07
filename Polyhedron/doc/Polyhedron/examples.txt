@@ -1,5 +1,5 @@
 /*!
-\example Polyhedron_IO/polyhedron2vrml.cpp
+\example Polyhedron/polyhedron2vrml.cpp
 \example Polyhedron/polyhedron_prog_color.cpp
 \example Polyhedron/polyhedron_prog_cube.cpp
 \example Polyhedron/polyhedron_prog_incr_builder.cpp
@@ -10,4 +10,5 @@
 \example Polyhedron/polyhedron_prog_subdiv.cpp
 \example Polyhedron/polyhedron_prog_tetra.cpp
 \example Polyhedron/polyhedron_prog_vector.cpp
+\example Polyhedron/draw_polyhedron.cpp
 */

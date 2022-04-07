@@ -1,10 +1,23 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
+#include <CGAL/config.h>
+
+#ifndef CGAL_NDEBUG
+
+#include <iostream>
+int main()
+{
+  std::cerr << "No performance test for a Debug build" << std::endl;
+  return 0;
+}
+
+#else
+
 #include "./types.h"
 #include <CGAL/Triangulation_2.h>
 #include <ctime>
 
-typedef Triangulation_2<Gt>              EuclideanTriangulation;
+typedef Triangulation_2<P2TT>              EuclideanTriangulation;
 
 const int N_RUNS = 2;
 const int N_PTS  = 50000;
@@ -37,8 +50,9 @@ int main()
   pts.resize(500000);
   for (size_t i = 0; i < pts.size(); ++i) pts[i] = *(++g) + midpoint;
 
-  Gt gt;
-  for (size_t i = 0; i < pts.size() - 2; ++i) gt.orientation_2_object()(pts[i], pts[i + 1], pts[i + 2]);
+  P2TT gt;
+  for (size_t i = 0; i < pts.size() - 2; ++i)
+    gt.orientation_2_object()(pts[i], pts[i + 1], pts[i + 2]);
 
   return 0;
 #endif
@@ -98,10 +112,12 @@ int main()
                         << periodic_insert_time <<  ", \t" << periodic_insert_time << std::endl;
             }
         }
-      CGAL_assertion(t.is_valid());
+      assert(t.is_valid());
 
       std::cout << std::endl;
     }
 
   return 0;
 }
+
+#endif

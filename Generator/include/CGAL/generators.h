@@ -1,29 +1,23 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 
 #ifndef CGAL_GENERATORS_H
 #define CGAL_GENERATORS_H 1
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
 #include <cstddef>
@@ -68,7 +62,7 @@ protected:
 public:
     typedef  Random_generator_base<T> This;
 
-    Random_generator_base() : _rnd( default_random) {}
+    Random_generator_base() : _rnd( CGAL::get_default_random() ) {}
     Random_generator_base( double range, Random& rnd)
         : Generator_base<T>( range), _rnd( rnd) {}
     Random_generator_base( const T& item, double range, Random& rnd)
@@ -83,17 +77,17 @@ class Random_double_in_interval : public Random_generator_base<double> {
 
  public:
   typedef Random_double_in_interval This;
-  Random_double_in_interval(double a = 1, Random& rnd = default_random)
+  Random_double_in_interval(double a = 1, Random& rnd = CGAL::get_default_random())
     // g is an input iterator creating points of type `P' uniformly
     // distributed in the half-open square with side length a,
     // centered around the origin, i.e. \forall p = `*g': -\frac{a}{2}
     // <= p.x() < \frac{a}{2} and -\frac{a}{2} <= p.y() < \frac{a}{2}
     // . Two random numbers are needed from `rnd' for each point.
     : Random_generator_base<double>( a, rnd)
-    { 
+    {
       this->d_item = this->d_range * (2 * this->_rnd.get_double() - 1.0);
     }
-  
+
   This& operator++() {
     this->d_item = this->d_range * (2 * this->_rnd.get_double() - 1.0);
     return *this;
@@ -106,5 +100,8 @@ class Random_double_in_interval : public Random_generator_base<double> {
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_GENERATORS_H //
 // EOF //

@@ -1,0 +1,1 @@
+set(CMAKE_DISABLE_FIND_PACKAGE_VTK TRUE CACHE BOOL "Disable VTK with -ansi")

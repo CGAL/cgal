@@ -1,6 +1,6 @@
 // This tests the rounding mode functions.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>
 #include <cassert>
@@ -102,6 +102,6 @@ int main()
    print_res(flag);
    if (!flag) print_rounding_name(FPU_empiric_test());
 
-   CGAL::FPU_set_cw(backup); // We restore it, as this gets checked 
+   CGAL::FPU_set_cw(backup); // We restore it, as this gets checked
    return (int) !flag;
 }

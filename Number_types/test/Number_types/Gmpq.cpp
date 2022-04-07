@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_GMP
 
@@ -36,6 +36,20 @@ void test_overflow_to_interval(const NT&)
   }
 }
 
+template<class NT>
+void test_underflow_to_interval(const NT&)
+{
+  NT q0 = std::numeric_limits<double>::denorm_min();
+  NT q1 = q0 / 2;
+  NT q2 = q1 * 3;
+  CGAL::Interval_nt<> i1 = CGAL::to_interval(q1);
+  CGAL::Interval_nt<> i2 = CGAL::to_interval(q2);
+  assert(i1.inf() <= q1);
+  assert(i1.sup() >= q1);
+  assert(i2.inf() <= q2);
+  assert(i2.sup() >= q2);
+}
+
 void test_overflow_to_double()
 {
   std::cout << "Tests if to_double(Gmpq) overflows or not." << std::endl;
@@ -61,7 +75,7 @@ Test_set make_derived_tests (const Test_pair& pair) {
   for (std::string l = ""; l != "ff"; l += "f") {
     // append char 'f' to test whether it is correctly not eaten
     for (std::string sign = ""; sign != "done";) {
-      // prepend signs "", "+", "-"	
+      // prepend signs "", "+", "-"
       Gmpq s = should_be;
       if (sign == "-") s = -s;
       result.push_back(Test_pair(sign+input+l , s));
@@ -105,11 +119,11 @@ void test_input_from_float()
 
   // now the actual test
   std::cout << " Running " << test_set.size()  << " master tests..."
-	    << std::endl;
+            << std::endl;
   for (unsigned int i=0; i<test_set.size(); ++i) {
     Test_set derived = make_derived_tests (test_set[i]);
     std::cout << " Running " <<derived.size() << " derived tests..."
-	      << std::endl;
+              << std::endl;
     for (unsigned int j=0; j <derived.size(); ++j) {
       std::stringstream is(derived[j].first);
       Gmpq should_be (derived[j].second);
@@ -117,8 +131,8 @@ void test_input_from_float()
       assert(!is.fail());
       if (!is.eof()) assert(is.peek()=='f');
       if (q != should_be)
-	std::cout << " Error: " << derived[j].first + "  read as "
-		  << q << std::endl;
+        std::cout << " Error: " << derived[j].first + "  read as "
+                  << q << std::endl;
       assert(q == should_be);
     }
   }
@@ -263,10 +277,12 @@ int main() {
   test_overflow_to_double();
   test_overflow_to_interval(Gmpz());
   test_overflow_to_interval(Gmpq());
+  test_underflow_to_interval(Gmpq());
 
 #ifdef CGAL_USE_GMPXX
   test_overflow_to_interval(mpz_class());
   test_overflow_to_interval(mpq_class());
+  test_underflow_to_interval(mpq_class());
 #endif
 
   // test operators Gmpq/Gmpfr (added by Luis)

@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // $Date$
 
 // Author(s)     :  Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -23,14 +15,14 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 
 #include <CGAL/Random.h>
 
 typedef CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> > EK;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     FK;
-typedef CGAL::Periodic_3_triangulation_traits_3<EK>             ETraits;
-typedef CGAL::Periodic_3_triangulation_traits_3<FK>             FTraits;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<EK>             ETraits;
+typedef CGAL::Periodic_3_Delaunay_triangulation_traits_3<FK>             FTraits;
 
 typedef ETraits::Point_3              EPoint;
 typedef ETraits::Iso_cuboid_3         EIso_cuboid;
@@ -69,17 +61,17 @@ Point my_rand_p3()
 }
 
 // Random int in [0;256).
-int my_rand_int(int min, int max)
+int my_rand_int(int imin, int imax)
 {
-  return r->get_int(min, max+1);
+  return r->get_int(imin, imax+1);
 }
 
 // Random offset
-Offset my_rand_o3(int min, int max)
+Offset my_rand_o3(int imin, int imax)
 {
-  int x = my_rand_int(min,max);
-  int y = my_rand_int(min,max);
-  int z = my_rand_int(min,max);
+  int x = my_rand_int(imin,imax);
+  int y = my_rand_int(imin,imax);
+  int z = my_rand_int(imin,imax);
   return Offset(x, y, z);
 }
 
@@ -304,7 +296,7 @@ void compute_epsilons()
 int _test_periodic_3_static_filters()
 {
   int loops = 2000;
-  int seed  = CGAL::default_random.get_int(0, 1<<30);
+  int seed  = CGAL::get_default_random().get_int(0, 1<<30);
 
   std::cout << "Initializing random generator with seed = " << seed
             << std::endl
@@ -334,7 +326,7 @@ int _test_periodic_3_static_filters()
     test_orientation_3(eorient,forient);
 
   std::cout << "Testing statically filtered Side_of_oriented_sphere_3"
-	    << std::endl;
+            << std::endl;
   for(int i=0; i<loops; ++i)
     test_side_of_oriented_sphere_3(esoos,fsoos);
 

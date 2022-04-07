@@ -1,25 +1,20 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Michael Seel
 //                 Stefan Schirra
- 
+
 
 #ifndef CGAL_TEST_NEW_3_H
 #define CGAL_TEST_NEW_3_H
@@ -28,7 +23,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>
 
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 using CGAL::internal::use;
 
@@ -42,7 +37,7 @@ _test_new_3_sqrt(const R&, CGAL::Tag_false)
     std::cout << std::endl
               << "NOTE : FT doesn't support sqrt(),"
                  " hence some functions are not tested."
-	      << std::endl;
+              << std::endl;
     return true;
 }
 
@@ -93,6 +88,7 @@ test_new_3(const R& rep)
   typedef typename R::FT                          FT;
 
   typedef typename R::Point_3                     Point_3;
+  typedef typename R::Weighted_point_3            Weighted_point_3;
   typedef typename R::Vector_3                    Vector_3;
   typedef typename R::Direction_3                 Direction_3;
   typedef typename R::Segment_3                   Segment_3;
@@ -118,6 +114,21 @@ test_new_3(const R& rep)
   Point_3 p5 = construct_point(1,2,3,4);
   Point_3 p6 = construct_point(4,2,1,2);
 
+  typename R::Construct_weighted_point_3 construct_weighted_point
+        = rep.construct_weighted_point_3_object();
+  Weighted_point_3 wp1;
+  Weighted_point_3 wp2 = construct_weighted_point(ORIGIN);
+  Weighted_point_3 wp3 = construct_weighted_point(1,1,1);
+  Weighted_point_3 wp3bis = construct_weighted_point(RT(1),RT(1),RT(1));
+  Weighted_point_3 wp3ter = construct_weighted_point(FT(1),FT(1),FT(1));
+  use(wp3bis); use(wp3ter);
+  Weighted_point_3 wp4 = construct_weighted_point(p2);
+  Weighted_point_3 wp5 = construct_weighted_point(p4,2);
+  Weighted_point_3 wp6 = construct_weighted_point(p5,RT(2));
+  Weighted_point_3 wp7 = construct_weighted_point(p6,FT(2));
+  Weighted_point_3 wp8 = construct_weighted_point(wp7);
+  use(wp1);
+
   typename R::Construct_vector_3 construct_vector
         = rep.construct_vector_3_object();
   Vector_3 v1;
@@ -135,13 +146,13 @@ test_new_3(const R& rep)
   Direction_3 d2 = construct_direction(v3);
   Direction_3 d3 = construct_direction(1,1,5);
   Direction_3 d4 = construct_direction(1,5,5);
-  // remaining constructions tested below, after the 
+  // remaining constructions tested below, after the
   // corresponding types have been introduced
 
   typename R::Construct_segment_3 construct_segment
         = rep.construct_segment_3_object();
-  Segment_3 s1;
-  Segment_3 s2 = construct_segment(p2,p3);
+  Segment_3 s0; CGAL_USE(s0); // test default-construction
+  Segment_3 s2 = construct_segment(p2,p3), s1 = s2;
 
   typename R::Construct_ray_3 construct_ray =
         rep.construct_ray_3_object();
@@ -173,7 +184,7 @@ test_new_3(const R& rep)
   Vector_3 v7 = construct_vector(s2);
   Vector_3 v8 = construct_vector(r2);
   Vector_3 v9 = construct_vector(l2);
-  
+
   typename R::Construct_plane_3 construct_plane
         = rep.construct_plane_3_object();
   Plane_3 h1;
@@ -197,16 +208,15 @@ test_new_3(const R& rep)
   Sphere_3 sp8 = construct_sphere(p3);
   Sphere_3 sp9 = construct_sphere(p3,CLOCKWISE);
 
-
+  Triangle_3 t0; CGAL_USE(t0); // test the default-construction
   typename R::Construct_triangle_3 construct_triangle
         = rep.construct_triangle_3_object();
-  Triangle_3 t1;
-  Triangle_3 t2 = construct_triangle(p2,p3,p4);
+  Triangle_3 t1 = construct_triangle(p2,p3,p4), t2 = t1;
 
   typename R::Construct_tetrahedron_3 construct_tetrahedron
         = rep.construct_tetrahedron_3_object();
-  Tetrahedron_3 th1;
-  Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5);
+  Tetrahedron_3 th0; // test default-constructor
+  Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5), th1 = th2;
 
   typename R::Construct_iso_cuboid_3 construct_iso_cuboid
         = rep.construct_iso_cuboid_3_object();
@@ -228,6 +238,8 @@ test_new_3(const R& rep)
         = rep.construct_projected_point_3_object();
           tmp1 = construct_projected_point(l2, p4);
           tmp1 = construct_projected_point(h7, p3);
+          tmp1 = construct_projected_point(s2, p3);
+          tmp1 = construct_projected_point(t2, p3);
 
   typename R::Construct_lifted_point_3 construct_lifted_point
         = rep.construct_lifted_point_3_object();
@@ -249,7 +261,7 @@ test_new_3(const R& rep)
           tmp2f = construct_vertex_3(iso1, 0);
           tmp2f = construct_vertex_3(t2, 0);
           tmp2f = construct_vertex_3(th2, 0);
-  
+
   typename R::Construct_min_vertex_3 construct_min_vertex_3
         = rep.construct_min_vertex_3_object();
           tmp2f = construct_min_vertex_3(iso1);
@@ -276,7 +288,7 @@ test_new_3(const R& rep)
   Bbox_3 bb5 = construct_bbox_3(sp1); // Sphere_3
   Bbox_3 bb6 = construct_bbox_3(iso1); // Iso_cuboid_3
 
-  typename R::Construct_cartesian_const_iterator_3 
+  typename R::Construct_cartesian_const_iterator_3
     construct_cartesian_const_iterator_3
     = rep.construct_cartesian_const_iterator_3_object();
 
@@ -324,6 +336,12 @@ test_new_3(const R& rep)
           tmp4 = construct_circumcenter(p2,p3);
           tmp4 = construct_circumcenter(th2);
           tmp4 = construct_circumcenter(t2);
+
+  typename R::Construct_weighted_circumcenter_3 construct_weighted_circumcenter
+        = rep.construct_weighted_circumcenter_3_object();
+          tmp4 = construct_weighted_circumcenter(wp4,wp5);
+          tmp4 = construct_weighted_circumcenter(wp4,wp5,wp6);
+          tmp4 = construct_weighted_circumcenter(wp4,wp5,wp6,wp7);
 
   typename R::Construct_centroid_3 construct_centroid
         = rep.construct_centroid_3_object();
@@ -420,13 +438,18 @@ test_new_3(const R& rep)
      tmp12c = Compute_squared_distance(p1, h2);
   (void) tmp12c;
 
+  typename R::Compute_power_product_3 compute_power_product
+        = rep.compute_power_product_3_object();
+     tmp12c = compute_power_product(wp2, wp3);
+  (void) tmp12c;
+
   typename R::Compute_squared_length_3 compute_squared_length
         = rep.compute_squared_length_3_object();
   FT tmp11 = compute_squared_length(v3);
   tmp11 = compute_squared_length(s2);
   (void) tmp11;
 
-  
+
   typename R::Compute_squared_radius_3 Compute_squared_radius
         = rep.compute_squared_radius_3_object();
   FT tmp11aa = Compute_squared_radius(sp1);
@@ -434,6 +457,17 @@ test_new_3(const R& rep)
      tmp11aa = Compute_squared_radius(p3, p4);
      tmp11aa = Compute_squared_radius(p3, p4, p5);
      tmp11aa = Compute_squared_radius(p3, p4, p5, p6);
+
+  typename R::Compute_power_distance_to_power_sphere_3 power_distance_to_power_sphere
+        = rep.compute_power_distance_to_power_sphere_3_object();
+     tmp11aa = power_distance_to_power_sphere(wp3, wp4, wp5, wp6, wp7);
+
+  typename R::Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere
+       = rep.compute_squared_radius_smallest_orthogonal_sphere_3_object();
+     tmp11aa = compute_squared_radius_smallest_orthogonal_sphere(wp4);
+     tmp11aa = compute_squared_radius_smallest_orthogonal_sphere(wp4, wp5);
+     tmp11aa = compute_squared_radius_smallest_orthogonal_sphere(wp4, wp5, wp6);
+     tmp11aa = compute_squared_radius_smallest_orthogonal_sphere(wp4, wp5, wp6, wp7);
   (void) tmp11aa;
 
   typename R::Compute_squared_area_3 compute_squared_area
@@ -570,7 +604,7 @@ test_new_3(const R& rep)
         = rep.compare_distance_3_object();
   Comparison_result tmp34ab = compare_dist(p2,p3,p4);
   tmp34ab = compare_dist(p2,p3,p2,p3);
-  tmp34ab = compare_dist(p1, p2, p3, p4);  
+  tmp34ab = compare_dist(p1, p2, p3, p4);
   (void) tmp34ab;
 
   typename R::Compare_squared_distance_3 compare_sq_dist
@@ -584,8 +618,12 @@ test_new_3(const R& rep)
   tmp34ab = compare_sq_dist(p1, p2, p3, p4);
 
   tmp34ab = CGAL::compare_distance(p2,p3,p2,p3);
-  tmp34ab = CGAL::compare_distance(p1, p2, p3, p4);  
-  tmp34ab = CGAL::compare_distance(p1, p2, p3);  
+  tmp34ab = CGAL::compare_distance(p1, p2, p3, p4);
+  tmp34ab = CGAL::compare_distance(p1, p2, p3);
+
+  typename R::Compare_power_distance_3 compare_power_dist
+        = rep.compare_power_distance_3_object();
+  tmp34ab = compare_power_dist(p1, wp2, wp3);
 
   typename R::Compare_squared_radius_3 compare_sq_radius
         = rep.compare_squared_radius_3_object();
@@ -599,6 +637,13 @@ test_new_3(const R& rep)
     tmp = compare_sq_radius(p1, rad);
     (void)tmp;
   }
+
+  typename R::Compare_weighted_squared_radius_3 compare_weighted_squared_radius
+        = rep.compare_weighted_squared_radius_3_object();
+  tmp34ab = compare_weighted_squared_radius(wp4, FT(1));
+  tmp34ab = compare_weighted_squared_radius(wp4, wp5, FT(1));
+  tmp34ab = compare_weighted_squared_radius(wp4, wp5, wp6, FT(1));
+  tmp34ab = compare_weighted_squared_radius(wp4, wp5, wp6, wp7, FT(1));
 
   typename R::Collinear_3 collinear
         = rep.collinear_3_object();
@@ -702,6 +747,7 @@ test_new_3(const R& rep)
         = rep.oriented_side_3_object();
   Oriented_side tmp39 = oriented_side(h2,p2);
                 tmp39 = oriented_side(sp9,p2);
+                tmp39 = oriented_side(p2,v3,p2);
   (void) tmp39;
 
   typename R::Bounded_side_3 bounded_side
@@ -738,21 +784,34 @@ test_new_3(const R& rep)
   typename R::Side_of_oriented_sphere_3 side_of_oriented_sphere
         = rep.side_of_oriented_sphere_3_object();
   Oriented_side tmp44 = side_of_oriented_sphere(p2,p3,p4,p5,p6);
-  (void) tmp44;
 
+  typename R::Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere
+        = rep.power_side_of_oriented_power_sphere_3_object();
+                tmp44 = power_side_of_oriented_power_sphere(wp3,wp4);
+                tmp44 = power_side_of_oriented_power_sphere(wp3,wp4,wp5);
+                tmp44 = power_side_of_oriented_power_sphere(wp3,wp4,wp5,wp6);
+                tmp44 = power_side_of_oriented_power_sphere(wp3,wp4,wp5,wp6,wp8);
+  (void) tmp44;
 
   typename R::Side_of_bounded_sphere_3 side_of_bounded_sphere
         = rep.side_of_bounded_sphere_3_object();
   Bounded_side tmp45 = side_of_bounded_sphere(p2,p3,p4,p5,p6);
                tmp45 = side_of_bounded_sphere(p2,p3,p4,p6);
                tmp45 = side_of_bounded_sphere(p2,p3,p6);
+
+  typename R::Power_side_of_bounded_power_sphere_3 power_side_of_bounded_power_sphere
+        = rep.power_side_of_bounded_power_sphere_3_object();
+               tmp45 = power_side_of_bounded_power_sphere(wp3,wp4);
+               tmp45 = power_side_of_bounded_power_sphere(wp3,wp4,wp5);
+               tmp45 = power_side_of_bounded_power_sphere(wp3,wp4,wp5,wp6);
+               tmp45 = power_side_of_bounded_power_sphere(wp3,wp4,wp5,wp6,wp7);
   (void) tmp45;
 
   typename R::Angle_3 angle
         = rep.angle_3_object();
   Angle tmp46 = angle(p2,p3,p4);
   (void) tmp46;
-  
+
   typename R::Construct_bisector_3 construct_bisector
         = rep.construct_bisector_3_object();
   Plane_3 tmp47 = construct_bisector(p2,p3);
@@ -761,23 +820,23 @@ test_new_3(const R& rep)
   // kill warnings ...
   use(v1); use(d1); use(s1); use(l1); use(l4); use(l5);
   use(l6); use(d4); use(d5); use(d6); use(d7); use(r1);
-  use(h1); use(h4); use(h5); use(h6); 
+  use(h1); use(h4); use(h5); use(h6);
   use(sp4); use(sp5); use(sp6); use(sp7); use(sp8);
   use(t1); use(th1);
   use(tmp3); use(tmp3a);
   use(tmp9); use(tmp14a); use(tmp5); use(tmp6);
   use(tmp7); use(tmp71); use(sp1a); use(tmp72);
   use(tmp12a); use(tmp12aa); use(tmp12b);
-  use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6); 
+  use(bb1); use(bb2); use(bb3); use(bb4); use(bb5); use(bb6);
   use(r4); use(r5); use(l7); use(l8); use(v7); use(v8); use(v9); use(h8);
   use(cccit);
 
   // More tests, that require sqrt().
-  typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
-  static const bool has_sqrt = 
+  typedef ::CGAL::Algebraic_structure_traits<FT> AST;
+  static const bool has_sqrt =
       ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
   _test_new_3_sqrt(rep, ::CGAL::Boolean_tag<has_sqrt>() );
-  
+
   return true;
 }
 

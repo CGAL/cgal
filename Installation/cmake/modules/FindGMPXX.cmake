@@ -10,7 +10,7 @@
 
 find_package( GMP QUIET )
 
-if(WITH_GMP AND GMP_FOUND)
+if(GMP_FOUND)
 
   if (GMPXX_INCLUDE_DIR AND GMPXX_LIBRARIES)
     # Already in cache, be silent

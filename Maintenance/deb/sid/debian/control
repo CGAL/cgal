@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 9), dpkg-awk, cmake, zlib1g-dev, libboost-dev,
  libipe-dev (>= 7), ipe
 Standards-Version: 3.9.3
 Section: libs
-Homepage: http://www.cgal.org/
+Homepage: https://www.cgal.org/
 XS-Autobuild: yes
 
 Package: libcgal10

@@ -1,6 +1,6 @@
 # -*- mode: shell-script -*-
 BUILD_HOSTS="localhost"
-PROCESSORS_localhost=9
+PROCESSORS_localhost=4
 #PROCESSORS_localhost=2
 #COMPILERS_localhost="i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O3 i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O2 i686_Linux-2.6_g++-4.1.2_CentOS-5.1 i686_Linux-2.6_g++-4.3.2_CentOS-5.1-O3 i686_Linux-2.6_g++-4.3.2_CentOS-5.1"
 COMPILERS_localhost="i686_Linux-2.6_g++-4.3.2_CentOS-5.1"

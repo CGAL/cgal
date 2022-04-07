@@ -3,43 +3,43 @@ namespace Qt {
 /*!
 \ingroup PkgGraphicsViewGraphicsItemClasses
 
-An object of type `CircularArcGraphicsItem` is a graphics item that encapsulates a circular arc. 
+An object of type `CircularArcGraphicsItem` is a graphics item that encapsulates a circular arc.
 
-\tparam CK  must be a \cgal `CircularKernel`. 
+\tparam CK  must be a \cgal `CircularKernel`.
 
 */
 template< typename CK >
 class CircularArcGraphicsItem : public Qt::GraphicsItem {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-Constructs a graphics 
-item for a circular arc. 
-*/ 
-CircularArcGraphicsItem<CK>(); 
+Constructs a graphics
+item for a circular arc.
+*/
+CircularArcGraphicsItem<CK>();
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-Returns the pen used to draw edges. 
-*/ 
-QPen edgesPen()() const; 
+Returns the pen used to draw edges.
+*/
+QPen edgesPen()() const;
 
 /*!
-Sets the pen used to draw edges. 
-*/ 
-void setEdgesPen()(const QPen& p); 
+Sets the pen used to draw edges.
+*/
+void setEdgesPen()(const QPen& p);
 
 /*!
-Sets the circular arc. 
-*/ 
-void setArc(const Circular_arc_2<CK>& ca2); 
+Sets the circular arc.
+*/
+void setArc(const Circular_arc_2<CK>& ca2);
 
 /// @}
 

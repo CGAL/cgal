@@ -2,25 +2,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_CURVE_DATA_AUX_H
 #define CGAL_CURVE_DATA_AUX_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Definition of auxiliary classes for the Arr_curve_data_traits_2<> template.
@@ -66,11 +61,11 @@ public:
   /*! Default constructor. */
   _Curve_data_ex ()
   {}
-    
+
   /*!
    * Construct an extended curve from a base curve.
    * \param cv The base curve.
-   */ 
+   */
   _Curve_data_ex (const BaseCurveType& cv) :
     BaseCurveType (cv)
   {}
@@ -79,7 +74,7 @@ public:
    * Construct an extended curve from a base curve and a data object.
    * \param cv The base curve.
    * \param data The data object.
-   */ 
+   */
   _Curve_data_ex (const BaseCurveType& cv, const Data& data) :
     BaseCurveType (cv),
     m_data (data)

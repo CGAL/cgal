@@ -1,10 +1,13 @@
 #include <fstream>
-
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
-
+#include <CGAL/Alpha_shape_face_base_2.h>
+#include <CGAL/Alpha_shape_vertex_base_2.h>
+#include <CGAL/IO/WKT.h>
 #include <CGAL/point_generators_2.h>
 
 // Qt headers
@@ -20,7 +23,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
-  
+
 // the two base classes
 #include "ui_Alpha_shapes_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -43,12 +46,12 @@ class MainWindow :
   public Ui::Alpha_shapes_2
 {
   Q_OBJECT
-  
-private:  
+
+private:
   double alpha;
   std::vector<Point_2> points;
-  Alpha_shape_2 as; 
-  QGraphicsScene scene;  
+  Alpha_shape_2 as;
+  QGraphicsScene scene;
 
   CGAL::Qt::AlphaShapeGraphicsItem<Alpha_shape_2> * agi;
   CGAL::Qt::GraphicsViewPolylineInput<K> * pi;
@@ -56,7 +59,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -72,7 +75,7 @@ public slots:
 
   void open(QString fileName);
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -88,7 +91,7 @@ MainWindow::MainWindow()
   agi = new CGAL::Qt::AlphaShapeGraphicsItem<Alpha_shape_2>(&as);
 
   QObject::connect(this, SIGNAL(changed()),
-		   agi, SLOT(modelChanged()));
+                   agi, SLOT(modelChanged()));
 
   agi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   agi->setEdgesPen(QPen(Qt::lightGray, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -97,30 +100,30 @@ MainWindow::MainWindow()
   agi->setRegularFacesBrush(QBrush(Qt::cyan));
   scene.addItem(agi);
 
-  // 
+  //
   // Manual handling of actions
   //
 
 
-  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)), 
-		   this, SLOT(alphaChanged(int)));
+  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)),
+                   this, SLOT(alphaChanged(int)));
 
   QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)),
-		   this, SLOT(alphaChanged(int)));
+                   this, SLOT(alphaChanged(int)));
 
-  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)), 
-		   this->alphaBox, SLOT(setValue(int)));
+  QObject::connect(this->alphaSlider, SIGNAL(valueChanged(int)),
+                   this->alphaBox, SLOT(setValue(int)));
 
-  QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)), 
-		   this->alphaSlider, SLOT(setValue(int)));
+  QObject::connect(this->alphaBox, SIGNAL(valueChanged(int)),
+                   this->alphaSlider, SLOT(setValue(int)));
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 1, false); // inputs a list with one point
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-   
+                   this, SLOT(processInput(CGAL::Object)));
+
   scene.installEventFilter(pi);
   //this->actionShowAlphaShape->setChecked(true);
 
@@ -133,8 +136,8 @@ MainWindow::MainWindow()
   this->graphicsView->setMouseTracking(true);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
-                                                      
+  this->graphicsView->transform().scale(1, -1);
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -146,7 +149,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -160,7 +163,7 @@ MainWindow::processInput(CGAL::Object o)
       as.make_alpha_shape(points.begin(), points.end());
       as.set_alpha(alpha);
     }
-    emit(changed());
+    Q_EMIT( changed());
   }
 }
 
@@ -181,13 +184,13 @@ void MainWindow::alphaChanged(int i)
     alpha = 0;
     as.set_alpha(0);
   }
-  emit (changed());
+  Q_EMIT( changed());
 }
 
-/* 
+/*
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
- * 
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -199,7 +202,7 @@ MainWindow::on_actionClear_triggered()
 {
   as.clear();
   points.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -207,19 +210,20 @@ void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
   QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-  CGAL::Qt::Converter<K> convert;  
+  CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   bool ok = false;
-  const int number_of_points = 
-    QInputDialog::getInteger(this, 
+
+  const int number_of_points =
+    QInputDialog::getInt(this,
                              tr("Number of random points"),
                              tr("Enter number of random points"),
-			     100,
-			     0,
-			     (std::numeric_limits<int>::max)(),
-			     1,
-			     &ok);
+                             100,
+                             0,
+                             (std::numeric_limits<int>::max)(),
+                             1,
+                             &ok);
 
   if(!ok) {
     return;
@@ -236,7 +240,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   as.set_alpha(alpha);
   // default cursor
   QApplication::restoreOverrideCursor();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -244,8 +248,11 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
-						  ".");
+                                                  tr("Open Points file"),
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                     "WKT files (*.wktk *.WKT);;"
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -261,20 +268,25 @@ MainWindow::open(QString fileName)
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
-  
-  K::Point_2 p;
-  while(ifs >> p) {
-    points.push_back(p);
+  if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
+  {
+    CGAL::IO::read_multi_point_WKT(ifs, points);
+  }
+  else
+  {
+    K::Point_2 p;
+    while(ifs >> p) {
+      points.push_back(p);
+    }
   }
   as.make_alpha_shape(points.begin(), points.end());
   as.set_alpha(alpha);
-
   // default cursor
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
-  emit(changed());
-    
+  Q_EMIT( changed());
+
 }
 
 
@@ -284,7 +296,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(agi->boundingRect());
-  this->graphicsView->fitInView(agi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(agi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 
@@ -299,9 +311,8 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Alpha_shape_2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGAL (Qt5).
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

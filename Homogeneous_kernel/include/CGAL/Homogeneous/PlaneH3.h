@@ -1,24 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -44,7 +36,7 @@ class PlaneH3
    typedef typename R_::Plane_3              Plane_3;
    typedef typename R_::Aff_transformation_3 Aff_transformation_3;
 
-   typedef cpp11::array<RT, 4>               Rep;
+   typedef std::array<RT, 4>               Rep;
    typedef typename R_::template Handle<Rep>::type  Base;
 
    Base base;
@@ -66,6 +58,7 @@ public:
     PlaneH3(const Ray_3&, const Point_3& );
     PlaneH3(const Point_3&, const Direction_3& );
     PlaneH3(const Point_3&, const Vector_3& );
+    PlaneH3(Origin, const Vector_3& );
     PlaneH3(const Point_3&, const Direction_3&, const Direction_3& );
 
     const RT & a() const;
@@ -119,7 +112,7 @@ protected:
 //      |  q.hx()   q.hy()  q.hz()  q.hw()  |
 //      |  r.hx()   r.hy()  r.hz()  r.hw()  |
 //
-//  cpp11::array<RT, 4> ( a(), b(), c(), d() )
+//  std::array<RT, 4> ( a(), b(), c(), d() )
 
 template < class R >
 inline
@@ -249,6 +242,17 @@ PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
 
 template < class R >
 CGAL_KERNEL_INLINE
+PlaneH3<R>::PlaneH3(Origin,
+                    const typename PlaneH3<R>::Vector_3& ov)
+{
+  new_rep( ov.hx(),
+           ov.hy(),
+           ov.hz(),
+           RT(0) );
+}
+
+template < class R >
+CGAL_KERNEL_INLINE
 PlaneH3<R>::PlaneH3(const typename PlaneH3<R>::Point_3& p,
                         const typename PlaneH3<R>::Direction_3& d1,
                         const typename PlaneH3<R>::Direction_3& d2)
@@ -258,25 +262,25 @@ template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::a() const
-{ return get(base)[0]; }
+{ return get_pointee_or_identity(base)[0]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::b() const
-{ return get(base)[1]; }
+{ return get_pointee_or_identity(base)[1]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::c() const
-{ return get(base)[2]; }
+{ return get_pointee_or_identity(base)[2]; }
 
 template < class R >
 inline
 const typename PlaneH3<R>::RT &
 PlaneH3<R>::d() const
-{ return get(base)[3]; }
+{ return get_pointee_or_identity(base)[3]; }
 
 template < class R >
 CGAL_KERNEL_INLINE

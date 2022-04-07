@@ -1,23 +1,15 @@
-// Copyright (c) 2002-2004,2007  
+// Copyright (c) 2002-2004,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
@@ -25,9 +17,10 @@
 #ifndef CGAL_CORE_EXPR_H
 #define CGAL_CORE_EXPR_H
 
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE_coercion_traits.h>
-#include <CGAL/CORE/Expr.h>
 #include <utility>
 
 
@@ -41,7 +34,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
     typedef Tag_true            Is_numerical_sensitive;
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return CORE::sqrt( x );
@@ -49,7 +42,7 @@ template <> class Algebraic_structure_traits< CORE::Expr >
     };
 
     class Kth_root
-      : public std::binary_function<int, Type, Type> {
+      : public CGAL::cpp98::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -128,7 +121,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
   : public INTERN_RET::Real_embeddable_traits_base< CORE::Expr , CGAL::Tag_true > {
   public:
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
             return CORE::abs( x );
@@ -136,7 +129,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class Sgn
-      : public std::unary_function< Type, ::CGAL::Sign > {
+      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return (::CGAL::Sign) CORE::sign( x );
@@ -144,7 +137,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -158,7 +151,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
           x.approx(53,1075);
@@ -167,7 +160,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
             std::pair<double,double> result;
@@ -183,8 +176,7 @@ template <> class Real_embeddable_traits< CORE::Expr >
 } //namespace CGAL
 
 //since types are included by CORE_coercion_traits.h:
-#include <CGAL/CORE_Expr.h>
-#include <CGAL/CORE_BigInt.h> 
+#include <CGAL/CORE_BigInt.h>
 #include <CGAL/CORE_BigRat.h>
 #include <CGAL/CORE_BigFloat.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
@@ -196,6 +188,7 @@ namespace Eigen {
     typedef CORE::Expr Real;
     typedef CORE::Expr NonInteger;
     typedef CORE::Expr Nested;
+    typedef CORE::Expr Literal;
 
     static inline Real epsilon() { return 0; }
     static inline Real dummy_precision() { return 0; }
@@ -211,5 +204,7 @@ namespace Eigen {
     };
   };
 }
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_CORE_EXPR_H

@@ -1,9 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Profiling tools, Hash Map, Union-find, Modifiers"
-
-
-INPUT = ${CMAKE_SOURCE_DIR}/Miscellany/doc/Miscellany/
-
-EXAMPLE_PATH = ${CMAKE_SOURCE_DIR}/Profiling_tools/examples
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Profiling tools, Hash Map, Union-find, Modifiers"
+EXAMPLE_PATH = ${CGAL_Profiling_tools_EXAMPLE_DIR}
 

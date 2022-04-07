@@ -1,65 +1,95 @@
-Subject: CGAL 4.5 Beta 1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.4 Beta 1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
-Body: 
+Body:
 
-The CGAL Open Source Project is pleased to announce the release 4.5 Beta 1
+The CGAL Open Source Project is pleased to announce the release 5.4 Beta 1
 of CGAL, the Computational Geometry Algorithms Library.
 
-CGAL version 4.5 Beta 1 is a public testing release. It should provide
-a solid ground to report bugs that need to be tackled before the
-release of the final version of CGAL 4.5 in October.
+
+CGAL version 5.4 Beta 1 is a public testing release. It should provide a
+solid ground to report bugs that need to be tackled before the release
+of the final version of CGAL 5.4 in January 2022.
 
 
-Besides fixes to existing packages, the following has changed since
-CGAL 4.4:
-
-  o Support
-
-    - CMake version 3.0 is now supported.
-
-    - Microsoft Windows Visual C++ compiler 2008 (VC9) is no longer
-      supported.
+Besides fixes and general enhancement to existing packages, the following
+has changed since CGAL 5.3:
 
 
-  o Triangulated Surface Mesh Deformation (new package)
+General changes
 
-    This package allows to deform a triangulated surface mesh under positional
-    constraints of some of its vertices without requiring any additional
-    structure other than the surface mesh itself. The methods provided
-    implements an as-rigid-as-possible deformation.
+-   Added the cmake target CGAL::CGAL_Basic_viewer to ease the
+    compilation of programs using the basic viewer-based function
+    CGAL::draw(). This target will define the macro and link with
+    CGAL_Qt5 target when linked with it.
 
-
-  o Breaking change in the support of Boost Graph Library
-    
-   - Introduction of the FaceGraph concept.
-
-   - Cleanup of the HalfedgeGraph concept. In particular:
-
-      - Deprecation of halfedge_graph_traits.
-
-      - A model of HalfedgeGraph is considered as an undirected graph. Thus any
-        call to edges() should be replaced by halfedges() and num_edges() now
-        returns the number of (undirected) edges.
-
-      - Breaking change: is_border_edge and is_border_halfedge properties are
-        removed. The free functions is_border() and is_border_edge() should be
-        used instead.
+-   The kernel providing exact constructions and exact predicates
+    (CGAL::Exact_predicates_exact_constructions_kernel) is now
+    thread-safe.
+    more details.
 
 
-  o 3D Triangulations
+Shape Regularization (new package)
 
-    Add an experimental parallel version of the Delaunay triangulation and the
-    regular triangulation algorithms, which allows parallel insertion and
-    removal of point ranges.
+-   This package enables to regularize a set of segments and open or
+    closed contours in 2D and a set of planes in 3D such that all input
+    objects are rotated and aligned with respect to the user-specified
+    conditions. In addition, it provides a global regularization
+    framework that can be adjusted for the user needs and any type of
+    geometric objects.
+
+      https://www.cgal.org/2021/11/16/shape-regularization/
+
+      https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization
 
 
-  o 3D Mesh Generation
+Weights (new package)
 
-    Add an experimental parallel version of the 3D mesh refinement and mesh
-    optimization methods.
+-   This package provides a simple and unified interface to different
+    types of weights. In particular, it groups all weights into three
+    category: analytic weights including all basic weights which can be
+    computed analytically for a query point with respect to its local
+    neighbors in 2D and 3D; barycentric weights, including all weights
+    which can be computed for a query point with respect to the vertices
+    of a planar polygon; and weighting regions, including all weights
+    which are used to balance other weights.
+
+      https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights
 
 
-See http://www.cgal.org/releases.html for a complete list of changes.
+2D Generalized Barycentric Coordinates (major changes)
+
+-   Breaking change: The headers Segment_coordinates_2.h and
+    Triangle_coordinates_2.h are renamed to segment_coordinates_2.h and
+    triangle_coordinates_2.h.
+-   The classes Segment_coordinates_2 and Triangle_coordinates_2 are
+    deprecated. The free functions compute_segment_coordinates_2() and
+    compute_triangle_coordinates_2() are deprecated as well. Instead,
+    the free functions segment_coordinates_2() and
+    triangle_coordinates_2() should be used.
+-   The enums Query_point_location and Type_of_algorithm are deprecated.
+    Instead, the enum Computation_policy_2 should be used.
+-   The classes Wachspress_2, Discrete_harmonic_2, Mean_value_2, and
+    Generalized_barycentric_coordinates_2 are deprecated. As
+    consequence, the concept BarycentricCoordinates_2 is deprecated as
+    well. Instead, the classes Wachspress_coordinates_2,
+    Discrete_harmonic_coordinates_2, and Mean_value_coordinates_2 should
+    be used.
+-   Added the class Harmonic_coordinates_2 to compute approximate
+    harmonic coordinates in 2D. These coordinates satisfy all properties
+    of barycentric coordinates inside any simple polygon.
+-   Added a new concept DiscretizedDomain_2 and a model of this concept
+    called Delaunay_domain_2, which is based on the Mesh 2 package. A
+    model of this concept is required to use Harmonic_coordinates_2.
+-   Added free functions to compute Wachspress, discrete harmonic, and
+    mean value coordinates.
+-   All free functions and classes are now using ranges and property
+    maps.
+
+      https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2
+
+
+See https://www.cgal.org/2021/12/17/cgal54-beta1/ for a
+complete list of changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,
@@ -83,8 +113,7 @@ structures and algorithms, like
   streamlines),
 - optimization algorithms (smallest enclosing sphere of points or
   spheres, smallest enclosing ellipsoid of points, principal
-  component analysis),
-- kinetic data structures
+  component analysis).
 
 
 
@@ -99,4 +128,4 @@ GeometryFactory (http://www.geometryfactory.com/).
 
 
 For further information and for downloading the library and its
-documentation, please visit the CGAL web site: http://www.cgal.org/
+documentation, please visit the CGAL web site: https://www.cgal.org/

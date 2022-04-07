@@ -1,0 +1,7 @@
+/*!
+\example Periodic_3_mesh_3/mesh_implicit_shape.cpp
+\example Periodic_3_mesh_3/mesh_implicit_multi_domain.cpp
+\example Periodic_3_mesh_3/mesh_implicit_shape_with_optimizers.cpp
+\example Periodic_3_mesh_3/mesh_implicit_shape_with_features.cpp
+\example Periodic_3_mesh_3/mesh_implicit_shape_with_subdomains.cpp
+*/

@@ -1,23 +1,15 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Geert-Jan Giezeman, Michael Hemmer
@@ -28,6 +20,7 @@
 #include <CGAL/utils.h>
 #include <CGAL/utils_classes.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Algebraic_structure_traits.h>
 #include <utility>
 #include <cmath>
 #include <math.h> // for nextafter
@@ -71,7 +64,7 @@ is_nan_by_mask_double(unsigned int h, unsigned int l)
 
 template<>
 class Is_valid< double >
-  : public std::unary_function< double, bool > {
+  : public CGAL::cpp98::unary_function< double, bool > {
   public :
     bool operator()( const double& x ) const{
       double d = x;
@@ -84,7 +77,7 @@ class Is_valid< double >
 
 template<>
 class Is_valid< double >
-  : public std::unary_function< double, bool > {
+  : public CGAL::cpp98::unary_function< double, bool > {
   public :
     bool operator()( const double& x ) const {
 #ifdef _MSC_VER
@@ -105,7 +98,7 @@ template <> class Algebraic_structure_traits< double >
     typedef Tag_true             Is_numerical_sensitive;
 
     class Sqrt
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
           return std::sqrt( x );
@@ -113,7 +106,7 @@ template <> class Algebraic_structure_traits< double >
     };
 
     class Kth_root
-      : public std::binary_function<int, Type, Type> {
+      : public CGAL::cpp98::binary_function<int, Type, Type> {
       public:
         Type operator()( int k,
                                         const Type& x) const {
@@ -125,20 +118,19 @@ template <> class Algebraic_structure_traits< double >
 };
 
 
-  
-#ifdef CGAL_USE_SSE2_FABS   
+
+#ifdef CGAL_USE_SSE2_FABS
 inline double sse2fabs(double a)
 {
   static CGAL_ALIGN_16 const union{
     __int64 i[2];
     __m128d m;
   } absMask = {0x7fffffffffffffff, 0x7fffffffffffffff};
-	  
+
   __m128d temp = _mm_set1_pd(a);
-  
+
   temp = _mm_and_pd(temp, absMask.m);
-  _mm_store_sd(&a, temp);
-  return a;
+  return _mm_cvtsd_f64 (temp);
 }
 
 #endif
@@ -151,12 +143,12 @@ template <> class Real_embeddable_traits< double >
 // GCC is faster with std::fabs().
 #if defined(__GNUG__) || defined(CGAL_MSVC_USE_STD_FABS) || defined(CGAL_USE_SSE2_FABS)
     class Abs
-      : public std::unary_function< Type, Type > {
+      : public CGAL::cpp98::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
 #ifdef CGAL_USE_SSE2_FABS
           return sse2fabs(x);
-#else         
+#else
           return std::fabs( x );
 #endif
         }
@@ -165,19 +157,16 @@ template <> class Real_embeddable_traits< double >
 
 // Is_finite depends on platform
     class Is_finite
-      : public std::unary_function< Type, bool > {
+      : public CGAL::cpp98::unary_function< Type, bool > {
       public :
         bool operator()( const Type& x ) const {
-#ifdef CGAL_CFG_IEEE_754_BUG
+
+#if defined CGAL_CFG_IEEE_754_BUG
           Type d = x;
           IEEE_754_double* p = reinterpret_cast<IEEE_754_double*>(&d);
           return is_finite_by_mask_double( p->c.H );
-#elif defined CGAL_CFG_NUMERIC_LIMITS_BUG
-          return (x == x) && (is_valid(x-x));
 #else
-          return (x != std::numeric_limits<Type>::infinity())
-              && (-x != std::numeric_limits<Type>::infinity())
-              && is_valid(x);
+          return std::isfinite(x);
 #endif
       }
     };

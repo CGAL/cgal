@@ -1,24 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -36,7 +28,7 @@ template <class R_>
 class SphereC3
 {
   typedef typename R_::FT                   FT;
-// http://www.cgal.org/Members/Manual_test/LAST/Developers_internal_manual/Developers_manual/Chapter_code_format.html#sec:programming_conventions
+// https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
   typedef typename R_::Point_3              Point_3_;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Sphere_3             Sphere_3;
@@ -66,7 +58,7 @@ public:
            const Point_3_ &r, const Point_3_ &s)
   {
     Orientation orient = make_certain(CGAL::orientation(p, q, r, s));
-    Point_3_ center = circumcenter(p, q, r, s);
+    Point_3_ center = CGAL::circumcenter(p, q, r, s);
     FT      squared_radius = squared_distance(p, center);
 
     base = Rep(center, squared_radius, orient);
@@ -74,11 +66,11 @@ public:
 
   // Sphere with great circle passing through p,q,r, oriented by o
   SphereC3(const Point_3_ &p, const Point_3_ &q, const Point_3_ &r,
-	   const Orientation &o = COUNTERCLOCKWISE)
+           const Orientation &o = COUNTERCLOCKWISE)
   {
     CGAL_kernel_precondition(o != COLLINEAR);
 
-    Point_3_ center = circumcenter(p, q, r);
+    Point_3_ center = CGAL::circumcenter(p, q, r);
     FT      squared_radius = squared_distance(p, center);
 
     base = Rep(center, squared_radius, o);
@@ -109,17 +101,17 @@ public:
 
   const Point_3_ & center() const
   {
-      return get(base).template get<0>();
+      return get_pointee_or_identity(base).template get<0>();
   }
   const FT & squared_radius() const
   {
       // Returns the square of the radius (instead of the radius itself,
       // which would require square roots)
-      return get(base).template get<1>();
+      return get_pointee_or_identity(base).template get<1>();
   }
   Orientation orientation() const
   {
-      return get(base).template get<2>();
+      return get_pointee_or_identity(base).template get<2>();
   }
 
   // A circle is degenerate if its (squared) radius is null or negative

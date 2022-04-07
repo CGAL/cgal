@@ -1,73 +1,42 @@
-
-/*!
-\ingroup PkgArrangement2ConceptsTraits
-\cgalConcept
-
-The concept `ArrangementLandmarkTraits_2` refines the general traits concept by adding 
-operations needed for the landmarks point-location strategy, namely - 
-approximating points and connecting points with a simple \f$ x\f$-monotone 
-curve. 
-
-A model of this concept must define the `Approximate_number_type`, which 
-is used to approximate the coordinates of `Point_2` instances. It is 
-recommended to define the approximated number type as the built-in 
-`double` type. 
-
-\cgalRefines `ArrangementTraits_2` 
-
-\cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>` 
-\cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>` 
-\cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>` 
-\cgalHasModel `CGAL::Arr_polyline_traits_2<SegmentTraits>` 
-\cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>` 
-
-\sa `ArrangementTraits_2` 
-
-*/
-
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
+ * \cgalConcept
+ *
+ * The concept `ArrangementLandmarkTraits_2` refines the traits concepts
+ * `ArrangementApproximateTraits_2` and
+ * `ArrangementConstructXMonotoneCurveTraits_2`. The type of an arrangement
+ * associated with the landmark point-location strategy (see
+ * `CGAL::Arr_landmarks_point_location`) must be an instance of the
+ * `CGAL::Arrangement_2<Traits,Dcel>` class template, where the Traits parameter
+ * is substituted with a model of this concept.
+ *
+ * \cgalRefines `ArrangementApproximateTraits_2` and
+ * `ArrangementConstructXMonotoneCurveTraits_2`
+ *
+ * \cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
+ * \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2`
+ * \cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
+ * \cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
+ * \cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
+ * \cgalHasModel `CGAL::Arr_polycurve_traits_2<GeometryTraits_2>`
+ * \cgalHasModel `CGAL::Arr_polyline_traits_2<SegmentTraits_2>`
+ * \cgalHasModel `CGAL::Arr_rational_function_traits_2`
+ *
+ * \sa `ArrangementXMonotoneTraits_2` and
+ * `ArrangementTraits_2<AlgebraicKernel_d_1>`
+ */
 class ArrangementLandmarkTraits_2 {
 public:
 
-/// \name Types 
-/// @{
+  /// \name Types
+  /// @{
+  /// @}
 
-/*!
-the number type used to approximate point coordinates. 
-*/ 
-typedef unspecified_type Approximate_number_type; 
+  /// \name Functor Types
+  /// @{
+  /// @}
 
-/// @} 
+  /// \name Accessing Functor Objects
+  /// @{
+  /// @}
 
-/// \name Functor Types 
-/// @{
-
-/*!
-models the concept `ArrTraits::Approximate_2`. 
-*/ 
-typedef unspecified_type Approximate_2; 
-
-/*!
-models the concept `ArrTraits::ConstructXMonotoneCurve_2`. 
-*/ 
-typedef unspecified_type Construct_x_monotone_curve_2; 
-
-/// @} 
-
-/// \name Accessing Functor Objects 
-/// @{
-
-/*!
-
-*/ 
-Approximate_2 approximate_2_object() const; 
-
-/*!
-
-*/ 
-Construct_x_monotone_curve_2 
-construct_x_monotone_curve_2_object() const; 
-
-/// @}
-
-}; /* end ArrangementLandmarkTraits_2 */
-
+};

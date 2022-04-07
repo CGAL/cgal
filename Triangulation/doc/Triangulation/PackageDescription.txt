@@ -1,0 +1,121 @@
+/// \defgroup PkgTriangulationsRef dD Triangulations Reference
+/// \defgroup PkgTriangulationsConcepts Concepts
+/// \ingroup PkgTriangulationsRef
+
+/// \defgroup PkgTriangulationsTriangulationClasses Triangulation Classes
+/// \ingroup PkgTriangulationsRef
+
+/// \defgroup PkgTriangulationsTraitsClasses Traits Classes
+/// \ingroup PkgTriangulationsRef
+
+/// \defgroup PkgTriangulationsVertexCellClasses Vertex, Face and Cell Classes
+/// \ingroup PkgTriangulationsRef
+
+/*!
+\addtogroup PkgTriangulationsRef
+\cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulations}
+\cgalPkgPicture{Hypertriangle.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Olivier Devillers, Samuel Hornus, and Clément Jamin}
+\cgalPkgDesc{This package provides classes for manipulating
+triangulations (pure simplicial complexes) in Euclidean spaces whose dimension
+can be specified at compile-time or at run-time. Specifically, it provides a
+data structure to store the triangulations, and two classes to handle
+triangulations and Delaunay triangulations of point sets. Point location and point
+insertion are supported. The Delaunay triangulation also supports point removal.}
+\cgalPkgManuals{Chapter_Triangulations,PkgTriangulationsRef}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.6}
+\cgalPkgBib{cgal:hdj-t}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+A triangulation is a pure manifold simplicial complex.
+Its faces are simplices such that two of them either do not
+intersect or share a common face.
+
+The triangulation classes of \cgal are designed to
+represent triangulations of a set of points \f$ A\f$ in
+\f$ \mathbb{R}^d\f$. It can be
+viewed as a partition of the convex hull of \f$ A\f$ into simplices whose
+vertices are the points of \f$ A\f$.
+
+See the \ref Chapter_Triangulations "User Manual" for more details.
+
+<!---
+In order to deal only with full dimensional simplices (full cells),
+which is convenient for many
+applications, the space outside the convex hull is subdivided into
+full cells by
+considering that each convex hull facet is incident to an infinite
+full cell having as vertex an auxiliary vertex called the infinite
+vertex. In that way, each facet is incident to exactly two full cells and
+special cases at the boundary of the convex hull are simple to deal
+with.
+
+A triangulation is represented as a collection of vertices
+and full cells that are linked
+together through incidence and adjacency relations. Each full cell gives
+access to its incident vertices and to its adjacent
+full cells. Each vertex gives access to one of its incident full cells.
+
+The vertices of a full cell are indexed in positive
+orientation, the positive orientation being defined by the orientation
+of the underlying Euclidean space \f$ \mathbb{R}^d\f$.
+The neighbors of a full cell are also
+indexed  in such a way that the neighbor indexed by \f$ i\f$
+is opposite to the vertex with the same index.
+--->
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+\cgalCRPSection{Triangulation Data Structure}
+
+- `TriangulationDataStructure`
+- `TriangulationDataStructure::FullCell`
+- `TriangulationDataStructure::Vertex`
+- `TriangulationDSVertex`
+- `TriangulationDSFullCell`
+- `TriangulationDSFace`
+- `FullCellData`
+
+\cgalCRPSection{Triangulations}
+
+- `TriangulationTraits`
+- `DelaunayTriangulationTraits`
+- `RegularTriangulationTraits`
+- `TriangulationVertex`
+- `TriangulationFullCell`
+
+The latter two concepts are also abbreviated respectively as `TrVertex` and `TrFullCell`.
+
+\cgalCRPSection{Classes}
+
+\cgalCRPSection{Triangulation Data Structure}
+
+- `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
+- `CGAL::Triangulation_ds_vertex<TriangulationDataStructure_>`
+- `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure_, TriangulationDSFullCellStoragePolicy>`
+- `CGAL::Triangulation_face<TriangulationDataStructure_>`
+
+\cgalCRPSection{(Geometric) Triangulations}
+
+- `CGAL::Triangulation<TriangulationTraits_, TriangulationDataStructure_>`
+- `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits_, TriangulationDataStructure_>`
+- `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`
+- `CGAL::Triangulation_vertex<TriangulationTraits_, Data, TriangulationDSVertex_>`
+- `CGAL::Triangulation_full_cell<TriangulationTraits_, Data, TriangulationDSFullCell_>`
+
+\cgalCRPSection{Traits Classes}
+
+-  `CGAL::Regular_triangulation_traits_adapter<K>`
+
+\cgalCRPSection{Enums}
+
+- `CGAL::Triangulation::Locate_type`
+*/
+

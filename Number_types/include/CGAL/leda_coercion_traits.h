@@ -1,26 +1,18 @@
 // Copyright (c) 2006-2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hemmer   <hemmer@mpi-inf.mpg.de>
 
 
 /*! \file NiX/LEDA/Coercion_traits.h
- *  \brief Provides specializations of Coercion_traits for the LEDA number types.
+ *  \brief provides specializations of Coercion_traits for the LEDA number types.
  */
 
 #ifndef CGAL_LEDA_COERCION_TRAITS_H
@@ -31,17 +23,10 @@
 #ifdef CGAL_USE_LEDA
 
 #include <CGAL/LEDA_basic.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/integer.h>
-#include <LEDA/bigfloat.h>
-#include <LEDA/rational.h>
-#include <LEDA/real.h>
-#else
 #include <LEDA/numbers/integer.h>
 #include <LEDA/numbers/bigfloat.h>
 #include <LEDA/numbers/rational.h>
 #include <LEDA/numbers/real.h>
-#endif
 
 namespace CGAL {
 
@@ -107,21 +92,7 @@ struct Coercion_traits< ::leda::bigfloat ,::leda::rational  >{
         typedef Type result_type;
         Type operator()(const ::leda::rational& x)  const { return x;}
         Type operator()(const ::leda::bigfloat& x) const {
-#if CGAL_LEDA_VERSION < 500
-            ::leda::integer e = x.get_exponent();
-            ::leda::integer s = x.get_significant();
-            if(e<0) {
-                ::leda::bigfloat b_two_to_e = ::leda::ipow2(-e);
-                ::leda::integer two_to_e = ::leda::floor(b_two_to_e);
-                return ::leda::rational(s,two_to_e);
-            }
-            // e >= 0
-            ::leda::bigfloat b_two_to_e = ::leda::ipow2(e);
-            ::leda::integer two_to_e = ::leda::floor(b_two_to_e);
-            return ::leda::rational(s * two_to_e);
-#else
             return x.to_rational();
-#endif
         }
     };
 };

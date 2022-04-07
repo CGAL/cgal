@@ -9,7 +9,7 @@ typedef Kernel::Point_2                     Point_2;
 typedef std::pair<Point_2,int>              Point_with_info;
 typedef std::vector< Point_with_info >      Data_vector;
 
-typedef CGAL::Spatial_sort_traits_adapter_2<Kernel, 
+typedef CGAL::Spatial_sort_traits_adapter_2<Kernel,
   CGAL::First_of_pair_property_map<Point_with_info>
 > Search_traits_2;
 
@@ -22,14 +22,22 @@ int main()
   points.push_back(std::make_pair(Point_2(4,21)  , 1));
   points.push_back(std::make_pair(Point_2(7,74)  , 2));
   points.push_back(std::make_pair(Point_2(74,4)  , 4));
-  
+
   Search_traits_2 traits;
+
+  std::cout << "Order using default policy (median)\n";
   CGAL::spatial_sort(points.begin(), points.end(), traits);
   for (Data_vector::iterator it=points.begin();it!=points.end();++it)
     std::cout << it->second << " ";
   std::cout << "\n";
 
+  std::cout << "Order using middle policy\n";
+  CGAL::spatial_sort(points.begin(), points.end(), traits, CGAL::Hilbert_sort_middle_policy());
+  for (Data_vector::iterator it=points.begin();it!=points.end();++it)
+    std::cout << it->second << " ";
+  std::cout << "\n";
+
   std::cout << "done" << std::endl;
-  
+
   return 0;
 }

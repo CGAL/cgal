@@ -1,33 +1,27 @@
-// Copyright (c) 1999,2004  
+// Copyright (c) 1999,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Andreas Fabri
 
 #ifndef CGAL_BBOX_3_H
 #define CGAL_BBOX_3_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/array.h>
+#include <boost/math/special_functions/next.hpp>
 
 namespace CGAL {
 
@@ -36,7 +30,7 @@ struct Simple_cartesian;
 
 class Bbox_3
 {
-  cpp11::array<double, 6>   rep;
+  std::array<double, 6>   rep;
 
 public:
 
@@ -45,28 +39,44 @@ public:
 
   typedef Simple_cartesian<double>  R;
 
-        Bbox_3() {}
+  Bbox_3()
+    : rep(CGAL::make_array( std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity() ))
+  {}
 
-        Bbox_3(double x_min, double y_min, double z_min,
-               double x_max, double y_max, double z_max)
-	  : rep(CGAL::make_array(x_min, y_min, z_min, x_max, y_max, z_max)) {}
+  Bbox_3(double x_min, double y_min, double z_min,
+         double x_max, double y_max, double z_max)
+    : rep(CGAL::make_array(x_min, y_min, z_min, x_max, y_max, z_max))
+  {}
 
   inline bool operator==(const Bbox_3 &b) const;
   inline bool operator!=(const Bbox_3 &b) const;
 
   inline int dimension() const;
-  double  xmin() const;
-  double  ymin() const;
-  double  zmin() const;
-  double  xmax() const;
-  double  ymax() const;
-  double  zmax() const;
+  double xmin() const;
+  double ymin() const;
+  double zmin() const;
+  double xmax() const;
+  double ymax() const;
+  double zmax() const;
+  double x_span() const;
+  double y_span() const;
+  double z_span() const;
 
   inline double min BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
   inline double max BOOST_PREVENT_MACRO_SUBSTITUTION (int i) const;
 
+  inline double min_coord(int i) const { return (min)(i); }
+  inline double max_coord(int i) const { return (max)(i); }
+
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
+
+  void dilate(int dist);
 };
 
 inline
@@ -98,6 +108,18 @@ inline
 double
 Bbox_3::zmax() const
 { return rep[5]; }
+
+inline double Bbox_3::x_span() const {
+  return xmax() - xmin();
+}
+
+inline double Bbox_3::y_span() const {
+  return ymax() - ymin();
+}
+
+inline double Bbox_3::z_span() const {
+  return zmax() - zmin();
+}
 
 inline
 bool
@@ -166,6 +188,20 @@ Bbox_3::operator+=(const Bbox_3& b)
 }
 
 inline
+void
+Bbox_3::dilate(int dist)
+{
+  using boost::math::float_advance;
+  rep[0] = float_advance(rep[0],-dist);
+  rep[1] = float_advance(rep[1],-dist);
+  rep[2] = float_advance(rep[2],-dist);
+  rep[3] = float_advance(rep[3],dist);
+  rep[4] = float_advance(rep[4],dist);
+  rep[5] = float_advance(rep[5],dist);
+}
+
+
+inline
 bool
 do_overlap(const Bbox_3& bb1, const Bbox_3& bb2)
 {
@@ -184,11 +220,11 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_3& b)
 {
-  switch(os.iword(IO::mode))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin()
-		  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
+                  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
     case IO::BINARY :
         write(os, b.xmin());
         write(os, b.ymin());
@@ -197,6 +233,7 @@ operator<<(std::ostream &os, const Bbox_3& b)
         write(os, b.ymax());
         write(os, b.zmax());
         return os;
+    case IO::PRETTY :
     default:
         os << "Bbox_3((" << b.xmin()
            << ", "       << b.ymin()
@@ -212,12 +249,18 @@ inline
 std::istream&
 operator>>(std::istream &is, Bbox_3& b)
 {
-  double xmin, ymin, zmin, xmax, ymax, zmax;
+    double xmin = 0;
+    double ymin = 0;
+    double zmin = 0;
+    double xmax = 0;
+    double ymax = 0;
+    double zmax = 0;
 
-  switch(is.iword(IO::mode))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
-      is >> xmin >> ymin >> zmin >> xmax >> ymax >> zmax;
+      is >> IO::iformat(xmin) >> IO::iformat(ymin) >> IO::iformat(zmin)
+         >> IO::iformat(xmax) >> IO::iformat(ymax) >> IO::iformat(zmax);
         break;
     case IO::BINARY :
         read(is, xmin);
@@ -227,6 +270,8 @@ operator>>(std::istream &is, Bbox_3& b)
         read(is, ymax);
         read(is, zmax);
         break;
+    case IO::PRETTY :
+      break;
   }
   if (is)
     b = Bbox_3(xmin, ymin, zmin, xmax, ymax, zmax);

@@ -1,13 +1,4 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Point Set Processing"
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Point_set_processing_3/doc/Point_set_processing_3/ \ 
-                              ${CMAKE_SOURCE_DIR}/Point_set_processing_3/include
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Point Set Processing"
 EXCLUDE_PATTERNS          +=  property_map.h
-
-            
-
-
-

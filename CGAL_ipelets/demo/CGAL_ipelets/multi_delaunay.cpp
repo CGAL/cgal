@@ -1,29 +1,20 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_face_base_2.h>
 #include <CGAL/Regular_triangulation_vertex_base_2.h>
 #include <CGAL/Regular_triangulation_2.h>
@@ -33,16 +24,14 @@
 namespace CGAL_multi_delaunay{
 
 typedef  CGAL::Exact_predicates_inexact_constructions_kernel                        Kernel;
-typedef Kernel::FT                                                                  FT;
 typedef CGAL::Delaunay_triangulation_2<Kernel>                                      Delaunay;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<Kernel,FT>                   Gt;
-typedef CGAL::Regular_triangulation_vertex_base_2<Gt>                               Vb;
-typedef CGAL::Triangulation_vertex_base_with_info_2<std::vector<Kernel::Point_2>,Gt,Vb>   VbI;
-//~ typedef CGAL::Triangulation_vertex_base_with_info_2<std::list<Kernel::Point_2>,Gt,Vb>         VbI;
+typedef CGAL::Regular_triangulation_vertex_base_2<Kernel>                          Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_2<std::vector<Kernel::Point_2>,Kernel,Vb>   VbI;
+//~ typedef CGAL::Triangulation_vertex_base_with_info_2<std::list<Kernel::Point_2>,Kernel,Vb>         VbI;
 typedef CGAL::Regular_triangulation_face_base_2<Kernel  >                           Fb;
 typedef CGAL::Triangulation_data_structure_2<VbI,Fb>                                Tds;
-typedef CGAL::Regular_triangulation_2<Gt,Tds>                                       RegularI;
-typedef CGAL::Regular_triangulation_2<Gt>                                           Regular;
+typedef CGAL::Regular_triangulation_2<Kernel,Tds>                                   RegularI;
+typedef CGAL::Regular_triangulation_2<Kernel>                                       Regular;
 typedef Delaunay::Finite_vertices_iterator                                          itVert;
 typedef RegularI::Finite_vertices_iterator                                          RitVert;
 typedef Delaunay::Vertex_handle                                                     Vertex;
@@ -59,7 +48,7 @@ const std::string hlpmsg[] = {
 "Generate k-th Delaunay triangulation and k-th dual Voronoi diagram. Note : k must be smaller than the number of input points."
 };
 
-class MdelaunayIpelet 
+class MdelaunayIpelet
   : public CGAL::Ipelet_base<Kernel,11> {
 public:
   MdelaunayIpelet()
@@ -75,31 +64,34 @@ void MdelaunayIpelet::protected_run(int fn)
   RegularI rti;
   Regular rt;
   //~ std::vector<Point_2> pt_list; I use instead pt_list
-  
+
   if (fn==10){
     show_help(false);
     return;
   }
-  
+
   std::vector<Point_2> pt_list;
-  
-  Iso_rectangle_2 bbox=read_active_objects( CGAL::dispatch_or_drop_output<Point_2>( std::back_inserter(pt_list) ) );  
-  
+
+  Iso_rectangle_2 bbox=read_active_objects( CGAL::dispatch_or_drop_output<Point_2>( std::back_inserter(pt_list) ) );
+
   if (pt_list.empty()){
     print_error_message("No mark selected");
     return;
   }
-  
-  
+
+
   dt.insert(pt_list.begin(),pt_list.end());
-  
+
   switch(fn){
     case 0://Classical Delauney
       draw_in_ipe(dt);
       break;
     case 1:
+      CGAL_FALLTHROUGH;
     case 6:
+      CGAL_FALLTHROUGH;
     case 2:
+      CGAL_FALLTHROUGH;
     case 7:        //Delaunay and Voronoi for 2nd-3rd order
       for (Delaunay::Finite_edges_iterator it=dt.finite_edges_begin();it!=dt.finite_edges_end();++it){
           Point_2 pt0=it->first->vertex(Delaunay::cw(it->second))->point();
@@ -123,23 +115,24 @@ void MdelaunayIpelet::protected_run(int fn)
           Point_2 pt0_ori1=it->first->vertex(Delaunay::cw(it->second))->info().back();
           Point_2 pt1_ori0=it->first->vertex(Delaunay::ccw(it->second))->info().front();
           Point_2 pt1_ori1=it->first->vertex(Delaunay::ccw(it->second))->info().back();
-          Point_2 pt3 = Point_2();
+
           if(CGAL::compare_xy(pt0_ori0,pt1_ori0)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori0)==CGAL::EQUAL)
-            pt3 = pt1_ori1;
+            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori1),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+              CGAL::squared_distance(pt0_ori0,pt1_ori1)+CGAL::squared_distance(pt1_ori1,pt0_ori1))/9.));
           else
             if(CGAL::compare_xy(pt0_ori0,pt1_ori1)==CGAL::EQUAL || CGAL::compare_xy(pt0_ori1,pt1_ori1)==CGAL::EQUAL)
-              pt3 = pt1_ori0;
+              rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt1_ori0),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
+              CGAL::squared_distance(pt0_ori0,pt1_ori0)+CGAL::squared_distance(pt1_ori0,pt0_ori1))/9.));
 
-          if(pt3!=Point_2()) //if adjacent wpoints comed from a delaunay triangle
-            rt.insert(Weighted_point_2(CGAL::centroid(pt0_ori0,pt0_ori1,pt3),-CGAL::to_double(CGAL::squared_distance(pt0_ori0,pt0_ori1)+
-              CGAL::squared_distance(pt0_ori0,pt3)+CGAL::squared_distance(pt3,pt0_ori1))/9.));
         }
         if(fn==2){//Draw 3th Delauney
           draw_in_ipe(rt);
           break;
         }
       }
+      CGAL_FALLTHROUGH;
     case 3://Delaunay and Voronoi of order n-1
+      CGAL_FALLTHROUGH;
     case 8:
       if(fn==3 ||fn==8){
         int order = pt_list.size()-1;
@@ -172,7 +165,9 @@ void MdelaunayIpelet::protected_run(int fn)
           break;
         }
       }
+      CGAL_FALLTHROUGH;
     case 4:
+      CGAL_FALLTHROUGH;
     case 9://k-th Delauney and Voronoi
         if(fn==4 ||fn==9){
           int order;
@@ -180,10 +175,10 @@ void MdelaunayIpelet::protected_run(int fn)
           boost::tie(ret_val,order)=request_value_from_user<int>("Enter order");
           if (ret_val < 0){
             print_error_message("Incorrect value");
-            return;  
+            return;
           }
           int nb_pts = pt_list.size();
-          
+
           if(order<1 || order>=nb_pts){
             print_error_message("Not a good order");
             return;
@@ -194,6 +189,7 @@ void MdelaunayIpelet::protected_run(int fn)
             break;
           }
         }
+        CGAL_FALLTHROUGH;
     case 5://Draw Voronoi diagrams
       if(fn==5) draw_dual_in_ipe(dt,bbox);
       if(fn==6) draw_dual_in_ipe(rti,bbox);

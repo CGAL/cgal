@@ -80,7 +80,7 @@
      <x>0</x>
      <y>0</y>
      <width>568</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -103,6 +103,7 @@
     <addaction name="actionGeneratePointsInSquare"/>
     <addaction name="actionGenerateSegments"/>
     <addaction name="actionGenerateSegmentFans"/>
+    <addaction name="actionGeneratePolytopeInDisc"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
@@ -239,6 +240,11 @@
   <action name="actionGenerateSegmentFans">
    <property name="text">
     <string>Generate Segment Fans</string>
+   </property>
+  </action>
+  <action name="actionGeneratePolytopeInDisc">
+   <property name="text">
+    <string>Generate Polygon in Disc</string>
    </property>
   </action>
  </widget>

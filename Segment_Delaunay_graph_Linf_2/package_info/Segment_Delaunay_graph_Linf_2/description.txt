@@ -1,0 +1,5 @@
+This package computes the Delaunay graph for a set of segments on the
+plane under the L infinity distance, i.e., the triangulated dual of the
+Voronoi diagram for the set of segments, where distance is computed
+according to the L infinity distance. The segments are allowed to
+intersect at interior points.

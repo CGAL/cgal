@@ -1,23 +1,17 @@
 // Copyright (c) 2007-2010 Inria Lorraine (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_GMPFR_TYPE_H
 #define CGAL_GMPFR_TYPE_H
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/gmp.h>
 #include <mpfr.h>
@@ -28,6 +22,7 @@
 #include <limits>
 #include <CGAL/Uncertain.h>
 #include <CGAL/ipower.h>
+#include <CGAL/IO/io.h>
 
 #if MPFR_VERSION_MAJOR < 3
         typedef mp_rnd_t mpfr_rnd_t;
@@ -347,7 +342,10 @@ class Gmpfr:
         // only avoid the binary incompatibility of a CGAL program compiled
         // with MSVC with the libmpfr-1.dll compiled with mingw.
 #ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable: 4244)
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_d);
+#  pragma warning(pop)
 #else
         CGAL_GMPFR_CONSTRUCTOR_FROM_TYPE(long double,mpfr_set_ld);
 #endif
@@ -884,7 +882,11 @@ CGAL_GMPFR_ARITHMETIC_FUNCTION(cbrt,mpfr_cbrt)
 inline
 Gmpfr Gmpfr::kthroot(int k,std::float_round_style r)const{
         Gmpfr result(0,CGAL_GMPFR_MEMBER_PREC());
-        mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        #if(MPFR_VERSION_MAJOR < 4)
+            mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        #else
+            mpfr_rootn_ui(result.fr(),fr(),k,_gmp_rnd(r));
+        #endif
         return result;
 }
 
@@ -894,7 +896,11 @@ Gmpfr Gmpfr::kthroot(int k,
                      std::float_round_style r)const{
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
         Gmpfr result(0,p);
-        mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        #if(MPFR_VERSION_MAJOR < 4)
+            mpfr_root(result.fr(),fr(),k,_gmp_rnd(r));
+        #else
+            mpfr_rootn_ui(result.fr(),fr(),k,_gmp_rnd(r));
+        #endif
         return result;
 }
 
@@ -1030,7 +1036,7 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         std::ios::fmtflags old_flags = is.flags();
 
         is.unsetf(std::ios::skipws);
-        gmpz_eat_white_space(is);
+        internal::eat_white_space(is);
 
         // 1. read the mantissa, it starts in +, - or a digit and ends in e
         Gmpz mant(0);           // the mantissa of the number
@@ -1042,11 +1048,11 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                 case '-':
                         neg_mant=true;
                         is.get();
-                        gmpz_eat_white_space(is);
+                        internal::eat_white_space(is);
                         break;
                 case '+':
                         is.get();
-                        gmpz_eat_white_space(is);
+                        internal::eat_white_space(is);
                         break;
                 case 'n':       // this is NaN
                         is.get();
@@ -1087,8 +1093,8 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
         if(neg_mant)
                 mant=-mant;
 
-        is.putback(c);
-        gmpz_eat_white_space(is);
+        is.putback(static_cast<std::istream::char_type>(c));
+        internal::eat_white_space(is);
 
         switch(c=is.get()){
                 case 'e':
@@ -1103,20 +1109,20 @@ std::istream& operator>>(std::istream& is,Gmpfr &f){
                 case '-':
                         neg_exp=true;
                         is.get();
-                        gmpz_eat_white_space(is);
+                        internal::eat_white_space(is);
                         break;
                 case '+':
                         is.get();
-                        gmpz_eat_white_space(is);
+                        internal::eat_white_space(is);
                         break;
                 default:
                         if(c<'0'||c>'9')
                                 goto invalid_number;
         }
-        gmpz_eat_white_space(is);
+        internal::eat_white_space(is);
         while((c=is.get())>='0'&&c<='9')
                 exp=10*exp+(c-'0');
-        is.putback(c);
+        is.putback(static_cast<std::istream::char_type>(c));
         if(exp.bit_size()>8*sizeof(mpfr_exp_t))
                 mpfr_set_erangeflag();
 
@@ -1161,16 +1167,16 @@ std::ostream& operator<<(std::ostream& os,const Gmpfr &a){
         if(a.is_inf())
                 return os<<(a<0?"-inf":"+inf");
         // The rest of the function was written by George Tzoumas.
-        if (!is_pretty(os)) {
+        if (!IO::is_pretty(os)) {
                 std::pair<Gmpz,long> ie=a.to_integer_exp();
                 os << ie.first << 'e' << ie.second;
                 return os;
         } else {
                 // human-readable format
                 mpfr_exp_t expptr;
-                char *str = mpfr_get_str(NULL, &expptr, 10, 0, a.fr(),
+                char *str = mpfr_get_str(nullptr, &expptr, 10, 0, a.fr(),
                                 mpfr_get_default_rounding_mode());
-                if (str == NULL) return os << "@err@";
+                if (str == nullptr) return os << "@err@";
                 std::string s(str);
                 mpfr_free_str(str);
                 int i = 0;
@@ -1281,17 +1287,17 @@ bool operator==(const Gmpfr &a,double b){
 #ifdef _MSC_VER
 inline
 bool operator<(const Gmpfr &a,long double b){
-        return(mpfr_cmp_d(a.fr(),b)<0);
+        return(mpfr_cmp_d(a.fr(),static_cast<double>(b))<0);
 }
 
 inline
 bool operator>(const Gmpfr &a,long double b){
-        return(mpfr_cmp_d(a.fr(),b)>0);
+        return(mpfr_cmp_d(a.fr(),static_cast<double>(b))>0);
 }
 
 inline
 bool operator==(const Gmpfr &a,long double b){
-        return !mpfr_cmp_d(a.fr(),b);
+        return !mpfr_cmp_d(a.fr(),static_cast<double>(b));
 }
 #else
 inline
@@ -1336,5 +1342,7 @@ Gmpfr max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpfr& x,const Gmpfr& y){
 }
 
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_GMPFR_TYPE_H

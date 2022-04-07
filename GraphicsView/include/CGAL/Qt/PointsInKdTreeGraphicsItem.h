@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -22,12 +14,16 @@
 #ifndef CGAL_QT_POINTS_IN_KD_TREE_GRAPHICS_ITEM_H
 #define CGAL_QT_POINTS_IN_KD_TREE_GRAPHICS_ITEM_H
 
+#include <CGAL/license/GraphicsView.h>
+
+
 #include <CGAL/Bbox_2.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/Qt/PainterOstream.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
 #include <CGAL/Fuzzy_iso_box.h>
+#include <CGAL/iterator.h>
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -49,12 +45,13 @@ class PointsInKdTreeGraphicsItem : public GraphicsItem
   // Instead of first collecting points into a container, and then draw them
   // we use an output iterator that draws them on the fly
   template <typename K>
-  class Draw : public std::iterator<std::output_iterator_tag, void, void, void, void> {
+  class Draw
+    : public CGAL::cpp98::iterator<std::output_iterator_tag, void, void, void, void> {
     QPainter* painter;
-    QMatrix* matrix;
+    QTransform* matrix;
     Converter<K> convert;
   public:
-    Draw(QPainter* painter, QMatrix* matrix)
+    Draw(QPainter* painter, QTransform* matrix)
       : painter(painter), matrix(matrix)
     {}
 
@@ -93,7 +90,7 @@ public:
   QRectF boundingRect() const;
 
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& verticesPen() const
   {
@@ -122,7 +119,7 @@ protected:
 
 template <typename KdTree>
 PointsInKdTreeGraphicsItem<KdTree>::PointsInKdTreeGraphicsItem(KdTree * p_)
-  :  kdtree(p_), painterostream(0),  draw_vertices(true)   
+  :  kdtree(p_), painterostream(0),  draw_vertices(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(kdtree->size() == 0){
@@ -130,13 +127,11 @@ PointsInKdTreeGraphicsItem<KdTree>::PointsInKdTreeGraphicsItem(KdTree * p_)
   }
   updateBoundingBox();
   setZValue(3);
-#if QT_VERSION >= 0x040600
   setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
-#endif
 }
 
 template <typename KdTree>
-QRectF 
+QRectF
 PointsInKdTreeGraphicsItem<KdTree>::boundingRect() const
 {
   return bounding_rect;
@@ -148,16 +143,16 @@ PointsInKdTreeGraphicsItem<KdTree>::boundingRect() const
 
 
 template <typename KdTree>
-void 
-PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter, 
+void
+PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
   Iso_rectangle_2 isor = convert(option->exposedRect);
   Fuzzy_iso_box range(isor.vertex(0), isor.vertex(2));
   painter->setPen(verticesPen());
-  QMatrix matrix = painter->matrix();
-  painter->resetMatrix();
+  QTransform matrix = painter->worldTransform();
+  painter->resetTransform();
   Draw<Traits> draw(painter, &matrix);
   kdtree->search(draw, range);
 }
@@ -165,7 +160,7 @@ PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter,
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename KdTree>
-void 
+void
 PointsInKdTreeGraphicsItem<KdTree>::updateBoundingBox()
 {
   prepareGeometryChange();
@@ -177,7 +172,7 @@ PointsInKdTreeGraphicsItem<KdTree>::updateBoundingBox()
 
 
 template <typename KdTree>
-void 
+void
 PointsInKdTreeGraphicsItem<KdTree>::modelChanged()
 {
   if((kdtree->size() == 0) ){

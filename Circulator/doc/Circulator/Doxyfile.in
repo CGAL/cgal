@@ -1,9 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Handles and Circulators"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Circulator/doc/Circulator/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Handles and Circulators"

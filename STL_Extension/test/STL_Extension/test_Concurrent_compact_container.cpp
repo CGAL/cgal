@@ -6,7 +6,7 @@
 
 int main()
 {
-  std::cout << 
+  std::cout <<
     "NOTICE: this test needs CGAL_LINKED_WITH_TBB, and will not be tested."
     << std::endl;
   return 0;
@@ -14,7 +14,6 @@ int main()
 
 #else
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <cstddef>
 #include <list>
@@ -22,17 +21,31 @@ int main()
 #include <CGAL/Compact_container.h>
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
-
+#include <CGAL/use.h>
+#define TBB_PREVIEW_GLOBAL_CONTROL 1
+# include <tbb/global_control.h>
 # include <tbb/parallel_for.h>
-# include <tbb/atomic.h>
+# include <atomic>
+
+#include <CGAL/disable_warnings.h>
 
 struct Node_1
 : public CGAL::Compact_container_base
 {
+  Node_1() {}
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
+
+  typedef CGAL::Tag_true Has_timestamp;
+
+  std::size_t time_stamp() const {
+    return time_stamp_;
+  }
+  void set_time_stamp(const std::size_t& ts) {
+    time_stamp_ = ts;
+  }
+  std::size_t time_stamp_;
 };
 
 class Node_2
@@ -43,18 +56,18 @@ class Node_2
   };
 
 public:
-  
+
   int      rnd;
 
   Node_2()
-  : p(NULL), rnd(CGAL::default_random.get_int(0, 100)) {}
+  : p(nullptr), rnd(CGAL::get_default_random().get_int(0, 100)) {}
 
   bool operator==(const Node_2 &n) const { return rnd == n.rnd; }
   bool operator!=(const Node_2 &n) const { return rnd != n.rnd; }
   bool operator< (const Node_2 &n) const { return rnd <  n.rnd; }
 
   void *   for_compact_container() const { return p_cc; }
-  void * & for_compact_container()       { return p_cc; }
+  void for_compact_container(void *p) { p_cc = p; }
 };
 
 template < class Cont >
@@ -72,12 +85,7 @@ class Insert_in_CCC_functor
 public:
   Insert_in_CCC_functor(
     const Values_vec &values, Cont &cont, Iterators_vec &iterators)
-    : m_values(values), m_cont(cont), m_iterators(iterators) 
-  {}
-  
-  Insert_in_CCC_functor(const Insert_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont), 
-      m_iterators(other.m_iterators)
+    : m_values(values), m_cont(cont), m_iterators(iterators)
   {}
 
   void operator() (const tbb::blocked_range<size_t>& r) const
@@ -101,12 +109,7 @@ class Erase_in_CCC_functor
 public:
   Erase_in_CCC_functor(
     Cont &cont, Iterators_vec &iterators)
-    : m_cont(cont), m_iterators(iterators) 
-  {}
-  
-  Erase_in_CCC_functor(const Erase_in_CCC_functor &other)
-    : m_cont(other.m_cont), 
-      m_iterators(other.m_iterators)
+    : m_cont(cont), m_iterators(iterators)
   {}
 
   void operator() (const tbb::blocked_range<size_t>& r) const
@@ -125,20 +128,14 @@ template <typename Values_vec, typename Cont>
 class Insert_and_erase_in_CCC_functor
 {
   typedef std::vector<typename Cont::iterator>  Iterators_vec;
-  typedef std::vector<tbb::atomic<bool> >       Free_elts_vec;
+  typedef std::vector<std::atomic<bool> >       Free_elts_vec;
 
 public:
   Insert_and_erase_in_CCC_functor(
     const Values_vec &values, Cont &cont, Iterators_vec &iterators,
-    Free_elts_vec &free_elements, tbb::atomic<unsigned int> &num_erasures)
+    Free_elts_vec &free_elements, std::atomic<unsigned int> &num_erasures)
   : m_values(values), m_cont(cont), m_iterators(iterators),
     m_free_elements(free_elements), m_num_erasures(num_erasures)
-  {}
-  
-  Insert_and_erase_in_CCC_functor(const Insert_and_erase_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont), 
-      m_iterators(other.m_iterators), m_free_elements(other.m_free_elements),
-      m_num_erasures(other.m_num_erasures)
   {}
 
   void operator() (const tbb::blocked_range<size_t>& r) const
@@ -147,9 +144,10 @@ public:
     {
       m_iterators[i] = m_cont.insert(m_values[i]);
       // Random-pick an element to erase
-      int index_to_erase = rand() % m_values.size();
+      auto index_to_erase = rand() % m_values.size();
       // If it exists
-      if (m_free_elements[index_to_erase].compare_and_swap(true, false) == false)
+      bool comparand = false;
+      if (m_free_elements[index_to_erase].compare_exchange_weak(comparand, true) )
       {
         m_cont.erase(m_iterators[index_to_erase]);
         ++m_num_erasures;
@@ -162,12 +160,16 @@ private:
   Cont                      & m_cont;
   Iterators_vec             & m_iterators;
   Free_elts_vec             & m_free_elements;
-  tbb::atomic<unsigned int> & m_num_erasures;
+  std::atomic<unsigned int> & m_num_erasures;
 };
 
 template < class Cont >
 void test(const Cont &)
 {
+  static_assert(std::is_nothrow_move_constructible<Cont>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cont>::value,
+                "move assignment is missing");
   // Testing if all types are provided.
 
   typename Cont::value_type              t0;
@@ -227,7 +229,7 @@ void test(const Cont &)
   assert(check_empty(c0));
   assert(check_empty(c1));
 
-  typename Cont::allocator_type  t20 = c0.get_allocator();
+  c0.get_allocator();
 
   std::cout << "Now filling some containers" << std::endl;
 
@@ -316,7 +318,7 @@ void test(const Cont &)
   c11.reserve(v1.size());
   for(typename Vect::const_iterator it = v1.begin(); it != v1.end(); ++it)
     c11.insert(*it);
-  
+
   assert(c11.size() == v1.size());
   assert(c10 == c11);*/
 
@@ -334,7 +336,7 @@ void test(const Cont &)
   c9.erase(c9.begin(), c9.end());
 
   assert(check_empty(c9));
-  
+
   std::cout << "Testing parallel insertion" << std::endl;
   {
   Cont c11;
@@ -345,7 +347,7 @@ void test(const Cont &)
     Insert_in_CCC_functor<Vect, Cont>(v11, c11, iterators)
   );
   assert(c11.size() == v11.size());
-  
+
   std::cout << "Testing parallel erasure" << std::endl;
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v11.size() ),
@@ -358,14 +360,14 @@ void test(const Cont &)
   {
   Cont c12;
   Vect v12(1000000);
-  std::vector<tbb::atomic<bool> > free_elements(v12.size());
-  for(typename std::vector<tbb::atomic<bool> >::iterator 
-    it = free_elements.begin(), end = free_elements.end(); it != end; ++it) 
+  std::vector<std::atomic<bool> > free_elements(v12.size());
+  for(typename std::vector<std::atomic<bool> >::iterator
+    it = free_elements.begin(), end = free_elements.end(); it != end; ++it)
   {
     *it = true;
   }
-    
-  tbb::atomic<unsigned int> num_erasures; 
+
+  std::atomic<unsigned int> num_erasures;
   num_erasures = 0;
   std::vector<typename Cont::iterator> iterators(v12.size());
   tbb::parallel_for(
@@ -377,6 +379,22 @@ void test(const Cont &)
   }
 }
 
+
+template < class Cont >
+void test_time_stamps() {
+  Cont c1;
+  for (std::size_t i = 0 ; i < 10 ; ++i)
+    c1.emplace();
+  typename Cont::iterator it = c1.begin();
+  for (std::size_t i = 0 ; i < 10 ; ++i) {
+    assert(i == it++->time_stamp());
+  }
+  Cont c2(c1);
+  it = c2.begin();
+  for (std::size_t i = 0 ; i < 10 ; ++i) {
+    assert(i == it++->time_stamp());
+  }
+}
 
 int main()
 {
@@ -407,7 +425,7 @@ int main()
     n.rnd = i;
     cc2.insert(n);
   }
-  
+
   std::cout << "cc1 capacity: " << cc1.capacity() << std::endl;
   std::cout << "cc1 size: " << cc1.size() << std::endl;
   for(CCC::const_iterator it = cc1.begin(), end = cc1.end(); it != end; ++it) {
@@ -433,6 +451,8 @@ int main()
     std::cout << "cc2: " << it->rnd << " / " << std::endl;
   }*/
 
+  tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
+  test_time_stamps<CGAL::Concurrent_compact_container<Node_1> >();
   return 0;
 }
 

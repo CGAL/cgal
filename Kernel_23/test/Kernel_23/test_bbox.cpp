@@ -32,6 +32,16 @@ int main()
 
   assert( b1==b2 );
   assert( b1==CGAL::Bbox_2(0,0,4,4) );
+
+  b1 = CGAL::Bbox_2(-1., -3.e15, 5.e6, 7.e20);
+  b1.dilate(2);
+  assert( b1 == CGAL::Bbox_2(-1.0000000000000004,
+                             -3000000000000001.,
+                             5000000.0000000019,
+                             7.0000000000000026e+20) );
+  CGAL::Bbox_2 span{1,2,5,8};
+  assert( span.x_span() == 4);
+  assert( span.y_span() == 6);
   }
 
   {
@@ -55,5 +65,17 @@ int main()
 
   assert( b1==b2 );
   assert( b1==CGAL::Bbox_3(0,0,0,4,4,4) );
+  b1 = CGAL::Bbox_3(-1., -3.e15, 10, 5.e6, 7.e20, 15);
+  b1.dilate(15);
+  assert( b1 == CGAL::Bbox_3(-1.0000000000000033,
+                             -3000000000000007.5,
+                             9.9999999999999734,
+                             5000000.000000014,
+                             7.0000000000000197e+20,
+                             15.000000000000027) );
+  CGAL::Bbox_3 span{1,2,3,5,8,11};
+  assert( span.x_span() == 4);
+  assert( span.y_span() == 6);
+  assert( span.z_span() == 8);
   }
 }

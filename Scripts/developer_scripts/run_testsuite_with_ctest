@@ -1,0 +1,385 @@
+#!/bin/bash
+#usage : script [-c -l -n -s -k] testsuite_dir
+
+##########################
+####   LAUNCH CTEST   ####
+##########################
+
+source "${CGAL_DIR}/${SCRIPTS_DIR}developer_scripts/log.sh"
+# Load settings
+if [ -f "${CGAL_HOME}/.autocgalrc" ]; then
+  . "${CGAL_HOME}/.autocgalrc"
+else
+  echo "CONFIGURATION FILE  .autocgalrc NOT FOUND" >&2;
+  exit 1
+fi
+
+# ----------------------------------------------------------------------------------------
+# function to print the value of variable $1
+# ----------------------------------------------------------------------------------------
+value_of()
+{
+  _value=`eval "printf '$'${1}"`
+  eval "printf \"${_value}\""
+}
+
+# ----------------------------------------------------------------------------------------
+# produce a string containing the actual date/time
+#  (used to identify files)
+# ----------------------------------------------------------------------------------------
+datestr()
+{
+  date +%d%m%Y%H%M
+}
+
+
+# ----------------------------------------------------------------------------------------
+# Return 0 if $1 exists in the list $2, otherwise returns non-zero.
+# ----------------------------------------------------------------------------------------
+is_in_list()
+{
+  ELEMENT=${1}
+  LIST=${2}
+
+  for E in ${LIST} ; do
+    if [ "${E}" = "${ELEMENT}" ] ; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+
+# ----------------------------------------------------------------------------------------
+# Uniquely adds $1 to the global, space-separated list $PLATFORMS
+# (if it is not in the list already)
+# ----------------------------------------------------------------------------------------
+add_to_platforms()
+{
+  if ! is_in_list "${1}" "${PLATFORMS}" ; then
+    PLATFORMS="${PLATFORMS} ${1}"
+  fi
+}
+
+# ----------------------------------------------------------------------------------------
+# Uniquely adds to the global, space-separated list $PLATFORMS all the directories found
+# under ${REFERENCE_PLATFORMS_DIR}
+# ----------------------------------------------------------------------------------------
+collect_all_reference_platforms()
+{
+  log "${ACTUAL_LOGFILE}" "Indicated to build on ALL platform folders"
+  if [ -d "${REFERENCE_PLATFORMS_DIR}" ]; then
+    cd "${REFERENCE_PLATFORMS_DIR}"
+    for PLATFORM in * ; do
+      if [ -d "${PLATFORM}" ]; then
+        add_to_platforms "${PLATFORM}"
+      fi
+    done
+  else
+    log "${ACTUAL_LOGFILE}" "WARNING: Invalid reference platforms directory: ${REFERENCE_PLATFORMS_DIR}"
+  fi
+}
+
+# ----------------------------------------------------------------------------------------
+# Uniquely adds to the global, space-separated list $PLATFORMS all the directories found
+# under $1
+# ----------------------------------------------------------------------------------------
+collect_all_current_platforms()
+{
+  PLATFORMS=""
+  cd "${1}"
+  for PLATFORM in * ; do
+    if [ -d "${PLATFORM}" ]; then
+      PLATFORMS="${PLATFORMS} ${PLATFORM}"
+    fi
+  done
+}
+
+# ----------------------------------------------------------------------------------------
+# Uniquely adds to the global, space-separated list $PLATFORMS all the directory names
+# listed in the space-separated list $1
+# NOTE: If any such name is "all", it's NOT added as a platform and the flag
+# USE_REFERENCE_PLATFORMS is set instead.
+# ----------------------------------------------------------------------------------------
+build_platforms_list()
+{
+  for LOCAL_PLATFORM in $1; do
+    if [ "${LOCAL_PLATFORM}" = "all" ] ; then
+      USE_REFERENCE_PLATFORMS='y'
+    else
+      add_to_platforms "${LOCAL_PLATFORM}"
+    fi
+  done
+}
+
+
+# ----------------------------------------------------------------------------------------
+# Sets up the variables indicating the directories to use.
+# Crates all platform directories under the current release binary folder.
+# ----------------------------------------------------------------------------------------
+setup_dirs()
+{
+  # dir for the actual release
+  if [ ! -d ${CGAL_DIR}/test ]; then
+    mkdir ${CGAL_DIR}/test
+    #give all rights so that, if it is first created by docker, it is still editable without root access by the local user.
+    chmod 777 ${CGAL_DIR}/test
+  fi
+  CGAL_TEST_DIR=${CGAL_DIR}/test
+
+  if [ ! -d "${CGAL_DIR}/cmake" ]; then
+    mkdir "${CGAL_DIR}/cmake"
+    chmod 777 "${CGAL_DIR}/cmake"
+    log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake"
+  fi
+
+  if [ ! -d "${CGAL_DIR}/cmake/platforms" ]; then
+    mkdir "${CGAL_DIR}/cmake/platforms"
+    chmod 777 "${CGAL_DIR}/cmake/platforms"
+    log "${ACTUAL_LOGFILE}" "Creating ${CGAL_DIR}/cmake/platforms"
+  fi
+
+  CGAL_RELEASE_DIR="${CGAL_DIR}"
+  if [ -z "$SCRIPTS_DIR" ]; then
+    CGAL_RELEASE_ID=`basename "${CGAL_RELEASE_DIR}"`
+  else
+    CGAL_GIT_VERSION=$(sed -n '/CGAL_VERSION /s/#define CGAL_VERSION //p'<"$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h" | sed -n 's/-\w*//p')
+    MINIMALIST_DATE=$(date +%y%m%d)
+    CGAL_GIT_VERSION="${CGAL_GIT_VERSION}-Ic-${MINIMALIST_DATE}"
+    CGAL_RELEASE_ID="CGAL-${CGAL_GIT_VERSION}"
+  fi
+
+  #todo : too complicated for nothing. Take a simpler outsource build dir
+  CGAL_BINARY_DIR_BASE=${CGAL_RELEASE_DIR}/cmake/platforms
+
+  log "${ACTUAL_LOGFILE}" "Release to test ${CGAL_RELEASE_DIR}"
+  log "${ACTUAL_LOGFILE}" "CGAL_RELEASE_ID=${CGAL_RELEASE_ID}"
+
+  if [ ! -r "${LOGS_DIR}" ]; then
+    mkdir "$LOGS_DIR"
+    chmod 777 "$LOGS_DIR"
+  fi
+
+  #
+  # Collects the list of platform directories to build and test on
+  #
+  # The global variable PLATFORMS contains all the platform directories for all hosts
+  # as indicated in .autocgalrc.
+  # If .autocgalrc says "all" in any entry for BUILD_ON_* or COMPILERS_*, the platform
+  # directories existing in the reference release are added to $PLATFORMS
+  #
+  PLATFORMS=""
+  build_platforms_list "`value_of BUILD_ON_${HOST}`"
+  build_platforms_list "`value_of COMPILERS_${HOST}`"
+
+  if [ -n "${USE_REFERENCE_PLATFORMS}" ]; then
+    collect_all_reference_platforms
+  fi
+
+  for PLATFORM in ${PLATFORMS}; do
+
+    CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
+
+    if [ ! -d "${CGAL_BINARY_DIR}" ]; then
+      log "${ACTUAL_LOGFILE}" "Creating platform directory ${CGAL_BINARY_DIR}"
+      mkdir "${CGAL_BINARY_DIR}"
+      chmod 777 "${CGAL_BINARY_DIR}"
+    fi
+
+  done
+}
+
+
+# ----------------------------------------------------------------------------------------
+# function to put result files on the web
+# $1 = source filename (full path)
+# $2 = target filename (basename only)
+# ----------------------------------------------------------------------------------------
+put_on_web()
+{
+  log "${ACTUAL_LOGFILE}" "Uploading results ${1} to $UPLOAD_RESULT_DESTINATION/$2"
+
+  "$SCP" "${1}" "$UPLOAD_RESULT_DESTINATION/$2" >> "${ACTUAL_LOGFILE}"
+}
+
+
+
+publish_results()
+{
+  PLATFORM=${1}
+  #
+  # collect results and put them on the web
+  #
+  cd "${CGAL_TEST_DIR}"
+
+  log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "COLLECTING RESULTS ${PLATFORM}-${HOST}"
+
+  # If this file does not exist results collection failed. Fake a results so this fact is itself reported
+  if [ ! -f "results_${CGAL_TESTER}_${PLATFORM}.txt" ]; then
+    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Results collection for tester ${CGAL_TESTER} and platform ${PLATFORM} failed!"
+    echo "Results collection failed!" >> "results_${CGAL_TESTER}_${PLATFORM}.txt"
+    ${TAR} cf "results_${CGAL_TESTER}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.txt"
+    ${COMPRESSOR} -9f "results_${CGAL_TESTER}_${PLATFORM}.tar"
+  fi
+
+  ${TAR} cf "test_results-${HOST}_${PLATFORM}.tar" "results_${CGAL_TESTER}_${PLATFORM}.tar.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt"
+  ${COMPRESSOR} -9f "test_results-${HOST}_${PLATFORM}.tar"
+  COMPILER=`printf "%s" "$1" | tr -c '[A-Za-z0-9]./[=-=]*_\'\''\":?() ' 'x'`
+
+  FILENAME="${CGAL_RELEASE_ID}_${CGAL_TESTER}-test`datestr`-${COMPILER}-cmake.tar.gz"
+
+  LOGFILENAME="${CGAL_RELEASE_ID}-log`datestr`-${HOST}.gz"
+  ${COMPRESSOR} -9f "${ACTUAL_LOGFILE}.test.${PLATFORM}"
+  mv "${ACTUAL_LOGFILE}.test.${PLATFORM}.gz" "${LOGS_DIR}/${LOGFILENAME}"
+
+  log_done "${ACTUAL_LOGFILE}.test.${PLATFORM}"
+
+  log "${ACTUAL_LOGFILE}" "Test results: ${CGAL_TEST_DIR}/test_results-${HOST}_${PLATFORM}.tar.gz"
+
+  if [ -z "${DO_NOT_UPLOAD}" ]; then
+    log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "PUTTING RESULTS ON THE WEB"
+    put_on_web "test_results-${HOST}_${PLATFORM}.tar.gz" "${FILENAME}"
+    if [ -e "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" ]; then
+      put_on_web "demos_${CGAL_TESTER}_${PLATFORM}.tar.gz" "demos-${FILENAME}"
+    fi
+    log_done "${ACTUAL_LOGFILE}"
+  fi
+
+}
+run_test_on_platform()
+{
+  PLATFORM=${1}
+
+  NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${HOST}`"
+  if [ -z "${NUMBER_OF_PROCESSORS}" ]; then
+    NUMBER_OF_PROCESSORS=1
+  fi
+  CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
+  cd "${CGAL_BINARY_DIR}"
+  log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
+
+  if [ -f "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup" ]; then
+    source "${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}/setup"
+  else
+    INIT_FILE="${CGAL_HOME}/${REFERENCE_PLATFORMS_DIR}/${PLATFORM}.cmake"
+  fi
+  if [ ! -f "${INIT_FILE}" ]; then
+    echo "error NEED A INIT FILE !"
+  fi
+  cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON -DWITH_tests=ON -DCGAL_TEST_SUITE=ON $CGAL_DIR>installation.log 2>&1
+  rm CMakeCache.txt
+  CMAKE_OPTS="-DCGAL_TEST_SUITE=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DWITH_tests=ON"
+  if [ -n "${SCRIPTS_DIR}" ]; then
+    CMAKE_OPTS="${CMAKE_OPTS} -DWITH_examples=ON -DWITH_demos=ON"
+  fi
+  if [ -z "${SHOW_PROGRESS}" ]; then
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR  >package_installation.log 2>&1
+  else
+    cmake ${INIT_FILE:+"-C${INIT_FILE}"} -DBUILD_TESTING=ON ${CMAKE_OPTS} $CGAL_DIR 2>&1 |tee package_installation.log
+  fi
+  LIST_TEST_FILE="${CGAL_HOME}/list_test_packages"
+  if [ -f ${LIST_TEST_FILE} ]; then
+    LIST_TEST_PACKAGES=$(source ${LIST_TEST_FILE})
+  fi
+  INIT=""
+  for pkg in $LIST_TEST_PACKAGES; do
+    if [ -z "$INIT" ]; then
+      TO_TEST=$pkg
+      INIT="y"
+    else
+      TO_TEST="${TO_TEST}|$pkg"
+    fi
+  done
+  #unsets the limit of 1024 bits for the logs through ssh
+  echo "SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000000)" > CTestCustom.cmake
+  echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
+
+  CTEST_OPTS="-T Start -T Test --timeout 1200 ${DO_NOT_TEST:+-E execution___of__}"
+  if uname | grep -q "CYGWIN"; then
+    CTEST_OPTS="-C ${CONFIG_TYPE} ${CTEST_OPTS}"
+  fi
+  if [ -z "${SHOW_PROGRESS}" ]; then
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}>tmp.txt
+  else
+    ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} -j${NUMBER_OF_PROCESSORS} ${KEEP_TESTS:+-FC .}|tee tmp.txt
+  fi
+  #####################
+  ##   GET RESULTS   ##
+  #####################
+  TAG_DIR=$(awk '/^Create new tag: /{print $4F}' tmp.txt)
+  rm tmp.txt
+  cd Testing/${TAG_DIR}
+  RESULT_FILE=./"results_${CGAL_TESTER}_${PLATFORM}.txt"
+  rm -f "$RESULT_FILE"
+  touch "$RESULT_FILE"
+  if [ -z "${SCRIPTS_DIR}" ]; then
+    sed -n '/CGAL_VERSION /s/#define //p' < "$CGAL_DIR/${INSTALLATION_DIR}include/CGAL/version.h" >> "$RESULT_FILE"
+  else
+    echo "CGAL_VERSION ${CGAL_GIT_VERSION}">> "$RESULT_FILE"
+  fi
+  sed -n '/The CXX compiler/s/-- The CXX compiler identification is/COMPILER_VERSION =/p' < "${CGAL_BINARY_DIR}/installation.log" |sed -E "s/ = (.*)/\ = '\1\'/">> "$RESULT_FILE"
+  echo "TESTER ${CGAL_TESTER}" >> "$RESULT_FILE"
+  echo "TESTER_NAME ${CGAL_TESTER}" >> "$RESULT_FILE"
+  echo "TESTER_ADDRESS ${TESTER_ADDRESS}" >> "$RESULT_FILE"
+  echo "CGAL_TEST_PLATFORM ${PLATFORM}" >> "$RESULT_FILE"
+  grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log"|sort -u >> $RESULT_FILE
+  #Use sed to get the content of DEBUG or RELEASE CXX FLAGS so that Multiconfiguration platforms do provide their CXXXFLAGS to the testsuite page (that greps USING CXXFLAGS to get info)
+  sed -i -E 's/(^-- USING )(DEBUG|RELEASE) (CXXFLAGS)/\1\3/' $RESULT_FILE
+  echo "------------" >> "$RESULT_FILE"
+  #if git branch, create empty scm file for python script
+  if [ -n "${SCRIPTS_DIR}" ]; then
+    touch ../../../../../.scm-branch
+  fi
+  python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/parse-ctest-dashboard-xml.py $CGAL_TESTER $PLATFORM
+
+  for file in $(ls|grep _Tests); do
+    mv $file "$(echo "$file" | sed 's/_Tests//g')"
+  done
+  OUTPUT_FILE=results_${CGAL_TESTER}_${PLATFORM}.tar
+  TEST_REPORT="TestReport_${CGAL_TESTER}_${PLATFORM}"
+  mkdir -p Installation
+  chmod 777 Installation
+  cat "${CGAL_BINARY_DIR}/package_installation.log" >> "Installation/${TEST_REPORT}"
+
+  #call the python script to complete the results report.
+  python3 ${CGAL_DIR}/${TESTSUITE_DIR}test/post_process_ctest_results.py Installation/${TEST_REPORT} ${TEST_REPORT} results_${CGAL_TESTER}_${PLATFORM}.txt
+  rm -f $OUTPUT_FILE $OUTPUT_FILE.gz
+  if [ -n "${SCRIPTS_DIR}" ]; then
+    rm ../../../../../.scm-branch
+  fi
+  tar cf $OUTPUT_FILE results_${CGAL_TESTER}_${PLATFORM}.txt */"$TEST_REPORT"
+  echo
+  gzip -9f $OUTPUT_FILE
+  cp "${OUTPUT_FILE}.gz" "results_${CGAL_TESTER}_${PLATFORM}.txt" "${CGAL_TEST_DIR}"
+}
+# ----------------------------------------------------------------------------------------
+# Runs the test on the host $1
+# ----------------------------------------------------------------------------------------
+run_test_on_host()
+{
+  PLATFORMS=`value_of COMPILERS_${HOST}`
+  if [ "${PLATFORMS}" = "all" ]; then
+    collect_all_current_platforms "${CGAL_BINARY_DIR_BASE}"
+  fi
+
+  for PLATFORM in ${PLATFORMS}; do
+    run_test_on_platform "${PLATFORM}"
+    publish_results "${PLATFORM}"
+    if [ -z "${KEEP_TESTS}" ]; then
+      rm -rf $CGAL_DIR/cmake/platforms/${PLATFORM}
+    fi
+  done
+}
+
+
+#setup dir
+setup_dirs
+
+
+# Setup cmake
+log "${ACTUAL_LOGFILE}" "running the testsuites"
+if [ -n "${CONSOLE_OUTPUT}" ]; then
+    printf "\n-------------------------------------------------------\n"
+fi
+run_test_on_host

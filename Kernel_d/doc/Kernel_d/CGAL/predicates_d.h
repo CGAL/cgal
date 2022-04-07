@@ -9,8 +9,8 @@ namespace CGAL {
 returns true iff the points in `A = tuple [first,last)` are
 affinely independent.
 
-\pre The objects are of the same dimension. 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<R>` 
+\pre The objects are of the same dimension.
+\tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> bool
 affinely_independent(ForwardIterator first, ForwardIterator last);
@@ -21,8 +21,8 @@ affinely_independent(ForwardIterator first, ForwardIterator last);
 
 computes
 the affine rank of the points in `A = tuple [first,last)`.
-\pre The objects in \f$ A\f$ are of the same dimension. 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<R>`. 
+\pre The objects in \f$ A\f$ are of the same dimension.
+\tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> int
 affine_rank(ForwardIterator first, ForwardIterator last);
@@ -49,7 +49,7 @@ determines whether \f$ p\f$ is contained in
 the affine hull of the points in `A = tuple [first,last)`.
 \pre The objects in `A` are of the same dimension.
 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<R>`.
+\tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> bool
 contained_in_affine_hull( ForwardIterator first, ForwardIterator
@@ -63,7 +63,7 @@ determines whether \f$ v\f$ is contained
 in the linear hull of the vectors in `A = tuple [first,last)`.
 \pre The objects in \f$ A\f$ are of the same dimension.
 
-\cgalRequires The value type of `ForwardIterator` is `Vector_d<R>`.
+\tparam ForwardIterator has `Vector_d<R>` as value type.
 */
 template <class ForwardIterator> bool
 contained_in_linear_hull( ForwardIterator first, ForwardIterator
@@ -77,8 +77,8 @@ determines whether \f$ p\f$ is contained in the
 simplex of the points in `A = tuple [first,last)`.
 
 \pre The objects in \f$ A\f$ are of the same dimension and affinely
-independent. 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<R>`.
+independent.
+\tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> bool
 contained_in_simplex( ForwardIterator first, ForwardIterator last,
@@ -117,8 +117,8 @@ p, const Point_d<R>& q);
 decides whether the vectors in `A = tuple [first,last)`
 are linearly independent.
 
-\pre The objects in `A` are of the same dimension. 
-\cgalRequires The value type of `ForwardIterator` is `Vector_d<R>`.
+\pre The objects in `A` are of the same dimension.
+\tparam ForwardIterator has `Vector_d<R>` as value type.
 */
 template <class ForwardIterator> bool
 linearly_independent( ForwardIterator first, ForwardIterator
@@ -130,8 +130,8 @@ last);
 
 computes
 the linear rank of the vectors in `A = tuple [first,last)`.
-\pre The objects are of the same dimension. 
-\cgalRequires The value type of `ForwardIterator` is `Vector_d<R>`. 
+\pre The objects are of the same dimension.
+\tparam ForwardIterator has `Vector_d<R>` as value type.
 */
 template <class ForwardIterator> int
 linear_rank(ForwardIterator first, ForwardIterator last);
@@ -146,11 +146,11 @@ determines the orientation of the points of the tuple `A = tuple [first,last)` w
 1 & 1 & 1 & 1 \\
 A[0] & A[1] & \dots& A[d]
 \end{array} \right| \f]
-where `A[i]` denotes the %Cartesian coordinate vector of 
+where `A[i]` denotes the %Cartesian coordinate vector of
 the \f$ i\f$-th point in \f$ A\f$.
 \pre `size [first,last) == d+1` and `A[i].dimension() == d` \f$ \forall0 \leq i \leq d\f$.
 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<R>`.
+\tparam ForwardIterator has `Point_d<R>` as value type.
 
 */
 template <class ForwardIterator> Orientation
@@ -164,8 +164,8 @@ returns the relative position of point
 `p` to the sphere defined by `A = tuple [first,last)`. The
 order of the points of \f$ A\f$ does not matter.
 
-\pre `orientation(first,last)` is not `ZERO`. 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<R>`. 
+\pre `orientation(first,last)` is not `ZERO`.
+\tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> Bounded_side
 side_of_bounded_sphere( ForwardIterator first, ForwardIterator last,
@@ -181,8 +181,8 @@ important, since it determines the orientation of the implicitly
 constructed sphere. If the points in \f$ A\f$ are positively oriented,
 the positive side is the bounded interior of the sphere.
 
-\pre `A` contains \f$ d+1\f$ points in \f$ d\f$-space. 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<R>`.
+\pre `A` contains \f$ d+1\f$ points in \f$ d\f$-space.
+\tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> Oriented_side
 side_of_oriented_sphere( ForwardIterator first, ForwardIterator

@@ -1,12 +1,13 @@
 #include <fstream>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
+#include <CGAL/IO/WKT.h>
 
 #include <CGAL/point_generators_2.h>
-
 // Qt headers
 #include <QtGui>
 #include <QString>
@@ -20,7 +21,7 @@
 #include <CGAL/Qt/GraphicsViewCircleInput.h>
 #include <CGAL/Qt/RegularTriangulationGraphicsItem.h>
 #include <CGAL/Qt/PowerdiagramGraphicsItem.h>
-  
+
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
 // the two base classes
@@ -28,23 +29,22 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_2 Point_2;
-typedef K::Point_2 Circle_2;
-typedef K::Iso_rectangle_2 Iso_rectangle_2;
+typedef K::Point_2                                          Point_2;
+typedef K::Weighted_point_2                                 Weighted_point_2;
+typedef K::Point_2                                          Circle_2;
+typedef K::Iso_rectangle_2                                  Iso_rectangle_2;
 
-typedef double Weight;
-typedef CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>  Gt;
-typedef CGAL::Regular_triangulation_2<Gt> Regular;
+typedef CGAL::Regular_triangulation_2<K>                    Regular;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
   public Ui::Regular_triangulation_2
 {
   Q_OBJECT
-  
-private:  
-  Regular dt; 
-  QGraphicsScene scene;  
+
+private:
+  Regular dt;
+  QGraphicsScene scene;
 
   CGAL::Qt::RegularTriangulationGraphicsItem<Regular> * dgi;
   CGAL::Qt::PowerdiagramGraphicsItem<Regular> * vgi;
@@ -54,7 +54,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void processInput(CGAL::Object o);
 
@@ -63,7 +63,7 @@ public slots:
   void on_actionShowPowerdiagram_toggled(bool checked);
 
   void on_actionInsertPoint_toggled(bool checked);
-  
+
   void on_actionInsertRandomPoints_triggered();
 
   void on_actionLoadPoints_triggered();
@@ -75,7 +75,7 @@ public slots:
   void on_actionRecenter_triggered();
 
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -85,49 +85,50 @@ MainWindow::MainWindow()
 {
   setupUi(this);
 
-  // Add a GraphicItem for the Regular triangulation
+  // Add a GraphicItem for the regular triangulation
   dgi = new CGAL::Qt::RegularTriangulationGraphicsItem<Regular>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
-		   dgi, SLOT(modelChanged()));
+                   dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  dgi->setEdgesPen(QPen(Qt::black, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
 
   // Add a GraphicItem for the Powerdiagram diagram
   vgi = new CGAL::Qt::PowerdiagramGraphicsItem<Regular>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
-		   vgi, SLOT(modelChanged()));
+                   vgi, SLOT(modelChanged()));
 
   vgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(vgi);
   vgi->hide();
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
+  // and the input they generate is passed to the triangulation with
+  // the signal/slot mechanism
   pi = new CGAL::Qt::GraphicsViewCircleInput<K>(this, &scene, 1); // emits center/radius
-                                                                           
+
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+                   this, SLOT(processInput(CGAL::Object)));
 
   trv = new CGAL::Qt::RegularTriangulationRemoveVertex<Regular>(&dt, this);
   QObject::connect(trv, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
+                   this, SIGNAL(changed()));
 
-  // 
+  //
   // Manual handling of actions
   //
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
 
-  // Check two actions 
+  // Check two actions
   this->actionInsertPoint->setChecked(true);
   this->actionShowRegular->setChecked(true);
 
@@ -140,8 +141,8 @@ MainWindow::MainWindow()
   this->graphicsView->setMouseTracking(true);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
-                                                      
+  this->graphicsView->transform().scale(1, -1);
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -162,14 +163,14 @@ MainWindow::processInput(CGAL::Object o)
     dt.insert(wp);
   }
 
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
- * 
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -205,7 +206,7 @@ void
 MainWindow::on_actionClear_triggered()
 {
   dt.clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -216,22 +217,25 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   CGAL::Qt::Converter<K> convert;
   Iso_rectangle_2 isor = convert(rect);
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
-  const int number_of_points = 
-    QInputDialog::getInteger(this, 
+  CGAL::Random rnd(CGAL::get_default_random());
+
+  const int number_of_points =
+    QInputDialog::getInt(this,
                              tr("Number of random points"),
                              tr("Enter number of random points"), 100, 0);
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  std::vector<Point_2> points;
+  std::vector<Weighted_point_2> points;
   points.reserve(number_of_points);
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(*pg++);
+    Weighted_point_2 wp(*pg++, rnd.get_double(0, 500));
+    points.push_back(wp);
   }
   dt.insert(points.begin(), points.end());
   // default cursor
   QApplication::setOverrideCursor(Qt::ArrowCursor);
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -239,20 +243,35 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
-						  ".");
+                                                  tr("Open Points file"),
+                                                  ".",
+                                                  tr("Weighted Points (*.wpts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                     "All (*)"));
+
   if(! fileName.isEmpty()){
     std::ifstream ifs(qPrintable(fileName));
-
-    Gt::Weighted_point_2 p;
-    std::vector<Gt::Weighted_point_2> points;
-    while(ifs >> p) {
-      points.push_back(p);
+    std::vector<Weighted_point_2> points;
+    if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
+    {
+      std::vector<K::Point_3> points_3;
+      CGAL::IO::read_multi_point_WKT(ifs, points_3);
+      for(const K::Point_3& p : points_3)
+      {
+        points.push_back(Weighted_point_2(K::Point_2(p.x(), p.y()), p.z()));
+      }
+    }
+    else
+    {
+      Weighted_point_2 p;
+      while(ifs >> p) {
+        points.push_back(p);
+      }
     }
     dt.insert(points.begin(), points.end());
 
     actionRecenter->trigger();
-    emit(changed());
+    Q_EMIT( changed());
   }
 }
 
@@ -261,16 +280,36 @@ void
 MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
-						  ".");
+                                                  tr("Save points"),
+                                                  ".reg.cgal",
+                                                  tr("Weighted Points (*.wpts.cgal);;"
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                     "All (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Regular::Finite_vertices_iterator 
+    if(fileName.endsWith(".wkt",Qt::CaseInsensitive))
+    {
+      std::vector<K::Point_3> points_3;
+      for(Regular::Finite_vertices_iterator
           vit = dt.finite_vertices_begin(),
           end = dt.finite_vertices_end();
-        vit!= end; ++vit)
+          vit!= end; ++vit)
+      {
+        points_3.push_back(K::Point_3(vit->point().x(),
+                                      vit->point().y(),
+                                      vit->point().weight()));
+      }
+      CGAL::IO::write_multi_point_WKT(ofs, points_3);
+    }
+    else
     {
-      ofs << vit->point() << std::endl;
+      for(Regular::Finite_vertices_iterator
+          vit = dt.finite_vertices_begin(),
+          end = dt.finite_vertices_end();
+          vit!= end; ++vit)
+      {
+        ofs << vit->point() << std::endl;
+      }
     }
   }
 }
@@ -280,7 +319,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(dgi->boundingRect());
-  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 
@@ -295,9 +334,8 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Regular_triangulation_2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGAL (Qt5).
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

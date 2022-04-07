@@ -9,9 +9,6 @@
 //----------------------------------------------------------
 // normal_estimation_test points1.xyz points2.xyz...
 
-// With iterator debugging this testsuite takes to long and the process gets killed
-#define _HAS_ITERATOR_DEBUGGING 0
-
 // CGAL
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
@@ -23,14 +20,13 @@
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/read_points.h>
 
 #include <vector>
-#include <cstdlib>
+#include <string>
 #include <fstream>
 #include <cassert>
-#include <math.h>
+#include <cmath>
 
 
 // ----------------------------------------------------------------------------
@@ -47,6 +43,8 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
 typedef std::vector<Point_with_normal> PointList;
 
+// Concurrency
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // ----------------------------------------------------------------------------
 // Tests
@@ -126,15 +124,12 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
   std::cerr << "Estimates Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << ")...\n";
 
-  CGAL::pca_estimate_normals(points.begin(), points.end(),
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
-#else
-                             CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()), 
-#endif
-                             nb_neighbors_pca_normals);
+  CGAL::pca_estimate_normals<Concurrency_tag>
+    (points, nb_neighbors_pca_normals,
+     CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -154,15 +149,12 @@ bool run_jet_estimate_normals(PointList& points, // input points + output normal
   std::cerr << "Estimates Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << ")...\n";
 
-  CGAL::jet_estimate_normals(points.begin(), points.end(),
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                             CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
-#else
-                             CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()), 
-#endif
-                             nb_neighbors_jet_fitting_normals);
+  CGAL::jet_estimate_normals<Concurrency_tag>
+    (points, nb_neighbors_jet_fitting_normals,
+     CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -234,28 +226,15 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
                             unsigned int nb_neighbors_mst, // number of neighbors
                             const std::vector<Vector>& original_normals) // may be empty
 {
-#if (BOOST_VERSION / 100) == 1054
-  std::cerr <<
-    "In run_mst_orient_normals():\n"
-    "NOTICE: This function is incompatible with Boost 1.54, "
-    "and will not be tested. See the following bug:\n"
-    "  https://svn.boost.org/trac/boost/ticket/9012\n";
-  return true;
-#endif // Boost version is 1.54
-
   std::cerr << "Orients Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  PointList::iterator unoriented_points_begin = 
-    CGAL::mst_orient_normals(points.begin(), points.end(),
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
-#else
-    CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()), 
-#endif
-                             nb_neighbors_mst);
+  PointList::iterator unoriented_points_begin =
+    CGAL::mst_orient_normals(points, nb_neighbors_mst,
+      CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -321,30 +300,21 @@ int main(int argc, char * argv[])
     if (extension == ".off" || extension == ".OFF")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream && 
-                CGAL::read_off_points_and_normals(stream,
-                                                  std::back_inserter(points),
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                                  CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points))
-#else
-                                                  CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type()) 
-#endif
-                                                  );
+      success = stream &&
+                CGAL::IO::read_OFF(stream,
+                                   std::back_inserter(points),
+                                   CGAL::parameters::normal_map
+                                     (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))
+                  );
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
              extension == ".pwn" || extension == ".PWN")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream && 
-                CGAL::read_xyz_points_and_normals(stream,
-                                                  std::back_inserter(points),
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-                                                  CGAL::make_normal_of_point_with_normal_pmap(std::back_inserter(points))
-#else
-                                                  CGAL::make_normal_of_point_with_normal_pmap(PointList::value_type())
-#endif
-                                                  );
+      success = stream && CGAL::IO::read_XYZ(stream,
+                                             std::back_inserter(points),
+                                             CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
     }
     if (success)
     {
@@ -361,8 +331,7 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    int nb_points = points.size();
-    if (nb_points == 0)
+    if (points.size() == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;
@@ -373,7 +342,7 @@ int main(int argc, char * argv[])
     // Copy original normals
     //***************************************
 
-    std::vector<Vector> original_normals; 
+    std::vector<Vector> original_normals;
     bool points_have_original_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
     if ( points_have_original_normals )
     {
@@ -417,4 +386,3 @@ int main(int argc, char * argv[])
   std::cerr << "Tool returned " << accumulated_fatal_err << std::endl;
   return accumulated_fatal_err;
 }
-

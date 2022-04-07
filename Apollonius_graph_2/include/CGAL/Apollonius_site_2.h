@@ -2,24 +2,19 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #ifndef CGAL_APOLLONIUS_SITE_2_H
 #define CGAL_APOLLONIUS_SITE_2_H
+
+#include <CGAL/license/Apollonius_graph_2.h>
+
 
 #include <iostream>
 #include <CGAL/basic.h>
@@ -41,13 +36,9 @@ public:
 
 public:
   Apollonius_site_2(const Point_2& p = Point_2(),
-		    const Weight& w = Weight(0))
+                    const Weight& w = Weight(0))
     : _p(p), _w(w) {}
 
-  Apollonius_site_2(const Apollonius_site_2& other)
-    : _p(other._p), _w(other._w) {}
-
-  
   const Point_2& point() const { return _p; }
   const Weight&  weight() const { return _w; }
   RT      x() const { return _p.x(); }
@@ -75,8 +66,8 @@ template <class K>
 std::istream&
 operator>>(std::istream& is, Apollonius_site_2<K>& wp)
 {
-  typename Apollonius_site_2<K>::Weight   weight;
-  typename Apollonius_site_2<K>::Point_2  p;
+  typename Apollonius_site_2<K>::Weight   weight (0.);
+  typename Apollonius_site_2<K>::Point_2  p (0., 0.);
   is >> p >> weight;
   if(is) {
     wp = Apollonius_site_2<K>(p, weight);

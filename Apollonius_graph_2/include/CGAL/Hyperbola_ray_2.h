@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -22,6 +14,9 @@
 
 #ifndef CGAL_HYPERBOLA_RAY_2_H
 #define CGAL_HYPERBOLA_RAY_2_H
+
+#include <CGAL/license/Apollonius_graph_2.h>
+
 
 #include <CGAL/Hyperbola_segment_2.h>
 
@@ -49,20 +44,12 @@ public:
   using Base::f;
 
 protected:
-#if defined(__POWERPC__) && \
-  defined(__GNUC__) && (__GNUC__ == 3 ) && (__GNUC_MINOR__ == 4)
-  // hack to avoid nasty warning for G++ 3.4 on Darwin
-  static FT OFFSET()
-  {
-    return FT(10000);
-  }
-#else
+
   static const FT& OFFSET()
   {
-    static FT offset_(10000);
+    static const FT offset_(10000);
     return offset_;
   }
-#endif
 
   template< class Stream >
   inline
@@ -80,8 +67,8 @@ public:
 
 
   Hyperbola_ray_2(const Site_2 &f1, const Site_2 &f2,
-		  const Point_2 &p,
-		  const Hyperbola_direction& direction) :
+                  const Point_2 &p,
+                  const Hyperbola_direction& direction) :
     Hyperbola_segment_2< Gt >(f1, f2, p, p),
     _f1(f1), _f2(f2), _p(p), _dir(direction)
   {
@@ -117,7 +104,7 @@ public:
     } else {
       this->p2 = f(t1 - this->STEP * OFFSET());
     }
-    
+
     Hyperbola_segment_2< Gt >::draw(s);
   }
 
@@ -132,7 +119,7 @@ public:
 
     Hyperbola_segment_2< Gt >::draw(s);
   }
-  
+
 };
 
 

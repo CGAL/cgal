@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Olivier Devillers <Olivivier.Devillers@sophia.inria.fr>
 //                 Mariette Yvinec  <Mariette.Yvinec@sophia.inria.fr>
@@ -21,6 +13,9 @@
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_2_H
+
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/array.h>
@@ -60,6 +55,7 @@ public:
   //typedef typename PTr::Finite_faces_iterator     Finite_faces_iterator;
 
   typedef typename PTr::Weighted_tag       Weighted_tag;
+  typedef typename PTr::Periodic_tag       Periodic_tag;
 
 #ifndef CGAL_CFG_USING_BASE_MEMBER_BUG_2
   using PTr_Base::geom_traits;
@@ -292,9 +288,9 @@ void
 Periodic_2_triangulation_hierarchy_2<PTr>::
 clear()
 {
-  for(int i = 0; i < m_maxlevel; ++i) 
+  for(int i = 0; i < m_maxlevel; ++i)
   {
-      CGAL_assertion(hierarchy[i] != NULL);
+      CGAL_assertion(hierarchy[i] != nullptr);
       hierarchy[i]->clear();
   }
 }
@@ -599,7 +595,7 @@ locate_in_all(const Point& p,
         {
           nearest = position->vertex(1);
         }
-      // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  NULL
+      // compare to vertex 2, but only if the triangulation is 2D, because otherwise vertex(2) is  nullptr
       if ( (hierarchy[level]->dimension() == 2) && (!  hierarchy[level]->is_infinite(position->vertex(2))))
         {
           if ( closer( p,

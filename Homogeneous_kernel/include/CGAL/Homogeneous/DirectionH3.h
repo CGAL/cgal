@@ -1,27 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 #ifndef CGAL_HOMOGENEOUS_DIRECTION_3_H
 #define CGAL_HOMOGENEOUS_DIRECTION_3_H
 
@@ -42,9 +34,9 @@ class DirectionH3
    typedef typename R_::Line_3               Line_3;
    typedef typename R_::Ray_3                Ray_3;
 
-    typedef cpp11::array<RT, 4>              Rep;
+    typedef std::array<RT, 4>              Rep;
     typedef typename R_::template Handle<Rep>::type  Base;
- 
+
     Base base;
 
 public:
@@ -57,16 +49,16 @@ public:
     //: base(p) {}
 
   DirectionH3(const Vector_3 & v )
-  { *this = v.direction(); }
+  { *this = v.rep().direction(); }
 
   DirectionH3(const Line_3 & l )
   { *this = l.rep().direction(); }
 
   DirectionH3(const Ray_3 & r )
-  { *this = r.direction(); }
+  { *this = r.rep().direction(); }
 
   DirectionH3(const Segment_3 & s )
-  { *this = s.direction(); }
+  { *this = s.rep().direction(); }
 
   // the fourth argument is not documented.  Should go away ?
   DirectionH3(const RT& x, const RT& y,
@@ -82,15 +74,15 @@ public:
   Vector_3    to_vector() const;
   Vector_3    vector() const { return to_vector(); }
 
-  const RT & dx() const { return get(base)[0]; }
-  const RT & dy() const { return get(base)[1]; }
-  const RT & dz() const { return get(base)[2]; }
-  const RT & x()  const { return get(base)[0]; }
-  const RT & y()  const { return get(base)[1]; }
-  const RT & z()  const { return get(base)[2]; }
-  const RT & hx() const { return get(base)[0]; }
-  const RT & hy() const { return get(base)[1]; }
-  const RT & hz() const { return get(base)[2]; }
+  const RT & dx() const { return get_pointee_or_identity(base)[0]; }
+  const RT & dy() const { return get_pointee_or_identity(base)[1]; }
+  const RT & dz() const { return get_pointee_or_identity(base)[2]; }
+  const RT & x()  const { return get_pointee_or_identity(base)[0]; }
+  const RT & y()  const { return get_pointee_or_identity(base)[1]; }
+  const RT & z()  const { return get_pointee_or_identity(base)[2]; }
+  const RT & hx() const { return get_pointee_or_identity(base)[0]; }
+  const RT & hy() const { return get_pointee_or_identity(base)[1]; }
+  const RT & hz() const { return get_pointee_or_identity(base)[2]; }
 };
 
 template <class R >

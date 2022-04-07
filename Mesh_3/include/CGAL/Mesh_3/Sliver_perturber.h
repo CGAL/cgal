@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -24,6 +16,10 @@
 
 #ifndef CGAL_MESH_3_SLIVER_PERTURBER_H
 #define CGAL_MESH_3_SLIVER_PERTURBER_H
+
+#include <CGAL/license/Mesh_3.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -43,10 +39,10 @@
 #include <CGAL/Mesh_3/vertex_perturbation.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_optimization_return_code.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
-#include <CGAL/Has_timestamp.h>
+#include <CGAL/Time_stamper.h>
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 #include <CGAL/Mesh_3/Worksharing_data_structures.h>
@@ -57,17 +53,11 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/task.h>
+# include <tbb/task_group.h>
 #endif
 
 #include <boost/format.hpp>
-#ifdef CGAL_MESH_3_USE_RELAXED_HEAP
-#include <boost/pending/relaxed_heap.hpp>
-#else
 #include <CGAL/Modifiable_priority_queue.h>
-#endif //CGAL_MESH_3_USE_RELAXED_HEAP
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
@@ -77,31 +67,7 @@
 
 namespace CGAL {
 
-namespace internal { namespace Mesh_3 {
-
-  // Hash function for boost::unordered_map<Vertex_handle,...>
-  template <typename Tr, bool HasTimestamp>
-  struct VHash
-  {
-    typedef typename Tr::Vertex_handle Vertex_handle;
-    std::size_t operator()(Vertex_handle vh) const
-    {
-      return vh->time_stamp();
-    }
-  };
-  template <typename Tr>
-  struct VHash<Tr, false>
-  {
-    typedef typename Tr::Vertex_handle Vertex_handle;
-    std::size_t operator()(Vertex_handle vh) const
-    {
-      return boost::hash_value(&*vh);
-    }
-  };
-}} // end internal::Mesh_3
-
 namespace Mesh_3 {
-
 
 /**
 * @class PVertex
@@ -131,7 +97,7 @@ PVertex_()
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_()
 { }
 
@@ -140,7 +106,7 @@ PVertex_(const Vertex_handle& vh, id_type id)
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_(id)
 { }
 
@@ -160,7 +126,7 @@ void set_perturbation(const Perturbation* p) { p_perturbation_ = p; }
 bool is_perturbable() const
 {
   return (   (vertex_handle_->in_dimension() > 1)
-          && (NULL != perturbation())
+          && (nullptr != perturbation())
           && (sliver_nb() != 0) );
 }
 
@@ -240,7 +206,7 @@ PVertex_()
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_()
 { }
 
@@ -251,7 +217,7 @@ PVertex_(const Vertex_handle& vh, id_type id)
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_(id)
 { }
 
@@ -281,7 +247,7 @@ void set_perturbation(const Perturbation* p) { p_perturbation_ = p; }
 bool is_perturbable() const
 {
   return (   (vertex_handle_->in_dimension() > 1)
-          && (NULL != perturbation())
+          && (nullptr != perturbation())
           && (sliver_nb() != 0) );
 }
 
@@ -362,10 +328,10 @@ protected:
   Lock_data_structure *
     get_lock_data_structure()                       const { return 0; }
   void unlock_all_elements()                        const {}
-  void create_root_task()                           const {}
+  void create_task_group()                          const {}
   bool flush_work_buffers()                         const { return true; }
   void wait_for_all()                               const {}
-  void destroy_root_task()                          const {}
+  void destroy_trask_group()                        const {}
   template <typename Func, typename PVertex>
   void enqueue_work(Func, const PVertex &)          const {}
 
@@ -400,36 +366,34 @@ protected:
     m_lock_ds.unlock_all_points_locked_by_this_thread();
   }
 
-  void create_root_task() const
+  void create_task_group() const
   {
-    m_empty_root_task = new( tbb::task::allocate_root() ) tbb::empty_task;
-    m_empty_root_task->set_ref_count(1);
+    m_task_group = new tbb::task_group;
   }
 
   bool flush_work_buffers() const
   {
-    m_empty_root_task->set_ref_count(1);
-    bool keep_flushing = m_worksharing_ds.flush_work_buffers(*m_empty_root_task);
+    bool keep_flushing = m_worksharing_ds.flush_work_buffers(*m_task_group);
     wait_for_all();
     return keep_flushing;
   }
 
   void wait_for_all() const
   {
-    m_empty_root_task->wait_for_all();
+    m_task_group->wait();
   }
 
-  void destroy_root_task() const
+  void destroy_trask_group() const
   {
-    tbb::task::destroy(*m_empty_root_task);
-    m_empty_root_task = 0;
+    delete m_task_group;
+    m_task_group = 0;
   }
 
   template <typename Func, typename PVertex>
   void enqueue_work(Func f, const PVertex &pv) const
   {
-    CGAL_assertion(m_empty_root_task != 0);
-    m_worksharing_ds.enqueue_work(f, pv, *m_empty_root_task);
+    CGAL_assertion(m_task_group != 0);
+    m_worksharing_ds.enqueue_work(f, pv, *m_task_group);
   }
 
   void increment_erase_counter(const Vertex_handle &vh) const
@@ -437,12 +401,16 @@ protected:
     vh->increment_erase_counter();
   }
 
+  void cancel() const {
+    return m_task_group->cancel();
+  }
+
 public:
 
 protected:
   mutable Lock_data_structure           m_lock_ds;
   mutable Mesh_3::Auto_worksharing_ds   m_worksharing_ds;
-  mutable tbb::task                    *m_empty_root_task;
+  mutable tbb::task_group               *m_task_group;
 };
 #endif // CGAL_LINKED_WITH_TBB
 
@@ -468,13 +436,15 @@ class Sliver_perturber
   typedef Sliver_perturber_base<
     typename C3T3::Triangulation, Concurrency_tag>                      Base;
 
-  typedef typename C3T3::Triangulation  Tr;
-  typedef typename Tr::Geom_traits      Gt;
+  typedef typename C3T3::Triangulation          Tr;
+  typedef typename Tr::Geom_traits              Gt;
 
   typedef typename Tr::Cell_handle              Cell_handle;
   typedef typename Base::Vertex_handle          Vertex_handle;
   typedef typename Tr::Vertex                   Vertex;
-  typedef typename MeshDomain::Point_3          Point_3;
+
+  typedef typename Tr::Bare_point               Bare_point;
+  typedef typename Tr::Weighted_point           Weighted_point;
 
   typedef typename std::vector<Cell_handle>     Cell_vector;
   typedef typename std::vector<Vertex_handle>   Vertex_vector;
@@ -503,7 +473,7 @@ private:
 
   typedef PVertex_<FT,
                    Vertex_handle,
-                   Point_3,
+                   Bare_point,
                    SliverCriterion,
                    Perturbation,
                    Concurrency_tag> PVertex;
@@ -512,8 +482,7 @@ private:
    * @class PVertex_id
    * relaxed heap
    */
-  class PVertex_id :
-  public boost::put_get_helper<typename PVertex::id_type, PVertex_id>
+  class PVertex_id
   {
   public:
     typedef boost::readable_property_map_tag category;
@@ -522,14 +491,17 @@ private:
     typedef PVertex key_type;
 
     value_type operator[] (const key_type& pv) const { return pv.id(); }
+
+    friend inline
+    value_type get(const PVertex_id& m, const key_type& k)
+    {
+      return m[k];
+    }
   };
 
   typedef std::less<PVertex> less_PVertex;
-  #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
-  typedef boost::relaxed_heap<PVertex, less_PVertex, PVertex_id> PQueue;
-  #else
-  typedef ::CGAL::internal::mutable_queue_with_remove<PVertex,std::vector<PVertex>, less_PVertex, PVertex_id> PQueue;
-  #endif //CGAL_MESH_3_USE_RELAXED_HEAP
+  typedef Modifiable_priority_queue<PVertex, less_PVertex, PVertex_id> PQueue;
+
 
 public:
   /**
@@ -729,7 +701,7 @@ private:
       } while (!could_lock_zone);
 
       if ( m_sliver_perturber.is_time_limit_reached() )
-        tbb::task::self().cancel_group_execution();
+        m_sliver_perturber.cancel();
     }
   };
 #endif
@@ -749,7 +721,7 @@ private:
 
   // Timer
   double time_limit_;
-  CGAL::Timer running_time_;
+  CGAL::Real_timer running_time_;
 };
 
 
@@ -787,7 +759,7 @@ operator()(Visitor visitor)
 {
   //check criterion bound
   if ( sliver_criterion_.sliver_bound() == 0 )
-    sliver_criterion_.set_sliver_bound(Sc::default_value);
+    sliver_criterion_.set_sliver_bound(sliver_criterion_.get_default_value());
 
   // Reset sliver value cache
   helper_.reset_cache();
@@ -907,7 +879,7 @@ add_perturbation(Perturbation* perturbation)
   if ( !perturbation_vector_.empty() )
     perturbation_vector_.back().set_next(perturbation);
 
-  if ( NULL != perturbation )
+  if ( nullptr != perturbation )
   {
     // Set order
     perturbation->set_order(next_perturbation_order_++);
@@ -929,7 +901,7 @@ Sliver_perturber<C3T3,Md,Sc,V_>::
 perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 {
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
   std::streamsize prec = std::cerr.precision(4);
   std::cerr << "Perturb sliver vertices (bound: " << sliver_bound
@@ -958,12 +930,11 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
   // Parallel
   if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
-    this->create_root_task();
+    this->create_task_group();
 
-    while (pqueue.size() > 0)
+    while (!pqueue.empty())
     {
-      PVertex pv = pqueue.top();
-      pqueue.pop();
+      PVertex pv = pqueue.top_and_pop();
       enqueue_task(pv, sliver_bound,
                    visitor, bad_vertices);
     }
@@ -982,7 +953,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 # endif
     }
 
-    this->destroy_root_task();
+    this->destroy_trask_group();
   }
   // Sequential
   else
@@ -995,8 +966,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
     while ( !is_time_limit_reached() && !pqueue.empty() )
     {
       // Get pqueue head
-      PVertex pv = pqueue.top();
-      pqueue.pop();
+      PVertex pv = pqueue.top_and_pop();
       --pqueue_size;
 
       CGAL_assertion(pv.is_perturbable());
@@ -1016,8 +986,8 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
       // Perturb vertex
       Vertex_vector modified_vertices;
 
-      // pv.perturbation() should not be NULL if pv is in pqueue
-      CGAL_assertion(pv.perturbation() != NULL);
+      // pv.perturbation() should not be nullptr if pv is in pqueue
+      CGAL_assertion(pv.perturbation() != nullptr);
 
       std::pair<bool,Vertex_handle> perturbation_ok =
         pv.perturbation()->operator()(pv.vertex(),
@@ -1056,7 +1026,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
         // If perturbation fails, try next one
         pv.set_perturbation(pv.perturbation()->next());
 
-        if ( NULL == pv.perturbation() )
+        if ( nullptr == pv.perturbation() )
         {
           bad_vertices.push_back(pv.vertex());
         }
@@ -1115,18 +1085,15 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   CGAL_precondition(pqueue.empty());
 
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
   std::cerr << "Build pqueue...";
 #endif
 
   int pqueue_size = 0;
 
-  typedef typename std::iterator_traits<Vertex_handle>::value_type Vertex;
-  typedef CGAL::internal::Has_timestamp<Vertex> Vertex_has_timestamp;
-  using CGAL::internal::Mesh_3::VHash;
-  typedef VHash<Tr, Vertex_has_timestamp::value> Hash_fct;
-  typedef boost::unordered_map<Vertex_handle,PVertex,Hash_fct> M;
+  typedef CGAL::Hash_handles_with_or_without_timestamps            Hash_fct;
+  typedef boost::unordered_map<Vertex_handle, PVertex, Hash_fct>   M;
 
   M vpm;
   for ( typename Tr::Finite_cells_iterator cit = tr_.finite_cells_begin();
@@ -1180,7 +1147,7 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   CGAL_precondition(pqueue.empty());
 
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
   std::cerr << "Build pqueue...";
 #endif
@@ -1266,7 +1233,7 @@ update_priority_queue(const PVertex& pv, PQueue& pqueue) const
     }
     else
     {
-      pqueue.remove(pv);
+      pqueue.erase(pv);
       return -1;
     }
   }
@@ -1294,6 +1261,8 @@ perturb_vertex( PVertex pv
               , bool *could_lock_zone
               ) const
 {
+  typename Gt::Construct_point_3 cp = tr_.geom_traits().construct_point_3_object();
+
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
   static Profile_branch_counter_3 bcounter(
     "early withdrawals / late withdrawals / successes [Perturber]");
@@ -1307,8 +1276,9 @@ perturb_vertex( PVertex pv
     return;
   }
 
-  Point_3 p = pv.vertex()->point();
-  if (!helper_.try_lock_point_no_spin(p) || p != pv.vertex()->point())
+  Bare_point p = cp(pv.vertex()->point());
+  if (!helper_.try_lock_point_no_spin(pv.vertex()->point()) ||
+      ! tr_.geom_traits().equal_3_object()(p, cp(pv.vertex()->point())))
   {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!
@@ -1348,8 +1318,8 @@ perturb_vertex( PVertex pv
     // Perturb vertex
     Vertex_vector modified_vertices;
 
-    // pv.perturbation() should not be NULL if pv is in pqueue
-    CGAL_assertion(pv.perturbation() != NULL);
+    // pv.perturbation() should not be nullptr if pv is in pqueue
+    CGAL_assertion(pv.perturbation() != nullptr);
 
     std::pair<bool,Vertex_handle> perturbation_ok =
       pv.perturbation()->operator()(pv.vertex(),
@@ -1398,7 +1368,7 @@ perturb_vertex( PVertex pv
         pv.set_perturbation(pv.perturbation()->next());
         pv.update_saved_erase_counter();
 
-        if ( NULL == pv.perturbation() )
+        if ( nullptr == pv.perturbation() )
         {
           bad_vertices.push_back(pv.vertex());
         }
@@ -1551,11 +1521,11 @@ void
 Sliver_perturber<C3T3,Md,Sc,V_>::
 initialize_vertices_id() const
 {
-  namespace bl = boost::lambda;
   int cur_id = 0;
-
-  std::for_each(tr_.finite_vertices_begin(), tr_.finite_vertices_end(),
-                bl::bind(&Vertex::set_meshing_info, &bl::_1, bl::var(cur_id)++));
+  for(typename Tr::Finite_vertices_iterator it = tr_.finite_vertices_begin();
+      it != tr_.finite_vertices_end(); ++it) {
+    it->set_meshing_info(cur_id++);
+  }
 }
 
 
@@ -1659,5 +1629,7 @@ enqueue_task(const PVertex &pv,
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_SLIVERS_PERTURBER_H

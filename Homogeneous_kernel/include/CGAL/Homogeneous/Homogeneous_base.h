@@ -1,31 +1,23 @@
-// Copyright (c) 1999-2004  
+// Copyright (c) 1999-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
 
 #ifndef CGAL_HOMOGENEOUS_BASE_H
 #define CGAL_HOMOGENEOUS_BASE_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/basic_classes.h>
 
 #include <CGAL/Kernel/global_functions.h>
@@ -38,12 +30,13 @@
 #include <CGAL/Homogeneous/Iso_rectangleH2.h>
 #include <CGAL/Homogeneous/LineH2.h>
 #include <CGAL/Homogeneous/PointH2.h>
+#include <CGAL/Homogeneous/Weighted_point_2.h>
 #include <CGAL/Cartesian/Ray_2.h>
 #include <CGAL/Cartesian/Segment_2.h>
 #include <CGAL/Cartesian/Triangle_2.h>
 #include <CGAL/Homogeneous/VectorH2.h>
 #include <CGAL/Homogeneous/Data_accessorH2.h>
-#include <CGAL/ConicHPA2.h>
+#include <CGAL/Homogeneous/ConicHPA2.h>
 
 #include <CGAL/Homogeneous/Aff_transformationH3.h>
 #include <CGAL/Homogeneous/DirectionH3.h>
@@ -51,6 +44,7 @@
 #include <CGAL/Cartesian/Line_3.h>
 #include <CGAL/Homogeneous/PlaneH3.h>
 #include <CGAL/Homogeneous/PointH3.h>
+#include <CGAL/Homogeneous/Weighted_point_3.h>
 #include <CGAL/Homogeneous/RayH3.h>
 #include <CGAL/Cartesian/Segment_3.h>
 #include <CGAL/Homogeneous/SphereH3.h>
@@ -127,6 +121,7 @@ struct Homogeneous_base
     typedef TriangleC2<Kernel>                      Triangle_2;
     typedef Iso_rectangleH2<Kernel>                 Iso_rectangle_2;
     typedef Aff_transformationH2<Kernel>            Aff_transformation_2;
+    typedef Weighted_pointH2<Kernel>                Weighted_point_2;
 
     typedef PointH3<Kernel>                         Point_3;
     typedef VectorH3<Kernel>                        Vector_3;
@@ -141,15 +136,16 @@ struct Homogeneous_base
     typedef SphereH3<Kernel>                        Sphere_3;
     typedef CircleC3<Kernel>                        Circle_3;
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
+    typedef Weighted_pointH3<Kernel>                Weighted_point_3;
 
-    typedef Cartesian_const_iterator_d<typename cpp11::array<RT, 3>::const_iterator> Cartesian_const_iterator_2;
-    typedef Cartesian_const_iterator_d<typename cpp11::array<RT, 4>::const_iterator> Cartesian_const_iterator_3;
+    typedef Cartesian_const_iterator_d<typename std::array<RT, 3>::const_iterator> Cartesian_const_iterator_2;
+    typedef Cartesian_const_iterator_d<typename std::array<RT, 4>::const_iterator> Cartesian_const_iterator_3;
 
     typedef FT_                                     Cartesian_coordinate_type;
     typedef const RT_&                              Homogeneous_coordinate_type;
     // Undocumented stuff.
     typedef Data_accessorH2<Kernel>                 Data_accessor_2;
-    typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2; 
+    typedef ConicHPA2<Point_2, Data_accessor_2>     Conic_2;
     // Functors types and access functions.
 #define CGAL_Kernel_pred(Y,Z) typedef HomogeneousKernelFunctors::Y<Kernel> Y; \
                               Y Z() const { return Y(); }

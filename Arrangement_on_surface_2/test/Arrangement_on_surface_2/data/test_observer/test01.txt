@@ -75,9 +75,9 @@ after_global_change
 e 3
 before_global_change
 before_remove_edge
+after_remove_edge
 before_remove_vertex
 after_remove_vertex
-after_remove_edge
 after_global_change
 e 1
 before_global_change
@@ -89,7 +89,7 @@ after_global_change
 e 2
 before_global_change
 before_remove_edge
+after_remove_edge
 before_remove_vertex
 after_remove_vertex
-after_remove_edge
 after_global_change

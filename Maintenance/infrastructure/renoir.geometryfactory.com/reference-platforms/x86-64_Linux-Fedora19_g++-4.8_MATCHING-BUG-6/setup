@@ -1,7 +1,2 @@
 export QTDIR=/usr/lib64/qt-3.3
 source /home/lrineau/infrastructure/reference-platforms/setup-common
-
-BOOST_ROOT=/home/lrineau/CGAL/boost/1.44-beta1
-export BOOST_ROOT
-
-CXX_FLAGS=-I$BOOST_ROOT/include

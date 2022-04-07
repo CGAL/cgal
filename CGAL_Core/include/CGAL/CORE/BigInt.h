@@ -3,24 +3,13 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/).
- * You can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
+ * This file is part of CGAL (www.cgal.org).
  *
  * File: BigInt.h
- * Synopsis: 
- * 		a wrapper class for mpz from GMP
- * 
- * Written by 
+ * Synopsis:
+ *                 a wrapper class for mpz from GMP
+ *
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -30,6 +19,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 #ifndef _CORE_BIGINT_H_
 #define _CORE_BIGINT_H_
@@ -39,7 +29,7 @@
 #include <CGAL/CORE/MemoryPool.h>
 #include <string>
 
-namespace CORE { 
+namespace CORE {
 
 
 class BigIntRep : public RCRepImpl<BigIntRep> {
@@ -94,7 +84,8 @@ public:
     mpz_clear(mp);
   }
 
-  CORE_MEMORY(BigIntRep)
+  CGAL_CORE_EXPORT CORE_NEW(BigIntRep)
+  CGAL_CORE_EXPORT CORE_DELETE(BigIntRep)
 
   mpz_srcptr get_mp() const {
     return mp;
@@ -478,7 +469,7 @@ inline void divexact(BigInt& z, const BigInt& x, const BigInt& y) {
 // Chee (1/12/2004)   The definition of div_exact(x,y) next
 //   ensure that in Polynomials<NT> works with both NT=BigInt and NT=int:
 inline BigInt div_exact(const BigInt& x, const BigInt& y) {
-  BigInt z;	     // precodition: isDivisible(x,y)
+  BigInt z;             // precodition: isDivisible(x,y)
   divexact(z, x, y); // z is set to x/y;
   return z;
 }
@@ -520,14 +511,14 @@ inline int bitLength(const BigInt& a) {
   return mpz_sizeinbase(a.get_mp(), 2);
 }
 /// floorLg -- floor of log_2(a)
-/** Convention: a=0, floorLg(a) returns -1. 
+/** Convention: a=0, floorLg(a) returns -1.
  *  This makes sense for integer a.
  */
 inline long floorLg(const BigInt& a) {
   return (sign(a) == 0) ? (-1) : (bitLength(a)-1);
 }
 /// ceilLg -- ceiling of log_2(a) where a=BigInt, int or long
-/** Convention: a=0, ceilLg(a) returns -1. 
+/** Convention: a=0, ceilLg(a) returns -1.
  *  This makes sense for integer a.
  */
 inline long ceilLg(const BigInt& a) {
@@ -543,20 +534,10 @@ inline long ceilLg(int a) { // need this for Polynomial<int>
   return ceilLg(BigInt(a));
 }
 
-
-// return a gmp_randstate_t structure
-extern gmp_randstate_t* getRandstate();
-/// seed function
-inline void seed(const BigInt& a) {
-  gmp_randseed(*getRandstate(), a.get_mp());
-}
-/// randomize function
-inline BigInt randomize(const BigInt& a) {
-  BigInt r;
-  mpz_urandomm(r.get_mp(), *getRandstate(), a.get_mp());
-  return r;
-}
 //@}
 
+
+
 } //namespace CORE
+
 #endif // _CORE_BIGINT_H_

@@ -26,13 +26,13 @@
 // implementation: testing of use of default traits classes for partitioning
 // ============================================================================
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Partition_traits_2.h>
 #include <CGAL/partition_2.h>
 #include <list>
 #include <cassert>
 
-typedef CGAL::Cartesian<double>       K;
+typedef CGAL::Simple_cartesian<double>       K;
 typedef CGAL::Partition_traits_2<K>   Traits;
 typedef Traits::Point_2               Point_2;
 typedef Traits::Polygon_2             Polygon_2;

@@ -33,15 +33,18 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
     <addaction name="actionImportOFF"/>
-    <addaction name="actionAddOFF"/>
+    <addaction name="actionImportMoka"/>
     <addaction name="separator"/>
     <addaction name="actionImport3DTDS"/>
     <addaction name="actionCompute_Voronoi_3D"/>
@@ -54,11 +57,16 @@
     <property name="title">
      <string>&amp;Operations</string>
     </property>
+    <addaction name="actionInsert_center_vertices"/>
     <addaction name="actionTriangulate_all_facets"/>
-    <addaction name="actionSew3_same_facets"/>
-    <addaction name="actionUnsew3_all"/>
+    <addaction name="actionMerge_coplanar_faces"/>
     <addaction name="actionMerge_all_volumes"/>
     <addaction name="actionRemove_filled_volumes"/>
+    <addaction name="separator"/>
+    <addaction name="actionSew3_same_facets"/>
+    <addaction name="actionUnsew3_all"/>
+    <addaction name="separator"/>
+    <addaction name="actionInsideOut"/>
     <addaction name="separator"/>
     <addaction name="actionSubdivide"/>
     <addaction name="actionSubdivide_pqq"/>
@@ -74,6 +82,9 @@
     <addaction name="actionCreate2Volumes"/>
     <addaction name="actionCreate_mesh"/>
     <addaction name="actionCreate_Menger_Sponge"/>
+    <addaction name="separator"/>
+    <addaction name="actionCreate_Sierpinski_Carpet"/>
+    <addaction name="actionCreate_Sierpinski_Triangle"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -93,11 +104,6 @@
   <action name="actionImportOFF">
    <property name="text">
     <string>&amp;Import OFF</string>
-   </property>
-  </action>
-  <action name="actionAddOFF">
-   <property name="text">
-    <string>Add &amp;OFF</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -180,6 +186,11 @@
     <string>&amp;Unsew3 volumes</string>
    </property>
   </action>
+  <action name="actionInsideOut">
+   <property name="text">
+    <string>Reverse &amp;orientation</string>
+   </property>
+  </action>
   <action name="actionVolume_list">
    <property name="checkable">
     <bool>true</bool>
@@ -206,6 +217,41 @@
   <action name="actionMerge_all_volumes">
    <property name="text">
     <string>&amp;Merge volumes</string>
+   </property>
+  </action>
+  <action name="actionCreate_Sierpinski_Carpet">
+   <property name="text">
+    <string>Create Sierpinski Carpet</string>
+   </property>
+  </action>
+  <action name="actionCreate_Sierpinski_Triangle">
+   <property name="text">
+    <string>Create Sierpinski Triangle</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>&amp;Load</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionImportMoka">
+   <property name="text">
+    <string>Import Moka</string>
+   </property>
+  </action>
+  <action name="actionMerge_coplanar_faces">
+   <property name="text">
+    <string>Merge coplanar faces</string>
+   </property>
+  </action>
+  <action name="actionInsert_center_vertices">
+   <property name="text">
+    <string>Insert center vertices in faces</string>
    </property>
   </action>
  </widget>

@@ -96,8 +96,6 @@ const int     TET_SHAPE                = 3;
   // =====================
 
 //# define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
-//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET
-//# define CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT // default
 
   // ==========================================================================
   // Profiling
@@ -107,14 +105,7 @@ const int     TET_SHAPE                = 3;
 # define CGAL_CONCURRENT_MESH_3_PROFILING
 //# define CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
 
-  // ==========================================================================
-  // TBB
-  // ==========================================================================
-# if TBB_IMPLEMENT_CPP0X
-#   include <tbb/compat/thread>
-# else
-#   include <thread>
-# endif
+#include  <thread>
 
 // ==========================================================================
 // SEQUENTIAL
@@ -383,13 +374,9 @@ std::string get_technique()
 #ifdef CGAL_CONCURRENT_MESH_3
 
   tech += "Task-scheduler (auto";
-# if defined(CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_MULTISET)
-    tech += ", sorted batches with multiset";
-# elif defined(CGAL_MESH_3_LOAD_BASED_WORKSHARING)
+# ifdef CGAL_MESH_3_LOAD_BASED_WORKSHARING
     tech += ", load-based worksharing";
-# else // CGAL_MESH_3_TASK_SCHEDULER_SORTED_BATCHES_WITH_SORT
-    tech += ", sorted batches with std::sort";
-# endif
+#endif
   tech += ")";
 
 #else // !CGAL_CONCURRENT_MESH_3
@@ -831,7 +818,7 @@ int main()
 #if defined(CHECK_MEMORY_LEAKS_ON_MSVC) && defined(_MSC_VER)
   _CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-  
+
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   // Program options
   po::variables_map vm;

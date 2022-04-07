@@ -1,18 +1,10 @@
 // Copyright (c) 2007-2010 Inria Lorraine (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
@@ -23,12 +15,13 @@
 #include <CGAL/gmp.h>
 #include <mpfr.h>
 #include <CGAL/GMP/Gmpfr_type.h>
+#include <CGAL/GMP/Gmpq_type.h>
 #include <mpfi.h>
 #include <boost/operators.hpp>
 #include <CGAL/Uncertain.h>
-#ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
-#endif
+#include <CGAL/tss.h>
+#include <CGAL/IO/io.h>
+
 #include <limits>
 #include <algorithm>
 
@@ -80,11 +73,8 @@ Uncertain<bool> operator==(const Gmpfi&,const Gmpq&);
 
 // the default precision is a variable local to each thread in multithreaded
 // environments, or a global variable otherwise
-#ifdef CGAL_HAS_THREADS
-        static boost::thread_specific_ptr<mp_prec_t> Gmpfi_default_precision_;
-#else
-        static mp_prec_t Gmpfi_default_precision=CGAL_GMPFI_DEFAULT_PRECISION;
-#endif
+
+
 
 class Gmpfi:
         boost::ordered_euclidian_ring_operators1<Gmpfi,
@@ -108,6 +98,13 @@ class Gmpfi:
         // back the result of the operation in _left and _right.
         Gmpfr _left,_right;
         mutable __mpfi_struct _interval;
+
+  static mp_prec_t&  default_precision()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(mp_prec_t, Gmpfi_default_precision, CGAL_GMPFI_DEFAULT_PRECISION);
+    return Gmpfi_default_precision;
+  }
+
 
         bool is_unique(){
 #ifdef CGAL_GMPFR_NO_REFCOUNT
@@ -296,9 +293,7 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 
         // default precision
 
-#ifdef CGAL_HAS_THREADS
-        static void init_precision_for_thread();
-#endif
+
         static Gmpfi::Precision_type get_default_precision();
         static Gmpfi::Precision_type set_default_precision(
                                                 Gmpfi::Precision_type prec);
@@ -400,35 +395,20 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 // --------------
 
 // default precision
-#ifdef CGAL_HAS_THREADS
-inline
-void Gmpfi::init_precision_for_thread(){
-        CGAL_precondition(Gmpfi_default_precision_.get()==NULL);
-        Gmpfi_default_precision_.reset(
-                new mp_prec_t(CGAL_GMPFI_DEFAULT_PRECISION));
-}
-#endif
+
 
 inline
 Gmpfi::Precision_type Gmpfi::get_default_precision(){
-#ifdef CGAL_HAS_THREADS
-        if(Gmpfi_default_precision_.get()==NULL)
-                Gmpfi::init_precision_for_thread();
-        return *Gmpfi_default_precision_.get();
-#else
-        return Gmpfi_default_precision;
-#endif
+
+  return default_precision();
 }
 
 inline
 Gmpfi::Precision_type Gmpfi::set_default_precision(Gmpfi::Precision_type prec){
-        Gmpfi::Precision_type old_prec=Gmpfi::get_default_precision();
+        Gmpfi::Precision_type old_prec= default_precision();
         CGAL_assertion(prec>=MPFR_PREC_MIN&&prec<=MPFR_PREC_MAX);
-#ifdef CGAL_HAS_THREADS
-        *Gmpfi_default_precision_.get()=prec;
-#else
-        Gmpfi_default_precision=prec;
-#endif
+        default_precision() = prec;
+
         return old_prec;
 }
 
@@ -630,8 +610,13 @@ Gmpfi Gmpfi::kthroot(int k,Gmpfi::Precision_type p)const{
         // MPFI does not provide k-th root functions
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
         Gmpfi result (0, p);
-        mpfr_root(&(result.mpfi())->left, left_mpfr(), k,GMP_RNDD);
-        mpfr_root(&(result.mpfi())->right,right_mpfr(),k,GMP_RNDU);
+        #if(MPFR_VERSION_MAJOR < 4)
+            mpfr_root(&(result.mpfi())->left, left_mpfr(), k,GMP_RNDD);
+            mpfr_root(&(result.mpfi())->right,right_mpfr(),k,GMP_RNDU);
+        #else
+            mpfr_rootn_ui(&(result.mpfi())->left, left_mpfr(), k,GMP_RNDD);
+            mpfr_rootn_ui(&(result.mpfi())->right,right_mpfr(),k,GMP_RNDU);
+        #endif
         *(result._left.fr()) = result._interval.left;
         *(result._right.fr()) = result._interval.right;
         return result;
@@ -797,7 +782,7 @@ std::pair<double,double> Gmpfi::to_interval()const{
 inline
 std::pair<double,long> Gmpfi::to_double_exp()const{
         mpfr_t middle;
-        long *e=NULL;
+        long *e=nullptr;
         mpfr_init2(middle,53);
         mpfi_get_fr(middle,mpfi());
         double d=mpfr_get_d_2exp(e,middle,mpfr_get_default_rounding_mode());
@@ -807,7 +792,7 @@ std::pair<double,long> Gmpfi::to_double_exp()const{
 
 inline
 std::pair<std::pair<double,double>,long> Gmpfi::to_interval_exp()const{
-        long *e1=NULL,*e2=NULL;
+        long *e1=nullptr,*e2=nullptr;
         double d_low=mpfr_get_d_2exp(e1,left_mpfr(),GMP_RNDD);
         double d_upp=mpfr_get_d_2exp(e2,right_mpfr(),GMP_RNDU);
         if(e1<e2)
@@ -832,7 +817,7 @@ std::istream& operator>>(std::istream& is,Gmpfi &f){
         std::istream::int_type c;
         std::ios::fmtflags old_flags = is.flags();
         is.unsetf(std::ios::skipws);
-        gmpz_eat_white_space(is);
+        internal::eat_white_space(is);
         c=is.get();
         if(c!='['){
                 invalid_number:
@@ -840,13 +825,13 @@ std::istream& operator>>(std::istream& is,Gmpfi &f){
                 is.flags(old_flags);
                 return is;
         }
-        gmpz_eat_white_space(is);
+        internal::eat_white_space(is);
         is>>left;
         c=is.get();
         if(c!=',')
                 goto invalid_number;
         is>>right;
-        gmpz_eat_white_space(is);
+        internal::eat_white_space(is);
         c=is.get();
         if(c!=']')
                 goto invalid_number;

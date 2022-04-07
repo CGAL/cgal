@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -22,7 +14,10 @@
 #ifndef CGAL_ARR_PLANAR_TOPOLOGY_TRAITS_BASE_2_H
 #define CGAL_ARR_PLANAR_TOPOLOGY_TRAITS_BASE_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 /*! \file
+ *
  * Definition of the Arr_planar_topology_traits_base_2<GeomTraits> class.
  */
 
@@ -30,23 +25,15 @@
 #include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_walk_along_line_point_location.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
-#include <CGAL/Sweep_line_2/Arr_construction_event.h>
-#include <CGAL/Sweep_line_2/Arr_construction_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_basic_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_insertion_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_subcurve.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_traits_2.h>
-#include <CGAL/Sweep_line_2/Arr_overlay_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_batched_pl_sl_visitor.h>
-#include <CGAL/Sweep_line_2/Arr_vert_decomp_sl_visitor.h>
+#include <CGAL/Surface_sweep_2/Arr_basic_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_insertion_traits_2.h>
+#include <CGAL/Surface_sweep_2/Arr_overlay_traits_2.h>
 #include <CGAL/Arr_point_location/Arr_batched_point_location_traits_2.h>
 
 namespace CGAL {
 
 /*! \class Arr_planar_topology_traits_base_2
+ *
  * A base topology-traits class that encapsulates the embedding of 2D
  * arrangements of bounded or unbounded curves on the plane.
  */
@@ -114,11 +101,12 @@ public:
     // Clear the DCEL.
     m_dcel.delete_all();
 
-    if (m_own_geom_traits && (m_geom_traits != NULL)) {
+    if (m_own_geom_traits && (m_geom_traits != nullptr)) {
       delete m_geom_traits;
-      m_geom_traits = NULL;
+      m_geom_traits = nullptr;
     }
   }
+
   //@}
 
   ///! \name Common topology-traits methods.
@@ -130,8 +118,23 @@ public:
   /*! Get the DCEL (non-const version). */
   Dcel& dcel() { return (m_dcel); }
 
-  /*!
-   * Receive a notification on the creation of a new boundary vertex that
+  /*! Receive a notification on the creation of a new boundary vertex that
+   * corresponds to a given point.
+   * \param v The new boundary vertex.
+   * \param p The point.
+   * \param ps_x The boundary condition of the curve end in x.
+   * \param ps_y The boundary condition of the curve end in y.
+   */
+  void notify_on_boundary_vertex_creation(Vertex*,
+                                          const Point_2& ,
+                                          Arr_parameter_space /* ps_x */,
+                                          Arr_parameter_space /* ps_y */)
+  {
+    // In the planar-topology traits this function should never be invoked:
+    return;
+  }
+
+  /*! Receive a notification on the creation of a new boundary vertex that
    * corresponds to the given curve end.
    * \param v The new boundary vertex.
    * \param cv The x-monotone curve.
@@ -168,9 +171,7 @@ public:
     return false;
   }
 
-
-  /*!
-   * Given signs of two ccbs that show up when splitting upon insertion of
+  /*! Given signs of two ccbs that show up when splitting upon insertion of
    * curve into two, determine what happens to the face(s).
    * \param signs1 signs in x and y of the first implied ccb
    * \param signs2 signs in x and y of the secondd implied ccb
@@ -186,11 +187,10 @@ public:
   {
     // In case of a planar topology, connecting two vertices on the same
     // inner CCB closes a new face that becomes a hole in the original face:
-    return (std::make_pair(true, true));
+    return std::make_pair(true, true);
   }
 
-  /*!
-   * Determine whether the given point lies in the interior of the given face.
+  /*! Determine whether the given point lies in the interior of the given face.
    * \param f The face.
    * \param p The query point.
    * \param v The vertex associated with p (if exists).
@@ -198,6 +198,7 @@ public:
    * \return Whether p is contained in f's interior.
    */
   bool is_in_face(const Face* f, const Point_2& p, const Vertex* v) const;
+
   //@}
 
   /// \name Additional accessors, specialized for this topology-traits class.
@@ -210,8 +211,7 @@ public:
   /// \name Additional predicates, specialized for this topology-traits class.
   //@{
 
-  /*!
-   * Compare the given vertex (which may lie at infinity) and the given point.
+  /*! Compare the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the comparison of the x-coordinates of p and v.
@@ -219,17 +219,15 @@ public:
   virtual Comparison_result compare_x(const Point_2& p,
                                       const Vertex* v) const = 0;
 
-  /*!
-   * Compare the given vertex (which may lie at infinity) and the given point.
+  /*! Compare the given vertex (which may lie at infinity) and the given point.
    * \param p The point.
    * \param v The vertex.
    * \return The result of the xy-lexicographic comparison of p and v.
    */
-  virtual Comparison_result compare_xy (const Point_2& p,
-                                        const Vertex* v) const = 0;
+  virtual Comparison_result compare_xy(const Point_2& p,
+                                       const Vertex* v) const = 0;
 
-  /*!
-   * Compare the relative y-position of the given point and the given edge
+  /*! Compare the relative y-position of the given point and the given edge
    * (which may be fictitious).
    * \param p The point.
    * \param he The edge (one of the pair of halfedges).
@@ -242,7 +240,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -257,9 +255,9 @@ Arr_planar_topology_traits_base_2<GeomTraits, Dcel_>::assign(const Self& other)
   m_dcel.assign(other.m_dcel);
 
   // Take care of the traits object.
-  if (m_own_geom_traits && (m_geom_traits != NULL)) {
+  if (m_own_geom_traits && (m_geom_traits != nullptr)) {
     delete m_geom_traits;
-    m_geom_traits = NULL;
+    m_geom_traits = nullptr;
   }
 
   if (other.m_own_geom_traits) m_geom_traits = new Traits_adaptor_2;
@@ -275,8 +273,8 @@ template <typename GeomTraits, typename Dcel_>
 bool Arr_planar_topology_traits_base_2<GeomTraits, Dcel_>::
 is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 {
-  CGAL_precondition((v == NULL) || ! v->has_null_point());
-  CGAL_precondition((v == NULL) ||
+  CGAL_precondition((v == nullptr) || ! v->has_null_point());
+  CGAL_precondition((v == nullptr) ||
                     m_geom_traits->equal_2_object()(p, v->point()));
 
   // In case the face is unbounded and has no outer ccbs, this is the single
@@ -320,7 +318,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 
   do {
     // Compare p to the target vertex of the current halfedge.
-    // If the vertex v associated with p (if v is given and is not NULL)
+    // If the vertex v associated with p (if v is given and is not nullptr)
     // on the boundary of the component, p is obviously not in the interior
     // the component.
     if (curr->vertex() == v) return false;
@@ -375,6 +373,6 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
   return ((n_ray_intersections % 2) != 0);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

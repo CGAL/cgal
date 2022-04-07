@@ -1,0 +1,8 @@
+/*!
+\example Surface_mesh_approximation/vsa_approximation_2_example.cpp
+\example Surface_mesh_approximation/vsa_approximation_example.cpp
+\example Surface_mesh_approximation/vsa_class_interface_example.cpp
+\example Surface_mesh_approximation/vsa_isotropic_metric_example.cpp
+\example Surface_mesh_approximation/vsa_segmentation_example.cpp
+\example Surface_mesh_approximation/vsa_simple_approximation_example.cpp
+*/

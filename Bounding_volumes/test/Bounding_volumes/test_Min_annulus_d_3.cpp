@@ -24,10 +24,10 @@
 // implementation: test program for Min_annulus (3D traits class)
 // ============================================================================
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
 #include <CGAL/Min_annulus_d.h>
 #include <CGAL/Min_sphere_annulus_d_traits_3.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Homogeneous.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 #include <CGAL/Gmpq.h>
@@ -63,7 +63,7 @@ typedef  CGAL::Min_sphere_annulus_d_traits_3<HK2, RT, double> HTraits2;
 #include "test_Min_annulus_d.h"
 
 template <class K, class Traits>
-void process () 
+void process ()
 {
   // generate point set
   std::vector<typename K::Point_3>  points;
@@ -72,29 +72,29 @@ void process ()
     double hom = 2.0;
     for ( int i = 0; i < 100; ++i) {
       points.push_back
-	(typename K::Point_3
-	 (CGAL::default_random( 0x100000),
-	  CGAL::default_random( 0x100000),
-	  CGAL::default_random( 0x100000),
-	  hom));
+        (typename K::Point_3
+         (CGAL::get_default_random()( 0x100000),
+          CGAL::get_default_random()( 0x100000),
+          CGAL::get_default_random()( 0x100000),
+          hom));
     }
-    
+
   // call test function
   CGAL::test_Min_annulus_d(points.begin(), points.end(), Traits(), 0);
   }
 }
-    
+
 // main
 // ----
 int main()
 {
   // the following takes forever under Quotient<MP_Float>
-#ifdef CGAL_USE_GMP 
+#ifdef CGAL_USE_GMP
     process<CK1, CTraits1>();
 #endif
-    process<HK1, HTraits1>(); 
+    process<HK1, HTraits1>();
     process<CK2, CTraits2>();
     process<HK2, HTraits2>();
 }
- 
+
 // ===== EOF ==================================================================

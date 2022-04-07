@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgMesh_3Concepts
+\ingroup PkgMesh3Concepts
 \cgalConcept
 
 The concept `MeshDomain_3` describes the knowledge required on the
@@ -30,8 +30,7 @@ if it includes points which are strictly inside
 and strictly outside the domain (resp. the subdomain).
 
 \cgalHasModel `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
-\cgalHasModel `CGAL::Implicit_mesh_domain_3<Function,BGT>`
-\cgalHasModel `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
+\cgalHasModel `CGAL::Labeled_mesh_domain_3<BGT>`
 
 \sa `MeshVertexBase_3`
 \sa `MeshCellBase_3`
@@ -107,12 +106,12 @@ Assignable, DefaultConstructible and EqualityComparable.
 typedef unspecified_type Index;
 
 /*!
-Return type of `Construct_intersection` queries.
+Returns type of `Construct_intersection` queries.
 `int` represents the
 dimension of the lower dimensional face of the input complex on which the intersection
-point lies and `Index` is the index of this face.
+point lies and `%Index` is the index of this face.
 */
-typedef CGAL::cpp11::tuple<Point_3, Index, int> Intersection;
+typedef std::tuple<Point_3, Index, int> Intersection;
 
 /*!
 A function object to construct
@@ -129,7 +128,7 @@ following operators:
 
 Those two operators output a set of (`n`) surface points to the
 output iterator `pts`, as objects of type `std::pair<Point_3,
-Index>`. If `n` is not given, the functor must provide enough
+%Index>`. If `n` is not given, the functor must provide enough
 points to initialize the mesh generation process.
 */
 typedef unspecified_type Construct_initial_points;
@@ -175,6 +174,15 @@ intersection between an object of type `Segment_3`, `Ray_3` or
 */
 typedef unspecified_type Construct_intersection;
 
+/// @}
+
+/// \name Bounding box
+/// Since CGAL-4.8, a model of `MeshDomain_3` must provide a function
+/// providing a bounding box of the domain.
+/// @{
+
+/// Returns a bounding box of the domain
+Bbox_3 bbox() const;
 /// @}
 
 /// \name Operations

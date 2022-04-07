@@ -1,23 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -29,6 +21,8 @@
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/IO/io.h>
+#include <CGAL/Kernel/mpl.h>
 
 namespace CGAL {
 
@@ -72,6 +66,9 @@ public:
   Line_2(const RLine_2& l)  // conversion impl -> interface class
     : RLine_2(l) {}
 
+  Line_2(RLine_2&& l)
+    : RLine_2(std::move(l)) {}
+
   Line_2(const Point_2 &p, const Point_2 &q)
     : RLine_2(typename R::Construct_line_2()(Return_base_tag(), p,q)) {}
 
@@ -111,7 +108,7 @@ public:
   transform(const Aff_transformation_2 &t) const
   {
     return Line_2(t.transform(point(0)),
-		  t.transform(direction()));
+                  t.transform(direction()));
   }
 
   Line_2
@@ -209,7 +206,20 @@ public:
   }
 
   Point_2
-  point(int i) const
+  point(const int i) const
+  {
+    return R().construct_point_2_object()(*this, RT(i));
+  }
+
+  Point_2
+  point(const typename First_if_different<RT, int, 1>::Type& i) const
+  {
+    return R().construct_point_2_object()(*this,i);
+  }
+
+  Point_2
+  point(const typename First_if_different<
+                const typename First_if_different<FT, RT, 2>::Type, int>::Type& i) const
   {
     return R().construct_point_2_object()(*this,i);
   }
@@ -233,7 +243,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Line_2<R>& l)
 {
-    switch(os.iword(IO::mode)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << l.a() << ' ' << l.b() << ' ' << l.c();
     case IO::BINARY :
@@ -243,7 +253,7 @@ insert(std::ostream& os, const Line_2<R>& l)
         return os;
     default:
         return os << "Line_2(" << l.a()
-		  << ", " << l.b() << ", " << l.c() <<')';
+                  << ", " << l.b() << ", " << l.c() <<')';
     }
 }
 
@@ -259,10 +269,10 @@ template <class R >
 std::istream&
 extract(std::istream& is, Line_2<R>& l)
 {
-    typename R::RT a, b, c;
-    switch(is.iword(IO::mode)) {
+  typename R::RT a(0), b(0), c(0);
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> a >> b >> c;
+        is >> IO::iformat(a) >> IO::iformat(b) >> IO::iformat(c);
         break;
     case IO::BINARY :
         read(is, a);
@@ -270,12 +280,13 @@ extract(std::istream& is, Line_2<R>& l)
         read(is, c);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
-	l = Line_2<R>(a, b, c);
+        l = Line_2<R>(a, b, c);
     return is;
 }
 

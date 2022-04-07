@@ -2,24 +2,19 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
 #ifndef CGAL_EXTREMAL_POLYGON_2_H
 #define CGAL_EXTREMAL_POLYGON_2_H 1
+
+#include <CGAL/license/Inscribed_areas.h>
+
 
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/monotone_matrix_search.h>
@@ -30,15 +25,13 @@
 #include <functional>
 #include <algorithm>
 #include <CGAL/Extremal_polygon_traits_2.h>
-
 namespace CGAL {
 
 //!!! This will eventually be integrated into function_objects.h
 template < class Array, class Index, class Element >
 struct Index_operator
-: public std::binary_function< Array, Index, Element >
+: public CGAL::cpp98::binary_function< Array, Index, Element >
 {
-
   Element&
   operator()( Array& a, const Index& i) const
   { return a[i]; }
@@ -175,7 +168,7 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
 // n > k,
 //  * k >= t.min_k()
 //  * value_type of RandomAccessIC is Traits::Point_2
-//  * OutputIterator accepts Traits::Point_2 as value_type 
+//  * OutputIterator accepts Traits::Point_2 as value_type
 //
 // functionality:
 // --------------
@@ -190,7 +183,7 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
   // check preconditions:
   CGAL_optimisation_precondition( k >= t.min_k());
   int number_of_points(
-                       static_cast<int>(iterator_distance( points_begin, 
+                       static_cast<int>(iterator_distance( points_begin,
                                                            points_end)));
   CGAL_optimisation_precondition( number_of_points > k);
 
@@ -208,7 +201,7 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
   int i( t.min_k());
   t.compute_min_k_gon(
     points_begin, points_end, max_area, gon.rbegin() + k + 1 - i);
-  
+
   for (;;) {
     CGAL_optimisation_assertion( gon[0] == 0);
     gon[i] = number_of_points - 1;
@@ -226,7 +219,7 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
       gon.rbegin() + k + 1 - i,
       t);
   } // for (;;)
-  
+
   return CGAL_maximum_inscribed_rooted_k_gon_2(
     points_begin,
     points_end,
@@ -295,7 +288,7 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
   int i;
 
   // compute size of ranges:
-  int number_of_points = static_cast<int>(iterator_distance( points_begin, 
+  int number_of_points = static_cast<int>(iterator_distance( points_begin,
                                                              points_end));
   int size_of_gon = static_cast<int>(iterator_distance( right_c_begin,
                                                         right_c_end));
@@ -331,10 +324,10 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
   //!!! static ???
   // area container:
   FT_cont area( number_of_points);
-  
+
   // last vertex container:
   Index_cont last_vertex( number_of_points);
-  
+
   // matrix operation:
   Operation op( t.operation( points_begin[root]));
   // initialize area and last vertex containers:
@@ -342,10 +335,10 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
     area[i] = t.init( points_begin[i], points_begin[root]);
     last_vertex[i] = root;
   }
-  
-  
+
+
   for ( i = 1; i < size_of_gon; ++i) {
-  
+
     monotone_matrix_search(
       dynamic_matrix(
         extremal_polygon_matrix(
@@ -357,7 +350,7 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
           area.begin() + right_c_begin[i-1] + 1,
           op)),
           last_vertex.begin() + left_c_begin[i]);
-  
+
     // compute new area values and adjust last_vertex values
     // (they are relative to left_c_begin[i-1] now)
     int j;
@@ -366,9 +359,9 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
       area[j] = area[last_vertex[j]] +
         op( points_begin[j], points_begin[last_vertex[j]]);
     }
-  
+
   } // for ( i = 1; i < size_of_gon; ++i)
-  
+
   // find maximum in last range:
   int maxi =
     static_cast<int>(iterator_distance(
@@ -377,7 +370,7 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
                    area.begin() + right_c_begin[size_of_gon - 1] + 1)));
   // set max_area:
   max_area = area[maxi];
-  
+
   // construct gon:
   *o++ = maxi;
   maxi = last_vertex[maxi];
@@ -393,10 +386,10 @@ CGAL_maximum_inscribed_rooted_k_gon_2(
       maxi = right_c_begin[i-2];
     }
   } // for ( i = size_of_gon - 1; i > 0; --i)
-  
+
   *o++ = root;
   return o;
-  
+
 
 } // CGAL_maximum_inscribed_rooted_k_gon_2( p, k, result)
 
@@ -422,7 +415,7 @@ extremal_polygon_2(
 //    enumerated clock- or counterclockwise
 //  * k >= t.min_k()
 //  * value_type of RandomAccessIC is Traits::Point_2
-//  * OutputIterator accepts Traits::Point_2 as value_type 
+//  * OutputIterator accepts Traits::Point_2 as value_type
 //
 // functionality:
 // --------------
@@ -432,12 +425,10 @@ extremal_polygon_2(
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
 {
-  using std::bind1st;
-
   // check preconditions:
   CGAL_optimisation_precondition_code(
     int number_of_points(
-                         static_cast<int>(iterator_distance( points_begin, 
+                         static_cast<int>(iterator_distance( points_begin,
                                                              points_end)));)
   CGAL_optimisation_precondition( number_of_points >= t.min_k());
   CGAL_optimisation_expensive_precondition(
@@ -448,11 +439,10 @@ extremal_polygon_2(
     points_begin,
     points_end,
     k,
-    transform_iterator(
+    CGAL::transform_iterator(
       o,
-      bind1st(
-        Index_operator< RandomAccessIC, int, Point_2 >(),
-        points_begin)),
+      std::function<Point_2(int)>([points_begin](int i)
+      { return Index_operator< RandomAccessIC, int, Point_2 >()(points_begin, i); })),
     t);
 }
 
@@ -469,6 +459,7 @@ extremal_polygon(
   OutputIterator o,
   const Traits& t)
 { return extremal_polygon_2(points_begin, points_end, k, o, t); }
+
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >
@@ -489,7 +480,7 @@ CGAL_maximum_inscribed_k_gon_2(
 //    enumerated clock- or counterclockwise
 //  * k >= t.min_k()
 //  * value_type of RandomAccessIC is Traits::Point_2
-//  * OutputIterator accepts Traits::Point_2 as value_type 
+//  * OutputIterator accepts Traits::Point_2 as value_type
 //
 // functionality:
 // --------------
@@ -502,7 +493,7 @@ CGAL_maximum_inscribed_k_gon_2(
   // check preconditions:
   CGAL_optimisation_precondition( k >= t.min_k());
   int number_of_points(
-                       static_cast<int>(iterator_distance( points_begin, 
+                       static_cast<int>(iterator_distance( points_begin,
                                                            points_end)));
   CGAL_optimisation_precondition( number_of_points > 0);
 
@@ -531,7 +522,7 @@ CGAL_maximum_inscribed_k_gon_2(
   // compute k-gon rooted at points_begin[P_0[1]]
   Index_cont P_1( k);
   FT area_1;
-  
+
   CGAL_maximum_inscribed_rooted_k_gon_2(
     points_begin,
     points_end,
@@ -543,10 +534,10 @@ CGAL_maximum_inscribed_k_gon_2(
     area_1,
     P_1.rbegin(),
     t);
-  
+
   CGAL_optimisation_assertion( P_1[0] == P_0[1]);
-  
-  
+
+
   // start recursive computation:
   FT area_r( 0);
   Index_cont P_r( k);
@@ -565,7 +556,7 @@ CGAL_maximum_inscribed_k_gon_2(
       P_r.rbegin(),
       t);
   }
-  
+
   if ( area_r > area_0)
     if ( area_r > area_1)
       // recursive is maximum
@@ -645,7 +636,7 @@ CGAL_maximum_inscribed_k_gon_2(
   CGAL_optimisation_precondition( right_index >= 0);
   CGAL_optimisation_precondition_code(
     int number_of_points(
-                         static_cast<int>(iterator_distance( points_begin, 
+                         static_cast<int>(iterator_distance( points_begin,
                                                              points_end)));)
   CGAL_optimisation_precondition( left_index < number_of_points);
   CGAL_optimisation_precondition( right_index < number_of_points);
@@ -699,8 +690,8 @@ CGAL_maximum_inscribed_k_gon_2(
       P_l.rbegin(),
       t);
   } // if ( left_index < middle_index)
-  
-  
+
+
   // right recursive branch:
   FT area_right( 0);
   Index_cont P_r( k);
@@ -719,8 +710,8 @@ CGAL_maximum_inscribed_k_gon_2(
       P_r.rbegin(),
       t);
   } // if ( right_index > middle_index)
-  
-  
+
+
 
   if ( area_left > area_right)
     if ( area_left > area_middle) {

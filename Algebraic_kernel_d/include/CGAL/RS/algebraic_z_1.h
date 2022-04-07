@@ -1,20 +1,10 @@
 // Copyright (c) 2006-2013 INRIA Nancy-Grand Est (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-
-// See the file LICENSE.LGPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
@@ -184,7 +174,7 @@ boost::totally_ordered<Algebraic_z_1<Polynomial_,
 #else
 #define CGAL_RS_DBL_PREC        53
 #endif
-        double to_double(){
+        double to_double()const{
                 typedef Real_embeddable_traits<Bound>                   RT;
                 typedef typename RT::To_double                          TD;
                 ZRefiner()(get_zpol(),
@@ -249,39 +239,39 @@ public INTERN_RET::Real_embeddable_traits_base<
                                                         Base;
         typedef typename Base::Compare                  Compare;
 
-        class Sgn:public std::unary_function<Type,CGAL::Sign>{
+        class Sgn:public CGAL::cpp98::unary_function<Type,CGAL::Sign>{
                 public:
                 CGAL::Sign operator()(const Type &a)const{
                         return Compare()(a,Type(0));
                 }
         };
 
-        class To_double:public std::unary_function<Type,double>{
+        class To_double:public CGAL::cpp98::unary_function<Type,double>{
                 public:
-                double operator()(Type a)const{return a.to_double();}
+                double operator()(const Type &a)const{return a.to_double();}
         };
 
         class To_interval:
-        public std::unary_function<Type,std::pair<double,double> >{
+        public CGAL::cpp98::unary_function<Type,std::pair<double,double> >{
                 public:
                 std::pair<double,double> operator()(const Type &a)const{
                         return a.to_interval();
                 }
         };
 
-        class Is_zero:public std::unary_function<Type,Boolean>{
+        class Is_zero:public CGAL::cpp98::unary_function<Type,Boolean>{
                 public:
                 bool operator()(const Type &a)const{
                         return Sgn()(a)==CGAL::ZERO;
                 }
         };
 
-        class Is_finite:public std::unary_function<Type,Boolean>{
+        class Is_finite:public CGAL::cpp98::unary_function<Type,Boolean>{
                 public:
                 bool operator()(const Type&)const{return true;}
         };
 
-        class Abs:public std::unary_function<Type,Type>{
+        class Abs:public CGAL::cpp98::unary_function<Type,Type>{
                 public:
                 Type operator()(const Type &a)const{
                         return Sgn()(a)==CGAL::NEGATIVE?-a:a;

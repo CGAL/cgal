@@ -1,0 +1,82 @@
+namespace CGAL {
+namespace Barycentric_coordinates {
+
+/*!
+\defgroup PkgBarycentricCoordinates2Ref 2D Generalized Barycentric Coordinates Reference
+
+\defgroup PkgBarycentricCoordinates2RefConcepts Concepts
+\ingroup PkgBarycentricCoordinates2Ref
+
+Generalized barycentric concepts.
+
+\defgroup PkgBarycentricCoordinates2RefAnalytic Analytic Coordinates
+\ingroup PkgBarycentricCoordinates2Ref
+
+Analytic coordinates and related classes.
+
+\defgroup PkgBarycentricCoordinates2RefHarmonic Harmonic Coordinates
+\ingroup PkgBarycentricCoordinates2Ref
+
+Harmonic coordinates and related classes.
+
+\defgroup PkgBarycentricCoordinates2RefFunctions Free Functions
+\ingroup PkgBarycentricCoordinates2Ref
+
+Free functions to compute barycentric weights and coordinates.
+
+\defgroup PkgBarycentricCoordinates2RefDeprecated Deprecated
+\ingroup PkgBarycentricCoordinates2Ref
+
+Deprecated classes and functions.
+
+\addtogroup PkgBarycentricCoordinates2Ref
+
+\cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentricCoordinates2}
+\cgalPkgPicture{barcoord_thumb.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez}
+\cgalPkgDesc{This package offers an efficient and robust implementation of 2D generalized barycentric
+coordinates defined for simple polygons in the plane. If coordinates with respect to multivariate
+scattered points instead of a polygon are required, please refer to natural neighbor
+coordinates from the Package \ref PkgInterpolation2.}
+\cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentricCoordinates2Ref}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.6}
+\cgalPkgBib{cgal:abha-gbc}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `BarycentricTraits_2`
+- `DiscretizedDomain_2`
+- `BarycentricCoordinates_2`
+
+## Analytic Coordinates ##
+- `Wachspress_coordinates_2<VertexRange, GeomTraits, PointMap>`
+- `Mean_value_coordinates_2<VertexRange, GeomTraits, PointMap>`
+- `Discrete_harmonic_coordinates_2<VertexRange, GeomTraits, PointMap>`
+
+## Harmonic Coordinates ##
+- `Delaunay_domain_2<VertexRange, GeomTraits, PointMap>`
+- `Harmonic_coordinates_2<VertexRange, DiscretizedDomain, GeomTraits, PointMap>`
+
+## Free Functions ##
+- `segment_coordinates_2()`
+- `triangle_coordinates_2()`
+- `wachspress_weights_2()`
+- `wachspress_coordinates_2()`
+- `mean_value_weights_2()`
+- `mean_value_coordinates_2()`
+- `discrete_harmonic_weights_2()`
+- `discrete_harmonic_coordinates_2()`
+- `boundary_coordinates_2()`
+*/
+
+} /* namespace Barycentric_coordinates */
+} /* namespace CGAL */

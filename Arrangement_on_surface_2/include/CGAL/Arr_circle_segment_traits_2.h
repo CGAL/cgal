@@ -2,25 +2,22 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein          <wein@post.tau.ac.il>
-//                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Baruch Zukerman   <baruchzu@post.tau.ac.il>
+//            Waqar Khan        <wkhan@mpi-inf.mpg.de>
+//            Efi Fogel         <efifogel@gmail.com>
 
 #ifndef CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
 #define CGAL_ARR_CIRCLE_SEGMENT_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * The header file for the Arr_circle_segment_traits_2<Kenrel> class.
@@ -31,17 +28,16 @@
 #include <CGAL/Arr_geometry_traits/Circle_segment_2.h>
 
 #include <fstream>
+#include <atomic>
 
 namespace CGAL {
 
 /*! \class
  * A traits class for maintaining an arrangement of circles.
  */
-template <class Kernel_, bool Filter = true>
-class Arr_circle_segment_traits_2 
-{
+template <typename Kernel_, bool Filter = true>
+class Arr_circle_segment_traits_2 {
 public:
-
   typedef Kernel_                                        Kernel;
   typedef typename Kernel::FT                            NT;
   typedef typename Kernel::Point_2                       Rational_point_2;
@@ -55,17 +51,16 @@ public:
   typedef Arr_circle_segment_traits_2<Kernel, Filter>    Self;
 
   // Category tags:
-  typedef Tag_true                                     Has_left_category;
-  typedef Tag_true                                     Has_merge_category;
-  typedef Tag_false                                    Has_do_intersect_category;
+  typedef Tag_true                                   Has_left_category;
+  typedef Tag_true                                   Has_merge_category;
+  typedef Tag_false                                  Has_do_intersect_category;
 
-  typedef Arr_oblivious_side_tag                       Left_side_category;
-  typedef Arr_oblivious_side_tag                       Bottom_side_category;
-  typedef Arr_oblivious_side_tag                       Top_side_category;
-  typedef Arr_oblivious_side_tag                       Right_side_category;
-    
+  typedef Arr_oblivious_side_tag                     Left_side_category;
+  typedef Arr_oblivious_side_tag                     Bottom_side_category;
+  typedef Arr_oblivious_side_tag                     Top_side_category;
+  typedef Arr_oblivious_side_tag                     Right_side_category;
+
 protected:
-
   // Type definition for the intersection points mapping.
   typedef typename X_monotone_curve_2::Intersection_map   Intersection_map;
 
@@ -74,16 +69,19 @@ protected:
   bool m_use_cache;
 
 public:
-
   /*! Default constructor. */
   Arr_circle_segment_traits_2 (bool use_intersection_caching = false) :
     m_use_cache(use_intersection_caching)
   {}
 
   /*! Get the next curve index. */
-  static unsigned int get_index () 
+  static unsigned int get_index ()
   {
-    static unsigned int index = 0;
+#ifdef CGAL_NO_ATOMIC
+    static unsigned int index;
+#else
+    static std::atomic<unsigned int> index;
+#endif
     return (++index);
   }
 
@@ -314,24 +312,24 @@ public:
 
       if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
           (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
-	  { //both cv1 and cv2 are vertical
+          { //both cv1 and cv2 are vertical
          CGAL_precondition (!(cv1.left()).equals(p) && !(cv2.left()).equals(p));
-	  }
-	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
+          }
+          else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
                    (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
-	  { //only cv1 is vertical
+          { //only cv1 is vertical
          CGAL_precondition (!(cv1.left()).equals(p));
-	  }
-	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
+          }
+          else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
                    (CGAL::compare (cv2.left().x(),cv2.right().x()) != EQUAL))
-	  { //only cv2 is vertical
+          { //only cv2 is vertical
          CGAL_precondition (!(cv2.left()).equals(p));
-	  }
-	  else
-	  { //both cv1 and cv2 are non vertical
+          }
+          else
+          { //both cv1 and cv2 are non vertical
         CGAL_precondition (CGAL::compare (cv1.left().x(),p.x()) == SMALLER &&
                            CGAL::compare (cv2.left().x(),p.x()) == SMALLER);
-	  }
+          }
       // Compare the two curves immediately to the left of p:
       return (cv1.compare_to_left (cv2, p));
     }
@@ -380,144 +378,133 @@ public:
   }
   //@}
 
-  /// \name Functor definitions for supporting intersections.
+  /// \name Intersections, subdivisions, and mergings
   //@{
 
-  class Make_x_monotone_2
-  {
+  /*! \class
+   * A functor for subdividing a curve into x-monotone curves.
+   */
+  class Make_x_monotone_2 {
   private:
     typedef Arr_circle_segment_traits_2<Kernel_, Filter> Self;
 
     bool m_use_cache;
 
   public:
+    Make_x_monotone_2(bool use_cache = false) : m_use_cache(use_cache) {}
 
-    Make_x_monotone_2(bool use_cache = false) : m_use_cache(use_cache)
-    {}
-
-    /*!
-     * Cut the given conic curve (ocv.is_in_x_range (p)r conic arc) into x-monotone subcurves 
-     * and insert them to the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects are all wrcv.is_in_x_range (p)appers X_monotone_curve_2 objects.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given circular arc or line segment into x-monotone subcurves
+     * and insert them to a given output iterator.
+     * \param cv the curve.
+     * \param oi the output iterator for the result. Its dereference type is a
+     *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
+     *           objects.
+     * \return the past-the-end iterator.
      */
-    template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& cv, OutputIterator oi) const
+    template <typename OutputIterator>
+    OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+        Make_x_monotone_result;
+
       // Increment the serial number of the curve cv, which will serve as its
       // unique identifier.
-      unsigned int  index = 0;
-      if(m_use_cache)
-        index = Self::get_index();
+      unsigned int index = 0;
+      if (m_use_cache) index = Self::get_index();
 
-      if (cv.orientation() == COLLINEAR)
-      {
+      if (cv.orientation() == COLLINEAR) {
         // The curve is a line segment.
-        *oi = make_object (X_monotone_curve_2 (cv.supporting_line(),
-                                               cv.source(), cv.target(),
-                                               index));
-        ++oi;
-        return (oi);
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(cv.supporting_line(),
+                                                          cv.source(),
+                                                          cv.target(),
+                                                          index));
+        return oi;
       }
 
       // Check the case of a degenrate circle (a point).
       const typename Kernel::Circle_2&  circ = cv.supporting_circle();
       CGAL::Sign   sign_rad = CGAL::sign (circ.squared_radius());
       CGAL_precondition (sign_rad != NEGATIVE);
-      
-      if (sign_rad == ZERO)
-      {
+
+      if (sign_rad == ZERO) {
         // Create an isolated point.
-        *oi = make_object (Point_2 (circ.center().x(), circ.center().y()));
-        ++oi;
-        return (oi);
+        *oi++ = Make_x_monotone_result(Point_2(circ.center().x(),
+                                               circ.center().y()));
+        return oi;
       }
-      
+
       // The curve is circular: compute the to vertical tangency points
       // of the supporting circle.
       Point_2         vpts[2];
       unsigned int    n_vpts = cv.vertical_tangency_points (vpts);
 
-      if (cv.is_full())
-      {
+      if (cv.is_full()) {
         CGAL_assertion (n_vpts == 2);
 
         // Subdivide the circle into two arcs (an upper and a lower half).
-        *oi = make_object (X_monotone_curve_2 (circ,
-                                               vpts[0], vpts[1],
-                                               cv.orientation(),
-                                               index));
-        ++oi;
-        
-        *oi = make_object (X_monotone_curve_2 (circ,
-                                               vpts[1], vpts[0],
-                                               cv.orientation(),
-                                               index));
-        ++oi;
-      }
-      else
-      {
-        // Act according to the number of vertical tangency points.
-        if (n_vpts == 2)
-        {
-          // Subdivide the circular arc into three x-monotone arcs.
-          *oi = make_object (X_monotone_curve_2 (circ,
-                                                 cv.source(), vpts[0],
-                                                 cv.orientation(),
-                                                 index));
-          ++oi;
-        
-          *oi = make_object (X_monotone_curve_2 (circ,
-                                                 vpts[0], vpts[1],
-                                                 cv.orientation(),
-                                                 index));
-          ++oi;
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
+                                                          vpts[0], vpts[1],
+                                                          cv.orientation(),
+                                                          index));
 
-          *oi = make_object (X_monotone_curve_2 (circ,
-                                                 vpts[1], cv.target(),
-                                                 cv.orientation(),
-                                                 index));
-          ++oi;
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
+                                                          vpts[1], vpts[0],
+                                                          cv.orientation(),
+                                                          index));
+      }
+      else {
+        // Act according to the number of vertical tangency points.
+        if (n_vpts == 2) {
+          // Subdivide the circular arc into three x-monotone arcs.
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
+                                                            cv.source(), vpts[0],
+                                                            cv.orientation(),
+                                                            index));
+
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
+                                                            vpts[0], vpts[1],
+                                                            cv.orientation(),
+                                                            index));
+
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
+                                                            vpts[1],
+                                                            cv.target(),
+                                                            cv.orientation(),
+                                                            index));
         }
-        else if (n_vpts == 1)
-        {
+        else if (n_vpts == 1) {
           // Subdivide the circular arc into two x-monotone arcs.
-          *oi = make_object (X_monotone_curve_2 (circ,
-                                                 cv.source(), vpts[0],
-                                                 cv.orientation(),
-                                                 index));
-          ++oi;
-        
-          *oi = make_object (X_monotone_curve_2 (circ,
-                                                 vpts[0], cv.target(),
-                                                 cv.orientation(),
-                                                 index));
-          ++oi;
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
+                                                            cv.source(),
+                                                            vpts[0],
+                                                            cv.orientation(),
+                                                            index));
+
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
+                                                            vpts[0],
+                                                            cv.target(),
+                                                            cv.orientation(),
+                                                            index));
         }
-        else
-        {
-          CGAL_assertion (n_vpts == 0);
+        else {
+          CGAL_assertion(n_vpts == 0);
 
           // The arc is already x-monotone:
-          *oi = make_object (X_monotone_curve_2 (circ,
-                                                 cv.source(), cv.target(),
-                                                 cv.orientation(),
-                                                 index));
-          ++oi;
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(circ,
+                                                            cv.source(),
+                                                            cv.target(),
+                                                            cv.orientation(),
+                                                            index));
         }
       }
-      
-      return (oi);
+
+      return oi;
     }
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object () const
-  {
-    return Make_x_monotone_2(m_use_cache);
-  }
+  Make_x_monotone_2 make_x_monotone_2_object() const
+  { return Make_x_monotone_2(m_use_cache); }
 
   class Split_2
   {
@@ -549,21 +536,15 @@ public:
     return Split_2();
   }
 
-  class Intersect_2
-  {
+  class Intersect_2 {
   private:
-
-    Intersection_map&  _inter_map;       // The map of intersection points.
+    Intersection_map& _inter_map;       // The map of intersection points.
 
   public:
-
     /*! Constructor. */
-    Intersect_2 (Intersection_map& map) :
-      _inter_map (map)
-    {}
+    Intersect_2(Intersection_map& map) : _inter_map(map) {}
 
-    /*!
-     * Find the intersections of the two given curves and insert them to the
+    /*! Find the intersections of the two given curves and insert them to the
      * given output iterator. As two segments may itersect only once, only a
      * single will be contained in the iterator.
      * \param cv1 The first curve.
@@ -571,20 +552,15 @@ public:
      * \param oi The output iterator.
      * \return The past-the-end iterator.
      */
-    template<class OutputIterator>
-    OutputIterator operator() (const X_monotone_curve_2& cv1,
-                               const X_monotone_curve_2& cv2,
-                               OutputIterator oi) const
-    {
-      return (cv1.intersect (cv2, oi, &_inter_map));
-    }
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& cv1,
+                              const X_monotone_curve_2& cv2,
+                              OutputIterator oi) const
+    { return (cv1.intersect(cv2, oi, &_inter_map)); }
   };
 
   /*! Get an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () const
-  {
-    return (Intersect_2 (inter_map));
-  }
+  Intersect_2 intersect_2_object() const { return (Intersect_2(inter_map)); }
 
   class Are_mergeable_2
   {
@@ -619,7 +595,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -674,7 +650,6 @@ public:
     return Compare_endpoints_xy_2();
   }
 
-
   class Construct_opposite_2
   {
   public:
@@ -693,10 +668,63 @@ public:
   Construct_opposite_2 construct_opposite_2_object() const
   {
     return Construct_opposite_2();
-  } 
+  }
+
+  class Trim_2 {
+  protected:
+    typedef Arr_circle_segment_traits_2<Kernel, Filter> Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Trim_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_circle_segment_traits_2<Kernel, Filter>;
+
+  public:
+    /*! Obtain a trimmed version of an arc
+     * \param xcv The arc
+     * \param src the new first endpoint
+     * \param tgt the new second endpoint
+     * \return The trimmed arc
+     * \pre src != tgt
+     * \pre both points must be interior and must lie on \c cv
+     */
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
+                                  const Point_2& src,
+                                  const Point_2& tgt)const
+    {
+      // make functor objects
+      CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
+                             m_traits.compare_y_at_x_2_object());
+      CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
+      Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
+      // Check whether source and taget are two distinct points and they lie
+      // on the line.
+      CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
+      CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);
+      CGAL_precondition(! equal_2(src, tgt));
+
+      //check if the orientation conforms to the src and tgt.
+      if( (xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER) ||
+          (! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER) )
+        return (xcv.trim(tgt, src) );
+      else return (xcv.trim(src, tgt));
+    }
+  };
+
+  /*! Obtain a Trim_2 functor object. */
+  Trim_2 trim_2_object() const { return Trim_2(*this); }
+
+  // @}
 
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

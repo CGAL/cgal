@@ -25,7 +25,7 @@ configure()
 {
   echo "Configuring... "
     
-  if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
                                      .' ; then
         
@@ -80,8 +80,8 @@ run()
       DATANAME=`basename $DATAFILE`
       OUTPUTFILE=ProgramOutput.$1.$DATANAME.$PLATFORM
       rm -f $OUTPUTFILE
-      COMMAND="./$1 $DATAFILE > ${data_dir}/out"
-      echo "Executing ./$1 $DATAFILE > ${data_dir}/out"
+      COMMAND="./$1 $DATAFILE  ${data_dir}/out"
+      echo "Executing ./$1 $DATAFILE  ${data_dir}/out"
       echo
       if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
 	echo "   execution of $1 ${data_dir}/$DATATFILE > ${data_dir}/out succeeded" >> $ERRORFILE
@@ -128,8 +128,8 @@ run()
   fi
   
 
-  compile test 
-  run test
+  compile test_snap_rounding_2
+  run test_snap_rounding_2
 
   if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
     #

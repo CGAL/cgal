@@ -1,0 +1,37 @@
+/// \defgroup PkgVisibility2Ref Visibility_2 Reference
+
+/// \defgroup PkgVisibility2Concepts Concepts
+/// \ingroup PkgVisibility2Ref
+
+/// \defgroup PkgVisibility2Classes Classes
+/// \ingroup PkgVisibility2Ref
+
+/*!
+\addtogroup PkgVisibility2Ref
+\cgalPkgDescriptionBegin{2D Visibility Computation,PkgVisibility2}
+\cgalPkgPicture{visibility-teaser-thumbnail.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Michael Hemmer, Kan Huang, Francisc Bungiu, Ning Xu}
+\cgalPkgDesc{This package provides several variants to compute
+the visibility area of a point within polygonal regions in two dimensions.}
+\cgalPkgManuals{Chapter_2D_Visibility_Computation,PkgVisibility2Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.7}
+\cgalPkgDependsOn{\ref PkgArrangementOnSurface2}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgBib{hhb-visibility-2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `Visibility_2`
+
+\cgalCRPSection{Classes}
+- `CGAL::Simple_polygon_visibility_2<Arrangement_2, Regularization_tag>`
+- `CGAL::Rotational_sweep_visibility_2<Arrangement_2, Regularization_tag>`
+- `CGAL::Triangular_expansion_visibility_2<Arrangement_2, Regularization_tag>`
+*/

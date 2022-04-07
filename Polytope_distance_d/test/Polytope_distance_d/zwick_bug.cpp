@@ -1,5 +1,7 @@
+#include <CGAL/Polytope_distance_d.h>
+#include <CGAL/Polytope_distance_d_traits_2.h>
+#include <CGAL/Simple_cartesian.h>
 #include <iostream>
-#include <CGAL/basic.h>
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpzf.h>
 typedef CGAL::Gmpzf ET;
@@ -7,13 +9,10 @@ typedef CGAL::Gmpzf ET;
 #include <CGAL/MP_Float.h>
 typedef CGAL::MP_Float ET;
 #endif
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Polytope_distance_d.h>
-#include <CGAL/Polytope_distance_d_traits_2.h>
 
-typedef CGAL::Simple_cartesian<double>    K;  
+typedef CGAL::Simple_cartesian<double>    K;
 typedef K::Point_2                        Point;
-typedef CGAL::Polytope_distance_d_traits_2<K, ET, double>  
+typedef CGAL::Polytope_distance_d_traits_2<K, ET, double>
                                           Traits;
 typedef CGAL::Polytope_distance_d<Traits> Polytope_distance;
 
@@ -35,4 +34,4 @@ int main(void)
   std::cout << "Number of support points: " <<
     pd.number_of_support_points() << std::endl;
   return 0;
-} 
+}

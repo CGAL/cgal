@@ -1,23 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra
@@ -27,9 +19,11 @@
 
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
@@ -71,6 +65,9 @@ public:
   Direction_2(const RDirection_2& d)
     : RDirection_2(d) {}
 
+  Direction_2(RDirection_2&& d)
+    : RDirection_2(std::move(d)) {}
+
   explicit Direction_2(const Vector_2& v)
     : RDirection_2(typename R::Construct_direction_2()(Return_base_tag(), v)) {}
 
@@ -88,7 +85,7 @@ public:
 
   typename R::Boolean
   counterclockwise_in_between(const Direction_2 &d1,
-			      const Direction_2 &d2) const
+                              const Direction_2 &d2) const
   {
     return R().counterclockwise_in_between_2_object()(*this, d1, d2);
   }
@@ -98,19 +95,19 @@ public:
     return R().construct_perpendicular_direction_2_object()(*this,o);
   }
 
-  typename cpp11::result_of<typename R::Compute_dx_2( Direction_2)>::type
+  decltype(auto)
   dx() const
   {
     return R().compute_dx_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dy_2( Direction_2)>::type
+  decltype(auto)
   dy() const
   {
     return R().compute_dy_2_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dx_2( Direction_2)>::type
+  decltype(auto)
   delta(int i) const
   {
     CGAL_kernel_precondition( ( i == 0 ) || ( i == 1 ) );
@@ -186,7 +183,7 @@ std::ostream&
 insert(std::ostream& os, const Direction_2<R>& d, const Cartesian_tag&)
 {
     typename R::Vector_2 v = d.to_vector();
-    switch(os.iword(IO::mode)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << v.x() << ' ' << v.y();
     case IO::BINARY :
@@ -202,7 +199,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Direction_2<R>& d, const Homogeneous_tag&)
 {
-  switch(os.iword(IO::mode))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << d.dx() << ' ' << d.dy();
@@ -228,17 +225,18 @@ template <class R >
 std::istream&
 extract(std::istream& is, Direction_2<R>& d, const Cartesian_tag&)
 {
-    typename R::FT x, y;
-    switch(is.iword(IO::mode)) {
+  typename R::FT x(0), y(0);
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> x >> y;
+        is >> IO::iformat(x) >> IO::iformat(y);
         break;
     case IO::BINARY :
         read(is, x);
         read(is, y);
         break;
     default:
-        std::cerr << std::endl << "Stream must be in ascii or binary mode"
+        is.setstate(std::ios::failbit);
+        std::cerr << std::endl << "Stream must be in ASCII or binary mode"
                   << std::endl;
         break;
     }
@@ -252,18 +250,19 @@ std::istream&
 extract(std::istream& is, Direction_2<R>& d, const Homogeneous_tag&)
 {
   typename R::RT x, y;
-  switch(is.iword(IO::mode))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
-        is >> x >> y;
+        is >> IO::iformat(x) >> IO::iformat(y);
         break;
     case IO::BINARY :
         read(is, x);
         read(is, y);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   d = Direction_2<R>(x, y);

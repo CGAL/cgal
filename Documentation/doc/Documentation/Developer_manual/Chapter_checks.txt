@@ -19,7 +19,7 @@ react after the error (application processes are killed).
 Thus, the default behavior of all checks is to throw exceptions for reporting
 failures.
 
-\section secchecks_categories Categories of checks 
+\section secchecks_categories Categories of checks
 
 There are five types of checks.
 <UL>
@@ -40,6 +40,11 @@ There are five types of checks.
 <LI><B>Static assertions</B>
       are compile-time assertions, used <I>e.g.</I> to verify the values of compile-time
       constants or compare types for (in)equality.
+<LI><B>Destructor assertions</B>
+      These are checks which can be made within normal clean up of an object.
+      A special macro `CGAL_destructor_assertion` is provided to ensure these
+      checks are not made when the object is being cleaned up during exception
+      handling.
 </UL>
 
 The according macro names all have the format `CGAL_<check_type>` where
@@ -50,6 +55,7 @@ The according macro names all have the format `CGAL_<check_type>` where
  <LI>`assertion`
  <LI>`warning`
  <LI>`static_assertion`
+ <LI>`destructor_assertion`
 </UL>
 
 Failures of the first three types are errors and lead to a halt of the
@@ -92,7 +98,7 @@ Additionally, we provide macros `CGAL_error()` and `CGAL_error_msg(MSG_TEXT)`
 which are equivalent to always-failing assertions. However,
 they cannot be disabled.
 
-\section secchecks_using Using checks 
+\section secchecks_using Using checks
 
 The checks are implemented as preprocessor macros;
 
@@ -147,7 +153,7 @@ and `CGAL_CHECK_EXACTNESS`
 have to be supplied. However, exactness checks should only be turned on if
 the computation is done with some exact number type.
 
-\section secchecks_controlling Controlling checks at a finer granularity 
+\section secchecks_controlling Controlling checks at a finer granularity
 
 The macros and related compile-time flags described so far all operate
 on the whole library. Sometimes the user may want to have a more
@@ -163,7 +169,7 @@ reference manual.
 
 For a new package you will first have to create a suitable header file
 with all macro definitions.  This is done with the shell script
-<TT>cgal_create_assertions.sh</TT>, to be found in the in the
+<TT>cgal_create_assertions.sh</TT>, to be found in the
 <TT>scripts</TT> directory.
 
 The following command will create a file <TT>optimisation_assertions.h</TT>:
@@ -177,9 +183,9 @@ You should place the generated file in the proper directory (and possibly
 rename it).  Then you can use the checks in the following fashion.
 
 \code{.cpp}
- #include <CGAL/optimisation\_assertions.h>
+ #include <CGAL/Optimisation/assertions.h>
 
- void optimisation\_foo( int i)
+ void optimisation_foo( int i)
  {
    CGAL_optimisation_precondition_msg( i == 42, "Only 42 allowed!");
    // ...
@@ -198,23 +204,54 @@ package you can find a sentence similar to the following.
   checking in the optimisation code.
 </BLOCKQUOTE>
 
-\section secexception_handling Exception handling 
+\section secchecks_cgal_assume Suppress warnings using CGAL_assume.
+
+Moderns compilers, when their optimizers are activated, sometimes emit
+warnings about events that may occur. For example:
+
+    warning: array subscript is above array bounds [-Warray-bounds]
+
+or:
+
+    warning: 'res' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+Most false positives could be removed if the compiler knew that an integer
+variable is within given bounds, or that a Boolean variable is true. If
+`CGAL_NDEBUG` is not defined, then a `CGAL_assertion` is enough to instruct
+the compiler that a given condition is fulfilled. But, usually when the
+compiler optimizers are activated, `CGAL_NDEBUG` is also defined, to speed
+up the generated binary code. In that case, `CGAL_assume` can be used.
+
+`CGAL_assume` is identical to `CGAL_assertion` when `CGAL_NDEBUG` is not
+defined. But, even if `CGAL_NDEBUG` is defined, its semantic uses
+compiler-specific instructions, such as [`__assume` from
+MSVC][msvc-assume], or [`__builtin_unreachable`][builtin-unreachable]
+recognized by both clang and g++.
+
+[msvc-assume]: https://msdn.microsoft.com/en-us/library/1b3fsfxw.aspx
+[builtin-unreachable]: http://clang.llvm.org/docs/LanguageExtensions.html#builtin-unreachable
+
+\section secexception_handling Exception handling
 
 Some parts of the library use exceptions, but there is no general specific
 policy concerning exception handling in \cgal.  It is nevertheless good to
 target exception safety, as much as possible.  Good references on exception
 safety are: Appendix E of \cgalCite{cgal:s-cpl-97} (also available at
-<A HREF="http://www.research.att.com/~bs/3rd_safe0.html"><TT>http://www.research.att.com/~bs/3rd_safe0.html</TT></A>),
+<A HREF="http://www.stroustrup.com/3rd_safe0.html"><TT>http://www.stroustrup.com/3rd_safe0.html</TT></A>),
 and \cgalCite{cgal:a-esgc-98} (also available at
-<A HREF="http://www.boost.org/more/generic_exception_safety.html"><TT>http://www.boost.org/more/generic_exception_safety.html</TT></A>).
+<A HREF="https://www.boost.org/community/exception_safety.html"><TT>https://www.boost.org/community/exception_safety.html</TT></A>).
+Any destructor which might throw an exception, including a destructor which
+uses the `CGAL_destructor_assertion` macro, should be marked with the
+`noexcept(!CGAL_ASSERTIONS_ENABLED)`.
 
-\section secchecks_req_and_rec Requirements and recommendations 
+\section secchecks_req_and_rec Requirements and recommendations
 
 Requirements:
 <UL>
    <LI>Write pre- and postcondition checkers for your functions wherever
          possible.
-   <LI>Use the \cgal preprocessor macros (Sections  \ref secchecks_using 
+   <LI>Use the \cgal preprocessor macros (Sections  \ref secchecks_using
          and  \ref secchecks_controlling )
          exclusively throughout your code (instead of,
          for example, the `assert` macro or the `std::abort` or

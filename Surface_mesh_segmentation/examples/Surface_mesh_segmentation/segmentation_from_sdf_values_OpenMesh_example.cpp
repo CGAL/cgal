@@ -14,32 +14,33 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Mesh;
-
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Mesh>::face_iterator face_iterator;
 
 int main(int argc, char** argv )
 {
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cactus.off");
+
   Mesh mesh;
-  if (argc==2)
-    OpenMesh::IO::read_mesh(mesh, argv[1]);
-  else
-    OpenMesh::IO::read_mesh(mesh, "data/cactus.off");
+  OpenMesh::IO::read_mesh(mesh, filename);
+
+  if (!CGAL::is_triangle_mesh(mesh))
+  {
+    std::cerr << "Input geometry is not triangulated." << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  std::cout << "#F : " << num_faces(mesh) << std::endl;
+  std::cout << "#H : " << num_halfedges(mesh) << std::endl;
+  std::cout << "#V : " << num_vertices(mesh) << std::endl;
 
   // create a property-map for SDF values
   typedef std::map<face_descriptor, double> Facet_double_map;
   Facet_double_map internal_sdf_map;
   boost::associative_property_map<Facet_double_map> sdf_property_map(internal_sdf_map);
 
-  typedef boost::property_map<Mesh, boost::vertex_point_t>::type Ppmap;
-  Ppmap ppmap(mesh);
-
   // compute SDF values
-  // We can't use default parameters for number of rays, and cone angle
-  // and the postprocessing
-  CGAL::sdf_values(mesh, sdf_property_map, 2.0 / 3.0 * CGAL_PI, 25, true, ppmap);
+  CGAL::sdf_values(mesh, sdf_property_map);
 
   // create a property-map for segment-ids
   typedef std::map<face_descriptor, std::size_t> Facet_int_map;
@@ -52,11 +53,10 @@ int main(int argc, char** argv )
 
   std::cout << "Number of segments: " << number_of_segments << std::endl;
   // print segment-ids
-  face_iterator facet_it, fend;
-  for(boost::tie(facet_it,fend) = faces(mesh);
-      facet_it != fend; ++facet_it) {
+
+  for(face_descriptor f : faces(mesh)) {
       // ids are between [0, number_of_segments -1]
-      std::cout << segment_property_map[*facet_it] << " ";
+      std::cout << segment_property_map[f] << " ";
   }
   std::cout << std::endl;
 
@@ -66,4 +66,5 @@ int main(int argc, char** argv )
   // Note that we can use the same SDF values (sdf_property_map) over and over again for segmentation.
   // This feature is relevant for segmenting the mesh several times with different parameters.
   CGAL::segmentation_from_sdf_values(mesh, sdf_property_map, segment_property_map, number_of_clusters, smoothing_lambda);
+  return EXIT_SUCCESS;
 }

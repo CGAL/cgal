@@ -1,27 +1,19 @@
-// Copyright (c) 2003-2004  
+// Copyright (c) 2003-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 #ifndef CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H
 #define CGAL_KERNEL_GLOBAL_FUNCTIONS_2_H
 
@@ -290,6 +282,16 @@ compare_distance_to_point(const Point_2<K>& p,
 template <class K >
 inline
 typename K::Comparison_result
+compare_power_distance(const Point_2<K> &r,
+                       const Weighted_point_2<K> &p,
+                       const Weighted_point_2<K> &q)
+{
+  return internal::compare_power_distance(r, p, q, K());
+}
+
+template <class K >
+inline
+typename K::Comparison_result
 compare_squared_distance(const Point_2<K>& p,
                          const Point_2<K>& q,
                          const typename K::FT& d2)
@@ -301,9 +303,9 @@ template <class K>
 inline
 typename K::Comparison_result
 compare_signed_distance_to_line(const Point_2<K>& p,
-				const Point_2<K>& q,
-				const Point_2<K>& r,
-				const Point_2<K>& s)
+                                const Point_2<K>& q,
+                                const Point_2<K>& r,
+                                const Point_2<K>& s)
 {
   return internal::compare_signed_distance_to_line(p, q, r, s, K());
 }
@@ -312,8 +314,8 @@ template <class K>
 inline
 typename K::Comparison_result
 compare_signed_distance_to_line(const Line_2<K>& l,
-				const Point_2<K>& p,
-				const Point_2<K>& q)
+                                const Point_2<K>& p,
+                                const Point_2<K>& q)
 {
   return internal::compare_signed_distance_to_line(l, p, q, K());
 }
@@ -332,18 +334,50 @@ compare_lexicographically_xy(const Point_2<K> &p,
 template < class K >
 inline
 typename K::Comparison_result
-compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
+compare_slope(const Line_2<K> &l1, const Line_2<K> &l2)
 {
-  return internal::compare_slopes(l1, l2, K());
+  return internal::compare_slope(l1, l2, K());
 }
 
 template < class K >
 inline
 typename K::Comparison_result
+compare_slope(const Segment_2<K> &s1, const Segment_2<K> &s2)
+{
+  return internal::compare_slope(s1, s2, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_slope(const Point_2<K> &s1s, const Point_2<K> &s1t,
+              const Point_2<K> &s2s, const Point_2<K> &s2t)
+{
+  return internal::compare_slope(s1s, s1t, s2s, s2t, K());
+}
+
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+// kept for backward compatibility
+template < class K >
+CGAL_DEPRECATED_MSG("This function is deprecated. CGAL::compare_slope() should be used instead")
+inline
+typename K::Comparison_result
+compare_slopes(const Line_2<K> &l1, const Line_2<K> &l2)
+{
+  return internal::compare_slope(l1, l2, K());
+}
+
+// kept for backward compatibility
+template < class K >
+CGAL_DEPRECATED_MSG("This function is deprecated. CGAL::compare_slope() should be used instead")
+inline
+typename K::Comparison_result
 compare_slopes(const Segment_2<K> &s1, const Segment_2<K> &s2)
 {
-  return internal::compare_slopes(s1, s2, K());
+  return internal::compare_slope(s1, s2, K());
 }
+#endif
 
 template < class K >
 inline
@@ -512,7 +546,7 @@ typename K::Comparison_result
 compare_y_at_x(const Point_2<K> &p, const Line_2<K> &h)
 {
   return internal::compare_y_at_x(p, h, K());
-}  
+}
 
 template < class K >
 inline
@@ -565,8 +599,8 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_distance_to_point(const Point_2<K>& p,
-			     const Point_2<K>& q,
-			     const Point_2<K>& r)
+                             const Point_2<K>& q,
+                             const Point_2<K>& r)
 {
   return internal::has_larger_distance_to_point(p, q, r, K());
 }
@@ -595,8 +629,8 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_signed_distance_to_line(const Line_2<K>& l,
-				   const Point_2<K>& p,
-				   const Point_2<K>& q)
+                                   const Point_2<K>& p,
+                                   const Point_2<K>& q)
 {
   return internal::has_larger_signed_distance_to_line(l, p, q, K());
 }
@@ -605,9 +639,9 @@ template <class K>
 inline
 typename K::Boolean
 has_larger_signed_distance_to_line(const Point_2<K>& p,
-				   const Point_2<K>& q,
-				   const Point_2<K>& r,
-				   const Point_2<K>& s)
+                                   const Point_2<K>& q,
+                                   const Point_2<K>& r,
+                                   const Point_2<K>& s)
 {
   return internal::has_larger_signed_distance_to_line(p, q, r, s, K());
 }
@@ -715,11 +749,24 @@ lexicographically_yx_larger_or_equal(const Point_2<K> &p, const Point_2<K> &q)
 }
 
 template < class K >
+typename K::FT
+l_infinity_distance(const Point_2<K> &p, const Point_2<K> &q)
+{
+  return internal::l_infinity_distance(p,q, K());
+}
+
+template < class K >
 inline
 typename K::Point_2
 midpoint(const Point_2<K> &p, const Point_2<K> &q)
 {
   return internal::midpoint(p, q, K());
+}
+
+template < class K >
+inline typename K::Point_2 midpoint(const Segment_2<K> &s)
+{
+  return internal::midpoint(s, K());
 }
 
 template < class K >
@@ -932,11 +979,89 @@ orientation(const Vector_2<K> &u, const Vector_2<K> &v)
 
 // parallel() functions are in global_functions.h
 
+template <class K >
+inline
+typename K::FT
+power_product(const Weighted_point_2<K> &p,
+              const Weighted_point_2<K> &q)
+{
+  return internal::power_product(p, q, K());
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, K());
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q,
+                                   const Weighted_point_2<K> &r)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, r, K());
+}
+
+template <class K >
+inline
+typename K::Bounded_side
+power_side_of_bounded_power_circle(const Weighted_point_2<K> &p,
+                                   const Weighted_point_2<K> &q,
+                                   const Weighted_point_2<K> &r,
+                                   const Weighted_point_2<K> &s)
+{
+  return internal::power_side_of_bounded_power_circle(p, q, r, s, K());
+}
+
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, K());
+}
+
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q,
+                                    const Weighted_point_2<K> &r)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, r, K());
+}
+
+template <typename K>
+inline
+typename K::Orientation
+power_side_of_oriented_power_circle(const Weighted_point_2<K> &p,
+                                    const Weighted_point_2<K> &q,
+                                    const Weighted_point_2<K> &r,
+                                    const Weighted_point_2<K> &s)
+{
+  return internal::power_side_of_oriented_power_circle(p, q, r, s, K());
+}
+
+template <class K>
+inline
+typename K::Line_2
+radical_axis(const Weighted_point_2<K> &p,
+             const Weighted_point_2<K> &q)
+{
+  return internal::radical_axis(p, q, K());
+}
+
 template <class K>
 inline
 typename K::Line_2
 radical_line(const Circle_2<K> &s1,
-              const Circle_2<K> &s2)
+             const Circle_2<K> &s2)
 {
   return K().construct_radical_line_2_object()(s1,s2);
 }
@@ -947,6 +1072,14 @@ typename K::Boolean
 right_turn(const Point_2<K> &p, const Point_2<K> &q, const Point_2<K> &r)
 {
   return internal::right_turn(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::FT
+scalar_product(const Vector_2<K> &v, const Vector_2<K> &w)
+{
+  return K().compute_scalar_product_2_object()(v, w);
 }
 
 template <class K>
@@ -1003,6 +1136,43 @@ typename K::FT
 squared_radius(const Point_2<K>& p, const Point_2<K>& q, const Point_2<K>& r)
 {
   return internal::squared_radius(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p,
+                                          const Weighted_point_2<K> &q)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, q, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_radius_smallest_orthogonal_circle(const Weighted_point_2<K> &p,
+                                          const Weighted_point_2<K> &q,
+                                          const Weighted_point_2<K> &r)
+{
+  return internal::squared_radius_smallest_orthogonal_circle(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::Point_2
+weighted_circumcenter(const Weighted_point_2<K> &p,
+                      const Weighted_point_2<K> &q,
+                      const Weighted_point_2<K> &r)
+{
+  return internal::weighted_circumcenter(p, q, r, K());
 }
 
 template < class K >

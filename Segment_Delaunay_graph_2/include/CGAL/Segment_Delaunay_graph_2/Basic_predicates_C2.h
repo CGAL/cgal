@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -23,6 +15,9 @@
 
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_BASIC_PREDICATES_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_BASIC_PREDICATES_C2_H
+
+#include <CGAL/license/Segment_Delaunay_graph_2.h>
+
 
 
 #include <CGAL/Segment_Delaunay_graph_2/basic.h>
@@ -65,17 +60,7 @@ private:
 public:
     typedef Boolean_tag<CGAL::is_same_or_derived<Field_with_sqrt_tag,RT_Category>::value>  RT_Has_sqrt;
     typedef Boolean_tag<CGAL::is_same_or_derived<Field_with_sqrt_tag,FT_Category>::value>  FT_Has_sqrt;
- 
-  static const RT_Has_sqrt& rt_has_sqrt() {
-    static RT_Has_sqrt has_sqrt;
-    return has_sqrt;
-  }
 
-  static const FT_Has_sqrt& ft_has_sqrt() {
-    static FT_Has_sqrt has_sqrt;
-    return has_sqrt;
-  }
-				   
 
   class Line_2
   {
@@ -116,9 +101,6 @@ public:
     Homogeneous_point_2(const Point_2& p)
       : hx_(p.x()), hy_(p.y()), hw_(1) {}
 
-    Homogeneous_point_2(const Homogeneous_point_2& other)
-      : hx_(other.hx_), hy_(other.hy_), hw_(other.hw_) {}
-
     RT hx() const { return hx_; }
     RT hy() const { return hy_; }
     RT hw() const { return hw_; }
@@ -145,15 +127,18 @@ public:
   static
   FT to_ft(const Sqrt_1& x)
   {
-    FT sqrt_c = compute_sqrt( x.root(), ft_has_sqrt() );
+    FT sqrt_c = compute_sqrt( x.root(), FT_Has_sqrt() );
     return x.a0() + x.a1() * sqrt_c;
   }
 
   static
   FT to_ft(const Sqrt_3& x)
   {
-    FT sqrt_e = compute_sqrt( to_ft(x.e()), ft_has_sqrt() );
-    FT sqrt_f = compute_sqrt( to_ft(x.f()), ft_has_sqrt() );
+    // If the number type does not offer a square root, x.e() and x.f() (which are of type sqrt_1)
+    // might be negative after (approximately) evaluating them. Taking the max sanitize these values
+    // to ensure that we do not take the square root of a negative number.
+    FT sqrt_e = compute_sqrt( (std::max)(FT(0), to_ft(x.e())), FT_Has_sqrt() );
+    FT sqrt_f = compute_sqrt( (std::max)(FT(0), to_ft(x.f())), FT_Has_sqrt() );
     FT sqrt_ef = sqrt_e * sqrt_f;
     return to_ft(x.a()) + to_ft(x.b()) * sqrt_e
       + to_ft(x.c()) * sqrt_f + to_ft(x.d()) * sqrt_ef;
@@ -177,7 +162,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
 
   static
   void compute_supporting_line(const Site_2& s,
-			       RT& a, RT& b, RT& c)
+                               RT& a, RT& b, RT& c)
   {
     a = s.source().y() - s.target().y();
     b = s.target().x() - s.source().x();
@@ -194,7 +179,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
 
   static
   void compute_supporting_line(const Segment_2& s,
-			       RT& a, RT& b, RT& c)
+                               RT& a, RT& b, RT& c)
   {
     a = s.source().y() - s.target().y();
     b = s.target().x() - s.source().x();
@@ -306,7 +291,7 @@ public:
   static
   Comparison_result
   compare_squared_distances_to_lines(const Point_2& p,
-				     const Line_2& l1,
+                                     const Line_2& l1,
                                      const Line_2& l2)
   {
     RT d2_l1 = CGAL::square(l1.a() * p.x() + l1.b() * p.y() + l1.c());
@@ -347,7 +332,7 @@ public:
     os2 = oriented_side_of_line(l, s.target());
 
     return ( (os1 == ON_POSITIVE_SIDE && os2 != ON_NEGATIVE_SIDE) ||
-	     (os1 != ON_NEGATIVE_SIDE && os2 == ON_POSITIVE_SIDE) );
+             (os1 != ON_NEGATIVE_SIDE && os2 == ON_POSITIVE_SIDE) );
   }
 
 };

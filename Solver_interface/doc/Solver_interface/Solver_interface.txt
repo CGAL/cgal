@@ -1,0 +1,142 @@
+﻿namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_CGAL_and_Solvers
+\anchor chapterSolvers
+\cgalAutoToc
+\authors Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan
+
+Several \cgal packages have to solve linear systems with dense or sparse matrices,
+linear integer programs, and quadratic programs. This package provides concepts and
+models for that purpose.
+
+For linear systems, we generally provide models using the
+\ref thirdpartyEigen library. Wrappers for the Eigen classes
+`Eigen_matrix` and `Eigen_vector` are also provided when needed.
+It is straightforward to develop equivalent models for
+other solvers, for example those found in the <a
+href="https://software.intel.com/en-us/mkl">Intel Math Kernel
+Library (MKL)</a>.
+
+For mixed integer programs (either constrained or unconstrained),
+we provide models using the \ref thirdpartySCIP and \ref thirdpartyGLPK
+libraries.
+
+For linear and quadratic programs, \cgal provides the built-in
+\ref PkgQPSolver "CGAL Linear and Quadratic Programming Solver"
+and we also provide a model using the \ref thirdpartyOSQP library.
+
+
+\section SectionSolverDiagonalize Matrix Diagonalization
+
+The concept `DiagonalizeTraits<T, dim>` defines an interface for the
+diagonalization and computation of eigenvectors and eigenvalues of a
+symmetric matrix. `T` is the number type and `dim` is the dimension of
+the matrices and vector (set to 3 by default). We provide the model
+`Eigen_diagonalize_traits<T, dim>` that uses the \ref thirdpartyEigen library.
+
+This is an example of an eigen decomposition of a matrix using this class:
+
+\cgalExample{Solver_interface/diagonalize_matrix.cpp}
+
+
+\section SectionSolverSVD Singular Value Decomposition
+
+The concept `SvdTraits` defines an interface for solving in the least
+square sense a linear system with a singular value decomposition. The
+field type is `double`. We provide the model `Eigen_svd` that uses the
+\ref thirdpartyEigen library.
+
+Here is a simple example that shows how to handle matrices, vectors,
+and this solver:
+
+\cgalExample{Solver_interface/singular_value_decomposition.cpp}
+
+
+\section SectionSolverSparse Sparse Solvers
+
+We define 3 concepts for sparse linear algebra:
+
+- `SparseLinearAlgebraTraits_d`
+- `SparseLinearAlgebraWithFactorTraits_d`
+- `NormalEquationSparseLinearAlgebraTraits_d`
+
+An interface to the sparse solvers from the \ref thirdpartyEigen
+library is provided as a model for these 3 concepts through the class
+`Eigen_solver_traits<T>`. This solver traits class can be used for an
+iterative or a direct, symmetric or general sparse solvers. The
+specific solver to be used must be given as template parameter.
+
+Each \cgal package using a sparse solver specifies which type of matrix
+and solver is required:
+
+\code{.cpp}
+
+typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix;
+
+// iterative general solver
+typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver;
+
+// iterative symmetric solver
+typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver;
+
+// direct symmetric solver
+typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver;
+
+\endcode
+
+Here is an example that shows how to fill the sparse matrix and call the solver:
+
+\cgalExample{Solver_interface/sparse_solvers.cpp}
+
+
+\section SectionMIPSolver Mixed Integer Program Solvers
+
+The concept `MixedIntegerProgramTraits` defines an interface for
+formulating and solving (constrained or unconstrained) mixed integer
+programs. It can also be used for general linear programs.
+
+The field type is `double`. We provide two models of this concept:
+`CGAL::GLPK_mixed_integer_program_traits` using \ref thirdpartyGLPK and
+`CGAL::SCIP_mixed_integer_program_traits` using \ref thirdpartySCIP.
+
+Here is an example that shows how to formulate and solve a simple
+mixed integer program using this solver:
+
+\cgalExample{Solver_interface/mixed_integer_program.cpp}
+
+
+\section SectionQPSolver Quadratic Program Solvers
+
+The concept `QuadraticProgramTraits` defines an interface for quadratic programs (QP)
+whereas a similar concept `LinearProgramTraits` gives an interface for linear programs (LP).
+The model `CGAL::OSQP_quadratic_program_traits` provides a way to solve convex quadratic programs
+with the dense or sparse interface.
+
+Here is an example that shows how to formulate and solve a simple convex quadratic
+program using the latter solver:
+
+\cgalExample{Solver_interface/osqp_quadratic_program.cpp}
+
+
+\section SolversHistory Implementation History
+This package is the result of the increasing needs for linear solvers
+in \cgal.  The first packages that introduced the solver concepts were
+\ref PkgSurfaceMeshParameterization, \ref PkgPoissonSurfaceReconstruction3
+and \ref PkgJetFitting3.  At that time, these packages were relying
+on \taucs, \lapack, \blas and \opennl. Gaël Guennebaud
+then introduced new models using the \ref thirdpartyEigen library that
+became the only supported models by \cgal.  Later on the packages \ref
+PkgSurfaceMeshSkeletonization and \ref PkgSurfaceMeshDeformation
+extended the existing concepts. Liangliang Nan introduced the concept
+`MixedIntegerProgramTraits` and two models for solving mixed integer
+programs when implementing the \ref PkgPolygonalSurfaceReconstruction
+package. The concepts and models for solving linear and quadratic programs
+were later introduced by Dmitry Anisimov and Mael Rouxel-Labbé.
+
+Simon Giraudot was responsible for gathering all concepts and classes,
+and also wrote this user manual with the help of Andreas Fabri.
+
+*/
+} /* namespace CGAL */

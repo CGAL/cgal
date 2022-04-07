@@ -3,12 +3,11 @@
 \ingroup PkgLinearCellComplexConcepts
 \cgalConcept
 
-The concept `CellAttributeWithPoint` is a refinement of the `CellAttribute`
-concept, to represent a cell attribute containing a point.
+The concept `CellAttributeWithPoint` is a refinement of the `CellAttribute` concept, to represent a cell attribute containing a point.
 
 \cgalRefines `CellAttribute`
 
-\cgalHasModel \ref CGAL::Cell_attribute_with_point "CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>"
+\cgalHasModel \link CGAL::Cell_attribute_with_point `CGAL::Cell_attribute_with_point<LCC,Info_,Tag,OnMerge,OnSplit>`\endlink
 
 \sa `LinearCellComplexItems`
 
@@ -42,15 +41,15 @@ CellAttributeWithPoint();
 
 /*!
 Constructor initializing the point of this attribute by the
-copy contructor \ref Point "Point"`(apoint)`.
+copy contructor \link Point `Point`\endlink`(apoint)`.
 */
 CellAttributeWithPoint(const Point&apoint);
 
 /*!
 Constructor initializing the point of this attribute by the
-copy contructor \ref Point "Point"`(apoint)` and initializing the
+copy contructor \link Point `Point`\endlink`(apoint)` and initializing the
 information of this attribute by the
-copy contructor \ref Info "Info"`(info)`.
+copy contructor \link Info `Info`\endlink`(info)`.
 Defined only if `Info` is different from `void`.
 */
   CellAttributeWithPoint(const Point&apoint, const Info& info);

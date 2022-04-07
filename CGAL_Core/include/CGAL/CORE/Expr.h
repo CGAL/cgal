@@ -3,30 +3,19 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/).
- * You can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
+ * This file is part of CGAL (www.cgal.org).
  *
  * File: Expr.h
  * Synopsis: a class of Expression in Level 3
- * 
- * Written by 
+ *
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Igor Pechtchanski <pechtcha@cs.nyu.edu>
  *       Vijay Karamcheti <vijayk@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *       Vikram Sharma<sharma@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
@@ -34,14 +23,20 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
+
+// We need to include BigFloat.h here because there is a circular dependency
+// between Expr and BigFloat.
+#include <CGAL/CORE/BigFloat.h>
 
 #ifndef _CORE_EXPR_H_
 #define _CORE_EXPR_H_
 
 #include <CGAL/CORE/ExprRep.h>
+#include <CGAL/assertions.h>
 
-namespace CORE { 
+namespace CORE {
 
 /// \class Expr Expr.h
 /// \brief Expr is a class of Expression in Level 3
@@ -66,32 +61,32 @@ public:
   Expr(unsigned long ul) : RCExpr(new ConstRealRep(Real(ul))) {}
 
   /// constructor for <tt>float</tt>
-  /** \note the results of this constructor may appear unpredictable to the 
+  /** \note the results of this constructor may appear unpredictable to the
    *  user.  E.g.,  one may assume that new Expr(.1) is exactly equal to .1,
    *  but it will be print as
    *      .1000000000000000055511151231257827021181583404541015625.
    *  This is so because .1 cannot be represented exactly as a double
-   *  (or, for that matter, as a binary fraction of any finite length). 
+   *  (or, for that matter, as a binary fraction of any finite length).
    *  The value is the closest double value determined by the compiler.
    */
-  Expr(float f) : RCExpr(NULL) { // check for valid numbers
+  Expr(float f) : RCExpr(nullptr) { // check for valid numbers
     // (i.e., not infinite and not NaN)
     if (! CGAL_CORE_finite(f)) {
-      std::cerr << " ERROR : constructed an invalid float! " << std::endl;
-      if (AbortFlag)
+      core_error(" ERROR : constructed an invalid float! ", __FILE__, __LINE__, false);
+      if (get_static_AbortFlag())
         abort();
-      InvalidFlag = -1;
+      get_static_InvalidFlag() = -1;
     }
     rep = new ConstDoubleRep(f);
   }
   /// constructor for <tt>double</tt>
-  Expr(double d) : RCExpr(NULL) { // check for valid numbers
+  Expr(double d) : RCExpr(nullptr) { // check for valid numbers
     // (i.e., not infinite and not NaN)
     if (! CGAL_CORE_finite(d)) {
-      std::cerr << " ERROR : constructed an invalid double! " << std::endl;
-      if (AbortFlag)
+      core_error(" ERROR : constructed an invalid double! ", __FILE__, __LINE__, false);
+      if (get_static_AbortFlag())
         abort();
-      InvalidFlag = -2;
+      get_static_InvalidFlag() = -2;
     }
     rep = new ConstDoubleRep(d);
   }
@@ -111,11 +106,11 @@ public:
    * it is generally recommended that the (String) constructor be used in
    * preference to the (double) constructor.
    */
-  Expr(const char *s, const extLong& p = defInputDigits)
+  Expr(const char *s, const extLong& p = get_static_defInputDigits())
       : RCExpr(new ConstRealRep(Real(s, p))) {}
 
   /// constructor for <tt>std::string</tt>
-  Expr(const std::string& s, const extLong& p = defInputDigits)
+  Expr(const std::string& s, const extLong& p = get_static_defInputDigits())
       : RCExpr(new ConstRealRep(Real(s, p))) {}
 
   /// constructor for <tt>Real</tt>
@@ -178,10 +173,10 @@ public:
   /// /= operator
   Expr& operator/=(const Expr& e) {
     if ((e.rep)->getSign() == 0) {
-      std::cerr << " ERROR : division by zero ! " << std::endl;
-      if (AbortFlag)
+      core_error(" ERROR : division by zero ! ",__FILE__, __LINE__, false);
+      if (get_static_AbortFlag())
         abort();
-      InvalidFlag = -3;
+      get_static_InvalidFlag() = -3;
     }
     *this = new DivRep(rep, e.rep);
     return *this;
@@ -225,12 +220,12 @@ public:
   /// \name String Conversion Functions
   //@{
   /// set value from <tt>const char*</tt>
-  void fromString(const char* s, const extLong& prec = defInputDigits) {
+  void fromString(const char* s, const extLong& prec = get_static_defInputDigits()) {
     *this = Expr(s, prec);
   }
   /// convert to <tt>std::string</tt>
   /** give decimal string representation */
-  std::string toString(long prec=defOutputDigits, bool sci=false) const {
+  std::string toString(long prec=get_static_defOutputDigits(), bool sci=false) const {
     return rep->toString(prec, sci);
   }
   //@}
@@ -282,8 +277,8 @@ public:
   /** Here is the definition of what this means:
        If e is the exact value and ee is the approximate value,
        then  |e - ee| <= 2^{-a} or  |e - ee| <= 2^{-r} |e|. */
-  const Real & approx(const extLong& relPrec = defRelPrec,
-                      const extLong& absPrec = defAbsPrec) const {
+  const Real & approx(const extLong& relPrec = get_static_defRelPrec(),
+                      const extLong& absPrec = get_static_defAbsPrec()) const {
     return rep->getAppValue(relPrec, absPrec);
   }
   //@}
@@ -355,9 +350,9 @@ inline std::ostream& operator<<(std::ostream& o, const Expr& e) {
 /// I/O Stream operator>>
 inline std::istream& operator>>(std::istream& i, Expr& e) {
   Real rVal;
-  i >> rVal; // precision is = defInputDigits
+  i >> rVal; // precision is = get_static_defInputDigits()
   if (i)
-    e = rVal;		// only assign when reading is successful.
+    e = rVal;                // only assign when reading is successful.
   return i;
 }
 
@@ -381,10 +376,10 @@ inline Expr operator*(const Expr& e1, const Expr& e2) {
 /// division
 inline Expr operator/(const Expr& e1, const Expr& e2) {
   if (e2.sign() == 0) {
-    std::cerr << " ERROR : division by zero ! " << std::endl;
-    if (AbortFlag)
+    core_error(" ERROR : division by zero ! ", __FILE__, __LINE__, false);
+    if (get_static_AbortFlag())
       abort();
-    InvalidFlag = -4;
+    get_static_InvalidFlag() = -4;
   }
   return Expr(new DivRep(e1.Rep(), e2.Rep()));
 }
@@ -474,7 +469,7 @@ inline Expr power(const Expr& e, unsigned long p) {
 /** We do not check if e2 is 0.
  * */
 // NOTE:  The name "isDivisible" is not consistent
-// 		with the analogous "divisible" predicate in BigInt!
+//                 with the analogous "divisible" predicate in BigInt!
 inline bool isDivisible(const Expr& e1, const Expr& e2) {
   Expr result;
   floor(e1/e2, result);
@@ -484,10 +479,10 @@ inline bool isDivisible(const Expr& e1, const Expr& e2) {
 /// square root
 inline Expr sqrt(const Expr& e) {
   if (e.sign() < 0) {
-    std::cerr << " ERROR : sqrt of negative value ! " << std::endl;
-    if (AbortFlag)
+    core_error(" ERROR : sqrt of negative value ! ", __FILE__, __LINE__, false);
+    if (get_static_AbortFlag())
       abort();
-    InvalidFlag = -5;
+    get_static_InvalidFlag() = -5;
   }
   return Expr(new SqrtRep(e.Rep()));
 }
@@ -515,7 +510,7 @@ inline Expr rootOf(const Polynomial<NT>& p, const BFInterval& I) {
 /// helper function for constructing Polynomial node with pair of BigFloats
 template <class NT>
 inline Expr rootOf(const Polynomial<NT>& p, const BigFloat& x,
-		const BigFloat& y) {
+                const BigFloat& y) {
   return Expr(p, BFInterval(x, y) );
 }
 /// helper function for constructing Polynomial node with pair of doubles
@@ -534,7 +529,7 @@ inline Expr rootOf(const Polynomial<NT>& p, int x, int y) {
  * */
 template <class NT>
 inline Expr radical(const NT& n, int m) {
-  assert(n>=0 && m>=1);
+  CGAL_assertion(n>=0 && m>=1);
   if (n == 0 || n == 1 || m == 1)
     return Expr(n);
   Polynomial<NT> Q(m);
@@ -548,4 +543,9 @@ inline Expr radical(const NT& n, int m) {
 #include <CGAL/CORE/poly/Poly.tcc>
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/Expr_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_EXPR_H_

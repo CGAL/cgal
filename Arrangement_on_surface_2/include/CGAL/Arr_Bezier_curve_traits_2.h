@@ -2,28 +2,23 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
-// 
-// Author(s)     : Ron Wein     <wein@post.tau.ac.il>
-//                 Iddo Hanniel <iddoh@cs.technion.ac.il>
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s): Ron Wein     <wein@post.tau.ac.il>
+//            Iddo Hanniel <iddoh@cs.technion.ac.il>
+//            Waqar Khan   <wkhan@mpi-inf.mpg.de>
 
 #ifndef CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 #define CGAL_ARR_BEZIER_CURVE_TRAITS_2_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+#include <CGAL/disable_warnings.h>
+
 /*! \file
- * Definition of the Arr_Bezier_curve_traits_2 class. 
+ * Definition of the Arr_Bezier_curve_traits_2 class.
  */
 
 #include <CGAL/tags.h>
@@ -40,7 +35,7 @@ namespace CGAL {
  * A traits class for maintaining an arrangement of Bezier curves with
  * rational control points.
  *
- * The class is templated with four parameters: 
+ * The class is templated with four parameters:
  * Rat_kernel A kernel that defines the type of control points.
  * Alg_kernel A geometric kernel, where Alg_kernel::FT is the number type
  *            for the coordinates of arrangement vertices and is used to
@@ -54,7 +49,7 @@ namespace CGAL {
  */
 template <class RatKernel_, class AlgKernel_, class NtTraits_,
           class BoundingTraits_ = Bezier_bounding_rational_traits<RatKernel_> >
-class Arr_Bezier_curve_traits_2 
+class Arr_Bezier_curve_traits_2
 {
 public:
 
@@ -66,14 +61,14 @@ public:
                                     Alg_kernel,
                                     Nt_traits,
                                     Bounding_traits>   Self;
- 
+
   typedef typename Nt_traits::Integer            Integer;
   typedef typename Rat_kernel::FT                Rational;
   typedef typename Alg_kernel::FT                Algebraic;
 
   typedef typename Rat_kernel::Point_2           Rat_point_2;
   typedef typename Alg_kernel::Point_2           Alg_point_2;
-  
+
   // Category tags:
   typedef Tag_true                               Has_left_category;
   typedef Tag_true                               Has_merge_category;
@@ -163,12 +158,12 @@ public:
       delete p_cache;
       delete p_inter_map;
     }
-    p_cache = NULL;
-    p_inter_map = NULL;
+    p_cache = nullptr;
+    p_inter_map = nullptr;
   }
   //@}
 
-  /// \name Functor definitions for the arrangement traits.
+  /// \name Basic functor definitions for the arrangement traits
   //@{
 
   /*! \class Compare_x_2
@@ -339,7 +334,7 @@ public:
     Comparison_result operator() (const Point_2& p,
                                   const X_monotone_curve_2& cv) const
     {
-      return (cv.point_position (p, 
+      return (cv.point_position (p,
                                  const_cast<Bezier_cache&> (*p_cache)));
     }
   };
@@ -478,33 +473,34 @@ public:
   {
     return (Equal_2 (p_cache));
   }
+  //@}
+
+  //! \name Intersections, subdivisions, and mergings
+  //@{
 
   /*! \class Make_x_monotone_2
-   * The Make_x_monotone_2 functor.
+   * A functor for subdividing a curve into x-monotone curves.
    */
-  class Make_x_monotone_2
-  {
+  class Make_x_monotone_2 {
   private:
-    Bezier_cache         *p_cache;
+    Bezier_cache* p_cache;
 
   public:
-
     /*! Constructor. */
-    Make_x_monotone_2 (Bezier_cache *cache) :
-      p_cache (cache)
-    {}
+    Make_x_monotone_2(Bezier_cache* cache) : p_cache(cache) {}
 
-    /*!
-     * Cut the given Bezier curve into x-monotone subcurves and insert them
-     * into the given output iterator.
-     * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object. The returned
-     *           objects is a wrapper for an X_monotone_curve_2 object.
-     * \return The past-the-end iterator.
+    /*! Subdivide a given Bezier curve into x-monotone subcurves and insert them
+     * into a given output iterator.
+     * \param cv the curve.
+     * \param oi an output iterator for the result. Its value type is a variant
+     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     * \return the past-the-end iterator.
      */
-    template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& B, OutputIterator oi)
+    template <typename OutputIterator>
+    OutputIterator operator() (const Curve_2& B, OutputIterator oi) const
     {
+      typedef boost::variant<Point_2, X_monotone_curve_2>
+                                                Make_x_monotone_result;
       typedef typename Bounding_traits::Vertical_tangency_point
                                                 Vertical_tangency_point;
 
@@ -517,20 +513,17 @@ public:
                  std::back_inserter(cpts));
 
       bound_tr.compute_vertical_tangency_points
-          (cpts, std::back_inserter (vpt_bounds));
+        (cpts, std::back_inserter (vpt_bounds));
 
       // Construct Point_2 from bounded tangency points.
       std::list<Point_2>                            vpts;
       bool                                          app_ok = true;
-      typename std::list<Vertical_tangency_point>::const_iterator iter;
 
-      for (iter = vpt_bounds.begin(); iter != vpt_bounds.end(); ++iter)
-      {
+      for (auto iter = vpt_bounds.begin(); iter != vpt_bounds.end(); ++iter) {
         const typename Bounding_traits::Bez_point_bound& bound = iter->bound;
         const typename Bounding_traits::Bez_point_bbox&  bbox = iter->bbox;
 
-        if (! bound.can_refine)
-        {
+        if (! bound.can_refine) {
           // If we cannot refine the vertical-tangency bound anymore, then
           // we failed to bound the vertical tangency point.
           // \todo In the future, we might want to use the info.
@@ -539,47 +532,42 @@ public:
         }
 
         // Construct an approximate vertical tangency point.
-        Point_2   pt;
+        Point_2 pt;
 
-        if (bound.type == Bounding_traits::Bez_point_bound::RATIONAL_PT)
-        {
-          CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL); 
-          Rational  t0 = bound.t_min;
+        if (bound.type == Bounding_traits::Bez_point_bound::RATIONAL_PT) {
+          CGAL_assertion (CGAL::compare (bound.t_min, bound.t_max) == EQUAL);
+          Rational t0 = bound.t_min;
 
           pt = Point_2 (B, t0);
         }
-        else
-        {
-          pt.add_originator (typename Point_2::Originator(B, bound));
+        else {
+          pt.add_originator(typename Point_2::Originator(B, bound));
         }
-        pt.set_bbox (bbox);
+        pt.set_bbox(bbox);
 
         vpts.push_back(pt);
       }
 
       // If bounding the approximated vertical-tangency points went fine,
       // use these points as endpoint for the x-monotone subcurves.
-      if (app_ok)
-      {
+      if (app_ok) {
         // Create the x-monotone subcurves with approximate endpoints.
         typename std::list<Point_2>::const_iterator pit;
-        Point_2       p0(B, Rational(0)); // A rational start point.
         unsigned int  xid = 1;            // Serial number of the subcurve.
+        Point_2       p0(B, xid, Rational(0)); // A rational start point.
+        // Note: xid is needed in ctr of p0 (and of p1 below),
+        // for handling end case of start point == end point.
 
-        for (pit = vpts.begin(); pit != vpts.end(); ++pit)
-        {
-          *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                         p0, *pit,
-                                                         *p_cache));
+        for (pit = vpts.begin(); pit != vpts.end(); ++pit) {
+          *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, *pit,
+                                                            *p_cache));
           xid++;
           p0 = *pit;
         }
 
-        Point_2    p1(B, Rational(1)); // A rational end point.
-
-        *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                       p0, p1,
-                                                       *p_cache));
+        Point_2    p1(B, xid, Rational(1)); // A rational end point.
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
+                                                          *p_cache));
         return (oi);
       }
 
@@ -587,40 +575,34 @@ public:
       // points in an exact manner. We do this by considering all t-values
       // on B(t) = (X(t), Y(t)), such that X'(t) = 0.
       const typename Bezier_cache::Vertical_tangency_list&
-        vt_list = p_cache->get_vertical_tangencies (B.id(),
-                                                    B.x_polynomial(),
-                                                    B.x_norm());
+        vt_list = p_cache->get_vertical_tangencies(B.id(), B.x_polynomial(),
+                                                   B.x_norm());
 
       // Create the x-monotone subcurves.
-      Point_2                                        p0 (B, Rational(0));
-      Point_2                                        p1;
-      typename Bezier_cache::Vertical_tangency_iter  it;
-      unsigned int  xid = 1;            // Serial number of the subcurve.
+      Point_2 p1;
+      unsigned int xid = 1;            // Serial number of the subcurve.
+      Point_2 p0(B, xid, Rational(0));
 
-      for (it = vt_list.begin(); it != vt_list.end(); ++it)
-      {
-        p1 = Point_2 (B, *it);
-        *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                       p0, p1,
-                                                       *p_cache));
+
+      for (auto it = vt_list.begin(); it != vt_list.end(); ++it) {
+        p1 = Point_2(B, *it);
+        *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
+                                                          *p_cache));
         xid++;
         p0 = p1;
       }
 
       // Create the final subcurve.
-      p1 = Point_2 (B, Rational(1));
-      *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                     p0, p1,
-                                                     *p_cache));
-      return (oi);
+      p1 = Point_2(B, xid, Rational(1));
+      *oi++ = Make_x_monotone_result(X_monotone_curve_2(B, xid, p0, p1,
+                                                        *p_cache));
+      return oi;
     }
   };
 
   /*! Get a Make_x_monotone_2 functor object. */
-  Make_x_monotone_2 make_x_monotone_2_object () const
-  {
-    return (Make_x_monotone_2 (p_cache));
-  }
+  Make_x_monotone_2 make_x_monotone_2_object() const
+  { return (Make_x_monotone_2 (p_cache)); }
 
   /*! \class Split_2
    * The Split_2 functor.
@@ -678,7 +660,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi)
+                               OutputIterator oi) const
     {
       return (cv1.intersect (cv2, *p_imap, *p_cache, oi));
     }
@@ -726,7 +708,7 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
@@ -748,7 +730,7 @@ public:
                      X_monotone_curve_2& c) const
     {
       CGAL_precondition(m_traits->are_mergeable_2_object()(cv2, cv1));
-      
+
       c = cv1.merge (cv2);
       return;
     }
@@ -759,7 +741,6 @@ public:
   {
     return Merge_2(this);
   }
-
   //@}
 
   /// \name Functor definitions for the Boolean set-operation traits.
@@ -771,7 +752,6 @@ public:
   class Compare_endpoints_xy_2
   {
   public:
-
     /*!
      * Compare the endpoints of an $x$-monotone curve lexicographically.
      * (assuming the curve has a designated source and target points).
@@ -779,7 +759,7 @@ public:
      * \return SMALLER if the curve is directed right;
      *         LARGER if the curve is directed left.
      */
-    Comparison_result operator() (const X_monotone_curve_2& cv)
+    Comparison_result operator() (const X_monotone_curve_2& cv) const
     {
       if (cv.is_directed_right())
         return (SMALLER);
@@ -793,6 +773,59 @@ public:
   {
     return Compare_endpoints_xy_2();
   }
+
+  class Trim_2 {
+    typedef Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel,
+                                      Nt_traits, Bounding_traits>       Traits;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! Constructor
+     * \param traits the traits (in case it has state)
+     */
+    Trim_2(const Traits& traits) : m_traits(traits) {}
+
+    friend class Arr_Bezier_curve_traits_2<Rat_kernel, Alg_kernel,
+                                           Nt_traits, Bounding_traits>;
+    /*!\brief
+     * Returns a trimmed version of an arc
+     *
+     * \param xcv The arc
+     * \param src the new first endpoint
+     * \param tgt the new second endpoint
+     * \return The trimmed arc
+     *
+     * \pre src != tgt
+     * \pre both points must be interior and must lie on \c cv
+     */
+  public:
+    X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,
+                                  const Point_2& src,
+                                  const Point_2& tgt) const
+    {
+      // make functor objects
+      CGAL_precondition_code(Compare_y_at_x_2 compare_y_at_x_2 =
+                             m_traits.compare_y_at_x_2_object());
+      CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
+      Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
+      // Check whether source and taget are two distinct points and they lie
+      // on the line.
+      CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
+      CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);
+      CGAL_precondition(! equal_2(src, tgt));
+
+      //check if the orientation conforms to the src and tgt.
+      if( xcv.is_directed_right() && compare_x_2(src, tgt) == LARGER)
+        return (xcv.trim(tgt, src));
+      else if(! xcv.is_directed_right() && compare_x_2(src, tgt) == SMALLER)
+        return (xcv.trim(tgt, src));
+      else return (xcv.trim(src, tgt));
+    }
+  };
+
+  /*! Obtain a Trim_2 functor object. */
+  Trim_2 trim_2_object() const { return Trim_2(*this); }
 
   /*! \class Construct_opposite_2
    * The Construct_opposite_2 functor.
@@ -823,4 +856,5 @@ public:
 
 } //namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 #endif

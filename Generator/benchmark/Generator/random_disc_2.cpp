@@ -28,7 +28,7 @@ disk(int N, double radius)
   }
 }
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   int N= 10;
   double radius = 1;
@@ -41,9 +41,9 @@ int main(int argc, char* argv[])
       ("radius", po::value<double>(), "radius of the disc")
       ;
 
-    po::variables_map vm;        
+    po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
-    po::notify(vm);    
+    po::notify(vm);
 
     if (vm.count("help")) {
       std::cout << desc << "\n";

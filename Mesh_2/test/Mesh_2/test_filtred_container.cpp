@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Meshes/Filtered_queue_container.h>
 #include <CGAL/Random.h>
 
@@ -30,7 +29,7 @@ int main(int, char**)
 
   for(int n=0; n<500; n++)
     {
-      int i=CGAL::default_random.get_int(0,1000);
+      int i=CGAL::get_default_random().get_int(0,1000);
       if((i%2)==1) ++real_number_of_odds;
       q.add_bad_element(i);
     }
@@ -42,6 +41,6 @@ int main(int, char**)
     }
 
   std::cout << "detected = " << detected_number_of_odds << std::endl
-	    << "really  = " << real_number_of_odds << std::endl;
+            << "really  = " << real_number_of_odds << std::endl;
   return detected_number_of_odds!=real_number_of_odds;
 }

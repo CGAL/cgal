@@ -2,25 +2,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
 
 #ifndef CGAL_BOX_INTERSECTION_D_BOX_WITH_HANDLE_D_H
 #define CGAL_BOX_INTERSECTION_D_BOX_WITH_HANDLE_D_H
+
+#include <CGAL/license/Box_intersection_d.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/Box_d.h>
@@ -30,7 +25,7 @@ namespace CGAL {
 namespace Box_intersection_d {
 
 // Generic template signature of boxes, specialized for ID_FROM_HANDLE policy
-template<class NT_, int N, class Handle_, class IdPolicy = ID_FROM_HANDLE> 
+template<class NT_, int N, class Handle_, class IdPolicy = ID_FROM_HANDLE>
 class Box_with_handle_d : public Box_d< NT_, N, IdPolicy> {
 protected:
     Handle_ m_handle;
@@ -48,7 +43,7 @@ public:
 };
 
 // Specialization for ID_FROM_HANDLE policy
-template<class NT_, int N, class Handle_> 
+template<class NT_, int N, class Handle_>
 class Box_with_handle_d<NT_, N, Handle_, ID_FROM_HANDLE>
     : public Box_d< NT_, N, ID_NONE> {
 protected:

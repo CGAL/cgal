@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : /test/Triangulation/test_triangulation_2.C
 // package       : Triangulation
 // source        : $URL$
@@ -20,7 +20,7 @@
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
-#include <CGAL/basic.h>
+
 #include <utility>
 #include <list>
 
@@ -29,7 +29,6 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Triangulation_ds_face_base_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_euclidean_traits_2.h>
 #include <CGAL/Triangulation_2.h>
 
 #include <CGAL/_test_traits.h>
@@ -41,9 +40,9 @@ template class CGAL::Triangulation_2<TestK>;
 int main()
 {
 
-  std::cout << "Testing Triangulation_2 " << std::endl; 
-  std::cout << " with Euclidean_traits_2<Cartesian> : " << std::endl ;
-  typedef CGAL::Triangulation_euclidean_traits_2<Test_rep_cartesian> Gt1;
+  std::cout << "Testing Triangulation_2 " << std::endl;
+  std::cout << " with Cartesian : " << std::endl ;
+  typedef Test_rep_cartesian Gt1;
   typedef CGAL::Triangulation_vertex_base_2<Gt1>                     Vb1;
   typedef CGAL::Triangulation_face_base_2<Gt1>                       Fb1;
   typedef CGAL::Triangulation_data_structure_2<Vb1,Fb1> Tds1;

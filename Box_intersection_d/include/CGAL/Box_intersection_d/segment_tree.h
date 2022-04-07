@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
@@ -22,13 +14,14 @@
 #ifndef CGAL_BOX_INTERSECTION_D_SEGMENT_TREE_H
 #define CGAL_BOX_INTERSECTION_D_SEGMENT_TREE_H
 
+#include <CGAL/license/Box_intersection_d.h>
+
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
-
 
 #include <algorithm>
 #include <iterator>
@@ -98,6 +91,8 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
+
+    // Putting a parallel sort here slows down the overall parallel algorithm
     std::sort( p_begin, p_end, Compare( 0 ) );
     std::sort( i_begin, i_end, Compare( 0 ) );
 
@@ -212,24 +207,19 @@ median_of_three( RandomAccessIter a, RandomAccessIter b, RandomAccessIter c,
 }
 
 
-template< class RandomAccessIter, class Predicate_traits >
+template< class RandomAccessIter, class Predicate_traits, class Generator>
 class Iterative_radon {
 
   RandomAccessIter begin;
-  std::ptrdiff_t size;
   Predicate_traits traits;
   int dim;
-
-  boost::rand48 rng;
-  boost::uniform_int<std::ptrdiff_t> dist;
-  boost::variate_generator<boost::rand48&, boost::uniform_int<std::ptrdiff_t> > generator;
+  Generator& generator;
 
 public:
 
-Iterative_radon( RandomAccessIter begin, RandomAccessIter end,
-                 Predicate_traits traits, int dim, int /*num_levels*/ )
-  : begin(begin), size(end-begin), traits(traits), dim(dim), 
-    rng(), dist(0,size-1), generator(rng,dist)
+  Iterative_radon( const RandomAccessIter& begin_, const Predicate_traits& traits_,
+                   int dim_, Generator& generator_)
+  : begin(begin_), traits(traits_), dim(dim_), generator(generator_)
   {}
 
   RandomAccessIter
@@ -252,7 +242,10 @@ RandomAccessIter
 iterative_radon( RandomAccessIter begin, RandomAccessIter end,
                  Predicate_traits traits, int dim, int num_levels )
 {
-  Iterative_radon<RandomAccessIter, Predicate_traits> IR(begin,end,traits,dim,num_levels);
+  typedef typename boost::variate_generator<boost::rand48&, boost::uniform_int<std::ptrdiff_t> > Generator;
+  boost::rand48 rng;
+  Generator generator(rng, boost::uniform_int<std::ptrdiff_t>(0, (end-begin)-1));
+  Iterative_radon<RandomAccessIter, Predicate_traits, Generator> IR(begin, traits, dim, generator);
   return IR(num_levels);
 }
 
@@ -275,7 +268,6 @@ split_points( RandomAccessIter begin, RandomAccessIter end,
 
 
 #if CGAL_BOX_INTERSECTION_DEBUG
- static int level = -1;
  #define CGAL_BOX_INTERSECTION_DUMP(msg) { \
    for( unsigned int i = level; i; --i ) \
      std::cout << "  "; \
@@ -329,7 +321,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback callback, Predicate_traits traits,
-                   std::ptrdiff_t cutoff, int dim, bool in_order )
+                   std::ptrdiff_t cutoff, int dim, bool in_order)
 {
     typedef typename Predicate_traits::Spanning   Spanning;
     typedef typename Predicate_traits::Lo_less    Lo_less;
@@ -339,8 +331,9 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     const T sup = box_limits< T >::sup();
 
 #if CGAL_BOX_INTERSECTION_DEBUG
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, level, -1);
     Counter<int> bla( level );
-    CGAL_BOX_INTERSECTION_DUMP("range: [" << lo << "," << hi << ") dim " 
+    CGAL_BOX_INTERSECTION_DUMP("range: [" << lo << "," << hi << ") dim "
                                           << dim << std::endl )
     CGAL_BOX_INTERSECTION_DUMP("intervals: " )
     //dump_box_numbers( i_begin, i_end, traits );
@@ -386,7 +379,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
         std::partition( i_begin, i_end, Spanning( lo, hi, dim ) );
 
     if( i_begin != i_span_end ) {
-        CGAL_BOX_INTERSECTION_DUMP( "checking spanning intervals ... " 
+        CGAL_BOX_INTERSECTION_DUMP( "checking spanning intervals ... "
                                     << std::endl )
         // make two calls for roots of segment tree at next level.
         segment_tree( p_begin, p_end, i_begin, i_span_end, inf, sup,
@@ -401,7 +394,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
     if( p_mid == p_begin || p_mid == p_end )  {
         CGAL_BOX_INTERSECTION_DUMP( "unable to split points! ")
         //dump_points( p_begin, p_end, traits, dim );
-        CGAL_BOX_INTERSECTION_DUMP( "performing modified two_way_san ... " 
+        CGAL_BOX_INTERSECTION_DUMP( "performing modified two_way_san ... "
                                      << std::endl )
         modified_two_way_scan( p_begin, p_end, i_span_end, i_end,
                                callback, traits, dim, in_order );

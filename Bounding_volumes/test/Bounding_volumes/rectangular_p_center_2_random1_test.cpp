@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -45,7 +37,6 @@ using CGAL::Creator_uniform_2;
 using CGAL::Random_points_in_square_2;
 using CGAL::Random;
 using CGAL::Timer;
-using CGAL::default_random;
 using CGAL::rectangular_p_center_2;
 #ifndef CGAL_PCENTER_NO_OUTPUT
 using std::ostream;
@@ -108,7 +99,7 @@ public:
   Random_p_clusters_2(int n_,
                       double c_size_,
                       double r = 1,
-                      Random& rnd = default_random)
+                      Random& rnd = CGAL::get_default_random())
   : Base(r - c_size_, rnd),
     n(n_),
     c_size(c_size_),
@@ -144,7 +135,7 @@ int
 main(int argc, char* argv[])
 {
 #ifndef CGAL_PCENTER_NO_OUTPUT
-  CGAL::set_pretty_mode(cerr);
+  CGAL::IO::set_pretty_mode(cerr);
 #endif // CGAL_PCENTER_NO_OUTPUT
 
   int number_of_points;
@@ -163,7 +154,7 @@ main(int argc, char* argv[])
 #endif // CGAL_PCENTER_NO_OUTPUT
 
     // generate random seed
-    random_seed = default_random.get_int(0, (1 << 30));
+    random_seed = CGAL::get_default_random().get_int(0, (1 << 30));
   }
   else
     random_seed = atoi(argv[2]);
@@ -175,7 +166,7 @@ main(int argc, char* argv[])
   cerr << "random seed is " << random_seed << endl;
 #endif // CGAL_PCENTER_NO_OUTPUT
   PCont input_points;
-  CGAL::cpp11::copy_n(Point_generator(1, rnd),
+  std::copy_n(Point_generator(1, rnd),
                 number_of_points,
                 back_inserter(input_points));
 
@@ -223,7 +214,7 @@ main(int argc, char* argv[])
     #ifdef _MSC_VER
     }
     #endif
-    
+
     // check that there is at least one square with two points
     // on opposite sides
     CGAL::I_Signed_x_distance_2< K > xdist;
@@ -258,7 +249,7 @@ main(int argc, char* argv[])
   } // for (int p(2); p < 5; ++p)
 
   return 0;
-} 
+}
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

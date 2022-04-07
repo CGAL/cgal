@@ -8,6 +8,7 @@ fi
 export CMAKE_GENERATOR='-GNMake Makefiles'
 export MAKE_CMD='/cygdrive/c/bin/jom/jom.exe'
 export PATH=$PATH:'/cygdrive/c/CGAL/CGAL-I/scripts:/cygdrive/c/CGAL/CGAL-I/developer_scripts'
+export PATH=$PATH:'/cygdrive/c/bin/depends'
 
 #Header only libraries
 export BOOST_INCLUDEDIR="C:\3rdPartyLibs\boost_${BOOST_VERSION}"
@@ -24,6 +25,32 @@ export MPFR_LIB_DIR="C:\3rdPartyLibs\VC-${ARCH}\gmp-5.0.1_and_mpfr-3.0.0\lib"
 #paths depending on the compiler and the architecture
 export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.3.17"
 export QTDIR="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\QT-4.8.4"
+#export QTDIR="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\QT-5.4.1"
 
-export PATH="`cygpath $CGAL_DIR`/bin:`cygpath $GMP_LIB_DIR`:`cygpath $QTDIR`/bin:`cygpath $BOOST_LIBRARYDIR`:`cygpath $QGLVIEWERROOT`/QGLViewer/debug:`cygpath $QGLVIEWERROOT`/QGLViewer/release:/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib":$PATH
+if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/QT-5.5.0 ]; then
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/QT-5.5.0/*/msvc*/lib/cmake/Qt5`
+   if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
+      export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
+   fi
+else
+   export Qt5_DIR=`cygpath -w /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/QT-5*/*/msvc*/lib/cmake/Qt5`
+fi
+
+if [ -d /cygdrive/c/3rdPartyLibs/VC${VC_VERSION}-${ARCH}/libQGLViewer-2.6.2 ]; then
+   export QGLVIEWERROOT="C:\3rdPartyLibs\VC${VC_VERSION}-${ARCH}\libQGLViewer-2.6.2"
+fi
+
+export PATH=`cygpath $GMP_LIB_DIR`:$PATH
+export PATH=`cygpath $BOOST_LIBRARYDIR`:$PATH
+export PATH=/cygdrive/c/3rdPartyLibs/VC-${ARCH}/zlib:$PATH
+
+#export QT_QPA_PLATFORM_PLUGIN_PATH=$Qt5_DIR/../../../plugins
+
+#TBB # only when TBB_ARCH_PLATFORM is already defined in platform-specific setup
+if [ -n "${TBB_ARCH}" ]; then
+  export TBBROOT="C:\3rdPartyLibs\tbb43_20141204"
+  # bin and lib depend on compiler and architecture
+  export TBB_ARCH_PLATFORM="${TBB_ARCH}/vc${VC_VERSION}"
+  export PATH=$PATH:"${TBBROOT}\bin\\${TBB_ARCH}\vc${VC_VERSION}"
+fi
 

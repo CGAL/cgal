@@ -5,8 +5,6 @@
 # The variables used here are defined in the CGALConfig.cmake generated when CGAL was installed.
 #
 #
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 cgal_setup_module_path()
@@ -14,23 +12,14 @@ cgal_setup_module_path()
 if(NOT USE_CGAL_FILE_INCLUDED)
   set(USE_CGAL_FILE_INCLUDED 1)
 
-  include(CGAL_Common)
-  include(CGAL_SetupFlags)
-  include(CGAL_GeneratorSpecificSettings)
-  include(CGAL_TweakFindBoost)
-
-  set(CGAL_INSTALLED_SCM_BRANCH_NAME ${CGAL_SCM_BRANCH_NAME})
-  set(CGAL_SCM_BRANCH_NAME "")
-
-  if( NOT "${CGAL_INSTALLED_SCM_BRANCH_NAME}" STREQUAL "" )
-    include(CGAL_SCM)
-    if ( NOT "${CGAL_SCM_BRANCH_NAME}" STREQUAL "" )
-      message ( STATUS "Code taken from Git branch: ${CGAL_SCM_BRANCH_NAME}" )
-      if ( NOT "${CGAL_SCM_BRANCH_NAME}" STREQUAL "${CGAL_INSTALLED_SCM_BRANCH_NAME}")
-        message (AUTHOR_WARNING "Branch '${CGAL_SCM_BRANCH_NAME}' does not match branch '${CGAL_INSTALLED_SCM_BRANCH_NAME}' from which CGAL has been installed. Please consider rebuilding CGAL from this branch.")
-      endif()
-    endif()
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Common.cmake)
+  if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
+    include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupFlags.cmake)
+  else()
+    include(${CMAKE_CURRENT_LIST_DIR}/CGAL_display_flags.cmake)
   endif()
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_GeneratorSpecificSettings.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
 
   set( CGAL_LIBRARIES )
 
@@ -38,15 +27,11 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     use_component( ${component} )
   endforeach()
 
-  use_essential_libs()
-
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" )
 
-  # need to get variable from cache while compiling CGAL, while in a demo it is set in CGALConfig.cmake
-  if ( NOT CGAL_LIBRARY )
-    cache_get(CGAL_LIBRARY)
-  endif()
-  if(TARGET CGAL)
+  if(TARGET CGAL::CGAL)
+    add_to_list( CGAL_LIBRARIES CGAL::CGAL )
+  elseif(TARGET CGAL)
     add_to_list( CGAL_LIBRARIES CGAL )
   else()
     add_to_list( CGAL_LIBRARIES ${CGAL_LIBRARY} )
@@ -59,8 +44,8 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   include_directories ( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
   add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )
 
-  link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
-  link_libraries      ( ${CGAL_LIBRARIES}     ${CGAL_3RD_PARTY_LIBRARIES}      )
-
-
+  if(NOT CGAL_NO_BLANKET_LINKING)
+    link_directories    ( ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
+    link_libraries      ( ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}      )
+  endif()
 endif()

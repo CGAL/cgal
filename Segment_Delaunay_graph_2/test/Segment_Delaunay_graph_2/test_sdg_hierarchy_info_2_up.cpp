@@ -1,6 +1,3 @@
-// file: multi_info.cpp
-#include <CGAL/basic.h>
-
 // standard includes
 #include <iostream>
 #include <fstream>
@@ -9,18 +6,15 @@
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 
-struct Rep : public CGAL::Simple_cartesian<double> {};
+typedef CGAL::Simple_cartesian<double> K;
 
 // typedefs for the traits and the algorithm
 #include <CGAL/Segment_Delaunay_graph_hierarchy_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_storage_traits_with_info_2.h>
 
-typedef
-CGAL::Segment_Delaunay_graph_filtered_traits_2<Rep>
-Traits_x;
+typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<K> Gt;
 
-struct Gt : public Traits_x {};
 
 #include "Multi_info.h"
 
@@ -31,9 +25,9 @@ typedef Multi_info_convert_info<int>  Convert_info;
 typedef Multi_info_merge_info<int>    Merge_info;
 
 typedef CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
-								Info,
-								Convert_info,
-								Merge_info>
+                                                                Info,
+                                                                Convert_info,
+                                                                Merge_info>
 ST;
 
 typedef CGAL::Tag_true  STag;

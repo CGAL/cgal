@@ -1,5 +1,0 @@
-@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-
-PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Triangulation Data Structure"
-INPUT        = ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/TDS_2/
-IMAGE_PATH  +=  ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/Triangulation_2/fig

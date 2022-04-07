@@ -1,23 +1,15 @@
-// Copyright (c) 1999-2007  
+// Copyright (c) 1999-2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hemmer
@@ -30,8 +22,6 @@
 
 // The include is done before the protect macro on purpose, because
 // of a cyclic dependency.
-
-#include <CGAL/number_type_basic.h>
 
 #ifndef CGAL_QUOTIENT_H
 #define CGAL_QUOTIENT_H
@@ -90,7 +80,7 @@ class Quotient
   { Split_double<NT>()(n, num, den); }
 
   Quotient(const CGAL_int(NT) & n)
-    : num(n), den(1) {}
+    : num(n), den(NT(1)) {}
 
   template <class T>
   explicit Quotient(const T& n) : num(n), den(1) {}
@@ -118,28 +108,9 @@ class Quotient
     return *this;
   }
 
-#ifdef CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE
-
   template <class T1, class T2>
   Quotient(const T1& n, const T2& d) : num(n), den(d)
   { CGAL_precondition( d != 0 ); }
-
-#else
-  template <class T1, class T2>
-  Quotient(T1 && n, T2 && d)
-     : num(std::forward<T1>(n)), den(std::forward<T2>(d))
-  { CGAL_postcondition( den != 0 ); }
-
-  Quotient(NT && n)
-    : num(std::move(n)), den(1) {}
-
-  Quotient& operator=(NT && n)
-  {
-    num = std::move(n);
-    den = 1;
-    return *this;
-  }
-#endif
 
   Quotient<NT>& operator+= (const Quotient<NT>& r);
   Quotient<NT>& operator-= (const Quotient<NT>& r);
@@ -158,6 +129,15 @@ class Quotient
   Quotient<NT>& operator*= (const CGAL_double(NT)& r);
   Quotient<NT>& operator/= (const CGAL_double(NT)& r);
 
+  friend bool operator==(const Quotient& x, const Quotient& y)
+  { return x.num * y.den == x.den * y.num; }
+  friend bool operator==(const Quotient& x, const NT& y)
+  { return x.den * y == x.num; }
+  friend inline bool operator==(const Quotient& x, const CGAL_int(NT) & y)
+  { return x.den * y == x.num; }
+  friend inline bool operator==(const Quotient& x, const CGAL_double(NT) & y)
+  { return x.den * y == x.num; } // Uh?
+
   Quotient<NT>&    normalize();
 
   const NT&   numerator()   const { return num; }
@@ -171,7 +151,7 @@ class Quotient
   }
 
 #ifdef CGAL_ROOT_OF_2_ENABLE_HISTOGRAM_OF_NUMBER_OF_DIGIT_ON_THE_COMPLEX_CONSTRUCTOR
-  int tam() const { return std::max(num.tam(), den.tam()); }
+  int tam() const { return (std::max)(num.tam(), den.tam()); }
 #endif
 
  public:
@@ -335,11 +315,11 @@ CGAL_MEDIUM_INLINE
 Quotient<NT>&
 Quotient<NT>::operator+= (const CGAL_double(NT)& r)
 {
-  //num += r * den; 
-  NT r_num, r_den; 
+  //num += r * den;
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num = num*r_den + r_num*den;
-  den *=r_den; 
+  den *=r_den;
   return *this;
 }
 
@@ -349,10 +329,10 @@ Quotient<NT>&
 Quotient<NT>::operator-= (const CGAL_double(NT)& r)
 {
   //num -= r * den;
-  NT r_num, r_den; 
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num =  num*r_den - r_num*den;
-  den *= r_den; 
+  den *= r_den;
   return *this;
 }
 
@@ -362,11 +342,11 @@ Quotient<NT>&
 Quotient<NT>::operator*= (const CGAL_double(NT)& r)
 {
   // num *= r;
-  
-  NT r_num, r_den; 
+
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num *= r_num;
-  den *= r_den; 
+  den *= r_den;
   return *this;
 }
 
@@ -376,10 +356,10 @@ Quotient<NT>&
 Quotient<NT>::operator/= (const CGAL_double(NT)& r)
 {
   CGAL_precondition( r != 0 );
-  NT r_num, r_den; 
+  NT r_num, r_den;
   Split_double<NT>()(r,r_num,r_den);
   num *= r_den;
-  den *= r_num; 
+  den *= r_num;
   return *this;
 }
 
@@ -402,8 +382,8 @@ quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
     if (diff == 0)
     {
         int msign = CGAL_NTS sign(x.den) * CGAL_NTS sign(y.den);
-        NT leftop  = x.num * y.den * msign;
-        NT rightop = y.num * x.den * msign;
+        NT leftop  = NT(x.num * y.den * msign);
+        NT rightop = NT(y.num * x.den * msign);
         return CGAL_NTS compare(leftop, rightop);
     }
     else
@@ -431,15 +411,15 @@ operator>>(std::istream& in, Quotient<NT>& r)
   if(!in) return in;
   std::istream::sentry s(in); // skip whitespace
   if(in.peek()!='/'){
-	  if(!in.good()){
-		  in.clear(std::ios_base::eofbit);
-		  // unlikely to be some other reason?
-	  }
+          if(!in.good()){
+                  in.clear(std::ios_base::eofbit);
+                  // unlikely to be some other reason?
+          }
   } else {
-	  char c;
-	  in.get(c); // remove the '/'
-	  in >> den;
-	  if(!in) return in;
+          char c;
+          in.get(c); // remove the '/'
+          in >> den;
+          if(!in) return in;
   }
   r=Quotient<NT>(num,den);
   return in;
@@ -465,31 +445,6 @@ NT
 quotient_truncation(const Quotient<NT>& r)
 { return (r.num / r.den); }
 
-
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const Quotient<NT>& x, const Quotient<NT>& y)
-{ return x.num * y.den == x.den * y.num; }
-
-template <class NT>
-CGAL_MEDIUM_INLINE
-bool
-operator==(const Quotient<NT>& x, const NT& y)
-{ return x.den * y == x.num; }
-
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_int(NT) & y)
-{ return x.den * y == x.num; }
-
-template <class NT>
-inline
-bool
-operator==(const Quotient<NT>& x, const CGAL_double(NT) & y)
-{ return x.den * y == x.num; }
 
 
 
@@ -547,7 +502,7 @@ operator>(const Quotient<NT>& x, const CGAL_double(NT)& y)
 
 template< class NT >
 class Is_valid< Quotient<NT> >
-  : public std::unary_function< Quotient<NT>, bool > {
+  : public CGAL::cpp98::unary_function< Quotient<NT>, bool > {
   public :
     bool operator()( const Quotient<NT>& x ) const {
       return is_valid(x.num) && is_valid(x.den);
@@ -606,11 +561,11 @@ namespace INTERN_QUOTIENT {
   class Sqrt_selector {
     public:
       class Sqrt
-        : public std::unary_function< NT, NT > {
+        : public CGAL::cpp98::unary_function< NT, NT > {
         public:
           NT operator()( const NT& x ) const {
             CGAL_precondition(x > 0);
-            return NT(CGAL_NTS sqrt(x.numerator()*x.denominator()),
+            return NT(CGAL_NTS sqrt(typename NT::NT(x.numerator()*x.denominator())),
                       x.denominator());
           }
       };
@@ -638,7 +593,7 @@ public:
 
 
     class Is_square
-        : public std::binary_function< Quotient<NT>, Quotient<NT>&, bool > {
+        : public CGAL::cpp98::binary_function< Quotient<NT>, Quotient<NT>&, bool > {
     public:
         bool operator()( Quotient<NT> x, Quotient<NT>& y ) const {
             NT x_num, x_den, y_num, y_den;
@@ -669,7 +624,7 @@ public:
                             >::type Sqrt;
 
     class Simplify
-      : public std::unary_function< Type&, void > {
+      : public CGAL::cpp98::unary_function< Type&, void > {
       public:
         void operator()( Type& x) const {
             x.normalize();
@@ -687,7 +642,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     typedef Quotient<NT> Type;
 
     class Compare
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Comparison_result > {
       public:
         Comparison_result operator()( const Type& x,
@@ -697,7 +652,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class To_double
-      : public std::unary_function< Type, double > {
+      : public CGAL::cpp98::unary_function< Type, double > {
       public:
         double operator()( const Type& x ) const {
         // Original global function was marked with an TODO!!
@@ -729,7 +684,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           Interval_nt<> quot =
@@ -740,7 +695,7 @@ template < class NT > class Real_embeddable_traits_quotient_base< Quotient<NT> >
     };
 
     class Is_finite
-      : public std::unary_function< Type, bool > {
+      : public CGAL::cpp98::unary_function< Type, bool > {
       public:
         bool operator()( const Type& x ) const {
           return CGAL_NTS is_finite(x.num) && CGAL_NTS is_finite(x.den);
@@ -859,6 +814,7 @@ namespace Eigen {
     typedef CGAL::Quotient<NT> Real;
     typedef CGAL::Quotient<NT> NonInteger;
     typedef CGAL::Quotient<NT> Nested;
+    typedef CGAL::Quotient<NT> Literal;
 
     static inline Real epsilon() { return NumTraits<NT>::epsilon(); }
     static inline Real dummy_precision() { return NumTraits<NT>::dummy_precision(); }

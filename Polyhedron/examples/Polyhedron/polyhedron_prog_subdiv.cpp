@@ -1,10 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
 #include <cmath>
+#include <fstream>
+#include <cassert>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Vector_3                                     Vector;
@@ -27,7 +28,7 @@ void create_center_vertex( Polyhedron& P, Facet_iterator f) {
         vec = vec + ( h->vertex()->point() - CGAL::ORIGIN);
         ++ order;
     } while ( ++h != f->facet_begin());
-    CGAL_assertion( order >= 3); // guaranteed by definition of polyhedron
+    assert( order >= 3); // guaranteed by definition of polyhedron
     Point center =  CGAL::ORIGIN + (vec / static_cast<double>(order));
     Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
     new_center->vertex()->point() = center;
@@ -44,7 +45,7 @@ struct Smooth_old_vertex {
             vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN)
               * alpha / static_cast<double>(degree);
             ++ h;
-            CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
+            assert( h != v.vertex_begin()); // even degree guaranteed
             ++ h;
         } while ( h != v.vertex_begin());
         return (CGAL::ORIGIN + vec);
@@ -91,9 +92,10 @@ void subdiv( Polyhedron& P) {
     CGAL_postcondition( P.is_valid());
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     Polyhedron P;
-    std::cin >> P;
+    std::ifstream in1((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_quad.off"));
+    in1 >> P;
     P.normalize_border();
     if ( P.size_of_border_edges() != 0) {
         std::cerr << "The input object has border edges. Cannot subdivide."
@@ -101,6 +103,6 @@ int main() {
         std::exit(1);
     }
     subdiv( P);
-    std::cout << P;
+    std::cout << std::setprecision(17) << P;
     return 0;
 }

@@ -1,9 +1,0 @@
-TODO:
------
-
-  - More commands, e.g.:
-      - 'include <filename>' reads <filename>, breaks it into words at 
-        whitespaces and calls 'eval( argc, argv)' recursively 
-      - 'empty' and 'full' that create the empty space and the full space
-      - 'halfspace <coefficients>' once we can handle halfspaces with infboxes
-

@@ -1,0 +1,202 @@
+namespace CGAL {
+
+/*!
+\mainpage User Manual
+\anchor Chapter_Building_Optimal_Bounding_Box
+\cgalAutoToc
+
+\cgalFigureAnchor{OBBBanner}
+<center>
+<img src="obb_chess.png" style="max-width:70%;"/>
+</center>
+<!-- chess pieces from https://www.myminifactory.com/object/3d-print-chess-game-set-26114 -->
+
+\authors Konstantinos Katrioplas, Mael Rouxel-Labbé
+
+\section OBBIntro Introduction
+
+Encompassing a model within a volume is a common approach to accelerate
+a number of applications such as collision detection or visibility testing:
+the proxy volume provides a rapid way to test a configuration or filter results,
+with the real model only being used when required.
+Typical coarser volumes that can be used to approximate a more complex
+model are simplified meshes (for example using the package \ref PkgSurfaceMeshSimplification),
+convex hulls, or simple rectangular boxes. Within this last
+category, the axis-aligned bounding box (AABB) has obvious advantages:
+it is extremely simple to compute and one may build a hierarchical
+structure of successively tighter volumes to further speed up intersection and distance computations.
+One such example of structure is the \cgal AABB tree (\ref PkgAABBTree).
+The disadvantage is also clear: the box is usually poorly fitting most models.
+A good compromise between the good approximation offered by convex hulls or simplified meshes
+and the speed offered by axis-aligned bounding boxes are <em>Optimal Bounding Boxes</em>.
+Contrary to the AABB, the optimal bounding box of a model is not necessarily axis-aligned,
+but provides a tight approximation.
+
+\cgalFigureAnchor{obb_aabb_vs_obb}
+<center>
+<img src="aabb_vs_obb.jpg" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{obb_aabb_vs_obb}
+Left: the axis-aligned bounding box. Right: the optimal bounding box, a much better fit.
+<!-- source and license of the model: https://www.myminifactory.com/object/3d-print-chinese-new-year-dragon-incense-holder-5476 -->
+\cgalFigureCaptionEnd
+
+In 2D, the optimal bounding rectangle of an input can be computed in linear time
+using the technique of <em>rotating calipers</em>, first introduced
+by Toussaint \cgalCite{cgal:t-sgprc-83} (see also the \cgal package \ref PkgBoundingVolumes).
+An algorithm to compute the optimal oriented bounding box in 3D was proposed
+by O’Rourke \cgalCite{cgal:or-fmeb-85}, but its cubic complexity in the number
+of points makes it unusable in practice. The implementation proposed
+in this package is based on the paper of Chang et al.\cgalCite{cgal:cgm-fobbo-11},
+who introduced an algorithm to compute a close approximation of the optimal
+bounding box. As this is but an approximation of the optimal bounding box,
+we call the resulting box, the <em>Oriented Bounding Box</em>.
+
+\section OBBOrientedBoundingBox Oriented Bounding Box
+
+The algorithm introduced by Chang et al. formulates the computation
+of the optimal bounding box as an unconstrained optimization problem
+on the 3D matrix rotation group. The function to optimize is defined
+as the volume of the box. Because this function is non-differentiable,
+in particular near local optima, traditional optimization methods
+might encounter convergence issues.
+Consequently, Chang et al.'s algorithm employs a combination
+of a derivative-free optimization method, the Nelder-Mead
+simplex method \cgalCite{cgal:nm-smfm-65}, and a metaheuristics method based on
+biological evolution principles to maintain and evolve a population of tentative
+rotation matrices. The purpose of this evolution is to oppose
+a global approach to the local Nelder-Mead optimization,
+enabling the algorithm to explore the search space as much as possible,
+and to find not only a local minimum, but a global optimum.
+
+\subsection OBBOptimality Missing the Optimality
+
+In theory, the genetic algorithms used by Chang et al. enable - given enough time - the algorithm
+to explore the complete search space. In practice, an algorithm does not have
+infinite time at its disposal. In addition, there is no simple way
+to check if the current-best solution is optimal. Thus, an implementation
+of the algorithm cannot provide the same guarantees that the theoretical algorithm offers.
+However, we observe that in practice the algorithm constructs a close approximation
+of the optimal bounding box most of the time.
+
+\subsection OBBConvexHull Convex Hull Computation as Preprocessing
+
+As the bounding box only depends on the convex hull of the object,
+computing its convex hull as a preprocessing step is a good way to reduce
+the number of points in subsequent computations. The computational trade-off
+is developed in more details in Section \ref OBBComplexityPerformance.
+
+\section OBBImplementation Design and Implementation
+
+The computation of the oriented bounding box can be performed by calling the free function
+`CGAL::oriented_bounding_box()`. Convex hull computation is performed using the package \ref PkgConvexHull3,
+and is enabled by default.
+
+\subsection OBBInnOut Input and Output
+
+The input can be a range of 3D points, or a mesh, with a variety of \ref bgl_namedparameters "Named Parameters"
+enabling using further custom inputs.
+
+The result of the algorithm can be retrieved as:
+- the best affine transformation \f${\mathcal R}_b\f$ that the algorithm has found;
+- an array of eight points, representing the best oriented bounding box that
+the algorithm has constructed, which is related to \f$ {\mathcal R}_b\f$ as it is
+the inverse transformation of the axis-aligned bounding box of the transformed input object.
+The order of the points in the array is the same as in the function
+\link PkgBGLHelperFct `CGAL::make_hexahedron()` \endlink,
+which can be used to construct a mesh from these points.
+- a model of `MutableFaceGraph`, a quadrangular mesh representing the oriented bounding box.
+
+\subsection OBBTraitsnKernels Traits and Kernel Choice
+
+The requirements on geometric objects and operations on these objects are described in the traits
+class concept `OrientedBoundingBoxTraits_3`. A model of this concept is provided:
+`CGAL::Oriented_bounding_box_traits_3`.
+
+If the approach using the convex hull is chosen, a kernel offering exact predicates must be
+used to ensure a correct hull. In addition, the eight bounding vertices are constructed
+using the best found affine transformation; consequently, a kernel providing exact construction
+may also be useful.
+
+\section OBBComplexityPerformance Complexity and Performance
+
+A major drawback of the exact algorithm of O’Rourke is its cubic complexity
+and consequent large runtimes. In this section, we investigate the speedup gained
+by preprocessing the input data with a convex hull computation, and show that
+the oriented bounding box algorithm exhibits linear complexity.
+
+Models from the <a href="https://ten-thousand-models.appspot.com/">Thingi10k</a> data set are used
+with speeds being averaged over 100 runs for each model. The machine used is a laptop running Fedora 30
+64-bits, with two 6-core Intel(R) i9-8950HK CPU clocked at 2.90GHz, and with 32GB of RAM. The \cgal
+kernel used is `CGAL::Exact_predicates_inexact_constructions_kernel`.
+
+\subsection OBBConvexHullComplexity Cost and Gain of Convex Hull Computations
+
+Computing the convex hull as a preliminary step provides a significant speed advantage.
+
+\cgalFigureAnchor{ch_speed_up}
+<center>
+<img src="ch_speedup.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{ch_speed_up}
+Computation of the speedup achieved on the total runtime of the algorithm when the convex hull is computed
+and used afterwards. Note that the total runtime includes the construction of the convex hull (when it is used).
+The color and size of the dots represent the number of vertices in the input data (larger, bluer points
+having more input vertices than greener, smaller points).
+Computing the convex hull is beneficial for all but a handful of cases.
+\cgalFigureCaptionEnd
+
+\subsection OBBOrientedBoundingBoxComplexity Performance of the Oriented Bounding Box Algorithm
+
+We analyze in this section the computation time of the algorithm based on the number of vertices
+on the convex hull.
+
+\cgalFigureAnchor{obb_timings}
+<center>
+<img src="obb_time.png" style="max-width:70%;"/>
+</center>
+\cgalFigureCaptionBegin{obb_timings}
+Running times for the oriented bounding box construction of the convex hull of models
+of the <a href="https://ten-thousand-models.appspot.com/">Thingi10k</a> data set.
+The color and size of the dots represent the number of vertices in the input data (larger, bluer points
+having more input vertices than greener, smaller points).
+The algorithm exhibits linear complexity in practice.
+For visibility reasons, the few models whose convex hull has more than 10000 vertices
+are excluded from this graph, but consistent results are observed.
+\cgalFigureCaptionEnd
+
+\section OBBexamples Examples
+
+\subsection OBBBasicExample Basic Example
+
+The following example illustrates a basic usage of the algorithm: an input mesh is read,
+its oriented bounding box is computed using an array as output, and a mesh is constructed
+from the eight points.
+
+\cgalExample{Optimal_bounding_box/obb_example.cpp}
+
+\subsection OBBExampleNP Using Named Parameters
+
+The following example illustrates how to use \ref bgl_namedparameters "Named Parameters"
+to efficiently compute the oriented bounding box of a mesh whose vertices' positions are
+modified on the fly.
+
+\cgalExample{Optimal_bounding_box/obb_with_point_maps_example.cpp}
+
+\subsection OBBRotatedTree Rotated AABB Tree
+
+The following example uses the affine transformation, which is the affine transformation such
+that the axis-aligned bounding box of the transformed vertices of the mesh has minimum volume,
+returned by the algorithm to build a custom vertex point property map. An AABB tree of the (on the fly)
+rotated faces of the mesh is then constructed.
+
+\cgalExample{Optimal_bounding_box/rotated_aabb_tree_example.cpp}
+
+\section OBBHistory Implementation History
+
+A prototype was created by Konstantinos Katrioplas in 2018.
+Mael Rouxel-Labbé worked to speed up and robustify the implementation,
+and to submit the first version of this package.
+
+*/
+} /* namespace CGAL */

@@ -13,9 +13,9 @@ public:
 /// @{
 
 /*!
-returns the ith point defining the sphere \f$ s\f$. 
-*/ 
-bool operator()(const Kernel_d::Sphere_d& s, int i); 
+returns the ith point defining the sphere \f$ s\f$.
+*/
+bool operator()(const Kernel_d::Sphere_d& s, int i);
 
 /// @}
 

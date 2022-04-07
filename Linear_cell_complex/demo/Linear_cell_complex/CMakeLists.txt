@@ -2,17 +2,25 @@
 # This is the CMake script for compiling a CGAL application.
 # cmake ../ -DCMAKE_BUILD_TYPE=Debug
 
-project (Linear_cell_complex_3_demo)
+cmake_minimum_required(VERSION 3.1...3.20)
+project(Linear_cell_complex_Demo)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
 endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
+
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
 
 ## To add expensive tests
 # add_definitions("-DCGAL_CHECK_EXPENSIVE")
+# add_definitions("-Wall -Wextra")
 
 ## For profilling with gprof
 # add_definitions("-pg")
@@ -27,51 +35,46 @@ endif()
 add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
-find_package(CGAL COMPONENTS Qt4)
-include(${CGAL_USE_FILE})
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL Svg)
 
-find_package(OpenGL)
-find_package(QGLViewer)
+if(NOT
+   (CGAL_Qt5_FOUND
+    AND Qt5_FOUND))
 
-if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND
-      OPENGL_FOUND AND QGLVIEWER_FOUND) )
-
-  MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL "
-    "and Qt4, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, "
+                 "and Qt5, and will not be compiled.")
 
 else()
 
-include(${QT_USE_FILE})
-include_directories(${QGLVIEWER_INCLUDE_DIR})
-include_directories(BEFORE . ../../include/)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 
-# ui file, created wih Qt Designer
-qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui)
+  # ui file, created wih Qt Designer
+  qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
+              CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
 
-# qrc files (resources files, that contain icons, at least)
-qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
+  # qrc files (resources files, that contain icons, at least)
+  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
-qt4_automoc(MainWindow.cpp Viewer.cpp)
+  add_executable(
+    Linear_cell_complex_3_demo
+    Linear_cell_complex_3_demo.cpp
+    MainWindow.cpp
+    Viewer.cpp
+    Linear_cell_complex_3_subdivision.cpp
+    Linear_cell_complex_pqq_subdivision.cpp
+    typedefs.h
+    import_moka.h
+    ${uis}
+    ${CGAL_Qt5_RESOURCE_FILES}
+    ${CGAL_Qt5_MOC_FILES})
 
-add_executable(Linear_cell_complex_3_demo
-  Linear_cell_complex_3_demo.cpp MainWindow.cpp
-  Viewer.cpp Linear_cell_complex_3_subdivision.cpp
-  Linear_cell_complex_pqq_subdivision.cpp
-  ${uis} ${RESOURCE_FILES} )
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
-add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
+  target_link_libraries(Linear_cell_complex_3_demo
+                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL)
 
-target_link_libraries(Linear_cell_complex_3_demo ${CGAL_LIBRARIES}
-                                                 ${CGAL_3RD_PARTY_LIBRARIES})
-target_link_libraries(Linear_cell_complex_3_demo ${QT_LIBRARIES}
-                                                 ${QGLVIEWER_LIBRARIES} )
-target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY}
-                                                 ${OPENGL_glu_LIBRARY} )
-
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Linear_cell_complex_3_demo)
 endif()

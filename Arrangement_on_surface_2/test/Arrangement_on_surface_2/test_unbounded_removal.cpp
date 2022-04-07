@@ -1,12 +1,12 @@
 // Testing the removal function, covering all possible scenarios.
 
 #include <vector>
+#include <iostream>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 
 typedef CGAL::Exact_rational                            Number_type;
 typedef CGAL::Cartesian<Number_type>                    Kernel;
@@ -158,4 +158,3 @@ int main()
 
   return 0;
 }
-

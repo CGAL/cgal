@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <cassert>
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/Random.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_options.h>
@@ -29,8 +29,8 @@ CGAL::Comparison_result random_rel()
   return CGAL::Comparison_result(z);
 }
 
-void statistics (const Solution& s, 
-		 unsigned int& o, unsigned int& i, unsigned int& u)
+void statistics (const Solution& s,
+                 unsigned int& o, unsigned int& i, unsigned int& u)
 {
     switch (s.status()) {
     case CGAL::QP_OPTIMAL:
@@ -65,7 +65,7 @@ int tries = 5000;
 int max_dim = 11; // must be >1
 int max_entry = 11; // must be >0
 
-int main() {  
+int main() {
   // print seed
   std::cout << "Random seed: " << rd.get_seed() << std::endl;
 
@@ -83,10 +83,10 @@ int main() {
     int k = rd.get_int (1, 2*n); // number of rows of C
     std::vector<std::vector<int> > C (k, std::vector<int>(n, 0));
     for (int j=0; j<k+n; ++j)  // sparse C
-      C[rd.get_int(0, k)][rd.get_int(0,n)] = 
-	rd.get_int(-max_entry, max_entry);
+      C[rd.get_int(0, k)][rd.get_int(0,n)] =
+        rd.get_int(-max_entry, max_entry);
 
-    // now fill the program 
+    // now fill the program
     Program p;
     // A
     for (int j=0; j<n+m; ++j)
@@ -100,59 +100,59 @@ int main() {
     for (int j=0; j<n; ++j) {
       double l = rd.get_double();
       double u = rd.get_double();
-      if (l > u) std::swap (l, u); 
+      if (l > u) std::swap (l, u);
       p.set_l(j, rd.get_bool(), l);
       p.set_u(j, rd.get_bool(), u);
     }
     // D
     for (int i=0; i<n; ++i)
       for (int j=0; j<=i; ++j) {
-	double entry = 0;
-	for (int l=0; l<k; ++l) 
-	  entry += C[l][i] * C[l][j];
-	p.set_d(i, j, entry);
+        double entry = 0;
+        for (int l=0; l<k; ++l)
+          entry += C[l][i] * C[l][j];
+        p.set_d(i, j, entry);
       }
     // c
     for (int j=0; j<n/2; ++j)
       p.set_c (rd.get_int(0, n), rd.get_double());
     // c0
     p.set_c0(rd.get_double());
-    
+
     // solve it
     Solution s = CGAL::solve_quadratic_program (p, ET(), options);
     assert(s.is_valid());
     statistics (s, qp_optimal, qp_infeasible, qp_unbounded);
 
     // also solve it as nqp, lp, nlp
-    s = CGAL::solve_nonnegative_quadratic_program (p, ET(), options); 
+    s = CGAL::solve_nonnegative_quadratic_program (p, ET(), options);
     assert(s.is_valid());
     statistics (s, nqp_optimal, nqp_infeasible, nqp_unbounded);
-    s = CGAL::solve_linear_program (p, ET(), options);    
-    assert(s.is_valid()); 
+    s = CGAL::solve_linear_program (p, ET(), options);
+    assert(s.is_valid());
     statistics (s, lp_optimal, lp_infeasible, lp_unbounded);
-    s = CGAL::solve_nonnegative_linear_program (p, ET(), options);   
-    assert(s.is_valid());  
+    s = CGAL::solve_nonnegative_linear_program (p, ET(), options);
+    assert(s.is_valid());
     statistics (s, nlp_optimal, nlp_infeasible, nlp_unbounded);
   }
-  
+
   // output statistics
-  std::cout << "Solved " << tries 
-	    << " random QP / NQP  / LP / NLP .\n"
-	    << " Optimal:    " 
-	    << qp_optimal << " / " 
-	    << nqp_optimal << " / " 
-	    << lp_optimal << " / " 
-	    << nlp_optimal << "\n"
-	    << " Infeasible: "
-	    << qp_infeasible << " / " 
-	    << nqp_infeasible << " / " 
-	    << lp_infeasible << " / " 
-	    << nlp_infeasible << "\n"
-	    << " Unbounded:  "
-	    << qp_unbounded << " / " 
-	    << nqp_unbounded << " / " 
-	    << lp_unbounded << " / " 
-	    << nlp_unbounded << std::endl;
+  std::cout << "Solved " << tries
+            << " random QP / NQP  / LP / NLP .\n"
+            << " Optimal:    "
+            << qp_optimal << " / "
+            << nqp_optimal << " / "
+            << lp_optimal << " / "
+            << nlp_optimal << "\n"
+            << " Infeasible: "
+            << qp_infeasible << " / "
+            << nqp_infeasible << " / "
+            << lp_infeasible << " / "
+            << nlp_infeasible << "\n"
+            << " Unbounded:  "
+            << qp_unbounded << " / "
+            << nqp_unbounded << " / "
+            << lp_unbounded << " / "
+            << nlp_unbounded << std::endl;
 
   return 0;
 }

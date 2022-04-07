@@ -26,14 +26,14 @@
 // ============================================================================
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/Polyhedron_items_3.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 
 #include <cassert>
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 struct Dummy_traits_2 {
     typedef Kernel::Point_2 Point_2;
 };
@@ -91,7 +91,7 @@ void test_HalfedgeDS_decorator() {
     decorator.split_vertex( g2, g->opposite());
     assert( decorator.is_valid( false, 4));
     assert( g->next()->next()->next()->next() == g);
-    Halfedge_handle g3 = 
+    Halfedge_handle g3 =
         decorator.split_face( g2->next()->opposite(), h);
     assert( decorator.is_valid( false, 4));
     assert( g->next()->next()->next()->next() == g);
@@ -211,7 +211,7 @@ void test_HalfedgeDS_decorator2() {
     hds.normalize_border();
     assert( decorator.is_valid( false, 4));
     assert( g->next()->next()->next()->next() == g);
-    Halfedge_handle g3 = 
+    Halfedge_handle g3 =
         decorator.split_face( g2->next()->opposite(), h);
     hds.normalize_border();
     assert( decorator.is_valid( false, 4));

@@ -2,31 +2,26 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel <efif@post.tau.ac.il>
-//                 Ron Wein  <wein@post.tau.ac.il>
-//                 (based on old version by: Iddo Hanniel,
-//                                           Eyal Flato,
-//                                           Oren Nechushtan,
-//                                           Ester Ezra,
-//                                           Shai Hirsch,
-//                                           and Eugene Lipovetsky)
+// Author(s): Efi Fogel <efif@post.tau.ac.il>
+//            Ron Wein  <wein@post.tau.ac.il>
+//            (based on old version by: Iddo Hanniel,
+//                                      Eyal Flato,
+//                                      Oren Nechushtan,
+//                                      Ester Ezra,
+//                                      Shai Hirsch,
+//                                      and Eugene Lipovetsky)
 
 #ifndef CGAL_ARR_NON_CACHING_SEGMENT_BASIC_TRAITS_2_H
 #define CGAL_ARR_NON_CACHING_SEGMENT_BASIC_TRAITS_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file The basic non-caching segment traits-class for the arrangement
  * package. This traits class handles x-monotone non-intersecting segments.
@@ -58,8 +53,8 @@ public:
   typedef typename Kernel::FT                   FT;
 
 private:
-  typedef Algebraic_structure_traits<FT> AST; 
-  typedef typename AST::Is_exact FT_is_exact; 
+  typedef Algebraic_structure_traits<FT> AST;
+  typedef typename AST::Is_exact FT_is_exact;
 public:
 
   typedef Boolean_tag<FT_is_exact::value> Has_exact_division;
@@ -71,16 +66,16 @@ public:
   // Categories:
   typedef Tag_true                              Has_left_category;
   typedef Tag_false                             Has_do_intersect_category;
- 
+
   typedef Arr_oblivious_side_tag                Left_side_category;
   typedef Arr_oblivious_side_tag                Bottom_side_category;
   typedef Arr_oblivious_side_tag                Top_side_category;
   typedef Arr_oblivious_side_tag                Right_side_category;
-    
+
   /*! Default Constructor */
   Arr_non_caching_segment_basic_traits_2()
   {}
-  
+
   /// \name Types and functor inherited from the kernel
   //@{
 
@@ -100,13 +95,13 @@ public:
 
   /*! Obtain the right endpoint of a given segment */
   typedef typename Kernel::Construct_max_vertex_2  Construct_max_vertex_2;
-  
+
   /*! Check whether a given segment is vertical */
   typedef typename Kernel::Is_vertical_2           Is_vertical_2;
-  
+
   /*! Return the location of a given point with respect to an input segment */
   typedef typename Kernel::Compare_y_at_x_2        Compare_y_at_x_2;
-  
+
   /*! Check if two segments or if two points are identical */
   typedef typename Kernel::Equal_2                 Equal_2;
 
@@ -115,13 +110,13 @@ public:
   /// \name Functor introduced here (based on the kernel)
   //@{
 
-  /*! \class 
-   * A functor for comparing two segments to the left of a point 
+  /*! \class
+   * A functor for comparing two segments to the left of a point
    */
   class Compare_y_at_x_left_2 {
   public:
-    
-    /* 
+
+    /*
      * Compare the y value of two segments immediately to the left of their
      * intersection point.
      * \param cv1 The first segment.
@@ -132,9 +127,9 @@ public:
      * \return The relative position of cv1 with respect to cv2 immdiately to
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
-    Comparison_result operator()(const X_monotone_curve_2 & cv1,
-                                 const X_monotone_curve_2 & cv2,
-                                 const Point_2 & p) const
+    Comparison_result operator()(const X_monotone_curve_2& cv1,
+                                 const X_monotone_curve_2& cv2,
+                                 const Point_2& CGAL_precondition_code(p)) const
     {
       Kernel kernel;
 
@@ -156,10 +151,10 @@ public:
         const Point_2 & left2 =
           (kernel.less_xy_2_object()(source2, target2)) ? source2 : target2;
         );
-      
+
       CGAL_precondition(compare_xy(left1, p) == SMALLER &&
                         compare_xy(left2, p) == SMALLER);
-    
+
       // Compare the slopes of the two segments to determine thir relative
       // position immediately to the left of q.
       // Notice that we swap the order of the curves in order to obtain the
@@ -173,14 +168,14 @@ public:
   {
     return Compare_y_at_x_left_2();
   }
-  
+
   /*! \class
-   * A functor for comparing two segments to the right of a point. 
+   * A functor for comparing two segments to the right of a point.
    */
   class Compare_y_at_x_right_2 {
   public:
-    
-    /*! 
+
+    /*!
      * Compare the y value of two segments immediately to the right of their
      * intersection point.
      * \param cv1 The first segment.
@@ -194,7 +189,7 @@ public:
 
     Comparison_result operator()(const X_monotone_curve_2 & cv1,
                                  const X_monotone_curve_2 & cv2,
-                                 const Point_2 & p) const
+                                 const Point_2 & CGAL_precondition_code(p)) const
     {
       Kernel kernel;
 
@@ -246,7 +241,7 @@ public:
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an 
+     * \return An approximation of p's x-coordinate (if i == 0), or an
      *         approximation of p's y-coordinate (if i == 1).
      */
     Approximate_number_type operator() (const Point_2& p,
@@ -255,9 +250,9 @@ public:
       CGAL_precondition (i == 0 || i == 1);
 
       if (i == 0)
-	return (CGAL::to_double(p.x()));
+        return (CGAL::to_double(p.x()));
       else
-	return (CGAL::to_double(p.y()));
+        return (CGAL::to_double(p.y()));
     }
   };
 
@@ -278,5 +273,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

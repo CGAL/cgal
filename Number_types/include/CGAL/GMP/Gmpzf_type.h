@@ -1,19 +1,11 @@
 // Copyright (c) 1997-2001  ETH Zurich (Switzerland).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
@@ -23,6 +15,7 @@
 
 // includes
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/gmp.h>
 #include <mpfr.h>
@@ -168,7 +161,7 @@ public:
     int exp;
     double x = std::frexp(d, &exp); // x in [1/2, 1], x*2^exp = d
     mpz_init_set_d (man(), // to the following integer:
-		    std::ldexp( x, p));
+                    std::ldexp( x, p));
     e = exp - p;
     canonicalize();
   }
@@ -200,7 +193,7 @@ private:
   void canonicalize();
   bool is_canonical() const;
   static void align ( const mpz_t*& a_aligned, const mpz_t*& b_aligned,
-		     Exponent& rexp, const Gmpzf& a, const Gmpzf& b);
+                     Exponent& rexp, const Gmpzf& a, const Gmpzf& b);
 };
 
 
@@ -401,7 +394,7 @@ double Gmpzf::to_double() const
 {
   Exponent k;                                 // exponent
   double l = mpz_get_d_2exp (&k, man());      // mantissa in [0.5,1)
-  return std::ldexp(l, k+exp());
+  return std::ldexp(l, static_cast<int>(k+exp()));
 }
 
 
@@ -421,7 +414,7 @@ std::pair<std::pair<double, double>, long> Gmpzf::to_interval_exp() const
   // get surrounding interval of the form [l * 2 ^ k, u * 2^ k]
   // first get mantissa in the form l*2^k, with 0.5 <= d < 1;
   // truncation is guaranteed to go towards zero
-  long k = 0;
+  Exponent k = 0;
   double l = mpz_get_d_2exp (&k, man());
   // l = +/- 0.1*...*
   //           ------
@@ -447,7 +440,7 @@ std::pair<double, double> Gmpzf::to_interval() const
   std::pair<std::pair<double, double>, long> lue = to_interval_exp();
   double l = lue.first.first;
   double u = lue.first.second;
-  long k = lue.second;
+  int k = static_cast<int>(lue.second);
   return std::pair<double,double> (std::ldexp (l, k), std::ldexp (u, k));
 }
 
@@ -481,10 +474,11 @@ bool Gmpzf::is_canonical() const
 // it uses the static s to store the shifted number
 inline
 void Gmpzf::align ( const mpz_t*& a_aligned,
-			   const mpz_t*& b_aligned,
-			   Exponent& rexp,
-			   const Gmpzf& a, const Gmpzf& b) {
-  static Gmpz s;
+                           const mpz_t*& b_aligned,
+                           Exponent& rexp,
+                           const Gmpzf& a, const Gmpzf& b) {
+  CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Gmpz, s);
+
   switch (CGAL_NTS compare (b.exp(), a.exp())) {
   case SMALLER:
     {
@@ -580,10 +574,10 @@ bool operator>(const Gmpzf &a, int b)
 }
 
 inline Gmpzf min BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpzf& x,const Gmpzf& y){
-  return (x<=y)?x:y; 
+  return (x<=y)?x:y;
 }
 inline Gmpzf max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpzf& x,const Gmpzf& y){
-  return (x>=y)?x:y; 
+  return (x>=y)?x:y;
 }
 
 } //namespace CGAL

@@ -1,93 +1,79 @@
 # This is the CMake script for compiling this folder.
 
-
-project( Surface_mesh_parameterization_example )
-
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
-endif()
-
-# Require packages new or improved since CGAL 3.4
-include_directories (BEFORE ../../../Installation/include/)
-
-# Include this package's headers first
-include_directories (BEFORE . include ../../include)
+cmake_minimum_required(VERSION 3.1...3.22)
+project(Surface_mesh_parameterization_Examples)
 
 # Find CGAL
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL REQUIRED)
 
-if ( CGAL_FOUND )
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
+  # Executables that require Eigen 3.1
 
-  include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
+  # ------------------------------------------------------------------
+  # Detect SuiteSparse libraries:
+  # If not found automatically, set SuiteSparse_DIR in CMake to the
+  # directory where SuiteSparse was built.
+  # ------------------------------------------------------------------
 
-  # VisualC++ optimization for applications dealing with large data
-  if (MSVC)
-    # Use /FR to turn on IntelliSense
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
+  set(SuiteSparse_USE_LAPACK_BLAS ON)
+  find_package(SuiteSparse QUIET NO_MODULE
+  )# 1st: Try to locate the *config.cmake file.
+  if(NOT SuiteSparse_FOUND)
+    set(SuiteSparse_VERBOSE ON)
+    find_package(SuiteSparse QUIET) # 2nd: Use FindSuiteSparse.cmake module
+    if(SuiteSparse_FOUND)
+      include_directories(${SuiteSparse_INCLUDE_DIRS})
+    endif(SuiteSparse_FOUND)
+  else(NOT SuiteSparse_FOUND)
+    include(${USE_SuiteSparse})
+  endif(NOT SuiteSparse_FOUND)
 
-    # Allow Windows applications to use up to 3GB of RAM
-    SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
-
-    # Turn off stupid VC++ warnings
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396 /wd4018")
-    
-    # Print new compilation options
-    message( STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'" )
-    message( STATUS "USING DEBUG EXEFLAGS   = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_DEBUG}'" )
-    message( STATUS "USING RELEASE CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}'" )
-    message( STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'" )
-  endif()
-
-  # g++ 4.1 creates an infinite loop in Surface_mesh_parameterization
-  # if strict-aliasing optimization is on (implied by -O2, -O3 and -Os).
-  if (CMAKE_COMPILER_IS_GNUCXX)
-    SET (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fno-strict-aliasing")
-    SET (CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG}   -fno-strict-aliasing")
-
-    # Print new compilation options
-    string( TOUPPER "${CMAKE_BUILD_TYPE}" CGAL_BUILD_TYPE_UPPER )
-    message( STATUS "USING CXXFLAGS = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
-    message( STATUS "USING EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_${CGAL_BUILD_TYPE_UPPER}}'" )
-  endif()
-
-  # Link with Boost.ProgramOptions (optional)
-  find_package(Boost QUIET COMPONENTS program_options)
-  if(Boost_PROGRAM_OPTIONS_FOUND)
-    if( CGAL_AUTO_LINK_ENABLED )
-      message( STATUS "Boost.ProgramOptions library: found" )
+  if(SuiteSparse_FOUND)
+    if(SuiteSparse_UMFPACK_FOUND)
+      message(STATUS "SuiteSparse_LIBS: ${SuiteSparse_LIBRARIES}")
+      message(STATUS "Orbifold Tutte Embeddings will use UmfPackLU")
+      add_definitions(-DEIGEN_DONT_ALIGN_STATICALLY)
+      add_definitions(-DCGAL_SMP_USE_SPARSESUITE_SOLVERS)
     else()
-      message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
+      message(
+        STATUS
+          "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library and UmfPack. Try setting SuiteSparse_UMF_INCLUDE_DIR and at least one of SuiteSparse_UMFPACK_LIBRARY_RELEASE and SuiteSparse_UMFPACK_LIBRARY_DEBUG to you UMFPACK installation."
+      )
     endif()
-    add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-    list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
- endif()
+  else(SuiteSparse_FOUND)
+    message(
+      STATUS
+        "NOTICE: The example `orbifold.cpp` will be compiled without the Sparsesuite library."
+    )
+  endif(SuiteSparse_FOUND)
 
-  # Executables that do *not* require Eigen
-  create_single_source_cgal_program( "Authalic_parameterization.cpp" )
-  create_single_source_cgal_program( "Mesh_cutting_parameterization.cpp" )
-  create_single_source_cgal_program( "Simple_parameterization.cpp" )
-  create_single_source_cgal_program( "Square_border_parameterization.cpp" )
+  # ------------------------------------------------------------------
+  #   End of SuiteSparse detection
+  # ------------------------------------------------------------------
 
-  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
- 
-  if (EIGEN3_FOUND)
-    # Executables that require Eigen 3.1
-    include( ${EIGEN3_USE_FILE} )
-    create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
-    create_single_source_cgal_program( "Eigen_parameterization.cpp" )
-  else(EIGEN3_FOUND)
-    message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater) and will not be compiled.")  
-  endif(EIGEN3_FOUND)
-
-  create_single_source_cgal_program( "polyhedron_ex_parameterization.cpp" )
+  create_single_source_cgal_program("discrete_authalic.cpp")
+  target_link_libraries(discrete_authalic PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("lscm.cpp")
+  target_link_libraries(lscm PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("orbifold.cpp")
+  target_link_libraries(orbifold PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("seam_Polyhedron_3.cpp")
+  target_link_libraries(seam_Polyhedron_3 PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("simple_parameterization.cpp")
+  target_link_libraries(simple_parameterization PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("square_border_parameterizer.cpp")
+  target_link_libraries(square_border_parameterizer PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program( "iterative_authalic_parameterizer.cpp" )
+  target_link_libraries(iterative_authalic_parameterizer PUBLIC CGAL::Eigen3_support)
+  if(SuiteSparse_FOUND)
+    target_link_libraries(orbifold PRIVATE ${SuiteSparse_LIBRARIES})
+  endif()
 
 else()
-
-  message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-
+  message(
+    STATUS
+      "NOTICE: The examples require Eigen 3.1 (or greater) and will not be compiled."
+  )
 endif()
-

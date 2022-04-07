@@ -2,23 +2,18 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_FACE_BASE_2_H
+
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
 
 #include <CGAL/basic.h>
 #include <CGAL/triangulation_assertions.h>
@@ -35,6 +30,7 @@ class Periodic_2_triangulation_face_base_2
 {
   typedef Fb                                            Base;
   typedef typename Base::Triangulation_data_structure   Tds;
+
 public:
   typedef Gt                                            Geom_traits;
   typedef Tds                                           Triangulation_data_structure;

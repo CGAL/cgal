@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-#include <CGAL/AABB_intersections.h> 
+#include <CGAL/intersections.h>
 #include "types.h"
 #include "Color_ramp.h"
 
@@ -16,9 +16,41 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <QtCore/qglobal.h>
-#include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+#include <QMap>
+#include <CGAL/Qt/manipulatedFrame.h>
+#include <CGAL/Qt/qglviewer.h>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
 
+class Texture{
+private:
+     int Width;
+     int Height;
+     int size;
+    GLubyte *data;
+public:
+    Texture(int w, int h)
+    {
+        Width = w;
+        Height = h;
+        size = 3*Height*Width;
+        data = new GLubyte[Height*Width*3];
+    }
+    int getWidth() const {return Width;}
+    int getHeight() const {return Height;}
+    int getSize() const {return size;}
+    void setData(int i, int j, int r, int g, int b){
+        data[3*(Width*j+i) + 0] = r;
+        data[3*(Width*j+i) + 1] = g;
+        data[3*(Width*j+i) + 2] = b;
+    }
+
+    GLubyte* getData(){return data; }
+
+};
+class Viewer;
 class Scene : public QObject
 {
     Q_OBJECT
@@ -28,35 +60,40 @@ public:
 public:
     // types
     typedef CGAL::Bbox_3 Bbox;
-    
+
 private:
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>         Facet_Primitive;
     typedef CGAL::AABB_traits<Kernel, Facet_Primitive>                  Facet_Traits;
     typedef CGAL::AABB_tree<Facet_Traits>                               Facet_tree;
-  
+
     typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron>     Edge_Primitive;
     typedef CGAL::AABB_traits<Kernel, Edge_Primitive>                   Edge_Traits;
     typedef CGAL::AABB_tree<Edge_Traits>                                Edge_tree;
-    
-    typedef qglviewer::ManipulatedFrame ManipulatedFrame;
-    
+
+    typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
+
     enum Cut_planes_types {
         NONE, UNSIGNED_FACETS, SIGNED_FACETS, UNSIGNED_EDGES, CUT_SEGMENTS
     };
-  
+
 public:
-    void draw(); 
+    QGLContext* context;
+    void draw(CGAL::QGLViewer*);
     void update_bbox();
     Bbox bbox() { return m_bbox; }
     ManipulatedFrame* manipulatedFrame() const { return m_frame; }
+    void initGL();
 
 private:
     // member data
+    QOpenGLFunctions *gl;
     Bbox m_bbox;
     Polyhedron *m_pPolyhedron;
     std::list<Point> m_points;
     std::list<Segment> m_segments;
     std::vector<Segment> m_cut_segments;
+    bool ready_to_cut;
+    bool gl_init;
 
     // distance functions (simple 2D arrays)
     Color_ramp m_red_ramp;
@@ -65,7 +102,7 @@ private:
     FT m_max_distance_function;
     typedef std::pair<Point,FT> Point_distance;
     Point_distance m_distance_function[100][100];
-  
+
     // frame
     ManipulatedFrame* m_frame;
     bool m_view_plane;
@@ -75,9 +112,10 @@ private:
     // An aabb_tree indexing polyhedron facets/segments
     Facet_tree m_facet_tree;
     Edge_tree m_edge_tree;
-    
+
     Cut_planes_types m_cut_plane;
-  
+    bool are_buffers_initialized;
+
 private:
     // utility functions
     Vector random_vector();
@@ -94,22 +132,59 @@ private:
     void build_edge_tree();
     void clear_internal_data();
     void update_grid_size();
-    
+
     template <typename Tree>
     void compute_distance_function(const Tree& tree);
-    
+
     template <typename Tree>
     void sign_distance_function(const Tree& tree);
+
+    //Shaders elements
+
+    int poly_vertexLocation;
+    int tex_Location;
+    int points_vertexLocation;
+    int lines_vertexLocation;
+    int mvpLocation;
+    int tex_mvpLocation;
+    int fLocation;
+    int tex_fLocation;
+    int colorLocation;
+
+
+
+    std::vector<float> pos_points;
+    std::vector<float> pos_grid;
+    std::vector<float> pos_lines;
+    std::vector<float> pos_poly;
+    std::vector<float> pos_plane;
+    std::vector<float> pos_cut_segments;
+    std::vector<float> tex_map;
+    GLuint textureId;
+
+    Texture *texture;
+    GLint sampler_location;
+    QOpenGLBuffer buffers[10];
+    QOpenGLVertexArrayObject vao[10];
+    QOpenGLShaderProgram tex_rendering_program;
+    QOpenGLShaderProgram rendering_program;
+    void initialize_buffers();
+    void compute_elements(int mode);
+    void attrib_buffers(CGAL::QGLViewer*);
+    void compile_shaders();
+    void compute_texture(int, int, Color_ramp, Color_ramp);
+private slots:
+    void updateCutPlane();
 
 public:
     // file menu
     int open(QString filename);
 
     // edit menu
-    void clear_points() { m_points.clear(); }
-    void clear_segments() { m_segments.clear(); }
+    void clear_points() { m_points.clear(); changed(); }
+    void clear_segments() { m_segments.clear(); changed(); }
     void clear_cutting_plane();
-    
+
     // fast distance setter
     void set_fast_distance(bool b) { m_fast_distance = b; update_grid_size(); }
 
@@ -119,13 +194,13 @@ public:
     void generate_boundary_points(const unsigned int nb_points);
     void generate_boundary_segments(const unsigned int nb_slices);
     void generate_points_in(const unsigned int nb_points,
-        const double min, const double max);
+        const double vmin, const double vmax);
 
     // algorithms/refine
     void refine_loop();
     void refine_bisection(const FT max_sqlen);
 
-    // distance functions 
+    // distance functions
     void signed_distance_function();
     void unsigned_distance_function();
     void unsigned_distance_function_to_edges();
@@ -142,7 +217,7 @@ public:
     bool m_view_segments;
     bool m_view_polyhedron;
 
-    // benchmarks 
+    // benchmarks
     enum {DO_INTERSECT,
         ANY_INTERSECTION,
         NB_INTERSECTIONS,
@@ -174,22 +249,16 @@ public:
     void bench_closest_point_and_primitive(Facet_tree& tree,const double duration);
     void bench_distance(Facet_tree& tree,const int function,const double duration);
 
-    // drawing
-    void draw_points();
-    void draw_segments();
-    void draw_polyhedron();
-    void draw_distance_function(const Color_ramp& ramp_pos,
-                                const Color_ramp& ramp_neg) const;
-    void draw_cut_segment_plane() const;
-  
     // cutting plane activation/deactivation
     void activate_cutting_plane();
     void deactivate_cutting_plane();
-  
+
+
+
 public slots:
     // cutting plane
-    void cutting_plane();
-  
+    void cutting_plane(bool override = false);
+    void changed();
 }; // end class Scene
 
 #endif // SCENE_H

@@ -2,40 +2,33 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgNef2
+\ingroup PkgNef2Ref
 
-The class `Extended_homogeneous` serves as a traits class for the class 
-`Nef_polyhedron_2<T>`. It uses a polynomial component 
-representation based on a Euclidean ring number type `RT`. 
+The class `Extended_homogeneous` serves as a traits class for the class
+`Nef_polyhedron_2<T>`. It uses a polynomial component
+representation based on a Euclidean ring number type `RT`.
 
 \cgalModels `ExtendedKernelTraits_2`
 
-\cgalHeading{Requirements}
 
-To make an Euclidean ring number type 
-`RT_model` work with this class the number type must support 
-a gcd computation in namespace `CGAL::NTS`. \cgal provides 
-a function template for this, which will be used by default when 
-your number type is not one of the built-in number types, one of 
-the number types distrubuted with \cgal or one of the \leda 
-number types. 
+\tparam RT  must be a model of `RingNumberType`.
 
 
-\sa `CGAL::Extended_cartesian<FT>` 
-\sa `CGAL::Filtered_extended_homogeneous<RT>` 
+\sa `CGAL::Extended_cartesian<FT>`
+\sa `CGAL::Filtered_extended_homogeneous<RT>`
 
 */
 template< typename RT >
 class Extended_homogeneous {
 public:
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-default constructor. 
-*/ 
-Extended_homogeneous(); 
+default constructor.
+*/
+Extended_homogeneous();
 
 /// @}
 

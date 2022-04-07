@@ -1,5 +1,6 @@
 #include <fstream>
-
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Stream_lines_2.h>
@@ -20,7 +21,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
- 
+#include <CGAL/IO/WKT.h>
 // the two base classes
 #include "ui_Stream_lines_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -44,16 +45,16 @@ class MainWindow :
   public Ui::Stream_lines_2
 {
   Q_OBJECT
-  
-private:  
+
+private:
   Stream_lines * stream_lines;
   Runge_kutta_integrator * runge_kutta_integrator;
   Regular_grid * regular_grid;
   double density;
   double ratio;
   double integrating;
-  int sampling;  
-  QGraphicsScene scene;  
+  int sampling;
+  QGraphicsScene scene;
 
   CGAL::Qt::StreamLinesGraphicsItem<Stream_lines,K> * sli;
   CGAL::Qt::RegularGridVectorFieldGraphicsItem<Regular_grid,K> * rgi;
@@ -61,7 +62,7 @@ private:
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void on_actionLoadPoints_triggered();
 
@@ -69,13 +70,14 @@ public slots:
 
   void on_actionSavePoints_triggered();
 
-  void on_actionGenerate_triggered();
-
   void on_actionRecenter_triggered();
 
   virtual void open(QString fileName);
 
-signals:
+private:
+  void generate();
+
+Q_SIGNALS:
   void changed();
 };
 
@@ -91,8 +93,8 @@ MainWindow::MainWindow()
   // Manual handling of actions
   //
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   //
   // Setup the scene and the view
@@ -102,8 +104,8 @@ MainWindow::MainWindow()
   this->graphicsView->setScene(&scene);
 
   // Turn the vertical axis upside down
-  this->graphicsView->matrix().scale(1, -1);
-                                                      
+  this->graphicsView->transform().scale(1, -1);
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -115,15 +117,15 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
 
-/* 
+/*
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
- * 
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -132,12 +134,12 @@ MainWindow::MainWindow()
 void
 MainWindow::on_actionClear_triggered()
 {
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
 void
-MainWindow::on_actionGenerate_triggered()
+MainWindow::generate()
 {
   stream_lines = new Stream_lines(*regular_grid, *runge_kutta_integrator, density, ratio, sampling);
 
@@ -145,7 +147,7 @@ MainWindow::on_actionGenerate_triggered()
   rgi = new CGAL::Qt::RegularGridVectorFieldGraphicsItem<Regular_grid, K>(regular_grid);
 
   QObject::connect(this, SIGNAL(changed()),
-		   sli, SLOT(modelChanged()));
+                   sli, SLOT(modelChanged()));
 
 
   rgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -155,7 +157,7 @@ MainWindow::on_actionGenerate_triggered()
   scene.addItem(rgi);
 
   on_actionRecenter_triggered();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 
@@ -164,8 +166,10 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open grid file"),
-						  ".");
+                                                  tr("Open grid file"),
+                                                  "."
+                                                ,tr("WKT files (*.wkt *.WKT)")
+                                                  );
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -182,41 +186,78 @@ MainWindow::open(QString fileName)
   runge_kutta_integrator = new Runge_kutta_integrator(integrating);
   double iXSize, iYSize;
   iXSize = iYSize = 512;
-  unsigned int x_samples, y_samples;
-  ifs >> x_samples;
-  ifs >> y_samples;
-  regular_grid = new Regular_grid(x_samples, y_samples, iXSize, iYSize);
-  /*fill the grid with the appropreate values*/
-  for (unsigned int i=0;i<x_samples;i++)
-    for (unsigned int j=0;j<y_samples;j++)
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+    std::vector<std::vector<Point_2> > mp;
+    int size= -1;
+    do
+    {
+      std::vector<Point_2> ps;
+      CGAL::IO::read_multi_point_WKT(ifs, ps);
+      if(size == -1)
+        size = static_cast<int>(ps.size());
+      else if(ps.size() > 0 && size != static_cast<int>(ps.size()))
+        ps.resize(size);
+      else if(ps.size() == 0)
+        continue;
+      mp.push_back(ps);
+    }while(ifs.good() && !ifs.eof());
+    regular_grid = new Regular_grid(size, static_cast<int>(mp.size()), iXSize, iYSize);
+    /*fill the grid with the appropriate values*/
+    for (unsigned int i=0;i<static_cast<unsigned int>(size);++i)
+      for (unsigned int j=0;j<mp.size();++j)
+      {
+        regular_grid->set_field(i, j, Vector(mp[j][i].x(), mp[j][i].y()));
+      }
+  }
+  else{
+    unsigned int x_samples, y_samples;
+    ifs >> x_samples;
+    ifs >> y_samples;
+    regular_grid = new Regular_grid(x_samples, y_samples, iXSize, iYSize);
+    /*fill the grid with the appropriate values*/
+    for (unsigned int i=0;i<x_samples;i++)
+      for (unsigned int j=0;j<y_samples;j++)
       {
         double xval, yval;
         ifs >> xval;
         ifs >> yval;
         regular_grid->set_field(i, j, Vector(xval, yval));
       }
+  }
   ifs.close();
   // default cursor
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
-  //  actionRecenter->trigger();
-  on_actionGenerate_triggered();
-  emit(changed());
-    
+  generate();
+  Q_EMIT( changed());
+
 }
 
 void
 MainWindow::on_actionSavePoints_triggered()
 {
-  /*
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
-						  ".");
+                                                  tr("Save points"),
+                                                  ".",
+                                                  tr("WKT files (*.wkt *.WKT)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-  
+
+    std::vector<std::vector<Point_2> >mp;
+    mp.resize(regular_grid->get_dimension().second);
+    for (int i=0;i<regular_grid->get_dimension().first;++i)
+    {
+      mp[i].reserve(regular_grid->get_dimension().second);
+      for (int j=0;j<regular_grid->get_dimension().second;++j)
+      {
+        mp[i].push_back(Point_2(regular_grid->get_field(j,i).x(),
+                                regular_grid->get_field(j,i).y()));
+      }
+      CGAL::IO::write_multi_point_WKT(ofs, mp[i]);
+    }
+    ofs.close();
   }
-  */
 }
 
 
@@ -224,11 +265,10 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(rgi->boundingRect());
-  this->graphicsView->fitInView(rgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(rgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 
-#include "Stream_lines_2.moc"
 #include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
@@ -239,12 +279,14 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Stream_lines_2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGAL (Qt5).
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Stream_lines_2);
 
   MainWindow mainWindow;
   mainWindow.show();
   return app.exec();
 }
+
+#include "Stream_lines_2.moc"

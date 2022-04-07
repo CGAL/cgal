@@ -1,0 +1,2 @@
+Package Polyline_simplification_2 provides functions to simplify one or several polylines
+in a way that preserves the topology.

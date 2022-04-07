@@ -1,0 +1,188 @@
+
+\page Chapter_2D_Hyperbolic_Triangulations 2D Hyperbolic Delaunay Triangulations
+
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_2D_Hyperbolic_Triangulations
+\anchor ChapterHTriangulation2
+
+\cgalAutoToc
+\author Mikhail Bogdanov, Iordan Iordanov, and Monique Teillaud
+
+<center>
+<img src="header.png" style="max-width:50%; width:50%;"/>
+</center>
+
+This package enables the computation of Delaunay triangulations of
+point sets in the Poincar&eacute; disk model of the hyperbolic plane.
+
+\section HT2_Poincare_model The Poincar&eacute; Disk Model of the Hyperbolic Plane
+The Poincar&eacute; disk model represents the hyperbolic plane
+\f$\mathbb H^2\f$ in the unit disk centered at the origin in the Euclidean plane: points of
+\f$\mathbb H^2\f$ lie in the interior of the disk, while its boundary,
+the unit circle, represents the set \f$\mathcal
+H_\infty\f$ of points at infinity.
+
+In this model, a hyperbolic line is either an arc of circle
+perpendicular to the unit circle or, if it passes through the origin,
+a diameter of the unit disk. A hyperbolic circle is a Euclidean
+circle contained in the unit disk; however, its hyperbolic center and radius
+are not the same as its Euclidean center and radius.
+
+\cgalFigureAnchor{Hyperbolic_triangulation_2Poincare_disk}
+<center>
+<img src="poincare-disk.svg" style="max-width:27%; width:27%;"/>
+</center>
+\cgalFigureCaptionBegin{Hyperbolic_triangulation_2Poincare_disk}
+The Poincar&eacute; disk model for the hyperbolic plane. The figure shows
+two hyperbolic lines and three concentric hyperbolic circles with different
+radii.
+\cgalFigureCaptionEnd
+
+
+\section HT2_Euclidean_and_hyperbolic_Delaunay_triangulations Euclidean and Hyperbolic Delaunay Triangulations
+As hyperbolic circles coincide with Euclidean circles contained in the
+unit disk, the combinatorial structure of the hyperbolic Delaunay
+triangulation of a set \f$\mathcal P\f$ of points in \f$\mathbb H^2\f$
+is a subset of the Euclidean Delaunay triangulation of \f$\mathcal
+P\f$ (see
+\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic} - Left). More
+precisely, the hyperbolic Delaunay triangulation of \f$\mathcal P\f$ only
+contains the simplices of the Euclidean Delaunay triangulation that
+are <i>hyperbolic</i>:
+<ul>
+        <li> A Euclidean Delaunay face is hyperbolic if its
+        circumscribing circle is contained in \f$\mathbb H^2\f$.
+        <li> A Euclidean Delaunay edge is hyperbolic if one of the
+        empty disks (i.e., not containing any point of \f$\mathcal
+        P\f$) passing through its endpoints is contained in \f$\mathbb
+        H^2\f$.
+</ul>
+
+In the Euclidean Delaunay triangulation, there is a bijection between
+non-hyperbolic faces and non-hyperbolic
+edges&nbsp;\cgalCite{cgal:bdt-hdcvd-14}, illustrated by
+\cgalFigureRef{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic} - Right.
+
+\cgalFigureAnchor{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
+<center>
+        <img src="hyperbolic-vs-euclidean.svg" style="max-width:27%; width:27%; display: inline-block; text-align:right;"/>
+        <img src="ht-empty-disks.svg" style="max-width:30%; width:30%; display: inline-block; text-align:left;"/>
+</center>
+\cgalFigureCaptionBegin{Hyperbolic_triangulation_2Euclidean_vs_hyperbolic}
+<b>Left:</b> The Euclidean (red) and hyperbolic (black) Delaunay triangulations
+of a given set of points in the unit disk. Only the colored faces
+are faces of the hyperbolic Delaunay triangulation. The hyperbolic
+and Euclidean geometric embeddings of a Delaunay face that exists
+in both triangulations are different.
+<b>Right:</b> The shaded face is non-hyperbolic. Its dashed edge is non-hyperbolic,
+as no empty circle through its endpoints is contained in
+\f$\mathbb H^2\f$. Its other two edges are hyperbolic.
+\cgalFigureCaptionEnd
+
+The hyperbolic Delaunay triangulation is a simplicial complex, i.e., a set of simplices such that
+<ul>
+        <li>any face of a simplex is a simplex,
+        <li>two simplices either are disjoint or share a common face.
+</ul>
+Moreover, it is connected&nbsp;\cgalCite{cgal:bdt-hdcvd-14}.
+
+\section HT2_Software_design Software Design
+From what was said above, it is natural that the class
+`Hyperbolic_Delaunay_triangulation_2` privately inherits from the class
+`Delaunay_triangulation_2`. Consequently, users are encouraged to look at Chapter
+\ref Chapter_2D_Triangulations "2D Triangulation" of the \cgal manual to
+know more in particular about the representation of triangulations in
+CGAL and the flexibility of the design.
+
+The class `Hyperbolic_Delaunay_triangulation_2` has two template
+parameters:
+<ul>
+        <li> A <b>geometric traits</b> class `Gt`, which provides geometric
+        primitives. The requirements on this first template parameter
+        are described by the concept
+        `HyperbolicDelaunayTriangulationTraits_2`, which refines
+        `DelaunayTriangulationTraits_2`.</li>
+        <li> A <b>triangulation data structure</b> parameter, for which the
+        requirements are described by the concept `TriangulationDataStructure_2`.
+        The vertex and face of this triangulation data structure must be models of
+        the concepts `TriangulationVertexBase_2` and `HyperbolicTriangulationFaceBase_2`, respectively.</li>
+</ul>
+
+Two models of the concept `HyperbolicDelaunayTriangulationTraits_2`
+are proposed for the geometric traits
+class. The first one, `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2`, is based
+upon `CGAL::Circular_kernel_2` and guarantees exact constructions of
+Delaunay triangulations and dual objects when the input points have
+rational coordinates. The second one,
+`CGAL::Hyperbolic_Delaunay_triangulation_traits_2`, is more general,
+as it guarantees exact constructions even for input points with
+algebraic coordinates; however the first model is more efficient for
+rational points.
+
+\section Examples
+The example below shows insertion of random points in a hyperbolic Delaunay triangulation.
+The same set of points is inserted twice. The first time points are inserted one by one,
+which causes Euclidean faces to be filtered at each insertion. The second time, all points
+are inserted and the filtering is done once at the end.
+\cgalExample{Hyperbolic_triangulation_2/ht2_example.cpp}
+
+The example below shows how user-defined info can be added to the hyperbolic faces.
+\cgalExample{Hyperbolic_triangulation_2/ht2_example_color.cpp}
+
+
+\section HT2_Performance Performance
+
+We have measured the insertion execution time of our implementation
+with both traits classes `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2`
+and `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` with their default template
+parameters against the insertion time in a Euclidean \cgal triangulation.
+We generate 1 million random points, uniformly distributed in the unit disk with respect
+to the Euclidean metric. We insert the same set of points in three triangulations:
+<ul>
+  <li> a hyperbolic Delaunay triangulation with `CGAL::Hyperbolic_Delaunay_triangulation_traits_2`    (%CORE traits) as traits class;
+  <li> a hyperbolic Delaunay triangulation with `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2` (CK traits)          as traits class;
+  <li> a Euclidean  Delaunay triangulation with `CGAL::Exact_predicates_inexact_constructions_kernel` (EPICK)              as traits class.
+</ul>
+We create two instances of each type of triangulation. In one instance we insert the points one by one, which causes
+non-hyperbolic faces to be filtered out at each insertion. In the other instance we insert the points via iterator
+input, which causes non-hyperbolic faces to be filtered only once, after all points have been inserted. We report
+results averaged over 10 executions of this experiment in \ref HT2_Table_1 "Table 1" below. The experiments have been
+executed on two machines:
+<ul>
+  <li> <b>Machine 1:</b> MacBook Pro (2015), CPU: Intel Core i5 @ 2.9 GHz, RAM: 16 GB @ 1867 MHz, OS: Mac OS X (10.10.5), Compiler: gcc version 7.3.0;
+  <li> <b>Machine 2:</b> Dell Vostro 5471 (2018), CPU: Intel Core i5 @ 1.6 GHZ (up to 3.4 GHz in TurboMode), RAM: 8GB @ 2400 MHz, OS: Ubuntu 18.04 (kernel 4.15.0), Compiler: gcc version 7.3.0.
+</ul>
+
+<center>
+\anchor HT2_Table_1
+<table>
+<caption>Table 1: Comparison of insertion times of 1 million random points</caption>
+<tr><th>  %Triangulation type       <th colspan="2">  Machine 1                                                     <th colspan="2">  Machine 2
+<tr><td>                                                          <td> Sequential insertion         <td> %Iterator insertion         <td> Sequential insertion         <td> %Iterator insertion
+<tr><td>  Hyperbolic (%CORE traits) <td> 955 sec.                                 <td> 23 sec.                                <td> 884 sec.                                <td> 20 sec.
+<tr><td>  Hyperbolic (CK traits)    <td> 330 sec.                              <td> 1 sec.                                        <td> 289 sec.                                <td> 1 sec.
+<tr><td>  Euclidean  (EPICK)        <td> 131 sec.                              <td> 0.71 sec.                                <td> 114 sec.                                <td> 0.68 sec.
+</table>
+</center>
+
+
+\section HT2_Design Design and Implementation History
+
+This package implements the algorithms for computing Delaunay complexes
+in the hyperbolic plane, described by Mikhail Bogdanov, Olivier
+Devillers, and Monique Teillaud \cgalCite{cgal:bdt-hdcvd-14}.
+
+Mikhail Bogdanov wrote most of the code. Iordan Iordanov added the
+traits class `CGAL::Hyperbolic_Delaunay_triangulation_traits_2` and
+worked on the documentations. Both were PhD candidates advised by
+Monique Teillaud.
+
+Authors acknowledge partial support from <a href="https://members.loria.fr/Monique.Teillaud/collab/SoS/">ANR SoS</a>.
+
+*/
+} /* namespace CGAL */
+
+\\\\\\\\\\\\

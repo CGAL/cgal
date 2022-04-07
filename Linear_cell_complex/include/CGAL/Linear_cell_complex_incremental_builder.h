@@ -1,157 +1,406 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_H
 #define CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_H 1
 
-#include <CGAL/Linear_cell_complex.h>
 #include <vector>
 #include <cstddef>
+#include <unordered_map>
+#include <initializer_list>
+#include <CGAL/Linear_cell_complex_base.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
-  template < class LCC_ >
-  class Linear_cell_complex_incremental_builder_3
+///////////////////////////////////////////////////////////////////////////////
+  template<class LCC, class Combinatorial_data_structure=
+           typename LCC::Combinatorial_data_structure>
+  struct Add_vertex_to_face
   {
-  public:
-    typedef LCC_ LCC;
-    typedef typename LCC::Dart_handle             Dart_handle;
-    typedef typename LCC::Vertex_attribute_handle Vertex_attribute_handle;
-    typedef typename LCC::Point                   Point_3;
-    typedef typename LCC::size_type               size_type;
-
-    Linear_cell_complex_incremental_builder_3(LCC & alcc) :
-      lcc(alcc)
+    static typename LCC::Dart_handle run(LCC&,
+                                         typename LCC::Vertex_attribute_handle,
+                                         typename LCC::Dart_handle)
     {}
-
-    Vertex_attribute_handle add_vertex (const Point_3& p)
+  };
+  template<class LCC>
+  struct Add_vertex_to_face<LCC, Combinatorial_map_tag>
+  {
+    static typename LCC::Dart_handle run(LCC& lcc,
+                                         typename LCC::Vertex_attribute_handle vh,
+                                         typename LCC::Dart_handle prev_dart)
     {
-      Vertex_attribute_handle res = lcc.create_vertex_attribute(p);
-      vertex_map.push_back(res);
-      vertex_to_dart_map.push_back(std::vector<Dart_handle>());
-      ++new_vertices;
+      typename LCC::Dart_handle res=lcc.create_dart(vh);
+      if (prev_dart!=lcc.null_handle)
+      {
+        lcc.template link_beta<1>(prev_dart, res);
+      }
       return res;
     }
-    
-    void begin_facet()
+    static void run_for_last(LCC&,
+                             typename LCC::Vertex_attribute_handle,
+                             typename LCC::Dart_handle)
+    { // here nothing to do, all darts were already created.
+    }
+  };
+  template<class LCC>
+  struct Add_vertex_to_face<LCC, Generalized_map_tag>
+  {
+    static typename LCC::Dart_handle run(LCC& lcc,
+                                         typename LCC::Vertex_attribute_handle vh,
+                                         typename LCC::Dart_handle prev_dart)
     {
-      CGAL_assertion( first_dart==lcc.null_handle && prev_dart==lcc.null_handle );
-      // std::cout<<"Begin facet: "<<std::flush;
+      typename LCC::Dart_handle res=lcc.create_dart(vh);
+      if (prev_dart!=lcc.null_handle)
+      {
+        lcc.template link_alpha<0>(prev_dart, res);
+        lcc.template link_alpha<1>(res, lcc.create_dart(vh));
+        res=lcc.template alpha<1>(res);
+      }
+      return res;
+    }
+    static void run_for_last(LCC& lcc,
+                             typename LCC::Vertex_attribute_handle vh,
+                             typename LCC::Dart_handle prev_dart)
+    {
+      // here we need to create a last dart and 0-link it
+      CGAL_assertion(prev_dart!=lcc.null_handle);
+      lcc.template link_alpha<0>(prev_dart, lcc.create_dart(vh));
+    }
+  };
+///////////////////////////////////////////////////////////////////////////////
+template<class LCC, class Combinatorial_data_structure=
+         typename LCC::Combinatorial_data_structure>
+struct Find_opposite_2_no_control // No difference for CMap and GMap
+{
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  static DH run(LCC&,
+                std::unordered_map<VAH, std::unordered_map<VAH, DH>>&
+                vertex_to_dart_map_in_surface,
+                VAH vah1, VAH vah2)
+  {
+    // We are searching edge vah2->vah1 (the opposite of edge vah1->vah2)
+    auto it2=vertex_to_dart_map_in_surface.find(vah2);
+    if (it2!=vertex_to_dart_map_in_surface.end())
+    {
+      auto it1=it2->second.find(vah1);
+      if (it1!=it2->second.end())
+      { return it1->second; }
+    }
+    return nullptr;
+  }
+};
+///////////////////////////////////////////////////////////////////////////////
+template<class LCC, class Combinatorial_data_structure=
+         typename LCC::Combinatorial_data_structure>
+struct Find_opposite_2_with_control
+{
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  static DH run(LCC&,
+                std::unordered_map<VAH, std::unordered_map<VAH, DH>>&,
+                VAH, VAH)
+  { return nullptr; }
+};
+template<class LCC>
+struct Find_opposite_2_with_control<LCC, CGAL::Combinatorial_map_tag>
+{
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  static DH run(LCC& lcc,
+                std::unordered_map<VAH, std::unordered_map<VAH, DH>>&
+                vertex_to_dart_map_in_surface,
+                VAH vah1, VAH vah2)
+  {
+    DH res=Find_opposite_2_no_control<LCC>::run(lcc,
+                                                vertex_to_dart_map_in_surface,
+                                                vah1, vah2);
+    if (res!=nullptr)
+    {
+      if (!lcc.template is_free<2>(res))
+      { // Here a dart vah1->vah2 already exists, and it was already 2-sewn.
+        std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
+        return nullptr;
+      }
+    }
+    if (Find_opposite_2_no_control<LCC>::run(lcc,
+                                             vertex_to_dart_map_in_surface,
+                                             vah2, vah1)!=nullptr)
+    { // Here a dart vah1->vah2 already exists (but it was not already 2-sewn).
+      std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
+      return nullptr;
     }
 
-    void add_vertex_to_facet(size_type i)
+    return res;
+  }
+};
+template<class LCC>
+struct Find_opposite_2_with_control<LCC, CGAL::Generalized_map_tag>
+{
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  static DH run(LCC& lcc,
+                std::unordered_map<VAH, std::unordered_map<VAH, DH>>&
+                vertex_to_dart_map_in_surface,
+                VAH vah1, VAH vah2)
+  {
+    DH res=Find_opposite_2_no_control<LCC>::run(lcc,
+                                                vertex_to_dart_map_in_surface,
+                                                vah1, vah2);
+    if (res!=nullptr)
     {
-      CGAL_assertion( i<new_vertices );
-      // std::cout<<i<<"  "<<std::flush;
-      Dart_handle cur = lcc.create_dart(vertex_map[i]);
+      if (!lcc.template is_free<2>(res))
+      { // Here a dart vah1->vah2 already exists, and it was already 2-sewn.
+        std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
+        return nullptr;
+      }
+    }
+    return res;
+  }
+};
+///////////////////////////////////////////////////////////////////////////////
+template<class LCC, class Combinatorial_data_structure=
+         typename LCC::Combinatorial_data_structure>
+struct Add_edge_in_associative_array
+{
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  static void run(LCC&, DH,
+                  std::unordered_map<VAH, std::unordered_map<VAH, DH>>&)
+   {}
+};
+template<class LCC>
+struct Add_edge_in_associative_array<LCC, CGAL::Combinatorial_map_tag>
+{
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  static void run(LCC& lcc, DH dh,
+                  std::unordered_map<VAH, std::unordered_map<VAH, DH>>&
+                  vertex_to_dart_map_in_surface)
+  {
+    vertex_to_dart_map_in_surface[lcc.vertex_attribute(dh)].insert
+        (std::make_pair(lcc.vertex_attribute(lcc.next(dh)), dh));
+  }
+};
+template<class LCC>
+struct Add_edge_in_associative_array<LCC, CGAL::Generalized_map_tag>
+{
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  static void run(LCC& lcc, DH dh,
+                  std::unordered_map<VAH, std::unordered_map<VAH, DH>>&
+                  vertex_to_dart_map_in_surface)
+  {
+    vertex_to_dart_map_in_surface[lcc.vertex_attribute(dh)].insert
+        (std::make_pair(lcc.vertex_attribute(lcc.template alpha<0>(dh)), dh));
 
-      if ( prev_dart!=lcc.null_handle )
+    vertex_to_dart_map_in_surface
+        [lcc.vertex_attribute(lcc.template alpha<0>(dh))].insert
+        (std::make_pair(lcc.vertex_attribute(dh), lcc.template alpha<0>(dh)));
+  }
+};
+///////////////////////////////////////////////////////////////////////////////
+template<class LCC_, unsigned int dim=LCC_::dimension>
+struct Sew3_for_LCC_incremental_builder
+{
+  static void run(LCC_& lcc,
+                  typename LCC_::Dart_handle dh1, typename LCC_::Dart_handle dh2)
+  {
+    if(dh1!=nullptr)
+    {
+      if(!lcc.template is_free<3>(dh1))
       {
-        lcc.template link_beta<1>(prev_dart, cur);
-
-        Dart_handle opposite=find_dart_between(i,lcc.temp_vertex_attribute(prev_dart));
-        if ( opposite!=lcc.null_handle )
-        {
-          CGAL_assertion( lcc.template is_free<2>(opposite) );
-          lcc.template link_beta<2>(prev_dart, opposite);
-        }
-
-        add_dart_in_vertex_to_dart_map( prev_dart, prev_vertex );
+        std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: "
+                 <<"it exists more than 2 faces with same indices."<<std::endl;
       }
       else
-      {
-        first_dart   = cur;
-        first_vertex = i;
-      }
-
-      prev_dart   = cur;
-      prev_vertex = i;
+      { lcc.template sew<3>(lcc.other_orientation(dh1), dh2); }
     }
+  }
+};
+template<class LCC_>
+struct Sew3_for_LCC_incremental_builder<LCC_, 2>
+{
+  static void run(LCC_&, typename LCC_::Dart_handle, typename LCC_::Dart_handle)
+  {}
+};
+///////////////////////////////////////////////////////////////////////////////
+// Incremental builder
+template < class LCC_ >
+class Linear_cell_complex_incremental_builder_3
+{
+public:
+  typedef LCC_ LCC;
+  typedef typename LCC::Dart_handle             DH;
+  typedef typename LCC::Vertex_attribute_handle VAH;
+  typedef typename LCC::Point                   Point_3;
+  typedef typename LCC::size_type               size_type;
 
-    void end_facet()
+  Linear_cell_complex_incremental_builder_3(LCC & alcc) :
+    lcc(alcc)
+  {}
+
+  VAH add_vertex(const Point_3& p)
+  {
+    VAH res=lcc.create_vertex_attribute(p);
+    vertex_map.push_back(res);
+    return res;
+  }
+
+  void begin_facet()
+  { // std::cout<<"Begin facet: "<<std::flush;
+    first_dart=lcc.null_handle;
+    prev_dart =lcc.null_handle;
+  }
+
+  void add_vertex_to_facet(size_type i)
+  {
+    CGAL_assertion(i<vertex_map.size());
+    // std::cout<<i<<"  "<<std::flush;
+    DH cur_dart=Add_vertex_to_face<LCC>::run(lcc, vertex_map[i], prev_dart);
+    if ( prev_dart!=lcc.null_handle )
     {
-      CGAL_assertion( first_dart!=lcc.null_handle && prev_dart!=lcc.null_handle );
-      lcc.template link_beta<1>(prev_dart, first_dart);
-
-      Dart_handle opposite =
-        find_dart_between(first_vertex,lcc.temp_vertex_attribute(prev_dart));
+      DH opposite=Find_opposite_2_with_control<LCC>::
+        run(lcc,
+            vertex_to_dart_map_in_surface,
+            lcc.vertex_attribute(prev_dart),
+            lcc.vertex_attribute(cur_dart));
       if ( opposite!=lcc.null_handle )
       {
         CGAL_assertion( lcc.template is_free<2>(opposite) );
-        lcc.template link_beta<2>(prev_dart, opposite);
+        lcc.template set_opposite<2>(prev_dart, opposite);
       }
 
-      add_dart_in_vertex_to_dart_map( prev_dart, prev_vertex );
+      Add_edge_in_associative_array<LCC>::run(lcc, prev_dart,
+                                              vertex_to_dart_map_in_surface);
 
-      first_dart = lcc.null_handle;
-      prev_dart = lcc.null_handle;
-      // std::cout<<"  end facet."<<std::endl;
+      if (i<min_vertex) { min_vertex=i; min_dart=cur_dart; }
+      if (i>max_vertex) { max_vertex=i; }
     }
+    else
+    { first_dart=cur_dart; min_vertex=max_vertex=i; min_dart=cur_dart; }
 
-    void begin_surface( std::size_t v, std::size_t /*f*/, std::size_t /*h*/)
+    prev_dart=cur_dart;
+  }
+
+  // End of the facet. Return the first dart of this facet.
+  DH end_facet()
+  {
+    CGAL_assertion( first_dart!=lcc.null_handle && prev_dart!=lcc.null_handle );
+
+    Add_vertex_to_face<LCC>::run_for_last(lcc,
+                                          lcc.vertex_attribute(first_dart),
+                                          prev_dart);
+
+    lcc.set_next(prev_dart, first_dart);
+
+    DH opposite=Find_opposite_2_with_control<LCC>::
+                run(lcc,
+                    vertex_to_dart_map_in_surface,
+                    lcc.vertex_attribute(prev_dart),
+                    lcc.vertex_attribute(first_dart));
+    if ( opposite!=lcc.null_handle )
     {
-      new_vertices  = 0;
-      first_dart    = lcc.null_handle;
-      prev_dart     = lcc.null_handle;
-      vertex_map.clear();
-      vertex_to_dart_map.clear();
-      vertex_map.reserve(v);
-      vertex_to_dart_map.reserve(v);
-      // lcc.reserve(v,h);
+      CGAL_assertion( lcc.template is_free<2>(opposite) );
+      lcc.template set_opposite<2>(prev_dart, opposite);
     }
 
-    void end_surface()
-    {}
+    Add_edge_in_associative_array<LCC>::run(lcc, prev_dart,
+                                            vertex_to_dart_map_in_surface);
+
+    if(LCC::dimension>2)
+    {
+      opposite=opposite_face();
+      Sew3_for_LCC_incremental_builder<LCC>::run(lcc, opposite, min_dart);
+      add_face_in_array();
+    }
+    return first_dart;
+  }
+
+  DH add_facet(std::initializer_list<size_type> l)
+  {
+    begin_facet();
+    for (std::size_t i:l)
+    { add_vertex_to_facet(i); }
+    return end_facet();
+  }
+
+  void begin_surface()
+  {
+    vertex_to_dart_map_in_surface.clear();
+  }
+
+    // End of the surface. Return one dart of the created surface.
+    DH end_surface()
+    { return first_dart; }
 
   protected:
-
-    Dart_handle find_dart_between(size_type i, Vertex_attribute_handle vh)
+  /** test if the two given facets have the same vertex handle but with
+   *  opposite orientations. For closed facets.
+   * @return true iff the two facets have the same vertex handle with opposite
+   *         orientation.
+   */
+  bool are_facets_opposite_and_same_vertex_handles(DH d1, DH d2) const
+  {
+    DH s1=d1;
+    DH s2=d2;
+    do
     {
-      typename std::vector<Dart_handle>::reverse_iterator
-        it(vertex_to_dart_map[i].rbegin());
-      typename std::vector<Dart_handle>::reverse_iterator
-        itend(vertex_to_dart_map[i].rend());
+      CGAL_assertion(lcc.is_next_exist(d1) && lcc.is_previous_exist(d2));
+      CGAL_assertion(lcc.other_extremity(d2)!=lcc.null_handle);
 
-      for ( ; it!=itend; ++it )
-      {
-        if ( lcc.temp_vertex_attribute(lcc.template beta<1>(*it))==vh ) return (*it);
-      }
-      return lcc.null_handle;
+      if (lcc.vertex_attribute(d1)!=lcc.vertex_attribute(d2))
+      { return false; }
+      d1=lcc.next(d1);
+      d2=lcc.previous(d2);
     }
+    while(d1!=s1);
 
-    void add_dart_in_vertex_to_dart_map( Dart_handle adart, size_type i )
+    if (d2!=s2) { return false; }
+    return true;
+  }
+
+  DH opposite_face()
+  {
+    auto it1=faces.find(min_vertex);
+    if(it1==faces.end()) { return nullptr; }
+    auto it2=it1->second.find(max_vertex);
+    if(it2==it1->second.end()) { return nullptr; }
+    for(auto it3=it2->second.begin(), it3end=it2->second.end(); it3!=it3end; ++it3)
     {
-      CGAL_assertion( adart!=lcc.null_handle );
-      CGAL_assertion( !lcc.template is_free<1>(adart) );
-      vertex_to_dart_map[i].push_back(adart);
+      if (are_facets_opposite_and_same_vertex_handles(*it3, min_dart))
+      { return lcc.previous(*it3); }
     }
+    return nullptr;
+  }
 
-  private:
-    std::vector<Vertex_attribute_handle> vertex_map;
-    std::vector<std::vector<Dart_handle> > vertex_to_dart_map;
+  void add_face_in_array()
+  {
+    faces[min_vertex][max_vertex].push_back(min_dart);
+  }
 
-    LCC&                      lcc;
-    Dart_handle               first_dart;
-    Dart_handle               prev_dart;
-    size_type                 first_vertex;
-    size_type                 prev_vertex;
-    size_type                 new_vertices;
-  };
+private:
+  LCC& lcc;
+  std::vector<VAH> vertex_map; // Map each index to the corresponding vertex handle
+
+  // A map to associate to each edge of a surface its dart. The edge is given
+  // by its two vertex handles (source-target).
+  std::unordered_map<VAH, std::unordered_map<VAH, DH>> vertex_to_dart_map_in_surface;
+  std::unordered_map<std::size_t, std::unordered_map<std::size_t, std::vector<DH>>> faces;
+
+  DH first_dart; /// First dart of the current face
+  DH prev_dart; /// Prev dart of the current face
+  DH min_dart; /// dart with the min vertex of the current facet.
+  std::size_t min_vertex, max_vertex; /// min and max indices of vertices of the current face
+};
 
 } //namespace CGAL
 

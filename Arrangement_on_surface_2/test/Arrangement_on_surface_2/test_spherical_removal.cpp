@@ -3,16 +3,17 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <fstream>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 
 typedef CGAL::Exact_rational                                 Number_type;
 typedef CGAL::Cartesian<Number_type>                         Kernel;
+typedef Kernel::Direction_3                                  Direction_3;
 typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>    Geom_traits_2;
 typedef Geom_traits_2::Point_2                               Point_2;
 typedef Geom_traits_2::Curve_2                               Curve_2;
@@ -26,14 +27,23 @@ typedef Arrangement_2::Halfedge_iterator                     Halfedge_iterator;
 
 bool test_one_file(std::ifstream& in_file, bool /* verbose */)
 {
+  Geom_traits_2 geom_traits;
+  Geom_traits_2::Construct_point_2 ctr_point =
+    geom_traits.construct_point_2_object();
+  Geom_traits_2::Construct_x_monotone_curve_2 ctr_xcv =
+    geom_traits.construct_x_monotone_curve_2_object();
+
   unsigned int i;
 
   // Read the points:
   unsigned int num_of_points;
   in_file >> num_of_points;
   std::vector<Point_2> points(num_of_points);
-  for (i = 0; i < num_of_points; ++i)
-    in_file >> points[i];
+  for (i = 0; i < num_of_points; ++i) {
+    Direction_3 d;
+    in_file >> d;
+    points[i] = ctr_point(d);
+  }
 
   // Read the curves:
   unsigned int num_of_curves;
@@ -60,7 +70,7 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   Arrangement_2::Size num_vertices_left, num_edges_left, num_faces_left;
   in_file >> num_vertices_left >> num_edges_left >> num_faces_left;
 
-  Arrangement_2 arr;
+  Arrangement_2 arr(&geom_traits);;
   std::vector<Halfedge_handle> halfedges;
   std::vector<std::pair<unsigned int, unsigned int> >::const_iterator cit;
 
@@ -78,16 +88,15 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   // Insert the curves aggregately.
   std::list<X_monotone_curve_2> xcurves;
   for (cit = curves.begin(); cit != curves.end(); ++cit) {
-    X_monotone_curve_2 xcv(points[cit->first], points[cit->second]);
+    X_monotone_curve_2 xcv = ctr_xcv(points[cit->first], points[cit->second]);
     xcurves.push_back(xcv);
   }
   std::cout << "inserting " << " ... ";
   std::cout.flush();
   CGAL::insert_non_intersecting_curves(arr, xcurves.begin(), xcurves.end());
   std::cout << "inserted" << std::endl;
-  for (Halfedge_iterator hit = arr.halfedges_begin(); hit != arr.halfedges_end(); hit++) {
-    halfedges.push_back(hit);
-  }
+  for(Halfedge_handle hh : arr.halfedge_handles())
+      halfedges.push_back(hh);
 #endif
 
   curves.clear();
@@ -102,7 +111,6 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
   }
   isolated_points.clear();
   points.clear();
-
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges()
@@ -110,16 +118,16 @@ bool test_one_file(std::ifstream& in_file, bool /* verbose */)
 
   {
     std::cout << "Faces:" << std::endl;
-    Arrangement_2::Face_const_iterator fit;
-    for (fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
+    for(Arrangement_2::Face_handle fh : arr.face_handles())
+    {
       std::cout << "  Face: "
-                << &(*fit)
+                << &(fh)
                 << std::endl;
       std::cout << "  Outer CCBs: "
-                << std::distance(fit->outer_ccbs_begin(), fit->outer_ccbs_end())
+                << std::distance(fh->outer_ccbs_begin(), fh->outer_ccbs_end())
                 << std::endl;
       std::cout << "  Inner CCBs: "
-                << std::distance(fit->inner_ccbs_begin(), fit->inner_ccbs_end())
+                << std::distance(fh->inner_ccbs_begin(), fh->inner_ccbs_end())
                 << std::endl;
       std::cout << std::endl;
     }

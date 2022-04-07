@@ -2,26 +2,21 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Ron Wein       <wein@post.tau.ac.il>
+// Author(s)     : Ron Wein       <wein_r@yahoo.com>
 //                 Andreas Fabri  <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 //                 Efi Fogel      <efif@post.tau.ac.il>
 
 #ifndef CGAL_APPROXIMATED_OFFSET_BASE_H
 #define CGAL_APPROXIMATED_OFFSET_BASE_H
+
+#include <CGAL/license/Minkowski_sum_2.h>
+
 
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -52,7 +47,7 @@ protected:
   typedef CGAL::Polygon_with_holes_2<Kernel, Container_> Polygon_with_holes_2;
 
 private:
-  
+
   // Kernel types:
   typedef typename Kernel::Point_2                       Point_2;
   typedef typename Kernel::Line_2                        Line_2;
@@ -70,8 +65,8 @@ private:
 protected:
 
   typedef typename Traits_2::Polygon_2                   Offset_polygon_2;
-  
-  typedef Arr_labeled_traits_2<Traits_2>                 Labeled_traits_2; 
+
+  typedef Arr_labeled_traits_2<Traits_2>                 Labeled_traits_2;
   typedef typename Labeled_traits_2::X_monotone_curve_2  Labeled_curve_2;
 
   // Data members:
@@ -92,7 +87,7 @@ public:
     _inv_sqrt_eps = static_cast<int> (1.0 / CGAL::sqrt (_eps));
     if (_inv_sqrt_eps <= 0)
       _inv_sqrt_eps = 1;
-  }    
+  }
 
 protected:
 
@@ -119,7 +114,7 @@ protected:
     Vertex_circulator     first, curr, next, prev;
 
     first = pgn.vertices_circulator();
-    curr = first; 
+    curr = first;
     next = first;
     prev = first;
 
@@ -248,8 +243,8 @@ protected:
       }
       else
       {
-        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : -delta_x;
-        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : -delta_y;
+        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : NT(-delta_x);
+        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : NT(-delta_y);
 
         // In this general case, the length d of the current edge is usually
         // an irrational number.
@@ -309,22 +304,22 @@ protected:
               }
               else
               {
-		// In case of overflow of denom
+    // In case of overflow of denom
                 numer = 1;
                 denom = max_int;
-              } 
+              }
             }
         }
-        else {// if numer < 0 (overflow)  
+        else {// if numer < 0 (overflow)
           numer = max_int;
           denom = 1;
         }
 
 
         app_d = NT (numer) / NT (denom);
-        app_err = sqr_d - CGAL::square (app_d); 
+        app_err = sqr_d - CGAL::square (app_d);
 
-        while (CGAL::compare (CGAL::abs (app_err), 
+        while (CGAL::compare (CGAL::abs (app_err),
                               err_bound) == CGAL::LARGER ||
                CGAL::compare (app_d, abs_delta_x) != LARGER ||
                CGAL::compare (app_d, abs_delta_y) != LARGER)
@@ -452,7 +447,7 @@ protected:
           // Compute the line l1 tangent to the circle centered at (x1, y1)
           // with radius r at the approximated point op1.
           l1 = f_perp_line (f_line (*curr, op1), op1);
-        
+
           // Compute the line l2 tangent to the circle centered at (x2, y2)
           // with radius r at the approximated point op2.
           l2 = f_perp_line (f_line (*next, op2), op2);
@@ -460,7 +455,7 @@ protected:
           // Intersect the two lines. The intersection point serves as a common
           // end point for the two line segments we are about to introduce.
           obj = f_intersect (l1, l2);
-        
+
           assign_success = CGAL::assign (mid_p, obj);
           CGAL_assertion (assign_success);
           CGAL_USE(assign_success);
@@ -508,7 +503,7 @@ protected:
           }
           if (res1 != res2) orient = CGAL::LEFT_TURN;
         }
-        
+
         // Connect the offset target point of the previous edge to the
         // offset source of the current edge.
         if (orient == CGAL::LEFT_TURN) {
@@ -557,12 +552,12 @@ protected:
         *oi++ = Labeled_curve_2 (seg2, X_curve_label (dir_right2,
                                                       cycle_id, curve_index++));
       }
-    
+
       // Proceed to the next polygon vertex.
       prev_op = op2;
       prev = curr;
       curr = next;
-    
+
     } while (curr != first);
 
     // Close the convolution cycle by creating the final circular arc,
@@ -582,7 +577,7 @@ protected:
       assign_success = CGAL::assign (xarc, *xobj_it);
       CGAL_assertion (assign_success);
       CGAL_USE(assign_success);
-      
+
       ++xobj_it;
       bool is_last = (xobj_it == xobjs.end());
 

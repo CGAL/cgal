@@ -2,25 +2,19 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 //                 (based on old version by Michal Meyerovitch and Ester Ezra)
 //
 #ifndef CGAL_IO_ARRANGEMENT_2_WRITER_H
 #define CGAL_IO_ARRANGEMENT_2_WRITER_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * The header file for the Arrangement_2_writer<Arrangement> class.
@@ -88,7 +82,7 @@ namespace CGAL {
     /*! Constructor. */
     Arrangement_2_writer(const Arrangement_2& arr) :
       m_arr(arr),
-      m_dcel(NULL),
+      m_dcel(nullptr),
       m_curr_v(0),
       m_curr_he(0)
     {
@@ -197,17 +191,17 @@ namespace CGAL {
       formatter.write_edge_begin();
       formatter.write_vertex_index(_index(he_t->vertex()));
       formatter.write_vertex_index(_index(he->vertex()));
-    
+
       if (he->direction() == ARR_LEFT_TO_RIGHT)
         formatter.write_vertex_index(0);
       else
         formatter.write_vertex_index(1);
-      
+
       if (! he->has_null_curve())
       {
         // Write the associated curve.
         formatter.write_vertex_index(1);
-        formatter.write_x_monotone_curve(he->curve()); 
+        formatter.write_x_monotone_curve(he->curve());
 
         // Write additional user-defined data.
         formatter.write_halfedge_data(Halfedge_const_handle(he));
@@ -253,7 +247,7 @@ namespace CGAL {
         const std::size_t              n = _circulator_size(*oc_it);
 
         formatter.write_size("halfedges_on_outer_ccb", n);
-        _write_ccb(formatter, *oc_it);      
+        _write_ccb(formatter, *oc_it);
       }
       formatter.write_inner_ccbs_end();
 
@@ -267,7 +261,7 @@ namespace CGAL {
       {
         const std::size_t n = _circulator_size(*ic_it);
         formatter.write_size("halfedges_on_inner_ccb", n);
-        _write_ccb(formatter, *ic_it);      
+        _write_ccb(formatter, *ic_it);
       }
       formatter.write_inner_ccbs_end();
 
@@ -282,7 +276,7 @@ namespace CGAL {
           formatter.write_vertex_index(_index(&(*iso_vit)));
         formatter.write_isolated_vertices_end();
       }
-    
+
       // Write additional user-defined data associated with the face.
       if (! f->is_fictitious())
         formatter.write_face_data(Face_const_handle(f));
@@ -291,8 +285,8 @@ namespace CGAL {
     }
 
     /*! Write the edges along a given CCB. */
-    template <class Formatter>   
-    void _write_ccb(Formatter& formatter, const DHalfedge* ccb) const      
+    template <class Formatter>
+    void _write_ccb(Formatter& formatter, const DHalfedge* ccb) const
     {
       const DHalfedge* curr = ccb;
 
@@ -303,7 +297,7 @@ namespace CGAL {
       } while (curr != ccb);
       formatter.write_ccb_halfedges_end();
     }
-  
+
     /*! Get the mapped index of a given vertex. */
     int _index(const DVertex* v) const
     {
@@ -325,7 +319,7 @@ namespace CGAL {
     /*! Get the number of edges along a given CCB. */
     std::size_t _circulator_size(const DHalfedge* ccb) const
     {
-      CGAL_assertion(ccb != NULL);
+      CGAL_assertion(ccb != nullptr);
 
       std::size_t       n = 0;
       const DHalfedge*  curr = ccb;
@@ -336,9 +330,9 @@ namespace CGAL {
       } while (curr != ccb);
 
       return (n);
-    }  
+    }
   };
 
 } //namespace CGAL
 
-#endif // CGAL_IO_ARRANGEMENT_2_WRITER_H 
+#endif // CGAL_IO_ARRANGEMENT_2_WRITER_H

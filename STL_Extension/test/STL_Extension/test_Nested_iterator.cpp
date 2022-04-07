@@ -1,5 +1,3 @@
-#include <CGAL/basic.h>
-
 #include <iostream>
 #include <list>
 #include <vector>
@@ -46,7 +44,7 @@ int main()
     for (unsigned int i = 0; i < v.size(); i++) {
       std::cout << "List " << (i+1) << ": ";
       for (unsigned int j = 0; j < v[i].size(); j++) {
-	std::cout << " " << v[i][j];
+        std::cout << " " << v[i][j];
       }
       std::cout << std::endl;
     }
@@ -60,71 +58,71 @@ int main()
   //------------------------------------------------------------------
   {
     std::cout << "================================================"
-	      << std::endl << std::endl;
+              << std::endl << std::endl;
     {
       std::cout << "testing constructors..." << std::flush;
       {
-	n_iterator ni;
-	n_iterator ni_begin(v.end(), v.begin());
-	n_iterator ni_end(v.end(), v.end());
+        n_iterator ni;
+        n_iterator ni_begin(v.end(), v.begin());
+        n_iterator ni_end(v.end(), v.end());
 
-	dummy(ni);
-	dummy(ni_begin);
-	dummy(ni_end);
+        dummy(ni);
+        dummy(ni_begin);
+        dummy(ni_end);
       }
 
       std::vector< std::vector<int> > v1;
       {
-	n_iterator ni;
-	n_iterator ni_begin(v1.end(), v1.begin());
-	n_iterator ni_end(v1.end(), v1.end());
+        n_iterator ni;
+        n_iterator ni_begin(v1.end(), v1.begin());
+        n_iterator ni_end(v1.end(), v1.end());
 
-	dummy(ni);
-	dummy(ni_begin);
-	dummy(ni_end);
+        dummy(ni);
+        dummy(ni_begin);
+        dummy(ni_end);
       }
 
       v1.push_back(empty);
       v1.push_back(empty);
       {
-	n_iterator ni;
-	n_iterator ni_begin(v1.end(), v1.begin());
-	n_iterator ni_end(v1.end(), v1.end());
+        n_iterator ni;
+        n_iterator ni_begin(v1.end(), v1.begin());
+        n_iterator ni_end(v1.end(), v1.end());
 
-	dummy(ni);
-	dummy(ni_begin);
-	dummy(ni_end);
-      }      
+        dummy(ni);
+        dummy(ni_begin);
+        dummy(ni_end);
+      }
 
       std::cout << " yes" << std::endl;
     }
     {
       std::cout << "testing copy constructor..." << std::flush;
       {
-	n_iterator ni_begin(v.end(), v.begin());
-	n_iterator ni(ni_begin);
+        n_iterator ni_begin(v.end(), v.begin());
+        n_iterator ni(ni_begin);
 
-	dummy(ni);
-	dummy(ni_begin);
+        dummy(ni);
+        dummy(ni_begin);
       }
 
       std::vector< std::vector<int> > v1;
       {
-	n_iterator ni_begin(v1.end(), v1.begin());
-	n_iterator ni(ni_begin);
+        n_iterator ni_begin(v1.end(), v1.begin());
+        n_iterator ni(ni_begin);
 
-	dummy(ni);
-	dummy(ni_begin);
+        dummy(ni);
+        dummy(ni_begin);
       }
 
       v1.push_back(empty);
       v1.push_back(empty);
       {
-	n_iterator ni_begin(v1.end(), v1.begin());
-	n_iterator ni(ni_begin);
+        n_iterator ni_begin(v1.end(), v1.begin());
+        n_iterator ni(ni_begin);
 
-	dummy(ni);
-	dummy(ni_begin);
+        dummy(ni);
+        dummy(ni_begin);
       }
 
       std::cout << " yes" << std::endl;
@@ -132,32 +130,32 @@ int main()
     {
       std::cout << "testing assignment operator..." << std::flush;
       {
-	n_iterator ni_begin(v.end(), v.begin());
-	n_iterator ni;
-	ni = ni_begin;
+        n_iterator ni_begin(v.end(), v.begin());
+        n_iterator ni;
+        ni = ni_begin;
 
-	dummy(ni);
-	dummy(ni_begin);
+        dummy(ni);
+        dummy(ni_begin);
       }
       std::vector< std::vector<int> > v1;
       {
-	n_iterator ni_begin(v1.end(), v1.begin());
-	n_iterator ni;
-	ni = ni_begin;
+        n_iterator ni_begin(v1.end(), v1.begin());
+        n_iterator ni;
+        ni = ni_begin;
 
-	dummy(ni);
-	dummy(ni_begin);
+        dummy(ni);
+        dummy(ni_begin);
       }
 
       v1.push_back(empty);
       v1.push_back(empty);
       {
-	n_iterator ni_begin(v1.end(), v1.begin());
-	n_iterator ni;
-	ni = ni_begin;
+        n_iterator ni_begin(v1.end(), v1.begin());
+        n_iterator ni;
+        ni = ni_begin;
 
-	dummy(ni);
-	dummy(ni_begin);
+        dummy(ni);
+        dummy(ni_begin);
       }
       std::cout << " yes" << std::endl;
     }
@@ -166,7 +164,7 @@ int main()
   //------------------------------------------------------------------
   {
     std::cout << "================================================"
-	      << std::endl << std::endl;
+              << std::endl << std::endl;
     n_iterator ni_begin(v.end(), v.begin());
     n_iterator ni_end(v.end(), v.end());
 
@@ -187,7 +185,7 @@ int main()
   //------------------------------------------------------------------
   {
     std::cout << "================================================"
-	      << std::endl << std::endl;
+              << std::endl << std::endl;
     v.clear();
     v.push_back(empty);
     v.push_back(empty);
@@ -197,18 +195,18 @@ int main()
 
     {
       for (unsigned int i = 0; i < v.size(); i++) {
-	std::cout << "List " << (i+1) << ": ";
-	for (unsigned int j = 0; j < v[i].size(); j++) {
-	  std::cout << " " << v[i][j];
-	}
-	std::cout << std::endl;
+        std::cout << "List " << (i+1) << ": ";
+        for (unsigned int j = 0; j < v[i].size(); j++) {
+          std::cout << " " << v[i][j];
+        }
+        std::cout << std::endl;
       }
       std::cout << std::endl;
     }
 
     n_iterator ni_begin(v.end(), v.begin());
     n_iterator ni_end(v.end(), v.end());
-    
+
     std::cout << "Nested iterator:" << std::endl;
     n_iterator ni_it;
     for (ni_it = ni_begin; ni_it != ni_end; ++ni_it) {
@@ -220,18 +218,18 @@ int main()
     std::cout << "Nested iterator in reverse order:" << std::endl;
     if ( ni_begin != ni_end ) {
       for (ni_it = --ni_end; ni_it != ni_begin; --ni_it) {
-	std::cout << " " << (*ni_it);
+        std::cout << " " << (*ni_it);
       }
       std::cout << " " << (*ni_it);
     }
     std::cout << std::endl << std::endl;
   }
 
-  
+
   //------------------------------------------------------------------
   {
     std::cout << "================================================"
-	      << std::endl << std::endl;
+              << std::endl << std::endl;
     v.clear();
     v1.clear();
 
@@ -245,18 +243,18 @@ int main()
 
     {
       for (unsigned int i = 0; i < v.size(); i++) {
-	std::cout << "List " << (i+1) << ": ";
-	for (unsigned int j = 0; j < v[i].size(); j++) {
-	  std::cout << " " << v[i][j];
-	}
-	std::cout << std::endl;
+        std::cout << "List " << (i+1) << ": ";
+        for (unsigned int j = 0; j < v[i].size(); j++) {
+          std::cout << " " << v[i][j];
+        }
+        std::cout << std::endl;
       }
       std::cout << std::endl;
     }
 
     n_iterator ni_begin(v.end(), v.begin());
     n_iterator ni_end(v.end(), v.end());
-    
+
     std::cout << "Nested iterator:" << std::endl;
     n_iterator ni_it;
     for (ni_it = ni_begin; ni_it != ni_end; ++ni_it) {
@@ -268,17 +266,17 @@ int main()
     std::cout << "Nested iterator in reverse order:" << std::endl;
     if ( ni_begin != ni_end ) {
       for (ni_it = --ni_end; ni_it != ni_begin; --ni_it) {
-	std::cout << " " << (*ni_it);
+        std::cout << " " << (*ni_it);
       }
       std::cout << " " << (*ni_it);
     }
     std::cout << std::endl << std::endl;
   }
- 
+
   //------------------------------------------------------------------
   {
     std::cout << "================================================"
-	      << std::endl << std::endl;
+              << std::endl << std::endl;
     v.clear();
     v1.clear();
 
@@ -294,18 +292,18 @@ int main()
 
     {
       for (unsigned int i = 0; i < v.size(); i++) {
-	std::cout << "List " << (i+1) << ": ";
-	for (unsigned int j = 0; j < v[i].size(); j++) {
-	  std::cout << " " << v[i][j];
-	}
-	std::cout << std::endl;
+        std::cout << "List " << (i+1) << ": ";
+        for (unsigned int j = 0; j < v[i].size(); j++) {
+          std::cout << " " << v[i][j];
+        }
+        std::cout << std::endl;
       }
       std::cout << std::endl;
     }
 
     n_iterator ni_begin(v.end(), v.begin());
     n_iterator ni_end(v.end(), v.end());
-    
+
     std::cout << "Nested iterator:" << std::endl;
     for (n_iterator ni_it = ni_begin; ni_it != ni_end; ++ni_it) {
       std::cout << " " << (*ni_it);
@@ -317,7 +315,7 @@ int main()
     if ( ni_begin != ni_end ) {
       n_iterator ni_it;
       for (ni_it = --ni_end; ni_it != ni_begin; --ni_it) {
-	std::cout << " " << (*ni_it);
+        std::cout << " " << (*ni_it);
       }
       std::cout << " " << (*ni_it);
     }

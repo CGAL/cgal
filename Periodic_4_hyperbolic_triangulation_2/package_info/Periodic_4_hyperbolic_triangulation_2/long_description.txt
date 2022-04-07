@@ -1,0 +1,9 @@
+The package 2D Periodic Hyperbolic Triangulation provides Delaunay triangulations
+of the Bolza surface, the most symmetric closed orientable surface of genus 2.
+Triangulations of the Bolza surface can be seen as periodic triangulations in the
+Poincaré disk model of the hyperbolic plane. The package includes demos, examples,
+and tests. More information can be found in:
+        Iordan Iordanov and Monique Teillaud. Implementing Delaunay triangulations of
+        the Bolza surface. In Proceedings of the Thirty-third International Symposium
+        on Computational Geometry, pages 44:1–44:15, 2017.
+        doi: 10.4230/LIPIcs.SoCG.2017.44.

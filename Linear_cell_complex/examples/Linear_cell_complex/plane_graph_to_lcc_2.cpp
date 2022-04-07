@@ -1,10 +1,10 @@
-#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <iostream>
 #include <fstream>
 #include <cstring>
 
-typedef CGAL::Linear_cell_complex<2,2> LCC_2;
+typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,2> LCC_2;
 typedef LCC_2::Dart_handle             Dart_handle;
 typedef LCC_2::Point                   Point;
 
@@ -37,18 +37,18 @@ int main(int narg, char** argv)
   }
   else
     filename=std::string(argv[1]);
-  
+
   LCC_2 lcc;
 
   std::ifstream is(filename.c_str());
   std::cout<<"Import plane graph from "<<filename<<std::endl;
   CGAL::import_from_plane_graph(lcc, is);
-  
+
   // Display the lcc characteristics.
   std::cout<<"LCC characteristics:"<<std::endl<<"  ";
-  lcc.display_characteristics(std::cout) 
+  lcc.display_characteristics(std::cout)
     << ", valid=" << lcc.is_valid() << std::endl;
-  
+
   return EXIT_SUCCESS;
 }
 

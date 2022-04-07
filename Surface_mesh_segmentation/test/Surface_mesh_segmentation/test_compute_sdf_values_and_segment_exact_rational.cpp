@@ -1,8 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/mesh_segmentation.h>
 
 #include <CGAL/property_map.h>
@@ -17,7 +16,7 @@ int main()
 {
     // create and read Polyhedron
     Polyhedron mesh;
-    std::ifstream input("data/cactus.off");
+    std::ifstream input(CGAL::data_file_path("meshes/cactus.off"));
     if ( !input || !(input >> mesh) || mesh.empty() ) {
         std::cerr << "Not a valid off file." << std::endl;
         return EXIT_FAILURE;
@@ -34,7 +33,7 @@ int main()
     std::cout << "Number of segments: " << number_of_segments << std::endl;
 
     // print segment-ids
-    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin(); 
+    for(Polyhedron::Facet_const_iterator facet_it = mesh.facets_begin();
         facet_it != mesh.facets_end(); ++facet_it) {
         std::cout << segment_property_map[facet_it] << " ";
     }

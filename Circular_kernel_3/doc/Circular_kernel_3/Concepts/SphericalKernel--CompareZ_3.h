@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3GeometricConcepts
+\ingroup PkgCircularKernel3GeometricConcepts
 \cgalConcept
 
 \cgalRefines `Kernel::CompareZ_3`
@@ -23,11 +23,11 @@ public:
 /// @{
 
 /*!
-Compares the \f$ z\f$-coordinates of `p` and `q`. 
-*/ 
-Comparison_result operator() 
-(const SphericalKernel::Circular_arc_point_3 &p, 
-const SphericalKernel::Circular_arc_point_3 &q ); 
+Compares the \f$ z\f$-coordinates of `p` and `q`.
+*/
+Comparison_result operator()
+(const SphericalKernel::Circular_arc_point_3 &p,
+const SphericalKernel::Circular_arc_point_3 &q );
 
 /// @}
 

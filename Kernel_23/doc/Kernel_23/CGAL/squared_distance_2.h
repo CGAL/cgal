@@ -6,7 +6,7 @@ namespace CGAL {
 \code
 #include <CGAL/squared_distance_2.h> //for 2D functions
 #include <CGAL/squared_distance_3.h> //for 3D functions
-\endcode  
+\endcode
 
 */
 /// @{
@@ -28,15 +28,22 @@ In 2D, the types `Type1` and `Type2` can be any of the following:
 - `Segment_2`
 - `Triangle_2`
 
+as well as any combination of `Kernel::Point_2` and `Kernel::Weighted_point_2`
 
-In 3D, the types `Type1` and `Type2` can be any of the
-following:
+In 3D, the types `Type1` and `Type2` can be any of the following:
 
 - `Point_3`
 - `Line_3`
 - `Ray_3`
 - `Segment_3`
 - `Plane_3`
+
+as well as the following combinations:
+- `Point_3`/`Triangle_3`
+- `Point_3`/`Tetrahedron_3`
+- `Weighted_point_3`/`Triangle_3`
+- `Weighted_point_3`/`Tetrahedron_3`
+- `Triangle_3`/`Triangle_3`
 
 \sa `compare_distance_to_point_grp`
 \sa `compare_signed_distance_to_line_grp`

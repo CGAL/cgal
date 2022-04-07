@@ -1,8 +1,8 @@
 namespace CGAL {
 /*!
-  \ingroup PkgSphericalKernel3GeometricClasses
+  \ingroup PkgCircularKernel3GeometricClasses
 
-  The enum `Circle_type` is used to classify an object of type `Circle_3`, so as to specify 
+  The enum `Circle_type` is used to classify an object of type `Circle_3`, so as to specify
   its type (normal,polar,bipolar or threaded), as defined in Section  \ref sectionSKobjects.
 
   \sa `CGAL::classify()`

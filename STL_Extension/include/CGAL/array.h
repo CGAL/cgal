@@ -1,19 +1,11 @@
 // Copyright (c) 2008  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion
 
@@ -21,30 +13,10 @@
 #define CGAL_ARRAY_H
 
 #include <CGAL/config.h>
-#ifndef CGAL_CFG_NO_CPP0X_ARRAY
-#  include <array>
-#else
-#  include <boost/array.hpp>
-#endif
+#include <array>
+#include <utility>
 
 namespace CGAL {
-
-namespace cpp11 {
-
-#ifndef CGAL_CFG_NO_CPP0X_ARRAY
-using std::array;
-#else
-using boost::array;
-#endif
-
-} // cpp11
-
-namespace cpp0x = cpp11;
-
-// This using is just for short-term backward-compat, people should take the
-// habit to use CGAL::cpp11::array.
-using cpp11::array;
-
 
 // The make_array() function simply constructs an std::array.
 // It is needed for cases where a std::array is used as a class data
@@ -55,7 +27,7 @@ using cpp11::array;
 
 // I proposed it for Boost.Array, but it has not been integrated so far.
 // See the thread starting at
-// http://lists.boost.org/Archives/boost/2006/08/109003.php
+// https://lists.boost.org/Archives/boost/2006/08/109003.php
 //
 // C++0x has it under discussion here :
 // http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-active.html#851
@@ -73,69 +45,40 @@ using cpp11::array;
 
 // It's also untrue that this is not documented...  It is !
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-
 template< typename T, typename... Args >
-inline
-cpp11::array< T, 1 + sizeof...(Args) >
+BOOST_CXX14_CONSTEXPR
+std::array< T, 1 + sizeof...(Args) >
 make_array(const T & t, const Args & ... args)
 {
-  cpp11::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
+  std::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
   return a;
 }
 
-#else // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
-template < typename T > inline
-cpp11::array<T, 1>
-make_array(const T& b1)
+// Functor version
+struct Construct_array
 {
-  cpp11::array<T, 1> a = { { b1 } };
-  return a;
-}
+  template <typename T, typename... Args>
+  constexpr
+  std::array<T, 1 + sizeof...(Args)>
+  operator()(const T& t, const Args& ... args) const
+  {
+    return make_array (t, args...);
+  }
+};
 
-template < typename T > inline
-cpp11::array<T, 2>
-make_array(const T& b1, const T& b2)
+template <std::size_t...Is, typename T>
+constexpr std::array<T, sizeof...(Is)>
+make_filled_array_aux(const T& value, std::index_sequence<Is...>)
 {
-  cpp11::array<T, 2> a = { { b1, b2 } };
-  return a;
+  return {(static_cast<void>(Is), value)...};
 }
 
-template < typename T > inline
-cpp11::array<T, 3>
-make_array(const T& b1, const T& b2, const T& b3)
+template <std::size_t N, typename T>
+constexpr std::array<T, N> make_filled_array(const T& value)
 {
-  cpp11::array<T, 3> a = { { b1, b2, b3 } };
-  return a;
+  return make_filled_array_aux(value, std::make_index_sequence<N>());
 }
-
-template < typename T > inline
-cpp11::array<T, 4>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4)
-{
-  cpp11::array<T, 4> a = { { b1, b2, b3, b4 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 5>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5)
-{
-  cpp11::array<T, 5> a = { { b1, b2, b3, b4, b5 } };
-  return a;
-}
-
-template < typename T > inline
-cpp11::array<T, 6>
-make_array(const T& b1, const T& b2, const T& b3, const T& b4, const T& b5,
-           const T& b6)
-{
-  cpp11::array<T, 6> a = { { b1, b2, b3, b4, b5, b6 } };
-  return a;
-}
-
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 } //namespace CGAL
 

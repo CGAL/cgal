@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+# Should be run in the directory with the release files, and named after
+# the release name, like "CGAL-4.9.1".
+
+release=${${PWD:t}/CGAL-/}
+tag=v${release}
+
+gh release upload "$tag" *.(zip|xz|txt|exe) -R CGAL/cgal
+gh release upload "$tag" CGAL-${release}-win64-auxiliary-libraries-gmp-mpfr.zip'#GMP and MPFR libraries, for Windows 64bits' -R CGAL/cgal --clobber

@@ -1,29 +1,20 @@
-// Copyright (c) 2012  Tel-Aviv University (Israel).
+// Copyright (c) 2012, 2020 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL: $
-// $Id: $
-//
-// Author(s)     : Alex Tsui <alextsui05@gmail.com>
+// Author(s): Alex Tsui <alextsui05@gmail.com>
+//            Ahmed Essam <theartful.ae@gmail.com>
 
 #ifndef CGAL_CONIC_READER_H
 #define CGAL_CONIC_READER_H
 
 #include <iostream>
 #include <fstream>
-#include <sstream>
-#include <list>
 #include <string>
 
 template <typename Traits>
@@ -41,16 +32,15 @@ public:
   typedef typename Traits::Rat_circle_2         Rat_circle_2;
 
   template<class OutputIterator>
-  int read_data(const char * filename, OutputIterator curves_out,
+  int read_data(std::ifstream & inp, OutputIterator curves_out,
                 CGAL::Bbox_2 & bbox)
   {
 
     Curve_2 cv;
     char dummy[256];
 
-    std::ifstream inp(filename);
     if (!inp.is_open()) {
-      std::cerr << "Cannot open file " << filename << "!" << std::endl;
+      std::cerr << "Input stream is not open!" << std::endl;
       return -1;
     }
     int count;
@@ -64,7 +54,6 @@ public:
         else bbox = bbox + curve_bbox;
       }
     }
-    inp.close();
     return 0;
   }
 
@@ -241,6 +230,54 @@ public:
       is.getline(one_line, 128);
       if (one_line[0] != '#') break;
     }
+  }
+
+  // should probably change class name since it reads and writes
+  template <typename InputIterator>
+  int write_data(std::ofstream & ofs, InputIterator begin_, InputIterator end_)
+  {
+    ofs << std::distance(begin_, end_) << std::endl;
+    for (auto it = begin_; it != end_; ++it)
+    {
+      if (it->is_full_conic())
+      {
+        ofs << "F ";
+        ofs << it->r() << " ";
+        ofs << it->s() << " ";
+        ofs << it->t() << " ";
+        ofs << it->u() << " ";
+        ofs << it->v() << " ";
+        ofs << it->w() << " ";
+        ofs << std::endl;
+      }
+      else if (it->orientation() == CGAL::COLLINEAR)
+      {
+        ofs << "S ";
+        ofs << it->source() << " ";
+        ofs << it->target() << " ";
+        ofs << std::endl;
+      }
+      else
+      {
+        ofs << "A ";
+        ofs << it->r() << " ";
+        ofs << it->s() << " ";
+        ofs << it->t() << " ";
+        ofs << it->u() << " ";
+        ofs << it->v() << " ";
+        ofs << it->w() << " ";
+        if (it->orientation() == CGAL::COUNTERCLOCKWISE)
+          ofs << "1 ";
+        else if (it->orientation() == CGAL::CLOCKWISE)
+          ofs << "-1 ";
+        else
+          ofs << "0 ";
+        ofs << it->source() << " ";
+        ofs << it->target() << " ";
+        ofs << std::endl;
+      }
+    }
+    return 0;
   }
 };
 

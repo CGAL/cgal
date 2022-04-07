@@ -1,0 +1,15 @@
+/*!
+\example Surface_mesh/check_orientation.cpp
+\example Surface_mesh/sm_iterators.cpp
+\example Surface_mesh/sm_circulators.cpp
+\example Surface_mesh/sm_properties.cpp
+\example Surface_mesh/sm_memory.cpp
+\example Surface_mesh/sm_bgl.cpp
+\example Surface_mesh/sm_kruskal.cpp
+\example Surface_mesh/sm_derivation.cpp
+@cond
+\example Surface_mesh/sm_do_intersect.cpp
+\example Surface_mesh/sm_aabbtree.cpp
+@endcond
+\example Surface_mesh/draw_surface_mesh.cpp
+*/

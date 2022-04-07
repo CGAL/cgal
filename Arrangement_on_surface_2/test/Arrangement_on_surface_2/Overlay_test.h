@@ -6,7 +6,7 @@
 #include <string>
 #include <algorithm>
 
-#include <CGAL/basic.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_overlay_2.h>
@@ -209,7 +209,7 @@ protected:
 #endif
     }
 
-    /*! Create a vertex v that mathces v1, which lies of the edge e2. */
+    /*! Create a vertex v that matches v1, which lies of the edge e2. */
     virtual void create_vertex(Vertex_const_handle  v1,
                                Halfedge_const_handle e2,
                                Vertex_handle v) const
@@ -227,7 +227,7 @@ protected:
       }
     }
 
-    /*! Create a vertex v that mathces v1, contained in the face f2. */
+    /*! Create a vertex v that matches v1, contained in the face f2. */
     virtual void create_vertex(Vertex_const_handle v1, Face_const_handle f2,
                                Vertex_handle v) const
     {
@@ -244,7 +244,7 @@ protected:
       }
     }
 
-    /*! Create a vertex v that mathces v2, which lies of the edge e1. */
+    /*! Create a vertex v that matches v2, which lies of the edge e1. */
     virtual void create_vertex(Halfedge_const_handle e1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
@@ -261,7 +261,7 @@ protected:
       }
     }
 
-    /*! Create a vertex v that mathces v2, contained in the face f1. */
+    /*! Create a vertex v that matches v2, contained in the face f1. */
     virtual void create_vertex(Face_const_handle f1, Vertex_const_handle v2,
                                Vertex_handle v) const
     {
@@ -278,7 +278,7 @@ protected:
       }
     }
 
-    /*! Create a vertex v that mathces the intersection of the edges e1 and e2.
+    /*! Create a vertex v that matches the intersection of the edges e1 and e2.
      */
     virtual void create_vertex(Halfedge_const_handle e1,
                                Halfedge_const_handle e2,
@@ -745,7 +745,7 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::init()
 
   // Expected arrangement.
   Formatter formatter;
-  CGAL::read(m_arr, p_stream, formatter);
+  CGAL::IO::read(m_arr, p_stream, formatter);
 
   p_stream.close();
 
@@ -981,13 +981,13 @@ bool Overlay_test<T_Geom_traits, T_Topol_traits>::perform()
   Arrangement arr;
   Overlay_traits overlay_traits(m_verbose_level);
   // Formatter formatter;
-  // CGAL::write(m_arr2, std::cout, formatter);
+  // CGAL::IO::write(m_arr2, std::cout, formatter);
 
   CGAL::overlay(m_arr1, m_arr2, arr, overlay_traits);
 
   // Generate the output for debugging purposes
   // Formatter formatter;
-  // CGAL::write(arr, std::cout, formatter);
+  // CGAL::IO::write(arr, std::cout, formatter);
 
   // Verify the resulting arrangement:
   if (!equivalent_arr(arr, m_arr)) {

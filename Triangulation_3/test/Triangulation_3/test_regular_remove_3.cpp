@@ -2,24 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Christophe Delage (Christophe.Delage@sophia.inria.fr)
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 
 #include <iostream>
 #include <fstream>
@@ -33,18 +24,18 @@
 #include <CGAL/_test_types.h>
 //#include <CGAL/_test_cls_regular_3.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel FK;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK> bare_traits;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 int degeneracy_counter = 0;
 
 // This traits class counts the number of times a power_test has returned 0.
 // This gives a rough idea of how degenerate a data set is.
-struct traits : public bare_traits
+struct traits : public K
 {
-    struct Power_test_3 : public bare_traits::Power_test_3
+    struct Power_side_of_oriented_power_sphere_3 : public K::Power_side_of_oriented_power_sphere_3
     {
-        typedef bare_traits::Power_test_3 P3;
+      typedef K::Weighted_point_3 Weighted_point;
+        typedef K::Power_side_of_oriented_power_sphere_3 P3;
         Oriented_side operator() (const Weighted_point &p0,
                                   const Weighted_point &p) const
         {
@@ -81,8 +72,8 @@ struct traits : public bare_traits
         }
     };
 
-    Power_test_3 power_test_3_object() const
-    { return Power_test_3(); }
+    Power_side_of_oriented_power_sphere_3 power_side_of_oriented_power_sphere_3_object() const
+    { return Power_side_of_oriented_power_sphere_3(); }
 };
 
 
@@ -92,21 +83,24 @@ template class CGAL::Regular_triangulation_3<traits>;
 
 typedef CGAL::Regular_triangulation_3<traits>                 Cls;
 
-typedef traits::Bare_point Point;
-typedef traits::Weighted_point Weighted_point;
+typedef K::Point_3 Point;
+typedef K::Weighted_point_3 Weighted_point;
 
 typedef Cls::Vertex_handle                         Vertex_handle;
 
 // We don't want to use compare_xyz because it thinks two weighted points
 // located at the same place with different weights are identical.
-struct less_xyzw 
+struct less_xyzw
 {
     bool operator() (const Weighted_point &p,
                      const Weighted_point &q) const
     {
-        if (p.x() < q.x()) return true; if (p.x() > q.x()) return false;
-        if (p.y() < q.y()) return true; if (p.y() > q.y()) return false;
-        if (p.z() < q.z()) return true; if (p.z() > q.z()) return false;
+        if (p.x() < q.x()) return true;
+        if (p.x() > q.x()) return false;
+        if (p.y() < q.y()) return true;
+        if (p.y() > q.y()) return false;
+        if (p.z() < q.z()) return true;
+        if (p.z() > q.z()) return false;
         if (p.weight() < q.weight()) return true;
         return false;
     }
@@ -127,7 +121,7 @@ public:
     const Weighted_point &operator* () const { return _wp; }
     bool operator== (const point_iterator &i) const { return _i == i._i; }
     bool operator!= (const point_iterator &i) const { return ! (*this == i); }
-    
+
 protected:
     void set_point (int x, int y, int z, int w)
     {
@@ -197,13 +191,13 @@ struct point_iterator_3 : public point_iterator
     }
 };
 
-class point_reader 
+class point_reader
 {
     std::istream *in;
     Weighted_point wp;
     int nb;
 public:
-    point_reader () : in (0), wp(), nb(0) {}
+    point_reader () : in (nullptr), wp(), nb(0) {}
     point_reader (std::istream &is) : in(&is)
     {
         if (*in >> nb) {
@@ -240,7 +234,7 @@ void insert (Cls &T, point_set &points, int number)
     assert(T.is_valid());
     std::cout << " number of vertices: " << T.number_of_vertices()
         << std::endl;
-    
+
     std::cout << " number of degeneracies: " << degeneracy_counter << std::endl;
     degeneracy_counter = 0;
 }
@@ -261,7 +255,7 @@ void remove (Cls &T, point_set &points, int number)
         std::cout << "\r number of removed points:  " << i << std::flush;
     }
     std::cout << std::endl;
-    
+
     assert(number >= 0);
     assert(T.number_of_vertices() == 0);
     assert(T.is_valid());
@@ -280,7 +274,7 @@ void dim_jump (Cls &T, const Point &p, int dim)
     assert(T.is_valid());
     assert(v != Vertex_handle());
     assert(T.dimension() == dim + 1);
-    
+
     T.remove (v);
     assert(T.is_valid());
     assert(T.dimension() == dim);
@@ -295,14 +289,14 @@ bool test_case (std::istream &is)
     point_set points;
     Cls T;
     int number = 0;
-    
+
     do {
         ++number;
         points.insert (*pi);
         T.insert (*pi);
     } while (++pi != pend);
     assert(T.is_valid());
-    
+
     for (int i = 0; !points.empty(); ++i) {
         assert(T.number_of_vertices() != 0);
         Vertex_handle v = T.finite_vertices_begin();
@@ -313,15 +307,12 @@ bool test_case (std::istream &is)
     }
     assert(T.number_of_vertices() == 0);
     assert(points.empty());
-    
+
     return true;
 }
 
 int main(int argc, char **argv)
 {
-    std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
-            << std::endl;
-
     // Test various data sets that crashed the code at some point in the past.
     // File format is:
     // number of points of first data set
@@ -334,20 +325,20 @@ int main(int argc, char **argv)
         std::ifstream fin ("data/regular_remove_3");
         assert(fin);
         std:: cout << " test `data/regular_remove_3'" << std::endl;
-        while (test_case (fin)) 
+        while (test_case (fin))
             // semicolon
             ;
     }
-    
+
     // Hardcoded seeds so that the test-suite is deterministic.
     boost::int32_t seed0 = 42, seed1 = 43, seed2 = 42, seed3 = 42;
 
     // You can also pass seeds on the command line.
-    if (argc > 1) std::sscanf (argv[1], "%d", &seed0);
-    if (argc > 2) std::sscanf (argv[2], "%d", &seed1);
-    if (argc > 3) std::sscanf (argv[3], "%d", &seed2);
-    if (argc > 4) std::sscanf (argv[4], "%d", &seed3);
-    
+    if (argc > 1) { std::istringstream iss(argv[1]); iss >>seed0; }
+    if (argc > 2) { std::istringstream iss(argv[2]); iss >>seed1; }
+    if (argc > 3) { std::istringstream iss(argv[3]); iss >>seed2; }
+    if (argc > 4) { std::istringstream iss(argv[4]); iss >>seed3; }
+
     Cls T;
     point_set points;
 

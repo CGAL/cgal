@@ -17,8 +17,10 @@ It is templated by a parameter which must be instantiated by one of the \cgal pe
 implementation, only `Periodic_2_Delaunay_triangulation_2` is
 supported for `PTr`.</I>
 
-\tparam PTr::Vertex has to be a model of the concept
-`Periodic_2TriangulationHierarchyVertexBase_2`.
+\tparam PTr::Vertex has to be a model of the concepts
+`TriangulationHierarchyVertexBase_2` and `Periodic_2TriangulationVertexBase_2`.
+This can be achieved for example by using `CGAL::Triangulation_hierarchy_vertex_base_2`
+ templated by `CGAL::Periodic_2_triangulation_vertex_base_2`.
 
 \tparam PTr::Geom_traits has to be a model of the concept
 `Periodic_2DelaunayTriangulationTraits_2`.
@@ -57,7 +59,7 @@ fraction of the number of vertices of the preceding triangulation
 the data structure remains small and achieves fast point location
 queries on real data.
 
-\sa `CGAL::Periodic_2_triangulation_hierarchy_vertex_base_2`
+\sa `CGAL::Triangulation_hierarchy_vertex_base_2`
 \sa `CGAL::Periodic_2_Delaunay_triangulation_2`
 
 */

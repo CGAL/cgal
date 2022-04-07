@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>,
@@ -22,6 +14,9 @@
 #ifndef CGAL_SNAP_ROUNDING_KD_2_H
 #define CGAL_SNAP_ROUNDING_KD_2_H
 
+#include <CGAL/license/Snap_rounding_2.h>
+
+
 #include <list>
 #include <CGAL/basic.h>
 #include <CGAL/predicates_on_points_2.h>
@@ -29,6 +24,8 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Dimension.h>
+#include <CGAL/number_type_config.h>
 
 #include <boost/type_traits/is_pointer.hpp>
 
@@ -84,6 +81,7 @@ public:
   typedef Traits_                                                Traits;
   typedef Point_                                                 Point_d;
 
+  typedef Dimension_tag<2>                                       Dimension;
   typedef typename Traits::Iso_rectangle_2                       Iso_box_d;
   typedef typename Traits::Cartesian_const_iterator_2            Cartesian_const_iterator_d;
   typedef typename Traits::Construct_cartesian_const_iterator_2  Construct_cartesian_const_iterator_d;
@@ -397,7 +395,7 @@ public:
   Multiple_kd_tree(const Point_saved_pair_list & inp_points_list,
                    int inp_number_of_trees,
                    const Segment_list & seg_list) :
-    pi(3.1415), half_pi(1.57075),
+    pi(CGAL_PI), half_pi(0.5 * CGAL_PI),
     number_of_trees(inp_number_of_trees), input_points_list(inp_points_list)
   {
 
@@ -411,7 +409,7 @@ public:
     // find the kd trees that have enough candidates  (segments with a close
     // slope)
     int * kd_counter = new int[number_of_trees];
-    int number_of_segments = seg_list.size();
+    std::size_t number_of_segments = seg_list.size();
 
     // auxilary directions
     Direction_list directions;
@@ -524,8 +522,8 @@ public:
     // determine right kd-tree to work on, depending on the segment's slope
     Direction_2 d = get_direction(s);
 
-    int i = 0;
-    int n = kd_trees_list.size();
+    std::size_t i = 0;
+    std::size_t n = kd_trees_list.size();
     bool found = false;
     typename Kd_triple_list::const_iterator iter = kd_trees_list.begin();
 
@@ -585,7 +583,7 @@ public:
     iter->first->search(std::back_inserter(result), b);
 
     // create result
-    result_list.empty();
+    CGAL_assertion(result_list.empty());
 
     for( Point_with_hot_pixel_history_saved_iter my_point_iter = result.begin();    my_point_iter != result.end();   ++my_point_iter )
       result_list.push_back(my_point_iter->object);

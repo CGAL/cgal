@@ -19,7 +19,7 @@ public:
   typedef typename Kernel::Point_2                        Point_2;
 
   ArrangementPointInput(QObject* parent);
-  
+
 protected:
   void mousePressEvent(QGraphicsSceneMouseEvent *event);
   void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -37,7 +37,7 @@ ArrangementPointInput<T>::ArrangementPointInput(QObject* parent)
 {}
 
 template <typename T>
-void 
+void
 ArrangementPointInput<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   m_p = m_convert(event->scenePos());
@@ -45,16 +45,16 @@ ArrangementPointInput<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-void 
+void
 ArrangementPointInput<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent* )
 {
-  emit (generate(CGAL::make_object(m_p)));
+  Q_EMIT (generate(CGAL::make_object(m_p)));
 }
 
 
 
 template <typename T>
-bool 
+bool
 ArrangementPointInput<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -69,7 +69,7 @@ ArrangementPointInput<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

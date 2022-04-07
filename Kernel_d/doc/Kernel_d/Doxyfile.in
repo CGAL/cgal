@@ -1,14 +1,4 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - dD Geometry Kernel"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Kernel_d/doc/Kernel_d/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - dD Geometry Kernel"
 SORT_GROUP_NAMES           =  true
-
-
-
-EXAMPLE_PATH =

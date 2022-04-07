@@ -5,6 +5,8 @@ compare_y_at_x 3 0 EQUAL
 compare_y_at_x 4 0 EQUAL
 compare_y_at_x 5 0 EQUAL
 compare_y_at_x 6 0 EQUAL
+compare_y_at_x 7 0 SMALLER
+compare_y_at_x 22 0 LARGER
 #
 compare_y_at_x 7  1 SMALLER
 compare_y_at_x 8  1 EQUAL

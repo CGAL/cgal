@@ -1,144 +1,55 @@
 //! \file examples/Arrangement_on_surface_2/bgl_primal_adapter.cpp
 // Adapting an arrangement to a BGL graph.
 
-#include "arr_rational_nt.h"
-#include <CGAL/Cartesian.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arrangement_2.h>
+#include <vector>
+
+#include <CGAL/config.h>
+
+#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/property_map/vector_property_map.hpp>
+
 #include <CGAL/graph_traits_Arrangement_2.h>
 #include <CGAL/Arr_vertex_index_map.h>
-
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
-
 #include <CGAL/property_map.h>
 
-typedef CGAL::Cartesian<Number_type>                    Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
-typedef Traits_2::Point_2                               Point_2;
-typedef Traits_2::X_monotone_curve_2                    Segment_2;
-typedef CGAL::Arrangement_2<Traits_2>                   Arrangement_2;
+#include "arr_exact_construction_segments.h"
+#include "Edge_length.h"
 
-// A functor used to compute the length of an edge.
-class Edge_length_func
-{
-public:
+typedef CGAL::Arr_vertex_index_map<Arrangement>  Vertex_index_map;
+typedef Edge_length<Arrangement>                 My_edge_length;
 
-  // Boost property type definitions:
-  typedef boost::readable_property_map_tag        category;
-  typedef double                                  value_type;
-  typedef value_type                              reference;
-  typedef Arrangement_2::Halfedge_handle          key_type;
-
-  double operator()(Arrangement_2::Halfedge_handle e) const
-  {
-    const double     x1 = CGAL::to_double (e->source()->point().x());
-    const double     y1 = CGAL::to_double (e->source()->point().y());
-    const double     x2 = CGAL::to_double (e->target()->point().x());
-    const double     y2 = CGAL::to_double (e->target()->point().y());
-    const double     diff_x = x2 - x1;
-    const double     diff_y = y2 - y1;
-
-    return std::sqrt(diff_x*diff_x + diff_y*diff_y);
-  }
-};
-
-double get(Edge_length_func edge_length, Arrangement_2::Halfedge_handle e)
-{
-  return edge_length(e);
-}
-
-/* The folowing is a workaround for a bug in the BGL upto and including version
- * 103400.
- *
- * Unfortunately some of the calls to the get() function below from the BGL
- * code are qualified with the boost namespace, while others are not. For The
- * qualified calls the compiler naturally looks for the definition of the
- * function in boost namespace. For the other calls it searches the CGAL
- * namespace according to ADL (Koenig Lookup), as the type of the 1st
- * parameter is in CGAL namespace.
- *
- * One way to get around it is to provide 2 similar functions that do the
- * same thing. One in CGAL namespace provided in CGAL/Arr_vertex_map.h, and
- * the other in boost namespace below. The signature of the latter is slightly
- * changed to avoid redefinition. The type of its 1st parameter is defined in
- * boost namespace, and is a simple derivation of the 1st parameter of the
- * CGAL::get() function.
- */
-
-namespace boost {
-
-template <typename Arrangement_2>
-class Arr_vertex_index_map_boost :
-    public CGAL::Arr_vertex_index_map<Arrangement_2>
-{
- public:
-  typedef CGAL::Arr_vertex_index_map<Arrangement_2>     Base;
-  /*! Default constructor. */
-  Arr_vertex_index_map_boost() : Base() {}
-
-  /*! Constructor from CGAL index map. */
-  Arr_vertex_index_map_boost(Base & other) :
-    CGAL::Arr_vertex_index_map<Arrangement_2>(other)
-  {}
-};
-
-/*!
- * Get the index property-map function. Provided so that boost is able to
- * access the Arr_vertex_index_map above.
- * \param index_map The index map.
- * \param v A vertex handle.
- * \return The vertex index.
- */
-template<class Arrangement>
-unsigned int
-get(const boost::Arr_vertex_index_map_boost<Arrangement> & index_map,
-    typename Arrangement::Vertex_handle v) 
-{
-  const CGAL::Arr_vertex_index_map<Arrangement> & index_map_tmp =
-    static_cast<const CGAL::Arr_vertex_index_map<Arrangement> &>(index_map);
-  return CGAL::get<Arrangement>(index_map_tmp, v);
-}
-
-}
- 
-int main()
-{
-  Arrangement_2   arr;
- 
+int main() {
   // Construct an arrangement of seven intersecting line segments.
-  // We keep a handle for the vertex v_0 that corresponds to the point (1,1).
-  Arrangement_2::Halfedge_handle  e =
-    insert_non_intersecting_curve (arr, Segment_2 (Point_2 (1, 1), 
-                                                   Point_2 (7, 1)));
-  Arrangement_2::Vertex_handle    v0 = e->source();
-  insert (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
-  insert (arr, Segment_2 (Point_2 (1, 4), Point_2 (7, 1)));
-  insert (arr, Segment_2 (Point_2 (2, 2), Point_2 (9, 3)));
-  insert (arr, Segment_2 (Point_2 (2, 2), Point_2 (4, 4)));
-  insert (arr, Segment_2 (Point_2 (7, 1), Point_2 (9, 3)));
-  insert (arr, Segment_2 (Point_2 (3, 7), Point_2 (9, 3)));
+  // We keep a handle for the vertex v0 that corresponds to the point (1,1).
+  Point p1(1, 1), p2(1, 4), p3(2, 2), p4(3, 7), p5(4, 4), p6(7, 1), p7(9, 3);
+  Arrangement arr;
+  Segment s(p1, p6);
+  Arrangement::Halfedge_handle e = insert_non_intersecting_curve(arr, s);
+  Arrangement::Vertex_handle v0 = e->source();
+  insert(arr, Segment(p1, p4));  insert(arr, Segment(p2, p6));
+  insert(arr, Segment(p3, p7));  insert(arr, Segment(p3, p5));
+  insert(arr, Segment(p6, p7));  insert(arr, Segment(p4, p7));
 
   // Create a mapping of the arrangement vertices to indices.
-  CGAL::Arr_vertex_index_map<Arrangement_2>        index_map_tmp(arr);
-  boost::Arr_vertex_index_map_boost<Arrangement_2> index_map(index_map_tmp);
-  
-  // Perform Dijkstra's algorithm from the vertex v0.
-  Edge_length_func                                      edge_length;
-  
-  boost::vector_property_map<double, boost::Arr_vertex_index_map_boost<Arrangement_2> > dist_map(static_cast<unsigned int>(arr.number_of_vertices()), index_map);
-  boost::dijkstra_shortest_paths(arr, v0,
-                                 boost::vertex_index_map(index_map).
-                                 weight_map(edge_length).
-                                 distance_map(dist_map));
-  
-  // Print the results:
-  Arrangement_2::Vertex_iterator      vit;
+  Vertex_index_map index_map(arr);
 
-  std::cout << "The distances of the arrangement vertices from ("
-            << v0->point() << ") :" << std::endl;
-  for (vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
+  // Create a property map based on std::vector to keep the result distances.
+  boost::vector_property_map<Number_type, Vertex_index_map>
+    dist_map(static_cast<unsigned int>(arr.number_of_vertices()), index_map);
+
+  // Perform Dijkstra's algorithm from the vertex v0.
+  My_edge_length edge_length;
+  boost::dijkstra_shortest_paths(arr, v0, boost::vertex_index_map(index_map).
+                                 weight_map(edge_length).distance_map(dist_map).
+                                 distance_zero(Number_type(0)).
+                                 distance_inf(Number_type(1000)));
+
+  // Print the distance of each vertex from v0.
+  std::cout << "The graph distances of the arrangement vertices from ("
+            << v0->point() << ") :\n";
+  for (auto vit = arr.vertices_begin(); vit != arr.vertices_end(); ++vit)
     std::cout << "(" << vit->point() << ") at distance "
-              << dist_map[vit] << std::endl;
+              << CGAL::to_double(dist_map[vit]) << std::endl;
 
   return 0;
 }

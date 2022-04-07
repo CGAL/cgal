@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL: $
-// $Id: $
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
@@ -21,13 +13,16 @@
 #define PROPERTY_VALUE_DELEGATE_H
 
 #include <QtGui>
+#include <QItemDelegate>
+#include <QSpinBox>
+
 
 class PropertyValueDelegate : public QItemDelegate
 {
   Q_OBJECT
 
   public:
-  PropertyValueDelegate( QObject* parent = 0 );
+  PropertyValueDelegate( QObject* parent = nullptr );
 
 public:
   QWidget* createEditor( QWidget* parent, const QStyleOptionViewItem& option,
@@ -36,7 +31,7 @@ public:
                      const QModelIndex& index ) const;
   bool eventFilter( QObject* object, QEvent* event );
 
-public slots:
+public Q_SLOTS:
   void commit( );
 
 };

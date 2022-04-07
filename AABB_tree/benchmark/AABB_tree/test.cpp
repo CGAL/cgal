@@ -1,0 +1,176 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Polygon_mesh_processing/intersection.h>
+#include <CGAL/Polygon_mesh_processing/transform.h>
+
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/Side_of_triangle_mesh.h>
+
+#include <fstream>
+#include <sstream>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Surface_mesh<K::Point_3>             Surface_mesh;
+
+typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;
+typedef CGAL::AABB_do_intersect_transform_traits<K, Primitive> Traits;
+typedef CGAL::AABB_tree<Traits> Tree;
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+void naive_test(int k, const char* fname,
+                int& nb_inter, int& nb_no_inter, int& nb_include)
+{
+  std::ifstream input(fname);
+  Surface_mesh tm, tm2;
+  input >> tm;
+  copy_face_graph(tm, tm2);
+  CGAL::Aff_transformation_3<K> init1(CGAL::SCALING, 6.0);
+  PMP::transform(init1, tm);
+  CGAL::Bbox_3 box = PMP::bbox(tm);
+  typedef CGAL::AABB_tree<CGAL::AABB_traits<K, Primitive> > Tree;
+  Tree tmTree(tm.faces_begin(), tm.faces_end(), tm);
+  Tree tmTree2(tm2.faces_begin(), tm2.faces_end(), tm2);
+  CGAL::Aff_transformation_3<K> init2(CGAL::TRANSLATION, - K::Vector_3(
+                                        (box.xmax()-box.xmin()),0,0));
+  PMP::transform(init2, tm2);
+
+  tmTree.build();
+  K::Vector_3 unit_vec = (2.0/k * K::Vector_3((box.xmax()-box.xmin()),
+                                              0,
+                                              0));
+  CGAL::Aff_transformation_3<K> T0(CGAL::IDENTITY);
+  K::FT rot[9];
+  rot[0] = 1.0;
+  rot[1] = 0.0;
+  rot[2] = 0.0;
+  rot[3] = 0.0;
+  rot[4] = std::cos(CGAL_PI/4.0);
+  rot[5] = -std::sin(CGAL_PI/4.0);
+  rot[6] = 0.0;
+  rot[7] = std::sin(CGAL_PI/4.0);
+  rot[8] = std::cos(CGAL_PI/4.0);
+  CGAL::Aff_transformation_3<K> R(rot[0], rot[1], rot[2],
+      rot[3], rot[4], rot[5],
+      rot[6], rot[7], rot[8]);
+
+  CGAL::Side_of_triangle_mesh<Surface_mesh, K> sotm1(tm);
+  for(int i=1; i<k+1; ++i)
+  {
+    CGAL::Aff_transformation_3<K> T1 = CGAL::Aff_transformation_3<K>(CGAL::TRANSLATION, i*unit_vec);
+    CGAL::Aff_transformation_3<K> transfo = T0*R*T1;
+    PMP::transform(transfo, tm2);
+    tmTree2.build();
+    if(tmTree2.do_intersect(tmTree))
+      ++nb_inter;
+    else
+    {
+      if(sotm1(tm2.point(*tm2.vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
+      {
+        ++nb_include;
+      }
+      else
+      {
+        CGAL::Side_of_triangle_mesh<Surface_mesh, K> sotm2(tm2);
+        if(sotm2(tm.point(*tm.vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
+          ++nb_include;
+        else
+          ++nb_no_inter;
+      }
+    }
+    T0 = CGAL::Aff_transformation_3<K>(CGAL::TRANSLATION, -i*unit_vec);
+  }
+}
+void test_no_collision(int k, const char* fname,
+                       int& nb_inter, int& nb_no_inter, int& nb_include)
+{
+  std::ifstream input(fname);
+  Surface_mesh tm, tm2;
+  input >> tm;
+  copy_face_graph(tm, tm2);
+  CGAL::Aff_transformation_3<K> init1(CGAL::SCALING, 6.0);
+  PMP::transform(init1, tm);
+  CGAL::Bbox_3 box = PMP::bbox(tm);
+  Tree tmTree(tm.faces_begin(), tm.faces_end(), tm);
+  Tree tmTree2(tm2.faces_begin(), tm2.faces_end(), tm2);
+  CGAL::Aff_transformation_3<K> init2(CGAL::TRANSLATION, - K::Vector_3(
+                                        (box.xmax()-box.xmin()),0,0));
+  PMP::transform(init2, tm2);
+
+  tmTree.build();
+  tmTree2.build();
+  typedef boost::property_map<Surface_mesh, CGAL::vertex_point_t>::type VPM;
+  VPM vpm2 = get(CGAL::vertex_point, tm2);
+
+  K::Vector_3 unit_vec = (2.0/k * K::Vector_3((box.xmax()-box.xmin()),
+                                              0,
+                                              0));
+
+  CGAL::Side_of_triangle_mesh<Surface_mesh, K,
+      VPM, Tree> sotm1(tmTree);
+  for(int i=1; i<k+1; ++i)
+  {
+    K::FT rot[9];
+    rot[0] = 1.0;
+    rot[1] = 0.0;
+    rot[2] = 0.0;
+    rot[3] = 0.0;
+    rot[4] = std::cos(i*CGAL_PI/4.0);
+    rot[5] = -std::sin(i*CGAL_PI/4.0);
+    rot[6] = 0.0;
+    rot[7] = std::sin(i*CGAL_PI/4.0);
+    rot[8] = std::cos(i*CGAL_PI/4.0);
+    CGAL::Aff_transformation_3<K> R(rot[0], rot[1], rot[2],
+        rot[3], rot[4], rot[5],
+        rot[6], rot[7], rot[8]);
+    CGAL::Aff_transformation_3<K> T1 = CGAL::Aff_transformation_3<K>(CGAL::TRANSLATION, i*unit_vec);
+    CGAL::Aff_transformation_3<K> transfo = R*T1;
+    tmTree2.traits().set_transformation(transfo);
+    CGAL::Interval_nt_advanced::Protector protector;
+    if(tmTree2.do_intersect(tmTree))
+      ++nb_inter;
+    else
+    {
+      if(sotm1(transfo.transform(vpm2[*tm2.vertices().begin()])) != CGAL::ON_UNBOUNDED_SIDE)
+      {
+        ++nb_include;
+      }
+      else
+      {
+        CGAL::Side_of_triangle_mesh<Surface_mesh, K,
+            VPM, Tree> sotm2(tmTree2);
+        if(sotm2(tm.point(*tm.vertices().begin())) != CGAL::ON_UNBOUNDED_SIDE)
+          ++nb_include;
+        else
+          ++nb_no_inter;
+      }
+    }
+  }
+}
+
+int main(int argc, const char** argv)
+{
+  int k = (argc>1) ? atoi(argv[1]) : 10;
+  const char* path = (argc>2)?argv[2]:"data/handle"
+                                      ".off";
+
+  std::cout<< k<<" steps in "<<path<<std::endl;
+  int nb_inter(0), nb_no_inter(0), nb_include(0),
+      naive_inter(0), naive_no_inter(0), naive_include(0);
+  auto start = std::chrono::steady_clock::now();
+  naive_test(k, path, naive_inter, naive_no_inter, naive_include);
+  auto end = std::chrono::steady_clock::now();
+  std::cout<<"Naive test            :"<<naive_inter<<" collisions, "<<naive_include<<" inclusions, "<<naive_no_inter<<" no collision, calculated in "
+          <<std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "μs." << std::endl;
+  start = std::chrono::steady_clock::now();
+  test_no_collision(k, path,nb_inter, nb_no_inter, nb_include);
+  end = std::chrono::steady_clock::now();
+  std::cout<<"With transform_traits: "<<nb_inter<<" collisions, "<<nb_include<<" inclusions, "<<nb_no_inter<<" no collision, calculated in "
+          <<std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "μs." << std::endl;
+    return 0;
+}

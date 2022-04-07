@@ -18,10 +18,10 @@ class MainWindow : public CGAL::Qt::DemosMainWindow, private Ui::MainWindow
   Q_OBJECT
 
 public:
-  MainWindow(QWidget* parent = 0);
+  MainWindow(QWidget* parent = nullptr);
   ~MainWindow() {}
 
-public slots:
+public Q_SLOTS:
   // file menu
   void on_actionLoad_Points_triggered();
   void on_actionSave_Points_triggered();
@@ -39,7 +39,7 @@ public slots:
   // about menu
   void popupAboutCGAL();
 
-  signals:
+  Q_SIGNALS:
   void sceneChanged();
 
 protected:

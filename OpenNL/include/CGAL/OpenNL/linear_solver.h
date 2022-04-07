@@ -3,19 +3,7 @@
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This file is part of CGAL (www.cgal.org)
  *
  * Scientific work that use this software can reference the website and
  * the following publication:
@@ -33,6 +21,10 @@
  *      - DefaultLinearSolverTraits is now a model of the SparseLinearAlgebraTraits_d concept
  *      - Added SymmetricLinearSolverTraits
  *      - copied Jacobi preconditioner from Graphite 1.9 code
+ *
+ * $URL$
+ * $Id$
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
 
@@ -48,6 +40,8 @@
 #include <vector>
 #include <iostream>
 #include <cstdlib>
+
+#include <CGAL/use.h>
 
 namespace OpenNL {
 
@@ -222,9 +216,9 @@ public:
         least_squares_ = false ;
         nb_variables_ = nb_variables ;
         variable_ = new Variable[nb_variables] ;
-        A_ = NULL ;
-        x_ = NULL ;
-        b_ = NULL ;
+        A_ = nullptr ;
+        x_ = nullptr ;
+        b_ = nullptr ;
     }
 
     ~LinearSolver() {
@@ -267,7 +261,7 @@ public:
             }
         }
         unsigned int n = index ;
-        A_ = new Matrix(n) ;
+        A_ = new Matrix(static_cast<int>(n)) ;
         x_ = new Vector(n) ;
         b_ = new Vector(n) ;
         for(unsigned int i=0; i<n; i++) {
@@ -334,28 +328,28 @@ public:
 
     void end_row() {
         if(least_squares_) {
-            unsigned int nf = af_.size() ;
-            unsigned int nl = al_.size() ;
-            for(unsigned int i=0; i<nf; i++) {
-                for(unsigned int j=0; j<nf; j++) {
+            std::size_t nf = af_.size() ;
+            std::size_t nl = al_.size() ;
+            for(std::size_t i=0; i<nf; i++) {
+                for(std::size_t j=0; j<nf; j++) {
                     A_->add_coef(if_[i], if_[j], af_[i] * af_[j]) ;
                 }
             }
             CoeffType S = - bk_ ;
-            for(unsigned int j=0; j<nl; j++) {
+            for(std::size_t j=0; j<nl; j++) {
                 S += al_[j] * xl_[j] ;
             }
-            for(unsigned int i=0; i<nf; i++) {
+            for(std::size_t i=0; i<nf; i++) {
                 (*b_)[if_[i]] -= af_[i] * S ;
             }
         } else {
-            unsigned int nf = af_.size() ;
-            unsigned int nl = al_.size() ;
-            for(unsigned int i=0; i<nf; i++) {
+            std::size_t nf = af_.size() ;
+            std::size_t nl = al_.size() ;
+            for(std::size_t i=0; i<nf; i++) {
                 A_->add_coef(current_row_, if_[i], af_[i]) ;
             }
             (*b_)[current_row_] = bk_ ;
-            for(unsigned int i=0; i<nl; i++) {
+            for(std::size_t i=0; i<nl; i++) {
                 (*b_)[current_row_] -= al_[i] * xl_[i] ;
             }
         }
@@ -386,9 +380,9 @@ public:
 
         transition(CONSTRUCTED, SOLVED) ;
 
-        delete A_ ; A_ = NULL ;
-        delete b_ ; b_ = NULL ;
-        delete x_ ; x_ = NULL ;
+        delete A_ ; A_ = nullptr ;
+        delete b_ ; b_ = nullptr ;
+        delete x_ ; x_ = nullptr ;
 
         return success;
     }
@@ -436,6 +430,7 @@ protected:
     }
 
     void check_state(State s) {
+            CGAL_USE(s);
             CGAL_assertion(state_ == s) ;
     }
 

@@ -2,24 +2,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_FACE_INDEX_MAP_H
 #define CGAL_ARR_FACE_INDEX_MAP_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+#include <CGAL/disable_warnings.h>
 
 /*! \file
  * Definition of the Arr_face_index_map<Arrangement> class.
@@ -27,12 +23,8 @@
 
 #include <CGAL/Arr_observer.h>
 #include <CGAL/Unique_hash_map.h>
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-#include <boost/property_map/property_map.hpp>
-#else
-#include <boost/property_map.hpp>
-#endif
+#include <CGAL/property_map.h>
+
 #include <boost/graph/properties.hpp>
 
 namespace CGAL {
@@ -196,15 +188,15 @@ public:
   virtual void before_merge_face (Face_handle /* f1 */,
                                   Face_handle f2,
                                   typename
-				  Arrangement_2::Halfedge_handle /* e */)
+                                  Arrangement_2::Halfedge_handle /* e */)
   {
     // Update the number of faces.
     n_faces--;
-    
+
     // Reduce memory consumption in case the number of faces has
     // drastically decreased.
-    if (2*n_faces+1 < rev_map.size() && 
-	rev_map.size() / 2 >= MIN_REV_MAP_SIZE)
+    if (2*n_faces+1 < rev_map.size() &&
+        rev_map.size() / 2 >= MIN_REV_MAP_SIZE)
     {
       rev_map.resize (rev_map.size() / 2);
     }
@@ -215,7 +207,7 @@ public:
 
     if (index == n_faces)
       return;
-    
+
     Face_handle    last_f = rev_map[n_faces];
     index_map[last_f] = index;
     rev_map[index] = last_f;
@@ -228,13 +220,13 @@ public:
   //@}
 
 private:
-  
+
   /*! Initialize the map for the given arrangement. */
   void _init ()
   {
     // Get the number of faces and allocate the reverse map accordingly.
     n_faces = static_cast<unsigned int>(this->arrangement()->number_of_faces());
-    
+
     if (n_faces < MIN_REV_MAP_SIZE)
       rev_map.resize (MIN_REV_MAP_SIZE);
     else
@@ -243,13 +235,13 @@ private:
     // Clear the current mapping.
     index_map.clear();
 
-    // Create the initial mapping. 
+    // Create the initial mapping.
     typename Arrangement_2::Face_iterator     fit;
     Face_handle                               fh;
     unsigned int                              index = 0;
 
     for (fit = this->arrangement()->faces_begin();
-	 fit != this->arrangement()->faces_end(); ++fit, ++index)
+         fit != this->arrangement()->faces_end(); ++fit, ++index)
     {
       // Map the current face to the current index.
       fh = fit;
@@ -258,7 +250,7 @@ private:
     }
 
     return;
-  }  
+  }
 
 };
 
@@ -271,11 +263,13 @@ private:
  */
 template<class Arrangement>
 unsigned int get (const CGAL::Arr_face_index_map<Arrangement>& index_map,
-		  typename Arrangement::Face_handle f) 
-{ 
+                  typename Arrangement::Face_handle f)
+{
   return (index_map[f]);
 }
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pierre Alliez
@@ -26,17 +18,21 @@
 #include "MainWindow.h"
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 int main(int argc, char **argv)
 {
+  CGAL::Qt::init_ogl_context(2, 1);
+
   QApplication app(argc, argv);
   app.setOrganizationDomain("inria.fr");
   app.setOrganizationName("INRIA");
   app.setApplicationName("PCA demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGALQt.
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();

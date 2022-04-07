@@ -1,4 +1,4 @@
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <iostream>
 #include <algorithm>
@@ -14,10 +14,10 @@ struct Plane_equation {
     }
 };
 
-typedef CGAL::Homogeneous<int>      Kernel;
-typedef Kernel::Point_3             Point_3;
-typedef Kernel::Plane_3             Plane_3;
-typedef CGAL::Polyhedron_3<Kernel>  Polyhedron;
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef Kernel::Point_3                Point_3;
+typedef Kernel::Plane_3                Plane_3;
+typedef CGAL::Polyhedron_3<Kernel>     Polyhedron;
 
 int main() {
     Point_3 p( 1, 0, 0);
@@ -28,7 +28,7 @@ int main() {
     P.make_tetrahedron( p, q, r, s);
     std::transform( P.facets_begin(), P.facets_end(), P.planes_begin(),
                     Plane_equation());
-    CGAL::set_pretty_mode( std::cout);
+    CGAL::IO::set_pretty_mode( std::cout);
     std::copy( P.planes_begin(), P.planes_end(),
                std::ostream_iterator<Plane_3>( std::cout, "\n"));
     return 0;

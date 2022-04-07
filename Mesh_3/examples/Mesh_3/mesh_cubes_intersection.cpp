@@ -29,7 +29,7 @@ typedef FT (*Function)(const Point&);
 typedef CGAL::Implicit_multi_domain_to_labeling_function_wrapper<Function>
                                                         Function_wrapper;
 typedef Function_wrapper::Function_vector Function_vector;
-typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, K> Mesh_domain;
+typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -85,13 +85,13 @@ int main()
 
   // Perturbation (maximum cpu time: 10s, targeted dihedral angle: default)
   CGAL::perturb_mesh_3(c3t3, domain, time_limit = 10);
-  
+
   // Exudation
   CGAL::exude_mesh_3(c3t3,12);
-  
+
   // Output
   std::ofstream medit_file("out_cubes_intersection.mesh");
-  CGAL::output_to_medit(medit_file, c3t3);
+  CGAL::IO::output_to_medit(medit_file, c3t3);
 
   return 0;
 }

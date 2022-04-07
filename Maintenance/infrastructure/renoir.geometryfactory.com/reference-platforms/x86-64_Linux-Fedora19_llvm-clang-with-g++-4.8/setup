@@ -5,10 +5,7 @@ export CXX CC
 export QTDIR=/usr/lib64/qt-3.3
 source ${REFS}/setup-common
 
-BOOST_ROOT=/home/lrineau/CGAL/boost/boost-release-branch
-export BOOST_ROOT
-
-CXXFLAGS="-I$BOOST_ROOT/include -fsanitize=address"
+CXXFLAGS="-fsanitize=address -DDONT_USE_BOOST_PROGRAM_OPTIONS"
 
 ASAN_OPTIONS="detect_leaks=1"
 LSAN_OPTIONS="suppressions=${REFS}/x86-64_Linux-Fedora19_llvm-clang-with-g++-4.8/suppr.txt:print_suppressions=0"

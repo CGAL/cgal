@@ -1,0 +1,10 @@
+-------------------------------------------------------
+ RANDOM DESIGN IDEAS extracted from Convex_hull.h
+-------------------------------------------------------
+- Use a policy tag to choose for incremental with inserts only or
+  incremental with  removals and inserts.
+  In the first case: use Triangulation for storage.
+  In the second case: use Delaunay !
+    In this second case, we must keeps the points that are inserted in the hull,
+    as they may become part of the boundary later on, when some points are removed.
+- Constructor with range argument uses quickhull.

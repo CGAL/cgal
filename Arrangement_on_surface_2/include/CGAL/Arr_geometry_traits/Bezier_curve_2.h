@@ -2,25 +2,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
 
 #ifndef CGAL_BEZIER_CURVE_2_H
 #define CGAL_BEZIER_CURVE_2_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*! \file
  * Header file for the _Bezier_curve_2 class.
@@ -33,6 +28,7 @@
 #include <deque>
 #include <vector>
 #include <list>
+#include <CGAL/Arr_enums.h>
 #include <ostream>
 
 namespace CGAL {
@@ -42,7 +38,7 @@ namespace CGAL {
  * p_0, ... , p_n that define the curve (X(t), Y(t)) for 0 <= t <= 1,
  * where X(t) and Y(t) are polynomials of degree n.
  *
- * The class is templated with three parameters: 
+ * The class is templated with three parameters:
  * Rat_kernel A geometric kernel, where Alg_kernel::FT is the number type
  *            for the coordinates of control points (and subsequently also for
  *            the polynomial coefficients). This number type must be the same
@@ -78,7 +74,7 @@ public:
 
   typedef typename Rat_kernel::Point_2            Rat_point_2;
   typedef typename Alg_kernel::Point_2            Alg_point_2;
-  
+
   typedef typename Nt_traits::Integer             Integer;
   typedef typename Nt_traits::Rational            Rational;
   typedef typename Nt_traits::Algebraic           Algebraic;
@@ -97,7 +93,7 @@ private:
 
   /// \name Lazily-evaluated values of the polynomials B(t) = (X(t), Y(t)).
   //@{
- 
+
   // X(t) is given by *p_polyX(t) / _normX:
   mutable Polynomial        *p_polyX;       // The polynomial for x.
   mutable Integer           *p_normX;       // Normalizing factor for y.
@@ -110,12 +106,12 @@ private:
 public:
 
   /*! Default constructor. */
-  _Bezier_curve_2_rep () : 
+  _Bezier_curve_2_rep () :
     _no_self_inter (true),
-    p_polyX(NULL),
-    p_normX(NULL),
-    p_polyY(NULL),
-    p_normY(NULL)
+    p_polyX(nullptr),
+    p_normX(nullptr),
+    p_polyY(nullptr),
+    p_normY(nullptr)
   {}
 
   /*! Copy constructor (isn't really used). */
@@ -123,18 +119,18 @@ public:
     _ctrl_pts(other._ctrl_pts),
     _bbox(other._bbox),
     _no_self_inter(other._no_self_inter),
-    p_polyX(NULL),
-    p_normX(NULL),
-    p_polyY(NULL),
-    p_normY(NULL)
+    p_polyX(nullptr),
+    p_normX(nullptr),
+    p_polyY(nullptr),
+    p_normY(nullptr)
   {
-    if (other.p_polyX != NULL)
+    if (other.p_polyX != nullptr)
       p_polyX = new Polynomial(*(other.p_polyX));
-    if (other.p_polyY != NULL)
+    if (other.p_polyY != nullptr)
       p_polyY = new Polynomial(*(other.p_polyY));
-    if (other.p_normX != NULL)
+    if (other.p_normX != nullptr)
       p_normX = new Integer(*(other.p_normX));
-    if (other.p_normY != NULL)
+    if (other.p_normY != nullptr)
       p_normY = new Integer(*(other.p_normY));
   }
 
@@ -147,13 +143,13 @@ public:
    */
   template <class InputIterator>
   _Bezier_curve_2_rep (InputIterator pts_begin, InputIterator pts_end) :
-    p_polyX(NULL),
-    p_normX(NULL),
-    p_polyY(NULL),
-    p_normY(NULL)
+    p_polyX(nullptr),
+    p_normX(nullptr),
+    p_polyY(nullptr),
+    p_normY(nullptr)
   {
     // Copy the control points and compute their bounding box.
-    const int   pts_size = std::distance (pts_begin, pts_end);
+    const int   pts_size = static_cast<int>(std::distance (pts_begin, pts_end));
     double      x, y;
     double      x_min = 0, x_max = 0;
     double      y_min = 0, y_max = 0;
@@ -163,7 +159,7 @@ public:
                            "There must be at least 2 control points.");
 
     _ctrl_pts.resize (pts_size);
-    
+
     for (k = 0; pts_begin != pts_end; ++pts_begin, k++)
     {
 //SL: Acccording to the fact that all operations are based on polynomials
@@ -213,13 +209,13 @@ public:
   /*! Destructor. */
   ~_Bezier_curve_2_rep ()
   {
-    if (p_polyX != NULL) 
+    if (p_polyX != nullptr)
       delete p_polyX;
-    if (p_normX != NULL) 
+    if (p_normX != nullptr)
       delete p_normX;
-    if (p_polyY != NULL) 
+    if (p_polyY != nullptr)
       delete p_polyY;
-    if (p_normY != NULL) 
+    if (p_normY != nullptr)
       delete p_normY;
   }
 
@@ -229,43 +225,43 @@ public:
   /*! Check if the polynomials are already constructed. */
   bool has_polynomials () const
   {
-    return (p_polyX != NULL && p_normX != NULL &&
-            p_polyY != NULL && p_normY != NULL);
+    return (p_polyX != nullptr && p_normX != nullptr &&
+            p_polyY != nullptr && p_normY != nullptr);
   }
 
   /*! Get the polynomial X(t). */
-  const Polynomial& x_polynomial () const 
+  const Polynomial& x_polynomial () const
   {
-    if (p_polyX == NULL)
+    if (p_polyX == nullptr)
       _construct_polynomials ();
-    
+
     return (*p_polyX);
   }
 
   /*! Get the normalizing factor for X(t). */
-  const Integer& x_norm () const 
+  const Integer& x_norm () const
   {
-    if (p_normX == NULL)
+    if (p_normX == nullptr)
       _construct_polynomials ();
-    
+
     return (*p_normX);
   }
 
   /*! Get the polynomial Y(t). */
-  const Polynomial& y_polynomial () const 
+  const Polynomial& y_polynomial () const
   {
-    if (p_polyY == NULL)
+    if (p_polyY == nullptr)
       _construct_polynomials ();
 
     return (*p_polyY);
   }
 
   /*! Get the normalizing factor for Y(t). */
-  const Integer& y_norm () const 
+  const Integer& y_norm () const
   {
-    if (p_normY == NULL)
+    if (p_normY == nullptr)
       _construct_polynomials ();
-    
+
     return (*p_normY);
   }
   //@}
@@ -318,7 +314,7 @@ public:
 
   typedef typename Bcv_rep::Rat_point_2           Rat_point_2;
   typedef typename Bcv_rep::Alg_point_2           Alg_point_2;
-  
+
   typedef typename Bcv_rep::Integer               Integer;
   typedef typename Bcv_rep::Rational              Rational;
   typedef typename Bcv_rep::Algebraic             Algebraic;
@@ -365,7 +361,7 @@ public:
     Bcv_handle::operator= (bc);
     return (*this);
   }
-  
+
   /*!
    * Get a unique curve ID (based on the actual representation pointer).
    */
@@ -385,7 +381,7 @@ public:
   /*!
    * Get the normalizing factor for the x-coordinates.
    */
-  const Integer& x_norm () const 
+  const Integer& x_norm () const
   {
     return (this->_rep().x_norm());
   }
@@ -393,7 +389,7 @@ public:
   /*!
    * Get the polynomial for the y-coordinates of the curve.
    */
-  const Polynomial& y_polynomial () const 
+  const Polynomial& y_polynomial () const
   {
     return (this->_rep().y_polynomial());
   }
@@ -401,7 +397,7 @@ public:
   /*!
    * Get the normalizing factor for the y-coordinates.
    */
-  const Integer& y_norm () const 
+  const Integer& y_norm () const
   {
     return (this->_rep().y_norm());
   }
@@ -411,7 +407,7 @@ public:
    */
   unsigned int number_of_control_points () const
   {
-    return (this->_rep()._ctrl_pts.size());
+    return static_cast<unsigned int>((this->_rep()._ctrl_pts.size()));
   }
 
   /*!
@@ -456,14 +452,14 @@ public:
    * \return The point B(t).
    */
   Rat_point_2 operator() (const Rational& t) const;
-  
+
   /*!
    * Compute a point of the Bezier curve given an algebraic t-value.
    * \param t The given t-value.
    * \return The point B(t).
    */
   Alg_point_2 operator() (const Algebraic& t) const;
- 
+
   /*!
    * Sample a portion of the curve (for drawing purposes, etc.).
    * \param t_start The t-value to start with.
@@ -476,7 +472,7 @@ public:
   template <class OutputIterator>
   OutputIterator sample (const double& t_start, const double& t_end,
                          unsigned int n_samples,
-                         OutputIterator oi) const 
+                         OutputIterator oi) const
   {
     // Convert the coordinates of the control points to doubles.
     typedef Simple_cartesian<double>                        App_kernel;
@@ -495,7 +491,7 @@ public:
     }
 
     // Sample the approximated curve.
-    const unsigned int   n = (n_samples >= 2) ? n_samples : 2; 
+    const unsigned int   n = (n_samples >= 2) ? n_samples : 2;
     const double         delta_t = (t_end - t_start) / (n - 1);
     App_point_2          p;
 
@@ -523,8 +519,8 @@ public:
   OutputIterator get_t_at_x (const Rational& x0,
                              OutputIterator oi) const
   {
-    return (_solve_t_values (this->_rep().x_polynomial(), 
-                             this->_rep().x_norm(), 
+    return (_solve_t_values (this->_rep().x_polynomial(),
+                             this->_rep().x_norm(),
                              x0,
                              oi));
   }
@@ -541,7 +537,7 @@ public:
   OutputIterator get_t_at_y (const Rational& y0,
                              OutputIterator oi) const
   {
-    return (_solve_t_values (this->_rep().y_polynomial(), 
+    return (_solve_t_values (this->_rep().y_polynomial(),
                              this->_rep().y_norm(), y0,
                              oi));
   }
@@ -625,10 +621,10 @@ private:
 /*!
  * Exporter for Bezier curves.
  */
-template <class Rat_kernel, class Alg_kernel, class Nt_traits, 
+template <class Rat_kernel, class Alg_kernel, class Nt_traits,
           class Bounding_traits>
-std::ostream& 
-operator<< (std::ostream& os, 
+std::ostream&
+operator<< (std::ostream& os,
             const _Bezier_curve_2<Rat_kernel, Alg_kernel, Nt_traits,
                                   Bounding_traits> & bc)
 {
@@ -645,10 +641,10 @@ operator<< (std::ostream& os,
 /*!
  * Importer for Bezier curves.
  */
-template <class Rat_kernel, class Alg_kernel, class Nt_traits, 
+template <class Rat_kernel, class Alg_kernel, class Nt_traits,
           class Bounding_traits>
-std::istream& 
-operator>> (std::istream& is, 
+std::istream&
+operator>> (std::istream& is,
             _Bezier_curve_2<Rat_kernel, Alg_kernel, Nt_traits,
                             Bounding_traits> & bc)
 {
@@ -679,18 +675,18 @@ template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
                          BndTrt>::_construct_polynomials () const
 {
-  const int        n = _ctrl_pts.size() - 1;
+  const int        n = static_cast<int>(_ctrl_pts.size() - 1);
   Rational        *coeffsX = new Rational [n + 1];
   Rational        *coeffsY = new Rational [n + 1];
   const Rational   rat_zero = Rational (0);
   int              j, k;
-  
+
   CGAL_precondition_msg (n > 0,
                          "There must be at least 2 control points.");
-  
+
   for (j = 0; j <= n; j++)
     coeffsX[j] = coeffsY[j] = rat_zero;
-  
+
   // Compute the rational coefficients, given by the formula:
   //
   //                     n
@@ -704,15 +700,15 @@ void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
   Rational               px, py;
   Integer                n_over_k_j;
   bool                   even_exp;
-  
-  typename Control_point_vec::const_iterator pts_begin = _ctrl_pts.begin();  
-  typename Control_point_vec::const_iterator pts_end = _ctrl_pts.end();  
+
+  typename Control_point_vec::const_iterator pts_begin = _ctrl_pts.begin();
+  typename Control_point_vec::const_iterator pts_end = _ctrl_pts.end();
 
   for (k = 0; pts_begin != pts_end; ++pts_begin, k++)
   {
     px = pts_begin->x();
     py = pts_begin->y();
-    
+
     // By simplifying (1 - t)^(n-k) we obtain that the k'th expression of
     // the above sum is given by:
     //
@@ -724,11 +720,11 @@ void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
     //    *****
     //     j=0
     //
-    even_exp = true; 
+    even_exp = true;
     for (j = 0; j <= n - k; j++)
     {
       n_over_k_j = _choose (n, k, j);
-      
+
       if (even_exp)
       {
         // We should add the current values to the coefficients of the
@@ -743,12 +739,12 @@ void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
         coeffsX[j + k] -= px * n_over_k_j;
         coeffsY[j + k] -= py * n_over_k_j;
       }
-      
+
       // As we increment j, negate the "even" flag for the exponent (n-j).
       even_exp = !even_exp;
     } // loop on j.
   } // loop on k.
-  
+
   // Convert the rational polynomials to polynomials with rational
   // coefficients (plus normalizing factors).
   Nt_traits        nt_traits;
@@ -756,11 +752,11 @@ void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
   p_normX = new Integer;
   p_polyY = new Polynomial;
   p_normY = new Integer;
-  
+
   nt_traits.construct_polynomial (coeffsX, n,
                                   *p_polyX, *p_normX);
   delete[] coeffsX;
-  
+
   nt_traits.construct_polynomial (coeffsY, n,
                                   *p_polyY, *p_normY);
   delete[] coeffsY;
@@ -783,13 +779,13 @@ _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_choose (int n,
   Integer   reduced_fact = 1;
   Integer   j_fact = 1, k_fact = 1;
   int       i;
-  
+
   for (i = n - k - j + 1; i <= n; i++)
     reduced_fact *= Integer (i);
-  
+
   for (i = 2; i <= j; i++)
     j_fact *= Integer (i);
-  
+
   for (i = 2; i <= k; i++)
     k_fact *= Integer (i);
 
@@ -802,7 +798,7 @@ _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_choose (int n,
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 typename _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::Rat_point_2
 _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
-        (const Rational& t) const 
+        (const Rational& t) const
 {
   // Check for extermal t values (either 0 or 1).
   const CGAL::Sign   sign_t = CGAL::sign (t);
@@ -837,12 +833,12 @@ _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
   // Compute the x and y coordinates using the X(t), Y(t) polynomials.
   Rational           x, y;
   Nt_traits          nt_traits;
-    
+
   x = nt_traits.evaluate_at (this->_rep().x_polynomial(), t) /
       Rational (this->_rep().x_norm(), 1);
   y = nt_traits.evaluate_at (this->_rep().y_polynomial(), t) /
       Rational (this->_rep().y_norm(), 1);
-  
+
   // Return the point.
   return (Rat_point_2 (x, y));
 }
@@ -865,7 +861,7 @@ _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
   {
     // If t is 0, simply return the first control point.
     const Rat_point_2&  p_0 = this->_rep()._ctrl_pts[0];
-    
+
     return (Alg_point_2 (nt_traits.convert (p_0.x()),
                          nt_traits.convert (p_0.y())));
   }
@@ -877,9 +873,9 @@ _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
   if (res == EQUAL)
   {
     // If t is 1, simply return the first control point.
-    const Rat_point_2&  p_n = 
+    const Rat_point_2&  p_n =
       this->_rep()._ctrl_pts[this->_rep()._ctrl_pts.size() - 1];
-    
+
     return (Alg_point_2 (nt_traits.convert (p_n.x()),
                          nt_traits.convert (p_n.y())));
   }
@@ -907,7 +903,7 @@ bool _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::has_same_support
   const int      n_samples = deg1*deg2;
   Rat_point_2    p1;
   int            k;
-  
+
   for (k = 0; k <= n_samples; k++)
   {
     // Compute p1 = B1(k/n_samples), where B1 is (*this) curve.
@@ -917,7 +913,7 @@ bool _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::has_same_support
       p1 = (this->_rep()._ctrl_pts[this->_rep()._ctrl_pts.size() - 1]);
     else
       p1 = this->operator() (Rational (k, n_samples));
-    
+
     // Get all t-values such that the x-coordinate of B2(t) equals x1,
     // and check if there exists a t-value such that the y-coordinate of
     // b2(t) equals the y-coordinate of p1.
@@ -926,26 +922,26 @@ bool _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::has_same_support
     Nt_traits                             nt_traits;
     const Algebraic&                      y1 = nt_traits.convert (p1.y());
     bool                                  eq_y = false;
-    
+
     bc.get_t_at_x (p1.x(), std::back_inserter(t_vals));
-    
+
     for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
     {
       const Alg_point_2&  p2 = bc (*t_iter);
-      
+
       if (CGAL::compare (y1, p2.y()) == CGAL::EQUAL)
       {
         eq_y = true;
         break;
       }
     }
-    
+
     // If we found a point on B1 which is not of B2, the two curves do not
     // have the same support.
     if (! eq_y)
       return (false);
   }
-  
+
   // If we reached here, we found (d1*d2 + 1) common points of B1 and B2.
   // This means they have the same support.
   return (true);

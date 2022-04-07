@@ -1,21 +1,16 @@
-// Copyright (c) 1999,2002  
+// Copyright (c) 1999,2002
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
 
@@ -25,6 +20,7 @@
 #include <CGAL/intersection_3.h>
 
 #include "CGAL/Precise_numbers.h"
+#define TEST_FILENAME "Test-Homogeneous-IO.out"
 #include "CGAL/_test_io.h"
 #include "CGAL/_test_2.h"
 #include "CGAL/_test_3.h"
@@ -66,7 +62,7 @@ test_basic()
   assert( pl.has_on(pp) );
   assert( pp == ip );
 }
- 
+
 
 int
 main()

@@ -3,24 +3,13 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/).
- * You can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
+ * This file is part of CGAL (www.cgal.org);
  *
  * File: BigFloat.h
- * Synopsis: 
- * 		An implementation of BigFloat numbers with error bounds.
- * 
- * Written by 
+ * Synopsis:
+ *                 An implementation of BigFloat numbers with error bounds.
+ *
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -30,14 +19,18 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_BIGFLOAT_H_
 #define _CORE_BIGFLOAT_H_
 
-#include <CGAL/CORE/BigFloatRep.h>
+#include <CGAL/disable_warnings.h>
 
-namespace CORE { 
+#include <CGAL/CORE/BigFloatRep.h>
+#include <CGAL/assertions.h>
+
+namespace CORE {
 
 class Expr;
 
@@ -57,6 +50,8 @@ public:
   BigFloat(float i) : RCBigFloat(new BigFloatRep(i)) {}
   /// constructor for <tt>int</tt>
   BigFloat(int i) : RCBigFloat(new BigFloatRep(i)) {}
+  /// constructor for <tt>unsigned int</tt>
+  BigFloat(unsigned int i) : RCBigFloat(new BigFloatRep(i)) {}
   /// constructor for <tt>long</tt>
   BigFloat(long l) : RCBigFloat(new BigFloatRep(l)) {}
   /// constructor for <tt>double</tt>
@@ -83,8 +78,8 @@ public:
   BigFloat(const BigInt& I)
       : RCBigFloat(new BigFloatRep(I)) {}
   /// constructor for <tt>BigRat</tt>
-  BigFloat(const BigRat& R, const extLong& r = defRelPrec,
-           const extLong& a = defAbsPrec)
+  BigFloat(const BigRat& R, const extLong& r = get_static_defRelPrec(),
+           const extLong& a = get_static_defAbsPrec())
       : RCBigFloat(new BigFloatRep()) {
     rep->approx(R, r, a);
   }
@@ -93,8 +88,8 @@ public:
   // know about Expr, but BigFloat has a special role in our system!
   // ===============================
   /// constructor for <tt>Expr</tt>
-  explicit BigFloat(const Expr& E, const extLong& r = defRelPrec,
-           const extLong& a = defAbsPrec);
+  explicit BigFloat(const Expr& E, const extLong& r = get_static_defRelPrec(),
+           const extLong& a = get_static_defAbsPrec());
 
   //Dummy
   explicit BigFloat(const BigFloat& E, const extLong& ,
@@ -161,7 +156,7 @@ public:
   /// operator/=
   BigFloat& operator/= (const BigFloat& x) {
     BigFloat z;
-    z.rep->div(*rep, *x.rep, defBFdivRelPrec);
+    z.rep->div(*rep, *x.rep, get_static_defBFdivRelPrec());
     *this = z;
     return *this;
   }
@@ -182,11 +177,11 @@ public:
   /// \name String Conversion Functions
   //@{
   /// set value from <tt>const char*</tt> (base = 10)
-  void fromString(const char* s, const extLong& p=defBigFloatInputDigits) {
+  void fromString(const char* s, extLong p = getBigFloatInputDigits()) {
     rep->fromString(s, p);
   }
   /// convert to <tt>std::string</tt> (base = 10)
-  std::string toString(long prec=defBigFloatOutputDigits, bool sci=false) const {
+  std::string toString(long prec=get_static_defBigFloatOutputDigits(), bool sci=false) const {
     return rep->toString(prec, sci);
   }
   std::string str() const {
@@ -235,7 +230,7 @@ public:
   static bool hasExactDivision() {
     return false;
   }
-  
+
   //CONSTANTS
   /// return BigFloat(0)
   static const BigFloat& getZero();
@@ -246,7 +241,7 @@ public:
   /** \note This is only the sign of the mantissa, it can be taken to be
       the sign of the BigFloat only if !(isZeroIn()). */
   int sign() const {
-    assert((err() == 0 && m() == 0) || !(isZeroIn()));
+    CGAL_assertion((err() == 0 && m() == 0) || !(isZeroIn()));
     return rep->signM();
   }
   /// check whether contains zero
@@ -399,7 +394,7 @@ public:
 void readFromFile(BigFloat& bf, std::istream& in, long maxLength = 0);
 /// write to file
 void writeToFile(const BigFloat& bf, std::ostream& in,
-		int base=10, int charsPerLine=80);
+                int base=10, int charsPerLine=80);
 
 /// IO stream operator<<
 inline std::ostream& operator<< (std::ostream& o, const BigFloat& x) {
@@ -435,7 +430,7 @@ inline BigFloat operator* (const BigFloat& x, const BigFloat& y) {
 /// operator/
 inline BigFloat operator/ (const BigFloat& x, const BigFloat& y) {
   BigFloat z;
-  z.getRep().div(x.getRep(),y.getRep(),defBFdivRelPrec);
+  z.getRep().div(x.getRep(),y.getRep(),get_static_defBFdivRelPrec());
   return z;
 }
 
@@ -490,12 +485,12 @@ inline BigFloat power(const BigFloat& x, unsigned long p) {
 ///   The argument x is an initial approximation.
 BigFloat root(const BigFloat&, unsigned long k, const extLong&, const BigFloat&);
 inline BigFloat root(const BigFloat& x, unsigned long k) {
-  return root(x, k, defBFsqrtAbsPrec, x);
+  return root(x, k, get_static_defBFsqrtAbsPrec(), x);
 }
 
 /// sqrt to defAbsPrec:
 inline BigFloat sqrt(const BigFloat& x) {
-  return x.sqrt(defBFsqrtAbsPrec);
+  return x.sqrt(get_static_defBFsqrtAbsPrec());
 }
 
 /// convert an BigFloat Interval to a BigFloat with error bits
@@ -508,17 +503,17 @@ inline BigFloat centerize(const BigFloat& a, const BigFloat& b) {
 /// minStar(m,n) returns the min-star of m and n
 inline long minStar(long m, long n) {
   if (m*n <= 0) return 0;
-  if (m>0) 
+  if (m>0)
     return core_min(m, n);
-  else 
+  else
     return core_max(m, n);
 }
 /// \name Functions for Compatibility with BigInt (needed by Poly, Curves)
 //@{
 /// isDivisible(a,b) = "is a divisible by b"
-/** 	Assuming that a and  b are in coanonized forms.
-	Defined to be true if mantissa(b) | mantissa(a) && 
-	exp(b) = min*(exp(b), exp(a)).
+/**         Assuming that a and  b are in coanonized forms.
+        Defined to be true if mantissa(b) | mantissa(a) &&
+        exp(b) = min*(exp(b), exp(a)).
  *      This concepts assume a and b are exact BigFloats.
  */
 inline bool isDivisible(const BigFloat& a, const BigFloat& b) {
@@ -527,25 +522,25 @@ inline bool isDivisible(const BigFloat& a, const BigFloat& b) {
   if (sign(b.m()) == 0) return false;
   unsigned long bin_a = getBinExpo(a.m());
   unsigned long bin_b = getBinExpo(b.m());
-  
+
   BigInt m_a = a.m() >> bin_a;
   BigInt m_b = b.m() >> bin_b;
   long e_a = bin_a + BigFloatRep::bits(a.exp());
   long e_b = bin_b + BigFloatRep::bits(b.exp());
   long dx = minStar(e_a, e_b);
 
-  return isDivisible(m_a, m_b) && (dx == e_b); 
+  return isDivisible(m_a, m_b) && (dx == e_b);
 }
 
 inline bool isDivisible(double x, double y) {
   //Are these exact?
-  return isDivisible(BigFloat(x), BigFloat(y)); 
+  return isDivisible(BigFloat(x), BigFloat(y));
 }
 
 /// div_exact(x,y) returns the BigFloat quotient of x divided by y
-/**	This is defined only if isDivisible(x,y).
+/**        This is defined only if isDivisible(x,y).
  */
-// Chee (8/1/2004)   The definition of div_exact(x,y) 
+// Chee (8/1/2004)   The definition of div_exact(x,y)
 //   ensure that Polynomials<NT> works with NT=BigFloat and NT=double.
 //Bug: We should first normalize the mantissas of the Bigfloats and
 //then do the BigInt division. For e.g. 1 can be written as 2^{14}*2{-14}.
@@ -553,7 +548,7 @@ inline bool isDivisible(double x, double y) {
 // normalizing it then we get zero.
 inline BigFloat div_exact(const BigFloat& x, const BigFloat& y) {
   BigInt z;
-  assert (isDivisible(x,y));
+  CGAL_assertion (isDivisible(x,y));
   unsigned long bin_x = getBinExpo(x.m());
   unsigned long bin_y = getBinExpo(y.m());
 
@@ -566,15 +561,15 @@ inline BigFloat div_exact(const BigFloat& x, const BigFloat& y) {
 
   //  mpz_divexact(z.get_mp(), x.m().get_mp(), y.m().get_mp()); THIS WAS THE BUG
   // assert: x.exp() - y.exp() does not under- or over-flow.
-  return BigFloat(z, e_x - e_y);  
+  return BigFloat(z, e_x - e_y);
 }
 
 inline BigFloat div_exact(double x, double y) {
   return div_exact(BigFloat(x), BigFloat(y));
 }
 // Remark: there is another notion of "exact division" for BigFloats,
-// 	and that is to make the division return an "exact" BigFloat
-// 	i.e., err()=0.  
+//         and that is to make the division return an "exact" BigFloat
+//         i.e., err()=0.
 
 /// gcd(a,b) =  BigFloat(gcd(a.mantissa,b.matissa), min(a.exp(), b.exp()) )
 inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
@@ -601,7 +596,7 @@ inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
   BigInt m_b = b.m() >> bin_b;
   r = gcd(m_a, m_b);
   dx = minStar(bin_a + BigFloatRep::bits(a.exp()),
-		  bin_b + BigFloatRep::bits(b.exp()));
+                  bin_b + BigFloatRep::bits(b.exp()));
 
   long chunks = BigFloatRep::chunkFloor(dx);
   r <<= (dx - BigFloatRep::bits(chunks));
@@ -613,7 +608,7 @@ inline BigFloat gcd(const BigFloat& a, const BigFloat& b) {
 // Not needed for now:
 /// div_rem
 // inline void div_rem(BigFloat& q, BigFloat& r,
-// 	const BigFloat& a, const BigFloat& b) {
+//         const BigFloat& a, const BigFloat& b) {
   //q.makeCopy();
   //r.makeCopy();
   //mpz_tdiv_qr(q.get_mp(), r.get_mp(), a.get_mp(), b.get_mp());
@@ -625,4 +620,12 @@ inline BigRat::BigRat(const BigFloat& f) : RCBigRat(new BigRatRep()){
   *this = f.BigRatValue();
 }
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/BigFloat_impl.h>
+#include <CGAL/CORE/CoreIO_impl.h>
+#endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
+
 #endif // _CORE_BIGFLOAT_H_

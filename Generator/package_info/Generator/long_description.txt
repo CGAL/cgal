@@ -12,13 +12,13 @@ Generator Package
 -  CGAL/point_generators_2.h
 
      Random and synthetic point distributions over different domains
-     for two-dimensional points: disc, circle, in square, on square, 
+     for two-dimensional points: disc, circle, in triangle, in square, on square,
      on segment, grid, random perturbation. Generators for degeneracies.
 
 -  CGAL/point_generators_3.h
 
      Random and synthetic point distributions over different domains
-     for three-dimensional points: in sphere, on sphere, in cube.
+     for three-dimensional points: in sphere, in triangle, in tetrahedron, on sphere, in cube.
 
 -  CGAL/random_convex_set_2.h
 -  CGAL/Random_convex_set_traits_2.h

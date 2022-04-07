@@ -8,6 +8,7 @@
 #include <QtGui>
 #include <QString>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QGraphicsRectItem>
 #include <QGraphicsLineItem>
 
@@ -15,7 +16,7 @@
 #include <CGAL/Qt/PointsGraphicsItem.h>
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
 #include <CGAL/Qt/utility.h>
-  
+
 // the two base classes
 #include "ui_Largest_empty_rectangle_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -33,14 +34,14 @@ class MainWindow :
   public Ui::Largest_empty_rectangle_2
 {
   Q_OBJECT
-  
+
 private:
 
   Iso_rectangle_2 square;
   Largest_empty_iso_rectangle_2 ler;
   CGAL::Qt::Converter<K> convert;
-  std::vector<Point_2> points; 
-  QGraphicsScene scene;  
+  std::vector<Point_2> points;
+  QGraphicsScene scene;
 
   CGAL::Qt::PointsGraphicsItem<std::vector<Point_2> > * pgi;
   QGraphicsRectItem * rgi;
@@ -60,8 +61,9 @@ private:
 
     G pg(radius);
     bool ok = false;
-    const int number_of_points = 
-      QInputDialog::getInteger(this, 
+
+    const int number_of_points =
+      QInputDialog::getInt(this,
                                tr("Number of random points"),
                                tr("Enter number of random points"),
                                100,
@@ -83,16 +85,16 @@ private:
       ler.insert(points.back());
       ++pg;
     }
-    
+
     // default cursor
     QApplication::restoreOverrideCursor();
-    emit(changed());
+    Q_EMIT( changed());
   }
 
 public:
   MainWindow();
 
-public slots:
+public Q_SLOTS:
 
   void on_actionClear_triggered();
 
@@ -106,7 +108,7 @@ public slots:
 
   void update_largest_empty_rectangle();
 
-signals:
+Q_SIGNALS:
   void changed();
 };
 
@@ -122,20 +124,24 @@ MainWindow::MainWindow()
   rgi = new QGraphicsRectItem(convert(square));
 
   Point_2 bl(-1,-1), br(1,-1), tl(-1,1), tr(1,1);
-  
+
+
   frame[0] = new QGraphicsLineItem(convert(Segment_2(bl, br)));
   frame[1] = new QGraphicsLineItem(convert(Segment_2(br, tr)));
   frame[2] = new QGraphicsLineItem(convert(Segment_2(tr, tl)));
   frame[3] = new QGraphicsLineItem(convert(Segment_2(tl, bl)));
+  for(int i=0; i<4; i++)
+    frame[i]->setPen(QPen(::Qt::black, 0));
 
   QObject::connect(this, SIGNAL(changed()),
-		   pgi, SLOT(modelChanged()));
+                   pgi, SLOT(modelChanged()));
 
   QObject::connect(this, SIGNAL(changed()),
-		   this, SLOT(update_largest_empty_rectangle()));
+                   this, SLOT(update_largest_empty_rectangle()));
 
   pgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   rgi->setBrush(QBrush(Qt::cyan));
+  rgi->setPen(QPen(::Qt::black, 0));
   scene.addItem(pgi);
   scene.addItem(rgi);
   scene.addItem(frame[0]);
@@ -143,17 +149,17 @@ MainWindow::MainWindow()
   scene.addItem(frame[2]);
   scene.addItem(frame[3]);
 
-  // 
+  //
   // Manual handling of actions
   //
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
- 
+
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 1, false); // inputs a list with one point
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-   
+                   this, SLOT(processInput(CGAL::Object)));
+
   scene.installEventFilter(pi);
   //
   // Setup the scene and the view
@@ -167,7 +173,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -181,10 +187,10 @@ MainWindow::MainWindow()
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
- * 
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -203,7 +209,7 @@ MainWindow::processInput(CGAL::Object o)
         ler.insert(p);
       }
     }
-    emit(changed());
+    Q_EMIT( changed());
   }
 
 }
@@ -220,14 +226,14 @@ void
 MainWindow::on_actionClear_triggered()
 {
   clear();
-  emit(changed());
+  Q_EMIT( changed());
 }
 
 void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(convert(square));
-  this->graphicsView->fitInView(convert(square), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(convert(square), Qt::KeepAspectRatio);
 }
 
 void
@@ -275,9 +281,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Largest_empty_rectangle_2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGAL (Qt5).
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Largest_empty_rectangle_2);
 
   MainWindow mainWindow;

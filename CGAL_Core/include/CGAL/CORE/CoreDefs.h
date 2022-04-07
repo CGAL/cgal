@@ -3,18 +3,7 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/).
- * You can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
+ * This file is part of CGAL (www.cgal.org).
  *
  * File: CoreDefs.h
  * Synopsis:
@@ -23,7 +12,7 @@
  *       For each parameter, we provide corresponding methods to
  *       modify or examine the values.
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -33,14 +22,38 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_COREDEFS_H_
 #define _CORE_COREDEFS_H_
 
 #include <CGAL/CORE/extLong.h>
+#include <CGAL/disable_warnings.h>
 
-namespace CORE { 
+#include <atomic>
+
+#ifdef CGAL_HEADER_ONLY
+
+  #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
+    inline TYPE & get_static_##NAME()               \
+    {                                               \
+      static TYPE NAME(VALUE);                      \
+      return NAME;                                  \
+    }
+
+#else // CGAL_HEADER_ONLY
+
+  #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
+    CGAL_CORE_EXPORT extern TYPE NAME;              \
+    inline TYPE& get_static_##NAME()                \
+    {                                               \
+      return NAME;                                  \
+    }
+
+#endif // CGAL_HEADER_ONLY
+
+namespace CORE {
 
 //////////////////////////////////////////////////////////////
 // defined constants
@@ -60,184 +73,245 @@ namespace CORE {
 /** The normal behavior is to abort when an invalid expression
  * is constructed.  This flag can be used to turn off this abort.
  * In any case, an error message will be printed */
-CGAL_CORE_EXPORT extern bool AbortFlag;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(bool, AbortFlag, true)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, AbortFlag, true)
+#endif
 
 /// Invalid Flag -- initiallly value is non-negative
 /** If the Abort Flag is false, then the Invalid flag will be set to
  *  a negative value whenever an invalid expression is constructed.
  *  It is the user's responsibility to check this flag and to make
  *  it non-negative again. */
-CGAL_CORE_EXPORT extern int InvalidFlag;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(int, InvalidFlag, 0)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<int>, InvalidFlag, 0)
+#endif
 
 /// Escape Precision in bits
-CGAL_CORE_EXPORT extern extLong EscapePrec;
+CGAL_GLOBAL_STATE_VAR(extLong, EscapePrec, CORE_posInfty)
 
 /// current ur when EscapePrec triggered
 /** this flag becomes negative when default EscapePrec is applied */
-CGAL_CORE_EXPORT extern long EscapePrecFlag;
+CGAL_GLOBAL_STATE_VAR(long, EscapePrecFlag, 0)
 
 /// Escape Precision Warning Flag
 /** this flag is true by default, and will cause a warning to be printed
     when EscapePrec is reached */
-CGAL_CORE_EXPORT extern bool EscapePrecWarning;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(bool, EscapePrecWarning, true)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, EscapePrecWarning, true)
+#endif
 
 // These following two values determine the precision of computing
 // approximations in Expr.
 
 /// default Relative Precision in bits
-CGAL_CORE_EXPORT extern extLong defRelPrec;
+CGAL_GLOBAL_STATE_VAR(extLong, defRelPrec, 60)
 /// default Absolute Precision in bits
-CGAL_CORE_EXPORT extern extLong defAbsPrec;
+CGAL_GLOBAL_STATE_VAR(extLong, defAbsPrec, CORE_posInfty)
 
 /// default # of decimal digits for conversion from a BF to string.
 /** This value cannot be CORE_INFTY.
-    See also defOutputDigits. 
+    See also defOutputDigits.
     */
 /*  QUESTION: the following comment seems to contradict the above comment:
-	"controls the printout precision of std::cout for BigFloat"
+        "controls the printout precision of std::cout for BigFloat"
     Perhaps, we should merge defOutputDigits and defBigFloatOutputDigits?
     */
-CGAL_CORE_EXPORT extern long defBigFloatOutputDigits;
+#ifdef CGAL_NO_ATOMIC
+    CGAL_GLOBAL_STATE_VAR(long, defBigFloatOutputDigits, 10)
+#else
+    CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defBigFloatOutputDigits, 10)
+#endif
 
 /// default input precision in digits for converting a string to a Real or Expr
 /** This value can be CORE_INFTY */
-CGAL_CORE_EXPORT extern extLong defInputDigits;
+CGAL_GLOBAL_STATE_VAR(extLong, defInputDigits, CORE_posInfty)
 
 /// controls the printout precision of std::cout for Real and Expr
 /** This value cannot be CORE_INFTY
-    See also defBigFloatOutputDigits. 
+    See also defBigFloatOutputDigits.
     (it really should be an int, as in std::cout.setprecision(int)). */
-CGAL_CORE_EXPORT extern long defOutputDigits;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(long, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defOutputDigits, 10) // == get_static_defBigFloatOutputDigits()
+#endif
 
 /// default input precision in digits for converting a string to a BigFloat
 /** This value cannot be CORE_INFTY. */
-CGAL_CORE_EXPORT extern long defBigFloatInputDigits;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(long, defBigFloatInputDigits, 16)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defBigFloatInputDigits, 16)
+#endif
+
+inline
+long
+getBigFloatInputDigits()
+{
+  return get_static_defBigFloatInputDigits();
+}
 
 /// default BigFloat Division Relative Precision
-CGAL_CORE_EXPORT extern extLong defBFdivRelPrec;
-
+CGAL_GLOBAL_STATE_VAR(extLong, defBFdivRelPrec, 54)
 /// default BigFloat Sqrt Absolute Precision
-CGAL_CORE_EXPORT extern extLong defBFsqrtAbsPrec;
+CGAL_GLOBAL_STATE_VAR(extLong, defBFsqrtAbsPrec, 54)
 
 //////////////////////////////////////////////////////////////
 // Mode parameters: incremental, progressive, filters
 //////////////////////////////////////////////////////////////
 
 /// floating point filter flag
-CGAL_CORE_EXPORT extern bool fpFilterFlag;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(bool, fpFilterFlag, true)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, fpFilterFlag, true)
+#endif
+
+
 /// if true, evaluation of expressions would be incremental
-CGAL_CORE_EXPORT extern bool incrementalEvalFlag;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(bool, incrementalEvalFlag, true)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, incrementalEvalFlag, true)
+#endif
+
+
 /// progressive evaluation flag
-CGAL_CORE_EXPORT extern bool progressiveEvalFlag;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(bool, progressiveEvalFlag, true)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, progressiveEvalFlag, true)
+#endif
+
+
 /// rational reduction flag
-CGAL_CORE_EXPORT extern bool rationalReduceFlag;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(bool, rationalReduceFlag, false)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<bool>, rationalReduceFlag, false)
+#endif
+
 /// default initial (bit) precision for AddSub Progressive Evaluation
-CGAL_CORE_EXPORT extern long defInitialProgressivePrec;
+#ifdef CGAL_NO_ATOMIC
+CGAL_GLOBAL_STATE_VAR(long, defInitialProgressivePrec, 64)
+#else
+CGAL_GLOBAL_STATE_VAR(std::atomic<long>, defInitialProgressivePrec, 64)
+#endif
 
 //////////////////////////////////////////////////////////////
 // methods for setting global precision parameters
-// 	including: scientific vs. positional format
-//	All the set methods return the previous global value if any
+//         including: scientific vs. positional format
+//        All the set methods return the previous global value if any
 //////////////////////////////////////////////////////////////
 
 /// set default composite precision [defAbsPrec, defRelPrec]
 /** It determines the precision to which an Expr evaluates its
     (exact, implicit) constant value. */
 inline void setDefaultPrecision(const extLong &r, const extLong &a) {
-  defRelPrec = r;
-  defAbsPrec = a;
+  get_static_defRelPrec() = r;
+  get_static_defAbsPrec() = a;
 }
 
 /// set default relative precision
 inline extLong setDefaultRelPrecision(const extLong &r) {
-  extLong old = defRelPrec;
-  defRelPrec = r;
+  extLong old = get_static_defRelPrec();
+  get_static_defRelPrec() = r;
   return old;
 }
 
 /// set default absolute precision
 inline extLong setDefaultAbsPrecision(const extLong &a) {
-  extLong old = defAbsPrec;
-  defAbsPrec = a;
+  extLong old = get_static_defAbsPrec();
+  get_static_defAbsPrec() = a;
   return old;
 }
 
 /// set default input digits (for Expr, Real)
 /** it controls the absolute error */
 inline extLong setDefaultInputDigits(const extLong &d) {
-  extLong old = defInputDigits;
-  defInputDigits = d;
+  extLong old = get_static_defInputDigits();
+  get_static_defInputDigits() = d;
   return old;
 }
 
 /// set default output digits (for Expr, Real)
-inline long setDefaultOutputDigits(long d = defOutputDigits,
+inline long setDefaultOutputDigits(long d = get_static_defOutputDigits(),
                                    std::ostream& o = std::cout) {
-  long old = defOutputDigits;
-  defOutputDigits = d;
+  long old = get_static_defOutputDigits();
+  get_static_defOutputDigits() = d;
   o.precision(d);
   return old;
 }
 
 /// set default input digits for BigFloat
 inline long setDefaultBFInputDigits(long d) {
-  long old = defBigFloatInputDigits;
-  defBigFloatInputDigits = d;
+  long old = get_static_defBigFloatInputDigits();
+  get_static_defBigFloatInputDigits() = d;
   return old;
 }
 
 /// set default output digits for BigFloat
 inline long setDefaultBFOutputDigits(long d) {
-  long old = defBigFloatOutputDigits;
-  defBigFloatOutputDigits = d;
+  long old = get_static_defBigFloatOutputDigits();
+  get_static_defBigFloatOutputDigits() = d;
   return old;
 }
 
 /// turn floating-point filter on/off
 inline bool setFpFilterFlag(bool f) {
-  bool oldf = fpFilterFlag;
-  fpFilterFlag = f;
+  bool oldf = get_static_fpFilterFlag();
+  get_static_fpFilterFlag() = f;
   return oldf;
 }
 
 /// turn incremental evaluation flag on/off
 inline bool setIncrementalEvalFlag(bool f) {
-  bool oldf = incrementalEvalFlag;
-  incrementalEvalFlag = f;
+  bool oldf = get_static_incrementalEvalFlag();
+  get_static_incrementalEvalFlag() = f;
   return oldf;
 }
 
 /// turn progressive evaluation flag on/off
 inline bool setProgressiveEvalFlag(bool f) {
-  bool oldf = progressiveEvalFlag;
-  progressiveEvalFlag = f;
+  bool oldf = get_static_progressiveEvalFlag();
+  get_static_progressiveEvalFlag() = f;
   return oldf;
 }
 
+  inline long getInitialProgressivePrec()
+  {
+    return get_static_defInitialProgressivePrec();
+  }
+
 /// set initial bit precision for progressive evaluation:
 inline long setDefInitialProgressivePrec(long n) {
-  long oldn = defInitialProgressivePrec;
-  defInitialProgressivePrec = n;
+  long oldn = get_static_defInitialProgressivePrec();
+  get_static_defInitialProgressivePrec() = n;
   return oldn;
 }
 
 /// turn rational reduction flag on/off
 inline bool setRationalReduceFlag(bool f) {
-  bool oldf = rationalReduceFlag;
-  rationalReduceFlag = f;
+  bool oldf = get_static_rationalReduceFlag();
+  get_static_rationalReduceFlag() = f;
   return oldf;
 }
 
 /// CORE_init(..) is the CORE initialization function.
 /** We recommend calling it before anything else.  Originally motivated
-    by need to get around gnu's compiler bug in which the variable 
+    by need to get around gnu's compiler bug in which the variable
     "defAbsPrec" was not properly initialized.  But it has other uses,
-    e.g., overriding the default std::cout precision (most systems 
+    e.g., overriding the default std::cout precision (most systems
     initializes this value to 6) to our own */
 inline void CORE_init(long d) {
-  defAbsPrec = CORE_posInfty;
-  defOutputDigits = d;
-  std::setprecision(defOutputDigits);
+  get_static_defAbsPrec() = CORE_posInfty;
+  get_static_defOutputDigits() = d;
 }
 
 /// change to scientific output format
@@ -251,4 +325,13 @@ inline void setPositionalFormat(std::ostream& o = std::cout) {
 }
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/CoreDefs_impl.h>
+#endif // CGAL_HEADER_ONLY
+
+#include <CGAL/enable_warnings.h>
+
+#undef CGAL_GLOBAL_STATE_VAR
+
 #endif // _CORE_COREDEFS_H_

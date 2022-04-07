@@ -1,7 +1,7 @@
 // Test program for the MP_Float class.
 // Sylvain Pion.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/exceptions.h>
 #include <iostream>
 #include <cassert>
@@ -19,9 +19,9 @@ typedef CGAL::Quotient<MPF>  QMPF;
 double non_zero_double(){
  double d;
  do {
-  d = CGAL::default_random.get_double();
+  d = CGAL::get_default_random().get_double();
   if(d ==0) {
-	  std::cout << "generated zero" << std::endl;
+          std::cout << "generated zero" << std::endl;
   }
  }while(d==0);
  return d;
@@ -97,7 +97,7 @@ void test_integral_division()
     assert( CGAL::divides(n,nd) );
     assert( CGAL::divides(d,nd) );
   }
-  
+
   assert( ! CGAL::divides(MPF(3), MPF(1)) );
   assert( ! CGAL::divides(MPF(7), MPF(2)) );
   // test if we're lucky :)
@@ -130,7 +130,7 @@ void square_test()
 {
   for (int i = 0; i<1000; ++i)
   {
-    double d = CGAL::default_random.get_double();
+    double d = CGAL::get_default_random().get_double();
     MPF D(d);
     assert(D*D == CGAL_NTS square(D));
   }
@@ -274,8 +274,8 @@ int main(int argc, char **argv)
 
   std::cout << "Checking MP_Float(float) constructor." << std::endl;
   for (int i = 0; i < loops; ++i) {
-    float d = (float)CGAL::default_random.get_double();
-    int exp = int((CGAL::default_random.get_double()-.5)*256);
+    float d = (float)CGAL::get_default_random().get_double();
+    int exp = int((CGAL::get_default_random().get_double()-.5)*256);
     d = std::ldexp(d, exp);
     // std::cout << d << std::endl;
     // std::cout << MPF(d) << std::endl;
@@ -289,8 +289,8 @@ int main(int argc, char **argv)
   std::cout << "Checking MP_Float(double) constructor." << std::endl;
   MPF y = 0.5000000000000001; // see bug-report on cgal-discuss (2006-06-23).
   for (int i = 0; i < loops; ++i) {
-    double d = CGAL::default_random.get_double();
-    int exp = int((CGAL::default_random.get_double()-.5)*1024);
+    double d = CGAL::get_default_random().get_double();
+    int exp = int((CGAL::get_default_random().get_double()-.5)*1024);
     d = std::ldexp(d, exp);
     // std::cout << d << std::endl;
     // std::cout << MPF(d) << std::endl;
@@ -303,9 +303,9 @@ int main(int argc, char **argv)
 
   std::cout << "Checking MP_Float(long double) constructor." << std::endl;
   for (int i = 0; i < loops; ++i) {
-    long double d = CGAL::default_random.get_double();
+    long double d = CGAL::get_default_random().get_double();
     d = d*d; // to get more bits
-    int exp = int((CGAL::default_random.get_double()-.5)*1024);
+    int exp = int((CGAL::get_default_random().get_double()-.5)*1024);
     d = d * std::ldexp(1.0, exp);
     //std::cout << d << std::endl;
     //std::cout << MPF(d) << std::endl;
@@ -375,7 +375,7 @@ int main(int argc, char **argv)
 
   MPF bb = factoriel(100);
   std::cout << "100! = " << bb << std::endl;
-  
+
   MPF b = factoriel(10);
   std::cout << "10! = " << b << " =? 3628800 " << " =? " << CGAL_NTS to_double(b);
   std::cout << std::endl;

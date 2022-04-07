@@ -1,24 +1,16 @@
-// Copyright (c) 2000-2004  
+// Copyright (c) 2000-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -30,6 +22,7 @@
 #include <CGAL/Kernel/global_functions.h>
 
 #include <CGAL/Cartesian/Point_2.h>
+#include <CGAL/Cartesian/Weighted_point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
 #include <CGAL/Cartesian/Direction_2.h>
 #include <CGAL/Cartesian/Line_2.h>
@@ -40,13 +33,14 @@
 #include <CGAL/Cartesian/Iso_rectangle_2.h>
 #include <CGAL/Cartesian/Aff_transformation_2.h>
 #include <CGAL/Cartesian/Data_accessor_2.h>
-#include <CGAL/ConicCPA2.h>
+#include <CGAL/Cartesian/ConicCPA2.h>
 
 #include <CGAL/Cartesian/predicates_on_points_2.h>
 #include <CGAL/Cartesian/predicates_on_directions_2.h>
 #include <CGAL/Cartesian/basic_constructions_2.h>
 
 #include <CGAL/Cartesian/Point_3.h>
+#include <CGAL/Cartesian/Weighted_point_3.h>
 #include <CGAL/Cartesian/Vector_3.h>
 #include <CGAL/Cartesian/Direction_3.h>
 #include <CGAL/Cartesian/Line_3.h>
@@ -123,6 +117,7 @@ struct Cartesian_base
     typedef CircleC2<Kernel>                            Circle_2;
     typedef Iso_rectangleC2<Kernel>                     Iso_rectangle_2;
     typedef Aff_transformationC2<Kernel>                Aff_transformation_2;
+    typedef Weighted_pointC2<Kernel>                    Weighted_point_2;
 
     typedef PointC3<Kernel>                             Point_3;
     typedef VectorC3<Kernel>                            Vector_3;
@@ -137,9 +132,10 @@ struct Cartesian_base
     typedef SphereC3<Kernel>                            Sphere_3;
     typedef CircleC3<Kernel>                            Circle_3;
     typedef Aff_transformationC3<Kernel>                Aff_transformation_3;
+    typedef Weighted_pointC3<Kernel>                    Weighted_point_3;
 
-    typedef typename cpp11::array<FT_, 2>::const_iterator Cartesian_const_iterator_2;
-    typedef typename cpp11::array<FT_, 3>::const_iterator Cartesian_const_iterator_3;
+    typedef typename std::array<FT_, 2>::const_iterator Cartesian_const_iterator_2;
+    typedef typename std::array<FT_, 3>::const_iterator Cartesian_const_iterator_3;
 
     // Undocumented stuff.
     typedef Data_accessorC2<Kernel>                     Data_accessor_2;

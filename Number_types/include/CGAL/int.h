@@ -1,23 +1,15 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
@@ -26,15 +18,18 @@
 #ifndef CGAL_INT_H
 #define CGAL_INT_H
 
-#include <CGAL/number_type_basic.h>
+#include <CGAL/Interval_nt.h>
 #include <CGAL/Modular_traits.h>
+#include <CGAL/Modular_arithmetic/Residue_type.h>
 
 namespace CGAL {
+
+
 
 namespace INTERN_INT {
     template< class Type >
     class Is_square_per_double_conversion
-      : public std::binary_function< Type, Type&,
+      : public CGAL::cpp98::binary_function< Type, Type&,
                                 bool > {
       public:
         bool operator()( const Type& x,
@@ -71,29 +66,29 @@ template <> class Real_embeddable_traits< int >
 
 /*! \ingroup CGAL_Modular_traits_spec
   \brief Specialization of CGAL::Modular_traits for \c int.
-  
-  A model of concept ModularTraits, supports \c int. 
+
+  A model of concept ModularTraits, supports \c int.
 */
   template <typename T>
   class Modular_traits;
 
 template<>
 class Modular_traits<int>{
-public: 
+public:
     typedef int NT;
     typedef ::CGAL::Tag_true Is_modularizable;
     typedef Residue Residue_type;
- 
+
     struct Modular_image{
         Residue_type operator()(int i){
             return Residue_type(i);
         }
-    };    
+    };
     struct Modular_image_representative{
         NT operator()(const Residue_type& x){
             return x.get_value();
         }
-    };    
+    };
 };
 
 // long
@@ -118,7 +113,7 @@ template <> class Real_embeddable_traits< long int >
 public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();
@@ -129,26 +124,26 @@ public:
 
 /*! \ingroup CGAL_Modular_traits_spec
   \brief Specialization of CGAL::Modular_traits for \c long.
-  
-  A model of concept ModularTraits, supports \c long. 
+
+  A model of concept ModularTraits, supports \c long.
 */
 template<>
 class Modular_traits<long>{
-public: 
+public:
     typedef long NT;
     typedef ::CGAL::Tag_true Is_modularizable;
     typedef Residue Residue_type;
- 
+
     struct Modular_image{
         Residue_type operator()(long i){
             return Residue_type(i);
         }
-    };   
+    };
     struct Modular_image_representative{
         NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }
-    };    
+    };
 };
 
 // short
@@ -165,7 +160,7 @@ template<> class Algebraic_structure_traits< short int >
     //  interoperability. This is nescessary because of the implicit conversion
     //  to int for binary operations between short ints.
     class Integral_division
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -179,7 +174,7 @@ template<> class Algebraic_structure_traits< short int >
     };
 
     class Gcd
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
@@ -230,31 +225,32 @@ template<> class Algebraic_structure_traits< short int >
         void operator()( const Type& x,
                          const Type& y,
                          Type& q, Type& r) const {
-          q = x / y;
-          r = x % y;
+          q = Type(x / y);
+          r = Type(x % y);
+          CGAL_assertion(x == q * y + r);
           return;
         }
     };
 
     // based on \c Div_mod.
     class Div
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
-                                        const Type& y) const {
-          return x / y;
+                         const Type& y) const {
+          return Type(x / y);
         };
     };
 
     // based on \c Div_mod.
     class Mod
-      : public std::binary_function< Type, Type,
+      : public CGAL::cpp98::binary_function< Type, Type,
                                 Type > {
       public:
         Type operator()( const Type& x,
-                                        const Type& y) const {
-          return x % y;
+                         const Type& y) const {
+          return Type(x % y);
         };
     };
 
@@ -277,7 +273,7 @@ template <> class Real_embeddable_traits< unsigned long >
 public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();

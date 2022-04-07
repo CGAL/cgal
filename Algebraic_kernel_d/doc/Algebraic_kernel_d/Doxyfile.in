@@ -1,12 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Algebraic Kernel"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Algebraic_kernel_d/doc/Algebraic_kernel_d/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Algebraic Kernel"
 SORT_GROUP_NAMES           =  true
 
 

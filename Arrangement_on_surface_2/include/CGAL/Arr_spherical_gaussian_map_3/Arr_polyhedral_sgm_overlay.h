@@ -2,27 +2,23 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_H
 #define CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
+
 // #define CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_DEBUG 1
 
 #include <iostream>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -31,7 +27,7 @@ class Arr_polyhedral_sgm_overlay {
 private:
   typedef typename Sgm::Point_3                         Point_3;
   typedef typename Sgm::Vector_3                        Vector_3;
-  
+
 public:
   typedef typename Sgm::Face_handle                     Face_handle;
   typedef typename Sgm::Vertex_handle                   Vertex_handle;
@@ -41,12 +37,12 @@ public:
   typedef typename Sgm::Vertex_const_handle             Vertex_const_handle;
   typedef typename Sgm::Halfedge_const_handle           Halfedge_const_handle;
 
-  typedef typename Sgm::Ccb_halfedge_const_circulator 
+  typedef typename Sgm::Ccb_halfedge_const_circulator
     Ccb_halfedge_const_circulator;
 
   typedef typename Sgm::Halfedge_around_vertex_const_circulator
     Arr_halfedge_around_vertex_const_circulator;
-  
+
   /*! 1 */
   void create_face(Face_const_handle f1, Face_const_handle f2, Face_handle f)
   {
@@ -84,73 +80,85 @@ public:
   }
 
   /*! 2 */
-  void create_vertex(Halfedge_const_handle h1, Halfedge_const_handle h2,
+  void create_vertex(Halfedge_const_handle /*h1*/, Halfedge_const_handle /*h2*/,
                      Vertex_handle v)
   {
 #ifdef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_DEBUG
     std::cout << "create_vertex(h1, h2)"
               << " " << v->point()
               << std::endl;
+#else
+    CGAL_USE(v);
 #endif
   }
 
   /*! 3 */
-  void create_vertex(Vertex_const_handle v1, Vertex_const_handle v2,
+  void create_vertex(Vertex_const_handle /*v1*/, Vertex_const_handle /*v2*/,
                      Vertex_handle v)
   {
 #ifdef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_DEBUG
     std::cout << "create_vertex(v1, v2)"
               << " " << v->point()
               << std::endl;
+#else
+    CGAL_USE(v);
 #endif
   }
 
   /*! 4 */
-  void create_vertex(Vertex_const_handle v1, Halfedge_const_handle h2,
+  void create_vertex(Vertex_const_handle /*v1*/, Halfedge_const_handle /*h2*/,
                      Vertex_handle v)
   {
 #ifdef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_DEBUG
     std::cout << "create_vertex(v1, h2)"
               << " " << v->point()
               << std::endl;
+#else
+    CGAL_USE(v);
 #endif
   }
 
   /*! 5 */
-  void create_vertex(Halfedge_const_handle h1, Vertex_const_handle v2,
+  void create_vertex(Halfedge_const_handle /*h1*/, Vertex_const_handle /*v2*/,
                      Vertex_handle v)
   {
 #ifdef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_DEBUG
     std::cout << "create_vertex(h1, v2)"
               << " " << v->point()
               << std::endl;
+#else
+    CGAL_USE(v);
 #endif
   }
 
   /*! 6 */
-  void create_vertex(Face_const_handle f1, Vertex_const_handle v2,
+  void create_vertex(Face_const_handle /*f1*/, Vertex_const_handle /*v2*/,
                      Vertex_handle v)
   {
 #ifdef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_DEBUG
     std::cout << "create_vertex(f1, v2)"
               << " " << v->point()
               << std::endl;
+#else
+    CGAL_USE(v);
 #endif
   }
 
   /*! 7 */
-  void create_vertex(Vertex_const_handle v1, Face_const_handle f2,
+  void create_vertex(Vertex_const_handle /*v1*/, Face_const_handle /*f2*/,
                      Vertex_handle v)
   {
 #ifdef CGAL_ARR_POLYHEDRAL_SGM_OVERLAY_DEBUG
     std::cout << "create_vertex(v1, f2)"
               << " " << v->point()
               << std::endl;
+#else
+    CGAL_USE(v);
 #endif
   }
 
   /*! 8 */
-  void create_edge(Halfedge_const_handle h1, Halfedge_const_handle h2,
+  void create_edge(Halfedge_const_handle /*h1*/, Halfedge_const_handle /*h2*/,
                    Halfedge_handle h)
   {
     h->add_arr(0);
@@ -165,7 +173,7 @@ public:
   }
 
   /*! 9 */
-  void create_edge(Halfedge_const_handle h1, Face_const_handle f2,
+  void create_edge(Halfedge_const_handle /*h1*/, Face_const_handle /*f2*/,
                    Halfedge_handle h)
   {
     h->add_arr(0);
@@ -178,7 +186,7 @@ public:
   }
 
   /*! 10 */
-  void create_edge(Face_const_handle f1, Halfedge_const_handle h2,
+  void create_edge(Face_const_handle /*f1*/, Halfedge_const_handle /*h2*/,
                    Halfedge_handle h)
   {
     h->add_arr(1);

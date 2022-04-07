@@ -3,30 +3,19 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/).
- * You can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
+ * This file is part of CGAL (www.cgal.org).
  *
  * File: ExprRep.h
  * Synopsis: Internal Representation of Expr.
- * 
- * Written by 
+ *
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Igor Pechtchanski <pechtcha@cs.nyu.edu>
  *       Vijay Karamcheti <vijayk@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *       Vikram Sharma<sharma@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
@@ -34,6 +23,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_EXPRREP_H_
@@ -42,10 +32,17 @@
 #include <CGAL/CORE/Real.h>
 #include <CGAL/CORE/Filter.h>
 #include <CGAL/CORE/poly/Sturm.h>
+#include <sstream>
 
-namespace CORE { 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4275)
+#  pragma warning(disable:4251)
+#endif
 
-#ifdef CORE_DEBUG_BOUND
+namespace CORE {
+
+#if defined(CGAL_CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
 // These counters are incremented each time each bound is recognized as equal
 // to the best one in computeBound().
 extern unsigned int BFMSS_counter;
@@ -80,12 +77,12 @@ inline extLong ceilLg5(const extLong & a) {
 /// \struct NodeInfo
 /// \brief store information of a node
 struct NodeInfo {
-  Real     appValue;		///< current approximate value
-  bool     appComputed;  	///< true if the approx value been computed
-  bool     flagsComputed;  	///< true if rootBound parameters have been computed
-  extLong  knownPrecision; 	///< Precision achieved by current approx value
+  Real     appValue;                ///< current approximate value
+  bool     appComputed;          ///< true if the approx value been computed
+  bool     flagsComputed;          ///< true if rootBound parameters have been computed
+  extLong  knownPrecision;         ///< Precision achieved by current approx value
 
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   extLong relPrecision;
   extLong absPrecision;
   unsigned long numNodes;
@@ -97,8 +94,8 @@ struct NodeInfo {
    *   generalized accordingly.   */
   extLong d_e;
 
-  bool visited;   	///< flag in counting # of sqrts
-  int sign; 		///< sign of the value being represented.
+  bool visited;           ///< flag in counting # of sqrts
+  int sign;                 ///< sign of the value being represented.
 
   extLong  uMSB; ///< upper bound of the position of Most Significant Bit
   extLong  lMSB; ///< lower bound of the position of Most Significant Bit
@@ -137,8 +134,8 @@ struct NodeInfo {
   /** where E = 2^v2*5^v5*U(E)/L(E), U(E) and L(E) are division-free. */
   extLong l25;
 
-  int ratFlag;		///< rational flag
-  BigRat* ratValue;	///< rational value
+  int ratFlag;                ///< rational flag
+  BigRat* ratValue;        ///< rational value
 
   /// default constructor
   CGAL_CORE_EXPORT NodeInfo();
@@ -152,15 +149,15 @@ struct NodeInfo {
 //  Members: private: int refCount,
 //            public:  NodeInfo* nodeInfo,
 //                     filteredFp ffVal.
-class ExprRep {
+class CGAL_CORE_EXPORT ExprRep {
 public:
   /// \name Constructor and Destructor
   //@{
   /// default constructor
-  CGAL_CORE_EXPORT ExprRep();
+  ExprRep();
   /// virtual destructor for this base class
   virtual ~ExprRep() {
-    if (nodeInfo != NULL) // This check is only for optimization.
+    if (nodeInfo != nullptr) // This check is only for optimization.
       delete nodeInfo;
   }
   //@}
@@ -189,8 +186,8 @@ public:
   /// \name Helper Functions
   //@{
   /// Get the approximate value
-  CGAL_CORE_EXPORT const Real & getAppValue(const extLong& relPrec = defRelPrec,
-                                            const extLong& absPrec = defAbsPrec);
+  const Real & getAppValue(const extLong& relPrec = get_static_defRelPrec(),
+                           const extLong& absPrec = get_static_defAbsPrec());
   /// Get the sign.
   int getSign();
   int getExactSign();
@@ -223,7 +220,7 @@ public:
     return nodeInfo->knownPrecision;
   }
 
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   const extLong& relPrecision() const {
     return nodeInfo->relPrecision;
   }
@@ -389,8 +386,8 @@ public:
   BigFloat BigFloatValue();
   /// represent as a string in decimal value
   // toString() Joaquin Grech 31/5/2003
-  std::string toString(long prec=defOutputDigits, bool sci=false) {
-    return (getAppValue(defRelPrec, defAbsPrec)).toString(prec,sci);
+  std::string toString(long prec=get_static_defOutputDigits(), bool sci=false) {
+    return (getAppValue(get_static_defRelPrec(), get_static_defAbsPrec())).toString(prec,sci);
   }
   //@}
 
@@ -415,8 +412,8 @@ private:
 public:
   enum {OPERATOR_ONLY, VALUE_ONLY, OPERATOR_VALUE, FULL_DUMP};
 
-  NodeInfo* nodeInfo;	///< node information
-  filteredFp ffVal;	///< filtered value
+  NodeInfo* nodeInfo;        ///< node information
+  filteredFp ffVal;        ///< filtered value
 
   /// \name Approximation Functions
   //@{
@@ -425,23 +422,23 @@ public:
   /// compute the sign, uMSB, lMSB, etc.
   virtual void computeExactFlags() = 0;
   /// compute the minimal root bound
-  CGAL_CORE_EXPORT extLong computeBound();
+  extLong computeBound();
   /// driver function to approximate
-  CGAL_CORE_EXPORT void approx(const extLong& relPrec, const extLong& absPrec);
+  void approx(const extLong& relPrec, const extLong& absPrec);
   /// compute an approximate value satifying the specified precisions
   virtual void computeApproxValue(const extLong&, const extLong&) = 0;
   /// Test whether the current approx. value satisfies [relPrec, absPrec]
-  CGAL_CORE_EXPORT bool withinKnownPrecision(const extLong&, const extLong&);
+  bool withinKnownPrecision(const extLong&, const extLong&);
   //@}
 
   /// \name Misc Functions
   //@{
   /// reduce current node
-  CGAL_CORE_EXPORT void reduceToBigRat(const BigRat&);
+  void reduceToBigRat(const BigRat&);
   /// reduce current node
-  CGAL_CORE_EXPORT void reduceTo(const ExprRep*);
+  void reduceTo(const ExprRep*);
   /// reduce current node to zero
-  CGAL_CORE_EXPORT void reduceToZero();
+  void reduceToZero();
   /// return operator string
   virtual const std::string op() const {
     return "UNKNOWN";
@@ -451,13 +448,13 @@ public:
   /// \name Degree Bound Functions
   //@{
   /// compute "d_e" based on # of sqrts
-  CGAL_CORE_EXPORT extLong degreeBound();
+  extLong degreeBound();
   /// count actually computes the degree bound of current node.
   virtual extLong count() = 0;
   /// reset the flag "visited"
   virtual void clearFlag() = 0;
   //@}
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   virtual unsigned long dagSize() = 0;
   virtual void fullClearFlag() = 0;
 #endif
@@ -465,7 +462,7 @@ public:
 
 /// \class ConstRep
 /// \brief constant node
-class ConstRep : public ExprRep {
+class CGAL_CORE_EXPORT ConstRep : public ExprRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -478,25 +475,25 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
+  void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   /// initialize nodeInfo
-  CGAL_CORE_EXPORT virtual void initNodeInfo();
+  virtual void initNodeInfo();
   /// return operator in string
   const std::string op() const {
     return "C";
   }
   /// count returns the degree of current node
   //extLong count() { return d_e(); }
-  CGAL_CORE_EXPORT extLong count();
+  extLong count();
   /// clear visited flag
   void clearFlag() {
     visited() = false;
   }
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
 #endif
@@ -504,7 +501,7 @@ protected:
 
 /// \class ConstDoubleRep
 /// \brief constant node
-class ConstDoubleRep : public ConstRep {
+class CGAL_CORE_EXPORT ConstDoubleRep : public ConstRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -517,28 +514,31 @@ public:
   /// destructor
   ~ConstDoubleRep() {}
   //@}
-  CORE_MEMORY(ConstDoubleRep)
+  CORE_NEW(ConstDoubleRep)
+  CORE_DELETE(ConstDoubleRep)
 protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+  void computeExactFlags();
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
 };
 
 /// \class ConstRealRep
 /// \brief constant node
-class ConstRealRep : public ConstRep {
+class CGAL_CORE_EXPORT ConstRealRep : public ConstRep {
 public:
   /// \name Constructors and Destructor
   //@{
   /// default constructor
   ConstRealRep() : value(CORE_REAL_ZERO) { }
   /// constructor for all \c Real type
-  CGAL_CORE_EXPORT ConstRealRep(const Real &);
+  ConstRealRep(const Real &);
   /// destructor
   ~ConstRealRep() {}
   //@}
-  CORE_MEMORY(ConstRealRep)
+
+  CORE_NEW(ConstRealRep)
+  CORE_DELETE(ConstRealRep)
 private:
   Real value; ///< internal representation of node
 protected:
@@ -551,7 +551,7 @@ protected:
 /// \class Constant Polynomial Node
 /// \brief template class where NT is supposed to be some number type
 template <class NT>
-class ConstPolyRep : public ConstRep {
+class CGAL_CORE_EXPORT ConstPolyRep : public ConstRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -565,26 +565,26 @@ public:
     // check whether n-th root exists
     if (I.first == 1 && I.second == 0) {
       core_error("CORE ERROR! root index out of bound",
-		      __FILE__, __LINE__, true);
+                      __FILE__, __LINE__, true);
       abort();
     }
     // test if the root isolated in I is 0:
     if ((I.first == 0)&&(I.second == 0))
       ffVal = 0;
     else
-      ffVal = computeFilteredValue();	// silly to use a filter here!
-    					// since sign is known.
+      ffVal = computeFilteredValue();        // silly to use a filter here!
+                                            // since sign is known.
   }
 
   /// constructor for Polynomial
   ConstPolyRep(const Polynomial<NT>& p, const BFInterval& II)
-	  : ss(p), I(II) {
+          : ss(p), I(II) {
     BFVecInterval v;
     ss.isolateRoots(I.first, I.second, v);
     I = v.front();
     if (v.size() != 1) {
       core_error("CORE ERROR! non-isolating interval",
-		      __FILE__, __LINE__, true);
+                      __FILE__, __LINE__, true);
       abort();
     }
     ffVal = computeFilteredValue(); // Chee: this line seems unnecessary
@@ -593,15 +593,22 @@ public:
   /// destructor
   ~ConstPolyRep() {}
   //@}
-  CORE_MEMORY(ConstPolyRep)
+
+  void *operator new( size_t size){
+    return MemoryPool<ConstPolyRep>::global_allocator().allocate(size);
+  }
+
+  void operator delete( void *p, size_t ){
+    MemoryPool<ConstPolyRep>::global_allocator().free(p);
+  }
 
 private:
   Sturm<NT> ss; ///< internal Sturm sequences
   BFInterval I; ///< current interval contains the real value
-  		// IMPORTANT: I.first and I.second are exact BigFloats
+                  // IMPORTANT: I.first and I.second are exact BigFloats
   filteredFp computeFilteredValue() {
     // refine initial interval to absolute error of 2^(lMSB(k)-54) where
-    // 	  k is a lower bound on the root (use Cauchy Lower Bound).
+    //           k is a lower bound on the root (use Cauchy Lower Bound).
     //    Hence, the precision we pass to refine should be 54-lMSB(k).
 
     // refine with newton (new method)
@@ -619,7 +626,7 @@ private:
     // It should be "centralized" to set
     // the error bit correctly.
     // E.g., otherwise, radical(4,2) will print wrongly.
-    if ((I.first == 0) && (I.second == 0))	// Checkfor zero value
+    if ((I.first == 0) && (I.second == 0))        // Checkfor zero value
       return filteredFp(0);
     BigFloat x = centerize(I.first, I.second);
     double val = x.doubleValue();
@@ -629,7 +636,7 @@ private:
     long ee = x.exp()*CHUNK_BIT;
     unsigned long err = ee > 0 ? (x.err() << ee) : (x.err() >> (-ee));
     double max = core_abs(val) + err;
-    int ind = longValue((BigInt(x.err()) << 53) / (x.m() + x.err())); 
+    int ind = longValue((BigInt(x.err()) << 53) / (x.m() + x.err()));
     */
     return filteredFp(val, max, ind); // Aug 8, 2004, Comment from Chee:
        // I think we should get rid of filters here!  Given the interval I,
@@ -660,15 +667,15 @@ protected:
       sign() = -1;
     }
     // length() = 1+ ss.seq[0].length().uMSB();
-    measure() = 1+ ss.seq[0].length().uMSB();	// since measure<= length
+    measure() = 1+ ss.seq[0].length().uMSB();        // since measure<= length
 
     // compute u25, l25, v2p, v2m, v5p, v5m
     v2p() = v2m() = v5p() = v5m() = 0;
     u25() = 1+ss.seq[0].CauchyUpperBound().uMSB();
     l25() = ceilLg(ss.seq[0].getLeadCoeff());  // assumed coeff is integer!!
-    		// ceilLg(BigInt) and ceilLg(Expr) are defined. But if
-    		// NT=int, ceilLg(int) is ambiguous!  Added ceilLg(int)
-		// under BigInt.h
+                    // ceilLg(BigInt) and ceilLg(Expr) are defined. But if
+                    // NT=int, ceilLg(int) is ambiguous!  Added ceilLg(int)
+                // under BigInt.h
 
     // compute high, low, lc, tc
     high() = u25();
@@ -677,7 +684,7 @@ protected:
     tc() = ceilLg(ss.seq[0].getTailCoeff());
 
     // no rational reduction
-    if (rationalReduceFlag)
+    if (get_static_rationalReduceFlag())
       ratFlag() = -1;
 
     flagsComputed() = true;
@@ -696,9 +703,11 @@ protected:
     appValue() = centerize(I.first, I.second);
   }
 };
+
+
 /// \class UnaryOpRep
 /// \brief unary operator node
-class UnaryOpRep : public ExprRep {
+class CGAL_CORE_EXPORT UnaryOpRep : public ExprRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -715,17 +724,20 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
+  void debugList(int level, int depthLimit) const;
+
   /// print debug information in tree mode
-  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   ExprRep* child; ///< pointer to its child node
   /// initialize nodeInfo
-  CGAL_CORE_EXPORT virtual void initNodeInfo();
+  virtual void initNodeInfo();
+
   /// clear visited flag
-  CGAL_CORE_EXPORT void clearFlag();
-#ifdef CORE_DEBUG
+  void clearFlag();
+
+#ifdef CGAL_CORE_DEBUG
   unsigned long dagSize();
   void fullClearFlag();
 #endif
@@ -733,7 +745,7 @@ protected:
 
 /// \class NegRep
 /// \brief unary minus operator node
-class NegRep : public UnaryOpRep {
+class CGAL_CORE_EXPORT NegRep : public UnaryOpRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -745,12 +757,15 @@ public:
   ~NegRep() {}
   //@}
 
-  CORE_MEMORY(NegRep)
+  CORE_NEW(NegRep)
+  CORE_DELETE(NegRep)
 protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+  void computeExactFlags();
+
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
+
   /// return operator in string
   const std::string op() const {
     return "Neg";
@@ -758,12 +773,12 @@ protected:
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  CGAL_CORE_EXPORT extLong count();
+  extLong count();
 };
 
 /// \class SqrtRep
 /// \brief squartroot operator node
-class SqrtRep : public UnaryOpRep {
+class CGAL_CORE_EXPORT SqrtRep : public UnaryOpRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -775,12 +790,14 @@ public:
   ~SqrtRep() {}
   //@}
 
-  CORE_MEMORY(SqrtRep)
+  CORE_NEW(SqrtRep)
+  CORE_DELETE(SqrtRep)
 protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+  void computeExactFlags();
+
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "Sqrt";
@@ -788,12 +805,12 @@ protected:
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  CGAL_CORE_EXPORT extLong count();
+  extLong count();
 };
 
 /// \class BinOpRep
 /// \brief binary operator node
-class BinOpRep : public ExprRep {
+class CGAL_CORE_EXPORT BinOpRep : public ExprRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -812,25 +829,25 @@ public:
   /// \name Debug Functions
   //@{
   /// print debug information in list mode
-  CGAL_CORE_EXPORT void debugList(int level, int depthLimit) const;
+  void debugList(int level, int depthLimit) const;
   /// print debug information in tree mode
-  CGAL_CORE_EXPORT void debugTree(int level, int indent, int depthLimit) const;
+  void debugTree(int level, int indent, int depthLimit) const;
   //@}
 protected:
   ExprRep* first;  ///< first operand
   ExprRep* second; ///< second operand
 
   /// initialize nodeInfo
-  CGAL_CORE_EXPORT virtual void initNodeInfo();
+  virtual void initNodeInfo();
   /// clear visited flags
-  CGAL_CORE_EXPORT void clearFlag();
+  void clearFlag();
   /// count computes the degree of current node, i.e., d_e().
   /** This is now a misnomer, but historically accurate.
    */
-  CGAL_CORE_EXPORT extLong count();
-#ifdef CORE_DEBUG
-  CGAL_CORE_EXPORT unsigned long dagSize();
-  CGAL_CORE_EXPORT void fullClearFlag();
+  extLong count();
+#ifdef CGAL_CORE_DEBUG
+  unsigned long dagSize();
+  void fullClearFlag();
 #endif
 };
 
@@ -838,7 +855,12 @@ protected:
 /// \brief "functor" class used as parameter to AddSubRep<>
 struct Add {
   /// name
+#ifndef CGAL_HEADER_ONLY
   CGAL_CORE_EXPORT static const char* name;
+#endif
+  static const char* get_name() {
+    return "+";
+  }
 
   /// unary operator
   template <class T>
@@ -857,7 +879,12 @@ struct Add {
 /// \brief "functor" class used as parameter to AddSubRep<>
 struct Sub {
   /// name
+#ifndef CGAL_HEADER_ONLY
   CGAL_CORE_EXPORT static const char* name;
+#endif
+  static const char* get_name() {
+    return "-";
+  }
 
   /// unary operator
   template <class T>
@@ -887,7 +914,8 @@ public:
   ~AddSubRep() {}
   //@}
 
-  CORE_MEMORY(AddSubRep)
+  CORE_NEW(AddSubRep)
+  CORE_DELETE(AddSubRep)
 protected:
   /// compute sign and MSB
    void computeExactFlags();
@@ -895,14 +923,12 @@ protected:
    void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
-    return Operator::name;
+    return Operator::get_name();
   }
 private:
-  static Operator Op;
+  Operator Op;
 };//AddSubRep class
 
-template <class Operator>
-Operator AddSubRep<Operator>::Op;
 
   /// AddSubRep<Op>::computeExactFlags()
   ///     This function is the heart of Expr class,
@@ -925,7 +951,7 @@ void AddSubRep<Operator>::computeExactFlags() {
     reduceTo(second);
     sign() = Op(ss);
     appValue() = Op(appValue());
-    if (rationalReduceFlag && ratFlag() > 0)
+    if (get_static_rationalReduceFlag() && ratFlag() > 0)
       *(ratValue()) = Op(*(ratValue()));
     return;
   } else if (ss == 0) { // second operand is zero
@@ -933,7 +959,7 @@ void AddSubRep<Operator>::computeExactFlags() {
     return;
   }
   // rational node
-  if (rationalReduceFlag) {
+  if (get_static_rationalReduceFlag()) {
     if (first->ratFlag() > 0 && second->ratFlag() > 0) {
       BigRat val=Op(*(first->ratValue()), *(second->ratValue()));
       reduceToBigRat(val);
@@ -957,17 +983,17 @@ void AddSubRep<Operator>::computeExactFlags() {
 
   // BFMSS[2,5] bound.
   v2p() = core_min(first->v2p() + second->v2m(),
-		  first->v2m() + second->v2p());
+                  first->v2m() + second->v2p());
   v2m() = first->v2m() + second->v2m();
   v5p() = core_min(first->v5p() + second->v5m(),
-		  first->v5m() + second->v5p());
+                  first->v5m() + second->v5p());
   v5m() = first->v5m() + second->v5m();
 
   if (v2p().isInfty() || v5p().isInfty())
     u25() = CORE_INFTY;
   else
     u25() = EXTLONG_ONE + core_max(first->v2p() + second->v2m()
-	    - v2p() + ceilLg5(first->v5p() + second->v5m() - v5p())
+            - v2p() + ceilLg5(first->v5p() + second->v5m() - v5p())
             + first->u25() + second->l25(),
                                    first->v2m() + second->v2p() - v2p()
             + ceilLg5(first->v5m() + second->v5p() - v5p())
@@ -989,12 +1015,12 @@ void AddSubRep<Operator>::computeExactFlags() {
   extLong l  = core_max(lf, ls);
   extLong u  = core_max(uf, us);
 
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
   std::cout << "INSIDE Add/sub Rep: " << std::endl;
 #endif
 
   if (Op(sf, ss) != 0) {     // can't possibly cancel out
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
     std::cout << "Add/sub Rep:  Op(sf, ss) non-zero" << std::endl;
 #endif
 
@@ -1002,38 +1028,38 @@ void AddSubRep<Operator>::computeExactFlags() {
     lMSB() = l;            // lMSB = core_min(lf, ls)+1 better
     sign() = sf;
   } else {               // might cancel out
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
     std::cout << "Add/sub Rep:  Op(sf, ss) zero" << std::endl;
 #endif
 
     uMSB() = u + EXTLONG_ONE;
     uMSB() = u;
     if (lf >= us + EXTLONG_TWO) {// one is at least 1 order of magnitude larger
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
       std::cout << "Add/sub Rep:  Can't cancel" << std::endl;
 #endif
 
       lMSB() = lf - EXTLONG_ONE;     // can't possibly cancel out
       sign() = sf;
     } else if (ls >= uf + EXTLONG_TWO) {
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
       std::cout << "Add/sub Rep:  Can't cancel" << std::endl;
 #endif
 
       lMSB() = ls - EXTLONG_ONE;
       sign() = Op(ss);
     } else if (ffVal.isOK()) {// begin filter computation
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
       std::cout << "Add/sub Rep:  filter used" << std::endl;
 #endif
-#ifdef CORE_DEBUG_FILTER
+#ifdef CGAL_CORE_DEBUG_FILTER
       std::cout << "call filter in " << op() << "Rep" << std::endl;
 #endif
       sign() = ffVal.sign();
       lMSB() = ffVal.lMSB();
       uMSB() = ffVal.uMSB();
-    } else {			// about the same size, might cancel out
-#ifdef CORE_TRACE
+    } else {                        // about the same size, might cancel out
+#ifdef CGAL_CORE_TRACE
       std::cout << "Add/sub Rep:  iteration start" << std::endl;
 #endif
 
@@ -1046,21 +1072,21 @@ void AddSubRep<Operator>::computeExactFlags() {
       if (lowBound <= EXTLONG_ZERO)
         lowBound = EXTLONG_ONE;
 
-      if (!progressiveEvalFlag) {
+      if (!get_static_progressiveEvalFlag()) {
         // convert the absolute error requirement "lowBound" to
         // a relative error requirement "ur", s.t.
         //    |x|*2^(-ur) <= 2^(-lowBound).
         // ==> r >= a + lg(x) >= a + (uMSB + 1);
-        //	    extLong  rf = lowBound + (uf + 1);
-        //	    extLong  rs = lowBound + (us + 1);
-        //	    first->approx(rf, CORE_INFTY);
-        //	    second->approx(rs, CORE_INFTY);
+        //            extLong  rf = lowBound + (uf + 1);
+        //            extLong  rs = lowBound + (us + 1);
+        //            first->approx(rf, CORE_INFTY);
+        //            second->approx(rs, CORE_INFTY);
         // Chen: considering the uMSB is also an approximate bound.
         // we choose to use absolute precision up-front.
         Real newValue = Op(first->getAppValue(CORE_INFTY,
-				lowBound + EXTLONG_ONE),
+                                lowBound + EXTLONG_ONE),
                            second->getAppValue(CORE_INFTY,
-				   lowBound + EXTLONG_ONE));
+                                   lowBound + EXTLONG_ONE));
         if (!newValue.isZeroIn()) { // Op(first, second) != 0
           lMSB() = newValue.lMSB();
           uMSB() = newValue.uMSB();   // chen: to get tighers value.
@@ -1073,7 +1099,7 @@ void AddSubRep<Operator>::computeExactFlags() {
           sign() = 0;
         }
       } else {  // else do progressive evaluation
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
         std::cout << "Add/sub Rep:  progressive eval" << std::endl;
 #endif
         // Oct 30, 2002: fixed a bug here!  Old versions used relative
@@ -1081,92 +1107,99 @@ void AddSubRep<Operator>::computeExactFlags() {
         // Moreover, this is much more efficient.
 
         // ua is the upper bound on the absolute precision in our iteration
-	// Chee, Aug 8, 2004: it is important that ua be strictly
-	//     larger than lowBound AND the defaultInitialProgressivePrec,
-	//     so that we do at least one iteration of the for-loop. So:
-	// i is the variable for iteration.
-        extLong i = core_min(defInitialProgressivePrec, lowBound.asLong());
+        // Chee, Aug 8, 2004: it is important that ua be strictly
+        //     larger than lowBound AND the defaultInitialProgressivePrec,
+        //     so that we do at least one iteration of the for-loop. So:
+        // i is the variable for iteration.
+        extLong i = core_min(getInitialProgressivePrec(), lowBound.asLong());
         extLong ua = lowBound.asLong() + EXTLONG_ONE;
         //   NOTE: ua is allowed to be CORE_INFTY
-	
-#ifdef CORE_DEBUG_BOUND
+
+#ifdef CGAL_CORE_DEBUG_BOUND
         std::cout << "DebugBound:" << "ua = " << ua << std::endl;
 #endif
         // We initially set the lMSB and sign as if the value is zero:
         lMSB() = CORE_negInfty;
         sign() = 0;
 
-        EscapePrecFlag = 0;	// reset the Escape Flag
+        get_static_EscapePrecFlag() = 0;        // reset the Escape Flag
 
         // Now we try to determine the real lMSB and sign,
         // in case it is not really zero:
-#ifdef CORE_TRACE
+#ifdef CGAL_CORE_TRACE
         std::cout << "Upper bound (ua) for iteration is " << ua << std::endl;
-	std::cout << "Starting iteration at i = " << i << std::endl;
+        std::cout << "Starting iteration at i = " << i << std::endl;
 #endif
 
-        for ( ; i<ua; i*=EXTLONG_TWO) {
+        bool current_precision_lower_than_bound = true;
+        for ( ; current_precision_lower_than_bound; i*=EXTLONG_TWO) {
+          // since at the previous loop i was lower than ua, we need
+          // another loop so that the precision bound is exceeded
+          if ( i>=ua ){
+            current_precision_lower_than_bound = false;
+            i = ua; // do not compute more than needed
+          }
           // relative bits = i
-	  //
-	  // PROBLEM WITH NEXT LINE: you must ensure that
-	  // first and second are represented by BigFloats...
-	  //
+          //
+          // PROBLEM WITH NEXT LINE: you must ensure that
+          // first and second are represented by BigFloats...
+          //
           Real newValue = Op(first->getAppValue(CORE_INFTY, i),
                              second->getAppValue(CORE_INFTY, i));
 
-#ifdef CORE_TRACE
-	  if (newValue.getRep().ID() == REAL_BIGFLOAT) 
-	  std::cout << "BigFloat! newValue->rep->ID() = "
-		  << newValue.getRep().ID() << std::endl;
-	  else 
-	  std::cout << "ERROR, Not BigFloat! newValue->rep->ID() ="
-		  << newValue.getRep().ID() << std::endl;
-	  std::cout << "newValue = Op(first,second) = "
-		  << newValue << std::endl;
-	  std::cout << "first:appVal, appComputed, knownPrec, sign ="
-		  << first->appValue() << ","
-		  << first->appComputed() << ","
-		  << first->knownPrecision() << ","
-		  << first->sign() << std::endl;
-	  std::cout << "second:appVal, appComputed, knownPrec, sign ="
-		  << second->appValue() << ","
-		  << second->appComputed() << ","
-		  << second->knownPrecision() << ","
-		  << second->sign() << std::endl;
+#ifdef CGAL_CORE_TRACE
+          if (newValue.getRep().ID() == REAL_BIGFLOAT)
+          std::cout << "BigFloat! newValue->rep->ID() = "
+                  << newValue.getRep().ID() << std::endl;
+          else
+          std::cout << "ERROR, Not BigFloat! newValue->rep->ID() ="
+                  << newValue.getRep().ID() << std::endl;
+          std::cout << "newValue = Op(first,second) = "
+                  << newValue << std::endl;
+          std::cout << "first:appVal, appComputed, knownPrec, sign ="
+                  << first->appValue() << ","
+                  << first->appComputed() << ","
+                  << first->knownPrecision() << ","
+                  << first->sign() << std::endl;
+          std::cout << "second:appVal, appComputed, knownPrec, sign ="
+                  << second->appValue() << ","
+                  << second->appComputed() << ","
+                  << second->knownPrecision() << ","
+                  << second->sign() << std::endl;
 #endif
           if (!newValue.isZeroIn()) {   // Op(first, second) != 0
             lMSB() = newValue.lMSB();
             uMSB() = newValue.uMSB();
             sign() = newValue.sign();
-#ifdef CORE_DEBUG_BOUND
+#ifdef CGAL_CORE_DEBUG_BOUND
             std::cout << "DebugBound(Exit Loop): " << "i=" << i << std::endl;
 #endif
-#ifdef CORE_TRACE
-	    std::cout << "Zero is not in, lMSB() = " << lMSB()
-		    << ", uMSB() = " << uMSB()
-		    << ", sign() = " << sign() << std::endl;
-	    std::cout << "newValue = " << newValue << std::endl;
+#ifdef CGAL_CORE_TRACE
+            std::cout << "Zero is not in, lMSB() = " << lMSB()
+                    << ", uMSB() = " << uMSB()
+                    << ", sign() = " << sign() << std::endl;
+            std::cout << "newValue = " << newValue << std::endl;
 #endif
 
             break; // assert -- this must happen in the loop if nonzero!
           }
           //8/9/01, Chee: implement escape precision here:
-          if (i> EscapePrec) {
-            EscapePrecFlag = -i.asLong();//negative means EscapePrec is used
-	    core_error("Escape precision triggered at",
-            		 __FILE__, __LINE__, false);
-            if (EscapePrecWarning)
+          if (i> get_static_EscapePrec()) {
+            get_static_EscapePrecFlag() = -i.asLong();//negative means EscapePrec is used
+            core_error("Escape precision triggered at",
+                             __FILE__, __LINE__, false);
+            if (get_static_EscapePrecWarning())
               std::cout<< "Escape Precision triggered at "
-		      << EscapePrec << " bits" << std::endl;
-#ifdef CORE_DEBUG
-            std::cout << "EscapePrecFlags=" << EscapePrecFlag << std::endl;
+                      << get_static_EscapePrec() << " bits" << std::endl;
+#ifdef CGAL_CORE_DEBUG
+            std::cout << "EscapePrecFlags=" << get_static_EscapePrecFlag() << std::endl;
             std::cout << "ua =" << ua  << ",lowBound=" << lowBound << std::endl;
 #endif
             break;
           }// if
         }// for (long i=1...)
 
-#ifdef CORE_DEBUG_BOUND
+#if defined(CGAL_CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
         rootBoundHitCounter++;
 #endif
 
@@ -1196,21 +1229,35 @@ void AddSubRep<Operator>::computeApproxValue(const extLong& relPrec,
     appValue() = first->getAppValue(relPrec, absPrec);
     return;
   }
-  if (lMSB() < EXTLONG_BIG && lMSB() > EXTLONG_SMALL) {
-    extLong rf = first->uMSB()-lMSB()+relPrec+EXTLONG_FOUR;  // 2 better
-    if (rf < EXTLONG_ZERO)
-      rf = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
-    extLong rs = second->uMSB()-lMSB()+relPrec+EXTLONG_FOUR; // 2 better
-    if (rs < EXTLONG_ZERO)
-      rs = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
-    extLong  a  = absPrec + EXTLONG_THREE;                      // 1 better
-    appValue() = Op(first->getAppValue(rf, a), second->getAppValue(rs, a));
-  } else {
-    std::cerr << "lMSB = " << lMSB() << std::endl; // should be in core_error
-    core_error("CORE WARNING: a huge lMSB in AddSubRep",
-	 	__FILE__, __LINE__, false);
+
+  // warn about large MSB bound but do the computation as extLong is
+  // handling overflow and underflow
+  if (lMSB() >= EXTLONG_BIG || lMSB() <= EXTLONG_SMALL)
+  {
+    std::ostringstream oss;
+    oss << "CORE WARNING: a huge lMSB in AddSubRep: " << lMSB();
+    core_error(oss.str(),
+                 __FILE__, __LINE__, false);
   }
+
+  extLong rf = first->uMSB()-lMSB()+relPrec+EXTLONG_FOUR;  // 2 better
+  if (rf < EXTLONG_ZERO)
+    rf = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
+  extLong rs = second->uMSB()-lMSB()+relPrec+EXTLONG_FOUR; // 2 better
+  if (rs < EXTLONG_ZERO)
+    rs = EXTLONG_ZERO;  // from Koji's thesis P63: Proposition 26
+  extLong  a  = absPrec + EXTLONG_THREE;                      // 1 better
+  appValue() = Op(first->getAppValue(rf, a), second->getAppValue(rs, a));
 }
+
+template <typename O>
+void * AddSubRep<O>::operator new( size_t size)
+{ return MemoryPool<AddSubRep<O> >::global_allocator().allocate(size); }
+
+template <typename O>
+void AddSubRep<O>::operator delete( void *p, size_t )
+{ MemoryPool<AddSubRep<O> >::global_allocator().free(p); }
+
 
 /// \typedef AddRep
 /// \brief AddRep for easy of use
@@ -1222,7 +1269,7 @@ typedef AddSubRep<Sub> SubRep;
 
 /// \class MultRep
 /// \brief multiplication operator node
-class MultRep : public BinOpRep {
+class CGAL_CORE_EXPORT MultRep : public BinOpRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -1233,13 +1280,15 @@ public:
   /// destructor
   ~MultRep() {}
   //@}
-  
-  CORE_MEMORY(MultRep)
+
+  CORE_NEW(MultRep)
+  CORE_DELETE(MultRep)
   protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+  void computeExactFlags();
+
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "*";
@@ -1248,7 +1297,7 @@ public:
 
 /// \class DivRep
 /// \brief division operator node
-class DivRep : public BinOpRep {
+class CGAL_CORE_EXPORT DivRep : public BinOpRep {
 public:
   /// \name Constructors and Destructor
   //@{
@@ -1260,12 +1309,14 @@ public:
   ~DivRep() {}
   //@}
 
-  CORE_MEMORY(DivRep)
+  CORE_NEW(DivRep)
+  CORE_DELETE(DivRep)
 protected:
   /// compute sign and MSB
-  CGAL_CORE_EXPORT void computeExactFlags();
+   void computeExactFlags();
+
   /// compute approximation value
-  CGAL_CORE_EXPORT void computeApproxValue(const extLong&, const extLong&);
+  void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
     return "/";
@@ -1279,7 +1330,7 @@ inline int ExprRep::getExactSign() {
 
   if (!flagsComputed()) {
     degreeBound();
-#ifdef CORE_DEBUG
+#ifdef CGAL_CORE_DEBUG
     dagSize();
     fullClearFlag();
 #endif
@@ -1311,4 +1362,9 @@ inline BigFloat ExprRep::BigFloatValue() {
 }
 
 } //namespace CORE
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif // _CORE_EXPRREP_H_

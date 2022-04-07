@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -22,18 +14,21 @@
 #ifndef CGAL_CONVEXITY_CHECK_2_H
 #define CGAL_CONVEXITY_CHECK_2_H
 
+#include <CGAL/license/Convex_hull_2.h>
+
+
 #include <CGAL/basic.h>
 #include <iterator>
 
 namespace CGAL {
 
-// returns true, if the point elements in [|first|,|last|) form a 
-// counterclockwise oriented strongly convex polygon. Strongly means, 
-// there are no three collinear points. 
+// returns true, if the point elements in [|first|,|last|) form a
+// counterclockwise oriented strongly convex polygon. Strongly means,
+// there are no three collinear points.
 // {\sc traits}: uses |Traits::Left_turn_2|, |Traits::Equal_2| and |Traits::Less_xy_2|.
 template <class ForwardIterator, class Traits>
 bool
-is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last, 
+is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                           const Traits& ch_traits);
 
 template <class ForwardIterator>
@@ -45,19 +40,19 @@ is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last )
     typedef typename ITraits::value_type          value_type;
     typedef CGAL::Kernel_traits<value_type>       KTraits;
     typedef typename KTraits::Kernel              Kernel;
-    return is_ccw_strongly_convex_2( first, last, Kernel()); 
+    return is_ccw_strongly_convex_2( first, last, Kernel());
 }
 
 
 
 
-// returns true, if the point elements in [|first|,|last|) form a 
+// returns true, if the point elements in [|first|,|last|) form a
 // clockwise oriented strongly convex polygon. Strongly means, there are
 // no three collinear points.
 // {\sc traits}: uses |Traits::Left_turn_2|, |Traits::Equal_2| and |Traits::Less_xy_2|.
 template <class ForwardIterator, class Traits>
 bool
-is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last, 
+is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                          const Traits& ch_traits);
 
 template <class ForwardIterator>
@@ -69,12 +64,12 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last )
     typedef typename ITraits::value_type          value_type;
     typedef CGAL::Kernel_traits<value_type>       KTraits;
     typedef typename KTraits::Kernel              Kernel;
-    return is_cw_strongly_convex_2( first, last, Kernel()); 
+    return is_cw_strongly_convex_2( first, last, Kernel());
 }
 
 
-// returns true, if all points in [|first1|,|last1|) are 
-// not right of the lines defined by consecutive points in the range 
+// returns true, if all points in [|first1|,|last1|) are
+// not right of the lines defined by consecutive points in the range
 // [|first2|,|last2|), where the range is considered as a cycle.
 // {\sc traits}: uses |Traits::Left_turn_2|.
 template <class ForwardIterator1, class ForwardIterator2, class Traits>
@@ -97,15 +92,15 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
 }
 
 
-// returns true, if all points in [|first1|,|last1|) are 
-// not right of the lines defined by consecutive points in the range 
-// [|first2|,|last2|). 
+// returns true, if all points in [|first1|,|last1|) are
+// not right of the lines defined by consecutive points in the range
+// [|first2|,|last2|).
 // {\sc traits}: uses |Traits::Left_turn_2|.
 template <class ForwardIterator1, class ForwardIterator2, class Traits>
 bool
-ch_brute_force_chain_check_2(ForwardIterator1 first1, 
+ch_brute_force_chain_check_2(ForwardIterator1 first1,
                              ForwardIterator1 last1,
-                             ForwardIterator2 first2, 
+                             ForwardIterator2 first2,
                              ForwardIterator2 last2,
                              const Traits& ch_traits);
 
@@ -119,7 +114,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
     typedef typename ITraits::value_type           value_type;
     typedef CGAL::Kernel_traits<value_type>        KTraits;
     typedef typename KTraits::Kernel               Kernel;
-    return ch_brute_force_chain_check_2( first1, last1, first2, last2, 
+    return ch_brute_force_chain_check_2( first1, last1, first2, last2,
                                          Kernel());
 }
 

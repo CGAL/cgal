@@ -1,4 +1,4 @@
-#include <CGAL/Constraint_hierarchy_2.h>
+#include <CGAL/Triangulation_2/internal/Constraint_hierarchy_2.h>
 
 struct Less
 {
@@ -10,7 +10,7 @@ struct Less
 
 typedef int Vh;
 typedef bool Data;
-typedef CGAL::Constraint_hierarchy_2<Vh, 
+typedef CGAL::Constraint_hierarchy_2<Vh,
                                      Less,
                                      Data>      Hierarchy;
 typedef Hierarchy::H_constraint                 H_constraint;
@@ -41,16 +41,16 @@ _test_cls_hierarchy_2()
   assert(c ==  std::make_pair(v[1],v[2]));
   h.enclosing_constraint(std::make_pair(v[3], v[7]), c);
   assert(c ==  std::make_pair(v[3],v[4]));
-  
+
   // result should be 152 3764
   // h.print();
   H_context co = h.context(v[1],v[5]);
-    H_vertex_it vit = co.vertices_begin();  
-  assert( *vit++ == v[1] && 
-	  *vit++ == v[5] && 
-	  *vit++ == v[2] &&
-	  vit == co.vertices_end() &&
-	  *(co.current()) == v[1]) ;
+    H_vertex_it vit = co.vertices_begin();
+  assert( *vit++ == v[1] &&
+          *vit++ == v[5] &&
+          *vit++ == v[2] &&
+          vit == co.vertices_end() &&
+          *(co.current()) == v[1]) ;
   co = h.context(v[7],v[6]);
   vit = co.vertices_begin();
   assert( *vit++ == v[3]);
@@ -91,21 +91,21 @@ _test_cls_hierarchy_2()
   H_constraint_list hcl;
   h.enclosing_constraints(v[1], v[5], hcl);
   assert(hcl.size() == 2);
- 
+
   //h.print();
   // result should be 152 374 158
   assert(h.number_of_enclosing_constraints(v[1],v[5]) == 2);
   H_context_iterator co_it = h.contexts_begin(v[1],v[5]);
   assert(co_it->number_of_vertices() == 3);
   vit = co_it->vertices_begin();
-  assert ( *vit++ == v[1] && 
-	   *vit++ == v[5] &&
-	   *vit++ == v[2]);
+  assert ( *vit++ == v[1] &&
+           *vit++ == v[5] &&
+           *vit++ == v[2]);
   co_it++;
   vit = co_it->vertices_begin();
-  assert ( *vit++ == v[1] && 
-	   *vit++ == v[5] &&
-	   *vit++ == v[8]);
+  assert ( *vit++ == v[1] &&
+           *vit++ == v[5] &&
+           *vit++ == v[8]);
   co_it++;
   assert (co_it  == h.contexts_end(v[1],v[5]));
 

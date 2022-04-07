@@ -6,17 +6,20 @@
 
 #include "Traits_base_test.h"
 
-template <typename Geom_traits_T>
+template <typename GeomTraits, typename BaseGeomTraits>
 class Traits_adaptor_test :
-  public Traits_base_test<typename Geom_traits_T::Base>
+  public Traits_base_test<BaseGeomTraits>
 {
 public:
-  typedef Geom_traits_T                                 Geom_traits;
-  typedef Traits_base_test<typename Geom_traits::Base>  Base;
+  typedef GeomTraits                                          Geom_traits;
+  typedef BaseGeomTraits                                      Base_geom_traits;
+  typedef Traits_base_test<Base_geom_traits>                  Base;
 
 private:
+  typedef Traits_adaptor_test<Geom_traits, Base_geom_traits>  Self;
+
   /*! A map between (strings) commands and (member functions) operations */
-  typedef bool (Traits_adaptor_test::* Wrapper)(std::istringstream &);
+  typedef bool (Traits_adaptor_test::* Wrapper)(std::istringstream&);
   typedef std::map<std::string, Wrapper> Wrapper_map;
   typedef typename Wrapper_map::iterator Wrapper_iter;
   Wrapper_map m_wrappers;
@@ -34,6 +37,8 @@ private:
   }
 
   //@{
+  bool ta_compare_xy(std::istringstream&);
+  bool ta_compare_xy_imp(std::istringstream&);
 
   bool ta_compare_y_at_x_left_wrapper(std::istringstream&);
   bool ta_compare_y_at_x_left_wrapper_imp(std::istringstream&,
@@ -61,67 +66,78 @@ protected:
   const Geom_traits& m_geom_traits;
 
 public:
-  /*! Constructor */
+  /*! Construct.
+   */
   Traits_adaptor_test(const Geom_traits& geom_traits);
 
-  /*! Destructor */
+  /*! Destruct.
+   */
   virtual ~Traits_adaptor_test();
 };
 
-/*!
- * Constructor.
+/*! Construct.
  * Accepts test data file name.
  */
-template <typename Geom_traits_T>
-Traits_adaptor_test<Geom_traits_T>::
-Traits_adaptor_test(const Geom_traits_T& geom_traits) :
+template <typename GeomTraits, typename BaseGeomTraits>
+Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+Traits_adaptor_test(const GeomTraits& geom_traits) :
   Base(geom_traits),
   m_geom_traits(geom_traits)
 {
-  typedef Geom_traits_T         Geom_traits;
-
+  m_wrappers[std::string("compare_xy")] = &Self::ta_compare_xy;
   m_wrappers[std::string("compare_y_at_x_left")] =
-    &Traits_adaptor_test<Geom_traits>::ta_compare_y_at_x_left_wrapper;
-  m_wrappers[std::string("is_in_x_range")] =
-    &Traits_adaptor_test<Geom_traits>::ta_is_in_x_range_wrapper;
+    &Self::ta_compare_y_at_x_left_wrapper;
+  m_wrappers[std::string("is_in_x_range")] = &Self::ta_is_in_x_range_wrapper;
   m_wrappers[std::string("compare_y_position")] =
-    &Traits_adaptor_test<Geom_traits>::ta_compare_y_position_wrapper;
-  m_wrappers[std::string("is_between_cw")] =
-    &Traits_adaptor_test<Geom_traits>::ta_is_between_cw_wrapper;
+    &Self::ta_compare_y_position_wrapper;
+  m_wrappers[std::string("is_between_cw")] = &Self::ta_is_between_cw_wrapper;
   m_wrappers[std::string("compare_cw_around_point")] =
-    &Traits_adaptor_test<Geom_traits>::ta_compare_cw_around_point_wrapper;
-  m_wrappers[std::string("are_mergeable")] =
-    &Traits_adaptor_test<Geom_traits>::ta_are_mergeable_wrapper;
-  m_wrappers[std::string("merge")] =
-    &Traits_adaptor_test<Geom_traits>::ta_merge_wrapper;
+    &Self::ta_compare_cw_around_point_wrapper;
+  m_wrappers[std::string("are_mergeable")] = &Self::ta_are_mergeable_wrapper;
+  m_wrappers[std::string("merge")] = &Self::ta_merge_wrapper;
 }
 
-/*!
- * Destructor.
+/*! Destruct.
  * Declares as virtual.
  */
-template <typename Geom_traits_T>
-Traits_adaptor_test<Geom_traits_T>::~Traits_adaptor_test() {}
+template <typename GeomTraits, typename BaseGeomTraits>
+Traits_adaptor_test<GeomTraits, BaseGeomTraits>::~Traits_adaptor_test() {}
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_compare_y_at_x_left_wrapper(std::istringstream & str_stream)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_compare_xy(std::istringstream& str_stream)
 {
-  typedef typename Geom_traits_T::Has_left_category          Has_left_category;
+  unsigned int id1, id2;
+  str_stream >> id1 >> id2;
+  unsigned int exp_answer = this->get_expected_enum(str_stream);
+  std::cout << "Test: compare_xy( " << this->m_xcurves[id1]
+            << "," << this->m_xcurves[id2] << " ) ? " << exp_answer << " ";
+
+  unsigned int real_answer =
+    m_geom_traits.compare_xy_2_object()(this->m_xcurves[id1] ,
+                                        this->m_xcurves[id2]);
+  return this->compare(exp_answer, real_answer);
+}
+
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_compare_y_at_x_left_wrapper(std::istringstream& str_stream)
+{
+  typedef typename Geom_traits::Has_left_category          Has_left_category;
   return ta_compare_y_at_x_left_wrapper_imp(str_stream, Has_left_category());
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_compare_y_at_x_left_wrapper_imp(std::istringstream &, CGAL::Tag_false)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_compare_y_at_x_left_wrapper_imp(std::istringstream&, CGAL::Tag_false)
 {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_compare_y_at_x_left_wrapper_imp(std::istringstream& str_stream,
                                    CGAL::Tag_true)
 {
   unsigned int id1, id2, id3;
@@ -138,21 +154,18 @@ ta_compare_y_at_x_left_wrapper_imp(std::istringstream & str_stream,
   return this->compare(exp_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_is_in_x_range_wrapper(std::istringstream & str_stream)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_is_in_x_range_wrapper(std::istringstream& str_stream)
 {
   unsigned int id1, id2;
   char c;
   str_stream >> c >> id1 >> id2;
   bool exp_answer = this->get_expected_boolean(str_stream);
   std::cout << "Test: is_in_x_range( " << this->m_xcurves[id1] << ",";
-  if (c == 'p')
-    std::cout << this->m_points[id2];
-  else if (c == 'x')
-    std::cout << this->m_xcurves[id2];
-  else
-    CGAL_error();
+  if (c == 'p') std::cout << this->m_points[id2];
+  else if (c == 'x') std::cout << this->m_xcurves[id2];
+  else CGAL_error();
   std::cout << " ) ? " << " ";
 
   bool real_answer = (c == 'p') ?
@@ -163,9 +176,9 @@ ta_is_in_x_range_wrapper(std::istringstream & str_stream)
   return this->compare(exp_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_compare_y_position_wrapper(std::istringstream & str_stream)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_compare_y_position_wrapper(std::istringstream& str_stream)
 {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
@@ -179,9 +192,9 @@ ta_compare_y_position_wrapper(std::istringstream & str_stream)
   return this->compare(exp_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_is_between_cw_wrapper(std::istringstream & str_stream)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_is_between_cw_wrapper(std::istringstream& str_stream)
 {
   unsigned int xcv , b , xcv1 , b1 , xcv2 , b2 , p;
   //note that b_ref1 b_ref2 are outputs so they can be tested also
@@ -205,9 +218,9 @@ ta_is_between_cw_wrapper(std::istringstream & str_stream)
   return this->compare(exp_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_compare_cw_around_point_wrapper(std::istringstream & str_stream)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_compare_cw_around_point_wrapper(std::istringstream& str_stream)
 {
   unsigned int xcv1 , b1 , xcv2 , b2 , p , b3;
   str_stream >> xcv1 >> b1 >> xcv2 >> b2 >> p >> b3;
@@ -231,25 +244,25 @@ ta_compare_cw_around_point_wrapper(std::istringstream & str_stream)
   return this->compare(exp_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_are_mergeable_wrapper(std::istringstream & str_stream)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_are_mergeable_wrapper(std::istringstream& str_stream)
 {
-  typedef typename Geom_traits_T::Has_merge_category      Has_merge_category;
+  typedef typename GeomTraits::Has_merge_category      Has_merge_category;
   return ta_are_mergeable_wrapper_imp(str_stream, Has_merge_category());
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_are_mergeable_wrapper_imp(std::istringstream &, CGAL::Tag_false)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_are_mergeable_wrapper_imp(std::istringstream&, CGAL::Tag_false)
 {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_are_mergeable_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_are_mergeable_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true)
 {
   unsigned int id1, id2;
   str_stream >> id1 >> id2;
@@ -263,27 +276,26 @@ ta_are_mergeable_wrapper_imp (std::istringstream & str_stream, CGAL::Tag_true)
   return this->compare(exp_answer, real_answer);
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::ta_merge_wrapper
-(std::istringstream & str_stream)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::ta_merge_wrapper
+(std::istringstream& str_stream)
 {
-  typedef typename Geom_traits_T::Has_merge_category      Has_merge_category;
+  typedef typename GeomTraits::Has_merge_category      Has_merge_category;
   return ta_merge_wrapper_imp(str_stream, Has_merge_category());
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_merge_wrapper_imp(std::istringstream &, CGAL::Tag_false)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_merge_wrapper_imp(std::istringstream&, CGAL::Tag_false)
 {
   CGAL_error();
   return false;
 }
 
-template <typename Geom_traits_T>
-bool Traits_adaptor_test<Geom_traits_T>::
-ta_merge_wrapper_imp(std::istringstream & str_stream, CGAL::Tag_true)
+template <typename GeomTraits, typename BaseGeomTraits>
+bool Traits_adaptor_test<GeomTraits, BaseGeomTraits>::
+ta_merge_wrapper_imp(std::istringstream& str_stream, CGAL::Tag_true)
 {
-  typedef Geom_traits_T                             Geom_traits;
   typedef typename Geom_traits::X_monotone_curve_2  X_monotone_curve_2;
   typedef typename Geom_traits::Equal_2             Equal_2;
   CGAL_USE_TYPE(Equal_2);

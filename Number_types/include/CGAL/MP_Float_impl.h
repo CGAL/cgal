@@ -2,20 +2,12 @@
 // Copyright (c) 2001-2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -42,11 +34,11 @@ const double trunc_min = double(-base)*(base/2)/double(base-1);
 // We face portability issues with the ISO C99 functions "nearbyint",
 // so I re-implement it for my need.
 template < typename T >
-inline 
+inline
 int my_nearbyint(const T& d)
 {
   int z = int(d);
-  T frac = d - z;
+  T frac = d - T(z);
 
   CGAL_assertion(CGAL::abs(frac) < T(1.0));
 
@@ -95,9 +87,9 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     T orig = d, sum = 0;
     while (true) {
       int r = my_nearbyint(d);
-      if (d-r >= T( INTERN_MP_FLOAT::base/2-1)/( INTERN_MP_FLOAT::base-1))
+      if (d-double(r) >= T( INTERN_MP_FLOAT::base/2-1)/( INTERN_MP_FLOAT::base-1))
         ++r;
-      v.push_back(r);
+      v.push_back(limb(r));
       // We used to do simply "d -= v.back();", but when the most significant
       // limb is 1 and the second is -32768, then it can happen that
       // |d - v.back()| > |d|, hence a bit of precision can be lost.
@@ -288,7 +280,7 @@ INTERN_MP_FLOAT::square(const MP_Float &a)
       if (tmp > 0 && tmp0 < 0 && tmp1 < 0)
       {
         // If my calculations are correct, this case should never happen.
-	CGAL_error();
+        CGAL_error();
       }
       else if (tmp < 0 && tmp0 > 0 && tmp1 > 0)
         carry2 = 1;

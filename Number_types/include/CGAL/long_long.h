@@ -1,23 +1,15 @@
-// Copyright (c) 1999,2001,2007  
+// Copyright (c) 1999,2001,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Michael Hemmer
@@ -45,7 +37,7 @@ template<> class Algebraic_structure_traits< long long int >
     typedef INTERN_AST::Mod_per_operator< Type >  Mod;
 
     class Is_square
-      : public std::binary_function< Type, Type&,
+      : public CGAL::cpp98::binary_function< Type, Type&,
                                 bool > {
       public:
         bool operator()( const Type& x,
@@ -66,7 +58,7 @@ template <> class Real_embeddable_traits< long long int >
   public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();
@@ -80,7 +72,7 @@ template <> class Real_embeddable_traits< unsigned long long >
   public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
           return Interval_nt<true>(x).pair();
@@ -108,10 +100,10 @@ template <> class Real_embeddable_traits< boost::int128_type >
   public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-	  return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
+          return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
         }
     };
 };
@@ -122,10 +114,10 @@ template <> class Real_embeddable_traits< boost::uint128_type >
   public:
 
     class To_interval
-      : public std::unary_function< Type, std::pair< double, double > > {
+      : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-	  return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
+          return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
         }
     };
 };

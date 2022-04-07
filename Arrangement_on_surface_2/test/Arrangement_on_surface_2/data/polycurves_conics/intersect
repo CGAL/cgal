@@ -1,0 +1,10 @@
+## -*- comment-start: "#"; -*-
+# Format
+# <Command> <x-curve 1> <x-curve 2> <Number of intersections expected> <Intersection type> <intersecting point/curve id> 
+#																		<multiplicity of intersection point or curve>
+#
+# Intersection type: 0 if intersection is just a point, 1 if a curve is overlapping
+#
+intersect 2 3 1 0 19 0
+intersect 1 2 1 1 1 0
+

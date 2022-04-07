@@ -6,6 +6,7 @@
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include <sstream>
 
@@ -25,7 +26,7 @@ struct Polyhedron_tester : public Tester<K>
       Concurrency_tag>::type Tr;
     typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr,
       typename Mesh_domain::Corner_index,
-      typename Mesh_domain::Curve_segment_index> C3t3;
+      typename Mesh_domain::Curve_index> C3t3;
 
     // Criteria
     typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
@@ -53,7 +54,10 @@ struct Polyhedron_tester : public Tester<K>
     // Mesh criteria
     using namespace CGAL::parameters;
     const double cs = 0.408248;
-    Mesh_criteria criteria(edge_size = cs/2.0,
+    Mesh_criteria criteria(
+#ifndef CGAL_MESH_3_USE_DEFAULT_EDGE_SIZE
+                           edge_size = cs/2.0,
+#endif // see test_meshing_with_default_edge_size.cpp
                            facet_angle = 25,
                            facet_size = cs,
                            facet_distance = cs/10.0,
@@ -61,25 +65,23 @@ struct Polyhedron_tester : public Tester<K>
                            cell_size = cs);
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
-    
+
     CGAL::remove_far_points_in_mesh_3(c3t3);
-    
+
     double vol = 1/6.;
     this->verify_c3t3_volume(c3t3, vol*0.95, vol*1.05);
-#ifdef CGAL_LINKED_WITH_TBB
-    // Parallel
-    if (boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value)
-    {
-      this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
-                        55, 65, 110, 125, 85, 120);
-    }
-    else
-#endif //CGAL_LINKED_WITH_TBB
-    {
-      this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
-                        55, 65, 110, 125, 85, 120);
-    }
-    
+#ifdef CGAL_MESH_3_USE_DEFAULT_EDGE_SIZE
+    this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
+                      55, 70, 110, 135, 85, 130);
+#else // not CGAL_MESH_3_USE_DEFAULT_EDGE_SIZE
+    this->verify_c3t3(c3t3,domain,Polyhedral_tag(),
+                      55, 65, 110, 125, 85, 120);
+#endif // not CGAL_MESH_3_USE_DEFAULT_EDGE_SIZE
+
+#ifndef DUMP_FILES_PREFIX
+#  define DUMP_FILES_PREFIX "unit_tetrahedron"
+#endif// see test_meshing_with_default_edge_size.cpp
+    CGAL::dump_c3t3(c3t3, DUMP_FILES_PREFIX);
   }
 };
 
@@ -88,7 +90,7 @@ int main() {
   Polyhedron_tester<K> test_epic;
   std::cerr << "Mesh generation from a polyhedron:\n";
   test_epic.polyhedron();
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   Polyhedron_tester<K, CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation from a polyhedron:\n";

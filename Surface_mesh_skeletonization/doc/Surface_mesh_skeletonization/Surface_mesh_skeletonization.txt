@@ -1,0 +1,159 @@
+namespace CGAL {
+/*!
+\mainpage User Manual
+\anchor Chapter_3D_Surface_mesh_skeletonization
+
+\cgalAutoToc
+\author Xiang Gao, Sébastien Loriot and Andrea Tagliasacchi
+
+\section MCFSkelSecMot Introduction
+
+\cgalFigureBegin{Main_image_suggestion, main_image_suggestion.png}
+Curve skeleton of a horse model.
+\cgalFigureEnd
+
+Skeletons are effective shape abstractions used in segmentation, shape
+matching, reconstruction, virtual navigation, etc. As the name
+implies, a curve skeleton is a graph of curvilinear structures (1D).
+It is not a medial axis that for a 3D geometry is composed of surfaces (2D).
+As illustrated in \cgalFigureRef{Main_image_suggestion}, the curve
+skeleton of a shape captures its essential topology. In this package,
+we implement the <i>Mean Curvature Skeleton</i> algorithm described in
+\cgalCite{tagliasacchi2012mean} that extracts a curve skeleton from a
+triangulated surface mesh without borders by iteratively contracting the
+input triangulated surface mesh.
+
+\section MCFSkelSecAPI User Interface Description
+
+\subsection MCFSkelSecAPI-IO Input and Output
+
+The input is a triangulated surface mesh, model of the `FaceListGraph`
+concept (`CGAL::Surface_mesh`, `CGAL::Polyhedron_3`, ...)
+that has no boundary and that has only one connected component.
+The skeleton is provided as a graph of type
+<a href="https://www.boost.org/doc/libs/release/libs/graph/doc/adjacency_list.html"><code>boost::adjacency_list</code></a>.
+Each vertex of the skeleton is associated to a 3D location point and to the
+set of input vertices that contracted to that skeleton vertex.
+Note that due to the construction process of the skeleton, a
+skeleton vertex might have no corresponding input vertex.
+
+This package needs a sparse linear solver and we recommend the use of
+\ref thirdpartyEigen 3.2 or later.
+
+The input and output are illustrated in \cgalFigureRef{MCFInputOutput}.
+
+\cgalFigureBegin{MCFInputOutput, correspondence.png}
+Left: An input triangulated surface mesh model of an octopus;
+Middle: The mean curvature flow skeleton extracted using this package;
+Right: Each vertex of the input surface is associated to a skeleton vertex.
+\cgalFigureEnd
+
+\subsection MCFSkelSecAPI-FF Free Function
+If a \cgal model of the `FaceListGraph` concept such as
+`CGAL::Surface_mesh` or `CGAL::Polyhedron_3` is used as triangulated
+input surface mesh, \ref thirdpartyEigen 3.2 or later is available
+and `CGAL_EIGEN3_ENABLED` is defined, the function
+`CGAL::extract_mean_curvature_flow_skeleton()` can be used to
+extract a mean curvature flow skeleton from the input surface mesh
+using the default parameters, which work well in most cases.
+
+The following example shows how to extract a skeleton out of a triangulated
+surface mesh and how to access the point of each skeleton vertex and the
+set of input vertices associated.
+
+\cgalExample{Surface_mesh_skeletonization/simple_mcfskel_example.cpp}
+
+
+\subsection MCFSkelSecAPI-AUUFO Advanced Usage with the Function Object
+
+
+The class `CGAL::Mean_curvature_flow_skeletonization` enables the
+usage of low level functions such as \link
+CGAL::Mean_curvature_flow_skeletonization::contract_geometry()
+`contract_geometry()`\endlink and \link
+CGAL::Mean_curvature_flow_skeletonization::collapse_edges()
+`collapse_edges()`\endlink. The class further enables to change the
+parameters of the algorithm, for example by calling \link
+CGAL::Mean_curvature_flow_skeletonization::is_medially_centered()
+`set_is_medially_centered()`\endlink.  The class gives the user full
+control over each step of the algorithm as well as the intermediate
+contracted mesh (called <i>meso-skeleton</i>) as illustrated by
+\cgalFigureRef{MCFMesoSkel}.
+
+\cgalFigureBegin{MCFMesoSkel, iterations.png}
+Three iterations of the mean curvature flow contraction of the horse of
+\cgalFigureRef{Main_image_suggestion}. The red points indicate
+vertices where the surface has locally degenerated to a curvilinear
+structure.
+\cgalFigureEnd
+
+In this example, we show how to use the API of the class
+`CGAL::Mean_curvature_flow_skeletonization`.
+
+\cgalExample{Surface_mesh_skeletonization/MCF_Skeleton_sm_example.cpp}
+
+
+\subsection Mesh Segmentation through Skeletonization
+As a proof of concept, we show how to use the skeleton and the
+association of input vertices to skeleton to compute a segmentation
+of the input triangulated surface mesh using the package
+\ref PkgSurfaceMeshSegmentation.
+The segmentation algorithm consists in computing a <i>shape diameter function</i>
+for each face of the input mesh, followed by solving a graph cut problem.
+Here we use the skeleton to define a new shape diameter function.
+Specifically, for each face we compute the diameter value as
+the average distance between its three incident vertices and their
+corresponding skeletal point.
+The result of this segmentation is shown in \cgalFigureRef{Segmentation}.
+
+\cgalFigureBegin{Segmentation, segmentation.png}
+Left: Curve skeleton extracted of a triangulated surface mesh;
+Right: Segmentation using the skeleton to compute a shape diameter function.
+\cgalFigureEnd
+
+\cgalExample{Surface_mesh_skeletonization/segmentation_example.cpp}
+
+
+\section MCFSkelSecEvaluation Performance
+
+The elephant model is used to illustrate the performance of the
+mean curvature flow skeletonization procedure.
+Different resolutions of the model obtained by loop subdivision are used.
+
+As can be seen on \cgalFigureRef{MCFBenchComp}, the more sampled the
+surface is, the better the skeleton is inside the model.
+
+\cgalFigureBegin{MCFBenchComp, comparison.png}
+Skeleton of the head of the elephant model.
+Left: Using the original mesh (2,775 vertices);
+Middle: After one loop subdivision step (11,112 vertices);
+Right: After two loops subdivision steps (44,460 vertices).
+\cgalFigureEnd
+
+Runtime in milliseconds of `extract_mean_curvature_flow_skeleton()` using
+`Polyhedron_3<Simple_cartesian<double> >` as input data structure. The runtimes are similar if
+`Surface_mesh<Simple_cartesian<double>::%Point_3>` is used instead. The solver used is the
+default one when \ref thirdpartyEigen is available.
+The code was compiled using \cgal 4.7 with g++ 4.8.4 with <code>-O3 -DNDEBUG</code>
+as compiling flags and was run on a Intel(R) Core(TM) i7-2820QM CPU @ 2.30GHz
+
+
+<center>
+Number of loop subdivision of <code>elephant.off</code> | Number of vertices  | Runtime in s |
+-------------------------------------------------------:| -------------------:| -----------: |
+0                                                       |   2,775             |   0.46       |
+1                                                       |  11,112             |   1.26       |
+2                                                       |  44,460             |   5.64       |
+3                                                       | 177,852             |  26.26       |
+</center>
+
+\section MCFSkelSecDesign Design and Implementation History
+
+The initial implementation of this package is the result of the work
+of Xiang Gao during the 2013 season of the Google Summer of Code
+mentored by Andrea Tagliasacchi and Sébastien Loriot. It was finalized
+by Andreas Fabri and Sébastien Loriot.
+
+*/
+} /* namespace CGAL */
+

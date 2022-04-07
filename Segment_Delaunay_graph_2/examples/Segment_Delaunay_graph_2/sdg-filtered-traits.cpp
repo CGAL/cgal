@@ -26,7 +26,8 @@ int main()
   assert( ifs );
 
   SDG2          sdg;
-  SDG2::Site_2  site;
+  SDG2::Site_2  site =
+    SDG2::Site_2::construct_site_2(K::Point_2(CGAL::ORIGIN));
 
   // read the sites and insert them in the segment Delaunay graph
   while ( ifs >> site ) {

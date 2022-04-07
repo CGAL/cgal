@@ -1,0 +1,1 @@
+Various predicates and operations that solves movable-separability problems of sets in the plane. At this point only predicates and operations related to catings of planar objects, such as given a polygonal object, is there a mold for it from which is can be pulled out.

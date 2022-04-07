@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -24,6 +16,9 @@
 #ifndef CGAL_GPS_ON_SURFACE_BASE_2_IMPL_H
 #define CGAL_GPS_ON_SURFACE_BASE_2_IMPL_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+
 #include <CGAL/iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/circulator.h>
@@ -33,10 +28,12 @@
 #include <queue>
 #include <list>
 
+namespace CGAL {
+
 template <class Traits_, class TopTraits_, class ValidationPolicy>
 void Gps_on_surface_base_2<Traits_, TopTraits_,ValidationPolicy>::
 construct_polygon(Ccb_halfedge_const_circulator ccb, Polygon_2 & pgn,
-                  Traits_ * tr)
+                  const Traits_* tr)
 {
   typedef CGAL::Ccb_curve_iterator<Arrangement_on_surface_2>
     Ccb_curve_iterator;
@@ -77,18 +74,17 @@ public:
 
 
 protected:
-
-  Gps_traits*                            m_traits;
-  std::queue<Face_const_iterator>        m_holes_q;
-  std::list<Polygon_2>                   m_pgn_holes;
-  OutputIterator                         m_oi;
+  const Gps_traits* m_traits;
+  std::queue<Face_const_iterator> m_holes_q;
+  std::list<Polygon_2> m_pgn_holes;
+  OutputIterator m_oi;
 
 public:
-
   /*! Constructor */
-  Arr_bfs_scanner(Gps_traits* tr, OutputIterator oi) : m_traits(tr), m_oi(oi)
+  Arr_bfs_scanner(const Gps_traits* tr, OutputIterator oi) :
+    m_traits(tr),
+    m_oi(oi)
   {}
-
 
   void scan(Arrangement& arr)
   {
@@ -352,7 +348,7 @@ _insert(const Polygon_2& pgn, Arrangement_on_surface_2 & arr)
   }
 
   Face_const_handle const_f;
-  // face should not be contained as the pgn is completly disjoint of the
+  // face should not be contained as the pgn is completely disjoint of the
   // arrangement.
   CGAL_assertion(CGAL::assign(const_f, obj_f) && !const_f->contained());
   CGAL::assign(const_f, obj_f);
@@ -443,9 +439,9 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 {
   typename std::iterator_traits<PolygonIter>::value_type pgn;
   //check validity of all polygons
-  for( ; p_begin != p_end; ++p_begin)
+  for(PolygonIter pitr = p_begin; pitr != p_end; ++pitr)
   {
-    ValidationPolicy::is_valid(*p_begin, *m_traits);
+    ValidationPolicy::is_valid(*pitr, *m_traits);
   }
 
   _insert(p_begin, p_end, pgn);
@@ -473,7 +469,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   for( ; pwh_begin != pwh_end; ++pwh_begin)
   {
     ValidationPolicy::is_valid(*pwh_begin, *m_traits);
-    is_unbounded = (is_unbounded || m_traits->construct_is_unbounded_object()(*pwh_begin));
+    is_unbounded = (is_unbounded || m_traits->is_unbounded_object()(*pwh_begin));
     // is_unbounded = (is_unbounded || pwh_begin->is_unbounded());
     _construct_curves(*pwh_begin, std::back_inserter(xcurve_list));
   }
@@ -521,7 +517,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   for( ; p_begin != p_end; ++p_begin)
   {
     // is_unbounded = (is_unbounded || p_begin->is_unbounded());
-    is_unbounded = (is_unbounded || m_traits->construct_is_unbounded_object()(*p_begin));
+    is_unbounded = (is_unbounded || m_traits->is_unbounded_object()(*p_begin));
     _construct_curves(*p_begin, std::back_inserter(xcurve_list));
 
   }
@@ -561,7 +557,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   insert_non_intersecting_curves(arr, xcurve_list.begin(), xcurve_list.end());
 
   //if (pgn.is_unbounded())
-  if (m_traits->construct_is_unbounded_object()(pgn))
+  if (m_traits->is_unbounded_object()(pgn))
   {
     for (Face_iterator fit = arr.faces_begin();
          fit != arr.faces_end(); ++fit)
@@ -583,8 +579,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   Gps_on_surface_base_2<Traits_, TopTraits_, ValidationPolicy>::
   _construct_curves(const Polygon_2 & pgn, OutputIterator oi)
 {
-  std::pair<Curve_const_iterator,
-    Curve_const_iterator> itr_pair =
+  std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair =
     m_traits->construct_curves_2_object()(pgn);
   std::copy (itr_pair.first, itr_pair.second, oi);
 }
@@ -595,11 +590,11 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   _construct_curves(const Polygon_with_holes_2 & pgn, OutputIterator oi)
 {
   //if (!pgn.is_unbounded())
-  if (!m_traits->construct_is_unbounded_object()(pgn))
+  if (!m_traits->is_unbounded_object()(pgn))
   {
-    const Polygon_2& pgn_boundary = m_traits->construct_outer_boundary_object ()(pgn);
-    std::pair<Curve_const_iterator,
-      Curve_const_iterator> itr_pair =
+    const Polygon_2& pgn_boundary =
+      m_traits->construct_outer_boundary_object()(pgn);
+    std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair =
       m_traits->construct_curves_2_object()(pgn_boundary);
     std::copy (itr_pair.first, itr_pair.second, oi);
   }
@@ -609,8 +604,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   for (hit = hpair.first; hit != hpair.second; ++hit)
   {
     const Polygon_2& pgn_hole = *hit;
-    std::pair<Curve_const_iterator,
-      Curve_const_iterator> itr_pair =
+    std::pair<Curve_const_iterator, Curve_const_iterator> itr_pair =
       m_traits->construct_curves_2_object()(pgn_hole);
     std::copy (itr_pair.first, itr_pair.second, oi);
   }
@@ -741,8 +735,8 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
   if (f->number_of_outer_ccbs() > 1)
     CGAL_error_msg("Not implemented yet.");
 
-	// Some compilers (VC 9) do not like that we directly access the ccb_circ. So we have
-	// to pass through the iterator.
+        // Some compilers (VC 9) do not like that we directly access the ccb_circ. So we have
+        // to pass through the iterator.
   Outer_ccb_const_iterator oci_temp = f->outer_ccbs_begin();
   Ccb_halfedge_const_circulator ccb_end = *oci_temp;
   Ccb_halfedge_const_circulator ccb_circ = ccb_end;
@@ -789,5 +783,7 @@ template <class Traits_, class TopTraits_, class ValidationPolicy>
 
   return false;
 }
+
+} // namespace CGAL
 
 #endif // CGAL_GPS_UTILS_H

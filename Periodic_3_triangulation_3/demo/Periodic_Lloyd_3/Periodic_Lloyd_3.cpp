@@ -1,18 +1,21 @@
 #include "MainWindow.h"
 #include <QApplication>
 #include <CGAL/Qt/resources.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 int main(int argc, char** argv)
 {
+
+  CGAL::Qt::init_ogl_context(2, 1);
+
   QApplication application(argc,argv);
- 
   application.setOrganizationDomain("inria.fr");
   application.setOrganizationName("INRIA");
   application.setApplicationName("3D Periodic Lloyd");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGAL (QT5).
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Periodic_Lloyd_3);
 
   MainWindow mw;

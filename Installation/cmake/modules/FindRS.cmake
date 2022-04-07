@@ -11,7 +11,7 @@ endif()
 
 if( MPFI_FOUND )
 
-  include( CGAL_VersionUtils )
+  include( ${CMAKE_CURRENT_LIST_DIR}/CGAL_VersionUtils.cmake )
 
   find_path(RS_INCLUDE_DIR
             NAMES rs_exports.h

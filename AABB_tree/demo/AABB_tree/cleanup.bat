@@ -1,1 +1,0 @@
-del *.vcproj* *.user *.cmake ZERO* *.ncb *.sln AABB_demo.suo CMakeCache.txt *_moc.* qrc* ui_*.h /Q

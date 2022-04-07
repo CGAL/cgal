@@ -9,25 +9,25 @@
 //----------------------------------------------------------
 // normal_estimation file_in file_out [options]
 
+// This package
+#include <CGAL/IO/read_points.h>
+#include <CGAL/IO/write_points.h>
+#include <CGAL/pca_estimate_normals.h>
+#include <CGAL/jet_estimate_normals.h>
+#include <CGAL/vcm_estimate_normals.h>
+#include <CGAL/mst_orient_normals.h>
+#include <CGAL/property_map.h>
+
 // CGAL
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Timer.h>
 
-// This package
-#include <CGAL/pca_estimate_normals.h>
-#include <CGAL/jet_estimate_normals.h>
-#include <CGAL/mst_orient_normals.h>
-#include <CGAL/property_map.h>
-#include <CGAL/IO/read_off_points.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/IO/write_xyz_points.h>
-
 #include <utility> // defines std::pair
 #include <vector>
-#include <cstdlib>
+#include <string>
 #include <fstream>
-
+#include <iostream>
 
 // ----------------------------------------------------------------------------
 // Types
@@ -45,6 +45,8 @@ typedef Kernel::Vector_3 Vector;
 typedef std::pair<Point, Vector> PointVectorPair;
 typedef std::vector<PointVectorPair> PointList;
 
+// Concurrency
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // ----------------------------------------------------------------------------
 // Private functions
@@ -61,12 +63,12 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
   // Estimates normals direction.
   // Note: pca_estimate_normals() requires an iterator over points
   // as well as property maps to access each point's position and normal.
-  CGAL::pca_estimate_normals(points.begin(), points.end(),
-                             CGAL::First_of_pair_property_map<PointVectorPair>(),
-                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                             nb_neighbors_pca_normals);
+  CGAL::pca_estimate_normals<Concurrency_tag>(points,
+     nb_neighbors_pca_normals,
+     CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+     normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -83,15 +85,39 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
   // Estimates normals direction.
   // Note: jet_estimate_normals() requires an iterator over points
   // + property maps to access each point's position and normal.
-  CGAL::jet_estimate_normals(points.begin(), points.end(),
-                             CGAL::First_of_pair_property_map<PointVectorPair>(),
-                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                             nb_neighbors_jet_fitting_normals);
+  CGAL::jet_estimate_normals<Concurrency_tag>
+    (points,
+     nb_neighbors_jet_fitting_normals,
+     CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+     normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
+}
+
+// Compute normals direction using the VCM
+void run_vcm_estimate_normals(PointList &points, // input points + output normals
+                              double R, // radius of the offset
+                              double r) { // radius used during the convolution
+    CGAL::Timer task_timer; task_timer.start();
+    std::cerr << "Estimates Normals Direction using VCM (R="
+        << R << " and r=" << r << ")...\n";
+
+  // Estimates normals direction.
+  // Note: vcm_estimate_normals() requires an iterator over points
+  // + property maps to access each point's position and normal.
+    CGAL::vcm_estimate_normals(points, R, r,
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                               normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
+
+    std::size_t memory = CGAL::Memory_sizer().virtual_size();
+    std::cerr << "done: " << task_timer.time() << " seconds, "
+        << (memory>>20) << " Mb allocated"
+        << std::endl;
+
 }
 
 // Hoppe92 normal orientation using a Minimum Spanning Tree.
@@ -105,16 +131,16 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   // Note: mst_orient_normals() requires an iterator over points
   // as well as property maps to access each point's position and normal.
   PointList::iterator unoriented_points_begin =
-    CGAL::mst_orient_normals(points.begin(), points.end(),
-                             CGAL::First_of_pair_property_map<PointVectorPair>(),
-                             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-                             nb_neighbors_mst);
+    CGAL::mst_orient_normals(points,
+                             nb_neighbors_mst,
+                             CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                             normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>()));
 
   // Optional: delete points with an unoriented normal
   // if you plan to call a reconstruction algorithm that expects oriented normals.
   points.erase(unoriented_points_begin, points.end());
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -144,34 +170,47 @@ int main(int argc, char * argv[])
       std::cerr << "Input file formats are .off, .xyz and .pwn.\n";
       std::cerr << "Output file formats are .xyz and .pwn.\n";
       std::cerr << "Options:\n";
-      std::cerr << "  -estimate plane|quadric          Estimates normals direction\n";
-      std::cerr << "  using a tangent plane or quadric (default=quadric)\n";
-      std::cerr << "  -nb_neighbors_pca <int>          Number of neighbors\n";
+      std::cerr << "  -estimate plane|quadric|vcm          Estimates normals direction\n";
+      std::cerr << "  using a tangent plane or quadric or vcm (default=quadric)\n";
+      std::cerr << "  -nb_neighbors_pca <int>              Number of neighbors\n";
       std::cerr << "  to compute tangent plane (default=18)\n";
-      std::cerr << "  -nb_neighbors_jet_fitting <int>  Number of neighbors\n";
+      std::cerr << "  -nb_neighbors_jet_fitting <int>      Number of neighbors\n";
       std::cerr << "  to compute quadric (default=18)\n";
-      std::cerr << "  -orient MST                      Orient normals\n";
+      std::cerr << "  -offset_radius_vcm <double>           Offset radius\n";
+      std::cerr << "  to compute VCM (default=0.1)\n";
+      std::cerr << "  -convolve_radius_vcm <double>         Convolve radius\n";
+      std::cerr << "  to compute VCM (default=0)\n";
+      std::cerr << "  -orient MST                          Orient normals\n";
       std::cerr << "  using a Minimum Spanning Tree (default=MST)\n";
-      std::cerr << "  -nb_neighbors_mst <int>          Number of neighbors\n";
+      std::cerr << "  -nb_neighbors_mst <int>              Number of neighbors\n";
       std::cerr << "  to compute the MST (default=18)\n";
-      return EXIT_FAILURE;
+      std::cerr << "Running with " << argv[0] << "data/ChineseDragon-10kv.off ChineseDragon-10kv.pwn"
+                                   << " -nb_neighbors_jet_fitting 10 -nb_neighbors_mst 10\n";
     }
 
     // Normals Computing options
     unsigned int nb_neighbors_pca_normals = 18; // K-nearest neighbors = 3 rings (estimate normals by PCA)
     unsigned int nb_neighbors_jet_fitting_normals = 18; // K-nearest neighbors (estimate normals by Jet Fitting)
     unsigned int nb_neighbors_mst = 18; // K-nearest neighbors (orient normals by MST)
+    double offset_radius_vcm = 0.1; // Offset radius (estimate normals by VCM)
+    double convolve_radius_vcm = 0; // Convolve radius (estimate normals by VCM)
     std::string estimate = "quadric"; // estimate normals by jet fitting
     std::string orient = "MST"; // orient normals using a Minimum Spanning Tree
 
     // decode parameters
-    std::string input_filename  = argv[1];
-    std::string output_filename = argv[2];
+    std::string input_filename  = argc == 1 ?  CGAL::data_file_path("meshes/ChineseDragon-10kv.off") : argv[1];
+    std::string output_filename = argc == 1 ?  "ChineseDragon-10kv.pwn" : argv[2];
+    if (argc==1)
+    {
+      nb_neighbors_jet_fitting_normals = 10;
+      nb_neighbors_mst = 10;
+    }
+
     for (int i=3; i+1<argc ; ++i)
     {
       if (std::string(argv[i])=="-estimate") {
         estimate = argv[++i];
-        if (estimate != "plane" && estimate != "quadric")
+        if (estimate != "plane" && estimate != "quadric" && estimate != "vcm")
           std::cerr << "invalid option " << argv[i] << "\n";
       }
       else if (std::string(argv[i])=="-nb_neighbors_pca") {
@@ -179,6 +218,12 @@ int main(int argc, char * argv[])
       }
       else if (std::string(argv[i])=="-nb_neighbors_jet_fitting") {
         nb_neighbors_jet_fitting_normals = atoi(argv[++i]);
+      }
+      else if (std::string(argv[i])=="-offset_radius_vcm") {
+          offset_radius_vcm = atof(argv[++i]);
+      }
+      else if (std::string(argv[i])=="-convolve_radius_vcm") {
+          convolve_radius_vcm = atof(argv[++i]);
       }
       else if (std::string(argv[i])=="-orient") {
         orient = argv[++i];
@@ -202,39 +247,19 @@ int main(int argc, char * argv[])
     // Loads point set
     //***************************************
 
-    // Reads a .off or .xyz point set file in points[].
+    // Reads a point set file in points[].
     PointList points;
     std::cerr << "Open " << input_filename << " for reading..." << std::endl;
 
-    // If OFF file format
-    bool success = false;
-    std::string extension = input_filename.substr(input_filename.find_last_of('.'));
-    if (extension == ".off" || extension == ".OFF")
-    {
-      std::ifstream stream(input_filename.c_str());
-      success = stream &&
-                CGAL::read_off_points(stream,
-                                      std::back_inserter(points),
-                                      CGAL::First_of_pair_property_map<PointVectorPair>());
-    }
-    // If XYZ file format
-    else if (extension == ".xyz" || extension == ".XYZ" ||
-             extension == ".pwn" || extension == ".PWN")
-    {
-      std::ifstream stream(input_filename.c_str());
-      success = stream &&
-                CGAL::read_xyz_points(stream,
-                                      std::back_inserter(points),
-                                      CGAL::First_of_pair_property_map<PointVectorPair>());
-    }
-    if (!success)
+    if(!CGAL::IO::read_points(input_filename.c_str(), std::back_inserter(points),
+                              CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {
       std::cerr << "Error: cannot read file " << input_filename << std::endl;
       return EXIT_FAILURE;
     }
 
     // Prints status
-    int nb_points = points.size();
+    std::size_t nb_points = points.size();
     std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
                                                          << task_timer.time() << " seconds"
                                                          << std::endl;
@@ -244,7 +269,7 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    if (nb_points == 0)
+    if(nb_points == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       return EXIT_FAILURE;
@@ -259,6 +284,8 @@ int main(int argc, char * argv[])
       run_pca_estimate_normals(points, nb_neighbors_pca_normals);
     else if (estimate == "quadric")
       run_jet_estimate_normals(points, nb_neighbors_jet_fitting_normals);
+    else if (estimate == "vcm")
+      run_vcm_estimate_normals(points, offset_radius_vcm, convolve_radius_vcm);
 
     // Orient normals.
     if (orient == "MST")
@@ -270,26 +297,13 @@ int main(int argc, char * argv[])
 
     std::cerr << "Write file " << output_filename << std::endl << std::endl;
 
-    // If XYZ file format
-    /*std::string*/ extension = output_filename.substr(output_filename.find_last_of('.'));
-    if (extension == ".xyz" || extension == ".XYZ" ||
-        extension == ".pwn" || extension == ".PWN")
+    if(!CGAL::IO::write_points(output_filename, points,
+                               CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
+                                                .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
+                                                .stream_precision(17)))
     {
-      std::ofstream stream(output_filename.c_str());
-      if (!stream ||
-          !CGAL::write_xyz_points_and_normals(stream,
-                                              points.begin(), points.end(),
-                                              CGAL::First_of_pair_property_map<PointVectorPair>(),
-                                              CGAL::Second_of_pair_property_map<PointVectorPair>()))
-      {
-        std::cerr << "Error: cannot write file " << output_filename << std::endl;
-        return EXIT_FAILURE;
-      }
-    }
-    else
-    {
-        std::cerr << "Error: cannot write file " << output_filename << std::endl;
-        return EXIT_FAILURE;
+      std::cerr << "Error: cannot write file " << output_filename << std::endl;
+      return EXIT_FAILURE;
     }
 
     // Returns accumulated fatal error

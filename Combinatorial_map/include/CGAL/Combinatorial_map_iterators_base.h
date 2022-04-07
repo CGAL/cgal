@@ -1,25 +1,20 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 #define CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH 1
 
+#include <CGAL/disable_warnings.h>
+
+#include <CGAL/Compact_container.h>
 #include <CGAL/Compact_container_with_index_2.h>
 #include <queue>
 #include <boost/mpl/if.hpp>
@@ -36,6 +31,10 @@ namespace CGAL {
    *    the involution Bi.
    *  - CMap_non_basic_iterator<Map_,Ite> to transform the basic iterator Ite
    *    into the corresponding non basic iterator.
+   *  - CMap_range<Map,It,ConstIt,BasicIt> generic definition of a range
+   *    given an iterator and its const version
+   *  - CMap_const_range<Map,It,ConstIt,BasicIt> generic definition of a const
+   *    range given an iterator and its const version
    */
   //****************************************************************************
   /// OperationState: type to keep the last operation used by the previous ++.
@@ -56,7 +55,7 @@ namespace CGAL {
     OP_BETA21,     ///< Previous op was beta21.
     OP_JUMP,      ///< Previous op was a jump .
     OP_POP,       ///< Previous op pop a dart from a stack or a queue.
-    OP_END        ///< Previous op go out of the iterator.    
+    OP_END        ///< Previous op go out of the iterator.
   };
   //****************************************************************************
   /** Generic class of iterator onto darts.
@@ -91,14 +90,16 @@ namespace CGAL {
     typedef typename Base::value_type value_type;
     typedef typename Base::difference_type difference_type;
     typedef typename Base::pointer pointer;
-    typedef typename Base::reference reference;    
+    typedef typename Base::reference reference;
 
     /// true iff this iterator is basic
     typedef Tag_true Basic_iterator;
 
+    typedef typename Map::size_type size_type;
+
   public:
     /// Main constructor.
-    CMap_dart_iterator(Map& amap, Dart_handle adart): 
+    CMap_dart_iterator(Map& amap, Dart_handle adart):
       Base(adart),
       mmap(&amap),
       mfirst_dart(adart),
@@ -109,8 +110,8 @@ namespace CGAL {
     bool operator==(const Self& aiterator) const
     {
       return ( ((*this==mmap->null_handle) && (aiterator==mmap->null_handle)) ||
-               (mfirst_dart == aiterator.mfirst_dart && 
-               static_cast<const Base&>(*this)==
+               (mfirst_dart == aiterator.mfirst_dart &&
+                static_cast<const Base&>(*this)==
                 static_cast<const Base&>(aiterator)) );
     }
 
@@ -123,7 +124,7 @@ namespace CGAL {
 
     /// Accessor to the combinatorial map.
     Map* get_combinatorial_map() const { return mmap; }
-    
+
     /// Rewind of the iterator to its beginning.
     void rewind()
     { set_current_dart(mfirst_dart); mprev_op = OP_NONE; }
@@ -150,11 +151,8 @@ namespace CGAL {
 
   protected:
     /// test if adart->beta(ai) exists and is not marked for amark
-    bool is_unmarked(Dart_handle adart, unsigned int ai, unsigned amark) const
+    bool is_unmarked(Dart_handle adart, unsigned int ai, size_type amark) const
     { return
-#ifdef CGAL_CMAP_DEPRECATED
-        !mmap->is_free(adart,ai) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
         !mmap->is_marked(mmap->beta(adart,ai), amark);
     }
 
@@ -164,11 +162,8 @@ namespace CGAL {
 
     /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
     bool is_unmarked2(Dart_handle adart, unsigned int ai, unsigned int aj,
-                      unsigned amark) const
+                      typename Map::size_type amark) const
     { return
-#ifdef CGAL_CMAP_DEPRECATED
-         exist_betaij(adart, ai, aj) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
         !mmap->is_marked(mmap->beta(adart, ai, aj), amark);
     }
   protected:
@@ -289,7 +284,7 @@ namespace CGAL {
     OperationState mprev_op;
   };
   //****************************************************************************
-  /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by 
+  /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by
    * adding Bi and by using a stack and a mark.
    * General case when Ite does not have already a stack.
    */
@@ -306,12 +301,14 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
+    typedef typename Map::size_type size_type;
+
     CGAL_static_assertion( (Bi<=Map::dimension &&
                             boost::is_same<Ite_has_stack,Tag_false>::value) );
-    
+
   public:
     /// Main constructor.
-    CMap_extend_iterator(Map& amap, Dart_handle adart, int amark):
+    CMap_extend_iterator(Map& amap, Dart_handle adart, size_type amark):
       Base(amap, adart),
       mmark_number(amark),
       minitial_dart(adart)
@@ -324,7 +321,6 @@ namespace CGAL {
             this->mmap->beta(minitial_dart, Bi)!=minitial_dart )
         {
           mto_treat.push(this->mmap->beta(minitial_dart, Bi));
-          this->mmap->mark(this->mmap->beta(minitial_dart, Bi), mmark_number);
         }
       }
     }
@@ -332,7 +328,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != -1);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::operator= ( Base(*this->mmap,minitial_dart) );
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark(minitial_dart, mmark_number);
@@ -341,14 +337,13 @@ namespace CGAL {
           this->mmap->beta(minitial_dart, Bi)!=minitial_dart)
       {
         mto_treat.push(this->mmap->beta(minitial_dart, Bi));
-        this->mmap->mark(this->mmap->beta(minitial_dart, Bi), mmark_number);
       }
     }
 
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != -1);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       do
@@ -357,24 +352,27 @@ namespace CGAL {
       }
       while ( this->cont() &&
               this->mmap->is_marked(*this, mmark_number) );
-      
+
       if ( !this->cont() )
       {
+        while ( !mto_treat.empty() &&
+                this->mmap->is_marked(mto_treat.front(), mmark_number))
+        {
+          mto_treat.pop();
+        }
+
         if ( !mto_treat.empty() )
         {
           Base::operator= ( Base(*this->mmap,mto_treat.front()) );
           mto_treat.pop();
           this->mprev_op = OP_POP;
-          CGAL_assertion( this->mmap->is_marked((*this), mmark_number) );
+          CGAL_assertion( !this->mmap->is_marked((*this), mmark_number) );
+          this->mmap->mark((*this), mmark_number);
 
           if (
-#ifdef CGAL_CMAP_DEPRECATED
-        !this->mmap->is_free(*this, Bi) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
                !this->mmap->is_marked(this->mmap->beta(*this, Bi), mmark_number) )
           {
             mto_treat.push(this->mmap->beta(*this, Bi));
-            this->mmap->mark(this->mmap->beta(*this, Bi), mmark_number);
           }
         }
       }
@@ -382,13 +380,9 @@ namespace CGAL {
       {
         this->mmap->mark((*this), mmark_number);
         if (
-#ifdef CGAL_CMAP_DEPRECATED
-        !this->mmap->is_free(*this, Bi) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
              !this->mmap->is_marked(this->mmap->beta(*this, Bi), mmark_number) )
         {
           mto_treat.push(this->mmap->beta(*this, Bi));
-          this->mmap->mark(this->mmap->beta(*this, Bi), mmark_number);
         }
       }
 
@@ -404,13 +398,13 @@ namespace CGAL {
     std::queue<Dart_handle> mto_treat;
 
     /// Index of the used mark.
-    int mmark_number;
+    size_type mmark_number;
 
     /// Initial dart
     Dart_handle minitial_dart;
   };
   //****************************************************************************
-  /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by 
+  /* Class CMap_extend_iterator<Map,Ite,Bi> which extend a given iterator by
    * adding Bi and by using a stack and a mark.
    * Specialization when Ite has already a stack.
    */
@@ -426,8 +420,10 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
+    typedef typename Map::size_type size_type;
+
     /// Main constructor.
-    CMap_extend_iterator(Map& amap, Dart_handle adart, int amark):
+    CMap_extend_iterator(Map& amap, Dart_handle adart, size_type amark):
       Base(amap, adart, amark)
     {
       if ( this->minitial_dart!=amap.null_handle &&
@@ -435,20 +431,18 @@ namespace CGAL {
            this->mmap->beta(this->minitial_dart, Bi)!=this->minitial_dart )
       {
         this->mto_treat.push(this->mmap->beta(this->minitial_dart, Bi));
-        this->mmap->mark(this->mmap->beta(this->minitial_dart, Bi), this->mmark_number);
       }
     }
 
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(this->mmark_number != -1);
+      CGAL_assertion(this->mmark_number != Map::INVALID_MARK);
       Base::rewind();
       if ( !this->mmap->is_free(this->minitial_dart, Bi) &&
            this->mmap->beta(this->minitial_dart, Bi)!=this->minitial_dart )
       {
         this->mto_treat.push(this->mmap->beta(this->minitial_dart, Bi));
-        this->mmap->mark(this->mmap->beta(this->minitial_dart, Bi), this->mmark_number);
       }
     }
 
@@ -462,13 +456,9 @@ namespace CGAL {
         CGAL_assertion( this->mmap->is_marked(*this, this->mmark_number) );
 
         if (
-#ifdef CGAL_CMAP_DEPRECATED
-            !this->mmap->is_free(*this, Bi) && // Pb with static null_dart_handle for windows
-#endif // CGAL_CMAP_DEPRECATED
             !this->mmap->is_marked(this->mmap->beta(*this, Bi), this->mmark_number) )
         {
           this->mto_treat.push(this->mmap->beta(*this, Bi));
-          this->mmap->mark(this->mmap->beta(*this, Bi), this->mmark_number);
         }
       }
       return *this;
@@ -481,45 +471,48 @@ namespace CGAL {
   //****************************************************************************
   //* Class CMap_non_basic_iterator allows to transform a basic_iterator onto
   //* a non basic one, depending if the basic iterator uses mark or not.
-  template <typename Map_,typename Basic_iterator, 
+  template <typename Map_,typename Basic_iterator,
             typename Use_mark=typename Basic_iterator::Use_mark>
   class CMap_non_basic_iterator;
   //****************************************************************************
   template <typename Map_,typename Base_>
-  class CMap_non_basic_iterator<Map_,Base_,Tag_true>: 
+  class CMap_non_basic_iterator<Map_,Base_,Tag_true>:
     public Base_
   {
   public:
     typedef CMap_non_basic_iterator<Map_,Base_,Tag_true> Self;
     typedef Base_ Base;
-    
+
     typedef typename Base::Map Map;
     typedef typename Base::Dart_handle Dart_handle;
 
     /// True iff this iterator is basic
     typedef Tag_false Basic_iterator;
 
+    typedef typename Map::size_type size_type;
+
     CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
                             Tag_true>::value) );
-    
+
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_handle adart1):
       Base(amap, adart1, amap.get_new_mark())
     {}
 
     /// Destructor.
-    ~CMap_non_basic_iterator()
+    ~CMap_non_basic_iterator() noexcept(!CGAL_ASSERTIONS_ENABLED)
     {
-      CGAL_assertion( this->mmark_number!=-1 );
+      CGAL_destructor_assertion( this->mmark_number!=Map::INVALID_MARK );
       if (this->mmap->get_number_of_times_mark_reserved
           (this->mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(this->mmark_number);
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
     CMap_non_basic_iterator(const Self& aiterator):
-      Base(aiterator)      
+      Base(aiterator)
     { this->mmap->share_a_mark(this->mmark_number); }
 
     /// Assignment operator.
@@ -531,6 +524,7 @@ namespace CGAL {
             (this->mmark_number)==1)
           unmark_treated_darts();
         this->mmap->free_mark(this->mmark_number);
+        this->mmark_number = Map::INVALID_MARK;
 
         Base::operator=(aiterator);
         this->mmap->share_a_mark(this->mmark_number);
@@ -570,13 +564,13 @@ namespace CGAL {
   };
   //****************************************************************************
   template <typename Map_,typename Base_>
-  class CMap_non_basic_iterator<Map_,Base_,Tag_false>: 
+  class CMap_non_basic_iterator<Map_,Base_,Tag_false>:
     public Base_
   {
   public:
     typedef CMap_non_basic_iterator<Map_,Base_,Tag_false> Self;
     typedef Base_ Base;
-    
+
     typedef typename Base::Map Map;
     typedef typename Base::Dart_handle Dart_handle;
 
@@ -585,7 +579,7 @@ namespace CGAL {
 
     CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
                             Tag_true>::value) );
-    
+
     /// Main constructor.
     CMap_non_basic_iterator(Map& amap, Dart_handle adart):
       Base(amap, adart)
@@ -605,10 +599,10 @@ namespace CGAL {
     iterator end()               { return iterator(mmap,mmap.null_handle); }
     const_iterator begin() const { return const_iterator(mmap,mdart); }
     const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
-    typename Map_::size_type size()
+    typename Map_::size_type size() const
     {
       if (msize==0)
-        for (const_iterator it=begin(); it!=end(); ++it)
+        for ( const_iterator it=begin(), itend=end(); it!=itend; ++it)
           ++msize;
       return msize;
     }
@@ -617,7 +611,7 @@ namespace CGAL {
   private:
     Map_ & mmap;
     typename Map_::Dart_handle mdart;
-    typename Map_::size_type msize;
+    mutable typename Map_::size_type msize;
   };
   //****************************************************************************
   template <typename Map_, typename It, typename Const_it>
@@ -626,14 +620,17 @@ namespace CGAL {
     typedef CMap_range<Map_,It,Const_it,Tag_true> Base_cmap_range;
     typedef It iterator;
     typedef Const_it const_iterator;
-    CMap_range(Map_ &amap, typename Map_::Dart_handle adart, int amark=-1):
+
+    typedef typename Map_::size_type size_type;
+
+    CMap_range(Map_ &amap, typename Map_::Dart_handle adart, size_type amark=Map_::INVALID_MARK):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     iterator begin()             { return iterator(mmap,mdart,mmark); }
     iterator end()               { return iterator(mmap,mmap.null_handle,mmark); }
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
     const_iterator end() const   { return const_iterator(mmap,mmap.null_handle,mmark); }
-    typename Map_::size_type size()
+    typename Map_::size_type size() const
     {
       if (msize==0)
         for ( CMap_non_basic_iterator<Map_,const_iterator> it(mmap,mdart);
@@ -646,8 +643,8 @@ namespace CGAL {
   private:
     Map_ & mmap;
     typename Map_::Dart_handle mdart;
-    typename Map_::size_type msize;
-    int mmark;
+    mutable typename Map_::size_type msize;
+    size_type mmark;
   };
   //****************************************************************************
   template <typename Map_, typename Const_it,
@@ -660,10 +657,10 @@ namespace CGAL {
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart); }
     const_iterator end() const   { return const_iterator(mmap,mmap.null_handle); }
-    typename Map_::size_type size()
+    typename Map_::size_type size() const
     {
       if (msize==0)
-        for (const_iterator it=begin(); it!=end(); ++it)
+        for ( const_iterator it=begin(), itend=end(); it!=itend; ++it)
           ++msize;
       return msize;
     }
@@ -672,20 +669,21 @@ namespace CGAL {
   private:
     const Map_ & mmap;
     typename Map_::Dart_const_handle mdart;
-    typename Map_::size_type msize;
+    mutable typename Map_::size_type msize;
   };
   //****************************************************************************
   template <typename Map_, typename Const_it>
   struct CMap_const_range<Map_,Const_it,Tag_true>
   {
     typedef Const_it const_iterator;
+    typedef typename Map_::size_type size_type;
     CMap_const_range(const Map_ &amap, typename Map_::Dart_const_handle adart,
-                     int amark=-1):
+                     size_type amark=Map_::INVALID_MARK):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
     const_iterator end() const   { return const_iterator(mmap,mmap.null_handle,mmark); }
-    typename Map_::size_type size()
+    typename Map_::size_type size() const
     {
       if (msize==0)
         for ( CMap_non_basic_iterator<Map_,const_iterator> it(mmap,mdart);
@@ -698,11 +696,14 @@ namespace CGAL {
   private:
     const Map_ & mmap;
     typename Map_::Dart_const_handle mdart;
-    typename Map_::size_type msize;
-    int mmark;
+    mutable typename Map_::size_type msize;
+    size_type mmark;
   };
   //****************************************************************************
 } // namespace CGAL
+
+#include <CGAL/enable_warnings.h>
+
 //******************************************************************************
 #endif // CGAL_COMBINATORIAL_MAP_ITERATORS_BASE_HH
 //******************************************************************************

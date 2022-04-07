@@ -5,20 +5,23 @@
 
 
 #include <CGAL/Qt/resources.h>
+#include <CGAL/Qt/init_ogl_context.h>
 
 int main(int argc, char** argv)
 {
- QApplication application(argc,argv);
- 
+  CGAL::Qt::init_ogl_context(4,3);
+
+  QApplication application(argc,argv);
   application.setOrganizationDomain("geometryfactory.com");
   application.setOrganizationName("GeometryFactory");
   application.setApplicationName("Alpha Shape Reconstruction");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGALQt (Qt5).
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+
+  CGAL_QT_INIT_RESOURCES;
   Q_INIT_RESOURCE(Alpha_shape_3);
-  
+
   MainWindow mw;
   mw.show();
 

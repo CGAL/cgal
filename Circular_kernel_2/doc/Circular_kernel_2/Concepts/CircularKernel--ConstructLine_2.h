@@ -17,16 +17,16 @@ public:
 /// @{
 
 /*!
-Constructs the supporting line of a line segment. 
-*/ 
-CircularKernel::Line_2 operator() 
-(CircularKernel::LineArc_2); 
+Constructs the supporting line of a line segment.
+*/
+CircularKernel::Line_2 operator()
+(CircularKernel::LineArc_2);
 
 /*!
-Constructs a line from an equation. 
-*/ 
-CircularKernel::Line_2 operator() 
-(CircularKernel::Polynomial_1_2); 
+Constructs a line from an equation.
+*/
+CircularKernel::Line_2 operator()
+(CircularKernel::Polynomial_1_2);
 
 /// @}
 

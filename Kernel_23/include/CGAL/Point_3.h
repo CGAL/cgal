@@ -1,23 +1,15 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
@@ -39,7 +31,6 @@ template <class R_>
 class Point_3 : public R_::Kernel_base::Point_3
 {
   typedef typename R_::RT                    RT;
-  typedef typename R_::FT                    FT;
   typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
@@ -51,15 +42,16 @@ public:
   typedef Dimension_tag<3>  Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
+  typedef typename R_::Weighted_point_3 Weighted_point_3;
   typedef typename R_::Kernel_base::Point_3  Rep;
   typedef typename R_::Cartesian_const_iterator_3 Cartesian_const_iterator;
 
-  const Rep& rep() const
+  const Rep& rep() const noexcept
   {
     return *this;
   }
 
-  Rep& rep()
+  Rep& rep() noexcept
   {
     return *this;
   }
@@ -75,6 +67,14 @@ public:
   Point_3(const Rep& p)
       : Rep(p) {}
 
+  Point_3(Rep&& p)
+      : Rep(std::move(p)) {}
+
+  explicit
+  Point_3(const Weighted_point_3& wp)
+    : Rep(wp.point())
+  {}
+
   template < typename T1, typename T2, typename T3 >
   Point_3(const T1& x, const T2& y, const T3& z)
     : Rep(typename R::Construct_point_3()(Return_base_tag(), x, y, z))
@@ -84,49 +84,58 @@ public:
     : Rep(typename R::Construct_point_3()(Return_base_tag(), hx, hy, hz, hw))
   {}
 
-  typename cpp11::result_of<typename R::Compute_x_3( Point_3)>::type
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+  {
+    using std::swap;
+    swap(a.rep(), b.rep());
+  }
+
+  decltype(auto)
   x() const
   {
     return typename R::Compute_x_3()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_y_3( Point_3)>::type
+  decltype(auto)
   y() const
   {
     return typename R::Compute_y_3()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_z_3( Point_3)>::type
+  decltype(auto)
   z() const
   {
     return typename R::Compute_z_3()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_3( Point_3)>::type
+  decltype(auto)
   hx() const
   {
     return R().compute_hx_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_3( Point_3)>::type
+  decltype(auto)
   hy() const
   {
     return R().compute_hy_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hz_3( Point_3)>::type
+  decltype(auto)
   hz() const
   {
     return R().compute_hz_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_3( Point_3)>::type
+  decltype(auto)
   hw() const
   {
     return R().compute_hw_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3( Point_3)>::type
+  decltype(auto)
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
@@ -145,7 +154,7 @@ public:
     return hw();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_3(Point_3)>::type
+  decltype(auto)
   operator[](int i) const
   {
       return cartesian(i);
@@ -176,6 +185,21 @@ public:
     return t.transform(*this);
   }
 
+  Point_3<R_>&
+  operator+=(const Vector_3 &v)
+  {
+    *this = R().construct_translated_point_3_object()(*this, v);
+    return *this;
+  }
+
+  Point_3<R_>&
+  operator-=(const Vector_3 &v)
+  {
+    *this = R().construct_translated_point_3_object()(*this,
+                  R().construct_opposite_vector_3_object()(v));
+    return *this;
+  }
+
 };
 
 template <class R>
@@ -195,7 +219,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Point_3<R>& p,const Cartesian_tag&)
 {
-    switch(os.iword(IO::mode)) {
+    switch(IO::get_mode(os)) {
     case IO::ASCII :
         return os << p.x() << ' ' << p.y() << ' ' << p.z();
     case IO::BINARY :
@@ -213,7 +237,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Point_3<R>& p,const Homogeneous_tag&)
 {
-  switch(os.iword(IO::mode))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << p.hx() << ' ' << p.hy() << ' ' << p.hz() << ' ' << p.hw();
@@ -243,10 +267,10 @@ template <class R >
 std::istream&
 extract(std::istream& is, Point_3<R>& p, const Cartesian_tag&)
 {
-    typename R::FT x, y, z;
-    switch(is.iword(IO::mode)) {
+  typename R::FT x(0), y(0), z(0);
+    switch(IO::get_mode(is)) {
     case IO::ASCII :
-        is >> x >> y >> z;
+        is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z);
         break;
     case IO::BINARY :
         read(is, x);
@@ -254,12 +278,13 @@ extract(std::istream& is, Point_3<R>& p, const Cartesian_tag&)
         read(is, z);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
     }
     if (is)
-	p = Point_3<R>(x, y, z);
+      p = Point_3<R>(x, y, z);
     return is;
 }
 
@@ -269,7 +294,7 @@ std::istream&
 extract(std::istream& is, Point_3<R>& p, const Homogeneous_tag&)
 {
   typename R::RT hx, hy, hz, hw;
-  switch(is.iword(IO::mode))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
         is >> hx >> hy >> hz >> hw;
@@ -281,8 +306,9 @@ extract(std::istream& is, Point_3<R>& p, const Homogeneous_tag&)
         read(is, hw);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

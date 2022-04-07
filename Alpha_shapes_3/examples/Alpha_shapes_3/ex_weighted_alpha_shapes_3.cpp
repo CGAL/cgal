@@ -1,25 +1,31 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/Regular_triangulation_3.h>
+
 #include <CGAL/Alpha_shape_3.h>
+#include <CGAL/Alpha_shape_cell_base_3.h>
+#include <CGAL/Alpha_shape_vertex_base_3.h>
+#include <CGAL/Regular_triangulation_3.h>
+
+#include <iostream>
 #include <list>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Gt;
+typedef CGAL::Regular_triangulation_vertex_base_3<K>        Rvb;
+typedef CGAL::Alpha_shape_vertex_base_3<K,Rvb>              Vb;
 
-typedef CGAL::Alpha_shape_vertex_base_3<Gt>         Vb;
-typedef CGAL::Alpha_shape_cell_base_3<Gt>           Fb;
-typedef CGAL::Triangulation_data_structure_3<Vb,Fb> Tds;
-typedef CGAL::Regular_triangulation_3<Gt,Tds>       Triangulation_3;
-typedef CGAL::Alpha_shape_3<Triangulation_3>        Alpha_shape_3;
+typedef CGAL::Regular_triangulation_cell_base_3<K>          Rcb;
+typedef CGAL::Alpha_shape_cell_base_3<K,Rcb>                Cb;
 
-typedef Alpha_shape_3::Cell_handle          Cell_handle;
-typedef Alpha_shape_3::Vertex_handle        Vertex_handle;
-typedef Alpha_shape_3::Facet                Facet;
-typedef Alpha_shape_3::Edge                 Edge;
-typedef Gt::Weighted_point                  Weighted_point;
-typedef Gt::Bare_point                      Bare_point;
+typedef CGAL::Triangulation_data_structure_3<Vb,Cb>         Tds;
+typedef CGAL::Regular_triangulation_3<K,Tds>                Triangulation_3;
+typedef CGAL::Alpha_shape_3<Triangulation_3>                Alpha_shape_3;
+
+typedef Alpha_shape_3::Cell_handle                          Cell_handle;
+typedef Alpha_shape_3::Vertex_handle                        Vertex_handle;
+typedef Alpha_shape_3::Facet                                Facet;
+typedef Alpha_shape_3::Edge                                 Edge;
+typedef Triangulation_3::Weighted_point                     Weighted_point;
+typedef Triangulation_3::Bare_point                         Bare_point;
 
 int main()
 {
@@ -40,13 +46,13 @@ int main()
   std::list<Facet>       facets;
   std::list<Edge>        edges;
   as.get_alpha_shape_cells(std::back_inserter(cells),
-			   Alpha_shape_3::INTERIOR);
+                           Alpha_shape_3::INTERIOR);
   as.get_alpha_shape_facets(std::back_inserter(facets),
-			    Alpha_shape_3::REGULAR);
+                            Alpha_shape_3::REGULAR);
   as.get_alpha_shape_facets(std::back_inserter(facets),
-			    Alpha_shape_3::SINGULAR);
+                            Alpha_shape_3::SINGULAR);
   as.get_alpha_shape_edges(std::back_inserter(edges),
-			   Alpha_shape_3::SINGULAR);
+                           Alpha_shape_3::SINGULAR);
   std::cout << " The 0-shape has : " << std::endl;
   std::cout << cells.size() << " interior tetrahedra" << std::endl;
   std::cout << facets.size() << " boundary facets" << std::endl;

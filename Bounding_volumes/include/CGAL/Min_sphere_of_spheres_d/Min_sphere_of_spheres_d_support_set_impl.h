@@ -2,25 +2,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Kaspar Fischer
 
 
 #ifndef CGAL_MINIBALL_SUPPORTSET_C
 #define CGAL_MINIBALL_SUPPORTSET_C
+
+#include <CGAL/license/Bounding_volumes.h>
+
 
 #include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_support_set.h>
 
@@ -46,7 +41,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     bool Support_set<Traits>::push(const Sphere& ball) {
       CGAL_MINIBALL_DO_DEBUG(is_spanning_was_called = false);
 
-      if (m > D)
+      if ((std::ptrdiff_t)m > D)
         return false;
 
       b[m] = &ball;
@@ -72,7 +67,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
         }
 
         // compute $\tau_{im}$ for $1<=i<m$:
-        for (int i=1; i<m; ++i) {
+        for (unsigned int i=1; i<m; ++i) {
           tau[i][m] = 0;
           for (int j=0; j<D; ++j)
             tau[i][m] += u[i][j]*u[m][j];
@@ -91,14 +86,14 @@ namespace CGAL_MINIBALL_NAMESPACE {
         for (int j=0; j<D; ++j) {
           eps[m]   -= u[m][j]*e[m-1][j];
           phi[m]   -= u[m][j]*f[m-1][j];
-          delta[m] += sqr(u[m][j]-d[m-1][j]);
+          delta[m] += sqr<FT>(u[m][j]-d[m-1][j]);
         }
         phi[m] = FT(2)*(phi[m] - t1);
         eps[m] = t1*t2+FT(2)*eps[m];
 
         // fix u[m] to be $C_m-\q{C}_m$:
         // (This is only necessary for m>1 because $\q{C}_1=0$.)
-        for (int i=1; i<m; ++i)
+        for (unsigned int i=1; i<m; ++i)
           for (int j=0; j<D; ++j)
             u[m][j] -= tau[i][m]*u[i][j];
 
@@ -150,8 +145,8 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
       if (m > 1) {
         // compute the coeffients beta[i] and the center:
-        for(int i=1; i<m; ++i) {
-          beta[i] = (delta[i]+eps[i]+sol[m]*phi[i])/alpha[i];
+        for(unsigned int i=1; i<m; ++i) {
+          beta[i] = (static_cast<FT>(delta[i]+eps[i])+sol[m]*phi[i])/alpha[i];
           for (int j=0; j<D; ++j)
             center[j] += beta[i]*u[i][j];
         }
@@ -163,12 +158,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
         Result mingamma(0);
         Result gamma0(1);
 
-        for (int i=m-1; i>0; --i) {
+        for (unsigned int i=m-1; i>0; --i) {
           gamma[i] = beta[i];
-          // the next for won't do anything fori=m-1
-          // which triggers a warning with g++-4.8
-          // but it makes no sense to add an if(i!=m-1)
-          for (int j=i+1; j<m; ++j)
+          for (unsigned int j=i+1; j<m; ++j)
             gamma[i] -= gamma[j]*tau[i][j];
           gamma0 -= gamma[i];
           if (is_neg(gamma[i]-mingamma,discrim[m]))

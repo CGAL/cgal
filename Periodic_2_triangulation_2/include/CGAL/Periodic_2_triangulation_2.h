@@ -2,23 +2,18 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_2_H
+
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
 
 #include <CGAL/basic.h>
 
@@ -37,8 +32,6 @@
 #include <CGAL/Triangulation_utils_2.h>
 
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Periodic_2_triangulation_face_base_2.h>
 #include <CGAL/Periodic_2_triangulation_vertex_base_2.h>
 #include <CGAL/Periodic_2_triangulation_iterators_2.h>
@@ -49,6 +42,7 @@
 #include <boost/random/variate_generator.hpp>
 
 #include <CGAL/utility.h>
+#include <array>
 
 namespace CGAL
 {
@@ -59,10 +53,11 @@ namespace CGAL
 /// - Deletion of points
 /// - Point location
 template < class Gt,
-         class Tds = Triangulation_data_structure_2 <
-         Periodic_2_triangulation_vertex_base_2<Gt>,
-         Periodic_2_triangulation_face_base_2<Gt> > >
-class Periodic_2_triangulation_2: public Triangulation_cw_ccw_2
+           class Tds = Triangulation_data_structure_2 <
+             Periodic_2_triangulation_vertex_base_2<Gt>,
+             Periodic_2_triangulation_face_base_2<Gt> > >
+class Periodic_2_triangulation_2
+  : public Triangulation_cw_ccw_2
 {
   typedef Periodic_2_triangulation_2<Gt, Tds> Self;
 
@@ -78,21 +73,23 @@ public:
   /// The iso rectangle type
   typedef typename Gt::Iso_rectangle_2 Iso_rectangle;
   /// Integer tuple to store the number of sheets in each direction of space.
-  typedef array<int, 2> Covering_sheets;
+  typedef std::array<int, 2> Covering_sheets;
 
   /// The point type
   typedef typename Gt::Point_2 Point;
-  /// The segment type
+  /// The vector type
   typedef typename Gt::Segment_2 Segment;
+  /// The segment type
+  typedef typename Gt::Vector_2 Vector;
   /// The triangle type
   typedef typename Gt::Triangle_2 Triangle;
 
   /// Represents a point-offset pair. The point in the pair lies in the original domain.
   typedef std::pair<Point, Offset> Periodic_point;
   /// A pair of periodic points representing a segment in the periodic domain.
-  typedef array<std::pair<Point, Offset>, 2> Periodic_segment;
+  typedef std::array<std::pair<Point, Offset>, 2> Periodic_segment;
   /// A triple of periodic points representing a triangle in the periodic domain.
-  typedef array<std::pair<Point, Offset>, 3> Periodic_triangle;
+  typedef std::array<std::pair<Point, Offset>, 3> Periodic_triangle;
 
   /// The vertex type
   typedef typename Tds::Vertex Vertex;
@@ -174,8 +171,15 @@ public:
     FACE,
     /// The query point lies outside the affine hull of the triangulation,
     /// which is the case when the triangulation is empty.
-    EMPTY
+    EMPTY,
+    OUTSIDE_CONVEX_HULL, // unused, for compatibility with Alpha_shape_2
+    OUTSIDE_AFFINE_HULL  // unused, for compatibility with Alpha_shape_2
   };
+
+  /// Returns false, no infinite simplices in the periodic triangulation
+  template<class T>
+  bool is_infinite(const T&, int = 0) const { return false; }
+
   //\}
 
   // Auxiliary iterators for convenience
@@ -193,9 +197,11 @@ public:
   typedef value_type& reference;
   // \}
 
-
-  /// Tag to distinguish Regular triangulations from others;
+  /// Tag to distinguish regular triangulations from others;
   typedef Tag_false Weighted_tag;
+
+  /// Tag to distinguish periodic triangulations from others
+  typedef Tag_true Periodic_tag;
 
 protected:
   // Protected types of Periodic_2_triangulation_2
@@ -286,12 +292,12 @@ public:
   {
     return _gt;
   }
-  /// Returns the datastructure storing the triangulation.
+  /// Returns the data structure storing the triangulation.
   const Triangulation_data_structure & tds() const
   {
     return _tds;
   }
-  /// Returns the datastructure storing the triangulation.
+  /// Returns the data structure storing the triangulation.
   Triangulation_data_structure & tds()
   {
     return _tds;
@@ -351,17 +357,17 @@ public:
     else
       return _tds.number_of_faces() / 9;
   }
-  /// Returns the number of vertices stored in the datastructure.
+  /// Returns the number of vertices stored in the data structure.
   size_type number_of_stored_vertices() const
   {
     return _tds.number_of_vertices();
   }
-  /// Returns the number of edges stored in the datastructure.
+  /// Returns the number of edges stored in the data structure.
   size_type number_of_stored_edges() const
   {
     return _tds.number_of_edges();
   }
-  /// Returns the number of faces stored in the datastructure.
+  /// Returns the number of faces stored in the data structure.
   size_type number_of_stored_faces() const
   {
     return _tds.number_of_faces();
@@ -371,14 +377,6 @@ public:
 
   /// \name Methods regarding the covering
   /// \{
-
-  /// Checks whether the triangulation is a valid simplicial complex in the one cover.
-  /// Uses an edge-length-criterion.
-  bool is_extensible_triangulation_in_1_sheet_h1() const;
-
-  /// Checks whether the triangulation is a valid simplicial complex in the one cover.
-  /// Uses a criterion based on the maximal radius of the circumscribing circle.
-  bool is_extensible_triangulation_in_1_sheet_h2() const;
 
   /// Checks whether the triangulation is a valid simplicial complex in the one cover.
   bool is_triangulation_in_1_sheet() const;
@@ -398,7 +396,7 @@ public:
   /// represented in the 1-sheeted covering space, the offset is
   /// always zero. Otherwise v can correspond to a periodic copy
   /// outside domain of an input point.
-  Periodic_point periodic_point(const Vertex_handle &v) const
+  Periodic_point periodic_point(Vertex_handle v) const
   {
     return Periodic_point(v->point(), get_offset(v));
   }
@@ -410,7 +408,7 @@ public:
   /// covering space, this offset is possibly added to another offset
   /// determining the periodic copy.
   /// \pre i == {0,1,2}
-  Periodic_point periodic_point(const Face_handle &f, int i) const
+  Periodic_point periodic_point(Face_handle f, int i) const
   {
     return Periodic_point(f->vertex(i)->point(), get_offset(f, i));
   }
@@ -418,7 +416,7 @@ public:
   /// Returns the periodic segment formed by the two point-offset
   /// pairs corresponding to the two vertices of edge (f,i).
   /// \pre i == {0,1,2}
-  Periodic_segment periodic_segment(const Face_handle &f, int i) const
+  Periodic_segment periodic_segment(Face_handle f, int i) const
   {
     CGAL_triangulation_precondition( number_of_vertices() != 0 );
     CGAL_triangulation_precondition( i >= 0 && i <= 2);
@@ -434,7 +432,7 @@ public:
 
   /// Returns the periodic triangle formed by the three point-offset
   /// pairs corresponding to the three vertices of facet f.
-  Periodic_triangle periodic_triangle(const Face_handle &f) const
+  Periodic_triangle periodic_triangle(Face_handle f) const
   {
     return make_array(periodic_point(f, 0),
                       periodic_point(f, 1),
@@ -447,14 +445,15 @@ public:
   {
     return construct_point(pp.first, pp.second);
   }
-  Point point(const Vertex_handle &v) const
+  Point point(Vertex_handle v) const
   {
     return point(periodic_point(v));
   }
-  Point point(const Face_handle &fh, int i) const
+  Point point(Face_handle fh, int i) const
   {
     return point(periodic_point(fh, i));
   }
+
   /// Converts the Periodic_segment ps to a Segment in \f$R^2\f$.
   Segment segment(const Periodic_segment &ps) const
   {
@@ -666,7 +665,7 @@ public:
   /// begin iterator over the non-virtual vertices
   Unique_vertex_iterator unique_vertices_begin() const
   {
-    return CGAL::filter_iterator(vertices_end(), 
+    return CGAL::filter_iterator(vertices_end(),
                                  Periodic_2_triangulation_2_internal::Domain_tester<Self>(this),
                                  vertices_begin());
   }
@@ -883,43 +882,7 @@ public:
   /// Returns the orientation of (p1,o1), (p2,o2), (p3,o3)
   Orientation orientation(const Point& p1, const Point& p2, const Point& p3,
                           const Offset& o1, const Offset& o2, const Offset& o3) const;
-
-  /// Determines whether the point p lies on the (un-)bounded side of
-  /// the circle through the vertices of f
-  Oriented_side
-  side_of_oriented_circle(Face_handle f,
-                          const Point & p, bool perturb = false) const;
-  /// Determines whether the point p lies on the (un-)bounded side of
-  /// the circle through the points p0, p1 and p2
-  Oriented_side
-  side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
-                          const Point &p, bool perturb) const;
-  /// Determines whether the point (p,o) lies on the (un-)bounded side of
-  /// the circle through the points (p0,o0), (p1,o1) and (p2,o2)
-  Oriented_side
-  side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
-                          const Point &p, const Offset &o0, const Offset &o1, const Offset &o2,
-                          const Offset &o, bool perturb) const;
-
-
-
-  /// Constructs the circumcenter of the face f, respects the offset
-  Point circumcenter(Face_handle f) const
-  {
-    return construct_circumcenter(f->vertex(0)->point(),
-                                  f->vertex(1)->point(),
-                                  f->vertex(2)->point(),
-                                  get_offset(f, 0),
-                                  get_offset(f, 1),
-                                  get_offset(f, 2));
-  }
-  Point construct_circumcenter(const Point &p1, const Point &p2, const Point &p3,
-                               const Offset &o1, const Offset &o2, const Offset &o3) const
-  {
-    return geom_traits().construct_circumcenter_2_object()(p1, p2, p3, o1, o2, o3);
-  }
   //\}
-
 
   /// \name Miscellaneous
   //\{
@@ -1388,13 +1351,6 @@ protected:
   Tds _tds;
   // \}
 
-  /// Returns false, no infinite simplices in the periodic triangulation
-  template <class T>
-  inline bool is_infinite(T) const
-  {
-    return false;
-  }
-
 private:
   /// Inserts (p,o) in the face f and sets the offsets of the newly created faces
   /// Doesn't insert periodic copies
@@ -1421,6 +1377,10 @@ private:
   /// The domain
   Iso_rectangle _domain;
 
+protected:
+  // @fixme this covering stuff should really be at the Delaunay level (will need
+  // to be if P2RT2 is ever introduced...)
+
   /// This threshold should be chosen such that if all edges are shorter,
   /// we can be sure that there are no self-edges anymore.
   FT _edge_length_threshold;
@@ -1431,6 +1391,7 @@ private:
   /// Number of edges that are too long
   size_t _too_long_edge_counter;
 
+private:
   /// map of offsets for periodic copies of vertices
   Virtual_vertex_map _virtual_vertices;
   /// map of a non-virtual vertex to its virtual copies
@@ -1851,7 +1812,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
             {
               if (too_long)
                 {
-                  if (verbose) std::cout << "1. Too long edge not in the datastructure" << std::endl;
+                  if (verbose) std::cout << "1. Too long edge not in the data structure" << std::endl;
                   result = false;
                 }
               result &= !too_long;
@@ -1865,7 +1826,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
                   too_long_edges++;
                   if (it2 == it->second.end())
                     {
-                      if (verbose) std::cout << "2. Too long edge not in the datastructure" << std::endl;
+                      if (verbose) std::cout << "2. Too long edge not in the data structure" << std::endl;
                       result = false;
                     }
                   CGAL_triangulation_assertion(result);
@@ -1874,7 +1835,7 @@ bool Periodic_2_triangulation_2<Gt, Tds>::is_valid_too_long_edges(bool verbose, 
                 {
                   if (it2 != it->second.end())
                     {
-                      if (verbose) std::cout << "Edge is not too long, but contained in the datastructure" << std::endl;
+                      if (verbose) std::cout << "Edge is not too long, but contained in the data structure" << std::endl;
                       result = false;
                     }
                   CGAL_triangulation_assertion(result);
@@ -1999,10 +1960,10 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
             vh2_copy = v2s[i2 - 1];
 
           bool found = is_edge(vh1_copy, vh2_copy, fh, index);
-	  CGAL_USE(found);
+          CGAL_USE(found);
           CGAL_assertion(found);
-	  if (found)
-	    flip_single_edge(fh, index);
+          if (found)
+            flip_single_edge(fh, index);
         }
     }
 
@@ -3312,11 +3273,11 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
     }
 
   // Store neighboring offsets in a separate data structure
-  std::list<array<Offset, 3> > off_nb;
+  std::list<std::array<Offset, 3> > off_nb;
   for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
        != original_faces.end(); ++fit)
     {
-      array<Offset, 3> off_nb_f;
+      std::array<Offset, 3> off_nb_f;
       for (int i = 0; i < 3; i++)
         {
           Face_handle fff = *fit;
@@ -3385,7 +3346,7 @@ void Periodic_2_triangulation_2<Gt, Tds>::convert_to_9_sheeted_covering()
     }
 
   // Set neighboring relations of face copies
-  typename std::list<array<Offset, 3> >::iterator oit = off_nb.begin();
+  typename std::list<std::array<Offset, 3> >::iterator oit = off_nb.begin();
   for (typename std::list<Face_handle>::iterator fit = original_faces.begin(); fit
        != original_faces.end(); ++fit, ++oit)
     {
@@ -3994,105 +3955,6 @@ inline Orientation Periodic_2_triangulation_2<Gt, Tds>::orientation(
   return geom_traits().orientation_2_object()(p0, p1, p2, o0, o1, o2);
 }
 
-
-template<class Gt, class Tds>
-Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
-  const Point &p0, const Point &p1, const Point &p2, const Point &p,
-  bool perturb) const
-{
-  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p);
-  if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
-    return os;
-
-  // We are now in a degenerate case => we do a symbolic perturbation.
-
-  // We sort the points lexicographically.
-  const Point * points[4] = { &p0, &p1, &p2, &p };
-  std::sort(points, points + 4, Perturbation_order(this));
-
-  // We successively look whether the leading monomial, then 2nd monomial
-  // of the determinant has non null coefficient.
-  // 2 iterations are enough (cf paper)
-  for (int i = 3; i > 0; --i)
-    {
-      if (points[i] == &p)
-        return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
-      // and positively oriented
-      Orientation o;
-      if (points[i] == &p2 && (o = orientation(p0, p1, p)) != COLLINEAR)
-        return Oriented_side(o);
-      if (points[i] == &p1 && (o = orientation(p0, p, p2)) != COLLINEAR)
-        return Oriented_side(o);
-      if (points[i] == &p0 && (o = orientation(p, p1, p2)) != COLLINEAR)
-        return Oriented_side(o);
-    }
-  CGAL_triangulation_assertion(false);
-  return ON_NEGATIVE_SIDE;
-}
-
-template<class Gt, class Tds>
-Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
-  const Point &p0, const Point &p1, const Point &p2, const Point &p,
-  const Offset &o0, const Offset &o1, const Offset &o2, const Offset &o,
-  bool perturb) const
-{
-  Oriented_side os = geom_traits().side_of_oriented_circle_2_object()(p0, p1, p2, p, o0, o1, o2, o);
-  if ((os != ON_ORIENTED_BOUNDARY) || (!perturb))
-    return os;
-
-  // We are now in a degenerate case => we do a symbolic perturbation.
-  // We sort the points lexicographically.
-  Periodic_point pts[4] = { std::make_pair(p0, o0), std::make_pair(p1, o1),
-                            std::make_pair(p2, o2), std::make_pair(p, o)
-                          };
-  const Periodic_point *points[4] = { &pts[0], &pts[1], &pts[2], &pts[3] };
-
-  std::sort(points, points + 4, Perturbation_order(this));
-
-  // We successively look whether the leading monomial, then 2nd monomial
-  // of the determinant has non null coefficient.
-  // 2 iterations are enough (cf paper)
-  for (int i = 3; i > 0; --i)
-    {
-      if (points[i] == &pts[3])
-        return ON_NEGATIVE_SIDE; // since p0 p1 p2 are non collinear
-      // and positively oriented
-      Orientation orient;
-      if ((points[i] == &pts[2]) && ((orient = orientation(p0, p1, p, o0, o1, o))
-                                     != COLLINEAR))
-        return Oriented_side(orient);
-      if ((points[i] == &pts[1]) && ((orient = orientation(p0, p, p2, o0, o, o2))
-                                     != COLLINEAR))
-        return Oriented_side(orient);
-      if ((points[i] == &pts[0]) && ((orient = orientation(p, p1, p2, o, o1, o2))
-                                     != COLLINEAR))
-        return Oriented_side(orient);
-    }
-  CGAL_triangulation_assertion(false);
-  return ON_NEGATIVE_SIDE;
-}
-
-template<class Gt, class Tds>
-Oriented_side Periodic_2_triangulation_2<Gt, Tds>::side_of_oriented_circle(
-  Face_handle f, const Point & p, bool perturb) const
-{
-  Oriented_side os = ON_NEGATIVE_SIDE;
-
-  int i = 0;
-  // TODO: optimize which copies to check depending on the offsets in
-  // the face.
-  while (os == ON_NEGATIVE_SIDE && i < 4)
-    {
-      os = side_of_oriented_circle(f->vertex(0)->point(), f->vertex(1)->point(), f->vertex(2)->point(), p,
-                                   get_offset(f, 0), get_offset(f, 1), get_offset(f, 2), combine_offsets(Offset(), int_to_off(i)),
-                                   perturb);
-      i++;
-    }
-
-  return os;
-}
-
-
 template<class Gt, class Tds>
 void Periodic_2_triangulation_2<Gt, Tds>::insert_too_long_edges_in_star(Vertex_handle vh)
 {
@@ -4234,52 +4096,6 @@ bool Periodic_2_triangulation_2<Gt, Tds>::edge_is_too_long(const Point &p1,
 }
 
 template<class GT, class Tds>
-inline bool Periodic_2_triangulation_2<GT, Tds>::is_extensible_triangulation_in_1_sheet_h1() const
-{
-  if (!is_1_cover())
-    {
-      if (_too_long_edge_counter == 0)
-        return true;
-      else
-        return false;
-    }
-  else
-    {
-      typename Geom_traits::FT longest_edge_squared_length(0);
-      Segment s;
-      for (Periodic_segment_iterator psit = periodic_segments_begin(UNIQUE); psit
-           != periodic_segments_end(UNIQUE); ++psit)
-        {
-          s = construct_segment(*psit);
-          longest_edge_squared_length = (std::max)(longest_edge_squared_length,
-                                        s.squared_length());
-        }
-      return (longest_edge_squared_length < _edge_length_threshold);
-    }
-}
-
-template<class GT, class Tds>
-inline bool Periodic_2_triangulation_2<GT, Tds>::is_extensible_triangulation_in_1_sheet_h2() const
-{
-  typedef typename Geom_traits::Construct_circumcenter_2 Construct_circumcenter;
-  typedef typename Geom_traits::FT FT;
-  Construct_circumcenter construct_circumcenter =
-    _gt.construct_circumcenter_2_object();
-  for (Periodic_triangle_iterator tit = periodic_triangles_begin(UNIQUE); tit
-       != periodic_triangles_end(UNIQUE); ++tit)
-    {
-      Point cc = construct_circumcenter(tit->at(0).first, tit->at(1).first,
-                                        tit->at(2).first, tit->at(0).second, tit->at(1).second,
-                                        tit->at(2).second);
-
-      if (!(FT(16) * squared_distance(cc, point(tit->at(0))) < (_domain.xmax()
-            - _domain.xmin()) * (_domain.xmax() - _domain.xmin())))
-        return false;
-    }
-  return true;
-}
-
-template<class GT, class Tds>
 inline bool Periodic_2_triangulation_2<GT, Tds>::is_triangulation_in_1_sheet() const
 {
   if (is_1_cover())
@@ -4329,7 +4145,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
   size_type n = number_of_vertices();
 
 
-  if (is_ascii(os))
+  if (IO::is_ascii(os))
     os << domain() << std::endl
        << cover[0] << " " << cover[1] << std::endl
        << n*cover[0]*cover[1] << std::endl;
@@ -4348,7 +4164,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
     return os;
 
   // write the vertices
-  Unique_hash_map<Vertex_handle, std::size_t > V;
+  Unique_hash_map<Vertex_handle, std::size_t > V(0, number_of_vertices());
   std::size_t i = 0;
   if (is_1_cover())
     {
@@ -4356,7 +4172,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
         {
           V[it] = i++;
           os << it->point();
-          if (is_ascii(os))
+          if (IO::is_ascii(os))
             os << std::endl;
         }
     }
@@ -4369,7 +4185,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
           vit = _virtual_vertices.find(it);
           if (vit != _virtual_vertices.end()) continue;
           V[it] = i++;
-          if (is_ascii(os))
+          if (IO::is_ascii(os))
             os << it->point() << std::endl
                << Offset(0, 0) << std::endl;
           else
@@ -4383,7 +4199,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
               vvit = _virtual_vertices.find(vv[j]);
               CGAL_triangulation_assertion(vvit != _virtual_vertices.end());
               V[vv[j]] = i++;
-              if (is_ascii(os))
+              if (IO::is_ascii(os))
                 os << vv[j]->point() << std::endl
                    << vvit->second.second << std::endl;
               else os << vv[j]->point() << vvit->second.second;
@@ -4392,12 +4208,12 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
     }
   CGAL_triangulation_postcondition(i == _cover[0]*_cover[1]*n);
 
-  Unique_hash_map<Face_handle, std::size_t> F;
+  Unique_hash_map<Face_handle, std::size_t> F(0,  _tds.number_of_faces());
   int inum = 0;
   // asks the tds for the combinatorial information
   // vertices of the faces
   size_type m = _tds.number_of_faces();
-  if (is_ascii(os)) os << std::endl << m << std::endl;
+  if (IO::is_ascii(os)) os << std::endl << m << std::endl;
   else write(os, m);
   std::cout << "save, #Faces: " << m << std::endl;
 
@@ -4407,13 +4223,13 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       F[ib] = inum++;
       for(int j = 0; j < 3 ; ++j)
         {
-          if(is_ascii(os)) os << V[ib->vertex(j)] << " ";
+          if(IO::is_ascii(os)) os << V[ib->vertex(j)] << " ";
           else write(os, V[ib->vertex(j)]);
         }
       os << *ib ;
-      if(is_ascii(os)) os << "\n";
+      if(IO::is_ascii(os)) os << "\n";
     }
-  if(is_ascii(os)) os << "\n";
+  if(IO::is_ascii(os)) os << "\n";
 
   std::cout << "save, face check: " << inum << " == " << m << std::endl;
   CGAL_assertion(m == (size_type)inum);
@@ -4425,10 +4241,10 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       for(int j = 0; j < 3; ++j)
         {
           CGAL_assertion(F.is_defined(it->neighbor(j)));
-          if(is_ascii(os))  os << F[it->neighbor(j)] << " ";
+          if(IO::is_ascii(os))  os << F[it->neighbor(j)] << " ";
           else write(os, F[it->neighbor(j)]);
         }
-      if(is_ascii(os)) os << "\n";
+      if(IO::is_ascii(os)) os << "\n";
     }
 
   // write offsets
@@ -4439,7 +4255,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       Face_handle ch(it);
       for (int j = 0; j < 3; j++)
         {
-          if(is_ascii(os))
+          if(IO::is_ascii(os))
             {
               os << ch->offset(j);
               if ( j == 3 )
@@ -4460,7 +4276,7 @@ Periodic_2_triangulation_2<Gt, Tds>::save(std::ostream& os) const
       for(Face_iterator it = faces_begin(); it != faces_end(); ++it)
         {
           os << *it; // other information
-          if(is_ascii(os))
+          if(IO::is_ascii(os))
             os << std::endl;
         }
     }
@@ -4491,7 +4307,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   int cx = 0, cy = 0;
   size_type n = 0;
 
-  if (is_ascii(is))
+  if (IO::is_ascii(is))
   {
     is >> domain;
     is >> cx >> cy >> n;
@@ -4556,7 +4372,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   // Creation of the faces
   std::size_t index;
   size_type m;
-  if (is_ascii(is)) is >> m;
+  if (IO::is_ascii(is)) is >> m;
   else read(is, m);
   std::vector<Face_handle> F(m);
   std::cout << "load, #Faces: " << m << std::endl;
@@ -4566,7 +4382,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
         F[i] = _tds.create_face() ;
         for(int j = 0; j < 3 ; ++j)
           {
-            if (is_ascii(is)) is >> index;
+            if (IO::is_ascii(is)) is >> index;
             else read(is, index);
             CGAL_assertion(index < V.size());
             F[i]->set_vertex(j, V[index]);
@@ -4585,7 +4401,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
       {
         for(int j = 0; j < 3; ++j)
           {
-            if (is_ascii(is)) is >> index;
+            if (IO::is_ascii(is)) is >> index;
             else read(is, index);
             if (index >= F.size()) {
               std::cout << __FILE__ << ", " << __FUNCTION__ << ", l:" << __LINE__ << "  f="
@@ -4603,7 +4419,7 @@ Periodic_2_triangulation_2<Gt, Tds>::load(std::istream& is)
   int off[3] = {0, 0, 0};
   for (std::size_t j = 0 ; j < m; j++)
     {
-      if (is_ascii(is))
+      if (IO::is_ascii(is))
         is >> off[0] >> off[1] >> off[2];
       else
         {
@@ -4845,8 +4661,9 @@ operator!=(const Periodic_2_triangulation_2<GT, Tds1> &t1,
   return ! (t1 == t2);
 }
 
+#define CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 #include <CGAL/Periodic_2_triangulation_dummy_12.h>
-
+#undef CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 } //namespace CGAL
 
 

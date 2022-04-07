@@ -1,0 +1,38 @@
+/// \defgroup PkgOptimalTransportationReconstruction2Ref Optimal Transportation Curve Reconstruction Reference
+
+/// \defgroup PkgOptimalTransportationReconstruction2Concepts Concepts
+/// \ingroup PkgOptimalTransportationReconstruction2Ref
+
+/// \defgroup PkgOptimalTransportationReconstruction2Classes Classes
+/// \ingroup PkgOptimalTransportationReconstruction2Ref
+
+
+/*!
+\addtogroup PkgOptimalTransportationReconstruction2Ref
+\cgalPkgDescriptionBegin{Optimal Transportation Curve Reconstruction, PkgOptimalTransportationReconstruction2}
+\cgalPkgPicture{RS_2_small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Pierre Alliez, David Cohen-Steiner, Fernando de Goes, Clément Jamin, Ivo Vigan}
+\cgalPkgDesc{This package provides an algorithm to reconstruct and simplify a shape from a point set in the plane, possibly hampered with noise and outliers. It generates as output a set of line segments and isolated points, which approximate the input point set.}
+\cgalPkgManuals{Chapter_Optimal_Transportation_Curve_Reconstruction, PkgOptimalTransportationReconstruction2Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.8}
+\cgalPkgDependsOn{\ref PkgTriangulation2}
+\cgalPkgBib{cgal:gavj-rs}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{2D Optimal Transportation Curve Reconstruction,otr2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `OptimalTransportationReconstructionTraits_2`
+
+\cgalCRPSection{Classes}
+- `CGAL::Optimal_transportation_reconstruction_2<Traits, PointPMap, MassPMap>`
+
+*/
+

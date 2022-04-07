@@ -23,7 +23,7 @@ public:
   typedef Tag_false     Has_exact_sqrt;
 
   typedef Tag_true      Is_real_embeddable;
-  
+
   // Constructors.
   Double() : val(0) {}
 
@@ -60,7 +60,7 @@ public:
   // Equality operators. Note that x equals y iff:
   //
   //     |x - y|
-  //   ----------- <ERR_EPSILON 
+  //   ----------- <ERR_EPSILON
   //    |x| + |y|
   //
   bool operator==(const Double& x) const

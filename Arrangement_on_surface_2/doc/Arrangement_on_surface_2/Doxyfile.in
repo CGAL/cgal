@@ -1,9 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Arrangements"
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Arrangement_on_surface_2/
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Arrangements"
 EXCLUDE_SYMBOLS           +=  Dcel         \
                               FaceBase     \
                               HalfedgeBase \

@@ -1,46 +1,39 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
 #ifndef CGAL_KD_TYPE_SPHERE_H
 #define CGAL_KD_TYPE_SPHERE_H
 #include <CGAL/NewKernel_d/store_kernel.h>
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {
 template <class R_> class Sphere {
-	typedef typename Get_type<R_, FT_tag>::type FT_;
-	typedef typename Get_type<R_, Point_tag>::type	Point_;
-	Point_ c_;
-	FT_ r2_;
+        typedef typename Get_type<R_, FT_tag>::type FT_;
+        typedef typename Get_type<R_, Point_tag>::type        Point_;
+        Point_ c_;
+        FT_ r2_;
 
-	public:
-	Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
-	// TODO: Add a piecewise constructor?
+        public:
+        Sphere(){}
+        Sphere(Point_ const&p, FT_ const&r2): c_(p), r2_(r2) {}
+        // TODO: Add a piecewise constructor?
 
-	Point_ const& center()const{return c_;}
-	FT_ const& squared_radius()const{return r2_;}
+        Point_ const& center()const{return c_;}
+        FT_ const& squared_radius()const{return r2_;}
 };
 
 namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_sphere : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_sphere)
-  typedef typename Get_type<R_, Sphere_tag>::type	result_type;
-  typedef typename Get_type<R_, Point_tag>::type	Point;
+  typedef typename Get_type<R_, Sphere_tag>::type        result_type;
+  typedef typename Get_type<R_, Point_tag>::type        Point;
   typedef typename Get_type<R_, FT_tag>::type FT;
   result_type operator()(Point const&a, FT const&b)const{
     return result_type(a,b);
@@ -48,52 +41,32 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
   // Not really needed
   result_type operator()()const{
     typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(push)
+#  pragma warning(disable: 4309)
+#endif
     return result_type(cp(),0);
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(pop)
+#endif
   }
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
-    // 2*(x-y).c == x^2-y^2
-    typedef typename R_::LA LA;
-    typedef typename LA::Square_matrix Matrix;
-    typedef typename LA::Vector Vec;
-    typedef typename LA::Construct_vector CVec;
-    typedef typename Get_type<R_, Point_tag>::type	Point;
-    typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
-    typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
-    typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
-    typename Get_functor<R_, Squared_distance_to_origin_tag>::type sdo(this->kernel());
+    typename Get_functor<R_, Construct_circumcenter_tag>::type cc(this->kernel());
     typename Get_functor<R_, Squared_distance_tag>::type sd(this->kernel());
 
-    Point const& p0=*f;
-    int d = pd(p0);
-    FT const& n0 = sdo(p0);
-    Matrix m(d,d);
-    Vec b = typename CVec::Dimension()(d);
-    // Write the point coordinates in lines.
-    int i;
-    for(i=0; ++f!=e; ++i) {
-      Point const& p=*f;
-      for(int j=0;j<d;++j) {
-	m(i,j)=2*(c(p,j)-c(p0,j));
-	b[i] = sdo(p) - n0;
-      }
-    }
-    CGAL_assertion (i == d);
-    Vec res = typename CVec::Dimension()(d);;
-    //std::cout << "Mat: " << m << "\n Vec: " << one << std::endl;
-    LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(b));
-    //std::cout << "Sol: " << res << std::endl;
-    Point center = cp(d,LA::vector_begin(res),LA::vector_end(res));
-    FT const& r2 = sd (center, p0);
-    return this->operator()(CGAL_MOVE(center), r2);
+    // It should be possible to avoid copying the center by moving this code to a constructor.
+    Point center = cc(f, e);
+    FT const& r2 = sd(center, *f);
+    return this->operator()(std::move(center), r2);
   }
 };
 
 template <class R_> struct Center_of_sphere : private Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Center_of_sphere)
-  typedef typename Get_type<R_, Sphere_tag>::type	Sphere;
+  typedef typename Get_type<R_, Sphere_tag>::type        Sphere;
   // No reference because of the second overload
-  typedef typename Get_type<R_, Point_tag>::type	result_type;
+  typedef typename Get_type<R_, Point_tag>::type        result_type;
 
   result_type const& operator()(Sphere const&s)const{
     return s.center();
@@ -101,16 +74,16 @@ template <class R_> struct Center_of_sphere : private Store_kernel<R_> {
 
   template<class Iter>
   result_type operator()(Iter b, Iter e)const{
-    typename Get_functor<R_, Construct_ttag<Sphere_tag> >::type	cs(this->kernel());
+    typename Get_functor<R_, Construct_ttag<Sphere_tag> >::type        cs(this->kernel());
     return operator()(cs(b,e)); // computes the radius needlessly
   }
 };
 
 template <class R_> struct Squared_radius {
   CGAL_FUNCTOR_INIT_IGNORE(Squared_radius)
-  typedef typename Get_type<R_, Sphere_tag>::type	Sphere;
-  typedef typename Get_type<R_, FT_tag>::type const&	result_type;
-  // TODO: Is_exact?
+  typedef typename Get_type<R_, Sphere_tag>::type        Sphere;
+  typedef typename Get_type<R_, FT_tag>::type const&        result_type;
+  // TODO: Uses_no_arithmetic?
   result_type operator()(Sphere const&s)const{
     return s.squared_radius();
   }
@@ -130,7 +103,7 @@ template<class R_> struct Point_of_sphere : private Store_kernel<R_> {
   typedef Point result_type;
   typedef Sphere first_argument_type;
   typedef int second_argument_type;
-  struct Trans : std::binary_function<FT,int,FT> {
+  struct Trans : CGAL::cpp98::binary_function<FT,int,FT> {
     FT const& r_; int idx; bool sgn;
     Trans (int n, FT const& r, bool b) : r_(r), idx(n), sgn(b) {}
     FT operator()(FT const&x, int i)const{

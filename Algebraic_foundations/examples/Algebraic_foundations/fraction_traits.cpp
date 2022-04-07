@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/IO/io.h>
 
@@ -18,7 +17,7 @@ int main(){
     CGAL::Gmpq fraction(4,5);
     FT::Decompose()(fraction,numerator,denominator);
 
-    CGAL::set_pretty_mode(std::cout);
+    CGAL::IO::set_pretty_mode(std::cout);
     std::cout << "decompose fraction: "<< std::endl;
     std::cout << "fraction   : " << fraction << std::endl;
     std::cout << "numerator  : " << numerator<< std::endl;

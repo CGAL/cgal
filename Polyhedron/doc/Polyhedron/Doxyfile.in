@@ -1,10 +1,2 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Polyhedral Surface"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Polyhedron/doc/Polyhedron/
-
-
-
-EXAMPLE_PATH              +=  ${CMAKE_SOURCE_DIR}/Polyhedron_IO/examples
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 3D Polyhedral Surface"

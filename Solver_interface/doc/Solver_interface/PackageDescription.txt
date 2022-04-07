@@ -1,0 +1,72 @@
+/*!
+\defgroup PkgSolverInterfaceRef CGAL and Solvers Reference
+
+\defgroup PkgSolverInterfaceConcepts Concepts
+\ingroup PkgSolverInterfaceRef
+
+Concepts that describe various solvers.
+
+\defgroup PkgSolverInterfaceLS Linear Systems
+\ingroup PkgSolverInterfaceRef
+
+Classes to define and solve linear systems.
+
+\defgroup PkgSolverInterfaceMIP Mixed Integer Programming
+\ingroup PkgSolverInterfaceRef
+
+Classes to define and solve mixed integer programs.
+
+\defgroup PkgSolverInterfaceNLP Nonlinear Programming
+\ingroup PkgSolverInterfaceRef
+
+Classes to define and solve nonlinear programs.
+
+\addtogroup PkgSolverInterfaceRef
+\cgalPkgDescriptionBegin{CGAL and Solvers, PkgSolverInterface}
+\cgalPkgPicture{solver.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan}
+\cgalPkgDesc{This package provides concepts and models for solving linear systems with
+dense or sparse matrices, mixed integer programming problems with or without constraints,
+and nonlinear programming problems with or without constraints.}
+\cgalPkgManuals{Chapter_CGAL_and_Solvers, PkgSolverInterfaceRef}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.8}
+\cgalPkgBib{cgal:eb-solver}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `DiagonalizeTraits`
+- `NormalEquationSparseLinearAlgebraTraits_d`
+- `SparseLinearAlgebraTraits_d`
+- `SparseLinearAlgebraWithFactorTraits_d`
+- `SvdTraits`
+- `MixedIntegerProgramTraits`
+- `LinearProgramTraits`
+- `QuadraticProgramTraits`
+
+\cgalCRPSection{Linear Systems}
+- `CGAL::Eigen_solver_traits`
+- `CGAL::Eigen_diagonalize_traits`
+- `CGAL::Eigen_vector`
+- `CGAL::Eigen_matrix`
+- `CGAL::Eigen_sparse_matrix`
+- `CGAL::Eigen_sparse_symmetric_matrix`
+- `CGAL::Eigen_svd`
+
+\cgalCRPSection{Mixed Integer Programming}
+- `CGAL::Variable`
+- `CGAL::Linear_constraint`
+- `CGAL::Linear_objective`
+- `CGAL::Mixed_integer_program_traits`
+- `CGAL::GLPK_mixed_integer_program_traits`
+- `CGAL::SCIP_mixed_integer_program_traits`
+
+\cgalCRPSection{Nonlinear Programming}
+- `CGAL::OSQP_quadratic_program_traits`
+*/

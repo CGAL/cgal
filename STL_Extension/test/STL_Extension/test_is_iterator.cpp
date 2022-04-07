@@ -1,6 +1,6 @@
-#include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <CGAL/is_iterator.h>
+#include <CGAL/use.h>
 #include <vector>
 #include <list>
 
@@ -14,6 +14,9 @@ int main() {
   using CGAL::is_iterator_type;
   using CGAL::is_iterator_to;
 
+  CGAL_USE_TYPE(vector_it);
+  CGAL_USE_TYPE(list_it);
+  CGAL_USE_TYPE(int_p);
   CGAL_static_assertion(is_iterator<vector_it>::value);
   CGAL_static_assertion(is_iterator<list_it>::value);
   CGAL_static_assertion(!is_iterator<void>::value);

@@ -1,0 +1,536 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Classification
+\cgalAutoToc
+\authors Simon Giraudot, Florent Lafarge
+
+This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12} (section 2), generalized to handle different types of data, multiple features and multiple labels. It classifies a data set into a user-defined set of labels, such as _ground_, _vegetation_ and _buildings_. A flexible API is provided so that users can classify any type of data which they can index and for which they can compute relevant features, compute their own local features on the input data set and define their own labels.
+
+\section Classification_Organization Package Organization
+
+%Classification of data sets is achieved as follows (see Figure \cgalFigureRef{Classification_organization_fig}):
+
+- some analysis is performed on the input data set;
+- features are computed based on this analysis;
+- a set of labels (for example: _ground_, _building_, _vegetation_) is defined by the user;
+- a classifier is defined and trained: from the set of values taken by the features at an input item, it measures the likelihood of this item to belong to one label or another;
+- classification is computed itemwise using the classifier;
+- additional regularization can be used by smoothing either locally or globally through a _graph cut_ \cgalCite{Boykov2001FastApproximate} approach.
+
+\cgalFigureBegin{Classification_organization_fig,organization.svg}
+Organization of the package.
+\cgalFigureEnd
+
+This package is designed to be easily extended by users: more specifically, features and labels can be defined by users to handle any data they need to classify.
+
+Currently, \cgal provides data structures to handle classification of point sets, surface meshes and clusters.
+
+\section Classification_structures Common Data Structures
+
+\subsection Classification_labels Label Set
+
+A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc. In \cgal, a label has a name, an index (in a label set), a standard index (for example, the index of the label in the ASPRS standard) and a color. It is simply identified by a [Label_handle](@ref CGAL::Classification::Label_handle). Note that names, standard indices and colors are not used for identification: two labels in the same set can have the same name, standard index and color but not the same handle.
+
+If labels are initialized with their names only, standard indices and colors can be deduced in some cases (see [Label_set::add()](@ref CGAL::Classification::Label_set::add)).
+
+The following code snippet shows how to add labels to the classification object:
+
+\snippet Classification/example_classification.cpp Labels
+
+\subsection Classification_features Feature Set
+
+Features are defined as scalar fields that associate each input item with a specific value. Note that in order to limit memory consumption, we use the type `float` for these scalar values (as well as for every floating point value in this package). A feature has a name and is identified by a [Feature_handle](@ref CGAL::Classification::Feature_handle).
+
+The computation of features and their addition to the feature set is done in a single step using the [Feature_set::add<Feature>()](@ref CGAL::Classification::Feature_set::add) method. If \cgal was linked with \ref thirdpartyTBB, features can be computed in parallel (see below).
+
+\cgal provides some predefined features (see \ref Classification_point_sets for example). In the following code snippet, a subset of these predefined features are instantiated (in parallel if \ref thirdpartyTBB is available). Note that all the predefined features can also be automatically generated in multiple scales (see \ref Classification_point_sets for example).
+
+\snippet Classification/example_classification.cpp Features
+
+Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from [Feature_base](@ref CGAL::Classification::Feature_base) and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associates a scalar value to each input item.
+
+The following example shows how to define a feature that discriminates
+points that lie inside a 2D box from the others:
+
+\snippet Classification/example_feature.cpp Feature
+
+This feature can then be instantiated from the feature set the same way as the others:
+
+\snippet Classification/example_feature.cpp Addition
+
+\section Classification_structures_specialized Specialized Data Structures
+
+%Classification is based on the computation of local features. These features can take advantage of shared data structures that are precomputed and stored separately. Both these features and the underlying data structures depend on the type of data that needs to be classified. \cgal provides data structures to classify point sets, surface meshes and clusters.
+
+\subsection Classification_point_sets Point Set Classification
+
+\cgal provides the following structures:
+
+- [Point_set_neighborhood](@ref CGAL::Classification::Point_set_neighborhood) stores spatial searching structures and provides adapted queries for points;
+- [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of points and stores the associated eigenvectors and eigenvalues;
+- [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is a 2D grid used for digital terrain modeling.
+
+Most of these data structures depend on a scale parameter. \cgal provides a method to estimate the average spacing based on a number of neighbors (see [CGAL::compute_average_spacing()](@ref compute_average_spacing)), which usually provides satisfying results in the absence of noise. In the presence of noise, [CGAL::estimate_global_range_scale()](@ref estimate_global_range_scale) provides an estimation of the smallest scale such that the point set has the local dimension of a surface (this method is both robust to noise and outliers, see \ref Classification_sowf_result).
+
+The eigen analysis can be used to estimate normals. Note however that this analysis (based on Principal Component Analysis) might not be robust to a high level of noise. \cgal also provides more robust normal estimation functions (see for example [CGAL::jet_estimate_normals()](@ref jet_estimate_normals)).
+
+The following code snippet shows how to instantiate such data structures from an input PLY point set (the [full example](@ref Classification_example_general) is given at the end of the manual).
+
+\snippet Classification/example_classification.cpp Analysis
+
+\cgal provides some predefined features:
+
+- [Distance_to_plane](@ref CGAL::Classification::Feature::Distance_to_plane) measures how far away a point is from a locally estimated plane;
+- [Eigenvalue](@ref CGAL::Classification::Feature::Eigenvalue) measures one of the three local eigenvalues;
+- [Elevation](@ref CGAL::Classification::Feature::Elevation) computes the local distance to an estimation of the ground;
+- [Height_above](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest point and the point;
+- [Height_below](@ref CGAL::Classification::Feature::Elevation) computes the distance between the point and the local lowest point;
+- [Vertical_dispersion](@ref CGAL::Classification::Feature::Vertical_dispersion) computes how noisy the point set is on a local Z-cylinder;
+- [Vertical_range](@ref CGAL::Classification::Feature::Elevation) computes the distance between the local highest and lowest points;
+- [Verticality](@ref CGAL::Classification::Feature::Verticality) compares the local normal vector to the vertical vector.
+
+These features are designed for point sets but can easily be used with surface meshes as well (see \ref Classification_meshes). For more details about how these different features can help to identify one label or the other, please refer to their associated reference manual pages.
+
+In addition, if the input data set has additional properties, these can also be used as features. For example, \cgal provides the following features:
+
+- [Color_channel](@ref CGAL::Classification::Feature::Color_channel) uses input color information if available;
+- [Echo_scatter](@ref CGAL::Classification::Feature::Echo_scatter) uses the number of returns (echo) provided by most LIDAR scanners if available;
+- [Simple_feature](@ref CGAL::Classification::Feature::Simple_feature) uses any property map applicable to the input range and whose value type is castable to `float` (useful if an additional property of the input set should be used as is, for example an `intensity` measurement).
+
+Users commonly want to use all predefined features to get the best result possible. \cgal provides a class [Point_set_feature_generator](@ref CGAL::Classification::Point_set_feature_generator)  that performs the following operations:
+
+- it estimates the smallest relevant scale;
+- it generates all needed analysis structures and provides access to them;
+- it generates all possible features (among all the \cgal predefined ones) based on which property maps are available (they use colors if available, etc.).
+
+Multiple scales that are sequentially larger can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}.
+
+Note that using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of point sets simpler to handle. Users can still add their own features within their feature set.
+
+Some data structure instantiated by the generator will be used by feature: for this reason, the generator should be instantiated _within the same scope_ as the feature set and should not be deleted before the feature set.
+
+The following snippet shows how to use the point set feature generator:
+
+\snippet Classification/example_generation_and_training.cpp Generator
+
+\cgalFigureBegin{Classification_point_set_fig,point_set.png}
+Example of point set classification (left: input, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green.
+\cgalFigureEnd
+
+\subsection Classification_meshes Mesh Classification
+
+%Classification of mesh is performed by considering the face of a mesh as an atomic element that should be assign one label or another. Some structures such as neighborhood or Eigen analysis are significantly different from their equivalent for point sets; other data structures from point sets can be directly used by viewing the mesh as a point set through the use of a property map that associates each face with a representative point.
+
+Hereafter, a _mesh_ refers to a model of `FaceListGraph`.
+
+\cgal provides the following structures:
+
+- [Face_descriptor_to_center_of_mass_map](@ref CGAL::Classification::Face_descriptor_to_center_of_mass_map) is a property map that takes the face of a mesh as key type and returns the `CGAL::Point_3` located at the center of mass of the face. It is useful to apply point set structures and features to surface meshes;
+- [Face_descriptor_to_face_descriptor_with_bbox_map](@ref CGAL::Classification::Face_descriptor_to_face_descriptor_with_bbox_map) is a property map that takes the face of a mesh as key type and returns the same face along with its bounding box as a value type. It is useful to call `CGAL::Classification::classify_with_graphcut()` which requires objects that provide a `bbox()` method (see \ref Classification_classification_functions);
+- [Mesh_neighborhood](@ref CGAL::Classification::Mesh_neighborhood) provides adapted queries for surface meshes;
+- [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) precomputes covariance matrices on local neighborhoods of triangles and stores the associated eigenvectors and eigenvalues (it is the same object as for point sets called with a different named constructor);
+- [Planimetric_grid](@ref CGAL::Classification::Planimetric_grid) is the 2D grid used for digital terrain modeling of point sets, it can be used with meshes through [Face_descriptor_to_center_of_mass_map](@ref CGAL::Classification::Face_descriptor_to_center_of_mass_map).
+
+The point set features can be used for mesh classification as well:
+
+- [Eigenvalue](@ref CGAL::Classification::Feature::Eigenvalue) takes the [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) object computed on faces as input;
+- the other ones are computed by considering the mesh as a point set.
+
+Similarly to [Point_set_feature_generator](@ref CGAL::Classification::Point_set_feature_generator), \cgal provides a class [Mesh_feature_generator](@ref CGAL::Classification::Mesh_feature_generator) that estimates the smallest scale automatically and computes all predefined features on several scales. As for point sets, using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of meshes simpler to handle. Users can still add their own features within their feature set.
+
+The following snippet shows how to use the mesh feature generator:
+
+\snippet Classification/example_mesh_classification.cpp Generator
+
+The [full example](@ref Classification_example_mesh) is given at the end of the manual.
+
+\cgalFigureBegin{Classification_mesh_fig,mesh.png}
+Example of mesh classification (left: input, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green.
+\cgalFigureEnd
+
+\subsection Classification_clusters Cluster Classification
+
+Classifying clusters of items instead of raw sets of items can have several advantages:
+
+- if the data set is very large, using clusters can drastically decrease the complexity and thus the need for computation time and memory;
+- clusters are more complex objects than raw items (isolated points or triangles of a mesh) and thus provide additional information (size of cluster, spatial consistency, etc.);
+- by construction, the output classification is less noisy (if all points of a facade are in the same cluster, then they are guaranteed to all be classified in the same label).
+
+For example, when dealing with urban scenes that typically contain large planar sections, it may be more efficient to first detect planes (with `CGAL::Shape_detection::Region_growing` or `CGAL::Shape_detection::Efficient_RANSAC` for example) and then to classify each subset of points belonging to a specific plane as clusters.
+
+\cgal provides some tools to classify clusters:
+
+- the class `CGAL::Classification::Cluster` can be used to represent a cluster of items (points, for example);
+- the function `CGAL::Classification::create_clusters_from_indices()` takes indices over items as input (for example, shape indices taken from shape detection) and generates one cluster per index.
+
+The following snippet shows how to create classification clusters from a shape detection algorithm ([Region Growing](@ref CGAL::Shape_detection::Region_growing)):
+
+\snippet Classification/example_cluster_classification.cpp Cluster
+
+The class [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) can also take point clusters as input:
+
+\snippet Classification/example_cluster_classification.cpp Eigen
+
+As clusters are based on simple items, users can compute cluster features based on statistics over the itemwise features:
+
+- [Cluster_mean_of_feature](@ref CGAL::Classification::Feature::Cluster_mean_of_feature) computes, for a cluster, the mean value of an itemwise feature over the inliers of this cluster;
+- [Cluster_variance_of_feature](@ref CGAL::Classification::Feature::Cluster_variance_of_feature) computes, for a cluster, the variance of an itemwise feature over the inliers of this cluster.
+
+Some additional features are provided specifically for clusters:
+
+- [Cluster_size](@ref CGAL::Classification::Feature::Cluster_size) uses the number of items in a cluster;
+- [Cluster_vertical_extent](@ref CGAL::Classification::Feature::Cluster_vertical_extent) computes the length of the smallest interval
+on the `Z` axis that contains all the items of a cluster;
+- [Eigenvalue](@ref CGAL::Classification::Feature::Eigenvalue), similarly to point sets and meshes, can use the [Local_eigen_analysis](@ref CGAL::Classification::Local_eigen_analysis) object computed on clusters.
+
+The following snippet shows, from a pointwise feature set, how to generate the statistical features from a pointwise feature set (along with these latest cluster features):
+
+\snippet Classification/example_cluster_classification.cpp Features
+
+The [full example](@ref Classification_example_cluster) is given at the end of the manual.
+
+\cgalFigureBegin{Classification_cluster_fig,clusters.png}
+Example of cluster classification mesh (left: input, middle: clusters computed from region growing, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green, points not assigned to a cluster are _black_.
+\cgalFigureEnd
+
+\section Classification_classifiers Classifiers
+
+%Classification relies on a classifier: this classifier is an object that, from the set of values taken by the features at an input item, computes the probability that an input item belongs to one label or another. A model of the concept `CGAL::Classification::Classifier` must take the index of an input item and store the probability associated to each label in a vector. If a classifier returns the value 1 for a pair of label and input item, it means that this item belongs to this label with certainty; values close to 0 mean that this item is not likely to belong to this label.
+
+\cgal provides three models for this concept, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier), [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier), and [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier).
+
+\note Currently, [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier)
+is the best classifier available in \cgal and we strongly advise users
+to use it.
+
+To perform classification based on four classifiers, please refer to \ref Classification_classification_functions.
+
+\subsection Classification_ETHZ_random_forest ETHZ Random Forest
+
+\cgal provides [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier),
+a classifier based on the Random Forest Template Library developed by
+Stefan Walk at ETH Zurich \cgalCite{cgal:w-erftl-14} (the library is
+distributed under the MIT license and is included with the \cgal release,
+the user does not have to install anything more). This classifier uses
+a ground truth training set to construct several decision trees that
+are then used to assign a label to each input item.
+
+This classifier cannot be set up by hand and requires a ground truth
+training set. The training algorithm is fast but usually requires a
+high number of inliers. The training algorithm uses more memory at
+runtime and the configuration files are larger than those produced by
+[Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier), but the
+output quality is usually significantly better, especially in the
+cases where many labels are used (more than five).
+
+An [example](\ref Classification_example_ethz_random_forest) shows how to
+use this classifier. For more details about the algorithm, please refer
+to README provided in the [ETH Zurich's code archive](https://ethz.ch/content/dam/ethz/special-interest/baug/igp/photogrammetry-remote-sensing-dam/documents/sourcecode-and-datasets/Random%20Forest/rforest.zip).
+
+\subsubsection Classification_ETHZ_random_forest_deprecated Deprecated IO
+
+The IO functions of this classifier were changed in \cgal
+5.2. Configurations generated from previous versions are not valid
+anymore and should be converted first as shown in the following example:
+
+\cgalExample{Classification/example_deprecated_conversion.cpp}
+
+\subsection Classification_OpenCV_random_forest OpenCV Random Forest
+
+The second classifier is [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier).
+It uses the \ref thirdpartyOpenCV library, more specifically the
+[Random Trees](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+package.
+
+Note that this classifier usually produces results with a lower
+quality than [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier).
+It is provided for the sake of completeness and for testing purposes,
+but if you are not sure what to use, we advise using the ETHZ Random
+Forest instead.
+
+An [example](\ref Classification_example_opencv_random_forest) shows how to
+use this classifier. For more details about the algorithm, please refer
+to [the official documentation](https://docs.opencv.org/2.4/modules/ml/doc/random_trees.html)
+of OpenCV.
+
+\subsection Classification_sowf Sum of Weighted Features
+
+This latest classifier defines the following attributes:
+
+- a weight applied to each feature;
+- an effect applied to each pair of feature and label.
+
+For each label, the classifier computes an energy as a sum of features normalized with both their weight and the effect they have on this specific label.
+
+The main advantage of this classifier is that it can be set up by hand. Nevertheless, it also embeds a training algorithm.
+
+\subsubsection Classification_sowf_weights_effects Weights and Effects
+
+Each feature is assigned a weight that measures its strength with respect to the other features.
+
+Each pair of feature and label is assigned an effect that can either be:
+
+- [FAVORING](@ref CGAL::Classification::Sum_of_weighted_features_classifier::FAVORING): the label is favored by high values of the feature;
+- [NEUTRAL](@ref CGAL::Classification::Sum_of_weighted_features_classifier::NEUTRAL): the label is not affected by the feature;
+- [PENALIZING](@ref CGAL::Classification::Sum_of_weighted_features_classifier::PENALIZING): the label is favored by low values of the feature.
+
+For example, _vegetation_ is expected to have a high distance to plane and have a color close to green (if colors are available); _facades_ have a low distance to plane and a low verticality; etc.
+
+Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the number of input items and \f$x_i\f$ the class of the \f$i^{th}\f$ item (for example: _vegetation_, _ground_, etc.). Let \f$f_j(i)\f$ be the raw value of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item and \f$w_j\f$ be the weight of this feature. We define the normalized value \f$F_j(x_i) \in [0:1]\f$ of the \f$j^{th}\f$ feature at the \f$i^{th}\f$ item as follows:
+
+\f{eqnarray*}{
+    F_j(x_i) = & (1 - \min(\max(0,\frac{f_j(i)}{w_j}), 1)) & \mbox{if } f_j \mbox{ favors } x_i \\
+    & 0.5 & \mbox{if } f_j \mbox{ is neutral for } x_i \\
+    & \min(\max(0,\frac{f_j(i)}{w_j}), 1) & \mbox{if } f_j \mbox{ penalizes } x_i
+    \f}
+
+The itemwise energy measures the coherence of the label \f$x_i\f$ at
+the \f$i^{th}\f$ item and is defined as:
+
+\f[
+  E_{di}(x_i) = \sum_{j = 1..N_f} F_j(x_i)
+\f]
+
+
+The following code snippet shows how to define the weights and effects of features and labels:
+
+\snippet Classification/example_classification.cpp Weights
+
+\subsubsection Classification_sowf_training Training
+
+Each feature has a specific weight and each pair of feature-label has a specific effect. This means that the number of parameters to set up can quickly explode: if 6 features are used to classify between 4 labels, 30 parameters have to be set up (6 weights + 6x4 feature-label relationships).
+
+Though it is possible to set them up one by one, \cgal also provides a method [train()](@ref CGAL::Classification::Sum_of_weighted_features_classifier::train)  that requires a small set of ground truth items provided by users. More specifically, users must provide, for each label they want to classify, a set of known inliers among the input data set (for example, selecting one roof, one tree and one section of the ground). The training algorithm works as follows:
+
+- for each feature, a range of weights is tested: the effect each feature has on each label is estimated. For a given weight, if a feature has the same effect on each label, it is non-relevant for classification. The range of weights such that the feature is relevant is estimated;
+
+- for each feature, uniformly picked weight values are tested and their effects are estimated;
+
+- each inlier provided by the user is classified using this set of weights and effects;
+
+- the mean intersection-over-union (see @ref Classification_evaluation) is used to evaluate the quality of this set of weights and effects;
+
+- the same mechanism is repeated until all features' ranges have been tested. Weights are only changed one by one, the other ones are kept to the values that gave the latest best score.
+
+This usually converges to a satisfying solution (see Figure \cgalFigureRef{Classification_trainer_fig}). The number of trials is user defined, set to 300 by default. Using at least 10 times the number of features is advised (for example, at least 300 iterations if 30 features are used). If the solution is not satisfying, more inliers can be selected, for example, in a region that the user identifies as misclassified with the current configuration. The training algorithm keeps, as initialization, the best weights found at the previous round and carries on trying new weights by taking new inliers into account.
+
+\cgalFigureBegin{Classification_trainer_fig,classif_training.png}
+Example of evolution of the mean intersection-over-union. The purple curve is the score computed at the current iteration, green curve is the best score found so far.
+\cgalFigureEnd
+
+\subsubsection Classification_sowf_result Result
+
+Figure \cgalFigureRef{Classification_sowf_result_fig} shows an example of output on a defect-laden point set. The accuracy on this example is 0.97 with a mean intersection-over-union of 0.85 (see section \ref Classification_evaluation).
+
+\cgalFigureBegin{Classification_sowf_result_fig,noise_outliers.png}
+Example of classification on a point set with medium noise and outliers (left: input, right: output). _Ground_ is orange, _roofs_ are pink, _vegetation_ is green. Outliers are classified with an additional label _outlier_ in black.
+\cgalFigureEnd
+
+\section Classification_classification_functions Classification Functions
+
+%Classification is performed by minimizing an energy over the input data set that may include regularization. \cgal provides three different methods for classification, ranging from high speed / low quality to low speed / high quality:
+
+- `CGAL::Classification::classify()`
+- `CGAL::Classification::classify_with_local_smoothing()`
+- `CGAL::Classification::classify_with_graphcut()`
+
+On a point set of 3 millions of points, the first method takes about 4 seconds, the second about 40 seconds and the third about 2 minutes.
+
+\cgalFigureBegin{Classification_image,classif.png}
+Top-Left: input point set. Top-Right: raw output classification represented by a set of colors (_ground_ is orange, _facades_ are blue, _roofs_ are pink and _vegetation_ is green). Bottom-Left: output classification using local smoothing. Bottom-Right: output classification using graphcut.
+\cgalFigureEnd
+
+
+Mathematical details are provided hereafter.
+
+\subsection Classification_classify Raw Classification
+
+- `CGAL::Classification::classify()`: this is the fastest method
+that provides acceptable but usually noisy results (see Figure
+\cgalFigureRef{Classification_image}, top-right).
+
+Let \f$x=(x_i)_{i=1..N}\f$ be a potential classification result with \f$N\f$ the number of input items and \f$x_i\f$ the label of the \f$i^{th}\f$ item (for example: _vegetation_, _ground_, etc.). The classification is performed by minimizing the following energy:
+
+\f[
+  E(x) = \sum_{i = 1..N} E_{di}(x_i)
+\f]
+
+This energy is a sum of itemwise energies provided by the classifier and involves no regularization.
+
+The following snippet shows how to classify points based on a label
+set and a classifier. The result is stored in `label_indices`,
+following the same order as the input set and providing for each point
+the index (in the label set) of its assigned label.
+
+\snippet Classification/example_classification.cpp Classify
+
+\subsection Classification_smoothing Local Regularization
+
+- `CGAL::Classification::classify_with_local_smoothing()`: this
+method is a tradeoff between quality and efficiency (see Figure
+\cgalFigureRef{Classification_image}, bottom-left). The minimized
+energy is defined as follows:
+
+
+\f[
+  E(x) = \sum_{i = 1..N} E_{si}(x_i)
+\f]
+
+The energy \f$E_{si}(x_i)\f$ is defined on a small local neighborhood
+\f$Nb(i)\f$ of the \f$i^{th}\f$ item (including itself):
+
+\f[
+  E_{si}(x_i) = \frac{\sum_{k \in Nb(i)} E_{di}(x_k)}{\left| Nb(i) \right|}
+\f]
+
+This allows to eliminate local noisy variations of assigned
+labels. Increasing the size of the neighborhood
+increases the noise reduction at the cost of higher computation times.
+
+The following snippet shows how to classify points using local
+smoothing by providing a model of `CGAL::Classification::NeighborQuery`.
+
+\snippet Classification/example_classification.cpp Smoothing
+
+\subsection Classification_graphcut Global Regularization (Graph Cut)
+
+- `CGAL::Classification::classify_with_graphcut()`: this method
+offers the best quality but requires longer computation time (see
+Figure \cgalFigureRef{Classification_image}, bottom-right). The
+total energy that is minimized is the sum of the partial data term
+\f$E_{di}(x_i)\f$ and of a pairwise interaction energy defined by the
+standard Potts model \cgalCite{cgal:l-mrfmi-09} :
+
+\f[
+  E(x) = \sum_{i = 1..N} E_{di}(x_i) + \gamma \sum_{i \sim j} \mathbf{1}_{x_i \neq x_j}
+\f]
+
+where \f$\gamma>0\f$ is the parameter of the Potts model that
+quantifies the strengh of the regularization, \f$i \sim j\f$
+represents the pairs of neighboring items and
+\f$\mathbf{1}_{\{.\}}\f$ the characteristic function.
+
+A _graph cut_ based algorithm (alpha expansion) is used to quickly reach
+an approximate solution close to the global optimum of this energy.
+
+This method allows to consistently segment the input data set in
+piecewise constant parts and to correct large wrongly classified
+clusters. Increasing \f$\gamma\f$ produces more regular result with a
+constant computation time.
+
+To speed up computations, the input domain can be subdivided into
+smaller subsets such that several smaller graph cuts are applied
+instead of a big one. The computation of these smaller graph cuts can
+be done in parallel. Increasing the number of subsets allows for
+faster computation times but can also reduce the quality of the
+results.
+
+The following snippet shows how to classify points using a graph cut
+regularization providing a model of
+`CGAL::Classification::NeighborQuery`, a strengh parameter
+\f$\gamma\f$ and a number of subdivisions.
+
+\snippet Classification/example_classification.cpp Graph_cut
+
+\section Classification_evaluation Evaluation
+
+The class [Evaluation](@ref CGAL::Classification::Evaluation) allows
+users to evaluate the reliability of the classification with respect
+to a provided ground truth. The following measurements are available:
+
+- [precision()](@ref CGAL::Classification::Evaluation::precision) computes, for one label, the ratio of true positives over the total number of detected positives;
+- [recall()](@ref CGAL::Classification::Evaluation::recall) computes, for one label, the ratio of true positives over the total number of provided inliers of this label;
+- [f1_score()](@ref CGAL::Classification::Evaluation::f1_score) is the harmonic mean of precision and recall;
+- [intersection_over_union()](@ref CGAL::Classification::Evaluation::intersection_over_union) computes the ratio of true positives over the union of the detected positives and of the provided inliers;
+- [accuracy()](@ref CGAL::Classification::Evaluation::accuracy) computes the ratio of all true positives over the total number of provided inliers;
+- [mean_f1_score()](@ref CGAL::Classification::Evaluation::mean_f1_score);
+- [mean_intersection_over_union()](@ref CGAL::Classification::Evaluation::mean_intersection_over_union).
+
+All these values range from 0 (poor quality) to 1 (perfect quality).
+
+\section Classification_examples Full Examples
+
+\subsection Classification_example_general Simple Point Set Classification
+
+The following example:
+
+- reads an input file (LIDAR point set in PLY format);
+- computes useful structures from this input;
+- computes features from the input and the precomputed structures;
+- defines 3 labels (_vegetation_, _ground_ and _roof_);
+- sets up the classification classifier [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier);
+- classifies the point set with the 3 different methods (this is for
+the sake of the example: each method overwrites the previous result,
+users should only call one of the methods);
+- saves the result in a colored PLY format.
+
+\cgalExample{Classification/example_classification.cpp}
+
+\subsection Classification_example_feeature Defining a Custom Feature
+
+The following example shows how to define a custom feature and how to integrate it in the \cgal classification framework.
+
+\cgalExample{Classification/example_feature.cpp}
+
+\subsection Classification_example_training Feature Generation and Training
+
+The following example:
+
+- reads a point set with a training set (embedded as a PLY feature _label_);
+- automatically generates features on 5 scales;
+- trains the classifier [Sum_of_weighted_features_classifier](@ref CGAL::Classification::Sum_of_weighted_features_classifier) using 800 trials;
+- runs the algorithm using the graphcut regularization;
+- prints some evaluation measurements;
+- saves the configuration of the classifier for further use.
+
+\cgalExample{Classification/example_generation_and_training.cpp}
+
+\subsection Classification_example_ethz_random_forest ETHZ Random Forest
+
+The following example shows how to use the classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier) using an input training set.
+
+\cgalExample{Classification/example_ethz_random_forest.cpp}
+
+\subsection Classification_example_opencv_random_forest OpenCV Random Forest
+
+The following example shows how to use the classifier [OpenCV::Random_forest_classifier](@ref CGAL::Classification::OpenCV::Random_forest_classifier) using an input training set.
+
+\cgalExample{Classification/example_opencv_random_forest.cpp}
+
+\subsection Classification_example_mesh Mesh Classification
+
+The following example:
+
+- reads a mesh in OFF format;
+- automatically generates features on 5 scales;
+- loads a configuration file for classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier);
+- runs the algorithm using the graphcut regularization.
+
+\cgalExample{Classification/example_mesh_classification.cpp}
+
+\subsection Classification_example_cluster Cluster Classification
+
+The following example:
+
+- reads a point set in PLY format;
+- estimates the normal vectors of the point set;
+- automatically generates pointwise features on 5 scales;
+- detects plane using the algorithm `CGAL::Shape_detection::Region_growing`;
+- creates [Cluster](@ref CGAL::Classification::Cluster) objects from these detected planes;
+- computes cluster features from the pointwise features;
+- loads a configuration file for classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier);
+- runs the algorithm using the raw algorithm.
+
+\cgalExample{Classification/example_cluster_classification.cpp}
+
+
+\section Classification_history History
+
+This package is based on a research code by [Florent Lafarge](https://www-sop.inria.fr/members/Florent.Lafarge/) that was generalized, extended and packaged by [Simon Giraudot](http://geometryfactory.com/who-we-are/) in \cgal 4.12. %Classification of surface meshes and of clusters were introduced in \cgal 4.13. The Neural Network classifier was introduced in \cgal 4.14.
+
+
+
+*/
+} /* namespace CGAL */

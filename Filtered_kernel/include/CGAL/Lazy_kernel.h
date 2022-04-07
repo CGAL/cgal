@@ -1,19 +1,11 @@
 // Copyright (c) 2005,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
@@ -23,6 +15,7 @@
 
 #include <CGAL/basic.h>
 //#include <CGAL/Filtered_predicate.h>
+#include <CGAL/Static_filtered_predicate.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
@@ -31,7 +24,8 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_2.h>
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Lazy.h>
-
+#include <CGAL/Filtered_kernel/internal/Static_filters/tools.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <boost/none.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/or.hpp>
@@ -68,8 +62,8 @@ public:
 };
 
 template<typename T>
-struct Has_result_type 
-  : boost::integral_constant< bool, 
+struct Has_result_type
+  : boost::integral_constant< bool,
                               Has_result_type_helper< typename boost::remove_cv<T>::type>::value>
 {};
 
@@ -79,15 +73,15 @@ struct Get_result_type {
 };
 
 template <typename T>
-struct Lazy_result_type 
-  : boost::mpl::eval_if< Has_result_type<T>, 
-                         Get_result_type<T>, 
-                         boost::mpl::identity<void> > 
+struct Lazy_result_type
+  : boost::mpl::eval_if< Has_result_type<T>,
+                         Get_result_type<T>,
+                         boost::mpl::identity<void> >
 {};
 
 class Enum_holder {
 protected:
-  enum { NONE, NT, VARIANT, OBJECT, BBOX };
+  enum { NONE, NT, VARIANT, OBJECT, BBOX, OPTIONAL_ };
 };
 
 } // internal
@@ -108,6 +102,8 @@ public:
   typedef EK_   Exact_kernel;
   typedef E2A_  E2A;
   typedef Kernel_ Kernel;
+
+  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_> Self;
 
   // synonym identical to Filtered_kernel
   typedef AK_   FK;
@@ -141,25 +137,25 @@ public:
   typedef FT RT;
 
   typedef typename Same_uncertainty_nt<bool, FT>::type
-	                                                              Boolean;
+                                                                      Boolean;
   typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
-	                                                              Sign;
+                                                                      Sign;
   typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
-	                                                              Comparison_result;
+                                                                      Comparison_result;
   typedef typename Same_uncertainty_nt<CGAL::Orientation, FT>::type
-		                                                      Orientation;
+                                                                      Orientation;
   typedef typename Same_uncertainty_nt<CGAL::Oriented_side, FT>::type
-	                                                              Oriented_side;
+                                                                      Oriented_side;
   typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type
-	                                                              Bounded_side;
+                                                                      Bounded_side;
   typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
-	                                                              Angle;
+                                                                      Angle;
 
   typedef CGAL::Object Object_2;
   typedef CGAL::Object Object_3;
 
 #define CGAL_Kernel_obj(X) \
-  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, typename Exact_kernel::FT, E2A>  X;
+  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, E2A>  X;
 
   CGAL_Kernel_obj(Data_accessor_2)
   CGAL_Kernel_obj(Conic_2)
@@ -178,50 +174,47 @@ private:
   // We use a combination of partial and logic to extract the right
   // construction. Constructions without a result_type always have to
   // be done through specializations.
-  // 
-  // The case distinction goes as follows: 
+  //
+  // The case distinction goes as follows:
   // result_type == FT                              => NT
   // result_type == Object                          => Object
+  // result_type == boost::optional                 => OPTIONAL_    Only for Intersect_point_3_for_polyhedral_envelope which returns a handle for a singleton
   // result_type == Bbox_2 || result_type == Bbox_3 => BBOX
   // default                                        => NONE
   // no result_type                                 => NONE
-  // 
+  //
   //
   // we require a Dummy because we cannot have complete
   // specializations inside a non-namespace scope.
   // The default implementation does some default handling,
   // the special cases are filtered by partial specializations.
   template <typename Construction, typename Dummy = boost::none_t>
-  struct Lazy_wrapper_traits : 
+  struct Lazy_wrapper_traits :
     boost::mpl::eval_if< internal::Has_result_type<Construction>,
-                         boost::mpl::eval_if< boost::is_same< typename boost::remove_cv< 
-                                                                typename boost::remove_reference< 
-                                                                  typename internal::Lazy_result_type<Construction>::type 
+                         boost::mpl::eval_if< boost::is_same< typename boost::remove_cv<
+                                                                typename boost::remove_reference<
+                                                                  typename internal::Lazy_result_type<Construction>::type
                                                                   >::type >::type,
                                                               typename Approximate_kernel::FT>,
                                               boost::mpl::int_<NT>,
                                               boost::mpl::eval_if< boost::is_same< typename internal::Lazy_result_type<Construction>::type,
                                                                                    CGAL::Object >,
                                                                    boost::mpl::int_<OBJECT>,
-                                                                   boost::mpl::eval_if< boost::mpl::or_< 
-                                                                                          boost::is_same< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_2 >, 
+                                                                   boost::mpl::eval_if< boost::mpl::or_<
+                                                                                          boost::is_same< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_2 >,
                                                                                           boost::is_same< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_3 > >,
                                                                                         boost::mpl::int_<BBOX>,
                                                                                         boost::mpl::int_<NONE> > > >,
                          boost::mpl::int_<NONE> >::type {};
-  
+
 #define CGAL_WRAPPER_TRAIT(NAME, WRAPPER)                               \
   template<typename Dummy>                                              \
   struct Lazy_wrapper_traits<typename Approximate_kernel::NAME, Dummy>  \
     : boost::mpl::int_<WRAPPER> {};
 
-#if CGAL_INTERSECTION_VERSION > 1
   CGAL_WRAPPER_TRAIT(Intersect_2, VARIANT)
   CGAL_WRAPPER_TRAIT(Intersect_3, VARIANT)
-#else
-  CGAL_WRAPPER_TRAIT(Intersect_2, OBJECT)
-  CGAL_WRAPPER_TRAIT(Intersect_3, OBJECT)
-#endif
+  CGAL_WRAPPER_TRAIT(Intersect_point_3_for_polyhedral_envelope, OPTIONAL_)
   CGAL_WRAPPER_TRAIT(Compute_squared_radius_2, NT)
   CGAL_WRAPPER_TRAIT(Compute_x_3, NT)
   CGAL_WRAPPER_TRAIT(Compute_y_3, NT)
@@ -261,18 +254,28 @@ private:
     template<typename Kernel, typename AKC, typename EKC>
     struct apply { typedef Lazy_construction_bbox<Kernel, AKC, EKC> type; };
   };
-  
+
+  template <typename Construction>
+  struct Select_wrapper_impl<Construction, OPTIONAL_> {
+    template<typename Kernel, typename AKC, typename EKC>
+    struct apply { typedef Lazy_construction_optional_for_polygonal_envelope<Kernel, AKC, EKC> type; };
+  };
+
   template <typename Construction>
   struct Select_wrapper : Select_wrapper_impl<Construction> {};
 
 public:
 
-  // We don't touch the predicates.
-  // FIXME TODO : better use a layer of Filtered_kernel on top of everything,
-  //              so that semi-static filters are used as well (?).
-#define CGAL_Kernel_pred(P, Pf)  \
+
+#ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
+#define CGAL_Kernel_pred(P, Pf)                                         \
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
     P Pf() const { return P(); }
+#else
+#define CGAL_Kernel_pred(P, Pf)  \
+  typedef Static_filtered_predicate<Approximate_kernel, Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F>, Exact_predicates_inexact_constructions_kernel::P> P; \
+    P Pf() const { return P(); }
+#endif
 
 #define CGAL_Kernel_cons(C, Cf) \
   typedef typename Select_wrapper<typename Approximate_kernel::C>::template apply<Kernel, typename Approximate_kernel::C, typename Exact_kernel::C>::type C; \
@@ -280,6 +283,10 @@ public:
 
 #include <CGAL/Kernel/interface_macros.h>
 };
+
+
+
+
 
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
 class Lazy_kernel_base
@@ -291,6 +298,7 @@ public:
   typedef EK_   Exact_kernel;
   typedef E2A_  E2A;
 
+  typedef Lazy_kernel_generic_base<EK_, AK_, E2A_, Kernel_> BaseClass;
   template < typename Kernel2 >
   struct Base { typedef Lazy_kernel_base<Exact_kernel, Approximate_kernel, E2A, Kernel2>  Type; };
 
@@ -306,6 +314,272 @@ public:
 
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
+
+
+
+  struct Compute_weight_2 : public BaseClass::Compute_weight_2
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_2 Point_2;
+    typedef typename Kernel_::Weighted_point_2 Weighted_point_2;
+
+    FT operator()(const Weighted_point_2& p) const
+    {
+
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         true,
+                         Return_base_tag,
+                         Point_2,
+                         FT
+                         > LR;
+
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         true,
+                         Return_base_tag,
+                         Point_2,
+                         int
+                         > LRint;
+
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
+        if(lr->is_lazy()){
+          // Another thread could reset lr->l before this line, so we disable reset for Construct_weighted_point_2 in MT-mode.
+          // We could also always disable reset for Construct_weighted_point_2 and return lr->l here even if update_exact has run.
+          return std::get<2>(lr->l);
+        }
+      }else{
+        if(tn == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
+          if(lrint->is_lazy()){
+            return std::get<2>(lrint->l);
+          }
+        }
+      }
+
+      return BaseClass().compute_weight_2_object()(p);
+    }
+
+  };
+
+
+  struct Compute_weight_3 : public BaseClass::Compute_weight_3
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_3 Point_3;
+    typedef typename Kernel_::Weighted_point_3 Weighted_point_3;
+
+    FT operator()(const Weighted_point_3& p) const
+    {
+
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         true,
+                         Return_base_tag,
+                         Point_3,
+                         FT
+                         > LR;
+
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         true,
+                         Return_base_tag,
+                         Point_3,
+                         int
+                         > LRint;
+
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
+        if(lr->is_lazy()){
+          return std::get<2>(lr->l);
+        }
+      }else{
+        if(tn == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
+          if(lrint->is_lazy()){
+            return std::get<2>(lrint->l);
+          }
+        }
+      }
+
+      return BaseClass().compute_weight_3_object()(p);
+    }
+
+  };
+
+
+  struct Construct_point_2 : public BaseClass::Construct_point_2
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_2 Point_2;
+    typedef typename Kernel_::Weighted_point_2 Weighted_point_2;
+
+    using BaseClass::Construct_point_2::operator();
+
+    const Point_2& operator()(const Point_2& p) const
+    {
+      return p;
+    }
+
+
+    Point_2 operator()(const Weighted_point_2& p) const
+    {
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         true,
+                         Return_base_tag,
+                         Point_2,
+                         FT
+                         > LR;
+
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
+                         typename Exact_kernel::Weighted_point_2,
+                         typename Approximate_kernel::Construct_weighted_point_2,
+                         typename Exact_kernel::Construct_weighted_point_2,
+                         E2A_,
+                         true,
+                         Return_base_tag,
+                         Point_2,
+                         int
+                         > LRint;
+
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
+        if(lr->is_lazy()){
+          return std::get<1>(lr->l);
+        }
+      }else{
+        if(tn == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
+          if(lrint->is_lazy()){
+            return std::get<1>(lrint->l);
+          }
+        }
+      }
+
+      return BaseClass().construct_point_2_object()(p);
+    }
+
+  };
+
+
+
+  struct Construct_point_3 : public BaseClass::Construct_point_3
+  {
+    typedef typename Kernel_::FT FT;
+    typedef typename Kernel_::Point_3 Point_3;
+    typedef typename Kernel_::Weighted_point_3 Weighted_point_3;
+
+    using BaseClass::Construct_point_3::operator();
+
+    const Point_3& operator()(const Point_3& p) const
+    {
+      return p;
+    }
+
+    Point_3 operator()(const Weighted_point_3& p) const
+    {
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         true,
+                         Return_base_tag,
+                         Point_3,
+                         FT
+                         > LR;
+
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
+                         typename Exact_kernel::Weighted_point_3,
+                         typename Approximate_kernel::Construct_weighted_point_3,
+                         typename Exact_kernel::Construct_weighted_point_3,
+                         E2A_,
+                         true,
+                         Return_base_tag,
+                         Point_3,
+                         int
+                         > LRint;
+
+      auto& obj = *p.ptr();
+      const char* tn = typeid(obj).name();
+
+      if(tn == typeid(LR).name()){
+        LR * lr = static_cast<LR*>(p.ptr());
+        if(lr->is_lazy()){
+          return std::get<1>(lr->l);
+        }
+      }else{
+        if(tn == typeid(LRint).name()){
+          LRint* lrint = static_cast<LRint*>(p.ptr());
+          if(lrint->is_lazy()){
+            return std::get<1>(lrint->l);
+          }
+        }
+      }
+
+      return BaseClass().construct_point_3_object()(p);
+    }
+
+  };
+
+
+  struct Less_xyz_3 : public BaseClass::Less_xyz_3
+  {
+    typedef typename Kernel_::Point_3 Point_3;
+
+    bool operator()(const Point_3& p, const Point_3& q) const
+    {
+      if (p.rep().identical(q.rep())) { return false; }
+      return BaseClass::Less_xyz_3::operator()(p,q);
+    }
+  };
+
+  Construct_point_2 construct_point_2_object() const
+  {
+    return Construct_point_2();
+  }
+
+  Construct_point_3 construct_point_3_object() const
+  {
+    return Construct_point_3();
+  }
+
+
+  Compute_weight_2 compute_weight_2_object() const
+  {
+    return Compute_weight_2();
+  }
+
+  Compute_weight_3 compute_weight_3_object() const
+  {
+    return Compute_weight_3();
+  }
 
   Assign_2
   assign_2_object() const
@@ -338,15 +612,12 @@ public:
   Compute_approximate_area_3
   compute_approximate_area_3_object() const
   { return Compute_approximate_area_3(); }
+
+  Less_xyz_3
+  less_xyz_3_object() const
+  { return Less_xyz_3(); }
 }; // end class Lazy_kernel_base<EK_, AK_, E2A_, Kernel_2>
 
-#ifndef CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
-#  ifdef CGAL_NO_STATIC_FILTERS
-#    define CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT false
-#  else 
-#    define CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT true
-#  endif
-#endif
 
 template <class Exact_kernel, class Approximate_kernel, class E2A>
 struct Lazy_kernel_without_type_equality
@@ -354,22 +625,12 @@ struct Lazy_kernel_without_type_equality
 {};
 
 template <class Exact_kernel,
-	  class Approximate_kernel = Simple_cartesian<Interval_nt_advanced>,
-          class E2A = Cartesian_converter<Exact_kernel, Approximate_kernel>,
-          bool UseStaticFilters = CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT >
+          class Approximate_kernel = Simple_cartesian<Interval_nt_advanced>,
+          class E2A = Cartesian_converter<Exact_kernel, Approximate_kernel> >
 struct Lazy_kernel
   : public Type_equality_wrapper<
-             Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A,
-                               Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, UseStaticFilters> >,
-             Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, UseStaticFilters> >
-{};
-
-template <class Exact_kernel, class Approximate_kernel, class E2A>
-struct Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true>
-  : public internal::Static_filters<
-      Type_equality_wrapper<
-        Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true> > ,
-        Lazy_kernel<Exact_kernel, Approximate_kernel, E2A, true> >, false >
+             Lazy_kernel_base< Exact_kernel, Approximate_kernel, E2A, Lazy_kernel<Exact_kernel, Approximate_kernel, E2A> >,
+             Lazy_kernel<Exact_kernel, Approximate_kernel, E2A> >
 {
 // WARNING: If you change the definition of Lazy_kernel, then you need to
 // change also the definition of Epeck in

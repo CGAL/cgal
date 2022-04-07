@@ -3,24 +3,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Steve OUDOT, Laurent RINEAU
 
 #ifndef CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H
 #define CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H
+
+#include <CGAL/license/Surface_mesher.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
@@ -99,9 +95,9 @@ namespace CGAL {
     */
 
   namespace {
-    
+
   template <typename T>
-  struct Return_min : std::binary_function<T, T, T>
+  struct Return_min : CGAL::cpp98::binary_function<T, T, T>
   {
     T operator()(const T& a, const T& b) const
     {
@@ -114,9 +110,9 @@ namespace CGAL {
   template <
     class GT,
     class Surface,
-    class Transform_functor_ = 
+    class Transform_functor_ =
       typename Real_embeddable_traits<typename Surface::FT>::Sgn,
-    class Surface_identifiers_generator_ = 
+    class Surface_identifiers_generator_ =
       Return_min<typename Transform_functor_::result_type>,
     class Point_creator = Creator_uniform_3<typename GT::FT,
                                             typename GT::Point_3>,
@@ -150,7 +146,7 @@ namespace CGAL {
 
     typedef Transform_functor_ Transform_functor;
     typedef Surface_identifiers_generator_ Surface_identifiers_generator;
-    
+
     typedef Point_3 Intersection_point;
 
     typedef Surface Surface_3;
@@ -169,7 +165,7 @@ namespace CGAL {
 
     // Constructors
 //     Implicit_surface_oracle_3 (Visitor visitor_ = Visitor()) :
-//       visitor(visitor_), 
+//       visitor(visitor_),
 //       transform_functor(),
 //       surface_identifiers_generator()
 //     {
@@ -184,7 +180,7 @@ namespace CGAL {
                                  surface_identifiers_generator
                                    = Surface_identifiers_generator(),
                                Visitor visitor_ = Visitor()) :
-      visitor(visitor_), 
+      visitor(visitor_),
       transform_functor(transform_functor),
       surface_identifiers_generator(surface_identifiers_generator)
     {
@@ -193,7 +189,7 @@ namespace CGAL {
 #endif
     }
 
-    class Intersect_3 
+    class Intersect_3
     {
       Visitor visitor;
       Transform_functor transform_functor;
@@ -232,8 +228,8 @@ namespace CGAL {
       Object operator()(const Surface_3& surface, Segment_3 s)
       // s is passed by value, because it is clipped below
       {
-	CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3)");
-	CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3)");
+        CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3)");
+        CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3)");
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
 
@@ -246,7 +242,7 @@ namespace CGAL {
         Point_3 b = point_on(s, 1);
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_IMPLICIT_ORACLE
-        std::cerr << 
+        std::cerr <<
           boost::format("** Implicit_surface_oracle_3::operator()( (%1%), (%2%) )\n")
           % a % b;
 #endif
@@ -270,8 +266,8 @@ namespace CGAL {
       } // end operator()(Surface_3, Segment_3)
 
       Object operator()(const Surface_3& surface, const Ray_3& r) {
-	CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Ray_3)");
-	CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Ray_3)");
+        CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Ray_3)");
+        CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Ray_3)");
         typename Sphere_oracle::Intersect_3 clip =
           Sphere_oracle().intersect_3_object();
 
@@ -290,8 +286,8 @@ namespace CGAL {
       } // end operator()(Surface_3, Ray_3)
 
       Object operator()(const Surface_3& surface, const Line_3& l) {
-	CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Line_3)");
-	CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Line_3)");
+        CGAL_SURFACE_MESHER_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Line_3)");
+        CGAL_SURFACE_MESHER_TIME_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Line_3)");
         typename Sphere_oracle::Intersect_3 clip =
           Sphere_oracle().intersect_3_object();
 
@@ -311,10 +307,10 @@ namespace CGAL {
 
       // debug function
       std::string debug_point(const Surface_3& surface,
-                              const Point& p) 
+                              const Point& p)
       {
         std::stringstream s;
-        s << p << " (distance=" 
+        s << p << " (distance="
           << CGAL::sqrt(CGAL::squared_distance(p,
                                  surface.bounding_sphere().center()))
           << ", value=" << surf_equation(surface, p)
@@ -323,7 +319,7 @@ namespace CGAL {
       }
 
       result_type surf_equation (const Surface_3& surface,
-                                 const Point& p) 
+                                 const Point& p)
       {
         return transform_functor(surface(p));
       } // @TODO, @WARNING: we use x(), y() and z()
@@ -339,7 +335,7 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
         std::cerr << "clipped_segment( ("  << p1 << "), (" << p2 << ") )\n";
 #endif
-        typename GT::Compute_squared_distance_3 squared_distance = 
+        typename GT::Compute_squared_distance_3 squared_distance =
           GT().compute_squared_distance_3_object();
         typename GT::Construct_midpoint_3 midpoint =
           GT().construct_midpoint_3_object();
@@ -354,12 +350,12 @@ namespace CGAL {
           return Object();
 
 #ifdef CGAL_SURFACE_MESHER_PROFILE
-	int steps = 0;
+        int steps = 0;
 #endif
         while(true)
         {
 #ifdef CGAL_SURFACE_MESHER_PROFILE
-	  ++steps;
+          ++steps;
 #endif
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CLIPPED_SEGMENT
           std::cerr << debug_point(surface, p1) << ", "
@@ -377,12 +373,12 @@ namespace CGAL {
 #endif
             // the following function conditionnally call
             // mid.set_on_surface(...) if mid has such a function.
-            set_on_surface(mid, 
+            set_on_surface(mid,
                            surface_identifiers_generator(value_at_p1,
                                                          value_at_p2));
 
             visitor.new_point(mid);
-	    CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3) bissection steps", steps)
+            CGAL_SURFACE_MESHER_HISTOGRAM_PROFILER("Implificit_surface_oracle::Intersect_3::operator(Segment_3) bissection steps", steps)
             return make_object(mid);
           }
 
@@ -409,16 +405,16 @@ namespace CGAL {
       Construct_initial_points(const Self& oracle) : oracle(oracle)
       {
       }
-      
+
       // Random points
       template <typename OutputIteratorPoints>
-      OutputIteratorPoints operator() (const Surface_3& surface, 
-                                       OutputIteratorPoints out, 
+      OutputIteratorPoints operator() (const Surface_3& surface,
+                                       OutputIteratorPoints out,
                                        int n = 20) // WARNING: why 20?
       {
         const Sphere_3& sphere = surface.bounding_sphere();
         const Point initial_center = GT().construct_center_3_object()(sphere);
-        const FT squared_radius = 
+        const FT squared_radius =
           GT().compute_squared_radius_3_object()(sphere);
         const FT radius = CGAL::sqrt(squared_radius);
         typename Self::Intersect_3 intersect = oracle.intersect_3_object();
@@ -427,7 +423,7 @@ namespace CGAL {
           Point_creator> random_point_on_sphere(CGAL::to_double(radius));
         typename CGAL::Random_points_in_sphere_3<Point,
           Point_creator> random_point_in_sphere(CGAL::to_double(radius));
-        typename GT::Construct_segment_3 segment_3 = 
+        typename GT::Construct_segment_3 segment_3 =
           GT().construct_segment_3_object();
         typename GT::Construct_vector_3 vector_3 =
           GT().construct_vector_3_object();
@@ -435,13 +431,13 @@ namespace CGAL {
           GT().construct_translated_point_3_object();
 
         Point center = initial_center;
-        while (n>0) 
+        while (n>0)
         {
           const Point p = translate(*random_point_on_sphere++,
                                     vector_3(CGAL::ORIGIN, initial_center));
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INITIAL_POINTS
-          std::cerr << "test " 
+          std::cerr << "test "
                     << intersect.debug_point(surface, center)
                     << ", " << intersect.debug_point(surface, p);
 #endif
@@ -480,7 +476,7 @@ namespace CGAL {
     Intersect_3 intersect_3_object() const
     {
       return Intersect_3(visitor,
-                         transform_functor, 
+                         transform_functor,
                          surface_identifiers_generator);
     }
 
@@ -491,14 +487,10 @@ namespace CGAL {
 
   };  // end Implicit_surface_oracle_3
 
-template <typename FT>
-FT approximate_sqrt(const FT x) {
-  return FT (CGAL_NTS sqrt(CGAL_NTS to_double(x)));
-}
-
   }  // namespace Surface_mesher
 
 } // namespace CGAL
 
+#include <CGAL/enable_warnings.h>
 
 #endif  // CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H

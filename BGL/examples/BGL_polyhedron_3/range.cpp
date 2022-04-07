@@ -1,9 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/iterator_range.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <boost/foreach.hpp>
+#include <CGAL/Iterator_range.h>
 
 
 #include <iostream>
@@ -18,7 +15,7 @@ typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator   vertex_iterator;
 
-typedef CGAL::iterator_range<vertex_iterator> vertex_range;
+typedef CGAL::Iterator_range<vertex_iterator> vertex_range;
 
 
 vertex_range vertices_range(const Polyhedron& p)
@@ -37,30 +34,23 @@ struct Fct
 void fct(const Polyhedron& p)
 {
   vertex_range vr(vertices(p));
-  
-#ifndef CGAL_NO_CPP0X_RANGE_BASED_FOR
+
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
   }
-#endif
-  
-  std::cout << "BOOST_FOREACH" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vr){
-    std::cout << vd->point() << std::endl;
-  }
-  
+
   std::cout << "boost::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
-  
+
   boost::tie(vb,ve) = vertices_range(p);
   std::for_each(vb,ve, Fct());
 }
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
-  Polyhedron P;  
-  std::ifstream in(argv[1]);
+  Polyhedron P;
+  std::ifstream in((argc>1)?argv[1]:CGAL::data_file_path("meshes/cube_poly.off"));
   in >> P ;
 
   fct(P);

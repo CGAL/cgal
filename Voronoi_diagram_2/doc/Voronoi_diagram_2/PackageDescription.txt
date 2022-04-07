@@ -1,26 +1,34 @@
-/// \defgroup PkgVoronoiDiagramAdaptor2 2D Voronoi Diagram Adaptor Reference
-/// \defgroup PkgVoronoiDiagramAdaptor2Concepts Concepts
-/// \ingroup PkgVoronoiDiagramAdaptor2
+/// \defgroup PkgVoronoiDiagram2Ref 2D Voronoi Diagram Adaptor Reference
+/// \defgroup PkgVoronoiDiagram2Concepts Concepts
+/// \ingroup PkgVoronoiDiagram2Ref
 
-/// \defgroup PkgVoronoiDiagramAdaptor2Points Voronoi Diagram of Points 
-/// \ingroup PkgVoronoiDiagramAdaptor2
+/// \defgroup PkgVoronoiDiagram2Points Voronoi Diagram of Points
+/// \ingroup PkgVoronoiDiagram2Ref
 
 
-/// \defgroup PkgVoronoiDiagramAdaptor2Segments Voronoi Diagram of Segments
-/// \ingroup PkgVoronoiDiagramAdaptor2
+/// \defgroup PkgVoronoiDiagram2Segments Voronoi Diagram of Segments
+/// \ingroup PkgVoronoiDiagram2Ref
 
-/// \defgroup PkgVoronoiDiagramAdaptor2Disks Voronoi Diagram of Disks
-/// \ingroup PkgVoronoiDiagramAdaptor2
+/// \defgroup PkgVoronoiDiagram2Disks Voronoi Diagram of Disks
+/// \ingroup PkgVoronoiDiagram2Ref
 
 /*!
-\addtogroup PkgVoronoiDiagramAdaptor2
+  \code
+  #include <CGAL/draw_voronoi_diagram_2.h>
+  \endcode
+*/
+/// \defgroup PkgDrawVoronoiDiagram2 Draw a 2D Voronoi Diagram
+/// \ingroup PkgVoronoiDiagram2Ref
+
+/*!
+\addtogroup PkgVoronoiDiagram2Ref
 \todo check generated documentation
-\cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagramAdaptor2Summary}
+\cgalPkgDescriptionBegin{2D Voronoi Diagram Adaptor,PkgVoronoiDiagram2}
 \cgalPkgPicture{voronoi.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Menelaos Karavelas}
 \cgalPkgDesc{The 2D Voronoi diagram adaptor package provides an adaptor that adapts a 2-dimensional triangulated Delaunay graph to the corresponding Voronoi diagram, represented as a doubly connected edge list (DCEL) data structure. The adaptor has the ability to automatically eliminate, in a consistent manner, degenerate features of the Voronoi diagram, that are artifacts of the requirement that Delaunay graphs should be triangulated even in degenerate configurations. Depending on the type of operations that the underlying Delaunay graph supports, the adaptor allows for the incremental or dynamic construction of Voronoi diagrams and can support point location queries. }
-\cgalPkgManuals{Chapter_2D_Voronoi_Diagram_Adaptor,PkgVoronoiDiagramAdaptor2}
+\cgalPkgManuals{Chapter_2D_Voronoi_Diagram_Adaptor,PkgVoronoiDiagram2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
@@ -48,20 +56,20 @@ The three template parameters must be models of the
 The first concept is related to the Delaunay graphs that are to be
 adapted, whereas the second one is responsible for
 manipulating/accessing in a unified way the geometry of a specific
-Voronoi diagram as well as for performing nearest site queries. 
+Voronoi diagram as well as for performing nearest site queries.
 The third template parameter corresponds to the chosen adaptation
 policy and provides the necessary types and functors needed for
 performing this adaptation.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `DelaunayGraph_2`
 - `AdaptationTraits_2`
 - `AdaptationPolicy_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 - `CGAL::Voronoi_diagram_2<DG,AT,AP>`
 - \link CGAL::Voronoi_diagram_2::Halfedge `CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge` \endlink
@@ -80,6 +88,10 @@ performing this adaptation.
 - `CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>`
 - `CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>`
 - `CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>`
+
+\cgalCRPSection{Draw Voronoi Diagram}
+
+- \link PkgDrawVoronoiDiagram2 CGAL::draw<VD>() \endlink
 
 
 */

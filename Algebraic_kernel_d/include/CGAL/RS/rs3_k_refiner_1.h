@@ -1,20 +1,10 @@
 // Copyright (c) 2006-2013 INRIA Nancy-Grand Est (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-
-// See the file LICENSE.LGPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
@@ -22,9 +12,15 @@
 #define CGAL_RS_RS3_K_REFINER_1_H
 
 #include <CGAL/Polynomial_traits_d.h>
+#include "polynomial_converter_1.h"
 #include "rs2_calls.h"
 #include <rs3_fncts.h>
 #include "Gmpfr_make_unique.h"
+
+// If we want assertions, we need to evaluate.
+#ifndef CGAL_NO_PRECONDITIONS
+#include "signat_1.h"
+#endif
 
 namespace CGAL{
 namespace RS3{
@@ -51,8 +47,15 @@ operator()
         typedef Polynomial_traits_d<Polynomial>         Ptraits;
         typedef Ptraits::Degree                         Degree;
         CGAL_precondition(left<=right);
-        // TODO: add precondition to check whether the interval is a point
-        // or the evaluations on its endpoints have different signs
+#ifndef CGAL_NO_PRECONDITIONS
+        typedef Ptraits::Make_square_free               Sfpart;
+        typedef CGAL::RS_AK1::Signat_1<Polynomial,Gmpfr>
+                                                        Signat;
+        Polynomial sfpp=Sfpart()(pol);
+        Signat signof(sfpp);
+        CGAL::Sign sl=signof(left);
+        CGAL_precondition(sl!=signof(right)||(left==right&&sl==ZERO));
+#endif
         //std::cout<<"refining ["<<left<<","<<right<<"]"<<std::endl;
         int deg=Degree()(pol);
         mpz_t* coefficients=(mpz_t*)malloc((deg+1)*sizeof(mpz_t));
@@ -98,12 +101,21 @@ operator()
         typedef Polynomial_traits_d<ZPolynomial>        ZPtraits;
         typedef ZPtraits::Degree                        ZDegree;
         CGAL_precondition(left<=right);
-        // TODO: add precondition to check whether the interval is a point
-        // or the evaluations on its endpoints have different signs
+#ifndef CGAL_NO_PRECONDITIONS
+        typedef ZPtraits::Make_square_free              ZSfpart;
+        typedef CGAL::RS_AK1::Signat_1<ZPolynomial,Gmpfr>
+                                                        Signat;
+#endif
         //std::cout<<"refining ["<<left<<","<<right<<"]"<<std::endl;
         Polynomial<Gmpz> zpol=CGAL::RS_AK1::Polynomial_converter_1<
                                         CGAL::Polynomial<Gmpq>,
                                         CGAL::Polynomial<Gmpz> >()(qpol);
+#ifndef CGAL_NO_PRECONDITIONS
+        ZPolynomial zsfpp=ZSfpart()(zpol);
+        Signat signof(zsfpp);
+        CGAL::Sign sl=signof(left);
+        CGAL_precondition(sl!=signof(right)||(left==right&&sl==ZERO));
+#endif
         int deg=ZDegree()(zpol);
         mpz_t* coefficients=(mpz_t*)malloc((deg+1)*sizeof(mpz_t));
         __mpfi_struct interval;

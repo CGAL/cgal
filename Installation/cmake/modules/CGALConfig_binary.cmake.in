@@ -4,15 +4,68 @@
 # This file is loaded by cmake via the command "find_package(CGAL)"
 #
 # This file correspond to a possibly out-of-sources CGAL configuration, thus the actual location
-# must be given by the cmake variable or enviroment variable CGAL_DIR. 
+# must be given by the cmake variable or environment variable CGAL_DIR.
 
 set(CGAL_CONFIG_LOADED TRUE)
 
+get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
+
+include(CMakeFindDependencyMacro)
+find_dependency(Boost REQUIRED)
+
+# The code for including exported targets is different from
+# CGAL_Config_install.cmake. We do not have separate export files in
+# an installed version and we need to make sure that we are not
+# currently building CGAL.
+if(NOT CGAL_BUILDING_LIBS)
+  include("${CGAL_CONFIG_DIR}/CGALExports.cmake")
+else()
+  # We are currently in a CGAL Build and CGALExports.cmake has not
+  # necessarily been created yet. Just alias the targets. Also don't
+  # access the LOCATION property here to set lib_LIBRARY, since those
+  # targets are not imported and this is disallowed by CMP0026. Just
+  # set it to the target name.
+  macro(CGAL_alias_library lib)
+    if(TARGET ${lib} AND NOT TARGET CGAL::${lib})
+      add_library(CGAL::${lib} ALIAS ${lib})
+    endif()
+  endmacro()
+
+  CGAL_alias_library(CGAL)
+  CGAL_alias_library(CGAL_Core)
+  CGAL_alias_library(CGAL_ImageIO)
+  CGAL_alias_library(CGAL_Qt5)
+endif()
+
+macro(CGAL_set_LIB_LIBRARY_var lib)
+  if(TARGET CGAL::${lib})
+    set(${lib}_LIBRARY CGAL::${lib})
+  else()
+    set(${lib}_LIBRARY "")
+  endif()
+endmacro()
+
+CGAL_set_LIB_LIBRARY_var(CGAL)
+CGAL_set_LIB_LIBRARY_var(CGAL_Core)
+CGAL_set_LIB_LIBRARY_var(CGAL_ImageIO)
+CGAL_set_LIB_LIBRARY_var(CGAL_Qt5)
+
+set(CGAL_CONFIGURED_LIBRARIES "@CGAL_ACTUAL_CONFIGURED_LIBRARIES@")
+
+# Check for possible config files of our libraries and include them.
+foreach(lib ${CGAL_CONFIGURED_LIBRARIES})
+  include("${CGAL_CONFIG_DIR}/${lib}LibConfig.cmake" OPTIONAL)
+endforeach()
+
 set(CGAL_INSTALLATION_PACKAGE_DIR "@CGAL_INSTALLATION_PACKAGE_DIR@")
 set(CGAL_CORE_PACKAGE_DIR "@CGAL_CORE_PACKAGE_DIR@")
+set(CGAL_GRAPHICSVIEW_PACKAGE_DIR "@CGAL_GRAPHICSVIEW_PACKAGE_DIR@")
 
 set(CGAL_MAJOR_VERSION    "@CGAL_MAJOR_VERSION@" )
 set(CGAL_MINOR_VERSION    "@CGAL_MINOR_VERSION@" )
+set(CGAL_BUGFIX_VERSION   "@CGAL_BUGFIX_VERSION@" )
 set(CGAL_BUILD_VERSION    "@CGAL_BUILD_VERSION@" )
 set(CGAL_SCM_BRANCH_NAME  "@CGAL_SCM_BRANCH_NAME@")
 set(CGAL_GIT_SHA1         "@CGAL_GIT_SHA1@")
@@ -35,50 +88,12 @@ set(CGAL_INCLUDE_DIRS      "@CGAL_INCLUDE_DIRS@" )
 set(CGAL_MODULES_DIR       "@CGAL_MODULES_DIR@" )
 set(CGAL_LIBRARIES_DIR     "@CGAL_LIBRARIES_DIR@" )
 
-set(WITH_CGAL         "ON" )
-set(WITH_CGAL_Core    "@WITH_CGAL_Core@" )
-set(WITH_CGAL_ImageIO "@WITH_CGAL_ImageIO@" )
-set(WITH_CGAL_Qt3     "@WITH_CGAL_Qt3@" )
-set(WITH_CGAL_Qt4     "@WITH_CGAL_Qt4@" )
-
-set(CGAL_LIBRARY         "@CGAL_LIBRARY@" )
-set(CGAL_Core_LIBRARY    "@CGAL_Core_LIBRARY@" )
-set(CGAL_ImageIO_LIBRARY "@CGAL_ImageIO_LIBRARY@" )
-set(CGAL_Qt3_LIBRARY     "@CGAL_Qt3_LIBRARY@" )
-set(CGAL_Qt4_LIBRARY     "@CGAL_Qt4_LIBRARY@" )
-
-set(CGAL_3RD_PARTY_INCLUDE_DIRS   "@CGAL_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_3RD_PARTY_DEFINITIONS    "@CGAL_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_3RD_PARTY_LIBRARIES_DIRS "@CGAL_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_3RD_PARTY_LIBRARIES      "@CGAL_3RD_PARTY_LIBRARIES@" )
-
-set(CGAL_Core_3RD_PARTY_INCLUDE_DIRS   "@CGAL_Core_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_Core_3RD_PARTY_DEFINITIONS    "@CGAL_Core_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_Core_3RD_PARTY_LIBRARIES_DIRS "@CGAL_Core_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_Core_3RD_PARTY_LIBRARIES      "@CGAL_Core_3RD_PARTY_LIBRARIES@" )
-
-set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS   "@CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS    "@CGAL_ImageIO_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_ImageIO_3RD_PARTY_LIBRARIES_DIRS "@CGAL_ImageIO_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_ImageIO_3RD_PARTY_LIBRARIES      "@CGAL_ImageIO_3RD_PARTY_LIBRARIES@" )
+# If CGAL_ImageIO is built, tell if it was linked with Zlib.
 set(CGAL_ImageIO_USE_ZLIB                 "@CGAL_ImageIO_USE_ZLIB@" )
 
-set(CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS   "@CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_Qt3_3RD_PARTY_DEFINITIONS    "@CGAL_Qt3_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_Qt3_3RD_PARTY_LIBRARIES_DIRS "@CGAL_Qt3_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_Qt3_3RD_PARTY_LIBRARIES      "@CGAL_Qt3_3RD_PARTY_LIBRARIES@" )
+set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}")
 
-set(CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS   "@CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_Qt4_3RD_PARTY_DEFINITIONS    "@CGAL_Qt4_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS "@CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_Qt4_3RD_PARTY_LIBRARIES      "@CGAL_Qt4_3RD_PARTY_LIBRARIES@" )
-
-
-set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
-
-set(CGAL_USE_FILE   "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
-
-set(CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "@CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT@")
+set(CGAL_USE_FILE "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
 
 if ( CGAL_FIND_REQUIRED )
   set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE        )
@@ -89,12 +104,10 @@ else()
     set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE      )
     set( CHECK_CGAL_COMPONENT_ERROR_TYPE   STATUS    )
     set( CHECK_CGAL_COMPONENT_ERROR_TITLE "NOTICE:" )
-  else()  
+  else()
     set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR FALSE )
   endif()
 endif()
-
-set(CGAL_CONFIGURED_LIBRARIES "@CGAL_CONFIGURED_LIBRARIES@")
 
 macro(check_cgal_component COMPONENT)
 
@@ -104,19 +117,45 @@ macro(check_cgal_component COMPONENT)
   if ( "${CGAL_LIB}" STREQUAL "CGAL" )
     set( CGAL_FOUND TRUE )
     set( CHECK_CGAL_ERROR_TAIL "" )
-  else() 
+  else( "${CGAL_LIB}" STREQUAL "CGAL" )
     if ( WITH_${CGAL_LIB} )
-      set( ${CGAL_LIB}_FOUND TRUE )
-    else()
+      if(TARGET CGAL::${CGAL_LIB})
+        if ("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+          
+          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_Qt5Dependencies.cmake")
+
+          if(CGAL_Qt5_MISSING_DEPS)
+            set( CGAL_Qt5_FOUND FALSE )
+            message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
+          else()
+            set( CGAL_Qt5_FOUND TRUE )
+          endif()
+        elseif("${CGAL_LIB}" STREQUAL "CGAL_Core")
+          include("${CGAL_MODULES_DIR}/CGAL_SetupCGAL_CoreDependencies.cmake")
+          if(CGAL_Core_MISSING_DEPS)
+            set( CGAL_Core_FOUND FALSE )
+            message(STATUS "libCGAL_Core is missing the dependencies: ${CGAL_Core_MISSING_DEPS} cannot be configured.")
+          else()
+            set( CGAL_Core_FOUND TRUE )
+          endif()
+        else("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+          # Librairies that have no dependencies
+          set( ${CGAL_LIB}_FOUND TRUE )
+        endif("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+      else(TARGET CGAL::${CGAL_LIB})
+        set( ${CGAL_LIB}_FOUND FALSE )
+        set( CHECK_${CGAL_LIB}_ERROR_TAIL " CGAL was configured with WITH_${CGAL_LIB}=ON, but one of the dependencies of ${CGAL_LIB} was not configured properly." )
+      endif(TARGET CGAL::${CGAL_LIB})
+    else( WITH_${CGAL_LIB} )
       set( ${CGAL_LIB}_FOUND FALSE )
-    endif()
-    set( CHECK_${CGAL_LIB}_ERROR_TAIL " Please configure CGAL using WITH_${CGAL_LIB}=ON." )
-  endif()  
+      set( CHECK_${CGAL_LIB}_ERROR_TAIL " Please configure CGAL using WITH_${CGAL_LIB}=ON." )
+    endif( WITH_${CGAL_LIB} )
+  endif()
 
   if ( NOT ${CGAL_LIB}_FOUND AND CHECK_CGAL_COMPONENT_MSG_ON_ERROR )
     message( ${CHECK_CGAL_COMPONENT_ERROR_TYPE} "${CHECK_CGAL_COMPONENT_ERROR_TITLE} The ${CGAL_LIB} library was not configured.${CHECK_${CGAL_LIB}_ERROR_TAIL}" )
   endif()
-  
+
 endmacro()
 
 check_cgal_component("CGAL")
@@ -139,3 +178,43 @@ set(CGAL_SUPPORTING_3RD_PARTY_LIBRARIES "@CGAL_SUPPORTING_3RD_PARTY_LIBRARIES@")
 set(CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "@CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES@")
 
 set(CGAL_DISABLE_GMP "@CGAL_DISABLE_GMP@")
+
+include(${CGAL_MODULES_DIR}/CGAL_CreateSingleSourceCGALProgram.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_Common.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_TweakFindBoost.cmake)
+include(${CGAL_MODULES_DIR}/CGAL_target_use_TBB.cmake)
+
+# Temporary? Change the CMAKE module path
+cgal_setup_module_path()
+
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+  # Ugly hack to be compatible with current CGAL testsuite process (as of
+  # Nov. 2017). -- Laurent Rineau
+  include(CGAL_SetupFlags)
+endif()
+
+#CGAL_DATA_DIR, used by `CGAL::data_file_path(filename)` from `CGAL/config.h`
+set(CGAL_DATA_DIR "@CGAL_DATA_DIR@")
+
+if(NOT TARGET CGAL::Data)
+  add_library(CGAL::Data INTERFACE IMPORTED GLOBAL)
+  if ( NOT "${CGAL_DATA_DIR}" STREQUAL "" )
+    set_target_properties(CGAL::Data PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_DATA_DIR=\"${CGAL_DATA_DIR}\"")
+  endif()
+endif()
+
+#
+# Define a specific target for basic viewer
+#
+if (NOT TARGET CGAL::CGAL_Basic_viewer)
+  add_library(CGAL::CGAL_Basic_viewer INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt5)
+endif()
+
+include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

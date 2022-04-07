@@ -3,24 +3,18 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
 //
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL: https://scm.gforge.inria.fr/svn/cgal/branches/features/Mesh_3-experimental-GF/Mesh_3/include/CGAL/Mesh_3/Profile_counter.h $
-// $Id: Profile_counter.h 66846 2011-12-16 13:48:50Z lrineau $
-//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion, Laurent Rineau
 
 #ifndef CGAL_MESH_3_PROFILE_COUNTER_H
 #define CGAL_MESH_3_PROFILE_COUNTER_H
+
+#include <CGAL/license/Mesh_3.h>
+
 
 #include <CGAL/Mesh_3/config.h>
 
@@ -46,9 +40,9 @@
 #  define CGAL_MESH_3_HISTOGRAM_PROFILER(Y, Z)
 #  define CGAL_MESH_3_BRANCH_PROFILER(Y, NAME)
 #  define CGAL_MESH_3_BRANCH_PROFILER_BRANCH(NAME)
-#  define CGAL_MESH_3_BRANCH_PROFILER_3(Y, NAME) 
+#  define CGAL_MESH_3_BRANCH_PROFILER_3(Y, NAME)
 #  define CGAL_MESH_3_BRANCH_PROFILER_BRANCH_1(NAME)
-#  define CGAL_MESH_3_BRANCH_PROFILER_BRANCH_2(NAME) 
+#  define CGAL_MESH_3_BRANCH_PROFILER_BRANCH_2(NAME)
 #endif
 
 #endif // CGAL_MESH_3_PROFILE_COUNTER_H

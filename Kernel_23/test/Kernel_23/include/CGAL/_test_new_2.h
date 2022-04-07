@@ -1,30 +1,26 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Michael Seel
 //                 Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_NEW_2_H
 #define CGAL__TEST_NEW_2_H
 
 #include <CGAL/squared_distance_2.h>
+#include <CGAL/use.h>
 
 #include "_test_cls_line_new_2.h"
 #include "_test_cls_segment_new_2.h"
@@ -33,7 +29,7 @@
 #include "_test_cls_iso_rectangle_new_2.h"
 #include "_test_cls_circle_new_2.h"
 
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 using CGAL::internal::use;
 
@@ -41,10 +37,10 @@ template <class R>
 bool
 _test_cls_new_2(const R& r)
 {
- return  
+ return
    _test_cls_line_new_2( r )
    && _test_cls_segment_new_2( r )
-   && _test_cls_ray_new_2( r )  
+   && _test_cls_ray_new_2( r )
    && _test_cls_triangle_new_2( r )
    && _test_cls_iso_rectangle_new_2( r )
    && _test_cls_circle_new_2( r )
@@ -67,6 +63,7 @@ test_new_2(const R& rep)
   typedef typename R::FT                          FT;
 
   typedef typename R::Point_2                     Point_2;
+  typedef typename R::Weighted_point_2            Weighted_point_2;
   typedef typename R::Vector_2                    Vector_2;
   typedef typename R::Direction_2                 Direction_2;
   typedef typename R::Segment_2                   Segment_2;
@@ -91,6 +88,20 @@ test_new_2(const R& rep)
   Point_2 p5 = construct_point(3,4,5);
   Point_2 p6 = construct_point(3,4,6);
 
+  typename R::Construct_weighted_point_2 construct_weighted_point =
+        rep.construct_weighted_point_2_object();
+  Weighted_point_2 wp1;
+  Weighted_point_2 wp2 = construct_weighted_point(ORIGIN);
+  Weighted_point_2 wp3 = construct_weighted_point(1,1);
+  Weighted_point_2 wp3bis = construct_weighted_point(RT(1),RT(1));
+  Weighted_point_2 wp3ter = construct_weighted_point(FT(1),FT(1));
+  Weighted_point_2 wp4 = construct_weighted_point(p2);
+  Weighted_point_2 wp5 = construct_weighted_point(p3,2);
+  Weighted_point_2 wp6 = construct_weighted_point(p4,RT(2));
+  Weighted_point_2 wp7 = construct_weighted_point(p5,FT(2));
+  Weighted_point_2 wp8 = construct_weighted_point(wp7);
+  use(wp1); use(wp3bis); use(wp3ter);
+
   typename R::Construct_vector_2 construct_vector =
         rep.construct_vector_2_object();
   Vector_2 v1;
@@ -107,7 +118,7 @@ test_new_2(const R& rep)
   Direction_2 d1;  d1 = Direction_2(4,1);
   Direction_2 d2 = construct_direction(v3);
   Direction_2 d3 = construct_direction(1,4);
-  // remaining constructions tested below, after the 
+  // remaining constructions tested below, after the
   // corresponding types have been introduced
 
   typename R::Construct_segment_2 construct_segment
@@ -146,7 +157,7 @@ test_new_2(const R& rep)
   Vector_2 v7 = construct_vector(s2);
   Vector_2 v8 = construct_vector(r2);
   Vector_2 v9 = construct_vector(l2);
-  
+
   typename R::Construct_circle_2 construct_circle
         = rep.construct_circle_2_object();
   Circle_2 c1 = construct_circle(p2,1);
@@ -158,8 +169,8 @@ test_new_2(const R& rep)
 
   typename R::Construct_triangle_2 construct_triangle
         = rep.construct_triangle_2_object();
-  Triangle_2 t1;
-  Triangle_2 t2 = construct_triangle(p2,p3,p4);
+  Triangle_2 t0; CGAL_USE(t0); // test default-construction
+  Triangle_2 t2 = construct_triangle(p2,p3,p4), t1 = t2;
 
   typename R::Construct_iso_rectangle_2 construct_iso_rectangle
         = rep.construct_iso_rectangle_2_object();
@@ -167,12 +178,12 @@ test_new_2(const R& rep)
                   rec2 = construct_iso_rectangle(p2,p3,0);
                   rec2 = construct_iso_rectangle(p4,p4,p5,p5);
 
-  typename R::Construct_object_2 construct_object 
+  typename R::Construct_object_2 construct_object
         = rep.construct_object_2_object();
   Object_2 obj = construct_object(rec2);
            obj = construct_object(t1);
            obj = construct_object(c41);
-	   obj = construct_object(d6);
+           obj = construct_object(d6);
            obj = construct_object(l6);
 
   typename R::Construct_point_on_2 construct_point_on
@@ -224,7 +235,7 @@ test_new_2(const R& rep)
   Bbox_2 bb4 = construct_bbox_2(c1); // Circle_2
   Bbox_2 bb5 = construct_bbox_2(rec2); // Iso_rectangle_2
 
-  typename R::Construct_cartesian_const_iterator_2 
+  typename R::Construct_cartesian_const_iterator_2
     construct_cartesian_const_iterator_2
     = rep.construct_cartesian_const_iterator_2_object();
 
@@ -234,7 +245,7 @@ test_new_2(const R& rep)
   cccit = construct_cartesian_const_iterator_2(p1,0);
   cccit = construct_cartesian_const_iterator_2(v6);
   cccit = construct_cartesian_const_iterator_2(v6,0);
-  
+
   typename R::Construct_perpendicular_vector_2 construct_perpendicular_vector
         = rep.construct_perpendicular_vector_2_object();
   Vector_2 tmp9 = construct_perpendicular_vector(v2,CLOCKWISE);
@@ -260,6 +271,10 @@ test_new_2(const R& rep)
   Point_2 tmp13 = construct_circumcenter(p2,p3,p4);
           tmp13 = construct_circumcenter(p2,p3);
           tmp13 = construct_circumcenter(t2);
+
+  typename R::Construct_weighted_circumcenter_2 construct_weighted_circumcenter
+        = rep.construct_weighted_circumcenter_2_object();
+          tmp13 = construct_weighted_circumcenter(wp4,wp5,wp6);
 
   typename R::Construct_centroid_2 construct_centroid
         = rep.construct_centroid_2_object();
@@ -301,6 +316,9 @@ test_new_2(const R& rep)
         = rep.construct_opposite_line_2_object();
   Line_2 tmp17 = construct_opposite_line(l2);
 
+  typename R::Construct_radical_axis_2 construct_radical_axis
+        = rep.construct_radical_axis_2_object();
+         tmp17 = construct_radical_axis(wp6, wp8);
 
   typename R::Construct_opposite_triangle_2 construct_opposite_triangle
         = rep.construct_opposite_triangle_2_object();
@@ -352,6 +370,11 @@ test_new_2(const R& rep)
      tmp22d = Compute_squared_distance(p1, r2);
      tmp22d = Compute_squared_distance(p1, t2);
 
+  typename R::Compute_power_product_2 compute_power_product
+        = rep.compute_power_product_2_object();
+     tmp22d = compute_power_product(wp6, wp7);
+  CGAL_USE(tmp22d);
+
   typename R::Compute_squared_length_2 Compute_squared_length
         = rep.compute_squared_length_2_object();
   FT tmp23 = Compute_squared_length(v2);
@@ -363,6 +386,14 @@ test_new_2(const R& rep)
      tmp23b = Compute_squared_radius(p3);
      tmp23b = Compute_squared_radius(p3, p4);
      tmp23b = Compute_squared_radius(p3, p4, p5);
+
+  typename R::Compute_squared_radius_smallest_orthogonal_circle_2
+         compute_squared_radius_smallest_orthogonal_circle
+      = rep.compute_squared_radius_smallest_orthogonal_circle_2_object();
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4);
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4, wp5);
+    tmp23b = compute_squared_radius_smallest_orthogonal_circle(wp4, wp5, wp6);
+  (void) tmp23b;
 
   typename R::Equal_2 equal
         = rep.equal_2_object();
@@ -446,6 +477,7 @@ test_new_2(const R& rep)
         = rep.compare_slope_2_object();
   Comparison_result tmp34ee = compare_slope(l1, l2);
   Comparison_result tmp34ff = compare_slope(s1, s2);
+  Comparison_result tmp34gg = compare_slope(p3, p5, p2, p3);
 
   typename R::Less_distance_to_point_2 less_distance_to_point
         = rep.less_distance_to_point_2_object();
@@ -471,6 +503,10 @@ test_new_2(const R& rep)
   tmp34ab = CGAL::compare_distance(t2, l1, s1, p1);
   tmp34ab = CGAL::compare_distance(t2, l1, s1);
 
+  typename R::Compare_power_distance_2 compare_power_dist
+        = rep.compare_power_distance_2_object();
+  tmp34ab = compare_power_dist(p1, wp2, wp3);
+
   typename R::Compare_angle_with_x_axis_2 compare_angle
         = rep.compare_angle_with_x_axis_2_object();
   Comparison_result tmp34ac = compare_angle(d3,d2);
@@ -480,7 +516,7 @@ test_new_2(const R& rep)
   bool tmp36 = less_signed_distance_to_line(p4,p5,p2,p3);
   tmp36 = less_signed_distance_to_line(l1,p2,p3);
 
-  typename R::Less_rotate_ccw_2 less_rotate_ccw 
+  typename R::Less_rotate_ccw_2 less_rotate_ccw
         = rep.less_rotate_ccw_2_object();
   bool tmp36a = less_rotate_ccw(p4,p2,p3);
 
@@ -508,12 +544,22 @@ test_new_2(const R& rep)
         = rep.side_of_oriented_circle_2_object();
   Oriented_side tmp41 = side_of_oriented_circle(p2,p3,p4,p5);
 
+  typename R::Power_side_of_oriented_power_circle_2 power_side_of_oriented_power_circle
+        = rep.power_side_of_oriented_power_circle_2_object();
+                tmp41 = power_side_of_oriented_power_circle(wp4,wp5);
+                tmp41 = power_side_of_oriented_power_circle(wp4,wp5,wp6);
+                tmp41 = power_side_of_oriented_power_circle(wp4,wp5,wp6,wp7);
 
   typename R::Side_of_bounded_circle_2 side_of_bounded_circle
         = rep.side_of_bounded_circle_2_object();
   Bounded_side tmp42 = side_of_bounded_circle(p2,p3,p4,p5);
                tmp42 = side_of_bounded_circle(p2,p3,p5);
 
+  typename R::Power_side_of_bounded_power_circle_2 power_side_of_bounded_power_circle
+        = rep.power_side_of_bounded_power_circle_2_object();
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5);
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5,wp6);
+               tmp42 = power_side_of_bounded_power_circle(wp4,wp5,wp6,wp7);
 
   typename R::Is_horizontal_2 is_horizontal
         = rep.is_horizontal_2_object();
@@ -622,7 +668,7 @@ test_new_2(const R& rep)
   use(tmp9); use(tmp10); use(tmp11); use(tmp12); use(tmp12a);
   use(tmp14); use(tmp14a); use(tmp15); use(tmp16);
   use(tmp16); use(tmp17); use(tmp19); use(tmp19a); use(tmp22a);
-  use(tmp22b); use(tmp22c); use(tmp23);
+  use(tmp22b); use(tmp22c); use(tmp22d); use(tmp23);
 
   use(tmp58);
   use(tmp57); use(tmp56); use(tmp55); use(tmp54); use(tmp53b); use(tmp53a);
@@ -634,10 +680,10 @@ test_new_2(const R& rep)
   use(tmp34c); use(tmp34b); use(tmp34a); use(tmp32d); use(tmp32c); use(tmp32b);
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);
-  use(tmp29); use(tmp28); use(tmp33a); use(tmp33b); use(tmp34ab); use(tmp34ac); 
-  use(tmp34ff); use(tmp34ee); use(tmp34dd); use(tmp34cc); use(tmp34bb); 
-  use(tmp34aa); 
-  use(tmp39a); use(tmp36a); use(tmp48c); use(tmp49c); use(tmp50c); 
+  use(tmp29); use(tmp28); use(tmp33a); use(tmp33b); use(tmp34ab); use(tmp34ac);
+  use(tmp34ff); use(tmp34gg); use(tmp34ee); use(tmp34dd); use(tmp34cc); use(tmp34bb);
+  use(tmp34aa);
+  use(tmp39a); use(tmp36a); use(tmp48c); use(tmp49c); use(tmp50c);
   use(tmp24a); use(tmp24b); use(tmp24c); use(tmp24d); use(tmp24e); use(tmp24f);
   use(tmp24g); use(tmp24h); use(tmp24);use(tmp_bool);
 

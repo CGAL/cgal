@@ -1,13 +1,8 @@
-# This allows else(), endif(), etc... (without repeating the expression)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Macros.cmake)
 
-if ( "${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" )
-  set( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL TRUE )
-else()
-  set( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL FALSE )
-endif()  
-
-include(CGAL_Macros)
+option(CGAL_DEV_MODE
+  "Activate the CGAL developers mode. See https://github.com/CGAL/cgal/wiki/CGAL_DEV_MODE"
+  $ENV{CGAL_DEV_MODE})
 
 if(RUNNING_CGAL_AUTO_TEST)
 # Just to avoid a warning from CMake if that variable is set on the command line...
@@ -28,18 +23,7 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
   else()
     set( CMAKE_2_6_3_OR_ABOVE FALSE )
   endif()
-    
-  if ( CGAL_BUILDING_LIBS )
-    option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-    set(CGAL_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 
-    if ( BUILD_SHARED_LIBS )
-      message( STATUS "Building shared libraries" )
-    else()
-      message( STATUS "Building static libraries" )
-    endif()
-  endif()
-  
   if ( WIN32 )
     find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
     if(CMAKE_UNAME)
@@ -50,11 +34,20 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
       endif()
     endif()
     hide_variable(CMAKE_UNAME)
-  endif()
 
-  set(CMAKE_COLORMAKEFILE ON)
+    # Optionally setup the Visual Leak Detector
+    include(${CMAKE_CURRENT_LIST_DIR}/CGAL_SetupVLD.cmake)
+    CGAL_SetupVLD()
+    if(VLD_FOUND)
+      message(STATUS "Visual Leak Detector (VLD) is enabled.")
+    else()
+      message(STATUS "Visual Leak Detector (VLD) is not found.")
+    endif()
+  endif()
 
   # set minimal version of some optional libraries:
   set( Eigen3_FIND_VERSION "3.1.0")
-  
+  # set use-file for Eigen3 (needed to have default solvers)
+  set(EIGEN3_USE_FILE "UseEigen3")
+
 endif()

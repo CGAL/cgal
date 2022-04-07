@@ -1,10 +1,11 @@
 // Generic bench file for the IA package.
 // Sylvain Pion, 1997-2005.
 
-#include <CGAL/basic.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/predicates/kernel_ftC2.h>
+
+#include <CGAL/disable_warnings.h>
 
 #include <cassert>
 
@@ -102,7 +103,7 @@ void bench_main()
   typename IA_nt::Protector p;
 
   double d;
-  if ((((long) &d) & 7) != 0)
+  if ((((std::size_t) &d) & 7) != 0)
     std::cout << "Benchmark might not be meaningful due to bad alignment\n";
 
   std::cout.precision(20);

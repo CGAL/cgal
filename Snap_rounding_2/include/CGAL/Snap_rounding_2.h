@@ -2,36 +2,33 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // author(s)     : Eli Packer <elip@post.tau.ac.il>
+
 #ifndef CGAL_SNAP_ROUNDING_2_H
 #define CGAL_SNAP_ROUNDING_2_H
+
+#include <CGAL/license/Snap_rounding_2.h>
+
 
 #include <iostream>
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/intersection_2.h>
-#include <CGAL/Sweep_line_2_algorithms.h>
+#include <CGAL/Surface_sweep_2_algorithms.h>
 #include <list>
 #include <set>
 #include <CGAL/Snap_rounding_kd_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/tss.h>
 
 namespace CGAL {
 
@@ -73,7 +70,7 @@ private:
   typedef typename Traits::Segment_2    Segment_2;
   typedef typename Traits::Point_2      Point_2;
   typedef CGAL::Segment_data<Traits>          Segment_data;
-  
+
 private:
   // p is the center of the hot pixel
   Point_2 p;
@@ -87,7 +84,14 @@ private:
   Segment_2 *left_seg;
   Segment_2 *top_seg;
   Segment_2 *bot_seg;
-  static SEG_Direction seg_dir;
+
+  static SEG_Direction& direction()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(SEG_Direction, seg_dir,SEG_UP);
+    return seg_dir;
+  }
+
+
 
 public:
   Hot_pixel(const Point_2 & inp_point, NT inp_pixel_size);
@@ -99,12 +103,12 @@ public:
   bool intersect_bot(const Segment_2 & seg, SEG_Direction seg_dir) const;
   bool intersect_top(const Segment_2 & seg, SEG_Direction seg_dir) const;
   bool intersect(Segment_data & seg, SEG_Direction seg_dir) const;
-  void set_direction(SEG_Direction inp_seg_dir) { seg_dir = inp_seg_dir; }
-  SEG_Direction get_direction() const { return(seg_dir); }
+  void set_direction(SEG_Direction inp_seg_dir) { direction() = inp_seg_dir; }
+  SEG_Direction get_direction() const { return direction(); }
 };
 
 /*! */
-template<class Traits_> SEG_Direction Hot_pixel<Traits_>::seg_dir;
+
 
 // a function for compare two hot pixels for the set of hot pixels
 template<class Traits_>
@@ -124,7 +128,7 @@ struct Hot_pixel_dir_cmp {
 
   Traits_ m_gt;
 
-  bool operator()(const Hot_pixel * h1, const Hot_pixel * h2);
+  bool operator()(const Hot_pixel * h1, const Hot_pixel * h2) const;
 };
 
 #ifdef CGAL_SR_DEBUG
@@ -144,7 +148,7 @@ private:
   typedef std::list<Segment_data>                       Segment_data_list;
   typedef CGAL::Hot_pixel_dir_cmp<Traits>               Hot_pixel_dir_cmp;
   typedef std::set<Hot_pixel *, Hot_pixel_dir_cmp>      Hot_pixel_set;
-  
+
 public:
   // friend class Segment_data<Traits>;
   // friend class Hot_pixel<Traits>;
@@ -163,7 +167,7 @@ public:
                NT pixel_size, bool int_output, bool do_isr,
                Segment_data_list & seg_list,
                Multiple_kd_tree * mul_kd_tree);
-  
+
 private:
   Traits m_gt;
 
@@ -233,7 +237,7 @@ void Segment_data<Traits_>::determine_direction(SEG_Direction & seg_dir)
 
   Compare_x_2 compare_x = m_gt.compare_x_2_object();
   Compare_y_2 compare_y = m_gt.compare_y_2_object();
-    
+
   Comparison_result cx = compare_x(p, q);
   Comparison_result cy = compare_y(p, q);
 
@@ -320,7 +324,7 @@ bool Hot_pixel<Traits_>::intersect_left(const Segment_2 & seg,
 {
   typedef typename Traits_::Compare_y_2         Compare_y_2;
   typedef typename Traits_::Construct_vertex_2  Construct_vertex_2;
-  
+
   Object result;
   Point_2 p;
   Segment_2 s;
@@ -330,7 +334,7 @@ bool Hot_pixel<Traits_>::intersect_left(const Segment_2 & seg,
   if (assign(p, result)) {
     Compare_y_2 compare_y = m_gt.compare_y_2_object();
     Construct_vertex_2 construct_vertex = m_gt.construct_vertex_2_object();
-    
+
     Comparison_result c_p = compare_y(p, p_up);
     Comparison_result c_target = compare_y(construct_vertex(seg, 1), p_up);
     Comparison_result c_source = compare_y(construct_vertex(seg, 0), p_up);
@@ -352,17 +356,17 @@ bool Hot_pixel<Traits_>::intersect_right(const Segment_2 & seg,
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Construct_vertex_2  Construct_vertex_2;
 
-  Object result;    
+  Object result;
   Point_2 p;
   Segment_2 s;
-    
+
   result = intersection(seg, *right_seg);
 
   if (assign(p,result)) {
     // bottom right point was checked in intersect_bot
     Compare_y_2 compare_y = m_gt.compare_y_2_object();
     Construct_vertex_2 construct_vertex = m_gt.construct_vertex_2_object();
-    
+
     Comparison_result c1 = compare_y(p, p_up);
     Comparison_result c2 = compare_y(p, p_down);
 
@@ -380,11 +384,11 @@ bool Hot_pixel<Traits_>::intersect_right(const Segment_2 & seg,
     Compare_x_2 compare_x = m_gt.compare_x_2_object();
     Comparison_result c_target = compare_x(p_right, trg);
     Comparison_result c_source = compare_x(p_right, src);
-      
+
     return (((seg_dir == SEG_LEFT || seg_dir == SEG_DOWN_LEFT ||
-	      seg_dir == SEG_UP_LEFT) && c_target != EQUAL) ||
+              seg_dir == SEG_UP_LEFT) && c_target != EQUAL) ||
             ((seg_dir == SEG_RIGHT || seg_dir == SEG_DOWN_RIGHT ||
-	      seg_dir == SEG_UP_RIGHT) && c_source != EQUAL));
+              seg_dir == SEG_UP_RIGHT) && c_source != EQUAL));
   }
   return false;
 }
@@ -396,7 +400,7 @@ bool Hot_pixel<Traits_>::intersect_bot(const Segment_2 & seg,
 {
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Construct_vertex_2  Construct_vertex_2;
-  
+
   Object result;
   Point_2 p;
   Segment_2 s;
@@ -406,13 +410,13 @@ bool Hot_pixel<Traits_>::intersect_bot(const Segment_2 & seg,
   if (assign(p,result)) {
     Compare_x_2 compare_x = m_gt.compare_x_2_object();
     Construct_vertex_2 construct_vertex = m_gt.construct_vertex_2_object();
-    
+
     Comparison_result c_p = compare_x(p, p_right);
     Comparison_result c_target = compare_x(construct_vertex(seg, 1), p_right);
     Comparison_result c_source = compare_x(construct_vertex(seg, 0), p_right);
 
-    return(c_p != EQUAL || (seg_dir == SEG_UP_LEFT && c_target != EQUAL) || 
-	   (seg_dir == SEG_DOWN_RIGHT && c_source != EQUAL));
+    return(c_p != EQUAL || (seg_dir == SEG_UP_LEFT && c_target != EQUAL) ||
+           (seg_dir == SEG_DOWN_RIGHT && c_source != EQUAL));
   } else if (assign(s,result))
     return(true);
   else
@@ -427,14 +431,14 @@ bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Compare_y_2         Compare_y_2;
   typedef typename Traits_::Construct_vertex_2  Construct_vertex_2;
-  
+
   Object result;
   Point_2 p;
   Segment_2 s;
-    
+
   result = intersection(seg, *top_seg);
 
-  if (assign(p,result)) 
+  if (assign(p,result))
   {
     Compare_x_2 compare_x = m_gt.compare_x_2_object();
     Compare_y_2 compare_y = m_gt.compare_y_2_object();
@@ -450,10 +454,10 @@ bool Hot_pixel<Traits_>::intersect_top(const Segment_2 & seg,
       return(false);// were checked
     else
       return(((seg_dir == SEG_DOWN || seg_dir == SEG_DOWN_LEFT ||
-	       seg_dir == SEG_DOWN_RIGHT) && c3 != EQUAL) ||
+               seg_dir == SEG_DOWN_RIGHT) && c3 != EQUAL) ||
              ((seg_dir == SEG_UP || seg_dir == SEG_UP_LEFT ||
-	       seg_dir == SEG_UP_RIGHT) && c4 != EQUAL));
-  } 
+               seg_dir == SEG_UP_RIGHT) && c4 != EQUAL));
+  }
   return(false);
 }
 
@@ -478,7 +482,7 @@ operator()(const Hot_pixel * h1, const Hot_pixel * h2) const
 
   Compare_x_2 compare_x = m_gt.compare_x_2_object();
   Compare_y_2 compare_y = m_gt.compare_y_2_object();
-  
+
   Comparison_result cx = compare_x(h1->get_center(), h2->get_center());
   Comparison_result cy = compare_y(h1->get_center(), h2->get_center());
 
@@ -489,31 +493,31 @@ operator()(const Hot_pixel * h1, const Hot_pixel * h2) const
 // segment intersect
 template<class Traits_>
 bool Hot_pixel_dir_cmp<Traits_>::operator ()(const Hot_pixel * h1,
-                                             const Hot_pixel * h2) 
+                                             const Hot_pixel * h2) const
 {
   typedef typename Traits_::Compare_x_2         Compare_x_2;
   typedef typename Traits_::Compare_y_2         Compare_y_2;
 
   Compare_x_2 compare_x = m_gt.compare_x_2_object();
   Compare_y_2 compare_y = m_gt.compare_y_2_object();
-  
+
   Comparison_result cx = compare_x(h1->get_center(), h2->get_center());
   Comparison_result cy = compare_y(h1->get_center(), h2->get_center());
   SEG_Direction seg_dir = h1->get_direction();
 
   // Point segment intersects only one pixel, thus ignored
   return((seg_dir == SEG_UP_RIGHT &&  (cx == SMALLER || (cx == EQUAL &&
-							 cy == SMALLER))) || 
-	 (seg_dir == SEG_UP_LEFT && (cx == LARGER || (cx == EQUAL && 
-						      cy == SMALLER))) || 
-	 (seg_dir == SEG_DOWN_RIGHT && (cx == SMALLER || (cx == EQUAL && 
-							  cy == LARGER))) ||
+                                                         cy == SMALLER))) ||
+         (seg_dir == SEG_UP_LEFT && (cx == LARGER || (cx == EQUAL &&
+                                                      cy == SMALLER))) ||
+         (seg_dir == SEG_DOWN_RIGHT && (cx == SMALLER || (cx == EQUAL &&
+                                                          cy == LARGER))) ||
          (seg_dir == SEG_DOWN_LEFT && (cx == LARGER || (cx == EQUAL &&
-							cy == LARGER))) || 
-	 (seg_dir == SEG_UP && cy == SMALLER) ||
-         (seg_dir == SEG_DOWN && cy == LARGER) || 
-	 (seg_dir == SEG_LEFT && cx == LARGER) || 
-	 (seg_dir == SEG_RIGHT && cx == SMALLER));
+                                                        cy == LARGER))) ||
+         (seg_dir == SEG_UP && cy == SMALLER) ||
+         (seg_dir == SEG_DOWN && cy == LARGER) ||
+         (seg_dir == SEG_LEFT && cx == LARGER) ||
+         (seg_dir == SEG_RIGHT && cx == SMALLER));
 }
 
 /*! */
@@ -528,7 +532,7 @@ find_hot_pixels_and_create_kd_trees(NT pixel_size,
   typedef typename std::list<Segment_data>::iterator    Segment_data_iter;
   typedef std::list<Segment_2>                          Segment_list;
   typedef typename std::list<Point_2>::const_iterator   Point_const_iter;
-    
+
   typedef typename Traits::Construct_segment_2  Construct_segment_2;
   Construct_segment_2 construct_seg = m_gt.construct_segment_2_object();
 
@@ -565,7 +569,7 @@ find_hot_pixels_and_create_kd_trees(NT pixel_size,
        ++iter)
   {
     simple_seg_list.push_back(construct_seg(iter->source(), iter->target()));
-  } 
+  }
   *mul_kd_tree = new Multiple_kd_tree(hot_pixels_list, number_of_kd_trees,
                                       simple_seg_list);
 }
@@ -581,7 +585,7 @@ find_intersected_hot_pixels(Segment_data & seg,
                             Multiple_kd_tree * mul_kd_tree)
 {
   typedef typename std::list<Hot_pixel *>::iterator     Hot_pixel_iter;
-  
+
   Hot_pixel_iter iter;
   SEG_Direction seg_dir;
 
@@ -589,10 +593,10 @@ find_intersected_hot_pixels(Segment_data & seg,
   seg.determine_direction(seg_dir);
   number_of_intersections = 0;
   std::list<Hot_pixel *> hot_pixels_list;
-    
+
   mul_kd_tree->get_intersecting_points(hot_pixels_list,
                                        Segment_2(seg.segment()), pixel_size);
-    
+
   for (iter = hot_pixels_list.begin();iter != hot_pixels_list.end();++iter) {
     if ((*iter)->intersect(seg,seg_dir)) {
       (*iter)->set_direction(seg_dir);
@@ -606,7 +610,7 @@ find_intersected_hot_pixels(Segment_data & seg,
 
   }
 
-  number_of_intersections = hot_pixels_intersected_set.size();
+  number_of_intersections = static_cast<int>(hot_pixels_intersected_set.size());
 }
 
 /*! */
@@ -691,14 +695,14 @@ iterate(OutputContainer & output_container,
   typedef typename std::set<Hot_pixel *, Hot_pixel_dir_cmp>::iterator
     Hot_pixel_iter;
   typedef typename std::list<Segment_data>::iterator    Segment_data_iter;
-  
+
   Polyline_type seg_output;
   Hot_pixel_set hot_pixels_intersected_set;
   Hot_pixel_iter hot_pixel_iter;
   int number_of_intersections;
   Hot_pixel * hp;
   SEG_Direction seg_dir;
-    
+
   for (Segment_data_iter iter = seg_list.begin(); iter != seg_list.end();
        ++iter)
   {
@@ -730,7 +734,7 @@ iterate(OutputContainer & output_container,
     }
 
     output_container.push_back(seg_output);
-  }    
+  }
 }
 
 /*! */
@@ -751,9 +755,9 @@ void snap_rounding_2(InputIterator begin,
   typedef CGAL::Segment_data<Traits>                  Segment_data;
   typedef CGAL::Multiple_kd_tree<Traits,Hot_pixel *>  Multiple_kd_tree;
   typedef std::list<Segment_data>                     Segment_data_list;
-  
+
   Segment_data_list seg_list;
-  Multiple_kd_tree * mul_kd_tree = NULL;
+  Multiple_kd_tree * mul_kd_tree = nullptr;
 
   output_container.clear();
   // copy segments list

@@ -9,14 +9,14 @@ REFERENCE_PLATFORMS_DIR=/home/lrineau/CGAL/releases-and-testsuites-with-cmake/re
 
 COMPILERS_localhost=""
 #COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2"
-COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.1.2_CentOS-5.1"
-COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O2"
-COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O3"
+#COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.1.2_CentOS-5.1"
+#COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O2"
+#COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O3"
 #COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.3.3_CentOS-5.1"
 #COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O2-NO-DEPRECATED"
 #COMPILERS_localhost="$COMPILERS_localhost i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O3"
 # Ignored: i686_Linux-2.6_g++-4.1.2_CentOS-5.1-NOGMP
-
+#COMPILERS_localhost="$COMPILERS_localhost x86_64_Linux-x.y_IntelCompiler-15.0_CentOS-7.x"
 
 # ignore COMPILERS_localhost and use all ref platformes:
 USE_REFERENCE_PLATFORMS=yes

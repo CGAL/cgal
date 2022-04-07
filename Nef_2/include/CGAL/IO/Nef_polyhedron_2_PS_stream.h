@@ -2,38 +2,27 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_POLYHEDRON_2_PS_STREAM_H
 #define CGAL_NEF_POLYHEDRON_2_PS_STREAM_H
 
+#include <CGAL/license/Nef_2.h>
+
+
 #include <CGAL/Nef_polyhedron_2.h>
-#if CGAL_LEDA_VERSION < 500
-#include <LEDA/gen_polygon.h>
-#include <LEDA/ps_file.h>
-#include <LEDA/color.h>
-#else
 #include <LEDA/geo/gen_polygon.h>
 #include <LEDA/graphics/ps_file.h>
 #include <LEDA/graphics/color.h>
-#endif
 
 namespace CGAL {
-static int frame_default = 100;
+static const int frame_default = 100;
 
 template <typename CIRC>
 leda_list<leda_point>
@@ -59,7 +48,7 @@ ps_file& operator<<(ps_file& PS, const Nef_polyhedron_2<T>& P)
   typedef typename T::RT  RT;
   typedef typename T::Standard_RT Standard_RT;
 
-  PMCDec D = P.explorer(); 
+  PMCDec D = P.explorer();
   const T& E = Nef_polyhedron_2<T>::EK;
 
   Standard_RT frame_radius = frame_default;
@@ -94,9 +83,9 @@ ps_file& operator<<(ps_file& PS, const Nef_polyhedron_2<T>& P)
   Halfedge_const_iterator hit;
   for (hit = D.halfedges_begin(); hit != D.halfedges_end(); ++(++hit)) {
     leda_segment s(CGAL::to_double(hit->vertex()->point().x()),
-		   CGAL::to_double(hit->vertex()->point().y()),
-		   CGAL::to_double(hit->opposite()->vertex()->point().x()),
-		   CGAL::to_double(hit->opposite()->vertex()->point().y()));
+                   CGAL::to_double(hit->vertex()->point().y()),
+                   CGAL::to_double(hit->opposite()->vertex()->point().x()),
+                   CGAL::to_double(hit->opposite()->vertex()->point().y()));
     if ( hit->mark() ) PS.set_color(leda_black);
     else               PS.set_color(leda_grey1);
     PS << s;
@@ -106,7 +95,7 @@ ps_file& operator<<(ps_file& PS, const Nef_polyhedron_2<T>& P)
   Vertex_const_iterator v;
   for (v = D.vertices_begin(); v != D.vertices_end(); ++v) {
     leda_point p(CGAL::to_double(v->point().x()),
-		 CGAL::to_double(v->point().y()));
+                 CGAL::to_double(v->point().y()));
     leda_color pc;
     if ( v->mark() ) pc = leda_black;
     else             pc = leda_grey1;

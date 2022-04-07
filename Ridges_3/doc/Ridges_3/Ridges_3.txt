@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Approximation_of_Ridges_and_Umbilics_on_Triangulated_Surface_Meshes
 \anchor chapRidges3
 
@@ -26,8 +26,8 @@ analysis. Based on the results of the article
 different parts of this singular ridge curve as well as umbilics on a
 surface given as a triangulated surface mesh. Differential quantities
 associated to the mesh vertices are assumed to be given for these
-algorithms; such quantities may be computed by the package <I>Estimation of Local Differential Properties of Sampled Surfaces via
-Polynomial Fitting</I>.
+algorithms; such quantities may be computed by the package \ref PkgJetFitting3.
+
 
 Note that this package needs the third party library \ref thirdpartyEigen for linear algebra operations.
 
@@ -38,12 +38,12 @@ umbilics on smooth surfaces. Sections \ref Ridges_3Approximating and
 \ref Ridges_3Approximating_1 present algorithms for approximating the ridges and
 umbilics (of a smooth surface) from a triangle mesh. Section
 \ref Ridges_3Software gives the package specifications, while example calls to
-functions of the package are provided in Section \ref examples.
+functions of the package are provided in Section \ref Ridges_3Examples.
 
-\section smooth Ridges and Umbilics of a Smooth Surface 
+\section smooth Ridges and Umbilics of a Smooth Surface
 
 For a detailed introduction to ridges and related topics, the reader
-may consult 
+may consult
 \cgalCite{cgal:hgygm-ttdpf-99},cgal:p-gd-01, as well as
 the following survey article \cgalCite{cgal:cp-ssulc-05}.
 In the sequel, we just introduce the basic notions so as to explain
@@ -57,7 +57,7 @@ induced by the ambient Euclidean space, and \f$ dk_1\f$, \f$ dk_2\f$ the
 gradients of the principal curvatures. Ridges, illustrated in
 \cgalFigureRef{ellipsoidridges} for the standard ellipsoid, are defined by:
 
-<B>Definition.</B> <EM>\anchor defridgeextrema
+<B>Definition.</B> \anchor defridgeextrema
 A non umbilical point is called
 <UL>
 <LI>a max ridge point, if the <I>extremality coefficient</I> \f$ b_0=\langle
@@ -67,7 +67,6 @@ dk_1,d_1 \rangle\f$ vanishes, i.e.\ \f$ b_0=0\f$.
 \f$ b_3=\langle dk_2,d_2 \rangle\f$ vanishes, i.e.\ \f$ b_3=0\f$
 \cgalFootnote{Notations \f$ b_0, b_3\f$ comes from Equation \ref eqmonge }.
 </UL>
-</EM>
 
 The previous characterization of ridges involves third-order
 differential properties. Using fourth-order differential quantities, a
@@ -113,20 +112,16 @@ The Taylor expansion of \f$ k_1\f$ (resp. \f$ k_2\f$) along the max
 by \f$ x\f$ (resp. \f$ y\f$) are:
 
 \anchor eqtaylor_along_line
-\f[
-\begin{equation}
+\f{equation}{
 k_1(x) = k_1 + b_0x + \frac{P_1}{2(k_1-k_2)}x^2 + ... , \quad \quad \quad
 P_1= 3b_1^2+(k_1-k_2)(c_0-3k_1^3).
-\end{equation}
-\f]
+\f}
 
 \anchor eqtaylor_along_red_line
-\f[
-\begin{equation}
+\f{equation}{
 k_2(y) = k_2 + b_3y + \frac{P_2}{2(k_2-k_1)}y^2 + ... , \quad \quad \quad
 P_2= 3b_2^2+(k_2-k_1)(c_4-3k_2^3).
-\end{equation}
-\f]
+\f}
 
 Notice also that switching from one to the other of the two
 afore-mentioned coordinate systems reverts the sign of all the odd
@@ -134,7 +129,7 @@ coefficients on the Monge form of the surface.<BR>
 
 <BR>
 
-Hence ridge types are characterized by 
+Hence ridge types are characterized by
 <UL>
 <LI>max ridge if \f$ b_0=0\f$
 <LI>\ref MAX_ELLIPTIC_RIDGE if \f$ b_0=0\f$ and \f$ P_1<0\f$
@@ -172,8 +167,6 @@ Elliptic and hyperbolic umbilics.
 \cgalFigureEnd
 
 \section Ridges_3Approximating Approximating Ridges on Triangulated Surface Meshes
-
-\anchor ridgemesh
 
 Our method aims at reporting ridges as polygonal lines living on the
 mesh. It assumes differential quantities are available for each vertex
@@ -326,23 +319,18 @@ details.
 \anchor soft
 
 All classes of this package are templated by the parameter
-`TriangulatedSurfaceMesh`, which defines the type of the mesh to which the
+`TriangleMesh`, which defines the type of the mesh to which the
 approximation algorithms operate.
 
 The differential quantities are provided at vertices of this mesh via
-property maps, a concept commonly used in the Boost library. Scalar
-data (curvatures and their derivatives) are provided via
-`Vertex2FTPropertyMap` concepts, while \f$ 3d\f$ vector data (principal
-directions of curvatures) are provided via
-`Vertex2VectorPropertyMap` concepts. 
-The rationale for introducing these concepts is that properties are
-used independently from the way they are stored. This enables the user
-to store them <I>internally</I> in extended vertices or <I>externally</I>
-with maps. We provide a class
-`Vertex2Data_Property_Map_with_std_map` to adapt `std::map` with 
-a `boost::associative_property_map` to model these concepts.
+property maps, a concept commonly used in the Boost library.
+Property maps enables the user
+to store scalars and vectors associated to a vertex either
+<I>internally</I> in extended vertices or <I>externally</I>
+with a `std::map` combined with
+a <A href="https://www.boost.org/libs/property_map/doc/associative_property_map.html">`boost::associative_property_map`</a>.
 
-Output of ridges or umbilics are provided via output iterator.
+Output of ridges or umbilics are provided via output iterators.
 
 Approximation of ridges and umbilics are performed by two independent
 classes, which we now further describe.
@@ -350,7 +338,7 @@ classes, which we now further describe.
 \subsection Ridges_3RidgeApproximation Ridge Approximation
 
 The main class is
-`Ridge_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`.
+`Ridge_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`.
 Its construction requires the mesh and the property maps defining the
 differential quantities for principal curvatures \f$ k_1\f$ and \f$ k_2\f$, the
 third order extremalities \f$ b_0\f$ and \f$ b_3\f$, the principal directions of
@@ -379,7 +367,7 @@ just notice max and min crests cannot intersect over a triangle.<BR>
 <BR>
 
 The ridge lines are stored in
-`Ridge_line` objects and output through an iterator. 
+`Ridge_line` objects and output through an iterator.
 Each ridge line is represented as a list of halfedges of the mesh it
 crosses with a scalar defining the barycentric coordinate of the
 crossing point with respect to the half-egde endpoints. Each ridge
@@ -392,7 +380,7 @@ defined.
 \subsection Ridges_3UmbilicApproximation Umbilic Approximation
 
 The main class is
-`Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>`.
+`Umbilic_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`.
 Its construction requires the mesh and the property maps defining the
 differential quantities for principal curvatures \f$ k_1\f$ and \f$ k_2\f$, and
 the principal directions of curvature \f$ d_1\f$ and \f$ d_2\f$. The member
@@ -405,24 +393,14 @@ type : \ref ELLIPTIC_UMBILIC, \ref HYPERBOLIC_UMBILIC or
 to and the list of half-edges representing the contour of the
 neighborhood.
 
-\subsection Ridges_3ModelsforthePropertyMapConcepts Models for the Property Map Concepts
-
-The class
-`Vertex2Data_Property_Map_with_std_map<TriangulatedSurfaceMesh>`
-enables the definition of models for the concepts
-`Vertex2FTPropertyMap` and
-`Vertex2VectorPropertyMap` 
-using `std::maps` and `boost::associative_property_map`.
 
 \section Ridges_3Examples Examples
 
-\anchor examples
-
-\subsection Ridges_3Exampleprogram Example program
+\subsection Ridges_3Exampleprogram Example Program
 
 The following program computes ridges and umbilics from an off
-file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the Jet fitting package to estimate the differential
-quantities. 
+file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJetFitting3 to estimate the differential
+quantities.
 The default output file gives rough data for visualization purpose, a
 verbose output file may also be asked for. Parameters are
 <UL>
@@ -445,80 +423,80 @@ hyperbolic ridges, \f$ t\f$ is 3 (default) or 4;
 
 \code{.cpp}
 
-#include <CGAL/Ridges.h> 
-#include <CGAL/Umbilics.h>
-
 //this is an enriched Polyhedron with facets' normal
 #include "PolyhedralSurf.h"
+
+#include <CGAL/Ridges.h>
+#include <CGAL/Umbilics.h>
+
 
 typedef PolyhedralSurf::Traits Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point_3;
 typedef Kernel::Vector_3 Vector_3;
 
-typedef PolyhedralSurf::Vertex_const_handle Vertex_const_handle;
-typedef PolyhedralSurf::Vertex_const_iterator Vertex_const_iterator;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_descriptor  vertex_descriptor;
+typedef boost::graph_traits<PolyhedralSurf>::vertex_iterator vertex_iterator;
+typedef boost::graph_traits<PolyhedralSurf>::face_descriptor face_descriptor;
 
-typedef CGAL::Vertex2Data_Property_Map_with_std_map<PolyhedralSurf> Vertex2Data_Property_Map_with_std_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_map Vertex2FT_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_map Vertex2Vector_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2FT_property_map Vertex2FT_property_map;
-typedef Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map Vertex2Vector_property_map;
+typedef std::map<vertex_descriptor, FT> VertexFT_map;
+typedef boost::associative_property_map< VertexFT_map > VertexFT_property_map;
+
+typedef std::map<vertex_descriptor, Vector_3> VertexVector_map;
+typedef boost::associative_property_map< VertexVector_map > VertexVector_property_map;
 
 //RIDGES
 typedef CGAL::Ridge_line<PolyhedralSurf> Ridge_line;
-typedef CGAL::Ridge_approximation < PolyhedralSurf,
-back_insert_iterator< std::vector<Ridge_line*> >,
-Vertex2FT_property_map,
-Vertex2Vector_property_map > Ridge_approximation;
+typedef CGAL::Ridge_approximation <PolyhedralSurf,
+                                   VertexFT_property_map,
+                                   VertexVector_property_map > Ridge_approximation;
 //UMBILICS
 typedef CGAL::Umbilic<PolyhedralSurf> Umbilic;
 typedef CGAL::Umbilic_approximation < PolyhedralSurf,
-back_insert_iterator< std::vector<Umbilic*> >, 
-Vertex2FT_property_map, 
-Vertex2Vector_property_map > Umbilic_approximation;
+                                      VertexFT_property_map,
+                                      VertexVector_property_map > Umbilic_approximation;
 
 //create property maps
-Vertex2FT_map vertex2k1_map, vertex2k2_map, 
-vertex2b0_map, vertex2b3_map, 
-vertex2P1_map, vertex2P2_map;
-Vertex2Vector_map vertex2d1_map, vertex2d2_map;
+VertexFT_map vertex_k1_map, vertex_k2_map,
+  vertex_b0_map, vertex_b3_map,
+  vertex_P1_map, vertex_P2_map;
+  VertexVector_map vertex_d1_map, vertex_d2_map;
 
-Vertex2FT_property_map vertex2k1_pm(vertex2k1_map), vertex2k2_pm(vertex2k2_map), 
-vertex2b0_pm(vertex2b0_map), vertex2b3_pm(vertex2b3_map), 
-vertex2P1_pm(vertex2P1_map), vertex2P2_pm(vertex2P2_map);
-Vertex2Vector_property_map vertex2d1_pm(vertex2d1_map), vertex2d2_pm(vertex2d2_map);
+VertexFT_property_map vertex_k1_pm(vertex_k1_map), vertex_k2_pm(vertex_k2_map),
+  vertex_b0_pm(vertex_b0_map), vertex_b3_pm(vertex_b3_map),
+  vertex_P1_pm(vertex_P1_map), vertex_P2_pm(vertex_P2_map);
+  VertexVector_property_map vertex_d1_pm(vertex_d1_map), vertex_d2_pm(vertex_d2_map);
 
 int main(int argc, char *argv[])
-{ 
+{
   //compute differential quantities with the jet fitting package
   ...
   //initialize the property maps
   ...
-  //---------------------------------------------------------------------------
+
   //Ridges
   //--------------------------------------------------------------------------
-  Ridge_approximation ridge_approximation(P, 
-                                          vertex2k1_pm, vertex2k2_pm,
-                                          vertex2b0_pm, vertex2b3_pm,
-                                          vertex2P1_pm, vertex2P2_pm,
-                                          vertex2d1_pm, vertex2d2_pm);
+  Ridge_approximation ridge_approximation(P,
+                                          vertex_k1_pm, vertex_k2_pm,
+                                          vertex_b0_pm, vertex_b3_pm,
+                                          vertex_P1_pm, vertex_P2_pm,
+                                          vertex_d1_pm, vertex_d2_pm);
   std::vector<Ridge_line*> ridge_lines;
-  back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
+  std::back_insert_iterator<std::vector<Ridge_line*> > ii(ridge_lines);
 
   //Find MAX_RIDGE, MIN_RIDGE, CREST or all ridges
-  ridge_approximation.compute_max_ridges(ii, tag_order); 
-  ridge_approximation.compute_min_ridges(ii, tag_order); 
-  ridge_approximation.compute_crest_ridges(ii, tag_order); 
+  ridge_approximation.compute_max_ridges(ii, tag_order);
+  ridge_approximation.compute_min_ridges(ii, tag_order);
+  ridge_approximation.compute_crest_ridges(ii, tag_order);
 
-  //---------------------------------------------------------------------------
+
   // UMBILICS
   //--------------------------------------------------------------------------
-  Umbilic_approximation umbilic_approximation(P, 
-                                              vertex2k1_pm, vertex2k2_pm,
-                                              vertex2d1_pm, vertex2d2_pm);
+  Umbilic_approximation umbilic_approximation(P,
+                                              vertex_k1_pm, vertex_k2_pm,
+                                              vertex_d1_pm, vertex_d2_pm);
   std::vector<Umbilic*> umbilics;
-  back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
+  std::back_insert_iterator<std::vector<Umbilic*> > umb_it(umbilics);
   umbilic_approximation.compute(umb_it, umb_size);
 }
 
@@ -554,7 +532,7 @@ Ridges on the ellipsoid, normals pointing outward. Color coding :
 
 \subsection Ridges_3ExampleFilteringofCrestRidgesona Example: Filtering of Crest Ridges on a Mechanical Part
 
-\cgalFigureRef{figmechanical_crest_filteredintro} illustrates the filtering 
+\cgalFigureRef{figmechanical_crest_filteredintro} illustrates the filtering
 of crest ridges on a mechanical model, and has been computed as follows:
 
 \code{.cpp}
@@ -570,6 +548,6 @@ first two figures is unavoidable. It is however easily filtered out with
 the sharpness as can be seen on the right figure.
 \cgalFigureEnd
 
-*/ 
+*/
 } /* namespace CGAL */
 

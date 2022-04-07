@@ -1,0 +1,88 @@
+#
+# 1.<Type of x-curve> 2.<Number of x-curves in a polycurve> 3.<coefficients of conic> 4.<Orientation> 5.<source point> 6.<Target point> (repeat 3 to 6 for number of curves time. )
+#
+# Types of curves
+# TODO define
+#
+# In order to construct a poly-curve out of N curves, all curves should be counter clockwise or counter-clockwise and the order should be from spacially left curve to right curve (doubt).
+#
+# First Quadrant
+# curve 1: y=x^2 [(0,0)->(3,9)] 
+# curve 2: y=x^2 [(3,9)->(5,25)] both counter-clockwise
+# Curve id: 0
+a 2 1 0 0 0 -1 0 1 0 0 3 9 1 0 0 0 -1 0 1 3 9 5 25 
+#
+# Second Quadrant
+# curve 1: (circle of radius 4 centered at (-3,13) ) [(-7,13)->(-3,9)] 
+# curve 2:(y=x^2)[(-3,9)->(0,0)]  both counter-clockwise
+# Curve id: 1
+a 2 1 1 0 6 -26 162 1 -7 13 -3 9 1 0 0 0 -1 0 1 -3 9 0 0 
+#
+# Second and 4th quadrant
+# curve 1: (circle of radius 4 centered at (-3,13) ) [(-7,13)->(-3,9)] 
+# curve 2:(y=x^2)[(-3,9)->(0,0)]  
+# curve 3: (x=y^2) [ (0,0)->(4,-2) ]   all counter-clockwise
+# Curve id: 2
+a 3 1 1 0 6 -26 162 1 -7 13 -3 9 1 0 0 0 -1 0 1 -3 9 0 0 0 1 0 -1 0 0 1 0 0 4 -2
+#
+# First and 3rd quadrant
+# Curve 1: y^2=-x [ (-25,-5)->(0,0) ]
+# curve 2: y=x^2 [ (0,0)->(3,9) ] 
+# curve 3:(y=x^2)[ (3,9)->(5,25) ]     all counter-clockwise
+# Curve id: 3
+a 3 0 1 0 1 0 0 1 -25 -5 0 0 1 0 0 0 -1 0 1  0 0 3 9 1 0 0 0 -1 0 1 3 9 5 25
+#
+# 4th Quadrant
+# curve 1: (x=y^2) [ (0,0)->(4,-2) ]
+# Curve id: 4                          counter-clockwise
+a 1 0 1 0 -1 0 0 1 0 0 4 -2
+#
+# 3rd Quadrant
+# curve 1: y^2=-x [ (-25,-5)->(0,0) ]
+# Curve id: 5                          counter-clockwise
+a 1 0 1 0 1 0 0 1 -25 -5 0 0
+#
+# 4th Quadrant
+# curve 1: y^2=x [ (25,-5)->(0,0) ]
+# Curve id: 6                          clockwise
+a 1 0 1 0 -1 0 0 -1 25 -5 0 0 
+#
+# 2nd Quadrant
+# curve 1: y^2=-x [ (0,0)->(-25,5) ]
+# Curve id: 7                          counter-clockwise
+a 1 0 1 0 1 0 0 1 0 0 -25 5
+#
+# 1st and 2nd Quadrant
+# curve 1: (circle of radius 4 centered at (-3,13) ) [(-7,13)->(-3,9)] 
+# curve 2:(y=x^2)[(-3,9)->(0,0)]  
+# curve 3: y=x^2 [(0,0)->(3,9)] 
+# curve 4: y=x^2 [(3,9)->(5,25)] all counter-clockwise
+# Curve id: 8
+a 4 1 1 0 6 -26 162 1 -7 13 -3 9 1 0 0 0 -1 0 1 -3 9 0 0 1 0 0 0 -1 0 1 0 0 3 9 1 0 0 0 -1 0 1 3 9 5 25 
+#
+#
+# Second and 4th quadrant (opposite of Curve Id: 2)
+# curve 1: (x=y^2) [ (4,-2)->(0,0) ]   all clockwise
+# curve 2:(y=x^2)[(0,0)->(-3,9)]  
+# curve 3: (circle of radius 4 centered at (-3,13) ) [(-3,9) -> (-7,13)] 
+# Curve id: 9
+a 3 0 1 0 -1 0 0 -1 4 -2 0 0 1 0 0 0 -1 0 -1 0 0 -3 9 1 1 0 6 -26 162 -1 -3 9 -7 13
+#
+#
+# 1st and 2nd Quadrant (opposite of Curve Id: 8)
+# curve 1: y=x^2 [(5,25) -> (3,9)] all counter-clockwise
+# curve 2: y=x^2 [(3,9) -> (0,0)]
+# curve 3:(y=x^2)[(0,0) -> (-3,9)]  
+# curve 4: (circle of radius 4 centered at (-3,13) ) [(-3,9) -> (-7,13)] 
+# Curve id: 10
+a 4 1 0 0 0 -1 0 -1 5 25 3 9 1 0 0 0 -1 0 -1 3 9 0 0 1 0 0 0 -1 0 -1 0 0 -3 9 1 1 0 6 -26 162 -1 -3 9 -7 13
+#
+# x monotone conic Segments (basically conic x-monotone curves)
+#
+# y=x^2 [(0,0)->(3,9)] counter-clockwise
+# segment id: 0
+s -1 0 0 0 1 0 1 0 0 5 25
+#
+# y^2=x [ (25,-5)->(0,0) ]  counter-clockwise
+# segment id: 1
+s 0 1 0 1 0 0 1 -25 -5 0 0

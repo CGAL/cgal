@@ -1,0 +1,37 @@
+# # -*- comment-start: "#"; -*-
+# # 
+# # Format
+# # <command>	<point> <xcurve> <result>
+# #
+# # First Quadrant
+# compare_y_at_x 0 0 LARGER
+# compare_y_at_x 1 0 SMALLER
+# compare_y_at_x 2 0 EQUAL
+# compare_y_at_x 3 0 LARGER
+# compare_y_at_x 4 0 SMALLER
+# compare_y_at_x 5 0 SMALLER
+# compare_y_at_x 6 0 LARGER
+# #
+# #2nd Quadrant x-curve
+# compare_y_at_x 7 1 LARGER
+# compare_y_at_x 8 1 SMALLER
+# compare_y_at_x 9 1 LARGER
+# compare_y_at_x 10 1 SMALLER
+# compare_y_at_x 11 1 LARGER
+# compare_y_at_x 12 1 SMALLER
+# compare_y_at_x 13 1 EQUAL
+# compare_y_at_x 14 1 EQUAL
+# compare_y_at_x 15 1 EQUAL
+# #
+# # Second And Fourth quadrant of x-curve i.e. curve # 2
+# compare_y_at_x 8 2 SMALLER
+# compare_y_at_x 9 2 LARGER
+# compare_y_at_x 10 2 SMALLER
+# compare_y_at_x 11 2 LARGER
+# compare_y_at_x 12 2 SMALLER
+# compare_y_at_x 13 2 EQUAL
+# compare_y_at_x 14 2 EQUAL
+# compare_y_at_x 15 2 EQUAL
+# compare_y_at_x 16 2 LARGER
+# compare_y_at_x 17 2 SMALLER
+# compare_y_at_x 18 2 EQUAL

@@ -1,35 +1,29 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
- 
+
 #ifndef CGAL_DIRECTION_3_H
 #define CGAL_DIRECTION_3_H
 
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
+#include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
@@ -70,6 +64,9 @@ public:
   Direction_3(const Rep& d)
     : Rep(d) {}
 
+  Direction_3(Rep&& d)
+    : Rep(std::move(d)) {}
+
   explicit Direction_3(const Vector_3& v)
     : Rep(typename R::Construct_direction_3()(Return_base_tag(), v)) {}
 
@@ -89,13 +86,13 @@ public:
   {
     return t.transform(*this);
   }
- 
+
   Direction_3
   operator-() const
   {
     return R().construct_opposite_direction_3_object()(*this);
-  } 
-  
+  }
+
   Vector_3 to_vector() const
   {
     return R().construct_vector_3_object()(*this);
@@ -104,25 +101,25 @@ public:
   Vector_3 vector() const { return to_vector(); }
 
 
-  typename cpp11::result_of<typename R::Compute_dx_3(Direction_3)>::type
+  decltype(auto)
   dx() const
   {
     return R().compute_dx_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dy_3(Direction_3)>::type
+  decltype(auto)
   dy() const
   {
     return R().compute_dy_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dz_3(Direction_3)>::type
+  decltype(auto)
   dz() const
   {
     return R().compute_dz_3_object()(*this);
   }
 
-  typename cpp11::result_of<typename R::Compute_dx_3(Direction_3)>::type
+  decltype(auto)
   delta(int i) const
   {
     CGAL_kernel_precondition( i >= 0 && i <= 2 );
@@ -136,10 +133,10 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Direction_3<R>& d, const Cartesian_tag&) 
+insert(std::ostream& os, const Direction_3<R>& d, const Cartesian_tag&)
 {
   typename R::Vector_3 v = d.to_vector();
-  switch(os.iword(IO::mode)) {
+  switch(IO::get_mode(os)) {
     case IO::ASCII :
       return os << v.x() << ' ' << v.y()  << ' ' << v.z();
     case IO::BINARY :
@@ -157,7 +154,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Direction_3<R>& d, const Homogeneous_tag&)
 {
-  switch(os.iword(IO::mode))
+  switch(IO::get_mode(os))
   {
     case IO::ASCII :
         return os << d.dx() << ' ' << d.dy() << ' ' << d.dz();
@@ -183,12 +180,12 @@ operator<<(std::ostream& os, const Direction_3<R>& d)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&) 
+extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&)
 {
-  typename R::FT x, y, z;
-  switch(is.iword(IO::mode)) {
+  typename R::FT x(0), y(0), z(0);
+  switch(IO::get_mode(is)) {
     case IO::ASCII :
-      is >> x >> y >> z;
+      is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z);
       break;
     case IO::BINARY :
       read(is, x);
@@ -196,8 +193,9 @@ extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&)
       read(is, z);
       break;
     default:
+      is.setstate(std::ios::failbit);
       std::cerr << "" << std::endl;
-      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
       break;
   }
   if (is)
@@ -207,13 +205,13 @@ extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&) 
+extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&)
 {
   typename R::RT x, y, z;
-  switch(is.iword(IO::mode))
+  switch(IO::get_mode(is))
   {
     case IO::ASCII :
-        is >> x >> y >> z;
+        is >> IO::iformat(x) >> IO::iformat(y) >> IO::iformat(z);
         break;
     case IO::BINARY :
         read(is, x);
@@ -221,8 +219,9 @@ extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&)
         read(is, z);
         break;
     default:
+        is.setstate(std::ios::failbit);
         std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << "Stream must be in ASCII or binary mode" << std::endl;
         break;
   }
   if (is)

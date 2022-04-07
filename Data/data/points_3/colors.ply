@@ -1,0 +1,18 @@
+ply
+format ascii 1.0
+comment Example for CGAL PLY reader
+element vertex 3
+property double x
+property double y
+property double z
+property double nx
+property double ny
+property double nz
+property uchar red
+property uchar green
+property uchar blue
+property int intensity
+end_header
+0.0 0.0 0.0 0.0 0.0 1.0 255 0 0 10
+0.0 0.0 1.0 0.0 0.0 1.0 0 255 0 20
+0.0 1.0 0.0 0.0 0.0 1.0 0 0 255 30

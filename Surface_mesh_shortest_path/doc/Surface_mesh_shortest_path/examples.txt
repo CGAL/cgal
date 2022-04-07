@@ -1,0 +1,9 @@
+/*!
+\example Surface_mesh_shortest_path/shortest_paths.cpp
+\example Surface_mesh_shortest_path/shortest_paths_with_id.cpp
+\example Surface_mesh_shortest_path/shortest_paths_no_id.cpp
+\example Surface_mesh_shortest_path/shortest_paths_OpenMesh.cpp
+\example Surface_mesh_shortest_path/shortest_paths_multiple_sources.cpp
+\example Surface_mesh_shortest_path/shortest_path_sequence.cpp
+\example Surface_mesh_shortest_path/shortest_path_with_locate.cpp
+*/

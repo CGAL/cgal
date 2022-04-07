@@ -1,41 +1,40 @@
-project (Circular_kernel_3)
+cmake_minimum_required(VERSION 3.1...3.20)
+project(Circular_kernel_3_Demo)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
 endif()
 
-find_package(CGAL  COMPONENTS Qt4)
-include(${CGAL_USE_FILE})
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(OpenGL)
-find_package(QGLViewer)
+find_package(Qt5 QUIET COMPONENTS Script OpenGL)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND )
+if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
-  include(${QT_USE_FILE})
+  add_executable(
+    Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp
+                      ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
-  include_directories (${QGLVIEWER_INCLUDE_DIR})
-  include_directories (BEFORE ../../include ./ )
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS Circular_kernel_3)
 
-  add_executable  ( Circular_kernel_3 Circular_kernel_3.cpp Viewer.cpp )
+  target_link_libraries(Circular_kernel_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
+                                                  Qt5::OpenGL Qt5::Gui)
 
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Circular_kernel_3 )
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Circular_kernel_3)
 
-  target_link_libraries( Circular_kernel_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( Circular_kernel_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
-  target_link_libraries( Circular_kernel_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Circular_kernel_3)
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, the QGLViewer, OpenGL and Qt4, and will not be compiled.")
+  message(
+    STATUS "NOTICE: This demo requires CGAL, and Qt5, and will not be compiled."
+  )
 
 endif()

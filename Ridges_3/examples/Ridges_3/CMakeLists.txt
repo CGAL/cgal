@@ -1,55 +1,42 @@
 # This is the CMake script for compiling a CGAL application.
-project( Ridges_3_example )
+cmake_minimum_required(VERSION 3.1...3.22)
+project(Ridges_3_Examples)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
-endif()
+find_package(CGAL REQUIRED)
 
-find_package(CGAL QUIET )
+# use either Eigen
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
 
-if ( CGAL_FOUND )
+  # Link with Boost.ProgramOptions (optional)
+  find_package(Boost QUIET COMPONENTS program_options)
 
-  include( ${CGAL_USE_FILE} )
-  include( CGAL_CreateSingleSourceCGALProgram )
-
-  # use either Eigen or BLAS/LAPACK
-  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
-    find_package(LAPACK)
-    if(LAPACK_FOUND)
-      include( ${LAPACK_USE_FILE} )
-    endif(LAPACK_FOUND)
+  if(Boost_PROGRAM_OPTIONS_FOUND)
+    create_single_source_cgal_program(Compute_Ridges_Umbilics.cpp)
+    target_link_libraries(Compute_Ridges_Umbilics PUBLIC CGAL::Eigen3_support)
+    create_single_source_cgal_program(Ridges_Umbilics_SM.cpp)
+    target_link_libraries(Ridges_Umbilics_SM PUBLIC CGAL::Eigen3_support)
+    create_single_source_cgal_program(Ridges_Umbilics_LCC.cpp)
+    target_link_libraries(Ridges_Umbilics_LCC PUBLIC CGAL::Eigen3_support)
+    if(TARGET Boost::program_options)
+      target_link_libraries(Compute_Ridges_Umbilics PRIVATE Boost::program_options)
+      target_link_libraries(Ridges_Umbilics_SM PRIVATE Boost::program_options)
+      target_link_libraries(Ridges_Umbilics_LCC PRIVATE Boost::program_options)
+    else()
+      target_link_libraries(Compute_Ridges_Umbilics PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
+      target_link_libraries(Ridges_Umbilics_SM PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
+      target_link_libraries(Ridges_Umbilics_LCC PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
+    endif()
   else()
-    include( ${EIGEN3_USE_FILE} )
+    message(
+      STATUS
+        "NOTICE: This programs require Boost Program Options and will not be compiled."
+    )
   endif()
-  
-  
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
-    # Link with Boost.ProgramOptions (optional)
-    find_package(Boost QUIET COMPONENTS program_options)
-    if(Boost_PROGRAM_OPTIONS_FOUND)
-      if( CGAL_AUTO_LINK_ENABLED )
-        message( STATUS "Boost.ProgramOptions library: found" )
-      else()
-        message( STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}" )
-      endif()
-      add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
-      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
-   endif()
-
-   create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp PolyhedralSurf.cpp)
-
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
-
-    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
-
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
-
 else()
-  
-    message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+  message(
+    STATUS
+      "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled."
+  )
 endif()

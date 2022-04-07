@@ -73,22 +73,20 @@ struct Red_blue_merge_info
 // choose the kernel
 #include <CGAL/Simple_cartesian.h>
 
-struct Rep : public CGAL::Simple_cartesian<double> {};
-
 // typedefs for the geometric traits, storage traits and the algorithm
 #include <CGAL/Segment_Delaunay_graph_2.h>
 #include <CGAL/Segment_Delaunay_graph_filtered_traits_2.h>
 #include <CGAL/Segment_Delaunay_graph_storage_traits_with_info_2.h>
 
-
-typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<Rep> Gt;
+typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Segment_Delaunay_graph_filtered_traits_2<K> Gt;
 
 // define the storage traits with info
 typedef
 CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
-							Red_blue,
-							Red_blue_convert_info,
-							Red_blue_merge_info>
+                                                        Red_blue,
+                                                        Red_blue_convert_info,
+                                                        Red_blue_merge_info>
 ST;
 
 typedef CGAL::Segment_Delaunay_graph_2<Gt,ST>  SDG2;

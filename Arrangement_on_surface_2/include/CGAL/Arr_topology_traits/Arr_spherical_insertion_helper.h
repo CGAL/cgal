@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -22,45 +14,57 @@
 #ifndef CGAL_ARR_SPHERICAL_INSERTION_HELPER_H
 #define CGAL_ARR_SPHERICAL_INSERTION_HELPER_H
 
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 /*! \file
+ *
  * Definition of the Arr_spherical_insertion_helper class-template.
  */
 
-#include <CGAL/Sweep_line_2/Arr_construction_sl_visitor.h>
+#include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_topology_traits/Arr_spherical_construction_helper.h>
 
 namespace CGAL {
 
 /*! \class Arr_spherical_insertion_helper
+ *
  * A helper class for the insertion sweep-line visitors, suitable
  * for an Arrangement_on_surface_2 instantiated with a topology-traits class
  * for bounded curves in the plane.
  */
-template <typename Traits_, typename Arrangement_, typename Event_,
+template <typename GeometryTraits_2, typename Arrangement_, typename Event_,
           typename Subcurve_>
 class Arr_spherical_insertion_helper :
-  public Arr_spherical_construction_helper<Traits_, Arrangement_,
+  public Arr_spherical_construction_helper<GeometryTraits_2, Arrangement_,
                                            Event_, Subcurve_>
 {
 public:
-  typedef Traits_                                       Traits_2;
+  typedef GeometryTraits_2                              Geometry_traits_2;
   typedef Arrangement_                                  Arrangement_2;
   typedef Event_                                        Event;
   typedef Subcurve_                                     Subcurve;
 
-  typedef typename Traits_2::X_monotone_curve_2         X_monotone_curve_2;
-  typedef typename Traits_2::Point_2                    Point_2;
+private:
+  typedef Geometry_traits_2                             Gt2;
+  typedef Arr_spherical_insertion_helper<Gt2, Arrangement_2, Event, Subcurve>
+                                                        Self;
+  typedef Arr_spherical_construction_helper<Gt2, Arrangement_2, Event, Subcurve>
+                                                        Base;
 
-  typedef Arr_spherical_construction_helper<Traits_2, Arrangement_2, Event,
-                                            Subcurve>   Base;
+  typedef typename Gt2::Left_side_category              Left_side_category;
+  typedef typename Gt2::Bottom_side_category            Bottom_side_category;
+  typedef typename Gt2::Top_side_category               Top_side_category;
+  typedef typename Gt2::Right_side_category             Right_side_category;
 
-  typedef Sweep_line_empty_visitor<Traits_2, Subcurve, Event>
-                                                        Base_visitor;
+  typedef typename Arr_all_sides_oblivious_category<Left_side_category,
+                                                    Bottom_side_category,
+                                                    Top_side_category,
+                                                    Right_side_category>::result
+    All_sides_oblivious_category;
 
-  typedef Arr_spherical_insertion_helper<Traits_2, Arrangement_2, Event,
-                                         Subcurve>      Self;
-
-  typedef Arr_construction_sl_visitor<Self>             Parent_visitor;
+public:
+  typedef typename Gt2::X_monotone_curve_2              X_monotone_curve_2;
+  typedef typename Gt2::Point_2                         Point_2;
 
   typedef typename Arrangement_2::Vertex_handle         Vertex_handle;
   typedef typename Arrangement_2::Face_handle           Face_handle;
@@ -90,20 +94,37 @@ public:
     this->m_spherical_face = Face_handle(this->m_top_traits->south_face());
   }
 
-  /*! A notification invoked before the sweep-line starts handling a given
+  /*! A notification invoked before the surface-sweep starts handling a given
    * event.
    */
   virtual void before_handle_event(Event* event);
+
+  //@}
 
   /*! A notification invoked when a new subcurve is created. */
   virtual void add_subcurve(Halfedge_handle he, Subcurve* sc);
 
   /*! Get the current top face. */
   virtual Face_handle top_face() const;
+
+private:
+  /* A notification invoked before the surface-sweep starts handling a given
+   * event.
+   * This is the implementation for the case where all 4 boundary sides are
+   * oblivious.
+   */
+  void before_handle_event_imp(Event* event, Arr_all_sides_oblivious_tag);
+
+  /* A notification invoked before the surface-sweep starts handling a given
+   * event.
+   * This is the implementation for the case where all 4 boundary sides are
+   * not oblivious.
+   */
+  void before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag);
 };
 
 //-----------------------------------------------------------------------------
-// Memeber-function definitions:
+// Member-function definitions:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
@@ -113,11 +134,33 @@ public:
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
 before_handle_event(Event* event)
+{ before_handle_event_imp(event, All_sides_oblivious_category()); }
+
+/* A notification invoked before the surface-sweep starts handling a given
+ * event.
+ * This is the implementation for the case where all 4 boundary sides are
+ * oblivious.
+ */
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
+before_handle_event_imp(Event* /* event */, Arr_all_sides_oblivious_tag)
+{ return; }
+
+/* A notification invoked before the surface-sweep starts handling a given
+ * event.
+ * This is the implementation for the case where all 4 boundary sides are
+ * not oblivious.
+ */
+template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
+void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
+before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
 {
   // Ignore events that do not have boundary conditions.
-  const Arr_parameter_space ps_x = event->parameter_space_in_x();
-  const Arr_parameter_space ps_y = event->parameter_space_in_y();
+  auto ps_x = event->parameter_space_in_x();
+  auto ps_y = event->parameter_space_in_y();
   if ((ps_x == ARR_INTERIOR) && (ps_y == ARR_INTERIOR)) return;
+
+  if (event->is_isolated()) return;
 
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
     // Process bootom contraction boundary:
@@ -125,8 +168,7 @@ before_handle_event(Event* event)
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() == 0) &&
                    (event->number_of_right_curves() == 1));
-    const X_monotone_curve_2& xc =
-        (*(event->right_curves_begin()))->last_curve();
+    const auto& xc = (*(event->right_curves_begin()))->last_curve();
     if (xc.halfedge_handle() != Halfedge_handle()) return;
 
     // If a vertex on the south pole does not exists, create one.
@@ -143,8 +185,7 @@ before_handle_event(Event* event)
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() == 1) &&
                    (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc =
-      (*(event->left_curves_begin()))->last_curve();
+    const auto& xc = (*(event->left_curves_begin()))->last_curve();
 
     if (xc.halfedge_handle() != Halfedge_handle()) {
       // Update the current top face.
@@ -161,21 +202,19 @@ before_handle_event(Event* event)
   }
 
   if (ps_x == ARR_LEFT_BOUNDARY) {
-    // Process left discontinuity boundary:
-    // The event has only right curves, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    CGAL_assertion((event->number_of_left_curves() == 0) &&
-                   (event->number_of_right_curves() >= 1));
-    const X_monotone_curve_2& xc =
-      (*(event->right_curves_begin()))->last_curve();
+    // If the event is an end-point of a curve that coincides with the
+    // identification boundary, it may not have right curves at all
+    if (0 == event->number_of_right_curves()) return;
 
+    // Otherwise, it may still have a left curve...
+    const auto& xc = (*(event->right_curves_begin()))->last_curve();
     if (xc.halfedge_handle() != Halfedge_handle()) {
       // Update the current top face.
       this->m_spherical_face = xc.halfedge_handle()->twin()->face();
       return;
     }
 
-    // If a vertex on the line of discontinuity does not exists. create one.
+    // If a vertex on the line of discontinuity does not exists, create one.
     DVertex* dv = this->m_top_traits->discontinuity_vertex(xc, ARR_MIN_END);
     Vertex_handle v = (dv) ? Vertex_handle(dv) :
       this->m_arr_access.create_boundary_vertex(xc, ARR_MIN_END, ps_x, ps_y);
@@ -189,8 +228,7 @@ before_handle_event(Event* event)
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() >= 1) &&
                    (event->number_of_right_curves() == 0));
-    const X_monotone_curve_2& xc =
-      (*(event->left_curves_begin()))->last_curve();
+    const auto& xc = (*(event->left_curves_begin()))->last_curve();
     if (xc.halfedge_handle() != Halfedge_handle()) return;
 
     // If a vertex on the line of discontinuity does not exists. create one.
@@ -202,7 +240,8 @@ before_handle_event(Event* event)
   }
 }
 
-/*! A notification invoked when a new subcurve is created. */
+/*! A notification invoked when a new subcurve is created.
+ */
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
 add_subcurve(Halfedge_handle he, Subcurve* /* sc */)
@@ -227,6 +266,6 @@ Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::top_face() const
   return this->m_spherical_face;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

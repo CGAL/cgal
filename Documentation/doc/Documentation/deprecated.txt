@@ -1,0 +1,11 @@
+/*!
+
+\page deprecated Deprecation Notice
+
+In \cgal, we are trying as much as possible not to break the backward compatibility. If we have to do it, it will be announced in the <a href="https://www.cgal.org/releases.html">release notes</a> ,
+and a solution will always be provided. When possible, we keep the deprecated API for two releases before removing it.
+If you reached this page after clicking on a link, it must probably mean that the documentation page you were trying to reach
+is now deprecated. Have a look at the <a href="https://www.cgal.org/releases.html">release notes</a> for more information.
+
+
+*/

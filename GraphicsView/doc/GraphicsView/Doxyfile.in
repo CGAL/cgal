@@ -1,10 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - CGAL and the Qt Graphics View Framework"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/GraphicsView/doc/GraphicsView/
-
-
-
-EXAMPLE_PATH =
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - CGAL and the Qt Graphics View Framework"

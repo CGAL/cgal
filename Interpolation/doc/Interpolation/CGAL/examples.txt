@@ -1,7 +1,0 @@
-/*!
-\example Interpolation/nn_coordinates_2.cpp
-\example Interpolation/rn_coordinates_2.cpp
-\example Interpolation/surface_neighbor_coordinates_3.cpp
-\example Interpolation/linear_interpolation_2.cpp
-\example Interpolation/sibson_interpolation_2.cpp
-*/

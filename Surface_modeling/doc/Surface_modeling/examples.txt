@@ -1,6 +1,0 @@
-/*!
-\example Surface_modeling/all_roi_assign_example.cpp
-\example Surface_modeling/k_ring_roi_translate_rotate_example.cpp
-\example Surface_modeling/deform_polyhedron_with_custom_pmap_example.cpp
-\example Surface_modeling/custom_weight_for_edges_example.cpp
-*/

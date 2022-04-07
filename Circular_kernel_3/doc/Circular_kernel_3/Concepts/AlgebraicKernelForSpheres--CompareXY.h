@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSphericalKernel3AlgebraicConcepts
+\ingroup PkgCircularKernel3AlgebraicConcepts
 \cgalConcept
 
 \sa `AlgebraicKernelForSpheres::CompareX`
@@ -18,12 +18,12 @@ public:
 /// @{
 
 /*!
-Compares the `x` and `y` (the two first) variables of 
-two `Root_for_spheres_2_3` lexicographically. 
-*/ 
-CGAL::Comparison_result 
-operator()(const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r1, 
-const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r2); 
+Compares the `x` and `y` (the two first) variables of
+two `Root_for_spheres_2_3` lexicographically.
+*/
+CGAL::Comparison_result
+operator()(const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r1,
+const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r2);
 
 /// @}
 

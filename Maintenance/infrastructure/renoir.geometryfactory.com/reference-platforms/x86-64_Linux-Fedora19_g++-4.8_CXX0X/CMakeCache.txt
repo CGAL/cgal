@@ -7,7 +7,7 @@
 # The syntax for the file is as follows:
 # KEY:TYPE=VALUE
 # KEY is the name of a variable in the cache.
-# TYPE is a hint to GUI's for the type of VALUE, DO NOT EDIT TYPE!.
+# TYPE is a hint to GUIs for the type of VALUE, DO NOT EDIT TYPE!.
 # VALUE is the current value for the KEY.
 
 ########################
@@ -17,32 +17,26 @@
 //Build shared libraries
 BUILD_SHARED_LIBS:BOOL=ON
 
-//The directory containing a CMake configuration file for Boost.
-Boost_DIR:PATH=Boost_DIR-NOTFOUND
+//Activate the debug messages of the script FindBoost
+Boost_DEBUG:BOOL=OFF
 
 //Path to a file.
-Boost_INCLUDE_DIR:PATH=/home/lrineau/CGAL/boost/1.48/include
+Boost_INCLUDE_DIR:PATH=/home/lrineau/CGAL/boost/boost_1_57_0
 
 //Boost library directory
-Boost_LIBRARY_DIRS:FILEPATH=/home/lrineau/CGAL/boost/1.48/lib
-
-//The Boost SYSTEM library
-Boost_SYSTEM_LIBRARY:FILEPATH=/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so
+Boost_LIBRARY_DIR:PATH=/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib
 
 //Boost system library (debug)
-Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so
+Boost_SYSTEM_LIBRARY_DEBUG:FILEPATH=/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_system.so
 
 //Boost system library (release)
-Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so
-
-//The Boost THREAD library
-Boost_THREAD_LIBRARY:FILEPATH=/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so
+Boost_SYSTEM_LIBRARY_RELEASE:FILEPATH=/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_system.so
 
 //Boost thread library (debug)
-Boost_THREAD_LIBRARY_DEBUG:FILEPATH=/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so
+Boost_THREAD_LIBRARY_DEBUG:FILEPATH=/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_thread.so
 
 //Boost thread library (release)
-Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so
+Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_thread.so
 
 //Select to allow to use all preconfigured external libraries
 CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT:BOOL=OFF
@@ -52,9 +46,6 @@ CGAL_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-64_L
 
 //Link with static Boost libraries
 CGAL_Boost_USE_STATIC_LIBS:BOOL=OFF
-
-//Directory containing the Maintenance package
-CGAL_CORE_PACKAGE_DIR:PATH=/home/lrineau/CGAL/CGAL-I
 
 //User-defined flags
 CGAL_CXX_FLAGS:STRING= -frounding-math -std=c++11
@@ -66,7 +57,7 @@ CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86
 CGAL_Core_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL_Core.so
 
 //Dependencies for the target
-CGAL_Core_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so;
+CGAL_Core_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_thread.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_system.so;
 
 //Value Computed by CMake
 CGAL_Core_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALCore
@@ -80,9 +71,6 @@ CGAL_DONT_OVERRIDE_CMAKE_FLAGS:BOOL=TRUE
 
 //Select to allow to preconfiguration of external libraries
 CGAL_ENABLE_PRECONFIG:BOOL=ON
-
-//Directory containing the Installation package
-CGAL_INSTALLATION_PACKAGE_DIR:PATH=/home/lrineau/CGAL/CGAL-I
 
 //The folder where CGAL user-side scripts will be installed, relative
 // to CMAKE_INSTALL_PREFIX
@@ -115,7 +103,7 @@ CGAL_ImageIO_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/
 CGAL_ImageIO_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL_ImageIO.so
 
 //Dependencies for the target
-CGAL_ImageIO_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;general;/usr/lib64/libz.so;
+CGAL_ImageIO_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_thread.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_system.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;general;/usr/lib64/libz.so;
 
 //Value Computed by CMake
 CGAL_ImageIO_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALImageIO
@@ -124,10 +112,7 @@ CGAL_ImageIO_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALImageIO
 CGAL_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so
 
 //Dependencies for the target
-CGAL_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so;
-
-//Directory containing the Maintenance package
-CGAL_MAINTENANCE_PACKAGE_DIR:PATH=/home/lrineau/CGAL/CGAL-I
+CGAL_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_thread.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_system.so;
 
 //Value Computed by CMake
 CGAL_Qt3_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/src/Qt3
@@ -136,7 +121,7 @@ CGAL_Qt3_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-
 CGAL_Qt3_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL_Qt3.so
 
 //Dependencies for the target
-CGAL_Qt3_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so;general;/usr/lib64/qt-3.3/lib/libqassistantclient.a;general;/usr/lib64/qt-3.3/lib/libqt-mt.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;general;dl;general;-lpthread;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
+CGAL_Qt3_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_thread.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_system.so;general;/usr/lib64/qt-3.3/lib/libqassistantclient.a;general;/usr/lib64/qt-3.3/lib/libqt-mt.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;general;dl;general;-lpthread;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
 
 //Value Computed by CMake
 CGAL_Qt3_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALQt3
@@ -148,7 +133,7 @@ CGAL_Qt4_BINARY_DIR:STATIC=/home/lrineau/infrastructure/reference-platforms/x86-
 CGAL_Qt4_LIBRARY:STRING=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL_Qt4.so
 
 //Dependencies for the target
-CGAL_Qt4_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so;general;/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so;optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
+CGAL_Qt4_LIB_DEPENDS:STATIC=general;/usr/lib64/libmpfr.so;general;/usr/lib64/libgmpxx.so;general;/usr/lib64/libgmp.so;general;/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_thread.so;general;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_system.so;optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtSvg.so;debug;/usr/lib64/libQtSvg_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;general;/usr/lib64/libGLU.so;general;/usr/lib64/libGL.so;general;/usr/lib64/libSM.so;general;/usr/lib64/libICE.so;general;/usr/lib64/libX11.so;general;/usr/lib64/libXext.so;
 
 //Value Computed by CMake
 CGAL_Qt4_SOURCE_DIR:STATIC=/home/lrineau/CGAL/CGAL-I/src/CGALQt4
@@ -289,10 +274,25 @@ CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //If set, runtime paths are not added when installing shared libraries,
 // but are added when building.
-CMAKE_SKIP_INSTALL_RPATH:BOOL=NO
+CMAKE_SKIP_INSTALL_RPATH:BOOL=OFF
 
 //If set, runtime paths are not added when using shared libraries.
 CMAKE_SKIP_RPATH:BOOL=OFF
+
+//Flags used by the linker during the creation of static libraries.
+CMAKE_STATIC_LINKER_FLAGS:STRING=
+
+//Flags used by the linker during debug builds.
+CMAKE_STATIC_LINKER_FLAGS_DEBUG:STRING=
+
+//Flags used by the linker during release minsize builds.
+CMAKE_STATIC_LINKER_FLAGS_MINSIZEREL:STRING=
+
+//Flags used by the linker during release builds.
+CMAKE_STATIC_LINKER_FLAGS_RELEASE:STRING=
+
+//Flags used by the linker during Release with Debug Info builds.
+CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 
 //Path to a program.
 CMAKE_STRIP:FILEPATH=/usr/bin/strip
@@ -1204,7 +1204,7 @@ X11_Xft_LIB:FILEPATH=/usr/lib64/libXft.so
 X11_Xi_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a library.
-X11_Xi_LIB:FILEPATH=X11_Xi_LIB-NOTFOUND
+X11_Xi_LIB:FILEPATH=/usr/lib64/libXi.so
 
 //Path to a file.
 X11_Xinerama_INCLUDE_PATH:PATH=/usr/include
@@ -1225,7 +1225,7 @@ X11_Xkb_INCLUDE_PATH:PATH=/usr/include
 X11_Xkbfile_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a library.
-X11_Xkbfile_LIB:FILEPATH=X11_Xkbfile_LIB-NOTFOUND
+X11_Xkbfile_LIB:FILEPATH=/usr/lib64/libxkbfile.so
 
 //Path to a file.
 X11_Xkblib_INCLUDE_PATH:PATH=/usr/include
@@ -1237,7 +1237,7 @@ X11_Xlib_INCLUDE_PATH:PATH=/usr/include
 X11_Xmu_INCLUDE_PATH:PATH=/usr/include
 
 //Path to a library.
-X11_Xmu_LIB:FILEPATH=X11_Xmu_LIB-NOTFOUND
+X11_Xmu_LIB:FILEPATH=/usr/lib64/libXmu.so
 
 //Path to a file.
 X11_Xpm_INCLUDE_PATH:PATH=/usr/include
@@ -1285,7 +1285,7 @@ X11_Xv_LIB:FILEPATH=/usr/lib64/libXv.so
 X11_Xxf86misc_LIB:FILEPATH=/usr/lib64/libXxf86misc.so
 
 //Path to a library.
-X11_Xxf86vm_LIB:FILEPATH=X11_Xxf86vm_LIB-NOTFOUND
+X11_Xxf86vm_LIB:FILEPATH=/usr/lib64/libXxf86vm.so
 
 //Path to a file.
 X11_dpms_INCLUDE_PATH:PATH=/usr/include
@@ -1309,24 +1309,24 @@ ZLIB_LIBRARY:FILEPATH=/usr/lib64/libz.so
 
 //Name of all CGAL libraries.
 ALL_CGAL_LIBRARIES:INTERNAL=CGAL;CGAL_Core;CGAL_ImageIO;CGAL_Qt3;CGAL_Qt4
+//ADVANCED property for variable: Boost_DEBUG
+Boost_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_INCLUDE_DIR
 Boost_INCLUDE_DIR-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: Boost_LIBRARY_DIRS
-Boost_LIBRARY_DIRS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: Boost_LIBRARY_DIR
+Boost_LIBRARY_DIR-ADVANCED:INTERNAL=1
 //The library version string for boost libraries
 Boost_LIB_VERSION:INTERNAL=1_48
+//Avoid future search of boost-cmake
+Boost_NO_BOOST_CMAKE:INTERNAL=TRUE
 //Whether the Boost SYSTEM library found
 Boost_SYSTEM_FOUND:INTERNAL=ON
-//ADVANCED property for variable: Boost_SYSTEM_LIBRARY
-Boost_SYSTEM_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_SYSTEM_LIBRARY_DEBUG
 Boost_SYSTEM_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_SYSTEM_LIBRARY_RELEASE
 Boost_SYSTEM_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //Whether the Boost THREAD library found
 Boost_THREAD_FOUND:INTERNAL=ON
-//ADVANCED property for variable: Boost_THREAD_LIBRARY
-Boost_THREAD_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_THREAD_LIBRARY_DEBUG
 Boost_THREAD_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Boost_THREAD_LIBRARY_RELEASE
@@ -1334,15 +1334,18 @@ Boost_THREAD_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //The version number for boost libraries
 Boost_VERSION:INTERNAL=104800
 CGAL_3RD_PARTY_DEFINITIONS:INTERNAL=
-CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/home/lrineau/CGAL/boost/1.48/include
-CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/home/lrineau/CGAL/boost/1.48/lib/libboost_thread-mt.so;/home/lrineau/CGAL/boost/1.48/lib/libboost_system-mt.so
-CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/home/lrineau/CGAL/boost/1.48/lib
+CGAL_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/home/lrineau/CGAL/boost/boost_1_57_0
+CGAL_3RD_PARTY_LIBRARIES:INTERNAL=/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_thread.so;/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib/libboost_system.so
+CGAL_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib
 CGAL_3RD_PARTY_PRECONFIGURED:INTERNAL=
 //ADVANCED property for variable: CGAL_Boost_USE_STATIC_LIBS
 CGAL_Boost_USE_STATIC_LIBS-ADVANCED:INTERNAL=1
 CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG:INTERNAL=0
 //Result of TRY_COMPILE
 CGAL_CFG_ARRAY_MEMBER_INITIALIZATION_BUG_COMPILED:INTERNAL=TRUE
+CGAL_CFG_BOOST_VARIANT_SWAP_BUG:INTERNAL=0
+//Result of TRY_COMPILE
+CGAL_CFG_BOOST_VARIANT_SWAP_BUG_COMPILED:INTERNAL=TRUE
 CGAL_CFG_DENORMALS_COMPILE_BUG:INTERNAL=0
 //Result of TRY_COMPILE
 CGAL_CFG_DENORMALS_COMPILE_BUG_COMPILED:INTERNAL=TRUE
@@ -1364,6 +1367,12 @@ CGAL_CFG_MATCHING_BUG_5_COMPILED:INTERNAL=TRUE
 CGAL_CFG_MATCHING_BUG_6:INTERNAL=0
 //Result of TRY_COMPILE
 CGAL_CFG_MATCHING_BUG_6_COMPILED:INTERNAL=TRUE
+CGAL_CFG_MATCHING_BUG_7:INTERNAL=0
+//Result of TRY_COMPILE
+CGAL_CFG_MATCHING_BUG_7_COMPILED:INTERNAL=TRUE
+CGAL_CFG_MATCHING_BUG_8:INTERNAL=0
+//Result of TRY_COMPILE
+CGAL_CFG_MATCHING_BUG_8_COMPILED:INTERNAL=TRUE
 CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG:INTERNAL=0
 //Result of TRY_COMPILE
 CGAL_CFG_NESTED_CLASS_FRIEND_DECLARATION_BUG_COMPILED:INTERNAL=TRUE
@@ -1464,7 +1473,9 @@ CGAL_CFG_USING_BASE_MEMBER_BUG_2_COMPILED:INTERNAL=TRUE
 CGAL_CGAL_LIBRARY:INTERNAL=/home/lrineau/infrastructure/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXX0X/lib/libCGAL.so
 //Variable hidden from user
 CGAL_CGAL_LIBRARY_NAME:INTERNAL=libCGAL.so
-CGAL_CONFIGURED_LIBRARIES:INTERNAL=CGAL;CGAL_Core;CGAL_ImageIO;CGAL_Qt3;CGAL_Qt4;Core;ImageIO;Qt3;Qt4
+CGAL_CONFIGURED_LIBRARIES:INTERNAL=CGAL_Core;CGAL_ImageIO;CGAL_Qt3;CGAL_Qt4
+//Directory containing the Core package
+CGAL_CORE_PACKAGE_DIR:INTERNAL=/home/lrineau/CGAL/CGAL-I
 CGAL_Core_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_Core_3RD_PARTY_INCLUDE_DIRS:INTERNAL=
 CGAL_Core_3RD_PARTY_LIBRARIES:INTERNAL=
@@ -1476,7 +1487,7 @@ CGAL_Core_LIBRARY_INSTALLED:INTERNAL=/usr/local/lib/libCGAL_Core.so
 //Variable hidden from user
 CGAL_Core_LIBRARY_NAME:INTERNAL=
 //Variable hidden from user
-CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR;GMP;MPFR
+CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES:INTERNAL=GMP;MPFR
 CGAL_EXECUTABLE_TARGETS:INTERNAL=
 //Variable hidden from user
 CGAL_EXT_LIB_BLAS_PREFIX:INTERNAL=BLAS
@@ -1516,6 +1527,8 @@ CGAL_EXT_LIB_RS_PREFIX:INTERNAL=RS
 CGAL_EXT_LIB_TAUCS_PREFIX:INTERNAL=TAUCS
 //Variable hidden from user
 CGAL_EXT_LIB_ZLIB_PREFIX:INTERNAL=ZLIB
+//Directory containing the Installation package
+CGAL_INSTALLATION_PACKAGE_DIR:INTERNAL=/home/lrineau/CGAL/CGAL-I
 CGAL_ImageIO_3RD_PARTY_DEFINITIONS:INTERNAL=-DCGAL_USE_ZLIB
 CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include
 CGAL_ImageIO_3RD_PARTY_LIBRARIES:INTERNAL=/usr/lib64/libGLU.so;/usr/lib64/libGL.so;/usr/lib64/libSM.so;/usr/lib64/libICE.so;/usr/lib64/libX11.so;/usr/lib64/libXext.so;/usr/lib64/libz.so
@@ -1533,6 +1546,8 @@ CGAL_LIBRARY-ADVANCED:INTERNAL=1
 CGAL_LIBRARY_INSTALLED:INTERNAL=/usr/local/lib/libCGAL.so
 //Variable hidden from user
 CGAL_LIBRARY_NAME:INTERNAL=libCGAL.so
+//Directory containing the Maintenance package
+CGAL_MAINTENANCE_PACKAGE_DIR:INTERNAL=/home/lrineau/CGAL/CGAL-I
 CGAL_Qt3_3RD_PARTY_DEFINITIONS:INTERNAL=-DQT_SHARED;-DQT_NO_DEBUG;-DQT_THREAD_SUPPORT;-D_REENTRANT
 CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/lib64/qt-3.3/include;/usr/include
 CGAL_Qt3_3RD_PARTY_LIBRARIES:INTERNAL=/usr/lib64/qt-3.3/lib/libqassistantclient.a;/usr/lib64/qt-3.3/lib/libqt-mt.so;/usr/lib64/libSM.so;/usr/lib64/libICE.so;/usr/lib64/libX11.so;/usr/lib64/libXext.so;dl;-lpthread;/usr/lib64/libGLU.so;/usr/lib64/libGL.so;/usr/lib64/libSM.so;/usr/lib64/libICE.so;/usr/lib64/libX11.so;/usr/lib64/libXext.so
@@ -1545,7 +1560,7 @@ CGAL_Qt3_LIBRARY_INSTALLED:INTERNAL=/usr/local/lib/libCGAL_Qt3.so
 CGAL_Qt3_LIBRARY_NAME:INTERNAL=libCGAL_Qt3.so
 CGAL_Qt4_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS:INTERNAL=/usr/include;/usr/include
-CGAL_Qt4_3RD_PARTY_LIBRARIES:INTERNAL=optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;/usr/lib64/libGLU.so;/usr/lib64/libGL.so;/usr/lib64/libSM.so;/usr/lib64/libICE.so;/usr/lib64/libX11.so;/usr/lib64/libXext.so
+CGAL_Qt4_3RD_PARTY_LIBRARIES:INTERNAL=optimized;/usr/lib64/libQtOpenGL.so;debug;/usr/lib64/libQtOpenGL_debug.so;optimized;/usr/lib64/libQtSvg.so;debug;/usr/lib64/libQtSvg_debug.so;optimized;/usr/lib64/libQtGui.so;debug;/usr/lib64/libQtGui_debug.so;optimized;/usr/lib64/libQtCore.so;debug;/usr/lib64/libQtCore_debug.so;/usr/lib64/libGLU.so;/usr/lib64/libGL.so;/usr/lib64/libSM.so;/usr/lib64/libICE.so;/usr/lib64/libX11.so;/usr/lib64/libXext.so
 CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
 //ADVANCED property for variable: CGAL_Qt4_LIBRARY
 CGAL_Qt4_LIBRARY-ADVANCED:INTERNAL=1
@@ -1558,7 +1573,7 @@ CGAL_SONAME_VERSION-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CGAL_SOVERSION
 CGAL_SOVERSION-ADVANCED:INTERNAL=1
 //Variable hidden from user
-CGAL_SUPPORTING_3RD_PARTY_LIBRARIES:INTERNAL=GMP;GMPXX;MPFR;ZLIB;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;TAUCS;Eigen3;BLAS;LAPACK;QGLViewer;ESBTL;Coin3D;NTL;IPE
+CGAL_SUPPORTING_3RD_PARTY_LIBRARIES:INTERNAL=GMP;GMPXX;MPFR;ZLIB;OpenGL;LEDA;MPFI;RS;RS3;OpenNL;Eigen3;BLAS;LAPACK;QGLViewer;ESBTL;Coin3D;NTL;IPE;TAUCS
 //ADVANCED property for variable: CMAKE_AR
 CMAKE_AR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_BACKWARDS_COMPATIBILITY
@@ -1574,7 +1589,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=2
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=8
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=8
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=12
 //Major version of cmake used to create the current loaded cache
 CMAKE_CACHE_RELEASE_VERSION:INTERNAL=patch 4
 //ADVANCED property for variable: CMAKE_COLOR_MAKEFILE
@@ -1587,7 +1602,6 @@ CMAKE_CPACK_COMMAND:INTERNAL=/usr/bin/cpack
 CMAKE_CTEST_COMMAND:INTERNAL=/usr/bin/ctest
 //ADVANCED property for variable: CMAKE_CXX_COMPILER
 CMAKE_CXX_COMPILER-ADVANCED:INTERNAL=1
-CMAKE_CXX_COMPILER_WORKS:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_FLAGS
 CMAKE_CXX_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_FLAGS_DEBUG
@@ -1600,7 +1614,6 @@ CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_COMPILER
 CMAKE_C_COMPILER-ADVANCED:INTERNAL=1
-CMAKE_C_COMPILER_WORKS:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS
 CMAKE_C_FLAGS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_FLAGS_DEBUG
@@ -1633,6 +1646,8 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 CMAKE_EXPORT_COMPILE_COMMANDS-ADVANCED:INTERNAL=1
 //Name of generator.
 CMAKE_GENERATOR:INTERNAL=Unix Makefiles
+//Name of generator toolset.
+CMAKE_GENERATOR_TOOLSET:INTERNAL=
 //Have function connect
 CMAKE_HAVE_CONNECT:INTERNAL=1
 //Have function gethostbyname
@@ -1696,6 +1711,16 @@ CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 CMAKE_SKIP_INSTALL_RPATH-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_SKIP_RPATH
 CMAKE_SKIP_RPATH-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_STATIC_LINKER_FLAGS
+CMAKE_STATIC_LINKER_FLAGS-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_STATIC_LINKER_FLAGS_DEBUG
+CMAKE_STATIC_LINKER_FLAGS_DEBUG-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_STATIC_LINKER_FLAGS_MINSIZEREL
+CMAKE_STATIC_LINKER_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_STATIC_LINKER_FLAGS_RELEASE
+CMAKE_STATIC_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO
+CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_STRIP
 CMAKE_STRIP-ADVANCED:INTERNAL=1
 //Suppress Warnings that are meant for the author of the CMakeLists.txt
@@ -1713,13 +1738,13 @@ Core_LIBRARY_INSTALLED:INTERNAL=
 //Variable hidden from user
 EXECUTABLE_OUTPUT_PATH:INTERNAL=
 //Details about finding OpenGL
-FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib64/libGL.so][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/usr/lib64/libGL.so][/usr/include][v()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Details about finding X11
-FIND_PACKAGE_MESSAGE_DETAILS_X11:INTERNAL=[/usr/lib64/libX11.so][/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include;/usr/include]
+FIND_PACKAGE_MESSAGE_DETAILS_X11:INTERNAL=[/usr/lib64/libX11.so][/usr/include]
 //Details about finding ZLIB
-FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/usr/lib64/libz.so][/usr/include][v1.2.5()]
+FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/usr/lib64/libz.so][/usr/include][v1.2.8()]
 //Result of TRY_COMPILE
 GCC_COMPILE_RES:INTERNAL=TRUE
 //Result of TRY_RUN
@@ -2381,4 +2406,16 @@ ZLIB_INCLUDE_DIR-ADVANCED:INTERNAL=1
 ZLIB_LIBRARY-ADVANCED:INTERNAL=1
 //Result of TRY_RUN
 ZLIB_RUN_RES:INTERNAL=0
+//Last used Boost_ADDITIONAL_VERSIONS value.
+_Boost_ADDITIONAL_VERSIONS_LAST:INTERNAL=1.56.1;1.56.0;1.56;1.55.1;1.55.0;1.55;1.54.1;1.54.0;1.54;1.53.1;1.53.0;1.53;1.52.1;1.52.0;1.52;1.51.1;1.51.0;1.51;1.50.1;1.50.0;1.50;1.49.1;1.49.0;1.49;1.48.1;1.48.0;1.48;1.47.1;1.47.0;1.47;1.46.1;1.46.0;1.46;1.45.1;1.45.0;1.45;1.44.1;1.44.0;1.44;1.43.1;1.43.0;1.43;1.42.1;1.42.0;1.42;1.41.1;1.41.0;1.41;1.40.1;1.40.0;1.40;1.39.1;1.39.0;1.39;1.38.1;1.38.0;1.38;1.37.1;1.37.0;1.37
+//Components requested for this build tree.
+_Boost_COMPONENTS_SEARCHED:INTERNAL=system;thread
+//Last used Boost_INCLUDE_DIR value.
+_Boost_INCLUDE_DIR_LAST:INTERNAL=/home/lrineau/CGAL/boost/boost_1_57_0
+//Last used Boost_LIBRARY_DIR value.
+_Boost_LIBRARY_DIR_LAST:INTERNAL=/home/lrineau/CGAL/boost/boost_1_57_0/stage/lib
+//Last used Boost_USE_MULTITHREADED value.
+_Boost_USE_MULTITHREADED_LAST:INTERNAL=TRUE
+//Last used Boost_USE_STATIC_LIBS value.
+_Boost_USE_STATIC_LIBS_LAST:INTERNAL=OFF
 

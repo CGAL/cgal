@@ -1,44 +1,26 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Susan Hert, Sylvain Pion
- 
+
 
 #ifndef CGAL__TEST_FCT_LINE_2_H
 #define CGAL__TEST_FCT_LINE_2_H
 
-// Accessory function testing functions that require sqrt().
-// Doesn't instantiate anything if RT doesn't support sqrt().
 template <class R>
 bool
-_test_fct_line_sqrt_2(const R&, CGAL::Tag_false)
-{
-//  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
-  std::cout << std::endl
-            << "NOTE : FT doesn't support sqrt(),"
-               " hence some functions are not tested." << std::endl;
-  return true;
-}
-
-template <class R>
-bool
-_test_fct_line_sqrt_2(const R&, CGAL::Tag_true)
+_test_fct_line_sqrt_2(const R&)
 {
  typedef typename  R::Point_2  Point_2;
  typedef typename  R::Line_2   Line_2;
@@ -71,7 +53,6 @@ _test_fct_line_2(const R& )
  std::cout << "Testing functions Line_2" ;
 
  typedef typename  R::RT       RT;
- typedef typename  R::FT       FT;
  typedef typename  R::Point_2  Point_2;
  typedef typename  R::Line_2   Line_2;
 
@@ -93,36 +74,36 @@ _test_fct_line_2(const R& )
  Line_2 l2(p3, p2);
  Line_2 l3(p4, p6);
 
- assert( CGAL::compare_slopes(l1,l2) == CGAL::EQUAL );
- assert( CGAL::compare_slopes(l1,l3) == CGAL::EQUAL );
- assert( CGAL::compare_slopes(l3,l1) == CGAL::EQUAL );
+ assert( CGAL::compare_slope(l1,l2) == CGAL::EQUAL );
+ assert( CGAL::compare_slope(l1,l3) == CGAL::EQUAL );
+ assert( CGAL::compare_slope(l3,l1) == CGAL::EQUAL );
 
  std::cout <<'.';
 
  // horizontal lines
  Line_2 l4(p3, p8);
  Line_2 l5(p4, p9);
- assert( CGAL::compare_slopes(l4, l5) == CGAL::EQUAL );
- assert( CGAL::compare_slopes(l3, l4) == CGAL::LARGER );
- assert( CGAL::compare_slopes(l4, l3) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l4, l5) == CGAL::EQUAL );
+ assert( CGAL::compare_slope(l3, l4) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l4, l3) == CGAL::SMALLER );
 
  std::cout <<'.';
 
  // parallel lines
  Line_2 l5a(p6, p7);
  Line_2 l5b(p11, p1);
- assert( CGAL::compare_slopes(l5a, l5b) == CGAL::EQUAL );
+ assert( CGAL::compare_slope(l5a, l5b) == CGAL::EQUAL );
  assert( CGAL::parallel(l5a, l5b) );
 
  // two positive slopes
  Line_2 l6(p2, p4);
  Line_2 l7(p2, p6);
  Line_2 l8(p7, p10);
- assert( CGAL::compare_slopes(l6, l6) == CGAL::EQUAL );
- assert( CGAL::compare_slopes(l6, l7) == CGAL::LARGER );
- assert( CGAL::compare_slopes(l7, l6) == CGAL::SMALLER );
- assert( CGAL::compare_slopes(l6, l8) == CGAL::LARGER );
- assert( CGAL::compare_slopes(l8, l6) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l6, l6) == CGAL::EQUAL );
+ assert( CGAL::compare_slope(l6, l7) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l7, l6) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l6, l8) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l8, l6) == CGAL::SMALLER );
  assert(   CGAL::parallel(l6, l6) );
  assert( ! CGAL::parallel(l6, l7) );
  assert( ! CGAL::parallel(l7, l6) );
@@ -130,14 +111,14 @@ _test_fct_line_2(const R& )
  assert( ! CGAL::parallel(l8, l6) );
 
  // vertical and positive slope
- assert( CGAL::compare_slopes(l1, l6) == CGAL::LARGER );
- assert( CGAL::compare_slopes(l6, l1) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l1, l6) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l6, l1) == CGAL::SMALLER );
  assert( ! CGAL::parallel(l1, l6) );
  assert( ! CGAL::parallel(l6, l1) );
 
  // horizontal and positive slope
- assert( CGAL::compare_slopes(l5, l6) == CGAL::SMALLER );
- assert( CGAL::compare_slopes(l6, l5) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l5, l6) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l6, l5) == CGAL::LARGER );
  assert( ! CGAL::parallel(l5, l6) );
  assert( ! CGAL::parallel(l6, l5) );
 
@@ -148,28 +129,28 @@ _test_fct_line_2(const R& )
  Line_2 l10(p9, p8);
  Line_2 l11(p5, p3);
 
- assert( CGAL::compare_slopes(l9, l10) == CGAL::SMALLER );
- assert( CGAL::compare_slopes(l10, l9) == CGAL::LARGER );
- assert( CGAL::compare_slopes(l11, l10) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l9, l10) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l10, l9) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l11, l10) == CGAL::LARGER );
  assert( ! CGAL::parallel(l9, l10) );
  assert( ! CGAL::parallel(l10, l9) );
  assert( ! CGAL::parallel(l11, l10) );
 
  // vertical and negative slope
- assert( CGAL::compare_slopes(l2, l9) == CGAL::LARGER );
- assert( CGAL::compare_slopes(l9, l2) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l2, l9) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l9, l2) == CGAL::SMALLER );
  assert( ! CGAL::parallel(l2, l9) );
  assert( ! CGAL::parallel(l9, l2) );
 
  // horizontal and negative slope
- assert( CGAL::compare_slopes(l5, l9) == CGAL::LARGER );
- assert( CGAL::compare_slopes(l9, l5) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l5, l9) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l9, l5) == CGAL::SMALLER );
 
  std::cout <<'.';
 
  // positive and negative slope
- assert( CGAL::compare_slopes(l6, l9) == CGAL::LARGER );
- assert( CGAL::compare_slopes(l9, l7) == CGAL::SMALLER );
+ assert( CGAL::compare_slope(l6, l9) == CGAL::LARGER );
+ assert( CGAL::compare_slope(l9, l7) == CGAL::SMALLER );
  assert( ! CGAL::parallel(l6, l9) );
  assert( ! CGAL::parallel(l9, l7) );
 
@@ -183,13 +164,9 @@ _test_fct_line_2(const R& )
  assert(bl1.oriented_side(p2) == CGAL::ON_POSITIVE_SIDE);
  assert( CGAL::parallel(bl1, bl2) );
 
- // More tests, that require sqrt().
- {
-     typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
-     static const bool has_sqrt = 
-         ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
-     _test_fct_line_sqrt_2(R(), ::CGAL::Boolean_tag<has_sqrt>());
- }
+ // More tests, that require sqrt() or use approx.
+  _test_fct_line_sqrt_2(R());
+
  std::cout << "done" << std::endl;
  return true;
 }

@@ -1,93 +1,100 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project (Periodic_Lloyd_3)
+cmake_minimum_required(VERSION 3.1...3.20)
+project(Periodic_Lloyd_3_Demo)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
+endif()
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
 endif()
 
-find_package(CGAL  COMPONENTS Qt4)
-include(${CGAL_USE_FILE})
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
 
-find_package(OpenGL)
+find_package(Qt5 QUIET COMPONENTS Script Help OpenGL Svg)
 
-if(QT4_FOUND)
-  include( ${QT_USE_FILE} )
-  find_package(QGLViewer)
-endif(QT4_FOUND)
+if(Qt5Help_VERSION VERSION_LESS 5.12)
+  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qcollectiongenerator)
+else()
+  set(CGAL_QCOLLECTIONGENERATOR_TARGET Qt5::qhelpgenerator)
+endif()
 
-if ( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE )
+if(CGAL_Qt5_FOUND
+   AND Qt5_FOUND
+   AND TARGET ${CGAL_QCOLLECTIONGENERATOR_TARGET})
 
-  include(${QT_USE_FILE})
-
-  include_directories (${QGLVIEWER_INCLUDE_DIR})
-  include_directories (BEFORE ../../include ./ )
+  include_directories(BEFORE ./)
 
   # ui file, created wih Qt Designer
-  qt4_wrap_ui( uis MainWindow.ui )
+  qt5_wrap_ui(uis MainWindow.ui)
 
   # qrc files (resources files, that contain icons, at least)
-  qt4_add_resources ( RESOURCE_FILES ./Periodic_Lloyd_3.qrc )
-
-  qt4_automoc( MainWindow.cpp Viewer.cpp)
+  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ./Periodic_Lloyd_3.qrc)
 
   if(DEFINED QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+
   else()
     set(QT_QCOLLECTIONGENERATOR_EXECUTABLE qcollectiongenerator)
   endif()
 
   # generate QtAssistant collection file
-  add_custom_command ( OUTPUT Periodic_Lloyd_3.qhc
-      DEPENDS Periodic_Lloyd_3.qhp Periodic_Lloyd_3.qhcp
-      COMMAND ${QT_QCOLLECTIONGENERATOR_EXECUTABLE}
-                ${CMAKE_CURRENT_SOURCE_DIR}/Periodic_Lloyd_3.qhcp
-                -o ${CMAKE_CURRENT_BINARY_DIR}/Periodic_Lloyd_3.qhc
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  )
+  add_custom_command(
+    OUTPUT Periodic_Lloyd_3.qhc
+    DEPENDS Periodic_Lloyd_3.qhp Periodic_Lloyd_3.qhcp
+    COMMAND
+      ${CGAL_QCOLLECTIONGENERATOR_TARGET}
+      ${CMAKE_CURRENT_SOURCE_DIR}/Periodic_Lloyd_3.qhcp -o
+      ${CMAKE_CURRENT_BINARY_DIR}/Periodic_Lloyd_3.qhc
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-  add_executable  ( Periodic_Lloyd_3 Periodic_Lloyd_3.qhc Periodic_Lloyd_3.cpp MainWindow.cpp Viewer.cpp ${uis}  ${RESOURCE_FILES} )
+  add_executable(
+    Periodic_Lloyd_3
+    Periodic_Lloyd_3.qhc
+    Periodic_Lloyd_3.cpp
+    MainWindow.cpp
+    Viewer.cpp
+    ${uis}
+    ${CGAL_Qt5_RESOURCE_FILES}
+    ${CGAL_Qt5_MOC_FILES})
 
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3 )
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS Periodic_Lloyd_3)
 
-  target_link_libraries( Periodic_Lloyd_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
-  target_link_libraries( Periodic_Lloyd_3 ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} )
-  target_link_libraries( Periodic_Lloyd_3 ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  target_link_libraries(Periodic_Lloyd_3 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
+                                                 Qt5::OpenGL)
 
-else( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE )
+  include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+  cgal_add_compilation_test(Periodic_Lloyd_3)
+else(CGAL_Qt5_FOUND
+  AND Qt5_FOUND
+  AND QT_QCOLLECTIONGENERATOR_EXECUTABLE)
 
   set(PERIODIC_LLOYD_MISSING_DEPS "")
 
-  if(NOT CGAL_FOUND)
-    set(PERIODIC_LLOYD_MISSING_DEPS "the CGAL Qt4 library, ${PERIODIC_LLOYD_MISSING_DEPS}")
-  endif()      	   
-
-  if(NOT QT4_FOUND)
-    set(PERIODIC_LLOYD_MISSING_DEPS "Qt4, ${PERIODIC_LLOYD_MISSING_DEPS}")
-  endif()      	   
-
-  if(NOT OPENGL_FOUND)
-    set(PERIODIC_LLOYD_MISSING_DEPS "OpenGL, ${PERIODIC_LLOYD_MISSING_DEPS}")
-  endif()      	   
-
-  if(NOT QGLVIEWER_FOUND)
-    set(PERIODIC_LLOYD_MISSING_DEPS "QGLViewer, ${PERIODIC_LLOYD_MISSING_DEPS}")
-  endif()      	   
-
-  if(NOT QT_QCOLLECTIONGENERATOR_EXECUTABLE)
-    set(PERIODIC_LLOYD_MISSING_DEPS "qcollectiongenerator, ${PERIODIC_LLOYD_MISSING_DEPS}")
+  if(NOT CGAL_Qt5_FOUND)
+    set(PERIODIC_LLOYD_MISSING_DEPS
+        "the CGAL Qt5 library, ${PERIODIC_LLOYD_MISSING_DEPS}")
   endif()
 
+  if(NOT Qt5_FOUND)
+    set(PERIODIC_LLOYD_MISSING_DEPS "Qt5, ${PERIODIC_LLOYD_MISSING_DEPS}")
+  endif()
 
-  message(STATUS "NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS}and will not be compiled.")
+  if(NOT QT_QCOLLECTIONGENERATOR_EXECUTABLE)
+    set(PERIODIC_LLOYD_MISSING_DEPS
+        "${CGAL_QCOLLECTIONGENERATOR_TARGET}, ${PERIODIC_LLOYD_MISSING_DEPS}")
+  endif()
 
-endif( CGAL_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND QT_QCOLLECTIONGENERATOR_EXECUTABLE )
+  message(
+    STATUS
+      "NOTICE: This demo requires ${PERIODIC_LLOYD_MISSING_DEPS}and will not be compiled."
+  )
+
+endif()

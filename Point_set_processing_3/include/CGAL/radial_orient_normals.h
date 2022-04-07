@@ -2,26 +2,22 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Laurent Saboret
 
 #ifndef CGAL_RADIAL_ORIENT_NORMALS_H
 #define CGAL_RADIAL_ORIENT_NORMALS_H
 
+#include <CGAL/license/Point_set_processing_3.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Origin.h>
-#include <CGAL/trace.h>
+#include <CGAL/IO/trace.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 
@@ -43,11 +39,11 @@ namespace CGAL {
 /// \pre normals must be unit vectors
 ///
 /// @tparam ForwardIterator iterator over input points.
-/// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = Point_3<Kernel>.
-///        It can be omitted if ForwardIterator value_type is convertible to Point_3<Kernel>.
-/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with a value_type = Vector_3<Kernel>.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam NormalPMap is a model of `ReadWritePropertyMap` with value type `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
-///        It can be omitted and deduced automatically from PointPMap value_type.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 ///
 /// @return iterator over the first point with an unoriented normal.
 
@@ -71,6 +67,8 @@ radial_orient_normals(
     typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename boost::property_traits<NormalPMap>::value_type Vector;
+    typedef typename boost::property_traits<PointPMap>::reference Point_ref;
+    typedef typename boost::property_traits<NormalPMap>::reference Vector_ref;
     typedef typename Kernel::FT FT;
 
     // Precondition: at least one element in the container.
@@ -83,11 +81,7 @@ radial_orient_normals(
     int nb_points = 0;
     for (ForwardIterator it = first; it != beyond; it++)
     {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
-#else
-      Point point = get(point_pmap, *it);
-#endif  
+      Point_ref point = get(point_pmap, *it);
       sum = sum + (point - CGAL::ORIGIN);
       nb_points++;
     }
@@ -98,32 +92,21 @@ radial_orient_normals(
     std::deque<Enriched_point> oriented_points, unoriented_points;
     for (ForwardIterator it = first; it != beyond; it++)
     {
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Point point = get(point_pmap, it);
-#else
-      Point point = get(point_pmap, *it);
-#endif 
+      Point_ref point = get(point_pmap, *it);
+
       // Radial vector towards exterior of the point set
       Vector vec1 = point - barycenter;
 
       // Point's normal
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      Vector vec2 = get(normal_pmap, it);
-#else
-      Vector vec2 = get(normal_pmap, *it);
-#endif
-      
+      Vector_ref vec2 = get(normal_pmap, *it);
+
       //         ->               ->
       // Orients vec2 parallel to vec1
       double dot = vec1 * vec2;
       if (dot < 0)
         vec2 = -vec2;
 
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      put(normal_pmap, it, vec2); 
-#else
       put(normal_pmap, *it, vec2);
-#endif
 
       // Is orientation robust?
       bool oriented = (std::abs(dot) > std::cos(80.*CGAL_PI/180.)); // robust iff angle < 80 degrees
@@ -161,7 +144,7 @@ radial_orient_normals(
     typedef typename Kernel_traits<Point>::Kernel Kernel;
     return radial_orient_normals(
       first,beyond,
-      point_pmap, normal_pmap, 
+      point_pmap, normal_pmap,
       Kernel());
 }
 /// @endcond
@@ -179,12 +162,8 @@ radial_orient_normals(
 {
     return radial_orient_normals(
       first,beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      make_dereference_property_map(first),
-#else
       make_identity_property_map(
       typename std::iterator_traits<ForwardIterator>::value_type()),
-#endif
       normal_pmap);
 }
 /// @endcond
@@ -193,5 +172,7 @@ radial_orient_normals(
 
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_RADIAL_ORIENT_NORMALS_H

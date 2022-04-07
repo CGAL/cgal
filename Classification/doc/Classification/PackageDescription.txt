@@ -1,0 +1,155 @@
+/// \defgroup PkgClassificationRef Classification Reference
+
+/*!
+\defgroup PkgClassificationConcepts Concepts
+\ingroup PkgClassificationRef
+
+\defgroup PkgClassificationMain Main Functions
+\ingroup PkgClassificationRef
+
+Functions that perform classification based on a set of labels and a classifier, with or without regularization.
+
+\defgroup PkgClassificationClassifiers Classifiers
+\ingroup PkgClassificationRef
+
+Classifiers are functors that, given a label set and an input item, associate this input item with an energy for each label. This energy measures the likelihood of the item to belong to this label.
+
+\defgroup PkgClassificationClassifiersETHZ ETHZ
+\ingroup PkgClassificationClassifiers
+
+Classifiers that use the ETHZ library.
+
+\defgroup PkgClassificationClassifiersOpenCV OpenCV
+\ingroup PkgClassificationClassifiers
+
+Classifiers that use the \ref thirdpartyOpenCV library.
+
+\defgroup PkgClassificationDataStructures Common Data Structures
+\ingroup PkgClassificationRef
+
+Useful data structures that are used to compute features (computation of eigenvalues, for example).
+
+\defgroup PkgClassificationLabel Label
+\ingroup PkgClassificationRef
+
+A label represents how an item should be classified, for example: _vegetation_, _building_, _road_, etc.
+
+\defgroup PkgClassificationFeature Feature
+\ingroup PkgClassificationRef
+
+Features are defined as scalar fields that associates each input item with a specific value.
+
+\defgroup PkgClassificationFeatures Predefined Features
+\ingroup PkgClassificationRef
+
+\cgal provides some predefined features that are relevant for classification of point sets.
+
+\defgroup PkgClassificationPointSet Point Set Classification
+\ingroup PkgClassificationRef
+
+Data structures specialized to classify point sets.
+
+\defgroup PkgClassificationMesh Mesh Classification
+\ingroup PkgClassificationRef
+
+Data structures specialized to classify surface meshes.
+
+\defgroup PkgClassificationCluster Cluster Classification
+\ingroup PkgClassificationRef
+
+Data structures specialized to classify clusters.
+
+\addtogroup PkgClassificationRef
+
+\cgalPkgDescriptionBegin{Classification, PkgClassification}
+\cgalPkgPicture{data_classif.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Simon Giraudot, Florent Lafarge}
+\cgalPkgDesc{This component implements an algorithm that classifies a data set into a user-defined set of labels (such as ground, vegetation, buildings, etc.). A flexible API is provided so that users can classify any type of data, compute their own local features on the input data set, and define their own labels.}
+\cgalPkgManuals{Chapter_Classification, PkgClassificationRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.12}
+\cgalPkgDependsOn{\ref PkgSolverInterface, \ref PkgSpatialSearchingD}
+\cgalPkgBib{cgal:lm-clscm-12}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `CGAL::Classification::Classifier`
+- `CGAL::Classification::NeighborQuery`
+
+\cgalCRPSection{Main Functions}
+
+- `CGAL::Classification::classify()`
+- `CGAL::Classification::classify_with_local_smoothing()`
+- `CGAL::Classification::classify_with_graphcut()`
+
+\cgalCRPSection{Classifiers}
+
+- `CGAL::Classification::ETHZ::Random_forest_classifier`
+- `CGAL::Classification::OpenCV::Random_forest_classifier`
+- `CGAL::Classification::Sum_of_weighted_features_classifier`
+
+\cgalCRPSection{Common Data Structures}
+
+- `CGAL::Classification::Local_eigen_analysis`
+- `CGAL::Classification::Planimetric_grid<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Evaluation`
+
+\cgalCRPSection{Label}
+
+- `CGAL::Classification::Label`
+- `CGAL::Classification::Label_handle`
+- `CGAL::Classification::Label_set`
+
+\cgalCRPSection{Feature}
+
+- `CGAL::Classification::Feature_base`
+- `CGAL::Classification::Feature_handle`
+- `CGAL::Classification::Feature_set`
+
+\cgalCRPSection{Predefined Features}
+
+- `CGAL::Classification::Feature::Color_channel<GeomTraits, PointRange, ColorMap>`
+- `CGAL::Classification::Feature::Distance_to_plane<PointRange, PointMap>`
+- `CGAL::Classification::Feature::Echo_scatter<GeomTraits, PointRange, PointMap, EchoMap>`
+- `CGAL::Classification::Feature::Eigenvalue`
+- `CGAL::Classification::Feature::Elevation<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Height_above<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Height_below<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Simple_feature<InputRange, PropertyMap>`
+- `CGAL::Classification::Feature::Vertical_dispersion<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Vertical_range<GeomTraits, PointRange, PointMap>`
+- `CGAL::Classification::Feature::Verticality<GeomTraits>`
+
+\cgalCRPSection{Point Set Classification}
+
+- `CGAL::Classification::Point_set_feature_generator<GeomTraits, PointRange, PointMap, ConcurrencyTag, DiagonalizeTraits>`
+- `CGAL::Classification::Point_set_neighborhood<GeomTraits, PointRange, PointMap>`
+
+\cgalCRPSection{Mesh Classification}
+
+- `CGAL::Classification::Mesh_feature_generator<GeomTraits, FaceGraph, PointMap, ConcurrencyTag, DiagonalizeTraits>`
+- `CGAL::Classification::Mesh_neighborhood<FaceListGraph>`
+- `CGAL::Classification::Face_descriptor_to_center_of_mass_map<FaceListGraph, VertexPointMap>`
+- `CGAL::Classification::Face_descriptor_to_face_descriptor_with_bbox_map<FaceListGraph, VertexPointMap>`
+
+\cgalCRPSection{Cluster Classification}
+
+- `CGAL::Classification::Cluster<ItemRange, ItemMap>`
+- `CGAL::Classification::create_clusters_from_indices()`
+- `CGAL::Classification::Feature::Cluster_mean_of_feature`
+- `CGAL::Classification::Feature::Cluster_variance_of_feature`
+- `CGAL::Classification::Feature::Cluster_size`
+- `CGAL::Classification::Feature::Cluster_vertical_extent`
+
+*/

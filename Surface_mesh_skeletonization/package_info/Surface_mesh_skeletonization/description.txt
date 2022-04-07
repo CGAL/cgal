@@ -1,0 +1,1 @@
+Extraction of a curve skeleton from a triangulated surface mesh

@@ -2,36 +2,30 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
 #ifndef CGAL_NEF_2_GENINFO_H
 #define CGAL_NEF_2_GENINFO_H
 
+#include <CGAL/license/Nef_2.h>
 
-//This file is deprecated and something like boost::any or boost::variant should 
-//be used instead
-#include <CGAL/internal/deprecation_warning.h>
+#define CGAL_DEPRECATED_HEADER "<CGAL/Nef_2/geninfo.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "Something like boost::any or boost::variant should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
 
 #include <CGAL/config.h>
 #include <memory>
 
 /*{\Moptions outfile=geninfo.man}*/
 /*{\Moptions constref=yes}*/
-/*{\Manpage {geninfo} {T} {Information association via GenPtr} {}}*/    
+/*{\Manpage {geninfo} {T} {Information association via GenPtr} {}}*/
 
 template <typename T>
 struct geninfo {
@@ -49,8 +43,8 @@ misuse memory problems occur.}*/
 /*{\Moperations 2 1}*/
 
   #ifdef CGAL_USE_FORMER_GENINFO
-  static void create(GenPtr& p) 
-  /*{\Mstatic create a slot for an object of type |T| referenced 
+  static void create(GenPtr& p)
+  /*{\Mstatic create a slot for an object of type |T| referenced
     via |p|.}*/
   { if (sizeof(T) <= sizeof(GenPtr)) new((void*)(&p)) T;
     if (sizeof(T) >  sizeof(GenPtr)) p = (GenPtr) new T;
@@ -58,21 +52,21 @@ misuse memory problems occur.}*/
 
   static T& access(GenPtr& p)
   /*{\Mstatic access an object of type |T| via |p|.
-    \precond |p| was initialized via |create| and was not cleared 
+    \precond |p| was initialized via |create| and was not cleared
     via |clear|.}*/
   { if (sizeof(T) <= sizeof(GenPtr)) return *(T*)(&p);
     else                             return *(T*)p;
   }
 
-  static const T& const_access(const GenPtr& p) 
+  static const T& const_access(const GenPtr& p)
   /*{\Mstatic read-only access of an object of type |T| via |p|.
-    \precond |p| was initialized via |create| and was not cleared 
+    \precond |p| was initialized via |create| and was not cleared
     via |clear|.}*/
   { if (sizeof(T) <= sizeof(GenPtr)) return *(const T*)(&p);
-    else                             return *(const T*)p; 
+    else                             return *(const T*)p;
   }
 
-  static void clear(GenPtr& p) 
+  static void clear(GenPtr& p)
   /*{\Mstatic clear the memory used for the object of type |T| via
      |p|. \precond |p| was initialized via |create|.}*/
   { if (sizeof(T) <= sizeof(GenPtr)) ((T*)(&p))->~T();
@@ -82,9 +76,9 @@ misuse memory problems occur.}*/
   #else //CGAL_USE_FORMER_GENINFO
   static void create(GenPtr& p)  { p = (GenPtr) new T; }
   static T& access(GenPtr& p)  { return *(T*)p;  }
-  static const T& const_access(const GenPtr& p) 
+  static const T& const_access(const GenPtr& p)
   { return *(const T*)p;   }
-  static void clear(GenPtr& p){ 
+  static void clear(GenPtr& p){
     delete (T*) p;
     p=0;
   }

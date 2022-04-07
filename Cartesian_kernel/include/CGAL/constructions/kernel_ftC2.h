@@ -1,24 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr, Herve Bronnimann, Sylvain Pion
 
@@ -27,6 +19,7 @@
 
 #include <CGAL/determinant.h>
 #include <CGAL/number_utils.h>
+#include <boost/type_traits/is_integral.hpp>
 
 namespace CGAL {
 
@@ -62,7 +55,7 @@ circumcenter_translateC2(const FT &dqx, const FT &dqy,
   CGAL_kernel_assertion ( ! CGAL_NTS is_zero(den) );
 
   // One possible optimization here is to precompute 1/den, to avoid one
-  // division.  However, we loose precision, and it's maybe not worth it (?).
+  // division.  However, we lose precision, and it's maybe not worth it (?).
   dcx =   determinant (dry, dqy, r2, q2) / den;
   dcy = - determinant (drx, dqx, r2, q2) / den;
 }
@@ -185,10 +178,10 @@ inline
 void
 line_from_pointsC2(const FT &px, const FT &py,
                    const FT &qx, const FT &qy,
-                   FT &a, FT &b, FT &c) 
+                   FT &a, FT &b, FT &c)
 {
   // The horizontal and vertical line get a special treatment
-  // in order to make the intersection code robust for doubles 
+  // in order to make the intersection code robust for doubles
   if(py == qy){
     a = 0 ;
     if(qx > px){
@@ -225,7 +218,7 @@ inline
 void
 line_from_point_directionC2(const FT &px, const FT &py,
                             const FT &dx, const FT &dy,
-                            FT &a, FT &b, FT &c) 
+                            FT &a, FT &b, FT &c)
 {
   a = - dy;
   b = dx;
@@ -236,8 +229,8 @@ template < class FT >
 CGAL_KERNEL_INLINE
 void
 bisector_of_pointsC2(const FT &px, const FT &py,
-		     const FT &qx, const FT &qy,
-		     FT &a, FT &b, FT& c )
+                     const FT &qx, const FT &qy,
+                     FT &a, FT &b, FT& c )
 {
   a = 2 * (px - qx);
   b = 2 * (py - qy);
@@ -249,12 +242,12 @@ template < class FT >
 CGAL_KERNEL_INLINE
 void
 bisector_of_linesC2(const FT &pa, const FT &pb, const FT &pc,
-		    const FT &qa, const FT &qb, const FT &qc,
-		    FT &a, FT &b, FT &c)
+                    const FT &qa, const FT &qb, const FT &qc,
+                    FT &a, FT &b, FT &c)
 {
   // We normalize the equations of the 2 lines, and we then add them.
-  FT n1 = CGAL_NTS sqrt(CGAL_NTS square(pa) + CGAL_NTS square(pb));
-  FT n2 = CGAL_NTS sqrt(CGAL_NTS square(qa) + CGAL_NTS square(qb));
+  FT n1 = CGAL_NTS approximate_sqrt( FT(CGAL_NTS square(pa) + CGAL_NTS square(pb)) );
+  FT n2 = CGAL_NTS approximate_sqrt( FT(CGAL_NTS square(qa) + CGAL_NTS square(qb)) );
   a = n2 * pa + n1 * qa;
   b = n2 * pb + n1 * qb;
   c = n2 * pc + n1 * qc;
@@ -275,15 +268,23 @@ line_y_at_xC2(const FT &a, const FT &b, const FT &c, const FT &x)
   return (-a*x-c) / b;
 }
 
-template < class FT > 
+// Silence a warning for MSVC 2017
+// > include\cgal\constructions\kernel_ftc2.h(287) :
+// >   warning C4723: potential divide by 0
+#if defined(BOOST_MSVC)
+#pragma warning(push)
+#pragma warning(disable:4723)
+#endif
+template < class FT >
 inline
 void
-line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
+line_get_pointC2(const FT &a, const FT &b, const FT &c, const FT &i,
                  FT &x, FT &y)
 {
   if (CGAL_NTS is_zero(b))
     {
-      x = (-b-c)/a + i * b;
+
+      x = -c/a;
       y = 1 - i * a;
     }
   else
@@ -292,13 +293,16 @@ line_get_pointC2(const FT &a, const FT &b, const FT &c, int i,
       y = -(a+c)/b - i * a;
     }
 }
+#if defined(BOOST_MSVC)
+#pragma warning(pop)
+#endif
 
-template < class FT > 
+template < class FT >
 inline
 void
 perpendicular_through_pointC2(const FT &la, const FT &lb,
-		              const FT &px, const FT &py,
-			      FT &a, FT &b, FT &c)
+                              const FT &px, const FT &py,
+                              FT &a, FT &b, FT &c)
 {
   a = -lb;
   b = la;
@@ -309,37 +313,27 @@ template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 void
 line_project_pointC2(const FT &la, const FT &lb, const FT &lc,
-		     const FT &px, const FT &py,
-		     FT &x, FT &y)
+                     const FT &px, const FT &py,
+                     FT &x, FT &y)
 {
-#if 1 // FIXME
-  // Original old version
-  if (CGAL_NTS is_zero(la)) // horizontal line
+  if (certainly(is_zero(la))) // horizontal line
   {
     x = px;
     y = -lc/lb;
   }
-  else if (CGAL_NTS is_zero(lb)) // vertical line
+  else if (certainly(is_zero(lb))) // vertical line
   {
     x = -lc/la;
     y = py;
   }
   else
   {
-    FT ab = la/lb, ba = lb/la, ca = lc/la;
-    y = ( -px + ab*py - ca ) / ( ba + ab );
-    x = -ba * y - ca;
+    FT a2 = CGAL_NTS square(la);
+    FT b2 = CGAL_NTS square(lb);
+    FT d = a2 + b2;
+    x = (b2*px - la*lb*py  - la*lc) / d;
+    y = (-la*lb*px + a2*py - lb*lc) / d;
   }
-#else
-  // New version, with more multiplications, but less divisions and tests.
-  // Let's compare the results of the 2, benchmark them, as well as check
-  // the precision with the intervals.
-  FT a2 = CGAL_NTS square(la);
-  FT b2 = CGAL_NTS square(lb);
-  FT d = a2 + b2;
-  x = (la * (lb * py - lc) - px * b2) / d;
-  y = (lb * (lc - la * px) + py * a2) / d;
-#endif
 }
 
 template < class FT >
@@ -416,6 +410,107 @@ scaled_distance_to_lineC2( const FT &px, const FT &py,
                            const FT &rx, const FT &ry)
 {
   return determinant<FT>(px-rx, py-ry, qx-rx, qy-ry);
+}
+
+template < class RT >
+void
+weighted_circumcenter_translateC2(const RT &dqx, const RT &dqy, const RT &dqw,
+                                  const RT &drx, const RT &dry, const RT &drw,
+                                  RT &dcx, RT &dcy)
+{
+  // Given 3 points P, Q, R, this function takes as input:
+  // qx-px, qy-py,qw-pw,  rx-px, ry-py, rw-pw.  And returns cx-px, cy-py,
+  // where (cx, cy) are the coordinates of the circumcenter C.
+
+  // What we do is intersect the radical axis
+  RT r2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) - drw;
+  RT q2 = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - dqw;
+
+  RT den = RT(2) * determinant(dqx, dqy, drx, dry);
+
+  // The 3 points aren't collinear.
+  // Hopefully, this is already checked at the upper level.
+  CGAL_assertion ( den != RT(0) );
+
+  // One possible optimization here is to precompute 1/den, to avoid one
+  // division.  However, we lose precision, and it's maybe not worth it (?).
+  dcx =   determinant (dry, dqy, r2, q2) / den;
+  dcy = - determinant (drx, dqx, r2, q2) / den;
+}
+
+//template < class RT >
+template < class RT, class We>
+void
+weighted_circumcenterC2( const RT &px, const RT &py, const We &pw,
+                         const RT &qx, const RT &qy, const We &qw,
+                         const RT &rx, const RT &ry, const We &rw,
+                         RT &x, RT &y )
+{
+  RT dqw = RT(qw-pw);
+  RT drw = RT(rw-pw);
+
+  weighted_circumcenter_translateC2<RT>(qx-px, qy-py, dqw,rx-px, ry-py,drw,x, y);
+  x += px;
+  y += py;
+}
+
+template< class FT >
+FT
+power_productC2(const FT &px, const FT &py, const FT &pw,
+                const FT &qx, const FT &qy, const FT &qw)
+{
+  // computes the power product of two weighted points
+  FT qpx = qx - px;
+  FT qpy = qy - py;
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy);
+  return qp2 - pw - qw;
+}
+
+template < class RT , class We>
+void
+radical_axisC2(const RT &px, const RT &py, const We &pw,
+               const RT &qx, const RT &qy, const We &qw,
+               RT &a, RT &b, RT& c )
+{
+  a =  RT(2)*(px - qx);
+  b =  RT(2)*(py - qy);
+  c = - CGAL_NTS square(px) - CGAL_NTS square(py)
+      + CGAL_NTS square(qx) + CGAL_NTS square(qy)
+      + RT(pw) - RT(qw);
+}
+
+template< class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+FT
+squared_radius_orthogonal_circleC2(const FT &px, const FT &py, const FT &pw,
+                                   const FT &qx, const FT &qy, const FT &qw,
+                                   const FT &rx, const FT &ry, const FT &rw)
+{
+  FT FT4(4);
+  FT dpx = px - rx;
+  FT dpy = py - ry;
+  FT dqx = qx - rx;
+  FT dqy = qy - ry;
+  FT dpp = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) - pw + rw;
+  FT dqq = CGAL_NTS square(dqx) + CGAL_NTS square(dqy) - qw + rw;
+
+  FT det0 = determinant(dpx, dpy, dqx, dqy);
+  FT det1 = determinant(dpp, dpy, dqq, dqy);
+  FT det2 = determinant(dpx, dpp, dqx, dqq);
+
+  return (CGAL_NTS square(det1) + CGAL_NTS square(det2)) /
+                                  (FT4 * CGAL_NTS square(det0)) - rw;
+}
+
+template< class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+FT
+squared_radius_smallest_orthogonal_circleC2(const FT &px, const FT &py, const FT &pw,
+                                            const FT &qx, const FT &qy, const FT &qw)
+{
+  FT FT4(4);
+  FT dpz = CGAL_NTS square(px - qx) + CGAL_NTS square(py - qy);
+  return (CGAL_NTS square(dpz - pw + qw) / (FT4 * dpz) - qw);
 }
 
 } //namespace CGAL

@@ -1,24 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -65,6 +57,11 @@ class Aff_transformation_rep_baseH2 : public Ref_counted_virtual
     virtual  Aff_transformation_repH2<R>
                         general_form() const = 0;
     virtual  bool       is_even() const = 0;
+
+    virtual  bool       is_translation() const { return false; }
+    virtual  bool       is_scaling() const { return false; }
+    virtual  bool       is_reflection() const { return false; }
+    virtual  bool       is_rotation() const { return false; }
 
     virtual  RT         homogeneous(int i, int j) const = 0;
     virtual  FT         cartesian(int i, int j) const = 0;
@@ -255,6 +252,10 @@ class Translation_repH2 : public Aff_transformation_rep_baseH2<R>
              is_even() const
              { return true; }
 
+    virtual  bool
+             is_translation() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -329,6 +330,11 @@ class Rotation_repH2 : public Aff_transformation_rep_baseH2<R>
              {
                return true;
              }
+
+    virtual  bool
+             is_rotation() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -400,6 +406,10 @@ class Scaling_repH2 : public Aff_transformation_rep_baseH2<R>
              is_even() const
              { return true; }
 
+    virtual  bool
+             is_scaling() const
+             { return true; }
+
     virtual  Aff_transformation_repH2<R>
              general_form() const
              {
@@ -452,19 +462,21 @@ class Reflection_repH2 : public Aff_transformation_rep_baseH2<R>
 
     virtual  Direction_2
              transform(const Direction_2 & d) const
-             { return transform( Vector_2(d) ).direction(); }
+             { return transform( d.vector() ).direction(); }
 
     virtual  Aff_transformationH2<R>
              inverse() const
              {
-               return Aff_transformationH2<R>(
-                   static_cast< Aff_transformation_rep_baseH2<R>* >
-                   ( const_cast< Reflection_repH2<R>*> (this) )  );
+               return Aff_transformationH2<R>(REFLECTION, l);
              }
 
     virtual  bool
              is_even() const
              { return false; }
+
+    virtual  bool
+             is_reflection() const
+             { return true; }
 
     virtual  Aff_transformation_repH2<R>
              general_form() const
@@ -523,7 +535,7 @@ public:
 
           // Scaling:
 
-          Aff_transformationH2(const Scaling, const RT& a,  
+          Aff_transformationH2(const Scaling, const RT& a,
                                const RT& b = RT(1));
 
           Aff_transformationH2(const Scaling, const RT& xa, const RT& xb,
@@ -586,6 +598,11 @@ public:
     bool                    is_even() const;
     bool                    is_odd()  const;
 
+    bool                    is_translation() const;
+    bool                    is_scaling() const;
+    bool                    is_rotation() const;
+    bool                    is_reflection() const;
+
                             // Access functions for matrix form
     FT                      cartesian(int i, int j) const;
     RT                      homogeneous(int i, int j) const;
@@ -605,6 +622,21 @@ public:
     Aff_transformationH2<R>
     operator*(const Aff_transformationH2<R>& right_argument ) const;
 
+
+    bool operator==(const Aff_transformationH2 &t)const
+    {
+      for(int i=0; i<3; ++i)
+        for(int j = 0; j< 3; ++j)
+          if(homogeneous(i,j)!=t.homogeneous(i,j))
+            return false;
+      return true;
+    }
+
+    bool operator!=(const Aff_transformationH2 &t)const
+    {
+      return !(*this == t);
+    }
+
 };
 
 template < class R >
@@ -619,7 +651,7 @@ Aff_transformationH2(const Identity_transformation)
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2(const Translation,
-	             const typename Aff_transformationH2<R>::Vector_2& v)
+                     const typename Aff_transformationH2<R>::Vector_2& v)
 { initialize_with(Translation_repH2<R>( v )); }
 
 template < class R >
@@ -640,7 +672,7 @@ Aff_transformationH2( const Scaling, const RT& xa, const RT& xb,
 template < class R >
 Aff_transformationH2<R>::
 Aff_transformationH2(const Reflection,
-	             const typename Aff_transformationH2<R>::Line_2& l)
+                     const typename Aff_transformationH2<R>::Line_2& l)
 { initialize_with(Reflection_repH2<R>( l)); }
 
 template < class R >
@@ -735,6 +767,30 @@ is_odd() const
 { return ! is_even(); }
 
 template < class R >
+bool
+Aff_transformationH2<R>::
+is_translation() const
+{ return this->Ptr()->is_translation(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_scaling() const
+{ return this->Ptr()->is_scaling(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_rotation() const
+{ return this->Ptr()->is_rotation(); }
+
+template < class R >
+bool
+Aff_transformationH2<R>::
+is_reflection() const
+{ return this->Ptr()->is_reflection(); }
+
+template < class R >
 inline
 typename Aff_transformationH2<R>::FT
 Aff_transformationH2<R>::
@@ -767,6 +823,17 @@ operator*(const Aff_transformationH2<R>& right_argument) const
 }
 
 template <class R>
+std::ostream&
+operator<<(std::ostream& out, const Aff_transformationH2<R>& t)
+{
+  typename R::RT RT0(0);
+  Aff_transformation_repH2<R> r = t.Ptr()->general_form();
+  return out << "| "<< r.a << ' ' << r.b << ' ' << r.c << " |\n"
+             << "| "<< r.d << ' ' << r.e << ' ' << r.f << " |\n"
+             << "| "<< RT0 << ' ' << RT0 << ' ' << r.g << " |\n";
+}
+
+template <class R>
 Aff_transformationH2<R>
 _general_transformation_composition( Aff_transformation_repH2<R> l,
                                      Aff_transformation_repH2<R> r )
@@ -789,20 +856,26 @@ Aff_transformation_repH2<R>::homogeneous(int i, int j) const
               case 0: return a;
               case 1: return b;
               case 2: return c;
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return d;
               case 1: return e;
               case 2: return f;
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return g;
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return RT(0);
 }
 
@@ -827,20 +900,26 @@ Translation_repH2<R>::homogeneous(int i, int j) const
               case 0: return _tv.hw();
               case 1: return RT(0);
               case 2: return _tv.hx();
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return RT(0);
               case 1: return _tv.hw();
               case 2: return _tv.hy();
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _tv.hw();
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return RT(0);
 }
 
@@ -856,20 +935,26 @@ Translation_repH2<R>::cartesian(int i, int j) const
               case 0: return FT(1);
               case 1: return FT(0);
               case 2: return _tv.x();
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(1);
               case 2: return _tv.y();
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return FT(0);
 }
 
@@ -886,20 +971,26 @@ homogeneous(int i, int j) const
               case 0: return _cos;
               case 1: return - _sin;
               case 2: return RT(0);
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return _sin;
               case 1: return _cos;
               case 2: return RT(0);
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _den;
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return RT(0);
 }
 
@@ -915,21 +1006,27 @@ cartesian(int i, int j) const
             {
               case 0: return FT(_cos) / FT(_den);
               case 1: return - FT(_sin) / FT(_den);
-              case 2: return RT(0);
+              case 2: return FT(0);
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(_sin) / FT(_den);
               case 1: return FT(_cos) / FT(_den);
               case 2: return FT(0);
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return FT(0);
 }
 
@@ -946,20 +1043,26 @@ homogeneous(int i, int j) const
               case 0: return _sf_num;
               case 1: return RT(0);
               case 2: return RT(0);
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return RT(0);
               case 1: return _sf_num;
               case 2: return RT(0);
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return _sf_den;
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return RT(0);
 }
 
@@ -976,20 +1079,26 @@ cartesian(int i, int j) const
               case 0: return FT(_sf_num) / FT(_sf_den);
               case 1: return FT(0);
               case 2: return FT(0);
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(_sf_num) / FT(_sf_den);
               case 2: return FT(0);
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return FT(0);
 }
 
@@ -1007,20 +1116,26 @@ homogeneous(int i, int j) const
               case 0: return l.b()*l.b() - l.a()*l.a();
               case 1: return l.a()*l.b()*mRT2;
               case 2: return l.a()*l.c()*mRT2;
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return l.a()*l.b()*mRT2;
               case 1: return l.a()*l.a() - l.b()*l.b();
               case 2: return l.b()*l.c()*mRT2;
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return RT(0);
               case 1: return RT(0);
               case 2: return l.a()*l.a() + l.b()*l.b();
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return RT(0);
 }
 
@@ -1038,20 +1153,26 @@ cartesian(int i, int j) const
               case 0: return FT( l.b()-l.a() ) / FT( l.a()+l.b());
               case 1: return FT( homogeneous(0,1)) / de;
               case 2: return FT( homogeneous(0,2)) / de;
+              default: CGAL_unreachable();
             }
+            break;
     case 1: switch (j)
             {
               case 0: return FT( homogeneous(1,0)) / de;
               case 1: return FT( l.a()-l.b() ) / FT( l.a()+l.b());
               case 2: return FT( homogeneous(1,2)) / de;
+              default: CGAL_unreachable();
             }
+            break;
     case 2: switch (j)
             {
               case 0: return FT(0);
               case 1: return FT(0);
               case 2: return FT(1);
+              default: CGAL_unreachable();
             }
   }
+  CGAL_unreachable();
   return FT(0);
 }
 

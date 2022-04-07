@@ -1,23 +1,15 @@
-// Copyright (c) 1999,2003,2004  
+// Copyright (c) 1999,2003,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra, Sylvain Pion, Michael Hemmer
@@ -27,6 +19,8 @@
 #define CGAL_GMPZ_TYPE_H
 
 #include <CGAL/basic.h>
+#include <CGAL/IO/io.h>
+
 #include <CGAL/gmp.h>
 #include <mpfr.h>
 
@@ -49,7 +43,7 @@ struct Gmpz_rep
 // maybe the mpz_init_set* functions should move back to Gmpz_rep.
 // But then we should use the Storage_traits::construct/get...
 
-  mpz_t mpZ;
+  mpz_t mpZ; /* coverity[member_decl] */
 
   Gmpz_rep() {}
   ~Gmpz_rep() { mpz_clear(mpZ); }
@@ -282,27 +276,6 @@ operator<<(std::ostream& os, const Gmpz &z)
   return os;
 }
 
-inline
-void gmpz_eat_white_space(std::istream &is)
-{
-  std::istream::int_type c;
-  do {
-    c= is.peek();
-    if (c== std::istream::traits_type::eof())
-      return;
-    else {
-      std::istream::char_type cc= c;
-      if ( std::isspace(cc, std::locale::classic()) ) {
-        is.get();
-        // since peek succeeded, this should too
-        CGAL_assertion(!is.fail());
-      } else {
-        return;
-      }
-    }
-  } while (true);
-}
-
 
 inline
 std::istream &
@@ -315,18 +288,18 @@ gmpz_new_read(std::istream &is, Gmpz &z)
   std::ios::fmtflags old_flags = is.flags();
 
   is.unsetf(std::ios::skipws);
-  gmpz_eat_white_space(is);
+  internal::eat_white_space(is);
 
   c=is.peek();
   if (c=='-' || c=='+'){
       is.get();
       CGAL_assertion(!is.fail());
       negative=(c=='-');
-      gmpz_eat_white_space(is);
+      internal::eat_white_space(is);
       c=is.peek();
   }
 
-  std::istream::char_type cc= c;
+  std::istream::char_type cc= static_cast<std::istream::char_type>(c);
 
   if (c== std::istream::traits_type::eof() ||
       !std::isdigit(cc, std::locale::classic() ) ){
@@ -361,7 +334,7 @@ gmpz_new_read(std::istream &is, Gmpz &z)
       if (c== std::istream::traits_type::eof()) {
         break;
       }
-      cc=c;
+      cc=static_cast<std::istream::char_type>(c);
       if  ( !std::isdigit(cc, std::locale::classic() )) {
         break;
       }

@@ -1,14 +1,15 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
 #include <algorithm>
 #include <vector>
 #include <cstdlib>
 #include <cctype>
 #include <cmath>
+#include <fstream>
+#include <cassert>
 
-typedef CGAL::Simple_cartesian<double>                              Kernel;
+typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Vector_3                                     Vector;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
@@ -29,7 +30,7 @@ void create_center_vertex( Polyhedron& P, Facet_iterator f) {
         vec = vec + ( h->vertex()->point() - CGAL::ORIGIN);
         ++ order;
     } while ( ++h != f->facet_begin());
-    CGAL_assertion( order >= 3); // guaranteed by definition of polyhedron
+    assert( order >= 3); // guaranteed by definition of polyhedron
     Point center =  CGAL::ORIGIN + (vec / static_cast<double>(order));
     Halfedge_handle new_center = P.create_center_vertex( f->halfedge());
     new_center->vertex()->point() = center;
@@ -55,7 +56,7 @@ struct Smooth_old_vertex {
             vec = vec + ( h->opposite()->vertex()->point() - CGAL::ORIGIN)
               * alpha / static_cast<double>(degree);
             ++ h;
-            CGAL_assertion( h != v.vertex_begin()); // even degree guaranteed
+            assert( h != v.vertex_begin()); // even degree guaranteed
             ++ h;
         } while ( h != v.vertex_begin());
         return (CGAL::ORIGIN + vec);
@@ -101,11 +102,10 @@ void subdiv( Polyhedron& P) {
         ++e; // careful, incr. before flip since flip destroys current edge
         flip_edge( P, h);
     };
-    CGAL_postcondition( P.is_valid());
 }
 
 void trisect_border_halfedge( Polyhedron& P, Halfedge_handle e) {
-    CGAL_precondition( e->is_border());
+    assert( e->is_border());
     // Create two new vertices on e.
     e = e->prev();
     P.split_vertex( e, e->next()->opposite());
@@ -121,7 +121,7 @@ void trisect_border_halfedge( Polyhedron& P, Halfedge_handle e) {
 
 template <class OutputIterator>
 void smooth_border_vertices( Halfedge_handle e, OutputIterator out) {
-    CGAL_precondition( e->is_border());
+    assert( e->is_border());
     // We know that the vertex at this edge is from the unrefined mesh.
     // Get the locus vectors of the unrefined vertices in the neighborhood.
     Vector v0 = e->prev()->prev()->opposite()->vertex()->point() -CGAL::ORIGIN;
@@ -166,28 +166,27 @@ void subdiv_border( Polyhedron& P) {
             e->next()->vertex()->point() = *i++;
         }
     } while ( e++ != last_e);
-    CGAL_assertion( i == pts.end());
-    CGAL_postcondition( P.is_valid());
 }
 
 using namespace std;
 
 int main( int argc, char* argv[]) {
-    if ( argc > 2 || (argc == 2 && ! isdigit( argv[1][0]))) {
-        cerr << "Usage: " << argv[0] << " [<n>]" << endl;
-        cerr << "    subdivides <n> times the polyhedron read from stdin."
+    if ( argc > 3 || (argc == 3 && ! isdigit( argv[2][0]))) {
+        cerr << "Usage: " << argv[0] << " [offfile] [<n>]]" << endl;
+        cerr << "    subdivides <n> times the polyhedron read from offfile."
              << endl;
         exit(1);
     }
     int n = 1;
-    if ( argc >= 2)
-        n = atoi( argv[1]);
+    std::ifstream in1((argc>1)?argv[1]:CGAL::data_file_path("meshes/corner_with_hole.off"));
+    if ( argc == 3)
+        n = atoi( argv[2]);
     if ( n < 1 || n > 12) {
         cerr << "Error: Choose reasonable value for <n> in [1..12]" << endl;
         exit(1);
     }
     Polyhedron P;
-    cin >> P;
+    in1 >> P;
 
     for ( int i = 0; i != n; ++i) {
         cerr << "Subdivision " << i+1 << " ..." << endl;
@@ -195,6 +194,6 @@ int main( int argc, char* argv[]) {
         if ( i & 1)
             subdiv_border( P);
     }
-    cout << P;
+    cout << std::setprecision(17) << P;
     return 0;
 }

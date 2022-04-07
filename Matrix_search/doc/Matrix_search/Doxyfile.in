@@ -1,9 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Monotone and Sorted Matrix Search"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Matrix_search/doc/Matrix_search/
-
-
-
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Monotone and Sorted Matrix Search"

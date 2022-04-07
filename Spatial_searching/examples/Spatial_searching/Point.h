@@ -1,6 +1,7 @@
 struct Point {
   double vec[3];
 
+
   Point() { vec[0]= vec[1] = vec[2] = 0; }
   Point (double x, double y, double z) { vec[0]=x; vec[1]=y; vec[2]=z;  }
 
@@ -19,20 +20,6 @@ struct Point {
 
   bool  operator!=(const Point& p) const { return ! (*this == p); }
 }; //end of class
-
-
-
-namespace CGAL {
-
-  template <>
-  struct Kernel_traits<Point> {
-    struct Kernel {
-      typedef double FT;
-      typedef double RT;
-    };
-  };
-}
-
 
 struct Construct_coord_iterator {
   typedef  const double* result_type;

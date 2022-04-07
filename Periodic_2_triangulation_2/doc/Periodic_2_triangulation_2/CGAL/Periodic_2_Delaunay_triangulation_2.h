@@ -16,12 +16,14 @@ The class `Periodic_2_Delaunay_triangulation_2` has two template parameters. The
 \tparam Traits is the geometric traits, it is to be instantiated by a
 model of the concept `Periodic_2DelaunayTriangulationTraits_2`.
 
-The second parameter is the triangulation data structure, it has to be
-instantiated by a model of the concept
-`TriangulationDataStructure_2` with some additional functionality
-in faces. By default, the triangulation data structure is instantiated
-by
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
+\tparam Tds is the triangulation data data structure and must be a model of `TriangulationDataStructure_2`
+whose vertex and face are models of `Periodic_2TriangulationVertexBase_2` and `Periodic_2TriangulationFaceBase_2`.
+It defaults to:
+\code
+CGAL::Triangulation_data_structure_2<
+  CGAL::Periodic_2_triangulation_vertex_base_2<Gt>,
+  CGAL::Periodic_2_triangulation_face_base_2<Gt> > >
+\endcode
 
 \cgalHeading{Implementation}
 
@@ -42,11 +44,8 @@ After a point location step, the nearest neighbor is found in time
 vertices distributed uniformly at random and any query point.
 
 \sa `CGAL::Periodic_2_triangulation_2<Traits,Tds>`
-\sa `CGAL::Delaunay_triangulation_2<Traits,Tds>`
-\sa `TriangulationDataStructure_2`
-\sa `Periodic_2DelaunayTriangulationTraits_2`
 \sa `CGAL::Periodic_2_triangulation_hierarchy_2<Tr>`
-
+\sa `CGAL::Delaunay_triangulation_2<Traits,Tds>`
 */
 template< typename Traits, typename Tds >
 class Periodic_2_Delaunay_triangulation_2 : public Periodic_2_triangulation_2<Traits, Tds>
@@ -184,6 +183,17 @@ public:
   Vertex_handle nearest_vertex(Point p,
                                Face_handle f = Face_handle());
 
+  /*!
+  Returns on which side of the circumcircle of face `f` lies
+  the point `p`. The circle is assumed to be counterclockwise
+  oriented, so its positive
+  side correspond to its bounded side.
+  This predicate is available only if the corresponding predicates on
+  points is provided in the geometric traits class.
+  */
+  Oriented_side
+  side_of_oriented_circle(Face_handle f, const Point & p);
+
 /// @}
 
 /// \name
@@ -240,6 +250,13 @@ public:
 /// @{
 
   /*!
+  Compute the circumcenter of the face pointed to by f. This function
+  is available only if the corresponding function is provided in the
+  geometric traits.
+  */
+  Point circumcenter(Face_handle f) const;
+
+  /*!
   Returns the center of the circle circumscribed to face `f`.
   */
   Point dual(const Face_handle &f) const;
@@ -287,6 +304,7 @@ public:
 /// @{
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Checks the combinatorial validity of the triangulation and the
   validity of its geometric embedding (see
@@ -301,6 +319,7 @@ public:
   is_valid(bool verbose = false) const;
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Checks the combinatorial and geometric validity of the cell (see
   Section \ref P2Triangulation2secintro). Also checks that the
@@ -312,7 +331,7 @@ public:
   */
   bool
   is_valid(Face_handle f, bool verbose = false) const;
-  
+
 /// @}
 
 }; /* end Periodic_2_Delaunay_triangulation_2 */

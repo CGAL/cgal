@@ -1,21 +1,16 @@
-// Copyright (c) 2001  
+// Copyright (c) 2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -25,17 +20,21 @@
 #include <fstream>
 #include <cassert>
 
+#ifndef TEST_FILENAME
+#  define TEST_FILENAME "Test_IO.out"
+#endif
+
 template <class T>
 void
 _test_io_for(const T& t)
 {
     {
-        std::ofstream oFile("Test_IO.out", std::ios::out);
+        std::ofstream oFile(TEST_FILENAME, std::ios::out);
         oFile << t << std::endl;
     }
 
-    std::ifstream iFile("Test_IO.out", std::ios::in);
-    T u;
+    std::ifstream iFile(TEST_FILENAME, std::ios::in);
+    T u = t;
     iFile >> u;
     assert(!iFile.fail());
     assert(u == t);
@@ -53,6 +52,14 @@ _test_io(const R&)
     typename R::Point_2 p2(2, 6, 2);
     typename R::Point_2 p22(2, -6, 2);
     typename R::Point_2 p222(-2, 6, 2);
+    _test_io_for(p2);
+    _test_io_for(p22);
+    _test_io_for(p222);
+
+    std::cout << "Weighted_point_2" << std::endl;
+    typename R::Weighted_point_2 wp2(p2);
+    typename R::Weighted_point_2 wp22(p22, 2);
+    typename R::Weighted_point_2 wp222(p222, -2);
     _test_io_for(p2);
     _test_io_for(p22);
     _test_io_for(p222);
@@ -120,6 +127,14 @@ _test_io(const R&)
     _test_io_for(p33);
     _test_io_for(p333);
     _test_io_for(p3333);
+
+    std::cout << "Weighted_point_3" << std::endl;
+    typename R::Weighted_point_3 wp3(p3);
+    typename R::Weighted_point_3 wp33(p33, 3);
+    typename R::Weighted_point_3 wp333(p333, -3);
+    _test_io_for(p3);
+    _test_io_for(p33);
+    _test_io_for(p333);
 
     std::cout << "Vector_3" << std::endl;
     typename R::Vector_3 v3(2, 6, 2, 2);

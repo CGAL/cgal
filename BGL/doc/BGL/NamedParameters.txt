@@ -1,0 +1,48 @@
+/*!
+\defgroup bgl_namedparameters Named Parameters
+\ingroup PkgBGLRef
+
+The algorithms of the Boost Graph Library (\bgl) often have many parameters with default
+values that are appropriate for most cases. In general, when no
+special treatment is applied, the values of such parameters are passed
+as a sequence. Deviating from the default for a certain parameter
+requires the user to explicitly pass values for all preceding
+parameters. The solution to this problem
+is to first write a tag and then the parameter, which for
+Dijkstra's shortest path algorithm might look as follows:
+
+\code {.cpp}
+std::vector<vertex_descriptor> p(num_vertices(g));
+std::vector<int> d(num_vertices(g));
+vertex_descriptor s = vertex(A, g);
+dijkstra_shortest_paths(g, s, predecessor_map(&p[0]).distance_map(&d[0]));
+\endcode
+
+In the \bgl manual, this is called
+<a href="https://www.boost.org/libs/graph/doc/bgl_named_params.html">named parameters</a>.
+The named parameters in the snippet use the tags `predecessor_map` and `distance_map`
+and they are concatenated using the dot operator.<BR>
+
+A similar mechanism was introduced in \cgal, with the small difference that the named parameters
+tag live in the `CGAL::parameters::` namespace and `CGAL::parameters::default_values()` can be used to indicate
+that default values of optional named parameters must be used.
+As in the \bgl, named parameters in \cgal are also concatenated using
+the dot operator, and a typical usage is thus:
+
+\code {.cpp}
+Graph g1, g2;
+Vertex_point_map_2 vpm_2; // an hypothetical custom property map assigning a Point to the vertices of g2
+
+// without any named parameter (default values are used)
+CGAL::copy_face_graph(g1, g2);
+
+// specifying named parameters for the second graph
+CGAL::copy_face_graph(g1, g2,
+                      CGAL::parameters::vertex_point_map(vpm)  //parameter for g1
+                      .vertex_to_vertex_map(v2v),              //other parameter for g1
+                      CGAL::parameters::default_values());        //parameter for g2
+\endcode
+*/
+
+
+˛

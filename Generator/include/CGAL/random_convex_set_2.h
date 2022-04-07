@@ -1,24 +1,16 @@
-// Copyright (c) 1998  
+// Copyright (c) 1998
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -31,7 +23,6 @@
 #include <algorithm>
 #include <numeric>
 #include <CGAL/Random_convex_set_traits_2.h>
-#include <CGAL/centroid.h>
 
 namespace CGAL {
 
@@ -48,12 +39,11 @@ random_convex_set_2( std::size_t n,
   using std::back_inserter;
   using std::accumulate;
   using std::transform;
-  using std::bind2nd;
   using std::sort;
   using std::partial_sum;
   using std::less;
   using std::max_element;
-  using CGAL::cpp11::copy_n;
+  using std::copy_n;
 
   typedef typename Traits::Point_2         Point_2;
   typedef typename Traits::FT              FT;
@@ -72,17 +62,24 @@ random_convex_set_2( std::size_t n,
   // build random point set:
   Container points;
   points.reserve( n);
-  CGAL::cpp11::copy_n( pg, n, back_inserter( points));
+  std::copy_n( pg, n, back_inserter( points));
 
   // compute centroid of points:
-  Point_2 centroid = CGAL::centroid( points.begin(), points.end(), t );
+  // Point_2 centroid = CGAL::centroid( points.begin(), points.end(), t );
+
+  Point_2 centroid = t.origin();
+
+  for(const Point_2& p : points){
+    centroid = sum(centroid, p);
+  }
+  centroid = scale(centroid, FT(1)/FT(n));
 
   // translate s.t. centroid == origin:
   transform(
     points.begin(),
     points.end(),
     points.begin(),
-    bind2nd( Sum(), scale( centroid, FT( -1))));
+    [&centroid, &sum, &scale](const Point_2& p) { return sum(p, scale(centroid, FT( -1))); });
 
   // sort them according to their direction's angle
   // w.r.t. the positive x-axis:
@@ -93,15 +90,20 @@ random_convex_set_2( std::size_t n,
     points.begin(), points.end(), points.begin(), Sum());
 
   // and compute its centroid:
-  Point_2 new_centroid = CGAL::centroid( points.begin(), points.end(), t );
+  Point_2 new_centroid = t.origin();
 
+  for(const Point_2& p : points){
+    new_centroid = sum(new_centroid, p);
+  }
+  new_centroid = scale(new_centroid, FT(1)/FT(n));
   // translate s.t. centroids match:
   transform(
     points.begin(),
     points.end(),
     points.begin(),
-    bind2nd( Sum(), sum( centroid,
-                         scale( new_centroid, FT( -1)))));
+    [&centroid, &new_centroid, &sum, &scale](const Point_2& p)
+    {return sum(p, sum( centroid, scale(new_centroid, FT( -1)))); }
+  );
 
   // compute maximal coordinate:
   FT maxcoord( max_coordinate(
@@ -116,7 +118,7 @@ random_convex_set_2( std::size_t n,
     points.begin(),
     points.end(),
     o,
-    bind2nd( Scale(), FT( pg.range()) / maxcoord));
+    [&pg, &maxcoord, &scale](const Point_2& p){ return scale(p, FT( pg.range()) / maxcoord); });
 
 } // random_convex_set_2( n, o, pg, t)
 

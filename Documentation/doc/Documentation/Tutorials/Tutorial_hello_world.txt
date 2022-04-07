@@ -1,0 +1,326 @@
+namespace CGAL {
+/*!
+\example Convex_hull_2/array_convex_hull_2.cpp
+\example Convex_hull_2/vector_convex_hull_2.cpp
+\example Convex_hull_2/iostream_convex_hull_2.cpp
+\example Convex_hull_2/convex_hull_yz.cpp
+\example Kernel_23/points_and_segment.cpp
+\example Kernel_23/surprising.cpp
+\example Kernel_23/exact.cpp
+*/
+
+/*!
+
+\page tutorial_hello_world Hello World
+\cgalAutoToc
+\author %CGAL Editorial Board
+
+This tutorial is for the \cgal newbie, who knows \CC and has
+a basic knowledge of geometric algorithms. The first section
+shows how to define a point and segment class, and how to
+apply geometric predicates on them. The section further raises
+the awareness that that there are serious issues when using
+floating point numbers for coordinates. In the second section,
+you will meet a typical \cgal function, which computes a 2D convex hull.
+The third section shows what we mean with a \em Traits class,
+and the fourth section explains the notion of \em concept and \em model.
+
+\section intro_Three Three Points and One Segment
+
+In this first example, we demonstrate how to construct some points
+and a segment, and perform some basic operations on them.
+
+All \cgal header files are in the subdirectory `include/CGAL`. All \cgal
+classes and functions are in the namespace `CGAL`.
+Classes start with a capital letter, global
+function with a lowercase letter, and constants are all uppercase.
+The dimension of an object is expressed with a suffix.
+
+The geometric primitives, like the point type, are defined in a \em kernel.
+The kernel we have chosen for this first example uses `double`
+precision floating point numbers for the %Cartesian coordinates of the point.
+
+Besides the types we see \em predicates like the orientation test for
+three points, and \em constructions like the distance and midpoint
+computation. A predicate has a discrete set of possible results,
+whereas a construction produces either a number, or another
+geometric entity.
+
+\cgalExample{Kernel_23/points_and_segment.cpp}
+
+To do geometry with floating point numbers can be surprising
+as the next example shows.
+
+\cgalExample{Kernel_23/surprising.cpp}
+
+Reading the code, we could assume that it would print three times "collinear".
+However the actual output is the following:
+
+\verbatim
+not collinear
+not collinear
+collinear
+\endverbatim
+
+This is because these fractions are not representable as double-precision numbers,
+and the collinearity test will internally compute a determinant of a 3x3 matrix
+which is close but not equal to zero, and hence the non collinearity for the
+first two tests.
+
+Something similar can happen with points that perform a left turn,
+but due to rounding errors during the determinant computation, it
+seems that the points are collinear, or perform a right turn.
+
+If you must ensure that your numbers get interpreted at their full precision
+you can use a \cgal kernel that performs exact predicates and
+extract constructions.
+
+\cgalExample{Kernel_23/exact.cpp}
+
+Here comes the output and you may still be surprised.
+
+\verbatim
+not collinear
+collinear
+collinear
+\endverbatim
+
+In the first block the points are still not collinear,
+for the simple reason that the coordinates you see as text
+get turned into floating point numbers. When they are then
+turned into arbitrary precision rationals, they exactly
+represent the floating point number, but not the text!
+
+This is different in the second block, which corresponds
+to reading numbers from a file. The arbitrary precision
+rationals are then directly constructed from a string
+so that they represent exactly the text.
+
+In the third block you see that constructions as
+midpoint constructions are exact, just as the name
+of the kernel type suggests.
+
+In many cases, you will have floating point numbers that are "exact",
+in the sense that they were computed by some application or obtained
+from a sensor. They are not the string "0.1" or computed on the
+fly as "1.0/10.0", but a full precision floating point number.
+If they are input to an algorithm that makes no constructions,
+you can use a kernel that provides exact predicates but <em>inexact</em>
+constructions. One such example is the convex hull algorithm
+which we will see in the next section.
+The output is a subset of the input, and the algorithm
+only compares coordinates and performs orientation tests.
+
+At a first glance the kernel doing exact predicates and constructions
+seems to be the perfect choice, but performance requirements
+or limited memory resources make that it is not. Furthermore, for many
+algorithms it is irrelevant to do exact constructions. For example
+a surface mesh simplification algorithm that iteratively contracts
+an edge by collapsing it to the midpoint of the edge.
+
+Most \cgal packages explain which kind of kernel they should use or support.
+
+\section intro_convex_hull The Convex Hull of a Sequence of Points
+
+All examples in this section compute the 2D convex hull of a set of points.
+We show that algorithms get their input as a begin/end iterator pair
+denoting a range of points, and that they write the result (in the
+example the points on the convex hull) into an output iterator.
+
+\subsection intro_array The Convex Hull of Points in a Built-in Array
+
+In the first example, we have as input an array of five points.
+As the convex hull of these points is a subset of the input,
+it is safe to provide an array for storing the result which
+has the same size.
+
+\cgalExample{Convex_hull_2/array_convex_hull_2.cpp}
+
+We have seen in the previous section that \cgal comes
+with several kernels. Since the convex hull algorithm only makes
+comparisons of coordinates and orientation tests of input points,
+we can choose a kernel that provides exact predicates, but no
+exact geometric constructions.
+
+The convex hull function takes three arguments, the start
+and past-the-end pointer for the input, and the start pointer of the
+array for the result. The function returns the pointer
+into the result array just behind the last convex hull
+point written, so the pointer difference tells us how
+many points are on the convex hull.
+
+\subsection intro_vector The Convex Hull of Points in a Vector
+
+In the second example, we replace the built-in array
+by an `std::vector` of the Standard Template Library.
+
+\cgalExample{Convex_hull_2/vector_convex_hull_2.cpp}
+
+We put some points in the vector, calling the `push_back()`
+method of the `std::vector` class.
+
+We then call the convex hull function. The first two arguments,
+`points.begin()` and `points.end()` are *iterators*, which are a
+generalization of pointers: they can be dereferenced and
+incremented. The convex hull function is *generic* in the sense
+that it takes as input whatever can be dereferenced and incremented.
+
+The third argument is where the result gets written to. In the
+previous example we provided a pointer to allocated memory. The
+generalization of such a pointer is the *output iterator*, which
+allows to increment and assign a value to the dereferenced iterator.
+In this example we start with an empty vector which grows as needed.
+Therefore, we cannot simply pass it `result.begin()`, but an output
+iterator generated by the helper function
+`std::back_inserter(result)`. This output iterator does nothing when
+incremented, and calls `result.push_back(..)` on the assignment.
+
+If you know the \stl, the Standard Template Library, the above makes
+perfect sense, as this is the way the \stl decouples algorithms from
+containers. If you don't know the \stl, you maybe better first
+familiarize yourself with its basic ideas.
+
+\section intro_traits About Kernels and Traits Classes
+
+In this section, we show how we express the requirements that must
+be fulfilled in order that a function like `convex_hull_2()`
+can be used with an arbitrary point type.
+
+If you look at the manual page of the function `convex_hull_2()`
+and the other 2D convex hull algorithms, you see that they come in two
+versions. In the examples we have seen so far, the function that takes two
+iterators for the range of input points and an output iterator for
+writing the result to. The second version has an additional template
+parameter `Traits`, and an additional parameter of this type.
+
+\code{.cpp}
+template<class InputIterator , class OutputIterator , class Traits >
+OutputIterator
+convex_hull_2(InputIterator first,
+              InputIterator beyond,
+              OutputIterator result,
+              const Traits & ch_traits)
+\endcode
+
+What are the geometric primitives a typical convex hull algorithm
+uses? Of course, this depends on the algorithm, so let us consider
+what is probably the simplest efficient algorithm, the so-called
+"Graham/Andrew Scan". This algorithm first sorts the points from left
+to right, and then builds the convex hull incrementally by adding one
+point after another from the sorted list. To do this, it must at least
+know about some point type, it should have some idea how to sort those
+points, and it must be able to evaluate the orientation of a triple of
+points.
+
+And that is where the template parameter `Traits` comes in.
+For `ch_graham_andrew()` it must provide the following nested types:
+
+- `Traits::Point_2`
+- `Traits::Less_xy_2`
+- `Traits::Left_turn_2`
+- `Traits::Equal_2`
+
+
+As you can guess, `Left_turn_2` is responsible for the orientation
+test, while `Less_xy_2` is used for sorting the points. The requirements these
+types have to satisfy are documented in full with the concept
+`ConvexHullTraits_2`.
+
+The types are regrouped for a simple reason. The alternative would
+have been a rather lengthy function template, and an even longer
+function call.
+
+\code{.cpp}
+template <class InputIterator, class OutputIterator, class Point_2, class Less_xy_2, class Left_turn_2, class Equal_2>
+OutputIterator
+ch_graham_andrew( InputIterator  first,
+                  InputIterator  beyond,
+                  OutputIterator result);
+\endcode
+
+There are two obvious questions: What can be used as argument for
+this template parameter? And why do we have template parameters at all?
+
+To answer the first question, any model of the \cgal concept `Kernel` provides
+what is required by the concept `ConvexHullTraits_2`.
+
+As for the second question, think about an application where we want to
+compute the convex hull of 3D points projected into the `yz` plane. Using
+the class `Projection_traits_yz_3` this is a small modification
+of the previous example.
+
+\cgalExample{Convex_hull_2/convex_hull_yz.cpp}
+
+Another example would be about a user defined point type, or a point
+type coming from a third party library other than \cgal. Put the point
+type together with the required predicates for this point type in the
+scope of a class, and you can run `convex_hull_2()` with these
+points.
+
+Finally, let us explain why a traits object that is passed to the
+convex hull function?  It would allow to use a more general projection
+traits object to store state, for example if the projection plane was
+given by a direction, which is hardwired in the class
+`Projection_traits_yz_3`.
+
+\section intro_concept Concepts and Models
+
+In the previous section, we wrote that "Any model of the CGAL concept
+Kernel provides what is required by the concept `ConvexHullTraits_2`.
+
+A \em concept is a set of requirements on a type, namely that it has
+certain nested types, certain member functions, or comes with certain
+free functions that take the type as it. A \em model of a concept
+is a class that fulfills the requirements of the concept.
+
+Let's have a look at the following function.
+
+\code{.cpp}
+template <typename T>
+T
+duplicate(T t)
+{
+  return t;
+}
+\endcode
+
+If you want to instantiate this function with a class `C`, this
+class must at least provide a copy constructor, and we
+say that class `C` must be a model of `CopyConstructible`.
+A singleton class does not fulfill this requirment.
+
+Another example is the function:
+
+\code{.cpp}
+template <typename T>
+T& std::min(const T& a, const T& b)
+{
+  return (a<b)?a:b;
+}
+\endcode
+
+This function only compiles if the `operator<(..)` is defined for the type used as `T`,
+and we say that the type must be a model of `LessThanComparable`.
+
+An example for a concept with required free functions is the `HalfedgeListGraph` in the
+\cgal package \ref PkgBGL. In order to be a model of `HalfedgeListGraph` a class `G`
+there must be a global function `halfedges(const G&)`, etc.
+
+An example for a concept with a required traits class is `InputIterator`.
+For a model of an `InputIterator` a specialization of the class
+<a href="https://en.cppreference.com/w/cpp/iterator/iterator_traits"> `std::iterator_traits`</a>
+must exist (or the generic template must be applicable).
+
+\section intro_further Further Reading
+
+We also recommend the standard text books "The C++ Standard Library, A
+Tutorial and Reference" by Nicolai M. Josuttis from Addison-Wesley, or
+"Generic Programming and the STL" by Matthew H. Austern for the \stl
+and its notion of *concepts* and *models*.
+
+Other resources for \cgal are the rest of the \ref tutorials "tutorials"
+and the user support page at https://www.cgal.org/.
+
+*/
+} /* namespace CGAL */
+

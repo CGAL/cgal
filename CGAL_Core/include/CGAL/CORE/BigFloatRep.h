@@ -3,24 +3,13 @@
  * Copyright (c) 1995-2004 Exact Computation Project
  * All rights reserved.
  *
- * This file is part of CORE (http://cs.nyu.edu/exact/core/).
- * You can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
+ * This file is part of CGAL (www.cgal.org);
  *
  * File: BigFloatRep.h
- * Synopsis: 
- * 		Internal Representation BigFloat.
- * 
- * Written by 
+ * Synopsis:
+ *                 Internal Representation BigFloat.
+ *
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -30,6 +19,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_BIGFLOATREP_H_
@@ -40,7 +30,7 @@
 #include <CGAL/CORE/CoreDefs.h>
 #include <CGAL/CORE/extLong.h>
 
-namespace CORE { 
+namespace CORE {
 
 //  forward reference
 class BigFloat;
@@ -70,6 +60,7 @@ public:
 public:
   //  constructors
   BigFloatRep(int=0);           //inline
+  BigFloatRep(unsigned int);           //inline
   BigFloatRep(short);           //inline
   BigFloatRep(float);           //inline
   BigFloatRep(long);          //inline
@@ -84,8 +75,8 @@ public:
   //  the destructor
   ~BigFloatRep(); //inline
 
-  CORE_MEMORY(BigFloatRep)    // allocate the memory pool, unless
-	                      // memory pool feature is disabled.
+  CORE_NEW(BigFloatRep)    // allocate the memory pool, unless
+  CORE_DELETE(BigFloatRep) // memory pool feature is disabled.
 
   //  approximation
   void trunc(const BigInt&, const extLong&, const extLong&);
@@ -144,11 +135,11 @@ private:
   //  conversion
 
   // toString() Joaquin Grech 31/5/2003
-  std::string toString(long prec=defBigFloatOutputDigits, bool sci=false) const;
+  std::string toString(long prec=get_static_defBigFloatOutputDigits(), bool sci=false) const;
   std::string round(std::string inRep, long& L10, unsigned int width) const;
-  DecimalOutput toDecimal(unsigned int width=defBigFloatOutputDigits,
+  DecimalOutput toDecimal(unsigned int width=get_static_defBigFloatOutputDigits(),
                           bool Scientific=false) const;
-  void fromString(const char *p, const extLong & prec = defBigFloatInputDigits);
+  void fromString(const char *p, extLong  prec = getBigFloatInputDigits());
 
   void dump() const;  //inline
   long adjustE(long E, BigInt M, long e) const;
@@ -180,11 +171,11 @@ struct BigFloatRep::DecimalOutput {
 };//DecimalOutput
 
 // constants used by BigFloatRep
-//	NOTES:  CHUNK_BIT is the number of bits in each Chunk
-//	Since LONG_BIT = 32 or 64, then CHUNK_BIT = 14 or 30.
-//	We have:  0 <= err < 4 * 2^{CHUNK_BIT}
+//        NOTES:  CHUNK_BIT is the number of bits in each Chunk
+//        Since LONG_BIT = 32 or 64, then CHUNK_BIT = 14 or 30.
+//        We have:  0 <= err < 4 * 2^{CHUNK_BIT}
 
-const long CHUNK_BIT = (long)(LONG_BIT / 2 - 2); 	//  chunks
+const long CHUNK_BIT = (long)(LONG_BIT / 2 - 2);         //  chunks
 const long HALF_CHUNK_BIT = (CHUNK_BIT + 1) / 2;
 const long DBL_MAX_CHUNK = (DBL_MAX_EXP - 1) / CHUNK_BIT + 1;
 const double lgTenM = 3.321928094887362;
@@ -248,6 +239,9 @@ inline BigFloatRep::BigFloatRep(float n)
 inline BigFloatRep::BigFloatRep(int n)
   : m(n), err(0), exp(0) {}
 
+inline BigFloatRep::BigFloatRep(unsigned int n)
+  : m(n), err(0), exp(0) {}
+
 //  Chee (8/8/04) -- introduced constructor from long
 inline BigFloatRep::BigFloatRep(long n)
   : m(n), err(0), exp(0) {}
@@ -256,7 +250,7 @@ inline BigFloatRep::BigFloatRep(long n)
 /* This turns out to be an alternative implementation of the
  * original one in BigFloat.cpp!!
 inline BigFloatRep::BigFloatRep(double d)
-	    : m(IntMantissa(d)), err(0), exp(0) {
+            : m(IntMantissa(d)), err(0), exp(0) {
      BigFloatRep * bfr = exp2(IntExponent(d));  // take care of the exponent
      m *= bfr->m;
      exp = bfr->exp;
@@ -329,8 +323,8 @@ inline extLong BigFloatRep::lMSB() const {
 }
 
 /// uMSB() returns an upper bound on log_2(abs(*this)).
-/** Returns -1 if (*this)=0.  
- * Not well-defined if zero is in the interval. 
+/** Returns -1 if (*this)=0.
+ * Not well-defined if zero is in the interval.
  */
 inline extLong BigFloatRep::uMSB() const {
   return extLong(floorLg(abs(m) + err)) + bits(exp);
@@ -361,7 +355,7 @@ inline extLong BigFloatRep::clLgErr() const {
 // isZero() = true iff zero is inside the interval of BigFloat:
 inline bool BigFloatRep::isZeroIn() const {
   if (err == 0){
-    return (m == 0);	//Nov 6, 2002: bug fix!
+    return (m == 0);        //Nov 6, 2002: bug fix!
   }
   long lm = bitLength(m);
   if (lm > CHUNK_BIT+2) {
@@ -417,7 +411,7 @@ inline std::ostream& BigFloatRep::operator<<(std::ostream& o) const {
 
 /* Returns a std::string with precision and format specified
    Works as cout << with the exception that if the output
-   contains any error it returns a NULL
+   contains any error it returns a nullptr
    Joaquin Grech 31/5/03
    */
 inline std::string BigFloatRep::toString(long prec, bool sci) const {
@@ -429,7 +423,7 @@ inline std::string BigFloatRep::toString(long prec, bool sci) const {
     else
       return r.rep;
   }
-  return NULL;
+  return std::string();
 }
 
 inline void BigFloatRep::dump() const {
@@ -442,6 +436,8 @@ inline void BigFloatRep::dump() const {
   std::cout << "  exp = " << exp << std::endl;
   std::cout << " -- End of BFRep " << this << " -- " << std::endl;
 }
+
+
 
 } //namespace CORE
 #endif // _CORE_BIGFLOATREP_H_

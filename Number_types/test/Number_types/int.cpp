@@ -1,5 +1,8 @@
 #include <iostream>
 #include <CGAL/int.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/Test/_test_algebraic_structure.h>
 #include <CGAL/Test/_test_real_embeddable.h>
 
@@ -16,7 +19,7 @@ int main() {
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-  
+
     CGAL::test_real_embeddable<NT>();
 }
 {   typedef long int NT;
@@ -31,7 +34,7 @@ int main() {
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-  
+
     CGAL::test_real_embeddable<NT>();
 
     NT i = 1; i <<= 30;

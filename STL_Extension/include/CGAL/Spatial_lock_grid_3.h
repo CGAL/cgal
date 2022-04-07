@@ -1,19 +1,11 @@
 // Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Clement Jamin
 
@@ -24,16 +16,9 @@
 
 #include <CGAL/Bbox_3.h>
 
-#include <boost/bind.hpp>
-
-#include <tbb/atomic.h>
-#if TBB_IMPLEMENT_CPP0X
-# include <tbb/compat/thread>
-#else
-# include <thread>
-#endif
+#include <atomic>
+#include <thread>
 #include <tbb/enumerable_thread_specific.h>
-#include <tbb/recursive_mutex.h>
 
 #include <algorithm>
 #include <vector>
@@ -42,7 +27,6 @@ namespace CGAL {
 
 struct Tag_no_lock {};
 struct Tag_non_blocking {};
-struct Tag_non_blocking_with_mutexes {};
 struct Tag_priority_blocking {};
 
 //*****************************************************************************
@@ -145,16 +129,16 @@ public:
       std::vector<int> locked_cells_tmp;
 
       // For each cell inside the square
-      for (int i = std::max(0, index_x-lock_radius) ;
-           i <= std::min(m_num_grid_cells_per_axis - 1, index_x+lock_radius) ;
+      for (int i = (std::max)(0, index_x-lock_radius) ;
+           i <= (std::min)(m_num_grid_cells_per_axis - 1, index_x+lock_radius) ;
            ++i)
       {
-        for (int j = std::max(0, index_y-lock_radius) ;
-             j <= std::min(m_num_grid_cells_per_axis - 1, index_y+lock_radius) ;
+        for (int j = (std::max)(0, index_y-lock_radius) ;
+             j <= (std::min)(m_num_grid_cells_per_axis - 1, index_y+lock_radius) ;
              ++j)
         {
-          for (int k = std::max(0, index_z-lock_radius) ;
-               k <= std::min(m_num_grid_cells_per_axis - 1, index_z+lock_radius) ;
+          for (int k = (std::max)(0, index_z-lock_radius) ;
+               k <= (std::min)(m_num_grid_cells_per_axis - 1, index_z+lock_radius) ;
                ++k)
           {
             int index_to_lock =
@@ -344,7 +328,7 @@ protected:
   Spatial_lock_grid_base_3(const Bbox_3 &bbox,
                                           int num_grid_cells_per_axis)
     : m_num_grid_cells_per_axis(num_grid_cells_per_axis),
-      m_tls_grids(boost::bind(init_TLS_grid, num_grid_cells_per_axis))
+      m_tls_grids([num_grid_cells_per_axis](){ return init_TLS_grid(num_grid_cells_per_axis); })
   {
     set_bbox(bbox);
   }
@@ -462,12 +446,12 @@ class Spatial_lock_grid_3<Tag_non_blocking>
 public:
   // Constructors
   Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
-  : Base(bbox, num_grid_cells_per_axis)
+  : Base(bbox, num_grid_cells_per_axis),
+    m_grid(num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis)
   {
     int num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
 
-    m_grid.resize(num_cells);
     // Initialize grid (useless?)
     for (int i = 0 ; i < num_cells ; ++i)
       m_grid[i] = false;
@@ -485,8 +469,8 @@ public:
   template <bool no_spin>
   bool try_lock_cell_impl(int cell_index)
   {
-    bool old_value = m_grid[cell_index].compare_and_swap(true, false);
-    if (old_value == false)
+    bool v1 = true, v2 = false;
+    if(m_grid[cell_index].compare_exchange_strong(v2,v1))
     {
       get_thread_local_grid()[cell_index] = true;
       m_tls_locked_cells.local().push_back(cell_index);
@@ -502,7 +486,7 @@ public:
 
 protected:
 
-  std::vector<tbb::atomic<bool> > m_grid;
+  std::vector<std::atomic<bool> > m_grid;
 };
 
 
@@ -522,11 +506,14 @@ public:
 
   Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
-    m_tls_thread_ids(init_TLS_thread_ids)
+    m_grid(num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis),
+    m_tls_thread_priorities(init_TLS_thread_priorities)
   {
-    int num_cells =
-      num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
-    m_grid.resize(num_cells);
+    // Explicitly initialize the atomics
+    std::vector<std::atomic<unsigned int> >::iterator it     = m_grid.begin();
+    std::vector<std::atomic<unsigned int> >::iterator it_end = m_grid.end();
+    for ( ; it != it_end ; ++it)
+      *it = 0;
   }
 
   /// Destructor
@@ -542,14 +529,13 @@ public:
   template <bool no_spin>
   bool try_lock_cell_impl(int cell_index)
   {
-    unsigned int this_thread_id = m_tls_thread_ids.local();
+    unsigned int this_thread_priority = m_tls_thread_priorities.local();
 
     // NO SPIN
     if (no_spin)
     {
-      unsigned int old_value =
-        m_grid[cell_index].compare_and_swap(this_thread_id, 0);
-      if (old_value == 0)
+      unsigned int old_value = 0;
+      if(m_grid[cell_index].compare_exchange_strong(old_value, this_thread_priority))
       {
         get_thread_local_grid()[cell_index] = true;
         m_tls_locked_cells.local().push_back(cell_index);
@@ -561,15 +547,14 @@ public:
     {
       for(;;)
       {
-        unsigned int old_value =
-          m_grid[cell_index].compare_and_swap(this_thread_id, 0);
-        if (old_value == 0)
+        unsigned int old_value =0;
+        if(m_grid[cell_index].compare_exchange_weak(old_value, this_thread_priority))
         {
           get_thread_local_grid()[cell_index] = true;
           m_tls_locked_cells.local().push_back(cell_index);
           return true;
         }
-        else if (old_value > this_thread_id)
+        else if (old_value > this_thread_priority)
         {
           // Another "more prioritary" thread owns the lock, we back off
           return false;
@@ -590,78 +575,20 @@ public:
   }
 
 private:
-  static unsigned int init_TLS_thread_ids()
+  static unsigned int init_TLS_thread_priorities()
   {
-    static tbb::atomic<unsigned int> last_id;
+    static std::atomic<unsigned int> last_id;
     unsigned int id = ++last_id;
     // Ensure it is > 0
-    return (1 + id%(std::numeric_limits<unsigned int>::max()));
+    return (1 + id%((std::numeric_limits<unsigned int>::max)()));
   }
 
 protected:
 
-  std::vector<tbb::atomic<unsigned int> >               m_grid;
+  std::vector<std::atomic<unsigned int> >               m_grid;
 
   typedef tbb::enumerable_thread_specific<unsigned int> TLS_thread_uint_ids;
-  TLS_thread_uint_ids                                   m_tls_thread_ids;
-};
-
-//*****************************************************************************
-// class Spatial_lock_grid_3<Tag_non_blocking_with_mutexes>
-// Note: undocumented, for testing only...
-//*****************************************************************************
-
-template <>
-class Spatial_lock_grid_3<Tag_non_blocking_with_mutexes>
-  : public Spatial_lock_grid_base_3<
-      Spatial_lock_grid_3<Tag_non_blocking_with_mutexes> >
-{
-  typedef Spatial_lock_grid_base_3<
-    Spatial_lock_grid_3<Tag_non_blocking_with_mutexes> > Base;
-
-public:
-  // Constructors
-  Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
-  : Base(bbox, num_grid_cells_per_axis)
-  {
-    int num_cells =
-      num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
-    m_grid.resize(num_cells);
-  }
-
-  /// Destructor
-  ~Spatial_lock_grid_3()
-  {
-  }
-
-  bool is_cell_locked_impl(int cell_index)
-  {
-    bool locked = m_grid[cell_index].try_lock();
-    if (locked)
-      m_grid[cell_index].unlock();
-    return !locked;
-  }
-
-  template <bool no_spin>
-  bool try_lock_cell_impl(int cell_index)
-  {
-    bool success = m_grid[cell_index].try_lock();
-    if (success)
-    {
-      get_thread_local_grid()[cell_index] = true;
-      m_tls_locked_cells.local().push_back(cell_index);
-    }
-    return success;
-  }
-
-  void unlock_cell_impl(int cell_index)
-  {
-    m_grid[cell_index].unlock();
-  }
-
-protected:
-
-  std::vector<tbb::recursive_mutex> m_grid;
+  TLS_thread_uint_ids                                   m_tls_thread_priorities;
 };
 
 } //namespace CGAL

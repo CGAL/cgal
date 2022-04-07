@@ -21,7 +21,7 @@ then
   exit
 fi
 
-echo -n "Fetching from origin ... "
+echo -n "Fetching from cgal-dev ... "
 git fetch
 echo "done"
 
@@ -32,7 +32,7 @@ if [ ! -e .git ];
 then
   git init
 fi
-if git pull .. remotes/origin/hooks-for-clients; then
+if git pull .. remotes/cgal-public-dev/hooks-for-clients; then
   echo "Hooks updated."
 fi
 cd ../..

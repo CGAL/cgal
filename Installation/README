@@ -6,7 +6,7 @@ This distribution of CGAL includes:
   AUTHORS          - current and former authors of CGAL
   CHANGES          - history of changes for the library
   CMakeLists.txt   - main script of the build system
-  INSTALL          - information about the installation process 
+  INSTALL.md       - information about the installation process
   LICENSE          - describes the license of CGAL
   LICENSE.FREE_USE - text of the free use license (see LICENSE file)
   LICENSE.GPL      - text of  GPL v3 license

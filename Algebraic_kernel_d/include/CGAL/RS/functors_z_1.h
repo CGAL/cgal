@@ -1,20 +1,10 @@
 // Copyright (c) 2006-2013 INRIA Nancy-Grand Est (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-
-// See the file LICENSE.LGPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
@@ -68,7 +58,7 @@ struct Construct_algebraic_real_z_1{
 
 template <class Polynomial_,class Algebraic_>
 struct Compute_polynomial_z_1:
-public std::unary_function<Algebraic_,Polynomial_>{
+public CGAL::cpp98::unary_function<Algebraic_,Polynomial_>{
         typedef Polynomial_                                     Polynomial;
         typedef Algebraic_                                      Algebraic;
         Polynomial operator()(const Algebraic &x)const{
@@ -78,7 +68,7 @@ public std::unary_function<Algebraic_,Polynomial_>{
 
 template <class Polynomial_,class Ptraits_>
 struct Is_coprime_z_1:
-public std::binary_function<Polynomial_,Polynomial_,bool>{
+public CGAL::cpp98::binary_function<Polynomial_,Polynomial_,bool>{
         typedef Polynomial_                                     Polynomial;
         typedef Ptraits_                                        Ptraits;
         typedef typename Ptraits::Gcd_up_to_constant_factor     Gcd;
@@ -141,8 +131,6 @@ struct Solve_z_1{
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_1 &p,
                                   OutputIterator res)const{
-                typedef std::pair<Polynomial_1,int>     polmult;
-                typedef std::vector<polmult>            sqvec;
                 typedef std::pair<ZPolynomial_1,int>    zpolmult;
                 typedef std::vector<zpolmult>           zsqvec;
 
@@ -183,7 +171,7 @@ struct Solve_z_1{
 
         template <class OutputIterator>
         OutputIterator operator()(const Polynomial_1 &p,
-                                  bool known_to_be_square_free,
+                                  bool,
                                   OutputIterator res)const{
                 ZPolynomial_1 zp=PolConverter()(p);
                 Isolator isol(zp);
@@ -286,7 +274,7 @@ template <class Polynomial_,
           class Ptraits_,
           class ZPtraits_>
 class Sign_at_z_1:
-public std::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
+public CGAL::cpp98::binary_function<Polynomial_,Algebraic_,CGAL::Sign>{
         // This implementation will work with any polynomial type whose
         // coefficient type is explicit interoperable with Gmpfi.
         // TODO: Make this function generic.
@@ -398,7 +386,7 @@ template <class Polynomial_,
           class Ptraits_,
           class ZPtraits_>
 class Is_zero_at_z_1:
-public std::binary_function<Polynomial_,Algebraic_,bool>{
+public CGAL::cpp98::binary_function<Polynomial_,Algebraic_,bool>{
         // This implementation will work with any polynomial type whose
         // coefficient type is explicit interoperable with Gmpfi.
         // TODO: Make this function generic.
@@ -420,7 +408,7 @@ public std::binary_function<Polynomial_,Algebraic_,bool>{
                 typedef typename Ptraits::Substitute                    Subst;
                 std::vector<CGAL::Gmpfi> substitutions;
                 substitutions.push_back(CGAL::Gmpfi(l,r));
-                CGAL::Gmpfi eval=Subst()(p,     
+                CGAL::Gmpfi eval=Subst()(p,
                                          substitutions.begin(),
                                          substitutions.end());
                 return eval.sign();
@@ -484,7 +472,7 @@ template <class Polynomial_,
           class PolConverter_,
           class Isolator_>
 struct Number_of_solutions_z_1:
-public std::unary_function<Polynomial_,int>{
+public CGAL::cpp98::unary_function<Polynomial_,int>{
         typedef Polynomial_                                     Polynomial_1;
         typedef ZPolynomial_                                    ZPolynomial_1;
         typedef PolConverter_                                   PolConverter;
@@ -502,7 +490,7 @@ template <class Algebraic_,
           class Bound_,
           class Comparator_>
 struct Compare_z_1:
-public std::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
+public CGAL::cpp98::binary_function<Algebraic_,Algebraic_,CGAL::Comparison_result>{
         typedef Algebraic_                                      Algebraic;
         typedef Bound_                                          Bound;
         typedef Comparator_                                     Comparator;
@@ -554,7 +542,7 @@ template <class Algebraic_,
           class Bound_,
           class Comparator_>
 struct Bound_between_z_1:
-public std::binary_function<Algebraic_,Algebraic_,Bound_>{
+public CGAL::cpp98::binary_function<Algebraic_,Algebraic_,Bound_>{
         typedef Algebraic_                                      Algebraic;
         typedef Bound_                                          Bound;
         typedef Comparator_                                     Comparator;
@@ -597,7 +585,7 @@ template <class Polynomial_,
           class Ptraits_,
           class ZPtraits_>
 struct Isolate_z_1:
-public std::binary_function<Algebraic_,Polynomial_,std::pair<Bound_,Bound_> >{
+public CGAL::cpp98::binary_function<Algebraic_,Polynomial_,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
         typedef ZPolynomial_                                    ZPolynomial_1;
         typedef PolConverter_                                   PolConverter;
@@ -641,7 +629,7 @@ template <class Polynomial_,
           class Algebraic_,
           class Refiner_>
 struct Approximate_absolute_z_1:
-public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
+public CGAL::cpp98::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;
@@ -673,7 +661,7 @@ template <class Polynomial_,
           class Algebraic_,
           class Refiner_>
 struct Approximate_relative_z_1:
-public std::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
+public CGAL::cpp98::binary_function<Algebraic_,int,std::pair<Bound_,Bound_> >{
         typedef Polynomial_                                     Polynomial_1;
         typedef Bound_                                          Bound;
         typedef Algebraic_                                      Algebraic;

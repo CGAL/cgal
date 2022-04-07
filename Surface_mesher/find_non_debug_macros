@@ -1,5 +1,0 @@
-#!/bin/sh
-
-grep -Er '# *(if|define).*CGAL' "${@:-.}" | \
-  perl -ne '/(CGAL_[[:alnum:]_]*)/ && print "$1\n"' | \
-    sort -u | grep -Ev '(_H$|DEBUG)'

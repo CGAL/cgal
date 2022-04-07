@@ -12,8 +12,8 @@
 //
 // ============================================================================
 
-#include <CGAL/basic.h>
 #include <cassert>
+#include <CGAL/IO/io.h>
 #include <CGAL/algorithm.h>
 #include <cstdlib>
 #include <sstream>
@@ -45,7 +45,7 @@ void test_lex_compare() {
 void test_output_range() {
     std::ostringstream os;
     std::ostream* sp;
-    CGAL::set_ascii_mode(os);
+    CGAL::IO::set_ascii_mode(os);
 
     assert(os.str() == "");
 

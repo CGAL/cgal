@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_real.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
@@ -9,11 +9,7 @@
 int main() {
     typedef leda_real NT;
 
-#if CGAL_LEDA_VERSION >= 500 
     typedef CGAL::Field_with_root_of_tag Tag;
-#else
-    typedef CGAL::Field_with_kth_root_tag Tag;
-#endif
     typedef CGAL::Tag_true Is_exact;
 
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>();
@@ -25,9 +21,9 @@ int main() {
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-  
+
     CGAL::test_real_embeddable<NT>();
-    
+
   return 0;
 }
 

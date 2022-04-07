@@ -2,25 +2,20 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
 
 #ifndef CGAL_BOX_INTERSECTION_D_BOX_TRAITS_D_H
 #define CGAL_BOX_INTERSECTION_D_BOX_TRAITS_D_H
+
+#include <CGAL/license/Box_intersection_d.h>
+
 
 #include <CGAL/basic.h>
 #include <functional>
@@ -83,33 +78,33 @@ struct Predicate_traits_d : public BoxTraits {
     static bool hi_greater(NT hi, NT val, Bool_t<true> ) { return hi >= val;}
     static bool hi_greater(NT hi, NT val, Bool_t<false> ){ return hi >  val;}
     static bool hi_greater (NT hi, NT val) {
-        return hi_greater(hi,val, Bool_t<closed>()); 
+        return hi_greater(hi,val, Bool_t<closed>());
     }
 
     // compare dim a b = islolesslo a b dim
-    class Compare : 
-        public std::binary_function<Box_parameter,Box_parameter,bool>
+    class Compare :
+        public CGAL::cpp98::binary_function<Box_parameter,Box_parameter,bool>
     {
         int dim;
     public:
         Compare(int dim) : dim(dim) {}
-        bool operator()(Box_parameter a, Box_parameter b) const { 
-            return is_lo_less_lo(a,b,dim); 
+        bool operator()(Box_parameter a, Box_parameter b) const {
+            return is_lo_less_lo(a,b,dim);
         }
     };
 
     // loless val dim box = getlo box dim < val
-    class Lo_less : public std::unary_function<Box_parameter,bool> {
+    class Lo_less : public CGAL::cpp98::unary_function<Box_parameter,bool> {
         NT value;
         int dim;
     public:
         Lo_less(NT value, int dim) : value(value), dim(dim) {}
-        bool operator() (Box_parameter box) const { 
+        bool operator() (Box_parameter box) const {
             return BoxTraits::min_coord(box, dim) < value;
         }
     };
 
-    class Hi_greater : public std::unary_function<Box_parameter,bool> {
+    class Hi_greater : public CGAL::cpp98::unary_function<Box_parameter,bool> {
         NT value;
         int dim;
     public:
@@ -120,14 +115,14 @@ struct Predicate_traits_d : public BoxTraits {
     };
 
     // spanning lo hi dim box = getlo box dim < lo && gethi box dim > hi
-    class Spanning : public std::unary_function<Box_parameter,bool> {
+    class Spanning : public CGAL::cpp98::unary_function<Box_parameter,bool> {
         NT lo, hi;
         int dim;
     public:
         Spanning(NT lo, NT hi, int dim) : lo(lo), hi(hi), dim(dim) {}
         // returns true <=> box spans [lo,hi) in dimension dim
         bool operator() (Box_parameter box) const {
-            return BoxTraits::min_coord(box,dim) < lo 
+            return BoxTraits::min_coord(box,dim) < lo
                 && BoxTraits::max_coord(box,dim) > hi;
         }
     };
@@ -145,12 +140,12 @@ struct Predicate_traits_d : public BoxTraits {
     }
     static bool is_lo_less_lo(Box_parameter a, Box_parameter b, int dim) {
         return BoxTraits::min_coord(a,dim)  < BoxTraits::min_coord(b,dim) ||
-               ( BoxTraits::min_coord(a,dim) == BoxTraits::min_coord(b,dim) && 
+               ( BoxTraits::min_coord(a,dim) == BoxTraits::min_coord(b,dim) &&
                  BoxTraits::id(a) < BoxTraits::id(b) );
     }
 
     static bool is_lo_less_hi(Box_parameter a, Box_parameter b, int dim) {
-        return hi_greater( BoxTraits::max_coord(b,dim), 
+        return hi_greater( BoxTraits::max_coord(b,dim),
                            BoxTraits::min_coord(a,dim));
     }
     static bool does_intersect (Box_parameter a, Box_parameter b, int dim) {

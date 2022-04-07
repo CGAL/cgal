@@ -1,6 +1,8 @@
+#include <cassert>
 #include <iostream>
 #include <string>
-#include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
+
+#include <CGAL/Surface_mesh_segmentation/internal/K_means_clustering.h>
 typedef CGAL::internal::K_means_clustering K_means;
 /**
  * Test where number of points equal to number of centers,
@@ -11,7 +13,7 @@ int main(void)
 {
   for(std::size_t init_type = 0; init_type < 2; ++init_type)
   {
-    K_means::Initialization_types init_type_enum = init_type == 0 ? K_means::RANDOM_INITIALIZATION : 
+    K_means::Initialization_types init_type_enum = init_type == 0 ? K_means::RANDOM_INITIALIZATION :
                                                                     K_means::PLUS_INITIALIZATION;
     // Test case: number of points equals to number of clusters
     //            and all points are unique
@@ -29,12 +31,12 @@ int main(void)
       kmeans.fill_with_center_ids(center_ids);
 
       for(std::size_t i = 0; i < center_size -1; ++i) {
-        if(center_ids[i] >= center_ids[i +1]) // center ids are ordered according to mean                                          
-        {                                     // and since points are generated ascendingly ... 
+        if(center_ids[i] >= center_ids[i +1]) // center ids are ordered according to mean
+        {                                     // and since points are generated ascendingly ...
           std::string init_type_s = init_type_enum == K_means::RANDOM_INITIALIZATION ? "Random " :
                                                                                        "Plus plus ";
           std::cerr << "Init type: " << init_type_s << "center size: "  << center_size << std::endl;
-          CGAL_assertion(false);
+          assert(false);
         }
       }
     }

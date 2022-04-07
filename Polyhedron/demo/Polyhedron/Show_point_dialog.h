@@ -15,7 +15,7 @@ class POINT_DIALOG_EXPORT Show_point_dialog :
 {
   Q_OBJECT
 public:
-  Show_point_dialog(QWidget* parent = 0);
+  Show_point_dialog(QWidget* parent = nullptr);
   ~Show_point_dialog();
 
   bool has_correct_coordinates() const;
@@ -24,7 +24,7 @@ public:
   double get_y() const;
   double get_z() const;
 
-protected slots:
+protected Q_SLOTS:
   void interprete_string(const QString&);
 
 protected:

@@ -2,6 +2,8 @@
 
 \page dev_manual Developer Manual
 
+The developer manual is primarly aimed at \cgal developers, but may also be interesting to any \cgal user.
+
 - \subpage devman_intro
 - \subpage devman_code_format
 - \subpage devman_kernels
@@ -10,12 +12,15 @@
 - \subpage devman_reference_counting
 - \subpage devman_memory_management
 - \subpage devman_namespaces
+- \subpage devman_multithreading
 - \subpage devman_polyret
 - \subpage devman_iterators_and_circulators
 - \subpage devman_robustness
 - \subpage devman_portability
 - \subpage devman_debugging
+- \subpage devman_testing
 - \subpage devman_submission
 - \subpage devman_info
-
+- \subpage devman_create_cgal_CMakeLists
+- \subpage deprecated
 */

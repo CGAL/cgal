@@ -1,7 +1,9 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgConvexHullD
+\ingroup PkgConvexHullDRef
+
+\deprecated This package is deprecated since the version 4.6 of \cgal. The package \ref PkgTriangulations should be used instead.
 
 An instance `DT` of type `Delaunay_d< R, Lifted_R >` is the
 nearest and furthest site Delaunay triangulation of a set `S` of
@@ -41,8 +43,8 @@ otherwise. If `t` exists then `s` and `t` share `dcur` vertices,
 namely all but the vertex with index `i` of `s` and the vertex with
 index `DT.index_of_vertex_in_opposite_simplex(s,i)` of `t`.
 Assume that `t = DT.opposite_simplex(s,i)` exists and let `
-j = DT.index_of_vertex_in_opposite_simplex(s,i)`. Then 
-`s = DT.opposite_simplex(t,j)` and 
+j = DT.index_of_vertex_in_opposite_simplex(s,i)`. Then
+`s = DT.opposite_simplex(t,j)` and
 `i = DT.index_of_vertex_in_opposite_simplex(t,j)`. In general, a vertex
 belongs to many simplices.
 
@@ -276,7 +278,7 @@ Simplex_handle opposite_simplex(Simplex_handle s, int i) ;
 
 /*!
 returns the index of the vertex opposite to the `i`-th vertex
-of `s`. 
+of `s`.
 \pre `0 <= i <= dcur`.
 
 */

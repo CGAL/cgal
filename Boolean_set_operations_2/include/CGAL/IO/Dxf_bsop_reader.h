@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
@@ -22,12 +14,17 @@
 #ifndef CGAL_DXF_BSOP_READER_H
 #define CGAL_DXF_BSOP_READER_H
 
+#include <CGAL/license/Boolean_set_operations_2.h>
+
+#include <CGAL/disable_warnings.h>
+
 #include <CGAL/IO/Dxf_reader.h>
 #include <iostream>
 
 #include <list>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>
+#include <CGAL/squared_distance_2.h>
 
 namespace CGAL {
 
@@ -76,7 +73,7 @@ public:
    * \param simplify Should we simplify the polygons (in case the file
    *                 contains polygons that are not simple).
    * \return A pair of past-the-end iterators for both ranges.
-   */ 
+   */
   template <class PolygonOutputIterator,
             class PolygonWithHolesOutputIterator>
   std::pair<PolygonOutputIterator, PolygonWithHolesOutputIterator>
@@ -97,7 +94,7 @@ public:
     // Convert the circles, such that each circle becomes a simple polygon
     // with two edges (the upper and the lower half-circles).
     Traits_2                             traits;
-    typename Traits_2::Make_x_monotone_2 make_x_monotone = 
+    typename Traits_2::Make_x_monotone_2 make_x_monotone =
                                              traits.make_x_monotone_2_object();
     typename Dxf_circles_list::iterator  circ_it;
     CGAL::Object                         obj_vec[3];
@@ -156,7 +153,7 @@ public:
           pt = pgn_it->begin()->first;
 
         // Check whether a "bulge" is defined between the two vertices.
-        if (curr->second) 
+        if (curr->second)
         {
           // A non-zero bulge: ps and pt are connected by a circular arc.
           // We compute the center and the squared radius of its supporting
@@ -168,8 +165,8 @@ public:
           const FT x_coord = ((ps.x() + pt.x())/2) + common*(ps.y() - pt.y());
           const FT y_coord = ((ps.y() + pt.y())/2) + common*(pt.x() - ps.x());
           const FT sqr_bulge = CGAL::square(bulge);
-          const FT sqr_rad = CGAL::squared_distance(ps, pt) * 
-                             (1/sqr_bulge + 2 + sqr_bulge) / 16; 
+          const FT sqr_rad = CGAL::squared_distance(ps, pt) *
+                             (1/sqr_bulge + 2 + sqr_bulge) / 16;
 
           // Construct the arc: A positive bulge means the arc is
           // counterclockwise oriented and a negative bulge means that the arc
@@ -181,7 +178,7 @@ public:
             supp_circ = Circle_2 (Point_2 (x_coord, y_coord), sqr_rad,
                                   CGAL::CLOCKWISE);
 
-          Curve_2 circ_arc (supp_circ, 
+          Curve_2 circ_arc (supp_circ,
                             Arc_point_2 (ps.x(), ps.y()),
                             Arc_point_2 (pt.x(), pt.y()));
 
@@ -242,5 +239,7 @@ public:
 };
 
 } //namespace CGAL
+
+#include <CGAL/enable_warnings.h>
 
 #endif

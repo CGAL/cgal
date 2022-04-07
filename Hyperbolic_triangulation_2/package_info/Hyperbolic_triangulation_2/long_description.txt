@@ -1,0 +1,12 @@
+The package 2D Hyperbolic Triangulation provides Delaunay triangulations
+in the Poincaré disk model of the hyperbolic plane, complete with demos,
+examples, and tests. The hyperbolic Delaunay triangulation defined by a
+set of points in the Poincaré disk model is a simplicial sub-complex of
+the Euclidean Delaunay triangulation defined by the same set of points in
+the unit disk centered at the origin of the Euclidean plane. More information
+is available in:
+        Mikhail Bogdanov, Olivier Devillers, and Monique Teillaud. Hyperbolic
+        Delaunay complexes and Voronoi diagrams made practical. Journal of
+        Computational Geometry, 5(1):56–85, 2014.
+        URL: https://hal.inria.fr/hal-00961390,
+        doi:10.20382/jocg.v5i1a4.

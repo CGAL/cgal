@@ -1,5 +1,5 @@
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <iostream>
 
 // That one should not be needed in the long term:
@@ -41,8 +41,8 @@ test(const NT &)
     std::cout << "  BUG zero ! : " << zero_i.first << " " << zero_i.second << std::endl;
   if (one_i.first > 1 || one_i.second < 1)
     std::cout << "  BUG one ! : " << one_i.first << " " << one_i.second << std::endl;
-  std::cout << one_third_i.first << " " << one_third_i.second 
-	    << " (not correct for integer types)" << std::endl;
+  std::cout << one_third_i.first << " " << one_third_i.second
+            << " (not correct for integer types)" << std::endl;
 }
 
 int main()
@@ -79,6 +79,6 @@ int main()
   ::test(cl_integer());
 #endif
 #endif
-  
+
   return 0;
 }

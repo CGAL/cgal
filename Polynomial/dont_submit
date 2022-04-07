@@ -1,9 +1,0 @@
-include/CGAL/Polynomial/polynomial_functions.h
-test/Polynomial/polynomial_functions.cpp
-include/CGAL/Polynomial/wang.h
-include/CGAL/Polynomial/Wang_traits.h
-include/CGAL/Polynomial/modular_gcd_utcf_pure_wang.h
-test/Polynomial/modular_gcd_utcf_pure_wang.cpp
-include/CGAL/Polynomial/modular_gcd_utcf_with_wang.h
-test/Polynomial/modular_gcd_utcf_with_wang.cpp
-test/Polynomial/Polynomial_traits_d.cpp

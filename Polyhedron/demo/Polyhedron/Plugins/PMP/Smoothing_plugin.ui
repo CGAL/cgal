@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Smoothing</class>
+ <widget class="QDockWidget" name="Smoothing">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>518</width>
+    <height>478</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Smoothing</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="1">
+     <widget class="QSpinBox" name="smooth_iter_spinBox">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>1000</number>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0" colspan="2">
+     <widget class="QGroupBox" name="Shape_groupBox">
+      <property name="title">
+       <string>Shape Smoothing</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="1" column="0">
+        <widget class="QLabel" name="time_step_label">
+         <property name="toolTip">
+          <string>The time step should not be too large or the smoothing will be unsatisfactory</string>
+         </property>
+         <property name="text">
+          <string>Time Step:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2">
+        <widget class="QPushButton" name="shape_smoothing_button">
+         <property name="text">
+          <string>Smooth Shape</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="DoubleEdit" name="time_step_spinBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>0.000001</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QCheckBox" name="border_button">
+      <property name="toolTip">
+       <string>If you are using a selection item, this will combine your selected vertices and the border vertices</string>
+      </property>
+      <property name="text">
+       <string>Constrain Border Vertices</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0" colspan="2">
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Number of iterations</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="2">
+     <widget class="QGroupBox" name="Mesh_groupBox">
+      <property name="title">
+       <string>Mesh Smoothing</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="4" column="1">
+        <widget class="QPushButton" name="mesh_smoothing_button">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Smooth Mesh</string>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="sanity_checkBox">
+         <property name="toolTip">
+          <string>By default, a serie of checks are performed when a displacement is computed (e.g. is the minimul angle around the vertex not reduced?). However, sometimes local bad moves are necessary to achieve a better result overall.</string>
+         </property>
+         <property name="text">
+          <string>Do not apply worsening moves</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="area_smoothing_checkBox">
+         <property name="text">
+          <string>Use Area Smoothing</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="angle_smoothing_checkBox">
+         <property name="text">
+          <string>Use Angle Smoothing</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="projection_checkBox">
+         <property name="toolTip">
+          <string>Reprojection on the initial surface will not happen if there are self-intersections in the mesh, except if worsening moves are allowed (the option just above).</string>
+         </property>
+         <property name="text">
+          <string>Re-project Vertices</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="flip_checkBox">
+         <property name="text">
+          <string>Allow Delaunay flips</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

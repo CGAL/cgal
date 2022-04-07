@@ -1,10 +1,11 @@
 // Testing the removal function, covering all possible scenarios.
 
+#include <iostream>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 
 typedef CGAL::Quotient<int>                           Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
@@ -16,6 +17,99 @@ typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
 
 #define N_SEGMENTS 26
 #define N_REMOVE   10
+
+Halfedge_handle construct_arr(Arrangement_2& arr)
+{
+  arr.clear();
+  Segment_2 seg;
+  seg = Segment_2(Point_2(0, 0), Point_2(2, 0));
+  insert_non_intersecting_curve(arr, seg);
+  seg = Segment_2(Point_2(2, 4), Point_2(0, 4));
+  insert_non_intersecting_curve(arr, seg);
+  seg = Segment_2(Point_2(0, 4), Point_2(0, 0));
+  insert_non_intersecting_curve(arr, seg);
+  seg = Segment_2(Point_2(2, 0), Point_2(4, 0));
+  insert_non_intersecting_curve(arr, seg);
+  seg = Segment_2(Point_2(4, 0), Point_2(4, 4));
+  insert_non_intersecting_curve(arr, seg);
+  seg = Segment_2(Point_2(4, 4), Point_2(2, 4));
+  insert_non_intersecting_curve(arr, seg);
+
+  seg = Segment_2(Point_2(2, 0), Point_2(2, 4));
+  return insert_non_intersecting_curve(arr, seg);
+}
+
+/* (1)
+ * -------------     -------------
+ * |     |     |     |           |
+ * |     |  o  |  => |        o  |
+ * |     |     |     |           |
+ * -------------     -------------
+ */
+bool test1()
+{
+  Arrangement_2 arr;
+  Halfedge_handle he = construct_arr(arr);
+  insert_point(arr, Point_2(3, 2));
+  arr.remove_edge(he);
+  return arr.is_valid();
+}
+
+/* (2)
+ * -------------     -------------
+ * |  o  |     |     |  o        |
+ * |     |  o  |  => |        o  |
+ * |  o  |     |     |  o        |
+ * -------------     -------------
+ */
+bool test2()
+{
+  Arrangement_2 arr;
+  Halfedge_handle he = construct_arr(arr);
+  insert_point(arr, Point_2(1, 1));
+  insert_point(arr, Point_2(1, 3));
+  insert_point(arr, Point_2(3, 2));
+  arr.remove_edge(he);
+  return arr.is_valid();
+}
+
+/* (3)
+ * -------------     -------------
+ * |     |  o  |     |        o  |
+ * |  o  |     |  => |  o        |
+ * |     |  o  |     |        o  |
+ * -------------     -------------
+ */
+bool test3()
+{
+  Arrangement_2 arr;
+  Halfedge_handle he = construct_arr(arr);
+  insert_point(arr, Point_2(1, 2));
+  insert_point(arr, Point_2(3, 1));
+  insert_point(arr, Point_2(3, 3));
+  arr.remove_edge(he);
+  return arr.is_valid();
+}
+
+/* (4)
+ * -------------     -------------
+ * |  o  |  o  |     |        o  |
+ * |  o  |     |  => |  o        |
+ * |  o  |  o  |     |        o  |
+ * -------------     -------------
+ */
+bool test4()
+{
+  Arrangement_2 arr;
+  Halfedge_handle he = construct_arr(arr);
+  insert_point(arr, Point_2(1, 1));
+  insert_point(arr, Point_2(1, 2));
+  insert_point(arr, Point_2(1, 3));
+  insert_point(arr, Point_2(3, 1));
+  insert_point(arr, Point_2(3, 3));
+  arr.remove_edge(he);
+  return arr.is_valid();
+}
 
 int main ()
 {
@@ -52,7 +146,7 @@ int main ()
   segs[23] = Segment_2 (Point_2 (13, 3), Point_2 (17, 3));
   segs[24] = Segment_2 (Point_2 (12, 6), Point_2 (13, 3));
   segs[25] = Segment_2 (Point_2 (17, 3), Point_2 (20, 1));
-  
+
   for (k = 0; k < N_SEGMENTS; k++)
   {
     hhs[k] = insert_non_intersecting_curve (arr, segs[k]);
@@ -61,11 +155,11 @@ int main ()
 
   std::cout << "Arrangement size:"
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
   std::cout << "The arrangement is "
             << (valid ? "valid." : "NOT valid!") << std::endl;
- 
+
   if (! valid)
     return (1);
 
@@ -85,14 +179,33 @@ int main ()
 
   std::cout << "Final arrangement size:"
             << "   V = " << arr.number_of_vertices()
-            << ",  E = " << arr.number_of_edges() 
+            << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
 
   // Check the validity more thoroughly.
   valid = is_valid(arr);
   std::cout << "Arrangement is "
               << (valid ? "valid." : "NOT valid!") << std::endl;
- 
-  return (0);
-}
 
+  valid = test1();
+  std::cout << "The arrangement is "
+            << (valid ? "valid." : "NOT valid!") << std::endl;
+  if (!valid) return 1;
+
+  valid = test2();
+  std::cout << "The arrangement is "
+            << (valid ? "valid." : "NOT valid!") << std::endl;
+  if (!valid) return 1;
+
+  valid = test3();
+  std::cout << "The arrangement is "
+            << (valid ? "valid." : "NOT valid!") << std::endl;
+  if (!valid) return 1;
+
+  valid = test4();
+  std::cout << "The arrangement is "
+            << (valid ? "valid." : "NOT valid!") << std::endl;
+  if (!valid) return 1;
+
+  return 0;
+}

@@ -1,0 +1,71 @@
+#!/bin/bash
+
+set -o errexit
+
+cd /home/cgal-testsuite
+
+# Rotate log files on one month: the logfile name contains the number of
+# the day
+LOGFILE=$PWD/doxygen_testsuite-`date '+%d'`.log
+
+exec > "$LOGFILE"
+
+# Display commands as if using `set -o xtrace`, but to the stdout
+trap 'echo "[$BASH_SOURCE:$LINENO] $BASH_COMMAND" >&1' DEBUG
+
+# A helper error function that outputs both to stderr and stdout before
+# aborting the script.
+function error() {
+    echo "Error: $@"
+    echo "Error: $@" >&2
+    echo "See $LOGFILE" >&2
+    exit 1
+}
+
+CGAL_URL="https://cgal.geometryfactory.com/CGAL/Releases"
+CURL_OPTS="--remote-name --silent --location --netrc"
+LATEST_LOCATION="${CGAL_URL}/LATEST"
+CGAL_DOC_BUILD="/home/cgal-testsuite/cgal_doc_build"
+
+if [ -r "${CGAL_DOC_BUILD}" ]; then
+    rm -rf "${CGAL_DOC_BUILD}"
+fi
+
+mkdir ${CGAL_DOC_BUILD}
+cd ${CGAL_DOC_BUILD}
+
+if [ -r "LATEST" ]; then
+    rm -rf LATEST
+fi
+
+curl ${CURL_OPTS} "${LATEST_LOCATION}"
+
+if [ ! -f "LATEST" ]; then
+    error "COULD NOT DOWNLOAD LATEST!"
+fi
+
+for i in `cat LATEST`
+do
+    CGAL_LOCATION="${CGAL_URL}/${i}";
+    CGAL_ZIPFILE="${i}";
+done
+CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
+
+curl ${CURL_OPTS} "${CGAL_LOCATION}"
+tar xvzf "${CGAL_ZIPFILE}" && rm "${CGAL_ZIPFILE}"
+if [ ! -d "${CGAL_DOC_BUILD}/${CGAL_RELEASE_ID}" ]; then
+    error "directory ${CGAL_DOC_BUILD}/${CGAL_RELEASE_ID} does not exist"
+fi
+cd "${CGAL_RELEASE_ID}"
+
+PATH=/home/cgal-testsuite/local/bin:$PATH
+export PATH
+cd "$PWD/doc/scripts"
+bash -$- ./process_doc.sh /home/cgal-testsuite/local/bin/doxygen /home/mgimeno/bin/doxygen /srv/CGAL/www/Members/Manual_doxygen_test
+if head -2 ../../.scm-branch | grep -q cgal/master; then
+    rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output2/" /srv/CGAL/www/doc/master/
+fi
+rm -rf "${CGAL_DOC_BUILD}"
+# Then gzip the log file, to save space
+exec
+gzip -f "$LOGFILE"

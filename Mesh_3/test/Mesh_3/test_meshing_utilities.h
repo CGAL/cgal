@@ -2,18 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -40,6 +32,9 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 
+#include <CGAL/disable_warnings.h>
+
+#include <limits>
 #include <vector>
 #include <boost/optional/optional_io.hpp>
 
@@ -53,6 +48,34 @@
 struct Bissection_tag {};
 struct Polyhedral_tag {};
 
+// Verify that the time stamps of vertices and cells are strictly
+// increasing
+template <typename C3t3>
+void verify_time_stamps(const C3t3& c3t3, CGAL::Sequential_tag) {
+  typedef typename C3t3::Triangulation::Triangulation_data_structure TDS;
+  const TDS& tds = c3t3.triangulation().tds();
+  {
+    typename TDS::Vertex_iterator prev = tds.vertices_begin();
+    assert(0 == prev->time_stamp());
+    typename TDS::Vertex_iterator vit = prev;
+    ++vit;
+    for(; vit != tds.vertices_end(); ++vit, ++prev) {
+      assert(prev->time_stamp() < vit->time_stamp());
+    }
+  }
+  {
+    typename TDS::Cell_iterator prev = tds.cells_begin();
+    typename TDS::Cell_iterator cit = prev;
+    ++cit;
+    for(; cit != tds.cells_end(); ++cit, ++prev) {
+      assert(prev->time_stamp() < cit->time_stamp());
+    }
+  }
+}
+
+// Do not verify time stamps in parallel mode
+template <typename C3t3>
+void verify_time_stamps(const C3t3&, CGAL::Parallel_tag) {}
 
 template <typename K>
 struct Tester
@@ -117,10 +140,10 @@ struct Tester
     }
 
     f = c3t3.number_of_facets_in_complex();
-    c = c3t3.number_of_cells_in_complex(); 
+    c = c3t3.number_of_cells_in_complex();
     assert ( n < 11 );
 #endif
-    
+
     verify_c3t3(c3t3,domain,domain_type,v,v,f,f,c,c);
     verify_c3t3_hausdorff_distance(c3t3, domain, domain_type, hdist);
 
@@ -135,7 +158,7 @@ struct Tester
     verify_c3t3_quality(c3t3,exude_c3t3);
     verify_c3t3_volume(exude_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(exude_c3t3, domain, domain_type, hdist);
-    
+
     // Perturb.
     // Vertex number should not change (obvious)
     // Quality should increase
@@ -147,7 +170,7 @@ struct Tester
     verify_c3t3_volume(perturb_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(perturb_c3t3, domain, domain_type, hdist);
 
-    // Odt-smoothing
+    // ODT-smoothing
     // Vertex number should not change (obvious)
     C3t3 odt_c3t3(c3t3);
     std::cerr << "Odt...\n";
@@ -156,7 +179,7 @@ struct Tester
     verify_c3t3(odt_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(odt_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(odt_c3t3, domain, domain_type, hdist);
-    
+
     // Lloyd-smoothing
     // Vertex number should not change (obvious)
     C3t3 lloyd_c3t3(c3t3);
@@ -179,16 +202,17 @@ struct Tester
                    const std::size_t min_cells_expected = 0,
                    const std::size_t max_cells_expected = STD_SIZE_T_MAX ) const
   {
+    verify_time_stamps(c3t3, typename C3t3::Concurrency_tag());
     //-------------------------------------------------------
     // Verifications
     //-------------------------------------------------------
     std::cerr << "\tNumber of cells: " << c3t3.number_of_cells_in_complex() << "\n";
     std::cerr << "\tNumber of facets: " << c3t3.number_of_facets_in_complex() << "\n";
     std::cerr << "\tNumber of vertices: " << c3t3.triangulation().number_of_vertices() << "\n";
-        
-    std::size_t dist_facets ( std::distance(c3t3.facets_in_complex_begin(), 
+
+    std::size_t dist_facets ( std::distance(c3t3.facets_in_complex_begin(),
                                             c3t3.facets_in_complex_end()) );
-    std::size_t dist_cells ( std::distance(c3t3.cells_in_complex_begin(), 
+    std::size_t dist_cells ( std::distance(c3t3.cells_in_complex_begin(),
                                             c3t3.cells_in_complex_end()) );
 
     assert(min_vertices_expected <= c3t3.triangulation().number_of_vertices());
@@ -197,42 +221,42 @@ struct Tester
     assert(min_facets_expected <= c3t3.number_of_facets_in_complex());
     assert(max_facets_expected >= c3t3.number_of_facets_in_complex());
     assert(dist_facets == c3t3.number_of_facets_in_complex());
-    
+
     assert(min_cells_expected <= c3t3.number_of_cells_in_complex());
     assert(max_cells_expected >= c3t3.number_of_cells_in_complex());
     assert(dist_cells == c3t3.number_of_cells_in_complex());
     verify_c3t3_combinatorics(c3t3, domain, domain_type);
   }
-  
+
   template<typename C3t3>
   void verify_c3t3_quality(const C3t3& original_c3t3,
                            const C3t3& modified_c3t3) const
   {
     double original = min_value(original_c3t3);
     double modified = min_value(modified_c3t3);
-    
+
     std::cout << "\tQuality before optimization: " << original
               << " - Quality after optimization: " << modified << std::endl;
-    
-    assert(original <= modified);
+
+    assert(original <= modified * (1. + 1e-15) /*precision of double*/ );
   }
-  
+
   template<typename C3t3>
   double min_value(const C3t3& c3t3) const
   {
     typedef typename C3t3::Triangulation                              Tr;
     typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Tr>   Criterion;
     typedef typename C3t3::Cells_in_complex_iterator                  Cell_iterator;
-    
-    double min_value = Criterion::max_value;
+
+    double min_value = (std::numeric_limits<double>::max)();
     Criterion criterion(min_value, c3t3.triangulation());
-    
+
     for ( Cell_iterator cit = c3t3.cells_in_complex_begin(),
          end = c3t3.cells_in_complex_end() ; cit != end ; ++cit )
     {
       min_value = (std::min)(min_value, criterion(c3t3.triangulation().tetrahedron(cit)));
     }
-    
+
     return min_value;
   }
 
@@ -298,13 +322,7 @@ struct Tester
         assert(index.first != index.second);
         Cell_handle c1 = f.first;
         Cell_handle c2 = f.first->neighbor(f.second);
-        if( ! (
-               (c1->subdomain_index() == index.first
-                && c2->subdomain_index() == index.second)
-               ||
-               (c2->subdomain_index() == index.first
-                && c1->subdomain_index() == index.second)
-               ))
+        if( c1->subdomain_index() == c2->subdomain_index() )
         {
           std::cerr << "ERROR:"
                     << "\nc1->subdomain_index(): " << c1->subdomain_index()
@@ -339,7 +357,7 @@ struct Tester
     return 0.;
   }
 
-  // For polyhedral domains, compute the distance to polyhedron 
+  // For polyhedral domains, compute the distance to polyhedron
   // using the domain's AABBtree
   template<typename C3t3, typename MeshDomain>
   double compute_hausdorff_distance(const C3t3& c3t3,
@@ -362,7 +380,7 @@ struct Tester
       if(!c3t3.is_in_complex(f))
         continue;
 
-      max_sqd = (std::max)(max_sqd, 
+      max_sqd = (std::max)(max_sqd,
         aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f))));
     }
     double hdist = std::sqrt(max_sqd);
@@ -396,5 +414,7 @@ struct Tester
   { //nothing to do
   }
 };
+
+#include <CGAL/enable_warnings.h>
 
 #endif // CGAL_MESH_3_TEST_TEST_MESHING_UTILITIES

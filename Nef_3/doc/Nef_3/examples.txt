@@ -11,12 +11,11 @@
 \example Nef_3/nefIO.cpp
 \example Nef_3/offIO.cpp
 \example Nef_3/point_set_operations.cpp
-\example Nef_3/polygon_construction.cpp
 \example Nef_3/polyline_construction.cpp
 \example Nef_3/set_operations.cpp
 \example Nef_3/shell_exploration.cpp
 \example Nef_3/topological_operations.cpp
 \example Nef_3/transformation.cpp
-\example Nef_3/visualization_SM.cpp
-\example Nef_3/visualization_SNC.cpp
+\example Nef_3/nef_3_to_surface_mesh.cpp
+\example Nef_3/draw_nef_3.cpp
 */

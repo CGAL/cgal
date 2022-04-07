@@ -12,3 +12,7 @@ export BOOST_LIBRARYDIR BOOST_INCLUDEDIR
 
 CXXFLAGS="-I$BOOST_INCLUDEDIR/include $CXXFLAGS"
 export CXXFLAGS
+
+# Workaround to pass options to cmake
+CMAKE_GENERATOR="-C/home/lrineau/CGAL/branches/local-master.git/Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_CXXDEBUG/initial.cmake"
+export CMAKE_GENERATOR

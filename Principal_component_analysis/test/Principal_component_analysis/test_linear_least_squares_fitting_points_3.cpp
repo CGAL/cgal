@@ -1,15 +1,19 @@
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
 // test for the linear_least_square_fitting() functions.
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Default_diagonalize_traits.h>
+
 #include <cassert>
 
 #include <cstdlib>
 #include <list>
 
 // types
-typedef CGAL::Cartesian<float> Kernel;
+typedef CGAL::Simple_cartesian<float> Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Line_3 Line;
 typedef Kernel::Point_3 Point;
@@ -43,13 +47,17 @@ void fit_point_set(std::list<Point>& points,
   std::cout << "fit 3D line...";
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>());
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),kernel);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),kernel,
+                                           CGAL::Default_diagonalize_traits<FT,3>());
+
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   std::cout << "fit 3D plane...";
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>());
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>(),kernel);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>(),kernel,
+                                           CGAL::Default_diagonalize_traits<FT,3>());
+
   std::cout << "done (quality: " << quality << ")" << std::endl;
 }
 

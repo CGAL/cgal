@@ -2,19 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -35,9 +27,13 @@
 #ifndef  CGAL_ROTATION_TREE_H
 #define  CGAL_ROTATION_TREE_H
 
+#include <CGAL/disable_warnings.h>
+
+#include <CGAL/license/Partition_2.h>
+
+
 #include <CGAL/vector.h>
 #include <CGAL/Partition_2/Rotation_tree_node_2.h>
-#include <boost/bind.hpp>
 
 namespace CGAL {
 
@@ -50,35 +46,57 @@ public:
    typedef typename internal::vector<Node>::iterator  Self_iterator;
    typedef typename Traits::Point_2                Point_2;
 
-  using  internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
+   using internal::vector< Rotation_tree_node_2<Traits_> >::push_back;
+      using internal::vector< Rotation_tree_node_2<Traits_> >::back;
+
+   class Greater {
+      typename Traits::Less_xy_2 less;
+      typedef typename Traits::Point_2 Point;
+   public:
+      Greater(typename Traits::Less_xy_2 less) : less(less) {}
+
+      template <typename Point_like>
+      bool operator()(const Point_like& p1, const Point_like& p2) {
+         return less(Point(p2), Point(p1));
+      }
+   };
+
+   struct Equal {
+      bool operator()(const Point_2& p, const Point_2& q) const
+      {
+         return p == q;
+      }
+   };
 
    // constructor
    template<class ForwardIterator>
-   Rotation_tree_2(ForwardIterator first, ForwardIterator beyond)
+   Rotation_tree_2(ForwardIterator first, ForwardIterator beyond, const Traits& traits)
    {
       for (ForwardIterator it = first; it != beyond; it++)
          push_back(*it);
-   
-      std::sort(this->begin(), this->end(), 
-                boost::bind(Traits().less_xy_2_object(), _2, _1));
-      std::unique(this->begin(), this->end());
-   
+
+      Greater greater (traits.less_xy_2_object());
+      Equal equal;
+      std::sort(this->begin(), this->end(), greater);
+      std::unique(this->begin(), this->end(),equal);
+
       // front() is the point with the largest x coordinate
-   
+
+      // Add two auxiliary points that have a special role and whose coordinates are not used
       // push the point p_minus_infinity; the coordinates should never be used
-      push_back(Point_2( 1, -1));
+      push_back(back());
 
       // push the point p_infinity; the coordinates should never be used
-      push_back(Point_2(1, 1));
-   
+      push_back(back());
+
       _p_inf = this->end();  // record the iterators to these extreme points
       _p_inf--;
       _p_minus_inf = _p_inf;
       _p_minus_inf--;
-   
+
       Self_iterator child;
       // make p_minus_inf a child of p_inf
-      set_rightmost_child(_p_minus_inf, _p_inf); 
+      set_rightmost_child(_p_minus_inf, _p_inf);
       child = this->begin();               // now points to p_0
       while (child != _p_minus_inf)  // make all points children of p_minus_inf
       {
@@ -90,41 +108,41 @@ public:
 
    // the point that comes first in the right-to-left ordering is first
    // in the ordering, after the auxilliary points p_minus_inf and p_inf
-   Self_iterator rightmost_point_ref() 
+   Self_iterator rightmost_point_ref()
    {
       return this->begin();
    }
 
-   Self_iterator right_sibling(Self_iterator p) 
+   Self_iterator right_sibling(Self_iterator p)
    {
       if (!(*p).has_right_sibling()) return this->end();
       return (*p).right_sibling();
    }
 
-   Self_iterator left_sibling(Self_iterator p) 
+   Self_iterator left_sibling(Self_iterator p)
    {
       if (!(*p).has_left_sibling()) return this->end();
       return (*p).left_sibling();
    }
 
-   Self_iterator rightmost_child(Self_iterator p) 
+   Self_iterator rightmost_child(Self_iterator p)
    {
       if (!(*p).has_children()) return this->end();
       return (*p).rightmost_child();
    }
 
-   Self_iterator parent(Self_iterator p) 
+   Self_iterator parent(Self_iterator p)
    {
       if (!(*p).has_parent()) return this->end();
       return (*p).parent();
    }
 
-   bool parent_is_p_infinity(Self_iterator p) 
+   bool parent_is_p_infinity(Self_iterator p)
    {
       return parent(p) == _p_inf;
    }
 
-   bool parent_is_p_minus_infinity(Self_iterator p) 
+   bool parent_is_p_minus_infinity(Self_iterator p)
    {
       return parent(p) == _p_minus_inf;
    }
@@ -162,4 +180,11 @@ private:
 
 #include <CGAL/Partition_2/Rotation_tree_2_impl.h>
 
+#include <CGAL/enable_warnings.h>
+
 #endif // CGAL_ROTATION_TREE_H
+
+// For the Emacs editor:
+// Local Variables:
+// c-basic-offset: 3
+// End:
