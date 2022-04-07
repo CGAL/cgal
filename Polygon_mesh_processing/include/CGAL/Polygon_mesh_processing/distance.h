@@ -1700,6 +1700,10 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       CGAL_assertion(sub_triangle_bounds.tm2_lface != boost::graph_traits<TriangleMesh2>::null_face());
       CGAL_assertion(sub_triangle_bounds.tm2_uface != boost::graph_traits<TriangleMesh2>::null_face());
 
+      // Add the subtriangle to the candidate list if it is meaningful
+      if(sub_triangle_bounds.upper < global_bounds.lower)
+        continue;
+
       // The global lower bound is the max of the per-face lower bounds
       if(sub_triangle_bounds.lower > global_bounds.lower)
       {
@@ -1716,7 +1720,9 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       candidate_triangles.emplace(sub_triangles[i], sub_triangle_bounds, triangle_and_bounds.tm1_face);
     }
 
-    CGAL_assertion(!candidate_triangles.empty());
+    // In case all subdividing triangles of the last queue entry are useless
+    if(candidate_triangles.empty())
+      break;
 
     // Update global upper Hausdorff bound after subdivision.
     const Candidate& top_candidate = candidate_triangles.top();
