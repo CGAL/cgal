@@ -601,8 +601,8 @@ private:
   // Manifoldness is tolerated while debugging and extracting at intermediate states
   // Not the preferred way because it uses 3*nv storage
   template <typename OutputMesh, typename OVPM>
-  void extract_possibly_non_manifoldness_surface(OutputMesh& output_mesh,
-                                                 OVPM ovpm)
+  void extract_possibly_non_manifold_surface(OutputMesh& output_mesh,
+                                             OVPM ovpm)
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -686,8 +686,8 @@ private:
   }
 
   template <typename OutputMesh, typename OVPM>
-  void extract_manifoldness_surface(OutputMesh& output_mesh,
-                                    OVPM ovpm)
+  void extract_manifold_surface(OutputMesh& output_mesh,
+                                OVPM ovpm)
   {
     namespace PMP = Polygon_mesh_processing;
 
@@ -757,9 +757,9 @@ private:
                        const bool tolerate_non_manifoldness = false)
   {
     if(tolerate_non_manifoldness)
-      extract_possibly_non_manifoldness_surface(output_mesh, ovpm);
+      extract_possibly_non_manifold_surface(output_mesh, ovpm);
     else
-      extract_manifoldness_surface(output_mesh, ovpm);
+      extract_manifold_surface(output_mesh, ovpm);
   }
 
 private:
