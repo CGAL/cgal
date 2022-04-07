@@ -50,11 +50,12 @@ int main()
   // load the soup into the mesh;
   mesh.clear();
   PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
-  std::ofstream("soup.off") << mesh;
+  CGAL::IO::write_polygon_mesh("soup.off", mesh, CGAL::parameters::stream_precision(17));
 
 // now check how face orientation should be reversed
   auto fbm = mesh.add_property_map<Mesh::Face_index, bool>("fbm", false).first;
-  PMP::connected_components_compatible_orientations(mesh, fbm);
+  bool is_orientable = PMP::connected_components_compatible_orientations(mesh, fbm);
+  assert(is_orientable);
 
 // now reverse orientation of faces with bit 1
   std::vector<Mesh::Face_index> faces_to_reverse;
@@ -63,11 +64,11 @@ int main()
       faces_to_reverse.push_back(f);
   PMP::reverse_face_orientations(faces_to_reverse, mesh);
 
-// now stitch borders to close the mesh
+// there are still borders between previously incompatible faces: stitch to close the mesh
   PMP::stitch_borders(mesh);
 
   assert(CGAL::is_closed(mesh));
-  std::ofstream("reoriented_and_stitched.off") << mesh;
+  CGAL::IO::write_polygon_mesh("reoriented_and_stitched.off", mesh, CGAL::parameters::stream_precision(17));
 
   return 0;
 }
