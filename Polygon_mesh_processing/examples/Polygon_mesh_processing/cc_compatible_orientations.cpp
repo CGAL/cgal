@@ -52,12 +52,12 @@ int main()
   PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
   CGAL::IO::write_polygon_mesh("soup.off", mesh, CGAL::parameters::stream_precision(17));
 
-// now check how face orientation should be reversed
+// determine face orientations to be reversed to create compatibility
   auto fbm = mesh.add_property_map<Mesh::Face_index, bool>("fbm", false).first;
   bool is_orientable = PMP::connected_components_compatible_orientations(mesh, fbm);
   assert(is_orientable);
 
-// now reverse orientation of faces with bit 1
+// reverse orientation of faces with bit 1
   std::vector<Mesh::Face_index> faces_to_reverse;
   for (Mesh::Face_index f : mesh.faces())
     if (get(fbm, f))
