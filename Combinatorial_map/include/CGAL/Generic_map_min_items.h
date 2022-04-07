@@ -38,7 +38,7 @@ namespace CGAL {
     struct Dart_wrapper
     {};
   };
-
+  } // namespace Index
 } // namespace CGAL
 
 #endif // CGAL_GENERIC_MAP_MIN_ITEMS_H

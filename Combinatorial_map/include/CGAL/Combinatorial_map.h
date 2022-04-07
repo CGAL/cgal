@@ -153,7 +153,8 @@ namespace CGAL {
     using Base::dart;
     using Base::darts;
     using Base::number_of_darts;
-    
+    using Base::is_empty;
+
     /// Typedef for attributes
     template<int i>
     struct Attribute_type: public Base::template Attribute_type<i>
@@ -656,6 +657,64 @@ namespace CGAL {
       load_combinatorial_map(is, amap);
       return is;
     }
+
+    /** Create a new dart and add it to the map.
+     * The marks of the darts are initialised with mmask_marks, i.e. the dart
+     * is unmarked for all the marks.
+     * @return a Dart_handle on the new dart.
+     */
+    template < typename... Args >
+    Dart_handle create_dart(const Args&... args)
+    {
+      Dart_handle res=mdarts.emplace(args...);
+      init_dart(res);
+      return res;
+    }
+
+    /** Erase a dart from the list of darts.
+     * @param adart the dart to erase.
+     */
+    void erase_dart(Dart_handle adart)
+    {
+      // 1) We update the number of marked darts.
+      for ( size_type i = 0; i < mnb_used_marks; ++i)
+      {
+        if (is_marked(adart, mused_marks_stack[i]))
+          --mnb_marked_darts[mused_marks_stack[i]];
+      }
+
+      // 2) We update the attribute_ref_counting.
+      Helper::template Foreach_enabled_attributes
+        <internal::Decrease_attribute_functor<Self> >::run(*this,adart);
+
+      // 3) We erase the dart.
+      mdarts.erase(adart);
+    }
+
+    /** Erase a dart from the list of darts. Restricted version
+     *  which do not delete attribute having no more dart associated.
+     * @param adart the dart to erase.
+     */
+    void restricted_erase_dart(Dart_handle adart)
+    {
+      // 1) We update the number of marked darts.
+      for ( size_type i = 0; i < mnb_used_marks; ++i)
+      {
+        if (is_marked(adart, mused_marks_stack[i]))
+          --mnb_marked_darts[mused_marks_stack[i]];
+      }
+
+      // 2) We update the attribute_ref_counting.
+      Helper::template Foreach_enabled_attributes
+        <internal::Restricted_decrease_attribute_functor<Self> >::run(*this,adart);
+
+      // 3) We erase the dart.
+      mdarts.erase(adart);
+    }
+
+    /// @return true if dh points to a used dart (i.e. valid).
+    bool is_dart_used(Dart_const_handle dh) const
+    { return mdarts.is_used(dh); }
 
     /** Get the first dart of this map.
      * @return the first dart.
@@ -4766,12 +4825,13 @@ namespace CGAL {
       Base(amap, converters, dartinfoconverter, pointconverter)
     {}
   };
+
   namespace Index
   {
   template < unsigned int d_,
-             class Items_=Combinatorial_map_min_items<d_>,
-             class Alloc_=CGAL_ALLOCATOR(int),
-             class Storage_= Combinatorial_map_storage_2<d_, Items_, Alloc_, unsigned int> >
+             class Items_,
+             class Alloc_,
+             class Storage_>
   class Combinatorial_map :
     public Combinatorial_map_base<d_,
                                   Combinatorial_map<d_,Items_,Alloc_, Storage_>,
@@ -4784,27 +4844,49 @@ namespace CGAL {
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Alloc Alloc;
+    typedef typename Base::Exception_no_more_available_mark
+    Exception_no_more_available_mark;
 
     Combinatorial_map() : Base()
     {}
 
-    Combinatorial_map(const Self & amap)
-    { Base::template copy<Self>(amap); }
+    Combinatorial_map(const Self & amap) : Base(amap)
+    {}
 
-    template < class CMap >
-    Combinatorial_map(const CMap & amap)
-    { Base::template copy<CMap>(amap); }
+    Combinatorial_map(Self && amap) : Base(amap)
+    {}
 
-    template < class CMap, typename Converters >
-    Combinatorial_map(const CMap & amap, const Converters& converters)
-    { Base::template copy<CMap, Converters>
-          (amap, converters); }
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2>
+    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+                      amap) : Base(amap)
+    {}
 
-    template < class CMap, typename Converters, typename Pointconverter >
-    Combinatorial_map(const CMap & amap, const Converters& converters,
-                      const Pointconverter& pointconverter)
-    { Base::template copy<CMap, Converters, Pointconverter>
-          (amap, converters, pointconverter); }
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters>
+    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+                      amap, const Converters& converters) :
+      Base(amap, converters)
+    {}
+
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters,
+              typename DartInfoConverter>
+    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+                      amap, const Converters& converters,
+                      const DartInfoConverter& dartinfoconverter) :
+      Base(amap, converters, dartinfoconverter)
+    {}
+
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters,
+              typename DartInfoConverter, typename PointConverter >
+    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+                      amap, const Converters& converters,
+                      const DartInfoConverter& dartinfoconverter,
+                      const PointConverter& pointconverter) :
+      Base(amap, converters, dartinfoconverter, pointconverter)
+    {}
   };
   } // namespace Index
 

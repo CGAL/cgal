@@ -176,6 +176,7 @@ namespace CGAL {
     /// The last operation used for the ++ operator.
     OperationState mprev_op;
   };
+
   template < typename Map_,bool Const >
   class CMap_dart_iterator<Map_, Const, Tag_true>:
       /*public boost::mpl::if_c< Const,

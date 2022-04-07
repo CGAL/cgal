@@ -670,7 +670,7 @@ namespace CGAL {
     friend class Concurrent_compact_container;
 
   public:
-    typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit, WithID> Self;
+    typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit> Self;
 
     typedef Tag_                             Supports_cell_dart;
     typedef typename Refs::Dart_handle       Dart_handle;
