@@ -1637,7 +1637,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
  * \cgalNamedParamsEnd
  */
 template <class PolygonMesh, class FaceBitMap, class NamedParameters = parameters::Default_named_parameters>
-bool connected_components_compatible_orientations(PolygonMesh& pm,
+bool connected_components_compatible_orientations(const PolygonMesh& pm,
                                                   FaceBitMap fbm,
                                                   const NamedParameters& np = parameters::default_values())
 {
@@ -1655,7 +1655,7 @@ bool connected_components_compatible_orientations(PolygonMesh& pm,
   typedef std::size_t E_id; // Edge id
 
   typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Face_cc_map;
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::const_type   Face_cc_map;
   Face_cc_map f_cc_ids  = get(Face_property_tag(), pm);
   F_cc_id nb_cc = connected_components(pm, f_cc_ids);
 
