@@ -437,7 +437,7 @@ public:
     CGAL_NEF_TRACEN("reference counted " << reference_counted);
 #endif
     non_efective_splits=0;
-    nodes.reserve(2 * (vertices.size() + edges.size() + facets.size()));
+    nodes.reserve(vertices.size() + edges.size() + facets.size());
     root = build_kdtree(vertices, edges, facets, 0);
   }
   const Object_list& objects_around_point( const Point_3& p) const {
