@@ -411,13 +411,13 @@ public:
       Halfedge_handle e;
       for(typename Halfedge_list::const_iterator ei=n->edges_begin(); ei!=n->edges_end(); ++ei) {
         e = *ei;
-        Segment_3 ss(e->source()->point(),e->twin()->source()->point());
         CGAL_NEF_TRACEN("test edge " << e->source()->point() << "->" << e->twin()->source()->point());
         if (SNC_intersection::does_contain_internally(e->source()->point(), e->twin()->source()->point(), p)) {
           _CGAL_NEF_TRACEN("found on edge "<< ss);
           return make_object(e);
         }
-        if((e->source() != v)  && (e->twin()->source() != v) && SNC_intersection::does_intersect_internally(s, ss, ip)) {
+        if((e->source() != v)  && (e->twin()->source() != v) &&
+           SNC_intersection::does_intersect_internally(s, Segment_3(e->source()->point(),e->twin()->source()->point()), ip)) {
           s = Segment_3(p, normalized(ip));
           e_res = e;
           solution = is_edge_;
