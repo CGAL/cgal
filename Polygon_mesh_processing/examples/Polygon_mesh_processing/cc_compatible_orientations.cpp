@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <random>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
@@ -33,6 +34,8 @@ int main()
   std::vector< std::array<std::size_t, 3> > triangles;
   triangles.reserve(faces(mesh).size());
   points.reserve(3*triangles.size());
+  std::random_device rd;
+  std::mt19937 g(rd());
   for (Mesh::Face_index f : mesh.faces())
   {
     Mesh::Halfedge_index h = mesh.halfedge(f);
@@ -41,12 +44,13 @@ int main()
     points.push_back(mesh.point(target(h,mesh)));
     points.push_back(mesh.point(target(mesh.next(h),mesh)));
     triangles.push_back( {s, s+1, s+2} );
-    std::random_shuffle(triangles.back().begin(), triangles.back().end());
+    std::shuffle(triangles.back().begin(), triangles.back().end(), g);
   }
 
   // load the soup into the mesh;
   mesh.clear();
   PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
+  std::ofstream("soup.off") << mesh;
 
 // now check how face orientation should be reversed
   auto fbm = mesh.add_property_map<Mesh::Face_index, bool>("fbm", false).first;
@@ -63,7 +67,7 @@ int main()
   PMP::stitch_borders(mesh);
 
   assert(CGAL::is_closed(mesh));
-  std::ofstream("out.off") << mesh;
+  std::ofstream("reoriented_and_stitched.off") << mesh;
 
   return 0;
 }
