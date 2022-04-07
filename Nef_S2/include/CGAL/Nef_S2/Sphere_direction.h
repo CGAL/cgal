@@ -51,14 +51,14 @@ Sphere_direction(const Sphere_circle<R>& c)
   : Base(c) {}
 
 Sphere_direction(const Sphere_point<R>& p, const Sphere_point<R>&q)
-  : Base(Point_3(0,0,0),p,q)
+  : Base(CGAL::ORIGIN,p,q)
 /*{\Mcreate creates a direction that describes the orientation of
 the great circle through $p$ and $q$ (oriented such that the segment
 $pq$ is the shorter one of the two possible ones. \precond $p$ and $q$
 are not opposite on $S_2$.}*/
 { CGAL_assertion(p!=q.opposite());
   Point_3 p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
-  if ( CGAL::orientation(CGAL::ORIGIN,p,q,p4) != CGAL::POSITIVE )
+  if ( R().orientation_3_object()(CGAL::ORIGIN,p,q,p4) != CGAL::POSITIVE )
     *this = Sphere_direction(opposite());
 }
 
