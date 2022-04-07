@@ -863,7 +863,7 @@ namespace CGAL {
       Helper::template Foreach_enabled_attributes
           <internal::Init_attribute_functor<Self> >::run(*this, adart);
 
-      // TODO internal::Init_id<Dart_container>::run(mdarts, adart);
+      internal::Init_id<Dart_container>::run(mdarts, adart);
     }
     // Initialize a given dart: all beta to null_dart_handle and all
     // attributes to null, marks are given.
