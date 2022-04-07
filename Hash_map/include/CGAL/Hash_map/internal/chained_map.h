@@ -166,7 +166,6 @@ void chained_map<T, Allocator>::rehash()
 {
   chained_map_elem<T>* old_table = table;
   chained_map_elem<T>* old_table_end = table_end;
-  chained_map_elem<T>* old_free = free;
 
   Item old_table_mid = table + table_size;
 
