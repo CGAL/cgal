@@ -24,6 +24,7 @@
 #include <CGAL/Combinatorial_map/internal/Combinatorial_map_sewable.h>
 
 #include <CGAL/Combinatorial_map_storages.h>
+#include <CGAL/Combinatorial_map_storages_with_index.h>
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Combinatorial_map_operations.h>
@@ -862,7 +863,7 @@ namespace CGAL {
       Helper::template Foreach_enabled_attributes
           <internal::Init_attribute_functor<Self> >::run(*this, adart);
 
-      internal::Init_id<Dart_container>::run(mdarts, adart);
+      // TODO internal::Init_id<Dart_container>::run(mdarts, adart);
     }
     // Initialize a given dart: all beta to null_dart_handle and all
     // attributes to null, marks are given.

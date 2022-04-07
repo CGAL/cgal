@@ -105,10 +105,18 @@ public:
       : Base(idx)
     {}
 
+    Index(const Index& idx): Base(idx)
+    {}
+
     Index(const const_iterator& it) : Base(it)
     {}
 
     Index(const iterator& it) : Base(it)
+    {}
+
+    // Constructor allowing to transform an index from one container to another
+    template<typename Index2>
+    Index(const Index2& idx): Base(static_cast<size_t>(idx))
     {}
   };
   friend class internal::CC_iterator_with_index<Self, false>;

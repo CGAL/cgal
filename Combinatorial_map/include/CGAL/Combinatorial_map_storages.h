@@ -42,8 +42,8 @@ namespace CGAL {
   class Combinatorial_map_storage_1
   {
   public:
-    typedef Combinatorial_map_storage_1<d_, Items_, Alloc_, Concurrent_tag> Self;
-    typedef CGAL::Tag_false Use_index;
+    using Self=Combinatorial_map_storage_1<d_, Items_, Alloc_, Concurrent_tag>;
+    using Use_index=CGAL::Tag_false;
 
     typedef internal::Combinatorial_map_helper<Self>      Helper;
 

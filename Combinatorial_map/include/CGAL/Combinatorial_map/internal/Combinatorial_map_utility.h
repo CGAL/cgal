@@ -526,7 +526,8 @@ namespace CGAL
       { typedef Void type; };
 
       // Helper class allowing to retreive the d-cell-handle attribute
-      template<int d, class Type=typename Attribute_type<d>::type>
+      template<int d, class Type=typename Attribute_type<d>::type,
+               typename WithIndex=typename CMap::Use_index>
       struct Attribute_handle
       {
          typedef typename std::tuple_element
@@ -534,10 +535,14 @@ namespace CGAL
       };
 
       template<int d>
-      struct Attribute_handle<d, CGAL::Void>
+      struct Attribute_handle<d, CGAL::Void, CGAL::Tag_false>
       { typedef CGAL::Void* type; };
 
-      // Helper class allowing to retreive the d-cell-const handle attribute
+      template<int d>
+      struct Attribute_handle<d, CGAL::Void, CGAL::Tag_true>
+      { typedef typename CMap::Dart_index type; };
+
+               // Helper class allowing to retreive the d-cell-const handle attribute
       template<int d, class Type=typename Attribute_type<d>::type>
       struct Attribute_const_handle
       {

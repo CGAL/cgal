@@ -9,89 +9,37 @@
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
-#ifndef CGAL_DART_H
-#define CGAL_DART_H 1
+#ifndef CGAL_DART_WITH_INDEX_H
+#define CGAL_DART_WITH_INDEX_H 1
 
 #include <CGAL/assertions.h>
 #include <CGAL/tags.h>
 #include <CGAL/tuple.h>
 #include <bitset>
 #include <CGAL/Cell_attribute.h>
-#include <CGAL/Dart_with_index.h>
 
 namespace CGAL {
 
-  template <class, class, class, class>
-  class Compact_container;
-
-  template <class, class>
-  class Concurrent_compact_container;
-
-  template<unsigned int, class, class, class>
-  class Combinatorial_map_storage_1;
-
-  template<unsigned int, class, class, class>
-  class Combinatorial_map_storage_2;
-
-  template<unsigned int, class, class, class>
-  class Generalized_map_storage_1;
-
-  template<unsigned int, unsigned int, class, class, class, class>
-  class CMap_linear_cell_complex_storage_1;
-
-  template<unsigned int, unsigned int, class, class, class, class>
-  class CMap_linear_cell_complex_storage_2;
-
-  template<unsigned int, unsigned int, class, class, class, class>
-  class GMap_linear_cell_complex_storage_1;
-
-  namespace internal {
-    template<class, class>
-    struct Init_id;
-  } // end namespace internal
-
-  /** @file Dart.h
-   * Definition of nD dart.
-   */
-
-  /** Definition of nD dart without information.
-   * The_dart class describes an nD dart (basic element of a combinatorial or generalized map).
-   * A dart is composed with handle towards its neighbors,
-   * a bitset containing Boolean marks, and handle towards enabled attributes.
-   * n is the dimension of the space (2 for 2D, 3 for 3D...)
-   * Refs the ref class
-   */
-  template <unsigned int d, typename Refs, class WithId>
-  struct Dart_without_info: public Add_id<WithId>
+  namespace Index
   {
-  public:
+  template <unsigned int d, typename Refs>
+  struct Dart_without_info
+  {
     template<unsigned int, class, class, class>
-    friend class Combinatorial_map_storage_1;
+    friend class CGAL::Combinatorial_map_storage_2;
 
-    template<unsigned int, class, class, class>
-    friend class Generalized_map_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CMap_linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
+    // TODO template<unsigned int, unsigned int, class, class, class, class>
+    // friend class CGAL::CMap_linear_cell_complex_storage_2;
 
     template <class, class, class, class>
-    friend class Compact_container;
+    friend class CGAL::Compact_container_with_index_2;
 
-    template <class, class>
-    friend class Concurrent_compact_container;
-
-    template<class, class>
-    friend struct internal::Init_id;
-
-    typedef Dart_without_info<d,Refs, WithId> Self;
-    typedef typename Refs::Dart_handle        Dart_handle;
-    typedef typename Refs::size_type          size_type;
-    typedef typename Refs::Dart_const_handle  Dart_const_handle;
-    typedef typename Refs::Helper             Helper;
-    typedef WithId                            Has_id;
+    typedef Dart_without_info<d,Refs>        Self;
+    typedef typename Refs::Dart_handle       Dart_handle;
+    typedef typename Refs::size_type         size_type;
+    typedef typename Refs::Dart_const_handle Dart_const_handle;
+    typedef typename Refs::Helper            Helper;
+    typedef CGAL::Tag_false                  Has_id;
 
     /// Typedef for attributes
     template<int i>
@@ -108,10 +56,10 @@ namespace CGAL {
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d;
 
-    void * for_compact_container() const
-    { return mf[0].for_compact_container(); }
-    void for_compact_container(void *p)
-    { mf[0].for_compact_container(p); }
+    size_type for_compact_container_with_index() const
+    { return mf[0].for_compact_container_with_index(); }
+    size_type& for_compact_container_with_index()
+    { return mf[0].for_compact_container_with_index(); }
 
     Dart_handle get_f(unsigned int i) const
     {
@@ -173,7 +121,7 @@ namespace CGAL {
     /** Set simultaneously all the marks of this dart to a given value.
      * @param amarks the value of the marks.
      */
-     void set_marks(const std::bitset<NB_MARKS>& amarks) const
+    void set_marks(const std::bitset<NB_MARKS>& amarks) const
     { mmarks = amarks; }
 
     /// @return a handle on the i-attribute
@@ -207,31 +155,21 @@ namespace CGAL {
 
   // Dart definition with an info;
   //  (there is a specialization below when Info_==void)
-  template <unsigned int d, typename Refs, typename Info_=void,
-            class WithID=Tag_false>
-  struct Dart : public Dart_without_info<d, Refs, WithID>
+  template <unsigned int d, typename Refs, typename Info_=void>
+  struct Dart : public Dart_without_info<d, Refs>
   {
   public:
     template<unsigned int, class, class, class>
-    friend class Combinatorial_map_storage_1;
+    friend class CGAL::Combinatorial_map_storage_2;
 
-    template<unsigned int, class, class, class>
-    friend class Generalized_map_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CMap_linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
+    /* TODO template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_2; */
 
     template <class, class, class, class>
-    friend class Compact_container;
+    friend class CGAL::Compact_container_with_index_2;
 
-    template <class, class>
-    friend class Concurrent_compact_container;
-
-    typedef Dart<d, Refs, Info_, WithID> Self;
-    typedef Info_                        Info;
+    typedef Dart<d, Refs, Info_> Self;
+    typedef Info_                Info;
 
   protected:
     /** Default constructor: no real initialisation,
@@ -253,14 +191,16 @@ namespace CGAL {
   };
 
   // Specialization of Dart class when info==void
-  template <unsigned int d, typename Refs, class WithID>
-  struct Dart<d, Refs, void, WithID> : public Dart_without_info<d, Refs, WithID>
+  template <unsigned int d, typename Refs>
+  struct Dart<d, Refs, void> : public Dart_without_info<d, Refs>
   {
   public:
     typedef CGAL::Void Info;
   };
 
+  } // namespace Index
+
 } // namespace CGAL
 
-#endif // CGAL_DART_H //
+#endif // CGAL_DART_WITH_INDEX_H //
 // EOF //
