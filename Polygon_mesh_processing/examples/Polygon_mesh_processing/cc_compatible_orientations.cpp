@@ -7,9 +7,8 @@
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
 #include <iostream>
-#include <iterator>
-#include <map>
 #include <string>
+#include <algorithm>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
