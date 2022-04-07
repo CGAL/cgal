@@ -435,9 +435,10 @@ namespace CGAL
         iterator_type;
 
         // TODO case when there is no Use_index typedef in CMap
-        typedef typename boost::mpl::if_
+        /* TODO ask sebastien ?
+         typedef typename boost::mpl::if_
         < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
-          typename CMap::Dart_handle, iterator_type >::type type;
+          typename CMap::Dart_handle, iterator_type >::type type;*/
 
         typedef typename GetIndexOrHandle
         <typename CMap::template Container_for_attributes<T> >::type type;
@@ -451,10 +452,11 @@ namespace CGAL
         typedef typename CMap::template Container_for_attributes<T>::
         const_iterator iterator_type;
 
+        /* TODO ask sebastien ?
         typedef typename boost::mpl::if_
              < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
                typename CMap::Dart_handle, iterator_type >::type type;
-
+         */
         typedef typename GetConstIndexOrConstHandle
         <typename CMap::template Container_for_attributes<T> >::type type;
       };

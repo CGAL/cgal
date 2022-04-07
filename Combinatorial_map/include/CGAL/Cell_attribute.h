@@ -428,9 +428,6 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
-    template <unsigned int, typename>
-    friend struct Index::Dart;
-
     template < unsigned int, class, class, class, class >
     friend class Generalized_map_base;
 
@@ -439,22 +436,9 @@ namespace CGAL {
 
     template<unsigned int, unsigned int, class, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
->>>>>>> master
-
-    template < unsigned int, typename>
-    friend struct GMap_dart;
 
     template <class, class, class, class>
     friend class Compact_container_with_index;
-
-    template<typename, unsigned int, typename>
-    friend struct internal::Decrease_attribute_functor_run;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_map_functor;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
     typedef Tag_false                            Supports_cell_dart;
@@ -544,26 +528,11 @@ namespace CGAL {
     template < unsigned int, class, class, class, class >
     friend class Combinatorial_map_base;
 
-    template <unsigned int, typename>
-    friend struct Index::Dart;
-
     template < unsigned int, class, class, class, class >
     friend class Generalized_map_base;
 
-    template <unsigned int, typename>
-    friend struct GMap_dart;
-
     template <class, class, class, class>
     friend class Compact_container_with_index;
-
-    template<typename, unsigned int, typename>
-    friend struct internal::Decrease_attribute_functor_run;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_map_functor;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
     typedef Tag_true                             Supports_cell_dart;

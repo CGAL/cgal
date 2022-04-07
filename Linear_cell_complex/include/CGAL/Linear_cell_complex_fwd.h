@@ -26,6 +26,14 @@ template<unsigned int d_, unsigned int ambient_dim,
          class Traits_, class Items_, class Alloc_, class Concurrent_tag=CGAL::Tag_false >
 class GMap_linear_cell_complex_storage_1;
 
+template<unsigned int d_, unsigned int ambient_dim,
+         class Traits_, class Items_, class Alloc_, class Size_type> // TODO add Concurrent_tag
+class CMap_linear_cell_complex_storage_2;
+
+template<unsigned int d_, unsigned int ambient_dim,
+         class Traits_, class Items_, class Alloc_, class Size_type> // TODO add Concurrent_tag class Concurrent_tag=CGAL::Tag_false >
+class GMap_linear_cell_complex_storage_2;
+
 template <unsigned int d>
 struct LCC_default_kernel;
 
@@ -66,6 +74,33 @@ template < unsigned int d_, unsigned int ambient_dim = d_,
                                                                Traits_, Items_,
                                                                Alloc_, CGAL::Tag_false> >
 class Linear_cell_complex_for_generalized_map;
+
+    namespace Index
+    {
+    template < unsigned int d_, unsigned int ambient_dim = d_,
+               class Traits_ = Linear_cell_complex_traits<ambient_dim>,
+               class Items_ = Linear_cell_complex_min_items,
+               class Alloc_ = CGAL_ALLOCATOR(int),
+               template<unsigned int,class,class,class,class>
+               class CMap = Combinatorial_map_base,
+               class Storage_ = CMap_linear_cell_complex_storage_2<d_, ambient_dim,
+                                                                   Traits_, Items_,
+                                                                   Alloc_, unsigned int>>
+                                                                   // TODO READD CGAL::Tag_false> >
+      class Linear_cell_complex_for_combinatorial_map;
+
+      /* TODO GMap_linear_cell_complex_storage_2
+       template < unsigned int d_, unsigned int ambient_dim = d_,
+                 class Traits_ = Linear_cell_complex_traits<ambient_dim>,
+                 class Items_ = Linear_cell_complex_min_items,
+                 class Alloc_ = CGAL_ALLOCATOR(int),
+                 template<unsigned int,class,class,class,class>
+                 class CMap = Generalized_map_base,
+                 class Storage_ = GMap_linear_cell_complex_storage_2<d_, ambient_dim,
+                                                                     Traits_, Items_, unsigned int>>
+      // TODO READD CGAL::Tag_false> >
+        class Linear_cell_complex_for_generalized_map; */
+    } // namespace Index
 
 } // CGAL
 

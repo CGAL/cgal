@@ -40,7 +40,6 @@ namespace CGAL {
 
   namespace Index
   {
-  template <unsigned int d>
   struct Linear_cell_complex_min_items
   {
     /// Dart_wrapper defines the type of darts used.

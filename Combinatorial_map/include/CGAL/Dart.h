@@ -30,10 +30,16 @@ namespace CGAL {
   class Combinatorial_map_storage_1;
 
   template<unsigned int, class, class, class>
+  class Combinatorial_map_storage_2;
+
+  template<unsigned int, class, class, class>
   class Generalized_map_storage_1;
 
   template<unsigned int, unsigned int, class, class, class, class>
   class CMap_linear_cell_complex_storage_1;
+
+  template<unsigned int, unsigned int, class, class, class, class>
+  class CMap_linear_cell_complex_storage_2;
 
   template<unsigned int, unsigned int, class, class, class, class>
   class GMap_linear_cell_complex_storage_1;
@@ -264,14 +270,12 @@ namespace CGAL {
   public:
     typedef CGAL::Void Info;
   };
+
   namespace Index
   {
   template <unsigned int d, typename Refs>
   struct Dart
   {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
-
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_1;
 
@@ -287,26 +291,14 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
+    template <class, class>
+    friend class Concurrent_compact_container;
+
     template <class, class, class, class>
     friend class Compact_container_with_index;
 
     template <class, class, class, class>
     friend class Compact_container_with_index_2;
-
-    template<class, unsigned int, unsigned int>
-    friend struct Remove_cell_functor;
-
-    template<class, unsigned int>
-    friend struct Contract_cell_functor;
-
-    template <typename,unsigned int>
-    friend struct internal::link_beta_functor;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_map_functor;
-
-    template <typename, typename>
-    friend struct internal::Reverse_orientation_of_connected_component_functor;
 
   public:
     typedef Dart<d,Refs>                     Self;
@@ -329,47 +321,11 @@ namespace CGAL {
     /// The dimension of the combinatorial map.
     static const unsigned int dimension = d;
 
-    /** Return the beta of this dart for a given dimension.
-     * @param i the dimension.
-     * @return beta(\em i).
-     */
-    template<unsigned int i>
-    Dart_handle beta()
+    Dart_handle get_f(unsigned int i) const
     {
-      CGAL_assertion(i <= dimension);
-      return mbeta[i];
+      assert(i<=dimension);
+      return mf[i];
     }
-    Dart_handle beta(unsigned int i)
-    {
-      CGAL_assertion(i <= dimension);
-      return mbeta[i];
-    }
-    template<unsigned int i>
-    Dart_const_handle beta() const
-    {
-      CGAL_assertion(i <= dimension);
-      return mbeta[i];
-    }
-    Dart_const_handle beta(unsigned int i) const
-    {
-      CGAL_assertion(i <= dimension);
-      return mbeta[i];
-    }
-
-    /** Return the beta inverse of this dart for a given dimension.
-     * @param i the dimension.
-     * @return beta^{-1}(\em i).
-     */
-    template<unsigned int i>
-    Dart_handle beta_inv()
-    { return beta<CGAL_BETAINV(i)>(); }
-    Dart_handle beta_inv(unsigned int i)
-    { return beta(CGAL_BETAINV(i)); }
-    template<unsigned int i>
-    Dart_const_handle beta_inv() const
-    { return beta<CGAL_BETAINV(i)>(); }
-    Dart_const_handle beta_inv(unsigned int i) const
-    { return beta(CGAL_BETAINV(i)); }
 
     /// @return a handle on the i-attribute
     template<int i>
@@ -455,18 +411,18 @@ namespace CGAL {
       mattribute_handles(adart.mattribute_handles)
     {
       for (unsigned int i = 0; i <= dimension; ++i)
-        mbeta[i] = adart.mbeta[i];
+        mf[i] = adart.mf[i];
     }
 
   public:
     size_type for_compact_container_with_index() const
-    { return mbeta[0].for_compact_container_with_index(); }
+    { return mf[0].for_compact_container_with_index(); }
     size_type& for_compact_container_with_index()
-    { return mbeta[0].for_compact_container_with_index(); }
+    { return mf[0].for_compact_container_with_index(); }
 
   protected:
-    /// Beta for each dimension +1 (from 0 to dimension).
-    Dart_handle mbeta[dimension+1];
+    /// Neighboors for each dimension +1 (from 0 to dimension).
+    Dart_handle mf[dimension+1];
 
     /// Values of Boolean marks.
     mutable std::bitset<NB_MARKS> mmarks;
