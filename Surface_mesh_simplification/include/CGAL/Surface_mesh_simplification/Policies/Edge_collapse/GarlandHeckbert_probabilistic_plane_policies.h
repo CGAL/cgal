@@ -56,7 +56,7 @@ private:
   Face_variance_map m_face_variance_map;
 
 public:
-  Probabilistic_plane_quadric_calculator() { CGAL_assertion(false); } // compilation only
+  Probabilistic_plane_quadric_calculator() = delete;
 
   template <typename FVM>
   Probabilistic_plane_quadric_calculator(const FVM fvm)
@@ -129,10 +129,7 @@ template<typename TriangleMesh,
          typename GeomTraits,
          typename FaceVarianceMap = CGAL::Default>
 class GarlandHeckbert_probabilistic_plane_policies
-  : public internal::GarlandHeckbert_placement_base<
-             internal::Probabilistic_plane_quadric_calculator<TriangleMesh, GeomTraits, FaceVarianceMap>,
-             TriangleMesh, GeomTraits>,
-    public internal::GarlandHeckbert_cost_base<
+  : public internal::GarlandHeckbert_cost_and_placement<
              internal::Probabilistic_plane_quadric_calculator<TriangleMesh, GeomTraits, FaceVarianceMap>,
              TriangleMesh, GeomTraits>
 {
@@ -141,16 +138,8 @@ public:
             TriangleMesh, GeomTraits, FaceVarianceMap>                         Quadric_calculator;
 
 private:
-  typedef internal::GarlandHeckbert_placement_base<
-            Quadric_calculator, TriangleMesh, GeomTraits>                      Placement_base;
-
-  typedef internal::GarlandHeckbert_cost_base<
-            Quadric_calculator, TriangleMesh, GeomTraits>                      Cost_base;
-
-  // Diamond base
-  typedef internal::GarlandHeckbert_quadrics_storage<
-            Quadric_calculator, TriangleMesh, GeomTraits>                      Quadrics_storage;
-
+  typedef internal::GarlandHeckbert_cost_and_placement<
+            Quadric_calculator, TriangleMesh, GeomTraits>                      Base;
   typedef GarlandHeckbert_probabilistic_plane_policies<
             TriangleMesh, GeomTraits>                                          Self;
 
@@ -164,22 +153,21 @@ public:
   // Only available if the quadric calculator is using the default (constant) variance property map
   GarlandHeckbert_probabilistic_plane_policies(TriangleMesh& tmesh,
                                                const FT dm = FT(100))
-    : Quadrics_storage(tmesh, Quadric_calculator(tmesh)), Placement_base(), Cost_base(dm)
+    : Base(tmesh, Quadric_calculator(tmesh), dm)
   { }
 
   template <typename FVM>
   GarlandHeckbert_probabilistic_plane_policies(TriangleMesh& tmesh,
                                                const FT dm,
                                                const FVM fvm)
-    : Quadrics_storage(tmesh, Quadric_calculator(fvm)), Placement_base(), Cost_base(dm)
+    : Base(tmesh, Quadric_calculator(fvm), dm)
   { }
 
 public:
   const Get_cost& get_cost() const { return *this; }
   const Get_placement& get_placement() const { return *this; }
 
-  using Cost_base::operator();
-  using Placement_base::operator();
+  using Base::operator();
 };
 
 } // namespace Surface_mesh_simplification

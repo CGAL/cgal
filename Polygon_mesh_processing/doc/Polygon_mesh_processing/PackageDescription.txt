@@ -61,6 +61,9 @@
 /// \defgroup PMP_IO_grp I/O Functions
 /// \ingroup PkgPolygonMeshProcessingRef
 
+/// \defgroup PMPDeprecated Deprecated Functions
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /*!
 \addtogroup PkgPolygonMeshProcessingRef
 
@@ -111,7 +114,9 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::triangulate_face()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
 - `CGAL::Polygon_mesh_processing::extrude_mesh()`
-- `CGAL::Polygon_mesh_processing::smooth_mesh()`
+- `CGAL::Polygon_mesh_processing::smooth_mesh()` (deprecated)
+- `CGAL::Polygon_mesh_processing::angle_and_area_smoothing()`
+- `CGAL::Polygon_mesh_processing::tangential_relaxation()`
 - `CGAL::Polygon_mesh_processing::smooth_shape()`
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
 

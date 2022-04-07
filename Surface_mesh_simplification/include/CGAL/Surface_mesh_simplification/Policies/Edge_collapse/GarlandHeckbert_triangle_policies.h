@@ -67,24 +67,15 @@ public:
 // implements classic triangle policies
 template<typename TriangleMesh, typename GeomTraits>
 class GarlandHeckbert_triangle_policies
-  : public internal::GarlandHeckbert_placement_base<
-             internal::Triangle_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>,
-    public internal::GarlandHeckbert_cost_base<
+  : public internal::GarlandHeckbert_cost_and_placement<
              internal::Triangle_quadric_calculator<TriangleMesh, GeomTraits>, TriangleMesh, GeomTraits>
 {
 public:
   typedef internal::Triangle_quadric_calculator<TriangleMesh, GeomTraits>      Quadric_calculator;
 
 private:
-  typedef internal::GarlandHeckbert_placement_base<
-            Quadric_calculator, TriangleMesh, GeomTraits>                      Placement_base;
-  typedef internal::GarlandHeckbert_cost_base<
-            Quadric_calculator, TriangleMesh, GeomTraits>                      Cost_base;
-
-  // Diamond base
-  typedef internal::GarlandHeckbert_quadrics_storage<
-            Quadric_calculator, TriangleMesh, GeomTraits>                      Quadrics_storage;
-
+  typedef internal::GarlandHeckbert_cost_and_placement<
+            Quadric_calculator, TriangleMesh, GeomTraits>                      Base;
   typedef GarlandHeckbert_triangle_policies<TriangleMesh, GeomTraits>          Self;
 
 public:
@@ -96,15 +87,14 @@ public:
 public:
   GarlandHeckbert_triangle_policies(TriangleMesh& tmesh,
                                     const FT dm = FT(100))
-    : Quadrics_storage(tmesh), Placement_base(), Cost_base(dm)
+    : Base(tmesh, Quadric_calculator(), dm)
   { }
 
 public:
   const Get_cost& get_cost() const { return *this; }
   const Get_placement& get_placement() const { return *this; }
 
-  using Cost_base::operator();
-  using Placement_base::operator();
+  using Base::operator();
 };
 
 } // namespace Surface_mesh_simplification
