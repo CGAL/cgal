@@ -1627,6 +1627,10 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     if((closest_triangle_v0.second == closest_triangle_v1.second) &&
        (closest_triangle_v1.second == closest_triangle_v2.second))
     {
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+      std::cout << "Projects onto the same TM2 face" << std::endl;
+#endif
+
       // The upper bound of this triangle is the actual Hausdorff distance of
       // the triangle to the second mesh. Use it as new global lower bound.
       // Here, we update the reference to the realizing triangle as this is the best current guess.
