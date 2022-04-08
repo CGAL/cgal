@@ -298,8 +298,8 @@ public:
   {
     CGAL_precondition(type(x) == USED);
     T& e = operator[](x);
-    //std::allocator_traits<allocator_type>::destroy(alloc, &e);
-    e.~T();
+    std::allocator_traits<allocator_type>::destroy(alloc, &e);
+    //e.~T();
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&e, 0, sizeof(T));
 #endif
@@ -530,8 +530,12 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
       std::allocator_traits<allocator_type>::allocate(alloc, capacity_);
   for (size_type index=0; index<oldcapacity; ++index)
   {
-    std::allocator_traits<allocator_type>::construct(alloc, &(all_items2[index]),
-                                                     std::move(all_items[index]));
+    if(is_used(index))
+    {
+      std::allocator_traits<allocator_type>::construct(alloc, &(all_items2[index]),
+                                                       std::move(all_items[index]));
+      alloc.destroy(&(all_items[index]));
+    }
   }
   std::swap(all_items, all_items2);
   std::allocator_traits<allocator_type>::deallocate(alloc, all_items2, oldcapacity);
