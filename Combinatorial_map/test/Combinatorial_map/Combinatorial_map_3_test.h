@@ -447,7 +447,6 @@ bool test3D()
   cout << "***************************** TEST TRIANGULATION_3 3D DONE."
        << endl;
 
-
   cout << "***************************** TEST ITERATORS 3D:" << endl;
 
   for (int i = 0; i < 1000; ++i)

@@ -134,6 +134,8 @@ namespace CGAL {
       { return mmap.mdarts.size()-1; }
       bool empty() const
       { return mmap.is_empty(); }
+      size_type index(Dart_index idx) const
+      { return idx; }
       size_type index(const_iterator cit) const
       { return cit; }
     private:
@@ -154,8 +156,12 @@ namespace CGAL {
       // Allocate a dart for null_dart_handle
       assert(mdarts.empty());
       Dart_index local_null_dart_handle = mdarts.emplace();
-      CGAL_USE(local_null_dart_handle);
-      assert(local_null_dart_handle==0);
+      if(local_null_dart_handle!=0)
+      {
+        std::cerr<<"[ERROR] fatal in Combinatorial_map_storage_2::init_storage"
+                 <<std::endl;
+        CGAL_assertion(false);
+      }
     }
 
     void clear_storage()

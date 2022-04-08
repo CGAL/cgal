@@ -150,6 +150,12 @@ public:
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
+  Compact_container_with_index_2(Compact_container_with_index_2&& c) noexcept
+  : alloc(c.get_allocator())
+  {
+    c.swap(*this);
+  }
+
   Compact_container_with_index_2 &
   operator=(const Compact_container_with_index_2 &c)
   {
@@ -157,6 +163,13 @@ public:
       Self tmp(c);
       swap(tmp);
     }
+    return *this;
+  }
+
+  Compact_container_with_index_2 & operator=(Compact_container_with_index_2&& c) noexcept
+  {
+    Self tmp(std::move(c));
+    tmp.swap(*this);
     return *this;
   }
 
@@ -233,7 +246,6 @@ public:
 
   // Special insert methods that construct the objects in place
   // (just forward the arguments to the constructor, to optimize a copy).
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template < typename... Args >
   Index emplace(const Args&... args)
   {
@@ -244,154 +256,11 @@ public:
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
+    //std::allocator_traits<allocator_type>::construct(alloc, &e, args...);
     new (&e) value_type(args...);
     ++size_;
     return ret;
   }
-#else
-  // inserts a default constructed item.
-  Index emplace()
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type();
-    ++size_;
-
-    return ret;
-  }
-
-  template < typename T1 >
-  Index emplace(const T1 &t1)
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type(t1);
-    ++size_;
-    return ret;
-  }
-
-  template < typename T1, typename T2 >
-  Index emplace(const T1 &t1, const T2 &t2)
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type(t1, t2);
-    ++size_;
-    return ret;
-  }
-
-  template < typename T1, typename T2, typename T3 >
-  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3)
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type(t1, t2, t3);
-    ++size_;
-    return ret;
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4 >
-  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4)
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type(t1, t2, t3, t4);
-    ++size_;
-    return ret;
-   }
-
-  template < typename T1, typename T2, typename T3, typename T4, typename T5 >
-  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                const T5 &t5)
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type(t1, t2, t3, t4, t5);
-    ++size_;
-    return ret;
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6 >
-  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                const T5 &t5, const T6 &t6)
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type(t1, t2, t3, t4, t5, t6);
-    ++size_;
-    return ret;
- }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7 >
-  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                const T5 &t5, const T6 &t6, const T7 &t7)
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type(t1, t2, t3, t4, t5, t6, t7);
-    ++size_;
-    return ret;
-  }
-
-  template < typename T1, typename T2, typename T3, typename T4,
-             typename T5, typename T6, typename T7, typename T8 >
-  Index emplace(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4,
-                const T5 &t5, const T6 &t6, const T7 &t7, const T8 &t8)
-  {
-    if (free_list == bottom)
-      allocate_new_block();
-
-    Index ret(free_list);
-    T& e = operator[](free_list);
-    static_set_type(e, USED);
-    free_list = static_get_val(e);
-    new (&e) value_type(t1, t2, t3, t4, t5, t6, t7, t8);
-    ++size_;
-    return ret;
-  }
-#endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
   Index insert(const T &t)
   {
@@ -402,7 +271,8 @@ public:
     T& e = operator[](free_list);
     static_set_type(e, USED);
     free_list = static_get_val(e);
-    alloc.construct(&e, t);
+    //std::allocator_traits<allocator_type>::construct(alloc, &e, t);
+    new (&e) value_type(t);
     ++size_;
     return ret;
   }
@@ -425,7 +295,8 @@ public:
   {
     CGAL_precondition(type(x) == USED);
     T& e = operator[](x);
-    alloc.destroy(&e);
+    //std::allocator_traits<allocator_type>::destroy(alloc, &e);
+    e.~T();
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&e, 0, sizeof(T));
 #endif
@@ -453,7 +324,7 @@ public:
 
   size_type max_size() const
   {
-    return alloc.max_size();
+    return std::allocator_traits<allocator_type>::max_size(alloc);
   }
 
   size_type capacity() const
@@ -640,8 +511,8 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
     if ( is_used(i) ) alloc.destroy(&operator[](i));
   }
 
-  free(all_items);
-  all_items = NULL;
+  std::allocator_traits<allocator_type>::deallocate(alloc, all_items, capacity_);
+  all_items=nullptr;
 
   init();
 }
@@ -652,16 +523,20 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
   size_type oldcapacity=capacity_;
   capacity_ += block_size;
 
-  if ( all_items==NULL )
-    all_items = (pointer)malloc(capacity_*sizeof(T));
-  else
-    all_items = (pointer)realloc(all_items, capacity_*sizeof(T));
+  pointer all_items2=
+      std::allocator_traits<allocator_type>::allocate(alloc, capacity_);
+  for (size_type index=0; index<oldcapacity; ++index)
+  {
+    std::allocator_traits<allocator_type>::construct(alloc, &(all_items2[index]),
+                                                     std::move(all_items[index]));
+  }
+  std::swap(all_items, all_items2);
+  std::allocator_traits<allocator_type>::deallocate(alloc, all_items2, oldcapacity);
 
   // We mark them free in reverse order, so that the insertion order
   // will correspond to the iterator order...
   for (size_type index = capacity_-1; index>oldcapacity; --index)
-    put_on_free_list(index);
-
+  { put_on_free_list(index); }
   put_on_free_list(oldcapacity);
 
   // Increase the block_size for the next time.

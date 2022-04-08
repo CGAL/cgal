@@ -464,4 +464,57 @@ bool test2D()
     return true;
 }
 
+template<typename Map>
+bool test_get_new_mark()
+{
+  cout << "***************************** TEST GET_NEW_MARK:"
+       << endl;
+
+  Map map;
+
+  typename Map::size_type marks[Map::NB_MARKS];
+  for (typename Map::size_type i=0; i<Map::NB_MARKS; ++i)
+  {
+    try
+    {
+      marks[i] = map.get_new_mark();
+    }
+    catch (typename Map::Exception_no_more_available_mark)
+    {
+      std::cerr<<"No more free mark, exit."<<std::endl;
+      return false;
+    }
+  }
+
+  cout << "Creation of NB_MARK marks: OK" << endl;
+
+  bool res = false;
+  typename Map::size_type mark=0;
+  try
+  {
+    mark = map.get_new_mark();
+  }
+  catch (typename Map::Exception_no_more_available_mark)
+  {
+    std::cout<<"The creation of an additional mark throw an exception: OK"<<std::endl;
+    res = true;
+  }
+
+  if ( !res )
+  {
+      std::cerr<<"PB we can reserve NB_MARK+1 !! mark, exit."<<std::endl;
+      map.free_mark(mark); // This is never supposed to occur.
+      return false;
+  }
+
+  for (typename Map::size_type i=0; i<Map::NB_MARKS; ++i)
+  {
+    map.free_mark(marks[i]);
+  }
+
+  cout << "***************************** TEST GET_NEW_MARK DONE" << endl;
+
+  return true;
+}
+
 #endif // CGAL_COMBINATORIAL_MAP_2_TEST
