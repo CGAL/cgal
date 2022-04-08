@@ -496,7 +496,7 @@ struct Init_attribute_functor
 {
   template <int i>
   static void run(CMap& amap, typename CMap::Dart_handle adart)
-  { amap.template set_dart_attribute<i>(adart, 0/* TODO CMap::null_handle*/); }
+  { amap.template set_dart_attribute<i>(adart, CMap::null_handle); }
 };
 // ****************************************************************************
 /// Functor used to set the i-attribute of a given dart.

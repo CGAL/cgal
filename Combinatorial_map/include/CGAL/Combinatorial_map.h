@@ -1479,10 +1479,6 @@ namespace CGAL {
           run(*this);
     }
 
-    /// @return the number of darts.
-    size_type number_of_darts() const
-    { return mdarts.size(); }
-
     /// @return an estimation of the bytes used by the combinatorial map.
     size_type bytes() const
     {

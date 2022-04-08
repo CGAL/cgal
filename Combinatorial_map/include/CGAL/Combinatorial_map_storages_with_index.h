@@ -94,17 +94,19 @@ namespace CGAL {
     struct Attribute_type: public Helper::template Attribute_type<i>
     {};
     template<int i>
-    struct Attribute_range
-    { using type=Container_for_attributes<typename Attribute_type<i>::type>; };
+    struct Attribute_handle: public Helper::template Attribute_handle<i>
+    {};
     template<int i>
-    struct Attribute_const_range
-    { using type=const typename Attribute_range<i>::type; };
+    struct Attribute_const_handle:
+      public Helper::template Attribute_const_handle<i>
+    {};
     template<int i>
-    struct Attribute_handle
-    { using type=typename Attribute_range<i>::type::Index; };
+    struct Attribute_range: public Helper::template Attribute_range<i>
+    {};
     template<int i>
-    struct Attribute_const_handle
-    { using type=const typename Attribute_range<i>::type::Index; };
+    struct Attribute_const_range:
+      public Helper::template Attribute_const_range<i>
+    {};
 
     /// Number of marks
     static const size_type NB_MARKS = 32;
