@@ -760,7 +760,7 @@ namespace CGAL {
     }
 
     /** Return a dart belonging to the same edge and to the second vertex
-     * of the current edge (nullptr if such a dart does not exist).
+     * of the current edge (null_handle if such a dart does not exist).
      * @return An handle to the opposite dart.
      */
     Dart_handle opposite(Dart_handle dh)
@@ -778,7 +778,7 @@ namespace CGAL {
 
     /** Return a dart incident to the other extremity of the current edge,
      *  but contrary to opposite, non necessary to the same edge
-     *  (nullptr if such a dart does not exist).
+     *  (null_handle if such a dart does not exist).
      * @return An handle to the opposite dart.
      */
     Dart_handle other_extremity(Dart_handle dh)
@@ -1804,10 +1804,10 @@ namespace CGAL {
       else basic_link_beta_for_involution(adart1, adart2, i);
     }
 
-    /** Double link two darts, and update the nullptr attributes.
+    /** Double link two darts, and update the null_handle attributes.
      * \em adart1 is 0-linked to \em adart2 and \em adart2 is 1-linked
-     * with \em adart1. The nullptr attributes of \em adart1 are updated to
-     * non nullptr attributes associated to \em adart2, and vice-versa.
+     * with \em adart1. The null_handle attributes of \em adart1 are updated to
+     * non null_handle attributes associated to \em adart2, and vice-versa.
      * If both darts have an attribute, the attribute of adart1 is
      * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
@@ -1824,10 +1824,10 @@ namespace CGAL {
       this->template dart_link_beta<1>(adart2, adart1);
     }
 
-    /** Double link two darts, and update the nullptr attributes.
+    /** Double link two darts, and update the null_handle attributes.
      * \em adart1 is 1-linked to \em adart2 and \em adart2 is 0-linked
-     * with \em adart1. The nullptr attributes of \em adart1 are updated to
-     * non nullptr attributes associated to \em adart2, and vice-versa.
+     * with \em adart1. The null_handle attributes of \em adart1 are updated to
+     * non null_handle attributes associated to \em adart2, and vice-versa.
      * If both darts have an attribute, the attribute of adart1 is
      * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
@@ -1844,10 +1844,10 @@ namespace CGAL {
       this->template dart_link_beta<0>(adart2, adart1);
     }
 
-    /** Double link two darts, and update the nullptr attributes.
+    /** Double link two darts, and update the null_handle attributes.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
-     * with \em adart1. The nullptr attributes of \em adart1 are updated to
-     * non nullptr attributes associated to \em adart2, and vice-versa.
+     * with \em adart1. The null_handle attributes of \em adart1 are updated to
+     * non null_handle attributes associated to \em adart2, and vice-versa.
      * If both darts have an attribute, the attribute of adart1 is
      * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
@@ -1868,10 +1868,10 @@ namespace CGAL {
       this->template dart_link_beta<i>(adart2, adart1);
     }
 
-    /** Double link two darts, and update the nullptr attributes.
+    /** Double link two darts, and update the null_handle attributes.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
-     * with \em adart1. The nullptr attributes of \em adart1 are updated to
-     * non nullptr attributes associated to \em adart2, and vice-versa.
+     * with \em adart1. The null_handle attributes of \em adart1 are updated to
+     * non null_handle attributes associated to \em adart2, and vice-versa.
      * If both darts have an attribute, the attribute of adart1 is
      * associated to adart2.
      * We can obtain a non-valid map with darts belonging to a same cell
@@ -1893,8 +1893,8 @@ namespace CGAL {
 
     /** Double link a dart with betai to a second dart.
      * \em adart1 is i-linked to \em adart2 and \em adart2 is i^-1-linked
-     * with \em adart1. The nullptr attributes of \em adart1 are updated to
-     * non nullptr attributes associated to \em adart2, and vice-versa,
+     * with \em adart1. The null_handle attributes of \em adart1 are updated to
+     * non null_handle attributes associated to \em adart2, and vice-versa,
      * if both darts have an attribute, the attribute of adart1 is
      * associated to adart2 (only if update_attributes==true).
      * @param adart1 a first dart.
@@ -3370,8 +3370,8 @@ namespace CGAL {
 
     /** Compute the dual of a Combinatorial_map.
      * @param amap the cmap in which we build the dual of this map.
-     * @param adart a dart of the initial map, nullptr by default.
-     * @return adart of the dual map, the dual of adart if adart!=nullptr,
+     * @param adart a dart of the initial map, null_handle by default.
+     * @return adart of the dual map, the dual of adart if adart!=null_handle,
      *         any dart otherwise.
      * As soon as we don't modify this map and amap map, we can iterate
      * simultaneously through all the darts of the two maps and we have
@@ -4055,7 +4055,7 @@ namespace CGAL {
     }
 
     /** Insert a vertex in a given edge.
-     * @param adart a dart of the edge (!=nullptr && !=null_dart_handle).
+     * @param adart a dart of the edge (!=null_handle && !=null_dart_handle).
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart of the new vertex.
      */
@@ -4301,7 +4301,7 @@ namespace CGAL {
     }
 
     /** Insert a dangling edge in a 2-cell between given by a dart.
-     * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
+     * @param adart1 a first dart of the facet (!=null_handle && !=null_dart_handle).
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart of the new edge, not incident to the vertex of adart1.
      */
@@ -4371,7 +4371,7 @@ namespace CGAL {
           }
         }
         if (are_attributes_automatically_managed() &&
-            update_attributes && ah!=nullptr)
+            update_attributes && ah!=null_handle)
         {
           internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d1, ah);
         }
@@ -4417,8 +4417,8 @@ namespace CGAL {
     }
 
     /** Insert an edge in a 2-cell between two given darts.
-     * @param adart1 a first dart of the facet (!=nullptr && !=null_dart_handle).
-     * @param adart2 a second dart of the facet. If nullptr insert a dangling edge.
+     * @param adart1 a first dart of the facet (!=null_handle && !=null_dart_handle).
+     * @param adart2 a second dart of the facet. If null_handle insert a dangling edge.
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart of the new edge, and not incident to the
      *         same vertex than adart1.

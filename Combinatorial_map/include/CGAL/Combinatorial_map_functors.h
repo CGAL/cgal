@@ -72,8 +72,8 @@ struct Display_attribute_functor
   static void run(const CMap& amap,
                   typename CMap::Dart_const_handle adart)
   {
-    if ( amap.template attribute<i>(adart)==nullptr )
-      std::cout<<"nullptr";
+    if (amap.template attribute<i>(adart)==amap.null_handle)
+      std::cout<<"null_handle";
     else
       amap.template display_attribute<i>(amap.template attribute<i>(adart));
   }

@@ -174,7 +174,7 @@ namespace CGAL {
       for (auto it=amap.template one_dart_per_cell<i>().begin(),
            itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        if (amap.template attribute<i>(it)!=nullptr)
+        if (amap.template attribute<i>(it)!=amap.null_handle)
         {
           // make composant, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
@@ -207,7 +207,7 @@ namespace CGAL {
       for (auto it=amap.template one_dart_per_cell<i>().begin(),
            itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        if (amap.template attribute<i>(it)!=nullptr)
+        if (amap.template attribute<i>(it)!=amap.null_handle)
         {
           // make composant, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
@@ -240,7 +240,7 @@ namespace CGAL {
       for (auto it=amap.template one_dart_per_cell<i>().begin(),
            itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        if (amap.template attribute<i>(it)!=nullptr)
+        if (amap.template attribute<i>(it)!=amap.null_handle)
         {
           // make composant, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
@@ -272,7 +272,7 @@ namespace CGAL {
       for (auto it=amap.template one_dart_per_cell<i>().begin(),
            itend=amap.template one_dart_per_cell<i>().end(); it!=itend; ++it)
       {
-        if (amap.template attribute<i>(it)!=nullptr)
+        if (amap.template attribute<i>(it)!=amap.null_handle)
         {
           // make composant, dart and property node
           boost::property_tree::ptree & nattr = ndim.add("a", "");
@@ -547,7 +547,7 @@ namespace CGAL {
                   if( type==type_map && v2.first == "v" )
                   {
                     if (amap.template attribute<i>(myDarts[id_dart_cellule])
-                        ==nullptr )
+                        ==amap.null_handle )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -558,7 +558,7 @@ namespace CGAL {
                   if( ptype==ptype_map && v2.first == "p" )
                   {
                     if (amap.template attribute<i>(myDarts[id_dart_cellule])
-                        ==nullptr )
+                        ==amap.null_handle )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -618,7 +618,7 @@ namespace CGAL {
                   if( v2.first == "p" )
                   {
                     if (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])==nullptr )
+                        (myDarts[id_dart_cellule])==amap.null_handle )
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -679,7 +679,7 @@ namespace CGAL {
                   if( v2.first == "v" )
                   {
                     if (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])==nullptr)
+                        (myDarts[id_dart_cellule])==amap.null_handle)
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
@@ -723,7 +723,8 @@ namespace CGAL {
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
 
-                if (amap.template attribute<i>(myDarts[id_dart_cellule])==nullptr)
+                if (amap.template attribute<i>(myDarts[id_dart_cellule])==
+                    amap.null_handle)
                   amap.template set_attribute<i>
                     (myDarts[id_dart_cellule],
                    amap.template create_attribute<i>());

@@ -75,7 +75,7 @@
  * internal::Reverse_orientation_of_connected_component_functor to reverse
  *   the orientation of a connected component in a cmap
  *
- * internal::Init_attribute_functor to initialize all attributes to nullptr.
+ * internal::Init_attribute_functor to initialize all attributes to null_handle.
  *
  * internal::Correct_invalid_attributes_functor to correct the i-attribute
  *   associated with a given i-cell
@@ -274,14 +274,14 @@ struct Test_is_valid_attribute_functor
       if ( !amap.template is_valid_attribute<i>(a) )
       {
         std::cout<<"ERROR: the dart associated with an "<<i
-                <<"-attribute is nullptr for dart ";
+                <<"-attribute is null_handle for dart ";
         amap.display_dart(adart); std::cout<<std::endl;
         valid=false;
       }
       if ( amap.template dart_of_attribute<i>(a)!=amap.null_handle &&
            !found_dart )
       {
-        std::cout<<"ERROR: the non nullptr dart of an "<<i
+        std::cout<<"ERROR: the non null_handle dart of an "<<i
                 <<"-attribute does not belong to the cell."<<std::endl;
         valid=false;
       }
@@ -490,7 +490,7 @@ struct Restricted_decrease_attribute_functor
         run(amap, adart); }
 };
 // ****************************************************************************
-/// Functor used to initialize all attributes to nullptr.
+/// Functor used to initialize all attributes to null_handle.
 template<typename CMap>
 struct Init_attribute_functor
 {
@@ -782,9 +782,12 @@ struct Reverse_orientation_of_map_functor
     CGAL_precondition(amap.is_whole_map_unmarked(mymark));
     CGAL_precondition(amap.is_valid());
 
-    typename CMap::Dart_handle first=nullptr, current=nullptr, prev=nullptr, next=nullptr;
+    typename CMap::Dart_handle first=amap.null_handle,
+      current=amap.null_handle,
+      prev=amap.null_handle,
+      next=amap.null_handle;
     typename CMap::Helper::template Attribute_handle<0>::type
-      first_attribute=nullptr, next_attribute=nullptr;
+      first_attribute=amap.null_handle, next_attribute=amap.null_handle;
 
     for (typename CMap::Dart_range::iterator current_dart=amap.darts().begin(),
            last_dart = amap.darts().end(); current_dart!=last_dart;
@@ -876,9 +879,10 @@ struct Reverse_orientation_of_connected_component_functor
     typename CMap::size_type mymark =
       (amark==CMap::INVALID_MARK?amap.get_new_mark():amark);
 
-    typename CMap::Dart_handle first=nullptr, current=nullptr, prev=nullptr, next=nullptr;
+    typename CMap::Dart_handle first=amap.null_handle, current=amap.null_handle,
+      prev=amap.null_handle, next=amap.null_handle;
     typename CMap::Helper::template Attribute_handle<0>::type
-      first_attribute=nullptr, next_attribute=nullptr;
+      first_attribute=amap.null_handle, next_attribute=amap.null_handle;
 
     for (typename CMap::template Dart_of_cell_range<CMap::dimension+1>::iterator
            current_dart=amap.template darts_of_cell<CMap::dimension+1>
