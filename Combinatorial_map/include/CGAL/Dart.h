@@ -31,23 +31,19 @@ namespace CGAL {
   class Combinatorial_map_storage_1;
 
   template<unsigned int, class, class, class>
-  class Combinatorial_map_storage_2;
-
-  template<unsigned int, class, class, class>
   class Generalized_map_storage_1;
 
   template<unsigned int, unsigned int, class, class, class, class>
   class CMap_linear_cell_complex_storage_1;
 
   template<unsigned int, unsigned int, class, class, class, class>
-  class CMap_linear_cell_complex_storage_2;
-
-  template<unsigned int, unsigned int, class, class, class, class>
   class GMap_linear_cell_complex_storage_1;
 
   namespace internal {
+
     template<class, class>
     struct Init_id;
+
   } // end namespace internal
 
   /** @file Dart.h

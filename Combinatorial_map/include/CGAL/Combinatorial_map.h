@@ -727,7 +727,7 @@ namespace CGAL {
     }
     Dart_const_handle first_dart() const
     {
-      if (darts().begin() == darts().end()) return null_dart_handle;
+      if (darts().begin() == darts().end()) return null_handle;
       return darts().begin();
     }
 

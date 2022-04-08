@@ -30,15 +30,6 @@ namespace CGAL {
     {};
   };
 
-  namespace Index 
-  {
-  struct Generic_map_min_items
-  {
-    template < class Refs >
-    struct Dart_wrapper
-    {};
-  };
-  } // namespace Index
 } // namespace CGAL
 
 #endif // CGAL_GENERIC_MAP_MIN_ITEMS_H

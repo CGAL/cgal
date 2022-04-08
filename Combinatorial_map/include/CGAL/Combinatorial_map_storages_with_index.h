@@ -62,7 +62,7 @@ namespace CGAL {
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
 
     typedef Compact_container_with_index_2<Dart,Dart_allocator,
-    Constant_size_policy_for_cc_with_size<1024>, Index_type>
+    Multiply_by_two_policy_for_cc_with_size<64>, Index_type>
     Dart_container;
 
     // typedef unsigned int Dart_index;
@@ -83,7 +83,7 @@ namespace CGAL {
     struct Container_for_attributes : public
         Compact_container_with_index_2<T,
         typename Alloc_::template rebind<T>::other,
-        Constant_size_policy_for_cc_with_size<1024>, size_type >
+        Multiply_by_two_policy_for_cc_with_size<64>, size_type >
     {};
 
     /// Typedef for attributes

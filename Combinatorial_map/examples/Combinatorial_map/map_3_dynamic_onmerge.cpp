@@ -9,14 +9,13 @@ struct Myitem
   template<class CMap>
   struct Dart_wrapper
   {
-    typedef CGAL::Index::Cell_attribute<CMap, double> Face_attribute; // A weight
+    typedef CGAL::Cell_attribute<CMap, double> Face_attribute; // A weight
     typedef std::tuple<void,void,Face_attribute> Attributes;
   };
 };
 
 // Definition of my combinatorial map.
-//typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
-typedef CGAL::Index::Combinatorial_map<3,Myitem> CMap_3;
+typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
 typedef CMap_3::Dart_handle               Dart_handle;
 typedef CMap_3::Attribute_type<2>::type   Face_attribute;
 

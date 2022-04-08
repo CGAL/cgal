@@ -124,8 +124,10 @@ public:
   friend class internal::CC_iterator_with_index<Self, true>;
 
   template<unsigned int first_block_size_, unsigned int block_size_increment>
-    friend struct Addition_size_policy;
+  friend struct Addition_size_policy;
   template<unsigned int k> friend struct Constant_size_policy_for_cc_with_size;
+  template<unsigned int k>
+  friend struct Multiply_by_two_policy_for_cc_with_size;
 
   explicit Compact_container_with_index_2(const Allocator &a = Allocator())
   : alloc(a)
