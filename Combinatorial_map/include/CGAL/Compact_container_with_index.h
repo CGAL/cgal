@@ -72,6 +72,16 @@
 namespace CGAL {
 
 template<unsigned int k>
+struct Multiply_by_two_policy_for_cc_with_size
+{
+  static const unsigned int first_block_size = k;
+
+  template<typename Compact_container>
+  static void increase_size(Compact_container& cc)
+  { cc.block_size=cc.capacity_; }
+};
+
+template<unsigned int k>
 struct Constant_size_policy_for_cc_with_size
 {
   static const unsigned int first_block_size = k;
@@ -79,15 +89,6 @@ struct Constant_size_policy_for_cc_with_size
   template<typename Compact_container>
   static void increase_size(Compact_container& /*cc*/)
   {}
-
-  template<typename Compact_container>
-  static void get_index_and_block(typename Compact_container::size_type i,
-                                  typename Compact_container::size_type& index,
-                                  typename Compact_container::size_type& block)
-  {
-    block=i/k;
-    index=i%k;
-  }
 };
 
 

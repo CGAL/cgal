@@ -71,7 +71,8 @@
 
 namespace CGAL {
 
-template < class T, class Allocator_, class Increment_policy, class IndexType = std::size_t >
+template < class T, class Allocator_, class Increment_policy,
+           class IndexType = std::size_t >
 class Compact_container_with_index_2
 {
   typedef Allocator_                                Al;
