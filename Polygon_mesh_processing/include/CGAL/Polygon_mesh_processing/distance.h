@@ -1445,11 +1445,9 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   using Point_3 = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
-  const FT sq_error_bound = square(FT(error_bound));
-
 #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << " -- Bounded Hausdorff --" << std::endl;
-  std::cout << "error bound: " << error_bound << " (square: " << sq_error_bound << ")" << std::endl;
+  std::cout << "error bound: " << error_bound << std::endl;
   std::cout << "initial bound: " << sq_initial_bound << " (" << approximate_sqrt(sq_initial_bound) << ")" << std::endl;
   std::cout << "distance bound: " << sq_distance_bound << " (" << approximate_sqrt(sq_distance_bound) << ")" << std::endl;
   std::cout << "inf val: " << infinity_value << " (" << approximate_sqrt(infinity_value) << ")" << std::endl;
@@ -1463,9 +1461,8 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
 
   using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
 
-  CGAL_precondition(sq_initial_bound >= sq_error_bound);
+  CGAL_precondition(sq_initial_bound >= square(FT(error_bound)));
   CGAL_precondition(sq_distance_bound != FT(0)); // value is -1 if unused
-  CGAL_precondition(sq_error_bound >= FT(0));
   CGAL_precondition(tm1_tree.size() > 0);
   CGAL_precondition(tm2_tree.size() > 0);
 
