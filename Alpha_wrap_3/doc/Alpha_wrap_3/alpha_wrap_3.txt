@@ -209,8 +209,8 @@ The parameter <em>offset</em> refers to the distance between the vertices of the
 and the input, so that a large offset translates into a loose enclosing of the input.
 This second parameter offers a means to control the trade-off between tightness and complexity.
 
-The main entry point of the component is a global function that generates the alpha wrap;
-this function takes as input a polygon soup or a polygon mesh: `CGAL::alpha_wrap_3()`.
+The main entry point of the component is the global function `CGAL::alpha_wrap_3()` that generates the alpha wrap;
+this function takes as input a polygon soup or a polygon mesh.
 There is no prerequisite on the input connectivity so that it can take an arbitrary triangle soup,
 with islands, self-intersections, or overlaps, as well as combinatorial or geometrical degeneracies.
 
