@@ -202,7 +202,7 @@ struct Converter_map9_points_into_map5_points
   (const CMap9& map1, CMap5& map2, CMap9::Dart_const_handle dh1,
    CMap5::Dart_handle dh2) const
   {
-    assert( ap1.attribute<0>(dh1)!=map1.null_handle);
+    assert( map1.attribute<0>(dh1)!=map1.null_handle);
 
     CMap5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
     if ( res==map2.null_handle )

@@ -10,7 +10,7 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_COMBINATORIAL_MAP_STORAGES_WITH_INDEX_H
-#define CGAL_COMBINATORIAL_MAP_STORAGES_WITH_INDEX_HH 1
+#define CGAL_COMBINATORIAL_MAP_STORAGES_WITH_INDEX_H 1
 
 #include <CGAL/Compact_container_with_index_2.h>
 #include <CGAL/Dart.h>

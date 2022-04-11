@@ -87,7 +87,7 @@ namespace CGAL {
       typedef typename Base::Exception_no_more_available_mark
       Exception_no_more_available_mark;
 
-      Linear_cell_complex_for_combinatorial_map() : Base()
+      Linear_cell_complex_for_combinatorial_map_base() : Base()
       {}
 
       /** Copy the given linear cell complex into *this.
@@ -234,6 +234,7 @@ namespace CGAL {
         public Linear_cell_complex_for_combinatorial_map_base
         <d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_>
     {
+    public:
      typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
                           Traits_, Items_, Alloc_, CMap, Storage_>  Self;
 
@@ -318,6 +319,7 @@ class Linear_cell_complex_for_combinatorial_map:
     public Linear_cell_complex_for_combinatorial_map_base
     <d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_>
 {
+public:
   typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
   Traits_, Items_, Alloc_, CMap, Storage_>  Self;
 
