@@ -34,8 +34,15 @@
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
+/** \ingroup PMP_hole_filling_grp
+ *  Default hole filling visitor model of `PMPHolefillingVisitor`.
+ *  All of its functions have an empty body. This class can be used as a
+ *  base class if only some of the functions of the concept require to be
+ *  overridden.
+ */
+  namespace Hole_filling {
 
-    struct Hole_fill_visitor{
+    struct Default_visitor{
 
       void start_planar_phase() const
       {}
@@ -63,6 +70,7 @@ namespace Polygon_mesh_processing {
 
 
     };
+  } // namespace Hole_filling
 
   /*!
   \ingroup PMP_hole_filling_grp
@@ -141,6 +149,12 @@ namespace Polygon_mesh_processing {
                       otherwise nothing will be done.}
     \cgalParamNEnd
 
+    \cgalParamNBegin{visitor}
+      \cgalParamDescription{a visitor used to track the progress made
+      in the algorithm}
+      \cgalParamType{}
+    \cgalParamNEnd
+
   \cgalNamedParamsEnd
 
   @return `out`
@@ -206,7 +220,7 @@ namespace Polygon_mesh_processing {
       CGAL_assertion(max_squared_distance >= typename GeomTraits::FT(0));
     }
 
-    Hole_fill_visitor default_visitor;
+    Hole_filling::Default_visitor default_visitor;
 
     return internal::triangulate_hole_polygon_mesh(
       pmesh,
@@ -568,7 +582,7 @@ bool use_dt3 =
     typedef typename std::iterator_traits<InIterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
-    Hole_fill_visitor default_visitor;
+    Hole_filling::Default_visitor default_visitor;
 
 #ifndef CGAL_HOLE_FILLING_DO_NOT_USE_CDT2
     if (use_cdt)
