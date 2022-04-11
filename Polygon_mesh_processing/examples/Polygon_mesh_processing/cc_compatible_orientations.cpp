@@ -55,7 +55,7 @@ int main()
 
   // determine face orientations to be reversed to create compatibility
   auto fbm = mesh.add_property_map<Mesh::Face_index, bool>("fbm", false).first;
-  bool is_orientable = PMP::connected_components_compatible_orientations(mesh, fbm);
+  bool is_orientable = PMP::compatible_orientations(mesh, fbm);
   assert(is_orientable);
 
   // reverse orientation of faces with bit 1

@@ -1608,10 +1608,9 @@ void merge_reversible_connected_components(PolygonMesh& pm,
 /*!
  * \ingroup PMP_orientation_grp
  *
- * identifies possible connections between the connected components of `pm` and if re-orientable,
- * assigns a bit (`false` or `true`) to each face such that
- * two faces with the same bits have a compatible orientation, while
- * two faces with opposite bits have an incompatible orientation.
+ * identifies faces whose orientation must be reversed in order to enable stitching of connected components.
+ * Each face is assigned a bit (`false` or `true`)
+ * such that two faces have compatible orientations iff they are assigned the same bits.
  *
  * @tparam PolygonMesh a model of `HalfedgeListGraph`, `FaceGraph`.
  * @tparam FaceBitMap a model of `WritablePropertyMap` with `face_descriptor` as key and `bool` as value_type
@@ -1635,11 +1634,15 @@ void merge_reversible_connected_components(PolygonMesh& pm,
  *                     should be available for the vertices of `pm`.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ * \sa reverse_face_orientations()
+ * \sa stitch_borders()
+ *
  */
 template <class PolygonMesh, class FaceBitMap, class NamedParameters = parameters::Default_named_parameters>
-bool connected_components_compatible_orientations(const PolygonMesh& pm,
-                                                  FaceBitMap fbm,
-                                                  const NamedParameters& np = parameters::default_values())
+bool compatible_orientations(const PolygonMesh& pm,
+                             FaceBitMap fbm,
+                             const NamedParameters& np = parameters::default_values())
 {
   typedef boost::graph_traits<PolygonMesh> GrT;
   typedef typename GrT::face_descriptor face_descriptor;
