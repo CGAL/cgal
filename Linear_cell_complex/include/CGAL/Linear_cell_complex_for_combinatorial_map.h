@@ -18,6 +18,7 @@
 #include <CGAL/Linear_cell_complex_min_items.h>
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/CMap_linear_cell_complex_storages.h>
+#include <CGAL/CMap_linear_cell_complex_storages_with_index.h>
 #include <CGAL/boost/graph/properties.h>
 #include <unordered_map>
 
@@ -35,7 +36,7 @@ namespace CGAL {
              class Traits_, class Items_, class Alloc_,
              template<unsigned int,class,class,class,class> class CMap,
              class Storage_ >
-    class Linear_cell_complex_for_combinatorial_map:
+    class Linear_cell_complex_for_combinatorial_map_base:
         public Linear_cell_complex_base<d_, ambient_dim, Traits_,
                                         Items_, Alloc_, CMap,
                                         Linear_cell_complex_for_combinatorial_map
@@ -45,7 +46,7 @@ namespace CGAL {
                                         Storage_>
     {
     public:
-      typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
+      typedef Linear_cell_complex_for_combinatorial_map_base<d_, ambient_dim,
                           Traits_, Items_, Alloc_, CMap, Storage_>  Self;
 
       typedef Linear_cell_complex_base<d_, ambient_dim,
@@ -94,18 +95,18 @@ namespace CGAL {
        *  @param alcc the linear cell complex to copy.
        *  @post *this is valid.
        */
-      Linear_cell_complex_for_combinatorial_map(const Self& alcc) : Base(alcc)
+      Linear_cell_complex_for_combinatorial_map_base(const Self& alcc) : Base(alcc)
       {}
 
-      Linear_cell_complex_for_combinatorial_map(Self&& alcc) : Base(alcc)
+      Linear_cell_complex_for_combinatorial_map_base(Self&& alcc) : Base(alcc)
       {}
 
       template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
                 class Storage2>
-      Linear_cell_complex_for_combinatorial_map
-      (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+      Linear_cell_complex_for_combinatorial_map_base
+      (const Linear_cell_complex_for_combinatorial_map_base<d2, ambient_dim2,
        Traits2, Items2, Alloc2, CMap2, Storage2>& alcc) : Base(alcc)
       {}
 
@@ -113,8 +114,8 @@ namespace CGAL {
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
                 class Storage2, typename Converters>
-      Linear_cell_complex_for_combinatorial_map
-      (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+      Linear_cell_complex_for_combinatorial_map_base
+      (const Linear_cell_complex_for_combinatorial_map_base<d2, ambient_dim2,
        Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
        const Converters& converters) : Base(alcc, converters)
       {}
@@ -123,8 +124,8 @@ namespace CGAL {
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
                 class Storage2, typename Converters, typename DartInfoConverter>
-      Linear_cell_complex_for_combinatorial_map
-      (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+      Linear_cell_complex_for_combinatorial_map_base
+      (const Linear_cell_complex_for_combinatorial_map_base<d2, ambient_dim2,
        Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
        const Converters& converters,
        const DartInfoConverter& dartinfoconverter) :
@@ -136,8 +137,8 @@ namespace CGAL {
                 template<unsigned int,class,class,class,class> class CMap2,
                 class Storage2, typename Converters,
                 typename DartInfoConverter, typename PointConverter>
-      Linear_cell_complex_for_combinatorial_map
-      (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+      Linear_cell_complex_for_combinatorial_map_base
+      (const Linear_cell_complex_for_combinatorial_map_base<d2, ambient_dim2,
        Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
        const Converters& converters, const DartInfoConverter& dartinfoconverter,
        const PointConverter& pointconverter) :
@@ -225,6 +226,83 @@ namespace CGAL {
       void clear() { Base::clear(); } //need explicit definition for Has_member_clear in bgl helpers
     };
 
+  template < unsigned int d_, unsigned int ambient_dim,
+             class Traits_, class Items_, class Alloc_,
+             template<unsigned int,class,class,class,class> class CMap,
+             class Storage_ >
+    class Linear_cell_complex_for_combinatorial_map:
+        public Linear_cell_complex_for_combinatorial_map_base
+        <d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_>
+    {
+     typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
+                          Traits_, Items_, Alloc_, CMap, Storage_>  Self;
+
+      typedef Linear_cell_complex_for_combinatorial_map_base<d_, ambient_dim,
+                          Traits_, Items_, Alloc_, CMap, Storage_> Base;
+
+      typedef Traits_ Traits;
+      typedef Items_  Items;
+      typedef Alloc_  Alloc;
+
+      Linear_cell_complex_for_combinatorial_map() : Base()
+      {}
+
+      /** Copy the given linear cell complex into *this.
+       *  Note that both LCC can have different dimensions and/or non void attributes.
+       *  @param alcc the linear cell complex to copy.
+       *  @post *this is valid.
+       */
+      Linear_cell_complex_for_combinatorial_map(const Self& alcc) : Base(alcc)
+      {}
+
+      Linear_cell_complex_for_combinatorial_map(Self&& alcc) : Base(alcc)
+      {}
+
+      template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+                class Items2, class Alloc2,
+                template<unsigned int,class,class,class,class> class CMap2,
+                class Storage2>
+      Linear_cell_complex_for_combinatorial_map
+      (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc) : Base(alcc)
+      {}
+
+      template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+                class Items2, class Alloc2,
+                template<unsigned int,class,class,class,class> class CMap2,
+                class Storage2, typename Converters>
+      Linear_cell_complex_for_combinatorial_map
+      (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       const Converters& converters) : Base(alcc, converters)
+      {}
+
+      template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+                class Items2, class Alloc2,
+                template<unsigned int,class,class,class,class> class CMap2,
+                class Storage2, typename Converters, typename DartInfoConverter>
+      Linear_cell_complex_for_combinatorial_map
+      (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       const Converters& converters,
+       const DartInfoConverter& dartinfoconverter) :
+        Base(alcc, converters, dartinfoconverter)
+      {}
+
+      template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+                class Items2, class Alloc2,
+                template<unsigned int,class,class,class,class> class CMap2,
+                class Storage2, typename Converters,
+                typename DartInfoConverter, typename PointConverter>
+      Linear_cell_complex_for_combinatorial_map
+      (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       const Converters& converters, const DartInfoConverter& dartinfoconverter,
+       const PointConverter& pointconverter) :
+        Base(alcc, converters, dartinfoconverter, pointconverter)
+      {}
+};
+
 namespace Index
 {
 // New class Linear_cell_complex using compact container with index.
@@ -232,23 +310,83 @@ namespace Index
 // template parameters and the default parameter for Refs class.
 // NOTE: If we want to inherit from this class, we need to add the Refs class
 // template parameter.
-template < unsigned int d_, unsigned int ambient_dim = d_,
-           class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-           class Items_ = Linear_cell_complex_min_items<d_>,
-           class Alloc_ = CGAL_ALLOCATOR(int),
-           template<unsigned int,class,class,class,class>
-           class CMap = Combinatorial_map_base,
-           class Storage_ = Linear_cell_complex_storage_2<d_, ambient_dim,
-                                                          Traits_, Items_,
-                                                          Alloc_, unsigned int> >
-  class Linear_cell_complex : public Linear_cell_complex_base<d_,
-      ambient_dim, Traits_, Items_, Alloc_, CMap,
-      Linear_cell_complex<d_, ambient_dim,
-                          Traits_, Items_, Alloc_, CMap, Storage_>,
-      Storage_>
-  { // TODO
-  };
-  } 
+template< unsigned int d_, unsigned int ambient_dim,
+          class Traits_, class Items_, class Alloc_,
+          template<unsigned int,class,class,class,class>
+          class CMap, class Storage_>
+class Linear_cell_complex_for_combinatorial_map:
+    public Linear_cell_complex_for_combinatorial_map_base
+    <d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_>
+{
+  typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
+  Traits_, Items_, Alloc_, CMap, Storage_>  Self;
+
+  typedef Linear_cell_complex_for_combinatorial_map_base<d_, ambient_dim,
+  Traits_, Items_, Alloc_, CMap, Storage_> Base;
+
+  typedef Traits_ Traits;
+  typedef Items_  Items;
+  typedef Alloc_  Alloc;
+
+  Linear_cell_complex_for_combinatorial_map() : Base()
+  {}
+
+  /** Copy the given linear cell complex into *this.
+   *  Note that both LCC can have different dimensions and/or non void attributes.
+   *  @param alcc the linear cell complex to copy.
+   *  @post *this is valid.
+   */
+  Linear_cell_complex_for_combinatorial_map(const Self& alcc) : Base(alcc)
+  {}
+
+  Linear_cell_complex_for_combinatorial_map(Self&& alcc) : Base(alcc)
+  {}
+
+  template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+            class Items2, class Alloc2,
+            template<unsigned int,class,class,class,class> class CMap2,
+            class Storage2>
+  Linear_cell_complex_for_combinatorial_map
+  (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+   Traits2, Items2, Alloc2, CMap2, Storage2>& alcc) : Base(alcc)
+  {}
+
+  template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+            class Items2, class Alloc2,
+            template<unsigned int,class,class,class,class> class CMap2,
+            class Storage2, typename Converters>
+  Linear_cell_complex_for_combinatorial_map
+  (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+   Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+   const Converters& converters) : Base(alcc, converters)
+  {}
+
+  template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+            class Items2, class Alloc2,
+            template<unsigned int,class,class,class,class> class CMap2,
+            class Storage2, typename Converters, typename DartInfoConverter>
+  Linear_cell_complex_for_combinatorial_map
+  (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+   Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+   const Converters& converters,
+   const DartInfoConverter& dartinfoconverter) :
+    Base(alcc, converters, dartinfoconverter)
+  {}
+
+  template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
+            class Items2, class Alloc2,
+            template<unsigned int,class,class,class,class> class CMap2,
+            class Storage2, typename Converters,
+            typename DartInfoConverter, typename PointConverter>
+  Linear_cell_complex_for_combinatorial_map
+  (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
+   Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+   const Converters& converters, const DartInfoConverter& dartinfoconverter,
+   const PointConverter& pointconverter) :
+    Base(alcc, converters, dartinfoconverter, pointconverter)
+  {}
+};
+} // namespace Index
 } // namespace CGAL
 
 #endif // CGAL_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H //

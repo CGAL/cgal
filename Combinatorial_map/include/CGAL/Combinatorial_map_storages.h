@@ -137,7 +137,7 @@ namespace CGAL {
     /** Return if this dart is free for adimension.
      * @param dh a dart handle
      * @param i the dimension.
-     * @return true iff dh is linked with nullptr for \em adimension.
+     * @return true iff dh is linked with null_dart_handle for \em adimension.
      */
     template<unsigned int i>
     bool is_free(Dart_const_handle dh) const

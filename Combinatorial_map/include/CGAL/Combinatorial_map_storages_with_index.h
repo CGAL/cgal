@@ -85,7 +85,6 @@ namespace CGAL {
         typename Alloc_::template rebind<T>::other,
         Multiply_by_two_policy_for_cc_with_size<64>, size_type >
     {};
-
     /// Typedef for attributes
     typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
                                    Attributes;
@@ -180,7 +179,7 @@ namespace CGAL {
     /** Return if this dart is free for adimension.
      * @param dh a dart handle
      * @param i the dimension.
-     * @return true iff dh is linked with NULL for \em adimension.
+     * @return true iff dh is linked with null_dart_handle for \em adimension.
      */
     template<unsigned int i>
     bool is_free(Dart_const_handle dh) const
@@ -319,7 +318,6 @@ namespace CGAL {
       return std::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers)[ah];
     }
-
     template<unsigned int i>
     const typename Attribute_type<i>::type&
     get_attribute(typename Attribute_const_handle<i>::type ah) const

@@ -10,7 +10,42 @@
 
 // If defined, use compact container with index; otherwise use compact
 // container with handle.
-// #define USE_COMPACT_CONTAINER_WITH_INDEX 1
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+template<class Refs, class Info>
+using My_cell_attribute=CGAL::Index::Cell_attribute<Refs, Info>;
+
+template<class Refs, class Info>
+using My_cell_attribute_with_point=
+CGAL::Index::Cell_attribute_with_point<Refs, Info>;
+
+template<unsigned int d, unsigned int ambient_dim,
+         class Traits, class Items>
+using My_lcc_cmap=CGAL::Index::Linear_cell_complex_for_combinatorial_map
+<d, ambient_dim, Traits, Items>;
+
+// TODO use CGAL::Index::Linear_cell_complex_for_generalized_map
+template<unsigned int d, unsigned int ambient_dim,
+         class Traits, class Items>
+using My_lcc_gmap=CGAL::Linear_cell_complex_for_generalized_map
+<d, ambient_dim, Traits, Items>;
+#else
+template<class Refs, class Info>
+using My_cell_attribute=CGAL::Cell_attribute<Refs, Info>;
+
+template<class Refs, class Info>
+using My_cell_attribute_with_point=CGAL::Cell_attribute_with_point<Refs, Info>;
+
+template<unsigned int d, unsigned int ambient_dim,
+         class Traits, class Items>
+using My_lcc_cmap=CGAL::Linear_cell_complex_for_combinatorial_map
+<d, ambient_dim, Traits, Items>;
+
+template<unsigned int d, unsigned int ambient_dim,
+         class Traits, class Items>
+using My_lcc_gmap=CGAL::Linear_cell_complex_for_generalized_map
+<d, ambient_dim, Traits, Items>;
+#endif // USE_COMPACT_CONTAINER_WITH_INDEX
+
 using namespace std;
 
 struct Map_2_dart_items
@@ -19,16 +54,9 @@ struct Map_2_dart_items
   template < class Refs >
   struct Dart_wrapper
   {
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
-    typedef CGAL::Index::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
-#else
-    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-    typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
-#endif
-
+    typedef My_cell_attribute< Refs, int > Int_attrib;
+    typedef My_cell_attribute< Refs, double > Double_attrib;
+    typedef My_cell_attribute< Refs, double > Double_attrib_wp;
     typedef std::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
   };
 };
@@ -39,19 +67,11 @@ struct Map_2_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
-#else
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-#endif
-
+    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef My_cell_attribute< Refs, int > Int_attrib;
+    typedef My_cell_attribute< Refs, double > Double_attrib;
     typedef double Dart_info;
-    typedef std::tuple<Int_attrib_wp, Int_attrib,
-          Double_attrib> Attributes;
+    typedef std::tuple<Int_attrib_wp, Int_attrib,Double_attrib> Attributes;
   };
 };
 
@@ -61,19 +81,12 @@ struct Map_3_dart_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
-    typedef CGAL::Index::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
-#else
-    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-    typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
-#endif
-
+    typedef My_cell_attribute< Refs, int > Int_attrib;
+    typedef My_cell_attribute< Refs, double > Double_attrib;
+    typedef My_cell_attribute_with_point< Refs, double > Double_attrib_wp;
     typedef char Dart_info;
-    typedef std::tuple<Double_attrib_wp, void,
-          Int_attrib, Double_attrib> Attributes;
+    typedef std::tuple<Double_attrib_wp, void,Int_attrib, Double_attrib>
+    Attributes;
   };
 };
 
@@ -83,19 +96,12 @@ struct Map_3_dart_max_items_3
   template < class Refs >
   struct Dart_wrapper
   {
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
-#else
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-#endif
-
+    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef My_cell_attribute< Refs, int > Int_attrib;
+    typedef My_cell_attribute< Refs, double > Double_attrib;
     typedef char* Dart_info;
-    typedef std::tuple<Int_attrib_wp, Int_attrib,
-          Int_attrib, Double_attrib> Attributes;
+    typedef std::tuple<Int_attrib_wp, Int_attrib,Int_attrib, Double_attrib>
+    Attributes;
   };
 };
 
@@ -106,14 +112,8 @@ public:
   template < class Refs >
   struct Dart_wrapper
   {
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
-#else
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-#endif
-
+    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef My_cell_attribute< Refs, int > Int_attrib;
     typedef int* Dart_info;
     typedef std::tuple<Int_attrib_wp, void, Int_attrib> Attributes;
   };
@@ -137,19 +137,11 @@ struct Map_dart_items_4
   template < class Refs >
   struct Dart_wrapper
   {
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
-#else
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-#endif
-
+    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef My_cell_attribute< Refs, int > Int_attrib;
+    typedef My_cell_attribute< Refs, double > Double_attrib;
     typedef MonInfo Dart_info;
-    typedef std::tuple<Int_attrib_wp, void,
-          Int_attrib, void, Int_attrib>
+    typedef std::tuple<Int_attrib_wp, void, Int_attrib, void, Int_attrib>
     Attributes;
   };
 };
@@ -159,19 +151,11 @@ struct Map_dart_max_items_4
   template < class Refs >
   struct Dart_wrapper
   {
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-    typedef CGAL::Index::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Index::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Index::Cell_attribute< Refs, double > Double_attrib;
-#else
-    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
-    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
-#endif
-
+    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef My_cell_attribute< Refs, int > Int_attrib;
+    typedef My_cell_attribute< Refs, double > Double_attrib;
     typedef double Dart_info;
-    typedef std::tuple<Int_attrib_wp, Int_attrib,
-          Int_attrib, Int_attrib, Double_attrib>
+    typedef std::tuple<Int_attrib_wp, Int_attrib,Int_attrib, Int_attrib, Double_attrib>
     Attributes;
   };
 };
@@ -184,83 +168,41 @@ typedef CGAL::Linear_cell_complex_traits
 
 typedef CGAL::Linear_cell_complex_traits<4> Traits4_a;
 
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-// Point_3, void, void
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a,
-CGAL::Linear_cell_complex_min_items<2> > CMap1;
-
-// Point_3+double, void, double
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a, Map_2_dart_items > CMap2;
-
-// Point_3+int, int, double
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_b, Map_2_dart_max_items_3> CMap3;
-
-// Point_3, void, void, void
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_a,
-CGAL::Linear_cell_complex_min_items<3> > CMap4;
-
-// Point_3+double, void, int, double
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_a, Map_3_dart_items_3> CMap5;
-
-// Point_3+int, int, int, double
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_b, Map_3_dart_max_items_3> CMap6;
-
-// Point_3+int, void, int, void
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_b,
-Another_map_3_dart_items_3> CMap7;
-
-// Point_4+int, void, int, void, int
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<4,4, Traits4_a, Map_dart_items_4> CMap8;
-
-// Point_4+int, int, int, int, double
-typedef CGAL::Index::Linear_cell_complex_for_combinatorial_map<4,4, Traits4_a, Map_dart_max_items_4> CMap9;
-
-#else
-
 // ======================= LCC based on combinatorial maps
 // Point_3, void, void
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_a,
-               CGAL::Linear_cell_complex_min_items > CMap1;
+typedef My_lcc_cmap<2,3, Traits3_a, CGAL::Linear_cell_complex_min_items> CMap1;
 
 // Point_3+double, void, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3,
-               Traits3_a, Map_2_dart_items > CMap2;
+typedef My_lcc_cmap<2,3,Traits3_a, Map_2_dart_items> CMap2;
 
 // Point_3+int, int, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3, Traits3_b,
-               Map_2_dart_max_items_3> CMap3;
+typedef My_lcc_cmap<2,3, Traits3_b, Map_2_dart_max_items_3> CMap3;
 
 // Point_3, void, void, void
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3, Traits3_a,
-               CGAL::Linear_cell_complex_min_items > CMap4;
+typedef My_lcc_cmap<3,3, Traits3_a, CGAL::Linear_cell_complex_min_items> CMap4;
 
 // Point_3+double, void, int, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
-               Traits3_a, Map_3_dart_items_3> CMap5;
+typedef My_lcc_cmap<3,3, Traits3_a, Map_3_dart_items_3> CMap5;
 
 // Point_3+int, int, int, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
-               Traits3_b, Map_3_dart_max_items_3> CMap6;
+typedef My_lcc_cmap<3,3, Traits3_b, Map_3_dart_max_items_3> CMap6;
 
 // Point_3+int, void, int, void
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<3,3,
-               Traits3_b, Another_map_3_dart_items_3> CMap7;
+typedef My_lcc_cmap<3,3, Traits3_b, Another_map_3_dart_items_3> CMap7;
 
 // Point_4+int, void, int, void, int
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
-               Traits4_a, Map_dart_items_4> CMap8;
+typedef My_lcc_cmap<4,4, Traits4_a, Map_dart_items_4> CMap8;
 
 // Point_4+int, int, int, int, double
-typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
-               Traits4_a, Map_dart_max_items_4> CMap9;
+typedef My_lcc_cmap<4,4, Traits4_a, Map_dart_max_items_4> CMap9;
 
 struct Converter_map9_points_into_map5_points
 {
-  CMap5::Attribute_handle<0>::type operator()
+  CMap5::template Attribute_handle<0>::type operator()
   (const CMap9& map1, CMap5& map2, CMap9::Dart_const_handle dh1,
    CMap5::Dart_handle dh2) const
   {
-    assert( map1.attribute<0>(dh1)!=map1.null_handle );
+    assert( ap1.attribute<0>(dh1)!=map1.null_handle);
 
     CMap5::Attribute_handle<0>::type res = map2.attribute<0>(dh2);
     if ( res==map2.null_handle )
@@ -276,40 +218,31 @@ struct Converter_map9_points_into_map5_points
 
 // ======================= LCC based on generalized maps
 // Point_3, void, void
-typedef CGAL::Linear_cell_complex_for_generalized_map<2,3, Traits3_a,
-               CGAL::Linear_cell_complex_min_items > GMap1;
+typedef My_lcc_gmap<2,3, Traits3_a, CGAL::Linear_cell_complex_min_items> GMap1;
 
 // Point_3+double, void, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<2,3,
-               Traits3_a, Map_2_dart_items > GMap2;
+typedef My_lcc_gmap<2,3, Traits3_a, Map_2_dart_items> GMap2;
 
 // Point_3+int, int, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<2,3, Traits3_b,
-               Map_2_dart_max_items_3> GMap3;
+typedef My_lcc_gmap<2,3, Traits3_b, Map_2_dart_max_items_3> GMap3;
 
 // Point_3, void, void, void
-typedef CGAL::Linear_cell_complex_for_generalized_map<3,3, Traits3_a,
-               CGAL::Linear_cell_complex_min_items > GMap4;
+typedef My_lcc_gmap<3,3, Traits3_a, CGAL::Linear_cell_complex_min_items> GMap4;
 
 // Point_3+double, void, int, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
-               Traits3_a, Map_3_dart_items_3> GMap5;
+typedef My_lcc_gmap<3,3, Traits3_a, Map_3_dart_items_3> GMap5;
 
 // Point_3+int, int, int, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
-               Traits3_b, Map_3_dart_max_items_3> GMap6;
+typedef My_lcc_gmap<3,3, Traits3_b, Map_3_dart_max_items_3> GMap6;
 
 // Point_3+int, void, int, void
-typedef CGAL::Linear_cell_complex_for_generalized_map<3,3,
-               Traits3_b, Another_map_3_dart_items_3> GMap7;
+typedef My_lcc_gmap<3,3, Traits3_b, Another_map_3_dart_items_3> GMap7;
 
 // Point_4+int, void, int, void, int
-typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
-               Traits4_a, Map_dart_items_4> GMap8;
+typedef My_lcc_gmap<4,4, Traits4_a, Map_dart_items_4> GMap8;
 
 // Point_4+int, int, int, int, double
-typedef CGAL::Linear_cell_complex_for_generalized_map<4,4,
-               Traits4_a, Map_dart_max_items_4> GMap9;
+typedef My_lcc_gmap<4,4, Traits4_a, Map_dart_max_items_4> GMap9;
 
 struct Converter_gmap9_points_into_gmap5_points
 {
