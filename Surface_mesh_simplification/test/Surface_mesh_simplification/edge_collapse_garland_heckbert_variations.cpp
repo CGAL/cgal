@@ -52,7 +52,7 @@ bool read_from_file(const std::string& filename,
   // make sure the mesh is empty and ready for the next set of data
   clear(mesh);
 
-  if(!CGAL::IO::read_polygon_mesh(filename, mesh))
+  if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Error: failed to read input: " << filename << std::endl;
     return false;

@@ -64,11 +64,7 @@ protected:
   Quadric_calculator m_quadric_calculator;
 
 public:
-  GarlandHeckbert_quadrics_storage() { CGAL_assertion(false); } // only for compilation
-  GarlandHeckbert_quadrics_storage(TriangleMesh& tmesh)
-  {
-    m_cost_matrices = get(Cost_property(), tmesh);
-  }
+  GarlandHeckbert_quadrics_storage() = delete;
 
   GarlandHeckbert_quadrics_storage(TriangleMesh& tmesh,
                                    const Quadric_calculator& quadric_calculator)
@@ -79,9 +75,8 @@ public:
 };
 
 template <typename QuadricCalculator, typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_cost_base
-  // Virtual base because the storage is common to both the cost and the placement
-  : virtual public GarlandHeckbert_quadrics_storage<QuadricCalculator, TriangleMesh, GeomTraits>
+class GarlandHeckbert_cost_and_placement
+  : public GarlandHeckbert_quadrics_storage<QuadricCalculator, TriangleMesh, GeomTraits>
 {
   typedef QuadricCalculator                                                    Quadric_calculator;
   typedef GarlandHeckbert_quadrics_storage<
@@ -107,8 +102,10 @@ private:
   FT discontinuity_multiplier;
 
 public:
-  GarlandHeckbert_cost_base(const FT dm = 100)
-    : discontinuity_multiplier(dm)
+  GarlandHeckbert_cost_and_placement(TriangleMesh& tmesh,
+                                     const Quadric_calculator& quadric_calculator,
+                                     const FT dm = FT(100))
+    : Base(tmesh, quadric_calculator), discontinuity_multiplier(dm)
   { }
 
   decltype(auto) vcm() const { return this->m_cost_matrices; }
@@ -118,6 +115,11 @@ public:
   static Col_4 point_to_homogenous_column(const Point_3& point)
   {
     return Col_4 { point.x(), point.y(), point.z(), FT(1) };
+  }
+
+  Col_4 construct_optimum(const Mat_4& mat, const Col_4& p0, const Col_4& p1) const
+  {
+    return quadric_calculator().construct_optimal_point(mat, p0, p1);
   }
 
   static bool is_discontinuity_edge(const halfedge_descriptor h,
@@ -195,6 +197,7 @@ public:
   }
 
 public:
+  // Cost
   template <typename Profile>
   boost::optional<typename Profile::FT>
   operator()(const Profile& profile,
@@ -215,43 +218,9 @@ public:
 
     return cost;
   }
-};
-
-template <typename QuadricCalculator, typename TriangleMesh, typename GeomTraits>
-class GarlandHeckbert_placement_base
-  // Virtual base because the storage is common to both the cost and the placement
-  : virtual public GarlandHeckbert_quadrics_storage<QuadricCalculator, TriangleMesh, GeomTraits>
-{
-  typedef GarlandHeckbert_quadrics_storage<
-            QuadricCalculator, TriangleMesh, GeomTraits>                       Base;
 
 public:
-  typedef typename GeomTraits::FT                                              FT;
-  typedef typename GeomTraits::Point_3                                         Point_3;
-
-  typedef QuadricCalculator                                                    Quadric_calculator;
-
-  typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Mat_4             Mat_4;
-  typedef typename GarlandHeckbert_matrix_types<GeomTraits>::Col_4             Col_4;
-
-public:
-  GarlandHeckbert_placement_base() { }
-
-  decltype(auto) vcm() const { return this->m_cost_matrices; }
-  const Quadric_calculator& quadric_calculator() const { return this->m_quadric_calculator; }
-
-protected:
-  static Col_4 point_to_homogenous_column(const Point_3& point)
-  {
-    return Col_4 { point.x(), point.y(), point.z(), FT(1) };
-  }
-
-  Col_4 construct_optimum(const Mat_4& mat, const Col_4& p0, const Col_4& p1) const
-  {
-    return quadric_calculator().construct_optimal_point(mat, p0, p1);
-  }
-
-public:
+  // Placement
   template <typename Profile>
   boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
