@@ -40,7 +40,7 @@ We seek unconditional robustness in the sense that the output mesh should be val
 2-manifold, and without self-intersections), even for raw input with many defects
 and degeneracies.
 The default input is a soup of 3D triangles, but the generic interface leaves the door open
-to other types of finite 3D primitives.
+to other types of finite 3D primitives such as triangle soups and point sets.
 
 \cgalFigureAnchor{1}
 <center>
