@@ -62,7 +62,17 @@ struct Progress {
 
     Progress(const Progress&) = delete;
 
-      void start_quadratic_phase(int n)
+    void start_planar_phase() const
+    {
+      std::cout << "Start planar phase"<< std::endl;
+    }
+
+    void end_planar_phase(bool success) const
+    {
+      std::cout << "End planar phase " << (success? "(success)" : "(failed)") << std::endl;
+    }
+
+    void start_quadratic_phase(int n)
       {
         timer.start();
         quadratic_i = 0;
@@ -82,7 +92,7 @@ struct Progress {
       void end_quadratic_phase(bool success) const
       {
         timer.stop();
-        std::cout << "End Quadratic phase " << timer.time() << " sec. " << (success ? "(success)" : "(falied)") << std::endl;
+        std::cout << "End Quadratic phase " << timer.time() << " sec. " << (success ? "(success)" : "(failed)") << std::endl;
         timer.reset();
       }
 

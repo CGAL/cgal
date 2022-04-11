@@ -37,6 +37,12 @@ namespace Polygon_mesh_processing {
 
     struct Hole_fill_visitor{
 
+      void start_planar_phase() const
+      {}
+
+      void end_planar_phase(bool) const
+      {}
+
       void start_quadratic_phase(int /* N*/) const
       {}
 

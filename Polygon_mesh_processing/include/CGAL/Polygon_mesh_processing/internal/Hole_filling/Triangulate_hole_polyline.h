@@ -1341,6 +1341,8 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   typedef typename Traits::Vector_3 Vector_3;
   typedef typename Traits::Collinear_3 Collinear_3;
 
+  visitor.start_planar_phase();
+
   // Compute an average normal of the hole.
   const Collinear_3 collinear_3 =
     traits.collinear_3_object();
@@ -1383,6 +1385,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
 
   if (num_normals < 1) {
     // std::cerr << "WARNING: num normals, cdt 2 falls back to the original solution!" << std::endl;
+    visitor.end_planar_phase(false);
     return false;
   }
 
@@ -1394,11 +1397,14 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   const Vector_3 avg_normal = Vector_3(x, y, z);
   // std::cout << "avg normal: " << avg_normal << std::endl;
 
-  if (avg_normal==NULL_VECTOR) return false;
-
+  if (avg_normal==NULL_VECTOR){
+    visitor.end_planar_phase(false);
+    return false;
+  }
   // Checking the hole planarity.
   if (!is_planar_2(P, avg_normal, max_squared_distance, traits)) {
     // std::cerr << "WARNING: planarity, cdt 2 falls back to the original solution!" << std::endl;
+        visitor.end_planar_phase(false);
     return false;
   }
 
@@ -1407,6 +1413,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   const P_traits p_traits(avg_normal);
   if (!is_simple_2(P.begin(), P.end() - 1, p_traits)) {
     // std::cerr << "WARNING: simplicity, cdt 2 falls back to the original solution!" << std::endl;
+    visitor.end_planar_phase(false);
     return false;
   }
 
@@ -1468,6 +1475,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
 
   if (cdt.dimension() != 2 || cdt.number_of_vertices() != size) {
     // std::cerr << "WARNING: dim + num vertices, cdt 2 falls back to the original solution!" << std::endl;
+    visitor.end_planar_phase(false);
     return false;
   }
 
@@ -1485,6 +1493,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
       lambda.put(is[0], is[2], is[1]);
       if (!is_valid(P, is[0], is[1], is[2])) {
         // std::cerr << "WARNING: validity, cdt 2 falls back to the original solution!" << std::endl;
+        visitor.end_planar_phase(false);
         return false;
       }
     }
@@ -1493,6 +1502,7 @@ triangulate_hole_polyline_with_cdt(const PointRange& points,
   // Call the tracer. It correctly orients the patch faces.
   // std::cout << "CDT is being used!" << std::endl;
   tracer(lambda, 0, static_cast<int>(size) - 1);
+  visitor.end_planar_phase(true);
   return true;
 }
 
