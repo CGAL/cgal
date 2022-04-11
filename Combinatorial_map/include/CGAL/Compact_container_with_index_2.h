@@ -536,6 +536,10 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
                                                        std::move(all_items[index]));
       alloc.destroy(&(all_items[index]));
     }
+    else
+    {
+      static_set_val(all_items2[index], static_get_val(all_items[index]), FREE);
+    }
   }
   std::swap(all_items, all_items2);
   std::allocator_traits<allocator_type>::deallocate(alloc, all_items2, oldcapacity);
