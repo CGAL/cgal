@@ -102,7 +102,15 @@ public:
         m_map.xdef() = deflt; }
 
     bool is_defined( const Key& key) const {
-        return m_map.lookup( m_hash_function(key)) != 0;
+        return contains(key);
+    }
+
+    bool contains(const Key& key) const {
+        return m_map.lookup( m_hash_function(key)) != nullptr;
+    }
+
+    void erase(const Key& key) {
+        m_map.erase(m_hash_function(key));
     }
 
     const Data& operator[]( const Key& key) const {
