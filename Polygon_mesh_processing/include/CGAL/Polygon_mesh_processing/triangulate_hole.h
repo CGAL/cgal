@@ -152,7 +152,7 @@ namespace Polygon_mesh_processing {
     \cgalParamNBegin{visitor}
       \cgalParamDescription{a visitor used to track the progress made
       in the algorithm}
-      \cgalParamType{}
+      \cgalParamType{Hole_filling::Default_visitor}
     \cgalParamNEnd
 
   \cgalNamedParamsEnd
