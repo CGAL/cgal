@@ -7,6 +7,18 @@ Release History
 
 Release date: June 2022
 
+### 3D Alpha Wrapping (new package)
+
+-   This component takes a 3D triangle mesh, soup, or point set as input, and generates a valid
+    (watertight, intersection-free, and combinatorially 2-manifold) surface triangle mesh
+    that contains the input.
+    The algorithm proceeds by shrink-wrapping and refining a 3D Delaunay triangulation,
+    starting from a loose bounding box of the input.
+    Two user-defined parameters, alpha and offset, offer control over the maximum size of cavities
+    where the shrink-wrapping process can enter, and the tightness of the final surface mesh
+    to the input, respectively. Once combined, these parameters provide a means to trade fidelity
+    to the input for complexity of the output.
+
 ### [Point Set Processing](https://doc.cgal.org/5.5/Manual/packages.html#PkgPointSetProcessing3)
 
 -   A new optional named parameter, `min_points_per_cell` has been added to [`grid_simplify_point_set()`](https://doc.cgal.org/5.5/Point_set_processing_3/group__PkgPointSetProcessing3Algorithms.html#ga7757ef9b3900e42fde26f5a0ac56e20f). By adding a minimal number of points in a cell such that a point is retained, one can also filter out low density areas and outliers: in the case of densely sampled point clouds, this yields better results than using grid simplification and then outlier removal, while being very vast. The default value is `1` to keep the previous behavior as default.

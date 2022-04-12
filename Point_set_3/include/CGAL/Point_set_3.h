@@ -166,7 +166,10 @@ public:
   public:
     typedef CGAL::Property_map_to_unary_function<Property_map<Type> > Unary_function;
     typedef boost::transform_iterator<Unary_function,
+                                      typename Point_set::iterator> iterator; // for NP helper
+    typedef boost::transform_iterator<Unary_function,
                                       typename Point_set::const_iterator> const_iterator;
+
   private:
     const_iterator m_begin;
     const_iterator m_end;
