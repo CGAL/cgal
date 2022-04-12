@@ -1604,6 +1604,239 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   }
 }
 
+
+/*!
+ * \ingroup PMP_orientation_grp
+ *
+ * identifies faces whose orientation must be reversed in order to enable stitching of connected components.
+ * Each face is assigned a bit (`false` or `true`)
+ * such that two faces have compatible orientations iff they are assigned the same bits.
+ *
+ * @tparam PolygonMesh a model of `HalfedgeListGraph`, `FaceGraph`.
+ * @tparam FaceBitMap a model of `WritablePropertyMap` with `face_descriptor` as key and `bool` as value_type
+ * @tparam NamedParameters a sequence of \ref bgl_namedparameters
+ *
+ * @param pm a surface mesh
+ * @param fbm face bit map indicating if a face orientation should be reversed to be stitchable
+ *        (see `CGAL::Polygon_mesh_processing::stitch_borders()`) with another face. If `false` is
+ *        returned, the map will not be filled.
+ * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * @return `true` if `pm` can be reoriented and `false` otherwise.
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     should be available for the vertices of `pm`.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \sa reverse_face_orientations()
+ * \sa stitch_borders()
+ *
+ */
+template <class PolygonMesh, class FaceBitMap, class NamedParameters = parameters::Default_named_parameters>
+bool compatible_orientations(const PolygonMesh& pm,
+                             FaceBitMap fbm,
+                             const NamedParameters& np = parameters::default_values())
+{
+  typedef boost::graph_traits<PolygonMesh> GrT;
+  typedef typename GrT::face_descriptor face_descriptor;
+  typedef typename GrT::halfedge_descriptor halfedge_descriptor;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
+
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                         get_const_property_map(vertex_point, pm));
+
+  typedef std::size_t F_cc_id; // Face cc-id
+  typedef std::size_t E_id; // Edge id
+
+  typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag>::const_type   Face_cc_map;
+  Face_cc_map f_cc_ids  = get(Face_property_tag(), pm);
+  F_cc_id nb_cc = connected_components(pm, f_cc_ids);
+
+  std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
+  for (face_descriptor f : faces(pm))
+    nb_faces_per_cc[ get(f_cc_ids, f) ]+=1;
+
+  // collect border halfedges
+  std::vector<halfedge_descriptor> border_hedges;
+  for (halfedge_descriptor h : halfedges(pm))
+    if ( is_border(h, pm) )
+      border_hedges.push_back(h);
+  std::size_t nb_bh=border_hedges.size();
+
+  // compute the edge id of all border halfedges
+  typedef std::map< std::pair<Point_3, Point_3>, E_id> E_id_map;
+  E_id_map e_id_map;
+  E_id e_id = 0;
+
+  std::vector<E_id> eids;
+  eids.reserve(nb_bh);
+  for (halfedge_descriptor h : border_hedges)
+  {
+    std::pair< typename E_id_map::iterator, bool > insert_res =
+        e_id_map.insert(
+          std::make_pair(
+            make_sorted_pair(get(vpm, source(h, pm)),
+                             get(vpm, target(h,pm))), e_id) );
+    if (insert_res.second)
+      ++e_id;
+    eids.push_back(insert_res.first->second);
+  }
+
+  // fill incidence per edge
+  std::vector< std::vector<halfedge_descriptor> > incident_ccs_per_edge(e_id);
+  for (std::size_t i=0; i<nb_bh; ++i)
+    incident_ccs_per_edge[ eids[i] ].push_back(border_hedges[i]);
+
+  std::vector< std::vector<F_cc_id> > compatible_patches(nb_cc);
+  std::vector< std::vector<F_cc_id> > incompatible_patches(nb_cc);
+
+  for (std::vector<halfedge_descriptor>& v : incident_ccs_per_edge)
+  {
+    // ignore non-manifold edges
+    if (v.size()!=2) continue;
+    F_cc_id front_id=get(f_cc_ids, face(opposite(v.front(), pm), pm));
+    F_cc_id back_id=get(f_cc_ids, face(opposite(v.back(), pm), pm));
+
+    if (front_id==back_id) continue;
+
+    if (get(vpm, source(v.front(), pm))==get(vpm, target(v.back(), pm)))
+    {
+      compatible_patches[front_id].push_back(back_id);
+      compatible_patches[back_id].push_back(front_id);
+    }
+    else
+    {
+      incompatible_patches[front_id].push_back(back_id);
+      incompatible_patches[back_id].push_back(front_id);
+    }
+  }
+
+  for(F_cc_id cc_id=0; cc_id<nb_cc; ++cc_id)
+  {
+    std::sort(compatible_patches[cc_id].begin(), compatible_patches[cc_id].end());
+    std::sort(incompatible_patches[cc_id].begin(), incompatible_patches[cc_id].end());
+  }
+
+  // sort the connected components with potential matches using their number
+  // of faces (sorted by decreasing number of faces)
+  std::vector<bool> cc_bits(nb_cc, false);
+  std::vector<bool> cc_handled(nb_cc, false);
+
+  std::set< F_cc_id, std::function<bool(F_cc_id,F_cc_id)> > sorted_ids(
+    [&nb_faces_per_cc](F_cc_id i, F_cc_id j)
+    {return nb_faces_per_cc[i]==nb_faces_per_cc[j] ? i<j : nb_faces_per_cc[i]>nb_faces_per_cc[j];}
+  );
+  for(F_cc_id cc_id=0; cc_id<nb_cc; ++cc_id)
+    sorted_ids.insert(cc_id);
+
+  // consider largest CC first, default and set its bit to 0
+  for(F_cc_id cc_id : sorted_ids)
+  {
+    if (cc_handled[cc_id]) continue;
+
+    // extract compatible components
+    std::set<F_cc_id> bit_0_cc_set;
+    std::set<F_cc_id> bit_1_cc_set;
+    bit_0_cc_set.insert(cc_id);
+    std::vector<F_cc_id> stack_0=compatible_patches[cc_id];
+    std::vector<F_cc_id> stack_1=incompatible_patches[cc_id];
+
+    while( !stack_0.empty() || !stack_1.empty())
+    {
+      // increase the set of patches for bit 0 using compatible_patches
+      while( !stack_0.empty() )
+      {
+        F_cc_id back=stack_0.back();
+        stack_0.pop_back();
+        if (!bit_0_cc_set.insert(back).second) continue;
+        stack_0.insert(stack_0.end(), compatible_patches[back].begin(), compatible_patches[back].end());
+      }
+
+      // extract incompatible components
+      for (F_cc_id cid : bit_0_cc_set)
+        stack_1.insert(stack_1.end(), incompatible_patches[cid].begin(), incompatible_patches[cid].end());
+      // increase the set of patches for bit 1 using compatible_patches
+      while( !stack_1.empty() )
+      {
+        F_cc_id back=stack_1.back();
+        stack_1.pop_back();
+        if (!bit_1_cc_set.insert(back).second) continue;
+        stack_1.insert(stack_1.end(), compatible_patches[back].begin(), compatible_patches[back].end());
+      }
+      for (F_cc_id cid1 : bit_1_cc_set)
+        for (F_cc_id cid0 : incompatible_patches[cid1])
+          if( bit_0_cc_set.count(cid0)==0 )
+            stack_0.push_back(cid0);
+    }
+
+    // set intersection should be empty
+    std::vector<F_cc_id> inter;
+    std::set_intersection( bit_0_cc_set.begin(), bit_0_cc_set.end(),
+                           bit_1_cc_set.begin(), bit_1_cc_set.end(),
+                           std::back_inserter(inter));
+    if (!inter.empty())
+    {
+#ifdef CGAL_PMP_DEBUG_ORIENTATION
+      std::cout << "DEBUG: Set intersection is not empty\n";
+#endif
+      return false;
+    }
+
+    // set bit of compatible patches
+    for (F_cc_id id : bit_0_cc_set)
+    {
+      if (cc_handled[id])
+      {
+        if(cc_bits[id] == true)
+        {
+#ifdef CGAL_PMP_DEBUG_ORIENTATION
+          std::cout << "DEBUG: orientation bit already set to 1, incompatible with 0\n";
+#endif
+          return false;
+        }
+        else
+          continue;
+      }
+      cc_handled[id]=true;
+    }
+
+    // set bit of incompatible patches
+    for (F_cc_id id : bit_1_cc_set)
+    {
+      if (cc_handled[id])
+      {
+        if(cc_bits[id] == false)
+        {
+#ifdef CGAL_PMP_DEBUG_ORIENTATION
+          std::cout << "DEBUG: orientation bit already set to 0, incompatible with 1\n";
+#endif
+          return false;
+        }
+        else
+          continue;
+      }
+      cc_handled[id]=true;
+      cc_bits[id]=true;
+    }
+  }
+
+  // set the bit per face
+  for (face_descriptor f : faces(pm))
+    put(fbm, f, cc_bits[get(f_cc_ids,f)]);
+
+  return true;
+}
+
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 #endif // CGAL_ORIENT_POLYGON_MESH_H

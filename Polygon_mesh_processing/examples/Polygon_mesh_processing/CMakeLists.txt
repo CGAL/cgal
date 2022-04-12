@@ -94,6 +94,7 @@ create_single_source_cgal_program("orientation_pipeline_example.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
 create_single_source_cgal_program("match_faces.cpp")
+create_single_source_cgal_program("cc_compatible_orientations.cpp")
 
 if(OpenMesh_FOUND)
 
