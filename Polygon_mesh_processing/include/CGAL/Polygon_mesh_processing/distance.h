@@ -1435,7 +1435,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
                                               const VPM2 vpm2,
                                               const TM1Tree& tm1_tree,
                                               const TM2Tree& tm2_tree,
-                                              const typename Kernel::FT sq_error_bound,
+                                              const typename Kernel::FT error_bound,
                                               const typename Kernel::FT sq_initial_bound,
                                               const typename Kernel::FT sq_distance_bound,
                                               const typename Kernel::FT infinity_value,
@@ -1445,6 +1445,14 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   using Point_3 = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
+#ifdef CGAL_HAUSDORFF_DEBUG
+  std::cout << " -- Bounded Hausdorff --" << std::endl;
+  std::cout << "error bound: " << error_bound << std::endl;
+  std::cout << "initial bound: " << sq_initial_bound << " (" << approximate_sqrt(sq_initial_bound) << ")" << std::endl;
+  std::cout << "distance bound: " << sq_distance_bound << " (" << approximate_sqrt(sq_distance_bound) << ")" << std::endl;
+  std::cout << "inf val: " << infinity_value << " (" << approximate_sqrt(infinity_value) << ")" << std::endl;
+#endif
+
   using TM1_hd_traits = Hausdorff_primitive_traits_tm1<Point_3, Kernel, TriangleMesh1, TriangleMesh2, VPM1, VPM2>;
   using TM2_hd_traits = Hausdorff_primitive_traits_tm2<Triangle_3, Kernel, TriangleMesh1, TriangleMesh2, VPM2>;
 
@@ -1453,8 +1461,8 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
 
   using Candidate = Candidate_triangle<Kernel, Face_handle_1, Face_handle_2>;
 
+  CGAL_precondition(sq_initial_bound >= square(FT(error_bound)));
   CGAL_precondition(sq_distance_bound != FT(0)); // value is -1 if unused
-  CGAL_precondition(sq_error_bound >= FT(0));
   CGAL_precondition(tm1_tree.size() > 0);
   CGAL_precondition(tm2_tree.size() > 0);
 
@@ -1469,7 +1477,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
 
   // Build traversal traits for tm1_tree.
   TM1_hd_traits traversal_traits_tm1(tm2_tree, tm1, tm2, vpm1, vpm2,
-                                     sq_error_bound, infinity_value, sq_initial_bound, sq_distance_bound);
+                                     infinity_value, sq_initial_bound, sq_distance_bound);
 
   // Find candidate triangles in TM1, which might realise the Hausdorff bound.
   // We build a sorted structure while collecting the candidates.
@@ -1511,8 +1519,8 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   // Second, we apply subdivision.
 #ifdef CGAL_HAUSDORFF_DEBUG
   timer.reset();
-  timer.start();
   std::cout << "- applying subdivision" << std::endl;
+  timer.start();
   std::size_t explored_candidates_count = 0;
 #endif
 
@@ -1523,15 +1531,22 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     std::cout << "===" << std::endl;
     std::cout << candidate_triangles.size() << " candidates" << std::endl;
     std::cout << "- infinity_value: " << infinity_value << std::endl;
-    std::cout << "- initial_bound: " << sq_initial_bound << std::endl;
-    std::cout << "- distance_bound: " << sq_distance_bound << std::endl;
+    std::cout << "- error_bound: " << error_bound << std::endl;
+    std::cout << "- sq_initial_bound: " << sq_initial_bound << std::endl;
+    std::cout << "- sq_distance_bound: " << sq_distance_bound << std::endl;
     std::cout << "- global_bounds.lower: " << global_bounds.lower << std::endl;
     std::cout << "- global_bounds.upper: " << global_bounds.upper << std::endl;
-    std::cout << "- diff = " << (global_bounds.upper - global_bounds.lower) << ", below bound? "
-              << ((global_bounds.upper - global_bounds.lower) <= sq_error_bound) << std::endl;
+    std::cout << "- diff = " << CGAL::approximate_sqrt(global_bounds.upper) -
+                                CGAL::approximate_sqrt(global_bounds.lower) << ", below bound? "
+              << ((CGAL::approximate_sqrt(global_bounds.upper) -
+                   CGAL::approximate_sqrt(global_bounds.lower)) <= error_bound) << std::endl;
 #endif
 
-    if((global_bounds.upper - global_bounds.lower <= sq_error_bound))
+    CGAL_assertion(global_bounds.lower >= FT(0));
+    CGAL_assertion(global_bounds.upper >= global_bounds.lower);
+
+    // @todo could cache those sqrts
+    if(CGAL::approximate_sqrt(global_bounds.upper) - CGAL::approximate_sqrt(global_bounds.lower) <= error_bound)
       break;
 
     // Check if we can early quit.
@@ -1563,6 +1578,10 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     std::cout << triangle_and_bounds.triangle.vertex(2) << std::endl;
     std::cout << "triangle_bounds.lower: " << triangle_bounds.lower << std::endl;
     std::cout << "triangle_bounds.upper: " << triangle_bounds.upper << std::endl;
+    std::cout << "- diff = " << CGAL::approximate_sqrt(triangle_bounds.upper) -
+                                CGAL::approximate_sqrt(triangle_bounds.lower) << ", below bound? "
+              << ((CGAL::approximate_sqrt(triangle_bounds.upper) -
+                   CGAL::approximate_sqrt(triangle_bounds.lower)) <= error_bound) << std::endl;
 #endif
 
     CGAL_assertion(triangle_bounds.lower >= FT(0));
@@ -1572,9 +1591,14 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
 
     // Might have been a good candidate when added to the queue, but rendered useless by later insertions
     if(triangle_bounds.upper < global_bounds.lower)
+    {
+#ifdef CGAL_HAUSDORFF_DEBUG_PP
+      std::cout << "Upper bound is lower than global.lower" << std::endl;
+#endif
       continue;
+    }
 
-    if((triangle_bounds.upper - triangle_bounds.lower) <= sq_error_bound)
+    if((CGAL::approximate_sqrt(triangle_bounds.upper) - CGAL::approximate_sqrt(triangle_bounds.lower)) <= error_bound)
     {
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
       std::cout << "Candidate triangle bounds are tight enough: " << triangle_bounds.lower << " " << triangle_bounds.upper << std::endl;
@@ -1592,30 +1616,27 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     const Point_3& v1 = triangle_for_subdivision.vertex(1);
     const Point_3& v2 = triangle_for_subdivision.vertex(2);
 
-    // Third stopping condition: all edge lengths of the triangle are smaller than the given error bound
-    // @todo can we even be here considering it implies the triangle bounds are within the error bound,
-    // and thus we would have already continue'd?
-    if(CGAL::squared_distance(v0, v1) < sq_error_bound &&
-       CGAL::squared_distance(v0, v2) < sq_error_bound &&
-       CGAL::squared_distance(v1, v2) < sq_error_bound)
+    // Stopping condition: All three vertices of the triangle are projected onto the same triangle in TM2.
+    const auto closest_triangle_v0 = tm2_tree.closest_point_and_primitive(v0);
+    const auto closest_triangle_v1 = tm2_tree.closest_point_and_primitive(v1);
+    const auto closest_triangle_v2 = tm2_tree.closest_point_and_primitive(v2);
+    CGAL_assertion(closest_triangle_v0.second != boost::graph_traits<TriangleMesh2>::null_face());
+    CGAL_assertion(closest_triangle_v1.second != boost::graph_traits<TriangleMesh2>::null_face());
+    CGAL_assertion(closest_triangle_v2.second != boost::graph_traits<TriangleMesh2>::null_face());
+
+    if((closest_triangle_v0.second == closest_triangle_v1.second) &&
+       (closest_triangle_v1.second == closest_triangle_v2.second))
     {
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
-      std::cout << "Third stopping condition, small triangle" << std::endl;
+      std::cout << "Projects onto the same TM2 face" << std::endl;
 #endif
 
-      // By definition, lower_bound(t1, TM2) is smaller than h(t1, TM2).
-      // Let `v` is the vertex of t1 and `p_l` the point on TM2 realizing the lower bound, i.e.,
-      //   d(v, p_l) = max_{v in t1} min_{t2 in TM2) d(v, t2).
-      // Let `p` be the pair of points resp. on t1 and TM2 realizing the Hausdorff distance, i.e.,
-      //   h(t1, TM2) = d(p.first, p.second),
-      // Since we are here:
-      //   d(p.first, v) < error_bound (1)
-      // From the lower bound
-      //   d(v, p_l) <= d(p.first, p.second)
-      // Because d(p.first, p.second) is the min distance from p.first to TM2,
-      //   d(p.first, p.second) <= d(p.first, p_l)
-      // And by triangular inequality
-      //   d(p.first, p.second) <= d(v, p_l) + d(p.first, v) <= d(v, p_l) + error_bound = lower_bound + epsilon
+      // The upper bound of this triangle is the actual Hausdorff distance of
+      // the triangle to the second mesh. Use it as new global lower bound.
+      // Here, we update the reference to the realizing triangle as this is the best current guess.
+      global_bounds.lower = triangle_bounds.upper;
+      global_bounds.lpair.second = triangle_bounds.tm2_uface;
+
       continue;
     }
 
@@ -1651,33 +1672,34 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       // (We also have that error_bound is a lower bound.)
       const Bbox_3 sub_t1_bbox = sub_triangles[i].bbox();
 
-      // Because:
+      // The lower bound is:
       //   h_lower(t1, TM2) := max_{v in t1} min_{t2 in TM2} d(v, t2)
-      // adding more vertices can only increase the max (and the lower bound).
-      //
+
       // The upper bound is:
       //   h_upper(t1, TM2) := min_{t2 in TM2} max_{v in t1} d(v, t2)
-      // If t2m is the face of TM2 realizing the minimum of max_{v in t1} d(v, t2),
-      // then subdividing t1 can only decrease this upper bound: let v' be a new vertex v'
-      // of a triangle subdividing t1 is such that
-      //   min_{t2 in TM2} d(v', t2) > h_upper(t1, TM2)
-      // Because the maximum of the distance over t1 is necessarily reached at a vertex,
-      // there must exist a vertex v1 in t1 such that d(v1, t2) > d(v', t2), which contradicts
-      // the definition of v'.
-      // Thus, subdivision can only decrease the upper bound.
-      // @FIXME using 'triangle_bounds' actually create bugs?...
-      Local_bounds<Kernel, Face_handle_1, Face_handle_2> bounds(infinity_value);
+      // The value max_{p in t1} d(p, t2) is realized at a vertex of t1.
+      // Thus, when splitting t1 into four subtriangles, the distance at the three new vertices
+      // is smaller than max_{v in t1} d(v, t2)
+      // Thus, subdivision can only decrease the min, and the upper bound.
+      Local_bounds<Kernel, Face_handle_1, Face_handle_2> bounds(triangle_bounds.upper);
+
+      // Ensure 'uface' is initialized in case the upper bound is not changed by the subdivision
+      bounds.tm2_uface = triangle_bounds.tm2_uface;
+
       TM2_hd_traits traversal_traits_tm2(sub_t1_bbox, tm2, vpm2, bounds, global_bounds, infinity_value);
       tm2_tree.traversal_with_priority(sub_triangles[i], traversal_traits_tm2);
 
       // Update global lower Hausdorff bound according to the obtained local bounds.
       const auto& sub_triangle_bounds = traversal_traits_tm2.get_local_bounds();
+
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
       std::cout << "Subdivided triangle bounds: " << sub_triangle_bounds.lower << " " << sub_triangle_bounds.upper << std::endl;
 #endif
 
       CGAL_assertion(sub_triangle_bounds.lower >= FT(0));
       CGAL_assertion(sub_triangle_bounds.upper >= sub_triangle_bounds.lower);
+      CGAL_assertion(sub_triangle_bounds.tm2_lface != boost::graph_traits<TriangleMesh2>::null_face());
+      CGAL_assertion(sub_triangle_bounds.tm2_uface != boost::graph_traits<TriangleMesh2>::null_face());
 
       // The global lower bound is the max of the per-face lower bounds
       if(sub_triangle_bounds.lower > global_bounds.lower)
@@ -1692,7 +1714,6 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
       // which can go down, so it is only recomputed once splitting is finished,
       // using the top value of the PQ
 
-      // Add the subtriangle to the candidate list.
       candidate_triangles.emplace(sub_triangles[i], sub_triangle_bounds, triangle_and_bounds.tm1_face);
     }
 
@@ -1700,30 +1721,27 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     const Candidate& top_candidate = candidate_triangles.top();
     const FT current_upmost = top_candidate.bounds.upper;
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
-    std::cout << "current candidates count: " << candidate_triangles.size() << std::endl;
+    std::cout << "global_bounds.lower = " << global_bounds.lower << std::endl;
+    std::cout << "global_bounds.upper = " << global_bounds.upper << std::endl;
     std::cout << "current upper bound = " << current_upmost << std::endl;
 #endif
+
     CGAL_assertion(is_positive(current_upmost));
 
-    // Below can happen if the subtriangle returned something like [l;u],
-    // with l and u both below the global error bound. The lowest bound will not have been updated
-    // since it has been initialized with the error bound.
     if(current_upmost < global_bounds.lower)
     {
 #ifdef CGAL_HAUSDORFF_DEBUG_PP
-      std::cout << "upmost is below lowest, end." << std::endl;
+      std::cout << "Top of the queue is lower than the lowest!" << std::endl;
 #endif
 
       global_bounds.upper = global_bounds.lower; // not really needed since lower is returned but doesn't hurt
       global_bounds.upair.first = global_bounds.lpair.first;
       global_bounds.upair.second = global_bounds.lpair.second;
 
-      // Current upmost being equal to the lower is fine, but if it's strictly below, it must
-      // be because we crossed the error bound, or there is some issue...
-      CGAL_assertion(global_bounds.lower == sq_error_bound);
-
       break;
     }
+
+    CGAL_assertion(current_upmost >= global_bounds.lower);
 
     global_bounds.upper = current_upmost;
     global_bounds.upair.first = top_candidate.tm1_face;
@@ -1741,7 +1759,16 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   timer.stop();
   std::cout << "* subdivision (sec.): " << timer.time() << std::endl;
   std::cout << "Explored " << explored_candidates_count << " candidates" << std::endl;
+  std::cout << "Final global bounds: " << global_bounds.lower << " " << global_bounds.upper << std::endl;
+  std::cout << "Final global bounds (sqrt): " << CGAL::approximate_sqrt(global_bounds.lower) << " "
+                                              << CGAL::approximate_sqrt(global_bounds.upper) << std::endl;
+  std::cout << "Difference: " << CGAL::approximate_sqrt(global_bounds.upper) -
+                                 CGAL::approximate_sqrt(global_bounds.lower) << std::endl;
 #endif
+
+  CGAL_assertion(global_bounds.lower >= FT(0));
+  CGAL_assertion(global_bounds.upper >= global_bounds.lower);
+  CGAL_assertion(CGAL::approximate_sqrt(global_bounds.upper) - CGAL::approximate_sqrt(global_bounds.lower) <= error_bound);
 
   // Get realizing triangles.
   CGAL_assertion(global_bounds.lpair.first != boost::graph_traits<TriangleMesh1>::null_face());
@@ -1857,7 +1884,7 @@ struct Bounded_error_squared_distance_computation
 
   const std::vector<TriangleMesh1>& tm1_parts;
   const TriangleMesh2& tm2;
-  const FT sq_error_bound;
+  const double error_bound;
   const VPM1 vpm1; const VPM2 vpm2;
   const FT infinity_value;
   const FT sq_initial_bound;
@@ -1868,14 +1895,14 @@ struct Bounded_error_squared_distance_computation
   // Constructor.
   Bounded_error_squared_distance_computation(const std::vector<TriangleMesh1>& tm1_parts,
                                              const TriangleMesh2& tm2,
-                                             const FT sq_error_bound,
+                                             const double error_bound,
                                              const VPM1 vpm1, const VPM2 vpm2,
                                              const FT infinity_value,
                                              const FT sq_initial_bound,
                                              const std::vector<TM1Tree>& tm1_trees,
                                              const TM2Tree& tm2_tree)
     : tm1_parts(tm1_parts), tm2(tm2),
-      sq_error_bound(sq_error_bound),
+      error_bound(error_bound),
       vpm1(vpm1), vpm2(vpm2),
       infinity_value(infinity_value), sq_initial_bound(sq_initial_bound),
       tm1_trees(tm1_trees), tm2_tree(tm2_tree),
@@ -1887,7 +1914,7 @@ struct Bounded_error_squared_distance_computation
   // Split constructor.
   Bounded_error_squared_distance_computation(Bounded_error_squared_distance_computation& s, tbb::split)
     : tm1_parts(s.tm1_parts), tm2(s.tm2),
-      sq_error_bound(s.sq_error_bound),
+      error_bound(s.error_bound),
       vpm1(s.vpm1), vpm2(s.vpm2),
       infinity_value(s.infinity_value), sq_initial_bound(s.sq_initial_bound),
       tm1_trees(s.tm1_trees), tm2_tree(s.tm2_tree),
@@ -1919,7 +1946,7 @@ struct Bounded_error_squared_distance_computation
       // for checking if two meshes are close.
       const FT sqd = bounded_error_squared_Hausdorff_distance_impl<Kernel>(
                        tm1, tm2, vpm1, vpm2, tm1_tree, tm2_tree,
-                       sq_error_bound, sq_initial_bound, FT(-1) /*sq_distance_bound*/, infinity_value,
+                       error_bound, sq_initial_bound, FT(-1) /*sq_distance_bound*/, infinity_value,
                        stub);
       if(sqd > sq_dist)
         sq_dist = sqd;
@@ -1954,7 +1981,7 @@ template <class Concurrency_tag,
 typename Kernel::FT
 bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1,
                                                         const TriangleMesh2& tm2,
-                                                        const typename Kernel::FT sq_error_bound,
+                                                        const typename Kernel::FT error_bound,
                                                         const typename Kernel::FT sq_distance_bound,
                                                         const bool compare_meshes,
                                                         const VPM1 vpm1,
@@ -2165,9 +2192,9 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
   }
 
   CGAL_assertion(infinity_value > FT(0));
-  CGAL_assertion(sq_error_bound >= FT(0));
+  CGAL_assertion(error_bound >= 0.);
 
-  const FT sq_initial_bound = sq_error_bound;
+  const FT sq_initial_bound = square(FT(error_bound));
   FT sq_hdist = FT(-1);
 
 #ifdef CGAL_HAUSDORFF_DEBUG
@@ -2186,7 +2213,7 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 
     using Comp = Bounded_error_squared_distance_computation<TMF, TM2, VPM1, VPM2, TMF_tree, TM2_tree, Kernel>;
 
-    Comp bedc(tm1_parts, tm2, sq_error_bound, vpm1, vpm2,
+    Comp bedc(tm1_parts, tm2, error_bound, vpm1, vpm2,
               infinity_value, sq_initial_bound, tm1_trees, tm2_tree);
     tbb::parallel_reduce(tbb::blocked_range<std::size_t>(0, tm1_parts.size()), bedc);
 
@@ -2196,11 +2223,11 @@ bounded_error_squared_one_sided_Hausdorff_distance_impl(const TriangleMesh1& tm1
 #endif // defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_METIS_ENABLED)
   {
 #ifdef CGAL_HAUSDORFF_DEBUG
-    std::cout << "* executing sequential version " << std::endl;
+    std::cout << "* executing sequential version" << std::endl;
 #endif
     sq_hdist = bounded_error_squared_Hausdorff_distance_impl<Kernel>(
                  tm1, tm2, vpm1, vpm2, tm1_tree, tm2_tree,
-                 sq_error_bound, sq_initial_bound, sq_distance_bound, infinity_value, out);
+                 error_bound, sq_initial_bound, sq_distance_bound, infinity_value, out);
   }
 
 #ifdef CGAL_HAUSDORFF_DEBUG
@@ -2228,7 +2255,7 @@ template <class Concurrency_tag,
 typename Kernel::FT
 bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1,
                                                         const TriangleMesh2& tm2,
-                                                        const typename Kernel::FT sq_error_bound,
+                                                        const typename Kernel::FT error_bound,
                                                         const typename Kernel::FT sq_distance_bound,
                                                         const bool compare_meshes,
                                                         const VPM1 vpm1,
@@ -2264,6 +2291,7 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
   std::vector<Face_handle_1> tm1_only;
   std::vector<Face_handle_2> tm2_only;
 
+  const FT sq_error_bound = square(FT(error_bound));
   FT infinity_value = FT(-1);
 
   // All trees below are built and/or accelerated lazily.
@@ -2289,6 +2317,7 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
 
     return 0.; // TM1 and TM2 are equal so the distance is zero
   }
+
   CGAL_assertion(is_positive(infinity_value));
 
   // Compute the first one-sided distance.
@@ -2299,7 +2328,7 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
   {
     sq_dista = bounded_error_squared_Hausdorff_distance_impl<Kernel>(
                  tm1, tm2, vpm1, vpm2, tm1_tree, tm2_tree,
-                 sq_error_bound, sq_initial_bound, sq_distance_bound, infinity_value, out1);
+                 error_bound, sq_initial_bound, sq_distance_bound, infinity_value, out1);
   }
 
   // In case this is true, we need to rebuild trees in order to accelerate
@@ -2323,7 +2352,7 @@ bounded_error_squared_symmetric_Hausdorff_distance_impl(const TriangleMesh1& tm1
   {
     sq_distb = bounded_error_squared_Hausdorff_distance_impl<Kernel>(
                  tm2, tm1, vpm2, vpm1, tm2_tree, tm1_tree,
-                 sq_error_bound, sq_initial_bound, sq_distance_bound, infinity_value, out2);
+                 error_bound, sq_initial_bound, sq_distance_bound, infinity_value, out2);
   }
 
   return (CGAL::max)(sq_dista, sq_distb);
@@ -2496,10 +2525,9 @@ double bounded_error_Hausdorff_distance(const TriangleMesh1& tm1,
                               CGAL::Emptyset_iterator());
 
   CGAL_precondition(error_bound >= 0.);
-  const FT sq_error_bound = square(FT(error_bound));
 
   const FT sq_hdist = internal::bounded_error_squared_one_sided_Hausdorff_distance_impl<Concurrency_tag, Traits>(
-        tm1, tm2, sq_error_bound, FT(-1) /*distance threshold*/, match_faces, vpm1, vpm2, np1, np2, out);
+        tm1, tm2, error_bound, FT(-1) /*distance threshold*/, match_faces, vpm1, vpm2, np1, np2, out);
 
   return to_double(approximate_sqrt(sq_hdist));
 }
@@ -2550,10 +2578,9 @@ double bounded_error_symmetric_Hausdorff_distance(const TriangleMesh1& tm1,
                                CGAL::Emptyset_iterator());
 
   CGAL_precondition(error_bound >= 0.);
-  const FT sq_error_bound = square(FT(error_bound));
 
   const FT sq_hdist = internal::bounded_error_squared_symmetric_Hausdorff_distance_impl<Concurrency_tag, Traits>(
-    tm1, tm2, sq_error_bound, FT(-1) /*distance_threshold*/, match_faces, vpm1, vpm2, np1, np2, out1, out2);
+    tm1, tm2, error_bound, FT(-1) /*distance_threshold*/, match_faces, vpm1, vpm2, np1, np2, out1, out2);
 
   return to_double(approximate_sqrt(sq_hdist));
 }
@@ -2614,7 +2641,6 @@ bool is_Hausdorff_distance_larger(const TriangleMesh1& tm1,
   const bool use_one_sided = choose_parameter(get_parameter(np1, internal_np::use_one_sided_hausdorff), true);
 
   CGAL_precondition(error_bound >= 0.);
-  const FT sq_error_bound = square(FT(error_bound));
   CGAL_precondition(distance_bound > 0.);
   const FT sq_distance_bound = square(FT(distance_bound));
 
@@ -2624,12 +2650,12 @@ bool is_Hausdorff_distance_larger(const TriangleMesh1& tm1,
   if(use_one_sided)
   {
     sq_hdist = internal::bounded_error_squared_one_sided_Hausdorff_distance_impl<Concurrency_tag, Traits>(
-      tm1, tm2, sq_error_bound, sq_distance_bound, match_faces, vpm1, vpm2, np1, np2, stub);
+      tm1, tm2, error_bound, sq_distance_bound, match_faces, vpm1, vpm2, np1, np2, stub);
   }
   else
   {
     sq_hdist = internal::bounded_error_squared_symmetric_Hausdorff_distance_impl<Concurrency_tag, Traits>(
-      tm1, tm2, sq_error_bound, sq_distance_bound, match_faces, vpm1, vpm2, np1, np2, stub, stub);
+      tm1, tm2, error_bound, sq_distance_bound, match_faces, vpm1, vpm2, np1, np2, stub, stub);
   }
 
 #ifdef CGAL_HAUSDORFF_DEBUG
@@ -2667,10 +2693,9 @@ double bounded_error_Hausdorff_distance_naive(const TriangleMesh1& tm1,
                                      get_const_property_map(vertex_point, tm2));
 
   CGAL_precondition(error_bound >= 0.);
-  const FT sq_error_bound = square(FT(error_bound));
 
   const FT sq_hdist = internal::bounded_error_squared_Hausdorff_distance_naive_impl<Concurrency_tag, Traits>(
-           tm1, tm2, sq_error_bound, vpm1, vpm2);
+           tm1, tm2, error_bound, vpm1, vpm2);
 
   return to_double(approximate_sqrt(sq_hdist));
 }
