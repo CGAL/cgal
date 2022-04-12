@@ -47,6 +47,7 @@ class chained_map
 
    typedef std::allocator_traits<Allocator> Allocator_traits;
    typedef typename Allocator_traits::template rebind_alloc<chained_map_elem<T> > allocator_type;
+   typedef std::allocator_traits<allocator_type> Allocator_type_traits;
 
    allocator_type alloc;
    std::size_t reserved_size;
@@ -58,7 +59,6 @@ public:
 private:
    void init_inf(T& x)   const { x = def; }
 
-
    chained_map_elem<T>*  HASH(std::size_t x)  const
    { return table + (x & table_size_1);  }
 
@@ -67,11 +67,14 @@ private:
 
    inline void insert(std::size_t x, T y);
 
+   void construct(chained_map_elem<T>* item)
+   { Allocator_type_traits::construct(alloc,item); }
+
    void destroy(chained_map_elem<T>* item)
-   {
-     typedef std::allocator_traits<allocator_type> Allocator_type_traits;
-     Allocator_type_traits::destroy(alloc,item);
-   }
+   { Allocator_type_traits::destroy(alloc,item); }
+
+   void erase(chained_map_elem<T>* q);
+   inline void free_succ() { free = free->succ; }
 
 public:
    static constexpr std::size_t min_size = 32;
@@ -86,6 +89,7 @@ public:
    chained_map& operator=(const chained_map<T, Allocator>& D);
 
    void reserve(std::size_t n);
+   void erase(std::size_t x);
    void clear();
    ~chained_map()
    {
@@ -130,18 +134,23 @@ void chained_map<T, Allocator>::init_table(std::size_t n)
   while (t < n) t <<= 1;
 
   table_size = t;
-  table_size_1 = t-1;
-  table = alloc.allocate(t + t/2);
-  for (std::size_t i = 0 ; i < t + t/2 ; ++i){
-    std::allocator_traits<allocator_type>::construct(alloc,table + i);
+  table_size_1 = t - 1;
+  std::size_t s = t + t / 2;
+  table = alloc.allocate(s);
+  free = table + t;
+  table_end = table + s;
+
+  for (Item p = table; p != free; ++p) {
+    construct(p);
+    p->k = nullkey;
+    p->succ = nullptr;
   }
 
-  free = table + t;
-  table_end = table + t + t/2;
-
-  for (Item p = table; p < free; ++p)
-  { p->succ = nullptr;
+  // build free chain
+  for (Item p = free; p != table_end; ++p) {
+    construct(p);
     p->k = nullkey;
+    p->succ = p + 1;
   }
 }
 
@@ -153,10 +162,11 @@ inline void chained_map<T, Allocator>::insert(std::size_t x, T y)
     q->k = x;
     q->i = y;
   } else {
-    free->k = x;
-    free->i = y;
-    free->succ = q->succ;
-    q->succ = free++;
+    Item p = free; free_succ();
+    p->k = x;
+    p->i = y;
+    p->succ = q->succ;
+    q->succ = p;
   }
 }
 
@@ -217,7 +227,7 @@ T& chained_map<T, Allocator>::access(Item p, std::size_t x)
     return p->i;
   }
 
-  q = free++;
+  q = free; free_succ();
   q->k = x;
   init_inf(q->i);    // initializes q->i to xdef
   q->succ = p->succ;
@@ -270,6 +280,54 @@ void chained_map<T, Allocator>::reserve(std::size_t n)
 }
 
 template <typename T, typename Allocator>
+void chained_map<T, Allocator>::erase(std::size_t x)
+{
+  if(!table)
+    return;
+
+  Item p, q = HASH(x);
+
+  if (q->k == x) {
+    p = q->succ;
+    if(p) {
+      // move succ to head
+      q->i = p->i;
+      q->k = p->k;
+      q->succ = p->succ;
+      erase(p);
+      return;
+    }
+    destroy(q);
+    construct(q);
+    q->k = nullkey;
+    return;
+  }
+
+  while (q && q->k != x) {
+    p = q;
+    q = q->succ;
+  }
+
+  if (q == nullptr)
+    return;
+
+  p->succ = q->succ;
+
+  erase(q);
+}
+
+template <typename T, typename Allocator>
+void chained_map<T, Allocator>::erase(chained_map_elem<T>* q)
+{
+  destroy(q);
+  construct(q);
+  q->k = nullkey;
+  // append erased element to free chain.
+  q->succ = free;
+  free = q;
+}
+
+template <typename T, typename Allocator>
 void chained_map<T, Allocator>::clear()
 {
   if(!table)
@@ -299,9 +357,12 @@ template <typename T, typename Allocator>
 void chained_map<T, Allocator>::statistics() const
 { std::cout << "table_size: " << table_size <<"\n";
   std::size_t n = 0;
-  for (Item p = table; p < table + table_size; ++p)
+  Item table_mid = table + table_size;
+  for (Item p = table; p != table_mid; ++p)
      if (p ->k != nullkey) ++n;
-  std::size_t used_in_overflow = free - (table + table_size );
+  std::size_t used_in_overflow = 0;
+  for (Item p = table_mid; p != table_end; ++p)
+    if (p ->k != nullkey) ++used_in_overflow;
   n += used_in_overflow;
   std::cout << "number of entries: " << n << "\n";
   std::cout << "fraction of entries in first position: " <<
