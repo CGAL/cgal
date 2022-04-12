@@ -85,22 +85,22 @@ namespace CGAL {
       public Add_id<WithID>
   {
     template<unsigned int, class, class, class>
-    friend class Combinatorial_map_storage_1;
+    friend class CGAL::Combinatorial_map_storage_1;
 
     template<unsigned int, class, class, class>
-    friend class Generalized_map_storage_1;
+    friend class CGAL::Generalized_map_storage_1;
 
     template<unsigned int, unsigned int, class, class, class, class>
-    friend class CMap_linear_cell_complex_storage_1;
+    friend class CGAL::CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
+    friend class CGAL::GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
-    friend class Compact_container;
+    friend class CGAL::Compact_container;
 
     template <class, class>
-    friend class Concurrent_compact_container;
+    friend class CGAL::Concurrent_compact_container;
 
     template<class, class>
     friend struct internal::Init_id;
@@ -195,22 +195,22 @@ namespace CGAL {
                                     OnMerge, OnSplit, WithID>: public Add_id<WithID>
   {
     template<unsigned int, class, class, class>
-    friend class Combinatorial_map_storage_1;
+    friend class CGAL::Combinatorial_map_storage_1;
 
     template<unsigned int, class, class, class>
-    friend class Generalized_map_storage_1;
+    friend class CGAL::Generalized_map_storage_1;
 
     template<unsigned int, unsigned int, class, class, class, class>
-    friend class CMap_linear_cell_complex_storage_1;
+    friend class CGAL::CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
+    friend class CGAL::GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
-    friend class Compact_container;
+    friend class CGAL::Compact_container;
 
     template <class, class>
-    friend class Concurrent_compact_container;
+    friend class CGAL::Concurrent_compact_container;
 
     template<class, class>
     friend struct internal::Init_id;
@@ -311,22 +311,22 @@ namespace CGAL {
     public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>
   {
     template<unsigned int, class, class, class>
-    friend class Combinatorial_map_storage_1;
+    friend class CGAL::Combinatorial_map_storage_1;
 
     template<unsigned int, class, class, class>
-    friend class Generalized_map_storage_1;
+    friend class CGAL::Generalized_map_storage_1;
 
     template<unsigned int, unsigned int, class, class, class, class>
-    friend class CMap_linear_cell_complex_storage_1;
+    friend class CGAL::CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
+    friend class CGAL::GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
-    friend class Compact_container;
+    friend class CGAL::Compact_container;
 
     template <class, class>
-    friend class Concurrent_compact_container;
+    friend class CGAL::Concurrent_compact_container;
 
   public:
     typedef Tag_                             Supports_cell_dart;
@@ -351,22 +351,22 @@ namespace CGAL {
     public Info_for_cell_attribute<Info_>
   {
     template<unsigned int, class, class, class>
-    friend class Combinatorial_map_storage_1;
+    friend class CGAL::Combinatorial_map_storage_1;
 
     template<unsigned int, class, class, class>
-    friend class Generalized_map_storage_1;
+    friend class CGAL::Generalized_map_storage_1;
 
     template<unsigned int, unsigned int, class, class, class, class>
-    friend class CMap_linear_cell_complex_storage_1;
+    friend class CGAL::CMap_linear_cell_complex_storage_1;
 
     template<unsigned int, unsigned int, class, class, class, class>
-    friend class GMap_linear_cell_complex_storage_1;
+    friend class CGAL::GMap_linear_cell_complex_storage_1;
 
     template <class, class, class, class>
-    friend class Compact_container;
+    friend class CGAL::Compact_container;
 
     template <class, class>
-    friend class Concurrent_compact_container;
+    friend class CGAL::Concurrent_compact_container;
 
   public:
     typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit, WithID> Self;

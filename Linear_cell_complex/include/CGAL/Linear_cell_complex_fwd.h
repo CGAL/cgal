@@ -89,17 +89,17 @@ template < unsigned int d_, unsigned int ambient_dim = d_,
 // TODO READD CGAL::Tag_false> >
 class Linear_cell_complex_for_combinatorial_map;
 
-/* TODO GMap_linear_cell_complex_storage_2
-       template < unsigned int d_, unsigned int ambient_dim = d_,
-                 class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-                 class Items_ = Linear_cell_complex_min_items,
-                 class Alloc_ = CGAL_ALLOCATOR(int),
-                 template<unsigned int,class,class,class,class>
-                 class CMap = Generalized_map_base,
-                 class Storage_ = GMap_linear_cell_complex_storage_2<d_, ambient_dim,
-                                                                     Traits_, Items_, unsigned int>>
+template < unsigned int d_, unsigned int ambient_dim = d_,
+           class Traits_ = Linear_cell_complex_traits<ambient_dim>,
+           class Items_ = Linear_cell_complex_min_items,
+           class Alloc_ = CGAL_ALLOCATOR(int),
+           template<unsigned int,class,class,class,class>
+           class CMap = Generalized_map_base,
+           class Storage_ = GMap_linear_cell_complex_storage_2<d_, ambient_dim,
+                                                               Traits_, Items_,
+                                                               Alloc_, unsigned int>>
       // TODO READD CGAL::Tag_false> >
-        class Linear_cell_complex_for_generalized_map; */
+class Linear_cell_complex_for_generalized_map;
 } // namespace Index
 
 } // CGAL

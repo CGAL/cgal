@@ -14,7 +14,6 @@
 
 #include <CGAL/Compact_container_with_index_2.h>
 #include <CGAL/Dart.h>
-#include <CGAL/Handle_hash_function.h>
 #include <bitset>
 
 #include <boost/config.hpp>
@@ -31,14 +30,6 @@ namespace CGAL {
 
     template<typename Concurrent_tag, class T, class Alloc_>
     struct Container_type;
-
-    struct Index_hash_function {
-      typedef std::size_t result_type;
-      template <class H>
-      std::size_t operator() (const H& h) const {
-        return h;
-      }
-    };
   }
 
   // Storage with combinatorial maps using index
@@ -192,6 +183,8 @@ namespace CGAL {
       CGAL_assertion(i <= dimension);
       return mdarts[dh].mf[i]==null_dart_handle;
     }
+    bool is_perforated(Dart_const_handle /*dh*/) const
+    { return false; }
 
     /// Set simultaneously all the marks of this dart to a given value.
     void set_dart_marks(Dart_const_handle ADart,
@@ -225,24 +218,24 @@ namespace CGAL {
     // Access to beta maps
     Dart_handle get_beta(Dart_handle ADart, int B1)
     {
-      CGAL_assertion(B1>=0 && B1<=dimension);
+      CGAL_assertion(B1>=0 && B1<=(int)dimension);
       return mdarts[ADart].mf[B1];
     }
     Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
     {
-      CGAL_assertion(B1>=0 && B1<=dimension);
+      CGAL_assertion(B1>=0 && B1<=(int)dimension);
       return  mdarts[ADart].mf[B1];
     }
     template<int B1>
     Dart_handle get_beta(Dart_handle ADart)
     {
-      CGAL_assertion(B1>=0 && B1<=dimension);
+      CGAL_assertion(B1>=0 && B1<=(int)dimension);
       return  mdarts[ADart].mf[B1];
     }
     template<int B1>
     Dart_const_handle get_beta(Dart_const_handle ADart) const
     {
-      CGAL_assertion(B1>=0 && B1<=dimension);
+      CGAL_assertion(B1>=0 && B1<=(int)dimension);
       return  mdarts[ADart].mf[B1];
     }
 
@@ -417,11 +410,11 @@ namespace CGAL {
   protected:
     // Set the handle on the i th attribute
     template<unsigned int i>
-    void basic_set_dart_attribute(Dart_handle ADart,
+    void basic_set_dart_attribute(Dart_handle dh,
                                   typename Attribute_handle<i>::type ah)
     {
       std::get<Helper::template Dimension_index<i>::value>
-        (mdarts[ADart].mattribute_handles) = ah;
+        (mdarts[dh].mattribute_handles) = ah;
     }
 
     /** Link a dart with a given dart for a given dimension.
@@ -467,6 +460,9 @@ namespace CGAL {
     /// Dart container.
     Dart_container mdarts;
     Dart_range mdarts_range;
+
+    /// Container for the null_dart_handle: unused; to be compatible with handle version
+    Dart_container mnull_dart_container;
     
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;

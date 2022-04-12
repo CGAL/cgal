@@ -34,9 +34,6 @@ namespace CGAL {
     struct Container_type;
   }
 
-  /** @file Combinatorial_map_storages.h
-   * Definition of storages for dD Combinatorial map.
-   */
   // Storage of darts with compact container, beta with handles
   template<unsigned int d_, class Items_, class Alloc_, class Concurrent_tag >
   class Combinatorial_map_storage_1

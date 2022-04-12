@@ -21,6 +21,7 @@
 #include <CGAL/Generalized_map/internal/Generalized_map_sewable.h>
 
 #include <CGAL/Generalized_map_storages.h>
+#include <CGAL/Generalized_map_storages_with_index.h>
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Generalized_map_operations.h>
@@ -37,8 +38,6 @@
 #include <unordered_map>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/config.h>
-
-#include <unordered_map>
 
 #if defined( __INTEL_COMPILER )
 // Workarounf for warning in function basic_link_beta_0
@@ -102,6 +101,8 @@ namespace CGAL {
     typedef typename Base::Items Items;
     typedef typename Base::Alloc Alloc;
     typedef typename Base::Use_index Use_index;
+    typedef typename Base::Dart_range Dart_range;
+    typedef typename Base::Dart_const_range Dart_const_range;
 
     static const size_type NB_MARKS = Base::NB_MARKS;
     static const size_type INVALID_MARK = NB_MARKS;
@@ -128,10 +129,9 @@ namespace CGAL {
     using Base::info_of_attribute;
     using Base::info;
     using Base::dart;
-
-    /// Typedef for Dart_range, a range through all the darts of the map.
-    typedef Dart_container       Dart_range;
-    typedef const Dart_container Dart_const_range;
+    using Base::darts;
+    using Base::number_of_darts;
+    using Base::is_empty;
 
     /// Typedef for attributes
     template<int i>
@@ -262,7 +262,7 @@ namespace CGAL {
 
           internal::Copy_dart_info_functor
             <typename GMap2::Refs, Refs, DartInfoConverter>::run
-            (static_cast<const typename GMap2::Refs&>(amap), static_cast<Refs&>(*this),
+            (static_cast<typename GMap2::Refs&>(amap), static_cast<Refs&>(*this),
              it, new_dart, dartinfoconverter);
         }
       }
@@ -545,6 +545,7 @@ namespace CGAL {
      */
     void clear()
     {
+      this->clear_storage();
       mdarts.clear();
       for ( size_type i = 0; i < NB_MARKS; ++i)
         this->mnb_marked_darts[i]  = 0;
@@ -552,12 +553,6 @@ namespace CGAL {
       internal::Clear_all::run(mattribute_containers);
       this->init_storage();
     }
-
-    /** Test if the map is empty.
-     *  @return true iff the map is empty.
-     */
-    bool is_empty() const
-    { return mdarts.empty(); }
 
     friend std::ostream& operator<< (std::ostream& os, const Self& amap)
     {
@@ -604,13 +599,30 @@ namespace CGAL {
       mdarts.erase(adart);
     }
 
+    /** Erase a dart from the list of darts. Restricted version
+     *  which do not delete attribute having no more dart associated.
+     * @param adart the dart to erase.
+     */
+    void restricted_erase_dart(Dart_handle adart)
+    {
+      // 1) We update the number of marked darts.
+      for ( size_type i = 0; i < mnb_used_marks; ++i)
+      {
+        if (is_marked(adart, mused_marks_stack[i]))
+          --mnb_marked_darts[mused_marks_stack[i]];
+      }
+
+      // 2) We update the attribute_ref_counting.
+      Helper::template Foreach_enabled_attributes
+        <internal::Restricted_decrease_attribute_functor<Self> >::run(*this,adart);
+
+      // 3) We erase the dart.
+      mdarts.erase(adart);
+    }
+
     /// @return true if dh points to a used dart (i.e. valid).
     bool is_dart_used(Dart_const_handle dh) const
     { return mdarts.is_used(dh); }
-
-    /// @return a Dart_range (range through all the darts of the map).
-    Dart_range& darts()             { return mdarts;}
-    Dart_const_range& darts() const { return mdarts; }
 
     /** Get the first dart of this map.
      * @return the first dart.
@@ -618,12 +630,12 @@ namespace CGAL {
     Dart_handle first_dart()
     {
       if (darts().begin() == darts().end()) return null_handle;
-      return mdarts.begin();
+      return darts().begin();
     }
     Dart_const_handle first_dart() const
     {
       if (darts().begin() == darts().end()) return null_handle;
-      return mdarts.begin();
+      return darts().begin();
     }
 
     /// @return the Dart_handle corresponding to the given dart.
@@ -670,6 +682,31 @@ namespace CGAL {
     }
 
     // Set the handle on the i th attribute
+    // Restricted version which do not use delete attributes when their ref
+    // counting become null, nor that update the dart of attribute.
+    template<unsigned int i>
+    void restricted_set_dart_attribute(Dart_handle dh,
+                                       typename Attribute_handle<i>::type ah)
+    {
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "set_dart_attribute<i> called but i-attributes are disabled.");
+
+      if ( this->template attribute<i>(dh)==ah ) return;
+
+      if ( this->template attribute<i>(dh)!=null_handle )
+      {
+        this->template dec_attribute_ref_counting<i>(this->template attribute<i>(dh));
+      }
+
+      Base::template basic_set_dart_attribute<i>(dh, ah);
+
+      if ( ah!=null_handle )
+      {
+        this->template inc_attribute_ref_counting<i>(ah);
+      }
+    }
+
+    // Set the handle on the i th attribute
     template<unsigned int i>
     void set_dart_attribute(Dart_handle dh,
                             typename Attribute_handle<i>::type ah)
@@ -712,6 +749,8 @@ namespace CGAL {
 
       Helper::template Foreach_enabled_attributes
           <internal::Init_attribute_functor<Self> >::run(*this, adart);
+
+      internal::Init_id<Dart_container>::run(mdarts, adart);
     }
     // Initialize a given dart: all alpha to this and all
     // attributes to null, marks are given.
@@ -725,6 +764,8 @@ namespace CGAL {
 
       Helper::template Foreach_enabled_attributes
           <internal::Init_attribute_functor<Self> >::run(*this, adart);
+
+      internal::Init_id<Dart_container>::run(mdarts, adart);
     }
 
   public:
@@ -1168,7 +1209,7 @@ namespace CGAL {
     /** Test if the map is valid.
      * @return true iff the map is valid.
      */
-    bool is_valid() const
+    bool is_valid(bool show_errors=true) const
     {
       bool valid = true;
       unsigned int i = 0, j = 0;
@@ -1194,9 +1235,11 @@ namespace CGAL {
           for ( i = 0; i <= dimension; ++i)
             if (alpha(it, i, i)!=it)
             {
-              std::cerr << "Map not valid: alpha(" << i
+              if (show_errors)
+              { std::cerr << "Map not valid: alpha(" << i
                         << ") is not an involution for dart "
                         <<darts().index(it)<< std::endl;
+              }
               valid = false;
             }
 
@@ -1206,10 +1249,12 @@ namespace CGAL {
             for ( j = i + 2; j <= dimension; ++j)
               if (alpha(it, i, j)!=alpha(it, j, i))
               {
-                std::cerr <<"Map not valid: alpha(" << i
-                          <<") o alpha(" << j
-                          <<") is not an involution for dart "
-                          <<darts().index(it)<< std::endl;
+                if (show_errors)
+                { std::cerr <<"Map not valid: alpha(" << i
+                            <<") o alpha(" << j
+                            <<") is not an involution for dart "
+                            <<darts().index(it)<< std::endl;
+                }
                 valid = false;
               }
           }
@@ -1258,10 +1303,6 @@ namespace CGAL {
         Foreach_enabled_attributes<internal::Cleanup_useless_attributes<Self> >::
           run(*this);
     }
-
-    /// @return the number of darts.
-    size_type number_of_darts() const
-    { return mdarts.size(); }
 
     /// @return an estimation of the bytes used by the generalized map.
     size_type bytes() const
@@ -1375,6 +1416,8 @@ namespace CGAL {
      // Reinitialize the ref counting of the new attribute. This is normally
      // not required except if create_attribute is used as "copy contructor".
      this->template init_attribute_ref_counting<i>(res);
+     internal::Init_id<typename Attribute_range<i>::type>::run
+         (this->template attributes<i>(), res);
      return res;
     }
 
@@ -1757,6 +1800,30 @@ namespace CGAL {
       else topo_unsew<i>(adart);
     }
 
+    /// Keep the biggest connected component.
+    /// @return the size (in number of darts) of the biggest cc.
+    std::size_t keep_biggest_connected_component()
+    {
+      std::map<std::size_t, Dart_handle> ccs;
+
+      size_type treated=get_new_mark();
+      for (auto it=darts().begin(), itend=darts().end(); it!=itend; ++it)
+      {
+        if (!is_marked(it, treated))
+        { ccs[mark_cell<dimension+1>(it, treated)]=it; }
+      }
+
+      if (ccs.size()>1)
+      { // Here all darts are marked
+        this->template unmark_cell<dimension+1>(ccs.rbegin()->second, treated); // Unmark the biggest cc
+        erase_marked_darts(treated);
+      }
+
+      free_mark(treated);
+
+      return ccs.rbegin()->first;
+    }
+
     /** Count the marked cells (at least one marked dart).
      * @param amark the mark to consider.
      * @param avector containing the dimensions of the cells to count.
@@ -1890,6 +1957,7 @@ namespace CGAL {
     }
 
   public:
+
     /// @return the positive turn between the two given darts.
     //  @pre next(d1) and d2 must belong to the same vertex.
     std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
@@ -2527,7 +2595,7 @@ namespace CGAL {
         if (!is_marked(current, m1))
         {
           if (map2.is_marked(other, m2))
-            match=false;
+          { match=false; }
           else
           {
             bijection[current] = other;
@@ -3050,7 +3118,7 @@ namespace CGAL {
      * @param adart an intial dart
      * @return true iff the volume containing adart is a combinatorial tetrahedron.
      */
-    bool is_volume_combinatorial_tetrahedron(Dart_const_handle d1)
+    bool is_volume_combinatorial_tetrahedron(Dart_const_handle d1) const
     {
       Dart_const_handle d2 = alpha(d1, 0, 2);
       Dart_const_handle d3 = alpha(d2, 1, 2);
@@ -3127,7 +3195,7 @@ namespace CGAL {
      * @param adart an intial dart
      * @return true iff the volume containing adart is a combinatorial hexahedron.
      */
-    bool is_volume_combinatorial_hexahedron(Dart_const_handle d1)
+    bool is_volume_combinatorial_hexahedron(Dart_const_handle d1) const
     {
       Dart_const_handle d2 = alpha(d1,1,0,1,2);
       Dart_const_handle d3 = alpha(d2,1,0,1,2);
@@ -3612,7 +3680,7 @@ namespace CGAL {
    *  @param afirst iterator on the beginning of the path.
    *  @param alast  iterator on the end of the path.
    *  @return true iff a 2-cell can be inserted along the path.
-   *          the path is a sequence of dartd, one per edge
+   *          the path is a sequence of dart, one per edge
    *          where the face will be inserted.
    */
   template <class InputIterator>
@@ -3918,6 +3986,68 @@ namespace CGAL {
       Base(amap, converters, dartinfoconverter, pointconverter)
     {}
   };
+
+  namespace Index
+  {
+  template<unsigned int d_, class Items_, class Alloc_,class Storage_>
+  class Generalized_map :
+    public Generalized_map_base<d_,
+                                  Generalized_map<d_,Items_,Alloc_, Storage_>,
+                                  Items_, Alloc_, Storage_ >
+  {
+  public:
+    typedef Generalized_map<d_, Items_,Alloc_, Storage_>  Self;
+    typedef Generalized_map_base<d_, Self, Items_, Alloc_, Storage_> Base;
+
+    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_const_handle Dart_const_handle;
+    typedef typename Base::Alloc Alloc;
+    typedef typename Base::Exception_no_more_available_mark
+    Exception_no_more_available_mark;
+
+    Generalized_map() : Base()
+    {}
+
+    Generalized_map(const Self & amap) : Base(amap)
+    {}
+
+    Generalized_map(Self && amap) : Base(amap)
+    {}
+
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2>
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap) :
+      Base(amap)
+    {}
+
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2, typename Converters>
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                    const Converters& converters) :
+      Base(amap, converters)
+    {}
+
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter>
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                    const Converters& converters,
+                    const DartInfoConverter& dartinfoconverter) :
+      Base(amap, converters, dartinfoconverter)
+    {}
+
+    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
+              typename Storage2,
+              typename Converters, typename DartInfoConverter,
+              typename PointConverter >
+    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+                    const Converters& converters,
+                    const DartInfoConverter& dartinfoconverter,
+                    const PointConverter& pointconverter) :
+      Base(amap, converters, dartinfoconverter, pointconverter)
+    {}
+  };
+  } // namespace Index
 
 } // namespace CGAL
 

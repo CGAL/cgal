@@ -14,7 +14,6 @@
 
 #include <CGAL/Compact_container_with_index_2.h>
 #include <CGAL/Dart.h>
-#include <CGAL/Combinatorial_map_storages_with_index.h>
 #include <bitset>
 
 #include <boost/config.hpp>
@@ -33,16 +32,13 @@ namespace CGAL {
     struct Container_type;
   }
 
-  /** @file CMap_linear_cell_complex_storages_with_index.h
-   * Definition of storages for dD Linear cell complex for combinatorial maps index version.
-   */
-  // Storage with combinatorial maps using index
+  // Storage of darts with compact container, alpha using index
   // Copy of Combinatorial_map_storage_2 and add new types related
   // to geometry (not possible to inherith because we use Self type
   // as template parameter of Dart_wrapper. If we inherit, Self is not
-  // the correct type.)
-  template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_, class Index_type_ >
+  // the correct type).
+  template<unsigned int d_, unsigned int ambient_dim, class Traits_, 
+           class Items_, class Alloc_, class Index_type_ >
   class CMap_linear_cell_complex_storage_2
   {
   public:
@@ -206,6 +202,8 @@ namespace CGAL {
       CGAL_assertion(i <= dimension);
       return mdarts[dh].mf[i]==null_dart_handle;
     }
+    bool is_perforated(Dart_const_handle /*dh*/) const
+    { return false; }
 
     /// Set simultaneously all the marks of this dart to a given value.
     void set_dart_marks(Dart_const_handle ADart,
@@ -239,24 +237,24 @@ namespace CGAL {
     // Access to beta maps
     Dart_handle get_beta(Dart_handle ADart, int B1)
     {
-      CGAL_assertion(B1>=0 && B1<=dimension);
+      CGAL_assertion(B1>=0 && B1<=(int)dimension);
       return mdarts[ADart].mf[B1];
     }
     Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
     {
-      CGAL_assertion(B1>=0 && B1<=dimension);
+      CGAL_assertion(B1>=0 && B1<=(int)dimension);
       return  mdarts[ADart].mf[B1];
     }
     template<int B1>
     Dart_handle get_beta(Dart_handle ADart)
     {
-      CGAL_assertion(B1>=0 && B1<=dimension);
+      CGAL_assertion(B1>=0 && B1<=(int)dimension);
       return  mdarts[ADart].mf[B1];
     }
     template<int B1>
     Dart_const_handle get_beta(Dart_const_handle ADart) const
     {
-      CGAL_assertion(B1>=0 && B1<=dimension);
+      CGAL_assertion(B1>=0 && B1<=(int)dimension);
       return  mdarts[ADart].mf[B1];
     }
 
@@ -445,11 +443,11 @@ namespace CGAL {
   protected:
     // Set the handle on the i th attribute
     template<unsigned int i>
-    void basic_set_dart_attribute(Dart_handle ADart,
+    void basic_set_dart_attribute(Dart_handle dh,
                                   typename Attribute_handle<i>::type ah)
     {
       std::get<Helper::template Dimension_index<i>::value>
-          (mdarts[ADart].mattribute_handles) = ah;
+          (mdarts[dh].mattribute_handles) = ah;
     }
 
     /** Link a dart with a given dart for a given dimension.
@@ -496,6 +494,9 @@ namespace CGAL {
     Dart_container mdarts;
     Dart_range mdarts_range;
 
+    /// Container for the null_dart_handle: unused; to be compatible with handle version
+    Dart_container mnull_dart_container;
+
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };
@@ -508,11 +509,11 @@ namespace CGAL {
   null_dart_handle(0);
 
   /// null_handle
-  template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_, class Index_type_>
-  typename  CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_, Index_type_>::
+  template<unsigned int d_, unsigned int ambient_dim, class Traits_,
+           class Items_, class Alloc_, class Index_type_>
+  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_, Index_type_>::
   Null_handle_type CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                                Items_, Alloc_, Index_type_>::
+                                                      Items_, Alloc_, Index_type_>::
   null_handle((std::numeric_limits<Index_type_>::max)()/2);
 
 } // namespace CGAL

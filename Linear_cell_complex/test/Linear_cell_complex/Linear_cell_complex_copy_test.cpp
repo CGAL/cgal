@@ -23,10 +23,9 @@ template<unsigned int d, unsigned int ambient_dim,
 using My_lcc_cmap=CGAL::Index::Linear_cell_complex_for_combinatorial_map
 <d, ambient_dim, Traits, Items>;
 
-// TODO use CGAL::Index::Linear_cell_complex_for_generalized_map
 template<unsigned int d, unsigned int ambient_dim,
          class Traits, class Items>
-using My_lcc_gmap=CGAL::Linear_cell_complex_for_generalized_map
+using My_lcc_gmap=CGAL::Index::Linear_cell_complex_for_generalized_map
 <d, ambient_dim, Traits, Items>;
 #else
 template<class Refs, class Info>
@@ -56,7 +55,7 @@ struct Map_2_dart_items
   {
     typedef My_cell_attribute< Refs, int > Int_attrib;
     typedef My_cell_attribute< Refs, double > Double_attrib;
-    typedef My_cell_attribute< Refs, double > Double_attrib_wp;
+    typedef My_cell_attribute_with_point< Refs, double > Double_attrib_wp;
     typedef std::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
   };
 };

@@ -25,6 +25,15 @@ namespace CGAL {
   template<unsigned int, class, class, class>
   class Combinatorial_map_storage_2;
 
+  template<unsigned int, class, class, class>
+  class Generalized_map_storage_2;
+
+  template<unsigned int, unsigned int, class, class, class, class>
+  class CMap_linear_cell_complex_storage_2;
+
+  template<unsigned int, unsigned int, class, class, class, class>
+  class GMap_linear_cell_complex_storage_2;
+
   namespace Index
   {
   // Versions to use with containers using index
@@ -38,11 +47,20 @@ namespace CGAL {
   class Cell_attribute_without_info<Refs, Tag_false,
                                     OnMerge, OnSplit>
   {
+    template <class, class, class, class>
+    friend class CGAL::Compact_container_with_index_2;
+
     template<unsigned int, class, class, class>
     friend class CGAL::Combinatorial_map_storage_2;
 
-    template <class, class, class, class>
-    friend class CGAL::Compact_container_with_index_2;
+    template<unsigned int, class, class, class>
+    friend class CGAL::Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CGAL::CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CGAL::GMap_linear_cell_complex_storage_2;
 
   public:
     typedef Tag_false                        Supports_cell_dart;
@@ -83,7 +101,7 @@ namespace CGAL {
     bool operator!=(const Cell_attribute_without_info& other) const
     { return !operator==(other); }
 
-    // protected:
+  protected:
     /// Contructor without parameter.
     Cell_attribute_without_info(): mrefcounting(0)
     {}
@@ -130,11 +148,20 @@ namespace CGAL {
   class Cell_attribute_without_info<Refs, Tag_true,
                                     OnMerge, OnSplit>
   {
+    template <class, class, class, class>
+    friend class CGAL::Compact_container_with_index_2;
+
     template<unsigned int, class, class, class>
     friend class CGAL::Combinatorial_map_storage_2;
 
-    template <class, class, class, class>
-    friend class CGAL::Compact_container_with_index;
+    template<unsigned int, class, class, class>
+    friend class CGAL::Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CGAL::CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CGAL::GMap_linear_cell_complex_storage_2;
 
   public:
     typedef Tag_true                         Supports_cell_dart;
@@ -166,7 +193,7 @@ namespace CGAL {
     void set_dart(Dart_handle adart) { mdart = adart; }
 
     /// Test if the cell is valid.
-    /// A cell is valid if its dart is not NULL.
+    /// A cell is valid if its dart is not null_handle.
     bool is_valid() const
     { return mdart!=Refs::null_handle; }
 
@@ -212,11 +239,11 @@ namespace CGAL {
     { return mdart.for_compact_container_with_index(); }
 
   private:
-    /// Reference counting: the number of darts linked to this cell.
-    std::size_t mrefcounting;
-
     /// The dart handle associated with the cell.
     Dart_handle mdart;
+
+    /// Reference counting: the number of darts linked to this cell.
+    std::size_t mrefcounting;
   };
 
   /// Cell associated with an attribute, with or without info depending
@@ -234,11 +261,20 @@ namespace CGAL {
     public Cell_attribute_without_info<Refs, Tag_,
                                        OnSplit, OnMerge>
   {
-    template < unsigned int, class, class, class, class >
-    friend class CGAL::Combinatorial_map_base;
-
     template <class, class, class, class>
     friend class CGAL::Compact_container_with_index_2;
+
+    template<unsigned int, class, class, class>
+    friend class CGAL::Combinatorial_map_storage_2;
+
+    template<unsigned int, class, class, class>
+    friend class CGAL::Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CGAL::CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CGAL::GMap_linear_cell_complex_storage_2;
 
   public:
     typedef Tag_                             Supports_cell_dart;
@@ -249,7 +285,7 @@ namespace CGAL {
     typedef OnSplit                          On_split;
     typedef void                             Info;
 
-    //  protected:
+  protected:
     /// Default contructor.
     Cell_attribute()
     {}
@@ -263,11 +299,20 @@ namespace CGAL {
                                        OnMerge, OnSplit>,
     public CGAL::Info_for_cell_attribute<Info_>
   {
-    template < unsigned int, class, class, class, class >
-    friend class CGAL::Combinatorial_map_base;
-
     template <class, class, class, class>
     friend class CGAL::Compact_container_with_index_2;
+
+    template<unsigned int, class, class, class>
+    friend class CGAL::Combinatorial_map_storage_2;
+
+    template<unsigned int, class, class, class>
+    friend class CGAL::Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CGAL::CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CGAL::GMap_linear_cell_complex_storage_2;
 
   public:
     typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit> Self;

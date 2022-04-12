@@ -29,32 +29,26 @@ namespace CGAL {
    * points associated to all vertices.
    */
 
-  // Linear_cell_complex_for_combinatorial_map class.
-  // No difference with class Linear_cell_complex_base except the default
-  // template parameters for Refs class which is a combinatorial map.
+  // Linear_cell_complex_for_combinatorial_map_base class.
   template < unsigned int d_, unsigned int ambient_dim,
              class Traits_, class Items_, class Alloc_,
              template<unsigned int,class,class,class,class> class CMap,
-             class Storage_ >
+             class Refs_, class Storage_ >
     class Linear_cell_complex_for_combinatorial_map_base:
         public Linear_cell_complex_base<d_, ambient_dim, Traits_,
-                                        Items_, Alloc_, CMap,
-                                        Linear_cell_complex_for_combinatorial_map
-                                        <d_, ambient_dim,
-                                         Traits_, Items_,
-                                         Alloc_, CMap, Storage_>,
-                                        Storage_>
+                                        Items_, Alloc_, CMap, Refs_, Storage_>
     {
     public:
       typedef Linear_cell_complex_for_combinatorial_map_base<d_, ambient_dim,
-                          Traits_, Items_, Alloc_, CMap, Storage_>  Self;
+                          Traits_, Items_, Alloc_, CMap, Refs_, Storage_>  Self;
 
       typedef Linear_cell_complex_base<d_, ambient_dim,
-                          Traits_, Items_, Alloc_, CMap, Self, Storage_> Base;
+                          Traits_, Items_, Alloc_, CMap, Refs_, Storage_> Base;
 
       typedef Traits_ Traits;
       typedef Items_  Items;
       typedef Alloc_  Alloc;
+      typedef Refs_   Refs;
 
       static const unsigned int ambient_dimension = Base::ambient_dimension;
       static const unsigned int dimension = Base::dimension;
@@ -104,29 +98,29 @@ namespace CGAL {
       template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
-                class Storage2>
+                class Ref2, class Storage2>
       Linear_cell_complex_for_combinatorial_map_base
       (const Linear_cell_complex_for_combinatorial_map_base<d2, ambient_dim2,
-       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc) : Base(alcc)
+       Traits2, Items2, Alloc2, CMap2, Ref2, Storage2>& alcc) : Base(alcc)
       {}
 
       template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
-                class Storage2, typename Converters>
+                class Ref2, class Storage2, typename Converters>
       Linear_cell_complex_for_combinatorial_map_base
       (const Linear_cell_complex_for_combinatorial_map_base<d2, ambient_dim2,
-       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       Traits2, Items2, Alloc2, CMap2, Ref2, Storage2>& alcc,
        const Converters& converters) : Base(alcc, converters)
       {}
 
       template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
-                class Storage2, typename Converters, typename DartInfoConverter>
+                class Ref2, class Storage2, typename Converters, typename DartInfoConverter>
       Linear_cell_complex_for_combinatorial_map_base
       (const Linear_cell_complex_for_combinatorial_map_base<d2, ambient_dim2,
-       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       Traits2, Items2, Alloc2, CMap2, Ref2, Storage2>& alcc,
        const Converters& converters,
        const DartInfoConverter& dartinfoconverter) :
         Base(alcc, converters, dartinfoconverter)
@@ -135,11 +129,11 @@ namespace CGAL {
       template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
                 class Items2, class Alloc2,
                 template<unsigned int,class,class,class,class> class CMap2,
-                class Storage2, typename Converters,
+                class Ref2, class Storage2, typename Converters,
                 typename DartInfoConverter, typename PointConverter>
       Linear_cell_complex_for_combinatorial_map_base
       (const Linear_cell_complex_for_combinatorial_map_base<d2, ambient_dim2,
-       Traits2, Items2, Alloc2, CMap2, Storage2>& alcc,
+       Traits2, Items2, Alloc2, CMap2, Ref2, Storage2>& alcc,
        const Converters& converters, const DartInfoConverter& dartinfoconverter,
        const PointConverter& pointconverter) :
         Base(alcc, converters, dartinfoconverter, pointconverter)
@@ -232,14 +226,16 @@ namespace CGAL {
              class Storage_ >
     class Linear_cell_complex_for_combinatorial_map:
         public Linear_cell_complex_for_combinatorial_map_base
-        <d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_>
+        <d_, ambient_dim, Traits_, Items_, Alloc_, CMap,
+        Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_,
+        Items_, Alloc_, CMap, Storage_>, Storage_>
     {
     public:
      typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
                           Traits_, Items_, Alloc_, CMap, Storage_>  Self;
 
       typedef Linear_cell_complex_for_combinatorial_map_base<d_, ambient_dim,
-                          Traits_, Items_, Alloc_, CMap, Storage_> Base;
+                          Traits_, Items_, Alloc_, CMap, Self, Storage_> Base;
 
       typedef Traits_ Traits;
       typedef Items_  Items;
@@ -302,6 +298,14 @@ namespace CGAL {
        const PointConverter& pointconverter) :
         Base(alcc, converters, dartinfoconverter, pointconverter)
       {}
+
+      Self & operator= (const Self & alcc)
+      {
+        Base::operator=(alcc);
+        return *this;
+      }
+
+      void clear() { Base::clear(); } //need explicit definition for Has_member_clear in bgl helpers
 };
 
 namespace Index
@@ -317,14 +321,16 @@ template< unsigned int d_, unsigned int ambient_dim,
           class CMap, class Storage_>
 class Linear_cell_complex_for_combinatorial_map:
     public Linear_cell_complex_for_combinatorial_map_base
-    <d_, ambient_dim, Traits_, Items_, Alloc_, CMap, Storage_>
+    <d_, ambient_dim, Traits_, Items_, Alloc_, CMap,
+    Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_,
+    Items_, Alloc_, CMap, Storage_>, Storage_>
 {
 public:
   typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim,
   Traits_, Items_, Alloc_, CMap, Storage_>  Self;
 
   typedef Linear_cell_complex_for_combinatorial_map_base<d_, ambient_dim,
-  Traits_, Items_, Alloc_, CMap, Storage_> Base;
+  Traits_, Items_, Alloc_, CMap, Self, Storage_> Base;
 
   typedef Traits_ Traits;
   typedef Items_  Items;
@@ -387,6 +393,14 @@ public:
    const PointConverter& pointconverter) :
     Base(alcc, converters, dartinfoconverter, pointconverter)
   {}
+
+  Self & operator= (const Self & alcc)
+  {
+    Base::operator=(alcc);
+    return *this;
+  }
+
+  void clear() { Base::clear(); } //need explicit definition for Has_member_clear in bgl helpers
 };
 } // namespace Index
 } // namespace CGAL

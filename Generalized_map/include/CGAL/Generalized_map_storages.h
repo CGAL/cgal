@@ -34,17 +34,13 @@ namespace CGAL {
     struct Container_type;
   }
 
-  /** @file Generalized_map_storages.h
-   * Definition of storages for dD Generalized map.
-   */
-
   // Storage of darts with compact container, alpha with handles
   template<unsigned int d_, class Items_, class Alloc_, class Concurrent_tag >
   class Generalized_map_storage_1
   {
   public:
-    typedef Generalized_map_storage_1<d_, Items_, Alloc_, Concurrent_tag> Self;
-    typedef CGAL::Tag_false Use_index;
+    using Self=Generalized_map_storage_1<d_, Items_, Alloc_, Concurrent_tag>;
+    using Use_index=CGAL::Tag_false;
 
     typedef internal::Combinatorial_map_helper<Self>      Helper;
 
@@ -62,7 +58,6 @@ namespace CGAL {
     typedef typename internal::Container_type
                  <Concurrent_tag, Dart, Dart_allocator>::type Dart_container;
 
-
     typedef typename Dart_container::iterator             Dart_handle;
     typedef typename Dart_container::const_iterator       Dart_const_handle;
     typedef typename Dart_container::size_type            size_type;
@@ -72,7 +67,6 @@ namespace CGAL {
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
-
     template <typename T>
     struct Container_for_attributes :
       public internal::Container_type
@@ -109,14 +103,33 @@ namespace CGAL {
 
     typedef Handle_hash_function Hash_function;
 
+    typedef Dart_container       Dart_range;
+    typedef const Dart_container Dart_const_range;
+    /// @return a Dart_range (range through all the darts of the map).
+    Dart_range& darts()             { return mdarts;}
+    Dart_const_range& darts() const { return mdarts; }
+
     // Init
     void init_storage()
     { null_dart_handle=nullptr; }
 
-   /** Return if this dart is free for adimension.
+    void clear_storage()
+    {}
+
+    /** Test if the map is empty.
+     *  @return true iff the map is empty.
+     */
+    bool is_empty() const
+    { return mdarts.empty(); }
+
+    /// @return the number of darts.
+    size_type number_of_darts() const
+    { return mdarts.size(); }
+
+    /** Return if this dart is free for adimension.
      * @param dh a dart handle
      * @param i the dimension.
-     * @return true iff dh is linked with nullptr for \em adimension.
+     * @return true iff dh is linked with itself for \em adimension.
      */
     template<unsigned int i>
     bool is_free(Dart_const_handle dh) const

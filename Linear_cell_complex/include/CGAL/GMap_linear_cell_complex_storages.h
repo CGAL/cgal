@@ -13,6 +13,7 @@
 #define CGAL_GMAP_LINEAR_CELL_COMPLEX_STORAGES_H 1
 
 #include <CGAL/Compact_container.h>
+#include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Dart.h>
 #include <CGAL/Handle_hash_function.h>
 #include <bitset>
@@ -33,10 +34,6 @@ namespace CGAL {
     struct Container_type;
   }
 
-  /** @file GMap_linear_cell_complex_storages.h
-   * Definition of storages for dD Linear cell complex for generalized map.
-   */
-
   // Storage of darts with compact container, alpha with handles
   // Copy of Generalized_map_storage_1 and add new types related
   // to geometry (not possible to inherith because we use Self type
@@ -47,13 +44,13 @@ namespace CGAL {
   class GMap_linear_cell_complex_storage_1
   {
   public:
+    using Self=GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
+    Items_, Alloc_, Concurrent_tag>;
+    using Use_index=CGAL::Tag_false;
+
     typedef typename Traits_::Point  Point;
     typedef typename Traits_::Vector Vector;
     typedef typename Traits_::FT     FT;
-
-    typedef GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-    Items_, Alloc_, Concurrent_tag> Self;
-    typedef CGAL::Tag_false Use_index;
 
     typedef internal::Combinatorial_map_helper<Self>      Helper;
 
@@ -71,7 +68,6 @@ namespace CGAL {
     typedef typename internal::Container_type
                  <Concurrent_tag, Dart, Dart_allocator>::type Dart_container;
 
-
     typedef typename Dart_container::iterator              Dart_handle;
     typedef typename Dart_container::const_iterator        Dart_const_handle;
     typedef typename Dart_container::size_type             size_type;
@@ -81,7 +77,6 @@ namespace CGAL {
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
-
     template <typename T>
     struct Container_for_attributes :
       public internal::Container_type
@@ -127,14 +122,33 @@ namespace CGAL {
 
     typedef Handle_hash_function Hash_function;
 
+    typedef Dart_container       Dart_range;
+    typedef const Dart_container Dart_const_range;
+    /// @return a Dart_range (range through all the darts of the map).
+    Dart_range& darts()             { return mdarts;}
+    Dart_const_range& darts() const { return mdarts; }
+
     // Init
     void init_storage()
     { null_dart_handle=nullptr; }
 
+    void clear_storage()
+    {}
+
+    /** Test if the map is empty.
+     *  @return true iff the map is empty.
+     */
+    bool is_empty() const
+    { return mdarts.empty(); }
+
+     /// @return the number of darts.
+    size_type number_of_darts() const
+    { return mdarts.size(); }
+
    /** Return if this dart is free for adimension.
      * @param dh a dart handle
      * @param i the dimension.
-     * @return true iff dh is linked with nullptr for \em adimension.
+     * @return true iff dh is linked with itself for \em adimension.
      */
     template<unsigned int i>
     bool is_free(Dart_const_handle dh) const

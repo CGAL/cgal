@@ -71,6 +71,17 @@
 
 namespace CGAL {
 
+namespace internal
+{
+struct Index_hash_function {
+  typedef std::size_t result_type;
+  template <class H>
+  std::size_t operator() (const H& h) const {
+    return h;
+  }
+};
+}
+
 template < class T, class Allocator_, class Increment_policy,
            class IndexType = std::size_t >
 class Compact_container_with_index_2
@@ -346,6 +357,12 @@ public:
   {
     return alloc;
   }
+
+  size_type index(const_iterator cit) const
+  { return static_cast<size_type>(cit); }
+
+  size_type index(Index idx) const
+  { return static_cast<size_type>(idx); }
 
   // Returns whether the iterator "cit" is in the range [begin(), end()].
   // Complexity : O(#blocks) = O(sqrt(capacity())).
