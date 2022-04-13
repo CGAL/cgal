@@ -146,9 +146,9 @@ namespace Boost_MP_internal {
   // here we know that `intv` contains int64 numbers such that their msb is std::numeric_limits<double>::digits-1
   // TODO: possibly return denormals sometimes...
   inline
-  Interval_nt<false> shift_positive_interval( const Interval_nt<false>& intv, const int e ) {
-    CGAL_assertion(intv.inf() > 0.0);
-    CGAL_assertion(intv.sup() > 0.0);
+  std::pair<double,double> shift_positive_interval( const std::pair<double,double>& intv, const int e ) {
+    CGAL_assertion(intv.first > 0.0);
+    CGAL_assertion(intv.second > 0.0);
 
     CGAL_assertion_code(
     union {
@@ -160,23 +160,21 @@ namespace Boost_MP_internal {
 #endif
       double d;
     } conv;
-    conv.d = intv.inf();
+    conv.d = intv.first;
     )
     // Check that the exponent of intv.inf is 52, which corresponds to a 53 bit integer
     CGAL_assertion(conv.s.exp - ((1 << (11 - 1)) - 1) == std::numeric_limits<double>::digits - 1);
 
     typedef std::numeric_limits<double> limits;
 
-    //TODO: Add a test that fails without the -1 on the next line
     // warning: min_exponent and max_exponent are 1 more than what the name suggests
     if (e < limits::min_exponent - limits::digits)
-      return CGAL::Interval_nt<false>(0, (limits::min)());
+      return {0, (limits::min)()};
     if (e > limits::max_exponent - limits::digits)
-      return CGAL::Interval_nt<false>((limits::max)(), limits::infinity()); // intv is positive
+      return {(limits::max)(), limits::infinity()}; // intv is positive
 
     const double scale = std::ldexp(1.0, e); // ldexp call is exact
-    // TODO: multiply directly without using intervals
-    return scale * intv; // cases that would require a rounding mode have been handled above
+    return { scale * intv.first, scale * intv.second }; // cases that would require a rounding mode have been handled above
   }
 
   // This function checks if the computed interval is correct and if it is tight.
@@ -207,9 +205,9 @@ namespace Boost_MP_internal {
   std::pair<double, double> get_0ulp_interval( const int shift, const uint64_t p ) {
 
     const double pp_dbl = static_cast<double>(p);
-    const Interval_nt<false> intv(pp_dbl, pp_dbl);
+    const std::pair<double,double> intv(pp_dbl, pp_dbl);
 
-    return shift_positive_interval(intv, -shift).pair();
+    return shift_positive_interval(intv, -shift);
   }
 
   // This one returns 1 unit length interval.
@@ -218,8 +216,8 @@ namespace Boost_MP_internal {
 
     const double pp_dbl = static_cast<double>(p);
     const double qq_dbl = pp_dbl+1;
-    const Interval_nt<false> intv(pp_dbl, qq_dbl);
-    return shift_positive_interval(intv, -shift).pair();
+    const std::pair<double,double> intv(pp_dbl, qq_dbl);
+    return shift_positive_interval(intv, -shift);
   }
 
   // This is a version of to_interval that converts a rational type into a
