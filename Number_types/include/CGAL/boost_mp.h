@@ -186,6 +186,7 @@ namespace Boost_MP_internal {
   }
 
   // This one returns zero length interval that is inf = sup.
+  inline
   std::pair<double, double> get_0ulp_interval( const int shift, const uint64_t p ) {
 
     const double pp_dbl = static_cast<double>(p);
@@ -195,6 +196,7 @@ namespace Boost_MP_internal {
   }
 
   // This one returns 1 unit length interval.
+  inline
   std::pair<double, double> get_1ulp_interval( const int shift, const uint64_t p ) {
 
     const double pp_dbl = static_cast<double>(p);
