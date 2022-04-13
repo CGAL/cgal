@@ -302,9 +302,9 @@ namespace Boost_MP_internal {
       int e = static_cast<int>(n - num_dbl_digits);
       x >>= e;
       if (n - mindig > num_dbl_digits)
-	std::tie(l, u) = get_1ulp_interval(-e, static_cast<uint64_t>(x));
+        std::tie(l, u) = get_1ulp_interval(-e, static_cast<uint64_t>(x));
       else
-	std::tie(l, u) = get_0ulp_interval(-e, static_cast<uint64_t>(x));
+        std::tie(l, u) = get_0ulp_interval(-e, static_cast<uint64_t>(x));
     } else {
       l = u = static_cast<double>(static_cast<uint64_t>(x));
     }
