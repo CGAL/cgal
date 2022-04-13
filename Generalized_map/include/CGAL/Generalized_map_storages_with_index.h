@@ -33,21 +33,23 @@ namespace CGAL {
   }
 
   // Storage of darts with compact container, alpha with indices
-  template<unsigned int d_, class Items_, class Alloc_, class Index_type_ >
+  template<unsigned int d_, class Items_, class Alloc_>
   class Generalized_map_storage_2
   {
   public:
-    using Self=Generalized_map_storage_2<d_, Items_, Alloc_, Index_type_>;
+    using Self=Generalized_map_storage_2<d_, Items_, Alloc_>;
     using Use_index=CGAL::Tag_true;
-    using Index_type=Index_type_;
+    using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
 
     typedef internal::Combinatorial_map_helper<Self> Helper;
+
+    using Index_type=typename internal::Get_index_type<Items_>::type;
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;
 
     typedef typename internal::template Get_dart_info<Dart_wrapper>::type
                                                            Dart_info;
-    typedef CGAL::Index::Dart<d_, Self, Dart_info> Dart;
+    typedef CGAL::Dart<d_, Self, Dart_info> Dart;
 
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
@@ -67,6 +69,8 @@ namespace CGAL {
 
     typedef Dart_index Null_handle_type;
     static Null_handle_type null_handle;
+
+    using Type_for_compact_container=Index_type;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -114,7 +118,7 @@ namespace CGAL {
     
     // Init
     void init_storage()
-    { null_dart_handle=nullptr; }
+    {}
 
     void clear_storage()
     {}
@@ -388,13 +392,13 @@ namespace CGAL {
     void dart_link_alpha(Dart_handle adart, Dart_handle adart2)
     {
       CGAL_assertion(i <= dimension);
-      CGAL_assertion(adart!=nullptr && adart2!=nullptr);
+      CGAL_assertion(adart!=null_handle && adart2!=null_handle);
       mdarts[adart].mf[i] = adart2;
     }
     void dart_link_alpha(Dart_handle adart, Dart_handle adart2, unsigned int i)
     {
       CGAL_assertion(i <= dimension);
-      CGAL_assertion(adart!=nullptr && adart2!=nullptr);
+      CGAL_assertion(adart!=null_handle && adart2!=null_handle);
       mdarts[adart].mf[i] = adart2;
     }
 
@@ -405,12 +409,12 @@ namespace CGAL {
     template<unsigned int i>
     void dart_unlink_alpha(Dart_handle adart)
     {
-      CGAL_assertion(adart!=nullptr && i <= dimension);
+      CGAL_assertion(adart!=null_handle && i <= dimension);
       mdarts[adart].mf[i] = adart;
     }
     void dart_unlink_alpha(Dart_handle adart, unsigned int i)
     {
-      CGAL_assertion(adart!=nullptr && i <= dimension);
+      CGAL_assertion(adart!=null_handle && i <= dimension);
       mdarts[adart].mf[i] = adart;
     }
 
@@ -425,9 +429,9 @@ namespace CGAL {
   };
 
   /// null_handle
-  template<unsigned int d_, class Items_, class Alloc_, class Size_type>
-  typename Generalized_map_storage_2<d_, Items_, Alloc_, Size_type>::Null_handle_type
-      Generalized_map_storage_2<d_, Items_, Alloc_, Size_type>::null_handle((std::numeric_limits<size_type>::max)()/2);
+  template<unsigned int d_, class Items_, class Alloc_>
+  typename Generalized_map_storage_2<d_, Items_, Alloc_>::Null_handle_type
+      Generalized_map_storage_2<d_, Items_, Alloc_>::null_handle((std::numeric_limits<size_type>::max)()/2);
 
 } // namespace CGAL
 

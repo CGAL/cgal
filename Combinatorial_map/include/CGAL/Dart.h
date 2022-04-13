@@ -35,10 +35,10 @@ namespace CGAL {
   template<unsigned int, class, class>
   class Combinatorial_map_storage_2;
 
-  template<unsigned int, class, class, class>
+  template<unsigned int, class, class>
   class Generalized_map_storage_1;
 
-  template<unsigned int, class, class, class>
+  template<unsigned int, class, class>
   class Generalized_map_storage_2;
 
   template<unsigned int, unsigned int, class, class, class, class>
@@ -90,10 +90,10 @@ namespace CGAL {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_2;
 
-    template<unsigned int, class, class, class>
+    template<unsigned int, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, class, class, class>
+    template<unsigned int, class, class>
     friend class Generalized_map_storage_2;
 
     template<unsigned int, unsigned int, class, class, class, class>
@@ -253,10 +253,10 @@ namespace CGAL {
     template<unsigned int, class, class>
     friend class Combinatorial_map_storage_2;
 
-    template<unsigned int, class, class, class>
+    template<unsigned int, class, class>
     friend class Generalized_map_storage_1;
 
-    template<unsigned int, class, class, class>
+    template<unsigned int, class, class>
     friend class Generalized_map_storage_2;
 
     template<unsigned int, unsigned int, class, class, class, class>

@@ -19,11 +19,12 @@ if(NOT Boost_FOUND)
 
 endif()
 
-# include for local directory
+set(hfiles Generalized_map_2_test.h Generalized_map_3_test.h 
+  Generalized_map_4_test.h GMap_test_insertions.h)
 
-# include for local package
+create_single_source_cgal_program("Generalized_map_test.cpp" ${hfiles})
 
-# Creating entries for all C++ files with "main" routine
-# ##########################################################
+add_executable(Generalized_map_test_index  Generalized_map_test.cpp ${hfiles})
+target_compile_definitions(Generalized_map_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Generalized_map_test_index PUBLIC CGAL CGAL::Data)
 
-create_single_source_cgal_program("Generalized_map_test.cpp")

@@ -38,9 +38,11 @@ namespace CGAL {
   {
   public:
     using Self=Combinatorial_map_storage_2<d_, Items_, Alloc_>;
+    using Use_index=CGAL::Tag_true;
+    using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
+
     typedef internal::Combinatorial_map_helper<Self> Helper;
 
-    using Use_index=CGAL::Tag_true;
     using Index_type=typename internal::Get_index_type<Items_>::type;
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;

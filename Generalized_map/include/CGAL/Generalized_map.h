@@ -3607,7 +3607,7 @@ namespace CGAL {
       else
       {
         if (are_attributes_automatically_managed() &&
-            update_attributes && ah!=nullptr)
+            update_attributes && ah!=null_handle)
         {
           internal::Set_i_attribute_of_dart_functor<Self, 0>::run(*this, d2, ah);
           if (!isfree1)
@@ -3833,7 +3833,7 @@ namespace CGAL {
               basic_link_alpha(dd, dddd, dim);
               basic_link_alpha(alpha<0>(dd), d0, dim);
 
-              if (oldb2!=nullptr)
+              if (oldb2!=null_handle)
               {
                 basic_link_alpha<2>(alpha(oldb2, dim), dddd);
                 basic_link_alpha<2>(alpha(oldb2, 0, dim), d0);
@@ -3986,68 +3986,6 @@ namespace CGAL {
       Base(amap, converters, dartinfoconverter, pointconverter)
     {}
   };
-
-  namespace Index
-  {
-  template<unsigned int d_, class Items_, class Alloc_,class Storage_>
-  class Generalized_map :
-    public Generalized_map_base<d_,
-                                  Generalized_map<d_,Items_,Alloc_, Storage_>,
-                                  Items_, Alloc_, Storage_ >
-  {
-  public:
-    typedef Generalized_map<d_, Items_,Alloc_, Storage_>  Self;
-    typedef Generalized_map_base<d_, Self, Items_, Alloc_, Storage_> Base;
-
-    typedef typename Base::Dart_handle Dart_handle;
-    typedef typename Base::Dart_const_handle Dart_const_handle;
-    typedef typename Base::Alloc Alloc;
-    typedef typename Base::Exception_no_more_available_mark
-    Exception_no_more_available_mark;
-
-    Generalized_map() : Base()
-    {}
-
-    Generalized_map(const Self & amap) : Base(amap)
-    {}
-
-    Generalized_map(Self && amap) : Base(amap)
-    {}
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2>
-    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap) :
-      Base(amap)
-    {}
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2, typename Converters>
-    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
-                    const Converters& converters) :
-      Base(amap, converters)
-    {}
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2,
-              typename Converters, typename DartInfoConverter>
-    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
-                    const Converters& converters,
-                    const DartInfoConverter& dartinfoconverter) :
-      Base(amap, converters, dartinfoconverter)
-    {}
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2,
-              typename Converters, typename DartInfoConverter,
-              typename PointConverter >
-    Generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
-                    const Converters& converters,
-                    const DartInfoConverter& dartinfoconverter,
-                    const PointConverter& pointconverter) :
-      Base(amap, converters, dartinfoconverter, pointconverter)
-    {}
-  };
-  } // namespace Index
 
 } // namespace CGAL
 
