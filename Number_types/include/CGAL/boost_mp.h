@@ -237,53 +237,31 @@ namespace Boost_MP_internal {
     const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(xnum));
     const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(xden));
     const int64_t msb_diff = msb_num - msb_den;
-    int shift = static_cast<int>(num_dbl_digits - msb_diff);
-    CGAL_assertion(shift == num_dbl_digits - msb_diff);
+    // Shift so the division result has at least 53 (and at most 54) bits
+    int shift = static_cast<int>(num_dbl_digits - msb_diff + 1);
+    CGAL_assertion(shift == num_dbl_digits - msb_diff + 1);
 
     if (shift > 0) {
-      CGAL_assertion(msb_diff < num_dbl_digits);
       xnum <<= +shift;
     } else if (shift < 0) {
-      CGAL_assertion(msb_diff > num_dbl_digits);
       xden <<= -shift;
     }
-    CGAL_assertion(num_dbl_digits ==
+    CGAL_assertion(num_dbl_digits + 1 ==
       static_cast<int64_t>(boost::multiprecision::msb(xnum)) -
       static_cast<int64_t>(boost::multiprecision::msb(xden)));
 
-    decltype(xnum) p, r;
+    ET p, r;
     boost::multiprecision::divide_qr(xnum, xden, p, r);
+    uint64_t uip = static_cast<uint64_t>(p);
     const int64_t p_bits = static_cast<int64_t>(boost::multiprecision::msb(p));
-    //CGAL_assertion(p > 0);
-    //CGAL_assertion(msb(p) == std::numeric_limits<double>::digits);
-    //const uint64_t pp = static_cast<uint64_t>(p);
+    bool exact = r.is_zero();
 
-    if (r == 0) {
-      CGAL_assertion(msb(p) <= num_dbl_digits);
-      std::tie(l, u) = get_0ulp_interval(shift, static_cast<uint64_t>(p));
-    } else {
-      CGAL_assertion(r > 0);
-      CGAL_assertion(r < xden);
-      if (p_bits == num_dbl_digits - 1) { // we did not reach full precision
-
-        p <<= 1;
-        r <<= 1;
-        ++shift;
-
-        CGAL_assertion(r > 0);
-        const int cmp = r.compare(xden);
-        if (cmp > 0) {
-          std::tie(l, u) = get_1ulp_interval(shift, static_cast<uint64_t>(p) + 1);
-        } else if (cmp == 0) {
-          std::tie(l, u) = get_0ulp_interval(shift, static_cast<uint64_t>(p) + 1);
-        } else {
-          std::tie(l, u) = get_1ulp_interval(shift, static_cast<uint64_t>(p));
-        }
-
-      } else {
-        std::tie(l, u) = get_1ulp_interval(shift, static_cast<uint64_t>(p));
-      }
+    if (p_bits > num_dbl_digits) { // case 54 bits
+      exact &= ((uip & 1) == 0);
+      uip>>=1;
+      --shift;
     }
+    std::tie(l, u) = exact ? get_0ulp_interval(shift, uip) : get_1ulp_interval(shift, uip);
 
     if (change_sign) {
       const double t = l;
