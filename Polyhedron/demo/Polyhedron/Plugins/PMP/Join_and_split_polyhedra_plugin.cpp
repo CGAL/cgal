@@ -144,11 +144,11 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
     if(item)
     {
       QApplication::setOverrideCursor(Qt::WaitCursor);
-      std::vector<FaceGraph> new_polyhedra;
+      std::list<FaceGraph> new_polyhedra;
       CGAL::Polygon_mesh_processing::split_connected_components(*item->face_graph(),
                                                                 new_polyhedra);
       //sort polyhedra by number of faces
-      std::sort(new_polyhedra.begin(), new_polyhedra.end(), Compare());
+      new_polyhedra.sort(Compare());
 
 
       if (new_polyhedra.size()==1)
