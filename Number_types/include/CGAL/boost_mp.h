@@ -144,6 +144,7 @@ struct Algebraic_structure_traits<boost::multiprecision::detail::expression<T1,T
 namespace Boost_MP_internal {
 
   // here we know that `intv` contains int64 numbers such that their msb is std::numeric_limits<double>::digits-1
+  // TODO: possibly return denormals sometimes...
   inline
   Interval_nt<false> shift_positive_interval( const Interval_nt<false>& intv, const int e ) {
     CGAL_assertion(intv.inf() > 0.0);
@@ -157,6 +158,7 @@ namespace Boost_MP_internal {
       return CGAL::Interval_nt<false>((limits::max)(), limits::infinity()); // intv is positive
 
     const double scale = std::ldexp(1.0, e); // ldexp call is exact
+    // TODO: multiply directly without using intervals
     return scale * intv; // cases that would require a rounding mode have been handled above
   }
 
@@ -166,7 +168,7 @@ namespace Boost_MP_internal {
     typedef std::numeric_limits<double> limits;
 
     const double inf = std::numeric_limits<double>::infinity();
-    if ( u!=l && (u==-inf || l==inf
+    if ( u!=l && (l==-inf || u==inf
                           || (u==0 && l >=  -(limits::min)())
                           || (l==0 && u <= (limits::min)())) )
     {
@@ -175,48 +177,30 @@ namespace Boost_MP_internal {
              (x > Type(-(limits::min)()) && x < Type((limits::min)()));
     }
 
-//    CGAL_assertion(u == l || u == std::nextafter(l, +inf));
-    const bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
+    if (!(u == l || u == std::nextafter(l, +inf))) return false;
+    //TODO: Type(nextafter(l,inf))>x && Type(nextafter(u,-inf))<x
 
-    // We cannot convert inf to Type so we skip.
-    if (
-      CGAL::abs(l) == inf ||
-      CGAL::abs(u) == inf ||
-      CGAL::abs(l) == 0.0 ||
-      CGAL::abs(u) == 0.0)
-    {
-      return are_bounds_tight;
-    }
     const Type lb(l), ub(u);
     const bool are_bounds_respected = (lb <= x && x <= ub);
-    return are_bounds_tight && are_bounds_respected;
+    return are_bounds_respected;
   }
 
   // This one returns zero length interval that is inf = sup.
-  template<typename ET>
-  std::pair<double, double> get_0ulp_interval( const int64_t shift, const ET& p ) {
+  std::pair<double, double> get_0ulp_interval( const int shift, const uint64_t p ) {
 
-    CGAL_assertion(p > 0);
-    CGAL_assertion(msb(p) == std::numeric_limits<double>::digits);
-    const uint64_t pp = static_cast<uint64_t>(p);
-    const double pp_dbl = static_cast<double>(pp);
+    const double pp_dbl = static_cast<double>(p);
     const Interval_nt<false> intv(pp_dbl, pp_dbl);
 
-    return shift_positive_interval(intv, -static_cast<int>(shift)).pair();
+    return shift_positive_interval(intv, -shift).pair();
   }
 
   // This one returns 1 unit length interval.
-  template<typename ET>
-  std::pair<double, double> get_1ulp_interval( const int64_t shift, const ET& p ) {
+  std::pair<double, double> get_1ulp_interval( const int shift, const uint64_t p ) {
 
-    CGAL_assertion(p > 0);
-    CGAL_assertion(msb(p) == std::numeric_limits<double>::digits);
-    const uint64_t pp = static_cast<uint64_t>(p);
-    CGAL_assertion(pp > 0);
-    const double pp_dbl = static_cast<double>(pp);
-    const double qq_dbl = pp+1;
+    const double pp_dbl = static_cast<double>(p);
+    const double qq_dbl = pp_dbl+1;
     const Interval_nt<false> intv(pp_dbl, qq_dbl);
-    return shift_positive_interval(intv, -static_cast<int>(shift)).pair();
+    return shift_positive_interval(intv, -shift).pair();
   }
 
   // This is a version of to_interval that converts a rational type into a
@@ -253,7 +237,8 @@ namespace Boost_MP_internal {
     const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(xnum));
     const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(xden));
     const int64_t msb_diff = msb_num - msb_den;
-    int64_t shift = num_dbl_digits - msb_diff;
+    int shift = static_cast<int>(num_dbl_digits - msb_diff);
+    CGAL_assertion(shift == num_dbl_digits - msb_diff);
 
     if (shift > 0) {
       CGAL_assertion(msb_diff < num_dbl_digits);
@@ -269,9 +254,13 @@ namespace Boost_MP_internal {
     decltype(xnum) p, r;
     boost::multiprecision::divide_qr(xnum, xden, p, r);
     const int64_t p_bits = static_cast<int64_t>(boost::multiprecision::msb(p));
+    //CGAL_assertion(p > 0);
+    //CGAL_assertion(msb(p) == std::numeric_limits<double>::digits);
+    //const uint64_t pp = static_cast<uint64_t>(p);
 
     if (r == 0) {
-      std::tie(l, u) = get_0ulp_interval(shift, p);
+      CGAL_assertion(msb(p) <= num_dbl_digits);
+      std::tie(l, u) = get_0ulp_interval(shift, static_cast<uint64_t>(p));
     } else {
       CGAL_assertion(r > 0);
       CGAL_assertion(r < xden);
@@ -284,17 +273,15 @@ namespace Boost_MP_internal {
         CGAL_assertion(r > 0);
         const int cmp = r.compare(xden);
         if (cmp > 0) {
-          ++p;
-          std::tie(l, u) = get_1ulp_interval(shift, p);
+          std::tie(l, u) = get_1ulp_interval(shift, static_cast<uint64_t>(p) + 1);
         } else if (cmp == 0) {
-          ++p;
-          std::tie(l, u) = get_0ulp_interval(shift, p);
+          std::tie(l, u) = get_0ulp_interval(shift, static_cast<uint64_t>(p) + 1);
         } else {
-          std::tie(l, u) = get_1ulp_interval(shift, p);
+          std::tie(l, u) = get_1ulp_interval(shift, static_cast<uint64_t>(p));
         }
 
       } else {
-        std::tie(l, u) = get_1ulp_interval(shift, p);
+        std::tie(l, u) = get_1ulp_interval(shift, static_cast<uint64_t>(p));
       }
     }
 
@@ -329,28 +316,16 @@ namespace Boost_MP_internal {
     }
     CGAL_assertion(CGAL::is_positive(x));
 
-    int64_t e = 0;
     const int64_t n = static_cast<int64_t>(boost::multiprecision::msb(x)) + 1;
     const int64_t num_dbl_digits = std::numeric_limits<double>::digits;
 
     if (n > num_dbl_digits) {
-      e = n - num_dbl_digits;
+      int e = static_cast<int>(n - num_dbl_digits);
       x >>= e;
-      const uint64_t xx = static_cast<uint64_t>(x);
-      const uint64_t yy = xx + 1;
-      CGAL_assertion(xx > 0 && yy > xx);
-      l = static_cast<double>(xx);
-      u = static_cast<double>(yy);
+      std::tie(l, u) = get_1ulp_interval(-e, static_cast<uint64_t>(x));
     } else {
-      const uint64_t xx = static_cast<uint64_t>(x);
-      CGAL_assertion(xx > 0);
-      l = static_cast<double>(xx);
-      u = l;
+      l = u = static_cast<double>(static_cast<uint64_t>(x));
     }
-
-    const Interval_nt<false> intv(l, u);
-    Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
-    std::tie(l, u) = CGAL::ldexp(intv, static_cast<int>(e)).pair();
 
     if (change_sign) {
       const double t = l;
