@@ -328,7 +328,7 @@ public:
       case is_vertex_: return make_object(v_res);
       case is_edge_: return make_object(e_res);
       case is_facet_: return make_object(f_res);
-      case is_none_ : return Object_handle();;
+      case is_none_ : return Object_handle();
     }
   }
 
@@ -371,7 +371,7 @@ public:
 
       CGAL_assertion( initialized);
       _CGAL_NEF_TRACEN( "locate "<<p);
-      SOLUTION solution;
+      SOLUTION solution = is_none_;
 
       Node_handle n = candidate_provider->locate_node_containing(p);
       typename Vertex_list::const_iterator vi = n->vertices_begin();
