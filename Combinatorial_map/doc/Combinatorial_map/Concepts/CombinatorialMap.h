@@ -4,8 +4,9 @@
 
 The concept `CombinatorialMap` defines a <I>d</I>-dimensional combinatorial map.
 
+\cgalRefines `GenericMap`
+
 \cgalHasModel \link CGAL::Combinatorial_map `CGAL::Combinatorial_map<d,Items,Alloc>`\endlink
-\cgalHasModel \link CGAL::Combinatorial_map `CGAL::Items::Combinatorial_map<d,Items,Alloc>`\endlink
 
 For a combinatorial map, the function \link GenericMap::next `next`\endlink is equal to \f$ \beta_1\f$, \link GenericMap::previous `previous`\endlink is equal to \f$ \beta_0\f$  and the function \link GenericMap::opposite `opposite<i>`\endlink is equal to \f$ \beta_i\f$.
 */
