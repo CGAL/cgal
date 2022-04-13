@@ -264,16 +264,14 @@ namespace Boost_MP_internal {
     // (fit_in_double). Then the denominator is a power of 2, so we can skip
     // the division and it becomes unnecessary to set the rounding mode, we
     // just need to modify the exponent correction for the denominator.
-    if(msb_den == lsb(xden)) {
+    if(msb_den == static_cast<int64_t>(lsb(xden))) {
       std::tie(l,u)=to_interval(xnum, msb_den);
       if (change_sign) {
-        const double t = l;
-        l = -u;
-        u = -t;
+        CGAL_assertion(are_bounds_correct(-u, -l, input));
+        return {-u, -l};
       }
-
       CGAL_assertion(are_bounds_correct(l, u, input));
-      return std::make_pair(l, u);
+      return {u, l};
     }
 
 
@@ -347,8 +345,8 @@ namespace Boost_MP_internal {
       else
         std::tie(l, u) = get_0ulp_interval(-e+extra_shift, static_cast<uint64_t>(x));
     } else {
-      // if extra_shift != 0 ....
-      l = u = std::ldexp(static_cast<double>(static_cast<uint64_t>(x)),-(int)extra_shift);
+      l = u = extra_shift==0 ? static_cast<double>(static_cast<uint64_t>(x))
+                             : std::ldexp(static_cast<double>(static_cast<uint64_t>(x)),-extra_shift);
     }
 
     if (change_sign) {
