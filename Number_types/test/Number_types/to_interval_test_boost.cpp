@@ -840,7 +840,6 @@ void test_shift_positive() {
 
 int main() {
   test_shift_positive();
-  return 0;
 
   // Make sure we have the same seed.
   CGAL::get_default_random() = CGAL::Random(0);
