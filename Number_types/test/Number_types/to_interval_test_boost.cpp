@@ -794,9 +794,53 @@ void test_to_interval_tight_integer() {
   std::cout << std::endl;
 }
 
+void test_shift_positive() {
+  {
+    double d = (1L << 53) - 1;
+    auto shift = std::numeric_limits<double>::max_exponent - (std::numeric_limits<double>::digits);
+    auto r = CGAL::Boost_MP_internal::shift_positive_interval(d,shift);
+    d = ldexp(d,shift);
+    assert(!isinf(d));
+    assert(r.inf() == d && d == r.sup());
+  }
+  {
+    double d = (1L << 52);
+    auto shift = std::numeric_limits<double>::max_exponent - std::numeric_limits<double>::digits + 1;
+    auto r = CGAL::Boost_MP_internal::shift_positive_interval(d,shift);
+    d = ldexp(d,shift);
+    assert(isinf(d));
+    assert(r.inf() < d && d <= r.sup());
+  }
+  {
+    double d = (1L << 53) - 1;
+    auto shift = std::numeric_limits<double>::min_exponent - std::numeric_limits<double>::digits - 1;
+    auto r = CGAL::Boost_MP_internal::shift_positive_interval(d,shift);
+    d = ldexp(d,shift);
+    assert(d <= (std::numeric_limits<double>::min)());
+    assert(r.inf() <= d && d <= r.sup());
+  }
+  {
+    double d = (1L << 53) - 2;
+    auto shift = std::numeric_limits<double>::min_exponent - std::numeric_limits<double>::digits - 1;
+    auto r = CGAL::Boost_MP_internal::shift_positive_interval(d,shift);
+    d = ldexp(d,shift);
+    assert(d < (std::numeric_limits<double>::min)());
+    assert(r.inf() <= d && d <= r.sup());
+  }
+  {
+    double d = (1L << 52);
+    auto shift = std::numeric_limits<double>::min_exponent - std::numeric_limits<double>::digits;
+    auto r = CGAL::Boost_MP_internal::shift_positive_interval(d,shift);
+    d = ldexp(d,shift);
+    assert(d == (std::numeric_limits<double>::min)());
+    assert(r.inf() == d && d == r.sup());
+  }
+}
 #endif // CGAL_USE_BOOST_MP
 
 int main() {
+  test_shift_positive();
+  return 0;
 
   // Make sure we have the same seed.
   CGAL::get_default_random() = CGAL::Random(0);

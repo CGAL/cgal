@@ -167,10 +167,11 @@ namespace Boost_MP_internal {
 
     typedef std::numeric_limits<double> limits;
 
-    //TODO: think about strict, +-1
-    if (e < std::numeric_limits<double>::min_exponent - std::numeric_limits<double>::digits)
+    //TODO: Add a test that fails without the -1 on the next line
+    // warning: min_exponent and max_exponent are 1 more than what the name suggests
+    if (e < limits::min_exponent - limits::digits)
       return CGAL::Interval_nt<false>(0, (limits::min)());
-    if (e > limits::max_exponent - std::numeric_limits<double>::digits)
+    if (e > limits::max_exponent - limits::digits)
       return CGAL::Interval_nt<false>((limits::max)(), limits::infinity()); // intv is positive
 
     const double scale = std::ldexp(1.0, e); // ldexp call is exact
