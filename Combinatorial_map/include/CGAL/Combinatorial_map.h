@@ -257,7 +257,7 @@ namespace CGAL {
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
       std::unordered_map<Dart_handle_2, Dart_handle> local_dartmap;
-      if (origin_to_copy==NULL) // Use local_dartmap if user does not provides its own unordered_map
+      if (origin_to_copy==nullptr) // Use local_dartmap if user does not provides its own unordered_map
       { origin_to_copy=&local_dartmap; }
 
       Dart_handle new_dart;
