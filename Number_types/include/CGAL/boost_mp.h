@@ -220,6 +220,9 @@ namespace Boost_MP_internal {
     return shift_positive_interval(intv, -shift);
   }
 
+  template<typename ET>
+  std::pair<double, double> to_interval( ET x, int extra_shift = 0 );
+
   // This is a version of to_interval that converts a rational type into a
   // double tight interval.
   template<typename Type, typename ET>
@@ -253,6 +256,27 @@ namespace Boost_MP_internal {
     const int64_t num_dbl_digits = std::numeric_limits<double>::digits - 1;
     const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(xnum));
     const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(xden));
+
+    // An alternative strategy would be to convert numerator and denominator to
+    // intervals, then divide. However, this would require setting the rounding
+    // mode (and dividing intervals is not completely free). An important
+    // special case is when the rational is exactly equal to a double
+    // (fit_in_double). Then the denominator is a power of 2, so we can skip
+    // the division and it becomes unnecessary to set the rounding mode, we
+    // just need to modify the exponent correction for the denominator.
+    if(msb_den == lsb(xden)) {
+      std::tie(l,u)=to_interval(xnum, msb_den);
+      if (change_sign) {
+        const double t = l;
+        l = -u;
+        u = -t;
+      }
+
+      CGAL_assertion(are_bounds_correct(l, u, input));
+      return std::make_pair(l, u);
+    }
+
+
     const int64_t msb_diff = msb_num - msb_den;
     // Shift so the division result has at least 53 (and at most 54) bits
     int shift = static_cast<int>(num_dbl_digits - msb_diff + 1);
@@ -293,7 +317,7 @@ namespace Boost_MP_internal {
   // This is a version of to_interval that converts an integer type into a
   // double tight interval.
   template<typename ET>
-  std::pair<double, double> to_interval( ET x ) {
+  std::pair<double, double> to_interval( ET x, int extra_shift) {
 
     CGAL_assertion_code(const ET input = x);
     double l = 0.0, u = 0.0;
@@ -319,11 +343,12 @@ namespace Boost_MP_internal {
       int e = static_cast<int>(n - num_dbl_digits);
       x >>= e;
       if (n - mindig > num_dbl_digits)
-        std::tie(l, u) = get_1ulp_interval(-e, static_cast<uint64_t>(x));
+        std::tie(l, u) = get_1ulp_interval(-e+extra_shift, static_cast<uint64_t>(x));
       else
-        std::tie(l, u) = get_0ulp_interval(-e, static_cast<uint64_t>(x));
+        std::tie(l, u) = get_0ulp_interval(-e+extra_shift, static_cast<uint64_t>(x));
     } else {
-      l = u = static_cast<double>(static_cast<uint64_t>(x));
+      // if extra_shift != 0 ....
+      l = u = std::ldexp(static_cast<double>(static_cast<uint64_t>(x)),-(int)extra_shift);
     }
 
     if (change_sign) {
@@ -332,7 +357,7 @@ namespace Boost_MP_internal {
       u = -t;
     }
 
-    CGAL_assertion(are_bounds_correct(l, u, input));
+    CGAL_assertion(extra_shift != 0 || are_bounds_correct(l, u, input));
     return std::make_pair(l, u);
   }
 
