@@ -40,8 +40,7 @@ struct Map_2_dart_max_items_3
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
-    typedef std::tuple<Int_attrib, Int_attrib,
-          Double_attrib> Attributes;
+    typedef std::tuple<Int_attrib, Int_attrib, Double_attrib> Attributes;
   };
 };
 

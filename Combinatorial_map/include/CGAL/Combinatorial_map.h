@@ -123,7 +123,7 @@ namespace CGAL {
     typedef typename Base::Attributes Attributes;
     typedef typename Base::Items Items;
     typedef typename Base::Alloc Alloc;
-    typedef typename Base::Use_index Use_index;
+    typedef typename Base::Use_index Use_index; 
     typedef typename Base::Dart_range Dart_range;
     typedef typename Base::Dart_const_range Dart_const_range;
 
@@ -4822,70 +4822,6 @@ namespace CGAL {
       Base(amap, converters, dartinfoconverter, pointconverter)
     {}
   };
-
-  namespace Index
-  {
-  template < unsigned int d_,
-             class Items_,
-             class Alloc_,
-             class Storage_>
-  class Combinatorial_map :
-    public Combinatorial_map_base<d_,
-                                  Combinatorial_map<d_,Items_,Alloc_, Storage_>,
-                                  Items_, Alloc_, Storage_>
-  {
-  public:
-    typedef Combinatorial_map<d_, Items_,Alloc_, Storage_>  Self;
-    typedef Combinatorial_map_base<d_, Self, Items_, Alloc_, Storage_> Base;
-
-    typedef typename Base::Dart_handle Dart_handle;
-    typedef typename Base::Dart_const_handle Dart_const_handle;
-    typedef typename Base::Alloc Alloc;
-    typedef typename Base::Exception_no_more_available_mark
-    Exception_no_more_available_mark;
-
-    Combinatorial_map() : Base()
-    {}
-
-    Combinatorial_map(const Self & amap) : Base(amap)
-    {}
-
-    Combinatorial_map(Self && amap) : Base(amap)
-    {}
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2>
-    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
-                      amap) : Base(amap)
-    {}
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2, typename Converters>
-    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
-                      amap, const Converters& converters) :
-      Base(amap, converters)
-    {}
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2, typename Converters,
-              typename DartInfoConverter>
-    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
-                      amap, const Converters& converters,
-                      const DartInfoConverter& dartinfoconverter) :
-      Base(amap, converters, dartinfoconverter)
-    {}
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2, typename Converters,
-              typename DartInfoConverter, typename PointConverter >
-    Combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
-                      amap, const Converters& converters,
-                      const DartInfoConverter& dartinfoconverter,
-                      const PointConverter& pointconverter) :
-      Base(amap, converters, dartinfoconverter, pointconverter)
-    {}
-  };
-  } // namespace Index
 
 } // namespace CGAL
 

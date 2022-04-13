@@ -35,12 +35,13 @@ namespace CGAL {
   }
 
   // Storage of darts with compact container, beta with handles
-  template<unsigned int d_, class Items_, class Alloc_, class Concurrent_tag >
+  template<unsigned int d_, class Items_, class Alloc_>
   class Combinatorial_map_storage_1
   {
   public:
-    using Self=Combinatorial_map_storage_1<d_, Items_, Alloc_, Concurrent_tag>;
+    using Self=Combinatorial_map_storage_1<d_, Items_, Alloc_>;
     using Use_index=CGAL::Tag_false;
+    using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
 
     typedef internal::Combinatorial_map_helper<Self>      Helper;
 
@@ -64,6 +65,8 @@ namespace CGAL {
 
     typedef std::nullptr_t Null_handle_type;
     static const Null_handle_type null_handle;
+
+    using Type_for_compact_container=void*;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -445,9 +448,9 @@ namespace CGAL {
   };
 
   /// null_handle
-  template < unsigned int d_, class Items_, class Alloc_, class Concurrent_tag >
-  const typename Combinatorial_map_storage_1<d_, Items_, Alloc_, Concurrent_tag>::Null_handle_type
-  Combinatorial_map_storage_1<d_, Items_, Alloc_, Concurrent_tag>::null_handle = nullptr;
+  template < unsigned int d_, class Items_, class Alloc_>
+  const typename Combinatorial_map_storage_1<d_, Items_, Alloc_>::Null_handle_type
+  Combinatorial_map_storage_1<d_, Items_, Alloc_>::null_handle = nullptr;
 
 } // namespace CGAL
 

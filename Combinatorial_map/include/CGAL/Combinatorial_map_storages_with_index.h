@@ -33,21 +33,21 @@ namespace CGAL {
   }
 
   // Storage with combinatorial maps using index
-  template<unsigned int d_, class Items_, class Alloc_, class Index_type_ >
+  template<unsigned int d_, class Items_, class Alloc_>
   class Combinatorial_map_storage_2
   {
   public:
-    using Self=Combinatorial_map_storage_2<d_, Items_, Alloc_, Index_type_>;
-    using Use_index=CGAL::Tag_true;
-    using Index_type=Index_type_;
-
+    using Self=Combinatorial_map_storage_2<d_, Items_, Alloc_>;
     typedef internal::Combinatorial_map_helper<Self> Helper;
+
+    using Use_index=CGAL::Tag_true;
+    using Index_type=typename internal::Get_index_type<Items_>::type;
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;
 
     typedef typename internal::template Get_dart_info<Dart_wrapper>::type
                                                            Dart_info;
-    typedef CGAL::Index::Dart<d_, Self, Dart_info> Dart;
+    typedef CGAL::Dart<d_, Self, Dart_info> Dart;
 
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
@@ -67,6 +67,8 @@ namespace CGAL {
 
     typedef Dart_index Null_handle_type;
     static Null_handle_type null_handle;
+
+    using Type_for_compact_container=Index_type;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -469,14 +471,14 @@ namespace CGAL {
   };
 
   /// null_dart_handle
-  template<unsigned int d_, class Items_, class Alloc_, class Size_type>
-  typename Combinatorial_map_storage_2<d_, Items_, Alloc_, Size_type>::Dart_index
-  Combinatorial_map_storage_2<d_, Items_, Alloc_, Size_type>::null_dart_handle(0);
+  template<unsigned int d_, class Items_, class Alloc_>
+  typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Dart_index
+  Combinatorial_map_storage_2<d_, Items_, Alloc_>::null_dart_handle(0);
 
   /// null_handle
-  template<unsigned int d_, class Items_, class Alloc_, class Size_type>
-  typename Combinatorial_map_storage_2<d_, Items_, Alloc_, Size_type>::Null_handle_type
-      Combinatorial_map_storage_2<d_, Items_, Alloc_, Size_type>::null_handle((std::numeric_limits<size_type>::max)()/2);
+  template<unsigned int d_, class Items_, class Alloc_>
+  typename Combinatorial_map_storage_2<d_, Items_, Alloc_>::Null_handle_type
+      Combinatorial_map_storage_2<d_, Items_, Alloc_>::null_handle((std::numeric_limits<size_type>::max)()/2);
 
 } // namespace CGAL
 

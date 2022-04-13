@@ -16,34 +16,48 @@
 #include <CGAL/assertions.h>
 #include <cstddef>
 #include <CGAL/Info_for_cell_attribute.h>
-#include <CGAL/Cell_attribute_with_index.h>
 
 namespace CGAL {
 
-  template <class, class, class, class>
-  class Compact_container;
+template <class, class, class, class>
+class Compact_container;
 
-  template <class, class>
-  class Concurrent_compact_container;
+template <class, class>
+class Concurrent_compact_container;
 
-  template<unsigned int, class, class, class>
-  class Combinatorial_map_storage_1;
+template <class, class, class, class>
+class Compact_container_with_index_2;
 
-  template<unsigned int, class, class, class>
-  class Generalized_map_storage_1;
+template<unsigned int, class, class>
+class Combinatorial_map_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class, class>
-  class CMap_linear_cell_complex_storage_1;
+template<unsigned int, class, class>
+class Combinatorial_map_storage_2;
 
-  template<unsigned int, unsigned int, class, class, class, class>
-  class GMap_linear_cell_complex_storage_1;
+template<unsigned int, class, class, class>
+class Generalized_map_storage_1;
 
-  namespace internal {
+template<unsigned int, class, class, class>
+class Generalized_map_storage_2;
 
-  template<class, class>
-  struct Init_id;
+template<unsigned int, unsigned int, class, class, class, class>
+class CMap_linear_cell_complex_storage_1;
 
-  } // end namespace internal
+template<unsigned int, unsigned int, class, class, class, class>
+class CMap_linear_cell_complex_storage_2;
+
+template<unsigned int, unsigned int, class, class, class, class>
+class GMap_linear_cell_complex_storage_1;
+
+template<unsigned int, unsigned int, class, class, class, class>
+class GMap_linear_cell_complex_storage_2;
+
+namespace internal {
+
+template<class, class>
+struct Init_id;
+
+} // end namespace internal
 
   /** @file Cell_attribute.h
    * Definition of cell attribute, with or without info.
@@ -84,23 +98,38 @@ namespace CGAL {
                                     OnMerge, OnSplit, WithID>:
       public Add_id<WithID>
   {
-    template<unsigned int, class, class, class>
-    friend class CGAL::Combinatorial_map_storage_1;
-
-    template<unsigned int, class, class, class>
-    friend class CGAL::Generalized_map_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CGAL::CMap_linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CGAL::GMap_linear_cell_complex_storage_1;
-
     template <class, class, class, class>
-    friend class CGAL::Compact_container;
+    friend class Compact_container;
 
     template <class, class>
-    friend class CGAL::Concurrent_compact_container;
+    friend class Concurrent_compact_container;
+
+    template <class, class, class, class>
+    friend class Compact_container_with_index_2;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_2;
+
+    template<unsigned int, class, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class, class>
+    friend class Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class GMap_linear_cell_complex_storage_2;
 
     template<class, class>
     friend struct internal::Init_id;
@@ -115,12 +144,14 @@ namespace CGAL {
     typedef OnMerge On_merge;
     typedef OnSplit On_split;
     typedef WithID Has_id;
+    using Type_for_compact_container=typename Refs::Type_for_compact_container;
 
     /// operator =
     Cell_attribute_without_info&
     operator=(const Cell_attribute_without_info& acell)
     {
-      mrefcounting = acell.mrefcounting;
+      mrefcounting=acell.mrefcounting;
+      m_for_cc=acell.m_for_cc;
       return *this;
     }
 
@@ -157,32 +188,30 @@ namespace CGAL {
   protected:
     /// Increment the reference counting.
     void inc_nb_refs()
-    { mrefcounting+=4; } // 4 because the two lowest bits are reserved for cc
+    { ++mrefcounting; }
 
     /// Decrement the reference counting.
     void dec_nb_refs()
     {
-      CGAL_assertion( mrefcounting>=4 );
-      mrefcounting-=4; // 4 because the two lowest bits are reserved for cc
+      CGAL_assertion( mrefcounting>0 );
+      --mrefcounting;
     }
 
   public:
     /// Get the reference counting.
     std::size_t get_nb_refs() const
-    { return (mrefcounting>>2); } // >>2 to ignore the 2 least significant bits
+    { return mrefcounting; }
 
-    void * for_compact_container() const
-    { return vp; }
-    void for_compact_container(void *p)
-    { vp = p; }
+    Type_for_compact_container for_compact_container() const
+    { return m_for_cc; }
+    void for_compact_container(Type_for_compact_container p)
+    { m_for_cc=p; }
 
   private:
     /// Reference counting: the number of darts linked to this cell.
-    union
-    {
-      std::size_t mrefcounting;
-      void        *vp;
-    };
+    std::size_t                mrefcounting;
+    Type_for_compact_container m_for_cc; // TODO better: this is memory consuming
+    // TODO: or keep like that and never use an attribute without info and without dart !
   };
 
   /** Definition of cell attribute.
@@ -194,23 +223,38 @@ namespace CGAL {
   class Cell_attribute_without_info<Refs, Tag_true,
                                     OnMerge, OnSplit, WithID>: public Add_id<WithID>
   {
-    template<unsigned int, class, class, class>
-    friend class CGAL::Combinatorial_map_storage_1;
-
-    template<unsigned int, class, class, class>
-    friend class CGAL::Generalized_map_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CGAL::CMap_linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CGAL::GMap_linear_cell_complex_storage_1;
-
     template <class, class, class, class>
-    friend class CGAL::Compact_container;
+    friend class Compact_container;
 
     template <class, class>
-    friend class CGAL::Concurrent_compact_container;
+    friend class Concurrent_compact_container;
+
+    template <class, class, class, class>
+    friend class Compact_container_with_index_2;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_2;
+
+    template<unsigned int, class, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class, class>
+    friend class Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class GMap_linear_cell_complex_storage_2;
 
     template<class, class>
     friend struct internal::Init_id;
@@ -225,6 +269,7 @@ namespace CGAL {
     typedef OnMerge On_merge;
     typedef OnSplit On_split;
     typedef WithID Has_id;
+    using Type_for_compact_container=typename Refs::Type_for_compact_container;
 
     /// operator =
     Cell_attribute_without_info&
@@ -284,9 +329,9 @@ namespace CGAL {
     std::size_t get_nb_refs() const
     { return mrefcounting; }
 
-    void * for_compact_container() const
+    Type_for_compact_container for_compact_container() const
     { return mdart.for_compact_container(); }
-    void for_compact_container(void *p)
+    void for_compact_container(Type_for_compact_container p)
     { mdart.for_compact_container(p); }
 
   private:
@@ -310,23 +355,38 @@ namespace CGAL {
   class Cell_attribute<Refs, void, Tag_, OnMerge, OnSplit, WithID> :
     public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>
   {
-    template<unsigned int, class, class, class>
-    friend class CGAL::Combinatorial_map_storage_1;
-
-    template<unsigned int, class, class, class>
-    friend class CGAL::Generalized_map_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CGAL::CMap_linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CGAL::GMap_linear_cell_complex_storage_1;
-
     template <class, class, class, class>
-    friend class CGAL::Compact_container;
+    friend class Compact_container;
 
     template <class, class>
-    friend class CGAL::Concurrent_compact_container;
+    friend class Concurrent_compact_container;
+
+    template <class, class, class, class>
+    friend class Compact_container_with_index_2;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_2;
+
+    template<unsigned int, class, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class, class>
+    friend class Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class GMap_linear_cell_complex_storage_2;
 
   public:
     typedef Tag_                             Supports_cell_dart;
@@ -350,23 +410,38 @@ namespace CGAL {
     public Cell_attribute_without_info<Refs, Tag_, OnMerge, OnSplit, WithID>,
     public Info_for_cell_attribute<Info_>
   {
-    template<unsigned int, class, class, class>
-    friend class CGAL::Combinatorial_map_storage_1;
-
-    template<unsigned int, class, class, class>
-    friend class CGAL::Generalized_map_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CGAL::CMap_linear_cell_complex_storage_1;
-
-    template<unsigned int, unsigned int, class, class, class, class>
-    friend class CGAL::GMap_linear_cell_complex_storage_1;
-
     template <class, class, class, class>
-    friend class CGAL::Compact_container;
+    friend class Compact_container;
 
     template <class, class>
-    friend class CGAL::Concurrent_compact_container;
+    friend class Concurrent_compact_container;
+
+    template <class, class, class, class>
+    friend class Compact_container_with_index_2;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_2;
+
+    template<unsigned int, class, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class, class>
+    friend class Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class, class>
+    friend class GMap_linear_cell_complex_storage_2;
 
   public:
     typedef Cell_attribute<Refs, Info_, Tag_, OnMerge, OnSplit, WithID> Self;

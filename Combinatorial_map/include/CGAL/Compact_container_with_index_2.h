@@ -446,15 +446,6 @@ private:
   Type type(size_type e) const
   { return static_type(operator[](e)); }
 
-  // Sets the pointer part and the type of the pointee.
-  static void static_set_type(T& e, Type t)
-  {
-    // This out of range compare is always true and causes lots of
-    // unnecessary warnings.
-    // CGAL_precondition(0 <= t && t < 2);
-    Traits::size_t(e) &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
-  }
-
   // get the value of the element (removing the two bits)
   static size_type static_get_val(const T& e)
   { return (Traits::size_t(e) & ~mask_type); }
@@ -464,7 +455,16 @@ private:
 
   // set the value of the element and its type
   static void static_set_val(T& e, size_type v, Type t)
-  { Traits::size_t(e)=v | ( ((size_type)t) <<(nbbits_size_type_m1)); }
+  { Traits::set_size_t(e, v | ( ((size_type)t) <<(nbbits_size_type_m1))); }
+
+  // Sets the pointer part and the type of the pointee.
+  static void static_set_type(T& e, Type t)
+  {
+    // This out of range compare is always true and causes lots of
+    // unnecessary warnings.
+    // CGAL_precondition(0 <= t && t < 2);
+    static_set_val(e, Traits::size_t(e)&~mask_type, t);
+  }
 
   void set_val(size_type e, size_type v, Type t)
   { static_set_val(operator[](e), v, t); }

@@ -97,9 +97,9 @@ struct Constant_size_policy_for_cc_with_size
   template < class T, class size_type >
 struct Compact_container_with_index_traits {
   static size_type size_t(const T &t)
-  { return t.for_compact_container_with_index(); }
-  static size_type & size_t(T &t)
-  { return t.for_compact_container_with_index(); }
+  { return t.for_compact_container(); }
+  static void set_size_t(T &t, size_type v)
+  { t.for_compact_container(v); }
 };
 
 template <class, class, class, class>
@@ -625,13 +625,6 @@ private:
   Type type(size_type e) const
   { return static_type(operator[](e)); }
 
-  // Sets the pointer part and the type of the pointee.
-  static void static_set_type(T& e, Type t)
-  {
-    Traits::size_t(e).get_idx()
-      &= ( ~mask_type | ( ((size_type)t) <<(nbbits_size_type_m1) ) );
-  }
-
   // get the value of the element (removing the used bit)
   static size_type static_get_val(const T& e)
   { return (Traits::size_t(e).get_idx() & ~mask_type); }
@@ -641,7 +634,11 @@ private:
 
   // set the value of the element and its type
   static void static_set_val(T& e, size_type v, Type t)
-  { Traits::size_t(e).get_idx()=v | ( ((size_type)t) <<(nbbits_size_type_m1)); }
+  { Traits::set_size_t(e, v | ( ((size_type)t) <<(nbbits_size_type_m1))); }
+
+  // Sets the pointer part and the type of the pointee.
+  static void static_set_type(T& e, Type t)
+  { static_set_val(e, Traits::size_t(e)&~mask_type, t); }
 
   void set_val(size_type e, size_type v, Type t)
   { static_set_val(operator[](e), v, t); }
@@ -883,13 +880,10 @@ namespace internal {
     pointer   operator->() const { return &((*m_ptr_to_cc)[m_index]); }
 
     // Can itself be used for bit-squatting.
-    void *   for_compact_container() const { return (m_ptr_to_cc); }
-    void * & for_compact_container()       { return (m_ptr_to_cc); }
-
-    size_type   for_compact_container_with_index() const
-    { return (m_index); }
-    size_type & for_compact_container_with_index()
-    { return (m_index); }
+    size_type for_compact_container() const
+    { return m_index; }
+    void for_compact_container(size_type v)
+    { m_index=v; }
 
     template<class ADSC,bool AC1,bool AC2>
     friend bool operator==(const CC_iterator_with_index<ADSC,AC1>&,
@@ -1003,10 +997,10 @@ namespace internal {
     /// decrement.
     Self operator--(int) { Self tmp(*this); --m_idx; return tmp; }
 
-    size_type   for_compact_container_with_index() const
+    size_type for_compact_container() const
     { return m_idx; }
-    size_type & for_compact_container_with_index()
-    { return m_idx; }
+    void for_compact_container(size_type v)
+    { m_idx=v; }
 
   private:
     size_type m_idx;

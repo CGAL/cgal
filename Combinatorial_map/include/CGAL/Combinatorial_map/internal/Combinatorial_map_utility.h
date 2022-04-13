@@ -73,6 +73,25 @@ namespace CGAL
     struct Get_attributes_tuple<T, true>
     { typedef typename T::Attributes type; };
 
+    // Get the Index_type
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_index_type,Index_type,false)
+    template<typename T, typename I=typename T::Use_index,
+             bool typedefined=Has_index_type<T>::value >
+    struct Get_index_type
+    { typedef unsigned int type; }; // By default use unsigned int for index type
+    template<typename T>
+    struct Get_index_type<T, CGAL::Tag_true, true>
+    { typedef typename T::Index_type type; };
+
+    // Get the Concurrent_tag
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_concurrent_tag,Use_concurrent_container,false)
+    template<typename T, bool typedefined=Has_concurrent_tag<T>::value >
+    struct Get_concurrent_tag
+    { typedef CGAL::Tag_false type; };
+    template<typename T>
+    struct Get_concurrent_tag<T, true>
+    { typedef CGAL::Tag_true type; };
+
     // Convert a tuple in a same tuple where each void type was replaced into
     // CGAL::Void.
     template<typename ... Items>

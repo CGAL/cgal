@@ -14,41 +14,48 @@
 
 #include <CGAL/memory.h>
 #include <CGAL/tags.h>
+#include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
 
 struct Generic_map_min_items;
 
-template<unsigned int d_, class Items_, class Alloc_,
-         class Concurrent_tag=CGAL::Tag_false >
+template<unsigned int d_, class Items_, class Alloc_>
 class Combinatorial_map_storage_1;
 
-template<unsigned int d_, class Items_, class Alloc_, class Index_type_ >
+template<unsigned int d_, class Items_, class Alloc_>
 class Combinatorial_map_storage_2;
 
-template < unsigned int d_, class Refs_,
-           class Items_=Generic_map_min_items,
-           class Alloc_=CGAL_ALLOCATOR(int),
-           class Storage_= Combinatorial_map_storage_1
-           <d_, Items_, Alloc_, CGAL::Tag_false> >
+namespace internal
+{
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_use_index_tag,Use_index,false)
+template<typename T, bool typedefined=Has_use_index_tag<T>::value>
+struct Default_storage_for_cmap
+{
+  template<unsigned int d_, class Items_, class Alloc_>
+  using type=Combinatorial_map_storage_1<d_, Items_, Alloc_>;
+};
+template<typename T>
+struct Default_storage_for_cmap<T, true>
+{
+  template<unsigned int d_, class Items_, class Alloc_>
+  using type=Combinatorial_map_storage_2<d_, Items_, Alloc_>;
+};
+} // namespace internal
+
+template<unsigned int d_, class Refs_,
+         class Items_=Generic_map_min_items,
+         class Alloc_=CGAL_ALLOCATOR(int),
+         class Storage_=typename internal::Default_storage_for_cmap<Items_>::
+         type<d_, Items_, Alloc_>>
 class Combinatorial_map_base;
 
-template < unsigned int d_,
-           class Items_=Generic_map_min_items,
-           class Alloc_=CGAL_ALLOCATOR(int),
-           class Storage_= Combinatorial_map_storage_1
-           <d_, Items_, Alloc_, CGAL::Tag_false> >
+template<unsigned int d_,
+         class Items_=Generic_map_min_items,
+         class Alloc_=CGAL_ALLOCATOR(int),
+         class Storage_=typename internal::Default_storage_for_cmap<Items_>::
+         type<d_, Items_, Alloc_>>
 class Combinatorial_map;
-
-namespace Index
-{
-template < unsigned int d_,
-           class Items_=Generic_map_min_items,
-           class Alloc_=CGAL_ALLOCATOR(int),
-           class Storage_= Combinatorial_map_storage_2
-           <d_, Items_, Alloc_, unsigned int> >
-class Combinatorial_map;
-} // namespace Index
 
 } // CGAL
 
