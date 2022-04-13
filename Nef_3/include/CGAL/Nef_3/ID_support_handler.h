@@ -65,16 +65,18 @@ class ID_support_handler<SNC_indexed_items, Decorator> {
     hash.reserve(n);
   }
 
-  // The method get_hash implements a
-  // two-pass union find algorithm
-  //    __    __           _______
-  //   /  \  /  \         /  _____\
-  //  _|__|__|__|_      _/__/__/__|_
-  // | |  v  |  v |    | |  |  |  v |
-  // | O  O  O  O | => | O  O  O  O |
-  // |____|__^____|    |____________|
-  //      |  | root
-  //      \_/
+  /*
+     The method get_hash implements a
+     two-pass union find algorithm
+        __    __           _______
+       /  \  /  \         /  _____\
+      _|__|__|__|_      _/__/__/__|_
+     | |  v  |  v |    | |  |  |  v |
+     | O  O  O  O | => | O  O  O  O |
+     |____|__^____|    |____________|
+          |  | root
+          \_/
+  */
   int get_hash(int i) {
     int root(i);
     while(hash[root] != root)
