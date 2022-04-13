@@ -150,33 +150,15 @@ namespace Boost_MP_internal {
     CGAL_assertion(intv.sup() > 0.0);
     typedef std::numeric_limits<double> limits;
 
-    if (e < limits::min_exponent)
-    {
-      if ( e+std::numeric_limits<double>::digits < std::numeric_limits<double>::min_exponent)
-        return CGAL::Interval_nt<false>(0, (limits::min)());
-      // following calls to ldexp call are exact (e+digits is larger or equal to min_exponent)
-      return CGAL::Interval_nt<false>(std::ldexp(intv.inf(), e), std::ldexp(intv.sup(), e));
-    }
-    if (e > limits::max_exponent)
-      return CGAL::Interval_nt<false>((limits::max)(), limits::infinity()); // no multiplication as intv is positive
+    //TODO: think about strict, +-1
+    if (e < std::numeric_limits<double>::min_exponent - std::numeric_limits<double>::digits)
+      return CGAL::Interval_nt<false>(0, (limits::min)());
+    if (e > limits::max_exponent - std::numeric_limits<double>::digits)
+      return CGAL::Interval_nt<false>((limits::max)(), limits::infinity()); // intv is positive
 
-    const double scale = std::ldexp(1.0, e); // ldexp call is exact (e is less than min_exponent)
-    return scale * intv;
+    const double scale = std::ldexp(1.0, e); // ldexp call is exact
+    return scale * intv; // cases that would require a rounding mode have been handled above
   }
-
-/*
-  template<typename T>
-  bool is_splitter_working(const T d) {
-    T num = d;
-    T den = 1.0;
-    while (std::ceil(num) != num) {
-      num *= 2.0;
-      den *= 2.0;
-    }
-    if (d != num / den) return false;
-    return true;
-  }
-*/
 
   // This function checks if the computed interval is correct and if it is tight.
   template<typename Type>
@@ -196,16 +178,6 @@ namespace Boost_MP_internal {
 //    CGAL_assertion(u == l || u == std::nextafter(l, +inf));
     const bool are_bounds_tight = (u == l || u == std::nextafter(l, +inf));
 
-/*
-    // This check is required until a bug in double.h:split_numerator_denominator() is fixed.
-    // For the moment, this splitter does not handle certain limit values.
-    // See also: https://github.com/CGAL/cgal/issues/5982
-    // E.g. it fails for d = 2.752961027411077E-308!
-    if (!is_splitter_working(l) || !is_splitter_working(u)) {
-      return are_bounds_tight;
-    }
-    CGAL_assertion(is_spliiter_working(l) && is_spliiter_working(u));
-*/
     // We cannot convert inf to Type so we skip.
     if (
       CGAL::abs(l) == inf ||
@@ -224,9 +196,9 @@ namespace Boost_MP_internal {
   template<typename ET>
   std::pair<double, double> get_0ulp_interval( const int64_t shift, const ET& p ) {
 
-    CGAL_assertion(p >= 0);
+    CGAL_assertion(p > 0);
+    CGAL_assertion(msb(p) == std::numeric_limits<double>::digits);
     const uint64_t pp = static_cast<uint64_t>(p);
-    CGAL_assertion(pp >= 0);
     const double pp_dbl = static_cast<double>(pp);
     const Interval_nt<false> intv(pp_dbl, pp_dbl);
 
@@ -237,15 +209,13 @@ namespace Boost_MP_internal {
   template<typename ET>
   std::pair<double, double> get_1ulp_interval( const int64_t shift, const ET& p ) {
 
-    CGAL_assertion(p >= 0);
+    CGAL_assertion(p > 0);
+    CGAL_assertion(msb(p) == std::numeric_limits<double>::digits);
     const uint64_t pp = static_cast<uint64_t>(p);
-    const uint64_t qq = pp + 1;
-    CGAL_assertion(pp >= 0);
-    CGAL_assertion(qq > pp);
+    CGAL_assertion(pp > 0);
     const double pp_dbl = static_cast<double>(pp);
-    const double qq_dbl = static_cast<double>(qq);
+    const double qq_dbl = pp+1;
     const Interval_nt<false> intv(pp_dbl, qq_dbl);
-    Protect_FPU_rounding<true> P(CGAL_FE_UPWARD);
     return shift_positive_interval(intv, -static_cast<int>(shift)).pair();
   }
 
@@ -909,160 +879,6 @@ template< > class Real_embeddable_traits< Quotient<boost::multiprecision::cpp_in
     class To_interval
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
-
-        /*
-        // Option 1.
-        // Inspired by the one from the gmpzf type.
-        // Seems to be less precise and we rarely end up with an interval [d,d]
-        // even for numbers, which are exactly representable as double.
-        // Otherwise, it is quite similar to the results of the Option 3.
-        // It does not guarantee tight intervals!
-        std::pair< Interval_nt<>, int64_t > get_interval_exp(
-          boost::multiprecision::cpp_int& x ) const {
-
-          CGAL_assertion(CGAL::is_positive(x));
-          int64_t d = 0;
-          double l = 0.0, u = 0.0;
-          const int64_t n = static_cast<int64_t>(boost::multiprecision::msb(x)) + 1;
-          const int64_t num_dbl_digits = std::numeric_limits<double>::digits;
-
-          if (n > num_dbl_digits) {
-            d = n - num_dbl_digits;
-            x >>= d;
-            const uint64_t xx = static_cast<uint64_t>(x);
-            const uint64_t yy = xx + 1;
-            CGAL_assertion(xx > 0 && yy > xx);
-            l = static_cast<double>(xx);
-            u = static_cast<double>(yy);
-          } else {
-            const uint64_t xx = static_cast<uint64_t>(x);
-            CGAL_assertion(xx > 0);
-            l = static_cast<double>(xx);
-            u = l;
-          }
-          return std::make_pair( Interval_nt<>(l, u), d );
-        }
-
-        std::pair<double, double> get_interval_as_gmpzf( Type x ) const {
-
-          CGAL_assertion_code(const Type input = x);
-          double l = 0.0, u = 0.0;
-          if (CGAL::is_zero(x.num)) { // return [0.0, 0.0]
-            CGAL_assertion(
-              Boost_MP_internal::are_bounds_correct(l, u, input));
-            return std::make_pair(l, u);
-          }
-          CGAL_assertion(!CGAL::is_zero(x.num));
-          CGAL_assertion(!CGAL::is_zero(x.den));
-
-          // Handle signs.
-          bool change_sign = false;
-          const bool is_num_pos = CGAL::is_positive(x.num);
-          const bool is_den_pos = CGAL::is_positive(x.den);
-          if (!is_num_pos && !is_den_pos) {
-            x.num = -x.num;
-            x.den = -x.den;
-          } else if (!is_num_pos && is_den_pos) {
-            change_sign = true;
-            x.num = -x.num;
-          } else if (is_num_pos && !is_den_pos) {
-            change_sign = true;
-            x.den = -x.den;
-          }
-          CGAL_assertion(CGAL::is_positive(x.num) && CGAL::is_positive(x.den));
-
-          const auto num = get_interval_exp(x.num);
-          const auto den = get_interval_exp(x.den);
-
-          const Interval_nt<> div = num.first / den.first;
-          const int64_t e = num.second - den.second;
-          std::tie(l, u) = ldexp(div, e).pair();
-
-          if (change_sign) {
-            const double t = l;
-            l = -u;
-            u = -t;
-          }
-
-          CGAL_assertion(
-            Boost_MP_internal::are_bounds_correct(l, u, input));
-          return std::make_pair(l, u);
-        } */
-
-        /*
-        // Option 3.
-        // This one requires a temporary conversion to cpp_rational and
-        // it does not guarantee tight intervals! It has intervals similar to the
-        // intervals produced by the Option 1.
-        std::pair<double, double> interval_from_cpp_rational( const Type& x ) const {
-
-          // Seems fast enough because this conversion happens
-          // only a few times during the run, at least for NEF.
-          boost::multiprecision::cpp_rational rat;
-          CGAL_assertion(!CGAL::is_zero(x.den));
-          if (CGAL::is_negative(x.den)) {
-            rat = boost::multiprecision::cpp_rational(-x.num, -x.den);
-          } else {
-            CGAL_assertion(CGAL::is_positive(x.den));
-            rat = boost::multiprecision::cpp_rational( x.num,  x.den);
-          }
-
-          double l, u;
-          std::tie(l, u) = to_interval(rat); // fails if boost_mp is not included!
-          const double inf = std::numeric_limits<double>::infinity();
-
-          if (l == +inf) {
-            l = (std::numeric_limits<double>::max)();
-            CGAL_assertion(u == +inf);
-          } else if (u == -inf) {
-            u = std::numeric_limits<double>::lowest();
-            CGAL_assertion(l == -inf);
-          }
-
-          CGAL_assertion(
-            Boost_MP_internal::are_bounds_correct(l, u, x));
-          return std::make_pair(l, u);
-        }
-
-        std::pair<double, double> get_interval_using_cpp_rational( const Type& x ) const {
-
-          const double inf = std::numeric_limits<double>::infinity();
-
-          const Interval_nt<> xn = Interval_nt<>(CGAL_NTS to_interval(x.num));
-          if (CGAL::abs(xn.inf()) == inf || CGAL::abs(xn.sup()) == inf) {
-            return interval_from_cpp_rational(x);
-          }
-          CGAL_assertion(CGAL::abs(xn.inf()) != inf && CGAL::abs(xn.sup()) != inf);
-
-          const Interval_nt<> xd = Interval_nt<>(CGAL_NTS to_interval(x.den));
-          if (CGAL::abs(xd.inf()) == inf || CGAL::abs(xd.sup()) == inf) {
-            return interval_from_cpp_rational(x);
-          }
-          CGAL_assertion(CGAL::abs(xd.inf()) != inf && CGAL::abs(xd.sup()) != inf);
-
-          const Interval_nt<> quot = xn / xd;
-          CGAL_assertion(Boost_MP_internal::
-            are_bounds_correct(quot.inf(), quot.sup(), x));
-          return std::make_pair(quot.inf(), quot.sup());
-        } */
-
-        // TODO: This is a temporary implementation and
-        // should be replaced by the default one. The default one fails:
-        // For some reason, CGAL::ldexp on Interval_nt returns
-        // 2.752961027411077506e-308 instead of denorm_min!
-        // We can work it around using
-
-        // See get_1ulp_interval() below:
-        // const auto res = CGAL::ldexp(intv, -static_cast<int>(shift)).pair();
-        // if (res.first == 0.0) {
-        //   CGAL_assertion(res.second != 0.0);
-        //   return std::make_pair(0.0, CGAL_IA_MIN_DOUBLE);
-        // }
-        // return res;
-
-        // Or alternatively, we can use my_ldexp above.
-
-        // Option 2. Stable one!
         std::pair<double, double> operator()( const Type& x ) const {
           return Boost_MP_internal::to_interval<Type>(x.num, x.den);
         }
