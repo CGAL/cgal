@@ -320,9 +320,13 @@ namespace Boost_MP_internal {
     const int64_t num_dbl_digits = std::numeric_limits<double>::digits;
 
     if (n > num_dbl_digits) {
+      const int64_t mindig = static_cast<int64_t>(boost::multiprecision::lsb(x));
       int e = static_cast<int>(n - num_dbl_digits);
       x >>= e;
-      std::tie(l, u) = get_1ulp_interval(-e, static_cast<uint64_t>(x));
+      if (n - mindig > num_dbl_digits)
+	std::tie(l, u) = get_1ulp_interval(-e, static_cast<uint64_t>(x));
+      else
+	std::tie(l, u) = get_0ulp_interval(-e, static_cast<uint64_t>(x));
     } else {
       l = u = static_cast<double>(static_cast<uint64_t>(x));
     }
