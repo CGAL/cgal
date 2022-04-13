@@ -328,8 +328,8 @@ public:
       case is_vertex_: return make_object(v_res);
       case is_edge_: return make_object(e_res);
       case is_facet_: return make_object(f_res);
+      case is_none_ : return Object_handle();;
     }
-    return Object_handle();
   }
 
   virtual Object_handle locate( const Point_3& p) const {

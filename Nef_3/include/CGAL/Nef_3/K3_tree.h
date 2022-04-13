@@ -193,8 +193,8 @@ private:
   Node_handle right_node;
   Plane_3 splitting_plane;
   Vertex_list vertex_list;
-  Halffacet_list facet_list;
   Halfedge_list edge_list;
+  Halffacet_list facet_list;
 };
 
   typedef boost::container::deque<Node> Node_range;
