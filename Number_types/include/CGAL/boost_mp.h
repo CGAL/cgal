@@ -149,6 +149,22 @@ namespace Boost_MP_internal {
   Interval_nt<false> shift_positive_interval( const Interval_nt<false>& intv, const int e ) {
     CGAL_assertion(intv.inf() > 0.0);
     CGAL_assertion(intv.sup() > 0.0);
+
+    CGAL_assertion_code(
+    union {
+#ifdef CGAL_LITTLE_ENDIAN
+      struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;
+#else /* CGAL_BIG_ENDIAN */
+      //WARNING: untested!
+      struct { uint64_t sig:1; uint64_t exp:11; uint64_t man:52; } s;
+#endif
+      double d;
+    } conv;
+    conv.d = intv.inf();
+    )
+    // Check that the exponent of intv.inf is 52, which corresponds to a 53 bit integer
+    CGAL_assertion(conv.s.exp - ((1 << (11 - 1)) - 1) == std::numeric_limits<double>::digits - 1);
+
     typedef std::numeric_limits<double> limits;
 
     //TODO: think about strict, +-1
