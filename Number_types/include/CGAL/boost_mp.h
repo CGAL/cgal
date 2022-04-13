@@ -257,6 +257,7 @@ namespace Boost_MP_internal {
     const int64_t msb_num = static_cast<int64_t>(boost::multiprecision::msb(xnum));
     const int64_t msb_den = static_cast<int64_t>(boost::multiprecision::msb(xden));
 
+#if 0 // Optimisation for the case of input that are double
     // An alternative strategy would be to convert numerator and denominator to
     // intervals, then divide. However, this would require setting the rounding
     // mode (and dividing intervals is not completely free). An important
@@ -273,7 +274,7 @@ namespace Boost_MP_internal {
       CGAL_assertion(are_bounds_correct(l, u, input));
       return {u, l};
     }
-
+#endif
 
     const int64_t msb_diff = msb_num - msb_den;
     // Shift so the division result has at least 53 (and at most 54) bits
