@@ -320,23 +320,19 @@ namespace CGAL {
     typedef typename LCC::Vertex_attribute_range::const_iterator VCI;
     VCI vit, vend = alcc.vertex_attributes().end();
 
-    // TODO FOR index do we need the Unique_hash_map ?
-    // size_t i=0;
-    // CGAL::Unique_hash_map< typename LCC::Vertex_attribute_const_handle,
-    //     size_t, typename LCC::Hash_function > index;
+    // TODO FOR index we do not need the Unique_hash_map.
+    size_t i=0;
+    CGAL::Unique_hash_map< typename LCC::Vertex_attribute_const_handle,
+        size_t, typename LCC::Hash_function > index;
     for (vit=alcc.vertex_attributes().begin(); vit!=vend; ++vit)
     {
       writer.write_vertex(::CGAL::to_double(vit->point().x()),
                           ::CGAL::to_double(vit->point().y()),
                           ::CGAL::to_double(vit->point().z()));
-      // TODO for index ?? index[i++]=vit;
+      index[i++]=vit; // TODO for index
     }
 
-    typedef Inverse_index< VCI > Index;
-    Index index( alcc.vertex_attributes().begin(),
-                 alcc.vertex_attributes().end());
     writer.write_facet_header();
-
     typename LCC::size_type m = alcc.get_new_mark();
 
     for (typename LCC::Dart_range::iterator itall = alcc.darts().begin(),
@@ -360,9 +356,7 @@ namespace CGAL {
         // Second we write the indices of vertices.
         do
         {
-          // TODO case with index
-         // TODO For index ? writer.write_facet_vertex_index(index[alcc.vertex_attribute(itf)]);// ?
-          writer.write_facet_vertex_index(index[VCI(alcc.vertex_attribute(cur))]);
+          writer.write_facet_vertex_index(index[alcc.vertex_attribute(cur)]); // TODO for index
           alcc.mark(cur, m);
           alcc.mark(alcc.other_orientation(cur), m); // for GMap only, for CMap
           CGAL_assertion(alcc.is_next_exist(cur));           // marks the same dart twice

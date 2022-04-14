@@ -318,7 +318,7 @@ namespace CGAL {
       for (typename Dart_range::const_iterator it(darts().begin()),
              itend(darts().end()); valid && it != itend; ++it)
       {
-        if ( vertex_attribute(it)==null_handle )
+        if (vertex_attribute(it)==null_handle)
         {
           std::cerr << "Map not valid: dart "<<&(*it)
                     <<" does not have a vertex."<< std::endl;

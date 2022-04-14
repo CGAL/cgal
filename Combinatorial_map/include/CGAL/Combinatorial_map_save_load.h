@@ -564,8 +564,9 @@ namespace CGAL {
                          amap.template create_attribute<i>());
                     read_cmap_attribute_node
                       (v2,
-                       amap.template attribute<i>(myDarts[id_dart_cellule])
-                       ->point());
+                       amap.template get_attribute<i>
+                       (amap.template attribute<i>(myDarts[id_dart_cellule])).
+                       point());
                   }
                 }
               }
@@ -625,8 +626,9 @@ namespace CGAL {
 
                     read_cmap_attribute_node
                       (v2,
-                       (amap.template attribute<i>
-                        (myDarts[id_dart_cellule])->point()));
+                       (amap.template get_attribute<i>
+                        (amap.template attribute<i>(myDarts[id_dart_cellule])).
+                        point()));
                   }
                 }
               }

@@ -20,7 +20,7 @@ template<unsigned int d, unsigned int ambient_dim,
 using My_lcc_gmap=CGAL::Linear_cell_complex_for_generalized_map
 <d, ambient_dim, Traits, Items>;
 
-struct Min_items: public CGAL::Generic_map_min_items
+struct Min_items: public CGAL::Linear_cell_complex_min_items
 {
 #ifdef USE_COMPACT_CONTAINER_WITH_INDEX
   typedef CGAL::Tag_true Use_index;
@@ -169,7 +169,7 @@ typedef CGAL::Linear_cell_complex_traits<4> Traits4_a;
 
 // ======================= LCC based on combinatorial maps
 // Point_3, void, void
-typedef My_lcc_cmap<2,3, Traits3_a, CGAL::Linear_cell_complex_min_items> CMap1;
+typedef My_lcc_cmap<2,3, Traits3_a, Min_items> CMap1;
 
 // Point_3+double, void, double
 typedef My_lcc_cmap<2,3,Traits3_a, Map_2_dart_items> CMap2;
@@ -178,7 +178,7 @@ typedef My_lcc_cmap<2,3,Traits3_a, Map_2_dart_items> CMap2;
 typedef My_lcc_cmap<2,3, Traits3_b, Map_2_dart_max_items_3> CMap3;
 
 // Point_3, void, void, void
-typedef My_lcc_cmap<3,3, Traits3_a, CGAL::Linear_cell_complex_min_items> CMap4;
+typedef My_lcc_cmap<3,3, Traits3_a, Min_items> CMap4;
 
 // Point_3+double, void, int, double
 typedef My_lcc_cmap<3,3, Traits3_a, Map_3_dart_items_3> CMap5;
@@ -217,7 +217,7 @@ struct Converter_map9_points_into_map5_points
 
 // ======================= LCC based on generalized maps
 // Point_3, void, void
-typedef My_lcc_gmap<2,3, Traits3_a, CGAL::Linear_cell_complex_min_items> GMap1;
+typedef My_lcc_gmap<2,3, Traits3_a, Min_items> GMap1;
 
 // Point_3+double, void, double
 typedef My_lcc_gmap<2,3, Traits3_a, Map_2_dart_items> GMap2;
@@ -226,7 +226,7 @@ typedef My_lcc_gmap<2,3, Traits3_a, Map_2_dart_items> GMap2;
 typedef My_lcc_gmap<2,3, Traits3_b, Map_2_dart_max_items_3> GMap3;
 
 // Point_3, void, void, void
-typedef My_lcc_gmap<3,3, Traits3_a, CGAL::Linear_cell_complex_min_items> GMap4;
+typedef My_lcc_gmap<3,3, Traits3_a, Min_items> GMap4;
 
 // Point_3+double, void, int, double
 typedef My_lcc_gmap<3,3, Traits3_a, Map_3_dart_items_3> GMap5;

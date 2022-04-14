@@ -82,7 +82,7 @@ struct Find_opposite_2_no_control // No difference for CMap and GMap
 {
   typedef typename LCC::Dart_handle             DH;
   typedef typename LCC::Vertex_attribute_handle VAH;
-  static DH run(LCC&,
+  static DH run(LCC& lcc,
                 std::unordered_map<VAH, std::unordered_map<VAH, DH>>&
                 vertex_to_dart_map_in_surface,
                 VAH vah1, VAH vah2)
@@ -95,7 +95,7 @@ struct Find_opposite_2_no_control // No difference for CMap and GMap
       if (it1!=it2->second.end())
       { return it1->second; }
     }
-    return nullptr;
+    return lcc.null_handle;
   }
 };
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,10 +105,10 @@ struct Find_opposite_2_with_control
 {
   typedef typename LCC::Dart_handle             DH;
   typedef typename LCC::Vertex_attribute_handle VAH;
-  static DH run(LCC&,
+  static DH run(LCC& lcc,
                 std::unordered_map<VAH, std::unordered_map<VAH, DH>>&,
                 VAH, VAH)
-  { return nullptr; }
+  { return lcc.null_handle; }
 };
 template<class LCC>
 struct Find_opposite_2_with_control<LCC, CGAL::Combinatorial_map_tag>
@@ -123,20 +123,20 @@ struct Find_opposite_2_with_control<LCC, CGAL::Combinatorial_map_tag>
     DH res=Find_opposite_2_no_control<LCC>::run(lcc,
                                                 vertex_to_dart_map_in_surface,
                                                 vah1, vah2);
-    if (res!=nullptr)
+    if (res!=lcc.null_handle)
     {
       if (!lcc.template is_free<2>(res))
       { // Here a dart vah1->vah2 already exists, and it was already 2-sewn.
         std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
-        return nullptr;
+        return lcc.null_handle;
       }
     }
     if (Find_opposite_2_no_control<LCC>::run(lcc,
                                              vertex_to_dart_map_in_surface,
-                                             vah2, vah1)!=nullptr)
+                                             vah2, vah1)!=lcc.null_handle)
     { // Here a dart vah1->vah2 already exists (but it was not already 2-sewn).
       std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
-      return nullptr;
+      return lcc.null_handle;
     }
 
     return res;
@@ -155,12 +155,12 @@ struct Find_opposite_2_with_control<LCC, CGAL::Generalized_map_tag>
     DH res=Find_opposite_2_no_control<LCC>::run(lcc,
                                                 vertex_to_dart_map_in_surface,
                                                 vah1, vah2);
-    if (res!=nullptr)
+    if (res!=lcc.null_handle)
     {
       if (!lcc.template is_free<2>(res))
       { // Here a dart vah1->vah2 already exists, and it was already 2-sewn.
         std::cerr<<"ERROR in My_linear_cell_complex_incremental_builder_3: try to use a same oriented edge twice."<<std::endl;
-        return nullptr;
+        return lcc.null_handle;
       }
     }
     return res;
@@ -214,7 +214,7 @@ struct Sew3_for_LCC_incremental_builder
   static void run(LCC_& lcc,
                   typename LCC_::Dart_handle dh1, typename LCC_::Dart_handle dh2)
   {
-    if(dh1!=nullptr)
+    if(dh1!=lcc.null_handle)
     {
       if(!lcc.template is_free<3>(dh1))
       {
@@ -371,15 +371,15 @@ public:
   DH opposite_face()
   {
     auto it1=faces.find(min_vertex);
-    if(it1==faces.end()) { return nullptr; }
+    if(it1==faces.end()) { return lcc.null_handle; }
     auto it2=it1->second.find(max_vertex);
-    if(it2==it1->second.end()) { return nullptr; }
+    if(it2==it1->second.end()) { return lcc.null_handle; }
     for(auto it3=it2->second.begin(), it3end=it2->second.end(); it3!=it3end; ++it3)
     {
       if (are_facets_opposite_and_same_vertex_handles(*it3, min_dart))
       { return lcc.previous(*it3); }
     }
-    return nullptr;
+    return lcc.null_handle;
   }
 
   void add_face_in_array()

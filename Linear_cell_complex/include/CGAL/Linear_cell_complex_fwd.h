@@ -84,7 +84,7 @@ struct Default_storage_for_lcc_gmap_when_tag
 {
   template<unsigned int d_, unsigned int ambient_dim,
            class Traits_, class Items_, class Alloc_>
-  using type=GMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
+  using type=GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
   Items_, Alloc_>;
 };
 template<>
