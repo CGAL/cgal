@@ -71,6 +71,59 @@
 
 namespace CGAL {
 
+template<class Index_type>
+class Index_for_cc_with_index
+{
+public:
+  using Self=Index_for_cc_with_index<Index_type>;
+  using size_type=Index_type;
+
+  /// Constructor. Default construction creates a kind of "NULL" index.
+  /// max/2 because the most significant bit must be equal to 0 (used).
+  Index_for_cc_with_index(size_type idx=(std::numeric_limits<size_type>::max)()/2)
+    : m_idx(idx)
+  {}
+
+  /// Get the underlying index
+  operator size_t() const
+  { return m_idx; }
+
+  // Constructor allowing to transform an index from one container to another
+  template<typename Index2>
+  Index_for_cc_with_index(const Index2& idx): m_idx(static_cast<size_t>(idx))
+  {}
+
+  /// return whether the handle is valid
+  bool is_valid() const
+  { return m_idx != (std::numeric_limits<size_type>::max)()/2; }
+
+  /// Increment the internal index. This operations does not
+  /// guarantee that the index is valid or undeleted after the
+  /// increment.
+  Self& operator++() { ++m_idx; return *this; }
+  /// Decrement the internal index. This operations does not
+  /// guarantee that the index is valid or undeleted after the
+  /// decrement.
+  Self& operator--() { --m_idx; return *this; }
+
+  /// Increment the internal index. This operations does not
+  /// guarantee that the index is valid or undeleted after the
+  /// increment.
+  Self operator++(int) { Self tmp(*this); ++m_idx; return tmp; }
+  /// Decrement the internal index. This operations does not
+  /// guarantee that the index is valid or undeleted after the
+  /// decrement.
+  Self operator--(int) { Self tmp(*this); --m_idx; return tmp; }
+
+  size_type for_compact_container() const
+  { return m_idx; }
+  void for_compact_container(size_type v)
+  { m_idx=v; }
+
+private:
+  size_type m_idx;
+};
+
 namespace internal
 {
 struct Index_hash_function {
@@ -107,30 +160,7 @@ public:
 
   static const size_type bottom;
 
-  class Index : public internal::MyIndex<T,size_type>
-  {
-  public:
-    typedef typename Compact_container_with_index_2::size_type size_type;
-    typedef internal::MyIndex<T,size_type> Base;
-
-    Index(size_type idx=(std::numeric_limits<size_type>::max)()/2)
-      : Base(idx)
-    {}
-
-    Index(const Index& idx): Base(idx)
-    {}
-
-    Index(const const_iterator& it) : Base(it)
-    {}
-
-    Index(const iterator& it) : Base(it)
-    {}
-
-    // Constructor allowing to transform an index from one container to another
-    template<typename Index2>
-    Index(const Index2& idx): Base(static_cast<size_t>(idx))
-    {}
-  };
+  using Index=Index_for_cc_with_index<IndexType>;
   friend class internal::CC_iterator_with_index<Self, false>;
   friend class internal::CC_iterator_with_index<Self, true>;
 
@@ -572,5 +602,18 @@ void Compact_container_with_index_2<T, Allocator, Increment_policy, IndexType>::
 }
 
 } //namespace CGAL
+
+namespace std
+{
+template <class Index_type>
+struct hash<CGAL::Index_for_cc_with_index<Index_type>>:
+    public CGAL::cpp98::unary_function<CGAL::Index_for_cc_with_index<Index_type>,
+    std::size_t>
+{
+  std::size_t operator()(const CGAL::Index_for_cc_with_index<Index_type>& idx) const
+  { return CGAL::internal::Index_hash_function()(idx); }
+};
+
+} // namespace std
 
 #endif // CGAL_COMPACT_CONTAINER_WITH_INDEX_2_H

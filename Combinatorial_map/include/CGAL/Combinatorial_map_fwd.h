@@ -41,8 +41,8 @@ struct Default_storage_for_cmap_when_tag<CGAL::Tag_true>
   using type=Combinatorial_map_storage_2<d_, Items_, Alloc_>;
 };
 
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_use_index_tag,Use_index,false)
-template<typename T, bool typedefined=Has_use_index_tag<T>::value>
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_use_index_tag_cmap,Use_index,false)
+template<typename T, bool typedefined=Has_use_index_tag_cmap<T>::value>
 struct Default_storage_for_cmap
 {
   template<unsigned int d_, class Items_, class Alloc_>
@@ -52,23 +52,24 @@ template<typename T>
 struct Default_storage_for_cmap<T, true>
 {
   template<unsigned int d_, class Items_, class Alloc_>
-  using type=typename Default_storage_for_cmap_when_tag<typename T::Use_index>::
-  type<d_, Items_, Alloc_>;
+  using type=typename CGAL::internal::template
+  Default_storage_for_cmap_when_tag<typename T::Use_index>::
+  template type<d_, Items_, Alloc_>;
 };
 } // namespace internal
 
 template<unsigned int d_, class Refs_,
          class Items_=Generic_map_min_items,
          class Alloc_=CGAL_ALLOCATOR(int),
-         class Storage_=typename internal::Default_storage_for_cmap<Items_>::
-         type<d_, Items_, Alloc_>>
+         class Storage_=typename internal::template
+         Default_storage_for_cmap<Items_>::template type<d_, Items_, Alloc_>>
 class Combinatorial_map_base;
 
 template<unsigned int d_,
          class Items_=Generic_map_min_items,
          class Alloc_=CGAL_ALLOCATOR(int),
-         class Storage_=typename internal::Default_storage_for_cmap<Items_>::
-         type<d_, Items_, Alloc_>>
+         class Storage_=typename internal::template
+         Default_storage_for_cmap<Items_>::template type<d_, Items_, Alloc_>>
 class Combinatorial_map;
 
 } // CGAL

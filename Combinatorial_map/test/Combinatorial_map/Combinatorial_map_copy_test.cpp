@@ -16,8 +16,18 @@
 
 using namespace std;
 
+struct Min_items: public CGAL::Generic_map_min_items
+{
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+};
+
 struct Map_2_dart_items
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -31,6 +41,9 @@ struct Map_2_dart_items
 
 struct Map_2_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -46,6 +59,9 @@ struct Map_2_dart_max_items_3
 
 struct Map_3_dart_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -60,6 +76,9 @@ struct Map_3_dart_items_3
 
 struct Map_3_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -87,9 +106,11 @@ struct MonInfo
   { return mnb==info.mnb && s==info.s && ptr==info.ptr; }
 };
 
-class Another_map_3_dart_items_3
+struct Another_map_3_dart_items_3
 {
-public:
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -104,6 +125,9 @@ public:
 
 struct Map_dart_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template < class Refs >
   struct Dart_wrapper
   {
@@ -118,6 +142,9 @@ struct Map_dart_items_4
 
 struct Map_dart_max_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template < class Refs >
   struct Dart_wrapper
   {
@@ -133,16 +160,16 @@ struct Map_dart_max_items_4
 };
 
 // noinfo, void, void, void
-typedef CGAL::Combinatorial_map<2, CGAL::Generic_map_min_items > Map1;
+typedef CGAL::Combinatorial_map<2, Min_items> Map1;
 
 // noinfo, double, void, double
-typedef CGAL::Combinatorial_map<2, Map_2_dart_items > Map2;
+typedef CGAL::Combinatorial_map<2, Map_2_dart_items> Map2;
 
 // info=int, int, int, double
 typedef CGAL::Combinatorial_map<2, Map_2_dart_max_items_3> Map3;
 
 // noinfo, void, void, void, void
-typedef CGAL::Combinatorial_map<3, CGAL::Generic_map_min_items > Map4;
+typedef CGAL::Combinatorial_map<3, Min_items> Map4;
 
 // noinfo, double, void, int, double
 typedef CGAL::Combinatorial_map<3, Map_3_dart_items_3> Map5;
