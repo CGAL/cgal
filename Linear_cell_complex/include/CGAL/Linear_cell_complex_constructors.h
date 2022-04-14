@@ -329,7 +329,7 @@ namespace CGAL {
       writer.write_vertex(::CGAL::to_double(vit->point().x()),
                           ::CGAL::to_double(vit->point().y()),
                           ::CGAL::to_double(vit->point().z()));
-      index[i++]=vit; // TODO for index
+      index[vit]=i++; // TODO for index
     }
 
     writer.write_facet_header();

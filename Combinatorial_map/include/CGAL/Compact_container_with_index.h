@@ -822,9 +822,7 @@ namespace internal {
     CC_iterator_with_index(cc_pointer ptr, int, int) : m_ptr_to_cc(ptr),
       m_index(0)
     {
-      if(!m_ptr_to_cc->empty())
-      { m_index=m_ptr_to_cc->capacity(); }
-      else if(m_ptr_to_cc->type(m_index) != DSC::USED)
+      if(m_ptr_to_cc->type(m_index) != DSC::USED)
       { increment(); }
     }
 

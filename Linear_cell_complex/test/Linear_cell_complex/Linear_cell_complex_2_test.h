@@ -12,10 +12,6 @@
 #ifndef CGAL_LCC_2_TEST_H
 #define CGAL_LCC_2_TEST_H
 
-// If defined, use compact container with index; otherwise use compact
-// container with handle.
-#define USE_COMPACT_CONTAINER_WITH_INDEX 1
-
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Linear_cell_complex_constructors.h>

@@ -249,10 +249,11 @@ public:
     std::swap(all_items, c.all_items);
   }
 
-  iterator begin() { return iterator(this, 0, 0); }
+  iterator begin() { if(empty()) return end(); return iterator(this, 0, 0); }
   iterator end()   { return iterator(this, capacity_); }
 
-  const_iterator begin() const { return const_iterator(this, 0, 0); }
+  const_iterator begin() const { if(empty()) return end();
+    else return const_iterator(this, 0, 0); }
   const_iterator end()   const { return const_iterator(this, capacity_); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
