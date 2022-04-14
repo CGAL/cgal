@@ -283,7 +283,7 @@ namespace CGAL {
           }
 
           (*origin_to_copy)[it]=new_dart;
-          if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
+          if (copy_to_origin!=nullptr) { (*copy_to_origin)[new_dart]=it; }
 
           internal::Copy_dart_info_functor
             <typename CMap2::Refs, Refs, DartInfoConverter>::run

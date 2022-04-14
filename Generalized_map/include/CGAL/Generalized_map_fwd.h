@@ -56,6 +56,7 @@ struct Default_storage_for_gmap<T, true>
   type<d_, Items_, Alloc_>;
 };
 } // namespace internal
+
 template<unsigned int d_, class Refs_,
          class Items_=Generic_map_min_items,
          class Alloc_=CGAL_ALLOCATOR(int),
