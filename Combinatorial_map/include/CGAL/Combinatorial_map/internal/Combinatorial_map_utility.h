@@ -432,19 +432,6 @@ namespace CGAL
         typedef typename CMap::template Container_for_attributes<T> type;
       };
 
-      template<typename T, typename WithIndex=typename CMap::Use_index>
-      struct GetIndexOrHandle
-      { typedef typename T::iterator type; };
-      template<typename T>
-      struct GetIndexOrHandle<T, Tag_true>
-      { typedef typename T::Index type; };
-      template<typename T, typename WithIndex=typename CMap::Use_index>
-      struct GetConstIndexOrConstHandle
-      { typedef typename T::const_iterator type; };
-      template<typename T>
-      struct GetConstIndexOrConstHandle<T, Tag_true>
-      { typedef typename T::Index type; };
-
       // defines as type Compact_container<T>::iterator
       template <class T>
       struct Add_compact_container_iterator{
@@ -453,13 +440,10 @@ namespace CGAL
         typedef typename CMap::template Container_for_attributes<T>::iterator
         iterator_type;
 
-        // TODO case when there is no Use_index typedef in CMap
+        // TODO? case when there is no Use_index typedef in CMap
          typedef typename boost::mpl::if_
         < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
           typename CMap::Dart_handle, iterator_type >::type type;
-
-        /*typedef typename GetIndexOrHandle
-        <typename CMap::template Container_for_attributes<T> >::type type;*/
       };
 
       // defines as type Compact_container<T>::const_iterator
@@ -473,8 +457,6 @@ namespace CGAL
         typedef typename boost::mpl::if_
              < typename boost::is_same<typename CMap::Use_index,Tag_true>::type,
                typename CMap::Dart_const_handle, iterator_type >::type type;
-        /*typedef typename GetConstIndexOrConstHandle
-        <typename CMap::template Container_for_attributes<T> >::type type;*/
       };
 
       // All the attributes (with CGAL::Void)

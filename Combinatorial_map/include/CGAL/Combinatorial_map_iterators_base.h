@@ -66,19 +66,18 @@ namespace CGAL {
   class CMap_dart_iterator;
   
   template < typename Map_,bool Const>
-  class CMap_dart_iterator<Map_, Const, Tag_false>:
-    /*public boost::mpl::if_c< Const,
+  class CMap_dart_iterator<Map_, Const, Tag_false>: public boost::mpl::if_c< Const,
       typename Map_::Dart_container::const_iterator,
-      typename Map_::Dart_container::iterator>::type*/
-    public internal::CC_iterator<typename Map_::Dart_container,Const>
+      typename Map_::Dart_container::iterator>::type
+    //public internal::CC_iterator<typename Map_::Dart_container,Const>
   {
   public:
     typedef CMap_dart_iterator<Map_,Const> Self;
 
-    /*typedef typename boost::mpl::if_c< Const,
+    typedef typename boost::mpl::if_c< Const,
           typename Map_::Dart_container::const_iterator,
-          typename Map_::Dart_container::iterator>::type Base;*/
-    typedef internal::CC_iterator<typename Map_::Dart_container,Const> Base;
+          typename Map_::Dart_container::iterator>::type Base;
+    // typedef internal::CC_iterator<typename Map_::Dart_container,Const> Base;
 
     typedef typename boost::mpl::if_c< Const,
                                        typename Map_::Dart_const_handle,
