@@ -47,6 +47,10 @@ namespace CGAL {
     using Use_index=CGAL::Tag_true;
     using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
 
+    typedef typename Traits_::Point  Point;
+    typedef typename Traits_::Vector Vector;
+    typedef typename Traits_::FT     FT;
+
     typedef internal::Combinatorial_map_helper<Self> Helper;
 
     using Index_type=typename internal::Get_index_type<Items_>::type;
@@ -64,8 +68,6 @@ namespace CGAL {
     Multiply_by_two_policy_for_cc_with_size<64>, Index_type>
     Dart_container;
 
-    // typedef unsigned int Dart_index;
-    // typedef MyIndex<unsigned int> Dart_index;
     typedef typename Dart_container::Index Dart_index;
 
     // Definition of old types, for backward compatibility.

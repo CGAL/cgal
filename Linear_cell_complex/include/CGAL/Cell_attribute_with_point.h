@@ -59,14 +59,35 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
-    template <class, class, class, class>
-    friend class Compact_container_with_index;
-
-    template <class, class, class>
-    friend class Compact_container_2;
-
     template <class, class>
     friend class Concurrent_compact_container;
+
+    template <class, class, class, class>
+    friend class Compact_container_with_index_2;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_2;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_2;
 
   public:
     typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
@@ -123,14 +144,38 @@ namespace CGAL {
     template <class, class, class, class>
     friend class Compact_container;
 
-    template <class, class, class, class>
-    friend class Compact_container_with_index;
+    template <class, class>
+    friend class Concurrent_compact_container;
 
     template <class, class, class, class>
     friend class Compact_container_with_index_2;
 
     template <class, class>
     friend class Concurrent_compact_container;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Combinatorial_map_storage_2;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_1;
+
+    template<unsigned int, class, class>
+    friend class Generalized_map_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class CMap_linear_cell_complex_storage_2;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_1;
+
+    template<unsigned int, unsigned int, class, class, class>
+    friend class GMap_linear_cell_complex_storage_2;
 
   public:
     typedef Cell_attribute<LCC, void, Tag,
@@ -164,113 +209,6 @@ namespace CGAL {
     Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
     {}
   };
-
-  namespace Index
-  {
-  // Versions for container using index.
-  /// Attribute associated with a point and an info.
-  template < class LCC, class Info_=void, class Tag=Tag_true,
-             class Functor_on_merge_=Null_functor,
-             class Functor_on_split_=Null_functor >
-  class Cell_attribute_with_point :
-      public Index::Cell_attribute<LCC, Info_, Tag,
-                                   Functor_on_merge_, Functor_on_split_>,
-    public Point_for_cell<typename LCC::Point>
-  {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
-
-    template <class, class, class, class>
-    friend class Compact_container_with_index;
-
-  public:
-    typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
-                                      Functor_on_split_> Self;
-
-    typedef Index::Cell_attribute<LCC, Info_, Tag,
-                                  Functor_on_merge_, Functor_on_split_> Base1;
-    typedef Point_for_cell<typename LCC::Point> Base2;
-
-    typedef typename LCC::Point             Point;
-    typedef typename LCC::Dart_handle       Dart_handle;
-    typedef typename LCC::Dart_const_handle Dart_const_handle;
-
-    typedef Info_                Info;
-    typedef Functor_on_merge_    Functor_on_merge;
-    typedef Functor_on_split_    Functor_on_split;
-
-    using Base1::info;
-
-    bool operator==(const Self& other) const
-    { return Base1::operator==(other) && this->point()==other.point(); }
-
-    bool operator!=(const Self& other) const
-    { return !operator==(other); }
-
-    // protected:
-    /// Default contructor.
-    Cell_attribute_with_point()
-    {}
-
-    /// Contructor with a point in parameter.
-    Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
-    {}
-
-    /// Contructor with a point and an attribute in parameters.
-    Cell_attribute_with_point(const Point& apoint, const Info& ainfo)
-      : Base1(ainfo),
-        Base2(apoint)
-    {}
-  };
-
-  /// Attribute associated with a point and without info.
-  template < class LCC, class Tag,
-             class Functor_on_merge_,
-             class Functor_on_split_ >
-  class Cell_attribute_with_point<LCC, void, Tag,
-                                  Functor_on_merge_, Functor_on_split_> :
-      public Index::Cell_attribute<LCC, void, Tag, Functor_on_merge_,
-      Functor_on_split_>,
-    public Point_for_cell<typename LCC::Point>
-  {
-    template < unsigned int, class, class, class, class >
-    friend class Combinatorial_map_base;
-
-    template <class, class, class, class>
-    friend class Compact_container_with_index;
-
-  public:
-    typedef Index::Cell_attribute<LCC, void, Tag,
-                           Functor_on_merge_, Functor_on_split_> Base1;
-    typedef Point_for_cell<typename LCC::Point> Base2;
-
-    typedef typename LCC::Point             Point;
-    typedef typename LCC::Dart_handle       Dart_handle;
-    typedef typename LCC::Dart_const_handle Dart_const_handle;
-
-    typedef Functor_on_merge_ Functor_on_merge;
-    typedef Functor_on_split_ Functor_on_split;
-
-    bool operator==(const Cell_attribute_with_point& other) const
-    { return Base1::operator==(other) && this->point()==other.point(); }
-
-    bool operator!=(const Cell_attribute_with_point& other) const
-    { return !operator==(other); }
-
-    template<typename Cellattr>
-    bool operator==(const Cellattr&) const
-    { return false; }
-
-    //  protected:
-    /// Default contructor.
-    Cell_attribute_with_point()
-    {}
-
-    /// Contructor with a point in parameter.
-    Cell_attribute_with_point(const Point& apoint) : Base2(apoint)
-    {}
-  };
-  } // namespace Index
 
 } // namespace CGAL
 

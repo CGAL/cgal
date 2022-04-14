@@ -38,20 +38,6 @@ namespace CGAL {
     };
   };
 
-  namespace Index
-  {
-  struct Linear_cell_complex_min_items
-  {
-    /// Dart_wrapper defines the type of darts used.
-    template <class LCC>
-    struct Dart_wrapper
-    {
-      typedef CGAL::Index::Cell_attribute_with_point<LCC> Vertex_attrib;
-      typedef std::tuple<Vertex_attrib> Attributes;
-    };
-  };
-  } // namespace Index
-
 } // namespace CGAL
 
 #endif // CGAL_LINEAR_CELL_COMPLEX_MIN_ITEMS_H //

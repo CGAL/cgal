@@ -47,13 +47,13 @@ namespace CGAL {
     using Use_index=CGAL::Tag_true;
     using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
 
-    typedef internal::Combinatorial_map_helper<Self> Helper;
-
-    using Index_type=typename internal::Get_index_type<Items_>::type;
-
     typedef typename Traits_::Point  Point;
     typedef typename Traits_::Vector Vector;
     typedef typename Traits_::FT     FT;
+
+    typedef internal::Combinatorial_map_helper<Self> Helper;
+
+    using Index_type=typename internal::Get_index_type<Items_>::type;
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;
 

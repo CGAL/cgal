@@ -482,7 +482,7 @@ namespace CGAL {
 
   /// null_handle
   template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_, class Concurrent_tag >
+           class Traits_, class Items_, class Alloc_>
   const typename CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
                                          Items_, Alloc_>::Null_handle_type
   CMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,

@@ -8,31 +8,7 @@
 #include <fstream>
 #include <cassert>
 
-// If defined, use compact container with index; otherwise use compact
-// container with handle.
-#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
-template<class Refs, class Info>
-using My_cell_attribute=CGAL::Index::Cell_attribute<Refs, Info>;
-
-template<class Refs, class Info>
-using My_cell_attribute_with_point=
-CGAL::Index::Cell_attribute_with_point<Refs, Info>;
-
-template<unsigned int d, unsigned int ambient_dim,
-         class Traits, class Items>
-using My_lcc_cmap=CGAL::Index::Linear_cell_complex_for_combinatorial_map
-<d, ambient_dim, Traits, Items>;
-
-template<unsigned int d, unsigned int ambient_dim,
-         class Traits, class Items>
-using My_lcc_gmap=CGAL::Index::Linear_cell_complex_for_generalized_map
-<d, ambient_dim, Traits, Items>;
-#else
-template<class Refs, class Info>
-using My_cell_attribute=CGAL::Cell_attribute<Refs, Info>;
-
-template<class Refs, class Info>
-using My_cell_attribute_with_point=CGAL::Cell_attribute_with_point<Refs, Info>;
+using namespace std;
 
 template<unsigned int d, unsigned int ambient_dim,
          class Traits, class Items>
@@ -43,32 +19,42 @@ template<unsigned int d, unsigned int ambient_dim,
          class Traits, class Items>
 using My_lcc_gmap=CGAL::Linear_cell_complex_for_generalized_map
 <d, ambient_dim, Traits, Items>;
-#endif // USE_COMPACT_CONTAINER_WITH_INDEX
 
-using namespace std;
+struct Min_items: public CGAL::Generic_map_min_items
+{
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+};
 
 struct Map_2_dart_items
 {
-  /// Dart_wrapper defines the type of darts used.
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+ /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef My_cell_attribute< Refs, int > Int_attrib;
-    typedef My_cell_attribute< Refs, double > Double_attrib;
-    typedef My_cell_attribute_with_point< Refs, double > Double_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
     typedef std::tuple<Double_attrib_wp, void, Double_attrib> Attributes;
   };
 };
 
 struct Map_2_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef My_cell_attribute< Refs, int > Int_attrib;
-    typedef My_cell_attribute< Refs, double > Double_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef double Dart_info;
     typedef std::tuple<Int_attrib_wp, Int_attrib,Double_attrib> Attributes;
   };
@@ -76,13 +62,16 @@ struct Map_2_dart_max_items_3
 
 struct Map_3_dart_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef My_cell_attribute< Refs, int > Int_attrib;
-    typedef My_cell_attribute< Refs, double > Double_attrib;
-    typedef My_cell_attribute_with_point< Refs, double > Double_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, double > Double_attrib_wp;
     typedef char Dart_info;
     typedef std::tuple<Double_attrib_wp, void,Int_attrib, Double_attrib>
     Attributes;
@@ -91,28 +80,33 @@ struct Map_3_dart_items_3
 
 struct Map_3_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef My_cell_attribute< Refs, int > Int_attrib;
-    typedef My_cell_attribute< Refs, double > Double_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef char* Dart_info;
     typedef std::tuple<Int_attrib_wp, Int_attrib,Int_attrib, Double_attrib>
     Attributes;
   };
 };
 
-class Another_map_3_dart_items_3
+struct Another_map_3_dart_items_3
 {
-public:
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef My_cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     typedef int* Dart_info;
     typedef std::tuple<Int_attrib_wp, void, Int_attrib> Attributes;
   };
@@ -133,12 +127,15 @@ struct MonInfo
 
 struct Map_dart_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef My_cell_attribute< Refs, int > Int_attrib;
-    typedef My_cell_attribute< Refs, double > Double_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef MonInfo Dart_info;
     typedef std::tuple<Int_attrib_wp, void, Int_attrib, void, Int_attrib>
     Attributes;
@@ -147,12 +144,15 @@ struct Map_dart_items_4
 
 struct Map_dart_max_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template < class Refs >
   struct Dart_wrapper
   {
-    typedef My_cell_attribute_with_point< Refs, int > Int_attrib_wp;
-    typedef My_cell_attribute< Refs, int > Int_attrib;
-    typedef My_cell_attribute< Refs, double > Double_attrib;
+    typedef CGAL::Cell_attribute_with_point< Refs, int > Int_attrib_wp;
+    typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
+    typedef CGAL::Cell_attribute< Refs, double > Double_attrib;
     typedef double Dart_info;
     typedef std::tuple<Int_attrib_wp, Int_attrib,Int_attrib, Int_attrib, Double_attrib>
     Attributes;

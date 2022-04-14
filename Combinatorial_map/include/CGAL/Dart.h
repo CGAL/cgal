@@ -41,16 +41,16 @@ namespace CGAL {
   template<unsigned int, class, class>
   class Generalized_map_storage_2;
 
-  template<unsigned int, unsigned int, class, class, class, class>
+  template<unsigned int, unsigned int, class, class, class>
   class CMap_linear_cell_complex_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class, class>
+  template<unsigned int, unsigned int, class, class, class>
   class CMap_linear_cell_complex_storage_2;
 
-  template<unsigned int, unsigned int, class, class, class, class>
+  template<unsigned int, unsigned int, class, class, class>
   class GMap_linear_cell_complex_storage_1;
 
-  template<unsigned int, unsigned int, class, class, class, class>
+  template<unsigned int, unsigned int, class, class, class>
   class GMap_linear_cell_complex_storage_2;
 
   namespace internal {
@@ -96,16 +96,16 @@ namespace CGAL {
     template<unsigned int, class, class>
     friend class Generalized_map_storage_2;
 
-    template<unsigned int, unsigned int, class, class, class, class>
+    template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class, class>
+    template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_2;
 
-    template<unsigned int, unsigned int, class, class, class, class>
+    template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class, class>
+    template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_2;
 
     template<class, class>
@@ -259,16 +259,16 @@ namespace CGAL {
     template<unsigned int, class, class>
     friend class Generalized_map_storage_2;
 
-    template<unsigned int, unsigned int, class, class, class, class>
+    template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class, class>
+    template<unsigned int, unsigned int, class, class, class>
     friend class CMap_linear_cell_complex_storage_2;
 
-    template<unsigned int, unsigned int, class, class, class, class>
+    template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_1;
 
-    template<unsigned int, unsigned int, class, class, class, class>
+    template<unsigned int, unsigned int, class, class, class>
     friend class GMap_linear_cell_complex_storage_2;
 
     typedef Dart<d, Refs, Info_, WithID> Self;
