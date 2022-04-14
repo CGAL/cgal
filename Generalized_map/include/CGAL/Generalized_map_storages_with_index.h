@@ -58,8 +58,6 @@ namespace CGAL {
     Multiply_by_two_policy_for_cc_with_size<64>, Index_type>
     Dart_container;
 
-    // typedef unsigned int Dart_index;
-    // typedef MyIndex<unsigned int> Dart_index;
     typedef typename Dart_container::Index Dart_index;
 
     // Definition of old types, for backward compatibility.
@@ -431,7 +429,7 @@ namespace CGAL {
   /// null_handle
   template<unsigned int d_, class Items_, class Alloc_>
   typename Generalized_map_storage_2<d_, Items_, Alloc_>::Null_handle_type
-      Generalized_map_storage_2<d_, Items_, Alloc_>::null_handle((std::numeric_limits<size_type>::max)()/2);
+      Generalized_map_storage_2<d_, Items_, Alloc_>::null_handle((std::numeric_limits<Index_type>::max)()/2);
 
 } // namespace CGAL
 

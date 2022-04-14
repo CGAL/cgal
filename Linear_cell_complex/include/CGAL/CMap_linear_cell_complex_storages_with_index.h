@@ -38,26 +38,24 @@ namespace CGAL {
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type).
   template<unsigned int d_, unsigned int ambient_dim, class Traits_, 
-           class Items_, class Alloc_, class Index_type_ >
+           class Items_, class Alloc_>
   class CMap_linear_cell_complex_storage_2
   {
   public:
     using Self=CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                          Items_, Alloc_, Index_type_>;
+                                          Items_, Alloc_>;
     using Use_index=CGAL::Tag_true;
-    using Index_type=Index_type_;
-
-    typedef typename Traits_::Point  Point;
-    typedef typename Traits_::Vector Vector;
-    typedef typename Traits_::FT     FT;
+    using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
 
     typedef internal::Combinatorial_map_helper<Self> Helper;
+
+    using Index_type=typename internal::Get_index_type<Items_>::type;
 
     typedef typename Items_::template Dart_wrapper<Self>  Dart_wrapper;
 
     typedef typename internal::template Get_dart_info<Dart_wrapper>::type
                                                            Dart_info;
-    typedef CGAL::Index::Dart<d_, Self, Dart_info> Dart;
+    typedef CGAL::Dart<d_, Self, Dart_info> Dart;
 
     typedef std::allocator_traits<Alloc_> Allocator_traits;
     typedef typename Allocator_traits::template rebind_alloc<Dart> Dart_allocator;
@@ -77,6 +75,8 @@ namespace CGAL {
 
     typedef Dart_index Null_handle_type;
     static Null_handle_type null_handle;
+
+    using Type_for_compact_container=Index_type;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -503,18 +503,18 @@ namespace CGAL {
 
   /// null_dart_handle
   template<unsigned int d_,  unsigned int ambient_dim, class Traits_,
-           class Items_, class Alloc_, class Index_type_>
-  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_, Index_type_>::
-  Dart_index CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_, Index_type_>::
+           class Items_, class Alloc_>
+  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
+  Dart_index CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
   null_dart_handle(0);
 
   /// null_handle
   template<unsigned int d_, unsigned int ambient_dim, class Traits_,
-           class Items_, class Alloc_, class Index_type_>
-  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_, Index_type_>::
+           class Items_, class Alloc_>
+  typename CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_, Items_, Alloc_>::
   Null_handle_type CMap_linear_cell_complex_storage_2<d_, ambient_dim, Traits_,
-                                                      Items_, Alloc_, Index_type_>::
-  null_handle((std::numeric_limits<Index_type_>::max)()/2);
+                                                      Items_, Alloc_>::
+  null_handle((std::numeric_limits<Index_type>::max)()/2);
 
 } // namespace CGAL
 

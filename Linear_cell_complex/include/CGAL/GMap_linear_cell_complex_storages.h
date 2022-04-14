@@ -40,13 +40,14 @@ namespace CGAL {
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type).
   template<unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_, class Concurrent_tag >
+           class Traits_, class Items_, class Alloc_>
   class GMap_linear_cell_complex_storage_1
   {
   public:
     using Self=GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-    Items_, Alloc_, Concurrent_tag>;
+    Items_, Alloc_>;
     using Use_index=CGAL::Tag_false;
+    using Concurrent_tag=typename internal::Get_concurrent_tag<Items_>::type;
 
     typedef typename Traits_::Point  Point;
     typedef typename Traits_::Vector Vector;
@@ -74,6 +75,8 @@ namespace CGAL {
 
     typedef std::nullptr_t Null_handle_type;
     static const Null_handle_type null_handle;
+
+    using Type_for_compact_container=void*;
 
     typedef Items_ Items;
     typedef Alloc_ Alloc;
@@ -467,11 +470,11 @@ namespace CGAL {
 
   /// null_handle
   template <unsigned int d_, unsigned int ambient_dim,
-           class Traits_, class Items_, class Alloc_, class Concurrent_tag >
+           class Traits_, class Items_, class Alloc_>
   const typename GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                         Items_, Alloc_, Concurrent_tag>::Null_handle_type
+                                         Items_, Alloc_>::Null_handle_type
   GMap_linear_cell_complex_storage_1<d_, ambient_dim, Traits_,
-                                Items_, Alloc_, Concurrent_tag>::null_handle = nullptr;
+                                Items_, Alloc_>::null_handle = nullptr;
 } // namespace CGAL
 
 #if defined(BOOST_GCC)
