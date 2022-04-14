@@ -108,7 +108,7 @@ bool test_GMAP_4()
 
   trace_test_begin();
   InitDartInfo<GMAP>::run(gmap);
-  /* TODO GMAP gmap2(gmap);
+  GMAP gmap2(gmap);
   if ( !check_number_of_cells_4(gmap2, 12, 20, 9, 2, 2, 1) )
     return false;
   if ( !gmap.is_isomorphic_to(gmap2) )
@@ -116,7 +116,7 @@ bool test_GMAP_4()
     std::cout<<"Error: gmap and gmap2 are not isomorphic (after copy).\n";
     assert(false);
     return false;
-  } */
+  }
 
   trace_test_begin();
   gmap.template close<2>();
@@ -156,12 +156,12 @@ bool test_GMAP_4()
   if ( !check_number_of_cells_4(gmap, 12, 20, 9, 2, 2, 1) )
     return false;
 
-  /* if ( !gmap.is_isomorphic_to(gmap2) )
+  if ( !gmap.is_isomorphic_to(gmap2) )
   {
     std::cout<<"Error: gmap and gmap2 are not isomorphic (after close and removals).\n";
     assert(false);
     return false;
-  } */
+  }
   gmap.clear();
 
   if (!test_vertex_insertion(gmap))
