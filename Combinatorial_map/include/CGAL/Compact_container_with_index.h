@@ -917,7 +917,7 @@ namespace internal {
   template < class DSC, bool Const >
   inline
   bool operator!=(const CC_iterator_with_index<DSC, Const> &rhs,
-		  Nullptr_t CGAL_assertion_code(n))
+  Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
     return rhs.m_index != 0;
@@ -931,7 +931,7 @@ namespace internal {
     friend class Compact_container_with_index;
     template < class, class, class, class >
     friend class Compact_container_with_index_2;
-    
+
     typedef MyIndex<T,IT> Self;
     typedef IT size_type;
 

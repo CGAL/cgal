@@ -37,7 +37,7 @@ namespace CGAL {
   // to geometry (not possible to inherith because we use Self type
   // as template parameter of Dart_wrapper. If we inherit, Self is not
   // the correct type).
-  template<unsigned int d_, unsigned int ambient_dim, class Traits_, 
+  template<unsigned int d_, unsigned int ambient_dim, class Traits_,
            class Items_, class Alloc_>
   class CMap_linear_cell_complex_storage_2
   {
@@ -157,12 +157,12 @@ namespace CGAL {
       Self & mmap;
     };
     typedef const Dart_range Dart_const_range;
-    
+
     /// @return a Dart_range (range through all the darts of the map).
     Dart_range& darts()             { return mdarts_range;}
     Dart_const_range& darts() const { return mdarts_range; }
     //**************************************************************************
-    
+
     CMap_linear_cell_complex_storage_2() : mdarts_range(*this)
     {}
 

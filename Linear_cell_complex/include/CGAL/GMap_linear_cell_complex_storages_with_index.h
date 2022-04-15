@@ -132,14 +132,14 @@ namespace CGAL {
     /// @return a Dart_range (range through all the darts of the map).
     Dart_range& darts()             { return mdarts;}
     Dart_const_range& darts() const { return mdarts; }
-    
+
     // Init
     void init_storage()
     {}
 
     void clear_storage()
     {}
-    
+
     /** Test if the map is empty.
      *  @return true iff the map is empty.
      */
@@ -454,7 +454,7 @@ namespace CGAL {
 
     /// Dart container.
     Dart_container mdarts;
-    
+
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };

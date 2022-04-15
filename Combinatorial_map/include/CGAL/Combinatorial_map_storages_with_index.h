@@ -138,12 +138,12 @@ namespace CGAL {
       Self & mmap;
     };
     typedef const Dart_range Dart_const_range;
-    
+
     /// @return a Dart_range (range through all the darts of the map).
     Dart_range& darts()             { return mdarts_range;}
     Dart_const_range& darts() const { return mdarts_range; }
     //**************************************************************************
-    
+
     Combinatorial_map_storage_2() : mdarts_range(*this)
     {}
 
@@ -162,7 +162,7 @@ namespace CGAL {
 
     void clear_storage()
     { mdarts.clear(); }
-    
+
     /** Test if the map is empty.
      *  @return true iff the map is empty.
      */
@@ -469,7 +469,7 @@ namespace CGAL {
 
     /// Container for the null_dart_handle: unused; to be compatible with handle version
     Dart_container mnull_dart_container;
-    
+
     /// Tuple of attributes containers
     typename Helper::Attribute_containers mattribute_containers;
   };

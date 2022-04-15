@@ -142,7 +142,7 @@ namespace CGAL {
     {
       mnull_dart_container.clear();
     }
-    
+
     /** Test if the map is empty.
      *  @return true iff the map is empty.
      */

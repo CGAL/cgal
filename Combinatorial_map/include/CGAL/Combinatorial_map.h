@@ -123,7 +123,7 @@ namespace CGAL {
     typedef typename Base::Attributes Attributes;
     typedef typename Base::Items Items;
     typedef typename Base::Alloc Alloc;
-    typedef typename Base::Use_index Use_index; 
+    typedef typename Base::Use_index Use_index;
     typedef typename Base::Dart_range Dart_range;
     typedef typename Base::Dart_const_range Dart_const_range;
 

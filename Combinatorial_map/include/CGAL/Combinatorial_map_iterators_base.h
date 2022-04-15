@@ -64,7 +64,7 @@ namespace CGAL {
    */
   template < typename Map_,bool Const=false, typename UseIndex=typename Map_::Use_index >
   class CMap_dart_iterator;
-  
+
   template < typename Map_,bool Const>
   class CMap_dart_iterator<Map_, Const, Tag_false>: public boost::mpl::if_c< Const,
       typename Map_::Dart_container::const_iterator,

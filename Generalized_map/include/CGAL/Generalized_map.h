@@ -104,7 +104,7 @@ namespace CGAL {
     typedef typename Base::Dart_range Dart_range;
     typedef typename Base::Dart_const_range Dart_const_range;
     using Hash_function=typename Base::Hash_function;
-    
+
     static const size_type NB_MARKS = Base::NB_MARKS;
     static const size_type INVALID_MARK = NB_MARKS;
 
