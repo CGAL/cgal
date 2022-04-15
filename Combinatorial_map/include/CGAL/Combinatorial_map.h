@@ -3384,7 +3384,7 @@ namespace CGAL {
       CGAL::Unique_hash_map<Dart_handle, Dart_handle,
                             typename Self::Hash_function>
           dual(Dart_handle(), darts().size());
-      Dart_handle d, d2, res = amap.null_handle;
+      Dart_handle d, d2, res=amap.null_handle, newd;
 
       // We clear amap. TODO return a new amap ?
       amap.clear();
@@ -3393,11 +3393,12 @@ namespace CGAL {
       for (typename Dart_range::iterator it=darts().begin();
            it!=darts().end(); ++it)
       {
-        dual[it]=amap.create_dart();
+        newd=amap.create_dart();
+        dual[it]=newd;
         internal::Copy_dart_info_functor<Refs, Refs>::
-          run(static_cast<Refs&>(amap), static_cast<Refs&>(*this),
-              it, dual[it]);
-        if (it==adart && res==amap.null_handle) { res=dual[it]; }
+          run(static_cast<Refs&>(*this), static_cast<Refs&>(amap),
+              it, newd);
+        if (it==adart && res==amap.null_handle) { res=newd; }
       }
 
       // Then we link the darts by using the dual formula :
@@ -3504,15 +3505,15 @@ namespace CGAL {
           { match=false; }
           else
           {
-            bijection[current] = other;
+            bijection[current]=other;
 
             mark(current, m1);
             map2.mark(other, m2);
 
             // We first test info of darts
             if (match && testDartInfo)
-              match=internal::Test_is_same_dart_info_functor<Self, Map2>::
-                  run(*this, map2, current, other);
+            { match=internal::Test_is_same_dart_info_functor<Self, Map2>::
+                  run(*this, map2, current, other); }
 
             // We need to test in both direction because
             // Foreach_enabled_attributes only test non void attributes
@@ -3521,13 +3522,13 @@ namespace CGAL {
             if (testAttributes)
             {
               if (match)
-                Helper::template Foreach_enabled_attributes
+              { Helper::template Foreach_enabled_attributes
                     < internal::Test_is_same_attribute_functor<Self, Map2> >::
-                    run(*this, map2, current, other, match);
+                    run(*this, map2, current, other, match); }
               if (match)
-                Map2::Helper::template Foreach_enabled_attributes
+              { Map2::Helper::template Foreach_enabled_attributes
                     < internal::Test_is_same_attribute_functor<Map2, Self> >::
-                    run(map2, *this, other, current, match);
+                    run(map2, *this, other, current, match); }
             }
 
             if (match && testPoint)
@@ -3540,7 +3541,7 @@ namespace CGAL {
 
             // We test if the injection is valid with its neighboors.
             // We go out as soon as it is not satisfied.
-            for (i = 0; match && i <= dimension; ++i)
+            for (i=0; match && i<=dimension; ++i)
             {
               if ( i>map2.dimension )
               {
@@ -3560,7 +3561,7 @@ namespace CGAL {
                   { match=false; }
                   else
                   {
-                    if (is_marked(beta(current,i), m1) !=
+                    if (is_marked(beta(current,i), m1)!=
                         map2.is_marked(map2.beta(other,i), m2))
                     { match=false; }
                     else

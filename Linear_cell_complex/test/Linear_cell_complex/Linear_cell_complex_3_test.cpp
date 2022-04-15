@@ -38,6 +38,12 @@ struct MonInfo
   bool operator==(const MonInfo& info) const
   { return mnb==info.mnb && s==info.s && ptr==info.ptr; }
 
+  friend std::ostream& operator<<(std::ostream& os, const MonInfo& i)
+  {
+    os<<"("<<i.mnb<<", "<<i.s<<", "<<reinterpret_cast<std::size_t>(i.ptr)<<")";
+    return os;
+  }
+
   int mnb;
   std::string s;
   char *ptr;
