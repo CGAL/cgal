@@ -42,7 +42,7 @@ public:
     }
 
     if (open)
-      return make_pair(v.point(), d);
+    { return std::make_pair(v.point(), d); }
 
     LCC::FT alpha = (4.0f - 2.0f *
                      (LCC::FT) cos (2.0f * PI / (LCC::FT) degree)) / 9.0f;

@@ -66,6 +66,8 @@ else()
     Linear_cell_complex_pqq_subdivision.cpp
     typedefs.h
     import_moka.h
+    MainWindow.h
+    Viewer.h
     ${uis}
     ${CGAL_Qt5_RESOURCE_FILES}
     ${CGAL_Qt5_MOC_FILES})

@@ -32,9 +32,7 @@ public:
 
     // Old points aren't concerned.
     if (mlcc.is_marked(d, old))
-    {
-      return make_pair(v.point(), d);
-    }
+    { return std::make_pair(v.point(), d); }
 
     std::vector<LCC::Point> facetsPoints;
     facetsPoints.resize(0);
@@ -46,9 +44,7 @@ public:
     {
       // If the vertex is on a border.
       if (mlcc.is_free(it,2))
-      {
-        return make_pair(v.point(), d);
-      }
+      { return std::make_pair(v.point(), d); }
       // If we found barycenter of a facet.
       if (!mlcc.is_marked(mlcc.opposite(it), old))
       {
@@ -59,9 +55,7 @@ public:
     // If we found more than two points we are on a vertice barycenter of a facet.
     // They aren't concerned.
     if (facetsPoints.size() > 2 || facetsPoints.size() < 2)
-    {
-      return make_pair(v.point(), d);
-    }
+    { return std::make_pair(v.point(), d); }
 
     // Average.
     LCC::Vector averageFacetsV = LCC::Traits::Construct_vector()
@@ -113,9 +107,7 @@ public:
 
     // Just old points are concerned.
     if (!mlcc.is_marked(d, old))
-    {
-      return make_pair(v.point(), d);
-    }
+    { return std::make_pair(v.point(), d); }
 
     unsigned int degree = 0;
     std::vector<LCC::Point> edgesPoints;
@@ -131,9 +123,7 @@ public:
     {
       // If the vertex is on a border
       if (mlcc.is_free(it,2))
-      {
-        return make_pair(v.point(), d);
-      }
+      { return std::make_pair(v.point(), d); }
       // If incident isn't an old point, it's an edge point.
       if (!mlcc.is_marked(mlcc.opposite(it), old))
       {
@@ -147,9 +137,7 @@ public:
     CGAL_assertion (facetsPoints.size() != 0 && edgesPoints.size() != 0);
 
     if (facetsPoints.size() < 3 || edgesPoints.size() < 3 )
-    {
-      return make_pair(v.point(), d);
-    }
+    { return std::make_pair(v.point(), d); }
 
     // Average of incidents "edge points".
     LCC::Vector averageEdgesV = LCC::Traits::Construct_vector()

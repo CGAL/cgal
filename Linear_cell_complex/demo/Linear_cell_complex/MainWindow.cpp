@@ -597,7 +597,7 @@ void MainWindow::on_actionSubdivide_triggered ()
   timer.start();
 #endif
 
-  subdivide_lcc_3 (*(scene.lcc));
+  subdivide_lcc_3(*(scene.lcc));
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
@@ -1047,7 +1047,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
     if ( scene.lcc->beta<0, 2>(*it)==*it || scene.lcc->beta<1, 2>(*it)==*it)
     { // To process dangling edges
 
-      Dart_handle actu = *it, prev=nullptr;
+      Dart_handle actu = *it, prev=LCC::null_handle;
       do
       {
         if ( scene.lcc->beta<0, 2>(actu)==actu ) prev = scene.lcc->beta<1>(actu);
@@ -1060,9 +1060,9 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
           actu = prev;
         }
         else
-          actu = nullptr;
+          actu=LCC::null_handle;
       }
-      while (actu!=nullptr && (scene.lcc->beta<0, 2>(actu)==actu || scene.lcc->beta<1, 2>(actu)==actu));
+      while (actu!=LCC::null_handle && (scene.lcc->beta<0, 2>(actu)==actu || scene.lcc->beta<1, 2>(actu)==actu));
     }
     else if ( !CGAL::belong_to_same_cell<LCC, 2>(*scene.lcc, *it,
                                                  scene.lcc->beta<2>(*it)) )
@@ -1176,19 +1176,18 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
   LCC::Dart_of_orbit_range<1>::iterator
     it(lcc.darts_of_orbit<1>(d1).begin());
 
-  CDT::Vertex_handle previous=LCC::null_handle, first=LCC::null_handle,
-    vh=LCC::null_handle;
+  CDT::Vertex_handle previous=nullptr, first=nullptr, vh=nullptr;
 
    for (LCC::Dart_of_orbit_range<1>::iterator
           itend(lcc.darts_of_orbit<1>(d1).end()); it!=itend; ++it)
    {
      vh = cdt.insert(lcc.point(it));
      vh->info().dh=it;
-     if( first==nullptr )
+     if(first==nullptr)
      {
        first=vh;
      }
-     if( previous!=nullptr)
+     if(previous!=nullptr)
      {
        CGAL_assertion( previous !=vh );
        cdt.insert_constraint(previous,vh);
@@ -1211,7 +1210,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
    }
 
    std::queue<CDT::Face_handle> face_queue;
-   CDT::Face_handle face_internal = nullptr;
+   CDT::Face_handle face_internal=nullptr;
 
    face_queue.push(cdt.infinite_vertex()->face());
    while(! face_queue.empty() )
@@ -1234,7 +1233,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        }
      }
    }
-   if ( face_internal!=nullptr )
+   if (face_internal!=nullptr)
      face_queue.push(face_internal);
 
    while(! face_queue.empty() )
@@ -1294,17 +1293,17 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        const CDT::Vertex_handle vb = fh->vertex(cdt.ccw(index));
        const CDT::Vertex_handle vc = fh->vertex(index);
 
-       Dart_handle dd1 = nullptr;
+       Dart_handle dd1 = LCC::null_handle;
        for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(va->info().dh).begin());
-            dd1==nullptr && it.cont(); ++it)
+            dd1==LCC::null_handle && it.cont(); ++it)
        {
          if (lcc.point(lcc.beta<1>(it))==vc->point())
            dd1=it;
        }
 
-       Dart_handle dd2 = nullptr;
+       Dart_handle dd2 = LCC::null_handle;
        for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(vb->info().dh).begin());
-            dd2==nullptr && it.cont(); ++it)
+            dd2==LCC::null_handle && it.cont(); ++it)
        {
          if (lcc.point(lcc.beta<0>(it))==vc->point())
            dd2=it;
