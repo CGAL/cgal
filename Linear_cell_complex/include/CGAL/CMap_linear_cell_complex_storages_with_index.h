@@ -136,12 +136,16 @@ namespace CGAL {
       Dart_range(Self &amap) : mmap(amap)
       {}
       iterator begin()
-      { iterator res=mmap.mdarts.begin(); ++res; return res; }
+      {
+        CGAL_assertion(!mmap.mdarts.empty()); // The container mdarts is not empty
+                                              // it has at least the null_dart
+        iterator res=mmap.mdarts.begin(); ++res; return res;
+      }
       iterator end() { return mmap.mdarts.end(); }
       const_iterator begin() const
       { const_iterator res=mmap.mdarts.begin(); ++res; return res; }
       const_iterator end() const { return mmap.mdarts.end(); }
-      size_type size()
+      size_type size() const
       { return mmap.mdarts.size()-1; }
       bool empty() const
       { return size()==0; } // mmap.is_empty(); }
@@ -165,7 +169,7 @@ namespace CGAL {
     void init_storage()
     {
       // Allocate a dart for null_dart_handle
-      assert(mdarts.empty());
+      assert(mdarts.empty()); // the compact container is empty
       Dart_index local_null_dart_handle = mdarts.emplace();
       if(local_null_dart_handle!=0)
       {
@@ -182,11 +186,11 @@ namespace CGAL {
      *  @return true iff the map is empty.
      */
     bool is_empty() const
-    { return  this->mdarts.size()==1; }
+    { return  darts().empty(); }
 
     /// @return the number of darts.
     size_type number_of_darts() const
-    { return mdarts.size()-1; }
+    { return darts().size(); }
 
     /** Return if this dart is free for adimension.
      * @param dh a dart handle

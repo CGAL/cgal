@@ -815,22 +815,22 @@ namespace CGAL {
      */
     Dart_handle dual_points_at_barycenter(Self & alcc, Dart_handle adart=null_handle)
     {
-      Dart_handle res = Base::dual(alcc, adart);
+      Dart_handle res=Base::dual(alcc, adart);
 
       // Now the lcc alcc is topologically correct, we just need to add
       // its geometry to each vertex (the barycenter of the corresponding
       // dim-cell in the initial map).
-      typename Dart_range::iterator it2 = alcc.darts().begin();
+      typename Dart_range::iterator it2=alcc.darts().begin();
       for (typename Dart_range::iterator it(darts().begin());
            it!=darts().end(); ++it, ++it2)
       {
-        if (vertex_attribute(it2)==null_handle)
+        if (alcc.vertex_attribute(it2)==null_handle)
         {
           alcc.set_vertex_attribute(it2, alcc.create_vertex_attribute
                                     (barycenter<dimension>(it)));
         }
       }
-      CGAL_assertion( is_valid() );
+      CGAL_expensive_assertion(alcc.is_valid());
       return res;
     }
 

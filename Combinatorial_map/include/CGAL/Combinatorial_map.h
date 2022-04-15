@@ -3381,22 +3381,23 @@ namespace CGAL {
     {
       CGAL_assertion( is_without_boundary(dimension) );
 
-      CGAL::Unique_hash_map< Dart_handle, Dart_handle,
-                             typename Self::Hash_function > dual(Dart_handle(), darts().size());
+      CGAL::Unique_hash_map<Dart_handle, Dart_handle,
+                            typename Self::Hash_function>
+          dual(Dart_handle(), darts().size());
       Dart_handle d, d2, res = amap.null_handle;
 
       // We clear amap. TODO return a new amap ?
       amap.clear();
 
       // We create a copy of all the dart of the map.
-      for ( typename Dart_range::iterator it=darts().begin();
-            it!=darts().end(); ++it)
+      for (typename Dart_range::iterator it=darts().begin();
+           it!=darts().end(); ++it)
       {
-        dual[it] = amap.create_dart();
+        dual[it]=amap.create_dart();
         internal::Copy_dart_info_functor<Refs, Refs>::
           run(static_cast<Refs&>(amap), static_cast<Refs&>(*this),
               it, dual[it]);
-        if ( it==adart && res==amap.null_handle ) res = dual[it];
+        if (it==adart && res==amap.null_handle) { res=dual[it]; }
       }
 
       // Then we link the darts by using the dual formula :
@@ -3407,20 +3408,20 @@ namespace CGAL {
       for ( typename Dart_range::iterator it=darts().begin();
             it!=darts().end(); ++it, ++it2)
       {
-        d = it2; // The supposition on the order allows to avoid d=dual[it];
+        d=it2; // The supposition on the order allows to avoid d=dual[it];
         CGAL_assertion( it2==dual[it] );
 
         // First case outside the loop since we need to use link_beta1
         if ( amap.template is_free<1>(d) &&
              beta<dimension, dimension-1>(it)!=null_dart_handle )
-          amap.basic_link_beta_1(d, dual[beta<dimension, dimension-1>(it)]);
+        { amap.basic_link_beta_1(d, dual[beta<dimension, dimension-1>(it)]); }
 
         // and during the loop we use link_beta(d1,d2,i)
         for ( unsigned int i=dimension-2; i>=1; --i)
         {
           if ( amap.is_free(d,dimension-i) &&
                beta(it, dimension, i)!=null_dart_handle )
-            amap.basic_link_beta(d, dual[beta(it, dimension, i)], dimension-i);
+          { amap.basic_link_beta(d, dual[beta(it, dimension, i)], dimension-i); }
         }
         if ( amap.template is_free<dimension>(d) )
         {
@@ -3429,7 +3430,7 @@ namespace CGAL {
         }
       }
 
-      if ( res==amap.null_handle ) res = amap.darts().begin();
+      if ( res==amap.null_handle ) { res=amap.darts().begin(); }
       return res;
     }
 
