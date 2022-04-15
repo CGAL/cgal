@@ -188,13 +188,23 @@ void chained_map<T, Allocator>::rehash()
     if ( x != nullkey ) // list p is non-empty
     { Item q = HASH(x);
       q->k = x;
-      q->i = p->i;
+      q->i = std::move(p->i);
     }
   }
 
   while (p < old_table_end)
   { std::size_t x = p->k;
-    insert(x,p->i);
+    Item q = HASH(x);
+    if ( q->k == nullkey ) {
+      q->k = x;
+      q->i = std::move(p->i);
+    } else {
+      Item r = free; free_succ();
+      r->k = x;
+      r->i = std::move(p->i);
+      r->succ = q->succ;
+      q->succ = r;
+    }
     ++p;
   }
 
@@ -291,7 +301,7 @@ void chained_map<T, Allocator>::erase(std::size_t x)
     p = q->succ;
     if(p) {
       // move succ to head
-      q->i = p->i;
+      q->i = std::move(p->i);
       q->k = p->k;
       q->succ = p->succ;
       erase(p);
