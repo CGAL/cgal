@@ -7,7 +7,7 @@ namespace CGAL {
 An instance of the class template `Unique_hash_map` is an
 injective mapping from the set of keys of type `Key` to the set of
 variables of type `Data`. New keys can be inserted at any time,
-however keys cannot be individually deleted.
+and can be deleted with the erase method.
 
 An object `hash` of the type `UniqueHashFunction` returns a
 unique integer index `hash(key)` of type `std::size_t` for all
