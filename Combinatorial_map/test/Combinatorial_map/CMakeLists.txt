@@ -6,7 +6,7 @@ project(Combinatorial_map_Tests)
 
 find_package(CGAL REQUIRED)
 
-set(hfiles Combinatorial_map_2_test.h Combinatorial_map_3_test.h 
+set(hfiles Combinatorial_map_2_test.h Combinatorial_map_3_test.h
   Combinatorial_map_test_iterators.h Face_graph_wrapper_test.h)
 
 # create a target per cppfile

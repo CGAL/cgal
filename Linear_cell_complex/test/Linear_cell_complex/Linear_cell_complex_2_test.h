@@ -133,7 +133,7 @@ bool test_LCC_2()
 
   typedef typename LCC::Dart_handle Dart_handle;
   typedef typename LCC::Point Point;
-  
+
   // Construction operations
   trace_test_begin();
   Dart_handle dh1=lcc.make_segment(Point(0,0),Point(1,0), true);
