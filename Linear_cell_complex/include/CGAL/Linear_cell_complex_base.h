@@ -830,7 +830,7 @@ namespace CGAL {
                                     (barycenter<dimension>(it)));
         }
       }
-
+      CGAL_assertion( is_valid() );
       return res;
     }
 

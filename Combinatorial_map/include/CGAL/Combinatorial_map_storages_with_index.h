@@ -125,7 +125,7 @@ namespace CGAL {
       size_type size()
       { return mmap.mdarts.size()-1; }
       bool empty() const
-      { return mmap.is_empty(); }
+      { return size()==0; } // is_empty(); }
       size_type index(Dart_index idx) const
       { return idx; }
       size_type index(const_iterator cit) const
