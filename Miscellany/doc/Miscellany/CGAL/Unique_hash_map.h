@@ -113,13 +113,22 @@ the current hash function.
 Hash_function hash_function() const;
 
 /*!
-returns true if \f$ key\f$ is
-defined in `*this`. Note that there can be keys defined that have not
+returns true if `*this` contains \f$ key\f$.
+Note that there can be keys defined that have not
 been inserted explicitly. Their variables are initialized to
 `default_value`.
 */
+bool contains( const Key& key) const;
+
+/*!
+returns true if `*this` contains \f$ key\f$
+*/
 bool is_defined( const Key& key) const;
 
+/*!
+erases \f$ key\f$ and its value from the `map`
+*/
+void erase(const Key& key);
 
 /*!
 sets the table size.
