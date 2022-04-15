@@ -2490,7 +2490,7 @@ namespace CGAL {
       CGAL_assertion( is_without_boundary(dimension) );
 
       CGAL::Unique_hash_map< Dart_handle, Dart_handle,Hash_function > dual;
-      Dart_handle d, d2, res = amap.null_handle;
+      Dart_handle d, d2, res = amap.null_handle, newd;
 
       // We clear amap. TODO return a new amap ?
       amap.clear();
@@ -2499,11 +2499,12 @@ namespace CGAL {
       for ( typename Dart_range::iterator it=darts().begin();
             it!=darts().end(); ++it)
       {
-        dual[it] = amap.create_dart();
+        newd=amap.create_dart();
+        dual[it]=newd;
         internal::Copy_dart_info_functor<Refs, Refs>::
-          run(static_cast<Refs&>(amap), static_cast<Refs&>(*this),
-              it, dual[it]);
-        if ( it==adart && res==amap.null_handle ) res = dual[it];
+          run(static_cast<Refs&>(*this), static_cast<Refs&>(amap),
+              it, newd);
+        if ( it==adart && res==amap.null_handle ) { res=newd; }
       }
 
       // Then we link the darts by using the dual formula :
