@@ -247,7 +247,7 @@ protected:
 
     Point p1 = lcc->point(dh);
     Dart_const_handle d2 = lcc->other_extremity(dh);
-    if (d2!=nullptr)
+    if (d2!=lcc->null_handle)
     {
       if (m_drawing_functor.colored_edge(*lcc, dh))
       { add_segment(p1, lcc->point(d2), m_drawing_functor.edge_color(*lcc, dh)); }
