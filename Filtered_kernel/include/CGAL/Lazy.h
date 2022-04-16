@@ -524,9 +524,7 @@ public:
   mutable std::atomic<ET*> ptr_ { nullptr };
   mutable std::once_flag once;
 
-  Lazy_rep () {}
-
-  Lazy_rep (AT a)
+  Lazy_rep (AT a = AT())
       : x(-a.inf()), y(a.sup()) {}
 
   template<class E>
@@ -535,7 +533,13 @@ public:
 
   AT approx() const
   {
-    return AT(-x.load(std::memory_order_relaxed), y.load(std::memory_order_relaxed));
+    // Do not check that the interval is valid. Indeed, using IO/WKT/traits_point.h for instance,
+    // one can default-construct a point, then set X, and then Y, which amounts to
+    // Point_2(Point_2(X, Point_2().y()).x(), Y).
+    // With Epeck, we have a default constructed array of Interval_nt in Point_2(),
+    // then .y() returns a Lazy_exact_nt containing an invalid interval,
+    // and when we read that interval we end up here.
+    return AT(-x.load(std::memory_order_relaxed), y.load(std::memory_order_relaxed), typename AT::no_check_t());
   }
 
   void set_at(ET*, AT a) const {
