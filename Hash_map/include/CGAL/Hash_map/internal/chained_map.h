@@ -32,6 +32,8 @@ class chained_map_elem
   template<typename T2, typename Alloc> friend class chained_map;
   std::size_t k; T i;
   chained_map_elem<T>*  succ;
+public:
+  chained_map_elem(const T& _i) : i(_i) {}
 };
 
 template <typename T, typename Allocator>
@@ -57,7 +59,6 @@ public:
    T& xdef() { return def; }
    const T& cxdef() const { return def; }
 private:
-   void init_inf(T& x)   const { x = def; }
 
    chained_map_elem<T>*  HASH(std::size_t x)  const
    { return table + (x & table_size_1);  }
@@ -67,8 +68,8 @@ private:
 
    inline void insert(std::size_t x, T y);
 
-   void construct(chained_map_elem<T>* item)
-   { Allocator_type_traits::construct(alloc,item); }
+   void construct(chained_map_elem<T>* item, const T& d)
+   { Allocator_type_traits::construct(alloc,item, d); }
 
    void destroy(chained_map_elem<T>* item)
    { Allocator_type_traits::destroy(alloc,item); }
@@ -92,13 +93,7 @@ public:
    void erase(std::size_t x);
    void clear();
    ~chained_map()
-   {
-     if(!table)
-       return;
-     for (Item item = table ; item != table_end ; ++item)
-       destroy(item);
-     alloc.deallocate(table, table_end - table);
-   }
+   { clear(); }
 
    T& access(Item p, std::size_t x);
    T& access(std::size_t x);
@@ -120,7 +115,7 @@ inline T& chained_map<T, Allocator>::access(std::size_t x)
   else {
     if ( p->k == nullkey ) {
       p->k = x;
-      init_inf(p->i);  // initializes p->i to xdef
+      construct(p, def);
       return p->i;
     } else
       return access(p,x);
@@ -141,14 +136,12 @@ void chained_map<T, Allocator>::init_table(std::size_t n)
   table_end = table + s;
 
   for (Item p = table; p != free; ++p) {
-    construct(p);
     p->k = nullkey;
     p->succ = nullptr;
   }
 
   // build free chain
   for (Item p = free; p != table_end; ++p) {
-    construct(p);
     p->k = nullkey;
     p->succ = p + 1;
   }
@@ -233,13 +226,13 @@ T& chained_map<T, Allocator>::access(Item p, std::size_t x)
 
   if (p->k == nullkey)
   { p->k = x;
-    init_inf(p->i);  // initializes p->i to xdef
+    construct(p, def);
     return p->i;
   }
 
   q = free; free_succ();
   q->k = x;
-  init_inf(q->i);    // initializes q->i to xdef
+  construct(q, def);
   q->succ = p->succ;
   p->succ = q;
   return q->i;
@@ -308,7 +301,6 @@ void chained_map<T, Allocator>::erase(std::size_t x)
       return;
     }
     destroy(q);
-    construct(q);
     q->k = nullkey;
     return;
   }
@@ -330,7 +322,6 @@ template <typename T, typename Allocator>
 void chained_map<T, Allocator>::erase(chained_map_elem<T>* q)
 {
   destroy(q);
-  construct(q);
   q->k = nullkey;
   // append erased element to free chain.
   q->succ = free;
@@ -344,7 +335,7 @@ void chained_map<T, Allocator>::clear()
     return;
 
   for (Item item = table ; item != table_end ; ++item)
-    destroy(item);
+    if(item->k != nullkey) destroy(item);
   alloc.deallocate(table, table_end - table);
 
   table = nullptr;
