@@ -33,7 +33,7 @@ class chained_map_elem
   std::size_t k; T i;
   chained_map_elem<T>*  succ;
 public:
-  chained_map_elem(const T& _i) : i(_i) {}
+  chained_map_elem(std::size_t _k, const T& _i) : k(_k), i(_i) {}
 };
 
 template <typename T, typename Allocator>
@@ -68,8 +68,8 @@ private:
 
    inline void insert(std::size_t x, T y);
 
-   void construct(chained_map_elem<T>* item, const T& d)
-   { Allocator_type_traits::construct(alloc,item, d); }
+   void construct(chained_map_elem<T>* item, std::size_t k, const T& d)
+   { Allocator_type_traits::construct(alloc,item, k, d); }
 
    void destroy(chained_map_elem<T>* item)
    { Allocator_type_traits::destroy(alloc,item); }
@@ -114,8 +114,7 @@ inline T& chained_map<T, Allocator>::access(std::size_t x)
   }
   else {
     if ( p->k == nullkey ) {
-      p->k = x;
-      construct(p, def);
+      construct(p, x, def);
       return p->i;
     } else
       return access(p,x);
@@ -225,14 +224,12 @@ T& chained_map<T, Allocator>::access(Item p, std::size_t x)
   }
 
   if (p->k == nullkey)
-  { p->k = x;
-    construct(p, def);
+  { construct(p, x, def);
     return p->i;
   }
 
   q = free; free_succ();
-  q->k = x;
-  construct(q, def);
+  construct(q, x, def);
   q->succ = p->succ;
   p->succ = q;
   return q->i;
