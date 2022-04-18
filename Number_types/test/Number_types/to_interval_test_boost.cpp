@@ -839,7 +839,9 @@ void test_shift_positive() {
 #endif // CGAL_USE_BOOST_MP
 
 int main() {
+#ifdef CGAL_USE_BOOST_MP
   test_shift_positive();
+#endif
 
   // Make sure we have the same seed.
   CGAL::get_default_random() = CGAL::Random(0);
