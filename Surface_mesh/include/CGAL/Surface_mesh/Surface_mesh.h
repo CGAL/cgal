@@ -932,11 +932,11 @@ public:
       , eremoved_(std::move(sm.eremoved_))
       , fremoved_(std::move(sm.fremoved_))
       , vpoint_(std::move(sm.vpoint_))
-      , removed_vertices_(sd::exchange(sm.removed_vertices, 0))
-      , removed_edges_(sd::exchange(sm.removed_edges, 0))
-      , removed_faces_(sd::exchange(sm.removed_faces, 0))
+      , removed_vertices_(std::exchange(sm.removed_vertices, 0))
+      , removed_edges_(std::exchange(sm.removed_edges, 0))
+      , removed_faces_(std::exchange(sm.removed_faces, 0))
       , vertices_freelist_(std::exchange(sm.vertices_freelist_,(std::numeric_limits<size_type>::max)()))
-      , edgces_freelist_(std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)()))
+      , edges_freelist_(std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)()))
       , faces_freelist_(std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)()))
       , garbage_(std::exchange(sm.garbage_, false))
       , recycle_(std::exchange(sm.recycle_, true))
@@ -960,12 +960,12 @@ public:
       eremoved_ = std::move(sm.eremoved_);
       fremoved_ = std::move(sm.fremoved_);
       vpoint_ = std::move(sm.vpoint_);
-      removed_vertices_ = sd::exchange(sm.removed_vertices, 0);
-      removed_edges_ = sd::exchange(sm.removed_edges, 0);
-      removed_faces_ = sd::exchange(sm.removed_faces, 0);
-      vertices_freelist_ = std::exchange(sm.vertices_freelist_, (std::numeric_limits<size_type>::max)();)
-      edgces_freelist_ = std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)();)
-      faces_freelist_ = std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)();)
+      removed_vertices_ = std::exchange(sm.removed_vertices, 0);
+      removed_edges_ = std::exchange(sm.removed_edges, 0);
+      removed_faces_ = std::exchange(sm.removed_faces, 0);
+      vertices_freelist_ = std::exchange(sm.vertices_freelist_, (std::numeric_limits<size_type>::max)());
+      edges_freelist_ = std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)());
+      faces_freelist_ = std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)());
       garbage_ = std::exchange(sm.garbage_, false);
       recycle_ = std::exchange(sm.recycle_, true);
       anonymous_property_ = std::exchange(sm.anonymous_property_, 0);

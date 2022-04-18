@@ -265,7 +265,7 @@ public:
 
     Property_container& operator=(Property_container&& c) noexcept
     {
-      Self tmp(std::move(c));
+      Property_container tmp(std::move(c));
       tmp.swap(*this);
       return *this;
     }
