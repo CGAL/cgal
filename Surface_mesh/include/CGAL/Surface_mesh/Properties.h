@@ -242,6 +242,12 @@ public:
     // copy constructor: performs deep copy of property arrays
     Property_container(const Property_container& _rhs) { operator=(_rhs); }
 
+    Property_container(Property_container&& c) noexcept
+      : size_(0), capacity_(0)
+    {
+      c.swap(*this);
+    }
+
     // assignment: performs deep copy of property arrays
     Property_container& operator=(const Property_container& _rhs)
     {
@@ -256,6 +262,14 @@ public:
         }
         return *this;
     }
+
+    Property_container& operator=(Property_container&& c) noexcept
+    {
+      Self tmp(std::move(c));
+      tmp.swap(*this);
+      return *this;
+    }
+
 
     void transfer(const Property_container& _rhs)
     {
@@ -494,7 +508,7 @@ public:
     void swap (Property_container& other)
     {
       this->parrays_.swap (other.parrays_);
-      std::swap(this->size_, other.size_);
+      std::swap(this->size_, other.size_); // AF: why not the same for capacity_  ?
     }
 
 private:
@@ -554,6 +568,11 @@ public:
 /// @cond CGAL_DOCUMENT_INTERNALS
     Property_map_base(Property_array<T>* p=nullptr) : parray_(p) {}
 
+    Property_map_base(Property_map_base&& pm) noexcept
+      : parray_(std::exchange(pm.parray_, nullptr))
+    {}
+
+  Property_map_base(const Property_map_base& pm) = default;
     void reset()
     {
         parray_ = nullptr;

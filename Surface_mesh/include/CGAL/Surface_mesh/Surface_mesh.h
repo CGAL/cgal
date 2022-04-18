@@ -343,6 +343,12 @@ public:
     typedef typename Base::reference reference;
     Property_map() : Base() {}
     Property_map(const Base& pm): Base(pm) {}
+
+    Property_map(const Property_map& pm) = default;
+
+    Property_map(Property_map&& pm) noexcept
+      : Base(pm)
+    {}
   };
 
   template <typename Key, typename T>
@@ -914,8 +920,56 @@ public:
     /// Copy constructor: copies `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh(const Surface_mesh& rhs) { *this = rhs; }
 
+    Surface_mesh(Surface_mesh&& sm)
+      : vprops_(std::move(sm.vprops_))
+      , hprops_(std::move(sm.hprops_))
+      , eprops_(std::move(sm.eprops_))
+      , fprops_(std::move(sm.fprops_))
+      , vconn_(std::move(sm.vconn_))
+      , hconn_(std::move(sm.hconn_))
+      , fconn_(std::move(sm.fconn_))
+      , vremoved_(std::move(sm.vremoved_))
+      , eremoved_(std::move(sm.eremoved_))
+      , fremoved_(std::move(sm.fremoved_))
+      , vpoint_(std::move(sm.vpoint_))
+      , removed_vertices_(sd::exchange(sm.removed_vertices, 0))
+      , removed_edges_(sd::exchange(sm.removed_edges, 0))
+      , removed_faces_(sd::exchange(sm.removed_faces, 0))
+      , vertices_freelist_(std::exchange(sm.vertices_freelist_,(std::numeric_limits<size_type>::max)()))
+      , edgces_freelist_(std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)()))
+      , faces_freelist_(std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)()))
+      , garbage_(std::exchange(sm.garbage_, false))
+      , recycle_(std::exchange(sm.recycle_, true))
+      , anonymous_property_(std::exchange(sm.anonymous_property_, 0))
+    {}
+
     /// assigns `rhs` to `*this`. Performs a deep copy of all properties.
     Surface_mesh& operator=(const Surface_mesh& rhs);
+
+
+    Surface_mesh& operator=(Surface_mesh&& sm)
+    {
+      vprops_ = std::move(sm.vprops_);
+      hprops_ = std::move(sm.hprops_);
+      eprops_ = std::move(sm.eprops_);
+      fprops_ = std::move(sm.fprops_);
+      vconn_ = std::move(sm.vconn_);
+      hconn_ = std::move(sm.hconn_);
+      fconn_ = std::move(sm.fconn_);
+      vremoved_ = std::move(sm.vremoved_);
+      eremoved_ = std::move(sm.eremoved_);
+      fremoved_ = std::move(sm.fremoved_);
+      vpoint_ = std::move(sm.vpoint_);
+      removed_vertices_ = sd::exchange(sm.removed_vertices, 0);
+      removed_edges_ = sd::exchange(sm.removed_edges, 0);
+      removed_faces_ = sd::exchange(sm.removed_faces, 0);
+      vertices_freelist_ = std::exchange(sm.vertices_freelist_, (std::numeric_limits<size_type>::max)();)
+      edgces_freelist_ = std::exchange(sm.edges_freelist_,(std::numeric_limits<size_type>::max)();)
+      faces_freelist_ = std::exchange(sm.faces_freelist_,(std::numeric_limits<size_type>::max)();)
+      garbage_ = std::exchange(sm.garbage_, false);
+      recycle_ = std::exchange(sm.recycle_, true);
+      anonymous_property_ = std::exchange(sm.anonymous_property_, 0);
+    }
 
     /// assigns `rhs` to `*this`. Does not copy custom properties.
     Surface_mesh& assign(const Surface_mesh& rhs);
