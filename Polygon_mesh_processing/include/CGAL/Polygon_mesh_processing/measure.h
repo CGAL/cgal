@@ -214,6 +214,54 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
 /**
   * \ingroup PMP_measure_grp
   *
+  * Finds the longest edge of a given polygon mesh.
+  *
+  * @tparam PolygonMesh a model of `HalfedgeGraph`
+  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  *
+  * @param pmesh the polygon mesh to which `h` belongs
+  * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *   \cgalParamNBegin{vertex_point_map}
+  *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+  *                    as key type and `%Point_3` as value type}
+  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+  *   \cgalParamNEnd
+  *
+  *   \cgalParamNBegin{geom_traits}
+  *     \cgalParamDescription{an instance of a geometric traits class}
+  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+  *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+  *   \cgalParamNEnd
+  * \cgalNamedParamsEnd
+  *
+  * @return the longest edge in `pmesh`. The return type is an `edge_descriptor`.
+  *
+  * @sa `squared_edge_length()`
+  * @sa `longest_border()`
+  */
+
+template<typename PolygonMesh,
+         typename NamedParameters = parameters::Default_named_parameters>
+inline typename boost::graph_traits<PolygonMesh>::edge_descriptor
+longest_edge(const PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
+
+    auto edge_range = edges(pmesh);
+
+    CGAL_assertion(edge_range.size() > 0);
+
+    return *std::max_element(edge_range.begin(), edge_range.end(), [&pmesh, &np](auto l, auto r) {
+        return squared_edge_length(l, pmesh, np)
+            < squared_edge_length(r, pmesh, np);
+    });
+}  
+  
+/**
+  * \ingroup PMP_measure_grp
+  *
   * computes the length of the border polyline that contains a given halfedge.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph`
