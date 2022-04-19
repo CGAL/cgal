@@ -100,7 +100,7 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 
     for(std::size_t i=1; i<4; ++i)
     {
-      Vertex_handle v = c->vertex((s+i)&3);
+      CGAL_assertion_code(Vertex_handle v = c->vertex((s+i)&3);)
       CGAL_assertion(v != Vertex_handle() && !c3t3.triangulation().is_infinite(v));
 
       const Weighted_point& wp = c3t3.triangulation().point(c, (s+i)&3);
