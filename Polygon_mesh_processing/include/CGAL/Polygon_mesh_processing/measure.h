@@ -214,12 +214,12 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
 /**
   * \ingroup PMP_measure_grp
   *
-  * Finds the longest edge of a given polygon mesh.
+  * returns the longest edge of a given polygon mesh.
   *
-  * @tparam PolygonMesh a model of `HalfedgeGraph`
+  * @tparam PolygonMesh a model of `HalfedgeListGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param pmesh the polygon mesh to which `h` belongs
+  * @param pmesh the polygon mesh in which the longest edge is searched for 
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
@@ -251,13 +251,22 @@ longest_edge(const PolygonMesh& pmesh, const NamedParameters& np = parameters::d
 
     auto edge_range = edges(pmesh);
 
-    CGAL_assertion(edge_range.size() > 0);
+    // if mesh has no edges
+    if (edge_range.begin() == edge_range.end())
+        return boost::graph_traits<PolygonMesh>::null_edge();
 
-    return *std::max_element(edge_range.begin(), edge_range.end(), [&pmesh, &np](auto l, auto r) {
+    auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&pmesh, &np](auto l, auto r) {
         return squared_edge_length(l, pmesh, np)
-            < squared_edge_length(r, pmesh, np);
+            < squared_edge_length(r, pmesh, np);    
     });
-}  
+    
+    // if edge_reference is not derefrenceble 
+    if (edge_reference == edge_range.end())
+        return boost::graph_traits<PolygonMesh>::null_edge();
+    
+    return *edge_reference;
+
+}
   
 /**
   * \ingroup PMP_measure_grp
