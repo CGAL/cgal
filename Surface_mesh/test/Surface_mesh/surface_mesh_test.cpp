@@ -230,6 +230,19 @@ void properties () {
   assert(created == false);
 }
 
+void move () {
+  Surface_fixture f;
+
+  int nf = num_faces(f.m);
+  f.m2 = f.m;
+
+  assert(num_faces(f.m2) == nf);
+
+  f.m3 = std::move(f.m);
+  assert(num_faces(f.m3) == nf);
+  assert(num_faces(f.m) == 0);
+}
+
 
 int main()
 {
@@ -244,6 +257,7 @@ int main()
   border_vertex_check();
   point_position_accessor();
   properties();
+  move();
   std::cout << "done" << std::endl;
   return 0;
 }

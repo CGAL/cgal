@@ -579,6 +579,7 @@ public:
     Property_map_base& operator=(const Property_map_base& pm)
     {
       parray_ = pm.parray_;
+      return *this;
     }
 
     void reset()
