@@ -48,7 +48,8 @@ public:
   Scene_surface_mesh_item();
   // Takes ownership of the argument.
   Scene_surface_mesh_item(SMesh*);
-  Scene_surface_mesh_item(SMesh);
+  Scene_surface_mesh_item(const SMesh&);
+    Scene_surface_mesh_item(SMesh&&);
   Scene_surface_mesh_item(const Scene_surface_mesh_item& other);
 
   ~Scene_surface_mesh_item();
