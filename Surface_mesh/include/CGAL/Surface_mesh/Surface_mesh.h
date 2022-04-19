@@ -347,8 +347,13 @@ public:
     Property_map(const Property_map& pm) = default;
 
     Property_map(Property_map&& pm) noexcept
-      : Base(pm)
+      : Base(std::forward<Property_map>(pm))
     {}
+
+    Property_map& operator=(const Property_map& pm)
+    {
+      static_cast<Base&>(*this) = static_cast<const Base&>(pm);
+    }
   };
 
   template <typename Key, typename T>
