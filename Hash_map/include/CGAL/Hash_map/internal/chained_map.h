@@ -34,6 +34,7 @@ class chained_map_elem
   chained_map_elem<T>*  succ;
 public:
   chained_map_elem(std::size_t _k, const T& _i) : k(_k), i(_i) {}
+  chained_map_elem(std::size_t _k, T&& _i) : k(_k), i(std::forward<T>(_i)) {}
 };
 
 template <typename T, typename Allocator>
@@ -70,6 +71,9 @@ private:
 
    void construct(chained_map_elem<T>* item, std::size_t k, const T& d)
    { Allocator_type_traits::construct(alloc,item, k, d); }
+
+   void construct(chained_map_elem<T>* item, std::size_t k, T&& d)
+   { Allocator_type_traits::construct(alloc,item, k, std::forward<T>(d)); }
 
    void destroy(chained_map_elem<T>* item)
    { Allocator_type_traits::destroy(alloc,item); }
@@ -179,8 +183,7 @@ void chained_map<T, Allocator>::rehash()
   { std::size_t x = p->k;
     if ( x != nullkey ) // list p is non-empty
     { Item q = HASH(x);
-      q->k = x;
-      q->i = std::move(p->i);
+      construct(q, x, std::move(p->i));
     }
   }
 
@@ -188,12 +191,10 @@ void chained_map<T, Allocator>::rehash()
   { std::size_t x = p->k;
     Item q = HASH(x);
     if ( q->k == nullkey ) {
-      q->k = x;
-      q->i = std::move(p->i);
+      construct(q, x, std::move(p->i));
     } else {
       Item r = free; free_succ();
-      r->k = x;
-      r->i = std::move(p->i);
+      construct(r, x, std::move(p->i));
       r->succ = q->succ;
       q->succ = r;
     }
