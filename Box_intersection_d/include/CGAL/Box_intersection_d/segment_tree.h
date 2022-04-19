@@ -317,7 +317,7 @@ private:
   class check {};
 
   template<class C>
-  static char f(check<bool(C::*)(int), &C::report>*);
+  static auto f(int) -> decltype(std::declval<C>().report(0) == true, char());
 
   template<class C>
   static int f(...);
