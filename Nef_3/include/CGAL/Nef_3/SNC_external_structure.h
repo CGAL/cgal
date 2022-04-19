@@ -30,6 +30,7 @@
 #include <CGAL/Nef_3/SNC_simplify.h>
 #include <map>
 #include <list>
+#include <unordered_map>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 43
