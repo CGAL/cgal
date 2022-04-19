@@ -7,7 +7,8 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : TBA
+// Author(s)     : Cedric Portaneri,
+//                 Mael Rouxel-Labbé
 //
 #ifndef CGAL_ALPHA_WRAP_3_TEST_ALPHA_WRAP_VALIDATION_H
 #define CGAL_ALPHA_WRAP_3_TEST_ALPHA_WRAP_VALIDATION_H
