@@ -241,13 +241,22 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
   * @return the longest edge in `pmesh`. The return type is an `edge_descriptor`.
   *
   * @sa `squared_edge_length()`
-  * @sa `longest_border()`
   */
 
 template<typename PolygonMesh,
          typename NamedParameters = parameters::Default_named_parameters>
 inline typename boost::graph_traits<PolygonMesh>::edge_descriptor
 longest_edge(const PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
+typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
+
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+            get_const_property_map(CGAL::vertex_point, pmesh));
+
+    Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
     auto edge_range = edges(pmesh);
 
@@ -255,9 +264,13 @@ longest_edge(const PolygonMesh& pmesh, const NamedParameters& np = parameters::d
     if (edge_range.begin() == edge_range.end())
         return boost::graph_traits<PolygonMesh>::null_edge();
 
-    auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&pmesh, &np](auto l, auto r) {
-        return squared_edge_length(l, pmesh, np)
-            < squared_edge_length(r, pmesh, np);    
+    auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, pmesh](auto l, auto r) {
+        auto res = gt.compare_squared_distance_3_object()(
+            get(vpm, source((l), pmesh)),
+            get(vpm, target((l), pmesh)),
+            get(vpm, source((r), pmesh)),
+            get(vpm, target((r), pmesh)));
+        return res == SMALLER;
     });
     
     // if edge_reference is not derefrenceble 
@@ -265,7 +278,6 @@ longest_edge(const PolygonMesh& pmesh, const NamedParameters& np = parameters::d
         return boost::graph_traits<PolygonMesh>::null_edge();
     
     return *edge_reference;
-
 }
   
 /**
