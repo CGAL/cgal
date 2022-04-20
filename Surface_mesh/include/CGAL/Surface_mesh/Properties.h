@@ -507,7 +507,8 @@ public:
     void swap (Property_container& other)
     {
       this->parrays_.swap (other.parrays_);
-      std::swap(this->size_, other.size_); // AF: why not the same for capacity_  ?
+      std::swap(this->size_, other.size_);
+      std::swap(this->capacity_, other.capacity_);
     }
 
 private:
