@@ -22,7 +22,7 @@ namespace CGAL {
 
 struct Void_handle_hash_function {
     std::size_t operator() (void* h) const {
-        return std::size_t(h);
+        return std::size_t(h)/sizeof(void*);
     }
 };
 
