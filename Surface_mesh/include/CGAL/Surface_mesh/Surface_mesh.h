@@ -347,7 +347,7 @@ public:
     Property_map(const Property_map& pm) = default;
 
     Property_map(Property_map&& pm) noexcept
-      : Base(std::forward<Property_map>(pm))
+      : Base(std::move(pm))
     {}
 
     Property_map& operator=(const Property_map& pm)
