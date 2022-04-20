@@ -358,7 +358,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(const SMesh& sm)
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh&& sm)
 {
-  standard_constructor(new SMesh(std::forward<SMesh>(sm)));
+  standard_constructor(new SMesh(std::move(sm)));
 }
 
 Scene_surface_mesh_item*
