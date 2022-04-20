@@ -130,7 +130,7 @@ struct Default_surface_intersection_visitor{
   void progress_triangulation(std::size_t) const {}
   void end_triangulation() const {}
 
-  void start_coplanar_faces(sd::size_t) const {}
+  void start_coplanar_faces(std::size_t) const {}
   void coplanar_faces_step() const {}
   void end_coplanar_faces() const {}
 
