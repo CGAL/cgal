@@ -233,14 +233,35 @@ void properties () {
 void move () {
   Surface_fixture f;
 
-  int nf = num_faces(f.m);
-  f.m2 = f.m;
+  auto nf = num_faces(f.m);
 
-  assert(num_faces(f.m2) == nf);
-
-  f.m3 = std::move(f.m);
-  assert(num_faces(f.m3) == nf);
+  // test move-constructor
+  Sm m2{std::move(f.m)};
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(m2) == nf);
   assert(num_faces(f.m) == 0);
+
+  // test move-assignment
+  f.m = std::move(m2);
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == 0);
+
+  // test copy-assignment
+  m2 = f.m;
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == nf);
+
+  // test copy-assignment
+  m2 = f.m;
+  assert(f.m.is_valid());
+  assert(m2.is_valid());
+  assert(num_faces(f.m) == nf);
+  assert(num_faces(m2) == nf);
 }
 
 

@@ -38,7 +38,7 @@ struct Surface_fixture {
     f3 = m.add_face(v,x,y);
   }
 
-  Sm m, m2,m3;
+  Sm m;
   Sm::Vertex_index u, v, w, x, y;
   Sm::Face_index f1, f2, f3;
 
