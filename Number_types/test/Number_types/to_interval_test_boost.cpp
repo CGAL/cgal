@@ -808,8 +808,8 @@ void test_shift_positive() {
     auto shift = std::numeric_limits<double>::max_exponent - std::numeric_limits<double>::digits + 1;
     auto r = CGAL::Boost_MP_internal::shift_positive_interval({d,d},shift);
     d = ldexp(d,shift);
-    assert(isinf(d));
-    assert(r.first < d && d <= r.second);
+    assert(d >= (std::numeric_limits<double>::max)());
+    assert(r.first <= d && d <= r.second);
   }
   {
     double d = (1L << 53) - 1;
