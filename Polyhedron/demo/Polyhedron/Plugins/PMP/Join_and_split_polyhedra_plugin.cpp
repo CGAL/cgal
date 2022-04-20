@@ -47,7 +47,7 @@ public:
     msg_interface = m;
 
     actionJoinPolyhedra= new QAction(tr("Join Selected Polyhedra"), mainWindow);
-    actionJoinPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
+    actionJoinPolyhedra->setProperty("subMenuName", "Polygon Mesh Processing");
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
 
     actionSplitPolyhedra= new QAction(tr("Split Selected Polyhedra"), mainWindow);
