@@ -29,13 +29,13 @@ struct Visitor_rep{
     }
   }
 
-  void start_triangulation(int tf)
+  void start_triangulation(std::size_t tf)
   {
     tfaces = tf;
     bound_faces = tf/10;
   }
 
-  void progress_triangulation(int i)
+  void progress_triangulation(std::size_t i)
   {
     if(i> bound_faces){
       std::cout << double(i)/double(tfaces) * 100  << " %" << std::endl;
@@ -85,18 +85,18 @@ struct Visitor_rep{
   double normalize;
   double bound = 0.1;
   double total = 0;
-  int count = 0;
+  std::size_t count = 0;
 
-  int bound_faces = 0;
-  int tfaces = 0;
+  std::size_t bound_faces = 0;
+  std::size_t tfaces = 0;
 
-  int bound_coplanar = 0;
-  int tcoplanar = 0;
-  int count_coplanar = 0;
+  std::size_t bound_coplanar = 0;
+  std::size_t tcoplanar = 0;
+  std::size_t count_coplanar = 0;
 
-  int bound_intersection = 0;
-  int tintersection = 0;
-  int count_intersection = 0;
+  std::size_t bound_intersection = 0;
+  std::size_t tintersection = 0;
+  std::size_t count_intersection = 0;
   CGAL::Timer t;
 };
 
@@ -130,7 +130,7 @@ struct Visitor :
     sptr->start_triangulation(tf);
   }
 
-  void progress_triangulation(int i) const
+  void progress_triangulation(std::size_t i) const
   {
     sptr->progress_triangulation(i);
   }
@@ -140,7 +140,7 @@ struct Visitor :
     std::cout << "Visitor::end_triangulation() at " << sptr->time() << " sec."  << std::endl;
   }
 
-  void start_coplanar_faces(int i) const
+  void start_coplanar_faces(std::size_t i) const
   {
     sptr->start_coplanar_faces(i);
   }
@@ -155,7 +155,7 @@ struct Visitor :
     std::cout << "Visitor::end_coplanar_faces() at " << sptr->time() << " sec." << std::endl;
   }
 
-  void start_intersection_points(int i) const
+  void start_intersection_points(std::size_t i) const
   {
     sptr->start_intersection_points(i);
   }

@@ -126,15 +126,15 @@ struct Default_surface_intersection_visitor{
   void progress_filter_intersection(double d) const{}
   void end_filter_intersections() const {}
 
-  void start_triangulation(int) const {}
-  void progress_triangulation(int) const {}
+  void start_triangulation(std::size_t) const {}
+  void progress_triangulation(std::size_t) const {}
   void end_triangulation() const {}
 
-  void start_coplanar_faces(int) const {}
+  void start_coplanar_faces(sd::size_t) const {}
   void coplanar_faces_step() const {}
   void end_coplanar_faces() const {}
 
-  void start_intersection_points(int) const {}
+  void start_intersection_points(std::size_t) const {}
   void intersection_points_step() const {}
   void end_intersection_points() const {}
 

@@ -570,7 +570,7 @@ public:
   }
 
 
-  void start_intersection_points(int i) const
+  void start_intersection_points(std::size_t i) const
   {
     user_visitor.start_intersection_points(i);
   }
@@ -585,7 +585,7 @@ public:
     user_visitor.end_intersection_points();
   }
 
-  void start_coplanar_faces(int i) const
+  void start_coplanar_faces(std::size_t i) const
   {
     user_visitor.start_coplanar_faces(i);
   }
@@ -1204,7 +1204,7 @@ public:
 
     const Node_id nb_nodes = nodes.size();
 
-    int i = 0;
+    std::size_t i = 0;
     for (typename On_face_map::iterator it=on_face_map.begin();
           it!=on_face_map.end();++it)
     {
@@ -1562,7 +1562,7 @@ public:
     //  and also those with intersection points only on the boundary.
 
 
-    int total_size = 0;
+    std::size_t total_size = 0;
     for (typename std::map<TriangleMesh*,On_face_map>::iterator
            it=on_face.begin(); it!=on_face.end(); ++it)
     {
