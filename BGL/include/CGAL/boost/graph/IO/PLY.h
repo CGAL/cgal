@@ -326,8 +326,8 @@ bool write_PLY(std::ostream& os,
   VCM vcm = choose_parameter(get_parameter(np, internal_np::vertex_color_map), VCM());
   FCM fcm = choose_parameter(get_parameter(np, internal_np::face_color_map), FCM());
 
-  bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>();
-  bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>();
+  bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
+  bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
   VIMap vim = CGAL::get_initialized_vertex_index_map(g, np);
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(boost::vertex_point, g));

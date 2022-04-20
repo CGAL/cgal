@@ -27,21 +27,6 @@
 #include <type_traits>
 
 namespace CGAL {
-namespace parameters {
-
-template <class Parameter, class NamedParameters>
-struct Is_default
-{
-  typedef typename internal_np::Lookup_named_param_def<Parameter,
-                                                       NamedParameters,
-                                                       internal_np::Param_not_found>::type NP_type;
-
-  static const bool value = boost::is_same<NP_type, internal_np::Param_not_found>::value;
-
-  typedef CGAL::Boolean_tag<value> type;
-};
-
-} // namespace parameters
 
 // forward declarations to avoid dependency to Solver_interface
 template <typename FT, unsigned int dim>
@@ -485,7 +470,7 @@ void set_stream_precision_from_NP(std::ostream& os, const NP& np)
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
 
-  if(!is_default_parameter<NP, internal_np::stream_precision_t>())
+  if(!is_default_parameter<NP, internal_np::stream_precision_t>::value)
   {
     const int precision = choose_parameter<int>(get_parameter(np,
                             internal_np::stream_precision));
