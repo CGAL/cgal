@@ -201,7 +201,7 @@ for i in `echo $nps`; do
   echo "  CGAL::parameters::${i}(A()).${i}(A());" >> main.cpp
 done
 echo "}" >> main.cpp
-if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I$git_dir/STL_Extension/include main.cpp; then
+if ! g++ -DCGAL_NO_STATIC_ASSERTION_TESTS -I$git_dir/STL_Extension/include -I$git_dir/Stream_support/include main.cpp; then
   echo "ERROR: At least one documented named parameter does not exist"
   cd -
   rm -r $tmp_dir
