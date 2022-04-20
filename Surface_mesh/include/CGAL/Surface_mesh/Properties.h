@@ -234,7 +234,7 @@ class Property_container
 public:
 
     // default constructor
-    Property_container() : size_(0), capacity_(0) {}
+    Property_container() = default;
 
     // destructor (deletes all property arrays)
     virtual ~Property_container() { clear(); }
@@ -243,7 +243,6 @@ public:
     Property_container(const Property_container& _rhs) { operator=(_rhs); }
 
     Property_container(Property_container&& c) noexcept
-      : size_(0), capacity_(0)
     {
       c.swap(*this);
     }
@@ -513,8 +512,8 @@ public:
 
 private:
     std::vector<Base_property_array*>  parrays_;
-    size_t  size_;
-    size_t  capacity_;
+    size_t  size_ = 0;
+    size_t  capacity_ = 0;
 };
 
   /// @endcond
