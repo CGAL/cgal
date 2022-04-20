@@ -57,7 +57,7 @@ struct Callback {
 
   void operator()( const Box& a, const Box& b ) {
     ++(sptr->count);
-    // std::cout << "box " << a.id() << " intersects box " << b.id() << std::endl;
+    std::cout << "box " << a.id() << " intersects box " << b.id() << std::endl;
   }
 
 
@@ -81,15 +81,13 @@ struct Callback {
 
 int main(int argc, char* argv[]) {
 
-  int n = (argc>1)?std::atoi(argv[1]): 100;
+  int n = (argc>1)?std::atoi(argv[1]): 5;
   int blx = (argc>2)?std::atoi(argv[2]): 1;
   int bly = (argc>2)?std::atoi(argv[3]): 1;
 
   std::vector<Box> boxes, queries;
   fill(boxes, 0, 0, n);
   fill(queries, blx, bly, n);
-
-  std::ptrdiff_t cutoff = 1;
 
   Callback callback(2.);  // because we call segment_tree twice
 
