@@ -63,7 +63,6 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 
   typedef typename C3T3::Triangulation                                   Tr;
 
-  typedef typename Tr::Vertex_handle                                     Vertex_handle;
   typedef typename Tr::Cell_handle                                       Cell_handle;
   typedef typename Tr::Weighted_point                                    Weighted_point;
 
@@ -100,6 +99,7 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 
     for(std::size_t i=1; i<4; ++i)
     {
+      CGAL_assertion_code(typedef typename Tr::Vertex_handle Vertex_handle;)
       CGAL_assertion_code(Vertex_handle v = c->vertex((s+i)&3);)
       CGAL_assertion(v != Vertex_handle() && !c3t3.triangulation().is_infinite(v));
 
