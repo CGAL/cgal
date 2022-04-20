@@ -737,8 +737,8 @@ corefine(      TriangleMesh& tm1,
   User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
   static const bool handle_non_manifold_features =
-    !parameters::is_default_parameter<internal_np::non_manifold_feature_map_t, NamedParameters1>::value ||
-    !parameters::is_default_parameter<internal_np::non_manifold_feature_map_t, NamedParameters2>::value;
+    !parameters::is_default_parameter<NamedParameters1, internal_np::non_manifold_feature_map_t>::value ||
+    !parameters::is_default_parameter<NamedParameters2, internal_np::non_manifold_feature_map_t>::value;
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
