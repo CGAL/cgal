@@ -103,6 +103,18 @@ void test_pmesh(const Mesh& pmesh)
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
   assert(mesh_area_np > 0);
 
+  edge_descriptor edge = PMP::longest_edge(pmesh);
+  if (edge == boost::graph_traits<Mesh>::null_edge()) 
+  {
+      std::cout << "mesh has no edges" << std::endl;
+  }
+  else 
+  {
+      std::cout << "longest edge is at:" << get(CGAL::vertex_point, pmesh, source(edge, pmesh)) 
+          << " -> " << get(CGAL::vertex_point, pmesh, target(edge, pmesh))
+          << ", length =" << PMP::edge_length(edge, pmesh) << std::endl;
+  }
+
   std::pair<halfedge_descriptor, FT> res = PMP::longest_border(pmesh);
   if(res.first == boost::graph_traits<Mesh>::null_halfedge()){
     std::cout << "mesh has no border" << std::endl;
