@@ -123,7 +123,7 @@ struct Default_surface_intersection_visitor{
 
   // needed for progress tracking
   void start_filter_intersections() const {}
-  void progress_filter_intersection(double d) const{}
+  void progress_filter_intersection(double) const{}
   void end_filter_intersections() const {}
 
   void start_triangulation(std::size_t) const {}
