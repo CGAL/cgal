@@ -219,7 +219,7 @@ squared_edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
   * @tparam PolygonMesh a model of `HalfedgeListGraph`
   * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   *
-  * @param pmesh the polygon mesh in which the longest edge is searched for 
+  * @param pmesh the polygon mesh in which the longest edge is searched for
   * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
@@ -272,14 +272,14 @@ typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
             get(vpm, target((r), pmesh)));
         return res == SMALLER;
     });
-    
-    // if edge_reference is not derefrenceble 
+
+    // if edge_reference is not derefrenceble
     if (edge_reference == edge_range.end())
         return boost::graph_traits<PolygonMesh>::null_edge();
-    
+
     return *edge_reference;
 }
-  
+
 /**
   * \ingroup PMP_measure_grp
   *
