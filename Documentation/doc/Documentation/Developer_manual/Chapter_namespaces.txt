@@ -14,7 +14,7 @@ and FLTK adds `fl`. \leda uses prefix `leda_`
 
 to some extent,
 but you have to tell \leda not to make the corresponding unprefixed names
-available as well.\cgalFootnote{\cgal's makefile does this by setting `-DLEDA_PREFIX`.} Initially, \cgal used
+available as well.\cgalFootnote{\cgal's makefile does this by setting \cgalFootnoteCode{-DLEDA_PREFIX}.} Initially, \cgal used
 prefix `CGAL_`.
 At the beginning of 1999, it was decided to drop prefix `CGAL_` and to
 introduce namespace `CGAL`.
