@@ -36,7 +36,7 @@ public:
 
   template <class H>
   std::size_t hash_function(H h) const
-  { return std::size_t((void*)&*h)/sizeof(h); }
+  { return std::size_t((void*)&*h)/sizeof(H); }
 
   template <class H>
   const I& operator[](H h) const
