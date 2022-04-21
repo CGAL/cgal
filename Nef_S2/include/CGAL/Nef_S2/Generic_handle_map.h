@@ -20,28 +20,31 @@
 
 namespace CGAL {
 
-struct Void_handle_hash_function {
-    std::size_t operator() (void* h) const {
-        return std::size_t(h)/sizeof(void*);
+struct Identity_hash_function {
+    std::size_t operator() (std::size_t h) const {
+        return h;
     }
 };
 
-
 template <class I>
 class Generic_handle_map : public
-  Unique_hash_map<void*,I,Void_handle_hash_function>
-{ typedef Unique_hash_map<void*,I,Void_handle_hash_function> Base;
+  Unique_hash_map<std::size_t,I,Identity_hash_function>
+{ typedef Unique_hash_map<std::size_t,I,Identity_hash_function> Base;
 public:
   Generic_handle_map() : Base() {}
   Generic_handle_map(I i) : Base(i) {}
 
   template <class H>
+  std::size_t hash_function(H h) const
+  { return std::size_t((void*)&*h)/sizeof(h); }
+
+  template <class H>
   const I& operator[](H h) const
-  { return Base::operator[]((void*)&*h); }
+  { return Base::operator[](hash_function(h)); }
 
   template <class H>
   I& operator[](H h)
-  { return Base::operator[]((void*)&*h); }
+  { return Base::operator[](hash_function(h)); }
 
 };
 
