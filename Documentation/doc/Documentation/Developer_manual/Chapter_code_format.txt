@@ -247,7 +247,7 @@ The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
   the outside, but internally it may modify some data members
   that are declared `mutable`. An example
   is the caching of results from expensive computations.  For more
-  information about conceptually `c`onst functions and mutable data
+  information about conceptually `const` functions and `mutable` data
   members see \cgalCite{cgal:m-ec-97}.
 - Prefer \cpp-style to C-style casts, <I>e.g.</I>, use `static_cast<double>( i)` instead of `(double)i`.
 - Protect header files against multiple inclusion, <I>e.g.</I> the file <TT>This_is_an_example.h</TT> should begin/end with
