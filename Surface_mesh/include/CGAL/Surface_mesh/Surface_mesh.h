@@ -341,20 +341,8 @@ public:
   {
     typedef Properties::Property_map_base<I, T, Property_map<I, T> > Base;
     typedef typename Base::reference reference;
-    Property_map() : Base() {}
+    Property_map() = default;
     Property_map(const Base& pm): Base(pm) {}
-
-    Property_map(const Property_map& pm) = default;
-
-    Property_map(Property_map&& pm) noexcept
-      : Base(std::move(pm))
-    {}
-
-    Property_map& operator=(const Property_map& pm)
-    {
-      static_cast<Base&>(*this) = static_cast<const Base&>(pm);
-      return *this;
-    }
   };
 
   template <typename Key, typename T>

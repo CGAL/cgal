@@ -256,8 +256,8 @@ void move () {
   assert(num_faces(f.m) == nf);
   assert(num_faces(m2) == nf);
 
-  // test copy-assignment
-  m2 = f.m;
+  // test copy-constructor
+  Sm m3 {f.m};
   assert(f.m.is_valid());
   assert(m2.is_valid());
   assert(num_faces(f.m) == nf);
