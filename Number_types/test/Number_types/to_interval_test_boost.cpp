@@ -796,7 +796,7 @@ void test_to_interval_tight_integer() {
 
 void test_shift_positive() {
   {
-    double d = (1L << 53) - 1;
+    double d = (1LL << 53) - 1;
     auto shift = std::numeric_limits<double>::max_exponent - (std::numeric_limits<double>::digits);
     auto r = CGAL::Boost_MP_internal::shift_positive_interval({d,d},shift);
     d = ldexp(d,shift);
