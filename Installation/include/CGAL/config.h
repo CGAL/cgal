@@ -495,7 +495,7 @@ namespace cpp11{
   #elif __has_cpp_attribute(clang::fallthrough)
   #  define CGAL_FALLTHROUGH [[clang::fallthrough]]
   #endif
-#elif defined(_has_attribute)
+#elif defined(__has_attribute)
   #if __has_attribute(fallthrough) && ! __clang__
   #  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
   #endif
