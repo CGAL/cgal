@@ -43,7 +43,7 @@ struct Visitor_rep{
     }
   }
 
-  void start_coplanar_faces(int tc)
+  void start_coplanar_faces(std::size_t tc)
   {
     std::cout << "Visitor::start_coplanar_faces() at " << t.time() << " sec." << std::endl;
     tcoplanar= tc;
@@ -60,7 +60,7 @@ struct Visitor_rep{
     }
   }
 
-  void start_intersection_points(int ti)
+  void start_intersection_points(std::size_t ti)
   {
     std::cout << "Visitor::start_intersection_points() at " << t.time() << " sec." << std::endl;
     tintersection= ti;
