@@ -304,14 +304,14 @@ struct Polyline_visitor
 template <typename Kernel>
 struct Angle_tester
 {
-  const double m_angle_sq_cosine;// squared cosine of `std:min(90, angle_deg)`
+  const double m_angle_sq_cosine;// squared cosine of `std:max(90, angle_deg)`
 
   Angle_tester()
     : m_angle_sq_cosine(0)
   {}
 
   Angle_tester(const double angle_deg)//angle given in degrees for readability
-    : m_angle_sq_cosine(CGAL::square(std::cos((std::min)(90.,angle_deg) * CGAL_PI / 180.)))
+    : m_angle_sq_cosine(CGAL::square(std::cos((std::max)(90.,angle_deg) * CGAL_PI / 180.)))
   {}
 
   template <typename vertex_descriptor, typename Graph>
