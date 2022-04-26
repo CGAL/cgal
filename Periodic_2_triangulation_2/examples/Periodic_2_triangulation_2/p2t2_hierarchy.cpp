@@ -28,6 +28,7 @@ typedef CGAL::Creator_uniform_2<double, Point>                      Creator;
 
 int main( )
 {
+  CGAL::get_default_random() = CGAL::Random(1650953440);
   std::cout << "insertion of 1000 random points" << std::endl;
   Triangulation t(Iso_rectangle(-1,-1, 1,1));
   CGAL::Random_points_in_square_2<Point, Creator> g(1.);
