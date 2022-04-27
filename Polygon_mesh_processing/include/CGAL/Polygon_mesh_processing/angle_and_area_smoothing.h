@@ -189,13 +189,19 @@ void angle_and_area_smoothing(const FaceRange& faces,
   bool use_area_smoothing = choose_parameter(get_parameter(np, internal_np::use_area_smoothing), true);
 
 #ifndef CGAL_PMP_USE_CERES_SOLVER
-  std::cerr << "Area-based smoothing requires the Ceres Library, which is not available." << std::endl;
-  std::cerr << "No such smoothing will be performed!" << std::endl;
-  use_area_smoothing = false;
+  if (use_area_smoothing)
+  {
+    std::cerr << "Area-based smoothing requires the Ceres Library, which is not available." << std::endl;
+    std::cerr << "No such smoothing will be performed!" << std::endl;
+    use_area_smoothing = false;
+  }
 #endif
 
   if(!use_angle_smoothing && !use_area_smoothing)
+  {
     std::cerr << "Called PMP::angle_and_area_smoothing() without any smoothing method selected or available" << std::endl;
+    return;
+  }
 
   unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   const bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), true);
