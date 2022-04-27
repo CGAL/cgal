@@ -124,7 +124,7 @@ struct Visitor :
     std::cout << "Visitor::end_filter_intersections() at " << sptr->time() << " sec."  << std::endl;
   }
 
-  void start_triangulation(int tf)const
+  void start_triangulation(std::size_t tf)const
   {
     std::cout << "Visitor::start_triangulation() with " << tf << " faces at " << sptr->time() << " sec."  << std::endl;
     sptr->start_triangulation(tf);
