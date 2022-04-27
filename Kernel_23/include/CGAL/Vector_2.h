@@ -93,7 +93,7 @@ public:
       : RVector_2(typename R::Construct_vector_2()(Return_base_tag(), x,y,w)) {}
 
   friend void swap(Self& a, Self& b)
-#ifdef __cpp_lib_is_swappable
+#if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
     noexcept(std::is_nothrow_swappable_v<Rep>)
 #endif
   {
