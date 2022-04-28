@@ -337,6 +337,7 @@ namespace Barycentric_coordinates {
       *output = b_first;
       ++output;
       *output = FT(1) - b_first;
+      ++output;
 
       // Output both coordinates.
       return boost::optional<OutputIterator>(output);
