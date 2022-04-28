@@ -487,20 +487,15 @@ namespace cpp11{
 //   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes
 // See for gcc:
 //   https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-#if defined(__has_cpp_attribute)
-  #if __cplusplus > 201402L && __has_cpp_attribute(fallthrough)
-  #  define CGAL_FALLTHROUGH [[fallthrough]]
-  #elif __has_cpp_attribute(gnu::fallthrough)
-  #  define CGAL_FALLTHROUGH [[gnu::fallthrough]]
-  #elif __has_cpp_attribute(clang::fallthrough)
-  #  define CGAL_FALLTHROUGH [[clang::fallthrough]]
-  #endif
-#elif defined(__has_attribute)
-  #if __has_attribute(fallthrough) && ! __clang__
-  #  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
-  #endif
-#endif
-#if !defined(CGAL_FALLTHROUGH)
+#if __cplusplus > 201402L && __has_cpp_attribute(fallthrough)
+#  define CGAL_FALLTHROUGH [[fallthrough]]
+#elif __has_cpp_attribute(gnu::fallthrough)
+#  define CGAL_FALLTHROUGH [[gnu::fallthrough]]
+#elif __has_cpp_attribute(clang::fallthrough)
+#  define CGAL_FALLTHROUGH [[clang::fallthrough]]
+#elif __has_attribute(fallthrough) && ! __clang__
+#  define CGAL_FALLTHROUGH __attribute__ ((fallthrough))
+#else
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
