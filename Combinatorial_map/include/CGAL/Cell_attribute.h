@@ -177,7 +177,7 @@ struct Init_id;
 
   protected:
     /// Contructor without parameter.
-    Cell_attribute_without_info(): mrefcounting(0)
+    Cell_attribute_without_info(): mrefcounting(0), m_for_cc(Refs::null_handle)
     {}
 
     /// Copy contructor.
