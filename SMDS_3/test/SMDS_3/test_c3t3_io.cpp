@@ -462,13 +462,13 @@ struct Test_c3t3_io {
 int main()
 {
   std::cout << "First test I/O when all indices are integers" << std::endl;
-  bool ok = Test_c3t3_io<MD_homogeneous_types>()("c3t3_io-homo");
+  bool ok = Test_c3t3_io<MD_homogeneous_types>()("data/c3t3_io-homo");
   if(!ok) {
     std::cerr << "Error\n";
     return -1;
   }
   std::cout << "Then test I/O when all indices are different types" << std::endl;
-  ok = Test_c3t3_io<MD_heterogeneous_types>()("c3t3_io-hetero");
+  ok = Test_c3t3_io<MD_heterogeneous_types>()("data/c3t3_io-hetero");
   if(!ok) {
     std::cerr << "Error\n";
     return -1;
