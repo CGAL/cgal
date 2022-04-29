@@ -249,7 +249,7 @@ TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
         NamedParameters,
         std::vector<std::vector<Point_3> > // default
       >::reference;
-      const Polylines& polylines
+      const Polylines polylines
         = choose_parameter(get_parameter_reference(np, internal_np::polyline_constraints),
           std::vector<std::vector<Point_3> >());
 
