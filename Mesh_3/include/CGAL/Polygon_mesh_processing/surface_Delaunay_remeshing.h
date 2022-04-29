@@ -238,9 +238,15 @@ TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
   }
 
   // Sharp features - provided by user as a set of polylines
-  const auto& polylines
+  using Polylines = typename internal_np::Lookup_named_param_def <
+      internal_np::polyline_constraints_t,
+      NamedParameters,
+      std::vector<std::vector<Point_3> > // default
+      >::reference;
+  const Polylines& polylines
     = choose_parameter(get_parameter_reference(np, internal_np::polyline_constraints),
                        std::vector<std::vector<Point_3> >());
+
   if (!polylines.empty() && !protection_of_user_given_constraints)
   {
     std::vector<std::vector<Point_3> > features;
