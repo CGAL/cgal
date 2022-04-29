@@ -1,3 +1,5 @@
+#define CGAL_MESH_3_VERBOSE 1
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -27,19 +29,35 @@ int main(int argc, char* argv[])
   }
 
   double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.1;
-
   double fdist = (argc > 3) ? std::stod(std::string(argv[3])) : 0.01;
+  double sharp_angle = (argc > 4) ? std::stod(std::string(argv[4])) : 45.;
 
   std::cout << "Detect features..." << std::endl;
 
+  // automatically detect features
   using EIFMap = boost::property_map<Mesh, CGAL::edge_is_feature_t>::type;
   EIFMap eif = get(CGAL::edge_is_feature, mesh);
-  PMP::detect_sharp_edges(mesh, 45, eif);
+  PMP::detect_sharp_edges(mesh, sharp_angle, eif);
+
+  // collect features in a vector of segments
+  auto vpmap = get_property_map(boost::vertex_point, mesh);
+  std::vector<std::vector<Point> > segments;
+  for (auto e : edges(mesh))
+  {
+    if (get(eif, e))
+    {
+      auto ps = get(vpmap, source(halfedge(e, mesh), mesh));
+      auto pt = get(vpmap, target(halfedge(e, mesh), mesh));
+      std::vector<Point> s = { ps, pt };
+      if (s[1] > s[0]) std::swap(s[0], s[1]);
+      segments.push_back(s);
+    }
+  }
 
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
-  Mesh outmesh = PMP::surface_Delaunay_remeshing(mesh,
+  Mesh outmesh1 = PMP::surface_Delaunay_remeshing(mesh,
     PMP::parameters::protect_constraints(true)
     .mesh_edge_size(target_edge_length)
     .mesh_facet_size(target_edge_length)
@@ -47,21 +65,6 @@ int main(int argc, char* argv[])
     .edge_is_constrained_map(eif));
 
   std::cout << "Remeshing with edge_is_constrained_map done." << std::endl;
-
-  auto vpmap = get_property_map(boost::vertex_point, mesh);
-  std::vector<std::vector<Point> > segments;
-  for (auto e : edges(mesh))
-  {
-    if (get(eif, e))
-    {
-      auto ps = get(vpmap, source(e, mesh));
-      auto pt = get(vpmap, target(e, mesh));
-      std::vector<Point> s;
-      if (ps < pt)  s = { ps, pt };
-      else          s = { pt, ps };
-      segments.push_back(s);
-    }
-  }
 
   Mesh outmesh2 = PMP::surface_Delaunay_remeshing(mesh,
     PMP::parameters::protect_constraints(true)
@@ -72,10 +75,27 @@ int main(int argc, char* argv[])
 
   std::cout << "Remeshing with polyline_constraints done." << std::endl;
 
-  assert(std::distance(outmesh.vertices().begin(), outmesh.vertices().end())
-      == std::distance(outmesh2.vertices().begin(), outmesh2.vertices().end()));
-  assert(std::distance(outmesh.faces().begin(), outmesh.faces().end())
-      == std::distance(outmesh2.faces().begin(), outmesh2.faces().end()));
+  Mesh outmesh3 = PMP::surface_Delaunay_remeshing(mesh,
+    PMP::parameters::protect_constraints(true)
+    .mesh_edge_size(target_edge_length)
+    .mesh_facet_size(target_edge_length)
+    .mesh_facet_distance(fdist)
+    .features_angle_bound(sharp_angle));
+
+  std::cout << "Remeshing with features_angle_bound done." << std::endl;
+
+  // Check
+  const std::size_t nbv1 = std::distance(outmesh1.vertices().begin(), outmesh1.vertices().end());
+  const std::size_t nbv2 = std::distance(outmesh2.vertices().begin(), outmesh2.vertices().end());
+  const std::size_t nbv3 = std::distance(outmesh3.vertices().begin(), outmesh3.vertices().end());
+  assert(nbv1 == nbv2);
+  assert(nbv2 == nbv3);
+
+  const std::size_t nbf1 = std::distance(outmesh1.faces().begin(), outmesh1.faces().end());
+  const std::size_t nbf2 = std::distance(outmesh2.faces().begin(), outmesh2.faces().end());
+  const std::size_t nbf3 = std::distance(outmesh3.faces().begin(), outmesh3.faces().end());
+  assert(nbf1 == nbf2);
+  assert(nbf2 == nbf3);
 
   return 0;
 }
