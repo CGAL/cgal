@@ -16,7 +16,8 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data_remeshing/anchor_dense.off";
+  std::string filename = (argc > 1) ? std::string(argv[1])
+    : CGAL::data_file_path("meshes/anchor_dense.off");
 
   Mesh mesh;
   if (!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -38,9 +39,7 @@ int main(int argc, char* argv[])
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
-  Mesh outmesh;
-  PMP::surface_Delaunay_remeshing(mesh,
-    outmesh,
+  Mesh outmesh = PMP::surface_Delaunay_remeshing(mesh,
     PMP::parameters::protect_constraints(true)
     .mesh_edge_size(target_edge_length)
     .mesh_facet_size(target_edge_length)
@@ -55,14 +54,16 @@ int main(int argc, char* argv[])
   {
     if (get(eif, e))
     {
-      std::vector<Point> s = {get(vpmap, source(e, mesh)), get(vpmap, target(e, mesh))};
+      auto ps = get(vpmap, source(e, mesh));
+      auto pt = get(vpmap, target(e, mesh));
+      std::vector<Point> s;
+      if (ps < pt)  s = { ps, pt };
+      else          s = { pt, ps };
       segments.push_back(s);
     }
   }
 
-  Mesh outmesh2;
-  PMP::surface_Delaunay_remeshing(mesh,
-    outmesh2,
+  Mesh outmesh2 = PMP::surface_Delaunay_remeshing(mesh,
     PMP::parameters::protect_constraints(true)
     .mesh_edge_size(target_edge_length)
     .mesh_facet_size(target_edge_length)
@@ -71,8 +72,10 @@ int main(int argc, char* argv[])
 
   std::cout << "Remeshing with polyline_constraints done." << std::endl;
 
-  assert(outmesh.number_of_vertices() == outmesh2.number_of_vertices());
-  assert(outmesh.number_of_faces() == outmesh2.number_of_faces());
+  assert(std::distance(outmesh.vertices().begin(), outmesh.vertices().end())
+      == std::distance(outmesh2.vertices().begin(), outmesh2.vertices().end()));
+  assert(std::distance(outmesh.faces().begin(), outmesh.faces().end())
+      == std::distance(outmesh2.faces().begin(), outmesh2.faces().end()));
 
   return 0;
 }

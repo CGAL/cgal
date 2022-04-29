@@ -20,7 +20,8 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/anchor_dense.off";
+  std::string filename = (argc > 1) ? std::string(argv[1])
+    : CGAL::data_file_path("meshes/anchor_dense.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -43,9 +44,7 @@ int main(int argc, char* argv[])
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
-  Mesh outmesh;
-  PMP::surface_Delaunay_remeshing(mesh,
-                                  outmesh,
+  Mesh outmesh = PMP::surface_Delaunay_remeshing(mesh,
                                   PMP::parameters::protect_constraints(true)
                                  .mesh_edge_size(size)
                                  .mesh_facet_distance(fdist)

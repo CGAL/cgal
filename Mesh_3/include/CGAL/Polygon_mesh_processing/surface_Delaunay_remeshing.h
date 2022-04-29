@@ -25,7 +25,7 @@
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <limits>
@@ -47,8 +47,10 @@ namespace Polygon_mesh_processing {
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param tmesh a triangle surface mesh
-* @param out the output triangle surface mesh
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+*
+* @returns the triangulated surface mesh following the requirements of the input
+*   meshing criteria
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
@@ -163,9 +165,8 @@ namespace Polygon_mesh_processing {
 */
 template<typename TriangleMesh
        , typename NamedParameters>
-void surface_Delaunay_remeshing(const TriangleMesh& tmesh
-                              , TriangleMesh& out
-                              , const NamedParameters& np)
+TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
+                                      , const NamedParameters& np)
 {
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -184,7 +185,7 @@ void surface_Delaunay_remeshing(const TriangleMesh& tmesh
 
   if (!CGAL::is_triangle_mesh(tmesh)) {
     std::cerr << "Input geometry is not triangulated." << std::endl;
-    return;
+    return TriangleMesh();
   }
 
   // Create a vector with only one element: the pointer to the polyhedron.
@@ -205,16 +206,17 @@ void surface_Delaunay_remeshing(const TriangleMesh& tmesh
   // Sharp features - provided by user as a pmap on input edges
   bool protection_of_user_given_constraints = false;
 
-  using edge_descriptor = typename boost::graph_traits<TM>::edge_descriptor;
-  using ECMap = typename internal_np::Lookup_named_param_def <
+  if (!parameters::is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>())
+  {
+    using edge_descriptor = typename boost::graph_traits<TM>::edge_descriptor;
+    using ECMap = typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters,
       Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
-  >::type;
-  ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                 Static_boolean_property_map<edge_descriptor, false>());
-  if (!parameters::is_default_parameter(ecmap))
-  {
+    >::type;
+    ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+      Static_boolean_property_map<edge_descriptor, false>());
+
     std::vector<std::vector<Point_3> > sharp_edges;
     for (edge_descriptor e : edges(tmesh))
     {
@@ -276,14 +278,15 @@ void surface_Delaunay_remeshing(const TriangleMesh& tmesh
                                       CGAL::parameters::no_perturb(),
                                       CGAL::parameters::no_exude());
 
+  TriangleMesh out;
   CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, out);
+  return std::move(out);
 }
 
 template<typename TriangleMesh>
-void surface_Delaunay_remeshing(const TriangleMesh& tmesh,
-                                TriangleMesh& out)
+TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh)
 {
-  delaunay_remeshing(tmesh, out, parameters::all_default());
+  return surface_Delaunay_remeshing(tmesh, parameters::all_default());
 }
 
 
