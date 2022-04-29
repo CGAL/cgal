@@ -161,7 +161,13 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
-* \pre `tmesh` must be free of self-intersections.
+* \pre `tmesh` must be free of self-intersections
+*
+* @note Only one of the named parameters defining constrained edges is taken into account
+* for meshing, in the following priority order : `edge_is_constrained_map`,
+* `polyline_constraints`, and `features_angle_bound`. The selected edges are protected only
+* if `protect_constraints` is set to `true`.
+*
 */
 template<typename TriangleMesh
        , typename NamedParameters>
@@ -202,67 +208,65 @@ TriangleMesh surface_Delaunay_remeshing(const TriangleMesh& tmesh
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                  get_const_property_map(vertex_point, tmesh));
 
-  // Sharp features
-  // Sharp features - provided by user as a pmap on input edges
-  bool protection_of_user_given_constraints = false;
-
-  if (!parameters::is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>())
+  // Features protection
+  const bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
+  if (protect)
   {
-    using edge_descriptor = typename boost::graph_traits<TM>::edge_descriptor;
-    using ECMap = typename internal_np::Lookup_named_param_def <
-      internal_np::edge_is_constrained_t,
-      NamedParameters,
-      Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
-    >::type;
-    ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-      Static_boolean_property_map<edge_descriptor, false>());
-
-    std::vector<std::vector<Point_3> > sharp_edges;
-    for (edge_descriptor e : edges(tmesh))
+    // Features provided by user as a pmap on input edges
+    if (!parameters::is_default_parameter<NamedParameters, internal_np::edge_is_constrained_t>())
     {
-      if (get(ecmap, e))
+      using edge_descriptor = typename boost::graph_traits<TM>::edge_descriptor;
+      using ECMap = typename internal_np::Lookup_named_param_def <
+        internal_np::edge_is_constrained_t,
+        NamedParameters,
+        Static_boolean_property_map<edge_descriptor, false> // default (no constraint pmap)
+      >::type;
+      ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+        Static_boolean_property_map<edge_descriptor, false>());
+
+      std::vector<std::vector<Point_3> > sharp_edges;
+      for (edge_descriptor e : edges(tmesh))
       {
-        std::vector<Point_3> ev;
-        Point_3 p = get(vpmap, source(halfedge(e, tmesh), tmesh));
-        ev.push_back(get(vpmap, source(halfedge(e,tmesh), tmesh)));
-        ev.push_back(get(vpmap, target(halfedge(e, tmesh), tmesh)));
-        sharp_edges.push_back(ev);
+        if (get(ecmap, e))
+        {
+          std::vector<Point_3> ev(2);
+          ev[0] = get(vpmap, source(halfedge(e, tmesh), tmesh));
+          ev[1] = get(vpmap, target(halfedge(e, tmesh), tmesh));
+          if (ev[1] > ev[0]) std::swap(ev[0], ev[1]);
+          sharp_edges.push_back(ev);
+        }
+      }
+
+      std::vector<std::vector<Point_3> > features;
+      CGAL::polylines_to_protect(features, sharp_edges.begin(), sharp_edges.end());
+      domain.add_features(features.begin(), features.end());
+    }
+    else if (!parameters::is_default_parameter<NamedParameters, internal_np::polyline_constraints_t>())
+    {
+      // Features - provided by user as a set of polylines
+      using Polylines = typename internal_np::Lookup_named_param_def <
+        internal_np::polyline_constraints_t,
+        NamedParameters,
+        std::vector<std::vector<Point_3> > // default
+      >::reference;
+      const Polylines& polylines
+        = choose_parameter(get_parameter_reference(np, internal_np::polyline_constraints),
+          std::vector<std::vector<Point_3> >());
+
+      if (!polylines.empty())
+      {
+        std::vector<std::vector<Point_3> > features;
+        CGAL::polylines_to_protect(features, polylines.begin(), polylines.end());
+        domain.add_features(features.begin(), features.end());
       }
     }
-
-    std::vector<std::vector<Point_3> > features;
-    CGAL::polylines_to_protect(features, sharp_edges.begin(), sharp_edges.end());
-    domain.add_features(features.begin(), features.end());
-
-    protection_of_user_given_constraints = true;
-  }
-
-  // Sharp features - provided by user as a set of polylines
-  using Polylines = typename internal_np::Lookup_named_param_def <
-      internal_np::polyline_constraints_t,
-      NamedParameters,
-      std::vector<std::vector<Point_3> > // default
-      >::reference;
-  const Polylines& polylines
-    = choose_parameter(get_parameter_reference(np, internal_np::polyline_constraints),
-                       std::vector<std::vector<Point_3> >());
-
-  if (!polylines.empty() && !protection_of_user_given_constraints)
-  {
-    std::vector<std::vector<Point_3> > features;
-    CGAL::polylines_to_protect(features, polylines.begin(), polylines.end());
-    domain.add_features(features.begin(), features.end());
-
-    protection_of_user_given_constraints = true;
-  }
-
-  // Sharp features - automatic detection
-  const bool protect = choose_parameter(get_parameter(np, internal_np::protect_constraints), false);
-  if (protect && !protection_of_user_given_constraints)
-  {
-    const FT angle_bound = choose_parameter(get_parameter(np, internal_np::features_angle_bound), 60.);
-    domain.detect_features(angle_bound); //includes detection of borders
-  }
+    else
+    {
+      // Sharp features - automatic detection
+      const FT angle_bound = choose_parameter(get_parameter(np, internal_np::features_angle_bound), 60.);
+      domain.detect_features(angle_bound); //includes detection of borders
+    }
+  }//end if(protect)
 
   // Mesh criteria
   auto esize  = choose_parameter(get_parameter(np, internal_np::mesh_edge_size),
