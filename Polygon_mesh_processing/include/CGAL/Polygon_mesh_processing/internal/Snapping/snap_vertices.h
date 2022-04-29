@@ -738,7 +738,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
                                  get_property_map(vertex_point, tm_B));
 
   internal::Snapping_default_visitor<PolygonMesh> default_visitor;
-  Visitor& visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
+  Visitor visitor = choose_parameter(get_parameter_reference(np_A, internal_np::visitor), default_visitor);
 
   visitor.start_vertex_vertex_phase();
   if(visitor.stop())
