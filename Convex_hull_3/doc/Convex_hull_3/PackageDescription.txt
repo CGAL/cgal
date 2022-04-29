@@ -6,6 +6,9 @@
 /// \defgroup PkgConvexHull3Traits Traits Classes
 /// \ingroup PkgConvexHull3Ref
 
+/// \defgroup PkgConvexHull3Predicates Predicates
+/// \ingroup PkgConvexHull3Ref
+
 /*! \defgroup PkgConvexHull3Functions Convex Hull Functions
    \ingroup PkgConvexHull3Ref
 The function `convex_hull_3()` computes the convex hull of a given set of
